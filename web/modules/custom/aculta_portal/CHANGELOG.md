@@ -1,3 +1,11 @@
+## 0.2.0-dev.46 — Botão da pesquisa completa sem cores fixas (apresentação movida para o tema) — 2026-10-10
+
+Classificação: PATCH (remoção de CSS; sem alteração de markup, rota, access ou cache).
+
+- Removido `css/search-preview.css` e a entrada `css` da biblioteca `aculta_portal/search-preview`. A biblioteca mantém o JavaScript.
+- A apresentação do botão "pesquisa completa" passa para o tema (`aculta420/css/components/search.css`, 0.6.0-dev.5), com tokens semânticos no lugar do azul fixo `#0b5394`. Visualmente, o azul vira o texto primário do tema no modo claro.
+- Verificação: gate `validate-aculta-portal-drupal11.php` (ver resultado no PR). RUNTIME STATUS: DEFERRED para a verificação do popup no servidor de testes.
+
 ## 0.2.0-dev.45 — Pesquisa completa em botão centralizado; lista da prévia sem marcadores — 2026-10-10
 
 Classificação: ajuste visual (PATCH).
