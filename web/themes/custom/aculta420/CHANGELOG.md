@@ -1,3 +1,14 @@
+## 0.6.0-dev.6 — Marca da barra institucional: logo no lugar do nome — 2026-10-10
+
+Classificação: PATCH (apresentação; sem componente, contrato Portal → tema ou dependência novos).
+
+- `templates/page.html.twig`: `p.aculta-institution-bar__brand` imprime a logo branca (`img.aculta-institution-bar__logo`, 78×26, com `alt` "ACULTA - Associação Cultural Antiproibicionista"). O texto "ACULTA" e o nome completo saem da barra.
+- `assets/branding/aculta420/web/`: `logo-aculta420-horizontal-branco-78x26.webp` e `-156x52.webp` (2x), gerados com Pillow (Lanczos, lossless) a partir de `source/logo-aculta420-horizontal-branco.png` (1800×600).
+- `css/components/institution-bar.css`: `.aculta-institution-bar__logo` com `filter: var(--aculta-shell-logo-filter)`, o mesmo tratamento do cabeçalho principal (escura no claro, sem filtro no escuro). Removida a regra que escondia o nome em telas pequenas.
+- Gate de Foundation (`validate-aculta420-foundation.php`): a lista de exportações de branding em `web/` passa a aceitar as duas logos da barra, além do favicon e da logo padrão. Mudança deliberada do gate, não relaxamento.
+- `docs/shell.md`: contrato da barra atualizado ("logo ACULTA; sem texto visível").
+- Verificado: a página do servidor de testes serve a logo; gates de design, SDC schema e validadores de navegador PASS. Medição do tamanho renderizado por navegador DEFERRED (o Chromium travou neste ambiente ao navegar e capturar tela).
+
 ## 0.6.0-dev.5 — F3: apresentação da busca (página, popup e resultados) — 2026-10-10
 
 Classificação: PATCH (apresentação; sem componente, template, contrato Portal → tema ou dependência novos).

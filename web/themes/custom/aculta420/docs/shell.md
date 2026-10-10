@@ -197,7 +197,7 @@ estão em PRs empilhadas (#92 a #95). QA em navegador registrado no Git (commit 
 ```text
 div.aculta-institution-bar            (faixa institucional, não é landmark)
   .container > .aculta-institution-bar__inner
-    p.aculta-institution-bar__brand   ACULTA + nome completo (oculto < 576px)
+    p.aculta-institution-bar__brand   logo ACULTA (img 78×26; alt com o nome completo; sem texto visível)
     div.aculta-utility                menu de conta, quando existir
 header.aculta-header                  Domain Header de purpose (0.2-D)
 ```

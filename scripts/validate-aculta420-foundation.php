@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.5', 'Theme metadata marks the current version 0.6.0-dev.5.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.6', 'Theme metadata marks the current version 0.6.0-dev.6.');
 $forbiddenIntegrationModules = ['social_auth', 'social_auth_google', 'captcha', 'turnstile', 'key'];
 $themeInfoDependencies = array_map(
   static fn(string $dependency): string => str_contains($dependency, ':')
@@ -118,6 +118,9 @@ $assert(
 $expectedWebAssets = [
   'aculta420-favicon.ico',
   'logo-aculta420-horizontal-branco-900x300.png',
+  // Logo da barra institucional (0.6.0-dev.6): tamanhos 1x e 2x, consumidos pelo page.html.twig.
+  'logo-aculta420-horizontal-branco-78x26.webp',
+  'logo-aculta420-horizontal-branco-156x52.webp',
 ];
 $actualWebAssets = [];
 $webAssetRoot = $themeRoot . '/assets/branding/aculta420/web';
@@ -128,7 +131,7 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($webAssetR
 }
 sort($actualWebAssets);
 sort($expectedWebAssets);
-$assert($actualWebAssets === $expectedWebAssets, 'Runtime branding exports contain only the favicon and active default logo.');
+$assert($actualWebAssets === $expectedWebAssets, 'Runtime branding exports contain only the favicon, the active default logo and the institution bar logo sizes.');
 
 $themeSettings = \Drupal::config('aculta420.settings');
 foreach (['institution_data_uuid', 'institution_home_nid', 'institution_transparency_nid'] as $functionalSetting) {
