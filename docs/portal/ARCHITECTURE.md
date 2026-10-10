@@ -129,7 +129,7 @@ Purposes atuais:
 | MAIN | aculta.org | aculta.toca.net.br |
 | ACCOUNT | conta.aculta.org | conta.aculta.toca.net.br |
 | SUPPORT | apoio.aculta.org | apoio.aculta.toca.net.br |
-| MAGAZINE | coletivo420.aculta.org | coletivo420.aculta.toca.net.br |
+| MAGAZINE | coletivo420.aculta.org | revista420.aculta.toca.net.br |
 | WIKI | wiki420.aculta.org | wiki420.aculta.toca.net.br |
 | SHOP | loja.aculta.org | loja.aculta.toca.net.br |
 | COURSES | cursos.aculta.org | cursos.aculta.toca.net.br |

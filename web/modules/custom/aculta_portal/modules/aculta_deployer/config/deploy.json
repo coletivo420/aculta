@@ -50,7 +50,7 @@
       "hosts": [
         "https://aculta.toca.net.br/",
         "https://apoio.aculta.toca.net.br/",
-        "https://coletivo420.aculta.toca.net.br/",
+        "https://revista420.aculta.toca.net.br/",
         "https://wiki420.aculta.toca.net.br/"
       ],
       "note": "Servidor de testes não indexável."
@@ -272,7 +272,7 @@
         {
           "file": "config/sync/domain.record.coletivo420_aculta_org.yml",
           "pattern": "^hostname: .*$",
-          "with": "hostname: coletivo420.aculta.toca.net.br"
+          "with": "hostname: revista420.aculta.toca.net.br"
         },
         {
           "file": "config/sync/domain.record.wiki420_aculta_org.yml",

@@ -1,3 +1,12 @@
+## 0.2.0-dev.47 — Host de teste da revista: coletivo420 → revista420 (servidor de testes) — 2026-10-10
+
+Classificação: PATCH (configuração de deploy e documentação; sem código de runtime).
+
+- `aculta_deployer/config/deploy.json`: host de teste da revista em `revista420.aculta.toca.net.br` (lista de hosts do sitemap/robots e substituição de `hostname` no domínio). Produção (`coletivo420.aculta.org`) não muda nesta versão.
+- `config/sync/domain_alias.alias.coletivo420_aculta_toca_net_br.yml`: padrão do alias de teste passa a `revista420.aculta.toca.net.br`. O `id` e o nome do arquivo permanecem, para não alterar a identidade da configuração importada.
+- Documentação: `docs/operations/TESTING.md`, `docs/architecture/multidomain.md`, `docs/portal/ARCHITECTURE.md` (coluna do servidor de testes).
+- Pendências fora do repositório (DEFERRED): (1) `trusted_host_patterns` em `settings.local.php` do servidor de testes; (2) `config import` do alias no Runtime e limpeza de cache; (3) DNS e VirtualHost/certificado no Cloudflare e no Virtualmin; (4) mudança equivalente em produção (`*.aculta.org`), registrada para deploy só no RC.
+
 ## 0.2.0-dev.46 — Botão da pesquisa completa sem cores fixas (apresentação movida para o tema) — 2026-10-10
 
 Classificação: PATCH (remoção de CSS; sem alteração de markup, rota, access ou cache).

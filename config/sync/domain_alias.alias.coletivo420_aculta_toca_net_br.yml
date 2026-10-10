@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 id: coletivo420_aculta_toca_net_br
 domain_id: coletivo420_aculta_org
-pattern: coletivo420.aculta.toca.net.br
+pattern: revista420.aculta.toca.net.br
 redirect: 0
 environment: homelab
 weight: 4
