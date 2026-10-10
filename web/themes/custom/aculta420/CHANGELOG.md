@@ -3,7 +3,7 @@
 Classificação: PATCH (apresentação; sem componente, template, contrato Portal → tema ou dependência novos).
 
 - `css/components/search.css`: formulário da página `/busca`, lista de resultados, popup da barra (`.aculta-search-preview`) e botão "pesquisa completa", com tokens semânticos. Carregado pela biblioteca global.
-- Botão "pesquisa completa" do popup estilizado com tokens; a regra equivalente do `aculta_portal` (`search-preview.css`) usa cores hexadecimais fixas. A regra do tema tem seletor mais específico (`.aculta-search-preview .aculta-search-preview__full.btn`), então prevalece sem alterar o Portal. Remover a regra do Portal segue como dívida do Portal.
+- Botão "pesquisa completa" do popup estilizado com tokens; a regra equivalente do `aculta_portal` (`search-preview.css`) usa cores hexadecimais fixas. A regra do tema tem seletor mais específico (`.aculta-search-preview .aculta-search-preview__full.btn`), então prevalece sem alterar o Portal. A regra do Portal foi removida na `aculta_portal` 0.2.0-dev.46 (PR #186, mesclada).
 - Foco por teclado com `--aculta-focus-ring`; movimento reduzido sem transição no botão de envio.
 - Lista de resultados sem recuo do Drupal (`.item-list`), ajustada após a captura de tela.
 - Gates: SDC schema PASS (98 checagens); design foundations PASS (1508 checagens, contraste dark incluído); browser validators PASS. Gates de Foundation e shell-contract dependem de bootstrap do Drupal (Drush) e não rodaram aqui.
