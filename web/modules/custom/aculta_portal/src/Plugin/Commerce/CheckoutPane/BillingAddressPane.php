@@ -72,6 +72,15 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       '#inline_form' => $inline_form,
     ];
     $pane_form['profile'] = $inline_form->buildInlineForm($pane_form['profile'], $form_state);
+    // Número: o endereço de cobrança do Commerce não tem campo próprio. O valor é gravado no logradouro.
+    $pane_form['street_number'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Número'),
+      '#required' => TRUE,
+      '#maxlength' => 20,
+      '#default_value' => $this->savedStreetNumber($profile),
+      '#weight' => 50,
+    ];
     $pane_form['#attached']['library'][] = self::CEP_LIBRARY;
 
     return $pane_form;
@@ -81,7 +90,24 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
   public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
     /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface $inline_form */
     $inline_form = $pane_form['profile']['#inline_form'];
-    $this->order->setBillingProfile($inline_form->getEntity());
+    $profile = $inline_form->getEntity();
+    $number = trim((string) $form_state->getValue(array_merge($pane_form['#parents'], ['street_number'])));
+    if ($number !== '' && $profile->hasField('address') && !$profile->get('address')->isEmpty()) {
+      $address = $profile->get('address')->first();
+      $street = trim(preg_replace('/,\s*[^,]*$/', '', (string) $address->getAddressLine1()));
+      $address->setAddressLine1($street . ', ' . $number);
+      $profile->save();
+    }
+    $this->order->setBillingProfile($profile);
+  }
+
+  /** Número já gravado no logradouro (último trecho após vírgula), para preencher o campo ao voltar à etapa. */
+  private function savedStreetNumber($profile): string {
+    if (!$profile || !$profile->hasField('address') || $profile->get('address')->isEmpty()) {
+      return '';
+    }
+    $line = (string) $profile->get('address')->first()->getAddressLine1();
+    return preg_match('/,\s*([^,]+)$/', $line, $m) ? trim($m[1]) : '';
   }
 
 }
