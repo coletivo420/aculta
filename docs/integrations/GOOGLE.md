@@ -35,7 +35,7 @@ redirecionamento exatos abaixo no cliente OAuth Web:
 
 Após autenticação concluída, o Social Auth direciona a pessoa para a raiz do
 Domain ACCOUNT. Esse Domain serve a visão geral (`aculta_portal.dashboard`) somente na raiz `/`;
-o caminho técnico `/conta-interna` responde 404. A rota `user.page` permanece somente para compatibilidade com redirects
+o caminho técnico `/minha-conta` responde 404. A rota `user.page` permanece somente para compatibilidade com redirects
 do Core e redireciona para a raiz da Conta, sem renderizar o perfil genérico;
 `/identidade` também não é um destino válido. O destino preferencial é a página visitada
 antes do login, transportada como `destination` e acompanhada pelo purpose do

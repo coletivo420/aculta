@@ -7,7 +7,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 
 1. **Caminho antigo responde 404; não há redirecionamento de slug.** É o padrão do projeto, antes e depois da versão estável (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404.
 2. **Redirecionamento entre purposes** usa `DomainPurposeManager` + `TrustedRedirectResponse`, nunca `RedirectResponse` cru para outro host (`DomainPurposeRequestSubscriber::retargetRedirect`).
-3. **Conta:** a raiz `/` do host de conta é o ponto de entrada da área logada. Visitante não logado é redirecionado (302) para `/entrar` do próprio host de conta; a visão geral (`/conta-interna` internamente) não é acessível diretamente. Após logout, o destino também é o login (`DomainPurposeRequestSubscriber`, `onRequestBeforeRouter` e bloco de `user.logout`).
+3. **Conta:** a raiz `/` do host de conta é o ponto de entrada da área logada. Visitante não logado é redirecionado (302) para `/entrar` do próprio host de conta; a visão geral (`/minha-conta` internamente) não é acessível diretamente. Após logout, o destino também é o login (`DomainPurposeRequestSubscriber`, `onRequestBeforeRouter` e bloco de `user.logout`).
 4. **Login com destino salvo** volta ao purpose de origem, validado por `isSafeLoginDestinationPath` (`LOGIN_DESTINATION_SESSION_KEY`).
 5. **Usuário legado:** `/user/{id}` antigo pode ser redirecionado por `PortalController::legacyUserPageRedirect` (rota `user.page`, para o painel da conta).
 6. **Wrong-purpose público continua 404** e não vira redirect genérico (`ADMIN-DOMAIN-POLICY.md`).
@@ -17,6 +17,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 10. **Exceção única:** visitante não logado na raiz do host de conta vai (302) para `/entrar` (`DomainPurposeRequestSubscriber::onRequestBeforeRouter`). A raiz `/` de cada host é a página inicial daquele purpose, por dois mecanismos:
    - MAIN: página inicial do site (`system.site:page.front` = `/node/1`).
    - Apoio, revista, wiki e cursos: nó com `field_domain_source` apontando para o domínio, que o módulo `domain_source` usa como página inicial desse host.
+   - Conta: `system.site:page.front` na coleção de configuração `domain.conta_aculta_org` = `/minha-conta` (exportada em `config/sync/domain/conta_aculta_org/system.site.yml`). `/minha-conta` é a rota interna da visão geral: requisição direta responde 404; o público é a raiz `/`.
 
 ## Matriz de comportamento (2026-10-11)
 
@@ -37,7 +38,7 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 
 - **Loja (SHOP):** a raiz serve a página inicial (nó 69) pelo `PurposeFrontPathProcessor`. Frete, prazo e trocas seguem pendentes do responsável.
 - **Mecanismo dos demais hosts:** a raiz de apoio, revista, wiki e cursos responde 200 por um mecanismo que ainda não foi rastreado. A pendência é padronizá-lo com o `PurposeFrontPathProcessor`, que é o mapa único (`FRONT_PATHS`).
-- **Por que não `domain_config`:** o override `system.site:page.front` por domínio não é aplicado nesta instalação (testado com nome e página inicial), e há relatos públicos de bugs do `DomainConfigFactoryOverride` (issues drupal.org #3154402 e #1650498).
+- **Por que não `domain_config`:** o override `system.site:page.front` por domínio não é aplicado nesta instalação (testado com nome e página inicial), e há relatos públicos de bugs do `DomainConfigFactoryOverride` (issues drupal.org #3154402 e #1650498). Exceção confirmada em 2026-10-11: a raiz da Conta é lida da coleção `domain.conta_aculta_org` e responde a visão geral na raiz; o mecanismo exato de leitura por domínio segue não rastreado.
 - **Mecanismo dos demais hosts:** a raiz de apoio, revista, wiki e cursos responde 200, mas o mecanismo exato não foi rastreado; `domain_source` sozinho não o explica. Rastrear e padronizar com a regra da loja é pendência.
 
 ## Onde está o código
@@ -61,6 +62,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | Origem | Destino | Código | Mecanismo (arquivo) | Motivo |
 | --- | --- | --- | --- | --- |
 | `/` no host de Conta, visitante | `/entrar` | 302 | `DomainPurposeRequestSubscriber` (`TrustedRedirectResponse`) | Raiz da conta exige login |
+| `/aceite-termos` (Conta), após aceitar | `/` (Conta) | 302 | Agreement `aculta_account_terms`, `settings.destination` (`config/sync/agreement.agreement.aculta_account_terms.yml`) | Retorno à raiz da conta; antes apontava para `/minha-conta` (404), corrigido em 0.3.0-dev.12 |
 | `/user/{uid}/edit`, próprio usuário | `/seguranca` (Conta) | 302 | `AccountRouteSubscriber` | Edição de conta acontece no painel |
 | `/user/{uid}/edit`, outro usuário | — | 403 | `AccountRouteSubscriber` | Sem acesso a conta alheia |
 | `/user/{uid}`, próprio usuário | `/` (Conta) | 302 | `AccountRouteSubscriber` | Perfil público não existe; a conta é a visão geral |
@@ -80,7 +82,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | `/donate`, `/donate/{valor}/now`, `/donate/{pedido}/{etapa}` | `/apoiar`, `/apoiar/{valor}/agora`, `/apoiar/{pedido}/{etapa}` | 0.3.0-dev.5 | Mesmas rotas do Commerce, novos caminhos |
 | `/user/{uid}/orders` | `/pedidos` | 0.3.0-dev.7 | Lista de pedidos do Commerce, sem ID na URL |
 | `/user/{uid}/payment-methods` | `/pagamentos` | 0.3.0-dev.7 | Lista de pagamentos do Commerce, sem ID na URL |
-| `/conta-interna` | `/` (Conta) | Visão geral | Rota interna; não é pública e responde 404 |
+| `/conta-interna` (Conta) | `/` (raiz da Conta) | 0.3.0-dev.13 | Sem rota. Visitante recebe 404. Logado recebe 302 para `/` pela regra geral de caminho inexistente da Conta (não alterada, decisão pendente) |
 
 ### Caminhos de conta com ID removidos (0.3.0-dev.8)
 
@@ -103,7 +105,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 ### Pendências de conta (não são redirecionamentos)
 
 - **Permissões de endereço (corrigido em 2026-10-11):** o papel "autenticado" tem `create customer profile`, `view own customer profile` e `update own customer profile` (`config/sync/user.role.authenticated.yml`): cliente cria e edita o próprio endereço. `delete any customer profile` e `delete own customer profile` ficam só com o administrador. O endereço de outra conta continua negado. Verificado com duas contas temporárias, já removidas.
-- **Teste de dono com cliente comum:** não concluído, porque o aceite de termos (`/agreement`) da conta de teste não foi registrado pelo serviço do Portal. Teste pendente com conta de cliente após o aceite.
+- **Teste de dono com cliente comum:** verificado por API em 2026-10-11 (usuário `teste.comum`, não dono de `/checkout/4`, negado pela regra do Commerce). O teste de navegador com o cliente comum segue com o responsável do teste.
 - **Pedido com itens:** `/pedidos/{pedido}` não foi testado com pedido real (não há pedidos finalizados no ambiente de teste).
 
 

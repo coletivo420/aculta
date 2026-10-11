@@ -20,7 +20,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 | --- | --- | --- | --- |
 | 1 | Gate Drupal 11+ do Portal | `php scripts/validate-aculta-portal-drupal11.php` | PASS (382 checks) |
 | 2 | Slugs públicos | `php scripts/validate-public-slugs.php` | PASS (266 rotas; 20 violações de contrib na linha de base DT-P20) |
-| 2b | Raiz da conta (sem `/conta-interna`) | `php scripts/validate-aculta-portal-conta-root.php` | PASS (1142 checks) |
+| 2b | Raiz da conta (sem `/conta-interna`; `/minha-conta` só interno, 404 direto) | `php scripts/validate-aculta-portal-conta-root.php` | PASS (1211 checks) |
 | 3 | Fundação do tema | `drush scr scripts/validate-aculta420-foundation.php` | PASS (310 checks) |
 | 4 | Contrato de shell do tema | `drush scr scripts/validate-aculta420-shell-contract.php` | PASS (9 checks). Corrigido o validador: passava 2 argumentos a `ThemeHooks`, que exige 3 (`entity_type.manager`). O tema não foi alterado |
 | 5 | Foundations de design (contraste) | `php scripts/validate-aculta420-design-foundations.php` | PASS |

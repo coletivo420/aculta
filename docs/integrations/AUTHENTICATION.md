@@ -23,7 +23,7 @@ propagado pelo módulo upstream, o Portal conserva o purpose já capturado para 
 mesmo path **e query** em vez de sobrescrevê-lo com ACCOUNT. Quando não há página anterior ou destino explícito, o destino público padrão é
 a raiz do Domain ACCOUNT (`/` em `conta.aculta.org` ou no alias Homelab).
 A visão geral (rota `aculta_portal.dashboard`) é servida somente nessa raiz.
-O caminho técnico `/conta-interna` não é público: requisição direta responde 404
+O caminho técnico `/minha-conta` não é público: requisição direta responde 404
 (guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter`), no mesmo padrão de `/apoio`.
 Nenhum link gerado aponta para esse caminho.
 
@@ -130,7 +130,7 @@ interação de navegador nesta alteração.
 - a UI genérica de `/user` foi removida da experiência: `user.page` é mantida
   apenas como rota técnica de compatibilidade e redireciona usuários autenticados
   para a raiz ACCOUNT; `/identidade` não é destino de login;
-- `/conta-interna` não é público: responde 404. A front page do Domain ACCOUNT resolve a visão geral na raiz.
+- `/minha-conta` não é público: responde 404. A front page do Domain ACCOUNT resolve a visão geral na raiz.
 - Os links de login renderizados em MAIN, MAGAZINE, WIKI e COURSES carregaram
   `destination` com o caminho visível e o purpose respectivo.
 - O link Google gerado em `/entrar` preservou `destination`; o início OAuth

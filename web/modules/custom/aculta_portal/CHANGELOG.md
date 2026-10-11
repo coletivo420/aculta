@@ -1,3 +1,15 @@
+## 0.3.0-dev.13 — Caminho interno da visão geral passa a /minha-conta (sem /conta-interna) — 2026-10-11
+
+Classificação: PATCH (caminho técnico interno trocado; nenhum link público alterado).
+
+- `/conta-interna` deixa de existir como caminho da visão geral. A rota `aculta_portal.dashboard` passa a `/minha-conta`, e o front do Domain ACCOUNT (`config/sync/domain/conta_aculta_org/system.site.yml`) aponta para ele. Motivo: o Core reserva `/` para a rota `<front>`, então a rota não pode usar `/` diretamente.
+- Requisição direta a `/minha-conta` responde 404 (guarda de `DomainPurposeRequestSubscriber`); a visão geral é servida somente na raiz `/` da Conta.
+- Gate `validate-aculta-portal-conta-root.php` passa a proibir o caminho em código, configuração e scripts (correspondência exata do caminho).
+- Sonda `/conta-interna` removida do `deploy.json` do aculta_deployer.
+- Observado e não alterado: para visitante logado, qualquer caminho inexistente da Conta (inclusive `/conta-interna`) responde 302 para `/`; visitante anônimo recebe 404. Regra existente de `DomainPurposeRequestSubscriber`; decisão pendente.
+
+**RUNTIME STATUS:** verificado no servidor de testes: `conta.../` 200 (logado); `conta.../minha-conta` 404 direto; `conta.../` 302 para `/entrar` (anônimo); `aculta.../` 200; gates de conta, Portal e root policy PASS.
+
 ## 0.3.0-dev.12 — Retorno após aceitar os termos da conta vai para a raiz da conta — 2026-10-11
 
 Classificação: PATCH (destino de configuração corrigido; nenhum caminho público alterado).

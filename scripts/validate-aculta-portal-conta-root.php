@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__);
 $module = $root . '/web/modules/custom/aculta_portal';
-$internalPath = '/conta-interna';
+$internalPath = '/minha-conta';
 $failures = [];
 $checks = 0;
 
@@ -77,7 +77,7 @@ $scanDirs = [
 ];
 $allowedConfig = [
   // The ACCOUNT Domain front page resolves the overview internally; it is not a link.
-  'config/sync/domain/conta_aculta_org/system.site.yml' => '#^\s*front: /conta-interna\s*$#',
+  'config/sync/domain/conta_aculta_org/system.site.yml' => '#^\s*front: /minha-conta\s*$#',
 ];
 foreach ($scanDirs as $dir) {
   $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $dir, FilesystemIterator::SKIP_DOTS));
@@ -92,7 +92,8 @@ foreach ($scanDirs as $dir) {
     $checks++;
     $lines = file($file->getPathname(), FILE_IGNORE_NEW_LINES) ?: [];
     foreach ($lines as $number => $line) {
-      if (!str_contains($line, $internalPath)) {
+      // Exact path token: /minha-conta/perfil (a retired route the commerce gate asserts absent) is not a link to the overview.
+      if (!preg_match('#' . preg_quote($internalPath, '#') . '(?![/\w-])#', $line)) {
         continue;
       }
       // Comments and documentation prose may name the path; code, templates and links may not.

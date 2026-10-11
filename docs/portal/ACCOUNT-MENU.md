@@ -2,7 +2,7 @@
 
 Data da revisão: 2026-10-10. Versões: `0.2.0-dev.26` a `0.2.0-dev.39`.
 
-A visão geral é a raiz do Domain ACCOUNT (`/`). O caminho técnico `/conta-interna` não é público e responde 404; nenhum link o usa (`docs/integrations/AUTHENTICATION.md`).
+A visão geral é a raiz do Domain ACCOUNT (`/`). O caminho técnico `/minha-conta` não é público e responde 404; nenhum link o usa (`docs/integrations/AUTHENTICATION.md`).
 
 O menu lateral da conta (`/` para a visão geral, `/dados`, `/seguranca`, `/conexoes`, `/meus-cursos`, `/meu-apoio`, `/configuracoes`) tem duas apresentações. As duas usam as mesmas rotas, a mesma ordem e o mesmo item ativo.
 
@@ -56,15 +56,15 @@ Sanfona nativa (`details`/`summary`, sem JavaScript de abertura):
 
 Uma única URL pública por destino evita conteúdo duplicado, links antigos que chegam a um caminho técnico e a dependência de o usuário lembrar um nome interno. O mesmo princípio vale para `/apoio`, que é servido somente em `/` no host SUPPORT.
 
-O caminho `/conta-interna` continua existindo só como identificador da rota `aculta_portal.dashboard`. Ele não é público: a guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter` responde 404 para qualquer requisição cujo caminho original não seja `/`.
+O caminho `/minha-conta` continua existindo só como identificador da rota `aculta_portal.dashboard`. Ele não é público: a guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter` responde 404 para qualquer requisição cujo caminho original não seja `/`.
 
 ## Barreira anti-regressão
 
 - Gate: `php scripts/validate-aculta-portal-conta-root.php` (1142 verificações). Reprova:
   - um segundo uso do caminho interno no roteamento;
   - a remoção da guarda da visão geral;
-  - um link literal a `/conta-interna` em código, template, JS, CSS, scripts ou configuração exportada (exceto `front` do Domain ACCOUNT, que é resolução interna);
+  - um link literal a `/minha-conta` em código, template, JS, CSS, scripts ou configuração exportada (exceto `front` do Domain ACCOUNT, que é resolução interna);
   - o reenvio de confirmação fora de `/confirmar-email/reenviar`;
   - divergência entre `aculta_portal.info.yml` e o topo do `CHANGELOG.md`.
-- Sonda privada do `aculta_deployer` (`deploy.json`, `private_probes`): `https://conta.aculta.org/conta-interna` é aceita com 404. A sonda não distingue 404 de página privada com noindex; a proteção principal é o gate acima.
-- Verificação HTTP no servidor de testes, depois do deploy: `https://conta.aculta.toca.net.br/` deve servir a conta; `https://conta.aculta.toca.net.br/conta-interna` deve responder 404.
+- Sonda privada do `aculta_deployer` (`deploy.json`, `private_probes`): a sonda de `/conta-interna` foi removida em 0.3.0-dev.13, junto com o caminho. A proteção principal é o gate acima.
+- Verificação HTTP no servidor de testes, depois do deploy: `https://conta.aculta.toca.net.br/` deve servir a conta; `https://conta.aculta.toca.net.br/minha-conta` deve responder 404.

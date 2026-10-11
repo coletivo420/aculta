@@ -1,7 +1,7 @@
-# Caminho interno da visão geral. Não é público: o painel é servido somente na raiz
-# do Domain ACCOUNT (DomainPurposeRequestSubscriber::onRequest). Não gerar links por este caminho.
+# Visão geral da conta. Caminho interno: o público é a raiz / do Domain ACCOUNT, cujo front aponta para cá
+# (o Core reserva / para a rota <front>). Requisição direta a este caminho responde 404 (DomainPurposeRequestSubscriber).
 aculta_portal.dashboard:
-  path: /conta-interna
+  path: /minha-conta
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalController::dashboard'
     _title: Minha conta
