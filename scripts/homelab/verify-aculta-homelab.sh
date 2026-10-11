@@ -39,18 +39,10 @@ if command -v pgrep >/dev/null && pgrep -x nginx >/dev/null 2>&1; then
   exit 1
 fi
 
-[[ -f var/database/aculta-runtime.sqlite ]] || {
-  echo "SQLite Runtime is missing." >&2
-  exit 1
-}
-
-php scripts/estados/estado.php validate-runtime var/database/aculta-runtime.sqlite
-
 DB_DRIVER="$(php vendor/drush/drush/drush.php php:eval 'print(\Drupal::database()->driver());')"
-DB_PATH="$(php vendor/drush/drush/drush.php php:eval 'print(\Drupal::database()->getConnectionOptions()["database"]);')"
-EXPECTED_DB="$(realpath var/database/aculta-runtime.sqlite)"
-[[ "$DB_DRIVER" == "sqlite" && "$(realpath "$DB_PATH")" == "$EXPECTED_DB" ]] || {
-  echo "Drupal is not connected to the expected SQLite Runtime." >&2
+DB_NAME="$(php vendor/drush/drush/drush.php php:eval 'print(\Drupal::database()->getConnectionOptions()["database"]);')"
+[[ "$DB_DRIVER" == "mysql" && "$DB_NAME" == "aculta_runtime" ]] || {
+  echo "Drupal is not connected to the expected MariaDB Runtime (aculta_runtime)." >&2
   exit 1
 }
 
@@ -58,4 +50,4 @@ php vendor/drush/drush/drush.php status
 php vendor/drush/drush/drush.php updatedb:status
 php vendor/drush/drush/drush.php config:status
 
-echo "Homelab verification complete: Apache baseline + SQLite Runtime."
+echo "Homelab verification complete: Apache baseline + MariaDB Runtime."

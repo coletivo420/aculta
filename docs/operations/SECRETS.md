@@ -200,7 +200,7 @@ externa para Key/env e Config Override.
 
 ## Database
 
-Não salvar secrets no SQLite ou MariaDB para simplificar o desenvolvimento.
+Não salvar secrets no banco (MariaDB) para simplificar o desenvolvimento.
 O banco guarda entidades/configuração de referência; o valor vem do adapter do
 ambiente.
 

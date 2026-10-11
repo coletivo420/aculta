@@ -27,7 +27,7 @@ unset($aculta_runtime_db);
 // environment variables, configure a restricted file outside the document
 // root and load the portable bootstrap adapter below. The loader gives an
 // existing native variable precedence over the file. Do not place credentials
-// in SQLite or substitute public test keys in a real environment.
+// in the database or substitute public test keys in a real environment.
 //
 // Optional secure bootstrap adapter (uncomment only when needed):
 // $settings['aculta_secrets_file'] = '/etc/aculta/secrets.env';

@@ -2,7 +2,7 @@
 
 ## Desenvolvimento / Homelab
 
-Debian, Apache, PHP-FPM, SQLite, aliases `*.aculta.toca.net.br` e noindex.
+Debian, Apache, PHP-FPM, MariaDB, aliases `*.aculta.toca.net.br` e noindex.
 
 O Homelab foi migrado de Nginx para Apache em 2026-10-06. Documentos
 históricos de fases anteriores podem mencionar Nginx ao descrever o ambiente

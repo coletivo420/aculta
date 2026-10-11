@@ -168,8 +168,8 @@ como efeito colateral.
 
 Atual:
 
-- Homelab Runtime: SQLite;
-- Estados: SQLite;
+- Homelab Runtime: MariaDB;
+- Estados: arquivos `.sqlite` de backup, fora do Runtime;
 - produção: MariaDB.
 
 Código Portal deve usar Entity API, Form API, serviços públicos e Database API

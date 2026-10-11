@@ -41,7 +41,7 @@ O Portal integra. ACULTA420 apresenta.
 
 ## Ambientes
 
-- Homelab (servidor de testes `*.aculta.toca.net.br`): Debian + Apache + PHP-FPM + SQLite. É noindex.
+- Homelab (servidor de testes `*.aculta.toca.net.br`): Debian + Apache + PHP-FPM + MariaDB. É noindex.
 - Produção (`*.aculta.org`): Hostinger + Apache + PHP + MariaDB. Recebe deploy só no RC de todos os módulos, temas e subtemas.
 
 Apache é o baseline de servidor web. Configuração específica de ambiente não

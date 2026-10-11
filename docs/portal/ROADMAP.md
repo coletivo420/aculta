@@ -45,7 +45,7 @@ versão alvo, validar e só então taguear.
 ### S2 — Tipagem e cobertura (DT-P02, DT-P03) — parcial: strict_types concluído e 1 teste de Kernel (login); domínio e pagamento pendentes
 
 - `declare(strict_types=1)` em `PortalHooks.php`; remover o teto correspondente do gate.
-- Testes de Kernel para os serviços P5–P7, em banco SQLite de teste. Comece pelos três de maior
+- Testes de Kernel para os serviços P5–P7, em banco MariaDB de teste. Comece pelos três de maior
   risco: login (validação), domínio (política de rotas) e pagamento (fail-closed).
 - Critério: teto de `strictTypesDebt` vazio; ao menos um teste de Kernel por serviço de risco alto.
 
