@@ -1,0 +1,12 @@
+uuid: a992f1d5-7d07-4aab-8a87-d89534aaa12c
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media
+id: media.produto_galeria
+label: 'Produto: galeria'
+description: null
+targetEntityType: media
+cache: true
+

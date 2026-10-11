@@ -6,7 +6,8 @@ Classificação: MINOR da linha 0.2 (novo campo de mídia do produto e nova view
 - `views.view.galeria_produto` (config/sync): view VVJB (`views_vvjb`) sobre `media_field_data`, com argumento de IDs separados por `+`, linhas com o modo de exibição padrão da mídia.
 - `Hook\ProductGalleryHooks` (`preprocess_commerce_product`): prepara a renderização da view em `aculta_product_gallery` para o tema. O tema só imprime.
 - Tema: template do produto usa `aculta_product_gallery`; componente `product-gallery` (Bootstrap) removido.
-- Verificado no servidor de testes (HTML): página 200; galeria VVJB com 7 imagens (estilo `large`, 384×480); sem carrossel Bootstrap.
+- Verificado no servidor de testes (HTML): página 200; galeria VVJB com 7 imagens; sem carrossel Bootstrap.
+- Resolução: modo de exibição `media.produto_galeria` com estilo `produto_galeria` de 960×1200 px (o dobro da largura da coluna da galeria), servido e verificado em 960×1200.
 - Pendente: exportar a configuração do Runtime antes do RC (campo, view e displays já estão em config/sync).
 - Número de versão: 0.2.0-dev.49, porque a 0.2.0-dev.48 está na PR #192 (CAPTCHA da loja) e na PR #190 (domínios).
 

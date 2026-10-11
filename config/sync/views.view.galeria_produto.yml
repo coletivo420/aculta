@@ -107,7 +107,7 @@ display:
       row:
         type: 'entity:media'
         options:
-          view_mode: default
+          view_mode: produto_galeria
       query:
         type: views_query
         options: {}
