@@ -7,9 +7,9 @@ Release da linha 0.2 do Portal (sem mudança de código além da versão). Conso
 - Migração do envio de e-mail para Mailer Plus (`symfony_mailer`), com SMTP2GO via Key; remoção do `drupal/smtp` e do `smtp.settings`; DT-P09 resolvida.
 - Gates de configuração e comércio alinhados ao estado de ambiente (linha de base DT-O10 e credencial DT-O11).
 
-Pendências que seguem para a próxima linha: DT-O10 (catálogo da loja, decisão de produto), DT-O11 (rotação do token de teste do Mercado Pago) e DT-P05 (entrega em produção, depende do RC).
+Pendências que seguem para a próxima linha: DT-O10 (catálogo da loja, ativação no RC) e DT-O11 (rotação do token de teste do Mercado Pago, pelo responsável). A entrega em produção é decisão do responsável no fim do projeto.
 
-RUNTIME STATUS: validado no runtime de teste (Homelab). Produção não validada.
+RUNTIME STATUS: validado no runtime de teste (Homelab).
 
 ## 0.2.0-dev.59 — Remoção do legado drupal/smtp (M2 da migração do e-mail) — 2026-10-11
 
