@@ -47,3 +47,10 @@
 - **Causa provável do domínio `mercadopago.com.br`:** o código usa `init_point`. A tela de pagamento abriu no navegador onde a sessão do responsável estava logada no Mercado Pago. Para testar, o comprador precisa ser o usuário de teste do Mercado Pago, e não uma conta real.
 - **Ação:** gateway religado em 2026-10-11 para o teste de compra simulada. Antes de cada teste, o navegador deve estar **deslogado** do Mercado Pago ou logado no comprador de teste.
 - **Pendente de confirmação:** o redirecionamento de teste deve ir para o fluxo de teste do Mercado Pago. Se houver dúvida sobre o domínio exibido, conferir o modo da conta de teste antes de pagar.
+
+## Métodos de pagamento do Mercado Pago na preferência (2026-10-11)
+
+- **Sintoma:** "Pagar e concluir a compra" abria a tela do Mercado Pago só com saldo ("Você não tem saldo suficiente") ou só com "Cartão de Débito Virtual CAIXA". Cartão de crédito não aparecia.
+- **Causa:** a configuração do gateway estava com `payment_types` vazio e `payment_method` vazio. Pelo módulo `commerce_mercado_pago`, isso gera `excluded_payment_types` com todos os tipos configuráveis e `excluded_payment_methods` com todas as bandeiras (visa, master, amex, hipercard, elo, caixa). Sobrava apenas a conta de saldo.
+- **Correção aplicada só no servidor de testes:** `payment_types = {credit_card, debit_card}` e `payment_method` com as bandeiras desses tipos para o Brasil (visa, master, amex, hipercard, elo, caixa). Resultado: nenhuma exclusão de métodos; excluídos apenas boleto, transferência e pré-pago.
+- **Pendente:** o `config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml` ainda tem `payment_types: {}` e `payment_method: {}`. Levar a mesma configuração ao repositório depende de aprovação do responsável.
