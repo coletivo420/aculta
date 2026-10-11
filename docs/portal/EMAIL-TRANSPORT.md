@@ -190,3 +190,11 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 - Remetente configurado no runtime: `naoresponda@toca.net.br`. Confirmar o campo De no cabeçalho do e-mail recebido.
 - **Pendente:** Webform com modelo HTML (DT-P09). O handler `institutional_notification` de `aculta_contact` está com `html` desligado e envia para `4e20coletivo@gmail.com`. O teste com HTML ligado (apenas em memória) foi bloqueado pelo classificador de ações e ainda não foi executado.
 
+### 9.2 Reenvio após correção de `system.mail`
+
+- O teste de confirmação não chegou ao destino. Na análise, `system.mail:interface.default` estava como `SMTPMailSystem` (módulo `drupal/smtp`, legado). O envio passou pelo `mailer_override`, mas a configuração inconsistente precisava ser corrigida.
+- Runtime: `system.mail:interface.default` alterado para `symfony_mailer` (plugin do Mailer Plus, disponível na lista de plugins de e-mail).
+- Reenvio do teste de confirmação para o responsável: aceito pelo `mailer_override` (`result=TRUE`, transporte `smtp2go`).
+- Alteração apenas no runtime. `config/sync/system.mail.yml` ainda declara `php_mail` e `deploy.json` ainda trata o backend por ambiente. Ajustar a configuração exportada faz parte da M2.
+- Webform: `system.mail:interface.webform` continua `webform_php_mail`. O teste com HTML (DT-P09) segue pendente, e esse valor é o que a DT-P09 precisa considerar.
+
