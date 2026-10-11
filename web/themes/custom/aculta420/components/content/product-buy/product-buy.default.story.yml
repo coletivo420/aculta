@@ -1,0 +1,9 @@
+name: Padrão
+description: Cabeçalho de compra com categoria, título e formulário.
+component: aculta420:product-buy
+props:
+  category: Bloco Sativa
+  title: Camiseta Abadá Bloco Sativa 2026 – Regata
+slots:
+  purchase:
+    markup: <p>Escolha o tamanho e compre.</p>

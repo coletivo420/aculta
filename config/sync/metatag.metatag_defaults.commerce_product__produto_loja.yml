@@ -1,0 +1,23 @@
+uuid: aae15a1b-614d-4d04-aa45-b9df0ccf5970
+langcode: pt-br
+status: true
+dependencies: {}
+id: commerce_product__produto_loja
+label: 'Loja: produto'
+tags:
+  title: '[commerce_product:title] | Associação Cultural Antiproibicionista'
+  description: '[commerce_product:field_resumo]'
+  og_title: '[commerce_product:title]'
+  og_description: '[commerce_product:field_resumo]'
+  og_url: '[commerce_product:url:absolute]'
+  canonical_url: '[commerce_product:url:absolute]'
+  og_type: product
+  schema_web_page_type: WebPage
+  schema_web_page_name: '[commerce_product:title]'
+  schema_web_page_description: '[commerce_product:field_resumo]'
+  schema_web_page_url: '[commerce_product:url:absolute]'
+  schema_product_type: Product
+  schema_product_name: '[commerce_product:title]'
+  schema_product_description: '[commerce_product:field_resumo]'
+  schema_product_url: '[commerce_product:url:absolute]'
+  schema_product_brand: 'a:2:{s:5:"@type";s:12:"Organization";s:4:"name";s:18:"[institution:name]";}'

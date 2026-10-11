@@ -1,0 +1,24 @@
+/* Abas do produto: cores e foco por tokens. */
+.aculta-product-tabs { margin-block: var(--aculta-space-section); color: var(--aculta-text-primary); }
+.aculta-product-tabs__nav { border-bottom: 1px solid var(--aculta-border-default); gap: 0.25rem; }
+.aculta-product-tabs__nav .nav-link {
+  color: var(--aculta-text-secondary);
+  font-family: var(--aculta-font-display);
+  font-weight: 600;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  background: transparent;
+}
+.aculta-product-tabs__nav .nav-link:is(:hover, :focus-visible) { color: var(--aculta-text-primary); }
+.aculta-product-tabs__nav .nav-link.active {
+  color: var(--aculta-text-primary);
+  border-bottom-color: var(--aculta-interactive-active-bg);
+  background: transparent;
+}
+.aculta-product-tabs__nav .nav-link:focus-visible,
+.aculta-product-tabs__panels .tab-pane:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.aculta-product-tabs__panels { padding-block: 1.5rem; max-width: 46rem; }
+@media (prefers-reduced-motion: reduce) {
+  .aculta-product-tabs__panels .tab-pane { transition: none; }
+}

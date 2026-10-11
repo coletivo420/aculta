@@ -67,6 +67,12 @@ Para pesquisa, inventário e tarefas básicas verificáveis, usar preferencialme
 
 Consultar `docs/portal/AGENT-TOKEN-ECONOMY.md`. Usar `python3 scripts/portal-agent-budget.py route research` para recomendação de tier e `python3 scripts/portal-agent-budget.py context P5.2-A 3000` para contexto curto. Economizar tokens lendo arquivos e linhas relevantes, evitando dumps/roadmaps repetidos e mantendo relatório conciso; nunca dispensar revisão, documentação, gates ou evidências.
 
+## Pesquisa obrigatória de melhores práticas Drupal 11+
+
+- Antes de decidir arquitetura, API, mecanismo de roteamento, configuração por domínio, cache, segurança ou uma dependência Drupal/contrib, pesquisar na web as melhores práticas atuais para Drupal 11+ (api.drupal.org, drupal.org/docs, issues do módulo e changelog do Core/contrib).
+- Não adivinhar mecanismos: se a pesquisa não confirmar, dizer que não foi confirmado e perguntar. Citar as fontes consultadas na resposta.
+- Verificar o código instalado (`web/core`, `web/modules/contrib`) como fonte de verdade para a versão em uso, além da pesquisa.
+
 ## Padrão Drupal 11+ do ACULTA Portal
 
 O módulo `web/modules/custom/aculta_portal` adota **Drupal Core 11.3+ como baseline arquitetural**.
@@ -483,7 +489,7 @@ O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 - Toda URL pública navegável de conteúdo ou de ação humana usa slug em português: minúsculas, palavras separadas por hífen, sem acentos e sem IDs numéricos quando existir título estável.
 - Não usar inglês nem termos técnicos de módulo, classe ou plugin no slug público (por exemplo `course`, `group`, `node`, `user`, `lesson`, `activity`). Usar `curso`, `grupo`, `licao`, `atividade`, `entrar`, `minha-conta`.
 - Rotas técnicas não são navegação: callbacks, endpoints AJAX, APIs e a administração do Drupal (`/admin`) ficam como estão. Qualquer outra exceção é registrada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`.
-- Slug publicado é estável até a versão estável. Até o lançamento da versão estável, não há redirecionamentos: mudança de slug troca o caminho e o antigo responde 404 (decisão do responsável, o site está em desenvolvimento). A partir da versão estável, mudança de slug exige redirecionamento 301 do caminho antigo para o novo.
+- Slug publicado é estável. Mudança de slug troca o caminho, e o caminho antigo responde 404. Esse é o comportamento padrão do projeto para endereços antigos; não se cria redirecionamento 301 de slug.
 - Diretiva detalhada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Gate: `php scripts/validate-public-slugs.php`.
 
 ## Versionamento obrigatório de mudanças

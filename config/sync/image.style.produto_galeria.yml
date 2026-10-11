@@ -1,0 +1,16 @@
+uuid: fc6574de-9629-471d-a005-07a7d0f1c441
+langcode: pt-br
+status: true
+dependencies: {  }
+name: produto_galeria
+label: 'Produto: galeria (720x900)'
+effects:
+  fa09cc12-2fd1-48a2-89fe-9cfac0ba24cf:
+    uuid: fa09cc12-2fd1-48a2-89fe-9cfac0ba24cf
+    id: image_scale
+    weight: 0
+    data:
+      width: 960
+      height: 1200
+      upscale: false
+

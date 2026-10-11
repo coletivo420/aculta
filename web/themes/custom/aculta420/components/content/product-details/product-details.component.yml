@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Informações adicionais do produto
+status: experimental
+group: Content
+description: 'Tabela de informações do produto (categoria e tamanhos), usada na aba Informação adicional.'
+props:
+  type: object
+  properties:
+    category:
+      type: string
+      description: 'Categoria do produto, em texto.'
+      default: ''
+    sizes:
+      type: string
+      description: 'Tamanhos disponíveis, em texto (ex.: P, M, G, GG e XXG).'
+      default: ''
+    weight:
+      type: string
+      description: 'Peso do produto, em texto.'
+      default: 'Não aplicável'
+    dimensions:
+      type: string
+      description: 'Dimensões do produto, em texto.'
+      default: 'Não aplicável'
+slots: {}

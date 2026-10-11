@@ -127,6 +127,15 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse($this->notFoundResponse());
       return;
     }
+    // Visitante não logado na raiz da Conta vai ao login do próprio host de conta (302: o estado de login muda).
+    // Feito antes do roteamento com acesso, que negaria a rota (403) antes de chegar a onRequest.
+    if ($matched['_route'] === 'aculta_portal.dashboard' && !$this->currentUser->isAuthenticated()) {
+      $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
+      if ($login !== NULL) {
+        $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));
+        return;
+      }
+    }
     $route = $this->routeProvider->getRouteByName($matched['_route']);
     $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
       $route,
@@ -162,7 +171,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $routeName = (string) $request->attributes->get('_route');
     // The support form is routed at /apoio but is the public home of the SUPPORT
     // subdomain: it is served only when the original request path is /.
-    if ($routeName === 'aculta_portal.support_form' && $request->getPathInfo() !== '/') {
+    if ($routeName === 'aculta_portal.support_form' && $request->getPathInfo() !== '/' && !$request->attributes->get(\Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor::FRONT_ATTRIBUTE)) {
       throw new NotFoundHttpException();
     }
     // The account overview is served only at the ACCOUNT root. Its internal

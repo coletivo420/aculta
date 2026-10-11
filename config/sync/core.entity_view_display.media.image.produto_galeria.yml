@@ -1,0 +1,35 @@
+uuid: c98141a8-ec65-4e8a-a00c-c61e1853bf21
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.produto_galeria
+    - field.field.media.image.field_media_image
+    - image.style.produto_galeria
+    - media.type.image
+  module:
+    - image
+id: media.image.produto_galeria
+targetEntityType: media
+bundle: image
+mode: produto_galeria
+content:
+  field_media_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: produto_galeria
+      image_loading:
+        attribute: eager
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  thumbnail: true
+  uid: true
+

@@ -15,6 +15,7 @@
     }
   ],
   "domain_transition": {
+    "shop": {"purpose": "shop", "route": "entity.commerce_product.canonical", "note": "A página do produto da loja fica no host SHOP (loja.aculta.toca.net.br em teste; loja.aculta.org em produção). Carrinho e checkout ficam no MAIN."},
     "note": "Migração de domínios do servidor de testes (*.aculta.toca.net.br) para produção (*.aculta.org), por domínio registrado no Portal. Dado declarado: o comando `domains` confere os registros de config/sync contra esta tabela (somente leitura). A troca em produção só acontece no deploy do RC.",
     "decision_pending": [
       "coletivo420_aculta_org: o host de produção da revista (coletivo420.aculta.org hoje) segue a mudança de host de teste (revista420). Confirmar revista420.aculta.org antes do RC."
@@ -66,6 +67,7 @@
         "https://aculta.toca.net.br/",
         "https://apoio.aculta.toca.net.br/",
         "https://revista420.aculta.toca.net.br/",
+        "https://loja.aculta.toca.net.br/",
         "https://wiki420.aculta.toca.net.br/"
       ],
       "note": "Servidor de testes não indexável."

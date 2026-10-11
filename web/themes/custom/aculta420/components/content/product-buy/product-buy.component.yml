@@ -1,0 +1,31 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Cabeçalho de compra do produto
+status: experimental
+group: Content
+description: 'Categoria, título e bloco de compra (variações e botão) do produto. A compra chega já renderizada pelo chamador, para o Commerce manter o formulário.'
+props:
+  type: object
+  properties:
+    category:
+      type: string
+      description: 'Categoria do produto, em texto.'
+      default: ''
+    title:
+      type: string
+      description: 'Título do produto.'
+      default: ''
+    price:
+      type: string
+      description: 'Preço formatado (ex.: R$ 30,00). Vazio não renderiza.'
+      default: ''
+slots:
+  summary:
+    title: Resumo
+    description: 'Mini-descrição do produto (campo Resumo), já renderizada pelo chamador. Vazio não renderiza.'
+  purchase:
+    title: Compra
+    description: 'Formulário de compra (variações e botão), já renderizado pelo Commerce.'
+assets:
+  css:
+    component:
+      product-buy.css: {}

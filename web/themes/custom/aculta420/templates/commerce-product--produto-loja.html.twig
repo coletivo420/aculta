@@ -1,0 +1,41 @@
+{#
+  Página do produto da loja (tipo produto_loja). Composição só com componentes SDC:
+  galeria em carrossel à esquerda; categoria, título e compra à direita; abas abaixo.
+  O Commerce renderiza o formulário de compra; o tema só apresenta.
+#}
+{% set category = product.field_categoria ? product.field_categoria|render|striptags|trim : '' %}
+{% set details %}
+  {{ include('aculta420:product-details', { category: category, sizes: 'P, M, G, GG e XXG', weight: 'Não aplicável', dimensions: 'Não aplicável' }, with_context = false) }}
+{% endset %}
+{% set reviews %}
+  <p>Não há avaliações ainda.</p>
+{% endset %}
+{% set default_variation = product_entity.getDefaultVariation() %}
+{% set default_price = default_variation and default_variation.getPrice() ? default_variation.getPrice() : null %}
+{% set price = default_price ? 'R$ ' ~ default_price.getNumber()|number_format(2, ',', '.') : '' %}
+{% set description = product.field_descricao ? product.field_descricao : '<p>Descrição em breve.</p>' %}
+
+<article class="aculta-product">
+  <div class="row g-4 g-lg-5 aculta-product__main">
+    <div class="col-12 col-lg-6">
+      {{ aculta_product_gallery }}
+    </div>
+    <div class="col-12 col-lg-6">
+      {{ include('aculta420:product-buy', {
+        category: category,
+        title: product_entity.label(),
+        summary: product.field_resumo,
+        price: price,
+        purchase: product.variations,
+      }, with_context = false) }}
+    </div>
+  </div>
+
+  {{ include('aculta420:product-tabs', {
+    id: 'aculta-produto-abas',
+    review_count: 0,
+    description: description,
+    details: details,
+    reviews: reviews,
+  }, with_context = false) }}
+</article>

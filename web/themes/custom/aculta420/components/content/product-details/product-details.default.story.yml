@@ -1,0 +1,6 @@
+name: Padrão
+description: Informações com categoria e tamanhos.
+component: aculta420:product-details
+props:
+  category: Bloco Sativa
+  sizes: 'P, M, G, GG e XXG'

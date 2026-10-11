@@ -18,6 +18,7 @@ global:
       css/components/footer.css: {}
       css/components/forms.css: {}
       css/components/search.css: {}
+      css/components/product.css: {}
       css/components/account.css: {}
       css/components/auth.css: {}
   js:

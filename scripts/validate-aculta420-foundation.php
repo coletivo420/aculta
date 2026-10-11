@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.6', 'Theme metadata marks the current version 0.6.0-dev.6.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.8', 'Theme metadata marks the current version 0.6.0-dev.8.');
 $forbiddenIntegrationModules = ['social_auth', 'social_auth_google', 'captcha', 'turnstile', 'key'];
 $themeInfoDependencies = array_map(
   static fn(string $dependency): string => str_contains($dependency, ':')
@@ -222,6 +222,8 @@ foreach (glob($root . '/config/sync/block.block.aculta_*.yml') ?: [] as $path) {
 $expectedTemplates = [
   'block--block-content--type--aculta-institution.html.twig',
   'block--system-branding-block.html.twig',
+  // Página do produto da loja (0.6.0-dev.7): composição só com componentes SDC do tema.
+  'commerce-product--produto-loja.html.twig',
   'aculta-section.html.twig',
   'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
