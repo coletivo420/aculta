@@ -36,7 +36,6 @@ permissions:
   - 'create customer profile'
   - 'create forum content'
   - 'create participante profile'
-  - 'delete own customer profile'
   - 'delete own files'
   - 'delete own forum content'
   - 'delete own social auth profile'
