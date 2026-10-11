@@ -1,6 +1,7 @@
 /* Galeria do produto: moldura 4:5, imagem com object-fit e controles por tokens. */
 .aculta-product-gallery {
   position: relative;
+  max-width: 480px;
   background: var(--aculta-surface-muted);
   border: 1px solid var(--aculta-border-default);
   border-radius: var(--bs-border-radius);

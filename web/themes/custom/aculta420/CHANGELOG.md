@@ -8,6 +8,7 @@ Classificação: MINOR da linha 0.6 (componentes novos, `experimental`; sem alte
 - `components/patterns/product-tabs`: abas Bootstrap "Descrição", "Informação adicional" e "Avaliações (0)", abaixo dos blocos.
 - `templates/commerce-product--produto-loja.html.twig`: compõe os componentes em grade de duas colunas (galeria à esquerda; compra à direita). Usa `product.*` (variável que o Commerce entrega). Preço da variação padrão, formatado em R$.
 - `css/components/product.css`: só espaçamento do conjunto; o resto fica no CSS de cada componente (`assets` do SDC), com tokens.
+- Galeria: imagens em derivado de 720×900 (estilo `produto_galeria`, carregamento imediato) e largura máxima de 480 px, para não ocupar a altura inteira da tela. Slides inicial e controles corrigidos (ver commit da correção).
 - Gate de Foundation: template de produto na allowlist de overrides de Twig; versão em `info.yml` e no gate.
 - Gates: design foundations PASS (1554); SDC schema PASS (11 componentes, 155 checagens); validadores de navegador PASS; Foundation PASS (312); shell-contract PASS.
 - Verificado no servidor de testes (HTML): galeria com 7 imagens, título, categoria, descrição, preço R$ 30,00, tamanhos P a XXG e as três abas. Captura de tela DEFERRED (o Chromium não consegue navegar neste ambiente).
