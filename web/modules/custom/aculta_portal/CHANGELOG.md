@@ -1,3 +1,15 @@
+## 0.3.0-dev.1 — Status com indexação, rótulo e barreira de textos únicos — 2026-10-11
+
+Classificação: MINOR (nova seção de indexação no Status; sem mudança de contrato público).
+
+- Tela "Status dos módulos e temas" renomeada para "Status" (menu e card).
+- Seção "Indexação" no Status: ambiente declarado, regra esperada (produção indexável; teste com noindex, nofollow, noarchive) e último resultado publicado pelo deployer em `var/deployer/status.json` (`indexing`). O Portal não executa a verificação.
+- Nota do Status corrigida: até a versão 1.0, o gateway Mercado Pago é habilitado com chaves de teste.
+- Gate `scripts/validate-unique-paths-texts.php`: caminho de rota duplicado, título de menu duplicado e texto aposentado.
+- Deployer 0.1.19: `robots` grava o resultado em `var/deployer/indexing.json` e o `status` inclui o resumo.
+
+**RUNTIME STATUS:** a seção de indexação depende do `aculta-deployer robots` ser executado no ambiente; sem o resultado, o Status mostra "nenhuma verificação registrada".
+
 ## 0.2.0 — Fechamento da linha 0.2 — 2026-10-11
 
 Release da linha 0.2 do Portal (sem mudança de código além da versão). Consolida as entregas 0.2.0-dev.1 a 0.2.0-dev.59:
