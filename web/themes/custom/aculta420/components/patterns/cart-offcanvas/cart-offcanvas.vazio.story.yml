@@ -1,0 +1,7 @@
+name: Vazio
+description: Carrinho sem itens.
+component: aculta420:cart-offcanvas
+props:
+  count: 0
+  empty: true
+  url: /cart

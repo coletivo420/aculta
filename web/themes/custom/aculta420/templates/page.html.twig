@@ -5,8 +5,21 @@
     <p class="aculta-institution-bar__brand">
       <img class="aculta-institution-bar__logo" src="{{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-78x26.webp" srcset="{{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-78x26.webp 1x, {{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-156x52.webp 2x" width="78" height="26" alt="{{ 'ACULTA - Associação Cultural Antiproibicionista'|t }}" decoding="async">
     </p>
-    {% if aculta_search_utility or aculta_account_menu %}
-      <div class="aculta-utility">{{ aculta_search_utility }}{{ aculta_account_menu }}</div>
+    {% if aculta_search_utility or aculta_account_menu or aculta_cart %}
+      <div class="aculta-utility">
+        {{ aculta_search_utility }}
+        {% if aculta_cart %}
+          {{ include('aculta420:cart-offcanvas', {
+            count: aculta_cart.count,
+            empty: aculta_cart.empty,
+            url: aculta_cart.url,
+            total: aculta_cart.total,
+            items: aculta_cart.items,
+            banner: 'Compre na loja e apoie a luta antiproibicionista!',
+          }, with_context = false) }}
+        {% endif %}
+        {{ aculta_account_menu }}
+      </div>
     {% endif %}
   </div>
 </div>

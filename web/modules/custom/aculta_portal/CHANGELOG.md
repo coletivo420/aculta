@@ -1,3 +1,12 @@
+## 0.2.0-dev.51 — Carrinho na barra multidomínio (presenter neutro) e cache do carrinho — 2026-10-11
+
+Classificação: MINOR (novo serviço de apresentação do carrinho; sem mudança de contrato público).
+
+- `Cart\CartUtility` (serviço `aculta_portal.cart_utility`): entrega ao tema contagem, itens, total e a URL do carrinho no MAIN (via `DomainPurposeManager`), sem storage paralelo. Cache: contextos `cart`, `user`, `session` e tags das orders, acumulados na página.
+- `PortalHooks::preprocessPage`: `aculta_cart` disponível para o tema.
+- `commerce_donation_flow.settings:donation_route` alterado de `donate` para `both`: o modo `donate` desligava as rotas de carrinho e de checkout da loja (403 para visitante). Doações continuam pelo próprio fluxo.
+- Pendente: verificar o estado com itens no carrinho e o fluxo de compra ponta a ponta (depende do Mercado Pago).
+
 ## 0.2.0-dev.50 — Página do produto da loja no host SHOP — 2026-10-11
 
 Classificação: PATCH (política de rota; sem mudança de contrato público).

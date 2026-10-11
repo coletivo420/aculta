@@ -80,6 +80,8 @@ final class PortalHooks {
     private readonly ConfigFactoryInterface $configFactory,
     #[Autowire(service: 'aculta_portal.search_utility')]
     private readonly \Drupal\aculta_portal\Search\SearchUtility $searchUtility,
+    #[Autowire(service: 'aculta_portal.cart_utility')]
+    private readonly \Drupal\aculta_portal\Cart\CartUtility $cartUtility,
     #[Autowire(service: 'extension.list.module')]
     private readonly ModuleExtensionList $moduleList,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
@@ -107,6 +109,12 @@ final class PortalHooks {
     $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
     $variables['domain_presentation'] = $domainPresentation?->toThemeArray();
     $variables['aculta_search_utility'] = $this->searchUtility->build();
+    $cart = $this->cartUtility->build();
+    if (isset($variables['page']) && is_array($variables['page'])) {
+      $this->renderer->addCacheableDependency($variables['page'], $cart['cache']);
+    }
+    unset($cart['cache']);
+    $variables['aculta_cart'] = $cart;
     if ($domainPresentation !== NULL
       && isset($variables['page'])
       && is_array($variables['page'])) {

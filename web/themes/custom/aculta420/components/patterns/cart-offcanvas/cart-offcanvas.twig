@@ -1,0 +1,31 @@
+{# Carrinho: botão com contagem e gaveta lateral (offcanvas do Bootstrap). Dados vêm do Portal. #}
+<button type="button" class="btn btn-link p-0 aculta-cart-utility" data-bs-toggle="offcanvas" data-bs-target="#aculta-cart-offcanvas" aria-controls="aculta-cart-offcanvas" aria-label="Abrir carrinho ({{ count }} itens)">
+  <i class="bi bi-cart3" aria-hidden="true"></i>
+  {% if count > 0 %}
+    <span class="badge aculta-cart-utility__count">{{ count }}</span>
+  {% endif %}
+</button>
+
+<div class="offcanvas offcanvas-end aculta-cart-offcanvas" tabindex="-1" id="aculta-cart-offcanvas" aria-labelledby="aculta-cart-offcanvas-label">
+  <div class="offcanvas-header">
+    <h2 class="offcanvas-title h5" id="aculta-cart-offcanvas-label">Carrinho</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar carrinho"></button>
+  </div>
+  <div class="offcanvas-body aculta-cart-offcanvas__body">
+    {% if empty %}
+      <p class="aculta-cart-offcanvas__empty">Sem produto(s) no carrinho.</p>
+    {% else %}
+      <ul class="aculta-cart-offcanvas__items">
+        {% for item in items %}
+          <li class="aculta-cart-offcanvas__item">
+            <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+            <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+      <p class="aculta-cart-offcanvas__total"><strong>Total:</strong> {{ total }}</p>
+      <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ url }}">Ver carrinho</a>
+    {% endif %}
+  </div>
+  <div class="aculta-cart-offcanvas__banner">{{ banner }}</div>
+</div>

@@ -1,3 +1,13 @@
+## 0.6.0-dev.8 — Carrinho na barra multidomínio e gaveta lateral — 2026-10-11
+
+Classificação: MINOR (componente novo `experimental`: `cart-offcanvas`).
+
+- `components/patterns/cart-offcanvas`: ícone do carrinho com contagem e gaveta lateral (offcanvas do Bootstrap). Recebe só dados neutros do Portal (contagem, itens, total, URL do carrinho no MAIN).
+- `templates/page.html.twig`: o ícone aparece na barra multidomínio, antes do menu da conta.
+- Gate de Foundation: versão 0.6.0-dev.8.
+- Verificado no servidor de testes (HTML): ícone e gaveta presentes na página da loja; estado vazio ("Sem produto(s) no carrinho.") e banner de apoio.
+- Pendente: verificação visual e o estado com itens (ainda não há item no carrinho de teste).
+
 ## 0.6.0-dev.7 — Página do produto da loja em SDC (galeria, compra, detalhes e abas) — 2026-10-11
 
 Classificação: MINOR da linha 0.6 (componentes novos, `experimental`; sem alteração de componentes `stable`).

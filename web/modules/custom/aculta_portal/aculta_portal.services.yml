@@ -54,6 +54,9 @@ services:
   aculta_portal.search_preview_controller:
     class: Drupal\aculta_portal\Search\SearchPreviewController
     arguments: ['@aculta_portal.search_results', '@aculta_portal.domain_purpose', '@renderer', '@string_translation']
+  aculta_portal.cart_utility:
+    class: Drupal\aculta_portal\Cart\CartUtility
+    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation']
   aculta_portal.search_utility:
     class: Drupal\aculta_portal\Search\SearchUtility
     arguments: ['@aculta_portal.domain_purpose', '@string_translation']
