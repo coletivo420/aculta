@@ -64,7 +64,7 @@ voltar a testar internals do tema.
 | MAIN | aculta.toca.net.br | aculta.org |
 | ACCOUNT | conta.aculta.toca.net.br | conta.aculta.org |
 | SUPPORT | apoio.aculta.toca.net.br | apoio.aculta.org |
-| MAGAZINE | coletivo420.aculta.toca.net.br | coletivo420.aculta.org |
+| MAGAZINE | revista420.aculta.toca.net.br | coletivo420.aculta.org |
 | WIKI | wiki420.aculta.toca.net.br | wiki420.aculta.org |
 | SHOP | loja.aculta.toca.net.br | loja.aculta.org |
 | COURSES | cursos.aculta.toca.net.br | cursos.aculta.org |

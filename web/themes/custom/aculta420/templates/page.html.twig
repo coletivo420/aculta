@@ -3,8 +3,7 @@
 <div class="aculta-institution-bar">
   <div class="container aculta-container aculta-institution-bar__inner">
     <p class="aculta-institution-bar__brand">
-      <span class="aculta-institution-bar__name">ACULTA</span>
-      <span class="aculta-institution-bar__full">{{ 'Associação Cultural Antiproibicionista'|t }}</span>
+      <img class="aculta-institution-bar__logo" src="{{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-78x26.webp" srcset="{{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-78x26.webp 1x, {{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-156x52.webp 2x" width="78" height="26" alt="{{ 'ACULTA - Associação Cultural Antiproibicionista'|t }}" decoding="async">
     </p>
     {% if aculta_search_utility or aculta_account_menu %}
       <div class="aculta-utility">{{ aculta_search_utility }}{{ aculta_account_menu }}</div>
