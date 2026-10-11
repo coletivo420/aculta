@@ -56,3 +56,6 @@ msgstr "Quantidade"
 
 msgid "Company"
 msgstr "Empresa"
+
+msgid "You have canceled checkout at @gateway but may resume the checkout process here when you are ready."
+msgstr "Você cancelou o pagamento no @gateway, mas pode retomar o checkout aqui quando quiser."
