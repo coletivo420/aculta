@@ -66,3 +66,10 @@
 - **Resultado do reteste (d277f2a):** a tela "Como você prefere pagar?" mostra cartões de crédito salvos (Mastercard e Visa de teste), "Novo cartão – Crédito" e "Cartão de Débito Virtual CAIXA". Crédito e débito confirmados. **Pix não aparece** no teste: provável falta de chave Pix na conta vendedora de teste.
 - **Decisão do responsável:** Pix **mantido ativado** na configuração (servidor de testes e `config/sync`). Não remover. A validação do Pix será feita em produção, com chave real cadastrada.
 
+
+## Pagamento bloqueado: "Pagar" desabilitado com cartão salvo (2026-10-11)
+
+- **Preferência analisada (leitura pela API):** site MLB, vendedor e comprador são contas de teste distintas, moeda BRL, um item de R$ 30,00, não expirada, `binary_mode` true, `installments` 1, `auto_return` approved, `payer.identification` vazio, `payer.email` com domínio `.invalid`.
+- **Alteração no servidor de testes:** e-mail do usuário `teste.comum` e do pedido 5 trocados para `teste.comum@testuser.com`. A troca pelo fluxo do Drupal exige confirmação na caixa de entrada, por isso foi aplicada direto na tabela `users_field_data`, só no servidor de testes. Confirmação de conta e aceite dos termos permanecem.
+- **Limitações (contrib, não alteradas):** o módulo `commerce_mercado_pago` envia `binary_mode` fixo em true e não envia CPF no pagador. O envio de `excluded_payment_methods` vazio também é decidido pelo módulo. Mudar qualquer um desses pontos exige alteração no módulo ou um ajuste no Portal, o que ainda não foi decidido.
+- **Pendente:** se "Pagar" continuar desabilitado com o novo e-mail, o caminho seguinte é avaliar CPF no pagador (módulo) e binary_mode.
