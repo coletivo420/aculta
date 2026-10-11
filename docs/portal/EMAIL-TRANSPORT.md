@@ -182,3 +182,11 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 
 **Pendências antes do M2:** testar o Webform (DT-P09), validar `transactionalMailReady()` no runtime e conferir o remetente no cabeçalho. Só depois disso o M2 começa.
 
+### 9.1 Atualização (M1, mesma data)
+
+- Constante `MAIL_TRANSPORT` ausente em `PortalController` encontrada na validação de runtime e corrigida (commit `e65c714`). Antes da correção, `transactionalMailReady()` falharia na página de Segurança.
+- `transactionalMailReady()` no runtime: `TRUE` (`mailer_override` ativo, transporte `smtp2go`, remetente configurado, Keys `smtp2go_username` e `smtp2go_password` presentes).
+- Segundo envio de confirmação pelo Core (`system.test_mail`) para o endereço do responsável: aceito pelo `mailer_override` (`result=TRUE`, transporte `smtp2go`).
+- Remetente configurado no runtime: `naoresponda@toca.net.br`. Confirmar o campo De no cabeçalho do e-mail recebido.
+- **Pendente:** Webform com modelo HTML (DT-P09). O handler `institutional_notification` de `aculta_contact` está com `html` desligado e envia para `4e20coletivo@gmail.com`. O teste com HTML ligado (apenas em memória) foi bloqueado pelo classificador de ações e ainda não foi executado.
+
