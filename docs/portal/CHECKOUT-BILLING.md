@@ -53,4 +53,13 @@
 - **Sintoma:** "Pagar e concluir a compra" abria a tela do Mercado Pago só com saldo ("Você não tem saldo suficiente") ou só com "Cartão de Débito Virtual CAIXA". Cartão de crédito não aparecia.
 - **Causa:** a configuração do gateway estava com `payment_types` vazio e `payment_method` vazio. Pelo módulo `commerce_mercado_pago`, isso gera `excluded_payment_types` com todos os tipos configuráveis e `excluded_payment_methods` com todas as bandeiras (visa, master, amex, hipercard, elo, caixa). Sobrava apenas a conta de saldo.
 - **Correção aplicada só no servidor de testes:** `payment_types = {credit_card, debit_card}` e `payment_method` com as bandeiras desses tipos para o Brasil (visa, master, amex, hipercard, elo, caixa). Resultado: nenhuma exclusão de métodos; excluídos apenas boleto, transferência e pré-pago.
-- **Pendente:** o `config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml` ainda tem `payment_types: {}` e `payment_method: {}`. Levar a mesma configuração ao repositório depende de aprovação do responsável.
+- **Repositório:** a mesma configuração foi levada ao `config/sync` (ver seção seguinte).
+
+## Crédito, débito e Pix no Checkout Pro (2026-10-11)
+
+- Tipos habilitados (`payment_types`): `credit_card`, `debit_card` e `bank_transfer` (Pix).
+- Métodos habilitados (`payment_method`, para o Brasil): `visa`, `master`, `amex`, `hipercard`, `elo` (crédito); `caixa`, `elo` (débito); `pix` (transferência).
+- Validado pela função `CheckoutPro::getExcludedPaymentTypesForPreference`: excluídos apenas `ticket` (boleto) e `prepaid_card`. `getExcludedPaymentMethodsForPreference`: nenhum.
+- Parcelamento: `max_installments` = 1 (a preferência envia 1 parcela). Não alterado, porque o pedido não pediu parcelas.
+- Pix: o módulo mapeia Pix como o método `pix` do tipo `bank_transfer`. **Não foi possível confirmar pela API** se a conta vendedora de teste tem a chave Pix cadastrada. Esse dado está no painel do Mercado Pago (conta de teste) e precisa ser confirmado pelo Felipe; se a opção não aparecer no checkout, é esse o motivo provável.
+- Configuração aplicada no servidor de testes e levada ao `config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml`.
