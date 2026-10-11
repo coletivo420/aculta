@@ -7,10 +7,12 @@ namespace Drupal\aculta_portal\Search;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Search\Form\SearchPageForm;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,6 +40,7 @@ final class SearchPageController implements ContainerInjectionInterface {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MessengerInterface $messenger,
     private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly FormBuilderInterface $formBuilder,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -45,6 +48,7 @@ final class SearchPageController implements ContainerInjectionInterface {
       $container->get('entity_type.manager'),
       $container->get('messenger'),
       $container->get('aculta_portal.domain_purpose'),
+      $container->get('form_builder'),
     );
   }
 
@@ -54,16 +58,10 @@ final class SearchPageController implements ContainerInjectionInterface {
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-search']],
       '#cache' => ['contexts' => ['url.query_args:q', 'user.permissions'], 'tags' => ['search_api_list:' . self::INDEX_ID]],
-      'form' => [
-        '#type' => 'form',
-        '#method' => 'get',
-        '#action' => Url::fromRoute('aculta_portal.search')->toString(),
-        '#attributes' => ['role' => 'search'],
-        'q' => ['#type' => 'search', '#title' => $this->t('Buscar no site'), '#default_value' => $term, '#maxlength' => self::MAX_CHARS, '#required' => TRUE, '#autocomplete_route_name' => 'aculta_portal.search_suggestions'],
-        'submit' => ['#type' => 'submit', '#value' => $this->t('Buscar')],
-      ],
+      'form' => $this->formBuilder->getForm(SearchPageForm::class),
     ];
     if ($term === '') {
+      $build['hint'] = ['#markup' => '<p class="text-body-secondary">' . $this->t('Digite um termo para buscar no site.') . '</p>'];
       return $build;
     }
     if (mb_strlen($term) < self::MIN_CHARS) {

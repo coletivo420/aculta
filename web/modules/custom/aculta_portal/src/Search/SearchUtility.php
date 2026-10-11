@@ -34,7 +34,12 @@ final class SearchUtility {
       '#attributes' => [
         'class' => ['aculta-search-utility', 'use-ajax', 'btn', 'btn-link', 'p-0'],
         'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => 520]),
+        'data-dialog-options' => Json::encode([
+          'width' => 520,
+          'maxHeight' => 560,
+          'position' => ['my' => 'center top+24', 'at' => 'center top', 'of' => 'window'],
+          'closeText' => (string) $this->t('Fechar'),
+        ]),
         'title' => (string) $this->t('Buscar no site'),
       ],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],

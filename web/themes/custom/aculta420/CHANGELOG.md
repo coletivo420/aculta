@@ -1,3 +1,11 @@
+## 0.6.0-dev.9 — Busca: teclado, popup e prévia — 2026-10-11
+
+Classificação: PATCH (correção de acessibilidade e comportamento; sem componente novo).
+
+- `search.css`: a prévia com muitos resultados rola dentro do diálogo (`max-height: 40vh`), e o campo e o botão Buscar continuam visíveis.
+- Verificado no servidor de testes com Claude in Chrome (ver relatório da F3): setas ↑/↓ percorrem os resultados, Tab cicla dentro do popup, Esc fecha.
+- Pendente de nova verificação pelo navegador após as correções.
+
 ## 0.6.0-dev.8 — Carrinho na barra multidomínio e gaveta lateral — 2026-10-11
 
 Classificação: MINOR (componente novo `experimental`: `cart-offcanvas`).

@@ -52,6 +52,7 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
         'autocomplete' => 'off',
         'class' => ['aculta-search-preview-input'],
         'data-preview-url' => Url::fromRoute('aculta_portal.search_preview')->toString(),
+        'data-min-chars' => (string) SearchPageController::MIN_CHARS,
       ],
     ];
     $form['preview'] = [
