@@ -40,10 +40,10 @@
 - `web/modules/contrib/commerce/modules/payment/src/Plugin/Commerce/CheckoutPane/PaymentInformation.php` (formulário de cobrança).
 - `web/modules/contrib/agreement/src/Form/AgreementForm.php` (`settings.destination` e destino salvo).
 
-## Incidente de ambiente: credencial de produção no token de teste (2026-10-11)
+## Incidente de ambiente: redirecionamento do Mercado Pago com token de teste (2026-10-11)
 
-- **Sintoma:** ao pagar o pedido 5 no servidor de testes, o Mercado Pago abriu `mercadopago.com.br/checkout/v1/payment/redirect/...` (domínio de produção), logado na conta real do responsável, com "Saldo em conta" como método recomendado. Não houve pagamento: o usuário parou na tela de revisão do Mercado Pago.
-- **Causa verificada:** o gateway estava em `mode: test`, mas o token de teste vem da variável de ambiente `MERCADOPAGO_TEST_ACCESS_TOKEN` (`key.key.mercadopago_test_access_token`, provedor env). O valor começa com `APP_USR`, que é o formato de credencial de produção. Credenciais de teste começam com `TEST-`. Com token de produção, o `RedirectCheckoutForm` usa o `init_point` de produção, e não o `sandbox_init_point`.
-- **Contenção aplicada:** gateway `mercado_pago` desligado no runtime (`status: 0`). Já estava `false` no `config/sync`.
-- **Pendente (responsável):** confirmar que o token usado no ambiente de testes é de conta de teste do Mercado Pago (credencial de teste; não há necessidade de rotação, conforme orientação do responsável). O prefixo atual é `APP_USR`, e o redirecionamento caiu no domínio de produção; por isso o gateway segue desligado. Antes de religar, o token de teste deve ser confirmado como de conta de teste e o redirecionamento deve ir para `sandbox.mercadopago.com.br`. Credenciais não podem estar no banco de configuração (ver AGENTS.md, seção de Keys).
-- **Pendente (código):** o `RedirectCheckoutForm` usa `init_point`. Com credencial de teste, o Mercado Pago deve devolver URLs de sandbox. Verificar que o domínio do redirecionamento é `sandbox.mercadopago.com.br` antes de religar. Credenciais não podem estar no banco de configuração (ver AGENTS.md, seção de Keys).
+- **Sintoma:** ao pagar o pedido 5 no servidor de testes, o Mercado Pago abriu a tela de revisão no domínio `mercadopago.com.br`, com a conta logada do responsável (com saldo). Nada foi pago.
+- **Verificado:** o token do ambiente (`MERCADOPAGO_TEST_ACCESS_TOKEN`) começa com `APP_USR` e pertence a uma **conta de teste** do Mercado Pago (`test_data.test_user = true`, apelido `TESTUSER…`, tag `test_user`). A captura do painel "Credenciais de teste" mostra o mesmo formato. Portanto, `APP_USR` **não** indica produção. Não há orientação de rotação para essas credenciais.
+- **Causa provável do domínio `mercadopago.com.br`:** o código usa `init_point`. A tela de pagamento abriu no navegador onde a sessão do responsável estava logada no Mercado Pago. Para testar, o comprador precisa ser o usuário de teste do Mercado Pago, e não uma conta real.
+- **Ação:** gateway religado em 2026-10-11 para o teste de compra simulada. Antes de cada teste, o navegador deve estar **deslogado** do Mercado Pago ou logado no comprador de teste.
+- **Pendente de confirmação:** o redirecionamento de teste deve ir para o fluxo de teste do Mercado Pago. Se houver dúvida sobre o domínio exibido, conferir o modo da conta de teste antes de pagar.

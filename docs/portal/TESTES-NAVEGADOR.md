@@ -115,7 +115,7 @@ Pré-requisito: usuário `teste.comum` com o aceite **pendente** (o agente do re
 
 Pendências desta rodada: a camada visual atrás do popup (cabeçalho) e o aceite pelo navegador com JavaScript (passos 3 e 5).
 
-**Mercado Pago:** não clicar em "Pagar" em nenhuma tela do Mercado Pago enquanto o token de teste não estiver corrigido (ver CHECKOUT-BILLING.md). O gateway está desligado.
+**Mercado Pago (compra simulada):** o gateway está ligado com token de conta de teste (`test_user`). Antes de pagar, o navegador deve estar **deslogado** do Mercado Pago ou logado no comprador de teste (`TESTUSER…`). Nunca usar a conta real do responsável. Se o domínio exibido não for o de teste, parar e avisar.
 
 ## K) Checkout: resumo, número e CEP (0.3.0-dev.16)
 
@@ -127,5 +127,5 @@ Pré-requisito: `teste.comum` com aceite dado (o popup não bloqueia o checkout 
 4. Digite `1000` no Número e continue. Esperado: a revisão mostra o logradouro "Avenida Paulista, 1000".
 5. No resumo do pedido, o item deve mostrar o nome "Camiseta Abadá Bloco Sativa 2026 – Regata", o tamanho M e o preço R$ 30,00.
 
-**Gateway:** enquanto o token de teste não for trocado, a etapa de pagamento mostra "Não existem gateways de pagamento disponíveis". Não passe da primeira tela do Mercado Pago.
+**Gateway:** ligado. Se a etapa mostrar "Não existem gateways de pagamento disponíveis", o token de teste não está sendo lido: avisar antes de continuar.
 
