@@ -1,3 +1,8 @@
+## 0.1.18 — Remoção das regras de SMTP e system.mail por ambiente — 2026-10-11
+
+- `config/deploy.json`: removidas as entradas `environment_bound` e as regras de perfil de `smtp.settings` e de `system.mail` (o transporte e o backend agora são iguais nos dois ambientes; ver `EMAIL-TRANSPORT.md`). Regras de `system.site` e demais mantidas.
+- `tests/run.php`: build de teste espera `system.mail` no `symfony_mailer` e não gera `smtp.settings`; guardrail de perfil usa `system.site.yml` como arquivo dependente de ambiente.
+
 ## 0.1.17 — Fórum: host de teste e de produção no deployer — 2026-10-11
 
 - `config/deploy.json`: `forum_aculta_org` em `domain_transition` (forum.aculta.toca.net.br → forum.aculta.org), na lista de robots de teste (noindex) e nas regras de hostname dos perfis de produção e de teste.

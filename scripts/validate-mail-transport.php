@@ -21,6 +21,10 @@ $check = static function (bool $ok, string $message) use (&$failures): void {
 $composer = json_decode((string) file_get_contents($root . '/composer.json'), true);
 $check(($composer['require']['drupal/symfony_mailer'] ?? '') === '^2.0', 'composer.json deve exigir drupal/symfony_mailer ^2.0.');
 
+// M2: o legado drupal/smtp não pode voltar (composer.json e configuração versionada).
+$check(!isset($composer['require']['drupal/smtp']), 'composer.json não pode exigir drupal/smtp (legado removido na M2).');
+$check(!is_file($root . '/config/sync/smtp.settings.yml'), 'config/sync/smtp.settings.yml não pode existir (legado removido na M2).');
+
 $lock = json_decode((string) file_get_contents($root . '/composer.lock'), true);
 $locked = array_column($lock['packages'] ?? [], 'version', 'name');
 $check(isset($locked['drupal/symfony_mailer']) && str_starts_with($locked['drupal/symfony_mailer'], '2.'), 'composer.lock deve conter drupal/symfony_mailer 2.x.');

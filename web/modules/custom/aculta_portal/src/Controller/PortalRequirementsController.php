@@ -154,12 +154,12 @@ final class PortalRequirementsController extends ControllerBase {
       'warning' => 'Chaves reais e homologação externa permanecem adiadas.',
     ],
     [
-      'name' => 'SMTP Authentication Support',
-      'modules' => ['smtp'],
-      'package' => 'drupal/smtp',
-      'minimum' => '^1.4',
-      'purpose' => 'Transporte de e-mail transacional preparado para SMTP2GO.',
-      'warning' => 'Envio SMTP está desativado até a homologação pós-deploy.',
+      'name' => 'Mailer Plus',
+      'modules' => ['symfony_mailer', 'mailer_override'],
+      'package' => 'drupal/symfony_mailer',
+      'minimum' => '^2.0',
+      'purpose' => 'Transporte de e-mail transacional pelo SMTP2GO, com o envio do Core e do Webform pelo Mailer Plus.',
+      'warning' => 'Entrega em produção depende do RC e do provisionamento das credenciais SMTP2GO.',
     ],
     [
       'name' => 'Agreement',

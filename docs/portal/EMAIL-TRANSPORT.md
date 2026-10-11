@@ -1,6 +1,6 @@
 # Transporte de e-mail do Portal (migração para Mailer Plus)
 
-Status: **M0 concluída; M1 validada no runtime (2026-10-11); M2 pendente.** Documento normativo para as fases M1 e M2.
+Status: **M0 e M1 concluídas; M1 validada no runtime; M2 concluída no mesmo PR (2026-10-11), com remoção do legado.** Documento normativo para as fases M1 e M2.
 
 Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05, DT-P09, DT-O07),
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
@@ -223,4 +223,24 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 - Checklist da seção 5: passos 1, 2, 3 e 5 concluídos; passo 4 (remetente) confirmado no cabeçalho; passo 6 (`transactionalMailReady()`) verdadeiro no runtime.
 - Correções feitas durante a validação: constante `MAIL_TRANSPORT` declarada (`e65c714`); `system.mail:interface.default` alterado para `symfony_mailer` (só no runtime).
 - Pendências transferidas para a M2: remover `drupal/smtp`, `smtp.settings` e os overrides de senha antigos; exportar `system.mail` com `symfony_mailer`; fechar DT-O07. DT-P05 (entrega em produção) depende do RC.
+
+### 9.7 M2: remoção do legado
+
+Executada no mesmo PR da M1, a pedido do responsável (o `AGENTS.md` pede um PR por fase; registrado aqui como desvio).
+
+- Runtime: módulo `smtp` desinstalado; overrides `smtp_password` e `smtp_username` removidos; `system.mail:interface.default` = `symfony_mailer`. Envio do Core ainda pronto (`transactionalMailReady()` TRUE).
+- Composer: `drupal/smtp` e `phpmailer/phpmailer` removidos. Só permanece `require-dev` do `drupal/webform`, sem instalação.
+- `config/sync`: removidos `smtp.settings.yml` e os dois `key.config_override.smtp_*`; `core.extension` sem `smtp`; `system.mail.yml` exportado (`symfony_mailer`).
+- `deploy.json`: 10 entradas removidas (`environment_bound` e regras de perfil de `smtp.settings` e `system.mail`). Regras de `system.site` mantidas.
+- Scripts, manifesto, card de requisitos e testes do deployer atualizados para `mailer_transport.*` e `symfony_mailer`.
+- `aculta_portal_update_11004` mantido sem alteração: hook de atualização histórico. Em instalações antigas que rodarem esse update, ele recria `smtp.settings` sem efeito (o módulo não existe mais).
+- Gate `validate-mail-transport.php` impede o retorno do `drupal/smtp` e do `smtp.settings`.
+
+**Verificações da M2:**
+- `validate-mail-transport.php`: PASS. `validate-aculta-portal-drupal11.php`: PASS (542 checks). `validate-secrets-contract.php`: PASS.
+- Testes do deployer (`tests/run.php`): PASS.
+- `validate-portal-commerce-security.php`: as asserções de e-mail passam; a execução para numa asserção do formulário de apoio (gateway de doação), sem relação com e-mail e sem alteração nesta branch. Falha anterior à M2.
+- `validate-final-drupal.php`: as asserções de e-mail passam (verificadas diretamente). Para numa asserção do endereço do site (`4e20coletivo@gmail.com` esperado; runtime tem `naoresponda@toca.net.br`), anterior à M2. A divergência de 77 itens entre runtime e `config/sync` também é anterior.
+
+**Pendências fora da M2:** DT-P05 (entrega em produção) depende do RC. Os itens acima anteriores à M2 ficam para o saneamento de dívidas.
 
