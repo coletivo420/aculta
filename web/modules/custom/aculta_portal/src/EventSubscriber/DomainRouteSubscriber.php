@@ -110,7 +110,22 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
 
-    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.support_my', 'aculta_portal.account_courses', 'aculta_portal.account_settings', 'aculta_portal.account_orders', 'aculta_portal.account_payments'] as $name) {
+    // Pedidos e pagamentos são as listas do Commerce, agora no painel da conta (sem ID na URL).
+    // O controller da página é o do Portal; o acesso exige login e a lista usa o usuário da sessão.
+    $account_lists = [
+      'view.commerce_user_orders.order_page' => ['/pedidos', 'orders', 'Meus pedidos'],
+      'entity.commerce_payment_method.collection' => ['/pagamentos', 'payments', 'Meus pagamentos'],
+    ];
+    foreach ($account_lists as $name => [$path, $method, $title]) {
+      if ($route = $collection->get($name)) {
+        $route->setPath($path);
+        $route->setDefaults(['_controller' => '\\Drupal\\aculta_portal\\Controller\\PortalController::' . $method, '_title' => $title]);
+        $route->setRequirements(['_user_is_logged_in' => 'TRUE']);
+        $route->setOption('parameters', []);
+        $route->setOption('_aculta_domain_purpose', 'account');
+      }
+    }
+    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.support_my', 'aculta_portal.account_courses', 'aculta_portal.account_settings'] as $name) {
       if ($route = $collection->get($name)) {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
