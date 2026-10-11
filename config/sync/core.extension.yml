@@ -66,6 +66,9 @@ module:
   lms_answer_plugins: 0
   locale: 0
   login_emailusername: 0
+  mailer_override: 0
+  mailer_policy: 0
+  mailer_transport: 0
   media: 0
   media_library: 0
   menu_link_content: 0
@@ -94,12 +97,12 @@ module:
   search_api_db: 0
   security_review: 0
   simple_sitemap: 0
-  smtp: 0
   social_api: 0
   social_auth: 0
   social_auth_google: 0
   sqlite: 0
   state_machine: 0
+  symfony_mailer: 0
   system: 0
   taxonomy: 0
   text: 0

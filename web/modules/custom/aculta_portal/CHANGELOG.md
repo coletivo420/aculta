@@ -1,3 +1,34 @@
+## 0.2.0-dev.59 — Remoção do legado drupal/smtp (M2 da migração do e-mail) — 2026-10-11
+
+Classificação: MINOR (remove dependência e configuração legadas do envio; sem mudança de contrato público).
+
+- `drupal/smtp` (e `phpmailer/phpmailer`, dependência dele) removido do `composer.json` e do `composer.lock`. Único resto: `require-dev` do próprio `drupal/webform`, sem instalação.
+- Runtime: módulo `smtp` desinstalado; overrides `smtp_password` e `smtp_username` removidos. `system.mail:interface.default` = `symfony_mailer`.
+- `config/sync`: removidos `smtp.settings.yml` e os dois `key.config_override.smtp_*`; `core.extension` sem `smtp`; `system.mail.yml` exportado do runtime (`default: symfony_mailer`).
+- Deployer (`deploy.json`): removidas as entradas e as regras de `smtp.settings` e de `system.mail` por ambiente; o e-mail deixa de ser dependente de ambiente.
+- Scripts de validação, sincronização e manifesto usam `mailer_transport.*` e `key.config_override.mailer_smtp2go_*` no lugar de `smtp.settings`.
+- Card de requisitos: "SMTP Authentication Support" substituído por "Mailer Plus".
+- Gate `validate-mail-transport.php` impede o retorno do `drupal/smtp` e do `smtp.settings`.
+- `aculta_portal_update_11004` mantido sem alteração: hook de atualização histórico.
+- Ver `docs/portal/EMAIL-TRANSPORT.md`, seção 9.7.
+
+**RUNTIME STATUS:** validado no runtime de desenvolvimento (Homelab) com envio do Core e Webform; a entrega em produção depende do RC.
+
+## 0.2.0-dev.58 — Migração do e-mail para Mailer Plus (M1) — 2026-10-11
+
+Classificação: MINOR (nova dependência de transporte; prontidão de e-mail muda de fonte; sem mudança de contrato público).
+
+- `drupal/symfony_mailer` 2.0.2 adicionado ao `composer.json` (pacote `mailer_transport`, `mailer_override` e `mailer_policy` incluídos). O `drupal/smtp` continua instalado e inativo até a M2.
+- `PortalController::transactionalMailReady()`: passa a checar o módulo `mailer_override`, o transporte padrão `smtp2go` e as Keys `smtp2go_username` e `smtp2go_password`. Deixa de depender de `smtp.settings` e de `SMTPMailSystem`.
+- Senha e usuário do transporte ficam fora da configuração exportada; a resolução usa o override nativo do módulo Key (sem código próprio).
+- Gate `scripts/validate-mail-transport.php`: dependência, prontidão sem o legado e configuração do transporte sem senha.
+- Documento de decisão e plano: `docs/portal/EMAIL-TRANSPORT.md`.
+
+**RUNTIME STATUS: VALIDADO no Homelab (2026-10-11).** Módulos ativos no runtime; transporte `smtp2go` e os dois `key.config_override` exportados para `config/sync`; `transactionalMailReady()` verdadeiro; e-mail do Core e teste do Webform com HTML recebidos e confirmados pelo responsável. DT-P09 resolvida. Ver `docs/portal/EMAIL-TRANSPORT.md`, seção 9.
+
+- Correção encontrada no teste de runtime: constante `MAIL_TRANSPORT` estava sem declaração em `PortalController` (corrigida).
+- Pendências para a M2 (remoção do legado): `drupal/smtp` ainda instalado; `config/sync/system.mail.yml` ainda declara `php_mail` (runtime usa `symfony_mailer`); `smtp.settings` ainda em `config/sync`.
+
 ## 0.2.0-dev.57 — Fórum (purpose `forum`, módulos forum e flag) — 2026-10-11
 
 Classificação: MINOR (novo purpose de domínio e novos módulos Drupal; sem mudança de contrato público existente).

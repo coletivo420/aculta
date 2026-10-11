@@ -20,6 +20,7 @@ use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\email_confirmer\EmailConfirmerManagerInterface;
+use Drupal\key\KeyRepositoryInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -29,6 +30,9 @@ final class PortalController extends ControllerBase {
 
   /** Social Auth stores the network plugin ID, not its URL short name. */
   private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
+
+  /** Transporte do Mailer Plus usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
+  private const MAIL_TRANSPORT = 'smtp2go';
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
@@ -44,6 +48,7 @@ final class PortalController extends ControllerBase {
     private readonly AccountInterface $account,
     private readonly ModuleHandlerInterface $modules,
     private readonly ConfigFactoryInterface $configs,
+    private readonly KeyRepositoryInterface $keys,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -61,6 +66,7 @@ final class PortalController extends ControllerBase {
       $container->get('current_user'),
       $container->get('module_handler'),
       $container->get('config.factory'),
+      $container->get('key.repository'),
     );
   }
 
@@ -282,17 +288,22 @@ final class PortalController extends ControllerBase {
       && !(bool) $this->userData->get('aculta_portal', $account->id(), 'social_auth_password_unset');
   }
 
+  /**
+   * Mailer Plus (mailer_override) envia pelo transporte SMTP2GO. As credenciais vêm de Keys
+   * (override nativo do módulo Key), nunca da configuração exportada.
+   */
   private function transactionalMailReady(): bool {
-    $smtp = $this->configs->get('smtp.settings');
-    $mail_system = $this->configs->get('system.mail')->get('interface.default');
     $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));
-    return $this->modules->moduleExists('smtp')
-      && $mail_system === 'SMTPMailSystem'
-      && (bool) $smtp->get('smtp_on')
-      && trim((string) $smtp->get('smtp_host')) !== ''
-      && trim((string) $smtp->get('smtp_username')) !== ''
-      && trim((string) $smtp->get('smtp_password')) !== ''
+    return $this->modules->moduleExists('mailer_override')
+      && $this->configs->get('mailer_transport.settings')->get('default_transport') === self::MAIL_TRANSPORT
+      && $this->keyHasValue('smtp2go_username')
+      && $this->keyHasValue('smtp2go_password')
       && $site_mail !== '';
+  }
+
+  private function keyHasValue(string $id): bool {
+    $key = $this->keys->getKey($id);
+    return $key !== NULL && trim((string) $key->getKeyValue()) !== '';
   }
 
   private function pendingEmail(int|string $uid): ?string {

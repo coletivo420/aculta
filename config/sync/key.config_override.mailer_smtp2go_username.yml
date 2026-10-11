@@ -1,0 +1,15 @@
+uuid: e6b2bf45-919a-4eac-9889-f28d112ed0fc
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - key.key.smtp2go_username
+    - mailer_transport.mailer_transport.smtp2go
+id: mailer_smtp2go_username
+label: 'SMTP2GO username'
+config_type: mailer_transport
+config_prefix: mailer_transport.mailer_transport
+config_name: smtp2go
+config_item: configuration.user
+key_id: smtp2go_username
+

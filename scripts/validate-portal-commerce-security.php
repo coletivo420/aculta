@@ -35,13 +35,14 @@ $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email
 $assert($modules->moduleExists('email_confirmer') && $modules->moduleExists('email_confirmer_user'), 'Email Confirmer and its user integration are enabled.');
 $assert($modules->moduleExists('change_mail_page'), 'Change Mail Page supplies the canonical new-address form.');
 $assert(\Drupal::config('email_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'Email Confirmer intercepts user email changes.');
-// SMTP segue o ambiente: ligado somente quando as credenciais SMTP2GO existem como Key/env deste ambiente.
+// E-mail segue o ambiente: o transporte SMTP2GO do Mailer Plus fica ativo somente quando as credenciais SMTP2GO existem como Key/env deste ambiente.
 $smtp_secrets = \Drupal::service('aculta_portal.secrets_manager');
 $smtp_credentials_present = $smtp_secrets->value('SMTP2GO_USERNAME') !== NULL && $smtp_secrets->value('SMTP2GO_PASSWORD') !== NULL;
-$assert((bool) \Drupal::config('smtp.settings')->get('smtp_on') === $smtp_credentials_present, 'SMTP is enabled exactly when its SMTP2GO credentials exist in this environment.');
+$mail_on = \Drupal::config('mailer_transport.settings')->get('default_transport') === 'smtp2go';
+$assert($mail_on === $smtp_credentials_present, 'SMTP2GO transport is the default exactly when its SMTP2GO credentials exist in this environment.');
 // getRawData(): a configuração ativa, sem os overrides de Key (que trazem o valor do ambiente em runtime).
-$smtp_raw = \Drupal::config('smtp.settings')->getRawData();
-$assert(empty($smtp_raw['smtp_username']) && empty($smtp_raw['smtp_password']), 'SMTP credentials are absent from active configuration.');
+$smtp_raw = \Drupal::config('mailer_transport.mailer_transport.smtp2go')->getRawData()['configuration'] ?? [];
+$assert(empty($smtp_raw['user']) && empty($smtp_raw['pass']), 'SMTP2GO credentials are absent from active configuration.');
 $login_composer = json_decode(file_get_contents(DRUPAL_ROOT . '/../composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $login_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/login_emailusername'))[0] ?? NULL;
 $assert(($login_package['version'] ?? NULL) === '3.0.1', 'Login Email or Username remains at the audited 3.0.1 release.');
@@ -49,12 +50,13 @@ $confirmer_package = array_values(array_filter($login_composer['packages'], stat
 $change_mail_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/change_mail_page'))[0] ?? NULL;
 $assert(($confirmer_package['version'] ?? NULL) === '1.0.0', 'Email Confirmer remains on its stable 1.0.0 release.');
 $assert(($change_mail_package['version'] ?? NULL) === '1.0.2', 'Change Mail Page remains on its stable 1.0.2 release.');
-$smtp_mail_config = \Drupal::config('system.mail');
-$smtp_on = (bool) \Drupal::config('smtp.settings')->get('smtp_on');
-$assert($smtp_on === ($smtp_mail_config->get('interface.default') === 'SMTPMailSystem'), 'The default mail backend is SMTPMailSystem exactly when SMTP is enabled.');
-$assert(!$smtp_on || \Drupal::moduleHandler()->moduleExists('smtp'), 'SMTP delivery requires the enabled SMTP module.');
+$mail_backend = \Drupal::config('system.mail')->get('interface.default');
+$mail_transport = \Drupal::config('mailer_transport.settings')->get('default_transport');
+$assert($mail_backend === 'symfony_mailer', 'The default mail backend is Mailer Plus (symfony_mailer).');
+$assert($mail_transport === 'smtp2go' && \Drupal::moduleHandler()->moduleExists('mailer_override'), 'Mailer Plus delivers through the SMTP2GO transport with mailer_override enabled.');
+$assert(!\Drupal::moduleHandler()->moduleExists('smtp'), 'The legacy smtp module is not enabled (removed in M2).');
 $portal_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Controller/PortalController.php');
-$assert(str_contains($portal_controller_source, "moduleExists('smtp')") && str_contains($portal_controller_source, "get('interface.default')") && str_contains($portal_controller_source, "=== 'SMTPMailSystem'"), 'Security only enables email change when the SMTP contrib transport is selected and configured.');
+$assert(str_contains($portal_controller_source, "moduleExists('mailer_override')") && str_contains($portal_controller_source, "MAIL_TRANSPORT") && str_contains($portal_controller_source, 'keyHasValue'), 'Security only enables email change when Mailer Plus, the SMTP2GO transport and its Keys are ready.');
 $assert(str_contains($portal_controller_source, "getForm(\$account, 'default')") && !str_contains($portal_controller_source, "getForm(\$account, 'edit')"), 'Portal account forms use the Drupal User entity type supported default form operation.');
 $assert(str_contains($portal_controller_source, "\$parameters->set('user', \$account)") && str_contains($portal_controller_source, "unset(\$form['social_auth'])") && str_contains($portal_controller_source, "\$parameters->remove('user')"), 'The Portal supplies Social Auth’s expected route parameter only while building Core User forms and removes its duplicate account section.');
 $assert(\Drupal::config('system.logging')->get('error_level') === 'hide' && str_contains(file_get_contents(DRUPAL_ROOT . '/../config/sync/system.logging.yml'), 'error_level: hide'), 'Detailed errors are hidden on screen in active and synchronized configuration (hardening: nao exibir erros detalhados).');
@@ -214,7 +216,7 @@ $assert($support_config_keys === [], 'Support settings contain only current edit
 foreach ([
   'entity.key.collection',
   'entity.key_config_override.collection',
-  'smtp.config',
+  'entity.mailer_transport.collection',
   'social_auth.integrations',
   'social_auth_google.settings_form',
   'captcha_settings',

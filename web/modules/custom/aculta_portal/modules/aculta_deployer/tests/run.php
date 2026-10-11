@@ -273,8 +273,8 @@ $assert(AcultaDeployer\Verify::toTestEnvironment('https://evil-aculta.org/ https
 $assert($t->validateProfiles() === [], 'perfis: deploy.json atual cobre todos os arquivos dependentes de ambiente');
 // Guardrail: um arquivo dependente de ambiente sem regra em um perfil falha a validação.
 $broken = $config;
-$broken['profiles']['test']['rules'] = array_values(array_filter($config['profiles']['test']['rules'], static fn(array $r): bool => $r['file'] !== 'config/sync/system.mail.yml'));
-$assert(count(array_filter((new Transform($broken))->validateProfiles(), static fn(string $e): bool => str_contains($e, 'system.mail.yml'))) === 1, 'perfis: arquivo sem regra no perfil de teste é recusado');
+$broken['profiles']['test']['rules'] = array_values(array_filter($config['profiles']['test']['rules'], static fn(array $r): bool => $r['file'] !== 'config/sync/system.site.yml'));
+$assert(count(array_filter((new Transform($broken))->validateProfiles(), static fn(string $e): bool => str_contains($e, 'system.site.yml'))) === 1, 'perfis: arquivo sem regra no perfil de teste é recusado');
 $noBound = $config;
 $noBound['environment_bound'] = [];
 $assert((new Transform($noBound))->validateProfiles() !== [], 'perfis: environment_bound vazio é recusado');
@@ -287,9 +287,8 @@ $assert($threw(fn() => $t->applyProfile("a\na\n", [['pattern' => '^a$', 'with' =
 $outTest = sys_get_temp_dir() . '/aculta-build-test-' . getmypid();
 exec($cli . ' build --target=test --out=' . escapeshellarg($outTest) . ' 2>&1', $bt, $btrc);
 $mailTest = is_file($outTest . '/config/sync/system.mail.yml') ? (string) file_get_contents($outTest . '/config/sync/system.mail.yml') : '';
-$assert($btrc === 0 && str_contains($mailTest, '  default: SMTPMailSystem') && str_contains($mailTest, '  webform: SMTPMailSystem'), 'build --target=test: system.mail em SMTP');
-$smtpTest = is_file($outTest . '/config/sync/smtp.settings.yml') ? (string) file_get_contents($outTest . '/config/sync/smtp.settings.yml') : '';
-$assert(str_contains($smtpTest, "smtp_from: 'naoresponda@toca.net.br'"), 'build --target=test: remetente de teste');
+$assert($btrc === 0 && str_contains($mailTest, '  default: symfony_mailer'), 'build --target=test: system.mail no Mailer Plus');
+$assert(!is_file($outTest . '/config/sync/smtp.settings.yml'), 'build --target=test: smtp.settings legado não é gerado');
 // Alvo e ambiente divergentes são recusados sem gerar saída.
 exec($cli . ' build --env=test --target=production --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);
 $assert($brc1 !== 0, 'build recusa --env diferente de --target');
