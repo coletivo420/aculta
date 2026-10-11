@@ -65,7 +65,7 @@ Esta pasta é a referência canônica dos módulos Core/contrib usados pelo proj
 
 `User`, `Node`, `Taxonomy`, `Views`, `Media`, `Media Library`, `Language`, `Locale`, `Workflows`, `Content Moderation`, `CKEditor 5`, `Navigation`, `Search`, `Layout Builder`, `BigPipe`, `Dynamic Page Cache` e `Page Cache` formam a base Core usada pelas integrações acima.
 
-`config_translation` está ativo na `main`; a PR #63 foi fechada como obsoleta em 2026-10-09.
+`config_translation` está ativo na `main`; uma PR antiga de tradução foi fechada como obsoleta em 2026-10-09 (registro em DT-O08).
 
 ## Dependências contrib indiretas importantes
 
