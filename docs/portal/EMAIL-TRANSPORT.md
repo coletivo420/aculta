@@ -198,3 +198,9 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 - Alteração apenas no runtime. `config/sync/system.mail.yml` ainda declara `php_mail` e `deploy.json` ainda trata o backend por ambiente. Ajustar a configuração exportada faz parte da M2.
 - Webform: `system.mail:interface.webform` continua `webform_php_mail`. O teste com HTML (DT-P09) segue pendente, e esse valor é o que a DT-P09 precisa considerar.
 
+### 9.3 Cabeçalho verificado
+
+- Cabeçalho do e-mail recebido: **Para** `advfjpm@gmail.com` e remetente `naoresponda@toca.net.br`. O destinatário é o pretendido; não houve redirecionamento.
+- A conta de administrador do Drupal (usuário 1) usa outro endereço (`outlook.com`) e não recebeu o teste. A confusão foi de identificação, não de envio.
+- Remetente confirmado. Falta apenas o teste do Webform com HTML (DT-P09).
+
