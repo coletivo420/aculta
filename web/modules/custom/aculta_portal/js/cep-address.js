@@ -83,7 +83,8 @@
   }
 
   function attach(context) {
-    const postalFields = once('aculta-cep-address', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
+    // Reivindica os campos com o mesmo id do contrib (data-once): o behavior do contrib não os processa de novo.
+    const postalFields = once('cep-autocomplete', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
     postalFields.forEach((postal) => {
       const name = postal.name || '';
       const marker = '[address][';
@@ -94,6 +95,12 @@
       const container = postal.closest('form') || document;
       const status = statusFor(postal);
       movePostalFirst(postal);
+      // Número (campo do checkout, fora do formulário de endereço) logo após o Logradouro.
+      const numberRow = container.querySelector('input[name$="[street_number]"]')?.closest('.form-item, .js-form-item');
+      const streetRow = getField(prefix, 'address_line1', container)?.closest('.form-item, .js-form-item');
+      if (numberRow && streetRow && numberRow !== streetRow) {
+        streetRow.after(numberRow);
+      }
 
       Object.entries(labels).forEach(([key, label]) => setLabel(getField(prefix, key, container), label));
       const complement = getField(prefix, 'address_line2', container);
@@ -161,7 +168,7 @@
     });
   }
 
-  // The contrib library is loaded first; this accessible integration replaces
-  // only its behavior, retaining its server endpoint, HTTP cache, and client.
-  Drupal.behaviors.cepAutocomplete = { attach };
+  // Nome próprio (não colide com o behavior cepAutocomplete do módulo contrib). Esta biblioteca é dependência
+  // do contrib, então executa antes dele e reivindica os campos (ver once acima).
+  Drupal.behaviors.acultaCepAddress = { attach };
 })(Drupal, drupalSettings, once);
