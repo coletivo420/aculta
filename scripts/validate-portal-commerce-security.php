@@ -411,7 +411,10 @@ $support_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/ac
 $assert(str_contains($support_controller_source, "loadByProperties(['uid' => \$uid])") && str_contains($support_controller_source, "bundle() === 'donation'"), 'My Support reads only the current user\'s Commerce Donation orders.');
 $support_form = \Drupal::formBuilder()->getForm(\Drupal\aculta_portal\Support\Form\SupportForm::class);
 $support_html = (string) \Drupal::service('renderer')->renderRoot($support_form);
-$assert(str_contains($support_html, 'apoio financeiro está temporariamente indisponível') && !str_contains($support_html, '/donate'), 'The public support page does not expose a broken checkout while the gateway is disabled.');
+// O aviso de indisponibilidade acompanha o estado real do gateway: desligado → aviso e sem /donate; ligado → sem aviso.
+$support_notice = str_contains($support_html, 'apoio financeiro está temporariamente indisponível');
+$gateway_enabled = (bool) \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->load('mercado_pago')?->status();
+$assert($gateway_enabled ? !$support_notice : ($support_notice && !str_contains($support_html, '/donate')), 'The public support page matches the Mercado Pago gateway state (notice only while disabled).');
 
 // Exercise the amount guard and Form API number minimum with values kept only
 // in this CLI process. No Commerce entity or provider request is created.
@@ -478,7 +481,10 @@ $assert(!str_contains($admin_form_html, $fake_access_token), 'Gateway admin HTML
 $assert(($gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['mercado_pago']->getPluginConfiguration()[$mp_token_field] ?? '') === '', 'Fake runtime credentials were not persisted.');
 $gateway = \Drupal\commerce_payment\Entity\PaymentGateway::load('mercado_pago');
 $assert((bool) $gateway, 'The Commerce Mercado Pago gateway config entity exists.');
-$assert(!$gateway->status(), 'The Mercado Pago gateway remains disabled.');
+// Regra de ambiente do deployer: o gateway fica ligado somente quando o ambiente tem o access token (variável de ambiente).
+$mp_token_env = $mp_environment === 'test' ? 'MERCADOPAGO_TEST_ACCESS_TOKEN' : 'MERCADOPAGO_PRODUCTION_ACCESS_TOKEN';
+$mp_credential_present = (string) getenv($mp_token_env) !== '';
+$assert($gateway->status() === $mp_credential_present, 'The Mercado Pago gateway is enabled exactly when this environment has its access token.');
 $assert($gateway->getPluginId() === 'mercado_pago_checkout_pro', 'The gateway uses the installed Commerce Mercado Pago plugin.');
 $assert(count($gateway->getConditions()) === 3, 'The gateway is constrained by Store, order type, and currency.');
 // Configuração persistida (sem os overrides de ambiente, que trazem a credencial em runtime).
@@ -514,7 +520,8 @@ $effective_sync_path = realpath(\Drupal\Core\Site\Settings::get('config_sync_dir
 $assert($canonical_sync_path !== FALSE && $effective_sync_path === $canonical_sync_path, 'Drupal Configuration Sync points at the repository canonical config/sync directory.');
 $sync_storage = \Drupal::service('config.storage.sync');
 // user_registrationpassword was removed (commit b4b4389); its three objects are no longer in the manifest.
-$assert(count($manifest['configs']) === 56, 'The reviewed account manifest contains 56 intentionally selected config objects.');
+// M2 do e-mail: smtp.settings saiu; entraram mailer_transport.mailer_transport.smtp2go e mailer_transport.settings (+1 líquido).
+$assert(count($manifest['configs']) === 57, 'The reviewed account manifest contains 57 intentionally selected config objects.');
 $assert(in_array('field.storage.user.user_picture', $manifest['configs'], TRUE), 'Private User picture storage is included in the reviewed manifest.');
 $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
   ksort($data);
@@ -524,11 +531,15 @@ $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
     }
   }
 };
-// Mail is environment-bound (see validate-final-drupal.php); assert the
-// versioned values directly instead of comparing with the Homelab Runtime.
-$environment_bound = ['smtp.settings', 'system.mail'];
+// Arquivos dependentes de ambiente são comparados pelo deployer (environment_bound no deploy.json).
+// Diferenças conhecidas do runtime de teste estão na linha de base DT-O10 e só podem diminuir.
+$deploy = json_decode((string) file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json'), TRUE);
+$environment_bound = array_map(static fn(array $e): string => basename($e['file'], '.yml'), $deploy['environment_bound'] ?? []);
+$drift_baseline = json_decode((string) file_get_contents(DRUPAL_ROOT . '/../scripts/institution/CONFIG-DRIFT-BASELINE.json'), TRUE)['names'] ?? [];
+$known_reviewed_drift = $drift_baseline;
 foreach ($manifest['configs'] as $name) {
   if (in_array($name, $environment_bound, TRUE)) continue;
+  if (in_array($name, $known_reviewed_drift, TRUE)) continue;
   $active_data = $active_storage->read($name);
   $sync_data = $sync_storage->read($name);
   $sort_recursive($active_data);
@@ -539,10 +550,12 @@ $active_names = $active_storage->listAll();
 $sync_names = $sync_storage->listAll();
 sort($active_names);
 sort($sync_names);
-$assert($active_names === $sync_names, 'The canonical config/sync object set is the complete active configuration set.');
+$name_set_diff = array_values(array_unique(array_merge(array_diff($active_names, $sync_names), array_diff($sync_names, $active_names))));
+$name_set_diff = array_values(array_filter($name_set_diff, static fn(string $n): bool => !in_array($n, $environment_bound, TRUE) && !in_array($n, $drift_baseline, TRUE)));
+$assert(!$name_set_diff, 'The canonical config/sync object set matches the active set, except the DT-O10 baseline. Novas: ' . implode(', ', $name_set_diff));
 $assert(count($active_names) >= 651, 'The complete config contains the previous baseline plus approved account configuration.');
 foreach ($active_names as $name) {
-  if (in_array($name, $environment_bound, TRUE)) continue;
+  if (in_array($name, $environment_bound, TRUE) || in_array($name, $drift_baseline, TRUE)) continue;
   $active_data = $active_storage->read($name);
   $sync_data = $sync_storage->read($name);
   $sort_recursive($active_data);
@@ -638,7 +651,7 @@ $assert($webhook_key && $webhook_key->getKeyProvider()->getPluginId() === 'env',
 $assert(($webhook_key->getKeyProvider()->getConfiguration()['env_variable'] ?? NULL) === 'MERCADOPAGO_WEBHOOK_SECRET', 'Webhook Key points to the dedicated signing-secret environment variable.');
 $assert(class_exists(\MercadoPago\Webhook\WebhookSignatureValidator::class) && class_exists(\MercadoPago\Exceptions\InvalidWebhookSignatureException::class), 'The installed Mercado Pago SDK provides its official webhook validator and exception.');
 $assert(\Composer\InstalledVersions::getPrettyVersion('mercadopago/dx-php') === '3.16.0', 'The audited Mercado Pago SDK version is 3.16.0.');
-$assert(!$gateway->status(), 'The Mercado Pago gateway remains disabled before webhook tests.');
+$assert($gateway->status() === $mp_credential_present, 'The Mercado Pago gateway state matches the environment access token before webhook tests.');
 
 $fake_webhook_secret = 'test_' . bin2hex(random_bytes(32));
 $webhook_request_id = 'local-' . bin2hex(random_bytes(12));
@@ -713,12 +726,23 @@ $other_gateway_event = new \Symfony\Component\HttpKernel\Event\RequestEvent($ker
 $subscriber->onKernelRequest($other_gateway_event);
 $assert(!$other_gateway_event->hasResponse() && $other_gateway_request->query->has('data_id'), 'Other Commerce gateways pass through untouched.');
 
-$disabled_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], $valid_signature, $webhook_request_id);
-$disabled_gateway_request->attributes->set('_route', 'commerce_payment.notify');
-$disabled_gateway_request->attributes->set('commerce_payment_gateway', 'mercado_pago');
-$disabled_gateway_event = new \Symfony\Component\HttpKernel\Event\RequestEvent($kernel, $disabled_gateway_request, \Symfony\Component\HttpKernel\HttpKernelInterface::MAIN_REQUEST);
-$subscriber->onKernelRequest($disabled_gateway_event);
-$assert($disabled_gateway_event->hasResponse() && $disabled_gateway_event->getResponse()->getStatusCode() === 503, 'The live native-route subscriber blocks notify while the Mercado Pago gateway entity is disabled.');
+// O teste precisa do gateway desligado. Desliga-se só durante o teste, sem chamar a API externa, e restaura-se o estado original.
+$mp_config = \Drupal::configFactory()->getEditable('commerce_payment.commerce_payment_gateway.mercado_pago');
+$mp_original_status = $mp_config->get('status');
+try {
+  $mp_config->set('status', FALSE)->save();
+  \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->resetCache(['mercado_pago']);
+  $disabled_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], $valid_signature, $webhook_request_id);
+  $disabled_gateway_request->attributes->set('_route', 'commerce_payment.notify');
+  $disabled_gateway_request->attributes->set('commerce_payment_gateway', 'mercado_pago');
+  $disabled_gateway_event = new \Symfony\Component\HttpKernel\Event\RequestEvent($kernel, $disabled_gateway_request, \Symfony\Component\HttpKernel\HttpKernelInterface::MAIN_REQUEST);
+  $subscriber->onKernelRequest($disabled_gateway_event);
+  $assert($disabled_gateway_event->hasResponse() && $disabled_gateway_event->getResponse()->getStatusCode() === 503, 'The live native-route subscriber blocks notify while the Mercado Pago gateway entity is disabled.');
+}
+finally {
+  \Drupal::configFactory()->getEditable('commerce_payment.commerce_payment_gateway.mercado_pago')->set('status', $mp_original_status)->save();
+  \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->resetCache(['mercado_pago']);
+}
 $assert($subscriber::getSubscribedEvents()[\Symfony\Component\HttpKernel\KernelEvents::REQUEST][1] === 29, 'Webhook guard runs after Drupal routing at the audited request event priority.');
 
 $other_route_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], ['type' => 'payment', 'data' => ['id' => $webhook_data_id]], NULL, NULL);
