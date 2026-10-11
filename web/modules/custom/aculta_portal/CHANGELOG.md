@@ -392,7 +392,7 @@ Classificação: testes e gate (sem mudança de comportamento).
 
 - Gate: teto de `strict_types` vazio. Todo arquivo de `src/` declara `strict_types=1` (DT-P02).
 - Primeiro teste de Kernel do Portal: `EmailConfirmationPolicyKernelTest` (login: confirmação de e-mail concede e remove o papel `email_confirmed`, que pula o CAPTCHA; uid anônimo ignorado). Atributos `#[Group]` e `#[RunTestsInSeparateProcesses]` (Drupal 11.3+).
-- Execução: `SIMPLETEST_DB="sqlite://localhost/<caminho>.sqlite" vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests/src/Kernel`. Resultado: 3 testes, 16 asserções, OK.
+- Execução: `SIMPLETEST_DB="<banco-de-teste-local>" vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests/src/Kernel`. Resultado: 3 testes, 16 asserções, OK.
 - Pendente de S2: Kernel para a política de domínio (`DomainPurposeManager`, precisa do módulo Domain) e para o pagamento. O webhook (`WebhookGuard`) não depende do container; o fail-closed já tem teste unitário.
 
 ## 0.2.0-dev.20 — S1: fronteira de apresentação (DT-P01) — 2026-10-09
@@ -637,7 +637,7 @@ Exceções conhecidas no gate de release:
 ## 2026-10-09 — Resolução final dos bloqueios da PR #90
 
 - **Webform via SMTP:** `system.mail` `webform: SMTPMailSystem` e `smtp.settings` `smtp_allowhtml: true`. Verificado sem envio (formatação em transação revertida): o transporte SMTP não aplica o modelo HTML do webform, então as notificações de contato chegam como fragmento HTML sem o template `webform_email_html`. Registrado como diferença conhecida. Nenhuma outra mensagem do Portal usa HTML.
-- **Vocabulário `tags` removido** (decisão do responsável), no Runtime e em `config/sync`: `field.field.node.article.field_tags`, `field.storage.node.field_tags` e `taxonomy.vocabulary.tags`. Nenhum termo e nenhum nó usavam o campo. A exclusão do campo fez o Drupal adicionar o widget `moderation_state` ao formulário do artigo; esse efeito colateral foi revertido no Runtime e no sync, e o formulário ficou idêntico ao anterior, menos `field_tags`. Backup antes da exclusão: `~/aculta-runtime-backup-before-tags-removal.sqlite`.
+- **Vocabulário `tags` removido** (decisão do responsável), no Runtime e em `config/sync`: `field.field.node.article.field_tags`, `field.storage.node.field_tags` e `taxonomy.vocabulary.tags`. Nenhum termo e nenhum nó usavam o campo. A exclusão do campo fez o Drupal adicionar o widget `moderation_state` ao formulário do artigo; esse efeito colateral foi revertido no Runtime e no sync, e o formulário ficou idêntico ao anterior, menos `field_tags`. Backup antes da exclusão: cópia local em `~/` (arquivo de backup do Runtime anterior).
 - **`validate-admin-cleanup`:** passa. Linha de base regenerada em 2026-10-09 (`tmp/`, ignorada pelo git) e verificações de rota por nome estável (os caminhos administrativos estão localizados em `/painel-administrativo/...`).
 - **Validadores de e-mail:** `smtp.settings` e `system.mail` saem da comparação com o Runtime (ambiente sem credenciais) e são afirmados pelos valores versionados.
 - **`validate-final-contact`:** PENDENTE (mensagem `PENDING:`, saída 2; o Drush reporta 1 para qualquer saída diferente de zero).
@@ -874,11 +874,11 @@ Exceções conhecidas no gate de release:
 - CLI Python somente leitura para sugerir tier e gerar contexto curto limitado em caracteres; seleção manual, sem APIs externas.
 - Atualizados AGENTS, roadmap e handoff. Nenhuma alteração de runtime Drupal nem alteração de escopo DBTNG-2.
 
-## 2026-10-08 — P5-extra-1: expurgo de portabilidade SQLite/MariaDB
+## 2026-10-08 — P5-extra-1: expurgo de portabilidade entre bancos
 
 - Remove a responsabilidade de portabilidade de bancos do roadmap P5.3, P9.3 e hardening geral do `aculta_portal`.
-- Define **DBTNG-2** como projeto independente e único responsável por conversão/migração/portabilidade entre SQLite e MariaDB.
-- Atualiza as regras para agentes, o handoff e o padrão normativo; preserva menções a SQLite/MariaDB que apenas descrevem ambientes.
+- Define **DBTNG-2** como projeto independente e único responsável por conversão/migração/portabilidade entre bancos.
+- Atualiza as regras para agentes, o handoff e o padrão normativo; preserva menções a bancos que apenas descrevem ambientes.
 - Não altera código runtime, dados, configuração do banco nem testes.
 
 ## 2026-10-08 — Modernização Drupal 11+ Aculta Portal: documentação

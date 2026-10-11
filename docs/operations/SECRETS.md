@@ -210,7 +210,7 @@ Após a migração R0.4, novos dumps do banco não transportam credenciais Googl
 no storage bruto. Backups e snapshots criados antes da limpeza continuam
 sensíveis e precisam de inventário, retenção e permissões restritas. O backup
 pós-migração do Homelab foi verificado com os campos Google brutos vazios.
-Nunca publicar em Git um dump ou Estado SQLite que contenha secret persistido;
+Nunca publicar em Git um dump ou Estado que contenha secret persistido;
 isso também se aplica aos Estados Homelab que, por decisão do projeto, podem
 ser públicos quando sanitizados.
 

@@ -9,7 +9,7 @@ Runbook canônico de deployment da plataforma ACULTA.
 - Homelab: Debian + Apache + PHP-FPM + MariaDB.
 - Produção: Hostinger + Apache + PHP + MariaDB.
 - o deploy transfere código, dependências travadas e configuração aprovada;
-- Estados SQLite são artefatos de desenvolvimento e nunca são enviados para produção;
+- Estados (backups do banco) são artefatos de desenvolvimento e nunca são enviados para produção;
 - produção não é ambiente de experimento.
 
 ## Pré-condições

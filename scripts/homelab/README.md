@@ -16,7 +16,6 @@ cd aculta-site
 composer install
 cp web/sites/default/settings.homelab.php.example web/sites/default/settings.homelab.php
 export ACULTA_ENV=homelab
-./scripts/estados/restaurar-estado.sh estados/2026-10-04_aculta_estado_fase8-integral-v1.sqlite
 bash scripts/homelab/verify-aculta-homelab.sh
 ```
 
@@ -34,9 +33,8 @@ Apache válida, `mod_rewrite`, `mod_headers` e `proxy_fcgi`, e falha se
 encontrar um processo Nginx ativo.
 
 Estados são backups privados dos servidores: não são versionados no Git
-(`estados/*.sqlite` no `.gitignore`) e não são sanitizados. Não adicione deliberadamente credenciais
+(a pasta `estados/` no `.gitignore`) e não são sanitizados. Não adicione deliberadamente credenciais
 externas ou de produção ao Runtime/Estado; nenhum Estado que contenha secret
 persistido pode ser versionado ou publicado. O banco e os settings de produção
 continuam ativos separados em MariaDB.
 
-O Runtime do Homelab é MariaDB. O módulo SQLite do Drupal foi desinstalado e não é mais usado.

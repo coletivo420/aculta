@@ -74,15 +74,8 @@ error_log
 __pycache__/
 *.py[cod]
 
-# Active SQLite runtime databases are private mutable working copies.
-/var/database/*.sqlite
 # A pasta estados/ é local: armazena o backup do banco de dados e nunca vai para o Git (ver estados/README.md).
 /estados/
-/estados/*.sqlite
-/estados/*.sqlite-wal
-/estados/*.sqlite-shm
-/var/database/*.sqlite-wal
-/var/database/*.sqlite-shm
 /var/database/*.db
 /var/database/*.db-wal
 /var/database/*.db-shm
