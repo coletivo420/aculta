@@ -17,7 +17,7 @@ aculta_portal.admin:
   parent: system.admin_config
   weight: 5
 aculta_portal.requirements:
-  title: Status dos módulos e temas
+  title: Status
   description: Status, versão mínima e versão instalada das integrações do Portal.
   route_name: aculta_portal.requirements
   parent: aculta_portal.admin

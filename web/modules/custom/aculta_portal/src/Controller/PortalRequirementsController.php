@@ -6,6 +6,8 @@ namespace Drupal\aculta_portal\Controller;
 
 use Composer\InstalledVersions;
 use Composer\Semver\Semver;
+use Drupal\aculta_portal\Deployer\DeployerStatusReader;
+use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -31,6 +33,8 @@ final class PortalRequirementsController extends ControllerBase {
     private readonly AccountInterface $account,
     #[Autowire(param: 'app.root')]
     private readonly string $appRoot,
+    #[Autowire(service: 'aculta_portal.deployer_status_reader')]
+    private readonly DeployerStatusReader $deployerStatus,
   ) {}
 
   /**
@@ -133,8 +137,8 @@ final class PortalRequirementsController extends ControllerBase {
       'modules' => ['commerce_mercado_pago'],
       'package' => 'drupal/commerce_mercado_pago',
       'minimum' => '^3.0@RC',
-      'purpose' => 'Gateway candidato; continua desabilitado até homologação.',
-      'warning' => 'Versão RC sem cobertura da Drupal Security Advisory Policy; gateway deve permanecer desabilitado.',
+      'purpose' => 'Gateway de pagamento. Até a versão 1.0 é habilitado com chaves de teste; chaves de produção dependem de decisão do responsável.',
+      'warning' => 'Versão RC sem cobertura da Drupal Security Advisory Policy. Enquanto a versão não for estável, o gateway fica restrito às chaves de teste.',
     ],
     [
       'name' => 'Key',
@@ -190,7 +194,7 @@ final class PortalRequirementsController extends ControllerBase {
   public function overview(): array {
     $rows = [];
     foreach ([
-      ['aculta_portal.requirements', $this->t('Status dos módulos e temas'), $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.')],
+      ['aculta_portal.requirements', $this->t('Status'), $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.')],
       ['aculta_portal.turnstile_settings', $this->t('Turnstile (anti-bot)'), $this->t('Ativar ou desativar o desafio Turnstile em cadastro, login, recuperação de senha e contato. Só ativa com a chave configurada no ambiente.')],
       ['aculta_portal.support_settings', $this->t('Configurações do Apoio'), $this->t('Edite o texto institucional exibido na página pública Apoie.')],
       ['aculta_portal.deployer_status', $this->t('ACULTA Deployer: status'), $this->t('Relatório de fronteiras, correções de deploy abertas e credenciais por ambiente. Somente leitura.')],
@@ -256,8 +260,9 @@ final class PortalRequirementsController extends ControllerBase {
       'note' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['messages', 'messages--warning']],
-        'text' => ['#plain_text' => $this->t('Os avisos sobre SMTP2GO, Google, Turnstile e Mercado Pago refletem o estado pré-deploy intencional. O gateway Mercado Pago deve continuar desabilitado. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
+        'text' => ['#plain_text' => $this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
       ],
+      'indexing' => $this->buildIndexingSection(),
       '#cache' => [
         'contexts' => ['user.permissions'],
         'tags' => ['config:core.extension', 'config:system.theme'],
@@ -268,6 +273,43 @@ final class PortalRequirementsController extends ControllerBase {
     $build['#attached']['library'][] = 'system/admin';
     $build['#attached']['library'][] = 'aculta_portal/requirements-report';
     return $build;
+  }
+
+  /**
+   * Indexação: regra do ambiente declarado e último resultado do deployer. O Portal não executa
+   * a verificação; ela é feita por `aculta-deployer robots`, que grava var/deployer/status.json.
+   */
+  private function buildIndexingSection(): array {
+    $environment = DeployerEnvironment::current(dirname($this->appRoot));
+    $rule = $environment === 'production'
+      ? $this->t('Produção: indexável em todos os hosts. Sem noindex e com o sitemap do índice anunciado no robots.txt.')
+      : $this->t('Teste: não indexável em todos os hosts (noindex, nofollow, noarchive). Caminhos privados mantêm noindex.');
+    $section = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['aculta-portal-requirements__indexing']],
+      'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Indexação')],
+      'environment' => ['#plain_text' => $this->t('Ambiente declarado: @env.', ['@env' => $environment])],
+      'rule' => ['#plain_text' => (string) $rule],
+    ];
+    $result = $this->deployerStatus->indexing();
+    if ($result === NULL) {
+      $section['last'] = ['#plain_text' => $this->t('Nenhuma verificação registrada. Execute aculta-deployer robots no ambiente para publicar o resultado.')];
+      return $section;
+    }
+    $checkedAt = (string) ($result['checked_at'] ?? '');
+    $section['last'] = ['#plain_text' => $this->t('Última verificação: @at (ambiente @env).', ['@at' => $checkedAt, '@env' => (string) ($result['environment'] ?? '')])];
+    if (($result['environment'] ?? NULL) !== $environment) {
+      $section['mismatch'] = ['#plain_text' => $this->t('⚠ O resultado publicado é de outro ambiente. Execute aculta-deployer robots neste ambiente.')];
+    }
+    $section['summary'] = ['#plain_text' => ($result['ok'] ?? FALSE) === TRUE
+      ? $this->t('✔ OK: @passed verificações aprovadas.', ['@passed' => (int) ($result['passed'] ?? 0)])
+      : $this->t('✖ Falha: @failed verificação(ões) com problema.', ['@failed' => (int) ($result['failed'] ?? 0)]),
+    ];
+    $failed = is_array($result['failed_urls'] ?? NULL) ? $result['failed_urls'] : [];
+    if ($failed !== []) {
+      $section['failed'] = ['#theme' => 'item_list', '#items' => array_map('strval', $failed)];
+    }
+    return $section;
   }
 
   /** Builds one module requirement row. */

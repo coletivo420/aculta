@@ -1,8 +1,10 @@
 # Mercado Pago
 
 Gateway de pagamento do Commerce (`commerce_mercado_pago` 3.0.0-rc3, plugin `mercado_pago_checkout_pro`).
-O gateway está **desativado** (`status: false`) e assim permanece até as credenciais de teste estarem no
-ambiente de testes e a validação de ponta a ponta ser feita.
+Até a versão 1.0, o gateway é **habilitado com chaves de teste** (`MERCADOPAGO_TEST_PUBLIC_KEY` e
+`MERCADOPAGO_TEST_ACCESS_TOKEN`, por variável de ambiente; nunca na configuração). O gateway fica ativo
+quando o ambiente tem o access token correspondente (regra do `aculta_deployer`). Chaves de produção só
+entram por decisão do responsável.
 
 ## Credenciais
 
