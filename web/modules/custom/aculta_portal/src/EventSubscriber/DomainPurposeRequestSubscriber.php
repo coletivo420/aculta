@@ -127,6 +127,14 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse($this->notFoundResponse());
       return;
     }
+    // Raiz do host da loja vai à página inicial da loja (302). Página publicada com o alias /loja-da-aculta.
+    if ($this->domainPurposeManager->getCurrentPurpose() === 'shop' && $event->getRequest()->getPathInfo() === '/') {
+      $home = $this->domainPurposeManager->pathUrl('shop', '/loja-da-aculta');
+      if ($home !== NULL) {
+        $event->setResponse(new TrustedRedirectResponse($home->toString(), Response::HTTP_FOUND));
+        return;
+      }
+    }
     // Visitante não logado na raiz da Conta vai ao login do próprio host de conta (302: o estado de login muda).
     // Feito antes do roteamento com acesso, que negaria a rota (403) antes de chegar a onRequest.
     if ($matched['_route'] === 'aculta_portal.dashboard' && !$this->currentUser->isAuthenticated()) {

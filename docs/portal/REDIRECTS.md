@@ -13,7 +13,8 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 6. **Wrong-purpose público continua 404** e não vira redirect genérico (`ADMIN-DOMAIN-POLICY.md`).
 7. **Carrinho, checkout e pagamento:** purpose MAIN, com o host de compra apontando para o MAIN (`PAYMENT-DOMAIN-POLICY.md`).
 8. **Página do produto da loja:** purpose SHOP (`DomainRouteSubscriber`, rota `entity.commerce_product.canonical`). Fora do host SHOP responde 404.
-9. **Cada subdomínio tem página inicial própria.** A raiz `/` de cada host é a página inicial daquele purpose, por dois mecanismos:
+9. **Raiz do host da loja:** `/` redireciona (302) para `/loja-da-aculta`, a página inicial da loja (`DomainPurposeRequestSubscriber::onRequestBeforeRouter`). É uma regra explícita do host SHOP, documentada aqui.
+10. **Cada subdomínio tem página inicial própria.** A raiz `/` de cada host é a página inicial daquele purpose, por dois mecanismos:
    - MAIN: página inicial do site (`system.site:page.front` = `/node/1`).
    - Apoio, revista, wiki e cursos: nó com `field_domain_source` apontando para o domínio, que o módulo `domain_source` usa como página inicial desse host.
 
@@ -24,7 +25,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 | aculta.toca.net.br (MAIN) | 200 | 404 | 404 | 404 | 404 | Início = nó 1 |
 | conta.aculta.toca.net.br (ACCOUNT) | 302 → /entrar | 200 | 404 | 404 | 404 | Visitante na raiz vai ao login; a visão geral só logado |
 | apoio.aculta.toca.net.br (SUPPORT) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` do apoio |
-| loja.aculta.toca.net.br (SHOP) | 404 | 404 | 404 | 404 | 404 | **Sem página inicial da loja** |
+| loja.aculta.toca.net.br (SHOP) | 302 → /loja-da-aculta | 404 | 404 | 404 | 404 | Página inicial da loja (nó 69, alias `/loja-da-aculta`) |
 | revista420.aculta.toca.net.br (MAGAZINE) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` da revista |
 | wiki420.aculta.toca.net.br (WIKI) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` da wiki |
 | cursos.aculta.toca.net.br (COURSES) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` dos cursos |
@@ -33,7 +34,8 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 
 ## Pendências para deixar os hosts iguais
 
-- **Loja (SHOP):** a raiz não tem página inicial. Caminho: criar um nó com `field_domain_source = loja_aculta_org` e publicado, como apoio, revista, wiki e cursos. Depende do conteúdo que o responsável aprovar.
+- **Loja (SHOP):** a página inicial é um modelo de texto (nó 69). Frete, prazo e trocas estão marcados como pendentes do responsável.
+- **Mecanismo dos demais hosts:** a raiz de apoio, revista, wiki e cursos responde 200, mas o mecanismo exato não foi rastreado; `domain_source` sozinho não o explica. Rastrear e padronizar com a regra da loja é pendência.
 
 ## Onde está o código
 

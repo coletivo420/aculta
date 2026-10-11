@@ -1,3 +1,9 @@
+## 0.2.0-dev.53 — Página inicial da loja e raiz do host SHOP — 2026-10-11
+
+- Página "Loja da ACULTA" (nó 69, alias `/loja-da-aculta`), atribuída ao domínio da loja, com texto de modelo para lojas sem fins lucrativos. Frete, prazo e trocas ficam como pendentes do responsável.
+- `DomainPurposeRequestSubscriber::onRequestBeforeRouter`: a raiz do host SHOP redireciona (302) para `/loja-da-aculta`.
+- Verificado no servidor de testes: `loja.aculta.toca.net.br/` → 302 → 200 na página da loja.
+
 ## 0.2.0-dev.52 — Raiz da Conta redireciona visitante ao login — 2026-10-11
 
 Classificação: PATCH (regra de redirecionamento do host de conta).
