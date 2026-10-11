@@ -67,6 +67,12 @@ Para pesquisa, inventário e tarefas básicas verificáveis, usar preferencialme
 
 Consultar `docs/portal/AGENT-TOKEN-ECONOMY.md`. Usar `python3 scripts/portal-agent-budget.py route research` para recomendação de tier e `python3 scripts/portal-agent-budget.py context P5.2-A 3000` para contexto curto. Economizar tokens lendo arquivos e linhas relevantes, evitando dumps/roadmaps repetidos e mantendo relatório conciso; nunca dispensar revisão, documentação, gates ou evidências.
 
+## Pesquisa obrigatória de melhores práticas Drupal 11+
+
+- Antes de decidir arquitetura, API, mecanismo de roteamento, configuração por domínio, cache, segurança ou uma dependência Drupal/contrib, pesquisar na web as melhores práticas atuais para Drupal 11+ (api.drupal.org, drupal.org/docs, issues do módulo e changelog do Core/contrib).
+- Não adivinhar mecanismos: se a pesquisa não confirmar, dizer que não foi confirmado e perguntar. Citar as fontes consultadas na resposta.
+- Verificar o código instalado (`web/core`, `web/modules/contrib`) como fonte de verdade para a versão em uso, além da pesquisa.
+
 ## Padrão Drupal 11+ do ACULTA Portal
 
 O módulo `web/modules/custom/aculta_portal` adota **Drupal Core 11.3+ como baseline arquitetural**.

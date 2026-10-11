@@ -27,6 +27,8 @@ $assert = static function (bool $ok, string $message) use (&$failures, &$checks)
 // Nenhum redirecionamento de raiz para outro caminho além da conta (padrão de redirecionamento com TrustedRedirectResponse e path '/').
 preg_match_all("/getPathInfo\\(\\) === '\\/'/", $subscriber, $rootChecks);
 $assert(!str_contains($subscriber, "pathUrl('shop', '/loja-da-aculta')"), 'Raiz da loja redirecionando para /loja-da-aculta: a decisão é servir conteúdo na raiz.');
+$processor = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php');
+$assert(str_contains($processor, "'shop' => '/loja-da-aculta'") && str_contains($processor, '_disable_route_normalizer'), 'PurposeFrontPathProcessor (raiz da loja servindo conteúdo) ausente.');
 $assert(!str_contains($subscriber, "pathUrl('main', '/')") && !str_contains($subscriber, "pathUrl('support', '/')"), 'Raiz de MAIN ou SUPPORT redirecionada: a decisão é servir conteúdo.');
 
 // A exceção da conta continua valendo.

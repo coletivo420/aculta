@@ -1,3 +1,9 @@
+## 0.2.0-dev.54 — Raiz da loja serve conteúdo (processador de entrada) — 2026-10-11
+
+- `PathProcessor\PurposeFrontPathProcessor` (tag `path_processor_inbound`, prioridade 300): mapa único `FRONT_PATHS` com a página inicial de cada purpose. Hoje: SHOP → `/loja-da-aculta` (nó 69). Define `_disable_route_normalizer` para o alias interno não virar 301.
+- Verificado no servidor de testes: `loja.aculta.toca.net.br/` → 200 com a página "Loja da ACULTA", sem redirecionamento; as demais raízes e a exceção da Conta (302 para `/entrar`) inalteradas.
+- Substitui o 302 da loja (0.2.0-dev.53), que foi removido.
+
 ## 0.2.0-dev.53 — Página inicial da loja e raiz do host SHOP — 2026-10-11
 
 - Página "Loja da ACULTA" (nó 69, alias `/loja-da-aculta`), atribuída ao domínio da loja, com texto de modelo para lojas sem fins lucrativos. Frete, prazo e trocas ficam como pendentes do responsável.
