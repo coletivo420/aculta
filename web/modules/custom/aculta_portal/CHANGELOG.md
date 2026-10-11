@@ -1,3 +1,14 @@
+## 0.3.0-dev.8 — Endereços, pagamentos e pedidos da conta sem ID na URL — 2026-10-11
+
+Classificação: MINOR (caminhos da conta alterados; rotas antigas com ID respondem 404).
+
+- `/user/{uid}/address-book*`, `/user/{uid}/payment-methods*` e `/user/{uid}/orders/{pedido}` passam a `/enderecos*`, `/pagamentos*` e `/pedidos/{pedido}`.
+- Controllers do Portal entregam ao Commerce o usuário da sessão; verificações que pediam o usuário da URL usam login e a verificação da entidade.
+- `AccountListPathProcessor` remove o ID de todas as URLs geradas dessas rotas.
+- Pendente: permissões de cliente para endereço (decisão do responsável) e teste de dono com conta de cliente.
+
+**RUNTIME STATUS:** verificado no servidor de testes com sessão de administrador: listas e cadastros 200; antigos 404; itens inexistentes 404; `/pagamentos/novo` 403 pelo Commerce quando não há tipo de pagamento que aceite cadastro.
+
 ## 0.3.0-dev.7 — Pedidos e pagamentos pelas rotas do Commerce no painel — 2026-10-11
 
 Classificação: MINOR (caminhos públicos das listas de pedidos e pagamentos alterados).

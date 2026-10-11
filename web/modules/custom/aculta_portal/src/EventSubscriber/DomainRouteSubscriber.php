@@ -110,6 +110,51 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
 
+    // Endereços, pagamentos e pedido: o ID do usuário sai da URL; AccountRouteSubscriber põe o usuário da sessão
+    // no parâmetro antes das verificações de acesso do Commerce. Rotas antigas /user/{uid}/... deixam de existir.
+    $account_paths = [
+      'commerce_order.address_book.overview' => ['/enderecos', []],
+      'commerce_order.address_book.add_form' => ['/enderecos/novo/{profile_type}', []],
+      'commerce_order.address_book.edit_form' => ['/enderecos/{profile}/editar', []],
+      'commerce_order.address_book.delete_form' => ['/enderecos/{profile}/excluir', []],
+      'commerce_order.address_book.set_default' => ['/enderecos/{profile}/padrao', []],
+      'entity.commerce_payment_method.add_form' => ['/pagamentos/novo', []],
+      'entity.commerce_payment_method.edit_form' => ['/pagamentos/{commerce_payment_method}/editar', []],
+      'entity.commerce_payment_method.delete_form' => ['/pagamentos/{commerce_payment_method}/excluir', []],
+      'entity.commerce_payment_method.set_default' => ['/pagamentos/{commerce_payment_method}/padrao', []],
+      'entity.commerce_order.user_view' => ['/pedidos/{commerce_order}', []],
+    ];
+    foreach ($account_paths as $name => [$path, $unused]) {
+      if ($route = $collection->get($name)) {
+        $route->setPath($path);
+        $route->setOption('parameters', array_diff_key((array) $route->getOption('parameters'), ['user' => TRUE]));
+        $route->setOption('_aculta_domain_purpose', 'account');
+      }
+    }
+    // Verificações que dependiam do usuário da URL passam a usar a sessão (login) e a verificação da entidade
+    // (dono do pedido ou do perfil). Ver docs/portal/REDIRECTS.md, seção de caminhos de conta.
+    // Controllers do Portal entregam ao Commerce o usuário da sessão (sem ID na URL).
+    $account_controllers = [
+      'commerce_order.address_book.overview' => '\\Drupal\\aculta_portal\\Controller\\PortalController::addressBook',
+      'commerce_order.address_book.add_form' => '\\Drupal\\aculta_portal\\Controller\\PortalController::addressBookAdd',
+      'entity.commerce_payment_method.add_form' => '\\Drupal\\aculta_portal\\Controller\\PortalController::paymentMethodAdd',
+    ];
+    foreach ($account_controllers as $name => $controller) {
+      if ($route = $collection->get($name)) {
+        $route->setDefaults(['_controller' => $controller, '_title' => $route->getDefault('_title')]);
+      }
+    }
+    $account_requirements = [
+      'commerce_order.address_book.overview' => ['_user_is_logged_in' => 'TRUE'],
+      'commerce_order.address_book.add_form' => ['_user_is_logged_in' => 'TRUE'],
+      'entity.commerce_payment_method.add_form' => ['_user_is_logged_in' => 'TRUE'],
+      'entity.commerce_order.user_view' => ['_entity_access' => 'commerce_order.view', 'commerce_order' => '\\d+', '_user_is_logged_in' => 'TRUE'],
+    ];
+    foreach ($account_requirements as $name => $requirements) {
+      if ($route = $collection->get($name)) {
+        $route->setRequirements($requirements);
+      }
+    }
     // Pedidos e pagamentos são as listas do Commerce, agora no painel da conta (sem ID na URL).
     // O controller da página é o do Portal; o acesso exige login e a lista usa o usuário da sessão.
     $account_lists = [
