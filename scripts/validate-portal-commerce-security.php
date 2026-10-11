@@ -411,7 +411,10 @@ $support_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/ac
 $assert(str_contains($support_controller_source, "loadByProperties(['uid' => \$uid])") && str_contains($support_controller_source, "bundle() === 'donation'"), 'My Support reads only the current user\'s Commerce Donation orders.');
 $support_form = \Drupal::formBuilder()->getForm(\Drupal\aculta_portal\Support\Form\SupportForm::class);
 $support_html = (string) \Drupal::service('renderer')->renderRoot($support_form);
-$assert(str_contains($support_html, 'apoio financeiro está temporariamente indisponível') && !str_contains($support_html, '/donate'), 'The public support page does not expose a broken checkout while the gateway is disabled.');
+// O aviso de indisponibilidade acompanha o estado real do gateway: desligado → aviso e sem /donate; ligado → sem aviso.
+$support_notice = str_contains($support_html, 'apoio financeiro está temporariamente indisponível');
+$gateway_enabled = (bool) \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->load('mercado_pago')?->status();
+$assert($gateway_enabled ? !$support_notice : ($support_notice && !str_contains($support_html, '/donate')), 'The public support page matches the Mercado Pago gateway state (notice only while disabled).');
 
 // Exercise the amount guard and Form API number minimum with values kept only
 // in this CLI process. No Commerce entity or provider request is created.
