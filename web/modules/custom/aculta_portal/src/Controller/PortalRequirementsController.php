@@ -284,32 +284,40 @@ final class PortalRequirementsController extends ControllerBase {
     $rule = $environment === 'production'
       ? $this->t('Produção: indexável em todos os hosts. Sem noindex e com o sitemap do índice anunciado no robots.txt.')
       : $this->t('Teste: não indexável em todos os hosts (noindex, nofollow, noarchive). Caminhos privados mantêm noindex.');
-    $section = [
+    $result = $this->deployerStatus->indexing();
+    $rows = [
+      [$this->t('Ambiente declarado'), $environment],
+      [$this->t('Regra esperada'), (string) $rule],
+    ];
+    if ($result === NULL) {
+      $rows[] = [$this->t('Última verificação'), $this->t('Nenhuma verificação registrada.')];
+      $rows[] = [$this->t('Como publicar'), $this->t('Execute a verificação de robots do ACULTA Deployer no ambiente.')];
+    }
+    else {
+      $rows[] = [$this->t('Última verificação'), $this->t('@at (ambiente @env)', ['@at' => (string) ($result['checked_at'] ?? ''), '@env' => (string) ($result['environment'] ?? '')])];
+      if (($result['environment'] ?? NULL) !== $environment) {
+        $rows[] = [$this->t('Atenção'), $this->t('O resultado publicado é de outro ambiente. Execute a verificação de robots neste ambiente.')];
+      }
+      $rows[] = [$this->t('Resultado'), ($result['ok'] ?? FALSE) === TRUE
+        ? $this->t('OK: @passed verificações aprovadas.', ['@passed' => (int) ($result['passed'] ?? 0)])
+        : $this->t('Falha: @failed verificação(ões) com problema.', ['@failed' => (int) ($result['failed'] ?? 0)]),
+      ];
+      $failed = is_array($result['failed_urls'] ?? NULL) ? array_map('strval', $result['failed_urls']) : [];
+      if ($failed !== []) {
+        $rows[] = [$this->t('URLs com falha'), ['#theme' => 'item_list', '#items' => $failed]];
+      }
+    }
+    return [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-portal-requirements__indexing']],
       'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Indexação')],
-      'environment' => ['#plain_text' => $this->t('Ambiente declarado: @env.', ['@env' => $environment])],
-      'rule' => ['#plain_text' => (string) $rule],
+      'table' => [
+        '#type' => 'table',
+        '#header' => [$this->t('Item'), $this->t('Valor')],
+        '#rows' => $rows,
+        '#attributes' => ['class' => ['aculta-portal-requirements__indexing-table']],
+      ],
     ];
-    $result = $this->deployerStatus->indexing();
-    if ($result === NULL) {
-      $section['last'] = ['#plain_text' => $this->t('Nenhuma verificação registrada. Execute a verificação de robots do ACULTA Deployer no ambiente para publicar o resultado.')];
-      return $section;
-    }
-    $checkedAt = (string) ($result['checked_at'] ?? '');
-    $section['last'] = ['#plain_text' => $this->t('Última verificação: @at (ambiente @env).', ['@at' => $checkedAt, '@env' => (string) ($result['environment'] ?? '')])];
-    if (($result['environment'] ?? NULL) !== $environment) {
-      $section['mismatch'] = ['#plain_text' => $this->t('⚠ O resultado publicado é de outro ambiente. Execute a verificação de robots do ACULTA Deployer neste ambiente.')];
-    }
-    $section['summary'] = ['#plain_text' => ($result['ok'] ?? FALSE) === TRUE
-      ? $this->t('✔ OK: @passed verificações aprovadas.', ['@passed' => (int) ($result['passed'] ?? 0)])
-      : $this->t('✖ Falha: @failed verificação(ões) com problema.', ['@failed' => (int) ($result['failed'] ?? 0)]),
-    ];
-    $failed = is_array($result['failed_urls'] ?? NULL) ? $result['failed_urls'] : [];
-    if ($failed !== []) {
-      $section['failed'] = ['#theme' => 'item_list', '#items' => array_map('strval', $failed)];
-    }
-    return $section;
   }
 
   /** Builds one module requirement row. */
