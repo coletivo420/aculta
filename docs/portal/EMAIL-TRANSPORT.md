@@ -162,3 +162,23 @@ Ordem de teste no Homelab (M1):
 ## 8. Versão
 
 Esta fase é documental. Nenhum marcador de versão é alterado. A versão entra na M1.
+
+## 9. Evidência do teste no runtime (M1)
+
+Executado em 2026-10-11 no runtime de desenvolvimento (`aculta_runtime`, Homelab), com autorização do responsável.
+
+| Passo | Resultado |
+|---|---|
+| 1. Módulos `symfony_mailer`, `mailer_transport`, `mailer_policy`, `mailer_override` ativos, sem erro de referência circular | OK. Único aviso: download de traduções do symfony_mailer (`ftp.drupal.org`), não bloqueante |
+| 2. Transporte `smtp2go` e dois `key.config_override` exportados para `config/sync`, com `user` e `pass` vazios | OK (commit `d33a747`) |
+| 3. E-mail de teste pelo Core (`system.test_mail`) com `mailer_override` como gerenciador | OK: envio aceito (`result=TRUE`), gerenciador `MailManagerReplacement`, transporte `smtp2go` |
+| Credenciais injetadas pelo Key no transporte em memória | OK: usuário e senha presentes (apenas tamanhos verificados: 23 e 16 caracteres; valores não exibidos) |
+| 4. Remetente | Não verificado |
+| 4. Recebimento na caixa de destino | Não verificado (sem acesso à caixa; o envio foi aceito pelo SMTP) |
+| 5. Webform com modelo HTML (DT-P09) | Não testado |
+| 6. `transactionalMailReady()` verdadeiro só com as Keys | Não verificado (método privado; coberto pelo código e pelo gate) |
+
+Configuração local: `settings.local.php` (fora do Git) passou a apontar `locale_translation_path` para `~/.local/share/aculta-runtime/translations`, porque `public://translations` pertence a outro usuário.
+
+**Pendências antes do M2:** confirmar recebimento e remetente, testar o Webform (DT-P09) e validar `transactionalMailReady()` no runtime. Só depois disso o M2 começa.
+
