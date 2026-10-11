@@ -52,7 +52,7 @@ final class CartUtility {
         $items[] = [
           'title' => (string) $item->getTitle(),
           'quantity' => (string) $quantity,
-          'total' => $total !== NULL ? $this->formatPrice((float) $total->getNumber(), (string) $currency) : '',
+          'total' => $total !== NULL ? $this->formatPrice((float) $total->getNumber(), $total->getCurrencyCode()) : '',
         ];
       }
     }

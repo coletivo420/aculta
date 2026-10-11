@@ -24,7 +24,9 @@
         {% endfor %}
       </ul>
       <p class="aculta-cart-offcanvas__total"><strong>Total:</strong> {{ total }}</p>
-      <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ url }}">Ver carrinho</a>
+      {% if url %}
+        <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ url }}">Ver carrinho</a>
+      {% endif %}
     {% endif %}
   </div>
   <div class="aculta-cart-offcanvas__banner">{{ banner }}</div>
