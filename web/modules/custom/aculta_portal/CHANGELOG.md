@@ -1,3 +1,12 @@
+## 0.3.0-dev.5 — Doação em `/apoiar` — 2026-10-11
+
+Classificação: MINOR (caminho público das rotas de doação alterado; nomes de rota e pagamento inalterados).
+
+- `DonationFriendlyRouteSubscriber`: `/donate` → `/apoiar`; `/donate/{valor}/now` → `/apoiar/{valor}/agora`; `/donate/{pedido}/{etapa}` → `/apoiar/{pedido}/{etapa}`.
+- `/donate` passa a responder 404, sem redirecionamento.
+- Gate de segurança e política de pagamento atualizados.
+- Gate de subscribers: 11.
+
 ## 0.3.0-dev.4 — Carrinho em `/carrinho` — 2026-10-11
 
 Classificação: MINOR (caminho público de rota alterado; nome da rota e checkout/pagamento inalterados).

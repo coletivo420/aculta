@@ -201,8 +201,8 @@ observado nesta data:
   orders para testar Add to cart, identidade do carrinho ou checkout;
 - Commerce Donation Flow está configurado em modo `donate`, que desabilita as
   rotas genéricas `/carrinho` (carrinho, antes `/cart`) e `/checkout`; ambas respondem `403` em MAIN;
-- a rota `/donate` redireciona de SUPPORT para MAIN, mas o acesso anônimo é
-  negado pela permissão `make donation`; `/donate` responde `403` em MAIN;
+- a rota `/apoiar` (antes `/donate`) redireciona de SUPPORT para MAIN, mas o acesso anônimo é
+  negado pela permissão `make donation`; `/apoiar` responde `403` em MAIN;
 - SHOP ainda não apresenta catálogo público e sua raiz responde `404`.
 
 Por isso Add to cart, persistência/continuidade da mesma order, checkout
