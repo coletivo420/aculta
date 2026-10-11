@@ -3,14 +3,6 @@
   galeria em carrossel à esquerda; categoria, título e compra à direita; abas abaixo.
   O Commerce renderiza o formulário de compra; o tema só apresenta.
 #}
-{% set image_count = product.field_imagens|keys|filter(k => k matches '/^\\d+$/')|length %}
-{% set slides %}
-  {% for key, img in product.field_imagens %}
-    {% if key matches '/^\\d+$/' %}
-      <div class="carousel-item{{ key == 0 ? ' active' }}">{{ img }}</div>
-    {% endif %}
-  {% endfor %}
-{% endset %}
 {% set category = product.field_categoria ? product.field_categoria|render|striptags|trim : '' %}
 {% set details %}
   {{ include('aculta420:product-details', { category: category }, with_context = false) }}
@@ -26,12 +18,7 @@
 <article class="aculta-product">
   <div class="row g-4 g-lg-5 aculta-product__main">
     <div class="col-12 col-lg-6">
-      {{ include('aculta420:product-gallery', {
-        id: 'aculta-produto-galeria',
-        label: 'Imagens do produto',
-        count: image_count,
-        slides: slides,
-      }, with_context = false) }}
+      {{ aculta_product_gallery }}
     </div>
     <div class="col-12 col-lg-6">
       {{ include('aculta420:product-buy', {

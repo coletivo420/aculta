@@ -1,3 +1,15 @@
+## 0.2.0-dev.49 — Galeria do produto em VVJB com mídias — 2026-10-11
+
+Classificação: MINOR da linha 0.2 (novo campo de mídia do produto e nova view; sem alteração de contrato público).
+
+- Fotos do produto viram mídias de imagem (`media.type.image`), ligadas ao produto pelo campo `field_galeria` (referência a mídia, múltiplo). O campo `field_imagens` (arquivos) fica como histórico.
+- `views.view.galeria_produto` (config/sync): view VVJB (`views_vvjb`) sobre `media_field_data`, com argumento de IDs separados por `+`, linhas com o modo de exibição padrão da mídia.
+- `Hook\ProductGalleryHooks` (`preprocess_commerce_product`): prepara a renderização da view em `aculta_product_gallery` para o tema. O tema só imprime.
+- Tema: template do produto usa `aculta_product_gallery`; componente `product-gallery` (Bootstrap) removido.
+- Verificado no servidor de testes (HTML): página 200; galeria VVJB com 7 imagens (estilo `large`, 384×480); sem carrossel Bootstrap.
+- Pendente: exportar a configuração do Runtime antes do RC (campo, view e displays já estão em config/sync).
+- Número de versão: 0.2.0-dev.49, porque a 0.2.0-dev.48 está na PR #192 (CAPTCHA da loja) e na PR #190 (domínios).
+
 ## 0.2.0-dev.48 — Deployer 0.1.15: tabela de migração de domínios (teste → produção) — 2026-10-11
 
 Classificação: PATCH (ferramenta de deploy e documentação; sem código de runtime do Portal).

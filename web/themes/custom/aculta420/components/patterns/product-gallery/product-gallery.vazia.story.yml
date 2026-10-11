@@ -1,8 +1,0 @@
-name: Sem imagens
-description: Galeria sem imagens não renderiza nada.
-component: aculta420:product-gallery
-props:
-  count: 0
-slots:
-  slides:
-    markup: ''
