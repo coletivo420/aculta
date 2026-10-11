@@ -1,3 +1,10 @@
+## 0.1.16 — Loja: host SHOP do produto e teste de robots — 2026-10-11
+
+- `config/deploy.json`: bloco `domain_transition.shop` (purpose SHOP, rota `entity.commerce_product.canonical`). Loja de teste `loja.aculta.toca.net.br`; produção `loja.aculta.org`.
+- `robots_policy.test.hosts`: inclui `loja.aculta.toca.net.br` (noindex verificado pelo `robots --env=test`).
+- Versão: `VERSION` e a constante da CLI em 0.1.16.
+- Testes: PASS; `check`: PASS; `domains`: 6 alinhados, 1 pendente de RC.
+
 ## 0.1.15 — migração de domínios (tabela e comando de leitura) — 2026-10-11
 
 - `config/deploy.json`: bloco `domain_transition` com os 7 domínios do Portal (host de teste → host de produção) e a decisão pendente da revista.

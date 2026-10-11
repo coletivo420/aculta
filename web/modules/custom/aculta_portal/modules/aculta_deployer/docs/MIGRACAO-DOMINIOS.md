@@ -35,3 +35,9 @@ Importar novamente o backup com `config:import --partial --source=DIR_BACKUP` e 
 ## Fora do repositório
 
 DNS, VirtualHosts e certificados de cada ambiente são configurados fora do Git. Credenciais não entram aqui (ver `GUARDRAILS.md`).
+
+## Loja (SHOP)
+
+- Teste: `loja.aculta.toca.net.br`. Produção: `loja.aculta.org`.
+- A página do produto só responde no host da loja (rota `entity.commerce_product.canonical`, purpose `shop`).
+- Na transição, o host de produção precisa existir no DNS e com certificado antes do deploy do RC.

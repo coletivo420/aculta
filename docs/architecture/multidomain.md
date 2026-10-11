@@ -65,3 +65,11 @@ principal não serve apoio.
   `docs/portal/PAYMENT-DOMAIN-POLICY.md`).
 - **Redirecionamentos:** não há redirecionamento para caminhos antigos até a versão
   estável.
+
+
+## Loja (SHOP): onde cada página vive
+
+- Página do produto (`entity.commerce_product.canonical`): purpose `shop`. Teste: `loja.aculta.toca.net.br`; produção: `loja.aculta.org`. No host principal responde 404.
+- Carrinho e checkout: purpose `main` (`DomainRoutePolicy`). A compra começa no host da loja e segue para o carrinho do principal.
+- Canonical do produto: sempre no host da loja (token absoluto da metatag, na requisição atual).
+- Deployer: `domain_transition.shop` em `web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json`.

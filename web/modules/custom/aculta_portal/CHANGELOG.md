@@ -1,3 +1,12 @@
+## 0.2.0-dev.50 — Página do produto da loja no host SHOP — 2026-10-11
+
+Classificação: PATCH (política de rota; sem mudança de contrato público).
+
+- `DomainRouteSubscriber`: a rota `entity.commerce_product.canonical` pertence ao purpose `shop`. Em `loja.aculta.toca.net.br` responde 200; no host principal, 404 (wrong-purpose público, conforme a política). Carrinho e checkout continuam no MAIN.
+- O link canônico do produto passa a apontar para o host SHOP (verificado: `https://loja.aculta.toca.net.br/loja/produto/...`).
+- Deployer 0.1.16: loja de teste na lista de robots e bloco `domain_transition.shop`.
+- Pendente: confirmar no navegador o fluxo adicionar ao carrinho (SHOP) → carrinho (MAIN). O carrinho no host principal respondeu 403 para visitante anônimo; a causa ainda não foi investigada.
+
 ## 0.2.0-dev.49 — Galeria do produto em VVJB com mídias — 2026-10-11
 
 Classificação: MINOR da linha 0.2 (novo campo de mídia do produto e nova view; sem alteração de contrato público).
