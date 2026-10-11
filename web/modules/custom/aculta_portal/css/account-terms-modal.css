@@ -1,0 +1,23 @@
+/*
+ * Popup de aceite dos termos (AccountTermsHooks). A página atrás fica borrada e não recebe cliques
+ * (showModal() torna o restante inerte). Sem fundo opaco nem botão de fechar.
+ */
+.portal-terms-modal {
+  max-width: min(36rem, calc(100vw - 2rem));
+  border: 0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.portal-terms-modal::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.portal-terms-modal__documents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}

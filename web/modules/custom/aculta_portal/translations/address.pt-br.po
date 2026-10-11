@@ -1,0 +1,163 @@
+# Catálogo dos rótulos de endereço do módulo address (contexto "Address label"). Importar com:
+#   drush locale:import --type=customized --override=none pt-br <este arquivo>
+msgid ""
+msgstr ""
+"Language: pt-br\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgctxt "Address label"
+msgid "First name"
+msgstr "Nome"
+
+msgctxt "Address label"
+msgid "Middle name"
+msgstr "Nome do meio"
+
+msgctxt "Address label"
+msgid "Last name"
+msgstr "Sobrenome"
+
+msgctxt "Address label"
+msgid "Organization"
+msgstr "Organização"
+
+msgctxt "Address label"
+msgid "Address line 1"
+msgstr "Endereço, linha 1"
+
+msgctxt "Address label"
+msgid "Address line 2"
+msgstr "Endereço, linha 2"
+
+msgctxt "Address label"
+msgid "Address line 3"
+msgstr "Endereço, linha 3"
+
+msgctxt "Address label"
+msgid "Postal code"
+msgstr "CEP"
+
+msgctxt "Address label"
+msgid "Zip code"
+msgstr "CEP"
+
+msgctxt "Address label"
+msgid "Pin code"
+msgstr "Código PIN"
+
+msgctxt "Address label"
+msgid "Sorting code"
+msgstr "Código de classificação"
+
+msgctxt "Address label"
+msgid "Cedex"
+msgstr "Cedex"
+
+msgctxt "Address label"
+msgid "Dependent locality (e.g. Neighbourhood)"
+msgstr "Bairro"
+
+msgctxt "Address label"
+msgid "Neighborhood"
+msgstr "Bairro"
+
+msgctxt "Address label"
+msgid "Suburb"
+msgstr "Bairro"
+
+msgctxt "Address label"
+msgid "Locality (e.g. City)"
+msgstr "Cidade"
+
+msgctxt "Address label"
+msgid "City"
+msgstr "Cidade"
+
+msgctxt "Address label"
+msgid "Town/City"
+msgstr "Cidade"
+
+msgctxt "Address label"
+msgid "Post town"
+msgstr "Cidade postal"
+
+msgctxt "Address label"
+msgid "Administrative area (e.g. State or Province)"
+msgstr "Estado"
+
+msgctxt "Address label"
+msgid "State"
+msgstr "Estado"
+
+msgctxt "Address label"
+msgid "Province"
+msgstr "Província"
+
+msgctxt "Address label"
+msgid "Region"
+msgstr "Região"
+
+msgctxt "Address label"
+msgid "Area"
+msgstr "Área"
+
+msgctxt "Address label"
+msgid "County"
+msgstr "Condado"
+
+msgctxt "Address label"
+msgid "Department"
+msgstr "Departamento"
+
+msgctxt "Address label"
+msgid "District"
+msgstr "Distrito"
+
+msgctxt "Address label"
+msgid "Canton"
+msgstr "Cantão"
+
+msgctxt "Address label"
+msgid "Emirate"
+msgstr "Emirado"
+
+msgctxt "Address label"
+msgid "Island"
+msgstr "Ilha"
+
+msgctxt "Address label"
+msgid "Parish"
+msgstr "Paróquia"
+
+msgctxt "Address label"
+msgid "Prefecture"
+msgstr "Prefeitura"
+
+msgctxt "Address label"
+msgid "Street address"
+msgstr "Logradouro"
+
+msgctxt "Address label"
+msgid "Street address line 2"
+msgstr "Logradouro, linha 2"
+
+msgctxt "Address label"
+msgid "Street address line 3"
+msgstr "Logradouro, linha 3"
+
+msgctxt "Address label"
+msgid "Eircode"
+msgstr "Eircode"
+
+msgctxt "Address label"
+msgid "Townland"
+msgstr "Townland"
+
+msgctxt "Address label"
+msgid "Village/Township"
+msgstr "Vila/Município"
+
+msgctxt "Address label"
+msgid "Do/Si"
+msgstr "Do/Si"

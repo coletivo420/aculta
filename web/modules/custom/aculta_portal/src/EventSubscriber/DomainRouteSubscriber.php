@@ -23,11 +23,27 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
 
   /** {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
-    // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado.
-    foreach (['lms.course.start', 'lms.group.answer_form', 'commerce_checkout.form', 'commerce_checkout.checkout'] as $name) {
+    // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado, somado à regra original do dono
+    // do recurso (ProtectedRouteAccessCheck). Rota sem recurso (/checkout) só recebe a checagem de e-mail; mantém _permission.
+    $protected = [
+      'lms.course.start' => 'aculta_portal.access.protected_route:course',
+      'lms.group.answer_form' => 'aculta_portal.access.protected_route:course',
+      'commerce_checkout.form' => 'aculta_portal.access.protected_route:checkout',
+    ];
+    foreach ($protected as $name => $access) {
       if ($route = $collection->get($name)) {
-        $route->setRequirement('_custom_access', 'aculta_portal.access.email_confirmed:access');
+        $route->setRequirement('_custom_access', $access);
       }
+    }
+    if ($route = $collection->get('commerce_checkout.checkout')) {
+      $route->setRequirement('_custom_access', 'aculta_portal.access.protected_route:account');
+    }
+    // Página do acordo de termos: substituída pelo popup de aceite (AccountTermsHooks). A rota continua existindo
+    // porque o módulo agreement a consulta por nome; o caminho /aceite-termos responde 404.
+    if ($route = $collection->get('agreement.aculta_account_terms')) {
+      $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\PortalController::retiredNotFound');
+      $route->setDefault('_form', NULL);
+      $route->setRequirements(['_access' => 'TRUE']);
     }
 
     $pathChanges = [
@@ -131,28 +147,20 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
     }
+    // Cadastro de pagamento só existe com gateway que guarda métodos; a mesma regra esconde o botão (ação local).
+    if ($route = $collection->get('entity.commerce_payment_method.add_form')) {
+      $route->setRequirements(['_custom_access' => 'aculta_portal.access.payment_method_add:access']);
+    }
     // Verificações que dependiam do usuário da URL passam a usar a sessão (login) e a verificação da entidade
     // (dono do pedido ou do perfil). Ver docs/portal/REDIRECTS.md, seção de caminhos de conta.
-    // Controllers do Portal entregam ao Commerce o usuário da sessão (sem ID na URL).
-    $account_controllers = [
-      'commerce_order.address_book.overview' => '\\Drupal\\aculta_portal\\Controller\\PortalController::addressBook',
-      'commerce_order.address_book.add_form' => '\\Drupal\\aculta_portal\\Controller\\PortalController::addressBookAdd',
-      'entity.commerce_payment_method.add_form' => '\\Drupal\\aculta_portal\\Controller\\PortalController::paymentMethodAdd',
-    ];
-    foreach ($account_controllers as $name => $controller) {
+    // Endereços do Commerce: a tela própria foi substituída por Meus Dados (CEP). Os caminhos antigos
+    // redirecionam para lá (ver PortalController::addressRedirect e docs/portal/REDIRECTS.md).
+    foreach (['commerce_order.address_book.overview', 'commerce_order.address_book.add_form', 'commerce_order.address_book.edit_form', 'commerce_order.address_book.delete_form', 'commerce_order.address_book.set_default'] as $name) {
       if ($route = $collection->get($name)) {
-        $route->setDefaults(['_controller' => $controller, '_title' => $route->getDefault('_title')]);
-      }
-    }
-    $account_requirements = [
-      'commerce_order.address_book.overview' => ['_user_is_logged_in' => 'TRUE'],
-      'commerce_order.address_book.add_form' => ['_user_is_logged_in' => 'TRUE'],
-      'entity.commerce_payment_method.add_form' => ['_user_is_logged_in' => 'TRUE'],
-      'entity.commerce_order.user_view' => ['_entity_access' => 'commerce_order.view', 'commerce_order' => '\\d+', '_user_is_logged_in' => 'TRUE'],
-    ];
-    foreach ($account_requirements as $name => $requirements) {
-      if ($route = $collection->get($name)) {
-        $route->setRequirements($requirements);
+        $route->setDefaults(['_controller' => '\\Drupal\\aculta_portal\\Controller\\PortalController::addressRedirect', '_title' => 'Meus dados']);
+        $route->setRequirements(['_user_is_logged_in' => 'TRUE']);
+        $route->setOption('parameters', []);
+        $route->setOption('_aculta_domain_purpose', 'account');
       }
     }
     // Pedidos e pagamentos são as listas do Commerce, agora no painel da conta (sem ID na URL).

@@ -1,3 +1,99 @@
+## 0.3.0-dev.16 — Aceite dos termos em popup persistente; contenção do Mercado Pago — 2026-10-11
+
+- Resumo do checkout: nome do produto no item (modo de visualização `summary` do bundle `camiseta_tamanho`, exportado em `config/sync`). Verificado por renderização: "Camiseta Abadá Bloco Sativa 2026 – Regata Tamanho M".
+- Máscara do CEP `00000-000` em `js/cep-address.js` (biblioteca compartilhada por Meus Dados e checkout). A consulta continua usando só os dígitos. Correção: o behavior do Portal tinha o mesmo nome do behavior do contrib (`cepAutocomplete`) e era sobrescrito; agora é `acultaCepAddress` e reivindica os campos pelo mesmo `once` do contrib. O campo Número fica logo após o Logradouro. Correção de regressão: ao preencher pelo CEP, o Estado dispara o rebuild AJAX do endereço, que apagava Logradouro, Bairro e Cidade. Agora o Estado é preenchido por último, e o preenchimento é reaplicado nos campos vazios do markup novo (`js/cep-address.js`). Vale para Meus Dados e para o checkout.
+- Checkout: campo **Número** no endereço de cobrança (`aculta_billing_address`). Como o endereço de cobrança do Commerce não tem campo próprio, o número é gravado no logradouro (`Logradouro, Número`) e preenchido de volta ao voltar à etapa. Verificado: campo renderizado em `order_information`; envio do passo ainda não testado de ponta a ponta.
+- Popup de aceite: Esc (fechamento sem ativação do usuário) reabre o popup no evento close, enquanto não houver aceite; Tab e Shift+Tab ficam presos dentro do popup (`js/account-terms-modal.js`). Verificado no navegador pelo Felipe antes desta correção; reteste pendente.
+- Tradução: "Company" → "Empresa" (`aculta_ui.pt-br.po`).
+Classificação: MINOR (fluxo de aceite substituído: a página /aceite-termos deixa de existir; novo bloqueio de páginas restritas).
+
+- **Aceite dos termos como popup (modal) persistente.** Substitui a página /aceite-termos. Aparece só nas páginas restritas (conta, carrinho, checkout, cursos e áreas de membro, marcadas pela opção de rota `_aculta_terms_required`) para quem ainda não aceitou a versão atual. Páginas públicas não mostram o popup. Não tem botão de fechar; Esc é cancelado; clique fora não fecha. Após aceitar, a mesma página volta liberada.
+- **Bloqueio.** O popup persistente é o bloqueio das páginas restritas: a página carrega na mesma URL com o popup por cima. As ações protegidas (checkout, cursos, conta) seguem negadas pelo servidor (`ProtectedRouteAccessCheck`), e a página de acesso negado também mostra o popup.
+- **Fonte de verdade.** O aceite é gravado no mesmo registro de `aculta_account_terms` que o cadastro usa (`AccountTermsPolicy`). Quem se cadastra pelo formulário já aceita e não vê o popup. Quem entra por OAuth vê o popup até aceitar. Trocar a versão dos termos é alterar `reset_date` do acordo.
+- Papéis do acordo `aculta_account_terms` zerados (`roles: {}`) para o redirecionamento antigo do módulo agreement não ser disparado. A rota `agreement.aculta_account_terms` continua existindo (o módulo a consulta por nome) e responde 404.
+- Formulário `/termos/aceitar` (POST com token): usado pelo popup e como retorno sem JavaScript. O destino é validado como caminho local do próprio host.
+- Popup só para usuário logado sem aceite, nas páginas que o anônimo não acessa (conta, edição e criação de conteúdo, área de membro), nos nós com comentários (fórum) e na página de acesso negado. Páginas acessíveis ao anônimo (loja, carrinho, verbetes públicos) não mostram o popup; anônimos nunca veem o popup.
+- Fundo do popup borrado: `css/account-terms-modal.css` (`::backdrop` com `backdrop-filter: blur(6px)`), biblioteca `aculta_portal/account-terms-modal`.
+- Limite conhecido: a página de bloqueio ainda mostra o cabeçalho e o título do site atrás do popup (o renderizador bare mantém o layout do tema). O conteúdo restrito não é entregue. Eliminar o cabeçalho exige página HTML própria, decisão pendente.
+- **Contenção Mercado Pago (incidente):** o token gravado como `MERCADOPAGO_TEST_ACCESS_TOKEN` tem prefixo `APP_USR` (credencial de produção). O pagamento de teste redirecionou para o domínio real. Gateway desligado no runtime (`status: 0`; já era `false` no `config/sync`). Ver `docs/portal/CHECKOUT-BILLING.md`.
+
+**RUNTIME STATUS:** verificado no servidor de testes por HTTP: página de aceite antiga 404; `/termos/aceitar` 403 para anônimo; páginas restritas sem aceite (carrinho, dados, conta) respondem 200 com o popup; checkout sem aceite 403 com popup; loja pública sem popup. Não verificado: comportamento do popup no navegador (foco, Esc, clique fora) e aceite pelo formulário com JavaScript.
+## 0.3.0-dev.15 — Passo de endereço de cobrança no checkout (CEP); traduções; nome do produto no carrinho — 2026-10-11
+
+Classificação: MINOR (novo pane de checkout; a etapa de dados do pedido passa a pedir endereço de cobrança).
+
+- Novo pane `aculta_billing_address` (`BillingAddressPane`) no passo `order_information` do fluxo `default`, no lugar de `billing_information` (removido pelo Commerce Payment). Usa o formulário inline de perfil de cobrança do Commerce, só com endereço, e o autocomplete por CEP `cep_autocomplete/viacep` (mesmo de "Meus Dados"). Grava o perfil como cobrança do pedido, que o Mercado Pago exige.
+- `collect_billing_information` do Mercado Pago volta para `false` (o pane agora coleta o endereço).
+- Traduções: "Payment" → "Pagamento" e "Quantity" → "Quantidade" (`translations/aculta_ui.pt-br.po`).
+- Nome do produto na coluna Item do carrinho: display `cart` do bundle `camiseta_tamanho` (`config/sync/core.entity_view_display.commerce_product_variation.camiseta_tamanho.cart.yml`), copiado do display padrão.
+- Documentação de testes de navegador: `docs/portal/TESTES-NAVEGADOR.md`.
+
+**RUNTIME STATUS:** parcial. Verificado no servidor de testes: o pedido 5 renderiza o campo de CEP em `order_information`, com a biblioteca `cep_autocomplete/viacep` carregada; traduções importadas. Não verificado: gravação do endereço pelo passo, passagem para o Mercado Pago e nome do produto no carrinho pelo navegador. Pendente de teste com `teste.comum`.
+
+## 0.3.0-dev.14 — Checkout: incidente de endereço de cobrança documentado; destino do aceite sem fixo — 2026-10-11
+
+Classificação: PATCH (configuração e documentação; o passo de endereço com CEP ainda não foi implementado).
+
+- Incidente: pedido 5, etapa de pagamento, "Billing information is required to proceed." Documentado em `docs/portal/CHECKOUT-BILLING.md`, com as três causas: país de cobrança vazio na loja, `billing_information` substituído pelo Commerce Payment e gateway Mercado Pago que exige perfil de cobrança.
+- Loja 1: `billing_countries = [BR]` (runtime; o campo não é exportado em `config/sync`).
+- Gateway Mercado Pago: `collect_billing_information: true` (config/sync e runtime).
+- Acordo `aculta_account_terms`: `settings.destination` vazio. O retorno volta ao destino salvo, e não a um fixo.
+- Pendente: passo de endereço de cobrança com autocomplete por CEP (comportamento esperado em `CHECKOUT-BILLING.md`), tradução de "Payment" e "Quantity", e nome do produto na coluna Item do carrinho.
+
+**RUNTIME STATUS:** verificado no servidor de testes: `billing_countries` da loja = [BR]; gateway com flag ativa; acordo sem destino fixo. Não verificado: passo de pagamento com formulário de cobrança (ainda sem campos na etapa `payment`) e pagamento até o Mercado Pago.
+
+## 0.3.0-dev.13 — Caminho interno da visão geral passa a /minha-conta (sem /conta-interna) — 2026-10-11
+
+Classificação: PATCH (caminho técnico interno trocado; nenhum link público alterado).
+
+- `/conta-interna` deixa de existir como caminho da visão geral. A rota `aculta_portal.dashboard` passa a `/minha-conta`, e o front do Domain ACCOUNT (`config/sync/domain/conta_aculta_org/system.site.yml`) aponta para ele. Motivo: o Core reserva `/` para a rota `<front>`, então a rota não pode usar `/` diretamente.
+- Requisição direta a `/minha-conta` responde 404 (guarda de `DomainPurposeRequestSubscriber`); a visão geral é servida somente na raiz `/` da Conta.
+- Gate `validate-aculta-portal-conta-root.php` passa a proibir o caminho em código, configuração e scripts (correspondência exata do caminho).
+- Sonda `/conta-interna` removida do `deploy.json` do aculta_deployer.
+- Observado e não alterado: para visitante logado, qualquer caminho inexistente da Conta (inclusive `/conta-interna`) responde 302 para `/`; visitante anônimo recebe 404. Regra existente de `DomainPurposeRequestSubscriber`; decisão pendente.
+
+**RUNTIME STATUS:** verificado no servidor de testes: `conta.../` 200 (logado); `conta.../minha-conta` 404 direto; `conta.../` 302 para `/entrar` (anônimo); `aculta.../` 200; gates de conta, Portal e root policy PASS.
+
+## 0.3.0-dev.12 — Retorno após aceitar os termos da conta vai para a raiz da conta — 2026-10-11
+
+Classificação: PATCH (destino de configuração corrigido; nenhum caminho público alterado).
+
+- O acordo `aculta_account_terms` redirecionava para `/minha-conta`, um caminho antigo que responde 404. A raiz da conta é `/`. Destino configurado para `/` em `config/sync/agreement.agreement.aculta_account_terms.yml` e no runtime.
+- Não é problema de DNS: `conta.aculta.toca.net.br` resolve (8.8.8.8, 1.1.1.1 e local) para o mesmo IP de `aculta.` e `loja.`.
+- `/conta-interna` continua respondendo 404 fora da raiz, por política do Portal (`DomainPurposeRequestSubscriber`); não é destino de retorno.
+
+**RUNTIME STATUS:** verificado no servidor de testes com envio real do formulário `aculta_account_terms` como usuário comum de teste: 302 para `https://conta.aculta.toca.net.br/`; logado, `/` 200 e `/dados` 200. Estado de aceite do usuário de teste restaurado após o teste.
+
+## 0.3.0-dev.11 — Checkout e cursos: e-mail confirmado somado à regra do dono (correção de segurança) — 2026-10-11
+
+Classificação: PATCH (correção de controle de acesso; nenhum caminho alterado).
+
+- Correção: a política de e-mail confirmado substituía o `_custom_access` de `commerce_checkout.form`, `lms.course.start` e `lms.group.answer_form`. Com isso, a regra do Commerce (dono do pedido, loja publicada, itens, permissão "access checkout") e a do LMS (`group.take`) deixavam de valer. Usuário com e-mail confirmado conseguia abrir o checkout de outro pedido ou o curso sem matrícula.
+- `aculta_portal.access.protected_route` (`ProtectedRouteAccessCheck`) combina a regra original com o e-mail confirmado, usando `andIf()`.
+- `/checkout` (`commerce_checkout.checkout`) mantém `_permission` e recebe só a checagem de e-mail.
+- Sintoma observado em teste: admin logado recebe "Acesso negado" em `/checkout/4` porque o e-mail da conta não está confirmado.
+
+**RUNTIME STATUS:** verificado no servidor de testes por API (`checkout()` com o dono do pedido 4 → forbidden, motivo "E-mail não confirmado."; visitante anônimo → forbidden). Não verificado: usuário não-dono com e-mail confirmado (não há outro usuário no banco de testes) e cursos (`group.take`).
+
+## 0.3.0-dev.10 — Correções da validação visual: cadastro de pagamento e rótulos de endereço — 2026-10-11
+
+Classificação: PATCH (correção de apresentação e de acesso; sem caminho novo).
+
+- "Adicionar método de pagamento" some quando nenhum gateway ativo guarda métodos (`aculta_portal.access.payment_method_add`, rota `/pagamentos/novo`). Hoje só o Checkout Pro está ativo, sem cartão salvo.
+- Rótulos de endereço (módulo address, contexto "Address label") em português: `translations/address.pt-br.po`. Importar com `drush locale:import --type=customized --override=none pt-br <arquivo>`.
+
+**RUNTIME STATUS:** verificado no servidor de testes (runtime `aculta_runtime`, por API, sem navegador): `checkNamedRoute` de `entity.commerce_payment_method.add_form` e a ação local da coleção `/pagamentos` retornam `forbidden` para o administrador, sem gateway com cartão ativo; `locale:import` adicionou 38 traduções; `t()` com contexto "Address label" em pt-br devolve "CEP" e "Logradouro, linha 2". Não verificado: captura visual de `/pagamentos` e `/dados/endereco` com sessão de navegador.
+
+## 0.3.0-dev.9 — Endereços somente em Meus Dados (CEP) — 2026-10-11
+
+Classificação: MINOR (tela de endereços do Commerce substituída por redirecionamento).
+
+- Lista e cadastro de endereços do Commerce (`/enderecos*`) redirecionam (302) para `/dados/endereco` (Meus Dados, com busca por CEP). Decisão do responsável.
+- `PortalController::addressRedirect`; `AccountListPathProcessor` sem `/enderecos`.
+- Caminho com ID `/user/{uid}/address-book*` responde 404.
+
+**RUNTIME STATUS:** verificado no servidor de testes com sessão de administrador: `/enderecos` 302 para `/dados/endereco`; `/dados/endereco` 200; anônimo 403; host principal 404.
+
 ## 0.3.0-dev.8 — Endereços, pagamentos e pedidos da conta sem ID na URL — 2026-10-11
 
 Classificação: MINOR (caminhos da conta alterados; rotas antigas com ID respondem 404).

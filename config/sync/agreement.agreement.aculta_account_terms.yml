@@ -14,7 +14,7 @@ settings:
   success: 'Aceite registrado. Você pode continuar usando sua conta.'
   revoked: 'O aceite foi revogado.'
   failure: 'É necessário aceitar os documentos para continuar.'
-  destination: /minha-conta
+  destination: ''
   reset_date: 0
   visibility:
     settings: 0
@@ -25,6 +25,5 @@ settings:
       - /termos-de-uso
       - /politica-de-privacidade
   recipient: ''
-  roles:
-    - authenticated
+  roles: {  }
 agreement: '<p>Para continuar, leia os documentos completos:</p><p><a href="/termos-de-uso">Termos de Uso</a> e <a href="/politica-de-privacidade">Política de Privacidade</a>.</p>'

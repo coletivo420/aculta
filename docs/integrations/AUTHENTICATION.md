@@ -23,7 +23,7 @@ propagado pelo módulo upstream, o Portal conserva o purpose já capturado para 
 mesmo path **e query** em vez de sobrescrevê-lo com ACCOUNT. Quando não há página anterior ou destino explícito, o destino público padrão é
 a raiz do Domain ACCOUNT (`/` em `conta.aculta.org` ou no alias Homelab).
 A visão geral (rota `aculta_portal.dashboard`) é servida somente nessa raiz.
-O caminho técnico `/conta-interna` não é público: requisição direta responde 404
+O caminho técnico `/minha-conta` não é público: requisição direta responde 404
 (guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter`), no mesmo padrão de `/apoio`.
 Nenhum link gerado aponta para esse caminho.
 
@@ -130,7 +130,7 @@ interação de navegador nesta alteração.
 - a UI genérica de `/user` foi removida da experiência: `user.page` é mantida
   apenas como rota técnica de compatibilidade e redireciona usuários autenticados
   para a raiz ACCOUNT; `/identidade` não é destino de login;
-- `/conta-interna` não é público: responde 404. A front page do Domain ACCOUNT resolve a visão geral na raiz.
+- `/minha-conta` não é público: responde 404. A front page do Domain ACCOUNT resolve a visão geral na raiz.
 - Os links de login renderizados em MAIN, MAGAZINE, WIKI e COURSES carregaram
   `destination` com o caminho visível e o purpose respectivo.
 - O link Google gerado em `/entrar` preservou `destination`; o início OAuth
@@ -168,3 +168,15 @@ Antes de alterar login/OAuth/Conta, validar pelo menos:
   “Desconectar Google”;
 - callback Google usa `SocialAuthUserInterface::getId()` como identificador do
   provedor.
+
+## Aceite dos termos (popup persistente, 0.3.0-dev.16)
+
+- **Origem do aceite:** o checkbox obrigatório "Li e aceito os Termos de Uso e a Política de Privacidade." do cadastro por e-mail/senha (`user_register_form`, `FormHooks`) grava o aceite em `aculta_account_terms` (`RegistrationTerms::record`). O mesmo registro é lido pelo popup (`AccountTermsPolicy`). Quem se cadastra pelo formulário nunca vê o popup.
+- **OAuth (Google) e outras vias sem o checkbox:** não gravam aceite. O popup aparece na primeira página restrita até o aceite.
+- **Onde o popup aparece (usuário logado sem aceite):** em toda página que o anônimo não acessa (conta, edição e criação de conteúdo, área de membro, `AccountTermsHooks::isRestrictedToLoggedUsers`); em nós com campo de comentário (fórum); e na página de acesso negado. Páginas que o anônimo acessa (loja, carrinho, verbetes públicos) não mostram o popup, e o anônimo nunca vê o popup.
+- **Comportamento:** sem aceite, a página restrita carrega normalmente, na mesma URL, com o popup por cima (o popup é o bloqueio). Não há redirecionamento para `/aceite-termos` nem resposta 403 de página. As ações protegidas (checkout e cursos) seguem negadas pelo servidor (`ProtectedRouteAccessCheck`); a página de acesso negado também mostra o popup. O popup não tem botão de fechar, Esc é cancelado (`js/account-terms-modal.js`), e clique fora não fecha. O foco fica no modal (`showModal()`).
+- **Após aceitar:** `POST /termos/aceitar` grava o aceite e volta à mesma página (destino validado como caminho local).
+- **Versão dos termos:** alterar `settings.reset_date` do acordo (ou aumentar a frequência) faz todos aceitarem de novo, pelo cálculo de `Agreement::getAgreementFrequencyTimestamp()`.
+- **Todos os hosts:** o aceite é por usuário no banco, então vale em principal, conta e loja.
+- **Página antiga:** `/aceite-termos` responde 404 (`DomainRouteSubscriber`; a rota do módulo agreement existe só por nome).
+- **Fundo:** `css/account-terms-modal.css` desfoca a página atrás do popup.

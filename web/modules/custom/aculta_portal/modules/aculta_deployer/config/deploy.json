@@ -51,7 +51,6 @@
       "note": "Indexação ativa em todos os domínios e subdomínios de produção. Noindex de páginas privadas da conta permanece no Portal (meta robots por rota).",
       "private_probes": [
         "https://conta.aculta.org/entrar",
-        "https://conta.aculta.org/conta-interna",
         "https://conta.aculta.org/dados",
         "https://conta.aculta.org/seguranca",
         "https://conta.aculta.org/conexoes",

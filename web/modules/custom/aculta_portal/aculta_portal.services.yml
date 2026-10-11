@@ -16,6 +16,15 @@ services:
   aculta_portal.registration_terms:
     class: Drupal\aculta_portal\Account\RegistrationTerms
     arguments: ['@agreement.handler', '@entity_type.manager']
+  aculta_portal.access.payment_method_add:
+    class: Drupal\aculta_portal\Access\PaymentMethodAddAccessCheck
+    arguments: ['@entity_type.manager']
+  aculta_portal.account_terms_policy:
+    class: Drupal\aculta_portal\Account\AccountTermsPolicy
+    arguments: ['@agreement.handler', '@entity_type.manager']
+  aculta_portal.access.protected_route:
+    class: Drupal\aculta_portal\Access\ProtectedRouteAccessCheck
+    arguments: ['@aculta_portal.access.email_confirmed', '@class_resolver', '@aculta_portal.account_terms_policy']
   aculta_portal.access.email_confirmed:
     class: Drupal\aculta_portal\Access\EmailConfirmedAccessCheck
     arguments: ['@aculta_portal.email_confirmation_policy']

@@ -13,6 +13,11 @@
   };
 
   const digits = (value) => (value || '').replace(/\D+/g, '').slice(0, 8);
+  // Máscara 00000-000 (o envio e a consulta usam só os dígitos).
+  const formatCep = (value) => {
+    const cep = digits(value);
+    return cep.length > 5 ? `${cep.slice(0, 5)}-${cep.slice(5)}` : cep;
+  };
 
   function getField(prefix, key, container) {
     const expected = `${prefix}[address][${key}]`;
@@ -77,8 +82,29 @@
     field.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  // Preenchimento do CEP. O Estado dispara um rebuild AJAX do endereço, que substitui os campos do markup. Por isso
+  // os campos vêm primeiro, e o Estado por último. O preenchimento fica guardado e é reaplicado nos campos vazios
+  // do markup novo (attach), sem disparar outro rebuild.
+  const pendingFill = new Map();
+
+  function applyFill(prefix, container, values, { onlyEmpty = false } = {}) {
+    Object.keys(values).filter((key) => key !== 'administrative_area').forEach((key) => {
+      const field = getField(prefix, key, container);
+      const value = values[key];
+      if (field && value !== undefined && value !== null && (!onlyEmpty || field.value === '')) {
+        field.value = value;
+      }
+    });
+    const state = getField(prefix, 'administrative_area', container);
+    if (state && values.administrative_area && (!onlyEmpty || state.value === '')) {
+      state.value = values.administrative_area;
+      dispatchChange(state);
+    }
+  }
+
   function attach(context) {
-    const postalFields = once('aculta-cep-address', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
+    // Reivindica os campos com o mesmo id do contrib (data-once): o behavior do contrib não os processa de novo.
+    const postalFields = once('cep-autocomplete', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
     postalFields.forEach((postal) => {
       const name = postal.name || '';
       const marker = '[address][';
@@ -89,8 +115,20 @@
       const container = postal.closest('form') || document;
       const status = statusFor(postal);
       movePostalFirst(postal);
+      // Número (campo do checkout, fora do formulário de endereço) logo após o Logradouro.
+      const numberRow = container.querySelector('input[name$="[street_number]"]')?.closest('.form-item, .js-form-item');
+      const streetRow = getField(prefix, 'address_line1', container)?.closest('.form-item, .js-form-item');
+      if (numberRow && streetRow && numberRow !== streetRow) {
+        streetRow.after(numberRow);
+      }
 
       Object.entries(labels).forEach(([key, label]) => setLabel(getField(prefix, key, container), label));
+      const pending = pendingFill.get(prefix);
+      if (pending) {
+        applyFill(prefix, container, pending, { onlyEmpty: true });
+        // O rebuild apaga o aviso de status: anuncia de novo, para leitor de tela.
+        announce(statusFor(postal), Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
+      }
       const complement = getField(prefix, 'address_line2', container);
       if (complement) complement.setAttribute('placeholder', Drupal.t('Complemento'));
 
@@ -116,14 +154,9 @@
               address_line1: data.address_line1,
               dependent_locality: raw.bairro || '',
             };
-            Object.entries(values).forEach(([key, value]) => {
-              const field = getField(prefix, key, container);
-              if (field && value !== undefined && value !== null) {
-                field.value = value;
-                dispatchChange(field);
-              }
-            });
-            postal.value = requestedCep;
+            pendingFill.set(prefix, values);
+            applyFill(prefix, container, values);
+            postal.value = formatCep(requestedCep);
             postal.dataset.acultaCepResolved = requestedCep;
             announce(status, Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
             const street = getField(prefix, 'address_line1', container);
@@ -141,15 +174,22 @@
       });
 
       postal.addEventListener('change', () => {
-        if (postal.value !== digits(postal.value)) {
-          postal.value = digits(postal.value);
+        if (postal.value !== formatCep(postal.value)) {
+          postal.value = formatCep(postal.value);
           postal.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      });
+      // Máscara enquanto digita (o cursor vai para o fim, que é onde o CEP é digitado).
+      postal.addEventListener('input', () => {
+        const formatted = formatCep(postal.value);
+        if (postal.value !== formatted && digits(postal.value).length > 0) {
+          postal.value = formatted;
         }
       });
     });
   }
 
-  // The contrib library is loaded first; this accessible integration replaces
-  // only its behavior, retaining its server endpoint, HTTP cache, and client.
-  Drupal.behaviors.cepAutocomplete = { attach };
+  // Nome próprio (não colide com o behavior cepAutocomplete do módulo contrib). Esta biblioteca é dependência
+  // do contrib, então executa antes dele e reivindica os campos (ver once acima).
+  Drupal.behaviors.acultaCepAddress = { attach };
 })(Drupal, drupalSettings, once);
