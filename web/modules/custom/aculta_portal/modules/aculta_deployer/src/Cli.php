@@ -411,6 +411,12 @@ final class Cli {
       if (!isset($e['probe'], $e['expect'])) {
         continue;
       }
+      // Entrada já resolvida pelo responsável: no teste, a conferência é obsoleta e sai do verify.
+      // A sonda de produção segue para a verificação pós-deploy (campo decision do registro).
+      if ($env === 'test' && ($e['status'] ?? '') === 'resolved') {
+        $this->say("SKIP {$e['id']}: resolvida; sonda de produção é verificação pós-deploy");
+        continue;
+      }
       $checked++;
       // Sondas e valores esperados são de produção; no teste viram os equivalentes de teste.
       $probe = $env === 'test' ? Verify::toTestEnvironment((string) $e['probe']) : (string) $e['probe'];

@@ -277,7 +277,7 @@ final class PortalRequirementsController extends ControllerBase {
 
   /**
    * Indexação: regra do ambiente declarado e último resultado do deployer. O Portal não executa
-   * a verificação; ela é feita por `aculta-deployer robots`, que grava var/deployer/status.json.
+   * a verificação; ela é feita pela verificação de robots do ACULTA Deployer, que grava var/deployer/status.json.
    */
   private function buildIndexingSection(): array {
     $environment = DeployerEnvironment::current(dirname($this->appRoot));
@@ -293,13 +293,13 @@ final class PortalRequirementsController extends ControllerBase {
     ];
     $result = $this->deployerStatus->indexing();
     if ($result === NULL) {
-      $section['last'] = ['#plain_text' => $this->t('Nenhuma verificação registrada. Execute aculta-deployer robots no ambiente para publicar o resultado.')];
+      $section['last'] = ['#plain_text' => $this->t('Nenhuma verificação registrada. Execute a verificação de robots do ACULTA Deployer no ambiente para publicar o resultado.')];
       return $section;
     }
     $checkedAt = (string) ($result['checked_at'] ?? '');
     $section['last'] = ['#plain_text' => $this->t('Última verificação: @at (ambiente @env).', ['@at' => $checkedAt, '@env' => (string) ($result['environment'] ?? '')])];
     if (($result['environment'] ?? NULL) !== $environment) {
-      $section['mismatch'] = ['#plain_text' => $this->t('⚠ O resultado publicado é de outro ambiente. Execute aculta-deployer robots neste ambiente.')];
+      $section['mismatch'] = ['#plain_text' => $this->t('⚠ O resultado publicado é de outro ambiente. Execute a verificação de robots do ACULTA Deployer neste ambiente.')];
     }
     $section['summary'] = ['#plain_text' => ($result['ok'] ?? FALSE) === TRUE
       ? $this->t('✔ OK: @passed verificações aprovadas.', ['@passed' => (int) ($result['passed'] ?? 0)])
