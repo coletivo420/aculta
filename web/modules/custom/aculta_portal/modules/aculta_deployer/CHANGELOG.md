@@ -1,3 +1,9 @@
+## 0.1.19 — Indexação no relatório de status — 2026-10-11
+
+- `robots` grava o resultado neutro em `var/deployer/indexing.json` (URLs públicas, estados e o valor público de X-Robots-Tag; nunca valores de credencial).
+- `status` inclui o resumo `indexing` (ambiente, data da verificação, aprovados, falhas e URLs com falha). Sem arquivo, o resumo é `null`.
+- Classe `Indexing` (`src/Indexing.php`), testada em `tests/run.php` sem rede.
+
 ## 0.1.18 — Remoção das regras de SMTP e system.mail por ambiente — 2026-10-11
 
 - `config/deploy.json`: removidas as entradas `environment_bound` e as regras de perfil de `smtp.settings` e de `system.mail` (o transporte e o backend agora são iguais nos dois ambientes; ver `EMAIL-TRANSPORT.md`). Regras de `system.site` e demais mantidas.

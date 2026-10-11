@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // Testes determinísticos da CLI. Não usam Drupal, Drush nem vendor.
 $toolRoot = dirname(__DIR__);
-foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Cli'] as $class) {
+foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'Cli'] as $class) {
   require_once $toolRoot . '/src/' . $class . '.php';
 }
 
@@ -281,6 +281,15 @@ $assert((new Transform($noBound))->validateProfiles() !== [], 'perfis: environme
 // Aplicação de regra: exatamente uma linha casa; zero ou várias recusam o build.
 $assert($t->applyProfile("smtp_on: false\nx: 1\n", [['pattern' => '^smtp_on: .*$', 'with' => 'smtp_on: true']], 'f') === "smtp_on: true\nx: 1\n", 'perfis: regra troca a linha casada');
 $threw = static function (callable $fn): bool { try { $fn(); return false; } catch (\RuntimeException $e) { return true; } };
+// Indexação (robots): resumo neutro do último resultado, lido pelo painel do Portal.
+$indexRun = \AcultaDeployer\Indexing::build('production', [
+  ['kind' => 'host', 'url' => 'https://aculta.org/', 'ok' => true, 'observed' => 'ausente'],
+  ['kind' => 'host', 'url' => 'https://loja.aculta.org/', 'ok' => false, 'observed' => 'noindex'],
+], false, '2026-10-11T12:00:00+00:00');
+$sum = \AcultaDeployer\Indexing::summarize($indexRun);
+$assert($sum !== null && $sum['passed'] === 1 && $sum['failed'] === 1 && $sum['failed_urls'] === ['https://loja.aculta.org/'] && $sum['ok'] === false && $sum['environment'] === 'production', 'indexação: resumo conta aprovados e falhas e lista só as URLs com falha');
+$assert(\AcultaDeployer\Indexing::summarize(null) === null && \AcultaDeployer\Indexing::summarize(['schema' => 2]) === null, 'indexação: arquivo ausente ou de outro schema não gera resumo');
+$assert(\AcultaDeployer\Indexing::summarize(\AcultaDeployer\Indexing::build('test', [], true, 'x'))['ok'] === true, 'indexação: resultado sem checks e ok gera resumo válido');
 $assert($threw(fn() => $t->applyProfile("x: 1\n", [['pattern' => '^smtp_on: .*$', 'with' => 'smtp_on: true']], 'f')), 'perfis: regra sem linha correspondente falha');
 $assert($threw(fn() => $t->applyProfile("a\na\n", [['pattern' => '^a$', 'with' => 'b']], 'f')), 'perfis: regra ambígua (duas linhas) falha');
 // Build de teste: gera a saída do ambiente de teste (hosts de teste preservados, SMTP no system.mail).
