@@ -96,6 +96,20 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (!$event->isMainRequest()) {
       return;
     }
+    // URLs antigas do checkout (/checkout/{pedido}/{etapa}, inclusive retorno e cancelamento do Mercado Pago):
+    // GET/HEAD vai com 301 para o caminho público em português (/finalizar-compra/...); outros métodos respondem 404.
+    $oldCheckoutRequest = $event->getRequest();
+    $publicCheckout = \Drupal\aculta_portal\Checkout\CheckoutSlugMap::toPublic($oldCheckoutRequest->getPathInfo());
+    if ($publicCheckout !== NULL) {
+      if (in_array($oldCheckoutRequest->getMethod(), ['GET', 'HEAD'], TRUE)) {
+        $query = $oldCheckoutRequest->getQueryString();
+        $event->setResponse(new \Drupal\Core\Routing\LocalRedirectResponse($publicCheckout . ($query ? '?' . $query : ''), Response::HTTP_MOVED_PERMANENTLY));
+      }
+      else {
+        $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, ['Cache-Control' => 'private, no-store']));
+      }
+      return;
+    }
     try {
       $matched = $this->accessFreeMatcher->matchRequest($event->getRequest());
     }

@@ -68,6 +68,11 @@ services:
     arguments: ['@aculta_portal.domain_purpose']
     tags:
       - { name: path_processor_inbound, priority: 300 }
+  aculta_portal.checkout_friendly_path_processor:
+    class: Drupal\aculta_portal\PathProcessor\CheckoutFriendlyPathProcessor
+    tags:
+      - { name: path_processor_inbound, priority: 310 }
+      - { name: path_processor_outbound, priority: 310 }
   aculta_portal.account_list_path_processor:
     class: Drupal\aculta_portal\PathProcessor\AccountListPathProcessor
     tags:
