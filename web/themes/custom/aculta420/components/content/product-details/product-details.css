@@ -1,0 +1,5 @@
+/* Tabela de informações: largura total, cabeçalho em texto secundário e filetes por tokens. */
+.aculta-product-details { width: 100%; border-collapse: collapse; color: var(--aculta-text-primary); }
+.aculta-product-details th,
+.aculta-product-details td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--aculta-border-subtle); text-align: start; }
+.aculta-product-details th { width: 35%; color: var(--aculta-text-secondary); font-weight: 600; }

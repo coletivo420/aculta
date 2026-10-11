@@ -1,0 +1,11 @@
+{# Lado direito da página do produto: categoria, título, preço e compra. #}
+<div class="aculta-product-buy">
+  {% if category %}
+    <p class="aculta-product-buy__category">{{ category }}</p>
+  {% endif %}
+  <h1 class="aculta-product-buy__title">{{ title }}</h1>
+  {% if price %}
+    <p class="aculta-product-buy__price">{{ price }}</p>
+  {% endif %}
+  <div class="aculta-product-buy__purchase">{{ purchase }}</div>
+</div>

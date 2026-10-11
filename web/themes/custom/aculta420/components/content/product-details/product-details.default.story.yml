@@ -1,0 +1,5 @@
+name: Padrão
+description: Informações com categoria.
+component: aculta420:product-details
+props:
+  category: Bloco Sativa

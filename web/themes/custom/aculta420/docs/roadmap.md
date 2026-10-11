@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.6.0-dev.7 | página do produto da loja em SDC: galeria em carrossel, compra com preço, detalhes e abas (layout da loja original) | marcada no código; gates PASS; captura de tela DEFERRED |
 | 0.6.0-dev.6 | marca da barra institucional: logo ACULTA no lugar do nome, 78×26 (1x) e 156×52 (2x) em WebP; nome completo só no `alt` | marcada no código; validada visualmente (captura de tela) |
 | 0.6.0-dev.5 | F3 (busca): apresentação da página `/busca`, do popup e dos resultados com tokens do tema | marcada no código; `/busca` verificada no servidor de testes; popup e teclado DEFERRED |
 | 0.6.0-dev.2 | validador de navegador: regras de barra e sigla ajustadas ao shell; apoio indisponível aceito; PASS no site público | marcada no código |

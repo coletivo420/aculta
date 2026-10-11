@@ -1,0 +1,9 @@
+name: Padrão
+description: Galeria com três imagens.
+component: aculta420:product-gallery
+props:
+  id: aculta-galeria-exemplo
+  count: 3
+slots:
+  slides:
+    markup: <div class="carousel-item active"><p>Imagem 1</p></div><div class="carousel-item"><p>Imagem 2</p></div><div class="carousel-item"><p>Imagem 3</p></div>

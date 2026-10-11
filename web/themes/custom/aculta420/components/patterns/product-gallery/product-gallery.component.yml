@@ -1,0 +1,29 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Galeria do produto
+status: experimental
+group: Patterns
+description: 'Carrossel de imagens do produto (Bootstrap), com indicadores e setas. Sem JavaScript próprio. Cada imagem chega já envolvida em carousel-item pelo chamador.'
+props:
+  type: object
+  properties:
+    id:
+      type: string
+      description: 'Identificador único do carrossel (indicadores e setas apontam para ele).'
+      default: 'aculta-produto-galeria'
+    label:
+      type: string
+      description: 'Nome acessível do carrossel.'
+      default: 'Imagens do produto'
+    count:
+      type: integer
+      description: 'Quantidade de imagens. Zero não renderiza nada.'
+      default: 0
+      minimum: 0
+slots:
+  slides:
+    title: Slides
+    description: 'Itens carousel-item já renderizados, uma imagem por item; o primeiro recebe a classe active.'
+assets:
+  css:
+    component:
+      product-gallery.css: {}

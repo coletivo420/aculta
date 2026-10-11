@@ -1,0 +1,23 @@
+{# Carrossel da galeria: o chamador entrega os slides; o componente entrega a moldura e os controles. #}
+{% if count > 0 %}
+  <div id="{{ id }}" class="carousel slide aculta-product-gallery" data-bs-ride="false" aria-roledescription="carrossel" aria-label="{{ label }}">
+    {% if count > 1 %}
+      <div class="carousel-indicators aculta-product-gallery__indicators">
+        {% for i in 0..(count - 1) %}
+          <button type="button" data-bs-target="#{{ id }}" data-bs-slide-to="{{ i }}"{{ i == 0 ? ' class="active" aria-current="true"' }} aria-label="Imagem {{ i + 1 }} de {{ count }}"></button>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div class="carousel-inner aculta-product-gallery__frame">{{ slides }}</div>
+    {% if count > 1 %}
+      <button class="carousel-control-prev aculta-product-gallery__control" type="button" data-bs-target="#{{ id }}" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Imagem anterior</span>
+      </button>
+      <button class="carousel-control-next aculta-product-gallery__control" type="button" data-bs-target="#{{ id }}" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próxima imagem</span>
+      </button>
+    {% endif %}
+  </div>
+{% endif %}

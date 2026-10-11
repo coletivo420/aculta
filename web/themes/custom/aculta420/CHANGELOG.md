@@ -1,3 +1,18 @@
+## 0.6.0-dev.7 — Página do produto da loja em SDC (galeria, compra, detalhes e abas) — 2026-10-11
+
+Classificação: MINOR da linha 0.6 (componentes novos, `experimental`; sem alteração de componentes `stable`).
+
+- `components/patterns/product-gallery`: carrossel Bootstrap de imagens do produto, com indicadores, setas e rótulos em português. Props `id`, `label`, `count`; slot `slides`.
+- `components/content/product-buy`: categoria, título, preço e compra (formulário do Commerce no slot `purchase`). Props `category`, `title`, `price`.
+- `components/content/product-details`: tabela da aba "Informação adicional".
+- `components/patterns/product-tabs`: abas Bootstrap "Descrição", "Informação adicional" e "Avaliações (0)", abaixo dos blocos.
+- `templates/commerce-product--produto-loja.html.twig`: compõe os componentes em grade de duas colunas (galeria à esquerda; compra à direita). Usa `product.*` (variável que o Commerce entrega). Preço da variação padrão, formatado em R$.
+- `css/components/product.css`: só espaçamento do conjunto; o resto fica no CSS de cada componente (`assets` do SDC), com tokens.
+- Gate de Foundation: template de produto na allowlist de overrides de Twig; versão em `info.yml` e no gate.
+- Gates: design foundations PASS (1554); SDC schema PASS (11 componentes, 155 checagens); validadores de navegador PASS; Foundation PASS (312); shell-contract PASS.
+- Verificado no servidor de testes (HTML): galeria com 7 imagens, título, categoria, descrição, preço R$ 30,00, tamanhos P a XXG e as três abas. Captura de tela DEFERRED (o Chromium não consegue navegar neste ambiente).
+- Pendente (Runtime, não está em `config/sync`): módulo `commerce_product` habilitado, tipo `produto_loja` com `field_descricao`, `field_imagens` e `field_categoria`, tipo de variação `camiseta_tamanho`, displays de visualização e vocabulário `categoria_loja`. Exportar antes do RC.
+
 ## 0.6.0-dev.6 — Marca da barra institucional: logo no lugar do nome — 2026-10-10
 
 Classificação: PATCH (apresentação; sem componente, contrato Portal → tema ou dependência novos).

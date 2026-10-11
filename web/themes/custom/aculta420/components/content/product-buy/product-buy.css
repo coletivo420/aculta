@@ -1,0 +1,24 @@
+/* Cabeçalho de compra: título e categoria com as fontes do tema; bloco de compra separado por filete. */
+.aculta-product-buy { display: flex; flex-direction: column; gap: 1rem; color: var(--aculta-text-primary); }
+.aculta-product-buy__category {
+  margin: 0;
+  font: 600 0.8125rem/1.4 var(--aculta-font-body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--aculta-text-secondary);
+}
+.aculta-product-buy__title {
+  margin: 0;
+  font-family: var(--aculta-font-display);
+  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
+  line-height: 1.15;
+  color: var(--aculta-text-primary);
+}
+.aculta-product-buy__purchase { padding-block-start: 1rem; border-top: 1px solid var(--aculta-border-subtle); }
+.aculta-product-buy__price {
+  margin: 0;
+  font-family: var(--aculta-font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--aculta-text-primary);
+}
