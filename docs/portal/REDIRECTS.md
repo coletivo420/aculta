@@ -7,13 +7,13 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 
 1. **Caminho antigo responde 404; não há redirecionamento de slug.** É o padrão do projeto, antes e depois da versão estável (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404.
 2. **Redirecionamento entre purposes** usa `DomainPurposeManager` + `TrustedRedirectResponse`, nunca `RedirectResponse` cru para outro host (`DomainPurposeRequestSubscriber::retargetRedirect`).
-3. **Conta:** após logout, o destino é o login do host de conta; a raiz do host de conta é o ponto de entrada da área logada (`DomainPurposeRequestSubscriber`, bloco de `user.logout`).
+3. **Conta:** a raiz `/` do host de conta é o ponto de entrada da área logada. Visitante não logado é redirecionado (302) para `/entrar` do próprio host de conta; a visão geral (`/conta-interna` internamente) não é acessível diretamente. Após logout, o destino também é o login (`DomainPurposeRequestSubscriber`, `onRequestBeforeRouter` e bloco de `user.logout`).
 4. **Login com destino salvo** volta ao purpose de origem, validado por `isSafeLoginDestinationPath` (`LOGIN_DESTINATION_SESSION_KEY`).
 5. **Usuário legado:** `/user/{id}` antigo pode ser redirecionado por `PortalController::legacyUserPageRedirect` (rota `user.page`, para o painel da conta).
 6. **Wrong-purpose público continua 404** e não vira redirect genérico (`ADMIN-DOMAIN-POLICY.md`).
 7. **Carrinho, checkout e pagamento:** purpose MAIN, com o host de compra apontando para o MAIN (`PAYMENT-DOMAIN-POLICY.md`).
 8. **Página do produto da loja:** purpose SHOP (`DomainRouteSubscriber`, rota `entity.commerce_product.canonical`). Fora do host SHOP responde 404.
-9. **Raiz de cada host:** a raiz `/` de um subdomínio é a página inicial daquele purpose. Hoje isso acontece por dois mecanismos:
+9. **Cada subdomínio tem página inicial própria.** A raiz `/` de cada host é a página inicial daquele purpose, por dois mecanismos:
    - MAIN: página inicial do site (`system.site:page.front` = `/node/1`).
    - Apoio, revista, wiki e cursos: nó com `field_domain_source` apontando para o domínio, que o módulo `domain_source` usa como página inicial desse host.
 
@@ -22,7 +22,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 | Host | `/` | `/entrar` | `/apoie` | `/apoio` | `/user/1` | Observação |
 | --- | --- | --- | --- | --- | --- | --- |
 | aculta.toca.net.br (MAIN) | 200 | 404 | 404 | 404 | 404 | Início = nó 1 |
-| conta.aculta.toca.net.br (ACCOUNT) | 403 | 200 | 404 | 404 | 404 | Raiz exige login; entrada em `/entrar` |
+| conta.aculta.toca.net.br (ACCOUNT) | 302 → /entrar | 200 | 404 | 404 | 404 | Visitante na raiz vai ao login; a visão geral só logado |
 | apoio.aculta.toca.net.br (SUPPORT) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` do apoio |
 | loja.aculta.toca.net.br (SHOP) | 404 | 404 | 404 | 404 | 404 | **Sem página inicial da loja** |
 | revista420.aculta.toca.net.br (MAGAZINE) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` da revista |
@@ -34,7 +34,6 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 ## Pendências para deixar os hosts iguais
 
 - **Loja (SHOP):** a raiz não tem página inicial. Caminho: criar um nó com `field_domain_source = loja_aculta_org` e publicado, como apoio, revista, wiki e cursos. Depende do conteúdo que o responsável aprovar.
-- **Conta (ACCOUNT):** a raiz responde 403 para visitante. Decidir se a raiz deve redirecionar para `/entrar` (visitante) ou mostrar a visão geral (logado).
 
 ## Onde está o código
 

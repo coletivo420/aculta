@@ -1,3 +1,11 @@
+## 0.2.0-dev.52 — Raiz da Conta redireciona visitante ao login — 2026-10-11
+
+Classificação: PATCH (regra de redirecionamento do host de conta).
+
+- `DomainPurposeRequestSubscriber::onRequestBeforeRouter`: visitante não logado na raiz do host de conta vai (302) ao login do próprio host (`/entrar`). Feito antes do roteamento com acesso, que negava a rota (403).
+- Verificado no servidor de testes: `conta.aculta.toca.net.br/` → 302 para `/entrar` (200); `/conta-interna` → 404.
+- `docs/portal/REDIRECTS.md` atualizado: a raiz da Conta e a regra de página inicial própria por subdomínio.
+
 ## 0.2.0-dev.51 — Carrinho na barra multidomínio (presenter neutro) e cache do carrinho — 2026-10-11
 
 Classificação: MINOR (novo serviço de apresentação do carrinho; sem mudança de contrato público).
