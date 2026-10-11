@@ -29,7 +29,7 @@ preg_match_all("/getPathInfo\\(\\) === '\\/'/", $subscriber, $rootChecks);
 $assert(!str_contains($subscriber, "pathUrl('shop', '/loja-da-aculta')"), 'Raiz da loja redirecionando para /loja-da-aculta: a decisão é servir conteúdo na raiz.');
 $processor = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php');
 $assert(str_contains($processor, '_disable_route_normalizer') && str_contains($processor, 'FRONT_ATTRIBUTE'), 'PurposeFrontPathProcessor sem _disable_route_normalizer/FRONT_ATTRIBUTE.');
-foreach (["'support' => '/apoio'", "'wiki' => '/wiki'", "'courses' => '/cursos'", "'shop' => '/loja-da-aculta'"] as $entry) {
+foreach (["'support' => '/apoio'", "'wiki' => '/wiki'", "'courses' => '/cursos'", "'shop' => '/loja-da-aculta'", "'forum' => '/forum'"] as $entry) {
   $assert(str_contains($processor, $entry), "Mapa FRONT_PATHS sem $entry: a raiz do host não está uniformizada.");
 }
 $assert(!str_contains($subscriber, "pathUrl('main', '/')") && !str_contains($subscriber, "pathUrl('support', '/')"), 'Raiz de MAIN ou SUPPORT redirecionada: a decisão é servir conteúdo.');
