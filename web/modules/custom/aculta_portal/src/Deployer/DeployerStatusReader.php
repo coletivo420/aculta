@@ -22,6 +22,13 @@ final class DeployerStatusReader {
   /**
    * @return array<string, mixed>|null null se o arquivo não existe, não pode ser lido ou tem outro esquema.
    */
+  /** Resultado da última verificação de indexação publicado pelo deployer (`indexing`), ou null. */
+  public function indexing(): ?array {
+    $data = $this->read();
+    $indexing = is_array($data) ? ($data['indexing'] ?? NULL) : NULL;
+    return is_array($indexing) ? $indexing : NULL;
+  }
+
   public function read(): ?array {
     $file = $this->path();
     if (!is_file($file) || !is_readable($file)) {

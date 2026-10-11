@@ -33,6 +33,16 @@ O tema marca a versão dentro do código (`aculta420.info.yml`, `CHANGELOG.md` e
 Mudanças do `aculta_portal` entram no `CHANGELOG.md` do módulo, citando a versão do tema
 em que foram entregues. A versão do Portal é marcada em `aculta_portal.info.yml`.
 
+## Caminhos e textos únicos até a 1.0
+
+Até a versão 1.0, o ambiente de teste não mantém caminho, rótulo ou texto duplicado nem texto
+antigo. Quando um texto ou caminho muda, a versão antiga sai do código, dos testes e da documentação
+atual, e fica só no CHANGELOG. Não se mantêm aliases nem traduções paralelas para compatibilidade.
+
+- Barreira: `php scripts/validate-unique-paths-texts.php`. Falha com caminho de rota duplicado, título de
+  menu duplicado ou texto aposentado (lista em `scripts/institution/RETIRED-TEXTS.json`).
+- Ao renomear um texto, acrescentar o texto antigo a `RETIRED-TEXTS.json` no mesmo PR.
+
 ## Gate de release
 
 Antes de tag:

@@ -105,7 +105,7 @@ aculta_portal.requirements:
   path: /admin/config/aculta/portal/requisitos
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalRequirementsController::report'
-    _title: Requisitos do Portal ACULTA
+    _title: Status do Portal Aculta
   requirements:
     _permission: administer site configuration
 aculta_portal.support_my:
