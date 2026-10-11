@@ -212,3 +212,9 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 - O envio real do teste foi bloqueado pelo classificador de ações. Permanece pendente.
 - DT-P09 **não fechada**.
 
+### 9.5 Webform com HTML: envio executado pelo responsável
+
+- Script `m1-webform-send.php` executado no terminal do responsável: `sendMessage=true`, com a notificação do formulário `aculta_contact` registrada ("Notificação institucional email").
+- Destino: `advfjpm@gmail.com`, com HTML ligado (só em memória; o formulário não foi alterado).
+- **Pendente:** confirmação visual do layout no e-mail recebido (envoltório do Mailer Plus). Enquanto não for confirmada, DT-P09 permanece aberta e a M2 bloqueada.
+
