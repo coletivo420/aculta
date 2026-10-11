@@ -106,6 +106,6 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 
 ### Pendências de conta (não são redirecionamentos)
 
-- **Permissões de cliente:** o papel "autenticado" não tem `update own customer profile` nem `delete own customer profile`. Por isso, um cliente comum não consegue editar nem excluir endereço (o caminho está correto; a permissão não). Decisão do responsável.
+- **Permissões de endereço (corrigido em 2026-10-11):** o papel "autenticado" tem `create customer profile`, `view own customer profile` e `update own customer profile` (`config/sync/user.role.authenticated.yml`): cliente cria e edita o próprio endereço. `delete any customer profile` e `delete own customer profile` ficam só com o administrador. O endereço de outra conta continua negado. Verificado com duas contas temporárias, já removidas.
 - **Teste de dono com cliente comum:** não concluído, porque o aceite de termos (`/agreement`) da conta de teste não foi registrado pelo serviço do Portal. Teste pendente com conta de cliente após o aceite.
 - **Pedido com itens:** `/pedidos/{pedido}` não foi testado com pedido real (não há pedidos finalizados no ambiente de teste).
