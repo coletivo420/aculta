@@ -87,7 +87,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-O04 | Diretório de agregados do Drupal não é gravável pelo usuário de desenvolvimento | `ls -ld web/sites/default/files/css` (dono `aculta:www-data`) | Média | Não (ambiente) | S6 | Aberta |
 | DT-O05 | Credenciais de teste no Runtime local, sem rotação programada | `~/.config/aculta-homelab/test-credentials.env`; `TEST-DATA.md` | Baixa | Não | S6 | Aberta |
 | DT-O06 | Teste de login negado para conta bloqueada descrito como esperado, não executado | executado em 2026-10-09: o formulário de login recusa a conta bloqueada e aceita a ativa (conta de teste removida) | Baixa | Não | S3 | Resolvida |
-| DT-O07 | Config ainda com drift (`smtp.settings` e `system.mail`) | classificado: diferem de `config/sync`; não importar até a decisão de credenciais SMTP (DT-P05) | Média | Sim (credenciais SMTP) | S3 | Aberta (adiada por dependência) |
+| DT-O07 | Config ainda com drift (`smtp.settings` e `system.mail`) | resolvida na M2 da migração do e-mail: `smtp.settings` removido, `drupal/smtp` removido e `system.mail` exportado como `symfony_mailer` (`docs/portal/EMAIL-TRANSPORT.md`, seção 9.7) | Média | Não | S3 | Resolvida (M2) |
 | DT-O08 | PRs obsoletas acumuladas | PR #63 fechada em 2026-10-09 com arquivo em `archive/pr63` | Baixa | Não | — | Resolvida |
 
 ## Governança
