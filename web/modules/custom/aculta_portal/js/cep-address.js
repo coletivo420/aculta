@@ -126,6 +126,8 @@
       const pending = pendingFill.get(prefix);
       if (pending) {
         applyFill(prefix, container, pending, { onlyEmpty: true });
+        // O rebuild apaga o aviso de status: anuncia de novo, para leitor de tela.
+        announce(statusFor(postal), Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
       }
       const complement = getField(prefix, 'address_line2', container);
       if (complement) complement.setAttribute('placeholder', Drupal.t('Complemento'));
