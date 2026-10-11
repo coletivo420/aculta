@@ -72,15 +72,9 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       '#inline_form' => $inline_form,
     ];
     $pane_form['profile'] = $inline_form->buildInlineForm($pane_form['profile'], $form_state);
-    // Número: o endereço de cobrança do Commerce não tem campo próprio. O valor é gravado no logradouro.
-    $pane_form['street_number'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Número'),
-      '#required' => TRUE,
-      '#maxlength' => 20,
-      '#default_value' => $this->savedStreetNumber($profile),
-      '#weight' => 50,
-    ];
+    // Número: o endereço de cobrança do Commerce não tem campo próprio. O campo entra dentro do bloco de endereço,
+    // logo depois do Logradouro (address_line1), e o valor é gravado no logradouro. No resumo não há subcampos.
+    $this->insertStreetNumber($pane_form['profile'], $this->savedStreetNumber($profile));
     $pane_form['#attached']['library'][] = self::CEP_LIBRARY;
 
     return $pane_form;
@@ -91,7 +85,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface $inline_form */
     $inline_form = $pane_form['profile']['#inline_form'];
     $profile = $inline_form->getEntity();
-    $number = trim((string) $form_state->getValue(array_merge($pane_form['#parents'], ['street_number'])));
+    $number_element = $this->findElement($pane_form, 'street_number');
+    $number = $number_element ? trim((string) $form_state->getValue($number_element['#parents'])) : '';
     if ($number !== '' && $profile->hasField('address') && !$profile->get('address')->isEmpty()) {
       $address = $profile->get('address')->first();
       $street = trim(preg_replace('/,\s*[^,]*$/', '', (string) $address->getAddressLine1()));
@@ -102,6 +97,43 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       $profile->save();
     }
     $this->order->setBillingProfile($profile);
+  }
+
+  /** Insere o campo Número como irmão de address_line1, em qualquer nível do formulário inline. */
+  private function insertStreetNumber(array &$tree, string $default): bool {
+    if (isset($tree['address_line1']) && is_array($tree['address_line1'])) {
+      $tree['street_number'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Número'),
+        '#required' => TRUE,
+        '#maxlength' => 20,
+        '#default_value' => $default,
+        '#weight' => ($tree['address_line1']['#weight'] ?? 0) + 0.5,
+      ];
+      return TRUE;
+    }
+    foreach ($tree as $key => &$child) {
+      if (is_array($child) && !str_starts_with((string) $key, '#') && $this->insertStreetNumber($child, $default)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /** Busca o elemento do formulário pela chave, em qualquer nível. */
+  private function findElement(array $tree, string $key): ?array {
+    if (isset($tree[$key]) && is_array($tree[$key])) {
+      return $tree[$key];
+    }
+    foreach ($tree as $child_key => $child) {
+      if (is_array($child) && !str_starts_with((string) $child_key, '#')) {
+        $found = $this->findElement($child, $key);
+        if ($found !== NULL) {
+          return $found;
+        }
+      }
+    }
+    return NULL;
   }
 
   /** Número já gravado no logradouro (último trecho após vírgula), para preencher o campo ao voltar à etapa. */
