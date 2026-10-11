@@ -27,6 +27,7 @@
       {"domain_id": "coletivo420_aculta_org", "test_host": "revista420.aculta.toca.net.br", "production_host": "revista420.aculta.org"},
       {"domain_id": "wiki420_aculta_org", "test_host": "wiki420.aculta.toca.net.br", "production_host": "wiki420.aculta.org"},
       {"domain_id": "loja_aculta_org", "test_host": "loja.aculta.toca.net.br", "production_host": "loja.aculta.org"},
+      {"domain_id": "forum_aculta_org", "test_host": "forum.aculta.toca.net.br", "production_host": "forum.aculta.org"},
       {"domain_id": "cursos_aculta_org", "test_host": "cursos.aculta.toca.net.br", "production_host": "cursos.aculta.org"}
     ]
   },
@@ -68,6 +69,7 @@
         "https://apoio.aculta.toca.net.br/",
         "https://revista420.aculta.toca.net.br/",
         "https://loja.aculta.toca.net.br/",
+        "https://forum.aculta.toca.net.br/",
         "https://wiki420.aculta.toca.net.br/"
       ],
       "note": "Servidor de testes não indexável."
@@ -140,6 +142,10 @@
     },
     {
       "file": "config/sync/domain.record.loja_aculta_org.yml",
+      "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
+    },
+    {
+      "file": "config/sync/domain.record.forum_aculta_org.yml",
       "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
     },
     {
@@ -222,6 +228,11 @@
           "with": "hostname: loja.aculta.org"
         },
         {
+          "file": "config/sync/domain.record.forum_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: forum.aculta.org"
+        },
+        {
           "file": "config/sync/domain.record.cursos_aculta_org.yml",
           "pattern": "^hostname: .*$",
           "with": "hostname: cursos.aculta.org"
@@ -300,6 +311,11 @@
           "file": "config/sync/domain.record.loja_aculta_org.yml",
           "pattern": "^hostname: .*$",
           "with": "hostname: loja.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain.record.forum_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: forum.aculta.toca.net.br"
         },
         {
           "file": "config/sync/domain.record.cursos_aculta_org.yml",

@@ -1,3 +1,10 @@
+## 0.1.17 — Fórum: host de teste e de produção no deployer — 2026-10-11
+
+- `config/deploy.json`: `forum_aculta_org` em `domain_transition` (forum.aculta.toca.net.br → forum.aculta.org), na lista de robots de teste (noindex) e nas regras de hostname dos perfis de produção e de teste.
+- `config/sync/domain.record.forum_aculta_org.yml` (produção) e `domain_alias.alias.forum_aculta_toca_net_br.yml` (teste, ambiente homelab).
+- Script de servidor: `/home/piradopirata/scripts/forum-setup.sh` (fora do Git).
+- Testes, `check` e `domains` (7 alinhados, 1 pendente de RC) passam.
+
 ## 0.1.16 — Loja: host SHOP do produto e teste de robots — 2026-10-11
 
 - `config/deploy.json`: bloco `domain_transition.shop` (purpose SHOP, rota `entity.commerce_product.canonical`). Loja de teste `loja.aculta.toca.net.br`; produção `loja.aculta.org`.

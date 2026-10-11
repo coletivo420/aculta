@@ -1,0 +1,12 @@
+uuid: b4ceb5df-b097-44ce-aac8-11e22da35a33
+langcode: pt-br
+status: true
+dependencies: {  }
+id: forum_aculta_org
+domain_id: 74050399
+hostname: forum.aculta.org
+name: 'ACULTA - Fórum'
+scheme: https
+weight: 8
+is_default: false
+path_prefix: ''
