@@ -9,7 +9,7 @@ anterior com pendência de segurança aberta.
 ## Premissas
 
 - A ferramenta é standalone: sem Drupal, Drush ou vendor (ver `ARQUITETURA.md`).
-- **Deploy:** o deploy para produção só acontece quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` atualiza o código do repositório, mas não publica nada no Hostinger. Até o RC, as verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
+- **Produção (decisão do responsável):** a entrega em produção não é requisito de fase, PR, release, RC nem pendência do agente. O responsável decide quando o projeto vai para produção, no fim de todo o projeto. Merge em `main` atualiza o código do repositório e não publica nada no Hostinger. As verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
 - O build de produção nunca grava dentro do repositório.
 - Correções que o código não resolve são registradas em `registry/deploy-registry.json`.
 - Segredos não entram no build nem no registro (ver `GUARDRAILS.md`).
@@ -147,7 +147,7 @@ Pendências:
 ## Fase 6 — Release 0.2.0 (curta)
 
 - Atualizar CHANGELOG, VERSION e `info.yml`; a tag só é criada sob pedido do responsável.
-- Esta fase é o gate de RC do deployer. O deploy de produção acontece depois do RC de todos os módulos, temas e subtemas.
+- Esta fase é o gate de RC do deployer. A entrega em produção é decisão do responsável no fim do projeto.
 - Revisão final da documentação e das fronteiras.
 
 ## Gates de segurança

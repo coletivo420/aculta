@@ -2,8 +2,8 @@
 
 Estado do projeto em 2026-10-09, medido no servidor de testes (`aculta.toca.net.br`, Drupal
 11.4.8, SQLite). Este documento registra a bateria executada, o resultado de cada item e o que
-impede declarar RC para **todo o projeto**. Deploy de produção só acontece no RC de todos os
-módulos, temas e subtemas (ver [DEPLOYMENT.md](DEPLOYMENT.md) e [RELEASES.md](RELEASES.md)).
+impede declarar RC para **todo o projeto**. A entrega em produção é decisão do responsável no fim do
+projeto e não faz parte deste RC (ver [DEPLOYMENT.md](DEPLOYMENT.md) e [RELEASES.md](RELEASES.md)).
 
 ## Escopo coberto por este documento
 
@@ -62,7 +62,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 | Componente | Versão | Status |
 | --- | --- | --- |
 | `aculta_portal_sitemap` | 0.1.0 (fases A a J) | Pronto para RC no servidor de testes |
-| `aculta_deployer` | 0.1.7 | Pronto para RC no servidor de testes; `verify` de produção depende do RC |
+| `aculta_deployer` | 0.1.7 | Pronto para RC no servidor de testes; `verify` de produção depende da decisão de entrega em produção |
 | `aculta_portal` | 0.2.0-dev.11 | Sitemap, robots, `noindex` e cadastro de credenciais; release depende do RC geral |
 | `aculta420` (tema) | 0.4.x | Não avaliado como release; item 1 pendente |
 

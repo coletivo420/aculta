@@ -23,7 +23,7 @@
    `docs/operations/DEBT-REGISTER.md`.
 9. **Indexação por ambiente.** Produção indexável em todos os domínios e subdomínios;
    servidor de testes com noindex. `build` recusa política de produção com noindex e
-   `robots --env=production` deve passar no RC, antes de considerar o deploy concluído (deploy só no RC de todos os módulos e temas).
+   `robots --env=production` é ensaio até a decisão do responsável de entregar em produção, no fim do projeto.
    Páginas privadas da conta mantêm noindex no Portal. O `robots --env=production` confere
    esses caminhos (`private_probes`) pelo cabeçalho ou pelo meta robots, e aceita 401, 403,
    404 ou 410. Não bloquear esses caminhos no `robots.txt`: um bloqueio impede o crawler de
