@@ -24,6 +24,7 @@ final class DomainPurposeManager {
     'wiki' => 'wiki420_aculta_org',
     'shop' => 'loja_aculta_org',
     'courses' => 'cursos_aculta_org',
+    'forum' => 'forum_aculta_org',
   ];
 
   public function __construct(

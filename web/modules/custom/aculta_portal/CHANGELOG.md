@@ -1,3 +1,17 @@
+## 0.2.0-dev.57 — Fórum (purpose `forum`, módulos forum e flag) — 2026-10-11
+
+Classificação: MINOR (novo purpose de domínio e novos módulos Drupal; sem mudança de contrato público existente).
+
+- Módulos instalados e registrados em `config/sync/core.extension.yml`: `drupal/forum` 1.1.3 (D11+) e `drupal/flag` 5.1.1, com `history` como dependência do fórum. Adicionados em `composer.json`/`composer.lock`.
+- Purpose `forum` (domínio `forum_aculta_org`, hostname `forum.aculta.org` em produção e `forum.aculta.toca.net.br` no servidor de testes) em `DomainPurposeManager`, `DomainPresentationBuilder` (título "Fórum") e `DomainPurposeCondition`.
+- `DomainRouteSubscriber`: rotas `forum.*` e `entity.taxonomy_term.forum_*` pertencem ao purpose `forum`.
+- `ContentPurposeResolver`: nós do tipo `forum` pertencem ao purpose `forum`.
+- Raiz do host do fórum: `PurposeFrontPathProcessor::FRONT_PATHS` com `forum` → `/forum`. Sem redirecionamento; o gate `validate-root-policy.php` exige a entrada.
+- Flags `seguir_topico` e `salvar_topico` (entidade nó, bundle `forum`), criadas no Runtime de teste; permissões para o papel autenticado exportadas.
+- Tradução `translations/forum.pt-br.po` (rótulos do módulo forum em português).
+- Limite: denúncia de comentários exige um tipo de flag para `comment`, ainda não disponível; tópicos de teste com conteúdo real não foram criados nesta entrega.
+- Próximas etapas: revisão visual do fórum no tema (fora desta entrega, sem alterar `aculta420`) e denúncia de comentários.
+
 ## 0.2.0-dev.56 — Raiz de todos os subdomínios pelo mesmo mapa — 2026-10-11
 
 - `FRONT_PATHS` agora cobre apoio (`/apoio`), wiki (`/wiki`), cursos (`/cursos`) e loja (`/loja-da-aculta`). Verificado: a raiz da wiki e a dos cursos têm texto visível igual ao das rotas correspondentes.

@@ -5,15 +5,20 @@ dependencies:
   config:
     - filter.format.basic_html
     - filter.format.webform_default
+    - node.type.forum
   module:
     - aculta_portal
+    - comment
     - commerce_checkout
     - commerce_order
     - commerce_payment
+    - commerce_product
     - email_confirmer
     - file
     - filter
+    - flag
     - media
+    - node
     - profile
     - social_auth
     - system
@@ -28,13 +33,23 @@ permissions:
   - 'access checkout'
   - 'access content'
   - 'access email confirmation'
+  - 'create forum content'
   - 'create participante profile'
   - 'delete own files'
+  - 'delete own forum content'
   - 'delete own social auth profile'
+  - 'edit own forum content'
+  - 'flag salvar_topico'
+  - 'flag seguir_topico'
   - 'manage own commerce_payment_method'
+  - 'post comments'
+  - 'unflag salvar_topico'
+  - 'unflag seguir_topico'
   - 'update own participante profile'
   - 'use text format basic_html'
   - 'use text format webform_default'
+  - 'view commerce_product'
   - 'view media'
   - 'view own commerce_order'
   - 'view own participante profile'
+

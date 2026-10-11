@@ -94,6 +94,11 @@ final class ContentPurposeResolver {
         ? $this->entities->getStorage('node')->load((int) $parameter)
         : (is_object($parameter) ? $parameter : NULL);
 
+      // Tópicos do fórum (nós do tipo forum) pertencem ao purpose FORUM.
+      if ($node && $node->bundle() === 'forum') {
+        return 'forum';
+      }
+
       if ($node && $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
         return $this->domainPurpose->getPurposeForDomainId(
           (string) $node->get('field_domain_source')->target_id

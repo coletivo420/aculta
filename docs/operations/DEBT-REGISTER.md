@@ -42,7 +42,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-P10 | Módulos de administração ativos em produção | `P10-R` risco 7 ("avaliar") | Média | Sim | S4 | Aberta |
 | DT-P11 | `validate-final-contact` não executa fora do ambiente local | local por desenho (recusa outros hosts); sai com código 2 porque o Turnstile recusa envio por script. Adiado com decisão: exceção de teste do CAPTCHA | Baixa | Sim (exceção de teste do CAPTCHA) | S3 | Aberta (adiada com decisão) |
 | DT-P12 | Conta: segurança/conexões e AJAX herdados da lista antiga de prioridades | `ROADMAP.md` antigo (prioridades 2 e 3); `js/account-navigation.js` com 183 linhas | Média | Sim (escopo) | S5 | Aberta |
-| DT-P13 | Busca, engajamento e fórum sem decisão de adoção | `ROADMAP.md` antigo (prioridades 5 e 6) | Baixa | Sim | S5 | Aberta (condicional) |
+| DT-P13 | Busca, engajamento e fórum sem decisão de adoção | `ROADMAP.md` antigo (prioridades 5 e 6) | Baixa | Sim | S5 | Parcial: fórum adotado e implementado (0.2.0-dev.57); denúncia de comentários pendente (sem tipo de flag para `comment`) |
 | DT-P14 | Portal sem tag própria antes de 2026-10-09 | `RELEASES.md` | Baixa | Não | — | Resolvida: `portal-v0.1.0` |
 | DT-P15 | Composer sem `composer/semver` declarado (P8) | `composer.json` linha 213 (commit `a946880`) | Média | Não | — | Resolvida: `a946880` |
 | DT-P16 | PR #63 citada como integração em andamento | `docs/modules/OPERATIONS.md` e `docs/modules/README.md` | Baixa | Não | S0 | Resolvida nesta revisão |

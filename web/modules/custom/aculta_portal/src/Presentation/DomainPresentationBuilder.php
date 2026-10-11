@@ -48,6 +48,10 @@ final class DomainPresentationBuilder {
       'title' => 'Cursos',
       'short_title' => 'Cursos',
     ],
+    'forum' => [
+      'title' => 'Fórum',
+      'short_title' => 'Fórum',
+    ],
   ];
 
   public function __construct(

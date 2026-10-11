@@ -4,12 +4,13 @@ Purposes estáveis atuais:
 
 `main`, `account`, `support`, `magazine`, `wiki`, `shop`, `courses`.
 
-Purpose planejado:
+Purpose ativo desde 0.2.0-dev.57:
 
 `forum`.
 
-O purpose `forum` só passa a ser estável depois da implementação e validação
-da feature de participação (ver `docs/portal/ROADMAP.md`, F3).
+O purpose `forum` foi implementado com os módulos `forum` e `flag`. A condição
+anterior (validação da feature de participação, F3) foi substituída por decisão
+do responsável em 2026-10-11, que pediu a raiz do host do fórum servindo `/forum`.
 
 Código customizado depende do purpose, não do hostname de ambiente.
 `DomainPurposeManager` centraliza Domain ID, URL correta, canonical de produção
@@ -31,7 +32,7 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | wiki | wiki420.aculta.org | wiki420.aculta.toca.net.br | ativo |
 | shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo futuro |
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |
-| forum | forum.aculta.org | forum.aculta.toca.net.br | planejado |
+| forum | forum.aculta.org | forum.aculta.toca.net.br | ativo (0.2.0-dev.57) |
 
 A sessão Drupal é compartilhada entre subdomínios da mesma raiz. Portanto todos
 os hosts que recebem o cookie compartilhado pertencem ao mesmo trust boundary.
