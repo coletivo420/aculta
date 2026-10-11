@@ -6,6 +6,7 @@
 
 - [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) — padrão Drupal 11+ e regras de código.
 - [GUARDRAILS.md](GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki, Conta e AJAX.
+- [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md) — migração do envio de e-mail para Mailer Plus (M0 decisão e plano; M1 e M2 pendentes).
 - [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) — fonte de verdade de cada dado.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
 - [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.
