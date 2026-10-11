@@ -7,7 +7,7 @@
 {% set slides %}
   {% for key, img in product.field_imagens %}
     {% if key matches '/^\\d+$/' %}
-      <div class="carousel-item{{ loop.first ? ' active' }}">{{ img }}</div>
+      <div class="carousel-item{{ key == 0 ? ' active' }}">{{ img }}</div>
     {% endif %}
   {% endfor %}
 {% endset %}
