@@ -352,7 +352,7 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 
 - Desenvolvimento (Homelab) usa o MariaDB `aculta_runtime`. Estados (`estados/`) são backups privados e não ficam no disco local; restaurações são carregadas no Runtime MariaDB.
 - `estados/*.sqlite` são snapshots imutáveis e integrais; não são sanitizados.
-- Estados são backups privados dos servidores e não são versionados neste repositório: `estados/*.sqlite` está no `.gitignore`. Apenas o README e o `manifesto.yml` ficam no Git. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
+- Estados são backups privados dos servidores e não são versionados neste repositório: `estados/*.sqlite` está no `.gitignore`. A pasta `estados/` é local e está inteira no `.gitignore` (`/estados/`): nada dela, nem README ou manifesto, é versionado. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
 - Produção continua usando MariaDB. Nunca implantar `estados/*.sqlite` nem apontar produção para o Runtime.
 - Não editar um Estado imutável. Mudanças operacionais depois do restore pertencem somente ao Runtime.
 - Código custom deve utilizar APIs Drupal para acesso a dados. A portabilidade/migração entre bancos não é responsabilidade de `aculta_portal`; pertence ao projeto independente **DBTNG-2**.
