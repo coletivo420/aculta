@@ -82,6 +82,26 @@
     field.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  // Preenchimento do CEP. O Estado dispara um rebuild AJAX do endereço, que substitui os campos do markup. Por isso
+  // os campos vêm primeiro, e o Estado por último. O preenchimento fica guardado e é reaplicado nos campos vazios
+  // do markup novo (attach), sem disparar outro rebuild.
+  const pendingFill = new Map();
+
+  function applyFill(prefix, container, values, { onlyEmpty = false } = {}) {
+    Object.keys(values).filter((key) => key !== 'administrative_area').forEach((key) => {
+      const field = getField(prefix, key, container);
+      const value = values[key];
+      if (field && value !== undefined && value !== null && (!onlyEmpty || field.value === '')) {
+        field.value = value;
+      }
+    });
+    const state = getField(prefix, 'administrative_area', container);
+    if (state && values.administrative_area && (!onlyEmpty || state.value === '')) {
+      state.value = values.administrative_area;
+      dispatchChange(state);
+    }
+  }
+
   function attach(context) {
     // Reivindica os campos com o mesmo id do contrib (data-once): o behavior do contrib não os processa de novo.
     const postalFields = once('cep-autocomplete', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
@@ -103,6 +123,10 @@
       }
 
       Object.entries(labels).forEach(([key, label]) => setLabel(getField(prefix, key, container), label));
+      const pending = pendingFill.get(prefix);
+      if (pending) {
+        applyFill(prefix, container, pending, { onlyEmpty: true });
+      }
       const complement = getField(prefix, 'address_line2', container);
       if (complement) complement.setAttribute('placeholder', Drupal.t('Complemento'));
 
@@ -128,13 +152,8 @@
               address_line1: data.address_line1,
               dependent_locality: raw.bairro || '',
             };
-            Object.entries(values).forEach(([key, value]) => {
-              const field = getField(prefix, key, container);
-              if (field && value !== undefined && value !== null) {
-                field.value = value;
-                dispatchChange(field);
-              }
-            });
+            pendingFill.set(prefix, values);
+            applyFill(prefix, container, values);
             postal.value = formatCep(requestedCep);
             postal.dataset.acultaCepResolved = requestedCep;
             announce(status, Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
