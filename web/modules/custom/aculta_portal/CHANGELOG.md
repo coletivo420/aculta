@@ -1,3 +1,15 @@
+## 0.2.0-dev.58 — Migração do e-mail para Mailer Plus (M1) — 2026-10-11
+
+Classificação: MINOR (nova dependência de transporte; prontidão de e-mail muda de fonte; sem mudança de contrato público).
+
+- `drupal/symfony_mailer` 2.0.2 adicionado ao `composer.json` (pacote `mailer_transport`, `mailer_override` e `mailer_policy` incluídos). O `drupal/smtp` continua instalado e inativo até a M2.
+- `PortalController::transactionalMailReady()`: passa a checar o módulo `mailer_override`, o transporte padrão `smtp2go` e as Keys `smtp2go_username` e `smtp2go_password`. Deixa de depender de `smtp.settings` e de `SMTPMailSystem`.
+- Senha e usuário do transporte ficam fora da configuração exportada; a resolução usa o override nativo do módulo Key (sem código próprio).
+- Gate `scripts/validate-mail-transport.php`: dependência, prontidão sem o legado e configuração do transporte sem senha.
+- Documento de decisão e plano: `docs/portal/EMAIL-TRANSPORT.md`.
+
+**RUNTIME STATUS: DEFERRED.** Ainda não testado no Homelab. Pendências da M1 (ver seção 5 do documento): ativar os módulos, exportar o transporte `smtp2go` e os dois `key.config_override`, confirmar entrega do Core, remetente e o modelo HTML do Webform (DT-P09). Nada disso entrou em `config/sync` nesta fase.
+
 ## 0.2.0-dev.57 — Fórum (purpose `forum`, módulos forum e flag) — 2026-10-11
 
 Classificação: MINOR (novo purpose de domínio e novos módulos Drupal; sem mudança de contrato público existente).
