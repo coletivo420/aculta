@@ -204,3 +204,11 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 - A conta de administrador do Drupal (usuário 1) usa outro endereço (`outlook.com`) e não recebeu o teste. A confusão foi de identificação, não de envio.
 - Remetente confirmado. Falta apenas o teste do Webform com HTML (DT-P09).
 
+### 9.4 Webform com HTML (DT-P09): verificação sem envio
+
+- Montagem da mensagem do handler `institutional_notification` com HTML ligado, em memória, pelo `mailer_override` com `send = FALSE`: sem transmissão.
+- O corpo gerado é HTML (`<b>`, `<br>`, `<a>`), com o modelo `webform-email-message-html` do Webform aplicado.
+- **Não verificado:** o envoltório visual que o Mailer Plus aplica no modo de compatibilidade (`mailer_policy` com `email_theme`). Isso só aparece no e-mail recebido.
+- O envio real do teste foi bloqueado pelo classificador de ações. Permanece pendente.
+- DT-P09 **não fechada**.
+
