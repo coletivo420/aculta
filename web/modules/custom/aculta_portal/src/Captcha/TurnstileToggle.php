@@ -23,6 +23,15 @@ final class TurnstileToggle {
 
   public const KEY_ID = 'turnstile';
 
+  /**
+   * Formulários da loja que nunca recebem CAPTCHA (carrinho e checkout padrão). A decisão do responsável ao ligar
+   * ou desligar o Turnstile não os altera. Os pontos correspondentes ficam em config/sync com status false.
+   */
+  public const SHOP_FORM_IDS = [
+    'commerce_order_item_add_to_cart_form',
+    'commerce_checkout_flow_default',
+  ];
+
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -44,6 +53,9 @@ final class TurnstileToggle {
   public function setEnabled(bool $enabled, string $account): void {
     $this->configFactory->getEditable('captcha.settings')->set('enable_globally', $enabled)->save();
     foreach ($this->entityTypeManager->getStorage('captcha_point')->loadByProperties(['captchaType' => self::CHALLENGE]) as $point) {
+      if (in_array($point->id(), self::SHOP_FORM_IDS, true)) {
+        continue;
+      }
       if ((bool) $point->status() !== $enabled) {
         $point->setStatus($enabled)->save();
       }
