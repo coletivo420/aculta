@@ -1,3 +1,12 @@
+## 0.1.15 — migração de domínios (tabela e comando de leitura) — 2026-10-11
+
+- `config/deploy.json`: bloco `domain_transition` com os 7 domínios do Portal (host de teste → host de produção) e a decisão pendente da revista.
+- `domains`: comando somente leitura que confere a tabela contra `config/sync/domain.record.*.yml`. Hoje: 6 alinhados, 1 pendente de RC.
+- `docs/MIGRACAO-DOMINIOS.md`: guia da transição, com passos do RC e rollback.
+- Versão: `VERSION` e a constante da CLI agora coincidem (a constante estava em 0.1.10).
+- Testes: PASS (inclui `domains`); `check`: PASS.
+- Não altera produção nem Runtime. A troca de host de produção acontece no deploy do RC.
+
 # Changelog — ACULTA Deployer
 
 ## 0.1.14 — transição de ambiente (plano) e sitemap de teste — 2026-10-10

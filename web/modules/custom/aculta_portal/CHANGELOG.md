@@ -1,4 +1,4 @@
-## 0.2.0-dev.48 — Loja sem CAPTCHA: barreira de carrinho, checkout e página de produto — 2026-10-11
+## 0.2.0-dev.49 — Loja sem CAPTCHA: barreira de carrinho, checkout e página de produto — 2026-10-11
 
 Classificação: PATCH de política de segurança do CAPTCHA (decisão do responsável; altera o formulário de compra).
 
@@ -9,6 +9,13 @@ Classificação: PATCH de política de segurança do CAPTCHA (decisão do respon
 - Risco aceito: sem CAPTCHA, o carrinho fica sem proteção contra automação. Pendência: limitar tentativas por IP se houver abuso.
 - Verificado no servidor de testes (HTML): página do produto sem `cf-turnstile`, sem `challenges.cloudflare` e sem a frase "Verificação de segurança"; formulário de compra presente. Home mantém o script (esperado).
 - Número de versão: a 0.2.0-dev.48 também está na PR #190 (domínios). Se a #190 for mesclada antes, esta vira 0.2.0-dev.49.
+## 0.2.0-dev.48 — Deployer 0.1.15: tabela de migração de domínios (teste → produção) — 2026-10-11
+
+Classificação: PATCH (ferramenta de deploy e documentação; sem código de runtime do Portal).
+
+- `aculta_deployer` 0.1.15: `domain_transition` em `config/deploy.json` e o comando `domains` (somente leitura), que confere a tabela contra `config/sync/domain.record.*.yml`.
+- Guia `aculta_deployer/docs/MIGRACAO-DOMINIOS.md` e fase 11 no `PLANEJAMENTO.md`.
+- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `coletivo420.aculta.org`). Produção só muda no deploy do RC.
 
 ## 0.2.0-dev.47 — Host de teste da revista: coletivo420 → revista420 (servidor de testes) — 2026-10-10
 

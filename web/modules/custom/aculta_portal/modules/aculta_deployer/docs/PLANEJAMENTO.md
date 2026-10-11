@@ -136,6 +136,14 @@ Pendências desta fase:
 3. Passo pós-deploy com verificação de presença (nomes), sem exibir valores, e bloqueio se obrigatórias faltarem.
 4. Gate S5 e registro no CHANGELOG da versão.
 
+## Fase 11 — Migração de domínios teste → produção (0.1.15)
+
+**Status: preparação concluída; execução no RC.** Tabela `domain_transition` em `config/deploy.json`, comando `domains` (somente leitura) e guia em `docs/MIGRACAO-DOMINIOS.md`.
+
+Pendências:
+1. Decidir o host de produção da revista (`revista420.aculta.org` ou manter `coletivo420.aculta.org`).
+2. No RC: `domains` sem pendências, `transition --target=production`, importação parcial com backup, DNS e certificados de `*.aculta.org` (fora do repositório), e verificação pós-deploy.
+
 ## Fase 6 — Release 0.2.0 (curta)
 
 - Atualizar CHANGELOG, VERSION e `info.yml`; a tag só é criada sob pedido do responsável.

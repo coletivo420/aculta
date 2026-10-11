@@ -294,5 +294,9 @@ $assert(str_contains($smtpTest, "smtp_from: 'naoresponda@toca.net.br'"), 'build 
 exec($cli . ' build --env=test --target=production --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);
 $assert($brc1 !== 0, 'build recusa --env diferente de --target');
 
+// Tabela de migração de domínios: somente leitura, e a revista aparece como pendente de RC.
+exec($cli . ' domains 2>&1', $dom, $domrc);
+$assert($domrc === 0 && str_contains(implode("\n", $dom), 'pendente coletivo420_aculta_org') && str_contains(implode("\n", $dom), 'alinhado'), 'domains: tabela válida; revista pendente de RC');
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);
