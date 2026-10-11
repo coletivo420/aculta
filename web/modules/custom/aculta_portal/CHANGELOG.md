@@ -1,3 +1,13 @@
+## 0.3.0-dev.9 — Endereços somente em Meus Dados (CEP) — 2026-10-11
+
+Classificação: MINOR (tela de endereços do Commerce substituída por redirecionamento).
+
+- Lista e cadastro de endereços do Commerce (`/enderecos*`) redirecionam (302) para `/dados/endereco` (Meus Dados, com busca por CEP). Decisão do responsável.
+- `PortalController::addressRedirect`; `AccountListPathProcessor` sem `/enderecos`.
+- Caminho com ID `/user/{uid}/address-book*` responde 404.
+
+**RUNTIME STATUS:** verificado no servidor de testes com sessão de administrador: `/enderecos` 302 para `/dados/endereco`; `/dados/endereco` 200; anônimo 403; host principal 404.
+
 ## 0.3.0-dev.8 — Endereços, pagamentos e pedidos da conta sem ID na URL — 2026-10-11
 
 Classificação: MINOR (caminhos da conta alterados; rotas antigas com ID respondem 404).

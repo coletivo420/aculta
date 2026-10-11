@@ -86,11 +86,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 
 | Caminho antigo (ID na URL) | Caminho atual (sessão) | Responde | Observação |
 | --- | --- | --- | --- |
-| `/user/{uid}/address-book` | `/enderecos` | 404 para o antigo | Lista de endereços (`PortalController::addressBook`) |
-| `/user/{uid}/address-book/add/{tipo}` | `/enderecos/novo/{tipo}` | 404 para o antigo | `PortalController::addressBookAdd` |
-| `/user/{uid}/address-book/{perfil}/edit` | `/enderecos/{perfil}/editar` | 404 para o antigo | Dono verificado pelo perfil |
-| `/user/{uid}/address-book/{perfil}/delete` | `/enderecos/{perfil}/excluir` | 404 para o antigo | Dono verificado pelo perfil |
-| `/user/{uid}/address-book/{perfil}/set-default` | `/enderecos/{perfil}/padrao` | 404 para o antigo | Dono verificado pelo perfil |
+| `/user/{uid}/address-book`, `/enderecos` | `/dados/endereco` (Meus Dados) | 302 para o caminho novo; 404 para o caminho com ID | Lista de endereços do Commerce substituída pelo formulário de Meus Dados (busca por CEP). Decisão do responsável (2026-10-11). |
 | `/user/{uid}/payment-methods/add` | `/pagamentos/novo` | 404 para o antigo | `PortalController::paymentMethodAdd`; 403 quando a loja não tem tipo de pagamento que aceite cadastro (comportamento do Commerce) |
 | `/user/{uid}/payment-methods/{id}/edit` | `/pagamentos/{id}/editar` | 404 para o antigo | Dono verificado pelo método |
 | `/user/{uid}/payment-methods/{id}/delete` | `/pagamentos/{id}/excluir` | 404 para o antigo | Dono verificado pelo método |
@@ -101,7 +97,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 
 - **Caminhos e controllers:** `DomainRouteSubscriber` troca o caminho e o controller das rotas do Commerce e remove o parâmetro `user`.
 - **Usuário da sessão:** `PortalController` entrega ao controller do Commerce o usuário da sessão como entidade (`sessionUser()`).
-- **Links sem ID:** `AccountListPathProcessor` remove `user` da query gerada para `/pedidos`, `/pagamentos` e `/enderecos`.
+- **Links sem ID:** `AccountListPathProcessor` remove `user` da query gerada para `/pedidos` e `/pagamentos`.
 - **Verificações:** exigências que pediam o `$user` da URL foram trocadas por `_user_is_logged_in`; a propriedade do registro continua verificada pela entidade (perfil, método de pagamento ou pedido).
 
 ### Pendências de conta (não são redirecionamentos)
@@ -109,3 +105,12 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 - **Permissões de endereço (corrigido em 2026-10-11):** o papel "autenticado" tem `create customer profile`, `view own customer profile` e `update own customer profile` (`config/sync/user.role.authenticated.yml`): cliente cria e edita o próprio endereço. `delete any customer profile` e `delete own customer profile` ficam só com o administrador. O endereço de outra conta continua negado. Verificado com duas contas temporárias, já removidas.
 - **Teste de dono com cliente comum:** não concluído, porque o aceite de termos (`/agreement`) da conta de teste não foi registrado pelo serviço do Portal. Teste pendente com conta de cliente após o aceite.
 - **Pedido com itens:** `/pedidos/{pedido}` não foi testado com pedido real (não há pedidos finalizados no ambiente de teste).
+
+
+### Endereços: substituição por Meus Dados (0.3.0-dev.9)
+
+- **Fonte única:** o endereço é cadastrado e alterado só em `/dados/endereco` (Meus Dados), que busca o endereço pelo CEP.
+- **Redirecionamentos (302):** `/enderecos`, `/enderecos/novo/{tipo}`, `/enderecos/{perfil}/editar`, `/enderecos/{perfil}/excluir`, `/enderecos/{perfil}/padrao` redirecionam para `/dados/endereco`. Implementados por `PortalController::addressRedirect`, nas rotas do Commerce (`DomainRouteSubscriber`).
+- **Exceção à regra de slug:** a regra geral não usa redirecionamento de slug. Aqui o redirecionamento foi pedido pelo responsável para a tela substituída.
+- **Caminho com ID:** `/user/{uid}/address-book*` responde 404.
+- **Perfil `customer`:** o formulário de Meus Dados grava no mesmo tipo de perfil usado pelo Commerce.
