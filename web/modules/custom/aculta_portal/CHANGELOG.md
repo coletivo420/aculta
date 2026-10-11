@@ -1,6 +1,7 @@
 ## 0.3.0-dev.16 — Aceite dos termos em popup persistente; contenção do Mercado Pago — 2026-10-11
 
 - Checkout: campo **Número** no endereço de cobrança (`aculta_billing_address`). Como o endereço de cobrança do Commerce não tem campo próprio, o número é gravado no logradouro (`Logradouro, Número`) e preenchido de volta ao voltar à etapa. Verificado: campo renderizado em `order_information`; envio do passo ainda não testado de ponta a ponta.
+- Popup de aceite: Esc (fechamento sem ativação do usuário) reabre o popup no evento close, enquanto não houver aceite; Tab e Shift+Tab ficam presos dentro do popup (`js/account-terms-modal.js`). Verificado no navegador pelo Felipe antes desta correção; reteste pendente.
 - Tradução: "Company" → "Empresa" (`aculta_ui.pt-br.po`).
 Classificação: MINOR (fluxo de aceite substituído: a página /aceite-termos deixa de existir; novo bloqueio de páginas restritas).
 
