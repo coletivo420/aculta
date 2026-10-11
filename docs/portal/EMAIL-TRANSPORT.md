@@ -244,3 +244,9 @@ Executada no mesmo PR da M1, a pedido do responsável (o `AGENTS.md` pede um PR 
 
 **Pendências fora da M2:** DT-P05 (entrega em produção) depende do RC. Os itens acima anteriores à M2 ficam para o saneamento de dívidas.
 
+### 9.8 Validação pós-remoção (antes do merge)
+
+- `transactionalMailReady()` com o módulo `smtp` removido: TRUE (backend `symfony_mailer`, transporte `smtp2go`, módulo `smtp` inexistente).
+- Reenvio do teste do Core para o endereço do responsável após a remoção: aceito pelo `mailer_override` (`result=TRUE`, transporte `smtp2go`). Recebimento a confirmar pelo responsável.
+- **Pendente antes do merge:** número do commit de release da linha 0.2 (`-dev` removido). A regra exige a versão final antes do merge; a linha ainda não tem esse número definido. Ver `docs/operations/RELEASES.md`.
+
