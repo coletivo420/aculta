@@ -4,4 +4,4 @@ component: aculta420:cart-offcanvas
 props:
   count: 0
   empty: true
-  url: /cart
+  url: /carrinho

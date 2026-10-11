@@ -4,7 +4,7 @@ component: aculta420:cart-offcanvas
 props:
   count: 1
   empty: false
-  url: /cart
+  url: /carrinho
   total: 'R$ 30,00'
   items:
     - title: Camiseta Abadá Bloco Sativa 2026 – Regata

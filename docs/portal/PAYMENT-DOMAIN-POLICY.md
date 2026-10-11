@@ -189,7 +189,7 @@ Antes da B.3, validar:
 
 No Homelab Apache/PHP-FPM, os gates de política, domínio, Foundation,
 apresentação e instituição passaram. A matriz HTTP confirmou que GET/HEAD de
-`/cart` em SHOP redirecionam para MAIN, preservando query string; POST/PUT/PATCH/
+`/carrinho` em SHOP redirecionam para MAIN, preservando query string; POST/PUT/PATCH/
 DELETE no host errado falham com `404` e `Cache-Control: private, no-store`.
 As rotas Commerce inventariadas têm metadata MAIN; `commerce_payment.notify` é
 POST-only e não recebe canonicalização browser-facing.
@@ -200,7 +200,7 @@ observado nesta data:
 - `commerce_product` está desabilitado; não há entidades de produto/variação nem
   orders para testar Add to cart, identidade do carrinho ou checkout;
 - Commerce Donation Flow está configurado em modo `donate`, que desabilita as
-  rotas genéricas `/cart` e `/checkout`; ambas respondem `403` em MAIN;
+  rotas genéricas `/carrinho` (carrinho, antes `/cart`) e `/checkout`; ambas respondem `403` em MAIN;
 - a rota `/donate` redireciona de SUPPORT para MAIN, mas o acesso anônimo é
   negado pela permissão `make donation`; `/donate` responde `403` em MAIN;
 - SHOP ainda não apresenta catálogo público e sua raiz responde `404`.

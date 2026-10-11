@@ -1,3 +1,14 @@
+## 0.3.0-dev.4 — Carrinho em `/carrinho` — 2026-10-11
+
+Classificação: MINOR (caminho público de rota alterado; nome da rota e checkout/pagamento inalterados).
+
+- `CartFriendlyRouteSubscriber`: `commerce_cart.page` passa de `/cart` para `/carrinho` (slug em português, `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`).
+- `/cart` passa a responder 404; sem redirecionamento, conforme a regra de slugs estáveis.
+- Checkout e pagamento do Commerce não mudam de caminho.
+- Textos do tema (stories do cart-offcanvas) e `PAYMENT-DOMAIN-POLICY.md` atualizados.
+
+**RUNTIME STATUS:** verificar `/carrinho` 200 e `/cart` 404 no servidor de testes.
+
 ## 0.3.0-dev.3 — Busca: ciclo de Tab e nome do botão fechar — 2026-10-11
 
 Classificação: PATCH.
