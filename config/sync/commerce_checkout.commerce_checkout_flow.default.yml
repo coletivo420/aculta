@@ -24,7 +24,7 @@ configuration:
       step: order_information
       weight: 1
       double_entry: true
-    billing_information:
+    aculta_billing_address:
       step: order_information
       weight: 2
     review:

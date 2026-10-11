@@ -28,7 +28,7 @@
 
 ## Pendente (não resolvido)
 
-- O passo de endereço de cobrança com CEP, conforme o comportamento esperado acima, ainda **não está implementado**. O caminho mais coerente com o Commerce é um pane próprio do Portal (`CheckoutPane`) no passo `order_information`, que reaproveita o autocomplete por CEP de "Meus endereços". Depende de decisão do responsável.
+- **Implementado em 0.3.0-dev.15:** pane `aculta_billing_address` (`BillingAddressPane`) no passo `order_information`, com o autocomplete por CEP `cep_autocomplete/viacep`. Substitui o `billing_information` removido pelo Commerce Payment. O gateway Mercado Pago voltou para `collect_billing_information: false`, porque o pane agora coleta o endereço. Verificado: campo de CEP renderizado no pedido 5. **Pendente:** teste de gravação pelo navegador e passagem ao Mercado Pago.
 - Título "Payment" e rótulo "Quantity" sem tradução no checkout e no carrinho.
 - Coluna "Item" do carrinho mostra só preço e tamanho, sem o nome do produto.
 - Não houve reprodução, por HTTP, do aceite repetido no host da loja relatado pelo Felipe (com sessão logada, `/loja/produto/...` respondeu 200). A causa provável é o destino fixo do acordo, já corrigido.

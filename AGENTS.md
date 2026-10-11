@@ -492,6 +492,10 @@ O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 - Slug publicado é estável. Mudança de slug troca o caminho, e o caminho antigo responde 404. Esse é o comportamento padrão do projeto para endereços antigos; não se cria redirecionamento 301 de slug.
 - Diretiva detalhada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Gate: `php scripts/validate-public-slugs.php`.
 
+## Testes interativos no navegador
+
+Rodadas de teste com agente de navegador e o responsável (Felipe), incluindo hosts, contas de teste, limites do agente de navegador e resultados, estão em `docs/portal/TESTES-NAVEGADOR.md`. Consultar antes de pedir teste de navegador e atualizar a seção de resultados a cada rodada.
+
 ## Versionamento obrigatório de mudanças
 
 O versionamento controla as mudanças e os avanços no código. Não criar tags no GitHub sem pedido explícito do responsável.

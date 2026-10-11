@@ -1,3 +1,15 @@
+## 0.3.0-dev.15 — Passo de endereço de cobrança no checkout (CEP); traduções; nome do produto no carrinho — 2026-10-11
+
+Classificação: MINOR (novo pane de checkout; a etapa de dados do pedido passa a pedir endereço de cobrança).
+
+- Novo pane `aculta_billing_address` (`BillingAddressPane`) no passo `order_information` do fluxo `default`, no lugar de `billing_information` (removido pelo Commerce Payment). Usa o formulário inline de perfil de cobrança do Commerce, só com endereço, e o autocomplete por CEP `cep_autocomplete/viacep` (mesmo de "Meus Dados"). Grava o perfil como cobrança do pedido, que o Mercado Pago exige.
+- `collect_billing_information` do Mercado Pago volta para `false` (o pane agora coleta o endereço).
+- Traduções: "Payment" → "Pagamento" e "Quantity" → "Quantidade" (`translations/aculta_ui.pt-br.po`).
+- Nome do produto na coluna Item do carrinho: display `cart` do bundle `camiseta_tamanho` (`config/sync/core.entity_view_display.commerce_product_variation.camiseta_tamanho.cart.yml`), copiado do display padrão.
+- Documentação de testes de navegador: `docs/portal/TESTES-NAVEGADOR.md`.
+
+**RUNTIME STATUS:** parcial. Verificado no servidor de testes: o pedido 5 renderiza o campo de CEP em `order_information`, com a biblioteca `cep_autocomplete/viacep` carregada; traduções importadas. Não verificado: gravação do endereço pelo passo, passagem para o Mercado Pago e nome do produto no carrinho pelo navegador. Pendente de teste com `teste.comum`.
+
 ## 0.3.0-dev.14 — Checkout: incidente de endereço de cobrança documentado; destino do aceite sem fixo — 2026-10-11
 
 Classificação: PATCH (configuração e documentação; o passo de endereço com CEP ainda não foi implementado).

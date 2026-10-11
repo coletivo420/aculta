@@ -47,3 +47,9 @@ msgstr "Recomendações para deixar a sua senha mais forte"
 
 msgid "User account menu"
 msgstr "Menu da conta de usuário"
+
+msgid "Payment"
+msgstr "Pagamento"
+
+msgid "Quantity"
+msgstr "Quantidade"
