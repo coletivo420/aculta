@@ -63,3 +63,6 @@
 - Parcelamento: `max_installments` = 1 (a preferência envia 1 parcela). Não alterado, porque o pedido não pediu parcelas.
 - Pix: o módulo mapeia Pix como o método `pix` do tipo `bank_transfer`. **Não foi possível confirmar pela API** se a conta vendedora de teste tem a chave Pix cadastrada. Esse dado está no painel do Mercado Pago (conta de teste) e precisa ser confirmado pelo Felipe; se a opção não aparecer no checkout, é esse o motivo provável.
 - Configuração aplicada no servidor de testes e levada ao `config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml`.
+- **Resultado do reteste (d277f2a):** a tela "Como você prefere pagar?" mostra cartões de crédito salvos (Mastercard e Visa de teste), "Novo cartão – Crédito" e "Cartão de Débito Virtual CAIXA". Crédito e débito confirmados. **Pix não aparece** no teste: provável falta de chave Pix na conta vendedora de teste.
+- **Decisão do responsável:** Pix **mantido ativado** na configuração (servidor de testes e `config/sync`). Não remover. A validação do Pix será feita em produção, com chave real cadastrada.
+
