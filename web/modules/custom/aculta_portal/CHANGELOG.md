@@ -1,3 +1,10 @@
+## 0.2.0-dev.55 — Raiz de todos os subdomínios pelo mesmo mapa — 2026-10-11
+
+- `FRONT_PATHS` agora cobre apoio (`/apoio`), wiki (`/wiki`), cursos (`/cursos`) e loja (`/loja-da-aculta`). Verificado: a raiz da wiki e a dos cursos têm texto visível igual ao das rotas correspondentes.
+- Atributo `_aculta_purpose_front`: marca a raiz reescrita; a regra que retornava 404 em `/apoio` aceita essa marca.
+- Revista e principal: `<front>`, sem reescrita (documentado).
+- Gate `validate-root-policy.php` exige o mapa completo.
+
 ## 0.2.0-dev.54 — Raiz da loja serve conteúdo (processador de entrada) — 2026-10-11
 
 - `PathProcessor\PurposeFrontPathProcessor` (tag `path_processor_inbound`, prioridade 300): mapa único `FRONT_PATHS` com a página inicial de cada purpose. Hoje: SHOP → `/loja-da-aculta` (nó 69). Define `_disable_route_normalizer` para o alias interno não virar 301.

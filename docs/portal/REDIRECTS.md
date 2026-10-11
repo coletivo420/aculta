@@ -22,13 +22,13 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 
 | Host | `/` | `/entrar` | `/apoie` | `/apoio` | `/user/1` | Observação |
 | --- | --- | --- | --- | --- | --- | --- |
-| aculta.toca.net.br (MAIN) | 200 | 404 | 404 | 404 | 404 | Início = nó 1 |
+| aculta.toca.net.br (MAIN) | 200 (`<front>`) | 404 | 404 | 404 | 404 | Início = nó 1 (sem reescrita) |
 | conta.aculta.toca.net.br (ACCOUNT) | 302 → /entrar | 200 | 404 | 404 | 404 | Exceção: visitante na raiz vai ao login |
-| apoio.aculta.toca.net.br (SUPPORT) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` do apoio |
-| loja.aculta.toca.net.br (SHOP) | 200 (serve conteúdo) | 404 | 404 | 404 | 404 | Página inicial da loja (nó 69) servida pelo processador de entrada `PurposeFrontPathProcessor` |
-| revista420.aculta.toca.net.br (MAGAZINE) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` da revista |
-| wiki420.aculta.toca.net.br (WIKI) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` da wiki |
-| cursos.aculta.toca.net.br (COURSES) | 200 | 404 | 404 | 404 | 404 | Raiz = nó com `domain_source` dos cursos |
+| apoio.aculta.toca.net.br (SUPPORT) | 200 (`/apoio` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Formulário de apoio |
+| loja.aculta.toca.net.br (SHOP) | 200 (`/loja-da-aculta` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Página inicial da loja (nó 69) |
+| revista420.aculta.toca.net.br (MAGAZINE) | 200 (`<front>`, com a marca da revista) | 404 | 404 | 404 | 404 | Sem reescrita: página inicial do site com o cabeçalho do host |
+| wiki420.aculta.toca.net.br (WIKI) | 200 (`/wiki` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Página inicial da wiki |
+| cursos.aculta.toca.net.br (COURSES) | 200 (`/cursos` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Página inicial dos cursos |
 
 Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero registros no Runtime de teste).
 
@@ -46,3 +46,7 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 - `src/Domain/DomainRoutePolicy.php`: rotas centrais (carrinho, checkout, pagamento).
 - `src/Controller/PortalController.php`: `legacyUserPageRedirect`.
 - Documentação relacionada: `ADMIN-DOMAIN-POLICY.md`, `CROSS-DOMAIN-REQUEST-POLICY.md`, `PAYMENT-DOMAIN-POLICY.md`, `docs/architecture/multidomain.md`.
+
+## Mecanismo único da raiz (decisão de 2026-10-11)
+
+Toda raiz de subdomínio que serve conteúdo passa pelo `PurposeFrontPathProcessor` (`src/PathProcessor/PurposeFrontPathProcessor.php`), um `InboundPathProcessorInterface` com a tag `path_processor_inbound`, mapa único `FRONT_PATHS`. Não há redirecionamento. Sem entrada no mapa, o host usa o `<front>` do Core. Hoje, o `FRONT_PATHS` tem apoio, wiki, cursos e loja. Revista e principal usam o `<front>`. Para mudar a raiz de um host, altere só esse mapa e rode `php scripts/validate-root-policy.php`.

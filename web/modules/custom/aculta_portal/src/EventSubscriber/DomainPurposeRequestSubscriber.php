@@ -171,7 +171,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $routeName = (string) $request->attributes->get('_route');
     // The support form is routed at /apoio but is the public home of the SUPPORT
     // subdomain: it is served only when the original request path is /.
-    if ($routeName === 'aculta_portal.support_form' && $request->getPathInfo() !== '/') {
+    if ($routeName === 'aculta_portal.support_form' && $request->getPathInfo() !== '/' && !$request->attributes->get(\Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor::FRONT_ATTRIBUTE)) {
       throw new NotFoundHttpException();
     }
     // The account overview is served only at the ACCOUNT root. Its internal

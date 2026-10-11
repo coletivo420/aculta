@@ -20,8 +20,21 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
 
-  /** Purpose => caminho interno (nó ou rota) que serve a raiz do host. */
+  /** Atributo da requisição que marca a raiz reescrita (permite rotas públicas que só respondem em `/`). */
+  public const FRONT_ATTRIBUTE = '_aculta_purpose_front';
+
+  /**
+   * Purpose => caminho interno que serve a raiz do host (mapa único).
+   *
+   * - support: a raiz serve o formulário de apoio (rota `aculta_portal.support_form`, `/apoio`).
+   * - wiki e courses: a raiz serve a página inicial da wiki (`/wiki`) e dos cursos (`/cursos`). Verificado: texto igual.
+   * - shop: a raiz serve a página inicial da loja (nó 69, alias `/loja-da-aculta`).
+   * - magazine e main: sem reescrita. A raiz é o `<front>` (página inicial do site, com a marca do host).
+   */
   public const FRONT_PATHS = [
+    'support' => '/apoio',
+    'wiki' => '/wiki',
+    'courses' => '/cursos',
     'shop' => '/loja-da-aculta',
   ];
 
@@ -40,6 +53,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
     // A raiz é a URL pública: o normalizador do módulo redirect (prioridade 30) não deve redirecionar o alias
     // interno para a URL canônica. Documentado pelo módulo redirect como _disable_route_normalizer.
     $request->attributes->set('_disable_route_normalizer', TRUE);
+    $request->attributes->set(self::FRONT_ATTRIBUTE, TRUE);
     return self::FRONT_PATHS[$purpose];
   }
 
