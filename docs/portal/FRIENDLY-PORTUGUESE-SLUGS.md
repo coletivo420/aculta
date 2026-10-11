@@ -372,3 +372,15 @@ A diretiva obrigatória para agentes está em `AGENTS.md` (seção "URLs e slugs
 - o caso `/course/1/0/1` foi corrigido em DT-P21 (0.2.0-dev.1): a rota do LMS é `/curso/{curso}/{lição}/{atividade}`, com slugs derivados dos títulos (`src/Lms/`). O Portal substitui a rota contrib e sai da linha de base; a rota numérica antiga responde 404, que é o padrão do projeto para caminhos antigos (sem redirecionamento de slug; ver DT-P22).
 
 Exceções permanentes: `/admin`, `/ajax`, `/api`, callbacks técnicos e arquivos `.json`.
+
+## Registro de trocas de slug
+
+Toda troca de caminho público entra aqui, com a instrução de deploy. O caminho antigo responde
+404; não há redirecionamento de slug.
+
+| Versão | Antes | Depois | Como chega à produção |
+| --- | --- | --- | --- |
+| 0.3.0-dev.4 | `/cart` | `/carrinho` | Código (`CartFriendlyRouteSubscriber`). Sem configuração a aplicar: o deploy do código já traz a rota. Após o deploy, `/cart` responde 404 e `/carrinho` 200 no host principal. |
+
+Verificação após cada deploy: `/carrinho` 200 e `/cart` 404 no host principal; o host da loja redireciona
+`/carrinho` para o principal, conforme a política de pagamento.
