@@ -10,8 +10,16 @@ props:
       type: string
       description: 'Categoria do produto, em texto.'
       default: ''
-    sizes_note:
+    sizes:
       type: string
-      description: 'Texto sobre os tamanhos disponíveis.'
-      default: 'Escolha o tamanho na seleção de compra.'
+      description: 'Tamanhos disponíveis, em texto (ex.: P, M, G, GG e XXG).'
+      default: ''
+    weight:
+      type: string
+      description: 'Peso do produto, em texto.'
+      default: 'Não aplicável'
+    dimensions:
+      type: string
+      description: 'Dimensões do produto, em texto.'
+      default: 'Não aplicável'
 slots: {}

@@ -1,0 +1,23 @@
+uuid: 8a8c34a0-2f08-4f22-99f8-a7cc57b34114
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_product.type.produto_loja
+  module:
+    - commerce_product
+id: aculta_produto
+label: 'URLs — produto da loja'
+type: 'canonical_entities:commerce_product'
+pattern: '/loja/produto/[commerce_product:field_categoria:entity:name]/[commerce_product:title]'
+selection_criteria:
+  3a2919be-877d-4216-8a73-56854d4656e8:
+    id: 'entity_bundle:commerce_product'
+    negate: false
+    context_mapping:
+      commerce_product: commerce_product
+    bundles:
+      produto_loja: produto_loja
+selection_logic: and
+weight: 0
+relationships: {}
