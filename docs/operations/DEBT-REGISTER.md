@@ -38,7 +38,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-P06 | Enumeração de contas pelo cadastro | reaberta e resolvida em 0.2.0-dev.22: mensagem única para e-mail novo e já cadastrado; conta existente não é criada nem revelada; dono recebe aviso. Limites registrados no CHANGELOG | Média | Decisão do responsável (2026-10-09) | S4 | Resolvida |
 | DT-P07 | Mercado Pago não testado com credencial real | adiado a pedido do responsável (decisão sobre a credencial de sandbox) | Média | Sim (credencial de sandbox) | S3 | Aberta (adiada) |
 | DT-P08 | Login completo com CAPTCHA não exercitado por HTTP | widget Turnstile verificado em `/entrar`; resolução do desafio depende de exceção de teste aprovada pelo responsável | Média | Sim (exceção de teste do CAPTCHA) | S3 | Aberta (parcial) |
-| DT-P09 | Mensagem de webform via SMTP sem o modelo HTML | `P10-R` risco 5; `CHANGELOG.md` do Portal | Baixa | Não | S4 | Aberta |
+| DT-P09 | Mensagem de webform via SMTP sem o modelo HTML | `P10-R` risco 5; `CHANGELOG.md` do Portal. Resolvida na M1 da migração do e-mail (Mailer Plus): teste de HTML no runtime recebido e confirmado pelo responsável (`docs/portal/EMAIL-TRANSPORT.md`, seção 9) | Baixa | Não | S4 | Resolvida (M1) |
 | DT-P10 | Módulos de administração ativos em produção | `P10-R` risco 7 ("avaliar") | Média | Sim | S4 | Aberta |
 | DT-P11 | `validate-final-contact` não executa fora do ambiente local | local por desenho (recusa outros hosts); sai com código 2 porque o Turnstile recusa envio por script. Adiado com decisão: exceção de teste do CAPTCHA | Baixa | Sim (exceção de teste do CAPTCHA) | S3 | Aberta (adiada com decisão) |
 | DT-P12 | Conta: segurança/conexões e AJAX herdados da lista antiga de prioridades | `ROADMAP.md` antigo (prioridades 2 e 3); `js/account-navigation.js` com 183 linhas | Média | Sim (escopo) | S5 | Aberta |
@@ -108,6 +108,6 @@ Estado após a rodada. Só o que foi verificado está como resolvido.
 - **Pendente de autorização explícita:** DT-O01 (apagar 64 branches remotas já mescladas), DT-O02 (regerar o snapshot versionado em `estados/`; ver nota de 2026-10-10 abaixo).
 - **Pendente de ambiente com privilégio:** DT-O04 (diretório de agregados do Drupal com dono `aculta:www-data`), DT-P04 (PHP 8.5 não instalado neste host).
 - **Pendente de operação:** DT-O05 (rotação de credenciais de teste), DT-P05 e DT-O07 (e-mail em produção e drift de `smtp.settings` e `system.mail`, dependem de credenciais SMTP e de deploy).
-- **Pendente de implementação maior:** DT-P01 (classes `aculta-*` no módulo, com ajuste visual), DT-P03 (testes de Kernel para P5–P7), DT-P09 (modelo HTML do webform), DT-P08 (login com CAPTCHA por HTTP), DT-P11, DT-P20 (slugs de rotas de contrib), DT-O06 (teste de conta bloqueada).
+- **Pendente de implementação maior:** DT-P01 (classes `aculta-*` no módulo, com ajuste visual), DT-P03 (testes de Kernel para P5–P7), DT-P08 (login com CAPTCHA por HTTP), DT-P11, DT-P20 (slugs de rotas de contrib), DT-O06 (teste de conta bloqueada).
 
 - **Nota (2026-10-10):** o responsável decidiu que os Estados são backups privados dos servidores. O `.sqlite` de `estados/` saiu do índice do Git e `estados/*.sqlite` está no `.gitignore`; os arquivos permanecem no disco. DT-O02 deixa de ser uma regeração versionada e passa a ser apenas inventário e retenção do backup local.

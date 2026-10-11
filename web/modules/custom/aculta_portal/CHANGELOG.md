@@ -8,7 +8,10 @@ Classificação: MINOR (nova dependência de transporte; prontidão de e-mail mu
 - Gate `scripts/validate-mail-transport.php`: dependência, prontidão sem o legado e configuração do transporte sem senha.
 - Documento de decisão e plano: `docs/portal/EMAIL-TRANSPORT.md`.
 
-**RUNTIME STATUS: DEFERRED.** Ainda não testado no Homelab. Pendências da M1 (ver seção 5 do documento): ativar os módulos, exportar o transporte `smtp2go` e os dois `key.config_override`, confirmar entrega do Core, remetente e o modelo HTML do Webform (DT-P09). Nada disso entrou em `config/sync` nesta fase.
+**RUNTIME STATUS: VALIDADO no Homelab (2026-10-11).** Módulos ativos no runtime; transporte `smtp2go` e os dois `key.config_override` exportados para `config/sync`; `transactionalMailReady()` verdadeiro; e-mail do Core e teste do Webform com HTML recebidos e confirmados pelo responsável. DT-P09 resolvida. Ver `docs/portal/EMAIL-TRANSPORT.md`, seção 9.
+
+- Correção encontrada no teste de runtime: constante `MAIL_TRANSPORT` estava sem declaração em `PortalController` (corrigida).
+- Pendências para a M2 (remoção do legado): `drupal/smtp` ainda instalado; `config/sync/system.mail.yml` ainda declara `php_mail` (runtime usa `symfony_mailer`); `smtp.settings` ainda em `config/sync`.
 
 ## 0.2.0-dev.57 — Fórum (purpose `forum`, módulos forum e flag) — 2026-10-11
 

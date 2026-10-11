@@ -1,7 +1,6 @@
 # Transporte de e-mail do Portal (migração para Mailer Plus)
 
-Status: **M0 — decisão e plano**. Documento normativo para as fases M1 e M2. Esta fase não altera
-código, configuração, composer nem banco.
+Status: **M0 concluída; M1 validada no runtime (2026-10-11); M2 pendente.** Documento normativo para as fases M1 e M2.
 
 Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05, DT-P09, DT-O07),
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
@@ -217,4 +216,11 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 - Script `m1-webform-send.php` executado no terminal do responsável: `sendMessage=true`, com a notificação do formulário `aculta_contact` registrada ("Notificação institucional email").
 - Destino: `advfjpm@gmail.com`, com HTML ligado (só em memória; o formulário não foi alterado).
 - **Pendente:** confirmação visual do layout no e-mail recebido (envoltório do Mailer Plus). Enquanto não for confirmada, DT-P09 permanece aberta e a M2 bloqueada.
+
+### 9.6 Fechamento da M1
+
+- Webform com HTML recebido e confirmado pelo responsável: **DT-P09 resolvida**.
+- Checklist da seção 5: passos 1, 2, 3 e 5 concluídos; passo 4 (remetente) confirmado no cabeçalho; passo 6 (`transactionalMailReady()`) verdadeiro no runtime.
+- Correções feitas durante a validação: constante `MAIL_TRANSPORT` declarada (`e65c714`); `system.mail:interface.default` alterado para `symfony_mailer` (só no runtime).
+- Pendências transferidas para a M2: remover `drupal/smtp`, `smtp.settings` e os overrides de senha antigos; exportar `system.mail` com `symfony_mailer`; fechar DT-O07. DT-P05 (entrega em produção) depende do RC.
 
