@@ -136,7 +136,7 @@ URLs humanas devem usar vocabulário de apoio/doação, por exemplo:
 - páginas de confirmação/status com nomes compreensíveis quando não forem
   endpoints técnicos do Commerce.
 
-Registro de decisão: a página pública de apoio é a página inicial do subdomínio de apoio (`/`). A rota interna é `/apoio`, que não é acessível diretamente; o histórico de doações fica em Minha Conta > Meu apoio (`/meu-apoio`). Não há redirecionamento para caminhos antigos até a versão estável (ver `docs/architecture/multidomain.md`, "Página de apoio (SUPPORT)").
+Registro de decisão: a página pública de apoio é a página inicial do subdomínio de apoio (`/`). A rota interna é `/apoio`, que não é acessível diretamente; o histórico de doações fica em Minha Conta > Meu apoio (`/meu-apoio`). Caminhos antigos, como `/apoie`, respondem 404; não há redirecionamento de slug (ver `docs/architecture/multidomain.md`, "Página de apoio (SUPPORT)").
 
 Checkout, payment callbacks e webhooks permanecem sob APIs upstream.
 
@@ -241,7 +241,7 @@ Ao trocar uma URL pública já usada:
 1. inventariar path atual;
 2. definir novo path;
 3. preservar canonical;
-4. criar redirect permanente apenas a partir da versão estável; até lá, não há redirecionamentos (ver regra abaixo);
+4. não criar redirecionamento: o caminho antigo responde 404 (ver regra abaixo);
 5. atualizar menus;
 6. atualizar breadcrumbs;
 7. atualizar sitemap;
@@ -249,7 +249,7 @@ Ao trocar uma URL pública já usada:
 9. atualizar Search/Views;
 10. testar links salvos/deep links.
 
-Até o lançamento da versão estável, não há redirecionamentos: o site está em desenvolvimento e o caminho antigo responde 404. Redirecionamentos 301 de slugs antigos, incluindo os criados em ciclos anteriores, foram removidos do runtime. A partir da versão estável, é obrigatório o redirecionamento 301 de todo path público já indexado que mudar.
+Caminhos antigos respondem 404. Esse é o comportamento padrão do projeto, válido antes e depois da versão estável: não há redirecionamento 301 de slug. Redirecionamentos de slugs antigos criados em ciclos anteriores foram removidos do runtime.
 
 ## Canonical e SEO
 
@@ -369,6 +369,6 @@ A diretiva obrigatória para agentes está em `AGENTS.md` (seção "URLs e slugs
 
 - reprova segmento numérico ou termo técnico em inglês em rotas customizadas e do tema;
 - para rotas de contrib, usa uma linha de base que só pode diminuir (DT-P20). Rota nova fora dela reprova; rota corrigida sai dela;
-- o caso `/course/1/0/1` foi corrigido em DT-P21 (0.2.0-dev.1): a rota do LMS é `/curso/{curso}/{lição}/{atividade}`, com slugs derivados dos títulos (`src/Lms/`). O Portal substitui a rota contrib e sai da linha de base; a rota numérica antiga responde 404 até a decisão de DT-P22 (301 ou 404).
+- o caso `/course/1/0/1` foi corrigido em DT-P21 (0.2.0-dev.1): a rota do LMS é `/curso/{curso}/{lição}/{atividade}`, com slugs derivados dos títulos (`src/Lms/`). O Portal substitui a rota contrib e sai da linha de base; a rota numérica antiga responde 404, que é o padrão do projeto para caminhos antigos (sem redirecionamento de slug; ver DT-P22).
 
 Exceções permanentes: `/admin`, `/ajax`, `/api`, callbacks técnicos e arquivos `.json`.

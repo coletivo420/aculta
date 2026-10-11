@@ -5,7 +5,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 
 ## Regras vigentes
 
-1. **Sem redirecionamento de slug antes da versão estável.** Mudança de slug troca o caminho e o antigo responde 404 (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404 hoje. Depois da versão estável, mudança de slug exige 301.
+1. **Caminho antigo responde 404; não há redirecionamento de slug.** É o padrão do projeto, antes e depois da versão estável (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404.
 2. **Redirecionamento entre purposes** usa `DomainPurposeManager` + `TrustedRedirectResponse`, nunca `RedirectResponse` cru para outro host (`DomainPurposeRequestSubscriber::retargetRedirect`).
 3. **Conta:** após logout, o destino é o login do host de conta; a raiz do host de conta é o ponto de entrada da área logada (`DomainPurposeRequestSubscriber`, bloco de `user.logout`).
 4. **Login com destino salvo** volta ao purpose de origem, validado por `isSafeLoginDestinationPath` (`LOGIN_DESTINATION_SESSION_KEY`).
@@ -35,7 +35,6 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 
 - **Loja (SHOP):** a raiz não tem página inicial. Caminho: criar um nó com `field_domain_source = loja_aculta_org` e publicado, como apoio, revista, wiki e cursos. Depende do conteúdo que o responsável aprovar.
 - **Conta (ACCOUNT):** a raiz responde 403 para visitante. Decidir se a raiz deve redirecionar para `/entrar` (visitante) ou mostrar a visão geral (logado).
-- **Antes da versão estável:** nenhum redirecionamento de slug. Depois: 301 do caminho antigo para o novo.
 
 ## Onde está o código
 

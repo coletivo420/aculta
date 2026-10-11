@@ -483,7 +483,7 @@ O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 - Toda URL pública navegável de conteúdo ou de ação humana usa slug em português: minúsculas, palavras separadas por hífen, sem acentos e sem IDs numéricos quando existir título estável.
 - Não usar inglês nem termos técnicos de módulo, classe ou plugin no slug público (por exemplo `course`, `group`, `node`, `user`, `lesson`, `activity`). Usar `curso`, `grupo`, `licao`, `atividade`, `entrar`, `minha-conta`.
 - Rotas técnicas não são navegação: callbacks, endpoints AJAX, APIs e a administração do Drupal (`/admin`) ficam como estão. Qualquer outra exceção é registrada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`.
-- Slug publicado é estável até a versão estável. Até o lançamento da versão estável, não há redirecionamentos: mudança de slug troca o caminho e o antigo responde 404 (decisão do responsável, o site está em desenvolvimento). A partir da versão estável, mudança de slug exige redirecionamento 301 do caminho antigo para o novo.
+- Slug publicado é estável. Mudança de slug troca o caminho, e o caminho antigo responde 404. Esse é o comportamento padrão do projeto para endereços antigos; não se cria redirecionamento 301 de slug.
 - Diretiva detalhada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Gate: `php scripts/validate-public-slugs.php`.
 
 ## Versionamento obrigatório de mudanças
