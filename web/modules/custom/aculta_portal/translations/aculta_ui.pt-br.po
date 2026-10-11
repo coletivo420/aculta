@@ -53,3 +53,6 @@ msgstr "Pagamento"
 
 msgid "Quantity"
 msgstr "Quantidade"
+
+msgid "Company"
+msgstr "Empresa"
