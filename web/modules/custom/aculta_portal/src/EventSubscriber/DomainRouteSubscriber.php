@@ -23,11 +23,20 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
 
   /** {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
-    // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado.
-    foreach (['lms.course.start', 'lms.group.answer_form', 'commerce_checkout.form', 'commerce_checkout.checkout'] as $name) {
+    // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado, somado à regra original do dono
+    // do recurso (ProtectedRouteAccessCheck). Rota sem recurso (/checkout) só recebe a checagem de e-mail; mantém _permission.
+    $protected = [
+      'lms.course.start' => 'aculta_portal.access.protected_route:course',
+      'lms.group.answer_form' => 'aculta_portal.access.protected_route:course',
+      'commerce_checkout.form' => 'aculta_portal.access.protected_route:checkout',
+    ];
+    foreach ($protected as $name => $access) {
       if ($route = $collection->get($name)) {
-        $route->setRequirement('_custom_access', 'aculta_portal.access.email_confirmed:access');
+        $route->setRequirement('_custom_access', $access);
       }
+    }
+    if ($route = $collection->get('commerce_checkout.checkout')) {
+      $route->setRequirement('_custom_access', 'aculta_portal.access.email_confirmed:access');
     }
 
     $pathChanges = [
@@ -130,6 +139,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('parameters', array_diff_key((array) $route->getOption('parameters'), ['user' => TRUE]));
         $route->setOption('_aculta_domain_purpose', 'account');
       }
+    }
+    // Cadastro de pagamento só existe com gateway que guarda métodos; a mesma regra esconde o botão (ação local).
+    if ($route = $collection->get('entity.commerce_payment_method.add_form')) {
+      $route->setRequirements(['_custom_access' => 'aculta_portal.access.payment_method_add:access']);
     }
     // Verificações que dependiam do usuário da URL passam a usar a sessão (login) e a verificação da entidade
     // (dono do pedido ou do perfil). Ver docs/portal/REDIRECTS.md, seção de caminhos de conta.

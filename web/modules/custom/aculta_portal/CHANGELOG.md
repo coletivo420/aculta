@@ -1,3 +1,33 @@
+## 0.3.0-dev.12 — Retorno após aceitar os termos da conta vai para a raiz da conta — 2026-10-11
+
+Classificação: PATCH (destino de configuração corrigido; nenhum caminho público alterado).
+
+- O acordo `aculta_account_terms` redirecionava para `/minha-conta`, um caminho antigo que responde 404. A raiz da conta é `/`. Destino configurado para `/` em `config/sync/agreement.agreement.aculta_account_terms.yml` e no runtime.
+- Não é problema de DNS: `conta.aculta.toca.net.br` resolve (8.8.8.8, 1.1.1.1 e local) para o mesmo IP de `aculta.` e `loja.`.
+- `/conta-interna` continua respondendo 404 fora da raiz, por política do Portal (`DomainPurposeRequestSubscriber`); não é destino de retorno.
+
+**RUNTIME STATUS:** verificado no servidor de testes com envio real do formulário `aculta_account_terms` como usuário comum de teste: 302 para `https://conta.aculta.toca.net.br/`; logado, `/` 200 e `/dados` 200. Estado de aceite do usuário de teste restaurado após o teste.
+
+## 0.3.0-dev.11 — Checkout e cursos: e-mail confirmado somado à regra do dono (correção de segurança) — 2026-10-11
+
+Classificação: PATCH (correção de controle de acesso; nenhum caminho alterado).
+
+- Correção: a política de e-mail confirmado substituía o `_custom_access` de `commerce_checkout.form`, `lms.course.start` e `lms.group.answer_form`. Com isso, a regra do Commerce (dono do pedido, loja publicada, itens, permissão "access checkout") e a do LMS (`group.take`) deixavam de valer. Usuário com e-mail confirmado conseguia abrir o checkout de outro pedido ou o curso sem matrícula.
+- `aculta_portal.access.protected_route` (`ProtectedRouteAccessCheck`) combina a regra original com o e-mail confirmado, usando `andIf()`.
+- `/checkout` (`commerce_checkout.checkout`) mantém `_permission` e recebe só a checagem de e-mail.
+- Sintoma observado em teste: admin logado recebe "Acesso negado" em `/checkout/4` porque o e-mail da conta não está confirmado.
+
+**RUNTIME STATUS:** verificado no servidor de testes por API (`checkout()` com o dono do pedido 4 → forbidden, motivo "E-mail não confirmado."; visitante anônimo → forbidden). Não verificado: usuário não-dono com e-mail confirmado (não há outro usuário no banco de testes) e cursos (`group.take`).
+
+## 0.3.0-dev.10 — Correções da validação visual: cadastro de pagamento e rótulos de endereço — 2026-10-11
+
+Classificação: PATCH (correção de apresentação e de acesso; sem caminho novo).
+
+- "Adicionar método de pagamento" some quando nenhum gateway ativo guarda métodos (`aculta_portal.access.payment_method_add`, rota `/pagamentos/novo`). Hoje só o Checkout Pro está ativo, sem cartão salvo.
+- Rótulos de endereço (módulo address, contexto "Address label") em português: `translations/address.pt-br.po`. Importar com `drush locale:import --type=customized --override=none pt-br <arquivo>`.
+
+**RUNTIME STATUS:** verificado no servidor de testes (runtime `aculta_runtime`, por API, sem navegador): `checkNamedRoute` de `entity.commerce_payment_method.add_form` e a ação local da coleção `/pagamentos` retornam `forbidden` para o administrador, sem gateway com cartão ativo; `locale:import` adicionou 38 traduções; `t()` com contexto "Address label" em pt-br devolve "CEP" e "Logradouro, linha 2". Não verificado: captura visual de `/pagamentos` e `/dados/endereco` com sessão de navegador.
+
 ## 0.3.0-dev.9 — Endereços somente em Meus Dados (CEP) — 2026-10-11
 
 Classificação: MINOR (tela de endereços do Commerce substituída por redirecionamento).
