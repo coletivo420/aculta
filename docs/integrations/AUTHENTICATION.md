@@ -168,3 +168,15 @@ Antes de alterar login/OAuth/Conta, validar pelo menos:
   “Desconectar Google”;
 - callback Google usa `SocialAuthUserInterface::getId()` como identificador do
   provedor.
+
+## Aceite dos termos (popup persistente, 0.3.0-dev.16)
+
+- **Origem do aceite:** o checkbox obrigatório "Li e aceito os Termos de Uso e a Política de Privacidade." do cadastro por e-mail/senha (`user_register_form`, `FormHooks`) grava o aceite em `aculta_account_terms` (`RegistrationTerms::record`). O mesmo registro é lido pelo popup (`AccountTermsPolicy`). Quem se cadastra pelo formulário nunca vê o popup.
+- **OAuth (Google) e outras vias sem o checkbox:** não gravam aceite. O popup aparece na primeira página restrita até o aceite.
+- **Páginas restritas:** conta (`_aculta_domain_purpose` = account), carrinho (`commerce_cart.*`), checkout (`commerce_checkout.*`), donation (`commerce_donation_flow.*`) e cursos/áreas de membro (`lms.*`). A opção de rota `_aculta_terms_required` é definida por `DomainRouteSubscriber`.
+- **Comportamento:** sem aceite, a requisição a uma página restrita responde 403 com página mínima contendo só o popup (`AccountTermsGate`). Não há redirecionamento para `/aceite-termos` e a URL não muda. O popup não tem botão de fechar, Esc é cancelado (`js/account-terms-modal.js`), e clique fora não fecha. O foco fica no modal (`showModal()`).
+- **Após aceitar:** `POST /termos/aceitar` grava o aceite e volta à mesma página (destino validado como caminho local).
+- **Versão dos termos:** alterar `settings.reset_date` do acordo (ou aumentar a frequência) faz todos aceitarem de novo, pelo cálculo de `Agreement::getAgreementFrequencyTimestamp()`.
+- **Todos os hosts:** o aceite é por usuário no banco, então vale em principal, conta e loja.
+- **Página antiga:** `/aceite-termos` responde 404 (`DomainRouteSubscriber`; a rota do módulo agreement existe só por nome).
+- **Limite:** a página de bloqueio ainda mostra o layout do site atrás do popup (renderizador bare). O conteúdo restrito não é entregue.

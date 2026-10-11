@@ -1,5 +1,16 @@
 # Visão geral da conta. Caminho interno: o público é a raiz / do Domain ACCOUNT, cujo front aponta para cá
 # (o Core reserva / para a rota <front>). Requisição direta a este caminho responde 404 (DomainPurposeRequestSubscriber).
+# Aceite dos termos (popup e retorno sem JavaScript). Ver docs/integrations/AUTHENTICATION.md.
+aculta_portal.account_terms.accept:
+  path: /termos/aceitar
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\AccountTermsAcceptForm'
+    _title: 'Termos de uso'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+
 aculta_portal.dashboard:
   path: /minha-conta
   defaults:

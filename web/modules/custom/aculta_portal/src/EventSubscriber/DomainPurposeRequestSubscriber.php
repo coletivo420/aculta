@@ -30,6 +30,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
     private readonly \Drupal\aculta_portal\Domain\ContentPurposeResolver $contentPurposeResolver,
+    private readonly \Drupal\aculta_portal\Account\AccountTermsPolicy $termsPolicy,
+    private readonly \Drupal\aculta_portal\Account\AccountTermsGate $termsGate,
   ) {}
 
   public static function getSubscribedEvents(): array {
@@ -178,6 +180,13 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     // route path is never a public URL, so direct requests to it fail closed.
     if ($routeName === 'aculta_portal.dashboard' && $request->getPathInfo() !== '/') {
       throw new NotFoundHttpException();
+    }
+    // Página restrita sem aceite da versão atual dos termos: o conteúdo não é entregue. Responde 403 com só o popup
+    // de aceite (AccountTermsGate), na mesma URL. Depois do aceite, a página volta liberada.
+    $route = $request->attributes->get('_route_object');
+    if ($route !== NULL && $route->getOption('_aculta_terms_required') && $this->termsPolicy->needsAcceptance($this->currentUser)) {
+      $event->setResponse($this->termsGate->blockingResponse());
+      return;
     }
     if (in_array($routeName, ['user.login', 'social_auth.network.redirect'], TRUE)
       && !$this->currentUser->isAuthenticated()

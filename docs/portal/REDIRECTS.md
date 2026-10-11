@@ -116,3 +116,12 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 - **Exceção à regra de slug:** a regra geral não usa redirecionamento de slug. Aqui o redirecionamento foi pedido pelo responsável para a tela substituída.
 - **Caminho com ID:** `/user/{uid}/address-book*` responde 404.
 - **Perfil `customer`:** o formulário de Meus Dados grava no mesmo tipo de perfil usado pelo Commerce.
+
+## Aceite dos termos (0.3.0-dev.16)
+
+| Origem | Destino | Código | Observação |
+| --- | --- | --- | --- |
+| `/aceite-termos` (qualquer host) | — | 404 | Página antiga do acordo, substituída pelo popup. |
+| Página restrita sem aceite (conta, carrinho, checkout, cursos) | — (sem redirecionamento) | 403 | Responde a página mínima com só o popup de aceite, na mesma URL. |
+| `POST /termos/aceitar` | destino validado da própria página | 302 | Grava o aceite e volta à página. |
+| `GET /termos/aceitar` sem sessão | login | 403 | Exige login. |

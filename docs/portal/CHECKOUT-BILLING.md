@@ -39,3 +39,11 @@
 - `web/modules/contrib/commerce_mercado_pago/src/PluginForm/Checkout/RedirectCheckoutForm.php` (mensagem de erro; contrib).
 - `web/modules/contrib/commerce/modules/payment/src/Plugin/Commerce/CheckoutPane/PaymentInformation.php` (formulário de cobrança).
 - `web/modules/contrib/agreement/src/Form/AgreementForm.php` (`settings.destination` e destino salvo).
+
+## Incidente de ambiente: credencial de produção no token de teste (2026-10-11)
+
+- **Sintoma:** ao pagar o pedido 5 no servidor de testes, o Mercado Pago abriu `mercadopago.com.br/checkout/v1/payment/redirect/...` (domínio de produção), logado na conta real do responsável, com "Saldo em conta" como método recomendado. Não houve pagamento: o usuário parou na tela de revisão do Mercado Pago.
+- **Causa verificada:** o gateway estava em `mode: test`, mas o token de teste vem da variável de ambiente `MERCADOPAGO_TEST_ACCESS_TOKEN` (`key.key.mercadopago_test_access_token`, provedor env). O valor começa com `APP_USR`, que é o formato de credencial de produção. Credenciais de teste começam com `TEST-`. Com token de produção, o `RedirectCheckoutForm` usa o `init_point` de produção, e não o `sandbox_init_point`.
+- **Contenção aplicada:** gateway `mercado_pago` desligado no runtime (`status: 0`). Já estava `false` no `config/sync`.
+- **Pendente (responsável):** substituir `MERCADOPAGO_TEST_ACCESS_TOKEN` por um token `TEST-` de conta de teste do Mercado Pago. Considerar o token atual comprometido: rotacionar a credencial de produção no painel do Mercado Pago. Confirmar o prefixo antes de religar o gateway (sem imprimir o valor). Não religar o gateway com token `APP_USR` no ambiente de testes.
+- **Pendente (código):** o `RedirectCheckoutForm` usa `init_point`. Com credencial de teste, o Mercado Pago deve devolver URLs de sandbox. Verificar que o domínio do redirecionamento é `sandbox.mercadopago.com.br` antes de religar. Credenciais não podem estar no banco de configuração (ver AGENTS.md, seção de Keys).

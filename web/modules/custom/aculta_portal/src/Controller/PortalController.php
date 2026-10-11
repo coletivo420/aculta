@@ -169,6 +169,11 @@ final class PortalController extends ControllerBase {
     return $this->buildDataSection('address');
   }
 
+  /** Caminho aposentado (página do acordo substituída pelo popup de aceite): responde 404. */
+  public function retiredNotFound(): never {
+    throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+  }
+
   /**
    * Lista e cadastro de endereços do Commerce foram substituídos pelo formulário de Meus Dados (CEP).
    * Todos os caminhos antigos redirecionam para lá (302). Ver docs/portal/REDIRECTS.md.

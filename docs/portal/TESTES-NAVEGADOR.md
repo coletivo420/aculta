@@ -99,3 +99,20 @@ Estado no runtime (servidor de testes):
 - CPF/CNPJ: estudo e recomendação (G3).
 - Reprodução do aceite repetido no host da loja, se voltar a ocorrer.
 - Limpeza do usuário `teste.comum` e dos pedidos de teste ao final.
+
+## J) Teste do popup de aceite dos termos (0.3.0-dev.16)
+
+Pré-requisito: usuário `teste.comum` com o aceite **pendente** (o agente do repositório remove o registro do acordo; não é o cadastro pelo formulário).
+
+1. **Página pública não mostra o popup:** abrir `https://loja.aculta.toca.net.br/loja-da-aculta` logado como `teste.comum`. Esperado: página normal, sem popup.
+2. **Página restrita bloqueada:** abrir `https://aculta.toca.net.br/carrinho`. Esperado: o popup "Aceite dos termos" aparece, a URL continua `/carrinho`, e não há itens do carrinho nem dados da conta. Atrás do popup pode aparecer o cabeçalho e o título do site (limite conhecido).
+3. **Popup não fechável:** com o popup aberto, testar: Esc, clique fora da caixa, Tab (o foco deve ficar dentro). Esperado: o popup continua aberto. Não existe botão de fechar.
+4. **Links sem perder o popup:** clicar em "Termos de Uso" e em "Política de Privacidade". Esperado: abrem em nova aba; o popup continua na aba original.
+5. **Aceite:** marcar o checkbox e clicar em "Aceitar e continuar". Esperado: a mesma URL (`/carrinho`) recarrega liberada, com o carrinho.
+6. **Aceite vale em outros hosts:** abrir `https://loja.aculta.toca.net.br/loja-da-aculta` e `https://conta.aculta.toca.net.br/`. Esperado: sem popup.
+7. **Cadastro pelo formulário não vê o popup:** um usuário criado pelo formulário de cadastro (checkbox marcado) deve entrar e navegar sem popup. Esse teste exige criar conta; o agente do repositório cria a conta de teste.
+8. **Conteúdo não entregue:** em `/carrinho` com o popup, o navegador não deve mostrar itens nem valores do carrinho.
+
+Pendências desta rodada: a camada visual atrás do popup (cabeçalho) e o aceite pelo navegador com JavaScript (passos 3 e 5).
+
+**Mercado Pago:** não clicar em "Pagar" em nenhuma tela do Mercado Pago enquanto o token de teste não estiver corrigido (ver CHECKOUT-BILLING.md). O gateway está desligado.

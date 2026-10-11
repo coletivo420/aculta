@@ -36,7 +36,14 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
     if ($route = $collection->get('commerce_checkout.checkout')) {
-      $route->setRequirement('_custom_access', 'aculta_portal.access.email_confirmed:access');
+      $route->setRequirement('_custom_access', 'aculta_portal.access.protected_route:account');
+    }
+    // Página do acordo de termos: substituída pelo popup de aceite (AccountTermsHooks). A rota continua existindo
+    // porque o módulo agreement a consulta por nome; o caminho /aceite-termos responde 404.
+    if ($route = $collection->get('agreement.aculta_account_terms')) {
+      $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\PortalController::retiredNotFound');
+      $route->setDefault('_form', NULL);
+      $route->setRequirements(['_access' => 'TRUE']);
     }
 
     $pathChanges = [
@@ -226,6 +233,16 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'appearance' => 'aparencia',
       'modules' => 'modulos',
     ];
+    // Páginas restritas: sem aceite da versão atual dos termos, a requisição responde 403 e o popup aparece sobre
+    // ela, sem entregar o conteúdo (AccountTermsRequestSubscriber em DomainPurposeRequestSubscriber::onRequest).
+    $termsPrefixes = ['commerce_cart.', 'commerce_checkout.', 'commerce_donation_flow.', 'lms.'];
+    foreach ($collection as $name => $route) {
+      $isAccount = $route->getOption('_aculta_domain_purpose') === 'account';
+      $isRestrictedName = array_filter($termsPrefixes, static fn($prefix) => str_starts_with((string) $name, $prefix)) !== [];
+      if ($isAccount || $isRestrictedName) {
+        $route->setOption('_aculta_terms_required', TRUE);
+      }
+    }
     foreach ($collection as $route) {
       $path = $route->getPath();
       if ($path === '/painel-administrativo' || str_starts_with($path, '/painel-administrativo/')) {

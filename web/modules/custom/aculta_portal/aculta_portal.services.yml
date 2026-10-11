@@ -19,9 +19,15 @@ services:
   aculta_portal.access.payment_method_add:
     class: Drupal\aculta_portal\Access\PaymentMethodAddAccessCheck
     arguments: ['@entity_type.manager']
+  aculta_portal.account_terms_gate:
+    class: Drupal\aculta_portal\Account\AccountTermsGate
+    arguments: ['@bare_html_page_renderer', '@form_builder', '@string_translation']
+  aculta_portal.account_terms_policy:
+    class: Drupal\aculta_portal\Account\AccountTermsPolicy
+    arguments: ['@agreement.handler', '@entity_type.manager']
   aculta_portal.access.protected_route:
     class: Drupal\aculta_portal\Access\ProtectedRouteAccessCheck
-    arguments: ['@aculta_portal.access.email_confirmed', '@class_resolver']
+    arguments: ['@aculta_portal.access.email_confirmed', '@class_resolver', '@aculta_portal.account_terms_policy']
   aculta_portal.access.email_confirmed:
     class: Drupal\aculta_portal\Access\EmailConfirmedAccessCheck
     arguments: ['@aculta_portal.email_confirmation_policy']
@@ -105,7 +111,7 @@ services:
       - { name: event_subscriber }
   aculta_portal.domain_purpose_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
-    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_purpose_resolver']
+    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_purpose_resolver', '@aculta_portal.account_terms_policy', '@aculta_portal.account_terms_gate']
     tags:
       - { name: event_subscriber }
   # CEP Autocomplete 1.0.0 references this Drupal logger channel but does

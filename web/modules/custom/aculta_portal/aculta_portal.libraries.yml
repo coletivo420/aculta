@@ -31,3 +31,10 @@ search-preview:
   dependencies:
     - core/drupal
     - core/once
+
+account-terms-modal:
+  js:
+    js/account-terms-modal.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
