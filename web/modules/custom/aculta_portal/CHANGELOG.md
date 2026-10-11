@@ -1,3 +1,15 @@
+## 0.2.0-dev.48 — Loja sem CAPTCHA: barreira de carrinho, checkout e página de produto — 2026-10-11
+
+Classificação: PATCH de política de segurança do CAPTCHA (decisão do responsável; altera o formulário de compra).
+
+- Pontos de CAPTCHA `commerce_order_item_add_to_cart_form` e `commerce_checkout_flow_default` desativados em `config/sync`. O formulário de compra (adicionar ao carrinho) e o checkout padrão da loja não recebem mais o desafio. O checkout de doações continua protegido.
+- `Captcha\TurnstileToggle::SHOP_FORM_IDS`: os formulários da loja não são alterados quando o responsável liga ou desliga o Turnstile no site.
+- `Hook\ShopCaptchaHooks` (`page_attachments_alter`): remove o script do Turnstile (challenges.cloudflare.com) das rotas de produto, carrinho e checkout. O módulo contrib `turnstile` continua fora da alteração.
+- `scripts/validate-shop-captcha.php`: gate estático (15 checagens) que reprova se a barreira for removida.
+- Risco aceito: sem CAPTCHA, o carrinho fica sem proteção contra automação. Pendência: limitar tentativas por IP se houver abuso.
+- Verificado no servidor de testes (HTML): página do produto sem `cf-turnstile`, sem `challenges.cloudflare` e sem a frase "Verificação de segurança"; formulário de compra presente. Home mantém o script (esperado).
+- Número de versão: a 0.2.0-dev.48 também está na PR #190 (domínios). Se a #190 for mesclada antes, esta vira 0.2.0-dev.49.
+
 ## 0.2.0-dev.47 — Host de teste da revista: coletivo420 → revista420 (servidor de testes) — 2026-10-10
 
 Classificação: PATCH (configuração de deploy e documentação; sem código de runtime).
