@@ -235,7 +235,8 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     ];
     // Páginas restritas: sem aceite da versão atual dos termos, a requisição responde 403 e o popup aparece sobre
     // ela, sem entregar o conteúdo (AccountTermsRequestSubscriber em DomainPurposeRequestSubscriber::onRequest).
-    $termsPrefixes = ['commerce_cart.', 'commerce_checkout.', 'commerce_donation_flow.', 'lms.'];
+    // Carrinho e doação são públicos (também para anônimos): não recebem o popup.
+    $termsPrefixes = ['commerce_checkout.', 'lms.'];
     foreach ($collection as $name => $route) {
       $isAccount = $route->getOption('_aculta_domain_purpose') === 'account';
       $isRestrictedName = array_filter($termsPrefixes, static fn($prefix) => str_starts_with((string) $name, $prefix)) !== [];
