@@ -1,6 +1,6 @@
 # Roadmap do aculta_portal
 
-Atualizado em 2026-10-09 pela revisão documental. Substitui o roadmap de modernização
+Atualizado em 2026-10-11 pela revisão documental da S0. Substitui o roadmap de modernização
 P0–P10 e a lista antiga de prioridades de produto.
 
 Dívidas e pendências, com evidência, estão em [`docs/operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md).
@@ -12,10 +12,11 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ## Estado atual
 
-- Versão: **`portal-v0.1.0`** (tag em `f651bdd`).
+- Versão: **0.2.0** (release da linha 0.2, mesclada na `main`). Sem tag: tags só por pedido explícito do responsável.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
-- Gates: Drupal 11+ do Portal PASS (366 checks); tema PASS (Foundation 309 checks).
-- Pendências abertas: 19 itens do Portal no registro (ver DEBT-REGISTER).
+- Migração do envio de e-mail para Mailer Plus (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
+- Gates: Drupal 11+ do Portal PASS (542 checks); comércio e configuração PASS; linha de base DT-O10 em `scripts/institution/CONFIG-DRIFT-BASELINE.json`.
+- Pendências abertas: ver DEBT-REGISTER (estado vivo; este roadmap não repete a contagem).
 
 ## Ordem de execução
 
@@ -28,10 +29,10 @@ versão alvo, validar e só então taguear.
 
 ## Saneamento
 
-### S0 — Higiene documental (esta fase)
+### S0 — Higiene documental (em andamento)
 
 - Corrigir referências a PRs e estados obsoletos (DT-P16, DT-P17, DT-P18).
-- Critério: `rg "PR #63|em integração|P10-R.*próxima"` vazio nos documentos atuais.
+- Critério: busca pelos padrões de DT-P16 e DT-P18 (PR obsoleta citada como integração em curso; auditoria P10-R apontada como etapa seguinte) vazia nos documentos atuais, excluindo este roadmap e o registro de dívidas, que guardam a evidência das dívidas resolvidas.
 
 ### S1 — Fronteira de apresentação (DT-P01) — concluída em 0.2.0-dev.20
 
@@ -61,7 +62,7 @@ Resultado da rodada de 2026-10-09. Cada item tem resultado ou decisão de adiar;
 
 ### S4 — Decisões do responsável (DT-P06, DT-P09, DT-P10, DT-G01)
 
-- DT-P06 concluído em 0.2.0-dev.22 (decisão do responsável, 2026-10-09): cadastro neutro. Restam DT-P09, DT-P10 e DT-G01.
+- DT-P06 concluído em 0.2.0-dev.22 (decisão do responsável, 2026-10-09): cadastro neutro. DT-P09 resolvida na M1 da migração do e-mail (2026-10-11). Restam DT-P10 e DT-G01.
 
 - Reabrir a política de enumeração pelo cadastro quando houver revisão de CAPTCHA.
 - Decidir sobre os módulos de administração ativos em produção.
