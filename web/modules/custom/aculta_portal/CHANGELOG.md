@@ -1,3 +1,15 @@
+## 0.3.0-dev.14 — Checkout: incidente de endereço de cobrança documentado; destino do aceite sem fixo — 2026-10-11
+
+Classificação: PATCH (configuração e documentação; o passo de endereço com CEP ainda não foi implementado).
+
+- Incidente: pedido 5, etapa de pagamento, "Billing information is required to proceed." Documentado em `docs/portal/CHECKOUT-BILLING.md`, com as três causas: país de cobrança vazio na loja, `billing_information` substituído pelo Commerce Payment e gateway Mercado Pago que exige perfil de cobrança.
+- Loja 1: `billing_countries = [BR]` (runtime; o campo não é exportado em `config/sync`).
+- Gateway Mercado Pago: `collect_billing_information: true` (config/sync e runtime).
+- Acordo `aculta_account_terms`: `settings.destination` vazio. O retorno volta ao destino salvo, e não a um fixo.
+- Pendente: passo de endereço de cobrança com autocomplete por CEP (comportamento esperado em `CHECKOUT-BILLING.md`), tradução de "Payment" e "Quantity", e nome do produto na coluna Item do carrinho.
+
+**RUNTIME STATUS:** verificado no servidor de testes: `billing_countries` da loja = [BR]; gateway com flag ativa; acordo sem destino fixo. Não verificado: passo de pagamento com formulário de cobrança (ainda sem campos na etapa `payment`) e pagamento até o Mercado Pago.
+
 ## 0.3.0-dev.13 — Caminho interno da visão geral passa a /minha-conta (sem /conta-interna) — 2026-10-11
 
 Classificação: PATCH (caminho técnico interno trocado; nenhum link público alterado).

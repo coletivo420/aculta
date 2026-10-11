@@ -13,7 +13,7 @@ configuration:
   mode: test
   payment_method_types:
     - mercado_pago_checkout_pro
-  collect_billing_information: false
+  collect_billing_information: true
   public_key_test: ''
   access_token_test: ''
   public_key_prod: ''

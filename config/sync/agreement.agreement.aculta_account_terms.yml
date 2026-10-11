@@ -14,7 +14,7 @@ settings:
   success: 'Aceite registrado. Você pode continuar usando sua conta.'
   revoked: 'O aceite foi revogado.'
   failure: 'É necessário aceitar os documentos para continuar.'
-  destination: /
+  destination: ''
   reset_date: 0
   visibility:
     settings: 0
