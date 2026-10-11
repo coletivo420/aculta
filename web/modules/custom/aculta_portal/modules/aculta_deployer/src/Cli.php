@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.17';
+  public const VERSION = '0.1.19';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -125,10 +125,12 @@ final class Cli {
       return 1;
     }
     $code = 0;
+    $checks = [];
     foreach ($policy['hosts'] as $url) {
       $res = Verify::fetchWithHeaders((string) $url);
       if ($res === null) {
         $this->say("FAIL $url: sem resposta");
+        $checks[] = ['kind' => 'host', 'url' => (string) $url, 'ok' => false, 'observed' => 'sem resposta'];
         $code = 1;
         continue;
       }
@@ -136,6 +138,7 @@ final class Cli {
       $noindex = Verify::isNoindex($value);
       $ok = $env === 'production' ? !$noindex : $noindex;
       $this->say(sprintf('%s %s: X-Robots-Tag=%s', $ok ? 'PASS' : 'FAIL', $url, $value ?? '(ausente)'));
+      $checks[] = ['kind' => 'host', 'url' => (string) $url, 'ok' => $ok, 'observed' => $value ?? 'ausente'];
       $code = $ok ? $code : 1;
     }
     if ($env === 'production') {
@@ -144,6 +147,7 @@ final class Cli {
         $res = Verify::fetchWithHeaders(rtrim((string) $url, '/') . '/robots.txt');
         if ($res === null || Verify::statusCode($res['headers']) !== 200) {
           $this->say("FAIL $url robots.txt: sem resposta 200");
+          $checks[] = ['kind' => 'robots_txt', 'url' => (string) $url, 'ok' => false, 'observed' => 'sem resposta 200'];
           $code = 1;
           continue;
         }
@@ -151,6 +155,7 @@ final class Cli {
         $blocked = Verify::disallowsRoot($res['body']);
         $ok = $advertised && !$blocked;
         $this->say(sprintf('%s %s robots.txt: Sitemap=%s, Disallow: / %s', $ok ? 'PASS' : 'FAIL', $url, $advertised ? 'índice' : 'ausente', $blocked ? 'presente' : 'ausente'));
+        $checks[] = ['kind' => 'robots_txt', 'url' => (string) $url, 'ok' => $ok, 'observed' => ($advertised ? 'Sitemap índice' : 'Sitemap ausente') . ', Disallow: / ' . ($blocked ? 'presente' : 'ausente')];
         $code = $ok ? $code : 1;
       }
     }
@@ -158,6 +163,7 @@ final class Cli {
       $res = Verify::fetchWithHeaders((string) $url);
       if ($res === null) {
         $this->say("FAIL $url: sem resposta (caminho privado)");
+        $checks[] = ['kind' => 'private', 'url' => (string) $url, 'ok' => false, 'observed' => 'sem resposta'];
         $code = 1;
         continue;
       }
@@ -168,8 +174,10 @@ final class Cli {
       $ok = Verify::isNoindex($value) || $meta || Verify::isRefusedStatus($status);
       $this->say(sprintf('%s %s (privado): status=%s X-Robots-Tag=%s meta=%s',
         $ok ? 'PASS' : 'FAIL', $url, $status ?? '?', $value ?? '(ausente)', $meta ? 'noindex' : 'ausente'));
+      $checks[] = ['kind' => 'private', 'url' => (string) $url, 'ok' => $ok, 'observed' => 'status ' . ($status ?? '?') . ', X-Robots-Tag ' . ($value ?? 'ausente') . ', meta ' . ($meta ? 'noindex' : 'ausente')];
       $code = $ok ? $code : 1;
     }
+    $this->writeIndexing($env, $checks, $code === 0);
     $this->say("robots ($env): " . ($code === 0 ? 'PASS' : 'FAIL'));
     return $code;
   }
@@ -323,6 +331,22 @@ final class Cli {
     return $this->report([]);
   }
 
+  /** Grava o resultado da verificação de robots em var/deployer/indexing.json (só URLs públicas e estados). */
+  private function writeIndexing(string $env, array $checks, bool $ok): void {
+    $dir = $this->repoRoot . '/var/deployer';
+    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+      $this->err('robots: não foi possível criar a pasta de destino do resultado de indexação');
+      return;
+    }
+    $data = Indexing::build($env, $checks, $ok, gmdate('c'));
+    file_put_contents($dir . '/' . Indexing::FILE, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
+  }
+
+  /** @return mixed */
+  private function readJsonFile(string $path): mixed {
+    return is_file($path) ? json_decode((string) file_get_contents($path), true) : null;
+  }
+
   /**
    * Relatório neutro para o painel do ACULTA Portal (var/deployer/status.json). Contém só nomes,
    * contagens e estados: nunca valores de credenciais. Não faz rede; sitemap e robots são comandos
@@ -351,6 +375,7 @@ final class Cli {
         ], $open),
       ],
       'environment' => $this->currentEnvironment(),
+      'indexing' => Indexing::summarize($this->readJsonFile($this->repoRoot . '/var/deployer/' . Indexing::FILE)),
       'not_included' => ['network' => 'execute aculta-deployer sitemap e robots', 'values' => 'nunca incluídos'],
     ];
     $dir = dirname($out);
