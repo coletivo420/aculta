@@ -33,6 +33,9 @@ search-preview:
     - core/once
 
 account-terms-modal:
+  css:
+    component:
+      css/account-terms-modal.css: {}
   js:
     js/account-terms-modal.js: {}
   dependencies:
