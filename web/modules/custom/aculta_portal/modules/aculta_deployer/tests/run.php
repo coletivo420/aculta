@@ -183,7 +183,7 @@ $pol = $config['robots_policy'] ?? [];
 $assert(array_key_exists('x_robots_tag', $pol['production'] ?? []) && $pol['production']['x_robots_tag'] === null, 'política de produção não envia X-Robots-Tag');
 $assert(str_contains((string) ($pol['test']['x_robots_tag'] ?? ''), 'noindex'), 'política de teste envia noindex');
 $prodHosts = $pol['production']['hosts'] ?? [];
-$expectedProd = ['https://aculta.org/', 'https://conta.aculta.org/', 'https://apoio.aculta.org/', 'https://coletivo420.aculta.org/', 'https://wiki420.aculta.org/', 'https://loja.aculta.org/', 'https://cursos.aculta.org/'];
+$expectedProd = ['https://aculta.org/', 'https://conta.aculta.org/', 'https://apoio.aculta.org/', 'https://revista420.aculta.org/', 'https://wiki420.aculta.org/', 'https://loja.aculta.org/', 'https://cursos.aculta.org/'];
 $assert(sort($prodHosts) === true && $prodHosts === (function () use ($expectedProd) { sort($expectedProd); return $expectedProd; })(), 'todos os sete domínios de produção estão na política (um por purpose)');
 $assert(!array_filter($prodHosts, static fn($h) => str_contains($h, 'toca.net.br')), 'nenhum host de teste na política de produção');
 $badRobots = ['robots_policy' => ['production' => ['x_robots_tag' => 'noindex']]];
@@ -302,9 +302,9 @@ $assert(!is_file($outTest . '/config/sync/smtp.settings.yml'), 'build --target=t
 exec($cli . ' build --env=test --target=production --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);
 $assert($brc1 !== 0, 'build recusa --env diferente de --target');
 
-// Tabela de migração de domínios: somente leitura, e a revista aparece como pendente de RC.
+// Tabela de migração de domínios: somente leitura; a revista está alinhada ao host decidido.
 exec($cli . ' domains 2>&1', $dom, $domrc);
-$assert($domrc === 0 && str_contains(implode("\n", $dom), 'pendente coletivo420_aculta_org') && str_contains(implode("\n", $dom), 'alinhado'), 'domains: tabela válida; revista pendente de RC');
+$assert($domrc === 0 && str_contains(implode("\n", $dom), 'revista420.aculta.org (regra de host)') && str_contains(implode("\n", $dom), '0 pendente(s) de RC'), 'domains: tabela válida; revista alinhada (host de produção decidido)');
 
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

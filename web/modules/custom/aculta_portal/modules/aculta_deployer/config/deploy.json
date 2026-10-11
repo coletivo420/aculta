@@ -18,7 +18,7 @@
     "shop": {"purpose": "shop", "route": "entity.commerce_product.canonical", "note": "A página do produto da loja fica no host SHOP (loja.aculta.toca.net.br em teste; loja.aculta.org em produção). Carrinho e checkout ficam no MAIN."},
     "note": "Migração de domínios do servidor de testes (*.aculta.toca.net.br) para produção (*.aculta.org), por domínio registrado no Portal. Dado declarado: o comando `domains` confere os registros de config/sync contra esta tabela (somente leitura). A troca em produção só acontece no deploy do RC.",
     "decision_pending": [
-      "coletivo420_aculta_org: o host de produção da revista (coletivo420.aculta.org hoje) segue a mudança de host de teste (revista420). Confirmar revista420.aculta.org antes do RC."
+      "coletivo420_aculta_org: host de produção da revista é revista420.aculta.org (decisão do responsável, 2026-10-11)."
     ],
     "entries": [
       {"domain_id": "aculta_org", "test_host": "aculta.toca.net.br", "production_host": "aculta.org"},
@@ -43,7 +43,7 @@
         "https://aculta.org/",
         "https://conta.aculta.org/",
         "https://apoio.aculta.org/",
-        "https://coletivo420.aculta.org/",
+        "https://revista420.aculta.org/",
         "https://wiki420.aculta.org/",
         "https://loja.aculta.org/",
         "https://cursos.aculta.org/"
@@ -187,7 +187,7 @@
         {
           "file": "config/sync/domain.record.coletivo420_aculta_org.yml",
           "pattern": "^hostname: .*$",
-          "with": "hostname: coletivo420.aculta.org"
+          "with": "hostname: revista420.aculta.org"
         },
         {
           "file": "config/sync/domain.record.wiki420_aculta_org.yml",

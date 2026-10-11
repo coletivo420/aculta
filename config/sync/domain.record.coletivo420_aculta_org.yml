@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 id: coletivo420_aculta_org
 domain_id: 5376482
-hostname: coletivo420.aculta.org
+hostname: revista420.aculta.org
 name: 'Observatório da Maconha Coletivo 420'
 scheme: https
 weight: 7

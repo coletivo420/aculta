@@ -1,3 +1,27 @@
+## 0.3.0-dev.3 — Busca: ciclo de Tab e nome do botão fechar — 2026-10-11
+
+Classificação: PATCH.
+
+- Ciclo de Tab/Shift+Tab no popup: interceptação na fase de captura, com o diálogo procurado a cada tecla (antes o handler não era registrado, porque o diálogo ainda não existia quando o campo era ligado).
+- Botão × do diálogo recebe `aria-label` e `title` "Fechar" pelo evento `dialog:aftercreate`.
+- Foco inicial no campo verificado depois da abertura do diálogo.
+
+**RUNTIME STATUS:** reteste no navegador pendente.
+
+## 0.3.0-dev.2 — Busca: acessibilidade, índice sem caixa e página com o termo — 2026-10-11
+
+Classificação: PATCH (correções de acessibilidade, prévia e índice; sem mudança de contrato público).
+
+- `search-preview.js`: prévia só consulta a partir do mínimo de caracteres (`data-min-chars`); termo curto restaura a dica sem requisição; requisição anterior é cancelada (AbortController); setas ↑/↓ entre resultados; Tab cicla no popup.
+- `SearchPopupForm`: campo com `data-min-chars`.
+- `SearchUtility`: diálogo com `maxHeight` 560, posição no topo (sem `of`: o padrão do jQuery UI é a janela) e botão de fechar com rótulo "Fechar".
+- Foco inicial do popup vai ao campo de busca.
+- `SearchPageForm` (novo): `/busca` renderiza o campo com o nome `q` e o termo da URL (antes o campo saía vazio); com a página sem termo, aparece a dica para digitar.
+- Índice `aculta_conteudo`: processador `ignorecase` ativo e reindexado (20 itens). "riddim" e "Riddim" retornam o mesmo resultado.
+- Regra de host da revista: `revista420.aculta.org` (produção), decisão do responsável (ver deployer 0.1.x e `config/sync`).
+
+**RUNTIME STATUS:** validado no servidor de testes: prévia, popup e índice verificados por consulta HTTP; teclado e ciclo de Tab aguardam nova verificação no navegador.
+
 ## 0.3.0-dev.1 — Status com indexação, rótulo e barreira de textos únicos — 2026-10-11
 
 Classificação: MINOR (nova seção de indexação no Status; sem mudança de contrato público).

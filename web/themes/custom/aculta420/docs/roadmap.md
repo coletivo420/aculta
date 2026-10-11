@@ -140,6 +140,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
   Messenger. Backend e índices ficam no Portal e no Core.
 - **Apresentação no tema (0.6.0-dev.5):** `css/components/search.css` (página, popup e resultados). Pendente: verificação do popup e do teclado no servidor de testes (`/busca` já verificada em 1280 px) . A remoção da regra com cores fixas no Portal foi feita na `aculta_portal` 0.2.0-dev.46 (PR #186).
 - Pré-requisito: F2 (concluída em 0.5.1). Verificar, antes de implementar, se o backend de banco atende a relevância e a latência esperadas.
+- **Estado: aprovada no reteste de navegador (2026-10-11).** Verificado no servidor de testes com Claude in Chrome, logado como admin: popup, foco, Tab e Shift+Tab em ciclo, rótulo do botão fechar, Esc, prévia com mínimo de caracteres, setas, Enter e página `/busca` (campo com o termo e dica sem termo). Exceção: T10 (390 px) não executado, porque a janela de teste não redimensiona. Dívida fora do tema: DT-P24 (erro do Core Navigation no Esc, só logado).
 
 ### F4 — Padrões de Drupal UI e biblioteca de componentes (DT-T13)
 
