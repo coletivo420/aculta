@@ -209,7 +209,7 @@ Política aprovada pelo responsável em 2026-10-09.
 - Correção registrada: DEP-0003 (VirtualHost de teste com noindex) permanece bloqueante até o
   `robots --env=production` passar em todos os hosts.
 
-**Regra de deploy (decisão do responsável, 2026-10-09):** o deploy para produção só acontece quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` atualiza o código do repositório, mas não publica nada no Hostinger. Até o RC, as verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
+**Produção (decisão do responsável):** a entrega em produção não é requisito de fase, PR, release, RC nem pendência do agente. O responsável decide quando o projeto vai para produção, no fim de todo o projeto. Merge em `main` atualiza o código do repositório e não publica nada no Hostinger. As verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
 
 Procedimento (somente no RC): `aculta-deployer check --strict`, `build --out=DIR`, aplicar o deploy,
 depois `aculta-deployer robots --env=production` e `aculta-deployer sitemap --env=production`
