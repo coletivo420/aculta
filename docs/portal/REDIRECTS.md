@@ -51,3 +51,40 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 ## Mecanismo único da raiz (decisão de 2026-10-11)
 
 Toda raiz de subdomínio que serve conteúdo passa pelo `PurposeFrontPathProcessor` (`src/PathProcessor/PurposeFrontPathProcessor.php`), um `InboundPathProcessorInterface` com a tag `path_processor_inbound`, mapa único `FRONT_PATHS`. Não há redirecionamento. Sem entrada no mapa, o host usa o `<front>` do Core. Hoje, o `FRONT_PATHS` tem apoio, wiki, cursos, loja e fórum. Revista e principal usam o `<front>`. Para mudar a raiz de um host, altere só esse mapa e rode `php scripts/validate-root-policy.php`.
+
+## Inventário de redirecionamentos e remoções (2026-10-11)
+
+Regra: slug publicado é estável. Quando um caminho público muda, o caminho antigo responde **404**; não há 301 de slug. Redirecionamentos existem só por segurança, login ou fluxo de conta, e estão listados abaixo com o arquivo que os emite.
+
+### Redirecionamentos vigentes
+
+| Origem | Destino | Código | Mecanismo (arquivo) | Motivo |
+| --- | --- | --- | --- | --- |
+| `/` no host de Conta, visitante | `/entrar` | 302 | `DomainPurposeRequestSubscriber` (`TrustedRedirectResponse`) | Raiz da conta exige login |
+| `/user/{uid}/edit`, próprio usuário | `/seguranca` (Conta) | 302 | `AccountRouteSubscriber` | Edição de conta acontece no painel |
+| `/user/{uid}/edit`, outro usuário | — | 403 | `AccountRouteSubscriber` | Sem acesso a conta alheia |
+| `/user/{uid}`, próprio usuário | `/` (Conta) | 302 | `AccountRouteSubscriber` | Perfil público não existe; a conta é a visão geral |
+| `/user/{uid}`, outro usuário | — | 403 | `AccountRouteSubscriber` | Sem acesso a conta alheia |
+| Rotas de troca de e-mail (`change_mail_page.*`) | `/seguranca` (Conta) | 302 | `AccountRouteSubscriber` | Troca de e-mail fica na segurança |
+| `/user` (página legada do Core) | raiz da Conta | 302 | `PortalController::legacyUserPageRedirect` | Página do Core sem interface própria |
+| `/carrinho` no host da loja (SHOP) | `/carrinho` no host principal (MAIN) | 302 | `DomainPurposeRequestSubscriber` e política de pagamento | Carrinho e checkout pertencem ao MAIN |
+| `/busca` enviada pelo formulário | `/busca?q=<termo>` | 302 | `SearchPageForm::submitForm` | Busca em GET com o termo na URL |
+| Destinos após formulários de conta (cadastro, segurança, dados, painel) | `aculta_portal.security`, `aculta_portal.dashboard`, `aculta_portal.my_data_address`, `<front>` | 302 | `PortalFormCallbacks` (`setRedirect`) | Retorno ao painel depois de salvar |
+| `/product/{id}` | `/loja/produto/...` (alias) | 301 | Módulo Redirect e alias do Pathauto | Caminho canônico do produto |
+
+### Caminhos removidos (404, sem redirecionamento)
+
+| Caminho antigo | Caminho atual | Quando | Observação |
+| --- | --- | --- | --- |
+| `/cart` | `/carrinho` | 0.3.0-dev.4 | Mesma rota do Commerce, novo caminho |
+| `/donate`, `/donate/{valor}/now`, `/donate/{pedido}/{etapa}` | `/apoiar`, `/apoiar/{valor}/agora`, `/apoiar/{pedido}/{etapa}` | 0.3.0-dev.5 | Mesmas rotas do Commerce, novos caminhos |
+| `/user/{uid}/orders` | `/pedidos` | 0.3.0-dev.7 | Lista de pedidos do Commerce, sem ID na URL |
+| `/user/{uid}/payment-methods` | `/pagamentos` | 0.3.0-dev.7 | Lista de pagamentos do Commerce, sem ID na URL |
+| `/conta-interna` | `/` (Conta) | Visão geral | Rota interna; não é pública e responde 404 |
+
+### Pendente (ainda com ID de usuário no caminho)
+
+- `/user/{uid}/address-book*`: endereços do Commerce.
+- `/user/{uid}/payment-methods/*` e `/user/{uid}/orders/{pedido}`: ver, editar, excluir e marcar como padrão.
+
+Esses caminhos continuam ativos e são protegidos pelo dono da conta. Ao tirar o ID, eles entram neste inventário com o novo destino.
