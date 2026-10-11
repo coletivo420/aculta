@@ -105,7 +105,7 @@ Estado no runtime (servidor de testes):
 Pré-requisito: usuário `teste.comum` com o aceite **pendente** (o agente do repositório remove o registro do acordo; não é o cadastro pelo formulário).
 
 1. **Página pública não mostra o popup:** abrir `https://loja.aculta.toca.net.br/loja-da-aculta` logado como `teste.comum`. Esperado: página normal, sem popup.
-2. **Página restrita bloqueada:** abrir `https://aculta.toca.net.br/carrinho`. Esperado: o popup "Aceite dos termos" aparece, a URL continua `/carrinho`, e não há itens do carrinho nem dados da conta. Atrás do popup pode aparecer o cabeçalho e o título do site (limite conhecido).
+2. **Página restrita com popup:** abrir `https://aculta.toca.net.br/carrinho`. Esperado: a página carrega na mesma URL, com o popup "Aceite dos termos" por cima e o fundo desfocado. O popup é o bloqueio; a página não é negada.
 3. **Popup não fechável:** com o popup aberto, testar: Esc, clique fora da caixa, Tab (o foco deve ficar dentro). Esperado: o popup continua aberto. Não existe botão de fechar.
 4. **Links sem perder o popup:** clicar em "Termos de Uso" e em "Política de Privacidade". Esperado: abrem em nova aba; o popup continua na aba original.
 5. **Aceite:** marcar o checkbox e clicar em "Aceitar e continuar". Esperado: a mesma URL (`/carrinho`) recarrega liberada, com o carrinho.

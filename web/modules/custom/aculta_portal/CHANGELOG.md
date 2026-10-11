@@ -3,7 +3,7 @@
 Classificação: MINOR (fluxo de aceite substituído: a página /aceite-termos deixa de existir; novo bloqueio de páginas restritas).
 
 - **Aceite dos termos como popup (modal) persistente.** Substitui a página /aceite-termos. Aparece só nas páginas restritas (conta, carrinho, checkout, cursos e áreas de membro, marcadas pela opção de rota `_aculta_terms_required`) para quem ainda não aceitou a versão atual. Páginas públicas não mostram o popup. Não tem botão de fechar; Esc é cancelado; clique fora não fecha. Após aceitar, a mesma página volta liberada.
-- **Bloqueio no servidor.** Página restrita sem aceite responde 403 com uma página mínima que contém só o popup (`AccountTermsGate`, renderizador bare, sem o conteúdo restrito). As verificações de checkout, cursos e conta (`ProtectedRouteAccessCheck`) também exigem o aceite.
+- **Bloqueio.** O popup persistente é o bloqueio das páginas restritas: a página carrega na mesma URL com o popup por cima. As ações protegidas (checkout, cursos, conta) seguem negadas pelo servidor (`ProtectedRouteAccessCheck`), e a página de acesso negado também mostra o popup.
 - **Fonte de verdade.** O aceite é gravado no mesmo registro de `aculta_account_terms` que o cadastro usa (`AccountTermsPolicy`). Quem se cadastra pelo formulário já aceita e não vê o popup. Quem entra por OAuth vê o popup até aceitar. Trocar a versão dos termos é alterar `reset_date` do acordo.
 - Papéis do acordo `aculta_account_terms` zerados (`roles: {}`) para o redirecionamento antigo do módulo agreement não ser disparado. A rota `agreement.aculta_account_terms` continua existindo (o módulo a consulta por nome) e responde 404.
 - Formulário `/termos/aceitar` (POST com token): usado pelo popup e como retorno sem JavaScript. O destino é validado como caminho local do próprio host.
@@ -11,7 +11,7 @@ Classificação: MINOR (fluxo de aceite substituído: a página /aceite-termos d
 - Limite conhecido: a página de bloqueio ainda mostra o cabeçalho e o título do site atrás do popup (o renderizador bare mantém o layout do tema). O conteúdo restrito não é entregue. Eliminar o cabeçalho exige página HTML própria, decisão pendente.
 - **Contenção Mercado Pago (incidente):** o token gravado como `MERCADOPAGO_TEST_ACCESS_TOKEN` tem prefixo `APP_USR` (credencial de produção). O pagamento de teste redirecionou para o domínio real. Gateway desligado no runtime (`status: 0`; já era `false` no `config/sync`). Ver `docs/portal/CHECKOUT-BILLING.md`.
 
-**RUNTIME STATUS:** verificado no servidor de testes por HTTP: página de aceite antiga 404; `/termos/aceitar` 403 para anônimo; restritas sem aceite (carrinho, dados, conta, checkout) respondem 403 com só o popup; loja pública sem popup; checkout de quem aceitou 200. Não verificado: comportamento do popup no navegador (foco, Esc, clique fora) e aceite pelo formulário com JavaScript.
+**RUNTIME STATUS:** verificado no servidor de testes por HTTP: página de aceite antiga 404; `/termos/aceitar` 403 para anônimo; páginas restritas sem aceite (carrinho, dados, conta) respondem 200 com o popup; checkout sem aceite 403 com popup; loja pública sem popup. Não verificado: comportamento do popup no navegador (foco, Esc, clique fora) e aceite pelo formulário com JavaScript.
 ## 0.3.0-dev.15 — Passo de endereço de cobrança no checkout (CEP); traduções; nome do produto no carrinho — 2026-10-11
 
 Classificação: MINOR (novo pane de checkout; a etapa de dados do pedido passa a pedir endereço de cobrança).

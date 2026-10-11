@@ -51,8 +51,10 @@ final class AccountTermsHooks {
     // Páginas públicas não mostram o popup: só as rotas restritas, ou a negativa de conteúdo restrito sem aceite.
     $request = $this->requestStack->getCurrentRequest();
     $routeObject = $request?->attributes->get('_route_object');
+    // A página de acesso negado (system.403) mostra o popup também: a ação negada é de rota restrita.
     $restricted = (bool) $request?->attributes->get('_aculta_terms_pending')
-      || ($routeObject !== NULL && $routeObject->getOption('_aculta_terms_required'));
+      || ($routeObject !== NULL && $routeObject->getOption('_aculta_terms_required'))
+      || $this->routeMatch->getRouteName() === 'system.403';
     if (!$restricted || in_array($this->routeMatch->getRouteName(), self::EXEMPT_ROUTES, TRUE)) {
       return;
     }

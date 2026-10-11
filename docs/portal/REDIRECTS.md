@@ -122,6 +122,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | Origem | Destino | Código | Observação |
 | --- | --- | --- | --- |
 | `/aceite-termos` (qualquer host) | — | 404 | Página antiga do acordo, substituída pelo popup. |
-| Página restrita sem aceite (conta, carrinho, checkout, cursos) | — (sem redirecionamento) | 403 | Responde a página mínima com só o popup de aceite, na mesma URL. |
+| Página restrita sem aceite (conta, carrinho, cursos) | — (sem redirecionamento) | 200 | A página carrega na mesma URL com o popup de aceite por cima. |
+| Ação protegida sem aceite (checkout, curso) | — | 403 | Negada pelo servidor; a página de acesso negado também mostra o popup. |
 | `POST /termos/aceitar` | destino validado da própria página | 302 | Grava o aceite e volta à página. |
 | `GET /termos/aceitar` sem sessão | login | 403 | Exige login. |
