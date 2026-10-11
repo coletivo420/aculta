@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -19,7 +21,18 @@ final class AccountShellBuilder {
     private readonly CurrentRouteMatch $routeMatch,
     private readonly MenuLinkManagerInterface $menuLinkManager,
     private readonly TranslationInterface $translation,
+    private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
+
+  /**
+   * Link de uma seção. A visão geral é a raiz do Domain ACCOUNT (`/`); o caminho técnico nunca aparece no menu.
+   */
+  private function sectionUrl(string $route, string $sectionRoute): string {
+    if ($sectionRoute === 'aculta_portal.dashboard') {
+      return ($this->domainPurposeManager->pathUrl('account', '/') ?? Url::fromRoute('aculta_portal.dashboard'))->toString();
+    }
+    return Url::fromRoute($route)->toString();
+  }
 
   /**
    * Wraps an existing route's render array in the shared account shell.
@@ -30,6 +43,8 @@ final class AccountShellBuilder {
       'aculta_portal.dashboard' => ['title' => $this->translation->translate('Visão geral'), 'route' => 'aculta_portal.dashboard', 'icon' => 'bi-grid'],
       'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my', 'icon' => 'bi-heart'],
       'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses', 'icon' => 'bi-mortarboard'],
+      'aculta_portal.account_orders' => ['title' => $this->translation->translate('Meus pedidos'), 'route' => 'aculta_portal.account_orders', 'icon' => 'bi-bag'],
+      'aculta_portal.account_payments' => ['title' => $this->translation->translate('Meus pagamentos'), 'route' => 'aculta_portal.account_payments', 'icon' => 'bi-credit-card'],
       'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data', 'icon' => 'bi-person-vcard'],
       'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections', 'icon' => 'bi-link-45deg'],
       'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security', 'icon' => 'bi-shield-lock'],
@@ -42,7 +57,7 @@ final class AccountShellBuilder {
     $items = [];
     foreach ($sections as $section_route => $section) {
       $items[] = $this->menuItem(
-        Url::fromRoute($section['route'])->toString(),
+        $this->sectionUrl($section['route'], $section_route),
         (string) $section['title'],
         $section['icon'],
         $route === $section_route,
@@ -62,7 +77,7 @@ final class AccountShellBuilder {
     $accordion = '';
     foreach ($sections as $section_route => $section) {
       $accordion .= $this->accordionItem(
-        Url::fromRoute($section['route'])->toString(),
+        $this->sectionUrl($section['route'], $section_route),
         (string) $section['title'],
         $section['icon'],
         $route === $section_route,

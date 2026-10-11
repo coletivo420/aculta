@@ -222,3 +222,23 @@ aculta_portal.email_resend:
     _user_is_logged_in: 'TRUE'
     _csrf_token: 'TRUE'
 
+
+aculta_portal.account_orders:
+  path: /pedidos
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\AccountCommerceController::orders'
+    _title: Meus pedidos
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+
+aculta_portal.account_payments:
+  path: /pagamentos
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\AccountCommerceController::payments'
+    _title: Meus pagamentos
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
