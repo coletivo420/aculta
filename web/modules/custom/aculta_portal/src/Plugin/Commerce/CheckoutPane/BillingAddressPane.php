@@ -18,10 +18,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * Substitui o pane billing_information, removido pelo Commerce Payment (hook de alteração de panes). O Mercado
  * Pago exige o perfil de cobrança com endereço no pedido (RedirectCheckoutForm). Usa o mesmo formulário inline de
- * perfil do Commerce, com escopo de cobrança e apenas o campo de endereço, sem abas. O autocomplete por CEP é o
- * mesmo de "Meus Dados": cep_autocomplete/viacep, que o Portal estende com aculta_portal/cep-address. O módulo
- * contrib só anexa essa biblioteca em formulários de perfil customer, então o pane a anexa explicitamente.
- * Ver docs/portal/CHECKOUT-BILLING.md.
+ * perfil do Commerce, com escopo de cobrança e apenas o endereço, sem abas. O autocomplete por CEP é o mesmo de
+ * "Meus Dados": cep_autocomplete/viacep, que o Portal estende com aculta_portal/cep-address.
+ *
+ * Número: o perfil guarda o número no logradouro ("Avenida Paulista, 1000"). Ao montar o formulário, o logradouro
+ * mostra só a rua ("Avenida Paulista") e o campo Número recebe o número. Ao gravar, rua e número são juntados de
+ * novo. O script de CEP move o campo Número para logo depois do Logradouro. Ver docs/portal/CHECKOUT-BILLING.md.
  */
 #[CommerceCheckoutPane(
   id: 'aculta_billing_address',
@@ -59,22 +61,37 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
         'uid' => 0,
       ]);
     }
+    // O formulário mostra só a rua. A cópia é usada só no formulário; o perfil original (resumo) não muda.
+    $saved_number = $this->savedStreetNumber($profile);
+    $editable = $profile;
+    if ($saved_number !== '') {
+      $editable = clone $profile;
+      $address = $editable->get('address')->first();
+      $value = $address->getValue();
+      $value['address_line1'] = $this->streetOnly((string) $address->getAddressLine1());
+      $address->setValue($value);
+    }
     $inline_form = $this->inlineFormManager->createInstance('customer_profile', [
       'profile_scope' => 'billing',
       'available_countries' => $this->order->getStore()->getBillingCountries(),
       'address_book_uid' => $this->order->getCustomerId(),
       // O perfil só entra na libreta de endereços quando o pedido é concluído.
       'copy_on_save' => FALSE,
-    ], $profile);
+    ], $editable);
 
     $pane_form['profile'] = [
       '#parents' => array_merge($pane_form['#parents'], ['profile']),
       '#inline_form' => $inline_form,
     ];
     $pane_form['profile'] = $inline_form->buildInlineForm($pane_form['profile'], $form_state);
-    // Número: o endereço de cobrança do Commerce não tem campo próprio. O campo entra dentro do bloco de endereço,
-    // logo depois do Logradouro (address_line1), e o valor é gravado no logradouro. No resumo não há subcampos.
-    $this->insertStreetNumber($pane_form['profile'], $this->savedStreetNumber($profile));
+    $pane_form['street_number'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Número'),
+      '#required' => TRUE,
+      '#maxlength' => 20,
+      '#default_value' => $saved_number,
+      '#weight' => 50,
+    ];
     $pane_form['#attached']['library'][] = self::CEP_LIBRARY;
 
     return $pane_form;
@@ -85,55 +102,21 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface $inline_form */
     $inline_form = $pane_form['profile']['#inline_form'];
     $profile = $inline_form->getEntity();
-    $number_element = $this->findElement($pane_form, 'street_number');
-    $number = $number_element ? trim((string) $form_state->getValue($number_element['#parents'])) : '';
+    $number = trim((string) $form_state->getValue(array_merge($pane_form['#parents'], ['street_number'])));
     if ($number !== '' && $profile->hasField('address') && !$profile->get('address')->isEmpty()) {
       $address = $profile->get('address')->first();
-      $street = trim(preg_replace('/,\s*[^,]*$/', '', (string) $address->getAddressLine1()));
       // AddressItem não tem setAddressLine1(): grava-se o array de valores do endereço.
       $value = $address->getValue();
-      $value['address_line1'] = $street . ', ' . $number;
+      $value['address_line1'] = $this->streetOnly((string) $address->getAddressLine1()) . ', ' . $number;
       $address->setValue($value);
       $profile->save();
     }
     $this->order->setBillingProfile($profile);
   }
 
-  /** Insere o campo Número como irmão de address_line1, em qualquer nível do formulário inline. */
-  private function insertStreetNumber(array &$tree, string $default): bool {
-    if (isset($tree['address_line1']) && is_array($tree['address_line1'])) {
-      $tree['street_number'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Número'),
-        '#required' => TRUE,
-        '#maxlength' => 20,
-        '#default_value' => $default,
-        '#weight' => ($tree['address_line1']['#weight'] ?? 0) + 0.5,
-      ];
-      return TRUE;
-    }
-    foreach ($tree as $key => &$child) {
-      if (is_array($child) && !str_starts_with((string) $key, '#') && $this->insertStreetNumber($child, $default)) {
-        return TRUE;
-      }
-    }
-    return FALSE;
-  }
-
-  /** Busca o elemento do formulário pela chave, em qualquer nível. */
-  private function findElement(array $tree, string $key): ?array {
-    if (isset($tree[$key]) && is_array($tree[$key])) {
-      return $tree[$key];
-    }
-    foreach ($tree as $child_key => $child) {
-      if (is_array($child) && !str_starts_with((string) $child_key, '#')) {
-        $found = $this->findElement($child, $key);
-        if ($found !== NULL) {
-          return $found;
-        }
-      }
-    }
-    return NULL;
+  /** Rua sem o número (remove o último trecho após vírgula). */
+  private function streetOnly(string $line): string {
+    return trim(preg_replace('/,\s*[^,]*$/', '', $line));
   }
 
   /** Número já gravado no logradouro (último trecho após vírgula), para preencher o campo ao voltar à etapa. */
