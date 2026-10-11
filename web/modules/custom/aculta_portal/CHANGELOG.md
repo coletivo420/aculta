@@ -1,3 +1,26 @@
+## 0.3.0-dev.7 — Pedidos e pagamentos pelas rotas do Commerce no painel — 2026-10-11
+
+Classificação: MINOR (caminhos públicos das listas de pedidos e pagamentos alterados).
+
+- `DomainRouteSubscriber`: `view.commerce_user_orders.order_page` → `/pedidos` e `entity.commerce_payment_method.collection` → `/pagamentos`, sem o ID do usuário; controllers do `PortalController`; acesso por login.
+- `AccountListPathProcessor`: remove o ID da URL gerada (`/pedidos`, `/pagamentos`).
+- Menu do painel usa as rotas do Commerce; rotas próprias duplicadas removidas.
+- `/user/{uid}/orders` e `/user/{uid}/payment-methods` respondem 404.
+- Pendente: ações (ver pedido, editar, excluir, padrão) e endereços ainda em `/user/{uid}/...`.
+
+**RUNTIME STATUS:** verificado no servidor de testes: URLs geradas limpas; anônimo 403; antigos 404; render para conta logada sem erro.
+
+## 0.3.0-dev.6 — Painel da conta: Meus pedidos, Meus pagamentos e visão geral em `/` — 2026-10-11
+
+Classificação: MINOR (duas seções novas no painel da conta; link da visão geral corrigido).
+
+- Novas seções: `/pedidos` (Meus pedidos) e `/pagamentos` (Meus pagamentos), só para usuário logado; o usuário vem da sessão, nunca da URL.
+- Pedidos: lista das compras da conta (rascunhos de carrinho ficam fora); pagamentos: métodos salvos da conta, somente leitura.
+- Visão geral: o item do menu usa a raiz do domínio de Conta (`/`), e não o caminho técnico `/conta-interna`, que segue 404.
+- Pendente: os endereços do Commerce `/user/{user}/orders` e `/user/{user}/payment-methods` ainda respondem para o próprio dono; bloqueio depende de decisão.
+
+**RUNTIME STATUS:** verificado no servidor de testes: `/pedidos` e `/pagamentos` renderizam para conta logada (checagem em sessão); anônimo recebe 403.
+
 ## 0.3.0-dev.5 — Doação em `/apoiar` — 2026-10-11
 
 Classificação: MINOR (caminho público das rotas de doação alterado; nomes de rota e pagamento inalterados).

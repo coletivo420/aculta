@@ -59,6 +59,10 @@ services:
     arguments: ['@aculta_portal.domain_purpose']
     tags:
       - { name: path_processor_inbound, priority: 300 }
+  aculta_portal.account_list_path_processor:
+    class: Drupal\aculta_portal\PathProcessor\AccountListPathProcessor
+    tags:
+      - { name: path_processor_outbound, priority: 300 }
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
     arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation']
@@ -82,7 +86,7 @@ services:
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
   aculta_portal.account_shell_builder:
     class: Drupal\aculta_portal\AccountShellBuilder
-    arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation']
+    arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation', '@aculta_portal.domain_purpose']
   aculta_portal.breadcrumb_builder:
     class: Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder
     arguments: ['@aculta_portal.domain_purpose', '@request_stack', '@title_resolver', '@path.matcher']

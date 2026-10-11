@@ -221,4 +221,3 @@ aculta_portal.email_resend:
   requirements:
     _user_is_logged_in: 'TRUE'
     _csrf_token: 'TRUE'
-
