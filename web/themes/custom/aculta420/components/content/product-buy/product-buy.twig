@@ -4,6 +4,9 @@
     <p class="aculta-product-buy__category">{{ category }}</p>
   {% endif %}
   <h1 class="aculta-product-buy__title">{{ title }}</h1>
+  {% if summary %}
+    <div class="aculta-product-buy__summary">{{ summary }}</div>
+  {% endif %}
   {% if price %}
     <p class="aculta-product-buy__price">{{ price }}</p>
   {% endif %}

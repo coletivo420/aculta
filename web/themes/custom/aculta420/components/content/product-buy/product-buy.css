@@ -22,3 +22,5 @@
   font-weight: 600;
   color: var(--aculta-text-primary);
 }
+.aculta-product-buy__summary { color: var(--aculta-text-primary); line-height: 1.5; }
+.aculta-product-buy__summary p { margin: 0; }

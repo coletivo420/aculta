@@ -24,6 +24,7 @@
       {{ include('aculta420:product-buy', {
         category: category,
         title: product_entity.label(),
+        summary: product.field_resumo,
         price: price,
         purchase: product.variations,
       }, with_context = false) }}

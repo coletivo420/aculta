@@ -19,6 +19,9 @@ props:
       description: 'Preço formatado (ex.: R$ 30,00). Vazio não renderiza.'
       default: ''
 slots:
+  summary:
+    title: Resumo
+    description: 'Mini-descrição do produto (campo Resumo), já renderizada pelo chamador. Vazio não renderiza.'
   purchase:
     title: Compra
     description: 'Formulário de compra (variações e botão), já renderizado pelo Commerce.'
