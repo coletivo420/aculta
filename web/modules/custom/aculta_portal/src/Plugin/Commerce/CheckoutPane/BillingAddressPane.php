@@ -95,7 +95,10 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     if ($number !== '' && $profile->hasField('address') && !$profile->get('address')->isEmpty()) {
       $address = $profile->get('address')->first();
       $street = trim(preg_replace('/,\s*[^,]*$/', '', (string) $address->getAddressLine1()));
-      $address->setAddressLine1($street . ', ' . $number);
+      // AddressItem não tem setAddressLine1(): grava-se o array de valores do endereço.
+      $value = $address->getValue();
+      $value['address_line1'] = $street . ', ' . $number;
+      $address->setValue($value);
       $profile->save();
     }
     $this->order->setBillingProfile($profile);
