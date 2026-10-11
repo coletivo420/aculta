@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 
 $root = dirname(__DIR__);
+require_once $root . '/vendor/autoload.php';
 $failures = [];
 $check = static function (bool $ok, string $message) use (&$failures): void {
   if (!$ok) {
@@ -30,10 +31,11 @@ $body = $match[1] ?? '';
 $check($body !== '', 'PortalController::transactionalMailReady() não encontrado.');
 $check(str_contains($body, 'mailer_override'), 'transactionalMailReady() deve checar mailer_override.');
 $check(str_contains($body, 'smtp2go_password') && str_contains($body, 'smtp2go_username'), 'transactionalMailReady() deve checar as duas Keys SMTP2GO.');
+$check(str_contains($controller, 'private const MAIL_TRANSPORT'), 'PortalController deve declarar a constante MAIL_TRANSPORT usada por transactionalMailReady().');
 $check(!str_contains($body, 'smtp.settings') && !str_contains($body, 'SMTPMailSystem'), 'transactionalMailReady() não pode depender do legado smtp.settings/SMTPMailSystem.');
 
 foreach (glob($root . '/config/sync/mailer_transport.mailer_transport.*.yml') ?: [] as $file) {
-  $data = yaml_parse_file($file) ?: [];
+  $data = \Symfony\Component\Yaml\Yaml::parseFile($file) ?: [];
   $configuration = $data['configuration'] ?? [];
   $name = basename($file);
   $check(($configuration['pass'] ?? '') === '', "$name: configuration.pass deve estar vazio na configuração exportada (senha vem da Key).");

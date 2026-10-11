@@ -31,6 +31,9 @@ final class PortalController extends ControllerBase {
   /** Social Auth stores the network plugin ID, not its URL short name. */
   private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
 
+  /** Transporte do Mailer Plus usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
+  private const MAIL_TRANSPORT = 'smtp2go';
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
