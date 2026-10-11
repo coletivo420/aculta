@@ -4,7 +4,8 @@ Classificação: PATCH (correções de acessibilidade, prévia e índice; sem mu
 
 - `search-preview.js`: prévia só consulta a partir do mínimo de caracteres (`data-min-chars`); termo curto restaura a dica sem requisição; requisição anterior é cancelada (AbortController); setas ↑/↓ entre resultados; Tab cicla no popup.
 - `SearchPopupForm`: campo com `data-min-chars`.
-- `SearchUtility`: diálogo com `maxHeight` 560, posição no topo e botão de fechar com rótulo "Fechar".
+- `SearchUtility`: diálogo com `maxHeight` 560, posição no topo (sem `of`: o padrão do jQuery UI é a janela) e botão de fechar com rótulo "Fechar".
+- Foco inicial do popup vai ao campo de busca.
 - `SearchPageForm` (novo): `/busca` renderiza o campo com o nome `q` e o termo da URL (antes o campo saía vazio); com a página sem termo, aparece a dica para digitar.
 - Índice `aculta_conteudo`: processador `ignorecase` ativo e reindexado (20 itens). "riddim" e "Riddim" retornam o mesmo resultado.
 - Regra de host da revista: `revista420.aculta.org` (produção), decisão do responsável (ver deployer 0.1.x e `config/sync`).

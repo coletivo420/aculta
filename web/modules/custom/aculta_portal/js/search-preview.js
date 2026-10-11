@@ -24,6 +24,11 @@
         let timer = null;
         let controller = null;
 
+        // Popup: o diálogo do Drupal foca o primeiro elemento; o foco deve ir ao campo de busca.
+        if (dialog) {
+          setTimeout(() => input.focus(), 0);
+        }
+
         input.setAttribute('role', 'combobox');
         input.setAttribute('aria-autocomplete', 'list');
         input.setAttribute('aria-expanded', 'false');
