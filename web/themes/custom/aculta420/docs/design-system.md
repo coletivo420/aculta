@@ -151,6 +151,14 @@ diferentes.
 Referência:
 https://getbootstrap.com/docs/5.3/customize/color-modes/
 
+## VVJB primeiro (carrossel)
+
+- O carrossel padrão do ACULTA é o VVJB (módulo `vvjb`, estilo de view `views_vvjb`). A home usa essa engine na view `home_editorial_highlights`.
+- Cada slide do VVJB é uma linha de entidade renderizada por view. Conteúdo que vira carrossel deve ser modelado como entidade (nó, mídia ou entidade própria) e exibido por uma view.
+- O componente `aculta420:carousel` é só a moldura que envolve o markup do VVJB. Não criar carrossel novo com Bootstrap nem JavaScript próprio.
+- Exceção: carrossel fora do VVJB só com decisão registrada no `DEBT-REGISTER.md` ou no roadmap do tema, com justificativa.
+- Motivo: uma só engine de carrossel, com navegação, teclado, reduced-motion e foco já tratados (`editorial-carousel.css` e `editorial-carousel.js`).
+
 ## Motion
 
 Motion deve ser foundation, não decisão local de cada componente.
