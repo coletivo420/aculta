@@ -178,7 +178,7 @@ Executado em 2026-10-11 no runtime de desenvolvimento (`aculta_runtime`, Homelab
 | 5. Webform com modelo HTML (DT-P09) | Não testado |
 | 6. `transactionalMailReady()` verdadeiro só com as Keys | Não verificado (método privado; coberto pelo código e pelo gate) |
 
-Configuração local: `settings.local.php` (fora do Git) passou a apontar `locale_translation_path` para `~/.local/share/aculta-runtime/translations`, porque `public://translations` pertence a outro usuário.
+Configuração local: durante o teste, `settings.local.php` (fora do Git) apontou `locale_translation_path` para `~/.local/share/aculta-runtime/translations`, porque o diretório padrão não era gravável. Depois de as permissões dos diretórios internos serem corrigidas pelo responsável, o override foi removido e o caminho padrão `web/sites/default/files/translations` voltou a valer (gravação verificada).
 
 **Pendências antes do M2:** testar o Webform (DT-P09), validar `transactionalMailReady()` no runtime e conferir o remetente no cabeçalho. Só depois disso o M2 começa.
 
