@@ -82,9 +82,30 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | `/user/{uid}/payment-methods` | `/pagamentos` | 0.3.0-dev.7 | Lista de pagamentos do Commerce, sem ID na URL |
 | `/conta-interna` | `/` (Conta) | Visão geral | Rota interna; não é pública e responde 404 |
 
-### Pendente (ainda com ID de usuário no caminho)
+### Caminhos de conta com ID removidos (0.3.0-dev.8)
 
-- `/user/{uid}/address-book*`: endereços do Commerce.
-- `/user/{uid}/payment-methods/*` e `/user/{uid}/orders/{pedido}`: ver, editar, excluir e marcar como padrão.
+| Caminho antigo (ID na URL) | Caminho atual (sessão) | Responde | Observação |
+| --- | --- | --- | --- |
+| `/user/{uid}/address-book` | `/enderecos` | 404 para o antigo | Lista de endereços (`PortalController::addressBook`) |
+| `/user/{uid}/address-book/add/{tipo}` | `/enderecos/novo/{tipo}` | 404 para o antigo | `PortalController::addressBookAdd` |
+| `/user/{uid}/address-book/{perfil}/edit` | `/enderecos/{perfil}/editar` | 404 para o antigo | Dono verificado pelo perfil |
+| `/user/{uid}/address-book/{perfil}/delete` | `/enderecos/{perfil}/excluir` | 404 para o antigo | Dono verificado pelo perfil |
+| `/user/{uid}/address-book/{perfil}/set-default` | `/enderecos/{perfil}/padrao` | 404 para o antigo | Dono verificado pelo perfil |
+| `/user/{uid}/payment-methods/add` | `/pagamentos/novo` | 404 para o antigo | `PortalController::paymentMethodAdd`; 403 quando a loja não tem tipo de pagamento que aceite cadastro (comportamento do Commerce) |
+| `/user/{uid}/payment-methods/{id}/edit` | `/pagamentos/{id}/editar` | 404 para o antigo | Dono verificado pelo método |
+| `/user/{uid}/payment-methods/{id}/delete` | `/pagamentos/{id}/excluir` | 404 para o antigo | Dono verificado pelo método |
+| `/user/{uid}/payment-methods/{id}/set-default` | `/pagamentos/{id}/padrao` | 404 para o antigo | Dono verificado pelo método |
+| `/user/{uid}/orders/{pedido}` | `/pedidos/{pedido}` | 404 para o antigo | Dono verificado pelo pedido (`_entity_access commerce_order.view`) |
 
-Esses caminhos continuam ativos e são protegidos pelo dono da conta. Ao tirar o ID, eles entram neste inventário com o novo destino.
+### Mecanismo
+
+- **Caminhos e controllers:** `DomainRouteSubscriber` troca o caminho e o controller das rotas do Commerce e remove o parâmetro `user`.
+- **Usuário da sessão:** `PortalController` entrega ao controller do Commerce o usuário da sessão como entidade (`sessionUser()`).
+- **Links sem ID:** `AccountListPathProcessor` remove `user` da query gerada para `/pedidos`, `/pagamentos` e `/enderecos`.
+- **Verificações:** exigências que pediam o `$user` da URL foram trocadas por `_user_is_logged_in`; a propriedade do registro continua verificada pela entidade (perfil, método de pagamento ou pedido).
+
+### Pendências de conta (não são redirecionamentos)
+
+- **Permissões de endereço (corrigido em 2026-10-11):** o papel "autenticado" tem `create customer profile`, `view own customer profile` e `update own customer profile` (`config/sync/user.role.authenticated.yml`): cliente cria e edita o próprio endereço. `delete any customer profile` e `delete own customer profile` ficam só com o administrador. O endereço de outra conta continua negado. Verificado com duas contas temporárias, já removidas.
+- **Teste de dono com cliente comum:** não concluído, porque o aceite de termos (`/agreement`) da conta de teste não foi registrado pelo serviço do Portal. Teste pendente com conta de cliente após o aceite.
+- **Pedido com itens:** `/pedidos/{pedido}` não foi testado com pedido real (não há pedidos finalizados no ambiente de teste).

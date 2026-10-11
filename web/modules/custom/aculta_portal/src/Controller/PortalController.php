@@ -11,6 +11,10 @@ use Drupal\change_mail_page\Form\ChangeMailForm;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
+use Drupal\commerce_order\Controller\AddressBookController;
+use Drupal\commerce_payment\Form\PaymentMethodAddForm;
+use Drupal\profile\Entity\ProfileTypeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -50,6 +54,7 @@ final class PortalController extends ControllerBase {
     private readonly ModuleHandlerInterface $modules,
     private readonly ConfigFactoryInterface $configs,
     private readonly DateFormatterInterface $dateFormatter,
+    private readonly ClassResolverInterface $classResolver,
     private readonly KeyRepositoryInterface $keys,
   ) {}
 
@@ -69,6 +74,7 @@ final class PortalController extends ControllerBase {
       $container->get('module_handler'),
       $container->get('config.factory'),
       $container->get('date.formatter'),
+      $container->get('class_resolver'),
       $container->get('key.repository'),
     );
   }
@@ -166,6 +172,26 @@ final class PortalController extends ControllerBase {
 
   public function address(): array {
     return $this->buildDataSection('address');
+  }
+
+  /** Usuário da sessão como entidade: os controllers do Commerce recebem o dono, nunca um ID vindo da URL. */
+  private function sessionUser(): UserInterface {
+    return $this->entities->getStorage('user')->load($this->account->id());
+  }
+
+  /** Endereços da conta (Commerce), para o usuário da sessão. */
+  public function addressBook(): array {
+    return $this->classResolver->getInstanceFromDefinition(AddressBookController::class)->overviewPage($this->sessionUser());
+  }
+
+  /** Novo endereço (Commerce), para o usuário da sessão. */
+  public function addressBookAdd(ProfileTypeInterface $profile_type): array {
+    return $this->classResolver->getInstanceFromDefinition(AddressBookController::class)->addForm($this->sessionUser(), $profile_type);
+  }
+
+  /** Novo método de pagamento (Commerce), para o usuário da sessão. */
+  public function paymentMethodAdd(): array {
+    return $this->accountFormBuilder->getForm(PaymentMethodAddForm::class, $this->sessionUser());
   }
 
   /** Meus pedidos: compras da pessoa logada (rascunhos de carrinho ficam fora). */

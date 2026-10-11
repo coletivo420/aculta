@@ -15,10 +15,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class AccountListPathProcessor implements OutboundPathProcessorInterface {
 
-  private const PATHS = ['/pedidos', '/pagamentos'];
+  private const PATHS = ['/pedidos', '/pagamentos', '/enderecos'];
+
+  /** Caminhos com segmentos de conta (ex.: /pedidos/{pedido}, /pagamentos/{id}/editar) também perdem o ID de usuário. */
+  private const PREFIX_PATTERN = '#^/(pedidos|pagamentos|enderecos)(/|$)#';
 
   public function processOutbound($path, &$options = [], ?Request $request = NULL, $bubbleable_metadata = NULL): string {
-    if (in_array($path, self::PATHS, TRUE)) {
+    if (in_array($path, self::PATHS, TRUE) || preg_match(self::PREFIX_PATTERN, $path)) {
       unset($options['query']['user']);
     }
     return $path;
