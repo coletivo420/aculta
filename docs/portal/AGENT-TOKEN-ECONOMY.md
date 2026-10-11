@@ -38,4 +38,4 @@ python3 scripts/portal-agent-budget.py context P5.2-A 3000
 
 ## Segurança e separação de escopo
 
-Aplicar `docs/portal/DRUPAL-11-STANDARDS.md`, `AGENTS.md`, PR #90 e roadmap. Não introduzir service locators, storage paralelo nem enfraquecer segurança/checkout. A portabilidade SQLite/MariaDB pertence somente ao projeto independente DBTNG-2. Não declarar PASS sem execução.
+Aplicar `docs/portal/DRUPAL-11-STANDARDS.md`, `AGENTS.md`, PR #90 e roadmap. Não introduzir service locators, storage paralelo nem enfraquecer segurança/checkout. A portabilidade entre bancos pertence somente ao projeto independente DBTNG-2. Não declarar PASS sem execução.

@@ -14,7 +14,7 @@ reduzir diferenças operacionais relevantes entre desenvolvimento e produção.
 
 Apache é o baseline definitivo de servidor web do ACULTA.
 
-Desenvolvimento/Homelab usa Debian + Apache + PHP-FPM + SQLite.
+Desenvolvimento/Homelab usa Debian + Apache + PHP-FPM + MariaDB.
 
 Produção Hostinger usa Apache + PHP + MariaDB, com configuração própria de
 hospedagem.
@@ -57,6 +57,6 @@ evidência histórica apenas para trocar o nome do servidor.
 
 ## Não objetivos
 
-Esta decisão não altera o banco de desenvolvimento, o Sistema de Estados
-SQLite, a arquitetura Domain, a produção MariaDB, a refatoração do tema ou o
+Esta decisão não altera o banco de desenvolvimento, o Sistema de Estados,
+a arquitetura Domain, a produção MariaDB, a refatoração do tema ou o
 roadmap futuro de migração do Runtime do Homelab para MariaDB.

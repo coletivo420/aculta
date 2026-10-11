@@ -36,7 +36,7 @@ def main():
         f'Fase: {args.phase}',
         'Portal portal-v0.1.0; conferir HEAD antes de atuar.',
         'Drupal 11+ moderno, DI, access/cache e gates; sem merge.',
-        'Portabilidade SQLite/MariaDB pertence a DBTNG-2.',
+        'Portabilidade entre bancos pertence a DBTNG-2.',
         'Consultar os arquivos-alvo e documentação original antes de editar.',
     ]
     for relative in ('docs/portal/ROADMAP.md', 'docs/operations/DEBT-REGISTER.md'):

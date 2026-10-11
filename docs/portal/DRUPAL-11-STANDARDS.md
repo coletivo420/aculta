@@ -95,7 +95,7 @@ Referência: https://api.drupal.org/api/drupal/core%21core.api.php/group/events/
 
 ## Limites de responsabilidade — banco de dados
 
-O módulo `aculta_portal` utiliza as APIs de entidades e storage do Drupal e **não implementa portabilidade, migração ou conversão SQLite/MariaDB**. Esse trabalho pertence ao projeto independente **DBTNG-2**. A presença de SQLite em desenvolvimento e MariaDB em produção descreve ambientes; não transforma portabilidade em obrigação técnica do Portal. Não adicionar ferramentas ou gates de migração entre motores neste módulo.
+O módulo `aculta_portal` utiliza as APIs de entidades e storage do Drupal e **não implementa portabilidade, migração ou conversão de banco**. Esse trabalho pertence ao projeto independente **DBTNG-2**. MariaDB é o banco de desenvolvimento e de produção; isso descreve ambientes e não transforma portabilidade em obrigação técnica do Portal. Não adicionar ferramentas ou gates de migração entre motores neste módulo.
 
 ## Entity API e access
 

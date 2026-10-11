@@ -1,4 +1,4 @@
-# DBTNG-2: registro da migração do Runtime SQLite → MariaDB
+# DBTNG-2: registro da migração do Runtime para MariaDB
 
 Este arquivo registra a migração do Runtime do Homelab. Pelo `AGENTS.md`, a
 portabilidade entre motores pertence ao projeto DBTNG-2. Como esse projeto ainda
@@ -8,7 +8,7 @@ acompanhamento até ser movido para lá.
 ## Evento
 
 - **Data:** 2026-10-10.
-- **Origem:** `var/database/aculta-runtime.sqlite` (SQLite, 372 tabelas, 54.579 linhas).
+- **Origem:** Runtime local de origem (372 tabelas, 54.579 linhas).
 - **Destino:** MariaDB 11.8.6 (`aculta_runtime`, utf8mb4, usuário próprio com
   privilégio apenas nesse banco).
 - **Resultado:** contagem idêntica em todas as 372 tabelas. Conferidos:
@@ -21,7 +21,7 @@ acompanhamento até ser movido para lá.
 
 - Tipos: `INTEGER` → `BIGINT`; `VARCHAR`/`TEXT` mantêm charset utf8mb4; colunas
   `NOCASE_UTF8` usam `utf8mb4_general_ci`; demais, `utf8mb4_bin` (mesma
-  semântica de comparação do SQLite).
+  semântica de comparação do banco de origem).
 - Índices: nomes acima de 64 caracteres recebem sufixo por hash. TEXT em PK/UNIQUE
   vira `VARCHAR(255)`, com verificação de tamanho; em índice não único, usa prefixo.
 - Carga: `NO_AUTO_VALUE_ON_ZERO` ativo, para o `uid 0` (anônimo) não virar `uid 1`.
@@ -36,8 +36,8 @@ acompanhamento até ser movido para lá.
   foi confirmada.
 - Foi testada e revertida a desativação do AIO nativo (io_uring) do InnoDB; o
   servidor voltou ao padrão.
-- A cópia SQLite de segurança foi removida em 2026-10-10, após confirmação de que
+- A cópia local de segurança foi removida em 2026-10-10, após confirmação de que
   o Drupal usa MariaDB.
-- Não há Estado SQLite integral do Runtime MariaDB atual. Backups de
+- Não há Estado integral do Runtime MariaDB atual. Backups de
   `aculta_runtime` devem ser definidos no processo de operação do Homelab.
 - ADR-004 atualizada para MariaDB.

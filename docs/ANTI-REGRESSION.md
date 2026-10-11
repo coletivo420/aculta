@@ -199,8 +199,8 @@ Refactor de infraestrutura não pode alterar comportamento, access, cache, Domai
 
 ## Ambientes
 
-- Homelab: Apache + PHP-FPM + SQLite;
+- Homelab: Apache + PHP-FPM + MariaDB;
 - produção: Apache + PHP + MariaDB;
 - Nginx não é baseline;
-- custom SQL precisa preservar portabilidade SQLite/MariaDB;
+- custom SQL precisa preservar portabilidade entre os bancos suportados (DBTNG-2);
 - produção não é ambiente de experimento/desenvolvimento.

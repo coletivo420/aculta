@@ -55,7 +55,7 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 - Não adicionar eventos de mensuração (`purchase`, `add_to_cart`) antes de existir o fluxo Commerce
   correspondente e um plano de mensuração revisado.
 - Antes de ativar catálogo: finalidade, política comercial, Product Types, checkout, gateway,
-  LGPD, testes SQLite e MariaDB, isolamento de Domain e exportação de configuração. Nenhuma dessas
+  LGPD, testes em MariaDB, isolamento de Domain e exportação de configuração. Nenhuma dessas
   decisões é tomada sem especificação.
 
 ## Wiki (`wiki`)

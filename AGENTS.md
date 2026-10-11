@@ -20,7 +20,7 @@ O objetivo inicial é construir um site institucional profissional, acessível, 
 - PHP 8.5
 - Apache como baseline definitivo de servidor web
 - PHP-FPM no Homelab
-- MariaDB para o Runtime de desenvolvimento (Homelab, banco `aculta_runtime`); SQLite apenas para Estados (backups privados locais, não versionados)
+- MariaDB para o Runtime de desenvolvimento (Homelab, banco `aculta_runtime`); a pasta `estados/` contém backups privados locais do banco, não versionados
 - MariaDB em produção
 - Composer
 - Drush
@@ -30,7 +30,7 @@ O objetivo inicial é construir um site institucional profissional, acessível, 
 
 Ambiente de desenvolvimento principal:
 
-Debian Homelab + Apache + PHP-FPM + SQLite
+Debian Homelab + Apache + PHP-FPM + MariaDB
 
 Produção:
 
@@ -351,11 +351,11 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 ## Bancos e Sistema de Estados
 
 - Desenvolvimento (Homelab) usa o MariaDB `aculta_runtime`. Estados (`estados/`) são backups privados e não ficam no disco local; restaurações são carregadas no Runtime MariaDB.
-- `estados/*.sqlite` são snapshots imutáveis e integrais; não são sanitizados.
-- Estados são backups privados dos servidores e não são versionados neste repositório: `estados/*.sqlite` está no `.gitignore`. A pasta `estados/` é local e está inteira no `.gitignore` (`/estados/`): nada dela, nem README ou manifesto, é versionado. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
-- Produção continua usando MariaDB. Nunca implantar `estados/*.sqlite` nem apontar produção para o Runtime.
+- Os backups em `estados/` são imutáveis e integrais; não são sanitizados.
+- Estados são backups privados dos servidores e não são versionados neste repositório: `estados/` está no `.gitignore`. A pasta `estados/` é local e está inteira no `.gitignore` (`/estados/`): nada dela, nem README ou manifesto, é versionado. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
+- Produção continua usando MariaDB. Nunca implantar backups de `estados/` nem apontar produção para o Runtime.
 - Não editar um Estado imutável. Mudanças operacionais depois do restore pertencem somente ao Runtime.
-- Código custom deve utilizar APIs Drupal para acesso a dados. A portabilidade/migração entre SQLite e MariaDB não é responsabilidade de `aculta_portal`; pertence ao projeto independente **DBTNG-2**.
+- Código custom deve utilizar APIs Drupal para acesso a dados. A portabilidade/migração entre bancos não é responsabilidade de `aculta_portal`; pertence ao projeto independente **DBTNG-2**.
 - `web/sites/default/settings.local.php` e configurações locais permanecem fora do Git. Credenciais MariaDB de produção nunca entram em settings versionados.
 - Alterações futuras de mecanismo de banco e procedimentos de migração devem ser acompanhados exclusivamente no projeto **DBTNG-2**; não fazem parte das fases de modernização do Portal.
 

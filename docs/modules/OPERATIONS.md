@@ -27,7 +27,7 @@ Language e Locale estão ativos. `config_translation` está ativo na `main` (ver
 
 ## Ambientes
 
-Homelab: Debian + Apache + PHP-FPM + SQLite.
+Homelab: Debian + Apache + PHP-FPM + MariaDB.
 Produção: Apache/PHP + MariaDB.
 
 Não introduzir Nginx como requisito ou documentação alternativa do Homelab.

@@ -75,7 +75,7 @@ Advisory conhecido não deve ser mascarado. Falha de rede é inconclusiva.
 
 ### 10. Portabilidade
 
-Custom SQL/schema deve funcionar no Runtime SQLite e permanecer compatível com
+Custom SQL/schema deve funcionar no Runtime MariaDB e permanecer compatível com
 MariaDB de produção.
 
 ### 11. Lifecycle

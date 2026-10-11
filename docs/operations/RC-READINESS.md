@@ -1,7 +1,7 @@
 # Prontidão para RC — sitemap, descoberta e deployer
 
 Estado do projeto em 2026-10-09, medido no servidor de testes (`aculta.toca.net.br`, Drupal
-11.4.8, SQLite). Este documento registra a bateria executada, o resultado de cada item e o que
+11.4.8, MariaDB). Este documento registra a bateria executada, o resultado de cada item e o que
 impede declarar RC para **todo o projeto**. A entrega em produção é decisão do responsável no fim do
 projeto e não faz parte deste RC (ver [DEPLOYMENT.md](DEPLOYMENT.md) e [RELEASES.md](RELEASES.md)).
 
@@ -51,7 +51,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
    variações de produto, atributo de tamanho, campos, displays, categoria `categoria_loja`, views
    `commerce_products`, ações de publicação) **não está em `config/sync`** por decisão do responsável.
    Antes do RC, a ativação precisa ser feita e revisada: finalidade e política comercial da loja,
-   LGPD, checkout, gateway, testes em SQLite e MariaDB, isolamento de Domain e exportação da
+   LGPD, checkout, gateway, testes em MariaDB, isolamento de Domain e exportação da
    configuração (ver `docs/portal/GUARDRAILS.md`, seção Loja). Permissões públicas do catálogo
    (`view commerce_product` para o papel anônimo) só são ligadas no lançamento. Produtos e imagens
    entram por migração de conteúdo, não por configuração. Os vínculos de domínio e de loja vão para o
