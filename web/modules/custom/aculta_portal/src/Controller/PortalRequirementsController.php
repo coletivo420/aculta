@@ -102,7 +102,7 @@ final class PortalRequirementsController extends ControllerBase {
       'modules' => ['social_auth_google'],
       'package' => 'drupal/social_auth_google',
       'minimum' => '^4.0',
-      'purpose' => 'Provedor Google ativo em modo de testes; aguardando homologação interna.',
+      'purpose' => 'Provedor Google ativo em modo de testes; aguardando homologação do Google.',
       'warning' => 'Credenciais Google não configuradas neste ambiente pré-deploy.',
     ],
     [
