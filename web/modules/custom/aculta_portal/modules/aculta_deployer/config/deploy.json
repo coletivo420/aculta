@@ -14,6 +14,21 @@
       "comment": "Host de teste (*.aculta.toca.net.br) para produção (*.aculta.org). Preserva o prefixo do subdomínio."
     }
   ],
+  "domain_transition": {
+    "note": "Migração de domínios do servidor de testes (*.aculta.toca.net.br) para produção (*.aculta.org), por domínio registrado no Portal. Dado declarado: o comando `domains` confere os registros de config/sync contra esta tabela (somente leitura). A troca em produção só acontece no deploy do RC.",
+    "decision_pending": [
+      "coletivo420_aculta_org: o host de produção da revista (coletivo420.aculta.org hoje) segue a mudança de host de teste (revista420). Confirmar revista420.aculta.org antes do RC."
+    ],
+    "entries": [
+      {"domain_id": "aculta_org", "test_host": "aculta.toca.net.br", "production_host": "aculta.org"},
+      {"domain_id": "apoio_aculta_org", "test_host": "apoio.aculta.toca.net.br", "production_host": "apoio.aculta.org"},
+      {"domain_id": "conta_aculta_org", "test_host": "conta.aculta.toca.net.br", "production_host": "conta.aculta.org"},
+      {"domain_id": "coletivo420_aculta_org", "test_host": "revista420.aculta.toca.net.br", "production_host": "revista420.aculta.org"},
+      {"domain_id": "wiki420_aculta_org", "test_host": "wiki420.aculta.toca.net.br", "production_host": "wiki420.aculta.org"},
+      {"domain_id": "loja_aculta_org", "test_host": "loja.aculta.toca.net.br", "production_host": "loja.aculta.org"},
+      {"domain_id": "cursos_aculta_org", "test_host": "cursos.aculta.toca.net.br", "production_host": "cursos.aculta.org"}
+    ]
+  },
   "blocking_kinds": [
     "canonical",
     "sitemap"

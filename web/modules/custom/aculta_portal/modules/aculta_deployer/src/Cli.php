@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.10';
+  public const VERSION = '0.1.15';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -30,6 +30,7 @@ final class Cli {
       'register' => $this->register($options),
       'build' => $this->build($options),
       'transition' => $this->transition($options),
+      'domains' => $this->domains(),
       'verify' => $this->verify($options),
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
@@ -756,6 +757,44 @@ final class Cli {
   }
 
   /** @return array<string, mixed> */
+  /** Confere, somente leitura, a tabela domain_transition contra os registros de domínio em config/sync. */
+  private function domains(): int {
+    $config = $this->json($this->toolRoot . '/config/deploy.json');
+    $table = $config['domain_transition']['entries'] ?? null;
+    if (!is_array($table) || $table === []) {
+      $this->err('domains: domain_transition.entries ausente ou vazio em config/deploy.json');
+      return 1;
+    }
+    $transform = $this->transform();
+    $aligned = 0;
+    $pending = 0;
+    foreach ($table as $entry) {
+      $id = $entry['domain_id'] ?? '';
+      $test = $entry['test_host'] ?? '';
+      $prod = $entry['production_host'] ?? '';
+      if (!is_string($id) || $id === '' || !is_string($test) || $test === '' || !is_string($prod) || $prod === '') {
+        $this->err('domains: entrada incompleta (domain_id, test_host e production_host são obrigatórios)');
+        return 1;
+      }
+      [$byRule] = $transform->applyHosts($test);
+      $rule = $byRule === $prod ? 'regra de host' : "exceção declarada (regra daria $byRule)";
+      $record = $this->repoRoot . '/config/sync/domain.record.' . $id . '.yml';
+      $current = is_file($record) && preg_match('/^hostname: (.+)$/m', (string) file_get_contents($record), $m) === 1 ? trim($m[1]) : null;
+      if ($current === null) {
+        $pending++;
+        $this->say("pendente $id: sem registro de domínio em config/sync (destino $prod)");
+      } elseif ($current === $prod) {
+        $aligned++;
+        $this->say("ok $id: config/sync = $prod ($rule)");
+      } else {
+        $pending++;
+        $this->say("pendente $id: config/sync diz $current; destino de produção $prod ($rule); muda no deploy do RC");
+      }
+    }
+    $this->say(sprintf('domains: %d alinhado(s), %d pendente(s) de RC; somente leitura', $aligned, $pending));
+    return 0;
+  }
+
   private function json(string $path): array {
     return json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
   }
@@ -788,6 +827,7 @@ Uso:
   aculta-deployer build --out=DIR [--allow-open-blocking]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
   aculta-deployer environment [show] | environment set --to=production|test  define o ambiente do site (e o endereço) lido pelo Portal
+  aculta-deployer domains              GET/leitura: confere a tabela domain_transition (teste → produção) contra config/sync
   aculta-deployer report [--out=PATH]  relatório neutro para o painel do Portal (sem valores)
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version
