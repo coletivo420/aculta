@@ -148,14 +148,14 @@ Ordem de teste no Homelab (M1):
 | Remetente trocado por ambiente | E-mail com endereço errado | Confirmar na M1; `deploy.json` cobre `system.site` |
 | Webform sem HTML em modo de compatibilidade | DT-P09 não resolvida | Teste de formulário; DT-P09 fica aberta até a prova |
 | Mensagens em fila antes do corte | Envio duplicado ou perdido | Ativação em janela sem campanha; sem fila pendente |
-| Deploy antes do RC | Mudança de produção fora da política | Deploy só no RC (decisão do responsável, 2026-10-09): merge em `main` não publica |
+| Entrega em produção antecipada | Mudança em produção sem decisão do responsável | Entrega em produção é decisão do responsável no fim do projeto; merge em `main` não publica |
 
 ## 7. Critério para fechar a migração
 
 - M1 validada no Homelab, com os seis passos da seção 5 registrados como evidência.
 - M2 executada somente depois da M1 validada.
 - DT-O07 fechada (drift de `smtp.settings` e `system.mail` removido).
-- DT-P05 fechada quando a entrega em produção for validada no RC.
+- DT-P05 fica aberta até a decisão do responsável de entregar em produção, no fim do projeto.
 - DT-P09 fechada apenas com a prova de envio de Webform com HTML.
 
 ## 8. Versão
@@ -222,7 +222,7 @@ Configuração local: durante o teste, `settings.local.php` (fora do Git) aponto
 - Webform com HTML recebido e confirmado pelo responsável: **DT-P09 resolvida**.
 - Checklist da seção 5: passos 1, 2, 3 e 5 concluídos; passo 4 (remetente) confirmado no cabeçalho; passo 6 (`transactionalMailReady()`) verdadeiro no runtime.
 - Correções feitas durante a validação: constante `MAIL_TRANSPORT` declarada (`e65c714`); `system.mail:interface.default` alterado para `symfony_mailer` (só no runtime).
-- Pendências transferidas para a M2: remover `drupal/smtp`, `smtp.settings` e os overrides de senha antigos; exportar `system.mail` com `symfony_mailer`; fechar DT-O07. DT-P05 (entrega em produção) depende do RC.
+- Pendências transferidas para a M2: remover `drupal/smtp`, `smtp.settings` e os overrides de senha antigos; exportar `system.mail` com `symfony_mailer`; fechar DT-O07. DT-P05 (entrega em produção) é decisão do responsável no fim do projeto.
 
 ### 9.7 M2: remoção do legado
 
@@ -242,7 +242,7 @@ Executada no mesmo PR da M1, a pedido do responsável (o `AGENTS.md` pede um PR 
 - `validate-portal-commerce-security.php`: as asserções de e-mail passam; a execução para numa asserção do formulário de apoio (gateway de doação), sem relação com e-mail e sem alteração nesta branch. Falha anterior à M2.
 - `validate-final-drupal.php`: as asserções de e-mail passam (verificadas diretamente). Para numa asserção do endereço do site (`4e20coletivo@gmail.com` esperado; runtime tem `naoresponda@toca.net.br`), anterior à M2. A divergência de 77 itens entre runtime e `config/sync` também é anterior.
 
-**Pendências fora da M2:** DT-P05 (entrega em produção) depende do RC. Os itens acima anteriores à M2 ficam para o saneamento de dívidas.
+**Pendências fora da M2:** DT-P05 (entrega em produção) é decisão do responsável no fim do projeto. Os itens acima anteriores à M2 ficam para o saneamento de dívidas.
 
 ### 9.8 Validação pós-remoção (antes do merge)
 
