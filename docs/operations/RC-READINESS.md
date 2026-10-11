@@ -47,6 +47,16 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
    o SMTP está ligado; `smtp_allowhtml` ainda difere do baseline). Classificação em
    [Baseline de configuração](#baseline-de-configuração-2026-10-09).
 
+2. **Ativação do catálogo da loja (DT-O10), obrigatória no RC**: a estrutura do catálogo (tipos e
+   variações de produto, atributo de tamanho, campos, displays, categoria `categoria_loja`, views
+   `commerce_products`, ações de publicação) **não está em `config/sync`** por decisão do responsável.
+   Antes do RC, a ativação precisa ser feita e revisada: finalidade e política comercial da loja,
+   LGPD, checkout, gateway, testes em SQLite e MariaDB, isolamento de Domain e exportação da
+   configuração (ver `docs/portal/GUARDRAILS.md`, seção Loja). Permissões públicas do catálogo
+   (`view commerce_product` para o papel anônimo) só são ligadas no lançamento. Produtos e imagens
+   entram por migração de conteúdo, não por configuração. Os vínculos de domínio e de loja vão para o
+   `aculta_deployer` por ambiente.
+
 ## Estado por componente
 
 | Componente | Versão | Status |
