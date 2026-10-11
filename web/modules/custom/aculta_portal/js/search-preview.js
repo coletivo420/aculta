@@ -11,6 +11,21 @@
   const visibleTabbables = (container) =>
     Array.from(container.querySelectorAll(TABBABLE)).filter((el) => el.offsetParent !== null || el === document.activeElement);
 
+  // Botão × do diálogo: o jQuery UI não grava o closeText no DOM; o nome acessível é definido aqui.
+  if (window.jQuery) {
+    window.jQuery(document).on('dialog:aftercreate', (event, dialog, $element) => {
+      if (!$element || !$element.find('#aculta-search-preview').length) {
+        return;
+      }
+      const wrapper = $element.closest('.ui-dialog').get(0);
+      const button = wrapper ? wrapper.querySelector('.ui-dialog-titlebar-close') : null;
+      if (button) {
+        button.setAttribute('aria-label', Drupal.t('Fechar'));
+        button.setAttribute('title', Drupal.t('Fechar'));
+      }
+    });
+  }
+
   Drupal.behaviors.acultaSearchPreview = {
     attach(context) {
       once('aculta-search-preview', 'input.aculta-search-preview-input', context).forEach((input) => {
@@ -20,14 +35,15 @@
         const minChars = Number.parseInt(input.dataset.minChars || '3', 10);
         // A dica inicial é guardada para voltar quando o termo fica curto demais.
         const hintHtml = box ? box.innerHTML : '';
-        const dialog = input.closest('.ui-dialog');
         let timer = null;
         let controller = null;
 
         // Popup: o diálogo do Drupal foca o primeiro elemento; o foco deve ir ao campo de busca.
-        if (dialog) {
-          setTimeout(() => input.focus(), 0);
-        }
+        setTimeout(() => {
+          if (input.closest('.ui-dialog')) {
+            input.focus();
+          }
+        }, 0);
 
         input.setAttribute('role', 'combobox');
         input.setAttribute('aria-autocomplete', 'list');
@@ -123,27 +139,40 @@
         }
 
         // Diálogo: Tab e Shift+Tab fazem ciclo dentro do popup, nos dois extremos.
-        if (dialog) {
-          dialog.addEventListener('keydown', (event) => {
-            if (event.key !== 'Tab') {
-              return;
-            }
-            const items = visibleTabbables(dialog);
-            if (items.length === 0) {
-              return;
-            }
-            const first = items[0];
-            const last = items[items.length - 1];
-            if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
-              event.preventDefault();
-              last.focus();
-            }
-            else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
-              event.preventDefault();
-              first.focus();
-            }
-          });
-        }
+        // Fase de captura: roda antes do jQuery UI, e o diálogo é procurado a cada tecla.
+        const trapTab = (event) => {
+          if (!input.isConnected) {
+            document.removeEventListener('keydown', trapTab, true);
+            return;
+          }
+          const dialogEl = input.closest('.ui-dialog');
+          if (event.key !== 'Tab' || !dialogEl) {
+            return;
+          }
+          const items = visibleTabbables(dialogEl);
+          if (items.length === 0) {
+            return;
+          }
+          const first = items[0];
+          const last = items[items.length - 1];
+          const active = document.activeElement;
+          if (!dialogEl.contains(active)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            (event.shiftKey ? last : first).focus();
+          }
+          else if (event.shiftKey && active === first) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            last.focus();
+          }
+          else if (!event.shiftKey && active === last) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            first.focus();
+          }
+        };
+        document.addEventListener('keydown', trapTab, true);
       });
     },
   };

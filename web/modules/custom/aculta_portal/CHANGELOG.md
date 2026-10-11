@@ -1,3 +1,13 @@
+## 0.3.0-dev.3 — Busca: ciclo de Tab e nome do botão fechar — 2026-10-11
+
+Classificação: PATCH.
+
+- Ciclo de Tab/Shift+Tab no popup: interceptação na fase de captura, com o diálogo procurado a cada tecla (antes o handler não era registrado, porque o diálogo ainda não existia quando o campo era ligado).
+- Botão × do diálogo recebe `aria-label` e `title` "Fechar" pelo evento `dialog:aftercreate`.
+- Foco inicial no campo verificado depois da abertura do diálogo.
+
+**RUNTIME STATUS:** reteste no navegador pendente.
+
 ## 0.3.0-dev.2 — Busca: acessibilidade, índice sem caixa e página com o termo — 2026-10-11
 
 Classificação: PATCH (correções de acessibilidade, prévia e índice; sem mudança de contrato público).
