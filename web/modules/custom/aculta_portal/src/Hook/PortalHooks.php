@@ -109,6 +109,9 @@ final class PortalHooks {
     $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
     $variables['domain_presentation'] = $domainPresentation?->toThemeArray();
     $variables['aculta_search_utility'] = $this->searchUtility->build();
+    // Ícone da ACULTA na barra multidomínio: página inicial do domínio principal (purpose main), nunca fixa no código.
+    $mainHome = $this->domainPurposeManager->pathUrl('main', '/');
+    $variables['aculta_brand_home'] = $mainHome !== NULL ? $mainHome->toString() : '/';
     $cart = $this->cartUtility->build();
     if (isset($variables['page']) && is_array($variables['page'])) {
       $this->renderer->addCacheableDependency($variables['page'], $cart['cache']);
