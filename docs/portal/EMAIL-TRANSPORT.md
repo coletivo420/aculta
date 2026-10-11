@@ -80,15 +80,28 @@ Secrets Contract (não ganha variável).
 (`mailer_transport.mailer_transport.<id>`). O formulário não oferece Key. Pela regra do `AGENTS.md`,
 senha não pode ir para configuração exportada.
 
-Solução adotada para M1: um `ConfigFactoryOverride` no `aculta_portal`, no padrão de
-`Captcha/TurnstileKeyOverride`. Ele preenche `user` e `pass` **em memória** a partir de
-`key.repository` (`smtp2go_username`, `smtp2go_password`). A configuração exportada fica com `user` e
-`pass` vazios. O override só atua quando o nome do transporte é o do SMTP2GO, e só consulta a Key nesse
-caso, para não criar recursão de carregamento de configuração.
+Solução adotada para M1: **override nativo do módulo Key** (`key.config_override`), o mesmo mecanismo
+que já liga `smtp.settings` às Keys hoje. Não é preciso código próprio. Verificado em
+`web/modules/contrib/key/src/KeyConfigOverrides.php` (Key 1.22): o override aceita
+`config_prefix` + `config_name` + `config_item` (caminho com pontos, por exemplo `configuration.pass`) e
+`key_id`. Ele só altera a configuração carregada em memória; não grava nada.
 
-Alternativa descartada: ler `getenv()` direto no override. Viola a regra "Key com provider `env`".
+Configuração a exportar no Homelab (M1, depois da ativação):
 
-**Risco:** o carregamento de Key dentro de `loadOverrides()` precisa de teste de runtime (ver M1).
+- `mailer_transport.mailer_transport.smtp2go`: plugin `smtp`, host `mail.smtp2go.com`, porta `2525`,
+  `user` e `pass` vazios;
+- `key.config_override.mailer_smtp2go_username`: `config_prefix: mailer_transport.mailer_transport`,
+  `config_name: smtp2go`, `config_item: configuration.user`, `key_id: smtp2go_username`;
+- `key.config_override.mailer_smtp2go_password`: o mesmo, com `configuration.pass` e
+  `key_id: smtp2go_password`;
+- `mailer_transport.settings:default_transport: smtp2go`.
+
+Essas configurações **não entram em `config/sync` nesta fase**. Dependem do módulo `mailer_transport`
+habilitado; importá-las antes da ativação quebraria `config:import`. A exportação é feita no Homelab
+depois do teste (seção 5).
+
+**Risco:** a resolução do override depende do Key carregado dentro de `loadOverrides()`. Confirmar no
+runtime (ver passo 2 da seção 5).
 
 ### 4.2 Remetente
 
@@ -111,14 +124,14 @@ continua pelo SMTP antigo. Não há migração de fila; a ativação é um ponto
 | Fase | Entrega | Runtime | Pré-requisito |
 |---|---|---|---|
 | **M0** | Este documento: decisão, inventário, plano e riscos | Não precisa (só docs) | — |
-| **M1** | `composer require drupal/symfony_mailer:^2.0` (com `mailer_override`); `ConfigFactoryOverride` de transporte com Key; atualização de `transactionalMailReady()` para checar Mailer Plus e as Keys; entradas em `deploy.json`; teste unitário do override; gate; CHANGELOG e versão do Portal | **DEFERRED** até teste no Homelab. `drupal/smtp` continua instalado e inativo como rede de segurança | M0 mergeada |
+| **M1** | `composer require drupal/symfony_mailer:^2.0`; `transactionalMailReady()` checando `mailer_override`, o transporte `smtp2go` e as Keys; gate `validate-mail-transport.php`; CHANGELOG e versão do Portal. Override de senha via `key.config_override` (sem código próprio); exportação do transporte e dos overrides no Homelab; `deploy.json` quando os arquivos existirem em `config/sync` | **DEFERRED** até teste no Homelab. `drupal/smtp` continua instalado e inativo como rede de segurança | M0 mergeada |
 | **M2** | Desinstalar `smtp`; apagar `smtp.settings` e os overrides de Key de `smtp.settings`; `composer remove drupal/smtp`; atualizar scripts e docs; fechar DT-O07 e, se confirmado, DT-P09 | Só depois da M1 validada no Homelab | M1 validada no Homelab |
 
 Ordem de teste no Homelab (M1):
 
 1. Ativar `symfony_mailer`, `mailer_transport`, `mailer_policy` e `mailer_override`; confirmar que não há
    erro de referência circular (issue citada na seção 2).
-2. Exportar o transporte SMTP2GO como `config/sync`, com `user` e `pass` vazios.
+2. Exportar o transporte SMTP2GO e os dois `key.config_override` (seção 4.1) como `config/sync`, com `user` e `pass` vazios.
 3. Enviar um e-mail de teste pelo Core (`drush php:eval` ou recuperação de senha) e confirmar a entrega
    no SMTP2GO.
 4. Confirmar o remetente (seção 4.2).
