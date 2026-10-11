@@ -443,20 +443,6 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - Consultar `docs/portal/COMPONENT-DESIGN-SYSTEM.md` e
   `web/themes/custom/aculta420/docs/design-system.md`.
 
-## Sincronização de `config/sync` após merge (obrigatório)
-
-Toda PR mesclada que mude configuração do Drupal (módulo instalado ou desinstalado, configuração de módulo, entidade de configuração) deixa a configuração ativa do runtime diferente de `config/sync`. Por isso, a sincronização é uma etapa do merge, não uma tarefa opcional:
-
-1. Após o merge, atualizar a `main` e rodar `php vendor/drush/drush/drush.php --uri=http://127.0.0.1 php:script scripts/validate-final-drupal.php`. O gate não pode acusar diferença nova fora da linha de base `DT-O10`, e a linha de base só pode diminuir.
-2. Exportar **somente** os arquivos que a PR alterou, com `drush config:get <nome> --format=yaml`. Nunca usar `drush config:export` completo: ele arrasta diferenças antigas do runtime.
-3. Nunca exportar arquivos declarados `environment_bound` no `aculta_deployer/config/deploy.json` (domínios, `system.site`, gateway de pagamento, `webform.webform.aculta_contact`, `system.logging`). O deployer os trata por ambiente.
-4. Nunca exportar credencial, token, hostname de teste ou valor de Key. Antes do commit, conferir os campos sensíveis do YAML.
-5. Não exportar itens que dependem de decisão de produto ou de segurança (catálogo da loja, permissões do papel anônimo, textos editoriais). Eles ficam em `DT-O10` até decisão do responsável.
-6. Atualizar `core.extension` apenas com os módulos da PR, preservando a ordem do arquivo.
-7. Commit próprio, com prefixo `config(...)`, citando a PR de origem. Se a sincronização revelar credencial no banco (como `DT-O11`), parar e registrar em vez de corrigir sem autorização.
-
-Se a PR não tiver mudança de configuração, a etapa não se aplica, mas o gate deve continuar passando.
-
 ## Regra de encerramento de fase
 
 Toda fase ou subfase concluída deve terminar em **PR próprio**.
