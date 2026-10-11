@@ -381,6 +381,7 @@ Toda troca de caminho público entra aqui, com a instrução de deploy. O caminh
 | Versão | Antes | Depois | Como chega à produção |
 | --- | --- | --- | --- |
 | 0.3.0-dev.4 | `/cart` | `/carrinho` | Código (`CartFriendlyRouteSubscriber`). Sem configuração a aplicar: o deploy do código já traz a rota. Após o deploy, `/cart` responde 404 e `/carrinho` 200 no host principal. |
+| 0.3.0-dev.5 | `/donate`, `/donate/{valor}/now`, `/donate/{pedido}/{etapa}` | `/apoiar`, `/apoiar/{valor}/agora`, `/apoiar/{pedido}/{etapa}` | Código (`DonationFriendlyRouteSubscriber`). Sem configuração a aplicar. Após o deploy, `/donate` responde 404. |
 
 Verificação após cada deploy: `/carrinho` 200 e `/cart` 404 no host principal; o host da loja redireciona
 `/carrinho` para o principal, conforme a política de pagamento.

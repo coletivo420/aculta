@@ -101,9 +101,10 @@ $check(
 // that every new subscriber is a deliberate change. 0.2.0-dev.16 adds EmailConfirmationSubscriber
 // (OAuth login and user creation mark the email as confirmed; política de confirmação de e-mail).
 // 0.3.0-dev.4 adds CartFriendlyRouteSubscriber (cart route path /carrinho, slug em português).
+// 0.3.0-dev.5 adds DonationFriendlyRouteSubscriber (donation route paths /apoiar, slug em português).
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 10,
-  'Portal must register exactly ten canonical event_subscriber tags.',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 11,
+  'Portal must register exactly eleven canonical event_subscriber tags.',
 );
 
 $legacyProceduralFunctions = [];
