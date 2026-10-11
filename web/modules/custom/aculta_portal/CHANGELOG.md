@@ -1,5 +1,7 @@
 ## 0.3.0-dev.16 — Aceite dos termos em popup persistente; contenção do Mercado Pago — 2026-10-11
 
+- Resumo do checkout: nome do produto no item (modo de visualização `summary` do bundle `camiseta_tamanho`, exportado em `config/sync`). Verificado por renderização: "Camiseta Abadá Bloco Sativa 2026 – Regata Tamanho M".
+- Máscara do CEP `00000-000` em `js/cep-address.js` (biblioteca compartilhada por Meus Dados e checkout). A consulta continua usando só os dígitos. Verificação visual pendente.
 - Checkout: campo **Número** no endereço de cobrança (`aculta_billing_address`). Como o endereço de cobrança do Commerce não tem campo próprio, o número é gravado no logradouro (`Logradouro, Número`) e preenchido de volta ao voltar à etapa. Verificado: campo renderizado em `order_information`; envio do passo ainda não testado de ponta a ponta.
 - Popup de aceite: Esc (fechamento sem ativação do usuário) reabre o popup no evento close, enquanto não houver aceite; Tab e Shift+Tab ficam presos dentro do popup (`js/account-terms-modal.js`). Verificado no navegador pelo Felipe antes desta correção; reteste pendente.
 - Tradução: "Company" → "Empresa" (`aculta_ui.pt-br.po`).

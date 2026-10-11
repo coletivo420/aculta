@@ -13,6 +13,11 @@
   };
 
   const digits = (value) => (value || '').replace(/\D+/g, '').slice(0, 8);
+  // Máscara 00000-000 (o envio e a consulta usam só os dígitos).
+  const formatCep = (value) => {
+    const cep = digits(value);
+    return cep.length > 5 ? `${cep.slice(0, 5)}-${cep.slice(5)}` : cep;
+  };
 
   function getField(prefix, key, container) {
     const expected = `${prefix}[address][${key}]`;
@@ -123,7 +128,7 @@
                 dispatchChange(field);
               }
             });
-            postal.value = requestedCep;
+            postal.value = formatCep(requestedCep);
             postal.dataset.acultaCepResolved = requestedCep;
             announce(status, Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
             const street = getField(prefix, 'address_line1', container);
@@ -141,9 +146,16 @@
       });
 
       postal.addEventListener('change', () => {
-        if (postal.value !== digits(postal.value)) {
-          postal.value = digits(postal.value);
+        if (postal.value !== formatCep(postal.value)) {
+          postal.value = formatCep(postal.value);
           postal.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      });
+      // Máscara enquanto digita (o cursor vai para o fim, que é onde o CEP é digitado).
+      postal.addEventListener('input', () => {
+        const formatted = formatCep(postal.value);
+        if (postal.value !== formatted && digits(postal.value).length > 0) {
+          postal.value = formatted;
         }
       });
     });

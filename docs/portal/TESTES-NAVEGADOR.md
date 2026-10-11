@@ -116,3 +116,16 @@ Pré-requisito: usuário `teste.comum` com o aceite **pendente** (o agente do re
 Pendências desta rodada: a camada visual atrás do popup (cabeçalho) e o aceite pelo navegador com JavaScript (passos 3 e 5).
 
 **Mercado Pago:** não clicar em "Pagar" em nenhuma tela do Mercado Pago enquanto o token de teste não estiver corrigido (ver CHECKOUT-BILLING.md). O gateway está desligado.
+
+## K) Checkout: resumo, número e CEP (0.3.0-dev.16)
+
+Pré-requisito: `teste.comum` com aceite dado (o popup não bloqueia o checkout depois do aceite), e gateway de pagamento ligado com token de teste.
+
+1. Abra `https://aculta.toca.net.br/checkout/5/order_information`. Esperado: bloco "Endereço de cobrança" com CEP, Logradouro, Complemento, Bairro, Cidade, Estado, País, campo **Número** (obrigatório) e rótulo "Empresa" (no lugar de "Company").
+2. Digite o CEP `01310100`. Esperado: aparece **01310-100** (máscara), e a rua, o bairro, a cidade e o estado são preenchidos.
+3. Deixe o Número vazio e clique em "Continuar para a revisão". Esperado: erro pedindo o número, sem avançar.
+4. Digite `1000` no Número e continue. Esperado: a revisão mostra o logradouro "Avenida Paulista, 1000".
+5. No resumo do pedido, o item deve mostrar o nome "Camiseta Abadá Bloco Sativa 2026 – Regata", o tamanho M e o preço R$ 30,00.
+
+**Gateway:** enquanto o token de teste não for trocado, a etapa de pagamento mostra "Não existem gateways de pagamento disponíveis". Não passe da primeira tela do Mercado Pago.
+

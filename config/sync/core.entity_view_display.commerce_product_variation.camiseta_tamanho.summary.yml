@@ -1,0 +1,55 @@
+uuid: 4b82e264-c04d-4b46-be11-f300e10a13cf
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_variation_type.camiseta_tamanho
+    - core.entity_view_mode.commerce_product_variation.summary
+    - field.field.commerce_product_variation.camiseta_tamanho.attribute_tamanho
+  module:
+    - commerce_price
+id: commerce_product_variation.camiseta_tamanho.summary
+targetEntityType: commerce_product_variation
+bundle: camiseta_tamanho
+mode: summary
+content:
+  attribute_tamanho:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  list_price:
+    type: commerce_price_default
+    label: above
+    settings:
+      strip_trailing_zeroes: false
+      currency_display: symbol
+    third_party_settings: {  }
+    weight: -1
+    region: content
+  price:
+    type: commerce_price_default
+    label: above
+    settings:
+      strip_trailing_zeroes: false
+      currency_display: symbol
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  product_id:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true
+  search_api_excerpt: true
+  sku: true
+  title: true
+
