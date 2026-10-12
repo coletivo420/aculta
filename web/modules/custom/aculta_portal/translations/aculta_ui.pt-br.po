@@ -62,3 +62,6 @@ msgstr "Você cancelou o pagamento no @gateway, mas pode retomar o checkout aqui
 
 msgid "%label has been saved."
 msgstr "%label foi salvo."
+
+msgid "The profile has been saved."
+msgstr "O perfil foi salvo."

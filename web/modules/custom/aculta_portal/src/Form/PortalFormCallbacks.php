@@ -57,6 +57,17 @@ final class PortalFormCallbacks {
     $address->setValue($value);
   }
 
+  /** Resposta AJAX do salvamento na Minha conta: mensagens e o formulário, no mesmo bloco. */
+  public function accountAjaxResponse(array &$form, FormStateInterface $formState): array {
+    unset($form['#prefix'], $form['#suffix']);
+    return ['messages' => ['#type' => 'status_messages'], 'form' => $form];
+  }
+
+  /** Último handler de envio da Minha conta: o salvamento fica na página (sem redirecionamento). */
+  public function disableAccountRedirect(array &$form, FormStateInterface $formState): void {
+    $formState->disableRedirect();
+  }
+
   /** Registra o aceite dos termos do cadastro (checkbox obrigatório no formulário). */
   public function acceptRegistrationTerms(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {

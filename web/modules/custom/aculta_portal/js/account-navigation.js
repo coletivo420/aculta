@@ -51,12 +51,12 @@
       method: 'html',
       progress: { type: 'throbber' },
     });
+    // O success do Drupal resolve depois dos comandos (inclui carregar bibliotecas): o estado novo é lido só então.
     const success = ajax.success.bind(ajax);
-    ajax.success = (response, status) => {
-      const result = success(response, status);
+    ajax.success = (response, status) => Promise.resolve(success(response, status)).then((result) => {
       if (onDone) onDone();
       return result;
-    };
+    });
     ajax.execute();
   };
 
@@ -174,6 +174,18 @@
           navigate(anchor, window.location.href, false);
           anchor.remove();
         });
+      });
+    },
+  };
+
+  // Formulários da conta salvos por AJAX: com erro de validação, o foco vai para o primeiro campo com erro.
+  Drupal.behaviors.acultaPortalAccountFormErrors = {
+    attach(context) {
+      once('aculta-portal-account-form-errors', '[id^="portal-account-"]', context).forEach((wrapper) => {
+        const invalid = wrapper.querySelector('.form-item--error input, .form-item--error select, .form-item--error textarea, .error[aria-invalid], input.error, select.error, textarea.error');
+        if (invalid) {
+          invalid.focus();
+        }
       });
     },
   };
