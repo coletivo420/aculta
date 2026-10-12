@@ -1,0 +1,16 @@
+services:
+  aculta_id_cpf.normalizer:
+    class: Drupal\aculta_id_cpf\Service\DocumentNormalizer
+  aculta_id_cpf.cpf_validator:
+    class: Drupal\aculta_id_cpf\Service\CpfValidator
+  aculta_id_cpf.cnpj_validator:
+    class: Drupal\aculta_id_cpf\Service\CnpjValidator
+  aculta_id_cpf.validator:
+    class: Drupal\aculta_id_cpf\Service\DocumentValidator
+    arguments: ['@aculta_id_cpf.normalizer', '@aculta_id_cpf.cpf_validator', '@aculta_id_cpf.cnpj_validator']
+  aculta_id_cpf.formatter:
+    class: Drupal\aculta_id_cpf\Service\DocumentFormatter
+    arguments: ['@aculta_id_cpf.validator']
+  aculta_id_cpf.element_validation:
+    class: Drupal\aculta_id_cpf\Form\DocumentElementValidation
+    arguments: ['@aculta_id_cpf.validator', '@string_translation']

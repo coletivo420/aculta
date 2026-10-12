@@ -74,6 +74,13 @@ O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime mig
 
 Consultar [CHANGELOG.md](CHANGELOG.md).
 
+## Submódulo de documentos brasileiros
+
+`modules/aculta_id_cpf` fornece serviços de validação CPF/CNPJ e elementos Form API,
+com ativação opcional. A primeira entrega não coleta documentos nos formulários da
+Conta nem altera autenticação. Consultar seu [README](modules/aculta_id_cpf/README.md)
+e a [evidência de entrega](../../../../docs/modules/ACULTA-ID-CPF.md).
+
 ## Credenciais do ambiente (0.2.0-dev.11)
 
 Painel `/admin/config/aculta/segredos` para cadastrar as credenciais do contrato

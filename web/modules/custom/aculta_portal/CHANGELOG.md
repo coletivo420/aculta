@@ -1,3 +1,17 @@
+## Em desenvolvimento — aculta_id_cpf 0.1.0-dev.1 — 2026-10-12
+
+Classificação: MINOR (nova capacidade opcional, primeira entrega priorizada pelo responsável).
+Portal permanece 0.3.0-dev.16; nova marcação/release do módulo pai não declarada sem homologação.
+
+- Novo submódulo opt-in: validadores locais de CPF/CNPJ numérico e alfanumérico,
+  normalização estrita, formatters, máscaras e elementos Form API Drupal 11.3+.
+- Sem alteração de login, dados pessoais Profile/User, tema, banco ou config sync.
+- Testes locais: 248 verificações PHP; PHPUnit 34 testes/63 asserções; Node 8 testes;
+  lint 13 arquivos; gate Drupal 11+ do Portal 583 verificações PASS.
+- **RUNTIME STATUS: DEFERRED** — Kernel, Homelab/MariaDB/PHP 8.5 pendentes.
+- Próxima entrega: homologação de elementos e persistência privada/uniqueness.
+- Evidência: `docs/modules/ACULTA-ID-CPF.md`; base `368ec263189d670d459e385b068d7bb188af95b3`.
+
 ## 0.3.0-dev.16 — Aceite dos termos em popup persistente; contenção do Mercado Pago — 2026-10-11
 
 - Resumo do checkout: nome do produto no item (modo de visualização `summary` do bundle `camiseta_tamanho`, exportado em `config/sync`). Verificado por renderização: "Camiseta Abadá Bloco Sativa 2026 – Regata Tamanho M".
