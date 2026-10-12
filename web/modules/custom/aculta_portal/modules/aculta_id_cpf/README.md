@@ -1,8 +1,8 @@
 # ACULTA CPF e CNPJ
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
-A entrega atual contém serviços de domínio e impressão digital HMAC, sem
-formulário, campo, persistência ou integração de autenticação.
+Versão atual: **0.2.0-dev.2**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
+e um índice de unicidade (fingerprint HMAC).
 
 **RUNTIME STATUS: DEFERRED** — a rodada local em PHP 8.4 passou; o servidor
 remoto `*.aculta.toca.net.br` continua pendente.
@@ -67,9 +67,29 @@ pontuação é aplicada no serviço. Máscara durante a digitação, widget/form
 do campo, armazenamento, unicidade e controle de acesso pertencem às próximas
 entregas do Portal e devem ser definidos antes de coletar documentos reais.
 
-Essa separação é deliberada: não habilitar campos persistidos em User/Profile
-nem Webform até haver decisão implementada e testada para privacidade, cache,
-armazenamento, unicidade concorrente e autorização de leitura.
+## Persistência (0.2.0-dev.2)
+
+- `DocumentCipher`: cifra libsodium com a Key `aculta_document_encryption_key`
+  (variável `ACULTA_DOCUMENT_ENCRYPTION_KEY`, 64 caracteres hexadecimais).
+- `AccountDocumentStore` grava em `profile.participante.field_documento` (cifrado)
+  e `field_documento_indice` (fingerprint HMAC com a Key `aculta_id_cpf_fingerprint`,
+  variável `ACULTA_ID_CPF_FINGERPRINT_KEY`, mínimo de 32 bytes).
+- Antes de gravar, recusa o mesmo documento em outra conta com mensagem genérica.
+  O formulário não revela se o documento existe em outra conta.
+- Exibição ao titular: 5 caracteres e `*` no restante (ex.: `974.12*.***-**`).
+- Sem Key de cifra ou de fingerprint, a gravação e a aba ficam indisponíveis
+  (falha fechada); a leitura de valores já gravados também exige a cifra.
+- Atualização `aculta_id_cpf_update_10001`: cria o campo de índice e indexa os
+  documentos gravados antes dele; para se houver duplicidade entre contas.
+
+## Limite conhecido: unicidade não é transacional
+
+A verificação de unicidade é uma consulta antes da gravação. Sob gravações
+simultâneas, duas contas podem passar pela verificação ao mesmo tempo. Campo de
+entidade do Drupal não oferece índice único; a garantia forte exige decisão
+sobre tabela com índice único (armazenamento paralelo) ou outra estratégia. Até
+essa decisão, não afirmar que documentos duplicados são impedidos em qualquer
+condição de concorrência.
 
 ## Testes
 
@@ -87,12 +107,12 @@ de campos. Evidência e limites conhecidos estão em
 
 ## Próximas entregas
 
-1. Implementar manualmente no `aculta_portal` os campos PF/PJ e suas máscaras,
-   consumindo os serviços deste submódulo; integrar o fingerprint à persistência
-   protegida e a uma garantia transacional sem duplicar a fonte de verdade.
-2. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
+1. Decidir a garantia transacional de unicidade (ver "Limite conhecido").
+2. Testes de Kernel para `AccountDocumentStore` (duplicidade, perfil despublicado,
+   atualização `aculta_id_cpf_update_10001`), ainda não cobertos.
+3. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
    CAPTCHA, Social Auth e respostas genéricas.
-3. Avaliar integração Webform somente após proteção de rascunhos, tokens,
+4. Avaliar integração Webform somente após proteção de rascunhos, tokens,
    e-mails, exportações e handlers.
 
 Não adicionar tabela paralela ou resolvedor de login sem documentar a lacuna
