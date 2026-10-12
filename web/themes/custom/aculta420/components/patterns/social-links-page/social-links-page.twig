@@ -1,0 +1,20 @@
+<section class="aculta-social-links" aria-labelledby="aculta-social-links-title">
+  <div class="aculta-social-links__profile">
+    <div class="aculta-social-links__logo-frame">
+      <img class="aculta-social-links__logo" src="{{ logo_src }}" width="180" height="60" alt="{{ 'ACULTA - Associação Cultural Antiproibicionista'|t }}">
+    </div>
+    <h1 id="aculta-social-links-title" class="visually-hidden">{{ title }}</h1>
+    {% if description %}
+      <div class="aculta-social-links__description aculta-prose">{{ description }}</div>
+    {% endif %}
+  </div>
+  {% if has_links %}
+    <div class="aculta-social-links__channels">{{ links }}</div>
+  {% endif %}
+  {% if projects %}
+    <section class="aculta-social-links__projects" aria-labelledby="aculta-social-links-projects-title">
+      <h2 id="aculta-social-links-projects-title">{{ 'Projetos da ACULTA'|t }}</h2>
+      {{ projects }}
+    </section>
+  {% endif %}
+</section>

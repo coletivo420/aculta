@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - node.type.project
   module:
+    - vvjb
     - node
     - user
 id: aculta_projects
@@ -87,6 +88,58 @@ display:
     display_options:
       display_extenders: {  }
       block_description: 'Projetos da Associação'
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  social_links:
+    id: social_links
+    display_title: 'Carrossel de projetos em LINKS'
+    display_plugin: block
+    position: 2
+    display_options:
+      title: 'Projetos da ACULTA'
+      defaults:
+        title: false
+        pager: false
+        style: false
+        row: false
+        css_class: false
+      pager:
+        type: none
+        options: {  }
+      style:
+        type: views_vvjb
+        options:
+          orientation: horizontal
+          items_small: 1
+          items_big: 2
+          gap: 24
+          item_width: 0
+          looping: true
+          slide_time: 4000
+          navigation: both
+          dot_style: circle
+          breakpoints: '768'
+          show_play_pause: true
+          show_progress_bar: false
+          show_page_counter: false
+          enable_keyboard_nav: true
+          enable_touch_swipe: true
+          enable_pause_on_hover: true
+          pause_on_reduced_motion: true
+          enable_deeplink: false
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: teaser
+      css_class: view-aculta-social-projects
+      block_description: 'Projetos ACULTA — carrossel LINKS'
+      block_hide_empty: true
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:

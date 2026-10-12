@@ -38,6 +38,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
     'courses' => '/cursos',
     'shop' => '/loja-da-aculta',
     'forum' => '/forum',
+    'links' => '/redes-sociais',
   ];
 
   public function __construct(

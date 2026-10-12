@@ -1,0 +1,13 @@
+{# The Portal selects this neutral suggestion from the content's Domain Source. #}
+<article{{ attributes.addClass('aculta-social-links-node') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {{ include('aculta420:social-links-page', {
+    title: node.title.value,
+    logo_src: base_path ~ directory ~ '/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-900x300.png',
+    description: content.body,
+    has_links: social_links_has_items,
+    links: social_links_site_link,
+    projects: social_links_projects
+  }, with_context = false) }}
+</article>

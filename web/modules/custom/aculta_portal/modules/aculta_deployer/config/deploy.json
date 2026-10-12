@@ -64,6 +64,11 @@
         "domain_id": "cursos_aculta_org",
         "test_host": "cursos.aculta.toca.net.br",
         "production_host": "cursos.aculta.org"
+      },
+      {
+        "domain_id": "links_aculta_org",
+        "test_host": "links.aculta.toca.net.br",
+        "production_host": "links.aculta.org"
       }
     ]
   },
@@ -82,7 +87,8 @@
         "https://revista420.aculta.org/",
         "https://wiki420.aculta.org/",
         "https://loja.aculta.org/",
-        "https://cursos.aculta.org/"
+        "https://cursos.aculta.org/",
+        "https://links.aculta.org/"
       ],
       "note": "Indexação ativa em todos os domínios e subdomínios de produção. Noindex de páginas privadas da conta permanece no Portal (meta robots por rota).",
       "private_probes": [
@@ -105,7 +111,8 @@
         "https://revista420.aculta.toca.net.br/",
         "https://loja.aculta.toca.net.br/",
         "https://forum.aculta.toca.net.br/",
-        "https://wiki420.aculta.toca.net.br/"
+        "https://wiki420.aculta.toca.net.br/",
+        "https://links.aculta.toca.net.br/"
       ],
       "note": "Servidor de testes não indexável."
     }
@@ -278,6 +285,18 @@
     {
       "file": "web/modules/custom/aculta_portal/tests/src/Unit/SecretsManagerTest.php",
       "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/domain.record.links_aculta_org.yml",
+      "reason": "hostname canônico do purpose de redes sociais por ambiente"
+    },
+    {
+      "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
+      "reason": "canonical e metatags do propósito LINKS apontam para o host canônico de produção"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.links_aculta_toca_net_br.yml",
+      "reason": "alias do host do servidor de testes; excluído no build de produção"
     }
   ],
   "profiles": {
@@ -343,6 +362,21 @@
           "file": "config/sync/domain.record.cursos_aculta_org.yml",
           "pattern": "^hostname: .*$",
           "with": "hostname: cursos.aculta.org"
+        },
+        {
+          "file": "config/sync/domain.record.links_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: links.aculta.org"
+        },
+        {
+          "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
+          "pattern": "^  canonical_url: .*$",
+          "with": "  canonical_url: 'https://links.aculta.org/'"
+        },
+        {
+          "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
+          "pattern": "^  og_url: .*$",
+          "with": "  og_url: 'https://links.aculta.org/'"
         }
       ]
     },
@@ -408,6 +442,21 @@
           "file": "config/sync/domain.record.cursos_aculta_org.yml",
           "pattern": "^hostname: .*$",
           "with": "hostname: cursos.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain.record.links_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: links.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
+          "pattern": "^  canonical_url: .*$",
+          "with": "  canonical_url: 'https://links.aculta.org/'"
+        },
+        {
+          "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
+          "pattern": "^  og_url: .*$",
+          "with": "  og_url: 'https://links.aculta.org/'"
         }
       ]
     }

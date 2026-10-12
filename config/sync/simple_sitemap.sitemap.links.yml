@@ -1,0 +1,16 @@
+uuid: 5c658c99-37ed-44f1-aae2-a5ff0f2fe95c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - simple_sitemap.type.aculta_purpose
+  module:
+    - aculta_portal_sitemap
+third_party_settings:
+  aculta_portal_sitemap:
+    purpose: links
+id: links
+label: 'ACULTA social links'
+description: null
+type: aculta_purpose
+weight: 0

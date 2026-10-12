@@ -2,7 +2,7 @@
 
 Purposes estáveis atuais:
 
-`main`, `account`, `support`, `magazine`, `wiki`, `shop`, `courses`.
+`main`, `account`, `support`, `magazine`, `wiki`, `shop`, `courses`, `links`.
 
 Purpose ativo desde 0.2.0-dev.57:
 
@@ -33,6 +33,43 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo futuro |
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |
 | forum | forum.aculta.org | forum.aculta.toca.net.br | ativo (0.2.0-dev.57) |
+| links | links.aculta.org | links.aculta.toca.net.br | perfil público de redes sociais; produção ainda não provisionada |
+
+## Redes sociais (LINKS)
+
+- A URL pública é a raiz `/` em `links.aculta.toca.net.br`. O front interno
+  `/redes-sociais` é resolvido para essa raiz pelo `PurposeFrontPathProcessor`.
+- A página é um Node `page` com `field_domain_source = links_aculta_org`; texto e
+  descrição permanecem editoriais no Drupal. Os perfis são salvos em
+  `aculta_portal.social_links` e editados em Administração > Configuração >
+  ACULTA Portal > Redes sociais (`/painel-administrativo/configuracoes/aculta/portal/redes-sociais`).
+- A tela aceita somente URLs HTTPS de `instagram.com`, `youtube.com`/`youtu.be`
+  e `facebook.com`/`fb.com`. Valores vazios ocultam o canal. Instagram vem do
+  perfil de organizador citado abaixo; YouTube e Facebook ficam vazios até a
+  confirmação dos endereços oficiais.
+- Em Administração > Configuração > ACULTA Portal > Redes sociais, a mesma
+  configuração permite cadastrar botões adicionais:
+  cada botão tem texto e link. “Visite nosso Site” permanece fixo no topo; links
+  adicionais aceitam HTTPS ou caminho interno começando com `/`.
+- A lista de projetos usa a View `aculta_projects`, o teaser editorial existente
+  e o estilo `views_vvjb`, com um item por vez em telas móveis.
+- O botão principal “Visite nosso Site” aponta à raiz do purpose MAIN, resolvida
+  pelo `DomainPurposeManager` para o ambiente atual; os canais sociais continuam
+  no rodapé da página.
+- O Instagram `coletivo_420` foi cadastrado porque aparece como site do
+  organizador no [perfil institucional do Coletivo 420](https://coletivo420.org.br/organizador/coletivo-420/).
+  Outros canais só entram após confirmação oficial.
+- O ACULTA420 apresenta somente a barra institucional multidomínio, o pattern
+  SDC mobile-first e um rodapé próprio desta página; o cabeçalho de domínio e o
+  rodapé comuns ficam fora desse shell.
+- Abaixo dos canais sociais, a página referencia os nós `project` publicados
+  existentes. O Portal verifica acesso e monta URLs para MAIN com
+  `DomainPurposeManager`, respeitando o host configurado em cada ambiente.
+- DNS do servidor de testes: CNAME `links.aculta.toca.net.br` →
+  `aculta.toca.net.br`, sem proxy Cloudflare. A produção não recebeu registro DNS
+  nesta configuração.
+- O host de testes mantém `noindex, nofollow, noarchive` conforme a política de
+  indexação do Homelab.
 
 A sessão Drupal é compartilhada entre subdomínios da mesma raiz. Portanto todos
 os hosts que recebem o cookie compartilhado pertencem ao mesmo trust boundary.

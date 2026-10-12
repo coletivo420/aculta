@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.page.field_hero_primary
     - field.field.node.page.field_hero_secondary
     - field.field.node.page.field_hero_slogan
+    - field.field.node.page.field_social_links
     - field.field.node.page.field_hero_title
     - field.field.node.page.field_meta_tags
     - node.type.page
@@ -157,5 +158,6 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_social_links: true
   promote: true
   sticky: true

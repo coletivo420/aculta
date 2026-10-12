@@ -25,6 +25,9 @@ aparece como Homelab; os dois termos designam o mesmo ambiente.
 
 - Hosts: `aculta.toca.net.br` (MAIN), `apoio.aculta.toca.net.br` (SUPPORT) e os
   demais purposes conforme `docs/architecture/multidomain.md`.
+- `links.aculta.toca.net.br` é o host de teste da página pública de links para
+  redes sociais e projetos ACULTA. Seu CNAME Cloudflare aponta para
+  `aculta.toca.net.br`, com proxy desabilitado.
 - Não é produção: nenhum dado de produção deve ser usado nele sem decisão do
   responsável.
 

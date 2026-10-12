@@ -101,6 +101,11 @@ services:
   aculta_portal.presentation.domain:
     class: Drupal\aculta_portal\Presentation\DomainPresentationBuilder
     arguments: ['@aculta_portal.domain_purpose', '@string_translation']
+  aculta_portal.presentation.social_links_page:
+    class: Drupal\aculta_portal\Presentation\SocialLinksPagePresenter
+    arguments: ['@config.factory', '@entity_type.manager', '@views.executable', '@string_translation', '@aculta_portal.domain_purpose']
+  aculta_portal.social_links_form_callbacks:
+    class: Drupal\aculta_portal\Presentation\SocialLinksFormCallbacks
   aculta_portal.content_purpose_resolver:
     class: Drupal\aculta_portal\Domain\ContentPurposeResolver
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']

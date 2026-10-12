@@ -22,7 +22,7 @@ O Portal integra a experiência de:
 - Fórum e comentários, quando a versão correspondente for implementada;
 - participação do usuário;
 - administração consolidada;
-- Domain purposes.
+- Domain purposes, incluindo o purpose `links` (página de redes sociais em `/redes-sociais`).
 
 Não é sistema próprio de autenticação, endereço, pagamento, LMS, matrícula,
 progresso, Wiki, fórum ou comentários.

@@ -7,7 +7,7 @@
   <img class="aculta-institution-bar__logo" src="{{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-78x26.webp" srcset="{{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-78x26.webp 1x, {{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-156x52.webp 2x" width="78" height="26" alt="{{ 'ACULTA - Associação Cultural Antiproibicionista'|t }}" decoding="async">
       </a>
     </p>
-    {% if aculta_search_utility or aculta_account_menu or aculta_cart %}
+    {% if domain_presentation.identity.purpose|default('') != 'links' and (aculta_search_utility or aculta_account_menu or aculta_cart) %}
       <div class="aculta-utility">
         {{ aculta_search_utility }}
         {% if aculta_cart %}
@@ -26,6 +26,18 @@
   </div>
 </div>
 
+{% if domain_presentation.identity.purpose|default('') == 'links' %}
+<main id="main-content" class="aculta-main aculta-social-links-shell" tabindex="-1">
+  <div class="container aculta-container">
+    {{ page.content }}
+  </div>
+</main>
+<footer class="aculta-social-links-footer">
+  <div class="container aculta-container">
+    {{ social_links_page_footer }}
+  </div>
+</footer>
+{% else %}
 <header class="aculta-header">
   <div class="navbar aculta-navbar">
     <div class="container aculta-container">
@@ -99,3 +111,4 @@
     </div>
   </div>
 </footer>
+{% endif %}

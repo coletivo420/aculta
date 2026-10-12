@@ -1,0 +1,27 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Social links page
+status: experimental
+group: Patterns
+description: 'Mobile-first ACULTA profile, primary site link, configured buttons, and social links. The Portal supplies content; the theme controls presentation.'
+props:
+  type: object
+  properties:
+    title:
+      type: string
+      title: Title
+    has_links:
+      type: boolean
+      title: Has social links
+    logo_src:
+      type: string
+      title: Logo URL
+slots:
+  description:
+    title: Description
+    description: 'Rendered editorial summary from Drupal content.'
+  links:
+    title: Social links
+    description: 'Primary MAIN link and configured additional buttons supplied by ACULTA Portal.'
+  projects:
+    title: ACULTA projects
+    description: 'Project teaser cards rendered by the ACULTA Projects View with the VVJB carousel.'

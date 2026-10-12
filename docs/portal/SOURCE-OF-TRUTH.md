@@ -49,6 +49,8 @@ dos módulos que integra.
 | Search ownership | Search Console | Google Search Console | sitemap/verificação | públicos | Não |
 | Classroom externo | Google Classroom | Classroom API | adapter futuro; LMS segue canônico | COURSES/ACCOUNT | Não |
 | Host/contexto | Domain entities | Domain suite | purpose/URLs/isolation | todos | Não |
+| Links sociais e botões públicos | `aculta_portal.social_links` | Config API + formulário administrativo do Portal | Instagram, YouTube e Facebook por URL HTTPS validada; “Visite nosso Site” fixo mais botões adicionais com texto e URL/caminho interno validados | LINKS | Não |
+| Projetos na página LINKS | Nodes `project` | View `aculta_projects`, teasers Core e estilo VVJB | projetos publicados com acesso respeitado e URL no purpose MAIN | LINKS | Não |
 
 ## Regra de gravação
 

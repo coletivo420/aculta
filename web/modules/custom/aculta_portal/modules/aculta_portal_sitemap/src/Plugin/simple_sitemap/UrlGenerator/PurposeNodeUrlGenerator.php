@@ -44,14 +44,14 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
    * explícito: existir como domínio não basta para ser indexável. SHOP fica fora
    * até ter catálogo público; FORUM e ACCOUNT nunca entram.
    */
-  public const INDEXABLE_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses'];
+  public const INDEXABLE_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links'];
 
   /**
    * Purposes cuja página pública inicial é uma rota (não um nó). A raiz do host
    * entra no sitemap do purpose como URL própria. SUPPORT: página de apoio na raiz
    * do subdomínio (DT-P23). MAGAZINE, WIKI e COURSES: home por front de rota.
    */
-  public const ROOT_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses'];
+  public const ROOT_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links'];
 
   /**
    * Páginas públicas que não são nós (rotas ou webforms) por purpose. Mantém a

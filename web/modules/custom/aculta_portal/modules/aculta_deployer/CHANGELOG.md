@@ -1,3 +1,9 @@
+## 0.1.20 — Purpose LINKS no servidor de testes — 2026-10-12
+
+- `config/deploy.json`: declara `links.aculta.toca.net.br`, transição do purpose e política noindex de teste; produção permanece sem provisionamento DNS.
+- `config/sync`: registra Domain, alias de teste, front `/redes-sociais` e sitemap LINKS.
+- `VERSION` e `Cli::VERSION`: 0.1.20.
+
 ## 0.1.19 — Indexação no relatório de status — 2026-10-11
 
 - `robots` grava o resultado neutro em `var/deployer/indexing.json` (URLs públicas, estados e o valor público de X-Robots-Tag; nunca valores de credencial).

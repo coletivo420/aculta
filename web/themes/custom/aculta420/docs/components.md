@@ -17,9 +17,11 @@ components/
 
 ```text
 components/
-└── content/
-    ├── editorial-card/       (stable)
-    └── project-card/        (experimental, 0.3.0)
+├── content/
+│   ├── editorial-card/       (stable)
+│   └── project-card/         (experimental, 0.3.0)
+└── patterns/
+    └── social-links-page/    (experimental, 0.6.0)
 ```
 
 Não criar diretórios vazios apenas para parecer completo.
