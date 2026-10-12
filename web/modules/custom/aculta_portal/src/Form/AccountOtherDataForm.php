@@ -110,7 +110,8 @@ final class AccountOtherDataForm extends FormBase {
       $this->messages->addStatus($this->t('Documento salvo.'));
     }
     catch (\LogicException) {
-      $this->messages->addError($this->t('Este documento já está salvo e não pode ser alterado.'));
+      // Mesma mensagem para "já cadastrado em outra conta" e "já salvo": não revela se o documento existe.
+      $this->messages->addError($this->t('Não foi possível salvar este documento.'));
     }
     catch (\RuntimeException) {
       $this->messages->addError($this->t('Não foi possível salvar agora. Tente novamente mais tarde.'));

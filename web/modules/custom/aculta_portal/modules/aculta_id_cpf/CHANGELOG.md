@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.0-dev.2 — unicidade por fingerprint e migração do índice — 2026-10-12
+
+Classificação: MINOR, capacidade opcional em desenvolvimento.
+
+- `AccountDocumentStore` recusa o mesmo documento em outra conta, por consulta ao
+  `field_documento_indice`. Mensagem genérica: não revela se o documento existe.
+- Consulta do perfil passa a incluir perfis despublicados (antes, `loadByUser`
+  filtrava por status e podia criar um segundo perfil participante).
+- Campo `field_documento_indice` (config/install) e `aculta_id_cpf_update_10001`
+  para instalações existentes: indexa documentos gravados; para se houver conflito.
+- Chave `aculta_id_cpf_fingerprint` (`ACULTA_ID_CPF_FINGERPRINT_KEY`) no contrato de
+  segredos, na allowlist e em `docs/operations/SECRETS.md`.
+- `DocumentFingerprint::isAvailable()`; testes unitários de máscara, detecção e cifra.
+- Limite: unicidade não é transacional (ver README). Kernel do store pendente.
+- Runtime: **RUNTIME STATUS: DEFERRED**.
+
 ## 0.2.0-dev.1 — persistência cifrada e Outros Dados — 2026-10-12
 
 Classificação: MINOR, nova capacidade opcional em desenvolvimento.

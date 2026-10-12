@@ -7,7 +7,7 @@ domínio; campos PF/PJ e máscara serão implementados manualmente no Portal.
 ## Escopo e arquitetura
 
 - Caminho: `web/modules/custom/aculta_portal/modules/aculta_id_cpf`.
-- Versão atual de desenvolvimento: `0.1.0-dev.3`; Drupal 11.3+ e PHP 8.4.
+- Versão atual de desenvolvimento: `0.2.0-dev.2`; Drupal 11.3+ e PHP 8.4.
 - O serviço valida CPF e CNPJ numérico/alfanumérico, normaliza entradas com
   pontuação completa ou sem pontuação, preserva zeros iniciais e rejeita
   caracteres inválidos. Usa strings para não perder zeros/letras.
@@ -15,11 +15,11 @@ domínio; campos PF/PJ e máscara serão implementados manualmente no Portal.
   separação por versão/tipo, usando chave do Drupal Key (`aculta_id_cpf_fingerprint`)
   de pelo menos 32 bytes. A chave não fica em Configuration Sync/Git. O resultado
   continua sendo dado pessoal pseudonimizado e requer proteção.
-- O submódulo não implementa campos, widgets, elementos Form API, máscara,
-  persistência, garantia transacional de unicidade, autenticação por CPF ou
-  integração Webform. O HMAC é somente uma primitiva para um futuro índice.
-- Campos PF/PJ e máscara serão implementados manualmente no `aculta_portal`,
-  consumindo os serviços do submódulo por DI.
+- Persistência: `field_documento` (cifrado) e `field_documento_indice`
+  (fingerprint) no perfil participante, privados do perfil.
+- Unicidade entre contas: checagem antes da gravação, sem garantia transacional
+  (campo de entidade não tem índice único). Ver README, "Limite conhecido".
+- Não implementa autenticação por CPF nem integração Webform.
 
 O Portal já integra `login_emailusername`, Social Auth, confirmação de e-mail e
 `PortalFormCallbacks::validateLoginAuthentication`, que mantém resposta genérica

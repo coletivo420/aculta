@@ -54,6 +54,7 @@ $allowed_variables = [
   'TURNSTILE_KEYS_JSON',
   'TURNSTILE_TEST_KEYS_JSON',
   'ACULTA_DOCUMENT_ENCRYPTION_KEY',
+  'ACULTA_ID_CPF_FINGERPRINT_KEY',
 ];
 
 $values = parse_ini_file($secrets_path, FALSE, INI_SCANNER_RAW);

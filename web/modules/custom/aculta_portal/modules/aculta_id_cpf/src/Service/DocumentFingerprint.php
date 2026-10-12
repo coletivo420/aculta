@@ -44,15 +44,23 @@ final class DocumentFingerprint {
    */
   public function fingerprint(string $input, DocumentType $type): string {
     $canonical = $this->validator->canonicalize($input, $type);
-    $key = $this->keyRepository->getKey(self::KEY_ID);
-    $secret = $key?->getKeyValue(TRUE);
-
-    if (!is_string($secret) || strlen($secret) < self::MINIMUM_KEY_BYTES) {
+    $secret = $this->secret();
+    if ($secret === NULL) {
       throw new \RuntimeException('The document fingerprint key is unavailable or invalid.');
     }
 
     $message = "aculta_id_cpf:v1\0" . $type->value . "\0" . $canonical;
     return hash_hmac('sha256', $message, $secret);
+  }
+
+  /** TRUE when the Key exists and meets the minimum strength; never exposes the value. */
+  public function isAvailable(): bool {
+    return $this->secret() !== NULL;
+  }
+
+  private function secret(): ?string {
+    $secret = $this->keyRepository->getKey(self::KEY_ID)?->getKeyValue(TRUE);
+    return is_string($secret) && strlen($secret) >= self::MINIMUM_KEY_BYTES ? $secret : NULL;
   }
 
 }
