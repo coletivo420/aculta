@@ -68,6 +68,12 @@ services:
     arguments: ['@aculta_portal.domain_purpose']
     tags:
       - { name: path_processor_inbound, priority: 300 }
+  aculta_portal.account_ajax_main_content_renderer:
+    class: Drupal\aculta_portal\Render\AccountAjaxMainContentRenderer
+    decorates: main_content_renderer.ajax
+    arguments: ['@aculta_portal.account_ajax_main_content_renderer.inner', '@title_resolver', '@breadcrumb']
+    tags:
+      - { name: render.main_content_renderer, format: drupal_ajax }
   aculta_portal.checkout_friendly_path_processor:
     class: Drupal\aculta_portal\PathProcessor\CheckoutFriendlyPathProcessor
     tags:

@@ -44,8 +44,9 @@ final class CepLookupController extends ControllerBase {
         'address_line2' => trim(($raw['bairro'] ?? '') . '  ' . ($raw['complemento'] ?? '')),
       ],
     ]);
-    $response->setMaxAge(86400);
-    $response->setSharedMaxAge(86400);
+    // Nunca em cache de página ou de proxy: a consulta é por requisição AJAX do usuário logado.
+    $response->headers->set('Cache-Control', 'private, no-store');
+    $response->headers->set('Vary', 'X-Requested-With, Cookie');
     return $response;
   }
 

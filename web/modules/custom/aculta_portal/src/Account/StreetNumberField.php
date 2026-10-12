@@ -75,7 +75,8 @@ final class StreetNumberField {
       $element['street_number'] = [
         '#type' => 'textfield',
         '#title' => t('Número'),
-        '#required' => TRUE,
+        // Obrigatoriedade pela validação (S/N dispensa); o #required do Drupal reprovaria o campo desabilitado.
+        '#required' => FALSE,
         '#maxlength' => self::MAX_DIGITS,
         '#size' => 4,
         '#attributes' => [

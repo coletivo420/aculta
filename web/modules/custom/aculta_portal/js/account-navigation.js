@@ -77,32 +77,17 @@
       else item.removeAttribute('aria-current');
     });
     const body = document.getElementById(BODY_ID);
-    const pageHeading = body?.querySelector('h1, h2, h3')?.textContent.trim() || '';
-    const sectionTitle = active ? active.textContent.trim() : pageHeading;
+    // Título e breadcrumb da página vêm do servidor, num bloco oculto do conteúdo (AccountAjaxMainContentRenderer).
+    const chrome = body?.querySelector('[data-portal-chrome]');
+    const pageTitle = chrome ? chrome.getAttribute('data-portal-page-title') : '';
+    const crumbList = chrome?.querySelector('ol');
+    const currentCrumbs = document.querySelector('ol.breadcrumb');
+    if (crumbList && currentCrumbs) currentCrumbs.replaceChildren(...crumbList.children);
+    chrome?.remove();
+    const sectionTitle = active ? active.textContent.trim() : pageTitle;
     const sectionHeading = document.getElementById('portal-account-section-title');
     if (sectionHeading) sectionHeading.textContent = sectionTitle;
-    const crumbs = document.querySelector('nav[aria-label="breadcrumb"] ol, ol.breadcrumb');
-    if (crumbs) {
-      const items = [{ text: 'Minha conta', href: '/' }];
-      if (active && pageHeading && pageHeading !== sectionTitle) items.push({ text: sectionTitle, href: active.href });
-      items.push({ text: pageHeading || sectionTitle, href: null });
-      crumbs.replaceChildren(...items.map((item) => {
-        const li = document.createElement('li');
-        li.className = 'breadcrumb-item' + (item.href ? '' : ' active');
-        if (item.href) {
-          const a = document.createElement('a');
-          a.href = item.href;
-          a.textContent = item.text;
-          li.append(a);
-        }
-        else {
-          li.setAttribute('aria-current', 'page');
-          li.textContent = item.text;
-        }
-        return li;
-      }));
-    }
-    document.title = (pageHeading || sectionTitle) + ' | Conta ACULTA';
+    document.title = (pageTitle || sectionTitle) + ' | Conta ACULTA';
   };
 
   // Navegação de página (menu, abas, pedidos, voltar/avançar): URL no histórico, shell atualizado, foco no título.
