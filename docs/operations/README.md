@@ -9,6 +9,6 @@ Documentação operacional durável do ACULTA.
 - [DEPLOYMENT.md](DEPLOYMENT.md) — deployment, conteúdo, homologação e rollback.
 - [RC-READINESS.md](RC-READINESS.md) — bateria de testes locais, pendências e prontidão para RC (sitemap, descoberta, deployer).
 - [Homelab](../../scripts/homelab/README.md) — ambiente de desenvolvimento.
-- [Estados](../../estados/README.md) — snapshots/estados de desenvolvimento.
+- Estados — snapshots/estados de desenvolvimento, mantidos fora do Git (pasta `estados/`, ignorada).
 
 Histórico de rodadas, SHAs e PRs fica no GitHub/Git, não nesta pasta.
