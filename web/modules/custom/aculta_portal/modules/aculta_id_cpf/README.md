@@ -18,7 +18,7 @@ Não é uma entrega completa de cadastro ou autenticação por CPF.
 - Elementos Form API `aculta_cpf` e `aculta_cnpj`, sem dependência de JavaScript.
 - Callbacks `service.id:method` com DI, conforme Drupal 11.3+.
 - Máscara local com `Drupal.behaviors`/`once`, AJAX e preservação da seleção.
-- Testes de domínio e JavaScript; testes Kernel preparados para homologação.
+- Testes de domínio e JavaScript; Kernel executado em MariaDB local separado.
 
 Nenhuma dependência Composer nova. O Portal não depende deste submódulo e
 `config/sync/core.extension.yml` não o habilita automaticamente.

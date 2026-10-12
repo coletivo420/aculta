@@ -72,7 +72,7 @@ MariaDB 11.8.6, Composer 2.8.8, Drupal Core 11.4.8, PHPUnit 11.5.57 e Node
 | Submódulo no Runtime local | PASS: habilitado em `aculta_runtime`; cache reconstruído; nenhum objeto de configuração foi atualizado |
 | Módulos de login/CAPTCHA/Social Auth | PASS: `login_emailusername`, `captcha`, `social_auth`, `social_auth_google` e `aculta_portal` permanecem habilitados; a PR não altera esses fluxos |
 | Gate CAPTCHA / Conta | PASS: `validate-shop-captcha.php` 15 checks; `validate-aculta-portal-conta-root.php` 1233 checks |
-| Gate Portal commerce/security | DEFERRED/FAIL: executado via Drush, parou na asserção existente `Fake runtime credentials were not persisted` (DT-O11); nenhum valor foi exposto ou alterado |
+| Gate Portal commerce/security | FAIL (pendência DT-O11): executado via Drush, parou na asserção existente `Fake runtime credentials were not persisted`; nenhum valor foi exposto ou alterado |
 | Kernel (descoberta, callback DI, normalização, opcional/inválido) | PASS: 5 testes, 8 asserções em `aculta_id_cpf_test` (MariaDB separado) |
 | Formulário temporário no Chromium, JavaScript ativo | PASS: colagem via clipboard mascara CNPJ alfanumérico; AJAX confirma valor canônico; seleção/cursor preservados |
 | Formulário temporário no Chromium, JavaScript desativado | PASS: digitação mantém valor sem máscara. Envio não concluído porque CAPTCHA global exige desafio; o CAPTCHA não foi contornado |
@@ -106,10 +106,11 @@ O Kernel foi executado com `SIMPLETEST_DB` apontando ao banco isolado
 O gate Portal passou também na árvore do PR; o gate de commerce/security requer
 revisão separada da pendência DT-O11.
 
-Os testes Node exercitam handlers reais em harness, mas não comprovam o
-comportamento de todos os navegadores. Os testes de Kernel foram adicionados
-para descoberta, resolução dos callbacks, valores aninhados, entradas vazias e
-controle CR/LF; não foram executados nem declarados PASS.
+Os testes Node exercitam handlers reais em harness; o Chromium cobriu a máscara
+e os fluxos interativos indicados na tabela, sem representar todos os
+navegadores. Os Kernel tests passaram para descoberta, resolução dos callbacks,
+valores aninhados, entradas vazias e rejeição de CR/LF/array; eles não
+homologam a cadeia completa de dependências do Portal.
 
 Os testes PHP usam vetores públicos ilustrativos e o exemplo alfanumérico
 oficial `12ABC34501DE35`. O runner também altera cada DV dos vetores válidos e
@@ -118,8 +119,8 @@ adicionado e nenhum segredo foi utilizado.
 
 ## Próximas entregas
 
-1. Concluir a homologação Kernel e interativa no servidor de testes, PHP 8.4,
-   com banco MariaDB de teste separado e formulário temporário sem persistência.
+1. Repetir os smokes no servidor remoto de testes e concluir a submissão sem JS
+   sob a política CAPTCHA sem contornar o desafio.
 2. Implementar campos PF/PJ e armazenamento privado, autorização, reautenticação
    e índices de unicidade transacionais. Testar concorrência e rollback em
    MariaDB de teste antes de coletar documentos.
