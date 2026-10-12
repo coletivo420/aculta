@@ -1,3 +1,28 @@
+## Em desenvolvimento — ajuste de escopo aculta_id_cpf — 2026-10-12
+
+- Decisão do responsável: aculta_id_cpf não implementa campos, widgets, elementos
+  Form API, máscaras JavaScript ou integração Webform nesta etapa. Os campos PF/PJ
+  e a máscara serão implementados manualmente no aculta_portal, consumindo os
+  serviços do submódulo.
+- Elementos e máscara foram removidos após homologação local em PHP 8.4.26; testes
+  de domínio continuam aplicáveis. Testes de UI/Form API descrevem somente a
+  implementação anterior, retirada por decisão de escopo.
+- Próximo passo: campos PF/PJ manuais no Portal antes de persistir documentos.
+
+## Em desenvolvimento — aculta_id_cpf 0.1.0-dev.1 — 2026-10-12
+
+Classificação: MINOR (nova capacidade opcional, primeira entrega priorizada pelo responsável).
+Portal permanece 0.3.0-dev.16; nova marcação/release do módulo pai não declarada sem homologação.
+
+- Novo submódulo opt-in: validadores locais de CPF/CNPJ numérico e alfanumérico,
+  normalização estrita e helpers de formatação Drupal 11.3+. Elementos Form API
+  e máscaras testados na rodada inicial foram removidos nesta atualização de escopo.
+- Sem alteração de login, dados pessoais Profile/User, tema, banco ou config sync.
+- Runner (248 verificações), PHPUnit Unit (34/63), lint e gate Drupal 11+ (583)
+  passaram em PHP 8.4.26. Homologação local detalhada: docs/modules/ACULTA-ID-CPF.md.
+- RUNTIME STATUS: DEFERRED para Homelab remoto; sem release ou tag.
+- Evidência: docs/modules/ACULTA-ID-CPF.md; base 368ec263189d670d459e385b068d7bb188af95b3.
+
 ## 0.3.0-dev.16 — Aceite dos termos em popup persistente; contenção do Mercado Pago — 2026-10-11
 
 - Resumo do checkout: nome do produto no item (modo de visualização `summary` do bundle `camiseta_tamanho`, exportado em `config/sync`). Verificado por renderização: "Camiseta Abadá Bloco Sativa 2026 – Regata Tamanho M".

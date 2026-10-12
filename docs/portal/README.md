@@ -11,6 +11,7 @@
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
 - [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.
 - [ADR-009 — sitemap multidomínio](../decisions/ADR-009-sitemap-multidominio.md) — submódulo `aculta_portal_sitemap` (linha 0.1.x, opt-in).
+- [ACULTA ID CPF](../modules/ACULTA-ID-CPF.md) — submódulo opcional de validação CPF/CNPJ; primeira entrega em draft, Runtime DEFERRED.
 
 ## Políticas
 
