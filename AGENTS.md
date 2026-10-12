@@ -492,6 +492,16 @@ O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 - Slug publicado é estável. Mudança de slug troca o caminho, e o caminho antigo responde 404. Esse é o comportamento padrão do projeto para endereços antigos; não se cria redirecionamento 301 de slug.
 - Diretiva detalhada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Gate: `php scripts/validate-public-slugs.php`.
 
+## Endereços dependentes de ambiente (regra permanente)
+
+Todo endereço que muda entre ambientes (domínio, subdomínio, URL absoluta, redirect entre hosts, `back_url` e webhook
+de gateway, link em e-mail, origem CORS/trusted_host, callback OAuth) deve estar declarado no mapeamento do
+aculta_deployer (`web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json`, seções `environments` e
+`environment_bound`) e **nunca** fixo no código, nos templates, nos assets ou na configuração exportada.
+
+- Como declarar e como obter o endereço no código: `web/modules/custom/aculta_portal/modules/aculta_deployer/docs/ENDERECOS-AMBIENTE.md`.
+- Gate: `php scripts/validate-environment-addresses.php` falha se `aculta.org` ou `aculta.toca.net.br` aparecer fora do mapeamento.
+
 ## Testes interativos no navegador
 
 Rodadas de teste com agente de navegador e o responsável (Felipe), incluindo hosts, contas de teste, limites do agente de navegador e resultados, estão em `docs/portal/TESTES-NAVEGADOR.md`. Consultar antes de pedir teste de navegador e atualizar a seção de resultados a cada rodada.
