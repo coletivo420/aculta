@@ -14,6 +14,9 @@ support:
       css/support.css: {}
 
 cep-address:
+  css:
+    component:
+      css/cep-address.css: {}
   js:
     js/cep-address.js: {}
   dependencies:

@@ -68,7 +68,7 @@
     const prefix = drupalSettings?.path?.pathPrefix || '';
     const response = await fetch(`${base}${prefix}cep-autocomplete/viacep/${cep}`, {
       credentials: 'same-origin',
-      headers: { Accept: 'application/json' },
+      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
     });
     if (!response.ok) throw new Error('lookup-failed');
     const result = await response.json();

@@ -96,6 +96,13 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (!$event->isMainRequest()) {
       return;
     }
+    // Fragmentos AJAX do Drupal (_wrapper_format=drupal_ajax, ajax_form) só são entregues para requisição AJAX.
+    // Acesso direto no navegador responde 403.
+    $ajaxQuery = $event->getRequest()->query;
+    if (!$event->getRequest()->isXmlHttpRequest() && ($ajaxQuery->get('_wrapper_format') === 'drupal_ajax' || $ajaxQuery->has('ajax_form'))) {
+      $event->setResponse(new Response('', Response::HTTP_FORBIDDEN, ['Cache-Control' => 'private, no-store']));
+      return;
+    }
     // Caminho antigo da área da conta (/minha-conta e subpáginas): 301 para a conta, sem o prefixo
     // (/minha-conta -> /, /minha-conta/pedidos -> /pedidos). O caminho interno da visão geral não é público.
     $accountPath = $event->getRequest()->getPathInfo();

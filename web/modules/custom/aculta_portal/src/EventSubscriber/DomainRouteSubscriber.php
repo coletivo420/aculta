@@ -38,6 +38,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('commerce_checkout.checkout')) {
       $route->setRequirement('_custom_access', 'aculta_portal.access.protected_route:account');
     }
+    // Consulta de CEP: controller do Portal (só AJAX e sem a resposta bruta do ViaCEP).
+    if ($route = $collection->get('cep_autocomplete.viacep_lookup')) {
+      $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\CepLookupController::lookup');
+    }
     // Página do acordo de termos: substituída pelo popup de aceite (AccountTermsHooks). A rota continua existindo
     // porque o módulo agreement a consulta por nome; o caminho /aceite-termos responde 404.
     if ($route = $collection->get('agreement.aculta_account_terms')) {
