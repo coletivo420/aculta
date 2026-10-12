@@ -15,7 +15,7 @@ aculta_portal.dashboard:
   path: /minha-conta
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalController::dashboard'
-    _title: Minha conta
+    _title: Visão geral
   requirements:
     _permission: access aculta portal
   options:

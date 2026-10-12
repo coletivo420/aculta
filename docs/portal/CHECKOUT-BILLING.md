@@ -82,3 +82,60 @@
 - **Mercado Pago:** o módulo contrib usa o perfil de cobrança do pedido para o payer (nome, e-mail, endereço). Como o pedido aponta para o endereço do cliente, esse dado continua chegando.
 - **Pendente:** o tipo de perfil `participante` tem um campo de endereço (`field_address`) que as telas atuais não usam. Antes de remover, conferir se há dados nele. Shipping não está instalado.
 
+## Meios de pagamento e histórico de pagamentos (decisão do responsável, 2026-10-12)
+
+- O pagamento é feito e gerenciado no **Mercado Pago**. O portal não guarda cartões nem métodos de pagamento salvos e
+  não exibe o histórico de pagamentos da pessoa.
+- Removido da Minha conta: a aba/seção "Meus pagamentos" (menu lateral, sanfona do celular e navegação AJAX).
+- `/pagamentos` responde **301** para `/pedidos`. `/pagamentos/novo`, `/pagamentos/{id}/editar`, `/pagamentos/{id}/excluir`
+  e `/pagamentos/{id}/padrao` respondem 404 (rotas do Commerce removidas pelo `DomainRouteSubscriber`).
+- Permissão `manage own commerce_payment_method` removida do papel autenticado (config/sync e runtime).
+- Em "Meus pedidos" há a caixa "Todos os nossos pagamentos são processados pelo Mercado Pago" com link para a conta
+  do Mercado Pago. A URL é a configuração `aculta_portal.settings:mercado_pago_account_url` (vazia oculta o link).
+  A logo é um asset de marca do tema (`assets/brands/mercado-pago/`).
+- Não alterado: o apoio (Meu Apoio e contribuições do apoio, que usam o histórico de pagamentos do Commerce), a etapa
+  de pagamento do checkout (`/finalizar-compra/{id}/pagamento`), o webhook do gateway e a view administrativa
+  `commerce_order_payments` (`/admin/commerce/orders/{pedido}/payments`).
+
+## Campos do endereço (lista final, 2026-10-12)
+
+Endereço único do cliente (Meus dados > Endereço, checkout, revisão, pedido concluído, detalhe do pedido). Campos usados:
+
+| Campo | Rótulo | Onde fica |
+| --- | --- | --- |
+| CEP | CEP | `postal_code` (autocomplete ViaCEP, com fallback BrasilAPI) |
+| Nome | Nome | `given_name` |
+| Sobrenome | Sobrenome | `family_name` |
+| Logradouro | Logradouro | `address_line1` (o número fica junto, ver abaixo) |
+| Número / S/N | Número, marca S/N | subcampos do endereço (`StreetNumberField`); gravado no logradouro como "Rua, 1068" ou "Rua, S/N" |
+| Complemento | Logradouro, linha 2 | `address_line2` |
+| Bairro | Bairro | `dependent_locality` |
+| Cidade | Cidade | `locality` |
+| Estado | Estado | `administrative_area` |
+| País | País | `country_code` (Brasil) |
+
+**Removidos:** Empresa (`organization`). Ficou configurado como `hidden` em `field_overrides` da instância
+`profile.customer.address` (e `profile.participante.field_address`), exportado em `config/sync`. Não é CSS e não é
+`#access` em código. Assim o campo some da edição, do checkout, da revisão, do detalhe do pedido e de qualquer exibição
+do Commerce (inclusive o Commerce Shipping quando instalado, que usa o mesmo tipo de perfil). Também saiu `addressLine3`
+(já estava oculto). Valores antigos de Empresa em pedidos de teste foram descartados pela regra; não aparecem mais.
+
+**Payer do Mercado Pago:** o módulo `commerce_mercado_pago` monta o payer com nome, sobrenome e endereço (CEP, logradouro,
+bairro, cidade, estado, país). Não envia Empresa.
+
+**Teste da próxima rodada:** conferir que "Empresa" não aparece em Meus dados > Endereço, no checkout (informações e
+revisão), no detalhe de /pedidos/{id} e nos e-mails/recibos; e que o endereço do payer no Mercado Pago tem só os campos acima.
+
+## Campos obrigatórios do endereço (2026-10-12)
+
+- **Obrigatórios:** CEP, Nome, Sobrenome, Logradouro, Número (ou marca S/N), Bairro, Cidade, Estado e País.
+- **Opcionais:** Complemento.
+- **Bairro:** `field_overrides.dependentLocality = required` na instância `profile.customer.address` (e no participante),
+  em `config/sync`. A validação é do servidor e a mensagem é "O campo Bairro é obrigatório.". O rótulo leva o asterisco
+  (`form-required`, do Bootstrap). O preenchimento pelo CEP continua; se o ViaCEP não trouxer bairro, a pessoa digita.
+- **Checkout:** "Continuar para a revisão" bloqueia com endereço salvo sem bairro e reabre a etapa em edição (igual ao
+  Número/S/N). Se o campo não vier no envio, `validatePaneForm` confere o endereço salvo.
+- **Atenção ao configurar:** no módulo `address`, quando a instância tem a lista `fields`, `field_overrides` é ignorado.
+  Por isso a lista `fields` foi removida e tudo está em `field_overrides` (oculto ou obrigatório).
+- **Teste:** Bairro vazio em Meus dados > Endereço não salva; no checkout, Bairro vazio bloqueia e o asterisco aparece.
+

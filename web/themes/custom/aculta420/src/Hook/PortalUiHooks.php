@@ -78,7 +78,6 @@ final class PortalUiHooks {
     'account-data-link' => ['portal-account-data__link'],
     'account-data-nav' => ['portal-account-data__nav'],
     'account-data-content' => ['portal-account-data__content'],
-    'account-data-email' => ['portal-account-data__email'],
     'security-card' => ['aculta-security-card'],
     'security-pending' => ['aculta-security-pending'],
     'auth-provider' => ['aculta-auth-provider'],
@@ -122,6 +121,11 @@ final class PortalUiHooks {
     if (isset($variables['element']) && is_array($variables['element'])) {
       $this->applyArray($variables['element']['#attributes'] ?? [], $variables['element'], '#attributes');
       $this->applyArray($variables['element']['#wrapper_attributes'] ?? [], $variables['element'], '#wrapper_attributes');
+      $this->applyArray($variables['element']['#title_attributes'] ?? [], $variables['element'], '#title_attributes');
+    }
+    // Rótulo de campo: o núcleo monta o rótulo como render array (label) com #title_attributes.
+    if (isset($variables['label']) && is_array($variables['label']) && isset($variables['label']['#title_attributes']) && is_array($variables['label']['#title_attributes'])) {
+      $this->applyArray($variables['label']['#title_attributes'], $variables['label'], '#title_attributes');
     }
     foreach (['attributes', 'title_attributes', 'content_attributes'] as $key) {
       // Antes da conversão para Attribute o valor ainda é array (preprocess inicial do núcleo).

@@ -569,4 +569,10 @@ O histórico detalhado anterior permanece no Git; não é especificação corren
 - Design do Aculta Portal concentrado aqui: `src/Hook/PortalUiHooks.php` traduz `data-portal-ui` em classes (mapa
   `TOKENS`); templates de apresentação do shell, modal de termos, editor de foto, caixa do carrinho, gatilho da busca e
   breadcrumb (`data-portal-breadcrumb`); CSS de Minha conta, Número/CEP, relatórios, suporte e carrinho.
+- Caixa do Mercado Pago em Meus pedidos: logo `assets/brands/mercado-pago/mercado-pago.svg`, layout e estilo
+  (`css/components/portal-payment-notice.css`, `templates/portal-payment-notice.html.twig`).
+- Ícones da Minha conta visíveis no desktop (Bootstrap Icons); ícone de edição da foto em Bootstrap Icons (`bi-pencil`).
+- Cores só em tokens: CSS dos componentes (conta, relatório, suporte, modal) sem cor literal. Novos tokens:
+  `--aculta-status-*` (erro, ok, atenção) e `--aculta-scrim`, nos modos claro e escuro. Corrige texto ilegível da área da
+  conta no modo escuro (antes 1,3:1 a 1,6:1 com cores fixas).
 

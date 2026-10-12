@@ -21,10 +21,6 @@ final class AccountShellBuilder {
     'aculta_portal.my_data_address' => 'aculta_portal.my_data',
     'commerce_order.address_book.overview' => 'aculta_portal.my_data',
     'entity.commerce_order.user_view' => 'view.commerce_user_orders.order_page',
-    'entity.commerce_payment_method.add_form' => 'entity.commerce_payment_method.collection',
-    'entity.commerce_payment_method.edit_form' => 'entity.commerce_payment_method.collection',
-    'entity.commerce_payment_method.delete_form' => 'entity.commerce_payment_method.collection',
-    'entity.commerce_payment_method.set_default' => 'entity.commerce_payment_method.collection',
   ];
 
   public function __construct(
@@ -54,7 +50,6 @@ final class AccountShellBuilder {
       'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my', 'icon' => 'heart'],
       'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses', 'icon' => 'mortarboard'],
       'view.commerce_user_orders.order_page' => ['title' => $this->translation->translate('Meus pedidos'), 'route' => 'view.commerce_user_orders.order_page', 'icon' => 'bag'],
-      'entity.commerce_payment_method.collection' => ['title' => $this->translation->translate('Meus pagamentos'), 'route' => 'entity.commerce_payment_method.collection', 'icon' => 'credit-card'],
       'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data', 'icon' => 'person-vcard'],
       'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections', 'icon' => 'link-45deg'],
       'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security', 'icon' => 'shield-lock'],
@@ -92,6 +87,8 @@ final class AccountShellBuilder {
 
     $variables['page']['content'] = [
       '#theme' => 'aculta_portal_shell',
+      // Todo shell da conta carrega o comportamento (navegação AJAX, sanfona do celular), inclusive pedidos.
+      '#attached' => ['library' => ['aculta_portal/account-navigation']],
       '#section_title' => $sections[$route]['title'],
       '#menu_items' => $menuItems,
       '#accordion_items' => $accordionItems,

@@ -16,9 +16,6 @@ services:
   aculta_portal.registration_terms:
     class: Drupal\aculta_portal\Account\RegistrationTerms
     arguments: ['@agreement.handler', '@entity_type.manager']
-  aculta_portal.access.payment_method_add:
-    class: Drupal\aculta_portal\Access\PaymentMethodAddAccessCheck
-    arguments: ['@entity_type.manager']
   aculta_portal.account_terms_policy:
     class: Drupal\aculta_portal\Account\AccountTermsPolicy
     arguments: ['@agreement.handler', '@entity_type.manager']
@@ -85,7 +82,7 @@ services:
       - { name: path_processor_outbound, priority: 300 }
   aculta_portal.cart_ajax:
     class: Drupal\aculta_portal\Cart\AddToCartAjax
-    arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer']
+    arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger']
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
     arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation']
@@ -188,3 +185,6 @@ services:
     arguments: ['@entity_type.manager']
     tags:
       - { name: event_subscriber }
+  aculta_portal.account_page_title:
+    class: Drupal\aculta_portal\Account\AccountPageTitle
+    arguments: ['@current_route_match', '@config.factory', '@string_translation']

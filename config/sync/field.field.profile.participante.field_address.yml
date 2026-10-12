@@ -35,6 +35,8 @@ settings:
       override: hidden
     familyName:
       override: hidden
+    dependentLocality:
+      override: required
   fields:
     administrativeArea: administrativeArea
     locality: locality
@@ -43,7 +45,6 @@ settings:
     sortingCode: sortingCode
     addressLine1: addressLine1
     addressLine2: addressLine2
-    organization: organization
     givenName: givenName
     additionalName: additionalName
     familyName: familyName

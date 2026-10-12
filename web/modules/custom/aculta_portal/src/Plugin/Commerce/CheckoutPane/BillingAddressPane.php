@@ -71,10 +71,9 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       $value['address_line1'] = $parts['street'];
       $address->setValue($value);
     }
-    // Sem número nem S/N, o formulário abre já editável: o resumo do Commerce não mostra o número que falta.
-    if ($parts['number'] === '' && !$parts['sn']) {
-      $form_state->set(array_merge($pane_form['#parents'], ['profile', 'render']), FALSE);
-    }
+    // O endereço fica sempre em edição no checkout: o resumo do Commerce tinha um "Editar" que não abria o formulário
+    // em todos os casos. O formulário lê o perfil de Meus Dados e salva nele; número, S/N e bairro são validados aqui.
+    $form_state->set(array_merge($pane_form['#parents'], ['profile', 'render']), FALSE);
     $inline_form = $this->inlineFormManager->createInstance('customer_profile', [
       'profile_scope' => 'billing',
       'available_countries' => $this->order->getStore()->getBillingCountries(),
@@ -92,6 +91,29 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $pane_form['#attached']['library'][] = self::CEP_LIBRARY;
 
     return $pane_form;
+  }
+
+  /**
+   * Número obrigatório também quando o campo não veio no envio (resumo do endereço): a validação do campo só roda
+   * quando o formulário está em edição. Sem número nem S/N, o pedido não avança e a etapa reabre em edição.
+   */
+  public function validatePaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
+    if (!isset($pane_form['profile']['#inline_form'])) {
+      return;
+    }
+    // Campo de número enviado (modo edição): a validação do próprio campo já rodou.
+    $submitted = $form_state->getValue(array_merge($pane_form['#parents'], ['profile', 'address', 0, 'address']));
+    if (is_array($submitted) && array_key_exists('street_number', $submitted)) {
+      return;
+    }
+    $profile = $pane_form['profile']['#inline_form']->getEntity();
+    $parts = $this->savedParts($profile);
+    if ($parts['number'] === '' && !$parts['sn']) {
+      $form_state->setError($pane_form['profile'], $this->t('Informe o número ou marque S/N.'));
+    }
+    if (!$this->hasNeighborhood($profile)) {
+      $form_state->setError($pane_form['profile'], $this->t('O campo Bairro é obrigatório.'));
+    }
   }
 
   /** {@inheritdoc} */
@@ -148,6 +170,14 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       $this->order->save();
     }
     return $billing;
+  }
+
+  /** Bairro (dependent_locality) obrigatório: o endereço salvo precisa ter bairro preenchido. */
+  private function hasNeighborhood($profile): bool {
+    if (!$profile || !$profile->hasField('address') || $profile->get('address')->isEmpty()) {
+      return FALSE;
+    }
+    return trim((string) $profile->get('address')->first()->getDependentLocality()) !== '';
   }
 
   /** Rua, número e S/N salvos no logradouro (para preencher o formulário ao voltar à etapa). */

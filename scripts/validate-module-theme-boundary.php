@@ -207,6 +207,37 @@ foreach ([$root . '/AGENTS.md', $module . '/README.md', $theme . '/docs/design-s
   $assert(str_contains((string) file_get_contents($doc), $rule), 'Regra "' . $rule . '" ausente em ' . substr($doc, strlen($root) + 1) . '.');
 }
 
+// 12. Ícones de interface: Bootstrap Icons (classe bi bi-*). SVG só como logo de marca de terceiros em assets/brands/.
+foreach (array_merge($files($theme . '/templates', ['twig']), $files($theme . '/components', ['twig']), $files($theme . '/css', ['css']), $files($module . '/templates', ['twig']), $files($module . '/src', ['php']), $files($module . '/js', ['js'])) as $path) {
+  $text = (string) file_get_contents($path);
+  $assert(!preg_match('/<svg[\s>]/i', $text), 'SVG inline de interface (use Bootstrap Icons, classe bi bi-*): ' . substr($path, strlen($root) + 1));
+}
+foreach ($files($theme, ['svg']) as $svg) {
+  $rel = substr($svg, strlen($theme) + 1);
+  $assert(str_starts_with($rel, 'assets/brands/'), "Arquivo SVG fora de assets/brands (ícone deve ser Bootstrap Icons): $rel");
+}
+
+// 12b. Assets do tema precisam ser legíveis pelo servidor web (modo 0644): arquivo 0600 responde 403 no Apache.
+foreach ($files($theme . '/assets', ['svg', 'png', 'jpg', 'jpeg', 'webp', 'gif']) as $asset) {
+  $assert((fileperms($asset) & 0004) !== 0, 'Asset sem leitura para o servidor web (chmod 644): ' . substr($asset, strlen($root) + 1));
+}
+
+// 12c. Cor só em tokens: CSS do tema fora de css/tokens.css não tem cor literal (hex, rgb, hsl, hwb, lab, oklch, color-mix).
+foreach ($files($theme . '/css', ['css']) as $css) {
+  if (str_ends_with($css, '/tokens.css')) {
+    continue;
+  }
+  $text = (string) file_get_contents($css);
+  $assert(!preg_match('/#[0-9a-fA-F]{3,8}\b|\b(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color-mix)\(/', $text), 'Cor literal fora de css/tokens.css (use token semântico): ' . substr($css, strlen($root) + 1));
+}
+
+// 13. Meus pagamentos removido: sem rota de meios de pagamento, sem permissão do Commerce no papel autenticado.
+$routes = (string) file_get_contents($module . '/src/EventSubscriber/DomainRouteSubscriber.php');
+$assert(!preg_match("/'entity\.commerce_payment_method\.(add_form|edit_form|delete_form|set_default)' => \['\/pagamentos/", $routes), 'DomainRouteSubscriber ainda define rota de meios de pagamento (/pagamentos/novo, editar, excluir, padrão).');
+$assert(!str_contains((string) file_get_contents($module . '/src/AccountShellBuilder.php'), 'commerce_payment_method'), 'AccountShellBuilder ainda lista "Meus pagamentos" (commerce_payment_method).');
+$assert(!str_contains((string) file_get_contents($root . '/config/sync/user.role.authenticated.yml'), 'commerce_payment_method'), 'Papel autenticado ainda tem permissão de meios de pagamento (config/sync/user.role.authenticated.yml).');
+$assert(str_contains($routes, 'PaymentMethodsRedirectController::redirectToOrders'), '/pagamentos deve redirecionar 301 para /pedidos (PaymentMethodsRedirectController).');
+
 if ($failures !== []) {
   foreach ($failures as $failure) {
     fwrite(STDERR, "FAIL: $failure\n");

@@ -81,6 +81,17 @@
   --aculta-motion-fast: 180ms;
   --aculta-ease-standard: ease;
   --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
+  --aculta-scrim: rgba(12, 60, 41, 0.58);
+  /* Status (erro, ok, atenção): texto, superfície e borda. Claro: texto ≥ 5,5:1 sobre a superfície. */
+  --aculta-status-error-text: #b3261e;
+  --aculta-status-error-surface: #fde8e7;
+  --aculta-status-error-border: #b3261e;
+  --aculta-status-ok-text: #1e5e2f;
+  --aculta-status-ok-surface: #e6f4ea;
+  --aculta-status-ok-border: #2e7d32;
+  --aculta-status-warning-text: #624b00;
+  --aculta-status-warning-surface: #fff4cc;
+  --aculta-status-warning-border: #c28a00;
 
   /* Bootstrap consumes semantic surfaces/text instead of a second palette. */
   --bs-font-sans-serif: var(--aculta-font-body);
@@ -238,6 +249,17 @@
   --aculta-control-border: var(--aculta-border-strong);
   --aculta-focus: var(--aculta-focus-ring);
   --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+  --aculta-scrim: rgba(0, 0, 0, 0.6);
+  /* Status no escuro: texto ≥ 7:1 sobre a superfície muted (cores de destaque do próprio tema). */
+  --aculta-status-error-text: var(--aculta-text-accent);
+  --aculta-status-error-surface: var(--aculta-surface-muted);
+  --aculta-status-error-border: var(--aculta-text-accent);
+  --aculta-status-ok-text: var(--aculta-border-accent);
+  --aculta-status-ok-surface: var(--aculta-surface-muted);
+  --aculta-status-ok-border: var(--aculta-border-accent);
+  --aculta-status-warning-text: var(--aculta-yellow);
+  --aculta-status-warning-surface: var(--aculta-surface-muted);
+  --aculta-status-warning-border: var(--aculta-yellow);
 
   --bs-body-color: var(--aculta-text-primary);
   --bs-body-color-rgb: 244, 239, 232;
@@ -376,6 +398,17 @@
     --aculta-control-border: var(--aculta-border-strong);
     --aculta-focus: var(--aculta-focus-ring);
     --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+  --aculta-scrim: rgba(0, 0, 0, 0.6);
+  /* Status no escuro: texto ≥ 7:1 sobre a superfície muted (cores de destaque do próprio tema). */
+  --aculta-status-error-text: var(--aculta-text-accent);
+  --aculta-status-error-surface: var(--aculta-surface-muted);
+  --aculta-status-error-border: var(--aculta-text-accent);
+  --aculta-status-ok-text: var(--aculta-border-accent);
+  --aculta-status-ok-surface: var(--aculta-surface-muted);
+  --aculta-status-ok-border: var(--aculta-border-accent);
+  --aculta-status-warning-text: var(--aculta-yellow);
+  --aculta-status-warning-surface: var(--aculta-surface-muted);
+  --aculta-status-warning-border: var(--aculta-yellow);
 
     --bs-body-color: var(--aculta-text-primary);
     --bs-body-color-rgb: 244, 239, 232;

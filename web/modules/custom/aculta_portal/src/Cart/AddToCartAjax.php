@@ -9,6 +9,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
@@ -29,6 +30,7 @@ final class AddToCartAjax {
     private readonly CartUtility $cart,
     private readonly TranslationInterface $translation,
     private readonly RendererInterface $renderer,
+    private readonly MessengerInterface $messenger,
   ) {}
 
   /** Liga o AJAX ao botão de adicionar e cria o contêiner de status acima do formulário. */
@@ -49,6 +51,8 @@ final class AddToCartAjax {
   /** Callback AJAX do botão: caixa de status, contador e rótulo do botão do carrinho. */
   public function response(array &$form, FormStateInterface $formState): AjaxResponse {
     $statusId = $formState->getTriggeringElement()['#ajax']['wrapper'] ?? $this->statusId((string) $formState->getFormObject()->getFormId());
+    // A caixa "Item adicionado com sucesso." substitui a mensagem padrão do Commerce, que não pode ficar para a próxima página.
+    $this->messenger->deleteAll();
     $cart = $this->cart->build();
     $response = new AjaxResponse();
     $errors = array_map(static fn($error): string => strip_tags((string) $error), array_values($formState->getErrors()));

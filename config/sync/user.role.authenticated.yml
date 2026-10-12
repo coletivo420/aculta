@@ -42,7 +42,6 @@ permissions:
   - 'edit own forum content'
   - 'flag salvar_topico'
   - 'flag seguir_topico'
-  - 'manage own commerce_payment_method'
   - 'post comments'
   - 'unflag salvar_topico'
   - 'unflag seguir_topico'

@@ -64,7 +64,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     if (!$route || !$purpose || !in_array($purpose, self::PUBLIC_PURPOSES, TRUE)
       || in_array($route_match->getRouteName(), self::HIDDEN_ROUTES, TRUE)
       || $route_match->getRouteName() === 'user.login_status.http'
-      || $this->isFrontPage()) {
+      // A Visão geral da conta é a página inicial do domínio, mas leva a raiz "Minha conta" como as outras seções.
+      || ($this->isFrontPage() && $route_match->getRouteName() !== 'aculta_portal.dashboard')) {
       return $breadcrumb;
     }
 
@@ -119,7 +120,7 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     if (!$route || !$purpose || !in_array($purpose, self::PUBLIC_PURPOSES, TRUE)
       || in_array($route_match->getRouteName(), self::HIDDEN_ROUTES, TRUE)
       || $route_match->getRouteName() === 'user.login_status.http'
-      || $this->isFrontPage()) {
+      || ($this->isFrontPage() && $route_match->getRouteName() !== 'aculta_portal.dashboard')) {
       return NULL;
     }
 

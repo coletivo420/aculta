@@ -14,7 +14,6 @@ use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
-use Drupal\commerce_payment\Form\PaymentMethodAddForm;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -141,9 +140,11 @@ final class PortalController extends ControllerBase {
       '#attributes' => ['data-portal-ui' => 'account-courses-summary'],
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Cursos')],
       'summary' => [
-        '#plain_text' => $count === 1
-          ? $this->t('Você participa de 1 curso.')
-          : $this->t('Você participa de @count cursos.', ['@count' => $count]),
+        '#plain_text' => match (TRUE) {
+          $count === 0 => $this->t('Você ainda não participa de nenhum curso.'),
+          $count === 1 => $this->t('Você participa de 1 curso.'),
+          default => $this->t('Você participa de @count cursos.', ['@count' => $count]),
+        },
       ],
     ];
     if ($count > 0) {
@@ -199,6 +200,20 @@ final class PortalController extends ControllerBase {
     };
   }
 
+  /**
+   * Caixa da Mercado Pago em "Meus pedidos": os pagamentos são processados pelo Mercado Pago, e o portal não guarda
+   * meios de pagamento. O texto e o link vêm da configuração aculta_portal.settings (mercado_pago_account_url).
+   */
+  private function paymentNotice(): array {
+    return [
+      '#theme' => 'aculta_portal_payment_notice',
+      '#intro' => $this->t('Todos os nossos pagamentos são processados pelo Mercado Pago.'),
+      '#link_label' => $this->t('Acesse sua conta Mercado Pago'),
+      '#url' => (string) $this->configs->get('aculta_portal.settings')->get('mercado_pago_account_url'),
+      '#weight' => 10,
+    ];
+  }
+
   public function orders(): array {
     $storage = $this->entities->getStorage('commerce_order');
     $ids = $storage->getQuery()->accessCheck(TRUE)
@@ -209,45 +224,23 @@ final class PortalController extends ControllerBase {
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $order) {
       $total = $order->getTotalPrice();
+      // data-label: rótulo de cada coluna, usado pelo tema no celular (linhas empilhadas).
       $rows[] = [
-        ['data' => ['#type' => 'link', '#title' => '#' . $order->getOrderNumber(), '#url' => Url::fromRoute('entity.commerce_order.user_view', ['commerce_order' => $order->id()])]],
-        $order->getPlacedTime() ? $this->dateFormatter->format($order->getPlacedTime(), 'short') : '',
-        $total ? $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode()) : '',
-        $this->orderStateLabel($order),
+        ['data' => ['#type' => 'link', '#title' => '#' . $order->getOrderNumber(), '#url' => Url::fromRoute('entity.commerce_order.user_view', ['commerce_order' => $order->id()])], 'data-label' => (string) $this->t('Pedido')],
+        ['data' => $order->getPlacedTime() ? $this->dateFormatter->format($order->getPlacedTime(), 'short') : '', 'data-label' => (string) $this->t('Data')],
+        ['data' => $total ? $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode()) : '', 'data-label' => (string) $this->t('Total')],
+        ['data' => $this->orderStateLabel($order), 'data-label' => (string) $this->t('Situação')],
       ];
     }
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-commerce-orders'],
+      'payment_notice' => $this->paymentNotice(),
       'table' => [
         '#type' => 'table',
         '#header' => [$this->t('Pedido'), $this->t('Data'), $this->t('Total'), $this->t('Situação')],
         '#rows' => $rows,
         '#empty' => $this->t('Você ainda não tem pedidos.'),
-      ],
-    ];
-  }
-
-  /** Meus pagamentos: métodos de pagamento da pessoa logada, somente leitura. */
-  public function payments(): array {
-    $storage = $this->entities->getStorage('commerce_payment_method');
-    $ids = $storage->getQuery()->accessCheck(TRUE)->condition('uid', $this->account->id())->execute();
-    $rows = [];
-    foreach ($storage->loadMultiple($ids) as $method) {
-      $rows[] = [
-        $method->label(),
-        $method->bundle(),
-        $method->isDefault() ? $this->t('Sim') : $this->t('Não'),
-      ];
-    }
-    return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'account-commerce-payments'],
-      'table' => [
-        '#type' => 'table',
-        '#header' => [$this->t('Método'), $this->t('Tipo'), $this->t('Padrão')],
-        '#rows' => $rows,
-        '#empty' => $this->t('Você ainda não tem métodos de pagamento salvos.'),
       ],
     ];
   }
@@ -436,12 +429,6 @@ final class PortalController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
         'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $title, '#element_attributes' => new Attribute(['tabindex' => '-1'])],
-        'account_email' => $section === 'basics' ? [
-          '#type' => 'container',
-          '#attributes' => ['data-portal-ui' => 'account-data-email'],
-          'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail')],
-          'value' => ['#plain_text' => $account->getEmail()],
-        ] : [],
         'form' => $this->profileForm($section, $profile),
       ],
       '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],

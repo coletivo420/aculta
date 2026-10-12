@@ -1336,4 +1336,8 @@ features executáveis preparadas sem Homelab permanecem draft até validação.
 - Novos: `Render/PortalLinkElement` (link com token preservando href e cacheabilidade), templates neutros
   `portal-element`, `portal-search-trigger`. Breadcrumb do AJAX em `item_list`; JS usa `[data-portal-breadcrumb]`.
 - Gate: `scripts/validate-module-theme-boundary.php` reprova classe de design no módulo e token sem correspondente no tema.
-
+- Meus pagamentos removido da Minha conta (menu, sanfona e navegação AJAX). `/pagamentos` → 301 `/pedidos`; rotas de
+  cadastro/edição/exclusão/padrão de meios de pagamento removidas (404); `PaymentMethodAddAccessCheck` removido.
+- Caixa "Todos os nossos pagamentos são processados pelo Mercado Pago" em Meus pedidos (texto e link no módulo, config
+  `aculta_portal.settings:mercado_pago_account_url`).
+- Gate: seções 12 (ícones Bootstrap Icons) e 13 (pagamentos) em `scripts/validate-module-theme-boundary.php`.

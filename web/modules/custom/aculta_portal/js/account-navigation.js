@@ -29,8 +29,7 @@
   };
 
   const focusHeading = () => {
-    const body = document.getElementById(BODY_ID);
-    const heading = body?.querySelector('h1, h2, h3');
+    const heading = document.getElementById('portal-account-section-title');
     if (heading) {
       heading.setAttribute('tabindex', '-1');
       heading.focus();
@@ -38,7 +37,7 @@
   };
 
   // Faz a requisição AJAX do link e troca o conteúdo do destino (wrapper). onDone roda depois da troca.
-  const requestInto = (anchor, url, wrapperId, onDone) => {
+  const requestInto = (anchor, url, wrapperId, onDone, onError) => {
     if (!anchor.id) {
       sequence += 1;
       anchor.id = 'portal-account-link-' + sequence;
@@ -57,6 +56,11 @@
       if (onDone) onDone();
       return result;
     });
+    const failure = ajax.error.bind(ajax);
+    ajax.error = (xhr, uri, message) => {
+      if (onError) onError();
+      return failure(xhr, uri, message);
+    };
     ajax.execute();
   };
 
@@ -77,7 +81,8 @@
     });
     const body = document.getElementById(BODY_ID);
     // Título e breadcrumb da página vêm do servidor, num bloco oculto do conteúdo (AccountAjaxMainContentRenderer).
-    const chrome = body?.querySelector('[data-portal-chrome]');
+    // O fragmento pode estar no corpo (desktop) ou no painel aberto (mobile): procura no documento.
+    const chrome = document.querySelector('[data-portal-chrome]');
     const pageTitle = chrome ? chrome.getAttribute('data-portal-page-title') : '';
     const crumbList = chrome?.querySelector('ol');
     const currentCrumbs = document.querySelector('[data-portal-breadcrumb]');
@@ -95,7 +100,9 @@
     layout?.setAttribute('aria-busy', 'true');
     // Mensagens da página anterior não podem ficar na página nova.
     document.querySelectorAll('.messages, [data-drupal-messages]').forEach((node) => node.remove());
-    requestInto(anchor, url, BODY_ID, () => {
+    // Link dentro de um painel da sanfona (mobile): a troca acontece nesse painel; senão, no corpo da página.
+    const panel = anchor.closest('[data-portal-account-accordion-panel]');
+    requestInto(anchor, url, panel?.id || BODY_ID, () => {
       layout?.setAttribute('aria-busy', 'false');
       if (push) window.history.pushState({ acultaAccount: true }, '', url);
       refreshChrome(url);
@@ -103,8 +110,34 @@
     });
   };
 
-  // Sanfona do celular: o painel carrega a seção pelo mesmo framework AJAX.
-  const loadAccordionItem = (details) => {
+  // Sanfona do celular: o painel carrega a seção pelo mesmo framework AJAX. Passados 10 s ou em caso de falha,
+  // o painel mostra erro com "Tentar novamente" e link para a página normal (fallback).
+  const ACCORDION_TIMEOUT = 10000;
+
+  const showAccordionError = (details, panel) => {
+    panel.dataset.loading = '0';
+    panel.replaceChildren();
+    const box = document.createElement('div');
+    box.setAttribute('data-portal-account-error', '');
+    box.setAttribute('role', 'alert');
+    const message = document.createElement('p');
+    message.textContent = Drupal.t('Não foi possível carregar esta seção agora.');
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.setAttribute('data-portal-account-retry', '');
+    retry.textContent = Drupal.t('Tentar novamente');
+    retry.addEventListener('click', () => {
+      panel.dataset.loaded = '0';
+      loadAccordionItem(details, true);
+    });
+    const link = document.createElement('a');
+    link.href = panel.dataset.src;
+    link.textContent = Drupal.t('Abrir a página desta seção');
+    box.append(message, retry, document.createTextNode(' '), link);
+    panel.append(box);
+  };
+
+  const loadAccordionItem = (details, push = false) => {
     const panel = details.querySelector('[data-portal-account-accordion-panel]');
     if (!panel || panel.dataset.loaded === '1' || panel.dataset.loading === '1') return;
     panel.dataset.loading = '1';
@@ -112,28 +145,59 @@
       sequence += 1;
       panel.id = 'portal-account-panel-' + sequence;
     }
-    const trigger = details.querySelector('[data-portal-account-summary]');
-    requestInto(trigger, panel.dataset.src, panel.id, () => {
+    // O Drupal.Ajax associa um clique ao elemento e cancela o padrão. Por isso o carregamento usa um marcador oculto
+    // dentro do painel, e não o summary: senão o item já carregado não abriria mais pelo toque.
+    panel.querySelectorAll(':scope > [data-portal-account-loader]').forEach((node) => node.remove());
+    const loader = document.createElement('span');
+    loader.hidden = true;
+    loader.setAttribute('data-portal-account-loader', '');
+    panel.prepend(loader);
+    const timer = window.setTimeout(() => {
+      if (panel.dataset.loaded !== '1') showAccordionError(details, panel);
+    }, ACCORDION_TIMEOUT);
+    requestInto(loader, panel.dataset.src, panel.id, () => {
+      window.clearTimeout(timer);
       panel.dataset.loaded = '1';
       panel.dataset.loading = '0';
+      // Como na navegação de página: URL no histórico, título, menu ativo e breadcrumb da seção.
+      if (push) window.history.pushState({ acultaAccount: true }, '', panel.dataset.src);
+      refreshChrome(panel.dataset.src);
+    }, () => {
+      window.clearTimeout(timer);
+      showAccordionError(details, panel);
     });
   };
 
   const setupAccordion = (layout) => {
     if (!mobileQuery.matches) return;
-    // No celular o conteúdo vive só na sanfona: a coluna de conteúdo sai do DOM para não duplicar IDs.
-    layout.querySelector('[data-portal-account-content]')?.remove();
+    // No celular o conteúdo vive só na sanfona. A seção ativa, já renderizada pelo servidor, vai para o painel aberto
+    // (sem placeholder e sem requisição); a coluna de conteúdo sai do DOM para não duplicar IDs.
+    const content = layout.querySelector('[data-portal-account-content]');
+    const openPanel = layout.querySelector('[data-portal-account-item][open] [data-portal-account-accordion-panel]');
+    if (content && openPanel && openPanel.dataset.loaded !== '1') {
+      openPanel.replaceChildren(...content.childNodes);
+      openPanel.dataset.loaded = '1';
+    }
+    content?.remove();
     layout.querySelectorAll('[data-portal-account-item]').forEach((details) => {
       if (details.dataset.acultaAccordion === '1') return;
       details.dataset.acultaAccordion = '1';
       details.addEventListener('toggle', () => {
         if (!details.open) return;
-        layout.querySelectorAll('[data-portal-account-item][open]').forEach((other) => {
-          if (other !== details) other.open = false;
+        layout.querySelectorAll('[data-portal-account-item]').forEach((other) => {
+          if (other === details) return;
+          other.open = false;
+          // Esvazia o painel: sem conteúdo repetido (ids) e a próxima abertura carrega de novo, com URL e título.
+          const otherPanel = other.querySelector('[data-portal-account-accordion-panel]');
+          if (otherPanel) {
+            otherPanel.replaceChildren();
+            otherPanel.dataset.loaded = '0';
+            otherPanel.dataset.loading = '0';
+          }
         });
-        loadAccordionItem(details);
+        loadAccordionItem(details, true);
       });
-      if (details.open) loadAccordionItem(details);
+      if (details.open) loadAccordionItem(details, false);
     });
   };
 
@@ -183,7 +247,8 @@
       once('aculta-portal-account-form-errors', '[id^="portal-account-"]', context).forEach((wrapper) => {
         const invalid = wrapper.querySelector('.form-item--error input, .form-item--error select, .form-item--error textarea, .error[aria-invalid], input.error, select.error, textarea.error');
         if (invalid) {
-          invalid.focus();
+          // Depois do Drupal.Ajax, que devolve o foco ao botão do envio.
+          window.setTimeout(() => invalid.focus(), 50);
         }
       });
     },

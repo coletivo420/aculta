@@ -19,7 +19,7 @@ Os hosts do servidor de testes são `*.aculta.toca.net.br`. `*.aculta.org` é pr
 | Host | Papel | Caminhos principais |
 | --- | --- | --- |
 | `aculta.toca.net.br` | Principal (MAIN). Carrinho e checkout pertencem sempre a este host. | `/carrinho`, `/checkout/{pedido}/order_information`, `/checkout/{pedido}/review`, `/checkout/{pedido}/payment` |
-| `conta.aculta.toca.net.br` | Conta (ACCOUNT). Raiz `/` é a visão geral (logado) ou o login (anônimo). | `/` (visão geral), `/entrar`, `/dados`, `/dados/endereco`, `/pedidos`, `/pagamentos`, `/aceite-termos` |
+| `conta.aculta.toca.net.br` | Conta (ACCOUNT). Raiz `/` é a visão geral (logado) ou o login (anônimo). | `/` (visão geral), `/entrar`, `/dados`, `/dados/endereco`, `/pedidos`, `/aceite-termos` |
 | `loja.aculta.toca.net.br` | Loja (SHOP). | `/loja-da-aculta`, produto `/loja/produto/bloco-sativa/camiseta-abada-bloco-sativa-2026-regata` (ou `/product/1`, que redireciona 301) |
 
 Caminhos que **não** existem ou não são públicos:

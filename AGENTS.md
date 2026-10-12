@@ -596,3 +596,22 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
   ACULTA420 na mesma entrega, cada parte no seu dono.
 - Inventário, dívida e motivo: `docs/portal/FRONTEIRA-MODULO-TEMA.md`. Gate obrigatório:
   `php scripts/validate-module-theme-boundary.php` (deve ser PASS; o cliquet de classes do módulo não pode subir).
+
+## Pagamentos: processados pelo Mercado Pago (regra permanente)
+
+- Todo pagamento é processado pelo **Mercado Pago**. O portal **não guarda** nem **exibe** meios de pagamento salvos
+  nem histórico de pagamentos da pessoa. Não existe "Meus pagamentos" na Minha conta, e `/pagamentos` redireciona
+  (301) para `/pedidos`; as rotas de cadastro, edição, exclusão e padrão de meios de pagamento respondem 404.
+- O papel autenticado não recebe a permissão `manage own commerce_payment_method`.
+- Em "Meus pedidos" aparece a caixa "Todos os nossos pagamentos são processados pelo Mercado Pago" com link para a conta
+  do Mercado Pago (URL em `aculta_portal.settings:mercado_pago_account_url`, abre em nova aba com `rel="noopener"`).
+- Não reintroduzir cartões, métodos salvos ou extrato de pagamento na conta. Detalhes: `docs/portal/CHECKOUT-BILLING.md`.
+- Fora desta regra (continuam): o apoio (Meu Apoio e contribuições), a etapa de pagamento do checkout e o webhook do
+  gateway. Gate: `php scripts/validate-module-theme-boundary.php`, seção 13.
+
+## Ícones de interface: Bootstrap Icons (regra permanente)
+
+- O padrão de ícones do ACULTA420 são os **Bootstrap Icons** (`<i class="bi bi-…">`, já carregados pelo bootstrap5).
+- Não usar outros pacotes de ícones nem SVG solto (inline ou arquivo) para ícone de interface.
+- **Exceção:** logos de marcas de terceiros (ex.: Mercado Pago), em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
+- Gate: `php scripts/validate-module-theme-boundary.php`, seção 12 (sem `<svg` inline e sem SVG fora de `assets/brands/`).

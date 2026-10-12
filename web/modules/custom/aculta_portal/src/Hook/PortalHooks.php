@@ -346,6 +346,25 @@ final class PortalHooks {
   }
 
   /**
+   * Detalhe do pedido (Minha conta): a situação sai pelo nome do Portal, traduzido ("Concluído"), e não pelo rótulo
+   * em inglês do workflow do Commerce. O título do campo vira "Situação".
+   */
+  #[Hook('entity_view_alter')]
+  public function commerceOrderUserView(array &$build, $entity, $display): void {
+    if ($entity->getEntityTypeId() !== 'commerce_order' || $display->id() !== 'commerce_order.default.user' || !isset($build['state'])) {
+      return;
+    }
+    $label = match ($entity->getState()->getId()) {
+      'completed' => (string) $this->translation->translate('Concluído'),
+      'canceled' => (string) $this->translation->translate('Cancelado'),
+      'draft' => (string) $this->translation->translate('Rascunho'),
+      default => (string) $this->translation->translate('Em andamento'),
+    };
+    $build['state']['#title'] = $this->translation->translate('Situação');
+    $build['state'][0] = ['#plain_text' => $label];
+  }
+
+  /**
    * Implements hook_page_attachments().
    */
   #[Hook('page_attachments')]
@@ -486,7 +505,7 @@ final class PortalHooks {
             $address_element[$key]['#title'] = $this->translation->translate($label);
           }
         }
-        foreach (['organization', 'given_name', 'additional_name', 'family_name'] as $private_or_duplicate) {
+        foreach (['given_name', 'additional_name', 'family_name'] as $private_or_duplicate) {
           if (isset($address_element[$private_or_duplicate])) {
             $address_element[$private_or_duplicate]['#access'] = FALSE;
           }
@@ -553,6 +572,16 @@ final class PortalHooks {
           'form' => NULL,
         ],
         'template' => 'aculta-portal-account-terms-modal',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
+      'aculta_portal_payment_notice' => [
+        'variables' => [
+          'intro' => NULL,
+          'link_label' => NULL,
+          'url' => NULL,
+          'logo' => NULL,
+        ],
+        'template' => 'portal-payment-notice',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
       'aculta_portal_element' => [

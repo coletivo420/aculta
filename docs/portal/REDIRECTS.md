@@ -93,6 +93,8 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | `/user/{uid}/payment-methods/{id}/edit` | `/pagamentos/{id}/editar` | 404 para o antigo | Dono verificado pelo método |
 | `/user/{uid}/payment-methods/{id}/delete` | `/pagamentos/{id}/excluir` | 404 para o antigo | Dono verificado pelo método |
 | `/user/{uid}/payment-methods/{id}/set-default` | `/pagamentos/{id}/padrao` | 404 para o antigo | Dono verificado pelo método |
+| `/pagamentos` (Meus pagamentos, removido) | `/pedidos` | 301 | Meios de pagamento não são exibidos: o pagamento é do Mercado Pago. `PaymentMethodsRedirectController`. |
+| `/pagamentos/novo`, `/pagamentos/{id}/editar`, `/pagamentos/{id}/excluir`, `/pagamentos/{id}/padrao` | — | 404 | Rotas do Commerce removidas. |
 | `/user/{uid}/orders/{pedido}` | `/pedidos/{pedido}` | 404 para o antigo | Dono verificado pelo pedido (`_entity_access commerce_order.view`) |
 
 ### Mecanismo

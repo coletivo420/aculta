@@ -138,10 +138,6 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'commerce_order.address_book.edit_form' => ['/enderecos/{profile}/editar', []],
       'commerce_order.address_book.delete_form' => ['/enderecos/{profile}/excluir', []],
       'commerce_order.address_book.set_default' => ['/enderecos/{profile}/padrao', []],
-      'entity.commerce_payment_method.add_form' => ['/pagamentos/novo', []],
-      'entity.commerce_payment_method.edit_form' => ['/pagamentos/{commerce_payment_method}/editar', []],
-      'entity.commerce_payment_method.delete_form' => ['/pagamentos/{commerce_payment_method}/excluir', []],
-      'entity.commerce_payment_method.set_default' => ['/pagamentos/{commerce_payment_method}/padrao', []],
       'entity.commerce_order.user_view' => ['/pedidos/{commerce_order}', []],
     ];
     foreach ($account_paths as $name => [$path, $unused]) {
@@ -151,9 +147,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
     }
-    // Cadastro de pagamento só existe com gateway que guarda métodos; a mesma regra esconde o botão (ação local).
-    if ($route = $collection->get('entity.commerce_payment_method.add_form')) {
-      $route->setRequirements(['_custom_access' => 'aculta_portal.access.payment_method_add:access']);
+    // Meios de pagamento não são guardados nem exibidos pelo portal: o pagamento é do Mercado Pago. As rotas de
+    // cadastro, edição, exclusão e padrão são removidas (404). A lista antiga /pagamentos redireciona para /pedidos.
+    foreach (['entity.commerce_payment_method.add_form', 'entity.commerce_payment_method.edit_form', 'entity.commerce_payment_method.delete_form', 'entity.commerce_payment_method.set_default'] as $name) {
+      $collection->remove($name);
     }
     // Verificações que dependiam do usuário da URL passam a usar a sessão (login) e a verificação da entidade
     // (dono do pedido ou do perfil). Ver docs/portal/REDIRECTS.md, seção de caminhos de conta.
@@ -171,7 +168,6 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     // O controller da página é o do Portal; o acesso exige login e a lista usa o usuário da sessão.
     $account_lists = [
       'view.commerce_user_orders.order_page' => ['/pedidos', 'orders', 'Meus pedidos'],
-      'entity.commerce_payment_method.collection' => ['/pagamentos', 'payments', 'Meus pagamentos'],
     ];
     foreach ($account_lists as $name => [$path, $method, $title]) {
       if ($route = $collection->get($name)) {
@@ -181,6 +177,14 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('parameters', []);
         $route->setOption('_aculta_domain_purpose', 'account');
       }
+    }
+    // /pagamentos: 301 para /pedidos (sem 404 para links antigos). Acesso livre para o redirecionamento acontecer.
+    if ($route = $collection->get('entity.commerce_payment_method.collection')) {
+      $route->setPath('/pagamentos');
+      $route->setDefaults(['_controller' => '\\Drupal\\aculta_portal\\Controller\\PaymentMethodsRedirectController::redirectToOrders']);
+      $route->setRequirements(['_access' => 'TRUE']);
+      $route->setOption('parameters', []);
+      $route->setOption('_aculta_domain_purpose', 'account');
     }
     foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.support_my', 'aculta_portal.account_courses', 'aculta_portal.account_settings'] as $name) {
       if ($route = $collection->get($name)) {
