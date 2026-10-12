@@ -28,3 +28,14 @@
   color: var(--aculta-status-error-text);
 }
 
+
+/* S/N alinhado à caixa do número: sem a margem dos blocos de formulário e sem o padding do alinhamento inferior. */
+.portal-address-number-row .form-item,
+.portal-address-number-row .form-check {
+  margin-block: 0;
+}
+
+.portal-address-number-row > .col-auto.pb-2 {
+  padding-block-end: 0 !important;
+  align-self: flex-end;
+}

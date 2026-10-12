@@ -241,7 +241,7 @@ final class PortalFormCallbacks {
     if ($uid > 0) {
       $this->userData->delete('aculta_portal', $uid, 'social_auth_password_unset');
     }
-    $formState->setRedirect('aculta_portal.security');
+    $formState->setRedirect('aculta_portal.security_password');
   }
 
   /** Applies accessible labels/autocomplete to Core's password widget. */

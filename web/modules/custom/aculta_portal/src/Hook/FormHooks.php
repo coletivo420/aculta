@@ -96,8 +96,8 @@ final class FormHooks {
     }
 
     // Formulário da conta em Segurança: a senha atual fica nesta página, sem o link de recuperação do Core.
-    if ($formId === 'user_form' && $this->routeMatch->getRouteName() === 'aculta_portal.security' && isset($form['account']['current_pass'])) {
-      $form['account']['current_pass']['#description'] = $this->translation->translate('Obrigatório se você quiser alterar o e-mail ou a senha abaixo: informe sua senha atual.');
+    if ($formId === 'user_form' && $this->routeMatch->getRouteName() === 'aculta_portal.security_password' && isset($form['account']['current_pass'])) {
+      $form['account']['current_pass']['#description'] = $this->translation->translate('Obrigatório para alterar a senha: informe sua senha atual.');
     }
 
     if ($formId === 'change_mail_form'
@@ -114,7 +114,7 @@ final class FormHooks {
     }
 
     if ($formId === 'user_form'
-      && $this->routeMatch->getRouteName() === 'aculta_portal.security'
+      && $this->routeMatch->getRouteName() === 'aculta_portal.security_password'
       && $formObject instanceof AccountForm) {
       $account = $formObject->getEntity();
       if ((int) $account->id() === (int) $this->currentUser->id()) {
@@ -227,6 +227,8 @@ final class FormHooks {
       'callback' => 'aculta_portal.form_callbacks:accountAjaxResponse',
       'wrapper' => $wrapper,
       'progress' => ['type' => 'throbber'],
+      // Sem devolver o foco ao botão: o foco vai para o primeiro campo com erro (acultaPortalAccountFormErrors).
+      'disable-refocus' => TRUE,
     ];
     // O último handler de envio desliga o redirecionamento (o envio fica na página, com mensagem).
     if (!empty($submit['#submit'])) {

@@ -248,7 +248,7 @@
         const invalid = wrapper.querySelector('.form-item--error input, .form-item--error select, .form-item--error textarea, .error[aria-invalid], input.error, select.error, textarea.error');
         if (invalid) {
           // Depois do Drupal.Ajax, que devolve o foco ao botão do envio.
-          window.setTimeout(() => invalid.focus(), 50);
+          invalid.focus();
         }
       });
     },

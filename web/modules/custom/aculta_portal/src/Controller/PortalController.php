@@ -305,32 +305,66 @@ final class PortalController extends ControllerBase {
     return $items;
   }
 
+  /** Segurança, aba E-mail (/seguranca): e-mail atual e troca do endereço (com confirmação). */
   public function security(): array {
-    $account = $this->entities->getStorage('user')->load($this->account->id());
-    $email_ready = $this->transactionalMailReady();
-    $content = [
-      'intro' => ['#plain_text' => $this->t('Gerencie como você acessa sua conta.')],
-      'email_section' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'security-card'],
-        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('E-mail de acesso')],
-        'current_label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
-        'current_email' => ['#plain_text' => $account->getEmail()],
-      ],
-      'password_section' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'security-card'],
-        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Senha')],
-        'description' => ['#plain_text' => $this->t('Mantenha uma senha segura para acessar sua conta.')],
-      ],
-      '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
-    ];
+    return $this->buildSecuritySection('email');
+  }
 
+  /** Segurança, aba Senha (/seguranca/senha): troca da senha (exige a senha atual). */
+  public function securityPassword(): array {
+    return $this->buildSecuritySection('password');
+  }
+
+  /**
+   * Abas internas da Segurança, no mesmo padrão de Meus Dados: E-mail e Senha, cada uma com URL própria. O conteúdo
+   * fica no shell da conta; os formulários salvam por AJAX (mensagens em português).
+   */
+  private function buildSecuritySection(string $section): array {
+    $account = $this->entities->getStorage('user')->load($this->account->id());
+    $links = [];
+    foreach ([
+      'email' => ['title' => $this->t('E-mail'), 'route' => 'aculta_portal.security'],
+      'password' => ['title' => $this->t('Senha'), 'route' => 'aculta_portal.security_password'],
+    ] as $key => $tab) {
+      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      if ($section === $key) {
+        $link['#element_attributes']->setAttribute('aria-current', 'page');
+        $link['#element_attributes']->addClass('is-active');
+      }
+      $links[] = $link;
+    }
+    $content = [
+      'description' => ['#plain_text' => $section === 'email'
+        ? $this->t('Veja o e-mail de acesso e solicite a troca dele.')
+        : $this->t('Mantenha uma senha segura para acessar sua conta.')],
+      'tabs' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => $this->t('Seções de segurança'), 'data-portal-account-data-nav' => 'true'],
+        'links' => $links,
+      ],
+      '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+    ];
+    return ['content' => $content + ['section' => $this->securitySectionContent($account, $section)]];
+  }
+
+  /** Conteúdo de cada aba de Segurança (e-mail ou senha). */
+  private function securitySectionContent(UserInterface $account, string $section): array {
+    if ($section === 'password') {
+      if ($this->hasUserChosenPassword($account)) {
+        return ['change_form' => $this->buildPortalAccountForm($account)];
+      }
+      return ['social_notice' => ['#plain_text' => $this->t('Sua conta utiliza acesso externo. Quando o fluxo de definição de senha local estiver homologado, ele poderá ser oferecido aqui.')]];
+    }
+    $email_ready = $this->transactionalMailReady();
+    $section_content = [
+      'current_label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
+      'current_email' => ['#plain_text' => $account->getEmail()],
+    ];
     if ($email_ready && $this->modules->moduleExists('email_confirmer_user') && $this->modules->moduleExists('change_mail_page')) {
-      $content['email_section']['change_form'] = $this->accountFormBuilder->getForm(ChangeMailForm::class, $account);
+      $section_content['change_form'] = $this->accountFormBuilder->getForm(ChangeMailForm::class, $account);
       $pending_email = $this->pendingEmail($account->id());
       if ($pending_email !== NULL) {
-        $content['email_section']['pending'] = [
+        $section_content['pending'] = [
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'security-pending', 'aria-live' => 'polite'],
           'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
@@ -340,19 +374,9 @@ final class PortalController extends ControllerBase {
       }
     }
     else {
-      $content['email_section']['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
+      $section_content['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
     }
-
-    if ($this->hasUserChosenPassword($account)) {
-      $content['password_section']['change_form'] = $this->buildPortalAccountForm($account);
-    }
-    else {
-      $content['password_section']['social_notice'] = ['#plain_text' => $this->t('Sua conta utiliza acesso externo. Quando o fluxo de definição de senha local estiver homologado, ele poderá ser oferecido aqui.')];
-    }
-
-    return [
-      'content' => $content,
-    ];
+    return $section_content;
   }
 
   /** Returns TRUE only when the account has a user-chosen local password. */

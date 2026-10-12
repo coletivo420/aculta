@@ -83,6 +83,12 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
         $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Meus dados'), $parent_url));
       }
     }
+    elseif ($purpose === 'account' && in_array($route_match->getRouteName(), ['aculta_portal.security', 'aculta_portal.security_password'], TRUE)) {
+      $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.security');
+      if ($parent_url) {
+        $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Segurança'), $parent_url));
+      }
+    }
     elseif ($purpose === 'account' && $route_match->getRouteName() === 'change_mail_page.change_mail') {
       $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.security');
       if ($parent_url) {

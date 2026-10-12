@@ -21,6 +21,7 @@ final class AccountShellBuilder {
     'aculta_portal.my_data_address' => 'aculta_portal.my_data',
     'commerce_order.address_book.overview' => 'aculta_portal.my_data',
     'entity.commerce_order.user_view' => 'view.commerce_user_orders.order_page',
+    'aculta_portal.security_password' => 'aculta_portal.security',
   ];
 
   public function __construct(

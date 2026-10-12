@@ -26,6 +26,7 @@ final class EmailConfirmationNotice {
     'aculta_portal.my_data',
     'aculta_portal.connections',
     'aculta_portal.security',
+    'aculta_portal.security_password',
   ];
 
   public function __construct(
