@@ -4,31 +4,39 @@ Plataforma Drupal 11 multidomínio da Associação Cultural Antiproibicionista.
 
 ## Contextos
 
-| Purpose | Produção | Responsabilidade |
+| Purpose | Produção (`config/sync`) | Responsabilidade |
 | --- | --- | --- |
-| `main` | `aculta.org` | institucional |
-| `account` | `conta.aculta.org` | identidade e conta |
-| `support` | `apoio.aculta.org` | apoio |
-| `magazine` | `coletivo420.aculta.org` | editorial |
+| `main` | `aculta.org` | institucional, painel administrativo, carrinho e pagamento |
+| `account` | `conta.aculta.org` | identidade e conta (Minha conta, Segurança, Meus pedidos) |
+| `support` | `apoio.aculta.org` | apoio (contribuições) |
+| `magazine` | `revista420.aculta.org` *(o AGENTS.md cita `coletivo420`; a confirmar)* | editorial |
 | `wiki` | `wiki420.aculta.org` | Wiki420 |
-| `shop` | `loja.aculta.org` | comércio |
-| `courses` | `cursos.aculta.org` | aprendizagem |
-| `forum` *(planejado)* | `forum.aculta.org` | comunidade |
+| `shop` | `loja.aculta.org` | comércio (produtos, camisetas) |
+| `courses` | `cursos.aculta.org` | aprendizagem (LMS) |
+| `forum` | `forum.aculta.org` | comunidade (fórum) |
+| `links` | `links.aculta.org` | redes sociais da ACULTA (página `/redes-sociais`) |
+
+Os hosts de teste são `*.aculta.toca.net.br` (Homelab, noindex). Os hosts de produção são os da coluna acima.
 
 ## Componentes próprios
 
 - [aculta_portal](web/modules/custom/aculta_portal/README.md) — integração e
-  orquestração.
+  orquestração: conta, endereço único, checkout, pagamento pelo Mercado Pago,
+  envio (Commerce Shipping), Social Auth e domínios. Versão 0.3.0-dev.18 na árvore
+  de trabalho (ver o CHANGELOG do módulo).
 - [ACULTA420](web/themes/custom/aculta420/README.md) — tema público e Bootstrap
-  Component Design System.
+  Component Design System. Versão 0.6.0-dev.11.
 - [aculta_portal_sitemap](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md)
   — sitemap multidomínio por purpose, índice central em `/sitemap.xml` e `robots.txt`
-  com a diretiva `Sitemap:`. Versão 0.1.0 (fases A a J), habilitado no runtime de teste.
+  com a diretiva `Sitemap:`. Versão 0.1.1 (fases A a J), habilitado no runtime de teste.
 - [aculta_deployer](web/modules/custom/aculta_portal/modules/aculta_deployer/README.md)
   — submódulo do `aculta_portal` que troca hosts de teste por produção no build de
   deploy, verifica `robots`, sitemaps e caminhos privados por ambiente, e mantém o
-  registro de correções de deploy. Versão 0.1.5, não habilitado no Drupal; CLI
+  registro de correções de deploy. Versão 0.1.20, não habilitado no Drupal; CLI
   standalone em `bin/aculta-deployer`.
+- [aculta_id_cpf](web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md)
+  — validação local de CPF e CNPJ (numérico e alfanumérico) e elementos de formulário.
+  Versão 0.1.0-dev.1, **RUNTIME STATUS: DEFERRED**. Ainda não está rastreado no Git.
 
 ## Arquitetura
 

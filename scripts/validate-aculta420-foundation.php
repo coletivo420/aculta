@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.8', 'Theme metadata marks the current version 0.6.0-dev.8.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.13', 'Theme metadata marks the current version 0.6.0-dev.13.');
 $forbiddenIntegrationModules = ['social_auth', 'social_auth_google', 'captcha', 'turnstile', 'key'];
 $themeInfoDependencies = array_map(
   static fn(string $dependency): string => str_contains($dependency, ':')
@@ -224,15 +224,24 @@ $expectedTemplates = [
   'block--system-branding-block.html.twig',
   // Página do produto da loja (0.6.0-dev.7): composição só com componentes SDC do tema.
   'commerce-product--produto-loja.html.twig',
+  'aculta-portal-account-terms-modal.html.twig',
+  'aculta-portal-photo-editor.html.twig',
+  'aculta-portal-shell.html.twig',
   'aculta-section.html.twig',
   'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
   'node--project--teaser.html.twig',
+  // Página pública LINKS (0.6.0-dev.11): presenter neutro e configuração do Portal.
+  'node--social-links.html.twig',
   'page.html.twig',
+  'portal-cart-status.html.twig',
+  'portal-payment-notice.html.twig',
+  'portal-search-trigger.html.twig',
   'views-view-unformatted--aculta-projects.html.twig',
   'views-view-unformatted--courses-catalog.html.twig',
   'views-view-vvjb.html.twig',
+  'views/views-view-table.html.twig',
 ];
 $actualTemplates = [];
 $templateRoot = $themeRoot . '/templates';
@@ -267,7 +276,10 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
     // SDC templates are compiled under their namespaced component id, e.g. aculta420:editorial-card.
     $componentName = basename($file->getFilename(), '.twig');
     $isComponent = preg_match('#/components/(content|patterns)/' . preg_quote($componentName, '#') . '/' . preg_quote($componentName, '#') . '\.twig$#', $file->getPathname()) === 1;
-    $sourceName = $isComponent ? 'aculta420:' . $componentName : $file->getFilename();
+    $themeRelativePath = str_replace($themeRoot . DIRECTORY_SEPARATOR, '', $file->getPathname());
+    // Drupal's Twig loader resolves regular theme templates through the theme
+    // namespace; the bare basename is not a registered loader key.
+    $sourceName = $isComponent ? 'aculta420:' . $componentName : '@aculta420/' . $themeRelativePath;
     $source = new \Twig\Source(file_get_contents($file->getPathname()), $sourceName, $file->getPathname());
     $twig->compile($twig->parse($twig->tokenize($source)));
   }

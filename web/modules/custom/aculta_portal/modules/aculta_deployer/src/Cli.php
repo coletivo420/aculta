@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.19';
+  public const VERSION = '0.1.20';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;

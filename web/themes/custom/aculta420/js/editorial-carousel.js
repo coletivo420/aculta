@@ -17,12 +17,12 @@
       once('aculta-editorial-ready', document.documentElement).forEach(() => {
         document.addEventListener('vvj:ready', (event) => {
           const carousel = event.detail?.source;
-          if (carousel?.matches('.view-home-editorial-highlights vvjb-carousel')) {
+          if (carousel?.matches(':is(.view-home-editorial-highlights, .view-aculta-social-projects) vvjb-carousel')) {
             pauseWhenFocused(carousel);
           }
         });
       });
-      once('aculta-editorial-focus', '.view-home-editorial-highlights vvjb-carousel', context).forEach((carousel) => {
+      once('aculta-editorial-focus', ':is(.view-home-editorial-highlights, .view-aculta-social-projects) vvjb-carousel', context).forEach((carousel) => {
         // VVJ 2.0 returns the browser's ViewTransition without observing ready.
         // Rapid navigation intentionally skips an older transition. Handle that
         // cancellation locally; all slide logic and animation remain native.
@@ -44,7 +44,7 @@
       });
       // The VVJB template hard-codes the region name in English. Translate it here
       // so the accessible name matches the site language; the label is in the locale.
-      once('aculta-editorial-label', '.view-home-editorial-highlights vvjb-carousel[aria-label="Carousel"]', context).forEach((carousel) => {
+      once('aculta-editorial-label', ':is(.view-home-editorial-highlights, .view-aculta-social-projects) vvjb-carousel[aria-label="Carousel"]', context).forEach((carousel) => {
         carousel.setAttribute('aria-label', Drupal.t('Carousel'));
       });
     },

@@ -175,6 +175,22 @@ uma escala maior nesta fase.
 Todos os componentes animados devem respeitar `prefers-reduced-motion`. A 0.2-A
 preserva as regras existentes e não faz o estado depender de transição.
 
+## Página de links sociais
+
+O pattern `aculta420:social-links-page` usa perfil centralizado e links
+empilhados no estilo Linktree para leitura e toque em telas móveis. Recebe os
+canais do formulário de configuração do Portal e uma View de projetos com os
+cards teaser já existentes, renderizada pelo VVJB do ACULTA.
+O Portal fornece os canais e invoca a View; o tema controla o layout. Os ícones
+Bootstrap (`instagram`, `youtube`, `facebook`) usam `currentColor` e tokens
+semânticos, ficando escuros no tema claro e claros no tema escuro. A logo vem
+do asset ACULTA já existente no próprio tema e recebe o token de filtro do shell.
+Nesse purpose, a página preserva a barra institucional multidomínio e um rodapé
+específico, omitindo o Domain Header e o rodapé padrão do site.
+O botão primário leva à raiz MAIN; botões adicionais configurados no Portal
+aparecem em seguida, e os canais sociais configurados permanecem no rodapé. O shell usa espaçamento vertical compacto para aproximar o conteúdo
+da barra institucional e do rodapé, sem remover a folga mínima de leitura.
+
 ## Primitives
 
 Primitive é uma categoria do design system, não sinônimo de SDC.

@@ -9,6 +9,33 @@
   implementação anterior, retirada por decisão de escopo.
 - Próximo passo: campos PF/PJ manuais no Portal antes de persistir documentos.
 
+## 0.3.0-dev.25 — Botões adicionais administráveis na página LINKS — 2026-10-12
+
+- A configuração de Redes sociais mantém “Visite nosso Site” fixo e permite adicionar/remover botões com texto e link.
+- Aceita URL HTTPS ou caminho interno seguro; pares incompletos e esquemas não HTTPS são recusados. Configuração continua em `aculta_portal.social_links`.
+- Formulário dinâmico usa Form API/AJAX e callbacks resolvidos pelo serviço `CallableResolver`.
+- Runtime: Form Builder renderizou o botão fixo e os campos; callbacks de inclusão/remoção mantiveram os dados restantes; URL `javascript:` rejeitada. Envio autenticado e salvamento por navegador pendentes.
+
+## 0.3.0-dev.24 — CTA principal da página LINKS — 2026-10-12
+
+- Troca o botão Instagram por “Visite nosso Site”, apontando à raiz do purpose MAIN via `DomainPurposeManager`; o host acompanha o ambiente.
+- Os perfis sociais configurados permanecem no rodapé dedicado.
+- Servidor de testes: HTTP 200, CTA e destino `https://aculta.toca.net.br/` conferidos; a rede social permanece no HTML do rodapé.
+
+## 0.3.0-dev.23 — Administração de redes sociais e carrossel VVJB em LINKS — 2026-10-12
+
+- Administração > Configuração > ACULTA Portal > Redes sociais configura Instagram, YouTube e Facebook. URL HTTPS e host oficial são validados; campo vazio oculta o canal.
+- `SocialLinksPagePresenter` lê a configuração, executa o display VVJB da View `aculta_projects` e entrega render arrays. A View mantém acesso/cache e usa o teaser existente.
+- Teasers na página LINKS apontam ao purpose MAIN, com alias do projeto e metadados de cache por host e idioma.
+- Servidor de testes: formulário configurável, página HTTP 200 e estrutura mobile inspecionada visualmente.
+
+## 0.3.0-dev.22 — Purpose LINKS para redes sociais — 2026-10-12
+
+- Adiciona o purpose `links` ao contrato de domínio e resolve a raiz pública `/` para a página Drupal interna `/redes-sociais`.
+- Apresenta os canais cadastrados no campo Core Link e referências acessíveis aos projetos publicados, com URLs do purpose MAIN resolvidas pelo `DomainPurposeManager`.
+- Homelab: HTTP 200; `X-Robots-Tag: noindex, nofollow, noarchive`; estrutura verificada com barra institucional, sem cabeçalho/rodapé comuns, canal Instagram e quatro projetos.
+- A configuração e o conteúdo do teste foram provisionados por Drupal API. O alias DNS de produção não foi criado.
+
 ## 0.3.0-dev.21 — Outros Dados (CPF ou CNPJ) em Meus dados — 2026-10-12
 
 Classificação: MINOR, nova aba com gravação de dado pessoal sensível.

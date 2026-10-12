@@ -1,0 +1,10 @@
+uuid: 273726dc-81e9-47ed-bd26-55fded8dedf4
+langcode: pt-br
+status: true
+dependencies: {  }
+id: links_aculta_toca_net_br
+domain_id: links_aculta_org
+pattern: links.aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 9

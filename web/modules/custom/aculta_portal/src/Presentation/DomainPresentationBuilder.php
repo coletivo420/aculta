@@ -52,6 +52,10 @@ final class DomainPresentationBuilder {
       'title' => 'Fórum',
       'short_title' => 'Fórum',
     ],
+    'links' => [
+      'title' => 'Redes sociais da ACULTA',
+      'short_title' => 'Redes sociais',
+    ],
   ];
 
   public function __construct(

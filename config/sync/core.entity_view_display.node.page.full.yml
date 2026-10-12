@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.page.field_hero_primary
     - field.field.node.page.field_hero_secondary
     - field.field.node.page.field_hero_slogan
+    - field.field.node.page.field_social_links
     - field.field.node.page.field_hero_title
     - field.field.node.page.field_meta_tags
     - node.type.page
@@ -35,6 +36,7 @@ content:
     weight: 100
     region: content
 hidden:
+  field_social_links: true
   field_domain_source: true
   field_hero_eyebrow: true
   field_hero_lead: true

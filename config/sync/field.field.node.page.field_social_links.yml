@@ -1,0 +1,23 @@
+uuid: 9e5b8c55-ef34-4f90-b0af-124d6c0cb9b0
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_social_links
+    - node.type.page
+  module:
+    - link
+id: node.page.field_social_links
+field_name: field_social_links
+entity_type: node
+bundle: page
+label: 'Links oficiais das redes sociais'
+description: 'Adicione cada canal oficial com o nome que será exibido e sua URL completa. Não cadastre perfis sem confirmação institucional.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 16
+field_type: link

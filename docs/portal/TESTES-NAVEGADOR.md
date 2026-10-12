@@ -150,3 +150,21 @@ funcionando sem o tema (fallback).
   acima é de marcação. Falta a conferência visual humana na Minha conta.
 - Efeito colateral dos testes: o carrinho do teste.comum recebeu itens de teste (pedidos de rascunho 5, 7 e 8). Limpar
   depois dos testes.
+
+## M. Página LINKS — inspeção visual mobile (2026-10-12)
+
+- Atualização posterior: CTA “Visite nosso Site” aponta para a raiz MAIN; Instagram segue no rodapé. O ajuste de
+  espaçamento vertical reduz as margens externas e o preenchimento do pattern. HTTP 200 e o destino foram conferidos;
+  a captura visual após compactar o espaçamento ficou pendente.
+
+- **Host:** `https://links.aculta.toca.net.br/`, acesso anônimo. Navegador Chromium headless local com viewport de
+  390 × 900 CSS px; não houve sessão com o responsável nem uso de conta.
+- **Claro:** perfil com logo existente do tema, canal Instagram, card de projeto, controles/dots do VVJB, barra
+  institucional e rodapé próprio visíveis; cabeçalho e rodapé padrão ausentes.
+- **Escuro:** mesmo DOM e geometria. O logo e o ícone Instagram ficaram claros; superfícies, texto e controles
+  acompanharam os tokens escuros do ACULTA420.
+- **Projetos:** a View existente apresentou quatro cards `project` publicados. O carrossel mostrou um card por vez,
+  com controles anterior/próximo, pausa e quatro indicadores.
+- **Limites:** inspeção de render visual; não incluiu autenticação administrativa, envio do formulário, interação
+  por toque físico ou teclado no navegador. A rota administrativa foi verificada por Drupal API/Form Builder e
+  responde 403 a acesso anônimo.

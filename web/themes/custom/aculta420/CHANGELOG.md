@@ -1,3 +1,38 @@
+## 0.6.0-dev.13 — Renderização de botões configuráveis em LINKS — 2026-10-12
+
+Classificação: PATCH (apresenta uma lista de botões já normalizada pelo Portal).
+
+- Renderiza os botões adicionais em sequência vertical, com a mesma apresentação do botão principal.
+- Foundation, SDC e markup do Portal: PASS. Ainda sem botões extras salvos no Runtime para inspeção visual destes novos itens.
+
+## 0.6.0-dev.12 — CTA para o site principal em LINKS — 2026-10-12
+
+Classificação: PATCH (texto e destino do link primário existente).
+
+- A página LINKS apresenta “Visite nosso Site” no botão principal; canais sociais continuam no rodapé.
+- Reduz o espaçamento vertical externo e interno do pattern, mantendo uma folga mínima entre barra institucional, conteúdo e rodapé.
+- Oculta visualmente o título “Redes sociais da ACULTA”, preservando o H1 acessível para tecnologias assistivas.
+- Runtime: CSS e HTML atualizados; inspeção visual desta compactação fica pendente.
+
+## 0.6.0-dev.11 — Carrossel de projetos e rodapé LINKS — 2026-10-12
+
+Classificação: MINOR (novo uso do VVJB e rodapé dedicado ao purpose LINKS).
+
+- Reutiliza o display VVJB da View `aculta_projects`, com os cards `node--project--teaser` existentes, navegação por toque/teclado e um card em telas móveis.
+- Estende o CSS e o comportamento de foco já existentes no carrossel da home; não cria engine JavaScript própria.
+- Usa ícones Bootstrap monocromáticos via `currentColor`, tokens do ACULTA420, e adiciona rodapé específico da página.
+- Verificado no servidor de testes por Chromium em 390 px, nos temas claro e escuro; cards, controles VVJB, ícones, logos, barra institucional e rodapé próprios presentes; cabeçalho e rodapé comuns ausentes.
+- Foundation gate ainda acusa durações literais preexistentes em `css/components/portal-account.css`; este trabalho não altera esse CSS.
+
+## 0.6.0-dev.10 — Página mobile de links sociais — 2026-10-12
+
+Classificação: MINOR (novo pattern experimental `social-links-page`).
+
+- A página LINKS usa o asset de logo ACULTA existente no tema e links verticais no estilo Linktree para telas móveis.
+- O shell preserva somente a barra institucional multidomínio; omite Domain Header, utilitários e rodapé comuns.
+- O template recebe os links cadastrados no Drupal e referências aos projetos publicados preparadas pelo Portal.
+- Servidor de testes: estrutura HTTP verificada; inspeção visual em navegador permanece pendente.
+
 ## 0.6.0-dev.9 — Busca: teclado, popup e prévia — 2026-10-11
 
 Classificação: PATCH (correção de acessibilidade e comportamento; sem componente novo).

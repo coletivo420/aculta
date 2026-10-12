@@ -12,6 +12,10 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
+| 0.6.0-dev.13 | Botões adicionais da página LINKS recebidos do Portal e exibidos em sequência vertical | RUNTIME STATUS: validação pendente | Layout reutiliza a apresentação do botão fixo |
+| 0.6.0-dev.12 | CTA “Visite nosso Site” na página LINKS, com destino à raiz MAIN resolvido pelo Portal | RUNTIME STATUS: pendente nesta alteração | Os canais sociais configurados permanecem no rodapé |
+| 0.6.0-dev.11 | Página LINKS com canais administráveis, cards de projeto em carrossel VVJB e rodapé dedicado | RUNTIME STATUS: HTTP e visual mobile (claro/escuro) PASS; Foundation gate bloqueado por durações literais preexistentes em `portal-account.css` | Reusa View `aculta_projects`, SDC `carousel` e ícones Bootstrap `currentColor` |
+| 0.6.0-dev.10 | Pattern mobile de links sociais, barra institucional e referências aos projetos publicados | RUNTIME STATUS: estrutura HTTP verificada no servidor de testes; inspeção visual pendente | Instagram institucional cadastrado; canais adicionais aguardam confirmação |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
 | 0.6.0-dev.7 | página do produto da loja em SDC: galeria em carrossel, compra com preço, detalhes e abas (layout da loja original) | marcada no código; gates PASS; captura de tela DEFERRED |
 | 0.6.0-dev.6 | marca da barra institucional: logo ACULTA no lugar do nome, 78×26 (1x) e 156×52 (2x) em WebP; nome completo só no `alt` | marcada no código; validada visualmente (captura de tela) |
