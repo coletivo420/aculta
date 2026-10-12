@@ -73,3 +73,12 @@
 - **Alteração no servidor de testes:** e-mail do usuário `teste.comum` e do pedido 5 trocados para `teste.comum@testuser.com`. A troca pelo fluxo do Drupal exige confirmação na caixa de entrada, por isso foi aplicada direto na tabela `users_field_data`, só no servidor de testes. Confirmação de conta e aceite dos termos permanecem.
 - **Limitações (contrib, não alteradas):** o módulo `commerce_mercado_pago` envia `binary_mode` fixo em true e não envia CPF no pagador. O envio de `excluded_payment_methods` vazio também é decidido pelo módulo. Mudar qualquer um desses pontos exige alteração no módulo ou um ajuste no Portal, o que ainda não foi decidido.
 - **Pendente:** se "Pagar" continuar desabilitado com o novo e-mail, o caminho seguinte é avaliar CPF no pagador (módulo) e binary_mode.
+
+## Endereço único (decisão do responsável, 2026-10-12)
+
+- **Decisão:** o site tem um único endereço, chamado "Endereço". Não há endereço de cobrança nem de envio separados. O pagamento é feito no Mercado Pago.
+- **Como fica no código:** o pane `aculta_billing_address` (rótulo "Endereço") usa o perfil `customer` do cliente quando o pedido ainda não tem um. Assim o checkout e Meus dados > Endereço editam o mesmo registro. O Commerce exibe "Billing information" como "Endereço" (tradução em `aculta_ui.pt-br.po`).
+- **Dados existentes:** pedidos já criados (ex.: 5 e 6) mantêm o perfil que já tinham. Nenhuma migração foi feita.
+- **Mercado Pago:** o módulo contrib usa o perfil de cobrança do pedido para o payer (nome, e-mail, endereço). Como o pedido aponta para o endereço do cliente, esse dado continua chegando.
+- **Pendente:** o tipo de perfil `participante` tem um campo de endereço (`field_address`) que as telas atuais não usam. Antes de remover, conferir se há dados nele. Shipping não está instalado.
+

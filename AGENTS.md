@@ -492,6 +492,17 @@ O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 - Slug publicado é estável. Mudança de slug troca o caminho, e o caminho antigo responde 404. Esse é o comportamento padrão do projeto para endereços antigos; não se cria redirecionamento 301 de slug.
 - Diretiva detalhada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Gate: `php scripts/validate-public-slugs.php`.
 
+## Endereço único (regra permanente)
+
+O site tem **um único endereço**, chamado "Endereço". Não há endereço de cobrança nem de envio separados, porque o
+pagamento é feito no Mercado Pago. O endereço do cliente é o mesmo em Meus dados > Endereço, no checkout, na revisão,
+na conclusão, no detalhe do pedido e nos recibos. Não criar perfil de cobrança ou de envio novo.
+
+- Código: `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/BillingAddressPane.php` (pane "Endereço"
+  do checkout; usa o perfil `customer` do cliente quando o pedido ainda não tem um).
+- Mercado Pago recebe o payer a partir desse endereço (módulo contrib; gateway com `collect_billing_information: false`).
+- Detalhes e motivo: `docs/portal/CHECKOUT-BILLING.md`.
+
 ## Endereços dependentes de ambiente (regra permanente)
 
 Todo endereço que muda entre ambientes (domínio, subdomínio, URL absoluta, redirect entre hosts, `back_url` e webhook

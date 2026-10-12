@@ -65,3 +65,6 @@ msgstr "%label foi salvo."
 
 msgid "The profile has been saved."
 msgstr "O perfil foi salvo."
+
+msgid "Billing information"
+msgstr "Endereço"

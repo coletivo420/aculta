@@ -15,7 +15,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Endereço de cobrança do pedido, com autocomplete por CEP.
+ * Endereço do pedido (um único endereço do site, usado também no Mercado Pago), com autocomplete por CEP.
  *
  * Substitui o pane billing_information, removido pelo Commerce Payment (hook de alteração de panes). O Mercado
  * Pago exige o perfil de cobrança com endereço no pedido (RedirectCheckoutForm). Usa o mesmo formulário inline de
@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 #[CommerceCheckoutPane(
   id: 'aculta_billing_address',
-  label: new TranslatableMarkup('Endereço de cobrança'),
+  label: new TranslatableMarkup('Endereço'),
   default_step: 'order_information',
   wrapper_element: 'fieldset',
 )]
@@ -56,10 +56,15 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
   /** {@inheritdoc} */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
     $profile = $this->order->getBillingProfile();
+    if (!$profile && (int) $this->order->getCustomerId() > 0) {
+      // Um único endereço: o pedido usa o endereço do cliente (o mesmo de Meus dados > Endereço), não um novo.
+      $account = $this->entityTypeManager->getStorage('user')->load($this->order->getCustomerId());
+      $profile = $account ? $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'customer') : NULL;
+    }
     if (!$profile) {
       $profile = $this->entityTypeManager->getStorage('profile')->create([
         'type' => 'customer',
-        'uid' => 0,
+        'uid' => (int) $this->order->getCustomerId(),
       ]);
     }
     // O formulário mostra só a rua. A cópia é usada só no formulário; o perfil original (resumo) não muda.
