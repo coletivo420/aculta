@@ -6,7 +6,7 @@
 
 - [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) — padrão Drupal 11+ e regras de código.
 - [GUARDRAILS.md](GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki, Conta e AJAX.
-- [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md) — migração do envio de e-mail para Mailer Plus (M0 decisão e plano; M1 e M2 pendentes).
+- [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md) — envio de e-mail pelo Mailer Plus (M0 a M2 concluídas; validado no runtime de teste).
 - [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) — fonte de verdade de cada dado.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
 - [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.
@@ -33,6 +33,11 @@
 - [COMPONENT-DESIGN-SYSTEM.md](COMPONENT-DESIGN-SYSTEM.md) — componentes e Bootstrap.
 - [AJAX.md](AJAX.md) — política de AJAX e interatividade.
 - [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md) — fronteira entre `aculta_portal` (função) e ACULTA420 (design); contrato `data-portal-ui`.
+
+## Estado e pendências
+
+- [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md) — o que funciona, o que está DEFERRED, em implementação, planejado e faltando (Portal, submódulos e tema), com resultados dos gates.
+- [ROADMAP.md](ROADMAP.md) — fases de saneamento e de produto.
 
 ## Testes e pendências
 
