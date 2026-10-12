@@ -55,9 +55,10 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
 
   /** {@inheritdoc} */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
-    $profile = $this->order->getBillingProfile();
-    if (!$profile && (int) $this->order->getCustomerId() > 0) {
-      // Um único endereço: o pedido usa o endereço do cliente (o mesmo de Meus dados > Endereço), não um novo.
+    // Um único endereço: sempre o perfil customer do cliente (o de Meus dados > Endereço). Perfis copiados de
+    // pedidos antigos não são usados aqui.
+    $profile = NULL;
+    if ((int) $this->order->getCustomerId() > 0) {
       $account = $this->entityTypeManager->getStorage('user')->load($this->order->getCustomerId());
       $profile = $account ? $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'customer') : NULL;
     }
@@ -80,7 +81,6 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $inline_form = $this->inlineFormManager->createInstance('customer_profile', [
       'profile_scope' => 'billing',
       'available_countries' => $this->order->getStore()->getBillingCountries(),
-      'address_book_uid' => $this->order->getCustomerId(),
       // O perfil só entra na libreta de endereços quando o pedido é concluído.
       'copy_on_save' => FALSE,
     ], $editable);

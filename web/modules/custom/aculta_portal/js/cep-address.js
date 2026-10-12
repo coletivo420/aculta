@@ -66,7 +66,7 @@
   async function lookup(cep) {
     const base = drupalSettings?.path?.baseUrl || '/';
     const prefix = drupalSettings?.path?.pathPrefix || '';
-    const response = await fetch(`${base}${prefix}cep-autocomplete/viacep/${cep}`, {
+    const response = await fetch(`${base}${prefix}cep-autocomplete/viacep/${cep}?v=2`, {
       credentials: 'same-origin',
       headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
     });

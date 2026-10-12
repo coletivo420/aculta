@@ -32,10 +32,15 @@ final class AccountAjaxMainContentRenderer implements MainContentRendererInterfa
       $title = (string) $this->titleResolver->getTitle($request, $route);
       $items = [];
       $links = $this->breadcrumbManager->build($route_match)->getLinks();
+      // Como na página direta: o título da página entra como último nível (quando não repete o último link).
+      $lastText = $links !== [] ? (string) end($links)->getText() : '';
+      if ($title !== '' && $title !== $lastText) {
+        $links[] = new \Drupal\Core\Link($title, new \Drupal\Core\Url('<nolink>'));
+      }
       $last = count($links) - 1;
       foreach ($links as $index => $link) {
         $text = Html::escape((string) $link->getText());
-        if ($index === $last || !$link->getUrl()) {
+        if ($index === $last || !$link->getUrl() || $link->getUrl()->isExternal() || $link->getUrl()->getRouteName() === '<nolink>') {
           $items[] = '<li class="breadcrumb-item active" aria-current="page">' . $text . '</li>';
         }
         else {
