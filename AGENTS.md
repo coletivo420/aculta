@@ -626,18 +626,21 @@ e não na `main`). Esta regra existe para que nenhum trabalho dependa de estado 
 
 - **Commit antes de encerrar.** Toda alteração concluída vira commit no próprio branch
   antes do fim da sessão. Não deixar trabalho só no working tree.
-- **Um branch por mudança lógica**, criado a partir da `origin/main` (ou do branch base
-  declarado no PR). Não reutilizar branch antigo com commits de outra entrega.
-- **Publicar o branch** com `git push -u origin <branch>` após o commit. Não há commit
+- **Um branch por tarefa, do início ao fim.** O agente trabalha sempre no mesmo branch, criado
+  a partir da `origin/main` (ou do branch base declarado no PR), e faz um commit atômico por
+  alteração lógica dentro dele. Não abrir branch novo para cada passo, nem reaproveitar branch
+  de outra entrega.
+- **Publicar o branch** com `git push -u origin <branch>` após cada commit. Não há commit
   "pendente" depois que a sessão termina.
+- **Merge só no final.** O PR é mesclado uma única vez, quando a tarefa estiver concluída e o
+  responsável autorizar. Não mesclar entregas parciais nem PRs intermediários.
 - **Stash não é entrega.** Não guardar trabalho em `git stash`. Stash temporário só dentro
   de um comando, e nunca como destino final.
 - **Worktree temporário** é criado para a tarefa e removido ao fim dela.
 - **Verificar a base do PR antes de mesclar.** `gh pr view <n> --json baseRefName` deve
   apontar para `main` (ou para o branch base declarado). Trocar a base antes da fusão, e
   confirmar depois com `git merge-base --is-ancestor <commit> origin/main`.
-- **Mesclar só com autorização explícita** do responsável, PR a PR. Commit e push
-  não autorizam fusão.
+- **Mesclar só com autorização explícita** do responsável. Commit e push não autorizam fusão.
 - **Não commitar** credenciais, `settings.local.php`, backups locais, `.claude/settings.local.json`
   nem conteúdo de `secrets/`. Verificar o conteúdo staged antes do commit.
 - **Não reescrever histórico** de branch compartilhado (sem force push).
