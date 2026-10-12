@@ -9,11 +9,13 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Exercises plugin discovery and real Form API service callback resolution.
  */
 #[Group('aculta_id_cpf')]
+#[RunTestsInSeparateProcesses]
 final class DocumentElementKernelTest extends KernelTestBase {
 
   // Kernel module lists isolate the element layer; this does not homologate

@@ -51,20 +51,55 @@ O relatório P10-R citado por AGENTS.md foi consultado no commit histórico
 
 ## Evidência de execução
 
-Validação local em container de desenvolvimento, não no servidor de testes
-Homelab. PHP CLI 8.3.6; PHPUnit 11.5.57; Node v24.19.0.
+Os resultados anteriores foram obtidos em container com PHP CLI 8.3.6 e Node
+24.19.0; continuam como evidência histórica, não como resultado desta rodada.
+Nesta rodada (2026-10-12), o checkout de desenvolvimento local que simula o
+servidor de testes usa PHP CLI 8.4.26, PHP-FPM 8.4.26 ativo, Apache ativo,
+MariaDB 11.8.6, Composer 2.8.8, Drupal Core 11.4.8, PHPUnit 11.5.57 e Node
+22.23.3. O uso local de `127.0.0.1` não comprova execução no host remoto
+`*.aculta.toca.net.br`.
 
-| Verificação | Resultado |
+| Verificação | Resultado nesta rodada |
 | --- | --- |
+| Composer validate | PASS: composer.json/lock válidos; avisos de constraints exatas preexistentes |
+| Composer audit --locked | PASS: nenhum advisory encontrado |
+| Dependências | PASS: Core 11.4.8 e PHPUnit 11.5.57 instalados; lock preservado, sem `composer update` |
+| Drush status | PASS: Drupal 11.4.8, PHP 8.4.26, banco conectado |
 | Runner PHP independente do Drupal | PASS: 248 verificações |
 | PHPUnit de domínio | PASS: 34 testes, 63 asserções |
 | Máscaras JavaScript em harness Node | PASS: 8 testes |
-| Lint PHP | PASS: 13 arquivos |
 | Gate Drupal 11+ do Portal | PASS: 583 verificações |
-| git diff --check | PASS |
-| Kernel / descoberta de plugins / Form API completo | DEFERRED |
-| Composer validate/audit, Drush cr e status de config/update | DEFERRED: dependências/runtime ausentes |
-| Homelab, MariaDB, PHP 8.5 e navegador real | DEFERRED |
+| Submódulo no Runtime local | PASS: habilitado em `aculta_runtime`; cache reconstruído; nenhum objeto de configuração foi atualizado |
+| Módulos de login/CAPTCHA/Social Auth | PASS: `login_emailusername`, `captcha`, `social_auth`, `social_auth_google` e `aculta_portal` permanecem habilitados; a PR não altera esses fluxos |
+| Gate CAPTCHA / Conta | PASS: `validate-shop-captcha.php` 15 checks; `validate-aculta-portal-conta-root.php` 1233 checks |
+| Gate Portal commerce/security | DEFERRED/FAIL: executado via Drush, parou na asserção existente `Fake runtime credentials were not persisted` (DT-O11); nenhum valor foi exposto ou alterado |
+| Kernel (descoberta, callback DI, normalização, opcional/inválido) | DEFERRED: o usuário MariaDB do Runtime só tem grants em `aculta_runtime`; não há privilégio para criar/usar banco de teste separado. O teste foi tentado e parou antes dos casos por ausência de `SIMPLETEST_DB` |
+| Formulário temporário e navegador com/sem JS, AJAX, colagem e seleção | DEFERRED: ainda sem execução em navegador real; nenhum formulário da Conta recebeu campos de documento |
+| Homelab remoto (`*.aculta.toca.net.br`) | DEFERRED: a execução disponível foi local em `127.0.0.1`, não no servidor de testes |
+| `git diff --check` | PASS |
+
+O teste Kernel sem banco apontou a depreciação Drupal 11.3 sobre testes sem
+`#[RunTestsInSeparateProcesses]`; a anotação foi adicionada ao teste. Os testes
+Kernel precisam ser repetidos no MariaDB separado para validar o ajuste e os
+comportamentos. Nenhuma informação/documento pessoal foi submetida ou gravada.
+
+Comandos da rodada, executados no checkout de desenvolvimento local:
+
+```sh
+composer validate --no-check-publish
+composer audit --locked --no-interaction
+php vendor/drush/drush/drush.php en aculta_id_cpf -y
+php vendor/drush/drush/drush.php cr
+php web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
+vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Unit
+node --test web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/mask.test.mjs
+php scripts/validate-aculta-portal-drupal11.php
+vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel
+```
+
+O comando Kernel acima foi tentado sem `SIMPLETEST_DB` e não iniciou os casos.
+O gate Portal foi executado também na árvore do PR antes da integração local;
+o gate de commerce/security requer revisão separada da pendência DT-O11.
 
 Os testes Node exercitam handlers reais em harness, mas não comprovam o
 comportamento de todos os navegadores. Os testes de Kernel foram adicionados
@@ -78,8 +113,8 @@ adicionado e nenhum segredo foi utilizado.
 
 ## Próximas entregas
 
-1. Homologar a primeira entrega com dependências instaladas, PHP 8.5, Kernel,
-   cache rebuild e smoke do Portal no Homelab.
+1. Concluir a homologação Kernel e interativa no servidor de testes, PHP 8.4,
+   com banco MariaDB de teste separado e formulário temporário sem persistência.
 2. Implementar campos PF/PJ e armazenamento privado, autorização, reautenticação
    e índices de unicidade transacionais. Testar concorrência e rollback em
    MariaDB de teste antes de coletar documentos.

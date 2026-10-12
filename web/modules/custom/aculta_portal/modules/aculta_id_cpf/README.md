@@ -3,7 +3,8 @@
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+**.
 Primeira entrega: **0.1.0-dev.1**, núcleo de domínio e elementos Form API.
 
-**RUNTIME STATUS: DEFERRED** — não homologado no Homelab, MariaDB ou PHP 8.5.
+**RUNTIME STATUS: DEFERRED** — falta homologação interativa no servidor de testes
+e execução Kernel em banco MariaDB separado. A rodada local usa PHP 8.4.
 Não é uma entrega completa de cadastro ou autenticação por CPF.
 
 ## Entregue
@@ -79,8 +80,10 @@ vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal
 ```
 
 Kernel isola elementos/callbacks, sem homologar a cadeia inteira de dependências
-do Portal. Usar banco de teste separado, nunca banco de produção. Evidência da
-entrega e próximos passos em [ACULTA-ID-CPF.md](../../../../../../docs/modules/ACULTA-ID-CPF.md).
+do Portal. Usar banco de teste MariaDB separado, nunca banco de produção. O
+Runtime atual só concede acesso a `aculta_runtime`, então a execução Kernel
+permanece pendente até o provisionamento do banco de teste. Evidência da entrega
+e próximos passos em [ACULTA-ID-CPF.md](../../../../../../docs/modules/ACULTA-ID-CPF.md).
 
 ## Limites e próxima entrega
 
