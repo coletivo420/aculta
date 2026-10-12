@@ -1,0 +1,11 @@
+uuid: e8fe9b46-ca43-4125-9d80-9904d832a7d3
+langcode: pt-br
+status: true
+dependencies: {  }
+id: camiseta_tamanho
+label: 'Camiseta (tamanho)'
+traits:
+  - purchasable_entity_shippable
+locked: false
+orderItemType: default
+generateTitle: true

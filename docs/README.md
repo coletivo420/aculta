@@ -30,6 +30,9 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [portal/DRUPAL-11-STANDARDS.md](portal/DRUPAL-11-STANDARDS.md) — padrão obrigatório Drupal 11+ para código.
 - [portal/GUARDRAILS.md](portal/GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki e Conta.
 - [portal/ROADMAP.md](portal/ROADMAP.md) — saneamento e, depois, features de produto.
+- [portal/CHECKOUT-BILLING.md](portal/CHECKOUT-BILLING.md) — endereço único, envio (Commerce Shipping) e pagamento pelo Mercado Pago.
+- [portal/SENHA-CONTA-OAUTH.md](portal/SENHA-CONTA-OAUTH.md) — primeira senha em conta criada com Google.
+- [portal/PENDENCIAS-PROXIMA-RODADA.md](portal/PENDENCIAS-PROXIMA-RODADA.md) — pendências abertas.
 
 ## Tema
 

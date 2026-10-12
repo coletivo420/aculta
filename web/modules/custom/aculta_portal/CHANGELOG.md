@@ -23,6 +23,15 @@ Portal permanece 0.3.0-dev.16; nova marcação/release do módulo pai não decla
 - RUNTIME STATUS: DEFERRED para Homelab remoto; sem release ou tag.
 - Evidência: docs/modules/ACULTA-ID-CPF.md; base 368ec263189d670d459e385b068d7bb188af95b3.
 
+## 0.3.0-dev.20 — Senha em conta Google, envio no checkout e aba Segurança — 2026-10-12
+
+- Minha conta > Segurança > Senha: contas criadas com Google, sem senha escolhida, ganham o formulário "Criar senha" (`AccountPasswordCreateForm`), sem pedir a senha atual. Conta com senha escolhida mantém "Alterar senha". Abas E-mail e Senha têm URL própria (`docs/portal/SENHA-CONTA-OAUTH.md`).
+- Foco no primeiro campo com erro em formulários da Minha conta (AJAX); o formulário de criar senha recarrega a aba depois de gravar.
+- Alinhamento do S/N no endereço (CSS do componente).
+- Checkout: pane "Envio" (`AcultaShippingInformation`, subclasse do pane do Commerce Shipping). Não tem formulário de endereço e reaproveita a cópia de cobrança (`BillingAddressPane::billingCopy()`), ou seja, o endereço único do cliente.
+- Dependências: `commerce_shipping` e `physical`, habilitados no runtime de teste e em `config/sync/core.extension.yml`. Variação `camiseta_tamanho` com trait de envio; método "Envio" com taxa R$ 0,00 (valor a definir), criado no runtime. Loja e método são conteúdo de banco, não entram em `config/sync`.
+- Validação: gates `validate-aculta-portal-drupal11`, `validate-public-slugs` e `validate-environment-addresses` passam. Verificação de navegador pendente: foco no primeiro erro, S/N, criação de senha, frete em pedido novo com camiseta (`docs/portal/PENDENCIAS-PROXIMA-RODADA.md`).
+
 ## 0.3.0-dev.16 — Aceite dos termos em popup persistente; contenção do Mercado Pago — 2026-10-11
 - Meus Dados > Endereço: campo **Número** logo abaixo da rua. O número é separado do logradouro ao abrir e juntado ao gravar ("Rua, número"), mesmo formato do endereço de cobrança do checkout. Implementado pelo campo `address_extra[street_number]` (`PortalHooks`, rota `/dados/endereco`) e pelo entity builder `buildStreetNumber` (`PortalFormCallbacks`). Verificado no servidor de testes: o perfil guarda "Avenida Paulista, 1000" e o formulário reabre separado. Os dois perfis (Meus Dados e o do pedido) continuam separados, com o mesmo formato.
 

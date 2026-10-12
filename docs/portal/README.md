@@ -21,12 +21,23 @@
 - [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md) — URLs e slugs em português.
 - [TURNSTILE.md](TURNSTILE.md) — anti-bot: pontos de CAPTCHA, chaves de teste e produção, caixa de ativação.
 - [ACCOUNT-MENU.md](ACCOUNT-MENU.md) — menu da Minha conta: lista no desktop e sanfona no celular.
+- [CHECKOUT-BILLING.md](CHECKOUT-BILLING.md) — endereço único (cobrança, envio e Mercado Pago), meios de pagamento e campos do endereço.
+- [SENHA-CONTA-OAUTH.md](SENHA-CONTA-OAUTH.md) — criação da primeira senha em conta criada com Google (Social Auth).
+- [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md) — confirmação de e-mail: quando a conta fica bloqueada e como é liberada.
+- [REDIRECTS.md](REDIRECTS.md) — redirecionamentos mantidos pelo Portal (rotas antigas e slugs).
+- [SEARCH.md](SEARCH.md) — busca pública e do painel por purpose.
 
 ## Contratos
 
 - [DOMAIN-PRESENTATION-CONTRACT.md](DOMAIN-PRESENTATION-CONTRACT.md) — contrato Portal → tema.
 - [COMPONENT-DESIGN-SYSTEM.md](COMPONENT-DESIGN-SYSTEM.md) — componentes e Bootstrap.
 - [AJAX.md](AJAX.md) — política de AJAX e interatividade.
+- [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md) — fronteira entre `aculta_portal` (função) e ACULTA420 (design); contrato `data-portal-ui`.
+
+## Testes e pendências
+
+- [TESTES-NAVEGADOR.md](TESTES-NAVEGADOR.md) — rodadas de teste no navegador com o responsável: hosts, contas e resultados.
+- [PENDENCIAS-PROXIMA-RODADA.md](PENDENCIAS-PROXIMA-RODADA.md) — pendências abertas do checkout, pagamento e Minha conta.
 
 ## Roadmap
 

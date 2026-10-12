@@ -146,9 +146,9 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
 
   /**
    * Endereço de cobrança do pedido. Rascunho: cópia atualizada a partir do perfil do cliente. Pedido concluído: o
-   * perfil gravado no fechamento.
+   * perfil gravado no fechamento. Público para o pane de envio usar o mesmo endereço (ver AcultaShippingInformation).
    */
-  private function billingCopy(): ?ProfileInterface {
+  public function billingCopy(): ?ProfileInterface {
     if ($this->order->getState()->getId() !== 'draft') {
       return $this->order->getBillingProfile();
     }

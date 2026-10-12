@@ -12,8 +12,11 @@ O Portal integra a experiência de:
 
 - Conta/User;
 - Profile/Address/CEP;
-- Social Auth;
+- Social Auth, incluindo a criação da primeira senha em conta criada com Google
+  (`docs/portal/SENHA-CONTA-OAUTH.md`);
 - apoio/Commerce;
+- checkout com endereço único, pagamento pelo Mercado Pago e envio pelo Commerce Shipping
+  (pane "Envio", método de frete fixo; ver `docs/portal/CHECKOUT-BILLING.md`);
 - cursos/LMS/Group;
 - Wiki420;
 - Fórum e comentários, quando a versão correspondente for implementada;
@@ -51,6 +54,15 @@ fontes de verdade.
 - segredos ficam fora de Configuration Sync e Git;
 - AJAX usa preferencialmente APIs Drupal;
 - toda feature identifica fonte de verdade, access, cache, Domain e testes.
+- endereço único: o cliente tem um só endereço (Meus dados > Endereço). Checkout, pagamento, envio, recibo e pedido usam
+  esse mesmo endereço. Não criar perfil de cobrança ou de envio separado. O pane "Envio" não tem formulário de endereço
+  próprio (`AcultaShippingInformation`). Número/S/N e Bairro existem só no pane "Endereço" (`BillingAddressPane`).
+- pagamento: todo pagamento é feito no Mercado Pago. A conta não guarda nem exibe meios de pagamento salvos nem histórico
+  de pagamentos. `/pagamentos` redireciona para `/pedidos`.
+- segurança da conta: a aba Senha tem dois formulários. Conta com senha escolhida pede a senha atual. Conta criada pelo
+  Social Auth, sem senha escolhida, mostra "Criar senha" (`AccountPasswordCreateForm`), sem senha atual.
+- Minha conta: formulários salvam por AJAX pelo framework do Drupal (`#ajax`, `aculta_portal.form_callbacks`), exceto o
+  formulário de criar senha, que recarrega a aba depois de gravar.
 
 ### Breadcrumb público
 
@@ -69,6 +81,16 @@ php scripts/validate-aculta-portal-drupal11.php
 Consultar também [docs/portal](../../../../docs/portal/README.md), [Roadmap do Portal](../../../../docs/portal/ROADMAP.md) e [dívidas](../../../../docs/operations/DEBT-REGISTER.md).
 
 O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime migráveis estão em `src/Hook/` e o módulo não mantém mais um `aculta_portal.module` vazio. Este README serve como entrada rápida para quem está no diretório do módulo.
+
+## Fluxos documentados
+
+| Assunto | Documento |
+| --- | --- |
+| Endereço único, cobrança, envio e Mercado Pago | [docs/portal/CHECKOUT-BILLING.md](../../../../docs/portal/CHECKOUT-BILLING.md) |
+| Criar a primeira senha em conta criada com Google | [docs/portal/SENHA-CONTA-OAUTH.md](../../../../docs/portal/SENHA-CONTA-OAUTH.md) |
+| Confirmação de e-mail | [docs/portal/EMAIL-CONFIRMATION-POLICY.md](../../../../docs/portal/EMAIL-CONFIRMATION-POLICY.md) |
+| Pendências abertas | [docs/portal/PENDENCIAS-PROXIMA-RODADA.md](../../../../docs/portal/PENDENCIAS-PROXIMA-RODADA.md) |
+| Dependências do módulo | `aculta_portal.info.yml`: `commerce_shipping` e `physical` (composer: `drupal/commerce_shipping` 3.0.5, `drupal/physical` 1.5.0) |
 
 ## Changelog
 
