@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Plugin\Commerce\CheckoutPane;
 
+use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\commerce\InlineFormManager;
 use Drupal\commerce_checkout\Attribute\CommerceCheckoutPane;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface;
@@ -84,14 +85,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       '#inline_form' => $inline_form,
     ];
     $pane_form['profile'] = $inline_form->buildInlineForm($pane_form['profile'], $form_state);
-    $pane_form['street_number'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Número'),
-      '#required' => TRUE,
-      '#maxlength' => 20,
-      '#default_value' => $saved_number,
-      '#weight' => 50,
-    ];
+    // O Número é um subcampo do elemento de endereço (ver StreetNumberField), e não um campo solto do pane.
+    StreetNumberField::attachTo($pane_form['profile'], $saved_number);
     $pane_form['#attached']['library'][] = self::CEP_LIBRARY;
 
     return $pane_form;
@@ -102,7 +97,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface $inline_form */
     $inline_form = $pane_form['profile']['#inline_form'];
     $profile = $inline_form->getEntity();
-    $number = trim((string) $form_state->getValue(array_merge($pane_form['#parents'], ['street_number'])));
+    $number_element = StreetNumberField::find($pane_form);
+    $number = $number_element ? trim((string) $form_state->getValue($number_element['#parents'])) : '';
     if ($number !== '' && $profile->hasField('address') && !$profile->get('address')->isEmpty()) {
       $address = $profile->get('address')->first();
       // AddressItem não tem setAddressLine1(): grava-se o array de valores do endereço.

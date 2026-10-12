@@ -47,7 +47,7 @@ final class PortalFormCallbacks {
    * do checkout. Roda na montagem da entidade, antes do save.
    */
   public function buildStreetNumber(string $entityTypeId, $profile, array &$form, FormStateInterface $formState): void {
-    $number = trim((string) $formState->getValue(['address_extra', 'street_number']));
+    $number = trim((string) $formState->getValue(['address', 0, 'address', 'street_number']));
     if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $number === '' || $profile->get('address')->isEmpty()) {
       return;
     }
