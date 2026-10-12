@@ -8,8 +8,11 @@ use Drupal\aculta_id_cpf\Enum\DocumentType;
 use Drupal\aculta_id_cpf\Service\CnpjValidator;
 use Drupal\aculta_id_cpf\Service\CpfValidator;
 use Drupal\aculta_id_cpf\Service\DocumentFormatter;
+use Drupal\aculta_id_cpf\Service\DocumentFingerprint;
 use Drupal\aculta_id_cpf\Service\DocumentNormalizer;
 use Drupal\aculta_id_cpf\Service\DocumentValidator;
+use Drupal\key\KeyInterface;
+use Drupal\key\KeyRepositoryInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -51,6 +54,41 @@ final class DocumentValidationTest extends TestCase {
     foreach (range(0, 9) as $digit) {
       $this->assertFalse($this->validator()->isValid(str_repeat((string) $digit, 11), DocumentType::CPF));
     }
+  }
+
+  public function testFingerprintIsDeterministicAndNamespaced(): void {
+    $key = $this->createMock(KeyInterface::class);
+    $key->expects($this->exactly(3))
+      ->method('getKeyValue')
+      ->with(TRUE)
+      ->willReturn(str_repeat('k', 32));
+    $repository = $this->createMock(KeyRepositoryInterface::class);
+    $repository->expects($this->exactly(3))
+      ->method('getKey')
+      ->with(DocumentFingerprint::KEY_ID)
+      ->willReturn($key);
+
+    $fingerprint = new DocumentFingerprint($this->validator(), $repository);
+    $cpf = $fingerprint->fingerprint('529.982.247-25', DocumentType::CPF);
+    $this->assertSame($cpf, $fingerprint->fingerprint('52998224725', DocumentType::CPF));
+    $this->assertSame(
+      hash_hmac('sha256', "aculta_id_cpf:v1\0cpf\0" . '52998224725', str_repeat('k', 32)),
+      $cpf,
+    );
+    $cnpj = $fingerprint->fingerprint('11.222.333/0001-81', DocumentType::CNPJ);
+    $this->assertNotSame($cpf, $cnpj);
+    $this->assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $cpf);
+  }
+
+  public function testFingerprintFailsClosedWithoutStrongKey(): void {
+    $key = $this->createMock(KeyInterface::class);
+    $key->method('getKeyValue')->with(TRUE)->willReturn(str_repeat('k', 31));
+    $repository = $this->createMock(KeyRepositoryInterface::class);
+    $repository->method('getKey')->with(DocumentFingerprint::KEY_ID)->willReturn($key);
+
+    $this->expectException(\RuntimeException::class);
+    (new DocumentFingerprint($this->validator(), $repository))
+      ->fingerprint('52998224725', DocumentType::CPF);
   }
 
 }

@@ -7,12 +7,17 @@ domínio; campos PF/PJ e máscara serão implementados manualmente no Portal.
 ## Escopo e arquitetura
 
 - Caminho: `web/modules/custom/aculta_portal/modules/aculta_id_cpf`.
-- Versão atual de desenvolvimento: `0.1.0-dev.2`; Drupal 11.3+ e PHP 8.4.
+- Versão atual de desenvolvimento: `0.1.0-dev.3`; Drupal 11.3+ e PHP 8.4.
 - O serviço valida CPF e CNPJ numérico/alfanumérico, normaliza entradas com
   pontuação completa ou sem pontuação, preserva zeros iniciais e rejeita
   caracteres inválidos. Usa strings para não perder zeros/letras.
+- O serviço `aculta_id_cpf.fingerprint` gera HMAC-SHA-256 determinístico, com
+  separação por versão/tipo, usando chave do Drupal Key (`aculta_id_cpf_fingerprint`)
+  de pelo menos 32 bytes. A chave não fica em Configuration Sync/Git. O resultado
+  continua sendo dado pessoal pseudonimizado e requer proteção.
 - O submódulo não implementa campos, widgets, elementos Form API, máscara,
-  persistência, unicidade, autenticação por CPF ou integração Webform.
+  persistência, garantia transacional de unicidade, autenticação por CPF ou
+  integração Webform. O HMAC é somente uma primitiva para um futuro índice.
 - Campos PF/PJ e máscara serão implementados manualmente no `aculta_portal`,
   consumindo os serviços do submódulo por DI.
 
@@ -59,12 +64,24 @@ atuais do módulo. Nenhum documento real foi usado ou gravado. O gate DT-O11
 permanece pendente separado; nenhum segredo foi exposto ou alterado. Status:
 **RUNTIME STATUS: DEFERRED**, sem release ou tag.
 
+### Validação adicional do HMAC (0.1.0-dev.3)
+
+No checkout atual, PHP 8.3.6 foi a única CLI disponível. Runner de domínio
+(248 checks), smoke isolado do fingerprint (canonicalização, vetor HMAC,
+documento inválido e chave curta), lint PHP, YAML parse, `git diff --check` e
+gate Drupal 11+ (583 checks) passaram. PHPUnit não foi executado porque este
+checkout não contém `vendor/`; PHP 8.4, Core/Key instalados e runtime Drupal
+precisam validar a nova integração antes de release. Essa evidência não altera
+os resultados históricos PHP 8.4.26 acima.
+
 ## Próximas etapas
 
 1. Implementar manualmente no `aculta_portal` os campos PF/PJ e máscara usando
    os serviços deste submódulo.
-2. Definir armazenamento protegido, autorização, retenção e unicidade
-   concorrente; testar concorrência e rollback em MariaDB de teste.
+2. Integrar o fingerprint à fonte de verdade Profile/User e definir
+   armazenamento protegido, autorização, retenção e unicidade concorrente;
+   testar concorrência e rollback em MariaDB de teste. Rotação da chave exige
+   recálculo controlado dos fingerprints existentes.
 3. Integrar login por CPF ao pipeline atual e testar flood, CAPTCHA, confirmação,
    Social Auth e enumeração.
 4. Avaliar Webform após definir proteção de rascunhos, exportações, notificações
@@ -75,3 +92,4 @@ permanece pendente separado; nenhum segredo foi exposto ou alterado. Status:
 - [Manual Receita/Serpro do DV de CNPJ](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj/manual-dv-cnpj.pdf).
 - Pesquisa: bissolli/validador-cpf-cnpj, geekcom/validator-docs e theuves/cpf.
   Nenhum arquivo foi copiado; a implementação é própria.
+
