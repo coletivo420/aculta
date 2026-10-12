@@ -96,6 +96,27 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (!$event->isMainRequest()) {
       return;
     }
+    // Caminho antigo da área da conta (/minha-conta e subpáginas): 301 para a conta, sem o prefixo
+    // (/minha-conta -> /, /minha-conta/pedidos -> /pedidos). O caminho interno da visão geral não é público.
+    $accountPath = $event->getRequest()->getPathInfo();
+    if ($accountPath === '/minha-conta' || str_starts_with($accountPath, '/minha-conta/')) {
+      $target = $accountPath === '/minha-conta' ? '/' : substr($accountPath, strlen('/minha-conta'));
+      if (in_array($event->getRequest()->getMethod(), ['GET', 'HEAD'], TRUE)) {
+        $url = $this->domainPurposeManager->pathUrl('account', $target);
+        if ($url !== NULL) {
+          $query = $event->getRequest()->getQueryString();
+          if ($query) {
+            $url->setOption('query', $event->getRequest()->query->all());
+          }
+          $event->setResponse(new TrustedRedirectResponse($url->toString(), Response::HTTP_MOVED_PERMANENTLY, [
+            'Cache-Control' => 'public, max-age=3600',
+          ]));
+          return;
+        }
+      }
+      $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, ['Cache-Control' => 'private, no-store']));
+      return;
+    }
     // URLs antigas do checkout (/checkout/{pedido}/{etapa}, inclusive retorno e cancelamento do Mercado Pago):
     // GET/HEAD vai com 301 para o caminho público em português (/finalizar-compra/...); outros métodos respondem 404.
     $oldCheckoutRequest = $event->getRequest();

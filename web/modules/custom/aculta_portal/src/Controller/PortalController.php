@@ -11,6 +11,7 @@ use Drupal\change_mail_page\Form\ChangeMailForm;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\commerce_payment\Form\PaymentMethodAddForm;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
@@ -52,6 +53,7 @@ final class PortalController extends ControllerBase {
     private readonly ConfigFactoryInterface $configs,
     private readonly DateFormatterInterface $dateFormatter,
     private readonly KeyRepositoryInterface $keys,
+    private readonly CurrencyFormatterInterface $currencyFormatter,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -71,6 +73,7 @@ final class PortalController extends ControllerBase {
       $container->get('config.factory'),
       $container->get('date.formatter'),
       $container->get('key.repository'),
+      $container->get('commerce_price.currency_formatter'),
     );
   }
 
@@ -184,6 +187,16 @@ final class PortalController extends ControllerBase {
   }
 
   /** Meus pedidos: compras da pessoa logada (rascunhos de carrinho ficam fora). */
+  /** Situação do pedido em português (os rótulos do workflow vêm em inglês). */
+  private function orderStateLabel($order): string {
+    return match ($order->getState()->getId()) {
+      'completed' => (string) $this->t('Concluído'),
+      'canceled' => (string) $this->t('Cancelado'),
+      'draft' => (string) $this->t('Rascunho'),
+      default => (string) $this->t('Em andamento'),
+    };
+  }
+
   public function orders(): array {
     $storage = $this->entities->getStorage('commerce_order');
     $ids = $storage->getQuery()->accessCheck(TRUE)
@@ -197,8 +210,8 @@ final class PortalController extends ControllerBase {
       $rows[] = [
         '#' . $order->getOrderNumber(),
         $order->getPlacedTime() ? $this->dateFormatter->format($order->getPlacedTime(), 'short') : '',
-        $total ? $total->getNumber() . ' ' . $total->getCurrencyCode() : '',
-        $order->getState()->getLabel(),
+        $total ? $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode()) : '',
+        $this->orderStateLabel($order),
       ];
     }
     return [
