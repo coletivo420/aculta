@@ -78,6 +78,7 @@ final class PortalUiHooks {
     'account-data-link' => ['portal-account-data__link'],
     'account-data-nav' => ['portal-account-data__nav'],
     'account-data-content' => ['portal-account-data__content'],
+    'account-document-input' => ['portal-account-document-input'],
     'security-card' => ['aculta-security-card'],
     'security-pending' => ['aculta-security-pending'],
     'auth-provider' => ['aculta-auth-provider'],

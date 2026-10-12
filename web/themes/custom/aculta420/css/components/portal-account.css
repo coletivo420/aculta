@@ -128,6 +128,8 @@
 .portal-account__body .form-item { margin-block-end: 1rem; }
 .portal-account__body .form-control,
 .portal-account__body .form-select { width: 100%; }
+/* Campo de CPF/CNPJ: largura de documento, não da coluna (token account-document-input). */
+.portal-account__body .form-control.portal-account-document-input { width: auto; max-width: 14rem; }
 
 .portal-account__identity { display: flex; align-items: center; gap: 1rem; margin-block-end: 1.5rem; }
 .portal-account__identity h3 { margin: 0 0 0.25rem; color: var(--aculta-text-primary); font: 600 1.5rem/1.2 Oswald, sans-serif; }
