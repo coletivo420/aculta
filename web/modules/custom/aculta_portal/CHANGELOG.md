@@ -1,3 +1,8 @@
+## 0.3.0-dev.25 (documental) — relatório de estado — 2026-10-12
+
+- Mudança apenas documental; `aculta_portal.info.yml` não muda. Adiciona `docs/portal/RELATORIO-ESTADO-2026-10-12.md` com o estado do Portal, dos submódulos e do tema, e corrige a versão em `docs/portal/ROADMAP.md`.
+- Achados registrados no DEBT-REGISTER: DT-O12 (`aculta_deployer` com falhas de teste e de `check`) e DT-T19 (gate Foundation do tema).
+
 ## Em desenvolvimento — ajuste de escopo aculta_id_cpf — 2026-10-12
 
 - Decisão do responsável: aculta_id_cpf não implementa campos, widgets, elementos

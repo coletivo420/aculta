@@ -1,6 +1,6 @@
 # Roadmap do aculta_portal
 
-Atualizado em 2026-10-11 pela revisão documental da S0. Substitui o roadmap de modernização
+Atualizado em 2026-10-12 (relatório de estado: [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md)). Substitui o roadmap de modernização
 P0–P10 e a lista antiga de prioridades de produto.
 
 Dívidas e pendências, com evidência, estão em [`docs/operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md).
@@ -12,7 +12,10 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ## Estado atual
 
-- Versão: **0.2.0** (release da linha 0.2, mesclada na `main`). Sem tag: tags só por pedido explícito do responsável.
+- Versão: **0.3.0-dev.25** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com a página LINKS e redes sociais). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
+- Submódulos: `aculta_deployer` 0.1.20 (com falhas de teste e de `check`, DT-O12), `aculta_id_cpf` 0.2.0-dev.2 (Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1.
+- Tema: `aculta420` 0.6.0-dev.13. O gate Foundation reprova durações literais (DT-T19).
+- Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md).
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
 - Migração do envio de e-mail para Mailer Plus (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
 - Gates: Drupal 11+ do Portal PASS (542 checks); comércio e configuração PASS; linha de base DT-O10 em `scripts/institution/CONFIG-DRIFT-BASELINE.json`.

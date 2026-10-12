@@ -8,7 +8,7 @@ Esta pasta é a referência canônica dos módulos Core/contrib usados pelo proj
 
 - Core/contrib permanecem donos das capacidades que já fornecem;
 - `aculta_portal` integra módulos e domínios, mas não cria storage paralelo;
-- o tema `aculta` apresenta dados e não vira dono de autenticação, Commerce, LMS, Domain ou conteúdo;
+- o tema `aculta420` apresenta dados e não vira dono de autenticação, Commerce, LMS, Domain ou conteúdo;
 - inclusão/remoção de módulo deve atualizar Composer, Configuration Sync e esta documentação;
 - incompatibilidades conhecidas exigem decisão explícita;
 - antes de criar código custom, pesquisar alternativa Core/contrib mantida.
