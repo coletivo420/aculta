@@ -41,10 +41,9 @@ flood, confirmação, CAPTCHA e Social Auth, com contadores compartilhados por u
 
 Plugins de Form API usam `#[FormElement]`; validação usa callback
 `aculta_id_cpf.element_validation:validate` com serviços explicitamente
-injetados. Esse contrato foi verificado no change record 3548821 e nos arquivos
-Textfield, FormBuilder e FormValidator da tag Core 11.4.8. Core/contrib/vendor
-não estavam instalados neste checkout; por isso a resolução no Drupal completo
-permanece pendente. Não há declaração de prontidão para Drupal 12/13.
+injetados. Esse contrato foi verificado no change record 3548821, no Core
+11.4.8 instalado e nos testes Kernel abaixo. Não há declaração de prontidão
+para Drupal 12/13.
 
 O relatório P10-R citado por AGENTS.md foi consultado no commit histórico
 `9c95420`, conforme indicado no DEBT-REGISTER; não foi recriado no working tree.
@@ -56,7 +55,8 @@ Os resultados anteriores foram obtidos em container com PHP CLI 8.3.6 e Node
 Nesta rodada (2026-10-12), o checkout de desenvolvimento local que simula o
 servidor de testes usa PHP CLI 8.4.26, PHP-FPM 8.4.26 ativo, Apache ativo,
 MariaDB 11.8.6, Composer 2.8.8, Drupal Core 11.4.8, PHPUnit 11.5.57 e Node
-22.23.3. O uso local de `127.0.0.1` não comprova execução no host remoto
+22.23.3. Navegador: Playwright 1.64.0 e Chromium 154.0.8037.92. O uso local de
+`127.0.0.1` com alias de host não comprova execução no servidor remoto
 `*.aculta.toca.net.br`.
 
 | Verificação | Resultado nesta rodada |
@@ -73,15 +73,19 @@ MariaDB 11.8.6, Composer 2.8.8, Drupal Core 11.4.8, PHPUnit 11.5.57 e Node
 | Módulos de login/CAPTCHA/Social Auth | PASS: `login_emailusername`, `captcha`, `social_auth`, `social_auth_google` e `aculta_portal` permanecem habilitados; a PR não altera esses fluxos |
 | Gate CAPTCHA / Conta | PASS: `validate-shop-captcha.php` 15 checks; `validate-aculta-portal-conta-root.php` 1233 checks |
 | Gate Portal commerce/security | DEFERRED/FAIL: executado via Drush, parou na asserção existente `Fake runtime credentials were not persisted` (DT-O11); nenhum valor foi exposto ou alterado |
-| Kernel (descoberta, callback DI, normalização, opcional/inválido) | DEFERRED: o usuário MariaDB do Runtime só tem grants em `aculta_runtime`; não há privilégio para criar/usar banco de teste separado. O teste foi tentado e parou antes dos casos por ausência de `SIMPLETEST_DB` |
-| Formulário temporário e navegador com/sem JS, AJAX, colagem e seleção | DEFERRED: ainda sem execução em navegador real; nenhum formulário da Conta recebeu campos de documento |
+| Kernel (descoberta, callback DI, normalização, opcional/inválido) | PASS: 5 testes, 8 asserções em `aculta_id_cpf_test` (MariaDB separado) |
+| Formulário temporário no Chromium, JavaScript ativo | PASS: colagem via clipboard mascara CNPJ alfanumérico; AJAX confirma valor canônico; seleção/cursor preservados |
+| Formulário temporário no Chromium, JavaScript desativado | PASS: digitação mantém valor sem máscara. Envio não concluído porque CAPTCHA global exige desafio; o CAPTCHA não foi contornado |
+| Formulário temporário / Conta | PASS: formulário não persiste, foi desinstalado/removido e sua rota voltou a 404 após cache rebuild; formulários da Conta não receberam campos |
 | Homelab remoto (`*.aculta.toca.net.br`) | DEFERRED: a execução disponível foi local em `127.0.0.1`, não no servidor de testes |
 | `git diff --check` | PASS |
 
-O teste Kernel sem banco apontou a depreciação Drupal 11.3 sobre testes sem
-`#[RunTestsInSeparateProcesses]`; a anotação foi adicionada ao teste. Os testes
-Kernel precisam ser repetidos no MariaDB separado para validar o ajuste e os
-comportamentos. Nenhuma informação/documento pessoal foi submetida ou gravada.
+O Kernel inicial sem banco apontou a depreciação Drupal 11.3 para testes sem
+`#[RunTestsInSeparateProcesses]`; a anotação foi adicionada e os cinco casos
+passaram no banco separado. Nenhum documento pessoal real foi usado ou gravado;
+o valor alfanumérico veio do vetor público de teste da entrega. A rodada de
+navegador é local e não substitui a verificação no host remoto do servidor de
+testes.
 
 Comandos da rodada, executados no checkout de desenvolvimento local:
 
@@ -97,9 +101,10 @@ php scripts/validate-aculta-portal-drupal11.php
 vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel
 ```
 
-O comando Kernel acima foi tentado sem `SIMPLETEST_DB` e não iniciou os casos.
-O gate Portal foi executado também na árvore do PR antes da integração local;
-o gate de commerce/security requer revisão separada da pendência DT-O11.
+O Kernel foi executado com `SIMPLETEST_DB` apontando ao banco isolado
+`aculta_id_cpf_test`; a credencial foi carregada apenas no ambiente do processo.
+O gate Portal passou também na árvore do PR; o gate de commerce/security requer
+revisão separada da pendência DT-O11.
 
 Os testes Node exercitam handlers reais em harness, mas não comprovam o
 comportamento de todos os navegadores. Os testes de Kernel foram adicionados

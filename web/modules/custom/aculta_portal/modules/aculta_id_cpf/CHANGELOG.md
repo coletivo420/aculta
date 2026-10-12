@@ -18,9 +18,10 @@ Base: `368ec263189d670d459e385b068d7bb188af95b3`.
   34/63, máscaras 8 e gate 583: PASS. Composer validate/audit: PASS; Drush
   habilitou o módulo no Runtime local e reconstruiu cache. Sem `composer update`.
 - Correção de homologação: Kernel recebe `#[RunTestsInSeparateProcesses]`,
-  exigido pelo Core 11.3+. Kernel MariaDB ainda não executado: conta disponível
-  só acessa `aculta_runtime`; formulário temporário/navegador e servidor remoto
-  `*.aculta.toca.net.br` também permanecem DEFERRED.
+  exigido pelo Core 11.3+. Kernel PASS em MariaDB separado: 5 testes/8
+  asserções. Formulário temporário PASS no Chromium local (máscara, clipboard,
+  AJAX e seleção; sem JS mantém entrada crua). Submissão sem JS não concluída
+  porque CAPTCHA global requer desafio; servidor remoto continua DEFERRED.
 - Regressões de CAPTCHA/Conta: gates PASS (15/1233 checks). O gate Portal de
   commerce/security não passou pela asserção `Fake runtime credentials were not
   persisted` (DT-O11); pendência registrada sem ler ou alterar valores.
