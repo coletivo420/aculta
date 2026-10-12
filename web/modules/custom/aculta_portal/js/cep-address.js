@@ -121,12 +121,13 @@
     if (numberRow && complementRow && numberRow.parentElement === complementRow.parentElement && !numberRow.closest('.portal-address-number-row')) {
       const row = document.createElement('div');
       row.className = 'row g-2 align-items-end portal-address-number-row';
+      // Colunas de largura do conteúdo: número e S/N encolhem para caber; o complemento ocupa o resto da linha.
       const numCol = document.createElement('div');
-      numCol.className = 'col-5 col-sm-3';
+      numCol.className = 'col-auto';
       const snCol = document.createElement('div');
       snCol.className = 'col-auto pb-2';
       const compCol = document.createElement('div');
-      compCol.className = 'col-sm';
+      compCol.className = 'col';
       numberRow.parentElement.insertBefore(row, numberRow);
       numCol.append(numberRow);
       if (snRow) snCol.append(snRow);

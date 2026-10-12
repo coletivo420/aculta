@@ -60,14 +60,61 @@
     ajax.execute();
   };
 
-  // Navegação de página (menu, abas, pedidos): URL nova no histórico e foco no título.
+  // Atualiza o shell para a página nova: seção ativa (um só item), título da seção, breadcrumb e document.title.
+  const refreshChrome = (url) => {
+    const path = new URL(url, window.location.href).pathname;
+    const links = Array.from(document.querySelectorAll('.portal-account__menu a, .portal-account__accordion a'));
+    // Item ativo: o link de maior caminho que contém a página (ex.: /pedidos/6 ativa /pedidos).
+    let active = null;
+    links.forEach((item) => {
+      const itemPath = new URL(item.href, window.location.href).pathname;
+      const matches = path === itemPath || path.startsWith(itemPath.replace(/\/$/, '') + '/');
+      if (matches && (!active || itemPath.length > new URL(active.href, window.location.href).pathname.length)) active = item;
+    });
+    links.forEach((item) => {
+      item.classList.toggle('is-active', item === active);
+      if (item === active) item.setAttribute('aria-current', 'page');
+      else item.removeAttribute('aria-current');
+    });
+    const body = document.getElementById(BODY_ID);
+    const pageHeading = body?.querySelector('h1, h2, h3')?.textContent.trim() || '';
+    const sectionTitle = active ? active.textContent.trim() : pageHeading;
+    const sectionHeading = document.getElementById('portal-account-section-title');
+    if (sectionHeading) sectionHeading.textContent = sectionTitle;
+    const crumbs = document.querySelector('nav[aria-label="breadcrumb"] ol, ol.breadcrumb');
+    if (crumbs) {
+      const items = [{ text: 'Minha conta', href: '/' }];
+      if (active && pageHeading && pageHeading !== sectionTitle) items.push({ text: sectionTitle, href: active.href });
+      items.push({ text: pageHeading || sectionTitle, href: null });
+      crumbs.replaceChildren(...items.map((item) => {
+        const li = document.createElement('li');
+        li.className = 'breadcrumb-item' + (item.href ? '' : ' active');
+        if (item.href) {
+          const a = document.createElement('a');
+          a.href = item.href;
+          a.textContent = item.text;
+          li.append(a);
+        }
+        else {
+          li.setAttribute('aria-current', 'page');
+          li.textContent = item.text;
+        }
+        return li;
+      }));
+    }
+    document.title = (pageHeading || sectionTitle) + ' | Conta ACULTA';
+  };
+
+  // Navegação de página (menu, abas, pedidos, voltar/avançar): URL no histórico, shell atualizado, foco no título.
   const navigate = (anchor, url, push) => {
     const layout = document.querySelector('[data-portal-account-layout]');
     layout?.setAttribute('aria-busy', 'true');
+    // Mensagens da página anterior não podem ficar na página nova.
+    document.querySelectorAll('.messages, [data-drupal-messages]').forEach((node) => node.remove());
     requestInto(anchor, url, BODY_ID, () => {
       layout?.setAttribute('aria-busy', 'false');
       if (push) window.history.pushState({ acultaAccount: true }, '', url);
-      updateMenu(url);
+      refreshChrome(url);
       focusHeading();
     });
   };
