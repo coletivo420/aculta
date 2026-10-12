@@ -57,7 +57,7 @@ Do not share it with an independent or SaaS-hosted subdomain.
 
 ## Web server: Homelab versus production
 
-The Homelab uses Nginx. Hostinger production uses Apache.
+The Homelab uses Apache since the migration of 2026-10-06 (ADR-006). Hostinger production uses Apache.
 
 Do not copy Nginx directives such as `server_name`, `location`, `try_files`
 or `add_header` into production. Preserve Drupal's Apache `.htaccess` and
@@ -156,7 +156,7 @@ the local configuration phase.
 
 ## Web server: Homelab versus Produção
 
-- Homelab (`toca`) uses Nginx. Production at Hostinger uses Apache.
+- Homelab (`toca`) uses Apache since 2026-10-06 (ADR-006). Production at Hostinger uses Apache.
 - Do not copy Nginx directives such as `server_name`, `location`, `try_files`,
   `add_header`, or `nginx reload` into production instructions.
 - Preserve Drupal's standard `.htaccess` in the Apache document root. Configure

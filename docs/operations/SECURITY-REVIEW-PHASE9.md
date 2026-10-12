@@ -1,5 +1,8 @@
 # Security Review - Phase 9
 
+> **Registro histórico (2026-10-05).** Descreve o Homelab quando ainda usava Nginx. Desde 2026-10-06 o baseline é Apache (ADR-006); as referências a Nginx abaixo são evidência da época, não arquitetura atual.
+
+
 Date: 2026-10-05
 
 This document records the Homelab review without storing credentials or
