@@ -436,10 +436,45 @@ final class PortalController extends ControllerBase {
           'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail')],
           'value' => ['#plain_text' => $account->getEmail()],
         ] : [],
-        'form' => $this->forms->getForm($profile, 'edit'),
+        'form' => $this->profileForm($section, $profile),
       ],
       '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
     ];
+  }
+
+  /**
+   * Formulário do perfil. No endereço, o número sai do logradouro ("Rua, 1000") para o campo Número, logo
+   * depois da rua; ao gravar, a rua e o número são juntados de novo (PortalFormCallbacks::saveStreetNumber).
+   */
+  private function profileForm(string $section, $profile): array {
+    if ($section !== 'address') {
+      return $this->forms->getForm($profile, 'edit');
+    }
+    $number = $this->savedStreetNumber($profile);
+    $display = $profile;
+    if ($number !== '' && !$profile->get('address')->isEmpty()) {
+      $display = clone $profile;
+      $address = $display->get('address')->first();
+      $value = $address->getValue();
+      $value['address_line1'] = $this->streetOnly((string) $address->getAddressLine1());
+      $address->setValue($value);
+    }
+    // O campo Número é criado no hook de alteração do formulário (PortalHooks::formAlter), antes do processamento.
+    return $this->forms->getForm($display, 'edit');
+  }
+
+  /** Rua sem o número (remove o último trecho após vírgula). */
+  private function streetOnly(string $line): string {
+    return trim(preg_replace('/,\s*[^,]*$/', '', $line));
+  }
+
+  /** Número gravado no logradouro (último trecho após vírgula). */
+  private function savedStreetNumber($profile): string {
+    if (!$profile->hasField('address') || $profile->get('address')->isEmpty()) {
+      return '';
+    }
+    $line = (string) $profile->get('address')->first()->getAddressLine1();
+    return preg_match('/,\s*([^,]+)$/', $line, $m) ? trim($m[1]) : '';
   }
 
   private function loadParticipantProfile(UserInterface $account) {

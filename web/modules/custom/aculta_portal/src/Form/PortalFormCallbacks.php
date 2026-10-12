@@ -42,6 +42,21 @@ final class PortalFormCallbacks {
     return (string) $this->translation->translate('Se este e-mail ainda não estiver cadastrado, enviaremos um link para confirmar o seu cadastro. Se ele já estiver cadastrado, enviaremos um aviso com as opções para acessar a sua conta. Verifique a caixa de entrada e a pasta de spam.');
   }
 
+  /**
+   * Entity builder de Meus Dados: junta a rua e o número ("Rua, número") antes de gravar o perfil, no mesmo formato
+   * do checkout. Roda na montagem da entidade, antes do save.
+   */
+  public function buildStreetNumber(string $entityTypeId, $profile, array &$form, FormStateInterface $formState): void {
+    $number = trim((string) $formState->getValue(['address_extra', 'street_number']));
+    if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $number === '' || $profile->get('address')->isEmpty()) {
+      return;
+    }
+    $address = $profile->get('address')->first();
+    $value = $address->getValue();
+    $value['address_line1'] = trim((string) $address->getAddressLine1()) . ', ' . $number;
+    $address->setValue($value);
+  }
+
   /** Registra o aceite dos termos do cadastro (checkbox obrigatório no formulário). */
   public function acceptRegistrationTerms(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {

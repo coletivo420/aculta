@@ -458,7 +458,8 @@ final class PortalHooks {
       && $path === '/dados/endereco'
       && (int) $entity->getOwnerId() === (int) $this->currentUser->id()) {
       // The Portal and Commerce edit the same customer Profile Address.
-      $allowed = ['address', 'actions', 'form_build_id', 'form_token', 'form_id'];
+      // address_extra: campo Número (PortalController::profileForm), junto à rua.
+      $allowed = ['address', 'address_extra', 'actions', 'form_build_id', 'form_token', 'form_id'];
       foreach (array_keys($form) as $key) {
         if (!str_starts_with((string) $key, '#') && !in_array($key, $allowed, TRUE)) {
           unset($form[$key]);
@@ -493,6 +494,27 @@ final class PortalHooks {
         }
         unset($address_element);
       }
+      // Número: campo logo depois da rua (o script de CEP move o campo). O valor vem do perfil salvo.
+      $saved_number = '';
+      if ($entity->id()) {
+        $saved = $this->entityTypeManager->getStorage('profile')->load($entity->id());
+        $saved_line = $saved && $saved->hasField('address') && !$saved->get('address')->isEmpty()
+          ? (string) $saved->get('address')->first()->getAddressLine1() : '';
+        $saved_number = preg_match('/,\s*([^,]+)$/', $saved_line, $m) ? trim($m[1]) : '';
+      }
+      // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
+      $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';
+      $form['address_extra'] = [
+        '#type' => 'container',
+        '#tree' => TRUE,
+        'street_number' => [
+          '#type' => 'textfield',
+          '#title' => $this->translation->translate('Número'),
+          '#required' => TRUE,
+          '#maxlength' => 20,
+          '#default_value' => $saved_number,
+        ],
+      ];
       if (isset($form['actions']['submit'])) {
         $form['actions']['submit']['#value'] = $this->translation->translate('Salvar endereço');
         $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:addressRedirect';
