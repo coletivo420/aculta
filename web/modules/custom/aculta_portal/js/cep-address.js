@@ -203,12 +203,12 @@
             const result = await lookup(requestedCep);
             if (digits(postal.value) !== requestedCep) return;
             const data = result.data;
-            const raw = result.raw || {};
+            // Campos do Commerce/Address: bairro em dependent_locality. O complemento do ViaCEP não é usado.
             const values = {
               administrative_area: data.administrative_area,
               locality: data.locality,
               address_line1: data.address_line1,
-              dependent_locality: raw.bairro || '',
+              dependent_locality: data.dependent_locality || '',
             };
             pendingFill.set(prefix, values);
             applyFill(prefix, container, values);
