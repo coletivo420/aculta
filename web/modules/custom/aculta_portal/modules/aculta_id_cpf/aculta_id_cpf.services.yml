@@ -11,6 +11,3 @@ services:
   aculta_id_cpf.formatter:
     class: Drupal\aculta_id_cpf\Service\DocumentFormatter
     arguments: ['@aculta_id_cpf.validator']
-  aculta_id_cpf.element_validation:
-    class: Drupal\aculta_id_cpf\Form\DocumentElementValidation
-    arguments: ['@aculta_id_cpf.validator', '@string_translation']

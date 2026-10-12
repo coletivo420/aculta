@@ -1,7 +1,0 @@
-document_mask:
-  version: 0.1.0-dev.1
-  js:
-    js/document-mask.js: {}
-  dependencies:
-    - core/drupal
-    - core/once

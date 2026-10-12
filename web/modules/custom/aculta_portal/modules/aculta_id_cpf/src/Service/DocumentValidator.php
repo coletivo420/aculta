@@ -7,7 +7,7 @@ namespace Drupal\aculta_id_cpf\Service;
 use Drupal\aculta_id_cpf\Enum\DocumentType;
 
 /**
- * Shared entry point for Form API and future persistence integrations.
+ * Shared entry point for aculta_portal forms and persistence integrations.
  */
 final class DocumentValidator {
 

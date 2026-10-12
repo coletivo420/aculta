@@ -1,8 +1,8 @@
 name: ACULTA CPF e CNPJ
 type: module
-description: 'Validação local e elementos de formulário para CPF e CNPJ numérico ou alfanumérico.'
+description: 'Serviços de normalização, validação e formatação para CPF e CNPJ numérico ou alfanumérico.'
 package: Associação Cultural Antiproibicionista
-version: '0.1.0-dev.1'
+version: '0.1.0-dev.2'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal

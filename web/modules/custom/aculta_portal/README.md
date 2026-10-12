@@ -76,9 +76,10 @@ Consultar [CHANGELOG.md](CHANGELOG.md).
 
 ## Submódulo de documentos brasileiros
 
-`modules/aculta_id_cpf` fornece serviços de validação CPF/CNPJ e elementos Form API,
-com ativação opcional. A primeira entrega não coleta documentos nos formulários da
-Conta nem altera autenticação. Consultar seu [README](modules/aculta_id_cpf/README.md)
+`modules/aculta_id_cpf` fornece serviços de domínio para validar, normalizar e formatar CPF/CNPJ.
+Os campos PF/PJ serão implementados manualmente no `aculta_portal`, consumindo esses serviços.
+O submódulo não implementa campos, widgets, elementos Form API, máscaras ou integração Webform.
+Consultar seu [README](modules/aculta_id_cpf/README.md)
 e a [evidência de entrega](../../../../docs/modules/ACULTA-ID-CPF.md).
 
 ## Credenciais do ambiente (0.2.0-dev.11)
