@@ -617,3 +617,30 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
 - Não usar outros pacotes de ícones nem SVG solto (inline ou arquivo) para ícone de interface.
 - **Exceção:** logos de marcas de terceiros (ex.: Mercado Pago), em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
 - Gate: `php scripts/validate-module-theme-boundary.php`, seção 12 (sem `<svg` inline e sem SVG fora de `assets/brands/`).
+
+## Política de commits para agentes de IA (regra permanente)
+
+Motivo: trabalho que ficou só no working tree, em stash ou em branch sem PR gerou
+duplicidade, código obsoleto e uma base de PR errada (PRs mesclados em branches antigos,
+e não na `main`). Esta regra existe para que nenhum trabalho dependa de estado local.
+
+- **Commit antes de encerrar.** Toda alteração concluída vira commit no próprio branch
+  antes do fim da sessão. Não deixar trabalho só no working tree.
+- **Um branch por mudança lógica**, criado a partir da `origin/main` (ou do branch base
+  declarado no PR). Não reutilizar branch antigo com commits de outra entrega.
+- **Publicar o branch** com `git push -u origin <branch>` após o commit. Não há commit
+  "pendente" depois que a sessão termina.
+- **Stash não é entrega.** Não guardar trabalho em `git stash`. Stash temporário só dentro
+  de um comando, e nunca como destino final.
+- **Worktree temporário** é criado para a tarefa e removido ao fim dela.
+- **Verificar a base do PR antes de mesclar.** `gh pr view <n> --json baseRefName` deve
+  apontar para `main` (ou para o branch base declarado). Trocar a base antes da fusão, e
+  confirmar depois com `git merge-base --is-ancestor <commit> origin/main`.
+- **Mesclar só com autorização explícita** do responsável, PR a PR. Commit e push
+  não autorizam fusão.
+- **Não commitar** credenciais, `settings.local.php`, backups locais, `.claude/settings.local.json`
+  nem conteúdo de `secrets/`. Verificar o conteúdo staged antes do commit.
+- **Não reescrever histórico** de branch compartilhado (sem force push).
+- **Mensagem de commit** em português, com o trailer `Co-Authored-By` do agente.
+- **Encerramento:** antes de encerrar a sessão, informar o estado de `git status`, o
+  branch e o commit de cada entrega. Se algo ficou fora do git, dizer o motivo.
