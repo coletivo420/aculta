@@ -11,3 +11,7 @@ services:
   aculta_id_cpf.formatter:
     class: Drupal\aculta_id_cpf\Service\DocumentFormatter
     arguments: ['@aculta_id_cpf.validator']
+  aculta_id_cpf.fingerprint:
+    class: Drupal\aculta_id_cpf\Service\DocumentFingerprint
+    arguments: ['@aculta_id_cpf.validator', '@key.repository']
+

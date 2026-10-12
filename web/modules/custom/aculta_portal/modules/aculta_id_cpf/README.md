@@ -1,8 +1,8 @@
 # ACULTA CPF e CNPJ
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
-A entrega atual contém serviços de domínio sem formulário, campo, persistência ou
-integração de autenticação.
+A entrega atual contém serviços de domínio e impressão digital HMAC, sem
+formulário, campo, persistência ou integração de autenticação.
 
 **RUNTIME STATUS: DEFERRED** — a rodada local em PHP 8.4 passou; o servidor
 remoto `*.aculta.toca.net.br` continua pendente.
@@ -18,12 +18,33 @@ remoto `*.aculta.toca.net.br` continua pendente.
   autorização de leitura.
 - Serviços acessíveis por DI: `aculta_id_cpf.normalizer`,
   `aculta_id_cpf.cpf_validator`, `aculta_id_cpf.cnpj_validator`,
-  `aculta_id_cpf.validator` e `aculta_id_cpf.formatter`.
+  `aculta_id_cpf.validator`, `aculta_id_cpf.formatter` e
+  `aculta_id_cpf.fingerprint`.
+- Impressão digital HMAC-SHA-256 estável para apoiar índices de unicidade sem
+  armazenar o documento em claro nesse índice. É dado pseudonimizado e continua
+  sujeito a proteção de acesso e retenção.
 - Testes de domínio e habilitação/cache local em PHP 8.4.26; a evidência completa
   e os testes históricos da implementação removida estão no relatório.
 
-Nenhuma dependência Composer nova. O Portal não depende deste submódulo e
+Nenhum pacote Composer novo: Key já é dependência do projeto e agora é declarado
+diretamente pelo submódulo. O Portal não depende deste submódulo e
 `config/sync/core.extension.yml` não o habilita automaticamente.
+
+### Chave para impressão digital
+
+Antes de chamar `aculta_id_cpf.fingerprint`, configure no Drupal Key uma chave
+com machine name `aculta_id_cpf_fingerprint`, valor aleatório de pelo menos 32
+bytes e provider seguro (por exemplo, variável de ambiente ou arquivo fora do
+webroot). Não exporte o segredo para Configuration Sync/Git. A perda ou troca
+da chave invalida os fingerprints existentes; rotação futura exige recalcular
+todos os índices de forma controlada. O serviço falha fechado se a chave estiver
+ausente ou for menor que 32 bytes.
+
+O HMAC não implementa armazenamento, restrição única no banco nem coordenação de
+gravações concorrentes. A integração manual no `aculta_portal` deverá armazenar
+o fingerprint junto à fonte de verdade Profile/User e estabelecer uma garantia
+de unicidade transacional antes de afirmar que documentos duplicados são
+impedidos. Não usar o fingerprint como autorização nem como anonimização.
 
 ## Decisão sobre campos e formulários
 
@@ -67,12 +88,11 @@ de campos. Evidência e limites conhecidos estão em
 ## Próximas entregas
 
 1. Implementar manualmente no `aculta_portal` os campos PF/PJ e suas máscaras,
-   consumindo os serviços deste submódulo.
-2. Definir a persistência privada, autorização, reautenticação e unicidade
-   transacional sem criar fonte de verdade duplicada em User/Profile.
-3. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
+   consumindo os serviços deste submódulo; integrar o fingerprint à persistência
+   protegida e a uma garantia transacional sem duplicar a fonte de verdade.
+2. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
    CAPTCHA, Social Auth e respostas genéricas.
-4. Avaliar integração Webform somente após proteção de rascunhos, tokens,
+3. Avaliar integração Webform somente após proteção de rascunhos, tokens,
    e-mails, exportações e handlers.
 
 Não adicionar tabela paralela ou resolvedor de login sem documentar a lacuna
@@ -84,3 +104,4 @@ Implementação própria a partir dos contratos da especificação e do algoritm
 publicado pela Receita Federal/Serpro. Não foram incorporados arquivos de
 validadores externos nem adicionadas dependências desses repositórios. Fontes e
 pesquisa estão no documento de entrega.
+

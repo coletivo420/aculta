@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-dev.3 — impressão digital HMAC para integração de unicidade — 2026-10-12
+
+- Adicionado `aculta_id_cpf.fingerprint`: canonicaliza CPF/CNPJ e retorna
+  HMAC-SHA-256 com separação de versão e tipo de documento.
+- Segredo obtido por DI do Drupal Key (Key ID fixo
+  `aculta_id_cpf_fingerprint`); falha fechada sem chave de pelo menos 32 bytes.
+- Isso é uma primitiva para a integração futura, não implementa persistência,
+  índice/garantia de unicidade, campos ou proteção de leitura.
+- Chave pseudonimiza o valor de índice, mas o fingerprint ainda é dado pessoal;
+  rotação precisa recalcular índices.
+- Runner: 248 checks PASS; lint PHP e gate Drupal 11+: 583 checks PASS em PHP
+  8.3 local. PHPUnit não executado neste checkout sem `vendor/`; PHP 8.4 e
+  runtime completo continuam DEFERRED para esta alteração.
+
 ## 0.1.0-dev.2 — serviços de domínio; campos adiados — 2026-10-12
 
 - Removidos os elementos Form API `aculta_cpf`/`aculta_cnpj`, callback, máscara
@@ -25,3 +39,4 @@
   Gate Portal commerce/security parou na asserção preexistente DT-O11
   `Fake runtime credentials were not persisted`. Servidor remoto DEFERRED.
 - **RUNTIME STATUS: DEFERRED** — não é release homologada; sem tag.
+
