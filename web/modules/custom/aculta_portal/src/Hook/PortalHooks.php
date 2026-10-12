@@ -374,6 +374,7 @@ final class PortalHooks {
       'aculta_portal.dashboard',
       'aculta_portal.my_data',
       'aculta_portal.my_data_address',
+      'aculta_portal.my_data_other',
       'aculta_portal.connections',
       'aculta_portal.security',
       'aculta_portal.security_password',
