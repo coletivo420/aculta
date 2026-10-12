@@ -11,13 +11,16 @@ use Drupal\Core\Form\FormStateInterface;
  * Número do endereço (checkout de cobrança, Meus dados e livro de endereços).
  *
  * Armazenamento: o número fica no logradouro do perfil ("Avenida Paulista, 1000"). Sem número, o logradouro
- * termina em "S/N" ("Avenida Paulista, S/N"). Aceita até 4 dígitos. O campo é um subcampo do elemento de endereço
+ * termina em "S/N" ("Avenida Paulista, S/N"). Aceita de 1 a 10 dígitos. O campo é um subcampo do elemento de endereço
  * (criado no #process, depois de Address::processAddress), por isso é recriado junto com o endereço no rebuild AJAX
  * do CEP. A regra de leitura e gravação fica nos métodos split() e join(), para todos os formulários usarem a mesma.
  */
 final class StreetNumberField {
 
   public const SN = 'S/N';
+
+  /** Limite folgado de dígitos do número (a caixa é pequena, mas aceita números maiores). */
+  public const MAX_DIGITS = 10;
 
   /** Separa o logradouro salvo em rua, número e marca S/N. */
   public static function split(string $line): array {
@@ -73,11 +76,11 @@ final class StreetNumberField {
         '#type' => 'textfield',
         '#title' => t('Número'),
         '#required' => TRUE,
-        '#maxlength' => 4,
-        '#size' => 6,
+        '#maxlength' => self::MAX_DIGITS,
+        '#size' => 4,
         '#attributes' => [
           'inputmode' => 'numeric',
-          'pattern' => '[0-9]{1,4}',
+          'pattern' => '[0-9]{1,' . self::MAX_DIGITS . '}',
           'autocomplete' => 'off',
           'data-aculta-number' => 'true',
         ],
@@ -111,8 +114,8 @@ final class StreetNumberField {
       $form_state->setError($element, t('Preencha o número ou marque S/N (sem número).'));
       return;
     }
-    if (!preg_match('/^[0-9]{1,4}$/', $value)) {
-      $form_state->setError($element, t('O número deve ter de 1 a 4 dígitos.'));
+    if (!preg_match('/^[0-9]{1,' . self::MAX_DIGITS . '}$/', $value)) {
+      $form_state->setError($element, t('O número deve ter de 1 a @max dígitos.', ['@max' => self::MAX_DIGITS]));
     }
   }
 

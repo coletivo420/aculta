@@ -103,7 +103,7 @@
   }
 
   /**
-   * Número, S/N e Complemento na mesma linha, logo depois da rua. Número: só dígitos, até 4. Com S/N marcado, o
+   * Número, S/N e Complemento na mesma linha, logo depois da rua. Número: só dígitos, até 10. Com S/N marcado, o
    * número fica desabilitado e vazio. A marca S/N e o número são subcampos do endereço (StreetNumberField).
    */
   function layoutStreetNumber(prefix, container) {
@@ -133,13 +133,13 @@
       compCol.append(complementRow);
       row.append(numCol, snCol, compCol);
     }
-    numInput.setAttribute('maxlength', '4');
+    numInput.setAttribute('maxlength', '10');
     numInput.setAttribute('inputmode', 'numeric');
-    numInput.setAttribute('pattern', '[0-9]{1,4}');
+    numInput.setAttribute('pattern', '[0-9]{1,10}');
     if (!numInput.dataset.acultaNumberBound) {
       numInput.dataset.acultaNumberBound = 'true';
       numInput.addEventListener('input', () => {
-        numInput.value = numInput.value.replace(/\D/g, '').slice(0, 4);
+        numInput.value = numInput.value.replace(/\D/g, '').slice(0, 10);
       });
     }
     if (snInput && !snInput.dataset.acultaSnBound) {
