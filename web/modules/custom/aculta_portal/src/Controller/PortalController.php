@@ -456,38 +456,32 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Formulário do perfil. No endereço, o número sai do logradouro ("Rua, 1000") para o campo Número, logo
-   * depois da rua; ao gravar, a rua e o número são juntados de novo (PortalFormCallbacks::saveStreetNumber).
+   * Formulário do perfil. No endereço, o número e a marca S/N saem do logradouro para os campos próprios
+   * (StreetNumberField), logo depois da rua; ao gravar, são juntados de novo (PortalHooks, entity builder).
    */
   private function profileForm(string $section, $profile): array {
     if ($section !== 'address') {
       return $this->forms->getForm($profile, 'edit');
     }
-    $number = $this->savedStreetNumber($profile);
+    $parts = $this->savedParts($profile);
     $display = $profile;
-    if ($number !== '' && !$profile->get('address')->isEmpty()) {
+    if (($parts['number'] !== '' || $parts['sn']) && !$profile->get('address')->isEmpty()) {
       $display = clone $profile;
       $address = $display->get('address')->first();
       $value = $address->getValue();
-      $value['address_line1'] = $this->streetOnly((string) $address->getAddressLine1());
+      $value['address_line1'] = $parts['street'];
       $address->setValue($value);
     }
     // O campo Número é criado no hook de alteração do formulário (PortalHooks::formAlter), antes do processamento.
     return $this->forms->getForm($display, 'edit');
   }
 
-  /** Rua sem o número (remove o último trecho após vírgula). */
-  private function streetOnly(string $line): string {
-    return trim(preg_replace('/,\s*[^,]*$/', '', $line));
-  }
-
-  /** Número gravado no logradouro (último trecho após vírgula). */
-  private function savedStreetNumber($profile): string {
+  /** Rua, número e S/N salvos no logradouro. */
+  private function savedParts($profile): array {
     if (!$profile->hasField('address') || $profile->get('address')->isEmpty()) {
-      return '';
+      return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    $line = (string) $profile->get('address')->first()->getAddressLine1();
-    return preg_match('/,\s*([^,]+)$/', $line, $m) ? trim($m[1]) : '';
+    return \Drupal\aculta_portal\Account\StreetNumberField::split((string) $profile->get('address')->first()->getAddressLine1());
   }
 
   private function loadParticipantProfile(UserInterface $account) {

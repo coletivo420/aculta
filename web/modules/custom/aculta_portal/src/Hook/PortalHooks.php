@@ -494,16 +494,16 @@ final class PortalHooks {
         }
         unset($address_element);
       }
-      // Número: subcampo do endereço, logo depois da rua (StreetNumberField). O valor vem do perfil salvo.
-      $saved_number = '';
+      // Número e S/N: subcampos do endereço, logo depois da rua (StreetNumberField). Valores do perfil salvo.
+      $parts = ['street' => '', 'number' => '', 'sn' => FALSE];
       if ($entity->id()) {
         $saved = $this->entityTypeManager->getStorage('profile')->load($entity->id());
-        $saved_line = $saved && $saved->hasField('address') && !$saved->get('address')->isEmpty()
-          ? (string) $saved->get('address')->first()->getAddressLine1() : '';
-        $saved_number = preg_match('/,\s*([^,]+)$/', $saved_line, $m) ? trim($m[1]) : '';
+        if ($saved && $saved->hasField('address') && !$saved->get('address')->isEmpty()) {
+          $parts = \Drupal\aculta_portal\Account\StreetNumberField::split((string) $saved->get('address')->first()->getAddressLine1());
+        }
       }
       if (isset($form['address']['widget'][0]['address'])) {
-        StreetNumberField::attach($form['address']['widget'][0]['address'], $saved_number);
+        \Drupal\aculta_portal\Account\StreetNumberField::attach($form['address']['widget'][0]['address'], $parts['number'], $parts['sn']);
       }
       // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
       $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';

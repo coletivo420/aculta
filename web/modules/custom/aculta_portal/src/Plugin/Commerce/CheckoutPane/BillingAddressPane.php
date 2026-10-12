@@ -63,13 +63,13 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       ]);
     }
     // O formulário mostra só a rua. A cópia é usada só no formulário; o perfil original (resumo) não muda.
-    $saved_number = $this->savedStreetNumber($profile);
+    $parts = $this->savedParts($profile);
     $editable = $profile;
-    if ($saved_number !== '') {
+    if ($parts['number'] !== '' || $parts['sn']) {
       $editable = clone $profile;
       $address = $editable->get('address')->first();
       $value = $address->getValue();
-      $value['address_line1'] = $this->streetOnly((string) $address->getAddressLine1());
+      $value['address_line1'] = $parts['street'];
       $address->setValue($value);
     }
     $inline_form = $this->inlineFormManager->createInstance('customer_profile', [
@@ -86,7 +86,7 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     ];
     $pane_form['profile'] = $inline_form->buildInlineForm($pane_form['profile'], $form_state);
     // O Número é um subcampo do elemento de endereço (ver StreetNumberField), e não um campo solto do pane.
-    StreetNumberField::attachTo($pane_form['profile'], $saved_number);
+    StreetNumberField::attachTo($pane_form['profile'], $parts['number'], $parts['sn']);
     $pane_form['#attached']['library'][] = self::CEP_LIBRARY;
 
     return $pane_form;
@@ -97,31 +97,23 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface $inline_form */
     $inline_form = $pane_form['profile']['#inline_form'];
     $profile = $inline_form->getEntity();
-    $number_element = StreetNumberField::find($pane_form);
-    $number = $number_element ? trim((string) $form_state->getValue($number_element['#parents'])) : '';
-    if ($number !== '' && $profile->hasField('address') && !$profile->get('address')->isEmpty()) {
+    [$number, $sn] = StreetNumberField::values($pane_form, $form_state);
+    if ($profile->hasField('address') && !$profile->get('address')->isEmpty()) {
       $address = $profile->get('address')->first();
-      // AddressItem não tem setAddressLine1(): grava-se o array de valores do endereço.
       $value = $address->getValue();
-      $value['address_line1'] = $this->streetOnly((string) $address->getAddressLine1()) . ', ' . $number;
+      $value['address_line1'] = StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
       $address->setValue($value);
       $profile->save();
     }
     $this->order->setBillingProfile($profile);
   }
 
-  /** Rua sem o número (remove o último trecho após vírgula). */
-  private function streetOnly(string $line): string {
-    return trim(preg_replace('/,\s*[^,]*$/', '', $line));
-  }
-
-  /** Número já gravado no logradouro (último trecho após vírgula), para preencher o campo ao voltar à etapa. */
-  private function savedStreetNumber($profile): string {
+  /** Rua, número e S/N salvos no logradouro (para preencher o formulário ao voltar à etapa). */
+  private function savedParts($profile): array {
     if (!$profile || !$profile->hasField('address') || $profile->get('address')->isEmpty()) {
-      return '';
+      return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    $line = (string) $profile->get('address')->first()->getAddressLine1();
-    return preg_match('/,\s*([^,]+)$/', $line, $m) ? trim($m[1]) : '';
+    return StreetNumberField::split((string) $profile->get('address')->first()->getAddressLine1());
   }
 
 }

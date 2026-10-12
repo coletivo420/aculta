@@ -102,6 +102,66 @@
     }
   }
 
+  /**
+   * Número, S/N e Complemento na mesma linha, logo depois da rua. Número: só dígitos, até 4. Com S/N marcado, o
+   * número fica desabilitado e vazio. A marca S/N e o número são subcampos do endereço (StreetNumberField).
+   */
+  function layoutStreetNumber(prefix, container) {
+    const numInput = container.querySelector('input[name$="[street_number]"]');
+    const snInput = container.querySelector('input[name$="[street_number_sn]"]');
+    if (!numInput) return;
+    const rowOf = (el) => el?.closest('.form-item, .js-form-item, .form-check');
+    const numberRow = rowOf(numInput);
+    const snRow = snInput ? rowOf(snInput) : null;
+    const streetRow = rowOf(getField(prefix, 'address_line1', container));
+    const complementRow = rowOf(getField(prefix, 'address_line2', container));
+    if (numberRow && streetRow && numberRow !== streetRow) {
+      streetRow.after(numberRow);
+    }
+    if (numberRow && complementRow && numberRow.parentElement === complementRow.parentElement && !numberRow.closest('.portal-address-number-row')) {
+      const row = document.createElement('div');
+      row.className = 'row g-2 align-items-end portal-address-number-row';
+      const numCol = document.createElement('div');
+      numCol.className = 'col-5 col-sm-3';
+      const snCol = document.createElement('div');
+      snCol.className = 'col-auto pb-2';
+      const compCol = document.createElement('div');
+      compCol.className = 'col-sm';
+      numberRow.parentElement.insertBefore(row, numberRow);
+      numCol.append(numberRow);
+      if (snRow) snCol.append(snRow);
+      compCol.append(complementRow);
+      row.append(numCol, snCol, compCol);
+    }
+    numInput.setAttribute('maxlength', '4');
+    numInput.setAttribute('inputmode', 'numeric');
+    numInput.setAttribute('pattern', '[0-9]{1,4}');
+    if (!numInput.dataset.acultaNumberBound) {
+      numInput.dataset.acultaNumberBound = 'true';
+      numInput.addEventListener('input', () => {
+        numInput.value = numInput.value.replace(/\D/g, '').slice(0, 4);
+      });
+    }
+    if (snInput && !snInput.dataset.acultaSnBound) {
+      snInput.dataset.acultaSnBound = 'true';
+      snInput.addEventListener('change', () => syncStreetNumber(numInput, snInput));
+    }
+    syncStreetNumber(numInput, snInput);
+  }
+
+  function syncStreetNumber(numInput, snInput) {
+    if (!snInput) return;
+    if (snInput.checked) {
+      numInput.value = '';
+      numInput.disabled = true;
+      numInput.required = false;
+    }
+    else {
+      numInput.disabled = false;
+      numInput.required = true;
+    }
+  }
+
   function attach(context) {
     // Reivindica os campos com o mesmo id do contrib (data-once): o behavior do contrib não os processa de novo.
     const postalFields = once('cep-autocomplete', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
@@ -115,12 +175,7 @@
       const container = postal.closest('form') || document;
       const status = statusFor(postal);
       movePostalFirst(postal);
-      // Número (campo do checkout, fora do formulário de endereço) logo após o Logradouro.
-      const numberRow = container.querySelector('input[name$="[street_number]"]')?.closest('.form-item, .js-form-item');
-      const streetRow = getField(prefix, 'address_line1', container)?.closest('.form-item, .js-form-item');
-      if (numberRow && streetRow && numberRow !== streetRow) {
-        streetRow.after(numberRow);
-      }
+      layoutStreetNumber(prefix, container);
 
       Object.entries(labels).forEach(([key, label]) => setLabel(getField(prefix, key, container), label));
       const pending = pendingFill.get(prefix);

@@ -47,13 +47,13 @@ final class PortalFormCallbacks {
    * do checkout. Roda na montagem da entidade, antes do save.
    */
   public function buildStreetNumber(string $entityTypeId, $profile, array &$form, FormStateInterface $formState): void {
-    $number = trim((string) $formState->getValue(['address', 0, 'address', 'street_number']));
-    if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $number === '' || $profile->get('address')->isEmpty()) {
+    if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $profile->get('address')->isEmpty()) {
       return;
     }
+    [$number, $sn] = \Drupal\aculta_portal\Account\StreetNumberField::values($form, $formState);
     $address = $profile->get('address')->first();
     $value = $address->getValue();
-    $value['address_line1'] = trim((string) $address->getAddressLine1()) . ', ' . $number;
+    $value['address_line1'] = \Drupal\aculta_portal\Account\StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
     $address->setValue($value);
   }
 
