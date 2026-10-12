@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\Core\Template\Attribute;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -99,18 +101,18 @@ final class PortalController extends ControllerBase {
       '#style_name' => 'aculta_avatar',
       '#uri' => $file->getFileUri(),
       '#alt' => $this->t('Foto de perfil de @name', ['@name' => $display_name]),
-      '#attributes' => ['class' => ['portal-account__avatar']],
+      '#attributes' => ['data-portal-ui' => 'account-avatar'],
     ] : [
-      '#type' => 'html_tag',
+      '#theme' => 'aculta_portal_element',
       '#tag' => 'span',
       '#value' => mb_strtoupper(mb_substr($display_name, 0, 1)),
-      '#attributes' => ['class' => ['portal-account__avatar', 'portal-account__avatar--empty'], 'aria-hidden' => 'true'],
+      '#element_attributes' => new Attribute(['data-portal-ui' => 'account-avatar-empty', 'aria-hidden' => 'true']),
     ];
 
     return [
       'identity' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['portal-account__identity']],
+        '#attributes' => ['data-portal-ui' => 'account-identity'],
         'photo_editor' => [
           '#theme' => 'aculta_portal_photo_editor',
           '#photo' => $photo,
@@ -119,7 +121,7 @@ final class PortalController extends ControllerBase {
         ],
         'details' => [
           '#type' => 'container',
-          'name' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $display_name],
+          'name' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $display_name],
           'email' => ['#plain_text' => $account->getEmail()],
         ],
       ],
@@ -136,8 +138,8 @@ final class PortalController extends ControllerBase {
     $count = $this->accountCourses->countCourses($account);
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['portal-account-courses-summary']],
-      'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Cursos')],
+      '#attributes' => ['data-portal-ui' => 'account-courses-summary'],
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Cursos')],
       'summary' => [
         '#plain_text' => $count === 1
           ? $this->t('Você participa de 1 curso.')
@@ -216,7 +218,7 @@ final class PortalController extends ControllerBase {
     }
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['portal-account__commerce', 'portal-account__commerce--orders']],
+      '#attributes' => ['data-portal-ui' => 'account-commerce-orders'],
       'table' => [
         '#type' => 'table',
         '#header' => [$this->t('Pedido'), $this->t('Data'), $this->t('Total'), $this->t('Situação')],
@@ -240,7 +242,7 @@ final class PortalController extends ControllerBase {
     }
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['portal-account__commerce', 'portal-account__commerce--payments']],
+      '#attributes' => ['data-portal-ui' => 'account-commerce-payments'],
       'table' => [
         '#type' => 'table',
         '#header' => [$this->t('Método'), $this->t('Tipo'), $this->t('Padrão')],
@@ -263,7 +265,7 @@ final class PortalController extends ControllerBase {
 
     $items = [
       'description' => ['#plain_text' => $this->t('Gerencie as contas externas conectadas à sua conta.')],
-      'google_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => 'Google'],
+      'google_title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => 'Google'],
     ];
     if ($links) {
       $social_auth = reset($links);
@@ -277,19 +279,14 @@ final class PortalController extends ControllerBase {
       else {
         $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
         $items['google_account'] = ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')];
-        $items['google_reconnect'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Atualizar conexão Google'),
-          '#url' => Url::fromRoute('social_auth.network.redirect', ['network' => 'google']),
-          '#attributes' => ['class' => ['button', 'button--secondary']],
-        ];
+        $items['google_reconnect'] = PortalLinkElement::build($this->t('Atualizar conexão Google'), Url::fromRoute('social_auth.network.redirect', ['network' => 'google']), ['data-portal-ui' => 'button-secondary']);
       }
       if ($this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
           '#type' => 'link',
           '#title' => $this->t('Desconectar Google'),
           '#url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()]),
-          '#attributes' => ['class' => ['button', 'button--secondary']],
+          '#attributes' => ['data-portal-ui' => 'button-secondary'],
           '#access' => $social_auth->access('delete'),
         ];
       }
@@ -302,7 +299,7 @@ final class PortalController extends ControllerBase {
       $items['google_status'] = ['#plain_text' => $this->t('Nenhuma conta Google está conectada.')];
       $items['google_login'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-auth-provider']],
+        '#attributes' => ['data-portal-ui' => 'auth-provider'],
         'provider' => $this->blockManager
           ->createInstance('social_auth_login', [])
           ->build(),
@@ -322,15 +319,15 @@ final class PortalController extends ControllerBase {
       'intro' => ['#plain_text' => $this->t('Gerencie como você acessa sua conta.')],
       'email_section' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-security-card']],
-        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('E-mail de acesso')],
-        'current_label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
+        '#attributes' => ['data-portal-ui' => 'security-card'],
+        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('E-mail de acesso')],
+        'current_label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
         'current_email' => ['#plain_text' => $account->getEmail()],
       ],
       'password_section' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-security-card']],
-        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Senha')],
+        '#attributes' => ['data-portal-ui' => 'security-card'],
+        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Senha')],
         'description' => ['#plain_text' => $this->t('Mantenha uma senha segura para acessar sua conta.')],
       ],
       '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
@@ -342,8 +339,8 @@ final class PortalController extends ControllerBase {
       if ($pending_email !== NULL) {
         $content['email_section']['pending'] = [
           '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-security-pending'], 'aria-live' => 'polite'],
-          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
+          '#attributes' => ['data-portal-ui' => 'security-pending', 'aria-live' => 'polite'],
+          'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
           'email' => ['#plain_text' => $pending_email],
           'message' => ['#plain_text' => $this->t('Aguardando confirmação no novo endereço.')],
         ];
@@ -420,15 +417,11 @@ final class PortalController extends ControllerBase {
       'basics' => ['title' => $this->t('Informações básicas'), 'route' => 'aculta_portal.my_data'],
       'address' => ['title' => $this->t('Endereço'), 'route' => 'aculta_portal.my_data_address'],
     ] as $key => $tab) {
-      $link = [
-        '#type' => 'link',
-        '#title' => $tab['title'],
-        '#url' => Url::fromRoute($tab['route']),
-        '#attributes' => ['data-portal-account-data-link' => 'true', 'class' => ['portal-account-data__link']],
-      ];
+      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
       if ($section === $key) {
-        $link['#attributes']['aria-current'] = 'page';
-        $link['#attributes']['class'][] = 'is-active';
+        // Estado da aba atual (aria-current; "is-active" é só o estado que o tema também reconhece).
+        $link['#element_attributes']->setAttribute('aria-current', 'page');
+        $link['#element_attributes']->addClass('is-active');
       }
       $links[] = $link;
     }
@@ -436,17 +429,17 @@ final class PortalController extends ControllerBase {
       'description' => ['#plain_text' => $this->t('Mantenha suas informações pessoais e de contato atualizadas.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['portal-account-data__nav'], 'aria-label' => $this->t('Seções de meus dados'), 'data-portal-account-data-nav' => 'true'],
+        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => $this->t('Seções de meus dados'), 'data-portal-account-data-nav' => 'true'],
         'links' => $links,
       ],
       'content' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['portal-account-data__content'], 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
-        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $title, '#attributes' => ['tabindex' => '-1']],
+        '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
+        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $title, '#element_attributes' => new Attribute(['tabindex' => '-1'])],
         'account_email' => $section === 'basics' ? [
           '#type' => 'container',
-          '#attributes' => ['class' => ['portal-account-data__email']],
-          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail')],
+          '#attributes' => ['data-portal-ui' => 'account-data-email'],
+          'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail')],
           'value' => ['#plain_text' => $account->getEmail()],
         ] : [],
         'form' => $this->profileForm($section, $profile),

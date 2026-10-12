@@ -1,0 +1,61 @@
+{#
+  Shell da Minha conta (apresentação ACULTA420). O módulo aculta_portal entrega seções, links, estado e sair como dados;
+  este template monta o menu lateral, a sanfona do celular e o cabeçalho. Os atributos data-portal-account-* são o contrato
+  de comportamento (js/account-navigation.js): não os remova ao mudar o visual.
+#}
+<section class="portal-account" data-portal-account-layout aria-busy="false">
+  <header class="portal-account__header">
+    <h1>{% trans %}Minha conta{% endtrans %}</h1>
+    <p>{% trans %}Área pessoal{% endtrans %}</p>
+  </header>
+  <div class="portal-account__layout">
+    <nav class="portal-account__nav" aria-label="{% trans %}Minha conta{% endtrans %}">
+      <h2 class="visually-hidden">{% trans %}Navegação da conta{% endtrans %}</h2>
+      <div class="portal-account__menu-desktop"><div class="item-list">
+        <ul class="portal-account__menu" data-portal-account-menu>
+          {% for item in menu_items %}
+            <li>
+              <a class="portal-account__link" href="{{ item.href }}" data-aculta-portal-link="true"{% if item.active %} aria-current="page"{% endif %}>
+                <i class="bi bi-{{ item.icon }} portal-account__icon" aria-hidden="true"></i>
+                <span class="portal-account__label">{{ item.label }}</span>
+                <i class="bi bi-chevron-right portal-account__chevron" aria-hidden="true"></i>
+              </a>
+            </li>
+          {% endfor %}
+          <li>
+            <a class="portal-account__link portal-account__logout" href="{{ logout.href }}" data-aculta-portal-link="true">
+              <i class="bi bi-box-arrow-right portal-account__icon" aria-hidden="true"></i>
+              <span class="portal-account__label">{{ logout.label }}</span>
+              <i class="bi bi-chevron-right portal-account__chevron" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+      </div></div>
+      <div class="portal-account__accordion" data-portal-account-accordion>
+        {% for item in accordion_items %}
+          <details class="portal-account__item" data-portal-account-item{% if item.open %} open{% endif %}>
+            <summary class="portal-account__summary" data-portal-account-summary>
+              <i class="bi bi-{{ item.icon }} portal-account__icon" aria-hidden="true"></i>
+              <span class="portal-account__label">{{ item.label }}</span>
+              <i class="bi bi-chevron-right portal-account__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="portal-account__panel" data-portal-account-accordion-panel data-src="{{ item.href }}">
+              <p class="portal-account__panel-loading">{% trans %}Carregando…{% endtrans %}</p>
+            </div>
+          </details>
+        {% endfor %}
+        <a class="portal-account__logout-row portal-account__summary" href="{{ logout.href }}" data-portal-account-summary>
+          <i class="bi bi-box-arrow-right portal-account__icon" aria-hidden="true"></i>
+          <span class="portal-account__label">{{ logout.label }}</span>
+          <i class="bi bi-chevron-right portal-account__chevron" aria-hidden="true"></i>
+        </a>
+      </div>
+    </nav>
+    <section class="portal-account__content" data-portal-account-content aria-labelledby="portal-account-section-title" aria-busy="false" role="region">
+      <h2 id="portal-account-section-title" tabindex="-1">{{ section_title }}</h2>
+      <div class="portal-account__body" id="portal-account-body">{{ content }}</div>
+    </section>
+  </div>
+  <p class="portal-account__loading" data-portal-account-loading hidden>{% trans %}Carregando…{% endtrans %}</p>
+  <p class="portal-account__status" data-portal-account-status aria-live="polite" aria-atomic="true"></p>
+</section>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Support\Form;
 
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -41,7 +42,7 @@ final class SupportForm extends FormBase {
       '#type' => 'html_tag',
       '#tag' => 'p',
       '#value' => Html::escape((string) ($this->configs->get('aculta_portal.support')->get('intro') ?: $this->t('Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.'))),
-      '#attributes' => ['class' => ['aculta-support-intro']],
+      '#attributes' => ['data-portal-ui' => 'support-intro'],
     ];
     $gateway = $this->entities->getStorage('commerce_payment_gateway')->load('mercado_pago');
     $gateway_configuration = $gateway ? $gateway->getPluginConfiguration() : [];
@@ -63,7 +64,7 @@ final class SupportForm extends FormBase {
     else {
       $form['status'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'message' => [
           '#plain_text' => $this->t('O apoio financeiro está temporariamente indisponível. Nenhuma cobrança será iniciada por esta página.'),
         ],
@@ -71,10 +72,10 @@ final class SupportForm extends FormBase {
     }
     $form['other_support'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-support-other']],
-      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Outras formas de apoio')],
-      'text' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.')],
-      'contact' => ['#type' => 'link', '#title' => $this->t('Fale com a Associação'), '#url' => \Drupal\Core\Url::fromUri('internal:/contato'), '#attributes' => ['class' => ['aculta-button', 'aculta-button--outline']]],
+      '#attributes' => ['data-portal-ui' => 'support-other'],
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Outras formas de apoio')],
+      'text' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.')],
+      'contact' => PortalLinkElement::build($this->t('Fale com a Associação'), \Drupal\Core\Url::fromUri('internal:/contato'), ['data-portal-ui' => 'aculta-button-outline']),
     ];
     return $form;
   }

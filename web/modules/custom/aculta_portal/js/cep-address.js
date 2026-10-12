@@ -38,7 +38,7 @@
     let status = wrapper?.querySelector('[data-aculta-cep-status]');
     if (!status && wrapper) {
       status = document.createElement('div');
-      status.className = 'description aculta-cep-status';
+      status.className = 'aculta-cep-status';
       status.dataset.acultaCepStatus = 'true';
       status.setAttribute('role', 'status');
       status.setAttribute('aria-live', 'polite');
@@ -46,15 +46,6 @@
       wrapper.append(status);
     }
     return status;
-  }
-
-  function movePostalFirst(postal) {
-    const row = postal.closest('.form-item, .js-form-item');
-    const parent = row?.parentElement;
-    if (row && parent && !postal.dataset.acultaCepMoved) {
-      parent.insertBefore(row, parent.firstChild);
-      postal.dataset.acultaCepMoved = 'true';
-    }
   }
 
   function announce(status, text, error = false) {
@@ -103,37 +94,11 @@
   }
 
   /**
-   * Número, S/N e Complemento na mesma linha, logo depois da rua. Número: só dígitos, até 10. Com S/N marcado, o
-   * número fica desabilitado e vazio. A marca S/N e o número são subcampos do endereço (StreetNumberField).
+   * Comportamento do Número e da marca S/N: só dígitos, até 10, e número desabilitado e vazio com S/N marcado.
+   * A posição e as colunas do bloco (CEP primeiro, Número/S/N/Complemento na mesma linha) são do tema do site
+   * (js/address-layout.js). A marca S/N e o número são subcampos do endereço (StreetNumberField).
    */
-  function layoutStreetNumber(prefix, container) {
-    const numInput = container.querySelector('input[name$="[street_number]"]');
-    const snInput = container.querySelector('input[name$="[street_number_sn]"]');
-    if (!numInput) return;
-    const rowOf = (el) => el?.closest('.form-item, .js-form-item, .form-check');
-    const numberRow = rowOf(numInput);
-    const snRow = snInput ? rowOf(snInput) : null;
-    const streetRow = rowOf(getField(prefix, 'address_line1', container));
-    const complementRow = rowOf(getField(prefix, 'address_line2', container));
-    if (numberRow && streetRow && numberRow !== streetRow) {
-      streetRow.after(numberRow);
-    }
-    if (numberRow && complementRow && numberRow.parentElement === complementRow.parentElement && !numberRow.closest('.portal-address-number-row')) {
-      const row = document.createElement('div');
-      row.className = 'row g-2 align-items-end portal-address-number-row';
-      // Colunas de largura do conteúdo: número e S/N encolhem para caber; o complemento ocupa o resto da linha.
-      const numCol = document.createElement('div');
-      numCol.className = 'col-auto';
-      const snCol = document.createElement('div');
-      snCol.className = 'col-auto pb-2';
-      const compCol = document.createElement('div');
-      compCol.className = 'col';
-      numberRow.parentElement.insertBefore(row, numberRow);
-      numCol.append(numberRow);
-      if (snRow) snCol.append(snRow);
-      compCol.append(complementRow);
-      row.append(numCol, snCol, compCol);
-    }
+  function bindStreetNumber(numInput, snInput) {
     numInput.setAttribute('maxlength', '10');
     numInput.setAttribute('inputmode', 'numeric');
     numInput.setAttribute('pattern', '[0-9]{1,10}');
@@ -175,8 +140,9 @@
       const prefix = name.slice(0, markerIndex);
       const container = postal.closest('form') || document;
       const status = statusFor(postal);
-      movePostalFirst(postal);
-      layoutStreetNumber(prefix, container);
+      const numInput = container.querySelector('input[name$="[street_number]"]');
+      const snInput = container.querySelector('input[name$="[street_number_sn]"]');
+      if (numInput) bindStreetNumber(numInput, snInput);
 
       Object.entries(labels).forEach(([key, label]) => setLabel(getField(prefix, key, container), label));
       const pending = pendingFill.get(prefix);

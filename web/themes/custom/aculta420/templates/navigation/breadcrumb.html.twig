@@ -1,7 +1,7 @@
 {# Public frontend breadcrumb. Claro keeps its independent admin template. #}
 {% if breadcrumb %}
   <nav class="aculta-breadcrumb__nav" aria-label="{{ 'Breadcrumb'|t }}">
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" data-portal-breadcrumb>
       {% for item in breadcrumb %}
         <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.text }}</a></li>
       {% endfor %}

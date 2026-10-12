@@ -1,0 +1,45 @@
+/* Carrinho: contador da barra (zero itens esconde o badge) e caixa de status do "Adicionar ao carrinho".
+   A marcação é do módulo aculta_portal (classes portal-cart-status*) e do componente cart-offcanvas. */
+.aculta-cart-utility__count[data-count="0"] {
+  display: none;
+}
+
+.portal-cart-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-block: 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--bs-border-color, currentColor);
+}
+
+.portal-cart-status--success {
+  border-color: var(--bs-success, currentColor);
+}
+
+.portal-cart-status--error {
+  border-color: var(--bs-danger, currentColor);
+  color: var(--bs-danger, inherit);
+}
+
+.portal-cart-status__message {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+.portal-cart-status__link {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.portal-cart-status__close {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+  cursor: pointer;
+}

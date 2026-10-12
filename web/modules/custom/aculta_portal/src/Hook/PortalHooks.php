@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\Core\Template\Attribute;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\AccountShellBuilder;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
@@ -372,21 +374,18 @@ final class PortalHooks {
       $form['name']['#title'] = $this->translation->translate('Nome de usuário ou e-mail');
       $form['name']['#description'] = $this->translation->translate('Informe seu e-mail ou nome de usuário.');
       $form['password_reset_link'] = [
-        '#type' => 'link',
-        '#title' => $this->translation->translate('Esqueci minha senha'),
-        '#url' => Url::fromRoute('user.pass'),
-        '#attributes' => ['class' => ['aculta-login__reset-link']],
+        ...PortalLinkElement::build($this->translation->translate('Esqueci minha senha'), Url::fromRoute('user.pass'), ['data-portal-ui' => 'login-reset-link']),
         '#weight' => 10,
       ];
       $form['registration_notice'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-login__registration']],
+        '#attributes' => ['data-portal-ui' => 'login-registration'],
         'text' => ['#plain_text' => $this->translation->translate('Ainda não tem uma conta?')],
         'link' => [
           '#type' => 'link',
           '#title' => $this->translation->translate('Ver informações sobre o cadastro'),
           '#url' => Url::fromRoute('user.register'),
-          '#attributes' => ['class' => ['aculta-button', 'aculta-button--secondary']],
+          '#attributes' => ['data-portal-ui' => 'aculta-button-secondary'],
         ],
         '#weight' => 30,
       ];
@@ -398,15 +397,15 @@ final class PortalHooks {
       && $this->authIntegrationManager->isGoogleConfigured()) {
       $form['social_auth_divider'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-login__divider']],
-        'line_before' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['aria-hidden' => 'true']],
+        '#attributes' => ['data-portal-ui' => 'login-divider'],
+        'line_before' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['aria-hidden' => 'true'])],
         'label' => ['#plain_text' => $this->translation->translate('ou')],
-        'line_after' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['aria-hidden' => 'true']],
+        'line_after' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['aria-hidden' => 'true'])],
         '#weight' => 20,
       ];
       $form['social_auth'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-auth-provider']],
+        '#attributes' => ['data-portal-ui' => 'auth-provider'],
         'provider' => $this->blockManager
           ->createInstance('social_auth_login', [])
           ->build(),
@@ -556,11 +555,42 @@ final class PortalHooks {
         'template' => 'aculta-portal-account-terms-modal',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
+      'aculta_portal_element' => [
+        'variables' => [
+          'tag' => 'span',
+          'value' => NULL,
+          'element_attributes' => NULL,
+        ],
+        'template' => 'portal-element',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
+      'aculta_portal_search_trigger' => [
+        'variables' => [
+          'url' => NULL,
+          'label' => NULL,
+          'trigger_attributes' => NULL,
+        ],
+        'template' => 'portal-search-trigger',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
+      'aculta_portal_cart_status' => [
+        'variables' => [
+          'status_type' => 'success',
+          'status_role' => 'status',
+          'message' => NULL,
+          'url' => NULL,
+          'link_label' => NULL,
+          'close_label' => NULL,
+        ],
+        'template' => 'portal-cart-status',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
       'aculta_portal_shell' => [
         'variables' => [
           'section_title' => NULL,
-          'menu' => NULL,
-          'menu_accordion' => NULL,
+          'menu_items' => [],
+          'accordion_items' => [],
+          'logout' => [],
           'content' => NULL,
         ],
         'template' => 'aculta-portal-shell',

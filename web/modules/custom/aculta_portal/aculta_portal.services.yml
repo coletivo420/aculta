@@ -83,6 +83,9 @@ services:
     class: Drupal\aculta_portal\PathProcessor\AccountListPathProcessor
     tags:
       - { name: path_processor_outbound, priority: 300 }
+  aculta_portal.cart_ajax:
+    class: Drupal\aculta_portal\Cart\AddToCartAjax
+    arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer']
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
     arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation']

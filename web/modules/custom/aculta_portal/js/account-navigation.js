@@ -21,7 +21,7 @@
 
   const updateMenu = (url) => {
     const pathname = new URL(url, window.location.href).pathname;
-    document.querySelectorAll('.portal-account__menu a, .portal-account__accordion a').forEach((item) => {
+    document.querySelectorAll('[data-portal-account-menu] a, [data-portal-account-accordion] a').forEach((item) => {
       const current = new URL(item.href, window.location.href).pathname === pathname;
       if (current) item.setAttribute('aria-current', 'page');
       else item.removeAttribute('aria-current');
@@ -63,7 +63,7 @@
   // Atualiza o shell para a página nova: seção ativa (um só item), título da seção, breadcrumb e document.title.
   const refreshChrome = (url) => {
     const path = new URL(url, window.location.href).pathname;
-    const links = Array.from(document.querySelectorAll('.portal-account__menu a, .portal-account__accordion a'));
+    const links = Array.from(document.querySelectorAll('[data-portal-account-menu] a, [data-portal-account-accordion] a'));
     // Item ativo: o link de maior caminho que contém a página (ex.: /pedidos/6 ativa /pedidos).
     let active = null;
     links.forEach((item) => {
@@ -72,7 +72,6 @@
       if (matches && (!active || itemPath.length > new URL(active.href, window.location.href).pathname.length)) active = item;
     });
     links.forEach((item) => {
-      item.classList.toggle('is-active', item === active);
       if (item === active) item.setAttribute('aria-current', 'page');
       else item.removeAttribute('aria-current');
     });
@@ -81,7 +80,7 @@
     const chrome = body?.querySelector('[data-portal-chrome]');
     const pageTitle = chrome ? chrome.getAttribute('data-portal-page-title') : '';
     const crumbList = chrome?.querySelector('ol');
-    const currentCrumbs = document.querySelector('ol.breadcrumb');
+    const currentCrumbs = document.querySelector('[data-portal-breadcrumb]');
     if (crumbList && currentCrumbs) currentCrumbs.replaceChildren(...crumbList.children);
     chrome?.remove();
     const sectionTitle = active ? active.textContent.trim() : pageTitle;
@@ -113,7 +112,7 @@
       sequence += 1;
       panel.id = 'portal-account-panel-' + sequence;
     }
-    const trigger = details.querySelector('.portal-account__summary');
+    const trigger = details.querySelector('[data-portal-account-summary]');
     requestInto(trigger, panel.dataset.src, panel.id, () => {
       panel.dataset.loaded = '1';
       panel.dataset.loading = '0';
@@ -124,12 +123,12 @@
     if (!mobileQuery.matches) return;
     // No celular o conteúdo vive só na sanfona: a coluna de conteúdo sai do DOM para não duplicar IDs.
     layout.querySelector('[data-portal-account-content]')?.remove();
-    layout.querySelectorAll('.portal-account__item').forEach((details) => {
+    layout.querySelectorAll('[data-portal-account-item]').forEach((details) => {
       if (details.dataset.acultaAccordion === '1') return;
       details.dataset.acultaAccordion = '1';
       details.addEventListener('toggle', () => {
         if (!details.open) return;
-        layout.querySelectorAll('.portal-account__item[open]').forEach((other) => {
+        layout.querySelectorAll('[data-portal-account-item][open]').forEach((other) => {
           if (other !== details) other.open = false;
         });
         loadAccordionItem(details);
@@ -152,9 +151,9 @@
         layout.addEventListener('click', (event) => {
           if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           const anchor = event.target.closest('a[href]');
-          if (!isInternalLink(anchor) || anchor.closest('.portal-account__summary')) return;
+          if (!isInternalLink(anchor) || anchor.closest('[data-portal-account-summary]')) return;
           // Só a navegação de seções e abas usa AJAX; ações dentro de formulários seguem o fluxo normal.
-          const inMenu = anchor.closest('.portal-account__menu, .portal-account__accordion, [data-portal-account-data-nav]');
+          const inMenu = anchor.closest('[data-portal-account-menu], [data-portal-account-accordion], [data-portal-account-data-nav]');
           const inBody = anchor.closest('#' + BODY_ID);
           if (!inMenu && !inBody) return;
           const target = new URL(anchor.href, window.location.href);
@@ -200,7 +199,7 @@
         if (!dialog || !trigger || typeof dialog.showModal !== 'function') return;
 
         // The dialog starts open so its form remains available without JS.
-        editor.classList.add('is-enhanced');
+        editor.setAttribute('data-portal-enhanced', '');
         if (dialog.open) dialog.close();
 
         trigger.addEventListener('click', () => {

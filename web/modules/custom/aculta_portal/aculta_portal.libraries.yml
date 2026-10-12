@@ -1,32 +1,18 @@
 account-navigation:
-  css:
-    theme:
-      css/account-portal.css: {}
   js:
     js/account-navigation.js: {}
   dependencies:
     - core/drupal
     - core/once
 
-support:
-  css:
-    theme:
-      css/support.css: {}
 
 cep-address:
-  css:
-    component:
-      css/cep-address.css: {}
   js:
     js/cep-address.js: {}
   dependencies:
     - core/drupal
     - core/once
 
-requirements-report:
-  css:
-    theme:
-      css/requirements-report.css: {}
 
 search-preview:
   js:
@@ -36,11 +22,15 @@ search-preview:
     - core/once
 
 account-terms-modal:
-  css:
-    component:
-      css/account-terms-modal.css: {}
   js:
     js/account-terms-modal.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+cart-status:
+  js:
+    js/cart-status.js: {}
   dependencies:
     - core/drupal
     - core/once

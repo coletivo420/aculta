@@ -232,3 +232,15 @@ Não:
 - embarcar Bootstrap novamente;
 - usar utilitário Bootstrap para substituir contrato semântico necessário;
 - criar motion incompatível com reduced-motion.
+
+## Código no Aculta Portal, Design no ACULTA420
+
+> **Código no Aculta Portal, Design no ACULTA420.**
+
+Toda a aparência do Portal vive aqui. O módulo marca elementos com `data-portal-ui="token"`; `src/Hook/PortalUiHooks.php` (mapa `TOKENS`) troca cada token pelas classes do ACULTA420. Novo token = nova entrada no mapa, com o nome semântico.
+
+Toda a aparência do Portal vive aqui: templates Twig de apresentação (shell da Minha conta, sanfona, modal de termos,
+editor de foto, caixa de status do carrinho), CSS e o JS de layout (`js/address-layout.js`). O tema sobrescreve os
+templates do módulo com o mesmo nome; o módulo mantém fallback neutro. O tema não tem rota, `form_alter`, serviço nem
+chamada ao módulo. Os atributos `data-portal-account-*`, `data-aculta-*` e `data-portal-cart-status*` são contrato de
+comportamento: não remova ao mudar o visual. Inventário: `docs/portal/FRONTEIRA-MODULO-TEMA.md`.

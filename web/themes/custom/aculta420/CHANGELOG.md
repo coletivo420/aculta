@@ -554,3 +554,19 @@ conjunto normativo:
 - acessibilidade/progressive enhancement.
 
 O histórico detalhado anterior permanece no Git; não é especificação corrente.
+
+## Não versionado — revisão módulo x tema (2026-10-12)
+
+- Regra permanente: **Código no Aculta Portal, Design no ACULTA420** (AGENTS.md, README do módulo, doc do tema, gate
+  `scripts/validate-module-theme-boundary.php`).
+- Migrado para o tema: shell da Minha conta (`templates/aculta-portal-shell.html.twig` em design), modal de termos,
+  editor de foto, caixa de status do carrinho (template e CSS), CSS de Minha conta, CEP (número, tamanho) e recurso de
+  layout do CEP (`js/address-layout.js`), relatório de requisitos e suporte. Mapa completo em
+  `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
+- O módulo mantém fallback neutro (sem classes) nos templates migrados e o comportamento dos JS usa `data-portal-*`.
+- Evidência: marcação da Minha conta 8/8 idêntica após normalização; roteiro de aceitação 10/10 com ACULTA420 e com
+  Olivero (`docs/portal/TESTES-NAVEGADOR.md`, seção L). Captura de tela não executada.
+- Design do Aculta Portal concentrado aqui: `src/Hook/PortalUiHooks.php` traduz `data-portal-ui` em classes (mapa
+  `TOKENS`); templates de apresentação do shell, modal de termos, editor de foto, caixa do carrinho, gatilho da busca e
+  breadcrumb (`data-portal-breadcrumb`); CSS de Minha conta, Número/CEP, relatórios, suporte e carrinho.
+

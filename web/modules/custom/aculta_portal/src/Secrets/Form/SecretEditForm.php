@@ -56,7 +56,7 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
     if (!$this->secrets->canSaveHere()) {
       $form['storage_notice'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'text' => ['#plain_text' => (string) $this->t('⚠ Neste ambiente as credenciais são armazenadas no banco de dados. O formulário não grava aqui.')],
       ];
       $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar'), '#disabled' => TRUE];

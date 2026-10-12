@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Search;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Core\Render\Markup;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Component\Serialization\Json;
@@ -28,11 +28,12 @@ final class SearchUtility {
   /** @return array<string, mixed> */
   public function build(): array {
     return [
-      '#type' => 'link',
-      '#title' => Markup::create('<i class="bi bi-search" aria-hidden="true"></i><span class="visually-hidden">' . $this->t('Buscar no site') . '</span>'),
-      '#url' => Url::fromRoute('aculta_portal.search_popup'),
-      '#attributes' => [
-        'class' => ['aculta-search-utility', 'use-ajax', 'btn', 'btn-link', 'p-0'],
+      '#theme' => 'aculta_portal_search_trigger',
+      '#label' => $this->t('Buscar no site'),
+      '#url' => Url::fromRoute('aculta_portal.search_popup')->toString(),
+      // Atributos do gatilho: use-ajax (comportamento do Drupal) e o token de design do tema.
+      '#trigger_attributes' => new Attribute([
+        'class' => ['use-ajax'], 'data-portal-ui' => 'search-utility',
         'data-dialog-type' => 'modal',
         'data-dialog-options' => Json::encode([
           'width' => 520,
@@ -42,7 +43,7 @@ final class SearchUtility {
           'closeText' => (string) $this->t('Fechar'),
         ]),
         'title' => (string) $this->t('Buscar no site'),
-      ],
+      ]),
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
       '#cache' => ['contexts' => ['domain', 'url.path']],
     ];

@@ -1,0 +1,10 @@
+/* Caixa do Número: pequena (cerca de 4 caracteres visíveis), mesmo aceitando até 10 dígitos. */
+.portal-street-number input.form-text {
+  max-width: 5.5rem;
+}
+
+/* Status do CEP (texto de apoio abaixo do campo; a marcação é do módulo, o estilo é do tema). */
+.aculta-cep-status {
+  font-size: 0.875em;
+  color: var(--bs-secondary-color, inherit);
+}

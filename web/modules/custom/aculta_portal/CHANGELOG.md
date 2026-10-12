@@ -1319,3 +1319,21 @@ System, testes, versionamento e roadmap antes de novas features.
 
 O desenvolvimento opera temporariamente em modo GitHub-first / Runtime-last;
 features executáveis preparadas sem Homelab permanecem draft até validação.
+
+## Não versionado — revisão módulo x tema (2026-10-12)
+
+- Regra permanente: **Código no Aculta Portal, Design no ACULTA420** (AGENTS.md, README do módulo, doc do tema, gate
+  `scripts/validate-module-theme-boundary.php`).
+- Migrado para o tema: shell da Minha conta (`templates/aculta-portal-shell.html.twig` em design), modal de termos,
+  editor de foto, caixa de status do carrinho (template e CSS), CSS de Minha conta, CEP (número, tamanho) e recurso de
+  layout do CEP (`js/address-layout.js`), relatório de requisitos e suporte. Mapa completo em
+  `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
+- O módulo mantém fallback neutro (sem classes) nos templates migrados e o comportamento dos JS usa `data-portal-*`.
+- Evidência: marcação da Minha conta 8/8 idêntica após normalização; roteiro de aceitação 10/10 com ACULTA420 e com
+  Olivero (`docs/portal/TESTES-NAVEGADOR.md`, seção L). Captura de tela não executada.
+- Migração de design concluída: nenhuma classe de design é escrita pelo módulo (`'class' =>` só `use-ajax`; `is-active` é
+  estado). Os elementos marcam `data-portal-ui` com tokens; o ACULTA420 traduz (`src/Hook/PortalUiHooks.php`).
+- Novos: `Render/PortalLinkElement` (link com token preservando href e cacheabilidade), templates neutros
+  `portal-element`, `portal-search-trigger`. Breadcrumb do AJAX em `item_list`; JS usa `[data-portal-breadcrumb]`.
+- Gate: `scripts/validate-module-theme-boundary.php` reprova classe de design no módulo e token sem correspondente no tema.
+

@@ -30,6 +30,8 @@ final class FormHooks {
     private readonly \Drupal\aculta_portal\Account\EmailConfirmationPolicy $emailPolicy,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly \Drupal\aculta_portal\Domain\DomainPurposeManager $domainPurpose,
+    #[Autowire(service: 'aculta_portal.cart_ajax')]
+    private readonly \Drupal\aculta_portal\Cart\AddToCartAjax $cartAjax,
   ) {}
 
   /**
@@ -39,6 +41,7 @@ final class FormHooks {
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
     $this->accountAjaxSubmit($form, $formId);
+    $this->cartAjax->alter($form, $formId);
 
     $this->restrictedFormNotice($form, $formId);
 
@@ -245,7 +248,7 @@ final class FormHooks {
     $form['aculta_email_restriction'] = [
       '#type' => 'container',
       '#weight' => -100,
-      '#attributes' => ['class' => ['messages', 'messages--error', 'aculta-email-notice'], 'role' => 'alert'],
+      '#attributes' => ['data-portal-ui' => 'notice-error email-notice', 'role' => 'alert'],
       'text' => ['#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Sua conta está bloqueada por não confirmar o e-mail.'), ENT_QUOTES) . '</strong> '
         . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>'],
     ];

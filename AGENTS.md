@@ -576,3 +576,23 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
 - O `aculta_deployer` é um complemento opcional do `aculta_portal` (submódulo, dependência do próprio módulo, desabilitado por padrão). O Portal não depende dele. Ele publica `var/deployer/status.json` e o painel do Portal lê esse arquivo; o Portal não executa a CLI.
 - O `aculta_deployer` está em desenvolvimento (0.1.x). O roadmap dele é `docs/PLANEJAMENTO.md`.
   Mudanças de descoberta e sitemap por ambiente pertencem à fase 7 desse roadmap.
+
+## Código no Aculta Portal, Design no ACULTA420 (regra permanente)
+
+> **Código no Aculta Portal, Design no ACULTA420.**
+
+- **Aculta Portal** (`web/modules/custom/aculta_portal/**`) = funções: rotas, controllers, forms, `#ajax`, validação
+  (Número/S/N, CEP), endpoints, serviços, access, dados, cache, checkout panes, Commerce/Shipping, JS de
+  **comportamento** (usa `data-portal-*` e `data-aculta-*`, nunca classes de design) e traduções.
+- **ACULTA420** (`web/themes/custom/aculta420/**`) = design: templates Twig de apresentação, CSS, layout, cores,
+  larguras, ícones, animações, estilo de mensagens e caixas, e preprocess de apresentação.
+- O módulo **não** carrega CSS, **não** emite classes de design (`btn`, `alert`, `col-`, `bi-`, `portal-account__*`…)
+  e **não** referencia o tema. Ele entrega **dados** ao tema (listas, links, estado, textos) e continua funcionando
+  sem o ACULTA420 (com marcação neutra de fallback, sem aparência).
+- O tema **não** tem rota, `form_alter`, serviço, `Drupal::`, nem classe ou biblioteca do módulo.
+- **Contrato `data-portal-ui`:** o módulo marca elementos com tokens semânticos (`data-portal-ui="account-avatar"`); o
+  ACULTA420 traduz em classes em `src/Hook/PortalUiHooks.php`. Novo token = entrada no mapa do tema. O gate confere.
+- **Autorização para agentes:** ao implementar uma função no Aculta Portal, o agente pode adicionar ou corrigir o
+  ACULTA420 na mesma entrega, cada parte no seu dono.
+- Inventário, dívida e motivo: `docs/portal/FRONTEIRA-MODULO-TEMA.md`. Gate obrigatório:
+  `php scripts/validate-module-theme-boundary.php` (deve ser PASS; o cliquet de classes do módulo não pode subir).

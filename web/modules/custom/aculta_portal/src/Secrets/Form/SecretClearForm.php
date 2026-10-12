@@ -46,7 +46,7 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
     $form['variable'] = ['#type' => 'item', '#title' => $this->t('Variável'), '#plain_text' => $name];
     $form['warning'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['messages', 'messages--warning']],
+      '#attributes' => ['data-portal-ui' => 'notice-warning'],
       'text' => ['#plain_text' => (string) $this->t('Apagar o valor remove a variável do arquivo de credenciais deste ambiente. Para usar a credencial de novo, será preciso cadastrar o valor outra vez.')],
     ];
     $form['actions'] = ['#type' => 'actions'];

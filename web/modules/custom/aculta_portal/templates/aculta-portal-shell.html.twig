@@ -1,19 +1,38 @@
-<section class="portal-account" data-portal-account-layout aria-busy="false">
-  <header class="portal-account__header">
+{#
+  Fallback neutro do shell da Minha conta (aculta_portal). Sem apresentação: o tema ativo (ACULTA420) sobrescreve este
+  template. Os atributos data-portal-account-* são o contrato de comportamento e ficam nos dois.
+#}
+<section data-portal-account-layout aria-busy="false">
+  <header>
     <h1>Minha conta</h1>
     <p>Área pessoal</p>
   </header>
-  <div class="portal-account__layout">
-    <nav class="portal-account__nav" aria-label="Minha conta">
-      <h2 class="visually-hidden">Navegação da conta</h2>
-      <div class="portal-account__menu-desktop">{{ menu }}</div>
-      {{ menu_accordion }}
+  <div>
+    <nav aria-label="Minha conta">
+      <h2>Navegação da conta</h2>
+      <div>
+        <ul data-portal-account-menu>
+          {% for item in menu_items %}
+            <li><a href="{{ item.href }}" data-aculta-portal-link="true"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+          {% endfor %}
+          <li><a href="{{ logout.href }}" data-aculta-portal-link="true">{{ logout.label }}</a></li>
+        </ul>
+      </div>
+      <div data-portal-account-accordion>
+        {% for item in accordion_items %}
+          <details data-portal-account-item{% if item.open %} open{% endif %}>
+            <summary data-portal-account-summary>{{ item.label }}</summary>
+            <div data-portal-account-accordion-panel data-src="{{ item.href }}"></div>
+          </details>
+        {% endfor %}
+        <a href="{{ logout.href }}" data-portal-account-summary>{{ logout.label }}</a>
+      </div>
     </nav>
-    <section class="portal-account__content" data-portal-account-content aria-labelledby="portal-account-section-title" aria-busy="false" role="region">
+    <section data-portal-account-content aria-labelledby="portal-account-section-title" aria-busy="false" role="region">
       <h2 id="portal-account-section-title" tabindex="-1">{{ section_title }}</h2>
-      <div class="portal-account__body" id="portal-account-body">{{ content }}</div>
+      <div id="portal-account-body">{{ content }}</div>
     </section>
   </div>
-  <p class="portal-account__loading" data-portal-account-loading hidden>Carregando…</p>
-  <p class="portal-account__status" data-portal-account-status aria-live="polite" aria-atomic="true"></p>
+  <p data-portal-account-loading hidden>Carregando…</p>
+  <p data-portal-account-status aria-live="polite" aria-atomic="true"></p>
 </section>

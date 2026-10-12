@@ -1,4 +1,0 @@
-/* Caixa do Número: pequena (cerca de 4 caracteres visíveis), mesmo aceitando até 10 dígitos. */
-.portal-street-number input.form-text {
-  max-width: 5.5rem;
-}

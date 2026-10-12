@@ -88,7 +88,7 @@ final class StreetNumberField {
         '#default_value' => $element['#street_number_default'] ?? '',
         '#element_validate' => [[self::class, 'validateNumber']],
         '#weight' => $weight + 0.5,
-        '#wrapper_attributes' => ['class' => ['portal-street-number']],
+        '#wrapper_attributes' => ['data-portal-ui' => 'street-number'],
       ];
       $element['street_number_sn'] = [
         '#type' => 'checkbox',
@@ -97,7 +97,7 @@ final class StreetNumberField {
         '#default_value' => (bool) ($element['#street_number_sn_default'] ?? FALSE),
         '#attributes' => ['data-aculta-number-sn' => 'true'],
         '#weight' => $weight + 0.6,
-        '#wrapper_attributes' => ['class' => ['portal-street-number-sn']],
+        '#wrapper_attributes' => ['data-portal-ui' => 'street-number-sn'],
       ];
     }
     return $element;
@@ -112,7 +112,7 @@ final class StreetNumberField {
     }
     $value = trim((string) $form_state->getValue($element['#parents']));
     if ($value === '') {
-      $form_state->setError($element, t('Preencha o número ou marque S/N (sem número).'));
+      $form_state->setError($element, t('Informe o número ou marque S/N.'));
       return;
     }
     if (!preg_match('/^[0-9]{1,' . self::MAX_DIGITS . '}$/', $value)) {

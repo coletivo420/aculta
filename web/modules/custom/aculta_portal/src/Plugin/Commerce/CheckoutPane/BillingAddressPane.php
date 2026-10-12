@@ -12,19 +12,19 @@ use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneBase;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Endereço do pedido (um único endereço do site, usado também no Mercado Pago), com autocomplete por CEP.
  *
- * Substitui o pane billing_information, removido pelo Commerce Payment (hook de alteração de panes). O Mercado
- * Pago exige o perfil de cobrança com endereço no pedido (RedirectCheckoutForm). Usa o mesmo formulário inline de
- * perfil do Commerce, com escopo de cobrança e apenas o endereço, sem abas. O autocomplete por CEP é o mesmo de
- * "Meus Dados": cep_autocomplete/viacep, que o Portal estende com aculta_portal/cep-address.
+ * Fonte única: o perfil customer do cliente (o de Meus Dados > Endereço). O Commerce não aceita o perfil do cliente
+ * como perfil de cobrança do pedido (Order::preSave passa o perfil de cobrança para o dono 0), então o pedido guarda
+ * uma cópia. A cópia é atualizada a partir do perfil do cliente em todo resumo de rascunho, e a edição no checkout
+ * grava no perfil do cliente e na cópia. O Mercado Pago lê a cópia (RedirectCheckoutForm). Ver docs/portal/CHECKOUT-BILLING.md.
  *
- * Número: o perfil guarda o número no logradouro ("Avenida Paulista, 1000"). Ao montar o formulário, o logradouro
- * mostra só a rua ("Avenida Paulista") e o campo Número recebe o número. Ao gravar, rua e número são juntados de
- * novo. O script de CEP move o campo Número para logo depois do Logradouro. Ver docs/portal/CHECKOUT-BILLING.md.
+ * Número: o perfil guarda o número no logradouro ("Avenida Paulista, 1000"). O formulário mostra a rua e o campo
+ * Número recebe o número. Ao gravar, rua e número são juntados de novo. Ver StreetNumberField.
  */
 #[CommerceCheckoutPane(
   id: 'aculta_billing_address',
@@ -47,7 +47,7 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
 
   /** {@inheritdoc} */
   public function buildPaneSummary() {
-    if (!$profile = $this->order->getBillingProfile()) {
+    if (!$profile = $this->billingCopy()) {
       return [];
     }
     return $this->entityTypeManager->getViewBuilder('profile')->view($profile, 'default');
@@ -55,20 +55,13 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
 
   /** {@inheritdoc} */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
-    // Um único endereço: sempre o perfil customer do cliente (o de Meus dados > Endereço). Perfis copiados de
-    // pedidos antigos não são usados aqui.
-    $profile = NULL;
-    if ((int) $this->order->getCustomerId() > 0) {
-      $account = $this->entityTypeManager->getStorage('user')->load($this->order->getCustomerId());
-      $profile = $account ? $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'customer') : NULL;
-    }
-    if (!$profile) {
-      $profile = $this->entityTypeManager->getStorage('profile')->create([
-        'type' => 'customer',
-        'uid' => (int) $this->order->getCustomerId(),
-      ]);
-    }
-    // O formulário mostra só a rua. A cópia é usada só no formulário; o perfil original (resumo) não muda.
+    $profile = $this->customerProfile() ?? $this->entityTypeManager->getStorage('profile')->create([
+      'type' => 'customer',
+      'uid' => (int) $this->order->getCustomerId(),
+      'status' => TRUE,
+      'is_default' => TRUE,
+    ]);
+    // O formulário mostra só a rua. A cópia é usada só no formulário; o perfil do cliente não muda até o envio.
     $parts = $this->savedParts($profile);
     $editable = $profile;
     if ($parts['number'] !== '' || $parts['sn']) {
@@ -77,6 +70,10 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       $value = $address->getValue();
       $value['address_line1'] = $parts['street'];
       $address->setValue($value);
+    }
+    // Sem número nem S/N, o formulário abre já editável: o resumo do Commerce não mostra o número que falta.
+    if ($parts['number'] === '' && !$parts['sn']) {
+      $form_state->set(array_merge($pane_form['#parents'], ['profile', 'render']), FALSE);
     }
     $inline_form = $this->inlineFormManager->createInstance('customer_profile', [
       'profile_scope' => 'billing',
@@ -108,9 +105,49 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       $value = $address->getValue();
       $value['address_line1'] = StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
       $address->setValue($value);
-      $profile->save();
     }
-    $this->order->setBillingProfile($profile);
+    $profile->set('uid', (int) $this->order->getCustomerId());
+    $profile->set('is_default', TRUE);
+    $profile->set('status', TRUE);
+    $profile->save();
+    $this->order->setBillingProfile($this->syncBillingCopy($profile));
+  }
+
+  /** Perfil customer do cliente do pedido (Meus Dados > Endereço), ou NULL. */
+  private function customerProfile(): ?ProfileInterface {
+    if ((int) $this->order->getCustomerId() <= 0) {
+      return NULL;
+    }
+    $account = $this->entityTypeManager->getStorage('user')->load($this->order->getCustomerId());
+    return $account ? $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'customer') : NULL;
+  }
+
+  /**
+   * Endereço de cobrança do pedido. Rascunho: cópia atualizada a partir do perfil do cliente. Pedido concluído: o
+   * perfil gravado no fechamento.
+   */
+  private function billingCopy(): ?ProfileInterface {
+    if ($this->order->getState()->getId() !== 'draft') {
+      return $this->order->getBillingProfile();
+    }
+    $customer = $this->customerProfile();
+    return $customer ? $this->syncBillingCopy($customer) : $this->order->getBillingProfile();
+  }
+
+  /** Copia o endereço do perfil do cliente para o perfil de cobrança do pedido e salva o pedido se houve troca. */
+  private function syncBillingCopy(ProfileInterface $customer): ProfileInterface {
+    $storage = $this->entityTypeManager->getStorage('profile');
+    $billing = $this->order->getBillingProfile() ?? $storage->create(['type' => 'customer', 'uid' => 0]);
+    $address = $customer->get('address')->getValue();
+    if ($billing->isNew() || $billing->get('address')->getValue() !== $address) {
+      $billing->set('address', $address);
+      $billing->save();
+    }
+    if ($this->order->getBillingProfile()?->id() !== $billing->id()) {
+      $this->order->setBillingProfile($billing);
+      $this->order->save();
+    }
+    return $billing;
   }
 
   /** Rua, número e S/N salvos no logradouro (para preencher o formulário ao voltar à etapa). */

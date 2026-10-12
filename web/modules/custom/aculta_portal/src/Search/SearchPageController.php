@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
+use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -56,12 +57,12 @@ final class SearchPageController implements ContainerInjectionInterface {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, self::MAX_CHARS);
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-search']],
+      '#attributes' => ['data-portal-ui' => 'search'],
       '#cache' => ['contexts' => ['url.query_args:q', 'user.permissions'], 'tags' => ['search_api_list:' . self::INDEX_ID]],
       'form' => $this->formBuilder->getForm(SearchPageForm::class),
     ];
     if ($term === '') {
-      $build['hint'] = ['#markup' => '<p class="text-body-secondary">' . $this->t('Digite um termo para buscar no site.') . '</p>'];
+      $build['hint'] = ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'hint-muted']), '#value' => $this->t('Digite um termo para buscar no site.')];
       return $build;
     }
     if (mb_strlen($term) < self::MIN_CHARS) {
@@ -99,7 +100,7 @@ final class SearchPageController implements ContainerInjectionInterface {
     }
     $build['results'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-search__results']],
+      '#attributes' => ['data-portal-ui' => 'search-results'],
       'count' => ['#markup' => '<p>' . $this->t('@count resultado(s).', ['@count' => count($links)]) . '</p>'],
       'list' => ['#theme' => 'item_list', '#items' => $links],
     ];

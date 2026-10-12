@@ -26,12 +26,12 @@ final class CoursesController extends ControllerBase {
   public function home(): array {
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['courses-home']],
+      '#attributes' => ['data-portal-ui' => 'courses-home'],
       'intro' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Formação para ampliar conhecimento, fortalecer direitos e construir caminhos antiproibicionistas.'),
-        '#attributes' => ['class' => ['courses-home__intro']],
+        '#attributes' => ['data-portal-ui' => 'courses-home-intro'],
       ],
       'catalog_title' => [
         '#type' => 'html_tag',
@@ -43,7 +43,7 @@ final class CoursesController extends ControllerBase {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Acesse sua conta para participar dos cursos.'),
-        '#attributes' => ['class' => ['courses-home__collaboration']],
+        '#attributes' => ['data-portal-ui' => 'courses-home-collaboration'],
       ],
     ];
   }

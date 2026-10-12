@@ -14,7 +14,7 @@ final class RegistrationController extends ControllerBase {
   public function closed(): array {
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-registration-status']],
+      '#attributes' => ['data-portal-ui' => 'registration-status'],
       'message' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
@@ -24,7 +24,7 @@ final class RegistrationController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Já tenho uma conta — entrar'),
         '#url' => Url::fromRoute('user.login'),
-        '#attributes' => ['class' => ['aculta-button', 'aculta-button--primary']],
+        '#attributes' => ['data-portal-ui' => 'aculta-button-primary'],
       ],
       '#cache' => [
         'contexts' => ['url.site'],

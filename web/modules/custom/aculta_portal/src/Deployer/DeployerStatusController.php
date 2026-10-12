@@ -22,13 +22,12 @@ final class DeployerStatusController extends ControllerBase {
   public function page(): array {
     $data = $this->reader->read();
     $build = [
-      '#attached' => ['library' => ['aculta_portal/requirements-report']],
       '#cache' => ['max-age' => 0],
     ];
     if ($data === NULL) {
       $build['missing'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'text' => ['#plain_text' => $this->t('⚠ Atenção: relatório do deployer indisponível. Gere com "aculta-deployer report" na raiz do repositório e confira a leitura do arquivo var/deployer/status.json.')],
       ];
       return $build;
@@ -43,7 +42,7 @@ final class DeployerStatusController extends ControllerBase {
         ['data' => ['#plain_text' => (string) ($data['generated_at'] ?? '—')]],
         ['data' => ['#plain_text' => (string) ($data['tool'] ?? '—')]],
       ]],
-      '#attributes' => ['class' => ['aculta-portal-requirements']],
+      '#attributes' => ['data-portal-ui' => 'requirements'],
     ];
     $build['intro'] = ['#plain_text' => $this->t('Mostra nomes e estados; valores de credenciais nunca são exibidos.')];
     $build['legend'] = $this->legend();
@@ -58,7 +57,7 @@ final class DeployerStatusController extends ControllerBase {
       '#type' => 'table',
       '#header' => [$this->t('Verificação'), $this->t('Detalhe'), $this->t('Status')],
       '#rows' => $rows,
-      '#attributes' => ['class' => ['aculta-portal-requirements']],
+      '#attributes' => ['data-portal-ui' => 'requirements'],
     ];
 
     $open = $data['registry']['entries'] ?? [];
@@ -79,7 +78,7 @@ final class DeployerStatusController extends ControllerBase {
       '#header' => [$this->t('Entrada'), $this->t('Tipo'), $this->t('Estado atual'), $this->t('Status')],
       '#rows' => $registryRows,
       '#empty' => $this->t('Nenhuma correção aberta.'),
-      '#attributes' => ['class' => ['aculta-portal-requirements']],
+      '#attributes' => ['data-portal-ui' => 'requirements'],
     ];
 
     $build['links'] = [
@@ -103,14 +102,14 @@ final class DeployerStatusController extends ControllerBase {
     };
     return [
       'data' => ['#plain_text' => $symbol . ' ' . $text],
-      'class' => ['aculta-portal-requirements__status', 'aculta-portal-requirements__status--' . $state],
+      'data-portal-ui' => 'requirements-status status-' . $state,
     ];
   }
 
   private function legend(): array {
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-portal-requirements__legend'], 'aria-label' => (string) $this->t('Legenda de status')],
+      '#attributes' => ['data-portal-ui' => 'requirements-legend', 'aria-label' => (string) $this->t('Legenda de status')],
       'ok' => ['#plain_text' => (string) $this->t('✔ OK: sem pendência.')],
       'attention' => ['#plain_text' => (string) $this->t('⚠ Atenção: pendência não bloqueante.')],
       'error' => ['#plain_text' => (string) $this->t('✖ Erro: pendência bloqueante ou credencial obrigatória ausente.')],

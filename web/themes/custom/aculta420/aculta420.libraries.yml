@@ -20,9 +20,16 @@ global:
       css/components/search.css: {}
       css/components/product.css: {}
       css/components/account.css: {}
+      css/components/portal-account.css: {}
+      css/components/portal-account-terms-modal.css: {}
+      css/components/portal-address-number.css: {}
+      css/components/portal-cart.css: {}
+      css/components/portal-requirements-report.css: {}
+      css/components/portal-support.css: {}
       css/components/auth.css: {}
   js:
     js/navigation.js: {}
+    js/address-layout.js: {}
   dependencies:
     - bootstrap5/global-styling
     - bootstrap5/bootstrap5-js-latest

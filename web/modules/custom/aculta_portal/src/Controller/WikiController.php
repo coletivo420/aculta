@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
@@ -38,22 +39,22 @@ final class WikiController extends ControllerBase {
   public function home(): array {
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-wiki-home']],
+      '#attributes' => ['data-portal-ui' => 'wiki-home'],
       '#cache' => [
         'contexts' => ['domain', 'user.permissions'],
         'tags' => ['node_list:wiki_entry', 'taxonomy_term_list'],
       ],
       'intro' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-wiki-intro']],
-        'title' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $this->t('Wiki420')],
+        '#attributes' => ['data-portal-ui' => 'wiki-intro'],
+        'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h1', '#value' => $this->t('Wiki420')],
         'text' => ['#plain_text' => $this->t('Wiki420 é uma wiki antiproibicionista, participativa e baseada em fontes. Aqui reunimos conhecimento sobre maconha, direitos, cultura, ciência, saúde, história, redução de danos e luta pela legalização.')],
       ],
       'search' => [
         '#type' => 'form',
         '#method' => 'get',
         '#action' => Url::fromRoute('aculta_portal.wiki_search')->toString(),
-        '#attributes' => ['role' => 'search', 'class' => ['aculta-wiki-search']],
+        '#attributes' => ['role' => 'search', 'data-portal-ui' => 'wiki-search'],
         'q' => [
           '#type' => 'textfield',
           '#name' => 'q',
@@ -76,11 +77,11 @@ final class WikiController extends ControllerBase {
         '#url' => Url::fromRoute('node.add', ['node_type' => 'wiki_entry']),
         '#access' => $this->account->hasPermission('create wiki_entry content'),
       ],
-      'categories_title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Categorias da Wiki420')],
+      'categories_title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Categorias da Wiki420')],
       'categories' => $this->viewBlock('wiki_categories', 'block_1'),
-      'recent_title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Verbetes recentes')],
+      'recent_title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Verbetes recentes')],
       'recent' => $this->viewBlock('wiki_entries', 'block_recent'),
-      'changes_title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Alterações recentes da Wiki420')],
+      'changes_title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Alterações recentes da Wiki420')],
       'changes' => $this->recentChanges(),
     ];
     return $build;
@@ -91,9 +92,9 @@ final class WikiController extends ControllerBase {
     $term = trim((string) $request->query->get('q', ''));
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-wiki-search-results']],
+      '#attributes' => ['data-portal-ui' => 'wiki-search-results'],
       '#cache' => ['contexts' => ['url.query_args:q', 'domain', 'user.permissions'], 'tags' => ['node_list:wiki_entry']],
-      'title' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $this->t('Buscar na Wiki420')],
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h1', '#value' => $this->t('Buscar na Wiki420')],
       'form' => [
         '#type' => 'form',
         '#method' => 'get',
@@ -180,7 +181,7 @@ final class WikiController extends ControllerBase {
       $changed = $node->getChangedTime();
       $row = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-wiki-recent-change']],
+        '#attributes' => ['data-portal-ui' => 'wiki-recent-change'],
         'title' => [
           '#type' => 'link',
           '#title' => $node->label(),
