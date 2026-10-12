@@ -13,6 +13,14 @@ targetEntityType: commerce_product_variation
 bundle: camiseta_tamanho
 mode: cart
 content:
+  attribute_tamanho:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
   list_price:
     type: commerce_price_default
     label: above

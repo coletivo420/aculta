@@ -24,6 +24,7 @@ Portal permanece 0.3.0-dev.16; nova marcação/release do módulo pai não decla
 - Evidência: docs/modules/ACULTA-ID-CPF.md; base 368ec263189d670d459e385b068d7bb188af95b3.
 
 ## 0.3.0-dev.16 — Aceite dos termos em popup persistente; contenção do Mercado Pago — 2026-10-11
+- Meus Dados > Endereço: campo **Número** logo abaixo da rua. O número é separado do logradouro ao abrir e juntado ao gravar ("Rua, número"), mesmo formato do endereço de cobrança do checkout. Implementado pelo campo `address_extra[street_number]` (`PortalHooks`, rota `/dados/endereco`) e pelo entity builder `buildStreetNumber` (`PortalFormCallbacks`). Verificado no servidor de testes: o perfil guarda "Avenida Paulista, 1000" e o formulário reabre separado. Os dois perfis (Meus Dados e o do pedido) continuam separados, com o mesmo formato.
 
 - Resumo do checkout: nome do produto no item (modo de visualização `summary` do bundle `camiseta_tamanho`, exportado em `config/sync`). Verificado por renderização: "Camiseta Abadá Bloco Sativa 2026 – Regata Tamanho M".
 - Máscara do CEP `00000-000` em `js/cep-address.js` (biblioteca compartilhada por Meus Dados e checkout). A consulta continua usando só os dígitos. Correção: o behavior do Portal tinha o mesmo nome do behavior do contrib (`cepAutocomplete`) e era sobrescrito; agora é `acultaCepAddress` e reivindica os campos pelo mesmo `once` do contrib. O campo Número fica logo após o Logradouro. Correção de regressão: ao preencher pelo CEP, o Estado dispara o rebuild AJAX do endereço, que apagava Logradouro, Bairro e Cidade. Agora o Estado é preenchido por último, e o preenchimento é reaplicado nos campos vazios do markup novo (`js/cep-address.js`). Vale para Meus Dados e para o checkout.
@@ -40,7 +41,7 @@ Classificação: MINOR (fluxo de aceite substituído: a página /aceite-termos d
 - Popup só para usuário logado sem aceite, nas páginas que o anônimo não acessa (conta, edição e criação de conteúdo, área de membro), nos nós com comentários (fórum) e na página de acesso negado. Páginas acessíveis ao anônimo (loja, carrinho, verbetes públicos) não mostram o popup; anônimos nunca veem o popup.
 - Fundo do popup borrado: `css/account-terms-modal.css` (`::backdrop` com `backdrop-filter: blur(6px)`), biblioteca `aculta_portal/account-terms-modal`.
 - Limite conhecido: a página de bloqueio ainda mostra o cabeçalho e o título do site atrás do popup (o renderizador bare mantém o layout do tema). O conteúdo restrito não é entregue. Eliminar o cabeçalho exige página HTML própria, decisão pendente.
-- **Contenção Mercado Pago (incidente):** o token gravado como `MERCADOPAGO_TEST_ACCESS_TOKEN` tem prefixo `APP_USR` (credencial de produção). O pagamento de teste redirecionou para o domínio real. Gateway desligado no runtime (`status: 0`; já era `false` no `config/sync`). Ver `docs/portal/CHECKOUT-BILLING.md`.
+- **Mercado Pago (incidente):** o redirecionamento de teste mostrou o domínio `mercadopago.com.br` com a sessão real do responsável logada. O token de teste é de conta de teste (`test_user = true`); `APP_USR` não indica produção. Gateway desligado e religado conforme a necessidade do teste. Ver `docs/portal/CHECKOUT-BILLING.md`.
 
 **RUNTIME STATUS:** verificado no servidor de testes por HTTP: página de aceite antiga 404; `/termos/aceitar` 403 para anônimo; páginas restritas sem aceite (carrinho, dados, conta) respondem 200 com o popup; checkout sem aceite 403 com popup; loja pública sem popup. Não verificado: comportamento do popup no navegador (foco, Esc, clique fora) e aceite pelo formulário com JavaScript.
 ## 0.3.0-dev.15 — Passo de endereço de cobrança no checkout (CEP); traduções; nome do produto no carrinho — 2026-10-11
@@ -1343,3 +1344,25 @@ System, testes, versionamento e roadmap antes de novas features.
 
 O desenvolvimento opera temporariamente em modo GitHub-first / Runtime-last;
 features executáveis preparadas sem Homelab permanecem draft até validação.
+
+## Não versionado — revisão módulo x tema (2026-10-12)
+
+- Regra permanente: **Código no Aculta Portal, Design no ACULTA420** (AGENTS.md, README do módulo, doc do tema, gate
+  `scripts/validate-module-theme-boundary.php`).
+- Migrado para o tema: shell da Minha conta (`templates/aculta-portal-shell.html.twig` em design), modal de termos,
+  editor de foto, caixa de status do carrinho (template e CSS), CSS de Minha conta, CEP (número, tamanho) e recurso de
+  layout do CEP (`js/address-layout.js`), relatório de requisitos e suporte. Mapa completo em
+  `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
+- O módulo mantém fallback neutro (sem classes) nos templates migrados e o comportamento dos JS usa `data-portal-*`.
+- Evidência: marcação da Minha conta 8/8 idêntica após normalização; roteiro de aceitação 10/10 com ACULTA420 e com
+  Olivero (`docs/portal/TESTES-NAVEGADOR.md`, seção L). Captura de tela não executada.
+- Migração de design concluída: nenhuma classe de design é escrita pelo módulo (`'class' =>` só `use-ajax`; `is-active` é
+  estado). Os elementos marcam `data-portal-ui` com tokens; o ACULTA420 traduz (`src/Hook/PortalUiHooks.php`).
+- Novos: `Render/PortalLinkElement` (link com token preservando href e cacheabilidade), templates neutros
+  `portal-element`, `portal-search-trigger`. Breadcrumb do AJAX em `item_list`; JS usa `[data-portal-breadcrumb]`.
+- Gate: `scripts/validate-module-theme-boundary.php` reprova classe de design no módulo e token sem correspondente no tema.
+- Meus pagamentos removido da Minha conta (menu, sanfona e navegação AJAX). `/pagamentos` → 301 `/pedidos`; rotas de
+  cadastro/edição/exclusão/padrão de meios de pagamento removidas (404); `PaymentMethodAddAccessCheck` removido.
+- Caixa "Todos os nossos pagamentos são processados pelo Mercado Pago" em Meus pedidos (texto e link no módulo, config
+  `aculta_portal.settings:mercado_pago_account_url`).
+- Gate: seções 12 (ícones Bootstrap Icons) e 13 (pagamentos) em `scripts/validate-module-theme-boundary.php`.

@@ -1,13 +1,7 @@
 {#
-/**
- * Popup persistente de aceite dos termos (AccountTermsHooks).
- *
- * Não tem botão de fechar: o JavaScript (aculta_portal/account-terms-modal) abre com showModal(), cancela Esc e
- * prende o foco. O formulário é a mesma tela de aceite usada em /termos/aceitar (retorno sem JavaScript).
- * O <dialog> fica aqui e não no #prefix do formulário, porque o Form API filtra essa tag.
- */
+  Fallback neutro do modal de termos (aculta_portal). Sem apresentação: o tema ativo (ACULTA420) sobrescreve este template.
 #}
-<dialog id="aculta-account-terms" class="portal-terms-modal" role="dialog" aria-modal="true" aria-labelledby="aculta-account-terms-title">
-  <h2 id="aculta-account-terms-title" class="h4">{{ title }}</h2>
+<dialog id="aculta-account-terms" role="dialog" aria-modal="true" aria-labelledby="aculta-account-terms-title">
+  <h2 id="aculta-account-terms-title">{{ title }}</h2>
   {{ form }}
 </dialog>

@@ -38,7 +38,7 @@
     let status = wrapper?.querySelector('[data-aculta-cep-status]');
     if (!status && wrapper) {
       status = document.createElement('div');
-      status.className = 'description aculta-cep-status';
+      status.className = 'aculta-cep-status';
       status.dataset.acultaCepStatus = 'true';
       status.setAttribute('role', 'status');
       status.setAttribute('aria-live', 'polite');
@@ -46,15 +46,6 @@
       wrapper.append(status);
     }
     return status;
-  }
-
-  function movePostalFirst(postal) {
-    const row = postal.closest('.form-item, .js-form-item');
-    const parent = row?.parentElement;
-    if (row && parent && !postal.dataset.acultaCepMoved) {
-      parent.insertBefore(row, parent.firstChild);
-      postal.dataset.acultaCepMoved = 'true';
-    }
   }
 
   function announce(status, text, error = false) {
@@ -66,9 +57,9 @@
   async function lookup(cep) {
     const base = drupalSettings?.path?.baseUrl || '/';
     const prefix = drupalSettings?.path?.pathPrefix || '';
-    const response = await fetch(`${base}${prefix}cep-autocomplete/viacep/${cep}`, {
+    const response = await fetch(`${base}${prefix}cep-autocomplete/viacep/${cep}?v=2`, {
       credentials: 'same-origin',
-      headers: { Accept: 'application/json' },
+      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
     });
     if (!response.ok) throw new Error('lookup-failed');
     const result = await response.json();
@@ -102,6 +93,41 @@
     }
   }
 
+  /**
+   * Comportamento do Número e da marca S/N: só dígitos, até 10, e número desabilitado e vazio com S/N marcado.
+   * A posição e as colunas do bloco (CEP primeiro, Número/S/N/Complemento na mesma linha) são do tema do site
+   * (js/address-layout.js). A marca S/N e o número são subcampos do endereço (StreetNumberField).
+   */
+  function bindStreetNumber(numInput, snInput) {
+    numInput.setAttribute('maxlength', '10');
+    numInput.setAttribute('inputmode', 'numeric');
+    numInput.setAttribute('pattern', '[0-9]{1,10}');
+    if (!numInput.dataset.acultaNumberBound) {
+      numInput.dataset.acultaNumberBound = 'true';
+      numInput.addEventListener('input', () => {
+        numInput.value = numInput.value.replace(/\D/g, '').slice(0, 10);
+      });
+    }
+    if (snInput && !snInput.dataset.acultaSnBound) {
+      snInput.dataset.acultaSnBound = 'true';
+      snInput.addEventListener('change', () => syncStreetNumber(numInput, snInput));
+    }
+    syncStreetNumber(numInput, snInput);
+  }
+
+  function syncStreetNumber(numInput, snInput) {
+    if (!snInput) return;
+    if (snInput.checked) {
+      numInput.value = '';
+      numInput.disabled = true;
+      numInput.required = false;
+    }
+    else {
+      numInput.disabled = false;
+      numInput.required = true;
+    }
+  }
+
   function attach(context) {
     // Reivindica os campos com o mesmo id do contrib (data-once): o behavior do contrib não os processa de novo.
     const postalFields = once('cep-autocomplete', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
@@ -114,13 +140,9 @@
       const prefix = name.slice(0, markerIndex);
       const container = postal.closest('form') || document;
       const status = statusFor(postal);
-      movePostalFirst(postal);
-      // Número (campo do checkout, fora do formulário de endereço) logo após o Logradouro.
-      const numberRow = container.querySelector('input[name$="[street_number]"]')?.closest('.form-item, .js-form-item');
-      const streetRow = getField(prefix, 'address_line1', container)?.closest('.form-item, .js-form-item');
-      if (numberRow && streetRow && numberRow !== streetRow) {
-        streetRow.after(numberRow);
-      }
+      const numInput = container.querySelector('input[name$="[street_number]"]');
+      const snInput = container.querySelector('input[name$="[street_number_sn]"]');
+      if (numInput) bindStreetNumber(numInput, snInput);
 
       Object.entries(labels).forEach(([key, label]) => setLabel(getField(prefix, key, container), label));
       const pending = pendingFill.get(prefix);
@@ -147,12 +169,12 @@
             const result = await lookup(requestedCep);
             if (digits(postal.value) !== requestedCep) return;
             const data = result.data;
-            const raw = result.raw || {};
+            // Campos do Commerce/Address: bairro em dependent_locality. O complemento do ViaCEP não é usado.
             const values = {
               administrative_area: data.administrative_area,
               locality: data.locality,
               address_line1: data.address_line1,
-              dependent_locality: raw.bairro || '',
+              dependent_locality: data.dependent_locality || '',
             };
             pendingFill.set(prefix, values);
             applyFill(prefix, container, values);

@@ -14,32 +14,32 @@
 .aculta-secret-value__clear,
 .aculta-secret-value__clear:link,
 .aculta-secret-value__clear:visited {
-  color: #b3261e;
+  color: var(--aculta-status-error-text);
 }
 
 .aculta-secret-value__clear:hover,
 .aculta-secret-value__clear:focus-visible {
-  color: #8c1d18;
+  color: var(--aculta-status-error-text);
 }
 
 .aculta-portal-requirements__status--ok {
-  color: #1e5e2f;
-  background-color: #e6f4ea;
-  border-inline-start: 0.25rem solid #2e7d32;
+  color: var(--aculta-status-ok-text);
+  background-color: var(--aculta-status-ok-surface);
+  border-inline-start: 0.25rem solid var(--aculta-status-ok-border);
   font-weight: 600;
 }
 
 .aculta-portal-requirements__status--attention {
-  color: #624b00;
-  background-color: #fff4cc;
-  border-inline-start: 0.25rem solid #c28a00;
+  color: var(--aculta-status-warning-text);
+  background-color: var(--aculta-status-warning-surface);
+  border-inline-start: 0.25rem solid var(--aculta-status-warning-border);
   font-weight: 600;
 }
 
 .aculta-portal-requirements__status--error {
-  color: #8c1d18;
-  background-color: #fde8e7;
-  border-inline-start: 0.25rem solid #b3261e;
+  color: var(--aculta-status-error-text);
+  background-color: var(--aculta-status-error-surface);
+  border-inline-start: 0.25rem solid var(--aculta-status-error-border);
   font-weight: 600;
 }
 
@@ -60,11 +60,11 @@
   font-family: monospace;
   padding: 0.75rem;
   border-radius: 0.25rem;
-  background-color: #f3f3f3;
+  background-color: var(--aculta-surface-muted);
 }
 
 /* Aviso abaixo do valor, em vermelho. */
 .aculta-secret-popup__hint {
-  color: #b3261e;
+  color: var(--aculta-status-error-text);
   font-weight: 600;
 }

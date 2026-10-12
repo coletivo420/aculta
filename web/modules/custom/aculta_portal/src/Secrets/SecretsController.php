@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Secrets;
 
+use Drupal\Core\Template\Attribute;
+use Drupal\Component\Render\Markup;
 use Drupal\aculta_portal\Secrets\Form\SecretClearForm;
 use Drupal\aculta_portal\Secrets\Form\SecretEditForm;
 use Drupal\Component\Serialization\Json;
@@ -47,7 +49,7 @@ final class SecretsController {
       ],
       'legend' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-portal-requirements__legend']],
+        '#attributes' => ['data-portal-ui' => 'requirements-legend'],
         'ok' => ['#plain_text' => (string) $this->t('✔ OK: chave preenchida no ambiente.')],
         'attention' => ['#plain_text' => (string) $this->t('⚠ Atenção: variável opcional sem valor.')],
         'error' => ['#plain_text' => (string) $this->t('✖ Erro: variável obrigatória sem valor.')],
@@ -60,7 +62,7 @@ final class SecretsController {
     if (!$this->secrets->canSaveHere()) {
       $page['storage_notice'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'text' => ['#plain_text' => (string) $this->t('⚠ Atenção: neste ambiente as credenciais são armazenadas no banco de dados, criptografadas. O provisionamento é feito pelo ACULTA Deployer após o deploy; o formulário não grava aqui.')],
       ];
     }
@@ -81,8 +83,8 @@ final class SecretsController {
     $this->secrets->logReveal($name, (string) $this->account->getAccountName());
     return [
       '#cache' => ['max-age' => 0, 'contexts' => ['user']],
-      'value' => ['#markup' => '<p>' . $this->t('Valor de @name:', ['@name' => $name]) . '</p><pre class="aculta-secret-popup__value">' . htmlspecialchars($value, ENT_QUOTES) . '</pre>'],
-      'help' => ['#markup' => '<p class="aculta-secret-popup__hint">' . $this->t('Feche este popup quando terminar.') . '</p>'],
+      'value' => ['#type' => 'container', 'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Valor de @name:', ['@name' => $name])], 'text' => ['#theme' => 'aculta_portal_element', '#tag' => 'pre', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-popup-value']), '#value' => Markup::create(htmlspecialchars($value, ENT_QUOTES))]],
+      'help' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-popup-hint']), '#value' => $this->t('Feche este popup quando terminar.')],
     ];
   }
 
@@ -139,20 +141,20 @@ final class SecretsController {
         ['data' => $this->valueCell($name, $present, $environment)],
         [
           'data' => ['#plain_text' => $label_state],
-          'class' => ['aculta-portal-requirements__status', 'aculta-portal-requirements__status--' . $state],
+          'data-portal-ui' => 'requirements-status status-' . $state,
         ],
       ];
     }
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-portal-secrets-section'], 'id' => 'credenciais-' . $environment],
-      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $label],
+      '#attributes' => ['data-portal-ui' => 'secrets-section', 'id' => 'credenciais-' . $environment],
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $label],
       'table' => [
         '#type' => 'table',
         '#header' => [$this->t('Variável'), $this->t('Key'), $this->t('Obrigatória'), $this->t('Valor salvo'), $this->t('Estado')],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhuma variável deste ambiente no contrato.'),
-        '#attributes' => ['class' => ['aculta-portal-requirements']],
+        '#attributes' => ['data-portal-ui' => 'requirements'],
       ],
     ];
   }
@@ -166,19 +168,19 @@ final class SecretsController {
   private function valueCell(string $name, bool $present, string $environment): array {
     $cell = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-secret-value']],
+      '#attributes' => ['data-portal-ui' => 'secret-value'],
     ];
     if ($present) {
       $value = $this->secrets->value($name);
       $masked = $value === NULL ? '—' : SecretsManager::mask($value);
       // A rota tem _csrf_token: o gerador de URL já acrescenta ?token=. Não concatenar outro.
-      $cell['masked'] = ['#markup' => '<span class="aculta-secret-value__text">' . htmlspecialchars($masked, ENT_QUOTES) . '</span>'];
+      $cell['masked'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-value-text']), '#value' => Markup::create(htmlspecialchars($masked, ENT_QUOTES))];
       $cell['eye'] = [
         '#type' => 'link',
         '#title' => '👁',
         '#url' => Url::fromRoute('aculta_portal.secrets_show', ['name' => $name]),
         '#attributes' => [
-          'class' => ['aculta-secret-value__eye', 'use-ajax'],
+          'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-eye',
           'data-dialog-type' => 'modal',
           'data-dialog-options' => Json::encode(['width' => 480]),
           'aria-label' => (string) $this->t('Mostrar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
@@ -187,7 +189,7 @@ final class SecretsController {
       ];
     }
     else {
-      $cell['masked'] = ['#markup' => '<span class="aculta-secret-value__text">—</span>'];
+      $cell['masked'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-value-text']), '#value' => '—'];
     }
     if ($this->secrets->canSaveHere()) {
       $cell['edit'] = [
@@ -195,7 +197,7 @@ final class SecretsController {
         '#title' => '✎',
         '#url' => Url::fromRoute('aculta_portal.secrets_edit', ['name' => $name]),
         '#attributes' => [
-          'class' => ['aculta-secret-value__edit', 'use-ajax'],
+          'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-edit',
           'data-dialog-type' => 'modal',
           'data-dialog-options' => Json::encode(['width' => 480]),
           'aria-label' => (string) $this->t('Alterar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
@@ -209,7 +211,7 @@ final class SecretsController {
         '#title' => '🗑',
         '#url' => Url::fromRoute('aculta_portal.secrets_clear', ['name' => $name]),
         '#attributes' => [
-          'class' => ['aculta-secret-value__clear', 'use-ajax'],
+          'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-clear',
           'data-dialog-type' => 'modal',
           'data-dialog-options' => Json::encode(['width' => 480]),
           'aria-label' => (string) $this->t('Apagar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),

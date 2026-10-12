@@ -1,0 +1,359 @@
+.portal-account {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--aculta-text-primary);
+}
+
+.portal-account__header {
+  padding: clamp(1.125rem, 2.5vw, 1.75rem);
+  background: var(--aculta-surface-raised);
+  border-inline-start: 4px solid var(--aculta-border-accent);
+  border-radius: 0.25rem;
+}
+
+.portal-account__header h1 {
+  margin: 0;
+  color: var(--aculta-text-primary);
+  font: 700 clamp(1.75rem, 3vw, 2.375rem)/1.1 Oswald, sans-serif;
+}
+
+.portal-account__header p {
+  margin: 0.35rem 0 0;
+  color: var(--aculta-text-primary);
+  font: 400 1rem/1.5 Inter, sans-serif;
+}
+
+.portal-account__layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 0.85fr) minmax(0, 3fr);
+  align-items: start;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.portal-account__nav,
+.portal-account__content {
+  min-width: 0;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  background: var(--aculta-surface-raised);
+  border-radius: 0.25rem;
+}
+
+.portal-account__nav {
+  position: sticky;
+  top: 1rem;
+  border-inline-start: 3px solid var(--aculta-border-accent);
+}
+
+.portal-account__menu {
+  display: grid;
+  gap: 0.375rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.portal-account__menu > li { min-width: 0; }
+
+.portal-account__link {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  color: var(--aculta-text-primary);
+  background: var(--aculta-surface-raised);
+  border-inline-start: 4px solid transparent;
+  border-radius: 0.1875rem;
+  font: 600 1rem/1.3 Oswald, sans-serif;
+  text-decoration: none;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+/* Ícones (Bootstrap Icons) aparecem em mobile e desktop; a seta de sanfona só no mobile (ver media query abaixo). */
+.portal-account__icon { display: inline-block; flex: 0 0 1.5rem; font-size: 1.1rem; color: var(--aculta-text-secondary); text-align: center; }
+.portal-account__chevron { display: none; }
+.portal-account__accordion { display: none; }
+
+.portal-account__link:is(:hover, :focus-visible) {
+  color: var(--aculta-text-primary);
+  background: var(--aculta-interactive-bg);
+  text-decoration: none;
+}
+
+.portal-account__link:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+.portal-account__link.is-active,
+.portal-account__link[aria-current="page"] {
+  color: var(--aculta-interactive-hover-text);
+  background: var(--aculta-interactive-hover-bg);
+  border-inline-start-color: var(--aculta-interactive-border);
+}
+
+.portal-account__link.is-active:is(:hover, :focus-visible),
+.portal-account__link[aria-current="page"]:is(:hover, :focus-visible) {
+  color: var(--aculta-interactive-hover-text);
+  background: var(--aculta-interactive-hover-bg);
+}
+
+.portal-account__logout {
+  margin-block-start: 0.75rem;
+  border-block-start: 1px solid var(--aculta-border-accent);
+  color: var(--aculta-text-accent);
+  font-size: 1.1667rem;
+}
+
+.portal-account__logout:is(:hover, :focus-visible) {
+  color: var(--aculta-interactive-hover-text);
+  background: var(--aculta-interactive-hover-bg);
+}
+
+.portal-account__content {
+  min-height: 18rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-inline-start: 3px solid var(--aculta-border-accent);
+}
+
+.portal-account__content > h2 {
+  margin: 0 0 1.25rem;
+  color: var(--aculta-text-primary);
+  font: 700 clamp(1.5rem, 2.5vw, 1.875rem)/1.15 Oswald, sans-serif;
+}
+
+.portal-account__content > h2:focus { outline: none; }
+.portal-account__content > h2:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 4px; }
+.portal-account__body { color: var(--aculta-text-primary); font: 400 1rem/1.6 Inter, sans-serif; }
+.portal-account__body h3 { color: var(--aculta-text-primary); font: 600 1.375rem/1.2 Oswald, sans-serif; }
+.portal-account__body .form-item { margin-block-end: 1rem; }
+.portal-account__body .form-control,
+.portal-account__body .form-select { width: 100%; }
+
+.portal-account__identity { display: flex; align-items: center; gap: 1rem; margin-block-end: 1.5rem; }
+.portal-account__identity h3 { margin: 0 0 0.25rem; color: var(--aculta-text-primary); font: 600 1.5rem/1.2 Oswald, sans-serif; }
+.portal-account__identity p { margin: 0; overflow-wrap: anywhere; }
+.portal-account__avatar { display: grid; width: 5rem; height: 5rem; flex: 0 0 5rem; place-items: center; border-radius: 50%; object-fit: cover; }
+.portal-account__avatar--empty { color: var(--aculta-interactive-hover-text); background: var(--aculta-interactive-hover-bg); font: 600 1.75rem/1 Oswald, sans-serif; }
+.portal-account-photo { position: relative; flex: 0 0 5rem; }
+.portal-account-photo__trigger { position: relative; display: grid; width: 5rem; height: 5rem; padding: 0; place-items: center; overflow: hidden; color: var(--aculta-text-inverse); background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+.portal-account-photo__trigger:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 3px; }
+.portal-account-photo__edit-icon { position: absolute; inset: auto 0 0 auto; display: grid; width: 2rem; height: 2rem; place-items: center; color: var(--aculta-interactive-hover-text); background: var(--aculta-interactive-hover-bg); border: 2px solid var(--aculta-surface-raised); border-radius: 50%; opacity: 0; transform: translate(-0.1rem, -0.1rem); transition: opacity 150ms ease; }
+.portal-account-photo__edit-icon svg { width: 1rem; height: 1rem; }
+.portal-account-photo__trigger:is(:hover, :focus-visible) .portal-account-photo__edit-icon { opacity: 1; }
+.portal-account-photo__dialog { position: static; width: min(34rem, 100%); max-width: 100%; max-height: none; padding: 0; margin: 1rem 0 0; overflow: visible; color: var(--aculta-text-primary); background: transparent; border: 0; }
+.portal-account-photo__dialog::backdrop { background: var(--aculta-scrim); }
+.portal-account-photo[data-portal-enhanced] .portal-account-photo__dialog[open] { position: fixed; inset: 0; width: min(34rem, calc(100vw - 2rem)); max-width: none; max-height: min(46rem, calc(100dvh - 2rem)); padding: 0; margin: auto; overflow: auto; background: var(--aculta-surface-raised); border: 1px solid var(--aculta-border-accent); border-radius: 0.5rem; box-shadow: 0 1rem 3rem var(--aculta-border-default); }
+.portal-account-photo__panel { position: relative; padding: clamp(1.25rem, 4vw, 2rem); }
+.portal-account-photo__panel h2 { max-width: calc(100% - 3rem); margin: 0 0 0.5rem; color: var(--aculta-text-primary); font: 600 1.5rem/1.2 Oswald, sans-serif; }
+.portal-account-photo__panel h2:focus { outline: none; }
+.portal-account-photo__panel h2:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 4px; }
+.portal-account-photo__panel > p { margin-block-end: 1rem; }
+.portal-account-photo__close { position: absolute; inset: 0.75rem 0.75rem auto auto; display: grid; width: 2.75rem; height: 2.75rem; place-items: center; color: var(--aculta-text-primary); background: var(--aculta-surface-muted); border: 1px solid var(--aculta-text-primary); border-radius: 50%; font: 400 1.75rem/1 Inter, sans-serif; cursor: pointer; }
+.portal-account-photo__close:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.portal-account__body .user-picture { max-width: 24rem; }
+.portal-account__body .user-picture .image-widget { max-width: 100%; }
+
+.portal-account-data__nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-block-end: 1rem; margin-block: 1rem; border-block-end: 1px solid var(--aculta-border-accent); }
+.portal-account-data__link { display: inline-flex; min-height: 2.75rem; align-items: center; padding: 0.625rem 0.875rem; color: var(--aculta-text-primary); background: var(--aculta-surface-raised); border: 1px solid var(--aculta-text-primary); border-radius: 0.1875rem; font: 600 0.9375rem/1.25 Oswald, sans-serif; text-decoration: none; transition: color 180ms ease, background-color 180ms ease; }
+.portal-account-data__link:is(:hover, :focus-visible) { color: var(--aculta-interactive-text); background: var(--aculta-interactive-bg); text-decoration: none; }
+.portal-account-data__link:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.portal-account-data__link.is-active,
+.portal-account-data__link[aria-current="page"] { color: var(--aculta-interactive-hover-text); background: var(--aculta-interactive-hover-bg); border-color: var(--aculta-text-primary); }
+.portal-account-data__link.is-active:is(:hover, :focus-visible),
+.portal-account-data__link[aria-current="page"]:is(:hover, :focus-visible) { color: var(--aculta-interactive-hover-text); background: var(--aculta-interactive-hover-bg); }
+.portal-account-data__content > h3 { margin-block: 0 1rem; }
+.portal-account-data__content .form-actions { margin-block-start: 1.25rem; }
+.portal-account-data__content [aria-busy="true"] { cursor: progress; }
+
+.portal-account__courses-summary,
+.portal-account-course,
+.portal-account-courses__empty {
+  padding: 1rem;
+  margin-block: 1rem;
+  background: var(--aculta-surface-muted);
+  border-inline-start: 3px solid var(--aculta-border-accent);
+  border-radius: 0.1875rem;
+}
+
+.portal-account__courses-summary h3,
+.portal-account-course h2 {
+  margin-block: 0 0.5rem;
+  color: var(--aculta-text-primary);
+  font: 600 1.375rem/1.2 Oswald, sans-serif;
+}
+
+.portal-account-course__status { font-weight: 700; }
+.portal-account-course .button { margin-block-start: 0.5rem; }
+
+.portal-account__loading {
+  width: fit-content;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  color: var(--aculta-text-primary);
+  background: var(--aculta-interactive-bg);
+  border-radius: 0.1875rem;
+  font: 600 0.875rem/1.4 Inter, sans-serif;
+}
+
+.portal-account[aria-busy="true"] .portal-account__content { cursor: progress; }
+.portal-account__status { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@media (max-width: 767.98px) {
+  /* Menu da conta no celular: sanfona. Cada item expande e mostra descrição e link para a página. Só mobile. */
+  .portal-account__nav { padding: 0; border-inline-start: 0; background: transparent; }
+  .portal-account__menu-desktop { display: none; }
+  .portal-account__accordion { display: block; background: var(--aculta-surface-raised); border-radius: 0.25rem; }
+  .portal-account__item { border-block-end: 1px solid var(--aculta-border-subtle); }
+  .portal-account__summary,
+  .portal-account__logout-row {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 3.5rem;
+    padding: 0.75rem 1rem;
+    color: var(--aculta-text-primary);
+    font: 500 1.05rem/1.3 Inter, sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
+  }
+  .portal-account__summary::-webkit-details-marker { display: none; }
+  .portal-account__summary:focus-visible,
+  .portal-account__logout-row:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: -3px; }
+  .portal-account__item[open] > .portal-account__summary { color: var(--aculta-text-primary); font-weight: 700; }
+  .portal-account__icon { display: inline-block; flex: 0 0 1.5rem; font-size: 1.35rem; color: var(--aculta-text-secondary); text-align: center; }
+  .portal-account__label { flex: 1 1 auto; min-width: 0; }
+  .portal-account__chevron { display: inline-block; flex: 0 0 auto; font-size: 1.1rem; color: var(--aculta-text-muted); transition: transform 180ms ease; }
+  .portal-account__item[open] .portal-account__chevron { transform: rotate(90deg); }
+  .portal-account__panel { padding: 0.5rem 1rem 1rem; }
+  .portal-account__panel-loading { margin: 0; color: var(--aculta-text-secondary); font: 400 0.95rem/1.4 Inter, sans-serif; }
+  .portal-account__logout-row { border-block-start: 1px solid var(--aculta-border-subtle); }
+  .portal-account__chevron { transition: none; }
+  @media (prefers-reduced-motion: no-preference) { .portal-account__chevron { transition: transform 180ms ease; } }
+  .portal-account__layout { grid-template-columns: minmax(0, 1fr); }
+  .portal-account__nav { position: static; }
+  .portal-account__identity { align-items: flex-start; }
+  .portal-account-photo__edit-icon { opacity: 1; }
+  .portal-account-photo[data-portal-enhanced] .portal-account-photo__dialog[open] { top: auto; bottom: 0; width: 100vw; max-width: none; max-height: min(90dvh, 46rem); margin: 0; border-radius: 1rem 1rem 0 0; }
+  .portal-account-photo__panel { padding: 1.25rem 1rem calc(1rem + env(safe-area-inset-bottom)); }
+}
+
+@media (hover: none) {
+  .portal-account-photo__edit-icon { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-account__link,
+  .portal-account-data__link { transition: none; }
+  .portal-account-photo__edit-icon { transition: none; }
+}
+
+
+/* Account learning summary and course list. LMS/Group own the data. */
+.portal-account-courses-summary {
+  margin-block-start: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--aculta-border-accent);
+  border-inline-start: 3px solid var(--aculta-interactive-border);
+  border-radius: 0.25rem;
+}
+.portal-account-courses-summary h3 { margin-top: 0; }
+.portal-account-courses {
+  display: grid;
+  gap: 1rem;
+}
+.portal-account-course {
+  padding: 1rem;
+  border: 1px solid var(--aculta-border-accent);
+  border-inline-start: 3px solid var(--aculta-interactive-border);
+  border-radius: 0.25rem;
+  background: var(--aculta-surface-raised);
+}
+.portal-account-course h3 { margin-top: 0; }
+.portal-account-course__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-block: 0.75rem;
+}
+
+/* Meus pedidos no celular: cada pedido vira um bloco com o nome do campo ao lado do valor (data-label do Portal).
+   O cabeçalho da tabela continua no código para leitores de tela. */
+@media (max-width: 767.98px) {
+  .portal-account__commerce--orders thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .portal-account__commerce--orders table,
+  .portal-account__commerce--orders tbody,
+  .portal-account__commerce--orders tr,
+  .portal-account__commerce--orders td {
+    display: block;
+    width: 100%;
+  }
+
+  .portal-account__commerce--orders tr {
+    padding-block: 0.5rem;
+    border-block-end: 1px solid var(--aculta-border-subtle);
+  }
+
+  .portal-account__commerce--orders td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.35rem 0.25rem;
+    border: 0;
+    text-align: end;
+  }
+
+  .portal-account__commerce--orders td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    text-align: start;
+  }
+}
+
+/* Tabelas de pedido (detalhe do pedido, itens) no celular: linhas empilhadas com o nome da coluna (data-label). */
+@media (max-width: 767.98px) {
+  .portal-account__body table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .portal-account__body table,
+  .portal-account__body tbody,
+  .portal-account__body tr,
+  .portal-account__body td {
+    display: block;
+    width: 100%;
+  }
+
+  .portal-account__body tr {
+    padding-block: 0.5rem;
+    border-block-end: 1px solid var(--aculta-border-subtle);
+  }
+
+  .portal-account__body td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.35rem 0.25rem;
+    border: 0;
+    text-align: end;
+  }
+
+  .portal-account__body td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 600;
+    text-align: start;
+  }
+}

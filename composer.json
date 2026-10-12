@@ -220,6 +220,7 @@
         "drupal/commerce": "^3.3",
         "drupal/commerce_donation_flow": "^1.2",
         "drupal/commerce_mercado_pago": "^3.0@RC",
+        "drupal/commerce_shipping": "^3.0",
         "drupal/content_lock": "^3.0",
         "drupal/core-composer-scaffold": "^11.4",
         "drupal/core-project-message": "^11.4",

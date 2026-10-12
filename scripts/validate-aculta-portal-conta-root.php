@@ -100,6 +100,10 @@ foreach ($scanDirs as $dir) {
       if (preg_match('~^\s*(?://|\#|\*|/\*)~', $line)) {
         continue;
       }
+      // Redirecionamento legado de /minha-conta (301 para a conta): a regra compara o caminho recebido, não gera link.
+      if ($relative === 'web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php' && str_contains($line, '$accountPath')) {
+        continue;
+      }
       if (isset($allowedConfig[$relative]) && preg_match($allowedConfig[$relative], $line)) {
         continue;
       }

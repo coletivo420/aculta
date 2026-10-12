@@ -1,0 +1,7 @@
+{#
+  Caixa "pagamentos pelo Mercado Pago" (aculta_portal). Sem apresentação: o tema ativo (ACULTA420) mostra a logo e o estilo.
+  O link abre em nova aba (rel="noopener").
+#}
+<section data-portal-payment-notice>
+  <p>{{ intro }}{% if url %} <a href="{{ url }}" target="_blank" rel="noopener">{{ link_label }} (abre em nova aba)</a>{% endif %}</p>
+</section>

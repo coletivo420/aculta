@@ -42,6 +42,32 @@ final class PortalFormCallbacks {
     return (string) $this->translation->translate('Se este e-mail ainda não estiver cadastrado, enviaremos um link para confirmar o seu cadastro. Se ele já estiver cadastrado, enviaremos um aviso com as opções para acessar a sua conta. Verifique a caixa de entrada e a pasta de spam.');
   }
 
+  /**
+   * Entity builder de Meus Dados: junta a rua e o número ("Rua, número") antes de gravar o perfil, no mesmo formato
+   * do checkout. Roda na montagem da entidade, antes do save.
+   */
+  public function buildStreetNumber(string $entityTypeId, $profile, array &$form, FormStateInterface $formState): void {
+    if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $profile->get('address')->isEmpty()) {
+      return;
+    }
+    [$number, $sn] = \Drupal\aculta_portal\Account\StreetNumberField::values($form, $formState);
+    $address = $profile->get('address')->first();
+    $value = $address->getValue();
+    $value['address_line1'] = \Drupal\aculta_portal\Account\StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
+    $address->setValue($value);
+  }
+
+  /** Resposta AJAX do salvamento na Minha conta: mensagens e o formulário, no mesmo bloco. */
+  public function accountAjaxResponse(array &$form, FormStateInterface $formState): array {
+    unset($form['#prefix'], $form['#suffix']);
+    return ['messages' => ['#type' => 'status_messages'], 'form' => $form];
+  }
+
+  /** Último handler de envio da Minha conta: o salvamento fica na página (sem redirecionamento). */
+  public function disableAccountRedirect(array &$form, FormStateInterface $formState): void {
+    $formState->disableRedirect();
+  }
+
   /** Registra o aceite dos termos do cadastro (checkbox obrigatório no formulário). */
   public function acceptRegistrationTerms(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
@@ -215,7 +241,7 @@ final class PortalFormCallbacks {
     if ($uid > 0) {
       $this->userData->delete('aculta_portal', $uid, 'social_auth_password_unset');
     }
-    $formState->setRedirect('aculta_portal.security');
+    $formState->setRedirect('aculta_portal.security_password');
   }
 
   /** Applies accessible labels/autocomplete to Core's password widget. */

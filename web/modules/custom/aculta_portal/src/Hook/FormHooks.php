@@ -30,6 +30,8 @@ final class FormHooks {
     private readonly \Drupal\aculta_portal\Account\EmailConfirmationPolicy $emailPolicy,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly \Drupal\aculta_portal\Domain\DomainPurposeManager $domainPurpose,
+    #[Autowire(service: 'aculta_portal.cart_ajax')]
+    private readonly \Drupal\aculta_portal\Cart\AddToCartAjax $cartAjax,
   ) {}
 
   /**
@@ -38,6 +40,8 @@ final class FormHooks {
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
+    $this->accountAjaxSubmit($form, $formId);
+    $this->cartAjax->alter($form, $formId);
 
     $this->restrictedFormNotice($form, $formId);
 
@@ -91,6 +95,11 @@ final class FormHooks {
       $form['#validate'] = $validators;
     }
 
+    // Formulário da conta em Segurança: a senha atual fica nesta página, sem o link de recuperação do Core.
+    if ($formId === 'user_form' && $this->routeMatch->getRouteName() === 'aculta_portal.security_password' && isset($form['account']['current_pass'])) {
+      $form['account']['current_pass']['#description'] = $this->translation->translate('Obrigatório para alterar a senha: informe sua senha atual.');
+    }
+
     if ($formId === 'change_mail_form'
       && $this->routeMatch->getRouteName() === 'aculta_portal.security') {
       $form['account']['mail']['#title'] = $this->translation->translate('Novo e-mail');
@@ -105,7 +114,7 @@ final class FormHooks {
     }
 
     if ($formId === 'user_form'
-      && $this->routeMatch->getRouteName() === 'aculta_portal.security'
+      && $this->routeMatch->getRouteName() === 'aculta_portal.security_password'
       && $formObject instanceof AccountForm) {
       $account = $formObject->getEntity();
       if ((int) $account->id() === (int) $this->currentUser->id()) {
@@ -199,6 +208,37 @@ final class FormHooks {
    * Formulários de wiki e de comentários para conta sem e-mail confirmado: mostra o motivo e o caminho
    * Minha conta > Segurança, e desativa os campos (a escrita já é negada pela checagem de acesso).
    */
+  /**
+   * Formulários da Minha conta salvam por AJAX (sem recarregar a página): o botão de envio chama um callback que
+   * devolve o próprio formulário, com as mensagens, dentro do mesmo bloco (wrapper). Redirecionamentos de salvamento
+   * são desligados para esse envio; o foco vai para o primeiro erro (aculta_portal/account-navigation).
+   */
+  private function accountAjaxSubmit(array &$form, string $formId): void {
+    $route = $this->routeMatch->getRouteObject();
+    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_account_terms_accept'
+      || !isset($form['actions']['submit'])) {
+      return;
+    }
+    $wrapper = 'portal-account-' . \Drupal\Component\Utility\Html::cleanCssIdentifier($formId);
+    $form['#prefix'] = '<div id="' . $wrapper . '">' . ($form['#prefix'] ?? '');
+    $form['#suffix'] = ($form['#suffix'] ?? '') . '</div>';
+    $submit = &$form['actions']['submit'];
+    $submit['#ajax'] = [
+      'callback' => 'aculta_portal.form_callbacks:accountAjaxResponse',
+      'wrapper' => $wrapper,
+      'progress' => ['type' => 'throbber'],
+      // Sem devolver o foco ao botão: o foco vai para o primeiro campo com erro (acultaPortalAccountFormErrors).
+      'disable-refocus' => TRUE,
+    ];
+    // O último handler de envio desliga o redirecionamento (o envio fica na página, com mensagem).
+    if (!empty($submit['#submit'])) {
+      $submit['#submit'][] = 'aculta_portal.form_callbacks:disableAccountRedirect';
+    }
+    else {
+      $form['#submit'][] = 'aculta_portal.form_callbacks:disableAccountRedirect';
+    }
+  }
+
   private function restrictedFormNotice(array &$form, string $form_id): void {
     $policy = $this->emailPolicy;
     $is_wiki = in_array($form_id, ['node_wiki_entry_form', 'node_wiki_entry_edit_form', 'taxonomy_term_wiki_category_form', 'taxonomy_term_wiki_category_edit_form'], TRUE);
@@ -210,7 +250,7 @@ final class FormHooks {
     $form['aculta_email_restriction'] = [
       '#type' => 'container',
       '#weight' => -100,
-      '#attributes' => ['class' => ['messages', 'messages--error', 'aculta-email-notice'], 'role' => 'alert'],
+      '#attributes' => ['data-portal-ui' => 'notice-error email-notice', 'role' => 'alert'],
       'text' => ['#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Sua conta está bloqueada por não confirmar o e-mail.'), ENT_QUOTES) . '</strong> '
         . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>'],
     ];

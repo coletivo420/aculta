@@ -15,7 +15,7 @@ aculta_portal.dashboard:
   path: /minha-conta
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalController::dashboard'
-    _title: Minha conta
+    _title: Visão geral
   requirements:
     _permission: access aculta portal
   options:
@@ -51,7 +51,17 @@ aculta_portal.security:
   path: /seguranca
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalController::security'
-    _title: Segurança da conta
+    _title: E-mail
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+
+aculta_portal.security_password:
+  path: /seguranca/senha
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::securityPassword'
+    _title: Senha
   requirements:
     _permission: access aculta portal
   options:

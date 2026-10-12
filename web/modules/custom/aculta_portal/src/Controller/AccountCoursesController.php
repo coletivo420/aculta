@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\Core\Template\Attribute;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Presentation\AccountCoursePresenter;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -32,7 +34,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     $items = $view['items'];
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['portal-account-courses']],
+      '#attributes' => ['data-portal-ui' => 'account-courses'],
       '#cache' => [
         'contexts' => ['user', 'user.permissions'],
         'max-age' => 0,
@@ -45,12 +47,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
         'message' => ['#plain_text' => $view['empty']['message']],
       ];
       if ($view['empty']['action'] !== NULL) {
-        $build['empty']['link'] = [
-          '#type' => 'link',
-          '#title' => $view['empty']['action']['label'],
-          '#url' => $view['empty']['action']['url'],
-          '#attributes' => ['class' => ['btn', 'btn-primary']],
-        ];
+        $build['empty']['link'] = PortalLinkElement::build($view['empty']['action']['label'], $view['empty']['action']['url'], ['data-portal-ui' => 'button-primary']);
       }
       return $build;
     }
@@ -58,16 +55,16 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     foreach ($items as $delta => $course) {
       $card = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['portal-account-course']],
+        '#attributes' => ['data-portal-ui' => 'account-course'],
         '#cache' => ['tags' => $course['cache_tags']],
-        'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $course['title']],
+        'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $course['title']],
       ];
       if ($course['description'] !== []) {
         $card['description'] = $course['description'];
       }
       $card['meta'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['portal-account-course__meta']],
+        '#attributes' => ['data-portal-ui' => 'account-course-meta'],
         'status' => [
           '#plain_text' => (string) $this->translation->translate(
             'Status: @status',
@@ -79,12 +76,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
         $card['meta']['score'] = ['#plain_text' => $course['score_label']];
       }
       if ($course['action'] !== NULL) {
-        $card['action'] = [
-          '#type' => 'link',
-          '#title' => $course['action']['label'],
-          '#url' => $course['action']['url'],
-          '#attributes' => ['class' => ['btn', 'btn-primary']],
-        ];
+        $card['action'] = PortalLinkElement::build($course['action']['label'], $course['action']['url'], ['data-portal-ui' => 'button-primary']);
       }
       $build['course_' . $delta] = $card;
     }

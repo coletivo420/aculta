@@ -56,3 +56,37 @@ msgstr "Quantidade"
 
 msgid "Company"
 msgstr "Empresa"
+
+msgid "You have canceled checkout at @gateway but may resume the checkout process here when you are ready."
+msgstr "Você cancelou o pagamento no @gateway, mas pode retomar o checkout aqui quando quiser."
+
+msgid "%label has been saved."
+msgstr "%label foi salvo."
+
+msgid "The profile has been saved."
+msgstr "O perfil foi salvo."
+
+msgid "Billing information"
+msgstr "Endereço"
+
+#: src/Controller/PortalController.php
+msgid "Data"
+msgstr "Data"
+
+msgid "Payment has been successfully processed."
+msgstr "Pagamento processado com sucesso."
+
+msgid "Complete"
+msgstr "Pedido concluído"
+
+msgid "Contact email"
+msgstr "E-mail de contato"
+
+msgid "Completed"
+msgstr "Concluído"
+
+msgid "Placed"
+msgstr "Realizado em"
+
+msgid "Title"
+msgstr "Item"

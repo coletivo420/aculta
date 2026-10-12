@@ -15,20 +15,56 @@
     }
   ],
   "domain_transition": {
-    "shop": {"purpose": "shop", "route": "entity.commerce_product.canonical", "note": "A página do produto da loja fica no host SHOP (loja.aculta.toca.net.br em teste; loja.aculta.org em produção). Carrinho e checkout ficam no MAIN."},
+    "shop": {
+      "purpose": "shop",
+      "route": "entity.commerce_product.canonical",
+      "note": "A página do produto da loja fica no host SHOP (loja.aculta.toca.net.br em teste; loja.aculta.org em produção). Carrinho e checkout ficam no MAIN."
+    },
     "note": "Migração de domínios do servidor de testes (*.aculta.toca.net.br) para produção (*.aculta.org), por domínio registrado no Portal. Dado declarado: o comando `domains` confere os registros de config/sync contra esta tabela (somente leitura). A troca em produção só acontece no deploy do RC.",
     "decision_pending": [
       "coletivo420_aculta_org: host de produção da revista é revista420.aculta.org (decisão do responsável, 2026-10-11)."
     ],
     "entries": [
-      {"domain_id": "aculta_org", "test_host": "aculta.toca.net.br", "production_host": "aculta.org"},
-      {"domain_id": "apoio_aculta_org", "test_host": "apoio.aculta.toca.net.br", "production_host": "apoio.aculta.org"},
-      {"domain_id": "conta_aculta_org", "test_host": "conta.aculta.toca.net.br", "production_host": "conta.aculta.org"},
-      {"domain_id": "coletivo420_aculta_org", "test_host": "revista420.aculta.toca.net.br", "production_host": "revista420.aculta.org"},
-      {"domain_id": "wiki420_aculta_org", "test_host": "wiki420.aculta.toca.net.br", "production_host": "wiki420.aculta.org"},
-      {"domain_id": "loja_aculta_org", "test_host": "loja.aculta.toca.net.br", "production_host": "loja.aculta.org"},
-      {"domain_id": "forum_aculta_org", "test_host": "forum.aculta.toca.net.br", "production_host": "forum.aculta.org"},
-      {"domain_id": "cursos_aculta_org", "test_host": "cursos.aculta.toca.net.br", "production_host": "cursos.aculta.org"}
+      {
+        "domain_id": "aculta_org",
+        "test_host": "aculta.toca.net.br",
+        "production_host": "aculta.org"
+      },
+      {
+        "domain_id": "apoio_aculta_org",
+        "test_host": "apoio.aculta.toca.net.br",
+        "production_host": "apoio.aculta.org"
+      },
+      {
+        "domain_id": "conta_aculta_org",
+        "test_host": "conta.aculta.toca.net.br",
+        "production_host": "conta.aculta.org"
+      },
+      {
+        "domain_id": "coletivo420_aculta_org",
+        "test_host": "revista420.aculta.toca.net.br",
+        "production_host": "revista420.aculta.org"
+      },
+      {
+        "domain_id": "wiki420_aculta_org",
+        "test_host": "wiki420.aculta.toca.net.br",
+        "production_host": "wiki420.aculta.org"
+      },
+      {
+        "domain_id": "loja_aculta_org",
+        "test_host": "loja.aculta.toca.net.br",
+        "production_host": "loja.aculta.org"
+      },
+      {
+        "domain_id": "forum_aculta_org",
+        "test_host": "forum.aculta.toca.net.br",
+        "production_host": "forum.aculta.org"
+      },
+      {
+        "domain_id": "cursos_aculta_org",
+        "test_host": "cursos.aculta.toca.net.br",
+        "production_host": "cursos.aculta.org"
+      }
     ]
   },
   "blocking_kinds": [
@@ -142,6 +178,106 @@
     {
       "file": "config/sync/domain.record.cursos_aculta_org.yml",
       "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.aculta_test_8080.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.aculta_toca_net_br.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.apoio_aculta_test_8080.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.apoio_aculta_toca_net_br.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.coletivo420_aculta_test_8080.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.coletivo420_aculta_toca_net_br.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.conta_aculta_test_8080.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.conta_aculta_toca_net_br.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.cursos_aculta_test_8080.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.cursos_aculta_toca_net_br.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.forum_aculta_toca_net_br.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.loja_aculta_test_8080.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.loja_aculta_toca_net_br.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.wiki420_aculta_test_8080.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain_alias.alias.wiki420_aculta_toca_net_br.yml",
+      "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
+    },
+    {
+      "file": "config/sync/domain.coletivo420_aculta_org/metatag.metatag_defaults.front.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/domain/coletivo420_aculta_org/metatag.metatag_defaults.front.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/domain/cursos_aculta_org/metatag.metatag_defaults.front.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/domain.wiki420_aculta_org/metatag.metatag_defaults.front.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/domain/wiki420_aculta_org/metatag.metatag_defaults.front.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/metatag.metatag_defaults.front.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/metatag.metatag_defaults.global.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/metatag.metatag_defaults.node__article.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "config/sync/simple_sitemap.settings.yml",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
+    },
+    {
+      "file": "web/modules/custom/aculta_portal/tests/src/Unit/SecretsManagerTest.php",
+      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
     }
   ],
   "profiles": {

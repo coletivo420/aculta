@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\aculta_portal\Account\AccountPageTitle;
 use Drupal\aculta_portal\Appearance\ColorModePreference;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -17,6 +18,8 @@ final class AppearanceHooks {
     private readonly ColorModePreference $preference,
     #[Autowire(service: 'current_user')]
     private readonly AccountProxyInterface $currentUser,
+    #[Autowire(service: 'aculta_portal.account_page_title')]
+    private readonly AccountPageTitle $accountTitle,
   ) {}
 
   /**
@@ -25,6 +28,7 @@ final class AppearanceHooks {
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
     $variables['aculta_color_mode'] = $this->preference->resolve((int) $this->currentUser->id());
+    $this->accountTitle->applyHeadTitle($variables);
   }
 
   /**

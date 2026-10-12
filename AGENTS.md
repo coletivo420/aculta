@@ -492,6 +492,27 @@ O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 - Slug publicado é estável. Mudança de slug troca o caminho, e o caminho antigo responde 404. Esse é o comportamento padrão do projeto para endereços antigos; não se cria redirecionamento 301 de slug.
 - Diretiva detalhada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Gate: `php scripts/validate-public-slugs.php`.
 
+## Endereço único (regra permanente)
+
+O site tem **um único endereço**, chamado "Endereço". Não há endereço de cobrança nem de envio separados, porque o
+pagamento é feito no Mercado Pago. O endereço do cliente é o mesmo em Meus dados > Endereço, no checkout, na revisão,
+na conclusão, no detalhe do pedido e nos recibos. Não criar perfil de cobrança ou de envio novo.
+
+- Código: `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/BillingAddressPane.php` (pane "Endereço"
+  do checkout; usa o perfil `customer` do cliente quando o pedido ainda não tem um).
+- Mercado Pago recebe o payer a partir desse endereço (módulo contrib; gateway com `collect_billing_information: false`).
+- Detalhes e motivo: `docs/portal/CHECKOUT-BILLING.md`.
+
+## Endereços dependentes de ambiente (regra permanente)
+
+Todo endereço que muda entre ambientes (domínio, subdomínio, URL absoluta, redirect entre hosts, `back_url` e webhook
+de gateway, link em e-mail, origem CORS/trusted_host, callback OAuth) deve estar declarado no mapeamento do
+aculta_deployer (`web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json`, seções `environments` e
+`environment_bound`) e **nunca** fixo no código, nos templates, nos assets ou na configuração exportada.
+
+- Como declarar e como obter o endereço no código: `web/modules/custom/aculta_portal/modules/aculta_deployer/docs/ENDERECOS-AMBIENTE.md`.
+- Gate: `php scripts/validate-environment-addresses.php` falha se `aculta.org` ou `aculta.toca.net.br` aparecer fora do mapeamento.
+
 ## Testes interativos no navegador
 
 Rodadas de teste com agente de navegador e o responsável (Felipe), incluindo hosts, contas de teste, limites do agente de navegador e resultados, estão em `docs/portal/TESTES-NAVEGADOR.md`. Consultar antes de pedir teste de navegador e atualizar a seção de resultados a cada rodada.
@@ -555,3 +576,42 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
 - O `aculta_deployer` é um complemento opcional do `aculta_portal` (submódulo, dependência do próprio módulo, desabilitado por padrão). O Portal não depende dele. Ele publica `var/deployer/status.json` e o painel do Portal lê esse arquivo; o Portal não executa a CLI.
 - O `aculta_deployer` está em desenvolvimento (0.1.x). O roadmap dele é `docs/PLANEJAMENTO.md`.
   Mudanças de descoberta e sitemap por ambiente pertencem à fase 7 desse roadmap.
+
+## Código no Aculta Portal, Design no ACULTA420 (regra permanente)
+
+> **Código no Aculta Portal, Design no ACULTA420.**
+
+- **Aculta Portal** (`web/modules/custom/aculta_portal/**`) = funções: rotas, controllers, forms, `#ajax`, validação
+  (Número/S/N, CEP), endpoints, serviços, access, dados, cache, checkout panes, Commerce/Shipping, JS de
+  **comportamento** (usa `data-portal-*` e `data-aculta-*`, nunca classes de design) e traduções.
+- **ACULTA420** (`web/themes/custom/aculta420/**`) = design: templates Twig de apresentação, CSS, layout, cores,
+  larguras, ícones, animações, estilo de mensagens e caixas, e preprocess de apresentação.
+- O módulo **não** carrega CSS, **não** emite classes de design (`btn`, `alert`, `col-`, `bi-`, `portal-account__*`…)
+  e **não** referencia o tema. Ele entrega **dados** ao tema (listas, links, estado, textos) e continua funcionando
+  sem o ACULTA420 (com marcação neutra de fallback, sem aparência).
+- O tema **não** tem rota, `form_alter`, serviço, `Drupal::`, nem classe ou biblioteca do módulo.
+- **Contrato `data-portal-ui`:** o módulo marca elementos com tokens semânticos (`data-portal-ui="account-avatar"`); o
+  ACULTA420 traduz em classes em `src/Hook/PortalUiHooks.php`. Novo token = entrada no mapa do tema. O gate confere.
+- **Autorização para agentes:** ao implementar uma função no Aculta Portal, o agente pode adicionar ou corrigir o
+  ACULTA420 na mesma entrega, cada parte no seu dono.
+- Inventário, dívida e motivo: `docs/portal/FRONTEIRA-MODULO-TEMA.md`. Gate obrigatório:
+  `php scripts/validate-module-theme-boundary.php` (deve ser PASS; o cliquet de classes do módulo não pode subir).
+
+## Pagamentos: processados pelo Mercado Pago (regra permanente)
+
+- Todo pagamento é processado pelo **Mercado Pago**. O portal **não guarda** nem **exibe** meios de pagamento salvos
+  nem histórico de pagamentos da pessoa. Não existe "Meus pagamentos" na Minha conta, e `/pagamentos` redireciona
+  (301) para `/pedidos`; as rotas de cadastro, edição, exclusão e padrão de meios de pagamento respondem 404.
+- O papel autenticado não recebe a permissão `manage own commerce_payment_method`.
+- Em "Meus pedidos" aparece a caixa "Todos os nossos pagamentos são processados pelo Mercado Pago" com link para a conta
+  do Mercado Pago (URL em `aculta_portal.settings:mercado_pago_account_url`, abre em nova aba com `rel="noopener"`).
+- Não reintroduzir cartões, métodos salvos ou extrato de pagamento na conta. Detalhes: `docs/portal/CHECKOUT-BILLING.md`.
+- Fora desta regra (continuam): o apoio (Meu Apoio e contribuições), a etapa de pagamento do checkout e o webhook do
+  gateway. Gate: `php scripts/validate-module-theme-boundary.php`, seção 13.
+
+## Ícones de interface: Bootstrap Icons (regra permanente)
+
+- O padrão de ícones do ACULTA420 são os **Bootstrap Icons** (`<i class="bi bi-…">`, já carregados pelo bootstrap5).
+- Não usar outros pacotes de ícones nem SVG solto (inline ou arquivo) para ícone de interface.
+- **Exceção:** logos de marcas de terceiros (ex.: Mercado Pago), em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
+- Gate: `php scripts/validate-module-theme-boundary.php`, seção 12 (sem `<svg` inline e sem SVG fora de `assets/brands/`).

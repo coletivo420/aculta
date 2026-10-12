@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\Core\Template\Attribute;
 use Composer\InstalledVersions;
 use Composer\Semver\Semver;
 use Drupal\aculta_portal\Deployer\DeployerStatusReader;
@@ -239,7 +240,7 @@ final class PortalRequirementsController extends ControllerBase {
       ],
       'legend' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-portal-requirements__legend'], 'aria-label' => $this->t('Legenda de status')],
+        '#attributes' => ['data-portal-ui' => 'requirements-legend', 'aria-label' => $this->t('Legenda de status')],
         'ok' => ['#plain_text' => $this->t('✔ OK: instalado, habilitado e compatível.')],
         'attention' => ['#plain_text' => $this->t('⚠ Atenção: integração deliberadamente pendente ou risco conhecido.')],
         'error' => ['#plain_text' => $this->t('✖ Erro: requisito ausente, desabilitado ou incompatível.')],
@@ -255,11 +256,11 @@ final class PortalRequirementsController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum requisito foi encontrado.'),
-        '#attributes' => ['class' => ['aculta-portal-requirements']],
+        '#attributes' => ['data-portal-ui' => 'requirements'],
       ],
       'note' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'text' => ['#plain_text' => $this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
       ],
       'indexing' => $this->buildIndexingSection(),
@@ -309,13 +310,13 @@ final class PortalRequirementsController extends ControllerBase {
     }
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-portal-requirements__indexing']],
-      'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Indexação')],
+      '#attributes' => ['data-portal-ui' => 'requirements-indexing'],
+      'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Indexação')],
       'table' => [
         '#type' => 'table',
         '#header' => [$this->t('Item'), $this->t('Valor')],
         '#rows' => $rows,
-        '#attributes' => ['class' => ['aculta-portal-requirements__indexing-table']],
+        '#attributes' => ['data-portal-ui' => 'requirements-indexing-table'],
       ],
     ];
   }
@@ -361,7 +362,7 @@ final class PortalRequirementsController extends ControllerBase {
       'installed' => ['data' => ['#plain_text' => $version ?: $this->t('Não encontrado')]],
       'status' => [
         'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . $status_label],
-        'class' => ['aculta-portal-requirements__status', 'aculta-portal-requirements__status--' . $status],
+        'data-portal-ui' => 'requirements-status status-' . $status,
       ],
     ];
   }
@@ -380,7 +381,7 @@ final class PortalRequirementsController extends ControllerBase {
       'installed' => ['data' => ['#plain_text' => $version ?: $this->t('Não encontrado')]],
       'status' => [
         'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($status === 'ok' ? $this->t('OK — tema base disponível.') : $this->t('Erro — tema base ausente ou incompatível.'))],
-        'class' => ['aculta-portal-requirements__status', 'aculta-portal-requirements__status--' . $status],
+        'data-portal-ui' => 'requirements-status status-' . $status,
       ],
     ];
   }
@@ -398,7 +399,7 @@ final class PortalRequirementsController extends ControllerBase {
       'installed' => ['data' => ['#plain_text' => $theme_exists ? $this->t('Tema custom do repositório; sem versão Composer') : $this->t('Não encontrado')]],
       'status' => [
         'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($enabled ? $this->t('OK — tema padrão habilitado.') : $this->t('Erro — tema ausente ou não é o tema padrão.'))],
-        'class' => ['aculta-portal-requirements__status', 'aculta-portal-requirements__status--' . $status],
+        'data-portal-ui' => 'requirements-status status-' . $status,
       ],
     ];
   }

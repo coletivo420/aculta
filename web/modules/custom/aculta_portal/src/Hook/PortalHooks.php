@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\Core\Template\Attribute;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\AccountShellBuilder;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
@@ -11,6 +13,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\block_content\BlockContentInterface;
+use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -343,6 +346,25 @@ final class PortalHooks {
   }
 
   /**
+   * Detalhe do pedido (Minha conta): a situação sai pelo nome do Portal, traduzido ("Concluído"), e não pelo rótulo
+   * em inglês do workflow do Commerce. O título do campo vira "Situação".
+   */
+  #[Hook('entity_view_alter')]
+  public function commerceOrderUserView(array &$build, $entity, $display): void {
+    if ($entity->getEntityTypeId() !== 'commerce_order' || $display->id() !== 'commerce_order.default.user' || !isset($build['state'])) {
+      return;
+    }
+    $label = match ($entity->getState()->getId()) {
+      'completed' => (string) $this->translation->translate('Concluído'),
+      'canceled' => (string) $this->translation->translate('Cancelado'),
+      'draft' => (string) $this->translation->translate('Rascunho'),
+      default => (string) $this->translation->translate('Em andamento'),
+    };
+    $build['state']['#title'] = $this->translation->translate('Situação');
+    $build['state'][0] = ['#plain_text' => $label];
+  }
+
+  /**
    * Implements hook_page_attachments().
    */
   #[Hook('page_attachments')]
@@ -371,21 +393,18 @@ final class PortalHooks {
       $form['name']['#title'] = $this->translation->translate('Nome de usuário ou e-mail');
       $form['name']['#description'] = $this->translation->translate('Informe seu e-mail ou nome de usuário.');
       $form['password_reset_link'] = [
-        '#type' => 'link',
-        '#title' => $this->translation->translate('Esqueci minha senha'),
-        '#url' => Url::fromRoute('user.pass'),
-        '#attributes' => ['class' => ['aculta-login__reset-link']],
+        ...PortalLinkElement::build($this->translation->translate('Esqueci minha senha'), Url::fromRoute('user.pass'), ['data-portal-ui' => 'login-reset-link']),
         '#weight' => 10,
       ];
       $form['registration_notice'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-login__registration']],
+        '#attributes' => ['data-portal-ui' => 'login-registration'],
         'text' => ['#plain_text' => $this->translation->translate('Ainda não tem uma conta?')],
         'link' => [
           '#type' => 'link',
           '#title' => $this->translation->translate('Ver informações sobre o cadastro'),
           '#url' => Url::fromRoute('user.register'),
-          '#attributes' => ['class' => ['aculta-button', 'aculta-button--secondary']],
+          '#attributes' => ['data-portal-ui' => 'aculta-button-secondary'],
         ],
         '#weight' => 30,
       ];
@@ -397,15 +416,15 @@ final class PortalHooks {
       && $this->authIntegrationManager->isGoogleConfigured()) {
       $form['social_auth_divider'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-login__divider']],
-        'line_before' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['aria-hidden' => 'true']],
+        '#attributes' => ['data-portal-ui' => 'login-divider'],
+        'line_before' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['aria-hidden' => 'true'])],
         'label' => ['#plain_text' => $this->translation->translate('ou')],
-        'line_after' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['aria-hidden' => 'true']],
+        'line_after' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['aria-hidden' => 'true'])],
         '#weight' => 20,
       ];
       $form['social_auth'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-auth-provider']],
+        '#attributes' => ['data-portal-ui' => 'auth-provider'],
         'provider' => $this->blockManager
           ->createInstance('social_auth_login', [])
           ->build(),
@@ -486,13 +505,26 @@ final class PortalHooks {
             $address_element[$key]['#title'] = $this->translation->translate($label);
           }
         }
-        foreach (['organization', 'given_name', 'additional_name', 'family_name'] as $private_or_duplicate) {
+        foreach (['given_name', 'additional_name', 'family_name'] as $private_or_duplicate) {
           if (isset($address_element[$private_or_duplicate])) {
             $address_element[$private_or_duplicate]['#access'] = FALSE;
           }
         }
         unset($address_element);
       }
+      // Número e S/N: subcampos do endereço, logo depois da rua (StreetNumberField). Valores do perfil salvo.
+      $parts = ['street' => '', 'number' => '', 'sn' => FALSE];
+      if ($entity->id()) {
+        $saved = $this->entityTypeManager->getStorage('profile')->load($entity->id());
+        if ($saved && $saved->hasField('address') && !$saved->get('address')->isEmpty()) {
+          $parts = \Drupal\aculta_portal\Account\StreetNumberField::split((string) $saved->get('address')->first()->getAddressLine1());
+        }
+      }
+      if (isset($form['address']['widget'][0]['address'])) {
+        \Drupal\aculta_portal\Account\StreetNumberField::attach($form['address']['widget'][0]['address'], $parts['number'], $parts['sn']);
+      }
+      // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
+      $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';
       if (isset($form['actions']['submit'])) {
         $form['actions']['submit']['#value'] = $this->translation->translate('Salvar endereço');
         $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:addressRedirect';
@@ -542,11 +574,52 @@ final class PortalHooks {
         'template' => 'aculta-portal-account-terms-modal',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
+      'aculta_portal_payment_notice' => [
+        'variables' => [
+          'intro' => NULL,
+          'link_label' => NULL,
+          'url' => NULL,
+          'logo' => NULL,
+        ],
+        'template' => 'portal-payment-notice',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
+      'aculta_portal_element' => [
+        'variables' => [
+          'tag' => 'span',
+          'value' => NULL,
+          'element_attributes' => NULL,
+        ],
+        'template' => 'portal-element',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
+      'aculta_portal_search_trigger' => [
+        'variables' => [
+          'url' => NULL,
+          'label' => NULL,
+          'trigger_attributes' => NULL,
+        ],
+        'template' => 'portal-search-trigger',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
+      'aculta_portal_cart_status' => [
+        'variables' => [
+          'status_type' => 'success',
+          'status_role' => 'status',
+          'message' => NULL,
+          'url' => NULL,
+          'link_label' => NULL,
+          'close_label' => NULL,
+        ],
+        'template' => 'portal-cart-status',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
       'aculta_portal_shell' => [
         'variables' => [
           'section_title' => NULL,
-          'menu' => NULL,
-          'menu_accordion' => NULL,
+          'menu_items' => [],
+          'accordion_items' => [],
+          'logout' => [],
           'content' => NULL,
         ],
         'template' => 'aculta-portal-shell',

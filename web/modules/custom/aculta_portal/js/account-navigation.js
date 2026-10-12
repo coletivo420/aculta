@@ -1,173 +1,211 @@
 (function (Drupal, once) {
   'use strict';
 
-  const mergeSettings = (responseDocument) => {
-    const settingsElement = responseDocument.querySelector('script[data-drupal-selector="drupal-settings-json"]');
-    if (!settingsElement || !window.drupalSettings) return;
-    const merge = (target, source) => {
-      Object.entries(source).forEach(([key, value]) => {
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-          target[key] = merge(target[key] && typeof target[key] === 'object' ? target[key] : {}, value);
-        }
-        else target[key] = value;
-      });
-      return target;
-    };
-    merge(window.drupalSettings, JSON.parse(settingsElement.textContent));
-  };
-
-  const requestDocument = async (url) => {
-    const target = new URL(url, window.location.href);
-    if (target.origin !== window.location.origin) {
-      throw new Error('Cross-origin account AJAX is not allowed.');
-    }
-    const response = await fetch(target.href, {
-      credentials: 'same-origin',
-      headers: { Accept: 'text/html', 'X-Requested-With': 'XMLHttpRequest' },
-    });
-    if (!response.ok) throw new Error('Account page request failed.');
-    return new DOMParser().parseFromString(await response.text(), 'text/html');
-  };
-
-  const setTopLevelActive = (layout) => {
-    layout.querySelectorAll('a[data-aculta-portal-link]').forEach((link) => {
-      const href = new URL(link.href);
-      const active = href.pathname === window.location.pathname || (href.pathname === '/dados' && window.location.pathname.startsWith('/dados/'));
-      if (active) link.setAttribute('aria-current', 'page');
-      else link.removeAttribute('aria-current');
-      link.classList.toggle('is-active', active);
-    });
-  };
-
-  const updateTitle = (responseDocument) => {
-    if (responseDocument.title) document.title = responseDocument.title;
-  };
-
-  const updatePanel = async (url, pushState) => {
-    const layout = document.querySelector('[data-portal-account-layout]');
-    const panel = layout?.querySelector('[data-portal-account-content]');
-    const status = layout?.querySelector('[data-portal-account-status]');
-    const loading = layout?.querySelector('[data-portal-account-loading]');
-    if (!layout || !panel) {
-      window.location.assign(url);
-      return;
-    }
-
-    layout.setAttribute('aria-busy', 'true');
-    panel.setAttribute('aria-busy', 'true');
-    if (loading) loading.hidden = false;
-    if (status) status.textContent = Drupal.t('Carregando conteúdo da seção.');
-    try {
-      const responseDocument = await requestDocument(url);
-      const replacement = responseDocument.querySelector('[data-portal-account-content]');
-      if (!replacement) throw new Error('Account content missing from response.');
-      Drupal.detachBehaviors(panel, window.drupalSettings || {}, 'unload');
-      panel.innerHTML = replacement.innerHTML;
-      updateTitle(responseDocument);
-      if (pushState) window.history.pushState({ acultaAccount: true }, '', url);
-      setTopLevelActive(layout);
-      mergeSettings(responseDocument);
-      Drupal.attachBehaviors(panel, window.drupalSettings || {});
-      const heading = panel.querySelector('h2');
-      if (heading) {
-        heading.setAttribute('tabindex', '-1');
-        heading.focus();
-      }
-      if (status) status.textContent = Drupal.t('@section carregado.', { '@section': heading?.textContent || '' });
-    }
-    catch (error) {
-      window.location.assign(url);
-    }
-    finally {
-      layout.setAttribute('aria-busy', 'false');
-      panel.setAttribute('aria-busy', 'false');
-      if (loading) loading.hidden = true;
-    }
-  };
-
-  const updateDataPanel = async (url, pushState) => {
-    const layout = document.querySelector('[data-portal-account-layout]');
-    const dataPanel = layout?.querySelector('[data-portal-account-data-content]');
-    const status = layout?.querySelector('[data-portal-account-status]');
-    if (!layout || !dataPanel) {
-      await updatePanel(url, pushState);
-      return;
-    }
-    dataPanel.setAttribute('aria-busy', 'true');
-    if (status) status.textContent = Drupal.t('Carregando seus dados.');
-    try {
-      const responseDocument = await requestDocument(url);
-      const replacement = responseDocument.querySelector('[data-portal-account-data-content]');
-      if (!replacement) throw new Error('Account data content missing from response.');
-      Drupal.detachBehaviors(dataPanel, window.drupalSettings || {}, 'unload');
-      dataPanel.innerHTML = replacement.innerHTML;
-      updateTitle(responseDocument);
-      if (pushState) window.history.pushState({ acultaAccount: true, acultaAccountData: true }, '', url);
-      layout.querySelectorAll('a[data-portal-account-data-link]').forEach((link) => {
-        const active = new URL(link.href).pathname === window.location.pathname;
-        if (active) link.setAttribute('aria-current', 'page');
-        else link.removeAttribute('aria-current');
-        link.classList.toggle('is-active', active);
-      });
-      setTopLevelActive(layout);
-      mergeSettings(responseDocument);
-      Drupal.attachBehaviors(dataPanel, window.drupalSettings || {});
-      const heading = dataPanel.querySelector('h3');
-      if (heading) {
-        heading.setAttribute('tabindex', '-1');
-        heading.focus();
-      }
-      if (status) status.textContent = Drupal.t('@section carregada.', { '@section': heading?.textContent || '' });
-    }
-    catch (error) {
-      window.location.assign(url);
-    }
-    finally {
-      dataPanel.setAttribute('aria-busy', 'false');
-    }
-  };
-
+  /**
+   * Navegação da Minha conta pelo framework AJAX do Drupal.
+   *
+   * O link é um Drupal.Ajax: a resposta (AjaxResponse do Core) traz o conteúdo da seção no #portal-account-body
+   * e as bibliotecas e drupalSettings da página, e o Drupal faz attachBehaviors. Por isso formulários com #ajax
+   * (CEP, Número) e os demais funcionam depois da navegação. Sem recarregar a página: URL (pushState), título,
+   * menu ativo e foco acompanham a troca. Voltar e avançar do navegador refazem a mesma requisição.
+   */
+  const BODY_ID = 'portal-account-body';
   const mobileQuery = window.matchMedia('(max-width: 767.98px)');
+  let sequence = 0;
 
-  // Sanfona do celular: abre a seção e carrega o conteúdo completo dela, pela mesma requisição AJAX.
-  const loadAccordionItem = async (details) => {
+  const withWrapperFormat = (url) => {
+    const target = new URL(url, window.location.href);
+    target.searchParams.set('_wrapper_format', 'drupal_ajax');
+    return target.pathname + target.search;
+  };
+
+  const updateMenu = (url) => {
+    const pathname = new URL(url, window.location.href).pathname;
+    document.querySelectorAll('[data-portal-account-menu] a, [data-portal-account-accordion] a').forEach((item) => {
+      const current = new URL(item.href, window.location.href).pathname === pathname;
+      if (current) item.setAttribute('aria-current', 'page');
+      else item.removeAttribute('aria-current');
+    });
+  };
+
+  const focusHeading = () => {
+    const heading = document.getElementById('portal-account-section-title');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus();
+    }
+  };
+
+  // Faz a requisição AJAX do link e troca o conteúdo do destino (wrapper). onDone roda depois da troca.
+  const requestInto = (anchor, url, wrapperId, onDone, onError) => {
+    if (!anchor.id) {
+      sequence += 1;
+      anchor.id = 'portal-account-link-' + sequence;
+    }
+    const ajax = new Drupal.Ajax(anchor.id, anchor, {
+      url: withWrapperFormat(url),
+      httpMethod: 'GET',
+      event: 'click',
+      wrapper: wrapperId,
+      method: 'html',
+      progress: { type: 'throbber' },
+    });
+    // O success do Drupal resolve depois dos comandos (inclui carregar bibliotecas): o estado novo é lido só então.
+    const success = ajax.success.bind(ajax);
+    ajax.success = (response, status) => Promise.resolve(success(response, status)).then((result) => {
+      if (onDone) onDone();
+      return result;
+    });
+    const failure = ajax.error.bind(ajax);
+    ajax.error = (xhr, uri, message) => {
+      if (onError) onError();
+      return failure(xhr, uri, message);
+    };
+    ajax.execute();
+  };
+
+  // Atualiza o shell para a página nova: seção ativa (um só item), título da seção, breadcrumb e document.title.
+  const refreshChrome = (url) => {
+    const path = new URL(url, window.location.href).pathname;
+    const links = Array.from(document.querySelectorAll('[data-portal-account-menu] a, [data-portal-account-accordion] a'));
+    // Item ativo: o link de maior caminho que contém a página (ex.: /pedidos/6 ativa /pedidos).
+    let active = null;
+    links.forEach((item) => {
+      const itemPath = new URL(item.href, window.location.href).pathname;
+      const matches = path === itemPath || path.startsWith(itemPath.replace(/\/$/, '') + '/');
+      if (matches && (!active || itemPath.length > new URL(active.href, window.location.href).pathname.length)) active = item;
+    });
+    links.forEach((item) => {
+      if (item === active) item.setAttribute('aria-current', 'page');
+      else item.removeAttribute('aria-current');
+    });
+    const body = document.getElementById(BODY_ID);
+    // Título e breadcrumb da página vêm do servidor, num bloco oculto do conteúdo (AccountAjaxMainContentRenderer).
+    // O fragmento pode estar no corpo (desktop) ou no painel aberto (mobile): procura no documento.
+    const chrome = document.querySelector('[data-portal-chrome]');
+    const pageTitle = chrome ? chrome.getAttribute('data-portal-page-title') : '';
+    const crumbList = chrome?.querySelector('ol');
+    const currentCrumbs = document.querySelector('[data-portal-breadcrumb]');
+    if (crumbList && currentCrumbs) currentCrumbs.replaceChildren(...crumbList.children);
+    chrome?.remove();
+    const sectionTitle = active ? active.textContent.trim() : pageTitle;
+    const sectionHeading = document.getElementById('portal-account-section-title');
+    if (sectionHeading) sectionHeading.textContent = sectionTitle;
+    document.title = (pageTitle || sectionTitle) + ' | Conta ACULTA';
+  };
+
+  // Navegação de página (menu, abas, pedidos, voltar/avançar): URL no histórico, shell atualizado, foco no título.
+  const navigate = (anchor, url, push) => {
+    const layout = document.querySelector('[data-portal-account-layout]');
+    layout?.setAttribute('aria-busy', 'true');
+    // Mensagens da página anterior não podem ficar na página nova.
+    document.querySelectorAll('.messages, [data-drupal-messages]').forEach((node) => node.remove());
+    // Link dentro de um painel da sanfona (mobile): a troca acontece nesse painel; senão, no corpo da página.
+    const panel = anchor.closest('[data-portal-account-accordion-panel]');
+    requestInto(anchor, url, panel?.id || BODY_ID, () => {
+      layout?.setAttribute('aria-busy', 'false');
+      if (push) window.history.pushState({ acultaAccount: true }, '', url);
+      refreshChrome(url);
+      focusHeading();
+    });
+  };
+
+  // Sanfona do celular: o painel carrega a seção pelo mesmo framework AJAX. Passados 10 s ou em caso de falha,
+  // o painel mostra erro com "Tentar novamente" e link para a página normal (fallback).
+  const ACCORDION_TIMEOUT = 10000;
+
+  const showAccordionError = (details, panel) => {
+    panel.dataset.loading = '0';
+    panel.replaceChildren();
+    const box = document.createElement('div');
+    box.setAttribute('data-portal-account-error', '');
+    box.setAttribute('role', 'alert');
+    const message = document.createElement('p');
+    message.textContent = Drupal.t('Não foi possível carregar esta seção agora.');
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.setAttribute('data-portal-account-retry', '');
+    retry.textContent = Drupal.t('Tentar novamente');
+    retry.addEventListener('click', () => {
+      panel.dataset.loaded = '0';
+      loadAccordionItem(details, true);
+    });
+    const link = document.createElement('a');
+    link.href = panel.dataset.src;
+    link.textContent = Drupal.t('Abrir a página desta seção');
+    box.append(message, retry, document.createTextNode(' '), link);
+    panel.append(box);
+  };
+
+  const loadAccordionItem = (details, push = false) => {
     const panel = details.querySelector('[data-portal-account-accordion-panel]');
     if (!panel || panel.dataset.loaded === '1' || panel.dataset.loading === '1') return;
     panel.dataset.loading = '1';
-    try {
-      const responseDocument = await requestDocument(panel.dataset.src);
-      const replacement = responseDocument.querySelector('[data-portal-account-content] .portal-account__body');
-      if (!replacement) throw new Error('Account section content missing from response.');
-      mergeSettings(responseDocument);
-      panel.innerHTML = replacement.innerHTML;
-      Drupal.attachBehaviors(panel, window.drupalSettings || {});
+    if (!panel.id) {
+      sequence += 1;
+      panel.id = 'portal-account-panel-' + sequence;
+    }
+    // O Drupal.Ajax associa um clique ao elemento e cancela o padrão. Por isso o carregamento usa um marcador oculto
+    // dentro do painel, e não o summary: senão o item já carregado não abriria mais pelo toque.
+    panel.querySelectorAll(':scope > [data-portal-account-loader]').forEach((node) => node.remove());
+    const loader = document.createElement('span');
+    loader.hidden = true;
+    loader.setAttribute('data-portal-account-loader', '');
+    panel.prepend(loader);
+    const timer = window.setTimeout(() => {
+      if (panel.dataset.loaded !== '1') showAccordionError(details, panel);
+    }, ACCORDION_TIMEOUT);
+    requestInto(loader, panel.dataset.src, panel.id, () => {
+      window.clearTimeout(timer);
       panel.dataset.loaded = '1';
-    }
-    catch (error) {
-      panel.innerHTML = '<p>Não foi possível carregar esta seção. <a href="' + panel.dataset.src + '">Abrir a página</a></p>';
-    }
-    finally {
       panel.dataset.loading = '0';
-    }
+      // Como na navegação de página: URL no histórico, título, menu ativo e breadcrumb da seção.
+      if (push) window.history.pushState({ acultaAccount: true }, '', panel.dataset.src);
+      refreshChrome(panel.dataset.src);
+    }, () => {
+      window.clearTimeout(timer);
+      showAccordionError(details, panel);
+    });
   };
 
   const setupAccordion = (layout) => {
     if (!mobileQuery.matches) return;
-    // No celular o conteúdo vive só na sanfona: a coluna de conteúdo sai do DOM para não duplicar IDs.
-    layout.querySelector('[data-portal-account-content]')?.remove();
-    layout.querySelectorAll('.portal-account__item').forEach((details) => {
+    // No celular o conteúdo vive só na sanfona. A seção ativa, já renderizada pelo servidor, vai para o painel aberto
+    // (sem placeholder e sem requisição); a coluna de conteúdo sai do DOM para não duplicar IDs.
+    const content = layout.querySelector('[data-portal-account-content]');
+    const openPanel = layout.querySelector('[data-portal-account-item][open] [data-portal-account-accordion-panel]');
+    if (content && openPanel && openPanel.dataset.loaded !== '1') {
+      openPanel.replaceChildren(...content.childNodes);
+      openPanel.dataset.loaded = '1';
+    }
+    content?.remove();
+    layout.querySelectorAll('[data-portal-account-item]').forEach((details) => {
       if (details.dataset.acultaAccordion === '1') return;
       details.dataset.acultaAccordion = '1';
       details.addEventListener('toggle', () => {
         if (!details.open) return;
-        // Só uma sanfona expandida por vez: as outras da mesma conta recolhem.
-        layout.querySelectorAll('.portal-account__item[open]').forEach((other) => {
-          if (other !== details) other.open = false;
+        layout.querySelectorAll('[data-portal-account-item]').forEach((other) => {
+          if (other === details) return;
+          other.open = false;
+          // Esvazia o painel: sem conteúdo repetido (ids) e a próxima abertura carrega de novo, com URL e título.
+          const otherPanel = other.querySelector('[data-portal-account-accordion-panel]');
+          if (otherPanel) {
+            otherPanel.replaceChildren();
+            otherPanel.dataset.loaded = '0';
+            otherPanel.dataset.loading = '0';
+          }
         });
-        loadAccordionItem(details);
+        loadAccordionItem(details, true);
       });
-      if (details.open) loadAccordionItem(details);
+      if (details.open) loadAccordionItem(details, false);
     });
+  };
+
+  // Links internos da conta (menu, abas, pedidos, detalhes): mesma origem e caminho, sem alvo novo.
+  const isInternalLink = (anchor) => {
+    if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return false;
+    const target = new URL(anchor.href, window.location.href);
+    return target.origin === window.location.origin && !target.pathname.startsWith('/sair');
   };
 
   Drupal.behaviors.acultaPortalNavigation = {
@@ -175,26 +213,43 @@
       once('aculta-portal-navigation', '[data-portal-account-layout]', context).forEach((layout) => {
         setupAccordion(layout);
         layout.addEventListener('click', (event) => {
-          const nestedLink = event.target.closest('a[data-portal-account-data-link]');
-          const portalLink = event.target.closest('a[data-aculta-portal-link]');
-          const link = nestedLink || portalLink;
-          if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target === '_blank') return;
-          const target = new URL(link.href, window.location.href);
-          // Cross-purpose links are normal browser navigation, never AJAX.
-          if (target.origin !== window.location.origin) return;
-          if (target.pathname === window.location.pathname) {
+          if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          const anchor = event.target.closest('a[href]');
+          if (!isInternalLink(anchor) || anchor.closest('[data-portal-account-summary]')) return;
+          // Só a navegação de seções e abas usa AJAX; ações dentro de formulários seguem o fluxo normal.
+          const inMenu = anchor.closest('[data-portal-account-menu], [data-portal-account-accordion], [data-portal-account-data-nav]');
+          const inBody = anchor.closest('#' + BODY_ID);
+          if (!inMenu && !inBody) return;
+          const target = new URL(anchor.href, window.location.href);
+          if (target.pathname === window.location.pathname && target.search === window.location.search) {
             event.preventDefault();
             return;
           }
           event.preventDefault();
-          if (nestedLink) updateDataPanel(link.href, true);
-          else updatePanel(link.href, true);
+          navigate(anchor, anchor.href, true);
         });
         window.addEventListener('popstate', () => {
-          const pathname = window.location.pathname;
-          if (pathname.startsWith('/dados')) updateDataPanel(window.location.href, false);
-          else updatePanel(window.location.href, false);
+          const body = document.getElementById(BODY_ID);
+          if (!body) return;
+          const anchor = document.createElement('a');
+          anchor.href = window.location.href;
+          document.body.append(anchor);
+          navigate(anchor, window.location.href, false);
+          anchor.remove();
         });
+      });
+    },
+  };
+
+  // Formulários da conta salvos por AJAX: com erro de validação, o foco vai para o primeiro campo com erro.
+  Drupal.behaviors.acultaPortalAccountFormErrors = {
+    attach(context) {
+      once('aculta-portal-account-form-errors', '[id^="portal-account-"]', context).forEach((wrapper) => {
+        const invalid = wrapper.querySelector('.form-item--error input, .form-item--error select, .form-item--error textarea, .error[aria-invalid], input.error, select.error, textarea.error');
+        if (invalid) {
+          // Depois do Drupal.Ajax, que devolve o foco ao botão do envio.
+          invalid.focus();
+        }
       });
     },
   };
@@ -209,7 +264,7 @@
         if (!dialog || !trigger || typeof dialog.showModal !== 'function') return;
 
         // The dialog starts open so its form remains available without JS.
-        editor.classList.add('is-enhanced');
+        editor.setAttribute('data-portal-enhanced', '');
         if (dialog.open) dialog.close();
 
         trigger.addEventListener('click', () => {

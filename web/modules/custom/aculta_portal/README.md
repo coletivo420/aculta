@@ -89,3 +89,17 @@ Painel `/admin/config/aculta/segredos` para cadastrar as credenciais do contrato
 Em teste, são gravados em arquivo; em produção, ficam no banco criptografado, provisionado pelo
 `aculta_deployer` após o deploy. Detalhes e limites em
 [docs/operations/SECRETS.md](../../../docs/operations/SECRETS.md#credenciais-do-ambiente-painel-aculta_portal-0200-dev11).
+
+## Código no Aculta Portal, Design no ACULTA420
+
+> **Código no Aculta Portal, Design no ACULTA420.**
+
+Este módulo entrega funções: rotas, controllers, forms, `#ajax`, validação, endpoints, serviços, access, dados e JS de
+comportamento (com `data-portal-*` e `data-aculta-*`). Não entrega aparência: templates de apresentação, CSS, classes de
+design (`btn`, `alert`, `bi-*`, `portal-account__*`) e ícones ficam no tema ACULTA420. Os templates do módulo são só
+fallback neutro, sem classes, para o site continuar funcional sem o tema. Quem implementa uma função aqui pode alterar o
+ACULTA420 na mesma entrega, cada parte no seu dono. Inventário e dívida: `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
+
+Mecanismo: o módulo marca `data-portal-ui="token"`; o tema traduz o token em classes (`PortalUiHooks::TOKENS`). Links com
+token usam `Render\PortalLinkElement`. Ver `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
+

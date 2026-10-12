@@ -258,6 +258,10 @@ final class ThemeHooks {
       'auto' => '',
       default => 'light',
     };
+    // Título do documento informado pelo Portal (contrato aculta_head_title). Roda depois do Metatag.
+    if (!empty($variables['aculta_head_title'])) {
+      $variables['head_title'] = ['title' => (string) $variables['aculta_head_title']];
+    }
   }
 
 }

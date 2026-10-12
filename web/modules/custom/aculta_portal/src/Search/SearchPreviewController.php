@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
+use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -56,7 +57,7 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
       return [
         '#cache' => ['max-age' => 0],
-        'hint' => ['#markup' => '<p class="small text-body-secondary">' . $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS]) . '</p>'],
+        'hint' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']), '#value' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS])],
       ];
     }
     $preview = $this->searchResults->search($term, self::PREVIEW_LIMIT);
@@ -79,15 +80,15 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     $full->setOption('query', ['q' => $term]);
     return [
       '#cache' => ['max-age' => 0, 'contexts' => ['domain', 'user.permissions']],
-      'list' => ['#theme' => 'item_list', '#items' => $items, '#attributes' => ['class' => ['aculta-search-preview__list', 'list-unstyled']]],
+      'list' => ['#theme' => 'item_list', '#items' => $items, '#attributes' => ['data-portal-ui' => 'search-preview-list']],
       'full' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-search-preview__footer', 'd-flex', 'justify-content-center', 'mt-2']],
+        '#attributes' => ['data-portal-ui' => 'search-preview-footer'],
         'link' => [
           '#type' => 'link',
           '#title' => $this->t('Pesquisa completa por «@term» (@total resultados)', ['@term' => $term, '@total' => $preview['total']]),
           '#url' => $full,
-          '#attributes' => ['class' => ['aculta-search-preview__full', 'btn', 'btn-outline-primary', 'btn-sm']],
+          '#attributes' => ['data-portal-ui' => 'search-preview-full'],
         ],
       ],
     ];

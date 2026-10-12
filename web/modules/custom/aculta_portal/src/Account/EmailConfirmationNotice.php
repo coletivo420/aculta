@@ -26,6 +26,7 @@ final class EmailConfirmationNotice {
     'aculta_portal.my_data',
     'aculta_portal.connections',
     'aculta_portal.security',
+    'aculta_portal.security_password',
   ];
 
   public function __construct(
@@ -57,7 +58,7 @@ final class EmailConfirmationNotice {
     return [
       '#type' => 'container',
       '#weight' => -100,
-      '#attributes' => ['class' => ['messages', 'messages--error', 'aculta-email-notice'], 'role' => 'alert'],
+      '#attributes' => ['data-portal-ui' => 'notice-error email-notice', 'role' => 'alert'],
       'text' => ['#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Seu e-mail precisa ser confirmado.'), ENT_QUOTES) . '</strong> '
         . htmlspecialchars($detail, ENT_QUOTES) . ' ' . $link . '.</p>'],
     ];

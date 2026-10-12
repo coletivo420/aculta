@@ -19,7 +19,7 @@ Os hosts do servidor de testes são `*.aculta.toca.net.br`. `*.aculta.org` é pr
 | Host | Papel | Caminhos principais |
 | --- | --- | --- |
 | `aculta.toca.net.br` | Principal (MAIN). Carrinho e checkout pertencem sempre a este host. | `/carrinho`, `/checkout/{pedido}/order_information`, `/checkout/{pedido}/review`, `/checkout/{pedido}/payment` |
-| `conta.aculta.toca.net.br` | Conta (ACCOUNT). Raiz `/` é a visão geral (logado) ou o login (anônimo). | `/` (visão geral), `/entrar`, `/dados`, `/dados/endereco`, `/pedidos`, `/pagamentos`, `/aceite-termos` |
+| `conta.aculta.toca.net.br` | Conta (ACCOUNT). Raiz `/` é a visão geral (logado) ou o login (anônimo). | `/` (visão geral), `/entrar`, `/dados`, `/dados/endereco`, `/pedidos`, `/aceite-termos` |
 | `loja.aculta.toca.net.br` | Loja (SHOP). | `/loja-da-aculta`, produto `/loja/produto/bloco-sativa/camiseta-abada-bloco-sativa-2026-regata` (ou `/product/1`, que redireciona 301) |
 
 Caminhos que **não** existem ou não são públicos:
@@ -115,7 +115,7 @@ Pré-requisito: usuário `teste.comum` com o aceite **pendente** (o agente do re
 
 Pendências desta rodada: a camada visual atrás do popup (cabeçalho) e o aceite pelo navegador com JavaScript (passos 3 e 5).
 
-**Mercado Pago:** não clicar em "Pagar" em nenhuma tela do Mercado Pago enquanto o token de teste não estiver corrigido (ver CHECKOUT-BILLING.md). O gateway está desligado.
+**Mercado Pago (compra simulada):** o gateway está ligado com token de conta de teste (`test_user`). Antes de pagar, o navegador deve estar **deslogado** do Mercado Pago ou logado no comprador de teste (`TESTUSER…`). Nunca usar a conta real do responsável. Se o domínio exibido não for o de teste, parar e avisar.
 
 ## K) Checkout: resumo, número e CEP (0.3.0-dev.16)
 
@@ -127,5 +127,26 @@ Pré-requisito: `teste.comum` com aceite dado (o popup não bloqueia o checkout 
 4. Digite `1000` no Número e continue. Esperado: a revisão mostra o logradouro "Avenida Paulista, 1000".
 5. No resumo do pedido, o item deve mostrar o nome "Camiseta Abadá Bloco Sativa 2026 – Regata", o tamanho M e o preço R$ 30,00.
 
-**Gateway:** enquanto o token de teste não for trocado, a etapa de pagamento mostra "Não existem gateways de pagamento disponíveis". Não passe da primeira tela do Mercado Pago.
+**Gateway:** ligado. Se a etapa mostrar "Não existem gateways de pagamento disponíveis", o token de teste não está sendo lido: avisar antes de continuar.
 
+
+## L. Migração módulo x tema (2026-10-12)
+
+Objetivo: confirmar que a migração de design para o ACULTA420 não mudou a Minha conta e que o módulo continua
+funcionando sem o tema (fallback).
+
+- **Marcação da Minha conta (HTTP, sem navegador):** 8 páginas (Minha conta, Dados, Endereço, Conexões, Segurança,
+  Meus cursos, Configurações, Meu apoio) capturadas antes e depois da migração. Após normalizar as diferenças
+  intencionais (`data-portal-account-*` acrescentados, `is-active`→`aria-current`, `is-enhanced`→atributo) e os valores
+  de runtime, **8 de 8 idênticas**.
+- **Roteiro de aceitação** (CEP por XHR, Minha conta, Dados > Endereço com Número/CEP, checkout informações e revisão
+  com endereço único e pagamento só Mercado Pago, adicionar ao carrinho por AJAX com caixa e contador): **10/10 com
+  ACULTA420** e **10/10 com Olivero** (tema padrão trocado temporariamente; o shell veio do fallback do módulo, sem
+  classes de design). Tema padrão restaurado para `aculta420` e Olivero desinstalado.
+- **Rodada 2 (2026-10-12, migração de design para o ACULTA420):** 9 páginas da conta e 3 do checkout/loja comparadas
+  com a linha de base (antes da migração), após normalização de ordem de atributos e classes e de valores de runtime:
+  **12 de 12 idênticas**. Roteiro de aceitação: 10/10 com ACULTA420 e 10/10 com Olivero como tema padrão.
+- **Não executado:** captura de tela no navegador. O ambiente não tem ferramenta de navegador conectada; a comparação
+  acima é de marcação. Falta a conferência visual humana na Minha conta.
+- Efeito colateral dos testes: o carrinho do teste.comum recebeu itens de teste (pedidos de rascunho 5, 7 e 8). Limpar
+  depois dos testes.

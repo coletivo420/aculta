@@ -112,7 +112,7 @@ final class DomainPresentationBuilder {
           '#width' => 960,
           '#height' => 307,
           '#attributes' => [
-            'class' => ['aculta-domain-brand-image'],
+            'data-portal-ui' => 'domain-brand-image',
             'srcset' => implode(', ', $srcset),
             'sizes' => '18rem',
             // The logo is above the fold and is the header's main visual: no lazy loading.

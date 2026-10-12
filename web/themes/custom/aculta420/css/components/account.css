@@ -1,4 +1,4 @@
-/* Portal account/security presentation; account behavior remains in aculta_portal/Core. */
+/* Apresentação da área de conta e segurança. O comportamento fica no módulo do Portal (ver docs/portal/FRONTEIRA-MODULO-TEMA.md). */
 .aculta-security-card {
   margin-block: 1.5rem;
   padding: clamp(1.25rem, 3vw, 2rem);
