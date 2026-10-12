@@ -83,3 +83,5 @@ __pycache__/
 
 # Relatório neutro do ACULTA Deployer para o painel (sem valores; gerado localmente)
 /var/deployer/
+# Permissões locais do Claude Code: pessoais, não versionadas
+.claude/settings.local.json
