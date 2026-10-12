@@ -22,6 +22,26 @@ final class DocumentFormatter {
   }
 
   /**
+   * Shows the first five characters and hides the rest with '*', keeping the mask punctuation.
+   * Example: 974.12*.***-**. Does not grant read access; callers decide who may see it.
+   */
+  public function partial(string $input, DocumentType $type): string {
+    $formatted = $this->format($input, $type);
+    $visible = 5;
+    $position = 0;
+    $out = '';
+    foreach (str_split($formatted) as $char) {
+      if ($char === '.' || $char === '/' || $char === '-') {
+        $out .= $char;
+        continue;
+      }
+      $out .= $position < $visible ? $char : '*';
+      $position++;
+    }
+    return $out;
+  }
+
+  /**
    * Hides the body, leaving only the check digits; does not grant read access.
    */
   public function redact(string $input, DocumentType $type): string {

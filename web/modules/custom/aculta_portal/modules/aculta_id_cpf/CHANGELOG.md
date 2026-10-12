@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0-dev.1 — persistência cifrada e Outros Dados — 2026-10-12
+
+Classificação: MINOR, nova capacidade opcional em desenvolvimento.
+
+- `DocumentValidator::detectType()` detecta CPF ou CNPJ pelo formato, com ou sem máscara.
+- `DocumentCipher`: cifra libsodium com chave do Drupal Key (`aculta_document_encryption_key`, 64 caracteres hexadecimais). Sem chave, a cifra fica indisponível.
+- Exibição mascarada: `DocumentFormatter::partial()` mostra 5 caracteres e `*` no restante (974.12*.***-**). O valor completo não é exibido.
+- `AccountDocumentStore` implementa `AccountDocumentInterface` (Portal) e grava em `profile.participante.field_documento` (privado do perfil; não entra em formulários, exibições ou Views).
+- Dependências adicionadas: `key` e `profile`.
+- Runtime: **RUNTIME STATUS: DEFERRED**.
+
 ## 0.1.0-dev.3 — impressão digital HMAC para integração de unicidade — 2026-10-12
 
 - Adicionado `aculta_id_cpf.fingerprint`: canonicaliza CPF/CNPJ e retorna

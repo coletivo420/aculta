@@ -11,6 +11,12 @@ services:
   aculta_id_cpf.formatter:
     class: Drupal\aculta_id_cpf\Service\DocumentFormatter
     arguments: ['@aculta_id_cpf.validator']
+  aculta_id_cpf.cipher:
+    class: Drupal\aculta_id_cpf\Service\DocumentCipher
+    arguments: ['@key.repository']
+  aculta_id_cpf.account_document:
+    class: Drupal\aculta_id_cpf\Service\AccountDocumentStore
+    arguments: ['@entity_type.manager', '@aculta_id_cpf.validator', '@aculta_id_cpf.formatter', '@aculta_id_cpf.cipher']
   aculta_id_cpf.fingerprint:
     class: Drupal\aculta_id_cpf\Service\DocumentFingerprint
     arguments: ['@aculta_id_cpf.validator', '@key.repository']
