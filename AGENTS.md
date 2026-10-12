@@ -501,6 +501,8 @@ na conclusão, no detalhe do pedido e nos recibos. Não criar perfil de cobranç
 - Código: `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/BillingAddressPane.php` (pane "Endereço"
   do checkout; usa o perfil `customer` do cliente quando o pedido ainda não tem um).
 - Mercado Pago recebe o payer a partir desse endereço (módulo contrib; gateway com `collect_billing_information: false`).
+- Envio (Commerce Shipping) usa o mesmo endereço: o pane "Envio" (`AcultaShippingInformation`) não tem formulário de endereço
+  próprio e reaproveita a cópia de cobrança. Número/S/N e Bairro existem só no pane "Endereço".
 - Detalhes e motivo: `docs/portal/CHECKOUT-BILLING.md`.
 
 ## Endereços dependentes de ambiente (regra permanente)

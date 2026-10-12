@@ -1,7 +1,9 @@
 uuid: a9e6dd20-64f3-43dd-b25f-4b219f628978
 langcode: pt-br
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - aculta_portal
 _core:
   default_config_hash: 50QUbDL5hfMj6JF3n2JcOsPZtzq8PyU9UR0iXIpVThA
 label: Default
@@ -24,9 +26,6 @@ configuration:
       step: order_information
       weight: 1
       double_entry: true
-    aculta_billing_address:
-      step: order_information
-      weight: 2
     review:
       step: review
       weight: 3
@@ -41,3 +40,11 @@ configuration:
       step: _sidebar
       weight: 5
       view: commerce_checkout_order_summary
+    aculta_billing_address:
+      step: order_information
+      weight: 2
+    aculta_shipping_information:
+      step: order_information
+      weight: 3
+      require_shipping_profile: true
+      auto_recalculate: true

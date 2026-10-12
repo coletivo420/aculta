@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Form\AccountPasswordCreateForm;
 use Drupal\change_mail_page\Form\ChangeMailForm;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -353,7 +354,8 @@ final class PortalController extends ControllerBase {
       if ($this->hasUserChosenPassword($account)) {
         return ['change_form' => $this->buildPortalAccountForm($account)];
       }
-      return ['social_notice' => ['#plain_text' => $this->t('Sua conta utiliza acesso externo. Quando o fluxo de definição de senha local estiver homologado, ele poderá ser oferecido aqui.')]];
+      // Conta sem senha escolhida (criada com Social Auth): o formulário cria a primeira senha, sem pedir a atual.
+      return ['create_form' => $this->accountFormBuilder->getForm(AccountPasswordCreateForm::class)];
     }
     $email_ready = $this->transactionalMailReady();
     $section_content = [

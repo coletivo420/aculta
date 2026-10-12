@@ -26,11 +26,11 @@
 - Gateway Mercado Pago: `collect_billing_information: true` (config/sync e runtime).
 - Acordo `aculta_account_terms`: `settings.destination` vazio (config/sync e runtime). Antes, `/` mandava o usuário para a home do host onde aceitou (no caso da loja, `/loja-da-aculta`) e perdia o produto pedido. Agora o retorno usa o destino salvo, com `<front>` do host como alternativa.
 
-## Pendente (não resolvido)
+## Pendências do checkout (atualizado em 2026-10-12)
 
 - **Implementado em 0.3.0-dev.15:** pane `aculta_billing_address` (`BillingAddressPane`) no passo `order_information`, com o autocomplete por CEP `cep_autocomplete/viacep`. Substitui o `billing_information` removido pelo Commerce Payment. O gateway Mercado Pago voltou para `collect_billing_information: false`, porque o pane agora coleta o endereço. Verificado: campo de CEP renderizado no pedido 5. **Pendente:** teste de gravação pelo navegador e passagem ao Mercado Pago.
-- Título "Payment" e rótulo "Quantity" sem tradução no checkout e no carrinho.
-- Coluna "Item" do carrinho mostra só preço e tamanho, sem o nome do produto.
+- Título "Payment" e rótulo "Quantity": traduzidos em 0.3.0-dev.15 (`aculta_ui.pt-br.po`).
+- Coluna "Item" do carrinho: nome do produto incluído em 0.3.0-dev.15 (display `cart` de `camiseta_tamanho`).
 - Não houve reprodução, por HTTP, do aceite repetido no host da loja relatado pelo Felipe (com sessão logada, `/loja/produto/...` respondeu 200). A causa provável é o destino fixo do acordo, já corrigido.
 
 ## Onde está o código
@@ -80,7 +80,7 @@
 - **Como fica no código:** o pane `aculta_billing_address` (rótulo "Endereço") usa o perfil `customer` do cliente quando o pedido ainda não tem um. Assim o checkout e Meus dados > Endereço editam o mesmo registro. O Commerce exibe "Billing information" como "Endereço" (tradução em `aculta_ui.pt-br.po`).
 - **Dados existentes:** pedidos já criados (ex.: 5 e 6) mantêm o perfil que já tinham. Nenhuma migração foi feita.
 - **Mercado Pago:** o módulo contrib usa o perfil de cobrança do pedido para o payer (nome, e-mail, endereço). Como o pedido aponta para o endereço do cliente, esse dado continua chegando.
-- **Pendente:** o tipo de perfil `participante` tem um campo de endereço (`field_address`) que as telas atuais não usam. Antes de remover, conferir se há dados nele. Shipping não está instalado.
+- **Pendente:** o tipo de perfil `participante` tem um campo de endereço (`field_address`) que as telas atuais não usam. Antes de remover, conferir se há dados nele. O Commerce Shipping está instalado desde 2026-10-12 (ver a seção "Envio com o endereço único").
 
 ## Meios de pagamento e histórico de pagamentos (decisão do responsável, 2026-10-12)
 
@@ -139,3 +139,28 @@ revisão), no detalhe de /pedidos/{id} e nos e-mails/recibos; e que o endereço 
   Por isso a lista `fields` foi removida e tudo está em `field_overrides` (oculto ou obrigatório).
 - **Teste:** Bairro vazio em Meus dados > Endereço não salva; no checkout, Bairro vazio bloqueia e o asterisco aparece.
 
+
+## Envio com o endereço único (2026-10-12)
+
+**Decisão do responsável:** o envio usa o mesmo endereço único do cliente. Não existe endereço de envio separado nem a
+opção "cobrança igual ao envio": o formulário é um só (pane "Endereço") e o pane "Envio" o reaproveita.
+
+- **Pane "Envio"** (`aculta_shipping_information`, classe `AcultaShippingInformation`, subclasse do pane do Commerce
+  Shipping): mostra a escolha do método de envio. O formulário de endereço do Commerce não aparece. O perfil de envio é a
+  cópia do endereço de cobrança do pedido (`BillingAddressPane::billingCopy()`), que segue o perfil do cliente.
+- **Campos Número/S/N e Bairro**: só existem no pane "Endereço". Por isso valem também para o envio.
+- **Mercado Pago**: o payer continua vindo da mesma cópia de cobrança.
+- **Produtos físicos**: a variação de camiseta (`camiseta_tamanho`) tem o trait `purchasable_entity_shippable`. Apoio,
+  doação e cursos não têm o trait, então o pedido só pede envio quando há item físico.
+- **Método de envio:** taxa fixa "Envio", criada no runtime com valor **R$ 0,00 (a definir pelo responsável)**. Enquanto o
+  valor não for definido, o frete aparece como grátis.
+- **Loja:** países de envio = Brasil (`shipping_countries`).
+- **Dependências:** `aculta_portal` depende de `commerce_shipping` e `physical` (composer: `drupal/commerce_shipping` 3.0.5,
+  `drupal/physical` 1.5.0).
+
+**Configuração de loja e de método é conteúdo, não configuração exportável.** O `commerce_store` e o
+`commerce_shipping_method` são entidades de conteúdo: não entram em `config/sync`. Produção precisa criá-los no
+provisionamento (país de envio BR, método "Envio" com o valor definido).
+
+**Pendências:** valor real do frete; teste de navegador com pedido novo (aguardando o pagamento do responsável);
+configuração em produção.

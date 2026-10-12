@@ -215,7 +215,7 @@ final class FormHooks {
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
-    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_account_terms_accept'
+    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_account_terms_accept' || $formId === 'aculta_portal_account_password_create'
       || !isset($form['actions']['submit'])) {
       return;
     }

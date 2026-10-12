@@ -23,6 +23,7 @@ module:
   commerce_order: 0
   commerce_payment: 0
   commerce_price: 0
+  commerce_shipping: 0
   commerce_store: 0
   config: 0
   config_translation: 0
@@ -81,6 +82,7 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
+  physical: 0
   profile: 0
   redirect: 0
   rename_admin_paths: 0
