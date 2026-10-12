@@ -53,6 +53,7 @@ $allowed_variables = [
   'SMTP2GO_PASSWORD',
   'TURNSTILE_KEYS_JSON',
   'TURNSTILE_TEST_KEYS_JSON',
+  'ACULTA_DOCUMENT_ENCRYPTION_KEY',
 ];
 
 $values = parse_ini_file($secrets_path, FALSE, INI_SCANNER_RAW);

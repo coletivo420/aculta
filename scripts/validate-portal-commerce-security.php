@@ -166,6 +166,7 @@ $route_expectations = [
   'aculta_portal.support_my' => [FALSE, TRUE, TRUE],
   'aculta_portal.my_data' => [FALSE, TRUE, TRUE],
   'aculta_portal.my_data_address' => [FALSE, TRUE, TRUE],
+  'aculta_portal.my_data_other' => [FALSE, TRUE, TRUE],
   'aculta_portal.connections' => [FALSE, TRUE, TRUE],
   'aculta_portal.security' => [FALSE, TRUE, TRUE],
   'aculta_portal.support_settings' => [FALSE, FALSE, TRUE],

@@ -38,6 +38,15 @@ aculta_portal.my_data_address:
     _permission: access aculta portal
   options:
     no_cache: true
+aculta_portal.my_data_other:
+  path: /dados/outros-dados
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::otherData'
+    _title: Outros Dados
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
 aculta_portal.connections:
   path: /conexoes
   defaults:

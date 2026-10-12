@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Controller;
 
 use Drupal\Core\Template\Attribute;
+use Drupal\aculta_portal\Account\AccountDocumentInterface;
+use Drupal\aculta_portal\Form\AccountOtherDataForm;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
@@ -56,6 +58,7 @@ final class PortalController extends ControllerBase {
     private readonly DateFormatterInterface $dateFormatter,
     private readonly KeyRepositoryInterface $keys,
     private readonly CurrencyFormatterInterface $currencyFormatter,
+    private readonly ?AccountDocumentInterface $accountDocument,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -76,6 +79,8 @@ final class PortalController extends ControllerBase {
       $container->get('date.formatter'),
       $container->get('key.repository'),
       $container->get('commerce_price.currency_formatter'),
+      // Opcional: só existe quando o submódulo aculta_id_cpf está habilitado. Sem ele, a aba não aparece.
+      $container->has('aculta_id_cpf.account_document') ? $container->get('aculta_id_cpf.account_document') : NULL,
     );
   }
 
@@ -174,6 +179,14 @@ final class PortalController extends ControllerBase {
 
   public function address(): array {
     return $this->buildDataSection('address');
+  }
+
+  /** Outros Dados (CPF ou CNPJ). Sem o submódulo que implementa o documento, o caminho responde 404. */
+  public function otherData(): array {
+    if ($this->accountDocument === NULL) {
+      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+    }
+    return $this->buildDataSection('other');
   }
 
   /** Caminho aposentado (página do acordo substituída pelo popup de aceite): responde 404. */
@@ -426,16 +439,30 @@ final class PortalController extends ControllerBase {
 
   private function buildDataSection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
-    $profile = $section === 'address'
-      ? $this->loadCommerceAddressProfile($account)
-      : $this->loadParticipantProfile($account);
-    $route = $section === 'address' ? 'aculta_portal.my_data_address' : 'aculta_portal.my_data';
-    $title = $section === 'address' ? $this->t('Endereço') : $this->t('Informações básicas');
-    $links = [];
-    foreach ([
+    $profile = match ($section) {
+      'address' => $this->loadCommerceAddressProfile($account),
+      'other' => NULL,
+      default => $this->loadParticipantProfile($account),
+    };
+    $route = match ($section) {
+      'address' => 'aculta_portal.my_data_address',
+      'other' => 'aculta_portal.my_data_other',
+      default => 'aculta_portal.my_data',
+    };
+    $title = match ($section) {
+      'address' => $this->t('Endereço'),
+      'other' => $this->t('Outros Dados'),
+      default => $this->t('Informações básicas'),
+    };
+    $tabs = [
       'basics' => ['title' => $this->t('Informações básicas'), 'route' => 'aculta_portal.my_data'],
       'address' => ['title' => $this->t('Endereço'), 'route' => 'aculta_portal.my_data_address'],
-    ] as $key => $tab) {
+    ];
+    if ($this->accountDocument !== NULL) {
+      $tabs['other'] = ['title' => $this->t('Outros Dados'), 'route' => 'aculta_portal.my_data_other'];
+    }
+    $links = [];
+    foreach ($tabs as $key => $tab) {
       $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
       if ($section === $key) {
         // Estado da aba atual (aria-current; "is-active" é só o estado que o tema também reconhece).
@@ -455,7 +482,9 @@ final class PortalController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
         'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $title, '#element_attributes' => new Attribute(['tabindex' => '-1'])],
-        'form' => $this->profileForm($section, $profile),
+        'form' => $section === 'other'
+          ? $this->accountFormBuilder->getForm(AccountOtherDataForm::class)
+          : $this->profileForm($section, $profile),
       ],
       '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
     ];

@@ -19,6 +19,7 @@ final class AccountShellBuilder {
   /** Subrotas da conta e a seção do menu que as contém. */
   private const PARENT_SECTION = [
     'aculta_portal.my_data_address' => 'aculta_portal.my_data',
+    'aculta_portal.my_data_other' => 'aculta_portal.my_data',
     'commerce_order.address_book.overview' => 'aculta_portal.my_data',
     'entity.commerce_order.user_view' => 'view.commerce_user_orders.order_page',
     'aculta_portal.security_password' => 'aculta_portal.security',

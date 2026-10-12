@@ -9,6 +9,17 @@
   implementação anterior, retirada por decisão de escopo.
 - Próximo passo: campos PF/PJ manuais no Portal antes de persistir documentos.
 
+## 0.3.0-dev.21 — Outros Dados (CPF ou CNPJ) em Meus dados — 2026-10-12
+
+Classificação: MINOR, nova aba com gravação de dado pessoal sensível.
+
+- Nova aba “Outros Dados” ao lado de “Endereço” em Meus dados (`/dados/outros-dados`). Aparece somente quando o submódulo `aculta_id_cpf` está habilitado; sem ele, a rota responde 404.
+- Contrato neutro `AccountDocumentInterface`: o Portal não depende do submódulo; a implementação é injetada opcionalmente.
+- Campo único CPF ou CNPJ, com ou sem pontuação (`000.000.000-00`, `00.000.000/0000-00`); o tipo é detectado pelo formato e os dígitos verificadores são conferidos no servidor.
+- Gravação única: depois de salvo, o valor aparece em somente leitura e não pode ser alterado.
+- Cifra simétrica (libsodium) com chave do Drupal Key `aculta_document_encryption_key` (variável `ACULTA_DOCUMENT_ENCRYPTION_KEY`). Sem chave, nada é gravado em claro e a aba mostra “indisponível”.
+- Runtime: **RUNTIME STATUS: DEFERRED**. Testes de domínio do `aculta_id_cpf` passaram (248 verificações). Não houve teste de formulário nem de gravação no servidor de testes.
+- Pendências: gerar a chave no arquivo de segredos do Homelab (o agente não tem permissão de escrita nesse arquivo); provisionar em produção; `drush en aculta_id_cpf`; testar a aba no navegador.
 ## Em desenvolvimento — aculta_id_cpf 0.1.0-dev.1 — 2026-10-12
 
 Classificação: MINOR (nova capacidade opcional, primeira entrega priorizada pelo responsável).
