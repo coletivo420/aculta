@@ -91,6 +91,11 @@ final class FormHooks {
       $form['#validate'] = $validators;
     }
 
+    // Formulário da conta em Segurança: a senha atual fica nesta página, sem o link de recuperação do Core.
+    if ($formId === 'user_form' && $this->routeMatch->getRouteName() === 'aculta_portal.security' && isset($form['account']['current_pass'])) {
+      $form['account']['current_pass']['#description'] = $this->translation->translate('Obrigatório se você quiser alterar o e-mail ou a senha abaixo: informe sua senha atual.');
+    }
+
     if ($formId === 'change_mail_form'
       && $this->routeMatch->getRouteName() === 'aculta_portal.security') {
       $form['account']['mail']['#title'] = $this->translation->translate('Novo e-mail');

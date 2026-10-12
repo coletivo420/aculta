@@ -1,20 +1,91 @@
 (function (Drupal, once) {
   'use strict';
 
+  /**
+   * Navegação da Minha conta pelo framework AJAX do Drupal.
+   *
+   * O link é um Drupal.Ajax: a resposta (AjaxResponse do Core) traz o conteúdo da seção no #portal-account-body
+   * e as bibliotecas e drupalSettings da página, e o Drupal faz attachBehaviors. Por isso formulários com #ajax
+   * (CEP, Número) e os demais funcionam depois da navegação. Sem recarregar a página: URL (pushState), título,
+   * menu ativo e foco acompanham a troca. Voltar e avançar do navegador refazem a mesma requisição.
+   */
+  const BODY_ID = 'portal-account-body';
   const mobileQuery = window.matchMedia('(max-width: 767.98px)');
+  let sequence = 0;
 
-  // Sanfona do celular: abre a seção e carrega o conteúdo completo dela, pela mesma requisição AJAX.
-  const loadAccordionItem = async (details) => {
+  const withWrapperFormat = (url) => {
+    const target = new URL(url, window.location.href);
+    target.searchParams.set('_wrapper_format', 'drupal_ajax');
+    return target.pathname + target.search;
+  };
+
+  const updateMenu = (url) => {
+    const pathname = new URL(url, window.location.href).pathname;
+    document.querySelectorAll('.portal-account__menu a, .portal-account__accordion a').forEach((item) => {
+      const current = new URL(item.href, window.location.href).pathname === pathname;
+      if (current) item.setAttribute('aria-current', 'page');
+      else item.removeAttribute('aria-current');
+    });
+  };
+
+  const focusHeading = () => {
+    const body = document.getElementById(BODY_ID);
+    const heading = body?.querySelector('h1, h2, h3');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus();
+    }
+  };
+
+  // Faz a requisição AJAX do link e troca o conteúdo do destino (wrapper). onDone roda depois da troca.
+  const requestInto = (anchor, url, wrapperId, onDone) => {
+    if (!anchor.id) {
+      sequence += 1;
+      anchor.id = 'portal-account-link-' + sequence;
+    }
+    const ajax = new Drupal.Ajax(anchor.id, anchor, {
+      url: withWrapperFormat(url),
+      httpMethod: 'GET',
+      event: 'click',
+      wrapper: wrapperId,
+      method: 'html',
+      progress: { type: 'throbber' },
+    });
+    const success = ajax.success.bind(ajax);
+    ajax.success = (response, status) => {
+      const result = success(response, status);
+      if (onDone) onDone();
+      return result;
+    };
+    ajax.execute();
+  };
+
+  // Navegação de página (menu, abas, pedidos): URL nova no histórico e foco no título.
+  const navigate = (anchor, url, push) => {
+    const layout = document.querySelector('[data-portal-account-layout]');
+    layout?.setAttribute('aria-busy', 'true');
+    requestInto(anchor, url, BODY_ID, () => {
+      layout?.setAttribute('aria-busy', 'false');
+      if (push) window.history.pushState({ acultaAccount: true }, '', url);
+      updateMenu(url);
+      focusHeading();
+    });
+  };
+
+  // Sanfona do celular: o painel carrega a seção pelo mesmo framework AJAX.
+  const loadAccordionItem = (details) => {
     const panel = details.querySelector('[data-portal-account-accordion-panel]');
     if (!panel || panel.dataset.loaded === '1' || panel.dataset.loading === '1') return;
-    // Sem busca AJAX de conteúdo: o painel leva à página da seção (ver navegação acima).
-    const link = document.createElement('a');
-    link.href = panel.dataset.src;
-    link.textContent = Drupal.t('Abrir a página');
-    const paragraph = document.createElement('p');
-    paragraph.append(link);
-    panel.replaceChildren(paragraph);
-    panel.dataset.loaded = '1';
+    panel.dataset.loading = '1';
+    if (!panel.id) {
+      sequence += 1;
+      panel.id = 'portal-account-panel-' + sequence;
+    }
+    const trigger = details.querySelector('.portal-account__summary');
+    requestInto(trigger, panel.dataset.src, panel.id, () => {
+      panel.dataset.loaded = '1';
+      panel.dataset.loading = '0';
+    });
   };
 
   const setupAccordion = (layout) => {
@@ -26,7 +97,6 @@
       details.dataset.acultaAccordion = '1';
       details.addEventListener('toggle', () => {
         if (!details.open) return;
-        // Só uma sanfona expandida por vez: as outras da mesma conta recolhem.
         layout.querySelectorAll('.portal-account__item[open]').forEach((other) => {
           if (other !== details) other.open = false;
         });
@@ -36,12 +106,42 @@
     });
   };
 
+  // Links internos da conta (menu, abas, pedidos, detalhes): mesma origem e caminho, sem alvo novo.
+  const isInternalLink = (anchor) => {
+    if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return false;
+    const target = new URL(anchor.href, window.location.href);
+    return target.origin === window.location.origin && !target.pathname.startsWith('/sair');
+  };
+
   Drupal.behaviors.acultaPortalNavigation = {
     attach(context) {
       once('aculta-portal-navigation', '[data-portal-account-layout]', context).forEach((layout) => {
         setupAccordion(layout);
-        // Navegação entre seções: página completa. A troca parcial de conteúdo não carrega as bibliotecas nem as
-        // configurações da página destino (formulários com AJAX deixavam de funcionar). Ver docs/portal/REDIRECTS.md.
+        layout.addEventListener('click', (event) => {
+          if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          const anchor = event.target.closest('a[href]');
+          if (!isInternalLink(anchor) || anchor.closest('.portal-account__summary')) return;
+          // Só a navegação de seções e abas usa AJAX; ações dentro de formulários seguem o fluxo normal.
+          const inMenu = anchor.closest('.portal-account__menu, .portal-account__accordion, [data-portal-account-data-nav]');
+          const inBody = anchor.closest('#' + BODY_ID);
+          if (!inMenu && !inBody) return;
+          const target = new URL(anchor.href, window.location.href);
+          if (target.pathname === window.location.pathname && target.search === window.location.search) {
+            event.preventDefault();
+            return;
+          }
+          event.preventDefault();
+          navigate(anchor, anchor.href, true);
+        });
+        window.addEventListener('popstate', () => {
+          const body = document.getElementById(BODY_ID);
+          if (!body) return;
+          const anchor = document.createElement('a');
+          anchor.href = window.location.href;
+          document.body.append(anchor);
+          navigate(anchor, window.location.href, false);
+          anchor.remove();
+        });
       });
     },
   };

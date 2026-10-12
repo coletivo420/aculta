@@ -208,7 +208,7 @@ final class PortalController extends ControllerBase {
     foreach ($storage->loadMultiple($ids) as $order) {
       $total = $order->getTotalPrice();
       $rows[] = [
-        '#' . $order->getOrderNumber(),
+        ['data' => ['#type' => 'link', '#title' => '#' . $order->getOrderNumber(), '#url' => Url::fromRoute('entity.commerce_order.user_view', ['commerce_order' => $order->id()])]],
         $order->getPlacedTime() ? $this->dateFormatter->format($order->getPlacedTime(), 'short') : '',
         $total ? $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode()) : '',
         $this->orderStateLabel($order),

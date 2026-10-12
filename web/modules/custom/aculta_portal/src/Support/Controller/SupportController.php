@@ -16,12 +16,14 @@ final class SupportController extends ControllerBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly AccountInterface $account,
+    private readonly \Drupal\aculta_portal\Domain\DomainPurposeManager $domainPurposeManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
+      $container->get('aculta_portal.domain_purpose'),
     );
   }
 
@@ -77,7 +79,8 @@ final class SupportController extends ControllerBase {
       'support_link' => [
         '#type' => 'link',
         '#title' => $this->t('Conheça as formas de apoio'),
-        '#url' => Url::fromRoute('aculta_portal.support_form'),
+        // A página de apoio fica no host de apoio (SUPPORT), não no host da conta nem no principal.
+        '#url' => $this->domainPurposeManager->pathUrl('support', '/') ?? Url::fromRoute('aculta_portal.support_form'),
       ],
       '#cache' => ['contexts' => ['user', 'user.permissions'], 'max-age' => 0],
     ];

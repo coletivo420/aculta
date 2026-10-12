@@ -17,6 +17,17 @@ use Drupal\Core\Url;
  */
 final class AccountShellBuilder {
 
+  /** Subrotas da conta e a seção do menu que as contém. */
+  private const PARENT_SECTION = [
+    'aculta_portal.my_data_address' => 'aculta_portal.my_data',
+    'commerce_order.address_book.overview' => 'aculta_portal.my_data',
+    'entity.commerce_order.user_view' => 'view.commerce_user_orders.order_page',
+    'entity.commerce_payment_method.add_form' => 'entity.commerce_payment_method.collection',
+    'entity.commerce_payment_method.edit_form' => 'entity.commerce_payment_method.collection',
+    'entity.commerce_payment_method.delete_form' => 'entity.commerce_payment_method.collection',
+    'entity.commerce_payment_method.set_default' => 'entity.commerce_payment_method.collection',
+  ];
+
   public function __construct(
     private readonly CurrentRouteMatch $routeMatch,
     private readonly MenuLinkManagerInterface $menuLinkManager,
@@ -50,9 +61,13 @@ final class AccountShellBuilder {
       'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security', 'icon' => 'bi-shield-lock'],
       'aculta_portal.account_settings' => ['title' => $this->translation->translate('Configurações'), 'route' => 'aculta_portal.account_settings', 'icon' => 'bi-sliders'],
     ];
-    if (!isset($sections[$route])) {
+    // Subpáginas herdam a seção do menu (ex.: endereço -> Meus Dados, detalhe do pedido -> Meus pedidos), para que
+    // toda página da conta, acessada direto ou pela navegação, renderize dentro do shell com a seção certa ativa.
+    $sectionRoute = self::PARENT_SECTION[$route] ?? $route;
+    if (!isset($sections[$sectionRoute])) {
       return;
     }
+    $route = $sectionRoute;
 
     $items = [];
     foreach ($sections as $section_route => $section) {
