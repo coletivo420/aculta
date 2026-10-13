@@ -151,10 +151,11 @@ Serviços previstos (nomes provisórios):
 
 **Pedido do responsável (2026-10-13):** a pessoa pode tornar o perfil privado em Minha conta > Configurações.
 
-- **Padrão (decisão 2, respondida nesta sessão): o apelido é público por padrão.** O perfil inteiro pode ser tornado privado. Foto, bio, e-mail e redes sociais são privados por padrão e só aparecem se a pessoa escolher exibi-los. Esta regra substitui o padrão privado anterior.
+- **Padrão (decisão 2, respondida nesta sessão): todos os perfis são públicos por padrão** (campo `field_perfil_publico` com valor padrão 1, em `config/sync/field.field.profile.participante.field_perfil_publico.yml`). A pessoa pode tornar o perfil privado. Foto, bio, e-mail e redes sociais são privados por padrão e só aparecem se a pessoa escolher exibi-los. Esta regra substitui o padrão privado anterior.
+- **Autores e editores são obrigatoriamente públicos** (regra do responsável, 2026-10-13): perfis com o papel `content_editor` (Editor de conteúdo) ou `wiki_editor` (Editor da Wiki420) não podem ser privados. O controle fica bloqueado, com o motivo exibido. Implementação: `PublicProfilePolicy::PAPEIS_PUBLICO_OBRIGATORIO` e `isObrigatorioPublico()`, usados pelo formulário de privacidade, pela página pública e pela caixa de autores da Revista.
 - **Lugar:** o formulário fica em `/configuracoes/perfil` (submódulo `aculta_user`, `ProfileVisibilityForm`). Campo `field_perfil_publico` no perfil `participante`, booleano, padrão verdadeiro. Ligar ou desligar tem efeito imediato. Vínculo a partir de `/configuracoes` pendente.
 - **Com perfil privado:**
-  - `/u/<apelido>` não mostra o perfil. Resposta: 404, para não revelar que o perfil existe (a confirmar, decisão 40).
+  - `/u/<apelido>` mostra somente foto e apelido (decisão 40 substituída em 2026-10-13: o perfil privado não responde 404).
   - Cartão de autor da revista mostra o nome de exibição sem link.
   - Badges (seção G) não aparecem em lugar público.
   - Conteúdos da pessoa (artigos, verbetes, tópicos) continuam públicos, porque são contribuições editoriais, não o perfil. O que muda é a página de perfil e os dados pessoais expostos.

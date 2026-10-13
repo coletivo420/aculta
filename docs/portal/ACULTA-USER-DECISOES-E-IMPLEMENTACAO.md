@@ -16,7 +16,9 @@ commitado ou não ligado), **Pendente** (decidido ou perguntado, sem código).
 | Apelido é público por padrão; o perfil inteiro pode ser tornado privado | Implementado | `PublicProfilePolicy`, `ProfileVisibilityForm`, `field_perfil_publico` |
 | Foto, bio, e-mail, redes sociais e badges só aparecem se a pessoa escolher exibir (privados por padrão) | Implementado (foto, bio, e-mail, redes); badges pendente (U4) | `field_exibir_*` |
 | Cidade e UF nunca são públicas | Implementado | `PublicProfilePolicy` (lista fechada de itens) |
-| Perfil privado responde 404 (não revela que existe) | Implementado | `PublicProfileController` |
+| Todos os perfis são públicos por padrão (campo `field_perfil_publico` com valor padrão 1, exportado em `config/sync`) | Implementado; verificado (perfis novos nascem públicos) | `field.field.profile.participante.field_perfil_publico.yml` |
+| Autores e editores (`content_editor`, `wiki_editor`) são obrigatoriamente públicos: controle bloqueado com o motivo | Implementado; verificado (único editor com flag público) | `PublicProfilePolicy::isObrigatorioPublico`, `ProfileVisibilityForm` |
+| Perfil privado mostra somente foto e apelido (substitui o 404 da decisão 40) | Implementado; verificado por HTTP | `PublicProfilePolicy::publicItems`, `PublicProfileController` |
 | Rota pública `/u/<apelido>` só no propósito `main` | Implementado | `PublicProfileController` |
 | Caminho `/u/<apelido>` é exceção de slug registrada | Implementado | `FRIENDLY-PORTUGUESE-SLUGS.md` |
 
