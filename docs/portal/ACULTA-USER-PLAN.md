@@ -135,15 +135,38 @@ Serviços previstos (nomes provisórios):
 - Listagem por autor: View com filtro de `uid` e status publicado, no purpose MAGAZINE.
 - Autor convidado sem conta: **não** criar entidade própria. Opção mínima: campo de texto de assinatura no nó (decisão 4).
 
-### D. Wiki (`wiki_entry`)
-- "Minhas contribuições": View sobre `node_field_revision` com `revision_uid` = usuário e tipo `wiki_entry`. Mostra data, verbete e link para `diff`.
-- Verbete não publicado não aparece na listagem pública do autor (regra da Wiki em `GUARDRAILS.md`).
-- Contagens são derivadas. Nenhum contador persistido no Portal.
+### D. Wiki (`wiki_entry`): como a Wikipedia
 
-### E. Fórum e "Minha participação" (`/minha-participacao`)
+**Decisão do responsável (2026-10-13):** o verbete não mostra autoria no corpo. A Wiki segue o modelo da Wikipedia.
+
+- **Corpo do verbete:** sem autor, sem "escrito por", sem cartão de autor e sem data de criação. Só conteúdo, categorias e, se houver, data da última revisão.
+- **Histórico do verbete:** aba "Histórico" no verbete, com as revisões (data, quem revisou, resumo da alteração), comparação entre revisões (módulo `diff`) e reversão somente para quem tem permissão de editor. Rotas com slug em português (`/verbete/<titulo>/historico`), sem rota técnica pública de revisão. A rota interna de revisão do Core fica sem link público (`FRIENDLY-PORTUGUESE-SLUGS.md`).
+- **Contribuições da pessoa:** aba "Wiki" em "Minha participação" (seção H). Lista as revisões feitas por ela, com verbete, data e link para o histórico. Só revisões de verbetes publicados aparecem na visão pública do autor, se houver.
+- **Privacidade:** o histórico mostra o nome de exibição de quem revisou. Quem não tem perfil público aparece como nome de exibição, sem link para perfil.
+- **Verbete não publicado** não aparece em listagem, contagem ou histórico público (`GUARDRAILS.md`, seção Wiki).
+- Contagens são derivadas (sobre `node_field_revision` com `revision_uid`). Nenhum contador persistido no Portal.
+
+### E. Fórum (aba "Fórum" em "Minha participação")
 - Tópicos: nós `forum` com `uid` do usuário. Respostas: `comment_forum` com `uid`.
-- Seguir e salvar tópico: flags `seguir_topico` e `salvar_topico` já existentes.
+- Seguir e salvar tópico: flags `seguir_topico` e `salvar_topico` já existentes; a aba lista os tópicos seguidos e salvos.
 - Denúncia de comentário (`DT-P13`): Flag do tipo `entity:comment` com fila de moderação via Views. A moderação reusa permissões e o Comment do Core (`GUARDRAILS.md`, seção Fórum). Entra na fase U4.
+
+### E2. Participação centralizada em "Minha participação"
+
+**Decisão do responsável (2026-10-13):** Wiki, Fórum, Revista, comentários e outras formas de participação ficam em **uma seção** da Minha conta, dividida em abas.
+
+- **Seção:** `/minha-participacao` com abas em URL própria, no mesmo padrão de "Segurança" (`/seguranca` e `/seguranca/senha`). Sem JavaScript para trocar de aba: cada aba é um link, com o item atual marcado.
+- **Abas propostas** (slugs a confirmar, seção 7):
+  - `/minha-participacao/wiki`: revisões feitas por ela (seção D);
+  - `/minha-participacao/forum`: tópicos, respostas, seguidos e salvos (seção E);
+  - `/minha-participacao/revista`: artigos da revista em que ela é autora (seção C);
+  - `/minha-participacao/comentarios`: comentários em todos os tipos de conteúdo com comentário ativo, com link para o conteúdo;
+  - `/minha-participacao/conquistas`: badges (seção G).
+- **Menu lateral:** um único item "Participação" (ícone Bootstrap Icons, a escolher), depois de "Cursos". Substitui os itens separados previstos para Wiki e Fórum.
+- **Mobile:** o conteúdo da seção entra na sanfona já existente. As abas aparecem como barra horizontal rolável, sem JavaScript.
+- **Vazio:** cada aba sem conteúdo mostra mensagem curta e link para a área correspondente (verbetes, Fórum, revista).
+- **Controle de acesso:** cada aba só lista o que a própria pessoa fez e o que ainda está publicado. Ninguém vê participação de outra pessoa por esta seção; a visão pública fica no perfil (seção B), e só com perfil público.
+- **Organização no código:** rotas e controller dentro do `aculta_user` (Views de aba, sem entidade nova); o `AccountShellBuilder` do Portal só ganha o item de menu.
 
 ### F. Funções sociais
 - **Seguir pessoa:** Flag sobre entidade `user`, nome `seguir_pessoa`. A confirmar que Flag 5.1.1 aceita `entity:user` (verificação no Homelab). Se não aceitar, a alternativa é um campo de referência em uma entidade de vínculo, o que cria storage e exige decisão.
@@ -211,7 +234,7 @@ Cada fase tem PR próprio (`AGENTS.md`, regra de encerramento). Código sem Runt
 | --- | --- | --- |
 | **U0** | Decisões da seção 7 e verificação no Homelab: `composer show` e `dry-run` dos candidatos; checagem de `flag` com `entity:user`; checagem de `pathauto` com perfil. | Respostas registradas no `DEBT-REGISTER` ou neste documento. Nenhum código. |
 | **U1** | Submódulo `aculta_user` (versão `0.1.0-dev.1`). Campos `field_bio`, `field_visibilidade_publica`, `field_slug`. `PublicProfilePolicy` e `PublicProfilePresenter`. `/autores/<slug>` (fallback sem perfil público). Avatar com fallback. | Testes de Kernel para privacidade e acesso; Unit dos presenters; gates do Portal, fronteira, slugs e endereços passam. |
-| **U2** | Autoria da revista (cartão e listagem por autor), "Minhas contribuições" da Wiki, "Minha participação" do Fórum. Só Views e leitura. | Views com cache correto; conteúdo não publicado não aparece; teste de navegador em `TESTES-NAVEGADOR.md`. |
+| **U2** | Seção "Minha participação" com abas Wiki, Fórum, Revista e Comentários (seção E2); histórico do verbete como na Wikipedia (seção D); cartão de autor e listagem na revista (seção C). Só Views e leitura. | Verbete sem autoria no corpo (teste de conteúdo); histórico com permissão de reversão; aba sem dados de outra pessoa; conteúdo não publicado não aparece; teste de navegador em `TESTES-NAVEGADOR.md`. |
 | **U3** | Seguir pessoas (Flag), seguidores e feed (Views), notificações opt-in por fila. | Consentimento validado; envio de e-mail só com opt-in; sem listas de seguidores públicas. |
 | **A1** | Papel `associado` (sem permissão administrativa), campos de adesão, RG cifrado (padrão `aculta_id_cpf`), profissão e data de nascimento em "Outros Dados", relatório administrativo de associados. | RG nunca em claro (teste de gravação e de leitura); relatório restrito por permissão; teste de acesso negado para comum e para `wiki_editor`. |
 | **U4** | Badges (automáticas e manuais, entidade `aculta_badge_award`), denúncia de comentário (DT-P13) com fila de moderação. | Sem ranking; concessão manual com autor e motivo; revogação registrada; badges sem PII. |
@@ -242,6 +265,9 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 17. **Relatório:** quais colunas o administrador vê? Pode exportar CSV? Quem além do administrador tem acesso?
 18. **Badges manuais:** quem pode conceder (só o administrador, ou também editores de Wiki e de Fórum)? Badge pode ser revogada?
 19. **Badges automáticas:** quais regras entram na primeira versão? (Sugestão: verbetes publicados, respostas no Fórum, tempo de participação.)
+20. **Slugs das abas:** confirma `/minha-participacao/{wiki,forum,revista,comentarios,conquistas}` e o nome do item de menu "Participação"?
+21. **Histórico da Wiki:** quem pode ver o histórico completo (público, ou só usuários logados)? Quem pode reverter revisão (só `wiki_editor`)?
+22. **Comentários:** a aba inclui comentários de artigos da revista, se os tipos de conteúdo tiverem comentário ativo? Hoje só o tipo de fórum tem comentário configurado.
 
 ## 8. Riscos e limites
 
