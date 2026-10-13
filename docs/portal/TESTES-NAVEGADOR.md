@@ -184,5 +184,13 @@ funcionando sem o tema (fallback).
   3. Senha errada: esperado permanecer em `/entrar` com a mensagem "Nome de usuário ou senha não reconhecidos.".
   4. HTTP de referência: POST com senha correta → `303 See Other`, `Location` para `/?check_logged_in=1`; POST com
      senha errada → `200` com a mensagem.
+- **Política de redirecionamento pós-login** (`DomainPurposeRequestSubscriber::onResponse`, respostas de `user.login`):
+  5. Entrada direta em `https://conta.aculta.toca.net.br/entrar` → `303` para `https://conta.aculta.toca.net.br/`.
+  6. Vindo do link "Entrar" da página principal (`?destination=/&aculta_destination_purpose=main`) → `303` para
+     `https://aculta.toca.net.br/`.
+  7. Destino da conta (`?destination=/configuracoes/perfil&aculta_destination_purpose=account`) → `303` para
+     `https://conta.aculta.toca.net.br/configuracoes/perfil`.
+  8. Em cada caso, o `Location` recebe `?check_logged_in=1` (Core, `Authentication/Provider/Cookie.php`) e o destino
+     responde `200` com sessão. Verificado por HTTP em 2026-10-13.
 - **Não repetir:** qualquer formulário de autenticação ou de sessão (login, cadastro com confirmação, senha) não deve
   entrar em `accountAjaxSubmit`; a regra existe só para salvar dados da Minha conta sem recarregar a página.
