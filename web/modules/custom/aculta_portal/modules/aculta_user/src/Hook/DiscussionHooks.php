@@ -74,13 +74,21 @@ final class DiscussionHooks {
 
     $build['discussao'] = [
       '#type' => 'container',
-      '#attributes' => ['data-aculta-user' => 'discussao'],
-      'titulo' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => (string) t('Discussão')],
-      'comentarios' => $items ?: ['#markup' => (string) t('Ainda não há comentários publicados.')],
+      // Depois da caixa de autoria (peso 100 em ArticleAuthorsHooks).
+      '#weight' => 110,
+      '#attributes' => ['data-aculta-user' => 'discussao', 'data-portal-ui' => 'discussion'],
+      'titulo' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => (string) t('Discussão'), '#attributes' => ['data-portal-ui' => 'discussion-title']],
+      'comentarios' => $items
+        ? ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'discussion-list'], 'itens' => array_map(
+          static fn(array $item): array => $item + ['#attributes' => ['data-portal-ui' => 'discussion-item']],
+          $items,
+        )]
+        : ['#markup' => (string) t('Ainda não há comentários publicados.')],
       'link' => [
         '#type' => 'link',
         '#title' => $this->formatPlural($total, 'Ver discussão completa (1 comentário)', 'Ver discussão completa (@count comentários)'),
         '#url' => $url,
+        '#attributes' => ['data-portal-ui' => 'discussion-link'],
       ],
       '#cache' => ['tags' => $cache->getCacheTags(), 'contexts' => $cache->getCacheContexts()],
     ];
