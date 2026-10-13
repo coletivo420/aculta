@@ -3,6 +3,7 @@
 - `AccountDocumentStore` lê as definições de campo do perfil uma vez por instância; `save()` deixa de criar o perfil antes de verificar os campos: a checagem fica só em `canSave()`, que já valida `field_documento` e `field_documento_indice` para o bundle `participante`.
 - `AccountOtherDataForm` centraliza a mensagem de indisponibilidade em um único ponto (`unavailableForm()` e `unavailableMessage()`), com o mesmo texto e os mesmos caminhos de decisão.
 - O teste de disponibilidade deixa de fixar o número de consultas internas ao gerenciador de campos; cobre o contrato de leitura e gravação, não a implementação.
+- `LoginValidatorSwapTest` estava desatualizado desde a inclusão de `AddToCartAjax` em `FormHooks`: o teste agora constrói os serviços finais reais (`DomainPurposeManager`, `CartUtility`, `AddToCartAjax`), em vez de duplicá-los. A suíte `aculta_portal` passa com 63 testes.
 - Sem mudança de comportamento para o usuário. Runtime: não testado (apenas código e testes unitários). **RUNTIME STATUS: DEFERRED**.
 
 ## 0.3.0-dev.27 — Preserva leitura de documento salvo — 2026-10-12
