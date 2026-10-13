@@ -80,6 +80,16 @@ final class PortalUiHooks {
     // Visão geral da Minha conta: ação "Ver Perfil" no topo (botão secundário, borda visível, foco por teclado).
     'account-overview-actions' => ['portal-account-overview__actions'],
     'account-view-profile' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
+    // Caixa de autores da publicação da Revista.
+    'article-authors' => ['portal-article-authors'],
+    'article-authors-title' => ['portal-article-authors__title'],
+    'article-authors-list' => ['portal-article-authors__list'],
+    'article-author' => ['portal-article-author'],
+    'article-author-photo' => ['portal-article-author__photo'],
+    'article-author-initial' => ['portal-article-author__initial'],
+    'article-author-text' => ['portal-article-author__text'],
+    'article-author-name' => ['portal-article-author__name'],
+    'article-author-role' => ['portal-article-author__role'],
     // Perfil público (/u/<apelido>).
     'public-profile' => ['portal-profile'],
     'public-profile-header' => ['portal-profile__header'],

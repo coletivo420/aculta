@@ -60,3 +60,15 @@
   .portal-profile__bio, .portal-profile__links { margin-inline: 1.5rem; padding-inline: 0; }
   .portal-profile__links { padding: 1rem 1.5rem 1.5rem; }
 }
+
+/* Caixa de autores da publicação (Revista): bordas neutras, sem cores de destaque. */
+.portal-article-authors { margin-block: 2rem 0; padding: 1.25rem; border: 1px solid var(--aculta-border-default); border-radius: 0.75rem; }
+.portal-article-authors__title { margin: 0 0 0.75rem; font-size: 1.125rem; }
+.portal-article-authors__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 0.75rem; }
+.portal-article-author { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border: 1px solid var(--aculta-border-subtle); border-radius: 0.5rem; }
+.portal-article-author__photo img,
+.portal-article-author__initial { display: grid; inline-size: 3rem; block-size: 3rem; border-radius: 50%; object-fit: cover; place-items: center; border: 1px solid var(--aculta-border-strong); }
+.portal-article-author__initial { font-weight: 600; }
+.portal-article-author__text { display: flex; flex-direction: column; min-inline-size: 0; }
+.portal-article-author__name { font-weight: 600; overflow-wrap: anywhere; }
+.portal-article-author__role { font-size: 0.8125rem; }
