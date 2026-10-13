@@ -497,4 +497,4 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 43. **Contas existentes:** respondida nesta sessão de forma parcial: apelidos provisórios `pessoa-1` e `pessoa-5` foram criados no Runtime para as duas contas sem apelido (backup prévio em `scratchpad`). Não há update hook versionado para contas futuras.
 44. **Palavras reservadas:** a lista proposta basta, ou há outras rotas a reservar?
 
-45. **Skip CAPTCHA:** o responsável informou que todos os usuários logados têm `skip CAPTCHA`. Na configuração e no Runtime, só o papel `email_confirmed` tem essa permissão (`authenticated` não tem). Confirmar se a permissão deve ir para `authenticated`; se sim, é mudança de segurança a ser registrada.
+45. **Skip CAPTCHA:** respondida nesta sessão: manter `skip CAPTCHA` só em `email_confirmed`; `authenticated` não muda. Wiki: `wiki_contributor` segue `email_confirmed` em todos os casos (decisão 28).
