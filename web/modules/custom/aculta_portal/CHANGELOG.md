@@ -1,3 +1,9 @@
+## 0.4.0-dev.6 — correção do redirecionamento após o login — 2026-10-13
+
+- Login (`user_login_form`) sai da regra AJAX de salvamento da Minha conta: a sessão era criada, mas a página não
+  saía de `/entrar`. Roteiro de regressão em `docs/portal/TESTES-NAVEGADOR.md`, seção O.
+- `aculta_portal.info.yml` 0.4.0-dev.6. RUNTIME STATUS: DEFERRED (validado no servidor de testes por HTTP; teste de navegador pendente).
+
 ## 0.4.0-dev.5 — botão de sortear avatar no popup de foto (aculta_user 0.3.0-dev.2) — 2026-10-12
 
 - Painel da conta envolve a foto em um contêiner com id `aculta-user-avatar`, alvo do AJAX do sorteio.
