@@ -79,6 +79,8 @@ final class AccountBioForm extends FormBase {
       '#type' => 'button',
       '#value' => $this->t('Limpar'),
       '#attributes' => ['data-aculta-bio-clear' => '', 'class' => ['btn', 'btn-secondary']],
+      // Antes de Salvar bio.
+      '#weight' => -1,
     ];
     return $form;
   }
