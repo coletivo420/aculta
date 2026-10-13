@@ -20,6 +20,21 @@ preservando a identidade ACULTA420:
 - listagem da Wiki continua usando a View/VVJB existente; nenhum carrossel ou
   mecanismo paralelo foi criado.
 
+## Cabeçalho e busca
+
+A busca fica ao lado da marca Wiki420 no Domain Header, seguindo a hierarquia de
+interface da Wikipédia: marca e busca na faixa superior, conteúdo logo abaixo.
+O cabeçalho Wiki é compacto e não repete o menu institucional das outras páginas.
+O ACULTA420 escolhe esse layout pela presença da região neutra `wiki_search`,
+montada pelo Portal com o endpoint existente. A busca é a mesma na home, nos
+verbetes e nos resultados; a consulta `q` permanece preenchida ao abrir os
+resultados.
+
+A Institution Bar multidomínio fica intacta e continua sendo global. A
+`wiki_search` é um render array no contrato `domain_presentation`, com cache
+context `url.query_args:q`; o Portal não envia classes, markup final ou tokens
+do tema.
+
 CSS do pattern e da página usa tokens semânticos Light/Dark; a folha da página
 Wiki é separada por responsabilidade e integrada ao library global, enquanto o
 CSS do pattern é anexado pelo SDC. Os templates recebem apenas render arrays
@@ -52,12 +67,21 @@ remover autor da entidade nem alterar o fluxo de revisão/moderação.
 ## Verificação
 
 Em checkout local com host da Wiki mapeado para 127.0.0.1 (simulação local, não
-o servidor de testes), home, lista, busca e verbete responderam HTTP 200; o
-verbete apresentou um H1 e nenhum metadado de autoria no HTML. CSS foi
-confirmado na agregação local. O gate Drupal 11+ (659), design foundations
-(1683), SDC (231), shell (11) e fronteira módulo/tema (714) passaram. O gate
-Foundation continua bloqueado por DT-T19 preexistente em portal-account.css.
+o servidor de testes), a home e o verbete responderam HTTP 200; a busca GET foi
+renderizada no Domain Header junto à marca, e o menu primário não apareceu
+nesse shell. A Institution Bar permaneceu no markup global. O verbete exibiu um
+H1, seções, referências e nenhum metadado de autoria. O cache foi reconstruído.
+Os gates Drupal 11+ (680), apresentação de domínio (127), design foundations
+(1683), SDC (231), shell (11) e fronteira módulo/tema (789) passaram. O gate
+Foundation segue bloqueado por DT-T19 preexistente: durações literais em
+`css/components/portal-account.css`.
 
-A captura headless do Chromium expirou; a revisão visual em desktop/mobile,
-modo escuro e Runtime remoto continuam pendentes. **RUNTIME STATUS: DEFERRED**
-até essa inspeção.
+Foram criados no banco local `aculta_runtime` dois verbetes publicados apenas
+para validar a experiência: “Maconha (cannabis): planta, usos e debate público”
+(nid 72) e “Antiproibicionismo: conceitos, história e políticas de drogas”
+(nid 73). Ambos têm síntese, seções, links internos e referências institucionais.
+Não foram escritos no Runtime remoto nem em produção. A captura Chromium da
+versão local excedeu o limite do navegador disponível; portanto a revisão
+visual por screenshot em desktop/mobile e nos modos claro/escuro continua
+pendente. **RUNTIME STATUS: DEFERRED** para validação visual no servidor de
+testes; a validação HTTP e de render arrays no Runtime local passou.

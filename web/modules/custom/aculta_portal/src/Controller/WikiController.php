@@ -50,22 +50,6 @@ final class WikiController extends ControllerBase {
         'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h1', '#value' => $this->t('Wiki420')],
         'text' => ['#plain_text' => $this->t('Wiki420 é uma wiki antiproibicionista, participativa e baseada em fontes. Aqui reunimos conhecimento sobre maconha, direitos, cultura, ciência, saúde, história, redução de danos e luta pela legalização.')],
       ],
-      'search' => [
-        '#type' => 'form',
-        '#method' => 'get',
-        '#action' => Url::fromRoute('aculta_portal.wiki_search')->toString(),
-        '#attributes' => ['role' => 'search', 'data-portal-ui' => 'wiki-search'],
-        'q' => [
-          '#type' => 'textfield',
-          '#name' => 'q',
-          '#title' => $this->t('Buscar verbetes'),
-          '#size' => 40,
-          '#maxlength' => 100,
-          '#required' => TRUE,
-          '#attributes' => ['autocomplete' => 'off'],
-        ],
-        'submit' => ['#type' => 'submit', '#value' => $this->t('Buscar')],
-      ],
       'browse' => [
         '#type' => 'link',
         '#title' => $this->t('Ver todos os verbetes'),
@@ -95,14 +79,6 @@ final class WikiController extends ControllerBase {
       '#attributes' => ['data-portal-ui' => 'wiki-search-results'],
       '#cache' => ['contexts' => ['url.query_args:q', 'domain', 'user.permissions'], 'tags' => ['node_list:wiki_entry']],
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h1', '#value' => $this->t('Buscar na Wiki420')],
-      'form' => [
-        '#type' => 'form',
-        '#method' => 'get',
-        '#action' => Url::fromRoute('aculta_portal.wiki_search')->toString(),
-        '#attributes' => ['role' => 'search'],
-        'q' => ['#type' => 'textfield', '#name' => 'q', '#title' => $this->t('Termo de busca'), '#default_value' => $term, '#maxlength' => 100, '#required' => TRUE],
-        'submit' => ['#type' => 'submit', '#value' => $this->t('Buscar')],
-      ],
     ];
     if ($term === '') {
       return $build;

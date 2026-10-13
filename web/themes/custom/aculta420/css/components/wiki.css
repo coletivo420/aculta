@@ -5,6 +5,77 @@
   color: var(--aculta-text-primary);
 }
 
+/* Wikipedia-inspired shell: keep the global Institution Bar untouched. */
+.aculta-header--wiki .aculta-navbar {
+  --bs-navbar-padding-y: 0.75rem;
+  font-size: 1rem;
+}
+
+.aculta-header--wiki .aculta-navbar > .container {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+.aculta-header--wiki .aculta-branding {
+  flex: 0 0 12rem;
+}
+
+.aculta-header--wiki .aculta-domain-brand-media a {
+  width: min(100%, 12rem);
+}
+
+.aculta-header--wiki .aculta-domain-brand-media img {
+  max-height: 3.85rem;
+}
+
+.aculta-wiki-header-search {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 44rem;
+  margin-inline-start: clamp(0.5rem, 3vw, 2rem);
+}
+
+.aculta-wiki-header-search form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+}
+
+.aculta-wiki-header-search .form-item {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+.aculta-wiki-header-search input[type="text"] {
+  width: 100%;
+  min-height: 2.75rem;
+  border-color: var(--aculta-border-default);
+  background: var(--aculta-surface-raised);
+}
+
+.aculta-wiki-header-search .form-submit {
+  flex: 0 0 auto;
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  .aculta-header--wiki .aculta-navbar > .container { gap: 0.75rem; }
+  .aculta-header--wiki .aculta-branding { flex-basis: 8.5rem; }
+  .aculta-wiki-header-search { margin-inline-start: 0; }
+}
+
+@media (max-width: 575.98px) {
+  .aculta-header--wiki .aculta-navbar > .container { column-gap: 0.5rem; }
+  .aculta-header--wiki .aculta-branding { flex-basis: 7rem; }
+  .aculta-wiki-header-search form { gap: 0.375rem; }
+  .aculta-wiki-header-search .form-submit { padding-inline: 0.625rem; }
+}
+
 .aculta-wiki-home > h2,
 .aculta-wiki-search-results > h2 {
   margin: 2rem 0 1rem;
@@ -63,6 +134,40 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+}
+
+.aculta-wiki-home .view-wiki-categories .views-row,
+.aculta-wiki-home .view-wiki-categories .taxonomy-term {
+  height: 100%;
+}
+
+.aculta-wiki-home .view-wiki-categories .taxonomy-term h2 {
+  height: 100%;
+  margin: 0;
+  font: 600 1rem/1.35 var(--aculta-font-body);
+}
+
+.aculta-wiki-home .view-wiki-categories .taxonomy-term h2 a {
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--aculta-border-default);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-link);
+  text-decoration: none;
+}
+
+.aculta-wiki-home .view-wiki-categories .taxonomy-term h2 a:is(:hover, :focus-visible) {
+  border-color: var(--aculta-border-accent);
+  color: var(--aculta-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.aculta-wiki-home .view-wiki-categories .taxonomy-term h2 a:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
 }
 
 .aculta-wiki-home .view-wiki-entries .views-row,

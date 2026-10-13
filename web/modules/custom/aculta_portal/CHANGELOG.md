@@ -1,3 +1,19 @@
+## 0.4.0-dev.9 — busca no cabeçalho neutro da Wiki420 — 2026-10-13
+
+- `DomainPresentationBuilder` oferece a região renderizável `wiki_search` apenas
+  para Wiki420. O formulário GET usa a rota existente e preserva `q` na página
+  de resultados; a query é indicada no cache context `url.query_args:q`.
+- Um construtor único monta a busca neutra consumida pelo shell e preserva o
+  termo no cabeçalho quando a página de resultados está aberta. Home e resultados
+  deixam de renderizar campos duplicados.
+- O ACULTA420 consome a região, oculta o menu global somente nesse shell e
+  mantém a busca disponível junto da marca. A Institution Bar permanece intacta.
+- Gates locais: Drupal 11+ (680), contrato de apresentação (127), fronteira
+  módulo/tema (789) PASS. Home e artigo retornam HTTP 200 no Runtime local; os
+  artigos de teste (nids 72 e 73) foram criados somente em `aculta_runtime`.
+  Nenhum conteúdo foi gravado em servidor remoto ou produção. Validação visual
+  por navegador no servidor de testes pendente. **RUNTIME STATUS: DEFERRED.**
+
 ## 0.4.0-dev.8 — separação módulo x tema: marca de domínio neutra — 2026-10-13
 
 - `DomainPresentationBuilder` não referencia mais o tema: envia `brand_media` como `['#brand_key' => 'wiki420', '#alt' => título]`. O asset e a imagem são montados pelo tema (aculta420 0.6.0-dev.17). Sem tema que trate a chave, o cabeçalho usa só o título.

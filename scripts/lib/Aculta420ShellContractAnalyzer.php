@@ -50,6 +50,12 @@ final class Aculta420ShellContractAnalyzer {
     if (!str_contains($pageSource, '{{ page.header }}')) {
       $findings[] = 'Existing Drupal header render array must always be preserved.';
     }
+    if (!str_contains($pageSource, '{{ domain_presentation.regions.wiki_search }}')) {
+      $findings[] = 'Wiki search render region must be consumed by the Domain Header.';
+    }
+    if (!str_contains($pageSource, '{% if not aculta_wiki_search and page.primary_menu %}')) {
+      $findings[] = 'The shared primary menu must remain available outside the Wiki search shell.';
+    }
     if (!str_contains(
       $pageSource,
       '{% if not aculta_has_system_branding and aculta_domain_brand_fallback %}',
@@ -63,7 +69,7 @@ final class Aculta420ShellContractAnalyzer {
     )) {
       $findings[] = 'Twig must not branch on a concrete Domain purpose.';
     }
-    // brand_media is consumed by the header (Wiki420 logo, PR #112); navigation and actions stay deferred.
+    // Wiki logo/search are consumed by the header; navigation and actions stay deferred.
     foreach ([
       'regions.navigation',
       'regions.actions',

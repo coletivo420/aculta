@@ -18,7 +18,7 @@ final class DomainPresentationContractTest extends UnitTestCase {
   private function presentation(): DomainPresentation {
     return new DomainPresentation(
       ['purpose' => 'wiki', 'title' => 'Wiki420', 'short_title' => 'Wiki', 'home_url' => 'https://wiki420.example.invalid/', 'logo_alt' => 'Wiki420'],
-      ['brand_media' => NULL, 'navigation' => NULL, 'actions' => NULL],
+      ['brand_media' => NULL, 'navigation' => NULL, 'actions' => NULL, 'wiki_search' => NULL],
       (new CacheableMetadata())->addCacheContexts(['domain', 'url.site'])->addCacheTags(['config:domain.record.wiki420_aculta_org']),
     );
   }

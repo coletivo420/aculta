@@ -105,6 +105,27 @@
   overflow-wrap: anywhere;
 }
 
+.aculta-wiki-article__body p { margin-block: 0 1em; }
+.aculta-wiki-article__body ul,
+.aculta-wiki-article__body ol { padding-inline-start: 1.5em; }
+.aculta-wiki-article__body li + li { margin-top: 0.35em; }
+
+.aculta-wiki-article__body blockquote {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1rem;
+  border-inline-start: 0.25rem solid var(--aculta-border-accent);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-secondary);
+}
+
+.aculta-wiki-article__body figure { margin: 1.5rem 0; }
+.aculta-wiki-article__body figure img { display: block; max-width: 100%; height: auto; }
+.aculta-wiki-article__body figcaption {
+  margin-top: 0.5rem;
+  color: var(--aculta-text-secondary);
+  font-size: 0.875rem;
+}
+
 .aculta-wiki-article__body h2,
 .aculta-wiki-article__body h3,
 .aculta-wiki-article__related h2,

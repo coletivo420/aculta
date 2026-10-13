@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_portal\Presentation;
+
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/** Builds the shared GET search form presented throughout Wiki420. */
+final class WikiSearchFormBuilder {
+
+  public function __construct(
+    private readonly TranslationInterface $translation,
+    private readonly RequestStack $requestStack,
+  ) {}
+
+  /**
+   * Returns a render array for the canonical Wiki search route.
+   *
+   * The current query value is repeated in the shared header on search results.
+   */
+  public function build(): array {
+    $term = $this->requestStack->getCurrentRequest()?->query->get('q', '');
+    $term = is_string($term) ? mb_substr(trim($term), 0, 100) : '';
+
+    return [
+      '#type' => 'form',
+      '#method' => 'get',
+      '#action' => Url::fromRoute('aculta_portal.wiki_search')->toString(),
+      '#attributes' => ['role' => 'search'],
+      '#cache' => ['contexts' => ['url.query_args:q']],
+      'q' => [
+        '#type' => 'textfield',
+        '#name' => 'q',
+        '#title' => (string) $this->translation->translate('Pesquisar na Wiki420'),
+        '#title_display' => 'invisible',
+        // This is a plain render element, not a Form API build array.
+        '#value' => $term,
+        '#placeholder' => (string) $this->translation->translate('Pesquisar na Wiki420'),
+        '#size' => 40,
+        '#maxlength' => 100,
+        '#required' => TRUE,
+        '#attributes' => ['autocomplete' => 'off'],
+      ],
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => (string) $this->translation->translate('Buscar'),
+      ],
+    ];
+  }
+
+}

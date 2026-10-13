@@ -52,6 +52,7 @@ $hooks = new \Drupal\aculta420\Hook\ThemeHooks(
   \Drupal::service('config.factory'),
   \Drupal::service('entity_type.manager'),
   \Drupal::routeMatch(),
+  \Drupal::service('extension.list.theme'),
 );
 
 $complete = [
@@ -67,6 +68,7 @@ $complete = [
       'brand_media' => NULL,
       'navigation' => NULL,
       'actions' => NULL,
+      'wiki_search' => NULL,
     ],
   ],
   'page' => ['header' => []],
