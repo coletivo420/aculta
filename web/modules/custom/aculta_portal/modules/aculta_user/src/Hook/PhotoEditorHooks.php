@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Hook;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -14,6 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_user\Form\AvatarCropForm;
 use Drupal\aculta_user\Form\PhotoEditorGuard;
+use Drupal\aculta_user\Form\UserPictureForm;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 
@@ -44,6 +46,8 @@ final class PhotoEditorHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'user.data')]
     private readonly UserDataInterface $userData,
+    #[Autowire(service: 'form_builder')]
+    private readonly FormBuilderInterface $formBuilder,
   ) {}
 
   #[Hook('aculta_portal_photo_editor_alter')]
@@ -52,6 +56,22 @@ final class PhotoEditorHooks {
     // elemento que o template renderiza.
     $photoForm['#attached']['library'][] = 'aculta_user/photo-flow';
     $photoForm['#attached']['drupalSettings']['acultaUser']['savedFid'] = (int) ($account->get('user_picture')->target_id ?? 0);
+
+    // Formulário da foto em rota própria (upload por AJAX). Substitui o formulário do painel.
+    $photoForm['form'] = $this->formBuilder->getForm(UserPictureForm::class);
+
+    // Recortar: só para foto personalizada (não existe recorte para o acervo).
+    $fid = (int) ($account->get('user_picture')->target_id ?? 0);
+    $file = $fid > 0 ? $this->entityTypeManager->getStorage('file')->load($fid) : NULL;
+    if ($file !== NULL && !PhotoEditorGuard::isAcervo($account, $file)) {
+      $photoForm['recortar'] = [
+        '#type' => 'link',
+        '#title' => t('Recortar foto'),
+        '#url' => Url::fromRoute('aculta_user.avatar_crop'),
+        '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary'], 'data-dialog-type' => 'modal'],
+        '#attached' => ['library' => ['core/drupal.dialog.ajax']],
+      ];
+    }
     $photoForm['reroll'] = [
       '#type' => 'link',
       '#title' => t('Sortear outro avatar'),
