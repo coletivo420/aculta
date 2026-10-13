@@ -225,6 +225,39 @@ Serviços previstos (nomes provisórios):
 - A permissão `administer comments` é do Core e não é restrita por tipo de conteúdo. Hoje o único tipo com comentário é o Fórum, então o efeito fica restrito ao Fórum. Se um tipo de comentário novo surgir, a permissão passa a valer para ele também: registrar no gate.
 - Denúncias de comentário (`DT-P13`, fase U4) vão para a mesma fila de moderação.
 
+### E6. Pré-visualização do verbete, "Citado em" e regras do Fórum
+
+**Decisões do responsável (2026-10-13):**
+
+- Ao passar o mouse (ou focar) em uma referência a verbete, aparece um **cartão de pré-visualização**. O bloco "Citado em" fica nesse cartão.
+- Criar tópico de Fórum exige **no mínimo 10 comentários publicados**.
+- O **primeiro comentário** de quem não tem comentário publicado vai para a fila de moderação.
+- As limitações são **explicadas à pessoa com mensagens** no formulário e na Atividade.
+
+**Cartão de pré-visualização (e "Citado em"):**
+
+- Conteúdo: título, resumo, categoria e "Citado em" (até 5 títulos publicados, com contagem total e link para a lista completa).
+- **Acesso por teclado e toque:** o cartão abre também com foco e com toque. Não depende de mouse. A lista completa de "Citado em" fica numa aba do próprio verbete, para que a informação não exista só no cartão.
+- **Restrição técnica:** o cartão aparece em páginas de outro host (ex.: artigo da revista chamando verbete da Wiki). O AJAX é de mesma origem e não há CORS (`CROSS-DOMAIN-REQUEST-POLICY.md`). Logo, os dados do cartão são montados **no servidor da página que os exibe**, e apenas exibidos ao passar o mouse. Não há busca ao host Wiki no navegador.
+- Dentro do próprio verbete (verbete para verbete, mesmo host WIKI), o cartão pode buscar os dados por AJAX de mesma origem, com fallback de link simples.
+- Cache: tags do verbete chamado e das referências publicadas.
+
+**Criação de tópico com 10 comentários:**
+
+- "Comentário" conta apenas comentários **publicados** no Fórum (`comment_forum`, `status` publicado).
+- Regra derivada, sem armazenamento novo: contagem por entidade, verificada na criação (`#[Hook('entity_create_access')]` do tipo `forum`). Sem permissão nova por papel.
+- Cache: contexto `user` e tags de comentários.
+- Mensagem a quem não atinge o limite: "Você pode criar tópicos a partir de 10 comentários publicados. Você tem N." A mesma informação aparece em Atividade, com barra de progresso.
+
+**Primeiro comentário em moderação:**
+
+- Se a pessoa não tem nenhum comentário publicado, o comentário é salvo como **não publicado**, na fila de moderação do Core (`admin/content/comment/approval`, aba "Não aprovados"). Quem modera: `contribuidor_editorial` (decisão 29) e administrador.
+- A regra vale **somente para o primeiro comentário**. Depois da primeira aprovação, os comentários são publicados direto.
+- Implementação: presave de comentário no `aculta_user` (`#[Hook]`), com `skip comment approval` como exceção para papéis que não passam pela fila (a confirmar, decisão 32).
+- Mensagem no formulário de comentário, antes de enviar: "Seu primeiro comentário passará por moderação antes de aparecer. Depois da aprovação, os próximos são publicados na hora."
+- Mensagem após envio: "Seu comentário foi recebido e aguarda moderação."
+- Textos em `translations/aculta_user.pt-br.po`, com a mesma formulação em Atividade.
+
 ### E2. Atividade centralizada em "Atividade"
 
 **Decisão do responsável (2026-10-13):** Wiki, Fórum, Revista, comentários e outras formas de participação ficam em **uma seção** da Minha conta, dividida em abas.
@@ -343,12 +376,15 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 21. **Histórico:** respondida em 2026-10-13: o histórico do verbete é público; a reversão é do `wiki_editor`; o histórico de atividade de cada pessoa é individual.
 22. **Comentários:** respondida em 2026-10-13: comentários moram só nas discussões do Fórum; o conteúdo mostra trecho com link para a discussão completa (seção E3).
 23. **Administrador:** respondida em 2026-10-13: o administrador vê só a própria atividade.
-24. **Tópico de discussão:** criação manual pelo editor ou pelo `wiki_editor`, ou automática para todo verbete? Qual tipo de conteúdo recebe discussão (verbete, artigo, atividade, projeto)?
+24. **Tópico de discussão:** respondida em 2026-10-13: criação de tópico exige 10 comentários publicados (seção E6). Pergunta restante: quais tipos de conteúdo recebem discussão vinculada, e o editor pode criar a discussão do próprio conteúdo sem os 10 comentários?
 25. **Papel `contribuidor_editorial`:** respondida em 2026-10-13: quem concede é o administrador.
 26. **Função do contribuidor editorial na Wiki:** respondida em 2026-10-13: recebe `wiki_editor`.
-27. **Mão dupla:** o bloco "Citado em" no verbete entra?
+27. **Citado em:** respondida em 2026-10-13: aparece no cartão de pré-visualização do verbete (seção E6), com a lista completa em aba do verbete.
 28. **Wiki para todo autenticado:** respondida em 2026-10-13: `wiki_contributor` é concedido a quem confirmou o e-mail (`email_confirmed`).
 29. **Moderação do Fórum:** respondida em 2026-10-13 (confirmação): `administer comments` e `edit any forum content` para `contribuidor_editorial`; `administer forums` fica com o administrador.
+30. **Editor sem limite:** o editor do conteúdo (ex.: `contribuidor_editorial`) pode criar discussão do próprio conteúdo sem os 10 comentários? Proposta: sim, a regra vale só para tópicos criados por usuários comuns.
+31. **Primeiro comentário:** confirma que só o primeiro comentário (até a primeira aprovação) vai para a fila, e que depois os comentários são publicados direto?
+32. **Quem fica fora da fila:** administrador e `contribuidor_editorial` publicam direto (`skip comment approval`), ou passam pela fila também?
 
 ## 8. Riscos e limites
 
