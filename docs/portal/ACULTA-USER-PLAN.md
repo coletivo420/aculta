@@ -151,10 +151,48 @@ Serviços previstos (nomes provisórios):
 - **Feed:** View de atividades (tópicos, respostas, verbetes publicados) das pessoas seguidas. Sem contrib de atividade.
 - **Notificações:** somente opt-in. Envio por Mailer Plus, com fila do Core (`queue`), uma mensagem por evento de lote. Nenhum envio sem consentimento, e nada de PII no corpo além do necessário.
 
-### G. Gamificação (escopo restrito)
-- **Recomendado:** badges **derivados**. Cada badge é uma condição sobre contagens reais (verbetes publicados, revisões, respostas no Fórum, anos de participação). Definições em `config/` (config entity do próprio módulo, ou `config` simples), sem tabela de pontos.
-- **Sem:** ranking público, comparação entre pessoas, pontuação ligada a doação, compra ou pagamento (Mercado Pago e apoio não entram em métricas). Motivo: a associação é antiproibicionista e sem fins lucrativos; ranking e pressão por volume podem desincentivar a participação e expor dados de apoio.
-- **Ledger (histórico de pontos):** só com decisão específica e justificativa. Seria storage novo (entidade própria), e a regra do projeto pede capacidade existente antes de criar storage paralelo.
+### G. Gamificação: badges, sem ranking
+
+**Decisão do responsável (2026-10-13):** sem ranking. Só badges, de dois tipos:
+
+- **Automáticas:** concedidas por regra sobre dados reais (verbetes publicados, revisões aceitas, respostas no Fórum, tempo de participação). Definição da regra em configuração do módulo.
+- **Manuais:** atribuídas pelo administrador a uma pessoa, com motivo registrado.
+
+Regras:
+
+- **Sem ranking público**, sem comparação entre pessoas e sem pontuação.
+- **Sem métricas de doação, compra ou pagamento.** Mercado Pago e apoio não entram em regra de badge.
+- **Armazenamento (muda o plano anterior):** a regra "sem storage novo" não se aplica a concessões. Uma badge concedida é fato histórico. Se fosse derivada, sumiria quando a regra mudasse ou quando o conteúdo fosse removido, e não há como registrar quem concedeu uma badge manual. Por isso, proposta: entidade de conteúdo própria `aculta_badge_award` (pessoa, badge, origem automática ou manual, quem concedeu, data, motivo). Justificativa: Core e contrib não oferecem concessão auditável com esse vínculo. Definições de badge são configuração (`config`).
+- **Revogação:** só o administrador revoga badge manual, e a revogação fica registrada, sem apagar a linha.
+- **Exibição:** badges aparecem no cartão público do autor (somente se o perfil for público, decisão 2) e na Minha conta. Badge sem perfil público não aparece em nenhum lugar público.
+- **Avaliação das regras automáticas:** em lote (cron), não a cada salvamento de conteúdo.
+
+### G2. Associado (tipo de conta) e dados de cadastro
+
+**Decisão do responsável (2026-10-13):** existe o tipo de conta **Associado**. Associado é associado e tem acesso a algumas ferramentas. Os dados de associado geram relatório para o administrador.
+
+**Papel (role), sem sobrepor os papéis do Drupal:**
+
+- Proposta: role Drupal `associado`, somada a `authenticated` e `email_confirmed`. É o mecanismo nativo de permissão do Drupal; cada ferramenta do associado é uma permissão concedida a esse papel. Não cria um sistema paralelo de permissão.
+- O papel não recebe permissão administrativa nem de conteúdo. Não altera permissões de `wiki_editor`, `lms_teacher` ou `content_editor`.
+- Quem vira associado é decidido pelo administrador. Autocadastro como associado: não, a não ser que o responsável diga o contrário.
+- Pergunta em aberto: "tipo de conta" é só o papel, ou também um estado (ativo, suspenso, desligado) com data de adesão? Proposta: papel `associado` mais campos de adesão no perfil (data de adesão e situação). Quem tira o papel mantém o histórico.
+
+**Dados (aba "Outros Dados" em Minha conta):**
+
+- **Novos campos:** RG, órgão emissor, profissão, data de nascimento.
+- **RG é dado sensível de identificação.** Deve seguir o mesmo padrão do CPF/CNPJ: cifrado e com índice HMAC pelo submódulo `aculta_id_cpf`, chaves por Drupal Key (provider `env`). Não gravar em claro. Só o administrador vê o valor completo, e a revelação fica registrada (padrão do painel de segredos).
+- **Profissão e data de nascimento:** campos comuns do perfil `participante` (texto e datetime). Data de nascimento entra no relatório, mas não é pública.
+- **Não duplicar:** e-mail, nome e endereço vêm dos campos que já existem (conta, perfil participante, Endereço único). Nada de endereço novo (regra permanente de endereço único).
+- **Já existente:** a aba "Outros Dados" hoje guarda CPF/CNPJ cifrado (`AccountOtherDataForm`, `aculta_id_cpf`); os campos PF/PJ ainda são manuais no Portal. RG entra junto desse fluxo, não em outro.
+
+**Relatório do administrador:**
+
+- View administrativa de associados (papel `associado`): nome, e-mail, endereço, profissão, data de nascimento, data de adesão, situação, badges.
+- RG aparece mascarado no relatório; o valor completo só por revelação registrada.
+- Exportação CSV pelo Views Data Export **só se** o módulo for verificado no Homelab (contrib não confirmado). Alternativa: exportação própria pelo Views (CSV via Views do Core) sem contrib.
+- Acesso: permissão específica de relatório de associados, restrita ao administrador. Sem cache público; contexto `user.permissions`.
+- Dados pessoais no relatório: LGPD, finalidade declarada, e acesso só a quem tem a permissão.
 
 ### H. Menções (`@apelido`)
 - Adiado (U5). Depende de verificação de contrib D11 ou de filtro de texto próprio. Sem essa verificação, não entra.
@@ -175,7 +213,8 @@ Cada fase tem PR próprio (`AGENTS.md`, regra de encerramento). Código sem Runt
 | **U1** | Submódulo `aculta_user` (versão `0.1.0-dev.1`). Campos `field_bio`, `field_visibilidade_publica`, `field_slug`. `PublicProfilePolicy` e `PublicProfilePresenter`. `/autores/<slug>` (fallback sem perfil público). Avatar com fallback. | Testes de Kernel para privacidade e acesso; Unit dos presenters; gates do Portal, fronteira, slugs e endereços passam. |
 | **U2** | Autoria da revista (cartão e listagem por autor), "Minhas contribuições" da Wiki, "Minha participação" do Fórum. Só Views e leitura. | Views com cache correto; conteúdo não publicado não aparece; teste de navegador em `TESTES-NAVEGADOR.md`. |
 | **U3** | Seguir pessoas (Flag), seguidores e feed (Views), notificações opt-in por fila. | Consentimento validado; envio de e-mail só com opt-in; sem listas de seguidores públicas. |
-| **U4** | Badges derivados; denúncia de comentário (DT-P13) com fila de moderação. | Sem ranking; badges sem PII; denúncia sem exposição do denunciante. |
+| **A1** | Papel `associado` (sem permissão administrativa), campos de adesão, RG cifrado (padrão `aculta_id_cpf`), profissão e data de nascimento em "Outros Dados", relatório administrativo de associados. | RG nunca em claro (teste de gravação e de leitura); relatório restrito por permissão; teste de acesso negado para comum e para `wiki_editor`. |
+| **U4** | Badges (automáticas e manuais, entidade `aculta_badge_award`), denúncia de comentário (DT-P13) com fila de moderação. | Sem ranking; concessão manual com autor e motivo; revogação registrada; badges sem PII. |
 | **U5** (condicional) | Menções `@apelido`. | Só se a verificação de contrib D11 aprovar. |
 
 Versionamento (`web/themes/custom/aculta420/docs/versioning.md`): U1 é **MINOR** no Portal (submódulo novo). Linha alvo sugerida: `0.4.0-dev.N`, com o submódulo em `0.1.0-dev.N`. Marcadores coerentes no mesmo PR: `aculta_portal.info.yml`, `CHANGELOG.md` do Portal e do submódulo, `ROADMAP.md`. Nenhuma tag sem pedido do responsável.
@@ -189,7 +228,7 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 3. **Slug do autor:** `field_slug` único gerado do apelido, ou o apelido atual com validação de unicidade?
 4. **Autor convidado** (sem conta) na revista: aceitar com campo de assinatura de texto, ou só autores com conta?
 5. **Purpose das páginas:** `/autores` no MAGAZINE? Perfil e participação ficam no MAIN, na ACCOUNT, ou em outro purpose? (`ADMIN-DOMAIN-POLICY.md`.)
-6. **Gamificação:** aprova badges derivados sem ranking? Algum badge pode depender de participação no Fórum e na Wiki?
+6. **Gamificação:** respondida em 2026-10-13: badges automáticas e manuais, sem ranking. Ver seção G e a decisão 18.
 7. **Gravatar:** confirma a recomendação de não usar?
 8. **Notificações:** opt-in por tipo de evento? Frequência máxima?
 9. **Menções:** entram no escopo ou ficam para depois?
@@ -197,6 +236,12 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 11. **Acervo de avatares:** recuperar os 10 arquivos de cogumelos (`mushrooms/`) ou remover essa família do `avatars.json`?
 12. **Persistência do avatar sorteado:** copiar o arquivo do acervo para `user_picture` (arquivo gerenciado com origem marcada) ou guardar a escolha em `user.data`?
 13. **OAuth:** importar a foto do Google quando houver, ou sempre usar o acervo?
+14. **Associado:** papel `associado` basta, ou também há estado (ativo, suspenso, desligado) com data de adesão? Quem tira o papel mantém o histórico?
+15. **Adesão:** só o administrador torna alguém associado, ou haverá fluxo de pedido de adesão?
+16. **RG:** confirma cifragem igual ao CPF/CNPJ (chave em Drupal Key, índice HMAC, revelação registrada)?
+17. **Relatório:** quais colunas o administrador vê? Pode exportar CSV? Quem além do administrador tem acesso?
+18. **Badges manuais:** quem pode conceder (só o administrador, ou também editores de Wiki e de Fórum)? Badge pode ser revogada?
+19. **Badges automáticas:** quais regras entram na primeira versão? (Sugestão: verbetes publicados, respostas no Fórum, tempo de participação.)
 
 ## 8. Riscos e limites
 
