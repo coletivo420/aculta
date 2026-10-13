@@ -71,6 +71,11 @@ final class AccountOtherDataForm extends FormBase {
       return $form;
     }
 
+    if (!$this->document->canSave()) {
+      $form['unavailable'] = ['#plain_text' => (string) $this->t('Este cadastro não está disponível neste ambiente.')];
+      return $form;
+    }
+
     $form['document'] = [
       '#type' => 'textfield',
       '#title' => $this->t('CPF ou CNPJ'),

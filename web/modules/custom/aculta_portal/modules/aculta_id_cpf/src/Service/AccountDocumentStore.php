@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_id_cpf\Service;
 
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserInterface;
@@ -26,6 +27,7 @@ final class AccountDocumentStore implements AccountDocumentInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
+    private readonly EntityFieldManagerInterface $fieldManager,
     private readonly DocumentValidator $validator,
     private readonly DocumentFormatter $formatter,
     private readonly DocumentCipher $cipher,
@@ -33,7 +35,15 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   ) {}
 
   public function isAvailable(): bool {
-    return $this->cipher->isAvailable() && $this->fingerprint->isAvailable();
+    $fields = $this->fieldManager->getFieldDefinitions('profile', 'participante');
+    return isset($fields[self::FIELD]) && $this->cipher->isAvailable();
+  }
+
+  public function canSave(): bool {
+    $fields = $this->fieldManager->getFieldDefinitions('profile', 'participante');
+    return isset($fields[self::FIELD], $fields[self::INDEX_FIELD])
+      && $this->cipher->isAvailable()
+      && $this->fingerprint->isAvailable();
   }
 
   public function canonicalize(string $input): ?string {
@@ -47,7 +57,13 @@ final class AccountDocumentStore implements AccountDocumentInterface {
 
   public function savedDocument(UserInterface $account): ?string {
     $profile = $this->participantProfile($account);
-    if ($profile === NULL || $profile->get(self::FIELD)->isEmpty()) {
+    if ($profile === NULL) {
+      return NULL;
+    }
+    if (!$profile->hasField(self::FIELD)) {
+      throw new \RuntimeException('Document field is unavailable.');
+    }
+    if ($profile->get(self::FIELD)->isEmpty()) {
       return NULL;
     }
     $plain = $this->cipher->decrypt((string) $profile->get(self::FIELD)->value);
@@ -55,7 +71,7 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   }
 
   public function save(UserInterface $account, string $canonical): void {
-    if (!$this->isAvailable()) {
+    if (!$this->canSave()) {
       throw new \RuntimeException('Document storage is unavailable.');
     }
     // Revalida no servidor: o valor do formulário nunca é confiável sozinho.
@@ -64,6 +80,9 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     $index = $this->fingerprint->fingerprint($value, $type);
 
     $profile = $this->participantProfile($account) ?? $this->createParticipantProfile($account);
+    if (!$profile->hasField(self::FIELD) || !$profile->hasField(self::INDEX_FIELD)) {
+      throw new \RuntimeException('Document fields are unavailable.');
+    }
     if (!$profile->get(self::FIELD)->isEmpty()) {
       throw new \LogicException('Document already saved.');
     }
@@ -86,10 +105,13 @@ final class AccountDocumentStore implements AccountDocumentInterface {
    *   Quando a cifra ou o fingerprint não está disponível.
    */
   public function indexStoredDocument(ProfileInterface $profile): string {
+    if (!$profile->hasField(self::FIELD)) {
+      throw new \RuntimeException('Document storage is unavailable.');
+    }
     if ($profile->get(self::FIELD)->isEmpty()) {
       return 'empty';
     }
-    if (!$this->isAvailable()) {
+    if (!$profile->hasField(self::INDEX_FIELD) || !$this->canSave()) {
       throw new \RuntimeException('Document storage is unavailable.');
     }
     $plain = $this->cipher->decrypt((string) $profile->get(self::FIELD)->value);

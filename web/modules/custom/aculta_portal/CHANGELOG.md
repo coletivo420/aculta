@@ -1,3 +1,16 @@
+## 0.3.0-dev.27 — Preserva leitura de documento salvo — 2026-10-12
+
+- O contrato neutro `AccountDocumentInterface` separa disponibilidade de leitura (`isAvailable()`) da capacidade de gravar (`canSave()`). O `aculta_portal` tenta ler e apresentar o documento existente, mascarado e somente leitura, mesmo quando o HMAC ou o campo de índice ainda não está provisionado; formulário de inclusão só aparece quando cifra, HMAC e ambos os campos estão disponíveis.
+- O submódulo `aculta_id_cpf` mantém validação, cifra, fingerprint e persistência. O tema `aculta420` não foi alterado e continua responsável apenas pela apresentação.
+- Testes internos cobrem leitura disponível sem HMAC/índice, leitura indisponível sem o campo cifrado e gravação disponível com os requisitos completos. Runtime: sem migração de banco e sem gravação/alteração de documentos.
+- **RUNTIME STATUS: DEFERRED** — o Runtime tem documento cifrado, mas não pode ser consultado em conta de titular para validar o valor exibido. O valor permanece protegido; chave HMAC/campo índice ainda não provisionados.
+
+## 0.3.0-dev.26 — Proteção inicial de Outros Dados — 2026-10-12
+
+- `AccountDocumentStore::isAvailable()` passou a exigir todos os recursos de leitura e gravação. A verificação evitava acesso a campos incompletos, mas também ocultava documentos cifrados já existentes quando faltavam HMAC ou campo de índice; essa regressão foi corrigida em `0.3.0-dev.27`. O POST também falhava de forma controlada se a configuração ficasse incompleta após a renderização.
+- Validação no servidor de testes `conta.aculta.toca.net.br`: GET autenticado por link de uso único respondeu HTTP 200 e mostrou a mensagem de indisponibilidade prevista, sem página de exceção; log sem erro `AccountDocument`. Estado do Runtime Homelab: atualização `10001` pendente, configuração de `field_documento_indice` ausente e chaves do submódulo indisponíveis.
+- **RUNTIME STATUS: PASS (GET autenticado)** — a apresentação da página foi verificada; gravação de documento não foi tentada enquanto os campos e as chaves não estão provisionados. Não executei `updb` nem alterei dados.
+
 ## 0.3.0-dev.25 (documental) — relatório de estado — 2026-10-12
 
 - Mudança apenas documental; `aculta_portal.info.yml` não muda. Adiciona `docs/portal/RELATORIO-ESTADO-2026-10-12.md` com o estado do Portal, dos submódulos e do tema, e corrige a versão em `docs/portal/ROADMAP.md`.
