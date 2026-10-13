@@ -79,6 +79,18 @@ administrativo normal deve ter sido carregado originalmente em MAIN e,
 portanto, submeter no mesmo host; repetir um request mutável em outro Domain
 introduziria risco de semântica, sessão e CSRF.
 
+## Edição e exclusão de conteúdo a partir do painel
+
+- O painel é MAIN. A listagem de conteúdo gera o link "Editar" para o host de origem do conteúdo (revista, fórum, wiki,
+  loja, links). Esse host não tem o formulário de administração: a navegação GET/HEAD é canonicalizada para MAIN.
+- **Motivo da regra:** o Core (`RedirectResponseSubscriber`) substitui a URL de qualquer redirecionamento pelo parâmetro
+  `destination` da requisição, resolvido no host atual. Por isso o Portal remove `destination` da requisição antes de
+  canonicalizar e leva o retorno já absoluto para MAIN (`DomainPurposeRequestSubscriber::canonicalMainNavigationResponse`).
+- Métodos que mudam estado (POST de exclusão) em host errado respondem 404 e não são redirecionados.
+- A autoria nas listagens não linka para `/identidade/{usuário}` (página pública da Conta). O item "Editar perfil" do
+  painel aponta para `aculta_portal.admin_self_edit` (`/painel-administrativo/perfil/editar`), que leva ao formulário do
+  próprio usuário em MAIN.
+
 ## Exceção técnica: reset de senha
 
 Drupal Core reutiliza `entity.user.edit_form`, cuja representação administrativa
