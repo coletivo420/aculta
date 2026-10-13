@@ -11,18 +11,23 @@
 }
 .node--view-mode-full .field--name-field-editorial-category .field__label { font-weight: 600; margin-inline-end: 0.25rem; }
 
-/* Imagem de destaque: proporção preservada, sem distorção, com respiro. */
-.node--view-mode-full .field--name-field-media-image { margin-block: 1.5rem 0; }
+/* Imagem de destaque: centralizada, moldura 3:2 na largura da coluna de leitura, imagem inteira sem distorção
+   (portais de notícia usam moldura larga e fundo neutro para fotos verticais). */
+.node--view-mode-full .field--name-field-media-image {
+  margin-block: 1.5rem 0.5rem;
+  text-align: center;
+}
 .node--view-mode-full .field--name-field-media-image img {
   display: block;
   inline-size: 100%;
-  max-inline-size: 30rem;
+  max-inline-size: 60rem;
   block-size: auto;
-  aspect-ratio: auto;
-  margin-inline: 0;
+  aspect-ratio: 3 / 2;
+  margin-inline: auto;
   border-radius: 0.75rem;
-  border: 1px solid var(--aculta-border-subtle);
+  /* Imagem inteira, sem recorte (logotipo e títulos preservados); moldura neutra nas laterais. */
   object-fit: contain;
+  background: var(--aculta-surface-muted);
 }
 
 /* Chamada: texto de abertura, maior, em destaque. */
@@ -53,7 +58,7 @@
 .node--view-mode-full .media--type-remote-video {
   inline-size: 100%;
   max-inline-size: 60rem;
-  margin-block: 2rem;
+  margin: 2rem auto;
 }
 .node--view-mode-full .media--type-remote-video iframe,
 .node--view-mode-full .media--type-remote-video video {
@@ -71,7 +76,7 @@
 .node--view-mode-full .portal-article-authors__title { margin-block: 0 0.5rem; }
 
 @media (max-width: 575.98px) {
-  .node--view-mode-full .field--name-field-media-image img { max-inline-size: 100%; }
+  .node--view-mode-full .field--name-field-media-image img { aspect-ratio: 4 / 3; }
   .node--view-mode-full .field--name-field-subtitle { font-size: 1.25rem; }
 }
 
