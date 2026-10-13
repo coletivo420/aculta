@@ -85,3 +85,14 @@ aculta_user.bio_form:
     _custom_access: 'aculta_user.bio_modal_access:access'
   options:
     _aculta_domain_purpose: 'account'
+
+aculta_user.bio_save:
+  path: '/bio/salvar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AccountBioSaveController::save'
+  methods: [POST]
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'account'

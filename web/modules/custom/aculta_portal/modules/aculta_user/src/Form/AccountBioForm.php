@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
-use Drupal\aculta_user\Bio\AccountBioCard;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
@@ -20,9 +16,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Modal de edição da bio (campo field_bio do perfil participante).
  *
- * Mesmo padrão do modal de foto: envio comum para a própria rota (#action) e redirecionamento para a
- * visão geral da Conta, que mostra a bio salva. Limpar só esvazia o campo (JS da biblioteca account-bio-form).
- * A bio só aparece no perfil público quando a pessoa escolhe exibi-la (PublicProfilePolicy).
+ * Salvar é tratado pelo JS da biblioteca account-bio-form: envia para a rota JSON aculta_user.bio_save, atualiza a
+ * caixa da visão geral e fecha o modal. Sem JS, o envio comum grava e redireciona para a visão geral.
+ * Limpar só esvazia o campo. A bio só aparece no perfil público quando a pessoa escolhe exibi-la (PublicProfilePolicy).
  */
 final class AccountBioForm extends FormBase {
 
@@ -34,8 +30,7 @@ final class AccountBioForm extends FormBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly AccountProxyInterface $currentUserService,
-    private readonly AccountBioCard $bioCard,
-    private readonly RendererInterface $renderer,
+    private readonly CsrfTokenGenerator $csrfToken,
   ) {}
 
   /**
@@ -45,8 +40,7 @@ final class AccountBioForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_user.account_bio_card'),
-      $container->get('renderer'),
+      $container->get('csrf_token'),
     );
   }
 
@@ -63,7 +57,11 @@ final class AccountBioForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
     $form['#action'] = Url::fromRoute('aculta_user.bio_form')->toString();
+    $form['#attributes']['data-aculta-bio-form'] = '';
     $form['#attached']['library'][] = 'aculta_user/account-bio-form';
+    $form['#attached']['drupalSettings']['acultaUser']['bioSave'] = [
+      'url' => Url::fromRoute('aculta_user.bio_save', [], ['query' => ['token' => $this->csrfToken->get('bio/salvar')]])->toString(),
+    ];
     $form['bio'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Bio'),
@@ -82,8 +80,6 @@ final class AccountBioForm extends FormBase {
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Salvar bio'),
-      // Salvar grava, substitui a caixa da visão geral e fecha o modal. Sem JS, o envio comum redireciona.
-      '#ajax' => ['callback' => '::ajaxSave'],
     ];
     return $form;
   }
@@ -107,17 +103,6 @@ final class AccountBioForm extends FormBase {
     $profile->save();
     $this->messenger()->addStatus($this->t('Bio salva.'));
     $form_state->setRedirect('aculta_portal.dashboard');
-  }
-
-  /**
-   * Resposta AJAX do modal: substitui a caixa Bio pela versão salva e fecha o modal.
-   */
-  public function ajaxSave(array &$form, FormStateInterface $form_state): AjaxResponse {
-    $card = $this->renderer->renderInIsolation($this->bioCard->build($this->currentUserService->getAccount()));
-    $response = new AjaxResponse();
-    $response->addCommand(new ReplaceCommand('#aculta-account-bio-card', $card));
-    $response->addCommand(new CloseModalDialogCommand());
-    return $response;
   }
 
   /**
