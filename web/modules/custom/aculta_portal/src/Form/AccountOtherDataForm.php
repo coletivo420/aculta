@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -44,8 +45,7 @@ final class AccountOtherDataForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     if ($this->document === NULL || !$this->document->isAvailable()) {
-      $form['unavailable'] = ['#plain_text' => (string) $this->t('Este cadastro não está disponível neste ambiente.')];
-      return $form;
+      return $this->unavailableForm($form);
     }
 
     try {
@@ -72,8 +72,7 @@ final class AccountOtherDataForm extends FormBase {
     }
 
     if (!$this->document->canSave()) {
-      $form['unavailable'] = ['#plain_text' => (string) $this->t('Este cadastro não está disponível neste ambiente.')];
-      return $form;
+      return $this->unavailableForm($form);
     }
 
     $form['document'] = [
@@ -98,7 +97,7 @@ final class AccountOtherDataForm extends FormBase {
 
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if ($this->document === NULL) {
-      $form_state->setErrorByName('document', $this->t('Este cadastro não está disponível neste ambiente.'));
+      $form_state->setErrorByName('document', $this->unavailableMessage());
       return;
     }
     $canonical = $this->document->canonicalize((string) $form_state->getValue('document'));
@@ -122,6 +121,18 @@ final class AccountOtherDataForm extends FormBase {
       $this->messages->addError($this->t('Não foi possível salvar agora. Tente novamente mais tarde.'));
     }
     $form_state->setRedirect('aculta_portal.my_data_other');
+  }
+
+  /**
+   * Formulário de indisponibilidade: uma única mensagem para todos os caminhos de "cadastro indisponível".
+   */
+  private function unavailableForm(array $form): array {
+    $form['unavailable'] = ['#plain_text' => (string) $this->unavailableMessage()];
+    return $form;
+  }
+
+  private function unavailableMessage(): TranslatableMarkup {
+    return $this->t('Este cadastro não está disponível neste ambiente.');
   }
 
   private function user(): \Drupal\user\UserInterface {
