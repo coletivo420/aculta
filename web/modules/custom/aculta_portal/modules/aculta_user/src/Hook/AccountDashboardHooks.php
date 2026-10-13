@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Hook;
 
 use Drupal\Component\Serialization\Json;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
@@ -38,19 +39,17 @@ final class AccountDashboardHooks {
       'header' => [
         '#type' => 'container',
         'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => t('Bio')],
-        'edit' => [
-          '#type' => 'link',
-          '#title' => t('Editar bio'),
-          '#url' => Url::fromRoute('aculta_user.bio_form'),
-          '#attributes' => [
-            'class' => ['use-ajax'],
+        'edit' => PortalLinkElement::build(
+          t('Editar bio'),
+          Url::fromRoute('aculta_user.bio_form'),
+          [
+            'class' => 'use-ajax',
             'data-dialog-type' => 'modal',
             'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Editar bio')]),
             'data-portal-ui' => 'account-bio-edit',
             'aria-label' => (string) t('Editar bio'),
           ],
-          '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-        ],
+        ) + ['#attached' => ['library' => ['core/drupal.dialog.ajax']]],
       ],
       'text' => [
         '#type' => 'html_tag',
