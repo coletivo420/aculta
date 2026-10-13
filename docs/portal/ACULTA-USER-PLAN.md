@@ -202,6 +202,29 @@ Serviços previstos (nomes provisórios):
 - **Risco a registrar:** `wiki_editor` edita qualquer verbete e publica. Estender isso a todo autor de revista amplia muito a edição da Wiki. A alternativa é `contribuidor_editorial` receber `wiki_contributor` (cria e edita só o próprio) e `wiki_editor` ficar para editores. Ver decisão 26.
 - **Reversão de revisão:** a decisão 21 atribui reversão ao `wiki_editor`, mas o `wiki_editor` não tem `revert wiki_entry revisions` hoje (só `content_editor` tem `revert all revisions`). Precisa ser adicionada à configuração exportada do papel, com `config/sync` e gate.
 
+### E5. Papéis de Wiki e moderação do Fórum
+
+**Decisões do responsável (2026-10-13):**
+
+- `contribuidor_editorial` recebe **`wiki_editor`**.
+- Todo usuário autenticado recebe **`wiki_contributor`**. As contribuições são moderadas.
+- `contribuidor_editorial` também é **moderador dos fóruns**.
+
+**Moderação da Wiki (já existe no workflow `wiki_editorial`):**
+
+- `wiki_contributor` cria rascunho (`create_new_draft`), envia para revisão (`draft_to_review`) e volta para rascunho (`review_to_draft`). **Não publica.**
+- Uma edição de verbete publicado vira nova revisão em rascunho. O texto publicado continua no ar até um editor publicar.
+- `wiki_editor` publica (`review_to_published`) e reverte revisões (decisão 21). Permissão de reversão ainda **não está** na configuração do papel: `revert wiki_entry revisions` precisa ser adicionada, com `config/sync` e gate.
+
+**Ponto a corrigir, conflito com a política de e-mail:** a regra da seção 1 de `EMAIL-CONFIRMATION-POLICY.md` diz que quem não confirmou o e-mail não pode editar a Wiki. Dar `wiki_contributor` a "todo autenticado" contraria essa regra. Proposta: conceder `wiki_contributor` ao papel `email_confirmed` (que já existe), e não a `authenticated`. Ver decisão 28.
+
+**Moderação do Fórum:** os comentários existem só nas discussões do Fórum (seção E3). Por isso o escopo de moderação de comentários é o próprio Fórum.
+
+- `contribuidor_editorial` recebe `administer comments` (aprovar, editar e excluir comentários) e `edit any forum content` (editar tópicos de qualquer autor).
+- **Não** recebe `administer forums` (estrutura de fóruns e taxonomia), que continua com administrador.
+- A permissão `administer comments` é do Core e não é restrita por tipo de conteúdo. Hoje o único tipo com comentário é o Fórum, então o efeito fica restrito ao Fórum. Se um tipo de comentário novo surgir, a permissão passa a valer para ele também: registrar no gate.
+- Denúncias de comentário (`DT-P13`, fase U4) vão para a mesma fila de moderação.
+
 ### E2. Atividade centralizada em "Atividade"
 
 **Decisão do responsável (2026-10-13):** Wiki, Fórum, Revista, comentários e outras formas de participação ficam em **uma seção** da Minha conta, dividida em abas.
@@ -322,8 +345,10 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 23. **Administrador:** respondida em 2026-10-13: o administrador vê só a própria atividade.
 24. **Tópico de discussão:** criação manual pelo editor ou pelo `wiki_editor`, ou automática para todo verbete? Qual tipo de conteúdo recebe discussão (verbete, artigo, atividade, projeto)?
 25. **Papel `contribuidor_editorial`:** respondida em 2026-10-13: quem concede é o administrador.
-26. **Função do autor na Wiki:** `wiki_editor` (como pedido: edita qualquer verbete e publica) ou `wiki_contributor` (cria e edita só o próprio)? A segunda opção evita que autor de revista edite verbetes de outras pessoas. Recomendação: `wiki_contributor`.
+26. **Função do contribuidor editorial na Wiki:** respondida em 2026-10-13: recebe `wiki_editor`.
 27. **Mão dupla:** o bloco "Citado em" no verbete entra?
+28. **Wiki para todo autenticado:** conceder `wiki_contributor` a `email_confirmed` (recomendado, respeita a política de e-mail) ou a `authenticated` (como pedido, contraria a seção 1 de `EMAIL-CONFIRMATION-POLICY.md`)?
+29. **Moderação do Fórum:** confirma `administer comments` e `edit any forum content` para `contribuidor_editorial`, e que `administer forums` fica com o administrador?
 
 ## 8. Riscos e limites
 
