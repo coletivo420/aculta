@@ -1,14 +1,14 @@
 /**
- * Modal da bio (aculta_user).
+ * Modal da bio (aculta_user). Tudo passa pelo evento de envio do formulário, identificando o botão de origem:
  *
- * - Limpar só esvazia o campo; não envia nem fecha o modal.
- * - Salvar bio grava pela rota JSON (drupalSettings.acultaUser.bioSave), atualiza o texto da caixa da visão geral
- *   e fecha o modal pelo botão de fechar do diálogo. Sem JS, o envio comum do formulário grava e redireciona.
+ * - Limpar (data-aculta-bio-clear): só esvazia o campo. Cancela o envio: não grava e não fecha o modal.
+ * - Salvar bio: grava pela rota JSON (drupalSettings.acultaUser.bioSave), atualiza o texto da caixa da visão geral
+ *   e fecha o modal pela API de diálogo do Drupal. Erro mantém o modal aberto com aviso.
+ * Sem JS, o envio comum do Salvar grava e redireciona para a visão geral.
  */
 (function (Drupal, once, drupalSettings) {
   'use strict';
 
-  // Fecha o modal pela API de diálogo do Drupal (core/drupal.dialog), a partir do conteúdo do diálogo.
   function closeDialog(form) {
     const content = form.closest('.ui-dialog-content');
     if (content && Drupal.dialog) {
@@ -18,26 +18,26 @@
 
   Drupal.behaviors.acultaAccountBioForm = {
     attach(context) {
-      once('aculta-account-bio-clear', '[data-aculta-bio-clear]', context).forEach((button) => {
-        button.addEventListener('click', (event) => {
-          // O Drupal renderiza o botão como submit: o clique não pode enviar o formulário.
-          event.preventDefault();
-          const field = button.form ? button.form.querySelector('textarea[name="bio"]') : null;
-          if (field) {
-            field.value = '';
-            field.focus();
-          }
-        });
-      });
-
-      once('aculta-account-bio-save', '[data-aculta-bio-form]', context).forEach((form) => {
+      once('aculta-account-bio-form', '[data-aculta-bio-form]', context).forEach((form) => {
         const settings = (drupalSettings.acultaUser || {}).bioSave;
-        if (!settings) {
-          return;
-        }
         form.addEventListener('submit', (event) => {
+          const origin = event.submitter;
+
+          if (origin && origin.hasAttribute('data-aculta-bio-clear')) {
+            event.preventDefault();
+            const field = form.querySelector('textarea[name="bio"]');
+            if (field) {
+              field.value = '';
+              field.focus();
+            }
+            return;
+          }
+
+          if (!settings) {
+            return;
+          }
           event.preventDefault();
-          const submit = form.querySelector('input[name="op"]:not([data-aculta-bio-clear])');
+          const submit = origin && origin.name === 'op' ? origin : form.querySelector('input[name="op"]:not([data-aculta-bio-clear])');
           if (submit) {
             submit.disabled = true;
           }
