@@ -258,6 +258,39 @@ Serviços previstos (nomes provisórios):
 - Mensagem após envio: "Seu comentário foi recebido e aguarda moderação."
 - Textos em `translations/aculta_user.pt-br.po`, com a mesma formulação em Atividade.
 
+### E7. Regras administráveis, exceções e integração de comentários
+
+**Decisões do responsável (2026-10-13):**
+
+- **Editor de conteúdo** (`content_editor`) não tem restrições editoriais, de comentários nem de outros tipos. Fica fora dos limites de criação de tópico e da moderação do primeiro comentário.
+- **Publicação bloqueada até a aprovação:** enquanto o primeiro comentário de uma pessoa estiver na fila, ela não publica outros comentários nem cria tópicos. Quando o primeiro comentário é aprovado, o bloqueio acaba.
+- **Opções no painel administrativo do `aculta_portal`** para definir e ligar/desligar esses limites.
+- **Comentários da Revista e o fórum de discussão do LMS** devem se integrar ao sistema de Fórum.
+
+**Painel administrativo (`aculta_user`, linkado pelo hub do `aculta_portal`):**
+
+- Caminho: `/admin/config/aculta/portal/participacao` (técnico, sem slug público). Permissão própria `administer aculta participacao`, com `restrict access`.
+- Configuração em `aculta_user.settings` (exportável; sem segredo):
+  - `topico_limite_ativo` (liga/desliga o limite de criação de tópico);
+  - `topico_comentarios_minimos` (padrão 10; número inteiro não negativo);
+  - `primeiro_comentario_moderado` (liga/desliga a fila do primeiro comentário);
+  - `bloqueio_ate_aprovacao` (liga/desliga o bloqueio de novas publicações enquanto o primeiro está na fila);
+  - `papeis_isentos` (lista de papéis; padrão: `content_editor` e `administrator`).
+- Mudanças são registradas em log do Drupal (quem alterou e o que mudou, sem valores pessoais).
+- Desligar um limite remove a restrição na hora. Sem reconstrução de dados.
+
+**Regras de aplicação:**
+
+- A isenção vale por papel, e não por lista de usuários.
+- Se a pessoa perde o papel isento, a regra volta a valer na próxima ação. Nada é gravado no usuário.
+- O bloqueio de publicação aparece como mensagem no formulário de comentário e na Atividade: "Seu primeiro comentário aguarda moderação. Novas publicações ficam disponíveis após a aprovação."
+
+**Integração com o Fórum:**
+
+- **Revista:** a discussão de cada artigo é um tópico do Fórum vinculado (seção E3). O artigo mostra o trecho e o link para a discussão completa. Nenhum comentário é gravado no artigo.
+- **LMS:** o repositório hoje não tem fórum de discussão no LMS. O tipo de atividade configurado é só `no_answer` e `true_false` (`lms.lms_activity_type.*`), e não há campo de comentário em curso ou lição. Quando a discussão do LMS existir, o modelo é o mesmo: cada curso ou lição (a definir, decisão 34) tem um tópico vinculado. Antes de desenhar isso, verificar no Homelab o que o módulo `lms` 1.2.3 oferece.
+- **Regra comum:** qualquer conteúdo com discussão usa tópico do Fórum. Nenhum tipo de conteúdo guarda comentário próprio.
+
 ### E2. Atividade centralizada em "Atividade"
 
 **Decisão do responsável (2026-10-13):** Wiki, Fórum, Revista, comentários e outras formas de participação ficam em **uma seção** da Minha conta, dividida em abas.
@@ -382,9 +415,12 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 27. **Citado em:** respondida em 2026-10-13: aparece no cartão de pré-visualização do verbete (seção E6), com a lista completa em aba do verbete.
 28. **Wiki para todo autenticado:** respondida em 2026-10-13: `wiki_contributor` é concedido a quem confirmou o e-mail (`email_confirmed`).
 29. **Moderação do Fórum:** respondida em 2026-10-13 (confirmação): `administer comments` e `edit any forum content` para `contribuidor_editorial`; `administer forums` fica com o administrador.
-30. **Editor sem limite:** o editor do conteúdo (ex.: `contribuidor_editorial`) pode criar discussão do próprio conteúdo sem os 10 comentários? Proposta: sim, a regra vale só para tópicos criados por usuários comuns.
-31. **Primeiro comentário:** confirma que só o primeiro comentário (até a primeira aprovação) vai para a fila, e que depois os comentários são publicados direto?
-32. **Quem fica fora da fila:** administrador e `contribuidor_editorial` publicam direto (`skip comment approval`), ou passam pela fila também?
+30. **Editor sem limite:** respondida em 2026-10-13: o editor de conteúdo não tem restrições de comentário nem editoriais (seção E7).
+31. **Primeiro comentário:** respondida em 2026-10-13: a publicação fica bloqueada até a aprovação do primeiro comentário (seção E7).
+32. **Quem fica fora da fila:** parcialmente respondida em 2026-10-13: `content_editor` fica isento. `administrator` também (padrão em `papeis_isentos`). Pergunta restante: `contribuidor_editorial` é isento ou segue a regra?
+33. **Contribuidor editorial:** segue o limite de 10 comentários e a fila do primeiro comentário, ou é isento (como o editor de conteúdo)?
+34. **Discussão do LMS:** a discussão é por curso, por lição ou por atividade? E ela já existe no módulo `lms` 1.2.3 (verificar no Homelab)?
+35. **Valores iniciais:** confirma `topico_comentarios_minimos` = 10 e os limites ligados por padrão?
 
 ## 8. Riscos e limites
 
