@@ -85,7 +85,7 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: -29
+    weight: -31
     region: content
 hidden:
   co_authors: true
