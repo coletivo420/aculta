@@ -1,3 +1,13 @@
+# Changelog — aculta_user
+
+## 0.3.0-dev.11 — discussão vinculada: plural do link e tradução correta — 2026-10-13
+
+- `DiscussionHooks`: o link "Ver discussão completa" usa plural correto (1 comentário / N comentários) e
+  tradução pelo `StringTranslationTrait`.
+- Integração com o Fórum da Revista: a publicação cria o tópico automaticamente (`aculta_magazine`); o bloco
+  de discussão desta página mostra o trecho e o link para o tópico no propósito FORUM.
+- RUNTIME STATUS: verificado no Homelab (HTTP e banco). Inspeção visual humana pendente.
+
 ## 0.3.0-dev.10 — abas de Configurações (Modo de cor e Privacidade) — 2026-10-13
 
 - Minha conta > Configurações com abas no padrão de Meus Dados: Modo de cor e Privacidade.

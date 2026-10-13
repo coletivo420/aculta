@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
@@ -22,6 +23,8 @@ use Drupal\node\NodeInterface;
  * Só comentários publicados aparecem.
  */
 final class DiscussionHooks {
+
+  use StringTranslationTrait;
 
   /** Campo de referência do conteúdo para o tópico de Fórum. */
   private const FIELD = 'field_discussao';
@@ -76,7 +79,7 @@ final class DiscussionHooks {
       'comentarios' => $items ?: ['#markup' => (string) t('Ainda não há comentários publicados.')],
       'link' => [
         '#type' => 'link',
-        '#title' => t('Ver discussão completa (@n comentários)', ['@n' => $total]),
+        '#title' => $this->formatPlural($total, 'Ver discussão completa (1 comentário)', 'Ver discussão completa (@count comentários)'),
         '#url' => $url,
       ],
       '#cache' => ['tags' => $cache->getCacheTags(), 'contexts' => $cache->getCacheContexts()],
