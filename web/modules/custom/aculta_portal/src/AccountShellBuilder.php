@@ -32,7 +32,7 @@ final class AccountShellBuilder {
     private readonly MenuLinkManagerInterface $menuLinkManager,
     private readonly TranslationInterface $translation,
     private readonly DomainPurposeManager $domainPurposeManager,
-    private readonly RouteProviderInterface $routeProvider,
+    private readonly ?RouteProviderInterface $routeProvider = NULL,
   ) {}
 
   /**
@@ -113,6 +113,9 @@ final class AccountShellBuilder {
 
   /** Verdadeiro quando a rota existe (módulo opcional ativo). O Portal não depende do submódulo. */
   private function routeExists(string $name): bool {
+    if ($this->routeProvider === NULL) {
+      return FALSE;
+    }
     try {
       $this->routeProvider->getRouteByName($name);
       return TRUE;

@@ -6,9 +6,9 @@ namespace Drupal\aculta_user\Hook;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\aculta_user\Form\AvatarRerollCallbacks;
 use Drupal\user\UserInterface;
 
@@ -19,7 +19,7 @@ final class AvatarRerollHooks {
 
   public function __construct(
     #[Autowire(service: 'current_route_match')]
-    private readonly CurrentRouteMatch $routeMatch,
+    private readonly RouteMatchInterface $routeMatch,
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
   ) {}

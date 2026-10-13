@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Hook;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\EntityViewDisplayInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -41,7 +40,7 @@ final class DiscussionHooks {
    * Implements hook_ENTITY_TYPE_view() for node entities.
    */
   #[Hook('node_view')]
-  public function nodeView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
+  public function nodeView(array &$build, EntityInterface $entity, mixed $display, string $view_mode): void {
     if (!$entity instanceof NodeInterface || $view_mode !== 'full' || !$entity->hasField(self::FIELD) || $entity->get(self::FIELD)->isEmpty()) {
       return;
     }

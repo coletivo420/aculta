@@ -6,7 +6,7 @@ namespace Drupal\aculta_user\Hook;
 
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\Avatar\AvatarPool;
-use Drupal\Core\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Transliteration\TransliterationInterface;
