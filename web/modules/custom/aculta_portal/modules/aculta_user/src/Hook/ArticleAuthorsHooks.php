@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Hook;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -31,6 +32,8 @@ final class ArticleAuthorsHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_user.public_profile_policy')]
     private readonly PublicProfilePolicy $policy,
+    #[Autowire(service: 'aculta_user.social_networks')]
+    private readonly SocialNetworks $networks,
   ) {}
 
   /**
@@ -96,6 +99,7 @@ final class ArticleAuthorsHooks {
       'apelido' => $name,
       'exibir_foto' => $flag('field_exibir_foto'),
       'exibir_bio' => $flag('field_exibir_bio'),
+      'exibir_redes' => $flag('field_exibir_redes'),
     ]);
 
     $photo = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'article-author-photo']];
@@ -123,11 +127,36 @@ final class ArticleAuthorsHooks {
         '#attributes' => ['data-portal-ui' => 'article-author-text'],
         'name' => $nameElement,
         'role' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => $role === 'author' ? (string) t('Autor') : (string) t('Coautor'), '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-role'])],
+        'social' => $this->socialIcons($profile, $items),
         'bio' => isset($items['bio']) && $profile && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()
           ? ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => (string) $profile->get('field_bio')->value, '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-bio'])]
           : [],
       ],
     ];
+  }
+
+  /**
+   * Ícones das redes preenchidas (somente ícone, clicável). Sem redes ou sem permissão de exibição, nada aparece.
+   */
+  private function socialIcons(?\Drupal\profile\Entity\ProfileInterface $profile, array $items): array {
+    if (!isset($items['redes']) || !$profile) {
+      return [];
+    }
+    $links = [];
+    foreach ($this->networks->linksOf($profile) as $key => $uri) {
+      $label = (string) SocialNetworks::NETWORKS[$key]['label'];
+      $links[] = PortalLinkElement::build('', Url::fromUri($uri), [
+        'data-portal-ui' => 'article-author-social-link-' . $key,
+        'rel' => 'noopener nofollow',
+        'target' => '_blank',
+        'aria-label' => $label,
+        'title' => $label,
+      ]);
+    }
+    if ($links === []) {
+      return [];
+    }
+    return ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'article-author-social'], 'links' => $links];
   }
 
 }

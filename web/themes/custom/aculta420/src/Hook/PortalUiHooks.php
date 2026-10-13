@@ -91,6 +91,10 @@ final class PortalUiHooks {
     'article-author-name' => ['portal-article-author__name'],
     'article-author-role' => ['portal-article-author__role'],
     'article-author-bio' => ['portal-article-author__bio'],
+    'article-author-social' => ['portal-article-author__social'],
+    'article-author-social-link-instagram' => ['portal-article-author__social-link', 'bi', 'bi-instagram'],
+    'article-author-social-link-facebook' => ['portal-article-author__social-link', 'bi', 'bi-facebook'],
+    'article-author-social-link-reddit' => ['portal-article-author__social-link', 'bi', 'bi-reddit'],
     // Perfil público (/u/<apelido>).
     'public-profile' => ['portal-profile'],
     'public-profile-header' => ['portal-profile__header'],
