@@ -347,3 +347,6 @@
     text-align: start;
   }
 }
+
+/* Modais de foto (popup e recorte): o conteúdo rola quando passa da altura máxima das opções do diálogo. */
+.ui-dialog > .ui-dialog-content { overflow-y: auto; }
