@@ -386,7 +386,9 @@
   background: transparent;
 }
 .portal-account-social__icon { font-size: 1rem; line-height: 1; }
-.portal-account-social__name { font-weight: 600; min-inline-size: 5.5rem; }
+.portal-account-social__text { display: flex; flex-direction: column; min-inline-size: 0; flex: 1 1 auto; }
+.portal-account-social__name { font-weight: 600; line-height: 1.2; }
+.portal-account-social__status { font-size: 0.75rem; font-weight: 400; line-height: 1.2; }
 .portal-account-social__value { flex: 1 1 auto; min-inline-size: 0; overflow-wrap: anywhere; }
 .portal-account-social__edit { margin-inline-start: auto; padding-block: 0; }
 /* Lápis das redes: só o ícone, sem texto; o nome da rede fica no aria-label do link. */

@@ -36,7 +36,20 @@ final class SocialLinksCard {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-social-item'],
         'icon' => $this->element('span', '', 'account-social-icon-' . $key, ['aria-hidden' => 'true']),
-        'name' => $this->element('span', $label, 'account-social-name'),
+        'text' => [
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'account-social-text'],
+          // Com link, o nome é um link para a rede (mailto: no e-mail). Sem link, só o nome.
+          'name' => isset($links[$key])
+            ? PortalLinkElement::build($label, Url::fromUri($links[$key]), [
+              'data-portal-ui' => 'account-social-name',
+              'rel' => 'noopener nofollow',
+              'target' => '_blank',
+            ])
+            : $this->element('span', $label, 'account-social-name'),
+          // Sem link: o status aparece abaixo do nome. Com link, nada é exibido (o valor fica armazenado).
+          'status' => isset($links[$key]) ? [] : $this->element('span', (string) t('Não informado'), 'account-social-status'),
+        ],
         'edit' => PortalLinkElement::build(
           '',
           Url::fromRoute('aculta_user.redes_form', ['rede' => $key]),
