@@ -96,8 +96,23 @@ manter o design em um só lugar.
 
 ## Limites conhecidos
 
-- `src/Controller/PortalRequirementsController.php` (verificação de instalação do tema) e
-  `src/Presentation/DomainPresentationBuilder.php` (caminho do logo da wiki) ainda referenciam o tema, listados em
-  `$allowedThemeReferences` do gate. O logo deve virar contrato do tema.
+- `src/Controller/PortalRequirementsController.php` (verificação de instalação do tema) ainda referencia o tema,
+  listado em `$allowedThemeReferences` do gate. É diagnóstico de ambiente, não dependência visual.
+
+## Marca de domínio (contrato neutro)
+
+- O Portal decide a marca do domínio e envia só a chave neutra em `domain_presentation.regions.brand_media`:
+  `['#brand_key' => 'wiki420', '#alt' => título]`. Nenhum caminho de tema no módulo.
+- O tema transforma a chave em imagem em `ThemeHooks::brandMediaRender()` (asset em `assets/branding/wiki420/web/`).
+- Sem tema que trate a chave, o cabeçalho mostra só o título (fallback neutro).
+- Não há alter de módulo para tema: temas não recebem `hook_*_alter` de módulos; o dado vai pelo `domain_presentation`.
+
+## Teste de compatibilidade de tema (2026-10-13)
+
+- Tema padrão trocado temporariamente para Claro (Core) no servidor de testes, e restaurado para aculta420 ao fim.
+- Com Claro: painel 200 com gatilho e avatar; popup de foto como modal centralizado (centro em 640×400 de uma tela 1280×800),
+  com prévia, texto, campo de envio e botões. Upload → recorte → aplicar: uma única requisição de recorte, navegação ao
+  painel, sem loop e sem erro de JavaScript. "Remover foto" → 303 e avatar do acervo.
+- Com aculta420 (padrão restaurado): logo do wiki voltou pelo tema (`brandMediaRender`).
 - Templates do módulo com fallback neutro: `aculta-portal-shell`, `aculta-portal-account-terms-modal`,
   `aculta-portal-photo-editor`, `portal-cart-status`, `portal-search-trigger` e `portal-element` (estrutural).

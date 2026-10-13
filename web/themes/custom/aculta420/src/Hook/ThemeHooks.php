@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta420\Hook;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Link;
@@ -13,6 +14,7 @@ use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\node\NodeInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Presentation-only hooks for ACULTA420.
@@ -24,6 +26,8 @@ final class ThemeHooks {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly RouteMatchInterface $routeMatch,
+    #[Autowire(service: 'extension.list.theme')]
+    private readonly ExtensionList $themes,
   ) {}
 
   /**
@@ -151,6 +155,41 @@ final class ThemeHooks {
   }
 
   /**
+   * Marca do domínio: o Portal envia uma chave neutra ('#brand_key'); o asset é do tema.
+   *
+   * Sem chave conhecida, o dado já é render array e segue sem alteração.
+   */
+  private function brandMediaRender(array $brandMedia): array {
+    if (($brandMedia['#brand_key'] ?? NULL) !== 'wiki420') {
+      return $brandMedia;
+    }
+    $dir = $this->themes->getPath('aculta420') . '/assets/branding/wiki420/web/';
+    if (!is_file(DRUPAL_ROOT . '/' . $dir . 'wiki420-horizontal-960w.webp')) {
+      return [];
+    }
+    // O cabeçalho mostra a logo com no máximo 18rem; o navegador escolhe a densidade.
+    $srcset = [];
+    foreach (['480w' => 480, '720w' => 720, '960w' => 960] as $suffix => $width) {
+      $srcset[] = Url::fromUri('base:' . $dir . 'wiki420-horizontal-' . $suffix . '.webp')->toString() . ' ' . $width . 'w';
+    }
+    return [
+      '#theme' => 'image',
+      '#uri' => Url::fromUri('base:' . $dir . 'wiki420-horizontal-960w.webp')->toString(),
+      '#alt' => $brandMedia['#alt'] ?? '',
+      '#width' => 960,
+      '#height' => 307,
+      '#attributes' => [
+        'data-portal-ui' => 'domain-brand-image',
+        'srcset' => implode(', ', $srcset),
+        'sizes' => '18rem',
+        // Logo acima da dobra e principal visual do cabeçalho: sem carregamento preguiçoso.
+        'loading' => 'eager',
+        'fetchpriority' => 'high',
+      ],
+    ];
+  }
+
+  /**
    * Composes stored header blocks into the current public shell.
    */
   #[Hook('preprocess_page')]
@@ -162,7 +201,7 @@ final class ThemeHooks {
       && $routeNode->bundle() === 'wiki_entry';
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
     $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
-    $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $brandMedia : [];
+    $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $this->brandMediaRender($brandMedia) : [];
     // The text fallback is only built when there is no brand media; otherwise the
     // header would show two home links (image and text) for the same destination.
     $variables['aculta_domain_brand_fallback'] = $variables['aculta_domain_brand_media'] === []

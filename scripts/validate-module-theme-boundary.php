@@ -33,8 +33,6 @@ $assert = static function (bool $ok, string $message) use (&$failures, &$checks)
 $allowedThemeReferences = [
   // Verificação de ambiente: o relatório de requisitos mostra se o tema está instalado. Não é dependência visual.
   'src/Controller/PortalRequirementsController.php',
-  // Logo da wiki vem de um caminho do tema. Dívida: deve virar contrato do tema (DT do registro de dívidas).
-  'src/Presentation/DomainPresentationBuilder.php',
 ];
 
 /** Cliquet: marcação de apresentação (classes Bootstrap/utilitárias) dentro de atributos de classe do módulo. */

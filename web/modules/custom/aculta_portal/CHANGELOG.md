@@ -1,3 +1,10 @@
+## 0.4.0-dev.8 — separação módulo x tema: marca de domínio neutra — 2026-10-13
+
+- `DomainPresentationBuilder` não referencia mais o tema: envia `brand_media` como `['#brand_key' => 'wiki420', '#alt' => título]`. O asset e a imagem são montados pelo tema (aculta420 0.6.0-dev.17). Sem tema que trate a chave, o cabeçalho usa só o título.
+- Gate `validate-module-theme-boundary` sem exceção para o builder (regra 1 passa a valer).
+- Teste de compatibilidade com o tema Claro: painel, foto (modal, recorte, remover) funcionam sem o ACULTA420.
+- `aculta_portal.info.yml` 0.4.0-dev.8. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.7 — integração da apresentação enciclopédica da Wiki — 2026-10-13
 
 - O Portal deixa de incluir nome do autor na lista de alterações recentes da

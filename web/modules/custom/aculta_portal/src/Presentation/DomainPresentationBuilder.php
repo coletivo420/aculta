@@ -6,7 +6,6 @@ namespace Drupal\aculta_portal\Presentation;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
@@ -97,35 +96,9 @@ final class DomainPresentationBuilder {
       ])
       ->addCacheableDependency($domain);
 
-    // Purpose-specific asset choice belongs to the Portal; the theme only
-    // receives an access-safe render array and does not inspect host/purpose.
-    $brandMedia = NULL;
-    if ($purpose === 'wiki') {
-      $logoDir = 'themes/custom/aculta420/assets/branding/wiki420/web/';
-      $variants = ['480w' => 480, '720w' => 720, '960w' => 960];
-      if (is_file(DRUPAL_ROOT . '/' . $logoDir . 'wiki420-horizontal-960w.webp')) {
-        // The header shows the logo at most 18rem wide; the browser picks the density.
-        $srcset = [];
-        foreach ($variants as $suffix => $width) {
-          $srcset[] = Url::fromUri('base:' . $logoDir . 'wiki420-horizontal-' . $suffix . '.webp')->toString() . ' ' . $width . 'w';
-        }
-        $brandMedia = [
-          '#theme' => 'image',
-          '#uri' => Url::fromUri('base:' . $logoDir . 'wiki420-horizontal-960w.webp')->toString(),
-          '#alt' => $title,
-          '#width' => 960,
-          '#height' => 307,
-          '#attributes' => [
-            'data-portal-ui' => 'domain-brand-image',
-            'srcset' => implode(', ', $srcset),
-            'sizes' => '18rem',
-            // The logo is above the fold and is the header's main visual: no lazy loading.
-            'loading' => 'eager',
-            'fetchpriority' => 'high',
-          ],
-        ];
-      }
-    }
+    // O Portal decide qual marca o domínio usa e informa só a chave neutra; o asset e a forma da imagem são do tema
+    // (ThemeHooks::brandMediaRender). Sem tema que trate a chave, o cabeçalho usa só o título.
+    $brandMedia = $purpose === 'wiki' ? ['#brand_key' => 'wiki420', '#alt' => $title] : NULL;
 
     return new DomainPresentation(
       [
