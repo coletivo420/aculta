@@ -14,7 +14,7 @@ Escopo: avatar, perfil público e autoria, integração com Wiki, Fórum e revis
 | Conexões sociais | `social_auth` e `social_auth_google`; rota `/conexoes` | Existe. |
 | Fórum | `forum` 1.1.3, `flag` 5.1.1, flags `seguir_topico` e `salvar_topico` (`0.2.0-dev.57`) | Adotado. Sem página "Atividade". |
 | Wiki | Nó `wiki_entry`, papéis `wiki_contributor` e `wiki_editor`, workflow `wiki_editorial`, módulo `diff` | Existe. Sem "Minhas contribuições". |
-| Revista | Nós `article` (Notícia), `document`, `activity`, `project`; autor = `node.uid` | Autor vem do Core, sem página de autor. Rota `/u/<apelido>` só está nos slugs candidatos (`FRIENDLY-PORTUGUESE-SLUGS.md`). |
+| Revista | Nós `article` (Notícia), `document`, `activity`, `project`; autor = `node.uid` | Autor vem do Core, sem página de autor. Perfil público em `/u/<apelido>`, exceção registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`; sem rota no código ainda. |
 | Notificações | Symfony Mailer (`symfony_mailer`, Mailer Plus) | Transporte pronto. Sem assinaturas. |
 | Gamificação, seguir pessoas, menções, denúncia | Não existem | `DT-P13`: denúncia de comentários pendente. |
 | Anti-abuso | `flood_control`, Turnstile, `username_enumeration_prevention` | Existe. |
@@ -124,8 +124,11 @@ Serviços previstos (nomes provisórios):
 - Moderação de imagem enviada pela pessoa fica fora desta fase; Core não a oferece.
 
 ### B. Perfil público e autoria
-- Página `/u/<apelido>` (decisão do responsável, 2026-10-13: o perfil fica em `aculta.*/u/<apelido>`) com foto, nome público (apelido), resumo curto, papel na associação (quando houver) e listas de contribuições.
-- Campos novos no perfil `participante`: `field_bio` (texto curto) e `field_visibilidade_publica` (booleano, padrão falso). O apelido (`field_nickname`) passa a ser **único** e é o caminho público `/u/<apelido>`. Não há campo de slug separado. Pathauto gera o alias a partir do apelido (a confirmar no Homelab, U0).
+- Página `/u/<apelido>` (caminho confirmado pelo responsável em 2026-10-13; proposta de host: `aculta.*/u/<apelido>`) com foto, nome público (apelido), resumo curto, papel na associação (quando houver) e listas de contribuições.
+- **Host e purpose ainda não definidos** (decisão 5). Enquanto não houver decisão, nenhum host é fixado no código. Pela política de domínio, rota pública em host de outro purpose responde 404 (`ADMIN-DOMAIN-POLICY.md`, `CROSS-DOMAIN-REQUEST-POLICY.md`).
+- Campos novos no perfil `participante`: `field_bio` (texto curto) e `field_visibilidade_publica` (booleano, padrão falso). Não há campo de slug separado: o caminho público é o próprio apelido (`field_nickname`).
+- **Unicidade do apelido:** `field_nickname` é texto livre, opcional, sem restrição de unicidade em `config/sync/field.field.profile.participante.field_nickname.yml` e sem validação de unicidade no `aculta_portal` (o `PortalHooks` só limita os campos exibidos no formulário). A unicidade deve ser garantida **por validação** no formulário e no cadastro, antes de o Pathauto gerar o alias. Não se deve depender do Pathauto para isso: quando um alias já existe, o `AliasUniquifier` acrescenta sufixo numérico (`web/modules/contrib/pathauto/src/AliasUniquifier.php:91-93`), o que muda o caminho público e viola a regra de slug estável.
+- Pathauto gera o alias a partir do apelido (token `[user:participante:field_nickname]`; verificação de geração no Runtime pendente, U0 e U1).
 - **Nunca público:** e-mail, CPF, endereço, WhatsApp, nome completo, cidade e UF (decisão 2).
 - Alteração de slug troca o caminho e o antigo responde 404, sem 301 (`FRIENDLY-PORTUGUESE-SLUGS.md`). Por isso, o módulo `redirect` precisa ficar **fora** da criação automática de redirect quando o Pathauto mudar um alias.
 
@@ -459,11 +462,16 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 38. **Criação dos tópicos do LMS:** respondida em 2026-10-13: os tópicos de curso e de atividade são criados por quem tem autorização para criar cursos.
 39. **Consentimento do nome em históricos:** o nome de exibição de quem revisou verbete aparece no histórico público mesmo com perfil privado? Proposta: sim, porque é a regra da Wiki (histórico público); a pessoa é informada ao criar a conta.
 40. **Perfil privado acessado por URL:** 404 (não revela que o perfil existe) ou 403? Proposta: 404.
+41. **Caminho do perfil:** respondida em 2026-10-13: `/u/<apelido>` é confirmado como exceção registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`.
+42. **Apelido no cadastro:** o apelido é pedido no cadastro, ou gerado e trocado depois em Configurações? Proposta: gerado no cadastro e trocável depois.
+43. **Contas existentes:** autoriza o update hook que cria perfil e apelido para todas as contas atuais, depois de backup do Runtime?
+44. **Palavras reservadas:** a lista proposta basta, ou há outras rotas a reservar?
 
 ## 8. Riscos e limites
 
 - Compatibilidade D11 de todos os candidatos novos: **não confirmada** nesta sessão (bloqueio de egress em `drupal.org`).
-- Código do Core e do contrib não está presente neste workspace; APIs citadas aqui (Flag `entity:user`, Pathauto para perfil, Views de `node_field_revision`) devem ser confirmadas no Homelab em U0.
+- Core 11.4.8 e contrib estão instalados no Homelab. As APIs citadas foram verificadas por leitura de código em U0 (`docs/portal/ACULTA-USER-U0-VERIFICACAO.md`). Continuam **não confirmadas**: a unicidade de alias gerado pelo Pathauto e a geração real de alias no Runtime; ambas exigem teste em U1.
+- Revisão de U0 corrigiu premissas deste plano: `revision_uid` fica em `node_revision`, não em `node_field_revision`; `skip comment approval` não distingue o primeiro comentário; `lms_activity` não tem campo de comentário.
 - O módulo `redirect` pode criar redirect automático quando o Pathauto troca um alias. Isso conflita com a regra de slug sem 301. Precisa ser desligado para os aliases de autor.
 - Dados pessoais e LGPD: a ativação de perfil público e de notificações depende de decisão do responsável e de revisão de texto de consentimento.
 - Gamificação mal desenhada pode expor participação e apoio. O risco está em métricas, não só na interface.
@@ -473,16 +481,12 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 
 **Decisão do responsável (2026-10-13):** funcionalidades que ainda não existem serão implementadas. Inclui as seções E2 a E7, A1, G2 e o cartão de pré-visualização do verbete.
 
-**Bloqueio para verificação (registrado em 2026-10-13):**
+**Status do bloqueio (atualizado após U0):** o bloqueio de 2026-10-13 não existe mais. O Homelab tem `composer install` concluído, Core 11.4.8 e Drush respondendo, com acesso ao banco `aculta_runtime`. Nenhum item deste plano foi validado no Runtime.
 
-- `packages.drupal.org` (repositório Composer do Drupal, declarado em `composer.json`) responde 403 pela política de egress da sessão. `repo.packagist.org` falha no túnel. Sem isso não há `composer install`, e portanto não há Core nem contrib para verificar APIs.
-- O código do Core e do contrib não está neste workspace (`web/core`, `vendor/` ausentes). Escrever PHP aqui sem poder rodar nem conferir APIs contraria `GUARDRAILS.md` e as regras de encerramento de fase.
-- Não há Runtime acessível a partir desta sessão.
+**Status da ordem de implementação (cada item é um PR próprio, `RUNTIME STATUS: DEFERRED` até validação no Homelab):**
 
-**Ordem de implementação (cada item é um PR próprio, `RUNTIME STATUS: DEFERRED` até validação no Homelab):**
-
-1. **U0 (no Homelab):** `composer install`, verificação de Flag com `entity:user`, Pathauto com perfil, Views de `node_field_revision` e de comentários, e do módulo `lms` 1.2.3 (discussão).
-2. **Configuração de papéis (sem código):** `content_editor` (com `wiki_editor`, `administer comments`, `edit any forum content`); `wiki_contributor` para `email_confirmed`; `revert wiki_entry revisions` para `wiki_editor`.
+1. **U0 (no Homelab): concluído** no branch `aculta-user-u0` (commit `6d11bb2`, publicado, sem PR). Relatório: `docs/portal/ACULTA-USER-U0-VERIFICACAO.md`. Parada registrada: `lms_activity` não tem discussão nem comentário.
+2. **Configuração de papéis:** **parcial**, no branch `aculta-user-papeis` (commit `0fc367a`, `RUNTIME STATUS: DEFERRED`). Feito: `content_editor` recebe as permissões de `wiki_editor`, `administer comments` e `edit any forum content` (sem `administer forums`); `wiki_editor` recebe `revert wiki_entry revisions`; gate `scripts/validate-aculta-user-roles.php`. **Pendente:** `wiki_contributor` para `email_confirmed`. Drupal não mapeia papel para papel; a forma de conceder (hook de atribuição ou outra) é decisão do responsável.
 3. **Participação e Fórum:** tópico vinculado (E3), limite de 10 comentários e fila do primeiro comentário com painel administrativo (E7), e cartão de pré-visualização (E6).
 4. **Atividade:** seção com abas (E2), histórico individual e progresso de limites.
 5. **Perfil, avatar e associado:** perfil público, acervo de avatares (com a família `mushrooms` resolvida), papel `associado`, campos de "Outros Dados" (A1).
@@ -496,7 +500,6 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 42. **Apelido no cadastro:** o apelido é pedido no cadastro, ou gerado e trocado depois em Configurações? Proposta: gerado no cadastro e trocável depois.
 43. **Contas existentes:** respondida nesta sessão de forma parcial: apelidos provisórios `pessoa-1` e `pessoa-5` foram criados no Runtime para as duas contas sem apelido (backup prévio em `scratchpad`). Não há update hook versionado para contas futuras.
 44. **Palavras reservadas:** a lista proposta basta, ou há outras rotas a reservar?
-
 45. **Skip CAPTCHA:** respondida nesta sessão: manter `skip CAPTCHA` só em `email_confirmed`; `authenticated` não muda. Wiki: `wiki_contributor` segue `email_confirmed` em todos os casos (decisão 28).
 
 ## 10. Decisões de cadastro, avatar e associado (2026-10-12)

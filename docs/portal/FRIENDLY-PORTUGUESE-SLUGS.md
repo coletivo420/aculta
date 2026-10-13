@@ -147,7 +147,7 @@ Conteúdo editorial deve evitar aliases técnicos de entidade.
 Padrões candidatos:
 
 - artigos por título;
-- `/autores/<nome>`;
+- perfil de autor em `/u/<apelido>` (não `/autores/<nome>`; ver "Exceção registrada: perfil público");
 - `/categorias/<termo>`;
 - `/arquivo` quando houver;
 - landing pages editoriais em português.
