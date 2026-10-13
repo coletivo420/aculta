@@ -65,10 +65,10 @@ final class SocialLinkForm extends FormBase {
     ];
     $form['rede'] = ['#type' => 'hidden', '#value' => $rede];
     $form['link'] = [
-      '#type' => $definition['type'] === 'email' ? 'email' : 'url',
+      '#type' => 'url',
       '#title' => $definition['label'],
       '#description' => $this->t('Deixe vazio para remover. Use o endereço completo da sua página.'),
-      '#default_value' => $definition['type'] === 'email' ? preg_replace('/^mailto:/i', '', $current) : $current,
+      '#default_value' => $current,
       '#maxlength' => 255,
     ];
     $form['actions'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'account-bio-actions']];

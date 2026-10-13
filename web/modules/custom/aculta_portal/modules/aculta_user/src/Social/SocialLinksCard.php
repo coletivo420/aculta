@@ -39,7 +39,7 @@ final class SocialLinksCard {
         'text' => [
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'account-social-text'],
-          // Com link, o nome é um link para a rede (mailto: no e-mail). Sem link, só o nome.
+          // Com link, o nome é um link para a rede. Sem link, só o nome.
           'name' => isset($links[$key])
             ? PortalLinkElement::build($label, Url::fromUri($links[$key]), [
               'data-portal-ui' => 'account-social-name',
@@ -89,9 +89,6 @@ final class SocialLinksCard {
    * Valor curto para exibir: o endereço do e-mail, ou o host e o caminho do link.
    */
   private function shortValue(string $key, string $uri): string {
-    if ($key === 'email') {
-      return preg_replace('/^mailto:/i', '', $uri) ?? $uri;
-    }
     $host = (string) parse_url($uri, PHP_URL_HOST);
     $path = rtrim((string) parse_url($uri, PHP_URL_PATH), '/');
     return $host . $path;

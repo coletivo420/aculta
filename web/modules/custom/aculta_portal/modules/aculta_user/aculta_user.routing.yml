@@ -104,7 +104,7 @@ aculta_user.redes_form:
     _title: 'Editar rede social'
   requirements:
     _custom_access: 'aculta_user.account_modal_access:access'
-    rede: 'instagram|facebook|email|reddit'
+    rede: 'instagram|facebook|reddit'
   options:
     _aculta_domain_purpose: 'account'
 

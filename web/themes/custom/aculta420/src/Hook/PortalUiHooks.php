@@ -83,7 +83,6 @@ final class PortalUiHooks {
     'account-social-item' => ['portal-account-social__item'],
     'account-social-icon-instagram' => ['portal-account-social__icon', 'bi', 'bi-instagram'],
     'account-social-icon-facebook' => ['portal-account-social__icon', 'bi', 'bi-facebook'],
-    'account-social-icon-email' => ['portal-account-social__icon', 'bi', 'bi-envelope'],
     'account-social-icon-reddit' => ['portal-account-social__icon', 'bi', 'bi-reddit'],
     'account-social-text' => ['portal-account-social__text'],
     'account-social-name' => ['portal-account-social__name'],

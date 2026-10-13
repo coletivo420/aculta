@@ -7,10 +7,10 @@ namespace Drupal\aculta_user\Social;
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
- * Redes sociais do perfil: Instagram, Facebook, E-mail e Reddit.
+ * Redes sociais do perfil: Instagram, Facebook e Reddit.
  *
  * Os links ficam no campo field_redes_sociais (link, múltiplo). A rede é reconhecida pelo host do link
- * (e-mail pelo esquema mailto:). Não há campo novo por rede. O módulo não emite classes de design:
+ * Não há campo novo por rede. O módulo não emite classes de design:
  * o ícone de cada rede é um token (account-social-icon-<rede>) mapeado no ACULTA420.
  */
 final class SocialNetworks {
@@ -22,16 +22,12 @@ final class SocialNetworks {
     'instagram' => ['label' => 'Instagram', 'type' => 'url', 'hosts' => ['instagram.com']],
     'facebook' => ['label' => 'Facebook', 'type' => 'url', 'hosts' => ['facebook.com', 'fb.com', 'fb.me']],
     'reddit' => ['label' => 'Reddit', 'type' => 'url', 'hosts' => ['reddit.com', 'redd.it']],
-    'email' => ['label' => 'E-mail', 'type' => 'email', 'hosts' => []],
   ];
 
   /**
    * Chave da rede de um link, ou NULL se não for de uma rede suportada.
    */
   public function keyForUri(string $uri): ?string {
-    if (str_starts_with(strtolower($uri), 'mailto:')) {
-      return 'email';
-    }
     $host = strtolower((string) parse_url($uri, PHP_URL_HOST));
     $host = preg_replace('/^www\./', '', $host) ?? $host;
     foreach (self::NETWORKS as $key => $definition) {
@@ -76,13 +72,6 @@ final class SocialNetworks {
     $input = trim($input);
     if ($input === '') {
       return NULL;
-    }
-    if ($key === 'email') {
-      $address = preg_replace('/^mailto:/i', '', $input) ?? $input;
-      if (filter_var($address, FILTER_VALIDATE_EMAIL) === FALSE) {
-        throw new \InvalidArgumentException('Informe um e-mail válido.');
-      }
-      return 'mailto:' . $address;
     }
     if (!preg_match('~^https?://~i', $input)) {
       $input = 'https://' . $input;
