@@ -22,3 +22,13 @@ aculta_user.participacao_settings:
     _title: 'Regras de participação'
   requirements:
     _permission: 'administer aculta participacao'
+
+aculta_user.atividade:
+  path: '/atividade/{aba}'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ActivityController::view'
+    _title: 'Atividade'
+    aba: 'wiki'
+  requirements:
+    _permission: 'access aculta portal'
+    aba: 'wiki|forum|revista|comentarios|conquistas'

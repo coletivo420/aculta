@@ -8,6 +8,8 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Routing\RouteProviderInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 
@@ -30,6 +32,7 @@ final class AccountShellBuilder {
     private readonly MenuLinkManagerInterface $menuLinkManager,
     private readonly TranslationInterface $translation,
     private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly RouteProviderInterface $routeProvider,
   ) {}
 
   /**
@@ -51,6 +54,7 @@ final class AccountShellBuilder {
       'aculta_portal.dashboard' => ['title' => $this->translation->translate('Visão geral'), 'route' => 'aculta_portal.dashboard', 'icon' => 'grid'],
       'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my', 'icon' => 'heart'],
       'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses', 'icon' => 'mortarboard'],
+      ...($this->routeExists('aculta_user.atividade') ? ['aculta_user.atividade' => ['title' => $this->translation->translate('Atividade'), 'route' => 'aculta_user.atividade', 'icon' => 'activity']] : []),
       'view.commerce_user_orders.order_page' => ['title' => $this->translation->translate('Meus pedidos'), 'route' => 'view.commerce_user_orders.order_page', 'icon' => 'bag'],
       'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data', 'icon' => 'person-vcard'],
       'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections', 'icon' => 'link-45deg'],
@@ -104,6 +108,18 @@ final class AccountShellBuilder {
     // The shell owns the only H1. Keep account actions in its sidebar.
     $variables['aculta_page_title'] = [];
     $variables['aculta_account_menu'] = [];
+  }
+
+
+  /** Verdadeiro quando a rota existe (módulo opcional ativo). O Portal não depende do submódulo. */
+  private function routeExists(string $name): bool {
+    try {
+      $this->routeProvider->getRouteByName($name);
+      return TRUE;
+    }
+    catch (RouteNotFoundException) {
+      return FALSE;
+    }
   }
 
 }

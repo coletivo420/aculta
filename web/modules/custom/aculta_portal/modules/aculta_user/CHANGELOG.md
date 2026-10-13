@@ -1,3 +1,15 @@
+## 0.2.0-dev.2 — Atividade em Minha Conta (fase 4, RUNTIME STATUS: DEFERRED) — 2026-10-12
+
+- Rota `/atividade/{aba}` (wiki, forum, revista, comentarios, conquistas), só no propósito `account`. Cada aba lista
+  só o que a própria pessoa fez e ainda está publicado; sem atividade de outra pessoa. Abas são links com a aba atual
+  marcada (sem JavaScript). Vazio: mensagem curta.
+- Wiki: verbetes publicados em que a pessoa tem revisão, com link para o histórico público do verbete.
+- Item "Atividade" no menu da conta (`AccountShellBuilder`), depois de "Cursos". Aparece só se a rota existir: o Portal
+  não depende do submódulo.
+- Conquistas: placeholder até a fase 6 (badges).
+- Pendências: flags de tópico seguido e salvo na aba Fórum; explicação dos limites de participação na aba; nome do
+  item de menu e slugs das abas (decisão 20, usados os padrões do plano); verificação no Runtime (DEFERRED).
+
 ## 0.2.0-dev.1 — participação no Fórum (fase 3, RUNTIME STATUS: DEFERRED) — 2026-10-12
 
 - Regras de participação (`ParticipationRules`, derivadas de contagens, sem contador persistido): comentário de Fórum

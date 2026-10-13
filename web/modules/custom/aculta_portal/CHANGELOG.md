@@ -1,3 +1,8 @@
+## 0.4.0-dev.3 — Atividade em Minha Conta (aculta_user 0.2.0-dev.2) — 2026-10-12
+
+- Item "Atividade" no menu da conta, condicionado à existência da rota do submódulo `aculta_user`.
+- `aculta_portal.info.yml` 0.4.0-dev.3. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.2 — participação no Fórum e discussão vinculada (aculta_user 0.2.0-dev.1) — 2026-10-12
 
 - Submódulo `aculta_user` 0.2.0-dev.1: moderação do primeiro comentário, limite de tópico, painel de regras e
