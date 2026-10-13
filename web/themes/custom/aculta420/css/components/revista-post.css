@@ -74,3 +74,59 @@
   .node--view-mode-full .field--name-field-media-image img { max-inline-size: 100%; }
   .node--view-mode-full .field--name-field-subtitle { font-size: 1.25rem; }
 }
+
+/* Cabeçalho da postagem: título menor e centralizado; faixa com autor, data e hora; compartilhamento. */
+.page-node-type-article .aculta-page-heading h1,
+.page-node-type-blog .aculta-page-heading h1 {
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  line-height: 1.15;
+  text-align: center;
+  max-inline-size: 42ch;
+  margin-inline: auto;
+}
+.node--view-mode-full .portal-post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-block: 1rem 0.5rem;
+  padding-block: 0.75rem;
+  border-block: 1px solid var(--aculta-border-subtle);
+  font-size: 0.9375rem;
+}
+.node--view-mode-full .portal-post__meta-item::before { margin-inline-end: 0.35rem; }
+.node--view-mode-full .portal-post__share { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-inline-start: auto; }
+.node--view-mode-full .portal-post__share-link + .portal-post__share-link { margin-inline-start: 0; }
+.node--view-mode-full .portal-post__share-label { font-weight: 600; margin-inline-end: 0.25rem; }
+.node--view-mode-full .portal-post__share-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: 50%;
+  font-size: 0;
+  color: var(--aculta-interactive-text);
+  border: 1px solid var(--aculta-border-subtle);
+  background: var(--aculta-surface-muted);
+  text-decoration: none;
+}
+.node--view-mode-full .portal-post__share-link::before { font-size: 1.125rem; line-height: 1; }
+.node--view-mode-full .portal-post__share-link--whatsapp { background: var(--aculta-status-ok-surface); }
+.node--view-mode-full .portal-post__share-link--telegram,
+.node--view-mode-full .portal-post__share-link--facebook { background: var(--aculta-surface-interactive); }
+.node--view-mode-full .portal-post__share-link--reddit { background: var(--aculta-status-error-surface); }
+.node--view-mode-full .portal-post__share-link--email { background: var(--aculta-button-primary-bg); color: var(--aculta-button-primary-text); }
+.node--view-mode-full .portal-post__share-link:hover,
+.node--view-mode-full .portal-post__share-link:focus-visible { outline: 2px solid var(--aculta-interactive-border); outline-offset: 2px; }
+
+/* Resumo: caixa própria, separada da chamada e do corpo. */
+.node--view-mode-full .field--name-field-summary {
+  margin-block: 1.25rem 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: var(--aculta-surface-muted);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}

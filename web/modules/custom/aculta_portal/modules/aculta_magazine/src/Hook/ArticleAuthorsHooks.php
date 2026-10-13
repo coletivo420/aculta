@@ -7,6 +7,7 @@ namespace Drupal\aculta_magazine\Hook;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_magazine\Presentation\PostPresentation;
 use Drupal\aculta_magazine\Revista\RevistaPublications;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -35,6 +36,8 @@ final class ArticleAuthorsHooks {
     private readonly PublicProfilePolicy $policy,
     #[Autowire(service: 'aculta_user.social_networks')]
     private readonly SocialNetworks $networks,
+    #[Autowire(service: 'aculta_magazine.post_presentation')]
+    private readonly PostPresentation $presentation,
   ) {}
 
   /**
@@ -48,6 +51,9 @@ final class ArticleAuthorsHooks {
     if ($view_mode !== 'full' || $this->purposeManager->getCurrentPurpose() !== 'magazine') {
       return;
     }
+
+    // Cabeçalho da publicação (data, autor, compartilhamento) e caixa de autores.
+    $this->presentation->build($build, $entity);
 
     $cache = (new CacheableMetadata())->addCacheableDependency($entity);
     $authors = [];

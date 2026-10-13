@@ -53,3 +53,12 @@ foto e bio só quando exibidas, ícones só das redes preenchidas e exibidas. E-
 O submódulo não tem CSS nem classes de design: todo elemento sai com `data-portal-ui` e o tema traduz.
 Os displays (`core.entity_view_display.node.*.full`) definem quais campos aparecem e em que ordem; a aparência é do tema.
 Referência de leitura usada: largura de linha entre 60 e 75 caracteres (Piccalilli, "Limit line lengths to increase readability").
+
+## Cabeçalho da postagem e compartilhamento (função)
+
+- `src/Presentation/PostPresentation.php` (serviço, chamado pelo hook `node_view` de `ArticleAuthorsHooks`):
+  faixa com autor, data e hora (fuso do site) e os botões de compartilhamento (WhatsApp, Telegram, Facebook,
+  Reddit e e-mail), com links montados a partir da URL canônica da publicação.
+- Só um hook `node_view` por módulo: novas funções de exibição entram como serviço chamado por esse hook.
+- Aparência (círculos, cores por rede, título e faixa) é do ACULTA420 (`revista-post.css`), com tokens semânticos.
+- Data: `field_published_at` é guardado em UTC; ao preencher manualmente, use o horário UTC (ex.: 19:32 de Brasília = 22:32 UTC).

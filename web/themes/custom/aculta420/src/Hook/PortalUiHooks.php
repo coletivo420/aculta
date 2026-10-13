@@ -80,6 +80,18 @@ final class PortalUiHooks {
     // Visão geral da Minha conta: ação "Ver Perfil" no topo (botão secundário, borda visível, foco por teclado).
     'account-overview-actions' => ['portal-account-overview__actions'],
     'account-view-profile' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
+    // Cabeçalho da postagem da Revista (metainformação e compartilhamento).
+    'post-meta' => ['portal-post__meta'],
+    'post-meta-author' => ['portal-post__meta-item', 'bi', 'bi-person-circle'],
+    'post-meta-date' => ['portal-post__meta-item', 'bi', 'bi-calendar3'],
+    'post-meta-time' => ['portal-post__meta-item', 'bi', 'bi-clock'],
+    'post-share' => ['portal-post__share'],
+    'post-share-label' => ['portal-post__share-label'],
+    'post-share-whatsapp' => ['portal-post__share-link', 'portal-post__share-link--whatsapp', 'bi', 'bi-whatsapp'],
+    'post-share-telegram' => ['portal-post__share-link', 'portal-post__share-link--telegram', 'bi', 'bi-telegram'],
+    'post-share-facebook' => ['portal-post__share-link', 'portal-post__share-link--facebook', 'bi', 'bi-facebook'],
+    'post-share-reddit' => ['portal-post__share-link', 'portal-post__share-link--reddit', 'bi', 'bi-reddit'],
+    'post-share-email' => ['portal-post__share-link', 'portal-post__share-link--email', 'bi', 'bi-envelope'],
     // Caixa de autores da publicação da Revista.
     'article-authors' => ['portal-article-authors'],
     'article-authors-title' => ['portal-article-authors__title'],
