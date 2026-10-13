@@ -1,0 +1,29 @@
+uuid: 61f79903-8541-4fce-8982-ea0eb34d8060
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_discussao
+    - node.type.wiki_entry
+  module:
+    - node
+id: node.wiki_entry.field_discussao
+field_name: field_discussao
+entity_type: node
+bundle: wiki_entry
+label: 'Discussão (tópico do Fórum)'
+description: 'Tópico de Fórum que reúne a discussão deste conteúdo. Vazio: sem bloco de discussão.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      forum: forum
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

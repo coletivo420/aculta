@@ -1,3 +1,19 @@
+## 0.2.0-dev.1 — participação no Fórum (fase 3, RUNTIME STATUS: DEFERRED) — 2026-10-12
+
+- Regras de participação (`ParticipationRules`, derivadas de contagens, sem contador persistido): comentário de Fórum
+  de quem não tem comentário publicado vai para a fila de moderação (`comment_presave`); os seguintes são publicados.
+- Criação de tópico de Fórum exige comentários publicados (padrão 10) e fica bloqueada enquanto o primeiro comentário
+  aguarda aprovação (`entity_create_access`). Mensagem de bloqueio no próprio acesso; a explicação na Atividade fica
+  para a fase 4.
+- Painel `/admin/config/aculta/portal/participacao` (permissão `administer aculta participacao`), com
+  `aculta_user.settings`: limite ligado/desligado, mínimo, primeiro comentário moderado, bloqueio e papéis isentos
+  (padrão: `content_editor` e `administrator`).
+- Discussão vinculada: campo `field_discussao` (referência a tópico de Fórum) em `article`, `activity`, `project`,
+  `document` e `wiki_entry`. A página mostra os últimos 5 comentários publicados e o link para a discussão completa no
+  propósito `forum` (via `DomainPurposeManager`). Sem tópico, não há bloco.
+- Pendências: configuração e campo ainda não aplicados no Runtime (`config:import` exige autorização); matriculados
+  (fase LMS); cartão de pré-visualização (E6), que depende de apresentação no ACULTA420; testes (ao final da série).
+
 # Changelog — aculta_user
 
 ## 0.1.0-dev.1 — perfil público por apelido (U1, RUNTIME STATUS: DEFERRED) — 2026-10-12

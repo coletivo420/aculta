@@ -14,3 +14,11 @@ aculta_user.configuracoes_perfil:
     _title: 'Perfil e privacidade'
   requirements:
     _permission: 'access aculta portal'
+
+aculta_user.participacao_settings:
+  path: '/admin/config/aculta/portal/participacao'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\ParticipationSettingsForm'
+    _title: 'Regras de participação'
+  requirements:
+    _permission: 'administer aculta participacao'

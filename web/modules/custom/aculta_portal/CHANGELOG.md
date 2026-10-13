@@ -1,3 +1,9 @@
+## 0.4.0-dev.2 — participação no Fórum e discussão vinculada (aculta_user 0.2.0-dev.1) — 2026-10-12
+
+- Submódulo `aculta_user` 0.2.0-dev.1: moderação do primeiro comentário, limite de tópico, painel de regras e
+  discussão vinculada aos conteúdos. RUNTIME STATUS: DEFERRED (ver o CHANGELOG do submódulo).
+- `aculta_portal.info.yml` 0.4.0-dev.2.
+
 ## 0.4.0-dev.1 — submódulo aculta_user: perfil público em /u/<apelido> — 2026-10-12
 
 - Adiciona o submódulo `aculta_user` 0.1.0-dev.1 (ver o CHANGELOG do submódulo). Rota `/u/{apelido}`, política de

@@ -1,3 +1,6 @@
 services:
   aculta_user.public_profile_policy:
     class: Drupal\aculta_user\PublicProfilePolicy
+  aculta_user.participation_rules:
+    class: Drupal\aculta_user\ParticipationRules
+    arguments: ['@config.factory', '@entity_type.manager']
