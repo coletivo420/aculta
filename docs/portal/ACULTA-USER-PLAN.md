@@ -320,10 +320,10 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 21. **Histórico:** respondida em 2026-10-13: o histórico do verbete é público; a reversão é do `wiki_editor`; o histórico de atividade de cada pessoa é individual.
 22. **Comentários:** respondida em 2026-10-13: comentários moram só nas discussões do Fórum; o conteúdo mostra trecho com link para a discussão completa (seção E3).
 23. **Administrador:** respondida em 2026-10-13: o administrador vê só a própria atividade.
+24. **Tópico de discussão:** criação manual pelo editor ou pelo `wiki_editor`, ou automática para todo verbete? Qual tipo de conteúdo recebe discussão (verbete, artigo, atividade, projeto)?
 25. **Papel `autor`:** quem concede: administrador, editor de conteúdo, ou automático na primeira publicação de artigo?
 26. **Função do autor na Wiki:** `wiki_editor` (como pedido: edita qualquer verbete e publica) ou `wiki_contributor` (cria e edita só o próprio)? A segunda opção evita que autor de revista edite verbetes de outras pessoas. Recomendação: `wiki_contributor`.
 27. **Mão dupla:** o bloco "Citado em" no verbete entra?
-24. **Tópico de discussão:** criação manual pelo editor ou pelo `wiki_editor`, ou automática para todo verbete? Qual tipo de conteúdo recebe discussão (verbete, artigo, atividade, projeto)?
 
 ## 8. Riscos e limites
 
