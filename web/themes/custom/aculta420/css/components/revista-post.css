@@ -98,7 +98,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem 1.5rem;
-  margin-block: 0.5rem 0.5rem;
+  margin-block: 0;
   padding-block: 0.75rem;
   border-block-end: 1px solid var(--aculta-border-subtle);
   font-size: 0.9375rem;
@@ -131,7 +131,7 @@
 
 /* Resumo: caixa própria, separada da chamada e do corpo. */
 .node--view-mode-full .field--name-field-summary {
-  margin-block: 0 0.5rem;
+  margin-block: 0 0;
   padding: 1.25rem 1.5rem;
   border: 0;
   border-radius: 0.75rem;
