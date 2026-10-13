@@ -64,8 +64,8 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `mercadopago_test_access_token` | `MERCADOPAGO_TEST_ACCESS_TOKEN` | Testes | Sim | plain |
 | `mercadopago_test_buyer_password` | `MERCADOPAGO_TEST_BUYER_PASSWORD` | Testes | Sim, senha do comprador de teste | plain |
 | `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Testes | Sim, contém secret | Base64 |
-| `aculta_id_cpf_fingerprint` | `ACULTA_ID_CPF_FINGERPRINT_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave HMAC do índice de unicidade de CPF/CNPJ (mínimo de 32 bytes) | plain |
-| `aculta_document_encryption_key` | `ACULTA_DOCUMENT_ENCRYPTION_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave de cifra de CPF/CNPJ (64 caracteres hexadecimais) | plain |
+| `aculta_id_cpf_fingerprint` | `ACULTA_ID_CPF_FINGERPRINT_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave HMAC do índice CPF/CNPJ (mínimo de 32 bytes; ID legado mantido pelo `aculta_associado_id`) | plain |
+| `aculta_document_encryption_key` | `ACULTA_DOCUMENT_ENCRYPTION_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave de cifra de documentos de associados/CPF/CNPJ (64 caracteres hexadecimais) | plain |
 
 Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
 compartilhadas aparecem nas duas seções do painel. Mercado Pago: ver [MERCADOPAGO.md](../integrations/MERCADOPAGO.md).

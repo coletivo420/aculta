@@ -10,15 +10,17 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) (fontes de verdade) e
 [RELEASES.md](../operations/RELEASES.md) (gates de release).
 
+- Escopo Associado ID e migração: [ACULTA-ASSOCIADO-ID.md](../modules/ACULTA-ASSOCIADO-ID.md).
+
 ## Estado atual
 
-- Versão: **0.3.0-dev.28** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
-- Submódulos: `aculta_deployer` 0.1.20 (com falhas de teste e de `check`, DT-O12), `aculta_id_cpf` 0.2.0-dev.2 (Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1.
+- Versão: **0.3.0-dev.29** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
+- Submódulos: `aculta_deployer` 0.1.20 (com falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1.
 - Tema: `aculta420` 0.6.0-dev.15 (PR #239). Em Chrome no servidor de testes, somente a barra multidomínio fica fixa; o cabeçalho do domínio rola com o conteúdo. O gate Foundation segue bloqueado por DT-T19.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
 - Migração do envio de e-mail para Mailer Plus (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
-- Gates locais nesta revisão: Drupal 11+ do Portal PASS (659 checks); fronteira módulo/tema PASS (684 verificações); endereços de ambiente PASS (1316 arquivos). Testes Unit do Portal: 63 PASS; testes do `aculta_id_cpf`: 47 PASS. Foundation continua FAIL por DT-T19.
+- Verificações desta mudança (2026-10-13): Drupal 11+ PASS (659 checks), domínio do Associado ID PASS (248 checks), Unit do Associado ID PASS (47 testes/107 asserções), Unit do Portal PASS (63 testes/118 asserções) e lint PHP PASS. Evidência anterior de fronteira módulo/tema e endereços permanece registrada na revisão anterior. Foundation continua FAIL por DT-T19.
 - Pendências abertas: ver DEBT-REGISTER (estado vivo; este roadmap não repete a contagem).
 
 ## Ordem de execução

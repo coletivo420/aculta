@@ -1,3 +1,17 @@
+## 0.3.0-dev.29 — integração compatível com Associado ID — 2026-10-13
+
+- O Portal prioriza `aculta_associado_id.account_document` e mantém fallback
+  temporário para `aculta_id_cpf.account_document` durante a migração controlada.
+- Atualiza o contrato neutro e a documentação do Portal para definir fronteiras:
+  submódulo orquestra domínio/dados, Portal integra funcionalidade e ACULTA420
+  apresenta. O novo escopo de atas/relatórios ainda não está implementado.
+- O módulo antigo fica oculto de novas instalações, mas permanece íntegro para
+  instalações existentes. Nenhuma alteração de Runtime ou de banco.
+- Verificações: gate Drupal 11+ (659 checks), runner de domínio (248 checks),
+  PHPUnit do submódulo (47/107) e Portal (63/118) passaram; lint PHP passou.
+- Evidência e plano de migração registrados em
+  `docs/modules/ACULTA-ASSOCIADO-ID.md`; **RUNTIME STATUS: DEFERRED**.
+
 ## 0.3.0-dev.28 — Acabamento da revisão de Outros Dados — 2026-10-13
 
 - Revisão documental do estado corrente após PRs #238 e #239: roadmap atualizado; S0 encerrada com evidência; S2/S3/S4 alinhadas ao registro de dívidas; snapshot de 2026-10-12 preservado como histórico.

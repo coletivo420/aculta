@@ -34,9 +34,9 @@ Os hosts de teste são `*.aculta.toca.net.br` (Homelab, noindex). Os hosts de pr
   deploy, verifica `robots`, sitemaps e caminhos privados por ambiente, e mantém o
   registro de correções de deploy. Versão 0.1.20, não habilitado no Drupal; CLI
   standalone em `bin/aculta-deployer`.
-- [aculta_id_cpf](web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md)
-  — validação local de CPF e CNPJ (numérico e alfanumérico) e elementos de formulário.
-  Versão 0.1.0-dev.1, **RUNTIME STATUS: DEFERRED**. Ainda não está rastreado no Git.
+- [aculta_associado_id](web/modules/custom/aculta_portal/modules/aculta_associado_id/README.md)
+  — orquestração dos dados dos associados; escopo implementado atualmente: serviços protegidos de CPF/CNPJ.
+  Versão 0.3.0-dev.1, **RUNTIME STATUS: DEFERRED**. A migração do módulo legado ainda precisa ser validada em cópia isolada.
 
 ## Arquitetura
 

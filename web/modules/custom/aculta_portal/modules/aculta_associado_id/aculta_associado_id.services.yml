@@ -1,0 +1,23 @@
+services:
+  aculta_associado_id.normalizer:
+    class: Drupal\aculta_associado_id\Service\DocumentNormalizer
+  aculta_associado_id.cpf_validator:
+    class: Drupal\aculta_associado_id\Service\CpfValidator
+  aculta_associado_id.cnpj_validator:
+    class: Drupal\aculta_associado_id\Service\CnpjValidator
+  aculta_associado_id.validator:
+    class: Drupal\aculta_associado_id\Service\DocumentValidator
+    arguments: ['@aculta_associado_id.normalizer', '@aculta_associado_id.cpf_validator', '@aculta_associado_id.cnpj_validator']
+  aculta_associado_id.formatter:
+    class: Drupal\aculta_associado_id\Service\DocumentFormatter
+    arguments: ['@aculta_associado_id.validator']
+  aculta_associado_id.cipher:
+    class: Drupal\aculta_associado_id\Service\DocumentCipher
+    arguments: ['@key.repository']
+  aculta_associado_id.account_document:
+    class: Drupal\aculta_associado_id\Service\AccountDocumentStore
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@aculta_associado_id.validator', '@aculta_associado_id.formatter', '@aculta_associado_id.cipher', '@aculta_associado_id.fingerprint']
+  aculta_associado_id.fingerprint:
+    class: Drupal\aculta_associado_id\Service\DocumentFingerprint
+    arguments: ['@aculta_associado_id.validator', '@key.repository']
+

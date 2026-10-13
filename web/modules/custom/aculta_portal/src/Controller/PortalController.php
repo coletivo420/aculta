@@ -79,9 +79,20 @@ final class PortalController extends ControllerBase {
       $container->get('date.formatter'),
       $container->get('key.repository'),
       $container->get('commerce_price.currency_formatter'),
-      // Opcional: só existe quando o submódulo aculta_id_cpf está habilitado. Sem ele, a aba não aparece.
-      $container->has('aculta_id_cpf.account_document') ? $container->get('aculta_id_cpf.account_document') : NULL,
+      self::accountDocumentService($container),
     );
+  }
+
+  /**
+   * Resolves the canonical implementation, retaining the legacy service during migration.
+   */
+  private static function accountDocumentService(ContainerInterface $container): ?AccountDocumentInterface {
+    foreach (['aculta_associado_id.account_document', 'aculta_id_cpf.account_document'] as $service_id) {
+      if ($container->has($service_id)) {
+        return $container->get($service_id);
+      }
+    }
+    return NULL;
   }
 
   /**

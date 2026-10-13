@@ -1,3 +1,5 @@
+> Snapshot anterior à mudança de identidade do submódulo. Estado atual e plano de migração: [ACULTA-ASSOCIADO-ID.md](../modules/ACULTA-ASSOCIADO-ID.md) e [ROADMAP.md](ROADMAP.md).
+
 # Estado atual do Portal após as PRs #238 e #239
 
 Base verificada: `origin/main` em `58ae82b` (PR #238; merge em 2026-10-13 UTC). A PR #239 também está integrada. Verificações locais executadas em PHP 8.4.26; este documento não representa homologação Runtime.

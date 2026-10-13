@@ -9,7 +9,7 @@ use Drupal\user\UserInterface;
 /**
  * Contrato neutro do documento (CPF ou CNPJ) da pessoa em Meus dados > Outros Dados.
  *
- * O Portal não depende do submódulo que o implementa (aculta_id_cpf, opcional e desabilitado por padrão).
+ * O Portal não depende do submódulo que o implementa; a implementação é opcional.
  * Sem implementação registrada, a aba não aparece. A implementação faz a validação, a cifra e a gravação;
  * o Portal só recebe texto e estado. O documento é gravado uma única vez e não pode ser alterado depois.
  */
