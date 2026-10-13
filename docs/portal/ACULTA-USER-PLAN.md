@@ -207,7 +207,7 @@ Serviços previstos (nomes provisórios):
 **Decisões do responsável (2026-10-13):**
 
 - `contribuidor_editorial` recebe **`wiki_editor`**.
-- Todo usuário autenticado recebe **`wiki_contributor`**. As contribuições são moderadas.
+- Todo usuário com **e-mail confirmado** (papel `email_confirmed`) recebe **`wiki_contributor`**. As contribuições são moderadas.
 - `contribuidor_editorial` também é **moderador dos fóruns**.
 
 **Moderação da Wiki (já existe no workflow `wiki_editorial`):**
@@ -216,7 +216,7 @@ Serviços previstos (nomes provisórios):
 - Uma edição de verbete publicado vira nova revisão em rascunho. O texto publicado continua no ar até um editor publicar.
 - `wiki_editor` publica (`review_to_published`) e reverte revisões (decisão 21). Permissão de reversão ainda **não está** na configuração do papel: `revert wiki_entry revisions` precisa ser adicionada, com `config/sync` e gate.
 
-**Ponto a corrigir, conflito com a política de e-mail:** a regra da seção 1 de `EMAIL-CONFIRMATION-POLICY.md` diz que quem não confirmou o e-mail não pode editar a Wiki. Dar `wiki_contributor` a "todo autenticado" contraria essa regra. Proposta: conceder `wiki_contributor` ao papel `email_confirmed` (que já existe), e não a `authenticated`. Ver decisão 28.
+**Ponto a corrigir, conflito com a política de e-mail:** a regra da seção 1 de `EMAIL-CONFIRMATION-POLICY.md` diz que quem não confirmou o e-mail não pode editar a Wiki. Por isso `wiki_contributor` é concedido ao papel `email_confirmed`, e não a `authenticated` (decisão 28, respondida em 2026-10-13).
 
 **Moderação do Fórum:** os comentários existem só nas discussões do Fórum (seção E3). Por isso o escopo de moderação de comentários é o próprio Fórum.
 
@@ -347,8 +347,8 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 25. **Papel `contribuidor_editorial`:** respondida em 2026-10-13: quem concede é o administrador.
 26. **Função do contribuidor editorial na Wiki:** respondida em 2026-10-13: recebe `wiki_editor`.
 27. **Mão dupla:** o bloco "Citado em" no verbete entra?
-28. **Wiki para todo autenticado:** conceder `wiki_contributor` a `email_confirmed` (recomendado, respeita a política de e-mail) ou a `authenticated` (como pedido, contraria a seção 1 de `EMAIL-CONFIRMATION-POLICY.md`)?
-29. **Moderação do Fórum:** confirma `administer comments` e `edit any forum content` para `contribuidor_editorial`, e que `administer forums` fica com o administrador?
+28. **Wiki para todo autenticado:** respondida em 2026-10-13: `wiki_contributor` é concedido a quem confirmou o e-mail (`email_confirmed`).
+29. **Moderação do Fórum:** respondida em 2026-10-13 (confirmação): `administer comments` e `edit any forum content` para `contribuidor_editorial`; `administer forums` fica com o administrador.
 
 ## 8. Riscos e limites
 
