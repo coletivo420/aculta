@@ -5,7 +5,7 @@
  * - Ao voltar do recorte (?aculta_recorte=1), reabre o popup da foto para o "Salvar". Nesse carregamento o recorte não reabre.
  * - Cada arquivo abre o recorte uma única vez por sessão do navegador.
  *
- * Observa o campo oculto user_picture[0][fids] em qualquer contexto: o Drupal troca esse bloco no upload por AJAX,
+ * Observa o campo oculto imagem[fids] (managed_file da UserPictureForm) em qualquer contexto: o Drupal troca esse bloco no upload por AJAX,
  * e o contêiner do popup não é trocado (por isso o script antigo não disparava).
  */
 (function (Drupal, once, drupalSettings) {
@@ -41,7 +41,7 @@
         reopenPhotoDialog();
       }
 
-      once('aculta-user-photo-fids', 'input[name="user_picture[0][fids]"]', context).forEach((input) => {
+      once('aculta-user-photo-fids', 'input[name="imagem[fids]"]', context).forEach((input) => {
         if (returned) {
           return;
         }
