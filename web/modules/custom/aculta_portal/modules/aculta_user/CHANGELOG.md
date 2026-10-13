@@ -1,3 +1,8 @@
+## 0.3.0-dev.6 — botão "Sortear novo avatar" na linha de ações — 2026-10-13
+
+- O sorteio fica como botão na linha de ações, ao lado de "Salvar foto do perfil", no lugar de "Remover foto" (personalizada). Regra de exibição inalterada (INV-FOTO-2).
+- `aculta_user.info.yml` 0.3.0-dev.6. RUNTIME STATUS: DEFERRED (inspeção visual pendente; captura conferida no Chromium).
+
 ## 0.3.0-dev.5 — sortear atualiza o painel por AJAX; fechar o modal recarrega — 2026-10-13
 
 - "Sortear outro avatar" troca por AJAX o avatar da visão geral e da prévia, sem recarregar.

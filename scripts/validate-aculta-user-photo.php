@@ -52,13 +52,13 @@ if (!str_contains($picture, "'#after_build' => [[self::class, 'withoutRemoveForA
 }
 
 // INV-FOTO-2: sortear só para acervo.
-$sortearPos = strpos($picture, "\$form['sortear']");
+$sortearPos = strpos($picture, "\$form['actions']['sortear']");
 $acervoPos = strpos($picture, 'if ($isAcervo) {');
 if ($sortearPos === FALSE) {
-  $errors[] = "INV-FOTO-2: \$form['sortear'] ausente";
+  $errors[] = "INV-FOTO-2: \$form['actions']['sortear'] ausente";
 }
 elseif ($acervoPos === FALSE || $acervoPos > $sortearPos || str_contains(substr($picture, $acervoPos, $sortearPos - $acervoPos), '}')) {
-  $errors[] = "INV-FOTO-2: \$form['sortear'] não está dentro de 'if (\$isAcervo)'";
+  $errors[] = "INV-FOTO-2: \$form['actions']['sortear'] não está dentro de 'if (\$isAcervo)'";
 }
 
 // INV-FOTO-3: sem link de recorte no popup nem no painel.

@@ -116,19 +116,18 @@ final class UserPictureForm extends FormBase {
     ];
     $form['#account_id'] = (int) $account->id();
 
-    // Sortear: só para quem está com avatar do sistema (regra de estado, docs/FOTO-PERFIL.md).
-    // Para foto personalizada o sorteio some; o recorte só acontece logo após o envio da imagem.
+    // Ações: "Sortear outro avatar" (só avatar do sistema) e "Remover foto" (só foto personalizada) ficam no mesmo lugar,
+    // ao lado de "Salvar foto do perfil" (regra de estado, docs/FOTO-PERFIL.md).
+    $form['actions'] = ['#type' => 'actions'];
     if ($isAcervo) {
-      $form['sortear'] = [
+      $form['actions']['sortear'] = [
         '#type' => 'link',
-        '#title' => $this->t('Sortear outro avatar'),
+        '#title' => $this->t('Sortear novo avatar'),
         '#url' => Url::fromRoute('aculta_user.avatar_reroll', [], ['query' => ['csrf_token' => $this->csrfToken->get('/avatar/sortear')]]),
         '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary']],
         '#attached' => ['library' => ['core/drupal.ajax']],
       ];
     }
-
-    $form['actions'] = ['#type' => 'actions'];
     if (!$isAcervo && $current > 0) {
       $form['actions']['remover'] = [
         '#type' => 'submit',

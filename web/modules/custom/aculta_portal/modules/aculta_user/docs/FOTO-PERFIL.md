@@ -4,9 +4,13 @@ Motivo: a regra de cada estado da foto já regrediu duas vezes (remover no avata
 personalizada, recorte que reabre sem novo envio). Este documento é a fonte das regras; o gate
 `scripts/validate-aculta-user-photo.php` e o roteiro de navegador (TESTES-NAVEGADOR, seção P) verificam.
 
+## Ações
+
+"Sortear novo avatar" (acervo) e "Remover foto" (personalizada) ficam na mesma linha de ações, ao lado de "Salvar foto do perfil".
+
 ## Estados
 
-| Estado | Prévia | Campo de envio | "Remover" | "Sortear outro avatar" | "Recortar foto" |
+| Estado | Prévia | Campo de envio | "Remover" | "Sortear novo avatar" | "Recortar foto" |
 |---|---|---|---|---|---|
 | Avatar do sistema (acervo, `public://pictures/acervo/`) | avatar do acervo | sim, vazio ("Escolha uma imagem") | **não** | **sim** | **não** |
 | Avatar personalizado (enviado pela pessoa) | foto própria (só a prévia) | sim, vazio | **sim**, botão "Remover foto" (volta a um avatar sorteado do acervo e recarrega o painel) | **não** | **não** |
@@ -18,11 +22,11 @@ Sem link "Recortar foto" em nenhum estado. Aplicar o recorte troca a foto e reca
 
 - **INV-FOTO-1 — avatar do sistema não tem "Remover".** O campo de envio recebe `#aculta_acervo = $isAcervo`; o
   `#after_build` `UserPictureForm::withoutRemoveForAcervo` retira `remove_button` nesse caso.
-- **INV-FOTO-2 — sortear só para o acervo.** O link "Sortear outro avatar" é criado somente dentro de
+- **INV-FOTO-2 — sortear só para o acervo.** O link "Sortear novo avatar" é criado somente dentro de
   `if ($isAcervo)`. Com foto personalizada ele some.
 - **INV-FOTO-3 — sem recorte manual.** Não existe link para recortar no popup. O recorte só é aberto pelo
   `photo-flow.js` ao chegar um novo arquivo no campo (`imagem[fids]`).
-- **INV-FOTO-8 — sortear atualiza o painel sem recarregar; fechar o modal recarrega.** "Sortear outro avatar" troca
+- **INV-FOTO-8 — sortear atualiza o painel sem recarregar; fechar o modal recarrega.** "Sortear novo avatar" troca
   por AJAX os avatares da visão geral e da prévia (`ReplaceCommand`) e marca o `body` com `data-aculta-avatar-changed`.
   Ao fechar o modal (`dialog:afterclose`), a página recarrega uma vez para refletir o sorteio em todo o painel.
   Fechar sem sortear não recarrega.

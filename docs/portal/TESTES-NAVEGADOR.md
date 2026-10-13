@@ -186,14 +186,14 @@ e salvamento. Antes desta rodada, o popup de recorte não abria ao escolher o ar
 ### Roteiro
 1. Abrir `https://conta.aculta.toca.net.br/` logado como `teste.comum`. Esperado: painel "Minha conta", com o avatar
    (foto do acervo ou uma foto já salva).
-2. Clicar no avatar. Esperado: popup "Alterar foto do perfil", com a visualização, o botão "Sortear outro avatar" e o campo de arquivo "Foto".
+2. Clicar no avatar. Esperado: popup "Alterar foto do perfil", com a visualização, o botão "Sortear novo avatar" e o campo de arquivo "Foto".
 3. Escolher a imagem `Bloco Sativa 2026 - Capa 2.png` no campo "Foto". Esperado: o envio termina e a visualização mostra a imagem nova.
    **Esperado principal:** o modal "Recortar foto" abre sozinho. **Se não abrir:** registrar isso e clicar em
    "Recortar foto" dentro do popup. Anotar o que aparece na tela e no console do navegador.
 4. No modal de recorte, ajustar o quadrado sobre a imagem e clicar em "Aplicar recorte". Esperado: a página volta ao
    painel e o popup "Alterar foto do perfil" reabre sozinho, com a imagem recortada na visualização.
 5. Clicar em "Salvar foto do perfil". Esperado: mensagem "Foto do perfil salva." e o avatar do painel mostra a imagem recortada.
-6. Reabrir o popup e clicar em "Sortear outro avatar". Esperado: só a imagem do avatar muda; a URL não muda e a página
+6. Reabrir o popup e clicar em "Sortear novo avatar". Esperado: só a imagem do avatar muda; a URL não muda e a página
    não recarrega (conferir pelo histórico do navegador ou por um marcador no DOM).
 7. Remover a foto personalizada (botão "Remover", disponível só para foto personalizada) e salvar. Esperado: o avatar
    volta a ser um avatar do acervo sorteado.
@@ -218,7 +218,7 @@ Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_u
 `php scripts/validate-aculta-user-photo.php`. Executar este roteiro após qualquer alteração na foto.
 
 - **P1 — avatar do sistema (conta de teste em acervo):** abrir o popup da foto no avatar do painel.
-  Esperado: prévia do avatar do acervo, campo "Escolha uma imagem" vazio, botão "Sortear outro avatar" visível,
+  Esperado: prévia do avatar do acervo, campo "Escolha uma imagem" vazio, botão "Sortear novo avatar" visível,
   **sem** "Remover" e **sem** "Recortar foto".
 - **P2 — envio no acervo:** enviar uma imagem PNG/JPG (até 2 MB).
   Esperado: o recorte abre sozinho (modal "Recortar foto", caixa de recorte direta, sem abas "Crop image" nem
@@ -230,13 +230,13 @@ Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_u
   outro avatar"; **sem** "Recortar foto".
 - **P4 — remover:** no popup da foto personalizada, clicar em "Remover foto" (sem "Salvar").
   Esperado: o painel recarrega com um avatar sorteado do acervo; reabrir o popup mostra o estado P1 (campo "Escolha
-  uma imagem", "Sortear outro avatar", sem "Remover foto"). Nenhum nome ou link de arquivo aparece no popup (INV-FOTO-7).
+  uma imagem", "Sortear novo avatar", sem "Remover foto"). Nenhum nome ou link de arquivo aparece no popup (INV-FOTO-7).
 - **P5 — recorte só após envio:** com foto personalizada, não há como recortar sem enviar de novo.
   Esperado: nenhum link de recorte no popup; enviar a imagem de novo é o único caminho.
-- **P6 — sortear com foto personalizada:** o link "Sortear outro avatar" não aparece (P3). Se a rota
+- **P6 — sortear com foto personalizada:** o link "Sortear novo avatar" não aparece (P3). Se a rota
   `/avatar/sortear` for chamada mesmo assim, ela troca a foto (rota técnica; a regra de exibição é a da tela).
 
-- **P7 — sortear (INV-FOTO-8):** em acervo, clicar "Sortear outro avatar" no popup.
+- **P7 — sortear (INV-FOTO-8):** em acervo, clicar "Sortear novo avatar" no popup.
   Esperado: sem recarregar, o avatar da visão geral e da prévia mudam. Fechar o modal depois disso recarrega a página
   uma vez. Fechar o modal sem sortear não recarrega.
 
