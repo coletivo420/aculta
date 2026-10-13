@@ -8,6 +8,7 @@ use Drupal\aculta_user\Avatar\AvatarPool;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\crop\Entity\Crop;
@@ -33,6 +34,9 @@ final class AvatarCropForm extends FormBase {
 
   /** Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml). */
   public const CROP_TYPE = 'aculta_avatar_1x1';
+
+  /** Opções do modal de recorte: altura máxima com barra de rolagem quando o conteúdo passa dela. */
+  public const DIALOG_OPTIONS = ['width' => 640, 'maxHeight' => 560, 'title' => 'Recortar foto'];
 
   /** Estilo de imagem usado pela visualização do avatar. */
   public const STYLE = 'aculta_avatar';
@@ -104,6 +108,8 @@ final class AvatarCropForm extends FormBase {
     }
     // Envio sem AJAX para a própria rota, com o arquivo a recortar: o modal não pode usar a URL com formato de modal.
     $form['#action'] = Url::fromRoute('aculta_user.avatar_crop', [], ['query' => ['fid' => (int) $file->id()]])->toString();
+    // Sem abas nem seções: o recorte mostra direto a caixa de recorte (ver flattenCropWrappers).
+    $form['#after_build'][] = [self::class, 'flattenCropWrappers'];
     $form['image_crop'] = [
       '#type' => 'image_crop',
       '#file' => $file,
@@ -126,6 +132,39 @@ final class AvatarCropForm extends FormBase {
       '#url' => Url::fromRoute('aculta_portal.dashboard', [], ['query' => [self::RETURN_QUERY => '1']]),
     ];
     return $form;
+  }
+
+  /**
+   * Remove as abas e seções que o image_crop cria em volta do tipo de recorte ("Crop image" e o nome do tipo).
+   *
+   * Troca só o tipo de elemento para container: nomes, #parents e valores enviados ficam iguais, então o submit lê o
+   * mesmo caminho (image_crop > crop_wrapper > CROP_TYPE > crop_container > values).
+   */
+  public static function flattenCropWrappers(array $form, FormStateInterface $form_state): array {
+    if (!isset($form['image_crop']['crop_wrapper']) || !is_array($form['image_crop']['crop_wrapper'])) {
+      return $form;
+    }
+    self::flattenElement($form['image_crop']['crop_wrapper']);
+    return $form;
+  }
+
+  /** Troca a moldura (tipo e theme_wrappers) de details/vertical_tabs por container, em todos os níveis. */
+  private static function flattenElement(array &$element): void {
+    foreach (Element::children($element) as $key) {
+      if (!is_array($element[$key])) {
+        continue;
+      }
+      if (in_array($element[$key]['#type'] ?? NULL, ['details', 'vertical_tabs'], TRUE)) {
+        $element[$key]['#type'] = 'container';
+        $element[$key]['#theme_wrappers'] = ['container'];
+        unset($element[$key]['#group'], $element[$key]['#open']);
+      }
+      self::flattenElement($element[$key]);
+    }
+    if (($element['#type'] ?? NULL) === 'details') {
+      $element['#type'] = 'container';
+      $element['#theme_wrappers'] = ['container'];
+    }
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {

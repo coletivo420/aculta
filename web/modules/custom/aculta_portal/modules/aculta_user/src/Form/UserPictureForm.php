@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -120,7 +121,7 @@ final class UserPictureForm extends FormBase {
         '#type' => 'link',
         '#title' => $this->t('Recortar foto'),
         '#url' => Url::fromRoute('aculta_user.avatar_crop', [], ['query' => ['fid' => $cropFid]]),
-        '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary'], 'data-dialog-type' => 'modal'],
+        '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary'], 'data-dialog-type' => 'modal', 'data-dialog-options' => Json::encode(AvatarCropForm::DIALOG_OPTIONS)],
         '#attached' => ['library' => ['core/drupal.dialog.ajax']],
       ];
     }
