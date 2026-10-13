@@ -77,6 +77,22 @@ final class PortalUiHooks {
     'account-bio-text' => ['portal-account-bio__text'],
     'account-bio-edit' => ['btn', 'btn-link', 'portal-account-bio__edit', 'bi', 'bi-pencil'],
     'account-bio-actions' => ['portal-account-bio__actions'],
+    // Visão geral da Minha conta: ação "Ver Perfil" no topo (botão secundário, borda visível, foco por teclado).
+    'account-overview-actions' => ['portal-account-overview__actions'],
+    'account-view-profile' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
+    // Perfil público (/u/<apelido>).
+    'public-profile' => ['portal-profile'],
+    'public-profile-header' => ['portal-profile__header'],
+    'public-profile-avatar' => ['portal-profile__avatar'],
+    'public-profile-initial' => ['portal-profile__initial'],
+    'public-profile-identity' => ['portal-profile__identity'],
+    'public-profile-name' => ['portal-profile__name'],
+    'public-profile-bio' => ['portal-profile__bio'],
+    'public-profile-links' => ['portal-profile__links'],
+    'public-profile-link-instagram' => ['portal-profile__link', 'bi', 'bi-instagram'],
+    'public-profile-link-facebook' => ['portal-profile__link', 'bi', 'bi-facebook'],
+    'public-profile-link-reddit' => ['portal-profile__link', 'bi', 'bi-reddit'],
+    'public-profile-link-email' => ['portal-profile__link', 'portal-profile__link--icon', 'bi', 'bi-envelope'],
     // Redes sociais (caixa embaixo da bio, Minha conta).
     'account-social-card' => ['portal-account-social'],
     'account-social-list' => ['portal-account-social__list'],

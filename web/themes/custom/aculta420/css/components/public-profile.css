@@ -1,0 +1,65 @@
+/* Perfil público (/u/<apelido>): cartão com cabeçalho, bio e redes em botões. Cores só por tokens do tema. */
+.portal-profile {
+  max-inline-size: 48rem;
+  margin-inline: auto;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--aculta-surface-page);
+}
+.portal-profile__header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2rem;
+  border-block-end: 1px solid var(--aculta-border-subtle);
+  background: var(--aculta-surface-muted);
+}
+.portal-profile__avatar { flex: 0 0 auto; }
+.portal-profile__avatar img,
+.portal-profile__initial {
+  display: grid;
+  inline-size: 6.5rem;
+  block-size: 6.5rem;
+  border-radius: 50%;
+  border: 3px solid var(--aculta-surface-page);
+  object-fit: cover;
+}
+.portal-profile__initial { place-items: center; font-size: 2.25rem; font-weight: 600; }
+.portal-profile__identity { min-inline-size: 0; }
+.portal-profile__name { margin: 0; font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.1; overflow-wrap: anywhere; }
+.portal-profile__bio {
+  max-inline-size: 60ch;
+  margin: 1.5rem 2rem 0;
+  line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.portal-profile__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1.5rem 2rem 2rem;
+}
+.portal-profile__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--aculta-border-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  text-decoration: none;
+}
+.portal-profile__link::before { font-size: 1rem; line-height: 1; }
+.portal-profile__link:hover,
+.portal-profile__link:focus-visible { border-color: var(--aculta-interactive-border); color: var(--aculta-interactive-text); }
+/* E-mail: só o ícone, com o nome no aria-label. */
+.portal-profile__link--icon { font-size: 0; padding: 0.5rem; inline-size: 2.5rem; block-size: 2.5rem; justify-content: center; }
+.portal-profile__link--icon::before { font-size: 1.25rem; }
+@media (max-width: 575.98px) {
+  .portal-profile__header { flex-direction: column; text-align: center; padding: 1.5rem; }
+  .portal-profile__bio, .portal-profile__links { margin-inline: 1.5rem; padding-inline: 0; }
+  .portal-profile__links { padding: 1rem 1.5rem 1.5rem; }
+}
