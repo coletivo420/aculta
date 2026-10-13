@@ -10,6 +10,7 @@
  * - INV-FOTO-4: o recorte só aceita o arquivo recém-enviado: nada de fallback para a foto atual nem para o recorte pendente.
  * - INV-FOTO-5: o campo de recorte aparece uma única vez no modal.
  * - INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel, sem reabrir o popup.
+ * - INV-FOTO-8: sortear atualiza os avatares por AJAX; fechar o modal depois do sorteio recarrega a página.
  * - INV-FOTO-7: o popup não mostra nome nem link da foto atual; "Remover foto" (só personalizada) volta a um avatar sorteado do acervo.
  *
  * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
@@ -87,6 +88,15 @@ if (!preg_match('/function removePersonal\(.*?avatarPool->reroll\(\$account\)/s'
   $errors[] = 'INV-FOTO-7: removePersonal não sorteia do acervo (AvatarPool::reroll)';
 }
 
+// INV-FOTO-8: sortear atualiza os avatares por AJAX e marca o body; fechar o modal depois disso recarrega a página.
+$reroll = $read('src/Controller/AvatarRerollController.php');
+if (!str_contains($reroll, "data-aculta-avatar-changed")) {
+  $errors[] = 'INV-FOTO-8: o sorteio não marca o body (data-aculta-avatar-changed)';
+}
+if (!str_contains($flow, "dialog:afterclose") || !str_contains($flow, "window.location.reload()")) {
+  $errors[] = 'INV-FOTO-8: photo-flow.js não recarrega a página ao fechar o modal depois do sorteio';
+}
+
 // INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel; não há etapa de "Salvar" nem reabertura do popup.
 if (str_contains($crop, 'PENDING_KEY') || str_contains($crop, 'aculta_recorte') || !str_contains($crop, "set('user_picture'")) {
   $errors[] = 'INV-FOTO-6: o recorte não troca a foto da conta, ou volta ao recorte pendente / reabertura do popup';
@@ -116,4 +126,4 @@ if ($errors !== []) {
   exit(1);
 }
 
-echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-7)' . PHP_EOL;
+echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-8)' . PHP_EOL;
