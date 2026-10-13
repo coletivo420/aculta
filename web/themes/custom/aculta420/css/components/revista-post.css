@@ -51,7 +51,10 @@
 .node--view-mode-full .field--name-field-summary .field__item { margin: 0; }
 
 /* Corpo: largura de leitura, ritmo vertical. */
-.node--view-mode-full .field--name-body { max-inline-size: 68ch; font-size: 1.0625rem; line-height: 1.7; }
+.node--view-mode-full .field--name-body { max-inline-size: 68ch; margin-inline: auto; font-size: 1.0625rem; line-height: 1.7; }
+/* Conteúdo embutido (vídeo, mídia) sempre centralizado no bloco do corpo. */
+.node--view-mode-full .field--name-body .media,
+.node--view-mode-full .field--name-body .media--type-remote-video { display: block; margin-inline: auto; }
 .node--view-mode-full .field--name-body p { margin-block: 0 1.1rem; }
 
 /* Vídeo embutido: responsivo, proporção 16:9, largura da coluna de leitura. */
