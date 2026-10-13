@@ -1,3 +1,9 @@
+## 0.3.0-dev.5 — sortear atualiza o painel por AJAX; fechar o modal recarrega — 2026-10-13
+
+- "Sortear outro avatar" troca por AJAX o avatar da visão geral e da prévia, sem recarregar.
+- Ao fechar o modal depois de sortear, a página recarrega uma vez (INV-FOTO-8). Fechar sem sortear não recarrega.
+- `aculta_user.info.yml` 0.3.0-dev.5. RUNTIME STATUS: DEFERRED (navegador verificado com Chromium; inspeção visual pendente).
+
 ## 0.3.0-dev.4 — foto de perfil: popup, estados, recorte e remoção (consolidado) — 2026-10-13
 
 - Popup da foto é modal Drupal centralizado (`/avatar/foto`), com prévia do avatar atual e a orientação do popup anterior. Lápis de edição sobre o gatilho.

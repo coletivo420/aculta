@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Controller;
 
 use Drupal\aculta_user\Avatar\AvatarPool;
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -72,6 +73,8 @@ final class AvatarRerollController implements ContainerInjectionInterface {
     ];
     $html = (string) $this->renderer->renderInIsolation($build);
     $response->addCommand(new ReplaceCommand('[' . self::SLOT_ATTRIBUTE . ']', $html));
+    // Marca o documento: ao fechar o modal, a página recarrega (photo-flow.js) para refletir o sorteio em todo o painel.
+    $response->addCommand(new InvokeCommand('body', 'attr', ['data-aculta-avatar-changed', '1']));
     return $response;
   }
 

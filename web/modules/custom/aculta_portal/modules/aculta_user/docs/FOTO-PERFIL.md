@@ -22,6 +22,10 @@ Sem link "Recortar foto" em nenhum estado. Aplicar o recorte troca a foto e reca
   `if ($isAcervo)`. Com foto personalizada ele some.
 - **INV-FOTO-3 — sem recorte manual.** Não existe link para recortar no popup. O recorte só é aberto pelo
   `photo-flow.js` ao chegar um novo arquivo no campo (`imagem[fids]`).
+- **INV-FOTO-8 — sortear atualiza o painel sem recarregar; fechar o modal recarrega.** "Sortear outro avatar" troca
+  por AJAX os avatares da visão geral e da prévia (`ReplaceCommand`) e marca o `body` com `data-aculta-avatar-changed`.
+  Ao fechar o modal (`dialog:afterclose`), a página recarrega uma vez para refletir o sorteio em todo o painel.
+  Fechar sem sortear não recarrega.
 - **INV-FOTO-7 — o popup não mostra nome nem link da foto atual.** O campo de envio começa vazio nos dois estados
   (`#default_value` NULL). Na foto personalizada, a única ação de remoção é o botão "Remover foto"
   (`UserPictureForm::removePersonal`, `AvatarPool::reroll`): volta a um avatar sorteado do acervo e recarrega o painel.
