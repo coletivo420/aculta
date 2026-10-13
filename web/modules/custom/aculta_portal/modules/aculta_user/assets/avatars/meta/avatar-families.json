@@ -20,12 +20,6 @@
     "active": true
   },
   {
-    "id": "mushrooms",
-    "label": "Cogumelos e fungos",
-    "count": 10,
-    "active": true
-  },
-  {
     "id": "reptiles",
     "label": "Sapos, répteis e anfíbios",
     "count": 10,

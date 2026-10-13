@@ -1,4 +1,37 @@
-## 0.3.0-dev.29 — integração compatível com Associado ID — 2026-10-13
+## 0.4.0-dev.5 — botão de sortear avatar no popup de foto (aculta_user 0.3.0-dev.2) — 2026-10-12
+
+- Painel da conta envolve a foto em um contêiner com id `aculta-user-avatar`, alvo do AJAX do sorteio.
+- `aculta_portal.info.yml` 0.4.0-dev.5. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.4 — cadastro, avatar acervo, associado e relatório (aculta_user 0.3.0-dev.1) — 2026-10-12
+
+- Nome de usuário vira apelido; conta OAuth usa a parte local do e-mail; acervo de avatares sem a família `mushrooms`.
+- `aculta_portal.info.yml` 0.4.0-dev.4. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.3 — Atividade em Minha Conta (aculta_user 0.2.0-dev.2) — 2026-10-12
+
+- Item "Atividade" no menu da conta, condicionado à existência da rota do submódulo `aculta_user`.
+- `aculta_portal.info.yml` 0.4.0-dev.3. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.2 — participação no Fórum e discussão vinculada (aculta_user 0.2.0-dev.1) — 2026-10-12
+
+- Submódulo `aculta_user` 0.2.0-dev.1: moderação do primeiro comentário, limite de tópico, painel de regras e
+  discussão vinculada aos conteúdos. RUNTIME STATUS: DEFERRED (ver o CHANGELOG do submódulo).
+- `aculta_portal.info.yml` 0.4.0-dev.2.
+
+## 0.4.0-dev.1 — submódulo aculta_user: perfil público em /u/<apelido> — 2026-10-12
+
+- Adiciona o submódulo `aculta_user` 0.1.0-dev.1 (ver o CHANGELOG do submódulo). Rota `/u/{apelido}`, política de
+  visibilidade por item, formulário em `/configuracoes/perfil` e campos do perfil participante.
+- `field_nickname` passa a ser público (`profile_private: false`).
+- Troca de e-mail só pelo formulário de Minha Conta (`change_mail_page`): `EmailChangeHooks` remove o campo de e-mail da edição de conta do Core (administrador e conta própria). Criação de conta por administrador mantém o campo (`EmailChangePolicy`, teste unitário).
+- Papel `email_confirmed` irreversível: `EmailConfirmedRoleGuard` (presave restaura o papel; formulário de administração trava o checkbox). `EmailConfirmationPolicy::markUnconfirmed` removido (sem uso em produção).
+- Versões: `aculta_portal.info.yml` 0.4.0-dev.1 (MINOR: submódulo novo).
+- RUNTIME STATUS: DEFERRED. Nenhum `drush en` ou `config:import` foi executado.
+- Apelidos provisórios `pessoa-1` e `pessoa-5` criados no Runtime para as duas contas sem apelido (com backup
+  prévio em `scratchpad`, fora do repositório).
+
+## 0.3.0-dev.29 — integração compatível com Associado ID — 2026-10-12
 
 - O Portal prioriza `aculta_associado_id.account_document` e mantém fallback
   temporário para `aculta_id_cpf.account_document` durante a migração controlada.
@@ -12,7 +45,7 @@
 - Evidência e plano de migração registrados em
   `docs/modules/ACULTA-ASSOCIADO-ID.md`; **RUNTIME STATUS: DEFERRED**.
 
-## 0.3.0-dev.28 — Acabamento da revisão de Outros Dados — 2026-10-13
+## 0.3.0-dev.28 — Acabamento da revisão de Outros Dados — 2026-10-12
 
 - Revisão documental do estado corrente após PRs #238 e #239: roadmap atualizado; S0 encerrada com evidência; S2/S3/S4 alinhadas ao registro de dívidas; snapshot de 2026-10-12 preservado como histórico.
 - Nenhuma alteração funcional ou de Runtime; versão mantida conforme a regra para documentação isolada.

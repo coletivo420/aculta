@@ -9,7 +9,7 @@ dependencies:
     - profile
 third_party_settings:
   profile:
-    profile_private: true
+    profile_private: false
 id: profile.participante.field_nickname
 field_name: field_nickname
 entity_type: profile

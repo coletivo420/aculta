@@ -21,6 +21,7 @@ permissions:
   - 'break content lock'
   - 'create wiki_entry content'
   - 'edit any wiki_entry content'
+  - 'revert wiki_entry revisions'
   - 'use text format wiki'
   - 'use wiki_editorial transition create_new_draft'
   - 'use wiki_editorial transition draft_to_review'

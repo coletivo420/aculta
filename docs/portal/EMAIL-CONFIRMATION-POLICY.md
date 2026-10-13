@@ -81,3 +81,28 @@ Decisão do responsável (2026-10-09): a resposta do cadastro não revela se o e
 - **Implementação:** o erro "already taken" do Core sai do formulário (`validateRegistrationMail`); o botão usa `saveRegistration` no lugar de `::save`; a busca e o aviso ficam em `RegistrationMailPolicy`; o texto do aviso está no hook `mail` do módulo. Callbacks que gravam dados ignoram o caso de e-mail existente.
 - **Limites:** (1) o tempo de resposta difere quando o aviso é enviado na mesma requisição; (2) o aviso pode ser usado para incomodar um endereço alheio, por isso o CAPTCHA do cadastro continua obrigatório (ver `TURNSTILE.md`); (3) o aviso não é enfileirado; (4) o aviso depende do SMTP, ainda não validado em produção (DT-P05).
 
+## 9. Troca de e-mail (decisão 2, 2026-10-12)
+
+**Decisão do responsável:** a troca de e-mail dispara uma nova confirmação do novo endereço, e o papel
+`email_confirmed` permanece na conta. A troca só existe no formulário de Minha Conta (`change_mail_page`); a edição
+de conta do Core não oferece o campo de e-mail (`EmailChangeHooks`).
+
+**Como funciona hoje (código e configuração verificados):**
+
+- O `email_confirmer_user` (`user_presave`, `email_confirmer_user.module`) intercepta toda troca de e-mail de conta
+  quando `email_confirmer_user.settings:user_email_change.enabled` está ligado (no Runtime: ligado).
+- Para troca feita por quem **não** tem o bypass: o módulo guarda o novo endereço em `user.data`
+  (`email_change_new_address`), restaura o endereço antigo, cria a confirmação do novo (realm `email_confirmer_user`)
+  e envia o e-mail. O novo endereço só passa a valer depois do clique no link.
+- O papel `email_confirmed` não é alterado por essa troca (o papel é irreversível, ver `EmailConfirmedRoleGuard`).
+- Troca feita por administrador: o papel `administrator` tem `is_admin: true`, então passa no bypass
+  `email confirmer user bypass email change`. A troca é aceita na hora, sem confirmação.
+
+**Decisões complementares (2026-10-12):**
+
+1. **Decidido: manter o comportamento do módulo.** O endereço antigo continua valendo até a confirmação do novo. É o
+   mais protetivo para o combate a contas falsas.
+2. **Decidido: aceito.** O bypass do administrador (`is_admin`) permanece: troca feita por administrador é aceita
+   sem confirmação. Essa lacuna só alcança trocas feitas por código, porque o formulário de administração não tem mais
+   o campo de e-mail.
+

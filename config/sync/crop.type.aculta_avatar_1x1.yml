@@ -8,5 +8,5 @@ description: 'Enquadramento quadrado da foto de perfil da conta.'
 aspect_ratio: '1:1'
 soft_limit_width: 256
 soft_limit_height: 256
-hard_limit_width: 2048
-hard_limit_height: 2048
+hard_limit_width: 256
+hard_limit_height: 256

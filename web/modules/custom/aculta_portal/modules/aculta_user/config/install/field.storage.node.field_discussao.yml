@@ -1,0 +1,19 @@
+uuid: 3c2f1a6e-7d4b-4f0a-9a7e-5b1d2c8e4f10
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_discussao
+field_name: field_discussao
+entity_type: node
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

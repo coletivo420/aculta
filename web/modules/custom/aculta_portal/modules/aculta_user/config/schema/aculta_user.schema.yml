@@ -1,0 +1,21 @@
+aculta_user.settings:
+  type: config_object
+  label: 'Regras de participação do ACULTA User'
+  mapping:
+    topico_limite_ativo:
+      type: boolean
+      label: 'Limite de comentários para criar tópico'
+    topico_comentarios_minimos:
+      type: integer
+      label: 'Comentários publicados necessários para criar tópico'
+    primeiro_comentario_moderado:
+      type: boolean
+      label: 'Primeiro comentário passa por moderação'
+    bloqueio_ate_aprovacao:
+      type: boolean
+      label: 'Bloqueia novas publicações enquanto o primeiro comentário aguarda'
+    papeis_isentos:
+      type: sequence
+      label: 'Papéis isentos das regras'
+      sequence:
+        type: string
