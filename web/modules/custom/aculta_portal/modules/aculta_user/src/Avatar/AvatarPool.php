@@ -51,7 +51,8 @@ final class AvatarPool {
   private function assignEntry(UserInterface $account, array $entry): bool {
     $root = $this->modules->getPath('aculta_user') . '/assets/avatars/';
     $basename = basename($entry['file']);
-    $this->fileSystem->prepareDirectory(self::DIRECTORY, FileSystemInterface::CREATE_DIRECTORY);
+    $directory = self::DIRECTORY;
+    $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
     $uri = $this->fileSystem->copy($root . $entry['file'], self::DIRECTORY . '/' . $basename, FileExists::Rename);
 
     $file = $this->entityTypeManager->getStorage('file')->create([

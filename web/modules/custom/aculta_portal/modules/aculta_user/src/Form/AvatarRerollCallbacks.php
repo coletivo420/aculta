@@ -22,8 +22,11 @@ use Drupal\user\UserInterface;
  */
 final class AvatarRerollCallbacks {
 
-  /** Id do contêiner da foto, definido pelo painel da conta (PortalController). */
-  public const WRAPPER = 'aculta-user-avatar';
+  /** Alvo do AJAX: avatar com este atributo (no botão e na visualização do popup), definido pelo PortalController. */
+  public const WRAPPER = 'portal-account-user-form';
+
+  /** Atributo que marca cada avatar exibido no painel. */
+  public const SLOT_ATTRIBUTE = 'data-aculta-user-avatar';
 
   public function __construct(
     #[Autowire(service: 'aculta_user.avatar_pool')]
@@ -52,8 +55,9 @@ final class AvatarRerollCallbacks {
     $fid = $account instanceof UserInterface ? (int) ($account->get('user_picture')->target_id ?? 0) : 0;
     $file = $fid > 0 ? $this->entityTypeManager->getStorage('file')->load($fid) : NULL;
     $build = [
-      '#type' => 'container',
-      '#attributes' => ['id' => self::WRAPPER],
+      '#type' => 'html_tag',
+      '#tag' => 'span',
+      '#attributes' => [self::SLOT_ATTRIBUTE => ''],
       'image' => $file ? [
         '#theme' => 'image_style',
         '#style_name' => 'aculta_avatar',
@@ -63,7 +67,7 @@ final class AvatarRerollCallbacks {
       ] : [],
     ];
     $html = (string) $this->renderer->renderInIsolation($build);
-    $response->addCommand(new ReplaceCommand('#' . self::WRAPPER, $html));
+    $response->addCommand(new ReplaceCommand('[' . self::SLOT_ATTRIBUTE . ']', $html));
     return $response;
   }
 

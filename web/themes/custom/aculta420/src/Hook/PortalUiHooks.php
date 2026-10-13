@@ -72,6 +72,7 @@ final class PortalUiHooks {
     // Minha conta.
     'account-avatar' => ['portal-account__avatar'],
     'account-avatar-empty' => ['portal-account__avatar', 'portal-account__avatar--empty'],
+    'account-photo-preview' => ['portal-account-photo__preview'],
     'account-identity' => ['portal-account__identity'],
     'account-commerce-orders' => ['portal-account__commerce', 'portal-account__commerce--orders'],
     'account-commerce-payments' => ['portal-account__commerce', 'portal-account__commerce--payments'],

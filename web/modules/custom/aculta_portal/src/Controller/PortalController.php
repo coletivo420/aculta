@@ -131,9 +131,18 @@ final class PortalController extends ControllerBase {
         '#attributes' => ['data-portal-ui' => 'account-identity'],
         'photo_editor' => [
           '#theme' => 'aculta_portal_photo_editor',
-          // Contêiner com id fixo: o sorteio de avatar (aculta_user) troca só este bloco, por AJAX.
-          '#photo' => ['#type' => 'container', '#attributes' => ['id' => 'aculta-user-avatar'], 'image' => $photo],
-          '#photo_form' => $this->buildPortalAccountForm($account),
+          // Avatar em <span> (válido dentro do botão) com atributo de alvo: o sorteio (aculta_user) troca todas as
+          // ocorrências por AJAX. A visualização no popup mostra o mesmo avatar antes do envio do formulário.
+          '#photo' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['data-aculta-user-avatar' => ''], 'image' => $photo],
+          '#photo_form' => [
+            'preview' => [
+              '#type' => 'html_tag',
+              '#tag' => 'div',
+              '#attributes' => ['data-portal-ui' => 'account-photo-preview'],
+              'avatar' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['data-aculta-user-avatar' => ''], 'image' => $photo],
+            ],
+            'form' => $this->buildPortalAccountForm($account),
+          ],
           '#display_name' => $display_name,
         ],
         'details' => [
