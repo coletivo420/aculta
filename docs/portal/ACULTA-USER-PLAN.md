@@ -90,11 +90,38 @@ Serviços previstos (nomes provisórios):
 ## 5. Funções por área
 
 ### A. Avatar
-- Manter o Core `user_picture` e o estilo `aculta_avatar`. Não criar campo de foto novo.
-- Fallback neutro quando não há foto: o presenter entrega `has_photo: false` e iniciais. O tema desenha o círculo (sem SVG de interface; ícone via Bootstrap Icons).
-- Não usar Gravatar. Motivo: envia e-mail (ou seu hash) a terceiro, o que exige revisão de privacidade e consentimento. Não há confirmação de D8+ para o módulo.
-- Foto pública é opt-in (decisão 2).
-- Moderação de imagem fica fora desta fase. Core não tem moderação de foto; registrar como risco.
+
+**Regra do responsável (2026-10-13):** quem não tem foto recebe um avatar aleatório do acervo do módulo. Isso vale para quem não enviou foto e para quem entrou por OAuth sem foto importada. Em Minha conta > Visão geral, a pessoa pode trocar o avatar do acervo por outro sorteado ("rotacionar").
+
+**Inventário atual dos assets** (`web/modules/custom/aculta_portal/assets/avatars/`, versionado no Git, 112 arquivos):
+
+- `meta/avatars.json`: 117 entradas, todas `active: true`, com `id`, `file`, `family`, `label` e `alt` (texto alternativo em português).
+- `meta/avatar-families.json`: 12 famílias, com `id`, `label`, `count`, `active`, e campos opcionais `version`, `format` e `crop`.
+- `meta/avatars-monsters.json` e `meta/avatars-aliens.json`: listas de 10 entradas cada, sobras de versões anteriores. Não são lidas por nenhum código hoje.
+- `README.txt`: descreve a coleção v2 e o destino sugerido.
+- Imagens: 107 PNG 1:1 em 11 pastas (`aliens`, `brazilian`, `cerrado`, `ghosts`, `lighter-rats`, `monsters`, `plants`, `reggae`, `reptiles`, `undead`, `urban`).
+
+**Divergências encontradas, a corrigir antes de U1:**
+
+- A família `mushrooms` ("Cogumelos e fungos") tem 10 entradas no `avatars.json` e nas famílias, mas **nenhum arquivo** existe no disco nem no histórico do Git (`git log --all -- '*mushroom*'` vazio). Um sorteio hoje falharia para esses 10 itens. Ou os arquivos são recuperados, ou as entradas saem do metadado.
+- Os contadores do `README.txt` ("117 avatares", "12 famílias") batem com o `avatars.json` e não com os arquivos existentes (107).
+- Não há validação de que cada `file` do JSON existe. Propor um gate que falhe quando houver `file` ausente, `alt` vazio ou `id` duplicado.
+- Os JSON `avatars-monsters.json` e `avatars-aliens.json` são duplicatas de `avatars.json` sem uso. Remover só com autorização.
+
+**Como o sistema deve funcionar (proposta):**
+
+- Fonte da verdade do acervo: `meta/avatars.json`, lido por um serviço do `aculta_user` (DI). Entradas com `active: false` não são sorteadas.
+- Novos avatares entram por acréscimo: arquivo PNG 1:1 na pasta da família, nova entrada no JSON com `alt` e `label`, e a família em `avatar-families.json` se for nova. Nenhuma alteração de código.
+- Sorteio aleatório na primeira vez que a conta fica sem foto (e na troca), com `random_int` sobre as entradas ativas e existentes. Sem garantia de unicidade entre contas, a não ser que seja pedido.
+- Persistência: o avatar sorteado precisa virar uma escolha estável da conta (não sortear a cada página). Como não criar storage paralelo, a escolha vai para o próprio `user_picture`: o acervo é copiado para o campo como arquivo gerenciado (`file_managed`, com origem marcada) ou, se o Core não der conta da marcação, a escolha fica em `user.data` do próprio módulo (decisão a confirmar no Homelab em U0).
+- Quem enviou foto própria nunca perde a foto: o sorteio só ocorre sem foto. A "rotação" só troca entre avatares do acervo; ela não apaga foto enviada sem confirmação.
+- OAuth: hoje o `aculta_portal` não importa a foto do provedor (não há referência a `picture` em `SocialAuth*Subscriber`). Decisão: importar ou não a foto do Google, e, se importar, aplicar o acervo quando o provedor não trouxer foto.
+- Fallback sem foto e sem acervo ativo: inicial, como hoje (`account-avatar-empty`).
+- Estilo: `aculta_avatar` (1:1, 256 px, crop `aculta_avatar_1x1`). O acervo já está 1:1, então o crop automático não deve cortar as artes; validar com `image_style` antes de publicar.
+- Apresentação: o presenter entrega o caminho do arquivo e o `alt` do acervo; o tema desenha. Nenhuma classe de design no módulo.
+- Gravatar: não usar (ver decisão 7).
+- Foto pública é opt-in (decisão 2). Avatar do acervo não depende de opt-in: é imagem institucional, não dado pessoal.
+- Moderação de imagem enviada pela pessoa fica fora desta fase; Core não a oferece.
 
 ### B. Perfil público e autoria
 - Página `/autores/<slug>` com foto, nome público (apelido), resumo curto, papel na associação (quando houver) e listas de contribuições.
@@ -167,6 +194,9 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 8. **Notificações:** opt-in por tipo de evento? Frequência máxima?
 9. **Menções:** entram no escopo ou ficam para depois?
 10. **Verificação de contrib:** autoriza verificar no Homelab (`composer dry-run`) os candidatos da seção 3 antes de U1?
+11. **Acervo de avatares:** recuperar os 10 arquivos de cogumelos (`mushrooms/`) ou remover essa família do `avatars.json`?
+12. **Persistência do avatar sorteado:** copiar o arquivo do acervo para `user_picture` (arquivo gerenciado com origem marcada) ou guardar a escolha em `user.data`?
+13. **OAuth:** importar a foto do Google quando houver, ou sempre usar o acervo?
 
 ## 8. Riscos e limites
 
