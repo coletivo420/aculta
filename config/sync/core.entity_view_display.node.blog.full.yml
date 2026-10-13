@@ -79,7 +79,7 @@ content:
       link_to_entity: false
       link_rel: canonical
     third_party_settings: {  }
-    weight: -5
+    weight: -32
     region: content
   field_summary:
     type: basic_string

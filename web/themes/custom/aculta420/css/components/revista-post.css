@@ -171,3 +171,13 @@
 .node--view-mode-full .field--name-field-tags .field__label,
 .node--view-mode-full .field--name-field-tags .field__item { margin: 0; padding: 0; }
 .node--view-mode-full .field--name-field-editorial-category { gap: 0.3rem 0.35rem; }
+
+/* Chamada (subtítulo): logo abaixo do título, centralizada com ele, em fonte menor. */
+.node--view-mode-full .field--name-field-subtitle {
+  margin: 0.25rem auto 0.75rem;
+  max-inline-size: 42ch;
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
