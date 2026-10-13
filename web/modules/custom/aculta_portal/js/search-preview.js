@@ -56,6 +56,14 @@
         const showHint = () => {
           if (box) {
             box.innerHTML = hintHtml;
+            box.removeAttribute('hidden');
+          }
+          input.setAttribute('aria-expanded', 'false');
+        };
+
+        const hidePreview = () => {
+          if (box) {
+            box.setAttribute('hidden', 'hidden');
           }
           input.setAttribute('aria-expanded', 'false');
         };
@@ -63,6 +71,17 @@
         input.addEventListener('input', () => {
           clearTimeout(timer);
           const term = input.value.trim();
+          if (term.length === 0) {
+            if (controller) {
+              controller.abort();
+              controller = null;
+            }
+            hidePreview();
+            return;
+          }
+          if (box) {
+            box.removeAttribute('hidden');
+          }
           if (term.length < minChars) {
             // Termo curto: cancela a busca em andamento e não faz requisição.
             if (controller) {
@@ -71,6 +90,9 @@
             }
             showHint();
             return;
+          }
+          if (box) {
+            box.innerHTML = '';
           }
           timer = setTimeout(() => {
             if (controller) {
