@@ -101,6 +101,12 @@ final class PortalUiHooks {
     'article-author-initial' => ['portal-article-author__initial'],
     'article-author-text' => ['portal-article-author__text'],
     'article-author-name' => ['portal-article-author__name'],
+    // Abertura do tópico do Fórum (resumo, imagem e link para a publicação da Revista).
+    'forum-opening-post' => ['portal-forum-opening'],
+    'forum-opening-post-title' => ['portal-forum-opening__title'],
+    'forum-opening-post-image' => ['portal-forum-opening__image'],
+    'forum-opening-post-body' => ['portal-forum-opening__body'],
+    'forum-opening-post-link' => ['portal-forum-opening__link'],
     'article-author-role' => ['portal-article-author__role'],
     'article-author-bio' => ['portal-article-author__bio'],
     'article-author-social' => ['portal-article-author__social'],
