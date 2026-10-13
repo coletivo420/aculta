@@ -96,13 +96,16 @@ O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime mig
 
 Consultar [CHANGELOG.md](CHANGELOG.md).
 
-## Submódulo de documentos brasileiros
+## Submódulo de dados dos associados
 
-`modules/aculta_id_cpf` fornece serviços de domínio para validar, normalizar e formatar CPF/CNPJ.
-Os campos PF/PJ serão implementados manualmente no `aculta_portal`, consumindo esses serviços.
-O submódulo não implementa campos, widgets, elementos Form API, máscaras ou integração Webform.
-Consultar seu [README](modules/aculta_id_cpf/README.md)
-e a [evidência de entrega](../../../../docs/modules/ACULTA-ID-CPF.md).
+`modules/aculta_associado_id` orquestra dados identificadores e cadastrais dos
+associados para atas, relatórios e obrigações legais. Atualmente implementa
+serviços e persistência protegida de CPF/CNPJ; outras finalidades ainda não
+estão implementadas. O Portal continua dono da integração funcional e ACULTA420
+da apresentação.
+
+Consultar o [README](modules/aculta_associado_id/README.md) e o
+[plano de migração/evidência](../../../../docs/modules/ACULTA-ASSOCIADO-ID.md).
 
 ## Credenciais do ambiente (0.2.0-dev.11)
 

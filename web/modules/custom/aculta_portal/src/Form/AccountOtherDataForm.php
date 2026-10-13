@@ -17,8 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Outros Dados: CPF ou CNPJ da pessoa, gravado uma única vez.
  *
  * Antes de salvar, mostra o campo. Depois, mostra o valor formatado em somente leitura. A validação e a
- * cifra ficam no contrato AccountDocumentInterface (implementado pelo aculta_id_cpf). O formulário nunca
- * inclui a entrada em mensagens de erro.
+ * cifra ficam no contrato AccountDocumentInterface. O formulário nunca inclui a entrada em mensagens de erro.
  */
 final class AccountOtherDataForm extends FormBase {
 
@@ -31,11 +30,23 @@ final class AccountOtherDataForm extends FormBase {
 
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->has('aculta_id_cpf.account_document') ? $container->get('aculta_id_cpf.account_document') : NULL,
+      self::accountDocumentService($container),
       $container->get('current_user'),
       $container->get('entity_type.manager'),
       $container->get('messenger'),
     );
+  }
+
+  /**
+   * Resolves the canonical implementation, retaining the legacy service during migration.
+   */
+  private static function accountDocumentService(ContainerInterface $container): ?AccountDocumentInterface {
+    foreach (['aculta_associado_id.account_document', 'aculta_id_cpf.account_document'] as $service_id) {
+      if ($container->has($service_id)) {
+        return $container->get($service_id);
+      }
+    }
+    return NULL;
   }
 
   public function getFormId(): string {
