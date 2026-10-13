@@ -213,13 +213,15 @@ final class FormHooks {
    * devolve o próprio formulário, com as mensagens, dentro do mesmo bloco (wrapper). Redirecionamentos de salvamento
    * são desligados para esse envio; o foco vai para o primeiro erro (aculta_portal/account-navigation).
    *
+   * A bio (aculta_user_account_bio_form) fica fora: salva pelo próprio JS do modal (rota JSON) e fecha o modal.
+   *
    * O login (user_login_form) fica fora: ele precisa do redirecionamento do Core após autenticar. Com o AJAX, a sessão
    * era criada, mas o redirecionamento era cancelado e a página continuava no formulário de login.
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
     if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_account_terms_accept' || $formId === 'aculta_portal_account_password_create'
-      || $formId === 'user_login_form' || !isset($form['actions']['submit'])) {
+      || $formId === 'user_login_form' || $formId === 'aculta_user_account_bio_form' || !isset($form['actions']['submit'])) {
       return;
     }
     $wrapper = 'portal-account-' . \Drupal\Component\Utility\Html::cleanCssIdentifier($formId);
