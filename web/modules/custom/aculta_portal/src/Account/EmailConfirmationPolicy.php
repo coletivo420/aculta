@@ -42,25 +42,17 @@ final class EmailConfirmationPolicy {
   public function markConfirmed(int $uid): void {
     if ($uid > 0) {
       $this->userData->set(self::MODULE, $uid, self::KEY, TRUE);
-      $this->setRole($uid, TRUE);
+      $this->grantRole($uid);
     }
   }
 
-  /** Marca o e-mail do usuário como não confirmado (por exemplo, em um novo cadastro por e-mail). */
-  public function markUnconfirmed(int $uid): void {
-    if ($uid > 0) {
-      $this->userData->delete(self::MODULE, $uid, self::KEY);
-      $this->setRole($uid, FALSE);
-    }
-  }
-
-  /** Adiciona ou remove o papel email_confirmed da conta. */
-  private function setRole(int $uid, bool $confirmed): void {
+  /** Adiciona o papel email_confirmed à conta. O papel não é removido (ver EmailConfirmedRoleGuard). */
+  private function grantRole(int $uid): void {
     $account = $this->entityTypeManager->getStorage('user')->load($uid);
-    if (!$account instanceof \Drupal\user\UserInterface || $account->hasRole(self::ROLE) === $confirmed) {
+    if (!$account instanceof \Drupal\user\UserInterface || $account->hasRole(self::ROLE)) {
       return;
     }
-    $confirmed ? $account->addRole(self::ROLE) : $account->removeRole(self::ROLE);
+    $account->addRole(self::ROLE);
     $account->save();
   }
 

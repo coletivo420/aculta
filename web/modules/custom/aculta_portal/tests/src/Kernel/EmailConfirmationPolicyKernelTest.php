@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Login risk (S2 / DT-P03): confirmação de e-mail concede e remove o papel que pula o CAPTCHA.
+ * Login risk (S2 / DT-P03): confirmação de e-mail concede o papel que pula o CAPTCHA. O papel é irreversível (ver EmailConfirmedRoleGuard).
  */
 #[Group('aculta_portal')]
 #[RunTestsInSeparateProcesses]
@@ -40,7 +40,7 @@ final class EmailConfirmationPolicyKernelTest extends KernelTestBase {
     $this->assertFalse($account->hasRole(EmailConfirmationPolicy::ROLE));
   }
 
-  public function testConfirmationGrantsRoleAndUnconfirmationRemovesIt(): void {
+  public function testConfirmationGrantsRoleAndIsIrreversible(): void {
     $account = User::create(['name' => 'confirmada', 'mail' => 'confirmada@example.invalid', 'status' => 1]);
     $account->save();
     $this->policy->markConfirmed((int) $account->id());
@@ -48,10 +48,9 @@ final class EmailConfirmationPolicyKernelTest extends KernelTestBase {
     $this->assertTrue($this->policy->isConfirmed($reloaded));
     $this->assertTrue($reloaded->hasRole(EmailConfirmationPolicy::ROLE));
 
-    $this->policy->markUnconfirmed((int) $account->id());
-    $reloaded = User::load($account->id());
-    $this->assertFalse($this->policy->isConfirmed($reloaded));
-    $this->assertFalse($reloaded->hasRole(EmailConfirmationPolicy::ROLE));
+    // Confirmar de novo não duplica nem remove o papel.
+    $this->policy->markConfirmed((int) $account->id());
+    $this->assertTrue(User::load($account->id())->hasRole(EmailConfirmationPolicy::ROLE));
   }
 
   public function testAnonymousUidIsIgnored(): void {

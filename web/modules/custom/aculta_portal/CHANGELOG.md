@@ -3,6 +3,7 @@
 - Adiciona o submódulo `aculta_user` 0.1.0-dev.1 (ver o CHANGELOG do submódulo). Rota `/u/{apelido}`, política de
   visibilidade por item, formulário em `/configuracoes/perfil` e campos do perfil participante.
 - `field_nickname` passa a ser público (`profile_private: false`).
+- Papel `email_confirmed` irreversível: `EmailConfirmedRoleGuard` (presave restaura o papel; formulário de administração trava o checkbox). `EmailConfirmationPolicy::markUnconfirmed` removido (sem uso em produção).
 - Versões: `aculta_portal.info.yml` 0.4.0-dev.1 (MINOR: submódulo novo).
 - RUNTIME STATUS: DEFERRED. Nenhum `drush en` ou `config:import` foi executado.
 - Apelidos provisórios `pessoa-1` e `pessoa-5` criados no Runtime para as duas contas sem apelido (com backup
