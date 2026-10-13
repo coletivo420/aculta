@@ -1,4 +1,9 @@
-/* 4a. Institution Bar: global, discreet, institutional utilities above the Domain Header. */
+/* 4a. The shared top shell keeps the multidomain bar and domain header visible while scrolling. */
+.aculta-page-top {
+  position: sticky;
+  top: var(--drupal-displace-offset-top, 0px);
+  z-index: 1030;
+}
 .aculta-institution-bar {
   color: var(--aculta-shell-institution-text);
   background-color: var(--aculta-shell-institution-bg);

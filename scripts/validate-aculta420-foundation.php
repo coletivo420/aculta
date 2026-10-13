@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.13', 'Theme metadata marks the current version 0.6.0-dev.13.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.14', 'Theme metadata marks the current version 0.6.0-dev.14.');
 $forbiddenIntegrationModules = ['social_auth', 'social_auth_google', 'captcha', 'turnstile', 'key'];
 $themeInfoDependencies = array_map(
   static fn(string $dependency): string => str_contains($dependency, ':')
