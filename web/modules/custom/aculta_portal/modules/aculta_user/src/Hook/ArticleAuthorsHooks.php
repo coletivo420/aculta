@@ -90,8 +90,13 @@ final class ArticleAuthorsHooks {
     $name = $nickname !== '' ? $nickname : $user->getDisplayName();
     $publico = $profile ? (bool) $profile->get('field_perfil_publico')->value : TRUE;
     $publico = $publico || PublicProfilePolicy::isObrigatorioPublico($user->getRoles());
-    $showPhoto = $profile && $profile->hasField('field_exibir_foto') && (bool) $profile->get('field_exibir_foto')->value;
-    $items = $this->policy->publicItems(['publico' => $publico, 'apelido' => $name, 'exibir_foto' => $showPhoto]);
+    $flag = static fn(string $field): bool => $profile && $profile->hasField($field) && (bool) $profile->get($field)->value;
+    $items = $this->policy->publicItems([
+      'publico' => $publico,
+      'apelido' => $name,
+      'exibir_foto' => $flag('field_exibir_foto'),
+      'exibir_bio' => $flag('field_exibir_bio'),
+    ]);
 
     $photo = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'article-author-photo']];
     if (isset($items['foto']) && !$user->get('user_picture')->isEmpty()) {
@@ -118,6 +123,9 @@ final class ArticleAuthorsHooks {
         '#attributes' => ['data-portal-ui' => 'article-author-text'],
         'name' => $nameElement,
         'role' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => $role === 'author' ? (string) t('Autor') : (string) t('Coautor'), '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-role'])],
+        'bio' => isset($items['bio']) && $profile && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()
+          ? ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => (string) $profile->get('field_bio')->value, '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-bio'])]
+          : [],
       ],
     ];
   }

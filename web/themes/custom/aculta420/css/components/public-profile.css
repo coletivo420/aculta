@@ -72,3 +72,4 @@
 .portal-article-author__text { display: flex; flex-direction: column; min-inline-size: 0; }
 .portal-article-author__name { font-weight: 600; overflow-wrap: anywhere; }
 .portal-article-author__role { font-size: 0.8125rem; }
+.portal-article-author__bio { margin: 0.25rem 0 0; font-size: 0.875rem; line-height: 1.5; overflow-wrap: anywhere; }

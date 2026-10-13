@@ -90,6 +90,7 @@ final class PortalUiHooks {
     'article-author-text' => ['portal-article-author__text'],
     'article-author-name' => ['portal-article-author__name'],
     'article-author-role' => ['portal-article-author__role'],
+    'article-author-bio' => ['portal-article-author__bio'],
     // Perfil público (/u/<apelido>).
     'public-profile' => ['portal-profile'],
     'public-profile-header' => ['portal-profile__header'],
