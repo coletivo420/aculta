@@ -22,13 +22,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Popup de recorte da foto personalizada.
  *
- * Fluxo (decisão do responsável): ao enviar a foto, o popup de recorte abre sozinho. Ao aplicar o recorte, o envio
- * é um POST comum (sem AJAX, porque o Core não grava estado de formulário em GET): o recorte é gravado pela API do
- * image_widget_crop, o arquivo fica como pendente, os derivados antigos são apagados e a página volta ao painel
- * com ?aculta_recorte=1, que reabre o popup da foto para o "Salvar".
+ * Fluxo: ao enviar a foto, o modal de recorte abre sozinho. Aplicar o recorte grava o recorte pela API do
+ * image_widget_crop, torna o arquivo permanente, troca a foto da conta e recarrega o painel (POST comum, sem AJAX,
+ * sem reabrir o popup). Por isso não há etapa de "Salvar" depois do recorte.
  *
- * O arquivo a recortar é, nesta ordem: o informado em ?fid= (upload enviado, dono da conta), o pendente já recortado
- * ou a foto personalizada salva. A foto do acervo nunca é recortada aqui.
+ * O arquivo a recortar é só o informado em ?fid= (upload temporário do próprio usuário). Não há recorte da foto já
+ * salva nem do acervo: para recortar de novo, a pessoa envia a imagem outra vez.
  */
 final class AvatarCropForm extends FormBase {
 
@@ -44,12 +43,6 @@ final class AvatarCropForm extends FormBase {
   /** Estilo de imagem usado pela visualização do avatar. */
   public const STYLE = 'aculta_avatar';
 
-  /** Chave em user.data com o arquivo recortado que aguarda o "Salvar" do popup da foto. */
-  public const PENDING_KEY = 'recorte_pendente';
-
-
-  /** Marcador do painel que reabre o popup da foto depois do recorte. */
-  public const RETURN_QUERY = 'aculta_recorte';
 
   public function __construct(
     private ImageWidgetCropInterface $cropManager,
@@ -126,7 +119,7 @@ final class AvatarCropForm extends FormBase {
     $form['actions']['cancelar'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_portal.dashboard', [], ['query' => [self::RETURN_QUERY => '1']]),
+      '#url' => Url::fromRoute('aculta_portal.dashboard'),
     ];
     return $form;
   }
@@ -189,18 +182,18 @@ final class AvatarCropForm extends FormBase {
       $this->cropManager->deleteCrop($file->getFileUri(), $cropType, $file->id());
     }
 
-    $uid = (int) $this->currentUserService->id();
-    $previous = (int) $this->userData->get('aculta_user', $uid, self::PENDING_KEY);
-    if ($previous > 0 && $previous !== (int) $file->id()) {
-      $old = $this->entityTypeManagerService->getStorage('file')->load($previous);
-      if ($old !== NULL && (int) $old->isPermanent() === 0) {
-        $old->delete();
-      }
-    }
-    $this->userData->set('aculta_user', $uid, self::PENDING_KEY, (int) $file->id());
     $this->flushDerivatives($file);
 
-    $form_state->setRedirect('aculta_portal.dashboard', [], ['query' => [self::RETURN_QUERY => '1']]);
+    // Aplicar o recorte já troca a foto da conta: o arquivo recortado vira a foto e a página recarrega (sem reabrir o popup).
+    $file->setPermanent();
+    $file->save();
+    $account = $this->entityTypeManagerService->getStorage('user')->load($this->currentUserService->id());
+    if ($account instanceof UserInterface) {
+      $account->set('user_picture', ['target_id' => $file->id(), 'alt' => (string) $account->label()]);
+      $account->save();
+    }
+    $this->messenger()->addStatus($this->t('Foto do perfil atualizada.'));
+    $form_state->setRedirect('aculta_portal.dashboard');
   }
 
   /** Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo. */

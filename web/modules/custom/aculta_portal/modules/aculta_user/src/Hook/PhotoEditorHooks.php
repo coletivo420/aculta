@@ -98,12 +98,6 @@ final class PhotoEditorHooks {
       return;
     }
 
-    // Recorte pendente (já recortado, aguardando "Salvar"): o popup da foto mostra esse arquivo.
-    $pending = (int) $this->userData->get('aculta_user', (int) $account->id(), AvatarCropForm::PENDING_KEY);
-    if ($pending > 0 && $pending !== $fid && isset($form['user_picture']['widget'][0])) {
-      $form['user_picture']['widget'][0]['#default_value'] = [$pending];
-    }
-
     // Foto personalizada: sem recorte inline; o recorte fica no popup próprio.
     $form['user_picture']['widget'][0]['#after_build'][] = [PhotoEditorGuard::class, 'hideInlineCrop'];
   }

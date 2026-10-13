@@ -9,7 +9,6 @@ use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Drupal\aculta_user\Form\AvatarCropForm;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 
@@ -116,8 +115,6 @@ final class AvatarPool {
       return NULL;
     }
     $previous = (int) ($account->get('user_picture')->target_id ?? 0);
-    // O recorte pendente era de foto personalizada: sortear troca a foto e descarta esse recorte.
-    $this->userData->delete('aculta_user', (int) $account->id(), AvatarCropForm::PENDING_KEY);
     $account->set('user_picture', NULL);
     if (!$this->assignEntry($account, $entry)) {
       return NULL;

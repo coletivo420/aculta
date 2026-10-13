@@ -9,6 +9,7 @@
  * - INV-FOTO-3: não existe link "Recortar foto" no popup; o recorte só abre logo após o envio (photo-flow.js).
  * - INV-FOTO-4: o recorte só aceita o arquivo recém-enviado: nada de fallback para a foto atual nem para o recorte pendente.
  * - INV-FOTO-5: o campo de recorte aparece uma única vez no modal.
+ * - INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel, sem reabrir o popup.
  *
  * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
  */
@@ -74,6 +75,14 @@ if (!str_contains($crop, "\$element[\$key]['#pre_render'] = [];") || !str_contai
   $errors[] = 'INV-FOTO-5: flattenElement não limpa #pre_render; o campo de recorte sai duplicado';
 }
 
+// INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel; não há etapa de "Salvar" nem reabertura do popup.
+if (str_contains($crop, 'PENDING_KEY') || str_contains($crop, 'aculta_recorte') || !str_contains($crop, "set('user_picture'")) {
+  $errors[] = 'INV-FOTO-6: o recorte não troca a foto da conta, ou volta ao recorte pendente / reabertura do popup';
+}
+if (str_contains($flow, 'aculta_recorte') || str_contains($flow, 'reopen')) {
+  $errors[] = 'INV-FOTO-6: photo-flow.js reabre o popup ao voltar (loop de reabertura)';
+}
+
 // INV-FOTO-4: recorte só do arquivo recém-enviado.
 if (!preg_match('/function targetFile\(\).*?\$file->isPermanent\(\)/s', $crop)) {
   $errors[] = 'INV-FOTO-4: targetFile não recusa arquivo permanente (foto já salva)';
@@ -95,4 +104,4 @@ if ($errors !== []) {
   exit(1);
 }
 
-echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-5)' . PHP_EOL;
+echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-6)' . PHP_EOL;

@@ -11,7 +11,7 @@ personalizada, recorte que reabre sem novo envio). Este documento é a fonte das
 | Avatar do sistema (acervo, `public://pictures/acervo/`) | avatar do acervo | sim, vazio ("Escolha uma imagem") | **não** | **sim** | **não** |
 | Avatar personalizado (enviado pela pessoa) | foto própria | sim, com a foto | **sim** (volta ao acervo ao salvar) | **não** | **não** |
 
-Sem link "Recortar foto" em nenhum estado. O recorte abre sozinho logo após o envio de uma imagem, pelo JavaScript
+Sem link "Recortar foto" em nenhum estado. Aplicar o recorte troca a foto e recarrega o painel. O recorte abre sozinho logo após o envio de uma imagem, pelo JavaScript
 `js/photo-flow.js`, e só para o arquivo recém-enviado.
 
 ## Regras (invariantes)
@@ -22,6 +22,9 @@ Sem link "Recortar foto" em nenhum estado. O recorte abre sozinho logo após o e
   `if ($isAcervo)`. Com foto personalizada ele some.
 - **INV-FOTO-3 — sem recorte manual.** Não existe link para recortar no popup. O recorte só é aberto pelo
   `photo-flow.js` ao chegar um novo arquivo no campo (`imagem[fids]`).
+- **INV-FOTO-6 — recorte aplicado troca a foto e recarrega o painel.** "Aplicar recorte" torna o arquivo permanente,
+  grava-o como foto da conta e redireciona ao painel, sem parâmetro e sem reabrir o popup. Não há etapa de "Salvar"
+  depois do recorte. O loop de reabertura era causado pela reabertura automática do popup ao voltar.
 - **INV-FOTO-5 — uma única caixa de recorte.** O achatamento das abas do `image_crop` troca o tipo e o
   `#theme_wrappers` e limpa o `#pre_render`; sem isso o pre_render reagrupa os filhos e o campo sai duplicado.
 - **INV-FOTO-4 — recorte só do arquivo recém-enviado.** `AvatarCropForm::targetFile()` aceita apenas o `fid` do

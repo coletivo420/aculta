@@ -65,11 +65,10 @@ final class UserPictureForm extends FormBase {
       return $form;
     }
     $current = (int) ($account->get('user_picture')->target_id ?? 0);
-    $pending = (int) $this->userData->get('aculta_user', (int) $account->id(), AvatarCropForm::PENDING_KEY);
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
-    // Foto do acervo: sem arquivo inicial (o envio fica disponível) e sem recorte pendente, que é de foto personalizada.
-    $default = $isAcervo ? 0 : ($pending > 0 && $pending !== $current ? $pending : $current);
+    // Foto do acervo: sem arquivo inicial (o envio fica disponível). Foto personalizada: a própria foto.
+    $default = $isAcervo ? 0 : $current;
 
     $form['#attributes']['data-aculta-user-picture'] = '';
 
@@ -170,8 +169,6 @@ final class UserPictureForm extends FormBase {
       $file->save();
     }
     $account->save();
-    // O recorte pendente foi consumido por este salvamento.
-    $this->userData->delete('aculta_user', $uid, AvatarCropForm::PENDING_KEY);
     $this->messenger()->addStatus($this->t('Foto do perfil salva.'));
     $form_state->setRedirect('aculta_portal.dashboard');
   }

@@ -222,9 +222,10 @@ Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_u
   **sem** "Remover" e **sem** "Recortar foto".
 - **P2 — envio no acervo:** enviar uma imagem PNG/JPG (até 2 MB).
   Esperado: o recorte abre sozinho (modal "Recortar foto", caixa de recorte direta, sem abas "Crop image" nem
-  nome do tipo, com barra de rolagem se passar de 560 px). Ao aplicar, volta ao painel com o popup reaberto. Não há
-  "Remover" no arquivo enviado.
-- **P3 — foto personalizada salva:** salvar a foto recortada.
+  nome do tipo, com barra de rolagem se passar de 560 px). Ao aplicar, a foto da conta é trocada e o painel recarrega
+  **uma vez**, sem reabrir o popup e sem repetir requisições a `/avatar/foto` (INV-FOTO-6). Não há "Remover" no
+  arquivo enviado.
+- **P3 — foto personalizada salva:** a foto recortada já é a foto da conta (aplicar o recorte salva).
   Esperado: painel mostra a foto própria. Abrir o popup: campo com a foto e botão **"Remover"**; **sem** "Sortear
   outro avatar"; **sem** "Recortar foto".
 - **P4 — remover:** clicar em "Remover" e depois em "Salvar foto do perfil".
@@ -234,6 +235,8 @@ Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_u
 - **P6 — sortear com foto personalizada:** o link "Sortear outro avatar" não aparece (P3). Se a rota
   `/avatar/sortear` for chamada mesmo assim, ela troca a foto (rota técnica; a regra de exibição é a da tela).
 
-Resultado (2026-10-13): verificado por HTTP em P1 (acervo: sem remover, com sortear, com campo de envio, sem
+Verificação automatizada (Chromium headless via DevTools, 2026-10-13): após "Aplicar recorte", um único
+`POST /avatar/recortar`, navegação para o painel, nenhuma repetição de `POST /avatar/foto`, e a foto da conta vira o
+arquivo enviado (permanente). Resultado anterior por HTTP: verificado em P1 (acervo: sem remover, com sortear, com campo de envio, sem
 recortar), P3 (personalizada: com remover, sem sortear, sem recortar) e recusa do recorte de foto já salva ("Envie
 uma foto própria para recortar."). **Não executado:** P2, P4 e P5 no navegador (envio por AJAX e modal).
