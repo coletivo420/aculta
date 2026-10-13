@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Instalação e atualizações do submódulo aculta_magazine.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Field\FieldConfigInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Cria a categoria de pasta do Fórum e gera os tópicos das publicações existentes.
+ *
+ * Campo `field_categoria_revista` em taxonomy_term (vocabulário forums): liga cada pasta à sessão da Revista.
+ * Depois, cria o tópico de cada publicação que ainda não tem (ForumTopicSync::backfill()).
+ */
+function aculta_magazine_update_10001(): string {
+  $storage = new FileStorage(__DIR__ . '/config/install');
+  $names = [
+    'field.storage.taxonomy_term.field_categoria_revista',
+    'field.field.taxonomy_term.forums.field_categoria_revista',
+  ];
+  foreach ($names as $name) {
+    $data = $storage->read($name);
+    unset($data['uuid'], $data['_core']);
+    if ($name === 'field.storage.taxonomy_term.field_categoria_revista') {
+      if (FieldStorageConfig::loadByName('taxonomy_term', 'field_categoria_revista') === NULL) {
+        FieldStorageConfig::create($data)->save();
+      }
+    }
+    elseif (FieldConfig::loadByName('taxonomy_term', 'forums', 'field_categoria_revista') === NULL) {
+      FieldConfig::create($data)->save();
+    }
+  }
+
+  $total = \Drupal::service('aculta_magazine.forum_topic_sync')->backfill();
+  return "Campo de categoria do Fórum criado e $total publicação(ões) verificada(s) para tópico.";
+}
+
+/**
+ * Cria uma pasta de Fórum para cada categoria editorial da Revista (mesma separação das sessões).
+ */
+function aculta_magazine_update_10002(): string {
+  $sections = \Drupal::service('aculta_magazine.forum_section_resolver')->ensureAll();
+  return count($sections) . ' pasta(s) de categoria da Revista garantida(s).';
+}
+
+/**
+ * Padrão de URL do tópico do Fórum: /topico/<título>, em português e sem ID (docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md).
+ */
+function aculta_magazine_update_10003(): string {
+  $storage = new FileStorage(__DIR__ . '/config/install');
+  $data = $storage->read('pathauto.pattern.aculta_forum_topic');
+  unset($data['uuid'], $data['_core']);
+  if (\Drupal::entityTypeManager()->getStorage('pathauto_pattern')->load('aculta_forum_topic') === NULL) {
+    \Drupal::entityTypeManager()->getStorage('pathauto_pattern')->create($data)->save();
+  }
+
+  $generator = \Drupal::service('pathauto.generator');
+  $topics = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'forum']);
+  foreach ($topics as $topic) {
+    $generator->updateEntityAlias($topic, 'bulkupdate');
+  }
+  return count($topics) . ' tópico(s) do Fórum com URL de /topico/.';
+}
