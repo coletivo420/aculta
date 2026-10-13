@@ -430,3 +430,28 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 - Dados pessoais e LGPD: a ativação de perfil público e de notificações depende de decisão do responsável e de revisão de texto de consentimento.
 - Gamificação mal desenhada pode expor participação e apoio. O risco está em métricas, não só na interface.
 - Não há Runtime validado para nenhum item deste plano.
+
+## 9. Implementação autorizada e bloqueio atual
+
+**Decisão do responsável (2026-10-13):** funcionalidades que ainda não existem serão implementadas. Inclui as seções E2 a E7, A1, G2 e o cartão de pré-visualização do verbete.
+
+**Bloqueio para verificação (registrado em 2026-10-13):**
+
+- `packages.drupal.org` (repositório Composer do Drupal, declarado em `composer.json`) responde 403 pela política de egress da sessão. `repo.packagist.org` falha no túnel. Sem isso não há `composer install`, e portanto não há Core nem contrib para verificar APIs.
+- O código do Core e do contrib não está neste workspace (`web/core`, `vendor/` ausentes). Escrever PHP aqui sem poder rodar nem conferir APIs contraria `GUARDRAILS.md` e as regras de encerramento de fase.
+- Não há Runtime acessível a partir desta sessão.
+
+**Ordem de implementação (cada item é um PR próprio, `RUNTIME STATUS: DEFERRED` até validação no Homelab):**
+
+1. **U0 (no Homelab):** `composer install`, verificação de Flag com `entity:user`, Pathauto com perfil, Views de `node_field_revision` e de comentários, e do módulo `lms` 1.2.3 (discussão).
+2. **Configuração de papéis (sem código):** `contribuidor_editorial` (com `wiki_editor`, `administer comments`, `edit any forum content`); `wiki_contributor` para `email_confirmed`; `revert wiki_entry revisions` para `wiki_editor`.
+3. **Participação e Fórum:** tópico vinculado (E3), limite de 10 comentários e fila do primeiro comentário com painel administrativo (E7), e cartão de pré-visualização (E6).
+4. **Atividade:** seção com abas (E2), histórico individual e progresso de limites.
+5. **Perfil, avatar e associado:** perfil público, acervo de avatares (com a família `mushrooms` resolvida), papel `associado`, campos de "Outros Dados" (A1).
+6. **Badges:** automáticas e manuais, com `aculta_badge_award` (G).
+7. **Discussão do LMS:** depois de confirmar o módulo `lms` no Homelab (decisão 34).
+
+**Padrões que valem para cada PR:** `#[Hook]` OOP, injeção de dependência, sem `\Drupal::` em `src/`, marcação `data-portal-ui` sem classes de design, textos em `translations/*.pt-br.po`, gates do Portal passando, e atualização de `CHANGELOG.md` e da versão.
+
+**Padrões a aplicar com defaults até a resposta:** decisão 33 (contribuidor editorial segue a regra), decisão 34 (discussão do LMS por curso), decisão 35 (10 comentários e limites ligados). Qualquer um deles pode ser alterado no painel administrativo.
+
