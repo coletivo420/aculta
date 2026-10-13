@@ -75,3 +75,13 @@ aculta_user.foto:
     _title: 'Foto do perfil'
   requirements:
     _permission: 'access aculta portal'
+
+aculta_user.bio_form:
+  path: '/bio/editar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AccountBioForm'
+    _title: 'Editar bio'
+  requirements:
+    _permission: 'access aculta portal'
+  options:
+    _aculta_domain_purpose: 'account'

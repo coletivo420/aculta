@@ -152,9 +152,6 @@ final class PortalController extends ControllerBase {
           'email' => ['#plain_text' => $account->getEmail()],
         ],
       ],
-      'intro' => [
-        '#plain_text' => $this->t('Use o menu para acompanhar seu apoio, seus cursos, atualizar seus dados e gerenciar sua conta.'),
-      ],
       '#cache' => ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
     ];
     // Caixas extras da visão geral (ex.: Bio, do aculta_user) entram pelo alter; Cursos saiu desta visão.

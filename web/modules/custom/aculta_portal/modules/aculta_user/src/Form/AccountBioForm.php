@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -55,7 +58,12 @@ final class AccountBioForm extends FormBase {
       '#rows' => 4,
     ];
     $form['actions'] = ['#type' => 'actions'];
-    $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar bio')];
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Salvar bio'),
+      // Modal: ao salvar, a visão geral é recarregada com a bio nova.
+      '#ajax' => ['callback' => '::ajaxSave'],
+    ];
     return $form;
   }
 
@@ -76,6 +84,15 @@ final class AccountBioForm extends FormBase {
     $profile->set('field_bio', trim((string) $form_state->getValue('bio')));
     $profile->save();
     $this->messenger()->addStatus($this->t('Bio salva.'));
+  }
+
+  /**
+   * Resposta AJAX do modal: recarrega a visão geral (a bio aparece lá).
+   */
+  public function ajaxSave(array &$form, FormStateInterface $form_state): AjaxResponse {
+    $response = new AjaxResponse();
+    $response->addCommand(new RedirectCommand(Url::fromRoute('aculta_portal.dashboard')->toString()));
+    return $response;
   }
 
   /**
