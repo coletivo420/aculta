@@ -129,6 +129,21 @@ Serviços previstos (nomes provisórios):
 - **Nunca público:** e-mail, CPF, endereço, WhatsApp, nome completo, cidade e UF (decisão 2).
 - Alteração de slug troca o caminho e o antigo responde 404, sem 301 (`FRIENDLY-PORTUGUESE-SLUGS.md`). Por isso, o módulo `redirect` precisa ficar **fora** da criação automática de redirect quando o Pathauto mudar um alias.
 
+### B1. Todo usuário tem perfil
+
+**Decisão do responsável (2026-10-13):** todos os usuários do site têm perfil.
+
+**Situação atual:** o perfil `participante` é criado só de forma lazy, em memória, quando a pessoa abre "Meus dados" (`PortalController::loadParticipantProfile`). Não há criação no cadastro. Por isso muitas contas não têm perfil salvo.
+
+**Proposta:**
+
+- **Criação no cadastro:** `#[Hook('user_insert')]` cria o perfil `participante` para toda conta nova, inclusive as criadas por OAuth (que também passam por `user_insert`). Sem depender de a pessoa abrir alguma página.
+- **Apelido provisório:** a conta nova recebe apelido gerado (ex.: `pessoa-<id>`), único, com perfil privado. A pessoa troca o apelido em Configurações (B2). Apelido gerado não é público enquanto o perfil estiver privado.
+- **Regras do apelido:** minúsculas, sem acento, letras, números e hífen, 3 a 40 caracteres, único. Lista de palavras reservadas (ex.: `admin`, `u`, `perfil`, `entrar`, `minha-conta`, `atividade`) para não colidir com rotas.
+- **Contas já existentes:** precisam de perfil salvo. Isso é um update hook de dados, que cria perfil e apelido para cada conta. **Não roda sem autorização explícita**, e antes disso é preciso um backup do Runtime (`estados/` não é versionado).
+- **Nome de exibição:** quando o perfil não tem nome público, o site usa o apelido. Nunca o e-mail.
+- **Cache:** tags do perfil; a criação do perfil invalida a cache do usuário.
+
 ### B2. Perfil público ou privado (Minha conta > Configurações)
 
 **Pedido do responsável (2026-10-13):** a pessoa pode tornar o perfil privado em Minha conta > Configurações.
@@ -478,3 +493,6 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 
 **Decisões 33 a 35 respondidas em 2026-10-13:** papel único `content_editor`; discussão do LMS por curso e por atividade, com comentário no Fórum; matriculados isentos da primeira moderação (decisão 36); 10 comentários como padrão, alterável no painel administrativo.
 41. **Caminho do perfil:** `/u/` é abreviação, e as regras de slug do projeto exigem palavra em português (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`). Confirma `/u/<apelido>` como exceção registrada, ou prefere `/perfil/<apelido>`?
+42. **Apelido no cadastro:** o apelido é pedido no cadastro, ou gerado e trocado depois em Configurações? Proposta: gerado no cadastro e trocável depois.
+43. **Contas existentes:** autoriza o update hook que cria perfil e apelido para todas as contas atuais, depois de backup do Runtime?
+44. **Palavras reservadas:** a lista proposta basta, ou há outras rotas a reservar?
