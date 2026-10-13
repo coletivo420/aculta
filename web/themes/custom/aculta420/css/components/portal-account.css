@@ -350,3 +350,11 @@
 
 /* Modais de foto (popup e recorte): o conteúdo rola quando passa da altura máxima das opções do diálogo. */
 .ui-dialog > .ui-dialog-content { overflow-y: auto; }
+
+/* Bio da visão geral: caixa bloqueada (textarea desabilitado) e lápis abaixo dela, com espaço entre ícone e rótulo. */
+.portal-account-bio .portal-account-bio__edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block-start: 0.5rem;
+}

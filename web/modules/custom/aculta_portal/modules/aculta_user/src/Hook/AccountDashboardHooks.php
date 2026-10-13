@@ -36,27 +36,35 @@ final class AccountDashboardHooks {
     $build['bio'] = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-bio-card'],
-      'header' => [
-        '#type' => 'container',
-        'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => t('Bio')],
-        'edit' => PortalLinkElement::build(
-          t('Editar bio'),
-          Url::fromRoute('aculta_user.bio_form'),
-          [
-            'class' => 'use-ajax',
-            'data-dialog-type' => 'modal',
-            'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Editar bio')]),
-            'data-portal-ui' => 'account-bio-edit',
-            'aria-label' => (string) t('Editar bio'),
-          ],
-        ) + ['#attached' => ['library' => ['core/drupal.dialog.ajax']]],
-      ],
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => t('Bio')],
+      // Caixa de formulário bloqueada: leitura da bio, ou o aviso como placeholder quando vazia.
       'text' => [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#attributes' => ['data-portal-ui' => 'account-bio-text'],
-        '#value' => $bio !== '' ? $bio : (string) t('Você ainda não escreveu sua bio.'),
+        '#type' => 'textarea',
+        '#title' => t('Bio'),
+        '#title_display' => 'invisible',
+        '#value' => $bio,
+        '#disabled' => TRUE,
+        '#resizable' => 'none',
+        '#rows' => 4,
+        '#attributes' => [
+          'disabled' => 'disabled',
+          'readonly' => 'readonly',
+          'placeholder' => (string) t('Você ainda não escreveu sua bio.'),
+          'data-portal-ui' => 'account-bio-text',
+        ],
       ],
+      // Lápis abaixo da caixa: abre o modal de edição.
+      'edit' => PortalLinkElement::build(
+        t('Editar bio'),
+        Url::fromRoute('aculta_user.bio_form'),
+        [
+          'class' => 'use-ajax',
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Editar bio')]),
+          'data-portal-ui' => 'account-bio-edit',
+          'aria-label' => (string) t('Editar bio'),
+        ],
+      ) + ['#attached' => ['library' => ['core/drupal.dialog.ajax']]],
       '#cache' => [
         'tags' => $profile ? $profile->getCacheTags() : [],
       ],
