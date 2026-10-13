@@ -63,6 +63,9 @@ Implementado (proposta aprovada pelo responsável):
 - Recorte inline do widget removido para foto personalizada; botão "Recortar foto" (link modal) reabre o recorte.
 - Limite mínimo do recorte: o tipo `aculta_avatar_1x1` tinha `hard_limit` 2048 px, incompatível com um avatar de
   256 px (a imagem do acervo tem 512 px). Ajustado para 256 px no `config/sync` e no Runtime. **Confirmar.**
+- Causa do recorte que não funcionava: o canvas de recorte usava o estilo `aculta_avatar`, que já aplica o recorte;
+  recortava-se sobre uma imagem já recortada. Corrigido: o canvas usa `crop_thumbnail` (só redimensiona, 400 px).
+  Verificado: o modal mostra o canvas de `crop_thumbnail` (200) e o POST grava o recorte (303).
 - Abertura automática ao enviar: `js/photo-flow.js` abre o modal `/avatar/recortar?fid=N` quando o campo da foto recebe
   um arquivo diferente da foto salva, uma vez por arquivo e por sessão. **Não verificado em navegador** (não disponível
   nesta sessão).
@@ -112,6 +115,12 @@ Pendente: teste em navegador da abertura automática e do fechamento do popup; t
 | Endereço antigo continua valendo até a confirmação do novo | Decidido: manter o comportamento do módulo | seção 9 |
 
 ### 1.8 Badges (troféus)
+Estado técnico: entidade `aculta_badge_award` instalada no Runtime (`aculta_user_update_10001`, rodado com `drush updb`,
+única atualização pendente); serviço `BadgeService` (concede uma vez, revoga só manuais); hooks de avaliação ativos
+(primeiro comentário, primeira edição da Wiki, perfil básico, pedido concluído, curso concluído). Verificado: concessão
+idempotente no CLI. Pendente: tela de concessão e revogação do administrador, exibição com "Obtida em: DATA" e
+verificação dos gatilhos com dados reais.
+
 | Decisão | Status |
 | --- | --- |
 | Troféus são concedidos e revogados só pelo administrador (manuais); automáticas nunca são revogadas | Decidido; código em andamento (não commitado) |
@@ -146,7 +155,7 @@ Pendente: teste em navegador da abertura automática e do fechamento do popup; t
 | Salvar foto sem enviar mantém a foto e os papéis | HTTP | verificado |
 | Popup fecha ao salvar; visual do popup | **Não verificado** (sem navegador) | pendente |
 | Testes de Kernel da rota e da privacidade do perfil | — | **pendentes** |
-| Fluxo de recorte e abertura automática | — | **pendentes** (navegador) |
+| Fluxo de recorte e abertura automática | — | **pendentes** (navegador; o lado servidor está verificado) |
 
 ## 4. Alterações no Runtime (homelab)
 Todas com backup prévio em `scratchpad` (fora do repositório).

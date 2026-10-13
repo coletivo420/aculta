@@ -107,7 +107,9 @@ final class AvatarCropForm extends FormBase {
       '#type' => 'image_crop',
       '#file' => $file,
       '#crop_type_list' => [self::CROP_TYPE],
-      '#crop_preview_image_style' => self::STYLE,
+      // Base do canvas de recorte: estilo só de redimensionamento. O estilo aculta_avatar já aplica o recorte,
+      // e recortar sobre uma imagem já recortada não funciona.
+      '#crop_preview_image_style' => 'crop_thumbnail',
       '#show_default_crop' => TRUE,
       '#show_crop' => TRUE,
       '#warn_multiple_usages' => FALSE,

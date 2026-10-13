@@ -17,3 +17,6 @@ services:
   aculta_user.avatar_asset_cleanup:
     class: Drupal\aculta_user\Avatar\AvatarAssetCleanup
     arguments: ["@entity_type.manager", "@datetime.time", "@file.usage"]
+  aculta_user.badge_service:
+    class: Drupal\aculta_user\Badge\BadgeService
+    arguments: ['@entity_type.manager']

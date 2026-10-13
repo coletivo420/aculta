@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @file
+ * Instalação e atualização do aculta_user.
+ */
+
+declare(strict_types=1);
+
+use Drupal\aculta_user\Entity\BadgeAward;
+
+/**
+ * Instala a tabela dos troféus concedidos (aculta_badge_award).
+ */
+function aculta_user_update_10001(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $type = \Drupal::entityTypeManager()->getDefinition('aculta_badge_award');
+  $manager->installEntityType($type);
+}
