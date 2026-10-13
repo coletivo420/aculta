@@ -1,3 +1,9 @@
+## 0.3.0-dev.7 — sorteio só na prévia; OAuth como foto personalizada — 2026-10-13
+
+- "Sortear novo avatar" troca só a prévia do modal (escolha pendente). A foto muda ao clicar em "Salvar foto do perfil". Fechar sem salvar descarta a escolha (INV-FOTO-8). Substitui o comportamento de 0.3.0-dev.5 (que gravava e recarregava ao fechar).
+- Foto importada por OAuth (Social Auth) fica permanente e é personalizada (INV-FOTO-9). Configuração do Google pendente: ver `docs/integrations/GOOGLE.md`.
+- `aculta_user.info.yml` 0.3.0-dev.7. RUNTIME STATUS: DEFERRED (inspeção visual pendente).
+
 ## 0.3.0-dev.6 — botão "Sortear novo avatar" na linha de ações — 2026-10-13
 
 - O sorteio fica como botão na linha de ações, ao lado de "Salvar foto do perfil", no lugar de "Remover foto" (personalizada). Regra de exibição inalterada (INV-FOTO-2).

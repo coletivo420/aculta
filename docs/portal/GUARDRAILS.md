@@ -77,6 +77,16 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 - Nenhuma regra funcional migra para o tema.
 - Substituição de fluxo acontece por fluxo, nunca com remoção total antecipada.
 
+## Foto de perfil (`aculta_user`)
+
+- Sorteio é prévia: só "Salvar foto do perfil" grava a foto. Fechar sem salvar descarta a escolha.
+- Foto personalizada tem "Remover foto" (imediato, sorteia do acervo). Avatar do sistema tem "Sortear novo avatar" e
+  caixa de envio, sem "Remover".
+- Recorte só do arquivo recém-enviado; aplicar o recorte troca a foto e recarrega o painel (sem reabrir o popup).
+- Foto importada por OAuth é personalizada.
+- Regras completas, contrato do sorteio e invariantes: `web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md`
+  e `docs/portal/ANTI-REGRESSAO.md`. Gate: `php scripts/validate-aculta-user-photo.php`.
+
 ## AJAX e formulários
 
 - O Portal não mantém um segundo framework de AJAX. Usa Drupal AJAX, Views AJAX ou Form API.

@@ -37,12 +37,22 @@ final class AccountCreationHooks {
     $this->createProfile($account);
   }
 
-  /** Conta nova sem foto recebe avatar do acervo antes de gravar (sem salvar dentro de hook de usuário). */
+  /**
+   * Conta nova: foto importada do provedor (OAuth, via Social Auth) é foto personalizada, então fica permanente;
+   * sem foto, recebe avatar do acervo. Sem salvar a conta dentro do hook (ver PictureReplacementHooks).
+   */
   #[Hook('user_presave')]
   public function userPresave(UserInterface $account): void {
-    if ($account->isNew()) {
-      $this->avatarPool->assignPresave($account);
+    if (!$account->isNew()) {
+      return;
     }
+    $file = $account->hasField('user_picture') ? $account->get('user_picture')->entity : NULL;
+    if ($file !== NULL && !$file->isPermanent() && !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/')) {
+      $file->setPermanent();
+      $file->save();
+      return;
+    }
+    $this->avatarPool->assignPresave($account);
   }
 
   /** Cria o perfil participante com o nome de usuário como apelido inicial, sem colidir. */

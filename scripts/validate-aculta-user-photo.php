@@ -10,7 +10,7 @@
  * - INV-FOTO-4: o recorte só aceita o arquivo recém-enviado: nada de fallback para a foto atual nem para o recorte pendente.
  * - INV-FOTO-5: o campo de recorte aparece uma única vez no modal.
  * - INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel, sem reabrir o popup.
- * - INV-FOTO-8: sortear atualiza os avatares por AJAX; fechar o modal depois do sorteio recarrega a página.
+ * - INV-FOTO-8: sortear só troca a prévia do modal; a foto muda ao salvar; fechar sem salvar descarta a escolha.
  * - INV-FOTO-7: o popup não mostra nome nem link da foto atual; "Remover foto" (só personalizada) volta a um avatar sorteado do acervo.
  *
  * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
@@ -88,13 +88,22 @@ if (!preg_match('/function removePersonal\(.*?avatarPool->reroll\(\$account\)/s'
   $errors[] = 'INV-FOTO-7: removePersonal não sorteia do acervo (AvatarPool::reroll)';
 }
 
-// INV-FOTO-8: sortear atualiza os avatares por AJAX e marca o body; fechar o modal depois disso recarrega a página.
+// INV-FOTO-8: sortear só troca a prévia do modal (escolha pendente); a foto só muda ao salvar. Fechar sem salvar não grava.
 $reroll = $read('src/Controller/AvatarRerollController.php');
-if (!str_contains($reroll, "data-aculta-avatar-changed")) {
-  $errors[] = 'INV-FOTO-8: o sorteio não marca o body (data-aculta-avatar-changed)';
+if (!str_contains($reroll, "'.ui-dialog [' . self::SLOT_ATTRIBUTE . ']'") || !str_contains($reroll, 'pool->preview(')) {
+  $errors[] = 'INV-FOTO-8: o sorteio não se limita à prévia do modal (ReplaceCommand em .ui-dialog) ou não guarda escolha pendente';
 }
-if (!str_contains($flow, "dialog:afterclose") || !str_contains($flow, "window.location.reload()")) {
-  $errors[] = 'INV-FOTO-8: photo-flow.js não recarrega a página ao fechar o modal depois do sorteio';
+if (str_contains($reroll, 'data-aculta-avatar-changed') || str_contains($flow, 'reloadAfterAvatarChange')) {
+  $errors[] = 'INV-FOTO-8: o sorteio ainda grava ou recarrega a página ao fechar o modal';
+}
+if (!str_contains($picture, 'applyPending(')) {
+  $errors[] = 'INV-FOTO-8: Salvar não aplica a escolha pendente do sorteio';
+}
+
+// INV-FOTO-9: foto importada por OAuth é personalizada: o presave de conta nova a torna permanente e fora do acervo.
+$accountHooks = $read('src/Hook/AccountCreationHooks.php');
+if (!str_contains($accountHooks, 'setPermanent()') || !str_contains($accountHooks, 'AvatarPool::DIRECTORY')) {
+  $errors[] = 'INV-FOTO-9: foto importada por OAuth não é tornada permanente/personalizada no presave da conta';
 }
 
 // INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel; não há etapa de "Salvar" nem reabertura do popup.
@@ -126,4 +135,4 @@ if ($errors !== []) {
   exit(1);
 }
 
-echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-8)' . PHP_EOL;
+echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-9)' . PHP_EOL;

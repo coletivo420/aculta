@@ -293,6 +293,23 @@ ledger.
 
 ## Google Login
 
+### Foto do perfil importada do Google (aculta_user 0.3.0-dev.7)
+
+- Na criação da conta por OAuth, o Social Auth baixa a foto do provedor (`UserManager::createNewUser` →
+  `downloadProfilePic`) para `public://pictures/[ano]-[mês]/` e grava em `user_picture`. A importação está ativa no código.
+- A foto importada é **foto personalizada**: `AccountCreationHooks::userPresave` a torna permanente e ela não é tratada
+  como acervo. Por isso aparece com "Remover foto" e sem "Sortear novo avatar" (ver `aculta_user/docs/FOTO-PERFIL.md`).
+- Verificação (2026-10-13, servidor de testes): conta de teste criada pelo `UserManager` com URL de foto; arquivo baixado,
+  permanente, fora do acervo. Conta e arquivo de teste removidos depois.
+- **Pendências de configuração (não resolvidas):**
+  - `social_auth_google.settings:client_id` está vazio no runtime. O Social Auth lê o client ID só da configuração; a Key
+    `google_oauth_client_id` (provider env) não é usada por ele. Ligar a credencial exige decisão e ajuste do ACULTA
+    Secrets Contract, gate e provisionamento por ambiente.
+  - `social_auth_google.settings:client_secret` está preenchido na configuração do runtime. Isso contraria a política
+    (credencial só em Key/env). Corrigir por provisionamento; valor não registrado aqui.
+  - Durante a importação de teste, o módulo `group` (`group_user_update`) falhou numa gravação posterior à criação, sem
+    `original` da conta. Risco a investigar no fluxo OAuth completo antes de ativar o login.
+
 A infraestrutura já está PREPARED.
 
 Ativar somente quando:

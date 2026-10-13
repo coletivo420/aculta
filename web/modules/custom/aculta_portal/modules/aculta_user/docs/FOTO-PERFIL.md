@@ -8,6 +8,19 @@ personalizada, recorte que reabre sem novo envio). Este documento é a fonte das
 
 "Sortear novo avatar" (acervo) e "Remover foto" (personalizada) ficam na mesma linha de ações, ao lado de "Salvar foto do perfil".
 
+## Contrato do sorteio e da foto
+
+- **Sortear** (`aculta_user.avatar_reroll`, AJAX): escolhe uma entrada do catálogo, guarda como escolha pendente
+  (`user.data` `sorteio_pendente`) e troca **só a prévia dentro do modal** (`.ui-dialog [data-aculta-user-avatar]`).
+  Não grava a foto e não altera a visão geral.
+- **Salvar foto do perfil** aplica a escolha pendente (`AvatarPool::applyPending`): copia para o acervo, troca a foto,
+  apaga a cópia anterior do acervo se ninguém mais a usa, e recarrega o painel.
+- **Abrir o modal** (GET sem entrada) descarta escolha pendente. **Fechar sem salvar** descarta a escolha.
+- **Remover foto** (personalizada) é imediato: sorteia um avatar do acervo e recarrega o painel.
+- **Foto importada por OAuth** é personalizada (ver `docs/integrations/GOOGLE.md`).
+- Marcadores: `data-aculta-user-avatar` identifica os avatares (gatilho e prévia). Módulo entrega dados e rotas; o tema só
+  apresenta. Nenhum dos dois decide a regra de estado.
+
 ## Estados
 
 | Estado | Prévia | Campo de envio | "Remover" | "Sortear novo avatar" | "Recortar foto" |
@@ -26,10 +39,11 @@ Sem link "Recortar foto" em nenhum estado. Aplicar o recorte troca a foto e reca
   `if ($isAcervo)`. Com foto personalizada ele some.
 - **INV-FOTO-3 — sem recorte manual.** Não existe link para recortar no popup. O recorte só é aberto pelo
   `photo-flow.js` ao chegar um novo arquivo no campo (`imagem[fids]`).
-- **INV-FOTO-8 — sortear atualiza o painel sem recarregar; fechar o modal recarrega.** "Sortear novo avatar" troca
-  por AJAX os avatares da visão geral e da prévia (`ReplaceCommand`) e marca o `body` com `data-aculta-avatar-changed`.
-  Ao fechar o modal (`dialog:afterclose`), a página recarrega uma vez para refletir o sorteio em todo o painel.
-  Fechar sem sortear não recarrega.
+- **INV-FOTO-8 — sortear só troca a prévia; a foto muda ao salvar.** "Sortear novo avatar" troca por AJAX apenas a
+  prévia dentro do modal e guarda a escolha pendente. Só "Salvar foto do perfil" grava a foto (e recarrega o painel).
+  Fechar o modal sem salvar descarta a escolha. Nada é gravado no sorteio.
+- **INV-FOTO-9 — foto importada por OAuth é personalizada.** A foto baixada pelo Social Auth na criação da conta fica
+  permanente e fora do acervo (`AccountCreationHooks::userPresave`).
 - **INV-FOTO-7 — o popup não mostra nome nem link da foto atual.** O campo de envio começa vazio nos dois estados
   (`#default_value` NULL). Na foto personalizada, a única ação de remoção é o botão "Remover foto"
   (`UserPictureForm::removePersonal`, `AvatarPool::reroll`): volta a um avatar sorteado do acervo e recarrega o painel.

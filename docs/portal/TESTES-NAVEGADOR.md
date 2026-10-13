@@ -236,9 +236,10 @@ Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_u
 - **P6 — sortear com foto personalizada:** o link "Sortear novo avatar" não aparece (P3). Se a rota
   `/avatar/sortear` for chamada mesmo assim, ela troca a foto (rota técnica; a regra de exibição é a da tela).
 
-- **P7 — sortear (INV-FOTO-8):** em acervo, clicar "Sortear novo avatar" no popup.
-  Esperado: sem recarregar, o avatar da visão geral e da prévia mudam. Fechar o modal depois disso recarrega a página
-  uma vez. Fechar o modal sem sortear não recarrega.
+- **P7 — sortear só na prévia (INV-FOTO-8):** em acervo, clicar "Sortear novo avatar" no popup.
+  Esperado: só a prévia dentro do modal muda; o avatar da visão geral **não** muda. Fechar o modal sem salvar mantém a
+  foto atual; reabrir o modal mostra a foto atual. Sortear de novo e clicar "Salvar foto do perfil" aplica a escolha:
+  o painel recarrega e o avatar da visão geral mostra a nova foto.
 
 Verificação por HTTP (2026-10-13, após INV-FOTO-7): foto personalizada → popup com "Remover foto", sem sortear, sem
 link de arquivo; "Remover foto" → 303 para o painel e foto do acervo; arquivo personalizado apagado.

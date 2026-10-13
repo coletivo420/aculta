@@ -66,6 +66,10 @@ final class UserPictureForm extends FormBase {
     if ($account === NULL) {
       return $form;
     }
+    // Abrir o modal (sem entrada do usuário) descarta um sorteio não salvo: só "Salvar" grava a escolha.
+    if (empty($form_state->getUserInput())) {
+      $this->avatarPool->clearPending($account);
+    }
     $current = (int) ($account->get('user_picture')->target_id ?? 0);
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
@@ -183,11 +187,16 @@ final class UserPictureForm extends FormBase {
     $file = $new > 0 ? $this->entityTypeManagerService->getStorage('file')->load($new) : NULL;
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
-    // Campo vazio não altera a foto (a remoção é o botão "Remover foto").
+    // Envio tem prioridade; sem envio, aplica o avatar sorteado no modal (só agora ele vira a foto da conta).
+    // Campo vazio e sem sorteio não altera a foto (a remoção é o botão "Remover foto").
     if ($new > 0 && $file !== NULL && $new !== $current) {
       $account->set('user_picture', ['target_id' => $file->id(), 'alt' => (string) $account->label()]);
       $file->setPermanent();
       $file->save();
+      $this->avatarPool->clearPending($account);
+    }
+    elseif ($this->avatarPool->pendingEntry($account) !== NULL) {
+      $this->avatarPool->applyPending($account);
     }
     $account->save();
     $this->messenger()->addStatus($this->t('Foto do perfil salva.'));

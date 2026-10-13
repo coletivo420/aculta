@@ -37,7 +37,8 @@ invariante verificável.
 | INV-FOTO-5 | Foto | Uma única caixa de recorte no modal (achatamento limpa o `#pre_render`). | Gate + Chromium | Seção N / P2 |
 | INV-FOTO-6 | Foto | Aplicar recorte troca a foto da conta e recarrega o painel; sem reabrir o popup (sem loop). | Gate + Chromium | Seção P2 |
 | INV-FOTO-7 | Foto | Popup sem nome/link da foto atual; "Remover foto" só em foto personalizada e sorteia do acervo. | Gate + HTTP | Seção P4 |
-| INV-FOTO-8 | Foto | Sortear atualiza os avatares por AJAX; fechar o modal depois do sorteio recarrega a página. | Gate + Chromium | Seção P7 |
+| INV-FOTO-8 | Foto | Sortear só troca a prévia do modal (escolha pendente); a foto muda ao salvar; abrir/fechar sem salvar descarta a escolha. | Gate + Chromium | Seção P7 |
+| INV-FOTO-9 | Foto | Foto importada por OAuth é personalizada (permanente, fora do acervo). | Gate + teste de criação de conta | docs/integrations/GOOGLE.md |
 
 Os invariantes de foto (INV-FOTO-1 a 7) estão na tabela acima; as regras completas e o motivo de cada uma estão em `web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md`.
 
