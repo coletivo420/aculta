@@ -8,11 +8,11 @@
 (function (Drupal, once, drupalSettings) {
   'use strict';
 
+  // Fecha o modal pela API de diálogo do Drupal (core/drupal.dialog), a partir do conteúdo do diálogo.
   function closeDialog(form) {
-    const dialog = form.closest('.ui-dialog');
-    const close = dialog ? dialog.querySelector('.ui-dialog-titlebar-close') : null;
-    if (close) {
-      close.click();
+    const content = form.closest('.ui-dialog-content');
+    if (content && Drupal.dialog) {
+      Drupal.dialog(content).close();
     }
   }
 

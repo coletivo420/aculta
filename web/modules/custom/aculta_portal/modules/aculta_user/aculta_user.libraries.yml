@@ -13,3 +13,4 @@ account-bio-form:
   dependencies:
     - core/drupal
     - core/once
+    - core/drupal.dialog
