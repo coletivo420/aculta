@@ -29,8 +29,8 @@ final class ProfileVisibilityForm extends FormBase {
   ];
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
+    private EntityTypeManagerInterface $entityTypeManagerService,
+    private AccountProxyInterface $currentUserService,
   ) {}
 
   /**

@@ -169,6 +169,82 @@ funcionando sem o tema (fallback).
   por toque físico ou teclado no navegador. A rota administrativa foi verificada por Drupal API/Form Builder e
   responde 403 a acesso anônimo.
 
+## N. Recorte de foto e envio (aculta_user, rodada de 2026-10-13)
+
+Objetivo: confirmar no navegador o fluxo de foto do perfil: envio, recorte em popup próprio, retorno ao popup da foto
+e salvamento. Antes desta rodada, o popup de recorte não abria ao escolher o arquivo.
+
+### Pré-condições
+- Conta de teste: `teste.comum` (uid 5), como na seção C. O login é feito pelo agente do repositório, com link único
+  gerado por `drush uli --uid=5 --uri=https://conta.aculta.toca.net.br` (não colar o link neste documento).
+- Imagem de teste: `Bloco Sativa 2026 - Capa 2.png`, que está no computador do Windows do Felipe (pasta Downloads).
+  O caminho típico é `C:\Users\<usuário do Windows>\Downloads\Bloco Sativa 2026 - Capa 2.png`. Conferir o nome exato do usuário.
+- Tamanho: o campo aceita no máximo **2 MB**. Antes do teste, conferir o tamanho da imagem no Windows (propriedades do arquivo). Acima disso, o envio é recusado e o popup mostra a mensagem de tamanho.
+- Limite: página não consegue escolher um arquivo local sozinha. Se o agente não puder anexar arquivo pelo navegador,
+  o Felipe escolhe a imagem no seletor e o agente segue a partir do passo 3.
+
+### Roteiro
+1. Abrir `https://conta.aculta.toca.net.br/` logado como `teste.comum`. Esperado: painel "Minha conta", com o avatar
+   (foto do acervo ou uma foto já salva).
+2. Clicar no avatar. Esperado: popup "Alterar foto do perfil", com a visualização, o botão "Sortear outro avatar" e o campo de arquivo "Foto".
+3. Escolher a imagem `Bloco Sativa 2026 - Capa 2.png` no campo "Foto". Esperado: o envio termina e a visualização mostra a imagem nova.
+   **Esperado principal:** o modal "Recortar foto" abre sozinho. **Se não abrir:** registrar isso e clicar em
+   "Recortar foto" dentro do popup. Anotar o que aparece na tela e no console do navegador.
+4. No modal de recorte, ajustar o quadrado sobre a imagem e clicar em "Aplicar recorte". Esperado: a página volta ao
+   painel e o popup "Alterar foto do perfil" reabre sozinho, com a imagem recortada na visualização.
+5. Clicar em "Salvar foto do perfil". Esperado: mensagem "Foto do perfil salva." e o avatar do painel mostra a imagem recortada.
+6. Reabrir o popup e clicar em "Sortear outro avatar". Esperado: só a imagem do avatar muda; a URL não muda e a página
+   não recarrega (conferir pelo histórico do navegador ou por um marcador no DOM).
+7. Remover a foto personalizada (botão "Remover", disponível só para foto personalizada) e salvar. Esperado: o avatar
+   volta a ser um avatar do acervo sorteado.
+8. Em todos os passos, anotar mensagens de erro na tela e no console (filtro "Erro").
+
+### Registro do resultado
+| Passo | Esperado | Resultado (OK / falhou) | Observação e mensagem de erro |
+| --- | --- | --- | --- |
+| 1 | painel com avatar | | |
+| 2 | popup com visualização e botões | | |
+| 3 | modal de recorte abre sozinho ao escolher o arquivo | | |
+| 4 | recorte aplicado, volta ao popup da foto | | |
+| 5 | foto salva e exibida | | |
+| 6 | sorteio sem recarregar a página | | |
+| 7 | remoção volta ao avatar do acervo | | |
+
+Não encerrar a rodada sem registrar o resultado de cada passo. Nenhum dado de conta ou senha deve ser colado aqui.
+
+## P. Foto de perfil: regras por estado (aculta_user, 2026-10-13)
+
+Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md`. Gate estático:
+`php scripts/validate-aculta-user-photo.php`. Executar este roteiro após qualquer alteração na foto.
+
+- **P1 — avatar do sistema (conta de teste em acervo):** abrir o popup da foto no avatar do painel.
+  Esperado: prévia do avatar do acervo, campo "Escolha uma imagem" vazio, botão "Sortear outro avatar" visível,
+  **sem** "Remover" e **sem** "Recortar foto".
+- **P2 — envio no acervo:** enviar uma imagem PNG/JPG (até 2 MB).
+  Esperado: o recorte abre sozinho (modal "Recortar foto", caixa de recorte direta, sem abas "Crop image" nem
+  nome do tipo, com barra de rolagem se passar de 560 px). Ao aplicar, a foto da conta é trocada e o painel recarrega
+  **uma vez**, sem reabrir o popup e sem repetir requisições a `/avatar/foto` (INV-FOTO-6). Não há "Remover" no
+  arquivo enviado.
+- **P3 — foto personalizada salva:** a foto recortada já é a foto da conta (aplicar o recorte salva).
+  Esperado: painel mostra a foto própria. Abrir o popup: campo com a foto e botão **"Remover"**; **sem** "Sortear
+  outro avatar"; **sem** "Recortar foto".
+- **P4 — remover:** no popup da foto personalizada, clicar em "Remover foto" (sem "Salvar").
+  Esperado: o painel recarrega com um avatar sorteado do acervo; reabrir o popup mostra o estado P1 (campo "Escolha
+  uma imagem", "Sortear outro avatar", sem "Remover foto"). Nenhum nome ou link de arquivo aparece no popup (INV-FOTO-7).
+- **P5 — recorte só após envio:** com foto personalizada, não há como recortar sem enviar de novo.
+  Esperado: nenhum link de recorte no popup; enviar a imagem de novo é o único caminho.
+- **P6 — sortear com foto personalizada:** o link "Sortear outro avatar" não aparece (P3). Se a rota
+  `/avatar/sortear` for chamada mesmo assim, ela troca a foto (rota técnica; a regra de exibição é a da tela).
+
+Verificação por HTTP (2026-10-13, após INV-FOTO-7): foto personalizada → popup com "Remover foto", sem sortear, sem
+link de arquivo; "Remover foto" → 303 para o painel e foto do acervo; arquivo personalizado apagado.
+
+Verificação automatizada (Chromium headless via DevTools, 2026-10-13): após "Aplicar recorte", um único
+`POST /avatar/recortar`, navegação para o painel, nenhuma repetição de `POST /avatar/foto`, e a foto da conta vira o
+arquivo enviado (permanente). Resultado anterior por HTTP: verificado em P1 (acervo: sem remover, com sortear, com campo de envio, sem
+recortar), P3 (personalizada: com remover, sem sortear, sem recortar) e recusa do recorte de foto já salva ("Envie
+uma foto própria para recortar."). **Não executado:** P2, P4 e P5 no navegador (envio por AJAX e modal).
+
 ## O. Login: redirecionamento após autenticar (2026-10-13)
 
 - **Sintoma:** após login correto em `https://conta.aculta.toca.net.br/entrar`, o usuário permanecia no formulário de

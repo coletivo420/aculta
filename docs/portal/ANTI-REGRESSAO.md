@@ -30,8 +30,15 @@ invariante verificável.
 |---|---|---|---|---|
 | INV-001 | Login | Login correto sai de `/entrar` e segue a política de redirecionamento (entrada direta → conta; `destination` principal → principal; `destination` da conta → rota da conta). Senha errada mostra mensagem e fica no formulário. | HTTP: 303 + `Location`; 200 com mensagem | TESTES-NAVEGADOR seção O |
 | INV-002 | Login | O formulário `user_login_form` não recebe o AJAX de salvamento da Minha conta (`FormHooks::accountAjaxSubmit`). | Revisão + INV-001 | TESTES-NAVEGADOR seção O |
+| INV-FOTO-1 | Foto | Avatar do sistema não tem botão "Remover" (campo de envio com `#aculta_acervo`; `withoutRemoveForAcervo`). | Gate `validate-aculta-user-photo.php` + HTTP | TESTES-NAVEGADOR seção P1 |
+| INV-FOTO-2 | Foto | "Sortear outro avatar" só existe com foto do acervo. | Gate + HTTP | Seção P1, P3 |
+| INV-FOTO-3 | Foto | Sem link "Recortar foto"; o recorte abre só logo após o envio (`photo-flow.js`). | Gate | Seção P2, P5 |
+| INV-FOTO-4 | Foto | Recorte só do arquivo recém-enviado (temporário, do próprio usuário); foto salva recusada. | Gate + HTTP | Seção P5 |
+| INV-FOTO-5 | Foto | Uma única caixa de recorte no modal (achatamento limpa o `#pre_render`). | Gate + Chromium | Seção N / P2 |
+| INV-FOTO-6 | Foto | Aplicar recorte troca a foto da conta e recarrega o painel; sem reabrir o popup (sem loop). | Gate + Chromium | Seção P2 |
+| INV-FOTO-7 | Foto | Popup sem nome/link da foto atual; "Remover foto" só em foto personalizada e sorteia do acervo. | Gate + HTTP | Seção P4 |
 
-Os invariantes de foto (avatar do sistema, sortear, recorte) entram neste índice na mesma entrega da correção.
+Os invariantes de foto (INV-FOTO-1 a 7) estão na tabela acima; as regras completas e o motivo de cada uma estão em `web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md`.
 
 ## Como aplicar na revisão
 

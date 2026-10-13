@@ -70,6 +70,13 @@ Implementado (proposta aprovada pelo responsável):
   um arquivo diferente da foto salva, uma vez por arquivo e por sessão. **Não verificado em navegador** (não disponível
   nesta sessão).
 
+Causa do modal que não abria ao escolher o arquivo (corrigida): o upload da foto era um POST AJAX para a própria página
+do painel. Nessa requisição, o Drupal reconstrói a página inteira e o arquivo enviado se perdia (o campo `fids` voltava
+vazio), e o script antigo dependia de um contêiner que não era trocado. Correção: o formulário da foto virou rota própria
+(`/avatar/foto`, `UserPictureForm`), que faz upload, remoção e salvamento; o script observa o campo `fids`.
+Verificado pela web: upload (fids 42), recorte (303, pendente), retorno com o arquivo no campo, salvamento (foto
+permanente, pendente limpo, papéis preservados). Não verificado em navegador: o disparo do modal pelo script.
+
 Pendente: teste em navegador da abertura automática e do fechamento do popup; teste de Kernel do fluxo.
 
 ### 1.4 Associado e dados

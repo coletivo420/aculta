@@ -64,3 +64,11 @@ aculta_user.avatar_crop:
     _title: 'Recortar foto'
   requirements:
     _permission: 'access aculta portal'
+
+aculta_user.foto:
+  path: '/avatar/foto'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\UserPictureForm'
+    _title: 'Foto do perfil'
+  requirements:
+    _permission: 'access aculta portal'

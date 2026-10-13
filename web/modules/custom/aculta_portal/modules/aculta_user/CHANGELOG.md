@@ -1,3 +1,22 @@
+## 0.3.0-dev.4 — foto de perfil: popup, estados, recorte e remoção (consolidado) — 2026-10-13
+
+- Popup da foto é modal Drupal centralizado (`/avatar/foto`), com prévia do avatar atual e a orientação do popup anterior. Lápis de edição sobre o gatilho.
+- Regras por estado (`docs/FOTO-PERFIL.md`): avatar do sistema sem "Remover", com "Sortear outro avatar" e campo de envio; foto personalizada com "Remover foto" (botão próprio, sorteia do acervo e recarrega o painel), sem sortear.
+- Campo de envio sempre vazio: sem nome nem link da foto atual no popup.
+- Recorte só logo após o envio, e só do arquivo recém-enviado. "Aplicar recorte" torna o arquivo permanente, troca a foto da conta e recarrega o painel (sem reabrir o popup: era o loop).
+- Recorte sem abas ("Crop image"/tipo) e sem duplicação do campo (pre_render limpo); modal de recorte com 560 px e 75% da altura, com rolagem.
+- Formulários de foto sem `readonly` nas dependências (rebuild AJAX do cache).
+- Gate: `scripts/validate-aculta-user-photo.php` (INV-FOTO-1 a INV-FOTO-7). Roteiro: TESTES-NAVEGADOR seção P.
+- `aculta_user.info.yml` 0.3.0-dev.4. RUNTIME STATUS: DEFERRED (teste de navegador do fluxo de foto pendente).
+
+## 0.3.0-dev.3 — regras de estado da foto de perfil — 2026-10-13
+
+- Avatar do sistema: sem "Remover"; campo de envio com "Escolha uma imagem"; "Sortear outro avatar" visível.
+- Avatar personalizado: "Remover" visível; sem "Sortear outro avatar".
+- "Recortar foto" removido do popup: o recorte abre só logo após o envio, e só para o arquivo recém-enviado.
+- Regras em `docs/FOTO-PERFIL.md`; gate `scripts/validate-aculta-user-photo.php`; roteiro de teste em TESTES-NAVEGADOR seção P.
+- `aculta_user.info.yml` 0.3.0-dev.3. RUNTIME STATUS: DEFERRED (navegador pendente; ver seção P).
+
 ## 0.3.0-dev.2 — sortear avatar no popup de foto (AJAX) — 2026-10-12
 
 - Botão "Sortear outro avatar" no popup de foto do painel da conta. Por AJAX troca só o bloco da foto
