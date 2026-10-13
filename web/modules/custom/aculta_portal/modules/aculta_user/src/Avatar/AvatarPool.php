@@ -129,20 +129,86 @@ final class AvatarPool {
     return (string) $this->entityTypeManager->getStorage('file')->load((int) $account->get('user_picture')->target_id)?->getFileUri();
   }
 
+  /**
+   * Sorteio em duas etapas: escolhe uma entrada e a guarda como pendente, sem alterar a foto da conta. Só vale quando
+   * a pessoa clica em "Salvar foto do perfil" (applyPending). Fechar o modal descarta a escolha.
+   */
+  public function preview(UserInterface $account): ?array {
+    $current = (string) $this->userData->get('aculta_user', (int) $account->id(), 'avatar_id');
+    $entry = $this->pick($current);
+    if ($entry !== NULL) {
+      $this->userData->set('aculta_user', (int) $account->id(), 'sorteio_pendente', (string) $entry['id']);
+    }
+    return $entry;
+  }
+
+  /** Entrada sorteada e ainda não salva, ou NULL. */
+  public function pendingEntry(UserInterface $account): ?array {
+    $id = (string) $this->userData->get('aculta_user', (int) $account->id(), 'sorteio_pendente');
+    if ($id === '') {
+      return NULL;
+    }
+    foreach ($this->available() as $item) {
+      if ((string) ($item['id'] ?? '') === $id) {
+        return $item;
+      }
+    }
+    return NULL;
+  }
+
+  /** Limpa a escolha pendente (ao abrir o modal, ao salvar e ao sortear de novo). */
+  public function clearPending(UserInterface $account): void {
+    $this->userData->delete('aculta_user', (int) $account->id(), 'sorteio_pendente');
+  }
+
+  /** URL pública da imagem de uma entrada do catálogo (prévia, sem copiar para o acervo). */
+  public function previewUrl(array $entry): string {
+    return \Drupal\Core\Url::fromUri('base:' . $this->modules->getPath('aculta_user') . '/assets/avatars/' . $entry['file'])->toString();
+  }
+
+  /**
+   * Salva a escolha pendente: copia para o acervo, troca a foto e apaga a cópia anterior do acervo se ninguém mais a usa.
+   * Quem chama é responsável por salvar a conta; aqui a conta é salva para a troca valer.
+   */
+  public function applyPending(UserInterface $account): bool {
+    $entry = $this->pendingEntry($account);
+    $this->clearPending($account);
+    if ($entry === NULL) {
+      return FALSE;
+    }
+    $previous = (int) ($account->get('user_picture')->target_id ?? 0);
+    if (!$this->assignEntry($account, $entry)) {
+      return FALSE;
+    }
+    $account->save();
+    if ($previous > 0) {
+      $old = $this->entityTypeManager->getStorage('file')->load($previous);
+      if ($old !== NULL && str_starts_with($old->getFileUri(), self::DIRECTORY . '/') && !$this->isUsedByOthers($previous, (int) $account->id())) {
+        $old->delete();
+      }
+    }
+    return TRUE;
+  }
+
   /** Verdadeiro se outra conta ainda usa a foto. */
   private function isUsedByOthers(int $fid, int $uid): bool {
     return $this->entityTypeManager->getStorage('user')->getQuery()
       ->accessCheck(FALSE)->condition('user_picture.target_id', $fid)->condition('uid', $uid, '<>')->range(0, 1)->count()->execute() > 0;
   }
 
-  /** Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
-  private function pick(string $exclude = ''): ?array {
+  /** Entradas ativas do catálogo cujo arquivo existe. */
+  private function available(): array {
     $catalog = json_decode((string) file_get_contents($this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/meta/avatars.json'), TRUE);
     $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
-    $available = array_values(array_filter(
+    return array_values(array_filter(
       is_array($catalog) ? $catalog : [],
       static fn (array $item): bool => !empty($item['active']) && is_file($root . ($item['file'] ?? '')),
     ));
+  }
+
+  /** Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
+  private function pick(string $exclude = ''): ?array {
+    $available = $this->available();
     $others = array_values(array_filter($available, static fn (array $item): bool => (string) ($item['id'] ?? '') !== $exclude));
     $pool = $others !== [] ? $others : $available;
     return $pool === [] ? NULL : $pool[random_int(0, count($pool) - 1)];

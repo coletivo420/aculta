@@ -6,7 +6,6 @@ namespace Drupal\aculta_user\Controller;
 
 use Drupal\aculta_user\Avatar\AvatarPool;
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -44,37 +43,37 @@ final class AvatarRerollController implements ContainerInjectionInterface {
     );
   }
 
-  /** Executa o sorteio e responde. */
+  /**
+   * Sorteia uma prévia no modal. Não grava a foto: "Salvar foto do perfil" aplica a escolha (AvatarPool::applyPending).
+   * Só o modal é atualizado; o avatar da visão geral muda quando a pessoa salva.
+   */
   public function reroll(Request $request): AjaxResponse|RedirectResponse {
     $uid = (int) $this->currentUserService->id();
     $account = $this->entityTypeManagerService->getStorage('user')->load($uid);
-    if ($account !== NULL) {
-      $this->pool->reroll($account);
-    }
 
     if (!$request->isXmlHttpRequest() && $request->query->get('_wrapper_format') !== 'drupal_ajax') {
       return new RedirectResponse(Url::fromRoute('aculta_portal.dashboard')->toString());
     }
 
     $response = new AjaxResponse();
-    $fid = $account ? (int) ($account->get('user_picture')->target_id ?? 0) : 0;
-    $file = $fid > 0 ? $this->entityTypeManagerService->getStorage('file')->load($fid) : NULL;
+    $entry = $account !== NULL ? $this->pool->preview($account) : NULL;
+    if ($entry === NULL) {
+      return $response;
+    }
     $build = [
       '#type' => 'html_tag',
       '#tag' => 'span',
       '#attributes' => [self::SLOT_ATTRIBUTE => ''],
-      'image' => $file ? [
-        '#theme' => 'image_style',
-        '#style_name' => 'aculta_avatar',
-        '#uri' => $file->getFileUri(),
+      'image' => [
+        '#theme' => 'image',
+        '#uri' => $this->pool->previewUrl($entry),
         '#alt' => (string) $account->label(),
         '#attributes' => ['data-portal-ui' => 'account-avatar'],
-      ] : [],
+      ],
     ];
     $html = (string) $this->renderer->renderInIsolation($build);
-    $response->addCommand(new ReplaceCommand('[' . self::SLOT_ATTRIBUTE . ']', $html));
-    // Marca o documento: ao fechar o modal, a página recarrega (photo-flow.js) para refletir o sorteio em todo o painel.
-    $response->addCommand(new InvokeCommand('body', 'attr', ['data-aculta-avatar-changed', '1']));
+    // Só a prévia dentro do modal: o avatar da visão geral (fora do diálogo) muda ao salvar.
+    $response->addCommand(new ReplaceCommand('.ui-dialog [' . self::SLOT_ATTRIBUTE . ']', $html));
     return $response;
   }
 
