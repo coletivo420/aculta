@@ -79,7 +79,7 @@ aculta_user.foto:
 aculta_user.bio_form:
   path: '/bio/editar'
   defaults:
-    _form: '\Drupal\aculta_user\Form\AccountBioForm'
+    _controller: '\Drupal\aculta_user\Controller\AccountBioController::modal'
     _title: 'Editar bio'
   requirements:
     _permission: 'access aculta portal'
