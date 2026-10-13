@@ -1,7 +1,7 @@
 # Registro de dívidas e pendências
 
-Atualizado em 2026-10-12 (inclui DT-T19 e DT-O12, achados do relatório de estado em
-[`docs/portal/RELATORIO-ESTADO-2026-10-12.md`](../portal/RELATORIO-ESTADO-2026-10-12.md)). Revisão documental anterior: 2026-10-09.
+Atualizado após os merges #238 e #239 (2026-10-13 UTC). Revisão anterior: 2026-10-12; os resultados detalhados daquela data estão no snapshot
+[`docs/portal/RELATORIO-ESTADO-2026-10-12.md`](../portal/RELATORIO-ESTADO-2026-10-12.md). Estado corrente de código e gates: [RELATORIO-ESTADO-APOS-PR-238-239.md](../portal/RELATORIO-ESTADO-APOS-PR-238-239.md).
 
 Este é o registro único de dívidas históricas e pendências de desenvolvimento. Os roadmaps
 (`docs/portal/ROADMAP.md` e `web/themes/custom/aculta420/docs/roadmap.md`) planejam as
@@ -84,7 +84,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 
 | ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
-| DT-O01 | 100 branches remotas; 64 já mescladas na `main` | `git branch -r --merged origin/main` | Baixa | Sim (apagar exige autorização) | S6 | Aberta |
+| DT-O01 | Inventário anterior contava 100 branches remotas, 64 mescladas na `main`; contagem ficou obsoleta após merges e limpezas recentes | O número é do inventário de 2026-10-09; reconciliar com `git ls-remote --heads origin` e a ancestralidade de `origin/main` antes de apagar | Baixa | Sim (apagar exige autorização; autorização anterior do responsável para branches mescladas) | S6 | Aberta (inventário a atualizar) |
 | DT-O02 | Snapshot de `estados/` é de 2026-10-04 e o Runtime já divergiu dele | `estados/manifesto.yml`; `TEST-DATA.md` | Média | Sim | S6 | Aberta |
 | DT-O03 | Scripts de migração e QA fora do repositório | migração de conteúdo versionada (ver DT-T10); scripts pontuais de migração continuam fora do Git por já terem sido aplicados; scratchpad de QA segue fora | Alta | Sim | T5 | Parcial |
 | DT-O04 | Diretório de agregados do Drupal não é gravável pelo usuário de desenvolvimento | `ls -ld web/sites/default/files/css` (dono `aculta:www-data`) | Média | Não (ambiente) | S6 | Aberta |
