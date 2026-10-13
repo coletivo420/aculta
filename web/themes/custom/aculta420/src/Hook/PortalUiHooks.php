@@ -92,7 +92,7 @@ final class PortalUiHooks {
     'public-profile-link-instagram' => ['portal-profile__link', 'bi', 'bi-instagram'],
     'public-profile-link-facebook' => ['portal-profile__link', 'bi', 'bi-facebook'],
     'public-profile-link-reddit' => ['portal-profile__link', 'bi', 'bi-reddit'],
-    'public-profile-link-email' => ['portal-profile__link', 'portal-profile__link--icon', 'bi', 'bi-envelope'],
+    'public-profile-link-email' => ['portal-profile__link', 'bi', 'bi-envelope'],
     // Redes sociais (caixa embaixo da bio, Minha conta).
     'account-social-card' => ['portal-account-social'],
     'account-social-list' => ['portal-account-social__list'],

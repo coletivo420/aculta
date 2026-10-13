@@ -132,13 +132,13 @@ final class PublicProfileController extends ControllerBase {
   }
 
   /**
-   * E-mail do perfil: só o ícone, com link mailto:.
+   * E-mail do perfil: botão com ícone e rótulo, como as demais redes, com link mailto:.
    */
   private function emailLink(string $email): array {
-    return PortalLinkElement::build('', Url::fromUri('mailto:' . $email), [
+    $label = (string) $this->t('E-mail');
+    return PortalLinkElement::build($label, Url::fromUri('mailto:' . $email), [
       'data-portal-ui' => 'public-profile-link-email',
-      'aria-label' => (string) $this->t('Enviar e-mail'),
-      'title' => $email,
+      'aria-label' => $label . ': ' . $email,
     ]);
   }
 

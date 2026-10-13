@@ -55,9 +55,6 @@
 .portal-profile__link::before { font-size: 1rem; line-height: 1; }
 .portal-profile__link:hover,
 .portal-profile__link:focus-visible { border-color: var(--aculta-interactive-border); color: var(--aculta-interactive-text); }
-/* E-mail: só o ícone, com o nome no aria-label. */
-.portal-profile__link--icon { font-size: 0; padding: 0.5rem; inline-size: 2.5rem; block-size: 2.5rem; justify-content: center; }
-.portal-profile__link--icon::before { font-size: 1.25rem; }
 @media (max-width: 575.98px) {
   .portal-profile__header { flex-direction: column; text-align: center; padding: 1.5rem; }
   .portal-profile__bio, .portal-profile__links { margin-inline: 1.5rem; padding-inline: 0; }
