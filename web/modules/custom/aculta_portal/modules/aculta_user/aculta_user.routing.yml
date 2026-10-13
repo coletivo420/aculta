@@ -56,3 +56,11 @@ aculta_user.avatar_reroll:
   requirements:
     _permission: 'access aculta portal'
     _csrf_token: 'TRUE'
+
+aculta_user.avatar_crop:
+  path: '/avatar/recortar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AvatarCropForm'
+    _title: 'Recortar foto'
+  requirements:
+    _permission: 'access aculta portal'

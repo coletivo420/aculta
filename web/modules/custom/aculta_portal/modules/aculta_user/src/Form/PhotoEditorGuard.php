@@ -49,4 +49,10 @@ final class PhotoEditorGuard {
     }
   }
 
+  /** After build do widget de foto: retira o recorte inline (o recorte fica no popup próprio). */
+  public static function hideInlineCrop(array $element, FormStateInterface $form_state): array {
+    unset($element['image_crop']);
+    return $element;
+  }
+
 }

@@ -45,27 +45,29 @@ commitado ou não ligado), **Pendente** (decidido ou perguntado, sem código).
 | Foto anterior enviada pela pessoa é apagada quando é trocada ou removida | Implementado (verificado no CLI) | `PictureReplacementHooks::userUpdate` |
 | Cópias do acervo nunca são apagadas como "foto antiga" | Implementado | `PictureReplacementHooks` (prefixo `pictures/acervo/`) |
 | Recorte em popup separado, só para foto personalizada enviada | **Bloqueado** (ver 1.3.1); o recorte inline do widget continua funcionando | `AvatarCropForm` (não commitado, sem rota) |
-| Após o recorte, volta ao popup da foto para salvar | **Pendente** (depende do envio do recorte, ver 1.3.1) | — |
-| Ao enviar a foto personalizada, o modal de recorte abre automaticamente | **Pendente** (depende do envio do recorte, ver 1.3.1) | — |
+| Após o recorte, volta ao popup da foto para salvar | **Implementado** (sem verificação em navegador) | `AvatarCropForm`, `photo-flow.js` |
+| Ao enviar a foto personalizada, o modal de recorte abre automaticamente | **Implementado** (sem verificação em navegador) | `photo-flow.js` |
 | Excluir arquivos temporários de upload e cópias do acervo sem uso | **Implementado no cron** (uploads temporários de foto com mais de 1 h e cópias do acervo sem conta; verificado no CLI, cron real não disparado) | `AvatarAssetCleanup`, `AvatarCronHooks` |
-| Limpeza de arquivos não usados após o recorte | **Pendente** (depende do recorte pelo popup) | — |
+| Limpeza de arquivos não usados após o recorte | **Implementado** (derivados apagados no recorte; no cron, fotos personalizadas sem uso e recortes órfãos) | `AvatarCropForm::flushDerivatives`, `AvatarAssetCleanup` |
 
 #### 1.3.1 Recorte em popup separado
 Decidido: ao enviar uma foto personalizada, o popup de recorte abre automaticamente; ao aplicar o recorte, ele fecha
 e a pessoa volta ao popup da foto, onde clica em "Salvar". O recorte só vale para foto personalizada.
 
-Estado:
-- Formulário `AvatarCropForm` escrito (usa a API do `image_widget_crop`: `applyCrop`/`updateCrop`/`deleteCrop`).
-- Abrir o modal pela rota `/avatar/recortar` funciona (HTTP 200 com o comando de abrir o diálogo e o formulário).
-- Gravar o recorte a partir do próprio modal **não funciona**: o envio AJAX volta com "O formulário ficou desatualizado".
-  Causa: o Core não grava o estado de formulário em requisição GET, e o envio AJAX de um formulário aberto por GET
-  precisa desse estado. Tentativa de `setCached` falhou com erro de GET.
-- Gravar o recorte pela API (fora do modal) funciona: testado no CLI, o registro de recorte é criado.
-- Por isso o recorte inline do widget foi mantido. O link "Recortar" e a remoção do recorte inline foram revertidos.
+Implementado (proposta aprovada pelo responsável):
+- Recorte por POST comum (sem AJAX): `AvatarCropForm` é rota `_form` (`/avatar/recortar`). O envio grava o recorte pela
+  API do `image_widget_crop`, guarda o arquivo como pendente em `user.data`, apaga os derivados do estilo
+  `aculta_avatar` e redireciona para o painel com `?aculta_recorte=1` (verificado: 303, recorte gravado, pendente gravado).
+- Retorno: o popup da foto mostra o arquivo pendente no campo da foto e reabre sozinho (biblioteca
+  `aculta_user/photo-flow`, anexada à página do painel por `PhotoFlowPageHooks`; verificado que o script é servido).
+- Recorte inline do widget removido para foto personalizada; botão "Recortar foto" (link modal) reabre o recorte.
+- Limite mínimo do recorte: o tipo `aculta_avatar_1x1` tinha `hard_limit` 2048 px, incompatível com um avatar de
+  256 px (a imagem do acervo tem 512 px). Ajustado para 256 px no `config/sync` e no Runtime. **Confirmar.**
+- Abertura automática ao enviar: `js/photo-flow.js` abre o modal `/avatar/recortar?fid=N` quando o campo da foto recebe
+  um arquivo diferente da foto salva, uma vez por arquivo e por sessão. **Não verificado em navegador** (não disponível
+  nesta sessão).
 
-Caminho proposto (aguarda confirmação): o envio do recorte vai por POST comum (sem AJAX) para a rota, grava o
-recorte e redireciona ao painel com um marcador; um script do módulo reabre o popup da foto. A abertura automática
-ao enviar a foto depende do mesmo caminho, mais um script que dispara o modal quando o upload termina.
+Pendente: teste em navegador da abertura automática e do fechamento do popup; teste de Kernel do fluxo.
 
 ### 1.4 Associado e dados
 | Decisão | Status | Onde está |
@@ -143,7 +145,8 @@ ao enviar a foto depende do mesmo caminho, mais um script que dispara o modal qu
 | Remover foto personalizada volta ao acervo e apaga o arquivo | CLI | verificado |
 | Salvar foto sem enviar mantém a foto e os papéis | HTTP | verificado |
 | Popup fecha ao salvar; visual do popup | **Não verificado** (sem navegador) | pendente |
-| Testes de Kernel da rota e da privacidade do perfil | — | **pendentes**, previstos para o final da série |
+| Testes de Kernel da rota e da privacidade do perfil | — | **pendentes** |
+| Fluxo de recorte e abertura automática | — | **pendentes** (navegador) |
 
 ## 4. Alterações no Runtime (homelab)
 Todas com backup prévio em `scratchpad` (fora do repositório).

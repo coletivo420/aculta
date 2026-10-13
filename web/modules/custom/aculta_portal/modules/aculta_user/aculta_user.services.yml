@@ -16,4 +16,4 @@ services:
     class: Drupal\aculta_user\Form\PhotoEditorGuard
   aculta_user.avatar_asset_cleanup:
     class: Drupal\aculta_user\Avatar\AvatarAssetCleanup
-    arguments: ['@entity_type.manager', '@datetime.time']
+    arguments: ["@entity_type.manager", "@datetime.time", "@file.usage"]

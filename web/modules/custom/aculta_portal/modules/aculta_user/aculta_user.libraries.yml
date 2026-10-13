@@ -1,0 +1,8 @@
+photo-flow:
+  js:
+    js/photo-flow.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupal.ajax
+    - core/drupal.dialog.ajax
