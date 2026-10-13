@@ -148,15 +148,15 @@ Serviços previstos (nomes provisórios):
 
 **Pedido do responsável (2026-10-13):** a pessoa pode tornar o perfil privado em Minha conta > Configurações.
 
-- **Padrão: privado.** Ninguém tem perfil público sem ligar a opção. Decisão de privacidade: consentimento explícito, não opt-out.
-- **Lugar:** a rota `/configuracoes` já existe (hoje só o modo de cor, `AppearanceForm`). A opção entra na mesma página, em um segundo bloco com formulário próprio. Campo: `field_visibilidade_publica` no perfil `participante`, booleano, padrão falso. Ligar ou desligar tem efeito imediato.
+- **Padrão (decisão 2, respondida nesta sessão): o apelido é público por padrão.** O perfil inteiro pode ser tornado privado. Foto, bio, e-mail e redes sociais são privados por padrão e só aparecem se a pessoa escolher exibi-los. Esta regra substitui o padrão privado anterior.
+- **Lugar:** o formulário fica em `/configuracoes/perfil` (submódulo `aculta_user`, `ProfileVisibilityForm`). Campo `field_perfil_publico` no perfil `participante`, booleano, padrão verdadeiro. Ligar ou desligar tem efeito imediato. Vínculo a partir de `/configuracoes` pendente.
 - **Com perfil privado:**
   - `/u/<apelido>` não mostra o perfil. Resposta: 404, para não revelar que o perfil existe (a confirmar, decisão 40).
   - Cartão de autor da revista mostra o nome de exibição sem link.
   - Badges (seção G) não aparecem em lugar público.
   - Conteúdos da pessoa (artigos, verbetes, tópicos) continuam públicos, porque são contribuições editoriais, não o perfil. O que muda é a página de perfil e os dados pessoais expostos.
 - **Mesmo com perfil privado, aparecem:** nome de exibição em históricos públicos de verbete (decisão 21) e autoria de artigo. Isso é conteúdo, não perfil. Pergunta de consentimento na decisão 39.
-- **Nunca público, mesmo com perfil público:** e-mail, CPF, RG, endereço, WhatsApp, data de nascimento, cidade e UF (seção B).
+- **Nunca público, mesmo com perfil público:** CPF, RG, endereço, WhatsApp, data de nascimento, cidade e UF (seção B). E-mail e redes sociais só aparecem se a pessoa escolher exibi-los.
 - **Acesso:** a própria pessoa vê e altera a opção. Administrador não altera a opção de outra pessoa; pode ver o status no relatório (seção G2), sem dados pessoais além do necessário.
 - **Cache:** a página pública do perfil acumula a tag do perfil e o contexto `user.permissions`; ao mudar a opção, as tags invalidam o cache.
 - **Auditoria:** mudança da opção registra data e origem (pessoa), sem valor de outros campos.
@@ -420,10 +420,10 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 ## 7. Decisões para o responsável
 
 1. **Prioridade:** iniciar U0 agora, ou esperar S2–S4? (Roadmap: features depois do saneamento.)
-2. **Visibilidade:** perfil público opt-in? Campos públicos aprovados: apelido, foto, resumo, papel na associação? Cidade e UF públicas: sim ou não?
+2. **Visibilidade:** respondida nesta sessão: o apelido é público por padrão. Cidade e UF nunca são públicas. Foto, bio, badges, e-mail e redes sociais podem ser exibidos pela pessoa ou ficar privados.
 3. **Slug do autor:** respondida em 2026-10-13: o apelido é o caminho público, `/u/<apelido>`, único.
 4. **Autor convidado** (sem conta) na revista: aceitar com campo de assinatura de texto, ou só autores com conta?
-5. **Purpose das páginas:** respondida parcialmente: o perfil fica em `aculta.*/u/<apelido>`. Host a confirmar (proposta: MAIN). Pergunta restante: `/u/` em qual purpose? Perfil e participação ficam no MAIN, na ACCOUNT, ou em outro purpose? (`ADMIN-DOMAIN-POLICY.md`.)
+5. **Purpose das páginas:** respondida nesta sessão: a rota `/u/{apelido}` é registrada e serve somente no purpose `main`; em outro purpose responde 404. Participação (Atividade, Fórum) continua em aberto.
 6. **Gamificação:** respondida em 2026-10-13: badges automáticas e manuais, sem ranking. Ver seção G e a decisão 18.
 7. **Gravatar:** confirma a recomendação de não usar?
 8. **Notificações:** opt-in por tipo de evento? Frequência máxima?
@@ -494,5 +494,7 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 **Decisões 33 a 35 respondidas em 2026-10-13:** papel único `content_editor`; discussão do LMS por curso e por atividade, com comentário no Fórum; matriculados isentos da primeira moderação (decisão 36); 10 comentários como padrão, alterável no painel administrativo.
 41. **Caminho do perfil:** respondida em 2026-10-13: `/u/<apelido>` é confirmado como exceção registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`.
 42. **Apelido no cadastro:** o apelido é pedido no cadastro, ou gerado e trocado depois em Configurações? Proposta: gerado no cadastro e trocável depois.
-43. **Contas existentes:** autoriza o update hook que cria perfil e apelido para todas as contas atuais, depois de backup do Runtime?
+43. **Contas existentes:** respondida nesta sessão de forma parcial: apelidos provisórios `pessoa-1` e `pessoa-5` foram criados no Runtime para as duas contas sem apelido (backup prévio em `scratchpad`). Não há update hook versionado para contas futuras.
 44. **Palavras reservadas:** a lista proposta basta, ou há outras rotas a reservar?
+
+45. **Skip CAPTCHA:** o responsável informou que todos os usuários logados têm `skip CAPTCHA`. Na configuração e no Runtime, só o papel `email_confirmed` tem essa permissão (`authenticated` não tem). Confirmar se a permissão deve ir para `authenticated`; se sim, é mudança de segurança a ser registrada.

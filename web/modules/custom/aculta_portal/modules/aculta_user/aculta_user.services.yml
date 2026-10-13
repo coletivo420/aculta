@@ -1,0 +1,3 @@
+services:
+  aculta_user.public_profile_policy:
+    class: Drupal\aculta_user\PublicProfilePolicy

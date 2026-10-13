@@ -1,0 +1,23 @@
+uuid: b55df6b3-c6fb-4bc6-b41a-6e1338164ef9
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_bio
+    - profile.type.participante
+  module:
+    - core
+    - profile
+id: profile.participante.field_bio
+field_name: field_bio
+entity_type: profile
+bundle: participante
+label: 'Bio'
+description: ''
+required: false
+translatable: false
+default_value:
+  {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

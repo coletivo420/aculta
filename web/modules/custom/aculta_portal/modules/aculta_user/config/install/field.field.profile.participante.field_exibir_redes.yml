@@ -1,0 +1,23 @@
+uuid: 411137c3-de09-4b0f-aa77-e869db99ab8d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_redes
+    - profile.type.participante
+  module:
+    - core
+    - profile
+id: profile.participante.field_exibir_redes
+field_name: field_exibir_redes
+entity_type: profile
+bundle: participante
+label: 'Exibir redes sociais no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  - value: false
+default_value_callback: ''
+settings: {  }
+field_type: boolean

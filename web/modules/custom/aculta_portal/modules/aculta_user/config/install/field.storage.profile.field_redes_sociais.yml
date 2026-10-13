@@ -1,0 +1,19 @@
+uuid: 6b7e1b50-1eb8-432c-a375-74f4d1f04919
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - link
+    - profile
+id: profile.field_redes_sociais
+field_name: field_redes_sociais
+entity_type: profile
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: -1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

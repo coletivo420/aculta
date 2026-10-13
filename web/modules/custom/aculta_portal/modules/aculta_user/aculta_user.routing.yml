@@ -1,0 +1,16 @@
+aculta_user.perfil_publico:
+  path: '/u/{apelido}'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\PublicProfileController::view'
+    _title: 'Perfil'
+  requirements:
+    _access: 'TRUE'
+    apelido: '[a-z0-9][a-z0-9-]{2,39}'
+
+aculta_user.configuracoes_perfil:
+  path: '/configuracoes/perfil'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
+    _title: 'Perfil e privacidade'
+  requirements:
+    _permission: 'access aculta portal'

@@ -1,4 +1,14 @@
-## 0.3.0-dev.29 — integração compatível com Associado ID — 2026-10-13
+## 0.4.0-dev.1 — submódulo aculta_user: perfil público em /u/<apelido> — 2026-10-12
+
+- Adiciona o submódulo `aculta_user` 0.1.0-dev.1 (ver o CHANGELOG do submódulo). Rota `/u/{apelido}`, política de
+  visibilidade por item, formulário em `/configuracoes/perfil` e campos do perfil participante.
+- `field_nickname` passa a ser público (`profile_private: false`).
+- Versões: `aculta_portal.info.yml` 0.4.0-dev.1 (MINOR: submódulo novo).
+- RUNTIME STATUS: DEFERRED. Nenhum `drush en` ou `config:import` foi executado.
+- Apelidos provisórios `pessoa-1` e `pessoa-5` criados no Runtime para as duas contas sem apelido (com backup
+  prévio em `scratchpad`, fora do repositório).
+
+## 0.3.0-dev.29 — integração compatível com Associado ID — 2026-10-12
 
 - O Portal prioriza `aculta_associado_id.account_document` e mantém fallback
   temporário para `aculta_id_cpf.account_document` durante a migração controlada.
@@ -12,7 +22,7 @@
 - Evidência e plano de migração registrados em
   `docs/modules/ACULTA-ASSOCIADO-ID.md`; **RUNTIME STATUS: DEFERRED**.
 
-## 0.3.0-dev.28 — Acabamento da revisão de Outros Dados — 2026-10-13
+## 0.3.0-dev.28 — Acabamento da revisão de Outros Dados — 2026-10-12
 
 - Revisão documental do estado corrente após PRs #238 e #239: roadmap atualizado; S0 encerrada com evidência; S2/S3/S4 alinhadas ao registro de dívidas; snapshot de 2026-10-12 preservado como histórico.
 - Nenhuma alteração funcional ou de Runtime; versão mantida conforme a regra para documentação isolada.
