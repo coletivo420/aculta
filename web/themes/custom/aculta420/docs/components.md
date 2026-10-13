@@ -151,6 +151,20 @@ abstrato que force domínios diferentes.
 
 Usar variants nativos para layouts da mesma família quando apropriado.
 
+## Pattern experimental da Wiki420
+
+aculta420:wiki-entry vive em components/patterns/wiki-entry/ e apresenta os
+modos artigo e teaser. Os presenters node--wiki-entry--full.html.twig e
+node--wiki-entry--teaser.html.twig mantêm atributos e render arrays nativos;
+não exibem autoria. Campos e ações continuam sob access do Drupal. O CSS usa
+tokens semânticos e não cria modo ou layout alternativo para Dark.
+
+A home/lista da Wiki usa css/components/wiki.css, arquivo temático de
+responsabilidade própria na biblioteca global. O markup continua preparado pelo
+Portal por tokens data-portal-ui; Views/VVJB continuam fonte dos itens.
+
+Status: experimental, até validação em navegador no servidor de testes.
+
 ## Patterns
 
 Patterns não são engines de dados.

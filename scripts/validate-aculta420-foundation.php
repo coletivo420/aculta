@@ -36,7 +36,16 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.15', 'Theme metadata marks the current version 0.6.0-dev.15.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.16', 'Theme metadata marks the current version 0.6.0-dev.16.');
+$wikiPresenters = [
+  file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
+  file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
+];
+$assert(
+  !str_contains(implode("\n", $wikiPresenters), 'author_name')
+    && !str_contains(implode("\n", $wikiPresenters), 'author_picture'),
+  'Wiki full and teaser presenters do not render author metadata.',
+);
 $forbiddenIntegrationModules = ['social_auth', 'social_auth_google', 'captcha', 'turnstile', 'key'];
 $themeInfoDependencies = array_map(
   static fn(string $dependency): string => str_contains($dependency, ':')
@@ -232,6 +241,9 @@ $expectedTemplates = [
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
   'node--project--teaser.html.twig',
+  // Wiki article and teaser presenters intentionally omit submitted-byline metadata.
+  'node--wiki-entry--full.html.twig',
+  'node--wiki-entry--teaser.html.twig',
   // Página pública LINKS (0.6.0-dev.11): presenter neutro e configuração do Portal.
   'node--social-links.html.twig',
   'page.html.twig',
@@ -253,7 +265,6 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($templateR
 sort($expectedTemplates);
 sort($actualTemplates);
 $assert($actualTemplates === $expectedTemplates, 'Twig override set matches the reviewed Foundation allowlist.');
-
 $sdc = \Drupal::service('plugin.manager.sdc');
 $assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers aculta420:editorial-card.');
 $componentMetadata = Yaml::parseFile($themeRoot . '/components/content/editorial-card/editorial-card.component.yml');
@@ -262,6 +273,9 @@ $assert(isset($componentMetadata['slots']) && is_array($componentMetadata['slots
 $projectMetadata = Yaml::parseFile($themeRoot . '/components/content/project-card/project-card.component.yml');
 $assert(($projectMetadata['status'] ?? NULL) === 'experimental', 'Project card is experimental until it proves its contract (0.3.0).');
 $assert($sdc->hasDefinition('aculta420:project-card'), 'Drupal discovers aculta420:project-card.');
+$wikiMetadata = Yaml::parseFile($themeRoot . '/components/patterns/wiki-entry/wiki-entry.component.yml');
+$assert(($wikiMetadata['status'] ?? NULL) === 'experimental', 'Wiki entry pattern remains experimental pending runtime and visual validation.');
+$assert($sdc->hasDefinition('aculta420:wiki-entry'), 'Drupal discovers aculta420:wiki-entry.');
 
 $twig = \Drupal::service('twig');
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {

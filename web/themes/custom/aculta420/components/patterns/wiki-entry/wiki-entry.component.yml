@@ -1,0 +1,51 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Wiki entry
+status: experimental
+group: Wiki
+description: 'Wikipedia-inspired article and entry teaser using Drupal renderable slots.'
+props:
+  type: object
+  required:
+    - variant
+  properties:
+    variant:
+      type: string
+      enum:
+        - article
+        - teaser
+      title: Presentation variant
+    url:
+      type: string
+      title: Canonical entry URL
+    has_summary:
+      type: boolean
+      title: Summary has visible content
+    has_image:
+      type: boolean
+      title: Image has visible content
+    has_categories:
+      type: boolean
+      title: Categories have visible content
+    has_related:
+      type: boolean
+      title: Related entries have visible content
+    has_references:
+      type: boolean
+      title: References have visible content
+slots:
+  title:
+    title: Entry title
+  summary:
+    title: Entry summary
+  image:
+    title: Entry image
+  categories:
+    title: Entry categories
+  body:
+    title: Entry body
+  related:
+    title: Related entries
+  references:
+    title: References
+  actions:
+    title: Drupal access-checked node actions

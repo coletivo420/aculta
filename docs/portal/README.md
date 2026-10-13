@@ -26,6 +26,7 @@
 - [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md) — confirmação de e-mail: quando a conta fica bloqueada e como é liberada.
 - [REDIRECTS.md](REDIRECTS.md) — redirecionamentos mantidos pelo Portal (rotas antigas e slugs).
 - [SEARCH.md](SEARCH.md) — busca pública e do painel por purpose.
+- [WIKI.md](WIKI.md) — conteúdo, autoria, permissões e apresentação da Wiki420.
 
 ## Contratos
 

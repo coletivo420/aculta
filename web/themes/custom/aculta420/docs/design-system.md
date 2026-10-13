@@ -278,3 +278,12 @@ comportamento: não remova ao mudar o visual. Inventário: `docs/portal/FRONTEIR
   de status: claro 5,56:1 (erro), 6,86:1 (ok), 7,55:1 (atenção); escuro 7,17:1, 7,16:1, 9,37:1.
 - **Sobreposição** (fundo de diálogo): `--aculta-scrim` (claro e escuro).
 
+
+
+## Wiki420
+
+A apresentação enciclopédica da Wiki usa o pattern experimental wiki-entry,
+a identidade tipográfica e as superfícies semânticas ACULTA420. Os links usam o
+token de link do tema; divisórias, painéis e foco usam tokens semânticos. Não
+copiar a paleta literal da Wikipedia nem criar seletores de modo fora de
+tokens.css. Ver components.md e docs/portal/WIKI.md.

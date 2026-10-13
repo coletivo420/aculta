@@ -622,9 +622,16 @@ $check(
     && substr_count($wikiSource, '->accessCheck(TRUE)') === 2
     && substr_count($wikiSource, "->condition('field_domain_source.target_id', \$wikiDomain->id())") === 2
     && substr_count($wikiSource, "->condition('status', 1)") === 2
-    && substr_count($wikiSource, "->access('view')") === 3
+    && substr_count($wikiSource, "->access('view')") === 2
+    && !str_contains($wikiSource, 'getOwner()')
+    && !str_contains($wikiSource, 'getDisplayName()')
     && str_contains($wikiSource, '$this->database->escapeLike($term)'),
   'P5.3 Wiki queries must keep explicit access checks, WIKI Domain/status filters and per-entity access.',
+);
+$wikiNodeType = $read($root . '/config/sync/node.type.wiki_entry.yml');
+$check(
+  str_contains($wikiNodeType, 'display_submitted: false'),
+  'Public Wiki entry presentation must not expose authorship while node ownership and revisions remain in Drupal.',
 );
 
 // P5.4-A/B/C/E: account controllers receive every collaborator explicitly.

@@ -10,6 +10,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Path\PathMatcherInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\node\NodeInterface;
 
@@ -22,6 +23,7 @@ final class ThemeHooks {
     private readonly PathMatcherInterface $pathMatcher,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly RouteMatchInterface $routeMatch,
   ) {}
 
   /**
@@ -153,6 +155,11 @@ final class ThemeHooks {
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
+    $routeName = $this->routeMatch->getRouteName();
+    $routeNode = $this->routeMatch->getParameter('node');
+    $wikiEntryPage = $routeName === 'entity.node.canonical'
+      && $routeNode instanceof NodeInterface
+      && $routeNode->bundle() === 'wiki_entry';
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
     $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
     $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $brandMedia : [];
@@ -198,6 +205,11 @@ final class ThemeHooks {
 
       $destination = $destinations[$pluginId] ?? NULL;
       if ($destination !== NULL) {
+        // The Wiki entry presenter owns the document H1; avoid a duplicate page title.
+        if ($wikiEntryPage && $destination === 'aculta_page_title') {
+          unset($variables['page']['header'][$key]);
+          continue;
+        }
         $variables[$destination][$key] = $block;
         unset($variables['page']['header'][$key]);
       }

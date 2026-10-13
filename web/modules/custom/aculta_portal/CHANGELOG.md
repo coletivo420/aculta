@@ -1,3 +1,13 @@
+## 0.4.0-dev.7 — integração da apresentação enciclopédica da Wiki — 2026-10-13
+
+- O Portal deixa de incluir nome do autor na lista de alterações recentes da
+  Wiki; título e data permanecem. Nodes/revisões continuam com autor para
+  workflow e administração.
+- A configuração de wiki_entry desativa o byline público (display_submitted).
+- Integração visual permanece por render arrays neutros; sem classes de tema no
+  Portal. Gate Drupal 11+ PASS (659 checks); local HTTP nos caminhos Wiki PASS.
+  Import de configuração e Runtime remoto DEFERRED.
+
 ## 0.4.0-dev.6 — correção do redirecionamento após o login — 2026-10-13
 
 - Login (`user_login_form`) sai da regra AJAX de salvamento da Minha conta: a sessão era criada, mas a página não

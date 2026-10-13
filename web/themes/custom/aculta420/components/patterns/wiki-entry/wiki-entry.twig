@@ -1,0 +1,32 @@
+{% if variant == 'teaser' %}
+  <div class="aculta-wiki-card__inner">
+    <h2 class="aculta-wiki-card__title">{{ title }}</h2>
+    {% if has_summary %}<div class="aculta-wiki-card__summary">{{ summary }}</div>{% endif %}
+    {% if has_categories %}<div class="aculta-wiki-card__categories">{{ categories }}</div>{% endif %}
+  </div>
+{% else %}
+  <div class="aculta-wiki-article">
+    <nav class="aculta-wiki-article__tabs" aria-label="{{ 'Ações do verbete'|t }}">
+      <a class="aculta-wiki-article__tab is-active" href="{{ url }}" aria-current="page">{{ 'Ler'|t }}</a>
+      {{ actions }}
+    </nav>
+    <header class="aculta-wiki-article__header">
+      <p class="aculta-wiki-article__eyebrow">{{ 'Wiki420 · Enciclopédia livre'|t }}</p>
+      <h1 class="aculta-wiki-article__title">{{ title }}</h1>
+      {% if has_summary %}<div class="aculta-wiki-article__lead">{{ summary }}</div>{% endif %}
+    </header>
+    <div class="aculta-wiki-article__layout">
+      <div class="aculta-wiki-article__main">
+        <div class="aculta-wiki-article__body">{{ body }}</div>
+        {% if has_related %}<div class="aculta-wiki-article__related">{{ related }}</div>{% endif %}
+        {% if has_references %}<div class="aculta-wiki-article__references">{{ references }}</div>{% endif %}
+      </div>
+      {% if has_image or has_categories %}
+        <aside class="aculta-wiki-article__aside" aria-label="{{ 'Informações do verbete'|t }}">
+          {% if has_image %}<div class="aculta-wiki-article__image">{{ image }}</div>{% endif %}
+          {% if has_categories %}<div class="aculta-wiki-article__categories">{{ categories }}</div>{% endif %}
+        </aside>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
