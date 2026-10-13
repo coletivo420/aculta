@@ -83,6 +83,18 @@ final class UserPictureForm extends FormBase {
     ];
     $form['#account_id'] = (int) $account->id();
 
+    // Recortar o arquivo enviado (ou a foto atual, se for personalizada) mesmo sem o disparo automático.
+    $cropFid = (int) (($form_state->getValue('imagem')[0] ?? NULL) ?: $default);
+    if ($cropFid > 0 && !$isAcervo) {
+      $form['recortar'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Recortar foto'),
+        '#url' => Url::fromRoute('aculta_user.avatar_crop', [], ['query' => ['fid' => $cropFid]]),
+        '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary'], 'data-dialog-type' => 'modal'],
+        '#attached' => ['library' => ['core/drupal.dialog.ajax']],
+      ];
+    }
+
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['salvar'] = [
       '#type' => 'submit',
