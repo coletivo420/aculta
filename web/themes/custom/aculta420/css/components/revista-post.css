@@ -135,4 +135,7 @@
   background: var(--aculta-surface-muted);
   font-size: 1.0625rem;
   line-height: 1.6;
+  /* Ocupa a largura do bloco, alinhado ao título (sem o limite de leitura do corpo). */
+  inline-size: 100%;
+  max-inline-size: none;
 }
