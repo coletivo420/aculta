@@ -1,4 +1,4 @@
 services:
   aculta_magazine.post_presentation:
     class: Drupal\aculta_magazine\Presentation\PostPresentation
-    arguments: ['@date.formatter']
+    arguments: ['@date.formatter', '@entity_type.manager', '@aculta_portal.domain_purpose']

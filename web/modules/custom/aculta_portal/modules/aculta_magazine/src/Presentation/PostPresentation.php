@@ -6,7 +6,10 @@ namespace Drupal\aculta_magazine\Presentation;
 
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -34,6 +37,10 @@ final class PostPresentation {
   public function __construct(
     #[Autowire(service: 'date.formatter')]
     private readonly DateFormatterInterface $dateFormatter,
+    #[Autowire(service: 'entity_type.manager')]
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'aculta_portal.domain_purpose')]
+    private readonly DomainPurposeManager $purposeManager,
   ) {}
 
   /**
@@ -45,13 +52,13 @@ final class PostPresentation {
       ? strtotime((string) $entity->get('field_published_at')->value . ' UTC') ?: $entity->getCreatedTime()
       : $entity->getCreatedTime();
     $owner = $entity->getOwner();
-    $author = $owner ? $owner->getDisplayName() : '';
+    $authorElement = $this->authorElement($owner);
 
     $build['post_meta'] = [
       '#type' => 'container',
       '#weight' => -30,
       '#attributes' => ['data-portal-ui' => 'post-meta'],
-      'author' => $this->item('post-meta-author', $author),
+      'author' => $authorElement,
       'date' => $this->item('post-meta-date', mb_strtolower($this->dateFormatter->format($ts, 'custom', 'j \d\e F \d\e Y'))),
       'time' => $this->item('post-meta-time', $this->dateFormatter->format($ts, 'custom', 'H:i')),
     ];
@@ -76,6 +83,26 @@ final class PostPresentation {
       'links' => $links,
     ];
     $cache->applyTo($build);
+  }
+
+  /**
+   * Nome do autor: link para o perfil público quando o perfil é público (mesma regra da caixa de autores).
+   */
+  private function authorElement(?\Drupal\user\UserInterface $owner): array {
+    $name = $owner ? $owner->getDisplayName() : '';
+    if ($owner) {
+      $profile = $this->entityTypeManager->getStorage('profile')->loadByUser($owner, 'participante');
+      $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
+      $publico = $profile ? (bool) $profile->get('field_perfil_publico')->value : TRUE;
+      $publico = $publico || PublicProfilePolicy::isObrigatorioPublico($owner->getRoles());
+      if ($publico && $nickname !== '') {
+        $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $nickname]);
+        if ($url !== NULL) {
+          return PortalLinkElement::build($nickname, $url, ['data-portal-ui' => 'post-meta-author']);
+        }
+      }
+    }
+    return $this->item('post-meta-author', $name);
   }
 
   /**
