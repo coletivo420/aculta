@@ -9,11 +9,9 @@
 (function (Drupal, once, drupalSettings) {
   'use strict';
 
-  function closeDialog(form) {
-    const content = form.closest('.ui-dialog-content');
-    if (content && Drupal.dialog) {
-      Drupal.dialog(content).close();
-    }
+  // Depois de gravar, a visão geral é recarregada: o modal fecha e a caixa mostra a bio salva.
+  function finishSave() {
+    window.location.reload();
   }
 
   Drupal.behaviors.acultaAccountBioForm = {
@@ -59,7 +57,7 @@
               if (text) {
                 text.value = data.bio;
               }
-              closeDialog(form);
+              finishSave();
             })
             .catch(() => {
               if (submit) {
