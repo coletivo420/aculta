@@ -44,16 +44,28 @@ commitado ou não ligado), **Pendente** (decidido ou perguntado, sem código).
 | Remover foto personalizada volta a conta ao sorteio do acervo | Implementado (verificado no CLI) | `PictureReplacementHooks::userPresave` |
 | Foto anterior enviada pela pessoa é apagada quando é trocada ou removida | Implementado (verificado no CLI) | `PictureReplacementHooks::userUpdate` |
 | Cópias do acervo nunca são apagadas como "foto antiga" | Implementado | `PictureReplacementHooks` (prefixo `pictures/acervo/`) |
-| Recorte em popup separado, só para foto personalizada enviada | **Em andamento** (ver 1.3.1) | `AvatarCropForm` (não commitado, sem rota) |
-| Após o recorte, volta ao popup da foto para salvar | **Em andamento** (mesmo item) | — |
-| Excluir arquivos temporários de upload para economizar espaço | **Pendente** (o cron do Drupal remove temporários após algumas horas; a limpeza imediata ainda não foi implementada) | — |
+| Recorte em popup separado, só para foto personalizada enviada | **Bloqueado** (ver 1.3.1); o recorte inline do widget continua funcionando | `AvatarCropForm` (não commitado, sem rota) |
+| Após o recorte, volta ao popup da foto para salvar | **Pendente** (depende do envio do recorte, ver 1.3.1) | — |
+| Ao enviar a foto personalizada, o modal de recorte abre automaticamente | **Pendente** (depende do envio do recorte, ver 1.3.1) | — |
+| Excluir arquivos temporários de upload e cópias do acervo sem uso | **Implementado no cron** (uploads temporários de foto com mais de 1 h e cópias do acervo sem conta; verificado no CLI, cron real não disparado) | `AvatarAssetCleanup`, `AvatarCronHooks` |
+| Limpeza de arquivos não usados após o recorte | **Pendente** (depende do recorte pelo popup) | — |
 
 #### 1.3.1 Recorte em popup separado
-Decidido: o recorte é feito num popup próprio, somente para foto personalizada enviada; ao concluir, o popup de recorte
-fecha e volta ao popup da foto, onde a pessoa clica em "Salvar". Implementado até agora: formulário `AvatarCropForm`
-usando a API do `image_widget_crop` (`applyCrop`/`updateCrop`/`deleteCrop`), que grava o recorte sobre o arquivo da
-conta. Falta: rota que abre o popup modal, link "Recortar" no popup da foto (só para foto personalizada), remoção do
-recorte inline do widget, e verificação. O arquivo `AvatarCropForm.php` não está commitado e não tem rota.
+Decidido: ao enviar uma foto personalizada, o popup de recorte abre automaticamente; ao aplicar o recorte, ele fecha
+e a pessoa volta ao popup da foto, onde clica em "Salvar". O recorte só vale para foto personalizada.
+
+Estado:
+- Formulário `AvatarCropForm` escrito (usa a API do `image_widget_crop`: `applyCrop`/`updateCrop`/`deleteCrop`).
+- Abrir o modal pela rota `/avatar/recortar` funciona (HTTP 200 com o comando de abrir o diálogo e o formulário).
+- Gravar o recorte a partir do próprio modal **não funciona**: o envio AJAX volta com "O formulário ficou desatualizado".
+  Causa: o Core não grava o estado de formulário em requisição GET, e o envio AJAX de um formulário aberto por GET
+  precisa desse estado. Tentativa de `setCached` falhou com erro de GET.
+- Gravar o recorte pela API (fora do modal) funciona: testado no CLI, o registro de recorte é criado.
+- Por isso o recorte inline do widget foi mantido. O link "Recortar" e a remoção do recorte inline foram revertidos.
+
+Caminho proposto (aguarda confirmação): o envio do recorte vai por POST comum (sem AJAX) para a rota, grava o
+recorte e redireciona ao painel com um marcador; um script do módulo reabre o popup da foto. A abertura automática
+ao enviar a foto depende do mesmo caminho, mais um script que dispara o modal quando o upload termina.
 
 ### 1.4 Associado e dados
 | Decisão | Status | Onde está |
