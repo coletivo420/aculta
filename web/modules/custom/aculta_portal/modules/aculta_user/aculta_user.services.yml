@@ -20,3 +20,6 @@ services:
   aculta_user.badge_service:
     class: Drupal\aculta_user\Badge\BadgeService
     arguments: ['@entity_type.manager']
+  aculta_user.account_bio_card:
+    class: Drupal\aculta_user\Bio\AccountBioCard
+    arguments: ['@entity_type.manager']
