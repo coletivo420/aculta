@@ -195,11 +195,11 @@ Serviços previstos (nomes provisórios):
 
 **Mão dupla (opcional, a decidir):** no verbete, bloco "Citado em" com os conteúdos publicados que chamam o verbete. É uma View reversa sobre os campos de referência. Só títulos publicados, nunca conteúdo não publicado.
 
-**Papel de autor:**
+**Papel de contribuidor editorial** (autores da revista e da Wiki):
 
-- Novo papel Drupal `autor` (autores do site). Concedido **somente pelo administrador** (decisão do responsável, 2026-10-13). Editor de conteúdo não concede papel.
-- Sincronização: quem recebe `autor` também recebe `wiki_editor`, e perde o papel quando perde `autor`. Feito por `#[Hook]` de presave de usuário em serviço do `aculta_user`, não manualmente. O papel Drupal continua sendo a permissão; não há sistema paralelo.
-- **Risco a registrar:** `wiki_editor` edita qualquer verbete e publica. Estender isso a todo autor de revista amplia muito a edição da Wiki. A alternativa é `autor` receber `wiki_contributor` (cria e edita só o próprio) e `wiki_editor` ficar para editores. Ver decisão 26.
+- Novo papel Drupal `contribuidor_editorial` (rótulo "Contribuidor editorial"), para autores da revista e da Wiki. Concedido **somente pelo administrador** (decisão do responsável, 2026-10-13). Editor de conteúdo não concede papel.
+- Sincronização: quem recebe `contribuidor_editorial` também recebe `wiki_editor`, e perde o papel quando perde `contribuidor_editorial`. Feito por `#[Hook]` de presave de usuário em serviço do `aculta_user`, não manualmente. O papel Drupal continua sendo a permissão; não há sistema paralelo.
+- **Risco a registrar:** `wiki_editor` edita qualquer verbete e publica. Estender isso a todo autor de revista amplia muito a edição da Wiki. A alternativa é `contribuidor_editorial` receber `wiki_contributor` (cria e edita só o próprio) e `wiki_editor` ficar para editores. Ver decisão 26.
 - **Reversão de revisão:** a decisão 21 atribui reversão ao `wiki_editor`, mas o `wiki_editor` não tem `revert wiki_entry revisions` hoje (só `content_editor` tem `revert all revisions`). Precisa ser adicionada à configuração exportada do papel, com `config/sync` e gate.
 
 ### E2. Atividade centralizada em "Atividade"
@@ -321,7 +321,7 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 22. **Comentários:** respondida em 2026-10-13: comentários moram só nas discussões do Fórum; o conteúdo mostra trecho com link para a discussão completa (seção E3).
 23. **Administrador:** respondida em 2026-10-13: o administrador vê só a própria atividade.
 24. **Tópico de discussão:** criação manual pelo editor ou pelo `wiki_editor`, ou automática para todo verbete? Qual tipo de conteúdo recebe discussão (verbete, artigo, atividade, projeto)?
-25. **Papel `autor`:** respondida em 2026-10-13: quem concede é o administrador.
+25. **Papel `contribuidor_editorial`:** respondida em 2026-10-13: quem concede é o administrador.
 26. **Função do autor na Wiki:** `wiki_editor` (como pedido: edita qualquer verbete e publica) ou `wiki_contributor` (cria e edita só o próprio)? A segunda opção evita que autor de revista edite verbetes de outras pessoas. Recomendação: `wiki_contributor`.
 27. **Mão dupla:** o bloco "Citado em" no verbete entra?
 
