@@ -61,6 +61,7 @@ final class WikiSearchFormBuilder {
           'id' => 'aculta-wiki-search-preview',
           'data-portal-ui' => 'search-preview',
           'aria-live' => 'polite',
+          'hidden' => TRUE,
         ],
         'hint' => [
           '#theme' => 'aculta_portal_element',

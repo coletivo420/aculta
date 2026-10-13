@@ -1,3 +1,13 @@
+## 0.4.0-dev.11 — exibir a dica da busca Wiki após digitação — 2026-10-13
+
+- O painel de prévia da Wiki começa recolhido; focar ou clicar no campo sem
+  digitar mantém a página limpa.
+- A dica de mínimo de três caracteres aparece após o primeiro caractere. Ao
+  apagar o termo, o painel se recolhe; com três ou mais caracteres, a dica sai
+  enquanto as sugestões são carregadas.
+- A submissão GET continua disponível como fallback. **RUNTIME STATUS: DEFERRED**
+  até validação interativa no servidor de testes.
+
 ## 0.4.0-dev.10 — prévia interativa na busca do Wiki420 — 2026-10-13
 
 - A busca do cabeçalho Wiki reutiliza o comportamento compartilhado de prévia

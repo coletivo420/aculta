@@ -30,10 +30,11 @@ montada pelo Portal com o endpoint existente. A busca é a mesma na home, nos
 verbetes e nos resultados; a consulta `q` permanece preenchida ao abrir os
 resultados.
 
-Ao digitar, a busca Wiki usa o mesmo comportamento de prévia da busca global:
-espera 300 ms após a última tecla, consulta a partir de três caracteres,
-descarta respostas antigas, permite percorrer sugestões com as setas e oferece
-um link para todos os resultados. A rota `/wiki/busca/previa` limita o resultado
+a busca Wiki mantém o painel de prévia recolhido até o visitante digitar algo;
+focar/clicar sem digitar não mostra a dica. Depois da primeira letra, informa o
+mínimo de três caracteres. Com termo suficiente, espera 300 ms após a última
+tecla, descarta respostas antigas, permite percorrer sugestões com as setas e
+oferece um link para todos os resultados. A rota `/wiki/busca/previa` limita o resultado
 a verbetes publicados, acessíveis e pertencentes ao Domain Wiki. A resposta é
 `no-store`; sem JavaScript, o formulário GET continua levando à busca completa.
 O Portal reutiliza `aculta_portal/search-preview` e seus marcadores neutros; o
