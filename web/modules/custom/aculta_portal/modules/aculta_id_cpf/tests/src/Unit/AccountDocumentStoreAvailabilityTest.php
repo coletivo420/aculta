@@ -55,8 +55,7 @@ final class AccountDocumentStoreAvailabilityTest extends TestCase {
    */
   private function store(array $fields, bool $fingerprint_key_available = FALSE): AccountDocumentStore {
     $field_manager = $this->createMock(EntityFieldManagerInterface::class);
-    $field_manager->expects($this->exactly(2))
-      ->method('getFieldDefinitions')
+    $field_manager->method('getFieldDefinitions')
       ->with('profile', 'participante')
       ->willReturn($fields);
 

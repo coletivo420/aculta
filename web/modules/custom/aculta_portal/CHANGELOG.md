@@ -1,3 +1,10 @@
+## 0.3.0-dev.28 — Acabamento da revisão de Outros Dados — 2026-10-13
+
+- `AccountDocumentStore` lê as definições de campo do perfil uma vez por instância; `save()` deixa de criar o perfil antes de verificar os campos: a checagem fica só em `canSave()`, que já valida `field_documento` e `field_documento_indice` para o bundle `participante`.
+- `AccountOtherDataForm` centraliza a mensagem de indisponibilidade em um único ponto (`unavailableForm()` e `unavailableMessage()`), com o mesmo texto e os mesmos caminhos de decisão.
+- O teste de disponibilidade deixa de fixar o número de consultas internas ao gerenciador de campos; cobre o contrato de leitura e gravação, não a implementação.
+- Sem mudança de comportamento para o usuário. Runtime: não testado (apenas código e testes unitários). **RUNTIME STATUS: DEFERRED**.
+
 ## 0.3.0-dev.27 — Preserva leitura de documento salvo — 2026-10-12
 
 - O contrato neutro `AccountDocumentInterface` separa disponibilidade de leitura (`isAvailable()`) da capacidade de gravar (`canSave()`). O `aculta_portal` tenta ler e apresentar o documento existente, mascarado e somente leitura, mesmo quando o HMAC ou o campo de índice ainda não está provisionado; formulário de inclusão só aparece quando cifra, HMAC e ambos os campos estão disponíveis.
@@ -7,7 +14,7 @@
 
 ## 0.3.0-dev.26 — Proteção inicial de Outros Dados — 2026-10-12
 
-- `AccountDocumentStore::isAvailable()` passou a exigir todos os recursos de leitura e gravação. A verificação evitava acesso a campos incompletos, mas também ocultava documentos cifrados já existentes quando faltavam HMAC ou campo de índice; essa regressão foi corrigida em `0.3.0-dev.27`. O POST também falhava de forma controlada se a configuração ficasse incompleta após a renderização.
+- `AccountDocumentStore::isAvailable()` passou a exigir todos os recursos de leitura e gravação. A verificação evitava acesso a campos incompletos, mas também ocultava documentos cifrados já existentes quando faltavam HMAC ou campo de índice. Esta versão intermediária nunca foi publicada: o defeito foi corrigido no mesmo PR, em `0.3.0-dev.27`. O POST também falhava de forma controlada se a configuração ficasse incompleta após a renderização.
 - Validação no servidor de testes `conta.aculta.toca.net.br`: GET autenticado por link de uso único respondeu HTTP 200 e mostrou a mensagem de indisponibilidade prevista, sem página de exceção; log sem erro `AccountDocument`. Estado do Runtime Homelab: atualização `10001` pendente, configuração de `field_documento_indice` ausente e chaves do submódulo indisponíveis.
 - **RUNTIME STATUS: PASS (GET autenticado)** — a apresentação da página foi verificada; gravação de documento não foi tentada enquanto os campos e as chaves não estão provisionados. Não executei `updb` nem alterei dados.
 

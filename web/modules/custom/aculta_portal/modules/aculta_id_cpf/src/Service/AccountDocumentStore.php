@@ -25,6 +25,11 @@ final class AccountDocumentStore implements AccountDocumentInterface {
 
   private const INDEX_FIELD = 'field_documento_indice';
 
+  /**
+   * @var array<string, mixed>|null
+   */
+  private ?array $profileFields = NULL;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFieldManagerInterface $fieldManager,
@@ -35,12 +40,11 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   ) {}
 
   public function isAvailable(): bool {
-    $fields = $this->fieldManager->getFieldDefinitions('profile', 'participante');
-    return isset($fields[self::FIELD]) && $this->cipher->isAvailable();
+    return isset($this->profileFields()[self::FIELD]) && $this->cipher->isAvailable();
   }
 
   public function canSave(): bool {
-    $fields = $this->fieldManager->getFieldDefinitions('profile', 'participante');
+    $fields = $this->profileFields();
     return isset($fields[self::FIELD], $fields[self::INDEX_FIELD])
       && $this->cipher->isAvailable()
       && $this->fingerprint->isAvailable();
@@ -79,10 +83,8 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     $value = $this->validator->canonicalize($canonical, $type);
     $index = $this->fingerprint->fingerprint($value, $type);
 
+    // Os campos já foram verificados por canSave(): o perfil é do bundle participante, então os campos existem.
     $profile = $this->participantProfile($account) ?? $this->createParticipantProfile($account);
-    if (!$profile->hasField(self::FIELD) || !$profile->hasField(self::INDEX_FIELD)) {
-      throw new \RuntimeException('Document fields are unavailable.');
-    }
     if (!$profile->get(self::FIELD)->isEmpty()) {
       throw new \LogicException('Document already saved.');
     }
@@ -123,6 +125,15 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     $profile->set(self::INDEX_FIELD, $index);
     $profile->save();
     return 'indexed';
+  }
+
+  /**
+   * Definições de campo do perfil participante, lidas uma vez por instância (o serviço é por requisição).
+   *
+   * @return array<string, mixed>
+   */
+  private function profileFields(): array {
+    return $this->profileFields ??= $this->fieldManager->getFieldDefinitions('profile', 'participante');
   }
 
   private function indexInUseByOther(string $index, int $uid): bool {
