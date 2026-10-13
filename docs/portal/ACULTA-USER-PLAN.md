@@ -195,20 +195,20 @@ Serviços previstos (nomes provisórios):
 
 **Mão dupla (opcional, a decidir):** no verbete, bloco "Citado em" com os conteúdos publicados que chamam o verbete. É uma View reversa sobre os campos de referência. Só títulos publicados, nunca conteúdo não publicado.
 
-**Papel de contribuidor editorial** (autores da revista e da Wiki):
+**Papel de autores da revista e da Wiki:** papel único `content_editor` (já existente). Decisão do responsável (2026-10-13): editor de conteúdo e editor de conteúdo são a mesma função, então não há papel separado.
 
-- Novo papel Drupal `contribuidor_editorial` (rótulo "Contribuidor editorial"), para autores da revista e da Wiki. Concedido **somente pelo administrador** (decisão do responsável, 2026-10-13). Editor de conteúdo não concede papel.
-- Sincronização: quem recebe `contribuidor_editorial` também recebe `wiki_editor`, e perde o papel quando perde `contribuidor_editorial`. Feito por `#[Hook]` de presave de usuário em serviço do `aculta_user`, não manualmente. O papel Drupal continua sendo a permissão; não há sistema paralelo.
-- **Risco a registrar:** `wiki_editor` edita qualquer verbete e publica. Estender isso a todo autor de revista amplia muito a edição da Wiki. A alternativa é `contribuidor_editorial` receber `wiki_contributor` (cria e edita só o próprio) e `wiki_editor` ficar para editores. Ver decisão 26.
+- Concedido **somente pelo administrador** (decisão do responsável, 2026-10-13). Sem papel novo.
+- Configuração: `content_editor` recebe `wiki_editor` diretamente no `config/sync`. Não há sincronização automática entre papéis.
+- **Risco a registrar:** `content_editor` passa a editar qualquer verbete e publicar, além do que já tem (navegação administrativa, reversão de todas as revisões). Ver decisão 26.
 - **Reversão de revisão:** a decisão 21 atribui reversão ao `wiki_editor`, mas o `wiki_editor` não tem `revert wiki_entry revisions` hoje (só `content_editor` tem `revert all revisions`). Precisa ser adicionada à configuração exportada do papel, com `config/sync` e gate.
 
 ### E5. Papéis de Wiki e moderação do Fórum
 
 **Decisões do responsável (2026-10-13):**
 
-- `contribuidor_editorial` recebe **`wiki_editor`**.
+- `content_editor` recebe **`wiki_editor`**.
 - Todo usuário com **e-mail confirmado** (papel `email_confirmed`) recebe **`wiki_contributor`**. As contribuições são moderadas.
-- `contribuidor_editorial` também é **moderador dos fóruns**.
+- `content_editor` também é **moderador dos fóruns**.
 
 **Moderação da Wiki (já existe no workflow `wiki_editorial`):**
 
@@ -220,7 +220,7 @@ Serviços previstos (nomes provisórios):
 
 **Moderação do Fórum:** os comentários existem só nas discussões do Fórum (seção E3). Por isso o escopo de moderação de comentários é o próprio Fórum.
 
-- `contribuidor_editorial` recebe `administer comments` (aprovar, editar e excluir comentários) e `edit any forum content` (editar tópicos de qualquer autor).
+- `content_editor` recebe `administer comments` (aprovar, editar e excluir comentários) e `edit any forum content` (editar tópicos de qualquer autor).
 - **Não** recebe `administer forums` (estrutura de fóruns e taxonomia), que continua com administrador.
 - A permissão `administer comments` é do Core e não é restrita por tipo de conteúdo. Hoje o único tipo com comentário é o Fórum, então o efeito fica restrito ao Fórum. Se um tipo de comentário novo surgir, a permissão passa a valer para ele também: registrar no gate.
 - Denúncias de comentário (`DT-P13`, fase U4) vão para a mesma fila de moderação.
@@ -251,7 +251,7 @@ Serviços previstos (nomes provisórios):
 
 **Primeiro comentário em moderação:**
 
-- Se a pessoa não tem nenhum comentário publicado, o comentário é salvo como **não publicado**, na fila de moderação do Core (`admin/content/comment/approval`, aba "Não aprovados"). Quem modera: `contribuidor_editorial` (decisão 29) e administrador.
+- Se a pessoa não tem nenhum comentário publicado, o comentário é salvo como **não publicado**, na fila de moderação do Core (`admin/content/comment/approval`, aba "Não aprovados"). Quem modera: `content_editor` (decisão 29) e administrador.
 - A regra vale **somente para o primeiro comentário**. Depois da primeira aprovação, os comentários são publicados direto.
 - Implementação: presave de comentário no `aculta_user` (`#[Hook]`), com `skip comment approval` como exceção para papéis que não passam pela fila (a confirmar, decisão 32).
 - Mensagem no formulário de comentário, antes de enviar: "Seu primeiro comentário passará por moderação antes de aparecer. Depois da aprovação, os próximos são publicados na hora."
@@ -288,7 +288,7 @@ Serviços previstos (nomes provisórios):
 **Integração com o Fórum:**
 
 - **Revista:** a discussão de cada artigo é um tópico do Fórum vinculado (seção E3). O artigo mostra o trecho e o link para a discussão completa. Nenhum comentário é gravado no artigo.
-- **LMS:** o repositório hoje não tem fórum de discussão no LMS. O tipo de atividade configurado é só `no_answer` e `true_false` (`lms.lms_activity_type.*`), e não há campo de comentário em curso ou lição. Quando a discussão do LMS existir, o modelo é o mesmo: cada curso ou lição (a definir, decisão 34) tem um tópico vinculado. Antes de desenhar isso, verificar no Homelab o que o módulo `lms` 1.2.3 oferece.
+- **LMS (decisão 34, respondida em 2026-10-13):** a discussão é por curso e por atividade do LMS. O repositório hoje não tem fórum de discussão no LMS. O tipo de atividade configurado é só `no_answer` e `true_false` (`lms.lms_activity_type.*`), e não há campo de comentário em curso ou lição. Quando a discussão do LMS existir, o modelo é o mesmo: cada curso e cada atividade do LMS têm um tópico vinculado. Antes de desenhar isso, verificar no Homelab o que o módulo `lms` 1.2.3 oferece.
 - **Regra comum:** qualquer conteúdo com discussão usa tópico do Fórum. Nenhum tipo de conteúdo guarda comentário próprio.
 
 ### E2. Atividade centralizada em "Atividade"
@@ -410,17 +410,17 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 22. **Comentários:** respondida em 2026-10-13: comentários moram só nas discussões do Fórum; o conteúdo mostra trecho com link para a discussão completa (seção E3).
 23. **Administrador:** respondida em 2026-10-13: o administrador vê só a própria atividade.
 24. **Tópico de discussão:** respondida em 2026-10-13: criação de tópico exige 10 comentários publicados (seção E6). Pergunta restante: quais tipos de conteúdo recebem discussão vinculada, e o editor pode criar a discussão do próprio conteúdo sem os 10 comentários?
-25. **Papel `contribuidor_editorial`:** respondida em 2026-10-13: quem concede é o administrador.
-26. **Função do contribuidor editorial na Wiki:** respondida em 2026-10-13: recebe `wiki_editor`.
+25. **Papel de autores:** respondida em 2026-10-13: quem concede é o administrador.
+26. **Função na Wiki:** respondida em 2026-10-13: `content_editor` recebe `wiki_editor`.
 27. **Citado em:** respondida em 2026-10-13: aparece no cartão de pré-visualização do verbete (seção E6), com a lista completa em aba do verbete.
 28. **Wiki para todo autenticado:** respondida em 2026-10-13: `wiki_contributor` é concedido a quem confirmou o e-mail (`email_confirmed`).
-29. **Moderação do Fórum:** respondida em 2026-10-13 (confirmação): `administer comments` e `edit any forum content` para `contribuidor_editorial`; `administer forums` fica com o administrador.
+29. **Moderação do Fórum:** respondida em 2026-10-13 (confirmação): `administer comments` e `edit any forum content` para `content_editor`; `administer forums` fica com o administrador.
 30. **Editor sem limite:** respondida em 2026-10-13: o editor de conteúdo não tem restrições de comentário nem editoriais (seção E7).
 31. **Primeiro comentário:** respondida em 2026-10-13: a publicação fica bloqueada até a aprovação do primeiro comentário (seção E7).
-32. **Quem fica fora da fila:** parcialmente respondida em 2026-10-13: `content_editor` fica isento. `administrator` também (padrão em `papeis_isentos`). Pergunta restante: `contribuidor_editorial` é isento ou segue a regra?
-33. **Contribuidor editorial:** segue o limite de 10 comentários e a fila do primeiro comentário, ou é isento (como o editor de conteúdo)?
-34. **Discussão do LMS:** a discussão é por curso, por lição ou por atividade? E ela já existe no módulo `lms` 1.2.3 (verificar no Homelab)?
-35. **Valores iniciais:** confirma `topico_comentarios_minimos` = 10 e os limites ligados por padrão?
+32. **Quem fica fora da fila:** respondida em 2026-10-13: `content_editor` e `administrator` ficam isentos (padrão em `papeis_isentos`).
+33. **Editor de conteúdo e contribuidor editorial:** respondida em 2026-10-13: são a mesma função, no papel `content_editor`.
+34. **Discussão do LMS:** respondida em 2026-10-13: a discussão é por curso e por atividade do LMS.
+35. **Valores iniciais:** respondida em 2026-10-13: 10 comentários como limite padrão, alterável no painel administrativo do `aculta_portal` (seção E7).
 
 ## 8. Riscos e limites
 
@@ -444,7 +444,7 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 **Ordem de implementação (cada item é um PR próprio, `RUNTIME STATUS: DEFERRED` até validação no Homelab):**
 
 1. **U0 (no Homelab):** `composer install`, verificação de Flag com `entity:user`, Pathauto com perfil, Views de `node_field_revision` e de comentários, e do módulo `lms` 1.2.3 (discussão).
-2. **Configuração de papéis (sem código):** `contribuidor_editorial` (com `wiki_editor`, `administer comments`, `edit any forum content`); `wiki_contributor` para `email_confirmed`; `revert wiki_entry revisions` para `wiki_editor`.
+2. **Configuração de papéis (sem código):** `content_editor` (com `wiki_editor`, `administer comments`, `edit any forum content`); `wiki_contributor` para `email_confirmed`; `revert wiki_entry revisions` para `wiki_editor`.
 3. **Participação e Fórum:** tópico vinculado (E3), limite de 10 comentários e fila do primeiro comentário com painel administrativo (E7), e cartão de pré-visualização (E6).
 4. **Atividade:** seção com abas (E2), histórico individual e progresso de limites.
 5. **Perfil, avatar e associado:** perfil público, acervo de avatares (com a família `mushrooms` resolvida), papel `associado`, campos de "Outros Dados" (A1).
@@ -453,5 +453,5 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 
 **Padrões que valem para cada PR:** `#[Hook]` OOP, injeção de dependência, sem `\Drupal::` em `src/`, marcação `data-portal-ui` sem classes de design, textos em `translations/*.pt-br.po`, gates do Portal passando, e atualização de `CHANGELOG.md` e da versão.
 
-**Padrões a aplicar com defaults até a resposta:** decisão 33 (contribuidor editorial segue a regra), decisão 34 (discussão do LMS por curso), decisão 35 (10 comentários e limites ligados). Qualquer um deles pode ser alterado no painel administrativo.
+**Decisões 33 a 35 respondidas em 2026-10-13:** papel único `content_editor`; discussão do LMS por curso e por atividade; 10 comentários como padrão, alterável no painel administrativo.
 
