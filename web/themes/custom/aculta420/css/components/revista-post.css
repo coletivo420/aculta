@@ -174,8 +174,9 @@
 
 /* Chamada (subtítulo): logo abaixo do título, centralizada com ele, em fonte menor. */
 .node--view-mode-full .field--name-field-subtitle {
-  margin: 0.25rem auto 0.75rem;
-  max-inline-size: 42ch;
+  margin: 0.25rem 0 0.75rem;
+  inline-size: 100%;
+  max-inline-size: none;
   text-align: center;
   font-size: 1.125rem;
   font-weight: 400;
