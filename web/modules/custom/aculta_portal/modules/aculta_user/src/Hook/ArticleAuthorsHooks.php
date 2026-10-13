@@ -128,10 +128,10 @@ final class ArticleAuthorsHooks {
         'name' => $nameElement,
         'role' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => $role === 'author' ? (string) t('Autor') : (string) t('Coautor'), '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-role'])],
         'social' => $this->socialIcons($profile, $items),
-        'bio' => isset($items['bio']) && $profile && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()
-          ? ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => (string) $profile->get('field_bio')->value, '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-bio'])]
-          : [],
       ],
+      'bio' => isset($items['bio']) && $profile && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()
+        ? ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => (string) $profile->get('field_bio')->value, '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-bio'])]
+        : [],
     ];
   }
 
