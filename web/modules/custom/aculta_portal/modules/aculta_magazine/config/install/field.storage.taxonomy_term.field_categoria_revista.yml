@@ -1,0 +1,19 @@
+uuid: b00a7461-f371-4465-be81-6bb06dfeb522
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - taxonomy
+id: taxonomy_term.field_categoria_revista
+field_name: field_categoria_revista
+entity_type: taxonomy_term
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

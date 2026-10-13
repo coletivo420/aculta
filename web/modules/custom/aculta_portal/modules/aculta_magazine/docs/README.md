@@ -62,3 +62,23 @@ Referência de leitura usada: largura de linha entre 60 e 75 caracteres (Piccali
 - Só um hook `node_view` por módulo: novas funções de exibição entram como serviço chamado por esse hook.
 - Aparência (círculos, cores por rede, título e faixa) é do ACULTA420 (`revista-post.css`), com tokens semânticos.
 - Data: `field_published_at` é guardado em UTC; ao preencher manualmente, use o horário UTC (ex.: 19:32 de Brasília = 22:32 UTC).
+
+## Fórum da Revista (função)
+
+Decisão do responsável (2026-10-13): cada publicação da Revista tem um tópico do Fórum criado automaticamente, com o
+mesmo autor, na pasta da sua categoria editorial. Motivo: a discussão fica em um lugar só (Fórum nativo), e a Revista
+não guarda comentário próprio (`docs/portal/ACULTA-USER-PLAN.md`, seção E3).
+
+- Pastas: pasta-mãe "Revista" com uma pasta por categoria (`ForumSectionResolver`). A pasta guarda a categoria em
+  `field_categoria_revista`, então renomear a sessão não quebra o vínculo.
+- Vínculo: `field_discussao` na publicação (já existente). Criação, edição, mudança de categoria, despublicação e
+  exclusão são tratadas em `ForumTopicHooks` e `ForumTopicSync`.
+- Abertura: `ForumOpeningPost` lê resumo e imagem da publicação. Nenhum texto ou arquivo é copiado: a imagem é o
+  mesmo arquivo da mídia, no estilo `large`. Editar a publicação atualiza a abertura.
+- Comentários: o tópico usa `comment_forum`. A publicação mostra o trecho e o link "Ver discussão completa" para o
+  propósito FORUM. A resposta é feita só no Fórum.
+- URL do tópico: `/topico/<título>` (padrão `aculta_forum_topic`).
+- Moderação: segue o Core. Quem não tem `skip comment approval` vai para a fila do `content_editor`.
+- Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e ganha tópico automaticamente.
+- Categoria nova: a pasta correspondente é criada na primeira publicação (ou por `aculta_magazine_update_10002`).
+- Não há criação manual de tópico para publicação. Tópicos de outros tipos (verbete, atividade) seguem o plano E3.

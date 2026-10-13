@@ -265,6 +265,7 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
 - **Resposta:** o formulário de resposta fica **só** na discussão completa, no host FORUM. A página de conteúdo não envia POST para outro host (`CROSS-DOMAIN-REQUEST-POLICY.md`).
 - **Sem tópico vinculado:** a página do conteúdo não mostra bloco nem link de discussão. Nada de comentário solto no conteúdo.
 - **Criação do tópico:** manual, pelo editor do conteúdo ou pelo `wiki_editor`, por ação no próprio conteúdo. Não criar tópico automaticamente para todo conteúdo (a confirmar, decisão 24).
+- **Exceção da Revista (pedido do responsável, 2026-10-13):** cada publicação da Revista cria o tópico automaticamente, com o mesmo autor, na pasta da sua categoria. Implementado em `aculta_magazine` 0.1.0-dev.2 (`docs/README.md`, seção Fórum da Revista). A decisão 24 continua aberta para os demais tipos.
 - **Atividade:** a aba Comentários (seção E2) lista os comentários da pessoa nas discussões. Com isso, a decisão 22 fica resolvida: não há comentário em artigo.
 
 **Por que esta forma:**
