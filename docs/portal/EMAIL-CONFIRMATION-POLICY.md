@@ -98,10 +98,11 @@ de conta do Core não oferece o campo de e-mail (`EmailChangeHooks`).
 - Troca feita por administrador: o papel `administrator` tem `is_admin: true`, então passa no bypass
   `email confirmer user bypass email change`. A troca é aceita na hora, sem confirmação.
 
-**Pontos em aberto (confirmar antes de implementar):**
+**Decisões complementares (2026-10-12):**
 
-1. "Aceitar a alteração" (texto da decisão) difere do comportamento do módulo, que mantém o endereço antigo até a
-   confirmação. O comportamento do módulo é o mais protetivo para o combate a contas falsas.
-2. O bypass do administrador não pode ser removido por permissão (`is_admin`). Fechar a lacuna exige código próprio,
-   e só alcança trocas feitas por código, porque o formulário de administração não tem mais o campo de e-mail.
+1. **Decidido: manter o comportamento do módulo.** O endereço antigo continua valendo até a confirmação do novo. É o
+   mais protetivo para o combate a contas falsas.
+2. **Decidido: aceito.** O bypass do administrador (`is_admin`) permanece: troca feita por administrador é aceita
+   sem confirmação. Essa lacuna só alcança trocas feitas por código, porque o formulário de administração não tem mais
+   o campo de e-mail.
 
