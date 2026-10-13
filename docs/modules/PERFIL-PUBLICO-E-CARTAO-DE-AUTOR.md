@@ -66,7 +66,12 @@ Ordem no topo: botão **Ver Perfil** (à direita, após o título), depois o cab
 Todo avatar (estilo `aculta_avatar`) tem proporção 1:1, não encolhe com o contêiner e não é esticado
 (`base.css`). Verificado em visão geral, perfil público, cartão de autor e modal de foto.
 
-## 7. Verificação
+## 7. Links de perfil
+
+Todo link para `/u/<apelido>` é gerado pela rota com o apelido atual, no propósito `main`, e a cache acompanha
+o perfil. Regra e gate em `docs/portal/GUARDRAILS.md` (seção "Links de perfil") e `scripts/validate-profile-links.php`.
+
+## 7b. Verificação
 
 - Gates: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-public-slugs`,
   `validate-environment-addresses`, `validate-aculta420-design-foundations`.

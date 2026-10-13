@@ -52,12 +52,15 @@ final class PostPresentation {
       ? strtotime((string) $entity->get('field_published_at')->value . ' UTC') ?: $entity->getCreatedTime()
       : $entity->getCreatedTime();
     $owner = $entity->getOwner();
-    $authorElement = $this->authorElement($owner);
+    $authorTags = [];
+    $authorElement = $this->authorElement($owner, $authorTags);
 
     $build['post_meta'] = [
       '#type' => 'container',
       '#weight' => -30,
       '#attributes' => ['data-portal-ui' => 'post-meta'],
+      // O link do autor depende do apelido e da visibilidade do perfil: a cache acompanha o perfil e o usuário.
+      '#cache' => ['tags' => $authorTags],
       'author' => $authorElement,
       'date' => $this->item('post-meta-date', mb_strtolower($this->dateFormatter->format($ts, 'custom', 'j \d\e F \d\e Y'))),
       'time' => $this->item('post-meta-time', $this->dateFormatter->format($ts, 'custom', 'H:i')),
@@ -88,10 +91,14 @@ final class PostPresentation {
   /**
    * Nome do autor: link para o perfil público quando o perfil é público (mesma regra da caixa de autores).
    */
-  private function authorElement(?\Drupal\user\UserInterface $owner): array {
+  private function authorElement(?\Drupal\user\UserInterface $owner, array &$tags): array {
     $name = $owner ? $owner->getDisplayName() : '';
     if ($owner) {
+      $tags = array_merge($tags, $owner->getCacheTags());
       $profile = $this->entityTypeManager->getStorage('profile')->loadByUser($owner, 'participante');
+      if ($profile) {
+        $tags = array_merge($tags, $profile->getCacheTags());
+      }
       $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
       $publico = $profile ? (bool) $profile->get('field_perfil_publico')->value : TRUE;
       $publico = $publico || PublicProfilePolicy::isObrigatorioPublico($owner->getRoles());
