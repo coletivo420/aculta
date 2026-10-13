@@ -23,17 +23,43 @@ final class PublicProfilePolicy {
   public const ITEMS = ['apelido', 'foto', 'bio', 'email', 'redes'];
 
   /**
+   * Papéis de autor e editor: o perfil é obrigatoriamente público (regra do responsável, 2026-10-13).
+   *
+   * Editor de conteúdo (autoria da Revista) e Editor da Wiki420 (autoria de verbetes).
+   */
+  public const PAPEIS_PUBLICO_OBRIGATORIO = ['content_editor', 'wiki_editor'];
+
+  /**
+   * Indica se os papéis da conta tornam o perfil obrigatoriamente público.
+   *
+   * @param string[] $roles
+   *   Papéis da conta (IDs).
+   */
+  public static function isObrigatorioPublico(array $roles): bool {
+    return array_intersect($roles, self::PAPEIS_PUBLICO_OBRIGATORIO) !== [];
+  }
+
+  /**
    * Retorna os itens públicos de um perfil.
    *
-   * @param array{publico: bool, apelido: string, exibir_foto: bool, exibir_bio: bool, exibir_email: bool, exibir_redes: bool} $perfil
-   *   Valores do perfil: visibilidade do perfil inteiro e escolha de cada item.
+   * Perfil público (padrão de todos) segue a escolha de cada item. Perfil privado, ou sem escolha, mostra
+   * somente foto e apelido. Sem apelido, nada aparece.
+   *
+   * @param array{publico: bool, obrigatorio?: bool, apelido: string, exibir_foto: bool, exibir_bio: bool, exibir_email: bool, exibir_redes: bool} $perfil
+   *   Valores do perfil: visibilidade do perfil inteiro, obrigação de público por papel e escolha de cada item.
    *
    * @return array<string, bool>
-   *   Mapa item => TRUE para os itens que podem aparecer. Vazio se o perfil for privado.
+   *   Mapa item => TRUE para os itens que podem aparecer. Vazio se não houver apelido.
    */
   public function publicItems(array $perfil): array {
-    if (empty($perfil['publico']) || trim((string) ($perfil['apelido'] ?? '')) === '') {
+    if (trim((string) ($perfil['apelido'] ?? '')) === '') {
       return [];
+    }
+
+    $publico = !empty($perfil['publico']) || !empty($perfil['obrigatorio']);
+    if (!$publico) {
+      // Perfil privado: somente foto e apelido.
+      return ['apelido' => TRUE, 'foto' => TRUE];
     }
 
     $items = ['apelido' => TRUE];

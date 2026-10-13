@@ -1,0 +1,19 @@
+uuid: 93226c4b-4596-4664-90a4-a295512fac4c
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_exibir_email
+field_name: field_exibir_email
+entity_type: profile
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
+

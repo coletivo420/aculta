@@ -1,0 +1,20 @@
+uuid: 31a8d035-1237-46b3-9a08-eb60693b0def
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_bio
+field_name: field_bio
+entity_type: profile
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
+

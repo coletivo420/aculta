@@ -10,6 +10,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_user\Social\SocialNetworks;
+use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\Core\Template\Attribute;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,8 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Página pública do perfil em /u/<apelido>.
  *
- * Perfil inexistente, privado ou fora do propósito MAIN responde 404, sem revelar que o perfil existe
- * (decisão 40 do plano). Só entra no render o que PublicProfilePolicy liberar.
+ * Perfil inexistente, sem apelido ou fora do propósito MAIN responde 404. Perfil privado mostra só foto e apelido. Só entra no render o que PublicProfilePolicy liberar.
  */
 final class PublicProfileController extends ControllerBase {
 
@@ -31,6 +33,7 @@ final class PublicProfileController extends ControllerBase {
     private readonly DomainPurposeManager $purposeManager,
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly PublicProfilePolicy $policy,
+    private readonly SocialNetworks $networks,
   ) {}
 
   /**
@@ -41,6 +44,7 @@ final class PublicProfileController extends ControllerBase {
       $container->get('aculta_portal.domain_purpose'),
       $container->get('entity_type.manager'),
       $container->get('aculta_user.public_profile_policy'),
+      $container->get('aculta_user.social_networks'),
     );
   }
 
@@ -62,40 +66,80 @@ final class PublicProfileController extends ControllerBase {
       ->addCacheTags(['profile:' . $profile->id(), 'user:' . $profile->getOwnerId()])
       ->addCacheContexts(['url.path']);
 
-    $items = $this->policy->publicItems($this->valuesOf($profile));
+    // Perfil privado mostra só foto e apelido (PublicProfilePolicy). Sem apelido, a resposta é a de inexistente.
+    $items = $this->policy->publicItems($this->valuesOf($profile, $account));
     if ($items === []) {
-      // Perfil privado: mesma resposta de inexistente.
       throw new NotFoundHttpException();
     }
 
     $build = [
+      '#type' => 'container',
       '#cache' => ['tags' => $cache->getCacheTags(), 'contexts' => $cache->getCacheContexts()],
-      'apelido' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $apelido],
+      '#attributes' => ['data-portal-ui' => 'public-profile'],
+      'header' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-header'], 'avatar' => $this->avatar($account, $apelido, isset($items['foto'])), 'identity' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-identity'], 'name' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $apelido, '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-name'])]]],
     ];
 
-    if (isset($items['foto']) && $account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
-      $build['foto'] = [
+    if (isset($items['bio']) && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()) {
+      $build['bio'] = ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => (string) $profile->get('field_bio')->value, '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-bio'])];
+    }
+
+    $links = [];
+    if (isset($items['redes'])) {
+      foreach ($this->networks->linksOf($profile) as $key => $uri) {
+        $links[] = $this->socialLink($key, $uri);
+      }
+    }
+    if (isset($items['email']) && $account !== NULL && $account->getEmail() !== '') {
+      $links[] = $this->emailLink((string) $account->getEmail());
+    }
+    if ($links !== []) {
+      $build['links'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-links', 'aria-label' => (string) $this->t('Contatos e redes')], 'items' => $links];
+    }
+
+    return $build;
+  }
+
+  /**
+   * Avatar do perfil: a foto quando o perfil a exibe; senão, a inicial do apelido.
+   */
+  private function avatar($account, string $apelido, bool $showPhoto): array {
+    $wrap = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-avatar']];
+    if ($showPhoto && $account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
+      $wrap['image'] = [
         '#theme' => 'image_style',
         '#style_name' => 'aculta_avatar',
         '#uri' => $account->get('user_picture')->entity->getFileUri(),
         '#alt' => $apelido,
       ];
     }
-    if (isset($items['bio']) && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()) {
-      $build['bio'] = ['#type' => 'html_tag', '#tag' => 'p', '#value' => (string) $profile->get('field_bio')->value];
+    else {
+      $wrap['initial'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => mb_strtoupper(mb_substr($apelido, 0, 1)), '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-initial', 'aria-hidden' => 'true'])];
     }
-    if (isset($items['email']) && $account !== NULL) {
-      $build['email'] = ['#type' => 'html_tag', '#tag' => 'p', '#value' => (string) $account->getEmail()];
-    }
-    if (isset($items['redes']) && $profile->hasField('field_redes_sociais') && !$profile->get('field_redes_sociais')->isEmpty()) {
-      $links = [];
-      foreach ($profile->get('field_redes_sociais') as $item) {
-        $links[] = ['#type' => 'link', '#title' => (string) $item->uri, '#url' => Url::fromUri((string) $item->uri), '#options' => ['attributes' => ['rel' => 'noopener nofollow']]];
-      }
-      $build['redes'] = $links;
-    }
+    return $wrap;
+  }
 
-    return $build;
+  /**
+   * Botão de rede social (Instagram, Facebook, Reddit): ícone Bootstrap e nome, em nova aba.
+   */
+  private function socialLink(string $key, string $uri): array {
+    $label = (string) SocialNetworks::NETWORKS[$key]['label'];
+    return PortalLinkElement::build($label, Url::fromUri($uri), [
+      'data-portal-ui' => 'public-profile-link-' . $key,
+      'rel' => 'noopener nofollow',
+      'target' => '_blank',
+      'aria-label' => $label,
+    ]);
+  }
+
+  /**
+   * E-mail do perfil: botão com ícone e rótulo, como as demais redes, com link mailto:.
+   */
+  private function emailLink(string $email): array {
+    $label = (string) $this->t('E-mail');
+    return PortalLinkElement::build($label, Url::fromUri('mailto:' . $email), [
+      'data-portal-ui' => 'public-profile-link-email',
+      'aria-label' => $label . ': ' . $email,
+    ]);
   }
 
   /**
@@ -119,9 +163,9 @@ final class PublicProfileController extends ControllerBase {
   /**
    * Lê os valores de visibilidade do perfil. Campo ausente usa o padrão: perfil público, itens privados.
    *
-   * @return array{publico: bool, apelido: string, exibir_foto: bool, exibir_bio: bool, exibir_email: bool, exibir_redes: bool}
+   * @return array{publico: bool, obrigatorio: bool, apelido: string, exibir_foto: bool, exibir_bio: bool, exibir_email: bool, exibir_redes: bool}
    */
-  private function valuesOf(ProfileInterface $profile): array {
+  private function valuesOf(ProfileInterface $profile, $account): array {
     $flag = static function (string $field, bool $default) use ($profile): bool {
       if (!$profile->hasField($field) || $profile->get($field)->isEmpty()) {
         return $default;
@@ -131,6 +175,7 @@ final class PublicProfileController extends ControllerBase {
 
     return [
       'publico' => $flag('field_perfil_publico', TRUE),
+      'obrigatorio' => $account !== NULL && PublicProfilePolicy::isObrigatorioPublico($account->getRoles()),
       'apelido' => (string) $profile->get('field_nickname')->value,
       'exibir_foto' => $flag('field_exibir_foto', FALSE),
       'exibir_bio' => $flag('field_exibir_bio', FALSE),

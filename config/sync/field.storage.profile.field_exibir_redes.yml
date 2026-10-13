@@ -1,0 +1,19 @@
+uuid: 3a5419e5-a5d2-4436-8446-47cbdf7b3eff
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_exibir_redes
+field_name: field_exibir_redes
+entity_type: profile
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
+

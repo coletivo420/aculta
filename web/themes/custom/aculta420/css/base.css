@@ -35,6 +35,13 @@ h3, .h3 { line-height: 1.15; }
 .aculta-main p { margin-bottom: 1rem; }
 .aculta-main :is(p, li, dd) { overflow-wrap: anywhere; }
 .aculta-main :is(h2, h3, h4, h5, h6) { margin-block: 1.75rem 0.75rem; }
+
+/* Título dos modais (diálogos do Drupal): mesma escala do H3 do tema, não o H1 de página. */
+.ui-dialog .ui-dialog-title {
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
 .aculta-main .node--view-mode-full .field--type-text-with-summary,
 .aculta-main .node--view-mode-full .field--type-text-long {
   max-inline-size: 70ch;
@@ -43,4 +50,15 @@ h3, .h3 { line-height: 1.15; }
 form, input, select, textarea, .form-label, .form-text,
 figcaption, caption, .site-slogan, .aculta-metadata {
   font-family: var(--aculta-font-body);
+}
+
+/* Avatares nunca são achatados, em nenhum lugar do site: proporção 1:1, sem encolher com o contêiner
+   e sem a largura máxima do img-fluid que comprime a altura. */
+img.image-style-aculta-avatar,
+img[src*="/styles/aculta_avatar/"] {
+  flex: 0 0 auto;
+  max-inline-size: none;
+  block-size: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }

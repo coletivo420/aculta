@@ -213,6 +213,13 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       $route->setOption('_aculta_domain_purpose', 'shop');
     }
 
+    // Listagens por sessão da Revista (view revista_sessoes) pertencem ao purpose MAGAZINE.
+    foreach ($collection as $name => $route) {
+      if (str_starts_with((string) $name, 'view.revista_sessoes.')) {
+        $route->setOption('_aculta_domain_purpose', 'magazine');
+      }
+    }
+
     // Rotas do módulo Forum (fórum, tópicos e containers) pertencem ao purpose FORUM. Admin continua em MAIN (abaixo).
     foreach ($collection as $name => $route) {
       if (str_starts_with((string) $name, 'forum.') || str_starts_with((string) $name, 'entity.taxonomy_term.forum_')) {

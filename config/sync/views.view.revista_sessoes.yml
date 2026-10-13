@@ -1,0 +1,335 @@
+uuid: ac729649-4509-588b-a8ef-04c0f5762ce8
+langcode: pt-br
+status: true
+dependencies:
+  config:
+  - core.entity_view_mode.node.teaser
+  - node.type.article
+  module:
+  - node
+  - user
+id: revista_sessoes
+label: Sessões da Revista
+module: views
+description: Listagens publicadas por sessão da Revista (Editorial, Notícias, Registros,
+  Zines, PodPlant420).
+tag: ''
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Revista
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 20
+      access:
+        type: perm
+        options:
+          perm: access content
+      cache:
+        type: tag
+        options: {}
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      relationships:
+        field_editorial_category:
+          id: field_editorial_category
+          table: node__field_editorial_category
+          field: field_editorial_category
+          relationship: none
+          group_type: group
+          admin_label: Sessão da Revista
+          plugin_id: standard
+          required: true
+      style:
+        type: default
+        options:
+          default_row_class: true
+      row:
+        type: entity:node
+        options:
+          view_mode: teaser
+      query:
+        type: views_query
+        options: {}
+      css_class: aculta-revista-sessao
+      display_extenders: {}
+    cache_metadata: &id001
+      max-age: -1
+      contexts:
+      - languages:language_interface
+      - user.node_grants:view
+      - user.permissions
+      tags: {}
+  page_editorial:
+    id: page_editorial
+    display_title: Página Editorial
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {}
+      defaults:
+        title: false
+        filters: false
+      title: Editorial
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            article: article
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: field_editorial_category
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: string
+          operator: '='
+          value: Editorial
+          group: 1
+          exposed: false
+      path: editorial
+      menu:
+        type: none
+    cache_metadata: *id001
+  page_noticias:
+    id: page_noticias
+    display_title: Página Notícias
+    display_plugin: page
+    position: 2
+    display_options:
+      display_extenders: {}
+      defaults:
+        title: false
+        filters: false
+      title: Notícias
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            article: article
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: field_editorial_category
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: string
+          operator: '='
+          value: Notícias
+          group: 1
+          exposed: false
+      path: noticias
+      menu:
+        type: none
+    cache_metadata: *id001
+  page_registros:
+    id: page_registros
+    display_title: Página Registros
+    display_plugin: page
+    position: 3
+    display_options:
+      display_extenders: {}
+      defaults:
+        title: false
+        filters: false
+      title: Registros
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            article: article
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: field_editorial_category
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: string
+          operator: '='
+          value: Registros
+          group: 1
+          exposed: false
+      path: registros
+      menu:
+        type: none
+    cache_metadata: *id001
+  page_zines:
+    id: page_zines
+    display_title: Página Zines
+    display_plugin: page
+    position: 4
+    display_options:
+      display_extenders: {}
+      defaults:
+        title: false
+        filters: false
+      title: Zines
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            article: article
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: field_editorial_category
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: string
+          operator: '='
+          value: Zines
+          group: 1
+          exposed: false
+      path: zines
+      menu:
+        type: none
+    cache_metadata: *id001
+  page_podplant420:
+    id: page_podplant420
+    display_title: Página PodPlant420
+    display_plugin: page
+    position: 5
+    display_options:
+      display_extenders: {}
+      defaults:
+        title: false
+        filters: false
+      title: PodPlant420
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            article: article
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: field_editorial_category
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: string
+          operator: '='
+          value: PodPlant420
+          group: 1
+          exposed: false
+      path: podplant420
+      menu:
+        type: none
+    cache_metadata: *id001
+  page_revista:
+    id: page_revista
+    display_title: Página Revista
+    display_plugin: page
+    position: 6
+    display_options:
+      display_extenders: {}
+      defaults:
+        title: false
+        filters: false
+      title: Revista
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            article: article
+      path: revista
+      menu:
+        type: none
+    cache_metadata: *id001

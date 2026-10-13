@@ -6,6 +6,9 @@ aculta_user.perfil_publico:
   requirements:
     _access: 'TRUE'
     apelido: '[a-z0-9][a-z0-9-]{2,39}'
+  options:
+    # Perfil público existe só no purpose MAIN; em outro host responde 404 (DomainPurposeRequestSubscriber).
+    _aculta_domain_purpose: 'main'
 
 aculta_user.configuracoes_perfil:
   path: '/configuracoes/perfil'
@@ -72,3 +75,46 @@ aculta_user.foto:
     _title: 'Foto do perfil'
   requirements:
     _permission: 'access aculta portal'
+
+aculta_user.bio_form:
+  path: '/bio/editar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AccountBioForm'
+    _title: 'Editar bio'
+  requirements:
+    _custom_access: 'aculta_user.account_modal_access:access'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user.bio_save:
+  path: '/bio/salvar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AccountBioSaveController::save'
+  methods: [POST]
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user.redes_form:
+  path: '/redes/editar/{rede}'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\SocialLinkForm'
+    _title: 'Editar rede social'
+  requirements:
+    _custom_access: 'aculta_user.account_modal_access:access'
+    rede: 'instagram|facebook|reddit'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user.redes_save:
+  path: '/redes/salvar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\SocialLinkSaveController::save'
+  methods: [POST]
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'account'

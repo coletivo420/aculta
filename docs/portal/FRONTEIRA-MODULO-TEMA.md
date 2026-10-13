@@ -116,3 +116,15 @@ manter o design em um só lugar.
 - Com aculta420 (padrão restaurado): logo do wiki voltou pelo tema (`brandMediaRender`).
 - Templates do módulo com fallback neutro: `aculta-portal-shell`, `aculta-portal-account-terms-modal`,
   `aculta-portal-photo-editor`, `portal-cart-status`, `portal-search-trigger` e `portal-element` (estrutural).
+
+## Perfil público e ações da Minha conta (regra de separação, 2026-10-13)
+
+Política: toda ferramenta do `aculta_user` funciona com outro tema. O módulo entrega estrutura, dados e URLs; o ACULTA420 entrega a aparência.
+
+| Parte | Dono | Exemplo |
+| --- | --- | --- |
+| Dados, privacidade, URL do perfil (`main`), ordem e textos | `aculta_user` | `PublicProfileController`, `SocialLinksCard`, `AccountDashboardHooks` (ação "Ver Perfil") |
+| Marcação neutra com `data-portal-ui` (tokens semânticos) | `aculta_user` | `account-view-profile`, `public-profile-link-instagram` |
+| Classes, bordas, cores, tamanhos e ícones | ACULTA420 | `PortalUiHooks::TOKENS`, `css/components/public-profile.css`, `portal-account.css` |
+
+Sem o ACULTA420, os elementos continuam funcionando: links com `href` válido, textos e foto. Só a aparência volta ao padrão do tema ativo. Não há classes de design (`btn`, `bi-*`, `portal-*`) no módulo; o gate `validate-module-theme-boundary.php` confere.

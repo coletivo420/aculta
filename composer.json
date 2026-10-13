@@ -240,6 +240,7 @@
         "drupal/lms": "^1.2",
         "drupal/login_emailusername": "^3.0",
         "drupal/metatag": "^2.2",
+        "drupal/node_co_authors": "^1.2",
         "drupal/pathauto": "1.15",
         "drupal/profile": "^1.14",
         "drupal/redirect": "^1.13",

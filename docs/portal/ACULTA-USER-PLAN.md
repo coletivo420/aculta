@@ -151,10 +151,11 @@ Serviços previstos (nomes provisórios):
 
 **Pedido do responsável (2026-10-13):** a pessoa pode tornar o perfil privado em Minha conta > Configurações.
 
-- **Padrão (decisão 2, respondida nesta sessão): o apelido é público por padrão.** O perfil inteiro pode ser tornado privado. Foto, bio, e-mail e redes sociais são privados por padrão e só aparecem se a pessoa escolher exibi-los. Esta regra substitui o padrão privado anterior.
+- **Padrão (decisão 2, respondida nesta sessão): todos os perfis são públicos por padrão** (campo `field_perfil_publico` com valor padrão 1, em `config/sync/field.field.profile.participante.field_perfil_publico.yml`). A pessoa pode tornar o perfil privado. Foto, bio, e-mail e redes sociais são privados por padrão e só aparecem se a pessoa escolher exibi-los. Esta regra substitui o padrão privado anterior.
+- **Autores e editores são obrigatoriamente públicos** (regra do responsável, 2026-10-13): perfis com o papel `content_editor` (Editor de conteúdo) ou `wiki_editor` (Editor da Wiki420) não podem ser privados. O controle fica bloqueado, com o motivo exibido. Implementação: `PublicProfilePolicy::PAPEIS_PUBLICO_OBRIGATORIO` e `isObrigatorioPublico()`, usados pelo formulário de privacidade, pela página pública e pela caixa de autores da Revista.
 - **Lugar:** o formulário fica em `/configuracoes/perfil` (submódulo `aculta_user`, `ProfileVisibilityForm`). Campo `field_perfil_publico` no perfil `participante`, booleano, padrão verdadeiro. Ligar ou desligar tem efeito imediato. Vínculo a partir de `/configuracoes` pendente.
 - **Com perfil privado:**
-  - `/u/<apelido>` não mostra o perfil. Resposta: 404, para não revelar que o perfil existe (a confirmar, decisão 40).
+  - `/u/<apelido>` mostra somente foto e apelido (decisão 40 substituída em 2026-10-13: o perfil privado não responde 404).
   - Cartão de autor da revista mostra o nome de exibição sem link.
   - Badges (seção G) não aparecem em lugar público.
   - Conteúdos da pessoa (artigos, verbetes, tópicos) continuam públicos, porque são contribuições editoriais, não o perfil. O que muda é a página de perfil e os dados pessoais expostos.
@@ -165,10 +166,73 @@ Serviços previstos (nomes provisórios):
 - **Auditoria:** mudança da opção registra data e origem (pessoa), sem valor de outros campos.
 
 ### C. Autoria da revista (MAGAZINE)
-- Autor = `node.uid`, do Core. Não criar campo "autor" paralelo.
-- Cartão de autor no fim do artigo (`article`), com link para `/u/<apelido>` quando o perfil for público; sem link quando não for.
-- Listagem por autor: View com filtro de `uid` e status publicado, no purpose MAGAZINE.
+
+**Decisão (2026-10-13, opção 1 — caixa de autor programada, sem módulo contrib):** a caixa de autor das publicações da
+Revista é montada no `aculta_user` e renderizada pelo ACULTA420. Não usa Display Suite, Field Group nem Views como fonte
+de privacidade: esses caminhos não aplicam `PublicProfilePolicy`. Layout Builder (Core) fica como possibilidade futura de
+posicionamento, não como fonte de dados.
+
+- Autor = `node.uid`, do Core. Não criar campo "autor" paralelo. O campo `field_editorial_author` (taxonomia
+  `editorial_author`) não entra na caixa: é autoria institucional ou de convidado, outro conceito.
+- Cartão de autor no fim do artigo (`article`, e futuro tipo de publicação da Revista), com link para `/u/<apelido>`
+  somente quando o perfil for público; sem link quando não for.
+- Listagem por autor: View com filtro de `uid` e status publicado, no purpose MAGAZINE (fase U2, depois do cartão).
 - Autor convidado sem conta: **não** criar entidade própria. Opção mínima: campo de texto de assinatura no nó (decisão 4).
+
+#### C1. Caixa de autor: arquitetura da opção 1
+
+Fluxo de dependência (Core/contrib → Portal → contrato neutro → tema → SDC/Bootstrap):
+
+```text
+Core (node, user, profile, image)
+   |
+   v
+aculta_user: AuthorshipPresenter  (autor do nó publicado; reusa PublicProfilePolicy)
+   |   hook OOP #[Hook('node_view')] injeta o render array 'author_box' (só em nós article da Revista)
+   v
+contrato neutro: data-portal-ui="author-card" + props escalares + slots renderizáveis
+   |
+   v
+ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escolhido pelo tema
+```
+
+- **Presenter:** `AuthorshipPresenter` (serviço DI, sem `\Drupal::` em `src/`). Entrada: o nó. Saída: somente
+  `display_name`, `avatar` (render array de imagem, estilo de imagem de avatar do Core), `bio` (texto filtrado, render
+  array) e `profile_url` (`Url` absoluta do purpose `main`, via `DomainPurposeManager`, ou ausente).
+- **Nome de exibição:** apelido (`field_nickname`), nunca o e-mail. Sem apelido, o nome de usuário do Core.
+- **Privacidade (fonte única: `PublicProfilePolicy`):**
+  - `profile_url` só se `field_perfil_publico` estiver ligado; sem perfil público, o nome aparece sem link.
+  - bio só se `field_exibir_bio` estiver ligado e o perfil for público.
+  - foto só se `field_exibir_foto` estiver ligado e o perfil for público; senão, avatar neutro.
+  - e-mail, redes, CPF, RG, endereço, WhatsApp, data de nascimento, cidade e UF nunca entram no presenter.
+- **Conteúdo não publicado:** a caixa só aparece em nó publicado. Nó não publicado ou de outro tipo não recebe a caixa.
+- **Purpose:** a caixa aparece somente no purpose `magazine`. O link para o perfil é construído no purpose `main`, porque
+  `/u/<apelido>` só existe lá (decisão 5 e `ADMIN-DOMAIN-POLICY.md`). Nenhum host é fixado no código.
+- **Sem componente do Portal referenciando o tema:** o Portal não emite `#component: aculta420:*` nem classes de design.
+  O elemento leva `data-portal-ui="author-card"`; o tema traduz em `PortalUiHooks::TOKENS` e, se for reutilizado,
+  mapeia as props escalares para um SDC `author-card`. Bio e avatar são slots/render arrays; nome e URL são props simples.
+- **Cache e access:** o presenter acumula `CacheableMetadata` com tags `node:<nid>`, `user:<uid>`, `profile:<id>` e o
+  contexto `user.permissions` quando a visibilidade depender do papel. A alteração de visibilidade do perfil invalida a
+  caixa em todas as publicações da pessoa.
+- **Sem storage novo.** Nenhuma tabela, nenhum campo novo no nó.
+- **Não-objetivo:** a caixa não mostra contagens, badges nem seguidores. Badges entram só na fase U4, com a regra de não
+  aparecer em lugar público quando o perfil for privado.
+
+**Testes exigidos antes de marcar a entrega como concluída:**
+- Kernel: matriz de privacidade (perfil público/privado × exibir bio/foto ligado/desligado), conta sem perfil, conta
+  bloqueada, nó não publicado, nó de outro tipo e nó de outro purpose.
+- Unit: `AuthorshipPresenter` com `PublicProfilePolicy` simulada; nome nunca é e-mail.
+- Cache: tags presentes no render array; invalidação ao mudar a visibilidade.
+- Gates: `validate-aculta-portal-drupal11.php`, `validate-module-theme-boundary.php`, `validate-public-slugs.php` e
+  `validate-environment-addresses.php`.
+- Navegador no servidor de testes (`TESTES-NAVEGADOR.md`): caixa visível em artigo da Revista, link só com perfil público.
+
+**Entrega:** fase U2, PR próprio, com `RUNTIME STATUS: DEFERRED` até o teste no Homelab. Marcadores de versão do
+`aculta_user` (`aculta_user.info.yml` e `CHANGELOG.md`) no mesmo PR.
+
+**Pendências dependentes do responsável** (registradas em `ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md`, seção 2):
+- tipo de publicação "blog" (hoje a Revista usa `article`, "Notícia");
+- mapeamento de "chamada" para `field_subtitle` e de "resumo" para `field_summary` no tipo de publicação da Revista.
 
 ### D. Wiki (`wiki_entry`): como a Wikipedia
 

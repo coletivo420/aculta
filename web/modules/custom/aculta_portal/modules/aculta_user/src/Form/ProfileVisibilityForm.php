@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
+use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\profile\Entity\ProfileInterface;
@@ -62,11 +63,16 @@ final class ProfileVisibilityForm extends FormBase {
       '#required' => TRUE,
     ];
 
+    // Autores e editores têm perfil público obrigatório (PublicProfilePolicy). O controle fica bloqueado com o motivo.
+    $obrigatorio = $this->isObrigatorioPublico();
     $form['publico'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Perfil público'),
-      '#description' => $this->t('Quando desligado, o perfil não aparece para ninguém.'),
-      '#default_value' => $this->flag($profile, 'field_perfil_publico', TRUE),
+      '#description' => $obrigatorio
+        ? $this->t('Bloqueado: o perfil de autores e editores da Revista e da Wiki420 é sempre público, para que a associação identifique quem publica.')
+        : $this->t('Padrão: perfil público. Quando desligado, aparecem somente a foto e o apelido.'),
+      '#default_value' => $obrigatorio ? TRUE : $this->flag($profile, 'field_perfil_publico', TRUE),
+      '#disabled' => $obrigatorio,
     ];
 
     $form['exibir_foto'] = [
@@ -145,7 +151,8 @@ final class ProfileVisibilityForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $profile = $this->loadOrCreateProfile();
     $profile->set('field_nickname', trim((string) $form_state->getValue('apelido')));
-    $profile->set('field_perfil_publico', (bool) $form_state->getValue('publico'));
+    // Controle bloqueado não é enviado pelo navegador; autor e editor continuam públicos.
+    $profile->set('field_perfil_publico', $this->isObrigatorioPublico() ? TRUE : (bool) $form_state->getValue('publico'));
     $profile->set('field_exibir_foto', (bool) $form_state->getValue('exibir_foto'));
     $profile->set('field_exibir_bio', (bool) $form_state->getValue('exibir_bio'));
     $profile->set('field_bio', (string) $form_state->getValue('bio'));
@@ -160,6 +167,13 @@ final class ProfileVisibilityForm extends FormBase {
 
     $this->messenger()->addStatus($this->t('Configurações de perfil salvas.'));
     $form_state->setRedirect('aculta_user.configuracoes_perfil');
+  }
+
+  /**
+   * Indica se a conta atual é autor ou editor (perfil público obrigatório).
+   */
+  private function isObrigatorioPublico(): bool {
+    return PublicProfilePolicy::isObrigatorioPublico($this->currentUserService->getAccount()->getRoles());
   }
 
   /**
