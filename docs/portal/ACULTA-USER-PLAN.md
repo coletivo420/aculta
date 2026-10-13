@@ -464,7 +464,7 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 40. **Perfil privado acessado por URL:** 404 (não revela que o perfil existe) ou 403? Proposta: 404.
 41. **Caminho do perfil:** respondida em 2026-10-13: `/u/<apelido>` é confirmado como exceção registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`.
 42. **Apelido no cadastro:** o apelido é pedido no cadastro, ou gerado e trocado depois em Configurações? Proposta: gerado no cadastro e trocável depois.
-43. **Contas existentes:** autoriza o update hook que cria perfil e apelido para todas as contas atuais, depois de backup do Runtime?
+43. **Contas existentes:** respondida nesta sessão de forma parcial: apelidos provisórios `pessoa-1` e `pessoa-5` foram criados no Runtime para as duas contas sem apelido (backup prévio em `scratchpad`). Não há update hook versionado para contas futuras.
 44. **Palavras reservadas:** a lista proposta basta, ou há outras rotas a reservar?
 
 ## 8. Riscos e limites
@@ -496,10 +496,6 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 **Padrões que valem para cada PR:** `#[Hook]` OOP, injeção de dependência, sem `\Drupal::` em `src/`, marcação `data-portal-ui` sem classes de design, textos em `translations/*.pt-br.po`, gates do Portal passando, e atualização de `CHANGELOG.md` e da versão.
 
 **Decisões 33 a 35 respondidas em 2026-10-13:** papel único `content_editor`; discussão do LMS por curso e por atividade, com comentário no Fórum; matriculados isentos da primeira moderação (decisão 36); 10 comentários como padrão, alterável no painel administrativo.
-41. **Caminho do perfil:** respondida em 2026-10-13: `/u/<apelido>` é confirmado como exceção registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`.
-42. **Apelido no cadastro:** o apelido é pedido no cadastro, ou gerado e trocado depois em Configurações? Proposta: gerado no cadastro e trocável depois.
-43. **Contas existentes:** respondida nesta sessão de forma parcial: apelidos provisórios `pessoa-1` e `pessoa-5` foram criados no Runtime para as duas contas sem apelido (backup prévio em `scratchpad`). Não há update hook versionado para contas futuras.
-44. **Palavras reservadas:** a lista proposta basta, ou há outras rotas a reservar?
 45. **Skip CAPTCHA:** respondida nesta sessão: manter `skip CAPTCHA` só em `email_confirmed`; `authenticated` não muda. Wiki: `wiki_contributor` segue `email_confirmed` em todos os casos (decisão 28).
 
 ## 10. Decisões de cadastro, avatar e associado (2026-10-12)
