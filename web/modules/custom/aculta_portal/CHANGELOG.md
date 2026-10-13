@@ -3,6 +3,7 @@
 - Adiciona o submódulo `aculta_user` 0.1.0-dev.1 (ver o CHANGELOG do submódulo). Rota `/u/{apelido}`, política de
   visibilidade por item, formulário em `/configuracoes/perfil` e campos do perfil participante.
 - `field_nickname` passa a ser público (`profile_private: false`).
+- Troca de e-mail só pelo formulário de Minha Conta (`change_mail_page`): `EmailChangeHooks` remove o campo de e-mail da edição de conta do Core (administrador e conta própria). Criação de conta por administrador mantém o campo (`EmailChangePolicy`, teste unitário).
 - Papel `email_confirmed` irreversível: `EmailConfirmedRoleGuard` (presave restaura o papel; formulário de administração trava o checkbox). `EmailConfirmationPolicy::markUnconfirmed` removido (sem uso em produção).
 - Versões: `aculta_portal.info.yml` 0.4.0-dev.1 (MINOR: submódulo novo).
 - RUNTIME STATUS: DEFERRED. Nenhum `drush en` ou `config:import` foi executado.
