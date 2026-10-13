@@ -42,3 +42,14 @@ foto e bio só quando exibidas, ícones só das redes preenchidas e exibidas. E-
 
 - Vídeo e galeria: tipos ainda não criados; seguem o passo a passo acima.
 - Inspeção visual humana.
+
+## Função x tema (separação)
+
+| Parte | Dono | Onde |
+| --- | --- | --- |
+| Tipos, campos, SEO, URL por sessão, listagens e caixa de autores (dados e marcação com tokens) | `aculta_magazine` (função) | `src/`, `config/sync` (displays, metatag, pathauto, view) |
+| Aparência da postagem (largura de leitura, imagem, chamada, resumo, vídeo 16:9, caixa de autores) | ACULTA420 (tema) | `css/components/revista-post.css`, `portal-account.css` |
+
+O submódulo não tem CSS nem classes de design: todo elemento sai com `data-portal-ui` e o tema traduz.
+Os displays (`core.entity_view_display.node.*.full`) definem quais campos aparecem e em que ordem; a aparência é do tema.
+Referência de leitura usada: largura de linha entre 60 e 75 caracteres (Piccalilli, "Limit line lengths to increase readability").

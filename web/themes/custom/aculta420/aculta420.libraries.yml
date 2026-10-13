@@ -23,6 +23,7 @@ global:
       css/components/account.css: {}
       css/components/portal-account.css: {}
       css/components/public-profile.css: {}
+      css/components/revista-post.css: {}
       css/components/portal-account-terms-modal.css: {}
       css/components/portal-address-number.css: {}
       css/components/portal-cart.css: {}
