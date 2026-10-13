@@ -1,3 +1,16 @@
+## 0.3.0-dev.9 — perfil público, cartão de autor e painel da Minha conta — 2026-10-13
+
+- Perfil público `/u/<apelido>`: foto, apelido, bio e redes em botões com ícone e rótulo; e-mail como botão `mailto:`.
+  Perfil privado mostra só foto e apelido. Rota no propósito `main`.
+- Visão geral: botão "Ver Perfil" (após o título), caixa Bio bloqueada com modal de edição e caixa Redes sociais
+  (Instagram, Facebook, Reddit) com lápis; gravação por JSON com token CSRF.
+- Cartão de autor nas publicações da Revista (`ArticleAuthorsHooks`): autor e coautores (Node Co-Authors), foto,
+  nome com link para o perfil público, bio e ícones das redes preenchidas.
+- Privacidade: padrão público; autores e editores (`content_editor`, `wiki_editor`) sempre públicos.
+- Dependência: `drupal/node_co_authors` ^1.2 (contrib, Drupal 11).
+- Documentação: `docs/modules/PERFIL-PUBLICO-E-CARTAO-DE-AUTOR.md`.
+- RUNTIME STATUS: verificado no Homelab (navegador e HTTP). Inspeção visual humana pendente.
+
 ## 0.3.0-dev.8 — Atividade em abas no padrão de Meus Dados e Segurança — 2026-10-13
 
 - Minha Conta > Atividade: Wiki, Fórum, Revista, Comentários e Conquistas viram abas com o mesmo marcador e estrutura de Meus Dados e Segurança (`account-data-nav`, links com URL própria, aba atual marcada, título e área de conteúdo).

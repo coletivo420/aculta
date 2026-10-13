@@ -4,6 +4,9 @@ Data da revisão: 2026-10-07.
 
 ## Arquitetura da Minha Conta
 
+Visão geral (Ver Perfil, Bio, Redes sociais), perfil público e cartão de autor da Revista: `docs/modules/PERFIL-PUBLICO-E-CARTAO-DE-AUTOR.md`.
+
+
 A área ACCOUNT usa rotas Drupal, access, Domain, controllers, Form API e progressive enhancement. O AJAX é otimização de UX; links e rotas normais continuam sendo o fallback full-page.
 
 ## VVJT — decisão arquitetural
