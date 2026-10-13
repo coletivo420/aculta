@@ -498,3 +498,16 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 44. **Palavras reservadas:** a lista proposta basta, ou há outras rotas a reservar?
 
 45. **Skip CAPTCHA:** respondida nesta sessão: manter `skip CAPTCHA` só em `email_confirmed`; `authenticated` não muda. Wiki: `wiki_contributor` segue `email_confirmed` em todos os casos (decisão 28).
+
+## 10. Decisões de cadastro, avatar e associado (2026-10-12)
+
+- **Nome de usuário vira apelido** no cadastro; a pessoa troca depois. Conta OAuth usa a parte local do e-mail, sem o
+  domínio (ex.: `fulano.silva@gmail.com` -> `fulano.silva`).
+- **Família `mushrooms` removida** do acervo (decisão 11).
+- **Arquivo do avatar vai para `user_picture`** (decisão 12). O sorteio só ocorre sem foto.
+- **Foto do Google importada quando houver** (decisão 13): já é feito pelo `social_auth`.
+- **Só o administrador torna uma pessoa associada** (decisão 15). Papel `associado`, sem permissões (decisão 14 não tratada: sem estado nem data de adesão).
+- **RG não é cifrado** (decisão 16). CPF/CNPJ continua no campo único existente.
+- **Só o administrador exporta** o relatório (decisão 17).
+- **Fotos antigas enviadas pela pessoa são apagadas** ao trocar a foto, quando não há outra referência. Acervo nunca é apagado.
+

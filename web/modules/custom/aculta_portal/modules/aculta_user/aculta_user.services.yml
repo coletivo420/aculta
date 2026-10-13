@@ -4,3 +4,10 @@ services:
   aculta_user.participation_rules:
     class: Drupal\aculta_user\ParticipationRules
     arguments: ['@config.factory', '@entity_type.manager']
+  aculta_user.avatar_pool:
+    class: Drupal\aculta_user\Avatar\AvatarPool
+  aculta_user.social_auth_fields_subscriber:
+    class: Drupal\aculta_user\EventSubscriber\SocialAuthFieldsSubscriber
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: event_subscriber }

@@ -1,3 +1,21 @@
+## 0.3.0-dev.1 — cadastro, avatar, associado e relatório (fase 5, RUNTIME STATUS: DEFERRED) — 2026-10-12
+
+- Cadastro: o nome de usuário vira o apelido inicial do perfil (sem colidir; reservadas e formato validados). Conta
+  OAuth recebe como nome de usuário a parte local do e-mail recebido, sem o domínio (`SocialAuthFieldsSubscriber`,
+  evento `social_auth.user.fields`).
+- Avatar do acervo: quem não tem foto recebe um sorteado (`AvatarPool`), copiado para `user_picture` como arquivo
+  gerenciado; a escolha fica em `user.data` (`avatar_id`). A família `mushrooms` foi removida do acervo (10 arquivos
+  inexistentes). A foto do provedor OAuth continua sendo importada pelo `social_auth`.
+- Troca de foto: a foto anterior enviada pela pessoa é apagada quando não há outra referência (`PictureReplacementHooks`).
+  Nunca apaga cópia do acervo (`public://pictures/acervo/`). No Runtime não há foto enviada por usuário hoje.
+- Papel `associado`, sem permissões; só o administrador concede.
+- Campos do perfil, sem cifra: `field_rg`, `field_orgao_emissor`, `field_profissao`, `field_data_nascimento`. O CPF/CNPJ
+  continua no campo único existente (`field_documento`, cifrado pelo módulo de documento).
+- Relatório `/admin/aculta/associados` (permissão `administer aculta associados`); RG mascarado na tela. Exportação CSV
+  em `/admin/aculta/associados/exportar`, somente com `export aculta associados` (administrador).
+- Pendências: botão "sortear outro avatar" em Minha Conta; campos de Outros Dados no formulário da conta; estado e data
+  de adesão (não decidido: foi usado só o papel); endereço no relatório; teste de Kernel (ao final da série).
+
 ## 0.2.0-dev.2 — Atividade em Minha Conta (fase 4, RUNTIME STATUS: DEFERRED) — 2026-10-12
 
 - Rota `/atividade/{aba}` (wiki, forum, revista, comentarios, conquistas), só no propósito `account`. Cada aba lista

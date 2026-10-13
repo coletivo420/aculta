@@ -1,3 +1,11 @@
 administer aculta participacao:
   title: 'Administrar regras de participação'
   restrict access: true
+
+administer aculta associados:
+  title: 'Ver relatório de associados'
+  restrict access: true
+
+export aculta associados:
+  title: 'Exportar relatório de associados (somente administrador)'
+  restrict access: true

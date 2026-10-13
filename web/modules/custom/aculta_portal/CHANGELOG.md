@@ -1,3 +1,8 @@
+## 0.4.0-dev.4 — cadastro, avatar acervo, associado e relatório (aculta_user 0.3.0-dev.1) — 2026-10-12
+
+- Nome de usuário vira apelido; conta OAuth usa a parte local do e-mail; acervo de avatares sem a família `mushrooms`.
+- `aculta_portal.info.yml` 0.4.0-dev.4. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.3 — Atividade em Minha Conta (aculta_user 0.2.0-dev.2) — 2026-10-12
 
 - Item "Atividade" no menu da conta, condicionado à existência da rota do submódulo `aculta_user`.

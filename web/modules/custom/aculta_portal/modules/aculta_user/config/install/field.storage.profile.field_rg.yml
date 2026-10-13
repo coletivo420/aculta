@@ -1,0 +1,18 @@
+uuid: d182d4cc-ede7-4c26-8ca4-f52d76acd43d
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_rg
+field_name: field_rg
+entity_type: profile
+type: string
+settings: {  max_length: 30, is_ascii: false, case_sensitive: false }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

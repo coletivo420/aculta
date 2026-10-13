@@ -32,3 +32,19 @@ aculta_user.atividade:
   requirements:
     _permission: 'access aculta portal'
     aba: 'wiki|forum|revista|comentarios|conquistas'
+
+aculta_user.associados:
+  path: '/admin/aculta/associados'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AssociadosController::report'
+    _title: 'Associados'
+  requirements:
+    _permission: 'administer aculta associados'
+
+aculta_user.associados_csv:
+  path: '/admin/aculta/associados/exportar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AssociadosController::export'
+    _title: 'Exportar associados'
+  requirements:
+    _permission: 'export aculta associados'
