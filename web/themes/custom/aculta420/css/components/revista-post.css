@@ -144,3 +144,30 @@
 /* Título da postagem colado no resumo: sem a margem de cabeçalho de página nas publicações da Revista. */
 .page-node-type-article .aculta-page-heading,
 .page-node-type-blog .aculta-page-heading { margin-block-end: 0; }
+
+/* Fim da postagem: categoria editorial e tags alinhadas à direita, rótulo e valores juntos, antes da caixa de autores. */
+.node--view-mode-full .field--name-field-editorial-category,
+.node--view-mode-full .field--name-field-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+  margin-block: 1.5rem 0;
+  margin-inline-start: auto;
+  max-inline-size: 60ch;
+  text-align: right;
+  font-size: 0.9375rem;
+}
+.node--view-mode-full .field--name-field-tags { margin-block-start: 0.5rem; }
+.node--view-mode-full .field--name-field-editorial-category .field__label,
+.node--view-mode-full .field--name-field-tags .field__label { font-weight: 600; }
+.node--view-mode-full .field--name-field-editorial-category .field__items,
+.node--view-mode-full .field--name-field-tags .field__items { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.25rem 0.5rem; }
+
+/* Categoria e tags: espaço mínimo fixo entre o rótulo e o valor (sem margens herdadas do campo). */
+.node--view-mode-full .field--name-field-editorial-category .field__label,
+.node--view-mode-full .field--name-field-editorial-category .field__item,
+.node--view-mode-full .field--name-field-tags .field__label,
+.node--view-mode-full .field--name-field-tags .field__item { margin: 0; padding: 0; }
+.node--view-mode-full .field--name-field-editorial-category { gap: 0.3rem 0.35rem; }
