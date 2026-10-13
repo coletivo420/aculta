@@ -168,3 +168,21 @@ funcionando sem o tema (fallback).
 - **Limites:** inspeção de render visual; não incluiu autenticação administrativa, envio do formulário, interação
   por toque físico ou teclado no navegador. A rota administrativa foi verificada por Drupal API/Form Builder e
   responde 403 a acesso anônimo.
+
+## O. Login: redirecionamento após autenticar (2026-10-13)
+
+- **Sintoma:** após login correto em `https://conta.aculta.toca.net.br/entrar`, o usuário permanecia no formulário de
+  login, mesmo com a sessão criada.
+- **Causa verificada:** o formulário de `/entrar` estava na regra AJAX de salvamento da Minha conta
+  (`FormHooks::accountAjaxSubmit`). O envio por AJAX devolvia o próprio formulário, e `disableAccountRedirect` cancelava
+  o redirecionamento do Core (`UserLoginForm::submitForm`). A validação e a sessão estavam corretas.
+- **Correção:** `user_login_form` fica fora da regra AJAX; o login volta a ser um POST comum com redirecionamento 303.
+- **Roteiro de regressão (servidor de testes):**
+  1. Abrir `/entrar`, informar a conta de teste e a senha correta, e enviar.
+  2. Esperado: a página sai de `/entrar` e vai para a área logada (`https://conta.aculta.toca.net.br/`); o menu da
+     conta aparece.
+  3. Senha errada: esperado permanecer em `/entrar` com a mensagem "Nome de usuário ou senha não reconhecidos.".
+  4. HTTP de referência: POST com senha correta → `303 See Other`, `Location` para `/?check_logged_in=1`; POST com
+     senha errada → `200` com a mensagem.
+- **Não repetir:** qualquer formulário de autenticação ou de sessão (login, cadastro com confirmação, senha) não deve
+  entrar em `accountAjaxSubmit`; a regra existe só para salvar dados da Minha conta sem recarregar a página.
