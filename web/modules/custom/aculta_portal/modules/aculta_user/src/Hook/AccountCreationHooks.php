@@ -9,7 +9,7 @@ use Drupal\aculta_user\Avatar\AvatarPool;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Transliteration\TransliterationInterface;
+use Drupal\Core\Transliteration\PhpTransliteration;
 use Drupal\user\UserInterface;
 
 /**
@@ -23,7 +23,7 @@ final class AccountCreationHooks {
     #[Autowire(service: 'aculta_user.avatar_pool')]
     private readonly AvatarPool $avatarPool,
     #[Autowire(service: 'transliteration')]
-    private readonly TransliterationInterface $transliteration,
+    private readonly PhpTransliteration $transliteration,
   ) {}
 
   /**
@@ -35,7 +35,14 @@ final class AccountCreationHooks {
       return;
     }
     $this->createProfile($account);
-    $this->avatarPool->assignIfMissing($account);
+  }
+
+  /** Conta nova sem foto recebe avatar do acervo antes de gravar (sem salvar dentro de hook de usuário). */
+  #[Hook('user_presave')]
+  public function userPresave(UserInterface $account): void {
+    if ($account->isNew()) {
+      $this->avatarPool->assignPresave($account);
+    }
   }
 
   /** Cria o perfil participante com o nome de usuário como apelido inicial, sem colidir. */

@@ -6,12 +6,11 @@ services:
     arguments: ['@config.factory', '@entity_type.manager']
   aculta_user.avatar_pool:
     class: Drupal\aculta_user\Avatar\AvatarPool
-    arguments: ['@extension.list.module', '@file_system', '@entity_type.manager', '@user.data']
+    arguments: ['@extension.list.module', '@file_system', '@entity_type.manager', '@user.data', '%app.root%']
   aculta_user.social_auth_fields_subscriber:
     class: Drupal\aculta_user\EventSubscriber\SocialAuthFieldsSubscriber
     arguments: ['@entity_type.manager']
     tags:
       - { name: event_subscriber }
-  aculta_user.avatar_reroll_callbacks:
-    class: Drupal\aculta_user\Form\AvatarRerollCallbacks
-    arguments: ['@aculta_user.avatar_pool', '@renderer', '@current_user', '@entity_type.manager']
+  aculta_user.photo_editor_guard:
+    class: Drupal\aculta_user\Form\PhotoEditorGuard

@@ -31,6 +31,8 @@ final class AvatarPool {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'user.data')]
     private readonly UserDataInterface $userData,
+    #[Autowire('%app.root%')]
+    private readonly string $appRoot,
   ) {}
 
   /**
@@ -44,16 +46,33 @@ final class AvatarPool {
     if ($entry === NULL) {
       return FALSE;
     }
-    return $this->assignEntry($account, $entry);
+    $ok = $this->assignEntry($account, $entry);
+    if ($ok) {
+      $account->save();
+    }
+    return $ok;
   }
 
   /** Copia a imagem da entrada para o acervo público e a grava em user_picture. */
   private function assignEntry(UserInterface $account, array $entry): bool {
-    $root = $this->modules->getPath('aculta_user') . '/assets/avatars/';
+    $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
     $basename = basename($entry['file']);
-    $directory = self::DIRECTORY;
-    $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
-    $uri = $this->fileSystem->copy($root . $entry['file'], self::DIRECTORY . '/' . $basename, FileExists::Rename);
+    // Cópia pelo caminho real (o stream public:// do Drupal recusava o diretório no contexto web). O registro do
+    // arquivo é criado depois, com o uri público.
+    $real = $this->fileSystem->realpath(self::DIRECTORY);
+    if ($real === FALSE || !is_dir($real) && !mkdir($real, 0775, TRUE)) {
+      return FALSE;
+    }
+    $target = $real . '/' . $basename;
+    $stem = pathinfo($basename, PATHINFO_FILENAME);
+    $ext = pathinfo($basename, PATHINFO_EXTENSION);
+    for ($i = 2; file_exists($target) && $i < 100; $i++) {
+      $target = $real . '/' . $stem . '-' . $i . '.' . $ext;
+    }
+    if (!copy($root . $entry['file'], $target)) {
+      return FALSE;
+    }
+    $uri = self::DIRECTORY . '/' . basename($target);
 
     $file = $this->entityTypeManager->getStorage('file')->create([
       'uri' => $uri,
@@ -65,9 +84,22 @@ final class AvatarPool {
     $file->save();
 
     $account->set('user_picture', ['target_id' => $file->id(), 'alt' => $entry['alt'] ?? '']);
-    $account->save();
-    $this->userData->set('aculta_user', (int) $account->id(), 'avatar_id', (string) $entry['id']);
+    if ((int) $account->id() > 0) {
+      $this->userData->set('aculta_user', (int) $account->id(), 'avatar_id', (string) $entry['id']);
+    }
     return TRUE;
+  }
+
+  /**
+   * Atribui um avatar do acervo dentro de user_presave, sem salvar a conta (salvar dentro de hook de usuário
+   * quebra outros módulos, como group, porque o original fica nulo).
+   */
+  public function assignPresave(UserInterface $account): bool {
+    if (!$account->hasField('user_picture') || !$account->get('user_picture')->isEmpty()) {
+      return FALSE;
+    }
+    $entry = $this->pick();
+    return $entry !== NULL && $this->assignEntry($account, $entry);
   }
 
   /**
@@ -87,6 +119,7 @@ final class AvatarPool {
     if (!$this->assignEntry($account, $entry)) {
       return NULL;
     }
+    $account->save();
     if ($previous > 0) {
       $old = $this->entityTypeManager->getStorage('file')->load($previous);
       if ($old !== NULL && str_starts_with($old->getFileUri(), self::DIRECTORY . '/') && !$this->isUsedByOthers($previous, (int) $account->id())) {
@@ -104,8 +137,8 @@ final class AvatarPool {
 
   /** Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
   private function pick(string $exclude = ''): ?array {
-    $catalog = json_decode((string) file_get_contents($this->modules->getPath('aculta_user') . '/assets/avatars/meta/avatars.json'), TRUE);
-    $root = $this->modules->getPath('aculta_user') . '/assets/avatars/';
+    $catalog = json_decode((string) file_get_contents($this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/meta/avatars.json'), TRUE);
+    $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
     $available = array_values(array_filter(
       is_array($catalog) ? $catalog : [],
       static fn (array $item): bool => !empty($item['active']) && is_file($root . ($item['file'] ?? '')),

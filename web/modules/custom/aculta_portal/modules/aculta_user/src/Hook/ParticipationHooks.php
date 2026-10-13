@@ -50,7 +50,7 @@ final class ParticipationHooks {
    * comentário aguarda aprovação, se a regra de bloqueio estiver ligada.
    */
   #[Hook('entity_create_access')]
-  public function entityCreateAccess(AccountInterface $account, array $context, string $entity_bundle): ?AccessResult {
+  public function entityCreateAccess(AccountInterface $account, array $context, ?string $entity_bundle): ?AccessResult {
     if (($context['entity_type_id'] ?? NULL) !== 'node' || $entity_bundle !== ParticipationRules::TOPIC_TYPE) {
       return NULL;
     }

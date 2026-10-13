@@ -48,3 +48,11 @@ aculta_user.associados_csv:
     _title: 'Exportar associados'
   requirements:
     _permission: 'export aculta associados'
+
+aculta_user.avatar_reroll:
+  path: '/avatar/sortear'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AvatarRerollController::reroll'
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
