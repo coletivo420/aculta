@@ -1,3 +1,18 @@
+## 0.6.0-dev.19 — sugestões interativas na busca Wiki420 — 2026-10-13
+
+Classificação: MINOR (reutiliza a interação de busca existente em um novo shell).
+
+- A região de busca do cabeçalho Wiki recebe o dropdown de prévia, com superfície
+  elevada, lista rolável, foco visível e tokens semânticos do tema.
+- A Institution Bar multidomínio não é alterada; o comportamento JS continua no
+  `aculta_portal` e a apresentação fica no ACULTA420.
+- Design foundations (1683), SDC (231), fixtures do shell (19) e fronteira
+  módulo/tema (789): PASS. O HTML do Runtime local contém os atributos neutros
+  da prévia e o alvo do dropdown; inspeção visual e navegação por teclado em
+  navegador no servidor de testes pendentes. **RUNTIME STATUS: DEFERRED.**
+- Gate Foundation permanece bloqueado pela dívida DT-T19 preexistente em
+  `css/components/portal-account.css` (durações de transição fora de `tokens.css`).
+
 ## 0.6.0-dev.18 — apresentação Wiki420 inspirada na Wikipédia — 2026-10-13
 
 Classificação: PATCH (apresentação e acessibilidade; sem mudança de contrato).

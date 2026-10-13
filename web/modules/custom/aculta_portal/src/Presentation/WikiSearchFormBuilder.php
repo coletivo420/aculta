@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Presentation;
 
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Search\SearchPageController;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-/** Builds the shared GET search form presented throughout Wiki420. */
+/**
+ * Builds the shared GET search form presented throughout Wiki420.
+ */
 final class WikiSearchFormBuilder {
 
   public function __construct(
@@ -31,8 +35,9 @@ final class WikiSearchFormBuilder {
       '#action' => Url::fromRoute('aculta_portal.wiki_search')->toString(),
       '#attributes' => ['role' => 'search'],
       '#cache' => ['contexts' => ['url.query_args:q']],
+      '#attached' => ['library' => ['aculta_portal/search-preview']],
       'q' => [
-        '#type' => 'textfield',
+        '#type' => 'search',
         '#name' => 'q',
         '#title' => (string) $this->translation->translate('Pesquisar na Wiki420'),
         '#title_display' => 'invisible',
@@ -40,9 +45,29 @@ final class WikiSearchFormBuilder {
         '#value' => $term,
         '#placeholder' => (string) $this->translation->translate('Pesquisar na Wiki420'),
         '#size' => 40,
-        '#maxlength' => 100,
+        '#maxlength' => SearchPageController::MAX_CHARS,
         '#required' => TRUE,
-        '#attributes' => ['autocomplete' => 'off'],
+        '#attributes' => [
+          'autocomplete' => 'off',
+          'data-portal-ui' => 'search-preview-input',
+          'data-preview-url' => Url::fromRoute('aculta_portal.wiki_search_preview')->toString(),
+          'data-preview-target' => 'aculta-wiki-search-preview',
+          'data-min-chars' => (string) SearchPageController::MIN_CHARS,
+        ],
+      ],
+      'preview' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'id' => 'aculta-wiki-search-preview',
+          'data-portal-ui' => 'search-preview',
+          'aria-live' => 'polite',
+        ],
+        'hint' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'p',
+          '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
+          '#value' => (string) $this->translation->translate('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS]),
+        ],
       ],
       'submit' => [
         '#type' => 'submit',

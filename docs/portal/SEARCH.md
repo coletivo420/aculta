@@ -11,7 +11,7 @@ Status: vigente desde 0.2.0-dev.41.
 
 ## Exceções
 
-- **Wiki420 mantém o próprio motor** (`/wiki/busca`, `WikiController::search`), restrito aos verbetes `wiki_entry`. Por isso `wiki_entry` não entra no índice geral.
+- **Wiki420 mantém o próprio motor** (`/wiki/busca`, `WikiController::search`), restrito aos verbetes `wiki_entry`. A prévia (`/wiki/busca/previa`) reusa a mesma consulta e o comportamento JS de `aculta_portal/search-preview`, mas responde apenas com verbetes publicados e acessíveis no purpose Wiki. Por isso `wiki_entry` não entra no índice geral.
 - `editorial_highlight` (destaques da home) não é conteúdo pesquisável e fica fora do índice.
 
 ## Verificação

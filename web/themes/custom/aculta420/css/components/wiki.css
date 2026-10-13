@@ -30,6 +30,7 @@
 }
 
 .aculta-wiki-header-search {
+  position: relative;
   flex: 1 1 auto;
   min-width: 0;
   max-width: 44rem;
@@ -50,11 +51,25 @@
   margin: 0;
 }
 
-.aculta-wiki-header-search input[type="text"] {
+.aculta-wiki-header-search input[type="search"] {
   width: 100%;
   min-height: 2.75rem;
   border-color: var(--aculta-border-default);
   background: var(--aculta-surface-raised);
+}
+
+.aculta-wiki-header-search .aculta-search-preview {
+  position: absolute;
+  z-index: 1050;
+  inset-block-start: calc(100% + 0.35rem);
+  inset-inline: 0;
+  max-height: min(28rem, 60vh);
+  margin: 0;
+  padding: 0.75rem 1rem;
+  overflow-y: auto;
+  border: 1px solid var(--aculta-border-default);
+  background: var(--aculta-surface-raised);
+  box-shadow: var(--bs-box-shadow-lg);
 }
 
 .aculta-wiki-header-search .form-submit {

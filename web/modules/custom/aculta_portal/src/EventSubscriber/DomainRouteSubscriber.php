@@ -197,7 +197,12 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('aculta_portal.support_form')) {
       $route->setOption('_aculta_domain_purpose', 'support');
     }
-    foreach (['aculta_portal.wiki_home', 'aculta_portal.wiki_search', 'view.wiki_entries.page_1'] as $name) {
+    foreach ([
+      'aculta_portal.wiki_home',
+      'aculta_portal.wiki_search',
+      'aculta_portal.wiki_search_preview',
+      'view.wiki_entries.page_1',
+    ] as $name) {
       if ($route = $collection->get($name)) {
         $route->setOption('_aculta_domain_purpose', 'wiki');
       }

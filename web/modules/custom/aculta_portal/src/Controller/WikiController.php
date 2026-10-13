@@ -5,19 +5,26 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Controller;
 
 use Drupal\Core\Template\Attribute;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Search\SearchPageController;
+use Drupal\domain\DomainInterface;
+use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-/** Public landing page and bounded title/summary/body search for the Wiki. */
+/**
+ * Public landing page and bounded title/summary/body search for the Wiki.
+ */
 final class WikiController extends ControllerBase {
 
   public function __construct(
@@ -33,9 +40,13 @@ final class WikiController extends ControllerBase {
     private readonly DateFormatterInterface $dateFormatter,
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $account,
+    #[Autowire(service: 'renderer')]
+    private readonly RendererInterface $renderer,
   ) {}
 
-  /** Builds the Wiki home from the editorial Views. */
+  /**
+   * Builds the Wiki home from the editorial Views.
+   */
   public function home(): array {
     $build = [
       '#type' => 'container',
@@ -71,7 +82,9 @@ final class WikiController extends ControllerBase {
     return $build;
   }
 
-  /** Searches only published Wiki entries by title, summary, and body. */
+  /**
+   * Searches only published Wiki entries by title, summary, and body.
+   */
   public function search(Request $request): array {
     $term = trim((string) $request->query->get('q', ''));
     $build = [
@@ -83,34 +96,16 @@ final class WikiController extends ControllerBase {
     if ($term === '') {
       return $build;
     }
-    $term = mb_substr($term, 0, 100);
+    $term = mb_substr($term, 0, SearchPageController::MAX_CHARS);
     $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
     if (!$wikiDomain) {
       $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.')];
       return $build;
     }
-    $pattern = '%' . $this->database->escapeLike($term) . '%';
-    // Public search: node access applies to the listing, and each result is
-    // still checked individually before rendering.
-    $nodeStorage = $this->entities->getStorage('node');
-    $query = $nodeStorage->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'wiki_entry')
-      ->condition('field_domain_source.target_id', $wikiDomain->id())
-      ->condition('status', 1)
-      ->range(0, 30)
-      ->sort('title');
-    $matches = $query->orConditionGroup()
-      ->condition('title', $pattern, 'LIKE')
-      ->condition('field_wiki_summary.value', $pattern, 'LIKE')
-      ->condition('body.value', $pattern, 'LIKE');
-    $ids = $query->condition($matches)->execute();
     $viewBuilder = $this->entities->getViewBuilder('node');
     $results = [];
-    foreach ($nodeStorage->loadMultiple($ids) as $node) {
-      if ($node->access('view')) {
-        $results[$node->id()] = $viewBuilder->view($node, 'teaser');
-      }
+    foreach ($this->findWikiEntries($term, $wikiDomain, 30) as $node) {
+      $results[$node->id()] = $viewBuilder->view($node, 'teaser');
     }
     // pt-BR plural rules use the singular form for 0, so the count is only
     // shown when there is at least one visible result.
@@ -124,7 +119,107 @@ final class WikiController extends ControllerBase {
     return $build;
   }
 
-  /** Lists published Wiki420 entries by latest update, without public authorship. */
+  /**
+   * Returns a no-store HTML preview using the full Wiki search query.
+   */
+  public function preview(Request $request): Response {
+    $term = trim((string) $request->query->get('q', ''));
+    $term = mb_substr($term, 0, SearchPageController::MAX_CHARS);
+    $build = ['#cache' => ['max-age' => 0]];
+    if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
+      $build['hint'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'p',
+        '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
+        '#value' => $this->t(
+          'Digite pelo menos @n caracteres para ver resultados.',
+          ['@n' => SearchPageController::MIN_CHARS],
+        ),
+      ];
+      return $this->previewResponse($build);
+    }
+
+    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
+    if ($wikiDomain === NULL) {
+      $build['empty'] = ['#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.')];
+      return $this->previewResponse($build);
+    }
+
+    $nodes = $this->findWikiEntries($term, $wikiDomain, 8);
+    if ($nodes === []) {
+      $build['empty'] = ['#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.')];
+      return $this->previewResponse($build);
+    }
+
+    $items = [];
+    foreach ($nodes as $node) {
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $node->label(),
+        '#url' => $node->toUrl('canonical'),
+      ];
+    }
+    $fullSearch = Url::fromRoute('aculta_portal.wiki_search', [], ['query' => ['q' => $term]]);
+    $build['list'] = [
+      '#theme' => 'item_list',
+      '#items' => $items,
+      '#attributes' => ['data-portal-ui' => 'search-preview-list'],
+    ];
+    $build['full'] = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'search-preview-footer'],
+      'link' => [
+        '#type' => 'link',
+        '#title' => $this->t('Ver todos os resultados para «@term»', ['@term' => $term]),
+        '#url' => $fullSearch,
+        '#attributes' => ['data-portal-ui' => 'search-preview-full'],
+      ],
+    ];
+    return $this->previewResponse($build);
+  }
+
+  /**
+   * Finds visible Wiki420 entries for both complete and interactive searches.
+   *
+   * @return \Drupal\node\NodeInterface[]
+   *   Published entries within the Wiki domain that the current account can view.
+   */
+  private function findWikiEntries(string $term, DomainInterface $wikiDomain, int $limit): array {
+    $pattern = '%' . $this->database->escapeLike($term) . '%';
+    $nodeStorage = $this->entities->getStorage('node');
+    $query = $nodeStorage->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('type', 'wiki_entry')
+      ->condition('field_domain_source.target_id', $wikiDomain->id())
+      ->condition('status', 1)
+      ->range(0, $limit)
+      ->sort('title');
+    $matches = $query->orConditionGroup()
+      ->condition('title', $pattern, 'LIKE')
+      ->condition('field_wiki_summary.value', $pattern, 'LIKE')
+      ->condition('body.value', $pattern, 'LIKE');
+    $ids = $query->condition($matches)->execute();
+    $nodes = [];
+    foreach ($nodeStorage->loadMultiple($ids) as $node) {
+      if ($node instanceof NodeInterface && $node->access('view')) {
+        $nodes[] = $node;
+      }
+    }
+    return $nodes;
+  }
+
+  /**
+   * Renders a non-cacheable preview response for the current request.
+   */
+  private function previewResponse(array $build): Response {
+    $response = new Response((string) $this->renderer->renderInIsolation($build));
+    $response->headers->set('Cache-Control', 'no-store, private');
+    return $response;
+  }
+
+  /**
+   * Lists published Wiki420 entries by latest update, without public authorship.
+   */
   private function recentChanges(): array {
     $build = [
       '#theme' => 'item_list',

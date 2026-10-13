@@ -85,8 +85,8 @@ try {
   file_put_contents(
     $pagePath,
     str_replace(
-      '<header class="aculta-header"',
-      "{% if domain_presentation.identity.purpose == 'wiki' %}<div>Wiki</div>{% endif %}\n<header class=\"aculta-header\"",
+      '<header class="aculta-header{{',
+      "{% if domain_presentation.identity.purpose == 'wiki' %}<div>Wiki</div>{% endif %}\n<header class=\"aculta-header{{",
       $originalPage,
     ),
   );

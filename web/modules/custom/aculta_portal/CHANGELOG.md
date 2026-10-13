@@ -1,3 +1,21 @@
+## 0.4.0-dev.10 — prévia interativa na busca do Wiki420 — 2026-10-13
+
+- A busca do cabeçalho Wiki reutiliza o comportamento compartilhado de prévia
+  (pausa de 300 ms, mínimo de 3 caracteres, cancelamento de requisições antigas,
+  navegação por teclado e envio normal do formulário como fallback).
+- O endpoint `/wiki/busca/previa` consulta somente verbetes publicados no Domain
+  Wiki e visíveis para a conta atual; retorna HTML `no-store` e um link para a
+  busca completa com o termo.
+- O controller compartilha a mesma consulta entre sugestões e resultados
+  completos. `DomainRouteSubscriber` atribui a nova rota ao purpose `wiki`.
+- PHP lint, JavaScript syntax, Drupal 11+ (680), contrato de apresentação (127),
+  fronteira módulo/tema (789), design foundations (1683), SDC (231), shell (11),
+  fixtures do shell (19) e slugs públicos (339 rotas): PASS. No Runtime local,
+  home, preview com resultados e preview abaixo do mínimo responderam HTTP 200;
+  a resposta usa `Cache-Control: no-store, private` e traz só verbetes da Wiki.
+  Interação por teclado no navegador de testes ainda pendente.
+  **RUNTIME STATUS: DEFERRED.**
+
 ## 0.4.0-dev.9 — busca no cabeçalho neutro da Wiki420 — 2026-10-13
 
 - `DomainPresentationBuilder` oferece a região renderizável `wiki_search` apenas
