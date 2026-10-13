@@ -1,3 +1,8 @@
+## 0.4.0-dev.5 — botão de sortear avatar no popup de foto (aculta_user 0.3.0-dev.2) — 2026-10-12
+
+- Painel da conta envolve a foto em um contêiner com id `aculta-user-avatar`, alvo do AJAX do sorteio.
+- `aculta_portal.info.yml` 0.4.0-dev.5. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.4 — cadastro, avatar acervo, associado e relatório (aculta_user 0.3.0-dev.1) — 2026-10-12
 
 - Nome de usuário vira apelido; conta OAuth usa a parte local do e-mail; acervo de avatares sem a família `mushrooms`.

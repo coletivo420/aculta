@@ -44,6 +44,11 @@ final class AvatarPool {
     if ($entry === NULL) {
       return FALSE;
     }
+    return $this->assignEntry($account, $entry);
+  }
+
+  /** Copia a imagem da entrada para o acervo público e a grava em user_picture. */
+  private function assignEntry(UserInterface $account, array $entry): bool {
     $root = $this->modules->getPath('aculta_portal') . '/assets/avatars/';
     $basename = basename($entry['file']);
     $this->fileSystem->prepareDirectory(self::DIRECTORY, FileSystemInterface::CREATE_DIRECTORY);
@@ -60,19 +65,53 @@ final class AvatarPool {
 
     $account->set('user_picture', ['target_id' => $file->id(), 'alt' => $entry['alt'] ?? '']);
     $account->save();
-    $this->userData->set('aculta_user', (int) $account->id(), 'avatar_id', $entry['id']);
+    $this->userData->set('aculta_user', (int) $account->id(), 'avatar_id', (string) $entry['id']);
     return TRUE;
   }
 
-  /** Sorteia uma entrada ativa cujo arquivo existe. */
-  private function pick(): ?array {
+  /**
+   * Sorteia outro avatar do acervo para a conta (botão "sortear outro" do popup de foto).
+   *
+   * Substitui a foto atual. A cópia anterior do acervo é apagada quando nenhuma outra conta a usa; fotos enviadas
+   * pela pessoa não são tocadas aqui (ver PictureReplacementHooks). Retorna o uri da nova foto, ou NULL.
+   */
+  public function reroll(UserInterface $account): ?string {
+    $current = (string) $this->userData->get('aculta_user', (int) $account->id(), 'avatar_id');
+    $entry = $this->pick($current);
+    if ($entry === NULL) {
+      return NULL;
+    }
+    $previous = (int) ($account->get('user_picture')->target_id ?? 0);
+    $account->set('user_picture', NULL);
+    if (!$this->assignEntry($account, $entry)) {
+      return NULL;
+    }
+    if ($previous > 0) {
+      $old = $this->entityTypeManager->getStorage('file')->load($previous);
+      if ($old !== NULL && str_starts_with($old->getFileUri(), self::DIRECTORY . '/') && !$this->isUsedByOthers($previous, (int) $account->id())) {
+        $old->delete();
+      }
+    }
+    return (string) $this->entityTypeManager->getStorage('file')->load((int) $account->get('user_picture')->target_id)?->getFileUri();
+  }
+
+  /** Verdadeiro se outra conta ainda usa a foto. */
+  private function isUsedByOthers(int $fid, int $uid): bool {
+    return $this->entityTypeManager->getStorage('user')->getQuery()
+      ->accessCheck(FALSE)->condition('user_picture.target_id', $fid)->condition('uid', $uid, '<>')->range(0, 1)->count()->execute() > 0;
+  }
+
+  /** Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
+  private function pick(string $exclude = ''): ?array {
     $catalog = json_decode((string) file_get_contents($this->modules->getPath('aculta_portal') . '/assets/avatars/meta/avatars.json'), TRUE);
     $root = $this->modules->getPath('aculta_portal') . '/assets/avatars/';
     $available = array_values(array_filter(
       is_array($catalog) ? $catalog : [],
       static fn (array $item): bool => !empty($item['active']) && is_file($root . ($item['file'] ?? '')),
     ));
-    return $available === [] ? NULL : $available[random_int(0, count($available) - 1)];
+    $others = array_values(array_filter($available, static fn (array $item): bool => (string) ($item['id'] ?? '') !== $exclude));
+    $pool = $others !== [] ? $others : $available;
+    return $pool === [] ? NULL : $pool[random_int(0, count($pool) - 1)];
   }
 
 }

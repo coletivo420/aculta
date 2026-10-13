@@ -1,3 +1,9 @@
+## 0.3.0-dev.2 — sortear avatar no popup de foto (AJAX) — 2026-10-12
+
+- Botão "Sortear outro avatar" no popup de foto do painel da conta. Por AJAX troca só o bloco da foto
+  (`#aculta-user-avatar`); sem JavaScript, o envio comum volta ao painel. Nunca sorteia o mesmo avatar quando há outro.
+- A cópia anterior do acervo é apagada quando nenhuma outra conta a usa.
+
 ## 0.3.0-dev.1 — cadastro, avatar, associado e relatório (fase 5, RUNTIME STATUS: DEFERRED) — 2026-10-12
 
 - Cadastro: o nome de usuário vira o apelido inicial do perfil (sem colidir; reservadas e formato validados). Conta

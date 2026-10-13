@@ -131,7 +131,8 @@ final class PortalController extends ControllerBase {
         '#attributes' => ['data-portal-ui' => 'account-identity'],
         'photo_editor' => [
           '#theme' => 'aculta_portal_photo_editor',
-          '#photo' => $photo,
+          // Contêiner com id fixo: o sorteio de avatar (aculta_user) troca só este bloco, por AJAX.
+          '#photo' => ['#type' => 'container', '#attributes' => ['id' => 'aculta-user-avatar'], 'image' => $photo],
           '#photo_form' => $this->buildPortalAccountForm($account),
           '#display_name' => $display_name,
         ],

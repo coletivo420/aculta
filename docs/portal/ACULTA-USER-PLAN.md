@@ -510,4 +510,6 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 - **RG não é cifrado** (decisão 16). CPF/CNPJ continua no campo único existente.
 - **Só o administrador exporta** o relatório (decisão 17).
 - **Fotos antigas enviadas pela pessoa são apagadas** ao trocar a foto, quando não há outra referência. Acervo nunca é apagado.
+- **Troféus (badges) são concedidos e revogados só pelo administrador** (decisão 18, 2026-10-12).
+- **Sortear outro avatar** fica no popup de foto, com AJAX que troca só a imagem (2026-10-12).
 
