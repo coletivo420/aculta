@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Controller;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -55,30 +57,43 @@ final class ActivityController implements ContainerInjectionInterface {
     $uid = (int) $this->currentUser->id();
     $cache = (new CacheableMetadata())->addCacheContexts(['user'])->addCacheTags(['node_list', 'comment_list']);
 
-    $build = ['#cache' => ['contexts' => $cache->getCacheContexts(), 'tags' => $cache->getCacheTags()]];
-    $build['abas'] = $this->tabs($aba);
-    $build['conteudo'] = match ($aba) {
+    $conteudo = match ($aba) {
       'wiki' => $this->wiki($uid),
       'forum' => $this->forum($uid),
       'revista' => $this->revista($uid),
       'comentarios' => $this->comentarios($uid),
       default => ['#markup' => (string) t('Nenhuma conquista ainda. As conquistas chegam em uma etapa futura.')],
     };
-    return $build;
+    // Mesmo padrão de Meus Dados e Segurança: descrição, abas (links com URL própria) e o conteúdo da aba.
+    return [
+      '#cache' => ['contexts' => $cache->getCacheContexts(), 'tags' => $cache->getCacheTags(), 'max-age' => 0],
+      'description' => ['#plain_text' => t('Veja o que você fez no site: verbetes, tópicos, artigos e comentários.')],
+      'tabs' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => t('Seções de atividade'), 'data-portal-account-data-nav' => 'true'],
+        'links' => $this->tabLinks($aba),
+      ],
+      'content' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
+        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => t(self::TABS[$aba]), '#element_attributes' => new Attribute(['tabindex' => '-1'])],
+        'list' => $conteudo,
+      ],
+    ];
   }
 
-  /** Barra de abas: links, com a aba atual marcada (sem JavaScript). */
-  private function tabs(string $atual): array {
-    $items = [];
+  /** Links das abas, com a aba atual marcada (aria-current e is-active), como em Meus Dados e Segurança. */
+  private function tabLinks(string $atual): array {
+    $links = [];
     foreach (self::TABS as $id => $label) {
-      $items[] = [
-        '#type' => 'link',
-        '#title' => t($label),
-        '#url' => Url::fromRoute('aculta_user.atividade', ['aba' => $id]),
-        '#attributes' => $id === $atual ? ['aria-current' => 'page'] : [],
-      ];
+      $link = PortalLinkElement::build(t($label), Url::fromRoute('aculta_user.atividade', ['aba' => $id]), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      if ($id === $atual) {
+        $link['#element_attributes']->setAttribute('aria-current', 'page');
+        $link['#element_attributes']->addClass('is-active');
+      }
+      $links[] = $link;
     }
-    return ['#theme' => 'item_list', '#items' => $items, '#attributes' => ['data-aculta-user' => 'atividade-abas']];
+    return $links;
   }
 
   /** Verbetes publicados em que a pessoa criou pelo menos uma revisão, com link para o histórico público. */

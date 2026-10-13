@@ -1,3 +1,8 @@
+## 0.3.0-dev.8 — Atividade em abas no padrão de Meus Dados e Segurança — 2026-10-13
+
+- Minha Conta > Atividade: Wiki, Fórum, Revista, Comentários e Conquistas viram abas com o mesmo marcador e estrutura de Meus Dados e Segurança (`account-data-nav`, links com URL própria, aba atual marcada, título e área de conteúdo).
+- `aculta_user.info.yml` 0.3.0-dev.8. RUNTIME STATUS: DEFERRED (inspeção visual humana pendente; captura conferida no Chromium).
+
 ## 0.3.0-dev.7 — sorteio só na prévia; OAuth como foto personalizada — 2026-10-13
 
 - "Sortear novo avatar" troca só a prévia do modal (escolha pendente). A foto muda ao clicar em "Salvar foto do perfil". Fechar sem salvar descarta a escolha (INV-FOTO-8). Substitui o comportamento de 0.3.0-dev.5 (que gravava e recarregava ao fechar).

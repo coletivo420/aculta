@@ -275,3 +275,10 @@ uma foto própria para recortar."). **Não executado:** P2, P4 e P5 no navegador
      responde `200` com sessão. Verificado por HTTP em 2026-10-13.
 - **Não repetir:** qualquer formulário de autenticação ou de sessão (login, cadastro com confirmação, senha) não deve
   entrar em `accountAjaxSubmit`; a regra existe só para salvar dados da Minha conta sem recarregar a página.
+
+## Q. Minha Conta > Atividade em abas (aculta_user 0.3.0-dev.8, 2026-10-13)
+
+- **Q1:** abrir Minha Conta > Atividade. Esperado: abas Wiki, Fórum, Revista, Comentários e Conquistas no mesmo estilo de
+  Meus Dados; a aba atual marcada; título da aba como cabeçalho da área de conteúdo.
+- **Q2:** trocar de aba pelos links. Esperado: cada aba tem URL própria (`/atividade/forum`, etc.); `/atividade` é a aba Wiki.
+- Verificação (2026-10-13): HTTP 200 em todas as abas com a estrutura de abas; captura no Chromium da aba Fórum.
