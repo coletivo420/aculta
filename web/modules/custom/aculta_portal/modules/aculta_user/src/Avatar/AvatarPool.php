@@ -20,7 +20,7 @@ use Drupal\user\UserInterface;
  */
 final class AvatarPool {
 
-  private const DIRECTORY = 'public://pictures/acervo';
+  public const DIRECTORY = 'public://pictures/acervo';
 
   public function __construct(
     #[Autowire(service: 'extension.list.module')]
