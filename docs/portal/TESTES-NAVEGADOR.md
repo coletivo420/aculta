@@ -179,6 +179,7 @@ e salvamento. Antes desta rodada, o popup de recorte não abria ao escolher o ar
   gerado por `drush uli --uid=5 --uri=https://conta.aculta.toca.net.br` (não colar o link neste documento).
 - Imagem de teste: `Bloco Sativa 2026 - Capa 2.png`, que está no computador do Windows do Felipe (pasta Downloads).
   O caminho típico é `C:\Users\<usuário do Windows>\Downloads\Bloco Sativa 2026 - Capa 2.png`. Conferir o nome exato do usuário.
+- Tamanho: o campo aceita no máximo **2 MB**. Antes do teste, conferir o tamanho da imagem no Windows (propriedades do arquivo). Acima disso, o envio é recusado e o popup mostra a mensagem de tamanho.
 - Limite: página não consegue escolher um arquivo local sozinha. Se o agente não puder anexar arquivo pelo navegador,
   o Felipe escolhe a imagem no seletor e o agente segue a partir do passo 3.
 
