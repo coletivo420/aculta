@@ -49,7 +49,7 @@ final class AvatarPool {
 
   /** Copia a imagem da entrada para o acervo público e a grava em user_picture. */
   private function assignEntry(UserInterface $account, array $entry): bool {
-    $root = $this->modules->getPath('aculta_portal') . '/assets/avatars/';
+    $root = $this->modules->getPath('aculta_user') . '/assets/avatars/';
     $basename = basename($entry['file']);
     $this->fileSystem->prepareDirectory(self::DIRECTORY, FileSystemInterface::CREATE_DIRECTORY);
     $uri = $this->fileSystem->copy($root . $entry['file'], self::DIRECTORY . '/' . $basename, FileExists::Rename);
@@ -103,8 +103,8 @@ final class AvatarPool {
 
   /** Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
   private function pick(string $exclude = ''): ?array {
-    $catalog = json_decode((string) file_get_contents($this->modules->getPath('aculta_portal') . '/assets/avatars/meta/avatars.json'), TRUE);
-    $root = $this->modules->getPath('aculta_portal') . '/assets/avatars/';
+    $catalog = json_decode((string) file_get_contents($this->modules->getPath('aculta_user') . '/assets/avatars/meta/avatars.json'), TRUE);
+    $root = $this->modules->getPath('aculta_user') . '/assets/avatars/';
     $available = array_values(array_filter(
       is_array($catalog) ? $catalog : [],
       static fn (array $item): bool => !empty($item['active']) && is_file($root . ($item['file'] ?? '')),
