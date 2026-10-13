@@ -152,8 +152,10 @@ final class AvatarCropForm extends FormBase {
         continue;
       }
       if (in_array($element[$key]['#type'] ?? NULL, ['details', 'vertical_tabs'], TRUE)) {
+        // O pre_render de details/vertical_tabs reagrupa os filhos (#group): sem ele, cada campo sai duplicado.
         $element[$key]['#type'] = 'container';
         $element[$key]['#theme_wrappers'] = ['container'];
+        $element[$key]['#pre_render'] = [];
         unset($element[$key]['#group'], $element[$key]['#open']);
       }
       self::flattenElement($element[$key]);
@@ -161,6 +163,7 @@ final class AvatarCropForm extends FormBase {
     if (($element['#type'] ?? NULL) === 'details') {
       $element['#type'] = 'container';
       $element['#theme_wrappers'] = ['container'];
+      $element['#pre_render'] = [];
     }
   }
 

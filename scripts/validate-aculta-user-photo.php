@@ -8,6 +8,7 @@
  * - INV-FOTO-2: "Sortear outro avatar" só existe quando a foto atual é do acervo (if ($isAcervo)).
  * - INV-FOTO-3: não existe link "Recortar foto" no popup; o recorte só abre logo após o envio (photo-flow.js).
  * - INV-FOTO-4: o recorte só aceita o arquivo recém-enviado: nada de fallback para a foto atual nem para o recorte pendente.
+ * - INV-FOTO-5: o campo de recorte aparece uma única vez no modal.
  *
  * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
  */
@@ -68,6 +69,11 @@ if (!str_contains($flow, 'openCrop(fid)')) {
   $errors[] = 'INV-FOTO-3: photo-flow.js não abre o recorte ao receber o envio (openCrop)';
 }
 
+// INV-FOTO-5: o recorte aparece uma única vez (o achatamento limpa o pre_render que reagrupa os filhos).
+if (!str_contains($crop, "\$element[\$key]['#pre_render'] = [];") || !str_contains($crop, "\$element['#pre_render'] = [];")) {
+  $errors[] = 'INV-FOTO-5: flattenElement não limpa #pre_render; o campo de recorte sai duplicado';
+}
+
 // INV-FOTO-4: recorte só do arquivo recém-enviado.
 if (!preg_match('/function targetFile\(\).*?\$file->isPermanent\(\)/s', $crop)) {
   $errors[] = 'INV-FOTO-4: targetFile não recusa arquivo permanente (foto já salva)';
@@ -89,4 +95,4 @@ if ($errors !== []) {
   exit(1);
 }
 
-echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-4)' . PHP_EOL;
+echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-5)' . PHP_EOL;

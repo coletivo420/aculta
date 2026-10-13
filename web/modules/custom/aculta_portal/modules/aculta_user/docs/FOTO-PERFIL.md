@@ -22,6 +22,8 @@ Sem link "Recortar foto" em nenhum estado. O recorte abre sozinho logo após o e
   `if ($isAcervo)`. Com foto personalizada ele some.
 - **INV-FOTO-3 — sem recorte manual.** Não existe link para recortar no popup. O recorte só é aberto pelo
   `photo-flow.js` ao chegar um novo arquivo no campo (`imagem[fids]`).
+- **INV-FOTO-5 — uma única caixa de recorte.** O achatamento das abas do `image_crop` troca o tipo e o
+  `#theme_wrappers` e limpa o `#pre_render`; sem isso o pre_render reagrupa os filhos e o campo sai duplicado.
 - **INV-FOTO-4 — recorte só do arquivo recém-enviado.** `AvatarCropForm::targetFile()` aceita apenas o `fid` do
   arquivo temporário do próprio usuário. Não há fallback para a foto atual nem para o recorte pendente, e foto já
   salva (permanente) é recusada.
