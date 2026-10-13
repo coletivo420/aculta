@@ -1,6 +1,5 @@
 {# Semantic layout; Bootstrap5 remains the sole provider of Bootstrap assets. #}
 {# Institution Bar: global, institutional, no Domain/purpose decisions here. #}
-<div class="aculta-page-top">
 <div class="aculta-institution-bar">
   <div class="container aculta-container aculta-institution-bar__inner">
     <p class="aculta-institution-bar__brand">
@@ -28,7 +27,6 @@
 </div>
 
 {% if domain_presentation.identity.purpose|default('') == 'links' %}
-</div>
 <main id="main-content" class="aculta-main aculta-social-links-shell" tabindex="-1">
   <div class="container aculta-container">
     {{ page.content }}
@@ -75,7 +73,6 @@
     </div>
   </div>
 </header>
-</div>
 
 <main id="main-content" class="aculta-main flex-grow-1" tabindex="-1">
   <div class="container aculta-container">

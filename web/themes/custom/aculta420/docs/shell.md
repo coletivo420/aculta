@@ -195,12 +195,11 @@ estão em PRs empilhadas (#92 a #95). QA em navegador registrado no Git (commit 
 ### Institution Bar (0.2-C)
 
 ```text
-div.aculta-page-top                   (wrapper sticky; offset da Toolbar vem de `displace.js`)
-  div.aculta-institution-bar          (faixa institucional, não é landmark)
-    .container > .aculta-institution-bar__inner
-      p.aculta-institution-bar__brand logo ACULTA (img 78×26; alt com o nome completo; sem texto visível)
-      div.aculta-utility              menu de conta, quando existir
-  header.aculta-header                Domain Header de purpose (0.2-D)
+div.aculta-institution-bar          (faixa sticky; offset da Toolbar vem de `displace.js`; não é landmark)
+  .container > .aculta-institution-bar__inner
+    p.aculta-institution-bar__brand   logo ACULTA (img 78×26; alt com o nome completo; sem texto visível)
+    div.aculta-utility                menu de conta, quando existir
+header.aculta-header                  Domain Header de purpose (0.2-D; rola com a página)
 ```
 
 ### Domain Header (0.2-D)
@@ -221,7 +220,7 @@ div.aculta-page-top                   (wrapper sticky; offset da Toolbar vem de 
 
 ## Sticky e mobile
 
-O wrapper `.aculta-page-top` usa `position: sticky`, com o deslocamento da Toolbar vindo de `displace.js`. Ele mantém a Institution Bar e o Domain Header juntos no topo, sem compensação artificial no `body`; no purpose LINKS, contém apenas a Institution Bar. Essa composição evita sobreposição entre duas faixas sticky e continua fluindo em telas estreitas, zoom e reflow.
+Somente a `.aculta-institution-bar` usa `position: sticky`, com o deslocamento da Toolbar vindo de `displace.js`. O Domain Header permanece no fluxo normal e rola com a página. A barra conserva seu espaço no fluxo, sem compensação artificial no `body`, e continua fluindo em telas estreitas, zoom e reflow.
 
 Referência de densidade, não contrato rígido:
 

@@ -1,3 +1,12 @@
+## 0.6.0-dev.15 — Somente a Institution Bar fica fixa no scroll — 2026-10-13
+
+Classificação: PATCH (ajuste de comportamento do shell após teste do responsável).
+
+- A propriedade sticky passa ao elemento `.aculta-institution-bar`. O Domain Header permanece no fluxo normal e rola com o restante da página.
+- O deslocamento da Toolbar continua sendo respeitado. Âncoras e foco consideram a altura da barra, sem prender o cabeçalho do domínio. O gate de contrato do shell verifica que somente a barra usa sticky.
+- Fronteira: alteração somente de estrutura/apresentação no ACULTA420; `aculta_portal` mantém o contrato neutro e a lógica de domínio.
+- Chrome no servidor de testes, autenticado em `/dados/outros-dados`: desktop 1280×800 (scrollY=634) e mobile 390×844 (scrollY=700); a barra permaneceu em `top: 0`, enquanto o cabeçalho do domínio rolou para fora do viewport. Cache Drupal reconstruído antes da verificação. **RUNTIME STATUS: PASS (Chrome desktop/mobile, 2026-10-13). Foundation gate: bloqueado por DT-T19 preexistente (`portal-account.css`); gates de design, SDC, shell e fronteira passaram. SHA do merge na `main`: a preencher no merge.
+
 ## 0.6.0-dev.14 — Barra multidomínio persistente no scroll — 2026-10-13
 
 Classificação: PATCH (correção de comportamento do shell; sem novo contrato de componente).
