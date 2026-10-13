@@ -8,7 +8,6 @@ use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Form\AccountOtherDataForm;
 use Drupal\aculta_portal\Render\PortalLinkElement;
-use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Form\AccountPasswordCreateForm;
@@ -45,7 +44,6 @@ final class PortalController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
     private readonly FormBuilderInterface $accountFormBuilder,
-    private readonly AccountCoursesManager $accountCourses,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly UserDataInterface $userData,
     private readonly AuthIntegrationManager $authIntegrationManager,
@@ -66,7 +64,6 @@ final class PortalController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
       $container->get('form_builder'),
-      $container->get('aculta_portal.account_courses'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('user.data'),
       $container->get('aculta_portal.auth_integration'),
@@ -137,7 +134,7 @@ final class PortalController extends ControllerBase {
     ];
     $this->modules->alter('aculta_portal_photo_editor', $photoForm, $account);
 
-    return [
+    $build = [
       'identity' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-identity'],
@@ -158,43 +155,10 @@ final class PortalController extends ControllerBase {
       'intro' => [
         '#plain_text' => $this->t('Use o menu para acompanhar seu apoio, seus cursos, atualizar seus dados e gerenciar sua conta.'),
       ],
-      'courses_summary' => $this->buildCoursesSummary($account),
       '#cache' => ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
     ];
-  }
-
-  /** Builds a compact learning summary for the account overview. */
-  private function buildCoursesSummary(AccountInterface $account): array {
-    $count = $this->accountCourses->countCourses($account);
-    $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'account-courses-summary'],
-      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Cursos')],
-      'summary' => [
-        '#plain_text' => match (TRUE) {
-          $count === 0 => $this->t('Você ainda não participa de nenhum curso.'),
-          $count === 1 => $this->t('Você participa de 1 curso.'),
-          default => $this->t('Você participa de @count cursos.', ['@count' => $count]),
-        },
-      ],
-    ];
-    if ($count > 0) {
-      $build['link'] = [
-        '#type' => 'link',
-        '#title' => $this->t('Ver meus cursos'),
-        '#url' => Url::fromRoute('aculta_portal.account_courses'),
-      ];
-    }
-    else {
-      $catalog = $this->accountCourses->catalogUrl();
-      if ($catalog) {
-        $build['link'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Ver cursos disponíveis'),
-          '#url' => $catalog,
-        ];
-      }
-    }
+    // Caixas extras da visão geral (ex.: Bio, do aculta_user) entram pelo alter; Cursos saiu desta visão.
+    $this->modules->alter('aculta_portal_dashboard', $build, $account);
     return $build;
   }
 
