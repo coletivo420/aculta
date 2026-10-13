@@ -106,13 +106,6 @@ final class PhotoEditorHooks {
 
     // Foto personalizada: sem recorte inline; o recorte fica no popup próprio.
     $form['user_picture']['widget'][0]['#after_build'][] = [PhotoEditorGuard::class, 'hideInlineCrop'];
-    $form['recortar'] = [
-      '#type' => 'link',
-      '#title' => t('Recortar foto'),
-      '#url' => Url::fromRoute('aculta_user.avatar_crop'),
-      '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary'], 'data-dialog-type' => 'modal'],
-      '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-    ];
   }
 
 }

@@ -211,3 +211,29 @@ e salvamento. Antes desta rodada, o popup de recorte não abria ao escolher o ar
 | 7 | remoção volta ao avatar do acervo | | |
 
 Não encerrar a rodada sem registrar o resultado de cada passo. Nenhum dado de conta ou senha deve ser colado aqui.
+
+## P. Foto de perfil: regras por estado (aculta_user, 2026-10-13)
+
+Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md`. Gate estático:
+`php scripts/validate-aculta-user-photo.php`. Executar este roteiro após qualquer alteração na foto.
+
+- **P1 — avatar do sistema (conta de teste em acervo):** abrir o popup da foto no avatar do painel.
+  Esperado: prévia do avatar do acervo, campo "Escolha uma imagem" vazio, botão "Sortear outro avatar" visível,
+  **sem** "Remover" e **sem** "Recortar foto".
+- **P2 — envio no acervo:** enviar uma imagem PNG/JPG (até 2 MB).
+  Esperado: o recorte abre sozinho (modal "Recortar foto", caixa de recorte direta, sem abas "Crop image" nem
+  nome do tipo, com barra de rolagem se passar de 560 px). Ao aplicar, volta ao painel com o popup reaberto. Não há
+  "Remover" no arquivo enviado.
+- **P3 — foto personalizada salva:** salvar a foto recortada.
+  Esperado: painel mostra a foto própria. Abrir o popup: campo com a foto e botão **"Remover"**; **sem** "Sortear
+  outro avatar"; **sem** "Recortar foto".
+- **P4 — remover:** clicar em "Remover" e depois em "Salvar foto do perfil".
+  Esperado: a foto volta ao avatar do sistema e o campo "Escolha uma imagem" aparece (estado P1).
+- **P5 — recorte só após envio:** com foto personalizada, não há como recortar sem enviar de novo.
+  Esperado: nenhum link de recorte no popup; enviar a imagem de novo é o único caminho.
+- **P6 — sortear com foto personalizada:** o link "Sortear outro avatar" não aparece (P3). Se a rota
+  `/avatar/sortear` for chamada mesmo assim, ela troca a foto (rota técnica; a regra de exibição é a da tela).
+
+Resultado (2026-10-13): verificado por HTTP em P1 (acervo: sem remover, com sortear, com campo de envio, sem
+recortar), P3 (personalizada: com remover, sem sortear, sem recortar) e recusa do recorte de foto já salva ("Envie
+uma foto própria para recortar."). **Não executado:** P2, P4 e P5 no navegador (envio por AJAX e modal).

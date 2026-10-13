@@ -70,29 +70,23 @@ final class AvatarCropForm extends FormBase {
     return 'aculta_user_avatar_crop_form';
   }
 
-  /** Arquivo a recortar (ver a ordem na documentação da classe), ou NULL. */
+  /**
+   * Arquivo a recortar, ou NULL. Só o arquivo recém-enviado: temporário, do próprio usuário e recortável.
+   *
+   * Não há fallback para a foto atual nem para o recorte pendente: para recortar de novo, a pessoa envia a imagem
+   * outra vez (regra de estado, docs/FOTO-PERFIL.md).
+   */
   public function targetFile(): ?FileInterface {
     $uid = (int) $this->currentUserService->id();
-    $storage = $this->entityTypeManagerService->getStorage('file');
     $fid = (int) $this->cropRequestStack->getCurrentRequest()?->query->get('fid', 0);
-    if ($fid > 0) {
-      $file = $storage->load($fid);
-      if ($file !== NULL && (int) $file->getOwnerId() === $uid && $this->isCroppable($file)) {
-        return $file;
-      }
-    }
-    $pending = (int) $this->userData->get('aculta_user', $uid, self::PENDING_KEY);
-    $file = $pending > 0 ? $storage->load($pending) : NULL;
-    if ($file !== NULL && $this->isCroppable($file)) {
-      return $file;
-    }
-    $account = $this->entityTypeManagerService->getStorage('user')->load($uid);
-    if (!$account instanceof UserInterface) {
+    if ($fid <= 0) {
       return NULL;
     }
-    $current = (int) ($account->get('user_picture')->target_id ?? 0);
-    $file = $current > 0 ? $storage->load($current) : NULL;
-    return $file !== NULL && $this->isCroppable($file) ? $file : NULL;
+    $file = $this->entityTypeManagerService->getStorage('file')->load($fid);
+    if ($file === NULL || (int) $file->getOwnerId() !== $uid || $file->isPermanent() || !$this->isCroppable($file)) {
+      return NULL;
+    }
+    return $file;
   }
 
   /** Imagem que não é do acervo do sistema. */

@@ -1,3 +1,11 @@
+## 0.3.0-dev.3 — regras de estado da foto de perfil — 2026-10-13
+
+- Avatar do sistema: sem "Remover"; campo de envio com "Escolha uma imagem"; "Sortear outro avatar" visível.
+- Avatar personalizado: "Remover" visível; sem "Sortear outro avatar".
+- "Recortar foto" removido do popup: o recorte abre só logo após o envio, e só para o arquivo recém-enviado.
+- Regras em `docs/FOTO-PERFIL.md`; gate `scripts/validate-aculta-user-photo.php`; roteiro de teste em TESTES-NAVEGADOR seção P.
+- `aculta_user.info.yml` 0.3.0-dev.3. RUNTIME STATUS: DEFERRED (navegador pendente; ver seção P).
+
 ## 0.3.0-dev.2 — sortear avatar no popup de foto (AJAX) — 2026-10-12
 
 - Botão "Sortear outro avatar" no popup de foto do painel da conta. Por AJAX troca só o bloco da foto

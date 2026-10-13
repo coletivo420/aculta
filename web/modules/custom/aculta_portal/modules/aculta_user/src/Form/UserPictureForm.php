@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
-use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -111,29 +110,23 @@ final class UserPictureForm extends FormBase {
       ],
       '#default_value' => $default > 0 ? [$default] : NULL,
       '#required' => FALSE,
+      // Regra de estado (docs/FOTO-PERFIL.md): avatar do sistema nunca tem botão "Remover".
+      '#aculta_acervo' => $isAcervo,
+      '#after_build' => [[self::class, 'withoutRemoveForAcervo']],
     ];
     $form['#account_id'] = (int) $account->id();
 
-    // Recortar o arquivo enviado (ou a foto atual, se for personalizada) mesmo sem o disparo automático.
-    $cropFid = (int) (($form_state->getValue('imagem')[0] ?? NULL) ?: $default);
-    if ($cropFid > 0 && !$isAcervo) {
-      $form['recortar'] = [
+    // Sortear: só para quem está com avatar do sistema (regra de estado, docs/FOTO-PERFIL.md).
+    // Para foto personalizada o sorteio some; o recorte só acontece logo após o envio da imagem.
+    if ($isAcervo) {
+      $form['sortear'] = [
         '#type' => 'link',
-        '#title' => $this->t('Recortar foto'),
-        '#url' => Url::fromRoute('aculta_user.avatar_crop', [], ['query' => ['fid' => $cropFid]]),
-        '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary'], 'data-dialog-type' => 'modal', 'data-dialog-options' => Json::encode(AvatarCropForm::DIALOG_OPTIONS)],
-        '#attached' => ['library' => ['core/drupal.dialog.ajax']],
+        '#title' => $this->t('Sortear outro avatar'),
+        '#url' => Url::fromRoute('aculta_user.avatar_reroll', [], ['query' => ['csrf_token' => $this->csrfToken->get('/avatar/sortear')]]),
+        '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary']],
+        '#attached' => ['library' => ['core/drupal.ajax']],
       ];
     }
-
-    // Sortear fica sempre disponível, junto com o envio (o sorteio troca a foto e descarta o recorte pendente).
-    $form['sortear'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Sortear outro avatar'),
-      '#url' => Url::fromRoute('aculta_user.avatar_reroll', [], ['query' => ['csrf_token' => $this->csrfToken->get('/avatar/sortear')]]),
-      '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary']],
-      '#attached' => ['library' => ['core/drupal.ajax']],
-    ];
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['salvar'] = [
@@ -142,6 +135,14 @@ final class UserPictureForm extends FormBase {
     ];
     $form['#action'] = Url::fromRoute('aculta_user.foto')->toString();
     return $form;
+  }
+
+  /** Remove o botão "Remover" do campo quando a foto é do acervo do sistema (regra de estado). */
+  public static function withoutRemoveForAcervo(array $element, FormStateInterface $form_state): array {
+    if (!empty($element['#aculta_acervo'])) {
+      unset($element['remove_button']);
+    }
+    return $element;
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
