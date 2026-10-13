@@ -76,6 +76,7 @@ final class PortalUiHooks {
     'account-bio-card' => ['card', 'card-body', 'portal-account-bio'],
     'account-bio-text' => ['portal-account-bio__text'],
     'account-bio-edit' => ['btn', 'btn-link', 'portal-account-bio__edit', 'bi', 'bi-pencil'],
+    'account-bio-actions' => ['portal-account-bio__actions'],
     'account-identity' => ['portal-account__identity'],
     'account-commerce-orders' => ['portal-account__commerce', 'portal-account__commerce--orders'],
     'account-commerce-payments' => ['portal-account__commerce', 'portal-account__commerce--payments'],

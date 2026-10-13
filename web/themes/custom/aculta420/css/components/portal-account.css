@@ -363,3 +363,11 @@
   padding-block: 0;
 }
 .portal-account-bio .form-textarea-wrapper { margin-block-end: 0; }
+
+/* Botões do modal da bio (Limpar e Salvar bio): à direita, como no modal de foto. */
+.portal-account-bio__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-block-start: 1rem;
+}

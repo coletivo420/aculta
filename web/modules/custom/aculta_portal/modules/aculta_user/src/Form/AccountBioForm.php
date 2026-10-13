@@ -71,7 +71,7 @@ final class AccountBioForm extends FormBase {
     ];
     // Container comum, não "actions": o Drupal move os botões de form-actions para a barra do diálogo (proxies)
     // e o clique nesses proxies não dispara o envio deste formulário.
-    $form['actions'] = ['#type' => 'container', '#attributes' => ['class' => ['aculta-bio-form__actions']]];
+    $form['actions'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'account-bio-actions']];
     // Limpar antes de Salvar bio. É do tipo botão: o JS só esvazia o campo, sem enviar.
     $form['actions']['clear'] = [
       '#type' => 'button',
