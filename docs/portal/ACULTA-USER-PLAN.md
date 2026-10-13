@@ -288,8 +288,8 @@ Serviços previstos (nomes provisórios):
 **Integração com o Fórum:**
 
 - **Revista:** a discussão de cada artigo é um tópico do Fórum vinculado (seção E3). O artigo mostra o trecho e o link para a discussão completa. Nenhum comentário é gravado no artigo.
-- **LMS (decisões 34 e 36, respondidas em 2026-10-13):** a discussão de cada atividade do LMS é um **comentário no Fórum**, como em qualquer LMS. Cada curso e cada atividade têm um tópico do Fórum vinculado, criado pelo sistema. Os comentários da atividade são comentários comuns do Fórum. O repositório hoje não tem essa discussão: o tipo de atividade configurado é só `no_answer` e `true_false` (`lms.lms_activity_type.*`), e não há campo de comentário em curso ou lição. Antes de implementar, verificar no Homelab o que o módulo `lms` 1.2.3 oferece para a atividade.
-- **Matriculados (decisão 36, respondida em 2026-10-13):** quem está matriculado no curso fica **isento da moderação do primeiro comentário** e tem **aprovação automática** nas discussões do LMS. A matrícula é a associação ao grupo do curso (`group.role.lms_course-member`), e não um papel Drupal novo. Isso vale só para as discussões do curso, e não para o resto do Fórum (a confirmar, decisão 37).
+- **LMS (decisões 34 e 36, respondidas em 2026-10-13):** a discussão de cada atividade do LMS é um **comentário no Fórum**, como em qualquer LMS. Cada curso e cada atividade têm um tópico do Fórum vinculado. Os tópicos são criados por quem tem autorização para criar cursos (decisão 38, respondida em 2026-10-13), e não por contagem de comentários. Os comentários da atividade são comentários comuns do Fórum. O repositório hoje não tem essa discussão: o tipo de atividade configurado é só `no_answer` e `true_false` (`lms.lms_activity_type.*`), e não há campo de comentário em curso ou lição. Antes de implementar, verificar no Homelab o que o módulo `lms` 1.2.3 oferece para a atividade.
+- **Matriculados (decisão 36, respondida em 2026-10-13):** quem está matriculado no curso fica **isento da moderação do primeiro comentário** e tem **aprovação automática** nas discussões do LMS. A matrícula é a associação ao grupo do curso (`group.role.lms_course-member`), e não um papel Drupal novo. A isenção vale nas discussões do curso. **Ao comentar no curso, a isenção vale em todo o Fórum** (decisão 37, respondida em 2026-10-13).
 - **Regra comum:** qualquer conteúdo com discussão usa tópico do Fórum. Nenhum tipo de conteúdo guarda comentário próprio.
 
 ### E2. Atividade centralizada em "Atividade"
@@ -423,8 +423,8 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 34. **Discussão do LMS:** respondida em 2026-10-13: a discussão de cada atividade do LMS é um comentário no Fórum; cada curso e cada atividade têm tópico vinculado (seção E7).
 35. **Valores iniciais:** respondida em 2026-10-13: 10 comentários como limite padrão, alterável no painel administrativo do `aculta_portal` (seção E7).
 36. **Matriculados:** respondida em 2026-10-13: matriculados no curso ficam isentos da moderação do primeiro comentário e têm aprovação automática nas discussões do LMS.
-37. **Escopo da isenção dos matriculados:** vale só nas discussões do curso, ou também em outros tópicos do Fórum? Proposta: só no curso.
-38. **Criação dos tópicos do LMS:** o sistema cria o tópico de cada curso e de cada atividade automaticamente, sem contar os 10 comentários? Proposta: sim, porque é parte do curso.
+37. **Escopo da isenção dos matriculados:** respondida em 2026-10-13: vale nas discussões do curso; ao comentar no curso, a isenção vale em todo o Fórum.
+38. **Criação dos tópicos do LMS:** respondida em 2026-10-13: os tópicos de curso e de atividade são criados por quem tem autorização para criar cursos.
 
 ## 8. Riscos e limites
 
