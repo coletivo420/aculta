@@ -58,7 +58,7 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
     'Identity contract has the stable key set: ' . $purpose,
   );
   $assert(
-    array_keys($theme['regions']) === ['brand_media', 'navigation', 'actions'],
+    array_keys($theme['regions']) === ['brand_media', 'navigation', 'actions', 'wiki_search'],
     'Region contract has the stable key set: ' . $purpose,
   );
   $assert($theme['identity']['purpose'] === $purpose, 'Purpose remains stable in presentation: ' . $purpose);
@@ -70,13 +70,25 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
     'Purpose home URL is absolute and prepared by the Portal: ' . $purpose,
   );
   $assert(!$containsObject($theme), 'No object crosses the Portal -> theme boundary: ' . $purpose);
-  // brand_media has a real consumer only for the wiki purpose (DT-W01 / PR #112);
-  // navigation and actions stay deferred until their consumers exist.
+  // Wiki logo and search have real consumers; navigation and actions stay deferred.
   $brand = $theme['regions']['brand_media'];
   $brandIsWiki = $purpose === 'wiki' ? is_array($brand) : $brand === NULL;
+  $search = $theme['regions']['wiki_search'];
+  $searchIsWiki = $purpose === 'wiki'
+    ? is_array($search)
+      && ($search['#type'] ?? NULL) === 'form'
+      && ($search['#method'] ?? NULL) === 'get'
+      && ($search['#attributes']['role'] ?? NULL) === 'search'
+      && ($search['q']['#title_display'] ?? NULL) === 'invisible'
+      && array_key_exists('#value', $search['q'])
+      && in_array('url.query_args:q', $search['#cache']['contexts'] ?? [], TRUE)
+    : $search === NULL;
   $assert(
-    $brandIsWiki && $theme['regions']['navigation'] === NULL && $theme['regions']['actions'] === NULL,
-    'Only brand_media is consumed, and only for wiki; navigation and actions stay deferred: ' . $purpose,
+    $brandIsWiki
+      && $searchIsWiki
+      && $theme['regions']['navigation'] === NULL
+      && $theme['regions']['actions'] === NULL,
+    'Wiki receives branded media and the shared GET search form; navigation/actions stay deferred: ' . $purpose,
   );
 
   $contexts = $presentation->getCacheContexts();

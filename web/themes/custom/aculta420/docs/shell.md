@@ -74,7 +74,11 @@ preparada pelo Portal ao fallback mínimo `{label, home_url}`, com `label =
 short_title ?? title`, e `page.html.twig` o acrescenta. Não inferir branding pela
 truthiness ou por “vazio visual” do render array. `purpose` não é emitido no DOM
 em B.3/B.4 e `logo_alt` fica reservado para mídia de branding futura. Regiões
-renderizáveis do contrato continuam deferidas, exceto `brand_media` no purpose Wiki, consumido pelo header desde 0.4.0-dev.6 (logo Wiki420, PR #112). `navigation` e `actions` seguem nulos até terem consumidor real.
+renderizáveis do contrato incluem `brand_media` (logo Wiki420) e `wiki_search`
+(busca GET do Portal na faixa superior da Wiki). `navigation` e `actions`
+seguem nulos até terem consumidor real. O shell Wiki usa essa região para
+substituir o menu principal compartilhado; a Institution Bar multidomínio não
+participa dessa variação.
 
 ## Branding e fallback
 

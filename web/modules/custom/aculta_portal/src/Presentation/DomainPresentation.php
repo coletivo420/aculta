@@ -17,7 +17,7 @@ final class DomainPresentation implements CacheableDependencyInterface {
 
   /**
    * @param array{purpose: string, title: string, short_title: ?string, home_url: string, logo_alt: ?string} $identity
-   * @param array{brand_media: ?array, navigation: ?array, actions: ?array} $regions
+   * @param array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array} $regions
    */
   public function __construct(
     private readonly array $identity,
@@ -30,7 +30,7 @@ final class DomainPresentation implements CacheableDependencyInterface {
    *
    * @return array{
    *   identity: array{purpose: string, title: string, short_title: ?string, home_url: string, logo_alt: ?string},
-   *   regions: array{brand_media: ?array, navigation: ?array, actions: ?array}
+   *   regions: array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array}
    * }
    */
   public function toThemeArray(): array {

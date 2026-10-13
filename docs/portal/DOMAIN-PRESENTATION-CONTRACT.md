@@ -142,7 +142,8 @@ domain_presentation
 └── regions
     ├── brand_media      render array|null  (array só no purpose wiki, desde a PR #112; consumido pelo header)
     ├── navigation       render array|null
-    └── actions          render array|null
+    ├── actions          render array|null
+    └── wiki_search      render array|null  (só Wiki; formulário GET do endpoint existente)
 ```
 
 `identity` é **props-ready**: somente escalares/arrays simples que podem ser
@@ -213,6 +214,7 @@ Não pode:
 | branding específico disponível | Portal | valor/renderable opcional |
 | fallback de branding | Portal prepara disponibilidade; tema apresenta | props simples |
 | menu correto para o purpose | Portal | render array |
+| busca da Wiki420 | Portal | render array com rota GET e cache context da query; sem classes de tema |
 | reescrita cross-domain | Portal | URL já correta |
 | account/global actions | Portal | render array |
 | access/permissões | Core/Portal | somente resultado autorizado |
@@ -242,9 +244,15 @@ fonte.
 
 Estado atual:
 
-- `system.menu.main` é global e está posicionado em `primary_menu`;
-- `system.menu.account` é global e aparece no header/faixa utilitária;
+- `system.menu.main` continua na região `primary_menu` e aparece nos cabeçalhos
+  compartilhados dos purposes não enciclopédicos;
+- `system.menu.account` é global e aparece na faixa utilitária;
 - `preprocess_menu` do Portal já corrige destinos cross-domain.
+- Para Wiki, o Portal entrega `regions.wiki_search` como formulário renderizável.
+  O ACULTA420 usa a presença dessa região como capacidade do cabeçalho de busca,
+  omite `system.menu.main` somente nesse cabeçalho e mantém a busca junto da
+  marca. Categorias, verbetes recentes e links de colaboração continuam na
+  página da Wiki. Isso não altera a Institution Bar multidomínio.
 
 0.2-B não deve criar menus duplicados por hostname. Se a 0.2-D exigir
 navegação distinta por purpose, a seleção deve ser feita no Portal e entregue

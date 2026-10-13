@@ -60,6 +60,7 @@ final class DomainPresentationBuilder {
   public function __construct(
     private readonly DomainPurposeManager $domainPurpose,
     private readonly TranslationInterface $translation,
+    private readonly WikiSearchFormBuilder $wikiSearchFormBuilder,
   ) {}
 
   /**
@@ -112,6 +113,7 @@ final class DomainPresentationBuilder {
         'brand_media' => $brandMedia,
         'navigation' => NULL,
         'actions' => NULL,
+        'wiki_search' => $purpose === 'wiki' ? $this->wikiSearchFormBuilder->build() : NULL,
       ],
       $cacheability,
     );

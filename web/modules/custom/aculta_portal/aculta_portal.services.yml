@@ -100,7 +100,10 @@ services:
     arguments: ['@aculta_portal.account_courses', '@string_translation']
   aculta_portal.presentation.domain:
     class: Drupal\aculta_portal\Presentation\DomainPresentationBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@string_translation']
+    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.presentation.wiki_search_form']
+  aculta_portal.presentation.wiki_search_form:
+    class: Drupal\aculta_portal\Presentation\WikiSearchFormBuilder
+    arguments: ['@string_translation', '@request_stack']
   aculta_portal.presentation.social_links_page:
     class: Drupal\aculta_portal\Presentation\SocialLinksPagePresenter
     arguments: ['@config.factory', '@entity_type.manager', '@views.executable', '@string_translation', '@aculta_portal.domain_purpose']

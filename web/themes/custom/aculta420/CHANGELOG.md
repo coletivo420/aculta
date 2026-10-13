@@ -1,3 +1,22 @@
+## 0.6.0-dev.18 — apresentação Wiki420 inspirada na Wikipédia — 2026-10-13
+
+Classificação: PATCH (apresentação e acessibilidade; sem mudança de contrato).
+
+- Categorias da página inicial passam de títulos grandes herdados do tema para
+  links compactos em cartões, com foco visível e tokens semânticos.
+- O texto dos verbetes recebe espaçamento consistente em parágrafos e listas,
+  citação em bloco e legenda de imagem.
+- O Domain Header da Wiki fica compacto, sem o menu primário comum, com a marca
+  e a busca GET do Portal lado a lado; a Institution Bar continua inalterada.
+- No Runtime local, home e verbete renderizam HTTP 200; a busca fica ao lado da
+  marca, o menu primário é omitido no cabeçalho Wiki e a Institution Bar segue
+  presente no markup global. Gate shell (11), SDC (231) e design foundations
+  (1683) passaram. Foundation permanece bloqueado por DT-T19 preexistente em
+  `portal-account.css`.
+- Chromium não concluiu a captura da versão local. Inspeção visual desktop,
+  mobile e claro/escuro no servidor de testes pendente. **RUNTIME STATUS:
+  DEFERRED** para validação visual remota.
+
 ## 0.6.0-dev.17 — marca de domínio como contrato neutro (fronteira módulo x tema) — 2026-10-13
 
 Classificação: PATCH (sem mudança visual; o asset do logo da Wiki passa a ser montado pelo tema a partir de uma chave do Portal).
