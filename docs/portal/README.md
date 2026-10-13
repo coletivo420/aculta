@@ -36,7 +36,8 @@
 
 ## Estado e pendências
 
-- [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md) — o que funciona, o que está DEFERRED, em implementação, planejado e faltando (Portal, submódulos e tema), com resultados dos gates.
+- [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md) — estado corrente após os merges #238 e #239, com verificações locais e limites de Runtime.
+- [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md) — snapshot histórico anterior às PRs #238 e #239.
 - [ROADMAP.md](ROADMAP.md) — fases de saneamento e de produto.
 
 ## Testes e pendências

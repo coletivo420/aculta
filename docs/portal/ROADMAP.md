@@ -1,6 +1,6 @@
 # Roadmap do aculta_portal
 
-Atualizado em 2026-10-12 (relatório de estado: [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md)). Substitui o roadmap de modernização
+Atualizado após os merges das PRs #238 e #239 (2026-10-13 UTC; estado atual: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md)). Substitui o roadmap de modernização
 P0–P10 e a lista antiga de prioridades de produto.
 
 Dívidas e pendências, com evidência, estão em [`docs/operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md).
@@ -14,11 +14,11 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 - Versão: **0.3.0-dev.28** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
 - Submódulos: `aculta_deployer` 0.1.20 (com falhas de teste e de `check`, DT-O12), `aculta_id_cpf` 0.2.0-dev.2 (Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1.
-- Tema: `aculta420` 0.6.0-dev.13. O gate Foundation reprova durações literais (DT-T19).
-- Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md).
+- Tema: `aculta420` 0.6.0-dev.15 (PR #239). Em Chrome no servidor de testes, somente a barra multidomínio fica fixa; o cabeçalho do domínio rola com o conteúdo. O gate Foundation segue bloqueado por DT-T19.
+- Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
 - Migração do envio de e-mail para Mailer Plus (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
-- Gates: Drupal 11+ do Portal PASS (542 checks); comércio e configuração PASS; linha de base DT-O10 em `scripts/institution/CONFIG-DRIFT-BASELINE.json`.
+- Gates locais nesta revisão: Drupal 11+ do Portal PASS (659 checks); fronteira módulo/tema PASS (684 verificações); endereços de ambiente PASS (1316 arquivos). Testes Unit do Portal: 63 PASS; testes do `aculta_id_cpf`: 47 PASS. Foundation continua FAIL por DT-T19.
 - Pendências abertas: ver DEBT-REGISTER (estado vivo; este roadmap não repete a contagem).
 
 ## Ordem de execução
@@ -32,10 +32,10 @@ versão alvo, validar e só então taguear.
 
 ## Saneamento
 
-### S0 — Higiene documental (em andamento)
+### S0 — Higiene documental (concluída nesta revisão)
 
 - Corrigir referências a PRs e estados obsoletos (DT-P16, DT-P17, DT-P18).
-- Critério: busca pelos padrões de DT-P16 e DT-P18 (PR obsoleta citada como integração em curso; auditoria P10-R apontada como etapa seguinte) vazia nos documentos atuais, excluindo este roadmap e o registro de dívidas, que guardam a evidência das dívidas resolvidas.
+- Critério verificado: busca nos documentos atuais não encontrou PR antiga descrita como integração em curso nem P10-R descrita como etapa futura. A auditoria P10-R permanece referenciada como concluída; suas evidências foram removidas na limpeza documental e estão preservadas no commit `9c95420`.
 
 ### S1 — Fronteira de apresentação (DT-P01) — concluída em 0.2.0-dev.20
 
@@ -45,27 +45,29 @@ versão alvo, validar e só então taguear.
 - Critério: nenhuma classe `aculta-*` em `web/modules/custom/aculta_portal/templates/`; o gate
   do Portal passa a impedir o retorno.
 
-### S2 — Tipagem e cobertura (DT-P02, DT-P03) — parcial: strict_types concluído e 1 teste de Kernel (login); domínio e pagamento pendentes
+### S2 — Tipagem e cobertura (DT-P02, DT-P03) — parcial: strict_types, login e domínio concluídos; pagamento pendente de decisão
 
 - `declare(strict_types=1)` em `PortalHooks.php`; remover o teto correspondente do gate.
-- Testes de Kernel para os serviços P5–P7, em banco MariaDB de teste. Comece pelos três de maior
-  risco: login (validação), domínio (política de rotas) e pagamento (fail-closed).
-- Critério: teto de `strictTypesDebt` vazio; ao menos um teste de Kernel por serviço de risco alto.
+- Testes de Kernel existentes para login (`EmailConfirmationPolicyKernelTest`) e domínio
+  (`DomainPurposeManagerKernelTest`, 7 testes). Um teste de Kernel de pagamento segue pendente:
+  sua instalação exige decidir sobre o ambiente de teste do Commerce (DT-P03).
+- Critério: teto de `strictTypesDebt` vazio; cobertura de Kernel para login e domínio; pagamento
+  depende da decisão registrada no DEBT-REGISTER.
 
-### S3 — Validação em ambiente real (DT-P04, DT-P05, DT-P07, DT-P08, DT-P11, DT-O06, DT-O07)
+### S3 — Validação em ambiente real (DT-P04, DT-P05, DT-P07, DT-P08, DT-P11)
 
-Resultado da rodada de 2026-10-09. Cada item tem resultado ou decisão de adiar; nada fica implícito.
+Resultados abaixo têm datas próprias no registro de dívidas. Itens resolvidos não devem ser descritos como pendentes.
 
 - **DT-O06 (login de conta bloqueada): executado.** A validação do formulário de login recusa a conta bloqueada com a mensagem do Core ("não foi ativado ou está bloqueado") e aceita a conta ativa. Conta de teste criada e removida. Observação: o serviço `user.auth` do Core devolve o uid sem checar o status; a recusa é do formulário, por desenho do Core.
 - **DT-P08 (login com CAPTCHA por HTTP): parcial.** O formulário de login em `/entrar` renderiza o widget Turnstile. A resolução do desafio depende de um humano ou de uma exceção de teste aprovada pelo responsável (ver DT-P11). Adiado.
 - **DT-P11 (`validate-final-contact`): adiado com decisão.** O script é local por desenho (recusa qualquer host que não seja localhost) e sai com código 2 (pendente) porque o Turnstile recusa envio por script. Permanece pendente até a decisão de exceção de teste.
 - **DT-P04 (PHP 8.5): adiado por ambiente.** O host tem PHP 8.4 e não tem PHP 8.5. A instalação exige privilégio de root neste host.
-- **DT-P05 (entrega de e-mail) e DT-O07 (drift de `smtp.settings` e `system.mail`): adiados por dependência.** Importar a configuração de SMTP exige credenciais e o deploy. Hoje o drift é classificado: ambos diferem de `config/sync`, e não serão importados até a decisão de credenciais.
+- **DT-O07 (drift de `smtp.settings` e `system.mail`): resolvida na M2.** O módulo SMTP e sua configuração foram removidos; `system.mail` usa Mailer Plus. **DT-P05 (entrega em produção):** decisão do responsável para o fim do projeto; não é bloqueio de fase. O envio no Runtime de teste está validado.
 - **DT-P07 (Mercado Pago com credencial de sandbox): adiado.** Decisão do responsável, a pedido.
 
-### S4 — Decisões do responsável (DT-P06, DT-P09, DT-P10, DT-G01)
+### S4 — Decisões do responsável (DT-P10; decisões tomadas em DT-P06, DT-P09 e DT-G01)
 
-- DT-P06 concluído em 0.2.0-dev.22 (decisão do responsável, 2026-10-09): cadastro neutro. DT-P09 resolvida na M1 da migração do e-mail (2026-10-11). Restam DT-P10 e DT-G01.
+- DT-P06 concluído em 0.2.0-dev.22 (decisão do responsável, 2026-10-09): cadastro neutro. DT-P09 resolvida na M1 da migração do e-mail (2026-10-11). DT-G01 tem decisão registrada pelo responsável. Resta a decisão DT-P10 sobre módulos de administração em produção.
 
 - Reabrir a política de enumeração pelo cadastro quando houver revisão de CAPTCHA.
 - Decidir sobre os módulos de administração ativos em produção.
@@ -81,7 +83,7 @@ Resultado da rodada de 2026-10-09. Cada item tem resultado ou decisão de adiar;
 
 ### S6 — Operação e Runtime (DT-O01 a DT-O05)
 
-- Limpeza de branches remotas mescladas (64): listar, confirmar e apagar só com autorização.
+- Limpeza de branches remotas mescladas: a contagem de 64 vem de inventário anterior e está desatualizada; reconciliar o inventário atual e remover somente branches já mescladas conforme autorização do responsável (DT-O01).
 - Política para `estados/`: o snapshot de 2026-10-04 não representa mais o Runtime. Decidir entre
   novo snapshot versionado ou registro de drift.
 - Diretório de agregados do Drupal: ajuste de permissão no ambiente (responsabilidade de operação).
