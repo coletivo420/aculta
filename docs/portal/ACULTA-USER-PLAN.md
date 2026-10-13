@@ -470,7 +470,8 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 ## 8. Riscos e limites
 
 - Compatibilidade D11 de todos os candidatos novos: **não confirmada** nesta sessão (bloqueio de egress em `drupal.org`).
-- Código do Core e do contrib não está presente neste workspace; APIs citadas aqui (Flag `entity:user`, Pathauto para perfil, Views de `node_field_revision`) devem ser confirmadas no Homelab em U0.
+- Core 11.4.8 e contrib estão instalados no Homelab. As APIs citadas foram verificadas por leitura de código em U0 (`docs/portal/ACULTA-USER-U0-VERIFICACAO.md`). Continuam **não confirmadas**: a unicidade de alias gerado pelo Pathauto e a geração real de alias no Runtime; ambas exigem teste em U1.
+- Revisão de U0 corrigiu premissas deste plano: `revision_uid` fica em `node_revision`, não em `node_field_revision`; `skip comment approval` não distingue o primeiro comentário; `lms_activity` não tem campo de comentário.
 - O módulo `redirect` pode criar redirect automático quando o Pathauto troca um alias. Isso conflita com a regra de slug sem 301. Precisa ser desligado para os aliases de autor.
 - Dados pessoais e LGPD: a ativação de perfil público e de notificações depende de decisão do responsável e de revisão de texto de consentimento.
 - Gamificação mal desenhada pode expor participação e apoio. O risco está em métricas, não só na interface.
@@ -480,16 +481,12 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 
 **Decisão do responsável (2026-10-13):** funcionalidades que ainda não existem serão implementadas. Inclui as seções E2 a E7, A1, G2 e o cartão de pré-visualização do verbete.
 
-**Bloqueio para verificação (registrado em 2026-10-13):**
+**Status do bloqueio (atualizado após U0):** o bloqueio de 2026-10-13 não existe mais. O Homelab tem `composer install` concluído, Core 11.4.8 e Drush respondendo, com acesso ao banco `aculta_runtime`. Nenhum item deste plano foi validado no Runtime.
 
-- `packages.drupal.org` (repositório Composer do Drupal, declarado em `composer.json`) responde 403 pela política de egress da sessão. `repo.packagist.org` falha no túnel. Sem isso não há `composer install`, e portanto não há Core nem contrib para verificar APIs.
-- O código do Core e do contrib não está neste workspace (`web/core`, `vendor/` ausentes). Escrever PHP aqui sem poder rodar nem conferir APIs contraria `GUARDRAILS.md` e as regras de encerramento de fase.
-- Não há Runtime acessível a partir desta sessão.
+**Status da ordem de implementação (cada item é um PR próprio, `RUNTIME STATUS: DEFERRED` até validação no Homelab):**
 
-**Ordem de implementação (cada item é um PR próprio, `RUNTIME STATUS: DEFERRED` até validação no Homelab):**
-
-1. **U0 (no Homelab):** `composer install`, verificação de Flag com `entity:user`, Pathauto com perfil, Views de `node_field_revision` e de comentários, e do módulo `lms` 1.2.3 (discussão).
-2. **Configuração de papéis (sem código):** `content_editor` (com `wiki_editor`, `administer comments`, `edit any forum content`); `wiki_contributor` para `email_confirmed`; `revert wiki_entry revisions` para `wiki_editor`.
+1. **U0 (no Homelab): concluído** no branch `aculta-user-u0` (commit `6d11bb2`, publicado, sem PR). Relatório: `docs/portal/ACULTA-USER-U0-VERIFICACAO.md`. Parada registrada: `lms_activity` não tem discussão nem comentário.
+2. **Configuração de papéis:** **parcial**, no branch `aculta-user-papeis` (commit `0fc367a`, `RUNTIME STATUS: DEFERRED`). Feito: `content_editor` recebe as permissões de `wiki_editor`, `administer comments` e `edit any forum content` (sem `administer forums`); `wiki_editor` recebe `revert wiki_entry revisions`; gate `scripts/validate-aculta-user-roles.php`. **Pendente:** `wiki_contributor` para `email_confirmed`. Drupal não mapeia papel para papel; a forma de conceder (hook de atribuição ou outra) é decisão do responsável.
 3. **Participação e Fórum:** tópico vinculado (E3), limite de 10 comentários e fila do primeiro comentário com painel administrativo (E7), e cartão de pré-visualização (E6).
 4. **Atividade:** seção com abas (E2), histórico individual e progresso de limites.
 5. **Perfil, avatar e associado:** perfil público, acervo de avatares (com a família `mushrooms` resolvida), papel `associado`, campos de "Outros Dados" (A1).
