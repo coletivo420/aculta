@@ -4,6 +4,8 @@
 - Privacidade (`/configuracoes/privacidade`) só com as escolhas de visibilidade (perfil público, foto, bio,
   redes, e-mail). Apelido segue em Meus dados; bio e redes na visão geral. `/configuracoes/perfil` sai (404).
 - Aba acrescentada pelo alter `aculta_portal_settings_tabs` (Portal: `aculta_portal.settings_tabs`).
+- Privacidade: a opção "Mostrar foto" sai; a foto sempre aparece no perfil público. Bio, redes e e-mail continuam separados.
+  Teste unitário da política atualizado (perfil privado: foto e apelido).
 - Sorteio de avatar: token CSRF verificado (200 com o link do modal, 403 sem token).
 - RUNTIME STATUS: verificado no Homelab (navegador). Inspeção visual humana pendente.
 

@@ -22,7 +22,6 @@ class PublicProfilePolicyTest extends UnitTestCase {
     return $override + [
       'publico' => TRUE,
       'apelido' => 'maria-souza',
-      'exibir_foto' => TRUE,
       'exibir_bio' => TRUE,
       'exibir_email' => TRUE,
       'exibir_redes' => TRUE,
@@ -30,20 +29,20 @@ class PublicProfilePolicyTest extends UnitTestCase {
   }
 
   /**
-   * Apelido é público por padrão; itens só com escolha da pessoa.
+   * Perfil público mostra apelido e foto; bio, e-mail e redes dependem da escolha da pessoa.
    */
-  public function testPadraoMostraSoApelido(): void {
+  public function testPadraoMostraApelidoEFoto(): void {
     $policy = new PublicProfilePolicy();
-    $perfil = ['publico' => TRUE, 'apelido' => 'maria-souza', 'exibir_foto' => FALSE, 'exibir_bio' => FALSE, 'exibir_email' => FALSE, 'exibir_redes' => FALSE];
-    $this->assertSame(['apelido' => TRUE], $policy->publicItems($perfil));
+    $perfil = ['publico' => TRUE, 'apelido' => 'maria-souza', 'exibir_bio' => FALSE, 'exibir_email' => FALSE, 'exibir_redes' => FALSE];
+    $this->assertSame(['apelido' => TRUE, 'foto' => TRUE], $policy->publicItems($perfil));
   }
 
   /**
-   * Perfil privado não mostra nada, nem o apelido.
+   * Perfil privado mostra somente foto e apelido; bio, redes e e-mail somem.
    */
-  public function testPerfilPrivadoNaoMostraNada(): void {
+  public function testPerfilPrivadoMostraSoFotoEApelido(): void {
     $policy = new PublicProfilePolicy();
-    $this->assertSame([], $policy->publicItems($this->perfilCompleto(['publico' => FALSE])));
+    $this->assertSame(['apelido' => TRUE, 'foto' => TRUE], $policy->publicItems($this->perfilCompleto(['publico' => FALSE])));
   }
 
   /**

@@ -97,7 +97,7 @@ final class ArticleAuthorsHooks {
     $items = $this->policy->publicItems([
       'publico' => $publico,
       'apelido' => $name,
-      'exibir_foto' => $flag('field_exibir_foto'),
+      'exibir_foto' => TRUE,
       'exibir_bio' => $flag('field_exibir_bio'),
       'exibir_redes' => $flag('field_exibir_redes'),
     ]);

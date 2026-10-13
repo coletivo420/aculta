@@ -21,8 +21,9 @@ Sem o ACULTA420, links, textos e fotos continuam funcionando.
 - **Autores e editores são sempre públicos:** papéis `content_editor` e `wiki_editor`. O controle de privacidade
   fica bloqueado, com o motivo exibido (`isObrigatorioPublico`).
 - **Perfil privado:** mostra somente foto e apelido, na página pública.
-- **Itens de perfil público:** bio (`field_exibir_bio`), foto (`field_exibir_foto`), redes (`field_exibir_redes`),
-  e-mail (`field_exibir_email`). Cada um só aparece se a pessoa escolheu exibi-lo.
+- **Foto:** sempre aparece no perfil público (não há opção de ocultar; o campo `field_exibir_foto` ficou sem uso).
+- **Itens separados:** bio (`field_exibir_bio`), redes sociais (`field_exibir_redes`) e e-mail (`field_exibir_email`).
+  Cada um só aparece se a pessoa escolheu exibi-lo, individualmente.
 - **Nunca públicos:** CPF, RG, endereço, WhatsApp, data de nascimento, cidade e UF.
 
 ## 3. Página pública `/u/<apelido>` (purpose `main`)

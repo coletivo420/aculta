@@ -66,10 +66,9 @@ final class ProfileVisibilityForm extends FormBase {
       '#default_value' => $obrigatorio ? TRUE : $this->flag($profile, 'field_perfil_publico', TRUE),
       '#disabled' => $obrigatorio,
     ];
-    $form['exibir_foto'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar foto'), '#default_value' => $this->flag($profile, 'field_exibir_foto', FALSE)];
     $form['exibir_bio'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar bio'), '#default_value' => $this->flag($profile, 'field_exibir_bio', FALSE)];
     $form['exibir_redes'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar redes sociais'), '#default_value' => $this->flag($profile, 'field_exibir_redes', FALSE)];
-    $form['exibir_email'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar e-mail (como botão)'), '#default_value' => $this->flag($profile, 'field_exibir_email', FALSE)];
+    $form['exibir_email'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar e-mail'), '#default_value' => $this->flag($profile, 'field_exibir_email', FALSE)];
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar')];
@@ -83,7 +82,6 @@ final class ProfileVisibilityForm extends FormBase {
     $profile = $this->loadOrCreateProfile();
     // Controle bloqueado não é enviado pelo navegador; autor e editor continuam públicos.
     $profile->set('field_perfil_publico', $this->isObrigatorioPublico() ? TRUE : (bool) $form_state->getValue('publico'));
-    $profile->set('field_exibir_foto', (bool) $form_state->getValue('exibir_foto'));
     $profile->set('field_exibir_bio', (bool) $form_state->getValue('exibir_bio'));
     $profile->set('field_exibir_redes', (bool) $form_state->getValue('exibir_redes'));
     $profile->set('field_exibir_email', (bool) $form_state->getValue('exibir_email'));
