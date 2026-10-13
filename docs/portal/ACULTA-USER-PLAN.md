@@ -140,10 +140,12 @@ Serviços previstos (nomes provisórios):
 **Decisão do responsável (2026-10-13):** o verbete não mostra autoria no corpo. A Wiki segue o modelo da Wikipedia.
 
 - **Corpo do verbete:** sem autor, sem "escrito por", sem cartão de autor e sem data de criação. Só conteúdo, categorias e, se houver, data da última revisão.
-- **Histórico é individual (decisão do responsável, 2026-10-13):** o histórico de revisões de cada pessoa aparece só para a própria pessoa, na aba Wiki de "Atividade". Outros usuários não veem esse histórico, nem pelo perfil público, nem por link direto. Acesso negado (403) para qualquer outra conta, inclusive por URL com o identificador da pessoa.
-- **Contribuições da pessoa:** aba "Wiki" em "Atividade" (seção H). Lista as revisões feitas por ela, com verbete, data e link para o histórico. Só revisões de verbetes publicados aparecem na visão pública do autor, se houver.
-- **Histórico do verbete (a confirmar):** a aba "Histórico" do verbete, no modelo da Wikipedia, mostraria revisões de todos. Isso conflita com a regra de histórico individual acima. Até o responsável decidir, esta aba **não** é implementada. Ver decisão 21.
-- **Privacidade:** nas abas de Atividade, nenhuma informação de outra pessoa aparece. Nos verbetes, o nome de exibição de quem revisou só aparece se a decisão 21 mantiver histórico público.
+- **Histórico do verbete é público (decisão do responsável, 2026-10-13):** aba "Histórico" no verbete, como na Wikipedia, com as revisões de todas as pessoas, comparação (`diff`) e nome de exibição de quem revisou.
+- **Reversão é do `wiki_editor`.** Nenhum outro papel reverte revisão.
+- **Histórico de atividade da pessoa é individual:** a lista de revisões que uma pessoa fez aparece só para ela, na aba Wiki de "Atividade". Outros usuários, inclusive administradores, recebem 403 (inclusive por URL com o identificador da pessoa).
+- **Contribuições da pessoa:** aba "Wiki" em "Atividade" (seção H). Lista as revisões feitas por ela, com verbete, data e link para o histórico público do verbete.
+- **Verbete não publicado** não aparece em listagem, contagem ou histórico público (`GUARDRAILS.md`, seção Wiki).
+- **Discussão do verbete:** ver seção E3 (discussão unificada no Fórum).
 - **Verbete não publicado** não aparece em listagem, contagem ou histórico público (`GUARDRAILS.md`, seção Wiki).
 - Contagens são derivadas (sobre `node_field_revision` com `revision_uid`). Nenhum contador persistido no Portal.
 
@@ -151,6 +153,33 @@ Serviços previstos (nomes provisórios):
 - Tópicos: nós `forum` com `uid` do usuário. Respostas: `comment_forum` com `uid`.
 - Seguir e salvar tópico: flags `seguir_topico` e `salvar_topico` já existentes; a aba lista os tópicos seguidos e salvos.
 - Denúncia de comentário (`DT-P13`): Flag do tipo `entity:comment` com fila de moderação via Views. A moderação reusa permissões e o Comment do Core (`GUARDRAILS.md`, seção Fórum). Entra na fase U4.
+
+### E3. Comentários unificados: a discussão mora no Fórum
+
+**Proposta (pedido do responsável, 2026-10-13):** um único sistema de comentários. A discussão completa fica no Fórum. Nas páginas de conteúdo aparece um trecho dela, com link para a discussão completa.
+
+**Como funciona:**
+
+- **Discussão vinculada:** cada verbete, artigo da revista, atividade ou projeto pode ter **um tópico de Fórum vinculado**. O vínculo é uma referência do tópico para o conteúdo (campo de referência no tipo `forum`, a criar). Como na Wikipedia, o verbete tem uma aba "Discussão", que abre esse tópico.
+- **Os comentários moram só no tópico.** Não há campo de comentário nos tipos de conteúdo de revista, wiki ou atividade. Um único tipo de comentário (`comment_forum`) e uma única moderação. Não há tabela nem entidade nova.
+- **Página do conteúdo:** bloco com os últimos comentários do tópico vinculado (View de comentários filtrada pelo tópico, com limite de quantidade), e o link "Ver discussão completa (N comentários)". O link aponta para o purpose FORUM, obtido por `DomainPurposeManager`, nunca por nome de host.
+- **Resposta:** o formulário de resposta fica **só** na discussão completa, no host FORUM. A página de conteúdo não envia POST para outro host (`CROSS-DOMAIN-REQUEST-POLICY.md`).
+- **Sem tópico vinculado:** a página do conteúdo não mostra bloco nem link de discussão. Nada de comentário solto no conteúdo.
+- **Criação do tópico:** manual, pelo editor do conteúdo ou pelo `wiki_editor`, por ação no próprio conteúdo. Não criar tópico automaticamente para todo conteúdo (a confirmar, decisão 24).
+- **Atividade:** a aba Comentários (seção E2) lista os comentários da pessoa nas discussões. Com isso, a decisão 22 fica resolvida: não há comentário em artigo.
+
+**Por que esta forma:**
+
+- Reaproveita o Forum e o Comment do Core já instalados. Não cria storage paralelo (`GUARDRAILS.md`).
+- A discussão completa e a denúncia (`DT-P13`) ficam em um lugar só.
+- O histórico de contribuição e as flags `seguir_topico` e `salvar_topico` funcionam sem mudança.
+
+**Pontos a verificar no Homelab antes de U2:**
+
+- O Core permite usar o tipo `comment_forum` com um campo de comentário em outro tipo de nó? Não precisa: a proposta usa campo de referência do tópico para o conteúdo, não comentário no conteúdo. Mesmo assim, verificar que o módulo `forum` não reage a comentários de tópicos fora do tipo `forum`.
+- View de comentários com filtro pelo tópico, e cache correto (tags do tópico e dos comentários).
+- Acesso anônimo de leitura do tópico no host FORUM (`access content` no papel anônimo já existe).
+- Pesquisa: a busca em drupal.org não confirmou detalhes de Views sobre comentários de outra entidade. Ver o registro de mudança de comentários como campos (`https://drupal.org/node/2100015`) e a documentação de Views de comentários no Homelab.
 
 ### E2. Atividade centralizada em "Atividade"
 
@@ -161,12 +190,12 @@ Serviços previstos (nomes provisórios):
   - `/atividade/wiki`: revisões feitas por ela (seção D);
   - `/atividade/forum`: tópicos, respostas, seguidos e salvos (seção E);
   - `/atividade/revista`: artigos da revista em que ela é autora (seção C);
-  - `/atividade/comentarios`: comentários em todos os tipos de conteúdo com comentário ativo, com link para o conteúdo;
+  - `/atividade/comentarios`: comentários feitos pela pessoa nas discussões do Fórum (seção E3), com link para a discussão;
   - `/atividade/conquistas`: badges (seção G).
 - **Menu lateral:** um único item "Atividade" (ícone Bootstrap Icons, a escolher), depois de "Cursos". Substitui os itens separados previstos para Wiki e Fórum.
 - **Mobile:** o conteúdo da seção entra na sanfona já existente. As abas aparecem como barra horizontal rolável, sem JavaScript.
 - **Vazio:** cada aba sem conteúdo mostra mensagem curta e link para a área correspondente (verbetes, Fórum, revista).
-- **Controle de acesso:** cada aba só lista o que a própria pessoa fez e o que ainda está publicado. Ninguém vê o histórico ou a atividade de outra pessoa por esta seção, nem administradores por ela (a confirmar, decisão 21). A visão pública fica no perfil (seção B), e só com perfil público, e sem o histórico de revisões.
+- **Controle de acesso:** cada aba só lista o que a própria pessoa fez e o que ainda está publicado. Ninguém vê a atividade de outra pessoa por esta seção. O administrador vê **somente a própria atividade** (decisão 23, respondida em 2026-10-13). A visão pública fica no perfil (seção B), e só com perfil público, e sem o histórico de revisões.
 - **Organização no código:** rotas e controller dentro do `aculta_user` (Views de aba, sem entidade nova); o `AccountShellBuilder` do Portal só ganha o item de menu.
 
 ### F. Funções sociais
@@ -235,7 +264,7 @@ Cada fase tem PR próprio (`AGENTS.md`, regra de encerramento). Código sem Runt
 | --- | --- | --- |
 | **U0** | Decisões da seção 7 e verificação no Homelab: `composer show` e `dry-run` dos candidatos; checagem de `flag` com `entity:user`; checagem de `pathauto` com perfil. | Respostas registradas no `DEBT-REGISTER` ou neste documento. Nenhum código. |
 | **U1** | Submódulo `aculta_user` (versão `0.1.0-dev.1`). Campos `field_bio`, `field_visibilidade_publica`, `field_slug`. `PublicProfilePolicy` e `PublicProfilePresenter`. `/autores/<slug>` (fallback sem perfil público). Avatar com fallback. | Testes de Kernel para privacidade e acesso; Unit dos presenters; gates do Portal, fronteira, slugs e endereços passam. |
-| **U2** | Seção "Atividade" com abas Wiki, Fórum, Revista e Comentários (seção E2); histórico do verbete como na Wikipedia (seção D); cartão de autor e listagem na revista (seção C). Só Views e leitura. | Verbete sem autoria no corpo (teste de conteúdo); histórico com permissão de reversão; aba sem dados de outra pessoa; conteúdo não publicado não aparece; teste de navegador em `TESTES-NAVEGADOR.md`. |
+| **U2** | Seção "Atividade" com abas Wiki, Fórum, Revista e Comentários (seção E2); histórico público do verbete e aba Discussão vinculada ao Fórum (seções D e E3); cartão de autor e listagem na revista (seção C). Só Views e leitura. | Verbete sem autoria no corpo (teste de conteúdo); histórico com permissão de reversão; aba sem dados de outra pessoa; conteúdo não publicado não aparece; teste de navegador em `TESTES-NAVEGADOR.md`. |
 | **U3** | Seguir pessoas (Flag), seguidores e feed (Views), notificações opt-in por fila. | Consentimento validado; envio de e-mail só com opt-in; sem listas de seguidores públicas. |
 | **A1** | Papel `associado` (sem permissão administrativa), campos de adesão, RG cifrado (padrão `aculta_id_cpf`), profissão e data de nascimento em "Outros Dados", relatório administrativo de associados. | RG nunca em claro (teste de gravação e de leitura); relatório restrito por permissão; teste de acesso negado para comum e para `wiki_editor`. |
 | **U4** | Badges (automáticas e manuais, entidade `aculta_badge_award`), denúncia de comentário (DT-P13) com fila de moderação. | Sem ranking; concessão manual com autor e motivo; revogação registrada; badges sem PII. |
@@ -267,9 +296,10 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 18. **Badges manuais:** quem pode conceder (só o administrador, ou também editores de Wiki e de Fórum)? Badge pode ser revogada?
 19. **Badges automáticas:** quais regras entram na primeira versão? (Sugestão: verbetes publicados, respostas no Fórum, tempo de participação.)
 20. **Slugs das abas:** confirma `/atividade/{wiki,forum,revista,comentarios,conquistas}` e o nome do item de menu "Atividade"?
-21. **Histórico:** respondida em 2026-10-13: o histórico de cada pessoa é individual, visto só por ela. Pergunta restante: o histórico de revisões **do verbete** (aba estilo Wikipédia) também é restrito, ou fica público? Se for público, a regra individual vale só para a aba de Atividade. Quem pode reverter revisão: só `wiki_editor`?
-23. **Administrador:** o administrador vê o histórico ou a atividade de outra pessoa? Proposta: não, a não ser por motivo registrado (como no painel de segredos).
-22. **Comentários:** a aba inclui comentários de artigos da revista, se os tipos de conteúdo tiverem comentário ativo? Hoje só o tipo de fórum tem comentário configurado.
+21. **Histórico:** respondida em 2026-10-13: o histórico do verbete é público; a reversão é do `wiki_editor`; o histórico de atividade de cada pessoa é individual.
+22. **Comentários:** respondida em 2026-10-13: comentários moram só nas discussões do Fórum; o conteúdo mostra trecho com link para a discussão completa (seção E3).
+23. **Administrador:** respondida em 2026-10-13: o administrador vê só a própria atividade.
+24. **Tópico de discussão:** criação manual pelo editor ou pelo `wiki_editor`, ou automática para todo verbete? Qual tipo de conteúdo recebe discussão (verbete, artigo, atividade, projeto)?
 
 ## 8. Riscos e limites
 
