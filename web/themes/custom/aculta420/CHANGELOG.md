@@ -1,3 +1,12 @@
+## 0.6.0-dev.17 — marca de domínio como contrato neutro (fronteira módulo x tema) — 2026-10-13
+
+Classificação: PATCH (sem mudança visual; o asset do logo da Wiki passa a ser montado pelo tema a partir de uma chave do Portal).
+
+- `ThemeHooks::brandMediaRender()` transforma `#brand_key` (`wiki420`) em imagem com o asset do tema. O Portal não referencia mais `themes/custom/aculta420`.
+- `PortalBrandHooks`: removida a tentativa de alter de módulo (temas não recebem `hook_*_alter`).
+- Teste de compatibilidade com o tema Claro (Core): popup de foto e recorte funcionam; logo da Wiki volta com aculta420.
+- `aculta420.info.yml` 0.6.0-dev.17. RUNTIME STATUS: DEFERRED (inspeção visual do cabeçalho da Wiki pendente).
+
 ## 0.6.0-dev.16 — Apresentação enciclopédica da Wiki420 — 2026-10-13
 
 Classificação: MINOR (pattern SDC experimental e presenters específicos da Wiki).
