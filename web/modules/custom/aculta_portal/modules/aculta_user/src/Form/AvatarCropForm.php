@@ -1,0 +1,207 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_user\Form;
+
+use Drupal\aculta_user\Avatar\AvatarPool;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\crop\Entity\Crop;
+use Drupal\file\FileInterface;
+use Drupal\image_widget_crop\ImageWidgetCropInterface;
+use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/**
+ * Popup de recorte da foto personalizada.
+ *
+ * Fluxo: ao enviar a foto, o modal de recorte abre sozinho. Aplicar o recorte grava o recorte pela API do
+ * image_widget_crop, torna o arquivo permanente, troca a foto da conta e recarrega o painel (POST comum, sem AJAX,
+ * sem reabrir o popup). Por isso não há etapa de "Salvar" depois do recorte.
+ *
+ * O arquivo a recortar é só o informado em ?fid= (upload temporário do próprio usuário). Não há recorte da foto já
+ * salva nem do acervo: para recortar de novo, a pessoa envia a imagem outra vez.
+ */
+final class AvatarCropForm extends FormBase {
+
+  /** Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml). */
+  public const CROP_TYPE = 'aculta_avatar_1x1';
+
+  /**
+   * Opções do modal de recorte. maxHeight em porcentagem é convertido pelo Drupal (dialog.position.js), descontando as
+   * barras do tema: o modal acompanha a altura da tela. Quando o conteúdo passa dela, rola (portal-account.css).
+   */
+  public const DIALOG_OPTIONS = ['width' => 560, 'maxHeight' => '75%', 'title' => 'Recortar foto'];
+
+  /** Estilo de imagem usado pela visualização do avatar. */
+  public const STYLE = 'aculta_avatar';
+
+
+  public function __construct(
+    private ImageWidgetCropInterface $cropManager,
+    private EntityTypeManagerInterface $entityTypeManagerService,
+    private AccountInterface $currentUserService,
+    private UserDataInterface $userData,
+    private RequestStack $cropRequestStack,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('image_widget_crop.manager'),
+      $container->get('entity_type.manager'),
+      $container->get('current_user'),
+      $container->get('user.data'),
+      $container->get('request_stack'),
+    );
+  }
+
+  public function getFormId(): string {
+    return 'aculta_user_avatar_crop_form';
+  }
+
+  /**
+   * Arquivo a recortar, ou NULL. Só o arquivo recém-enviado: temporário, do próprio usuário e recortável.
+   *
+   * Não há fallback para a foto atual nem para o recorte pendente: para recortar de novo, a pessoa envia a imagem
+   * outra vez (regra de estado, docs/FOTO-PERFIL.md).
+   */
+  public function targetFile(): ?FileInterface {
+    $uid = (int) $this->currentUserService->id();
+    $fid = (int) $this->cropRequestStack->getCurrentRequest()?->query->get('fid', 0);
+    if ($fid <= 0) {
+      return NULL;
+    }
+    $file = $this->entityTypeManagerService->getStorage('file')->load($fid);
+    if ($file === NULL || (int) $file->getOwnerId() !== $uid || $file->isPermanent() || !$this->isCroppable($file)) {
+      return NULL;
+    }
+    return $file;
+  }
+
+  /** Imagem que não é do acervo do sistema. */
+  private function isCroppable(FileInterface $file): bool {
+    return !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/');
+  }
+
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    $file = $this->targetFile();
+    if ($file === NULL) {
+      $form['vazio'] = ['#markup' => $this->t('Envie uma foto própria para recortar.')];
+      return $form;
+    }
+    // Envio sem AJAX para a própria rota, com o arquivo a recortar: o modal não pode usar a URL com formato de modal.
+    $form['#action'] = Url::fromRoute('aculta_user.avatar_crop', [], ['query' => ['fid' => (int) $file->id()]])->toString();
+    // Sem abas nem seções: o recorte mostra direto a caixa de recorte (ver flattenCropWrappers).
+    $form['#after_build'][] = [self::class, 'flattenCropWrappers'];
+    $form['image_crop'] = [
+      '#type' => 'image_crop',
+      '#file' => $file,
+      '#crop_type_list' => [self::CROP_TYPE],
+      // Base do canvas de recorte: estilo só de redimensionamento. O estilo aculta_avatar já aplica o recorte,
+      // e recortar sobre uma imagem já recortada não funciona.
+      '#crop_preview_image_style' => 'crop_thumbnail',
+      '#show_default_crop' => TRUE,
+      '#show_crop' => TRUE,
+      '#warn_multiple_usages' => FALSE,
+    ];
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['aplicar'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Aplicar recorte'),
+    ];
+    $form['actions']['cancelar'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Cancelar'),
+      '#url' => Url::fromRoute('aculta_portal.dashboard'),
+    ];
+    return $form;
+  }
+
+  /**
+   * Remove as abas e seções que o image_crop cria em volta do tipo de recorte ("Crop image" e o nome do tipo).
+   *
+   * Troca só o tipo de elemento para container: nomes, #parents e valores enviados ficam iguais, então o submit lê o
+   * mesmo caminho (image_crop > crop_wrapper > CROP_TYPE > crop_container > values).
+   */
+  public static function flattenCropWrappers(array $form, FormStateInterface $form_state): array {
+    if (!isset($form['image_crop']['crop_wrapper']) || !is_array($form['image_crop']['crop_wrapper'])) {
+      return $form;
+    }
+    self::flattenElement($form['image_crop']['crop_wrapper']);
+    return $form;
+  }
+
+  /** Troca a moldura (tipo e theme_wrappers) de details/vertical_tabs por container, em todos os níveis. */
+  private static function flattenElement(array &$element): void {
+    foreach (Element::children($element) as $key) {
+      if (!is_array($element[$key])) {
+        continue;
+      }
+      if (in_array($element[$key]['#type'] ?? NULL, ['details', 'vertical_tabs'], TRUE)) {
+        // O pre_render de details/vertical_tabs reagrupa os filhos (#group): sem ele, cada campo sai duplicado.
+        $element[$key]['#type'] = 'container';
+        $element[$key]['#theme_wrappers'] = ['container'];
+        $element[$key]['#pre_render'] = [];
+        unset($element[$key]['#group'], $element[$key]['#open']);
+      }
+      self::flattenElement($element[$key]);
+    }
+    if (($element['#type'] ?? NULL) === 'details') {
+      $element['#type'] = 'container';
+      $element['#theme_wrappers'] = ['container'];
+      $element['#pre_render'] = [];
+    }
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $file = $this->targetFile();
+    $wrapper = $form_state->getValue('image_crop')['crop_wrapper'] ?? [];
+    $cropType = $this->entityTypeManagerService->getStorage('crop_type')->load(self::CROP_TYPE);
+    if ($file === NULL || $cropType === NULL || !isset($wrapper[self::CROP_TYPE]['crop_container']['values'])) {
+      $this->messenger()->addError($this->t('Não foi possível aplicar o recorte.'));
+      return;
+    }
+    $props = $wrapper[self::CROP_TYPE]['crop_container']['values'];
+    $ref = ['file-id' => $file->id(), 'file-uri' => $file->getFileUri()];
+    if (($props['crop_applied'] ?? '0') === '1' && !empty($props['width']) && !empty($props['height'])) {
+      if (Crop::cropExists($file->getFileUri(), self::CROP_TYPE)) {
+        $this->cropManager->updateCrop($props, $ref, $cropType);
+      }
+      else {
+        $this->cropManager->applyCrop($props, $ref, $cropType);
+      }
+    }
+    elseif (Crop::cropExists($file->getFileUri(), self::CROP_TYPE)) {
+      $this->cropManager->deleteCrop($file->getFileUri(), $cropType, $file->id());
+    }
+
+    $this->flushDerivatives($file);
+
+    // Aplicar o recorte já troca a foto da conta: o arquivo recortado vira a foto e a página recarrega (sem reabrir o popup).
+    $file->setPermanent();
+    $file->save();
+    $account = $this->entityTypeManagerService->getStorage('user')->load($this->currentUserService->id());
+    if ($account instanceof UserInterface) {
+      $account->set('user_picture', ['target_id' => $file->id(), 'alt' => (string) $account->label()]);
+      $account->save();
+    }
+    $this->messenger()->addStatus($this->t('Foto do perfil atualizada.'));
+    $form_state->setRedirect('aculta_portal.dashboard');
+  }
+
+  /** Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo. */
+  private function flushDerivatives(FileInterface $file): void {
+    $style = $this->entityTypeManagerService->getStorage('image_style')->load(self::STYLE);
+    if ($style !== NULL) {
+      $style->flush($file->getFileUri());
+    }
+  }
+
+}

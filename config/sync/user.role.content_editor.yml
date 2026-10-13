@@ -2,9 +2,18 @@ uuid: cd258906-032e-4a78-837b-21e521525cfa
 langcode: pt-br
 status: true
 dependencies:
+  config:
+    - filter.format.wiki
+    - node.type.forum
+    - node.type.wiki_entry
+    - workflows.workflow.wiki_editorial
   module:
+    - comment
     - contextual
+    - content_lock
+    - content_moderation
     - file
+    - filter
     - navigation
     - node
     - path
@@ -17,14 +26,29 @@ weight: 2
 is_admin: false
 permissions:
   - 'access administration pages'
+  - 'access content'
   - 'access content overview'
   - 'access contextual links'
   - 'access files overview'
   - 'access navigation'
+  - 'administer comments'
   - 'administer url aliases'
+  - 'break content lock'
   - 'create url aliases'
+  - 'create wiki_entry content'
   - 'delete own files'
+  - 'edit any forum content'
+  - 'edit any wiki_entry content'
   - 'revert all revisions'
+  - 'revert wiki_entry revisions'
+  - 'use text format wiki'
+  - 'use wiki_editorial transition create_new_draft'
+  - 'use wiki_editorial transition draft_to_review'
+  - 'use wiki_editorial transition review_to_draft'
+  - 'use wiki_editorial transition review_to_published'
   - 'view all revisions'
+  - 'view any unpublished content'
+  - 'view latest version'
   - 'view own unpublished content'
   - 'view the administration theme'
+  - 'view wiki_entry revisions'

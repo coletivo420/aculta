@@ -1,0 +1,74 @@
+aculta_user.perfil_publico:
+  path: '/u/{apelido}'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\PublicProfileController::view'
+    _title: 'Perfil'
+  requirements:
+    _access: 'TRUE'
+    apelido: '[a-z0-9][a-z0-9-]{2,39}'
+
+aculta_user.configuracoes_perfil:
+  path: '/configuracoes/perfil'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
+    _title: 'Perfil e privacidade'
+  requirements:
+    _permission: 'access aculta portal'
+
+aculta_user.participacao_settings:
+  path: '/admin/config/aculta/portal/participacao'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\ParticipationSettingsForm'
+    _title: 'Regras de participação'
+  requirements:
+    _permission: 'administer aculta participacao'
+
+aculta_user.atividade:
+  path: '/atividade/{aba}'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ActivityController::view'
+    _title: 'Atividade'
+    aba: 'wiki'
+  requirements:
+    _permission: 'access aculta portal'
+    aba: 'wiki|forum|revista|comentarios|conquistas'
+
+aculta_user.associados:
+  path: '/admin/aculta/associados'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AssociadosController::report'
+    _title: 'Associados'
+  requirements:
+    _permission: 'administer aculta associados'
+
+aculta_user.associados_csv:
+  path: '/admin/aculta/associados/exportar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AssociadosController::export'
+    _title: 'Exportar associados'
+  requirements:
+    _permission: 'export aculta associados'
+
+aculta_user.avatar_reroll:
+  path: '/avatar/sortear'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AvatarRerollController::reroll'
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
+
+aculta_user.avatar_crop:
+  path: '/avatar/recortar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AvatarCropForm'
+    _title: 'Recortar foto'
+  requirements:
+    _permission: 'access aculta portal'
+
+aculta_user.foto:
+  path: '/avatar/foto'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\UserPictureForm'
+    _title: 'Foto do perfil'
+  requirements:
+    _permission: 'access aculta portal'

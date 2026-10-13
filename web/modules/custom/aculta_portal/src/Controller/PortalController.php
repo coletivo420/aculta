@@ -125,14 +125,28 @@ final class PortalController extends ControllerBase {
       '#element_attributes' => new Attribute(['data-portal-ui' => 'account-avatar-empty', 'aria-hidden' => 'true']),
     ];
 
+    // Extensão do editor de foto: o submódulo aculta_user adiciona o sorteio de avatar (formulário próprio).
+    $photoForm = [
+      'preview' => [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['data-portal-ui' => 'account-photo-preview'],
+        'avatar' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['data-aculta-user-avatar' => ''], 'image' => $photo],
+      ],
+      'form' => $this->buildPortalAccountForm($account),
+    ];
+    $this->modules->alter('aculta_portal_photo_editor', $photoForm, $account);
+
     return [
       'identity' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-identity'],
         'photo_editor' => [
           '#theme' => 'aculta_portal_photo_editor',
-          '#photo' => $photo,
-          '#photo_form' => $this->buildPortalAccountForm($account),
+          // Avatar em <span> (válido dentro do botão) com atributo de alvo: o sorteio (aculta_user) troca todas as
+          // ocorrências por AJAX. A visualização no popup mostra o mesmo avatar antes do envio do formulário.
+          '#photo' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['data-aculta-user-avatar' => ''], 'image' => $photo],
+          '#photo_form' => $photoForm,
           '#display_name' => $display_name,
         ],
         'details' => [

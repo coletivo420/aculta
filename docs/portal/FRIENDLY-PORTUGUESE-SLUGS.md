@@ -147,7 +147,7 @@ Conteúdo editorial deve evitar aliases técnicos de entidade.
 Padrões candidatos:
 
 - artigos por título;
-- `/autores/<nome>`;
+- perfil de autor em `/u/<apelido>` (não `/autores/<nome>`; ver "Exceção registrada: perfil público");
 - `/categorias/<termo>`;
 - `/arquivo` quando houver;
 - landing pages editoriais em português.
@@ -385,3 +385,12 @@ Toda troca de caminho público entra aqui, com a instrução de deploy. O caminh
 
 Verificação após cada deploy: `/carrinho` 200 e `/cart` 404 no host principal; o host da loja redireciona
 `/carrinho` para o principal, conforme a política de pagamento.
+
+## Exceção registrada: perfil público (`aculta_user`)
+
+- Caminho: `/u/<apelido>` (perfil público de cada pessoa usuária, em `aculta.*`).
+- Motivo: `/u/` é abreviação curta de "usuário", usada para o caminho público do perfil. O apelido é a parte em português.
+- Decisão do responsável em 2026-10-13. Alternativa não adotada: `/perfil/<apelido>`.
+- Apelido: minúsculas, sem acento, único; palavras reservadas em `docs/portal/ACULTA-USER-PLAN.md` (B1).
+- Perfil privado responde 404 (decisão 40 do plano).
+

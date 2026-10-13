@@ -1,0 +1,22 @@
+services:
+  aculta_user.public_profile_policy:
+    class: Drupal\aculta_user\PublicProfilePolicy
+  aculta_user.participation_rules:
+    class: Drupal\aculta_user\ParticipationRules
+    arguments: ['@config.factory', '@entity_type.manager']
+  aculta_user.avatar_pool:
+    class: Drupal\aculta_user\Avatar\AvatarPool
+    arguments: ['@extension.list.module', '@file_system', '@entity_type.manager', '@user.data', '%app.root%']
+  aculta_user.social_auth_fields_subscriber:
+    class: Drupal\aculta_user\EventSubscriber\SocialAuthFieldsSubscriber
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: event_subscriber }
+  aculta_user.photo_editor_guard:
+    class: Drupal\aculta_user\Form\PhotoEditorGuard
+  aculta_user.avatar_asset_cleanup:
+    class: Drupal\aculta_user\Avatar\AvatarAssetCleanup
+    arguments: ["@entity_type.manager", "@datetime.time", "@file.usage"]
+  aculta_user.badge_service:
+    class: Drupal\aculta_user\Badge\BadgeService
+    arguments: ['@entity_type.manager']
