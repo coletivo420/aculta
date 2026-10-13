@@ -25,42 +25,51 @@ use PHPUnit\Framework\TestCase;
 #[Group('aculta_id_cpf')]
 final class AccountDocumentStoreAvailabilityTest extends TestCase {
 
-  public function testUnavailableWhenFingerprintFieldIsMissingEvenWithKeys(): void {
-    $store = $this->store(['field_documento' => new \stdClass()]);
+  public function testReadableWhenFingerprintFieldAndKeyAreMissing(): void {
+    $store = $this->store(['field_documento' => new \stdClass()], FALSE);
 
-    $this->assertFalse($store->isAvailable());
+    $this->assertTrue($store->isAvailable());
+    $this->assertFalse($store->canSave());
   }
 
-  public function testUnavailableWhenDocumentFieldIsMissingEvenWithKeys(): void {
+  public function testUnavailableForReadingWhenDocumentFieldIsMissing(): void {
     $store = $this->store(['field_documento_indice' => new \stdClass()]);
 
     $this->assertFalse($store->isAvailable());
+    $this->assertFalse($store->canSave());
   }
 
   public function testAvailableWhenRequiredFieldsAndKeysExist(): void {
     $store = $this->store([
       'field_documento' => new \stdClass(),
       'field_documento_indice' => new \stdClass(),
-    ]);
+    ], TRUE);
 
     $this->assertTrue($store->isAvailable());
+    $this->assertTrue($store->canSave());
   }
 
   /**
    * @param array<string, object> $fields
    *   Configurable profile field definitions.
    */
-  private function store(array $fields): AccountDocumentStore {
+  private function store(array $fields, bool $fingerprint_key_available = FALSE): AccountDocumentStore {
     $field_manager = $this->createMock(EntityFieldManagerInterface::class);
-    $field_manager->expects($this->once())
+    $field_manager->expects($this->exactly(2))
       ->method('getFieldDefinitions')
       ->with('profile', 'participante')
       ->willReturn($fields);
 
-    $key = $this->createMock(KeyInterface::class);
-    $key->method('getKeyValue')->willReturn(str_repeat('ab', 32));
+    $encryption_key = $this->createMock(KeyInterface::class);
+    $encryption_key->method('getKeyValue')->willReturn(str_repeat('ab', 32));
+    $fingerprint_key = $fingerprint_key_available ? $this->createMock(KeyInterface::class) : NULL;
+    $fingerprint_key?->method('getKeyValue')->willReturn(str_repeat('cd', 32));
     $keys = $this->createMock(KeyRepositoryInterface::class);
-    $keys->method('getKey')->willReturn($key);
+    $keys->method('getKey')->willReturnCallback(static fn(string $id): ?KeyInterface => match ($id) {
+      'aculta_document_encryption_key' => $encryption_key,
+      'aculta_id_cpf_fingerprint' => $fingerprint_key,
+      default => NULL,
+    });
 
     $validator = new DocumentValidator(new DocumentNormalizer(), new CpfValidator(), new CnpjValidator());
     $cipher = new DocumentCipher($keys);

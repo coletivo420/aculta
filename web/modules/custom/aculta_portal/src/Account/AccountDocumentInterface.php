@@ -15,8 +15,11 @@ use Drupal\user\UserInterface;
  */
 interface AccountDocumentInterface {
 
-  /** TRUE quando a gravação é possível neste ambiente (chave de cifra disponível). */
+  /** TRUE quando é possível ler um documento salvo de forma cifrada neste ambiente. */
   public function isAvailable(): bool;
+
+  /** TRUE quando as chaves e os campos necessários para uma nova gravação estão disponíveis. */
+  public function canSave(): bool;
 
   /**
    * Valida a entrada (com ou sem pontuação) e devolve o valor canônico, ou NULL quando é inválida.
