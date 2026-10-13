@@ -17,7 +17,7 @@ Convenções: **CONFIRMADO** = a afirmação se sustenta na evidência lida. **C
 | 2a | Pathauto gera alias para `user` | `web/modules/contrib/pathauto/src/Plugin/Deriver/EntityAliasTypeDeriver.php:81` (exige rota `canonical` e campo `path`). `web/modules/contrib/pathauto/src/Hook/PathautoEntityHooks.php:82-83` (campo `path` só para tipos em `enabled_entity_types`). `config/sync/pathauto.settings.yml` e Runtime (`pathauto.settings:enabled_entity_types`) listam `user`. Rota canônica do user: `web/core/modules/user/src/Entity/User.php:64` | **CONFIRMADO** (código e configuração). |
 | 2b | Pathauto resolve token do perfil `participante` para `user` | `web/modules/contrib/profile/profile.tokens.inc:15-25` (registra cada tipo de perfil como token de `user`, tipo `profile`); `:32-70` (`[user:participante:<campo>]` via `loadByUser`). Tipo `participante` em `config/sync/profile.type.participante.yml`; campo `field_nickname` em `config/sync/field.field.profile.participante.field_nickname.yml` | **CONFIRMADO** (código). Não executado: nenhum alias de usuário foi gerado no Runtime. |
 | 2c | Já existe padrão de alias para `user` | `config/sync/pathauto.pattern.*`: não há padrão de `user` (só `aculta_activity`, `aculta_article`, `aculta_document`, `aculta_page`, `aculta_produto`, `aculta_project`, `group_relationship`, `wiki_entry`) | **CONFIRMADO**: o padrão de `user` precisa ser criado (configuração nova). |
-| 2d | Unicidade do alias gerado | `web/modules/contrib/pathauto/src/AliasUniquifier.php` existe. Comportamento não lido | **NÃO CONFIRMADO**. Verificar em U1 com teste. |
+| 2d | Unicidade do alias gerado | `web/modules/contrib/pathauto/src/AliasUniquifier.php:91-93`: alias repetido recebe sufixo numérico incremental. Atualização após U0: o apelido precisa de validação própria, não do Pathauto | **PARCIAL**: o comportamento de sufixo está confirmado por leitura; a geração real de alias e a unicidade não foram testadas no Runtime (teste em U1). |
 | 3a | Views lista revisões de `node` por `revision_uid` na tabela `node_field_revision` | `revision_uid` é campo de revisão do `node` (`web/core/modules/node/src/NodeStorageSchema.php:43-44`, tabela `node_revision`). Campo é `entity_reference` para `user` (`web/core/lib/Drupal/Core/Entity/RevisionLogEntityTrait.php:44-47`). Runtime: `revision_uid` existe em `node_revision`; `SHOW COLUMNS FROM node_field_revision LIKE 'revision_uid'` não retornou coluna | **CONTRARIADO** na premissa da tabela: a coluna está em `node_revision`, não em `node_field_revision`. |
 | 3b | Caminho de relacionamento para listar revisões com o autor | Base de revisões traduzível = `node_field_revision` (`web/core/modules/views/src/EntityViewsData.php:255-258`), com join para `node_revision` por `vid` (`:260-266`). Campo `entity_reference` gera relationship para a tabela de usuários (`web/core/modules/views/src/EntityViewsData.php:660-665`) | **CONFIRMADO** (código). Caminho: `node_field_revision` → `node_revision` (vid) → `users_field_data` (`revision_uid`). Não criada View de teste. |
 | 4a | `skip comment approval` define o status padrão de comentário por papel | `web/core/modules/comment/src/CommentForm.php:163`; `web/core/modules/comment/src/Entity/Comment.php:250` (callback do status) e `:551-552` (`getDefaultStatus`) | **CONFIRMADO**. É exceção por papel, não por pessoa. |
@@ -58,6 +58,31 @@ Nenhum gate já falhava antes da verificação. Nenhuma correção foi feita.
 
 ## 5. Próxima fase
 
-- **U1** (submódulo `aculta_user`: campos `field_bio`, `field_visibilidade_publica`, `field_slug`, `PublicProfilePolicy`, `PublicProfilePresenter`, `/autores/<slug>`) **não depende** do item 5. Pode começar quando o responsável aprovar, desde que a decisão 3 (`field_slug`) e a decisão 2 (campos públicos) sejam respondidas.
+- **U1** (submódulo `aculta_user`: campos `field_bio` e `field_visibilidade_publica`; apelido único em `field_nickname` como caminho `/u/<apelido>`; `PublicProfilePolicy`; `PublicProfilePresenter`; fallback sem perfil público). A decisão 3 foi respondida (apelido é o caminho; não há `field_slug`), e a decisão 2 está parcial. A **rota** `/u/<apelido>` depende da decisão 5 (purpose e host). Sem ela, a U1 pode implementar só dados, política de privacidade, presenter e testes de Kernel, sem registrar rota pública.
 - **U2 e a integração de discussão do LMS** dependem da decisão sobre o item 5 (seção 2) antes de qualquer código.
-- Pendências de decisão: decisão 24; alternativa para discussão de atividade do LMS (seção 2); confirmação de que o alias de usuário será gerado com padrão novo (item 2c).
+- Pendências de decisão: decisão 5 (purpose de `/u/`); decisão 2 (campos públicos, cidade e UF); decisão 24 (tipos com discussão vinculada); alternativa para discussão de atividade do LMS (seção 2); autorização do update hook de contas existentes (decisão 43).
+
+## 6. Atualizações após U0 (2026-10-13)
+
+Registradas no mesmo relatório para que ele não fique desatualizado.
+
+- **Slug do perfil:** `/u/<apelido>` está no `main` (commits `7cda8e8`, `c3e2969`, `a0863c5`), como exceção registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`. Não existe rota no código ainda.
+- **Unicidade do apelido:** `config/sync/field.field.profile.participante.field_nickname.yml` não tem restrição de unicidade; `aculta_portal` não valida unicidade (`PortalHooks.php:450-490` só restringe campos do formulário). Decisão de desenho: a validação fica no formulário e no cadastro, antes do Pathauto.
+- **Correções ao plano:** `/autores/<nome>` removido de `FRIENDLY-PORTUGUESE-SLUGS.md`; decisões 41 a 44 movidas para a seção 7; seções 8 e 9 atualizadas (o bloqueio de 2026-10-13 não existe mais).
+- **Passo 2 da ordem de implementação (papéis), parcial:** branch `aculta-user-papeis`, commit `0fc367a`, `RUNTIME STATUS: DEFERRED`.
+  - `content_editor` recebe as permissões de `wiki_editor`, `administer comments` e `edit any forum content`; não recebe `administer forums`.
+  - `wiki_editor` recebe `revert wiki_entry revisions`.
+  - Gate novo `scripts/validate-aculta-user-roles.php`: PASS no `config/sync`; teste negativo em cópia (sem `revert wiki_entry revisions` em `wiki_editor`) reprovou com código 1.
+  - Permissões conferidas contra o registro de permissões do Runtime (leitura via `php:eval`): nenhuma ausente.
+  - Não importado: não há `drush cim` nem `updb` sem autorização. O `config:status` mostra drift antigo já registrado (DT-O10), que não foi tratado.
+- **Pendente no passo 2:** `wiki_contributor` para quem tem `email_confirmed`. O papel `email_confirmed` tem só `skip CAPTCHA` (`config/sync/user.role.email_confirmed.yml`). Drupal não mapeia papel para papel, e a E5 do plano diz "não há sincronização automática entre papéis". Conceder exige código (por exemplo, hook OOP na atribuição do papel) ou outra decisão do responsável. Não implementado.
+
+## 7. Gates desta atualização
+
+| Gate | Resultado |
+| --- | --- |
+| `validate-aculta-portal-drupal11.php` | PASS (659) |
+| `validate-public-slugs.php` | PASS (338 rotas; 20 da linha de base DT-P20) |
+| `validate-module-theme-boundary.php` | PASS (704) |
+| `validate-environment-addresses.php` | PASS (1336 arquivos) |
+| `validate-aculta-user-roles.php` | PASS (14 permissões de `wiki_editor` replicadas em `content_editor`) |
