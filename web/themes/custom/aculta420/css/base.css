@@ -51,3 +51,14 @@ form, input, select, textarea, .form-label, .form-text,
 figcaption, caption, .site-slogan, .aculta-metadata {
   font-family: var(--aculta-font-body);
 }
+
+/* Avatares nunca são achatados, em nenhum lugar do site: proporção 1:1, sem encolher com o contêiner
+   e sem a largura máxima do img-fluid que comprime a altura. */
+img.image-style-aculta-avatar,
+img[src*="/styles/aculta_avatar/"] {
+  flex: 0 0 auto;
+  max-inline-size: none;
+  block-size: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
