@@ -205,6 +205,13 @@ aculta_portal.wiki_search:
   requirements:
     _permission: access content
 
+aculta_portal.wiki_search_preview:
+  path: /wiki/busca/previa
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\WikiController::preview'
+  requirements:
+    _permission: access content
+
 
 aculta_portal.courses_home:
   path: /cursos

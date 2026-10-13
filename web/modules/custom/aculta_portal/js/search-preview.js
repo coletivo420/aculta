@@ -30,7 +30,8 @@
     attach(context) {
       once('aculta-search-preview', 'input.aculta-search-preview-input', context).forEach((input) => {
         const form = input.form;
-        const box = form.querySelector('#aculta-search-preview');
+        const boxId = input.dataset.previewTarget || 'aculta-search-preview';
+        const box = Array.from(form.querySelectorAll('[id]')).find((element) => element.id === boxId);
         const url = input.dataset.previewUrl;
         const minChars = Number.parseInt(input.dataset.minChars || '3', 10);
         // A dica inicial é guardada para voltar quando o termo fica curto demais.

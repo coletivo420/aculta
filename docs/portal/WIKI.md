@@ -30,6 +30,21 @@ montada pelo Portal com o endpoint existente. A busca é a mesma na home, nos
 verbetes e nos resultados; a consulta `q` permanece preenchida ao abrir os
 resultados.
 
+Ao digitar, a busca Wiki usa o mesmo comportamento de prévia da busca global:
+espera 300 ms após a última tecla, consulta a partir de três caracteres,
+descarta respostas antigas, permite percorrer sugestões com as setas e oferece
+um link para todos os resultados. A rota `/wiki/busca/previa` limita o resultado
+a verbetes publicados, acessíveis e pertencentes ao Domain Wiki. A resposta é
+`no-store`; sem JavaScript, o formulário GET continua levando à busca completa.
+O Portal reutiliza `aculta_portal/search-preview` e seus marcadores neutros; o
+ACULTA420 posiciona e estiliza o dropdown.
+
+Validação local da implementação: home, preview com termo e preview abaixo do
+mínimo responderam HTTP 200; os cabeçalhos confirmaram `Cache-Control: no-store, private`,
+e o preview retornou somente verbetes Wiki. `search-preview.js` passou
+na verificação de sintaxe. A navegação interativa por teclado e a inspeção visual
+no servidor de testes permanecem **RUNTIME STATUS: DEFERRED**.
+
 A Institution Bar multidomínio fica intacta e continua sendo global. A
 `wiki_search` é um render array no contrato `domain_presentation`, com cache
 context `url.query_args:q`; o Portal não envia classes, markup final ou tokens

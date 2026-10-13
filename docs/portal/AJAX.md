@@ -103,6 +103,13 @@ Qualquer futura redução do arquivo precisa provar paridade de:
 
 ## Wiki e Fórum
 
+A busca interativa do Wiki420 reaproveita `aculta_portal/search-preview` (Drupal
+Behavior + `core/once`), com o endpoint escopado `/wiki/busca/previa`. O JavaScript
+custom já existente atende a prévia global e agora também a Wiki; não há um
+segundo framework de autocomplete. O formulário GET segue como fallback e o
+endpoint de prévia responde `no-store` após aplicar publicação, Domain e acesso
+ao nó.
+
 Preferir Views AJAX para:
 
 - listagens;
