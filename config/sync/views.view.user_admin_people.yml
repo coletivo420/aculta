@@ -9,7 +9,7 @@ _core:
 id: user_admin_people
 label: Pessoas
 module: user
-description: 'Find and manage people interacting with your site.'
+description: 'Administração de contas, estados e papéis de acesso. Preserve os filtros e as ações de gestão de usuários.'
 tag: default
 base_table: users_field_data
 base_field: uid
@@ -124,6 +124,8 @@ display:
           empty_zero: false
           hide_alter_empty: true
           type: user_name
+          settings:
+            link_to_entity: false
         status:
           id: status
           table: users_field_data
@@ -919,3 +921,4 @@ display:
         - url.query_args
         - user.permissions
       tags: {  }
+

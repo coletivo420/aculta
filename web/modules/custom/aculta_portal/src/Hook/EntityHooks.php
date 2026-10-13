@@ -32,6 +32,19 @@ final class EntityHooks {
   ) {}
 
   /**
+   * Removes the "Ver" operation of users from entity operation lists.
+   *
+   * O perfil público de identidade (/identidade/{usuário}) existe só no purpose ACCOUNT. Nas listas
+   * administrativas ele levava a 404 em MAIN. A edição continua disponível na mesma linha.
+   */
+  #[Hook('entity_operation_alter')]
+  public function entityOperationAlter(array &$operations, EntityInterface $entity): void {
+    if ($entity->getEntityTypeId() === 'user') {
+      unset($operations['view']);
+    }
+  }
+
+  /**
    * Restricts Portal-owned entity operations without replacing entity handlers.
    */
   #[Hook('entity_access')]

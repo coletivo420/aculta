@@ -267,3 +267,17 @@ aculta_portal.email_resend:
   requirements:
     _user_is_logged_in: 'TRUE'
     _csrf_token: 'TRUE'
+
+# Edição do próprio perfil a partir do painel administrativo (MAIN). Redireciona para o formulário do usuário logado
+# (entity.user.edit_form). O item de menu do Navigation aponta para esta rota, porque a rota de identidade da Conta
+# não existe em MAIN.
+aculta_portal.admin_self_edit:
+  path: /painel-administrativo/perfil/editar
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\AdminSelfEditController::redirectToOwnEdit'
+    _title: 'Editar perfil'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    _admin_route: true
+    no_cache: true
