@@ -1,3 +1,9 @@
+## 0.3.0-dev.26 — Campos requeridos antes de renderizar Outros Dados — 2026-10-12
+
+- `AccountDocumentStore::isAvailable()` agora confirma que os campos `field_documento` e `field_documento_indice` estão definidos no perfil `participante`, além de validar as chaves. Com configuração de campo incompleta (por exemplo, antes da atualização `aculta_id_cpf_update_10001`), a página apresenta o estado indisponível em vez de tentar ler/gravar campos ausentes; o POST também falha de forma controlada se uma configuração ficar incompleta após a renderização.
+- Validação local: atualização `10001` pendente e configuração de `field_documento_indice` ausente no Runtime Homelab. A URL remota responde 403 sem sessão; reprodução autenticada ainda pendente.
+- **RUNTIME STATUS: DEFERRED** — não executei `updb` nem alterei banco/ambiente; validação autenticada no servidor de testes pendente.
+
 ## 0.3.0-dev.25 (documental) — relatório de estado — 2026-10-12
 
 - Mudança apenas documental; `aculta_portal.info.yml` não muda. Adiciona `docs/portal/RELATORIO-ESTADO-2026-10-12.md` com o estado do Portal, dos submódulos e do tema, e corrige a versão em `docs/portal/ROADMAP.md`.

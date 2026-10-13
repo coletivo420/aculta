@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_id_cpf\Service;
 
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserInterface;
@@ -26,6 +27,7 @@ final class AccountDocumentStore implements AccountDocumentInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
+    private readonly EntityFieldManagerInterface $fieldManager,
     private readonly DocumentValidator $validator,
     private readonly DocumentFormatter $formatter,
     private readonly DocumentCipher $cipher,
@@ -33,7 +35,10 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   ) {}
 
   public function isAvailable(): bool {
-    return $this->cipher->isAvailable() && $this->fingerprint->isAvailable();
+    $fields = $this->fieldManager->getFieldDefinitions('profile', 'participante');
+    return isset($fields[self::FIELD], $fields[self::INDEX_FIELD])
+      && $this->cipher->isAvailable()
+      && $this->fingerprint->isAvailable();
   }
 
   public function canonicalize(string $input): ?string {

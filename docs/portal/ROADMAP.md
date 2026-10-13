@@ -12,7 +12,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ## Estado atual
 
-- Versão: **0.3.0-dev.25** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com a página LINKS e redes sociais). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
+- Versão: **0.3.0-dev.26** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com a proteção da página Outros Dados contra campos ainda não provisionados). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
 - Submódulos: `aculta_deployer` 0.1.20 (com falhas de teste e de `check`, DT-O12), `aculta_id_cpf` 0.2.0-dev.2 (Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1.
 - Tema: `aculta420` 0.6.0-dev.13. O gate Foundation reprova durações literais (DT-T19).
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md).
