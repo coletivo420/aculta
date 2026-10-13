@@ -1,15 +1,12 @@
 /* 5. Domain Header: dominant purpose header on shell tokens, with a structural accent line. */
-/* Sticky, not fixed: no body compensation; the Drupal Toolbar offset comes from Core's displace.js. */
+/* The shared .aculta-page-top wrapper owns sticky positioning and Drupal Toolbar offset. */
 .aculta-header {
-  position: sticky;
-  top: var(--drupal-displace-offset-top, 0px);
-  z-index: 1020;
   color: var(--aculta-shell-domain-text);
   background-color: var(--aculta-shell-domain-bg);
   border-bottom: 3px solid var(--aculta-border-accent);
 }
-/* Keeps anchored content and focused controls out from under the sticky header. */
-html { scroll-padding-top: calc(var(--drupal-displace-offset-top, 0px) + 6rem); }
+/* Keeps anchored content and focused controls out from under the persistent top shell. */
+html { scroll-padding-top: calc(var(--drupal-displace-offset-top, 0px) + 9rem); }
 .aculta-branding { min-width: 0; flex: 0 1 27%; }
 .aculta-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; }
 .aculta-header .site-title {

@@ -195,11 +195,12 @@ estão em PRs empilhadas (#92 a #95). QA em navegador registrado no Git (commit 
 ### Institution Bar (0.2-C)
 
 ```text
-div.aculta-institution-bar            (faixa institucional, não é landmark)
-  .container > .aculta-institution-bar__inner
-    p.aculta-institution-bar__brand   logo ACULTA (img 78×26; alt com o nome completo; sem texto visível)
-    div.aculta-utility                menu de conta, quando existir
-header.aculta-header                  Domain Header de purpose (0.2-D)
+div.aculta-page-top                   (wrapper sticky; offset da Toolbar vem de `displace.js`)
+  div.aculta-institution-bar          (faixa institucional, não é landmark)
+    .container > .aculta-institution-bar__inner
+      p.aculta-institution-bar__brand logo ACULTA (img 78×26; alt com o nome completo; sem texto visível)
+      div.aculta-utility              menu de conta, quando existir
+  header.aculta-header                Domain Header de purpose (0.2-D)
 ```
 
 ### Domain Header (0.2-D)
@@ -220,8 +221,7 @@ header.aculta-header                  Domain Header de purpose (0.2-D)
 
 ## Sticky e mobile
 
-Começar por `position: sticky`, não `fixed`, por conviver melhor com Drupal
-Toolbar, zoom/reflow e ausência de compensação artificial no `body`.
+O wrapper `.aculta-page-top` usa `position: sticky`, com o deslocamento da Toolbar vindo de `displace.js`. Ele mantém a Institution Bar e o Domain Header juntos no topo, sem compensação artificial no `body`; no purpose LINKS, contém apenas a Institution Bar. Essa composição evita sobreposição entre duas faixas sticky e continua fluindo em telas estreitas, zoom e reflow.
 
 Referência de densidade, não contrato rígido:
 

@@ -1,3 +1,12 @@
+## 0.6.0-dev.14 — Barra multidomínio persistente no scroll — 2026-10-13
+
+Classificação: PATCH (correção de comportamento do shell; sem novo contrato de componente).
+
+- Um wrapper sticky mantém a barra institucional e o cabeçalho do domínio juntos no topo, respeitando o deslocamento da Toolbar do Drupal. No purpose LINKS, que omite o cabeçalho do domínio, somente a barra fica no wrapper.
+- O tema controla a estrutura e a apresentação. `aculta_portal` continua preparando o contrato neutro de identidade e ações; nenhum comportamento funcional ou decisão de Domain foi movido para o tema.
+- `scroll-padding-top` foi ajustado para manter destinos de âncora e foco abaixo do shell persistente.
+- **Não validado:** inspeção em navegador após alteração; `RUNTIME STATUS: DEFERRED`. SHA do merge na `main`: a preencher no merge.
+
 ## 0.6.0-dev.13 — Renderização de botões configuráveis em LINKS — 2026-10-12
 
 Classificação: PATCH (apresenta uma lista de botões já normalizada pelo Portal).
