@@ -1,0 +1,20 @@
+uuid: 8daf66e1-8a4e-4769-8744-25ea29f5b3aa
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_summary
+    - node.type.blog
+id: node.blog.field_summary
+field_name: field_summary
+entity_type: node
+bundle: blog
+label: Resumo
+description: 'Campo editorial administrável: Resumo. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
+

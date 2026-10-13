@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.article.body
     - field.field.node.article.field_credits
+    - field.field.node.article.field_discussao
     - field.field.node.article.field_domain_source
     - field.field.node.article.field_editorial_author
     - field.field.node.article.field_editorial_category
@@ -49,6 +50,15 @@ content:
     third_party_settings: {  }
     weight: -20
     region: content
+  field_subtitle:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: -5
+    region: content
   field_summary:
     type: basic_string
     label: hidden
@@ -62,7 +72,9 @@ content:
     weight: 100
     region: content
 hidden:
+  co_authors: true
   field_credits: true
+  field_discussao: true
   field_domain_source: true
   field_editorial_category: true
   field_meta_tags: true
@@ -70,5 +82,6 @@ hidden:
   field_published_at: true
   field_references: true
   field_related_activity: true
-  field_subtitle: true
   langcode: true
+  search_api_excerpt: true
+

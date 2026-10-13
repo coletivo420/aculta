@@ -1,0 +1,26 @@
+uuid: cd35966e-c2f8-463a-9694-6363d93d9201
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_domain_source
+    - node.type.blog
+id: node.blog.field_domain_source
+field_name: field_domain_source
+entity_type: node
+bundle: blog
+label: 'Domain Source'
+description: 'Select the canonical domain for this content.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:domain'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: weight
+      direction: ASC
+field_type: entity_reference
+

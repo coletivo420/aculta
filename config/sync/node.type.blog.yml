@@ -1,0 +1,12 @@
+uuid: d83fc3a1-5445-4988-9d4a-3828bc64c7ac
+langcode: pt-br
+status: true
+dependencies: {  }
+name: Blog
+type: blog
+description: 'Publicação de blog da Revista: chamada, resumo, corpo e autoria.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false
+

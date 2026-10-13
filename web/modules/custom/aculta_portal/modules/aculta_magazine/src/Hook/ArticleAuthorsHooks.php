@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_user\Hook;
+namespace Drupal\aculta_magazine\Hook;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_magazine\Revista\RevistaPublications;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 /**
  * Caixa de autores da Revista: autor principal (node.uid) e coautores (co_authors, Node Co-Authors).
  *
- * Só aparece em Notícias publicadas, no propósito MAGAZINE. Nome, foto e link seguem PublicProfilePolicy.
+ * Só aparece em publicações da Revista (RevistaPublications::BUNDLES) publicadas, no propósito MAGAZINE. Nome, foto e link seguem PublicProfilePolicy.
  */
 final class ArticleAuthorsHooks {
 
@@ -41,7 +42,7 @@ final class ArticleAuthorsHooks {
    */
   #[Hook('node_view')]
   public function nodeView(array &$build, EntityInterface $entity, $display, $view_mode): void {
-    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'article' || $entity->isNew() || !$entity->isPublished()) {
+    if (!$entity instanceof NodeInterface || !RevistaPublications::isPublication($entity->bundle()) || $entity->isNew() || !$entity->isPublished()) {
       return;
     }
     if ($view_mode !== 'full' || $this->purposeManager->getCurrentPurpose() !== 'magazine') {
