@@ -19,10 +19,10 @@
 }
 .node--view-mode-full .field--name-field-media-image img {
   display: block;
-  inline-size: 100%;
-  max-inline-size: 60rem;
-  block-size: auto;
-  aspect-ratio: 3 / 2;
+  /* Caixa delimitada: largura e altura máximas, centralizada; a imagem inteira cabe dentro. */
+  inline-size: min(100%, 40rem);
+  block-size: min(26.6667rem, 100vw * 0.6);
+  max-block-size: 28rem;
   margin-inline: auto;
   border-radius: 0.75rem;
   /* Imagem inteira, sem recorte (logotipo e títulos preservados); moldura neutra nas laterais. */
@@ -76,7 +76,7 @@
 .node--view-mode-full .portal-article-authors__title { margin-block: 0 0.5rem; }
 
 @media (max-width: 575.98px) {
-  .node--view-mode-full .field--name-field-media-image img { aspect-ratio: 4 / 3; }
+  .node--view-mode-full .field--name-field-media-image img { block-size: auto; aspect-ratio: 4 / 3; inline-size: 100%; }
   .node--view-mode-full .field--name-field-subtitle { font-size: 1.25rem; }
 }
 
