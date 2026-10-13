@@ -181,6 +181,27 @@ Serviços previstos (nomes provisórios):
 - Acesso anônimo de leitura do tópico no host FORUM (`access content` no papel anônimo já existe).
 - Pesquisa: a busca em drupal.org não confirmou detalhes de Views sobre comentários de outra entidade. Ver o registro de mudança de comentários como campos (`https://drupal.org/node/2100015`) e a documentação de Views de comentários no Homelab.
 
+### E4. Verbetes chamados em todo o site, e papel de autor
+
+**Pedido do responsável (2026-10-13):** editores de conteúdo podem chamar verbetes em qualquer parte do site. Exemplo: ao publicar um artigo na revista, o autor chama um verbete da Wiki. Autores do site viram automaticamente editores da Wiki, com as mesmas funções.
+
+**Como chamar um verbete (sem copiar conteúdo):**
+
+- **Campo "Verbetes relacionados"** nos tipos `article`, `activity`, `project` e `document`: referência múltipla para `wiki_entry`, só verbetes publicados aparecem. Renderiza um cartão (título, resumo e link). Nenhuma cópia do texto do verbete no conteúdo; o verbete é sempre a fonte.
+- **Link no corpo do texto:** link interno para o verbete, pelo editor de texto. A verificar no Homelab se o CKEditor 5 do Core faz link para nó sem módulo extra (`entity_embed` não entra sem verificação de D11).
+- **Link para outro host:** o link ao verbete aponta para o purpose WIKI, obtido por `DomainPurposeManager`. Nenhum host escrito no código.
+- **Verbete não publicado** não aparece no cartão, nem no link, nem na contagem.
+- **Cache:** o cartão acumula tags do verbete chamado, para atualizar quando o verbete mudar.
+
+**Mão dupla (opcional, a decidir):** no verbete, bloco "Citado em" com os conteúdos publicados que chamam o verbete. É uma View reversa sobre os campos de referência. Só títulos publicados, nunca conteúdo não publicado.
+
+**Papel de autor:**
+
+- Novo papel Drupal `autor` (autores do site). Concedido pelo administrador ou por editor de conteúdo.
+- Sincronização: quem recebe `autor` também recebe `wiki_editor`, e perde o papel quando perde `autor`. Feito por `#[Hook]` de presave de usuário em serviço do `aculta_user`, não manualmente. O papel Drupal continua sendo a permissão; não há sistema paralelo.
+- **Risco a registrar:** `wiki_editor` edita qualquer verbete e publica. Estender isso a todo autor de revista amplia muito a edição da Wiki. A alternativa é `autor` receber `wiki_contributor` (cria e edita só o próprio) e `wiki_editor` ficar para editores. Ver decisão 26.
+- **Reversão de revisão:** a decisão 21 atribui reversão ao `wiki_editor`, mas o `wiki_editor` não tem `revert wiki_entry revisions` hoje (só `content_editor` tem `revert all revisions`). Precisa ser adicionada à configuração exportada do papel, com `config/sync` e gate.
+
 ### E2. Atividade centralizada em "Atividade"
 
 **Decisão do responsável (2026-10-13):** Wiki, Fórum, Revista, comentários e outras formas de participação ficam em **uma seção** da Minha conta, dividida em abas.
@@ -299,6 +320,9 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 21. **Histórico:** respondida em 2026-10-13: o histórico do verbete é público; a reversão é do `wiki_editor`; o histórico de atividade de cada pessoa é individual.
 22. **Comentários:** respondida em 2026-10-13: comentários moram só nas discussões do Fórum; o conteúdo mostra trecho com link para a discussão completa (seção E3).
 23. **Administrador:** respondida em 2026-10-13: o administrador vê só a própria atividade.
+25. **Papel `autor`:** quem concede: administrador, editor de conteúdo, ou automático na primeira publicação de artigo?
+26. **Função do autor na Wiki:** `wiki_editor` (como pedido: edita qualquer verbete e publica) ou `wiki_contributor` (cria e edita só o próprio)? A segunda opção evita que autor de revista edite verbetes de outras pessoas. Recomendação: `wiki_contributor`.
+27. **Mão dupla:** o bloco "Citado em" no verbete entra?
 24. **Tópico de discussão:** criação manual pelo editor ou pelo `wiki_editor`, ou automática para todo verbete? Qual tipo de conteúdo recebe discussão (verbete, artigo, atividade, projeto)?
 
 ## 8. Riscos e limites
