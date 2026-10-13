@@ -1,3 +1,22 @@
+## 0.6.0-dev.16 — Apresentação enciclopédica da Wiki420 — 2026-10-13
+
+Classificação: MINOR (pattern SDC experimental e presenters específicos da Wiki).
+
+- Adiciona o pattern aculta420:wiki-entry para artigos e teasers, com título,
+  síntese, áreas de conteúdo, categorias, imagem, referências, relacionados e
+  ações nativas condicionadas pelo access do Drupal.
+- Redesenha home, busca, cards e alterações recentes com layout de leitura
+  enciclopédica, Views/VVJB existentes e tokens semânticos ACULTA420.
+- Autoria nominal sai da página pública e das alterações recentes; continua
+  armazenada nas entidades e revisões para workflow/administração.
+- Gates locais: design foundations (1683), SDC (13 componentes/231 checks),
+  shell contract (11) e fronteira módulo/tema (714) PASS. Foundation falha por
+  DT-T19 preexistente (transições literais em portal-account.css).
+- Local HTTP via host mapeado a 127.0.0.1: home, lista, busca e verbete 200; CSS
+  e um único H1 presentes, autoria ausente no HTML. Isso não é o servidor de
+  testes. Captura Chromium expirou; inspeção visual e Runtime remoto DEFERRED.
+  SHA na main: preencher na etapa de release/merge.
+
 ## 0.6.0-dev.15 — Somente a Institution Bar fica fixa no scroll — 2026-10-13
 
 Classificação: PATCH (ajuste de comportamento do shell após teste do responsável).

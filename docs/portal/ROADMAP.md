@@ -12,9 +12,11 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 - Escopo Associado ID e migração: [ACULTA-ASSOCIADO-ID.md](../modules/ACULTA-ASSOCIADO-ID.md).
 
+- Apresentação Wiki420 e política de autoria pública: [WIKI.md](WIKI.md); Runtime DEFERRED até inspeção visual.
+
 ## Estado atual
 
-- Versão: **0.3.0-dev.29** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
+- Versão: **0.3.0-dev.30** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
 - Submódulos: `aculta_deployer` 0.1.20 (com falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1.
 - Tema: `aculta420` 0.6.0-dev.15 (PR #239). Em Chrome no servidor de testes, somente a barra multidomínio fica fixa; o cabeçalho do domínio rola com o conteúdo. O gate Foundation segue bloqueado por DT-T19.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.

@@ -1,0 +1,18 @@
+name: 'Wiki entry'
+component: aculta420:wiki-entry
+props:
+  variant: article
+  url: /wiki/verbetes/exemplo
+  has_summary: true
+  has_image: true
+  has_categories: true
+  has_related: true
+  has_references: true
+slots:
+  title: Exemplo de verbete
+  summary: '<p>Uma síntese breve, com fonte e contexto, apresenta o tema ao leitor.</p>'
+  image: '<figure><div class="ratio ratio-4x3 bg-body-secondary"></div><figcaption>Imagem ilustrativa</figcaption></figure>'
+  categories: '<div class="field"><div class="field__label">Categorias</div><div class="field__item"><a href="#">História</a></div></div>'
+  body: '<p>O texto do verbete usa parágrafos legíveis, títulos claros e ligações internas.</p><h2>História</h2><p>Conteúdo editorial preparado no Drupal.</p>'
+  related: '<div class="field"><div class="field__label">Ver também</div><div class="field__item"><a href="#">Outro verbete</a></div></div>'
+  references: '<div class="field"><div class="field__label">Referências</div><ol><li><a href="#">Fonte consultada</a></li></ol></div>'

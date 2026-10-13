@@ -1,3 +1,13 @@
+## 0.3.0-dev.30 — integração da apresentação enciclopédica da Wiki — 2026-10-13
+
+- O Portal deixa de incluir nome do autor na lista de alterações recentes da
+  Wiki; título e data permanecem. Nodes/revisões continuam com autor para
+  workflow e administração.
+- A configuração de wiki_entry desativa o byline público (display_submitted).
+- Integração visual permanece por render arrays neutros; sem classes de tema no
+  Portal. Gate Drupal 11+ PASS (659 checks); local HTTP nos caminhos Wiki PASS.
+  Import de configuração e Runtime remoto DEFERRED.
+
 ## 0.3.0-dev.29 — integração compatível com Associado ID — 2026-10-13
 
 - O Portal prioriza `aculta_associado_id.account_document` e mantém fallback

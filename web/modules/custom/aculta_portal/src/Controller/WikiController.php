@@ -148,7 +148,7 @@ final class WikiController extends ControllerBase {
     return $build;
   }
 
-  /** Lists published Wiki420 revisions by latest update with public attribution. */
+  /** Lists published Wiki420 entries by latest update, without public authorship. */
   private function recentChanges(): array {
     $build = [
       '#theme' => 'item_list',
@@ -194,11 +194,6 @@ final class WikiController extends ControllerBase {
           '#attributes' => ['datetime' => gmdate(DATE_ATOM, $changed)],
         ],
       ];
-      $owner = $node->getOwner();
-      if ($owner && $owner->access('view')) {
-        $row['author'] = ['#plain_text' => $this->t('por @name', ['@name' => $owner->getDisplayName()])];
-        $cacheability->addCacheableDependency($owner);
-      }
       $build['#items'][] = $row;
       $cacheability->addCacheableDependency($node);
     }

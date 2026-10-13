@@ -12,6 +12,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
+| 0.6.0-dev.16 | Apresentação enciclopédica Wiki420: pattern artigo/teaser, autoria omitida da leitura pública, home e busca revisadas | Em desenvolvimento; SDC/tokens/shell/fronteira PASS, Foundation bloqueado por DT-T19 preexistente; HTTP local PASS, inspeção visual DEFERRED | Primeiro layout enciclopédico com ownership Drupal → Portal → ACULTA420 |
 | 0.6.0-dev.15 | Somente a Institution Bar multidomínio permanece no topo; Domain Header rola normalmente | RUNTIME STATUS: PASS; Chrome desktop/mobile em `/dados/outros-dados` (2026-10-13) | Sticky aplicado diretamente à barra institucional |
 | 0.6.0-dev.14 | Institution Bar e Domain Header agrupados no topo durante o scroll | Comportamento substituído por 0.6.0-dev.15 após feedback do responsável | O wrapper sticky fazia o cabeçalho permanecer fixo também |
 | 0.6.0-dev.13 | Botões adicionais da página LINKS recebidos do Portal e exibidos em sequência vertical | RUNTIME STATUS: validação pendente | Layout reutiliza a apresentação do botão fixo |

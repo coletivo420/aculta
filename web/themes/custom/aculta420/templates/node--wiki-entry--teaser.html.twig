@@ -1,0 +1,15 @@
+{# Search and Views teasers intentionally omit Drupal's submitted-byline. #}
+{% set title_link %}<a href="{{ url }}" rel="bookmark">{{ label }}</a>{% endset %}
+<article{{ attributes.addClass('aculta-wiki-card') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {{ include('aculta420:wiki-entry', {
+    variant: 'teaser',
+    url: url,
+    title: title_link,
+    has_summary: not node.field_wiki_summary.isEmpty and content.field_wiki_summary['#access']|default(true),
+    has_categories: not node.field_wiki_categories.isEmpty and content.field_wiki_categories['#access']|default(true),
+    summary: content.field_wiki_summary,
+    categories: content.field_wiki_categories
+  }, with_context = false) }}
+</article>
