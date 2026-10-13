@@ -24,12 +24,10 @@
     link.click();
   }
 
-  function reopenPhotoDialog() {
+  // Ao voltar do recorte, reabre o popup da foto (o gatilho é o link de modal do avatar).
+  function reopenPhotoPopup() {
     window.setTimeout(() => {
-      const dialog = document.querySelector('[data-aculta-photo-dialog]');
-      if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
-        dialog.showModal();
-      }
+      document.querySelector('[data-aculta-photo-open]')?.click();
     }, 0);
   }
 
@@ -38,7 +36,7 @@
       const params = new URLSearchParams(window.location.search);
       const returned = params.has('aculta_recorte');
       if (returned) {
-        reopenPhotoDialog();
+        reopenPhotoPopup();
       }
 
       once('aculta-user-photo-fids', 'input[name="imagem[fids]"]', context).forEach((input) => {

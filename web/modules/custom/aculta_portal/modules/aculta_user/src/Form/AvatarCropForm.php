@@ -40,6 +40,7 @@ final class AvatarCropForm extends FormBase {
   /** Chave em user.data com o arquivo recortado que aguarda o "Salvar" do popup da foto. */
   public const PENDING_KEY = 'recorte_pendente';
 
+
   /** Marcador do painel que reabre o popup da foto depois do recorte. */
   public const RETURN_QUERY = 'aculta_recorte';
 

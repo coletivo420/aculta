@@ -1,18 +1,4 @@
 <div class="portal-account-photo" data-aculta-photo-editor>
-  <button class="portal-account-photo__trigger" type="button" data-aculta-photo-open aria-haspopup="dialog" aria-controls="portal-account-photo-dialog" aria-label="{{ 'Alterar foto de perfil de @name'|t({'@name': display_name}) }}">
-    {{ photo }}
-    <span class="portal-account-photo__edit-icon" aria-hidden="true">
-      <i class="bi bi-pencil" aria-hidden="true"></i>
-    </span>
-  </button>
-
-  {# The open attribute provides an inline form fallback when JavaScript is unavailable. #}
-  <dialog class="portal-account-photo__dialog" id="portal-account-photo-dialog" open data-aculta-photo-dialog aria-labelledby="portal-account-photo-title">
-    <div class="portal-account-photo__panel">
-      <button class="portal-account-photo__close" type="button" data-aculta-photo-close aria-label="{{ 'Fechar'|t }}">&times;</button>
-      <h2 id="portal-account-photo-title" tabindex="-1">{{ 'Alterar foto do perfil'|t }}</h2>
-      <p>{{ 'Escolha uma imagem e ajuste o enquadramento antes de salvar.'|t }}</p>
-      {{ photo_form }}
-    </div>
-  </dialog>
+  {# Gatilho do popup de foto: link AJAX de modal Drupal (montado pelo módulo aculta_user). #}
+  {{ photo_form }}
 </div>

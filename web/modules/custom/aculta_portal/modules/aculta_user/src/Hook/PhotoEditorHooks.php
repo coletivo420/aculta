@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -52,32 +53,23 @@ final class PhotoEditorHooks {
 
   #[Hook('aculta_portal_photo_editor_alter')]
   public function photoEditorAlter(array &$photoForm, UserInterface $account): void {
-    // Fluxo do popup (abrir o recorte ao enviar a foto e reabrir o popup após o recorte) é anexado aqui, no
-    // elemento que o template renderiza.
-    $photoForm['#attached']['library'][] = 'aculta_user/photo-flow';
-    $photoForm['#attached']['drupalSettings']['acultaUser']['savedFid'] = (int) ($account->get('user_picture')->target_id ?? 0);
-
-    // Formulário da foto em rota própria (upload por AJAX). Substitui o formulário do painel.
-    $photoForm['form'] = $this->formBuilder->getForm(UserPictureForm::class);
-
-    // Recortar: só para foto personalizada (não existe recorte para o acervo).
-    $fid = (int) ($account->get('user_picture')->target_id ?? 0);
-    $file = $fid > 0 ? $this->entityTypeManager->getStorage('file')->load($fid) : NULL;
-    if ($file !== NULL && !PhotoEditorGuard::isAcervo($account, $file)) {
-      $photoForm['recortar'] = [
-        '#type' => 'link',
-        '#title' => t('Recortar foto'),
-        '#url' => Url::fromRoute('aculta_user.avatar_crop'),
-        '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary'], 'data-dialog-type' => 'modal'],
-        '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-      ];
-    }
-    $photoForm['reroll'] = [
+    // O gatilho é o avatar: abre o modal Drupal com o formulário da foto (rota própria, upload por AJAX). O conteúdo
+    // do avatar vem do preparo do Portal ($photoForm['avatar']); o formulário, o sorteio e o recorte ficam no modal.
+    $photoForm = [
       '#type' => 'link',
-      '#title' => t('Sortear outro avatar'),
-      '#url' => Url::fromRoute('aculta_user.avatar_reroll', [], ['query' => ['csrf_token' => $this->csrfToken->get(self::PATH)]]),
-      '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary']],
-      '#attached' => ['library' => ['core/drupal.ajax']],
+      '#title' => $photoForm['avatar'] ?? ['#markup' => ''],
+      '#url' => Url::fromRoute('aculta_user.foto'),
+      '#attributes' => [
+        'class' => ['use-ajax', 'portal-account-photo__trigger'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Alterar foto do perfil'), 'dialogClass' => 'aculta-photo-popup', 'position' => ['my' => 'center', 'at' => 'center', 'of' => 'window']]),
+        'data-aculta-photo-open' => '',
+        'aria-label' => (string) t('Alterar foto de perfil de @name', ['@name' => $account->getDisplayName()]),
+      ],
+      '#attached' => [
+        'library' => ['core/drupal.dialog.ajax', 'aculta_user/photo-flow'],
+        'drupalSettings' => ['acultaUser' => ['savedFid' => (int) ($account->get('user_picture')->target_id ?? 0)]],
+      ],
     ];
   }
 

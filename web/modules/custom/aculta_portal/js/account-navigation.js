@@ -253,30 +253,4 @@
       });
     },
   };
-
-  Drupal.behaviors.acultaPortalPhotoEditor = {
-    attach(context) {
-      once('aculta-portal-photo-editor', '[data-aculta-photo-editor]', context).forEach((editor) => {
-        const dialog = editor.querySelector('[data-aculta-photo-dialog]');
-        const trigger = editor.querySelector('[data-aculta-photo-open]');
-        const closeButton = editor.querySelector('[data-aculta-photo-close]');
-        const heading = dialog?.querySelector('#portal-account-photo-title');
-        if (!dialog || !trigger || typeof dialog.showModal !== 'function') return;
-
-        // The dialog starts open so its form remains available without JS.
-        editor.setAttribute('data-portal-enhanced', '');
-        if (dialog.open) dialog.close();
-
-        trigger.addEventListener('click', () => {
-          if (!dialog.open) dialog.showModal();
-          window.requestAnimationFrame(() => heading?.focus());
-        });
-        closeButton?.addEventListener('click', () => dialog.close());
-        dialog.addEventListener('click', (event) => {
-          if (event.target === dialog) dialog.close();
-        });
-        dialog.addEventListener('close', () => trigger.focus());
-      });
-    },
-  };
 })(Drupal, once);

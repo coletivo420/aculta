@@ -142,16 +142,6 @@
 .portal-account-photo__edit-icon { position: absolute; inset: auto 0 0 auto; display: grid; width: 2rem; height: 2rem; place-items: center; color: var(--aculta-interactive-hover-text); background: var(--aculta-interactive-hover-bg); border: 2px solid var(--aculta-surface-raised); border-radius: 50%; opacity: 0; transform: translate(-0.1rem, -0.1rem); transition: opacity 150ms ease; }
 .portal-account-photo__edit-icon svg { width: 1rem; height: 1rem; }
 .portal-account-photo__trigger:is(:hover, :focus-visible) .portal-account-photo__edit-icon { opacity: 1; }
-.portal-account-photo__dialog { position: static; width: min(34rem, 100%); max-width: 100%; max-height: none; padding: 0; margin: 1rem 0 0; overflow: visible; color: var(--aculta-text-primary); background: transparent; border: 0; }
-.portal-account-photo__dialog::backdrop { background: var(--aculta-scrim); }
-.portal-account-photo[data-portal-enhanced] .portal-account-photo__dialog[open] { position: fixed; inset: 0; width: min(34rem, calc(100vw - 2rem)); max-width: none; max-height: min(46rem, calc(100dvh - 2rem)); padding: 0; margin: auto; overflow: auto; background: var(--aculta-surface-raised); border: 1px solid var(--aculta-border-accent); border-radius: 0.5rem; box-shadow: 0 1rem 3rem var(--aculta-border-default); }
-.portal-account-photo__panel { position: relative; padding: clamp(1.25rem, 4vw, 2rem); }
-.portal-account-photo__panel h2 { max-width: calc(100% - 3rem); margin: 0 0 0.5rem; color: var(--aculta-text-primary); font: 600 1.5rem/1.2 Oswald, sans-serif; }
-.portal-account-photo__panel h2:focus { outline: none; }
-.portal-account-photo__panel h2:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 4px; }
-.portal-account-photo__panel > p { margin-block-end: 1rem; }
-.portal-account-photo__close { position: absolute; inset: 0.75rem 0.75rem auto auto; display: grid; width: 2.75rem; height: 2.75rem; place-items: center; color: var(--aculta-text-primary); background: var(--aculta-surface-muted); border: 1px solid var(--aculta-text-primary); border-radius: 50%; font: 400 1.75rem/1 Inter, sans-serif; cursor: pointer; }
-.portal-account-photo__close:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 .portal-account__body .user-picture { max-width: 24rem; }
 .portal-account__body .user-picture .image-widget { max-width: 100%; }
 
@@ -236,8 +226,6 @@
   .portal-account__nav { position: static; }
   .portal-account__identity { align-items: flex-start; }
   .portal-account-photo__edit-icon { opacity: 1; }
-  .portal-account-photo[data-portal-enhanced] .portal-account-photo__dialog[open] { top: auto; bottom: 0; width: 100vw; max-width: none; max-height: min(90dvh, 46rem); margin: 0; border-radius: 1rem 1rem 0 0; }
-  .portal-account-photo__panel { padding: 1.25rem 1rem calc(1rem + env(safe-area-inset-bottom)); }
 }
 
 @media (hover: none) {

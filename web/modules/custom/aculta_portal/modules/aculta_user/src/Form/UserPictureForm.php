@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -36,6 +37,7 @@ final class UserPictureForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly AccountInterface $currentUserService,
     private readonly UserDataInterface $userData,
+    private readonly CsrfTokenGenerator $csrfToken,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -43,6 +45,7 @@ final class UserPictureForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('user.data'),
+      $container->get('csrf_token'),
     );
   }
 
@@ -65,8 +68,8 @@ final class UserPictureForm extends FormBase {
     $pending = (int) $this->userData->get('aculta_user', (int) $account->id(), AvatarCropForm::PENDING_KEY);
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
-    // Recorte pendente (ainda não salvo) tem prioridade; a foto do acervo começa sem arquivo, para permitir o envio.
-    $default = $pending > 0 && $pending !== $current ? $pending : ($isAcervo ? 0 : $current);
+    // Foto do acervo: sem arquivo inicial (o envio fica disponível) e sem recorte pendente, que é de foto personalizada.
+    $default = $isAcervo ? 0 : ($pending > 0 && $pending !== $current ? $pending : $current);
 
     $form['#attributes']['data-aculta-user-picture'] = '';
     $form['imagem'] = [
@@ -94,6 +97,15 @@ final class UserPictureForm extends FormBase {
         '#attached' => ['library' => ['core/drupal.dialog.ajax']],
       ];
     }
+
+    // Sortear fica sempre disponível, junto com o envio (o sorteio troca a foto e descarta o recorte pendente).
+    $form['sortear'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Sortear outro avatar'),
+      '#url' => Url::fromRoute('aculta_user.avatar_reroll', [], ['query' => ['csrf_token' => $this->csrfToken->get('/avatar/sortear')]]),
+      '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary']],
+      '#attached' => ['library' => ['core/drupal.ajax']],
+    ];
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['salvar'] = [
