@@ -129,6 +129,23 @@ Serviços previstos (nomes provisórios):
 - **Nunca público:** e-mail, CPF, endereço, WhatsApp, nome completo, cidade e UF (decisão 2).
 - Alteração de slug troca o caminho e o antigo responde 404, sem 301 (`FRIENDLY-PORTUGUESE-SLUGS.md`). Por isso, o módulo `redirect` precisa ficar **fora** da criação automática de redirect quando o Pathauto mudar um alias.
 
+### B2. Perfil público ou privado (Minha conta > Configurações)
+
+**Pedido do responsável (2026-10-13):** a pessoa pode tornar o perfil privado em Minha conta > Configurações.
+
+- **Padrão: privado.** Ninguém tem perfil público sem ligar a opção. Decisão de privacidade: consentimento explícito, não opt-out.
+- **Lugar:** a rota `/configuracoes` já existe (hoje só o modo de cor, `AppearanceForm`). A opção entra na mesma página, em um segundo bloco com formulário próprio. Campo: `field_visibilidade_publica` no perfil `participante`, booleano, padrão falso. Ligar ou desligar tem efeito imediato.
+- **Com perfil privado:**
+  - `/autores/<slug>` não mostra o perfil. Resposta: 404, para não revelar que o perfil existe (a confirmar, decisão 40).
+  - Cartão de autor da revista mostra o nome de exibição sem link.
+  - Badges (seção G) não aparecem em lugar público.
+  - Conteúdos da pessoa (artigos, verbetes, tópicos) continuam públicos, porque são contribuições editoriais, não o perfil. O que muda é a página de perfil e os dados pessoais expostos.
+- **Mesmo com perfil privado, aparecem:** nome de exibição em históricos públicos de verbete (decisão 21) e autoria de artigo. Isso é conteúdo, não perfil. Pergunta de consentimento na decisão 39.
+- **Nunca público, mesmo com perfil público:** e-mail, CPF, RG, endereço, WhatsApp, data de nascimento, cidade e UF (seção B).
+- **Acesso:** a própria pessoa vê e altera a opção. Administrador não altera a opção de outra pessoa; pode ver o status no relatório (seção G2), sem dados pessoais além do necessário.
+- **Cache:** a página pública do perfil acumula a tag do perfil e o contexto `user.permissions`; ao mudar a opção, as tags invalidam o cache.
+- **Auditoria:** mudança da opção registra data e origem (pessoa), sem valor de outros campos.
+
 ### C. Autoria da revista (MAGAZINE)
 - Autor = `node.uid`, do Core. Não criar campo "autor" paralelo.
 - Cartão de autor no fim do artigo (`article`), com link para `/autores/<slug>` quando o perfil for público; sem link quando não for.
@@ -425,6 +442,8 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 36. **Matriculados:** respondida em 2026-10-13: matriculados no curso ficam isentos da moderação do primeiro comentário e têm aprovação automática nas discussões do LMS.
 37. **Escopo da isenção dos matriculados:** respondida em 2026-10-13: vale nas discussões do curso; ao comentar no curso, a isenção vale em todo o Fórum.
 38. **Criação dos tópicos do LMS:** respondida em 2026-10-13: os tópicos de curso e de atividade são criados por quem tem autorização para criar cursos.
+39. **Consentimento do nome em históricos:** o nome de exibição de quem revisou verbete aparece no histórico público mesmo com perfil privado? Proposta: sim, porque é a regra da Wiki (histórico público); a pessoa é informada ao criar a conta.
+40. **Perfil privado acessado por URL:** 404 (não revela que o perfil existe) ou 403? Proposta: 404.
 
 ## 8. Riscos e limites
 
