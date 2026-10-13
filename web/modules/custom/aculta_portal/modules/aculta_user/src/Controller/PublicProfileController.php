@@ -17,8 +17,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Página pública do perfil em /u/<apelido>.
  *
- * Perfil inexistente, privado ou fora do propósito MAIN responde 404, sem revelar que o perfil existe
- * (decisão 40 do plano). Só entra no render o que PublicProfilePolicy liberar.
+ * Perfil inexistente, sem apelido ou fora do propósito MAIN responde 404. Perfil privado mostra só foto e apelido. Só entra no render o que PublicProfilePolicy liberar.
  */
 final class PublicProfileController extends ControllerBase {
 
@@ -62,9 +61,9 @@ final class PublicProfileController extends ControllerBase {
       ->addCacheTags(['profile:' . $profile->id(), 'user:' . $profile->getOwnerId()])
       ->addCacheContexts(['url.path']);
 
-    $items = $this->policy->publicItems($this->valuesOf($profile));
+    // Perfil privado mostra só foto e apelido (PublicProfilePolicy). Sem apelido, a resposta é a de inexistente.
+    $items = $this->policy->publicItems($this->valuesOf($profile, $account));
     if ($items === []) {
-      // Perfil privado: mesma resposta de inexistente.
       throw new NotFoundHttpException();
     }
 
@@ -119,9 +118,9 @@ final class PublicProfileController extends ControllerBase {
   /**
    * Lê os valores de visibilidade do perfil. Campo ausente usa o padrão: perfil público, itens privados.
    *
-   * @return array{publico: bool, apelido: string, exibir_foto: bool, exibir_bio: bool, exibir_email: bool, exibir_redes: bool}
+   * @return array{publico: bool, obrigatorio: bool, apelido: string, exibir_foto: bool, exibir_bio: bool, exibir_email: bool, exibir_redes: bool}
    */
-  private function valuesOf(ProfileInterface $profile): array {
+  private function valuesOf(ProfileInterface $profile, $account): array {
     $flag = static function (string $field, bool $default) use ($profile): bool {
       if (!$profile->hasField($field) || $profile->get($field)->isEmpty()) {
         return $default;
@@ -131,6 +130,7 @@ final class PublicProfileController extends ControllerBase {
 
     return [
       'publico' => $flag('field_perfil_publico', TRUE),
+      'obrigatorio' => $account !== NULL && PublicProfilePolicy::isObrigatorioPublico($account->getRoles()),
       'apelido' => (string) $profile->get('field_nickname')->value,
       'exibir_foto' => $flag('field_exibir_foto', FALSE),
       'exibir_bio' => $flag('field_exibir_bio', FALSE),

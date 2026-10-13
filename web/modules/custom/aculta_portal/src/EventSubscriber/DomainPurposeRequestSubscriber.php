@@ -212,8 +212,19 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $request = $event->getRequest();
     $routeName = (string) $request->attributes->get('_route');
     // The support form is routed at /apoio but is the public home of the SUPPORT
-    // subdomain: it is served only when the original request path is /.
+    // subdomain: it is served only when the original request path is /. A direct
+    // GET/HEAD to /apoio goes to the root with 301, as the other subdomains do for
+    // their internal front paths; other methods fail closed.
     if ($routeName === 'aculta_portal.support_form' && $request->getPathInfo() !== '/' && !$request->attributes->get(\Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor::FRONT_ATTRIBUTE)) {
+      if (in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
+        $url = $this->domainPurposeManager->pathUrl('support', '/');
+        if ($url !== NULL) {
+          $event->setResponse(new TrustedRedirectResponse($url->toString(), Response::HTTP_MOVED_PERMANENTLY, [
+            'Cache-Control' => 'public, max-age=3600',
+          ]));
+          return;
+        }
+      }
       throw new NotFoundHttpException();
     }
     // The account overview is served only at the ACCOUNT root. Its internal

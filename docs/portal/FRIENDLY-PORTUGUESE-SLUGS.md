@@ -136,7 +136,7 @@ URLs humanas devem usar vocabulário de apoio/doação, por exemplo:
 - páginas de confirmação/status com nomes compreensíveis quando não forem
   endpoints técnicos do Commerce.
 
-Registro de decisão: a página pública de apoio é a página inicial do subdomínio de apoio (`/`). A rota interna é `/apoio`, que não é acessível diretamente; o histórico de doações fica em Minha Conta > Meu apoio (`/meu-apoio`). Caminhos antigos, como `/apoie`, respondem 404; não há redirecionamento de slug (ver `docs/architecture/multidomain.md`, "Página de apoio (SUPPORT)").
+Registro de decisão: a página pública de apoio é a página inicial do subdomínio de apoio (`/`). A rota interna é `/apoio`: GET/HEAD direto responde 301 para `/`, como os demais subdomínios com home interna (Wiki, Cursos, Conta, Revista), e outros métodos respondem 404; o histórico de doações fica em Minha Conta > Meu apoio (`/meu-apoio`). Caminhos antigos, como `/apoie`, respondem 404; não há redirecionamento de slug (ver `docs/architecture/multidomain.md`, "Página de apoio (SUPPORT)").
 
 Checkout, payment callbacks e webhooks permanecem sob APIs upstream.
 

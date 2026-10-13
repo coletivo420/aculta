@@ -57,6 +57,7 @@ final class TokenHooks {
       'attendance',
       'organizer',
       'free',
+      'session',
     ] as $key) {
       $tokens[$key] = [
         'name' => $this->translation->translate('Editorial: @field', ['@field' => $key]),
@@ -273,6 +274,17 @@ final class TokenHooks {
 
         case 'organizer':
           $value = $get('field_organizer');
+          break;
+
+        case 'session':
+          // Sessão da Revista = termo de field_editorial_category. Sem termo, cai na Notícias.
+          $term = $node->hasField('field_editorial_category')
+            ? $node->get('field_editorial_category')->entity
+            : NULL;
+          if ($term !== NULL) {
+            $metadata->addCacheableDependency($term);
+          }
+          $value = $term?->label() ?: (string) $this->translation->translate('Notícias');
           break;
 
         case 'free':

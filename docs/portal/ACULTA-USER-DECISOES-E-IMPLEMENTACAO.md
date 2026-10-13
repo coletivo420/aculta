@@ -137,12 +137,27 @@ verificação dos gatilhos com dados reais.
 | Primeiro comentário no Fórum, primeira edição na Wiki e Associado (manual) | Decidido; código em andamento (não commitado) |
 | Data "Obtida em" registrada; ao passar o mouse, mostra "Obtida em: DATA" | Decidido; entidade `aculta_badge_award` em andamento (não commitada, não instalada no Runtime) |
 
+### 1.9 Revista: caixa de autor
+Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER-PLAN.md`, seção C1.
+
+| Decisão | Status |
+| --- | --- |
+| Caixa de autor da publicação da Revista é programada no `aculta_user` (opção 1: presenter + contrato `data-portal-ui="author-card"` + componente no ACULTA420), sem módulo contrib de layout ou de exibição | Decidido (2026-10-13); documentado, não implementado; fase U2, PR próprio |
+| A caixa mostra só nome de exibição (apelido), foto, bio e link para `/u/<apelido>`, cada um sob as regras de `PublicProfilePolicy` | Decidido; documentado |
+| O autor é `node.uid`; `field_editorial_author` não entra na caixa | Decidido; documentado |
+| Link para o perfil é construído no purpose `main` (perfil público só existe lá) | Decidido; documentado |
+
 ## 2. Pendências de decisão
 1. Estado da associação (ativa, inativa, suspensa) controlado pelo administrador, com mensagem verde/amarela/vermelha
    para a pessoa, e data de associação preenchida pelo administrador (pedido pelo responsável; não implementado).
 2. Confirmação dos tipos de discussão vinculada (decisão 24) e dos slugs da Atividade (decisão 20).
 3. Discussão do LMS por atividade (fase 7): o LMS 1.2.3 instalado não tem campo de comentário em `lms_activity`. As
    opções (a), (b) ou (c) estão em aberto.
+4. Tipo de publicação da Revista: a Revista publica hoje com o tipo `article` ("Notícia"). Falta decidir se a
+   publicação será um tipo novo "blog" (configuração, sem módulo) ou se `article` continua. Afeta a caixa de autor, que
+   só é programada no tipo que o responsável escolher.
+5. Mapeamento dos campos da publicação: "chamada" para `field_subtitle` e "resumo" para `field_summary` (ambos existem
+   em `article`). Falta confirmar, porque o tipo "blog" pode ter campos próprios.
 
 ## 3. Verificações feitas
 | Item | Como foi verificado | Resultado |

@@ -9,7 +9,7 @@ dependencies:
 id: aculta_article
 label: 'URLs — article'
 type: 'canonical_entities:node'
-pattern: '/noticias/[node:title]'
+pattern: '/[node:session]/[node:title]'
 selection_criteria:
   44a5e92b-d518-4812-874d-a8308a8097a9:
     id: 'entity_bundle:node'
