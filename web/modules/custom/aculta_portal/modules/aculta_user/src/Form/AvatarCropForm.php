@@ -35,8 +35,11 @@ final class AvatarCropForm extends FormBase {
   /** Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml). */
   public const CROP_TYPE = 'aculta_avatar_1x1';
 
-  /** Opções do modal de recorte: altura máxima com barra de rolagem quando o conteúdo passa dela. */
-  public const DIALOG_OPTIONS = ['width' => 640, 'maxHeight' => 560, 'title' => 'Recortar foto'];
+  /**
+   * Opções do modal de recorte. maxHeight em porcentagem é convertido pelo Drupal (dialog.position.js), descontando as
+   * barras do tema: o modal acompanha a altura da tela. Quando o conteúdo passa dela, rola (portal-account.css).
+   */
+  public const DIALOG_OPTIONS = ['width' => 560, 'maxHeight' => '75%', 'title' => 'Recortar foto'];
 
   /** Estilo de imagem usado pela visualização do avatar. */
   public const STYLE = 'aculta_avatar';

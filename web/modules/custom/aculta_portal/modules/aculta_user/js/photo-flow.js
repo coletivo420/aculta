@@ -19,7 +19,7 @@
     link.className = 'use-ajax';
     link.setAttribute('data-dialog-type', 'modal');
     // Mesmas opções do modal de recorte (AvatarCropForm::DIALOG_OPTIONS): rolagem quando passa da altura máxima.
-    link.setAttribute('data-dialog-options', JSON.stringify({ width: 640, maxHeight: 560, title: 'Recortar foto' }));
+    link.setAttribute('data-dialog-options', JSON.stringify({ width: 560, maxHeight: '75%', title: 'Recortar foto' }));
     link.hidden = true;
     document.body.appendChild(link);
     Drupal.attachBehaviors(link);
