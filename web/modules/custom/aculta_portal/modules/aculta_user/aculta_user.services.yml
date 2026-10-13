@@ -23,6 +23,11 @@ services:
   aculta_user.account_bio_card:
     class: Drupal\aculta_user\Bio\AccountBioCard
     arguments: ['@entity_type.manager']
-  aculta_user.bio_modal_access:
-    class: Drupal\aculta_user\Access\AccountBioModalAccess
+  aculta_user.account_modal_access:
+    class: Drupal\aculta_user\Access\AccountModalAccess
     arguments: ['@current_user', '@request_stack']
+  aculta_user.social_networks:
+    class: Drupal\aculta_user\Social\SocialNetworks
+  aculta_user.social_links_card:
+    class: Drupal\aculta_user\Social\SocialLinksCard
+    arguments: ['@entity_type.manager', '@aculta_user.social_networks']

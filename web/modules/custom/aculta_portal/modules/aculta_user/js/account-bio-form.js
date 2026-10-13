@@ -10,9 +10,59 @@
 (function (Drupal, drupalSettings) {
   'use strict';
 
+  // Envio por JSON genérico (data-aculta-json-form): grava pela URL de drupalSettings.acultaUser.jsonForms[chave],
+  // mostra o erro do servidor no campo e recarrega a visão geral ao gravar.
+  function onJsonSubmit(event, form, key) {
+    const origin = event.submitter;
+    if (origin && origin.hasAttribute('data-aculta-clear')) {
+      event.preventDefault();
+      const field = form.querySelector('input[name="link"], textarea');
+      if (field) {
+        field.value = '';
+        field.focus();
+      }
+      return;
+    }
+    const settings = ((drupalSettings.acultaUser || {}).jsonForms || {})[key];
+    if (!settings) {
+      return;
+    }
+    event.preventDefault();
+    const submit = origin && origin.name === 'op' ? origin : form.querySelector('input[name="op"]');
+    if (submit) {
+      submit.disabled = true;
+    }
+    fetch(settings.url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: new URLSearchParams(new FormData(form)),
+    })
+      .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok) {
+          throw new Error(data.message || 'Não foi possível salvar.');
+        }
+        window.location.reload();
+      })
+      .catch((error) => {
+        if (submit) {
+          submit.disabled = false;
+        }
+        window.alert(error.message || 'Não foi possível salvar. Tente novamente.');
+      });
+  }
+
   function onSubmit(event) {
     const form = event.target;
-    if (!(form instanceof HTMLFormElement) || !form.hasAttribute('data-aculta-bio-form')) {
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+    if (form.hasAttribute('data-aculta-json-form')) {
+      onJsonSubmit(event, form, form.getAttribute('data-aculta-json-form'));
+      return;
+    }
+    if (!form.hasAttribute('data-aculta-bio-form')) {
       return;
     }
     const origin = event.submitter;

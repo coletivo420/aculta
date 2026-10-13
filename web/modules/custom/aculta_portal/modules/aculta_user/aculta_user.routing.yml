@@ -82,7 +82,7 @@ aculta_user.bio_form:
     _form: '\Drupal\aculta_user\Form\AccountBioForm'
     _title: 'Editar bio'
   requirements:
-    _custom_access: 'aculta_user.bio_modal_access:access'
+    _custom_access: 'aculta_user.account_modal_access:access'
   options:
     _aculta_domain_purpose: 'account'
 
@@ -90,6 +90,28 @@ aculta_user.bio_save:
   path: '/bio/salvar'
   defaults:
     _controller: '\Drupal\aculta_user\Controller\AccountBioSaveController::save'
+  methods: [POST]
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user.redes_form:
+  path: '/redes/editar/{rede}'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\SocialLinkForm'
+    _title: 'Editar rede social'
+  requirements:
+    _custom_access: 'aculta_user.account_modal_access:access'
+    rede: 'instagram|facebook|email|reddit'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user.redes_save:
+  path: '/redes/salvar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\SocialLinkSaveController::save'
   methods: [POST]
   requirements:
     _permission: 'access aculta portal'

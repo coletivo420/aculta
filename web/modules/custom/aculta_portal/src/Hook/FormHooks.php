@@ -221,7 +221,7 @@ final class FormHooks {
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
     if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_account_terms_accept' || $formId === 'aculta_portal_account_password_create'
-      || $formId === 'user_login_form' || $formId === 'aculta_user_account_bio_form' || !isset($form['actions']['submit'])) {
+      || $formId === 'user_login_form' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])) {
       return;
     }
     $wrapper = 'portal-account-' . \Drupal\Component\Utility\Html::cleanCssIdentifier($formId);
