@@ -1,10 +1,8 @@
-/* 4a. The shared top shell keeps the multidomain bar and domain header visible while scrolling. */
-.aculta-page-top {
+/* 4a. Only the multidomain Institution Bar stays at the top while scrolling. */
+.aculta-institution-bar {
   position: sticky;
   top: var(--drupal-displace-offset-top, 0px);
   z-index: 1030;
-}
-.aculta-institution-bar {
   color: var(--aculta-shell-institution-text);
   background-color: var(--aculta-shell-institution-bg);
   border-bottom: 1px solid var(--aculta-shell-border);

@@ -28,6 +28,19 @@ $hookPath = $themeRoot . '/src/Hook/ThemeHooks.php';
 $pagePath = $themeRoot . '/templates/page.html.twig';
 $hookSource = file_get_contents($hookPath);
 $pageSource = file_get_contents($pagePath);
+$institutionBarCss = file_get_contents($themeRoot . '/css/components/institution-bar.css');
+$headerCss = file_get_contents($themeRoot . '/css/components/header.css');
+
+$assert(
+  str_contains($pageSource, '<div class="aculta-institution-bar">')
+    && !str_contains($pageSource, 'aculta-page-top'),
+  'Institution Bar is not grouped with the Domain Header in a sticky wrapper.',
+);
+$assert(
+  preg_match('/\.aculta-institution-bar\s*\{[^}]*position:\s*sticky\s*;/s', $institutionBarCss) === 1
+    && preg_match('/\.aculta-header\s*\{[^}]*position:\s*sticky\s*;/s', $headerCss) !== 1,
+  'Only the Institution Bar is sticky; the Domain Header scrolls with page content.',
+);
 
 $assert(
   str_contains($hookSource, "\$variables['domain_presentation']['identity']"),
