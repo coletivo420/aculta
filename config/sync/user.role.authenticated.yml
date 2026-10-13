@@ -31,6 +31,7 @@ is_admin: false
 permissions:
   - 'access aculta portal'
   - 'access checkout'
+  - 'access comments'
   - 'access content'
   - 'access email confirmation'
   - 'create customer profile'

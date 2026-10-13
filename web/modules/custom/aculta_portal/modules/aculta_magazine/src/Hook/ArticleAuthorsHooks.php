@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_user\Hook;
+namespace Drupal\aculta_magazine\Hook;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_magazine\Presentation\ForumOpeningPost;
+use Drupal\aculta_magazine\Presentation\PostPresentation;
+use Drupal\aculta_magazine\Revista\RevistaPublications;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,7 +24,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 /**
  * Caixa de autores da Revista: autor principal (node.uid) e coautores (co_authors, Node Co-Authors).
  *
- * Só aparece em Notícias publicadas, no propósito MAGAZINE. Nome, foto e link seguem PublicProfilePolicy.
+ * Só aparece em publicações da Revista (RevistaPublications::BUNDLES) publicadas, no propósito MAGAZINE. Nome, foto e link seguem PublicProfilePolicy.
+ *
+ * Este é o único `node_view` do módulo (um por hook e módulo). Tópicos do Fórum (tipo forum) também passam aqui: a
+ * abertura da discussão vai para ForumOpeningPost.
  */
 final class ArticleAuthorsHooks {
 
@@ -34,6 +40,10 @@ final class ArticleAuthorsHooks {
     private readonly PublicProfilePolicy $policy,
     #[Autowire(service: 'aculta_user.social_networks')]
     private readonly SocialNetworks $networks,
+    #[Autowire(service: 'aculta_magazine.post_presentation')]
+    private readonly PostPresentation $presentation,
+    #[Autowire(service: 'aculta_magazine.forum_opening_post')]
+    private readonly ForumOpeningPost $forumOpening,
   ) {}
 
   /**
@@ -41,12 +51,19 @@ final class ArticleAuthorsHooks {
    */
   #[Hook('node_view')]
   public function nodeView(array &$build, EntityInterface $entity, $display, $view_mode): void {
-    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'article' || $entity->isNew() || !$entity->isPublished()) {
+    if ($entity instanceof NodeInterface && $entity->bundle() === 'forum' && $view_mode === 'full') {
+      $this->forumOpening->build($build, $entity);
+      return;
+    }
+    if (!$entity instanceof NodeInterface || !RevistaPublications::isPublication($entity->bundle()) || $entity->isNew() || !$entity->isPublished()) {
       return;
     }
     if ($view_mode !== 'full' || $this->purposeManager->getCurrentPurpose() !== 'magazine') {
       return;
     }
+
+    // Cabeçalho da publicação (data, autor, compartilhamento) e caixa de autores.
+    $this->presentation->build($build, $entity);
 
     $cache = (new CacheableMetadata())->addCacheableDependency($entity);
     $authors = [];
@@ -97,7 +114,7 @@ final class ArticleAuthorsHooks {
     $items = $this->policy->publicItems([
       'publico' => $publico,
       'apelido' => $name,
-      'exibir_foto' => $flag('field_exibir_foto'),
+      'exibir_foto' => TRUE,
       'exibir_bio' => $flag('field_exibir_bio'),
       'exibir_redes' => $flag('field_exibir_redes'),
     ]);

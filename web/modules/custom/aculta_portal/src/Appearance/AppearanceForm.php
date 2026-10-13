@@ -17,12 +17,14 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
   public function __construct(
     private readonly ColorModePreference $preference,
     private readonly AccountProxyInterface $currentUser,
+    private readonly SettingsTabs $settingsTabs,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.color_mode_preference'),
       $container->get('current_user'),
+      $container->get('aculta_portal.settings_tabs'),
     );
   }
 
@@ -32,6 +34,7 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUser->id();
+    $form['tabs'] = $this->settingsTabs->build('color');
     $form['intro'] = ['#markup' => '<p>' . $this->t('Escolha como a página aparece para você. Automático segue a preferência do seu sistema.') . '</p>'];
     $form['color_mode'] = [
       '#type' => 'radios',

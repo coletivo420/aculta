@@ -80,6 +80,18 @@ final class PortalUiHooks {
     // Visão geral da Minha conta: ação "Ver Perfil" no topo (botão secundário, borda visível, foco por teclado).
     'account-overview-actions' => ['portal-account-overview__actions'],
     'account-view-profile' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
+    // Cabeçalho da postagem da Revista (metainformação e compartilhamento).
+    'post-meta' => ['portal-post__meta'],
+    'post-meta-author' => ['portal-post__meta-item', 'bi', 'bi-person-circle'],
+    'post-meta-date' => ['portal-post__meta-item', 'bi', 'bi-calendar3'],
+    'post-meta-time' => ['portal-post__meta-item', 'bi', 'bi-clock'],
+    'post-share' => ['portal-post__share'],
+    'post-share-label' => ['portal-post__share-label'],
+    'post-share-whatsapp' => ['portal-post__share-link', 'portal-post__share-link--whatsapp', 'bi', 'bi-whatsapp'],
+    'post-share-telegram' => ['portal-post__share-link', 'portal-post__share-link--telegram', 'bi', 'bi-telegram'],
+    'post-share-facebook' => ['portal-post__share-link', 'portal-post__share-link--facebook', 'bi', 'bi-facebook'],
+    'post-share-reddit' => ['portal-post__share-link', 'portal-post__share-link--reddit', 'bi', 'bi-reddit'],
+    'post-share-email' => ['portal-post__share-link', 'portal-post__share-link--email', 'bi', 'bi-envelope'],
     // Caixa de autores da publicação da Revista.
     'article-authors' => ['portal-article-authors'],
     'article-authors-title' => ['portal-article-authors__title'],
@@ -89,6 +101,19 @@ final class PortalUiHooks {
     'article-author-initial' => ['portal-article-author__initial'],
     'article-author-text' => ['portal-article-author__text'],
     'article-author-name' => ['portal-article-author__name'],
+    // Bloco de discussão (comentários do Fórum), em caixa própria abaixo da autoria.
+    'discussion' => ['portal-discussion'],
+    'discussion-title' => ['portal-discussion__title'],
+    'discussion-list' => ['portal-discussion__list'],
+    'discussion-item' => ['portal-discussion__item'],
+    'discussion-link' => ['portal-discussion__link'],
+
+    // Abertura do tópico do Fórum (resumo, imagem e link para a publicação da Revista).
+    'forum-opening-post' => ['portal-forum-opening'],
+    'forum-opening-post-title' => ['portal-forum-opening__title'],
+    'forum-opening-post-image' => ['portal-forum-opening__image'],
+    'forum-opening-post-body' => ['portal-forum-opening__body'],
+    'forum-opening-post-link' => ['portal-forum-opening__link'],
     'article-author-role' => ['portal-article-author__role'],
     'article-author-bio' => ['portal-article-author__bio'],
     'article-author-social' => ['portal-article-author__social'],

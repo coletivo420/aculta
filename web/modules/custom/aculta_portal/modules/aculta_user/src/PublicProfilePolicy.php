@@ -62,8 +62,9 @@ final class PublicProfilePolicy {
       return ['apelido' => TRUE, 'foto' => TRUE];
     }
 
-    $items = ['apelido' => TRUE];
-    foreach (['foto' => 'exibir_foto', 'bio' => 'exibir_bio', 'email' => 'exibir_email', 'redes' => 'exibir_redes'] as $item => $flag) {
+    // A foto sempre aparece no perfil público; bio, e-mail e redes dependem da escolha da pessoa.
+    $items = ['apelido' => TRUE, 'foto' => TRUE];
+    foreach (['bio' => 'exibir_bio', 'email' => 'exibir_email', 'redes' => 'exibir_redes'] as $item => $flag) {
       if (!empty($perfil[$flag])) {
         $items[$item] = TRUE;
       }

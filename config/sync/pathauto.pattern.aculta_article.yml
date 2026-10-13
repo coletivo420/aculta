@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - node.type.article
+    - node.type.blog
   module:
     - node
 id: aculta_article
@@ -18,6 +19,8 @@ selection_criteria:
       node: node
     bundles:
       article: article
+      blog: blog
 selection_logic: and
 weight: 0
 relationships: {  }
+

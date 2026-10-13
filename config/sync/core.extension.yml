@@ -2,6 +2,7 @@ _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
   aculta_portal: 0
+  aculta_magazine: 0
   aculta_portal_sitemap: 0
   address: 0
   announcements_feed: 0
@@ -78,6 +79,7 @@ module:
   metatag_open_graph: 0
   navigation: 0
   node: 0
+  node_co_authors: 0
   options: 0
   page_cache: 0
   path: 0

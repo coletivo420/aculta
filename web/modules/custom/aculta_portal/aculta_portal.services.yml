@@ -196,3 +196,6 @@ services:
   aculta_portal.account_page_title:
     class: Drupal\aculta_portal\Account\AccountPageTitle
     arguments: ['@current_route_match', '@config.factory', '@string_translation']
+  aculta_portal.settings_tabs:
+    class: Drupal\aculta_portal\Appearance\SettingsTabs
+    arguments: ['@module_handler']

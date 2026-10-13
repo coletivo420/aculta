@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.full
     - field.field.node.article.body
     - field.field.node.article.field_credits
+    - field.field.node.article.field_discussao
     - field.field.node.article.field_domain_source
     - field.field.node.article.field_editorial_author
     - field.field.node.article.field_editorial_category
@@ -17,8 +18,10 @@ dependencies:
     - field.field.node.article.field_related_activity
     - field.field.node.article.field_subtitle
     - field.field.node.article.field_summary
+    - field.field.node.article.field_tags
     - node.type.article
   module:
+    - link
     - text
     - user
 id: node.article.full
@@ -31,24 +34,78 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 5
+    weight: 0
     region: content
-  links:
+  field_credits:
+    type: basic_string
+    label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 100
+    weight: 21
+    region: content
+  field_editorial_category:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 89
+    region: content
+  field_media_image:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_references:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  field_subtitle:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: -32
+    region: content
+  field_summary:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: -31
+    region: content
+  field_tags:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 90
     region: content
 hidden:
-  field_credits: true
+  co_authors: true
+  field_discussao: true
   field_domain_source: true
   field_editorial_author: true
-  field_editorial_category: true
-  field_media_image: true
   field_meta_tags: true
   field_project: true
   field_published_at: true
-  field_references: true
   field_related_activity: true
-  field_subtitle: true
-  field_summary: true
   langcode: true
+  links: true
+  search_api_excerpt: true
+

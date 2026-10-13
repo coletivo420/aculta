@@ -21,8 +21,9 @@ Sem o ACULTA420, links, textos e fotos continuam funcionando.
 - **Autores e editores são sempre públicos:** papéis `content_editor` e `wiki_editor`. O controle de privacidade
   fica bloqueado, com o motivo exibido (`isObrigatorioPublico`).
 - **Perfil privado:** mostra somente foto e apelido, na página pública.
-- **Itens de perfil público:** bio (`field_exibir_bio`), foto (`field_exibir_foto`), redes (`field_exibir_redes`),
-  e-mail (`field_exibir_email`). Cada um só aparece se a pessoa escolheu exibi-lo.
+- **Foto:** sempre aparece no perfil público (não há opção de ocultar; o campo `field_exibir_foto` ficou sem uso).
+- **Itens separados:** bio (`field_exibir_bio`), redes sociais (`field_exibir_redes`) e e-mail (`field_exibir_email`).
+  Cada um só aparece se a pessoa escolheu exibi-lo, individualmente.
 - **Nunca públicos:** CPF, RG, endereço, WhatsApp, data de nascimento, cidade e UF.
 
 ## 3. Página pública `/u/<apelido>` (purpose `main`)
@@ -65,7 +66,12 @@ Ordem no topo: botão **Ver Perfil** (à direita, após o título), depois o cab
 Todo avatar (estilo `aculta_avatar`) tem proporção 1:1, não encolhe com o contêiner e não é esticado
 (`base.css`). Verificado em visão geral, perfil público, cartão de autor e modal de foto.
 
-## 7. Verificação
+## 7. Links de perfil
+
+Todo link para `/u/<apelido>` é gerado pela rota com o apelido atual, no propósito `main`, e a cache acompanha
+o perfil. Regra e gate em `docs/portal/GUARDRAILS.md` (seção "Links de perfil") e `scripts/validate-profile-links.php`.
+
+## 7b. Verificação
 
 - Gates: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-public-slugs`,
   `validate-environment-addresses`, `validate-aculta420-design-foundations`.
@@ -74,9 +80,24 @@ Todo avatar (estilo `aculta_avatar`) tem proporção 1:1, não encolhe com o con
   e bio, medidas de avatar sem distorção.
 - Pendente: inspeção visual humana das telas acima.
 
-## 8. Pendências
+## 8. Configurações (abas)
+
+Minha conta > Configurações tem duas abas, no mesmo padrão de Meus Dados (`account-data-nav`):
+- **Modo de cor** (`/configuracoes`): claro, escuro ou automático, por conta.
+- **Privacidade** (`/configuracoes/privacidade`): perfil público e o que aparece no perfil público (foto,
+  bio, redes sociais, e-mail como botão). Autores e editores têm o perfil público bloqueado, com o motivo.
+  Apelido fica em Meus dados; bio e redes ficam na visão geral.
+
+O Portal monta as abas (`aculta_portal.settings_tabs`) e chama o alter `aculta_portal_settings_tabs`; o
+`aculta_user` acrescenta "Privacidade". A rota antiga `/configuracoes/perfil` responde 404 (sem redirecionamento
+de slug, como no restante do projeto).
+
+## 9. Avatares de sorteio
+
+O link "Sortear novo avatar" leva token CSRF válido: requisição com o link do modal responde 200, sem token 403.
+
+## 10. Pendências
 
 - Tipo de publicação "blog" da Revista e mapeamento de chamada/resumo (decisão do responsável).
-- `/avatar/sortear`: token CSRF com barra inicial, provavelmente recusado (mesmo problema corrigido na bio).
-- Aba de Configurações ainda não agrupa Perfil, Privacidade e Modo de cor.
-- Versão do `aculta_portal` (módulo pai) não marcada nesta entrega; o `aculta_user` está em 0.3.0-dev.9.
+- Inspeção visual humana das telas (painel, perfil público, cartão de autor, abas).
+- Versão do `aculta_portal` (módulo pai) não marcada nesta entrega; o `aculta_user` está em 0.3.0-dev.10.

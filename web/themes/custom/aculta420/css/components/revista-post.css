@@ -1,0 +1,206 @@
+/* Página padrão de postagem da Revista (Notícia e blog, exibição completa).
+   Função no módulo; aparência aqui. Cores só por tokens; largura de leitura em ch (60-75 caracteres). */
+.node--view-mode-full.node--type-article,
+.node--view-mode-full.node--type-blog {
+  max-inline-size: 60rem;
+  margin-inline: auto;
+}
+.node--view-mode-full .field--name-field-editorial-category {
+  margin-block: 0.75rem 0.25rem;
+  font-size: 0.875rem;
+}
+.node--view-mode-full .field--name-field-editorial-category .field__label { font-weight: 600; margin-inline-end: 0.25rem; }
+
+/* Imagem de destaque: centralizada, moldura 3:2 na largura da coluna de leitura, imagem inteira sem distorção
+   (portais de notícia usam moldura larga e fundo neutro para fotos verticais). */
+.node--view-mode-full .field--name-field-media-image {
+  margin-block: 1.5rem 0.5rem;
+  text-align: center;
+}
+.node--view-mode-full .field--name-field-media-image img {
+  display: block;
+  /* Caixa delimitada: largura e altura máximas, centralizada; a imagem inteira cabe dentro. */
+  inline-size: min(100%, 40rem);
+  block-size: min(26.6667rem, 100vw * 0.6);
+  max-block-size: 28rem;
+  margin-inline: auto;
+  border-radius: 0.75rem;
+  /* Imagem inteira, sem recorte (logotipo e títulos preservados); moldura neutra nas laterais. */
+  object-fit: contain;
+  background: var(--aculta-surface-muted);
+}
+
+/* Chamada: texto de abertura, maior, em destaque. */
+.node--view-mode-full .field--name-field-subtitle {
+  margin-block: 1.5rem 0.75rem;
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.35;
+  max-inline-size: 42ch;
+}
+
+/* Resumo: apoio à chamada, com filete neutro. */
+.node--view-mode-full .field--name-field-summary {
+  margin-block: 0 1.5rem;
+  padding-inline-start: 1rem;
+  border-inline-start: 3px solid var(--aculta-border-strong);
+  font-size: 1rem;
+  line-height: 1.55;
+  max-inline-size: 60ch;
+}
+.node--view-mode-full .field--name-field-summary .field__item { margin: 0; }
+
+/* Corpo: largura de leitura, ritmo vertical. */
+.node--view-mode-full .field--name-body { max-inline-size: 68ch; margin-inline: auto; font-size: 1.0625rem; line-height: 1.7; text-align: justify; hyphens: auto; }
+/* Conteúdo embutido (vídeo, mídia) sempre centralizado no bloco do corpo. */
+.node--view-mode-full .field--name-body .media,
+.node--view-mode-full .field--name-body .media--type-remote-video { display: block; margin-inline: auto; }
+.node--view-mode-full .field--name-body p { margin-block: 0 1.1rem; }
+
+/* Vídeo embutido: responsivo, proporção 16:9, largura da coluna de leitura. */
+.node--view-mode-full .media--type-remote-video {
+  inline-size: 100%;
+  max-inline-size: 60rem;
+  margin: 2rem auto;
+}
+.node--view-mode-full .media--type-remote-video iframe,
+.node--view-mode-full .media--type-remote-video video {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 0.75rem;
+  background: var(--aculta-surface-muted);
+}
+
+/* Caixa de autores, depois do conteúdo. */
+.node--view-mode-full .portal-article-authors { margin-block: 2.5rem 0; }
+.node--view-mode-full .portal-article-authors__title { margin-block: 0 0.5rem; }
+
+@media (max-width: 575.98px) {
+  .node--view-mode-full .field--name-field-media-image img { block-size: auto; aspect-ratio: 4 / 3; inline-size: 100%; }
+  .node--view-mode-full .field--name-field-subtitle { font-size: 1.25rem; }
+}
+
+/* Cabeçalho da postagem: título menor e centralizado; faixa com autor, data e hora; compartilhamento. */
+.page-node-type-article .aculta-page-heading h1,
+.page-node-type-blog .aculta-page-heading h1 {
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  line-height: 1.15;
+  margin-block-end: 0.5rem;
+  text-align: center;
+  max-inline-size: 42ch;
+  margin-inline: auto;
+}
+.node--view-mode-full .portal-post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-block: 0;
+  padding-block: 0.75rem;
+  border-block-end: 1px solid var(--aculta-border-subtle);
+  font-size: 0.9375rem;
+}
+.node--view-mode-full .portal-post__meta-item::before { margin-inline-end: 0.35rem; }
+.node--view-mode-full .portal-post__share { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-inline-start: auto; }
+.node--view-mode-full .portal-post__share-link + .portal-post__share-link { margin-inline-start: 0; }
+.node--view-mode-full .portal-post__share-label { font-weight: 600; margin-inline-end: 0.25rem; }
+.node--view-mode-full .portal-post__share-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: 50%;
+  font-size: 0;
+  color: var(--aculta-interactive-text);
+  border: 1px solid var(--aculta-border-subtle);
+  background: var(--aculta-surface-muted);
+  text-decoration: none;
+}
+.node--view-mode-full .portal-post__share-link::before { font-size: 1.125rem; line-height: 1; }
+.node--view-mode-full .portal-post__share-link--whatsapp { background: var(--aculta-status-ok-surface); }
+.node--view-mode-full .portal-post__share-link--telegram,
+.node--view-mode-full .portal-post__share-link--facebook { background: var(--aculta-surface-interactive); }
+.node--view-mode-full .portal-post__share-link--reddit { background: var(--aculta-status-error-surface); }
+.node--view-mode-full .portal-post__share-link--email { background: var(--aculta-button-primary-bg); color: var(--aculta-button-primary-text); }
+.node--view-mode-full .portal-post__share-link:hover,
+.node--view-mode-full .portal-post__share-link:focus-visible { outline: 2px solid var(--aculta-interactive-border); outline-offset: 2px; }
+
+/* Resumo: caixa própria, separada da chamada e do corpo. */
+.node--view-mode-full .field--name-field-summary {
+  margin-block: 0 0;
+  padding: 1.25rem 1.5rem;
+  border: 0;
+  border-radius: 0.75rem;
+  /* Creme do tema (superfície muted), o mesmo da moldura da imagem: resumo e imagem na mesma família de cor. */
+  background: var(--aculta-surface-muted);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  /* Ocupa a largura do bloco, alinhado ao título (sem o limite de leitura do corpo). */
+  inline-size: 100%;
+  max-inline-size: none;
+}
+
+/* Título da postagem colado no resumo: sem a margem de cabeçalho de página nas publicações da Revista. */
+.page-node-type-article .aculta-page-heading,
+.page-node-type-blog .aculta-page-heading { margin-block-end: 0; }
+
+/* Fim da postagem: categoria editorial e tags alinhadas à direita, rótulo e valores juntos, antes da caixa de autores. */
+.node--view-mode-full .field--name-field-editorial-category,
+.node--view-mode-full .field--name-field-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+  margin-block: 1.5rem 0;
+  margin-inline-start: auto;
+  max-inline-size: 60ch;
+  text-align: right;
+  font-size: 0.9375rem;
+}
+.node--view-mode-full .field--name-field-tags { margin-block-start: 0.5rem; }
+.node--view-mode-full .field--name-field-editorial-category .field__label,
+.node--view-mode-full .field--name-field-tags .field__label { font-weight: 600; }
+.node--view-mode-full .field--name-field-editorial-category .field__items,
+.node--view-mode-full .field--name-field-tags .field__items { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.25rem 0.5rem; }
+
+/* Categoria e tags: espaço mínimo fixo entre o rótulo e o valor (sem margens herdadas do campo). */
+.node--view-mode-full .field--name-field-editorial-category .field__label,
+.node--view-mode-full .field--name-field-editorial-category .field__item,
+.node--view-mode-full .field--name-field-tags .field__label,
+.node--view-mode-full .field--name-field-tags .field__item { margin: 0; padding: 0; }
+.node--view-mode-full .field--name-field-editorial-category { gap: 0.3rem 0.35rem; }
+
+/* Chamada (subtítulo): logo abaixo do título, centralizada com ele, em fonte menor. */
+.node--view-mode-full .field--name-field-subtitle {
+  margin: 0.25rem 0 0.75rem;
+  padding-block-end: 0.75rem;
+  border-block-end: 1px solid var(--aculta-border-subtle);
+  inline-size: 100%;
+  max-inline-size: none;
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Abertura do tópico do Fórum: resumo e imagem da publicação da Revista, sem cópia (a imagem é a da mídia). */
+.portal-forum-opening {
+  display: grid;
+  gap: 0.75rem;
+  margin-block-end: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: 0.75rem;
+  background: var(--aculta-surface-muted);
+}
+.portal-forum-opening__title { margin: 0; font-size: 1.25rem; line-height: 1.3; }
+.portal-forum-opening__title a { color: inherit; text-decoration: none; }
+.portal-forum-opening__title a:hover { text-decoration: underline; }
+.portal-forum-opening__image img { display: block; inline-size: 100%; max-inline-size: 30rem; height: auto; border-radius: 0.5rem; }
+.portal-forum-opening__body { font-size: 1rem; line-height: 1.6; }
+.portal-forum-opening__link { justify-self: start; font-weight: 600; }

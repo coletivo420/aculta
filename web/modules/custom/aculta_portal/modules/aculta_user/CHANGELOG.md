@@ -1,3 +1,31 @@
+# Changelog — aculta_user
+
+## 0.3.0-dev.12 — bloco de discussão em caixa própria, abaixo da autoria — 2026-10-13
+
+- Bloco de discussão (`DiscussionHooks`) com tokens `discussion*` em `data-portal-ui` (sem classes de design) e peso 110,
+  depois da caixa de autoria. Cor e borda ficam no tema (`css/components/discussion.css`).
+- Testado com o tema padrão `aculta420` e com o Olivero (tema padrão trocado temporariamente, depois restaurado).
+- RUNTIME STATUS: verificado no Homelab (HTTP, navegador e Olivero). Inspeção visual humana pendente.
+
+## 0.3.0-dev.11 — discussão vinculada: plural do link e tradução correta — 2026-10-13
+
+- `DiscussionHooks`: o link "Ver discussão completa" usa plural correto (1 comentário / N comentários) e
+  tradução pelo `StringTranslationTrait`.
+- Integração com o Fórum da Revista: a publicação cria o tópico automaticamente (`aculta_magazine`); o bloco
+  de discussão desta página mostra o trecho e o link para o tópico no propósito FORUM.
+- RUNTIME STATUS: verificado no Homelab (HTTP e banco). Inspeção visual humana pendente.
+
+## 0.3.0-dev.10 — abas de Configurações (Modo de cor e Privacidade) — 2026-10-13
+
+- Minha conta > Configurações com abas no padrão de Meus Dados: Modo de cor e Privacidade.
+- Privacidade (`/configuracoes/privacidade`) só com as escolhas de visibilidade (perfil público, foto, bio,
+  redes, e-mail). Apelido segue em Meus dados; bio e redes na visão geral. `/configuracoes/perfil` sai (404).
+- Aba acrescentada pelo alter `aculta_portal_settings_tabs` (Portal: `aculta_portal.settings_tabs`).
+- Privacidade: a opção "Mostrar foto" sai; a foto sempre aparece no perfil público. Bio, redes e e-mail continuam separados.
+  Teste unitário da política atualizado (perfil privado: foto e apelido).
+- Sorteio de avatar: token CSRF verificado (200 com o link do modal, 403 sem token).
+- RUNTIME STATUS: verificado no Homelab (navegador). Inspeção visual humana pendente.
+
 ## 0.3.0-dev.9 — perfil público, cartão de autor e painel da Minha conta — 2026-10-13
 
 - Perfil público `/u/<apelido>`: foto, apelido, bio e redes em botões com ícone e rótulo; e-mail como botão `mailto:`.

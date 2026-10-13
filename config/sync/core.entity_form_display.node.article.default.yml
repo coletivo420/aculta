@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.article.body
+    - field.field.node.article.field_tags
     - field.field.node.article.field_credits
     - field.field.node.article.field_domain_source
     - field.field.node.article.field_editorial_author
@@ -48,6 +49,16 @@ content:
   co_authors:
     type: entity_reference_autocomplete_tags
     weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_tags:
+    type: entity_reference_autocomplete_tags
+    weight: 45
     region: content
     settings:
       match_operator: CONTAINS

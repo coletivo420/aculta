@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   config:
+    - field.field.taxonomy_term.forums.field_categoria_revista
     - field.field.taxonomy_term.forums.forum_container
     - taxonomy.vocabulary.forums
   module:
@@ -18,6 +19,12 @@ content:
   description:
     type: text_textfield
     weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_categoria_revista:
+    type: options_select
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }

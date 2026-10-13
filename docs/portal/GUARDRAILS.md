@@ -99,3 +99,20 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 - Gate Drupal 11+: `php scripts/validate-aculta-portal-drupal11.php`.
 - Revisão de PR: checar cada regra que o diff toca. Regra violada é finding, não nota.
 - Regressão: comportamentos já aceitos são invariantes em `docs/portal/ANTI-REGRESSAO.md`; diff que toca um deles precisa do caso executado.
+
+## Links de perfil (`/u/<apelido>`)
+
+Regra (fixada pelo responsável): todo link para o perfil público é gerado a partir do apelido **atual** do usuário,
+pela rota `aculta_user.perfil_publico` no propósito `main` (`DomainPurposeManager::routeUrl`). Nunca escrever o
+caminho `/u/...` à mão, nunca guardar a URL do perfil em campo, configuração ou cache sem tags do perfil.
+
+- **Por quê:** o apelido pode mudar. Um link escrito à mão ou guardado fica apontando para o endereço antigo
+  (que responde 404, conforme a regra de slug estável). Ao gerar pela rota, a URL acompanha o apelido.
+- **Cache:** quem gera o link registra o perfil e o usuário na cache (`getCacheTags()` / `addCacheableDependency`),
+  para que a troca de apelido invalide as páginas que mostram o link (caixa de autores, faixa da postagem,
+  botão "Ver Perfil" da Minha conta).
+- **Domínio:** o link é absoluto para o host do propósito `main` (ex.: a Revista aponta para o domínio principal),
+  porque o perfil só existe nele. Relativo só funciona dentro do próprio host principal; por isso o link é
+  gerado pelo serviço de domínio, sem host fixo no código.
+- **Gate:** `php scripts/validate-profile-links.php` reprova caminho `/u/` literal e geração de link de perfil
+  sem registro na cache. Deve ser PASS em toda mudança de perfil, caixa de autores ou faixa de postagem.

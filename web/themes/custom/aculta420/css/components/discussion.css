@@ -1,0 +1,20 @@
+/* Discussão vinculada (comentários do Fórum) na publicação: caixa própria, abaixo da autoria.
+   Cor de status "ok" (superfície verde-claro no modo claro) e borda de destaque, para não se confundir com o resumo. */
+.portal-discussion {
+  display: grid;
+  gap: 0.75rem;
+  margin-block: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-inline-start: 4px solid var(--aculta-border-accent);
+  border-radius: 0.75rem;
+  background: var(--aculta-status-ok-surface);
+}
+.portal-discussion__title { margin: 0; font-size: 1.25rem; line-height: 1.3; }
+.portal-discussion__list { display: grid; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.portal-discussion__item {
+  padding-block-end: 0.75rem;
+  border-block-end: 1px solid var(--aculta-border-subtle);
+}
+.portal-discussion__item:last-child { border-block-end: 0; padding-block-end: 0; }
+.portal-discussion__link { justify-self: start; font-weight: 600; }
