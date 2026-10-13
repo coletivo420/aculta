@@ -57,12 +57,12 @@ final class PhotoEditorHooks {
     // do avatar vem do preparo do Portal ($photoForm['avatar']); o formulário, o sorteio e o recorte ficam no modal.
     $photoForm = [
       '#type' => 'link',
-      '#title' => $photoForm['avatar'] ?? ['#markup' => ''],
+      '#title' => $photoForm['preview']['avatar'] ?? ['#markup' => ''],
       '#url' => Url::fromRoute('aculta_user.foto'),
       '#attributes' => [
         'class' => ['use-ajax', 'portal-account-photo__trigger'],
         'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Alterar foto do perfil'), 'dialogClass' => 'aculta-photo-popup', 'position' => ['my' => 'center', 'at' => 'center', 'of' => 'window']]),
+        'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Alterar foto do perfil'), 'dialogClass' => 'aculta-photo-popup', 'modal' => TRUE, 'position' => ['my' => 'center', 'at' => 'center', 'of' => 'window']]),
         'data-aculta-photo-open' => '',
         'aria-label' => (string) t('Alterar foto de perfil de @name', ['@name' => $account->getDisplayName()]),
       ],

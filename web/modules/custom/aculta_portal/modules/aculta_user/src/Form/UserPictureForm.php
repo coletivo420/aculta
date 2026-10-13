@@ -72,6 +72,33 @@ final class UserPictureForm extends FormBase {
     $default = $isAcervo ? 0 : ($pending > 0 && $pending !== $current ? $pending : $current);
 
     $form['#attributes']['data-aculta-user-picture'] = '';
+
+    // Mesmo conteúdo do popup anterior: prévia do avatar atual e a orientação de uso.
+    $currentFile = $current > 0 ? $this->entityTypeManagerService->getStorage('file')->load($current) : NULL;
+    if ($currentFile !== NULL) {
+      $form['preview'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['data-portal-ui' => 'account-photo-preview'],
+        'avatar' => [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => ['data-aculta-user-avatar' => ''],
+          'image' => [
+            '#theme' => 'image_style',
+            '#style_name' => 'aculta_avatar',
+            '#uri' => $currentFile->getFileUri(),
+            '#alt' => (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]),
+            '#attributes' => ['data-portal-ui' => 'account-avatar'],
+          ],
+        ],
+      ];
+    }
+    $form['intro'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t('Escolha uma imagem e ajuste o enquadramento antes de salvar.'),
+    ];
     $form['imagem'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Foto'),
