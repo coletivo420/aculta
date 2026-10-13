@@ -62,7 +62,7 @@ final class PhotoEditorHooks {
       '#attributes' => [
         'class' => ['use-ajax', 'portal-account-photo__trigger'],
         'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Alterar foto do perfil'), 'dialogClass' => 'aculta-photo-popup', 'modal' => TRUE, 'position' => ['my' => 'center', 'at' => 'center', 'of' => 'window']]),
+        'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Alterar foto do perfil'), 'dialogClass' => 'aculta-photo-popup', 'position' => ['my' => 'center', 'at' => 'center']]),
         'data-aculta-photo-open' => '',
         'aria-label' => (string) t('Alterar foto de perfil de @name', ['@name' => $account->getDisplayName()]),
       ],
