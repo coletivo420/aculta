@@ -3,7 +3,6 @@ langcode: pt-br
 status: true
 dependencies:
   module:
-    - core
     - profile
 id: profile.field_bio
 field_name: field_bio

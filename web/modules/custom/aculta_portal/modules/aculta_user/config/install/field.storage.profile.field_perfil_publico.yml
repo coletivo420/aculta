@@ -3,7 +3,6 @@ langcode: pt-br
 status: true
 dependencies:
   module:
-    - core
     - profile
 id: profile.field_perfil_publico
 field_name: field_perfil_publico

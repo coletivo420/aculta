@@ -6,7 +6,6 @@ dependencies:
     - field.storage.profile.field_bio
     - profile.type.participante
   module:
-    - core
     - profile
 id: profile.participante.field_bio
 field_name: field_bio

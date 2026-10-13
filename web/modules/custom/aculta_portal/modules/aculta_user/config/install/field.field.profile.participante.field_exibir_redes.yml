@@ -6,7 +6,6 @@ dependencies:
     - field.storage.profile.field_exibir_redes
     - profile.type.participante
   module:
-    - core
     - profile
 id: profile.participante.field_exibir_redes
 field_name: field_exibir_redes

@@ -6,7 +6,6 @@ dependencies:
     - field.storage.profile.field_perfil_publico
     - profile.type.participante
   module:
-    - core
     - profile
 id: profile.participante.field_perfil_publico
 field_name: field_perfil_publico
