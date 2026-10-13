@@ -88,3 +88,4 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 
 - Gate Drupal 11+: `php scripts/validate-aculta-portal-drupal11.php`.
 - Revisão de PR: checar cada regra que o diff toca. Regra violada é finding, não nota.
+- Regressão: comportamentos já aceitos são invariantes em `docs/portal/ANTI-REGRESSAO.md`; diff que toca um deles precisa do caso executado.
