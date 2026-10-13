@@ -13,13 +13,15 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Modal de edição da bio (campo field_bio do perfil participante).
  *
- * Salvar atualiza a caixa da Minha conta por AJAX e fecha o modal. Limpar só esvazia a caixa do modal.
+ * Mesmo padrão do modal de foto: envio comum para a própria rota (#action) e redirecionamento para a
+ * visão geral da Conta, que mostra a bio salva. Limpar só esvazia o campo (JS da biblioteca account-bio-form).
  * A bio só aparece no perfil público quando a pessoa escolhe exibi-la (PublicProfilePolicy).
  */
 final class AccountBioForm extends FormBase {
@@ -60,6 +62,7 @@ final class AccountBioForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
+    $form['#action'] = Url::fromRoute('aculta_user.bio_form')->toString();
     $form['#attached']['library'][] = 'aculta_user/account-bio-form';
     $form['bio'] = [
       '#type' => 'textarea',
@@ -69,18 +72,18 @@ final class AccountBioForm extends FormBase {
       '#rows' => 4,
     ];
     $form['actions'] = ['#type' => 'actions'];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Salvar bio'),
-      '#ajax' => ['callback' => '::ajaxSave'],
-    ];
-    // Botão de tipo "button": não envia o formulário. O JS da biblioteca esvazia o campo.
+    // Limpar antes de Salvar bio. É do tipo botão: o JS só esvazia o campo, sem enviar.
     $form['actions']['clear'] = [
       '#type' => 'button',
       '#value' => $this->t('Limpar'),
       '#attributes' => ['data-aculta-bio-clear' => '', 'class' => ['btn', 'btn-secondary']],
-      // Antes de Salvar bio.
       '#weight' => -1,
+    ];
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Salvar bio'),
+      // Salvar grava, substitui a caixa da visão geral e fecha o modal. Sem JS, o envio comum redireciona.
+      '#ajax' => ['callback' => '::ajaxSave'],
     ];
     return $form;
   }
@@ -99,13 +102,15 @@ final class AccountBioForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $profile = $this->profile();
-    // Texto vazio grava vazio: a caixa volta a mostrar o aviso padrão.
+    // Texto vazio grava vazio: a visão geral volta a mostrar o aviso padrão.
     $profile->set('field_bio', trim((string) $form_state->getValue('bio')));
     $profile->save();
+    $this->messenger()->addStatus($this->t('Bio salva.'));
+    $form_state->setRedirect('aculta_portal.dashboard');
   }
 
   /**
-   * Resposta AJAX: substitui a caixa Bio da Minha conta pela versão salva e fecha o modal.
+   * Resposta AJAX do modal: substitui a caixa Bio pela versão salva e fecha o modal.
    */
   public function ajaxSave(array &$form, FormStateInterface $form_state): AjaxResponse {
     $card = $this->renderer->renderInIsolation($this->bioCard->build($this->currentUserService->getAccount()));
