@@ -77,7 +77,24 @@ recorte para verticais). Enquanto não for criado, a foto aparece em até 480 px
 - Exibição centralizada, largura da coluna de leitura, proporção 16:9, responsiva.
 - Vídeo próprio ou de terceiros precisa dos mesmos direitos da imagem (seção 3).
 
-## 5. Estado e pendências
+## 5. SEO e compartilhamento (edição e miniatura)
+
+- **Onde editar:** no formulário da publicação, o grupo **"SEO e compartilhamento"** (campo `field_meta_tags`, Metatag).
+  Vale para `article` (Notícia), `blog`, `activity` e `project`. Config do grupo: `EditorialHooks::formNodeFormAlter`
+  (módulo `aculta_portal`).
+- **Quem edita:** papel `content_editor` tem acesso de edição ao campo. Verificado no Homelab com a conta do editor.
+- **Descrição (metadescrição):** preencher no próprio grupo. Usar uma frase de 120 a 160 caracteres.
+- **Miniatura para compartilhamento (WhatsApp, Telegram, Facebook, Reddit):** a tag `og:image` usa a imagem destacada da
+  publicação (`field_media_image`), por `[node:image]` no padrão `metatag_defaults.node__article` e `node__blog`.
+  Título e descrição das prévias vêm de `og_title` e `og_description`.
+- **Proporção recomendada da miniatura:** a imagem destacada é 3:2 (1800×1200), que as redes exibem bem. Imagem
+  quadrada também funciona, mas a prévia fica menor.
+- **Limites:** o pacote Metatag instalado não tem o submódulo de cartões do Twitter/X, então não há `twitter:card`.
+  Dimensões `og:image:width` e `og:image:height` não são geradas.
+- **Compartilhamento no celular:** os botões da barra usam links diretos (WhatsApp, Telegram etc.), que abrem o app.
+  Compartilhamento nativo do sistema (Web Share API) não está implementado.
+
+## 6. Estado e pendências
 
 - [x] Chamada, resumo, SEO (metadescrição e Open Graph), data e hora, projeto, autor e coautores, créditos e
   referências, imagem de destaque, vídeo embutido, sessão e URL.
