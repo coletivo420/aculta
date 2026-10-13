@@ -10,11 +10,11 @@ aculta_user.perfil_publico:
     # Perfil público existe só no purpose MAIN; em outro host responde 404 (DomainPurposeRequestSubscriber).
     _aculta_domain_purpose: 'main'
 
-aculta_user.configuracoes_perfil:
-  path: '/configuracoes/perfil'
+aculta_user.configuracoes_privacidade:
+  path: '/configuracoes/privacidade'
   defaults:
     _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
-    _title: 'Perfil e privacidade'
+    _title: 'Privacidade'
   requirements:
     _permission: 'access aculta portal'
 

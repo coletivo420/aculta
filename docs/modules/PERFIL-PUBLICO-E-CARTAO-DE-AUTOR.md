@@ -74,9 +74,24 @@ Todo avatar (estilo `aculta_avatar`) tem proporção 1:1, não encolhe com o con
   e bio, medidas de avatar sem distorção.
 - Pendente: inspeção visual humana das telas acima.
 
-## 8. Pendências
+## 8. Configurações (abas)
+
+Minha conta > Configurações tem duas abas, no mesmo padrão de Meus Dados (`account-data-nav`):
+- **Modo de cor** (`/configuracoes`): claro, escuro ou automático, por conta.
+- **Privacidade** (`/configuracoes/privacidade`): perfil público e o que aparece no perfil público (foto,
+  bio, redes sociais, e-mail como botão). Autores e editores têm o perfil público bloqueado, com o motivo.
+  Apelido fica em Meus dados; bio e redes ficam na visão geral.
+
+O Portal monta as abas (`aculta_portal.settings_tabs`) e chama o alter `aculta_portal_settings_tabs`; o
+`aculta_user` acrescenta "Privacidade". A rota antiga `/configuracoes/perfil` responde 404 (sem redirecionamento
+de slug, como no restante do projeto).
+
+## 9. Avatares de sorteio
+
+O link "Sortear novo avatar" leva token CSRF válido: requisição com o link do modal responde 200, sem token 403.
+
+## 10. Pendências
 
 - Tipo de publicação "blog" da Revista e mapeamento de chamada/resumo (decisão do responsável).
-- `/avatar/sortear`: token CSRF com barra inicial, provavelmente recusado (mesmo problema corrigido na bio).
-- Aba de Configurações ainda não agrupa Perfil, Privacidade e Modo de cor.
-- Versão do `aculta_portal` (módulo pai) não marcada nesta entrega; o `aculta_user` está em 0.3.0-dev.9.
+- Inspeção visual humana das telas (painel, perfil público, cartão de autor, abas).
+- Versão do `aculta_portal` (módulo pai) não marcada nesta entrega; o `aculta_user` está em 0.3.0-dev.10.

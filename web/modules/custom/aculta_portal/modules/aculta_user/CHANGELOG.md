@@ -1,3 +1,12 @@
+## 0.3.0-dev.10 — abas de Configurações (Modo de cor e Privacidade) — 2026-10-13
+
+- Minha conta > Configurações com abas no padrão de Meus Dados: Modo de cor e Privacidade.
+- Privacidade (`/configuracoes/privacidade`) só com as escolhas de visibilidade (perfil público, foto, bio,
+  redes, e-mail). Apelido segue em Meus dados; bio e redes na visão geral. `/configuracoes/perfil` sai (404).
+- Aba acrescentada pelo alter `aculta_portal_settings_tabs` (Portal: `aculta_portal.settings_tabs`).
+- Sorteio de avatar: token CSRF verificado (200 com o link do modal, 403 sem token).
+- RUNTIME STATUS: verificado no Homelab (navegador). Inspeção visual humana pendente.
+
 ## 0.3.0-dev.9 — perfil público, cartão de autor e painel da Minha conta — 2026-10-13
 
 - Perfil público `/u/<apelido>`: foto, apelido, bio e redes em botões com ícone e rótulo; e-mail como botão `mailto:`.
