@@ -14,7 +14,7 @@ Escopo: avatar, perfil público e autoria, integração com Wiki, Fórum e revis
 | Conexões sociais | `social_auth` e `social_auth_google`; rota `/conexoes` | Existe. |
 | Fórum | `forum` 1.1.3, `flag` 5.1.1, flags `seguir_topico` e `salvar_topico` (`0.2.0-dev.57`) | Adotado. Sem página "Atividade". |
 | Wiki | Nó `wiki_entry`, papéis `wiki_contributor` e `wiki_editor`, workflow `wiki_editorial`, módulo `diff` | Existe. Sem "Minhas contribuições". |
-| Revista | Nós `article` (Notícia), `document`, `activity`, `project`; autor = `node.uid` | Autor vem do Core, sem página de autor. Rota `/autores/<nome>` só está nos slugs candidatos (`FRIENDLY-PORTUGUESE-SLUGS.md`). |
+| Revista | Nós `article` (Notícia), `document`, `activity`, `project`; autor = `node.uid` | Autor vem do Core, sem página de autor. Rota `/u/<apelido>` só está nos slugs candidatos (`FRIENDLY-PORTUGUESE-SLUGS.md`). |
 | Notificações | Symfony Mailer (`symfony_mailer`, Mailer Plus) | Transporte pronto. Sem assinaturas. |
 | Gamificação, seguir pessoas, menções, denúncia | Não existem | `DT-P13`: denúncia de comentários pendente. |
 | Anti-abuso | `flood_control`, Turnstile, `username_enumeration_prevention` | Existe. |
@@ -124,8 +124,8 @@ Serviços previstos (nomes provisórios):
 - Moderação de imagem enviada pela pessoa fica fora desta fase; Core não a oferece.
 
 ### B. Perfil público e autoria
-- Página `/autores/<slug>` com foto, nome público (apelido), resumo curto, papel na associação (quando houver) e listas de contribuições.
-- Campos novos no perfil `participante`: `field_bio` (texto curto) e `field_visibilidade_publica` (booleano, padrão falso). Slug único em `field_slug`, gerado por Pathauto (se o `pathauto` aceitar o token de perfil; a confirmar) ou preenchido na validação.
+- Página `/u/<apelido>` (decisão do responsável, 2026-10-13: o perfil fica em `aculta.*/u/<apelido>`) com foto, nome público (apelido), resumo curto, papel na associação (quando houver) e listas de contribuições.
+- Campos novos no perfil `participante`: `field_bio` (texto curto) e `field_visibilidade_publica` (booleano, padrão falso). O apelido (`field_nickname`) passa a ser **único** e é o caminho público `/u/<apelido>`. Não há campo de slug separado. Pathauto gera o alias a partir do apelido (a confirmar no Homelab, U0).
 - **Nunca público:** e-mail, CPF, endereço, WhatsApp, nome completo, cidade e UF (decisão 2).
 - Alteração de slug troca o caminho e o antigo responde 404, sem 301 (`FRIENDLY-PORTUGUESE-SLUGS.md`). Por isso, o módulo `redirect` precisa ficar **fora** da criação automática de redirect quando o Pathauto mudar um alias.
 
@@ -136,7 +136,7 @@ Serviços previstos (nomes provisórios):
 - **Padrão: privado.** Ninguém tem perfil público sem ligar a opção. Decisão de privacidade: consentimento explícito, não opt-out.
 - **Lugar:** a rota `/configuracoes` já existe (hoje só o modo de cor, `AppearanceForm`). A opção entra na mesma página, em um segundo bloco com formulário próprio. Campo: `field_visibilidade_publica` no perfil `participante`, booleano, padrão falso. Ligar ou desligar tem efeito imediato.
 - **Com perfil privado:**
-  - `/autores/<slug>` não mostra o perfil. Resposta: 404, para não revelar que o perfil existe (a confirmar, decisão 40).
+  - `/u/<apelido>` não mostra o perfil. Resposta: 404, para não revelar que o perfil existe (a confirmar, decisão 40).
   - Cartão de autor da revista mostra o nome de exibição sem link.
   - Badges (seção G) não aparecem em lugar público.
   - Conteúdos da pessoa (artigos, verbetes, tópicos) continuam públicos, porque são contribuições editoriais, não o perfil. O que muda é a página de perfil e os dados pessoais expostos.
@@ -148,7 +148,7 @@ Serviços previstos (nomes provisórios):
 
 ### C. Autoria da revista (MAGAZINE)
 - Autor = `node.uid`, do Core. Não criar campo "autor" paralelo.
-- Cartão de autor no fim do artigo (`article`), com link para `/autores/<slug>` quando o perfil for público; sem link quando não for.
+- Cartão de autor no fim do artigo (`article`), com link para `/u/<apelido>` quando o perfil for público; sem link quando não for.
 - Listagem por autor: View com filtro de `uid` e status publicado, no purpose MAGAZINE.
 - Autor convidado sem conta: **não** criar entidade própria. Opção mínima: campo de texto de assinatura no nó (decisão 4).
 
@@ -391,7 +391,7 @@ Cada fase tem PR próprio (`AGENTS.md`, regra de encerramento). Código sem Runt
 | Fase | Entrega | Critério de conclusão |
 | --- | --- | --- |
 | **U0** | Decisões da seção 7 e verificação no Homelab: `composer show` e `dry-run` dos candidatos; checagem de `flag` com `entity:user`; checagem de `pathauto` com perfil. | Respostas registradas no `DEBT-REGISTER` ou neste documento. Nenhum código. |
-| **U1** | Submódulo `aculta_user` (versão `0.1.0-dev.1`). Campos `field_bio`, `field_visibilidade_publica`, `field_slug`. `PublicProfilePolicy` e `PublicProfilePresenter`. `/autores/<slug>` (fallback sem perfil público). Avatar com fallback. | Testes de Kernel para privacidade e acesso; Unit dos presenters; gates do Portal, fronteira, slugs e endereços passam. |
+| **U1** | Submódulo `aculta_user` (versão `0.1.0-dev.1`). Campos `field_bio` e `field_visibilidade_publica`; apelido único em `field_nickname`. `PublicProfilePolicy` e `PublicProfilePresenter`. `/u/<apelido>` (fallback sem perfil público). Avatar com fallback. | Testes de Kernel para privacidade e acesso; Unit dos presenters; gates do Portal, fronteira, slugs e endereços passam. |
 | **U2** | Seção "Atividade" com abas Wiki, Fórum, Revista e Comentários (seção E2); histórico público do verbete e aba Discussão vinculada ao Fórum (seções D e E3); cartão de autor e listagem na revista (seção C). Só Views e leitura. | Verbete sem autoria no corpo (teste de conteúdo); histórico com permissão de reversão; aba sem dados de outra pessoa; conteúdo não publicado não aparece; teste de navegador em `TESTES-NAVEGADOR.md`. |
 | **U3** | Seguir pessoas (Flag), seguidores e feed (Views), notificações opt-in por fila. | Consentimento validado; envio de e-mail só com opt-in; sem listas de seguidores públicas. |
 | **A1** | Papel `associado` (sem permissão administrativa), campos de adesão, RG cifrado (padrão `aculta_id_cpf`), profissão e data de nascimento em "Outros Dados", relatório administrativo de associados. | RG nunca em claro (teste de gravação e de leitura); relatório restrito por permissão; teste de acesso negado para comum e para `wiki_editor`. |
@@ -406,9 +406,9 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 
 1. **Prioridade:** iniciar U0 agora, ou esperar S2–S4? (Roadmap: features depois do saneamento.)
 2. **Visibilidade:** perfil público opt-in? Campos públicos aprovados: apelido, foto, resumo, papel na associação? Cidade e UF públicas: sim ou não?
-3. **Slug do autor:** `field_slug` único gerado do apelido, ou o apelido atual com validação de unicidade?
+3. **Slug do autor:** respondida em 2026-10-13: o apelido é o caminho público, `/u/<apelido>`, único.
 4. **Autor convidado** (sem conta) na revista: aceitar com campo de assinatura de texto, ou só autores com conta?
-5. **Purpose das páginas:** `/autores` no MAGAZINE? Perfil e participação ficam no MAIN, na ACCOUNT, ou em outro purpose? (`ADMIN-DOMAIN-POLICY.md`.)
+5. **Purpose das páginas:** respondida parcialmente: o perfil fica em `aculta.*/u/<apelido>`. Host a confirmar (proposta: MAIN). Pergunta restante: `/u/` em qual purpose? Perfil e participação ficam no MAIN, na ACCOUNT, ou em outro purpose? (`ADMIN-DOMAIN-POLICY.md`.)
 6. **Gamificação:** respondida em 2026-10-13: badges automáticas e manuais, sem ranking. Ver seção G e a decisão 18.
 7. **Gravatar:** confirma a recomendação de não usar?
 8. **Notificações:** opt-in por tipo de evento? Frequência máxima?
@@ -477,3 +477,4 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 **Padrões que valem para cada PR:** `#[Hook]` OOP, injeção de dependência, sem `\Drupal::` em `src/`, marcação `data-portal-ui` sem classes de design, textos em `translations/*.pt-br.po`, gates do Portal passando, e atualização de `CHANGELOG.md` e da versão.
 
 **Decisões 33 a 35 respondidas em 2026-10-13:** papel único `content_editor`; discussão do LMS por curso e por atividade, com comentário no Fórum; matriculados isentos da primeira moderação (decisão 36); 10 comentários como padrão, alterável no painel administrativo.
+41. **Caminho do perfil:** `/u/` é abreviação, e as regras de slug do projeto exigem palavra em português (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`). Confirma `/u/<apelido>` como exceção registrada, ou prefere `/perfil/<apelido>`?
