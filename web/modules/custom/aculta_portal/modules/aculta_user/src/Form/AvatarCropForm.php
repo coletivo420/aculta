@@ -52,11 +52,11 @@ final class AvatarCropForm extends FormBase {
   public const RETURN_QUERY = 'aculta_recorte';
 
   public function __construct(
-    private readonly ImageWidgetCropInterface $cropManager,
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountInterface $currentUserService,
-    private readonly UserDataInterface $userData,
-    private readonly RequestStack $cropRequestStack,
+    private ImageWidgetCropInterface $cropManager,
+    private EntityTypeManagerInterface $entityTypeManagerService,
+    private AccountInterface $currentUserService,
+    private UserDataInterface $userData,
+    private RequestStack $cropRequestStack,
   ) {}
 
   public static function create(ContainerInterface $container): static {

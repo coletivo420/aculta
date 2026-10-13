@@ -34,10 +34,10 @@ final class UserPictureForm extends FormBase {
   public const UPLOAD_LOCATION = 'public://pictures/uploads';
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountInterface $currentUserService,
-    private readonly UserDataInterface $userData,
-    private readonly CsrfTokenGenerator $csrfToken,
+    private EntityTypeManagerInterface $entityTypeManagerService,
+    private AccountInterface $currentUserService,
+    private UserDataInterface $userData,
+    private CsrfTokenGenerator $csrfToken,
   ) {}
 
   public static function create(ContainerInterface $container): static {
