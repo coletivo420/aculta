@@ -228,12 +228,16 @@ Regras e tabela de estados em `web/modules/custom/aculta_portal/modules/aculta_u
 - **P3 — foto personalizada salva:** a foto recortada já é a foto da conta (aplicar o recorte salva).
   Esperado: painel mostra a foto própria. Abrir o popup: campo com a foto e botão **"Remover"**; **sem** "Sortear
   outro avatar"; **sem** "Recortar foto".
-- **P4 — remover:** clicar em "Remover" e depois em "Salvar foto do perfil".
-  Esperado: a foto volta ao avatar do sistema e o campo "Escolha uma imagem" aparece (estado P1).
+- **P4 — remover:** no popup da foto personalizada, clicar em "Remover foto" (sem "Salvar").
+  Esperado: o painel recarrega com um avatar sorteado do acervo; reabrir o popup mostra o estado P1 (campo "Escolha
+  uma imagem", "Sortear outro avatar", sem "Remover foto"). Nenhum nome ou link de arquivo aparece no popup (INV-FOTO-7).
 - **P5 — recorte só após envio:** com foto personalizada, não há como recortar sem enviar de novo.
   Esperado: nenhum link de recorte no popup; enviar a imagem de novo é o único caminho.
 - **P6 — sortear com foto personalizada:** o link "Sortear outro avatar" não aparece (P3). Se a rota
   `/avatar/sortear` for chamada mesmo assim, ela troca a foto (rota técnica; a regra de exibição é a da tela).
+
+Verificação por HTTP (2026-10-13, após INV-FOTO-7): foto personalizada → popup com "Remover foto", sem sortear, sem
+link de arquivo; "Remover foto" → 303 para o painel e foto do acervo; arquivo personalizado apagado.
 
 Verificação automatizada (Chromium headless via DevTools, 2026-10-13): após "Aplicar recorte", um único
 `POST /avatar/recortar`, navegação para o painel, nenhuma repetição de `POST /avatar/foto`, e a foto da conta vira o

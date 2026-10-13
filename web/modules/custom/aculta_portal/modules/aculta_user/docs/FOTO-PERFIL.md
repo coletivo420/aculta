@@ -9,7 +9,7 @@ personalizada, recorte que reabre sem novo envio). Este documento é a fonte das
 | Estado | Prévia | Campo de envio | "Remover" | "Sortear outro avatar" | "Recortar foto" |
 |---|---|---|---|---|---|
 | Avatar do sistema (acervo, `public://pictures/acervo/`) | avatar do acervo | sim, vazio ("Escolha uma imagem") | **não** | **sim** | **não** |
-| Avatar personalizado (enviado pela pessoa) | foto própria | sim, com a foto | **sim** (volta ao acervo ao salvar) | **não** | **não** |
+| Avatar personalizado (enviado pela pessoa) | foto própria (só a prévia) | sim, vazio | **sim**, botão "Remover foto" (volta a um avatar sorteado do acervo e recarrega o painel) | **não** | **não** |
 
 Sem link "Recortar foto" em nenhum estado. Aplicar o recorte troca a foto e recarrega o painel. O recorte abre sozinho logo após o envio de uma imagem, pelo JavaScript
 `js/photo-flow.js`, e só para o arquivo recém-enviado.
@@ -22,6 +22,10 @@ Sem link "Recortar foto" em nenhum estado. Aplicar o recorte troca a foto e reca
   `if ($isAcervo)`. Com foto personalizada ele some.
 - **INV-FOTO-3 — sem recorte manual.** Não existe link para recortar no popup. O recorte só é aberto pelo
   `photo-flow.js` ao chegar um novo arquivo no campo (`imagem[fids]`).
+- **INV-FOTO-7 — o popup não mostra nome nem link da foto atual.** O campo de envio começa vazio nos dois estados
+  (`#default_value` NULL). Na foto personalizada, a única ação de remoção é o botão "Remover foto"
+  (`UserPictureForm::removePersonal`, `AvatarPool::reroll`): volta a um avatar sorteado do acervo e recarrega o painel.
+  "Salvar" com o campo vazio não altera a foto.
 - **INV-FOTO-6 — recorte aplicado troca a foto e recarrega o painel.** "Aplicar recorte" torna o arquivo permanente,
   grava-o como foto da conta e redireciona ao painel, sem parâmetro e sem reabrir o popup. Não há etapa de "Salvar"
   depois do recorte. O loop de reabertura era causado pela reabertura automática do popup ao voltar.

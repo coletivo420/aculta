@@ -10,6 +10,7 @@
  * - INV-FOTO-4: o recorte só aceita o arquivo recém-enviado: nada de fallback para a foto atual nem para o recorte pendente.
  * - INV-FOTO-5: o campo de recorte aparece uma única vez no modal.
  * - INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel, sem reabrir o popup.
+ * - INV-FOTO-7: o popup não mostra nome nem link da foto atual; "Remover foto" (só personalizada) volta a um avatar sorteado do acervo.
  *
  * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
  */
@@ -75,6 +76,17 @@ if (!str_contains($crop, "\$element[\$key]['#pre_render'] = [];") || !str_contai
   $errors[] = 'INV-FOTO-5: flattenElement não limpa #pre_render; o campo de recorte sai duplicado';
 }
 
+// INV-FOTO-7: o campo de envio não mostra a foto atual (nome e link); "Remover foto" é botão próprio, só para foto personalizada, e sorteia do acervo.
+if (!str_contains($picture, "'#default_value' => NULL")) {
+  $errors[] = 'INV-FOTO-7: o campo de envio tem valor padrão (mostra nome/link da foto atual)';
+}
+if (!preg_match("/if \\(!\\\$isAcervo && \\\$current > 0\\) \\{.*?'remover'.*?'::removePersonal'/s", $picture)) {
+  $errors[] = "INV-FOTO-7: botão 'remover' com '::removePersonal' ausente ou fora do estado de foto personalizada";
+}
+if (!preg_match('/function removePersonal\(.*?avatarPool->reroll\(\$account\)/s', $picture)) {
+  $errors[] = 'INV-FOTO-7: removePersonal não sorteia do acervo (AvatarPool::reroll)';
+}
+
 // INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel; não há etapa de "Salvar" nem reabertura do popup.
 if (str_contains($crop, 'PENDING_KEY') || str_contains($crop, 'aculta_recorte') || !str_contains($crop, "set('user_picture'")) {
   $errors[] = 'INV-FOTO-6: o recorte não troca a foto da conta, ou volta ao recorte pendente / reabertura do popup';
@@ -104,4 +116,4 @@ if ($errors !== []) {
   exit(1);
 }
 
-echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-6)' . PHP_EOL;
+echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-7)' . PHP_EOL;

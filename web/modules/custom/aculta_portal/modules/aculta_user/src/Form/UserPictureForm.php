@@ -38,6 +38,7 @@ final class UserPictureForm extends FormBase {
     private AccountInterface $currentUserService,
     private UserDataInterface $userData,
     private CsrfTokenGenerator $csrfToken,
+    private AvatarPool $avatarPool,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -46,6 +47,7 @@ final class UserPictureForm extends FormBase {
       $container->get('current_user'),
       $container->get('user.data'),
       $container->get('csrf_token'),
+      $container->get('aculta_user.avatar_pool'),
     );
   }
 
@@ -67,8 +69,7 @@ final class UserPictureForm extends FormBase {
     $current = (int) ($account->get('user_picture')->target_id ?? 0);
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
-    // Foto do acervo: sem arquivo inicial (o envio fica disponível). Foto personalizada: a própria foto.
-    $default = $isAcervo ? 0 : $current;
+    // O campo de envio começa vazio nos dois estados: nome e link da foto atual não aparecem no popup (a prévia mostra a foto).
 
     $form['#attributes']['data-aculta-user-picture'] = '';
 
@@ -107,7 +108,7 @@ final class UserPictureForm extends FormBase {
         'FileExtension' => ['extensions' => 'png jpg jpeg gif webp'],
         'FileSizeLimit' => ['fileLimit' => self::MAX_SIZE],
       ],
-      '#default_value' => $default > 0 ? [$default] : NULL,
+      '#default_value' => NULL,
       '#required' => FALSE,
       // Regra de estado (docs/FOTO-PERFIL.md): avatar do sistema nunca tem botão "Remover".
       '#aculta_acervo' => $isAcervo,
@@ -128,6 +129,14 @@ final class UserPictureForm extends FormBase {
     }
 
     $form['actions'] = ['#type' => 'actions'];
+    if (!$isAcervo && $current > 0) {
+      $form['actions']['remover'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Remover foto'),
+        '#limit_validation_errors' => [],
+        '#submit' => ['::removePersonal'],
+      ];
+    }
     $form['actions']['salvar'] = [
       '#type' => 'submit',
       '#value' => $this->t('Salvar foto do perfil'),
@@ -144,6 +153,24 @@ final class UserPictureForm extends FormBase {
     return $element;
   }
 
+  /**
+   * Botão "Remover foto" (só foto personalizada): volta a um avatar sorteado do acervo e recarrega o painel.
+   * A foto personalizada substituída é apagada pelo hook de troca de foto (PictureReplacementHooks).
+   */
+  public function removePersonal(array &$form, FormStateInterface $form_state): void {
+    $account = $this->account();
+    if ($account === NULL) {
+      return;
+    }
+    if ($this->avatarPool->reroll($account) === NULL) {
+      $this->messenger()->addError($this->t('Não foi possível sortear um avatar do sistema agora.'));
+    }
+    else {
+      $this->messenger()->addStatus($this->t('Foto personalizada removida. Seu avatar do sistema foi sorteado.'));
+    }
+    $form_state->setRedirect('aculta_portal.dashboard');
+  }
+
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();
     if ($account === NULL) {
@@ -157,13 +184,8 @@ final class UserPictureForm extends FormBase {
     $file = $new > 0 ? $this->entityTypeManagerService->getStorage('file')->load($new) : NULL;
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
-    if ($new === 0) {
-      // Nada enviado: a foto do acervo continua; foto personalizada removida volta ao sorteio do acervo.
-      if (!$isAcervo && $current > 0) {
-        $account->set('user_picture', NULL);
-      }
-    }
-    elseif ($file !== NULL && $new !== $current) {
+    // Campo vazio não altera a foto (a remoção é o botão "Remover foto").
+    if ($new > 0 && $file !== NULL && $new !== $current) {
       $account->set('user_picture', ['target_id' => $file->id(), 'alt' => (string) $account->label()]);
       $file->setPermanent();
       $file->save();
