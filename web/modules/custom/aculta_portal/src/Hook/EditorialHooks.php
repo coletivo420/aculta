@@ -174,7 +174,8 @@ final class EditorialHooks {
   #[Hook('form_node_form_alter')]
   public function formNodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $node = $formState->getFormObject()->getEntity();
-    if (!in_array($node->bundle(), ['article', 'activity', 'project'], TRUE)) {
+    // Blog (Revista) tem o mesmo espaço editorial e de SEO que a Notícia.
+    if (!in_array($node->bundle(), ['article', 'blog', 'activity', 'project'], TRUE)) {
       return;
     }
 

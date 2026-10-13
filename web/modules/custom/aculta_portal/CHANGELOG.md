@@ -1,3 +1,10 @@
+## 0.4.0-dev.12 — espaço de SEO na publicação da Revista (blog) — 2026-10-13
+
+- `EditorialHooks::formNodeFormAlter`: o grupo "SEO e compartilhamento" (campo `field_meta_tags`) passa a aparecer
+  também no formulário do tipo `blog`, com o mesmo espaço da Notícia (`article`), `activity` e `project`.
+- Editor com papel `content_editor` tem acesso de edição ao campo (verificado no Homelab).
+- RUNTIME STATUS: verificado no Homelab (formulário montado com a conta do editor). Inspeção visual humana pendente.
+
 ## 0.4.0-dev.11 — exibir a dica da busca Wiki após digitação — 2026-10-13
 
 - O painel de prévia da Wiki começa recolhido; focar ou clicar no campo sem
