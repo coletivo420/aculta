@@ -30,9 +30,32 @@ que a guarda. Não criar um segundo tipo para editorial, nem uma segunda seção
 
 ## Trocar o tipo de uma publicação (Notícia ↔ blog)
 
-O Drupal não converte o tipo de um nó no lugar. Use `aculta_magazine.publication_type_converter`: `plan()` mostra o
-que será copiado e o que se perde; `convert()` cria a publicação no tipo de destino, move o vínculo do tópico do
-Fórum, mantém o endereço e remove a antiga, em transação. O tópico, os comentários e a pasta do Fórum permanecem.
+O Drupal não converte o tipo de um nó no lugar. O serviço `aculta_magazine.publication_type_converter` faz a troca
+(é um serviço PHP: pode ser chamado de qualquer código; não há comando Drush nem tela registrados).
+
+- `plan($post, $target)`: não grava. Mostra o tópico vinculado, os campos que serão copiados e os que se perdem
+  (campos que só existem no tipo de origem).
+- `convert($post, $target)`: grava. Ordem: (1) cria a publicação no tipo de destino com os campos copiados, o mesmo
+  autor, a mesma data de criação e o mesmo estado; (2) move o vínculo `field_discussao` para a nova; (3) remove o
+  alias da antiga e a nova recebe o mesmo endereço pelo Pathauto; (4) a antiga perde o vínculo e o alias e é
+  excluída. Tudo em transação: se algo falhar, nada muda.
+- A antiga é sempre excluída. O vínculo sai antes, senão a exclusão despublicaria o tópico.
+
+### O que permanece na troca
+
+- **Tópico do Fórum**: é o mesmo nó. Título, pasta (segue a sessão), estado e autor são sincronizados como sempre.
+- **Comentários**: ficam no tópico, então permanecem. A publicação mostra a contagem em "Ver discussão completa".
+- **Endereço**: o mesmo, pelo padrão da sessão. O endereço antigo responde 404 (sem redirecionamento).
+- **Autoria**: o autor (`uid`), os coautores (`co_authors`) e o autor editorial (`field_editorial_author`) são copiados.
+  A caixa de autoria e o autor do tópico seguem o autor copiado. Verificado no runtime em 2026-10-14: publicações
+  PodPlant420 #01 e Cuidar não é crime, de `coletivo420` (uid 15), continuam de `coletivo420`; o Bloco Sativa segue
+  do uid 1. Os tópicos têm o mesmo dono de suas publicações.
+- **Campos**: copiados quando existem no destino. Blog e Notícia têm os mesmos campos da Revista, então nada se perde.
+
+### Verificação
+
+- Teste no navegador com comentário de teste no tópico, em ida e volta (Notícia → blog): contagem "1 comentário"
+  na publicação, comentário no tópico, endereço 200, comentário de teste removido depois.
 
 ## Privacidade
 
