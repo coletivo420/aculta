@@ -1,3 +1,14 @@
+## 0.1.0-dev.5 — login repetido nos comentários do Fórum da Revista — 2026-10-14
+
+Classificação: PATCH (correção de apresentação do Core; sem mudança de contrato).
+
+- Nos tópicos do Fórum, "Efetue login ou registre-se para postar comentários" aparecia duas vezes quando havia
+  comentário: uma nos links de cada comentário e outra na área do tópico. A de cada comentário sai
+  (`ForumTopicHooks::commentLinksAlter`, via `comment_links_alter`). Fica a da área do tópico.
+- Verificado no Homelab: com um comentário de teste, a página do tópico mostra uma única mensagem; comentário de
+  teste removido em seguida.
+- RUNTIME STATUS: verificado no Homelab (HTTP e renderização dos links). Inspeção visual humana pendente.
+
 ## 0.1.0-dev.4 — troca de tipo de publicação sem quebrar o tópico do Fórum — 2026-10-14
 
 Classificação: MINOR da linha aberta (serviço novo; sem mudança de contrato existente).
