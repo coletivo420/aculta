@@ -180,6 +180,8 @@ final class PortalUiHooks {
     'login-popup-links' => ['aculta-login-popup__links'],
     'login-popup-divider' => ['aculta-login-popup__divider'],
     'auth-google' => ['aculta-auth-google'],
+    'auth-google-status' => ['aculta-auth-google-status'],
+    'google-account' => ['aculta-google-account'],
     'registration-status' => ['aculta-registration-status'],
     'support-intro' => ['aculta-support-intro'],
     'support-other' => ['aculta-support-other'],
