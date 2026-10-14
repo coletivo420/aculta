@@ -1,0 +1,18 @@
+uuid: 757dd912-5f1f-433a-bb59-10df9b5f4f45
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: kBWDXFUkmY7M1o2V-9QO9iU-EyXnu6h2pOXHH0Ea1wc
+name: media_gallery_image
+label: 'Media Gallery Image (300x180)'
+effects:
+  8e172310-8ff8-413b-b8ae-3226ee51c865:
+    uuid: 8e172310-8ff8-413b-b8ae-3226ee51c865
+    id: image_scale_and_crop
+    weight: 0
+    data:
+      width: 300
+      height: 180
+      anchor: center-center
+

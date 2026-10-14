@@ -1,0 +1,40 @@
+# Grupo de breakpoints do tema ACULTA420 (Breakpoint API do Drupal).
+#
+# Alinhado às medidas que o CSS do tema já usa: 576 (celular grande), 768 (tablet),
+# 1100 (desktop; abaixo dele o menu vira "Menu") e 1400 (telas largas). Imagens responsivas
+# (srcset) e a grade de galerias usam este grupo. Não criar medidas novas fora daqui.
+aculta420.xs:
+  label: 'ACULTA420 — celular'
+  mediaQuery: ''
+  weight: 0
+  multipliers:
+    1x: 1x
+    2x: 2x
+aculta420.sm:
+  label: 'ACULTA420 — celular grande'
+  mediaQuery: '(min-width: 576px)'
+  weight: 1
+  multipliers:
+    1x: 1x
+    2x: 2x
+aculta420.md:
+  label: 'ACULTA420 — tablet'
+  mediaQuery: '(min-width: 768px)'
+  weight: 2
+  multipliers:
+    1x: 1x
+    2x: 2x
+aculta420.lg:
+  label: 'ACULTA420 — desktop'
+  mediaQuery: '(min-width: 1100px)'
+  weight: 3
+  multipliers:
+    1x: 1x
+    2x: 2x
+aculta420.xl:
+  label: 'ACULTA420 — tela larga'
+  mediaQuery: '(min-width: 1400px)'
+  weight: 4
+  multipliers:
+    1x: 1x
+    2x: 2x

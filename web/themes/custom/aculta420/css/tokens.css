@@ -83,6 +83,8 @@
   --aculta-ease-standard: ease;
   --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
   --aculta-scrim: rgba(12, 60, 41, 0.58);
+  /* Moldura de mídia (palco de galeria): areia quente da família do creme da marca; combina com o verde escuro e deixa a foto em destaque. */
+  --aculta-media-stage-bg: #e8dfcc;
   /* Status (erro, ok, atenção): texto, superfície e borda. Claro: texto ≥ 5,5:1 sobre a superfície. */
   --aculta-status-error-text: #b3261e;
   --aculta-status-error-surface: #fde8e7;
@@ -262,6 +264,8 @@
   --aculta-focus: var(--aculta-focus-ring);
   --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
   --aculta-scrim: rgba(0, 0, 0, 0.6);
+  /* Moldura de mídia no escuro: mais escura que a página, para continuar lida como moldura. */
+  --aculta-media-stage-bg: #0d0b0a;
   /* Status no escuro: texto ≥ 7:1 sobre a superfície muted (cores de destaque do próprio tema). */
   --aculta-status-error-text: var(--aculta-text-accent);
   --aculta-status-error-surface: var(--aculta-surface-muted);
@@ -411,6 +415,8 @@
     --aculta-focus: var(--aculta-focus-ring);
     --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
   --aculta-scrim: rgba(0, 0, 0, 0.6);
+  /* Moldura de mídia no escuro: mais escura que a página, para continuar lida como moldura. */
+  --aculta-media-stage-bg: #0d0b0a;
   /* Status no escuro: texto ≥ 7:1 sobre a superfície muted (cores de destaque do próprio tema). */
   --aculta-status-error-text: var(--aculta-text-accent);
   --aculta-status-error-surface: var(--aculta-surface-muted);

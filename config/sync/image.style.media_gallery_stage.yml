@@ -1,0 +1,16 @@
+uuid: 7dd48fc4-1230-4919-9ea0-74cd7ba3dd49
+langcode: pt-br
+status: true
+dependencies: {  }
+name: media_gallery_stage
+label: 'Galeria - palco'
+effects:
+  00272b5c-c420-4659-a35d-5861a70f68bd:
+    uuid: 00272b5c-c420-4659-a35d-5861a70f68bd
+    id: image_scale
+    weight: 1
+    data:
+      width: 1000
+      height: null
+      upscale: false
+

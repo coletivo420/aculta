@@ -1,0 +1,33 @@
+uuid: e78634dc-b5ce-44ff-857e-081f1cbdff15
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media_gallery.field_gallery_cover
+    - media.type.image
+  module:
+    - media_gallery
+_core:
+  default_config_hash: FGmd538NG_2x_jatQBzKmxNCBYBwiH-oc6LMK2f32GI
+id: media_gallery.media_gallery.field_gallery_cover
+field_name: field_gallery_cover
+entity_type: media_gallery
+bundle: media_gallery
+label: Capa
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
+

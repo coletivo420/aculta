@@ -1,0 +1,186 @@
+/* Palco do álbum: foto grande com rotação automática (VVJB) e painel de miniaturas.
+   Só apresentação. O VVJB, o autoplay e o toque seguem nativos; comportamento vem de data-*. */
+
+[data-aculta-album-stage] {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  align-items: stretch;
+  background: var(--aculta-media-stage-bg);
+  color: var(--aculta-text-inverse);
+  min-height: 0;
+}
+
+[data-aculta-album-stage] > *,
+[data-aculta-album-stage] .vvjb {
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-aculta-album-stage] .vvjb-carousel-dots,
+[data-aculta-album-stage] .vvjb-carousel-options .vvjb-carousel-dots,
+[data-aculta-album-stage] .vvjb-counter-separator {
+  display: none;
+}
+
+/* O VVJB reserva 50 px de cada lado e 16 px no .vvjb para setas que não ficam ao lado
+   da foto neste palco. Zerar aqui aproxima a foto do painel de miniaturas. */
+[data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-outer {
+  padding: 0;
+}
+
+[data-aculta-album-stage] .vvjb {
+  padding-inline: 0;
+}
+
+/* O VVJB limita a faixa de fotos a 844 px (breakpoints próprios). No palco ela ocupa a coluna. */
+[data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-wrapper {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+}
+
+[data-aculta-album-stage] .vvjb img {
+  display: block;
+  width: 100%;
+  height: min(80vh, 40rem);
+  object-fit: contain;
+  background: var(--aculta-media-stage-bg);
+}
+
+/* O VVJB posiciona as opções (play/pausa e contador) sobre o palco. Aqui elas ficam
+   abaixo da foto, sem fundo, como no carrossel da home. */
+[data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-options {
+  position: static;
+  transform: none;
+  background: transparent;
+  padding-block: 0.5rem;
+}
+
+[data-aculta-album-stage] .vvjb-carousel-controls button,
+[data-aculta-album-stage] .vvjb-carousel-options button {
+  color: var(--aculta-text-inverse);
+}
+
+[data-aculta-album-stage] .vvjb-carousel-dot {
+  color: var(--aculta-text-inverse);
+}
+
+[data-aculta-album-thumbs] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  align-content: start;
+  padding: 0.5rem;
+  overflow-y: auto;
+  max-height: min(80vh, 40rem);
+  background: var(--aculta-media-stage-bg);
+  scrollbar-width: thin;
+  scrollbar-color: var(--aculta-text-muted) var(--aculta-media-stage-bg);
+}
+
+[data-aculta-album-thumb] {
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  border: 2px solid transparent;
+  background: none;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--aculta-motion-quick) var(--aculta-ease-standard), border-color var(--aculta-motion-quick) var(--aculta-ease-standard);
+}
+
+[data-aculta-album-thumb] img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+[data-aculta-album-thumb]:hover,
+[data-aculta-album-thumb][aria-current="true"] {
+  opacity: 1;
+}
+
+[data-aculta-album-thumb][aria-current="true"] {
+  border-color: var(--aculta-focus);
+}
+
+[data-aculta-album-thumb]:focus-visible {
+  outline: 2px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+[data-aculta-album-toggle] {
+  display: none;
+}
+
+/* Celular (abaixo de 480 px): palco em largura total; miniaturas recolhidas atrás do botão. */
+@media (max-width: 479.98px) {
+  [data-aculta-album-stage] {
+    grid-template-columns: minmax(0, 1fr);
+    position: relative;
+  }
+
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-outer,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-wrapper,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-inner {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0;
+    margin-inline: 0;
+  }
+
+  [data-aculta-album-stage] .vvjb-item {
+    width: 100%;
+  }
+
+  /* Altura pela foto (paisagem fica baixa, retrato chega ao teto), com teto de 400 px.
+     A faixa VVJB é uma linha só: a altura é a da foto mais alta do álbum, sem saltos entre slides. */
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-outer,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-wrapper,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-inner,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-items,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-item {
+    height: auto;
+  }
+
+  /* Cada slide centraliza a foto na altura da linha (a da foto mais alta). */
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-item {
+    display: flex;
+    align-items: center;
+  }
+
+  [data-aculta-album-stage] .vvjb img {
+    height: auto;
+    max-height: 400px;
+  }
+
+  [data-aculta-album-thumbs] {
+    display: none;
+    max-height: 60vh;
+  }
+
+  [data-aculta-album-stage][data-aculta-album-open] [data-aculta-album-thumbs] {
+    display: grid;
+  }
+
+  [data-aculta-album-toggle] {
+    display: inline-flex;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    /* Superfície de controle e texto mudam com o modo; no escuro o botão não se confunde com o palco. */
+    background: var(--aculta-surface-interactive);
+    border: 1px solid var(--aculta-border-strong);
+    color: var(--aculta-text-primary);
+    cursor: pointer;
+  }
+}
