@@ -17,10 +17,7 @@
           title: element.dataset.dialogTitle || '',
           modal: true,
           closeOnEscape: false,
-          width: 520,
-          maxHeight: window.innerHeight - 32,
-          // Centro da janela (desktop e celular); sem isso o diálogo cai para o padrão do Drupal, no fim da tela.
-          position: { my: 'center', at: 'center', of: window, collision: 'fit' },
+          // Tamanho e posição são do tema (portal-account-terms-modal.css); o módulo só define comportamento.
           beforeClose: () => false,
         });
         dialog.showModal();

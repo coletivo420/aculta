@@ -36,7 +36,6 @@ final class AccountTermsAcceptForm extends FormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $form['#attributes']['class'][] = 'portal-terms-modal__form';
     $form['#action'] = Url::fromRoute('aculta_portal.account_terms.accept', [], [
       'query' => ['destination' => $this->destination()],
     ])->toString();

@@ -309,7 +309,6 @@ final class PortalHooks {
         'class' => ['use-ajax'],
         'data-dialog-type' => 'modal',
         'data-dialog-options' => Json::encode([
-          'width' => 440,
           'title' => (string) $this->translation->translate('Entrar'),
           'closeText' => (string) $this->translation->translate('Fechar'),
         ]),
