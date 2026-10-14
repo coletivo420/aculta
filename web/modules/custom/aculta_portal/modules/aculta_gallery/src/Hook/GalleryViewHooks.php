@@ -47,7 +47,8 @@ final class GalleryViewHooks {
       '#type' => 'container',
       '#weight' => -10,
       // Comportamento e ligação com o VVJB ficam em data-*; a aparência é do tema.
-      '#attributes' => ['data-aculta-album-stage' => 'true'],
+      // photoswipe-gallery é classe de comportamento do PhotoSwipe (agrupa as fotos num só lightbox), não de design.
+      '#attributes' => ['data-aculta-album-stage' => 'true', 'class' => ['photoswipe-gallery']],
       'slideshow' => $slideshow,
       'thumbs' => $this->thumbs($entity),
     ];

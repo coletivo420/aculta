@@ -47,6 +47,7 @@ display:
           settings:
             photoswipe_thumbnail_style: media_gallery_stage
             photoswipe_image_style: media_gallery_lightbox
+            photoswipe_remove_gallery_wrapper_class: true
           field_api_classes: false
       pager:
         type: some

@@ -43,8 +43,12 @@ foreach (['data-aculta-album-stage', 'data-aculta-album-thumbs', 'data-aculta-al
     $errors[] = "módulo não emite $attr (GalleryViewHooks)";
   }
 }
-if (preg_match("/'class'\s*=>/", $hooks)) {
-  $errors[] = 'módulo emite classe de marcação em GalleryViewHooks (classes de design são do tema)';
+// Única classe permitida: photoswipe-gallery (comportamento do PhotoSwipe, agrupa o lightbox).
+preg_match_all("/'class'\s*=>\s*\[([^\]]*)\]/", $hooks, $classes);
+foreach ($classes[1] as $list) {
+  if (trim($list, " '\"") !== 'photoswipe-gallery') {
+    $errors[] = 'módulo emite classe fora do comportamento PhotoSwipe em GalleryViewHooks: ' . trim($list);
+  }
 }
 
 // 2. Tema: usa os atributos do contrato e cria o botão do celular.
