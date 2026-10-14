@@ -1,3 +1,12 @@
+## 0.6.0-dev.22 — durações de movimento em tokens (DT-T19) — 2026-10-14
+
+Classificação: PATCH (sem mudança visual; mesmos valores).
+
+- `portal-account.css`: durações fixas (180ms, 150ms) trocadas por `var(--aculta-motion-fast)` e `var(--aculta-motion-quick)`.
+- `tokens.css`: novo token `--aculta-motion-quick: 150ms`, ao lado de `--aculta-motion-fast`.
+- Gate de Foundation: PASS (328 verificações). Antes falhava por DT-T19 e pela allowlist de Twig (`login-with`).
+- RUNTIME STATUS: verificado no Homelab por gate. Inspeção visual humana pendente.
+
 ## 0.6.0-dev.21 — modelo padrão de publicação da Revista — 2026-10-14
 
 Classificação: MINOR da linha aberta (componente novo `experimental`; sem quebra de contrato).
