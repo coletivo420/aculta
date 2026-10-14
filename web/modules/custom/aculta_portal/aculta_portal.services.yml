@@ -114,7 +114,7 @@ services:
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
   aculta_portal.account_shell_builder:
     class: Drupal\aculta_portal\AccountShellBuilder
-    arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation', '@aculta_portal.domain_purpose', '@router.route_provider']
+    arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation', '@aculta_portal.domain_purpose', '@router.route_provider', '@module_handler', '@current_user']
   aculta_portal.breadcrumb_builder:
     class: Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder
     arguments: ['@aculta_portal.domain_purpose', '@request_stack', '@title_resolver', '@path.matcher']

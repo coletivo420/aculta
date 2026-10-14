@@ -21,6 +21,7 @@ O Portal integra a experiência de:
 - Wiki420;
 - Fórum e comentários, quando a versão correspondente for implementada;
 - participação do usuário;
+- mensagens, notificações e avisos institucionais (`aculta_messenger`, em desenvolvimento);
 - administração consolidada;
 - Domain purposes, incluindo o purpose `links` (página de redes sociais em `/redes-sociais`).
 
@@ -106,6 +107,13 @@ da apresentação.
 
 Consultar o [README](modules/aculta_associado_id/README.md) e o
 [plano de migração/evidência](../../../../docs/modules/ACULTA-ASSOCIADO-ID.md).
+
+## Submódulo ACULTA Messenger
+
+O `aculta_messenger` integra Private Message, Message, Message Notify,
+Message Subscribe e Site Alert sem substituir suas entidades, permissões ou
+fluxos. Consultar a [documentação do submódulo](modules/aculta_messenger/README.md)
+antes de implementar integrações funcionais.
 
 ## Credenciais do ambiente (0.2.0-dev.11)
 

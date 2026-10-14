@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Institutional notice
+status: experimental
+group: Content
+description: 'Theme presentation of the native Site Alert message and its severity.'
+props:
+  type: object
+  properties:
+    severity:
+      type: string
+      enum: [low, medium, high]
+      default: medium
+slots:
+  message:
+    title: Alert message
+    description: 'Native Site Alert message render array.'

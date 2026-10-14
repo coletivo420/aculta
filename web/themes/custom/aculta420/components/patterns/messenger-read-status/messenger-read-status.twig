@@ -1,0 +1,5 @@
+{% set unread_label = notice|default(false) ? 'Não lido'|t : 'Não lida'|t %}
+{% set read_label = notice|default(false) ? 'Lido'|t : 'Lida'|t %}
+<span class="aculta-messenger-read-status{% if unread %} aculta-messenger-read-status--unread{% endif %}" aria-label="{{ unread ? unread_label : read_label }}">
+  <span aria-hidden="true">{{ unread ? unread_label : read_label }}</span>
+</span>

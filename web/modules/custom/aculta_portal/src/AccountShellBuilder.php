@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -33,6 +34,8 @@ final class AccountShellBuilder {
     private readonly TranslationInterface $translation,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly ?RouteProviderInterface $routeProvider = NULL,
+    private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
+    private readonly ?AccountInterface $currentUser = NULL,
   ) {}
 
   /**
@@ -61,9 +64,13 @@ final class AccountShellBuilder {
       'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security', 'icon' => 'shield-lock'],
       'aculta_portal.account_settings' => ['title' => $this->translation->translate('Configurações'), 'route' => 'aculta_portal.account_settings', 'icon' => 'sliders'],
     ];
+    $currentUser = $this->currentUser;
+    $this->moduleHandler?->alter('aculta_portal_account_sections', $sections, $currentUser);
     // Subpáginas herdam a seção do menu (ex.: endereço -> Meus Dados, detalhe do pedido -> Meus pedidos), para que
     // toda página da conta, acessada direto ou pela navegação, renderize dentro do shell com a seção certa ativa.
-    $sectionRoute = self::PARENT_SECTION[$route] ?? $route;
+    $parentSections = self::PARENT_SECTION;
+    $this->moduleHandler?->alter('aculta_portal_account_parent_sections', $parentSections);
+    $sectionRoute = $parentSections[$route] ?? $route;
     if (!isset($sections[$sectionRoute])) {
       return;
     }
@@ -78,12 +85,14 @@ final class AccountShellBuilder {
         'href' => $href,
         'label' => (string) $section['title'],
         'icon' => $section['icon'],
+        'badge_count' => isset($section['badge_count']) ? max(0, (int) $section['badge_count']) : 0,
         'active' => $route === $section_route,
       ];
       $accordionItems[] = [
         'href' => $href,
         'label' => (string) $section['title'],
         'icon' => $section['icon'],
+        'badge_count' => isset($section['badge_count']) ? max(0, (int) $section['badge_count']) : 0,
         'open' => $route === $section_route,
       ];
     }

@@ -20,6 +20,9 @@ O Drupal Core permite subdiretórios arbitrários dentro de `components/`.
 Disponível:
 
 - `content/editorial-card` -> `aculta420:editorial-card`.
+- `content/messenger-item`, `content/messenger-compose`, `content/messenger-notification` e `content/institutional-notice` -> componentes experimentais da central.
+- `patterns/messenger-list` -> moldura de listas do Private Message/Message.
+- `feedback/unread-badge` e `feedback/messenger-state` -> contagem e estados da central.
 
 Não criar placeholders vazios. Novos diretórios entram com o primeiro componente
 real da categoria.

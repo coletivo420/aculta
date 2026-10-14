@@ -1,6 +1,6 @@
 # Menu da Minha conta
 
-Data da revisão: 2026-10-10. Versões: `0.2.0-dev.26` a `0.2.0-dev.39`.
+Data da revisão: 2026-10-14. Versões: `0.2.0-dev.26` a `0.2.0-dev.39`; extensão de seções no Portal `0.4.0-dev.15`.
 
 A visão geral é a raiz do Domain ACCOUNT (`/`). O caminho técnico `/minha-conta` não é público e responde 404; nenhum link o usa (`docs/integrations/AUTHENTICATION.md`).
 
@@ -34,6 +34,7 @@ Sanfona nativa (`details`/`summary`, sem JavaScript de abertura):
 | Visão geral | `bi-grid` |
 | Meu Apoio | `bi-heart` |
 | Cursos | `bi-mortarboard` |
+| Mensagens | `bi-chat-dots` (opcional; somente com as permissões nativas de mensagens) |
 | Meus Dados | `bi-person-vcard` |
 | Conexões | `bi-link-45deg` |
 | Segurança | `bi-shield-lock` |
@@ -43,6 +44,8 @@ Sanfona nativa (`details`/`summary`, sem JavaScript de abertura):
 ## Arquivos
 
 - `src/AccountShellBuilder.php`: monta os dois menus e a sanfona.
+- O Portal chama `aculta_portal_account_sections_alter` e `aculta_portal_account_parent_sections_alter` para módulos opcionais acrescentarem seções e subrotas sem dependência funcional do Portal.
+- Uma seção pode fornecer `badge_count` numérico; o Portal encaminha o valor sem markup ou classe visual, e o ACULTA420 escolhe sua apresentação.
 - `templates/aculta-portal-shell.html.twig`: `menu` (desktop) e `menu_accordion` (celular).
 - `css/account-portal.css`: regras de desktop e de celular.
 - `js/account-navigation.js`: carga AJAX da sanfona e a regra de uma seção aberta por vez.

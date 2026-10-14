@@ -1,0 +1,8 @@
+name: Erro
+description: Estado anunciado como alerta acessível.
+component: aculta420:messenger-state
+props:
+  state: error
+slots:
+  content:
+    markup: <p>Não foi possível carregar as notificações.</p>

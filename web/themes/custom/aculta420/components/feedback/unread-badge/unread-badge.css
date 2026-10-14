@@ -1,0 +1,1 @@
+.aculta-messenger-unread-badge { display: inline-flex; min-width: 1.5rem; min-height: 1.5rem; align-items: center; justify-content: center; padding-inline: 0.35rem; border-radius: 999px; background: var(--aculta-interactive-active-bg); color: var(--aculta-interactive-active-text); font-size: 0.75rem; font-weight: 700; line-height: 1; }

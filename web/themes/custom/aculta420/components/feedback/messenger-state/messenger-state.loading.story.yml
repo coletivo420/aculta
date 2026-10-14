@@ -1,0 +1,8 @@
+name: Carregando
+description: Estado ocupado sem introduzir uma nova dependência de JavaScript.
+component: aculta420:messenger-state
+props:
+  state: loading
+slots:
+  content:
+    markup: <p>Carregando mensagens…</p>

@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+template: aculta_messenger_forum_topic_published
+label: 'Novo tópico seguido no fórum'
+description: 'Aviso de publicação de tópico para usuários que acompanham esse tópico.'
+text:
+  - value: 'Novo tópico no fórum'
+    format: plain_text
+  - value: "Um tópico acompanhado por você foi publicado: @topic_title\nAcesse: @topic_url"
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {}

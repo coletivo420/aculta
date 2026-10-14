@@ -1,0 +1,5 @@
+name: Contador não lidas
+description: Contagem numérica separada do rótulo da navegação.
+component: aculta420:unread-badge
+props:
+  count: 3

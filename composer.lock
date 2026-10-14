@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d7fe164ec2b04eb70671a3b3d95860c9",
+    "content-hash": "a073898126c48a56d56d5119050c1e49",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4141,6 +4141,211 @@
             }
         },
         {
+            "name": "drupal/message",
+            "version": "1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/message.git",
+                "reference": "8.x-1.9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/message-8.x-1.9.zip",
+                "reference": "8.x-1.9",
+                "shasum": "64cc53716d12674e4cf087e0d82ad0a3208b09b7"
+            },
+            "require": {
+                "drupal/core": "^9.2 || ^10 || ^11 || ^12"
+            },
+            "require-dev": {
+                "brianium/paratest": "^7.3",
+                "drupal/token": "^1.14",
+                "drush/drush": ">=12"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.9",
+                    "datestamp": "1785888839",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "amitaibu",
+                    "homepage": "https://www.drupal.org/user/57511"
+                },
+                {
+                    "name": "bluegeek9",
+                    "homepage": "https://www.drupal.org/user/1286304"
+                },
+                {
+                    "name": "Grayside",
+                    "homepage": "https://www.drupal.org/user/346868"
+                },
+                {
+                    "name": "jhedstrom",
+                    "homepage": "https://www.drupal.org/user/208732"
+                },
+                {
+                    "name": "roysegall",
+                    "homepage": "https://www.drupal.org/user/1812910"
+                }
+            ],
+            "description": "Message",
+            "homepage": "https://www.drupal.org/project/message",
+            "support": {
+                "source": "https://git.drupalcode.org/project/message"
+            }
+        },
+        {
+            "name": "drupal/message_notify",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/message_notify.git",
+                "reference": "8.x-1.5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/message_notify-8.x-1.5.zip",
+                "reference": "8.x-1.5",
+                "shasum": "04fe85e508750806b31acc99b417227b93837dd6"
+            },
+            "require": {
+                "drupal/core": "^9 || ^10 || ^11",
+                "drupal/message": "^1.0"
+            },
+            "require-dev": {
+                "drupal/message": "*",
+                "drupal/message_example": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.5",
+                    "datestamp": "1739804809",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "amitaibu",
+                    "homepage": "https://www.drupal.org/user/57511"
+                },
+                {
+                    "name": "bluegeek9",
+                    "homepage": "https://www.drupal.org/user/1286304"
+                },
+                {
+                    "name": "jhedstrom",
+                    "homepage": "https://www.drupal.org/user/208732"
+                },
+                {
+                    "name": "roysegall",
+                    "homepage": "https://www.drupal.org/user/1812910"
+                }
+            ],
+            "description": "Notification framework for the Message module",
+            "homepage": "https://drupal.org/project/message_notify",
+            "support": {
+                "source": "https://cgit.drupalcode.org/message_notify",
+                "issues": "https://drupal.org/project/issues/message_notify",
+                "irc": "irc://irc.freenode.org/drupal"
+            }
+        },
+        {
+            "name": "drupal/message_subscribe",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/message_subscribe.git",
+                "reference": "2.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/message_subscribe-2.1.0.zip",
+                "reference": "2.1.0",
+                "shasum": "bcb7f9a9f070abdd8d7ee50db6dfaa1106338736"
+            },
+            "require": {
+                "drupal/core": "^10.2 || ^11 || ^12",
+                "drupal/flag": "^4.0 || ^5.0",
+                "drupal/message": "^1.0",
+                "drupal/message_notify": "^1.0"
+            },
+            "require-dev": {
+                "drupal/flag": "*",
+                "drupal/message": "*",
+                "drupal/message_notify": "*",
+                "drupal/message_notify_ui": "*",
+                "drupal/message_subscribe_ui": "*",
+                "drupal/message_ui": "*",
+                "drupal/token": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.1.0",
+                    "datestamp": "1768443552",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "amitaibu",
+                    "homepage": "https://www.drupal.org/user/57511"
+                },
+                {
+                    "name": "bluegeek9",
+                    "homepage": "https://www.drupal.org/user/1286304"
+                },
+                {
+                    "name": "fubhy",
+                    "homepage": "https://www.drupal.org/user/761344"
+                },
+                {
+                    "name": "jhedstrom",
+                    "homepage": "https://www.drupal.org/user/208732"
+                },
+                {
+                    "name": "joelpittet",
+                    "homepage": "https://www.drupal.org/user/160302"
+                },
+                {
+                    "name": "roysegall",
+                    "homepage": "https://www.drupal.org/user/1812910"
+                }
+            ],
+            "description": "Subscription API for the Message and Message notify modules",
+            "homepage": "https://drupal.org/project/message_subscribe",
+            "support": {
+                "source": "https://cgit.drupalcode.org/message_subscribe",
+                "issues": "https://drupal.org/project/issues/message_subscribe"
+            }
+        },
+        {
             "name": "drupal/metatag",
             "version": "2.2.0",
             "source": {
@@ -4391,6 +4596,89 @@
             "homepage": "https://drupal.org/project/physical",
             "support": {
                 "source": "https://git.drupalcode.org/project/physical"
+            }
+        },
+        {
+            "name": "drupal/private_message",
+            "version": "3.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/private_message.git",
+                "reference": "3.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/private_message-3.0.7.zip",
+                "reference": "3.0.7",
+                "shasum": "debb71d6517858b154d4bf6d88b0f0d81802e675"
+            },
+            "require": {
+                "drupal/core": "^10 || ^11",
+                "drupal/message": "^1.0",
+                "drupal/message_notify": "^1.0",
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "drupal/message_notify": "*",
+                "drupal/rules": "^4.0",
+                "drupal/symfony_mailer_lite": "^2.0",
+                "drush/drush": "^12.5 || ^13.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "3.0.7",
+                    "datestamp": "1738002134",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Jay Friendly (Jaypan)",
+                    "homepage": "https://www.jaypan.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "artem_sylchuk",
+                    "homepage": "https://www.drupal.org/user/2511902"
+                },
+                {
+                    "name": "bohart",
+                    "homepage": "https://www.drupal.org/user/289861"
+                },
+                {
+                    "name": "claudiu.cristea",
+                    "homepage": "https://www.drupal.org/user/56348"
+                },
+                {
+                    "name": "edutrul",
+                    "homepage": "https://www.drupal.org/user/1621444"
+                },
+                {
+                    "name": "heddn",
+                    "homepage": "https://www.drupal.org/user/1463982"
+                },
+                {
+                    "name": "jaypan",
+                    "homepage": "https://www.drupal.org/user/324696"
+                },
+                {
+                    "name": "phjou",
+                    "homepage": "https://www.drupal.org/user/3344054"
+                }
+            ],
+            "description": "A private message system for users to send messages to each other.",
+            "homepage": "https://drupal.org/project/private_message",
+            "support": {
+                "source": "https://git.drupalcode.org/project/private_message",
+                "issues": "https://drupal.org/project/issues/private_message"
             }
         },
         {
@@ -4911,6 +5199,71 @@
             "support": {
                 "source": "https://cgit.drupalcode.org/simple_sitemap",
                 "issues": "https://drupal.org/project/issues/simple_sitemap"
+            }
+        },
+        {
+            "name": "drupal/site_alert",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/site_alert.git",
+                "reference": "8.x-1.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/site_alert-8.x-1.4.zip",
+                "reference": "8.x-1.4",
+                "shasum": "623fa60291ca37e45c40a9d3926e1a6d4a793f6a"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9 || ^10 || ^11"
+            },
+            "require-dev": {
+                "drush/drush": "^9 || ^10 || ^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.4",
+                    "datestamp": "1761899937",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                },
+                "drush": {
+                    "services": {
+                        "drush.services.yml": "^9 || ^10 || ^11"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Cecily Borzillo",
+                    "homepage": "https://www.drupal.org/u/cecrs",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "nicola85",
+                    "homepage": "https://www.drupal.org/user/1746956"
+                },
+                {
+                    "name": "pfrenssen",
+                    "homepage": "https://www.drupal.org/user/382067"
+                }
+            ],
+            "description": "Allows site admins to display a site-wide alert to all users.",
+            "homepage": "https://www.drupal.org/project/site_alert",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/site_alert",
+                "issues": "https://www.drupal.org/project/issues/site_alert"
             }
         },
         {

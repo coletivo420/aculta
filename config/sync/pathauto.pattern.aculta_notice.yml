@@ -1,0 +1,23 @@
+uuid: 94bd9155-ec96-4cf0-9b8a-6f3028c95d4b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.aculta_notice
+  module:
+    - node
+id: aculta_notice
+label: 'URLs — avisos institucionais'
+type: 'canonical_entities:node'
+pattern: '/avisos/[node:title]'
+selection_criteria:
+  04daf2fd-43ad-4bdf-b7c1-1286ec736fa0:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      aculta_notice: aculta_notice
+selection_logic: and
+weight: 0
+relationships: { }

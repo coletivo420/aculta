@@ -2,6 +2,8 @@ uuid: be6a8549-8fbe-4c67-911f-069521491578
 langcode: pt-br
 status: true
 dependencies:
+  config:
+    - node.type.aculta_notice
   module:
     - content_moderation
 _core:
@@ -26,6 +28,11 @@ type_settings:
       weight: 0
       published: true
       default_revision: true
+    review:
+      label: 'Em revisão'
+      weight: 1
+      published: false
+      default_revision: false
   transitions:
     archive:
       label: Archive
@@ -55,9 +62,29 @@ type_settings:
     publish:
       label: Publish
       from:
-        - draft
         - published
+        - draft
       to: published
       weight: 1
-  entity_types: {  }
+    draft_to_review:
+      label: 'Enviar para revisão'
+      from:
+        - draft
+      to: review
+      weight: 2
+    review_to_draft:
+      label: 'Devolver para rascunho'
+      from:
+        - review
+      to: draft
+      weight: 3
+    review_to_published:
+      label: Publicar
+      from:
+        - review
+      to: published
+      weight: 4
+  entity_types:
+    node:
+      - aculta_notice
   default_moderation_state: draft

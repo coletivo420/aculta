@@ -9,6 +9,20 @@ Classificação: PATCH (correção de contrato interno; mesma marcação).
 - Verificado no Homelab: a dica sai com as classes do tema (`small text-body-secondary`), o que prova a conversão.
 - RUNTIME STATUS: verificado no Homelab (gate e renderização isolada). Inspeção visual humana pendente.
 
+## 0.4.0-dev.16 — extensão opcional para seções da Minha Conta — 2026-10-14
+
+- `AccountShellBuilder` expõe alters neutros para acrescentar seções opcionais e mapear suas subrotas à seção ativa.
+- ACULTA Messenger usa esses alters para incluir Mensagens somente a contas com as permissões nativas do Private Message.
+- Nenhuma mudança visual no ACULTA420 nesta entrega.
+- Gates estáticos e PHP lint passaram na implementação original; Runtime e bootstrap Drupal não foram validados nesta cópia. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.17 — contador neutro nas seções da conta — 2026-10-14
+
+- `AccountShellBuilder` encaminha opcionalmente `badge_count` como número neutro junto aos itens da navegação, sem classes ou markup de apresentação.
+- ACULTA Messenger expõe a contagem nativa de threads não lidas nessa propriedade para o ACULTA420.
+- PHP lint, Portal Drupal 11+ gate (696 checks), Portal/theme boundary (907 checks), unique paths, Portal UI docs (167 tokens/132 usados/41 atributos), environment-address gate (1.561 arquivos), SDC schemas e design foundations passaram.
+- Foundation gate dependente de bootstrap Drupal não foi executado: esta cópia não tem settings/runtime. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.14 — popup "Entrar" na barra multidomínio, sem Turnstile; modais com fundo escurecido — 2026-10-14
 
 - "Entrar" da barra multidomínio, para visitante não autenticado, abre o login em modal no próprio host (`use-ajax`).

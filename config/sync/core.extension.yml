@@ -2,6 +2,7 @@ _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
   aculta_portal: 0
+  aculta_messenger: 0
   aculta_magazine: 0
   aculta_portal_sitemap: 0
   address: 0
@@ -33,6 +34,7 @@ module:
   contextual: 0
   crop: 0
   datetime: 0
+  datetime_range: 0
   dblog: 0
   diff: 0
   domain: 0
@@ -72,6 +74,9 @@ module:
   mailer_policy: 0
   mailer_transport: 0
   media: 0
+  message: 0
+  message_notify: 0
+  message_subscribe: 0
   media_library: 0
   menu_link_content: 0
   menu_ui: 0
@@ -86,6 +91,7 @@ module:
   path_alias: 0
   physical: 0
   profile: 0
+  private_message: 0
   redirect: 0
   rename_admin_paths: 0
   schema_article: 0
@@ -101,6 +107,7 @@ module:
   search_api_db: 0
   security_review: 0
   simple_sitemap: 0
+  site_alert: 0
   social_api: 0
   social_auth: 0
   social_auth_google: 0
