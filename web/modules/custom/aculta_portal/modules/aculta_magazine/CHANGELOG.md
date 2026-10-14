@@ -1,3 +1,21 @@
+## 0.1.0-dev.4 — troca de tipo de publicação sem quebrar o tópico do Fórum — 2026-10-14
+
+Classificação: MINOR da linha aberta (serviço novo; sem mudança de contrato existente).
+
+- Novo serviço `PublicationTypeConverter`: troca uma publicação entre article e blog criando a nova, copiando os
+  campos, movendo o vínculo `field_discussao` e mantendo o endereço; a antiga sai depois, sem despublicar o tópico.
+  Tudo em transação (falha = nada muda). Campos que só existem no tipo de origem são listados e não copiados.
+- `ForumTopicSync::silently()`: grava a publicação sem disparar a sincronização do tópico (uso só da troca).
+- Ao trocar a sessão, o tópico muda de pasta e o endereço segue o Pathauto. Endereço antigo responde 404 (sem redirect).
+- Uso: `PublicationTypeConverter::plan()` (sem gravar) e `convert()` (grava), pelo serviço
+  `aculta_magazine.publication_type_converter`.
+- Comando Drush: não registrado. Tentativas com os formatos do Drush 13 não foram reconhecidas; fica pendente.
+- Comentários: o tópico e seus comentários não mudam na troca. Teste no navegador: comentário de teste no tópico 87,
+  ida e volta article → blog, contagem "1 comentário" na publicação e comentário no tópico em cada etapa; comentário
+  de teste removido ao final.
+- RUNTIME STATUS: verificado no Homelab. Trocados PodPlant420 #01 (71 → 94) e Cuidar não é crime (86 → 95) para blog na
+  sessão Editorial, tópicos 78 e 87 preservados, endereços 200. Blog de teste (77) e tópico 79 excluídos.
+
 ## 0.1.0-dev.3 — cabeçalho da publicação declara a dependência de tema; Blog é Editorial documentado — 2026-10-14
 
 Classificação: PATCH (correção de cache; sem mudança de contrato).

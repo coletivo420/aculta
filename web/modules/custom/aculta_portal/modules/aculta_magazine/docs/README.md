@@ -28,6 +28,12 @@ que a guarda. Não criar um segundo tipo para editorial, nem uma segunda seção
 - Notícias seguem o tipo `article` com a sessão Notícias; Notícia não é sinônimo de editorial.
 - O modelo de publicação (`aculta420:revista-publication`) vale para os dois tipos.
 
+## Trocar o tipo de uma publicação (Notícia ↔ blog)
+
+O Drupal não converte o tipo de um nó no lugar. Use `aculta_magazine.publication_type_converter`: `plan()` mostra o
+que será copiado e o que se perde; `convert()` cria a publicação no tipo de destino, move o vínculo do tópico do
+Fórum, mantém o endereço e remove a antiga, em transação. O tópico, os comentários e a pasta do Fórum permanecem.
+
 ## Privacidade
 
 A caixa de autores usa somente `PublicProfilePolicy` (aculta_user): link para o perfil só com perfil público,

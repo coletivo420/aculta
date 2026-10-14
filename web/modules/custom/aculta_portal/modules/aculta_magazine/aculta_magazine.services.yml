@@ -11,3 +11,6 @@ services:
   aculta_magazine.forum_opening_post:
     class: Drupal\aculta_magazine\Presentation\ForumOpeningPost
     arguments: ['@aculta_portal.domain_purpose', '@aculta_magazine.forum_topic_sync']
+  aculta_magazine.publication_type_converter:
+    class: Drupal\aculta_magazine\Forum\PublicationTypeConverter
+    arguments: ['@entity_type.manager', '@aculta_magazine.forum_topic_sync', '@database']

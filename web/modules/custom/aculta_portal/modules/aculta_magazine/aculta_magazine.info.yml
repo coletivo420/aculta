@@ -2,7 +2,7 @@ name: ACULTA Magazine (Revista)
 type: module
 description: 'Revista da ACULTA: publicações (tipos de conteúdo da Revista), chamada, resumo, SEO, caixa de autores e coautoria. Submódulo do Portal ACULTA.'
 package: Associação Cultural Antiproibicionista
-version: '0.1.0-dev.3'
+version: '0.1.0-dev.4'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_user
