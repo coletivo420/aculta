@@ -8,7 +8,6 @@ use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
-use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
@@ -47,7 +46,6 @@ final class LoginPopupForm extends UserLoginForm {
     private readonly DomainPurposeManager $domainPurpose,
     private readonly AuthIntegrationManager $authIntegration,
     private readonly ModuleHandlerInterface $moduleHandler,
-    private readonly ModuleExtensionList $moduleExtensions,
   ) {
     parent::__construct($user_flood_control, $user_storage, $user_auth, $renderer, $bare_html_renderer);
   }
@@ -65,7 +63,6 @@ final class LoginPopupForm extends UserLoginForm {
       $container->get('aculta_portal.domain_purpose'),
       $container->get('aculta_portal.auth_integration'),
       $container->get('module_handler'),
-      $container->get('extension.list.module'),
     );
   }
 
@@ -162,11 +159,9 @@ final class LoginPopupForm extends UserLoginForm {
       $query['aculta_destination_purpose'] = $purpose;
     }
     $url->setOption('query', $query);
-    $logo = Url::fromUri('base:' . $this->moduleExtensions->getPath('social_auth_google') . '/img/google_logo.svg')->toString();
     $markup = sprintf(
-      '<a href="%s" data-portal-ui="auth-google"><img src="%s" alt="" width="24" height="24"> <span>%s <strong>Google</strong></span></a>',
+      '<a href="%s" data-portal-ui="auth-google"><span>%s <strong>Google</strong></span></a>',
       Html::escape($url->toString()),
-      Html::escape($logo),
       Html::escape((string) $this->t('Continuar com')),
     );
     return [
