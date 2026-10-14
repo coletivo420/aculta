@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.20', 'Theme metadata marks the current version 0.6.0-dev.20.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.21', 'Theme metadata marks the current version 0.6.0-dev.21.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -241,6 +241,9 @@ $expectedTemplates = [
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
   'node--project--teaser.html.twig',
+  // Modelo padrão da Revista (0.6.0-dev.21): Notícia e blog chamam o mesmo componente revista-publication.
+  'node--article--full.html.twig',
+  'node--blog--full.html.twig',
   // Wiki article and teaser presenters intentionally omit submitted-byline metadata.
   'node--wiki-entry--full.html.twig',
   'node--wiki-entry--teaser.html.twig',
