@@ -109,6 +109,24 @@ A página do Media Gallery cita "inserir galerias no CKEditor". O código do tar
 - **R7 (tema):** autorizado alterar `web/themes/custom/aculta420/**` na Fase 5.
 - **Galerias somente na Revista (D13):** toda publicação do tipo galeria fica vinculada à Revista, exclusivamente. Não é publicada em outros purposes (`main`, `shop`, `courses`, `wiki`, `forum`, `links`, `support`, `account`). A visibilidade por purpose (D8) é o purpose `magazine`. A inserção em posts fica restrita aos tipos da Revista (`article` e `blog`, `RevistaPublications::BUNDLES`). A Fase 8 implementa e testa essa restrição.
 
+### 4.2 Criar galeria dentro do editor: pesquisa e decisão (2026-10-14)
+
+Pergunta do responsável: é possível criar a galeria dentro do CKEditor 5? Quais alternativas?
+
+| Alternativa | Fonte | O que faz | Avaliação |
+| --- | --- | --- | --- |
+| Entity Embed (escolhida) | código do tarball 1.7 (`drupalentity`) | Incorpora entidade **já existente** no texto, por `<drupal-entity>`. | Não cria galeria no diálogo. Entidade reutilizável, PhotoSwipe e D13 por entidade. **Adotada.** |
+| Criar galeria no diálogo do Entity Embed | código do tarball 1.7 | Não há fluxo de criação. | Não suportado. |
+| Inline Entity Form Dialog 1.0.6 | [drupal.org/project/inline_entity_form_dialog](https://www.drupal.org/project/inline_entity_form_dialog) | Widget de campo `entity_reference` que cria/edita a entidade referenciada num modal. | É widget de campo, não integração com o texto do CKEditor 5 (a página não declara integração). Não atende à incorporação no texto. Também pede Core ^11.2 e a página não reconcilia com ^10.3. |
+| CKEditor Media Gallery 1.0.0-alpha1 (2026) | [drupal.org/node/3608354](https://www.drupal.org/node/3608354) | Botão de galeria no CKEditor 5; seleciona imagens da Media Library; galeria fica como elemento `drupal-gallery` no texto, **sem entidade**. | Alpha, "use at your own risk", fora da política de segurança, 10 sites. Sem entidade: sem reuso, sem publicação por purpose. **Não adotada.** |
+| Upload de imagem dentro do diálogo de mídia do CKEditor | Core (`drupalMedia`) | Cria imagem (mídia), não galeria. | Útil para o editor subir fotos sem sair do texto. A verificar no navegador (Fase 10). |
+| Plugin CKEditor próprio | — | Editor JS paralelo. | Proibido pela missão. |
+| Modal dentro de modal | resumo de busca (drupal.org, issue 2741877 citada, não aberta) | CKEditor 5 dentro de diálogo do Drupal tem problemas com modais aninhados. | Qualquer criação de entidade a partir do diálogo do CKEditor depende desse problema do Core. Risco. |
+
+Decisão: manter a galeria como **entidade criada no administrador** e incorporada pelo botão `galeria`. Complementar, na Fase 10: upload de fotos dentro do editor (Core) e um atalho "Criar galeria" na página de edição do artigo, que abre o formulário da galeria. Criar a galeria inteira dentro do CKEditor fica fora de escopo até o Core resolver modais aninhados.
+
+Formato de texto dedicado da Revista (D13, implementado nesta fase): `revista_editorial` (copia o `full_html`, com `entity_embed` e sem `sourceEditing`, para que não se digite marcação de incorporação à mão). O botão `galeria` só existe nele. Permissão `use text format revista_editorial` concedida ao editor de conteúdo. Campos de texto fora de artigo e blog passam a aceitar a lista de formatos sem o da Revista; artigo e blog continuam aceitando todos (inclusive o `full_html` existente, para não quebrar os 11 conteúdos já gravados nele).
+
 ## 5. Modelagem
 
 ### 5.1 Entidade

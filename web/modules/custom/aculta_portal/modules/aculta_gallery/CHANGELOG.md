@@ -15,7 +15,10 @@ Classificação: MINOR (nova dependência de módulo: `entity_embed` e `embed`; 
   - O botão aparece em todo o `full_html`, não só em artigos e blogs. A restrição D13 à Revista ainda não está aplicada na inserção (só na visualização). Precisa de formato de texto dedicado; decisão pendente.
   - Criar galeria dentro do CKEditor não é suportado (L5). Só se incorpora galeria já criada.
   - Legenda opcional e escolha de layout no diálogo do CKEditor: não verificados. Layout depende dos componentes da Fase 5.
-- RUNTIME STATUS: verificado no Runtime (incorporação, renderização pela Revista e remoção). Testes de navegador do editor pendentes (Fase 10).
+- Formato de texto dedicado `revista_editorial` (Revista — editorial): único com o botão `galeria` e o filtro `entity_embed`. Permissão para o editor de conteúdo. Campos de texto fora de artigo e blog excluem o formato. `full_html` perde o botão e o filtro.
+- Verificado: artigo no formato da Revista renderiza a galeria pela URL da Revista (200); artigos de teste apagados.
+- Pesquisa de criação de galeria no editor e alternativas: `docs/ARQUITETURA.md` §4.2.
+- RUNTIME STATUS: verificado no Runtime (incorporação, formato da Revista, renderização pela Revista e remoção). Testes de navegador do editor pendentes (Fase 10).
 
 ## 0.1.0-dev.4 — importação, organização e restrição à Revista — 2026-10-14
 

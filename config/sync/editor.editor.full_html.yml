@@ -31,7 +31,6 @@ settings:
       - codeBlock
       - sourceEditing
       - drupalMedia
-      - galeria
   plugins:
     ckeditor5_codeBlock:
       languages:
@@ -110,3 +109,4 @@ image_upload:
   max_dimensions:
     width: null
     height: null
+
