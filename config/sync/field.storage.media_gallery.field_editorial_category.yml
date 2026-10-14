@@ -1,0 +1,23 @@
+uuid: b768aa5b-0f65-4496-b97f-8bcc81b351bb
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media_gallery
+    - taxonomy
+_core:
+  default_config_hash: yYn2bkzAWs559l8y4jofsckZBddwTtoLoLSwvh2D8mU
+id: media_gallery.field_editorial_category
+field_name: field_editorial_category
+entity_type: media_gallery
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
+

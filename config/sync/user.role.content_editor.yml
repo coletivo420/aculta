@@ -27,8 +27,8 @@ weight: 2
 is_admin: false
 permissions:
   - 'access administration pages'
-  - 'access content'
   - 'access content overview'
+  - 'access content'
   - 'access contextual links'
   - 'access files overview'
   - 'access navigation'
@@ -44,6 +44,7 @@ permissions:
   - 'edit any aculta_notice content'
   - 'revert all revisions'
   - 'revert wiki_entry revisions'
+  - 'use text format revista_editorial'
   - 'use text format wiki'
   - 'use wiki_editorial transition create_new_draft'
   - 'use wiki_editorial transition draft_to_review'

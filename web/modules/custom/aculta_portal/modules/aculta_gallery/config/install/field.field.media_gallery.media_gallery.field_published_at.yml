@@ -1,0 +1,20 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media_gallery.field_published_at
+  module:
+    - datetime
+id: media_gallery.media_gallery.field_published_at
+field_name: field_published_at
+entity_type: media_gallery
+bundle: media_gallery
+label: 'Data de publicação'
+description: ''
+required: false
+translatable: false
+default_value: {}
+default_value_callback: ''
+settings:
+  {}
+field_type: datetime

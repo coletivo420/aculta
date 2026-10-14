@@ -1,0 +1,33 @@
+uuid: 730529f0-7431-4865-a749-e31739a43f8b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media_gallery.field_project
+    - node.type.project
+  module:
+    - media_gallery
+_core:
+  default_config_hash: rkfTbRJhnyZplcm4dU-_Zbz4g_CfNm-1tieAlCceT2E
+id: media_gallery.media_gallery.field_project
+field_name: field_project
+entity_type: media_gallery
+bundle: media_gallery
+label: Projeto
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      project: project
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
+

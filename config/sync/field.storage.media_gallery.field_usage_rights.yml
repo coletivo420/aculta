@@ -1,0 +1,22 @@
+uuid: 000ede0b-fb67-4351-b730-9aa21af11ea8
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media_gallery
+_core:
+  default_config_hash: qsXDCOMOmWHS_Ys7xg-gQHcefSx4wZr0dLExGhl-oVI
+id: media_gallery.field_usage_rights
+field_name: field_usage_rights
+entity_type: media_gallery
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
+

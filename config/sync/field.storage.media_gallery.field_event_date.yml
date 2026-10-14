@@ -1,0 +1,23 @@
+uuid: 0c92eed5-196e-4969-b37a-b2b065384cd8
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - datetime
+    - media_gallery
+_core:
+  default_config_hash: PuTEO2H-gT6itHZEpU8-h5T-z2_HWP98WE9TVkwUSa8
+id: media_gallery.field_event_date
+field_name: field_event_date
+entity_type: media_gallery
+type: datetime
+settings:
+  datetime_type: date
+module: datetime
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
+

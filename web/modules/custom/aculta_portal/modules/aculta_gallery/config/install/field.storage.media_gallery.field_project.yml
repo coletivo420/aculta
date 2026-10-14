@@ -1,0 +1,19 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media_gallery
+    - node
+id: media_gallery.field_project
+field_name: field_project
+entity_type: media_gallery
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false

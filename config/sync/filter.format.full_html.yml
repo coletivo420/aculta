@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - editor
+    - entity_embed
     - media
 _core:
   default_config_hash: vpZysv3RHJjhYzq7O_q5q8mVlHdrSzKELmXyiX6RtV0
@@ -16,6 +17,12 @@ filters:
     provider: editor
     status: true
     weight: 11
+    settings: {  }
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: false
+    weight: 20
     settings: {  }
   filter_align:
     id: filter_align
@@ -53,3 +60,4 @@ filters:
         image: image
         document: document
         remote_video: remote_video
+

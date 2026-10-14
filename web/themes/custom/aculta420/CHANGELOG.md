@@ -54,7 +54,7 @@ Classificação: MINOR da linha aberta (apresentação de mensagens e avisos).
 - Falha da consulta mantém o painel aberto e mostra uma mensagem acessível para nova tentativa.
 - Gates e validação visual/runtime no Homelab: pendentes; RUNTIME STATUS: DEFERRED.
 
-## 0.6.0-dev.25 — gavetas laterais para mensagens e avisos — 2026-10-14
+## 0.6.0-dev.25 — gavetas laterais e palco do álbum — 2026-10-14
 
 Classificação: MINOR da linha aberta (apresentação experimental de uma feature existente).
 
@@ -65,6 +65,8 @@ Classificação: MINOR da linha aberta (apresentação experimental de uma featu
   no próprio painel.
 - Gates de SDC, design foundations, fronteira Portal/tema e Foundation: pendentes nesta cópia local.
 - RUNTIME STATUS: DEFERRED; validar abertura, foco, rolagem e responsividade no Homelab.
+- Palco do álbum com moldura semântica por token, miniaturas responsivas e slideshow no palco; a biblioteca `aculta420/album-slideshow` fica global e não referencia a View no template.
+- Gate de contrato do álbum (`validate-album-stage-contract.php`) cobre seletores, atributos e API pública do slideshow.
 
 ## 0.6.0-dev.24 — modais da barra e estado de leitura — 2026-10-14
 
