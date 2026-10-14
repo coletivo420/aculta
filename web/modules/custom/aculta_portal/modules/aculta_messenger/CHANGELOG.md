@@ -2,6 +2,107 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.11 — resposta e data na caixa de mensagens — 2026-10-14
+
+- O modal de conversa mantém o histórico nativo do Private Message e garante o formulário de resposta nativo quando a exibição ativa não o inclui.
+- A lista da barra lateral mostra a data e hora da mensagem mais recente dentro do botão do remetente, em markup explícito e fonte pequena.
+- A data usa o timestamp da última mensagem; o timestamp da thread é fallback.
+- `git diff --check`: PASS. PHP lint, gates e validação visual: não executados nesta etapa.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.1.1-dev.10 — data da última mensagem no contato — 2026-10-14
+
+- Cada botão de remetente mostra a data e hora da última atividade da conversa acima do nome, em tipografia pequena.
+- A data usa o timestamp atualizado do Private Message; nenhuma dimensão do botão foi ampliada intencionalmente.
+- Validação visual e gate Drupal: pendentes nesta etapa.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.1.1-dev.9 — contatos compactos no Messenger — 2026-10-14
+
+- A gaveta mostra uma caixa clicável por usuário com avatar circular e nome somente; abre a conversa mais recente.
+- Ação contextual de limpar histórico e estado não lido permanecem disponíveis.
+- CSS da caixa passa a ser carregado pela biblioteca da gaveta, inclusive no conteúdo AJAX sem renderizar o SDC de mensagem.
+- Capturas visuais revisadas em desktop (1440×960) e mobile (390×844) com a resposta autenticada renderizada pelo checkout local.
+- RUNTIME STATUS: visual local PASS; interação real da gaveta ainda DEFERRED.
+
+## 0.1.1-dev.8 — menu contextual e retenção de conversas
+
+- Inclui menu de contexto no clique direito e atalho acessível para abrir a confirmação nativa de limpeza do histórico pessoal.
+- Preserva a exclusão por participante do Private Message; esconde da lista a ação global de apagar thread.
+- O Cron remove até 20 conversas sem atividade há seis meses por execução, usando o ciclo de vida da entidade nativa.
+- Não executado Cron nem exclusão no runtime durante esta alteração.
+- Validação no checkout local: `drush cr`, prévia autenticada e gates Portal/Foundation PASS; interação no navegador e expiração real ainda pendentes.
+- RUNTIME STATUS: DEFERRED até sincronizar a nova versão com o checkout local; purge DEFERRED até execução futura do Cron.
+
+## 0.1.1-dev.7 — conversas agrupadas por remetente
+
+- A prévia organiza conversas em caixas por remetente e prioriza a conversa atualizada mais recentemente.
+- O nome do remetente abre sua conversa mais recente; as linhas de conversa continuam abrindo os respectivos históricos nativos.
+- A ordem é baseada no timestamp `updated` do Private Message; não há armazenamento paralelo.
+- `php -l` e validação funcional autenticada: pendentes nesta etapa.
+- RUNTIME STATUS: DEFERRED até aplicação/teste do commit no checkout local.
+
+## 0.1.1-dev.6 — caixa visual de conversas e confirmação de avisos
+
+- A gaveta de mensagens limpa a contagem de conversas não lidas ao abrir, usando o last-check nativo do Private Message.
+- O item da inbox abre a thread autorizada em modal Drupal com histórico e Form API nativa para responder.
+- Avatar autorizado e direção de envio chegam ao tema como render array e estado neutro; o SDC apresenta balões de entrada/saída.
+- Site Alerts e comunicados podem ser dispensados individualmente; Flag mantém o estado por usuário e a contagem acompanha a dispensa.
+- RUNTIME STATUS: DEFERRED nesta branch sem Runtime instalado; validar atualização de config e interação modal no Homelab.
+
+## 0.1.1-dev.4 — fragmentos AJAX para gavetas Bootstrap
+
+- Rotas same-origin de prévia retornam somente HTML renderizado e têm cache privado/no-store;
+  a consulta ocorre ao abrir a gaveta, sem atualizações em segundo plano.
+- RUNTIME STATUS: DEFERRED — conferir DI, cache e interação no Homelab.
+
+## 0.1.1-dev.5 — contadores atualizados ao abrir as gavetas
+
+- Prévia de conversas retorna o total atual de threads não lidas; prévia de avisos retorna Site Alerts visíveis mais comunicados persistentes ainda não lidos.
+- O tema aplica a contagem e o rótulo acessível da barra na resposta da mesma requisição, sem polling.
+- RUNTIME STATUS: DEFERRED — comportamento e contagem por conta precisam de teste HTTP autenticado.
+
+## 0.1.1-dev.3 — gavetas de mensagens e avisos na barra
+
+- A prévia privada passa a exibir até 50 conversas recentes dentro do painel e remove o link de saída
+  para a caixa de mensagens.
+- Avisos persistentes visíveis passam a exibir até 50 itens no painel junto com Site Alerts ativos.
+- Os dois gatilhos permanecem restritos a contas autenticadas.
+- Os endpoints dos painéis deixam explícito o cache desativado para que cada abertura Ajax consulte o estado atual.
+- RUNTIME STATUS: DEFERRED — validação visual e funcional no Homelab pendente.
+
+## 0.1.1-dev.2 — pedidos de amizade e privacidade de novas conversas
+
+- `aculta_user` implementa amizade como entidade privada por par de membros, com estados pendente, aceita, recusada, cancelada e removida; API de serviço com DI, lock do Core e ID canônico único.
+- Perfis públicos autenticados oferecem solicitar, cancelar e remover amizade por Form API/POST; `/mensagens/notificacoes` mostra pedidos recebidos e permite aceitar/recusar. O contador da barra inclui pedidos pendentes.
+- Flood API limita novos pedidos de amizade a dez por membro por hora.
+- Completa o índice do contrato Portal/tema para tokens de Messenger e leitura já usados pela integração.
+- Preferência individual Todos/Somente amizades confirmadas salva em User Data pelo `aculta_messenger`; aplica-se somente ao início de thread. Administradores e editores ignoram essa preferência, nunca os bloqueios nativos.
+- Atualização `aculta_user_update_10002()` instala a nova entidade em sites existentes.
+- Composer audit revelou os advisories SA-CORE-2026-014/015/016 no Core 11.4.8; após dry-run, `composer.json`/lock atualizaram Core e `core-dev` para 11.4.10 e componentes Symfony compatíveis. `composer audit --locked`: PASS, sem advisories.
+- Verificado: PHP lint das classes alteradas, YAML de metadados/serviços/permissões, Drupal 11+ gate (696), environment-address gate (1.595), composer validate e `composer audit --locked` sem advisories. O gate de slugs não iniciou: este worktree não contém `vendor/autoload.php`.
+- RUNTIME STATUS: DEFERRED — sem instalação/atualização no Homelab, sem teste funcional entre usuários e sem envio de e-mails reais.
+
+## 0.1.1-dev.1 — pesquisa e decisão de arquitetura
+
+- Pesquisados Friendship, User Relationships, Flag, Private Message, Message e
+  Message Notify em fontes oficiais; versões e código instalado do lock foram
+  conferidos na branch local.
+- Friendship declara compatibilidade com Drupal 11, mas não possui cobertura
+  da política de advisories; sua implementação não atende diretamente à
+  central privada de pedidos e notificações do ACULTA. User Relationships é
+  legado para Drupal 7. Não instalar dependência adicional.
+- Decidido implementar o workflow de amizade em `aculta_user` como entidade
+  Drupal própria e serviço público; `aculta_messenger` consumirá essa API.
+  Message/Message Notify mantêm notificações e Private Message mantém threads;
+  Flag não será usado como máquina de estados. Os casos de uso do Friendship
+  serão adaptados para os contratos DI, Entity API, access e Form API do Portal.
+- Definida a preferência individual `todos`/`somente amigos`: limita somente
+  novas conversas; respostas em threads existentes permanecem liberadas.
+  Administradores e editores ignoram a preferência, mas não bloqueios nativos.
+- RUNTIME STATUS: DEFERRED — somente documentação/pesquisa nesta subfase;
+  implementação e validação seguem em dev.2/dev.3.
+
 ## 0.1.0-dev.10 — modais da barra e estado de leitura
 
 - Adiciona modal same-origin de conversas e de avisos ativos na barra
@@ -188,3 +289,10 @@ Mudanças relevantes do ACULTA Messenger.
 - Nenhuma mudança funcional ou instalação Composer.
 - STATIC: PASS — `git diff --check` e links Markdown internos (nove arquivos).
 - RUNTIME STATUS: DEFERRED (sem código funcional).
+
+### Classes e hooks da integração de amizade
+
+- `FriendRequestsForm`: lista pedidos direcionados à conta atual e trata aceitação/recusa por Form API.
+- `MessagesController::notifications()`: agrega os pedidos recebidos e notificações Message privadas existentes.
+- `MessengerBarHooks::preprocessPage()`: soma pedidos pendentes ao contador privado da barra.
+- `PrivateMessageFormHooks::formAlter()` e `PrivateMessageFormValidator::validateNewConversationPrivacy()`: aplicam a preferência apenas ao criar conversa.

@@ -9,3 +9,7 @@ administer aculta associados:
 export aculta associados:
   title: 'Exportar relatório de associados (somente administrador)'
   restrict access: true
+
+administer aculta friendships:
+  title: 'Administrar relacionamentos entre membros'
+  restrict access: true

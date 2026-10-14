@@ -1,16 +1,73 @@
-## 0.6.0-dev.25 — palco do álbum: cor, celular e contrato com o módulo — 2026-10-14
+## 0.6.0-dev.33 — contatos compactos e botão de amizade no perfil — 2026-10-14
 
-Classificação: MINOR da linha aberta (componente de apresentação novo, `experimental`; token novo; sem quebra de contrato).
+Classificação: PATCH (ajustes visuais e de apresentação sem alterar contratos estáveis).
 
-- Palco do álbum (`album-slideshow.css`, `album-slideshow.js`): moldura por token `--aculta-media-stage-bg` (areia `#e8dfcc` no claro, `#0d0b0a` no escuro), painel de miniaturas em duas colunas, miniatura ativa com foco do tema, botão do celular com superfície interativa e borda forte (acompanha o modo escuro).
-- Celular: a altura segue a foto (teto de 400 px); cada slide centraliza a foto na linha.
-- Desktop: a faixa de fotos ocupa a coluna do palco; foto a 10 px do painel de miniaturas.
-- Biblioteca `aculta420/album-slideshow` declarada em `aculta420.info.yml` (global). O template `views-view-vvjb.html.twig` não cita mais a view do módulo.
-- Gate novo: `scripts/validate-album-stage-contract.php` (módulo emite os `data-*`, tema usa os mesmos, sem nome de view no tema, seletores `.vvjb-*` e API `goToSlide`/`getCurrentSlide` existem no VVJB instalado). Teste negativo: falha quando um seletor não existe ou o nome da view aparece no CSS.
-- Gate de Foundation: versão atualizada para 0.6.0-dev.25 (o `main` já tinha `0.6.0-dev.23` e `0.6.0-dev.24`; esta entrega vem depois).
-- Commits: `4d168e4` (moldura), `5e6d553` e `c7b448c` (cor e botão), `e760a1e` (celular, gate, versão). SHA desta entrada: `e760a1e`.
-- Validação: design foundations PASS; module-theme boundary PASS; contrato do palco PASS. `validate-aculta420-foundation.php` falha por ausência do bootstrap do Drupal também no worktree limpo (anterior a esta entrega).
-- RUNTIME STATUS: verificado no Runtime (desktop e celular, claro e escuro, clique na miniatura). Inspeção visual humana pendente.
+- A gaveta de mensagens destaca cada remetente em uma caixa clicável com avatar circular e nome, sem detalhes extras.
+- O perfil público apresenta a ação de amizade no cabeçalho, com o estilo do botão “Ver Perfil” da Minha Conta.
+- CSS de conversa é carregado pela biblioteca da gaveta mesmo quando a resposta AJAX não renderiza o SDC de mensagem.
+- Capturas locais da lista em desktop/mobile revisadas; validação interativa do fluxo de amizade permanece DEFERRED.
+
+## 0.6.0-dev.30 — destaque vermelho para Minha Conta — 2026-10-14
+
+Classificação: MINOR da linha aberta (consistência visual da barra multidomínio).
+
+- O primeiro item do menu de conta usa o token vermelho de estado, em harmonia com os badges da barra.
+- O destaque de foco e hover usa a superfície semântica correspondente; os outros itens do menu mantêm suas cores atuais.
+- Validação visual no navegador pendente; RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.29 — contadores vermelhos ao lado dos ícones — 2026-10-14
+
+Classificação: MINOR da linha aberta (ajuste visual da barra multidomínio).
+
+- Carrinho, mensagens e avisos exibem seus contadores em vermelho, imediatamente ao lado dos ícones.
+- Os três continuam usando uma única regra compartilhada, com tokens semânticos e badge arredondado.
+- Validação visual no navegador pendente; RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.28 — conversa em balões e avisos vermelhos — 2026-10-14
+
+Classificação: MINOR da linha aberta (aprimoramento visual experimental do Messenger).
+
+- A lista apresenta avatar do remetente e prévia em balões de entrada/saída; a conversa abre em diálogo Drupal com histórico e resposta nativa.
+- O contador é zerado ao abrir a caixa, pela marcação nativa de leitura do Private Message.
+- Os três contadores da barra multidomínio agora usam o mesmo token, posição, tamanho e tipografia do carrinho.
+- Avisos Site Alert e persistentes usam vermelho semântico; X dispensa por usuário e atualiza a contagem.
+- Validação interativa no Runtime local/Homelab pendente. RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.27 — atualização sob demanda dos contadores — 2026-10-14
+
+Classificação: MINOR da linha aberta (atualização de interface multidomínio).
+
+- Ao abrir cada gaveta, as respostas AJAX atualizam o badge de mensagens ou de avisos junto com o conteúdo,
+  sem polling em segundo plano.
+- O throbber de espera do Drupal Core é ocultado apenas no desktop para o ícone de busca; a abertura AJAX e a
+  indicação em telas menores permanecem.
+- Gates estáticos e validação visual/runtime pendentes nesta cópia; RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.26 — gavetas de comunicação no padrão do carrinho — 2026-10-14
+
+Classificação: MINOR da linha aberta (apresentação de mensagens e avisos).
+
+- Mensagens e avisos usam o mesmo shell Bootstrap do carrinho: botão, offcanvas pela direita,
+  largura máxima de 420 px, cabeçalho, botão de fechar, badge e tokens semânticos compartilhados.
+- Cada abertura consulta um fragmento HTML same-origin com `fetch` e credenciais de sessão;
+  não há polling. Comportamentos Drupal do conteúdo renderizado são anexados após a resposta.
+- Falha da consulta mantém o painel aberto e mostra uma mensagem acessível para nova tentativa.
+- Gates e validação visual/runtime no Homelab: pendentes; RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.25 — gavetas laterais e palco do álbum — 2026-10-14
+
+Classificação: MINOR da linha aberta (apresentação experimental de uma feature existente).
+
+- Os ícones de mensagens e avisos abrem drawers off-canvas do Drupal Core pela direita, com 420 px,
+  igual à largura máxima da gaveta do carrinho.
+- A conversa e os avisos são buscados via Ajax ao abrir; não há consulta recorrente em segundo plano.
+- O conteúdo não inclui mais o link de saída “Abrir caixa de mensagens”; conversas e avisos aparecem
+  no próprio painel.
+- Gates de SDC, design foundations, fronteira Portal/tema e Foundation: pendentes nesta cópia local.
+- RUNTIME STATUS: DEFERRED; validar abertura, foco, rolagem e responsividade no Homelab.
+- Palco do álbum com moldura semântica por token, miniaturas responsivas e slideshow no palco; a biblioteca `aculta420/album-slideshow` fica global e não referencia a View no template.
+- Gate de contrato do álbum (`validate-album-stage-contract.php`) cobre seletores, atributos e API pública do slideshow.
+
 ## 0.6.0-dev.24 — modais da barra e estado de leitura — 2026-10-14
 
 Classificação: MINOR da linha aberta (SDCs experimentais de entrada e estado).
@@ -764,4 +821,30 @@ O histórico detalhado anterior permanece no Git; não é especificação corren
   `--aculta-status-*` (erro, ok, atenção) e `--aculta-scrim`, nos modos claro e escuro. Corrige texto ilegível da área da
   conta no modo escuro (antes 1,3:1 a 1,6:1 com cores fixas).
 
+## 0.6.0-dev.32 — menus de conversa e badge contextual — 2026-10-14
+
+Classificação: PATCH da linha 0.6.0 (organização de estilo sobre o componente experimental existente).
+
+- A prévia de mensagens apresenta caixas por remetente, com foco visual no nome e nas conversas recentes.
+- As caixas e suas conversas são ordenadas pelo timestamp de atualização fornecido pelo Private Message.
+- CSS do tema permanece exclusivamente de apresentação; agrupamento e ordenação pertencem ao ACULTA Messenger.
+- O badge de não lidas em Minha Conta usa vermelho como na barra multidomínio; fora do shell `.portal-account`, preserva a cor semântica original.
+- Conversas oferecem menu contextual de limpeza pessoal por clique direito e botão acessível; a ação global de excluir thread fica oculta na caixa.
+- RUNTIME STATUS: DEFERRED; aplicação e validação visual no checkout local pendentes.
+
+## 0.6.0-dev.34 — data nos contatos do Messenger — 2026-10-14
+
+Classificação: PATCH (apresentação de metadado na caixa existente).
+
+- A data e hora da última mensagem aparece em fonte pequena acima do nome do remetente.
+- O alinhamento mantém o avatar e o botão com a dimensão mínima já definida.
+- Validação visual pendente; RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.35 — data visível nos contatos — 2026-10-14
+
+Classificação: PATCH (apresentação do contato e composição nativa da conversa).
+
+- A data curta da última mensagem é apresentada em elemento próprio acima do nome, inclusive na gaveta lateral da barra multidomínio.
+- O tema preserva o espaço visual compacto do contato e aplica tipografia secundária pequena.
+- Validação visual pendente; RUNTIME STATUS: DEFERRED.
 

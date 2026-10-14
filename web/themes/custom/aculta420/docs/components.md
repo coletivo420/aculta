@@ -164,19 +164,25 @@ tokens semânticos e não cria modo ou layout alternativo para Dark.
 | Componente | Consumidor | Contrato |
 | --- | --- | --- |
 | `messenger-list` | rotas de central e inbox nativa | slot para render arrays autorizados; sem reconstruir Views |
-| `messenger-item` | entidade Private Message | slot com saída da entidade nativa |
+| `messenger-item` | entidade Private Message | avatar autorizado e conteúdo nativo em slots; prop booleana `outgoing`; CSS organiza balões e alinhamento |
 | `messenger-compose` | criação e resposta | slot contém Form API nativa, CSRF, AJAX e fallback |
 | `messenger-notification` | Message na lista própria | slot com entidade Message autorizada pelo Portal |
 | `institutional-notice` | Site Alert nativo | severity `low`, `medium`, `high` e slot da mensagem |
 | `unread-badge` | navegação de Minha Conta | prop inteira da contagem de não lidas; omitido em zero |
 | `messenger-state` | avisos vazios e estados futuros | `empty`, `error` ou `loading`; sem lógica de carregamento no tema |
-| `messenger-trigger` | ação de mensagens na barra multidomínio | modal Ajax do Drupal; contador nativo de threads não lidas |
-| `alerts-trigger` | ação de avisos na barra multidomínio | modal Ajax do Drupal; contador de avisos não lidos ou Site Alerts ativos |
+| `messenger-trigger` | ação de mensagens na barra multidomínio | gaveta Bootstrap compartilhando shell, largura, cabeçalho, fechamento, tokens e badge do carrinho; conteúdo e contador são atualizados por AJAX a cada abertura |
+| `alerts-trigger` | ação de avisos na barra multidomínio | gaveta Bootstrap compartilhando shell do carrinho; Site Alerts, comunicados e contador são atualizados por AJAX a cada abertura |
 | `messenger-read-status` | thread ou aviso renderizado | rótulo lido/não lido fornecido pelo Portal/Flag |
 
 O Portal escolhe access, dados, URL e cache; o ACULTA420 mapeia para esses SDCs.
 Todos permanecem `experimental` até validação real. Estilos usam tokens
 semânticos compartilhados entre claro e escuro, HTML semântico e foco visível.
+Na prévia da barra, as conversas chegam agrupadas em caixas por remetente e
+ordenadas pela atualização mais recente; o cabeçalho abre a conversa mais nova
+daquela pessoa. O badge da navegação de Minha Conta usa vermelho dentro do
+shell `.portal-account`, mantendo a cor semântica original fora dele. Cada
+linha tem menu contextual para limpar o histórico pessoal pelo formulário
+nativo do Private Message.
 
 A home/lista da Wiki usa css/components/wiki.css, arquivo temático de
 responsabilidade própria na biblioteca global. O markup continua preparado pelo

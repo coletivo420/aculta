@@ -17,8 +17,9 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\site_alert\GetAlertsInterface;
+use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Supplies the neutral, per-member Messenger action to the global shell. */
@@ -27,8 +28,8 @@ final class MessengerBarHooks {
   public function __construct(
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
-    #[Autowire(service: 'private_message.service')]
-    private readonly PrivateMessageServiceInterface $privateMessageService,
+    #[Autowire(service: 'aculta_messenger.unread_thread_counter')]
+    private readonly UnreadThreadCounter $unreadThreadCounter,
     #[Autowire(service: 'site_alert.get_alerts')]
     private readonly GetAlertsInterface $siteAlerts,
     #[Autowire(service: 'entity_type.manager')]
@@ -39,11 +40,19 @@ final class MessengerBarHooks {
     private readonly TimeInterface $time,
     #[Autowire(service: 'flag')]
     private readonly FlagServiceInterface $flagService,
+    #[Autowire(service: 'aculta_user.friendship_manager')]
+    private readonly FriendshipManagerInterface $friendshipManager,
   ) {}
 
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
+    if (!$this->currentUser->isAuthenticated()) {
+      $variables['aculta_alerts_trigger'] = [];
+      $variables['aculta_messenger_trigger'] = [];
+      return;
+    }
+
     if (isset($variables['page']) && is_array($variables['page'])) {
       $alertStorage = $this->entityTypeManager->getStorage('site_alert');
       $alerts = $this->siteAlerts->getActiveAlerts();
@@ -55,11 +64,24 @@ final class MessengerBarHooks {
         // The alert badge includes this member's unread Flag state.
         $alertCacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
       }
+      $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
       foreach ($alerts as $alert) {
         $alertCacheability->addCacheableDependency($alert);
       }
       $alertUrl = Url::fromRoute('aculta_messenger.alerts_preview')->toString(TRUE);
-      $alertCount = count($alerts);
+      $alertCount = 0;
+      foreach ($alerts as $alert) {
+        $access = $alert->access('view', $this->currentUser, TRUE);
+        $alertCacheability->addCacheableDependency($access);
+        if (!$access->isAllowed()) {
+          continue;
+        }
+        if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->currentUser) !== NULL) {
+          continue;
+        }
+        $alertCount++;
+      }
+      $alertCacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
       $unreadNoticeCount = $this->currentUser->isAuthenticated()
         ? $alertCount + $this->getUnreadNoticeCount()
         : $alertCount;
@@ -81,7 +103,7 @@ final class MessengerBarHooks {
     $url = Url::fromRoute('aculta_messenger.preview')->toString(TRUE);
     $variables['aculta_messenger'] = [
       'url' => $url->getGeneratedUrl(),
-      'unread_count' => max(0, $this->privateMessageService->getUnreadThreadCount()),
+      'unread_count' => $this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests()),
     ];
 
     if (isset($variables['page']) && is_array($variables['page'])) {

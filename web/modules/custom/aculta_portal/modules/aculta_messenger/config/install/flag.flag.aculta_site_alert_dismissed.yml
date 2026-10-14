@@ -1,0 +1,27 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - site_alert
+id: aculta_site_alert_dismissed
+label: 'Aviso temporário dispensado'
+bundles: {  }
+entity_type: site_alert
+global: false
+flag_short: 'Dispensar aviso'
+flag_long: 'Dispensar este aviso temporário somente para sua conta.'
+flag_message: 'Aviso dispensado para sua conta.'
+unflag_short: 'Mostrar aviso novamente'
+unflag_long: 'Mostrar este aviso novamente para sua conta.'
+unflag_message: 'Aviso restaurado para sua conta.'
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:site_alert'
+link_type: ajax_link
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions: {  }
+linkTypeConfig: {  }

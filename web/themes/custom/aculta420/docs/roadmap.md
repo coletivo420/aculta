@@ -8,6 +8,12 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.33 | Caixa compacta de remetente e ação de amizade no perfil público | Capturas locais desktop/mobile da lista revisadas; fluxo de amizade DEFERRED | Mensagens exibem avatar circular + nome; ação do perfil usa a forma de botão “Ver Perfil” |
+| 0.6.0-dev.34 | Data da última mensagem nos contatos | Validação visual pendente (RUNTIME STATUS: DEFERRED) | Data/hora pequena acima do nome, sem ampliar intencionalmente o botão |
+| 0.6.0-dev.35 | Data visível na gaveta lateral e apresentação compacta | Validação visual pendente (RUNTIME STATUS: DEFERRED) | Data em elemento explícito acima do nome; fonte secundária pequena |
+| 0.6.0-dev.32 | Agrupamento de conversas, menu contextual e badge contextual | Implementado; apresentação substituída por dev.33; RUNTIME STATUS: DEFERRED | Menu aciona formulário nativo de histórico pessoal; badge vermelho só no shell de conta |
+| 0.6.0-dev.30 | Primeiro item de Minha Conta usa destaque vermelho semântico na barra | Implementado; validação visual pendente; RUNTIME STATUS: DEFERRED | Hover e foco usam superfície vermelha; demais itens do menu preservados |
+| 0.6.0-dev.29 | Contadores vermelhos ao lado dos ícones da barra multidomínio | Implementado; validação visual pendente; RUNTIME STATUS: DEFERRED | Badge compartilhado pelo carrinho, mensagens e avisos |
 | 0.1.0 | concluída (2026-10-07) | marcada no código | Foundation: provider, namespace, tokens, fronteiras |
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
@@ -16,6 +22,9 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.6.0-dev.22 | Durações de movimento centralizadas em tokens (DT-T19): gate de Foundation volta a passar | Gate de Foundation PASS (328); validar no servidor de testes | Tokens `--aculta-motion-fast` e `--aculta-motion-quick` |
 | 0.6.0-dev.23 | Componentes SDC experimentais de conversas, mensagens, composição, Site Alert, notificações, não lidas e estados | Gates de código pendentes; Runtime visual DEFERRED | Slots preservam render arrays e formulários nativos; sem lógica funcional no ACULTA420 |
 | 0.6.0-dev.24 | Gatilho modal de avisos e apresentação de leitura por conversa | Gates pendentes; RUNTIME STATUS: DEFERRED | Visualização consome estado nativo provido pelo Private Message/Portal |
+| 0.6.0-dev.26 | Gavetas Bootstrap de mensagens e avisos no padrão visual do carrinho, com AJAX ao abrir | Código local; validação de gates e runtime pendente; RUNTIME STATUS: DEFERRED | Mesmo shell Bootstrap, largura 420 px e tokens do carrinho; atualização apenas ao abrir, sem polling |
+| 0.6.0-dev.27 | Badges atualizados na abertura das gavetas e remoção do throbber da busca no desktop | Código local; visual desktop/mobile pendente; RUNTIME STATUS: DEFERRED | Resposta AJAX já transporta o contador; a busca continua AJAX e o throbber permanece em telas menores |
+| 0.6.0-dev.28 | Caixa em balões com avatar e modal de resposta; avisos vermelhos dispensáveis por pessoa | Implementado; validação interativa pendente; RUNTIME STATUS: DEFERRED | Private Message continua dono da thread/formulário; SDC só exibe render arrays autorizados |
 | 0.6.0-dev.21 | Modelo padrão de publicação da Revista (`revista-publication`): todas as Notícias e blogs usam o mesmo layout | Em desenvolvimento; SDC, shell e fronteira PASS; validar no servidor de testes | Templates `node--article--full` e `node--blog--full` chamam o mesmo componente experimental |
 | 0.6.0-dev.20 | Revista: imagens do corpo (notícia e blog) centralizadas na coluna de leitura e intertítulos alinhados à esquerda | Em desenvolvimento; gates de código PASS; validar no servidor de testes | Imagens do corpo chegam como mídia embutida (`media--type-image`), sem regra de módulo |
 | 0.6.0-dev.19 | Sugestões interativas na busca Wiki420, com o comportamento de prévia compartilhado | Gates de código e HTTP local PASS; validar interação por teclado e visual no servidor de testes | O Portal consulta apenas verbetes acessíveis do Domain Wiki; tema estiliza o dropdown |

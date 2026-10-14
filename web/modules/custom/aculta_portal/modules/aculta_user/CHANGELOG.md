@@ -1,3 +1,20 @@
+# Changelog — aculta_user
+
+## 0.4.0-dev.2 — ação de amizade no cabeçalho do perfil público — 2026-10-14
+
+- Coloca a ação de amizade dentro do cabeçalho do cartão `/u/{apelido}` para membros autenticados, ao lado da identidade.
+- O botão de solicitação usa o mesmo contrato visual de “Ver Perfil” da Minha Conta; a operação continua sendo Form API e `FriendshipManager`.
+- A marcação inclui cache tag da lista de amizades para atualizar o estado depois de solicitar, cancelar ou remover.
+- `RUNTIME STATUS: DEFERRED` até validar em navegador local autenticado.
+
+## 0.4.0-dev.1 — relacionamentos privados entre membros — 2026-10-14
+
+- Cria `AcultaFriendship` (`aculta_friendship`) como entidade privada por par, com chave string canônica única e estados explícitos.
+- `FriendshipManager` fornece solicitações/transições sob lock e consultas por participante; acesso é controlado pelo handler da entidade.
+- Perfil público autenticado mostra ações de solicitar/cancelar/remover; pedidos recebidos são tratados no centro de notificações do Messenger.
+- `aculta_user_update_10002()` instala a entidade em sites existentes; não remove dados no uninstall.
+- Verificados PHP lint, Drupal 11+ gate (696), YAML de metadados/serviços/permissões e `git diff --check`; runtime/Homelab DEFERRED.
+
 ## 0.3.0-dev.13 — contagem de comentários sem plural de pt-br em zero — 2026-10-14
 
 Classificação: PATCH (correção de texto; sem mudança de contrato).
@@ -6,8 +23,6 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
   como singular. Agora a forma é escolhida pelo número (1 → singular; 0 e demais → plural com o número).
 - Verificado no runtime: publicação nova sem comentários passa a mostrar "(0 comentários)".
 - RUNTIME STATUS: verificado no Homelab (HTTP). Inspeção visual humana pendente.
-
-# Changelog — aculta_user
 
 ## 0.3.0-dev.12 — bloco de discussão em caixa própria, abaixo da autoria — 2026-10-13
 
@@ -159,3 +174,17 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
 - Pendências: vínculo do link a `/configuracoes` (bloco do Portal); apresentação no ACULTA420 (sem `data-portal-ui`
   nesta entrega); badges (U4); teste de Kernel da rota e da privacidade; execução no Runtime (`drush en` e
   `config:import` exigem autorização).
+# Changelog — aculta_user
+
+## 0.4.0-dev.1 — workflow de amizade
+
+- Adiciona a entidade privada `aculta_friendship`, com um registro por par e
+  identificador composto como chave primária para garantir unicidade no banco.
+- Adiciona `FriendshipManager` e API pública para solicitar, aceitar, recusar,
+  cancelar, remover e consultar amizades. O serviço usa Entity API, DI e lock
+  persistente; não copia SQL, service locator, endpoints GET nem plugins Views
+  do projeto Friendship.
+- Estudo de origem e decisões: `docs/AMIZADES.md`.
+- `RUNTIME STATUS: DEFERRED` — entidade ainda não instalada; interfaces,
+  formulários e integração de notificações seguem em desenvolvimento.
+

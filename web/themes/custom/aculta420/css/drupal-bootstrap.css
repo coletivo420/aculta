@@ -137,7 +137,7 @@
 }
 .alert-primary, .alert-success, .alert-info { --bs-alert-bg: var(--aculta-surface-raised); --bs-alert-border-color: var(--aculta-border-default); }
 .alert-secondary, .alert-light, .alert-dark { --bs-alert-bg: var(--aculta-surface-muted); --bs-alert-border-color: var(--aculta-border-default); }
-.alert-warning { --bs-alert-bg: var(--bs-warning-bg-subtle); --bs-alert-border-color: var(--aculta-border-default); border-inline-start: 3px solid var(--aculta-interactive-active-bg); }
+.alert-warning { --bs-alert-color: var(--aculta-status-error-text); --bs-alert-bg: var(--aculta-status-error-surface); --bs-alert-border-color: var(--aculta-status-error-border); border-inline-start: 3px solid var(--aculta-status-error-border); }
 .alert-danger { --bs-alert-bg: var(--bs-danger-bg-subtle); --bs-alert-border-color: var(--aculta-border-default); border-inline-start: 3px solid var(--aculta-text-accent); }
 
 .table {

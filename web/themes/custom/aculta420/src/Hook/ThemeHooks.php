@@ -389,7 +389,11 @@ final class ThemeHooks {
     $variables['content'] = [
       '#type' => 'component',
       '#component' => 'aculta420:messenger-item',
-      '#slots' => ['content' => $content],
+      '#props' => ['outgoing' => (bool) ($variables['aculta_messenger_outgoing'] ?? FALSE)],
+      '#slots' => [
+        'avatar' => $variables['aculta_messenger_sender_avatar'] ?? [],
+        'content' => $content,
+      ],
     ];
   }
 

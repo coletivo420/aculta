@@ -5,6 +5,20 @@ mensagem, assinaturas e avisos institucionais. A fonte de verdade de cada
 capacidade permanece no módulo Drupal que a fornece; este submódulo compõe a
 experiência e aplica os contratos de acesso e Domain do Portal.
 
+## ACULTA Messenger 0.1.1
+
+A subfase 0.1.1 implementa pedidos/aceites de amizade e uma preferência de
+privacidade para novas conversas. Consulte [INTEGRATIONS.md](docs/INTEGRATIONS.md)
+para a pesquisa comparativa e decisão sobre módulos contrib. Não há pacote
+Composer adicional: o workflow usa uma entidade Drupal própria, notificações
+ficam sob `aculta_user` (referência baseada no workflow do Friendship, adaptada
+à API/segurança do Portal), o Messenger consome seu serviço público, notificações
+usam a integração Message existente e threads continuam no Private Message.
+`todos` é o padrão; `somente amigos` bloqueia apenas a abertura de novas
+threads. Administradores e editores de conteúdo podem iniciar novas threads,
+mas o bloqueio individual nativo do Private Message continua obrigatório.
+Respostas em threads existentes não são restringidas pela preferência.
+
 ## Escopo arquitetural
 
 - Private Message mantém conversas, mensagens, participantes e suas regras de
@@ -20,10 +34,23 @@ experiência e aplica os contratos de acesso e Domain do Portal.
   o Private Message mantém seu estado nativo lido/não lido por conversa.
 - `aculta_messenger` não cria engine de mensagens, tabelas, entidades espelho,
   transporte SMTP ou regras visuais.
+- A prévia da barra agrupa conversas em caixas por remetente. Caixas e
+  conversas são ordenadas pela atualização mais recente; o cabeçalho do
+  remetente abre a conversa mais recente com essa pessoa, e cada conversa
+  continua apontando para seu histórico/formulário nativos.
+- Ao abrir a gaveta, `PrivateMessageServiceInterface::updateLastCheckTime()` é
+  a fonte do estado lido/não lido; o badge zera pela regra nativa de last-check.
+- A ação de cada conversa usa a rota canônica e o entity view completo do
+  Private Message dentro do modal Drupal, preservando thread access e Form API.
+- `PrivateMessagePresentationHooks::preprocessPrivateMessage()` prepara apenas
+  avatar User API com access/cache e direção enviada/recebida. `ThemeHooks` mapeia
+  esses dados para `aculta420:messenger-item`; CSS/Twig ficam no tema.
+- O `Flag` não global `aculta_site_alert_dismissed` guarda dispensa por membro
+  para Site Alert; `aculta_notice_read` continua marcando leitura dos Nodes.
 
 ## Compatibilidade e evidência
 
-O `composer.lock` registra Drupal Core 11.4.8 e trava os cinco projetos nas
+O `composer.lock` registra Drupal Core 11.4.10 e trava os cinco projetos nas
 versões estáveis instaladas. Seus arquivos foram auditados após a resolução
 Composer. O inventário e os limites da inspeção estão em
 [INTEGRATIONS.md](docs/INTEGRATIONS.md).
@@ -93,3 +120,18 @@ condicional mostra a contagem de threads não lidas e cada thread da inbox exibe
 estado individual. Notificações lista avisos privados entregues ao próprio
 usuário; `/mensagens/avisos` lista comunicados publicados e visíveis, marcáveis
 como lidos/não lidos por conta.
+
+
+## 0.1.1 — amizades e privacidade de mensagens
+
+A entidade `aculta_friendship` e o serviço `aculta_user.friendship_manager` são
+a fonte de verdade para pedidos e amizades. O Messenger integra ações na
+página de perfil e pedidos recebidos em `/mensagens/notificacoes`. A preferência
+individual `message_privacy` usa User Data sob a chave `aculta_messenger`;
+`friends` restringe apenas novas conversas. Respostas em threads existentes e
+bloqueios nativos do Private Message conservam suas regras.
+
+Administradores e editores de conteúdo podem iniciar novas conversas apesar
+da preferência, mas continuam sujeitos ao bloqueio. Ver
+[integrações](docs/INTEGRATIONS.md), [segurança](docs/SECURITY.md) e
+[roadmap](docs/ROADMAP.md). RUNTIME STATUS: DEFERRED.

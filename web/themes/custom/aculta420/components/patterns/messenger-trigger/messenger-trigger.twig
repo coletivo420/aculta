@@ -2,14 +2,29 @@
 {% set label = count > 0
   ? '@count conversas não lidas. Abrir mensagens'|t({'@count': count})
   : 'Abrir mensagens'|t %}
-<a class="aculta-messenger-trigger use-ajax"
-   href="{{ href }}"
-   data-dialog-type="modal"
-   data-dialog-options="{{ {'title': 'Mensagens'|t, 'closeText': 'Fechar'|t}|json_encode|e('html_attr') }}"
-   aria-haspopup="dialog"
-   aria-label="{{ label }}">
+{{ attach_library('aculta420/messenger-drawers') }}
+<button type="button"
+        class="btn btn-link p-0 aculta-utility-trigger aculta-messenger-trigger"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#aculta-messenger-offcanvas"
+        aria-controls="aculta-messenger-offcanvas"
+        aria-label="{{ label }}">
   <i class="bi bi-chat-dots" aria-hidden="true"></i>
-  {% if count > 0 %}
-    {{ include('aculta420:unread-badge', {count: count}, with_context = false) }}
-  {% endif %}
-</a>
+  <span class="badge aculta-cart-utility__count" data-aculta-messenger-count data-count="{{ count }}">{{ count }}</span>
+</button>
+
+<div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-messenger-offcanvas"
+     tabindex="-1"
+     id="aculta-messenger-offcanvas"
+     aria-labelledby="aculta-messenger-offcanvas-title"
+     data-aculta-drawer-count="messages"
+     data-aculta-drawer-url="{{ href }}"
+     data-aculta-drawer-label="{{ 'Não foi possível carregar as mensagens. Tente novamente.'|t }}">
+  <div class="offcanvas-header">
+    <h2 class="offcanvas-title h5" id="aculta-messenger-offcanvas-title">{{ 'Mensagens'|t }}</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ 'Fechar mensagens'|t }}"></button>
+  </div>
+  <div class="offcanvas-body aculta-utility-offcanvas__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
+    <p>{{ 'Abra para atualizar suas conversas.'|t }}</p>
+  </div>
+</div>

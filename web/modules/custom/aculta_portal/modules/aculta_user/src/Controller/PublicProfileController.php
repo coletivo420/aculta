@@ -9,9 +9,13 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_user\Form\FriendshipActionForm;
 use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,6 +38,9 @@ final class PublicProfileController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly PublicProfilePolicy $policy,
     private readonly SocialNetworks $networks,
+    private readonly FriendshipManagerInterface $friendshipManager,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly FormBuilderInterface $formBuilder,
   ) {}
 
   /**
@@ -45,6 +52,9 @@ final class PublicProfileController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('aculta_user.public_profile_policy'),
       $container->get('aculta_user.social_networks'),
+      $container->get('aculta_user.friendship_manager'),
+      $container->get('current_user'),
+      $container->get('form_builder'),
     );
   }
 
@@ -74,7 +84,6 @@ final class PublicProfileController extends ControllerBase {
 
     $build = [
       '#type' => 'container',
-      '#cache' => ['tags' => $cache->getCacheTags(), 'contexts' => $cache->getCacheContexts()],
       '#attributes' => ['data-portal-ui' => 'public-profile'],
       'header' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-header'], 'avatar' => $this->avatar($account, $apelido, isset($items['foto'])), 'identity' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-identity'], 'name' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $apelido, '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-name'])]]],
     ];
@@ -92,10 +101,24 @@ final class PublicProfileController extends ControllerBase {
     if (isset($items['email']) && $account !== NULL && $account->getEmail() !== '') {
       $links[] = $this->emailLink((string) $account->getEmail());
     }
+    if ($account !== NULL && $this->currentUser->isAuthenticated() && (int) $this->currentUser->id() !== (int) $account->id()) {
+      $relationship = $this->friendshipManager->getRelationshipWith((int) $account->id());
+      $build['header']['actions'] = [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'public-profile-actions'],
+        'friendship' => $this->formBuilder->getForm(FriendshipActionForm::class, $account, $relationship),
+      ];
+      $cache->addCacheContexts(['user'])->addCacheTags(['user:' . $this->currentUser->id()]);
+      $cache->addCacheTags($this->entityTypeManagerService->getDefinition('aculta_friendship')->getListCacheTags());
+      if ($relationship !== NULL) {
+        $cache->addCacheableDependency($relationship);
+      }
+    }
     if ($links !== []) {
       $build['links'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-links', 'aria-label' => (string) $this->t('Contatos e redes')], 'items' => $links];
     }
 
+    $cache->applyTo($build);
     return $build;
   }
 

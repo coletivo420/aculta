@@ -6,12 +6,81 @@ instalados nesta branch.
 
 ## Estado do repositório
 
+Na prévia da barra, as threads são agrupadas pelo outro membro da conversa e
+ordenadas pela atualização mais recente. O cabeçalho de cada caixa abre a
+thread mais recente daquele remetente; as threads individuais permanecem
+ordenadas dentro da caixa e mantêm o link nativo do Private Message.
+
+### Pesquisa de pedidos de amizade (0.1.1)
+
+O `composer.lock` desta branch contém Drupal Core 11.4.10, Flag 5.1.1, Private
+Message 3.0.7, Message 1.9.0 e Message Notify 1.5.0; não contém Friendship,
+User Relationships nem Open Social. O código instalado do Flag foi revisado
+no checkout local existente: `FlagServiceInterface` oferece operações públicas
+para criar, consultar e remover Flagging entities em entidades User. Flag tem
+release estável para Drupal 11 e é coberto pela política de advisories.
+
+O módulo Friendship 2.1.0 declara suporte a Drupal 11 e cobre follow, aceitar
+e remover amizade, mas o projeto declara explicitamente que não é coberto pela
+política de segurança Drupal. Sua documentação recomenda Views próprios para
+exibir seguidores/amizades e não descreve uma central de pedidos/notificações.
+Na tag 2.1.0 revisada localmente, as rotas são links GET com verificação de
+token CSRF, o serviço escreve sua própria entidade de relacionamento e o
+pacote não contém testes automatizados. O handler de acesso e os fluxos de
+notificação não oferecem, sem adaptação, os contratos privados e de mensagens
+do ACULTA. O suporte Drupal 11 declarado não elimina esses pontos.
+
+User Relationships é um projeto legado focado em Drupal 7, sem release
+adequado ao baseline Drupal 11. Não é candidato. Flag, por sua vez, fornece
+armazenamento de flaggings e integração Views, mas não possui workflow nativo
+de solicitação, aceite, cancelamento, recusa ou inbox de pedidos. Representar
+amizade apenas como Flag seria ambíguo: não há estado explícito de pedido e
+aceite, nem transições atômicas definidas pelo módulo.
+
+**Decisão para 0.1.1:** não instalar Friendship nem User Relationships e não
+simular workflow de amizade com flags. A capacidade social será implementada
+em `aculta_user`, que já é dono dos perfis e regras individuais de conta. O
+Messenger consumirá seu serviço público; Message/Message Notify continuam
+responsáveis por avisos, Private Message por conversas e User Data pela
+preferência de comunicação. Essa é uma lacuna funcional real, não uma nova
+engine de mensagens. Nenhum pacote Composer novo é necessário.
+
+O código Friendship serve como referência para a máquina de estados e os casos
+de uso `follow`, `accept`, `remove`, `isFriend` e `hasRelationship`, não como
+cópia literal. A versão ACULTA terá um registro por par com estados explícitos,
+DI, Entity API e EntityQuery com `accessCheck()` declarado; não usará service
+locator nem SQL direto. Ações mutáveis serão Form API/POST com validação CSRF,
+acesso por participante e transições verificadas no serviço. Solicitações
+validam contas ativas, self-request, duplicidade e permissões; o bloqueio
+bilateral é aplicado pelo formulário de novas conversas do Private Message. Recusa/cancelamento não cria amizade; a autorização é revalidada
+ao consultar ou entregar notificações.
+
+O destinatário escolhe `all` (Todos os membros) ou `friends` (Somente amizades confirmadas) em Minha Conta. O Messenger guarda a preferência em User Data com proprietário `aculta_messenger`, sem criar campo ou armazenamento paralelo. A regra
+restringe somente o início de novas conversas; respostas em threads existentes
+continuam permitidas. Administradores e editores de conteúdo podem iniciar
+novas conversas apesar da preferência do destinatário, mas o bloqueio
+individual nativo do Private Message permanece obrigatório inclusive para
+esses papéis. A configuração de papéis usa papéis existentes e não concede
+permissões Drupal novas.
+
+Fontes oficiais consultadas: [Friendship](https://www.drupal.org/project/friendship),
+[documentação Friendship](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/friendship),
+[Flag](https://www.drupal.org/project/flag),
+[User Relationships (arquivo comunitário)](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-archive/contrib-modules-for-building-the-site-functionality/social-networking-and-collaboration/community-building-and-social-networking-15),
+[Private Message 3.0.7](https://www.drupal.org/project/private_message/releases/3.0.7),
+[Message](https://www.drupal.org/project/message) e
+[Message Notify](https://www.drupal.org/project/message_notify),
+[Drupal Entity API 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21entity.api.php/group/entity_api/11.x)
+e [ContentEntityType attribute](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21Attribute%21ContentEntityType.php/class/ContentEntityType/11.x).
+
 O modal de mensagens consulta o estado nativo de leitura por conversa do
-Private Message, relativo ao membro atual. A abertura da conversa permanece
-no fluxo nativo do módulo. O modal de avisos mostra Site Alerts ativos e o
+Private Message, relativo ao membro atual. A rota de diálogo do ACULTA Messenger
+renderiza a entidade da conversa e reutiliza o formulário `private_message` do
+módulo; se a configuração de exibição não trouxer esse componente, inclui o
+mesmo Form API nativo como fallback. Acesso e envio continuam sob as regras do
+Private Message. O modal de avisos mostra Site Alerts ativos e o
 contador representa apenas a quantidade ativa: Site Alert não fornece recibo
-de leitura individual. Avisos persistentes segmentados ainda não foram
-implementados nesta subfase.
+de leitura individual. Pedidos de amizade recebidos também aparecem em `/mensagens/notificacoes`; o formulário usa ações POST e atualiza o contador da barra. A preferência é validada no formulário nativo do Private Message antes da criação de thread; threads existentes permanecem aptas a resposta.
 
 | Pacote | `composer.lock` | Código em `web/modules/contrib` | Conclusão |
 | --- | --- | --- | --- |
@@ -21,7 +90,7 @@ implementados nesta subfase.
 | `drupal/message_subscribe` | 2.1.0 | 2.1.0 | Inspecionado |
 | `drupal/site_alert` | 1.4.0 | 1.4.0 | Inspecionado |
 
-Base encontrada: Drupal Core 11.4.8 no lock; `composer.json` declara PHP >=8.3.
+Base encontrada: Drupal Core 11.4.10 no lock; `composer.json` declara PHP >=8.3.
 Este ambiente executa PHP 8.4.26. Não há PHP 8.5 para validação local. Os
 metadados Composer do projeto declaram plataforma PHP >=8.3; isso não substitui
 lint, testes ou avaliação das dependências em PHP 8.5.
@@ -117,6 +186,19 @@ transporte existente.
 Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
 cache/access de runtime ou compatibilidade em PHP 8.5.
 
+## Barra multidomínio: atualização sob demanda
+
+O ACULTA420 mantém a apresentação da gaveta: shell Bootstrap compartilhado com
+o carrinho, ícones, badge e estados visuais. Este módulo fornece os endpoints
+same-origin e monta o fragmento a partir das entidades/Views com as regras de
+acesso do usuário atual. Ao abrir uma gaveta, o tema faz uma requisição GET com
+credenciais de sessão, insere o fragmento e anexa os behaviors Drupal para
+links como os controles de leitura. Fechar interrompe uma requisição pendente.
+As respostas devolvem os contadores atuais nos cabeçalhos; o tema atualiza os
+badges e os rótulos acessíveis junto com o conteúdo. Não há polling, novo
+framework de AJAX nem caixa postal paralela. As respostas usam `no-store`; a
+instalação real e o comportamento visual ainda exigem validação no Homelab.
+
 ### Assinaturas de tópicos do fórum (dev.5)
 
 O caso implementado é a primeira publicação de Node `forum`, inclusive a
@@ -199,3 +281,10 @@ formulário e as entidades contrib permanecem intactos.
 - [Uso de SDC via render array](https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/using-your-new-single-directory-component), conferido para `#type: component`, `#props` e `#slots` no Core atual.
 - [Drupal Core HookCollectorPass 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21HookCollectorPass.php/class/HookCollectorPass/11.x), que registra hooks OOP em classes `Hook` como serviços autowired.
 - [ModuleHandlerInterface::alter](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Extension%21ModuleHandlerInterface.php/function/ModuleHandlerInterface%3A%3Aalter/9), [RouteSubscriberBase 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Routing%21RouteSubscriberBase.php/class/RouteSubscriberBase/main), [Url::fromRoute 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Url.php/function/Url%3A%3AfromRoute/11.x) e [TrustedRedirectResponse 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Routing%21TrustedRedirectResponse.php/class/TrustedRedirectResponse/main), consultados para extensão do shell, purpose de rotas e URL ACCOUNT confiável.
+
+
+## Integração ACULTA User (0.1.1)
+
+`aculta_user.friendship_manager` é a API pública de relacionamento. `aculta_messenger` não acessa storage de amizade diretamente: consulta `areFriendsWith()` ao validar uma nova conversa e `getIncomingRequests()` ao compor notificações/contador. `FriendshipActionForm` é renderizado na página pública do perfil; `FriendRequestsForm` compõe a seção Notificações.
+
+Ações são Form API com POST/CSRF, sem AJAX obrigatório. A autorização de estados é revalidada pelo manager sob lock e cada amizade tem uma chave primária string canônica (`uid-menor:uid-maior`), evitando linhas duplicadas por par. A preferência usa `user.data` na chave `aculta_messenger/message_privacy`; valores desconhecidos seguem o padrão permissivo `all`.
