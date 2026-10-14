@@ -339,6 +339,18 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
 
     $query = $request->query->all();
+    if (isset($query['destination']) && is_string($query['destination'])) {
+      // Core's RedirectResponseSubscriber replaces any redirect target with the request's ?destination=, resolved on
+      // the current (wrong) host. Remove it from the request and carry the return path to MAIN in this redirect.
+      $mainDestination = $this->mainDestinationUrl($query['destination']);
+      $request->query->remove('destination');
+      if ($mainDestination !== NULL) {
+        $query['destination'] = $mainDestination;
+      }
+      else {
+        unset($query['destination']);
+      }
+    }
     if ($query !== []) {
       $url->setOption('query', $query);
     }
@@ -347,6 +359,28 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       'Cache-Control' => 'private, no-store',
       'X-Robots-Tag' => 'noindex, nofollow',
     ]);
+  }
+
+  /**
+   * Converts a relative ?destination= path into an absolute MAIN URL, or NULL if it is not a safe local path.
+   */
+  private function mainDestinationUrl(string $destination): ?string {
+    if (!str_starts_with($destination, '/') || str_starts_with($destination, '//')) {
+      return NULL;
+    }
+    $parts = parse_url($destination);
+    if ($parts === FALSE || !isset($parts['path'])) {
+      return NULL;
+    }
+    $url = $this->domainPurposeManager->pathUrl('main', $parts['path']);
+    if ($url === NULL) {
+      return NULL;
+    }
+    if (isset($parts['query'])) {
+      parse_str($parts['query'], $query);
+      $url->setOption('query', $query);
+    }
+    return $url->toString();
   }
 
   /**

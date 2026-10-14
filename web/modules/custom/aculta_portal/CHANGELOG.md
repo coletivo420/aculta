@@ -1,3 +1,23 @@
+## 0.4.0-dev.13 — painel administrativo: edição e exclusão de conteúdo funcionam em todos os hosts — 2026-10-13
+
+- Edição e exclusão de conteúdo a partir da listagem do painel: o GET em host de purpose canonicaliza para MAIN.
+  O Core reescrevia o redirecionamento com o `destination` do host errado; o Portal remove `destination` da requisição
+  e leva o retorno absoluto para MAIN (`DomainPurposeRequestSubscriber`).
+- Listagens administrativas de conteúdo e de pessoas: o nome do autor/usuário não linka mais para `/identidade/{usuário}`
+  (página pública da Conta, 404 em MAIN). A operação "Ver" de usuários sai da coluna de operações (`EntityHooks`).
+- Item "Editar perfil" do painel (Navigation) aponta para `aculta_portal.admin_self_edit` (`/painel-administrativo/perfil/editar`),
+  que redireciona para o formulário do usuário logado.
+- Verificado no Homelab com a conta administradora: todos os links do painel respondem 200 (inclusive os seguidos
+  por redirecionamento) e a edição de conteúdo dos cinco hosts de purpose abre o formulário em MAIN.
+- RUNTIME STATUS: verificado no Homelab. Inspeção visual humana pendente.
+
+## 0.4.0-dev.12 — espaço de SEO na publicação da Revista (blog) — 2026-10-13
+
+- `EditorialHooks::formNodeFormAlter`: o grupo "SEO e compartilhamento" (campo `field_meta_tags`) passa a aparecer
+  também no formulário do tipo `blog`, com o mesmo espaço da Notícia (`article`), `activity` e `project`.
+- Editor com papel `content_editor` tem acesso de edição ao campo (verificado no Homelab).
+- RUNTIME STATUS: verificado no Homelab (formulário montado com a conta do editor). Inspeção visual humana pendente.
+
 ## 0.4.0-dev.11 — exibir a dica da busca Wiki após digitação — 2026-10-13
 
 - O painel de prévia da Wiki começa recolhido; focar ou clicar no campo sem
