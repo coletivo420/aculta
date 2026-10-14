@@ -31,6 +31,9 @@ $expected = [
   'smtp2go_password' => ['SMTP2GO_PASSWORD', FALSE],
   'turnstile' => ['TURNSTILE_KEYS_JSON', TRUE],
   'turnstile_test' => ['TURNSTILE_TEST_KEYS_JSON', TRUE],
+  // Chaves de aplicação em texto puro (docs/operations/SECRETS.md e config/secrets-contract.json).
+  'aculta_document_encryption_key' => ['ACULTA_DOCUMENT_ENCRYPTION_KEY', FALSE],
+  'aculta_id_cpf_fingerprint' => ['ACULTA_ID_CPF_FINGERPRINT_KEY', FALSE],
 ];
 
 $key_files = glob($root . '/config/sync/key.key.*.yml') ?: [];
