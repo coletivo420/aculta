@@ -287,3 +287,73 @@ a identidade tipográfica e as superfícies semânticas ACULTA420. Os links usam
 token de link do tema; divisórias, painéis e foco usam tokens semânticos. Não
 copiar a paleta literal da Wikipedia nem criar seletores de modo fora de
 tokens.css. Ver components.md e docs/portal/WIKI.md.
+
+## Tokens não documentados até 2026-10-14
+
+Levantados na varredura de 2026-10-14: declarados em `css/tokens.css` e sem entrada neste documento. Os valores são os declarados no bloco `:root`; alias (`var(--...)`) aponta para o token de origem. "Uso" é o número de arquivos de tema (CSS, componentes e templates) que o referenciam, fora de `tokens.css`. Uso 0 significa token declarado para estado futuro ou alias sem consumidor hoje, e não deve ser removido sem verificar o contrato de componente.
+
+| Token | Valor declarado | Uso (arquivos) | Família |
+|---|---|---|---|
+| `--aculta-border` | `var(--aculta-border-default)` | 0 | Bordas: cor padrão e variantes (acento, forte). |
+| `--aculta-border-accent` | `var(--aculta-green)` | 11 | Bordas: cor padrão e variantes (acento, forte). |
+| `--aculta-border-default` | `rgba(12, 60, 41, 0.16)` | 14 | Bordas: cor padrão e variantes (acento, forte). |
+| `--aculta-border-strong` | `rgba(12, 60, 41, 0.45)` | 7 | Bordas: cor padrão e variantes (acento, forte). |
+| `--aculta-button-hover-bg` | `var(--aculta-interactive-hover-bg)` | 0 | Botões: alias dos estados interativos (primário, secundário, hover). |
+| `--aculta-button-hover-text` | `var(--aculta-interactive-hover-text)` | 0 | Botões: alias dos estados interativos (primário, secundário, hover). |
+| `--aculta-button-primary-bg` | `var(--aculta-interactive-bg)` | 1 | Botões: alias dos estados interativos (primário, secundário, hover). |
+| `--aculta-button-primary-text` | `var(--aculta-interactive-text)` | 1 | Botões: alias dos estados interativos (primário, secundário, hover). |
+| `--aculta-button-secondary-bg` | `transparent` | 0 | Botões: alias dos estados interativos (primário, secundário, hover). |
+| `--aculta-button-secondary-border` | `var(--aculta-text-primary)` | 0 | Botões: alias dos estados interativos (primário, secundário, hover). |
+| `--aculta-button-secondary-text` | `var(--aculta-text-primary)` | 0 | Botões: alias dos estados interativos (primário, secundário, hover). |
+| `--aculta-control-border` | `var(--aculta-border-strong)` | 2 | Borda de controles de formulário. |
+| `--aculta-dialog-accent` | `#f7d64a` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-dialog-control-bg` | `#e9f1fc` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-dialog-control-text` | `#111111` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-dialog-primary-bg` | `#f5c93a` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-dialog-primary-text` | `#1a1a1a` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-dialog-secondary-bg` | `#fdf8ea` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-dialog-secondary-text` | `#163d2a` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-dialog-surface` | `#6b9a2c` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-dialog-text` | `#ffffff` | 1 | Diálogos (popups): cores literais da paleta do diálogo, por papel. |
+| `--aculta-focus` | `var(--aculta-focus-ring)` | 0 | Foco visível (anel de foco). |
+| `--aculta-focus-ring` | `var(--aculta-green-dark)` | 16 | Foco visível (anel de foco). |
+| `--aculta-font-body` | `"Inter", sans-serif` | 11 | Famílias tipográficas (corpo e títulos). |
+| `--aculta-font-display` | `"Oswald", sans-serif` | 18 | Famílias tipográficas (corpo e títulos). |
+| `--aculta-interactive-active-bg` | `var(--aculta-yellow)` | 12 | Estados interativos (ativo, borda). |
+| `--aculta-interactive-active-text` | `var(--aculta-green-dark)` | 5 | Estados interativos (ativo, borda). |
+| `--aculta-interactive-border` | `var(--aculta-yellow)` | 8 | Estados interativos (ativo, borda). |
+| `--aculta-link` | `var(--aculta-text-primary)` | 5 | Links: cor do texto e variante editorial (vermelho) e hover. |
+| `--aculta-link-editorial` | `var(--aculta-red)` | 0 | Links: cor do texto e variante editorial (vermelho) e hover. |
+| `--aculta-link-editorial-hover` | `var(--aculta-text-primary)` | 1 | Links: cor do texto e variante editorial (vermelho) e hover. |
+| `--aculta-motion-quick` | `150ms` | 1 | Duração curta de transição (150ms), ao lado de --aculta-motion-fast. |
+| `--aculta-nav-current-bg` | `var(--aculta-yellow)` | 0 | Navegação: atual e hover (fundo, texto, sublinhado). |
+| `--aculta-nav-current-text` | `var(--aculta-interactive-active-text)` | 0 | Navegação: atual e hover (fundo, texto, sublinhado). |
+| `--aculta-nav-current-underline` | `var(--aculta-text-accent)` | 0 | Navegação: atual e hover (fundo, texto, sublinhado). |
+| `--aculta-nav-hover-bg` | `var(--aculta-interactive-hover-bg)` | 0 | Navegação: atual e hover (fundo, texto, sublinhado). |
+| `--aculta-nav-hover-text` | `var(--aculta-interactive-hover-text)` | 0 | Navegação: atual e hover (fundo, texto, sublinhado). |
+| `--aculta-nav-hover-underline` | `var(--aculta-text-inverse)` | 0 | Navegação: atual e hover (fundo, texto, sublinhado). |
+| `--aculta-shadow-hover` | `0 0.125rem 0.5rem rgba(12, 60, 41, 0.08)` | 3 | Sombra no hover. |
+| `--aculta-shell-active-bg` | `var(--aculta-interactive-active-bg)` | 0 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
+| `--aculta-shell-active-text` | `var(--aculta-interactive-active-text)` | 0 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
+| `--aculta-shell-border` | `var(--aculta-border-default)` | 1 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
+| `--aculta-shell-domain-text` | `var(--aculta-text-primary)` | 3 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
+| `--aculta-shell-institution-text` | `var(--aculta-text-primary)` | 1 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
+| `--aculta-shell-logo-filter` | `brightness(0)` | 3 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
+| `--aculta-space-section` | `clamp(2.25rem, 4.5vw, 4.25rem)` | 6 | Espaço vertical entre seções (fluido). |
+| `--aculta-status-error-border` | `#b3261e` | 1 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-status-error-surface` | `#fde8e7` | 2 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-status-error-text` | `#b3261e` | 2 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-status-ok-border` | `#2e7d32` | 1 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-status-ok-surface` | `#e6f4ea` | 3 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-status-ok-text` | `#1e5e2f` | 2 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-status-warning-border` | `#c28a00` | 1 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-status-warning-surface` | `#fff4cc` | 1 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-status-warning-text` | `#624b00` | 1 | Estados (ok, erro, atenção): texto, superfície e borda. |
+| `--aculta-surface-interactive` | `var(--aculta-surface-raised)` | 3 | Superfícies: interativa, muted e RGB da página (para transparências). |
+| `--aculta-surface-muted` | `var(--aculta-cream)` | 11 | Superfícies: interativa, muted e RGB da página (para transparências). |
+| `--aculta-surface-page-rgb` | `242, 247, 240` | 0 | Superfícies: interativa, muted e RGB da página (para transparências). |
+| `--aculta-text-accent` | `#b23a26` | 6 | Textos: destaque, inverso e muted. |
+| `--aculta-text-inverse` | `var(--aculta-white)` | 7 | Textos: destaque, inverso e muted. |
+| `--aculta-text-muted` | `var(--aculta-green-dark)` | 2 | Textos: destaque, inverso e muted. |
+
+Novo token no 0.6.0-dev.22: `--aculta-motion-quick: 150ms`, usado em `css/components/portal-account.css` para fechar a DT-T19 (durações fora de tokens).

@@ -1,3 +1,38 @@
+## 0.6.0-dev.22 — durações de movimento em tokens (DT-T19) — 2026-10-14
+
+Classificação: PATCH (sem mudança visual; mesmos valores).
+
+- `portal-account.css`: durações fixas (180ms, 150ms) trocadas por `var(--aculta-motion-fast)` e `var(--aculta-motion-quick)`.
+- `tokens.css`: novo token `--aculta-motion-quick: 150ms`, ao lado de `--aculta-motion-fast`.
+- Gate de Foundation: PASS (328 verificações). Antes falhava por DT-T19 e pela allowlist de Twig (`login-with`).
+- RUNTIME STATUS: verificado no Homelab por gate. Inspeção visual humana pendente.
+
+## 0.6.0-dev.21 — modelo padrão de publicação da Revista — 2026-10-14
+
+Classificação: MINOR da linha aberta (componente novo `experimental`; sem quebra de contrato).
+
+- Novo componente `aculta420:revista-publication`: cabeçalho, capa, chamada, resumo, corpo, rodapé, caixa de autoria
+  e link da discussão. Todas as publicações da Revista usam o mesmo layout; não há ajuste por publicação.
+- `node--article--full` (Notícia) e `node--blog--full` (blog) chamam o mesmo componente e mantêm as classes de
+  visualização completa (`node`, `node--type-*`, `node--view-mode-full`).
+- Capa com moldura 4:3 única, recorte pelo centro; blocos de texto na mesma coluna de leitura (68ch).
+- Gates: SDC (14 componentes), shell (11), fronteira módulo/tema (847) PASS. Gate de Foundation segue bloqueado
+  pela allowlist de Twig (DT-T19), pré-existente.
+- RUNTIME STATUS: verificado no Homelab (HTTP 200 em todas as publicações da Revista; captura do artigo e do blog
+  de teste). Inspeção visual humana pendente.
+
+## 0.6.0-dev.20 — Revista: imagens do corpo e intertítulos — 2026-10-14
+
+Classificação: PATCH (apresentação da postagem; sem mudança de contrato nem de API).
+
+- Imagens embutidas no corpo de publicações da Revista (Notícia e blog) saem centralizadas na coluna de leitura,
+  com cantos e fundo dos tokens do tema, sem distorção (`revista-post.css`).
+- Intertítulos (h2/h3) do corpo ficam alinhados à esquerda: o texto justificado abria espaços nos títulos.
+- Sem mudança de marcação: a imagem chega como `media--type-image` pelo formato de mídia do Drupal.
+- Gate de Foundation atualizado para a versão 0.6.0-dev.20.
+- RUNTIME STATUS: verificado no Homelab (HTTP 200 da publicação com duas imagens e captura headless). Inspeção
+  visual humana pendente; a publicação sem imagem segue com o erro de cache descrito na PR da importação.
+
 ## 0.6.0-dev.19 — sugestões interativas na busca Wiki420 — 2026-10-13
 
 Classificação: MINOR (reutiliza a interação de busca existente em um novo shell).

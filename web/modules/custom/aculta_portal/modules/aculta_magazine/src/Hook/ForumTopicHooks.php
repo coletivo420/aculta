@@ -6,6 +6,7 @@ namespace Drupal\aculta_magazine\Hook;
 
 use Drupal\aculta_magazine\Forum\ForumTopicSync;
 use Drupal\aculta_magazine\Revista\RevistaPublications;
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
@@ -48,6 +49,24 @@ final class ForumTopicHooks {
   public function nodeDelete(EntityInterface $entity): void {
     if ($this->isPublication($entity)) {
       $this->sync->unpublish($entity);
+    }
+  }
+
+  /**
+   * Implements hook_comment_links_alter().
+   *
+   * Nos tópicos do Fórum, o Core repete "Efetue login ou registre-se para postar comentários" em cada comentário
+   * e na área do tópico. Fica só a da área do tópico, que é a resposta principal.
+   */
+  #[Hook('comment_links_alter')]
+  public function commentLinksAlter(array &$links, CommentInterface $entity, array &$context): void {
+    // A lista de links do comentário fica em $links['comment']['#links'] (ver CommentLazyBuilders::renderLinks).
+    if (!isset($links['comment']['#links']['comment-forbidden'])) {
+      return;
+    }
+    $commented = $entity->getCommentedEntity();
+    if ($commented instanceof NodeInterface && $commented->bundle() === 'forum') {
+      unset($links['comment']['#links']['comment-forbidden']);
     }
   }
 

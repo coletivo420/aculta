@@ -204,3 +204,27 @@ Planejado:
 - UI Patterns Library/UI Examples para catálogo.
 
 Não usar UI Suite Bootstrap para substituir ACULTA420.
+
+## Publicação da Revista (`aculta420:revista-publication`, 0.6.0-dev.21)
+
+Modelo padrão de Notícia e blog. Experimental. Os templates `node--article--full` e `node--blog--full` chamam
+o mesmo componente; o conteúdo vem do Drupal e a apresentação é deste componente.
+
+Classes (documentadas aqui porque são de apresentação, não do módulo):
+
+| Classe | Onde | Função |
+| --- | --- | --- |
+| `node`, `node--type-article` ou `node--type-blog`, `node--view-mode-full` | raiz do nó (`article`) | Classes padrão do Drupal, mantidas para as regras que dependem delas. |
+| `aculta-revista-article` | raiz do nó | Marca a publicação da Revista no tema. |
+| `aculta-revista-publication` | raiz do componente | Coluna de leitura (68ch), centralizada. |
+| `aculta-revista-publication__meta` | cabeçalho (autor, data, compartilhamento) | Faixa de metadados. |
+| `aculta-revista-publication__cover` | capa | Moldura 4:3 única, recorte pelo centro, largura máxima 40rem. |
+| `aculta-revista-publication__subtitle` | chamada | Texto de abertura. |
+| `aculta-revista-publication__summary` | resumo | Caixa de resumo (superfície muted). |
+| `aculta-revista-publication__body` | corpo | Texto da publicação. Intertítulos alinhados à esquerda; imagens do corpo centralizadas (`media--type-image`). |
+| `aculta-revista-publication__footer` | rodapé | Sessão, tags, referências e créditos. |
+| `aculta-revista-publication__authors` | caixa de autoria | Recebe `data-portal-ui="article-authors"` do módulo. |
+| `aculta-revista-publication__discussion` | discussão | Recebe `data-portal-ui="discussion"` do módulo. |
+
+Regras de apresentação que valem para todas as publicações (`css/components/revista-post.css`): não há ajuste por
+publicação; capa, resumo e corpo ficam na mesma coluna de leitura.

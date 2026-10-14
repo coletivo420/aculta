@@ -80,6 +80,10 @@ $allowedConfig = [
   'config/sync/domain/conta_aculta_org/system.site.yml' => '#^\s*front: /minha-conta\s*$#',
 ];
 foreach ($scanDirs as $dir) {
+  // Diretórios que não existem nesta árvore não têm o que varrer (ex.: css/ do módulo).
+  if (!is_dir($root . '/' . $dir)) {
+    continue;
+  }
   $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $dir, FilesystemIterator::SKIP_DOTS));
   foreach ($iterator as $file) {
     if (!$file->isFile() || !preg_match('#\.(php|module|inc|yml|twig|js|mjs|css|json)$#', $file->getFilename())) {

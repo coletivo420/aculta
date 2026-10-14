@@ -79,6 +79,7 @@
   --aculta-space-section: clamp(2.25rem, 4.5vw, 4.25rem);
   --aculta-focus: var(--aculta-focus-ring);
   --aculta-motion-fast: 180ms;
+  --aculta-motion-quick: 150ms;
   --aculta-ease-standard: ease;
   --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
   --aculta-scrim: rgba(12, 60, 41, 0.58);

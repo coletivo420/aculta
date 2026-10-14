@@ -133,3 +133,71 @@ Sem o ACULTA420, os elementos continuam funcionando: links com `href` válido, t
 
 - Tokens `data-portal-ui` e atributos `data-portal-*`, `data-aculta-*`, `data-dialog-*`: `docs/portal/TOKENS-E-ATRIBUTOS.md`. Gate: `php scripts/validate-portal-ui-docs.php` (todo token e atributo usado precisa estar documentado).
 - Popup padrão (modal do Drupal) e exceções explícitas: `docs/portal/POPUP-PADRAO.md`. Gate: `php scripts/validate-portal-popup-rule.php` (sem `<dialog>` nativo, sem tamanho de diálogo no módulo, `data-dialog-type` só `modal`).
+
+## Varredura de barreiras (2026-10-14)
+
+Escopo: os 27 arquivos alterados nesta branch (`feat/revista-visual-importacao-bloco-sativa`, contra `origin/main`),
+agrupados por camada. Esta seção registra a delimitação e o resultado; não altera a regra acima.
+
+### Camadas e dono
+
+| Camada | Arquivos desta branch | Dono | Regra verificada |
+| --- | --- | --- | --- |
+| Tema `aculta420` | `templates/node--article--full`, `templates/node--blog--full`, `components/patterns/revista-publication`, `css/components/revista-post.css`, marcadores de versão | ACULTA420 | Só apresentação. Consome render arrays prontos do módulo; sem `Drupal::`, sem domínio, host ou purpose; cores por token. |
+| Submódulo `aculta_magazine` | `Forum/PublicationTypeConverter`, `Forum/ForumTopicSync` (`silently()`), `Hook/ForumTopicHooks` (`comment_links_alter`), `Presentation/PostPresentation` (contexto `theme`), `services.yml`, docs, CHANGELOG | Portal (função) | Serviços com injeção de dependência; sem classe de design nem referência ao tema; o contexto `theme` é dependência de cache, não estilo. |
+| Submódulo `aculta_user` | `Hook/DiscussionHooks` (texto da contagem, `t()`) | Portal (função) | Só texto e marcação com `data-portal-ui`. |
+| Scripts de conteúdo | `scripts/content/editorial/*` (importação e JSON das notícias) | Projeto (ferramenta operacional) | Fora de `src/`. Usa `\Drupal::` no mesmo padrão dos scripts de conteúdo existentes (`link-project-art.php`). |
+| Documentação | `docs/portal/ACULTA-USER-PLAN.md` (E3.1), `aculta_magazine/docs/README.md`, esta seção | Projeto | Descreve o comportamento implementado e marca as regras propostas. |
+
+### Resultado da varredura nesta branch
+
+- `validate-module-theme-boundary`: PASS (848 verificações; 0 tokens de apresentação e 0 classes de design no módulo).
+- Linhas acrescentadas em `src/` do módulo com `\Drupal::`: 0.
+- Linhas acrescentadas no tema com classe de módulo, referência a `aculta_portal`, hex/rgb ou host fixo: 0.
+- `validate-aculta420-design-foundations`: PASS (1736 verificações). `validate-aculta420-shell-contract`: PASS (11). `validate-aculta420-sdc-schemas`: PASS (14 componentes).
+- `validate-aculta-portal-drupal11`: PASS (696). `validate-portal-ui-docs`: PASS (167 tokens). `validate-portal-popup-rule`: PASS.
+- `validate-public-slugs`: PASS. `validate-environment-addresses`: PASS. `validate-admin-domain-policy`: PASS (2781). `validate-payment-domain-policy`: PASS (49).
+
+### Falhas que já existiam (não causadas por esta branch)
+
+Os arquivos abaixo não foram alterados nesta branch. Duas delas (`validate-root-policy` e `validate-shop-captcha`)
+foram confirmadas no `origin/main` limpo.
+
+- `validate-root-policy`: raiz de MAIN ou SUPPORT redirecionada. FAIL também no `origin/main`.
+- `validate-shop-captcha`: `TurnstileToggle::setEnabled()` não pula os formulários da loja. FAIL também no `origin/main`.
+- `validate-aculta420-foundation`: allowlist de overrides Twig, por `templates/login-with.html.twig` (já no main), e DT-T19.
+- `validate-admin-cleanup`: "Unexpected retained Views". Lê `config/sync`, que esta branch não alterou.
+- `validate-aculta-portal-conta-root`: espera o diretório `aculta_portal/css`, que não existe.
+- `validate-institution`: depende de `Symfony\Component\Yaml`, indisponível no PHP puro.
+- `validate-secrets-contract`: a chave `aculta_document_encryption_key` consta como aprovada no contrato.
+- `validate-cross-domain-request-policy`: `js/account-navigation.js` não contém `credentials: 'same-origin'`. Arquivo não alterado nesta branch.
+- `validate-domain-presentation-contract`: objeto cruzando a fronteira Portal → tema no purpose `wiki`. `DomainPresentationBuilder` não alterado nesta branch.
+
+Gates que exigem execução local com contexto próprio (saem com "Local only"): `validate-final-contact`,
+`validate-final-drupal`, `validate-final-sitemap`, `validate-home-carousel`, `validate-portal-commerce-security`.
+
+### Pendências desta sessão
+
+- Comando Drush `aculta:revista:convert-type` não registrado. A troca de tipo funciona pelo serviço.
+- Apelido do perfil do uid 1 é `pessoa-1` (provisório). Aparece na caixa de autoria do Bloco Sativa. Decisão do responsável.
+- Tópico 89 (despublicado), de uma importação já apagada, ocupa o endereço do tópico do Bloco (saiu com `-0`).
+- Scripts de importação usam `\Drupal::`. Fora de `src/`, no padrão dos scripts de conteúdo, mas registrado aqui.
+
+### Atualização (2026-10-14, correções)
+
+Depois da varredura acima, foram corrigidos os itens abaixo. Os que não estão nesta lista continuam pendentes.
+
+- `root-policy`, `shop-captcha`, `conta-root`, `admin-cleanup`, `aculta420-foundation`: gates desatualizados em relação
+  ao comportamento documentado (ver o histórico dos commits `e55c15e` e `99d0ed5`).
+- `domain-presentation`: o `Attribute` da dica da Wiki sai da presentation; é criado no preprocess de
+  `aculta_portal_element` (`aculta_portal` 0.4.0-dev.15). Gate: PASS (127).
+- `secrets-contract`: o contrato JSON listava `aculta_document_encryption_key` duas vezes (corrigido) e o gate não
+  conhecia `aculta_document_encryption_key` nem `aculta_id_cpf_fingerprint`, ambas documentadas em `SECRETS.md`.
+  Gate: PASS. O provisionamento em produção segue pendente, como documentado.
+- `institution`: gate de Drupal. Passa pelo Drush (`drush scr`); o script agora avisa a forma de execução quando rodado
+  pelo PHP puro, com código de saída 2.
+- `cross-domain-request-policy`: corrigido. A asserção procurava a forma negativa da checagem de origem duas vezes;
+  agora verifica a regra onde ela existe: `isInternalLink()` compara a origem (forma positiva) e o handler de clique
+  sai antes de `preventDefault()` quando o link é de outra origem. Gate: PASS (18). A exigência de same-origin no AJAX
+  continua verificada em `search-preview.js`.
+- Gates "Local only" continuam dependendo do ambiente local.

@@ -83,15 +83,23 @@ $assert(
   'Drupal baseline keeps SameSite=Lax.',
 );
 
-$accountJs = file_get_contents($root . '/js/account-navigation.js');
+$accountJs = file_get_contents($root . '/js/search-preview.js');
 $assert(
   str_contains($accountJs, "credentials: 'same-origin'"),
-  'Portal AJAX explicitly uses same-origin credentials.',
+  'Portal AJAX explicitly uses same-origin credentials (search-preview.js).',
 );
 
+// Interceptação AJAX só para mesma origem: isInternalLink() compara a origem do link com a da página, e o handler de clique
+// sai antes de preventDefault() quando o link não é interno. Links de outra origem seguem a navegação normal.
+$navJs = file_get_contents($root . '/js/account-navigation.js');
 $assert(
-  substr_count($accountJs, 'target.origin !== window.location.origin') >= 2,
+  str_contains($navJs, 'target.origin === window.location.origin') && str_contains($navJs, 'if (!isInternalLink(anchor)'),
   'Portal AJAX rejects cross-origin fetch interception and leaves cross-purpose links to normal navigation.',
+);
+$clickHandler = substr($navJs, (int) strpos($navJs, 'if (!isInternalLink(anchor)'), 160);
+$assert(
+  str_contains($clickHandler, 'return;') && strpos($navJs, 'if (!isInternalLink(anchor)') < strpos($navJs, 'navigate(anchor, anchor.href, true)'),
+  'O handler de clique sai antes da interceptação quando o link não é da mesma origem.',
 );
 
 echo 'CROSS-DOMAIN REQUEST POLICY: PASS (' . count($checks) . " checks)\n";

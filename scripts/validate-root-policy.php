@@ -32,7 +32,9 @@ $assert(str_contains($processor, '_disable_route_normalizer') && str_contains($p
 foreach (["'support' => '/apoio'", "'wiki' => '/wiki'", "'courses' => '/cursos'", "'shop' => '/loja-da-aculta'", "'forum' => '/forum'"] as $entry) {
   $assert(str_contains($processor, $entry), "Mapa FRONT_PATHS sem $entry: a raiz do host não está uniformizada.");
 }
-$assert(!str_contains($subscriber, "pathUrl('main', '/')") && !str_contains($subscriber, "pathUrl('support', '/')"), 'Raiz de MAIN ou SUPPORT redirecionada: a decisão é servir conteúdo.');
+$assert(!str_contains($subscriber, "pathUrl('main', '/')"), 'Raiz de MAIN redirecionada: a decisão é servir conteúdo.');
+// O redirecionamento de /apoio para / é permitido: só dispara quando o caminho não é a raiz.
+$assert(str_contains($subscriber, "getPathInfo() !== '/'"), 'Redirecionamento para a raiz de SUPPORT sem a guarda de caminho (raiz servida).');
 
 // A exceção da conta continua valendo.
 $assert(str_contains($subscriber, "'aculta_portal.dashboard'") && str_contains($subscriber, "routeUrl('account', 'user.login')"), 'Regra da conta (visitante na raiz vai ao login) ausente.');

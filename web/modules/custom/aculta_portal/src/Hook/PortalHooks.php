@@ -191,6 +191,19 @@ final class PortalHooks {
   /**
    * Supplies presentation-only data for the institutional content block.
    */
+  /**
+   * Implements hook_preprocess_aculta_portal_element().
+   *
+   * Os elementos de presentation (ex.: busca da Wiki) chegam ao tema como array, sem objetos. O atributo é montado aqui,
+   * no último passo antes do template, que espera um Attribute.
+   */
+  #[Hook('preprocess_aculta_portal_element')]
+  public function preprocessPortalElement(array &$variables): void {
+    if (is_array($variables['element_attributes'] ?? NULL)) {
+      $variables['element_attributes'] = new Attribute($variables['element_attributes']);
+    }
+  }
+
   #[Hook('preprocess_block')]
   public function preprocessBlock(array &$variables): void {
     $entity = $variables['elements']['content']['#block_content'] ?? NULL;
