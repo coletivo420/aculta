@@ -19,13 +19,15 @@ Regras:
 
 ## 2. Marcação que a galeria entrega ao tema
 
-A galeria não tem template próprio no tema. Ela usa o markup do PhotoSwipe (contrib) e as classes do Bootstrap que o tema já carrega:
+**Palco do álbum (página `/albuns/...`):** o módulo entrega o contêiner `data-aculta-album-stage` com o slideshow VVJB e o painel `data-aculta-album-thumbs` (miniaturas `data-aculta-album-thumb="N"`). A aparência é do tema. Contrato completo, donos e pendências: [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md).
+
+Nas listagens e no corpo das notícias, a galeria usa o markup do PhotoSwipe (contrib) e as classes do Bootstrap que o tema já carrega:
 
 | Classe | Onde aparece | Uso |
 | --- | --- | --- |
 | `photoswipe-gallery` | contêiner de cada campo `images` | Agrupa as fotos de uma galeria. Grupos ficam isolados por instância. |
 | `photoswipe` | `<a>` de cada foto | Abre o lightbox. Traz `data-pswp-width` e `data-pswp-height` (dimensões reais). |
-| `img-fluid`, `image-style-media-gallery-image` | `<img>` da miniatura | Miniatura 300×180 (estilo `media_gallery_image`), com `loading="lazy"`. |
+| `img-fluid`, `image-style-media-gallery-image` | `<img>` da miniatura | Miniatura 300×180 (estilo `media_gallery_image`), com `loading="lazy"`. Usada fora do palco. |
 | `field--name-field-credits`, `field--name-field-event-date` | datas e crédito da galeria | Crédito e data do evento (Fase 5). |
 
 Imagem grande do lightbox: estilo `media_gallery_lightbox` (1600 px de largura, sem ampliar).

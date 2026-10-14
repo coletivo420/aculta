@@ -8,6 +8,7 @@ base theme: bootstrap5
 enforce_prop_schemas: true
 libraries:
   - aculta420/global
+  - aculta420/album-slideshow
 regions:
   header: Cabeçalho
   primary_menu: Menu principal

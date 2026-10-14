@@ -1,0 +1,73 @@
+# ACULTA Gallery — fronteira entre submódulo, tema e configuração
+
+Documento de dono. Diz quem é dono de cada parte da galeria e por quê. A regra geral do
+Portal está em `docs/portal/FRONTEIRA-MODULO-TEMA.md`; aqui está a aplicação ao álbum e
+ao palco (versão 0.1.0-dev.12).
+
+## 1. Três donos
+
+| Dono | Onde está | O que faz |
+| --- | --- | --- |
+| **Submódulo `aculta_gallery`** | `web/modules/custom/aculta_portal/modules/aculta_gallery/` | Dados, acesso, rotas, views de conteúdo, hooks, formulário de incorporação, coleção administrativa, *tamanho* das imagens (estilos) e *quais* fotos aparecem em que ordem. |
+| **Tema `aculta420`** | `web/themes/custom/aculta420/` | Aparência: cores (tokens), layout do palco, painel de miniaturas, botão do celular, comportamento visual do carrossel. Não conhece entidade, view nem regra de acesso. |
+| **Configuração do site** | `config/sync/` | Views, estilos de imagem e campos exportados. Cada item tem um dono nomeado abaixo. |
+
+Contrib (`media_gallery`, `photoswipe`, `vvjb`/`views_vvjb`, `entity_embed`, `embed`) é dependência
+de terceiros: o submódulo a configura, o tema estiliza o markup dela, e nenhum dos dois o altera.
+
+## 2. Quem é dono de cada peça
+
+| Peça | Dono | Arquivo | Motivo |
+| --- | --- | --- | --- |
+| Entidade `media_gallery`, campos, pathauto `/albuns/[title]` | submódulo | `config/install/*.yml` | Dados e URL pública pertencem ao domínio da galeria. |
+| Acesso só na Revista (D13) | submódulo | `src/Hook/GalleryPurposeAccessHooks.php` | Regra de negócio de purpose. |
+| Coleção administrativa, título apontando para a Revista | submódulo | `src/ListBuilder/AcultaGalleryListBuilder.php`, `src/Hook/GalleryListBuilderHooks.php` | Link é função; a edição continua no MAIN (política administrativa). |
+| View `aculta_album_fotos` (fotos do álbum, paginação, VVJB, PhotoSwipe) | submódulo (config) | `config/sync/views.view.aculta_album_fotos.yml` | Define o conteúdo do palco. |
+| View `aculta_albuns` (listagem `/albuns`) | submódulo (config) | `config/sync/views.view.aculta_albuns.yml` | Lista de álbuns; filtro de purpose está no hook de listagem. |
+| Palco e miniaturas (marcação) | submódulo | `src/Hook/GalleryViewHooks.php` | Monta `data-aculta-album-stage`, `data-aculta-album-thumbs` e `data-aculta-album-thumb`. |
+| Estilo da foto grande no palco | submódulo (config) | `config/sync/image.style.media_gallery_stage.yml` | Largura do arquivo (1000 px) é decisão de conteúdo e peso. |
+| Estilo da miniatura | submódulo (config) | `config/sync/image.style.media_gallery_thumb.yml` | Recorte quadrado de 160 px. |
+| Estilo da imagem do lightbox | submódulo (config) | `config/sync/image.style.media_gallery_lightbox.yml` | Ampliação em 1600 px. |
+| Cor da moldura do palco | tema | `css/tokens.css`, token `--aculta-media-stage-bg` | Cor é token; claro e escuro têm valores próprios. |
+| Layout do palco, painel, botão do celular | tema | `css/components/album-slideshow.css` | Aparência. |
+| Comportamento: clique na miniatura, miniatura ativa, botão que recolhe o painel | tema | `js/album-slideshow.js` | Comportamento visual. Usa só os atributos `data-*` do módulo. |
+| Biblioteca do palco carregada em todas as páginas | tema | `aculta420.info.yml` (`aculta420/album-slideshow`) | Ver §4. |
+
+## 3. Contrato entre módulo e tema
+
+O módulo entrega marcação com atributos `data-*` (comportamento). O tema escolhe a aparência.
+
+| Atributo | Quem põe | Quem usa | Significado |
+| --- | --- | --- | --- |
+| `data-aculta-album-stage` | módulo (`GalleryViewHooks`) | tema (CSS e JS) | Contêiner que junta o slideshow e o painel. |
+| `data-aculta-album-thumbs` | módulo | tema (CSS) | Painel de miniaturas. |
+| `data-aculta-album-thumb="N"` | módulo | tema (JS e CSS) | Miniatura N (1 a total de fotos). Corresponde ao slide N do VVJB. |
+| `aria-current` na miniatura | tema (JS) | tema (CSS) | Miniatura do slide atual. |
+| `data-aculta-album-toggle` | tema (JS) | tema (CSS) | Botão do celular que recolhe o painel. Criado pelo JS; o módulo não o conhece. |
+
+Regra: o módulo não põe classe de design (`bi-`, `btn`, `col-`, etc.) nem CSS/JS. O tema não consulta
+entidade, view, purpose nem nome de view do módulo.
+
+## 4. Pontos de atenção (decisões e dívidas)
+
+- **Biblioteca global.** O palco usa `aculta420/album-slideshow` declarada em `aculta420.info.yml`,
+  para não depender do nome da view do módulo. Custo: o CSS e o JS (poucos KB) são carregados em
+  todas as páginas do tema. Ação: se o peso incomodar, trocar por uma verificação de atributo no
+  preprocess do tema (`#[Hook('preprocess_page')]`), sem nome de view.
+- **Acoplamento com o VVJB.** O CSS do tema usa a marcação do `views_vvjb` (contrib): `.vvjb`,
+  `.vvjb-carousel-options`, `.vvjb-carousel-wrapper`, `.vvjb-carousel-outer`, `.vvjb-item`, e o
+  elemento `vvjb-carousel` com `goToSlide()` / `getCurrentSlide()`. Uma atualização do VVJB pode
+  mudar essas classes; conferir o palco a cada atualização.
+- **Layout fixo.** A altura do palco no desktop é `min(80vh, 40rem)` e no celular 400 px. Foto
+  landscape no celular deixa espaço vazio; decisão pendente.
+- **Miniaturas de 66 fotos.** O módulo gera as 66 miniaturas no HTML, com `loading="lazy"`.
+  Medição em `docs/ARQUITETURA.md` (fase 7).
+- **Gate.** `scripts/validate-module-theme-boundary.php` verifica classes e tokens do módulo, mas
+  não verifica o contrato `data-*`. Qualquer novo atributo entra nesta tabela antes do código.
+
+## 5. Versionamento
+
+- Módulo: `0.1.0-dev.12` (ver `CHANGELOG.md` do submódulo).
+- Tema: a mudança de palco (`album-slideshow`, `tokens.css`, `aculta420.info.yml`) ainda não foi
+  classificada nem marcada na versão do tema (`web/themes/custom/aculta420/docs/versioning.md`).
+  Pendência para o responsável.
