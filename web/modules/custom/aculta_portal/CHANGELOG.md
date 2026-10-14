@@ -1,3 +1,18 @@
+## 0.4.0-dev.14 — popup "Entrar" na barra multidomínio, sem Turnstile; modais com fundo escurecido — 2026-10-14
+
+- "Entrar" da barra multidomínio, para visitante não autenticado, abre o login em modal no próprio host (`use-ajax`).
+  O formulário `LoginPopupForm` herda o login do Core (`user.auth`, flood control, bloqueio de conta). A página
+  `/entrar` continua existindo e mantém o Turnstile.
+- Exceção do Turnstile: o popup (`aculta_login_popup_form`) não recebe o desafio. Junto com a loja (carrinho e
+  checkout) e o cadastro feito pelo fluxo de compra, forma a lista `TurnstileToggle::EXCEPTION_FORM_IDS`.
+- Barreira: `scripts/validate-turnstile-exceptions.php` e seção "Exceções" em `docs/portal/TURNSTILE.md`.
+- Tema ACULTA420 (mesma entrega): visual do popup conforme o anexo e escurecimento do fundo de todos os modais
+  (`.ui-widget-overlay` e `dialog::backdrop`, com `--aculta-scrim`).
+- Fronteira mantida: o módulo não emite classes de design; os tokens `login-popup` e `login-popup-links` são mapeados
+  no tema (`PortalUiHooks`).
+- RUNTIME STATUS: DEFERRED. Pendentes: teste de navegador do popup (TESTES-NAVEGADOR, seção R) e teste com outro tema
+  ativo (Olivero) para confirmar que o login funciona sem o ACULTA420.
+
 ## 0.4.0-dev.13 — painel administrativo: edição e exclusão de conteúdo funcionam em todos os hosts — 2026-10-13
 
 - Edição e exclusão de conteúdo a partir da listagem do painel: o GET em host de purpose canonicaliza para MAIN.
