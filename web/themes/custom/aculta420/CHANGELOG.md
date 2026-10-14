@@ -1,3 +1,17 @@
+## 0.6.0-dev.21 — modelo padrão de publicação da Revista — 2026-10-14
+
+Classificação: MINOR da linha aberta (componente novo `experimental`; sem quebra de contrato).
+
+- Novo componente `aculta420:revista-publication`: cabeçalho, capa, chamada, resumo, corpo, rodapé, caixa de autoria
+  e link da discussão. Todas as publicações da Revista usam o mesmo layout; não há ajuste por publicação.
+- `node--article--full` (Notícia) e `node--blog--full` (blog) chamam o mesmo componente e mantêm as classes de
+  visualização completa (`node`, `node--type-*`, `node--view-mode-full`).
+- Capa com moldura 4:3 única, recorte pelo centro; blocos de texto na mesma coluna de leitura (68ch).
+- Gates: SDC (14 componentes), shell (11), fronteira módulo/tema (847) PASS. Gate de Foundation segue bloqueado
+  pela allowlist de Twig (DT-T19), pré-existente.
+- RUNTIME STATUS: verificado no Homelab (HTTP 200 em todas as publicações da Revista; captura do artigo e do blog
+  de teste). Inspeção visual humana pendente.
+
 ## 0.6.0-dev.20 — Revista: imagens do corpo e intertítulos — 2026-10-14
 
 Classificação: PATCH (apresentação da postagem; sem mudança de contrato nem de API).
