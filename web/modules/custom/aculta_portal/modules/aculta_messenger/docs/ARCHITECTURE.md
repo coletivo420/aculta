@@ -72,6 +72,13 @@ dispatch. URLs usam o purpose `forum`; conteúdo sem alias português não é
 incluído no aviso. A entrega usa o notifier configurado e o e-mail já instalado.
 Como `gnode` não está habilitado, atividades Group não participam do escopo.
 
+Site Alert permanece a fonte dos avisos temporários; sua instância de bloco
+nativa ocupa `highlighted` e usa o intervalo de atualização próprio. Por ser
+sitewide e não oferecer escopo Domain, é apresentada nos purposes do ACULTA420.
+Comunicados persistentes ficam fora até que alvo e workflow editorial possam
+ser verificados por access nativo; `article` e o workflow disponível não
+fornecem esse contrato atualmente.
+
 ## Inventário técnico upstream
 
 O inventário verificado no código instalado (Core 11.4.8) está em

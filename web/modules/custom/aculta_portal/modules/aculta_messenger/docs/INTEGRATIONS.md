@@ -132,6 +132,22 @@ da entrega, então falhas parciais e retry precisam de homologação controlada.
 Group 3.3.5 está instalado, mas `gnode` não está habilitado. Não há integração
 ativa de atividades Group a reutilizar nesta fase.
 
+### Site Alert (dev.6)
+
+O bloco nativo `site_alert_block` é instalado no tema ACULTA420, região
+`highlighted`, com atualização a cada 300 segundos. A entidade fornece início,
+término, conteúdo e severidade `low`/`medium`/`high`; as rotas CRUD e permissões
+continuam as do módulo contrib. O módulo é sitewide e não possui segmentação por
+Domain, portanto a instância se apresenta nos purposes que usam ACULTA420. A
+região recebe os metadados de cache/contexto do bloco; visual no Design System
+será conferido na integração de tema.
+
+O tipo existente `article` não apresenta segmentação de acesso nem validade; o
+workflow `editorial` existe, mas não atribui bundles (`entity_types: {}`). Não
+foi criada entidade/Views de comunicado até haver um contrato verificável para
+alvo e revisão editorial. A administração dos Site Alerts usa rotas `/admin`
+protegidas pela política global de purpose `main`.
+
 ## Fontes públicas consultadas
 
 - [Private Message 3.0.7](https://www.drupal.org/project/private_message/releases/3.0.7) e [guia de instalação](https://www.drupal.org/docs/contributed-modules/private-message/installing-the-module).

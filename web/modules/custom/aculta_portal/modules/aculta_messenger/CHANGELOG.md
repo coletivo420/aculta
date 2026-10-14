@@ -23,6 +23,25 @@ Mudanças relevantes do ACULTA Messenger.
 - `validate-public-slugs.php`: FAIL pelas mesmas duas rotas de
   `message_subscribe_ui`; gate e allowlist permanecem intactos.
 
+## 0.1.0-dev.6 — integração administrativa de Site Alert
+
+- Adiciona a instância do bloco nativo Site Alert à região Destaques do ACULTA420,
+  disponível nos purposes que usam esse tema. Agenda e severidade vêm da
+  entidade Site Alert; o intervalo de atualização é 300 segundos.
+- Criação, edição e remoção continuam nos formulários/permissões nativos do
+  Site Alert; as rotas administrativas permanecem sob o purpose `main`.
+- Nenhuma role recebe permissão de Site Alert automaticamente; não há grants
+  atuais às permissões nativas na configuração exportada.
+- Comunicados persistentes Node/Views não foram criados: os tipos atuais não
+  fornecem segmentação de acesso verificável nem fluxo de revisão atribuído para
+  esse propósito. Evita-se publicar um aviso como conteúdo público sem contrato.
+- RUNTIME STATUS: DEFERRED — bloco, agenda e apresentação ainda exigem teste no
+  Homelab. Nenhum módulo foi habilitado; sem banco ou Config Sync alterado.
+- Verificações locais: PHP lint, YAML parse, gate Drupal 11+ (696 checks),
+  endereços de ambiente (1.519 arquivos) e `git diff --check`: PASS.
+- `validate-public-slugs.php`: FAIL pelas mesmas duas rotas de
+  `message_subscribe_ui`; gate e allowlist não foram alterados.
+
 ## 0.1.0-dev.4 — avisos privados por Message Notify
 
 - Enfileira eventos do hook nativo de nova mensagem e resolve a thread após o

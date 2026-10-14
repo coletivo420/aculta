@@ -69,3 +69,8 @@ status e acesso atual do conteúdo. A URL segue o purpose `forum` e a política 
 slug em português. Assinaturas de Group não foram conectadas, pois `gnode` não
 está ativo. O e-mail utiliza a infraestrutura já instalada pelo Drupal; a
 entrega real aguarda teste controlado no Homelab.
+
+O bloco de Site Alert é instalado na região `highlighted` do ACULTA420 e mantém
+agendamento/severidade no módulo nativo. Seu escopo é sitewide para os purposes
+que usam o tema. Comunicados persistentes continuam pendentes: não há hoje um
+contrato confirmado de segmentação de acesso e revisão editorial para esse uso.

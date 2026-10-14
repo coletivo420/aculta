@@ -16,9 +16,10 @@ Git, à PR e ao changelog; esta lista registra sequência e critérios de entreg
 5. **dev.5 — Message Subscribe:** concluída estaticamente para Nodes `forum`
    publicados com assinantes na flag existente `seguir_topico`; dispatch real
    aguarda Homelab. Group fica fora enquanto `gnode` não estiver habilitado.
-6. **dev.6 — Site Alert e comunicados:** alerta temporário nativo; Node/Views
-   separado para comunicado editorial persistente, se segmentação for
-   demonstrável.
+6. **dev.6 — Site Alert e comunicados:** integração estática do bloco nativo
+   Site Alert no ACULTA420 concluída; runtime aguarda Homelab. Comunicado
+   persistente permanece pendente de contrato de segmentação e revisão: os
+   mecanismos atuais não comprovam esses requisitos para um novo tipo Node.
 7. **dev.7 — Minha Conta:** `/mensagens`, conversas, avisos e notificações em
    `account`; preservar formulários e rotas nativas onde possível.
 8. **dev.8 — preferências:** comunicação, privacidade, e-mail e interações,
