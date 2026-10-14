@@ -45,3 +45,15 @@ aculta_messenger.notifications:
   options:
     no_cache: true
     _aculta_domain_purpose: account
+
+aculta_messenger.communication_settings:
+  path: '/configuracoes/mensagens'
+  defaults:
+    _form: '\Drupal\aculta_messenger\Form\CommunicationSettingsForm'
+    _title: 'Mensagens e notificações'
+  requirements:
+    _permission: 'access aculta portal, use private messaging system'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: account

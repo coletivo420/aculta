@@ -63,6 +63,14 @@ vazio até haver fonte persistente com segmentação aprovada.
 
 ## Checklist para implantação futura
 
+Preferências em `/configuracoes/mensagens` reutilizam `user.data` do Core e a
+chave `private_message.receive_notification`, já consumida pelo Private Message
+e pelo worker Messenger. A aba aparece para contas com acesso a mensagens e com
+avisos habilitados na configuração nativa. Não há opção/storage para restringir
+globalmente remetentes, silenciar comunicados ainda inexistentes ou controlar
+todas as assinaturas: bloqueio é por membro na interface nativa e seguir tópico
+usa a flag existente.
+
 1. Comparar configuração exportada dos cinco módulos e aprovar os componentes
    necessários; não fazer import/export automático.
 2. Confirmar os purposes e hosts do ambiente pelos arquivos de arquitetura e

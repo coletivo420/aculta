@@ -2,6 +2,20 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.0-dev.8 — preferências de comunicação
+
+- Adiciona `/configuracoes/mensagens` no purpose ACCOUNT e a aba Mensagens para
+  contas com acesso nativo ao Private Message e avisos por e-mail habilitados.
+- O opt-out lê e grava `private_message.receive_notification` através de
+  `user.data`; o worker consulta a mesma preferência no momento do envio.
+- O e-mail continua usando a ferramenta instalada no site, sem SMTP/transporte
+  novo e sem conteúdo da conversa.
+- Bloqueios continuam sendo ações nativas por membro; assinaturas permanecem
+  por tópico na flag existente `seguir_topico`. Não foi criado storage paralelo.
+- Preferências de comunicados persistentes, restrição global de mensagens e
+  controles de eventos ainda inexistentes aguardam mecanismos e política.
+- RUNTIME STATUS: DEFERRED — sem execução no Homelab ou teste entre contas.
+
 ## 0.1.0-dev.5 — assinaturas de tópicos do fórum
 
 - Reutiliza a flag existente `seguir_topico` em Nodes `forum`; não cria outra

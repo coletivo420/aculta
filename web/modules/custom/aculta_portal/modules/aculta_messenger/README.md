@@ -35,6 +35,11 @@ transportador.
 
 ## Domain Purpose
 
+Preferências ficam em `/configuracoes/mensagens`, na área ACCOUNT. O opt-out de
+e-mail reutiliza `private_message.receive_notification`; a entrega passa pela
+ferramenta de e-mail já instalada. Bloqueios e assinaturas usam os controles
+nativos por membro e por tópico.
+
 `account` é o único purpose da caixa postal e da experiência do membro.
 `main` é o único purpose administrativo, inclusive para manutenção de Site
 Alert e de comunicados. Outros purposes podem originar eventos e apontar para a

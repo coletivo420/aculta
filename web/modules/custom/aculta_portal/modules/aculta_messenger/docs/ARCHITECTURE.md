@@ -22,6 +22,11 @@ destinatários, permissões, domínio, armazenamento ou política de notificaç�
 
 ## Fontes de verdade
 
+Preferências de comunicação ficam no ACCOUNT. O opt-out de e-mail reutiliza
+`private_message.receive_notification` em Core `user.data`; nenhum estado de
+preferência duplicado é introduzido. Bloqueios e assinaturas mantêm o modelo
+nativo por membro e por tópico.
+
 | Capacidade | Fonte de verdade | Papel do Messenger | Storage próprio |
 | --- | --- | --- | --- |
 | Conversa e mensagens privadas | Private Message | Integração de UX, ligações e eventual presenter | Não |

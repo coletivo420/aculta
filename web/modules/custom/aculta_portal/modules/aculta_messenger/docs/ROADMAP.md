@@ -24,8 +24,11 @@ Git, à PR e ao changelog; esta lista registra sequência e critérios de entreg
    com inbox nativa, contador de não lidas e lista privada de eventos de
    mensagem; runtime aguarda Homelab. Avisos permanece em estado vazio até
    existir comunicado persistente com segmentação aprovada.
-8. **dev.8 — preferências:** comunicação, privacidade, e-mail e interações,
-   reutilizando armazenamento nativo.
+8. **dev.8 — preferências:** implementado estaticamente o opt-out individual
+   de e-mail, usando `private_message.receive_notification` nativo e aba na
+   área de configurações. Bloqueio e assinatura continuam nos controles por
+   membro/tópico; opções para comunicados e restrição global aguardam mecanismos
+   e política. Homelab permanece pendente.
 9. **dev.9 — Domain/ACULTA420:** presenter neutro e componentes SDC sob
    responsabilidade do tema, com responsividade e acessibilidade.
 10. **dev.10 — hardening:** autorização, cache, abuso, entrega, retenção,

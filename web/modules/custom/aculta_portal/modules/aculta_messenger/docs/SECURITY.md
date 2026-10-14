@@ -66,6 +66,12 @@ ações continuam nos handlers nativos.
 
 ## Invariantes
 
+A preferência de e-mail é individual e usa `user.data` nativo do Private
+Message; o formulário salva somente para o UID autenticado e o worker revalida
+a escolha antes do envio. A página é sem cache compartilhado. Bloqueio usa o
+mecanismo nativo; assinar tópico nunca concede acesso, e Message Subscribe
+revalida visibilidade no dispatch.
+
 - Cada leitura e escrita usa APIs públicas Drupal e permissões/access nativos;
   não consultar tabelas de contrib por SQL.
 - Thread, destinatário e conteúdo são autorizados no servidor em cada request;
