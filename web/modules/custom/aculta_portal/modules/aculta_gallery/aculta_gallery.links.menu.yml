@@ -1,0 +1,9 @@
+# Item "Galeria" na seção Criar da administração (navigation.create), junto dos tipos de conteúdo.
+# A rota é o formulário padrão de galeria (Media Gallery); o acesso segue a permissão
+# "add media gallery entities", concedida a administrador e editor de conteúdo.
+aculta_gallery.add_gallery:
+  title: 'Galeria'
+  description: 'Criar um álbum ou galeria de fotos.'
+  route_name: entity.media_gallery.add_form
+  parent: navigation.create
+  weight: 10
