@@ -1,0 +1,48 @@
+uuid: 26c39bf1-fbd8-4d80-8ba5-f747157e1531
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - image.style.media_gallery_image
+  module:
+    - media_gallery
+    - photoswipe
+    - text
+_core:
+  default_config_hash: '-NNFw9NtGOaznxdNFfR6etKS3QKcRohp8MMZCQc5Nn0'
+id: media_gallery.media_gallery.default
+targetEntityType: media_gallery
+bundle: media_gallery
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  images:
+    type: photoswipe_field_formatter
+    label: hidden
+    settings:
+      photoswipe_thumbnail_style: media_gallery_image
+      photoswipe_image_style: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  langcode: true
+  search_api_excerpt: true
+  status: true
+  uid: true
+

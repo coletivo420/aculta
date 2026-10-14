@@ -1,0 +1,28 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - media.type.image
+  module:
+    - media_gallery
+id: media_gallery.media_gallery.images
+field_name: images
+entity_type: media_gallery
+bundle: media_gallery
+label: 'Imagens da galeria'
+description: 'Apenas imagens da biblioteca de mídia. Uma imagem pode estar em mais de uma galeria; remover a imagem da galeria não exclui a mídia.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

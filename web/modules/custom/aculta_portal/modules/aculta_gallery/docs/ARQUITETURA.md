@@ -100,6 +100,15 @@ A página do Media Gallery cita "inserir galerias no CKEditor". O código do tar
 | **D11** | A biblioteca PhotoSwipe 5 precisa ser provisionada por **repositório de pacote** no `composer.json`, no padrão já usado por assets do projeto (`repositories` tipo `package`). Não é instalada por Composer PHP. | Pacote do módulo não traz a biblioteca JS. O projeto já usa esse padrão para bibliotecas jQuery/npm. Exige decisão explícita antes da Fase 1 (AGENTS, regra 14). |
 | **D12** | Componentes visuais (grid, item, capa, legenda, estado vazio) ficam em SDC do ACULTA420, criados somente com consumidor real. | COMPONENT-DESIGN-SYSTEM: SDC para composição repetida com contrato estável. A Fase 5 altera o tema por autorização explícita da missão. |
 
+### 4.1 Decisões do responsável (2026-10-14)
+
+- **R5 (forma de entrega):** uma única PR (#268), com cada fase como commit. Segue a missão.
+- **R3 (publicação):** aceito publicar sem revisão e sem Content Moderation (D5). **Só os papéis administrador e editor de conteúdo publicam galerias.** Mesmas permissões da Revista, aplicadas em `content_editor`: `access media gallery overview`, `add media gallery entities`, `edit any media gallery entities`, `delete any media gallery entities`, `view published media gallery entities`, `view unpublished media gallery entities`. O administrador já tem todas por `is_admin`. Não há papel de "autor" no site; autores que escrevem a Revista são o editor de conteúdo.
+- **R4 (rota técnica):** não respondido. Adotada a recomendação (a): 404 na rota técnica quando a galeria tem alias. Confirmar na Fase 2.
+- **R6 (PhotoSwipe):** autorizado. Instalado `photoswipe/photoswipe` 5.4.4 por repositório de pacote, em `web/libraries/photoswipe` (zip `v5.4.4` do GitHub, `dist/photoswipe.esm.js` confirmado).
+- **R7 (tema):** autorizado alterar `web/themes/custom/aculta420/**` na Fase 5.
+- **Galerias somente na Revista (D13):** toda publicação do tipo galeria fica vinculada à Revista, exclusivamente. Não é publicada em outros purposes (`main`, `shop`, `courses`, `wiki`, `forum`, `links`, `support`, `account`). A visibilidade por purpose (D8) é o purpose `magazine`. A inserção em posts fica restrita aos tipos da Revista (`article` e `blog`, `RevistaPublications::BUNDLES`). A Fase 8 implementa e testa essa restrição.
+
 ## 5. Modelagem
 
 ### 5.1 Entidade
