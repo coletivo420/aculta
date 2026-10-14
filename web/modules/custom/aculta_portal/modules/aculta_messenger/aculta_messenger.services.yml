@@ -1,5 +1,9 @@
 services:
-  aculta_messenger.private_message_rate_limiter:
-    class: Drupal\aculta_messenger\Access\PrivateMessageRateLimiter
-    arguments: ['@flood', '@current_user', '@string_translation']
+  aculta_messenger.private_message_form_validator:
+    class: Drupal\aculta_messenger\Form\PrivateMessageFormValidator
+    arguments:
+      - '@flood'
+      - '@current_user'
+      - '@string_translation'
+      - '@private_message.ban_manager'
     public: true

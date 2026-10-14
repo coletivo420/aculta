@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+template: aculta_messenger_private_message_notification
+label: 'Aviso de mensagem privada ACULTA'
+description: 'Aviso por e-mail sem o conteúdo da conversa privada.'
+text:
+  - value: 'Nova mensagem privada na ACULTA'
+    format: plain_text
+  - value: "Você recebeu uma nova mensagem privada. Acesse sua conta para ler e responder: @account_url"
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {}

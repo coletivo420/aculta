@@ -59,11 +59,11 @@ ação preservam a exceção de rota técnica documentada pelo projeto.
 | Evento de entidade assinada | Assinantes ativos com acesso atual ao contexto | Message Notify quando configurado | Revogação de access suprime entrega |
 | Site Alert ativo | Visitantes conforme regra nativa | Bloco/componente global de apresentação | Início, término e severidade vêm da entidade Site Alert |
 
-Identificadores estáveis, chaves idempotentes, filas, tentativas e hooks
-concretos serão definidos depois da inspeção das versões instaladas. Não criar
-uma segunda fila ou tabela antes de provar necessidade. Uma notificação não
-deve revelar a existência de usuário, conversa ou conteúdo a público não
-autorizado.
+Para mensagem privada, a referência ao Message e o lock por par evento/
+destinatário definem a idempotência inicial; Queue API processa o evento depois
+de salvar a thread. Mensagem, status e número de tentativas usam a entidade
+Message. Não há fila ou tabela própria. Uma notificação não revela a existência
+de usuário, conversa ou conteúdo a público não autorizado.
 
 ## Inventário técnico upstream
 
@@ -83,8 +83,9 @@ cache context `active_site_alerts`; validar o bubbling quando a UI for
 integrada.
 
 `private_message_notify` é submódulo opcional do pacote Private Message e
-reutiliza `message_notify.sender`. Não habilitar junto de outro caminho de
-entrega para o mesmo evento sem owner único e deduplicação.
+reutiliza `message_notify.sender`, mas seu template padrão inclui o corpo
+privado. O Messenger impede a ativação simultânea enquanto esse template não
+for substituído por uma configuração que respeite a política ACULTA.
 
 `hook_private_message_new_message` é o evento público do Private Message;
 Message Subscribe fornece hooks de seleção e alteração de candidatos e
@@ -138,3 +139,18 @@ do Drupal: dez envios válidos por usuário em uma janela de uma hora.
 tabela custom adicionaria dados operacionais e manutenção sem necessidade. O
 limite é aplicado como callback Form API após validações de destinatários e
 bloqueio, preservando o submit nativo.
+
+### ADR-MSG-006 — Aviso privado em fila e sem corpo
+
+**Decisão:** registrar o evento como Message, enfileirar somente o ID da
+mensagem privada e resolver thread, access, bloqueio e destinatário durante o
+processamento. A entrega usa `message_notify.sender` com template ACULTA que
+contém somente um link para a página central do purpose `account`.
+
+**Motivo:** o hook upstream ocorre antes de salvar uma thread nova, e o
+notificador opcional do Private Message inclui o corpo privado no template
+padrão. A fila processa depois do salvamento; o campo de referência no Message
+mantém uma chave de deduplicação por mensagem e destinatário. O link usa a raiz
+da conta enquanto as rotas portuguesas da caixa postal não existem. Drupal
+Queue processa com semântica de pelo menos uma vez, então a entidade persistida
+impede recriar o evento e limita tentativas de entrega.

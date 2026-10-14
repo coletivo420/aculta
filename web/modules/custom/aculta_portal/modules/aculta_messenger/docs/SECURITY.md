@@ -26,12 +26,27 @@ qualquer papel. A distribuição pretendida dessas permissões deve ser decidida
 e registrada antes da ativação do fluxo para membros. A proteção upstream é
 mantida enquanto essa política não for configurada.
 
+O módulo opcional `private_message_notify` não deve ser ativado junto do
+Messenger: seu template padrão inclui o corpo privado no e-mail. Hooks de
+instalação do Messenger impedem essa combinação.
+
 O formulário nativo de criação/resposta recebe um callback Form API que usa o
 serviço Flood do Core e identifica o limite pelo UID, sem gravar IP. São
 permitidos dez envios que passaram pelas validações anteriores em uma janela de
 uma hora; entradas já inválidas não consomem limite. Mensagens acima do limite
 são rejeitadas antes do submit/save nativo. Esse valor é um limite inicial do
 Messenger e deve ser reavaliado após métricas de uso controladas.
+Um callback separado consulta `private_message.ban_manager` e rejeita também
+destinatários que bloquearam o remetente, inclusive quando o modo nativo estiver
+configurado como passivo. A resposta é genérica para reduzir enumeração.
+
+O evento de notificação é processado pela fila do Core após o hook nativo. A
+entrega revalida thread, usuário ativo, permissões e ambos os sentidos de
+bloqueio. Uma entidade Message persistida com referência à mensagem de origem,
+UID do destinatário e estado oferece deduplicação; lock cobre concorrência.
+Falhas de entrega têm no máximo três tentativas. Queue API tem semântica de pelo
+menos uma execução: uma falha entre o aceite do transporte e a gravação final
+do estado pode repetir o aviso, limitação a verificar no transporte real.
 
 ## Invariantes
 
@@ -47,8 +62,8 @@ Messenger e deve ser reavaliado após métricas de uso controladas.
   incluem membros selecionáveis conforme permission e preferência do alvo.
 - Limitar frequência usando mecanismos Drupal/contrib existentes após verificar
   sua disponibilidade. Não inventar uma tabela de contadores no Messenger.
-- Mensagens privadas nunca aparecem em log, e-mail, breadcrumb, cache público,
-  metadado de perfil público ou mensagem de erro detalhada.
+- O corpo de mensagens privadas nunca aparece em log, e-mail, breadcrumb, cache
+  público, metadado de perfil público ou mensagem de erro detalhada.
 - E-mails têm informação mínima e link para a rota canônica `account`; link é
   gerado por `DomainPurposeManager`, sem host hardcoded.
 - Assinatura é preferência de notificação, não autorização para ler entidade.

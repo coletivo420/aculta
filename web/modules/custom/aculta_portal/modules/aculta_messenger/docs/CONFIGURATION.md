@@ -22,17 +22,20 @@ Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
 ## Fase atual
 
 `aculta_messenger.info.yml` declara dependências no ACULTA Portal e nos cinco
-módulos integrados. A integração do formulário privado usa um serviço para o
-callback Form API e o serviço Flood do Core; não cria rotas, permissões ou
-configuração administrativa própria. `composer.json` e `composer.lock` adicionam
-somente os cinco pacotes; detalhes e versões estão em
+módulos integrados. A integração privada usa callback Form API, Flood e Queue
+API do Core, configuração Message exportável e o serviço existente
+`message_notify.sender`. Não cria rotas ou permissões próprias. `composer.json`
+e `composer.lock` adicionam somente os cinco pacotes; versões em
 [INTEGRATIONS.md](INTEGRATIONS.md).
 
 O código de Private Message confirma que inbox, threads, criação, contagem de
 não lidas e bloqueio já existem. A instalação não concede as permissões de uso
 às roles: a revisão da política de papéis deve preceder a disponibilização do
 envio de membros. O rate limit usa dez envios válidos por UID/hora através do
-Flood do Core, sem nova tabela ou opção configurável.
+Flood do Core, sem nova tabela ou opção configurável. A configuração instalável
+do Messenger adiciona um tipo Message, campos de referência/estado e modos de
+visualização para deduplicação e email sem corpo privado. Enquanto houver
+eventos persistidos ou itens na fila, o lifecycle guard impede a desinstalação.
 
 ## Checklist para implantação futura
 

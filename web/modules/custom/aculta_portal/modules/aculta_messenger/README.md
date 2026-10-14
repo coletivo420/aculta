@@ -52,12 +52,13 @@ cross-purpose usam `DomainPurposeManager`; mutações não atravessam hosts.
 
 ## Estado da implementação
 
-O módulo declara dependências, mas ainda não foi ativado. A integração adiciona
-limite de envio ao formulário nativo usando Drupal Flood: dez envios válidos por
-usuário em uma janela de uma hora. Inbox, threads, criação/resposta, contagem de
-não lidas, bloqueio e access continuam pertencendo ao Private Message. As
-permissões `use private messaging system` e `access user profiles` não aparecem
-na configuração exportada de papéis; nenhuma concessão é feita pelo submódulo.
-A política dos papéis precisa ser aplicada por configuração administrativa
-revisada antes da ativação da experiência para membros. O uso em runtime e a
-integração do link de perfil ainda não foram verificados.
+O módulo declara dependências, mas ainda não foi ativado. O formulário nativo
+usa Flood para limitar envios; novos eventos são processados em fila e entregues
+como Message Notify usando o mailer instalado, com um template que não expõe o
+corpo privado. Inbox, threads, criação/resposta, contagem de não lidas,
+bloqueio e access continuam pertencendo ao Private Message. As permissões
+`use private messaging system` e `access user profiles` não aparecem na
+configuração exportada de papéis; nenhuma concessão é feita pelo submódulo. A
+política dos papéis precisa ser aplicada por configuração administrativa
+revisada antes da ativação da experiência para membros. Runtime, fallback sem
+JavaScript, isolamento real e link de perfil ainda não foram verificados.

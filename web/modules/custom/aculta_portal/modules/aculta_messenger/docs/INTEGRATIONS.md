@@ -72,8 +72,9 @@ Endereços públicos em inglês ainda precisam ser cobertos pelo contrato de slu
 antes de expor o fluxo.
 
 O submódulo opcional `private_message_notify` também entrega email via
-`message_notify.sender`; não ativar junto de outro handler de notificação do
-mesmo evento sem deduplicação/owner único de canal.
+`message_notify.sender`, mas seu template padrão inclui o corpo da mensagem
+privada. O lifecycle guard do Messenger bloqueia a ativação simultânea para
+evitar exposição e dupla entrega.
 
 O envio externo permanece no transporte de e-mail já instalado pelo projeto:
 Drupal Mail com Symfony Mailer/Mailer Plus. Message Notify é responsável pela
@@ -89,10 +90,22 @@ continuam protegidas pelos requisitos existentes.
 
 O Messenger altera somente o Form API `private_message_add_form` com um hook
 OOP `#[Hook('form_alter')]` e um callback de serviço resolvido pelo
-`CallableResolver`. O callback consulta e registra no Core Flood depois das validações
-nativas; não substitui o form object, o salvamento nem o AJAX/fallback do
-Private Message. A integração de ponto de entrada no perfil e o uso de runtime
-continuam pendentes.
+`CallableResolver`. O callback consulta e registra no Core Flood depois das
+validações nativas; não substitui o form object, o salvamento nem o
+AJAX/fallback do Private Message. Um segundo callback consulta o serviço nativo
+de bloqueio nos dois sentidos antes do submit, sem informar ao remetente a
+existência ou a identidade de um bloqueador.
+
+O hook `private_message_new_message` grava um item no Queue API do Core. O
+worker resolve a thread após o salvamento, revalida membership/access, status,
+permissões e bloqueio, registra evento como Message e envia aviso com
+`message_notify.sender`. Uma referência Message → Private Message e lock por
+evento/destinatário evitam criar notificações duplicadas. O template contém o
+aviso e a URL da página central da conta, sem corpo, assunto ou trecho da
+conversa. O assunto é fixo e genérico. Até a integração das rotas `/mensagens`,
+o link aponta para a raiz do purpose `account`. Falhas de entrega retornadas
+pelo notifier podem ser tentadas até três vezes; runtime no Homelab ainda é
+necessário para verificar o transporte existente.
 
 Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
 cache/access de runtime ou compatibilidade em PHP 8.5.
@@ -100,7 +113,9 @@ cache/access de runtime ou compatibilidade em PHP 8.5.
 ## Fontes públicas consultadas
 
 - [Private Message 3.0.7](https://www.drupal.org/project/private_message/releases/3.0.7) e [guia de instalação](https://www.drupal.org/docs/contributed-modules/private-message/installing-the-module).
-- [Message](https://www.drupal.org/project/message), [Message Notify](https://www.drupal.org/project/message_notify) e [Message Notify 8.x-1.4](https://www.drupal.org/project/message_notify/releases/8.x-1.4).
+- [Message](https://www.drupal.org/project/message), [Message Notify](https://www.drupal.org/project/message_notify) e [Message Notify 8.x-1.5](https://www.drupal.org/project/message_notify/releases/8.x-1.5).
 - [Message Subscribe](https://www.drupal.org/project/message_subscribe) e [releases](https://www.drupal.org/project/message_subscribe/releases).
 - [Site Alert](https://www.drupal.org/project/site_alert), [releases](https://www.drupal.org/project/site_alert/releases) e [issue queue](https://www.drupal.org/project/issues/site_alert).
 - [Issue queue de Private Message](https://www.drupal.org/project/issues/private_message?categories=All&status=All), para alertas de compatibilidade atuais.
+- [Drupal Core QueueInterface 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Queue%21QueueInterface.php/interface/QueueInterface/11.x), que define semântica de processamento pelo menos uma vez.
+- [Drupal Core HookCollectorPass 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21HookCollectorPass.php/class/HookCollectorPass/11.x), que registra hooks OOP em classes `Hook` como serviços autowired.
