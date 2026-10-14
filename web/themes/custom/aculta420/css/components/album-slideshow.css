@@ -6,7 +6,7 @@
   width: 100%;
   grid-template-columns: minmax(0, 1fr) 15rem;
   align-items: stretch;
-  background: var(--aculta-green-dark);
+  background: var(--aculta-media-stage-bg);
   color: var(--aculta-text-inverse);
   min-height: 0;
 }
@@ -32,7 +32,7 @@
   width: 100%;
   height: min(72vh, 36rem);
   object-fit: contain;
-  background: var(--aculta-green-dark);
+  background: var(--aculta-media-stage-bg);
 }
 
 /* O VVJB posiciona as opções (play/pausa e contador) sobre o palco. Aqui elas ficam
@@ -61,9 +61,9 @@
   padding: 0.5rem;
   overflow-y: auto;
   max-height: min(72vh, 36rem);
-  background: var(--aculta-green-dark);
+  background: var(--aculta-media-stage-bg);
   scrollbar-width: thin;
-  scrollbar-color: var(--aculta-text-muted) var(--aculta-green-dark);
+  scrollbar-color: var(--aculta-text-muted) var(--aculta-media-stage-bg);
 }
 
 [data-aculta-album-thumb] {
