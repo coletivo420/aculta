@@ -60,7 +60,9 @@ final class PostPresentation {
       '#weight' => -30,
       '#attributes' => ['data-portal-ui' => 'post-meta'],
       // O link do autor depende do apelido e da visibilidade do perfil: a cache acompanha o perfil e o usuário.
-      '#cache' => ['tags' => $authorTags],
+      // O cabeçalho é montado com elementos do tema (aculta_portal_element): declara a dependência de tema, que o
+      // nó raiz precisa ter em algum filho para o Core aceitar a variação em cache sem imagem de capa.
+      '#cache' => ['tags' => $authorTags, 'contexts' => ['theme']],
       'author' => $authorElement,
       'date' => $this->item('post-meta-date', mb_strtolower($this->dateFormatter->format($ts, 'custom', 'j \d\e F \d\e Y'))),
       'time' => $this->item('post-meta-time', $this->dateFormatter->format($ts, 'custom', 'H:i')),
