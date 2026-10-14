@@ -1,3 +1,11 @@
+## 0.6.0-dev.29 — contadores vermelhos ao lado dos ícones — 2026-10-14
+
+Classificação: MINOR da linha aberta (ajuste visual da barra multidomínio).
+
+- Carrinho, mensagens e avisos exibem seus contadores em vermelho, imediatamente ao lado dos ícones.
+- Os três continuam usando uma única regra compartilhada, com tokens semânticos e badge arredondado.
+- Validação visual no navegador pendente; RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.28 — conversa em balões e avisos vermelhos — 2026-10-14
 
 Classificação: MINOR da linha aberta (aprimoramento visual experimental do Messenger).
