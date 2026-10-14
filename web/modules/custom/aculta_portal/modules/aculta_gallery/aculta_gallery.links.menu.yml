@@ -7,3 +7,12 @@ aculta_gallery.add_gallery:
   route_name: entity.media_gallery.add_form
   parent: navigation.create
   weight: 10
+
+# Item "Galerias" na seção Conteúdo da administração: lista as galerias (entidade media_gallery,
+# que não é nó e por isso não aparece na listagem de conteúdo).
+aculta_gallery.collection:
+  title: 'Galerias'
+  description: 'Listar álbuns e galerias de fotos.'
+  route_name: entity.media_gallery.collection
+  parent: navigation.content
+  weight: 10
