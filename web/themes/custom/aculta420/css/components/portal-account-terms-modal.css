@@ -29,3 +29,14 @@
   min-block-size: 2.75rem;
   padding-inline: 1.5rem;
 }
+
+/* Centro da janela (desktop e celular), mesmo com a página rolada: o diálogo do aceite fica fixo na área visível.
+   O jQuery UI grava top/left inline; por isso !important. */
+.ui-dialog:has(#aculta-account-terms) {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  max-inline-size: calc(100vw - 2rem);
+}
