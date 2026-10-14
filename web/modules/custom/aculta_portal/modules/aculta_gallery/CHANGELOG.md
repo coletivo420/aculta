@@ -2,6 +2,21 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
+## 0.1.0-dev.8 — desempenho com galerias grandes (medido) — 2026-10-14
+
+Medição no servidor de testes (página anônima do álbum, Firefox e curl). Álbuns de teste com 50, 500 e 2.000 referências a fotos existentes, apagados depois:
+
+| Referências | Primeiro acesso | Com cache | Tamanho da página | Miniaturas com `loading="lazy"` |
+| --- | --- | --- | --- | --- |
+| 50 | 1,47 s | 0,016 s | 27,7 KB | 12 |
+| 500 | 1,54 s | 0,015 s | 28,8 KB | 12 |
+| 2.000 | 1,97 s | 0,015 s | 28,8 KB | 12 |
+
+- Paginação do servidor: 12 fotos por página. A página 166 do álbum de 2.000 responde 200.
+- Miniaturas com largura e altura (sem salto de layout), estilo `media_gallery_image` (não o original), carregamento preguiçoso.
+- Limite conhecido: o formatador carrega as referências do campo antes de paginar, por isso o primeiro acesso cresce com o tamanho do álbum. Com cache, a resposta fica em torno de 15 ms.
+- Pendências: `srcset` (imagem responsiva do Core, que depende dos grupos de breakpoint do tema); paginação por Views para não carregar todas as referências (decisão a tomar com o responsável).
+
 ## 0.1.0-dev.7 — catálogo público de álbuns (em andamento) — 2026-10-14
 
 - View `aculta_albuns` em `/albuns`: lista só álbuns publicados, ordenada pela data de publicação, 12 por página (paginação do servidor), com capa, título, data e crédito. Exibida em grade de três colunas.
