@@ -6,7 +6,7 @@ Classificação: MINOR da linha aberta (novos SDCs experimentais e contratos de 
   notificações, contador não lidas e estados vazios/erro/carregamento via SDC.
 - Formulários e render arrays permanecem nativos. A severity do Site Alert é
   preservada e mapeada em tokens semânticos; sem JavaScript adicional.
-- SHA de implementação: será registrado no commit documental seguinte desta fase.
+- SHA de implementação: `61939c9`.
 - Gates: SDC schemas (21 componentes/334 checks), design foundations (1.816),
   Portal/theme boundary (907) e Twig allowlist ajustada; Foundation gate requer
   bootstrap Drupal e não foi executado nesta cópia sem settings.
