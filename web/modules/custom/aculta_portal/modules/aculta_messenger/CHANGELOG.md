@@ -8,5 +8,5 @@ Mudanças relevantes do ACULTA Messenger.
   dependências candidatas e plano incremental.
 - Registra que as cinco dependências ainda não estão no lock nem instaladas.
 - Nenhuma mudança funcional ou instalação Composer.
-- STATIC: pendente de validação dos links e `git diff --check`.
+- STATIC: PASS — `git diff --check` e links Markdown internos (nove arquivos).
 - RUNTIME STATUS: DEFERRED (sem código funcional).
