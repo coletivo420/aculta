@@ -383,6 +383,6 @@
         }
     },
     "require-dev": {
-        "drupal/core-dev": "11.4.8"
+        "drupal/core-dev": "11.4.10"
     }
 }
