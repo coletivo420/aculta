@@ -830,3 +830,11 @@ Classificação: PATCH da linha 0.6.0 (organização de estilo sobre o component
 - Conversas oferecem menu contextual de limpeza pessoal por clique direito e botão acessível; a ação global de excluir thread fica oculta na caixa.
 - RUNTIME STATUS: DEFERRED; aplicação e validação visual no checkout local pendentes.
 
+## 0.6.0-dev.34 — data nos contatos do Messenger — 2026-10-14
+
+Classificação: PATCH (apresentação de metadado na caixa existente).
+
+- A data e hora da última mensagem aparece em fonte pequena acima do nome do remetente.
+- O alinhamento mantém o avatar e o botão com a dimensão mínima já definida.
+- Validação visual pendente; RUNTIME STATUS: DEFERRED.
+

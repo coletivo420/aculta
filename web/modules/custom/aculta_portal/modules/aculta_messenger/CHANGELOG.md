@@ -2,6 +2,13 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.10 — data da última mensagem no contato — 2026-10-14
+
+- Cada botão de remetente mostra a data e hora da última atividade da conversa acima do nome, em tipografia pequena.
+- A data usa o timestamp atualizado do Private Message; nenhuma dimensão do botão foi ampliada intencionalmente.
+- Validação visual e gate Drupal: pendentes nesta etapa.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.1-dev.9 — contatos compactos no Messenger — 2026-10-14
 
 - A gaveta mostra uma caixa clicável por usuário com avatar circular e nome somente; abre a conversa mais recente.

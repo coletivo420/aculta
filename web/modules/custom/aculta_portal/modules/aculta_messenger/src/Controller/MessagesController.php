@@ -7,6 +7,7 @@ namespace Drupal\aculta_messenger\Controller;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
@@ -47,6 +48,7 @@ final class MessagesController extends ControllerBase {
     private readonly TranslationInterface $translation,
     private readonly FormBuilderInterface $formBuilder,
     private readonly RendererInterface $renderer,
+    private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -62,6 +64,7 @@ final class MessagesController extends ControllerBase {
       $container->get('string_translation'),
       $container->get('form_builder'),
       $container->get('renderer'),
+      $container->get('date.formatter'),
     );
   }
 
@@ -149,6 +152,7 @@ final class MessagesController extends ControllerBase {
         'entity.private_message_thread.canonical',
         ['private_message_thread' => $thread->id()],
       );
+      $sentDate = $this->dateFormatter->format((int) $thread->getUpdatedTime(), 'custom', 'd/m/Y H:i');
       $openLink = $conversationUrl === NULL ? NULL : [
         '#type' => 'link',
         '#title' => $senderName,
@@ -162,7 +166,11 @@ final class MessagesController extends ControllerBase {
           ], JSON_THROW_ON_ERROR),
           'data-aculta-thread-id' => (string) $thread->id(),
           'data-aculta-thread-unread' => $isUnread ? 'true' : 'false',
-          'aria-label' => (string) $this->translation->translate('Abrir conversa com @name', ['@name' => $senderName]),
+          'data-aculta-sent-date' => $sentDate,
+          'aria-label' => (string) $this->translation->translate('Abrir conversa com @name. Última mensagem em @date.', [
+            '@name' => $senderName,
+            '@date' => $sentDate,
+          ]),
         ],
       ];
       $senderId = $sender?->id() ?? 'thread-' . $thread->id();
