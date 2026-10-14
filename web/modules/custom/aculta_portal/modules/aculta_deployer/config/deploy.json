@@ -460,5 +460,39 @@
         }
       ]
     }
+  },
+  "session_cookie": {
+    "note": "Cookie de sessão compartilhado entre os hosts de um mesmo ambiente (purposes de Domain). Cada ambiente define session.storage.options.cookie_domain no arquivo de serviços que o settings.php carrega. Não é configuração exportável e não vai ao Git como valor de produção. Ver docs/COOKIES-AMBIENTE.md.",
+    "environments": {
+      "production": {
+        "cookie_domain": ".aculta.org",
+        "source": "web/sites/default/services.hostinger.yml",
+        "source_note": "provisionado no servidor de produção; não versionado. O modelo é web/sites/default/services.hostinger.yml.example, que o comando confere.",
+        "loaded_by": "settings.hostinger.php.example"
+      },
+      "test": {
+        "cookie_domain": ".aculta.toca.net.br",
+        "source": "web/sites/default/services.homelab.yml",
+        "source_note": "versionado; carregado pelo settings.local.php do Homelab",
+        "loaded_by": "settings.local.php"
+      }
+    },
+    "transition": {
+      "from": "test",
+      "to": "production",
+      "change": "cookie_domain muda de .aculta.toca.net.br para .aculta.org no deploy do RC",
+      "impact": "o cookie de sessão é emitido por host de produção; sessões do Runtime de teste não são aceitas em aculta.org. Usuários entram de novo.",
+      "verify": "aculta-deployer cookies (somente leitura)",
+      "decision_pending": [
+        "Confirmar com o responsável que a sessão não migra entre ambientes (padrão adotado)."
+      ]
+    },
+    "known_debt": [
+      {
+        "file": "web/sites/default/services.local.yml",
+        "issue": "versionado com cookie_domain '.aculta.test', valor que não corresponde a nenhum ambiente declarado e não é carregado pelo settings.local.php do Homelab",
+        "action": "alinhar ou remover em PR próprio"
+      }
+    ]
   }
 }

@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.20';
+  public const VERSION = '0.1.21';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -31,6 +31,7 @@ final class Cli {
       'build' => $this->build($options),
       'transition' => $this->transition($options),
       'domains' => $this->domains(),
+      'cookies' => $this->cookies(),
       'verify' => $this->verify($options),
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
@@ -88,6 +89,10 @@ final class Cli {
       return 2;
     }
     $this->say($code === 0 ? 'check: PASS' : 'check: FAIL');
+    // Barreira: cookie de sessão por ambiente tem de bater com config/deploy.json (session_cookie).
+    if ($this->cookies() !== 0) {
+      $code = 1;
+    }
     return $code;
   }
 
@@ -789,6 +794,52 @@ final class Cli {
 
   /** @return array<string, mixed> */
   /** Confere, somente leitura, a tabela domain_transition contra os registros de domínio em config/sync. */
+  /**
+   * Confere (somente leitura) o cookie de sessão de cada ambiente contra os arquivos de serviços.
+   */
+  private function cookies(): int {
+    $config = $this->json($this->toolRoot . '/config/deploy.json');
+    $environments = $config['session_cookie']['environments'] ?? null;
+    if (!is_array($environments) || $environments === []) {
+      $this->err('cookies: session_cookie.environments ausente ou vazio em config/deploy.json');
+      return 1;
+    }
+    $declared = [];
+    $code = 0;
+    foreach ($environments as $name => $spec) {
+      $expected = $spec['cookie_domain'] ?? '';
+      $declared[] = $expected;
+      $source = $this->repoRoot . '/' . ($spec['source'] ?? '');
+      $check = $source;
+      $label = 'arquivo';
+      if (!is_file($source)) {
+        // Produção: o arquivo real é provisionado no servidor; confere-se o modelo versionado.
+        $check = $this->repoRoot . '/' . ($spec['source'] ?? '') . '.example';
+        $label = 'modelo';
+        if (!is_file($check)) {
+          $this->err("cookies: $name sem arquivo nem modelo ({$spec['source']})");
+          $code = 1;
+          continue;
+        }
+      }
+      $found = preg_match("/^\s*cookie_domain:\s*['\"]?([^'\"\s]+)['\"]?\s*$/m", (string) file_get_contents($check), $m) === 1 ? $m[1] : null;
+      if ($found === $expected) {
+        $this->say("ok $name: $label {$spec['source']} define cookie_domain $expected");
+      }
+      else {
+        $this->err("cookies: $name diverge: $label define " . ($found ?? '(ausente)') . ", política declarada $expected");
+        $code = 1;
+      }
+    }
+    // Arquivos de serviços versionados com cookie_domain fora da política.
+    foreach (glob($this->repoRoot . '/web/sites/default/services*.yml') ?: [] as $file) {
+      if (preg_match("/^\s*cookie_domain:\s*['\"]?([^'\"\s]+)/m", (string) file_get_contents($file), $m) === 1 && !in_array($m[1], $declared, true)) {
+        $this->say('dívida ' . basename($file) . ": cookie_domain {$m[1]} não corresponde a nenhum ambiente declarado (ver docs/COOKIES-AMBIENTE.md)");
+      }
+    }
+    return $code;
+  }
+
   private function domains(): int {
     $config = $this->json($this->toolRoot . '/config/deploy.json');
     $table = $config['domain_transition']['entries'] ?? null;
@@ -858,6 +909,7 @@ Uso:
   aculta-deployer build --out=DIR [--allow-open-blocking]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
   aculta-deployer environment [show] | environment set --to=production|test  define o ambiente do site (e o endereço) lido pelo Portal
+  aculta-deployer cookies               leitura: confere o cookie de sessão por ambiente (session_cookie) contra services.*.yml
   aculta-deployer domains              GET/leitura: confere a tabela domain_transition (teste → produção) contra config/sync
   aculta-deployer report [--out=PATH]  relatório neutro para o painel do Portal (sem valores)
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
