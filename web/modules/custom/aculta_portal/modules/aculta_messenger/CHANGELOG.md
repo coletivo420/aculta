@@ -2,6 +2,27 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.0-dev.5 — assinaturas de tópicos do fórum
+
+- Reutiliza a flag existente `seguir_topico` em Nodes `forum`; não cria outra
+  flag e não ativa `message_subscribe_ui`.
+- Enfileira a primeira publicação; o worker revalida publicação atual e gera
+  link pelo purpose `forum` via `DomainPurposeManager`. Sem alias português, não
+  envia link com slug técnico.
+- Seleção de destinatários usa a API pública de Flag; Message Subscribe aplica
+  status de conta e acesso atual do Node.
+- Evento Message registra Node, revisão, estado e tentativas. Lock e chave de
+  deduplicação protegem reprocessamento; erros deixam evento pendente para retry.
+- A entrega passa pelo notifier configurado e ferramenta de e-mail já instalada
+  via Drupal Mail; nenhum transporte SMTP novo é criado.
+- Group permanece fora: `gnode` não está habilitado no projeto.
+- RUNTIME STATUS: DEFERRED — teste de assinatura, access e transporte controlado
+  aguardam Homelab; sem mudança de banco ou Config Sync.
+- Verificações locais: PHP lint, YAML parse, gate Drupal 11+ (696 checks),
+  endereços de ambiente (1.518 arquivos) e `git diff --check`: PASS.
+- `validate-public-slugs.php`: FAIL pelas mesmas duas rotas de
+  `message_subscribe_ui`; gate e allowlist permanecem intactos.
+
 ## 0.1.0-dev.4 — avisos privados por Message Notify
 
 - Enfileira eventos do hook nativo de nova mensagem e resolve a thread após o

@@ -37,6 +37,12 @@ do Messenger adiciona um tipo Message, campos de referência/estado e modos de
 visualização para deduplicação e email sem corpo privado. Enquanto houver
 eventos persistidos ou itens na fila, o lifecycle guard impede a desinstalação.
 
+A fase dev.5 adiciona o tipo Message e fields de rastreamento para eventos de
+publicação. A assinatura usa a flag já existente `seguir_topico`; nenhuma
+configuração global do Message Subscribe ou do transporte de e-mail é alterada.
+Notifiers ativos continuam sob a configuração existente. Administração fica no
+purpose `main`.
+
 ## Checklist para implantação futura
 
 1. Comparar configuração exportada dos cinco módulos e aprovar os componentes

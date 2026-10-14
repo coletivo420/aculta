@@ -62,3 +62,10 @@ configuração exportada de papéis; nenhuma concessão é feita pelo submódulo
 política dos papéis precisa ser aplicada por configuração administrativa
 revisada antes da ativação da experiência para membros. Runtime, fallback sem
 JavaScript, isolamento real e link de perfil ainda não foram verificados.
+
+Para assinaturas, dev.5 reutiliza a flag Drupal `seguir_topico` dos tópicos
+`forum`. A publicação gera evento Message e chama Message Subscribe, que aplica
+status e acesso atual do conteúdo. A URL segue o purpose `forum` e a política de
+slug em português. Assinaturas de Group não foram conectadas, pois `gnode` não
+está ativo. O e-mail utiliza a infraestrutura já instalada pelo Drupal; a
+entrega real aguarda teste controlado no Homelab.

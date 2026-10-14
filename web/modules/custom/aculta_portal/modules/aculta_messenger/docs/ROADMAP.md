@@ -13,8 +13,9 @@ Git, à PR e ao changelog; esta lista registra sequência e critérios de entreg
    autorização, fallback sem JS e proteção contra interação indesejada.
 4. **dev.4 — Message/Message Notify:** eventos autorizados, e-mail mínimo,
    deduplicação e tratamento de entrega.
-5. **dev.5 — Message Subscribe:** assinaturas em casos verificados e rechecagem
-   de acesso na geração/entrega.
+5. **dev.5 — Message Subscribe:** concluída estaticamente para Nodes `forum`
+   publicados com assinantes na flag existente `seguir_topico`; dispatch real
+   aguarda Homelab. Group fica fora enquanto `gnode` não estiver habilitado.
 6. **dev.6 — Site Alert e comunicados:** alerta temporário nativo; Node/Views
    separado para comunicado editorial persistente, se segmentação for
    demonstrável.

@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_attempts
+    - message.template.aculta_messenger_forum_topic_published
+  enforced:
+    module:
+      - aculta_messenger
+field_name: field_aculta_messenger_attempts
+entity_type: message
+bundle: aculta_messenger_forum_topic_published
+label: 'Tentativas de processamento'
+description: 'Número de tentativas do evento de assinatura.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings: {}
+field_type: integer

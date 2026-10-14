@@ -110,6 +110,28 @@ necessário para verificar o transporte existente.
 Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
 cache/access de runtime ou compatibilidade em PHP 8.5.
 
+### Assinaturas de tópicos do fórum (dev.5)
+
+O caso implementado é a primeira publicação de Node `forum`, inclusive a
+transição de não publicado para publicado. O Messenger reutiliza a flag
+existente `seguir_topico` via `FlagServiceInterface`; não altera prefixo global
+do Message Subscribe e não instala `message_subscribe_ui`. O hook OOP de seleção
+retorna `DeliveryCandidate` para flaggings desse tópico. Message Subscribe volta
+a filtrar contas ativas e `Node::access('view')` no dispatch. A assinatura não
+concede acesso.
+
+O evento usa a Queue API do Core. O worker confirma publicação atual, exige
+alias público, resolve URL no purpose `forum` por `DomainPurposeManager` e chama
+`message_subscribe.subscribers` com access habilitado e dispatch síncrono. O
+notifier configurado usa o mailer instalado via Drupal Mail (Symfony
+Mailer/Mailer Plus); o Messenger não configura SMTP/transporte. O Message de
+evento registra Node/revisão, estado e tentativas; lock e chave Node/revisão
+deduplicam chamadas repetidas. `sendMessage()` não retorna resultado individual
+da entrega, então falhas parciais e retry precisam de homologação controlada.
+
+Group 3.3.5 está instalado, mas `gnode` não está habilitado. Não há integração
+ativa de atividades Group a reutilizar nesta fase.
+
 ## Fontes públicas consultadas
 
 - [Private Message 3.0.7](https://www.drupal.org/project/private_message/releases/3.0.7) e [guia de instalação](https://www.drupal.org/docs/contributed-modules/private-message/installing-the-module).

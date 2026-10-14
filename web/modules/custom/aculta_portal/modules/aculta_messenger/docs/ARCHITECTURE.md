@@ -65,6 +65,13 @@ de salvar a thread. Mensagem, status e número de tentativas usam a entidade
 Message. Não há fila ou tabela própria. Uma notificação não revela a existência
 de usuário, conversa ou conteúdo a público não autorizado.
 
+Para Message Subscribe, o escopo inicial é publicação de Node `forum` seguido
+pela flag existente `seguir_topico`. O evento registra Node/revisão para
+deduplicação, e Message Subscribe revalida status e acesso atual do Node no
+dispatch. URLs usam o purpose `forum`; conteúdo sem alias português não é
+incluído no aviso. A entrega usa o notifier configurado e o e-mail já instalado.
+Como `gnode` não está habilitado, atividades Group não participam do escopo.
+
 ## Inventário técnico upstream
 
 O inventário verificado no código instalado (Core 11.4.8) está em

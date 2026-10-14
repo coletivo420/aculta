@@ -48,6 +48,14 @@ Falhas de entrega têm no máximo três tentativas. Queue API tem semântica de 
 menos uma execução: uma falha entre o aceite do transporte e a gravação final
 do estado pode repetir o aviso, limitação a verificar no transporte real.
 
+Para assinaturas, só se processam tópicos `forum` ainda publicados. Message
+Subscribe verifica status da conta e acesso de visualização do Node no dispatch.
+Flagging significa preferência de aviso, nunca acesso. O evento Message tem
+chave Node/revisão e estado persistido; `sendMessage()` não retorna resultado
+por destinatário, portanto falhas parciais podem exigir reconciliação e serão
+cobertas no hardening. A URL é gerada no purpose `forum`; sem alias português
+seguro, o envio é suprimido.
+
 ## Invariantes
 
 - Cada leitura e escrita usa APIs públicas Drupal e permissões/access nativos;

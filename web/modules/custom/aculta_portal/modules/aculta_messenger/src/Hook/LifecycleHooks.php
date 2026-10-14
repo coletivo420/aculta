@@ -43,10 +43,13 @@ final class LifecycleHooks {
     if ($this->queueFactory->get('aculta_messenger_private_message_notification')->numberOfItems() > 0) {
       throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while private message notifications remain queued. Process or clear the queue explicitly first.');
     }
+    if ($this->queueFactory->get('aculta_messenger_message_subscribe_event')->numberOfItems() > 0) {
+      throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while subscription events remain queued. Process or clear the queue explicitly first.');
+    }
 
     $count = $this->entityTypeManager->getStorage('message')->getQuery()
       ->accessCheck(FALSE)
-      ->condition('template', 'aculta_messenger_private_message_notification')
+      ->condition('template', ['aculta_messenger_private_message_notification', 'aculta_messenger_forum_topic_published'], 'IN')
       ->count()
       ->execute();
     if ($count > 0) {
