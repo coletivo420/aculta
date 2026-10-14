@@ -48,26 +48,26 @@ O módulo entrega marcação com atributos `data-*` (comportamento). O tema esco
 Regra: o módulo não põe classe de design (`bi-`, `btn`, `col-`, etc.) nem CSS/JS. O tema não consulta
 entidade, view, purpose nem nome de view do módulo.
 
-## 4. Pontos de atenção (decisões e dívidas)
+## 4. Pontos de atenção (estado)
 
-- **Biblioteca global.** O palco usa `aculta420/album-slideshow` declarada em `aculta420.info.yml`,
-  para não depender do nome da view do módulo. Custo: o CSS e o JS (poucos KB) são carregados em
-  todas as páginas do tema. Ação: se o peso incomodar, trocar por uma verificação de atributo no
-  preprocess do tema (`#[Hook('preprocess_page')]`), sem nome de view.
-- **Acoplamento com o VVJB.** O CSS do tema usa a marcação do `views_vvjb` (contrib): `.vvjb`,
-  `.vvjb-carousel-options`, `.vvjb-carousel-wrapper`, `.vvjb-carousel-outer`, `.vvjb-item`, e o
-  elemento `vvjb-carousel` com `goToSlide()` / `getCurrentSlide()`. Uma atualização do VVJB pode
-  mudar essas classes; conferir o palco a cada atualização.
-- **Layout fixo.** A altura do palco no desktop é `min(80vh, 40rem)` e no celular 400 px. Foto
-  landscape no celular deixa espaço vazio; decisão pendente.
-- **Miniaturas de 66 fotos.** O módulo gera as 66 miniaturas no HTML, com `loading="lazy"`.
-  Medição em `docs/ARQUITETURA.md` (fase 7).
-- **Gate.** `scripts/validate-module-theme-boundary.php` verifica classes e tokens do módulo, mas
-  não verifica o contrato `data-*`. Qualquer novo atributo entra nesta tabela antes do código.
+- **Biblioteca global (aberto, aceito).** O palco usa `aculta420/album-slideshow`, declarada em
+  `aculta420.info.yml`, para não depender do nome da view do módulo. O CSS e o JS (poucos KB) carregam
+  em todas as páginas do tema; o JS só age onde há `data-aculta-album-stage`. Se o peso incomodar,
+  trocar por verificação no preprocess do tema (`#[Hook('preprocess_page')]`), sem nome de view.
+- **Acoplamento com o VVJB (mitigado por gate).** O CSS do palco usa a marcação do `views_vvjb`
+  (contrib). `scripts/validate-album-stage-contract.php` confere que cada seletor `.vvjb-*` existe no
+  VVJB instalado e que a API `goToSlide()`, `getCurrentSlide()`, `pause()` e `resume()` continua no
+  elemento `vvjb-carousel`. Uma atualização do VVJB que quebre isso faz o gate falhar.
+- **Altura no celular (resolvido).** A altura do palco segue a foto, com teto de 400 px. A faixa do VVJB
+  é uma linha só: a altura é a da foto mais alta do álbum, e cada slide centraliza a sua foto. Álbum
+  só com paisagens fica mais baixo; álbum com retratos mantém 400 px.
+- **Miniaturas de 66 fotos.** O módulo gera as miniaturas no HTML, com `loading="lazy"`. Medição em
+  `docs/ARQUITETURA.md` (fase 7).
+- **Contrato `data-*` (verificado).** Coberto pelo gate da seção 3. Novo atributo entra nesta tabela
+  antes do código.
 
 ## 5. Versionamento
 
 - Módulo: `0.1.0-dev.12` (ver `CHANGELOG.md` do submódulo).
-- Tema: a mudança de palco (`album-slideshow`, `tokens.css`, `aculta420.info.yml`) ainda não foi
-  classificada nem marcada na versão do tema (`web/themes/custom/aculta420/docs/versioning.md`).
-  Pendência para o responsável.
+- Tema: `0.6.0-dev.23`, MINOR da linha aberta, marcado em `aculta420.info.yml`, `CHANGELOG.md`,
+  `docs/roadmap.md` e no gate de Foundation (regra em `web/themes/custom/aculta420/docs/versioning.md`).

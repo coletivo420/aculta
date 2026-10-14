@@ -1,3 +1,17 @@
+## 0.6.0-dev.23 — palco do álbum: cor, celular e contrato com o módulo — 2026-10-14
+
+Classificação: MINOR da linha aberta (componente de apresentação novo, `experimental`; token novo; sem quebra de contrato).
+
+- Palco do álbum (`album-slideshow.css`, `album-slideshow.js`): moldura por token `--aculta-media-stage-bg` (areia `#e8dfcc` no claro, `#0d0b0a` no escuro), painel de miniaturas em duas colunas, miniatura ativa com foco do tema, botão do celular com superfície interativa e borda forte (acompanha o modo escuro).
+- Celular: a altura segue a foto (teto de 400 px); cada slide centraliza a foto na linha.
+- Desktop: a faixa de fotos ocupa a coluna do palco; foto a 10 px do painel de miniaturas.
+- Biblioteca `aculta420/album-slideshow` declarada em `aculta420.info.yml` (global). O template `views-view-vvjb.html.twig` não cita mais a view do módulo.
+- Gate novo: `scripts/validate-album-stage-contract.php` (módulo emite os `data-*`, tema usa os mesmos, sem nome de view no tema, seletores `.vvjb-*` e API `goToSlide`/`getCurrentSlide` existem no VVJB instalado). Teste negativo: falha quando um seletor não existe ou o nome da view aparece no CSS.
+- Gate de Foundation: versão atualizada para 0.6.0-dev.23.
+- Commits: `4d168e4` (moldura), `5e6d553` e `c7b448c` (cor e botão), `e760a1e` (celular, gate, versão). SHA desta entrada: `e760a1e`.
+- Validação: design foundations PASS; module-theme boundary PASS; contrato do palco PASS. `validate-aculta420-foundation.php` falha por ausência do bootstrap do Drupal também no worktree limpo (anterior a esta entrega).
+- RUNTIME STATUS: verificado no Runtime (desktop e celular, claro e escuro, clique na miniatura). Inspeção visual humana pendente.
+
 ## 0.6.0-dev.22 — durações de movimento em tokens (DT-T19) — 2026-10-14
 
 Classificação: PATCH (sem mudança visual; mesmos valores).
