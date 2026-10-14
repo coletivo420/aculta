@@ -313,7 +313,16 @@ Ambiente: servidor de testes (`*.aculta.toca.net.br`), Firefox por BiDi com ferr
 | Erros de JavaScript na página do álbum | PASS (nenhum) | listener antes do carregamento |
 | Upload de fotos novas no formulário da galeria (Media Library) | PASS, com ressalva: "Texto alternativo" é obrigatório e bloqueia a inserção; o campo de título é `title[0][value]` | BiDi + banco |
 | Inserção das mídias na galeria e salvamento | PASS (galeria com 2 imagens, alias gerado) | banco |
-| Upload e inserção pelo diálogo do CKEditor, no artigo | NÃO EXECUTADO nesta rodada | — |
-| Renderização de galeria incorporada em artigo | NÃO EXECUTADO nesta rodada (verificada na Fase 5) | — |
+| Diálogo "Criar galeria" aberto pela URL `/aculta-gallery/editor/revista_editorial` (administrador, Revista e principal) | PASS | BiDi |
+| Diálogo: upload de 2 fotos e "Criar e inserir" | PASS (galeria com 2 imagens e alias gerado) | banco |
+| Diálogo aberto pelo comando do editor (API `execute`) + upload + "Criar e inserir" | PASS: `<drupal-entity>` inserido no corpo do artigo | BiDi + editor |
+| Botão "Criar galeria" da barra, por clique do mouse ou teclado | FAIL: o diálogo não abre; sem erro de JavaScript; o comando funciona pela API. Causa não confirmada: o clique não alcança o botão (defeito de acerto de clique ou de posição). | BiDi |
+| Salvar artigo sem o campo "Imagem editorial" | PASS (servidor: "O campo Imagem editorial é obrigatório.") | BiDi |
+| Salvar artigo com todos os campos obrigatórios | NÃO CONCLUÍDO: "Adicionar mídia" do campo de imagem não abre o diálogo porque o clique cai no campo "Data efetiva de publicação" (acerto de clique). Causa não confirmada. | BiDi |
+| Renderização de galeria incorporada em artigo | NÃO EXECUTADO (depende de salvar o artigo) | — |
 
-Decisão pendente: a Fase 10 leva a `0.1.0-rc.1` somente depois do diálogo do CKEditor ser verificado. Por isso a versão do módulo continua `0.1.0-dev.12`.
+Observações da rodada:
+- Os campos obrigatórios do artigo (resumo, categoria editorial, imagem editorial) são validados pelo navegador e pelo servidor. Um envio sem esses campos não cria o artigo. Isso é comportamento esperado, não defeito.
+- Os dois defeitos de clique (botão do editor e "Adicionar mídia") parecem ter a mesma origem: o alvo do clique não corresponde ao elemento visível. Não confirmado; exige investigação de layout e de sobreposição na página de criação de artigo.
+
+Decisão pendente: a Fase 10 leva a `0.1.0-rc.1` somente depois de (a) o botão "Criar galeria" abrir o diálogo por clique e (b) o artigo com galeria ser salvo e renderizado na Revista. Por isso a versão do módulo continua `0.1.0-dev.12`.
