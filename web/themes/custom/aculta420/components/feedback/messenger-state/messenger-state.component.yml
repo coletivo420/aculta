@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Messenger state
+status: experimental
+group: Feedback
+description: 'Accessible empty, error and loading presentation for Messenger pages.'
+props:
+  type: object
+  properties:
+    state:
+      type: string
+      enum: [empty, error, loading]
+      default: empty
+slots:
+  content:
+    title: State content
+    description: 'Plain text or renderable feedback supplied by Drupal.'

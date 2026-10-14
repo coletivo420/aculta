@@ -45,6 +45,7 @@ Sanfona nativa (`details`/`summary`, sem JavaScript de abertura):
 
 - `src/AccountShellBuilder.php`: monta os dois menus e a sanfona.
 - O Portal chama `aculta_portal_account_sections_alter` e `aculta_portal_account_parent_sections_alter` para módulos opcionais acrescentarem seções e subrotas sem dependência funcional do Portal.
+- Uma seção pode fornecer `badge_count` numérico; o Portal encaminha o valor sem markup ou classe visual, e o ACULTA420 escolhe sua apresentação.
 - `templates/aculta-portal-shell.html.twig`: `menu` (desktop) e `menu_accordion` (celular).
 - `css/account-portal.css`: regras de desktop e de celular.
 - `js/account-navigation.js`: carga AJAX da sanfona e a regra de uma seção aberta por vez.

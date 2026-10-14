@@ -1,0 +1,6 @@
+name: Notificação
+description: Aviso interno apresentado a partir de Message.
+component: aculta420:messenger-notification
+slots:
+  content:
+    markup: <p>Você recebeu uma nova mensagem privada. Acesse sua conta para ler.</p>

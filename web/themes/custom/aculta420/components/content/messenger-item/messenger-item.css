@@ -1,0 +1,2 @@
+.aculta-messenger-item { min-width: 0; padding: 1rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); }
+.aculta-messenger-item > :last-child { margin-bottom: 0; }

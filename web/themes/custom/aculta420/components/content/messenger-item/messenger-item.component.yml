@@ -1,0 +1,12 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Message item
+status: experimental
+group: Content
+description: 'Visual wrapper around a Private Message render array. The entity and its access decisions remain upstream.'
+props:
+  type: object
+  properties: {}
+slots:
+  content:
+    title: Message
+    description: 'Private Message entity output with native access and cache metadata.'

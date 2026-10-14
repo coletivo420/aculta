@@ -1,0 +1,6 @@
+name: Item de conversa
+description: Mensagem privada renderizada pelo módulo nativo.
+component: aculta420:messenger-item
+slots:
+  content:
+    markup: <p>Mensagem renderizada pelo Private Message.</p>

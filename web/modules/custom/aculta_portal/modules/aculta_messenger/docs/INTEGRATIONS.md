@@ -176,6 +176,11 @@ A preferência de e-mail é persistida pelo Private Message via Core `user.data`
 (`private_message` / `receive_notification`). O formulário Messenger atualiza
 esse valor sem cópia; o worker aplica o opt-out antes de chamar Message Notify.
 
+O ACULTA420 fornece SDCs para listas, itens, composição, notificações, alertas,
+contadores e estados. O Portal não referencia IDs dos componentes: o tema
+seleciona os SDCs por hooks de apresentação e recebe slots renderizáveis. O
+formulário e as entidades contrib permanecem intactos.
+
 - [Private Message 3.0.7](https://www.drupal.org/project/private_message/releases/3.0.7) e [guia de instalação](https://www.drupal.org/docs/contributed-modules/private-message/installing-the-module).
 - [Message](https://www.drupal.org/project/message), [Message Notify](https://www.drupal.org/project/message_notify) e [Message Notify 8.x-1.5](https://www.drupal.org/project/message_notify/releases/8.x-1.5).
 - [Message Subscribe](https://www.drupal.org/project/message_subscribe) e [releases](https://www.drupal.org/project/message_subscribe/releases).
@@ -183,5 +188,7 @@ esse valor sem cópia; o worker aplica o opt-out antes de chamar Message Notify.
 - [Issue queue de Private Message](https://www.drupal.org/project/issues/private_message?categories=All&status=All), para alertas de compatibilidade atuais.
 - [Drupal Core QueueInterface 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Queue%21QueueInterface.php/interface/QueueInterface/11.x), que define semântica de processamento pelo menos uma vez.
 - [Drupal Core UserDataInterface 11.x](https://api.drupal.org/api/drupal/core%21modules%21user%21src%21UserDataInterface.php/interface/UserDataInterface/main), serviço usado para a preferência individual nativa.
+- [Drupal SDC — documentação de props e slots](https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/what-are-props-and-slots-in-drupal-sdc-theming), para a separação entre dados tipados e renderables.
+- [Uso de SDC via render array](https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/using-your-new-single-directory-component), conferido para `#type: component`, `#props` e `#slots` no Core atual.
 - [Drupal Core HookCollectorPass 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21HookCollectorPass.php/class/HookCollectorPass/11.x), que registra hooks OOP em classes `Hook` como serviços autowired.
 - [ModuleHandlerInterface::alter](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Extension%21ModuleHandlerInterface.php/function/ModuleHandlerInterface%3A%3Aalter/9), [RouteSubscriberBase 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Routing%21RouteSubscriberBase.php/class/RouteSubscriberBase/main), [Url::fromRoute 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Url.php/function/Url%3A%3AfromRoute/11.x) e [TrustedRedirectResponse 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Routing%21TrustedRedirectResponse.php/class/TrustedRedirectResponse/main), consultados para extensão do shell, purpose de rotas e URL ACCOUNT confiável.

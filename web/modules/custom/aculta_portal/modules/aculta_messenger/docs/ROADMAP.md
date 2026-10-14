@@ -29,8 +29,10 @@ Git, à PR e ao changelog; esta lista registra sequência e critérios de entreg
    área de configurações. Bloqueio e assinatura continuam nos controles por
    membro/tópico; opções para comunicados e restrição global aguardam mecanismos
    e política. Homelab permanece pendente.
-9. **dev.9 — Domain/ACULTA420:** presenter neutro e componentes SDC sob
-   responsabilidade do tema, com responsividade e acessibilidade.
+9. **dev.9 — Domain/ACULTA420:** integração estática com SDCs experimentais de
+   lista, item, composição, aviso, notificação, badge e estados. Form API e
+   render arrays são preservados; RUNTIME STATUS: DEFERRED para validação
+   visual desktop/mobile, teclado e modos claro/escuro no Homelab.
 10. **dev.10 — hardening:** autorização, cache, abuso, entrega, retenção,
     logs, desinstalação e testes automatizados.
 11. **rc.1 — homologação:** gates, testes no Homelab, Config Sync, isolamento

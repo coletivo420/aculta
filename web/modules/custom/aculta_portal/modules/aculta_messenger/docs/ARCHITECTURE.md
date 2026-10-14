@@ -179,3 +179,18 @@ mantém uma chave de deduplicação por mensagem e destinatário. O link usa a r
 da conta enquanto as rotas portuguesas da caixa postal não existem. Drupal
 Queue processa com semântica de pelo menos uma vez, então a entidade persistida
 impede recriar o evento e limita tentativas de entrega.
+
+### ADR-MSG-007 — Apresentação ACULTA420 sem acoplamento funcional
+
+**Decisão:** o Messenger e o Portal entregam render arrays com access/cache e
+valores neutros. O tema mapeia rotas/entidades já resolvidas para os SDCs
+`messenger-list`, `messenger-item`, `messenger-compose`,
+`messenger-notification`, `institutional-notice`, `unread-badge` e
+`messenger-state`.
+
+**Motivo:** SDC é a camada visual; não deve consultar storage, Domain ou
+permissões, nem substituir Form API. Slots recebem render arrays, preservando
+cacheability e os formulários Private Message. A severidade de Site Alert é
+passada pela saída nativa e estilizada com tokens semânticos. O Portal envia a
+contagem de não lidas como número no contrato neutro do shell; o tema decide sua
+forma visual.

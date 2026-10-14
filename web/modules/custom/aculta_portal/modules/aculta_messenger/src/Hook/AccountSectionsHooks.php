@@ -29,13 +29,11 @@ final class AccountSectionsHooks {
     }
 
     $unread = $this->privateMessageService->getUnreadThreadCount();
-    $label = $unread > 0
-      ? $this->translation->translate('Mensagens (@count não lidas)', ['@count' => $unread])
-      : $this->translation->translate('Mensagens');
     $messageSection = [
-      'title' => $label,
+      'title' => $this->translation->translate('Mensagens'),
       'route' => 'aculta_messenger.messages',
       'icon' => 'chat-dots',
+      'badge_count' => $unread,
     ];
     $orderedSections = [];
     foreach ($sections as $key => $section) {

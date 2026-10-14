@@ -85,12 +85,14 @@ final class AccountShellBuilder {
         'href' => $href,
         'label' => (string) $section['title'],
         'icon' => $section['icon'],
+        'badge_count' => isset($section['badge_count']) ? max(0, (int) $section['badge_count']) : 0,
         'active' => $route === $section_route,
       ];
       $accordionItems[] = [
         'href' => $href,
         'label' => (string) $section['title'],
         'icon' => $section['icon'],
+        'badge_count' => isset($section['badge_count']) ? max(0, (int) $section['badge_count']) : 0,
         'open' => $route === $section_route,
       ];
     }

@@ -2,6 +2,21 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.0-dev.9 — integração visual ACULTA420
+
+- O ACULTA420 apresenta listas, mensagens, notificações, composição nativa,
+  Site Alert, estado vazio e contador de não lidas por componentes SDC.
+- Formularios e entidades continuam sendo render arrays nativos do Drupal; o
+  tema só os envolve e apresenta, sem autorização, storage ou lógica funcional.
+- Componentes experimentais, claros/escuros por tokens compartilhados e sem
+  JavaScript próprio. RUNTIME STATUS: DEFERRED; validação visual no Homelab
+  ainda pendente.
+- Drupal 11+ gate (696), SDC schema (21 componentes/334 checks), ACULTA420
+  design foundations (1.816), module/theme boundary (907), unique paths,
+  Portal UI docs, environment addresses (1.561) e PHP lint: PASS.
+- Foundation gate que depende de bootstrap Drupal, Homelab, responsividade e
+  acessibilidade visual: DEFERRED nesta cópia sem settings.
+
 ## 0.1.0-dev.8 — preferências de comunicação
 
 - Adiciona `/configuracoes/mensagens` no purpose ACCOUNT e a aba Mensagens para

@@ -1,3 +1,17 @@
+## 0.6.0-dev.23 — componentes ACULTA Messenger — 2026-10-14
+
+Classificação: MINOR da linha aberta (novos SDCs experimentais e contratos de slots).
+
+- Apresentação de conversas, itens de mensagem, composição, avisos Site Alert,
+  notificações, contador não lidas e estados vazios/erro/carregamento via SDC.
+- Formulários e render arrays permanecem nativos. A severity do Site Alert é
+  preservada e mapeada em tokens semânticos; sem JavaScript adicional.
+- SHA de implementação: será registrado no commit documental seguinte desta fase.
+- Gates: SDC schemas (21 componentes/334 checks), design foundations (1.816),
+  Portal/theme boundary (907) e Twig allowlist ajustada; Foundation gate requer
+  bootstrap Drupal e não foi executado nesta cópia sem settings.
+- RUNTIME STATUS: DEFERRED; inspeção visual desktop/mobile nos dois modos de cor pendente.
+
 ## 0.6.0-dev.22 — durações de movimento em tokens (DT-T19) — 2026-10-14
 
 Classificação: PATCH (sem mudança visual; mesmos valores).
@@ -725,4 +739,5 @@ O histórico detalhado anterior permanece no Git; não é especificação corren
 - Cores só em tokens: CSS dos componentes (conta, relatório, suporte, modal) sem cor literal. Novos tokens:
   `--aculta-status-*` (erro, ok, atenção) e `--aculta-scrim`, nos modos claro e escuro. Corrige texto ilegível da área da
   conta no modo escuro (antes 1,3:1 a 1,6:1 com cores fixas).
+
 
