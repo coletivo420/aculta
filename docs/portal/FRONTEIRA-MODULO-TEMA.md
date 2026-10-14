@@ -196,7 +196,8 @@ Depois da varredura acima, foram corrigidos os itens abaixo. Os que não estão 
   Gate: PASS. O provisionamento em produção segue pendente, como documentado.
 - `institution`: gate de Drupal. Passa pelo Drush (`drush scr`); o script agora avisa a forma de execução quando rodado
   pelo PHP puro, com código de saída 2.
-- Continua pendente: `cross-domain-request-policy`. A asserção de origem procura a forma negativa da checagem em
-  `account-navigation.js`, mas a regra existe na forma positiva em `isInternalLink()`. Ajustar o gate exige decisão de
-  quem revisa a política de segurança.
+- `cross-domain-request-policy`: corrigido. A asserção procurava a forma negativa da checagem de origem duas vezes;
+  agora verifica a regra onde ela existe: `isInternalLink()` compara a origem (forma positiva) e o handler de clique
+  sai antes de `preventDefault()` quando o link é de outra origem. Gate: PASS (18). A exigência de same-origin no AJAX
+  continua verificada em `search-preview.js`.
 - Gates "Local only" continuam dependendo do ambiente local.
