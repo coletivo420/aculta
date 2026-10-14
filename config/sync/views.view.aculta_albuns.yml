@@ -1,0 +1,197 @@
+uuid: f524ad7a-274c-4efc-a929-1825626de448
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media_gallery.field_credits
+    - field.storage.media_gallery.field_gallery_cover
+    - field.storage.media_gallery.field_published_at
+  module:
+    - datetime
+    - media_gallery
+    - user
+id: aculta_albuns
+label: Álbuns
+module: views
+description: 'Listagem pública dos álbuns publicados (Revista).'
+tag: ''
+base_table: media_gallery_field_data
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Álbuns
+      fields:
+        field_gallery_cover:
+          id: field_gallery_cover
+          table: media_gallery__field_gallery_cover
+          field: field_gallery_cover
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: media_gallery
+          entity_field: field_gallery_cover
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+          element_type: div
+          click_sort_column: target_id
+          type: entity_reference_entity_view
+          settings:
+            view_mode: default
+            link: false
+          field_api_classes: false
+        title:
+          id: title
+          table: media_gallery_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: media_gallery
+          entity_field: title
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            make_link: true
+            path: '[path]'
+          element_type: h3
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: true
+          field_api_classes: false
+        field_published_at:
+          id: field_published_at
+          table: media_gallery__field_published_at
+          field: field_published_at
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: media_gallery
+          entity_field: field_published_at
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+          element_type: div
+          click_sort_column: value
+          type: datetime_default
+          settings:
+            timezone_override: ''
+            format_type: medium
+          field_api_classes: false
+        field_credits:
+          id: field_credits
+          table: media_gallery__field_credits
+          field: field_credits
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: media_gallery
+          entity_field: field_credits
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+          element_type: div
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          field_api_classes: false
+      pager:
+        type: mini
+        options:
+          offset: 0
+          items_per_page: 12
+          total_pages: null
+          id: 0
+          tags:
+            next: Próximo
+            previous: Anterior
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+      sorts:
+        field_published_at_value:
+          id: field_published_at_value
+          table: media_gallery__field_published_at
+          field: field_published_at_value
+          entity_type: media_gallery
+          entity_field: field_published_at
+          plugin_id: standard
+          order: DESC
+          exposed: false
+      filters:
+        status:
+          id: status
+          table: media_gallery_field_data
+          field: status
+          entity_type: media_gallery
+          entity_field: status
+          plugin_id: boolean
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+      style:
+        type: grid
+        options:
+          default_row_class: true
+          uses_fields: false
+          columns: 3
+          alignment: horizontal
+          row_class_default: true
+      row:
+        type: fields
+      query:
+        type: views_query
+        options: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags:
+        - 'config:field.storage.media_gallery.field_credits'
+        - 'config:field.storage.media_gallery.field_gallery_cover'
+        - 'config:field.storage.media_gallery.field_published_at'
+  page_1:
+    id: page_1
+    display_title: Página
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: albuns
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags:
+        - 'config:field.storage.media_gallery.field_credits'
+        - 'config:field.storage.media_gallery.field_gallery_cover'
+        - 'config:field.storage.media_gallery.field_published_at'
+

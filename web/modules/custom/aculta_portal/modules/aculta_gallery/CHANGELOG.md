@@ -2,6 +2,14 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
+## 0.1.0-dev.7 — catálogo público de álbuns (em andamento) — 2026-10-14
+
+- View `aculta_albuns` em `/albuns`: lista só álbuns publicados, ordenada pela data de publicação, 12 por página (paginação do servidor), com capa, título, data e crédito. Exibida em grade de três colunas.
+- Restrição de visibilidade (D13) também na listagem: `GalleryListingHooks` (hook `views_query_alter`) zera o resultado fora do purpose `magazine`. Verificado: no host principal a listagem não traz títulos nem links de álbum.
+- Cache da listagem desligado, para não servir a mesma página a outro host.
+- Pendências desta fase: visual dos cards (proporção da capa e alinhamento da grade) depende de CSS e componente do tema (SDC da grade e do item); filtros por projeto, categoria e data; contagem de imagens por álbum; metatags e noindex para álbum não publicado.
+- RUNTIME STATUS: verificado no Runtime (listagem, D13 nos dois hosts, capa e crédito).
+
 ## 0.1.0-dev.6 — PhotoSwipe e apresentação (em andamento) — 2026-10-14
 
 - Documentação de hooks, classes e contrato com o tema: `docs/TEMA-E-HOOKS.md`.
