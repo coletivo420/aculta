@@ -184,6 +184,15 @@ final class PortalUiHooks {
     'google-account' => ['aculta-google-account'],
     // Popup de aceite dos termos (diálogo modal do Drupal).
     'account-terms' => ['aculta-account-terms'],
+    // Diálogos abertos pelo módulo: o tema define tamanho e posição (dialog.css).
+    'photo-dialog' => ['aculta-photo-dialog'],
+    'avatar-crop-dialog' => ['aculta-avatar-crop-dialog'],
+    'account-bio-dialog' => ['aculta-account-bio-dialog'],
+    'social-link-dialog' => ['aculta-social-link-dialog'],
+    'secret-dialog' => ['aculta-secret-dialog'],
+    'account-photo-trigger' => ['portal-account-photo__trigger'],
+    'support-form' => ['aculta-support'],
+    'security-password-form' => ['aculta-security-password-form'],
     'registration-status' => ['aculta-registration-status'],
     'support-intro' => ['aculta-support-intro'],
     'support-other' => ['aculta-support-other'],

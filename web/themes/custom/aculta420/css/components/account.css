@@ -32,4 +32,4 @@
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
-.aculta-security-password-form { max-width: 40rem; }
+:is(.aculta-security-password-form, [data-portal-ui="security-password-form"]) { max-width: 40rem; }

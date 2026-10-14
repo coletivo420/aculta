@@ -180,3 +180,17 @@ dialog::backdrop {
   left: 50% !important;
   transform: translateX(-50%);
 }
+
+/* Tamanho dos diálogos abertos pelo módulo (o módulo só informa título e comportamento). O alvo é o elemento
+   marcado dentro do conteúdo: data-portal-ui (formulários e links) ou a classe gerada pelo mapa (containers). */
+.ui-dialog:has(:is([data-portal-ui="photo-dialog"], .aculta-photo-dialog, [data-portal-ui="avatar-crop-dialog"], .aculta-avatar-crop-dialog, [data-portal-ui="account-bio-dialog"], .aculta-account-bio-dialog)) {
+  inline-size: min(560px, calc(100vw - 2rem)) !important;
+  max-block-size: 75vh !important;
+  overflow-y: auto;
+}
+
+.ui-dialog:has(:is([data-portal-ui="social-link-dialog"], .aculta-social-link-dialog, [data-portal-ui="secret-dialog"], .aculta-secret-dialog)) {
+  inline-size: min(480px, calc(100vw - 2rem)) !important;
+  max-block-size: 75vh !important;
+  overflow-y: auto;
+}

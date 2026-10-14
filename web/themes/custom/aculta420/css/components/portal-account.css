@@ -137,11 +137,11 @@
 .portal-account__avatar { display: grid; width: 5rem; height: 5rem; flex: 0 0 5rem; place-items: center; border-radius: 50%; object-fit: cover; }
 .portal-account__avatar--empty { color: var(--aculta-interactive-hover-text); background: var(--aculta-interactive-hover-bg); font: 600 1.75rem/1 Oswald, sans-serif; }
 .portal-account-photo { position: relative; flex: 0 0 5rem; }
-.portal-account-photo__trigger { position: relative; display: grid; width: 5rem; height: 5rem; padding: 0; place-items: center; overflow: hidden; color: var(--aculta-text-inverse); background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
-.portal-account-photo__trigger:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 3px; }
+:is(.portal-account-photo__trigger, [data-portal-ui="account-photo-trigger"]) { position: relative; display: grid; width: 5rem; height: 5rem; padding: 0; place-items: center; overflow: hidden; color: var(--aculta-text-inverse); background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+:is(.portal-account-photo__trigger, [data-portal-ui="account-photo-trigger"]):focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 3px; }
 .portal-account-photo__edit-icon { pointer-events: none; position: absolute; inset: auto 0 0 auto; display: grid; width: 2rem; height: 2rem; place-items: center; color: var(--aculta-interactive-hover-text); background: var(--aculta-interactive-hover-bg); border: 2px solid var(--aculta-surface-raised); border-radius: 50%; opacity: 0; transform: translate(-0.1rem, -0.1rem); transition: opacity 150ms ease; }
 .portal-account-photo__edit-icon svg { width: 1rem; height: 1rem; }
-.portal-account-photo__trigger:is(:hover, :focus-visible) ~ .portal-account-photo__edit-icon { opacity: 1; }
+:is(.portal-account-photo__trigger, [data-portal-ui="account-photo-trigger"]):is(:hover, :focus-visible) ~ .portal-account-photo__edit-icon { opacity: 1; }
 .portal-account__body .user-picture { max-width: 24rem; }
 .portal-account__body .user-picture .image-widget { max-width: 100%; }
 
