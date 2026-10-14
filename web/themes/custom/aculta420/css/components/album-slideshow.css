@@ -136,8 +136,25 @@
     width: 100%;
   }
 
+  /* Altura pela foto (paisagem fica baixa, retrato chega ao teto), com teto de 400 px.
+     A faixa VVJB é uma linha só: a altura é a da foto mais alta do álbum, sem saltos entre slides. */
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-outer,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-wrapper,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-inner,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-items,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-item {
+    height: auto;
+  }
+
+  /* Cada slide centraliza a foto na altura da linha (a da foto mais alta). */
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-item {
+    display: flex;
+    align-items: center;
+  }
+
   [data-aculta-album-stage] .vvjb img {
-    height: 400px;
+    height: auto;
+    max-height: 400px;
   }
 
   [data-aculta-album-thumbs] {
