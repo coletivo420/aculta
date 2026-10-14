@@ -3,10 +3,22 @@ langcode: pt-br
 status: true
 dependencies:
   config:
+    - field.field.media_gallery.media_gallery.field_credits
+    - field.field.media_gallery.media_gallery.field_editorial_category
+    - field.field.media_gallery.media_gallery.field_event_date
+    - field.field.media_gallery.media_gallery.field_gallery_cover
+    - field.field.media_gallery.media_gallery.field_project
+    - field.field.media_gallery.media_gallery.field_published_at
+    - field.field.media_gallery.media_gallery.field_tags
+    - field.field.media_gallery.media_gallery.field_usage_rights
+    - field.field.media_gallery.media_gallery.path
     - image.style.media_gallery_image
+    - image.style.media_gallery_lightbox
   module:
+    - datetime
     - media_gallery
     - photoswipe
+    - photoswipe_dynamic_caption
     - text
 _core:
   default_config_hash: '-NNFw9NtGOaznxdNFfR6etKS3QKcRohp8MMZCQc5Nn0'
@@ -22,13 +34,40 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
+  field_credits:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_event_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 4
+    region: content
   images:
     type: photoswipe_field_formatter
     label: hidden
     settings:
+      photoswipe_thumbnail_style_first: ''
       photoswipe_thumbnail_style: media_gallery_image
-      photoswipe_image_style: ''
-    third_party_settings: {  }
+      photoswipe_image_style: media_gallery_lightbox
+      photoswipe_reference_image_field: ''
+      photoswipe_view_mode: ''
+      photoswipe_remove_gallery_wrapper_class: false
+      photoswipe_show_download_button: false
+      image_loading:
+        attribute: lazy
+    third_party_settings:
+      photoswipe_dynamic_caption:
+        photoswipe_caption: alt
     weight: 2
     region: content
   title:
@@ -41,7 +80,14 @@ content:
     region: content
 hidden:
   created: true
+  field_editorial_category: true
+  field_gallery_cover: true
+  field_project: true
+  field_published_at: true
+  field_tags: true
+  field_usage_rights: true
   langcode: true
+  path: true
   search_api_excerpt: true
   status: true
   uid: true

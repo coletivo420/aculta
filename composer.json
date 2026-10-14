@@ -16,6 +16,22 @@
         {
             "type": "package",
             "package": {
+                "name": "photoswipe/photoswipe-dynamic-caption-plugin",
+                "version": "1.2.7",
+                "type": "drupal-library",
+                "extra": {
+                    "installer-name": "photoswipe-dynamic-caption-plugin"
+                },
+                "dist": {
+                    "url": "https://github.com/dimsemenov/photoswipe-dynamic-caption-plugin/archive/refs/tags/1.2.7.zip",
+                    "type": "zip"
+                },
+                "license": "MIT"
+            }
+        },
+        {
+            "type": "package",
+            "package": {
                 "name": "photoswipe/photoswipe",
                 "version": "5.4.4",
                 "type": "drupal-library",
@@ -288,7 +304,8 @@
         "progress-tracker/progress-tracker": "2.0.7",
         "signature_pad/signature_pad": "2.3.0",
         "tabby/tabby": "12.0.3",
-        "tippyjs/tippyjs": "6.3.7"
+        "tippyjs/tippyjs": "6.3.7",
+        "photoswipe/photoswipe-dynamic-caption-plugin": "1.2.7"
     },
     "conflict": {
         "drupal/drupal": "*"

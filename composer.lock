@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62b9a25adaca4b4cdd91829f56c32578",
+    "content-hash": "85fc7b45791080e85d09f84e25200b73",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7872,6 +7872,21 @@
             "type": "drupal-library",
             "extra": {
                 "installer-name": "photoswipe"
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
+            "name": "photoswipe/photoswipe-dynamic-caption-plugin",
+            "version": "1.2.7",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/dimsemenov/photoswipe-dynamic-caption-plugin/archive/refs/tags/1.2.7.zip"
+            },
+            "type": "drupal-library",
+            "extra": {
+                "installer-name": "photoswipe-dynamic-caption-plugin"
             },
             "license": [
                 "MIT"

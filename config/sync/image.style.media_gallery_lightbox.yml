@@ -1,0 +1,16 @@
+uuid: 32c20fa3-43ac-492e-9a60-ab9bba7ab2b9
+langcode: pt-br
+status: true
+dependencies: {  }
+name: media_gallery_lightbox
+label: 'Galeria: lightbox (1600 px)'
+effects:
+  0673faa2-8897-4ba9-89e6-af4b3e1e929e:
+    uuid: 0673faa2-8897-4ba9-89e6-af4b3e1e929e
+    id: image_scale
+    weight: 0
+    data:
+      width: 1600
+      height: null
+      upscale: false
+
