@@ -11,10 +11,18 @@
   "credits": "Texto produzido para o Coletivo 420 a partir da pesquisa de Rosana Schmidt sobre o Bloco Sativa.",
   "references": "SCHMIDT, Rosana. A Percussão Popular como Prática de Educação Popular em Saúde: Sistematização da Experiência do Bloco Sativa no Carnaval de 2026 em Goiânia. Escola de Governo da Fiocruz, 2026.",
   "download_url": "https://coletivo420.org.br/livros/a-percussao-popular-como-pratica-de-educacao-popular-em-saude/",
-  "cover": {
-    "source": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/web/square/bloco-sativa420-square-512w.webp",
-    "alt": "Bloco Sativa 420 — arte com participantes mascarados, folhagens e as cores verde, amarelo e vermelho",
-    "name": "Carnareggae Bloco Sativa — arte do Bloco Sativa 420"
+  "cover": "capa",
+  "images": {
+    "capa": {
+      "url": "https://coletivo420.org.br/wp-content/uploads/tcc-rosana4.jpg",
+      "alt": "Imagem de destaque da publicação sobre a pesquisa de Rosana Schmidt",
+      "name": "Bloco Sativa na FIOCRUZ — imagem de destaque"
+    },
+    "autora": {
+      "url": "https://coletivo420.org.br/wp-content/uploads/tcc-rosana3-1.jpg",
+      "alt": "Imagem ilustrativa da seção sobre a autora da pesquisa",
+      "name": "Bloco Sativa na FIOCRUZ — imagem da seção sobre a autora"
+    }
   },
   "body": [
     ["p", "O trabalho intitulado A Percussão Popular como Prática de Educação Popular em Saúde: Sistematização da Experiência do Bloco Sativa no Carnaval de 2026 em Goiânia foi apresentado como Trabalho de Conclusão de Curso na Especialização em Educação Popular em Saúde da Escola de Governo da Fiocruz. O estudo parte de uma pergunta central: como a percussão popular e as manifestações culturais de rua podem operar como dispositivos de promoção da saúde e participação social."],
@@ -34,6 +42,7 @@
     ["p", "Para o Coletivo 420, o fato de o Bloco Sativa se tornar objeto de pesquisa na FIOCRUZ tem peso político, simbólico e estratégico. A publicação não apenas registra uma experiência. Ela legitima, em linguagem acadêmica e institucional, aquilo que a prática já afirmava na rua: a cultura popular pode ser ferramenta concreta de cuidado em liberdade."],
     ["p", "O estudo fortalece a compreensão de que o Baque Sativa e o Bloco Sativa não são apenas expressões culturais do carnaval goianiense, mas tecnologias sociais de cuidado, formação política e construção de comunidade. Ao reconhecer isso, a pesquisa amplia o alcance da experiência e abre caminho para novos diálogos entre cultura popular, políticas públicas, saúde e direitos humanos."],
     ["h2", "Quem é a autora"],
+    ["image", "autora"],
     ["p", "Rosana Schmidt é doutora em Antropologia Social pela Universidade Federal de Goiás (2022), mestre em Antropologia Social pela Universidade Federal de Goiás (2011), especialista em Educação Popular em Saúde pela Escola de Governo da Fiocruz (2026) e bacharel em Ciências Sociais pela Universidade Federal de Santa Catarina (2007)."],
     ["p", "Desenvolveu pesquisa no projeto Gênero, Subjetividade e Saúde Mental, com foco no mapeamento das políticas públicas, do ativismo político e das experiências sociais em torno do tema gênero e saúde mental. Também realizou pesquisa de mestrado e doutorado junto ao povo Xerente, no Tocantins, com enfoque no sistema alimentar tradicional e no discurso de (re)existência diante da problemática socioambiental. Atua como professora, pesquisadora e consultora."],
     ["h2", "Conclusão"],
