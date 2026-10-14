@@ -39,7 +39,7 @@ final class CreateGallery extends CKEditor5PluginDefault {
    * {@inheritdoc}
    */
   public function getDynamicPluginConfig(array $static_plugin_config, EditorInterface $editor): array {
-    $url = Url::fromRoute('aculta_gallery.ckeditor_dialog', ['filter_format' => $editor->getFilterFormatId()])->toString();
+    $url = Url::fromRoute('aculta_gallery.ckeditor_dialog', ['filter_format' => $editor->getFilterFormat()->id()])->toString();
     $static_plugin_config['acultaGalleryCreate'] = [
       'dialogUrl' => $url,
       'label' => 'Criar galeria',

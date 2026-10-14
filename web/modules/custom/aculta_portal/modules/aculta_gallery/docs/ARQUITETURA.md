@@ -137,7 +137,8 @@ Decisão do responsável: portar o fluxo do CKEditor Media Gallery para o ACULTA
 - **Reuso, sem duplicar**: inserção e renderização pelo Entity Embed; visualização pelo formatador PhotoSwipe da entidade; capa e publicação pelos hooks da Fase 3; restrição D13 pelo formato.
 - **Não portado**: armazenamento em lista no texto, GLightbox, os quatro tipos de exibição do módulo, e o filtro próprio `drupal-gallery`. Origem e licença em `THIRD-PARTY.md`.
 - **Verificado**: plugin descoberto e instanciado; formulário monta com título, widget de imagens e envio AJAX; envio sem imagem devolve o erro de validação e não cria galeria.
-- **Pendente (Fase 10, navegador)**: envio com imagens escolhidas pelo seletor da Media Library, inserção no texto e renderização do artigo.
+- **Ajuste de implementação (navegador, 2026-10-14)**: o widget de imagens do diálogo passou a ser o autocompletar por entidade do Core (`entity_reference_autocomplete`, múltiplo, mídias de imagem). A Media Library dentro do diálogo não funciona: o Drupal usa um único elemento de modal (`#drupal-modal`), e a Media Library substitui o diálogo da galeria. O formulário também guarda os serviços em propriedades comuns, como o Entity Embed, porque o objeto é restaurado nas requisições AJAX.
+- **Verificado no navegador (Firefox, servidor de testes)**: login, formato da Revista, botão "Criar galeria", diálogo com título e duas imagens, criação da galeria publicada, incorporação no editor, artigo salvo e publicado em `revista420`, com o título da galeria e as duas imagens na página e sem tag `drupal-entity` sobrando. Dados de teste removidos depois.
 
 ## 5. Modelagem
 

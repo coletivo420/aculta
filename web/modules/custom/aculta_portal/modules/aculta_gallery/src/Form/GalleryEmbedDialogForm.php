@@ -7,10 +7,11 @@ namespace Drupal\aculta_gallery\Form;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\HtmlCommand;
-use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Field\WidgetPluginManager;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\editor\Ajax\EditorDialogSave;
@@ -26,17 +27,23 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class GalleryEmbedDialogForm extends FormBase {
 
-  /** Display de formulário da galeria: fonte de verdade do widget de imagens. */
-  private const FORM_DISPLAY = 'media_gallery.media_gallery.default';
-
   /** Modo de exibição padrão da incorporação (Entity Embed). */
   private const EMBED_DISPLAY = 'entity_reference:entity_reference_entity_view';
 
+  /** Serviços guardados como propriedades comuns: o Drupal restaura o objeto entre as requisições AJAX. */
+  protected EntityTypeManagerInterface $entityTypeManager;
+  protected WidgetPluginManager $widgetManager;
+  protected AccountProxyInterface $currentUser;
+
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly WidgetPluginManager $widgetManager,
-    private readonly AccountProxyInterface $currentUser,
-  ) {}
+    EntityTypeManagerInterface $entity_type_manager,
+    WidgetPluginManager $widget_manager,
+    AccountProxyInterface $current_user,
+  ) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->widgetManager = $widget_manager;
+    $this->currentUser = $current_user;
+  }
 
   /**
    * {@inheritdoc}
@@ -73,16 +80,10 @@ final class GalleryEmbedDialogForm extends FormBase {
     ];
 
     $gallery = $this->entityTypeManager->getStorage('media_gallery')->create([]);
-    $component = EntityFormDisplay::load(self::FORM_DISPLAY)?->getComponent('images');
-    if ($component !== NULL) {
-      $widget = $this->widgetManager->getInstance([
-        'field_definition' => $gallery->getFieldDefinition('images'),
-        'form_mode' => 'default',
-        'configuration' => $component,
-      ]);
-      $form['images'] = $widget->form($gallery->get('images'), $form, $form_state);
-      $form['images']['#required'] = TRUE;
-    }
+    $widget = $this->imagesWidget($gallery);
+    $form['images'] = $widget->form($gallery->get('images'), $form, $form_state);
+    $form['images']['#required'] = TRUE;
+    $form['images']['#description'] = $this->t('Escreva o nome ou o ID de cada imagem da biblioteca de mídia. Para enviar fotos novas, use a Biblioteca de mídia antes de criar a galeria.');
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
@@ -101,6 +102,26 @@ final class GalleryEmbedDialogForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
+   * Widget do campo de imagens: autocompletar por entidade do Core (múltiplo).
+   *
+   * Não usa a Media Library: ela abre um modal dentro do diálogo, e o Drupal tem um único elemento de modal
+   * (#drupal-modal). A Media Library substituiria o diálogo da galeria. Ver docs/ARQUITETURA.md §4.3.
+   */
+  private function imagesWidget(EntityInterface $gallery): WidgetInterface {
+    return $this->widgetManager->getInstance([
+      'field_definition' => $gallery->getFieldDefinition('images'),
+      'form_mode' => 'default',
+      'configuration' => [
+        'type' => 'entity_reference_autocomplete',
+        'settings' => ['match_operator' => 'CONTAINS', 'match_limit' => 10, 'size' => 60, 'placeholder' => ''],
+        'third_party_settings' => [],
+        'weight' => 3,
+        'region' => 'content',
+      ],
+    ]);
+  }
+
+  /**
    * Cria a galeria e devolve a incorporação para o editor.
    */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse {
@@ -116,12 +137,7 @@ final class GalleryEmbedDialogForm extends FormBase {
       'status' => 1,
       'uid' => $this->currentUser->id(),
     ]);
-    $widget = $this->widgetManager->getInstance([
-      'field_definition' => $gallery->getFieldDefinition('images'),
-      'form_mode' => 'default',
-      'configuration' => EntityFormDisplay::load(self::FORM_DISPLAY)->getComponent('images'),
-    ]);
-    $widget->extractFormValues($gallery->get('images'), $form, $form_state);
+    $this->imagesWidget($gallery)->extractFormValues($gallery->get('images'), $form, $form_state);
     if ($gallery->get('images')->isEmpty()) {
       $form_state->setErrorByName('images', $this->t('Escolha ao menos uma imagem para a galeria.'));
       $response->addCommand(new HtmlCommand('#aculta-gallery-dialog-form', $form));
