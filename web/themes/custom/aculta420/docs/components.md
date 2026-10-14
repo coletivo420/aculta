@@ -159,6 +159,25 @@ node--wiki-entry--teaser.html.twig mantêm atributos e render arrays nativos;
 não exibem autoria. Campos e ações continuam sob access do Drupal. O CSS usa
 tokens semânticos e não cria modo ou layout alternativo para Dark.
 
+## Componentes experimentais do ACULTA Messenger (0.6.0-dev.23)
+
+| Componente | Consumidor | Contrato |
+| --- | --- | --- |
+| `messenger-list` | rotas de central e inbox nativa | slot para render arrays autorizados; sem reconstruir Views |
+| `messenger-item` | entidade Private Message | slot com saída da entidade nativa |
+| `messenger-compose` | criação e resposta | slot contém Form API nativa, CSRF, AJAX e fallback |
+| `messenger-notification` | Message na lista própria | slot com entidade Message autorizada pelo Portal |
+| `institutional-notice` | Site Alert nativo | severity `low`, `medium`, `high` e slot da mensagem |
+| `unread-badge` | navegação de Minha Conta | prop inteira da contagem de não lidas; omitido em zero |
+| `messenger-state` | avisos vazios e estados futuros | `empty`, `error` ou `loading`; sem lógica de carregamento no tema |
+| `messenger-trigger` | ação de mensagens na barra multidomínio | modal Ajax do Drupal; contador nativo de threads não lidas |
+| `alerts-trigger` | ação de avisos na barra multidomínio | modal Ajax do Drupal; contador de avisos não lidos ou Site Alerts ativos |
+| `messenger-read-status` | thread ou aviso renderizado | rótulo lido/não lido fornecido pelo Portal/Flag |
+
+O Portal escolhe access, dados, URL e cache; o ACULTA420 mapeia para esses SDCs.
+Todos permanecem `experimental` até validação real. Estilos usam tokens
+semânticos compartilhados entre claro e escuro, HTML semântico e foco visível.
+
 A home/lista da Wiki usa css/components/wiki.css, arquivo temático de
 responsabilidade própria na biblioteca global. O markup continua preparado pelo
 Portal por tokens data-portal-ui; Views/VVJB continuam fonte dos itens.

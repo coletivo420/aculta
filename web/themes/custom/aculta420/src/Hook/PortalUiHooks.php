@@ -190,6 +190,11 @@ final class PortalUiHooks {
     'account-bio-dialog' => ['aculta-account-bio-dialog'],
     'social-link-dialog' => ['aculta-social-link-dialog'],
     'secret-dialog' => ['aculta-secret-dialog'],
+    'messenger-preview' => ['aculta-messenger-preview'],
+    'messenger-preview-inbox-link' => ['btn', 'btn-primary', 'aculta-messenger-preview__inbox-link'],
+    'messenger-read-status' => ['aculta-messenger-read-status'],
+    'notice-read-status' => ['aculta-messenger-read-status'],
+    'notice-unread-status' => ['aculta-messenger-read-status', 'aculta-messenger-read-status--unread'],
     'account-photo-trigger' => ['portal-account-photo__trigger'],
     'support-form' => ['aculta-support'],
     'security-password-form' => ['aculta-security-password-form'],
@@ -220,6 +225,7 @@ final class PortalUiHooks {
   #[Hook('preprocess_aculta_portal_account_terms_modal')]
   #[Hook('preprocess_aculta_portal_photo_editor')]
   public function preprocess(array &$variables): void {
+    $this->addAccountUnreadBadges($variables);
     // #attributes do elemento de render são mesclados em "attributes" depois do preprocess: trata o elemento.
     if (isset($variables['element']) && is_array($variables['element'])) {
       $this->applyArray($variables['element']['#attributes'] ?? [], $variables['element'], '#attributes');
@@ -251,6 +257,28 @@ final class PortalUiHooks {
       if (is_array($item) && isset($item['#wrapper_attributes']) && is_array($item['#wrapper_attributes'])) {
         $this->applyArray($item['#wrapper_attributes'], $variables['items'][$key], '#wrapper_attributes');
       }
+    }
+  }
+
+  /** Maps the neutral unread count from the account contract to the theme SDC. */
+  private function addAccountUnreadBadges(array &$variables): void {
+    foreach (['menu_items', 'accordion_items'] as $listName) {
+      if (!is_array($variables[$listName] ?? NULL)) {
+        continue;
+      }
+      foreach ($variables[$listName] as &$item) {
+        $count = filter_var($item['badge_count'] ?? 0, FILTER_VALIDATE_INT);
+        unset($item['badge_count']);
+        if ($count === FALSE || $count < 1) {
+          continue;
+        }
+        $item['unread_badge'] = [
+          '#type' => 'component',
+          '#component' => 'aculta420:unread-badge',
+          '#props' => ['count' => $count],
+        ];
+      }
+      unset($item);
     }
   }
 

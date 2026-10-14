@@ -5,6 +5,7 @@ dependencies:
   config:
     - filter.format.wiki
     - node.type.forum
+    - node.type.aculta_notice
     - node.type.wiki_entry
     - workflows.workflow.wiki_editorial
   module:
@@ -36,9 +37,11 @@ permissions:
   - 'break content lock'
   - 'create url aliases'
   - 'create wiki_entry content'
+  - 'create aculta_notice content'
   - 'delete own files'
   - 'edit any forum content'
   - 'edit any wiki_entry content'
+  - 'edit any aculta_notice content'
   - 'revert all revisions'
   - 'revert wiki_entry revisions'
   - 'use text format revista_editorial'
@@ -47,6 +50,8 @@ permissions:
   - 'use wiki_editorial transition draft_to_review'
   - 'use wiki_editorial transition review_to_draft'
   - 'use wiki_editorial transition review_to_published'
+  - 'use editorial transition create_new_draft'
+  - 'use editorial transition draft_to_review'
   - 'view all revisions'
   - 'view any unpublished content'
   - 'view latest version'

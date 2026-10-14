@@ -1,0 +1,13 @@
+services:
+  aculta_messenger.private_message_form_validator:
+    class: Drupal\aculta_messenger\Form\PrivateMessageFormValidator
+    arguments:
+      - '@flood'
+      - '@current_user'
+      - '@string_translation'
+      - '@private_message.ban_manager'
+    public: true
+  aculta_messenger.private_message_account_route_subscriber:
+    class: Drupal\aculta_messenger\EventSubscriber\PrivateMessageAccountRouteSubscriber
+    tags:
+      - { name: event_subscriber }

@@ -141,3 +141,15 @@ Regra do responsável (2026-10-14). Vale para qualquer agente (Codex, Claude, Ch
 Motivo: contas de teste deixadas no Runtime aparecem em listagens de usuários, em relatórios de papéis e em
 buscas de autor, e podem receber e-mails ou permissões por engano. Excluir ao fim do teste mantém o Runtime com
 apenas as contas reais e as de teste permanentes.
+
+## Papéis editoriais: função única
+
+Decisão do responsável (2026-10-14). Vale para toda criação e moderação de conteúdo.
+
+- **Uma só função editorial:** `content_editor` (Editor de conteúdo). Autor, editor e revisor da Wiki, e editor, autor e moderador do Fórum, são a mesma função. Não criar papéis novos para isso.
+- **Única exceção:** `wiki_contributor` (Colaborador da Wiki420). Continua sendo concedido automaticamente a toda conta com e-mail confirmado (`email_confirmed`).
+- `wiki_editor` foi removido: suas permissões estão em `content_editor`.
+- Perfil público obrigatório para quem edita: somente `content_editor` (`PublicProfilePolicy`).
+- Gate: `php scripts/validate-aculta-user-roles.php`.
+
+Motivo: poucos papéis na criação de conteúdo. Um papel por função evita combinações de permissões difíceis de auditar.

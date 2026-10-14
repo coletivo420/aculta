@@ -1,0 +1,8 @@
+<div class="severity-{{ alert.severity|default('medium') }}">
+  <div class="text">
+    {{ include('aculta420:institutional-notice', {
+      severity: alert.severity|default('medium'),
+      message: alert.message|default(null),
+    }, with_context = false) }}
+  </div>
+</div>

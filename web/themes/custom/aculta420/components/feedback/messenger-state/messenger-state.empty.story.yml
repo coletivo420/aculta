@@ -1,0 +1,8 @@
+name: Estado vazio
+description: Nenhuma mensagem ou aviso disponível.
+component: aculta420:messenger-state
+props:
+  state: empty
+slots:
+  content:
+    markup: <p>Você ainda não recebeu notificações.</p>

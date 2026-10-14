@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.23', 'Theme metadata marks the current version 0.6.0-dev.23.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.25', 'Theme metadata marks the current version 0.6.0-dev.25.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -246,6 +246,8 @@ $expectedTemplates = [
   // Modelo padrão da Revista (0.6.0-dev.21): Notícia e blog chamam o mesmo componente revista-publication.
   'node--article--full.html.twig',
   'node--blog--full.html.twig',
+  // Site Alert keeps native scheduling/access and delegates presentation to the theme SDC.
+  'site-alert.html.twig',
   // Wiki article and teaser presenters intentionally omit submitted-byline metadata.
   'node--wiki-entry--full.html.twig',
   'node--wiki-entry--teaser.html.twig',
@@ -281,6 +283,18 @@ $assert($sdc->hasDefinition('aculta420:project-card'), 'Drupal discovers aculta4
 $wikiMetadata = Yaml::parseFile($themeRoot . '/components/patterns/wiki-entry/wiki-entry.component.yml');
 $assert(($wikiMetadata['status'] ?? NULL) === 'experimental', 'Wiki entry pattern remains experimental pending runtime and visual validation.');
 $assert($sdc->hasDefinition('aculta420:wiki-entry'), 'Drupal discovers aculta420:wiki-entry.');
+$messengerComponents = [
+  'aculta420:messenger-list',
+  'aculta420:messenger-item',
+  'aculta420:messenger-compose',
+  'aculta420:messenger-notification',
+  'aculta420:institutional-notice',
+  'aculta420:unread-badge',
+  'aculta420:messenger-state',
+];
+foreach ($messengerComponents as $componentId) {
+  $assert($sdc->hasDefinition($componentId), 'Drupal discovers ' . $componentId . '.');
+}
 
 $twig = \Drupal::service('twig');
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {

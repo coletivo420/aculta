@@ -127,6 +127,26 @@ final class ThemeHooks {
    */
   #[Hook('preprocess_field')]
   public function preprocessField(array &$variables): void {
+    if (($variables['entity_type'] ?? '') === 'private_message_thread'
+      && ($variables['field_name'] ?? '') === 'private_message_form') {
+      if (!is_array($variables['items'] ?? NULL)) {
+        return;
+      }
+      foreach ($variables['items'] as &$item) {
+        if (!is_array($item['content'] ?? NULL)) {
+          continue;
+        }
+        $form = $item['content'];
+        $item['content'] = [
+          '#type' => 'component',
+          '#component' => 'aculta420:messenger-compose',
+          '#slots' => ['form' => $form],
+        ];
+      }
+      unset($item);
+      return;
+    }
+
     if (($variables['entity_type'] ?? '') !== 'node'
       || ($variables['field_name'] ?? '') !== 'body') {
       return;
@@ -195,6 +215,9 @@ final class ThemeHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $routeName = $this->routeMatch->getRouteName();
+    $this->presentMessengerTrigger($variables);
+    $this->presentAlertsTrigger($variables);
+    $this->presentMessengerPage($variables, $routeName);
     $routeNode = $this->routeMatch->getParameter('node');
     $wikiEntryPage = $routeName === 'entity.node.canonical'
       && $routeNode instanceof NodeInterface
@@ -253,6 +276,136 @@ final class ThemeHooks {
         unset($variables['page']['header'][$key]);
       }
     }
+  }
+
+  /**
+   * Maps Messenger's pages to visual SDCs while keeping access/render logic in the module.
+   */
+  private function presentMessengerPage(array &$variables, ?string $routeName): void {
+    $component = match ($routeName) {
+      'aculta_messenger.messages', 'aculta_messenger.notifications', 'aculta_messenger.notices', 'private_message.private_message_page' => 'aculta420:messenger-list',
+      'aculta_messenger.preview' => 'aculta420:messenger-list',
+      'private_message.private_message_create' => 'aculta420:messenger-compose',
+      default => NULL,
+    };
+    if ($component === NULL || !isset($variables['page']['content']) || !is_array($variables['page']['content'])) {
+      return;
+    }
+
+    $content =& $variables['page']['content'];
+    if (isset($content['#content']) && is_array($content['#content'])) {
+      $content =& $content['#content'];
+    }
+
+    $original = $content;
+    $props = [];
+    $slot = 'content';
+    if ($routeName === 'aculta_messenger.messages') {
+      $props['label'] = 'Ações de mensagens';
+    }
+    elseif ($routeName === 'aculta_messenger.notifications') {
+      $props['label'] = 'Notificações';
+    }
+    elseif ($routeName === 'aculta_messenger.notices') {
+      $props['label'] = 'Avisos';
+    }
+    elseif ($routeName === 'private_message.private_message_page') {
+      $props['label'] = 'Conversas';
+    }
+    elseif ($routeName === 'aculta_messenger.preview') {
+      $props['label'] = 'Conversas recentes';
+    }
+    elseif ($routeName === 'private_message.private_message_create') {
+      $slot = 'form';
+    }
+
+    $content = [
+      '#type' => 'component',
+      '#component' => $component,
+      '#props' => $props,
+      '#slots' => [$slot => $original],
+    ];
+  }
+
+  /** Maps the Portal's neutral Messenger action to its theme SDC. */
+  private function presentMessengerTrigger(array &$variables): void {
+    $messenger = $variables['aculta_messenger'] ?? NULL;
+    if (!is_array($messenger) || !is_string($messenger['url'] ?? NULL)) {
+      $variables['aculta_messenger_trigger'] = [];
+      return;
+    }
+
+    $variables['aculta_messenger_trigger'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:messenger-trigger',
+      '#props' => [
+        'href' => $messenger['url'],
+        'count' => max(0, (int) ($messenger['unread_count'] ?? 0)),
+      ],
+    ];
+    unset($variables['aculta_messenger']);
+  }
+
+  /** Maps the Portal's neutral alert action to the theme's SDC. */
+  private function presentAlertsTrigger(array &$variables): void {
+    $alerts = $variables['aculta_alerts'] ?? NULL;
+    if (!is_array($alerts) || !is_string($alerts['url'] ?? NULL)) {
+      $variables['aculta_alerts_trigger'] = [];
+      return;
+    }
+    $variables['aculta_alerts_trigger'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:alerts-trigger',
+      '#props' => [
+        'href' => $alerts['url'],
+        'count' => max(0, (int) ($alerts['count'] ?? 0)),
+        'count_kind' => $alerts['count_kind'] ?? 'active',
+      ],
+    ];
+    unset($variables['aculta_alerts']);
+  }
+
+  /** Exposes Private Message's native per-thread read state to accessible UI. */
+  #[Hook('preprocess_private_message_thread')]
+  public function preprocessPrivateMessageThread(array &$variables): void {
+    $status = $variables['aculta_messenger_read_status'] ?? NULL;
+    if (!in_array($status, ['read', 'unread'], TRUE)) {
+      return;
+    }
+    $variables['read_status'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:messenger-read-status',
+      '#props' => ['unread' => $status === 'unread'],
+    ];
+  }
+
+  /** Wraps the native Private Message entity output in the theme's message item SDC. */
+  #[Hook('preprocess_private_message')]
+  public function preprocessPrivateMessage(array &$variables): void {
+    if (!is_array($variables['content'] ?? NULL)) {
+      return;
+    }
+    $content = $variables['content'];
+    $variables['content'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:messenger-item',
+      '#slots' => ['content' => $content],
+    ];
+  }
+
+  /** Wraps the account-owned Message output without changing its data or access. */
+  #[Hook('preprocess_message')]
+  public function preprocessMessage(array &$variables): void {
+    if ($this->routeMatch->getRouteName() !== 'aculta_messenger.notifications'
+      || !is_array($variables['content'] ?? NULL)) {
+      return;
+    }
+    $content = $variables['content'];
+    $variables['content'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:messenger-notification',
+      '#slots' => ['content' => $content],
+    ];
   }
 
   /**

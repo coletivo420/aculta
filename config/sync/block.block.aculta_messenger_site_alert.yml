@@ -1,0 +1,21 @@
+uuid: 6aa0d7a2-7f47-4edc-9109-49df62a99b2d
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - site_alert
+  theme:
+    - aculta420
+id: aculta_messenger_site_alert
+theme: aculta420
+region: highlighted
+weight: -20
+provider: null
+plugin: site_alert_block
+settings:
+  id: site_alert_block
+  label: 'Alertas institucionais'
+  label_display: '0'
+  provider: site_alert
+  timeout: 300
+visibility: {}

@@ -7,6 +7,18 @@
   -webkit-backdrop-filter: blur(4px);
 }
 
+/* Conversas recentes abertas pelo ícone da barra multidomínio. */
+.ui-dialog:has(.aculta-messenger-preview) {
+  inline-size: min(56rem, calc(100vw - 2rem)) !important;
+  max-inline-size: calc(100vw - 2rem);
+  max-block-size: calc(100vh - 2rem);
+}
+
+.ui-dialog:has(.aculta-messenger-preview) .ui-dialog-content {
+  max-block-size: min(75vh, 48rem);
+  overflow: auto;
+}
+
 dialog::backdrop {
   background: var(--aculta-scrim);
 }

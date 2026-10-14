@@ -1,0 +1,12 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Unread badge
+status: experimental
+group: Feedback
+description: 'Small accessible unread count badge. The Portal supplies only the authorized integer.'
+props:
+  type: object
+  properties:
+    count:
+      type: integer
+      minimum: 1
+      title: Unread count

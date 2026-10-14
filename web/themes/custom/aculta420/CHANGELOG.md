@@ -1,4 +1,4 @@
-## 0.6.0-dev.23 — palco do álbum: cor, celular e contrato com o módulo — 2026-10-14
+## 0.6.0-dev.25 — palco do álbum: cor, celular e contrato com o módulo — 2026-10-14
 
 Classificação: MINOR da linha aberta (componente de apresentação novo, `experimental`; token novo; sem quebra de contrato).
 
@@ -7,10 +7,34 @@ Classificação: MINOR da linha aberta (componente de apresentação novo, `expe
 - Desktop: a faixa de fotos ocupa a coluna do palco; foto a 10 px do painel de miniaturas.
 - Biblioteca `aculta420/album-slideshow` declarada em `aculta420.info.yml` (global). O template `views-view-vvjb.html.twig` não cita mais a view do módulo.
 - Gate novo: `scripts/validate-album-stage-contract.php` (módulo emite os `data-*`, tema usa os mesmos, sem nome de view no tema, seletores `.vvjb-*` e API `goToSlide`/`getCurrentSlide` existem no VVJB instalado). Teste negativo: falha quando um seletor não existe ou o nome da view aparece no CSS.
-- Gate de Foundation: versão atualizada para 0.6.0-dev.23.
+- Gate de Foundation: versão atualizada para 0.6.0-dev.25 (o `main` já tinha `0.6.0-dev.23` e `0.6.0-dev.24`; esta entrega vem depois).
 - Commits: `4d168e4` (moldura), `5e6d553` e `c7b448c` (cor e botão), `e760a1e` (celular, gate, versão). SHA desta entrada: `e760a1e`.
 - Validação: design foundations PASS; module-theme boundary PASS; contrato do palco PASS. `validate-aculta420-foundation.php` falha por ausência do bootstrap do Drupal também no worktree limpo (anterior a esta entrega).
 - RUNTIME STATUS: verificado no Runtime (desktop e celular, claro e escuro, clique na miniatura). Inspeção visual humana pendente.
+## 0.6.0-dev.24 — modais da barra e estado de leitura — 2026-10-14
+
+Classificação: MINOR da linha aberta (SDCs experimentais de entrada e estado).
+
+- Ícone Bootstrap de avisos ao lado de mensagens na barra, com modal Drupal.
+- Rótulo de conversa lida/não lida deriva do estado nativo Private Message.
+- Mensagens e avisos mantêm o mesmo comportamento de apresentação em modos de cor.
+- SDC schema e design foundations: PASS; gate de Foundation com bootstrap Drupal,
+  validação visual e RUNTIME STATUS: DEFERRED no Homelab.
+- RUNTIME STATUS: DEFERRED; validar modal, acessibilidade e responsividade no Homelab.
+
+## 0.6.0-dev.23 — componentes ACULTA Messenger — 2026-10-14
+
+Classificação: MINOR da linha aberta (novos SDCs experimentais e contratos de slots).
+
+- Apresentação de conversas, itens de mensagem, composição, avisos Site Alert,
+  notificações, contador não lidas e estados vazios/erro/carregamento via SDC.
+- Formulários e render arrays permanecem nativos. A severity do Site Alert é
+  preservada e mapeada em tokens semânticos; sem JavaScript adicional.
+- SHA de implementação: `61939c9`.
+- Gates: SDC schemas (21 componentes/334 checks), design foundations (1.816),
+  Portal/theme boundary (907) e Twig allowlist ajustada; Foundation gate requer
+  bootstrap Drupal e não foi executado nesta cópia sem settings.
+- RUNTIME STATUS: DEFERRED; inspeção visual desktop/mobile nos dois modos de cor pendente.
 
 ## 0.6.0-dev.22 — durações de movimento em tokens (DT-T19) — 2026-10-14
 
@@ -739,4 +763,5 @@ O histórico detalhado anterior permanece no Git; não é especificação corren
 - Cores só em tokens: CSS dos componentes (conta, relatório, suporte, modal) sem cor literal. Novos tokens:
   `--aculta-status-*` (erro, ok, atenção) e `--aculta-scrim`, nos modos claro e escuro. Corrige texto ilegível da área da
   conta no modo escuro (antes 1,3:1 a 1,6:1 com cores fixas).
+
 
