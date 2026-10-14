@@ -153,3 +153,14 @@ Decisão do responsável (2026-10-14). Vale para toda criação e moderação de
 - Gate: `php scripts/validate-aculta-user-roles.php`.
 
 Motivo: poucos papéis na criação de conteúdo. Um papel por função evita combinações de permissões difíceis de auditar.
+
+## Modelo visual: Notícia e Editorial são iguais
+
+Regra do responsável (2026-10-14). Vale para toda alteração de exibição dos conteúdos publicados.
+
+- **Notícia (`article`) e Editorial (`blog`) têm o mesmo modelo visual.** As visualizações padrão, teaser e completa têm os mesmos campos, a mesma ordem e as mesmas configurações de exibição.
+- Mudança visual em um dos dois tipos vale para o outro na mesma entrega. Não criar exceção de layout por tipo.
+- **Única diferença permitida de formulário:** o Editorial passa pelo fluxo de moderação (estado de moderação), que é funcional. Não há outra diferença registrada.
+- Gate: `php scripts/validate-content-visual-parity.php` (deve ser PASS em toda mudança de exibição de Notícia ou Editorial).
+
+Motivo: o leitor percebe a mesma página com dois layouts diferentes quando os tipos divergem, e a manutenção dobra.
