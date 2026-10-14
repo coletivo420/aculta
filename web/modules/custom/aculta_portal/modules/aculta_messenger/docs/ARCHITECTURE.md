@@ -128,3 +128,13 @@ segmentação for verificável.
 
 **Motivo:** não duplicar o armazenamento Site Alert nem forçar seu modelo
 temporário a funcionar como arquivo editorial.
+
+### ADR-MSG-005 — Limite de envio usa Flood do Core
+
+**Decisão:** limitar o formulário nativo do Private Message com o serviço Flood
+do Drupal: dez envios válidos por usuário em uma janela de uma hora.
+
+**Motivo:** o Core já fornece contagem com expiração e limpeza por cron. Uma
+tabela custom adicionaria dados operacionais e manutenção sem necessidade. O
+limite é aplicado como callback Form API após validações de destinatários e
+bloqueio, preservando o submit nativo.

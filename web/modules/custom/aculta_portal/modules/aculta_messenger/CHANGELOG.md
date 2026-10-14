@@ -2,6 +2,18 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.0-dev.3 — integração inicial de mensagens privadas
+
+- Acrescenta callback OOP `#[Hook('form_alter')]` ao formulário nativo de
+  criação/resposta do Private Message. O Form API contrib continua controlando
+  destinatários, validação, salvamento e renderização.
+- Acrescenta rate limit pelo serviço Flood do Core: dez envios válidos por UID
+  em uma hora; validações que já falharam não registram envio.
+- Mantém bloqueio, threads, entidades, caixa de entrada, contagem de não lidas e
+  handlers de acesso no Private Message. Nenhuma permissão é concedida a role.
+- RUNTIME STATUS: DEFERRED — módulo não habilitado; fluxo, fallback sem JS,
+  isolamento entre usuários e callback Flood aguardam validação no Homelab.
+
 ## 0.1.0-dev.2 — módulo integrador e dependências
 
 - Adiciona `aculta_messenger.info.yml` como submódulo opcional do Portal, com

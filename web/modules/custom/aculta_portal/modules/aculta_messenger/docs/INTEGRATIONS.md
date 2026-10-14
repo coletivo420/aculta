@@ -87,6 +87,13 @@ permissões automaticamente. A distribuição pretendida dessas permissões deve
 ser revisada antes de habilitar envio por membros; até lá, as rotas nativas
 continuam protegidas pelos requisitos existentes.
 
+O Messenger altera somente o Form API `private_message_add_form` com um hook
+OOP `#[Hook('form_alter')]` e um callback de serviço resolvido pelo
+`CallableResolver`. O callback consulta e registra no Core Flood depois das validações
+nativas; não substitui o form object, o salvamento nem o AJAX/fallback do
+Private Message. A integração de ponto de entrada no perfil e o uso de runtime
+continuam pendentes.
+
 Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
 cache/access de runtime ou compatibilidade em PHP 8.5.
 

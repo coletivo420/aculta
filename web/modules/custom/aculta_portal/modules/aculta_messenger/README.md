@@ -52,11 +52,12 @@ cross-purpose usam `DomainPurposeManager`; mutações não atravessam hosts.
 
 ## Estado da implementação
 
-O módulo declara dependências, mas ainda não foi ativado. As rotas, entidades,
-formulários, bloqueio e contadores de Private Message foram confirmados no
-código instalado para reutilização; a integração ACULTA ainda não adiciona
-runtime. As permissões `use private messaging system` e `access user profiles`
-não aparecem na configuração exportada de papéis, então nenhuma concessão será
-feita pelo submódulo. A política de quais papéis podem iniciar conversas precisa
-ser aplicada por configuração administrativa revisada antes da ativação da
-experiência para membros.
+O módulo declara dependências, mas ainda não foi ativado. A integração adiciona
+limite de envio ao formulário nativo usando Drupal Flood: dez envios válidos por
+usuário em uma janela de uma hora. Inbox, threads, criação/resposta, contagem de
+não lidas, bloqueio e access continuam pertencendo ao Private Message. As
+permissões `use private messaging system` e `access user profiles` não aparecem
+na configuração exportada de papéis; nenhuma concessão é feita pelo submódulo.
+A política dos papéis precisa ser aplicada por configuração administrativa
+revisada antes da ativação da experiência para membros. O uso em runtime e a
+integração do link de perfil ainda não foram verificados.

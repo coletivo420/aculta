@@ -26,6 +26,13 @@ qualquer papel. A distribuição pretendida dessas permissões deve ser decidida
 e registrada antes da ativação do fluxo para membros. A proteção upstream é
 mantida enquanto essa política não for configurada.
 
+O formulário nativo de criação/resposta recebe um callback Form API que usa o
+serviço Flood do Core e identifica o limite pelo UID, sem gravar IP. São
+permitidos dez envios que passaram pelas validações anteriores em uma janela de
+uma hora; entradas já inválidas não consomem limite. Mensagens acima do limite
+são rejeitadas antes do submit/save nativo. Esse valor é um limite inicial do
+Messenger e deve ser reavaliado após métricas de uso controladas.
+
 ## Invariantes
 
 - Cada leitura e escrita usa APIs públicas Drupal e permissões/access nativos;

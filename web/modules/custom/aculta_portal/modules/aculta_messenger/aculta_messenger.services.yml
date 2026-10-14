@@ -1,0 +1,5 @@
+services:
+  aculta_messenger.private_message_rate_limiter:
+    class: Drupal\aculta_messenger\Access\PrivateMessageRateLimiter
+    arguments: ['@flood', '@current_user', '@string_translation']
+    public: true
