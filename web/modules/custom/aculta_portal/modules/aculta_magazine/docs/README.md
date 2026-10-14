@@ -17,6 +17,17 @@ SEO, caixa de autores e coautoria. Depende de `aculta_user` (perfil, privacidade
 | Caixa de autores | `node_view`: autor (`node.uid`) e coautores (`co_authors`), foto, nome, bio, ícones das redes | `src/Hook/ArticleAuthorsHooks.php` |
 | Coautores | `co_authors` (Node Co-Authors): coautores recebem os direitos de conteúdo do autor | módulo contrib |
 
+## Blog é sinônimo de Editorial
+
+Decisão do responsável (2026-10-14): na Revista, **blog** e **Editorial** são a mesma coisa. Toda publicação do tipo
+`blog` é conteúdo editorial da Revista, e o conteúdo editorial é publicado como `blog`. "Editorial" é o nome da
+seção que o público vê (sessão em `field_editorial_category`, rota `/editorial/...`); "blog" é o tipo de conteúdo
+que a guarda. Não criar um segundo tipo para editorial, nem uma segunda seção para blog.
+
+- Ao importar conteúdo editorial, usar o tipo `blog` e a sessão Editorial, salvo decisão expressa em contrário.
+- Notícias seguem o tipo `article` com a sessão Notícias; Notícia não é sinônimo de editorial.
+- O modelo de publicação (`aculta420:revista-publication`) vale para os dois tipos.
+
 ## Privacidade
 
 A caixa de autores usa somente `PublicProfilePolicy` (aculta_user): link para o perfil só com perfil público,

@@ -1,3 +1,14 @@
+## 0.1.0-dev.3 — cabeçalho da publicação declara a dependência de tema; Blog é Editorial documentado — 2026-10-14
+
+Classificação: PATCH (correção de cache; sem mudança de contrato).
+
+- Correção: publicação da Revista sem imagem de capa falhava na renderização a frio com `LogicException` do
+  `VariationCache` (contexto `theme` ausente na raiz). O cabeçalho (`PostPresentation`) passa a declarar o contexto
+  `theme`, de que depende (elementos `aculta_portal_element`).
+- Documentação: regra "Blog é sinônimo de Editorial" em `docs/README.md`.
+- Gates: Portal Drupal 11+ PASS, fronteira módulo/tema PASS, slugs PASS, endereços de ambiente PASS.
+- RUNTIME STATUS: verificado no Homelab por renderização a frio (em memória) das publicações. Inspeção visual humana pendente.
+
 # Changelog — aculta_magazine
 
 ## 0.1.0-dev.2 — Fórum da Revista: tópico automático por publicação e abertura da discussão — 2026-10-13
