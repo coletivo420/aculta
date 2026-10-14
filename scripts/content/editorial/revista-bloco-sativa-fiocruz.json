@@ -25,27 +25,94 @@
     }
   },
   "body": [
-    ["p", "O trabalho intitulado A Percussão Popular como Prática de Educação Popular em Saúde: Sistematização da Experiência do Bloco Sativa no Carnaval de 2026 em Goiânia foi apresentado como Trabalho de Conclusão de Curso na Especialização em Educação Popular em Saúde da Escola de Governo da Fiocruz. O estudo parte de uma pergunta central: como a percussão popular e as manifestações culturais de rua podem operar como dispositivos de promoção da saúde e participação social."],
-    ["p", "A resposta construída pela autora é potente. Em vez de tratar o Bloco Sativa como simples evento carnavalesco, a pesquisa o reconhece como experiência concreta de cuidado coletivo, protagonismo popular e articulação entre cultura, saúde e território. O texto mostra que a prática percussiva coletiva fomenta pertencimento, territorialidade e redes de cuidado não convencionais, fundamentais para uma saúde pública democrática e humanizada."],
-    ["h2", "O bloco para além da festa"],
-    ["p", "Na introdução, Rosana Schmidt afirma que o Bloco Sativa emerge como resposta artivista às tensões territoriais e sociais do centro de Goiânia, pautando redução de danos, luta antimanicomial, antiproibicionismo e ocupação soberana do espaço público. A sistematização não se limita ao relato de um evento: ela busca extrair aprendizados críticos de uma práxis que une ritmo, política, saúde e cultura."],
-    ["p", "Esse é um dos maiores méritos da pesquisa. Ao transformar a experiência do bloco em objeto de reflexão acadêmica, o trabalho dá visibilidade a uma prática que já acontece nas ruas, nos ensaios, nos encontros e nas ações do coletivo. A pesquisa reconhece que o Bloco Sativa produz efeitos reais na vida social, na saúde mental e na organização comunitária."],
-    ["h2", "Percussão popular como Educação Popular em Saúde"],
-    ["p", "O estudo adota como base a Política Nacional de Educação Popular em Saúde e a metodologia da Sistematização de Experiências. A investigação foi construída a partir de observação participante, registros digitais, reuniões, ensaios e documentação institucional, articulando tempo de escola e tempo de comunidade. Com isso, o trabalho demonstra que a experiência do Carnareggae Bloco Sativa 2026 pode ser lida como processo educativo, político e territorial."],
-    ["p", "Na prática, isso significa reconhecer que bater tambor coletivamente também é produzir cuidado. A autora sustenta que a percussão popular promove autonomia, inclusão, cidadania, pertencimento e saúde mental, além de fortalecer ações de redução de danos e educação popular. O estudo afirma que a cultura popular expressa na percussão deve ser compreendida como território com potência para a saúde pública."],
-    ["h2", "Rua, cuidado e direito à cidade"],
-    ["p", "A pesquisa também destaca que o Bloco Sativa atua no território urbano como forma de resistência e comunicação popular. Ao ocupar a rua com música, informação e organização coletiva, o bloco tensiona o paradigma proibicionista e propõe outra leitura sobre maconha, cuidado e direitos humanos. Em vez de criminalização, isolamento e estigma, a experiência aponta para autonomia, acolhimento e construção de vínculos."],
-    ["h3", "O cotidiano também importa"],
-    ["p", "Outro ponto forte da pesquisa é mostrar que a potência do bloco não aparece apenas no dia do evento. Ela já se manifesta nos ensaios abertos, nas reuniões, nas articulações, na formação política e no trabalho contínuo de quem organiza, ensina e sustenta o processo coletivo. A autora chama atenção, inclusive, para a invisibilidade desse trabalho cotidiano e para a necessidade de reconhecê-lo como prática de cuidado comunitário."],
-    ["p", "Essa leitura é importante porque valoriza o que muitas vezes fica fora das narrativas oficiais: o esforço permanente de construção coletiva, a autogestão, os conflitos por espaço, os entraves burocráticos, a precariedade material e, ao mesmo tempo, a capacidade do grupo de seguir criando cultura e apoio mútuo mesmo diante das dificuldades."],
-    ["h3", "Uma contribuição importante para o Coletivo 420"],
-    ["p", "Para o Coletivo 420, o fato de o Bloco Sativa se tornar objeto de pesquisa na FIOCRUZ tem peso político, simbólico e estratégico. A publicação não apenas registra uma experiência. Ela legitima, em linguagem acadêmica e institucional, aquilo que a prática já afirmava na rua: a cultura popular pode ser ferramenta concreta de cuidado em liberdade."],
-    ["p", "O estudo fortalece a compreensão de que o Baque Sativa e o Bloco Sativa não são apenas expressões culturais do carnaval goianiense, mas tecnologias sociais de cuidado, formação política e construção de comunidade. Ao reconhecer isso, a pesquisa amplia o alcance da experiência e abre caminho para novos diálogos entre cultura popular, políticas públicas, saúde e direitos humanos."],
-    ["h2", "Quem é a autora"],
-    ["image", "autora"],
-    ["p", "Rosana Schmidt é doutora em Antropologia Social pela Universidade Federal de Goiás (2022), mestre em Antropologia Social pela Universidade Federal de Goiás (2011), especialista em Educação Popular em Saúde pela Escola de Governo da Fiocruz (2026) e bacharel em Ciências Sociais pela Universidade Federal de Santa Catarina (2007)."],
-    ["p", "Desenvolveu pesquisa no projeto Gênero, Subjetividade e Saúde Mental, com foco no mapeamento das políticas públicas, do ativismo político e das experiências sociais em torno do tema gênero e saúde mental. Também realizou pesquisa de mestrado e doutorado junto ao povo Xerente, no Tocantins, com enfoque no sistema alimentar tradicional e no discurso de (re)existência diante da problemática socioambiental. Atua como professora, pesquisadora e consultora."],
-    ["h2", "Conclusão"],
-    ["p", "Que o Bloco Sativa tenha se tornado objeto de pesquisa na FIOCRUZ não é detalhe. É sinal de que a rua produz conhecimento, de que o tambor também educa, e de que práticas coletivas construídas com autonomia, arte e compromisso social merecem ser reconhecidas como parte viva do debate sobre saúde pública no Brasil."]
-  ]
+    [
+      "p",
+      "O trabalho intitulado A Percussão Popular como Prática de Educação Popular em Saúde: Sistematização da Experiência do Bloco Sativa no Carnaval de 2026 em Goiânia foi apresentado como Trabalho de Conclusão de Curso na Especialização em Educação Popular em Saúde da Escola de Governo da Fiocruz. O estudo parte de uma pergunta central: como a percussão popular e as manifestações culturais de rua podem operar como dispositivos de promoção da saúde e participação social."
+    ],
+    [
+      "p",
+      "A resposta construída pela autora é potente. Em vez de tratar o Bloco Sativa como simples evento carnavalesco, a pesquisa o reconhece como experiência concreta de cuidado coletivo, protagonismo popular e articulação entre cultura, saúde e território. O texto mostra que a prática percussiva coletiva fomenta pertencimento, territorialidade e redes de cuidado não convencionais, fundamentais para uma saúde pública democrática e humanizada."
+    ],
+    [
+      "h2",
+      "O bloco para além da festa"
+    ],
+    [
+      "p",
+      "Na introdução, Rosana Schmidt afirma que o Bloco Sativa emerge como resposta artivista às tensões territoriais e sociais do centro de Goiânia, pautando redução de danos, luta antimanicomial, antiproibicionismo e ocupação soberana do espaço público. A sistematização não se limita ao relato de um evento: ela busca extrair aprendizados críticos de uma práxis que une ritmo, política, saúde e cultura."
+    ],
+    [
+      "p",
+      "Esse é um dos maiores méritos da pesquisa. Ao transformar a experiência do bloco em objeto de reflexão acadêmica, o trabalho dá visibilidade a uma prática que já acontece nas ruas, nos ensaios, nos encontros e nas ações do coletivo. A pesquisa reconhece que o Bloco Sativa produz efeitos reais na vida social, na saúde mental e na organização comunitária."
+    ],
+    [
+      "h2",
+      "Percussão popular como Educação Popular em Saúde"
+    ],
+    [
+      "p",
+      "O estudo adota como base a Política Nacional de Educação Popular em Saúde e a metodologia da Sistematização de Experiências. A investigação foi construída a partir de observação participante, registros digitais, reuniões, ensaios e documentação institucional, articulando tempo de escola e tempo de comunidade. Com isso, o trabalho demonstra que a experiência do Carnareggae Bloco Sativa 2026 pode ser lida como processo educativo, político e territorial."
+    ],
+    [
+      "p",
+      "Na prática, isso significa reconhecer que bater tambor coletivamente também é produzir cuidado. A autora sustenta que a percussão popular promove autonomia, inclusão, cidadania, pertencimento e saúde mental, além de fortalecer ações de redução de danos e educação popular. O estudo afirma que a cultura popular expressa na percussão deve ser compreendida como território com potência para a saúde pública."
+    ],
+    [
+      "h2",
+      "Rua, cuidado e direito à cidade"
+    ],
+    [
+      "p",
+      "A pesquisa também destaca que o Bloco Sativa atua no território urbano como forma de resistência e comunicação popular. Ao ocupar a rua com música, informação e organização coletiva, o bloco tensiona o paradigma proibicionista e propõe outra leitura sobre maconha, cuidado e direitos humanos. Em vez de criminalização, isolamento e estigma, a experiência aponta para autonomia, acolhimento e construção de vínculos."
+    ],
+    [
+      "h3",
+      "O cotidiano também importa"
+    ],
+    [
+      "p",
+      "Outro ponto forte da pesquisa é mostrar que a potência do bloco não aparece apenas no dia do evento. Ela já se manifesta nos ensaios abertos, nas reuniões, nas articulações, na formação política e no trabalho contínuo de quem organiza, ensina e sustenta o processo coletivo. A autora chama atenção, inclusive, para a invisibilidade desse trabalho cotidiano e para a necessidade de reconhecê-lo como prática de cuidado comunitário."
+    ],
+    [
+      "p",
+      "Essa leitura é importante porque valoriza o que muitas vezes fica fora das narrativas oficiais: o esforço permanente de construção coletiva, a autogestão, os conflitos por espaço, os entraves burocráticos, a precariedade material e, ao mesmo tempo, a capacidade do grupo de seguir criando cultura e apoio mútuo mesmo diante das dificuldades."
+    ],
+    [
+      "h3",
+      "Uma contribuição importante para o Coletivo 420"
+    ],
+    [
+      "p",
+      "Para o Coletivo 420, o fato de o Bloco Sativa se tornar objeto de pesquisa na FIOCRUZ tem peso político, simbólico e estratégico. A publicação não apenas registra uma experiência. Ela legitima, em linguagem acadêmica e institucional, aquilo que a prática já afirmava na rua: a cultura popular pode ser ferramenta concreta de cuidado em liberdade."
+    ],
+    [
+      "p",
+      "O estudo fortalece a compreensão de que o Baque Sativa e o Bloco Sativa não são apenas expressões culturais do carnaval goianiense, mas tecnologias sociais de cuidado, formação política e construção de comunidade. Ao reconhecer isso, a pesquisa amplia o alcance da experiência e abre caminho para novos diálogos entre cultura popular, políticas públicas, saúde e direitos humanos."
+    ],
+    [
+      "h2",
+      "Quem é a autora"
+    ],
+    [
+      "image",
+      "autora"
+    ],
+    [
+      "p",
+      "Rosana Schmidt é doutora em Antropologia Social pela Universidade Federal de Goiás (2022), mestre em Antropologia Social pela Universidade Federal de Goiás (2011), especialista em Educação Popular em Saúde pela Escola de Governo da Fiocruz (2026) e bacharel em Ciências Sociais pela Universidade Federal de Santa Catarina (2007)."
+    ],
+    [
+      "p",
+      "Desenvolveu pesquisa no projeto Gênero, Subjetividade e Saúde Mental, com foco no mapeamento das políticas públicas, do ativismo político e das experiências sociais em torno do tema gênero e saúde mental. Também realizou pesquisa de mestrado e doutorado junto ao povo Xerente, no Tocantins, com enfoque no sistema alimentar tradicional e no discurso de (re)existência diante da problemática socioambiental. Atua como professora, pesquisadora e consultora."
+    ],
+    [
+      "h2",
+      "Conclusão"
+    ],
+    [
+      "p",
+      "Que o Bloco Sativa tenha se tornado objeto de pesquisa na FIOCRUZ não é detalhe. É sinal de que a rua produz conhecimento, de que o tambor também educa, e de que práticas coletivas construídas com autonomia, arte e compromisso social merecem ser reconhecidas como parte viva do debate sobre saúde pública no Brasil."
+    ]
+  ],
+  "type": "blog"
 }
