@@ -164,7 +164,7 @@ tokens semânticos e não cria modo ou layout alternativo para Dark.
 | Componente | Consumidor | Contrato |
 | --- | --- | --- |
 | `messenger-list` | rotas de central e inbox nativa | slot para render arrays autorizados; sem reconstruir Views |
-| `messenger-item` | entidade Private Message | slot com saída da entidade nativa |
+| `messenger-item` | entidade Private Message | avatar autorizado e conteúdo nativo em slots; prop booleana `outgoing`; CSS organiza balões e alinhamento |
 | `messenger-compose` | criação e resposta | slot contém Form API nativa, CSRF, AJAX e fallback |
 | `messenger-notification` | Message na lista própria | slot com entidade Message autorizada pelo Portal |
 | `institutional-notice` | Site Alert nativo | severity `low`, `medium`, `high` e slot da mensagem |

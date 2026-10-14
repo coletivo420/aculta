@@ -1,3 +1,13 @@
+## 0.6.0-dev.28 — conversa em balões e avisos vermelhos — 2026-10-14
+
+Classificação: MINOR da linha aberta (aprimoramento visual experimental do Messenger).
+
+- A lista apresenta avatar do remetente e prévia em balões de entrada/saída; a conversa abre em diálogo Drupal com histórico e resposta nativa.
+- O contador é zerado ao abrir a caixa, pela marcação nativa de leitura do Private Message.
+- Os três contadores da barra multidomínio agora usam o mesmo token, posição, tamanho e tipografia do carrinho.
+- Avisos Site Alert e persistentes usam vermelho semântico; X dispensa por usuário e atualiza a contagem.
+- Validação interativa no Runtime local/Homelab pendente. RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.27 — atualização sob demanda dos contadores — 2026-10-14
 
 Classificação: MINOR da linha aberta (atualização de interface multidomínio).
@@ -783,5 +793,4 @@ O histórico detalhado anterior permanece no Git; não é especificação corren
 - Cores só em tokens: CSS dos componentes (conta, relatório, suporte, modal) sem cor literal. Novos tokens:
   `--aculta-status-*` (erro, ok, atenção) e `--aculta-scrim`, nos modos claro e escuro. Corrige texto ilegível da área da
   conta no modo escuro (antes 1,3:1 a 1,6:1 com cores fixas).
-
 

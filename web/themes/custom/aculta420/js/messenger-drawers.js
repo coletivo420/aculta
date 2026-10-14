@@ -3,6 +3,17 @@
 
   Drupal.behaviors.acultaMessengerDrawers = {
     attach(context) {
+      once('aculta-alert-dismiss', '[data-aculta-alert-dismiss]', context).forEach((link) => {
+        link.addEventListener('click', () => {
+          const count = document.querySelector('[data-aculta-alerts-count]');
+          const current = Number.parseInt(count?.dataset.count || '0', 10);
+          if (count && Number.isFinite(current) && current > 0) {
+            updateCounter('alerts', String(current - 1));
+          }
+          link.closest('li')?.remove();
+        });
+      });
+
       once('aculta-messenger-drawer', '[data-aculta-drawer-url]', context).forEach((drawer) => {
         let request;
 

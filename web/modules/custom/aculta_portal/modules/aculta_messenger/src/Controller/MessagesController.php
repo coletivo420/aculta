@@ -8,6 +8,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\flag\FlagInterface;
@@ -95,6 +96,10 @@ final class MessagesController extends ControllerBase {
    * purpose-specific mailbox; conversation links are canonicalized to ACCOUNT.
    */
   public function preview(): Response {
+    // Opening the inbox is the member's acknowledgement that they have
+    // checked the current set of conversations. Reuse Private Message's
+    // native last-check state so its unread count and notifications agree.
+    $this->privateMessageService->updateLastCheckTime();
     $threads = $this->privateMessageService->getThreadsForUser(50)['threads'];
     $items = [];
     $cacheability = (new CacheableMetadata())
@@ -114,6 +119,15 @@ final class MessagesController extends ControllerBase {
 
       $cacheability->addCacheableDependency($thread);
       $item = $viewBuilder->view($thread, 'inbox');
+      if (isset($item['inbox_link']) && is_array($item['inbox_link'])) {
+        $item['inbox_link']['#attributes']['class'][] = 'use-ajax';
+        $item['inbox_link']['#attributes']['data-dialog-type'] = 'modal';
+        $item['inbox_link']['#attributes']['data-dialog-options'] = json_encode([
+          'width' => 760,
+          'classes' => ['ui-dialog' => 'aculta-messenger-conversation-dialog'],
+        ], JSON_THROW_ON_ERROR);
+        $item['inbox_link']['#attributes']['aria-label'] = (string) $this->translation->translate('Abrir conversa');
+      }
       $this->canonicalizePrivateMessageLinks($item);
       $items[] = $item;
     }
@@ -129,8 +143,9 @@ final class MessagesController extends ControllerBase {
       '#cache' => ['max-age' => 0],
     ];
     $cacheability->applyTo($build);
+    $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
     return $this->buildDrawerResponse($build, [
-      'X-Aculta-Messages-Count' => (string) max(0, $this->privateMessageService->getUnreadThreadCount()),
+      'X-Aculta-Messages-Count' => '0',
     ]);
   }
 
@@ -169,22 +184,29 @@ final class MessagesController extends ControllerBase {
     $items = [];
 
     $activeAlertCount = 0;
+    $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
     foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
       $access = $alert->access('view', $this->currentUser, TRUE);
       $cacheability->addCacheableDependency($alert)->addCacheableDependency($access);
       if (!$access->isAllowed()) {
         continue;
       }
+      if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->currentUser) !== NULL) {
+        continue;
+      }
       $activeAlertCount++;
       // Match the public render contract of SiteAlertBlock; formatted text and
       // severity remain owned by the contrib entity and its theme hook.
       $items[] = [
-        '#theme' => 'site_alert',
-        '#alert' => [
-          'severity' => $alert->getSeverity(),
-          'label' => $alert->getLabel(),
-          'message' => ['#type' => 'markup', '#markup' => $alert->getMessage()],
+        'content' => [
+          '#theme' => 'site_alert',
+          '#alert' => [
+            'severity' => $alert->getSeverity(),
+            'label' => $alert->getLabel(),
+            'message' => ['#type' => 'markup', '#markup' => $alert->getMessage()],
+          ],
         ],
+        'dismiss' => $this->buildDismissalLink($dismissalFlag, $alert),
       ];
     }
 
@@ -283,7 +305,7 @@ final class MessagesController extends ControllerBase {
       }
       $item = $this->entityTypeManager->getViewBuilder('node')->view($node, 'full');
       if ($flag instanceof FlagInterface) {
-        $item['aculta_notice_read_action'] = $flag->getLinkTypePlugin()->getAsFlagLink($flag, $node);
+        $item['aculta_notice_read_action'] = $this->buildDismissalLink($flag, $node);
       }
       $item['aculta_notice_read_state'] = [
         '#type' => 'container',
@@ -300,6 +322,20 @@ final class MessagesController extends ControllerBase {
       $items[] = $item;
     }
     return $items;
+  }
+
+  /** Builds the native per-user flag link used to dismiss a notice. */
+  private function buildDismissalLink(?FlagInterface $flag, EntityInterface $entity): array {
+    if (!$flag instanceof FlagInterface || !$this->currentUser->isAuthenticated()) {
+      return [];
+    }
+    $link = $flag->getLinkTypePlugin()->getAsFlagLink($flag, $entity, 'default');
+    $link['#title'] = ['#markup' => '×'];
+    $link['#attributes']['class'][] = 'aculta-alert-dismiss';
+    $link['#attributes']['data-aculta-alert-dismiss'] = 'true';
+    $link['#attributes']['aria-label'] = (string) $this->translation->translate('Dispensar aviso');
+    $link['#attributes']['title'] = (string) $this->translation->translate('Dispensar aviso');
+    return $link;
   }
 
   /** Lists only delivered private-message notices owned by the current user. */

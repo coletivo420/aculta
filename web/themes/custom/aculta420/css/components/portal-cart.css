@@ -21,6 +21,15 @@
   outline-offset: 2px;
 }
 
+.aculta-utility-trigger .aculta-cart-utility__count {
+  position: absolute;
+  top: -0.4rem;
+  inset-inline-end: -0.6rem;
+  background: var(--aculta-interactive-bg);
+  color: var(--aculta-interactive-text);
+  font-size: 0.65rem;
+}
+
 .aculta-utility-offcanvas {
   --bs-offcanvas-width: min(420px, 100vw);
   background: var(--aculta-surface-raised);
@@ -39,6 +48,26 @@
 
 .aculta-cart-utility__count[data-count="0"] {
   display: none;
+}
+
+.aculta-alert-dismiss {
+  float: inline-end;
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  margin-inline-start: 0.5rem;
+  border: 1px solid var(--aculta-status-error-border);
+  border-radius: 50%;
+  color: var(--aculta-status-error-text);
+  font-size: 1.25rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.aculta-alert-dismiss:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
 }
 
 .aculta-messenger-offcanvas .item-list,

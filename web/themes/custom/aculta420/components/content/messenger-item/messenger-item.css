@@ -1,2 +1,19 @@
-.aculta-messenger-item { min-width: 0; padding: 1rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); }
-.aculta-messenger-item > :last-child { margin-bottom: 0; }
+.aculta-messenger-item { display: flex; align-items: flex-end; gap: 0.55rem; min-width: 0; margin-block: 0.65rem; }
+.aculta-messenger-item--outgoing { flex-direction: row-reverse; }
+.aculta-messenger-item__avatar { flex: 0 0 2.25rem; width: 2.25rem; height: 2.25rem; overflow: hidden; border-radius: 50%; background: var(--aculta-surface-muted); }
+.aculta-messenger-item__avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.aculta-messenger-item__bubble { min-width: 0; max-width: min(82%, 38rem); padding: 0.65rem 0.85rem; border: 1px solid var(--aculta-border-default); border-radius: 1rem 1rem 1rem 0.25rem; background: var(--aculta-surface-raised); color: var(--aculta-text-primary); overflow-wrap: anywhere; }
+.aculta-messenger-item--outgoing .aculta-messenger-item__bubble { border-color: var(--aculta-interactive-border); border-radius: 1rem 1rem 0.25rem 1rem; background: var(--aculta-interactive-active-bg); color: var(--aculta-interactive-active-text); }
+.aculta-messenger-item__bubble > :last-child { margin-bottom: 0; }
+.aculta-messenger-item__bubble .field--name-created { display: block; margin-block-start: 0.25rem; color: var(--aculta-text-secondary); font-size: 0.75rem; text-align: end; }
+.aculta-messenger-item--outgoing .aculta-messenger-item__bubble .field--name-created { color: var(--aculta-interactive-active-text); }
+
+.private-message-thread-inbox .aculta-messenger-item { margin-block: 0.2rem; }
+.private-message-thread-inbox .aculta-messenger-item__avatar { flex-basis: 2rem; width: 2rem; height: 2rem; }
+.private-message-thread-inbox .aculta-messenger-item__bubble { max-width: 100%; padding: 0.4rem 0.6rem; }
+
+.aculta-messenger-conversation-dialog { max-width: calc(100vw - 1.5rem); }
+.aculta-messenger-conversation-dialog .ui-dialog-content { max-height: min(75vh, 52rem); }
+.aculta-messenger-conversation-dialog #private-message-page { padding: 0.5rem; }
+.aculta-messenger-conversation-dialog .field--name-private-messages { max-height: min(52vh, 32rem); overflow-y: auto; padding-inline: 0.25rem; }
+.aculta-messenger-conversation-dialog .field--name-private-message-form { position: sticky; inset-block-end: 0; padding-block-start: 0.75rem; background: var(--aculta-surface-raised); }

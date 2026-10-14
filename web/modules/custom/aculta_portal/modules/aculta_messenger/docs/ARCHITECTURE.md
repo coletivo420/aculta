@@ -232,6 +232,22 @@ cacheability e os formulários Private Message. A severidade de Site Alert é
 passada pela saída nativa e estilizada com tokens semânticos. O Portal envia a
 contagem de não lidas como número no contrato neutro do shell; o tema decide sua
 forma visual.
+
+## Caixa de conversas e dispensa de avisos (0.1.1)
+
+Ao abrir a gaveta, o controller chama `PrivateMessageServiceInterface::updateLastCheckTime()`;
+isso reaproveita o estado nativo do módulo e faz o contador refletir zero após a
+consulta da inbox. A lista continua usando view mode `inbox` da entidade de
+thread. Cada link abre a rota canônica da thread em diálogo AJAX Drupal, cujo
+view mode completo fornece o histórico e o formulário nativo de resposta.
+
+`PrivateMessagePresentationHooks::preprocessPrivateMessage()` fornece avatar
+User API (compact, respeitando field access/cache) e booleano neutro de direção.
+O `ThemeHooks::preprocessPrivateMessage()` mapeia esses valores ao SDC
+`messenger-item`, que exibe balões; persistência, validação e envio continuam no
+Private Message. `aculta_site_alert_dismissed` e `aculta_notice_read` são Flags
+não globais por usuário, para que o X dispense só na conta que o acionou e a
+contagem do badge seja recalculada na próxima consulta.
 # Avisos e estado de leitura
 
 Avisos temporários ficam no Site Alert e continuam com agenda, severidade e

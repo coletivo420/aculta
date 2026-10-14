@@ -5,8 +5,14 @@ group: Content
 description: 'Visual wrapper around a Private Message render array. The entity and its access decisions remain upstream.'
 props:
   type: object
-  properties: {}
+  properties:
+    outgoing:
+      type: boolean
+      title: Enviada por quem está autenticado
 slots:
+  avatar:
+    title: Avatar do remetente
+    description: 'Imagem de perfil autorizada, renderizada pelo Drupal User API.'
   content:
     title: Message
     description: 'Private Message entity output with native access and cache metadata.'

@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Post-update functions for ACULTA Messenger.
+ */
+
+/**
+ * Adds the per-member dismissal Flag for temporary Site Alerts.
+ */
+function aculta_messenger_post_update_site_alert_dismissal_flag(array &$sandbox): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('flag');
+  if ($storage->load('aculta_site_alert_dismissed') !== NULL) {
+    return 'The Site Alert dismissal flag was already present.';
+  }
+
+  $storage->create([
+    'id' => 'aculta_site_alert_dismissed',
+    'label' => 'Aviso temporário dispensado',
+    'bundles' => [],
+    'entity_type' => 'site_alert',
+    'global' => FALSE,
+    'flag_short' => 'Dispensar aviso',
+    'flag_long' => 'Dispensar este aviso temporário somente para sua conta.',
+    'flag_message' => 'Aviso dispensado para sua conta.',
+    'unflag_short' => 'Mostrar aviso novamente',
+    'unflag_long' => 'Mostrar este aviso novamente para sua conta.',
+    'unflag_message' => 'Aviso restaurado para sua conta.',
+    'unflag_denied_text' => '',
+    'weight' => 0,
+    'flag_type' => 'entity:site_alert',
+    'link_type' => 'ajax_link',
+    'flagTypeConfig' => [
+      'show_in_links' => [],
+      'show_as_field' => TRUE,
+      'show_on_form' => FALSE,
+      'show_contextual_link' => FALSE,
+      'extra_permissions' => [],
+    ],
+    'linkTypeConfig' => [],
+  ])->save();
+
+  return 'Added the per-user dismissal Flag for Site Alerts.';
+}

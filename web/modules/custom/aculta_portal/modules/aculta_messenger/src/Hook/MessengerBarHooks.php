@@ -64,11 +64,24 @@ final class MessengerBarHooks {
         // The alert badge includes this member's unread Flag state.
         $alertCacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
       }
+      $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
       foreach ($alerts as $alert) {
         $alertCacheability->addCacheableDependency($alert);
       }
       $alertUrl = Url::fromRoute('aculta_messenger.alerts_preview')->toString(TRUE);
-      $alertCount = count($alerts);
+      $alertCount = 0;
+      foreach ($alerts as $alert) {
+        $access = $alert->access('view', $this->currentUser, TRUE);
+        $alertCacheability->addCacheableDependency($access);
+        if (!$access->isAllowed()) {
+          continue;
+        }
+        if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->currentUser) !== NULL) {
+          continue;
+        }
+        $alertCount++;
+      }
+      $alertCacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
       $unreadNoticeCount = $this->currentUser->isAuthenticated()
         ? $alertCount + $this->getUnreadNoticeCount()
         : $alertCount;

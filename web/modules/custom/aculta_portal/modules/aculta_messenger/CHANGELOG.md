@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.6 — caixa visual de conversas e confirmação de avisos
+
+- A gaveta de mensagens limpa a contagem de conversas não lidas ao abrir, usando o last-check nativo do Private Message.
+- O item da inbox abre a thread autorizada em modal Drupal com histórico e Form API nativa para responder.
+- Avatar autorizado e direção de envio chegam ao tema como render array e estado neutro; o SDC apresenta balões de entrada/saída.
+- Site Alerts e comunicados podem ser dispensados individualmente; Flag mantém o estado por usuário e a contagem acompanha a dispensa.
+- RUNTIME STATUS: DEFERRED nesta branch sem Runtime instalado; validar atualização de config e interação modal no Homelab.
+
 ## 0.1.1-dev.4 — fragmentos AJAX para gavetas Bootstrap
 
 - Rotas same-origin de prévia retornam somente HTML renderizado e têm cache privado/no-store;

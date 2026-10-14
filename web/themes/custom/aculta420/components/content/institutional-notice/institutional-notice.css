@@ -1,5 +1,5 @@
-.aculta-messenger-notice { padding: 0.875rem 1rem; border: 1px solid var(--aculta-border-default); border-inline-start-width: 0.3rem; border-radius: var(--bs-border-radius); background: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
-.aculta-messenger-notice--medium { border-color: var(--aculta-status-warning-border); background: var(--aculta-status-warning-surface); color: var(--aculta-status-warning-text); }
-.aculta-messenger-notice--high { border-color: var(--aculta-status-error-border); background: var(--aculta-status-error-surface); color: var(--aculta-status-error-text); }
-.aculta-messenger-notice--low { border-color: var(--aculta-border-default); }
+.aculta-messenger-notice { padding: 0.875rem 1rem; border: 1px solid var(--aculta-status-error-border); border-inline-start-width: 0.3rem; border-radius: var(--bs-border-radius); background: var(--aculta-status-error-surface); color: var(--aculta-status-error-text); }
+.aculta-messenger-notice--medium,
+.aculta-messenger-notice--high,
+.aculta-messenger-notice--low { border-color: var(--aculta-status-error-border); background: var(--aculta-status-error-surface); color: var(--aculta-status-error-text); }
 .aculta-messenger-notice > :last-child { margin-bottom: 0; }

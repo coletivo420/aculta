@@ -34,6 +34,15 @@ Respostas em threads existentes não são restringidas pela preferência.
   o Private Message mantém seu estado nativo lido/não lido por conversa.
 - `aculta_messenger` não cria engine de mensagens, tabelas, entidades espelho,
   transporte SMTP ou regras visuais.
+- Ao abrir a gaveta, `PrivateMessageServiceInterface::updateLastCheckTime()` é
+  a fonte do estado lido/não lido; o badge zera pela regra nativa de last-check.
+- A ação de cada conversa usa a rota canônica e o entity view completo do
+  Private Message dentro do modal Drupal, preservando thread access e Form API.
+- `PrivateMessagePresentationHooks::preprocessPrivateMessage()` prepara apenas
+  avatar User API com access/cache e direção enviada/recebida. `ThemeHooks` mapeia
+  esses dados para `aculta420:messenger-item`; CSS/Twig ficam no tema.
+- O `Flag` não global `aculta_site_alert_dismissed` guarda dispensa por membro
+  para Site Alert; `aculta_notice_read` continua marcando leitura dos Nodes.
 
 ## Compatibilidade e evidência
 
