@@ -50,6 +50,11 @@ O Drupal não converte o tipo de um nó no lugar. O serviço `aculta_magazine.pu
   A caixa de autoria e o autor do tópico seguem o autor copiado. Verificado no runtime em 2026-10-14: publicações
   PodPlant420 #01 e Cuidar não é crime, de `coletivo420` (uid 15), continuam de `coletivo420`; o Bloco Sativa segue
   do uid 1. Os tópicos têm o mesmo dono de suas publicações.
+- **Autor dos comentários**: o comentário guarda o próprio autor (`uid`) e o tópico ao qual pertence. A troca não
+  toca neles, então o autor, o nome exibido e a publicação do comentário permanecem. Verificado em 2026-10-14 com
+  comentário de outro autor (`teste.comum`), publicado explicitamente, em ida e volta (Notícia → blog): autor e nome
+  iguais, comentário no tópico. Comentários de autores sem permissão de publicação sem aprovação ficam na fila de
+  moderação, como em qualquer tópico; isso não é efeito da troca.
 - **Campos**: copiados quando existem no destino. Blog e Notícia têm os mesmos campos da Revista, então nada se perde.
 
 ### Verificação
