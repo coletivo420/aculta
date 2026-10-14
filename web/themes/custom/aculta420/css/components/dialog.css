@@ -167,3 +167,16 @@ dialog::backdrop {
   background: var(--aculta-dialog-secondary-bg);
   border-radius: 0.25rem;
 }
+
+/* Tamanho e posição dos modais que o módulo abre (o módulo só informa o comportamento). */
+.ui-dialog:has([data-portal-ui="login-popup"]) {
+  inline-size: min(440px, calc(100vw - 2rem)) !important;
+}
+
+.ui-dialog:has([data-portal-ui="search-popup"]) {
+  inline-size: min(520px, calc(100vw - 2rem)) !important;
+  max-block-size: min(560px, calc(100vh - 2rem)) !important;
+  top: 1.5rem !important;
+  left: 50% !important;
+  transform: translateX(-50%);
+}
