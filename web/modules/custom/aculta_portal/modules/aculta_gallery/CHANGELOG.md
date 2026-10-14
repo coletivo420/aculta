@@ -2,6 +2,14 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
+## 0.1.0-dev.10 — multidomínio e hardening — 2026-10-14
+
+- Multidomínio (D13), verificado nos dois hosts: visualização do álbum (200 na Revista, 403 no host principal), listagem (vazia no host principal, sem títulos nem links), incorporação em artigo (renderiza só na Revista). Sitemap: nenhuma URL de álbum (decisão pendente de indexação da Revista).
+- Gate `scripts/validate-aculta-gallery.php` (PASS): sem service locator em `src/`, `accessCheck()` explícito em toda EntityQuery, hooks OOP, D13 nos dois pontos, diálogo com permissão de criação.
+- Gates de projeto relevantes: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-environment-addresses` e `validate-account-profile-autocreate` PASS.
+- Pré-existente, fora deste módulo: `validate-public-slugs` reprova (20 falhas, linha de base DT-P20) também no `origin/main`. Não alterado aqui.
+- Pendências para a release: testes funcionais de permissão (Kernel/Functional), teclado e toque no navegador, responsividade, e o item de `srcset` (depende de breakpoints do tema).
+
 ## 0.1.0-dev.8 — desempenho com galerias grandes (medido) — 2026-10-14
 
 Medição no servidor de testes (página anônima do álbum, Firefox e curl). Álbuns de teste com 50, 500 e 2.000 referências a fotos existentes, apagados depois:
