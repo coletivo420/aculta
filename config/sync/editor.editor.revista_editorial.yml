@@ -29,6 +29,7 @@ settings:
       - codeBlock
       - drupalMedia
       - galeria
+      - acultaGalleryCreate
   plugins:
     ckeditor5_codeBlock:
       languages:

@@ -127,6 +127,18 @@ Decisão: manter a galeria como **entidade criada no administrador** e incorpora
 
 Formato de texto dedicado da Revista (D13, implementado nesta fase): `revista_editorial` (copia o `full_html`, com `entity_embed` e sem `sourceEditing`, para que não se digite marcação de incorporação à mão). O botão `galeria` só existe nele. Permissão `use text format revista_editorial` concedida ao editor de conteúdo. Campos de texto fora de artigo e blog passam a aceitar a lista de formatos sem o da Revista; artigo e blog continuam aceitando todos (inclusive o `full_html` existente, para não quebrar os 11 conteúdos já gravados nele).
 
+### 4.3 Criar galeria no editor: porte do CKEditor Media Gallery (2026-10-14)
+
+Decisão do responsável: portar o fluxo do CKEditor Media Gallery para o ACULTA Gallery, com entidade `media_gallery` e PhotoSwipe, usando as ferramentas que o submódulo já tem.
+
+- **Botão "Criar galeria"** (`acultaGalleryCreate`, plugin CKEditor 5 `CreateGallery` + `js/ckeditor5/acultagallery-create.js`), na toolbar do formato `revista_editorial`.
+- **Diálogo** (`GalleryEmbedDialogForm`, rota `aculta_gallery.ckeditor_dialog`): título e imagens. As imagens usam o widget de imagens do display de formulário da galeria (`media_gallery.media_gallery.default`), sem widget novo. Permissão `add media gallery entities` e uso do formato.
+- **Salvar**: cria a entidade `media_gallery` publicada e devolve a incorporação ao Entity Embed (`insertEntityEmbed`). Nada de lista de imagens no texto.
+- **Reuso, sem duplicar**: inserção e renderização pelo Entity Embed; visualização pelo formatador PhotoSwipe da entidade; capa e publicação pelos hooks da Fase 3; restrição D13 pelo formato.
+- **Não portado**: armazenamento em lista no texto, GLightbox, os quatro tipos de exibição do módulo, e o filtro próprio `drupal-gallery`. Origem e licença em `THIRD-PARTY.md`.
+- **Verificado**: plugin descoberto e instanciado; formulário monta com título, widget de imagens e envio AJAX; envio sem imagem devolve o erro de validação e não cria galeria.
+- **Pendente (Fase 10, navegador)**: envio com imagens escolhidas pelo seletor da Media Library, inserção no texto e renderização do artigo.
+
 ## 5. Modelagem
 
 ### 5.1 Entidade

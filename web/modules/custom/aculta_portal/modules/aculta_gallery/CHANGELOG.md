@@ -18,6 +18,9 @@ Classificação: MINOR (nova dependência de módulo: `entity_embed` e `embed`; 
 - Formato de texto dedicado `revista_editorial` (Revista — editorial): único com o botão `galeria` e o filtro `entity_embed`. Permissão para o editor de conteúdo. Campos de texto fora de artigo e blog excluem o formato. `full_html` perde o botão e o filtro.
 - Verificado: artigo no formato da Revista renderiza a galeria pela URL da Revista (200); artigos de teste apagados.
 - Pesquisa de criação de galeria no editor e alternativas: `docs/ARQUITETURA.md` §4.2.
+- Botão "Criar galeria" no CKEditor 5 (`acultaGalleryCreate`), portado do CKEditor Media Gallery (GPL-2.0-or-later) sobre a entidade `media_gallery`, Entity Embed e PhotoSwipe. Origem e adaptações em `THIRD-PARTY.md` e `docs/ARQUITETURA.md` §4.3.
+- Verificado: plugin descoberto; diálogo monta com widget de imagens reaproveitado; envio sem imagem devolve erro e não cria galeria.
+- Pendente: envio com imagens pelo navegador (Fase 10).
 - RUNTIME STATUS: verificado no Runtime (incorporação, formato da Revista, renderização pela Revista e remoção). Testes de navegador do editor pendentes (Fase 10).
 
 ## 0.1.0-dev.4 — importação, organização e restrição à Revista — 2026-10-14
