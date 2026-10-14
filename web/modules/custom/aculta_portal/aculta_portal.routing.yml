@@ -281,3 +281,12 @@ aculta_portal.admin_self_edit:
   options:
     _admin_route: true
     no_cache: true
+
+# Popup "Entrar" da barra multidomínio (use-ajax modal). Exceção do Turnstile: ver docs/portal/TURNSTILE.md.
+aculta_portal.login_popup:
+  path: /entrar/janela
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\LoginPopupForm'
+    _title: Entrar
+  requirements:
+    _user_is_logged_in: 'FALSE'
