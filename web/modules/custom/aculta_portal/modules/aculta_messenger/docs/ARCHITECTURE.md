@@ -96,7 +96,7 @@ Nodes e não no Site Alert.
 
 ## Inventário técnico upstream
 
-O inventário verificado no código instalado (Core 11.4.8) está em
+O inventário verificado no código instalado (Core 11.4.10) está em
 [INTEGRATIONS.md](INTEGRATIONS.md). Em síntese, Private Message tem entidades
 de mensagem/thread/ban e serviços de thread, bloqueio e contagem não lida;
 Message tem entidades `message` e `message_template`; Message Notify oferece
@@ -122,6 +122,40 @@ mensagens. Escolher handlers/hooks OOP somente após revisar assinaturas no
 Core e upstream instalados.
 
 ## Decisões arquiteturais
+
+### ADR-MSG-008 — pedidos de amizade e privacidade de novas conversas
+
+**Decisão:** `aculta_user` é dono do workflow de amizade e expõe seu serviço
+para o `aculta_messenger`. Nenhum módulo instalado oferece o contrato completo
+de pedido, aceite, recusa, notificação e autorização exigido. O estado explícito
+será uma entidade Drupal de `aculta_user`; eventos poderão ser Messages
+entregues por Message Notify. Não instalar o projeto Friendship, que declara
+não estar coberto pela política de segurança Drupal, nem reutilizar User
+Relationships, voltado a Drupal 7. A implementação de Friendship é referência
+de casos de uso, com modelo refeito para DI, Entity API, access control e
+Form API/POST; Flag permanece para leitura/assinatura, sem virar grafo social.
+
+**Política:** `todos` é o padrão retrocompatível. `somente amigos` afeta apenas
+a criação de uma nova thread; respostas a threads existentes continuam
+permitidas, inclusive se a preferência mudar ou a amizade terminar. O
+destinatário deve ser conta ativa, não pode ser o remetente e não pode bloquear
+o remetente; bloqueio bilateral nativo do Private Message é sempre respeitado.
+Administradores e editores de conteúdo podem ignorar a preferência de novas
+conversas, nunca os bloqueios. Essa exceção não concede permissão Drupal nem
+acesso a threads. Regras são aplicadas no servidor no submit e não dependem da
+visibilidade de links.
+
+**Motivo:** a separação preserva ownership: `aculta_user` governa perfil e
+relacionamentos entre contas; `aculta_messenger` integra comunicação. A
+preferência individual no User Data evita configuração paralela; a entidade
+permite queries, estados e acesso explícitos, sem confundir pedido pendente
+com amizade aceita. Mensagens e notificações continuam nas fontes existentes.
+
+**Consequências:** novas entidades e ações exigem validação de permissão,
+cacheabilidade por usuário, proteção contra IDOR, serialização de transições
+concorrentes e testes de isolamento. Notificações não são fonte do estado da
+amizade. A implementação deve manter nome de bundle e campos abaixo de 32
+caracteres.
 
 ### ADR-MSG-001 — Contrib como fonte de verdade
 
@@ -207,3 +241,10 @@ workflow editorial, público por papéis Drupal e validade opcional. O Flag
 nativo por thread de Private Message; nenhuma tabela paralela de recibos é
 criada. O menu global oferece dois modais Drupal same-origin; o centro em
 ACCOUNT continua sendo a navegação canônica para mensagens.
+
+
+## Amizades e preferência de novas conversas (0.1.1)
+
+O ownership do relacionamento fica em `aculta_user`; a entidade `aculta_friendship` guarda um registro por par com uma chave string canônica única, direção solicitante/destinatário e estado. A API `FriendshipManagerInterface` serializa transições com o lock persistente do Core e verifica participante/estado em cada mutação.
+
+O Messenger consome essa API em três pontos: ações de perfil, pedidos recebidos em Notificações/contador, e validação de destinatários ao criar nova thread. `user.data` (`aculta_messenger/message_privacy`) guarda a preferência individual sem schema duplicado. Admin/editor ignoram somente essa preferência; a verificação nativa de bloqueio corre antes e continua obrigatória. Threads existentes não são afetadas.

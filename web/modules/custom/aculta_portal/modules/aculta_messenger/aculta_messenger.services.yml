@@ -6,6 +6,8 @@ services:
       - '@current_user'
       - '@string_translation'
       - '@private_message.ban_manager'
+      - '@aculta_user.friendship_manager'
+      - '@user.data'
     public: true
   aculta_messenger.private_message_account_route_subscriber:
     class: Drupal\aculta_messenger\EventSubscriber\PrivateMessageAccountRouteSubscriber

@@ -3,6 +3,26 @@
 Documento de planejamento único do submódulo. O estado de execução pertence ao
 Git, à PR e ao changelog; esta lista registra sequência e critérios de entrega.
 
+## 0.1.1 — pedidos de amizade e política de novas conversas
+
+1. **dev.1 — pesquisa e decisão:** auditados Friendship, User Relationships,
+   Flag, Private Message, Message e Message Notify. Sem nova dependência;
+   workflow de amizade dentro de `aculta_user`, com entidade de conteúdo; o
+   Messenger consome o serviço público e usa as integrações atuais.
+2. **dev.2 — workflow e privacidade (implementado estaticamente):** entidade e
+   serviço em `aculta_user`, ações em perfil/notificações, preferência individual
+   e validação de novas threads; runtime DEFERRED.
+3. **dev.3 — eventos de amizade:** criar notificações persistentes Message e
+   integrar Message Notify para pedido/aceite, com deduplicação e e-mail mínimo,
+   sem expor dados privados.
+4. **dev.4 — hardening e homologação:** testes automatizados de acesso/IDOR,
+   transições, isolamento entre contas, rate limit, cache e regressão; validação
+   no Homelab e revisão do Config Sync antes do RC.
+
+Cada incremento registra os testes realmente executados e `RUNTIME STATUS`.
+O RC não é considerado pronto sem homologação de runtime e transporte de
+notificação controlado.
+
 ## 0.1.0
 
 1. **dev.1 — fundação documental:** ownership, inventário, compatibilidade,

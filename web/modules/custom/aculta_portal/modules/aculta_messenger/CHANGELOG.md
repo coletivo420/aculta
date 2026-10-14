@@ -2,6 +2,38 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.2 — pedidos de amizade e privacidade de novas conversas
+
+- `aculta_user` implementa amizade como entidade privada por par de membros, com estados pendente, aceita, recusada, cancelada e removida; API de serviço com DI, lock do Core e ID canônico único.
+- Perfis públicos autenticados oferecem solicitar, cancelar e remover amizade por Form API/POST; `/mensagens/notificacoes` mostra pedidos recebidos e permite aceitar/recusar. O contador da barra inclui pedidos pendentes.
+- Flood API limita novos pedidos de amizade a dez por membro por hora.
+- Completa o índice do contrato Portal/tema para tokens de Messenger e leitura já usados pela integração.
+- Preferência individual Todos/Somente amizades confirmadas salva em User Data pelo `aculta_messenger`; aplica-se somente ao início de thread. Administradores e editores ignoram essa preferência, nunca os bloqueios nativos.
+- Atualização `aculta_user_update_10002()` instala a nova entidade em sites existentes.
+- Composer audit revelou os advisories SA-CORE-2026-014/015/016 no Core 11.4.8; após dry-run, `composer.json`/lock atualizaram Core e `core-dev` para 11.4.10 e componentes Symfony compatíveis. `composer audit --locked`: PASS, sem advisories.
+- Verificado: PHP lint das classes alteradas, YAML de metadados/serviços/permissões, Drupal 11+ gate (696), environment-address gate (1.595), composer validate e `composer audit --locked` sem advisories. O gate de slugs não iniciou: este worktree não contém `vendor/autoload.php`.
+- RUNTIME STATUS: DEFERRED — sem instalação/atualização no Homelab, sem teste funcional entre usuários e sem envio de e-mails reais.
+
+## 0.1.1-dev.1 — pesquisa e decisão de arquitetura
+
+- Pesquisados Friendship, User Relationships, Flag, Private Message, Message e
+  Message Notify em fontes oficiais; versões e código instalado do lock foram
+  conferidos na branch local.
+- Friendship declara compatibilidade com Drupal 11, mas não possui cobertura
+  da política de advisories; sua implementação não atende diretamente à
+  central privada de pedidos e notificações do ACULTA. User Relationships é
+  legado para Drupal 7. Não instalar dependência adicional.
+- Decidido implementar o workflow de amizade em `aculta_user` como entidade
+  Drupal própria e serviço público; `aculta_messenger` consumirá essa API.
+  Message/Message Notify mantêm notificações e Private Message mantém threads;
+  Flag não será usado como máquina de estados. Os casos de uso do Friendship
+  serão adaptados para os contratos DI, Entity API, access e Form API do Portal.
+- Definida a preferência individual `todos`/`somente amigos`: limita somente
+  novas conversas; respostas em threads existentes permanecem liberadas.
+  Administradores e editores ignoram a preferência, mas não bloqueios nativos.
+- RUNTIME STATUS: DEFERRED — somente documentação/pesquisa nesta subfase;
+  implementação e validação seguem em dev.2/dev.3.
+
 ## 0.1.0-dev.10 — modais da barra e estado de leitura
 
 - Adiciona modal same-origin de conversas e de avisos ativos na barra
@@ -188,3 +220,10 @@ Mudanças relevantes do ACULTA Messenger.
 - Nenhuma mudança funcional ou instalação Composer.
 - STATIC: PASS — `git diff --check` e links Markdown internos (nove arquivos).
 - RUNTIME STATUS: DEFERRED (sem código funcional).
+
+### Classes e hooks da integração de amizade
+
+- `FriendRequestsForm`: lista pedidos direcionados à conta atual e trata aceitação/recusa por Form API.
+- `MessagesController::notifications()`: agrega os pedidos recebidos e notificações Message privadas existentes.
+- `MessengerBarHooks::preprocessPage()`: soma pedidos pendentes ao contador privado da barra.
+- `PrivateMessageFormHooks::formAlter()` e `PrivateMessageFormValidator::validateNewConversationPrivacy()`: aplicam a preferência apenas ao criar conversa.

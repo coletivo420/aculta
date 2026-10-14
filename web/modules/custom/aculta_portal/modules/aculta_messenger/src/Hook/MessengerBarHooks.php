@@ -19,6 +19,7 @@ use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
+use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Supplies the neutral, per-member Messenger action to the global shell. */
@@ -39,6 +40,8 @@ final class MessengerBarHooks {
     private readonly TimeInterface $time,
     #[Autowire(service: 'flag')]
     private readonly FlagServiceInterface $flagService,
+    #[Autowire(service: 'aculta_user.friendship_manager')]
+    private readonly FriendshipManagerInterface $friendshipManager,
   ) {}
 
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
@@ -81,7 +84,7 @@ final class MessengerBarHooks {
     $url = Url::fromRoute('aculta_messenger.preview')->toString(TRUE);
     $variables['aculta_messenger'] = [
       'url' => $url->getGeneratedUrl(),
-      'unread_count' => max(0, $this->privateMessageService->getUnreadThreadCount()),
+      'unread_count' => max(0, $this->privateMessageService->getUnreadThreadCount()) + count($this->friendshipManager->getIncomingRequests()),
     ];
 
     if (isset($variables['page']) && is_array($variables['page'])) {

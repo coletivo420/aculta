@@ -56,6 +56,17 @@ final class CommunicationSettingsForm extends FormBase {
         ? $this->t('O envio usa a ferramenta de e-mail já instalada no site.')
         : $this->t('Os avisos por e-mail estão desativados pela configuração do site.'),
     ];
+    $privacyPreference = $this->userData->get('aculta_messenger', $uid, 'message_privacy');
+    $form['message_privacy'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Quem pode iniciar uma conversa com você?'),
+      '#options' => [
+        'all' => $this->t('Todos os membros'),
+        'friends' => $this->t('Somente amizades confirmadas'),
+      ],
+      '#default_value' => $privacyPreference === 'friends' ? 'friends' : 'all',
+      '#description' => $this->t('A preferência vale para novas conversas. Pessoas com conversa existente ainda podem responder. Administradores e editores de conteúdo podem iniciar conversas; seus bloqueios continuam valendo.'),
+    ];
     $form['blocking'] = [
       '#type' => 'item',
       '#title' => $this->t('Bloquear uma pessoa'),
@@ -75,15 +86,21 @@ final class CommunicationSettingsForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if (!$this->configFactory->get('private_message.settings')->get('enable_notifications')) {
       $this->messenger()->addWarning($this->t('Os avisos por e-mail estão desativados pela configuração do site.'));
-      $form_state->setRedirect('aculta_messenger.communication_settings');
-      return;
     }
-
+    else {
+      $this->userData->set(
+        'private_message',
+        (int) $this->currentUser->id(),
+        'receive_notification',
+        (bool) $form_state->getValue('receive_notification'),
+      );
+    }
+    $privacyPreference = $form_state->getValue('message_privacy');
     $this->userData->set(
-      'private_message',
+      'aculta_messenger',
       (int) $this->currentUser->id(),
-      'receive_notification',
-      (bool) $form_state->getValue('receive_notification'),
+      'message_privacy',
+      $privacyPreference === 'friends' ? 'friends' : 'all',
     );
     $this->messenger()->addStatus($this->t('Preferências de mensagens salvas.'));
     $form_state->setRedirect('aculta_messenger.communication_settings');

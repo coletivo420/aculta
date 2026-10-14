@@ -20,6 +20,7 @@ final class PrivateMessageFormHooks {
     // Run after Private Message's own recipient and block validation. Keeping
     // the callback in Form API preserves its native validation and submit path.
     $form['#validate'][] = 'aculta_messenger.private_message_form_validator:validateBlockedRecipients';
+    $form['#validate'][] = 'aculta_messenger.private_message_form_validator:validateNewConversationPrivacy';
     $form['#validate'][] = 'aculta_messenger.private_message_form_validator:validateRateLimit';
   }
 

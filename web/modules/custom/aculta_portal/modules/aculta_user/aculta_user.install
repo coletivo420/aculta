@@ -17,3 +17,10 @@ function aculta_user_update_10001(): void {
   $type = \Drupal::entityTypeManager()->getDefinition('aculta_badge_award');
   $manager->installEntityType($type);
 }
+
+/** Instala a entidade interna de relacionamentos entre membros. */
+function aculta_user_update_10002(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $type = \Drupal::entityTypeManager()->getDefinition('aculta_friendship');
+  $manager->installEntityType($type);
+}

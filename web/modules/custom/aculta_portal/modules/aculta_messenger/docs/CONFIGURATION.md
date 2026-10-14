@@ -104,3 +104,8 @@ edita avisos em rascunho; publicação segue as transições editoriais atribuí
 `aculta_notice_read` é um Flag não global que fornece ações de marcar como lido
 e não lido. O badge para membros conta avisos visíveis ainda não marcados como
 lidos; visitantes veem a quantidade de Site Alerts temporários ativos.
+
+
+## Privacidade de novas conversas (0.1.1)
+
+Em Minha Conta > Configurações > Mensagens, cada usuário escolhe Todos os membros ou Somente amizades confirmadas. O estado usa User Data (`aculta_messenger`, chave `message_privacy`) e não requer configuração global ou import de configuração. O padrão efetivo é Todos os membros. Administradores e editores de conteúdo ignoram essa escolha; bloqueios individuais nativos do Private Message permanecem efetivos. A escolha não bloqueia respostas em conversas existentes.

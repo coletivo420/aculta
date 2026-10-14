@@ -124,3 +124,17 @@ O preview funciona same-origin no host corrente. A conta e as conversas
 permanecem privadas e os links da inbox usam o purpose ACCOUNT. O modal de
 avisos combina Site Alert (temporário) e Nodes autorizados; o corpo privado de
 mensagens não é incluído em e-mail.
+
+
+## Amizades e novas conversas (0.1.1)
+
+- Entidade privada: somente participantes podem consultar/atualizar; exclusão é negada aos participantes e exige permissão administrativa restrita.
+- Solicitações exigem sessão autenticada/ativa, destinatário ativo, UID diferente e chave única por par. Estado/participante são relidos sob lock antes de transicionar.
+- Flood API do Core limita novos pedidos a dez por remetente por hora.
+- Form API usa POST e token CSRF nativo; IDs recebidos são tratados como entrada não confiável e as entidades são reautorizadas pelo manager.
+- Preferência `friends` é consultada no servidor para cada destinatário apenas ao criar thread. Resposta em thread existente não passa pela regra.
+- A validação não informa se o destinatário restringiu mensagens a amizades, evitando expor a preferência individual.
+- A exceção `administrator`/`content_editor` não pula os bloqueios bilaterais nativos do Private Message.
+- Notificações de amizade mostram somente pedidos destinados ao usuário atual; consultas limitam o recipient UID e os registros passam por access handler após load.
+- O contador e a página de mensagens são privados por usuário e sem cache compartilhado.
+- Homelab, atualização de schema, isolamento entre usuários e revisão completa contra IDOR permanecem pendentes; RUNTIME STATUS: DEFERRED.

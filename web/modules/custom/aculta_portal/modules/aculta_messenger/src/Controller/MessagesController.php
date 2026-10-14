@@ -8,6 +8,8 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_messenger\Form\FriendRequestsForm;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
@@ -35,6 +37,7 @@ final class MessagesController extends ControllerBase {
     private readonly GetAlertsInterface $siteAlerts,
     private readonly FlagServiceInterface $flagService,
     private readonly TranslationInterface $translation,
+    private readonly FormBuilderInterface $formBuilder,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -46,6 +49,7 @@ final class MessagesController extends ControllerBase {
       $container->get('site_alert.get_alerts'),
       $container->get('flag'),
       $container->get('string_translation'),
+      $container->get('form_builder'),
     );
   }
 
@@ -283,7 +287,10 @@ final class MessagesController extends ControllerBase {
       ->range(0, 25)
       ->execute();
     $messages = $this->entityTypeManager->getStorage('message')->loadMultiple($ids);
-    $items = [];
+    $items = [
+      'friend_requests' => $this->formBuilder->getForm(FriendRequestsForm::class),
+      'messages' => [],
+    ];
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user'])
       ->addCacheTags($this->entityTypeManager->getDefinition('message')->getListCacheTags());
@@ -291,15 +298,20 @@ final class MessagesController extends ControllerBase {
       if (!$message instanceof MessageInterface || (int) $message->getOwnerId() !== $uid) {
         continue;
       }
-      $items[] = $this->entityTypeManager->getViewBuilder('message')->view($message, 'mail_body', 'pt-br');
+      $items['messages'][] = $this->entityTypeManager->getViewBuilder('message')->view($message, 'mail_body', 'pt-br');
       $cacheability->addCacheableDependency($message);
     }
 
-    if ($items === []) {
-      $items[] = ['#plain_text' => (string) $this->translation->translate('Você ainda não recebeu notificações de mensagens.')];
+    if ($items['messages'] === []) {
+      $items['messages'][] = ['#plain_text' => (string) $this->translation->translate('Você ainda não recebeu notificações de mensagens.')];
     }
 
-    $build = ['items' => ['#theme' => 'item_list', '#items' => $items], '#cache' => ['max-age' => 0]];
+    $build = [
+      'friend_requests' => $items['friend_requests'],
+      'messages' => ['#theme' => 'item_list', '#items' => $items['messages']],
+      '#cache' => ['max-age' => 0],
+    ];
+    $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     $cacheability->applyTo($build);
     return $build;
   }
