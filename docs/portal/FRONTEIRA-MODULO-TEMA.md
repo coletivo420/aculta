@@ -182,3 +182,21 @@ Gates que exigem execução local com contexto próprio (saem com "Local only"):
 - Apelido do perfil do uid 1 é `pessoa-1` (provisório). Aparece na caixa de autoria do Bloco Sativa. Decisão do responsável.
 - Tópico 89 (despublicado), de uma importação já apagada, ocupa o endereço do tópico do Bloco (saiu com `-0`).
 - Scripts de importação usam `\Drupal::`. Fora de `src/`, no padrão dos scripts de conteúdo, mas registrado aqui.
+
+### Atualização (2026-10-14, correções)
+
+Depois da varredura acima, foram corrigidos os itens abaixo. Os que não estão nesta lista continuam pendentes.
+
+- `root-policy`, `shop-captcha`, `conta-root`, `admin-cleanup`, `aculta420-foundation`: gates desatualizados em relação
+  ao comportamento documentado (ver o histórico dos commits `e55c15e` e `99d0ed5`).
+- `domain-presentation`: o `Attribute` da dica da Wiki sai da presentation; é criado no preprocess de
+  `aculta_portal_element` (`aculta_portal` 0.4.0-dev.15). Gate: PASS (127).
+- `secrets-contract`: o contrato JSON listava `aculta_document_encryption_key` duas vezes (corrigido) e o gate não
+  conhecia `aculta_document_encryption_key` nem `aculta_id_cpf_fingerprint`, ambas documentadas em `SECRETS.md`.
+  Gate: PASS. O provisionamento em produção segue pendente, como documentado.
+- `institution`: gate de Drupal. Passa pelo Drush (`drush scr`); o script agora avisa a forma de execução quando rodado
+  pelo PHP puro, com código de saída 2.
+- Continua pendente: `cross-domain-request-policy`. A asserção de origem procura a forma negativa da checagem em
+  `account-navigation.js`, mas a regra existe na forma positiva em `isInternalLink()`. Ajustar o gate exige decisão de
+  quem revisa a política de segurança.
+- Gates "Local only" continuam dependendo do ambiente local.
