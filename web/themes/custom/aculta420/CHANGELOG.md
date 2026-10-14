@@ -1,3 +1,15 @@
+## 0.6.0-dev.20 — Revista: imagens do corpo e intertítulos — 2026-10-14
+
+Classificação: PATCH (apresentação da postagem; sem mudança de contrato nem de API).
+
+- Imagens embutidas no corpo de publicações da Revista (Notícia e blog) saem centralizadas na coluna de leitura,
+  com cantos e fundo dos tokens do tema, sem distorção (`revista-post.css`).
+- Intertítulos (h2/h3) do corpo ficam alinhados à esquerda: o texto justificado abria espaços nos títulos.
+- Sem mudança de marcação: a imagem chega como `media--type-image` pelo formato de mídia do Drupal.
+- Gate de Foundation atualizado para a versão 0.6.0-dev.20.
+- RUNTIME STATUS: verificado no Homelab (HTTP 200 da publicação com duas imagens e captura headless). Inspeção
+  visual humana pendente; a publicação sem imagem segue com o erro de cache descrito na PR da importação.
+
 ## 0.6.0-dev.19 — sugestões interativas na busca Wiki420 — 2026-10-13
 
 Classificação: MINOR (reutiliza a interação de busca existente em um novo shell).
