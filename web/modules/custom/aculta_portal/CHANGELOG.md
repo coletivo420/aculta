@@ -9,6 +9,7 @@
 - Tema ACULTA420 (mesma entrega): visual do popup conforme o anexo e escurecimento do fundo de todos os modais
   (`.ui-widget-overlay` e `dialog::backdrop`, com `--aculta-scrim`).
 - Popup "Entrar": botão "Continuar com Google" no topo, pelo mesmo fluxo OAuth (rota do host da conta, retorno ao host de origem).
+- Popup "Entrar": ordem senha → Entrar → "Esqueceu sua senha?" → divisor → "Cadastre-se". O botão não fica no rodapé do diálogo (contêiner sem `form-actions`).
 - Fronteira mantida: o módulo não emite classes de design; os tokens `login-popup` e `login-popup-links` são mapeados
   no tema (`PortalUiHooks`).
 - RUNTIME STATUS: DEFERRED. Pendentes: teste de navegador do popup (TESTES-NAVEGADOR, seção R) e teste com outro tema

@@ -111,6 +111,8 @@ final class LoginPopupForm extends UserLoginForm {
     }
     $registerUrl = $this->domainPurpose->routeUrl('account', 'user.register');
     if ($registerUrl !== NULL) {
+      // Divisor entre "Esqueceu sua senha?" e "Cadastre-se", como no anexo.
+      $links['divider'] = ['#type' => 'html_tag', '#tag' => 'hr', '#attributes' => ['data-portal-ui' => 'login-popup-divider']];
       $links['register'] = ['#type' => 'link', '#title' => $this->t('Cadastre-se'), '#url' => $registerUrl];
     }
     $form['links'] = [
@@ -133,6 +135,11 @@ final class LoginPopupForm extends UserLoginForm {
       }
     }
 
+    // Entrar logo após a senha e os links depois dele. O contêiner não é "form-actions": assim o Core não copia o
+    // botão para o rodapé do diálogo (dialog.jquery-ui.js, prepareDialogButtons).
+    $form['actions']['#type'] = 'container';
+    $form['actions']['#weight'] = 5;
+    $form['links']['#weight'] = 10;
     $form['actions']['submit']['#ajax'] = [
       'callback' => '::ajaxSubmit',
       'wrapper' => self::WRAPPER_ID,
