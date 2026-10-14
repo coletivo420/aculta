@@ -29,6 +29,9 @@ Composer. O inventário e os limites da inspeção estão em
 O PHP CLI disponível nesta execução é 8.4.26. O projeto pede PHP 8.5; esta
 máquina não comprova validação em PHP 8.5. Compatibilidade de cada dependência
 com PHP 8.5 também não é declarada até examinar código e metadados instalados.
+O transporte de e-mail já instalado é o caminho de entrega previsto: Drupal Mail
+com Symfony Mailer/Mailer Plus. O Messenger não adiciona SMTP ou outro
+transportador.
 
 ## Domain Purpose
 
@@ -49,6 +52,11 @@ cross-purpose usam `DomainPurposeManager`; mutações não atravessam hosts.
 
 ## Estado da implementação
 
-O módulo declara dependências, mas ainda não foi ativado. Nenhuma funcionalidade
-de runtime foi implementada. Não habilitar o submódulo antes da validação do
-ciclo de instalação em ambiente apropriado.
+O módulo declara dependências, mas ainda não foi ativado. As rotas, entidades,
+formulários, bloqueio e contadores de Private Message foram confirmados no
+código instalado para reutilização; a integração ACULTA ainda não adiciona
+runtime. As permissões `use private messaging system` e `access user profiles`
+não aparecem na configuração exportada de papéis, então nenhuma concessão será
+feita pelo submódulo. A política de quais papéis podem iniciar conversas precisa
+ser aplicada por configuração administrativa revisada antes da ativação da
+experiência para membros.

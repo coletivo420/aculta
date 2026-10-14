@@ -75,6 +75,18 @@ O submódulo opcional `private_message_notify` também entrega email via
 `message_notify.sender`; não ativar junto de outro handler de notificação do
 mesmo evento sem deduplicação/owner único de canal.
 
+O envio externo permanece no transporte de e-mail já instalado pelo projeto:
+Drupal Mail com Symfony Mailer/Mailer Plus. Message Notify é responsável pela
+preparação/entrega lógica; não há configuração SMTP ou transportador próprio do
+Messenger. O `private_message_notify` opcional é um possível chamador do mesmo
+serviço, portanto deve haver um único caminho ativo para notificar cada evento.
+
+A configuração exportada atual não concede `use private messaging system` nem
+`access user profiles` a papéis. A ativação do Messenger não deve conceder essas
+permissões automaticamente. A distribuição pretendida dessas permissões deve
+ser revisada antes de habilitar envio por membros; até lá, as rotas nativas
+continuam protegidas pelos requisitos existentes.
+
 Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
 cache/access de runtime ou compatibilidade em PHP 8.5.
 

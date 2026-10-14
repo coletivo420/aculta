@@ -19,6 +19,13 @@ IDs e handlers foram confirmados no código instalado; contexts e tags de
 presenters precisam de testes funcionais. Não copiar permissões para o
 Messenger nem concedê-las automaticamente a papéis.
 
+Na configuração exportada examinada nesta fase, não há concessão das
+permissões nativas `use private messaging system` e `access user profiles`.
+Portanto a inclusão do módulo não habilita automaticamente mensagens para
+qualquer papel. A distribuição pretendida dessas permissões deve ser decidida
+e registrada antes da ativação do fluxo para membros. A proteção upstream é
+mantida enquanto essa política não for configurada.
+
 ## Invariantes
 
 - Cada leitura e escrita usa APIs públicas Drupal e permissões/access nativos;

@@ -14,8 +14,8 @@ Mudanças relevantes do ACULTA Messenger.
   alterou banco/runtime.
 - Confirma o inventário upstream nos arquivos efetivamente instalados; ver
   `docs/INTEGRATIONS.md` e `docs/ARCHITECTURE.md`.
-- E-mail reutiliza Drupal Mail com Symfony Mailer/Mailer Plus existente. Não
-  instala SMTP nem cria transporte.
+- E-mail reutiliza Drupal Mail com Symfony Mailer/Mailer Plus existente, pela
+  ferramenta de entrega já instalada. Não instala SMTP nem cria transporte.
 - Verificações: `composer validate` válido (com warnings preexistentes de
   constraints exatas), `composer audit` sem advisories, Drupal extension
   discovery PASS,
