@@ -838,3 +838,11 @@ Classificação: PATCH (apresentação de metadado na caixa existente).
 - O alinhamento mantém o avatar e o botão com a dimensão mínima já definida.
 - Validação visual pendente; RUNTIME STATUS: DEFERRED.
 
+## 0.6.0-dev.35 — data visível nos contatos — 2026-10-14
+
+Classificação: PATCH (apresentação do contato e composição nativa da conversa).
+
+- A data curta da última mensagem é apresentada em elemento próprio acima do nome, inclusive na gaveta lateral da barra multidomínio.
+- O tema preserva o espaço visual compacto do contato e aplica tipografia secundária pequena.
+- Validação visual pendente; RUNTIME STATUS: DEFERRED.
+

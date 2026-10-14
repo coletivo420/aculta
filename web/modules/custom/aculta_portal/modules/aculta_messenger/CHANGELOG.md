@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.11 — resposta e data na caixa de mensagens — 2026-10-14
+
+- O modal de conversa mantém o histórico nativo do Private Message e garante o formulário de resposta nativo quando a exibição ativa não o inclui.
+- A lista da barra lateral mostra a data e hora da mensagem mais recente dentro do botão do remetente, em markup explícito e fonte pequena.
+- A data usa o timestamp da última mensagem; o timestamp da thread é fallback.
+- `git diff --check`: PASS. PHP lint, gates e validação visual: não executados nesta etapa.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.1-dev.10 — data da última mensagem no contato — 2026-10-14
 
 - Cada botão de remetente mostra a data e hora da última atividade da conversa acima do nome, em tipografia pequena.

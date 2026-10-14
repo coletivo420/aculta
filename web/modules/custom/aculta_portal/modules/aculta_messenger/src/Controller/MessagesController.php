@@ -20,6 +20,8 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Markup;
 use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
@@ -149,13 +151,22 @@ final class MessagesController extends ControllerBase {
       }
       $conversationUrl = $this->domainPurposeManager->routeUrl(
         'account',
-        'entity.private_message_thread.canonical',
+        'aculta_messenger.conversation_dialog',
         ['private_message_thread' => $thread->id()],
       );
-      $sentDate = $this->dateFormatter->format((int) $thread->getUpdatedTime(), 'custom', 'd/m/Y H:i');
+      $lastMessageTimestamp = (int) $thread->getNewestMessageCreationTimestamp();
+      $sentDate = $this->dateFormatter->format(
+        $lastMessageTimestamp > 0 ? $lastMessageTimestamp : (int) $thread->getUpdatedTime(),
+        'custom',
+        'd/m/Y H:i',
+      );
+      $linkTitle = Markup::create(
+        '<span class="aculta-messenger-sender__date">' . Html::escape($sentDate) . '</span>'
+        . '<span class="aculta-messenger-sender__name">' . Html::escape($senderName) . '</span>'
+      );
       $openLink = $conversationUrl === NULL ? NULL : [
         '#type' => 'link',
-        '#title' => $senderName,
+        '#title' => $linkTitle,
         '#url' => $conversationUrl,
         '#attributes' => [
           'class' => ['use-ajax', 'aculta-messenger-sender__link'],
@@ -280,6 +291,37 @@ final class MessagesController extends ControllerBase {
     return $this->buildDrawerResponse($build, [
       'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
     ]);
+  }
+
+  /** Renders the native thread and reply form for the account message modal. */
+  public function conversationDialog(PrivateMessageThreadInterface $private_message_thread): array {
+    $thread = $private_message_thread;
+    $build = $this->entityTypeManager->getViewBuilder('private_message_thread')->view($thread, 'full');
+
+    // Private Message normally adds its native reply form from the entity view
+    // display. Keep that form when configured; provide the same native Form API
+    // form if a site's display configuration omitted the component.
+    if (!isset($build['private_message_form'])) {
+      $hasActiveRecipient = FALSE;
+      foreach ($thread->getMembers() as $member) {
+        if ($member->isActive() && (int) $member->id() !== (int) $this->currentUser->id()) {
+          $hasActiveRecipient = TRUE;
+          break;
+        }
+      }
+
+      if ($hasActiveRecipient) {
+        $message = $this->entityTypeManager->getStorage('private_message')->create([]);
+        $formObject = $this->entityTypeManager->getFormObject('private_message', 'add')
+          ->setEntity($message);
+        $build['private_message_form'] = $this->formBuilder->getForm($formObject, $thread);
+      }
+      else {
+        $build['no_active_users'] = ['#theme' => 'private_message_no_active_users_notice'];
+      }
+    }
+
+    return $build;
   }
 
   /** Selects the latest incoming author, or the conversation partner. */

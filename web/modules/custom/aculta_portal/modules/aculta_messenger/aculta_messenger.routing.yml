@@ -23,6 +23,22 @@ aculta_messenger.preview:
   options:
     no_cache: true
 
+aculta_messenger.conversation_dialog:
+  path: '/mensagens/conversa/{private_message_thread}/modal'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::conversationDialog'
+    _title: 'Conversa'
+  requirements:
+    _entity_access: 'private_message_thread.view'
+    _permission: 'use private messaging system,access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: account
+    parameters:
+      private_message_thread:
+        type: entity:private_message_thread
+
 aculta_messenger.alerts_preview:
   path: '/avisos/resumo'
   defaults:

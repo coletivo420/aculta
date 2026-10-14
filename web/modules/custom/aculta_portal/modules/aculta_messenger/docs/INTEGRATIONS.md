@@ -74,8 +74,11 @@ Fontes oficiais consultadas: [Friendship](https://www.drupal.org/project/friends
 e [ContentEntityType attribute](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21Attribute%21ContentEntityType.php/class/ContentEntityType/11.x).
 
 O modal de mensagens consulta o estado nativo de leitura por conversa do
-Private Message, relativo ao membro atual. A abertura da conversa permanece
-no fluxo nativo do módulo. O modal de avisos mostra Site Alerts ativos e o
+Private Message, relativo ao membro atual. A rota de diálogo do ACULTA Messenger
+renderiza a entidade da conversa e reutiliza o formulário `private_message` do
+módulo; se a configuração de exibição não trouxer esse componente, inclui o
+mesmo Form API nativo como fallback. Acesso e envio continuam sob as regras do
+Private Message. O modal de avisos mostra Site Alerts ativos e o
 contador representa apenas a quantidade ativa: Site Alert não fornece recibo
 de leitura individual. Pedidos de amizade recebidos também aparecem em `/mensagens/notificacoes`; o formulário usa ações POST e atualiza o contador da barra. A preferência é validada no formulário nativo do Private Message antes da criação de thread; threads existentes permanecem aptas a resposta.
 
