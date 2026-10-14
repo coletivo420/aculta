@@ -313,8 +313,7 @@ Ambiente: servidor de testes (`*.aculta.toca.net.br`), Firefox por BiDi com ferr
 | Erros de JavaScript na página do álbum | PASS (nenhum) | listener antes do carregamento |
 | Upload de fotos novas no formulário da galeria (Media Library) | PASS, com ressalva: "Texto alternativo" é obrigatório e bloqueia a inserção; o campo de título é `title[0][value]` | BiDi + banco |
 | Inserção das mídias na galeria e salvamento | PASS (galeria com 2 imagens, alias gerado) | banco |
-| Reordenação das imagens | NÃO VERIFICADO: não há alça de arrasto nesta versão; a ordem é o campo `weight` do widget, cujo acesso não foi automatizado | — |
 | Upload e inserção pelo diálogo do CKEditor, no artigo | NÃO EXECUTADO nesta rodada | — |
 | Renderização de galeria incorporada em artigo | NÃO EXECUTADO nesta rodada (verificada na Fase 5) | — |
 
-Decisão pendente: a Fase 10 leva a `0.1.0-rc.1` somente depois da reordenação e do diálogo do CKEditor serem verificados. Por isso a versão do módulo continua `0.1.0-dev.12`.
+Decisão pendente: a Fase 10 leva a `0.1.0-rc.1` somente depois do diálogo do CKEditor ser verificado. Por isso a versão do módulo continua `0.1.0-dev.12`.
