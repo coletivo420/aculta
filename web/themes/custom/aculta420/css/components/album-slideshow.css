@@ -159,9 +159,10 @@
     justify-content: center;
     width: 2.25rem;
     height: 2.25rem;
-    border: 0;
     border-radius: 50%;
-    background: var(--aculta-surface-raised);
+    /* Superfície de controle e texto mudam com o modo; no escuro o botão não se confunde com o palco. */
+    background: var(--aculta-surface-interactive);
+    border: 1px solid var(--aculta-border-strong);
     color: var(--aculta-text-primary);
     cursor: pointer;
   }
