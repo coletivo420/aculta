@@ -182,6 +182,8 @@ final class PortalUiHooks {
     'auth-google' => ['aculta-auth-google'],
     'auth-google-status' => ['aculta-auth-google-status'],
     'google-account' => ['aculta-google-account'],
+    // Popup de aceite dos termos (diálogo modal do Drupal).
+    'account-terms' => ['aculta-account-terms'],
     'registration-status' => ['aculta-registration-status'],
     'support-intro' => ['aculta-support-intro'],
     'support-other' => ['aculta-support-other'],

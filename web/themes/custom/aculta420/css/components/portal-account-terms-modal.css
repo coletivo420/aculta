@@ -1,18 +1,15 @@
-/*
- * Popup de aceite dos termos (AccountTermsHooks). A página atrás fica borrada e não recebe cliques
- * (showModal() torna o restante inerte). Sem fundo opaco nem botão de fechar.
- */
-.portal-terms-modal {
-  max-width: min(36rem, calc(100vw - 2rem));
-  border: 0;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
+/* Popup de aceite dos termos (AccountTermsHooks): diálogo modal do Drupal, como os demais modais (fundo escurecido
+   pelo token --aculta-scrim em dialog.css). Não tem botão de fechar: só o aceite fecha. */
+.ui-dialog:has(#aculta-account-terms) .ui-dialog-titlebar-close {
+  display: none;
 }
 
-.portal-terms-modal::backdrop {
-  background: var(--aculta-scrim);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+.ui-dialog:has(#aculta-account-terms) a {
+  color: var(--aculta-link);
+}
+
+.ui-dialog:has(#aculta-account-terms) .ui-dialog-content {
+  padding: 0.5rem 1.25rem 1.25rem;
 }
 
 .portal-terms-modal__documents {
@@ -20,4 +17,15 @@
   flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1rem;
+}
+
+/* Alvos de toque do aceite: checkbox e botão com pelo menos 44 px (celular). */
+.ui-dialog:has(#aculta-account-terms) input[type="checkbox"] {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.ui-dialog:has(#aculta-account-terms) input[type="submit"] {
+  min-block-size: 2.75rem;
+  padding-inline: 1.5rem;
 }
