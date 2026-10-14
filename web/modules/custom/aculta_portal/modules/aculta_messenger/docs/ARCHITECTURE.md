@@ -67,11 +67,29 @@ autorizado.
 
 ## Inventário técnico upstream
 
-Os módulos ainda não estão instalados. Não presumir nomes internos de entidades,
-serviços, rotas, permissões, config, eventos ou access handlers. A lista exata
-deve ser obtida dos pacotes travados e do código instalado durante a Fase 1;
-os checkpoints estão em [INTEGRATIONS.md](INTEGRATIONS.md). Essa verificação é
-condição para declarar a fundação completa e para escolher implementações.
+O inventário verificado no código instalado (Core 11.4.8) está em
+[INTEGRATIONS.md](INTEGRATIONS.md). Em síntese, Private Message tem entidades
+de mensagem/thread/ban e serviços de thread, bloqueio e contagem não lida;
+Message tem entidades `message` e `message_template`; Message Notify oferece
+`message_notify.sender`; Message Subscribe consulta Flag por
+`message_subscribe.subscribers`; Site Alert tem entidade própria e serviço de
+alertas ativos.
+
+Private Message exige na rota da inbox `use private messaging system` e
+`access user profiles` em conjunto. A entidade `private_message_ban` provê
+bloqueio upstream; denúncia segue sem definição de produto. `message_subscribe`
+tem queue opcional e opção de revalidar access da entidade. Site Alert inclui
+cache context `active_site_alerts`; validar o bubbling quando a UI for
+integrada.
+
+`private_message_notify` é submódulo opcional do pacote Private Message e
+reutiliza `message_notify.sender`. Não habilitar junto de outro caminho de
+entrega para o mesmo evento sem owner único e deduplicação.
+
+`hook_private_message_new_message` é o evento público do Private Message;
+Message Subscribe fornece hooks de seleção e alteração de candidatos e
+mensagens. Escolher handlers/hooks OOP somente após revisar assinaturas no
+Core e upstream instalados.
 
 ## Decisões arquiteturais
 

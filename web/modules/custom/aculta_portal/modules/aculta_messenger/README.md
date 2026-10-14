@@ -21,12 +21,10 @@ experiência e aplica os contratos de acesso e Domain do Portal.
 
 ## Compatibilidade e evidência
 
-O `composer.lock` desta base registra Drupal Core 11.4.8. Os cinco projetos
-estão ausentes do lock e de `web/modules/contrib`; portanto, as APIs internas
-instaladas (serviços, entidades, rotas, permissões, configuração e hooks) ainda
-precisam ser auditadas no código exato resolvido pelo Composer antes da Fase 1.
-Os releases estáveis Drupal 11 identificados na pesquisa oficial estão
-registrados em [INTEGRATIONS.md](docs/INTEGRATIONS.md).
+O `composer.lock` registra Drupal Core 11.4.8 e trava os cinco projetos nas
+versões estáveis instaladas. Seus arquivos foram auditados após a resolução
+Composer. O inventário e os limites da inspeção estão em
+[INTEGRATIONS.md](docs/INTEGRATIONS.md).
 
 O PHP CLI disponível nesta execução é 8.4.26. O projeto pede PHP 8.5; esta
 máquina não comprova validação em PHP 8.5. Compatibilidade de cada dependência
@@ -51,7 +49,6 @@ cross-purpose usam `DomainPurposeManager`; mutações não atravessam hosts.
 
 ## Estado da implementação
 
-A fundação documental define limites e pendências de verificação. Nenhuma
-dependência foi instalada e nenhuma funcionalidade de runtime foi implementada
-nesta etapa. Não habilitar o submódulo até que sua Fase 1 tenha metadados,
-integrações e dependências verificadas e testadas.
+O módulo declara dependências, mas ainda não foi ativado. Nenhuma funcionalidade
+de runtime foi implementada. Não habilitar o submódulo antes da validação do
+ciclo de instalação em ambiente apropriado.

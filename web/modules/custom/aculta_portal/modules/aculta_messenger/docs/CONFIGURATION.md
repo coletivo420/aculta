@@ -12,17 +12,19 @@ Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
 - Config exportável pode conter nomes, tipos e políticas, nunca tokens, senha,
   credencial SMTP ou segredo. Segredos, se uma integração futura realmente
   exigir, seguem Drupal Key provider `env` e o contrato de secrets do ACULTA.
-- Não configurar um novo transporte SMTP. O envio reutiliza o sistema de mail
-  existente e só pode ser ativado após validar Mailer Plus/Message Notify.
+- Não configurar um novo transporte SMTP. A entrega reutiliza o serviço de mail
+  Drupal e o Symfony Mailer/Mailer Plus já instalado. Message Notify prepara e
+  entrega a mensagem usando esse transporte; nenhuma dependência SMTP nova.
 - Administração de Site Alert e comunicados permanece em `main`.
 - A central pessoal e suas configurações ficam em `account`.
 
 ## Fase atual
 
-Não existe `.info.yml`, arquivo de serviços, rotas, permissões ou config do
-`aculta_messenger` nesta fase documental. Nenhuma dependência Composer foi
-adicionada. A Fase 1 só poderá declarar dependências realmente obrigatórias
-depois que metadados e Composer dry-run forem revisados.
+`aculta_messenger.info.yml` declara dependências no ACULTA Portal e nos cinco
+módulos integrados. Não há ainda arquivo de serviços, rotas, permissões ou
+config próprio porque a fase não implementa runtime. `composer.json` e
+`composer.lock` adicionam somente os cinco pacotes; detalhes e versões estão em
+[INTEGRATIONS.md](INTEGRATIONS.md).
 
 ## Checklist para implantação futura
 

@@ -1,18 +1,18 @@
 # Inventário de integrações
 
 Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
-2026-10-14. Versões publicadas verificadas nos projetos Drupal.org nesta data;
-nenhum pacote foi instalado nesta etapa.
+2026-10-14. Versões publicadas foram comparadas com os pacotes Composer
+instalados nesta branch.
 
 ## Estado do repositório
 
 | Pacote | `composer.lock` | Código em `web/modules/contrib` | Conclusão |
 | --- | --- | --- | --- |
-| `drupal/private_message` | Ausente | Ausente | Instalação e inspeção do código pendentes |
-| `drupal/message` | Ausente | Ausente | Instalação e inspeção do código pendentes |
-| `drupal/message_notify` | Ausente | Ausente | Instalação e inspeção do código pendentes |
-| `drupal/message_subscribe` | Ausente | Ausente | Instalação e inspeção do código pendentes |
-| `drupal/site_alert` | Ausente | Ausente | Instalação e inspeção do código pendentes |
+| `drupal/private_message` | 3.0.7 | 3.0.7 | Inspecionado |
+| `drupal/message` | 1.9.0 | 1.9.0 | Inspecionado |
+| `drupal/message_notify` | 1.5.0 | 1.5.0 | Inspecionado |
+| `drupal/message_subscribe` | 2.1.0 | 2.1.0 | Inspecionado |
+| `drupal/site_alert` | 1.4.0 | 1.4.0 | Inspecionado |
 
 Base encontrada: Drupal Core 11.4.8 no lock; `composer.json` declara PHP >=8.3.
 Este ambiente executa PHP 8.4.26. Não há PHP 8.5 para validação local. Os
@@ -25,43 +25,58 @@ lint, testes ou avaliação das dependências em PHP 8.5.
 | --- | --- | --- | --- |
 | [Private Message](https://www.drupal.org/project/private_message) | 3.0.7 (`^3.0`) | Sim | Issues recentes relatam `TypeError` com valor nulo em D11/PHP 8.4; reproduzir/revisar antes de adotar. 4.x consultado é alpha, não base da primeira implementação. |
 | [Message](https://www.drupal.org/project/message) | 8.x-1.9 (`^1.9`) | Sim | Projeto indicado como manutenção mínima; verificar issue queue e APIs usadas. |
-| [Message Notify](https://www.drupal.org/project/message_notify) | 8.x-1.5 (`^1.5`) | Sim | Requer Message, Entity API e CTools conforme página do projeto; comparar a instalação real e Mailer existente. |
-| [Message Subscribe](https://www.drupal.org/project/message_subscribe) | 2.1.0 (`^2.1`) | Sim | Requer Message, Message Notify, Flag, Entity API e CTools; página declara busca por co-maintainer. |
+| [Message Notify](https://www.drupal.org/project/message_notify) | 8.x-1.5 (`^1.5`) | Sim | O metadata instalado requer Core e Message. A página lista Entity API/CTools, mas estes não aparecem como requirements do pacote efetivamente resolvido. |
+| [Message Subscribe](https://www.drupal.org/project/message_subscribe) | 2.1.0 (`^2.1`) | Sim | Requer Message, Message Notify e Flag; a página declara busca por co-maintainer. |
 | [Site Alert](https://www.drupal.org/project/site_alert) | 8.x-1.4 (`^1.4`) | Sim | Entidade com agenda/severidade e bloco; documentação descreve renderização AJAX sem cache. Conferir acesso/cache e integração de tema. |
 
 Compatibilidade declarada significa que o release anuncia suporte ao Drupal 11.
 Não é uma validação de execução deste projeto nem uma afirmação de compatibilidade
 formal com PHP 8.5.
 
-## Requisitos transitivos a confirmar pelo Composer
+## Composer e módulos requeridos
 
-As páginas de Message Notify e Message Subscribe listam Message, Entity API,
-CTools e Flag como requisitos relevantes. Site Alert descreve Datetime Range
-para a linha Drupal 8+. A dependência direta e a possibilidade de remover
-requisitos já satisfeitos por Core devem vir do `.info.yml`/Composer metadata
-dos pacotes exatos; não adicionar esses pacotes por suposição. O `composer
-require --dry-run` deve resolver cada combinação com `composer.lock` real antes
-de alterar o lock. Não alterar `config/sync` ou ativar modules nesta fase.
+Dry-run real: **5 installs, 0 updates, 0 removals**. `composer.json` declara
+somente esses cinco pacotes; o lock agora trava os releases listados acima.
+O grafo também resolveu `drupal/flag` 5.1.1 para `message_subscribe`;
+`datetime_range` e `options` são módulos do Core exigidos por Site Alert.
+Nenhum deles foi incluído como requisito direto do projeto ACULTA.
 
-## Inventário de APIs pendente
+Metadata Composer: Private Message requer Core, Message, Message Notify e
+PHP >=8.1; Message Notify requer Core e Message; Message Subscribe requer Core,
+Flag ^4/5, Message e Message Notify; Message e Site Alert declaram faixas Core
+compatíveis com Drupal 11. Os `.info.yml` instalados confirmam requisitos Drupal
+adicionais `text`, `flag`, `datetime_range` e `options`. A página de Message
+Notify lista Entity API e CTools, porém o metadata Composer e `.info.yml`
+instalados não declaram esses requisitos; não foram adicionados por causa da
+discrepância documental.
 
-Como nenhum dos cinco pacotes está instalado nesta base e os arquivos raw do
-Git Drupal não puderam ser consultados pelo navegador usado na auditoria, estes
-itens ficam **não confirmados**; não inferir seus identificadores ou assinaturas:
+O `aculta_messenger.info.yml` depende dos cinco módulos porque as cinco
+integrações compõem a proposta do submódulo. Ativar/desinstalar o Messenger não
+desinstala esses contrib; a lista de dependências do Drupal protege o ciclo.
 
-| Módulo | Entities/fields | Services/events | Rotas/permissões | Config e access |
+## APIs confirmadas no código instalado
+
+| Módulo | Entidades e fields | Services e eventos | Rotas e permissões | Configuração e access |
 | --- | --- | --- | --- | --- |
-| Private Message | Não confirmados | Não confirmados | Não confirmados | Não confirmados |
-| Message | Não confirmados | Não confirmados | Não confirmados | Não confirmados |
-| Message Notify | Não confirmados | Não confirmados | Não confirmados | Não confirmados |
-| Message Subscribe | Não confirmados | Não confirmados | Não confirmados | Não confirmados |
-| Site Alert | Entidade mencionada pela documentação, ID/fields não confirmados | Não confirmados | Rota administrativa e permissão de administrar alertas descritas; machine names não confirmados | Config instalada/schema não confirmados |
+| Private Message | `private_message` (owner, message, created); `private_message_thread` (members, messages, history); `private_message_ban` (owner, target) | `private_message.service`, `private_message.thread_manager`, `private_message.ban_manager`, `private_message.mapper`; `hook_private_message_new_message` | `/private-messages`, `/private-message/create`, `/private-messages/{private_message_thread}`, `/private-message/{private_message}`; `use private messaging system` + `access user profiles`; também permissões de admin, ban e delete | settings, entity displays/forms e view modes. Access handlers próprios; inbox `no_cache`. `private_message_notify` é submódulo opcional para e-mail |
+| Message | Content entity `message`; config entity `message_template` | `message.purge_orchestrator`, `plugin.manager.message.purge` | CRUD de template em `/admin/structure/message`, settings `/admin/config/message`; `administer message templates`, `administer messages`, `overview messages` | settings, view mode `full`, ação `message_delete_action`; tipos de mensagem são config entities |
+| Message Notify | Sem entity própria | `message_notify.sender` (`MessageNotifyInterface::send`), `plugin.message_notify.notifier.manager`; plugins de notifier, incluindo email | Sem rotas ou permissions próprias no módulo base | view modes `message.mail_body` e `message.mail_subject`; entrega usa Drupal Mail |
+| Message Subscribe | Sem entity própria; subscriptions são Flagging entities | `message_subscribe.subscribers` (`sendMessage`, `getSubscribers`, `getFlags`); hooks de seleção/alteração de destinatários | `/admin/config/message/message-subscribe`; `administer message subscribe`; `message_subscribe_ui` e `message_subscribe_email` são opcionais | `message_subscribe.settings`: `use_queue`, `notify_own_actions`, `default_notifiers`, `range`; serviço tem opção `entity access` |
+| Site Alert | `site_alert` content entity (id, uuid, label, active, severity, message, scheduling) | `site_alert.get_alerts`, `site_alert.cli_commands`, `cache_context.active_site_alerts` | Collection/add/edit/delete em `/admin/config/system/site-alerts`; AJAX `/ajax/site_alert`; permissions `administer site alert`, `add site alerts`, `update site alerts`, `delete site alerts` | Sem config install própria; fields severity low/medium/high, message text_long, scheduling daterange |
 
-Esse inventário é gate da Fase 1: obter os pacotes por Composer, ler seus
-metadados/código instalados e registrar os nomes exatos, as dependências
-obrigatórias versus opcionais, entidades, serviços, rotas, permissões,
-configuração, cacheability, hooks/events e riscos conhecidos antes de declarar
-compatibilidade funcional.
+Os manifests e código foram lidos em `web/modules/contrib/{private_message,
+message,message_notify,message_subscribe,site_alert}`. A inbox contrib fica na
+rota inglesa `/private-messages`; a central ACULTA deve oferecer navegação em
+português e manter formulários/ações nativos conforme o teste de path e purpose.
+Endereços públicos em inglês ainda precisam ser cobertos pelo contrato de slugs
+antes de expor o fluxo.
+
+O submódulo opcional `private_message_notify` também entrega email via
+`message_notify.sender`; não ativar junto de outro handler de notificação do
+mesmo evento sem deduplicação/owner único de canal.
+
+Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
+cache/access de runtime ou compatibilidade em PHP 8.5.
 
 ## Fontes públicas consultadas
 

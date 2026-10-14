@@ -7,16 +7,16 @@ Portal. Revisão: 2026-10-14.
 
 | Ação/dado | Público autorizado | Decisão de access | Cache esperado |
 | --- | --- | --- | --- |
-| Ver caixa postal | Usuário autenticado e elegível | Permissões e ownership nativos de Private Message | Privado e por usuário; verificar contexts/tags do módulo |
-| Ver thread/mensagem | Participante autorizado ou administrador conforme regra upstream | Access handler/route do Private Message; nunca confiar apenas no ID da rota | Não compartilhado entre contas |
+| Ver caixa postal | Usuário autenticado com `use private messaging system` e `access user profiles` | Rota nativa do Private Message; as duas permissões são exigidas | Inbox upstream `no_cache`; validar contexts/tags do thread |
+| Ver thread/mensagem | Participante autorizado ou administrador conforme regra upstream | Entity access `private_message_thread.view` / `private_message.view` e handlers próprios | Não compartilhar entre contas; cache context da thread |
 | Iniciar conversa | Membro habilitado e destinatário que aceita contato | Permissões, elegibilidade, bloqueio e rate limit confirmados no upstream | Sem cache de formulário/destinatários privados |
 | Receber e-mail | Destinatário válido, elegível e permitido | Revalidar status da conta, access, preferências e assinatura na entrega | Não guardar conteúdo privado em cache compartilhado |
 | Ver comunicado | Público explicitamente segmentado | Node access, publicação, validade e membership quando necessário | Tags/contextos de entidade, usuário e grupo conforme decisão |
 | Assinar evento | Usuário autorizado a assinar o contexto | Flag/Message Subscribe e access atual da entidade | Contexto de usuário e dependências da entidade |
 | Administrar alerta/comunicado | Papéis administrativos autorizados em `main` | Permissões nativas dos módulos/editorial | Rotas administrativas sem cache público |
 
-IDs de permissões, implementações de access handler e contexts concretos ficam
-pendentes da leitura do código exato instalado. Não copiar permissões para o
+IDs e handlers foram confirmados no código instalado; contexts e tags de
+presenters precisam de testes funcionais. Não copiar permissões para o
 Messenger nem concedê-las automaticamente a papéis.
 
 ## Invariantes
@@ -46,12 +46,12 @@ Messenger nem concedê-las automaticamente a papéis.
 
 ## Bloqueio e denúncia
 
-Private Message documenta recursos próprios de acesso, mas a política ACULTA de
-bloqueio e denúncia ainda não foi aprovada nem verificada contra a versão
-instalada. O Messenger não criará fluxo de denúncia, registro de moderação ou
-campo de bloqueio paralelo sem uma decisão de escopo e um mecanismo upstream
-confirmado. Antes de habilitar mensagens entre membros, a Fase 2 precisa
-documentar o comportamento de interação indesejada e uma alternativa segura.
+Private Message 3.0.7 inclui a entidade `private_message_ban` e o serviço
+`private_message.ban_manager`, com operações `isBanned()`,
+`isCurrentUserBannedByUser()`, `banUser()` e `unbanUser()`. Reutilizar esse
+mecanismo e suas rotas/formulários; não criar storage de bloqueio próprio. A
+política ACULTA de denúncia ainda não foi aprovada; não criar fluxo ou registro
+paralelo sem decisão de escopo.
 
 ## Verificação obrigatória nas fases funcionais
 
