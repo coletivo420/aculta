@@ -2,10 +2,6 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
-## Correção documental (sem versão nova)
-
-- Removida a menção a reordenação por arrasto (`tabledrag`). O widget de imagens da galeria não tem alça de arrasto nesta versão; o teste da Fase 10 não cobre essa função e ela não faz parte do escopo da RC.
-
 ## 0.1.0-dev.12 — palco do álbum e links para a Revista — 2026-10-14
 
 Classificação: MINOR (nova apresentação do álbum e novos estilos de imagem; sem dependência nova). A versão no `aculta_gallery.info.yml` estava presa em `0.1.0-dev.5` e foi corrigida junto.
