@@ -3,5 +3,8 @@
   {{ attach_library('aculta420/editorial-carousel') }}
   <span id="vvjb-index-{{ options.unique_id }}" class="visually-hidden">{{ view.getTitle() }}</span>
 {% endif %}
+{% if view.id() == 'aculta_album_fotos' %}
+  {{ attach_library('aculta420/album-slideshow') }}
+{% endif %}
 {% set slides %}{{ include('@vvjb/views-view-vvjb.html.twig') }}{% endset %}
 {{ include('aculta420:carousel', { slides: slides }, with_context = false) }}

@@ -1,0 +1,16 @@
+uuid: 37ee47e5-10d6-406f-9d25-2740d8d4bfe6
+langcode: pt-br
+status: true
+dependencies: {  }
+name: media_gallery_thumb
+label: 'Galeria - miniatura'
+effects:
+  7fa3126f-be4b-4333-8ebc-b564f1942d70:
+    uuid: 7fa3126f-be4b-4333-8ebc-b564f1942d70
+    id: image_crop
+    weight: 1
+    data:
+      width: 160
+      height: 160
+      anchor: center-center
+

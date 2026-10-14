@@ -2,6 +2,21 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
+## 0.1.0-dev.12 — palco do álbum e links para a Revista — 2026-10-14
+
+Classificação: MINOR (nova apresentação do álbum e novos estilos de imagem; sem dependência nova). A versão no `aculta_gallery.info.yml` estava presa em `0.1.0-dev.5` e foi corrigida junto.
+
+- Links da coleção administrativa de galerias (título): gerados no purpose `magazine` por `AcultaGalleryListBuilder` (`DomainPurposeManager::pathUrl`), trocado no `entity_type_alter` (`GalleryListBuilderHooks`). Verificado: títulos apontam para `revista420` com o alias do álbum.
+- Edição e exclusão continuam no painel administrativo do MAIN. A política de domínio administrativo (`ADMIN-DOMAIN-POLICY.md`) não permite GET de `/painel-administrativo` no subdomínio: um link de edição na Revista seria redirecionado ao MAIN. Pendência de decisão do responsável.
+- Palco do álbum (visual próximo ao original): foto grande com rotação automática de 3 s (VVJB), painel lateral de miniaturas em duas colunas, clique na miniatura leva ao slide, controles de play/pausa e contador. Celular: palco em largura total (400 px) e miniaturas recolhidas por botão.
+- O slideshow percorre todas as fotos do álbum (paginação "algumas", limite de 150 fotos); antes mostrava só 24.
+- Estilos de imagem: `media_gallery_stage` (1000 px de largura, palco) e `media_gallery_thumb` (160 px, recorte quadrado).
+- Miniaturas geradas pelo módulo com `data-aculta-album-thumb` e `data-aculta-album-stage` (comportamento); aparência e JS de apresentação ficam no tema (`album-slideshow.css`, `album-slideshow.js`).
+- Peso medido (antes do palco): HTML ~51 KB e 24 miniaturas ~381 KB com `loading="lazy"`. As 66 miniaturas do palco e do painel são carregadas com lazy loading; a foto grande só é baixada quando o slide aparece.
+- Diferenças em relação ao original: não há botão de tela cheia no palco (o clique abre o PhotoSwipe), não há seta de rolagem do painel, e a altura no celular (400 px) e o recolhimento do painel abaixo de 480 px são aproximações.
+- Verificado no Runtime (Firefox, 1366 px e 390 px): palco com 66 slides, clique na miniatura 12 leva ao slide 12 (`aria-current`), botão de miniaturas no celular.
+- RUNTIME STATUS: verificado no Runtime (visual e navegação do palco; links da coleção por HTTP). Teste com toque real em aparelho ainda pendente.
+
 ## 0.1.0-dev.11 — acesso às galerias segue o padrão da Revista — 2026-10-14
 
 - Permissões de galeria removidas do papel `content_editor` (Runtime e `config/sync`). Só o administrador acessa a coleção e cria ou edita galerias, como já acontece com artigo e blog. Supera a decisão R3, registrada em `docs/ARQUITETURA.md` §4.1.

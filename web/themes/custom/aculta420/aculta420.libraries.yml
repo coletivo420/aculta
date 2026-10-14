@@ -42,6 +42,16 @@ global:
     - core/drupal
     - core/once
 
+album-slideshow:
+  css:
+    theme:
+      css/components/album-slideshow.css: {}
+  js:
+    js/album-slideshow.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
 editorial-carousel:
   css:
     theme:

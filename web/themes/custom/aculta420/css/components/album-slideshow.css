@@ -1,0 +1,155 @@
+/* Palco do álbum: foto grande com rotação automática (VVJB) e painel de miniaturas.
+   Só apresentação. O VVJB, o autoplay e o toque seguem nativos; comportamento vem de data-*. */
+
+[data-aculta-album-stage] {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  align-items: stretch;
+  background: var(--aculta-green-dark);
+  color: var(--aculta-text-inverse);
+  min-height: 0;
+}
+
+[data-aculta-album-stage] > *,
+[data-aculta-album-stage] .vvjb {
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-aculta-album-stage] .vvjb-carousel-dots,
+[data-aculta-album-stage] .vvjb-carousel-options .vvjb-carousel-dots,
+[data-aculta-album-stage] .vvjb-counter-separator {
+  display: none;
+}
+
+[data-aculta-album-stage] .vvjb .vvjb-carousel-outer {
+  padding: 0;
+}
+
+[data-aculta-album-stage] .vvjb img {
+  display: block;
+  width: 100%;
+  height: min(72vh, 36rem);
+  object-fit: contain;
+  background: var(--aculta-green-dark);
+}
+
+/* O VVJB posiciona as opções (play/pausa e contador) sobre o palco. Aqui elas ficam
+   abaixo da foto, sem fundo, como no carrossel da home. */
+[data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-options {
+  position: static;
+  transform: none;
+  background: transparent;
+  padding-block: 0.5rem;
+}
+
+[data-aculta-album-stage] .vvjb-carousel-controls button,
+[data-aculta-album-stage] .vvjb-carousel-options button {
+  color: var(--aculta-text-inverse);
+}
+
+[data-aculta-album-stage] .vvjb-carousel-dot {
+  color: var(--aculta-text-inverse);
+}
+
+[data-aculta-album-thumbs] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  align-content: start;
+  padding: 0.5rem;
+  overflow-y: auto;
+  max-height: min(72vh, 36rem);
+  background: var(--aculta-green-dark);
+  scrollbar-width: thin;
+  scrollbar-color: var(--aculta-text-muted) var(--aculta-green-dark);
+}
+
+[data-aculta-album-thumb] {
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  border: 2px solid transparent;
+  background: none;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--aculta-motion-quick) var(--aculta-ease-standard), border-color var(--aculta-motion-quick) var(--aculta-ease-standard);
+}
+
+[data-aculta-album-thumb] img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+[data-aculta-album-thumb]:hover,
+[data-aculta-album-thumb][aria-current="true"] {
+  opacity: 1;
+}
+
+[data-aculta-album-thumb][aria-current="true"] {
+  border-color: var(--aculta-focus);
+}
+
+[data-aculta-album-thumb]:focus-visible {
+  outline: 2px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+[data-aculta-album-toggle] {
+  display: none;
+}
+
+/* Celular (abaixo de 480 px): palco em largura total; miniaturas recolhidas atrás do botão. */
+@media (max-width: 479.98px) {
+  [data-aculta-album-stage] {
+    grid-template-columns: minmax(0, 1fr);
+    position: relative;
+  }
+
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-outer,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-wrapper,
+  [data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-inner {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0;
+    margin-inline: 0;
+  }
+
+  [data-aculta-album-stage] .vvjb-item {
+    width: 100%;
+  }
+
+  [data-aculta-album-stage] .vvjb img {
+    height: 400px;
+  }
+
+  [data-aculta-album-thumbs] {
+    display: none;
+    max-height: 60vh;
+  }
+
+  [data-aculta-album-stage][data-aculta-album-open] [data-aculta-album-thumbs] {
+    display: grid;
+  }
+
+  [data-aculta-album-toggle] {
+    display: inline-flex;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: 50%;
+    background: var(--aculta-surface-raised);
+    color: var(--aculta-text-primary);
+    cursor: pointer;
+  }
+}
