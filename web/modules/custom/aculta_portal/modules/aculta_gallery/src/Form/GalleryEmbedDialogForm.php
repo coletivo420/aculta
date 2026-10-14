@@ -27,6 +27,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class GalleryEmbedDialogForm extends FormBase {
 
+  /** Pasta das fotos enviadas pelo diálogo. */
+  private const UPLOAD_DIRECTORY = 'public://galerias/uploads';
+
   /** Modo de exibição padrão da incorporação (Entity Embed). */
   private const EMBED_DISPLAY = 'entity_reference:entity_reference_entity_view';
 
@@ -83,7 +86,21 @@ final class GalleryEmbedDialogForm extends FormBase {
     $widget = $this->imagesWidget($gallery);
     $form['images'] = $widget->form($gallery->get('images'), $form, $form_state);
     $form['images']['#required'] = TRUE;
-    $form['images']['#description'] = $this->t('Escreva o nome ou o ID de cada imagem da biblioteca de mídia. Para enviar fotos novas, use a Biblioteca de mídia antes de criar a galeria.');
+    $form['images']['#description'] = $this->t('Escreva o nome ou o ID de cada imagem já existente na biblioteca de mídia.');
+
+    // Upload direto (elemento de arquivo do Core, sem modal): as fotos novas viram mídias ao criar a galeria.
+    $form['new_images'] = [
+      '#type' => 'managed_file',
+      '#title' => $this->t('Enviar fotos novas'),
+      '#description' => $this->t('Formatos: png, gif, jpg, jpeg ou webp. Cada arquivo com até 10 MB.'),
+      '#multiple' => TRUE,
+      '#upload_location' => self::UPLOAD_DIRECTORY,
+      '#upload_validators' => [
+        'FileSizeLimit' => ['fileLimit' => 10 * 1024 * 1024],
+        'FileExtension' => ['extensions' => 'png gif jpg jpeg webp'],
+        'FileIsImage' => [],
+      ],
+    ];
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
@@ -100,6 +117,40 @@ final class GalleryEmbedDialogForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
+
+  /**
+   * Transforma os arquivos enviados no diálogo em mídias de imagem (uma por foto).
+   *
+   * @return int[]
+   *   IDs das mídias criadas, na ordem do envio.
+   */
+  private function createMediaFromUploads(FormStateInterface $form_state, string $title): array {
+    $fids = array_filter(array_map('intval', (array) $form_state->getValue('new_images')));
+    $media_ids = [];
+    $position = 0;
+    foreach ($fids as $fid) {
+      $file = $this->entityTypeManager->getStorage('file')->load($fid);
+      if ($file === NULL) {
+        continue;
+      }
+      $file->setPermanent();
+      $file->save();
+      $position++;
+      $media = $this->entityTypeManager->getStorage('media')->create([
+        'bundle' => 'image',
+        'name' => $file->getFilename(),
+        'uid' => $this->currentUser->id(),
+        'status' => 1,
+        'field_media_image' => [
+          'target_id' => $file->id(),
+          'alt' => $title !== '' ? $title . ', foto ' . $position : 'Foto ' . $position,
+        ],
+      ]);
+      $media->save();
+      $media_ids[] = (int) $media->id();
+    }
+    return $media_ids;
+  }
 
   /**
    * Widget do campo de imagens: autocompletar por entidade do Core (múltiplo).
@@ -138,8 +189,11 @@ final class GalleryEmbedDialogForm extends FormBase {
       'uid' => $this->currentUser->id(),
     ]);
     $this->imagesWidget($gallery)->extractFormValues($gallery->get('images'), $form, $form_state);
+    foreach ($this->createMediaFromUploads($form_state, (string) $form_state->getValue('title')) as $media_id) {
+      $gallery->get('images')->appendItem(['target_id' => $media_id]);
+    }
     if ($gallery->get('images')->isEmpty()) {
-      $form_state->setErrorByName('images', $this->t('Escolha ao menos uma imagem para a galeria.'));
+      $form_state->setErrorByName('images', $this->t('Escolha ou envie ao menos uma imagem para a galeria.'));
       $response->addCommand(new HtmlCommand('#aculta-gallery-dialog-form', $form));
       return $response;
     }

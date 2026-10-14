@@ -21,7 +21,7 @@ Classificação: MINOR (nova dependência de módulo: `entity_embed` e `embed`; 
 - Botão "Criar galeria" no CKEditor 5 (`acultaGalleryCreate`), portado do CKEditor Media Gallery (GPL-2.0-or-later) sobre a entidade `media_gallery`, Entity Embed e PhotoSwipe. Origem e adaptações em `THIRD-PARTY.md` e `docs/ARQUITETURA.md` §4.3.
 - Verificado: plugin descoberto; diálogo monta com widget de imagens reaproveitado; envio sem imagem devolve erro e não cria galeria.
 - Teste no navegador (Firefox, servidor de testes): fluxo completo verificado (ver `docs/ARQUITETURA.md` §4.3). Correções feitas: método inexistente no plugin (`getFilterFormatId`), serviços do formulário guardados como propriedades comuns, e widget de imagens trocado para autocompletar do Core (a Media Library não funciona dentro do diálogo por causa do modal único do Drupal).
-- Pendente: upload de fotos novas pelo diálogo (usar a Biblioteca de mídia antes).
+- Upload de fotos novas dentro do diálogo: elemento de arquivo do Core (vários arquivos, sem modal). Validação: extensões png/gif/jpg/jpeg/webp, imagem real e até 10 MB por arquivo. Cada foto vira uma mídia de imagem com texto alternativo descritivo e entra na galeria junto com as imagens já escolhidas. Verificado no navegador e no banco (galeria de teste com 2 mídias, removida depois).
 - RUNTIME STATUS: verificado no Runtime (incorporação, formato da Revista, renderização pela Revista e remoção). Testes de navegador do editor pendentes (Fase 10).
 
 ## 0.1.0-dev.4 — importação, organização e restrição à Revista — 2026-10-14
