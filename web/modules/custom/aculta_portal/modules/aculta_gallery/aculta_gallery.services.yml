@@ -1,0 +1,5 @@
+services:
+  aculta_gallery.canonical_route_subscriber:
+    class: Drupal\aculta_gallery\EventSubscriber\CanonicalGalleryRouteSubscriber
+    tags:
+      - { name: event_subscriber }

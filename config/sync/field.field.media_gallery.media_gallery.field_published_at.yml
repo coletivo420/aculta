@@ -1,0 +1,24 @@
+uuid: a28e8508-cdd8-4288-a4eb-43ebdff73a06
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media_gallery.field_published_at
+  module:
+    - datetime
+    - media_gallery
+_core:
+  default_config_hash: QbESHJs97hZkNZc9tYsdFtt8cldgEY0MNEirjj4tRec
+id: media_gallery.media_gallery.field_published_at
+field_name: field_published_at
+entity_type: media_gallery
+bundle: media_gallery
+label: 'Data de publicação'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime
+

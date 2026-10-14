@@ -2,6 +2,23 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
+## 0.1.0-dev.3 — álbuns independentes — 2026-10-14
+
+Classificação: MINOR (campos editoriais, alias público e rota técnica; sem dependência nova).
+
+- Campos de álbum (config exportável): capa (`field_gallery_cover`, mídia de imagem), data do evento, data de publicação, créditos, direitos de uso, categoria editorial (`editorial_category`), tags (`revista_tags`), projeto (nó `project`) e `path` (alias).
+- Formulário editorial (`core.entity_form_display.media_gallery.media_gallery.default`): autocompletar para autor, projeto, categoria e tags, para não carregar listas grandes.
+- Alias público por padrão `/albuns/[title]` (`pathauto.pattern.aculta_gallery_album`, tipo do plugin `media_gallery`). Sem o campo `path` o pathauto não gera alias automático: o campo foi adicionado e é exportado.
+- Rota técnica: `CanonicalGalleryRouteSubscriber` responde 404 ao caminho cru `/media_gallery/{id}` (R4, recomendação adotada). O alias continua respondendo. A primeira versão bloqueava pelo nome da rota e bloqueava também o alias; corrigido.
+- Papéis: `content_editor` publica (R3). Só administrador e editor.
+- Verificação no Runtime: álbum de teste criado e removido; alias 200 no host da Revista e no host principal; `/media_gallery/{id}` 404.
+- Primeira galeria real importada (ID 11, "Marcha da Maconha de Goiânia 2025 – Registros Antiproibicionistas"): 66 fotos originais do site antigo como mídias de imagem, capa definida, créditos da autora, datas de evento e de publicação. Dados no Runtime, não no repositório.
+- Regras e gates adicionados nesta fase: `docs/portal/GUARDRAILS.md` (usuários de teste de agentes são excluídos ao fim dos testes), `scripts/validate-account-profile-autocreate.php` (perfil participante nasce no `user_insert`, com get-or-create nos demais criadores) e `scripts/validate-agent-test-users-rule.php`.
+- Limpeza no Runtime (decisões do responsável): perfis sem conta removidos; pedidos 6 e 7 (concluídos, do `teste.comum`) excluídos. Os pagamentos 1 e 2 permanecem no banco sem pedido, e as cobranças no Mercado Pago não foram estornadas.
+- Pendente (Fase 8): galerias só na Revista (D13) ainda não está aplicado no código. Hoje a publicação é só por `status` e papel. Sem campo de purpose.
+- Pendente (Fase 6/7): página pública do álbum ainda sem permissão para anônimos (`view published`); listagem, capa visual e paginação real por Views não implementadas.
+- RUNTIME STATUS: verificado no Runtime (instalação, campos, alias, rota técnica, importação). Testes funcionais de permissão e visuais pendentes (Fases 9 e 10).
+
 ## 0.1.0-dev.2 — fundação do módulo — 2026-10-14
 
 Classificação: MINOR (feature nova em linha aberta; nova dependência Composer aprovada).
