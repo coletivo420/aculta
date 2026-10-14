@@ -1,3 +1,11 @@
+## 0.6.0-dev.30 — destaque vermelho para Minha Conta — 2026-10-14
+
+Classificação: MINOR da linha aberta (consistência visual da barra multidomínio).
+
+- O primeiro item do menu de conta usa o token vermelho de estado, em harmonia com os badges da barra.
+- O destaque de foco e hover usa a superfície semântica correspondente; os outros itens do menu mantêm suas cores atuais.
+- Validação visual no navegador pendente; RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.29 — contadores vermelhos ao lado dos ícones — 2026-10-14
 
 Classificação: MINOR da linha aberta (ajuste visual da barra multidomínio).
