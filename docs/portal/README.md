@@ -12,6 +12,7 @@
 - [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.
 - [ADR-009 — sitemap multidomínio](../decisions/ADR-009-sitemap-multidominio.md) — submódulo `aculta_portal_sitemap` (linha 0.1.x, opt-in).
 - [ACULTA Associado ID](../modules/ACULTA-ASSOCIADO-ID.md) — escopo de dados dos associados, compatibilidade e migração controlada; Runtime DEFERRED.
+- [ACULTA Messenger](../../web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) — integração de mensagens e notificações; arquitetura documentada antes da implementação funcional.
 
 ## Políticas
 
