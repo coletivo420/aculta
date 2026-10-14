@@ -294,3 +294,27 @@ RUNTIME STATUS: DEFERRED. Ainda não executado.
 5. Abra `/entrar` direto. Esperado: página de login com o desafio do Turnstile (INV-TS-1).
 6. Abra um modal existente (busca, Editar senha/segredo, termos). Esperado: o fundo escurece da mesma forma (INV-MODAL-1).
 7. Repita 1 e 6 com outro tema ativo (Olivero). Esperado: o login funciona e o modal abre, sem ACULTA420.
+
+## O. Fase 10 da ACULTA Gallery (rodada de 2026-10-14)
+
+Ambiente: servidor de testes (`*.aculta.toca.net.br`), Firefox por BiDi com ferramentas internas (scripts do agente, não o serviço de navegador da Anthropic). Hosts: Revista `revista420.aculta.toca.net.br`, principal `aculta.toca.net.br`. Login de administrador por link de uso único (`drush user:login`, conta do responsável). Testes de dados criados e removidos ao fim (galeria de teste e 8 mídias, 20 arquivos).
+
+| Passo | Resultado | Evidência |
+| --- | --- | --- |
+| Visualização do álbum na Revista (anônimo) | PASS (200) | HTTP |
+| Álbum no host principal (anônimo) | PASS (403, regra D13) | HTTP |
+| Coleção administrativa: título aponta para a Revista | PASS | HTML do painel |
+| Edição e exclusão no host principal | PASS (política administrativa) | HTML do painel |
+| Edição de galeria: administrador cria e edita; editor e conta comum não | PASS | `access()` por conta |
+| Palco: 66 slides e rotação automática | PASS | DOM |
+| Palco: seta do teclado no carrossel (foco no elemento `vvjb-carousel`) | PASS (3 → 4) | BiDi |
+| Lightbox: abre, seta e Esc | FAIL → corrigido em PR #274 (antes: `1 / 1`; depois: `3 / 66 → 4 / 66`) | BiDi |
+| Toque: swipe horizontal no palco | PASS (4 → 5) | BiDi com ponteiro `touch` |
+| Erros de JavaScript na página do álbum | PASS (nenhum) | listener antes do carregamento |
+| Upload de fotos novas no formulário da galeria (Media Library) | PASS, com ressalva: "Texto alternativo" é obrigatório e bloqueia a inserção; o campo de título é `title[0][value]` | BiDi + banco |
+| Inserção das mídias na galeria e salvamento | PASS (galeria com 2 imagens, alias gerado) | banco |
+| Reordenação das imagens | NÃO VERIFICADO: não há alça de arrasto nesta versão; a ordem é o campo `weight` do widget, cujo acesso não foi automatizado | — |
+| Upload e inserção pelo diálogo do CKEditor, no artigo | NÃO EXECUTADO nesta rodada | — |
+| Renderização de galeria incorporada em artigo | NÃO EXECUTADO nesta rodada (verificada na Fase 5) | — |
+
+Decisão pendente: a Fase 10 leva a `0.1.0-rc.1` somente depois da reordenação e do diálogo do CKEditor serem verificados. Por isso a versão do módulo continua `0.1.0-dev.12`.
