@@ -126,7 +126,7 @@ final class FormHooks {
         $form['account']['pass']['#title'] = $this->translation->translate('Nova senha');
         $form['account']['pass']['#attributes']['autocomplete'] = 'new-password';
         $form['#after_build'][] = 'aculta_portal.form_callbacks:securityPasswordAfterBuild';
-        $form['#attributes']['class'][] = 'aculta-security-password-form';
+        $form['#attributes']['data-portal-ui'] = 'security-password-form';
         $form['actions']['submit']['#value'] = $this->translation->translate('Salvar nova senha');
 
         foreach (array_keys($form) as $key) {

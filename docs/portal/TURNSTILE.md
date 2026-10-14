@@ -27,6 +27,27 @@ O projeto tem dois ambientes: **teste** e **produção**. Cada um lê a própria
 - **Chaves de teste** (as chaves públicas da Cloudflare, que sempre passam) existem só no ambiente de teste. Nunca vão para produção.
 - A chave de produção deve ser provisionada pelo deployer no banco criptografado, conforme `SECRETS.md`.
 
+## Exceções (sem desafio, sempre)
+
+Estes formulários **nunca** recebem o Turnstile, qualquer que seja a decisão do responsável na caixa de ativação. A
+lista de código é `Captcha\TurnstileToggle::EXCEPTION_FORM_IDS`; cada item tem ponto com `status: false` em `config/sync`.
+
+| Formulário (`formId`) | Quando aparece | Motivo | Ponto |
+| --- | --- | --- | --- |
+| `commerce_order_item_add_to_cart_form` | Adicionar ao carrinho (loja) | Carrinho não é conta; o desafio quebraria a compra. | `captcha.captcha_point.commerce_order_item_add_to_cart_form.yml` |
+| `commerce_checkout_flow_default` | Checkout da loja, inclusive o cadastro feito pelo fluxo de compra para usuário não autenticado | Pagamento é feito no Mercado Pago; o desafio não protege a compra e atrapalharia o cadastro pela compra. | `captcha.captcha_point.commerce_checkout_flow_default.yml` |
+| `aculta_login_popup_form` | Popup "Entrar" da barra multidomínio (visitante não autenticado) | Decisão do responsável: o modal de login não usa Turnstile. A validação do Core (`user.auth`, flood control e bloqueio de conta) continua, porque o formulário herda `UserLoginForm`. | `captcha.captcha_point.aculta_login_popup_form.yml` |
+
+- **Cadastro pelo fluxo de compra:** o cadastro feito pelo checkout segue a mesma regra. Hoje o checkout não cria conta
+  (`guest_new_account: false`, login do checkout com `allow_registration: false`). Se a criação de conta for ligada no
+  checkout, ela continua sem Turnstile pelo ponto `commerce_checkout_flow_default`.
+- **Página de login `/entrar` não é exceção:** `user_login_form` continua com o desafio (`status: true`). O popup é um
+  formulário separado, com ID próprio, e não substitui a página.
+- **Flood control:** o popup não tem desafio anti-bot; a proteção contra tentativas repetidas é o flood control do Core
+  (por IP e por conta). Não remover.
+- **Barreira de regressão:** gate `php scripts/validate-turnstile-exceptions.php` (invariantes INV-TS-1 a INV-TS-4 em
+  `docs/portal/ANTI-REGRESSAO.md`). Uma exceção nova exige atualizar a constante, o ponto em `config/sync`, esta tabela e o gate.
+
 ## Caixa de ativar/desativar
 
 - Caminho: **ACULTA Portal > Turnstile (anti-bot)**, em `/painel-administrativo/configuracoes/aculta/portal/turnstile`. Exige a permissão `administer site configuration`.

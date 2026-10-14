@@ -191,6 +191,17 @@
   --bs-danger-border-subtle: var(--aculta-text-accent);
   --bs-light-border-subtle: var(--aculta-border-default);
   --bs-dark-border-subtle: var(--aculta-border-strong);
+
+  /* Diálogo "Entrar" (popup da barra): superfície e controles do modal. */
+  --aculta-dialog-surface: #6b9a2c;
+  --aculta-dialog-text: #ffffff;
+  --aculta-dialog-accent: #f7d64a;
+  --aculta-dialog-control-bg: #e9f1fc;
+  --aculta-dialog-control-text: #111111;
+  --aculta-dialog-primary-bg: #f5c93a;
+  --aculta-dialog-primary-text: #1a1a1a;
+  --aculta-dialog-secondary-bg: #fdf8ea;
+  --aculta-dialog-secondary-text: #163d2a;
 }
 
 [data-bs-theme="dark"] {

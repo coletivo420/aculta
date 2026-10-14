@@ -133,3 +133,84 @@ body.page-route-user-login .aculta-login__registration a {
     scroll-behavior: auto;
   }
 }
+
+/* Caixa do Google (Social Auth): logo da marca (assets/brands/google.svg) + texto. Usada no /entrar e no popup
+   "Entrar" (ação "Continuar com Google") e em Minha conta > Conexões ("Conectar Google" ou "Conectado"). */
+[data-portal-ui="auth-google"],
+[data-portal-ui="auth-google-status"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  box-sizing: border-box;
+  min-block-size: 3rem;
+  max-inline-size: 22rem;
+  margin-inline: 0;
+  padding: 0.5rem 1rem;
+  color: var(--aculta-text-primary);
+  background: var(--aculta-white);
+  border: 1px solid var(--aculta-border-default);
+  border-radius: 3px;
+  box-shadow: var(--bs-box-shadow-sm);
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+
+a[data-portal-ui="auth-google"],
+a[data-portal-ui="auth-google"]:hover,
+a[data-portal-ui="auth-google"]:focus-visible {
+  color: var(--aculta-text-primary);
+  text-decoration: none;
+}
+
+a[data-portal-ui="auth-google"]:hover,
+a[data-portal-ui="auth-google"]:focus-visible {
+  background: var(--aculta-surface-muted);
+}
+
+a[data-portal-ui="auth-google"] span,
+a[data-portal-ui="auth-google"] strong,
+[data-portal-ui="auth-google-status"] span,
+[data-portal-ui="auth-google-status"] strong {
+  color: inherit;
+}
+
+/* Em formulários (popup e /entrar) a caixa fica centralizada, como no anexo. */
+form [data-portal-ui="auth-google"] {
+  margin-inline: auto;
+}
+
+/* Logo do Google (marca de terceiro, em assets/brands). */
+[data-portal-ui="auth-google"]::before,
+[data-portal-ui="auth-google-status"]::before {
+  content: "";
+  flex: 0 0 auto;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  background: url("../../assets/brands/google.svg") center / contain no-repeat;
+}
+
+/* Estado conectado: não é botão. Check verde ao lado do texto. */
+[data-portal-ui="auth-google-status"] {
+  cursor: default;
+  font-weight: 600;
+}
+
+[data-portal-ui="auth-google-status"]::after {
+  content: "\f26a";
+  font-family: "bootstrap-icons";
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--aculta-status-ok-text);
+}
+
+/* Conexões: a conta Google e a ação de desconectar em linha com a caixa. */
+[data-portal-ui="google-account"] {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  margin-block: 0.75rem 0;
+  color: var(--aculta-text-secondary);
+  overflow-wrap: anywhere;
+}

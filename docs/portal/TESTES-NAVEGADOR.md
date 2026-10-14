@@ -282,3 +282,15 @@ uma foto própria para recortar."). **Não executado:** P2, P4 e P5 no navegador
   Meus Dados; a aba atual marcada; título da aba como cabeçalho da área de conteúdo.
 - **Q2:** trocar de aba pelos links. Esperado: cada aba tem URL própria (`/atividade/forum`, etc.); `/atividade` é a aba Wiki.
 - Verificação (2026-10-13): HTTP 200 em todas as abas com a estrutura de abas; captura no Chromium da aba Fórum.
+
+## R. Popup "Entrar" da barra e fundo dos modais (aculta_portal 0.4.0-dev.14)
+
+RUNTIME STATUS: DEFERRED. Ainda não executado.
+
+1. Sem sessão, em MAIN, clique em "Entrar" na barra. Esperado: abre o modal verde do anexo, sem captcha; fundo escurecido.
+2. Sem sessão, em `conta.` e em `loja.`, repita o passo 1. Esperado: o modal abre no próprio host.
+3. Preencha conta válida e Entrar. Esperado: o modal fecha e a página atual é recarregada, já autenticada.
+4. Senha errada. Esperado: mensagem no próprio modal; o modal continua aberto.
+5. Abra `/entrar` direto. Esperado: página de login com o desafio do Turnstile (INV-TS-1).
+6. Abra um modal existente (busca, Editar senha/segredo, termos). Esperado: o fundo escurece da mesma forma (INV-MODAL-1).
+7. Repita 1 e 6 com outro tema ativo (Olivero). Esperado: o login funciona e o modal abre, sem ACULTA420.

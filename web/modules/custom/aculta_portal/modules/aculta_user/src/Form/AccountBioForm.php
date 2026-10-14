@@ -58,6 +58,7 @@ final class AccountBioForm extends FormBase {
     $profile = $this->profile();
     $form['#action'] = Url::fromRoute('aculta_user.bio_form')->toString();
     $form['#attributes']['data-aculta-bio-form'] = '';
+    $form['#attributes']['data-portal-ui'] = 'account-bio-dialog';
     $form['#attached']['library'][] = 'aculta_user/account-bio-form';
     $form['#attached']['drupalSettings']['acultaUser']['bioSave'] = [
       'url' => Url::fromRoute('aculta_user.bio_save', [], ['query' => ['token' => $this->csrfToken->get('bio/salvar')]])->toString(),
@@ -76,7 +77,7 @@ final class AccountBioForm extends FormBase {
     $form['actions']['clear'] = [
       '#type' => 'button',
       '#value' => $this->t('Limpar'),
-      '#attributes' => ['data-aculta-bio-clear' => '', 'class' => ['btn', 'btn-secondary']],
+      '#attributes' => ['data-aculta-bio-clear' => '', 'data-portal-ui' => 'button-secondary'],
       '#weight' => -1,
     ];
     $form['actions']['submit'] = [

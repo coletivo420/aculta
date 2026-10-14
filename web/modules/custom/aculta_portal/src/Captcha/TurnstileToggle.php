@@ -32,6 +32,16 @@ final class TurnstileToggle {
     'commerce_checkout_flow_default',
   ];
 
+  /**
+   * Exceções do Turnstile: nunca recebem o desafio, qualquer que seja a decisão do responsável. Inclui a loja e o
+   * popup "Entrar" da barra (usuário não autenticado). Lista completa e motivos em docs/portal/TURNSTILE.md.
+   */
+  public const EXCEPTION_FORM_IDS = [
+    'commerce_order_item_add_to_cart_form',
+    'commerce_checkout_flow_default',
+    'aculta_login_popup_form',
+  ];
+
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -53,7 +63,7 @@ final class TurnstileToggle {
   public function setEnabled(bool $enabled, string $account): void {
     $this->configFactory->getEditable('captcha.settings')->set('enable_globally', $enabled)->save();
     foreach ($this->entityTypeManager->getStorage('captcha_point')->loadByProperties(['captchaType' => self::CHALLENGE]) as $point) {
-      if (in_array($point->id(), self::SHOP_FORM_IDS, true)) {
+      if (in_array($point->id(), self::EXCEPTION_FORM_IDS, true)) {
         continue;
       }
       if ((bool) $point->status() !== $enabled) {

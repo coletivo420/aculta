@@ -21,6 +21,7 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
@@ -245,6 +246,20 @@ final class PortalController extends ControllerBase {
     ];
   }
 
+  /**
+   * Caixa do Google: link para conectar (com URL) ou estado "Conectado" (sem URL). Marca e cores são do tema.
+   *
+   * @param string $label
+   *   Texto já traduzido; aceita <strong> apenas em textos de desenvolvimento.
+   */
+  private function googleBox(?Url $url, string $label): array {
+    $markup = Markup::create('<span>' . $label . '</span>');
+    if ($url !== NULL) {
+      return ['#type' => 'html_tag', '#tag' => 'a', '#attributes' => ['href' => $url->toString(), 'data-portal-ui' => 'auth-google'], '#value' => $markup];
+    }
+    return ['#type' => 'html_tag', '#tag' => 'div', '#attributes' => ['data-portal-ui' => 'auth-google-status'], '#value' => $markup];
+  }
+
   public function connections(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
     $google_ready = $this->authIntegrationManager->isGoogleConfigured();
@@ -263,16 +278,22 @@ final class PortalController extends ControllerBase {
     if ($links) {
       $social_auth = reset($links);
       $provider_email = $social_auth->getAdditionalData()['provider_email'] ?? NULL;
+      // Caixa "Conectado": logo e texto; a marca e o check vêm do tema (data-portal-ui="auth-google-status").
+      $items['google_status'] = $this->googleBox(NULL, (string) $this->t('Conectado'));
       if (is_string($provider_email) && filter_var($provider_email, FILTER_VALIDATE_EMAIL)) {
-        $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
         $items['google_account'] = [
-          '#plain_text' => $this->t('Conta Google: @email', ['@email' => $provider_email]),
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'google-account'],
+          'text' => ['#plain_text' => $this->t('Conta Google: @email', ['@email' => $provider_email])],
         ];
       }
       else {
-        $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
-        $items['google_account'] = ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')];
-        $items['google_reconnect'] = PortalLinkElement::build($this->t('Atualizar conexão Google'), Url::fromRoute('social_auth.network.redirect', ['network' => 'google']), ['data-portal-ui' => 'button-secondary']);
+        $items['google_account'] = [
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'google-account'],
+          'text' => ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')],
+          'reconnect' => PortalLinkElement::build($this->t('Atualizar conexão Google'), Url::fromRoute('social_auth.network.redirect', ['network' => 'google']), ['data-portal-ui' => 'button-secondary']),
+        ];
       }
       if ($this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
@@ -289,14 +310,8 @@ final class PortalController extends ControllerBase {
       }
     }
     elseif ($google_ready) {
-      $items['google_status'] = ['#plain_text' => $this->t('Nenhuma conta Google está conectada.')];
-      $items['google_login'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'auth-provider'],
-        'provider' => $this->blockManager
-          ->createInstance('social_auth_login', [])
-          ->build(),
-      ];
+      // Caixa "Conectar Google": link para a mesma rota OAuth do login (social_auth).
+      $items['google_login'] = $this->googleBox(Url::fromRoute('social_auth.network.redirect', ['network' => 'google']), (string) $this->t('Conectar <strong>Google</strong>'));
     }
     else {
       $items['google_status'] = ['#plain_text' => $this->t('A conexão com o Google estará disponível quando a configuração institucional estiver concluída.')];
