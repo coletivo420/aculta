@@ -128,3 +128,8 @@ Política: toda ferramenta do `aculta_user` funciona com outro tema. O módulo e
 | Classes, bordas, cores, tamanhos e ícones | ACULTA420 | `PortalUiHooks::TOKENS`, `css/components/public-profile.css`, `portal-account.css` |
 
 Sem o ACULTA420, os elementos continuam funcionando: links com `href` válido, textos e foto. Só a aparência volta ao padrão do tema ativo. Não há classes de design (`btn`, `bi-*`, `portal-*`) no módulo; o gate `validate-module-theme-boundary.php` confere.
+
+## Documentos e gates complementares (2026-10-14)
+
+- Tokens `data-portal-ui` e atributos `data-portal-*`, `data-aculta-*`, `data-dialog-*`: `docs/portal/TOKENS-E-ATRIBUTOS.md`. Gate: `php scripts/validate-portal-ui-docs.php` (todo token e atributo usado precisa estar documentado).
+- Popup padrão (modal do Drupal) e exceções explícitas: `docs/portal/POPUP-PADRAO.md`. Gate: `php scripts/validate-portal-popup-rule.php` (sem `<dialog>` nativo, sem tamanho de diálogo no módulo, `data-dialog-type` só `modal`).
