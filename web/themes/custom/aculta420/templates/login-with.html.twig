@@ -1,0 +1,11 @@
+{#
+  Botões de login com provedor externo (Social Auth). Mesmo sistema OAuth do módulo: o link vem de
+  network.getRedirectUrl(). Só a apresentação é do tema: caixa branca com logo e "Continuar com <provedor>".
+#}
+{% for id, network in networks %}
+  {% set options = destination|default(false) ? {'query': {'destination': destination}} : {} %}
+  <a href="{{ network.getRedirectUrl(options).toString }}" data-portal-ui="auth-google">
+    <img src="{{ network.getProviderLogoPath }}" alt="" width="24" height="24">
+    <span>{{ 'Continuar com'|t }} <strong>{{ network.getPluginDefinition.social_network }}</strong></span>
+  </a>
+{% endfor %}

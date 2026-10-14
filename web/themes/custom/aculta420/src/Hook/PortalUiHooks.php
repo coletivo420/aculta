@@ -178,6 +178,8 @@ final class PortalUiHooks {
     // Popup "Entrar" da barra (aculta_portal, LoginPopupForm).
     'login-popup' => ['aculta-login-popup'],
     'login-popup-links' => ['aculta-login-popup__links'],
+    'login-popup-divider' => ['aculta-login-popup__divider'],
+    'auth-google' => ['aculta-auth-google'],
     'registration-status' => ['aculta-registration-status'],
     'support-intro' => ['aculta-support-intro'],
     'support-other' => ['aculta-support-other'],

@@ -110,3 +110,25 @@ dialog::backdrop {
   border-radius: 0.25rem;
   text-decoration: none;
 }
+
+/* Botão de fechar (X) de todos os diálogos. O ícone padrão do jQuery UI não é carregado pelo tema; usa o Bootstrap
+   Icons (bi-x-lg, \f659), já servido pelo tema base. */
+.ui-dialog-titlebar-close .ui-icon {
+  background: none;
+  text-indent: 0;
+}
+
+.ui-dialog-titlebar-close .ui-icon::before {
+  font-family: "bootstrap-icons";
+  font-size: 1.5rem;
+  font-style: normal;
+  line-height: 1;
+  content: "\f659";
+}
+
+[data-portal-ui="login-popup-divider"] {
+  margin: 0.25rem 0;
+  border: 0;
+  border-top: 2px solid var(--aculta-dialog-text);
+  opacity: 1;
+}

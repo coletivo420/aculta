@@ -133,3 +133,32 @@ body.page-route-user-login .aculta-login__registration a {
     scroll-behavior: auto;
   }
 }
+
+/* Botão "Continuar com Google" (Social Auth): caixa branca com logo, usada no /entrar e no popup "Entrar". */
+[data-portal-ui="auth-google"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 3rem;
+  max-inline-size: 22rem;
+  margin-inline: auto;
+  padding: 0.5rem 1rem;
+  color: var(--aculta-text-primary);
+  background: var(--aculta-white);
+  border: 1px solid var(--aculta-border-default);
+  border-radius: 3px;
+  box-shadow: var(--bs-box-shadow-sm);
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+
+[data-portal-ui="auth-google"]:hover,
+[data-portal-ui="auth-google"]:focus-visible {
+  color: var(--aculta-text-primary);
+  background: var(--aculta-surface-muted);
+}
+
+[data-portal-ui="auth-google"] img {
+  flex: 0 0 auto;
+}
