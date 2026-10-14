@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Presentation;
 
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Search\SearchPageController;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -66,7 +65,7 @@ final class WikiSearchFormBuilder {
         'hint' => [
           '#theme' => 'aculta_portal_element',
           '#tag' => 'p',
-          '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
+          '#element_attributes' => ['data-portal-ui' => 'hint'],
           '#value' => (string) $this->translation->translate('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS]),
         ],
       ],
