@@ -3,7 +3,8 @@ type: module
 description: 'Álbuns fotográficos e galerias incorporadas do Portal ACULTA, sobre o Media Gallery e o PhotoSwipe. Submódulo opcional do aculta_portal: desabilitado, o Portal não depende dele.'
 package: 'Associação Cultural Antiproibicionista'
 core_version_requirement: ^11.3
-version: '0.1.0-dev.3'
+version: '0.1.0-dev.4'
 dependencies:
+  - aculta_portal:aculta_portal
   - media_gallery:media_gallery
   - pathauto:pathauto
