@@ -11,22 +11,20 @@
 }
 .node--view-mode-full .field--name-field-editorial-category .field__label { font-weight: 600; margin-inline-end: 0.25rem; }
 
-/* Imagem de destaque: centralizada, moldura 3:2 na largura da coluna de leitura, imagem inteira sem distorção
-   (portais de notícia usam moldura larga e fundo neutro para fotos verticais). */
-.node--view-mode-full .field--name-field-media-image {
-  margin-block: 1.5rem 0.5rem;
+/* Capa do modelo padrão (aculta420:revista-publication): mesma moldura 4:3 em todas as publicações, centralizada
+   na coluna de leitura, com recorte pelo centro. Não há ajuste por publicação. */
+.aculta-revista-publication__cover {
+  margin: 1.5rem auto 0.5rem;
+  inline-size: min(100%, 40rem);
   text-align: center;
 }
-.node--view-mode-full .field--name-field-media-image img {
+.aculta-revista-publication__cover img {
   display: block;
-  /* Caixa delimitada: largura e altura máximas, centralizada; a imagem inteira cabe dentro. */
-  inline-size: min(100%, 40rem);
-  block-size: min(26.6667rem, 100vw * 0.6);
-  max-block-size: 28rem;
-  margin-inline: auto;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
   border-radius: 0.75rem;
-  /* Imagem inteira, sem recorte (logotipo e títulos preservados); moldura neutra nas laterais. */
-  object-fit: contain;
   background: var(--aculta-surface-muted);
 }
 
@@ -56,6 +54,26 @@
 .node--view-mode-full .field--name-body .media,
 .node--view-mode-full .field--name-body .media--type-remote-video { display: block; margin-inline: auto; }
 .node--view-mode-full .field--name-body p { margin-block: 0 1.1rem; }
+/* Intertítulos do corpo: alinhados à esquerda (o texto justificado abria espaços nos títulos). */
+.node--view-mode-full .field--name-body h2,
+.node--view-mode-full .field--name-body h3 { text-align: start; hyphens: manual; margin-block: 2rem 0.75rem; }
+
+/* Imagens no corpo (Notícia e blog): centralizadas na coluna de leitura, cantos e fundo do tema, sem distorção.
+   A imagem sai no tamanho do estilo do Drupal (large); só reduz quando a coluna é menor. */
+.node--view-mode-full .field--name-body .media--type-image {
+  display: block;
+  margin: 2rem auto;
+  text-align: center;
+}
+.node--view-mode-full .field--name-body .media--type-image img {
+  display: block;
+  inline-size: auto;
+  max-inline-size: 100%;
+  block-size: auto;
+  margin-inline: auto;
+  border-radius: 0.75rem;
+  background: var(--aculta-surface-muted);
+}
 
 /* Vídeo embutido: responsivo, proporção 16:9, largura da coluna de leitura. */
 .node--view-mode-full .media--type-remote-video {
@@ -79,7 +97,6 @@
 .node--view-mode-full .portal-article-authors__title { margin-block: 0 0.5rem; }
 
 @media (max-width: 575.98px) {
-  .node--view-mode-full .field--name-field-media-image img { block-size: auto; aspect-ratio: 4 / 3; inline-size: 100%; }
   .node--view-mode-full .field--name-field-subtitle { font-size: 1.25rem; }
 }
 
@@ -204,3 +221,13 @@
 .portal-forum-opening__image img { display: block; inline-size: 100%; max-inline-size: 30rem; height: auto; border-radius: 0.5rem; }
 .portal-forum-opening__body { font-size: 1rem; line-height: 1.6; }
 .portal-forum-opening__link { justify-self: start; font-weight: 600; }
+
+/* Modelo padrão da publicação (aculta420:revista-publication): todos os blocos na mesma coluna de leitura. */
+.aculta-revista-publication {
+  max-inline-size: 68ch;
+  margin-inline: auto;
+}
+.aculta-revista-publication > * { max-inline-size: 100%; }
+.aculta-revista-publication__summary,
+.aculta-revista-publication .field--name-field-summary,
+.aculta-revista-publication .field--name-body { max-inline-size: none; inline-size: 100%; margin-inline: 0; }

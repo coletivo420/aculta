@@ -93,6 +93,19 @@ final class ForumTopicSync {
   }
 
   /**
+   * Executa uma gravação da publicação sem disparar a sincronização do tópico (uso da troca de tipo).
+   */
+  public function silently(NodeInterface $post, callable $work): void {
+    $this->sincronizando[$post->id()] = TRUE;
+    try {
+      $work();
+    }
+    finally {
+      unset($this->sincronizando[$post->id()]);
+    }
+  }
+
+  /**
    * Despublica o tópico quando a publicação é excluída. A discussão e os comentários são preservados.
    */
   public function unpublish(NodeInterface $post): void {

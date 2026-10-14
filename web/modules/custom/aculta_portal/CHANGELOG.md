@@ -1,3 +1,14 @@
+## 0.4.0-dev.15 — elementos de presentation sem objeto cruzando a fronteira — 2026-10-14
+
+Classificação: PATCH (correção de contrato interno; mesma marcação).
+
+- A dica da busca da Wiki (`WikiSearchFormBuilder`) passa a enviar `#element_attributes` como array, e não como
+  `Attribute`. O objeto é criado no preprocess de `aculta_portal_element` (`PortalHooks::preprocessPortalElement`),
+  no último passo antes do template. Assim a presentation do domínio não contém objetos (gate
+  `validate-domain-presentation-contract`: PASS, 127 verificações).
+- Verificado no Homelab: a dica sai com as classes do tema (`small text-body-secondary`), o que prova a conversão.
+- RUNTIME STATUS: verificado no Homelab (gate e renderização isolada). Inspeção visual humana pendente.
+
 ## 0.4.0-dev.14 — popup "Entrar" na barra multidomínio, sem Turnstile; modais com fundo escurecido — 2026-10-14
 
 - "Entrar" da barra multidomínio, para visitante não autenticado, abre o login em modal no próprio host (`use-ajax`).

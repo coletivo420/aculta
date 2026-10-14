@@ -1,0 +1,37 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Revista publication
+status: experimental
+group: Revista
+description: 'Modelo padrão de publicação da Revista (Notícia e blog): cabeçalho, capa, chamada, resumo, corpo, rodapé e caixa de autoria. Todas as publicações usam este modelo; o conteúdo vem do Drupal, a apresentação é deste componente.'
+props:
+  type: object
+  properties:
+    has_subtitle:
+      type: boolean
+      title: Subtitle has visible content
+    has_summary:
+      type: boolean
+      title: Summary has visible content
+    has_cover:
+      type: boolean
+      title: Cover image has visible content
+    has_footer:
+      type: boolean
+      title: Footer has visible content
+slots:
+  meta:
+    title: Post meta (author, date, share)
+  cover:
+    title: Cover image
+  subtitle:
+    title: Subtitle (chamada)
+  summary:
+    title: Summary (resumo)
+  body:
+    title: Body
+  footer:
+    title: Category, tags, references and credits
+  authors:
+    title: Author box
+  discussion:
+    title: Forum discussion link

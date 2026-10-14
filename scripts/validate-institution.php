@@ -1,6 +1,13 @@
 <?php
 
 /** Read-only validation of the local institutional implementation. */
+
+// Gate de Drupal: a validação de Views precisa do bootstrap. Execução: drush scr (ver docs/portal/FRONTEIRA-MODULO-TEMA.md).
+if (!class_exists(\Drupal::class)) {
+  fwrite(STDERR, "validate-institution é um gate de Drupal. Execute: php vendor/drush/drush/drush.php --uri=<host> scr scripts/validate-institution.php\n");
+  exit(2);
+}
+
 use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);

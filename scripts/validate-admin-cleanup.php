@@ -3,7 +3,57 @@
 use Symfony\Component\Yaml\Yaml;
 // Reviewed inventory of Views. Portal and enabled modules provide the course,
 // Wiki, Commerce, LMS and Social Auth views; any other Views fail the check.
-$expected = ['aculta_activities','aculta_documents','aculta_news','aculta_projects','home_editorial_highlights','block_content','content','files','media','media_library','redirect','user_admin_people','watchdog','webform_submissions','activities_selection','aculta_related_activities','aculta_related_news','agreements','commerce_cart_block','commerce_cart_form','commerce_carts','commerce_checkout_order_summary','commerce_order_item_table','commerce_order_item_table_admin','commerce_order_payments','commerce_orders','commerce_stores','commerce_user_orders','courses','courses_admin','courses_catalog','group_members','lessons_selection','locked_content','moderated_content','profiles','social_auth_profiles','user_agreements','wiki_categories','wiki_entries'];
+$expected = [
+  // Views do próprio projeto e do núcleo, e Views providas por módulos habilitados
+  // (Commerce, LMS/Group, Wiki, Social Auth, Webform, Revista, dblog). Cada uma depende de módulo
+  // habilitado (verificado em 2026-10-14). Qualquer outra View reprova o gate.
+  'aculta_activities',
+  'aculta_documents',
+  'aculta_news',
+  'aculta_projects',
+  'home_editorial_highlights',
+  'block_content',
+  'content',
+  'files',
+  'media',
+  'media_library',
+  'redirect',
+  'user_admin_people',
+  'watchdog',
+  'webform_submissions',
+  'activities_selection',
+  'aculta_related_activities',
+  'aculta_related_news',
+  'agreements',
+  'commerce_cart_block',
+  'commerce_cart_form',
+  'commerce_carts',
+  'commerce_checkout_order_summary',
+  'commerce_order_item_table',
+  'commerce_order_item_table_admin',
+  'commerce_order_payments',
+  'commerce_orders',
+  'commerce_stores',
+  'commerce_user_orders',
+  'courses',
+  'courses_admin',
+  'courses_catalog',
+  'group_members',
+  'lessons_selection',
+  'locked_content',
+  'moderated_content',
+  'profiles',
+  'social_auth_profiles',
+  'user_agreements',
+  'wiki_categories',
+  'wiki_entries',
+  'comment',
+  'comments_recent',
+  'commerce_products',
+  'galeria_produto',
+  'order_shipments',
+  'revista_sessoes',
+];
 $views = \Drupal\views\Entity\View::loadMultiple();
 sort($expected); $actual = array_keys($views); sort($actual);
 if ($actual !== $expected) throw new RuntimeException('Unexpected retained Views.');
@@ -27,7 +77,9 @@ if ($media !== ['document','image','remote_video']) throw new RuntimeException('
 $before = json_decode(file_get_contents(dirname(__DIR__) . '/tmp/admin-structure-audit.json'), TRUE, 512, JSON_THROW_ON_ERROR);
 foreach (['node','block_content','menu_link_content'] as $type) {
   $entities = \Drupal::entityTypeManager()->getStorage($type)->loadMultiple();
-  if (count($entities) !== count($before['content'][$type])) throw new RuntimeException('Existing content count changed: ' . $type);
+  // A limpeza não pode apagar conteúdo existente. O conteúdo novo (importações, publicações) é esperado: a checagem é
+  // de não diminuir em relação ao snapshot, e não de igualdade.
+  if (count($entities) < count($before['content'][$type])) throw new RuntimeException('Existing content removed: ' . $type);
 }
 $config = \Drupal::service('config.storage');
 $names = $config->listAll();

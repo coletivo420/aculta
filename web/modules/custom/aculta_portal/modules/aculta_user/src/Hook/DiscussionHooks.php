@@ -86,7 +86,10 @@ final class DiscussionHooks {
         : ['#markup' => (string) t('Ainda não há comentários publicados.')],
       'link' => [
         '#type' => 'link',
-        '#title' => $this->formatPlural($total, 'Ver discussão completa (1 comentário)', 'Ver discussão completa (@count comentários)'),
+        // Forma escolhida pelo número, sem formatPlural: em pt-br a regra plural trata 0 como singular.
+        '#title' => $total === 1
+          ? t('Ver discussão completa (1 comentário)')
+          : t('Ver discussão completa (@count comentários)', ['@count' => $total]),
         '#url' => $url,
         '#attributes' => ['data-portal-ui' => 'discussion-link'],
       ],

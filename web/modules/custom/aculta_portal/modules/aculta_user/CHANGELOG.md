@@ -1,3 +1,12 @@
+## 0.3.0-dev.13 — contagem de comentários sem plural de pt-br em zero — 2026-10-14
+
+Classificação: PATCH (correção de texto; sem mudança de contrato).
+
+- "Ver discussão completa" mostrava "(1 comentário)" quando não havia comentário: em pt-br a regra plural trata 0
+  como singular. Agora a forma é escolhida pelo número (1 → singular; 0 e demais → plural com o número).
+- Verificado no runtime: publicação nova sem comentários passa a mostrar "(0 comentários)".
+- RUNTIME STATUS: verificado no Homelab (HTTP). Inspeção visual humana pendente.
+
 # Changelog — aculta_user
 
 ## 0.3.0-dev.12 — bloco de discussão em caixa própria, abaixo da autoria — 2026-10-13

@@ -1,3 +1,43 @@
+## 0.1.0-dev.5 — login repetido nos comentários do Fórum da Revista — 2026-10-14
+
+Classificação: PATCH (correção de apresentação do Core; sem mudança de contrato).
+
+- Nos tópicos do Fórum, "Efetue login ou registre-se para postar comentários" aparecia duas vezes quando havia
+  comentário: uma nos links de cada comentário e outra na área do tópico. A de cada comentário sai
+  (`ForumTopicHooks::commentLinksAlter`, via `comment_links_alter`). Fica a da área do tópico.
+- Verificado no Homelab: com um comentário de teste, a página do tópico mostra uma única mensagem; comentário de
+  teste removido em seguida.
+- RUNTIME STATUS: verificado no Homelab (HTTP e renderização dos links). Inspeção visual humana pendente.
+
+## 0.1.0-dev.4 — troca de tipo de publicação sem quebrar o tópico do Fórum — 2026-10-14
+
+Classificação: MINOR da linha aberta (serviço novo; sem mudança de contrato existente).
+
+- Novo serviço `PublicationTypeConverter`: troca uma publicação entre article e blog criando a nova, copiando os
+  campos, movendo o vínculo `field_discussao` e mantendo o endereço; a antiga sai depois, sem despublicar o tópico.
+  Tudo em transação (falha = nada muda). Campos que só existem no tipo de origem são listados e não copiados.
+- `ForumTopicSync::silently()`: grava a publicação sem disparar a sincronização do tópico (uso só da troca).
+- Ao trocar a sessão, o tópico muda de pasta e o endereço segue o Pathauto. Endereço antigo responde 404 (sem redirect).
+- Uso: `PublicationTypeConverter::plan()` (sem gravar) e `convert()` (grava), pelo serviço
+  `aculta_magazine.publication_type_converter`.
+- Comando Drush: não registrado. Tentativas com os formatos do Drush 13 não foram reconhecidas; fica pendente.
+- Comentários: o tópico e seus comentários não mudam na troca. Teste no navegador: comentário de teste no tópico 87,
+  ida e volta article → blog, contagem "1 comentário" na publicação e comentário no tópico em cada etapa; comentário
+  de teste removido ao final.
+- RUNTIME STATUS: verificado no Homelab. Trocados PodPlant420 #01 (71 → 94) e Cuidar não é crime (86 → 95) para blog na
+  sessão Editorial, tópicos 78 e 87 preservados, endereços 200. Blog de teste (77) e tópico 79 excluídos.
+
+## 0.1.0-dev.3 — cabeçalho da publicação declara a dependência de tema; Blog é Editorial documentado — 2026-10-14
+
+Classificação: PATCH (correção de cache; sem mudança de contrato).
+
+- Correção: publicação da Revista sem imagem de capa falhava na renderização a frio com `LogicException` do
+  `VariationCache` (contexto `theme` ausente na raiz). O cabeçalho (`PostPresentation`) passa a declarar o contexto
+  `theme`, de que depende (elementos `aculta_portal_element`).
+- Documentação: regra "Blog é sinônimo de Editorial" em `docs/README.md`.
+- Gates: Portal Drupal 11+ PASS, fronteira módulo/tema PASS, slugs PASS, endereços de ambiente PASS.
+- RUNTIME STATUS: verificado no Homelab por renderização a frio (em memória) das publicações. Inspeção visual humana pendente.
+
 # Changelog — aculta_magazine
 
 ## 0.1.0-dev.2 — Fórum da Revista: tópico automático por publicação e abertura da discussão — 2026-10-13
