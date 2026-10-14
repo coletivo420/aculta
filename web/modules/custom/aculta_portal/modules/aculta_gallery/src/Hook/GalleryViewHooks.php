@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * Página do álbum: as fotos do álbum atual aparecem num carrossel VVJB (uma por slide).
  *
  * A view aculta_album_fotos traz as imagens do álbum com paginação real. O tema envolve o VVJB no componente
- * de carrossel (SDC aculta420:carousel). Aqui só entra o contexto do álbum (argumento da view).
+ * de carrossel na apresentação do tema. Aqui só entra o contexto do álbum (argumento da view).
  */
 final class GalleryViewHooks {
 
