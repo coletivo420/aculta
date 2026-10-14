@@ -129,6 +129,11 @@ Regra do responsável (2026-10-14). Vale para qualquer agente (Codex, Claude, Ch
   antes e depois).
 - Contas que não foram criadas pelo agente nesta sessão **não são excluídas**. Em particular, `teste.comum`
   (uid 5) é conta de teste permanente do responsável e fica.
+- A mesma regra vale para **elementos publicados para teste**: pedidos, pagamentos, posts (nós), mídias,
+  galerias e demais conteúdos criados pelo agente para teste. Ao fim dos testes, o agente exclui o que criou.
+  Conteúdo de exemplo com prefixo `[EXEMPLO]` (ver `docs/operations/TEST-DATA.md`) é removido somente após
+  conferência do prefixo e do manifesto. Páginas institucionais reais, mesmo listadas num manifesto de QA,
+  não são removidas sem confirmação explícita do responsável.
 - Contas reais (autores, administradores, editores) nunca são excluídas por limpeza de teste.
 - Limpeza: `php vendor/drush/drush/drush.php php:script scripts/cleanup-agent-test-users.php` (padrão: simulação;
   `--apply` exclui). Gate: `php scripts/validate-agent-test-users-rule.php`.
