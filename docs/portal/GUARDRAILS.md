@@ -116,3 +116,23 @@ caminho `/u/...` à mão, nunca guardar a URL do perfil em campo, configuração
   gerado pelo serviço de domínio, sem host fixo no código.
 - **Gate:** `php scripts/validate-profile-links.php` reprova caminho `/u/` literal e geração de link de perfil
   sem registro na cache. Deve ser PASS em toda mudança de perfil, caixa de autores ou faixa de postagem.
+
+## Usuários de teste criados por agentes
+
+Regra do responsável (2026-10-14). Vale para qualquer agente (Codex, Claude, ChatGPT ou outro).
+
+- Quando um agente cria um **novo usuário para testes**, o usuário é **excluído ao fim dos testes**, na mesma
+  sessão. Não fica no Runtime como resíduo.
+- Nome obrigatório: prefixo `agente-teste-` (ex.: `agente-teste-20261014-1`), e-mail em `@testuser.invalid`.
+  O prefixo identifica o que o agente criou; sem ele, o usuário não é removido automaticamente.
+- O agente registra o `uid` criado e confirma a exclusão no relatório final (`drush php:eval` com contagem
+  antes e depois).
+- Contas que não foram criadas pelo agente nesta sessão **não são excluídas**. Em particular, `teste.comum`
+  (uid 5) é conta de teste permanente do responsável e fica.
+- Contas reais (autores, administradores, editores) nunca são excluídas por limpeza de teste.
+- Limpeza: `php vendor/drush/drush/drush.php php:script scripts/cleanup-agent-test-users.php` (padrão: simulação;
+  `--apply` exclui). Gate: `php scripts/validate-agent-test-users-rule.php`.
+
+Motivo: contas de teste deixadas no Runtime aparecem em listagens de usuários, em relatórios de papéis e em
+buscas de autor, e podem receber e-mails ou permissões por engano. Excluir ao fim do teste mantém o Runtime com
+apenas as contas reais e as de teste permanentes.
