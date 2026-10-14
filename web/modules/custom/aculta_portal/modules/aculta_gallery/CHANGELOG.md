@@ -2,6 +2,21 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
+## 0.1.0-dev.5 — galerias incorporadas em posts — 2026-10-14
+
+Classificação: MINOR (nova dependência de módulo: `entity_embed` e `embed`; sem pacote novo no Composer).
+
+- Habilitados `embed` e `entity_embed` (já instalados desde a Fase 1).
+- Botão de incorporação `galeria` (`embed.button.galeria`, módulo `aculta_gallery`): incorpora somente entidades `media_gallery`.
+- CKEditor 5 do `full_html`: botão `galeria` na toolbar e filtro `entity_embed` ativo (repo e Runtime).
+- Verificado de ponta a ponta: artigo de teste com a galeria 11 no corpo, aberto pela URL da Revista (200), com o título da galeria renderizado e sem tag `drupal-entity` sobrando. Artigo de teste apagado depois.
+- Remover a incorporação não apaga a galeria nem as imagens (66 antes e depois). Verificado.
+- Limitações registradas:
+  - O botão aparece em todo o `full_html`, não só em artigos e blogs. A restrição D13 à Revista ainda não está aplicada na inserção (só na visualização). Precisa de formato de texto dedicado; decisão pendente.
+  - Criar galeria dentro do CKEditor não é suportado (L5). Só se incorpora galeria já criada.
+  - Legenda opcional e escolha de layout no diálogo do CKEditor: não verificados. Layout depende dos componentes da Fase 5.
+- RUNTIME STATUS: verificado no Runtime (incorporação, renderização pela Revista e remoção). Testes de navegador do editor pendentes (Fase 10).
+
 ## 0.1.0-dev.4 — importação, organização e restrição à Revista — 2026-10-14
 
 Classificação: MINOR (regras de capa e de publicação; sem dependência nova).

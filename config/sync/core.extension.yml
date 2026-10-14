@@ -43,7 +43,9 @@ module:
   editor: 0
   email_confirmer: 0
   email_confirmer_user: 0
+  embed: 0
   entity: 0
+  entity_embed: 0
   entity_reference_revisions: 0
   field: 0
   field_ui: 0
