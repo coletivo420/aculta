@@ -37,23 +37,24 @@ final class FriendshipActionForm extends FormBase {
     }
     $form_state->set('target_uid', (int) $target->id());
     $form['#cache']['contexts'][] = 'user';
+    $form['#attributes']['data-portal-ui'] = 'friendship-action-form';
     $form['actions'] = ['#type' => 'actions'];
     $status = $relationship?->getStatus();
     $requester = $relationship?->getRequesterId();
     $uid = (int) $this->currentAccount->id();
 
     if ($status === FriendshipStatus::Accepted->value) {
-      $form['actions']['remove'] = ['#type' => 'submit', '#value' => $this->t('Remover amizade'), '#name' => 'remove'];
+      $form['actions']['remove'] = ['#type' => 'submit', '#value' => $this->t('Remover amizade'), '#name' => 'remove', '#attributes' => ['data-portal-ui' => 'friendship-action-button']];
     }
     elseif ($status === FriendshipStatus::Pending->value && $requester === $uid) {
       $form['status'] = ['#plain_text' => $this->t('Pedido de amizade enviado.')];
-      $form['actions']['cancel'] = ['#type' => 'submit', '#value' => $this->t('Cancelar pedido'), '#name' => 'cancel'];
+      $form['actions']['cancel'] = ['#type' => 'submit', '#value' => $this->t('Cancelar pedido'), '#name' => 'cancel', '#attributes' => ['data-portal-ui' => 'friendship-action-button']];
     }
     elseif ($status === FriendshipStatus::Pending->value) {
       $form['status'] = ['#plain_text' => $this->t('Esta pessoa enviou um pedido de amizade.')];
     }
     else {
-      $form['actions']['request'] = ['#type' => 'submit', '#value' => $this->t('Adicionar amizade'), '#name' => 'request'];
+      $form['actions']['request'] = ['#type' => 'submit', '#value' => $this->t('Adicionar amigo'), '#name' => 'request', '#attributes' => ['data-portal-ui' => 'friendship-action-button']];
     }
     return $form;
   }

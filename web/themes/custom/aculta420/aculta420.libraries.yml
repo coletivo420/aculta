@@ -53,6 +53,9 @@ editorial-carousel:
     - core/once
 
 messenger-drawers:
+  css:
+    theme:
+      components/content/messenger-item/messenger-item.css: {}
   js:
     js/messenger-drawers.js: {}
   dependencies:

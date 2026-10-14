@@ -108,11 +108,10 @@ final class MessagesController extends ControllerBase {
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user'])
       ->setCacheMaxAge(0);
-    $viewBuilder = $this->entityTypeManager->getViewBuilder('private_message_thread');
 
     // Private Message already returns threads newest first. Keep that order
-    // explicit here because each sender box is positioned by its latest
-    // conversation and contains that sender's conversations in the same order.
+    // explicit here because each sender is positioned by their latest
+    // conversation.
     usort($threads, static fn ($a, $b): int => (int) $b->getUpdatedTime() <=> (int) $a->getUpdatedTime());
     $senderBoxes = [];
 
@@ -127,13 +126,9 @@ final class MessagesController extends ControllerBase {
       }
 
       $cacheability->addCacheableDependency($thread);
-      $item = $viewBuilder->view($thread, 'inbox');
       $isUnread = $this->unreadThreadCounter->isUnread($thread);
       $sender = $this->getConversationSender($thread);
       $senderName = $sender?->getDisplayName() ?: (string) $this->translation->translate('Membro');
-      $item['#attributes']['class'][] = 'aculta-messenger-conversation';
-      $item['#attributes']['data-aculta-thread-id'] = (string) $thread->id();
-      $item['#attributes']['data-aculta-thread-unread'] = $isUnread ? 'true' : 'false';
       $clearAccess = $thread->access('clear_personal_history', $this->currentUser, TRUE);
       $cacheability->addCacheableDependency($clearAccess);
       $clearHistoryUrl = NULL;
@@ -146,8 +141,44 @@ final class MessagesController extends ControllerBase {
           ['private_message_thread' => $thread->id()],
         );
       }
-      if ($clearHistoryUrl !== NULL) {
-        $item['conversation_actions'] = [
+      if ($sender !== NULL) {
+        $cacheability->addCacheableDependency($sender);
+      }
+      $conversationUrl = $this->domainPurposeManager->routeUrl(
+        'account',
+        'entity.private_message_thread.canonical',
+        ['private_message_thread' => $thread->id()],
+      );
+      $openLink = $conversationUrl === NULL ? NULL : [
+        '#type' => 'link',
+        '#title' => $senderName,
+        '#url' => $conversationUrl,
+        '#attributes' => [
+          'class' => ['use-ajax', 'aculta-messenger-sender__link'],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => json_encode([
+            'width' => 760,
+            'classes' => ['ui-dialog' => 'aculta-messenger-conversation-dialog'],
+          ], JSON_THROW_ON_ERROR),
+          'data-aculta-thread-id' => (string) $thread->id(),
+          'data-aculta-thread-unread' => $isUnread ? 'true' : 'false',
+          'aria-label' => (string) $this->translation->translate('Abrir conversa com @name', ['@name' => $senderName]),
+        ],
+      ];
+      $senderId = $sender?->id() ?? 'thread-' . $thread->id();
+      $senderKey = (string) $senderId;
+      if (!isset($senderBoxes[$senderKey])) {
+        $avatar = NULL;
+        if ($sender instanceof UserInterface && $sender->hasField('user_picture') && !$sender->get('user_picture')->isEmpty()) {
+          $avatarAccess = $sender->access('view', $this->currentUser, TRUE);
+          $cacheability->addCacheableDependency($avatarAccess);
+          if ($avatarAccess->isAllowed()) {
+            $avatar = $sender->get('user_picture')->view('default');
+          }
+        }
+        $actions = [];
+        if ($clearHistoryUrl !== NULL) {
+          $actions = [
           '#type' => 'container',
           '#attributes' => ['class' => ['aculta-messenger-conversation__actions']],
           'trigger' => [
@@ -180,61 +211,48 @@ final class MessagesController extends ControllerBase {
               ],
             ],
           ],
-        ];
-      }
-      if ($sender !== NULL) {
-        $cacheability->addCacheableDependency($sender);
-      }
-      if (isset($item['inbox_link']) && is_array($item['inbox_link'])) {
-        $item['inbox_link']['#attributes']['class'][] = 'use-ajax';
-        $item['inbox_link']['#attributes']['data-dialog-type'] = 'modal';
-        $item['inbox_link']['#attributes']['data-dialog-options'] = json_encode([
-          'width' => 760,
-          'classes' => ['ui-dialog' => 'aculta-messenger-conversation-dialog'],
-        ], JSON_THROW_ON_ERROR);
-        $item['inbox_link']['#attributes']['data-aculta-thread-id'] = (string) $thread->id();
-        $item['inbox_link']['#attributes']['data-aculta-thread-unread'] = $isUnread ? 'true' : 'false';
-        $item['inbox_link']['#attributes']['aria-label'] = (string) $this->translation->translate('Abrir conversa com @name', ['@name' => $senderName]);
-      }
-      $this->canonicalizePrivateMessageLinks($item);
-
-      $senderId = $sender?->id() ?? 'thread-' . $thread->id();
-      $senderKey = (string) $senderId;
-      if (!isset($senderBoxes[$senderKey])) {
+          ];
+        }
         $senderBoxes[$senderKey] = [
           'updated' => (int) $thread->getUpdatedTime(),
+          'thread_id' => (string) $thread->id(),
           'name' => $senderName,
           'sender' => $sender,
-          'open' => $item['inbox_link'] ?? NULL,
-          'threads' => [],
+          'avatar' => $avatar,
+          'open' => $openLink,
+          'unread' => $isUnread,
+          'actions' => $actions,
         ];
       }
-      $senderBoxes[$senderKey]['threads'][] = $item;
     }
 
     // The groups were first encountered at their newest thread; sort anyway
     // so this remains true if the upstream mapper changes its order later.
     uasort($senderBoxes, static fn (array $a, array $b): int => $b['updated'] <=> $a['updated']);
     foreach ($senderBoxes as $senderBox) {
-      $headingLink = $senderBox['open'];
-      if (is_array($headingLink)) {
-        $headingLink['#title'] = $senderBox['name'];
-        $headingLink['#attributes']['class'][] = 'aculta-messenger-sender__link';
-        $headingLink['#attributes']['aria-label'] = (string) $this->translation->translate('Abrir conversa com @name', ['@name' => $senderBox['name']]);
-      }
       $box = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-messenger-sender']],
-        'heading' => [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-messenger-sender__heading']],
-          'name' => $headingLink ?? ['#plain_text' => $senderBox['name']],
+        '#attributes' => [
+          'class' => array_values(array_filter([
+            'aculta-messenger-sender',
+            'aculta-messenger-conversation',
+            $senderBox['unread'] ? 'is-unread' : NULL,
+          ])),
+          'data-aculta-thread-id' => $senderBox['thread_id'],
+          'data-aculta-thread-unread' => $senderBox['unread'] ? 'true' : 'false',
+          'tabindex' => '0',
         ],
-        'conversations' => ['#theme' => 'item_list', '#items' => $senderBox['threads']],
+        'avatar' => [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-messenger-sender__avatar'], 'aria-hidden' => 'true'],
+          'image' => $senderBox['avatar'] ?? ['#plain_text' => mb_substr($senderBox['name'], 0, 1)],
+        ],
+        'name' => $senderBox['open'] ?? ['#plain_text' => $senderBox['name']],
+        'actions' => $senderBox['actions'],
       ];
       if ($senderBox['sender'] instanceof UserInterface) {
         $cacheability->addCacheableDependency($senderBox['sender']);
-        $box['#cache']['tags'] = $senderBox['sender']->getCacheTags();
+        $box['avatar']['image']['#cache']['contexts'][] = 'user';
       }
       $items[] = $box;
     }
@@ -272,28 +290,6 @@ final class MessagesController extends ControllerBase {
     }
 
     return $sender;
-  }
-
-  /** Rewrites Private Message thread actions to the canonical account purpose. */
-  private function canonicalizePrivateMessageLinks(array &$build): void {
-    foreach ($build as &$element) {
-      if (!is_array($element)) {
-        continue;
-      }
-      $url = $element['#url'] ?? NULL;
-      if ($url instanceof Url) {
-        $routeName = $url->getRouteName();
-        if (is_string($routeName)
-          && (str_starts_with($routeName, 'private_message.')
-            || str_starts_with($routeName, 'entity.private_message.')
-            || str_starts_with($routeName, 'entity.private_message_thread.'))
-          && ($canonical = $this->domainPurposeManager->routeUrl('account', $routeName, $url->getRouteParameters())) !== NULL) {
-          $element['#url'] = $canonical;
-        }
-      }
-      $this->canonicalizePrivateMessageLinks($element);
-    }
-    unset($element);
   }
 
   /** Displays currently active native Site Alerts in the same-origin modal. */

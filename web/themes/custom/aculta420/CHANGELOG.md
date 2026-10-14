@@ -1,3 +1,12 @@
+## 0.6.0-dev.33 — contatos compactos e botão de amizade no perfil — 2026-10-14
+
+Classificação: PATCH (ajustes visuais e de apresentação sem alterar contratos estáveis).
+
+- A gaveta de mensagens destaca cada remetente em uma caixa clicável com avatar circular e nome, sem detalhes extras.
+- O perfil público apresenta a ação de amizade no cabeçalho, com o estilo do botão “Ver Perfil” da Minha Conta.
+- CSS de conversa é carregado pela biblioteca da gaveta mesmo quando a resposta AJAX não renderiza o SDC de mensagem.
+- Capturas locais da lista em desktop/mobile revisadas; validação interativa do fluxo de amizade permanece DEFERRED.
+
 ## 0.6.0-dev.30 — destaque vermelho para Minha Conta — 2026-10-14
 
 Classificação: MINOR da linha aberta (consistência visual da barra multidomínio).

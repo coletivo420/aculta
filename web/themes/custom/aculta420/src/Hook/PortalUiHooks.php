@@ -123,6 +123,9 @@ final class PortalUiHooks {
     // Perfil público (/u/<apelido>).
     'public-profile' => ['portal-profile'],
     'public-profile-header' => ['portal-profile__header'],
+    'public-profile-actions' => ['portal-profile__actions'],
+    'friendship-action-form' => ['portal-profile__friendship-form'],
+    'friendship-action-button' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
     'public-profile-avatar' => ['portal-profile__avatar'],
     'public-profile-initial' => ['portal-profile__initial'],
     'public-profile-identity' => ['portal-profile__identity'],

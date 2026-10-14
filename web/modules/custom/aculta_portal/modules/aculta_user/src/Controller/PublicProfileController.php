@@ -103,8 +103,13 @@ final class PublicProfileController extends ControllerBase {
     }
     if ($account !== NULL && $this->currentUser->isAuthenticated() && (int) $this->currentUser->id() !== (int) $account->id()) {
       $relationship = $this->friendshipManager->getRelationshipWith((int) $account->id());
-      $build['friendship'] = $this->formBuilder->getForm(FriendshipActionForm::class, $account, $relationship);
+      $build['header']['actions'] = [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'public-profile-actions'],
+        'friendship' => $this->formBuilder->getForm(FriendshipActionForm::class, $account, $relationship),
+      ];
       $cache->addCacheContexts(['user'])->addCacheTags(['user:' . $this->currentUser->id()]);
+      $cache->addCacheTags($this->entityTypeManagerService->getDefinition('aculta_friendship')->getListCacheTags());
       if ($relationship !== NULL) {
         $cache->addCacheableDependency($relationship);
       }

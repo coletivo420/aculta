@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.9 — contatos compactos no Messenger — 2026-10-14
+
+- A gaveta mostra uma caixa clicável por usuário com avatar circular e nome somente; abre a conversa mais recente.
+- Ação contextual de limpar histórico e estado não lido permanecem disponíveis.
+- CSS da caixa passa a ser carregado pela biblioteca da gaveta, inclusive no conteúdo AJAX sem renderizar o SDC de mensagem.
+- Capturas visuais revisadas em desktop (1440×960) e mobile (390×844) com a resposta autenticada renderizada pelo checkout local.
+- RUNTIME STATUS: visual local PASS; interação real da gaveta ainda DEFERRED.
+
 ## 0.1.1-dev.8 — menu contextual e retenção de conversas
 
 - Inclui menu de contexto no clique direito e atalho acessível para abrir a confirmação nativa de limpeza do histórico pessoal.

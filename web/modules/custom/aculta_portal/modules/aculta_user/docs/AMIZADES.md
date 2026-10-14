@@ -17,6 +17,14 @@ pela política de advisories de segurança do Drupal.
 - A tela de perfil pode oferecer um ponto de entrada, e a conta deve listar
   pedidos recebidos.
 
+### Apresentação no perfil público
+
+Para uma pessoa autenticada que abre `/u/<apelido>` de outro membro, a ação de
+amizade fica no cabeçalho do cartão do perfil, ao lado da identidade. O botão
+usa o mesmo contrato de apresentação de “Ver Perfil” na visão geral da conta.
+O tema só estiliza o formulário; a solicitação e suas transições continuam no
+`FriendshipActionForm` e no `FriendshipManager` do `aculta_user`.
+
 ### O que não será copiado
 
 - O banco upstream mantém dois registros espelhados por relação; no ACULTA um

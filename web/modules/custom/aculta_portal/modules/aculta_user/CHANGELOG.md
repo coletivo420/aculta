@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.2 — ação de amizade no cabeçalho do perfil público — 2026-10-14
+
+- Coloca a ação de amizade dentro do cabeçalho do cartão `/u/{apelido}` para membros autenticados, ao lado da identidade.
+- O botão de solicitação usa o mesmo contrato visual de “Ver Perfil” da Minha Conta; a operação continua sendo Form API e `FriendshipManager`.
+- A marcação inclui cache tag da lista de amizades para atualizar o estado depois de solicitar, cancelar ou remover.
+- `RUNTIME STATUS: DEFERRED` até validar em navegador local autenticado.
+
 ## 0.4.0-dev.1 — relacionamentos privados entre membros — 2026-10-14
 
 - Cria `AcultaFriendship` (`aculta_friendship`) como entidade privada por par, com chave string canônica única e estados explícitos.

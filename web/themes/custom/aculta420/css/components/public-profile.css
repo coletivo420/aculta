@@ -27,6 +27,9 @@
 }
 .portal-profile__initial { place-items: center; font-size: 2.25rem; font-weight: 600; }
 .portal-profile__identity { min-inline-size: 0; }
+.portal-profile__actions { margin-inline-start: auto; }
+.portal-profile__friendship-form { margin: 0; }
+.portal-profile__friendship-form .form-actions { margin: 0; }
 .portal-profile__name { margin: 0; font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.1; overflow-wrap: anywhere; }
 .portal-profile__bio {
   max-inline-size: 60ch;
@@ -57,6 +60,7 @@
 .portal-profile__link:focus-visible { border-color: var(--aculta-interactive-border); color: var(--aculta-interactive-text); }
 @media (max-width: 575.98px) {
   .portal-profile__header { flex-direction: column; text-align: center; padding: 1.5rem; }
+  .portal-profile__actions { margin-inline-start: 0; }
   .portal-profile__bio, .portal-profile__links { margin-inline: 1.5rem; padding-inline: 0; }
   .portal-profile__links { padding: 1rem 1.5rem 1.5rem; }
 }
