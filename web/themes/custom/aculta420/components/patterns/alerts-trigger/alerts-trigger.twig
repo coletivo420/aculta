@@ -5,15 +5,28 @@
 {% set label = count > 0
   ? '@count @kind. Abrir avisos'|t({'@count': count, '@kind': counter_label})
   : 'Abrir avisos'|t %}
-<a class="aculta-alerts-trigger use-ajax"
-   href="{{ href }}"
-   data-dialog-type="dialog"
-   data-dialog-renderer="off_canvas"
-   data-dialog-options="{{ {'title': 'Avisos'|t, 'closeText': 'Fechar'|t, 'width': 420, 'classes': {'ui-dialog': 'aculta-alerts-drawer'}}|json_encode|e('html_attr') }}"
-   aria-haspopup="dialog"
-   aria-label="{{ label }}">
+{{ attach_library('aculta420/messenger-drawers') }}
+<button type="button"
+        class="btn btn-link p-0 aculta-utility-trigger aculta-alerts-trigger"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#aculta-alerts-offcanvas"
+        aria-controls="aculta-alerts-offcanvas"
+        aria-label="{{ label }}">
   <i class="bi bi-bell" aria-hidden="true"></i>
-  {% if count > 0 %}
-    {{ include('aculta420:unread-badge', {count: count}, with_context = false) }}
-  {% endif %}
-</a>
+  <span class="badge aculta-cart-utility__count" data-count="{{ count }}">{{ count }}</span>
+</button>
+
+<div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-alerts-offcanvas"
+     tabindex="-1"
+     id="aculta-alerts-offcanvas"
+     aria-labelledby="aculta-alerts-offcanvas-title"
+     data-aculta-drawer-url="{{ href }}"
+     data-aculta-drawer-label="{{ 'Não foi possível carregar os avisos. Tente novamente.'|t }}">
+  <div class="offcanvas-header">
+    <h2 class="offcanvas-title h5" id="aculta-alerts-offcanvas-title">{{ 'Avisos'|t }}</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ 'Fechar avisos'|t }}"></button>
+  </div>
+  <div class="offcanvas-body aculta-utility-offcanvas__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
+    <p>{{ 'Abra para atualizar os avisos.'|t }}</p>
+  </div>
+</div>

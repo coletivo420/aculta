@@ -178,6 +178,18 @@ transporte existente.
 Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
 cache/access de runtime ou compatibilidade em PHP 8.5.
 
+## Barra multidomínio: atualização sob demanda
+
+O ACULTA420 mantém a apresentação da gaveta: shell Bootstrap compartilhado com
+o carrinho, ícones, badge e estados visuais. Este módulo fornece os endpoints
+same-origin e monta o fragmento a partir das entidades/Views com as regras de
+acesso do usuário atual. Ao abrir uma gaveta, o tema faz uma requisição GET com
+credenciais de sessão, insere o fragmento e anexa os behaviors Drupal para
+links como os controles de leitura. Fechar interrompe uma requisição pendente.
+Não há polling, novo framework de AJAX nem caixa postal paralela. As respostas
+usam `no-store`; a instalação real e o comportamento visual ainda exigem
+validação no Homelab.
+
 ### Assinaturas de tópicos do fórum (dev.5)
 
 O caso implementado é a primeira publicação de Node `forum`, inclusive a

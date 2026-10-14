@@ -2,6 +2,12 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.4 — fragmentos AJAX para gavetas Bootstrap
+
+- Rotas same-origin de prévia retornam somente HTML renderizado e têm cache privado/no-store;
+  a consulta ocorre ao abrir a gaveta, sem atualizações em segundo plano.
+- RUNTIME STATUS: DEFERRED — conferir DI, cache e interação no Homelab.
+
 ## 0.1.1-dev.3 — gavetas de mensagens e avisos na barra
 
 - A prévia privada passa a exibir até 50 conversas recentes dentro do painel e remove o link de saída

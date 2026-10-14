@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schema
 name: Mensagens na barra multidomínio
 status: experimental
 group: Patterns
-description: 'Gatilho do drawer off-canvas Drupal de conversas com ícone Bootstrap e contador.'
+description: 'Gatilho e gaveta Bootstrap de conversas, com conteúdo atualizado por AJAX ao abrir.'
 props:
   type: object
   required: [href]
@@ -16,7 +16,3 @@ props:
       default: 0
       title: Conversas não lidas
 slots: {}
-assets:
-  css:
-    component:
-      messenger-trigger.css: {}

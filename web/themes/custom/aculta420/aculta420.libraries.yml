@@ -52,3 +52,11 @@ editorial-carousel:
     - core/drupal
     - core/once
 
+messenger-drawers:
+  js:
+    js/messenger-drawers.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - bootstrap5/bootstrap5-js-latest
+

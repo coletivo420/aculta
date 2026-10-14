@@ -14,6 +14,7 @@ use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -23,6 +24,7 @@ use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
 
 /** Pages for the account communication center. */
 final class MessagesController extends ControllerBase {
@@ -38,6 +40,7 @@ final class MessagesController extends ControllerBase {
     private readonly FlagServiceInterface $flagService,
     private readonly TranslationInterface $translation,
     private readonly FormBuilderInterface $formBuilder,
+    private readonly RendererInterface $renderer,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -50,6 +53,7 @@ final class MessagesController extends ControllerBase {
       $container->get('flag'),
       $container->get('string_translation'),
       $container->get('form_builder'),
+      $container->get('renderer'),
     );
   }
 
@@ -90,7 +94,7 @@ final class MessagesController extends ControllerBase {
    * The endpoint is same-origin on every public purpose. It does not create a
    * purpose-specific mailbox; conversation links are canonicalized to ACCOUNT.
    */
-  public function preview(): array {
+  public function preview(): Response {
     $threads = $this->privateMessageService->getThreadsForUser(50)['threads'];
     $items = [];
     $cacheability = (new CacheableMetadata())
@@ -125,7 +129,7 @@ final class MessagesController extends ControllerBase {
       '#cache' => ['max-age' => 0],
     ];
     $cacheability->applyTo($build);
-    return $build;
+    return $this->buildDrawerResponse($build);
   }
 
   /** Rewrites Private Message thread actions to the canonical account purpose. */
@@ -151,7 +155,7 @@ final class MessagesController extends ControllerBase {
   }
 
   /** Displays currently active native Site Alerts in the same-origin modal. */
-  public function alertsPreview(): array {
+  public function alertsPreview(): Response {
     $storage = $this->entityTypeManager->getStorage('site_alert');
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['active_site_alerts'])
@@ -194,7 +198,17 @@ final class MessagesController extends ControllerBase {
       'alerts' => ['#theme' => 'item_list', '#items' => $items],
     ];
     $cacheability->applyTo($build);
-    return $build;
+    return $this->buildDrawerResponse($build);
+  }
+
+  /** Renders a same-origin, uncached HTML fragment for the Bootstrap drawers. */
+  private function buildDrawerResponse(array $build): Response {
+    $content = $this->renderer->renderInIsolation($build);
+    return new Response((string) $content, Response::HTTP_OK, [
+      'Content-Type' => 'text/html; charset=UTF-8',
+      'Cache-Control' => 'private, no-store, no-cache, must-revalidate',
+      'X-Content-Type-Options' => 'nosniff',
+    ]);
   }
 
   /** Lists published persistent notices visible to this member, with Flag state. */

@@ -1,3 +1,14 @@
+## 0.6.0-dev.26 — gavetas de comunicação no padrão do carrinho — 2026-10-14
+
+Classificação: MINOR da linha aberta (apresentação de mensagens e avisos).
+
+- Mensagens e avisos usam o mesmo shell Bootstrap do carrinho: botão, offcanvas pela direita,
+  largura máxima de 420 px, cabeçalho, botão de fechar, badge e tokens semânticos compartilhados.
+- Cada abertura consulta um fragmento HTML same-origin com `fetch` e credenciais de sessão;
+  não há polling. Comportamentos Drupal do conteúdo renderizado são anexados após a resposta.
+- Falha da consulta mantém o painel aberto e mostra uma mensagem acessível para nova tentativa.
+- Gates e validação visual/runtime no Homelab: pendentes; RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.25 — gavetas laterais para mensagens e avisos — 2026-10-14
 
 Classificação: MINOR da linha aberta (apresentação experimental de uma feature existente).
