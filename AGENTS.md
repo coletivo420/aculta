@@ -537,6 +537,13 @@ A exceção de versão já registrada (0.3.1) não autoriza nova exceção sem d
 
 ## Forma de trabalho esperada do Codex
 
+### Diretório de trabalho obrigatório
+
+- Trabalhar sempre no checkout local do repositório que o responsável abriu para a tarefa (`cwd` do projeto), mantendo nele o branch da tarefa e as alterações visíveis.
+- Não criar nem usar worktrees, clones ou diretórios temporários alternativos (por exemplo, `/tmp/...`) para implementar a tarefa, salvo pedido explícito do responsável.
+- Antes de alterar arquivos, confirmar `pwd`, branch e `git status` nesse checkout. Não trocar de branch nem substituir arquivos com alterações locais; preservar trabalho existente e resolver conflitos com segurança.
+- Quando a tarefa exigir interação com o servidor de testes, usar os meios de acesso autorizados a esse servidor; o checkout local ou um banco local não substitui a validação no servidor.
+
 Antes de uma alteração relevante:
 
 1. analisar os arquivos relacionados;
@@ -636,7 +643,7 @@ e não na `main`). Esta regra existe para que nenhum trabalho dependa de estado 
   responsável autorizar. Não mesclar entregas parciais nem PRs intermediários.
 - **Stash não é entrega.** Não guardar trabalho em `git stash`. Stash temporário só dentro
   de um comando, e nunca como destino final.
-- **Worktree temporário** é criado para a tarefa e removido ao fim dela.
+- **Diretório de trabalho:** usar o checkout local aberto pelo responsável, conforme a seção “Diretório de trabalho obrigatório”. Worktree ou clone temporário só pode ser usado a pedido explícito do responsável.
 - **Verificar a base do PR antes de mesclar.** `gh pr view <n> --json baseRefName` deve
   apontar para `main` (ou para o branch base declarado). Trocar a base antes da fusão, e
   confirmar depois com `git merge-base --is-ancestor <commit> origin/main`.
