@@ -37,7 +37,7 @@ $toggle = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/
 foreach ($shopForms as $formId) {
   $assert(str_contains($toggle, "'" . $formId . "'"), "TurnstileToggle::SHOP_FORM_IDS não cobre $formId.");
 }
-$assert(str_contains($toggle, 'in_array($point->id(), self::SHOP_FORM_IDS, true)'), 'TurnstileToggle::setEnabled() não pula os formulários da loja.');
+$assert(str_contains($toggle, 'in_array($point->id(), self::EXCEPTION_FORM_IDS, true)'), 'TurnstileToggle::setEnabled() não pula as exceções (inclui a loja).');
 
 $hook = $root . '/web/modules/custom/aculta_portal/src/Hook/ShopCaptchaHooks.php';
 $assert(is_file($hook), 'Hook da barreira da loja ausente (src/Hook/ShopCaptchaHooks.php).');

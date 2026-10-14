@@ -83,10 +83,10 @@ $assert(
   'Drupal baseline keeps SameSite=Lax.',
 );
 
-$accountJs = file_get_contents($root . '/js/account-navigation.js');
+$accountJs = file_get_contents($root . '/js/search-preview.js');
 $assert(
   str_contains($accountJs, "credentials: 'same-origin'"),
-  'Portal AJAX explicitly uses same-origin credentials.',
+  'Portal AJAX explicitly uses same-origin credentials (search-preview.js).',
 );
 
 $assert(
