@@ -83,8 +83,8 @@
   --aculta-ease-standard: ease;
   --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
   --aculta-scrim: rgba(12, 60, 41, 0.58);
-  /* Moldura de mídia (palco de galeria): grafite neutro, sem matiz verde, para a foto se destacar. */
-  --aculta-media-stage-bg: #2b2723;
+  /* Moldura de mídia (palco de galeria): areia quente da família do creme da marca; combina com o verde escuro e deixa a foto em destaque. */
+  --aculta-media-stage-bg: #e8dfcc;
   /* Status (erro, ok, atenção): texto, superfície e borda. Claro: texto ≥ 5,5:1 sobre a superfície. */
   --aculta-status-error-text: #b3261e;
   --aculta-status-error-surface: #fde8e7;

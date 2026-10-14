@@ -23,14 +23,27 @@
   display: none;
 }
 
-[data-aculta-album-stage] .vvjb .vvjb-carousel-outer {
+/* O VVJB reserva 50 px de cada lado e 16 px no .vvjb para setas que não ficam ao lado
+   da foto neste palco. Zerar aqui aproxima a foto do painel de miniaturas. */
+[data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-outer {
   padding: 0;
+}
+
+[data-aculta-album-stage] .vvjb {
+  padding-inline: 0;
+}
+
+/* O VVJB limita a faixa de fotos a 844 px (breakpoints próprios). No palco ela ocupa a coluna. */
+[data-aculta-album-stage] .vvjb.vvjb-orientation-horizontal .vvjb-carousel-wrapper {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
 }
 
 [data-aculta-album-stage] .vvjb img {
   display: block;
   width: 100%;
-  height: min(72vh, 36rem);
+  height: min(80vh, 40rem);
   object-fit: contain;
   background: var(--aculta-media-stage-bg);
 }
@@ -60,7 +73,7 @@
   align-content: start;
   padding: 0.5rem;
   overflow-y: auto;
-  max-height: min(72vh, 36rem);
+  max-height: min(80vh, 40rem);
   background: var(--aculta-media-stage-bg);
   scrollbar-width: thin;
   scrollbar-color: var(--aculta-text-muted) var(--aculta-media-stage-bg);
