@@ -36,6 +36,7 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
   }
 
   public function buildForm(array $form, FormStateInterface $form_state, string $name = ''): array {
+    $form['#attributes']['data-portal-ui'] = 'secret-dialog';
     $status = $this->secrets->status();
     if (!isset($status[$name])) {
       throw new NotFoundHttpException();

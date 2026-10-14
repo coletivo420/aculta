@@ -1,0 +1,196 @@
+/* Modais (diálogos do Drupal e nativos <dialog>): o fundo escurece da mesma forma em todos. A cor é o token
+   --aculta-scrim; o módulo não emite nenhuma classe de design. */
+.ui-widget-overlay {
+  background: var(--aculta-scrim);
+  opacity: 1;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+dialog::backdrop {
+  background: var(--aculta-scrim);
+}
+
+/* Botão de fechar (X) de todos os diálogos. O botão do jQuery UI sai sem ícone (o widget de ícone não inicializa),
+   então o X é desenhado com o Bootstrap Icons (bi-x-lg, \f659), fonte que o tema base já serve. */
+.ui-dialog-titlebar-close::before {
+  font-family: "bootstrap-icons";
+  font-size: 1.25rem;
+  font-style: normal;
+  line-height: 1;
+  content: "\f659";
+}
+
+/* Popup "Entrar" da barra multidomínio: visual do anexo (painel verde, caixa do Google no topo, campos claros,
+   Entrar amarelo, links e Cadastre-se creme). Classes mapeadas pelo ACULTA420 (PortalUiHooks). */
+.ui-dialog:has([data-portal-ui="login-popup"]) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--aculta-dialog-surface);
+  color: var(--aculta-dialog-text);
+  box-shadow: var(--bs-box-shadow-lg);
+}
+
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-titlebar {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 0;
+  padding: 0.125rem 0.125rem 0 0;
+  background: transparent;
+  border: 0;
+}
+
+/* O título "Entrar" fica para leitores de tela; visualmente só o X. */
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-titlebar-close::before {
+  font-size: 1.6rem;
+  -webkit-text-stroke: 0.5px currentColor;
+}
+
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-titlebar-close {
+  position: static;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--aculta-dialog-control-text);
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-content {
+  padding: 0 1.25rem 1.25rem;
+}
+
+[data-portal-ui="login-popup"] {
+  display: grid;
+  gap: 0.75rem;
+}
+
+[data-portal-ui="login-popup"] label {
+  font-family: var(--aculta-font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--aculta-dialog-text);
+}
+
+[data-portal-ui="login-popup"] :is(input[type="text"], input[type="password"]) {
+  background: var(--aculta-dialog-control-bg);
+  color: var(--aculta-dialog-control-text);
+  border: 1px solid var(--aculta-dialog-control-text);
+  border-radius: 0;
+  padding: 0.5rem 0.65rem;
+}
+
+[data-portal-ui="login-popup"] .form-item {
+  margin: 0;
+}
+
+/* O anexo não mostra o asterisco de campo obrigatório; a validação e o atributo required continuam.  */
+[data-portal-ui="login-popup"] .form-required::after {
+  content: none;
+}
+
+[data-portal-ui="login-popup"] [data-drupal-selector="edit-submit"] {
+  display: block;
+  box-sizing: border-box;
+  inline-size: min(100%, 14rem);
+  min-block-size: 2.75rem;
+  margin: 0.5rem auto 0;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--aculta-dialog-primary-text);
+  background: var(--aculta-dialog-primary-bg);
+  border: 0;
+  border-radius: 0.25rem;
+}
+
+[data-portal-ui="login-popup-divider"] {
+  width: 100%;
+  margin: 0.25rem 0;
+  border: 0;
+  border-top: 2px solid var(--aculta-dialog-text);
+  opacity: 1;
+}
+
+.aculta-login-popup__links {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.aculta-login-popup__links a {
+  text-decoration: none;
+}
+
+.aculta-login-popup__links > [data-portal-ui="login-popup-divider"] {
+  justify-self: stretch;
+}
+
+.aculta-login-popup__links a:first-of-type {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-inline: 0.5rem;
+  font-family: var(--aculta-font-display);
+  font-size: 1.05rem;
+  color: var(--aculta-dialog-accent);
+}
+
+.aculta-login-popup__links a:last-of-type {
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  inline-size: min(100%, 14rem);
+  min-block-size: 2.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--aculta-dialog-secondary-text);
+  background: var(--aculta-dialog-secondary-bg);
+  border-radius: 0.25rem;
+}
+
+/* Tamanho e posição dos modais que o módulo abre (o módulo só informa o comportamento). */
+.ui-dialog:has([data-portal-ui="login-popup"]) {
+  inline-size: min(440px, calc(100vw - 2rem)) !important;
+}
+
+.ui-dialog:has([data-portal-ui="search-popup"]) {
+  inline-size: min(520px, calc(100vw - 2rem)) !important;
+  max-block-size: min(560px, calc(100vh - 2rem)) !important;
+  top: 1.5rem !important;
+  left: 50% !important;
+  transform: translateX(-50%);
+}
+
+/* Tamanho dos diálogos abertos pelo módulo (o módulo só informa título e comportamento). O alvo é o elemento
+   marcado dentro do conteúdo: data-portal-ui (formulários e links) ou a classe gerada pelo mapa (containers). */
+.ui-dialog:has(:is([data-portal-ui="photo-dialog"], .aculta-photo-dialog, [data-portal-ui="avatar-crop-dialog"], .aculta-avatar-crop-dialog, [data-portal-ui="account-bio-dialog"], .aculta-account-bio-dialog)) {
+  inline-size: min(560px, calc(100vw - 2rem)) !important;
+  max-block-size: 75vh !important;
+  overflow-y: auto;
+}
+
+.ui-dialog:has(:is([data-portal-ui="social-link-dialog"], .aculta-social-link-dialog, [data-portal-ui="secret-dialog"], .aculta-secret-dialog)) {
+  inline-size: min(480px, calc(100vw - 2rem)) !important;
+  max-block-size: 75vh !important;
+  overflow-y: auto;
+}

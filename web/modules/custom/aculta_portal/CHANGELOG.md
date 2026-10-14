@@ -1,3 +1,25 @@
+## 0.4.0-dev.14 — popup "Entrar" na barra multidomínio, sem Turnstile; modais com fundo escurecido — 2026-10-14
+
+- "Entrar" da barra multidomínio, para visitante não autenticado, abre o login em modal no próprio host (`use-ajax`).
+  O formulário `LoginPopupForm` herda o login do Core (`user.auth`, flood control, bloqueio de conta). A página
+  `/entrar` continua existindo e mantém o Turnstile.
+- Exceção do Turnstile: o popup (`aculta_login_popup_form`) não recebe o desafio. Junto com a loja (carrinho e
+  checkout) e o cadastro feito pelo fluxo de compra, forma a lista `TurnstileToggle::EXCEPTION_FORM_IDS`.
+- Barreira: `scripts/validate-turnstile-exceptions.php` e seção "Exceções" em `docs/portal/TURNSTILE.md`.
+- Tema ACULTA420 (mesma entrega): visual do popup conforme o anexo e escurecimento do fundo de todos os modais
+  (`.ui-widget-overlay` e `dialog::backdrop`, com `--aculta-scrim`).
+- Popup "Entrar": botão "Continuar com Google" no topo, pelo mesmo fluxo OAuth (rota do host da conta, retorno ao host de origem).
+- Popup "Entrar": ordem senha → Entrar → "Esqueceu sua senha?" → divisor → "Cadastre-se". O botão não fica no rodapé do diálogo (contêiner sem `form-actions`).
+- Minha conta > Conexões: caixa do Google com logo (`assets/brands/google.svg`): "Conectar Google" sem conexão e "Conectado" com check quando conectada. A conta e o botão de desconectar ficam em bloco próprio.
+- Popup de aceite dos termos: diálogo modal do Drupal (core/drupal.dialog), sem X e sem fechar por Esc; só o aceite fecha. Visual no tema (portal-account-terms-modal.css).
+- Documentação e guardrails de inserção no tema: `docs/portal/TOKENS-E-ATRIBUTOS.md` (todos os tokens e atributos), `docs/portal/POPUP-PADRAO.md` (popup padrão = modal do Drupal, com exceções explícitas). Gates `validate-portal-ui-docs.php` e `validate-portal-popup-rule.php`.
+- Diálogos do módulo sem tamanho próprio: bio, redes, foto, recorte e segredos passam a ter tamanho no tema (`dialog.css`, por `data-portal-ui`). Classes de design em formulários e links trocadas por tokens (`button-secondary`, `support-form`, `security-password-form`, `account-photo-trigger`).
+- Fronteira módulo × tema nos diálogos do Portal: largura e posição do popup de aceite, do popup "Entrar" e da busca saem do módulo (`data-dialog-options`/`account-terms-modal.js`) e vão para o tema (`portal-account-terms-modal.css`, `dialog.css`). Classe de design removida do formulário de aceite.
+- Fronteira mantida: o módulo não emite classes de design; os tokens `login-popup` e `login-popup-links` são mapeados
+  no tema (`PortalUiHooks`).
+- RUNTIME STATUS: DEFERRED. Pendentes: teste de navegador do popup (TESTES-NAVEGADOR, seção R) e teste com outro tema
+  ativo (Olivero) para confirmar que o login funciona sem o ACULTA420.
+
 ## 0.4.0-dev.13 — painel administrativo: edição e exclusão de conteúdo funcionam em todos os hosts — 2026-10-13
 
 - Edição e exclusão de conteúdo a partir da listagem do painel: o GET em host de purpose canonicaliza para MAIN.

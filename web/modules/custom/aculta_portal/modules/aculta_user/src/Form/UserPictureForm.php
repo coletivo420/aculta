@@ -76,6 +76,7 @@ final class UserPictureForm extends FormBase {
     // O campo de envio começa vazio nos dois estados: nome e link da foto atual não aparecem no popup (a prévia mostra a foto).
 
     $form['#attributes']['data-aculta-user-picture'] = '';
+    $form['#attributes']['data-portal-ui'] = 'photo-dialog';
 
     // Mesmo conteúdo do popup anterior: prévia do avatar atual e a orientação de uso.
     $currentFile = $current > 0 ? $this->entityTypeManagerService->getStorage('file')->load($current) : NULL;
@@ -128,7 +129,7 @@ final class UserPictureForm extends FormBase {
         '#type' => 'link',
         '#title' => $this->t('Sortear novo avatar'),
         '#url' => Url::fromRoute('aculta_user.avatar_reroll', [], ['query' => ['csrf_token' => $this->csrfToken->get('/avatar/sortear')]]),
-        '#attributes' => ['class' => ['use-ajax', 'button', 'btn', 'btn-secondary']],
+        '#attributes' => ['class' => ['use-ajax'], 'data-portal-ui' => 'button-secondary'],
         '#attached' => ['library' => ['core/drupal.ajax']],
       ];
     }

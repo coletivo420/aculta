@@ -82,6 +82,8 @@ final class SecretsController {
     }
     $this->secrets->logReveal($name, (string) $this->account->getAccountName());
     return [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'secret-dialog'],
       '#cache' => ['max-age' => 0, 'contexts' => ['user']],
       'value' => ['#type' => 'container', 'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Valor de @name:', ['@name' => $name])], 'text' => ['#theme' => 'aculta_portal_element', '#tag' => 'pre', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-popup-value']), '#value' => Markup::create(htmlspecialchars($value, ENT_QUOTES))]],
       'help' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'secret-popup-hint']), '#value' => $this->t('Feche este popup quando terminar.')],
@@ -182,7 +184,6 @@ final class SecretsController {
         '#attributes' => [
           'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-eye',
           'data-dialog-type' => 'modal',
-          'data-dialog-options' => Json::encode(['width' => 480]),
           'aria-label' => (string) $this->t('Mostrar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
           'title' => (string) $this->t('Mostrar valor'),
         ],
@@ -199,7 +200,6 @@ final class SecretsController {
         '#attributes' => [
           'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-edit',
           'data-dialog-type' => 'modal',
-          'data-dialog-options' => Json::encode(['width' => 480]),
           'aria-label' => (string) $this->t('Alterar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
           'title' => (string) $this->t('Alterar valor'),
         ],
@@ -213,7 +213,6 @@ final class SecretsController {
         '#attributes' => [
           'class' => ['use-ajax'], 'data-portal-ui' => 'secret-value-clear',
           'data-dialog-type' => 'modal',
-          'data-dialog-options' => Json::encode(['width' => 480]),
           'aria-label' => (string) $this->t('Apagar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
           'title' => (string) $this->t('Apagar valor'),
         ],

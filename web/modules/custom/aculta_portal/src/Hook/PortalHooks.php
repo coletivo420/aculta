@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\AccountShellBuilder;
@@ -11,6 +12,7 @@ use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
+use Drupal\aculta_portal\Form\LoginPopupForm;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\aculta_portal\Presentation\SocialLinksPagePresenter;
 use Drupal\block_content\BlockContentInterface;
@@ -235,11 +237,12 @@ final class PortalHooks {
       return;
     }
     $resolver = $this->domainPurposeManager;
+    $this->decorateLoginPopupItems($variables['items']);
     $this->rewriteDomainMenuItems($variables['items'], $resolver);
     if (isset($variables['#cache']) && is_array($variables['#cache'])) {
       $variables['#cache']['contexts'] = array_values(array_unique(array_merge(
         $variables['#cache']['contexts'] ?? [],
-        ['domain', 'url.path', 'url.query_args'],
+        ['domain', 'url.path', 'url.query_args', 'user.roles'],
       )));
     }
   }
@@ -287,6 +290,33 @@ final class PortalHooks {
   }
 
   /** Rewrites only known cross-domain links, keeping their menu structure. */
+  /**
+   * "Entrar" para visitante anônimo abre o popup de login no próprio host (use-ajax modal, mesma origem). O link
+   * /entrar continua valendo sem JavaScript: a rota do popup também mostra o formulário em página.
+   */
+  private function decorateLoginPopupItems(array &$items): void {
+    if ($this->currentUser->isAuthenticated()) {
+      return;
+    }
+    $destination = LoginPopupForm::safeDestination($this->requestStack->getCurrentRequest()?->getRequestUri());
+    foreach ($items as &$item) {
+      $url = $item['url'] ?? NULL;
+      if (!$url instanceof Url || !$url->isRouted() || $url->getRouteName() !== 'user.login') {
+        continue;
+      }
+      $popup = Url::fromRoute('aculta_portal.login_popup', [], ['query' => ['destination' => $destination]]);
+      $popup->setOption('attributes', [
+        'class' => ['use-ajax'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode([
+          'title' => (string) $this->translation->translate('Entrar'),
+          'closeText' => (string) $this->translation->translate('Fechar'),
+        ]),
+      ]);
+      $item['url'] = $popup;
+    }
+  }
+
   private function rewriteDomainMenuItems(array &$items, \Drupal\aculta_portal\Domain\DomainPurposeManager $resolver): void {
     foreach ($items as &$item) {
       $url = $item['url'] ?? NULL;
@@ -376,6 +406,10 @@ final class PortalHooks {
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $route = $this->routeMatch->getRouteName();
+    // O "Entrar" da barra abre o popup por use-ajax modal (visitante anônimo, em qualquer host).
+    if (!$this->currentUser->isAuthenticated()) {
+      $attachments['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    }
     if (in_array($route, [
       'aculta_portal.dashboard',
       'aculta_portal.my_data',

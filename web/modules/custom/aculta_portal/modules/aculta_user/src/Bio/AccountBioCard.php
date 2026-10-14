@@ -56,7 +56,7 @@ final class AccountBioCard {
         [
           'class' => 'use-ajax',
           'data-dialog-type' => 'modal',
-          'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Editar bio')]),
+          'data-dialog-options' => Json::encode(['title' => (string) t('Editar bio')]),
           'data-portal-ui' => 'account-bio-edit',
           'aria-label' => (string) t('Editar bio'),
         ],

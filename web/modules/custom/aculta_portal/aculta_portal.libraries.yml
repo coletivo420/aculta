@@ -27,6 +27,7 @@ account-terms-modal:
   dependencies:
     - core/drupal
     - core/once
+    - core/drupal.dialog
 
 cart-status:
   js:

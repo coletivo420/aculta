@@ -56,7 +56,7 @@ final class SocialLinksCard {
           [
             'class' => 'use-ajax',
             'data-dialog-type' => 'modal',
-            'data-dialog-options' => Json::encode(['width' => 480, 'title' => (string) t('Editar @rede', ['@rede' => $label])]),
+            'data-dialog-options' => Json::encode(['title' => (string) t('Editar @rede', ['@rede' => $label])]),
             'data-portal-ui' => 'account-social-edit',
             'aria-label' => (string) t('Editar @rede', ['@rede' => $label]),
           ],

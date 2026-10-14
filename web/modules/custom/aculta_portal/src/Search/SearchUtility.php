@@ -36,10 +36,6 @@ final class SearchUtility {
         'class' => ['use-ajax'], 'data-portal-ui' => 'search-utility',
         'data-dialog-type' => 'modal',
         'data-dialog-options' => Json::encode([
-          'width' => 520,
-          'maxHeight' => 560,
-          // Sem 'of': opções chegam como JSON e o jQuery UI usa window como padrão.
-          'position' => ['my' => 'center top+24', 'at' => 'center top'],
           'closeText' => (string) $this->t('Fechar'),
         ]),
         'title' => (string) $this->t('Buscar no site'),
