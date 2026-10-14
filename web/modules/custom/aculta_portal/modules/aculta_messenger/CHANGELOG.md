@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.3 — gavetas de mensagens e avisos na barra
+
+- A prévia privada passa a exibir até 50 conversas recentes dentro do painel e remove o link de saída
+  para a caixa de mensagens.
+- Avisos persistentes visíveis passam a exibir até 50 itens no painel junto com Site Alerts ativos.
+- Os dois gatilhos permanecem restritos a contas autenticadas.
+- Os endpoints dos painéis deixam explícito o cache desativado para que cada abertura Ajax consulte o estado atual.
+- RUNTIME STATUS: DEFERRED — validação visual e funcional no Homelab pendente.
+
 ## 0.1.1-dev.2 — pedidos de amizade e privacidade de novas conversas
 
 - `aculta_user` implementa amizade como entidade privada por par de membros, com estados pendente, aceita, recusada, cancelada e removida; API de serviço com DI, lock do Core e ID canônico único.

@@ -7,8 +7,9 @@
   : 'Abrir avisos'|t %}
 <a class="aculta-alerts-trigger use-ajax"
    href="{{ href }}"
-   data-dialog-type="modal"
-   data-dialog-options="{{ {'title': 'Avisos'|t, 'closeText': 'Fechar'|t}|json_encode|e('html_attr') }}"
+   data-dialog-type="dialog"
+   data-dialog-renderer="off_canvas"
+   data-dialog-options="{{ {'title': 'Avisos'|t, 'closeText': 'Fechar'|t, 'width': 420, 'classes': {'ui-dialog': 'aculta-alerts-drawer'}}|json_encode|e('html_attr') }}"
    aria-haspopup="dialog"
    aria-label="{{ label }}">
   <i class="bi bi-bell" aria-hidden="true"></i>

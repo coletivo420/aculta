@@ -7,16 +7,22 @@
   -webkit-backdrop-filter: blur(4px);
 }
 
-/* Conversas recentes abertas pelo ícone da barra multidomínio. */
-.ui-dialog:has(.aculta-messenger-preview) {
-  inline-size: min(56rem, calc(100vw - 2rem)) !important;
-  max-inline-size: calc(100vw - 2rem);
-  max-block-size: calc(100vh - 2rem);
+/* The two communication panels use Drupal Core's off-canvas dialog renderer.
+   Keep its right-side interaction and match the cart's 420 px width. */
+.ui-dialog-off-canvas.aculta-messenger-drawer,
+.ui-dialog-off-canvas.aculta-alerts-drawer {
+  inline-size: min(420px, 100vw) !important;
+  max-inline-size: 100vw;
+  block-size: 100dvh;
+  max-block-size: 100dvh;
 }
 
-.ui-dialog:has(.aculta-messenger-preview) .ui-dialog-content {
-  max-block-size: min(75vh, 48rem);
-  overflow: auto;
+.ui-dialog-off-canvas:is(.aculta-messenger-drawer, .aculta-alerts-drawer) .ui-dialog-content {
+  box-sizing: border-box;
+  max-block-size: calc(100dvh - 4rem);
+  overflow-y: auto;
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
 }
 
 dialog::backdrop {

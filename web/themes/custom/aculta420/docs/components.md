@@ -170,8 +170,8 @@ tokens semânticos e não cria modo ou layout alternativo para Dark.
 | `institutional-notice` | Site Alert nativo | severity `low`, `medium`, `high` e slot da mensagem |
 | `unread-badge` | navegação de Minha Conta | prop inteira da contagem de não lidas; omitido em zero |
 | `messenger-state` | avisos vazios e estados futuros | `empty`, `error` ou `loading`; sem lógica de carregamento no tema |
-| `messenger-trigger` | ação de mensagens na barra multidomínio | modal Ajax do Drupal; contador nativo de threads não lidas |
-| `alerts-trigger` | ação de avisos na barra multidomínio | modal Ajax do Drupal; contador de avisos não lidos ou Site Alerts ativos |
+| `messenger-trigger` | ação de mensagens na barra multidomínio | drawer off-canvas do Drupal Core, largura 420 px; carrega as conversas atuais ao abrir |
+| `alerts-trigger` | ação de avisos na barra multidomínio | drawer off-canvas do Drupal Core, largura 420 px; carrega Site Alerts e avisos atuais ao abrir |
 | `messenger-read-status` | thread ou aviso renderizado | rótulo lido/não lido fornecido pelo Portal/Flag |
 
 O Portal escolhe access, dados, URL e cache; o ACULTA420 mapeia para esses SDCs.

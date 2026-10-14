@@ -4,8 +4,9 @@
   : 'Abrir mensagens'|t %}
 <a class="aculta-messenger-trigger use-ajax"
    href="{{ href }}"
-   data-dialog-type="modal"
-   data-dialog-options="{{ {'title': 'Mensagens'|t, 'closeText': 'Fechar'|t}|json_encode|e('html_attr') }}"
+   data-dialog-type="dialog"
+   data-dialog-renderer="off_canvas"
+   data-dialog-options="{{ {'title': 'Mensagens'|t, 'closeText': 'Fechar'|t, 'width': 420, 'classes': {'ui-dialog': 'aculta-messenger-drawer'}}|json_encode|e('html_attr') }}"
    aria-haspopup="dialog"
    aria-label="{{ label }}">
   <i class="bi bi-chat-dots" aria-hidden="true"></i>

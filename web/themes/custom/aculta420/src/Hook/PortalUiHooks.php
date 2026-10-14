@@ -191,7 +191,6 @@ final class PortalUiHooks {
     'social-link-dialog' => ['aculta-social-link-dialog'],
     'secret-dialog' => ['aculta-secret-dialog'],
     'messenger-preview' => ['aculta-messenger-preview'],
-    'messenger-preview-inbox-link' => ['btn', 'btn-primary', 'aculta-messenger-preview__inbox-link'],
     'messenger-read-status' => ['aculta-messenger-read-status'],
     'notice-read-status' => ['aculta-messenger-read-status'],
     'notice-unread-status' => ['aculta-messenger-read-status', 'aculta-messenger-read-status--unread'],

@@ -47,6 +47,12 @@ final class MessengerBarHooks {
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
+    if (!$this->currentUser->isAuthenticated()) {
+      $variables['aculta_alerts_trigger'] = [];
+      $variables['aculta_messenger_trigger'] = [];
+      return;
+    }
+
     if (isset($variables['page']) && is_array($variables['page'])) {
       $alertStorage = $this->entityTypeManager->getStorage('site_alert');
       $alerts = $this->siteAlerts->getActiveAlerts();

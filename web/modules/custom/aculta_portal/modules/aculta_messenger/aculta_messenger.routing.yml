@@ -30,6 +30,8 @@ aculta_messenger.alerts_preview:
     _title: 'Avisos ativos'
   requirements:
     _access: 'TRUE'
+  options:
+    no_cache: true
 
 aculta_messenger.conversations:
   path: '/mensagens/conversas'

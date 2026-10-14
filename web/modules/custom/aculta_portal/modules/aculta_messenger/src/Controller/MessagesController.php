@@ -91,7 +91,7 @@ final class MessagesController extends ControllerBase {
    * purpose-specific mailbox; conversation links are canonicalized to ACCOUNT.
    */
   public function preview(): array {
-    $threads = $this->privateMessageService->getThreadsForUser(5)['threads'];
+    $threads = $this->privateMessageService->getThreadsForUser(50)['threads'];
     $items = [];
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user'])
@@ -116,16 +116,6 @@ final class MessagesController extends ControllerBase {
 
     if ($items === []) {
       $items[] = ['#plain_text' => (string) $this->translation->translate('Você ainda não tem conversas.')];
-    }
-
-    $accountInbox = $this->domainPurposeManager->routeUrl('account', 'private_message.private_message_page');
-    if ($accountInbox !== NULL) {
-      $items[] = [
-        '#type' => 'link',
-        '#title' => $this->translation->translate('Abrir caixa de mensagens'),
-        '#url' => $accountInbox,
-        '#attributes' => ['rel' => 'noopener'],
-      ];
     }
 
     $build = [
@@ -190,7 +180,7 @@ final class MessagesController extends ControllerBase {
       ];
     }
 
-    foreach ($this->buildPersistentNoticeItems(5, $cacheability) as $item) {
+    foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
       $items[] = $item;
     }
 

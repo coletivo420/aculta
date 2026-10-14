@@ -2,11 +2,10 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schema
 name: Mensagens na barra multidomínio
 status: experimental
 group: Patterns
-description: 'Gatilho do modal de mensagens com ícone Bootstrap e contador neutro do Portal.'
+description: 'Gatilho do drawer off-canvas Drupal de conversas com ícone Bootstrap e contador.'
 props:
   type: object
-  required:
-    - href
+  required: [href]
   properties:
     href:
       type: string

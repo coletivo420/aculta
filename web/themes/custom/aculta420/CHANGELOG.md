@@ -1,3 +1,15 @@
+## 0.6.0-dev.25 — gavetas laterais para mensagens e avisos — 2026-10-14
+
+Classificação: MINOR da linha aberta (apresentação experimental de uma feature existente).
+
+- Os ícones de mensagens e avisos abrem drawers off-canvas do Drupal Core pela direita, com 420 px,
+  igual à largura máxima da gaveta do carrinho.
+- A conversa e os avisos são buscados via Ajax ao abrir; não há consulta recorrente em segundo plano.
+- O conteúdo não inclui mais o link de saída “Abrir caixa de mensagens”; conversas e avisos aparecem
+  no próprio painel.
+- Gates de SDC, design foundations, fronteira Portal/tema e Foundation: pendentes nesta cópia local.
+- RUNTIME STATUS: DEFERRED; validar abertura, foco, rolagem e responsividade no Homelab.
+
 ## 0.6.0-dev.24 — modais da barra e estado de leitura — 2026-10-14
 
 Classificação: MINOR da linha aberta (SDCs experimentais de entrada e estado).
