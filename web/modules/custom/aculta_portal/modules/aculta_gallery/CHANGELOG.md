@@ -2,6 +2,13 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
+## 0.1.0-dev.6 — PhotoSwipe e apresentação (em andamento) — 2026-10-14
+
+- Documentação de hooks, classes e contrato com o tema: `docs/TEMA-E-HOOKS.md`.
+- Lightbox: legenda pelo `alt` da mídia (submódulo `photoswipe_dynamic_caption`, contrib, habilitado no Runtime); imagem grande em estilo próprio de 1600 px (`media_gallery_lightbox`); crédito e data do evento na página do álbum.
+- Pendências desta fase: exportar para o `config/sync` as alterações de exibição do Runtime; verificar a legenda no navegador; criar os SDCs do ACULTA420 com consumidor real; corrigir o cartão da listagem com galeria incorporada.
+- RUNTIME STATUS: parcial (configuração aplicada no Runtime; navegador pendente).
+
 ## 0.1.0-dev.5 — galerias incorporadas em posts — 2026-10-14
 
 Classificação: MINOR (nova dependência de módulo: `entity_embed` e `embed`; sem pacote novo no Composer).
