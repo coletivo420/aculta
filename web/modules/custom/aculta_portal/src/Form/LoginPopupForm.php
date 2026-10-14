@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
+use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Url;
 use Drupal\Core\Render\BareHtmlPageRendererInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\user\Form\UserLoginForm;
@@ -39,6 +45,9 @@ final class LoginPopupForm extends UserLoginForm {
     RendererInterface $renderer,
     BareHtmlPageRendererInterface $bare_html_renderer,
     private readonly DomainPurposeManager $domainPurpose,
+    private readonly AuthIntegrationManager $authIntegration,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly ModuleExtensionList $moduleExtensions,
   ) {
     parent::__construct($user_flood_control, $user_storage, $user_auth, $renderer, $bare_html_renderer);
   }
@@ -54,6 +63,9 @@ final class LoginPopupForm extends UserLoginForm {
       $container->get('renderer'),
       $container->get('bare_html_page_renderer'),
       $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.auth_integration'),
+      $container->get('module_handler'),
+      $container->get('extension.list.module'),
     );
   }
 
@@ -106,12 +118,56 @@ final class LoginPopupForm extends UserLoginForm {
       '#attributes' => ['data-portal-ui' => 'login-popup-links'],
     ] + $links;
 
+    // Google (Social Auth, mesmo fluxo do /entrar). A rota OAuth é a do host da conta, onde as URIs de retorno estão
+    // cadastradas; o retorno volta ao host de origem pelo destino (aculta_destination_purpose, como em /entrar).
+    if ($this->moduleHandler->moduleExists('social_auth') && $this->authIntegration->isGoogleConfigured()) {
+      $google = $this->googleButton($form['destination']['#value']);
+      if ($google !== NULL) {
+        $form['social_auth'] = $google;
+        $form['social_auth_divider'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'hr',
+          '#attributes' => ['data-portal-ui' => 'login-popup-divider'],
+          '#weight' => -19,
+        ];
+      }
+    }
+
     $form['actions']['submit']['#ajax'] = [
       'callback' => '::ajaxSubmit',
       'wrapper' => self::WRAPPER_ID,
       'progress' => ['type' => 'throbber'],
     ];
     return $form;
+  }
+
+  /**
+   * Botão "Continuar com Google" do popup. Retorna NULL se a rota OAuth do host da conta não existir.
+   */
+  private function googleButton(string $destination): ?array {
+    $url = $this->domainPurpose->routeUrl('account', 'social_auth.network.redirect', ['network' => 'google']);
+    if ($url === NULL) {
+      return NULL;
+    }
+    $query = ['destination' => $destination];
+    $purpose = $this->domainPurpose->getCurrentPurpose();
+    if ($purpose !== NULL) {
+      $query['aculta_destination_purpose'] = $purpose;
+    }
+    $url->setOption('query', $query);
+    $logo = Url::fromUri('base:' . $this->moduleExtensions->getPath('social_auth_google') . '/img/google_logo.svg')->toString();
+    $markup = sprintf(
+      '<a href="%s" data-portal-ui="auth-google"><img src="%s" alt="" width="24" height="24"> <span>%s <strong>Google</strong></span></a>',
+      Html::escape($url->toString()),
+      Html::escape($logo),
+      Html::escape((string) $this->t('Continuar com')),
+    );
+    return [
+      '#type' => 'container',
+      '#weight' => -20,
+      '#attributes' => ['data-portal-ui' => 'auth-provider'],
+      'google' => ['#markup' => Markup::create($markup)],
+    ];
   }
 
   /**
