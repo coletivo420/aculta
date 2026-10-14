@@ -35,12 +35,41 @@ Mudanças relevantes do ACULTA Messenger.
 - Comunicados persistentes Node/Views não foram criados: os tipos atuais não
   fornecem segmentação de acesso verificável nem fluxo de revisão atribuído para
   esse propósito. Evita-se publicar um aviso como conteúdo público sem contrato.
-- RUNTIME STATUS: DEFERRED — bloco, agenda e apresentação ainda exigem teste no
-  Homelab. Nenhum módulo foi habilitado; sem banco ou Config Sync alterado.
+- `config/sync/core.extension.yml` habilita `datetime_range` e `site_alert`, e
+  `config/sync/block.block.aculta_messenger_site_alert.yml` coloca o bloco.
+- RUNTIME STATUS: DEFERRED — o Config Sync não foi importado; bloco, agenda e
+  apresentação ainda exigem teste no Homelab. Banco inalterado.
 - Verificações locais: PHP lint, YAML parse, gate Drupal 11+ (696 checks),
   endereços de ambiente (1.519 arquivos) e `git diff --check`: PASS.
 - `validate-public-slugs.php`: FAIL pelas mesmas duas rotas de
   `message_subscribe_ui`; gate e allowlist não foram alterados.
+
+## 0.1.0-dev.7 — seção Mensagens na Minha Conta
+
+- Cria `/mensagens`, `/mensagens/conversas`, `/mensagens/avisos` e
+  `/mensagens/notificacoes`, todas no purpose `account`, com acesso autenticado
+  e permissões nativas do Private Message.
+- Conversas encaminha para a inbox contrib por URL ACCOUNT confiável. Contagem
+  de não lidas usa `PrivateMessageServiceInterface`; a navegação só inclui a
+  seção quando a conta já tem as permissões exigidas.
+- Atualiza o link dos e-mails privados para a rota central `/mensagens` no
+  purpose `account`.
+- Notificações lista apenas Messages `sent` do bundle privado cujo owner UID é a
+  conta atual. Query `accessCheck(FALSE)` justificada pelo ausência de handler
+  de ownership no Message; UID é restrição obrigatória e resposta privada.
+- Portal adiciona alters neutros de seções/subrotas ao `AccountShellBuilder`;
+  rotas nativas Private Message são classificadas em `account`. Formulários,
+  inbox e armazenamento permanecem contrib.
+- Avisos é estado vazio até a implementação de comunicados persistentes.
+- Verificações: PHP lint, YAML, Portal gate (696), module/theme boundary (873),
+  unique paths, portal UI docs (167 tokens/132 usados/41 atributos) e
+  environment addresses (1.523 arquivos): PASS.
+- `validate-public-slugs.php`: FAIL pelas mesmas duas rotas do
+  `message_subscribe_ui`. `validate-aculta-portal-conta-root.php` não inicia
+  porque procura diretório `css/` ausente também em `origin/main`.
+- Shell/Domain gates exigem bootstrap Drupal e não rodaram sem settings/runtime.
+- RUNTIME STATUS: DEFERRED — fluxo de conta, acesso entre purposes e Config
+  Sync aguardam Homelab; nenhum import foi executado.
 
 ## 0.1.0-dev.4 — avisos privados por Message Notify
 

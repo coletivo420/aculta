@@ -33,6 +33,7 @@ module:
   contextual: 0
   crop: 0
   datetime: 0
+  datetime_range: 0
   dblog: 0
   diff: 0
   domain: 0
@@ -101,6 +102,7 @@ module:
   search_api_db: 0
   security_review: 0
   simple_sitemap: 0
+  site_alert: 0
   social_api: 0
   social_auth: 0
   social_auth_google: 0

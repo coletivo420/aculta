@@ -102,10 +102,10 @@ permissões e bloqueio, registra evento como Message e envia aviso com
 `message_notify.sender`. Uma referência Message → Private Message e lock por
 evento/destinatário evitam criar notificações duplicadas. O template contém o
 aviso e a URL da página central da conta, sem corpo, assunto ou trecho da
-conversa. O assunto é fixo e genérico. Até a integração das rotas `/mensagens`,
-o link aponta para a raiz do purpose `account`. Falhas de entrega retornadas
-pelo notifier podem ser tentadas até três vezes; runtime no Homelab ainda é
-necessário para verificar o transporte existente.
+conversa. O assunto é fixo e genérico. O link resolve a central `/mensagens` no
+purpose `account`. Falhas de entrega retornadas pelo notifier podem ser
+tentadas até três vezes; runtime no Homelab ainda é necessário para verificar o
+transporte existente.
 
 Este inventário é estático. Ainda não comprova instalação Drupal, habilitação,
 cache/access de runtime ou compatibilidade em PHP 8.5.
@@ -134,7 +134,7 @@ ativa de atividades Group a reutilizar nesta fase.
 
 ### Site Alert (dev.6)
 
-O bloco nativo `site_alert_block` é instalado no tema ACULTA420, região
+O bloco nativo `site_alert_block` é instalado pelo Config Sync no tema ACULTA420, região
 `highlighted`, com atualização a cada 300 segundos. A entidade fornece início,
 término, conteúdo e severidade `low`/`medium`/`high`; as rotas CRUD e permissões
 continuam as do módulo contrib. O módulo é sitewide e não possui segmentação por
@@ -148,6 +148,28 @@ foi criada entidade/Views de comunicado até haver um contrato verificável para
 alvo e revisão editorial. A administração dos Site Alerts usa rotas `/admin`
 protegidas pela política global de purpose `main`.
 
+### Área Mensagens da Conta (dev.7)
+
+Rotas ACULTA em português (`/mensagens` e subrotas) usam
+`_aculta_domain_purpose: account`, `_user_is_logged_in` e as permissões nativas
+de Private Message. Conversas redireciona via `TrustedRedirectResponse` para
+`private_message.private_message_page` no purpose ACCOUNT. Um subscriber
+classifica as rotas nativas `/private-message*` e `/private-messages*` como
+ACCOUNT sem mudar caminhos, formulários ou handlers.
+
+O Portal expõe `aculta_portal_account_sections_alter` e
+`aculta_portal_account_parent_sections_alter`, seguindo o padrão dos alters de
+abas opcionais de Configurações. Messenger acrescenta a seção somente se a
+conta atual possui as três permissões necessárias; o rótulo inclui a contagem
+nativa de threads não lidas. O Portal não depende do Messenger.
+
+Notificações consulta apenas Messages de aviso privado, com `uid` igual à
+sessão e estado `sent`. Message não declara access handler de ownership, então
+a query usa `accessCheck(FALSE)` com filtro obrigatório de UID, bundle conhecido,
+limite de resultados e cache privado/no-cache. Avisos fica vazio até haver
+conteúdo persistente segmentado; Site Alert é temporário e sitewide, não uma
+inbox individual.
+
 ## Fontes públicas consultadas
 
 - [Private Message 3.0.7](https://www.drupal.org/project/private_message/releases/3.0.7) e [guia de instalação](https://www.drupal.org/docs/contributed-modules/private-message/installing-the-module).
@@ -157,3 +179,4 @@ protegidas pela política global de purpose `main`.
 - [Issue queue de Private Message](https://www.drupal.org/project/issues/private_message?categories=All&status=All), para alertas de compatibilidade atuais.
 - [Drupal Core QueueInterface 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Queue%21QueueInterface.php/interface/QueueInterface/11.x), que define semântica de processamento pelo menos uma vez.
 - [Drupal Core HookCollectorPass 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21HookCollectorPass.php/class/HookCollectorPass/11.x), que registra hooks OOP em classes `Hook` como serviços autowired.
+- [ModuleHandlerInterface::alter](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Extension%21ModuleHandlerInterface.php/function/ModuleHandlerInterface%3A%3Aalter/9), [RouteSubscriberBase 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Routing%21RouteSubscriberBase.php/class/RouteSubscriberBase/main), [Url::fromRoute 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Url.php/function/Url%3A%3AfromRoute/11.x) e [TrustedRedirectResponse 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Routing%21TrustedRedirectResponse.php/class/TrustedRedirectResponse/main), consultados para extensão do shell, purpose de rotas e URL ACCOUNT confiável.

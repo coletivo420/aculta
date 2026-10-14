@@ -7,3 +7,7 @@ services:
       - '@string_translation'
       - '@private_message.ban_manager'
     public: true
+  aculta_messenger.private_message_account_route_subscriber:
+    class: Drupal\aculta_messenger\EventSubscriber\PrivateMessageAccountRouteSubscriber
+    tags:
+      - { name: event_subscriber }

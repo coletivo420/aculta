@@ -20,8 +20,10 @@ Git, à PR e ao changelog; esta lista registra sequência e critérios de entreg
    Site Alert no ACULTA420 concluída; runtime aguarda Homelab. Comunicado
    persistente permanece pendente de contrato de segmentação e revisão: os
    mecanismos atuais não comprovam esses requisitos para um novo tipo Node.
-7. **dev.7 — Minha Conta:** `/mensagens`, conversas, avisos e notificações em
-   `account`; preservar formulários e rotas nativas onde possível.
+7. **dev.7 — Minha Conta:** rotas portuguesas e shell de Mensagens implementados
+   com inbox nativa, contador de não lidas e lista privada de eventos de
+   mensagem; runtime aguarda Homelab. Avisos permanece em estado vazio até
+   existir comunicado persistente com segmentação aprovada.
 8. **dev.8 — preferências:** comunicação, privacidade, e-mail e interações,
    reutilizando armazenamento nativo.
 9. **dev.9 — Domain/ACULTA420:** presenter neutro e componentes SDC sob

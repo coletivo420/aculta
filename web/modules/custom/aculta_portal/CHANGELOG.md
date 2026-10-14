@@ -1,3 +1,12 @@
+## 0.4.0-dev.15 — extensão opcional para seções da Minha Conta — 2026-10-14
+
+- `AccountShellBuilder` expõe alters neutros para acrescentar seções opcionais e mapear suas subrotas à seção ativa.
+- ACULTA Messenger usa esses alters para incluir Mensagens somente a contas com as permissões nativas do Private Message.
+- Tema ACULTA420 0.6.0-dev.19 sem alterações visuais nesta etapa.
+- PHP lint, Drupal 11+ gate (696 checks), module/theme boundary (873 checks), unique paths, portal UI docs (167 tokens/132 usados/41 atributos), environment-address gate e YAML parse: PASS.
+- `validate-aculta-portal-conta-root.php` não inicializa porque espera `web/modules/custom/aculta_portal/css/`, ausente também em `origin/main`. Shell/Domain gates que exigem bootstrap Drupal não podem ser executados: não há settings/runtime nesta cópia.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.14 — popup "Entrar" na barra multidomínio, sem Turnstile; modais com fundo escurecido — 2026-10-14
 
 - "Entrar" da barra multidomínio, para visitante não autenticado, abre o login em modal no próprio host (`use-ajax`).

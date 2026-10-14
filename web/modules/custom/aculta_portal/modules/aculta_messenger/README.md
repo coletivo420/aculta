@@ -74,3 +74,9 @@ O bloco de Site Alert é instalado na região `highlighted` do ACULTA420 e mant�
 agendamento/severidade no módulo nativo. Seu escopo é sitewide para os purposes
 que usam o tema. Comunicados persistentes continuam pendentes: não há hoje um
 contrato confirmado de segmentação de acesso e revisão editorial para esse uso.
+
+A seção Mensagens da Minha Conta usa `/mensagens` e subrotas portuguesas no
+purpose `account`. Conversas abre a inbox do Private Message; a navegação
+condicional mostra a contagem de threads não lidas. Notificações lista avisos
+privados entregues ao próprio usuário. Avisos permanece em estado vazio até
+haver comunicados persistentes com segmentação segura.

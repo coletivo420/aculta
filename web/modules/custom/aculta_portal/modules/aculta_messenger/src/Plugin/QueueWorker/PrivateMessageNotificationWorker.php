@@ -155,9 +155,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       return;
     }
 
-    // Send members to the ACCOUNT central page. The inbox's native paths are
-    // English and will be integrated under Portuguese account paths later.
-    $url = $this->domainPurposeManager->pathUrl('account', '/');
+    // Send members to the Portuguese ACCOUNT communication center.
+    $url = $this->domainPurposeManager->routeUrl('account', 'aculta_messenger.messages');
     if ($url === NULL) {
       if ($notification === NULL) {
         $notification = $this->entityTypeManager->getStorage('message')->create([

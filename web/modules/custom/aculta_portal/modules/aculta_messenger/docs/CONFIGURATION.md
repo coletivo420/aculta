@@ -43,8 +43,9 @@ configuração global do Message Subscribe ou do transporte de e-mail é alterad
 Notifiers ativos continuam sob a configuração existente. Administração fica no
 purpose `main`.
 
-A fase dev.6 instala somente a configuração do bloco nativo Site Alert na região
-`highlighted` de ACULTA420, com polling em 300 segundos. Formulários,
+A fase dev.6 habilita Site Alert e `datetime_range` no Config Sync e instala a
+configuração do bloco nativo Site Alert na região `highlighted` de ACULTA420,
+com polling em 300 segundos. Formulários,
 programação, severidade e permissões continuam em Site Alert; nenhuma role é
 autorizada automaticamente. O bloco é sitewide nos purposes com esse tema.
 Comunicados persistentes aguardam decisão/implementação de segmentação verificável
@@ -54,6 +55,11 @@ Na configuração exportada examinada, nenhuma role recebe as permissões nativa
 `administer site alert`, `add site alerts`, `update site alerts` ou
 `delete site alerts`. O Messenger não amplia esse acesso; o responsável deve
 designar administradores em `main` antes de delegar a criação.
+
+A área de Mensagens instala quatro rotas de conta e entrada condicional no
+shell. Não concede permissões nativas do Private Message. Conversas preserva a
+inbox contrib; Notificações exibe eventos privados entregues e Avisos permanece
+vazio até haver fonte persistente com segmentação aprovada.
 
 ## Checklist para implantação futura
 

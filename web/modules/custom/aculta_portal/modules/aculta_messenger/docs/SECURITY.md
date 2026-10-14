@@ -56,6 +56,14 @@ por destinatário, portanto falhas parciais podem exigir reconciliação e serã
 cobertas no hardening. A URL é gerada no purpose `forum`; sem alias português
 seguro, o envio é suprimido.
 
+As páginas da central exigem autenticação, `access aculta portal` e as duas
+permissões nativas do Private Message. A lista de notificações aplica filtro
+explícito pelo UID da sessão antes de renderizar Message; nenhum identificador
+de usuário é controlado pela URL. A query declara `accessCheck(FALSE)` porque
+Message não tem handler que restrinja ownership; filtro UID, bundle conhecido,
+status `sent`, limite e cache max-age zero complementam a autorização. Inbox e
+ações continuam nos handlers nativos.
+
 ## Invariantes
 
 - Cada leitura e escrita usa APIs públicas Drupal e permissões/access nativos;

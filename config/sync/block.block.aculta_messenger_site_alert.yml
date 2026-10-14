@@ -6,9 +6,6 @@ dependencies:
     - site_alert
   theme:
     - aculta420
-  enforced:
-    module:
-      - aculta_messenger
 id: aculta_messenger_site_alert
 theme: aculta420
 region: highlighted

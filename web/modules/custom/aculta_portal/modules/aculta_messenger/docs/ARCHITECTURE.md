@@ -79,6 +79,12 @@ Comunicados persistentes ficam fora até que alvo e workflow editorial possam
 ser verificados por access nativo; `article` e o workflow disponível não
 fornecem esse contrato atualmente.
 
+O Portal compõe o shell da conta e oferece alters genéricos de seção/subrota.
+Messenger participa como módulo opcional, enquanto rotas privadas nativas são
+classificadas para ACCOUNT. O contador vem do serviço Private Message; a lista
+de notificações usa Message com UID da sessão e cache privado. Avisos
+institucionais persistentes não são misturados ao alerta sitewide.
+
 ## Inventário técnico upstream
 
 O inventário verificado no código instalado (Core 11.4.8) está em
