@@ -810,7 +810,7 @@ O histórico detalhado anterior permanece no Git; não é especificação corren
   `--aculta-status-*` (erro, ok, atenção) e `--aculta-scrim`, nos modos claro e escuro. Corrige texto ilegível da área da
   conta no modo escuro (antes 1,3:1 a 1,6:1 com cores fixas).
 
-## 0.6.0-dev.31 — caixas de conversa agrupadas por remetente — 2026-10-14
+## 0.6.0-dev.32 — menus de conversa e badge contextual — 2026-10-14
 
 Classificação: PATCH da linha 0.6.0 (organização de estilo sobre o componente experimental existente).
 
@@ -818,5 +818,6 @@ Classificação: PATCH da linha 0.6.0 (organização de estilo sobre o component
 - As caixas e suas conversas são ordenadas pelo timestamp de atualização fornecido pelo Private Message.
 - CSS do tema permanece exclusivamente de apresentação; agrupamento e ordenação pertencem ao ACULTA Messenger.
 - O badge de não lidas em Minha Conta usa vermelho como na barra multidomínio; fora do shell `.portal-account`, preserva a cor semântica original.
+- Conversas oferecem menu contextual de limpeza pessoal por clique direito e botão acessível; a ação global de excluir thread fica oculta na caixa.
 - RUNTIME STATUS: DEFERRED; aplicação e validação visual no checkout local pendentes.
 

@@ -134,6 +134,54 @@ final class MessagesController extends ControllerBase {
       $item['#attributes']['class'][] = 'aculta-messenger-conversation';
       $item['#attributes']['data-aculta-thread-id'] = (string) $thread->id();
       $item['#attributes']['data-aculta-thread-unread'] = $isUnread ? 'true' : 'false';
+      $clearAccess = $thread->access('clear_personal_history', $this->currentUser, TRUE);
+      $cacheability->addCacheableDependency($clearAccess);
+      $clearHistoryUrl = NULL;
+      if ($clearAccess->isAllowed()
+        && $this->currentUser->hasPermission('use private messaging system')
+        && $this->currentUser->hasPermission('access user profiles')) {
+        $clearHistoryUrl = $this->domainPurposeManager->routeUrl(
+          'account',
+          'entity.private_message_thread.clear_personal_history_form',
+          ['private_message_thread' => $thread->id()],
+        );
+      }
+      if ($clearHistoryUrl !== NULL) {
+        $item['conversation_actions'] = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-messenger-conversation__actions']],
+          'trigger' => [
+            '#type' => 'button',
+            '#value' => '⋮',
+            '#attributes' => [
+              'class' => ['aculta-messenger-conversation__menu-trigger'],
+              'aria-label' => (string) $this->translation->translate('Ações da conversa com @name', ['@name' => $senderName]),
+              'aria-haspopup' => 'menu',
+              'aria-expanded' => 'false',
+              'type' => 'button',
+            ],
+          ],
+          'menu' => [
+            '#type' => 'container',
+            '#attributes' => [
+              'class' => ['aculta-messenger-conversation__menu'],
+              'role' => 'menu',
+              'hidden' => TRUE,
+            ],
+            'clear_history' => [
+              '#type' => 'link',
+              '#title' => $this->translation->translate('Excluir meu histórico desta conversa'),
+              '#url' => $clearHistoryUrl,
+              '#attributes' => [
+                'class' => ['use-ajax'],
+                'role' => 'menuitem',
+                'data-dialog-type' => 'modal',
+                'data-dialog-options' => json_encode(['width' => 520], JSON_THROW_ON_ERROR),
+              ],
+            ],
+          ],
+        ];
+      }
       if ($sender !== NULL) {
         $cacheability->addCacheableDependency($sender);
       }

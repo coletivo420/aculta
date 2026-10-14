@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.8 — menu contextual e retenção de conversas
+
+- Inclui menu de contexto no clique direito e atalho acessível para abrir a confirmação nativa de limpeza do histórico pessoal.
+- Preserva a exclusão por participante do Private Message; esconde da lista a ação global de apagar thread.
+- O Cron remove até 20 conversas sem atividade há seis meses por execução, usando o ciclo de vida da entidade nativa.
+- Não executado Cron nem exclusão no runtime durante esta alteração.
+- Validação no checkout local: `drush cr`, prévia autenticada e gates Portal/Foundation PASS; interação no navegador e expiração real ainda pendentes.
+- RUNTIME STATUS: DEFERRED até sincronizar a nova versão com o checkout local; purge DEFERRED até execução futura do Cron.
+
 ## 0.1.1-dev.7 — conversas agrupadas por remetente
 
 - A prévia organiza conversas em caixas por remetente e prioriza a conversa atualizada mais recentemente.

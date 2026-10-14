@@ -20,6 +20,14 @@
 .aculta-messenger-sender .item-list__items { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
 .private-message-thread-inbox .private-message-inbox-thread-link { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; overflow: hidden; border: 0; border-radius: inherit; font-size: 0; }
 .private-message-thread-inbox .private-message-inbox-thread-link:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.private-message-thread-inbox .private_message_thread_delete_link_wrapper, .private-message-thread-inbox .private_message_thread_clear_history_link_wrapper { display: none; }
+.aculta-messenger-conversation__actions { position: absolute; z-index: 3; inset-block-start: 0.35rem; inset-inline-end: 0.35rem; }
+.aculta-messenger-conversation__menu-trigger { display: inline-grid; width: 2rem; height: 2rem; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--aculta-text-secondary); font-size: 1.25rem; line-height: 1; }
+.aculta-messenger-conversation__menu-trigger:hover, .aculta-messenger-conversation__menu-trigger:focus-visible { background: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.aculta-messenger-conversation__menu { z-index: 1080; min-width: 13rem; padding: 0.35rem; border: 1px solid var(--aculta-border-default); border-radius: 0.5rem; background: var(--aculta-surface-raised); box-shadow: var(--bs-box-shadow-lg); }
+.aculta-messenger-conversation__menu[hidden] { display: none; }
+.aculta-messenger-conversation__menu [role="menuitem"] { display: block; padding: 0.55rem 0.7rem; border-radius: 0.35rem; color: var(--aculta-status-error-text); text-decoration: none; }
+.aculta-messenger-conversation__menu [role="menuitem"]:hover, .aculta-messenger-conversation__menu [role="menuitem"]:focus-visible { background: var(--aculta-status-error-surface); color: var(--aculta-status-error-text); }
 
 .aculta-messenger-conversation-dialog { max-width: calc(100vw - 1.5rem); }
 .aculta-messenger-conversation-dialog .ui-dialog-content { max-height: min(75vh, 52rem); }

@@ -104,6 +104,20 @@ mecanismo e suas rotas/formulários; não criar storage de bloqueio próprio. A
 política ACULTA de denúncia ainda não foi aprovada; não criar fluxo ou registro
 paralelo sem decisão de escopo.
 
+## Exclusão e retenção de conversas
+
+O menu contextual e o atalho acessível da conversa apontam ao formulário nativo
+`clear_personal_history` do Private Message. A confirmação limpa o histórico
+somente para o membro atual; não usa a permissão administrativa de apagar a
+thread para todos. A caixa esconde as ações globais nativas da listagem.
+
+O Cron remove threads sem atividade por seis meses, em lotes de até 20 por
+execução. A exclusão é feita pela Entity API do Private Message, cujo ciclo
+nativo remove as mensagens e registros de histórico relacionados. A política
+mede seis meses desde a última atividade da conversa, não desde a criação de
+cada mensagem. Threads vencidas só são removidas quando o Cron executar; não
+se executa Cron durante atualização de código nem se apagam dados no deploy.
+
 ## Verificação obrigatória nas fases funcionais
 
 Cobrir isolamento entre usuários, IDOR, conteúdo não publicado, revogação de

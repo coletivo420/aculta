@@ -31,6 +31,64 @@
         });
       });
 
+      once('aculta-messenger-conversation-menu', '.aculta-messenger-conversation', context).forEach((row) => {
+        const trigger = row.querySelector('.aculta-messenger-conversation__menu-trigger');
+        const menu = row.querySelector('.aculta-messenger-conversation__menu');
+        if (!trigger || !menu) {
+          return;
+        }
+        const close = (restoreFocus = false) => {
+          menu.hidden = true;
+          trigger.setAttribute('aria-expanded', 'false');
+          if (restoreFocus) trigger.focus();
+        };
+        const open = (x, y) => {
+          document.querySelectorAll('.aculta-messenger-conversation__menu:not([hidden])').forEach((other) => {
+            if (other !== menu) {
+              other.hidden = true;
+              other.closest('.aculta-messenger-conversation')?.querySelector('.aculta-messenger-conversation__menu-trigger')?.setAttribute('aria-expanded', 'false');
+            }
+          });
+          menu.hidden = false;
+          trigger.setAttribute('aria-expanded', 'true');
+          menu.style.position = 'fixed';
+          menu.style.left = `${Math.max(8, Math.min(x, window.innerWidth - menu.offsetWidth - 8))}px`;
+          menu.style.top = `${Math.max(8, Math.min(y, window.innerHeight - menu.offsetHeight - 8))}px`;
+          menu.querySelector('[role="menuitem"]')?.focus();
+        };
+        row.addEventListener('contextmenu', (event) => {
+          if (event.target.closest('.aculta-messenger-conversation__menu')) return;
+          event.preventDefault();
+          open(event.clientX, event.clientY);
+        });
+        trigger.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (menu.hidden) {
+            const bounds = trigger.getBoundingClientRect();
+            open(bounds.right, bounds.bottom);
+          }
+          else close();
+        });
+        row.addEventListener('keydown', (event) => {
+          if ((event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) && menu.hidden) {
+            event.preventDefault();
+            const bounds = trigger.getBoundingClientRect();
+            open(bounds.right, bounds.bottom);
+          }
+          else if (event.key === 'Escape' && !menu.hidden) {
+            event.preventDefault();
+            close(true);
+          }
+        });
+        menu.addEventListener('click', (event) => {
+          if (event.target.closest('[role="menuitem"]')) close();
+        });
+        document.addEventListener('click', (event) => {
+          if (!row.contains(event.target) && !menu.hidden) close();
+        });
+      });
+
       once('aculta-alert-dismiss', '[data-aculta-alert-dismiss]', context).forEach((link) => {
         link.addEventListener('click', () => {
           const count = document.querySelector('[data-aculta-alerts-count]');
