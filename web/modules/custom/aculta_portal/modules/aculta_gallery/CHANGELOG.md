@@ -2,6 +2,11 @@
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
+## 0.1.0-dev.11 — acesso às galerias segue o padrão da Revista — 2026-10-14
+
+- Permissões de galeria removidas do papel `content_editor` (Runtime e `config/sync`). Só o administrador acessa a coleção e cria ou edita galerias, como já acontece com artigo e blog. Supera a decisão R3, registrada em `docs/ARQUITETURA.md` §4.1.
+- Verificado pelo gerenciador de acesso: administrador acessa; editor e conta sem papel editorial não acessam.
+
 ## 0.1.0-dev.10 — multidomínio e hardening — 2026-10-14
 
 - Multidomínio (D13), verificado nos dois hosts: visualização do álbum (200 na Revista, 403 no host principal), listagem (vazia no host principal, sem títulos nem links), incorporação em artigo (renderiza só na Revista). Sitemap: nenhuma URL de álbum (decisão pendente de indexação da Revista).
