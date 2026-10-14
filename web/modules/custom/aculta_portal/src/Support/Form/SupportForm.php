@@ -36,7 +36,7 @@ final class SupportForm extends FormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#cache']['max-age'] = 0;
-    $form['#attributes']['class'][] = 'aculta-support';
+    $form['#attributes']['data-portal-ui'] = 'support-form';
     $form['#attached']['library'][] = 'aculta_portal/support';
     $form['intro'] = [
       '#type' => 'html_tag',

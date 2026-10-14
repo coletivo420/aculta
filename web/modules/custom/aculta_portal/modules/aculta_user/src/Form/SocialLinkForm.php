@@ -59,6 +59,7 @@ final class SocialLinkForm extends FormBase {
     // Marca o formulário para o JS de envio por JSON (o Portal não adiciona AJAX do Core a ele).
     $form['#aculta_json_save'] = TRUE;
     $form['#attributes']['data-aculta-json-form'] = 'social';
+    $form['#attributes']['data-portal-ui'] = 'social-link-dialog';
     $form['#attached']['library'][] = 'aculta_user/account-bio-form';
     $form['#attached']['drupalSettings']['acultaUser']['jsonForms']['social'] = [
       'url' => Url::fromRoute('aculta_user.redes_save', [], ['query' => ['token' => $this->csrfToken->get('redes/salvar')]])->toString(),
@@ -75,7 +76,7 @@ final class SocialLinkForm extends FormBase {
     $form['actions']['clear'] = [
       '#type' => 'button',
       '#value' => $this->t('Limpar'),
-      '#attributes' => ['data-aculta-clear' => '', 'class' => ['btn', 'btn-secondary']],
+      '#attributes' => ['data-aculta-clear' => '', 'data-portal-ui' => 'button-secondary'],
       '#weight' => -1,
     ];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar')];

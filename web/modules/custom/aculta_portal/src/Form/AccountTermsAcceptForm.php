@@ -61,7 +61,7 @@ final class AccountTermsAcceptForm extends FormBase {
       '#button_type' => 'primary',
     ];
 
-    // Quando aparece como popup, o <dialog> envolve o formulário na hook page_bottom (AccountTermsHooks).
+    // Quando aparece como popup, o diálogo do Drupal envolve o formulário na hook page_bottom (AccountTermsHooks).
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
 
     return $form;

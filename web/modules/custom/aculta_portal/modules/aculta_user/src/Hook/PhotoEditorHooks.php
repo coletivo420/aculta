@@ -60,9 +60,10 @@ final class PhotoEditorHooks {
       '#title' => $photoForm['preview']['avatar'] ?? ['#markup' => ''],
       '#url' => Url::fromRoute('aculta_user.foto'),
       '#attributes' => [
-        'class' => ['use-ajax', 'portal-account-photo__trigger'],
+        'class' => ['use-ajax'],
+        'data-portal-ui' => 'account-photo-trigger',
         'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => 560, 'title' => (string) t('Alterar foto do perfil'), 'dialogClass' => 'aculta-photo-popup', 'position' => ['my' => 'center', 'at' => 'center']]),
+        'data-dialog-options' => Json::encode(['title' => (string) t('Alterar foto do perfil')]),
         'data-aculta-photo-open' => '',
         'aria-label' => (string) t('Alterar foto de perfil de @name', ['@name' => $account->getDisplayName()]),
       ],
