@@ -6,6 +6,13 @@ instalados nesta branch.
 
 ## Estado do repositório
 
+O modal de mensagens consulta o estado nativo de leitura por conversa do
+Private Message, relativo ao membro atual. A abertura da conversa permanece
+no fluxo nativo do módulo. O modal de avisos mostra Site Alerts ativos e o
+contador representa apenas a quantidade ativa: Site Alert não fornece recibo
+de leitura individual. Avisos persistentes segmentados ainda não foram
+implementados nesta subfase.
+
 | Pacote | `composer.lock` | Código em `web/modules/contrib` | Conclusão |
 | --- | --- | --- | --- |
 | `drupal/private_message` | 3.0.7 | 3.0.7 | Inspecionado |

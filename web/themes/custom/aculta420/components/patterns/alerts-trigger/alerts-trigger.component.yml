@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Avisos na barra multidomínio
+status: experimental
+group: Patterns
+description: 'Gatilho do modal Drupal para avisos ativos e comunicados.'
+props:
+  type: object
+  required: [href]
+  properties:
+    href:
+      type: string
+      title: URL same-origin do resumo de avisos
+    count:
+      type: integer
+      minimum: 0
+      default: 0
+      title: Avisos ativos
+    count_kind:
+      type: string
+      enum: [active, attention]
+      default: active
+      title: Tipo do contador
+slots: {}

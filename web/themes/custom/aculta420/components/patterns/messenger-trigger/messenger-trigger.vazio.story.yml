@@ -1,0 +1,6 @@
+name: Mensagens sem conversas não lidas
+description: Gatilho da barra sem badge quando não há conversa não lida.
+component: aculta420:messenger-trigger
+props:
+  href: /mensagens/resumo
+  count: 0

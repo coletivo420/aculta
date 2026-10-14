@@ -3,7 +3,7 @@ type: module
 description: 'Integra mensagens, notificações e avisos no ACULTA Portal.'
 package: Associação Cultural Antiproibicionista
 core_version_requirement: ^11.3
-version: '0.1.0-dev.9'
+version: '0.1.0-dev.10'
 dependencies:
   - aculta_portal:aculta_portal
   - private_message:private_message
@@ -11,3 +11,9 @@ dependencies:
   - message_notify:message_notify
   - message_subscribe:message_subscribe
   - site_alert:site_alert
+  - drupal:node
+  - drupal:datetime
+  - drupal:options
+  - flag:flag
+  - drupal:content_moderation
+  - pathauto:pathauto

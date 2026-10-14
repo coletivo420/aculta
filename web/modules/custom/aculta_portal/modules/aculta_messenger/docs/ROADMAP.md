@@ -17,13 +17,13 @@ Git, à PR e ao changelog; esta lista registra sequência e critérios de entreg
    publicados com assinantes na flag existente `seguir_topico`; dispatch real
    aguarda Homelab. Group fica fora enquanto `gnode` não estiver habilitado.
 6. **dev.6 — Site Alert e comunicados:** integração estática do bloco nativo
-   Site Alert no ACULTA420 concluída; runtime aguarda Homelab. Comunicado
-   persistente permanece pendente de contrato de segmentação e revisão: os
-   mecanismos atuais não comprovam esses requisitos para um novo tipo Node.
+   Site Alert e tipo de comunicado persistente com segmentação por papel,
+   workflow editorial, validade e Flag individual implementados; runtime aguarda
+   Homelab.
 7. **dev.7 — Minha Conta:** rotas portuguesas e shell de Mensagens implementados
    com inbox nativa, contador de não lidas e lista privada de eventos de
-   mensagem; runtime aguarda Homelab. Avisos permanece em estado vazio até
-   existir comunicado persistente com segmentação aprovada.
+   mensagem; runtime aguarda Homelab. Avisos agora lista comunicados Node
+   segmentados e estado individual pelo Flag.
 8. **dev.8 — preferências:** implementado estaticamente o opt-out individual
    de e-mail, usando `private_message.receive_notification` nativo e aba na
    área de configurações. Bloqueio e assinatura continuam nos controles por
@@ -33,10 +33,17 @@ Git, à PR e ao changelog; esta lista registra sequência e critérios de entreg
    lista, item, composição, aviso, notificação, badge e estados. Form API e
    render arrays são preservados; RUNTIME STATUS: DEFERRED para validação
    visual desktop/mobile, teclado e modos claro/escuro no Homelab.
-10. **dev.10 — hardening:** autorização, cache, abuso, entrega, retenção,
+10. **dev.11 — hardening:** autorização, cache, abuso, entrega, retenção,
     logs, desinstalação e testes automatizados.
 11. **rc.1 — homologação:** gates, testes no Homelab, Config Sync, isolamento
     de contas/domínios e revisão final; runtime e e-mails controlados.
+
+### Subfase dev.10 — barra, comunicados e estado de leitura
+
+Inclui modais same-origin na barra multidomínio, tipo de comunicado Node
+segmentado por papéis, validade e Flag individual para lido/não lido, além do
+estado nativo por conversa do Private Message. Avisos temporários Site Alert
+são contados enquanto ativos e não simulam estado individual.
 
 ## Critérios de avanço
 

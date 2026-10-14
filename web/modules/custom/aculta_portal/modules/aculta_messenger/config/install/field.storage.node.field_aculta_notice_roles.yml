@@ -1,0 +1,26 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_aculta_notice_roles
+field_name: field_aculta_notice_roles
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    - { value: authenticated, label: 'Todos os membros' }
+    - { value: email_confirmed, label: 'E-mail confirmado' }
+    - { value: content_editor, label: 'Editores de conteúdo' }
+    - { value: lms_teacher, label: 'Educadores' }
+    - { value: lms_admin, label: 'Administração LMS' }
+    - { value: wiki_contributor, label: 'Colaboradores Wiki' }
+    - { value: wiki_editor, label: 'Editores Wiki' }
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: -1
+translatable: false
+indexes: { }
+persist_with_no_fields: false
+custom_storage: false

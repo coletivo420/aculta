@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Mensagens na barra multidomínio
+status: experimental
+group: Patterns
+description: 'Gatilho do modal de mensagens com ícone Bootstrap e contador neutro do Portal.'
+props:
+  type: object
+  required:
+    - href
+  properties:
+    href:
+      type: string
+      title: URL same-origin do resumo de conversas
+    count:
+      type: integer
+      minimum: 0
+      default: 0
+      title: Conversas não lidas
+slots: {}
+assets:
+  css:
+    component:
+      messenger-trigger.css: {}

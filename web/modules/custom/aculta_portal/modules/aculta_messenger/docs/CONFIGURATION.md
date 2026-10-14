@@ -21,11 +21,14 @@ Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
 
 ## Fase atual
 
-`aculta_messenger.info.yml` declara dependências no ACULTA Portal e nos cinco
-módulos integrados. A integração privada usa callback Form API, Flood e Queue
-API do Core, configuração Message exportável e o serviço existente
-`message_notify.sender`. Não cria rotas ou permissões próprias. `composer.json`
-e `composer.lock` adicionam somente os cinco pacotes; versões em
+`aculta_messenger.info.yml` declara dependências no ACULTA Portal, nos cinco
+módulos integrados e nos módulos Core necessários ao bundle de aviso. A
+integração privada usa callback Form API, Flood e Queue API do Core,
+configuração Message exportável e o serviço existente
+`message_notify.sender`. As rotas são da central; o módulo acrescenta o tipo
+de Node, uma decisão de node access e as permissões de Flag limitadas a
+`aculta_notice_read`. `composer.json` e `composer.lock` adicionam somente os
+cinco pacotes; versões em
 [INTEGRATIONS.md](INTEGRATIONS.md).
 
 O código de Private Message confirma que inbox, threads, criação, contagem de
@@ -48,18 +51,21 @@ configuração do bloco nativo Site Alert na região `highlighted` de ACULTA420,
 com polling em 300 segundos. Formulários,
 programação, severidade e permissões continuam em Site Alert; nenhuma role é
 autorizada automaticamente. O bloco é sitewide nos purposes com esse tema.
-Comunicados persistentes aguardam decisão/implementação de segmentação verificável
-e fluxo editorial antes de qualquer tipo Node/Views novo.
+O tipo persistente `aculta_notice` usa o workflow editorial, validade opcional e
+segmentação por papéis existentes. O acesso ao Node valida público e período.
+O estado individual usa o Flag não global `aculta_notice_read`; não há tabela
+customizada nem duplicação do Site Alert. O sino soma avisos persistentes não
+lidos e Site Alerts ativos para membros.
 
 Na configuração exportada examinada, nenhuma role recebe as permissões nativas
 `administer site alert`, `add site alerts`, `update site alerts` ou
 `delete site alerts`. O Messenger não amplia esse acesso; o responsável deve
 designar administradores em `main` antes de delegar a criação.
 
-A área de Mensagens instala quatro rotas de conta e entrada condicional no
-shell. Não concede permissões nativas do Private Message. Conversas preserva a
-inbox contrib; Notificações exibe eventos privados entregues e Avisos permanece
-vazio até haver fonte persistente com segmentação aprovada.
+A área de Mensagens oferece rotas de conta e entradas condicionais no shell.
+Não concede permissões nativas do Private Message. Conversas preserva a inbox
+contrib; Notificações exibe eventos privados entregues; Avisos lista Nodes
+publicados e visíveis com links nativos lido/não lido do Flag.
 
 ## Checklist para implantação futura
 
@@ -67,9 +73,8 @@ Preferências em `/configuracoes/mensagens` reutilizam `user.data` do Core e a
 chave `private_message.receive_notification`, já consumida pelo Private Message
 e pelo worker Messenger. A aba aparece para contas com acesso a mensagens e com
 avisos habilitados na configuração nativa. Não há opção/storage para restringir
-globalmente remetentes, silenciar comunicados ainda inexistentes ou controlar
-todas as assinaturas: bloqueio é por membro na interface nativa e seguir tópico
-usa a flag existente.
+globalmente remetentes ou controlar todas as assinaturas: bloqueio é por membro
+na interface nativa e seguir tópico usa a flag existente.
 
 1. Comparar configuração exportada dos cinco módulos e aprovar os componentes
    necessários; não fazer import/export automático.
@@ -83,3 +88,19 @@ usa a flag existente.
    ausência de saída privada em outros purposes.
 7. Registrar comandos e evidências no changelog da fase/PR, sem criar relatório
    normativo permanente de execução.
+# Configuração de comunicados
+
+O módulo instala o tipo editorial `aculta_notice` com texto, público por papel,
+início e término opcionais. A segmentação é inclusiva (OU): o membro que possui
+qualquer papel selecionado pode visualizar o aviso durante sua validade.
+`authenticated` significa todos os membros autenticados. Os papéis disponíveis
+são definidos a partir dos papéis existentes na configuração do Portal; Group
+não é presumido como ativo.
+
+O workflow editorial controla revisão e publicação. `content_editor` cria e
+edita avisos em rascunho; publicação segue as transições editoriais atribuídas
+à administração. A administração continua no purpose MAIN.
+
+`aculta_notice_read` é um Flag não global que fornece ações de marcar como lido
+e não lido. O badge para membros conta avisos visíveis ainda não marcados como
+lidos; visitantes veem a quantidade de Site Alerts temporários ativos.

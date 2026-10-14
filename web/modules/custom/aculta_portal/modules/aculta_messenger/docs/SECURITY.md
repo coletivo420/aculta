@@ -110,3 +110,17 @@ Cobrir isolamento entre usuários, IDOR, conteúdo não publicado, revogação d
 acesso, csrf, XSS, enumeração, rate limit, cache privado, envio duplicado,
 preferências de e-mail, logs e endereços cross-purpose. E-mails de teste devem
 usar transporte de teste/destinatário controlado; nunca enviar aos membros.
+# Segurança e privacidade
+
+Avisos persistentes são Nodes publicados do bundle `aculta_notice`. A operação
+de visualização compara o membro atual com os papéis armazenados no aviso e
+com o intervalo de validade; falhas fecham o acesso. A consulta usa
+`accessCheck(TRUE)` e cada Node é verificado novamente antes de renderizar.
+Flagging `aculta_notice_read` é não global, associado ao usuário, e seu link
+nativo respeita as permissões individuais de flag/unflag. O cache do contador
+individual varia por usuário e não é compartilhado entre contas.
+
+O preview funciona same-origin no host corrente. A conta e as conversas
+permanecem privadas e os links da inbox usam o purpose ACCOUNT. O modal de
+avisos combina Site Alert (temporário) e Nodes autorizados; o corpo privado de
+mensagens não é incluído em e-mail.

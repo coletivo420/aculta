@@ -34,7 +34,7 @@ nativo por membro e por tópico.
 | Entrega de evento | Message Notify + Drupal Mail | Define conteúdo mínimo, preferências e destinatário permitido | Não |
 | Assinatura | Message Subscribe + Flag | Seleciona eventos suportados e filtra por access | Não |
 | Alerta temporário | Site Alert | Entrada e apresentação do alerta | Não |
-| Comunicado editorial persistente | Node, revisão, workflow e Views | Segmentação e integração quando houver política verificável | Não |
+| Comunicado editorial persistente | Node `aculta_notice`, workflow `editorial`, campos de público/validade e Flag `aculta_notice_read` | Segmentação por papéis e leitura individual | Não |
 | Preferência de usuário | Configuração/field/entity nativa a confirmar no upstream | Orquestra a UX sem cópia paralela | Não até prova de lacuna |
 | Identidade e papel | User + Profile + Group | Aplicação de política sem replicar identidade/associação | Não |
 | Host e propósito | Domain + `DomainPurposeManager` | Resolver rotas canônicas e aplicar política de propósito | Não |
@@ -60,7 +60,7 @@ ação preservam a exceção de rota técnica documentada pelo projeto.
 | Evento | Público elegível | Canal | Regra |
 | --- | --- | --- | --- |
 | Nova mensagem privada | Participantes autorizados não remetentes | Inbox e aviso por e-mail, se habilitado | E-mail não inclui corpo; link seguro para a central |
-| Comunicado publicado | Membros incluídos por segmentação verificável | Central; e-mail conforme preferência/política | Access reavaliado na geração e entrega |
+| Comunicado publicado | Membros que possuem ao menos um papel selecionado no Node | Central; e-mail conforme preferência/política | Node access reavaliado na listagem; avisos iniciados/expirados respeitam validade |
 | Evento de entidade assinada | Assinantes ativos com acesso atual ao contexto | Message Notify quando configurado | Revogação de access suprime entrega |
 | Site Alert ativo | Visitantes conforme regra nativa | Bloco/componente global de apresentação | Início, término e severidade vêm da entidade Site Alert |
 
@@ -80,15 +80,19 @@ Como `gnode` não está habilitado, atividades Group não participam do escopo.
 Site Alert permanece a fonte dos avisos temporários; sua instância de bloco
 nativa ocupa `highlighted` e usa o intervalo de atualização próprio. Por ser
 sitewide e não oferecer escopo Domain, é apresentada nos purposes do ACULTA420.
-Comunicados persistentes ficam fora até que alvo e workflow editorial possam
-ser verificados por access nativo; `article` e o workflow disponível não
-fornecem esse contrato atualmente.
+Comunicados persistentes usam o bundle `aculta_notice`, workflow `editorial`,
+validade opcional e segmentação por papéis do usuário. Um hook de access nega
+visualização fora do público/intervalo. A flag `aculta_notice_read` registra
+estado individual sem tabela paralela. O sino de membros soma avisos
+persistentes não lidos e Site Alerts ativos; visitantes veem a contagem de Site
+Alerts ativos.
 
 O Portal compõe o shell da conta e oferece alters genéricos de seção/subrota.
 Messenger participa como módulo opcional, enquanto rotas privadas nativas são
 classificadas para ACCOUNT. O contador vem do serviço Private Message; a lista
 de notificações usa Message com UID da sessão e cache privado. Avisos
-institucionais persistentes não são misturados ao alerta sitewide.
+institucionais persistentes aparecem no mesmo modal, mas são armazenados como
+Nodes e não no Site Alert.
 
 ## Inventário técnico upstream
 
@@ -194,3 +198,12 @@ cacheability e os formulários Private Message. A severidade de Site Alert é
 passada pela saída nativa e estilizada com tokens semânticos. O Portal envia a
 contagem de não lidas como número no contrato neutro do shell; o tema decide sua
 forma visual.
+# Avisos e estado de leitura
+
+Avisos temporários ficam no Site Alert e continuam com agenda, severidade e
+visibilidade de origem. Comunicados persistentes usam Node (`aculta_notice`),
+workflow editorial, público por papéis Drupal e validade opcional. O Flag
+`aculta_notice_read` guarda a leitura por usuário. Conversas usam o estado
+nativo por thread de Private Message; nenhuma tabela paralela de recibos é
+criada. O menu global oferece dois modais Drupal same-origin; o centro em
+ACCOUNT continua sendo a navegação canônica para mensagens.

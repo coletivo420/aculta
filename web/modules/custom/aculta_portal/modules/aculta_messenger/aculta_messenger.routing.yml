@@ -10,6 +10,27 @@ aculta_messenger.messages:
     no_cache: true
     _aculta_domain_purpose: account
 
+# Same-origin dialog fragment, available on each public purpose so Drupal AJAX
+# never crosses hosts. Conversation actions still link canonically to ACCOUNT.
+aculta_messenger.preview:
+  path: '/mensagens/resumo'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::preview'
+    _title: 'Mensagens'
+  requirements:
+    _permission: 'use private messaging system, access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+
+aculta_messenger.alerts_preview:
+  path: '/avisos/resumo'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::alertsPreview'
+    _title: 'Avisos ativos'
+  requirements:
+    _access: 'TRUE'
+
 aculta_messenger.conversations:
   path: '/mensagens/conversas'
   defaults:

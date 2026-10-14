@@ -1,3 +1,14 @@
+## 0.6.0-dev.24 — modais da barra e estado de leitura — 2026-10-14
+
+Classificação: MINOR da linha aberta (SDCs experimentais de entrada e estado).
+
+- Ícone Bootstrap de avisos ao lado de mensagens na barra, com modal Drupal.
+- Rótulo de conversa lida/não lida deriva do estado nativo Private Message.
+- Mensagens e avisos mantêm o mesmo comportamento de apresentação em modos de cor.
+- SDC schema e design foundations: PASS; gate de Foundation com bootstrap Drupal,
+  validação visual e RUNTIME STATUS: DEFERRED no Homelab.
+- RUNTIME STATUS: DEFERRED; validar modal, acessibilidade e responsividade no Homelab.
+
 ## 0.6.0-dev.23 — componentes ACULTA Messenger — 2026-10-14
 
 Classificação: MINOR da linha aberta (novos SDCs experimentais e contratos de slots).

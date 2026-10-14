@@ -14,8 +14,10 @@ experiência e aplica os contratos de acesso e Domain do Portal.
   infraestrutura de e-mail do Drupal.
 - Message Subscribe e Flag mantêm assinaturas; assinar nunca concede acesso.
 - Site Alert mantém alertas temporários globais.
-- Comunicados editoriais persistentes, se aprovados na fase correspondente,
-  serão conteúdo Drupal (Node/Views), sem substituir Site Alert.
+- Comunicados persistentes são Nodes `aculta_notice`, segmentados por papéis
+  Drupal existentes, moderados pelo workflow editorial e com validade opcional.
+- A leitura individual dos comunicados usa a flag não global `aculta_notice_read`;
+  o Private Message mantém seu estado nativo lido/não lido por conversa.
 - `aculta_messenger` não cria engine de mensagens, tabelas, entidades espelho,
   transporte SMTP ou regras visuais.
 
@@ -57,7 +59,9 @@ cross-purpose usam `DomainPurposeManager`; mutações não atravessam hosts.
 
 ## Estado da implementação
 
-O módulo declara dependências, mas ainda não foi ativado. O formulário nativo
+O módulo e os cinco módulos upstream estão selecionados em `core.extension`
+para a próxima importação de Config Sync; a ativação no runtime não foi feita.
+O formulário nativo
 usa Flood para limitar envios; novos eventos são processados em fila e entregues
 como Message Notify usando o mailer instalado, com um template que não expõe o
 corpo privado. Inbox, threads, criação/resposta, contagem de não lidas,
@@ -65,8 +69,9 @@ bloqueio e access continuam pertencendo ao Private Message. As permissões
 `use private messaging system` e `access user profiles` não aparecem na
 configuração exportada de papéis; nenhuma concessão é feita pelo submódulo. A
 política dos papéis precisa ser aplicada por configuração administrativa
-revisada antes da ativação da experiência para membros. Runtime, fallback sem
-JavaScript, isolamento real e link de perfil ainda não foram verificados.
+revisada antes da ativação da experiência para membros. Homelab, fallback sem
+JavaScript, isolamento real, instalação do bundle editorial e acessibilidade
+do modal ainda não foram verificados.
 
 Para assinaturas, dev.5 reutiliza a flag Drupal `seguir_topico` dos tópicos
 `forum`. A publicação gera evento Message e chama Message Subscribe, que aplica
@@ -77,11 +82,14 @@ entrega real aguarda teste controlado no Homelab.
 
 O bloco de Site Alert é instalado na região `highlighted` do ACULTA420 e mantém
 agendamento/severidade no módulo nativo. Seu escopo é sitewide para os purposes
-que usam o tema. Comunicados persistentes continuam pendentes: não há hoje um
-contrato confirmado de segmentação de acesso e revisão editorial para esse uso.
+que usam o tema. O ícone de avisos abre um modal Drupal same-origin: para membros
+o contador soma comunicados persistentes não lidos e Site Alerts ativos; para
+visitantes é a quantidade de Site Alerts ativos. O modal reúne alertas temporários e Nodes
+visíveis, com ação Flag nativa para marcar lido/não lido.
 
 A seção Mensagens da Minha Conta usa `/mensagens` e subrotas portuguesas no
 purpose `account`. Conversas abre a inbox do Private Message; a navegação
-condicional mostra a contagem de threads não lidas. Notificações lista avisos
-privados entregues ao próprio usuário. Avisos permanece em estado vazio até
-haver comunicados persistentes com segmentação segura.
+condicional mostra a contagem de threads não lidas e cada thread da inbox exibe
+estado individual. Notificações lista avisos privados entregues ao próprio
+usuário; `/mensagens/avisos` lista comunicados publicados e visíveis, marcáveis
+como lidos/não lidos por conta.

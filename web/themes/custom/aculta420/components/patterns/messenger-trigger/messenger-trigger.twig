@@ -1,0 +1,15 @@
+{% set count = count|default(0) %}
+{% set label = count > 0
+  ? '@count conversas não lidas. Abrir mensagens'|t({'@count': count})
+  : 'Abrir mensagens'|t %}
+<a class="aculta-messenger-trigger use-ajax"
+   href="{{ href }}"
+   data-dialog-type="modal"
+   data-dialog-options="{{ {'title': 'Mensagens'|t, 'closeText': 'Fechar'|t}|json_encode|e('html_attr') }}"
+   aria-haspopup="dialog"
+   aria-label="{{ label }}">
+  <i class="bi bi-chat-dots" aria-hidden="true"></i>
+  {% if count > 0 %}
+    {{ include('aculta420:unread-badge', {count: count}, with_context = false) }}
+  {% endif %}
+</a>

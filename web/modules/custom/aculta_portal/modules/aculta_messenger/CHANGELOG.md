@@ -2,6 +2,27 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.0-dev.10 — modais da barra e estado de leitura
+
+- Adiciona modal same-origin de conversas e de avisos ativos na barra
+  multidomínio, com ícones Bootstrap do tema e contador.
+- A caixa de mensagens usa o estado nativo lido/não lido por conversa do
+  Private Message. O resumo marca cada conversa acessivelmente e o contador
+  continua sendo o total nativo de threads não lidas do membro.
+- Cria o tipo editorial `aculta_notice`, segmentação OR pelos papéis de conta
+  existentes, validade inicial/final e leitura individual pelo Flag não global
+  `aculta_notice_read`. Acesso é verificado novamente ao listar e renderizar.
+- Para membros, o contador do sino soma Site Alerts ativos e comunicados
+  persistentes não lidos; para visitantes, conta Site Alerts ativos. Site Alert continua temporário e
+  sem estado de leitura individual.
+- Verificações estáticas: PHP lint, YAML parse, Drupal 11+ gate, SDC schema,
+  fronteira módulo/tema, design foundations e endereços de ambiente: PASS.
+- Gate de slug reporta apenas duas rotas upstream preexistentes do
+  Message Subscribe. Composer audit: FAIL no Drupal Core 11.4.8, com três
+  advisories publicados em 2026-10-14; sem atualização de Core nesta subfase.
+- RUNTIME STATUS: DEFERRED; revisar AJAX/modal, cache e estado entre contas no
+  Homelab.
+
 ## 0.1.0-dev.9 — integração visual ACULTA420
 
 - O ACULTA420 apresenta listas, mensagens, notificações, composição nativa,

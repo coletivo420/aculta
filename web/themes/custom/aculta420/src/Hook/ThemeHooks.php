@@ -215,6 +215,8 @@ final class ThemeHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $routeName = $this->routeMatch->getRouteName();
+    $this->presentMessengerTrigger($variables);
+    $this->presentAlertsTrigger($variables);
     $this->presentMessengerPage($variables, $routeName);
     $routeNode = $this->routeMatch->getParameter('node');
     $wikiEntryPage = $routeName === 'entity.node.canonical'
@@ -281,8 +283,8 @@ final class ThemeHooks {
    */
   private function presentMessengerPage(array &$variables, ?string $routeName): void {
     $component = match ($routeName) {
-      'aculta_messenger.messages', 'aculta_messenger.notifications', 'private_message.private_message_page' => 'aculta420:messenger-list',
-      'aculta_messenger.notices' => 'aculta420:messenger-state',
+      'aculta_messenger.messages', 'aculta_messenger.notifications', 'aculta_messenger.notices', 'private_message.private_message_page' => 'aculta420:messenger-list',
+      'aculta_messenger.preview' => 'aculta420:messenger-list',
       'private_message.private_message_create' => 'aculta420:messenger-compose',
       default => NULL,
     };
@@ -304,11 +306,14 @@ final class ThemeHooks {
     elseif ($routeName === 'aculta_messenger.notifications') {
       $props['label'] = 'Notificações';
     }
+    elseif ($routeName === 'aculta_messenger.notices') {
+      $props['label'] = 'Avisos';
+    }
     elseif ($routeName === 'private_message.private_message_page') {
       $props['label'] = 'Conversas';
     }
-    elseif ($routeName === 'aculta_messenger.notices') {
-      $props['state'] = 'empty';
+    elseif ($routeName === 'aculta_messenger.preview') {
+      $props['label'] = 'Conversas recentes';
     }
     elseif ($routeName === 'private_message.private_message_create') {
       $slot = 'form';
@@ -319,6 +324,58 @@ final class ThemeHooks {
       '#component' => $component,
       '#props' => $props,
       '#slots' => [$slot => $original],
+    ];
+  }
+
+  /** Maps the Portal's neutral Messenger action to its theme SDC. */
+  private function presentMessengerTrigger(array &$variables): void {
+    $messenger = $variables['aculta_messenger'] ?? NULL;
+    if (!is_array($messenger) || !is_string($messenger['url'] ?? NULL)) {
+      $variables['aculta_messenger_trigger'] = [];
+      return;
+    }
+
+    $variables['aculta_messenger_trigger'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:messenger-trigger',
+      '#props' => [
+        'href' => $messenger['url'],
+        'count' => max(0, (int) ($messenger['unread_count'] ?? 0)),
+      ],
+    ];
+    unset($variables['aculta_messenger']);
+  }
+
+  /** Maps the Portal's neutral alert action to the theme's SDC. */
+  private function presentAlertsTrigger(array &$variables): void {
+    $alerts = $variables['aculta_alerts'] ?? NULL;
+    if (!is_array($alerts) || !is_string($alerts['url'] ?? NULL)) {
+      $variables['aculta_alerts_trigger'] = [];
+      return;
+    }
+    $variables['aculta_alerts_trigger'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:alerts-trigger',
+      '#props' => [
+        'href' => $alerts['url'],
+        'count' => max(0, (int) ($alerts['count'] ?? 0)),
+        'count_kind' => $alerts['count_kind'] ?? 'active',
+      ],
+    ];
+    unset($variables['aculta_alerts']);
+  }
+
+  /** Exposes Private Message's native per-thread read state to accessible UI. */
+  #[Hook('preprocess_private_message_thread')]
+  public function preprocessPrivateMessageThread(array &$variables): void {
+    $status = $variables['aculta_messenger_read_status'] ?? NULL;
+    if (!in_array($status, ['read', 'unread'], TRUE)) {
+      return;
+    }
+    $variables['read_status'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:messenger-read-status',
+      '#props' => ['unread' => $status === 'unread'],
     ];
   }
 
