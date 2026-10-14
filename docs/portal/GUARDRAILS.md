@@ -116,3 +116,15 @@ caminho `/u/...` à mão, nunca guardar a URL do perfil em campo, configuração
   gerado pelo serviço de domínio, sem host fixo no código.
 - **Gate:** `php scripts/validate-profile-links.php` reprova caminho `/u/` literal e geração de link de perfil
   sem registro na cache. Deve ser PASS em toda mudança de perfil, caixa de autores ou faixa de postagem.
+
+## Papéis editoriais: função única
+
+Decisão do responsável (2026-10-14). Vale para toda criação e moderação de conteúdo.
+
+- **Uma só função editorial:** `content_editor` (Editor de conteúdo). Autor, editor e revisor da Wiki, e editor, autor e moderador do Fórum, são a mesma função. Não criar papéis novos para isso.
+- **Única exceção:** `wiki_contributor` (Colaborador da Wiki420). Continua sendo concedido automaticamente a toda conta com e-mail confirmado (`email_confirmed`).
+- `wiki_editor` foi removido: suas permissões estão em `content_editor`.
+- Perfil público obrigatório para quem edita: somente `content_editor` (`PublicProfilePolicy`).
+- Gate: `php scripts/validate-aculta-user-roles.php`.
+
+Motivo: poucos papéis na criação de conteúdo. Um papel por função evita combinações de permissões difíceis de auditar.

@@ -27,7 +27,7 @@ final class PublicProfilePolicy {
    *
    * Editor de conteúdo (autoria da Revista) e Editor da Wiki420 (autoria de verbetes).
    */
-  public const PAPEIS_PUBLICO_OBRIGATORIO = ['content_editor', 'wiki_editor'];
+  public const PAPEIS_PUBLICO_OBRIGATORIO = ['content_editor'];
 
   /**
    * Indica se os papéis da conta tornam o perfil obrigatoriamente público.
