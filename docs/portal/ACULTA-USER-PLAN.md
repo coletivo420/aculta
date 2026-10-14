@@ -281,6 +281,32 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
 - Acesso anônimo de leitura do tópico no host FORUM (`access content` no papel anônimo já existe).
 - Pesquisa: a busca em drupal.org não confirmou detalhes de Views sobre comentários de outra entidade. Ver o registro de mudança de comentários como campos (`https://drupal.org/node/2100015`) e a documentação de Views de comentários no Homelab.
 
+#### E3.1 Como os comentários funcionam (implementado)
+
+Esta subseção descreve o que já está no código e no runtime, em 2026-10-14. As regras de moderação de tópico (E5) são
+propostas e não estão implementadas.
+
+- **Onde moram:** só no tópico do Fórum (`comment_forum`). A publicação da Revista não tem campo de comentário. Ela
+  mostra a contagem e o link "Ver discussão completa (N comentários)" (`aculta_user` `DiscussionHooks`).
+- **Quem escreve:** a resposta fica no tópico, no host do Fórum. A publicação não envia POST para outro host.
+- **Autor:** cada comentário guarda o próprio autor (`uid`), e o nome exibido é o dele. Nada disso muda quando a
+  publicação troca de tipo (`PublicationTypeConverter`), porque o tópico e seus comentários não são recriados.
+  Verificado no runtime em 2026-10-14 com comentário de outro autor, publicado explicitamente, em ida e volta.
+- **Moderação:** a do Core. Quem tem `skip comment approval` publica direto. Quem não tem entra na fila do
+  `content_editor` (`administer comments`). Um comentário de quem não pode publicar sem aprovação não aparece na
+  página até ser aprovado. Isso não é efeito da troca de tipo, nem de publicação.
+- **Exclusão da publicação:** o tópico é despublicado e a discussão é preservada (`ForumTopicSync::unpublish`).
+  Comentários não são apagados.
+- **Troca de tipo (Notícia ↔ blog):** o tópico segue o nó da publicação nova. Comentários, autor e pasta permanecem
+  (`docs/README.md`, seção "Trocar o tipo de uma publicação").
+- **Login para comentar:** o Core mostra "Efetue login ou registre-se para postar comentários". Nos tópicos do
+  Fórum da Revista, a mensagem aparece uma vez, na área de comentários do tópico. Nos links de cada comentário ela
+  é removida (`ForumTopicHooks::commentLinksAlter`, `aculta_magazine` 0.1.0-dev.5). Motivo: a repetição era
+  visível quando havia comentário.
+
+Pendências desta subseção: a regra de criação de tópico com 10 comentários (E5) e a denúncia de comentário (`DT-P13`)
+continuam propostas.
+
 ### E4. Verbetes chamados em todo o site, e papel de autor
 
 **Pedido do responsável (2026-10-13):** editores de conteúdo podem chamar verbetes em qualquer parte do site. Exemplo: ao publicar um artigo na revista, o autor chama um verbete da Wiki. Autores do site viram automaticamente editores da Wiki, com as mesmas funções.
