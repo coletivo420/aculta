@@ -26,6 +26,7 @@ global:
       css/components/revista-post.css: {}
       css/components/discussion.css: {}
       css/components/portal-account-terms-modal.css: {}
+      css/components/dialog.css: {}
       css/components/portal-address-number.css: {}
       css/components/portal-cart.css: {}
       css/components/portal-payment-notice.css: {}

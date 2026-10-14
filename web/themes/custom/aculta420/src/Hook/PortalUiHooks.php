@@ -175,6 +175,9 @@ final class PortalUiHooks {
     'login-reset-link' => ['aculta-login__reset-link'],
     'login-registration' => ['aculta-login__registration'],
     'login-divider' => ['aculta-login__divider'],
+    // Popup "Entrar" da barra (aculta_portal, LoginPopupForm).
+    'login-popup' => ['aculta-login-popup'],
+    'login-popup-links' => ['aculta-login-popup__links'],
     'registration-status' => ['aculta-registration-status'],
     'support-intro' => ['aculta-support-intro'],
     'support-other' => ['aculta-support-other'],

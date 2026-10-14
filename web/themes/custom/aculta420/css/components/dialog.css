@@ -1,0 +1,112 @@
+/* Modais (diálogos do Drupal e nativos <dialog>): o fundo escurece da mesma forma em todos. A cor é o token
+   --aculta-scrim; o módulo não emite nenhuma classe de design. */
+.ui-widget-overlay {
+  background: var(--aculta-scrim);
+  opacity: 1;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+dialog::backdrop {
+  background: var(--aculta-scrim);
+}
+
+/* Popup "Entrar" da barra multidomínio: visual do anexo (painel verde, campos claros, botões amarelo e creme). */
+.ui-dialog:has([data-portal-ui="login-popup"]) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--aculta-dialog-surface);
+  color: var(--aculta-dialog-text);
+  box-shadow: var(--bs-box-shadow-lg);
+}
+
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-titlebar {
+  background: transparent;
+  border: 0;
+  padding: 0.5rem 0.75rem 0 0;
+  justify-content: flex-end;
+}
+
+/* O título "Entrar" fica para leitores de tela; o visual é só o botão de fechar. */
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-titlebar-close {
+  position: static;
+  width: auto;
+  height: auto;
+  color: var(--aculta-dialog-text);
+  background: none;
+  border: 0;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.ui-dialog:has([data-portal-ui="login-popup"]) .ui-dialog-content {
+  padding: 0 1.25rem 1.25rem;
+}
+
+[data-portal-ui="login-popup"] {
+  display: grid;
+  gap: 0.5rem;
+}
+
+[data-portal-ui="login-popup"] label {
+  font-family: var(--aculta-font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--aculta-dialog-text);
+}
+
+[data-portal-ui="login-popup"] :is(input[type="text"], input[type="password"]) {
+  background: var(--aculta-dialog-control-bg);
+  color: var(--aculta-dialog-control-text);
+  border: 1px solid var(--aculta-dialog-control-text);
+  border-radius: 0;
+  padding: 0.5rem 0.65rem;
+}
+
+[data-portal-ui="login-popup"] #edit-submit {
+  display: block;
+  justify-self: center;
+  min-width: 14rem;
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 1.1rem;
+  color: var(--aculta-dialog-primary-text);
+  background: var(--aculta-dialog-primary-bg);
+  border: 0;
+  border-radius: 0.25rem;
+}
+
+[data-portal-ui="login-popup-links"] {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 2px solid var(--aculta-dialog-text);
+}
+
+[data-portal-ui="login-popup-links"] a:first-of-type {
+  font-family: var(--aculta-font-display);
+  color: var(--aculta-dialog-accent);
+}
+
+[data-portal-ui="login-popup-links"] a:last-of-type {
+  display: block;
+  min-width: 14rem;
+  padding: 0.6rem 1.5rem;
+  text-align: center;
+  color: var(--aculta-dialog-secondary-text);
+  background: var(--aculta-dialog-secondary-bg);
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
