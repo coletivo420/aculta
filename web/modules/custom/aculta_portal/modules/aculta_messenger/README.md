@@ -34,6 +34,10 @@ Respostas em threads existentes não são restringidas pela preferência.
   o Private Message mantém seu estado nativo lido/não lido por conversa.
 - `aculta_messenger` não cria engine de mensagens, tabelas, entidades espelho,
   transporte SMTP ou regras visuais.
+- A prévia da barra agrupa conversas em caixas por remetente. Caixas e
+  conversas são ordenadas pela atualização mais recente; o cabeçalho do
+  remetente abre a conversa mais recente com essa pessoa, e cada conversa
+  continua apontando para seu histórico/formulário nativos.
 - Ao abrir a gaveta, `PrivateMessageServiceInterface::updateLastCheckTime()` é
   a fonte do estado lido/não lido; o badge zera pela regra nativa de last-check.
 - A ação de cada conversa usa a rota canônica e o entity view completo do

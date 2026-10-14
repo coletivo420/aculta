@@ -3,6 +3,34 @@
 
   Drupal.behaviors.acultaMessengerDrawers = {
     attach(context) {
+      once('aculta-messenger-read-on-open', 'html', context).forEach(() => {
+        window.addEventListener('dialog:aftercreate', (event) => {
+          const dialog = event.target.closest('.ui-dialog');
+          if (!dialog?.classList.contains('aculta-messenger-conversation-dialog')) {
+            return;
+          }
+
+          const thread = event.target.querySelector('.private-message-thread[data-thread-id]');
+          const threadId = thread?.dataset.threadId;
+          if (!threadId) {
+            return;
+          }
+
+          const row = document.querySelector(`.aculta-messenger-conversation[data-aculta-thread-id="${CSS.escape(threadId)}"]`);
+          if (!row || row.dataset.acultaThreadUnread !== 'true') {
+            return;
+          }
+
+          row.dataset.acultaThreadUnread = 'false';
+          row.classList.remove('unread-thread');
+          const counter = document.querySelector('[data-aculta-messenger-count]');
+          const current = Number.parseInt(counter?.dataset.count || '0', 10);
+          if (counter && Number.isFinite(current) && current > 0) {
+            updateCounter('messages', String(current - 1));
+          }
+        });
+      });
+
       once('aculta-alert-dismiss', '[data-aculta-alert-dismiss]', context).forEach((link) => {
         link.addEventListener('click', () => {
           const count = document.querySelector('[data-aculta-alerts-count]');

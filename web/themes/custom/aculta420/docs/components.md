@@ -177,6 +177,10 @@ tokens semânticos e não cria modo ou layout alternativo para Dark.
 O Portal escolhe access, dados, URL e cache; o ACULTA420 mapeia para esses SDCs.
 Todos permanecem `experimental` até validação real. Estilos usam tokens
 semânticos compartilhados entre claro e escuro, HTML semântico e foco visível.
+Na prévia da barra, as conversas chegam agrupadas em caixas por remetente e
+ordenadas pela atualização mais recente; o cabeçalho abre a conversa mais nova
+daquela pessoa. O badge da navegação de Minha Conta usa vermelho dentro do
+shell `.portal-account`, mantendo a cor semântica original fora dele.
 
 A home/lista da Wiki usa css/components/wiki.css, arquivo temático de
 responsabilidade própria na biblioteca global. O markup continua preparado pelo

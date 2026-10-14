@@ -22,6 +22,9 @@ use Drupal\Core\Url;
 use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Service\UnreadThreadCounter;
+use Drupal\aculta_user\Friendship\FriendshipManagerInterface;
+use Drupal\user\UserInterface;
 use Drupal\site_alert\GetAlertsInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -37,6 +40,8 @@ final class MessagesController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
     private readonly PrivateMessageServiceInterface $privateMessageService,
+    private readonly UnreadThreadCounter $unreadThreadCounter,
+    private readonly FriendshipManagerInterface $friendshipManager,
     private readonly GetAlertsInterface $siteAlerts,
     private readonly FlagServiceInterface $flagService,
     private readonly TranslationInterface $translation,
@@ -50,6 +55,8 @@ final class MessagesController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('private_message.service'),
+      $container->get('aculta_messenger.unread_thread_counter'),
+      $container->get('aculta_user.friendship_manager'),
       $container->get('site_alert.get_alerts'),
       $container->get('flag'),
       $container->get('string_translation'),
@@ -60,7 +67,7 @@ final class MessagesController extends ControllerBase {
 
   /** Shows the communication entry points and native unread-thread count. */
   public function overview(): array {
-    $count = $this->privateMessageService->getUnreadThreadCount();
+    $count = $this->unreadThreadCounter->count();
     $summary = $count === 1
       ? $this->translation->translate('Você tem 1 conversa não lida.')
       : $this->translation->translate('Conversas não lidas: @count.', ['@count' => $count]);
@@ -96,16 +103,18 @@ final class MessagesController extends ControllerBase {
    * purpose-specific mailbox; conversation links are canonicalized to ACCOUNT.
    */
   public function preview(): Response {
-    // Opening the inbox is the member's acknowledgement that they have
-    // checked the current set of conversations. Reuse Private Message's
-    // native last-check state so its unread count and notifications agree.
-    $this->privateMessageService->updateLastCheckTime();
     $threads = $this->privateMessageService->getThreadsForUser(50)['threads'];
     $items = [];
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user'])
       ->setCacheMaxAge(0);
     $viewBuilder = $this->entityTypeManager->getViewBuilder('private_message_thread');
+
+    // Private Message already returns threads newest first. Keep that order
+    // explicit here because each sender box is positioned by its latest
+    // conversation and contains that sender's conversations in the same order.
+    usort($threads, static fn ($a, $b): int => (int) $b->getUpdatedTime() <=> (int) $a->getUpdatedTime());
+    $senderBoxes = [];
 
     foreach ($threads as $thread) {
       if (!$thread instanceof PrivateMessageThreadInterface) {
@@ -119,6 +128,15 @@ final class MessagesController extends ControllerBase {
 
       $cacheability->addCacheableDependency($thread);
       $item = $viewBuilder->view($thread, 'inbox');
+      $isUnread = $this->unreadThreadCounter->isUnread($thread);
+      $sender = $this->getConversationSender($thread);
+      $senderName = $sender?->getDisplayName() ?: (string) $this->translation->translate('Membro');
+      $item['#attributes']['class'][] = 'aculta-messenger-conversation';
+      $item['#attributes']['data-aculta-thread-id'] = (string) $thread->id();
+      $item['#attributes']['data-aculta-thread-unread'] = $isUnread ? 'true' : 'false';
+      if ($sender !== NULL) {
+        $cacheability->addCacheableDependency($sender);
+      }
       if (isset($item['inbox_link']) && is_array($item['inbox_link'])) {
         $item['inbox_link']['#attributes']['class'][] = 'use-ajax';
         $item['inbox_link']['#attributes']['data-dialog-type'] = 'modal';
@@ -126,10 +144,51 @@ final class MessagesController extends ControllerBase {
           'width' => 760,
           'classes' => ['ui-dialog' => 'aculta-messenger-conversation-dialog'],
         ], JSON_THROW_ON_ERROR);
-        $item['inbox_link']['#attributes']['aria-label'] = (string) $this->translation->translate('Abrir conversa');
+        $item['inbox_link']['#attributes']['data-aculta-thread-id'] = (string) $thread->id();
+        $item['inbox_link']['#attributes']['data-aculta-thread-unread'] = $isUnread ? 'true' : 'false';
+        $item['inbox_link']['#attributes']['aria-label'] = (string) $this->translation->translate('Abrir conversa com @name', ['@name' => $senderName]);
       }
       $this->canonicalizePrivateMessageLinks($item);
-      $items[] = $item;
+
+      $senderId = $sender?->id() ?? 'thread-' . $thread->id();
+      $senderKey = (string) $senderId;
+      if (!isset($senderBoxes[$senderKey])) {
+        $senderBoxes[$senderKey] = [
+          'updated' => (int) $thread->getUpdatedTime(),
+          'name' => $senderName,
+          'sender' => $sender,
+          'open' => $item['inbox_link'] ?? NULL,
+          'threads' => [],
+        ];
+      }
+      $senderBoxes[$senderKey]['threads'][] = $item;
+    }
+
+    // The groups were first encountered at their newest thread; sort anyway
+    // so this remains true if the upstream mapper changes its order later.
+    uasort($senderBoxes, static fn (array $a, array $b): int => $b['updated'] <=> $a['updated']);
+    foreach ($senderBoxes as $senderBox) {
+      $headingLink = $senderBox['open'];
+      if (is_array($headingLink)) {
+        $headingLink['#title'] = $senderBox['name'];
+        $headingLink['#attributes']['class'][] = 'aculta-messenger-sender__link';
+        $headingLink['#attributes']['aria-label'] = (string) $this->translation->translate('Abrir conversa com @name', ['@name' => $senderBox['name']]);
+      }
+      $box = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-messenger-sender']],
+        'heading' => [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-messenger-sender__heading']],
+          'name' => $headingLink ?? ['#plain_text' => $senderBox['name']],
+        ],
+        'conversations' => ['#theme' => 'item_list', '#items' => $senderBox['threads']],
+      ];
+      if ($senderBox['sender'] instanceof UserInterface) {
+        $cacheability->addCacheableDependency($senderBox['sender']);
+        $box['#cache']['tags'] = $senderBox['sender']->getCacheTags();
+      }
+      $items[] = $box;
     }
 
     if ($items === []) {
@@ -145,8 +204,26 @@ final class MessagesController extends ControllerBase {
     $cacheability->applyTo($build);
     $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
     return $this->buildDrawerResponse($build, [
-      'X-Aculta-Messages-Count' => '0',
+      'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
     ]);
+  }
+
+  /** Selects the latest incoming author, or the conversation partner. */
+  private function getConversationSender(PrivateMessageThreadInterface $thread): ?UserInterface {
+    $messages = array_values($thread->getMessages());
+    $latestMessage = $messages === [] ? NULL : $messages[array_key_last($messages)];
+    $sender = $latestMessage?->getOwner();
+    if ($sender !== NULL && (int) $sender->id() !== (int) $this->currentUser->id()) {
+      return $sender;
+    }
+
+    foreach ($thread->getMembers() as $member) {
+      if ((int) $member->id() !== (int) $this->currentUser->id()) {
+        return $member;
+      }
+    }
+
+    return $sender;
   }
 
   /** Rewrites Private Message thread actions to the canonical account purpose. */

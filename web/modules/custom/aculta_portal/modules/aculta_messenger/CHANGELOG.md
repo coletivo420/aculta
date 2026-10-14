@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.7 — conversas agrupadas por remetente
+
+- A prévia organiza conversas em caixas por remetente e prioriza a conversa atualizada mais recentemente.
+- O nome do remetente abre sua conversa mais recente; as linhas de conversa continuam abrindo os respectivos históricos nativos.
+- A ordem é baseada no timestamp `updated` do Private Message; não há armazenamento paralelo.
+- `php -l` e validação funcional autenticada: pendentes nesta etapa.
+- RUNTIME STATUS: DEFERRED até aplicação/teste do commit no checkout local.
+
 ## 0.1.1-dev.6 — caixa visual de conversas e confirmação de avisos
 
 - A gaveta de mensagens limpa a contagem de conversas não lidas ao abrir, usando o last-check nativo do Private Message.

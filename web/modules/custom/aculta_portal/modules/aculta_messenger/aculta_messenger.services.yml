@@ -1,4 +1,9 @@
 services:
+  aculta_messenger.unread_thread_counter:
+    class: Drupal\aculta_messenger\Service\UnreadThreadCounter
+    arguments:
+      - '@current_user'
+      - '@private_message.service'
   aculta_messenger.private_message_form_validator:
     class: Drupal\aculta_messenger\Form\PrivateMessageFormValidator
     arguments:

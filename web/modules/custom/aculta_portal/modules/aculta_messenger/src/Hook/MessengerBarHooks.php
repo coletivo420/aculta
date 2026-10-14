@@ -17,7 +17,7 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\site_alert\GetAlertsInterface;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -28,8 +28,8 @@ final class MessengerBarHooks {
   public function __construct(
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
-    #[Autowire(service: 'private_message.service')]
-    private readonly PrivateMessageServiceInterface $privateMessageService,
+    #[Autowire(service: 'aculta_messenger.unread_thread_counter')]
+    private readonly UnreadThreadCounter $unreadThreadCounter,
     #[Autowire(service: 'site_alert.get_alerts')]
     private readonly GetAlertsInterface $siteAlerts,
     #[Autowire(service: 'entity_type.manager')]
@@ -103,7 +103,7 @@ final class MessengerBarHooks {
     $url = Url::fromRoute('aculta_messenger.preview')->toString(TRUE);
     $variables['aculta_messenger'] = [
       'url' => $url->getGeneratedUrl(),
-      'unread_count' => max(0, $this->privateMessageService->getUnreadThreadCount()) + count($this->friendshipManager->getIncomingRequests()),
+      'unread_count' => $this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests()),
     ];
 
     if (isset($variables['page']) && is_array($variables['page'])) {

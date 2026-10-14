@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.30', 'Theme metadata marks the current version 0.6.0-dev.30.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.31', 'Theme metadata marks the current version 0.6.0-dev.31.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -248,6 +248,8 @@ $expectedTemplates = [
   'node--blog--full.html.twig',
   // Site Alert keeps native scheduling/access and delegates presentation to the theme SDC.
   'site-alert.html.twig',
+  // Private Message thread wrapper exposes only its native rendered content and supplied read state.
+  'private-message-thread.html.twig',
   // Wiki article and teaser presenters intentionally omit submitted-byline metadata.
   'node--wiki-entry--full.html.twig',
   'node--wiki-entry--teaser.html.twig',

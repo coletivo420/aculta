@@ -6,6 +6,11 @@ instalados nesta branch.
 
 ## Estado do repositório
 
+Na prévia da barra, as threads são agrupadas pelo outro membro da conversa e
+ordenadas pela atualização mais recente. O cabeçalho de cada caixa abre a
+thread mais recente daquele remetente; as threads individuais permanecem
+ordenadas dentro da caixa e mantêm o link nativo do Private Message.
+
 ### Pesquisa de pedidos de amizade (0.1.1)
 
 O `composer.lock` desta branch contém Drupal Core 11.4.10, Flag 5.1.1, Private

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Entity\PrivateMessageInterface;
@@ -16,8 +15,6 @@ final class PrivateMessagePresentationHooks {
   public function __construct(
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
-    #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /** Adds the sender avatar and direction state without changing message data. */
@@ -38,9 +35,12 @@ final class PrivateMessagePresentationHooks {
       return;
     }
 
-    $variables['aculta_messenger_sender_avatar'] = $this->entityTypeManager
-      ->getViewBuilder('user')
-      ->view($sender, 'compact');
+    // Render only the native picture field. A missing user view mode can fall
+    // back to profile actions with unset labels in some site configurations.
+    if (!$sender->hasField('user_picture') || $sender->get('user_picture')->isEmpty()) {
+      return;
+    }
+    $variables['aculta_messenger_sender_avatar'] = $sender->get('user_picture')->view('default');
     $variables['aculta_messenger_sender_avatar']['#cache']['contexts'][] = 'user';
     $variables['aculta_messenger_sender_avatar']['#cache']['tags'] = array_merge(
       $variables['aculta_messenger_sender_avatar']['#cache']['tags'] ?? [],
