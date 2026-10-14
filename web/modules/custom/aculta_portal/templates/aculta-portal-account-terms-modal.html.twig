@@ -1,7 +1,7 @@
 {#
-  Fallback neutro do modal de termos (aculta_portal). Sem apresentação: o tema ativo (ACULTA420) sobrescreve este template.
+  Fallback neutro do popup de aceite dos termos (aculta_portal). Sem apresentação: o tema ativo (ACULTA420)
+  sobrescreve este template. O JavaScript abre o conteúdo como diálogo modal do Drupal (core/drupal.dialog).
 #}
-<dialog id="aculta-account-terms" role="dialog" aria-modal="true" aria-labelledby="aculta-account-terms-title">
-  <h2 id="aculta-account-terms-title">{{ title }}</h2>
+<div id="aculta-account-terms" data-portal-ui="account-terms" data-dialog-title="{{ title }}" hidden>
   {{ form }}
-</dialog>
+</div>

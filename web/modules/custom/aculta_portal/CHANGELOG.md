@@ -11,6 +11,7 @@
 - Popup "Entrar": botão "Continuar com Google" no topo, pelo mesmo fluxo OAuth (rota do host da conta, retorno ao host de origem).
 - Popup "Entrar": ordem senha → Entrar → "Esqueceu sua senha?" → divisor → "Cadastre-se". O botão não fica no rodapé do diálogo (contêiner sem `form-actions`).
 - Minha conta > Conexões: caixa do Google com logo (`assets/brands/google.svg`): "Conectar Google" sem conexão e "Conectado" com check quando conectada. A conta e o botão de desconectar ficam em bloco próprio.
+- Popup de aceite dos termos: diálogo modal do Drupal (core/drupal.dialog), sem X e sem fechar por Esc; só o aceite fecha. Visual no tema (portal-account-terms-modal.css).
 - Fronteira mantida: o módulo não emite classes de design; os tokens `login-popup` e `login-popup-links` são mapeados
   no tema (`PortalUiHooks`).
 - RUNTIME STATUS: DEFERRED. Pendentes: teste de navegador do popup (TESTES-NAVEGADOR, seção R) e teste com outro tema

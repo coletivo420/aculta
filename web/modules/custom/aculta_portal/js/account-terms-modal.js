@@ -1,66 +1,28 @@
 (function (Drupal, once) {
   'use strict';
 
-  const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
   /**
-   * Popup persistente de aceite dos termos.
+   * Popup persistente de aceite dos termos, como diálogo modal do Drupal (core/drupal.dialog).
    *
-   * Esc e o botão de fechar do navegador podem fechar um <dialog> sem ativação do usuário, e nesse caso o
-   * cancel não é cancelável. Por isso o popup é reaberto no evento close enquanto a página estiver aqui (o aceite
-   * recarrega a página). O foco fica preso: Tab e Shift+Tab circulam dentro do popup. Sem suporte a <dialog>,
-   * o popup não abre; o servidor não entrega o aceite sem os termos aceitos.
+   * O diálogo não fecha sem aceite: Esc não fecha (closeOnEscape) e beforeClose cancela qualquer fechamento.
+   * O X some pelo CSS do tema (data-portal-ui="account-terms"). O foco fica preso no diálogo (modal do jQuery UI).
+   * Depois do aceite o formulário envia e a página volta ao destino. Sem JavaScript o conteúdo continua oculto
+   * (atributo hidden) e o servidor não libera as áreas restritas.
    */
-  function focusables(dialog) {
-    return Array.from(dialog.querySelectorAll(FOCUSABLE)).filter((el) => el.offsetParent !== null);
-  }
-
   Drupal.behaviors.acultaAccountTermsModal = {
     attach(context) {
-      once('aculta-account-terms-modal', '#aculta-account-terms', context).forEach((dialog) => {
-        if (typeof dialog.showModal !== 'function') {
-          return;
-        }
-        const open = () => {
-          if (dialog.isConnected && !dialog.open) {
-            dialog.showModal();
-          }
-        };
-
-        dialog.addEventListener('cancel', (event) => event.preventDefault());
-        dialog.addEventListener('close', () => window.setTimeout(open, 0));
-
-        dialog.addEventListener('keydown', (event) => {
-          if (event.key !== 'Tab') {
-            return;
-          }
-          const items = focusables(dialog);
-          if (items.length === 0) {
-            return;
-          }
-          const first = items[0];
-          const last = items[items.length - 1];
-          const active = document.activeElement;
-          const outside = !dialog.contains(active);
-          if (event.shiftKey && (active === first || outside)) {
-            event.preventDefault();
-            last.focus();
-          }
-          else if (!event.shiftKey && (active === last || outside)) {
-            event.preventDefault();
-            first.focus();
-          }
+      once('aculta-account-terms-modal', '#aculta-account-terms', context).forEach((element) => {
+        element.removeAttribute('hidden');
+        const dialog = Drupal.dialog(element, {
+          title: element.dataset.dialogTitle || '',
+          modal: true,
+          closeOnEscape: false,
+          width: 520,
+          maxHeight: window.innerHeight - 32,
+          beforeClose: () => false,
         });
-
-        // Foco que sai do popup (por exemplo, pelo navegador) volta para o primeiro controle.
-        document.addEventListener('focusin', (event) => {
-          if (dialog.open && !dialog.contains(event.target)) {
-            focusables(dialog)[0]?.focus();
-          }
-        });
-
-        open();
-        dialog.querySelector('input[type="checkbox"]')?.focus();
+        dialog.showModal();
+        element.querySelector('input[type="checkbox"]')?.focus();
       });
     },
   };
