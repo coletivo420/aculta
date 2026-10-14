@@ -188,8 +188,7 @@ final class MessagesController extends ControllerBase {
       ];
     }
 
-    $unreadNoticeCount = 0;
-    foreach ($this->buildPersistentNoticeItems(50, $cacheability, $unreadNoticeCount) as $item) {
+    foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
       $items[] = $item;
     }
 
@@ -204,7 +203,7 @@ final class MessagesController extends ControllerBase {
     ];
     $cacheability->applyTo($build);
     return $this->buildDrawerResponse($build, [
-      'X-Aculta-Alerts-Count' => (string) ($activeAlertCount + $unreadNoticeCount),
+      'X-Aculta-Alerts-Count' => (string) ($activeAlertCount + $this->countUnreadPersistentNotices()),
     ]);
   }
 
@@ -216,6 +215,28 @@ final class MessagesController extends ControllerBase {
       'Cache-Control' => 'private, no-store, no-cache, must-revalidate',
       'X-Content-Type-Options' => 'nosniff',
     ]);
+  }
+
+  /** Counts every visible unread persistent notice, beyond the preview limit. */
+  private function countUnreadPersistentNotices(): int {
+    $flag = $this->flagService->getFlagById('aculta_notice_read');
+    if (!$flag instanceof FlagInterface) {
+      return 0;
+    }
+    $ids = $this->entityTypeManager->getStorage('node')->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('type', 'aculta_notice')
+      ->condition('status', 1)
+      ->execute();
+    $count = 0;
+    foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($ids) as $node) {
+      if ($node instanceof NodeInterface
+        && $node->access('view', $this->currentUser)
+        && $this->flagService->getFlagging($flag, $node, $this->currentUser) === NULL) {
+        $count++;
+      }
+    }
+    return $count;
   }
 
   /** Lists published persistent notices visible to this member, with Flag state. */
@@ -234,7 +255,7 @@ final class MessagesController extends ControllerBase {
   }
 
   /** Builds authorized notice render arrays and native per-member Flag actions. */
-  private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability, ?int &$unreadCount = NULL): array {
+  private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability): array {
     $ids = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'aculta_notice')
@@ -259,9 +280,6 @@ final class MessagesController extends ControllerBase {
         $flagging = $this->flagService->getFlagging($flag, $node, $this->currentUser);
         $read = $flagging !== NULL;
         $cacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
-      }
-      if ($unreadCount !== NULL && !$read) {
-        $unreadCount++;
       }
       $item = $this->entityTypeManager->getViewBuilder('node')->view($node, 'full');
       if ($flag instanceof FlagInterface) {
