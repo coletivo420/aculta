@@ -13,13 +13,14 @@
         aria-controls="aculta-alerts-offcanvas"
         aria-label="{{ label }}">
   <i class="bi bi-bell" aria-hidden="true"></i>
-  <span class="badge aculta-cart-utility__count" data-count="{{ count }}">{{ count }}</span>
+  <span class="badge aculta-cart-utility__count" data-aculta-alerts-count data-count="{{ count }}">{{ count }}</span>
 </button>
 
 <div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-alerts-offcanvas"
      tabindex="-1"
      id="aculta-alerts-offcanvas"
      aria-labelledby="aculta-alerts-offcanvas-title"
+     data-aculta-drawer-count="alerts"
      data-aculta-drawer-url="{{ href }}"
      data-aculta-drawer-label="{{ 'Não foi possível carregar os avisos. Tente novamente.'|t }}">
   <div class="offcanvas-header">

@@ -1,3 +1,13 @@
+## 0.6.0-dev.27 — atualização sob demanda dos contadores — 2026-10-14
+
+Classificação: MINOR da linha aberta (atualização de interface multidomínio).
+
+- Ao abrir cada gaveta, as respostas AJAX atualizam o badge de mensagens ou de avisos junto com o conteúdo,
+  sem polling em segundo plano.
+- O throbber de espera do Drupal Core é ocultado apenas no desktop para o ícone de busca; a abertura AJAX e a
+  indicação em telas menores permanecem.
+- Gates estáticos e validação visual/runtime pendentes nesta cópia; RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.26 — gavetas de comunicação no padrão do carrinho — 2026-10-14
 
 Classificação: MINOR da linha aberta (apresentação de mensagens e avisos).

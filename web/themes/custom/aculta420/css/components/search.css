@@ -128,6 +128,11 @@
   border-color: var(--bs-btn-hover-border-color);
 }
 
+/* No desktop, mantém a abertura AJAX do diálogo sem o throbber de espera do Core. */
+@media (min-width: 768px) {
+  .aculta-search-utility + .ajax-progress-throbber { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .aculta-search form[role="search"] .form-submit,
   .aculta-search-preview .form-submit { transition: none; }

@@ -8,6 +8,12 @@ Mudanças relevantes do ACULTA Messenger.
   a consulta ocorre ao abrir a gaveta, sem atualizações em segundo plano.
 - RUNTIME STATUS: DEFERRED — conferir DI, cache e interação no Homelab.
 
+## 0.1.1-dev.5 — contadores atualizados ao abrir as gavetas
+
+- Prévia de conversas retorna o total atual de threads não lidas; prévia de avisos retorna Site Alerts visíveis mais comunicados persistentes ainda não lidos.
+- O tema aplica a contagem e o rótulo acessível da barra na resposta da mesma requisição, sem polling.
+- RUNTIME STATUS: DEFERRED — comportamento e contagem por conta precisam de teste HTTP autenticado.
+
 ## 0.1.1-dev.3 — gavetas de mensagens e avisos na barra
 
 - A prévia privada passa a exibir até 50 conversas recentes dentro do painel e remove o link de saída

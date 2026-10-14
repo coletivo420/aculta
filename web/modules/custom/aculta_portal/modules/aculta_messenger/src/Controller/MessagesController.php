@@ -129,7 +129,9 @@ final class MessagesController extends ControllerBase {
       '#cache' => ['max-age' => 0],
     ];
     $cacheability->applyTo($build);
-    return $this->buildDrawerResponse($build);
+    return $this->buildDrawerResponse($build, [
+      'X-Aculta-Messages-Count' => (string) max(0, $this->privateMessageService->getUnreadThreadCount()),
+    ]);
   }
 
   /** Rewrites Private Message thread actions to the canonical account purpose. */
@@ -166,12 +168,14 @@ final class MessagesController extends ControllerBase {
     }
     $items = [];
 
+    $activeAlertCount = 0;
     foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
       $access = $alert->access('view', $this->currentUser, TRUE);
       $cacheability->addCacheableDependency($alert)->addCacheableDependency($access);
       if (!$access->isAllowed()) {
         continue;
       }
+      $activeAlertCount++;
       // Match the public render contract of SiteAlertBlock; formatted text and
       // severity remain owned by the contrib entity and its theme hook.
       $items[] = [
@@ -184,7 +188,8 @@ final class MessagesController extends ControllerBase {
       ];
     }
 
-    foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
+    $unreadNoticeCount = 0;
+    foreach ($this->buildPersistentNoticeItems(50, $cacheability, $unreadNoticeCount) as $item) {
       $items[] = $item;
     }
 
@@ -198,13 +203,15 @@ final class MessagesController extends ControllerBase {
       'alerts' => ['#theme' => 'item_list', '#items' => $items],
     ];
     $cacheability->applyTo($build);
-    return $this->buildDrawerResponse($build);
+    return $this->buildDrawerResponse($build, [
+      'X-Aculta-Alerts-Count' => (string) ($activeAlertCount + $unreadNoticeCount),
+    ]);
   }
 
   /** Renders a same-origin, uncached HTML fragment for the Bootstrap drawers. */
-  private function buildDrawerResponse(array $build): Response {
+  private function buildDrawerResponse(array $build, array $headers = []): Response {
     $content = $this->renderer->renderInIsolation($build);
-    return new Response((string) $content, Response::HTTP_OK, [
+    return new Response((string) $content, Response::HTTP_OK, $headers + [
       'Content-Type' => 'text/html; charset=UTF-8',
       'Cache-Control' => 'private, no-store, no-cache, must-revalidate',
       'X-Content-Type-Options' => 'nosniff',
@@ -227,7 +234,7 @@ final class MessagesController extends ControllerBase {
   }
 
   /** Builds authorized notice render arrays and native per-member Flag actions. */
-  private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability): array {
+  private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability, ?int &$unreadCount = NULL): array {
     $ids = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'aculta_notice')
@@ -247,10 +254,14 @@ final class MessagesController extends ControllerBase {
       if (!$access->isAllowed()) {
         continue;
       }
-      $read = $flag instanceof FlagInterface
-        && $this->flagService->getFlagging($flag, $node, $this->currentUser) !== NULL;
+      $read = FALSE;
       if ($flag instanceof FlagInterface) {
+        $flagging = $this->flagService->getFlagging($flag, $node, $this->currentUser);
+        $read = $flagging !== NULL;
         $cacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
+      }
+      if ($unreadCount !== NULL && !$read) {
+        $unreadCount++;
       }
       $item = $this->entityTypeManager->getViewBuilder('node')->view($node, 'full');
       if ($flag instanceof FlagInterface) {

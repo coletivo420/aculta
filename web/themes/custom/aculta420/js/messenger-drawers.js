@@ -29,6 +29,10 @@
               if (!response.ok) {
                 throw new Error('Drawer request failed.');
               }
+              const counterHeader = drawer.dataset.acultaDrawerCount === 'messages'
+                ? 'X-Aculta-Messages-Count'
+                : 'X-Aculta-Alerts-Count';
+              updateCounter(drawer.dataset.acultaDrawerCount, response.headers.get(counterHeader));
               return response.text();
             })
             .then((html) => {
@@ -53,4 +57,27 @@
       });
     },
   };
+
+  function updateCounter(type, value) {
+    const count = Number.parseInt(value || '', 10);
+    if (!Number.isFinite(count) || count < 0) {
+      return;
+    }
+
+    const selector = type === 'messages' ? '[data-aculta-messenger-count]' : '[data-aculta-alerts-count]';
+    const counter = document.querySelector(selector);
+    if (!counter) {
+      return;
+    }
+
+    counter.textContent = String(count);
+    counter.dataset.count = String(count);
+    const trigger = counter.closest('button');
+    if (trigger) {
+      const label = type === 'messages'
+        ? (count === 1 ? Drupal.t('1 conversa não lida. Abrir mensagens') : Drupal.t('@count conversas não lidas. Abrir mensagens', { '@count': count }))
+        : (count === 1 ? Drupal.t('1 aviso ativo ou não lido. Abrir avisos') : Drupal.t('@count avisos ativos ou não lidos. Abrir avisos', { '@count': count }));
+      trigger.setAttribute('aria-label', label);
+    }
+  }
 })(Drupal, once);

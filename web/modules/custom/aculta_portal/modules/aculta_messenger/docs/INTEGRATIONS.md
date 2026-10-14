@@ -186,9 +186,10 @@ same-origin e monta o fragmento a partir das entidades/Views com as regras de
 acesso do usuário atual. Ao abrir uma gaveta, o tema faz uma requisição GET com
 credenciais de sessão, insere o fragmento e anexa os behaviors Drupal para
 links como os controles de leitura. Fechar interrompe uma requisição pendente.
-Não há polling, novo framework de AJAX nem caixa postal paralela. As respostas
-usam `no-store`; a instalação real e o comportamento visual ainda exigem
-validação no Homelab.
+As respostas devolvem os contadores atuais nos cabeçalhos; o tema atualiza os
+badges e os rótulos acessíveis junto com o conteúdo. Não há polling, novo
+framework de AJAX nem caixa postal paralela. As respostas usam `no-store`; a
+instalação real e o comportamento visual ainda exigem validação no Homelab.
 
 ### Assinaturas de tópicos do fórum (dev.5)
 
