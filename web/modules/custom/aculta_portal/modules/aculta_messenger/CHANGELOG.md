@@ -2,6 +2,20 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.20 — "Iniciar nova conversa" funcionando de ponta a ponta — 2026-10-15
+
+Classificação: PATCH (correção do fluxo da 0.1.1-dev.19, que não tinha sido testado no navegador).
+
+- O botão "Iniciar nova conversa" é um botão de verdade (elemento de botão com classes do tema), e não um texto de link.
+- O campo de busca de membros recebe a classe que o script de busca procura, e o script passa a ser carregado em todas as páginas de membros por `hook_page_attachments` (antes era anexado a um array de região, que não chegava à página).
+- Envio da primeira mensagem por `fetch` dentro da gaveta: o AJAX do Form API não funciona em fragmento carregado por `fetch`, porque depende de `drupalSettings`. O formulário desativa o redirecionamento do Form API, e a gaveta recebe a conversa como resposta.
+- Correção no envio: o Private Message recebe entidades de usuário em `getThreadForMembers()`, não IDs.
+- Cancelar e Voltar para o início são elementos de link com os atributos que a gaveta usa; o `toRenderable()` antigo descartava esses atributos e fazia a gaveta carregar a página inteira.
+- A rota de compor aceita POST (`methods: [GET, POST]`).
+- Tema: `messenger-drawers.js` trata o envio do formulário de nova conversa e aceita o botão como ação de abrir a etapa. A alteração do tema não tem versão própria neste commit (ver o changelog do tema).
+- Testado no Firefox headless (geckodriver) nas larguras de 1280 e 390 px: passos completos do fluxo, Cancelar, Voltar para o início e envio. Roteiro e resultados em `docs/portal/TESTES-NAVEGADOR.md`, seção T.
+- Pendências: a visão nativa da conversa mostra "Clear history" e "Member(s)" em inglês (já existia); toque em aparelho real e leitor de tela não testados.
+
 ## 0.1.1-dev.19 — "Iniciar nova conversa" na barra de mensagens — 2026-10-15
 
 - Novo botão "Iniciar nova conversa" na primeira janela da barra de mensagens. Ele abre, por AJAX, um campo de busca de membros que funciona como a busca do cabeçalho: resultados interativos a partir de 3 caracteres, o mesmo atraso e a mesma dica de caracteres mínimos, sem abrir a página de busca completa.

@@ -127,6 +127,7 @@ aculta_messenger.new_conversation_search:
 
 aculta_messenger.new_conversation_compose:
   path: '/mensagens/nova/{user}/painel'
+  methods: [GET, POST]
   defaults:
     _controller: '\Drupal\aculta_messenger\Controller\NewConversationController::compose'
     _title: 'Nova conversa'

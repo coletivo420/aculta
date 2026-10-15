@@ -9,15 +9,18 @@ use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
+use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * "Iniciar nova conversa" in the multidomain bar drawer: find a member, then write the first message.
@@ -58,7 +61,6 @@ final class NewConversationController extends ControllerBase {
     $build = [
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa')],
       'search' => $this->searchForm(),
-      '#attached' => ['library' => ['aculta_portal/search-preview']],
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
     return $this->fragment($build);
@@ -101,14 +103,44 @@ final class NewConversationController extends ControllerBase {
     return $this->fragment($build);
   }
 
-  /** Second step: the first-message form for one member. */
-  public function compose(UserInterface $user): Response {
+  /**
+   * Second step: the first-message form for one member. The drawer posts the form here with fetch, so a
+   * successful POST answers with the new conversation and an invalid one with the form and its errors.
+   */
+  public function compose(UserInterface $user, Request $request): Response {
     if ((int) $user->id() === (int) $this->account->id() || !$user->isActive()) {
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+      throw new NotFoundHttpException();
     }
+    $formState = new FormState();
+    $formState->set('recipient', (int) $user->id());
+    $form = $this->forms->buildForm(NewConversationForm::class, $formState);
+
+    $thread = $formState->get('thread');
+    if ($request->isMethod('POST') && $thread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
+      // The same conversation container the drawer uses when a thread is opened (MessagesController::drawerConversation).
+      return $this->fragment([
+        'conversation' => [
+          '#type' => 'container',
+          '#attributes' => [
+            'class' => ['aculta-messenger-drawer-conversation'],
+            'data-aculta-conversation-view' => '',
+            'data-aculta-thread-id' => (string) $thread->id(),
+          ],
+          'thread' => $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full'),
+        ],
+        'back' => [
+          '#type' => 'link',
+          '#title' => $this->t('← Todas as conversas'),
+          '#url' => Url::fromRoute('aculta_messenger.preview'),
+          '#attributes' => ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'new-conversation-back'],
+        ],
+        '#cache' => ['contexts' => ['user'], 'max-age' => 0],
+      ]);
+    }
+
     $build = [
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa com @name', ['@name' => $user->getDisplayName()])],
-      'form' => $this->forms->getForm(NewConversationForm::class, (int) $user->id()),
+      'form' => $form,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
     return $this->fragment($build);
@@ -153,16 +185,16 @@ final class NewConversationController extends ControllerBase {
       '#type' => 'html_tag',
       '#tag' => 'form',
       '#attributes' => ['method' => 'get', 'action' => '#', 'role' => 'search', 'data-aculta-new-conversation' => ''],
-      'input' => [
-        '#type' => 'html_tag',
-        '#tag' => 'input',
+      // A Form API search element (not a raw html_tag input) so the theme's token mapping reaches it.
+      'q' => [
+        '#type' => 'search',
+        '#name' => 'q',
+        '#title' => (string) $this->t('Buscar membro'),
+        '#title_display' => 'invisible',
+        '#placeholder' => (string) $this->t('Buscar membro pelo nome'),
+        '#maxlength' => 100,
         '#attributes' => [
-          'type' => 'search',
-          'name' => 'q',
-          'maxlength' => '100',
           'autocomplete' => 'off',
-          'placeholder' => (string) $this->t('Buscar membro pelo nome'),
-          'aria-label' => (string) $this->t('Buscar membro'),
           'data-portal-ui' => 'search-preview-input',
           'data-preview-url' => Url::fromRoute('aculta_messenger.new_conversation_search')->toString(),
           'data-preview-target' => 'aculta-new-conversation-preview',

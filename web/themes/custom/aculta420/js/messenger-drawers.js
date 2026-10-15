@@ -107,7 +107,8 @@
         let request;
         const content = drawer.querySelector('[data-aculta-drawer-content]');
 
-        const navigate = (url) => {
+        // init carries a POST body for the new-conversation form; the answer replaces the drawer content either way.
+        const navigate = (url, init = {}) => {
           if (!content || !url) {
             return;
           }
@@ -121,6 +122,7 @@
             cache: 'no-store',
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             signal: activeRequest.signal,
+            ...init,
           })
             .then((response) => {
               if (!response.ok) {
@@ -149,7 +151,8 @@
         };
 
         drawer.addEventListener('click', (event) => {
-          const link = event.target.closest('a[data-aculta-conversation-url], a[data-aculta-drawer-back]');
+          // The "Iniciar nova conversa" button carries data-aculta-conversation-url too; it is not in a form.
+          const link = event.target.closest('a[data-aculta-conversation-url], button[data-aculta-conversation-url], input[data-aculta-conversation-url], a[data-aculta-drawer-back]');
           if (!link || !drawer.contains(link)) {
             return;
           }
@@ -157,10 +160,20 @@
           navigate(link.dataset.acultaConversationUrl || link.href);
         });
 
-        // The member search inside the drawer is not a page search: Enter must not submit it.
         drawer.addEventListener('submit', (event) => {
+          // The member search inside the drawer is not a page search: Enter must not submit it.
           if (event.target.matches('form[data-aculta-new-conversation]')) {
             event.preventDefault();
+            return;
+          }
+          // First message of a new conversation: posted with fetch, because the Form API AJAX needs page settings.
+          if (event.target.matches('form[data-aculta-new-conversation-form]')) {
+            event.preventDefault();
+            const body = new FormData(event.target);
+            if (event.submitter?.name) {
+              body.append(event.submitter.name, event.submitter.value);
+            }
+            navigate(event.target.action, { method: 'POST', body });
           }
         });
 

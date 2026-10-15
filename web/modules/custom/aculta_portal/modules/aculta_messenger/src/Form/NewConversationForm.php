@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Form;
 
-use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\user\UserInterface;
-use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessage;
@@ -64,18 +60,25 @@ final class NewConversationForm extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('Enviar'),
       '#attributes' => ['data-portal-ui' => 'new-conversation-submit'],
-      '#ajax' => ['callback' => '::ajaxSubmit', 'event' => 'click', 'progress' => ['type' => 'none']],
     ];
     // Cancelar: discard the draft and return to the member search. Voltar: the conversation list.
+    // Link elements, not Link::toRenderable(): the drawer finds these links by their data attributes,
+    // and toRenderable() drops the attributes, so the click would load the fragment as a whole page.
     $form['links'] = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'new-conversation-links'],
-      'cancel' => Link::fromTextAndUrl($this->t('Cancelar'), Url::fromRoute('aculta_messenger.new_conversation'), [
-        'attributes' => ['data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(), 'data-portal-ui' => 'new-conversation-back'],
-      ])->toRenderable(),
-      'home' => Link::fromTextAndUrl($this->t('Voltar para o início'), Url::fromRoute('aculta_messenger.preview'), [
-        'attributes' => ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'new-conversation-back'],
-      ])->toRenderable(),
+      'cancel' => [
+        '#type' => 'link',
+        '#title' => $this->t('Cancelar'),
+        '#url' => Url::fromRoute('aculta_messenger.new_conversation'),
+        '#attributes' => ['data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(), 'data-portal-ui' => 'new-conversation-back'],
+      ],
+      'home' => [
+        '#type' => 'link',
+        '#title' => $this->t('Voltar para o início'),
+        '#url' => Url::fromRoute('aculta_messenger.preview'),
+        '#attributes' => ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'new-conversation-back'],
+      ],
     ];
     $form['#cache'] = ['max-age' => 0];
     return $form;
@@ -100,7 +103,9 @@ final class NewConversationForm extends FormBase {
     if ($recipient === NULL) {
       return;
     }
-    $thread = $this->privateMessageService->getThreadForMembers([(int) $this->currentUser->id(), (int) $recipient->id()]);
+    // The Private Message mapper reads ->id() from each member, so the members are user entities, not IDs.
+    $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
+    $thread = $this->privateMessageService->getThreadForMembers([$sender, $recipient]);
     $message = PrivateMessage::create([
       'owner' => (int) $this->currentUser->id(),
       'message' => ['value' => (string) $formState->getValue('message'), 'format' => 'plain_text'],
@@ -109,24 +114,9 @@ final class NewConversationForm extends FormBase {
     $thread->addMessage($message);
     $thread->save();
     $formState->set('thread', $thread);
-  }
-
-  /** Errors re-render the form; success shows the conversation in the drawer. */
-  public function ajaxSubmit(array &$form, FormStateInterface $formState): AjaxResponse {
-    $response = new AjaxResponse();
-    $thread = $formState->get('thread');
-    if ($formState->hasAnyErrors() || !$thread instanceof PrivateMessageThreadInterface) {
-      $response->addCommand(new HtmlCommand('[data-aculta-drawer-content]', $form));
-      return $response;
-    }
-    $view = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
-    $response->addCommand(new HtmlCommand('[data-aculta-drawer-content]', [
-      'thread' => $view,
-      'back' => Link::fromTextAndUrl($this->t('← Todas as conversas'), Url::fromRoute('aculta_messenger.preview'), [
-        'attributes' => ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'new-conversation-back'],
-      ])->toRenderable(),
-    ]));
-    return $response;
+    // The drawer receives the conversation as the answer to its POST (NewConversationController::compose).
+    // A Form API redirect would send the drawer back to the compose step with a 303.
+    $formState->disableRedirect();
   }
 
   private function recipient(FormStateInterface $formState): ?UserInterface {

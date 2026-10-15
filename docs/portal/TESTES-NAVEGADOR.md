@@ -342,3 +342,35 @@ Observações:
 - Ordem de itens na reordenação: não há alça de arrasto nesta versão; ver a Fase 10 sem reordenação.
 
 Decisão pendente: com a rodada 2 sem defeitos abertos, a Fase 10 pode ser declarada `0.1.0-rc.1` pelo responsável. A versão do módulo continua `0.1.0-dev.12` até essa decisão.
+
+## T. Iniciar nova conversa na barra de mensagens (aculta_messenger 0.1.1-dev.20, 2026-10-15)
+
+### Pré-condições
+
+- Host: servidor de testes `aculta.toca.net.br` (Homelab, runtime `aculta_runtime`).
+- Conta: membro comum `teste.comum`, login por link único gerado com `drush uli`.
+- Destinatário: `teste.destino.nova` (criado só para o teste).
+- Navegador: Firefox ESR 153 headless, controlado pelo geckodriver 0.37.1 (protocolo WebDriver). O Chromium do host travou a aba nesta rodada e não foi usado.
+- Larguras: 1280 px (desktop) e 390 px (celular).
+
+### Roteiro
+
+1. Abrir a barra de mensagens; a primeira ação da janela é o botão "Iniciar nova conversa".
+2. Clicar no botão: a janela mostra "Nova conversa", o campo "Buscar membro pelo nome" e a dica de três caracteres.
+3. Digitar `teste`: aparece o resultado `teste.destino.nova`, sem abrir a busca completa.
+4. Escolher o membro: aparecem "Nova conversa com teste.destino.nova", a caixa de mensagem, Enviar, Cancelar e Voltar para o início.
+5. Cancelar: volta à busca. Voltar para o início: volta à lista de conversas.
+6. Escrever a mensagem e clicar em Enviar: a janela mostra a conversa com a mensagem enviada.
+
+### Registro do resultado
+
+- Passos 1 a 6 passaram nas duas larguras, com capturas de tela. Sem erros de JavaScript no console.
+- Defeitos encontrados nesta rodada e corrigidos antes desta entrega:
+  - O botão saía como texto puro: o mapeamento de tokens do tema não alcança links nem `html_tag` (são montados como string no pre-render do Core). Passou a ser um elemento de botão.
+  - O campo de busca não recebia a classe do tema e o script de busca não era carregado na página. O campo passou a ser `#type => search`, e a biblioteca passou a ser anexada por `hook_page_attachments`.
+  - O envio recarregava a página: o AJAX do Form API depende de `drupalSettings`, que o fragmento buscado não traz. O envio passou a ser feito por `fetch` na própria gaveta.
+  - O envio falhava com `Call to a member function id() on int`: o Private Message espera entidades de usuário, não IDs.
+  - Depois do envio, o Form API redirecionava com 303 para a própria página: o redirecionamento foi desativado, e a gaveta recebe a conversa.
+  - Cancelar e Voltar para o início saíam sem os atributos `data-*`, e a gaveta carregava o fragmento como página inteira: os links passaram a ser elementos `#type => link` com atributos.
+- Não testado nesta rodada: toque em dispositivo real, leitor de tela, membro com privacidade "somente amigos", envio com mensagem vazia e bloqueio entre membros.
+- Observação de produto, não corrigida: a conversa aberta na gaveta mostra "Clear history" e "Member(s)" em inglês, vindos da visão nativa do Private Message. Já existia antes desta mudança.

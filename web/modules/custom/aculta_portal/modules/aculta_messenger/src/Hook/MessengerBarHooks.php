@@ -85,11 +85,6 @@ final class MessengerBarHooks {
       return;
     }
 
-    // The new-conversation search in the drawer reuses the header search script; it must be on the page.
-    if (isset($variables['page']) && is_array($variables['page'])) {
-      $variables['page']['#attached']['library'][] = 'aculta_portal/search-preview';
-    }
-
     $url = Url::fromRoute('aculta_messenger.preview')->toString(TRUE);
     $variables['aculta_messenger'] = [
       'url' => $url->getGeneratedUrl(),
@@ -103,6 +98,21 @@ final class MessengerBarHooks {
         ->addCacheableDependency($url);
       $this->renderer->addCacheableDependency($variables['page'], $cacheability);
     }
+  }
+
+  /**
+   * The drawer's new-conversation search is loaded by fetch, so its script must already be on the page.
+   * Attaching it through page_attachments reaches every page, not only the region render array.
+   */
+  #[Hook('page_attachments')]
+  public function pageAttachments(array &$attachments): void {
+    if (!$this->currentUser->isAuthenticated()
+      || !$this->currentUser->hasPermission('use private messaging system')
+      || !$this->currentUser->hasPermission('access user profiles')) {
+      return;
+    }
+    $attachments['#attached']['library'][] = 'aculta_portal/search-preview';
+    $attachments['#cache']['contexts'][] = 'user.permissions';
   }
 
   /** Supplies the per-member native thread state as a presentation-neutral value. */
