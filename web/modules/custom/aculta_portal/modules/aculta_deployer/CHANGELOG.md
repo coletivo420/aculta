@@ -1,9 +1,9 @@
 ## 0.1.23 — raiz pública Hostinger por symlink — 2026-10-15
 
-- Adiciona `hostinger-layout --domain-root=DIR [--project-name=aculta-site] [--apply]`.
-- A instalação Composer permanece em uma pasta filha da pasta do domínio; `public_html` aponta para `<instalação>/web`.
+- Adiciona `hostinger-layout --domain-root=DIR [--apply]`.
+- A instalação Composer fica diretamente na raiz da pasta do domínio; `public_html` aponta para `<pasta-do-domínio>/web`.
 - A execução é dry-run por padrão. Com `--apply`, uma pasta/symlink `public_html` existente é renomeada para backup antes da ativação; nada é apagado e falha na ativação tenta restaurá-la.
-- Recusa instalação incompleta, destinos que sejam arquivo comum e projeto fora da pasta do domínio; repetição quando o symlink já está correto é idempotente.
+- Recusa instalação incompleta e destinos que sejam arquivo comum; repetição quando o symlink já está correto é idempotente.
 - Testes determinísticos da simulação, preservação, ativação, idempotência e recusa de instalação incompleta.
 - Nenhuma alteração foi aplicada na Hostinger ou no Runtime do Homelab.
 

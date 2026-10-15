@@ -681,12 +681,11 @@ final class Cli {
       $this->err('hostinger-layout: --domain-root absoluto é obrigatório (pasta do domínio na Hostinger)');
       return 1;
     }
-    $projectName = is_string($o['project-name'] ?? null) ? $o['project-name'] : 'aculta-site';
     $layout = new HostingerLayout();
     try {
-      $plan = $layout->inspect($domainRoot, $projectName);
-      $this->say('instalação: ' . $plan['project_root']);
-      $this->say('raiz pública: ' . $plan['project_root'] . '/web');
+      $plan = $layout->inspect($domainRoot);
+      $this->say('instalação: ' . $plan['installation_root']);
+      $this->say('raiz pública: ' . $plan['installation_root'] . '/web');
       $this->say('public_html: ' . $plan['status']);
       if ($plan['backup'] !== null) {
         $this->say('preservação: ' . basename($plan['backup']));
@@ -937,7 +936,7 @@ Uso:
   aculta-deployer list                 lista as correções de deploy registradas
   aculta-deployer register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]
   aculta-deployer build --out=DIR [--allow-open-blocking]
-  aculta-deployer hostinger-layout --domain-root=DIR [--project-name=aculta-site] [--apply]
+  aculta-deployer hostinger-layout --domain-root=DIR [--apply]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
   aculta-deployer environment [show] | environment set --to=production|test  define o ambiente do site (e o endereço) lido pelo Portal
   aculta-deployer cookies               leitura: confere o cookie de sessão por ambiente (session_cookie) contra services.*.yml

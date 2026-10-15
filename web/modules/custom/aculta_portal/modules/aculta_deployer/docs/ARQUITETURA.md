@@ -6,7 +6,7 @@
 | --- | --- |
 | `bin/aculta-deployer` | Ponto de entrada da CLI. Carrega as classes de `src/`. |
 | `src/Cli.php` | Comandos: `version`, `check`, `boundaries`, `list`, `register`, `build`, `verify`, `robots`, `sitemap`, `report`, `environment` e `hostinger-layout`. |
-| `src/HostingerLayout.php` | Valida a instalação dentro da pasta do domínio e ativa `public_html -> <instalação>/web` com backup e rollback de falha. |
+| `src/HostingerLayout.php` | Valida a instalação na raiz da pasta do domínio e ativa `public_html -> web/` com backup e rollback de falha. |
 | `src/Transform.php` | Escopo, remoção de aliases de teste e substituição de host. |
 | `src/Registry.php` | Leitura, validação e gravação de `registry/deploy-registry.json`. |
 | `config/secrets-contract.json` (raiz do repositório) | Contrato compartilhado com o Portal: nomes e ambientes obrigatórios, sem valores. Espelha `docs/operations/SECRETS.md`. |

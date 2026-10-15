@@ -140,14 +140,13 @@ foreach (['a', 'b'] as $d) {
 
 // Layout Hostinger: instalação permanece na pasta do domínio; public_html só aponta para web/.
 $domainRoot = sys_get_temp_dir() . '/aculta-hostinger-layout-' . getmypid();
-$project = $domainRoot . '/aculta-site';
-mkdir($project . '/web/sites/default', 0775, true);
-mkdir($project . '/vendor', 0775, true);
-file_put_contents($project . '/composer.json', '{}');
-file_put_contents($project . '/composer.lock', '{}');
-file_put_contents($project . '/vendor' . '/autoload.php', '<?php');
-file_put_contents($project . '/web/index.php', '<?php');
-file_put_contents($project . '/web/sites/default/settings.php', '<?php');
+mkdir($domainRoot . '/web/sites/default', 0775, true);
+mkdir($domainRoot . '/vendor', 0775, true);
+file_put_contents($domainRoot . '/composer.json', '{}');
+file_put_contents($domainRoot . '/composer.lock', '{}');
+file_put_contents($domainRoot . '/vendor' . '/autoload.php', '<?php');
+file_put_contents($domainRoot . '/web/index.php', '<?php');
+file_put_contents($domainRoot . '/web/sites/default/settings.php', '<?php');
 mkdir($domainRoot . '/public_html');
 file_put_contents($domainRoot . '/public_html/index.html', 'site anterior');
 $layout = new AcultaDeployer\HostingerLayout();
@@ -156,14 +155,14 @@ $assert($layoutPlan['status'] === 'directory' && is_dir($domainRoot . '/public_h
 $layoutDryRun = $quiet(fn() => $cli->run(['x', 'hostinger-layout', '--domain-root=' . $domainRoot]));
 $assert($layoutDryRun === 0 && is_dir($domainRoot . '/public_html') && !is_link($domainRoot . '/public_html'), 'layout: CLI sem --apply só simula');
 $layoutApply = $quiet(fn() => $cli->run(['x', 'hostinger-layout', '--domain-root=' . $domainRoot, '--apply']));
-$assert(is_link($domainRoot . '/public_html') && readlink($domainRoot . '/public_html') === $project . '/web', 'layout: public_html passa a apontar para aculta-site/web');
+$assert(is_link($domainRoot . '/public_html') && readlink($domainRoot . '/public_html') === $domainRoot . '/web', 'layout: public_html passa a apontar para web/ na raiz do domínio');
 $assert($layoutApply === 0 && $layoutPlan['backup'] !== null && file_get_contents($layoutPlan['backup'] . '/index.html') === 'site anterior', 'layout: CLI preserva o diretório anterior para rollback');
 $assert($layout->inspect($domainRoot)['status'] === 'already_linked' && $layout->activate($layout->inspect($domainRoot)) === 'public_html já aponta para a raiz web da instalação', 'layout: ativação repetida é idempotente');
 $incomplete = $domainRoot . '/incompleta';
 mkdir($incomplete);
 $thrown = false;
 try {
-  $layout->inspect($domainRoot, 'incompleta');
+  $layout->inspect($incomplete);
 } catch (RuntimeException) {
   $thrown = true;
 }

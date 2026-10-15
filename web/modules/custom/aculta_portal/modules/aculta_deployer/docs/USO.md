@@ -39,28 +39,31 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
 
 ## Estrutura Hostinger Cloud Startup (0.1.23)
 
-Na Hostinger, mantenha a instalação Composer numa pasta própria, filha da pasta do domínio,
-e faça `public_html` apontar somente para `web/`:
+Na Hostinger, mantenha a instalação Composer diretamente na raiz da pasta do domínio e faça
+`public_html` apontar somente para `web/`:
 
 ```text
 <pasta-do-dominio>/
-├── aculta-site/                 # composer.json, composer.lock, vendor/, config/ e web/
-│   └── web/                     # raiz servida; index.php e .htaccess do Drupal
-└── public_html -> aculta-site/web
+├── composer.json, composer.lock, vendor/, config/
+├── web/                         # raiz servida; index.php e .htaccess do Drupal
+└── public_html -> <pasta-do-dominio>/web
 ```
+
+O projeto Composer fica diretamente na raiz da pasta do domínio; não crie uma subpasta
+`aculta-site`.
 
 O caminho absoluto da pasta do domínio varia por conta. Descubra-o em hPanel → FTP Accounts;
 confirme que SSH está habilitado e que a função `symlink` foi removida de `disableFunctions`
 no PHP Configuration do site. Hostinger Web/Cloud desabilita `symlink` por padrão. Use a conta
 SSH da hospedagem, não `root`.
 
-Transfira primeiro a instalação completa para `<pasta-do-dominio>/aculta-site`, instale as
+Transfira primeiro a instalação completa para a raiz da pasta do domínio, instale as
 dependências do `composer.lock` e provisione os settings/secrets do ambiente. O comando abaixo
 somente troca a raiz pública; ele não transfere o projeto, não executa Composer e não altera o
 banco:
 
 ```sh
-cd "<pasta-do-dominio>/aculta-site"
+cd "<pasta-do-dominio>"
 CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
 php "$CLI" hostinger-layout --domain-root="<caminho-absoluto-da-pasta-do-dominio>"
 php "$CLI" hostinger-layout --domain-root="<caminho-absoluto-da-pasta-do-dominio>" --apply
