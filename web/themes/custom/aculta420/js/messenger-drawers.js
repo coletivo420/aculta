@@ -157,6 +157,13 @@
           navigate(link.dataset.acultaConversationUrl || link.href);
         });
 
+        // The member search inside the drawer is not a page search: Enter must not submit it.
+        drawer.addEventListener('submit', (event) => {
+          if (event.target.matches('form[data-aculta-new-conversation]')) {
+            event.preventDefault();
+          }
+        });
+
         drawer.addEventListener('show.bs.offcanvas', () => {
           const endpoint = drawer.dataset.acultaDrawerUrl;
           if (!content || !endpoint) {

@@ -85,6 +85,11 @@ final class MessengerBarHooks {
       return;
     }
 
+    // The new-conversation search in the drawer reuses the header search script; it must be on the page.
+    if (isset($variables['page']) && is_array($variables['page'])) {
+      $variables['page']['#attached']['library'][] = 'aculta_portal/search-preview';
+    }
+
     $url = Url::fromRoute('aculta_messenger.preview')->toString(TRUE);
     $variables['aculta_messenger'] = [
       'url' => $url->getGeneratedUrl(),

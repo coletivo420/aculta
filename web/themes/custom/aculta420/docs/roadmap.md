@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.44 | "Iniciar nova conversa" na primeira janela da barra de mensagens, com busca de membros a partir de 3 caracteres | Rotas verificadas por HTTP no runtime de testes (busca, compor); interação no navegador pendente | Etapa de busca e compor; envio pelo formulário nativo do Private Message |
 | 0.6.0-dev.43 | Sanfona da conta sem texto de carregamento; mensagens só na barra | Verificado no runtime com membro comum em 360 px | Sem 'Carregando…'; sem seção de Mensagens na conta |
 | 0.6.0-dev.42 | 99+ em todos os contadores, inclusive atualização ao vivo | Testado no runtime com valores máximos (1250, 120, 100) em 320 px e desktop | Script global corrige a atualização do carrinho |
 | 0.6.0-dev.41 | Limite de exibição 99+ nos contadores | Simulado no runtime com 100 conversas não lidas; 99+ em 320 px e desktop | Exibição 99+ acima de 99; número exato em data-count |

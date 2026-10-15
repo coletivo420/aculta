@@ -102,3 +102,39 @@ aculta_messenger.communication_settings:
   options:
     no_cache: true
     _aculta_domain_purpose: account
+
+aculta_messenger.new_conversation:
+  path: '/mensagens/nova'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\NewConversationController::start'
+    _title: 'Nova conversa'
+  requirements:
+    _permission: 'use private messaging system,access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+
+aculta_messenger.new_conversation_search:
+  path: '/mensagens/nova/buscar'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\NewConversationController::search'
+    _title: 'Buscar membro'
+  requirements:
+    _permission: 'use private messaging system,access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+
+aculta_messenger.new_conversation_compose:
+  path: '/mensagens/nova/{user}/painel'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\NewConversationController::compose'
+    _title: 'Nova conversa'
+  requirements:
+    _permission: 'use private messaging system,access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    parameters:
+      user:
+        type: entity:user

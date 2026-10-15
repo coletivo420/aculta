@@ -1,3 +1,11 @@
+## 0.6.0-dev.44 — "Iniciar nova conversa" na barra de mensagens — 2026-10-15
+
+Classificação: MINOR (novo fluxo de conversa na barra de mensagens, com tokens novos).
+
+- Novos tokens `data-portal-ui` para a etapa de nova conversa: `new-conversation-link`, `new-conversation-submit`, `new-conversation-back`, `new-conversation-links`, `new-conversation-message`, `new-conversation-results` e `new-conversation-result`. Documentados em `docs/portal/TOKENS-E-ATRIBUTOS.md`.
+- O script `messenger-drawers.js` ignora o envio do formulário de nova conversa, que é feito pelo AJAX do Drupal dentro da própria gaveta.
+- RUNTIME STATUS: rotas verificadas por HTTP no runtime de testes; interação no navegador ainda não verificada.
+
 ## 0.6.0-dev.43 — painel da conta no celular sem texto de carregamento — 2026-10-15
 
 Classificação: PATCH (apresentação da sanfona da conta).

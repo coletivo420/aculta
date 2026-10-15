@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.19 — "Iniciar nova conversa" na barra de mensagens — 2026-10-15
+
+- Novo botão "Iniciar nova conversa" na primeira janela da barra de mensagens. Ele abre, por AJAX, um campo de busca de membros que funciona como a busca do cabeçalho: resultados interativos a partir de 3 caracteres, o mesmo atraso e a mesma dica de caracteres mínimos, sem abrir a página de busca completa.
+- Ao escolher um membro, a etapa seguinte mostra a caixa de mensagem com "Enviar mensagem", "Cancelar" e "Voltar para o início". O envio usa o formulário nativo do Private Message, com as mesmas validações de bloqueio e privacidade de novas conversas.
+- Rotas: `aculta_messenger.new_conversation` (`/mensagens/nova`), `.new_conversation_search` (`/mensagens/nova/buscar`) e `.new_conversation_compose` (`/mensagens/nova/{user}/painel`). Exigem membro com permissão de mensagens e acesso a perfis.
+- Busca de membros: o `NewConversationController` limita a 10 resultados e exige 3 caracteres. A paridade exata de limite e de atraso com a busca do cabeçalho ainda não foi comparada lado a lado no navegador.
+- O script de busca do cabeçalho (`aculta_portal/search-preview`) passa a ser carregado nas páginas de membros, porque a nova etapa o reutiliza.
+- RUNTIME STATUS: rotas verificadas por HTTP no runtime de testes (etapa de busca com 0, 2 e 5 caracteres; etapa de compor). Interação no navegador e envio ainda não verificados; ver `docs/portal/TESTES-NAVEGADOR.md`.
+
 ## 0.1.1-dev.18 — quem pode iniciar conversas em Privacidade; e-mail só em notificações — 2026-10-15
 
 - A pergunta "Quem pode iniciar uma conversa com você?" e a nota de bloqueio saem de Notificações por e-mail e vão para Privacidade, no grupo "Mensagens privadas". O Messenger acrescenta o grupo ao formulário de privacidade por `form_alter`; o `aculta_user` não conhece essa regra.

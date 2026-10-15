@@ -79,6 +79,17 @@ final class MessagesController extends ControllerBase {
   /** Returns the inbox preview used by the existing drawer fetch. */
   public function preview(): Response {
     $build = $this->buildConversationList();
+    // "Iniciar nova conversa" is the first action of the first window.
+    $build = ['new_conversation' => [
+      '#type' => 'link',
+      '#title' => $this->translation->translate('Iniciar nova conversa'),
+      '#url' => Url::fromRoute('aculta_messenger.new_conversation'),
+      '#attributes' => [
+        'data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
+        'data-portal-ui' => 'new-conversation-link',
+      ],
+      '#weight' => -100,
+    ]] + $build;
     // The native clear-history action remains a Drupal confirmation form.
     $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
     return $this->buildDrawerResponse($build, [
