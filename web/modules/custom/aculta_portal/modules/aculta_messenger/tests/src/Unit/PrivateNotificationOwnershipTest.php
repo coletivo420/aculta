@@ -75,6 +75,7 @@ final class PrivateNotificationOwnershipTest extends UnitTestCase {
       $this->createMock(FormBuilderInterface::class),
       $this->createMock(RendererInterface::class),
       $this->createMock(DateFormatterInterface::class),
+      new RequestStack(),
     );
 
     $build = $controller->notifications();

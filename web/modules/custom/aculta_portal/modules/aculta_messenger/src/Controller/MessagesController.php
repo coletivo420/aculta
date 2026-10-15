@@ -31,6 +31,7 @@ use Drupal\user\UserInterface;
 use Drupal\site_alert\GetAlertsInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 /** Pages for the account communication center. */
@@ -51,6 +52,7 @@ final class MessagesController extends ControllerBase {
     private readonly FormBuilderInterface $forms,
     private readonly RendererInterface $renderer,
     private readonly DateFormatterInterface $dateFormatter,
+    private readonly RequestStack $requestStack,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -67,6 +69,7 @@ final class MessagesController extends ControllerBase {
       $container->get('form_builder'),
       $container->get('renderer'),
       $container->get('date.formatter'),
+      $container->get('request_stack'),
     );
   }
 
@@ -127,9 +130,12 @@ final class MessagesController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    // Private Message owns the per-member read timestamp. Update it only after
-    // confirming both entity access and active membership.
-    $thread->updateLastAccessTime($this->account);
+    // Rendering the thread is what marks it as read in Private Message's view builder. Cross-site
+    // requests and prefetches (which can carry the session cookie) must not render it, so they get an
+    // empty response and the conversation stays unread.
+    if (!$this->isMemberInitiatedRequest()) {
+      return new Response('', Response::HTTP_NO_CONTENT, ['Cache-Control' => 'private, no-store']);
+    }
     $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
     $build = [
       '#type' => 'container',
@@ -564,6 +570,19 @@ final class MessagesController extends ControllerBase {
     $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     $cacheability->applyTo($build);
     return $build;
+  }
+
+  /** A same-site, non-prefetch request, i.e. one the member opened on this site. */
+  private function isMemberInitiatedRequest(): bool {
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request === NULL) {
+      return FALSE;
+    }
+    if ($request->headers->get('Sec-Fetch-Site') === 'cross-site') {
+      return FALSE;
+    }
+    $purpose = strtolower((string) ($request->headers->get('Sec-Purpose') ?? $request->headers->get('Purpose') ?? ''));
+    return !str_contains($purpose, 'prefetch') && !str_contains($purpose, 'prerender');
   }
 
 }
