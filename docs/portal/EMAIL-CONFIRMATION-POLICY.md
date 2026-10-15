@@ -53,8 +53,13 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 ## 6.1 Validade do link (decisão do responsável)
 
 - O link de confirmação **não expira** (`EmailConfirmationEntity::isExpired()` devolve falso; classe trocada no Portal).
-- A segurança depende do hash de 43 caracteres de uso único, do cancelamento dos pedidos anteriores e do reenvio
-  (`aculta_portal.email_resend`, protegido por login e token CSRF). A configuração `hash_expiration` deixa de valer.
+- A segurança depende do hash de 43 caracteres de uso único, do cancelamento dos pedidos anteriores depois que um
+  novo envio é aceito e do reenvio por formulário POST com proteção CSRF (`aculta_portal.email_resend`). A configuração
+  `hash_expiration` deixa de valer.
+- A implementação de `isExpired()` é global: também afeta o realm `email_confirmer_user`, usado na troca de endereço.
+  Portanto, links de troca de e-mail também não expiram; se um link ou a caixa postal for comprometido, ele poderá
+  confirmar o novo endereço enquanto o token permanecer ativo. Esta fase preserva a política existente e não altera
+  sua validade.
 - Antes desta decisão, a premissa era de 24 horas (ver CHANGELOG do Portal 0.2.0-dev.16).
 
 ## 6.2 Decisões já tomadas
@@ -68,14 +73,14 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 
 - Nenhum endereço de e-mail nem valor de link é gravado em log além do necessário para diagnóstico (nome e usuário).
 - O reenvio é limitado pelo intervalo de `resendrequest_delay`.
-- A confirmação segue o hash de 43 caracteres de uso único e com validade; o login automático na confirmação está
+- A confirmação segue o hash de 43 caracteres de uso único e sem expiração; o login automático na confirmação está
   registrado em `docs/portal/` como risco aceito (ver CHANGELOG do Portal 0.2.0-dev.14).
 
 ## 8. Cadastro com e-mail já cadastrado (0.2.0-dev.22, DT-P06)
 
 Decisão do responsável (2026-10-09): a resposta do cadastro não revela se o e-mail já tem conta.
 
-- **Mensagem única** para e-mail novo e já cadastrado: "Se este e-mail ainda não estiver cadastrado, enviaremos um link para confirmar o seu cadastro. Se ele já estiver cadastrado, enviaremos um aviso com as opções para acessar a sua conta. Verifique a caixa de entrada e a pasta de spam." Mesmo destino (página inicial).
+- **Mensagem única** para e-mail novo e já cadastrado: "Sua solicitação foi recebida. Se este endereço tiver uma confirmação ou aviso disponível, verifique a caixa de entrada e a pasta de spam. Se nenhuma mensagem chegar, tente novamente mais tarde." Mesmo destino (página inicial).
 - **Com e-mail já cadastrado:** nenhuma conta é criada, ninguém é logado, e o dono da conta recebe um e-mail (`registration_existing_mail`) com o link para entrar, o link para recuperar a senha e a orientação de que não é preciso fazer nada se não foi ele.
 - **Com e-mail novo:** o cadastro segue como antes (conta bloqueada até a confirmação), só com a mensagem única.
 - **Implementação:** o erro "already taken" do Core sai do formulário (`validateRegistrationMail`); o botão usa `saveRegistration` no lugar de `::save`; a busca e o aviso ficam em `RegistrationMailPolicy`; o texto do aviso está no hook `mail` do módulo. Callbacks que gravam dados ignoram o caso de e-mail existente.
