@@ -41,6 +41,8 @@
   </div>
 </footer>
 {% else %}
+{% set aculta_show_site_header = domain_presentation.identity.purpose|default('') == 'wiki' or (domain_presentation.identity.purpose|default('') == 'main' and institutional_home) %}
+{% if aculta_show_site_header %}
 <header class="aculta-header{{ aculta_wiki_search ? ' aculta-header--wiki' : '' }}">
   <div class="navbar aculta-navbar">
     <div class="container aculta-container">
@@ -81,6 +83,7 @@
     </div>
   </div>
 </header>
+{% endif %}
 
 <main id="main-content" class="aculta-main flex-grow-1" tabindex="-1">
   <div class="container aculta-container">

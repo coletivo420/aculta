@@ -1,3 +1,11 @@
+## 0.6.0-dev.45 — cabeçalho principal somente na home — 2026-10-15
+
+Classificação: PATCH (visibilidade do cabeçalho existente; contrato e barra multidomínio preservados).
+
+- O cabeçalho com marca e menu do site principal aparece somente na página inicial do purpose `main`.
+- Cabeçalho próprio da Wiki420 permanece visível; a barra multidomínio não foi alterada.
+- Verificado por HTTP no Runtime: cabeçalho presente na home principal e Wiki; ausente em páginas internas do domínio principal e nos demais purposes consultados. Barra multidomínio preservada. RUNTIME STATUS: ACTIVE.
+
 ## 0.6.0-dev.44 — "Iniciar nova conversa" na barra de mensagens — 2026-10-15
 
 Classificação: MINOR (novo fluxo de conversa na barra de mensagens, com tokens novos).
