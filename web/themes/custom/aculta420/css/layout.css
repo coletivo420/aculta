@@ -5,6 +5,7 @@
   padding-inline: clamp(1rem, 3vw, 2rem);
 }
 .aculta-main { padding-block: clamp(1.5rem, 4vw, 3rem); }
+.aculta-main--compact-top { padding-block-start: clamp(0.5rem, 1.5vw, 1.25rem); }
 .aculta-content, .aculta-sidebar { min-width: 0; }
 .aculta-main .region-content,
 .aculta-main .region-sidebar,

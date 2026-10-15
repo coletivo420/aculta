@@ -1,3 +1,11 @@
+## 0.6.0-dev.46 — respiro superior compacto sem cabeçalho de domínio — 2026-10-15
+
+Classificação: PATCH (ajuste responsivo de espaçamento do shell existente).
+
+- Quando o cabeçalho de domínio não é exibido, o conteúdo começa mais perto da barra multidomínio: 0.5rem–1.25rem, conforme a largura da tela.
+- O espaçamento padrão da home principal e o cabeçalho da Wiki permanecem inalterados.
+- Inspeção visual por Firefox headless no Runtime (1440×1000 e 390×844): o intervalo aparente entre a barra e o primeiro texto caiu de ~70 para ~42 px no desktop e de ~48 para ~30 px no mobile. A home principal e o cabeçalho de busca da Wiki foram comparados e permanecem inalterados. RUNTIME STATUS: ACTIVE.
+
 ## 0.6.0-dev.45 — cabeçalho principal somente na home — 2026-10-15
 
 Classificação: PATCH (visibilidade do cabeçalho existente; contrato e barra multidomínio preservados).
