@@ -17,6 +17,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [architecture/environments.md](architecture/environments.md) — Homelab Apache e produção Hostinger LiteSpeed.
 - [architecture/data-ownership.md](architecture/data-ownership.md) — quem é dono de cada dado.
 - [decisions/](decisions/) — ADRs vigentes.
+- [ADR-010](decisions/ADR-010-hostinger-litespeed.md) — LiteSpeed na produção Hostinger Cloud Startup; Apache no Homelab.
 
 ## Módulos e integrações
 

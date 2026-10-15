@@ -1,3 +1,10 @@
+## 0.1.22 — plataforma LiteSpeed da Hostinger — 2026-10-15
+
+- Registra que produção usa Hostinger Cloud Startup com LiteSpeed, confirmado em cabeçalho HTTP público; Homelab permanece Apache.
+- Atualiza DEP-0003 para evitar pressupor configuração Apache no servidor gerenciado; as verificações HTTP do deployer não dependem do servidor.
+- Versão sincronizada em `VERSION`, `Cli::VERSION` e `aculta_deployer.info.yml`.
+- Nenhuma alteração foi aplicada no servidor de produção; ele já responde com cabeçalho LiteSpeed. Build/testes do deployer não executados nesta etapa.
+
 ## 0.1.21 — Política de cookies de sessão por ambiente — 2026-10-14
 
 - `config/deploy.json`: seção `session_cookie` com o `cookie_domain` de cada ambiente (teste `.aculta.toca.net.br`, produção `.aculta.org`) e a transição teste → produção.

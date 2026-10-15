@@ -1,7 +1,7 @@
 # Planejamento de construção do ACULTA Deployer
 
 Este documento define as fases de construção do submódulo `aculta_deployer`
-(versão atual: 0.1.20, conforme `VERSION`; estado de testes e de `check` em
+(versão atual: 0.1.22, conforme `VERSION`; estado de testes e de `check` em
 `docs/portal/historico/RELATORIO-ESTADO-2026-10-12.md` e DT-O12). Regra geral: cada fase é curta, termina com testes
 determinísticos e entra em PR própria. Fases longas terminam com uma **verificação
 de segurança** obrigatória (seção "Gates de segurança"). Nenhuma fase começa com a

@@ -95,8 +95,6 @@ Não copiar literalmente paths, usuários, certificados ou configuração de
 VirtualHost entre Homelab e Hostinger. A produção não herda o noindex do
 Homelab.
 
-Produção não herda o noindex do Homelab.
-
 ## Sequência geral
 
 1. criar restore point/backup;

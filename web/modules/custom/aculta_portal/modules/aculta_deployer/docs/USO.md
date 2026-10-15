@@ -57,9 +57,11 @@ php web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php
 
 ### Por que o deployer confere o meta robots
 
-O noindex das páginas privadas é emitido pelo Portal por rota (`meta robots`), não pelo
-Apache. Uma checagem só de `X-Robots-Tag` deixaria de ver essas páginas. Por isso a
-verificação lê o HTML e aceita o noindex em qualquer um dos dois.
+O noindex das páginas privadas é emitido pelo Portal por rota (`meta robots`).
+Uma checagem só de `X-Robots-Tag` deixaria de ver essas páginas; por isso a
+verificação lê o HTML e aceita o noindex no cabeçalho ou no documento, sem
+depender do servidor web. O Homelab usa Apache e a produção Hostinger Cloud
+Startup usa LiteSpeed; o deployer não configura nenhum dos dois.
 
 ### Por que 404/410 contam como não indexável
 

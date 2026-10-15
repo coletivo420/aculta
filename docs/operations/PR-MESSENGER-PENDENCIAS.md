@@ -1,4 +1,4 @@
-# PR: pendências do Messenger e da conta
+# PR: pendências do Messenger, da conta e do ambiente de produção
 
 Branch: `chore/messenger-pendencias` (a partir da `main` em 47cf202).
 
@@ -8,6 +8,7 @@ Branch: `chore/messenger-pendencias` (a partir da `main` em 47cf202).
 2. Validação do fluxo de mensagens com usuário comum; correções se houver.
 3. Alinhamento dos botões "Criar" da visão geral de avisos no mobile (tema).
 4. Quebra de "Configuraçõ/es" no menu lateral da conta (tema).
+5. Correção da fonte de verdade do servidor web: Apache no Homelab e LiteSpeed na produção Hostinger Cloud Startup; atualização do ADR, runbook e registro do `aculta_deployer`, sem alteração direta na produção.
 
 ## Regras para quem trabalhar nesta branch
 

@@ -1,3 +1,13 @@
+## 0.4.0-dev.23 — produção Hostinger LiteSpeed documentada — 2026-10-15
+
+Classificação: PATCH (correção da fonte de verdade operacional; sem mudança no runtime Drupal).
+
+- Corrige a arquitetura para Homelab Apache e produção Hostinger Cloud Startup/LiteSpeed, observada em cabeçalhos HTTP públicos.
+- O ADR-010 substitui o pressuposto de mesmo servidor; o runbook mantém `.htaccess` e separa validações por ambiente.
+- ACULTA Deployer 0.1.22 atualiza o registro de DEP-0003 e não presume diretivas Apache em produção.
+- `aculta.org` respondeu HTTP 200 com `platform: hostinger`, `x-turbo-charged-by: LiteSpeed` e `server: cloudflare` em consulta pública somente leitura. Nenhuma configuração do servidor foi alterada.
+- RUNTIME STATUS: DEFERRED — nenhuma validação no Homelab/Hostinger após alteração documental e do registro do deployer.
+
 ## 0.4.0-dev.22 — central de avisos administrativa e gate de slugs por módulos habilitados — 2026-10-15
 
 - Porta ao `aculta_messenger` a central Avisos em `/painel-administrativo/avisos`, com abas temporários e persistentes; a listagem de persistentes passa IDs escalares às rotas de editar/excluir (corrige o TypeError do dev.21).

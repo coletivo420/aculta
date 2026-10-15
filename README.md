@@ -52,8 +52,8 @@ O Portal integra. ACULTA420 apresenta.
 - Homelab (servidor de testes `*.aculta.toca.net.br`): Debian + Apache + PHP-FPM + MariaDB. É noindex.
 - Produção (`*.aculta.org`): Hostinger Cloud Startup + LiteSpeed + PHP + MariaDB. Recebe deploy só no RC de todos os módulos, temas e subtemas.
 
-Apache é o baseline de servidor web. Configuração específica de ambiente não
-pertence ao tema.
+O Homelab usa Apache e a produção Hostinger Cloud Startup usa LiteSpeed.
+Configuração específica de servidor pertence à infraestrutura, não ao tema.
 
 ## Documentação
 

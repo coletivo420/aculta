@@ -49,6 +49,7 @@ precisam ser validados separadamente em cada ambiente.
 ## Regra
 
 Apache é usado no Homelab; LiteSpeed, na produção Hostinger Cloud Startup.
+Ver [ADR-010](../decisions/ADR-010-hostinger-litespeed.md).
 Configuração Nginx legada não deve orientar novos recursos, testes ou
 documentação normativa. Referências a Nginx em relatórios antigos são
 evidência histórica da migração e não constituem suporte atual.
