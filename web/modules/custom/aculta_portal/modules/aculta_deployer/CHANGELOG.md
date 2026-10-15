@@ -4,6 +4,7 @@
 - A remoção não segue symlinks para fora de `public_html`.
 - Remove o caminho de backup, a mensagem de preservação e a rotina que gerava nomes de backup.
 - Revisa fixture para confirmar remoção do conteúdo e preservação do destino externo de symlink.
+- Validação focada da troca de diretório e segurança do destino externo passou; gates Drupal 11+ (768 verificações) e endereços de ambiente (1702 arquivos) passaram no checkout conectado ao Runtime de testes.
 
 ## 0.1.24 — symlink público relativo — 2026-10-15
 
