@@ -9,10 +9,9 @@ históricos de fases anteriores podem mencionar Nginx ao descrever o ambiente
 existente no momento daqueles testes; eles não definem mais a arquitetura
 atual.
 
-Apache é o baseline definitivo do servidor web de desenvolvimento. O Homelab
-deve exercitar o mesmo modelo de `.htaccess`, rewrite, headers e PHP-FPM que a
-aplicação espera em produção, sem manter uma camada paralela de compatibilidade
-com Nginx.
+Apache é o servidor web do Homelab. O ambiente de teste valida `.htaccess`,
+rewrite, headers e PHP-FPM neste servidor; produção usa LiteSpeed e precisa de
+validação específica, sem manter uma camada de compatibilidade com Nginx.
 
 O VirtualHost do Homelab deve apontar o DocumentRoot para `web/`, preservar o
 `.htaccess` fornecido pelo Drupal e permitir as diretivas necessárias ao
@@ -38,25 +37,31 @@ registrados como tal.
 
 ## Produção
 
-Hostinger, Apache, PHP, MariaDB e hosts `*.aculta.org`.
+Hostinger Cloud Startup, LiteSpeed, PHP, MariaDB e hosts `*.aculta.org`.
+Em 2026-10-15, a resposta HTTPS pública de `aculta.org` retornou
+`platform: hostinger` e `x-turbo-charged-by: LiteSpeed`; o cabeçalho `server`
+identifica Cloudflare.
 
-Produção compartilha a família de servidor web com o Homelab, mas configuração
-não é cópia cega entre os ambientes.
+A produção e o Homelab usam servidores web diferentes. O Drupal mantém o mesmo
+`web/.htaccess`, mas diretivas, headers, handlers PHP e controles de acesso
+precisam ser validados separadamente em cada ambiente.
 
 ## Regra
 
-Apache é o único baseline de servidor web mantido pelo projeto. Configuração
-Nginx legada não deve orientar novos recursos, testes ou documentação
-normativa. Referências a Nginx em relatórios antigos são evidência histórica da
-migração e não constituem suporte atual.
+Apache é usado no Homelab; LiteSpeed, na produção Hostinger Cloud Startup.
+Configuração Nginx legada não deve orientar novos recursos, testes ou
+documentação normativa. Referências a Nginx em relatórios antigos são
+evidência histórica da migração e não constituem suporte atual.
 
 Preservar o `.htaccess` Drupal e validar por ambiente:
 
 - VirtualHosts e aliases;
-- `mod_rewrite`;
-- `mod_headers`;
-- política de `AllowOverride`;
-- PHP-FPM/integração PHP, incluindo `proxy_fcgi` no Homelab;
+- rewrite;
+- headers;
+- política de leitura e processamento do `.htaccess` (`AllowOverride` no
+  Apache do Homelab; comportamento LiteSpeed na Hostinger);
+- integração PHP (`proxy_fcgi` no Homelab; handler fornecido pela Hostinger na
+  produção);
 - proteção de public/private files;
 - redirects e headers;
 - certificados e canonical hosts.

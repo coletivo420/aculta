@@ -18,7 +18,7 @@ O objetivo inicial é construir um site institucional profissional, acessível, 
 
 - Drupal 11
 - PHP 8.5
-- Apache como baseline definitivo de servidor web
+- Apache no Homelab e LiteSpeed na produção Hostinger Cloud Startup
 - PHP-FPM no Homelab
 - MariaDB para o Runtime de desenvolvimento (Homelab, banco `aculta_runtime`); a pasta `estados/` contém backups privados locais do banco, não versionados
 - MariaDB em produção
@@ -34,7 +34,7 @@ Debian Homelab + Apache + PHP-FPM + MariaDB
 
 Produção:
 
-Hostinger + Apache + PHP + MariaDB
+Hostinger Cloud Startup + LiteSpeed + PHP + MariaDB
 
 Document root do Drupal:
 
@@ -108,12 +108,13 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 
 ## Servidor web
 
-Apache é o baseline definitivo do ACULTA no Homelab e em produção.
+O Homelab usa Apache; a produção na Hostinger Cloud Startup usa LiteSpeed, confirmado por cabeçalhos HTTP públicos em 2026-10-15.
 
 - Não introduzir novos exemplos, regras ou dependências específicas de Nginx.
 - Não manter compatibilidade com Nginx como requisito do projeto.
-- Preservar o `web/.htaccess` do Drupal e validar rewrites/headers/proteção de arquivos em Apache.
+- Preservar o `web/.htaccess` fornecido pelo Drupal e validar as diretivas em ambos os ambientes.
 - No Homelab, validar `mod_rewrite`, `mod_headers` e a integração PHP-FPM por `proxy_fcgi`.
+- Na produção, validar reescrita, headers, proteção de arquivos, processamento de `.htaccess` e handler PHP no LiteSpeed/Hostinger; não presumir acesso a VirtualHost ou `httpd.conf`.
 - VirtualHosts, caminhos, usuários, certificados e configuração Virtualmin/Hostinger continuam específicos de cada ambiente.
 - Referências a Nginx em relatórios antigos são históricas e não definem a arquitetura atual.
 

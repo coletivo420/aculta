@@ -1,6 +1,6 @@
 # ADR-006: Apache como baseline definitivo
 
-Status: Accepted
+Status: Superseded by [ADR-010](ADR-010-hostinger-litespeed.md)
 
 Data da revisão: 2026-10-06
 

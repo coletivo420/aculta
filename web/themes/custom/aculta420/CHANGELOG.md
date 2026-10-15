@@ -1,3 +1,13 @@
+## 0.6.0-dev.40 — barra multidomínio com contadores de dois dígitos no mobile — 2026-10-15
+
+Classificação: PATCH (apresentação mobile da barra multidomínio).
+
+- Simulação no runtime de teste: carrinho com 12 unidades e 12 comunicados não lidos (dados removidos ao final).
+- Com badges de dois dígitos, a barra mobile cabe em uma linha em 320, 360 e 390 px. Em até 374,98 px o logo da barra sai da área visível (o link continua acessível; o logo do cabeçalho segue visível).
+- Desktop sem mudança.
+- Pendência: badge de mensagens com dois dígitos não foi simulado (exige dez conversas não lidas).
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.6.0-dev.39 — barra multidomínio em uma linha no mobile e destaque de Minha conta por propósito — 2026-10-15
 
 Classificação: PATCH (apresentação da barra multidomínio; sem mudança de API).

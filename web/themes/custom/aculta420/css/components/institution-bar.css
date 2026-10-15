@@ -56,3 +56,16 @@
   .aculta-utility-trigger { margin-inline: 0.0625rem; }
   .aculta-search-utility { margin-inline: 0; }
 }
+
+/* Very narrow phones: the bar's logo moves out of view (the link stays in the accessibility tree; the
+   header logo below is the visible one), so the account links keep their room on one line. */
+@media (max-width: 374.98px) {
+  .aculta-institution-bar__brand {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

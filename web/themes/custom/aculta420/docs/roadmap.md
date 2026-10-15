@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.40 | Contadores de dois dígitos na barra mobile | Simulado no runtime (carrinho 12, sino 12) em 320, 360 e 390 px; mensagens de dois dígitos pendentes | Barra em uma linha; logo da barra fora da área visível até 374 px |
 | 0.6.0-dev.39 | Barra multidomínio em uma linha no mobile; destaque de Minha conta por propósito | Verificado no runtime em 360, 390 e 414 px e nos domínios principal e conta; RUNTIME STATUS: ACTIVE | Logo e links compactados no mobile; classe da barra de conta vem do propósito do domínio |
 | 0.6.0-dev.38 | Link Minha conta identificado por token | Verificado no runtime (aculta, conta, loja); RUNTIME STATUS: ACTIVE | Cor do link vem da classe `aculta-account-home`, não da posição no menu |
 | 0.6.0-dev.37 | Rota de conversas e token de ação no tema | Verificação estática PASS (Foundation 341); RUNTIME STATUS: DEFERRED | Lista de conversas mapeada à rota `conversations`; token `messenger-preview-inbox-link` documentado |
