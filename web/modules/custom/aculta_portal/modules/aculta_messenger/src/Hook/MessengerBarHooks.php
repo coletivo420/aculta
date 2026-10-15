@@ -123,14 +123,7 @@ final class MessengerBarHooks {
     if (!$thread instanceof PrivateMessageThreadInterface) {
       return;
     }
-    $lastAccess = $thread->getLastAccessTimestamp($this->currentUser);
-    $variables['aculta_messenger_read_status'] = 'read';
-    foreach ($thread->getMessages() as $message) {
-      if ($lastAccess <= $message->getCreatedTime() && $message->getOwnerId() != $this->currentUser->id()) {
-        $variables['aculta_messenger_read_status'] = 'unread';
-        break;
-      }
-    }
+    $variables['aculta_messenger_read_status'] = $this->unreadThreadCounter->isUnread($thread) ? 'unread' : 'read';
     $variables['elements']['#cache']['contexts'][] = 'user';
     $variables['elements']['#cache']['max-age'] = 0;
   }
@@ -179,29 +172,38 @@ final class MessengerBarHooks {
       ->setCacheMaxAge($maxAge);
   }
 
-  /** Counts visible persistent notices not yet flagged as read by this member. */
+  /**
+   * Counts visible persistent notices not yet flagged as read by this member.
+   *
+   * Node access is applied by the query and the read state is excluded in SQL, so no notice is loaded
+   * only to be discarded.
+   */
   private function getUnreadNoticeCount(): int {
     $flag = $this->entityTypeManager->getStorage('flag')->load('aculta_notice_read');
     if ($flag === NULL) {
       return 0;
     }
-    $ids = $this->entityTypeManager->getStorage('node')->getQuery()
+    $readIds = $this->entityTypeManager->getStorage('flagging')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('flag_id', 'aculta_notice_read')
+      ->condition('uid', (int) $this->currentUser->id())
+      ->condition('entity_type', 'node')
+      ->execute();
+    $query = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'aculta_notice')
-      ->condition('status', 1)
-      ->sort('created', 'DESC')
-      ->execute();
-    $nodes = $this->entityTypeManager->getStorage('node')->loadMultiple($ids);
-    $count = 0;
-    foreach ($nodes as $node) {
-      if (!$node instanceof NodeInterface || !$node->access('view', $this->currentUser)) {
-        continue;
-      }
-      if ($flag instanceof FlagInterface && $this->flagService->getFlagging($flag, $node, $this->currentUser) === NULL) {
-        $count++;
+      ->condition('status', 1);
+    if ($readIds !== []) {
+      $readNodeIds = $this->entityTypeManager->getStorage('flagging')->loadMultiple($readIds);
+      $flagged = array_values(array_filter(array_map(
+        static fn($flagging) => (int) $flagging->getFlaggableId(),
+        $readNodeIds,
+      )));
+      if ($flagged !== []) {
+        $query->condition('nid', $flagged, 'NOT IN');
       }
     }
-    return $count;
+    return (int) $query->count()->execute();
   }
 
 }

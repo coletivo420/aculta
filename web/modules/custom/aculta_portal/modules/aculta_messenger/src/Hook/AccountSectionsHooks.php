@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
+use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
 
 /** Adds the Messenger section to the Portal's neutral account shell contract. */
 final class AccountSectionsHooks {
 
   public function __construct(
-    #[Autowire(service: 'private_message.service')]
-    private readonly PrivateMessageServiceInterface $privateMessageService,
+    private readonly UnreadThreadCounter $unreadThreadCounter,
     private readonly TranslationInterface $translation,
   ) {}
 
@@ -28,7 +26,8 @@ final class AccountSectionsHooks {
       return;
     }
 
-    $unread = $this->privateMessageService->getUnreadThreadCount();
+    // Same definition as the drawer and the inbox, so the badge cannot disagree with them.
+    $unread = $this->unreadThreadCounter->count();
     $messageSection = [
       'title' => $this->translation->translate('Mensagens'),
       'route' => 'aculta_messenger.messages',
