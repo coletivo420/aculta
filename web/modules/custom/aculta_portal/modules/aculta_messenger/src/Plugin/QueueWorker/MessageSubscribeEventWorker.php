@@ -7,10 +7,12 @@ namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\path_alias\AliasManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\Queue\RequeueException;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\message_subscribe\SubscribersInterface;
 use Drupal\node\NodeInterface;
@@ -45,6 +47,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly AliasManagerInterface $aliasManager,
     private readonly LockBackendInterface $lock,
+    private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -60,6 +63,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
       $container->get('aculta_portal.domain_purpose'),
       $container->get('path_alias.manager'),
       $container->get('lock.persistent'),
+      $container->get('logger.factory'),
     );
   }
 
@@ -76,8 +80,10 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
 
     $internalPath = '/node/' . $node->id();
     if ($this->aliasManager->getAliasByPath($internalPath, $node->language()->getId()) === $internalPath) {
-      // Do not send a public human-facing email link with an English/Core slug.
-      return;
+      // No Portuguese alias yet: the email must not carry an English/Core path. Requeue instead of
+      // dropping the event, so the notice is sent once pathauto has created the alias, and log it.
+      $this->loggerFactory->get('aculta_messenger')->warning('Forum topic @id has no public alias yet; the subscription notice was requeued.', ['@id' => $node->id()]);
+      throw new RequeueException();
     }
 
     $revisionId = (int) $node->getRevisionId();
