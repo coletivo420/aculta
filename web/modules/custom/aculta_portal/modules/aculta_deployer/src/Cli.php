@@ -945,7 +945,7 @@ Uso:
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version
 
-hostinger-layout valida a instalação dentro da pasta do domínio e, com --apply, preserva
+hostinger-layout valida a instalação na raiz da pasta do domínio e, com --apply, preserva
 public_html existente em backup antes de apontá-lo para <instalação>/web.
 
 Códigos de saída: 0 sucesso; 1 erro de uso, validação ou fronteira; 2 bloqueado (entrada bloqueante aberta).

@@ -20,7 +20,7 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
   - Com entradas bloqueantes abertas, o build é recusado. `--allow-open-blocking` serve
     só para ensaio, e não para publicar.
   - Grava `DIR/deploy-report.json` com os arquivos, as remoções e as substituições.
-- `$CLI hostinger-layout --domain-root=DIR [--project-name=aculta-site]`: valida a instalação e simula a mudança da raiz pública. Só altera o servidor com `--apply`.
+- `$CLI hostinger-layout --domain-root=DIR`: valida a instalação na raiz da pasta do domínio e simula a mudança da raiz pública. Só altera o servidor com `--apply`.
 - `$CLI verify`: GET somente leitura nas entradas com `probe` e `expect`. Só aceita HTTPS,
   sem credenciais na URL, sem seguir redirecionamentos. Não altera nenhum arquivo nem o registro.
 - `$CLI version`.
