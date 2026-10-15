@@ -48,12 +48,8 @@ final class MessengerBarHooks {
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
-    if (!$this->currentUser->isAuthenticated()) {
-      $variables['aculta_alerts_trigger'] = [];
-      $variables['aculta_messenger_trigger'] = [];
-      return;
-    }
-
+    // Site Alerts are public: visitors see the active-alert count, and members also see
+    // their unread persistent notices. Only the private messenger is member-only.
     if (isset($variables['page']) && is_array($variables['page'])) {
       $alertStorage = $this->entityTypeManager->getStorage('site_alert');
       $alerts = $this->siteAlerts->getActiveAlerts();
@@ -98,6 +94,7 @@ final class MessengerBarHooks {
     if (!$this->currentUser->isAuthenticated()
       || !$this->currentUser->hasPermission('use private messaging system')
       || !$this->currentUser->hasPermission('access user profiles')) {
+      $variables['aculta_messenger_trigger'] = [];
       return;
     }
 
