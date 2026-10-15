@@ -8,3 +8,4 @@
 - Pesquisados módulos, código de releases, licenças, arquitetura e roadmap.
 - Quatro pacotes inspecionados com checksums; nenhum código copiado ou módulo instalado.
 - Entrega exclusivamente documental; sem versão executável nova ou alteração de Runtime.
+- [Evidência de revisão e validação estática](../../../../../../docs/portal/FORUM-GAME-PESQUISA-VALIDACAO.md).

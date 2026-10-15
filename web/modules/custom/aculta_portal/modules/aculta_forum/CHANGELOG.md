@@ -8,3 +8,4 @@
   dos legados e a página coletiva `/u/lendashistoricas`.
 - Documentados pesquisa, arquitetura, reconstrução, roadmap e gates futuros.
 - Entrega exclusivamente documental, sem versão de módulo instalável ou Runtime.
+- [Evidência de revisão e validação estática](../../../../../../docs/portal/FORUM-GAME-PESQUISA-VALIDACAO.md).
