@@ -8,6 +8,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -36,6 +37,7 @@ final class ActivityController implements ContainerInjectionInterface {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
     private readonly DomainPurposeManager $purposeManager,
+    private readonly ModuleHandlerInterface $modules,
   ) {}
 
   /**
@@ -46,6 +48,7 @@ final class ActivityController implements ContainerInjectionInterface {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('aculta_portal.domain_purpose'),
+      $container->get('module_handler'),
     );
   }
 
@@ -64,6 +67,7 @@ final class ActivityController implements ContainerInjectionInterface {
       'comentarios' => $this->comentarios($uid),
       default => ['#markup' => (string) t('Nenhuma conquista ainda. As conquistas chegam em uma etapa futura.')],
     };
+    $this->modules->alter('aculta_user_activity_content', $conteudo, $aba, $uid);
     // Mesmo padrão de Meus Dados e Segurança: descrição, abas (links com URL própria) e o conteúdo da aba.
     return [
       '#cache' => ['contexts' => $cache->getCacheContexts(), 'tags' => $cache->getCacheTags(), 'max-age' => 0],

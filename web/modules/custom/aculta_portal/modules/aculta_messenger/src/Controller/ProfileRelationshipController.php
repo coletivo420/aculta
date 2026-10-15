@@ -23,7 +23,7 @@ final class ProfileRelationshipController extends ControllerBase {
 
   public function __construct(
     private readonly FormBuilderInterface $forms,
-    private readonly MessengerInterface $messenger,
+    private readonly MessengerInterface $statusMessenger,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -45,7 +45,7 @@ final class ProfileRelationshipController extends ControllerBase {
     $this->forms->buildForm(ConversationRelationshipForm::class, $formState, (int) $user->id(), $postUrl);
     $message = $formState->get('message');
     if ($message !== NULL) {
-      $this->messenger->addStatus((string) $message);
+      $this->statusMessenger->addStatus((string) $message);
     }
     return new RedirectResponse($return, Response::HTTP_SEE_OTHER);
   }

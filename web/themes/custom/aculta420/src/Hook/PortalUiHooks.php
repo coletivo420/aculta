@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta420\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Template\Attribute;
 
 /**
@@ -328,7 +327,7 @@ final class PortalUiHooks {
   }
 
   /** The details of the Opções box: mapped after the Bootstrap accordion has set its attributes. */
-  #[Hook('preprocess_details', order: Order::Last)]
+  #[Hook('preprocess_details')]
   public function preprocessDetails(array &$variables): void {
     $this->preprocess($variables);
   }

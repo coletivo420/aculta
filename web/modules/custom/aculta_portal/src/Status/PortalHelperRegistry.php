@@ -17,6 +17,11 @@ final class PortalHelperRegistry {
    * @var array<string, array{label: string, summary: string, docs: string}>
    */
   private const DEFINITIONS = [
+    'aculta_game.achievement_presentation' => [
+      'label' => 'Exibição de conquistas',
+      'summary' => 'Aplica privacidade, destaques e ordem às conquistas do perfil e da conta, sem expor evidências privadas.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
+    ],
     'aculta_portal.account_courses' => [
       'label' => 'Cursos da conta',
       'summary' => 'Consulta participação e situação de cursos a partir das entidades LMS e Group.',

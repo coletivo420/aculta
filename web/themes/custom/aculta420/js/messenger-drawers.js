@@ -187,6 +187,46 @@
     },
   };
 
+  // "Opções" of a conversation row: the row carries the address of its menu, and the menu is loaded the first time the
+  // member opens it. 'toggle' does not bubble, so the listener is on the document, in the capture phase.
+  document.addEventListener('toggle', (event) => {
+    const details = event.target;
+    if (!(details instanceof HTMLDetailsElement) || !details.open) {
+      return;
+    }
+    // The Bootstrap accordion template puts the element's attributes on its wrapper, around the details.
+    const box = details.closest('[data-aculta-options-url]');
+    const panel = details.querySelector('.aculta-messenger-options__panel');
+    if (!box || !panel || panel.childElementCount > 0 || box.dataset.acultaOptionsLoading === 'true') {
+      return;
+    }
+    box.dataset.acultaOptionsLoading = 'true';
+    fetch(box.dataset.acultaOptionsUrl, {
+      method: 'GET',
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Options request failed.');
+        }
+        return response.text();
+      })
+      .then((html) => {
+        const template = document.createElement('template');
+        template.innerHTML = html;
+        panel.replaceChildren(template.content.cloneNode(true));
+        Drupal.attachBehaviors(panel);
+      })
+      .catch(() => {
+        panel.replaceChildren(document.createTextNode(Drupal.t('Não foi possível carregar as opções.')));
+      })
+      .finally(() => {
+        delete box.dataset.acultaOptionsLoading;
+      });
+  }, true);
+
   function updateCounter(type, value) {
     const count = Number.parseInt(value || '', 10);
     if (!Number.isFinite(count) || count < 0) {

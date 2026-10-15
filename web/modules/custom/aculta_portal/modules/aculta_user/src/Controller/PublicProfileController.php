@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Controller;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_user\Form\FriendshipActionForm;
@@ -41,6 +42,7 @@ final class PublicProfileController extends ControllerBase {
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly AccountProxyInterface $account,
     private readonly FormBuilderInterface $forms,
+    private readonly ModuleHandlerInterface $modules,
   ) {}
 
   /**
@@ -55,6 +57,7 @@ final class PublicProfileController extends ControllerBase {
       $container->get('aculta_user.friendship_manager'),
       $container->get('current_user'),
       $container->get('form_builder'),
+      $container->get('module_handler'),
     );
   }
 
@@ -120,7 +123,7 @@ final class PublicProfileController extends ControllerBase {
     }
     // Other modules add to the profile's actions (the messenger's "Opções" box, which holds the friendship actions).
     $actions = $build['header']['actions'] ?? [];
-    $this->moduleHandler()->alter('aculta_user_public_profile_actions', $actions, $profile);
+    $this->modules->alter('aculta_user_public_profile_actions', $actions, $profile);
     if ($actions !== []) {
       $build['header']['actions'] = $actions;
     }
@@ -128,6 +131,7 @@ final class PublicProfileController extends ControllerBase {
       $build['links'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-links', 'aria-label' => (string) $this->t('Contatos e redes')], 'items' => $links];
     }
 
+    $this->modules->alter('aculta_user_public_profile', $build, $profile);
     $cache->applyTo($build);
     return $build;
   }

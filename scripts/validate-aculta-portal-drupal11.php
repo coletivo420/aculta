@@ -131,6 +131,11 @@ $check(
 );
 if (class_exists(Drupal\Component\Serialization\Yaml::class)) {
   $serviceData = Drupal\Component\Serialization\Yaml::decode($services) ?: [];
+  // Optional submodules own their services; Status collects active IDs only.
+  foreach (glob($moduleRoot . '/modules/*/*.services.yml') ?: [] as $submoduleServicesPath) {
+    $submoduleServices = Drupal\Component\Serialization\Yaml::decode($read($submoduleServicesPath)) ?: [];
+    $serviceData['services'] = array_merge($serviceData['services'] ?? [], $submoduleServices['services'] ?? []);
+  }
   foreach ([
     'aculta_portal.helper' => Drupal\aculta_portal\Status\PortalHelperRegistry::definitions(),
     'aculta_portal.implementation' => Drupal\aculta_portal\Status\PortalImplementationRegistry::definitions(),

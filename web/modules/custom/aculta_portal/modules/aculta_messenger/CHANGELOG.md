@@ -12,6 +12,7 @@ Classificação: PATCH (correções encontradas pela suíte de navegador e pela 
 - Aviso de bloqueio do Private Message em português (`private_message.settings`, exportado em `config/sync`).
 - Gate de fronteira: a regra de classes varre todos os `src/` do módulo (submódulos inclusos); dívida de `aculta_gallery` registrada como `DT-BOUNDARY-GALLERY`.
 - Validação: suíte de navegador (`tests/browser/aculta-messenger/`) 70 de 70 no runtime de teste.
+- Lista de conversas: o menu "Opções" de cada linha não é montado na lista; a linha guarda o endereço do menu e o carrega na primeira abertura (rota `aculta_messenger.drawer_options`).
 - Revisão de código (medium), mesma PR: destinatário da nova conversa vem da rota; ação de Opções no perfil mostra o resultado; IDs de título dos diálogos únicos; contagem de avisos para visitantes zerada; fila de aviso de fórum deixa de reenfileirar para sempre; script de preparação recusa outro banco que não aculta_runtime.
 - RUNTIME STATUS: ACTIVE no teste.
 

@@ -129,6 +129,24 @@ final class MessagesController extends ControllerBase {
    * The "Opções" form of a conversation posts here: the drawer gets the conversation again, with the new state.
    * The form is processed while the conversation is built, so the answer already shows the change.
    */
+  /**
+   * The "Opções" menu of one conversation, for a row of the list: the same form as the conversation's, loaded when the
+   * member opens the row's "Opções" (see lazyOptionsDisclosure).
+   */
+  public function drawerOptions(PrivateMessageThreadInterface $private_message_thread): Response {
+    $access = $private_message_thread->access('view', $this->account, TRUE);
+    if (!$access->isAllowed() || !$private_message_thread->isMember($this->account->id())) {
+      throw new NotFoundHttpException();
+    }
+    $build = $this->relationshipForm($private_message_thread);
+    $content = $this->renderer->renderInIsolation($build);
+    return new Response((string) $content, Response::HTTP_OK, [
+      'Content-Type' => 'text/html; charset=UTF-8',
+      'Cache-Control' => 'private, no-store, no-cache, must-revalidate',
+      'X-Content-Type-Options' => 'nosniff',
+    ]);
+  }
+
   public function drawerRelationship(PrivateMessageThreadInterface $private_message_thread): Response {
     $access = $private_message_thread->access('view', $this->account, TRUE);
     if (!$access->isAllowed() || !$private_message_thread->isMember($this->account->id())) {
@@ -240,6 +258,16 @@ final class MessagesController extends ControllerBase {
     return $this->buildDrawerResponse($build, [
       'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
     ]);
+  }
+
+  /**
+   * The "Opções" of a row in the list. Its menu is not built for every row of every list: the row carries the address
+   * of the menu, and the drawer loads it the first time the member opens it (drawerOptions).
+   */
+  private function lazyOptionsDisclosure(PrivateMessageThreadInterface $thread): array {
+    $box = OptionsDisclosure::build((string) $this->translation->translate('Opções'), []);
+    $box['#attributes']['data-aculta-options-url'] = Url::fromRoute('aculta_messenger.drawer_options', ['private_message_thread' => $thread->id()])->toString();
+    return $box;
   }
 
   /** The conversation container: toolbar (back on the left, "Opções" on the right), then the thread. */
@@ -438,7 +466,7 @@ final class MessagesController extends ControllerBase {
         $actions = [
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'messenger-conversation-actions'],
-          'options' => $this->optionsDisclosure($thread),
+          'options' => $this->lazyOptionsDisclosure($thread),
         ];
         $senderBoxes[$senderKey] = [
           'updated' => (int) $thread->getUpdatedTime(),

@@ -89,6 +89,10 @@ await b.shot('A-pending');
 await b.exec(`${b.C}.querySelector('.aculta-messenger-options__summary').click(); return 1;`);
 await b.clickByText('a', '← Todas as conversas');
 check('A: the list shows the conversation with B after going back', await b.waitFor(`[...${b.C}.querySelectorAll('a[data-aculta-conversation-url]')].some((x) => x.textContent.includes('teste.b'))`, 'row B'));
+// The list row's "Opções" loads its menu the first time it is opened (drawer_options).
+await b.exec(`${b.C}.querySelector('.aculta-messenger-conversation__actions .aculta-messenger-options__summary').click(); return 1;`);
+check('A: a list row\'s "Opções" loads its menu when opened', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-conversation__actions .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Limpar histórico')`, 'row menu'));
+await b.exec(`${b.C}.querySelector('.aculta-messenger-conversation__actions .aculta-messenger-options__summary').click(); return 1;`);
 
 // ---------- Phase 3: B accepts, as B ----------
 await b.open(B);
