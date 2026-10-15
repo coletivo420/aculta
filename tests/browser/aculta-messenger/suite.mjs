@@ -22,42 +22,46 @@ const lo = Math.min(uidA, uidB), hi = Math.max(uidA, uidB);
 drush(`\\Drupal::service("user.data")->delete("aculta_messenger", ${uidB}); $st = \\Drupal::entityTypeManager()->getStorage("aculta_friendship"); foreach ($st->loadMultiple(["${lo}:${hi}"]) as $r) { $r->delete(); } $st->resetCache(["${lo}:${hi}"]); \\Drupal::database()->delete("private_message_ban")->condition("owner", [${uidA}, ${uidB}], "IN")->execute(); \\Drupal::database()->delete("flood")->condition("event", ["aculta_messenger.private_message_send", "aculta_user.friendship_request"], "IN")->execute(); $em = \\Drupal::entityTypeManager(); $pair = $em->getStorage("user")->loadMultiple([${uidA}, ${uidB}]); $tid = \\Drupal::service("private_message.mapper")->getThreadIdForMembers(array_values($pair)); if ($tid) { $t = $em->getStorage("private_message_thread")->load($tid); $em->getStorage("private_message")->delete($t->get("private_messages")->referencedEntities()); $t->delete(); } echo "reset";`);
 
 const b = new Browser();
+// The search shows an "Adicionar" button per member: it becomes a chip. The message box and the buttons are already on the same screen.
+const pickMember = (name) => b.exec(`const x = [...${b.C}.querySelectorAll('[data-aculta-add-member]')].find((y) => y.dataset.acultaMemberName === ${JSON.stringify(name)}); if (!x) return 0; x.click(); return 1;`);
+const memberShown = (name) => `[...${b.C}.querySelectorAll('[data-aculta-add-member]')].some((x) => x.dataset.acultaMemberName === ${JSON.stringify(name)})`;
 
 // ---------- Phase 1: "Iniciar nova conversa" from the first window, as A (desktop) ----------
 await b.open(A);
 check('A: drawer opens', await b.openDrawer());
 check('A: list shows "Iniciar nova conversa" button', await b.waitFor(`${b.C}.querySelector('[data-aculta-conversation-url="/mensagens/nova"]')`, 'start button'));
 await b.exec(`${b.C}.querySelector('[data-aculta-conversation-url="/mensagens/nova"]').click(); return 1;`);
-check('A: start step shows the member search', await b.waitFor(`${b.C}.querySelector('input[type=search]')`, 'search'));
-await b.typeIn(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[type=search]`, 'te');
+check('A: start step shows the member search', await b.waitFor(`${b.C}.querySelector('input[name=q]')`, 'search'));
+await b.typeIn(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[name=q]`, 'te');
 await sleep(1200);
 check('A: 2 characters show the hint, not results', (await b.text()).includes('Digite pelo menos 3 caracteres') && (await b.exec(`return ${b.C}.querySelectorAll('[data-portal-ui="new-conversation-result"]').length;`)) === 0);
-await b.clearAndType(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[type=search]`, 'teste.b');
-check('A: 3+ characters find member B', await b.waitFor(`[...${b.C}.querySelectorAll('[data-portal-ui="new-conversation-result"]')].some((x) => x.textContent.includes('teste.b'))`, 'result'));
-await b.exec(`[...${b.C}.querySelectorAll('[data-portal-ui="new-conversation-result"]')].find((x) => x.textContent.includes('teste.b')).click(); return 1;`);
+await b.clearAndType(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[name=q]`, 'teste.b');
+check('A: 3+ characters find member B', await b.waitFor(memberShown('teste.b'), 'result'));
+await pickMember('teste.b');
 check('A: compose step shows the message box and the buttons', await b.waitFor(`${b.C}.querySelector('textarea') && [...${b.C}.querySelectorAll('input[type=submit]')].some((x) => x.value === 'Enviar')`, 'compose'));
 const composeText = await b.text();
 check('A: compose has Cancelar and Voltar para o início', composeText.includes('Cancelar') && composeText.includes('Voltar para o início'));
 const btnClasses = await b.exec(`const f = (t) => [...${b.C}.querySelectorAll('a')].find((x) => x.textContent.trim() === t); return JSON.stringify({ cancel: f('Cancelar')?.className || '', back: f('Voltar para o início')?.className || '', send: [...${b.C}.querySelectorAll('input[type=submit]')].find((x) => x.value === 'Enviar')?.className || '' });`);
 const bc = JSON.parse(btnClasses);
-check('A: "Cancelar" is an outline secondary button, "Voltar" an outline primary one, both above "Enviar"', bc.cancel.includes('btn-outline-secondary') && bc.back.includes('btn-outline-primary') && bc.send.includes('btn-primary'), btnClasses);
+check('A: "Cancelar" and "Voltar" have their own colours, apart from "Enviar"', bc.cancel.includes('aculta-new-conversation-cancel') && bc.back.includes('aculta-new-conversation-back') && bc.send.includes('btn-primary'), btnClasses);
 check('A: "Cancelar" and "Voltar para o início" come before "Enviar" in the form', await b.exec(`const all = [...${b.C}.querySelectorAll('a, input[type=submit]')]; const i = (t) => all.findIndex((x) => (x.textContent.trim() === t || x.value === t)); return i('Cancelar') < i('Enviar') && i('Voltar para o início') < i('Enviar');`));
 await b.shot('A-compose');
 await b.clickByText('a', 'Cancelar');
 check('A: Cancelar returns to the member search', await b.waitText('Digite pelo menos 3 caracteres'));
-await b.clearAndType(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[type=search]`, 'teste.b');
-await b.waitFor(`[...${b.C}.querySelectorAll('[data-portal-ui="new-conversation-result"]')].some((x) => x.textContent.includes('teste.b'))`, 'result 2');
-await b.exec(`[...${b.C}.querySelectorAll('[data-portal-ui="new-conversation-result"]')].find((x) => x.textContent.includes('teste.b')).click(); return 1;`);
+await b.clearAndType(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[name=q]`, 'teste.b');
+await b.waitFor(memberShown('teste.b'), 'result 2');
+await pickMember('teste.b');
 await b.waitFor(`${b.C}.querySelector('textarea')`, 'compose 2');
 await b.clickByText('a', 'Voltar para o início');
 check('A: Voltar para o início returns to the conversation list', await b.waitFor(`${b.C}.querySelector('[data-aculta-conversation-url="/mensagens/nova"]')`, 'list'));
 
 // Send the first message (A -> B), through the compose step.
 await b.exec(`${b.C}.querySelector('[data-aculta-conversation-url="/mensagens/nova"]').click(); return 1;`);
-await b.waitFor(`${b.C}.querySelector('input[type=search]')`, 'search 3');
-await b.clearAndType(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[type=search]`, 'teste.b');
-await b.waitFor(`[...${b.C}.querySelectorAll('[data-portal-ui="new-conversation-result"]')].some((x) => x.textContent.includes('teste.b'))`, 'result 3');
-await b.exec(`[...${b.C}.querySelectorAll('[data-portal-ui="new-conversation-result"]')].find((x) => x.textContent.includes('teste.b')).click(); return 1;`);
+await b.waitFor(`${b.C}.querySelector('input[name=q]')`, 'search 3');
+await sleep(800); // the drawer attaches the search behaviour after the fragment is inserted
+await b.clearAndType(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] input[name=q]`, 'teste.b');
+await b.waitFor(memberShown('teste.b'), 'result 3');
+await pickMember('teste.b');
 await b.waitFor(`${b.C}.querySelector('textarea')`, 'compose 3');
 await b.typeIn(`[data-aculta-drawer-url][data-aculta-drawer-count="messages"] textarea`, MSG);
 await b.exec(`[...${b.C}.querySelectorAll('input[type=submit]')].find((x) => x.value === 'Enviar').click(); return 1;`);

@@ -12,35 +12,67 @@ use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * The chat rules: kinds, the administrator's limits, and the defaults when no value is saved.
+ */
 #[CoversClass(ConversationPolicy::class)]
 #[Group('aculta_messenger')]
 final class ConversationPolicyTest extends UnitTestCase {
 
-  private ConversationPolicy $policy;
-
-  protected function setUp(): void {
-    parent::setUp();
-    $this->policy = new ConversationPolicy();
+  private function policy(array $settings = []): ConversationPolicy {
+    return new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => $settings]));
   }
 
   public function testKindFollowsTheMemberCount(): void {
-    $this->assertSame(ConversationPolicy::KIND_DIRECT, $this->policy->kindOf($this->thread(2)));
-    $this->assertSame(ConversationPolicy::KIND_GROUP, $this->policy->kindOf($this->thread(3)));
-    $this->assertSame(ConversationPolicy::KIND_GROUP, $this->policy->kindOf($this->thread(11)));
+    $policy = $this->policy();
+    $this->assertSame(ConversationPolicy::KIND_DIRECT, $policy->kindOf($this->thread(2)));
+    $this->assertSame(ConversationPolicy::KIND_GROUP, $policy->kindOf($this->thread(3)));
   }
 
-  public function testCommonMembersMayAddUpToTenOthersToAGroup(): void {
+  public function testDefaultsWhenNothingIsSaved(): void {
+    $policy = $this->policy();
     $account = $this->createMock(AccountInterface::class);
-    $this->assertSame(1, $this->policy->maxRecipients(ConversationPolicy::KIND_DIRECT, $account));
-    $this->assertSame(10, $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $account));
-    $this->assertSame(10, ConversationPolicy::GROUP_MAX_RECIPIENTS);
+    $this->assertSame(10, $policy->groupMaxMembers());
+    $this->assertSame(10, $policy->maxRecipients(ConversationPolicy::KIND_GROUP, $account));
+    $this->assertSame(1, $policy->maxRecipients(ConversationPolicy::KIND_DIRECT, $account));
+    $this->assertSame(6, $policy->retentionMonths());
+    $this->assertSame(20, $policy->cleanupBatch());
+    $this->assertSame(10, $policy->sendLimitPerHour());
+    $this->assertTrue($policy->groupCreationEnabled());
   }
 
-  public function testCourseChatsArePersistentAndOthersAreKeptSixMonths(): void {
-    $this->assertNull($this->policy->retentionMonths(ConversationPolicy::KIND_COURSE));
-    $this->assertSame(6, $this->policy->retentionMonths(ConversationPolicy::KIND_DIRECT));
-    $this->assertSame(6, $this->policy->retentionMonths(ConversationPolicy::KIND_GROUP));
-    $this->assertSame(6, $this->policy->retentionMonths(ConversationPolicy::KIND_FORUM));
+  public function testTheAdministratorsValuesAreUsed(): void {
+    $policy = $this->policy([
+      'group_max_members' => 25,
+      'retention_months' => 12,
+      'cleanup_batch' => 50,
+      'send_limit_per_hour' => 30,
+    ]);
+    $account = $this->createMock(AccountInterface::class);
+    $this->assertSame(25, $policy->maxRecipients(ConversationPolicy::KIND_GROUP, $account));
+    $this->assertSame(12, $policy->retentionMonths());
+    $this->assertSame(50, $policy->cleanupBatch());
+    $this->assertSame(30, $policy->sendLimitPerHour());
+  }
+
+  public function testGroupCreationOffLeavesOnlyOneRecipient(): void {
+    $policy = $this->policy(['group_creation_enabled' => FALSE, 'group_max_members' => 10]);
+    $account = $this->createMock(AccountInterface::class);
+    $this->assertSame(1, $policy->maxRecipients(ConversationPolicy::KIND_GROUP, $account));
+  }
+
+  public function testCourseChatIsPersistent(): void {
+    $policy = $this->policy();
+    $this->assertNull($policy->retentionMonths(ConversationPolicy::KIND_COURSE));
+    $this->assertSame(6, $policy->retentionMonths(ConversationPolicy::KIND_DIRECT));
+  }
+
+  public function testValuesOutsideTheLimitsAreClamped(): void {
+    $policy = $this->policy(['group_max_members' => 999, 'retention_months' => 0, 'cleanup_batch' => 0, 'send_limit_per_hour' => 99999]);
+    $this->assertSame(50, $policy->groupMaxMembers());
+    $this->assertSame(1, $policy->retentionMonths());
+    $this->assertSame(1, $policy->cleanupBatch());
+    $this->assertSame(1000, $policy->sendLimitPerHour());
   }
 
   private function thread(int $members): PrivateMessageThreadInterface {

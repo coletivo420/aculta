@@ -4,7 +4,7 @@
 .private-message-thread-inbox.aculta-messenger-conversation { position: relative; margin-block: 0; padding: 0.75rem; border: 1px solid var(--aculta-border-subtle); border-radius: 0.75rem; background: var(--aculta-surface-raised); }
 .private-message-thread-inbox.aculta-messenger-conversation.unread-thread { border-color: var(--aculta-interactive-border); background: var(--aculta-surface-muted); }
 .aculta-messenger-sender { position: relative; display: flex; align-items: center; gap: 0.8rem; min-height: 4.25rem; margin: 0.25rem 0; padding: 0.55rem 0.75rem; border: 1px solid var(--aculta-border-strong); border-radius: 0.4rem; background: var(--aculta-surface-raised); box-shadow: var(--bs-box-shadow-sm); transition: background-color var(--aculta-motion-quick) ease, border-color var(--aculta-motion-quick) ease, box-shadow var(--aculta-motion-quick) ease; }
-.aculta-messenger-sender:hover, .aculta-messenger-sender:focus-within { border-color: var(--aculta-interactive-border); background: var(--aculta-interactive-bg); box-shadow: var(--bs-box-shadow); }
+.aculta-messenger-sender:not(.aculta-notice-summary):hover, .aculta-messenger-sender:not(.aculta-notice-summary):focus-within { border-color: var(--aculta-interactive-border); background: var(--aculta-interactive-bg); box-shadow: var(--bs-box-shadow); }
 .aculta-messenger-sender__avatar { display: grid; flex: 0 0 3rem; width: 3rem; height: 3rem; place-items: center; overflow: hidden; border: 2px solid var(--aculta-surface-raised); border-radius: 50%; background: var(--aculta-interactive-hover-bg); box-shadow: 0 0 0 1px var(--aculta-border-strong); color: var(--aculta-interactive-hover-text); font-size: 1.1rem; font-weight: 700; }
 .aculta-messenger-sender__avatar img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .aculta-messenger-preview .item-list > ul { display: grid; gap: 0.65rem; margin: 0; padding: 0; list-style: none; }
@@ -112,4 +112,31 @@ dialog[data-aculta-dialog] .form-actions :is(button, input[type="submit"]) { wid
 .aculta-notice-summary [data-aculta-alert-dismiss] { position: relative; z-index: 3; }
 .aculta-notice-detail { display: flex; flex-direction: column; gap: 0.75rem; }
 /* Aviso persistente: não se dispensa, por isso tem cartão próprio (cor de aviso), diferente dos dispensáveis. */
-.aculta-messenger-sender.aculta-notice-summary--persistent { border-color: var(--aculta-status-warning-border); background: var(--aculta-status-warning-surface); }
+/* Persistent notice: brand-yellow fill with the brand's dark text in both themes, so it stands out from the three type colours. */
+.aculta-messenger-sender.aculta-notice-summary--persistent { border: 3px solid var(--aculta-interactive-border); background: var(--aculta-interactive-bg); color: var(--aculta-interactive-text); }
+.aculta-notice-summary--persistent .aculta-notice-summary__title,
+.aculta-notice-summary--persistent .aculta-notice-summary__excerpt,
+.aculta-notice-summary--persistent .aculta-notice-summary__state { color: var(--aculta-interactive-text); }
+/* Notice cards keep their own colours on hover and focus: only a shadow, and the link keeps the card's text colour. */
+.aculta-messenger-sender.aculta-notice-summary:hover, .aculta-messenger-sender.aculta-notice-summary:focus-within { box-shadow: var(--bs-box-shadow); }
+.aculta-notice-summary .aculta-messenger-sender__link:hover, .aculta-notice-summary .aculta-messenger-sender__link:focus-visible { color: inherit; text-decoration: underline; }
+
+/* Nova conversa: os membros escolhidos viram chips (nome e ×) no campo, como no Gmail. Só tokens semânticos. */
+.aculta-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; min-height: 0; margin-block-end: 0.5rem; }
+.aculta-chips:empty { display: none; }
+.aculta-chip { display: inline-flex; align-items: center; gap: 0.25rem; max-width: 100%; padding: 0.2rem 0.25rem 0.2rem 0.65rem; border: 1px solid var(--aculta-interactive-border); border-radius: 999px; background: var(--aculta-interactive-active-bg); color: var(--aculta-interactive-active-text); font-size: 0.875rem; }
+.aculta-chip__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 14rem; }
+.aculta-chip__remove { display: inline-grid; width: 1.5rem; height: 1.5rem; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; font-size: 1.1rem; line-height: 1; cursor: pointer; }
+.aculta-chip__remove:hover, .aculta-chip__remove:focus-visible { background: var(--aculta-interactive-hover-bg); color: var(--aculta-interactive-hover-text); }
+.aculta-chip__remove:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 1px; }
+.aculta-chips__status { flex-basis: 100%; color: var(--aculta-text-secondary); font-size: 0.8125rem; }
+/* Cor de cada tipo de aviso (Informação, Atenção, Urgente). Vem depois da cor do persistente: o tipo prevalece. */
+/* Persistent notices keep their own colour whatever type field they carry. */
+.aculta-messenger-sender.aculta-notice-type--info:not(.aculta-notice-summary--persistent) { border-color: var(--aculta-status-ok-border); background: var(--aculta-status-ok-surface); }
+.aculta-messenger-sender.aculta-notice-type--warning:not(.aculta-notice-summary--persistent) { border-color: var(--aculta-text-primary); background: var(--aculta-surface-page); }
+.aculta-messenger-sender.aculta-notice-type--danger:not(.aculta-notice-summary--persistent) { border-color: var(--aculta-status-error-border); background: var(--aculta-status-error-surface); }
+
+
+/* New conversation: Cancelar and Voltar keep their own colours, apart from the yellow Enviar (the outline variants are shared with other buttons). */
+.btn.aculta-new-conversation-cancel { --bs-btn-color: var(--aculta-text-primary); --bs-btn-bg: transparent; --bs-btn-border-color: var(--aculta-border-strong); --bs-btn-hover-color: var(--aculta-interactive-hover-text); --bs-btn-hover-bg: var(--aculta-interactive-hover-bg); --bs-btn-hover-border-color: var(--aculta-interactive-hover-bg); color: var(--aculta-text-primary); background-color: transparent; border: 2px solid var(--aculta-border-strong); }
+.btn.aculta-new-conversation-back { --bs-btn-color: var(--aculta-text-primary); --bs-btn-bg: var(--aculta-surface-muted); --bs-btn-border-color: var(--aculta-control-border); --bs-btn-hover-color: var(--aculta-interactive-hover-text); --bs-btn-hover-bg: var(--aculta-interactive-hover-bg); --bs-btn-hover-border-color: var(--aculta-interactive-hover-bg); color: var(--aculta-text-primary); background-color: var(--aculta-surface-muted); border: 1px solid var(--aculta-control-border); }

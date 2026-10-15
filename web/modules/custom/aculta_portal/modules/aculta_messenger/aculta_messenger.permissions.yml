@@ -1,0 +1,3 @@
+administer aculta messenger:
+  title: 'Administrar o chat (limites, limpeza e grupos)'
+  restrict access: true

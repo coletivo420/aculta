@@ -1,0 +1,5 @@
+group_creation_enabled: true
+group_max_members: 10
+retention_months: 6
+cleanup_batch: 20
+send_limit_per_hour: 10

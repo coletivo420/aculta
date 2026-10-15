@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserDataInterface;
+use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
@@ -18,7 +19,6 @@ final class PrivateMessageFormValidator {
 
   private const EVENT = 'aculta_messenger.private_message_send';
 
-  private const LIMIT = 10;
 
   private const WINDOW = 3600;
 
@@ -29,6 +29,7 @@ final class PrivateMessageFormValidator {
     private readonly PrivateMessageBanManagerInterface $banManager,
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly UserDataInterface $userData,
+    private readonly ConversationPolicy $policy,
   ) {}
 
   /** Rejects recipients who have blocked the current sender. */
@@ -121,7 +122,7 @@ final class PrivateMessageFormValidator {
     }
 
     $identifier = 'uid:' . $this->currentUser->id();
-    if (!$this->flood->isAllowed(self::EVENT, self::LIMIT, self::WINDOW, $identifier)) {
+    if (!$this->flood->isAllowed(self::EVENT, $this->policy->sendLimitPerHour(), self::WINDOW, $identifier)) {
       $formState->setErrorByName('message', $this->translation->translate('Você atingiu o limite temporário de envio de mensagens. Tente novamente mais tarde.'));
       return;
     }

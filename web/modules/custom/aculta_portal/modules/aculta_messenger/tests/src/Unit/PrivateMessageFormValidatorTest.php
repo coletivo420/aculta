@@ -12,6 +12,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
+use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\Tests\UnitTestCase;
@@ -100,6 +101,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $banManager,
       $this->createMock(FriendshipManagerInterface::class),
       $this->createMock(UserDataInterface::class),
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $form = [];
     $validator->validateBlockedRecipients($form, $formState);
@@ -120,6 +122,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $banManager,
       $this->createMock(FriendshipManagerInterface::class),
       $this->createMock(UserDataInterface::class),
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $form = [];
     $validator->validateBlockedRecipients($form, $formState);
@@ -135,6 +138,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(PrivateMessageBanManagerInterface::class),
       $this->createMock(FriendshipManagerInterface::class),
       $this->createMock(UserDataInterface::class),
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
   }
 

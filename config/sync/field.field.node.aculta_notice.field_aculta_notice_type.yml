@@ -1,0 +1,24 @@
+uuid: 3055d0ae-7ca9-4e54-9dbc-a4ff6217cfb3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_aculta_notice_type
+    - node.type.aculta_notice
+  module:
+    - options
+id: node.aculta_notice.field_aculta_notice_type
+field_name: field_aculta_notice_type
+entity_type: node
+bundle: aculta_notice
+label: 'Tipo do aviso'
+description: 'Define a cor do aviso na gaveta: Informação (azul), Atenção (amarelo) ou Urgente (vermelho).'
+required: false
+translatable: true
+default_value:
+  -
+    value: warning
+default_value_callback: ''
+settings: {  }
+field_type: list_string
+

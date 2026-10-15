@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Controller;
 
 use Drupal\aculta_messenger\Form\NewConversationForm;
+use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -44,6 +45,7 @@ final class NewConversationController extends ControllerBase {
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly FormBuilderInterface $forms,
     private readonly RendererInterface $renderer,
+    private readonly ConversationPolicy $policy,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -55,6 +57,7 @@ final class NewConversationController extends ControllerBase {
       $container->get('aculta_user.friendship_manager'),
       $container->get('form_builder'),
       $container->get('renderer'),
+      $container->get('aculta_messenger.conversation_policy'),
     );
   }
 
@@ -63,13 +66,13 @@ final class NewConversationController extends ControllerBase {
     $build = [
       'back' => $this->backLink(),
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa')],
-      'search' => $this->searchForm(),
+      'form' => $this->forms->buildForm(NewConversationForm::class, new FormState()),
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
     return $this->fragment($build);
   }
 
-  /** Search results for the typed name; the header search's rule (three characters) applies here too. */
+  /** Search results for the typed name: one checkbox per member, up to the group limit per choice. */
   public function search(Request $request): Response {
     $term = trim((string) $request->query->get('q', ''));
     $build = ['#cache' => ['contexts' => ['user'], 'max-age' => 0]];
@@ -78,32 +81,70 @@ final class NewConversationController extends ControllerBase {
       return $this->fragment($build);
     }
 
-    $items = [];
-    foreach ($this->candidates($term) as $user) {
-      $items[] = [
-        '#type' => 'link',
-        '#title' => $user->getDisplayName(),
-        '#url' => Url::fromRoute('aculta_messenger.new_conversation_compose', ['user' => $user->id()]),
-        '#attributes' => [
-          'data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation_compose', ['user' => $user->id()])->toString(),
-          'data-portal-ui' => 'new-conversation-result',
-        ],
-      ];
-      if (count($items) >= self::MAX_RESULTS) {
-        break;
-      }
-    }
-    if ($items === []) {
+    $candidates = array_slice($this->candidates($term), 0, self::MAX_RESULTS);
+    if ($candidates === []) {
       $build['empty'] = ['#plain_text' => $this->t('Nenhum membro encontrado.')];
     }
     else {
-      $build['results'] = [
+      $build['results'] = $this->memberResults($candidates);
+    }
+    return $this->fragment($build);
+  }
+
+  /**
+   * The send of the new-conversation form: the chips (members[]) and the message, posted together. Missing members or an
+   * empty message are reported by the form's validation; a valid send answers with the new conversation.
+   */
+  public function composeGroup(Request $request): Response {
+    $formState = new FormState();
+    $form = $this->forms->buildForm(NewConversationForm::class, $formState);
+
+    $thread = $formState->get('thread');
+    if ($request->isMethod('POST') && $thread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
+      return new RedirectResponse(Url::fromRoute('aculta_messenger.drawer_conversation', ['private_message_thread' => $thread->id()])->toString(), Response::HTTP_SEE_OTHER, [
+        'Cache-Control' => 'private, no-store',
+      ]);
+    }
+    $build = [
+      'back' => $this->backLink(),
+      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa')],
+      'form' => $form,
+      '#cache' => ['contexts' => ['user'], 'max-age' => 0],
+    ];
+    if ($request->isMethod('POST') && $formState->hasAnyErrors()) {
+      $build['errors'] = [
         '#theme' => 'item_list',
-        '#items' => $items,
-        '#attributes' => ['data-portal-ui' => 'new-conversation-results'],
+        '#items' => array_values(array_map(static fn($message) => (string) $message, $formState->getErrors())),
+        '#attributes' => ['role' => 'alert'],
+        '#weight' => -50,
       ];
     }
     return $this->fragment($build);
+  }
+
+  /**
+   * The search results: one "Adicionar" button per member. The drawer turns a press into a chip in the field above
+   * (messenger-drawers.js); the chips stay there while the results change.
+   *
+   * @param \Drupal\user\UserInterface[] $candidates
+   */
+  private function memberResults(array $candidates): array {
+    // The same list as the header search's preview (search-preview-list, styled as its dropdown). Each name is a link:
+    // the drawer turns a press into a chip (messenger-drawers.js) and does not follow the link.
+    $items = [];
+    $group = Url::fromRoute('aculta_messenger.new_conversation_group');
+    foreach ($candidates as $user) {
+      $items[] = PortalLinkElement::build($user->getDisplayName(), $group, [
+        'data-aculta-add-member' => (string) $user->id(),
+        'data-aculta-member-name' => $user->getDisplayName(),
+        'data-portal-ui' => 'new-conversation-add',
+      ]);
+    }
+    return [
+      '#theme' => 'item_list',
+      '#items' => $items,
+      '#attributes' => ['data-portal-ui' => 'search-preview-list'],
+    ];
   }
 
   /**
@@ -173,39 +214,6 @@ final class NewConversationController extends ControllerBase {
 
   private function escapeLike(string $value): string {
     return addcslashes($value, '\\%_');
-  }
-
-  /**
-   * The member search: a real form (the preview script reads input.form), a search input with the header
-   * search's token, and the preview box that holds the hint and the results.
-   */
-  private function searchForm(): array {
-    return [
-      '#type' => 'html_tag',
-      '#tag' => 'form',
-      '#attributes' => ['method' => 'get', 'action' => '#', 'role' => 'search', 'data-aculta-new-conversation' => ''],
-      // A Form API search element (not a raw html_tag input) so the theme's token mapping reaches it.
-      'q' => [
-        '#type' => 'search',
-        '#name' => 'q',
-        '#title' => (string) $this->t('Buscar membro'),
-        '#title_display' => 'invisible',
-        '#placeholder' => (string) $this->t('Buscar membro pelo nome'),
-        '#maxlength' => 100,
-        '#attributes' => [
-          'autocomplete' => 'off',
-          'data-portal-ui' => 'search-preview-input',
-          'data-preview-url' => Url::fromRoute('aculta_messenger.new_conversation_search')->toString(),
-          'data-preview-target' => 'aculta-new-conversation-preview',
-          'data-min-chars' => (string) self::MIN_CHARS,
-        ],
-      ],
-      'preview' => [
-        '#type' => 'container',
-        '#attributes' => ['id' => 'aculta-new-conversation-preview', 'data-portal-ui' => 'search-preview', 'aria-live' => 'polite'],
-        'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => self::MIN_CHARS])],
-      ],
-    ];
   }
 
   /** "← Todas as conversas", the same link and place as in the conversation view (top, under the drawer's X). */

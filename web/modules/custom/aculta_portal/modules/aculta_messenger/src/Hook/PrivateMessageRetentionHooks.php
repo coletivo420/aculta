@@ -16,7 +16,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class PrivateMessageRetentionHooks {
 
 
-  private const MAX_THREADS_PER_CRON = 20;
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
@@ -25,6 +24,8 @@ final class PrivateMessageRetentionHooks {
     private readonly TimeInterface $time,
     #[Autowire(service: 'logger.factory')]
     private readonly LoggerChannelFactoryInterface $loggerFactory,
+    #[Autowire(service: 'aculta_messenger.conversation_policy')]
+    private readonly ConversationPolicy $policy,
   ) {}
 
   /** Deletes dormant threads through Private Message's entity lifecycle. */
@@ -35,14 +36,14 @@ final class PrivateMessageRetentionHooks {
     }
 
     $cutoff = (new \DateTimeImmutable('@' . $this->time->getRequestTime()))
-      ->modify('-' . ConversationPolicy::RETENTION_MONTHS . ' months')
+      ->modify('-' . $this->policy->retentionMonths() . ' months')
       ->getTimestamp();
     $storage = $this->entityTypeManager->getStorage('private_message_thread');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('updated', $cutoff, '<=')
       ->sort('updated', 'ASC')
-      ->range(0, self::MAX_THREADS_PER_CRON)
+      ->range(0, $this->policy->cleanupBatch())
       ->execute();
     if ($ids === []) {
       return;
@@ -51,6 +52,10 @@ final class PrivateMessageRetentionHooks {
     $deleted = 0;
     foreach ($storage->loadMultiple($ids) as $thread) {
       if (!$thread instanceof PrivateMessageThreadInterface || (int) $thread->getUpdatedTime() > $cutoff) {
+        continue;
+      }
+      // A kind without retention (the LMS course chat) is never removed by inactivity.
+      if ($this->policy->retentionMonths($this->policy->kindOf($thread)) === NULL) {
         continue;
       }
       try {

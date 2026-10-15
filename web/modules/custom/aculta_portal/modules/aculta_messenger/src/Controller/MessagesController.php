@@ -11,6 +11,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
+use Drupal\aculta_messenger\Support\NoticeType;
 use Drupal\aculta_messenger\Support\OptionsDisclosure;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Component\Utility\Unicode;
@@ -557,6 +558,11 @@ final class MessagesController extends ControllerBase {
     }
     $items = [];
 
+    // Persistent notices always lead the list, ahead of the dismissable site alerts.
+    foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
+      $items[] = $item;
+    }
+
     // Same criteria as the header bar, from the shared service.
     $activeAlertCount = $this->counts->visibleActiveAlertCount($this->account, $cacheability);
     $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
@@ -578,12 +584,11 @@ final class MessagesController extends ControllerBase {
         Url::fromRoute('aculta_messenger.alert_detail', ['site_alert' => $alert->id()]),
         $this->buildDismissalLink($dismissalFlag, $alert),
         NULL,
+        FALSE,
+        NoticeType::fromSeverity($alert->getSeverity()),
       );
     }
 
-    foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
-      $items[] = $item;
-    }
     $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account);
 
     if ($items === []) {
@@ -647,6 +652,7 @@ final class MessagesController extends ControllerBase {
         [],
         $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
         TRUE,
+        NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
       );
     }
     return $items;
@@ -658,7 +664,7 @@ final class MessagesController extends ControllerBase {
    *
    * @param array<string, mixed> $dismiss
    */
-  private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state, bool $persistent = FALSE): array {
+  private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state, bool $persistent = FALSE, ?string $type = NULL): array {
     $title_parts = [
       '#type' => 'container',
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-title']), '#value' => $title],
@@ -671,7 +677,10 @@ final class MessagesController extends ControllerBase {
     }
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => $persistent ? 'notice-summary notice-summary-persistent' : 'notice-summary'],
+      '#attributes' => ['data-portal-ui' => trim(
+        ($persistent ? 'notice-summary notice-summary-persistent' : 'notice-summary')
+        . ($type !== NULL ? ' notice-type-' . NoticeType::normalize($type) : ''),
+      )],
       'link' => PortalLinkElement::build($title_parts, $url, [
         'data-aculta-conversation-url' => $url->toString(),
         'data-portal-ui' => 'notice-summary-link',

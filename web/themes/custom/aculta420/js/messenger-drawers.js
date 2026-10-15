@@ -99,7 +99,47 @@
         // Lets other parts of the page (for example the profile's "Iniciar conversa") load a drawer view.
         drawer.acultaNavigate = navigate;
 
+        // Gmail-style entry: a comma or Enter turns the typed name into a chip, and pasted "a, b, c" makes one chip per name.
+        drawer.addEventListener('keydown', (event) => {
+          const input = event.target;
+          if (!(input instanceof HTMLInputElement) || input.name !== 'q' || !input.form?.matches('form[data-aculta-new-conversation]')) {
+            return;
+          }
+          if (event.key !== ',' && event.key !== 'Enter') {
+            return;
+          }
+          event.preventDefault();
+          const name = input.value.replace(/,/g, '').trim();
+          if (name !== '') {
+            commitTypedMember(input, name);
+          }
+        });
+        drawer.addEventListener('input', (event) => {
+          const input = event.target;
+          if (!(input instanceof HTMLInputElement) || input.name !== 'q' || !input.value.includes(',')) {
+            return;
+          }
+          // Pasted or typed "a, b, c": every name before the last comma becomes a chip; the last one stays in the field.
+          const parts = input.value.split(',');
+          const last = parts.pop();
+          input.value = last;
+          parts.map((part) => part.trim()).filter((part) => part !== '').forEach((part) => commitTypedMember(input, part, false));
+        });
+
         drawer.addEventListener('click', (event) => {
+          // A search result becomes a chip in the field above the results; the chip's "×" takes it off again.
+          const add = event.target.closest('[data-aculta-add-member]');
+          if (add && drawer.contains(add)) {
+            event.preventDefault();
+            addMemberChip(add.closest('form'), add.dataset.acultaAddMember, add.dataset.acultaMemberName);
+            return;
+          }
+          const remove = event.target.closest('[data-aculta-chip-remove]');
+          if (remove && drawer.contains(remove)) {
+            event.preventDefault();
+            remove.closest('[data-aculta-chip]')?.remove();
+            return;
+          }
           // The "Iniciar nova conversa" button carries data-aculta-conversation-url too; it is not in a form.
           const link = event.target.closest('a[data-aculta-conversation-url], button[data-aculta-conversation-url], input[data-aculta-conversation-url], a[data-aculta-drawer-back]');
           if (!link || !drawer.contains(link)) {
@@ -110,11 +150,8 @@
         });
 
         drawer.addEventListener('submit', (event) => {
-          // The member search inside the drawer is not a page search: Enter must not submit it.
-          if (event.target.matches('form[data-aculta-new-conversation]')) {
-            event.preventDefault();
-            return;
-          }
+          // The new-conversation form is one form (search, chips, message): its "Enviar" posts everything below.
+          // Enter in the member search never sends (the keydown above stops it).
           // First message of a new conversation: posted with fetch, because the Form API AJAX needs page settings.
           // The "Opções" actions (friendship, block) post the same way and answer with the updated conversation.
           if (event.target.matches('form[data-aculta-new-conversation-form], form[data-aculta-drawer-action], form[data-aculta-reply-form]')) {
@@ -226,6 +263,101 @@
         delete box.dataset.acultaOptionsLoading;
       });
   }, true);
+
+  // Looks the typed name up in the member search and adds that member as a chip. The field is cleared when it worked;
+  // when no member has that name, the typed text stays and the form says so.
+  function commitTypedMember(input, name, clearField = true) {
+    const form = input.form;
+    const previewUrl = input.dataset.previewUrl;
+    if (!form || !previewUrl) {
+      return;
+    }
+    fetch(`${previewUrl}?q=${encodeURIComponent(name)}`, {
+      method: 'GET',
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    })
+      .then((response) => (response.ok ? response.text() : ''))
+      .then((html) => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const wanted = name.toLocaleLowerCase('pt-BR');
+        const match = [...doc.querySelectorAll('[data-aculta-add-member]')]
+          .find((option) => (option.dataset.acultaMemberName || '').toLocaleLowerCase('pt-BR') === wanted);
+        if (!match) {
+          showChipStatus(form, Drupal.t('Nenhum membro com o nome "@name".', { '@name': name }));
+          return;
+        }
+        addMemberChip(form, match.dataset.acultaAddMember, match.dataset.acultaMemberName);
+        if (clearField) {
+          input.value = '';
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      })
+      .catch(() => {});
+  }
+
+  function showChipStatus(form, text) {
+    const box = form?.querySelector('[data-aculta-chips]');
+    if (!box) {
+      return;
+    }
+    const note = document.createElement('span');
+    note.className = 'aculta-chips__status';
+    note.setAttribute('role', 'status');
+    note.textContent = text;
+    box.append(note);
+    window.setTimeout(() => note.remove(), 2500);
+  }
+
+  // Adds a member as a chip (name and "×") to the search form's field, up to the group limit of the form.
+  function addMemberChip(form, uid, name) {
+    const box = form?.querySelector('[data-aculta-chips]');
+    if (!box || !uid || box.querySelector(`input[name="members[]"][value="${uid}"]`)) {
+      return;
+    }
+    const max = Number.parseInt(form.dataset.acultaGroupMax || '10', 10);
+    if (box.querySelectorAll('input[name="members[]"]').length >= max) {
+      const note = document.createElement('span');
+      note.className = 'aculta-chips__status';
+      note.setAttribute('role', 'status');
+      note.textContent = Drupal.t('Limite de @n pessoas.', { '@n': max });
+      box.append(note);
+      window.setTimeout(() => note.remove(), 2500);
+      return;
+    }
+    const chip = document.createElement('span');
+    chip.className = 'aculta-chip';
+    chip.dataset.acultaChip = '';
+    const label = document.createElement('span');
+    label.className = 'aculta-chip__name';
+    label.textContent = name;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'aculta-chip__remove';
+    remove.dataset.acultaChipRemove = '';
+    remove.setAttribute('aria-label', Drupal.t('Remover @name', { '@name': name }));
+    remove.textContent = '×';
+    const field = document.createElement('input');
+    field.type = 'hidden';
+    field.name = 'members[]';
+    field.value = uid;
+    chip.append(label, remove, field);
+    box.append(chip);
+    clearSearchField(form);
+  }
+
+  // After a member is chosen the search is emptied (its results go with it) and the field takes focus, so the next name
+  // can be typed right away. The field and the Continuar button stay on screen the whole time.
+  function clearSearchField(form) {
+    const search = form?.querySelector('input[name="q"]');
+    if (!search) {
+      return;
+    }
+    search.value = '';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    search.focus();
+  }
 
   function updateCounter(type, value) {
     const count = Number.parseInt(value || '', 10);

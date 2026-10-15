@@ -124,6 +124,16 @@ aculta_messenger.notice_detail:
       node:
         type: entity:node
 
+aculta_messenger.settings_form:
+  path: '/admin/config/aculta/portal/mensagens'
+  defaults:
+    _form: '\Drupal\aculta_messenger\Form\MessengerSettingsForm'
+    _title: 'Chat: limites e limpeza'
+  requirements:
+    _permission: 'administer aculta messenger'
+  options:
+    _admin_route: true
+
 aculta_messenger.admin_notices:
   path: '/painel-administrativo/avisos'
   defaults:
@@ -198,6 +208,18 @@ aculta_messenger.new_conversation_search:
   defaults:
     _controller: '\Drupal\aculta_messenger\Controller\NewConversationController::search'
     _title: 'Buscar membro'
+  requirements:
+    _permission: 'use private messaging system,access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+
+aculta_messenger.new_conversation_group:
+  path: '/mensagens/nova/grupo/painel'
+  methods: [GET, POST]
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\NewConversationController::composeGroup'
+    _title: 'Nova conversa'
   requirements:
     _permission: 'use private messaging system,access user profiles'
     _user_is_logged_in: 'TRUE'
