@@ -194,6 +194,7 @@ final class PortalUiHooks {
     'social-link-dialog' => ['aculta-social-link-dialog'],
     'secret-dialog' => ['aculta-secret-dialog'],
     'messenger-preview' => ['aculta-messenger-preview'],
+    'account-home' => ['aculta-account-home'],
     'messenger-preview-inbox-link' => ['btn', 'btn-primary', 'aculta-messenger-preview__inbox-link'],
     'messenger-read-status' => ['aculta-messenger-read-status'],
     'notice-read-status' => ['aculta-messenger-read-status'],
@@ -214,6 +215,34 @@ final class PortalUiHooks {
     'status-attention' => ['aculta-portal-requirements__status--attention'],
     'breadcrumb-list' => ['breadcrumb'],
   ];
+
+  /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */
+  #[Hook('preprocess_menu')]
+  public function preprocessMenu(array &$variables): void {
+    if (!empty($variables['items']) && is_array($variables['items'])) {
+      $this->mapMenuLinkTokens($variables['items']);
+    }
+  }
+
+  /** @param array<int|string, mixed> $items */
+  private function mapMenuLinkTokens(array &$items): void {
+    foreach ($items as &$item) {
+      $url = $item['url'] ?? NULL;
+      if ($url instanceof \Drupal\Core\Url) {
+        $attributes = $url->getOption('attributes') ?? [];
+        $token = $attributes[self::ATTRIBUTE] ?? NULL;
+        if (is_string($token) && isset(self::TOKENS[$token])) {
+          unset($attributes[self::ATTRIBUTE]);
+          $attributes['class'] = array_merge($attributes['class'] ?? [], self::TOKENS[$token]);
+          $url->setOption('attributes', $attributes);
+        }
+      }
+      if (!empty($item['below']) && is_array($item['below'])) {
+        $this->mapMenuLinkTokens($item['below']);
+      }
+    }
+    unset($item);
+  }
 
   #[Hook('preprocess_container')]
   #[Hook('preprocess_html_tag')]

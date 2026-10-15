@@ -101,6 +101,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `requirements-indexing` | `aculta-portal-requirements__indexing` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `account-home` | `aculta-account-home` | `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` (link Minha conta do menu da conta; o tema aplica a classe ao link) |
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
@@ -247,6 +248,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `secret-dialog` | `aculta-secret-dialog` | `web/modules/custom/aculta_portal/src/Secrets/Form/SecretClearForm.php`<br>`web/modules/custom/aculta_portal/src/Secrets/Form/SecretEditForm.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | (montado pelo tema para link da inbox) |
+| `account-home` | `aculta-account-home` | (montado pelo tema no link Minha conta, a partir do token do módulo) |
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |

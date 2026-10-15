@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.38 | Link Minha conta identificado por token | Verificado no runtime (aculta, conta, loja); RUNTIME STATUS: ACTIVE | Cor do link vem da classe `aculta-account-home`, não da posição no menu |
 | 0.6.0-dev.37 | Rota de conversas e token de ação no tema | Verificação estática PASS (Foundation 341); RUNTIME STATUS: DEFERRED | Lista de conversas mapeada à rota `conversations`; token `messenger-preview-inbox-link` documentado |
 | 0.6.0-dev.36 | Conversa no drawer via navegação AJAX | Verificação estática PASS; runtime a validar (RUNTIME STATUS: DEFERRED) | Abre conversa e volta para lista no próprio painel lateral; link da caixa ocupa toda a área clicável |
 | 0.6.0-dev.35 | Data visível na gaveta lateral e apresentação compacta | Validação visual pendente (RUNTIME STATUS: DEFERRED) | Data em elemento explícito acima do nome; fonte secundária pequena |

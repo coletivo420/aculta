@@ -28,21 +28,13 @@
 .aculta-utility { margin-inline-start: auto; display: flex; align-items: center; gap: 0.5rem; }
 .aculta-search-utility { display: inline-flex; align-items: center; line-height: 1; }
 .aculta-utility .navbar-nav { flex-direction: row; justify-content: flex-end; flex-wrap: wrap; gap: 0.25rem 1rem; }
-.aculta-utility .navbar-nav > .nav-item:first-child > .nav-link {
-  color: var(--aculta-status-error-text);
-  font-weight: 700;
-}
-.aculta-utility .navbar-nav > .nav-item:first-child > .nav-link:is(:hover, :focus-visible) {
-  color: var(--aculta-status-error-text);
-  background: var(--aculta-status-error-surface);
-  border-radius: 0.25rem;
-}
 .aculta-utility .nav-link { padding-block: 0.375rem; font: inherit; }
-.aculta-utility .navbar-nav > .nav-item:first-child > .nav-link {
+/* "Minha conta" is identified by its semantic token (aculta-account-home), not by its position. */
+.aculta-utility .navbar-nav .nav-link.aculta-account-home {
   color: var(--aculta-status-error-text);
   font-weight: 700;
 }
-.aculta-utility .navbar-nav > .nav-item:first-child > .nav-link:is(:hover, :focus-visible) {
+.aculta-utility .navbar-nav .nav-link.aculta-account-home:is(:hover, :focus-visible) {
   color: var(--aculta-status-error-text);
   background: var(--aculta-status-error-surface);
   border-radius: 0.25rem;

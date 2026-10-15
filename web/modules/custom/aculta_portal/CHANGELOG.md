@@ -1,3 +1,8 @@
+## 0.4.0-dev.23 — link Minha conta marcado por token na barra multidomínio — 2026-10-15
+
+- O menu da conta marca o link "Minha conta" com o token `account-home` (`PortalHooks::markAccountHomeItems`, após a reescrita de domínio). O tema aplica a classe. Sem classe de design no módulo.
+- Gate de Drupal 11+ PASS (768). RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.4.0-dev.22 — central de avisos administrativa e gate de slugs por módulos habilitados — 2026-10-15
 
 - Porta ao `aculta_messenger` a central Avisos em `/painel-administrativo/avisos`, com abas temporários e persistentes; a listagem de persistentes passa IDs escalares às rotas de editar/excluir (corrige o TypeError do dev.21).

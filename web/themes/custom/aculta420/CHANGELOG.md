@@ -1,3 +1,12 @@
+## 0.6.0-dev.38 — link Minha conta identificado por token, não por posição — 2026-10-15
+
+Classificação: PATCH (correção visual da barra multidomínio).
+
+- A regra que pintava o link "Minha conta" era posicional (`:first-child`): pintava o primeiro item do menu, não o item de conta. Ela foi removida.
+- O módulo marca o link com o token `account-home`; o tema traduz para a classe `aculta-account-home` no mesmo mapa `PortalUiHooks::TOKENS`. O CSS estiliza essa classe.
+- Duas regras duplicadas em `institution-bar.css` foram unidas em uma.
+- Verificado no runtime: a classe aparece no link em aculta, conta e loja; não sobra atributo `data-portal-ui`. Entrega: PR de pendências do Messenger. RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.6.0-dev.37 — rota de conversas e token de ação no tema — 2026-10-15
 
 Classificação: PATCH (mapeamento de rota e token documentado; sem mudança visual).
