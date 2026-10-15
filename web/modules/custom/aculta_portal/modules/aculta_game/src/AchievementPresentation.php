@@ -10,6 +10,8 @@ use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
@@ -24,6 +26,7 @@ final class AchievementPresentation {
     private readonly BadgeService $badges,
     private readonly UserDataInterface $userData,
     private readonly CacheTagsInvalidatorInterface $cacheInvalidator,
+    private readonly ModuleExtensionList $modules,
   ) {}
 
   /** Preferências ausentes significam exibição pública, sem destaques. */
@@ -99,6 +102,7 @@ final class AchievementPresentation {
       }
       // A projeção não inclui IDs de curso/pedido, atores ou dados pessoais.
       $rows[$id] = [
+        'id' => $id,
         'label' => $catalog[$id]['label'],
         'highlight' => !empty($choice['highlight']),
         'weight' => (int) ($choice['weight'] ?? 0),
@@ -109,7 +113,12 @@ final class AchievementPresentation {
     if ($rows !== [] || !$public) {
       $items = [];
       foreach ($rows as $row) {
-        $items[] = ['#plain_text' => $row['highlight'] ? $this->t('@conquista — em destaque', ['@conquista' => $row['label']]) : $this->t($row['label'])];
+        $items[] = [
+          '#type' => 'container',
+          'image' => $this->trophyImage($row['id']),
+          // ItemList interpreta filhos sem #type como sublistas.
+          'label' => ['#type' => 'container', 'text' => ['#plain_text' => $row['highlight'] ? $this->t('@conquista — em destaque', ['@conquista' => $row['label']]) : $this->t($row['label'])]],
+        ];
       }
       $build = [
         '#theme' => 'item_list',
@@ -120,6 +129,39 @@ final class AchievementPresentation {
     }
     $cache->applyTo($build);
     return $build;
+  }
+
+  /** Catálogo sem dados de titulares; importar troféu não concede a ninguém. */
+  public function trophyCatalog(): array {
+    $build = ['#type' => 'details', '#title' => $this->t('Troféus da comunidade'), '#open' => TRUE];
+    $catalog = BadgeCatalog::all();
+    foreach (TrophyCatalog::all() as $id => $trophy) {
+      $build[$id] = [
+        '#type' => 'details',
+        '#title' => $this->t($catalog[$id]['label']),
+        '#open' => TRUE,
+        'image' => $this->trophyImage($id),
+        'description' => ['#plain_text' => $this->t($trophy['description'])],
+        'source' => ['#type' => 'link', '#title' => $this->t('Conheça a origem deste troféu'), '#url' => Url::fromUri($trophy['source'])],
+      ];
+    }
+    $build['#cache']['contexts'] = ['languages:language_interface'];
+    return $build;
+  }
+
+  private function trophyImage(string $id): array {
+    $trophy = TrophyCatalog::all()[$id] ?? NULL;
+    if ($trophy === NULL) {
+      return [];
+    }
+    return [
+      '#theme' => 'image',
+      '#uri' => $this->modules->getPath('aculta_game') . '/assets/trophies/' . $trophy['image'],
+      '#width' => 96,
+      '#height' => 96,
+      // O nome do troféu já aparece ao lado ou no título do catálogo.
+      '#alt' => '',
+    ];
   }
 
   private function cache(int $uid): CacheableMetadata {

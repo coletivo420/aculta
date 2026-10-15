@@ -40,6 +40,7 @@ final class ProfileHooks {
       $build = [
         'conquistas' => $this->presentation->own($uid),
         'missions' => $this->missions->build($uid),
+        'catalog' => $this->presentation->trophyCatalog(),
         'preferences' => $this->forms->getForm(AchievementDisplayForm::class),
       ];
     }

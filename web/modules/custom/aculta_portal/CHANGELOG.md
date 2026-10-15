@@ -1,3 +1,10 @@
+## 0.4.0-dev.38 — troféus históricos no Game — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.5` importa três troféus com imagens originais;
+User `0.4.0-dev.6` preserva IDs de Associado/Apoiador e acrescenta Fundadore manual.
+Catálogo na conta/administração; projeção pública continua sujeita à privacidade.
+Origem, autorização e hashes em `modules/aculta_game/assets/trophies/ORIGENS.json`.
+
 ## 0.4.0-dev.37 — ACULTA Game G4 — 2026-10-15
 
 Classificação MINOR. Game `0.1.0-dev.4`: missões unitárias, caixa na visão geral e

@@ -6,6 +6,6 @@ services:
       - { name: aculta_portal.helper }
   aculta_game.achievement_presentation:
     class: Drupal\aculta_game\AchievementPresentation
-    arguments: ['@entity_type.manager', '@aculta_user.badge_service', '@user.data', '@cache_tags.invalidator']
+    arguments: ['@entity_type.manager', '@aculta_user.badge_service', '@user.data', '@cache_tags.invalidator', '@extension.list.module']
     tags:
       - { name: aculta_portal.helper }

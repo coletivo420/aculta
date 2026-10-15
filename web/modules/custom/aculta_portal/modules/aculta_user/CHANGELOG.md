@@ -1,5 +1,10 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.6 — identidade dos troféus importados — 2026-10-15
+
+- Catálogo inclui Fundadore manual e nomes originais Apoiadore e Associado/a Antiproibicionista.
+- IDs e concessões antigas preservados. Imagens/metadados de apresentação pertencem ao Game.
+
 ## 0.4.0-dev.5 — pontos de integração do Game no perfil e na atividade — 2026-10-15
 
 - Alters neutros `aculta_user_public_profile` e `aculta_user_activity_content`
@@ -180,6 +185,11 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
 
 # Changelog — aculta_user
 
+## 0.4.0-dev.6 — identidade dos troféus importados — 2026-10-15
+
+- Catálogo inclui Fundadore manual e nomes originais Apoiadore e Associado/a Antiproibicionista.
+- IDs e concessões antigas preservados. Imagens/metadados de apresentação pertencem ao Game.
+
 ## 0.1.0-dev.1 — perfil público por apelido (U1, RUNTIME STATUS: DEFERRED) — 2026-10-12
 
 - Rota pública `/u/{apelido}` (exceção de slug registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`). Só serve no
@@ -197,6 +207,11 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
   nesta entrega); badges (U4); teste de Kernel da rota e da privacidade; execução no Runtime (`drush en` e
   `config:import` exigem autorização).
 # Changelog — aculta_user
+
+## 0.4.0-dev.6 — identidade dos troféus importados — 2026-10-15
+
+- Catálogo inclui Fundadore manual e nomes originais Apoiadore e Associado/a Antiproibicionista.
+- IDs e concessões antigas preservados. Imagens/metadados de apresentação pertencem ao Game.
 
 ## 0.4.0-dev.1 — workflow de amizade
 

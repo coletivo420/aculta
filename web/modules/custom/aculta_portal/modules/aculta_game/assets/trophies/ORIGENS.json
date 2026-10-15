@@ -1,0 +1,41 @@
+{
+  "imported_on": "2026-10-15",
+  "authorization": "Importação expressamente solicitada pelo responsável nesta sessão.",
+  "licensing_note": "Nenhuma licença pública independente das imagens foi identificada; não inferir GPL a partir do código WordPress/GamiPress. Preservar atribuição e origem.",
+  "transformation": "Nenhuma; PNGs originais preservados.",
+  "assets": [
+    {
+      "badge_id": "fundadore",
+      "label": "Fundadore",
+      "file": "fundadore.png",
+      "source_page": "https://coletivo420.org.br/insignias/fundadore/",
+      "source_image": "https://coletivo420.org.br/wp-content/uploads/trofeu-fundadore-coletivo420.png",
+      "bytes": 95722,
+      "width": 512,
+      "height": 512,
+      "sha256": "74af8ceea859f5d143c7d8197dbf721109c034897c484fb50d0622a4467a72dd"
+    },
+    {
+      "badge_id": "associado",
+      "label": "Associado/a Antiproibicionista",
+      "file": "associado-antiproibicionista.png",
+      "source_page": "https://coletivo420.org.br/insignias/associado-a-antiproibicionista/",
+      "source_image": "https://coletivo420.org.br/wp-content/uploads/insignia-associade-antiproibicionista.png",
+      "bytes": 16318,
+      "width": 512,
+      "height": 512,
+      "sha256": "ae286e1ada72ba30e41b74561ebcf33f088143d474896461613e277e5a7674cf"
+    },
+    {
+      "badge_id": "apoiador",
+      "label": "Apoiadore",
+      "file": "apoiadore.png",
+      "source_page": "https://coletivo420.org.br/insignias/apoiadore/",
+      "source_image": "https://coletivo420.org.br/wp-content/uploads/insignia-apoiadore.png",
+      "bytes": 120198,
+      "width": 512,
+      "height": 512,
+      "sha256": "f9fcc8e6bc1405d1d704964126584304b90979f2b27ed721173fb31d31f016f9"
+    }
+  ]
+}

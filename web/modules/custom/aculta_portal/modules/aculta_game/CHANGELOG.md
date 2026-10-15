@@ -1,5 +1,13 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.5 — troféus do site antigo — 2026-10-15
+
+- Importados Fundadore, Associado/a Antiproibicionista e Apoiadore, com PNGs originais e manifesto de origem/hash.
+- IDs `associado` e `apoiador` preservados; Fundadore novo, manual, sem concessões automáticas.
+- Catálogo visível na própria conta e na área Game; imagens nas conquistas efetivamente obtidas, respeitando privacidade.
+- Nenhuma titularidade/conta antiga importada; nenhuma dependência WordPress/GamiPress.
+- Regra ampliada de Apoiadore aprovada pelo responsável: pedido, apoio direto ou administrador; execução na fase administrativa seguinte.
+
 ## 0.1.0-dev.4 — G4: missões, descoberta e administração inicial — 2026-10-15
 
 - Três missões unitárias com configuração/schema e progresso por concessões reais.
