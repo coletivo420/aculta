@@ -1,3 +1,8 @@
+## 0.4.0-dev.24 — destaque de Minha conta só no domínio de conta — 2026-10-15
+
+- O token `account-home` passa a ser aplicado somente quando o domínio atual é o de conta (`purpose = account`). Antes era aplicado em todos os domínios, e o link ficava vermelho também no principal.
+- Verificado no runtime: token presente só em conta.aculta.toca.net.br (inclusive no payload BigPipe, onde o menu da conta é carregado); no principal, cor padrão. RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.4.0-dev.23 — link Minha conta marcado por token na barra multidomínio — 2026-10-15
 
 - O menu da conta marca o link "Minha conta" com o token `account-home` (`PortalHooks::markAccountHomeItems`, após a reescrita de domínio). O tema aplica a classe. Sem classe de design no módulo.

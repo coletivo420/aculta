@@ -252,7 +252,10 @@ final class PortalHooks {
     $resolver = $this->domainPurposeManager;
     $this->decorateLoginPopupItems($variables['items']);
     $this->rewriteDomainMenuItems($variables['items'], $resolver);
-    $this->markAccountHomeItems($variables['items']);
+    // The account link is highlighted only on the account domain, where it is the current section.
+    if ($resolver->getCurrentPurpose() === 'account') {
+      $this->markAccountHomeItems($variables['items']);
+    }
     if (isset($variables['#cache']) && is_array($variables['#cache'])) {
       $variables['#cache']['contexts'] = array_values(array_unique(array_merge(
         $variables['#cache']['contexts'] ?? [],
@@ -309,8 +312,9 @@ final class PortalHooks {
    * /entrar continua valendo sem JavaScript: a rota do popup também mostra o formulário em página.
    */
   /**
-   * Marks the "Minha conta" link with a semantic token. The theme decides how it looks; the item is
-   * identified by its menu link, so a domain rewrite of its URL does not affect the marking.
+   * Marks the "Minha conta" link with a semantic token when it is the current section (account domain).
+   * The theme decides how it looks; the item is identified by its menu link, so a domain rewrite of its URL
+   * does not affect the marking.
    */
   private function markAccountHomeItems(array &$items): void {
     foreach ($items as &$item) {
