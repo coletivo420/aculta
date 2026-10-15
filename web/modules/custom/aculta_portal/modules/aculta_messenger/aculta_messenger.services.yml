@@ -7,6 +7,12 @@ services:
   Drupal\message_subscribe\SubscribersInterface: '@message_subscribe.subscribers'
   Drupal\aculta_user\Social\FriendshipManagerInterface: '@aculta_user.friendship_manager'
   Drupal\aculta_messenger\Service\UnreadThreadCounter: '@aculta_messenger.unread_thread_counter'
+  aculta_messenger.counts:
+    class: Drupal\aculta_messenger\Service\MessengerCounts
+    arguments:
+      - '@entity_type.manager'
+      - '@flag'
+      - '@site_alert.get_alerts'
   aculta_messenger.unread_thread_counter:
     class: Drupal\aculta_messenger\Service\UnreadThreadCounter
     arguments:

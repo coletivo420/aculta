@@ -14,6 +14,7 @@ use Drupal\node\NodeInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
 use Drupal\aculta_messenger\Hook\MessengerBarHooks;
+use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\Tests\UnitTestCase;
@@ -83,6 +84,7 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
       $time,
       $this->createMock(FlagServiceInterface::class),
       $this->createMock(FriendshipManagerInterface::class),
+      new MessengerCounts($this->createMock(EntityTypeManagerInterface::class), $this->createMock(FlagServiceInterface::class), $this->createMock(GetAlertsInterface::class)),
     );
   }
 

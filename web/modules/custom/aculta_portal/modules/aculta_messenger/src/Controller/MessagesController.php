@@ -25,6 +25,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
@@ -53,6 +54,7 @@ final class MessagesController extends ControllerBase {
     private readonly RendererInterface $renderer,
     private readonly DateFormatterInterface $dateFormatter,
     private readonly RequestStack $requestStack,
+    private readonly MessengerCounts $counts,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -70,6 +72,7 @@ final class MessagesController extends ControllerBase {
       $container->get('renderer'),
       $container->get('date.formatter'),
       $container->get('request_stack'),
+      $container->get('aculta_messenger.counts'),
     );
   }
 
@@ -370,7 +373,8 @@ final class MessagesController extends ControllerBase {
     }
     $items = [];
 
-    $activeAlertCount = 0;
+    // Same criteria as the header bar, from the shared service.
+    $activeAlertCount = $this->counts->visibleActiveAlertCount($this->account, $cacheability);
     $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
     foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
       $access = $alert->access('view', $this->account, TRUE);
@@ -381,7 +385,6 @@ final class MessagesController extends ControllerBase {
       if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->account) !== NULL) {
         continue;
       }
-      $activeAlertCount++;
       // Match the public render contract of SiteAlertBlock; formatted text and
       // severity remain owned by the contrib entity and its theme hook.
       $items[] = [
@@ -412,7 +415,7 @@ final class MessagesController extends ControllerBase {
     ];
     $cacheability->applyTo($build);
     return $this->buildDrawerResponse($build, [
-      'X-Aculta-Alerts-Count' => (string) ($activeAlertCount + $this->countUnreadPersistentNotices()),
+      'X-Aculta-Alerts-Count' => (string) ($activeAlertCount + $this->counts->unreadPersistentNoticeCount($this->account)),
     ]);
   }
 
@@ -424,28 +427,6 @@ final class MessagesController extends ControllerBase {
       'Cache-Control' => 'private, no-store, no-cache, must-revalidate',
       'X-Content-Type-Options' => 'nosniff',
     ]);
-  }
-
-  /** Counts every visible unread persistent notice, beyond the preview limit. */
-  private function countUnreadPersistentNotices(): int {
-    $flag = $this->flagService->getFlagById('aculta_notice_read');
-    if (!$flag instanceof FlagInterface) {
-      return 0;
-    }
-    $ids = $this->entityTypes->getStorage('node')->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'aculta_notice')
-      ->condition('status', 1)
-      ->execute();
-    $count = 0;
-    foreach ($this->entityTypes->getStorage('node')->loadMultiple($ids) as $node) {
-      if ($node instanceof NodeInterface
-        && $node->access('view', $this->account)
-        && $this->flagService->getFlagging($flag, $node, $this->account) === NULL) {
-        $count++;
-      }
-    }
-    return $count;
   }
 
   /** Lists published persistent notices visible to this member, with Flag state. */

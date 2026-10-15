@@ -76,6 +76,11 @@ final class PrivateNotificationOwnershipTest extends UnitTestCase {
       $this->createMock(RendererInterface::class),
       $this->createMock(DateFormatterInterface::class),
       new RequestStack(),
+      new \Drupal\aculta_messenger\Service\MessengerCounts(
+        $entityTypes,
+        $this->createMock(FlagServiceInterface::class),
+        $this->createMock(GetAlertsInterface::class),
+      ),
     );
 
     $build = $controller->notifications();

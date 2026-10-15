@@ -17,6 +17,7 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_messenger\Support\StorageDateTime;
 use Drupal\site_alert\GetAlertsInterface;
@@ -43,6 +44,8 @@ final class MessengerBarHooks {
     private readonly FlagServiceInterface $flagService,
     #[Autowire(service: 'aculta_user.friendship_manager')]
     private readonly FriendshipManagerInterface $friendshipManager,
+    #[Autowire(service: 'aculta_messenger.counts')]
+    private readonly MessengerCounts $counts,
   ) {}
 
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
@@ -52,7 +55,6 @@ final class MessengerBarHooks {
     // their unread persistent notices. Only the private messenger is member-only.
     if (isset($variables['page']) && is_array($variables['page'])) {
       $alertStorage = $this->entityTypeManager->getStorage('site_alert');
-      $alerts = $this->siteAlerts->getActiveAlerts();
       $alertCacheability = (new CacheableMetadata())
         ->addCacheContexts(['active_site_alerts'])
         ->addCacheTags($this->entityTypeManager->getDefinition('site_alert')->getListCacheTags())
@@ -61,26 +63,11 @@ final class MessengerBarHooks {
         // The alert badge includes this member's unread Flag state.
         $alertCacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
       }
-      $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
-      foreach ($alerts as $alert) {
-        $alertCacheability->addCacheableDependency($alert);
-      }
       $alertUrl = Url::fromRoute('aculta_messenger.alerts_preview')->toString(TRUE);
-      $alertCount = 0;
-      foreach ($alerts as $alert) {
-        $access = $alert->access('view', $this->currentUser, TRUE);
-        $alertCacheability->addCacheableDependency($access);
-        if (!$access->isAllowed()) {
-          continue;
-        }
-        if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->currentUser) !== NULL) {
-          continue;
-        }
-        $alertCount++;
-      }
+      $alertCount = $this->counts->visibleActiveAlertCount($this->currentUser, $alertCacheability);
       $alertCacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
       $unreadNoticeCount = $this->currentUser->isAuthenticated()
-        ? $alertCount + $this->getUnreadNoticeCount()
+        ? $alertCount + $this->counts->unreadPersistentNoticeCount($this->currentUser)
         : $alertCount;
       $variables['aculta_alerts'] = [
         'url' => $alertUrl->getGeneratedUrl(),
@@ -170,40 +157,6 @@ final class MessengerBarHooks {
       ->addCacheableDependency($node)
       ->cachePerUser()
       ->setCacheMaxAge($maxAge);
-  }
-
-  /**
-   * Counts visible persistent notices not yet flagged as read by this member.
-   *
-   * Node access is applied by the query and the read state is excluded in SQL, so no notice is loaded
-   * only to be discarded.
-   */
-  private function getUnreadNoticeCount(): int {
-    $flag = $this->entityTypeManager->getStorage('flag')->load('aculta_notice_read');
-    if ($flag === NULL) {
-      return 0;
-    }
-    $readIds = $this->entityTypeManager->getStorage('flagging')->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('flag_id', 'aculta_notice_read')
-      ->condition('uid', (int) $this->currentUser->id())
-      ->condition('entity_type', 'node')
-      ->execute();
-    $query = $this->entityTypeManager->getStorage('node')->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'aculta_notice')
-      ->condition('status', 1);
-    if ($readIds !== []) {
-      $readNodeIds = $this->entityTypeManager->getStorage('flagging')->loadMultiple($readIds);
-      $flagged = array_values(array_filter(array_map(
-        static fn($flagging) => (int) $flagging->getFlaggableId(),
-        $readNodeIds,
-      )));
-      if ($flagged !== []) {
-        $query->condition('nid', $flagged, 'NOT IN');
-      }
-    }
-    return (int) $query->count()->execute();
   }
 
 }
