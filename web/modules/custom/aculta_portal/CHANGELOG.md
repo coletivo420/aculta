@@ -1,3 +1,14 @@
+## 0.4.0-dev.25 — confirmação de e-mail resiliente — 2026-10-15
+
+Classificação: PATCH (confiabilidade do envio e proteção contra reenvio abusivo).
+
+- `EmailConfirmationRequester` agora persiste antes do envio, verifica o retorno do MailManager, mantém links anteriores utilizáveis em falhas e só cancela confirmações anteriores após aceitação do novo envio.
+- Reenvio serializado por Lock e limitado a uma solicitação por conta a cada 900 segundos via Flood; a rota passou a usar formulário POST com proteção CSRF nativa da Form API.
+- A resposta do cadastro permanece igual para endereços novos e existentes, sem afirmar entrega final. O resultado `ACCEPTED` significa aceitação pelo MailManager.
+- Testes unitários do requester: 7 testes, 104 assertions; testes unitários incluindo login: 13 testes, 122 assertions. Gate Drupal 11+: PASS (772 checks); cache rebuild no Runtime de testes; home HTTP 200 e rota de reenvio anônima HTTP 403.
+- Confirmação de uso único e geração do link de purpose ACCOUNT permanecem sem teste automatizado nesta fase; o caminho de URL existente foi inspecionado e mantém `DomainPurposeManager`. RUNTIME STATUS: ACTIVE no Runtime de testes; entrega final na caixa postal não comprovada.
+- Implementação: commit `0eac9ef`.
+
 ## 0.4.0-dev.24 — formulários do Messenger fora do Turnstile — 2026-10-15
 
 Classificação: PATCH (exceções da política de CAPTCHA).
