@@ -37,7 +37,7 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
    produção para o diretório do build anterior, pelo processo do responsável. Builds nunca
    são sobrescritos.
 
-## Estrutura Hostinger Cloud Startup (0.1.24)
+## Estrutura Hostinger Cloud Startup (0.1.25)
 
 Na Hostinger, mantenha a instalação Composer diretamente na raiz da pasta do domínio e faça
 `public_html` apontar somente para `web/`:
@@ -71,20 +71,16 @@ php "$CLI" hostinger-layout --domain-root="<caminho-absoluto-da-pasta-do-dominio
 
 A primeira execução é somente leitura. Antes de `--apply`, revise o caminho e o status. O
 comando exige `composer.json`, `composer.lock`, `vendor/autoload.php`, `web/index.php` e
-`web/sites/default/settings.php`. Se `public_html` já existir como pasta ou symlink, ele é
-renomeado para `public_html.backup.<UTC>`; nenhum conteúdo é apagado. A ativação usa symlink
-temporário e renomeação, é idempotente e tenta restaurar o backup se a criação falhar.
+`web/sites/default/settings.php`. Se `public_html` já existir como pasta ou symlink, o comando
+o move temporariamente, ativa o novo symlink relativo e exclui o conteúdo antigo. Se a criação
+falhar antes da ativação, tenta restaurar o caminho anterior. Symlinks no conteúdo antigo são
+removidos sem seguir seus destinos. A operação é idempotente.
 
 Depois da ativação, valide o domínio HTTPS, rotas Drupal, arquivos estáticos, acesso de escrita
-em `web/sites/default/files`, proteção de arquivos privados e o mecanismo de renovação TLS. Se
-o `public_html` anterior continha `.well-known` ou validações de domínio, esses arquivos ficam
-no backup e precisam ser avaliados antes da troca; não copie outros conteúdos antigos para a
-raiz pública sem revisão.
+em `web/sites/default/files`, proteção de arquivos privados e o mecanismo de renovação TLS.
 
-Rollback manual: pelo SSH, mova o symlink atual para um nome de falha e restaure exatamente o
-`public_html.backup.<UTC>` exibido pelo comando. `mv public_html public_html.failed` move o
-symlink, não o destino. Nunca use `rm -rf` sobre o symlink ou sobre o backup. Teste o rollback
-antes da janela de produção.
+Rollback: restaure a cópia do site pelo processo de backup do ambiente. O comando remove o
+conteúdo público anterior depois de ativar o symlink; não há backup local automático.
 
 Referências: [Drupal — relocated web root em hospedagem compartilhada](https://www.drupal.org/docs/getting-started/system-requirements/relocated-web-root-on-shared-hosting),
 [Hostinger — criar symlink](https://www.hostinger.com/support/1583694-how-to-create-a-symlink-at-hostinger/),

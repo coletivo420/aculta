@@ -156,7 +156,7 @@ $layoutDryRun = $quiet(fn() => $cli->run(['x', 'hostinger-layout', '--domain-roo
 $assert($layoutDryRun === 0 && is_dir($domainRoot . '/public_html') && !is_link($domainRoot . '/public_html'), 'layout: CLI sem --apply só simula');
 $layoutApply = $quiet(fn() => $cli->run(['x', 'hostinger-layout', '--domain-root=' . $domainRoot, '--apply']));
 $assert(is_link($domainRoot . '/public_html') && readlink($domainRoot . '/public_html') === 'web', 'layout: public_html passa a apontar relativamente para web/ na raiz do domínio');
-$assert($layoutApply === 0 && $layoutPlan['backup'] !== null && file_get_contents($layoutPlan['backup'] . '/index.html') === 'site anterior', 'layout: CLI preserva o diretório anterior para rollback');
+$assert($layoutApply === 0 && !file_exists($domainRoot . '/public_html/index.html'), 'layout: --apply exclui o conteúdo anterior');
 $assert($layout->inspect($domainRoot)['status'] === 'already_linked' && $layout->activate($layout->inspect($domainRoot)) === 'public_html já aponta para a raiz web da instalação', 'layout: ativação repetida é idempotente');
 $incomplete = $domainRoot . '/incompleta';
 mkdir($incomplete);
@@ -167,6 +167,14 @@ try {
   $thrown = true;
 }
 $assert($thrown && is_link($domainRoot . '/public_html'), 'layout: instalação incompleta é recusada sem desfazer o symlink ativo');
+$external = $domainRoot . '/destino-externo';
+mkdir($external);
+file_put_contents($external . '/manter.txt', 'preservar');
+unlink($domainRoot . '/public_html');
+symlink($external, $domainRoot . '/public_html');
+$layoutSymlink = $layout->inspect($domainRoot);
+$layout->activate($layoutSymlink);
+$assert(readlink($domainRoot . '/public_html') === 'web' && file_get_contents($external . '/manter.txt') === 'preservar', 'layout: substituição de symlink não apaga o destino externo');
 $removeFixture = null;
 $removeFixture = static function (string $path) use (&$removeFixture): void {
   if (is_link($path) || is_file($path)) {

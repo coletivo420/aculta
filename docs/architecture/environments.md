@@ -13,11 +13,13 @@ Apache é o servidor web do Homelab. O ambiente de teste valida `.htaccess`,
 rewrite, headers e PHP-FPM neste servidor; produção usa LiteSpeed e precisa de
 validação específica, sem manter uma camada de compatibilidade com Nginx.
 
-No servidor de testes, a instalação fica em `/home/aculta` e o acesso público
-usa `/home/aculta/public_html -> web` (symlink relativo). O VirtualHost aponta
-para `/home/aculta/public_html`, preserva o `.htaccess` fornecido pelo Drupal e
-permite as diretivas necessárias ao Drupal. A raiz contém a instalação
-Composer; `private/` continua fora da árvore pública.
+No servidor de testes, `/home/aculta` é um symlink para o checkout
+`/home/piradopirata/projetos/aculta-site`; não há uma subpasta `aculta-site`
+dentro dele. O acesso público usa `/home/aculta/public_html -> web` (symlink
+relativo), e o VirtualHost aponta para `/home/aculta/public_html`. A raiz serve
+o `.htaccess` original do Drupal e permite as diretivas necessárias. Os dados
+do Virtualmin e os arquivos privados da conta permanecem fora do checkout e
+são acessados por symlinks no topo do projeto, fora da árvore pública.
 
 ## Diretório de trabalho (Homelab)
 

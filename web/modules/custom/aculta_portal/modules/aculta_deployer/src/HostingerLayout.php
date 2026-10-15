@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Safely points a Hostinger domain's public_html at the Drupal web directory. */
 final class HostingerLayout {
 
-  /** @return array{domain_root: string, installation_root: string, public_root: string, status: string, backup: ?string} */
+  /** @return array{domain_root: string, installation_root: string, public_root: string, status: string} */
   public function inspect(string $domainRoot): array {
     $root = realpath($domainRoot);
     if ($root === false || !is_dir($root) || $root === DIRECTORY_SEPARATOR) {
@@ -38,12 +38,10 @@ final class HostingerLayout {
       throw new \RuntimeException('public_html existe, mas não é pasta nem symlink; nenhuma alteração foi feita');
     }
     $status = 'absent';
-    $backup = null;
     if ($existing && is_link($publicRoot) && readlink($publicRoot) === 'web') {
       $status = 'already_linked';
     } elseif ($existing) {
       $status = is_link($publicRoot) ? 'symlink' : 'directory';
-      $backup = $this->backupPath($root);
     }
 
     return [
@@ -51,11 +49,10 @@ final class HostingerLayout {
       'installation_root' => $root,
       'public_root' => $publicRoot,
       'status' => $status,
-      'backup' => $backup,
     ];
   }
 
-  /** @param array{domain_root: string, installation_root: string, public_root: string, status: string, backup: ?string} $plan */
+  /** @param array{domain_root: string, installation_root: string, public_root: string, status: string} $plan */
   public function activate(array $plan): string {
     if ($plan['status'] === 'already_linked') {
       return 'public_html já aponta para a raiz web da instalação';
@@ -76,15 +73,13 @@ final class HostingerLayout {
       if ($current['status'] === 'already_linked') {
         return 'public_html já aponta para a raiz web da instalação';
       }
-      $backup = $plan['backup'];
-      if ($current['status'] !== $plan['status'] || ($backup !== null && (file_exists($backup) || is_link($backup)))) {
-        $backup = $current['backup'];
-      }
-      $temporary = $current['domain_root'] . DIRECTORY_SEPARATOR . '.public_html.aculta-deployer-' . bin2hex(random_bytes(6));
+      $suffix = bin2hex(random_bytes(6));
+      $temporary = $current['domain_root'] . DIRECTORY_SEPARATOR . '.public_html.aculta-deployer-link-' . $suffix;
+      $previous = $current['domain_root'] . DIRECTORY_SEPARATOR . '.public_html.aculta-deployer-old-' . $suffix;
       $moved = false;
       if ($current['status'] !== 'absent') {
-        if ($backup === null || !rename($current['public_root'], $backup)) {
-          throw new \RuntimeException('não foi possível preservar public_html existente; nenhuma pasta foi apagada');
+        if (!rename($current['public_root'], $previous)) {
+          throw new \RuntimeException('não foi possível mover o public_html anterior para substituí-lo');
         }
         $moved = true;
       }
@@ -100,27 +95,47 @@ final class HostingerLayout {
           unlink($temporary);
         }
         if ($moved && !file_exists($current['public_root']) && !is_link($current['public_root'])) {
-          rename((string) $backup, $current['public_root']);
+          rename($previous, $current['public_root']);
         }
         throw $e;
       }
-      return $moved
-        ? 'public_html ativado como symlink; conteúdo anterior preservado em ' . basename((string) $backup)
-        : 'public_html criado como symlink relativo para web/ na raiz do projeto';
+      if ($moved) {
+        $this->removePath($previous);
+        return 'public_html anterior excluído e substituído pelo symlink relativo para web/';
+      }
+      return 'public_html criado como symlink relativo para web/ na raiz do projeto';
     } finally {
       flock($lock, LOCK_UN);
       fclose($lock);
     }
   }
 
-  private function backupPath(string $root): string {
-    $base = $root . DIRECTORY_SEPARATOR . 'public_html.backup.' . gmdate('Ymd\THis\Z');
-    $path = $base;
-    $suffix = 1;
-    while (file_exists($path) || is_link($path)) {
-      $path = $base . '.' . $suffix++;
+  private function removePath(string $path): void {
+    if (is_link($path) || is_file($path)) {
+      if (!unlink($path)) {
+        throw new \RuntimeException('public_html foi substituído, mas não foi possível excluir o item anterior');
+      }
+      return;
     }
-    return $path;
+    if (!is_dir($path)) {
+      return;
+    }
+    $items = new \RecursiveIteratorIterator(
+      new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
+      \RecursiveIteratorIterator::CHILD_FIRST,
+    );
+    foreach ($items as $item) {
+      $itemPath = $item->getPathname();
+      $removed = $item->isLink() || !$item->isDir()
+        ? unlink($itemPath)
+        : rmdir($itemPath);
+      if (!$removed) {
+        throw new \RuntimeException('public_html foi substituído, mas não foi possível excluir todo o conteúdo anterior');
+      }
+    }
+    if (!rmdir($path)) {
+      throw new \RuntimeException('public_html foi substituído, mas não foi possível excluir a pasta anterior');
+    }
   }
 
 }

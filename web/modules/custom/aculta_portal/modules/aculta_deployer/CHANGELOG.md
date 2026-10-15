@@ -1,3 +1,15 @@
+## 0.1.25 — substituição e remoção da raiz pública anterior — 2026-10-15
+
+- `hostinger-layout --apply` substitui diretórios ou symlinks `public_html` por `public_html -> web` relativo e exclui o conteúdo anterior após a ativação.
+- A remoção não segue symlinks para fora de `public_html`.
+- Remove o caminho de backup, a mensagem de preservação e a rotina que gerava nomes de backup.
+- Revisa fixture para confirmar remoção do conteúdo e preservação do destino externo de symlink.
+
+## 0.1.24 — symlink público relativo — 2026-10-15
+
+- `hostinger-layout` ativa `public_html -> web` com destino relativo e o reconhece de forma idempotente.
+- Atualiza fixture e versão da CLI para 0.1.24.
+
 ## 0.1.23 — raiz pública Hostinger por symlink — 2026-10-15
 
 - Adiciona `hostinger-layout --domain-root=DIR [--apply]`.
@@ -191,8 +203,4 @@
 - Barreiras de separação verificadas por `boundaries`: tema e Portal (fora do submódulo) não referenciam a ferramenta; a ferramenta não depende de Drupal, Drush, vendor, tema ou Portal.
 - Testes determinísticos em `tests/run.php`.
 - Entradas iniciais: DEP-0001 (canonical da página de apoio) e DEP-0002 (sitemap sem o host de apoio), ambas bloqueantes e abertas.
-## 0.1.24 — symlink público relativo — 2026-10-15
-
-- `hostinger-layout` agora ativa `public_html -> web` com destino relativo e o reconhece de forma idempotente.
-- Atualiza fixture e versão da CLI para 0.1.24.
 

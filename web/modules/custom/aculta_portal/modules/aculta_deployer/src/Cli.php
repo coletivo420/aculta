@@ -687,9 +687,6 @@ final class Cli {
       $this->say('instalação: ' . $plan['installation_root']);
       $this->say('raiz pública: ' . $plan['installation_root'] . '/web');
       $this->say('public_html: ' . $plan['status']);
-      if ($plan['backup'] !== null) {
-        $this->say('preservação: ' . basename($plan['backup']));
-      }
       if (!isset($o['apply'])) {
         $this->say('simulação: nenhuma alteração feita; use --apply para ativar o symlink');
         return 0;
@@ -945,8 +942,8 @@ Uso:
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version
 
-hostinger-layout valida a instalação na raiz da pasta do domínio e, com --apply, preserva
-public_html existente em backup antes de apontá-lo para o symlink relativo public_html -> web.
+hostinger-layout valida a instalação na raiz da pasta do domínio e, com --apply, substitui
+public_html existente pelo symlink relativo public_html -> web e exclui seu conteúdo anterior.
 
 Códigos de saída: 0 sucesso; 1 erro de uso, validação ou fronteira; 2 bloqueado (entrada bloqueante aberta).
 
