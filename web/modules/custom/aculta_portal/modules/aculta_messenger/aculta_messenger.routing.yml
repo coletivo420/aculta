@@ -106,3 +106,49 @@ aculta_messenger.communication_settings:
   options:
     no_cache: true
     _aculta_domain_purpose: account
+
+aculta_messenger.admin_notices:
+  path: '/painel-administrativo/avisos'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\NoticeAdminController::overview'
+    _title: 'Avisos'
+  requirements:
+    _permission: 'administer site alert, administer nodes'
+  options:
+    _admin_route: true
+
+aculta_messenger.admin_temporary_notices:
+  path: '/painel-administrativo/avisos/temporarios'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\NoticeAdminController::temporary'
+    _title: 'Avisos temporários'
+  requirements:
+    _permission: 'administer site alert'
+  options:
+    _admin_route: true
+
+aculta_messenger.admin_persistent_notices:
+  path: '/painel-administrativo/avisos/persistentes'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\NoticeAdminController::persistent'
+    _title: 'Avisos persistentes'
+  requirements:
+    _permission: 'administer nodes'
+  options:
+    _admin_route: true
+
+aculta_messenger.admin_persistent_notice_add:
+  path: '/painel-administrativo/avisos/persistentes/criar'
+  defaults:
+    _entity_form: 'node.default'
+    entity_type_id: node
+    node_type: aculta_notice
+    _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
+  requirements:
+    _entity_create_access: 'node:aculta_notice'
+  options:
+    _admin_route: true
+    parameters:
+      node_type:
+        type: entity:node_type
+        with_config_overrides: true
