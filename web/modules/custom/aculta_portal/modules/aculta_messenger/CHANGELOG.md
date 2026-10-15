@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.12 — navegação de conversas no painel lateral — 2026-10-15
+
+- Adiciona endpoints same-origin para carregar a lista e uma conversa no painel lateral.
+- Acesso direto à thread exige permissão e associação do usuário à conversa.
+- O formulário de resposta continua sendo o formulário nativo de Private Message; foi incluído retorno à lista no drawer.
+- Verificações estáticas: PHP lint e `git diff --check` PASS; gates/runtime pendentes.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.1-dev.11 — resposta e data na caixa de mensagens — 2026-10-14
 
 - O modal de conversa mantém o histórico nativo do Private Message e garante o formulário de resposta nativo quando a exibição ativa não o inclui.

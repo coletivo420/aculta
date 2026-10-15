@@ -848,3 +848,13 @@ Classificação: PATCH da linha 0.6.0 (organização de estilo sobre o component
 - Conversas oferecem menu contextual de limpeza pessoal por clique direito e botão acessível; a ação global de excluir thread fica oculta na caixa.
 - RUNTIME STATUS: DEFERRED; aplicação e validação visual no checkout local pendentes.
 
+## 0.6.0-dev.36 — navegação de conversa no drawer — 2026-10-15
+
+Classificação: PATCH (navegação da caixa de mensagens existente).
+
+- Abrir uma conversa e voltar à lista acontece dentro do painel lateral com fetch same-origin, sem modal.
+- O ACULTA Messenger continua dono de acesso e renderização; o ACULTA420 controla navegação e apresentação.
+- A caixa inteira do remetente funciona como área de clique, preservando o menu contextual.
+- Verificações estáticas: PHP lint e `node --check` PASS; gates do Portal/tema pendentes.
+- RUNTIME STATUS: DEFERRED.
+

@@ -3,32 +3,15 @@
 
   Drupal.behaviors.acultaMessengerDrawers = {
     attach(context) {
-      once('aculta-messenger-read-on-open', 'html', context).forEach(() => {
-        window.addEventListener('dialog:aftercreate', (event) => {
-          const dialog = event.target.closest('.ui-dialog');
-          if (!dialog?.classList.contains('aculta-messenger-conversation-dialog')) {
-            return;
-          }
-
-          const thread = event.target.querySelector('.private-message-thread[data-thread-id]');
-          const threadId = thread?.dataset.threadId;
-          if (!threadId) {
-            return;
-          }
-
-          const row = document.querySelector(`.aculta-messenger-conversation[data-aculta-thread-id="${CSS.escape(threadId)}"]`);
-          if (!row || row.dataset.acultaThreadUnread !== 'true') {
-            return;
-          }
-
-          row.dataset.acultaThreadUnread = 'false';
-          row.classList.remove('unread-thread');
-          const counter = document.querySelector('[data-aculta-messenger-count]');
-          const current = Number.parseInt(counter?.dataset.count || '0', 10);
-          if (counter && Number.isFinite(current) && current > 0) {
-            updateCounter('messages', String(current - 1));
-          }
-        });
+      once('aculta-messenger-drawer-conversation-view', '[data-aculta-conversation-view]', context).forEach((conversation) => {
+        const history = conversation.querySelector('.field--name-private-messages');
+        if (history) {
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+              history.scrollTop = history.scrollHeight;
+            });
+          });
+        }
       });
 
       once('aculta-messenger-conversation-menu', '.aculta-messenger-conversation', context).forEach((row) => {
@@ -37,27 +20,38 @@
         if (!trigger || !menu) {
           return;
         }
+
         const close = (restoreFocus = false) => {
           menu.hidden = true;
           trigger.setAttribute('aria-expanded', 'false');
-          if (restoreFocus) trigger.focus();
+          row.classList.remove('aculta-messenger-conversation--menu-open');
+          if (restoreFocus) {
+            trigger.focus();
+          }
         };
-        const open = (x, y) => {
-          document.querySelectorAll('.aculta-messenger-conversation__menu:not([hidden])').forEach((other) => {
-            if (other !== menu) {
-              other.hidden = true;
-              other.closest('.aculta-messenger-conversation')?.querySelector('.aculta-messenger-conversation__menu-trigger')?.setAttribute('aria-expanded', 'false');
+        const open = (x, y, focus = true) => {
+          document.querySelectorAll('.aculta-messenger-conversation__menu:not([hidden])').forEach((otherMenu) => {
+            if (otherMenu !== menu) {
+              otherMenu.hidden = true;
+              otherMenu.closest('.aculta-messenger-conversation')?.classList.remove('aculta-messenger-conversation--menu-open');
+              otherMenu.closest('.aculta-messenger-conversation')?.querySelector('.aculta-messenger-conversation__menu-trigger')?.setAttribute('aria-expanded', 'false');
             }
           });
           menu.hidden = false;
+          row.classList.add('aculta-messenger-conversation--menu-open');
           trigger.setAttribute('aria-expanded', 'true');
           menu.style.position = 'fixed';
           menu.style.left = `${Math.max(8, Math.min(x, window.innerWidth - menu.offsetWidth - 8))}px`;
           menu.style.top = `${Math.max(8, Math.min(y, window.innerHeight - menu.offsetHeight - 8))}px`;
-          menu.querySelector('[role="menuitem"]')?.focus();
+          if (focus) {
+            menu.querySelector('[role="menuitem"]')?.focus();
+          }
         };
+
         row.addEventListener('contextmenu', (event) => {
-          if (event.target.closest('.aculta-messenger-conversation__menu')) return;
+          if (event.target.closest('.aculta-messenger-conversation__menu')) {
+            return;
+          }
           event.preventDefault();
           open(event.clientX, event.clientY);
         });
@@ -68,7 +62,9 @@
             const bounds = trigger.getBoundingClientRect();
             open(bounds.right, bounds.bottom);
           }
-          else close();
+          else {
+            close();
+          }
         });
         row.addEventListener('keydown', (event) => {
           if ((event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) && menu.hidden) {
@@ -82,18 +78,22 @@
           }
         });
         menu.addEventListener('click', (event) => {
-          if (event.target.closest('[role="menuitem"]')) close();
+          if (event.target.closest('[role="menuitem"]')) {
+            close();
+          }
         });
         document.addEventListener('click', (event) => {
-          if (!row.contains(event.target) && !menu.hidden) close();
+          if (!row.contains(event.target) && !menu.hidden) {
+            close();
+          }
         });
       });
 
       once('aculta-alert-dismiss', '[data-aculta-alert-dismiss]', context).forEach((link) => {
         link.addEventListener('click', () => {
-          const count = document.querySelector('[data-aculta-alerts-count]');
-          const current = Number.parseInt(count?.dataset.count || '0', 10);
-          if (count && Number.isFinite(current) && current > 0) {
+          const counter = document.querySelector('[data-aculta-alerts-count]');
+          const current = Number.parseInt(counter?.dataset.count || '0', 10);
+          if (counter && Number.isFinite(current) && current > 0) {
             updateCounter('alerts', String(current - 1));
           }
           link.closest('li')?.remove();
@@ -102,9 +102,59 @@
 
       once('aculta-messenger-drawer', '[data-aculta-drawer-url]', context).forEach((drawer) => {
         let request;
+        const content = drawer.querySelector('[data-aculta-drawer-content]');
+
+        const navigate = (url) => {
+          if (!content || !url) {
+            return;
+          }
+          request?.abort();
+          const activeRequest = new AbortController();
+          request = activeRequest;
+          content.setAttribute('aria-busy', 'true');
+          fetch(url, {
+            method: 'GET',
+            credentials: 'same-origin',
+            cache: 'no-store',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            signal: activeRequest.signal,
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Drawer navigation failed.');
+              }
+              updateCounter('messages', response.headers.get('X-Aculta-Messages-Count'));
+              return response.text();
+            })
+            .then((html) => {
+              const template = document.createElement('template');
+              template.innerHTML = html;
+              Drupal.detachBehaviors(content, null, 'unload');
+              content.replaceChildren(template.content.cloneNode(true));
+              Drupal.attachBehaviors(content);
+            })
+            .catch((error) => {
+              if (error.name !== 'AbortError') {
+                content.replaceChildren(document.createTextNode(Drupal.t('Não foi possível carregar esta conversa.')));
+              }
+            })
+            .finally(() => {
+              if (request === activeRequest) {
+                content.setAttribute('aria-busy', 'false');
+              }
+            });
+        };
+
+        drawer.addEventListener('click', (event) => {
+          const link = event.target.closest('a[data-aculta-conversation-url], a[data-aculta-drawer-back]');
+          if (!link || !drawer.contains(link)) {
+            return;
+          }
+          event.preventDefault();
+          navigate(link.dataset.acultaConversationUrl || link.href);
+        });
 
         drawer.addEventListener('show.bs.offcanvas', () => {
-          const content = drawer.querySelector('[data-aculta-drawer-content]');
           const endpoint = drawer.dataset.acultaDrawerUrl;
           if (!content || !endpoint) {
             return;
@@ -177,4 +227,4 @@
       trigger.setAttribute('aria-label', label);
     }
   }
-})(Drupal, once);
+})(Drupal, once, drupalSettings);
