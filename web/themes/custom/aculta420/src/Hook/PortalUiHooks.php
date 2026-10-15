@@ -227,6 +227,13 @@ final class PortalUiHooks {
     'messenger-sender-date' => ['aculta-messenger-sender__date'],
     'messenger-sender-name' => ['aculta-messenger-sender__name'],
     'messenger-sender-avatar' => ['aculta-messenger-sender__avatar'],
+    // Avisos na gaveta: resumo em caixa de botão (como uma conversa); o aviso completo abre na mesma gaveta.
+    'notice-summary' => ['aculta-messenger-sender', 'aculta-notice-summary'],
+    'notice-summary-link' => ['aculta-messenger-sender__link'],
+    'notice-summary-title' => ['aculta-notice-summary__title'],
+    'notice-summary-excerpt' => ['aculta-notice-summary__excerpt'],
+    'notice-summary-state' => ['aculta-notice-summary__state'],
+    'notice-detail' => ['aculta-notice-detail'],
     // Administração de avisos (ACULTA Avisos).
     'notice-admin-item' => ['admin-item'],
     'notice-admin-intro' => ['aculta-notice-admin-intro'],

@@ -98,6 +98,32 @@ aculta_messenger.drawer_conversation:
       private_message_thread:
         type: entity:private_message_thread
 
+aculta_messenger.alert_detail:
+  path: '/avisos/alerta/{site_alert}'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::alertDetail'
+    _title: 'Aviso'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: true
+    parameters:
+      site_alert:
+        type: entity:site_alert
+
+aculta_messenger.notice_detail:
+  path: '/avisos/aviso/{node}'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::noticeDetail'
+    _title: 'Aviso'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: true
+    parameters:
+      node:
+        type: entity:node
+
 aculta_messenger.admin_notices:
   path: '/painel-administrativo/avisos'
   defaults:

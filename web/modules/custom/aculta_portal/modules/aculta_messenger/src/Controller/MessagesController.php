@@ -13,6 +13,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
 use Drupal\aculta_messenger\Support\OptionsDisclosure;
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\Component\Utility\Unicode;
+use Drupal\site_alert\Entity\SiteAlert;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
@@ -566,17 +568,14 @@ final class MessagesController extends ControllerBase {
       }
       // Match the public render contract of SiteAlertBlock; formatted text and
       // severity remain owned by the contrib entity and its theme hook.
-      $items[] = [
-        'content' => [
-          '#theme' => 'site_alert',
-          '#alert' => [
-            'severity' => $alert->getSeverity(),
-            'label' => $alert->getLabel(),
-            'message' => ['#type' => 'markup', '#markup' => $alert->getMessage()],
-          ],
-        ],
-        'dismiss' => $this->buildDismissalLink($dismissalFlag, $alert),
-      ];
+      // The drawer lists a summary; the full alert opens in the same drawer (alertDetail).
+      $items[] = $this->noticeSummary(
+        (string) $alert->getLabel(),
+        $this->excerpt((string) $alert->getMessage()),
+        Url::fromRoute('aculta_messenger.alert_detail', ['site_alert' => $alert->id()]),
+        $this->buildDismissalLink($dismissalFlag, $alert),
+        NULL,
+      );
     }
 
     foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
@@ -635,25 +634,112 @@ final class MessagesController extends ControllerBase {
         $read = $flagging !== NULL;
         $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
       }
-      $item = $this->entityTypes->getViewBuilder('node')->view($node, 'full');
-      if ($flag instanceof FlagInterface) {
-        $item['aculta_notice_read_action'] = $this->buildDismissalLink($flag, $node);
-      }
-      $item['aculta_notice_read_state'] = [
-        '#type' => 'container',
-        '#attributes' => [
-          'data-portal-ui' => $read ? 'notice-read-status' : 'notice-unread-status',
-          'aria-label' => $read
-            ? (string) $this->translation->translate('Lido')
-            : (string) $this->translation->translate('Não lido'),
-        ],
-        'label' => ['#plain_text' => $read
-          ? (string) $this->translation->translate('Lido')
-          : (string) $this->translation->translate('Não lido')],
-      ];
-      $items[] = $item;
+      // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
+      $items[] = $this->noticeSummary(
+        (string) $node->label(),
+        $this->excerpt($this->noticeText($node)),
+        Url::fromRoute('aculta_messenger.notice_detail', ['node' => $node->id()]),
+        $flag instanceof FlagInterface ? $this->buildDismissalLink($flag, $node) : [],
+        $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
+      );
     }
     return $items;
+  }
+
+  /**
+   * One notice in the drawer's list: a button-like summary (title, excerpt, state). Clicking it loads the full notice in
+   * the same drawer; the dismissal link stays on the summary.
+   *
+   * @param array<string, mixed> $dismiss
+   */
+  private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state): array {
+    $title_parts = [
+      '#type' => 'container',
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-title']), '#value' => $title],
+    ];
+    if ($excerpt !== '') {
+      $title_parts['excerpt'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-excerpt']), '#value' => $excerpt];
+    }
+    if ($state !== NULL) {
+      $title_parts['state'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-state']), '#value' => $state];
+    }
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'notice-summary'],
+      'link' => PortalLinkElement::build($title_parts, $url, [
+        'data-aculta-conversation-url' => $url->toString(),
+        'data-portal-ui' => 'notice-summary-link',
+      ]),
+      'dismiss' => $dismiss,
+    ];
+  }
+
+  /** The text of a notice's summary, or its body when the summary is empty. */
+  private function noticeText(NodeInterface $node): string {
+    if (!$node->hasField('body') || $node->get('body')->isEmpty()) {
+      return '';
+    }
+    $body = $node->get('body');
+    return (string) ($body->summary ?: $body->value);
+  }
+
+  /** A short plain text of an HTML body, for a summary. */
+  private function excerpt(string $html): string {
+    // Block tags become spaces, so two paragraphs do not run into one word.
+    $spaced = (string) preg_replace('/<\/?(p|h[1-6]|li|div|br)\b[^>]*>/i', ' ', $html);
+    return Unicode::truncate(trim((string) preg_replace('/\s+/', ' ', strip_tags($spaced))), 160, TRUE, TRUE);
+  }
+
+  /** "← Todos os avisos": back to the notices list, in the same drawer. */
+  private function backToNoticesLink(): array {
+    return PortalLinkElement::build(
+      $this->translation->translate('← Todos os avisos'),
+      Url::fromRoute('aculta_messenger.alerts_preview'),
+      ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'messenger-back-link'],
+    ) + ['#weight' => -100];
+  }
+
+  /** One site notice in full, in the drawer. */
+  public function alertDetail(SiteAlert $site_alert): Response {
+    $access = $site_alert->access('view', $this->account, TRUE);
+    if (!$access->isAllowed()) {
+      throw new NotFoundHttpException();
+    }
+    $build = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'notice-detail'],
+      'back' => $this->backToNoticesLink(),
+      'alert' => [
+        '#theme' => 'site_alert',
+        '#alert' => [
+          'severity' => $site_alert->getSeverity(),
+          'label' => $site_alert->getLabel(),
+          'message' => ['#type' => 'markup', '#markup' => $site_alert->getMessage()],
+        ],
+      ],
+    ];
+    (new CacheableMetadata())->addCacheableDependency($site_alert)->addCacheableDependency($access)->applyTo($build);
+    return $this->buildDrawerResponse($build);
+  }
+
+  /** One notice in full, in the drawer, with its state and its dismissal. */
+  public function noticeDetail(NodeInterface $node): Response {
+    $access = $node->access('view', $this->account, TRUE);
+    if ($node->bundle() !== 'aculta_notice' || !$access->isAllowed()) {
+      throw new NotFoundHttpException();
+    }
+    $flag = $this->flagService->getFlagById('aculta_notice_read');
+    $build = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'notice-detail'],
+      'back' => $this->backToNoticesLink(),
+      'notice' => $this->entityTypes->getViewBuilder('node')->view($node, 'full'),
+    ];
+    if ($flag instanceof FlagInterface) {
+      $build['dismiss'] = $this->buildDismissalLink($flag, $node);
+    }
+    (new CacheableMetadata())->addCacheableDependency($node)->addCacheableDependency($access)->addCacheContexts(['user'])->setCacheMaxAge(0)->applyTo($build);
+    return $this->buildDrawerResponse($build);
   }
 
   /** Builds the native per-user flag link used to dismiss a notice. */
