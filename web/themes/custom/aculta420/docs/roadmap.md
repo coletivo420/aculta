@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.54 | Conquistas no perfil público | Firefox desktop/mobile e contrato módulo/tema verificados | `public-profile.css`, `PortalUiHooks.php` |
 | 0.6.0-dev.53 | Tokens do Messenger, CSS e JS separados, janelas e acordeão | Suíte de navegador: 70 de 70 | `messenger-drawer.css`, `alerts-dismiss.js`, `PortalUiHooks.php` |
 | 0.6.0-dev.52 | Confirmação para bloquear e desfazer amizade; botões Cancelar/Voltar da nova conversa | Capturas de tela e fluxo no runtime de teste | `messenger-drawers.js`, `messenger-item.css`, `PortalUiHooks.php` |
 | 0.6.0-dev.51 | Menu "Opções" nas conversas e no perfil; largura e fonte | Capturas de tela no runtime de teste | `messenger-item.css`, `messenger-drawers.js` |

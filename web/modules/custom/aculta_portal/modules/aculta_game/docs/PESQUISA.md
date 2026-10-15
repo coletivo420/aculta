@@ -91,6 +91,21 @@ sem pontos, ranking ou recompensa financeira, conforme decisão do responsável.
 As páginas documentam o produto atual; não são evidência de compatibilidade ou
 licença para copiar código.
 
+### Exibição em perfil
+
+O próprio exemplo oficial de integração com BuddyPress cria uma aba de perfil e
+passa o ID da pessoa visualizada para a listagem de conquistas; esconde busca e
+filtros e seleciona somente as obtidas. A lista GamiPress também oferece
+`current_user`/`user_id` para separar o perfil visto da conta autenticada
+([integração com perfil BuddyPress](https://gamipress.com/snippets/buddypress-integration/custom-user-profile-tab-with-gamipress-shortcodes/),
+[listagem de conquistas](https://gamipress.com/docs/shortcodes/gamipress_achievements/)).
+
+No ACULTA, `/u/<apelido>` já é o perfil público principal, então a integração
+fica na própria página em vez de criar outra aba/rota. Ela mostra somente
+conquistas ativas e que a pessoa permitiu exibir, com busca/filtro omitidos.
+Cartões acrescentam imagem, nome, descrição editorial e destaque escolhido; não
+revelam fonte, motivo, curso, pedido ou data da concessão.
+
 ## Pesquisa sobre desenho de incentivos
 
 [Anderson et al., Steering User Behavior with Badges](https://ai.stanford.edu/~jure/pubs/badges-www13.pdf)

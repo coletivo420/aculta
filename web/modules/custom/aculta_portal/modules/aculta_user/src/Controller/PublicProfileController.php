@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_user\Avatar\AvatarPool;
 use Drupal\aculta_user\Form\FriendshipActionForm;
 use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
@@ -43,6 +44,7 @@ final class PublicProfileController extends ControllerBase {
     private readonly AccountProxyInterface $account,
     private readonly FormBuilderInterface $forms,
     private readonly ModuleHandlerInterface $modules,
+    private readonly AvatarPool $avatarPool,
   ) {}
 
   /**
@@ -58,6 +60,7 @@ final class PublicProfileController extends ControllerBase {
       $container->get('current_user'),
       $container->get('form_builder'),
       $container->get('module_handler'),
+      $container->get('aculta_user.avatar_pool'),
     );
   }
 
@@ -137,7 +140,7 @@ final class PublicProfileController extends ControllerBase {
   }
 
   /**
-   * Avatar do perfil: a foto quando o perfil a exibe; senão, a inicial do apelido.
+   * Avatar do perfil: foto permitida, acervo ilustrativo ou inicial de segurança.
    */
   private function avatar($account, string $apelido, bool $showPhoto): array {
     $wrap = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-avatar']];
@@ -150,7 +153,22 @@ final class PublicProfileController extends ControllerBase {
       ];
     }
     else {
-      $wrap['initial'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => mb_strtoupper(mb_substr($apelido, 0, 1)), '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-initial', 'aria-hidden' => 'true'])];
+      $fallback = $this->avatarPool->fallbackEntry((int) $account?->id());
+      if ($fallback !== NULL) {
+        $wrap['image'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'img',
+          '#attributes' => [
+            'src' => $this->avatarPool->previewUrl($fallback),
+            'alt' => (string) $this->t('Avatar ilustrativo para @name', ['@name' => $apelido]),
+            'data-portal-ui' => 'public-profile-avatar-image',
+          ],
+          '#cache' => ['contexts' => ['languages:language_interface']],
+        ];
+      }
+      else {
+        $wrap['initial'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => mb_strtoupper(mb_substr($apelido, 0, 1)), '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-initial', 'aria-hidden' => 'true'])];
+      }
     }
     return $wrap;
   }

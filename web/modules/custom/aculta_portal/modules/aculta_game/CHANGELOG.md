@@ -1,5 +1,13 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.8 — G5.3: conquistas no perfil público — 2026-10-15
+
+- Perfis públicos exibem conquistas obtidas em cartões com imagem própria ou símbolo ilustrativo, título, descrição e destaque; avatar de pessoa sem foto usa o acervo do `aculta_user`.
+- Upload informa recomendação de imagem quadrada de 512 × 512 px e limites aceitos.
+- Visibilidade individual e global continuam controladas pela pessoa; dados de cursos, pedidos e concessões ficam privados.
+- Nenhum filtro/busca aparece no perfil: segue o padrão GamiPress de listar apenas as conquistas da pessoa exibida.
+- Verificação Firefox desktop/mobile no Runtime; gates Drupal 11 e fronteira módulo/tema.
+
 ## 0.1.0-dev.7 — G5.2: apresentação e avisos de conquistas — 2026-10-15
 
 - Editor reorganizado por identificação, imagem e condições; critérios separados por participação, formação, apoio e equipe.

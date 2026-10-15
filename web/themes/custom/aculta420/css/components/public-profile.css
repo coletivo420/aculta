@@ -58,11 +58,22 @@
 .portal-profile__link::before { font-size: 1rem; line-height: 1; }
 .portal-profile__link:hover,
 .portal-profile__link:focus-visible { border-color: var(--aculta-interactive-border); color: var(--aculta-interactive-text); }
+.portal-profile__achievements { margin-block-start: 1.5rem; padding: 1.5rem 2rem 2rem; border-block-start: 1px solid var(--aculta-border-subtle); }
+.portal-profile__achievements-title { margin: 0 0 1rem; font-size: 1.25rem; }
+.portal-profile__achievements-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 0.75rem; }
+.portal-profile__achievement { display: flex; align-items: flex-start; gap: 0.875rem; min-inline-size: 0; padding: 1rem; border: 1px solid var(--aculta-border-default); border-radius: 0.75rem; background: var(--aculta-surface-muted); }
+.portal-profile__achievement-image { flex: 0 0 auto; }
+.portal-profile__achievement-image img { display: block; inline-size: 4rem; block-size: 4rem; object-fit: contain; }
+.portal-profile__achievement-content { min-inline-size: 0; }
+.portal-profile__achievement-name { margin: 0; font-size: 1rem; line-height: 1.35; overflow-wrap: anywhere; }
+.portal-profile__achievement-description { margin: 0.375rem 0 0; font-size: 0.875rem; line-height: 1.5; overflow-wrap: anywhere; }
+.portal-profile__achievement-highlight { display: inline-flex; margin-block-start: 0.5rem; padding: 0.125rem 0.5rem; border: 1px solid var(--aculta-interactive-border); border-radius: 999px; color: var(--aculta-interactive-text); font-size: 0.75rem; font-weight: 600; }
 @media (max-width: 575.98px) {
   .portal-profile__header { flex-direction: column; text-align: center; padding: 1.5rem; }
   .portal-profile__actions { margin-inline-start: 0; }
   .portal-profile__bio, .portal-profile__links { margin-inline: 1.5rem; padding-inline: 0; }
   .portal-profile__links { padding: 1rem 1.5rem 1.5rem; }
+  .portal-profile__achievements { padding: 1.25rem 1.5rem 1.5rem; }
 }
 
 /* Caixa de autores da publicação (Revista): bordas neutras, sem cores de destaque. */

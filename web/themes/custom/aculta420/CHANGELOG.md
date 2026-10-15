@@ -1,3 +1,12 @@
+## 0.6.0-dev.54 — cartões de conquistas no perfil público — 2026-10-15
+
+Classificação: MINOR (novo contrato de apresentação no tema).
+
+- `PortalUiHooks.php` traduz tokens neutros do Game em classes do perfil ACULTA420.
+- `public-profile.css` apresenta cartões responsivos, imagens, descrições e destaque, em light/dark via tokens semânticos.
+- Firefox no Runtime: 19/19 verificações da integração, incluindo perfil responsivo; Foundation (342) e fronteira módulo/tema aprovados.
+- RUNTIME STATUS: ACTIVE (Homelab).
+
 ## 0.6.0-dev.53 — tokens do Messenger, CSS e JS separados, janelas e acordeão — 2026-10-15
 
 Classificação: PATCH (apresentação do Messenger; sem mudança de comportamento para o membro).

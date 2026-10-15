@@ -293,3 +293,30 @@ nenhum código ou plugin GamiPress foi instalado ou copiado.
   da linha de base). `git diff --check` passou.
 - Entrega de e-mail pelo transporte do ambiente, leitores de tela e concorrência
   de avisos não foram testados.
+
+## G5.3 — conquistas no perfil público — Runtime validado
+
+Classificação MINOR: Game `0.1.0-dev.8`, Portal `0.4.0-dev.41`, ACULTA420
+`0.6.0-dev.54`. A referência GamiPress passa o usuário visualizado ao perfil e
+mostra apenas conquistas obtidas, sem busca/filtro no perfil
+([exemplo oficial de perfil](https://gamipress.com/snippets/buddypress-integration/custom-user-profile-tab-with-gamipress-shortcodes/)).
+O ACULTA aplica a lista no perfil já existente `/u/<apelido>`.
+
+- Os itens publicados são cartões responsivos com imagem própria ou símbolo
+  ilustrativo de fallback, nome,
+  descrição pública editorial e marcador “Em destaque”. Ordenação coloca os
+  destaques e pesos escolhidos à frente.
+- `hide_all`, preferência individual, perfil privado, conta inelegível e contas
+  legadas continuam filtradas pelo mesmo presenter; não são exibidos detalhes
+  de curso/pedido, origem, concessor ou motivo.
+- Contrato de tema: `profile-achievements*` é token neutro do Game; ACULTA420
+  traduz os tokens e define grade/cartões com tokens semânticos, em ambos modos.
+- Cache conserva tags da concessão, perfil e usuário e tags de preferências e
+  configuração. A rota continua limitada ao propósito MAIN.
+- Perfil real do Runtime com conquista ativa exibiu o título e a seção; Firefox
+  passou 19/19 checks incluindo avatar, fallback SVG, cartões desktop/mobile e
+  ausência de rolagem horizontal. Gates Drupal 11, fronteira, Foundation,
+  slugs/endereço e `git diff --check` passam.
+- Imagens próprias devem ser quadradas, com **512 × 512 px** recomendados; o
+  campo de envio informa esse tamanho, os formatos aceitos, o limite de 2 MB e
+  o máximo de 4096 × 4096 px. Sem arte própria, o perfil exibe o SVG ilustrativo.

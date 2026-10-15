@@ -13,7 +13,8 @@ do responsável, as fases são commits próprios na PR #286 existente.
 | G3 — conta/perfil verificados; acessibilidade completa pendente | Minha Conta, perfil e escolhas de exibição pública; caixas adicionais em G7 | Público por padrão com ocultação, destaques e ordem; zero evidência privada publicada; acessibilidade e cache |
 | G4 — implementada e verificada no Homelab | Três missões unitárias, critérios versionados e progresso das conquistas reais | Sem XP/ranking; configuração, navegação, POST, privacidade e acesso verificados |
 | G5.1 — implementada/verificada | Criação/edição de conquistas, critérios, concessão/revogação manual, motivos e histórico na área Game | Permissão própria; fontes reais, dados preservados; HTTP 34/34 |
-| G5.2 — avisos pendentes | Avisos de conquistas pelo Messenger e preferências de entrega | Deduplicação, privacidade e revalidação; sem conceder privilégios editoriais |
+| G5.2 — implementada; entrega de e-mail não verificada | Avisos dispensáveis no Messenger e preferência individual por e-mail | Privacidade, revalidação e envio enfileirado; sem conceder privilégios editoriais |
+| G5.3 — perfil público implementado | Cartões de conquistas obtidas em `/u/<apelido>` | Imagem, título, descrição e destaque; preferências respeitadas; evidências privadas excluídas |
 | G6 — automação opcional | Spike ECA ou outro backend apenas se houver lacuna demonstrada | Composer e licenças revistos, ownership único, testes de paridade; não instalar ECA e Rules para a mesma regra |
 | G7 — integração continuada | Fórum atual, Wiki, Revista, cursos e participação cultural | Mesma conquista e mesma privacidade em todos os consumidores; legado tratado como memória |
 

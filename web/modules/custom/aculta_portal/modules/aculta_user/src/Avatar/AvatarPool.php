@@ -166,6 +166,16 @@ final class AvatarPool {
     return \Drupal\Core\Url::fromUri('base:' . $this->modules->getPath('aculta_user') . '/assets/avatars/' . $entry['file'])->toString();
   }
 
+  /** Avatar ilustrativo estável para apresentações públicas sem foto de conta. */
+  public function fallbackEntry(int $seed = 0): ?array {
+    $available = $this->available();
+    if ($available === []) {
+      return NULL;
+    }
+    $index = hexdec(substr(hash('sha256', (string) $seed), 0, 8)) % count($available);
+    return $available[$index];
+  }
+
   /**
    * Salva a escolha pendente: copia para o acervo, troca a foto e apaga a cópia anterior do acervo se ninguém mais a usa.
    * Quem chama é responsável por salvar a conta; aqui a conta é salva para a troca valer.

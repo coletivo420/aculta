@@ -107,3 +107,8 @@ imagem e condições em grupos; remoção da imagem exige confirmação e exclui
 arquivo enviado quando não há outro uso. Conquistas novas geram aviso dispensável
 no Messenger e e-mail enfileirado, com preferência individual de recebimento.
 Entrega de e-mail depende do cron e da configuração do ambiente.
+
+Para arte de conquista, recomendamos imagem quadrada de **512 × 512 px**. O
+formulário aceita PNG, JPG ou WebP até 2 MB, com dimensão máxima de 4096 × 4096
+px. No perfil público, definições sem imagem própria usam o símbolo ilustrativo
+`assets/conquistas/conquista-padrao.svg`.

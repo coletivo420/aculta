@@ -67,7 +67,7 @@ final class AchievementDefinitionForm extends FormBase {
     $form['image_section']['image_fid'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Enviar imagem da conquista'),
-      '#description' => $this->t('PNG, JPG ou WebP, até 2 MB. A nova imagem substitui a atual ao salvar.'),
+      '#description' => $this->t('Recomendado: 512 × 512 px, em formato quadrado. PNG, JPG ou WebP, até 2 MB e no máximo 4096 × 4096 px. A nova imagem substitui a atual ao salvar.'),
       '#upload_location' => 'public://conquistas',
       '#upload_validators' => [
         'FileExtension' => ['extensions' => 'png jpg jpeg webp'],

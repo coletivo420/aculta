@@ -28,6 +28,17 @@ try {
   check('Mobile sem rolagem horizontal', await browser.exec(`return document.documentElement.scrollWidth <= window.innerWidth + 1;`));
   await browser.exec(`document.querySelector('input[name="hide_all"]')?.closest('form')?.scrollIntoView(); return true;`);
   await browser.shot('game-conta-mobile');
+  // Public profile: only earned achievements are shown, with no achievement filters/search.
+  await fetch(GD + browser.p('/cookie'), { method: 'DELETE' });
+  await browser.go(mainBase + '/u/pessoa-5');
+  check('Perfil público mostra apenas conquistas obtidas', await browser.waitFor(`document.querySelector('.portal-profile__achievements') && document.body.innerText.includes('Perfil básico completo')`, 'conquistas do perfil'));
+  check('Avatar público apresenta uma imagem', await browser.exec(`return !!document.querySelector('.portal-profile__avatar img');`));
+  check('Conquista sem arte recebe símbolo de fallback', await browser.exec(`return !!document.querySelector('.portal-profile__achievement-image img[src*="conquista-padrao.svg"]');`));
+  check('Conquistas usam cartões e grade responsiva', await browser.exec(`const list = document.querySelector('.portal-profile__achievements-list'); const item = document.querySelector('.portal-profile__achievement'); return !!list && !!item && getComputedStyle(list).display === 'grid' && !document.body.innerText.includes('Pesquisar conquistas');`));
+  const profileResized = await fetch(GD + browser.p('/window/rect'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ width: 390, height: 844 }) });
+  if (!profileResized.ok) throw new Error('Falha ao redimensionar perfil para celular.');
+  check('Perfil público de conquistas cabe no celular', await browser.exec(`return document.documentElement.scrollWidth <= window.innerWidth + 1 && !!document.querySelector('.portal-profile__achievement');`));
+  await browser.shot('game-perfil-publico-mobile');
   // Nova sessão HTTP de admin no mesmo Firefox, sem encerrar processos de outra execução.
   await fetch(GD + browser.p('/cookie'), { method: 'DELETE' });
   await browser.go(oneTimeLogin(adminName));
@@ -38,7 +49,7 @@ try {
   await browser.go(mainBase + '/painel-administrativo/game/conquistas');
   check('Lista administrativa usa apenas Conquistas', await browser.exec(`return document.body.innerText.includes('Conquistas') && !document.body.innerText.includes('Troféus');`));
   await browser.go(mainBase + '/painel-administrativo/game/conquistas/criar');
-  check('Editor organiza nome, imagem e condições legíveis', await browser.exec(`return !!document.querySelector('input[name="identity[label]"]') && !!document.querySelector('input[type="file"]') && document.body.innerText.includes('Participação na comunidade') && document.body.innerText.includes('Apoio à associação') && document.body.innerText.includes('Basta cumprir uma das formas');`));
+  check('Editor informa 512 × 512 px e organiza nome, imagem e condições', await browser.exec(`return !!document.querySelector('input[name="identity[label]"]') && !!document.querySelector('input[type="file"]') && document.body.innerText.includes('512 × 512 px') && document.body.innerText.includes('Participação na comunidade') && document.body.innerText.includes('Apoio à associação') && document.body.innerText.includes('Basta cumprir uma das formas');`));
   await browser.go(mainBase + '/painel-administrativo/game/conquistas/fundadore/editar');
   check('Imagem atual tem ação de remoção separada', await browser.exec(`return [...document.querySelectorAll('a')].some(a => a.textContent.includes('Remover imagem atual'));`));
   await browser.go(mainBase + '/painel-administrativo/game/conquistas/fundadore/imagem/remover');

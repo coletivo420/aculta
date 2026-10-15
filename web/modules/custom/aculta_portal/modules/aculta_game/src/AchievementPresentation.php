@@ -11,6 +11,7 @@ use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Template\Attribute;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
 
@@ -109,7 +110,67 @@ final class AchievementPresentation {
     }
     uasort($rows, static fn (array $a, array $b): int =>
       ((int) $b['highlight'] <=> (int) $a['highlight']) ?: ($a['weight'] <=> $b['weight']) ?: strcmp($a['label'], $b['label']));
-    if ($rows !== [] || !$public) {
+    if ($public && $rows !== []) {
+      $items = [];
+      foreach ($rows as $row) {
+        $definition = $catalog[$row['id']];
+        $item = [
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'profile-achievement'],
+        ];
+        $image = $this->imageForDefinition($definition, TRUE);
+        if ($image !== []) {
+          $item['image'] = [
+            '#type' => 'container',
+            '#attributes' => ['data-portal-ui' => 'profile-achievement-image'],
+            'asset' => $image,
+          ];
+        }
+        $content = [
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'profile-achievement-content'],
+          'label' => [
+            '#theme' => 'aculta_portal_element',
+            '#tag' => 'h4',
+            '#value' => (string) $definition['label'],
+            '#element_attributes' => new Attribute(['data-portal-ui' => 'profile-achievement-name']),
+          ],
+        ];
+        if (!empty($row['highlight'])) {
+          $content['highlight'] = [
+            '#type' => 'container',
+            '#attributes' => ['data-portal-ui' => 'profile-achievement-highlight'],
+            'text' => ['#plain_text' => $this->t('Em destaque')],
+          ];
+        }
+        if (trim((string) ($definition['description'] ?? '')) !== '') {
+          $content['description'] = [
+            '#theme' => 'aculta_portal_element',
+            '#tag' => 'p',
+            '#value' => (string) $definition['description'],
+            '#element_attributes' => new Attribute(['data-portal-ui' => 'profile-achievement-description']),
+          ];
+        }
+        $item['content'] = $content;
+        $items[] = $item;
+      }
+      $build = [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'profile-achievements'],
+        'title' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h3',
+          '#value' => $this->t('Conquistas'),
+          '#element_attributes' => new Attribute(['data-portal-ui' => 'profile-achievements-title']),
+        ],
+        'items' => [
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'profile-achievements-list'],
+          'entries' => $items,
+        ],
+      ];
+    }
+    elseif ($rows !== [] || !$public) {
       $items = [];
       foreach ($rows as $row) {
         $items[] = [
@@ -140,7 +201,7 @@ final class AchievementPresentation {
   }
 
   /** Imagem pública atual, com fallback dos arquivos históricos importados. */
-  public function imageForDefinition(array $definition): array {
+  public function imageForDefinition(array $definition, bool $useFallback = FALSE): array {
     if (!empty($definition['image_uuid'])) {
       $files = $this->entities->getStorage('file')->loadByProperties(['uuid' => $definition['image_uuid']]);
       $file = $files ? reset($files) : NULL;
@@ -159,11 +220,21 @@ final class AchievementPresentation {
       'associado' => 'associado-antiproibicionista.png',
       'apoiador' => 'apoiadore.png',
     ][$definition['image'] ?? ''] ?? NULL;
-    return $legacy ? [
+    if ($legacy) {
+      return [
+        '#theme' => 'image',
+        '#uri' => $this->modules->getPath('aculta_game') . '/assets/conquistas/' . $legacy,
+        '#width' => 96,
+        '#alt' => (string) ($definition['label'] ?? ''),
+      ];
+    }
+    return $useFallback ? [
       '#theme' => 'image',
-      '#uri' => $this->modules->getPath('aculta_game') . '/assets/conquistas/' . $legacy,
+      '#uri' => $this->modules->getPath('aculta_game') . '/assets/conquistas/conquista-padrao.svg',
       '#width' => 96,
-      '#alt' => (string) ($definition['label'] ?? ''),
+      '#height' => 96,
+      '#alt' => (string) $this->t('Símbolo ilustrativo da conquista @label', ['@label' => $definition['label'] ?? '']),
+      '#cache' => ['contexts' => ['languages:language_interface']],
     ] : [];
   }
 

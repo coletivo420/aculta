@@ -1,3 +1,12 @@
+## 0.4.0-dev.41 — Game G5.3: conquistas no perfil público — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.8`, User `0.4.0-dev.9`: perfis
+`/u/<apelido>` apresentam conquistas obtidas em cartões responsivos com imagens
+ou símbolo ilustrativo, descrições e destaque, respeitando escolhas de
+privacidade. Avatar sem foto usa o acervo atual do `aculta_user`. Upload orienta
+imagem quadrada de 512 × 512 px. Firefox de desktop/mobile e gates Drupal 11
+verificados no Homelab.
+
 ## 0.4.0-dev.40 — Game G5.2: avisos, e-mail e confirmação de imagem — 2026-10-15
 
 Classificação MINOR. Game `0.1.0-dev.7`, User `0.4.0-dev.8`: catálogo único

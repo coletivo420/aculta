@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.9 — avatar ilustrativo em perfis sem foto — 2026-10-15
+
+- `/u/<apelido>` escolhe uma imagem estável por conta do acervo atual de avatares
+  quando não há foto pública. A imagem é apenas apresentação: não grava nem troca
+  a foto da conta.
+- Mantém a inicial como fallback de segurança caso o acervo esteja indisponível.
+
 ## 0.4.0-dev.8 — arquivo de imagem de conquista — 2026-10-15
 
 - Definição referencia o arquivo enviado por UUID e registra uso pela API File Usage.
@@ -227,4 +234,5 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
 - Estudo de origem e decisões: `docs/AMIZADES.md`.
 - `RUNTIME STATUS: DEFERRED` — entidade ainda não instalada; interfaces,
   formulários e integração de notificações seguem em desenvolvimento.
+
 
