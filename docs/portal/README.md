@@ -54,3 +54,16 @@
 ## Roadmap
 
 - [ROADMAP.md](ROADMAP.md) — saneamento e features de produto.
+
+## Projetos aprovados em documentação — 2026-10-15
+
+- [ACULTA Fórum / Growroom](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
+  — reconstrução do acervo, autores individuais no memorial coletivo, prefixo
+  `growroom`, conversas atuais vinculadas e integrações do Portal.
+- [ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md)
+  — conquistas e missões sem ranking ou benefícios financeiros; exibição pública
+  por padrão com privacidade e destaques; pesquisa de módulos e licenças.
+
+Esses diretórios contêm projetos dos futuros submódulos opcionais. Não são ainda
+extensões instaláveis ou habilitadas. Seus READMEs separam o estado do código
+existente, as decisões aprovadas e as fases de implementação.

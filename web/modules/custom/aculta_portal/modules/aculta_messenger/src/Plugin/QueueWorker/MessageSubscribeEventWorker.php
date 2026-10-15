@@ -80,6 +80,12 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
 
     $internalPath = '/node/' . $node->id();
     if ($this->aliasManager->getAliasByPath($internalPath, $node->language()->getId()) === $internalPath) {
+      // Requeue only for a while: a topic still without an alias after a week will not get one by waiting (for example
+      // when the pathauto rule is off). It is dropped with an error, so the queue cannot grow on every cron run.
+      if ((int) $node->getCreatedTime() < time() - 7 * 86400) {
+        $this->loggerFactory->get('aculta_messenger')->error('Forum topic @id still has no public alias after a week; the subscription notice was dropped.', ['@id' => $node->id()]);
+        return;
+      }
       // No Portuguese alias yet: the email must not carry an English/Core path. Requeue instead of
       // dropping the event, so the notice is sent once pathauto has created the alias, and log it.
       $this->loggerFactory->get('aculta_messenger')->warning('Forum topic @id has no public alias yet; the subscription notice was requeued.', ['@id' => $node->id()]);

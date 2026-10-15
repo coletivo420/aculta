@@ -267,7 +267,8 @@ final class PortalUiHooks {
         $token = $attributes[self::ATTRIBUTE] ?? NULL;
         if (is_string($token) && isset(self::TOKENS[$token])) {
           unset($attributes[self::ATTRIBUTE]);
-          $attributes['class'] = array_merge($attributes['class'] ?? [], self::TOKENS[$token]);
+          $existing = $attributes['class'] ?? [];
+          $attributes['class'] = array_values(array_unique(array_merge(is_array($existing) ? $existing : [$existing], self::TOKENS[$token])));
           $url->setOption('attributes', $attributes);
         }
       }
@@ -290,12 +291,6 @@ final class PortalUiHooks {
   #[Hook('preprocess_aculta_portal_shell')]
   #[Hook('preprocess_aculta_portal_account_terms_modal')]
   #[Hook('preprocess_aculta_portal_photo_editor')]
-  /** The details of the Opções box: mapped after the Bootstrap accordion has set its attributes. */
-  #[Hook('preprocess_details', order: Order::Last)]
-  public function preprocessDetails(array &$variables): void {
-    $this->preprocess($variables);
-  }
-
   public function preprocess(array &$variables): void {
     $this->addAccountUnreadBadges($variables);
     // #attributes do elemento de render são mesclados em "attributes" depois do preprocess: trata o elemento.
@@ -330,6 +325,12 @@ final class PortalUiHooks {
         $this->applyArray($item['#wrapper_attributes'], $variables['items'][$key], '#wrapper_attributes');
       }
     }
+  }
+
+  /** The details of the Opções box: mapped after the Bootstrap accordion has set its attributes. */
+  #[Hook('preprocess_details', order: Order::Last)]
+  public function preprocessDetails(array &$variables): void {
+    $this->preprocess($variables);
   }
 
   /** Maps the neutral unread count from the account contract to the theme SDC. */

@@ -53,6 +53,10 @@ final class MessengerCounts {
    * Counts the visible, published persistent notices this account has not marked as read.
    */
   public function unreadPersistentNoticeCount(AccountInterface $account): int {
+    // A visitor cannot dismiss a notice (there is no flagging for uid 0), so it has no unread notice to count.
+    if (!$account->isAuthenticated()) {
+      return 0;
+    }
     $flag = $this->entityTypeManager->getStorage('flag')->load('aculta_notice_read');
     if (!$flag instanceof FlagInterface) {
       return 0;

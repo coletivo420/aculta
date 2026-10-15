@@ -112,7 +112,8 @@ final class NewConversationForm extends FormBase {
   }
 
   private function recipient(FormStateInterface $formState): ?UserInterface {
-    $uid = (int) ($formState->getValue('recipient') ?: $formState->get('recipient') ?: 0);
+    // The member of the route (the compose page built the form for it) wins over the posted hidden field.
+    $uid = (int) ($formState->get('recipient') ?: $formState->getValue('recipient') ?: 0);
     $user = $uid > 0 ? $this->entityTypes->getStorage('user')->load($uid) : NULL;
     return $user instanceof UserInterface && $user->isActive() ? $user : NULL;
   }

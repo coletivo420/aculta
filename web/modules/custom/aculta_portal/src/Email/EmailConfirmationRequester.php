@@ -101,7 +101,15 @@ final class EmailConfirmationRequester {
         return EmailConfirmationRequestResult::ACCEPTED;
       }
 
-      foreach ($this->pendingFor($email, $uid) as $old) {
+      // The new request is already accepted: a failure to list or cancel the old tokens must not report it as failed.
+      try {
+        $pending = $this->pendingFor($email, $uid);
+      }
+      catch (Throwable $exception) {
+        $this->logFailure('The previous email confirmations could not be listed.', $exception);
+        return EmailConfirmationRequestResult::ACCEPTED;
+      }
+      foreach ($pending as $old) {
         if ($old->id() === $confirmation->id()) {
           continue;
         }

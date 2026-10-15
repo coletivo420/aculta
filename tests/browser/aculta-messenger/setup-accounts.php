@@ -12,6 +12,12 @@
 
 use Drupal\private_message\Entity\PrivateMessage;
 
+// Refuses to run anywhere but the test runtime: this script creates accounts and writes messages. Checked before any write.
+$database = \Drupal\Core\Database\Database::getConnection()->getConnectionOptions();
+if (($database['database'] ?? '') !== 'aculta_runtime') {
+  throw new \RuntimeException('Refused: the messenger suite prepares only the test runtime database (aculta_runtime).');
+}
+
 $storage = \Drupal::entityTypeManager()->getStorage('user');
 $accounts = [
   'teste.comum' => ['mail' => 'teste.comum@teste.invalid', 'roles' => ['email_confirmed']],

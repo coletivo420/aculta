@@ -8,6 +8,7 @@ Classificação: PATCH (apresentação do Messenger; sem mudança de comportamen
 - JS: `js/alerts-dismiss.js` (dispensar aviso, biblioteca global), fora de `messenger-drawers.js`.
 - `portal-cart.css`: o "×" do aviso é selecionado por `data-aculta-alert-dismiss`.
 - RUNTIME STATUS: ACTIVE no teste (suíte de navegador 70 de 70).
+- Revisão de código: `PortalUiHooks` com os hooks de `preprocess()` restaurados e `preprocessDetails` separado; mapeamento de classe de link de menu aceita classe em string.
 
 ## 0.6.0-dev.52 — confirmação para bloquear e botões da nova conversa — 2026-10-15
 

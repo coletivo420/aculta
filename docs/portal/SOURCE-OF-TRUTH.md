@@ -54,6 +54,27 @@ dos módulos que integra.
 
 ## Regra de gravação
 
+### Projetos aprovados para evolução — 2026-10-15
+
+O [ACULTA Fórum/Growroom](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
+integra os mesmos Forum/Node/Comment/Taxonomy. A marca e o prefixo público mudam
+para `growroom` na fase operacional, preservando o purpose `forum`. Autores
+históricos mantêm Users individuais bloqueados; o destino público de todos é
+o memorial coletivo `/u/lendashistoricas`, sem páginas individuais.
+
+O [ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md)
+tem como fonte inicial de concessões a entidade existente `aculta_badge_award`,
+hoje provida pelo `aculta_user`; regras estão em `BadgeCatalog` e
+`BadgeEvaluationHooks`. Não há um segundo backend de badges. Sua evolução e
+eventual mudança de ownership exigem transição própria. A decisão atual é
+conquistas públicas por padrão com ocultação e destaques, sem ranking ou
+benefícios financeiros; evidências privadas continuam sujeitas a acesso.
+
+Os novos submódulos estão em documentação. A tabela de capacidades existentes
+não significa que seus roadmaps estejam implementados ou homologados.
+
+### Princípio
+
 Se uma feature precisa gravar estado, gravar através da API da fonte de verdade.
 
 Exemplos:

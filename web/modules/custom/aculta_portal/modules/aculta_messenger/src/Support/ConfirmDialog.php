@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Support;
 
 use Drupal\Component\Render\MarkupInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Template\Attribute;
 
 /**
@@ -37,7 +38,8 @@ final class ConfirmDialog {
    *   The form with the open button in "actions" and the dialog under "$name_dialog".
    */
   public static function add(array $form, string $name, MarkupInterface|string $openLabel, MarkupInterface|string $question, MarkupInterface|string $confirmLabel, MarkupInterface|string $cancelLabel, int $weight = 0): array {
-    $titleId = 'aculta-' . $name . '-dialog-title';
+    // One id per dialog on the page: the list builds one menu per conversation, and each needs its own title.
+    $titleId = Html::getUniqueId('aculta-' . $name . '-dialog-title');
     $form['actions'][$name . '_open'] = [
       '#type' => 'button',
       '#button_type' => 'button',

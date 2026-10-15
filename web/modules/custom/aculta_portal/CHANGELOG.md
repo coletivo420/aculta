@@ -5,6 +5,10 @@ Classificação: PATCH.
 - Template `aculta_portal_element` inalterado; `PortalLinkElement` usado pelo Messenger.
 - `aculta_messenger` 0.1.1-dev.31: grupos na lista, menu sem reenvio, tokens no lugar de classes, aviso em português.
 - Gate `validate-module-theme-boundary`: varre os submódulos; dívida conhecida registrada no próprio gate e em `DEBT-REGISTER.md`.
+- Documentação, sem avanço de versão: abertos os projetos `aculta_forum` (Growroom)
+  e `aculta_game`, com decisões de 2026-10-15, arquitetura, roadmaps, pesquisa e
+  evidência de licenças. Os diretórios ainda não são extensões instaláveis; sem
+  alterações de domínio, identidades, dependências ou configuração de Runtime.
 
 ## 0.4.0-dev.31 — confirmação para bloquear e botões da nova conversa — 2026-10-15
 
