@@ -29,7 +29,10 @@
 .private-message-thread-inbox .private-message-inbox-thread-link { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; overflow: hidden; border: 0; border-radius: inherit; font-size: 0; }
 .private-message-thread-inbox .private-message-inbox-thread-link:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 .private-message-thread-inbox .private_message_thread_delete_link_wrapper, .private-message-thread-inbox .private_message_thread_clear_history_link_wrapper { display: none; }
-.aculta-messenger-conversation__actions { position: absolute; z-index: 3; inset-block-start: 50%; inset-inline-end: 0.65rem; transform: translateY(-50%); }
+.aculta-messenger-conversation__actions { position: relative; z-index: 3; flex: 0 0 auto; align-self: center; margin-inline-start: auto; }
+/* In a conversation row the menu opens over the list, aligned to the row's right edge, and does not widen the row. */
+.aculta-messenger-conversation__actions .aculta-messenger-options { position: relative; }
+.aculta-messenger-conversation__actions .aculta-messenger-options__panel { position: absolute; inset-inline-end: 0; inset-block-start: 100%; margin-block-start: 0.25rem; z-index: 5; }
 .aculta-messenger-conversation__menu-trigger { display: inline-grid; width: 2rem; height: 2rem; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--aculta-text-secondary); font-size: 1.25rem; line-height: 1; opacity: 0; }
 .aculta-messenger-sender:hover .aculta-messenger-conversation__menu-trigger, .aculta-messenger-sender:focus-within .aculta-messenger-conversation__menu-trigger, .aculta-messenger-sender--menu-open .aculta-messenger-conversation__menu-trigger { opacity: 1; }
 .aculta-messenger-conversation__menu-trigger:hover, .aculta-messenger-conversation__menu-trigger:focus-visible { background: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
@@ -86,6 +89,8 @@
 .aculta-messenger-options__item:focus-visible, .aculta-messenger-options__action:focus-visible { box-shadow: inset 0 0 0 3px var(--aculta-focus-ring); }
 .aculta-messenger-relationship { display: flex; flex-direction: column; }
 .aculta-messenger-relationship .form-actions { display: flex; flex-direction: column; margin: 0; }
+/* The relationship buttons are Form API submits: they get the same item look and body font as the Opções links. */
+.aculta-messenger-relationship .form-actions :is(button, input[type="submit"]) { display: block; width: 100%; margin: 0; padding: 0.6rem 0.75rem; border: 0; border-bottom: 1px solid var(--aculta-border-subtle); border-radius: 0; background: transparent; color: var(--aculta-text-primary); font: inherit; text-align: start; cursor: pointer; }
 .aculta-messenger-relationship .aculta-messenger-options__status { margin: 0; padding: 0.6rem 0.75rem; color: var(--aculta-text-secondary); font-size: 0.875rem; }
 /* Narrow screens: only the hamburger icon, so the toolbar always fits next to the back link. */
 @media (max-width: 575.98px) {

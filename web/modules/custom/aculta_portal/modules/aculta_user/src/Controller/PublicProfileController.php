@@ -118,6 +118,12 @@ final class PublicProfileController extends ControllerBase {
         $cache->addCacheableDependency($relationship);
       }
     }
+    // Other modules add to the profile's actions (the messenger's "Opções" box, which holds the friendship actions).
+    $actions = $build['header']['actions'] ?? [];
+    $this->moduleHandler()->alter('aculta_user_public_profile_actions', $actions, $profile);
+    if ($actions !== []) {
+      $build['header']['actions'] = $actions;
+    }
     if ($links !== []) {
       $build['links'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-links', 'aria-label' => (string) $this->t('Contatos e redes')], 'items' => $links];
     }

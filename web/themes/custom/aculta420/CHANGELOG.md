@@ -1,3 +1,12 @@
+## 0.6.0-dev.51 — menu "Opções" nas conversas e no perfil; largura e fonte — 2026-10-15
+
+Classificação: PATCH (apresentação do menu "Opções").
+
+- `messenger-item.css`: o painel "Opções" de cada linha abre por cima da lista, alinhado à direita da linha, sem alargar a gaveta.
+- `messenger-item.css`: os botões do menu de relação usam a mesma aparência e fonte dos itens "Opções" (antes saíam com a fonte de títulos).
+- `messenger-drawers.js`: "Iniciar conversa" do perfil abre a gaveta já na etapa de nova conversa (`drawer.acultaNavigate`).
+- RUNTIME STATUS: ACTIVE no teste (capturas de tela); a suíte de 52 verificações não foi reexecutada.
+
 ## 0.6.0-dev.50 — envio de resposta na gaveta sem navegação — 2026-10-15
 
 Classificação: PATCH (comportamento do envio de resposta na gaveta).

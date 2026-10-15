@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.29 — menu "Opções" nas conversas e no perfil — 2026-10-15
+
+Classificação: PATCH (troca do menu quebrado das conversas pelo menu "Opções" e inclusão do menu no perfil).
+
+- Conversas: os três pontos antigos saem; cada linha da gaveta mostra o "Opções" (amizade, limpar histórico em duas etapas, bloquear).
+- Perfil `/u/…`: caixa "Opções" no canto superior direito do cartão, com "Iniciar conversa" no lugar de "Limpar histórico". "Iniciar conversa" abre a gaveta de mensagens já na etapa de nova conversa com o membro.
+- Rota nova `aculta_messenger.profile_relationship` (POST) aplica as ações do perfil e volta ao perfil.
+- Validação: capturas de tela no runtime de teste (painéis abertos, perfil e linha). A suíte de 52 verificações não foi reexecutada depois desta mudança; ver `docs/portal/TESTES-NAVEGADOR.md`.
+
 ## 0.1.1-dev.28 — correções da revisão no navegador: resposta, limpeza, desbloqueio — 2026-10-15
 
 Classificação: PATCH (correções de fluxo encontradas pela suíte de navegador).

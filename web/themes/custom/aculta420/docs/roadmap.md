@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.51 | Menu "Opções" nas conversas e no perfil; largura e fonte | Capturas de tela no runtime de teste | `messenger-item.css`, `messenger-drawers.js` |
 | 0.6.0-dev.50 | Resposta enviada pela gaveta sem navegação | Suíte de navegador: 52 de 52 | `messenger-drawers.js` (envio da resposta) |
 | 0.6.0-dev.49 | Aviso de conversa restrita e de bloqueio no lugar da caixa de resposta | Testado no runtime de teste por POST e captura de tela | `messenger-item.css` (aviso), `PortalUiHooks.php` (token da ação do aviso) |
 | 0.6.0-dev.48 | "Opções" em menu sanfona na mesma linha de "← Todas as conversas"; ações de amizade e bloqueio | Testado no Firefox headless em 1280×800 e 390×844 (alinhamento e ordem do menu medidos); ações conferidas por POST | `messenger-item.css` (grid da barra e menu), `messenger-drawers.js` (envio do formulário de Opções) |

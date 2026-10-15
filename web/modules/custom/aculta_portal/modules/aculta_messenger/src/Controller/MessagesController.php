@@ -375,18 +375,6 @@ final class MessagesController extends ControllerBase {
       $isUnread = $this->unreadThreadCounter->isUnread($thread);
       $sender = $this->getConversationSender($thread);
       $senderName = $sender?->getDisplayName() ?: (string) $this->translation->translate('Membro');
-      $clearAccess = $thread->access('clear_personal_history', $this->account, TRUE);
-      $cacheability->addCacheableDependency($clearAccess);
-      $clearHistoryUrl = NULL;
-      if ($clearAccess->isAllowed()
-        && $this->account->hasPermission('use private messaging system')
-        && $this->account->hasPermission('access user profiles')) {
-        $clearHistoryUrl = $this->domainPurposeManager->routeUrl(
-          'account',
-          'entity.private_message_thread.clear_personal_history_form',
-          ['private_message_thread' => $thread->id()],
-        );
-      }
       if ($sender !== NULL) {
         $cacheability->addCacheableDependency($sender);
       }
@@ -431,43 +419,12 @@ final class MessagesController extends ControllerBase {
             $avatar = $sender->get('user_picture')->view('default');
           }
         }
-        $actions = [];
-        if ($clearHistoryUrl !== NULL) {
-          $actions = [
+        // The same "Opções" box as inside the conversation (friendship, block, clear), per member.
+        $actions = [
           '#type' => 'container',
           '#attributes' => ['class' => ['aculta-messenger-conversation__actions']],
-          'trigger' => [
-            '#type' => 'button',
-            '#value' => '⋮',
-            '#attributes' => [
-              'class' => ['aculta-messenger-conversation__menu-trigger'],
-              'aria-label' => (string) $this->translation->translate('Ações da conversa com @name', ['@name' => $senderName]),
-              'aria-haspopup' => 'menu',
-              'aria-expanded' => 'false',
-              'type' => 'button',
-            ],
-          ],
-          'menu' => [
-            '#type' => 'container',
-            '#attributes' => [
-              'class' => ['aculta-messenger-conversation__menu'],
-              'role' => 'menu',
-              'hidden' => TRUE,
-            ],
-            'clear_history' => [
-              '#type' => 'link',
-              '#title' => $this->translation->translate('Excluir meu histórico desta conversa'),
-              '#url' => $clearHistoryUrl,
-              '#attributes' => [
-                'class' => ['use-ajax'],
-                'role' => 'menuitem',
-                'data-dialog-type' => 'modal',
-                'data-dialog-options' => json_encode(['width' => 520], JSON_THROW_ON_ERROR),
-              ],
-            ],
-          ],
-          ];
-        }
+          'options' => $this->optionsDisclosure($thread),
+        ];
         $senderBoxes[$senderKey] = [
           'updated' => (int) $thread->getUpdatedTime(),
           'thread_id' => (string) $thread->id(),

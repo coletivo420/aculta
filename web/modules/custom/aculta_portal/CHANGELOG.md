@@ -1,3 +1,11 @@
+## 0.4.0-dev.30 — menu "Opções" no perfil público — 2026-10-15
+
+Classificação: PATCH (novo ponto de extensão do perfil público).
+
+- `aculta_user`: `PublicProfileController` passa as ações do cabeçalho por `aculta_user_public_profile_actions` (alter), para que outros módulos as completem.
+- `aculta_messenger` preenche essa caixa com "Opções" (ver `aculta_messenger` 0.1.1-dev.29). Sem o messenger, o perfil continua como antes.
+- Validação: capturas de tela no runtime de teste.
+
 ## 0.4.0-dev.29 — traduções pt-BR do Drupal e extensões — 2026-10-15
 
 Classificação: PATCH (localização da interface administrativa).

@@ -14,81 +14,18 @@
         }
       });
 
-      once('aculta-messenger-conversation-menu', '.aculta-messenger-conversation', context).forEach((row) => {
-        const trigger = row.querySelector('.aculta-messenger-conversation__menu-trigger');
-        const menu = row.querySelector('.aculta-messenger-conversation__menu');
-        if (!trigger || !menu) {
-          return;
-        }
-
-        // Attached only while this menu is open, so closed rows do not keep a document listener.
-        const outsideClick = (event) => {
-          if (!row.contains(event.target)) {
-            close();
-          }
-        };
-        const close = (restoreFocus = false) => {
-          menu.hidden = true;
-          trigger.setAttribute('aria-expanded', 'false');
-          row.classList.remove('aculta-messenger-conversation--menu-open');
-          document.removeEventListener('click', outsideClick);
-          if (restoreFocus) {
-            trigger.focus();
-          }
-        };
-        const open = (x, y, focus = true) => {
-          document.querySelectorAll('.aculta-messenger-conversation__menu:not([hidden])').forEach((otherMenu) => {
-            if (otherMenu !== menu) {
-              otherMenu.hidden = true;
-              otherMenu.closest('.aculta-messenger-conversation')?.classList.remove('aculta-messenger-conversation--menu-open');
-              otherMenu.closest('.aculta-messenger-conversation')?.querySelector('.aculta-messenger-conversation__menu-trigger')?.setAttribute('aria-expanded', 'false');
-            }
-          });
-          menu.hidden = false;
-          document.addEventListener('click', outsideClick);
-          row.classList.add('aculta-messenger-conversation--menu-open');
-          trigger.setAttribute('aria-expanded', 'true');
-          menu.style.position = 'fixed';
-          menu.style.left = `${Math.max(8, Math.min(x, window.innerWidth - menu.offsetWidth - 8))}px`;
-          menu.style.top = `${Math.max(8, Math.min(y, window.innerHeight - menu.offsetHeight - 8))}px`;
-          if (focus) {
-            menu.querySelector('[role="menuitem"]')?.focus();
-          }
-        };
-
-        row.addEventListener('contextmenu', (event) => {
-          if (event.target.closest('.aculta-messenger-conversation__menu')) {
+      // "Iniciar conversa" on a profile: open the bar's drawer already on the new-conversation step with that member.
+      once('aculta-open-conversation', '[data-aculta-open-conversation]', context).forEach((link) => {
+        link.addEventListener('click', (event) => {
+          const trigger = document.querySelector('.aculta-messenger-trigger');
+          const drawer = document.querySelector('[data-aculta-drawer-url][data-aculta-drawer-count="messages"]');
+          if (!trigger || !drawer || typeof drawer.acultaNavigate !== 'function') {
             return;
           }
           event.preventDefault();
-          open(event.clientX, event.clientY);
-        });
-        trigger.addEventListener('click', (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          if (menu.hidden) {
-            const bounds = trigger.getBoundingClientRect();
-            open(bounds.right, bounds.bottom);
-          }
-          else {
-            close();
-          }
-        });
-        row.addEventListener('keydown', (event) => {
-          if ((event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) && menu.hidden) {
-            event.preventDefault();
-            const bounds = trigger.getBoundingClientRect();
-            open(bounds.right, bounds.bottom);
-          }
-          else if (event.key === 'Escape' && !menu.hidden) {
-            event.preventDefault();
-            close(true);
-          }
-        });
-        menu.addEventListener('click', (event) => {
-          if (event.target.closest('[role="menuitem"]')) {
-            close();
-          }
+          // The trigger opens the drawer (its own offcanvas); the view then loads the new-conversation step.
+          trigger.click();
+          drawer.acultaNavigate(link.dataset.acultaOpenConversation || link.href);
         });
       });
 
@@ -149,6 +86,9 @@
               }
             });
         };
+
+        // Lets other parts of the page (for example the profile's "Iniciar conversa") load a drawer view.
+        drawer.acultaNavigate = navigate;
 
         drawer.addEventListener('click', (event) => {
           // The "Iniciar nova conversa" button carries data-aculta-conversation-url too; it is not in a form.

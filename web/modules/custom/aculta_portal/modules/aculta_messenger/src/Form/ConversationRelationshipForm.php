@@ -102,7 +102,11 @@ final class ConversationRelationshipForm extends FormBase {
     }
 
     // Menu order: friendship actions, then "Limpar histórico" (passed in by the controller), then the block last.
-    if ($formState->get('clear_step') === 'confirm') {
+    // On a profile there is no "Limpar histórico": the profile offers "Iniciar conversa" in its place.
+    if ($formState->get('profile') === TRUE) {
+      $form['return'] = ['#type' => 'hidden', '#value' => (string) $formState->get('return_path')];
+    }
+    elseif ($formState->get('clear_step') === 'confirm') {
       // The hidden step tells the POST answer which button is posted (the confirmation's label differs from the menu's).
       $form['clear_step'] = ['#type' => 'hidden', '#value' => 'confirm'];
       $form['clear_text'] = ['#plain_text' => $this->t('Limpar o histórico desta conversa só para você?'), '#prefix' => '<p class="aculta-messenger-options__status">', '#suffix' => '</p>'];

@@ -30,6 +30,21 @@ aculta_messenger.drawer_conversations:
   options:
     no_cache: true
 
+aculta_messenger.profile_relationship:
+  path: '/mensagens/perfil/{user}/relacao'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\ProfileRelationshipController::post'
+    _title: 'Perfil'
+  requirements:
+    _permission: 'use private messaging system,access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    parameters:
+      user:
+        type: entity:user
+
 aculta_messenger.drawer_reply:
   path: '/mensagens/conversa/{private_message_thread}/responder'
   methods: [POST]
