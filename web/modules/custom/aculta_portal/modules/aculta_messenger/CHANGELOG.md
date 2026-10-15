@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.14 — validação visual da central de avisos — 2026-10-15
+
+Classificação: PATCH (marcação de apresentação do módulo; sem mudança de acesso).
+
+- A descrição de cada item da visão geral de Avisos é um parágrafo próprio, e não texto solto após o link. Antes ficava colada ao título no desktop e no mobile.
+- Validação visual no runtime de teste com Chromium headless (desktop 1280 e mobile 390): visão geral, avisos temporários, persistentes, criação de persistente e caixa de mensagens da conta. Sem erro de PHP nas páginas.
+- Pendência menor: os botões "Criar" da visão geral ficam com alinhamento levemente diferente no mobile (margem do tema).
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.1.1-dev.13 — consolidação com a main e central administrativa de avisos — 2026-10-15
 
 - Consolida o trabalho preservado do checkout de teste sobre a main (PR #284) e porta a central Avisos em `/painel-administrativo/avisos`, com abas temporários (Site Alert nativo) e persistentes (`aculta_notice`).

@@ -51,7 +51,7 @@ final class NoticeAdminController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['class' => ['admin-item']],
         'title' => ['#type' => 'link', '#title' => $this->t('Avisos temporários'), '#url' => Url::fromRoute('aculta_messenger.admin_temporary_notices')],
-        'description' => ['#plain_text' => $this->t('Gerencie alertas curtos, com prioridade e período de exibição. Cada visitante pode dispensar o aviso na própria sessão/conta.')],
+        'description' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Gerencie alertas curtos, com prioridade e período de exibição. Cada visitante pode dispensar o aviso na própria sessão/conta.')],
       ];
     }
     if ($this->noticeAdminAccount->hasPermission('administer nodes')) {
@@ -59,7 +59,7 @@ final class NoticeAdminController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['class' => ['admin-item']],
         'title' => ['#type' => 'link', '#title' => $this->t('Avisos persistentes'), '#url' => Url::fromRoute('aculta_messenger.admin_persistent_notices')],
-        'description' => ['#plain_text' => $this->t('Crie comunicados institucionais segmentados por público, com início, validade, revisão editorial e estado individual de leitura.')],
+        'description' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Crie comunicados institucionais segmentados por público, com início, validade, revisão editorial e estado individual de leitura.')],
       ];
     }
 
