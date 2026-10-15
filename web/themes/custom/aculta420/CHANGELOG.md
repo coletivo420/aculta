@@ -1,3 +1,20 @@
+## 0.6.0-dev.37 — rota de conversas e token de ação no tema — 2026-10-15
+
+Classificação: PATCH (mapeamento de rota e token documentado; sem mudança visual).
+
+- Mapeia `aculta_messenger.conversations` à lista de mensagens e rotula como "Todas as conversas".
+- Registra `messenger-preview-inbox-link`, documentado em `TOKENS-E-ATRIBUTOS.md`.
+- Não reaplica a biblioteca `messenger-drawers` no root da página: os templates já a anexam.
+- Foundation (341) PASS. Entrega: PR #284. RUNTIME STATUS: DEFERRED para validação visual.
+
+## 0.6.0-dev.36 — conversa no drawer via navegação AJAX — 2026-10-15
+
+Classificação: PATCH (navegação no painel lateral).
+
+- Abre a conversa e volta para a lista no próprio painel lateral, em navegação AJAX.
+- Verificação estática PASS; validação no runtime pendente. RUNTIME STATUS: DEFERRED. Entrega: PR #283.
+
+
 ## 0.6.0-dev.35 — data visível nos contatos — 2026-10-14
 
 Classificação: PATCH (apresentação do contato e composição nativa da conversa).

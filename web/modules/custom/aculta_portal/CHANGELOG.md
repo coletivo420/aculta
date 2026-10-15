@@ -1,3 +1,11 @@
+## 0.4.0-dev.22 — central de avisos administrativa e gate de slugs por módulos habilitados — 2026-10-15
+
+- Porta ao `aculta_messenger` a central Avisos em `/painel-administrativo/avisos`, com abas temporários e persistentes; a listagem de persistentes passa IDs escalares às rotas de editar/excluir (corrige o TypeError do dev.21).
+- `validate-public-slugs.php` passa a considerar só rotas de módulos contrib habilitados em `config/sync/core.extension.yml`; `message_subscribe_ui` está no código, mas não habilitado, e não gera rota no site.
+- `validate-aculta-portal-drupal11.php`: gate PASS (768 checks); contagem de subscribers mantida em 12.
+- Validação: lint, testes unitários do Messenger (17), gates de slugs e Drupal 11+, cache rebuild e smoke autenticado no runtime de teste (host principal 200 nas rotas de avisos; conta redireciona para o principal). RUNTIME STATUS: ACTIVE no runtime de testes; inspeção visual pendente.
+- Entrega: PR #285.
+
 ## 0.4.0-dev.21 — corrige erro na listagem de avisos persistentes — 2026-10-14
 
 - URLs administrativas de editar/excluir agora recebem o ID do Node, evitando TypeError no requisito de rota do Drupal.
@@ -49,20 +57,6 @@ Classificação: PATCH (correção de contrato interno; mesma marcação).
   `validate-domain-presentation-contract`: PASS, 127 verificações).
 - Verificado no Homelab: a dica sai com as classes do tema (`small text-body-secondary`), o que prova a conversão.
 - RUNTIME STATUS: verificado no Homelab (gate e renderização isolada). Inspeção visual humana pendente.
-
-## 0.4.0-dev.16 — extensão opcional para seções da Minha Conta — 2026-10-14
-
-- `AccountShellBuilder` expõe alters neutros para acrescentar seções opcionais e mapear suas subrotas à seção ativa.
-- ACULTA Messenger usa esses alters para incluir Mensagens somente a contas com as permissões nativas do Private Message.
-- Nenhuma mudança visual no ACULTA420 nesta entrega.
-- Gates estáticos e PHP lint passaram na implementação original; Runtime e bootstrap Drupal não foram validados nesta cópia. RUNTIME STATUS: DEFERRED.
-
-## 0.4.0-dev.17 — contador neutro nas seções da conta — 2026-10-14
-
-- `AccountShellBuilder` encaminha opcionalmente `badge_count` como número neutro junto aos itens da navegação, sem classes ou markup de apresentação.
-- ACULTA Messenger expõe a contagem nativa de threads não lidas nessa propriedade para o ACULTA420.
-- PHP lint, Portal Drupal 11+ gate (696 checks), Portal/theme boundary (907 checks), unique paths, Portal UI docs (167 tokens/132 usados/41 atributos), environment-address gate (1.561 arquivos), SDC schemas e design foundations passaram.
-- Foundation gate dependente de bootstrap Drupal não foi executado: esta cópia não tem settings/runtime. RUNTIME STATUS: DEFERRED.
 
 ## 0.4.0-dev.14 — popup "Entrar" na barra multidomínio, sem Turnstile; modais com fundo escurecido — 2026-10-14
 

@@ -407,3 +407,12 @@ Verificação após cada deploy: `/carrinho` 200 e `/cart` 404 no host principal
 - Apelido: minúsculas, sem acento, único; palavras reservadas em `docs/portal/ACULTA-USER-PLAN.md` (B1).
 - Perfil privado responde 404 (decisão 40 do plano).
 
+
+## Escopo do gate para rotas contrib
+
+`scripts/validate-public-slugs.php` mede as rotas contrib só dos módulos habilitados em
+`config/sync/core.extension.yml`. O motivo é que um submódulo presente no código e não habilitado
+(caso de `message_subscribe_ui`) não registra rota no site, então não há URL público a corrigir. O
+baseline DT-P20 continua cobrindo as rotas dos módulos habilitados e só pode diminuir. Ao habilitar um
+módulo contrib com rota em caminho inglês ou numérico, o gate passa a falhar até que ele receba um
+caminho em português por override do Portal.
