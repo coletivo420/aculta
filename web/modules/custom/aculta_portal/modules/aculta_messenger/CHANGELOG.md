@@ -2,6 +2,21 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.15 — correções da revisão de código do Messenger — 2026-10-15
+
+Classificação: PATCH (correções; sem API nova).
+
+- Janelas de início e fim de avisos são lidas em UTC (`StorageDateTime`). Antes, o fuso do usuário mudava o instante em até 3 h.
+- Visitantes voltam a ver o gatilho de Site Alerts; só o gatilho de mensagens é restrito a membros.
+- Regra única de não lida (`UnreadThreadCounter::isUnread`) para badge da conta, cabeçalho, lista e indicador da thread. Threads sem atualização desde o último acesso não carregam mensagens.
+- `MessengerCounts`: contagem de alertas e de avisos não lidos em um só serviço; avisos contados por consulta.
+- Aviso de tópico sem alias é reenfileirado com registro, em vez de descartado.
+- Retenção de seis meses remove as notificações das mensagens antes de apagar a conversa. A política de apagar para os dois membros não mudou.
+- Leitura de conversa pelo painel só acontece em requisição do próprio site; cross-site e prefetch recebem 204.
+- Painel de mensagens (tema): listeners do menu são removidos ao fechar e o offcanvas desanexa comportamentos antes de substituir o conteúdo.
+- Validação: 23 testes unitários do Messenger OK; verificações no runtime de teste (home anônima, conta, avisos, prévia). Interação do menu no navegador pendente. RUNTIME STATUS: ACTIVE no runtime de testes.
+- Entrega: PR de pendências do Messenger (chore/messenger-pendencias).
+
 ## 0.1.1-dev.14 — validação visual da central de avisos — 2026-10-15
 
 Classificação: PATCH (marcação de apresentação do módulo; sem mudança de acesso).
