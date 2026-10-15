@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.41', 'Theme metadata marks the current version 0.6.0-dev.41.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.42', 'Theme metadata marks the current version 0.6.0-dev.42.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),

@@ -35,6 +35,7 @@ global:
       css/components/auth.css: {}
   js:
     js/navigation.js: {}
+    js/counters.js: {}
     js/address-layout.js: {}
   dependencies:
     - bootstrap5/global-styling

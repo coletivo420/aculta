@@ -1,3 +1,12 @@
+## 0.6.0-dev.42 — 99+ em todos os contadores, inclusive atualização ao vivo — 2026-10-15
+
+Classificação: PATCH (apresentação dos contadores).
+
+- Teste com os valores máximos no runtime de teste: carrinho com 1250 unidades, 120 avisos não lidos e 100 conversas não lidas (também no badge da navegação da conta). Todos mostram 99+; em 320 px e no desktop a barra continua em uma linha, sem quebra.
+- Atualização ao vivo: o carrinho é atualizado após "Adicionar" por um comando AJAX do módulo que grava o número direto no DOM. Novo script `js/counters.js` (biblioteca global) reaplica a regra sempre que `data-count` muda. Verificado em página de teste (120 e 150 viram 99+).
+- O módulo `aculta_portal` ainda grava o número bruto no comando (`AddToCartAjax`); a apresentação é corrigida pelo tema. Ajuste de contrato pendente: o módulo deve enviar só o dado.
+- Dados de teste removidos; contadores de volta a zero. RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.6.0-dev.41 — limite de exibição 99+ nos contadores — 2026-10-15
 
 Classificação: PATCH (apresentação dos contadores).

@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.42 | 99+ em todos os contadores, inclusive atualização ao vivo | Testado no runtime com valores máximos (1250, 120, 100) em 320 px e desktop | Script global corrige a atualização do carrinho |
 | 0.6.0-dev.41 | Limite de exibição 99+ nos contadores | Simulado no runtime com 100 conversas não lidas; 99+ em 320 px e desktop | Exibição 99+ acima de 99; número exato em data-count |
 | 0.6.0-dev.40 | Contadores de dois dígitos na barra mobile | Simulado no runtime (carrinho 12, sino 12) em 320, 360 e 390 px; mensagens de dois dígitos pendentes | Barra em uma linha; logo da barra fora da área visível até 374 px |
 | 0.6.0-dev.39 | Barra multidomínio em uma linha no mobile; destaque de Minha conta por propósito | Verificado no runtime em 360, 390 e 414 px e nos domínios principal e conta; RUNTIME STATUS: ACTIVE | Logo e links compactados no mobile; classe da barra de conta vem do propósito do domínio |
