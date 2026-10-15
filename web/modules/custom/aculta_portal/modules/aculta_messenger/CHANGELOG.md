@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.18 — quem pode iniciar conversas em Privacidade; e-mail só em notificações — 2026-10-15
+
+- A pergunta "Quem pode iniciar uma conversa com você?" e a nota de bloqueio saem de Notificações por e-mail e vão para Privacidade, no grupo "Mensagens privadas". O Messenger acrescenta o grupo ao formulário de privacidade por `form_alter`; o `aculta_user` não conhece essa regra.
+- A preferência é gravada pelo serviço do Messenger (`aculta_messenger.message_privacy_form`), no mesmo dado que a validação de novas conversas lê.
+- Notificações por e-mail ficam só com o controle de e-mail e o texto de assinaturas de tópicos.
+- Correções encontradas no caminho: o atributo `Autowire` usado nos hooks novos vinha de um namespace que não existe no Core (`Drupal\Core\DependencyInjection\Attribute`); trocado pelo namespace do Symfony. A aba "Notificações por e-mail" passa a aparecer sempre (para quem pode enviar mensagens), mesmo com notificações desligadas no site.
+- RUNTIME STATUS: ACTIVE no runtime de testes (salvamento verificado pelo navegador e pelo banco).
+
 ## 0.1.1-dev.17 — mensagens só pela barra; preferências de e-mail em Configurações — 2026-10-15
 
 - Páginas nativas do Private Message fora da experiência do membro: a caixa de entrada redireciona para a página inicial da conta e a página de conversa responde 404. Os formulários de excluir, limpar histórico e bloquear continuam; a página de nova mensagem (usada pelo botão do perfil) continua até o início de conversa existir na barra.

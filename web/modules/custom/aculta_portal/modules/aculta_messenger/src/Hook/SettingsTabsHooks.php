@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Session\AccountProxyInterface;
 
 /** Aba "Notificações por e-mail" em Minha conta > Configurações (preferência de e-mail da central de mensagens). */

@@ -12,7 +12,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\user\UserDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Account preferences backed by the native Private Message user data. */
+/** Minha conta > Configurações > Notificações por e-mail (preferência de e-mail do Private Message). */
 final class CommunicationSettingsForm extends FormBase {
 
   public function __construct(
@@ -56,25 +56,9 @@ final class CommunicationSettingsForm extends FormBase {
         ? $this->t('O envio usa a ferramenta de e-mail já instalada no site.')
         : $this->t('Os avisos por e-mail estão desativados pela configuração do site.'),
     ];
-    $privacyPreference = $this->userData->get('aculta_messenger', $uid, 'message_privacy');
-    $form['message_privacy'] = [
-      '#type' => 'radios',
-      '#title' => $this->t('Quem pode iniciar uma conversa com você?'),
-      '#options' => [
-        'all' => $this->t('Todos os membros'),
-        'friends' => $this->t('Somente amizades confirmadas'),
-      ],
-      '#default_value' => $privacyPreference === 'friends' ? 'friends' : 'all',
-      '#description' => $this->t('A preferência vale para novas conversas. Pessoas com conversa existente ainda podem responder. Administradores e editores de conteúdo podem iniciar conversas; seus bloqueios continuam valendo.'),
-    ];
-    $form['blocking'] = [
-      '#type' => 'item',
-      '#title' => $this->t('Bloquear uma pessoa'),
-      '#plain_text' => $this->t('O bloqueio é gerenciado nas conversas pelo Private Message. Ele impede novas interações com a pessoa bloqueada.'),
-    ];
     $form['subscriptions'] = [
       '#type' => 'item',
-      '#title' => $this->t('Assinaturas'),
+      '#title' => $this->t('Assinaturas de tópicos'),
       '#plain_text' => $this->t('As assinaturas são escolhidas em cada tópico do fórum. Seguir um tópico não altera o acesso ao conteúdo.'),
     ];
     $form['actions'] = ['#type' => 'actions'];
@@ -95,13 +79,6 @@ final class CommunicationSettingsForm extends FormBase {
         (bool) $form_state->getValue('receive_notification'),
       );
     }
-    $privacyPreference = $form_state->getValue('message_privacy');
-    $this->userData->set(
-      'aculta_messenger',
-      (int) $this->currentUser->id(),
-      'message_privacy',
-      $privacyPreference === 'friends' ? 'friends' : 'all',
-    );
     $this->messenger()->addStatus($this->t('Preferências de mensagens salvas.'));
     $form_state->setRedirect('aculta_messenger.communication_settings');
   }
