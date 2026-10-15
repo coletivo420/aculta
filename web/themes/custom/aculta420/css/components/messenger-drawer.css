@@ -102,3 +102,5 @@ dialog[data-aculta-dialog] .form-actions :is(button, input[type="submit"]) { wid
 .aculta-notice-summary__state { display: block; color: var(--aculta-text-secondary); font-size: 0.75rem; }
 .aculta-notice-summary [data-aculta-alert-dismiss] { position: relative; z-index: 3; }
 .aculta-notice-detail { display: flex; flex-direction: column; gap: 0.75rem; }
+/* Aviso persistente: não se dispensa, por isso tem cartão próprio (cor de aviso), diferente dos dispensáveis. */
+.aculta-messenger-sender.aculta-notice-summary--persistent { border-color: var(--aculta-status-warning-border); background: var(--aculta-status-warning-surface); }

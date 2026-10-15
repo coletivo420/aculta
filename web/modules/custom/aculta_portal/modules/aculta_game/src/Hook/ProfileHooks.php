@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_game\Hook;
 
 use Drupal\aculta_game\AchievementPresentation;
+use Drupal\aculta_game\MissionProgress;
 use Drupal\aculta_game\Form\AchievementDisplayForm;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Url;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -23,6 +25,8 @@ final class ProfileHooks {
     #[Autowire(service: 'aculta_game.achievement_presentation')]
     private readonly AchievementPresentation $presentation,
     private readonly FormBuilderInterface $forms,
+    #[Autowire(service: 'aculta_game.mission_progress')]
+    private readonly MissionProgress $missions,
   ) {}
 
   #[Hook('aculta_user_public_profile_alter')]
@@ -35,9 +39,26 @@ final class ProfileHooks {
     if ($tab === 'conquistas') {
       $build = [
         'conquistas' => $this->presentation->own($uid),
+        'missions' => $this->missions->build($uid),
         'preferences' => $this->forms->getForm(AchievementDisplayForm::class),
       ];
     }
+  }
+
+  #[Hook('aculta_portal_dashboard_alter')]
+  public function dashboard(array &$build, AccountInterface $account): void {
+    $build['game'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Conquistas e missões'),
+      '#open' => TRUE,
+      '#weight' => 30,
+      'conquistas' => $this->presentation->own((int) $account->id()),
+      'link' => [
+        '#type' => 'link',
+        '#title' => $this->t('Ver missões e escolher conquistas em destaque'),
+        '#url' => Url::fromRoute('aculta_user.atividade', ['aba' => 'conquistas']),
+      ],
+    ];
   }
 
   #[Hook('form_aculta_user_profile_visibility_form_alter')]

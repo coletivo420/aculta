@@ -1,0 +1,10 @@
+aculta_game.admin:
+  path: '/painel-administrativo/game'
+  defaults:
+    _form: '\Drupal\aculta_game\Form\MissionSettingsForm'
+    _title: 'Game'
+  requirements:
+    _permission: 'administer aculta game'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main

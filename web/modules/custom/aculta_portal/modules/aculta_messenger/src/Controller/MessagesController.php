@@ -635,12 +635,14 @@ final class MessagesController extends ControllerBase {
         $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
       }
       // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
+      // A persistent notice is not dismissed (no "×"): it stays in the list, and its own kind of card tells it apart.
       $items[] = $this->noticeSummary(
         (string) $node->label(),
         $this->excerpt($this->noticeText($node)),
         Url::fromRoute('aculta_messenger.notice_detail', ['node' => $node->id()]),
-        $flag instanceof FlagInterface ? $this->buildDismissalLink($flag, $node) : [],
+        [],
         $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
+        TRUE,
       );
     }
     return $items;
@@ -652,7 +654,7 @@ final class MessagesController extends ControllerBase {
    *
    * @param array<string, mixed> $dismiss
    */
-  private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state): array {
+  private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state, bool $persistent = FALSE): array {
     $title_parts = [
       '#type' => 'container',
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-title']), '#value' => $title],
@@ -665,7 +667,7 @@ final class MessagesController extends ControllerBase {
     }
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'notice-summary'],
+      '#attributes' => ['data-portal-ui' => $persistent ? 'notice-summary notice-summary-persistent' : 'notice-summary'],
       'link' => PortalLinkElement::build($title_parts, $url, [
         'data-aculta-conversation-url' => $url->toString(),
         'data-portal-ui' => 'notice-summary-link',
@@ -736,10 +738,20 @@ final class MessagesController extends ControllerBase {
       'notice' => $this->entityTypes->getViewBuilder('node')->view($node, 'full'),
     ];
     if ($flag instanceof FlagInterface) {
-      $build['dismiss'] = $this->buildDismissalLink($flag, $node);
+      $build['read'] = $this->buildReadLink($flag, $node);
     }
     (new CacheableMetadata())->addCacheableDependency($node)->addCacheableDependency($access)->addCacheContexts(['user'])->setCacheMaxAge(0)->applyTo($build);
     return $this->buildDrawerResponse($build);
+  }
+
+  /** "Marcar como lido" in a persistent notice's full view: the read state, as text, never an "×". */
+  private function buildReadLink(FlagInterface $flag, EntityInterface $entity): array {
+    if (!$this->account->isAuthenticated()) {
+      return [];
+    }
+    $link = $flag->getLinkTypePlugin()->getAsFlagLink($flag, $entity, 'default');
+    $link['#title'] = $this->translation->translate('Marcar como lido');
+    return $link;
   }
 
   /** Builds the native per-user flag link used to dismiss a notice. */

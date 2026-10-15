@@ -47,6 +47,7 @@ permissions:
   - 'flag salvar_topico'
   - 'flag seguir_topico'
   - 'flag aculta_notice_read'
+  - 'flag aculta_site_alert_dismissed'
   - 'post comments'
   - 'unflag salvar_topico'
   - 'unflag seguir_topico'

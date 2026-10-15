@@ -1,4 +1,9 @@
 services:
+  aculta_game.mission_progress:
+    class: Drupal\aculta_game\MissionProgress
+    arguments: ['@config.factory', '@aculta_user.badge_service', '@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_game.achievement_presentation:
     class: Drupal\aculta_game\AchievementPresentation
     arguments: ['@entity_type.manager', '@aculta_user.badge_service', '@user.data', '@cache_tags.invalidator']

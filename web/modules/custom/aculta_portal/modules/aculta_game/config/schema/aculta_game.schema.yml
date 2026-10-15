@@ -1,0 +1,25 @@
+aculta_game.missions:
+  type: config_object
+  label: 'Missões ACULTA Game'
+  mapping:
+    missions:
+      type: sequence
+      label: 'Missões iniciais'
+      sequence:
+        type: mapping
+        mapping:
+          enabled:
+            type: boolean
+            label: 'Ativa'
+          label:
+            type: label
+            label: 'Nome'
+          description:
+            type: text
+            label: 'Critério público'
+          criterion_version:
+            type: integer
+            label: 'Versão do critério'
+          badge:
+            type: string
+            label: 'Conquista que registra o marco'

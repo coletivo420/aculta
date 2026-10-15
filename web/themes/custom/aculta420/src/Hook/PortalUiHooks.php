@@ -230,6 +230,7 @@ final class PortalUiHooks {
     // Avisos na gaveta: resumo em caixa de botão (como uma conversa); o aviso completo abre na mesma gaveta.
     'notice-summary' => ['aculta-messenger-sender', 'aculta-notice-summary'],
     'notice-summary-link' => ['aculta-messenger-sender__link'],
+    'notice-summary-persistent' => ['aculta-notice-summary--persistent'],
     'notice-summary-title' => ['aculta-notice-summary__title'],
     'notice-summary-excerpt' => ['aculta-notice-summary__excerpt'],
     'notice-summary-state' => ['aculta-notice-summary__state'],

@@ -17,6 +17,11 @@ final class PortalHelperRegistry {
    * @var array<string, array{label: string, summary: string, docs: string}>
    */
   private const DEFINITIONS = [
+    'aculta_game.mission_progress' => [
+      'label' => 'Missões e progresso',
+      'summary' => 'Apresenta missões iniciais e progresso privado a partir das concessões reais, sem pontuação ou storage paralelo.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
+    ],
     'aculta_game.achievement_presentation' => [
       'label' => 'Exibição de conquistas',
       'summary' => 'Aplica privacidade, destaques e ordem às conquistas do perfil e da conta, sem expor evidências privadas.',
