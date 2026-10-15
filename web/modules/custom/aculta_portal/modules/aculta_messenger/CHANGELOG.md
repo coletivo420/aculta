@@ -2,6 +2,18 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.32 — avisos não interrompem perfis anônimos — 2026-10-15
+
+Classificação PATCH. A dispensa de avisos pertence a contas autenticadas: contagem
+na barra e prévia não consultam Flag com uid 0 sem sessão. Corrige erro 500
+reproduzido em perfil público durante a verificação do Game. Sem mudança de
+permissões, conteúdo ou Core/contrib.
+
+Verificação: HTTP anônimo do perfil e 17 verificações HTTP do Game passaram após
+a correção, incluindo ocultação/reexibição e cache em outra sessão. API conferida
+no Flag 5.1.1 instalado (`populateFlaggerDefaults`); referência upstream:
+https://www.drupal.org/project/social/issues/2925907.
+
 ## 0.1.1-dev.31 — correção dos menus e da suíte de navegador; grupos e confirmações — 2026-10-15
 
 Classificação: PATCH (correções encontradas pela suíte de navegador e pela auditoria; sem mudança de regra de negócio).

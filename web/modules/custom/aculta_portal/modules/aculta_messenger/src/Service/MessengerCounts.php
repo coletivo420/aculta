@@ -41,7 +41,8 @@ final class MessengerCounts {
       if (!$access->isAllowed()) {
         continue;
       }
-      if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $account) !== NULL) {
+      // Dispensa pertence a contas; não consultar Flag para uid 0 sem sessão.
+      if ($account->isAuthenticated() && $dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $account) !== NULL) {
         continue;
       }
       $count++;

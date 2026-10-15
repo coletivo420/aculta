@@ -1,3 +1,9 @@
+## 0.4.0-dev.36 — perfil público anônimo acessível — 2026-10-15
+
+Classificação PATCH. Messenger `0.1.1-dev.32` evita consultar dispensa de aviso
+para anônimo sem sessão Flag. Corrige erro 500 observado nos testes públicos do
+Game; HTTP anônimo e privacidade entre sessões verificados no Homelab.
+
 ## 0.4.0-dev.35 — ACULTA Game G3 — 2026-10-15
 
 Classificação: MINOR (conquistas na conta e no perfil com escolhas de exibição).

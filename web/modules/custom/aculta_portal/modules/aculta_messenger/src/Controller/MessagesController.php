@@ -563,7 +563,7 @@ final class MessagesController extends ControllerBase {
       if (!$access->isAllowed()) {
         continue;
       }
-      if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->account) !== NULL) {
+      if ($this->account->isAuthenticated() && $dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->account) !== NULL) {
         continue;
       }
       // Match the public render contract of SiteAlertBlock; formatted text and
