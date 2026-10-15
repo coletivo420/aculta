@@ -19,6 +19,26 @@ para `/home/aculta/public_html`, preserva o `.htaccess` fornecido pelo Drupal e
 permite as diretivas necessárias ao Drupal. A raiz contém a instalação
 Composer; `private/` continua fora da árvore pública.
 
+## Diretório de trabalho (Homelab)
+
+- Diretório de trabalho do Homelab e dos agentes: `/home/aculta/`. É a raiz da instalação
+  Drupal (Composer, `vendor/`, `web/`, `config/sync/`, `secrets/`, `var/deployer/`, `private/`)
+  e `public_html -> web` é o acesso público do Apache.
+- O repositório git aparece em `/home/aculta/aculta-site`. Até a migração completa, esse
+  caminho é um symlink para o checkout de origem em `/home/piradopirata/projetos/aculta-site`,
+  com o mesmo branch e o mesmo histórico. Não há duas cópias de trabalho: edite pelo caminho
+  canônico e confirme com `git status`.
+- Drush e operações de runtime devem ser executados a partir de `/home/aculta/`
+  (`php vendor/drush/drush/drush.php status`), porque o bootstrap lê
+  `web/sites/default/settings.php` e `settings.local.php`.
+- Permissão: esses dois arquivos são `aculta:aculta` com modo `0640`, por isso o usuário de
+  trabalho precisa estar no grupo `aculta` para o Drush conectar ao runtime. Sem essa
+  permissão, o `drush status` não mostra banco nem site URI. Não relaxe o modo dos arquivos
+  de configuração nem copie segredos para fora da instalação para contornar isso.
+- Estado verificado em 2026-10-15: o código customizado de `/home/aculta/web` é idêntico ao do
+  checkout de origem; a configuração local de `/home/aculta` ainda não foi conectada ao runtime
+  `aculta_runtime` para o usuário de trabalho atual (bloqueio de permissão, não de código).
+
 ## Servidor de testes
 
 `*.aculta.toca.net.br` é o **servidor de testes** do projeto. Neste documento ele
