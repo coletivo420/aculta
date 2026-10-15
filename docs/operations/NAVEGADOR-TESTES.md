@@ -1,7 +1,7 @@
 # Configuração do navegador para testes
 
 Registro das configurações que funcionam para validação de navegador (Chromium headless) neste ambiente.
-Aplica-se ao Homelab, com o Claude Code como processo pai. Diagnóstico de 2026-10-12 em [VALIDACAO-NAVEGADOR-2026-10-12.md](../portal/VALIDACAO-NAVEGADOR-2026-10-12.md).
+Aplica-se ao Homelab, com o Claude Code como processo pai. Diagnóstico de 2026-10-12 em [VALIDACAO-NAVEGADOR-2026-10-12.md](../portal/historico/VALIDACAO-NAVEGADOR-2026-10-12.md).
 
 ## Regra principal
 

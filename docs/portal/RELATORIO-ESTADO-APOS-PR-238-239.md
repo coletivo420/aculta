@@ -1,5 +1,7 @@
 > Snapshot anterior à mudança de identidade do submódulo. Estado atual e plano de migração: [ACULTA-ASSOCIADO-ID.md](../modules/ACULTA-ASSOCIADO-ID.md) e [ROADMAP.md](ROADMAP.md).
 
+> **Atualização de 2026-10-15 (revisão documental, PR #281).** Versões e gates verificados no código de `main`: `aculta_portal` 0.4.0-dev.17; `aculta_deployer` 0.1.21 (`info.yml` ainda 0.1.10); tema 0.6.0-dev.35 (CHANGELOG até dev.33). Gate Foundation PASS (341 checks, via Drush), antes FAIL por DT-T19. Gate de slugs com 2 rotas novas de `message_subscribe_ui` (DT-P20). Os números abaixo são da data original do relatório.
+
 # Estado atual do Portal após as PRs #238 e #239
 
 Base verificada: `origin/main` em `58ae82b` (PR #238; merge em 2026-10-13 UTC). A PR #239 também está integrada. Verificações locais executadas em PHP 8.4.26; este documento não representa homologação Runtime.
@@ -37,4 +39,4 @@ Os testes PHPUnit exibiram aviso de que `sites/simpletest/browser_output` não �
 
 ## Limites
 
-Não houve conexão ao Runtime, migração de banco, limpeza de branches, teste de gravação de documento ou alteração funcional. A barra fixa foi validada na PR #239; Outros Dados da PR #238 está com **RUNTIME STATUS: DEFERRED**. O relatório [de 2026-10-12](RELATORIO-ESTADO-2026-10-12.md) permanece preservado como snapshot anterior a essas duas PRs.
+Não houve conexão ao Runtime, migração de banco, limpeza de branches, teste de gravação de documento ou alteração funcional. A barra fixa foi validada na PR #239; Outros Dados da PR #238 está com **RUNTIME STATUS: DEFERRED**. O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) permanece preservado como snapshot anterior a essas duas PRs.

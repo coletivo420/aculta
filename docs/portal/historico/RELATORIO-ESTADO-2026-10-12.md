@@ -1,11 +1,14 @@
 # Relatório de estado — Portal, submódulos e tema (2026-10-12)
 
+> **Snapshot histórico (arquivado em 2026-10-15).** Não é o estado atual. Estado corrente: [RELATORIO-ESTADO-APOS-PR-238-239.md](../RELATORIO-ESTADO-APOS-PR-238-239.md), ROADMAP e DEBT-REGISTER.
+
+
 Data de referência: 2026-10-12. Branch base: `main` (após o merge da PR #232, `4de1645`).
 
 Este relatório separa o que **funciona** (verificado por gate ou teste executado nesta data), o que está
 **implementado mas não validado no Runtime** (`RUNTIME STATUS: DEFERRED`), o que está **em andamento** e o que está
 **só planejado**. Dívidas com evidência continuam no registro único
-[`docs/operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md); aqui estão referenciadas pelo ID, sem repetir o
+[`docs/operations/DEBT-REGISTER.md`](../../operations/DEBT-REGISTER.md); aqui estão referenciadas pelo ID, sem repetir o
 texto. Não há versão de lançamento 1.0 neste documento.
 
 ## 1. Versões vigentes
@@ -50,7 +53,7 @@ Execução local no Homelab, PHP 8.4.26. "Drush" indica execução por `drush sc
 - **Domínios e purposes** (`DomainPurposeManager`, política administrativa, rotas de pagamento no MAIN): testes de Kernel de domínio (7 testes, DT-P03 parcial).
 - **Confirmação de e-mail e cadastro neutro** (DT-P06 resolvida em 0.2.0-dev.22); teste de Kernel de login.
 - **Login de conta bloqueada** (DT-O06 resolvida em 2026-10-09).
-- **E-mail:** migração para Mailer Plus concluída (M0–M2); envio validado no Runtime de teste; remetente confirmado; HTML do Webform recebido e confirmado pelo responsável (DT-P09, DT-O07 resolvidas). Ver [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md).
+- **E-mail:** migração para Mailer Plus concluída (M0–M2); envio validado no Runtime de teste; remetente confirmado; HTML do Webform recebido e confirmado pelo responsável (DT-P09, DT-O07 resolvidas). Ver [EMAIL-TRANSPORT.md](../EMAIL-TRANSPORT.md).
 - **URLs de LMS em português** (`/curso/{curso}/{lição}/{atividade}`, 0.2.0-dev.1; DT-P21 resolvida). Caminhos numéricos antigos respondem 404 por política (DT-P22).
 - **Busca pelo banco** (`/busca`, 0.2.0-dev.19; índice com `content_access`, 0.2.0-dev.40).
 - **Fórum** adotado e implementado (0.2.0-dev.57). Denúncia de comentários pendente (DT-P13).
@@ -90,7 +93,7 @@ Execução local no Homelab, PHP 8.4.26. "Drush" indica execução por `drush sc
 
 ### 3.5 Planejado (ainda não implementado)
 
-Conforme [ROADMAP.md](ROADMAP.md) (revisado nesta data):
+Conforme [ROADMAP.md](../ROADMAP.md) (revisado nesta data):
 
 - **S2:** testes de Kernel para pagamento (DT-P03).
 - **S3:** validação em ambiente real: CAPTCHA, Mercado Pago com sandbox, PHP 8.5 (DT-P04).

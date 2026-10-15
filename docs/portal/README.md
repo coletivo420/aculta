@@ -40,13 +40,13 @@
 ## Estado e pendências
 
 - [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md) — estado corrente após os merges #238 e #239, com verificações locais e limites de Runtime.
-- [RELATORIO-ESTADO-2026-10-12.md](RELATORIO-ESTADO-2026-10-12.md) — snapshot histórico anterior às PRs #238 e #239.
+- [historico/RELATORIO-ESTADO-2026-10-12.md](historico/RELATORIO-ESTADO-2026-10-12.md) — snapshot histórico anterior às PRs #238 e #239.
 - [ROADMAP.md](ROADMAP.md) — fases de saneamento e de produto.
 
 ## Testes e pendências
 
 - [TESTES-NAVEGADOR.md](TESTES-NAVEGADOR.md) — rodadas de teste no navegador com o responsável: hosts, contas e resultados.
-- [PENDENCIAS-PROXIMA-RODADA.md](PENDENCIAS-PROXIMA-RODADA.md) — pendências abertas do checkout, pagamento e Minha conta.
+- [historico/PENDENCIAS-PROXIMA-RODADA.md](historico/PENDENCIAS-PROXIMA-RODADA.md) — pendências abertas do checkout, pagamento e Minha conta.
 
 ## Roadmap
 

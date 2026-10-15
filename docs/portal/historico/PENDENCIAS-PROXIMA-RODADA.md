@@ -1,5 +1,8 @@
 # Pendências da próxima rodada
 
+> **Snapshot histórico (arquivado em 2026-10-15).** Não é o estado atual. Estado corrente: [RELATORIO-ESTADO-APOS-PR-238-239.md](../RELATORIO-ESTADO-APOS-PR-238-239.md), ROADMAP e DEBT-REGISTER.
+
+
 Estado das pendências do checkout, pagamento e Minha conta, atualizado em 2026-10-12. Branch base: `main`, após o merge
 do PR #221 (`7a302a7`), que trouxe o commit `682bec2`.
 

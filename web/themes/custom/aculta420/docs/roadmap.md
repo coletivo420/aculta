@@ -1,6 +1,6 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-09 pela revisão documental. Dívidas e pendências, com evidência,
+Atualizado em 2026-10-15 (revisão documental, PR #281). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
@@ -8,23 +8,19 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
-| 0.6.0-dev.33 | Caixa compacta de remetente e ação de amizade no perfil público | Capturas locais desktop/mobile da lista revisadas; fluxo de amizade DEFERRED | Mensagens exibem avatar circular + nome; ação do perfil usa a forma de botão “Ver Perfil” |
-| 0.6.0-dev.34 | Data da última mensagem nos contatos | Validação visual pendente (RUNTIME STATUS: DEFERRED) | Data/hora pequena acima do nome, sem ampliar intencionalmente o botão |
 | 0.6.0-dev.35 | Data visível na gaveta lateral e apresentação compacta | Validação visual pendente (RUNTIME STATUS: DEFERRED) | Data em elemento explícito acima do nome; fonte secundária pequena |
+| 0.6.0-dev.34 | Data da última mensagem nos contatos | Validação visual pendente (RUNTIME STATUS: DEFERRED) | Data/hora pequena acima do nome, sem ampliar intencionalmente o botão |
+| 0.6.0-dev.33 | Caixa compacta de remetente e ação de amizade no perfil público | Capturas locais desktop/mobile da lista revisadas; fluxo de amizade DEFERRED | Mensagens exibem avatar circular + nome; ação do perfil usa a forma de botão “Ver Perfil” |
 | 0.6.0-dev.32 | Agrupamento de conversas, menu contextual e badge contextual | Implementado; apresentação substituída por dev.33; RUNTIME STATUS: DEFERRED | Menu aciona formulário nativo de histórico pessoal; badge vermelho só no shell de conta |
 | 0.6.0-dev.30 | Primeiro item de Minha Conta usa destaque vermelho semântico na barra | Implementado; validação visual pendente; RUNTIME STATUS: DEFERRED | Hover e foco usam superfície vermelha; demais itens do menu preservados |
 | 0.6.0-dev.29 | Contadores vermelhos ao lado dos ícones da barra multidomínio | Implementado; validação visual pendente; RUNTIME STATUS: DEFERRED | Badge compartilhado pelo carrinho, mensagens e avisos |
-| 0.1.0 | concluída (2026-10-07) | marcada no código | Foundation: provider, namespace, tokens, fronteiras |
-| 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
-| 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
-| 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.6.0-dev.25 | Palco do álbum com fronteira documentada: moldura neutra por token (claro e escuro), miniaturas e slideshow no palco; contrato módulo/tema verificado por gate (`validate-album-stage-contract.php`) | Gate de contrato PASS; validar palco no servidor de testes (desktop e celular, claro e escuro) | Token `--aculta-media-stage-bg`; biblioteca `aculta420/album-slideshow` global |
-| 0.6.0-dev.22 | Durações de movimento centralizadas em tokens (DT-T19): gate de Foundation volta a passar | Gate de Foundation PASS (328); validar no servidor de testes | Tokens `--aculta-motion-fast` e `--aculta-motion-quick` |
-| 0.6.0-dev.23 | Componentes SDC experimentais de conversas, mensagens, composição, Site Alert, notificações, não lidas e estados | Gates de código pendentes; Runtime visual DEFERRED | Slots preservam render arrays e formulários nativos; sem lógica funcional no ACULTA420 |
-| 0.6.0-dev.24 | Gatilho modal de avisos e apresentação de leitura por conversa | Gates pendentes; RUNTIME STATUS: DEFERRED | Visualização consome estado nativo provido pelo Private Message/Portal |
-| 0.6.0-dev.26 | Gavetas Bootstrap de mensagens e avisos no padrão visual do carrinho, com AJAX ao abrir | Código local; validação de gates e runtime pendente; RUNTIME STATUS: DEFERRED | Mesmo shell Bootstrap, largura 420 px e tokens do carrinho; atualização apenas ao abrir, sem polling |
-| 0.6.0-dev.27 | Badges atualizados na abertura das gavetas e remoção do throbber da busca no desktop | Código local; visual desktop/mobile pendente; RUNTIME STATUS: DEFERRED | Resposta AJAX já transporta o contador; a busca continua AJAX e o throbber permanece em telas menores |
 | 0.6.0-dev.28 | Caixa em balões com avatar e modal de resposta; avisos vermelhos dispensáveis por pessoa | Implementado; validação interativa pendente; RUNTIME STATUS: DEFERRED | Private Message continua dono da thread/formulário; SDC só exibe render arrays autorizados |
+| 0.6.0-dev.27 | Badges atualizados na abertura das gavetas e remoção do throbber da busca no desktop | Código local; visual desktop/mobile pendente; RUNTIME STATUS: DEFERRED | Resposta AJAX já transporta o contador; a busca continua AJAX e o throbber permanece em telas menores |
+| 0.6.0-dev.26 | Gavetas Bootstrap de mensagens e avisos no padrão visual do carrinho, com AJAX ao abrir | Código local; validação de gates e runtime pendente; RUNTIME STATUS: DEFERRED | Mesmo shell Bootstrap, largura 420 px e tokens do carrinho; atualização apenas ao abrir, sem polling |
+| 0.6.0-dev.25 | Palco do álbum com fronteira documentada: moldura neutra por token (claro e escuro), miniaturas e slideshow no palco; contrato módulo/tema verificado por gate (`validate-album-stage-contract.php`) | Gate de contrato PASS; validar palco no servidor de testes (desktop e celular, claro e escuro) | Token `--aculta-media-stage-bg`; biblioteca `aculta420/album-slideshow` global |
+| 0.6.0-dev.24 | Gatilho modal de avisos e apresentação de leitura por conversa | Gates pendentes; RUNTIME STATUS: DEFERRED | Visualização consome estado nativo provido pelo Private Message/Portal |
+| 0.6.0-dev.23 | Componentes SDC experimentais de conversas, mensagens, composição, Site Alert, notificações, não lidas e estados | Gates de código pendentes; Runtime visual DEFERRED | Slots preservam render arrays e formulários nativos; sem lógica funcional no ACULTA420 |
+| 0.6.0-dev.22 | Durações de movimento centralizadas em tokens (DT-T19): gate de Foundation volta a passar | Gate de Foundation PASS (341 checks, verificado em 2026-10-15 via Drush no servidor de testes) | Tokens `--aculta-motion-fast` e `--aculta-motion-quick` |
 | 0.6.0-dev.21 | Modelo padrão de publicação da Revista (`revista-publication`): todas as Notícias e blogs usam o mesmo layout | Em desenvolvimento; SDC, shell e fronteira PASS; validar no servidor de testes | Templates `node--article--full` e `node--blog--full` chamam o mesmo componente experimental |
 | 0.6.0-dev.20 | Revista: imagens do corpo (notícia e blog) centralizadas na coluna de leitura e intertítulos alinhados à esquerda | Em desenvolvimento; gates de código PASS; validar no servidor de testes | Imagens do corpo chegam como mídia embutida (`media--type-image`), sem regra de módulo |
 | 0.6.0-dev.19 | Sugestões interativas na busca Wiki420, com o comportamento de prévia compartilhado | Gates de código e HTTP local PASS; validar interação por teclado e visual no servidor de testes | O Portal consulta apenas verbetes acessíveis do Domain Wiki; tema estiliza o dropdown |
@@ -37,12 +33,16 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.6.0-dev.12 | CTA “Visite nosso Site” na página LINKS, com destino à raiz MAIN resolvido pelo Portal | RUNTIME STATUS: pendente nesta alteração | Os canais sociais configurados permanecem no rodapé |
 | 0.6.0-dev.11 | Página LINKS com canais administráveis, cards de projeto em carrossel VVJB e rodapé dedicado | RUNTIME STATUS: HTTP e visual mobile (claro/escuro) PASS; Foundation gate bloqueado por durações literais preexistentes em `portal-account.css` | Reusa View `aculta_projects`, SDC `carousel` e ícones Bootstrap `currentColor` |
 | 0.6.0-dev.10 | Pattern mobile de links sociais, barra institucional e referências aos projetos publicados | RUNTIME STATUS: estrutura HTTP verificada no servidor de testes; inspeção visual pendente | Instagram institucional cadastrado; canais adicionais aguardam confirmação |
-| 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
 | 0.6.0-dev.7 | página do produto da loja em SDC: galeria em carrossel, compra com preço, detalhes e abas (layout da loja original) | marcada no código; gates PASS; captura de tela DEFERRED |
 | 0.6.0-dev.6 | marca da barra institucional: logo ACULTA no lugar do nome, 78×26 (1x) e 156×52 (2x) em WebP; nome completo só no `alt` | marcada no código; validada visualmente (captura de tela) |
 | 0.6.0-dev.5 | F3 (busca): apresentação da página `/busca`, do popup e dos resultados com tokens do tema | marcada no código; `/busca` verificada no servidor de testes; popup e teclado DEFERRED |
 | 0.6.0-dev.2 | validador de navegador: regras de barra e sigla ajustadas ao shell; apoio indisponível aceito; PASS no site público | marcada no código |
 | 0.6.0-dev.1 | F4 (UI Patterns): biblioteca de componentes com 9 stories; ui_patterns ^2.0 | marcada no código |
+| 0.1.0 | concluída (2026-10-07) | marcada no código | Foundation: provider, namespace, tokens, fronteiras |
+| 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
+| 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
+| 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
+| 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
 | 0.5.1 | F2 (ícones) concluída: Bootstrap Icons, sem dependência nova; gate contra SVG inline no tema | marcada no código (release) |
 | 0.5.0 | F1 (modo de cor) concluída: claro, escuro e automático; validada no Runtime oficial em 2026-10-09 | marcada no código (release) |
 | 0.5.0-dev.3 | F1 (modo de cor): atributo aplicado via `b5_theme_mode` (o Bootstrap 5 sobrescrevia `html_attributes`); verificado por requisição HTTP em cópia isolada do Runtime | marcada no código; RUNTIME STATUS DEFERRED |
@@ -180,6 +180,8 @@ Nenhuma destas fases tem versão alvo de 1.0.
 ### F5 — Mega menu
 
 - **Decisão do responsável (2026-10-09): só depois do primeiro RC.** Antes disso não há produção estável para validar a navegação.
+
+Nota: as entradas de 0.6.0-dev.34 e 0.6.0-dev.35 existem nesta tabela e em `aculta420.info.yml`, mas ainda não têm entrada no `CHANGELOG.md` do tema. Serão transcritas quando a linha do Messenger fechar essas versões, para não colidir com o trabalho em andamento.
 
 ## Critério para encerrar o saneamento do tema
 
