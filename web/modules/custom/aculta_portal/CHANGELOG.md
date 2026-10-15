@@ -267,9 +267,9 @@ Portal permanece 0.3.0-dev.16; nova marcação/release do módulo pai não decla
   e máscaras testados na rodada inicial foram removidos nesta atualização de escopo.
 - Sem alteração de login, dados pessoais Profile/User, tema, banco ou config sync.
 - Runner (248 verificações), PHPUnit Unit (34/63), lint e gate Drupal 11+ (583)
-  passaram em PHP 8.4.26. Homologação local detalhada: docs/modules/ACULTA-ID-CPF.md.
+  passaram em PHP 8.4.26. Homologação local detalhada: docs/modules/ACULTA-ASSOCIADO-ID.md (antes ACULTA-ID-CPF.md, renomeado em c27f9a3).
 - RUNTIME STATUS: DEFERRED para Homelab remoto; sem release ou tag.
-- Evidência: docs/modules/ACULTA-ID-CPF.md; base 368ec263189d670d459e385b068d7bb188af95b3.
+- Evidência: docs/modules/ACULTA-ASSOCIADO-ID.md; base 368ec263189d670d459e385b068d7bb188af95b3.
 
 ## 0.3.0-dev.20 — Senha em conta Google, envio no checkout e aba Segurança — 2026-10-12
 

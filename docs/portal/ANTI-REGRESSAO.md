@@ -3,7 +3,8 @@
 Motivo: correções já aceitas pelo responsável voltaram a quebrar em rodadas seguintes (login sem redirecionamento
 após uma mudança de AJAX; avatar do sistema removível; crop abrindo atrás do popup). Sem registro e sem verificação,
 o próximo ajuste em área vizinha desfaz a correção anterior. Esta política torna cada comportamento aceito um
-invariante verificável.
+invariante verificável. Para as camadas de regra de arquitetura e ownership, veja
+`docs/ANTI-REGRESSION.md`.
 
 ## Regras
 
