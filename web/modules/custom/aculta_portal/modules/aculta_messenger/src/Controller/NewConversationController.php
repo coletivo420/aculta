@@ -19,6 +19,7 @@ use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -118,19 +119,10 @@ final class NewConversationController extends ControllerBase {
 
     $thread = $formState->get('thread');
     if ($request->isMethod('POST') && $thread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
-      // The same conversation container the drawer uses when a thread is opened (MessagesController::drawerConversation).
-      return $this->fragment([
-        'conversation' => [
-          '#type' => 'container',
-          '#attributes' => [
-            'class' => ['aculta-messenger-drawer-conversation'],
-            'data-aculta-conversation-view' => '',
-            'data-aculta-thread-id' => (string) $thread->id(),
-          ],
-          'thread' => $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full'),
-        ],
-        'back' => $this->backLink(),
-        '#cache' => ['contexts' => ['user'], 'max-age' => 0],
+      // Send, then show the conversation the way the drawer opens any thread: the drawer follows this redirect
+      // with fetch, so the conversation comes with its toolbar and "Opções" (MessagesController::drawerConversation).
+      return new RedirectResponse(Url::fromRoute('aculta_messenger.drawer_conversation', ['private_message_thread' => $thread->id()])->toString(), Response::HTTP_SEE_OTHER, [
+        'Cache-Control' => 'private, no-store',
       ]);
     }
 

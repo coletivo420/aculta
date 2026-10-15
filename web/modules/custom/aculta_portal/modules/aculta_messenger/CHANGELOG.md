@@ -2,6 +2,18 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.28 — correções da revisão no navegador: resposta, limpeza, desbloqueio — 2026-10-15
+
+Classificação: PATCH (correções de fluxo encontradas pela suíte de navegador).
+
+- Resposta enviada pela gaveta: o formulário nativo do Private Message redirecionava para a própria página (`/private-messages/…`, que não existe neste domínio). A gaveta agora envia por `fetch` para `aculta_messenger.drawer_reply`, que aplica as mesmas regras do compositor (bloqueio, só amigos, limite de envios) e grava a mensagem. O token do formulário é validado como o Form API faz.
+- "Limpar histórico": o link apontava para uma rota do domínio da conta (404 aqui). Agora é ação em duas etapas dentro do menu: primeiro pede confirmação, depois limpa só para quem confirma. A confirmação some quando outra ação é feita.
+- Depois da limpeza a resposta é a lista de conversas, com "Histórico limpo para você.".
+- Desbloquear pelo link do aviso: os botões do aviso são identificados por um campo oculto `mode=notice`, porque o rótulo do aviso é diferente do rótulo do menu.
+- O menu de Opções fica aberto depois de uma ação, para que o resultado seja visto.
+- Teste de navegador: 52 de 52 verificações passaram (ver `docs/portal/TESTES-NAVEGADOR.md`, seção U).
+- Pendências: conversas em grupo (mais de duas pessoas) não têm "Limpar histórico" no menu; o aviso nativo do bloqueio segue em inglês (configuração do contrib).
+
 ## 0.1.1-dev.27 — aviso no lugar da caixa de resposta para privacidade "só amigos" — 2026-10-15
 
 Classificação: PATCH (texto e apresentação do aviso).

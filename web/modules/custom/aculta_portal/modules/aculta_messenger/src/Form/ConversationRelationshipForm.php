@@ -7,11 +7,13 @@ namespace Drupal\aculta_messenger\Form;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 use Drupal\user\UserInterface;
+use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,6 +29,8 @@ final class ConversationRelationshipForm extends FormBase {
     private readonly PrivateMessageBanManagerInterface $banManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly EntityTypeManagerInterface $entityTypes,
+    private readonly PrivateMessageServiceInterface $privateMessageService,
+    private readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -35,6 +39,8 @@ final class ConversationRelationshipForm extends FormBase {
       $container->get('private_message.ban_manager'),
       $container->get('current_user'),
       $container->get('entity_type.manager'),
+      $container->get('private_message.service'),
+      $container->get('cache_tags.invalidator'),
     );
   }
 
@@ -60,6 +66,8 @@ final class ConversationRelationshipForm extends FormBase {
 
     // Notice mode: the one link that answers a blocked or friends-only conversation, shown in place of the reply box.
     if ($formState->get('mode') === 'notice') {
+      // The hidden mode tells the POST answer which buttons the notice posted (their labels differ from the menu's).
+      $form['mode'] = ['#type' => 'hidden', '#value' => 'notice'];
       $noticeTarget = (int) $target->id();
       if ($this->banManager->isBanned($noticeTarget)) {
         $form['actions']['unban'] = $this->button('unban', $this->t('Clique aqui para desbloquear'), 'conversation-notice-action');
@@ -94,9 +102,14 @@ final class ConversationRelationshipForm extends FormBase {
     }
 
     // Menu order: friendship actions, then "Limpar histórico" (passed in by the controller), then the block last.
-    $clear = $formState->get('clear');
-    if (is_array($clear)) {
-      $form['actions']['clear'] = $clear + ['#weight' => 5];
+    if ($formState->get('clear_step') === 'confirm') {
+      // The hidden step tells the POST answer which button is posted (the confirmation's label differs from the menu's).
+      $form['clear_step'] = ['#type' => 'hidden', '#value' => 'confirm'];
+      $form['clear_text'] = ['#plain_text' => $this->t('Limpar o histórico desta conversa só para você?'), '#prefix' => '<p class="aculta-messenger-options__status">', '#suffix' => '</p>'];
+      $form['actions']['clear_confirm'] = $this->button('clear_confirm', $this->t('Confirmar limpeza do histórico')) + ['#weight' => 5];
+    }
+    else {
+      $form['actions']['clear'] = $this->button('clear', $this->t('Limpar histórico')) + ['#weight' => 5];
     }
     if ($this->banManager->isBanned($targetId)) {
       $form['actions']['unban'] = $this->button('unban', $this->t('Desbloquear')) + ['#weight' => 10];
@@ -145,6 +158,25 @@ final class ConversationRelationshipForm extends FormBase {
           }
           $this->friendshipManager->cancel($relationship);
           break;
+
+        case 'clear':
+          // First step: ask for confirmation in the same menu. Nothing is cleared yet.
+          $formState->set('clear_step', 'confirm');
+          return;
+
+        case 'clear_confirm':
+          // Second step: the same operation as the native clear-history form, for this member only.
+          $sender = $this->entityTypes->getStorage('user')->load((int) $this->currentUser->id());
+          $thread = $this->privateMessageService->getThreadForMembers([$sender, $target]);
+          $thread->clearAccountHistory($sender);
+          // The message list is cached per message: invalidate the messages too, or this answer keeps the old list.
+          $tags = $thread->getCacheTags();
+          foreach ($thread->get('private_messages')->referencedEntities() as $message) {
+            $tags = array_merge($tags, $message->getCacheTags());
+          }
+          $this->cacheTagsInvalidator->invalidateTags($tags);
+          $formState->set('message', (string) $this->t('Histórico limpo para você.'));
+          return;
 
         case 'accept':
           $relationship = $this->friendshipManager->getRelationshipWith($targetId);

@@ -168,11 +168,18 @@
           }
           // First message of a new conversation: posted with fetch, because the Form API AJAX needs page settings.
           // The "Opções" actions (friendship, block) post the same way and answer with the updated conversation.
-          if (event.target.matches('form[data-aculta-new-conversation-form], form[data-aculta-drawer-action]')) {
+          if (event.target.matches('form[data-aculta-new-conversation-form], form[data-aculta-drawer-action], form.aculta-messenger-reply-form')) {
             event.preventDefault();
             const body = new FormData(event.target);
             if (event.submitter?.name) {
               body.append(event.submitter.name, event.submitter.value);
+            }
+            // A reply is posted without Form API keys (form_id would make the native form process it); its token
+            // travels as reply_token and the reply route checks it against the reply form.
+            if (event.target.matches('form.aculta-messenger-reply-form')) {
+              const token = body.get('form_token') || '';
+              ['form_build_id', 'form_id', 'form_token', 'op'].forEach((key) => body.delete(key));
+              body.set('reply_token', token);
             }
             navigate(event.target.action, { method: 'POST', body });
           }

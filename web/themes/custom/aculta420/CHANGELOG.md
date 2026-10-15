@@ -1,3 +1,10 @@
+## 0.6.0-dev.50 — envio de resposta na gaveta sem navegação — 2026-10-15
+
+Classificação: PATCH (comportamento do envio de resposta na gaveta).
+
+- `messenger-drawers.js`: o formulário de resposta é enviado por `fetch` (sem os campos de formulário do Drupal, que disparariam o processamento nativo); o token vai em `reply_token`.
+- RUNTIME STATUS: ACTIVE no teste (52 verificações de navegador).
+
 ## 0.6.0-dev.49 — aviso de conversa restrita e aviso de bloqueio no lugar da caixa de resposta — 2026-10-15
 
 Classificação: PATCH (apresentação do aviso).

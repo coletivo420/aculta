@@ -75,6 +75,8 @@ final class PrivateMessageReplyHooks {
     $replyForm = $this->formBuilder->getForm($formObject, $entity);
     $replyForm['#attributes']['id'] = 'aculta-messenger-reply-form';
     $replyForm['#attributes']['class'][] = 'aculta-messenger-reply-form';
+    // The drawer posts the reply to its own route, so the conversation comes back in the drawer.
+    $replyForm['#action'] = Url::fromRoute('aculta_messenger.drawer_reply', ['private_message_thread' => $entity->id()])->toString();
 
     // The native conversation history is rendered after the entity fields.
     // Keep the composer after that history in the account page and drawer.

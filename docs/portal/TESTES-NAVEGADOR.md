@@ -374,3 +374,42 @@ Decisão pendente: com a rodada 2 sem defeitos abertos, a Fase 10 pode ser decla
   - Cancelar e Voltar para o início saíam sem os atributos `data-*`, e a gaveta carregava o fragmento como página inteira: os links passaram a ser elementos `#type => link` com atributos.
 - Não testado nesta rodada: toque em dispositivo real, leitor de tela, membro com privacidade "somente amigos", envio com mensagem vazia e bloqueio entre membros.
 - Observação de produto, não corrigida: a conversa aberta na gaveta mostra "Clear history" e "Member(s)" em inglês, vindos da visão nativa do Private Message. Já existia antes desta mudança.
+
+## U. Revisão completa da barra de mensagens (aculta_messenger 0.1.1-dev.28, 2026-10-15)
+
+### Pré-condições
+
+- Host: servidor de testes `aculta.toca.net.br` (Homelab, runtime `aculta_runtime`).
+- Contas: `teste.comum` (uid 5, confirmada) e `teste.b` (uid 31, criada para o teste). A suíte zera, no início, a privacidade, as amizades, os bloqueios e os contadores de envio das duas contas, e apaga as conversas entre elas.
+- Privacidade "só amigos" de `teste.b` definida pelo `user.data` (o mesmo dado que o formulário de Configurações grava). Não passou pela interface de Configurações.
+- Navegador: Firefox ESR 153 headless, geckodriver 0.37.1 (protocolo WebDriver). Chromium não usado (travou a aba).
+- Larguras: 1280 px (desktop) e 390 px (celular).
+
+### Roteiro (suíte de navegador, 52 verificações)
+
+1. Nova conversa: busca com 2 caracteres (dica, sem resultados) e com 3 (resultado); composição; Cancelar; Voltar para o início; primeiro envio.
+2. Barra da conversa: "← Todas as conversas" à esquerda e Opções à direita, na mesma linha; ordem do menu sem relação (Adicionar amigo, Limpar histórico, Bloquear); Limpar histórico em duas etapas.
+3. Amizade nos dois lados: pedido (Cancelar pedido de amizade no menu de quem enviou); aceite e recusa (Aceitar, Rejeitar, Limpar histórico, Bloquear no menu de quem recebeu); desfazer.
+4. Só amigos: aviso no lugar da caixa de resposta; link "clique aqui para enviar um pedido de Amizade."; depois do pedido, "você já enviou pedido de amizade, aguarde."; aceite pelo menu e volta da caixa.
+5. Bloqueio nos dois lados: aviso de quem bloqueou (com o link "Clique aqui para desbloquear"); aviso de quem foi bloqueado (sem ação); conversa continua na lista; desbloqueio pelo menu e pelo link do aviso.
+6. Resposta depois do desbloqueio, enviada pela gaveta.
+7. Limpar histórico: primeira etapa pede confirmação; a segunda limpa só para quem confirmou, e o outro membro continua vendo as mensagens.
+8. Celular (390 px): alinhamento da barra, rótulo "Opções" oculto (só o hambúrguer), menu abre, sem rolagem horizontal da página.
+9. Erros de JavaScript no console: nenhum nas etapas verificadas.
+
+### Registro do resultado
+
+- 52 de 52 verificações passaram na última rodada, a partir do estado limpo.
+- Defeitos encontrados pela suíte e corrigidos antes desta entrega:
+  - Resposta enviada pela gaveta navegava para `/private-messages/…` (404): a resposta passou a ser enviada por `fetch` para a rota da gaveta, com as mesmas regras do compositor.
+  - "Limpar histórico" apontava para uma rota do domínio da conta (404 no principal): virou ação em duas etapas dentro do menu.
+  - Desbloquear pelo link do aviso não funcionava: o aviso e o menu tinham rótulos diferentes e o Form API não identificava o botão enviado.
+  - Confirmação da limpeza não era identificada pelo mesmo motivo; a conversa limpa ainda aparecia na resposta por cache. A resposta depois da limpeza passou a ser a lista de conversas.
+  - Depois de uma ação o menu fechava (e a confirmação da limpeza ficava escondida): agora fica aberto.
+  - Primeira mensagem na etapa "Nova conversa" saía sem a barra de Opções.
+  - Restrição "só amigos" não valia para conversas já existentes: agora vale na tela e na validação de envio.
+- Limites desta rodada:
+  - Sem toque em aparelho real e sem leitor de tela.
+  - Conversas em grupo (mais de duas pessoas) não têm "Limpar histórico" no menu.
+  - Recusa do envio por POST em conversa "só amigos" não foi exercitada diretamente (o formulário fica oculto nesse estado).
+  - O aviso nativo do bloqueio ("User is unable to receive your message") segue em inglês; é configuração do contrib, sem exportação.

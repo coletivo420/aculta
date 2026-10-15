@@ -27,6 +27,9 @@ use Drupal\Core\Render\Markup;
 use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
+use Drupal\Core\Access\CsrfTokenGenerator;
+use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
@@ -57,6 +60,8 @@ final class MessagesController extends ControllerBase {
     private readonly DateFormatterInterface $dateFormatter,
     private readonly RequestStack $requestStack,
     private readonly MessengerCounts $counts,
+    private readonly PrivateMessageFormValidator $replyValidator,
+    private readonly CsrfTokenGenerator $csrfToken,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -75,6 +80,8 @@ final class MessagesController extends ControllerBase {
       $container->get('date.formatter'),
       $container->get('request_stack'),
       $container->get('aculta_messenger.counts'),
+      $container->get('aculta_messenger.private_message_form_validator'),
+      $container->get('csrf_token'),
     );
   }
 
@@ -131,29 +138,108 @@ final class MessagesController extends ControllerBase {
     }
     // The posted action runs with the request's input; the panel is then built again from a new state, which
     // carries the result message (for example a refused request) to the member.
-    $message = $this->runRelationshipAction($private_message_thread);
-    return $this->conversationResponse($private_message_thread, $access, $message);
+    $panel = $this->runRelationshipAction($private_message_thread);
+    // A thread the member has just cleared has no messages for them, and Private Message does not let them open it:
+    // the drawer goes back to the list, which shows what happened.
+    if (($panel['cleared'] ?? FALSE) || !$private_message_thread->access('view', $this->account, TRUE)->isAllowed()) {
+      return $this->listWithMessage($panel['message'] ?? NULL);
+    }
+    return $this->conversationResponse($private_message_thread, $access, $panel);
   }
 
-  /** Runs the posted "Opções" action and returns the message it left, if any. */
-  private function runRelationshipAction(PrivateMessageThreadInterface $thread): ?string {
+  /**
+   * A reply sent from the drawer: the native Private Message form processes the post here, and the drawer gets
+   * the conversation back. The redirect the native form would send (to its own page) is not followed.
+   */
+  public function drawerReply(PrivateMessageThreadInterface $private_message_thread): Response {
+    $access = $private_message_thread->access('view', $this->account, TRUE);
+    if (!$access->isAllowed() || !$private_message_thread->isMember($this->account->id())) {
+      throw new NotFoundHttpException();
+    }
+    if (!$this->isMemberInitiatedRequest()) {
+      return new Response('', Response::HTTP_NO_CONTENT, ['Cache-Control' => 'private, no-store']);
+    }
+    // The same rules as the native composer (block, friends-only, send limit), then the message is saved here.
+    // The native form would redirect to its own page, which does not exist on this domain.
+    $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
+    $text = trim((string) ($input['message'][0]['value'] ?? ''));
+    $formState = new FormState();
+    $formState->set('thread', $private_message_thread);
+    $form = [];
+    // The token of the reply form (the same check the Form API makes): a post without it is not accepted.
+    // Core seeds a form's token with the placeholder of its form id (FormBuilder::doBuildForm).
+    $seed = 'form_token_placeholder_' . Crypt::hashBase64('private_message_add_form');
+    if (!$this->csrfToken->validate((string) ($input['reply_token'] ?? ''), $seed)) {
+      $formState->setErrorByName('message', $this->translation->translate('A sessão expirou. Recarregue a página e tente de novo.'));
+    }
+    if ($text === '') {
+      $formState->setErrorByName('message', $this->translation->translate('Escreva uma mensagem.'));
+    }
+    $this->replyValidator->validateBlockedRecipients($form, $formState);
+    $this->replyValidator->validateRateLimit($form, $formState);
+    $panel = [];
+    if ($formState->hasAnyErrors()) {
+      $panel['message'] = implode(' ', array_map(static fn($error) => (string) $error, array_values($formState->getErrors())));
+    }
+    else {
+      $message = $this->entityTypes->getStorage('private_message')->create([
+        'owner' => (int) $this->account->id(),
+        'message' => ['value' => $text, 'format' => 'plain_text'],
+      ]);
+      $message->save();
+      $private_message_thread->addMessage($message);
+      $private_message_thread->save();
+    }
+    return $this->conversationResponse($private_message_thread, $access, $panel);
+  }
+
+  /**
+   * Runs the posted "Opções" action with the request's input. Returns what the panel must show: the message of the
+   * action, and the step of the two-step "Limpar histórico".
+   */
+  private function runRelationshipAction(PrivateMessageThreadInterface $thread): array {
     $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
     if (count($others) !== 1) {
-      return NULL;
+      return [];
     }
     $state = new FormState();
     $state->set('target', (int) $others[0]->id());
     $state->set('post_url', Url::fromRoute('aculta_messenger.drawer_relationship', ['private_message_thread' => $thread->id()])->toString());
     // getForm() takes the method from the request; this state is built by hand, so it is set here.
     $state->setRequestMethod('POST');
-    $state->setUserInput($this->requestStack->getCurrentRequest()?->request->all() ?? []);
+    $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
+    $state->setUserInput($input);
+    // A notice posts its own buttons (for example "Clique aqui para desbloquear"): process them as the notice does.
+    if (($input['mode'] ?? '') === 'notice') {
+      $state->set('mode', 'notice');
+    }
+    if (($input['clear_step'] ?? '') === 'confirm') {
+      $state->set('clear_step', 'confirm');
+    }
     $this->forms->buildForm(ConversationRelationshipForm::class, $state);
-    $message = $state->get('message');
-    return $message === NULL ? NULL : (string) $message;
+    // The confirmation step is shown only right after "Limpar histórico" was pressed. Any other action ends it.
+    $trigger = (string) ($state->getTriggeringElement()['#name'] ?? '');
+    return array_filter([
+      'message' => $state->get('message') === NULL ? NULL : (string) $state->get('message'),
+      'clear_step' => $trigger === 'clear' ? $state->get('clear_step') : NULL,
+      // After a confirmed clear the answer is the list: the conversation is not rendered in the same response.
+      'cleared' => $trigger === 'clear_confirm' ? TRUE : NULL,
+    ], fn($value) => $value !== NULL);
+  }
+
+  /** The conversation list, with an optional message from the action just run. */
+  private function listWithMessage(?string $message): Response {
+    $build = $this->newConversationAction() + $this->buildConversationList();
+    if ($message !== NULL) {
+      $build['message'] = ['#plain_text' => $message, '#prefix' => '<p role="status" class="aculta-messenger-options__status">', '#suffix' => '</p>', '#weight' => -90];
+    }
+    return $this->buildDrawerResponse($build, [
+      'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
+    ]);
   }
 
   /** The conversation container: toolbar (back on the left, "Opções" on the right), then the thread. */
-  private function conversationResponse(PrivateMessageThreadInterface $thread, $access, ?string $message = NULL): Response {
+  private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = []): Response {
     $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
     $build = [
       '#type' => 'container',
@@ -167,7 +253,7 @@ final class MessagesController extends ControllerBase {
         '#attributes' => ['class' => ['aculta-messenger-conversation-toolbar']],
         '#weight' => -10,
         'back' => $this->backToConversationsLink(),
-        'options' => $this->optionsDisclosure($thread, $message),
+        'options' => $this->optionsDisclosure($thread, $panel),
       ],
       'thread' => $threadBuild,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
@@ -179,64 +265,42 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The friendship and block form of the other member, or NULL when the thread is not one-to-one.
-   *
-   * $fresh builds the form from a new state, which shows the result without the form cache: a rebuilt form comes
-   * back without its constructor dependencies. $message is the result of the action just run, shown in the form.
+   * The friendship and block form of the other member, or NULL when the thread is not one-to-one. Built from a new
+   * state each time: a rebuilt form comes back from the cache without its constructor dependencies.
    */
-  private function relationshipForm(PrivateMessageThreadInterface $thread, ?string $message = NULL, ?array $clear = NULL): ?array {
+  private function relationshipForm(PrivateMessageThreadInterface $thread, array $panel = []): ?array {
     $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
     if (count($others) !== 1) {
       return NULL;
     }
-    $uid = (int) $others[0]->id();
-    $postUrl = Url::fromRoute('aculta_messenger.drawer_relationship', ['private_message_thread' => $thread->id()])->toString();
-    // Built from a new state every time: a rebuilt form comes back from the cache without its constructor
-    // dependencies, and the GET path needs the same shape as the POST answer.
     $state = new FormState();
-    $state->set('target', $uid);
-    $state->set('post_url', $postUrl);
-    if ($message !== NULL) {
-      $state->set('message', $message);
+    $state->set('target', (int) $others[0]->id());
+    $state->set('post_url', Url::fromRoute('aculta_messenger.drawer_relationship', ['private_message_thread' => $thread->id()])->toString());
+    if (isset($panel['message'])) {
+      $state->set('message', $panel['message']);
     }
-    if ($clear !== NULL) {
-      $state->set('clear', $clear);
+    if (isset($panel['clear_step'])) {
+      $state->set('clear_step', $panel['clear_step']);
     }
     return $this->forms->buildForm(ConversationRelationshipForm::class, $state);
   }
 
   /**
    * "Opções": a native disclosure (a sanfona). On a narrow screen the label is hidden and only the hamburger
-   * icon remains, which is how the CSS decides whether it fits.
+   * icon remains, which is how the CSS decides whether it fits. Its items are the relationship form, which holds
+   * the friendship actions, "Limpar histórico" and the block, in that order.
    */
-  private function optionsDisclosure(PrivateMessageThreadInterface $thread, ?string $message = NULL): array {
+  private function optionsDisclosure(PrivateMessageThreadInterface $thread, array $panel = []): array {
     $items = [];
-    $clear = NULL;
-    $clearUrl = Url::fromRoute('entity.private_message_thread.clear_personal_history_form', ['private_message_thread' => $thread->id()]);
-    if ($clearUrl->access()) {
-      $clear = [
-        '#type' => 'link',
-        '#title' => $this->translation->translate('Limpar histórico'),
-        '#url' => $clearUrl,
-        '#attributes' => [
-          'class' => ['use-ajax', 'aculta-messenger-options__item'],
-          'data-dialog-type' => 'modal',
-          'data-dialog-options' => '{"width":520}',
-        ],
-      ];
-    }
-    $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
-    if (count($others) === 1) {
-      // Inside the form, between the friendship actions and the block: the menu order is set there.
-      $items['relationship'] = $this->relationshipForm($thread, $message, $clear);
-    }
-    elseif ($clear !== NULL) {
-      $items['clear'] = $clear;
+    $relationship = $this->relationshipForm($thread, $panel);
+    if ($relationship !== NULL) {
+      $items['relationship'] = $relationship;
     }
     return [
       '#type' => 'html_tag',
       '#tag' => 'details',
-      '#attributes' => ['class' => ['aculta-messenger-options']],
+      // After an action the menu stays open, so its result (a message, the clear confirmation) is what the member sees.
+      '#attributes' => ['class' => ['aculta-messenger-options']] + ($panel !== [] ? ['open' => 'open'] : []),
       'summary' => [
         '#type' => 'html_tag',
         '#tag' => 'summary',
