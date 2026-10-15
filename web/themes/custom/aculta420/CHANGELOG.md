@@ -1,3 +1,12 @@
+## 0.6.0-dev.41 — limite de exibição 99+ nos contadores — 2026-10-15
+
+Classificação: PATCH (apresentação dos contadores).
+
+- Regra: acima de 99 o badge mostra `99+`. Vale para conversas não lidas, avisos, carrinho e o contador da navegação da conta (`unread-badge`).
+- O `data-count` e o `aria-label` mantêm o número exato, para scripts e leitores de tela. O JavaScript (`updateCounter`) aplica a mesma regra nas atualizações ao vivo.
+- Simulado no runtime de teste: 100 conversas com mensagem não lida de um membro de teste. O badge passou a mostrar `99+` em aculta e conta, e coube em uma linha em 320 px e no desktop. Dados de teste removidos e contador de volta a zero.
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.6.0-dev.40 — barra multidomínio com contadores de dois dígitos no mobile — 2026-10-15
 
 Classificação: PATCH (apresentação mobile da barra multidomínio).

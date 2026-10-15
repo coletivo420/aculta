@@ -222,7 +222,8 @@
       return;
     }
 
-    counter.textContent = String(count);
+    // Badges show 99+ above 99; the exact number stays in data-count for scripts and assistive labels.
+    counter.textContent = count > 99 ? '99+' : String(count);
     counter.dataset.count = String(count);
     const trigger = counter.closest('button');
     if (trigger) {

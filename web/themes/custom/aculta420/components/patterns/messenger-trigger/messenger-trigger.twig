@@ -10,7 +10,7 @@
         aria-controls="aculta-messenger-offcanvas"
         aria-label="{{ label }}">
   <i class="bi bi-chat-dots" aria-hidden="true"></i>
-  <span class="badge aculta-cart-utility__count" data-aculta-messenger-count data-count="{{ count }}">{{ count }}</span>
+  <span class="badge aculta-cart-utility__count" data-aculta-messenger-count data-count="{{ count }}">{{ count > 99 ? '99+' : count }}</span>
 </button>
 
 <div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-messenger-offcanvas"

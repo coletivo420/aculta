@@ -13,7 +13,7 @@
         aria-controls="aculta-alerts-offcanvas"
         aria-label="{{ label }}">
   <i class="bi bi-bell" aria-hidden="true"></i>
-  <span class="badge aculta-cart-utility__count" data-aculta-alerts-count data-count="{{ count }}">{{ count }}</span>
+  <span class="badge aculta-cart-utility__count" data-aculta-alerts-count data-count="{{ count }}">{{ count > 99 ? '99+' : count }}</span>
 </button>
 
 <div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-alerts-offcanvas"
