@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.23';
+  public const VERSION = '0.1.24';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -946,7 +946,7 @@ Uso:
   aculta-deployer version
 
 hostinger-layout valida a instalação na raiz da pasta do domínio e, com --apply, preserva
-public_html existente em backup antes de apontá-lo para <instalação>/web.
+public_html existente em backup antes de apontá-lo para o symlink relativo public_html -> web.
 
 Códigos de saída: 0 sucesso; 1 erro de uso, validação ou fronteira; 2 bloqueado (entrada bloqueante aberta).
 

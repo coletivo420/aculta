@@ -13,9 +13,11 @@ Apache é o servidor web do Homelab. O ambiente de teste valida `.htaccess`,
 rewrite, headers e PHP-FPM neste servidor; produção usa LiteSpeed e precisa de
 validação específica, sem manter uma camada de compatibilidade com Nginx.
 
-O VirtualHost do Homelab deve apontar o DocumentRoot para `web/`, preservar o
-`.htaccess` fornecido pelo Drupal e permitir as diretivas necessárias ao
-Drupal.
+No servidor de testes, a instalação fica em `/home/aculta` e o acesso público
+usa `/home/aculta/public_html -> web` (symlink relativo). O VirtualHost aponta
+para `/home/aculta/public_html`, preserva o `.htaccess` fornecido pelo Drupal e
+permite as diretivas necessárias ao Drupal. A raiz contém a instalação
+Composer; `private/` continua fora da árvore pública.
 
 ## Servidor de testes
 

@@ -37,7 +37,7 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
    produção para o diretório do build anterior, pelo processo do responsável. Builds nunca
    são sobrescritos.
 
-## Estrutura Hostinger Cloud Startup (0.1.23)
+## Estrutura Hostinger Cloud Startup (0.1.24)
 
 Na Hostinger, mantenha a instalação Composer diretamente na raiz da pasta do domínio e faça
 `public_html` apontar somente para `web/`:
@@ -46,7 +46,7 @@ Na Hostinger, mantenha a instalação Composer diretamente na raiz da pasta do d
 <pasta-do-dominio>/
 ├── composer.json, composer.lock, vendor/, config/
 ├── web/                         # raiz servida; index.php e .htaccess do Drupal
-└── public_html -> <pasta-do-dominio>/web
+└── public_html -> web
 ```
 
 O projeto Composer fica diretamente na raiz da pasta do domínio; não crie uma subpasta

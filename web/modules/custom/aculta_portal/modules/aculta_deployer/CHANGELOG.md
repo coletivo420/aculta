@@ -191,3 +191,8 @@
 - Barreiras de separação verificadas por `boundaries`: tema e Portal (fora do submódulo) não referenciam a ferramenta; a ferramenta não depende de Drupal, Drush, vendor, tema ou Portal.
 - Testes determinísticos em `tests/run.php`.
 - Entradas iniciais: DEP-0001 (canonical da página de apoio) e DEP-0002 (sitemap sem o host de apoio), ambas bloqueantes e abertas.
+## 0.1.24 — symlink público relativo — 2026-10-15
+
+- `hostinger-layout` agora ativa `public_html -> web` com destino relativo e o reconhece de forma idempotente.
+- Atualiza fixture e versão da CLI para 0.1.24.
+
