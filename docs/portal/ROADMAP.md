@@ -16,9 +16,9 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ## Estado atual
 
-- Versão: **0.3.0-dev.30** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
-- Submódulos: `aculta_deployer` 0.1.20 (com falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1.
-- Tema: `aculta420` 0.6.0-dev.15 (PR #239). Em Chrome no servidor de testes, somente a barra multidomínio fica fixa; o cabeçalho do domínio rola com o conteúdo. O gate Foundation segue bloqueado por DT-T19.
+- Versão: **0.4.0-dev.17** (`aculta_portal.info.yml` e `CHANGELOG.md`; linha 0.4.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
+- Submódulos: `aculta_deployer` 0.1.21 (`CHANGELOG.md` e `Cli::VERSION`; o `aculta_deployer.info.yml` ainda marca 0.1.10, divergência de código a corrigir; falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1, `aculta_messenger` 0.1.1-dev.11, `aculta_gallery` 0.1.0-rc.1, `aculta_magazine` 0.1.0-dev.5.
+- Tema: `aculta420` 0.6.0-dev.33 (`CHANGELOG.md`; o `aculta420.info.yml` marca 0.6.0-dev.35, divergência a conciliar antes do próximo marcador; PR #239 é histórica). Em Chrome no servidor de testes, somente a barra multidomínio fica fixa; o cabeçalho do domínio rola com o conteúdo. O gate Foundation segue bloqueado por DT-T19.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
 - Migração do envio de e-mail para Mailer Plus (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
