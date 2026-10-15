@@ -5,6 +5,9 @@ Data da revisão: 2026-10-07.
 Este documento consolida regras duráveis que antes estavam espalhadas por
 snapshots de fases e runbooks históricos.
 
+Para o índice de invariantes de comportamento já aceito pelo responsável (com
+caso de teste no navegador), consulte `docs/portal/ANTI-REGRESSAO.md`.
+
 ## Arquitetura e ownership
 
 - Drupal Core/contrib são a fonte de verdade das capacidades que já fornecem.

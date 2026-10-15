@@ -16,14 +16,23 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ## Estado atual
 
-- Versão: **0.3.0-dev.30** (`aculta_portal.info.yml`; linha 0.3.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
-- Submódulos: `aculta_deployer` 0.1.20 (com falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1.
-- Tema: `aculta420` 0.6.0-dev.15 (PR #239). Em Chrome no servidor de testes, somente a barra multidomínio fica fixa; o cabeçalho do domínio rola com o conteúdo. O gate Foundation segue bloqueado por DT-T19.
-- Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
+- Versão: **0.4.0-dev.17** (`aculta_portal.info.yml` e `CHANGELOG.md`; linha 0.4.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
+- Submódulos: `aculta_deployer` 0.1.21 (`info.yml`, `VERSION` e `CHANGELOG.md`; falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1, `aculta_messenger` 0.1.1-dev.11, `aculta_gallery` 0.1.0-rc.1, `aculta_magazine` 0.1.0-dev.5.
+- Tema: `aculta420` 0.6.0-dev.35 (`aculta420.info.yml`, `CHANGELOG.md` e `docs/roadmap.md` coerentes). Gate Foundation PASS (341 checks) desde 2026-10-15: DT-T19 resolvida em 0.6.0-dev.22.
+- Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
 - Migração do envio de e-mail para Mailer Plus (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
-- Verificações desta mudança (2026-10-13): Drupal 11+ PASS (659 checks), domínio do Associado ID PASS (248 checks), Unit do Associado ID PASS (47 testes/107 asserções), Unit do Portal PASS (63 testes/118 asserções) e lint PHP PASS. Evidência anterior de fronteira módulo/tema e endereços permanece registrada na revisão anterior. Foundation continua FAIL por DT-T19.
+- Verificações desta mudança (2026-10-13): Drupal 11+ PASS (659 checks), domínio do Associado ID PASS (248 checks), Unit do Associado ID PASS (47 testes/107 asserções), Unit do Portal PASS (63 testes/118 asserções) e lint PHP PASS. Evidência anterior de fronteira módulo/tema e endereços permanece registrada na revisão anterior. Foundation PASS em 2026-10-15 (341 checks, via Drush; DT-T19 resolvida).
 - Pendências abertas: ver DEBT-REGISTER (estado vivo; este roadmap não repete a contagem).
+
+## Próximos passos (replanejamento de 2026-10-15)
+
+Ordem recomendada, com o registro de dívidas como fonte de estado:
+
+1. **DT-P20 (Portal):** duas rotas de `message_subscribe_ui` (`/user/{user}/message-subscribe`) estão fora da linha de base do gate de slugs. Decidir entre corrigir a rota ou registrar a exceção com justificativa; o gate não pode ficar em FAIL.
+2. **DT-O12 (`aculta_deployer`):** `tests/run.php` aborta no teste de build e `check` avisa sobre `cookie_domain` do `services.local.yml`. Antes da próxima marcação, corrigir os testes.
+3. **Operação (DT-O02, DT-O04, DT-O05):** decisões e ajustes de ambiente, sem mudança de código.
+4. **Features (F1–F4):** só depois dos itens 1 a 3, ou por priorização explícita do responsável.
 
 ## Ordem de execução
 

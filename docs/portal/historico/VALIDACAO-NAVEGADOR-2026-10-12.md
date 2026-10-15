@@ -1,5 +1,8 @@
 # Validação de navegador — 2026-10-12
 
+> **Snapshot histórico (arquivado em 2026-10-15).** Não é o estado atual. Estado corrente: [RELATORIO-ESTADO-APOS-PR-238-239.md](../RELATORIO-ESTADO-APOS-PR-238-239.md), ROADMAP e DEBT-REGISTER.
+
+
 Resultado da rodada de validação com Chromium headless nos hosts de teste (`*.aculta.toca.net.br`) e no controle `example.com`.
 Ferramenta: `scripts/check-browser-hosts.sh`.
 

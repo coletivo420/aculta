@@ -90,7 +90,7 @@ O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime mig
 | Endereço único, cobrança, envio e Mercado Pago | [docs/portal/CHECKOUT-BILLING.md](../../../../docs/portal/CHECKOUT-BILLING.md) |
 | Criar a primeira senha em conta criada com Google | [docs/portal/SENHA-CONTA-OAUTH.md](../../../../docs/portal/SENHA-CONTA-OAUTH.md) |
 | Confirmação de e-mail | [docs/portal/EMAIL-CONFIRMATION-POLICY.md](../../../../docs/portal/EMAIL-CONFIRMATION-POLICY.md) |
-| Pendências abertas | [docs/portal/PENDENCIAS-PROXIMA-RODADA.md](../../../../docs/portal/PENDENCIAS-PROXIMA-RODADA.md) |
+| Pendências abertas | [docs/portal/historico/PENDENCIAS-PROXIMA-RODADA.md](../../../../docs/portal/historico/PENDENCIAS-PROXIMA-RODADA.md) |
 | Dependências do módulo | `aculta_portal.info.yml`: `commerce_shipping` e `physical` (composer: `drupal/commerce_shipping` 3.0.5, `drupal/physical` 1.5.0) |
 
 ## Changelog

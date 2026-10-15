@@ -1,6 +1,6 @@
 # Perfil público, cartão de autor e painel da Minha conta
 
-Submódulo: `aculta_portal/modules/aculta_user` (0.3.0-dev.9). Tema: ACULTA420.
+Submódulo: `aculta_portal/modules/aculta_user` (0.4.0-dev.2). Tema: ACULTA420.
 Decisões e status: `docs/portal/ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md`. Plano: `docs/portal/ACULTA-USER-PLAN.md`.
 
 ## 1. Regra de separação (tema x módulo)
@@ -100,4 +100,4 @@ O link "Sortear novo avatar" leva token CSRF válido: requisição com o link do
 
 - Tipo de publicação "blog" da Revista e mapeamento de chamada/resumo (decisão do responsável).
 - Inspeção visual humana das telas (painel, perfil público, cartão de autor, abas).
-- Versão do `aculta_portal` (módulo pai) não marcada nesta entrega; o `aculta_user` está em 0.3.0-dev.10.
+- Versão do `aculta_portal` (módulo pai) não marcada nesta entrega; o `aculta_user` está em 0.4.0-dev.2 (versão atual em `aculta_user.info.yml`).

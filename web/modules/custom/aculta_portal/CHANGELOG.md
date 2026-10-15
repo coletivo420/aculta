@@ -205,7 +205,7 @@ Classificação: PATCH (correção de contrato interno; mesma marcação).
 
 ## 0.3.0-dev.25 (documental) — relatório de estado — 2026-10-12
 
-- Mudança apenas documental; `aculta_portal.info.yml` não muda. Adiciona `docs/portal/RELATORIO-ESTADO-2026-10-12.md` com o estado do Portal, dos submódulos e do tema, e corrige a versão em `docs/portal/ROADMAP.md`.
+- Mudança apenas documental; `aculta_portal.info.yml` não muda. Adiciona `docs/portal/historico/RELATORIO-ESTADO-2026-10-12.md` com o estado do Portal, dos submódulos e do tema, e corrige a versão em `docs/portal/ROADMAP.md`.
 - Achados registrados no DEBT-REGISTER: DT-O12 (`aculta_deployer` com falhas de teste e de `check`) e DT-T19 (gate Foundation do tema).
 
 ## Em desenvolvimento — ajuste de escopo aculta_id_cpf — 2026-10-12
@@ -267,9 +267,9 @@ Portal permanece 0.3.0-dev.16; nova marcação/release do módulo pai não decla
   e máscaras testados na rodada inicial foram removidos nesta atualização de escopo.
 - Sem alteração de login, dados pessoais Profile/User, tema, banco ou config sync.
 - Runner (248 verificações), PHPUnit Unit (34/63), lint e gate Drupal 11+ (583)
-  passaram em PHP 8.4.26. Homologação local detalhada: docs/modules/ACULTA-ID-CPF.md.
+  passaram em PHP 8.4.26. Homologação local detalhada: docs/modules/ACULTA-ASSOCIADO-ID.md (antes ACULTA-ID-CPF.md, renomeado em c27f9a3).
 - RUNTIME STATUS: DEFERRED para Homelab remoto; sem release ou tag.
-- Evidência: docs/modules/ACULTA-ID-CPF.md; base 368ec263189d670d459e385b068d7bb188af95b3.
+- Evidência: docs/modules/ACULTA-ASSOCIADO-ID.md; base 368ec263189d670d459e385b068d7bb188af95b3.
 
 ## 0.3.0-dev.20 — Senha em conta Google, envio no checkout e aba Segurança — 2026-10-12
 
@@ -278,7 +278,7 @@ Portal permanece 0.3.0-dev.16; nova marcação/release do módulo pai não decla
 - Alinhamento do S/N no endereço (CSS do componente).
 - Checkout: pane "Envio" (`AcultaShippingInformation`, subclasse do pane do Commerce Shipping). Não tem formulário de endereço e reaproveita a cópia de cobrança (`BillingAddressPane::billingCopy()`), ou seja, o endereço único do cliente.
 - Dependências: `commerce_shipping` e `physical`, habilitados no runtime de teste e em `config/sync/core.extension.yml`. Variação `camiseta_tamanho` com trait de envio; método "Envio" com taxa R$ 0,00 (valor a definir), criado no runtime. Loja e método são conteúdo de banco, não entram em `config/sync`.
-- Validação: gates `validate-aculta-portal-drupal11`, `validate-public-slugs` e `validate-environment-addresses` passam. Verificação de navegador pendente: foco no primeiro erro, S/N, criação de senha, frete em pedido novo com camiseta (`docs/portal/PENDENCIAS-PROXIMA-RODADA.md`).
+- Validação: gates `validate-aculta-portal-drupal11`, `validate-public-slugs` e `validate-environment-addresses` passam. Verificação de navegador pendente: foco no primeiro erro, S/N, criação de senha, frete em pedido novo com camiseta (`docs/portal/historico/PENDENCIAS-PROXIMA-RODADA.md`).
 
 ## 0.3.0-dev.16 — Aceite dos termos em popup persistente; contenção do Mercado Pago — 2026-10-11
 - Meus Dados > Endereço: campo **Número** logo abaixo da rua. O número é separado do logradouro ao abrir e juntado ao gravar ("Rua, número"), mesmo formato do endereço de cobrança do checkout. Implementado pelo campo `address_extra[street_number]` (`PortalHooks`, rota `/dados/endereco`) e pelo entity builder `buildStreetNumber` (`PortalFormCallbacks`). Verificado no servidor de testes: o perfil guarda "Avenida Paulista, 1000" e o formulário reabre separado. Os dois perfis (Meus Dados e o do pedido) continuam separados, com o mesmo formato.

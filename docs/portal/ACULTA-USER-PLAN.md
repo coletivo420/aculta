@@ -1,7 +1,6 @@
 # Plano do submódulo `aculta_user`
 
-Status: **proposta para decisão do responsável**. Nenhum código foi escrito. Data: 2026-10-13.
-Base: `main` em `ce0941a`. Versão atual do Portal: `0.3.0-dev.28`.
+Status: **plano de 2026-10-13, com implementação já iniciada**. O submódulo existe em `aculta_portal/modules/aculta_user` (versão 0.4.0-dev.2, `CHANGELOG.md` do submódulo). Esta seção 1 descreve a base de 2026-10-13 (`main` em `ce0941a`, Portal 0.3.0-dev.28) e não é mais o estado atual. O estado de cada decisão e de cada entrega está em [ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md](ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md); a verificação da fase U0 está em [ACULTA-USER-U0-VERIFICACAO.md](ACULTA-USER-U0-VERIFICACAO.md).
 
 Escopo: avatar, perfil público e autoria, integração com Wiki, Fórum e revista, funções sociais e gamificação, dentro de `web/modules/custom/aculta_portal/modules/aculta_user/`.
 

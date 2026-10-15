@@ -32,7 +32,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [portal/ROADMAP.md](portal/ROADMAP.md) — saneamento e, depois, features de produto.
 - [portal/CHECKOUT-BILLING.md](portal/CHECKOUT-BILLING.md) — endereço único, envio (Commerce Shipping) e pagamento pelo Mercado Pago.
 - [portal/SENHA-CONTA-OAUTH.md](portal/SENHA-CONTA-OAUTH.md) — primeira senha em conta criada com Google.
-- [portal/PENDENCIAS-PROXIMA-RODADA.md](portal/PENDENCIAS-PROXIMA-RODADA.md) — pendências abertas.
+- [portal/historico/PENDENCIAS-PROXIMA-RODADA.md](portal/historico/PENDENCIAS-PROXIMA-RODADA.md) — pendências abertas.
 
 ## Tema
 

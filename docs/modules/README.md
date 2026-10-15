@@ -37,7 +37,7 @@ Esta pasta é a referência canônica dos módulos Core/contrib usados pelo proj
 | login_emailusername | login por usuário ou e-mail | Drupal User |
 | username_enumeration_prevention | reduz enumeração de contas | Drupal User + módulo |
 | social_auth / social_auth_google | OAuth Google e vínculos externos | Social Auth + User |
-| smtp | transporte de e-mail | SMTP config |
+| symfony_mailer / mailer_transport | transporte de e-mail (Mailer Plus; SMTP2GO via mailer_transport). O módulo `smtp` foi removido na M2 | Symfony Mailer + config `mailer_*` |
 | key | referência a segredos externos | Key + ambiente |
 | profile | dados de perfil | Profile |
 | address | estrutura de endereço | Address |

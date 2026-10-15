@@ -103,7 +103,7 @@ php scripts/validate-aculta-portal-drupal11.php
 
 Testes de máscara e Kernel/Form API foram retirados junto com a implementação
 de campos. Evidência e limites conhecidos estão em
-[ACULTA-ID-CPF.md](../../../../../../docs/modules/ACULTA-ID-CPF.md).
+[ACULTA-ASSOCIADO-ID.md](../../../../../../docs/modules/ACULTA-ASSOCIADO-ID.md).
 
 ## Próximas entregas
 
