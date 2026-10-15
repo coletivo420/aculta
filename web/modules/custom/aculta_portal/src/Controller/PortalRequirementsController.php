@@ -9,9 +9,12 @@ use Composer\InstalledVersions;
 use Composer\Semver\Semver;
 use Drupal\aculta_portal\Deployer\DeployerStatusReader;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
+use Drupal\aculta_portal\Status\PortalHelperRegistry;
+use Drupal\aculta_portal\Status\PortalImplementationRegistry;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Extension\InfoParserInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -28,6 +31,8 @@ final class PortalRequirementsController extends ControllerBase {
     private readonly ThemeHandlerInterface $themes,
     #[Autowire(service: 'module_handler')]
     private readonly ModuleHandlerInterface $modules,
+    #[Autowire(service: 'info_parser')]
+    private readonly InfoParserInterface $infoParser,
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configs,
     #[Autowire(service: 'current_user')]
@@ -36,6 +41,10 @@ final class PortalRequirementsController extends ControllerBase {
     private readonly string $appRoot,
     #[Autowire(service: 'aculta_portal.deployer_status_reader')]
     private readonly DeployerStatusReader $deployerStatus,
+    #[Autowire(service: 'aculta_portal.helper_registry')]
+    private readonly PortalHelperRegistry $helperRegistry,
+    #[Autowire(service: 'aculta_portal.implementation_registry')]
+    private readonly PortalImplementationRegistry $implementationRegistry,
   ) {}
 
   /**
@@ -246,6 +255,8 @@ final class PortalRequirementsController extends ControllerBase {
         'attention' => ['#plain_text' => $this->t('⚠ Atenção: integração deliberadamente pendente ou risco conhecido.')],
         'error' => ['#plain_text' => $this->t('✖ Erro: requisito ausente, desabilitado ou incompatível.')],
       ],
+      'active_portal_functions' => $this->buildActivePortalFunctions(),
+      'portal_implementations' => $this->buildPortalImplementations(),
       'requirements' => [
         '#type' => 'table',
         '#header' => [
@@ -275,6 +286,72 @@ final class PortalRequirementsController extends ControllerBase {
     $build['#attached']['library'][] = 'system/admin';
     $build['#attached']['library'][] = 'aculta_portal/requirements-report';
     return $build;
+  }
+
+  /**
+   * Lists enabled Portal submodules from Drupal's extension registry.
+   *
+   * Names and summaries come from each module's own .info.yml; this avoids a
+   * second manually maintained inventory that could drift from runtime state.
+   */
+  private function buildActivePortalFunctions(): array {
+    $rows = [];
+    $moduleList = $this->modules->getModuleList();
+    foreach ($moduleList as $machineName => $extension) {
+      $path = str_replace('\\', '/', $extension->getPath());
+      if ($machineName !== 'aculta_portal' && !str_starts_with($path, 'modules/custom/aculta_portal/modules/')) {
+        continue;
+      }
+      $info = $this->infoParser->parse($this->appRoot . '/' . $path . '/' . $machineName . '.info.yml');
+      $rows[] = [
+        'name' => ['data' => ['#plain_text' => (string) ($info['name'] ?? $machineName)]],
+        'function' => ['data' => ['#plain_text' => (string) ($info['description'] ?? '')]],
+        'machine_name' => ['data' => ['#plain_text' => $machineName]],
+      ];
+    }
+    usort($rows, static fn (array $a, array $b): int => strcmp(
+      (string) ($a['name']['data']['#plain_text'] ?? ''),
+      (string) ($b['name']['data']['#plain_text'] ?? ''),
+    ));
+
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('ACULTA Portal e submódulos ativos'),
+      '#open' => TRUE,
+      'description' => ['#plain_text' => $this->t('Lista derivada das extensões ACULTA Portal habilitadas no Drupal. Nome e resumo vêm dos arquivos .info.yml, sem cadastro paralelo de status.')],
+      'items' => [
+        '#type' => 'table',
+        '#header' => [$this->t('Função'), $this->t('Resumo'), $this->t('Identificador')],
+        '#rows' => $rows,
+        '#empty' => $this->t('Nenhum submódulo do Portal está habilitado.'),
+      ],
+      '#cache' => ['tags' => ['config:core.extension']],
+    ];
+  }
+
+  /** Lists active, explicitly registered Portal implementation services. */
+  private function buildPortalImplementations(): array {
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('Implementações do ACULTA Portal'),
+      '#open' => TRUE,
+      'description' => ['#plain_text' => $this->t('Inventário de serviços reutilizáveis e integrações runtime aplicadas pelo Portal. Os itens ativos vêm das tags do container Drupal; os resumos e contratos são mantidos no registro documentado.')],
+      'helpers_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Helpers ativos')],
+      'helpers' => [
+        '#type' => 'table',
+        '#header' => [$this->t('Helper'), $this->t('Função'), $this->t('Serviço'), $this->t('Documentação')],
+        '#rows' => $this->helperRegistry->rows(),
+        '#empty' => $this->t('Nenhum helper está registrado.'),
+      ],
+      'extras_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Extras aplicados')],
+      'extras' => [
+        '#type' => 'table',
+        '#header' => [$this->t('Implementação'), $this->t('Efeito aplicado'), $this->t('Serviço'), $this->t('Documentação')],
+        '#rows' => $this->implementationRegistry->rows(),
+        '#empty' => $this->t('Nenhuma implementação extra está registrada.'),
+      ],
+      '#cache' => ['tags' => ['config:core.extension'], 'max-age' => 0],
+    ];
   }
 
   /**

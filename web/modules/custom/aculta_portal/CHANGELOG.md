@@ -1,3 +1,44 @@
+## 0.4.0-dev.21 — corrige erro na listagem de avisos persistentes — 2026-10-14
+
+- URLs administrativas de editar/excluir agora recebem o ID do Node, evitando TypeError no requisito de rota do Drupal.
+- Erro HTTP 500 reproduzido antes da correção; verificação posterior pendente. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.20 — posição do composer do Messenger — 2026-10-14
+
+- O formulário nativo de resposta fica após o histórico, evitando aparecer antes das mensagens na página e no diálogo responsivo.
+- CSS do ACULTA420 remove o sticky do composer e limita a área de histórico em telas pequenas.
+- Smoke HTTP autenticado local confirmou a ordem do histórico e do composer; gate Portal (768) e Foundation (341): PASS. RUNTIME STATUS: DEFERRED; validação em dispositivo mobile pendente.
+
+## 0.4.0-dev.19 — centralização e navegação de conversas do Messenger — 2026-10-14
+
+- O ACULTA Messenger prepara a mesma lista de conversas para a página de Mensagens e para a gaveta; threads abrem por AJAX somente no host ACCOUNT e usam navegação normal até a conta nos demais purposes.
+- Inclui retorno à lista no thread sem alterar o storage, access handler ou Form API do Private Message.
+- Smoke HTTP autenticado e PHP lint locais: PASS; gates Portal (768) e Foundation (341): PASS.
+
+## 0.4.0-dev.18 — restaura navegação AJAX da Visão geral — 2026-10-14
+
+- Corrige a construção do link de perfil na Visão geral quando há apelido legado fora do formato da rota; a página não falha e o link inválido é omitido.
+- Centraliza a normalização lowercase de slugs públicos no helper `PublicRouteSlug` e aplica o contrato aos links de perfil do painel e da Revista.
+- Status administrativo lista o ACULTA Portal e os submódulos habilitados; uploads novos usam sanitização nativa de nomes do Drupal configurada para ASCII/hífen, com extensão também canonicalizada para minúsculas antes da validação final do Core.
+- Status passa a apresentar **Implementações do ACULTA Portal**, listando Helpers e Extras runtime aplicados por tags ativas do container; os registros são verificados contra YAML e documentação pelo gate Drupal 11+.
+- Verificação desta atualização: `php scripts/validate-aculta-portal-drupal11.php` PASS (768 checks), PHP lint dos arquivos alterados PASS, `git diff --check` PASS e YAML de serviços válido.
+- Navegação AJAX da conta deixa de mostrar throbber e cursor de progresso; `aria-busy` continua disponível para tecnologias assistivas.
+- Gates Drupal 11+ (715 checks), links de perfil (387 arquivos), fronteira módulo/tema (969 checks), testes unitários (3 testes/6 assertions) e PHP lint passaram. Relatório Status e evento de sanitização exercitados por Drush no `aculta_runtime`; entrada `Relatório Árvore__ABC.JPG` resultou em `relatorio-arvore-abc.jpg`. `file.settings` está alinhado ao Config Sync. Upload real pelo formulário e sessão autenticada da Minha Conta permanecem sem validação humana; ambiente CLI usa PHP 8.4.26.
+
+## 0.4.0-dev.17 — contador neutro nas seções da conta — 2026-10-14
+
+- `AccountShellBuilder` encaminha opcionalmente `badge_count` como número neutro junto aos itens da navegação, sem classes ou markup de apresentação.
+- ACULTA Messenger expõe a contagem nativa de threads não lidas nessa propriedade para o ACULTA420.
+- PHP lint, Portal Drupal 11+ gate (696 checks), Portal/theme boundary (907 checks), unique paths, Portal UI docs (167 tokens/132 usados/41 atributos), environment-address gate (1.561 arquivos), SDC schemas e design foundations passaram.
+- Foundation gate dependente de bootstrap Drupal não foi executado: esta cópia não tem settings/runtime. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.16 — extensão opcional para seções da Minha Conta — 2026-10-14
+
+- `AccountShellBuilder` expõe alters neutros para acrescentar seções opcionais e mapear suas subrotas à seção ativa.
+- ACULTA Messenger usa esses alters para incluir Mensagens somente a contas com as permissões nativas do Private Message.
+- Nenhuma mudança visual no ACULTA420 nesta entrega.
+- Gates estáticos e PHP lint passaram na implementação original; Runtime e bootstrap Drupal não foram validados nesta cópia. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.15 — elementos de presentation sem objeto cruzando a fronteira — 2026-10-14
 
 Classificação: PATCH (correção de contrato interno; mesma marcação).
