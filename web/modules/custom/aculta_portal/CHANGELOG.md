@@ -1,3 +1,10 @@
+## 0.4.0-dev.37 — ACULTA Game G4 — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.4`: missões unitárias, caixa na visão geral e
+administração `/painel-administrativo/game`, abaixo de Avisos, com permissão
+própria. Configuração pontual aplicada no Homelab. Firefox 8/8 e HTTP 17/17;
+privacidade/cache de G3 verificados. Detalhes em `modules/aculta_game/docs/EXECUCAO.md`.
+
 ## 0.4.0-dev.36 — perfil público anônimo acessível — 2026-10-15
 
 Classificação PATCH. Messenger `0.1.1-dev.32` evita consultar dispensa de aviso

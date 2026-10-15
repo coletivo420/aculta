@@ -207,6 +207,11 @@ Rotas LMS técnicas podem permanecer internas.
 
 ## FORUM
 
+Exceção administrativa solicitada pelo responsável em 2026-10-15:
+**`/painel-administrativo/game`**, título **Game**, abaixo de Avisos.
+É área administrativa no MAIN, protegida por `administer aculta game`;
+não representa slug de conteúdo público em inglês.
+
 Decisão aprovada em 2026-10-15, com implementação futura no
 [ACULTA Fórum](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md):
 a marca/prefixo público será Growroom420; o purpose interno permanece `forum`.

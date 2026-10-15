@@ -1,5 +1,13 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.4 — G4: missões, descoberta e administração inicial — 2026-10-15
+
+- Três missões unitárias com configuração/schema e progresso por concessões reais.
+- Entrada destacada na visão geral; Game abaixo de Avisos na administração MAIN.
+- Update 10001 instala somente configuração ausente; nenhum dado migrado.
+- Homelab: Firefox 8/8, HTTP 17/17; preferências e configuração de teste restauradas.
+- Código inicial em commit compartilhado `5b325e5`; contrato/evidência em EXECUCAO.
+
 ## 0.1.0-dev.3 — G3: conta, perfil e escolhas de exibição — 2026-10-15
 
 - Lista própria e formulário na aba Conquistas; entrada pelos ajustes de privacidade.

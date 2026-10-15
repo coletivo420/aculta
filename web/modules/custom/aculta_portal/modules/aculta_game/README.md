@@ -4,7 +4,7 @@ Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
 Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável;
 G2 corrige os gatilhos; G3 integra conquistas e escolhas de exibição à Minha Conta
 e ao perfil público. Homologação funcional e fases seguintes estão registradas
-em [EXECUCAO.md](docs/EXECUCAO.md). Ainda não há catálogo de missões habilitado.
+em [EXECUCAO.md](docs/EXECUCAO.md). G4 habilita três missões unitárias com progresso privado.
 
 ## Proposta
 
@@ -72,6 +72,13 @@ ordem. Configurações → Privacidade oferece um link para esses controles. O p
 público usa a mesma projeção, respeitando privacidade geral, conta ativa e legado.
 Preferências pertencem ao User Data de `aculta_user`, para sobreviver à remoção
 do Game. Sem rota nova, biblioteca visual nova ou mudança de tema nesta fase.
+
+G4: `0.1.0-dev.4`. A Visão geral oferece a entrada **Conquistas e missões**.
+Em `/atividade/conquistas`, acompanhe contribuição no Growroom420, revisão
+publicada da Wiki e primeiro curso aprovado. Progresso consulta conquistas reais,
+sem XP, ranking ou novo storage. Controle administrativo **Game**, abaixo de
+**Avisos**, em `/painel-administrativo/game` no MAIN: ativa/desativa missões;
+concessão manual e auditoria serão ampliadas em G5.
 
 Evidência por fase: [execução](docs/EXECUCAO.md).
 

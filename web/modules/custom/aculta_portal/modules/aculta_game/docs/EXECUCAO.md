@@ -137,3 +137,56 @@ PHP lint PASS; gates Drupal 11+ (774), fronteira (1040) e endereços (1726) PASS
 **RUNTIME STATUS: DEFERRED** para submissão no navegador, duas sessões, ocultação,
 destaques, cache após POST e inspeção de acessibilidade/mobile. Renderização não
 equivale a essas verificações. G3 implementada, homologação funcional pendente.
+
+## G4 — missões e administração inicial
+
+Classificação MINOR: Game `0.1.0-dev.4`, Portal `0.4.0-dev.37`.
+Código inicial incluído por execução paralela em `5b325e5`; o commit da fase
+consolida versões e evidências, preservando o histórico compartilhado.
+
+- Três missões unitárias: contribuição no Growroom420, revisão publicada da
+  Wiki e primeiro curso aprovado. Critério versão 1, um marco por missão.
+- Conclusão consulta concessões ativas produzidas pelos gatilhos G2, sem nova
+  avaliação do passado, saldo, tabela de progresso ou detalhes de fontes privadas.
+- Configuração `aculta_game.missions`, com schema e catálogo fechado. Controle
+  administrativo altera disponibilidade; desativar não apaga conquistas.
+- Caixa Conquistas e missões na visão geral resolve a falta de entrada destacada.
+  A interface anterior estava acessível somente pela aba Atividade ou Privacidade.
+- `/painel-administrativo/game`: MAIN, permissão própria, peso 9 após Avisos (8).
+  Administração manual e auditoria permanecem em G5.
+
+### Aplicação e recuperação
+
+Runtime confirmado; apenas update Game 10001 pendente, configuração de missões
+ausente e dois registros de conquistas. O update instala somente essa configuração
+se ausente, preservando-a em reexecuções. Nenhuma mudança de entidade/schema ou
+importação/exportação global. Recuperação possível restaurando apenas o estado
+anterior dessa configuração, mantendo concessões; não executada.
+
+Update e cache rebuild concluídos. O Drush reportou inconsistência preexistente:
+módulo de driver `mysql` não registrado como instalado, apesar de bootstrap e
+conexão MariaDB funcionais. Nenhuma alteração do registro global de extensões.
+
+### Falha encontrada e corrigida
+
+Perfil anônimo retornava 500 em MessengerCounts/Flag: consulta de dispensa com
+uid 0 sem sessão. Correção `a0afe29` limita consultas de dispensa aos autenticados,
+conforme política existente, inclusive na prévia. Perfil anônimo voltou a responder.
+
+### Evidência funcional
+
+- Firefox **8/8**: entrada na visão geral, navegação AJAX, formulário, três missões,
+  mobile 390 px sem rolagem horizontal, administração e posição abaixo de Avisos.
+- HTTP com sessões independentes **17/17**: salvar ocultação global/individual,
+  reexibição/cache, destaque, acesso pela privacidade, salvar ativação/desativação
+  administrativa e efeito na conta, membro sem acesso, GET no host errado
+  canonicalizado e POST no host errado negado.
+- Preferências da conta `teste.comum` e disponibilidade da missão restauradas.
+  Nenhuma criação/remoção de usuário, conteúdo ou concessão pelo teste.
+- Capturas e resultados locais: `.suite-out/game/`, fora do Git. Suítes em
+  `tests/browser/aculta-game/smoke.mjs` e `tests/runtime/aculta-game/http-smoke.py`.
+  Hosts conferidos no Deployer; banco restrito a `aculta_runtime`.
+
+G3 agora tem submissão, privacidade e cache entre sessões verificados. Continuam
+pendentes a concorrência e jornadas de concessão de G2, leitor de tela e PHP 8.5.
+Não extrapolar os resultados de G4 para esses casos.

@@ -427,3 +427,19 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 - Execução 12 (final): **70 de 70**, sem erros de JavaScript.
 - Antes dela, três defeitos reais foram corrigidos e reproduzidos isoladamente: (1) conversa em grupo absorvida pela caixa de um dos membros; (2) menu de exibição reprocessando o envio e carregando formulário em cache sem dependências; (3) limpeza de teste que não encontrava a conversa (consulta com duas condições no mesmo campo multivalorado; trocada pelo mapeador do Private Message).
 - Limite: 390 px é aproximação de layout. Não houve teste em dispositivo de toque real nem com leitor de tela.
+
+
+## Game — rodada de 2026-10-15 (G4)
+
+- Runtime confirmado: `aculta_runtime`, hosts MAIN/ACCOUNT do mapeamento de testes.
+- Conta existente `teste.comum`; admin para área restrita, visitante em sessão
+  independente. Sem criação de contas/conteúdo ou concessão de conquistas.
+- Firefox 8/8: entrada Visão geral → Conquistas e missões, AJAX, formulário,
+  missões, mobile 390 px sem overflow, controles Game e ordem após Avisos.
+- HTTP 17/17: POST de preferências, ocultação global/individual e destaque vistos
+  por visitante; invalidação de cache; administração, controle de disponibilidade
+  e política MAIN (GET canonicalizado, POST errado negado).
+- Corrigido 500 anônimo em contagem de avisos/Flag (`a0afe29`).
+- Preferências e disponibilidade da missão restauradas; screenshots/resultados
+  em `.suite-out/game/`, fora do Git. Suítes Game versionadas em tests/browser e
+  tests/runtime. Concorrência de concessões e leitor de tela não validados.

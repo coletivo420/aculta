@@ -11,14 +11,26 @@ do responsável, as fases são commits próprios na PR #286 existente.
 | G1 — concluída; inventário e fonte única | Auditar concessões atuais e ownership; escolher transição/integração | Preservar IDs/datas/revogações; nenhum segundo backend; atualizar fontes de verdade |
 | G2 — implementada; homologação pendente | Aprovação tardia de comentário, revisão Wiki, status LMS e critérios existentes | Repetição/concorrência não duplicam; importações e legados não recebem novas conquistas |
 | G3 — conta/perfil implementados; homologação pendente | Minha Conta, perfil e escolhas de exibição pública; caixas adicionais em G7 | Público por padrão com ocultação, destaques e ordem; zero evidência privada publicada; acessibilidade e cache |
-| G4 — missões iniciais | Critérios e progresso sobre fontes reais aprovadas | Sem XP/ranking; limiares aprovados; fonte, escopo e versão do critério rastreáveis |
-| G5 — administração e avisos | Concessão/revogação manual, motivo, auditoria e avisos permitidos | Permissões restritas, deduplicação e preferências; sem conceder privilégios editoriais |
+| G4 — implementada e verificada no Homelab | Três missões unitárias, critérios versionados e progresso das conquistas reais | Sem XP/ranking; configuração, navegação, POST, privacidade e acesso verificados |
+| G5 — controles administrativos e avisos | Ampliar Game em `/painel-administrativo/game`, abaixo de Avisos: concessão/revogação manual, motivo, auditoria e avisos permitidos | Permissão própria, deduplicação e preferências; sem conceder privilégios editoriais |
 | G6 — automação opcional | Spike ECA ou outro backend apenas se houver lacuna demonstrada | Composer e licenças revistos, ownership único, testes de paridade; não instalar ECA e Rules para a mesma regra |
 | G7 — integração continuada | Fórum atual, Wiki, Revista, cursos e participação cultural | Mesma conquista e mesma privacidade em todos os consumidores; legado tratado como memória |
 
 G3 pode ser prototipada visualmente enquanto G1/G2 são resolvidas, sem publicar
 dados sem a política de acesso. G6 é condicional, não requisito de lançamento.
 Open Badges interoperável não faz parte da primeira linha do projeto.
+
+## Área administrativa aprovada
+
+Entrada **Game** no menu administrativo principal, imediatamente depois de
+**Avisos** (pesos 9 e 8), em `/painel-administrativo/game`, purpose MAIN.
+GET/HEAD em outro host seguem a canonicalização administrativa existente;
+requests mutáveis no host errado falham fechado. Permissão restrita
+`administer aculta game`.
+
+G4 entrega ativação/desativação das três missões; não desativa os gatilhos de
+conquistas nem apaga histórico. G5 amplia a área para gestão manual com motivo,
+ator e auditoria, sem CRUD paralelo às entidades Drupal existentes.
 
 ## Matriz mínima de evidência
 
