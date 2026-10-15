@@ -48,3 +48,10 @@ services:
   aculta_messenger.persistent_notice_route_access:
     class: Drupal\aculta_messenger\Access\PersistentNoticeRouteAccess
     public: true
+  aculta_messenger.conversation_messaging:
+    class: Drupal\aculta_messenger\Service\ConversationMessagingState
+    arguments:
+      - '@current_user'
+      - '@private_message.ban_manager'
+      - '@aculta_user.friendship_manager'
+      - '@user.data'

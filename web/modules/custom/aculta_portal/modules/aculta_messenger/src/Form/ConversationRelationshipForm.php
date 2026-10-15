@@ -58,6 +58,19 @@ final class ConversationRelationshipForm extends FormBase {
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     $form['actions'] = ['#type' => 'actions'];
 
+    // Notice mode: the one link that answers a blocked or friends-only conversation, shown in place of the reply box.
+    if ($formState->get('mode') === 'notice') {
+      $noticeTarget = (int) $target->id();
+      if ($this->banManager->isBanned($noticeTarget)) {
+        $form['actions']['unban'] = $this->button('unban', $this->t('Clique aqui para desbloquear'), 'conversation-notice-action');
+      }
+      elseif (!$this->friendshipManager->areFriendsWith($noticeTarget)
+        && $this->friendshipManager->getRelationshipWith($noticeTarget)?->getStatus() !== FriendshipStatus::Pending->value) {
+        $form['actions']['request'] = $this->button('request', $this->t('clique aqui para enviar um pedido de Amizade.'), 'conversation-notice-action');
+      }
+      return $form;
+    }
+
     if ($formState->get('message')) {
       $form['message'] = ['#plain_text' => (string) $formState->get('message'), '#prefix' => '<p role="status" class="aculta-messenger-options__status">', '#suffix' => '</p>'];
     }
@@ -176,12 +189,12 @@ final class ConversationRelationshipForm extends FormBase {
     return $user instanceof UserInterface && $user->isActive() ? $user : NULL;
   }
 
-  private function button(string $name, $label): array {
+  private function button(string $name, $label, string $token = 'conversation-action'): array {
     return [
       '#type' => 'submit',
       '#name' => $name,
       '#value' => $label,
-      '#attributes' => ['data-portal-ui' => 'conversation-action'],
+      '#attributes' => ['data-portal-ui' => $token],
     ];
   }
 

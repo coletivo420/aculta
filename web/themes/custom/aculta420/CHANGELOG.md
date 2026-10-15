@@ -1,3 +1,11 @@
+## 0.6.0-dev.49 — aviso de conversa restrita e aviso de bloqueio no lugar da caixa de resposta — 2026-10-15
+
+Classificação: PATCH (apresentação do aviso).
+
+- Token `conversation-notice-action` mapeia o botão do aviso para `aculta-messenger-notice__action` (link discreto dentro do texto).
+- Estilo `aculta-messenger-notice`: caixa de aviso com o texto e a ação na mesma linha, quando couber.
+- RUNTIME STATUS: ACTIVE no teste.
+
 ## 0.6.0-dev.48 — "Opções" em menu sanfona na mesma linha da barra — 2026-10-15
 
 Classificação: MINOR (novo menu de ações na conversa).

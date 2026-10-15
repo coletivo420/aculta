@@ -93,3 +93,9 @@
   .aculta-messenger-options__summary { min-width: 2.25rem; justify-content: center; padding-inline: 0.45rem; }
 }
 .aculta-messenger-back-link:hover, .aculta-messenger-back-link:focus-visible { text-decoration: underline; }
+/* Notice in place of the reply box: a blocked or friends-only conversation keeps its history and says why. */
+.aculta-messenger-notice { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; margin-block: 0.75rem; padding: 0.75rem; border: 1px solid var(--aculta-border-subtle); border-radius: 0.5rem; background: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.aculta-messenger-notice form, .aculta-messenger-notice .form-actions { display: inline; margin: 0; }
+.aculta-messenger-notice__action { display: inline; margin: 0; padding: 0; border: 0; background: transparent; color: var(--aculta-text-link); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+.aculta-messenger-notice__action:hover, .aculta-messenger-notice__action:focus-visible { text-decoration: none; }
+.aculta-messenger-notice__action:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }

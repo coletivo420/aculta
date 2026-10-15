@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.27 — aviso no lugar da caixa de resposta para privacidade "só amigos" — 2026-10-15
+
+Classificação: PATCH (texto e apresentação do aviso).
+
+- Em conversas com quem só recebe mensagens de Amigos, quem não é amigo vê o aviso no lugar da caixa de mensagem e do botão Enviar: "Essa pessoa só recebe mensagens de Amigos, clique aqui para enviar um pedido de Amizade."
+- Se o pedido já foi enviado: "Essa pessoa só recebe mensagens de Amigos, você já enviou pedido de amizade, aguarde."
+- O bloqueio continua com os avisos próprios ("Você bloqueou essa pessoa, Clique aqui para desbloquear" e "Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens").
+- Verificado no runtime de testes: aviso padrão, aviso após o pedido, e o texto na tela.
+
 ## 0.1.1-dev.26 — bloquear mantém a conversa visível e impede o envio — 2026-10-15
 
 Classificação: MINOR (muda o comportamento de bloqueio do Private Message nesta instalação).

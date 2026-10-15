@@ -104,7 +104,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `new-conversation-link` | `btn`, `btn-primary`, `aculta-messenger-new-conversation` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `new-conversation-submit` | `btn`, `btn-primary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
 | `new-conversation-back` | `btn`, `btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
-| `conversation-action` | `aculta-messenger-options__action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php` |
+| `conversation-action` | `aculta-messenger-options__action` |
+| `conversation-notice-action` | `aculta-messenger-notice__action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php` |
 | `new-conversation-links` | `d-flex`, `flex-wrap`, `gap-2`, `mt-2` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
 | `new-conversation-message` | `form-control` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
 | `new-conversation-results` | `list-group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |

@@ -11,6 +11,10 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Form\FormState;
+use Drupal\Core\Url;
+use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
+use Drupal\aculta_messenger\Service\ConversationMessagingState;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
@@ -28,6 +32,8 @@ final class PrivateMessageReplyHooks {
     private readonly AccountInterface $currentUser,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_messenger.conversation_messaging')]
+    private readonly ConversationMessagingState $messagingState,
   ) {}
 
   /** Adds the native composer when a site's thread display omitted its field. */
@@ -50,6 +56,13 @@ final class PrivateMessageReplyHooks {
     // The "← Todas as conversas" link is placed by MessagesController::drawerConversation, above the thread.
     $build['#cache']['contexts'][] = 'user';
     $build['#cache']['max-age'] = 0;
+
+    // A blocked or friends-only conversation keeps its history and shows a notice in place of the reply box.
+    $messagingState = $this->messagingState->stateFor($entity);
+    if ($messagingState !== ConversationMessagingState::OPEN) {
+      $build['aculta_messenger_notice'] = $this->notice($entity, $messagingState);
+      return;
+    }
 
     if (isset($build['private_message_form'])) {
       return;
@@ -92,6 +105,33 @@ final class PrivateMessageReplyHooks {
     if ($entity_type->id() === 'private_message_thread' && isset($fields['members'])) {
       $fields['members']->setLabel(new TranslatableMarkup('Participantes'));
     }
+  }
+
+  /**
+   * The notice that replaces the reply box: the state's sentence, and the one action it allows (if any).
+   */
+  private function notice(PrivateMessageThreadInterface $thread, string $state): array {
+    $other = $this->messagingState->otherMember($thread);
+    $pending = $other !== NULL && $state === ConversationMessagingState::FRIENDS_ONLY ? $this->messagingState->pendingRequest($other) : NULL;
+    $notice = ['#type' => 'container', '#attributes' => ['class' => ['aculta-messenger-notice'], 'role' => 'status']];
+    $text = match (TRUE) {
+      $state === ConversationMessagingState::BLOCKED_BY_ME => 'Você bloqueou essa pessoa, ',
+      $state === ConversationMessagingState::BLOCKED_BY_THEM => 'Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens.',
+      $pending === 'outgoing' => 'Essa pessoa só recebe mensagens de Amigos, você já enviou pedido de amizade, aguarde.',
+      $pending === 'incoming' => 'Essa pessoa só recebe mensagens de Amigos. Aceite o pedido de amizade nas Opções para conversar.',
+      default => 'Essa pessoa só recebe mensagens de Amigos, ',
+    };
+    $notice['text'] = ['#plain_text' => $text];
+    $needsAction = $other !== NULL && ($state === ConversationMessagingState::BLOCKED_BY_ME
+      || ($state === ConversationMessagingState::FRIENDS_ONLY && $pending === NULL));
+    if ($needsAction) {
+      $formState = new FormState();
+      $formState->set('target', $other);
+      $formState->set('post_url', Url::fromRoute('aculta_messenger.drawer_relationship', ['private_message_thread' => $thread->id()])->toString());
+      $formState->set('mode', 'notice');
+      $notice['action'] = $this->formBuilder->buildForm(ConversationRelationshipForm::class, $formState);
+    }
+    return $notice;
   }
 
 }
