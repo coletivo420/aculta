@@ -11,6 +11,11 @@ declare(strict_types=1);
  */
 
 $root = dirname(__DIR__);
+if (is_file($root . '/vendor/autoload.php')) {
+  require_once $root . '/vendor/autoload.php';
+}
+require_once $root . '/web/modules/custom/aculta_portal/src/Status/PortalHelperRegistry.php';
+require_once $root . '/web/modules/custom/aculta_portal/src/Status/PortalImplementationRegistry.php';
 $moduleRoot = $root . '/web/modules/custom/aculta_portal';
 $srcRoot = $moduleRoot . '/src';
 $failures = [];
@@ -83,12 +88,90 @@ foreach ($requiredDocs as $path => $needle) {
     basename($path) . ' must reference the Drupal 11+ standard/change.',
   );
 }
+$portalReadme = $read($moduleRoot . '/README.md');
+$requirementsController = $read($srcRoot . '/Controller/PortalRequirementsController.php');
+$services = $read($moduleRoot . '/aculta_portal.services.yml');
+$helperRegistrySource = $read($srcRoot . '/Status/PortalHelperRegistry.php');
+$implementationRegistrySource = $read($srcRoot . '/Status/PortalImplementationRegistry.php');
+$check(
+  str_contains($portalReadme, 'Capacidades e extensões ativas')
+    && str_contains($portalReadme, 'PublicRouteSlug::normalize()')
+    && str_contains($portalReadme, 'filename_sanitization')
+    && str_contains($info, 'slugs públicos canônicos')
+    && str_contains($info, 'nomes de upload'),
+  'New Portal capabilities must be documented in its README and module description.',
+);
+$filenameSubscriber = $read($srcRoot . '/EventSubscriber/UploadedFilenameExtensionSubscriber.php');
+$check(
+  str_contains($filenameSubscriber, 'FileUploadSanitizeNameEvent::class')
+    && str_contains($filenameSubscriber, "['lowercaseExtension', -100]")
+    && str_contains($filenameSubscriber, 'strtolower($extension)')
+    && str_contains($services, 'aculta_portal.uploaded_filename_extension_subscriber:'),
+  'Uploaded filename extension normalization must run after File sanitization and before Core security validation.',
+);
+$check(
+  str_contains($requirementsController, 'buildActivePortalFunctions')
+    && str_contains($requirementsController, 'getModuleList()')
+    && str_contains($requirementsController, 'InfoParserInterface')
+    && str_contains($requirementsController, '->parse(')
+    && str_contains($requirementsController, 'config:core.extension')
+    && str_contains($requirementsController, "['description'] ?? '')"),
+  'Portal Status must list enabled Portal extensions from Drupal metadata with extension cache tags.',
+);
+$check(
+  str_contains($requirementsController, 'buildPortalImplementations')
+    && str_contains($requirementsController, 'Helpers ativos')
+    && str_contains($requirementsController, 'Extras aplicados')
+    && str_contains($implementationRegistrySource, 'service_id_collector') === FALSE
+    && str_contains($services, 'tag: aculta_portal.helper')
+    && str_contains($services, 'tag: aculta_portal.implementation')
+    && is_file($root . '/docs/portal/IMPLEMENTATIONS.md')
+    && str_contains($read($root . '/docs/portal/IMPLEMENTATIONS.md'), 'service_id_collector'),
+  'Portal Status must expose documented helper and applied implementation inventories sourced from active service tags.',
+);
+if (class_exists(Drupal\Component\Serialization\Yaml::class)) {
+  $serviceData = Drupal\Component\Serialization\Yaml::decode($services) ?: [];
+  foreach ([
+    'aculta_portal.helper' => Drupal\aculta_portal\Status\PortalHelperRegistry::definitions(),
+    'aculta_portal.implementation' => Drupal\aculta_portal\Status\PortalImplementationRegistry::definitions(),
+  ] as $tagName => $definitions) {
+    $tagged = [];
+    foreach (($serviceData['services'] ?? []) as $serviceId => $definition) {
+      foreach (($definition['tags'] ?? []) as $tag) {
+        if (($tag['name'] ?? NULL) === $tagName) {
+          $tagged[] = $serviceId;
+        }
+      }
+    }
+    sort($tagged);
+    $documented = array_keys($definitions);
+    sort($documented);
+    $check($tagged === $documented, sprintf('%s tags and Status registry metadata must match exactly.', $tagName));
+    foreach ($definitions as $serviceId => $metadata) {
+      $check(
+        is_file($root . '/' . $metadata['docs']),
+        sprintf('%s (%s) must reference existing documentation.', $tagName, $serviceId),
+      );
+    }
+  }
+}
+foreach (glob($moduleRoot . '/modules/*/*.info.yml') ?: [] as $extensionInfoPath) {
+  $extensionInfo = $read($extensionInfoPath);
+  $extensionDir = dirname($extensionInfoPath);
+  $hasDocs = is_file($extensionDir . '/README.md') || (glob($extensionDir . '/docs/*.md') ?: []) !== [];
+  $extensionName = basename($extensionDir);
+  $check(
+    preg_match('/^name:\s*.+$/m', $extensionInfo) === 1
+      && preg_match('/^description:\s*.+$/m', $extensionInfo) === 1
+      && $hasDocs,
+    $extensionName . ' must declare its summary and have a README or docs page; enabled extensions appear in Portal Status.',
+  );
+}
 $check(
   is_file($root . '/docs/portal/DRUPAL-11-STANDARDS.md'),
   'Normative docs/portal/DRUPAL-11-STANDARDS.md must exist.',
 );
 
-$services = $read($moduleRoot . '/aculta_portal.services.yml');
 $legacySubscriberTags = preg_match_all('/name:\s*kernel\.event_subscriber\b/', $services);
 // P7.2: Core renames kernel.event_subscriber <-> event_subscriber in
 // RegisterEventSubscribersPass, so the legacy tag is redundant. Listener
@@ -102,9 +185,11 @@ $check(
 // (OAuth login and user creation mark the email as confirmed; política de confirmação de e-mail).
 // 0.3.0-dev.4 adds CartFriendlyRouteSubscriber (cart route path /carrinho, slug em português).
 // 0.3.0-dev.5 adds DonationFriendlyRouteSubscriber (donation route paths /apoiar, slug em português).
+// 0.4.0-dev.18 adds UploadedFilenameExtensionSubscriber after Core's configured filename sanitizer.
+// 0.4.0-dev.19 adjusts the account-owned Messenger conversation presentation.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 11,
-  'Portal must register exactly eleven canonical event_subscriber tags.',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 12,
+  'Portal must register exactly twelve canonical event_subscriber tags.',
 );
 
 $legacyProceduralFunctions = [];

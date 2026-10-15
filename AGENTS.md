@@ -44,8 +44,13 @@ web/
 
 - `*.aculta.toca.net.br` é o **servidor de testes** (Homelab). Nos documentos de arquitetura aparece como Homelab; os dois termos designam o mesmo ambiente.
 - `*.aculta.org` é **produção**.
+- Este checkout em `/home/piradopirata/projetos/aculta-site`, quando executado no host `toca`, é a pasta de trabalho ligada ao Homelab/servidor de testes. O Drupal e o MariaDB Runtime podem ser operados localmente a partir dela; não presumir que seja necessário acessar o próprio Homelab por SSH.
+- **Antes de qualquer operação de ambiente**, confirme `hostname`, `pwd`, branch/estado Git e `php vendor/drush/drush/drush.php status`. Confirme no Drush o site URI e o banco conectados antes de executar comandos que alterem estado.
+- Se `hostname` for `toca` e o Drush confirmar o Runtime `aculta_runtime` e um URI `*.aculta.toca.net.br`, trate a sessão como já estando no servidor de testes: use o checkout e o Drush locais. SSH só se justifica quando a operação necessária não estiver disponível localmente e o destino tiver sido confirmado pela documentação de ambientes.
+- **Padrão de desenvolvimento funcional:** em mudanças destinadas ao Portal/tema, implemente no checkout local ligado ao Homelab e aplique imediatamente ao Runtime de testes assim que o escopo estiver coerente para smoke test. Faça cache rebuild e as atualizações estritamente necessárias, verificando antes URI, banco, estado da configuração e efeitos; nunca espere uma etapa final para só então atualizar o ambiente de teste. Mantenha a mudança testável enquanto o trabalho continua. Isso não autoriza operações destrutivas nem qualquer alteração em produção.
+- Não executar `updb`, import/export de configuração, deploy ou outras operações persistentes sem primeiro inspecionar o estado, os efeitos e a possibilidade de recuperação; nunca apontar procedimentos de teste para produção.
 - Não inventar ambientes, hosts ou nomes de servidor. Use somente os definidos em `docs/architecture/environments.md` e `docs/architecture/multidomain.md`.
-- Testes locais em `127.0.0.1` com resolução de host própria simulam o servidor de testes, mas não são o servidor de testes; registre-os como tal.
+- Testes em `127.0.0.1` com resolução de host própria simulam o servidor de testes, mas não são o servidor de testes; registre-os como tal.
 
 ## Estrutura do desenvolvimento customizado
 
@@ -467,6 +472,7 @@ Para tarefas do `aculta_portal`:
 - o modo atual é GitHub-first / Runtime-last; consultar `docs/portal/README.md` e `docs/operations/RELEASES.md`;
 - `origin/main` é a base autoritativa; trabalho local antigo não publicado foi descartado;
 - mudanças executáveis sem Runtime ficam em draft com `RUNTIME STATUS: DEFERRED`;
+- quando o host for `toca` e o Drush confirmar `aculta_runtime` e um URI de teste, aplicar mudanças funcionais no Runtime de testes durante a implementação para smoke test contínuo; registrar como DEFERRED somente testes que realmente não foram executados nesse Runtime;
 - não modificar `web/themes/custom/aculta420/**` sem autorização explícita;
 - não recriar `web/themes/custom/aculta/` nem qualquer provider legado/alias do tema;
 - consultar `docs/portal/` antes de implementar;
@@ -601,6 +607,10 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
 - O tema **não** tem rota, `form_alter`, serviço, `Drupal::`, nem classe ou biblioteca do módulo.
 - **Contrato `data-portal-ui`:** o módulo marca elementos com tokens semânticos (`data-portal-ui="account-avatar"`); o
   ACULTA420 traduz em classes em `src/Hook/PortalUiHooks.php`. Novo token = entrada no mapa do tema. O gate confere.
+- **Implementações no Status:** todo helper reutilizável novo recebe a tag `aculta_portal.helper` e registro em
+  `PortalHelperRegistry`; toda integração runtime aplicada recebe `aculta_portal.implementation` e registro em
+  `PortalImplementationRegistry`. Ambos precisam de resumo e documentação vigente, ser exibidos em ACULTA Portal >
+  Status e passar pelo gate `php scripts/validate-aculta-portal-drupal11.php`. Ver `docs/portal/IMPLEMENTATIONS.md`.
 - **Autorização para agentes:** ao implementar uma função no Aculta Portal, o agente pode adicionar ou corrigir o
   ACULTA420 na mesma entrega, cada parte no seu dono.
 - Inventário, dívida e motivo: `docs/portal/FRONTEIRA-MODULO-TEMA.md`. Gate obrigatório:

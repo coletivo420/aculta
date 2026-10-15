@@ -24,9 +24,18 @@
 | `data-aculta-bio-form` | exato | sim | 2 |
 | `data-aculta-cart-count` | exato | não | 2 |
 | `data-aculta-cart-trigger` | exato | não | 2 |
+| `data-aculta-alert-dismiss` | exato | sim | 1 |
+| `data-aculta-alerts-count` | exato | sim | 2 |
 | `data-aculta-cep-status` | exato | sim | 1 |
 | `data-aculta-clear` | exato | sim | 2 |
+| `data-aculta-conversation-url` | exato | não | 1 |
+| `data-aculta-conversation-view` | exato | sim | 2 |
+| `data-aculta-drawer-content` | exato | sim | 2 |
+| `data-aculta-drawer-count` | exato | sim | 2 |
+| `data-aculta-drawer-label` | exato | não | 2 |
+| `data-aculta-drawer-url` | exato | sim | 2 |
 | `data-aculta-json-form` | exato | sim | 2 |
+| `data-aculta-messenger-count` | exato | sim | 2 |
 | `data-aculta-number` | exato | sim | 2 |
 | `data-aculta-number-sn` | exato | não | 1 |
 | `data-aculta-photo-editor` | exato | não | 2 |
@@ -35,6 +44,8 @@
 | `data-aculta-user` | exato | não | 1 |
 | `data-aculta-user-avatar` | exato | não | 3 |
 | `data-aculta-user-picture` | exato | não | 1 |
+| `data-aculta-thread-id` | exato | não | 1 |
+| `data-aculta-thread-unread` | exato | não | 1 |
 | `data-dialog-options` | exato | sim | 6 |
 | `data-dialog-title` | exato | não | 2 |
 | `data-dialog-type` | exato | sim | 7 |
@@ -88,6 +99,11 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `status-error` | `aculta-portal-requirements__status--error` | (montado dinamicamente ou só no tema) |
 | `status-pending` | `aculta-portal-requirements__status--pending` | (montado dinamicamente ou só no tema) |
 | `requirements-indexing` | `aculta-portal-requirements__indexing` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
+| `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
+| `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `requirements-indexing-table` | `aculta-portal-requirements__indexing-table` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `secrets-section` | `aculta-portal-secrets-section` | `web/modules/custom/aculta_portal/src/Secrets/SecretsController.php` |
 | `secret-value` | `aculta-secret-value` | `web/modules/custom/aculta_portal/src/Secrets/SecretsController.php` |

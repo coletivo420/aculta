@@ -6,6 +6,7 @@ namespace Drupal\aculta_magazine\Hook;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\aculta_magazine\Presentation\ForumOpeningPost;
 use Drupal\aculta_magazine\Presentation\PostPresentation;
@@ -128,8 +129,9 @@ final class ArticleAuthorsHooks {
     }
 
     $nameElement = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => $name, '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-name'])];
-    if ($publico && $nickname !== '') {
-      $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $nickname]);
+    $publicSlug = AccountNames::publicRouteSlug($nickname);
+    if ($publico && $publicSlug !== NULL) {
+      $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
       if ($url !== NULL) {
         $nameElement = PortalLinkElement::build($name, $url, ['data-portal-ui' => 'article-author-name']);
       }

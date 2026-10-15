@@ -24,6 +24,19 @@ quando a rota representa conteúdo ou uma ação humana.
 
 ## Princípio
 
+Valores de formulário/conteúdo podem conservar maiúsculas e minúsculas para
+exibição. Antes da geração de uma URL pública, o Portal oferece
+`Drupal\aculta_portal\Routing\PublicRouteSlug::normalize()` para aparar espaços
+externos e converter o parâmetro em minúsculas. O utilitário não translitera,
+remove pontuação, corta o valor nem o grava: a feature proprietária valida a
+gramática completa e mantém o valor original para apresentação. Assim, uma
+mudança de caixa não cria uma segunda identidade ou caminho para o mesmo item.
+
+Arquivos enviados usam a sanitização de nomes nativa do Drupal configurada em
+`config/sync/file.settings.yml`; uploads novos são transliterados, minúsculos e
+separados por hífen. Os arquivos já existentes não são renomeados
+retroativamente por essa configuração.
+
 ```text
 rota técnica interna
         ↓

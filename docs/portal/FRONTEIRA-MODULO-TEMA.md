@@ -129,6 +129,27 @@ Política: toda ferramenta do `aculta_user` funciona com outro tema. O módulo e
 
 Sem o ACULTA420, os elementos continuam funcionando: links com `href` válido, textos e foto. Só a aparência volta ao padrão do tema ativo. Não há classes de design (`btn`, `bi-*`, `portal-*`) no módulo; o gate `validate-module-theme-boundary.php` confere.
 
+## ACULTA Messenger (auditoria de ownership, 2026-10-14)
+
+| Camada | Responsabilidade | Arquivos atuais |
+| --- | --- | --- |
+| Core/contrib | Fonte de verdade de conversas, threads, bloqueios, mensagens/notificações, assinaturas, Site Alerts, Flags e workflow | Private Message, Message, Message Notify, Message Subscribe, Site Alert, Flag e entidades Core |
+| `aculta_portal` (módulo principal) | Extensão genérica do shell Minha Conta: alters para seções e rotas-filhas, sem vocabulário ou dependência do Messenger | `src/AccountShellBuilder.php` |
+| `aculta_messenger` (submódulo) | Regras, rotas, permissões, Domain Purpose, access/cache, contadores, preferências, leitura individual, filas e integração com APIs upstream; entrega render arrays neutros | `modules/aculta_messenger/src/**`, `*.routing.yml`, `*.services.yml`, `config/install/**` |
+| ACULTA420 | Mapeamento de dados neutros para SDCs, templates Twig, layout da barra, ícones Bootstrap, CSS e tokens visuais; não decide access nem consulta storage | `src/Hook/ThemeHooks.php` (apenas apresentação), `src/Hook/PortalUiHooks.php`, `templates/page.html.twig`, `templates/private-message-thread.html.twig`, `templates/site-alert.html.twig`, `components/**`, `css/components/dialog.css`, `css/components/portal-account.css` |
+
+O submódulo fornece dados da barra e estados (`MessengerBarHooks`); o tema converte esses valores em SDCs. O hook genérico `aculta_portal_account_sections_alter` pertence ao Portal, e a seção Mensagens é fornecida pelo submódulo. O tema envolve render arrays autorizados em SDCs, preservando Form API e saída upstream. O submódulo não referencia `aculta420:*`, classes de design, CSS ou templates do tema.
+
+Na navegação da barra, `aculta_messenger` entrega links com fallback canônico,
+endpoints de fragmento same-origin e comandos Drupal AJAX com os render arrays
+autorizados. ACULTA420 fornece a gaveta, os estilos e o comportamento de
+apresentação; o clique na conversa substitui o corpo da gaveta e a seta solicita
+a lista novamente. Nenhum modal de conversa ou transporte cross-domain é usado.
+
+Não foi necessário mover lógica de negócio: a inspeção confirmou os donos acima. Foi corrigida uma referência de documentação de tema que havia entrado no registry PHP do Portal; metadados de módulo agora apontam para a documentação neutra em `docs/portal/IMPLEMENTATIONS.md`.
+
+Verificação específica: `php scripts/validate-module-theme-boundary.php` PASS (973 verificações); `php scripts/validate-aculta420-sdc-schemas.php` PASS (24 componentes, 365 verificações); `php scripts/validate-aculta-portal-drupal11.php` PASS (768 verificações).
+
 ## Documentos e gates complementares (2026-10-14)
 
 - Tokens `data-portal-ui` e atributos `data-portal-*`, `data-aculta-*`, `data-dialog-*`: `docs/portal/TOKENS-E-ATRIBUTOS.md`. Gate: `php scripts/validate-portal-ui-docs.php` (todo token e atributo usado precisa estar documentado).

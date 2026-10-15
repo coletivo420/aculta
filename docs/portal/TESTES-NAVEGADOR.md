@@ -276,6 +276,16 @@ uma foto própria para recortar."). **Não executado:** P2, P4 e P5 no navegador
 - **Não repetir:** qualquer formulário de autenticação ou de sessão (login, cadastro com confirmação, senha) não deve
   entrar em `accountAjaxSubmit`; a regra existe só para salvar dados da Minha conta sem recarregar a página.
 
+## S. ACULTA Messenger com Olivero (2026-10-14)
+
+Escopo executado no diretório local com Apache/HTTPS e resolução de hosts para `127.0.0.1`; isso simula os hosts do teste, não é o servidor Homelab. Olivero foi instalado/ativado temporariamente, definido como tema padrão, e depois removido; `system.theme:default` foi restaurado para `aculta420` e o cache reconstruído.
+
+- HTTP anônimo com Olivero: home MAIN `200`; modal de avisos `/avisos/resumo` `200`; modal de mensagens `/mensagens/resumo` `403`, conforme a exigência de autenticação/permissões.
+- Com a conta documentada `teste.comum` (uid 5), o link único do Drush direcionou ao formulário de redefinição de senha one-time; não foi submetida alteração de senha e não se obteve sessão HTTP autenticada. Não declarar os fluxos autenticados como aprovados por navegador.
+- Teste local de renderização Drupal com a conta UID 5 passada ao `AccountProxy`: `overview`, `preview`, `alertsPreview`, `notices` e `notifications` foram construídos/renderizados pelo Render API sob o tema padrão temporário Olivero; respectivas saídas renderizadas: 194, 207, 102, 77 e 71 bytes. Nenhum formulário de envio foi submetido e nenhum e-mail foi enviado.
+- Pós-teste: Drupal bootstrap Successful, banco conectado, tema padrão ACULTA420 restaurado, Olivero desinstalado. Validadores: fronteira módulo/tema PASS (973), schemas SDC PASS (24 componentes/365 checks), Portal Drupal 11+ PASS (768 checks).
+- **Pendente para homologação completa:** sessão humana autenticada no navegador para abrir os modais, navegar inbox/thread e verificar formulários, leitura, responsividade e acessibilidade. O teste HTTP autenticado não foi concluído; não marcar o Messenger como integralmente homologado em outro tema.
+
 ## Q. Minha Conta > Atividade em abas (aculta_user 0.3.0-dev.8, 2026-10-13)
 
 - **Q1:** abrir Minha Conta > Atividade. Esperado: abas Wiki, Fórum, Revista, Comentários e Conquistas no mesmo estilo de
