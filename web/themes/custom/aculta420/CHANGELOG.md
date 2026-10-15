@@ -5,7 +5,7 @@ Classificação: PATCH (mapeamento de rota e token documentado; sem mudança vis
 - Mapeia `aculta_messenger.conversations` à lista de mensagens e rotula como "Todas as conversas".
 - Registra `messenger-preview-inbox-link`, documentado em `TOKENS-E-ATRIBUTOS.md`.
 - Não reaplica a biblioteca `messenger-drawers` no root da página: os templates já a anexam.
-- Foundation (341) PASS. Entrega: PR #284. RUNTIME STATUS: DEFERRED para validação visual.
+- Foundation (343) PASS. Entrega: PR #284. RUNTIME STATUS: DEFERRED para validação visual.
 
 ## 0.6.0-dev.36 — conversa no drawer via navegação AJAX — 2026-10-15
 
