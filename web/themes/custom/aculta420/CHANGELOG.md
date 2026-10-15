@@ -1,3 +1,19 @@
+## 0.6.0-dev.35 — data visível nos contatos — 2026-10-14
+
+Classificação: PATCH (apresentação do contato e composição nativa da conversa).
+
+- A data curta da última mensagem é apresentada em elemento próprio acima do nome, inclusive na gaveta lateral da barra multidomínio.
+- O tema preserva o espaço visual compacto do contato e aplica tipografia secundária pequena.
+- Validação visual pendente; RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.34 — data nos contatos do Messenger — 2026-10-14
+
+Classificação: PATCH (apresentação de metadado na caixa existente).
+
+- A data e hora da última mensagem aparece em fonte pequena acima do nome do remetente.
+- O alinhamento mantém o avatar e o botão com a dimensão mínima já definida.
+- Validação visual pendente; RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.33 — contatos compactos e botão de amizade no perfil — 2026-10-14
 
 Classificação: PATCH (ajustes visuais e de apresentação sem alterar contratos estáveis).
@@ -831,20 +847,4 @@ Classificação: PATCH da linha 0.6.0 (organização de estilo sobre o component
 - O badge de não lidas em Minha Conta usa vermelho como na barra multidomínio; fora do shell `.portal-account`, preserva a cor semântica original.
 - Conversas oferecem menu contextual de limpeza pessoal por clique direito e botão acessível; a ação global de excluir thread fica oculta na caixa.
 - RUNTIME STATUS: DEFERRED; aplicação e validação visual no checkout local pendentes.
-
-## 0.6.0-dev.34 — data nos contatos do Messenger — 2026-10-14
-
-Classificação: PATCH (apresentação de metadado na caixa existente).
-
-- A data e hora da última mensagem aparece em fonte pequena acima do nome do remetente.
-- O alinhamento mantém o avatar e o botão com a dimensão mínima já definida.
-- Validação visual pendente; RUNTIME STATUS: DEFERRED.
-
-## 0.6.0-dev.35 — data visível nos contatos — 2026-10-14
-
-Classificação: PATCH (apresentação do contato e composição nativa da conversa).
-
-- A data curta da última mensagem é apresentada em elemento próprio acima do nome, inclusive na gaveta lateral da barra multidomínio.
-- O tema preserva o espaço visual compacto do contato e aplica tipografia secundária pequena.
-- Validação visual pendente; RUNTIME STATUS: DEFERRED.
 
