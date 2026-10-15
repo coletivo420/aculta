@@ -181,8 +181,6 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 - **Decisão do responsável (2026-10-09): só depois do primeiro RC.** Antes disso não há produção estável para validar a navegação.
 
-Nota: as entradas de 0.6.0-dev.34 e 0.6.0-dev.35 existem nesta tabela e em `aculta420.info.yml`, mas ainda não têm entrada no `CHANGELOG.md` do tema. Serão transcritas quando a linha do Messenger fechar essas versões, para não colidir com o trabalho em andamento.
-
 ## Critério para encerrar o saneamento do tema
 
 Todos os itens de DEBT-REGISTER do tema estão em Resolvida, Decisão registrada ou Aberta com

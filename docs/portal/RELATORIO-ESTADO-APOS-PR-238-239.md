@@ -1,6 +1,6 @@
 > Snapshot anterior à mudança de identidade do submódulo. Estado atual e plano de migração: [ACULTA-ASSOCIADO-ID.md](../modules/ACULTA-ASSOCIADO-ID.md) e [ROADMAP.md](ROADMAP.md).
 
-> **Atualização de 2026-10-15 (revisão documental, PR #281).** Versões e gates verificados no código de `main`: `aculta_portal` 0.4.0-dev.17; `aculta_deployer` 0.1.21 (`info.yml` ainda 0.1.10); tema 0.6.0-dev.35 (CHANGELOG até dev.33). Gate Foundation PASS (341 checks, via Drush), antes FAIL por DT-T19. Gate de slugs com 2 rotas novas de `message_subscribe_ui` (DT-P20). Os números abaixo são da data original do relatório.
+> **Atualização de 2026-10-15 (revisão documental, PR #281).** Versões e gates verificados no código de `main`: `aculta_portal` 0.4.0-dev.17; `aculta_deployer` 0.1.21; tema 0.6.0-dev.35. Gate Foundation PASS (341 checks, via Drush), antes FAIL por DT-T19. Gate de slugs com 2 rotas novas de `message_subscribe_ui` (DT-P20). Os números abaixo são da data original do relatório.
 
 # Estado atual do Portal após as PRs #238 e #239
 
