@@ -1,3 +1,14 @@
+## 0.4.0-dev.29 — traduções pt-BR do Drupal e extensões — 2026-10-15
+
+Classificação: PATCH (localização da interface administrativa).
+
+- Conferidos 62 projetos de tradução associados às 139 extensões habilitadas; atualizados os pacotes pt-BR disponíveis, incluindo Drupal Core 11.4.10 e os módulos `private_message`, `message`, `message_notify`, `message_subscribe` e `site_alert`.
+- Catálogo `translations/modules.pt-br.po` acrescenta nomes e mensagens administrativas de extensões ACULTA e de `flexible_permissions`/`username_enumeration_prevention`, cujas versões instaladas não têm arquivo pt-BR no servidor de traduções.
+- Catálogos existentes do Portal e do tema foram importados sem sobrescrever traduções manuais; no Locale, o total passou de 13.336 para 13.658 strings pt-BR.
+- Verificado pelo serviço de tradução: `Edit` → “Editar”, `Add content` → “Adicionar conteúdo”, `Clear history` → “Limpar histórico”, `Member(s)` → “Membro(s)” e `Private Message Threads` → “Conversas de Mensagens Privadas”.
+- RUNTIME STATUS: ACTIVE no servidor de testes (`aculta_runtime`, `https://aculta.toca.net.br`). `locale:update --langcodes=pt-br` importou 14 pacotes disponíveis (300 strings adicionadas, 10.561 atualizadas); catálogos ACULTA importaram mais 22 strings e atualizaram 27.
+- No arquivo local, fora do Git, `settings.local.php` define `$settings['locale_translation_path'] = 'public://translations'`. Em outros ambientes, executar a importação do catálogo ACULTA com `drush locale:import --type=customized --override=none pt-br web/modules/custom/aculta_portal/translations/modules.pt-br.po`.
+
 ## 0.4.0-dev.28 — amizade sem erro fatal e Turnstile fora das Opções da conversa — 2026-10-15
 
 Classificação: PATCH (correção no serviço de amizade e exceção de CAPTCHA).
