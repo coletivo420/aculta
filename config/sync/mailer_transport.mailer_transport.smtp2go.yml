@@ -9,7 +9,7 @@ configuration:
   user: ''
   pass: ''
   host: mail.smtp2go.com
-  port: 2525
+  port: 465
   query:
     verify_peer: true
 

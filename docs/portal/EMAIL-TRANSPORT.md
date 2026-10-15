@@ -1,6 +1,6 @@
 # Transporte de e-mail do Portal (migração para Mailer Plus)
 
-Status: **M0 e M1 concluídas; M1 validada no runtime; M2 concluída no mesmo PR (2026-10-11), com remoção do legado.** Documento normativo para as fases M1 e M2.
+Status: **M0 e M1 concluídas; M1 validada no runtime; M2 concluída no mesmo PR (2026-10-11); R3 endurece TLS e remove o fallback local implícito.** Documento normativo da arquitetura de transporte.
 
 Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05, DT-P09, DT-O07),
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
@@ -250,3 +250,43 @@ Executada no mesmo PR da M1, a pedido do responsável (o `AGENTS.md` pede um PR 
 - Reenvio do teste do Core para o endereço do responsável após a remoção: aceito pelo `mailer_override` (`result=TRUE`, transporte `smtp2go`). Recebimento a confirmar pelo responsável.
 - **Pendente antes do merge:** número do commit de release da linha 0.2 (`-dev` removido). A regra exige a versão final antes do merge; a linha ainda não tem esse número definido. Ver `docs/operations/RELEASES.md`.
 
+## 10. R3 — cadeia ativa e falha fechada
+
+### Caminho efetivo
+
+No Core 11.4.10 e Mailer Plus 2.0.2 instalados, `mailer_override` substitui o serviço `plugin.manager.mail` por
+`MailManagerReplacement`. O mapa de overrides pode estar vazio: nesse caso, o módulo usa `LegacyMailer` como adaptador
+dos `hook_mail()` antigos, e esse adaptador ainda envia pela API de componentes do Mailer Plus. O transporte efetivo
+é `mailer_transport.settings:default_transport`, configurado como `smtp2go`. A configuração sincronizada mantém os
+transportes sendmail disponíveis, mas eles não são o padrão nem entram como retry/failover; o `MultiTransport` seleciona
+somente o ID solicitado e lança `MissingTransportException` quando ele não existe.
+
+O campo `system.mail:mailer_dsn` pertence ao backend Symfony Mailer experimental do Core. Ele não escolhe o transporte
+Mailer Plus enquanto `mailer_override` estiver ativo. Antes, seu valor `sendmail` era um caminho concorrente: se o
+serviço de override deixasse de atuar, o Core poderia enviar pelo MTA local sem SMTP2GO. Agora usa o esquema reservado
+`aculta-disabled`, que o factory do Core não reconhece. Assim, o uso acidental desse backend falha no envio e não troca
+silenciosamente de provedor.
+
+### TLS e autenticação
+
+O SMTP2GO institucional usa `mail.smtp2go.com:465`. A porta 465 inicia TLS implícito no Symfony Mailer 7.4 instalado;
+`verify_peer` permanece `true` no plugin Drupal e o transporte mantém verificação de certificado e hostname. Symfony
+Mailer não permite que essa conexão prossiga sem a camada TLS que a porta exige. O usuário e a senha são injetados
+pelas Keys com provider `env`; no Config Sync, `configuration.user` e `configuration.pass` continuam vazios.
+
+SMTP2GO documenta autenticação SMTP como obrigatória por padrão. Sem credenciais, não existe transporte alternativo:
+o envio deve falhar na autenticação do provedor e o MailManager registra falha. Nenhum segredo é impresso por gates ou
+relatórios. O transporte não tem uma lista de failover configurada.
+
+### Evidência da R3
+
+- Código instalado confirmou `MailManagerReplacement`, `mailer_override` ativo, mapa de overrides vazio e transporte
+  padrão `smtp2go`. A inspeção verificou host, porta, peer verification e presença das Keys resolvidas sem ler ou exibir
+  seus valores.
+- Uma conexão TLS sem autenticação ou mensagem para `mail.smtp2go.com:465` negociou TLS 1.3 e validou o certificado;
+  `2525` também anunciou STARTTLS. Nenhum e-mail foi enviado.
+- O gate `scripts/validate-mail-transport.php` constrói o transporte com credenciais sintéticas e verifica a porta TLS,
+  a verificação de certificado, as Keys/overrides e a rejeição do esquema `aculta-disabled` pelo factory Core.
+- O transporte e o sentinel do Core são configuração compartilhada por ambiente. Homelab foi validado; Hostinger não
+  foi acessada nem testada. A compatibilidade de saída TCP 465 na hospedagem de produção permanece DEFERRED até a
+  homologação no ambiente autorizado.
