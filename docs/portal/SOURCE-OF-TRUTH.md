@@ -64,13 +64,14 @@ o memorial coletivo `/u/lendashistoricas`, sem páginas individuais.
 
 O [ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md)
 tem como fonte inicial de concessões a entidade existente `aculta_badge_award`,
-hoje provida pelo `aculta_user`; regras estão em `BadgeCatalog` e
-`BadgeEvaluationHooks`. Não há um segundo backend de badges. Sua evolução e
+provida pelo `aculta_user`; `BadgeCatalog` e `BadgeService` permanecem nesse módulo.
+Os gatilhos `BadgeEvaluationHooks` pertencem ao `aculta_game` desde G1.
+Não há um segundo backend de badges. Sua evolução e
 eventual mudança de ownership exigem transição própria. A decisão atual é
 conquistas públicas por padrão com ocultação e destaques, sem ranking ou
 benefícios financeiros; evidências privadas continuam sujeitas a acesso.
 
-Os novos submódulos estão em documentação. A tabela de capacidades existentes
+Fórum está em documentação; Game inicia implementação em G1. A tabela de capacidades existentes
 não significa que seus roadmaps estejam implementados ou homologados.
 
 ### Princípio

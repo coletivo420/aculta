@@ -121,16 +121,16 @@ O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime mig
 
 Consultar [CHANGELOG.md](CHANGELOG.md).
 
-## Projetos de submódulos em documentação
+## Projetos de submódulos
 
 - [ACULTA Fórum — Growroom](modules/aculta_forum/README.md): acervo recuperado do
   Wayback, memorial coletivo com autoria individual e integração comunitária.
 - [ACULTA Game](modules/aculta_game/README.md): conquistas e missões, reaproveitando
   a base atual de badges sem duplicar concessões e com pesquisa de licenças.
 
-Projetos abertos por decisão do responsável em 2026-10-15. Ainda sem `.info.yml`,
-serviços, rotas ou ativação; não são capacidades novas do Runtime nem aparecem
-como extensões habilitadas no Status. O Portal não passa a depender deles.
+Projetos abertos por decisão do responsável em 2026-10-15. Fórum permanece
+documental. Game é extensão opcional instalável desde G1: assume os gatilhos de
+conquistas e preserva o backend no User. O Portal não passa a depender de Game.
 
 ## Submódulo de dados dos associados
 

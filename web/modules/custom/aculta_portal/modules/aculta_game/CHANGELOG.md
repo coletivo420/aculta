@@ -1,5 +1,12 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.1 — G1: integração e fonte única — 2026-10-15
+
+- Extensão opcional do Portal, dependente de User, sem dependência inversa.
+- Avaliador automático transferido do User; catálogo, serviço, entidade e dados
+  mantidos na fonte existente, sem migração ou storage paralelo.
+- Inventário e evidências em [EXECUCAO.md](docs/EXECUCAO.md).
+
 ## 2026-10-15 — abertura documental e pesquisa
 
 - Registradas conquistas e missões sem ranking, XP/níveis ou benefícios financeiros.

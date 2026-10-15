@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.3 — gatilhos de conquistas no Game — 2026-10-15
+
+- `BadgeEvaluationHooks` passa ao submódulo opcional `aculta_game`.
+- Catálogo, serviço, provider e dados de `aculta_badge_award` preservados no User.
+- Ativar Game acompanha esta mudança para continuar avaliações automáticas.
+- Evidência: `../aculta_game/docs/EXECUCAO.md`, fase G1.
+
 ## 0.4.0-dev.2 — ação de amizade no cabeçalho do perfil público — 2026-10-14
 
 - Coloca a ação de amizade dentro do cabeçalho do cartão `/u/{apelido}` para membros autenticados, ao lado da identidade.

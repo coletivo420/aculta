@@ -1,8 +1,9 @@
 # ACULTA Game — conquistas e missões
 
-Projeto do futuro submódulo opcional `aculta_game`, integrante do `aculta_portal`.
-Decisões de produto registradas em **2026-10-15**. Esta entrega é documental:
-não instala dependências, define rotas ou habilita um módulo Drupal.
+Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
+Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável
+e assume os gatilhos automáticos antes mantidos no User. As demais fases do
+roadmap continuam pendentes; ainda não há interface de missões ou de privacidade.
 
 ## Proposta
 
@@ -17,9 +18,9 @@ porque uma conquista pode ser exibida.
 
 ## A base já existente
 
-O submódulo Game ainda não existe como extensão instalável, mas o `aculta_user`
-já tem `BadgeCatalog`, `BadgeService`, `BadgeEvaluationHooks` e a entidade
-`aculta_badge_award`. Há seis conquistas no catálogo: Apoiador, Associado,
+O `aculta_user` mantém `BadgeCatalog`, `BadgeService` e a entidade
+`aculta_badge_award`. O `BadgeEvaluationHooks` agora pertence ao Game.
+Há seis conquistas no catálogo: Apoiador, Associado,
 Primeiro comentário no Fórum, Primeira edição na Wiki, Primeiro curso realizado
 e Perfil básico completo. Sua existência em código não comprova cada gatilho em Runtime.
 
@@ -57,6 +58,14 @@ Normas: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
 [design system](../../../../../../docs/portal/COMPONENT-DESIGN-SYSTEM.md).
 
 ## Estado e versão
+
+G1: `0.1.0-dev.1`, classificação MINOR. Integração em uma única direção:
+Game depende de User e Portal; User/Portal não dependem de Game. A ativação é
+pontual por `drush en aculta_game`, sem dependência Composer nova. Remover Game
+interrompe a avaliação automática; a entidade e suas concessões continuam no
+User. Não desinstalar User como forma de desativar gamificação.
+
+Evidência por fase: [execução](docs/EXECUCAO.md).
 
 Pesquisa sobre o checkout `868626d`, branch `chore/messenger-pendencias`, PR #286,
 com fontes públicas e quatro pacotes de código inspecionados fora da instalação.

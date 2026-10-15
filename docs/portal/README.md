@@ -55,7 +55,7 @@
 
 - [ROADMAP.md](ROADMAP.md) — saneamento e features de produto.
 
-## Projetos aprovados em documentação — 2026-10-15
+## Projetos aprovados — 2026-10-15
 
 - [ACULTA Fórum / Growroom](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
   — reconstrução do acervo, autores individuais no memorial coletivo, prefixo
@@ -64,6 +64,6 @@
   — conquistas e missões sem ranking ou benefícios financeiros; exibição pública
   por padrão com privacidade e destaques; pesquisa de módulos e licenças.
 
-Esses diretórios contêm projetos dos futuros submódulos opcionais. Não são ainda
-extensões instaláveis ou habilitadas. Seus READMEs separam o estado do código
-existente, as decisões aprovadas e as fases de implementação.
+Fórum permanece documental. Game é instalável desde G1 e integra o backend de
+conquistas do User. Seus READMEs separam o estado do código, as decisões aprovadas
+e as fases de implementação.

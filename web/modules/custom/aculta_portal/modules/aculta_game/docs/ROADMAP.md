@@ -1,13 +1,14 @@
 # Roadmap — ACULTA Game
 
-Escopo de produto aprovado em 2026-10-15. G0 documenta o projeto; G1 em diante
-ainda não foram implementadas. Não instalar módulos candidatos antes da fase e
-da decisão correspondente. Cada entrega funcional terá PR rastreável.
+Escopo de produto aprovado em 2026-10-15. G0 documenta o projeto; G1 inicia a
+implementação. Estado e evidências em [EXECUCAO.md](EXECUCAO.md). Não instalar
+módulos candidatos antes da fase e da decisão correspondente. Por autorização
+do responsável, as fases são commits próprios na PR #286 existente.
 
 | Fase | Entrega | Critério de aceite |
 | --- | --- | --- |
 | G0 — pesquisa e abertura | README, decisões, arquitetura, licenças e evidências de pacotes | Distinguir fonte existente, proposta e compatibilidade ainda não homologada |
-| G1 — inventário e fonte única | Auditar concessões atuais e ownership; escolher transição/integração | Preservar IDs/datas/revogações; nenhum segundo backend; atualizar fontes de verdade |
+| G1 — concluída; inventário e fonte única | Auditar concessões atuais e ownership; escolher transição/integração | Preservar IDs/datas/revogações; nenhum segundo backend; atualizar fontes de verdade |
 | G2 — integridade dos eventos | Aprovação tardia de comentário, revisão Wiki, status LMS e critérios existentes | Repetição/concorrência não duplicam; importações e legados não recebem novas conquistas |
 | G3 — experiência e privacidade | Minha Conta, caixas, catálogo e escolhas de exibição pública | Público por padrão com ocultação, destaques e ordem; zero evidência privada publicada; acessibilidade e cache |
 | G4 — missões iniciais | Critérios e progresso sobre fontes reais aprovadas | Sem XP/ranking; limiares aprovados; fonte, escopo e versão do critério rastreáveis |
@@ -35,7 +36,7 @@ Open Badges interoperável não faz parte da primeira linha do projeto.
 
 Esta abertura documental não muda `.info.yml`. Antes de codar, declarar a
 classificação e a subversão alvo; conferir a sequência de merge contra `main`.
-Não criar tags sem pedido explícito. A PR #286 recebe apenas a abertura autorizada.
+Não criar tags sem pedido explícito. A PR #286 recebe a implementação por fases autorizada.
 
 Aplicar os gates Drupal 11+, fronteira módulo/tema, slugs e endereços quando
 pertinentes. Tema também exige Foundation. Alterações de entidade/provider

@@ -1,3 +1,12 @@
+## 0.4.0-dev.33 — ACULTA Game G1 — 2026-10-15
+
+Classificação: MINOR (submódulo opcional; integração inicial da gamificação).
+
+- Game `0.1.0-dev.1` assume os gatilhos automáticos, mantendo catálogo, serviço e
+  entidade de concessões no User `0.4.0-dev.3`. Nenhuma migração de dados/schema.
+- Fonte única, inventário e ativação pontual documentados em
+  `modules/aculta_game/docs/EXECUCAO.md`. Fases posteriores permanecem no roadmap.
+
 ## 0.4.0-dev.32 — correções do Messenger e fronteira de classes — 2026-10-15
 
 Classificação: PATCH.

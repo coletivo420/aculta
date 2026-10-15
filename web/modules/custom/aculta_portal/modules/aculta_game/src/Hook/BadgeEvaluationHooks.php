@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_user\Hook;
+namespace Drupal\aculta_game\Hook;
 
 use Drupal\aculta_user\Badge\BadgeCatalog;
 use Drupal\aculta_user\Badge\BadgeService;
@@ -14,7 +14,7 @@ use Drupal\node\NodeInterface;
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
- * Avaliação das badges automáticas, no momento do fato (plano aculta_user, seção G).
+ * Avaliação única das conquistas automáticas do Portal.
  *
  * Cada regra concede no fato que a cumpre; a concessão é idempotente. Automáticas nunca são revogadas.
  */
