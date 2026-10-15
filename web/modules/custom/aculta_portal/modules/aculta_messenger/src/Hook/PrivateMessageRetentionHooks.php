@@ -54,6 +54,9 @@ final class PrivateMessageRetentionHooks {
         continue;
       }
       try {
+        // Notification records point at the private messages that the thread's lifecycle deletes.
+        // Remove them in the same pass so no member still sees a notice for a conversation that is gone.
+        $this->deleteNotificationsFor($thread);
         // The contrib entity's preDelete lifecycle deletes its referenced
         // private messages and participant history using its supported API.
         $thread->delete();
@@ -68,6 +71,26 @@ final class PrivateMessageRetentionHooks {
 
     if ($deleted > 0) {
       $this->loggerFactory->get('aculta_messenger')->notice('Removed @count private conversations after six months without activity.', ['@count' => $deleted]);
+    }
+  }
+
+  /** Deletes the Messenger notification records that reference this thread's private messages. */
+  private function deleteNotificationsFor(PrivateMessageThreadInterface $thread): void {
+    $messageIds = array_values(array_map(
+      static fn($message) => $message->id(),
+      $thread->getMessages(TRUE),
+    ));
+    if ($messageIds === []) {
+      return;
+    }
+    $storage = $this->entityTypeManager->getStorage('message');
+    $notificationIds = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('template', 'aculta_msg_private_notification')
+      ->condition('field_aculta_messenger_source_pm', $messageIds, 'IN')
+      ->execute();
+    if ($notificationIds !== []) {
+      $storage->delete($storage->loadMultiple($notificationIds));
     }
   }
 
