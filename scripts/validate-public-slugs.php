@@ -34,8 +34,23 @@ $forbidden = ['course', 'courses_', 'group', 'node', 'user', 'lesson', 'activity
 $exempt = ['/admin', '/ajax', '/api', '/_', '.json'];
 
 $customRouting = glob($root . '/web/modules/custom/*/*.routing.yml') ?: [];
-$contribRouting = glob($root . '/web/modules/contrib/*/*.routing.yml') ?: [];
-$contribRouting = array_merge($contribRouting, glob($root . '/web/modules/contrib/*/*/*.routing.yml') ?: []);
+// Only contributed modules enabled in the exported configuration serve public routes. Submodules that
+// are present in the code but not enabled (e.g. message_subscribe_ui) register no route on the site,
+// so their path cannot be a public violation. Enabling one adds it to core.extension and to this scan.
+$enabledModules = [];
+$extension = Yaml::parseFile($root . '/config/sync/core.extension.yml');
+foreach (array_keys($extension['module'] ?? []) as $module) {
+  $enabledModules[$module] = TRUE;
+}
+$contribRouting = [];
+foreach (array_merge(
+  glob($root . '/web/modules/contrib/*/*.routing.yml') ?: [],
+  glob($root . '/web/modules/contrib/*/*/*.routing.yml') ?: [],
+) as $file) {
+  if (isset($enabledModules[basename($file, '.routing.yml')])) {
+    $contribRouting[] = $file;
+  }
+}
 $themeRouting = glob($root . '/web/themes/custom/*/*.routing.yml') ?: [];
 
 $violations = function (string $path) use ($exempt, $forbidden): array {

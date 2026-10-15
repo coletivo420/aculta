@@ -2,6 +2,25 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.14 — validação visual da central de avisos — 2026-10-15
+
+Classificação: PATCH (marcação de apresentação do módulo; sem mudança de acesso).
+
+- A descrição de cada item da visão geral de Avisos é um parágrafo próprio, e não texto solto após o link. Antes ficava colada ao título no desktop e no mobile.
+- Validação visual no runtime de teste com Chromium headless (desktop 1280 e mobile 390): visão geral, avisos temporários, persistentes, criação de persistente e caixa de mensagens da conta. Sem erro de PHP nas páginas.
+- Pendência menor: os botões "Criar" da visão geral ficam com alinhamento levemente diferente no mobile (margem do tema).
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
+## 0.1.1-dev.13 — consolidação com a main e central administrativa de avisos — 2026-10-15
+
+- Consolida o trabalho preservado do checkout de teste sobre a main (PR #284) e porta a central Avisos em `/painel-administrativo/avisos`, com abas temporários (Site Alert nativo) e persistentes (`aculta_notice`).
+- Correções de carregamento: propriedades readonly que colidiam com `ControllerBase`/`FormBase`; tipos inexistentes no Core (`path_alias`, `Component` TimeInterface, Social FriendshipManager, `QueueFactory`); aliases de autowire para serviços de contrib.
+- Regressões da linha antiga restauradas: proteção de desinstalação de comunicados e recibos; trava de texto puro e rótulo de envio; acesso a comunicados fail-closed e cache até a validade; permissões de mensagens no papel authenticated.
+- Nomes de campos e bundles até 32 caracteres (`aculta_msg_*`), alinhados ao runtime.
+- Testes unitários versionados (17 testes, 65 asserções, OK).
+- Atualização `aculta_user` 10002 (tabela `aculta_friendship`) aplicada no runtime após backup.
+- Entrega: PR #284 (consolidação) e PR #285 (central de avisos). RUNTIME STATUS: ACTIVE no runtime de testes; validação autenticada do fluxo de mensagens pendente.
+
 ## 0.1.1-dev.12 — navegação de conversas no painel lateral — 2026-10-15
 
 - Adiciona endpoints same-origin para carregar a lista e uma conversa no painel lateral.

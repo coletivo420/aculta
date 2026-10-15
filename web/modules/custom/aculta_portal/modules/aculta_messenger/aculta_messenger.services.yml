@@ -26,3 +26,10 @@ services:
     class: Drupal\aculta_messenger\EventSubscriber\PrivateMessageAccountRouteSubscriber
     tags:
       - { name: event_subscriber }
+  aculta_messenger.notice_admin_route_subscriber:
+    class: Drupal\aculta_messenger\EventSubscriber\NoticeAdminRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  aculta_messenger.persistent_notice_route_access:
+    class: Drupal\aculta_messenger\Access\PersistentNoticeRouteAccess
+    public: true
