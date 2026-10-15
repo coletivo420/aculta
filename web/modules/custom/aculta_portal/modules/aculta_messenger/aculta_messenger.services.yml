@@ -32,6 +32,10 @@ services:
     class: Drupal\aculta_messenger\EventSubscriber\PrivateMessageAccountRouteSubscriber
     tags:
       - { name: event_subscriber }
+  aculta_messenger.native_private_message_pages:
+    class: Drupal\aculta_messenger\EventSubscriber\NativePrivateMessagePagesSubscriber
+    tags:
+      - { name: event_subscriber }
   aculta_messenger.notice_admin_route_subscriber:
     class: Drupal\aculta_messenger\EventSubscriber\NoticeAdminRouteSubscriber
     tags:

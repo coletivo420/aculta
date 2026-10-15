@@ -7,23 +7,11 @@ namespace AcultaDeployer;
 /** Safely points a Hostinger domain's public_html at the Drupal web directory. */
 final class HostingerLayout {
 
-  /** @return array{domain_root: string, project_root: string, public_root: string, status: string, backup: ?string} */
-  public function inspect(string $domainRoot, string $projectName = 'aculta-site'): array {
+  /** @return array{domain_root: string, installation_root: string, public_root: string, status: string, backup: ?string} */
+  public function inspect(string $domainRoot): array {
     $root = realpath($domainRoot);
     if ($root === false || !is_dir($root) || $root === DIRECTORY_SEPARATOR) {
       throw new \RuntimeException('informe --domain-root apontando para uma pasta de domínio existente');
-    }
-    if ($projectName === '' || $projectName === '.' || $projectName === '..' || !preg_match('/^[A-Za-z0-9._-]+$/D', $projectName)) {
-      throw new \RuntimeException('--project-name deve ser um nome simples de pasta, sem caminho');
-    }
-
-    $projectPath = $root . DIRECTORY_SEPARATOR . $projectName;
-    if (is_link($projectPath) || !is_dir($projectPath)) {
-      throw new \RuntimeException('a instalação precisa ser uma pasta física dentro de --domain-root');
-    }
-    $projectRoot = realpath($projectPath);
-    if ($projectRoot === false || dirname($projectRoot) !== $root) {
-      throw new \RuntimeException('a pasta de instalação precisa ser filha direta da pasta do domínio');
     }
     foreach ([
       'composer.json',
@@ -31,17 +19,17 @@ final class HostingerLayout {
       'web/index.php',
       'web/sites/default/settings.php',
     ] as $required) {
-      if (!is_file($projectRoot . DIRECTORY_SEPARATOR . $required)) {
+      if (!is_file($root . DIRECTORY_SEPARATOR . $required)) {
         throw new \RuntimeException("instalação incompleta: arquivo obrigatório ausente ($required)");
       }
     }
-    $composerAutoload = $projectRoot . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+    $composerAutoload = $root . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
     if (!is_file($composerAutoload)) {
       throw new \RuntimeException('instalação incompleta: dependências Composer não instaladas');
     }
-    $webRoot = $projectRoot . DIRECTORY_SEPARATOR . 'web';
+    $webRoot = $root . DIRECTORY_SEPARATOR . 'web';
     if (is_link($webRoot) || !is_dir($webRoot)) {
-      throw new \RuntimeException('web/ precisa ser uma pasta física dentro da instalação');
+      throw new \RuntimeException('web/ precisa ser uma pasta física na raiz do projeto');
     }
 
     $publicRoot = $root . DIRECTORY_SEPARATOR . 'public_html';
@@ -60,14 +48,14 @@ final class HostingerLayout {
 
     return [
       'domain_root' => $root,
-      'project_root' => $projectRoot,
+      'installation_root' => $root,
       'public_root' => $publicRoot,
       'status' => $status,
       'backup' => $backup,
     ];
   }
 
-  /** @param array{domain_root: string, project_root: string, public_root: string, status: string, backup: ?string} $plan */
+  /** @param array{domain_root: string, installation_root: string, public_root: string, status: string, backup: ?string} $plan */
   public function activate(array $plan): string {
     if ($plan['status'] === 'already_linked') {
       return 'public_html já aponta para a raiz web da instalação';
@@ -84,7 +72,7 @@ final class HostingerLayout {
         throw new \RuntimeException('outra operação de layout está em andamento para este domínio');
       }
       // Reinspect after taking the lock so a stale plan cannot move a changed destination.
-      $current = $this->inspect($plan['domain_root'], basename($plan['project_root']));
+      $current = $this->inspect($plan['domain_root']);
       if ($current['status'] === 'already_linked') {
         return 'public_html já aponta para a raiz web da instalação';
       }
@@ -101,7 +89,7 @@ final class HostingerLayout {
         $moved = true;
       }
       try {
-        if (!symlink($current['project_root'] . DIRECTORY_SEPARATOR . 'web', $temporary)) {
+        if (!symlink($current['installation_root'] . DIRECTORY_SEPARATOR . 'web', $temporary)) {
           throw new \RuntimeException('não foi possível criar o symlink temporário para web/');
         }
         if (!rename($temporary, $current['public_root'])) {
@@ -118,7 +106,7 @@ final class HostingerLayout {
       }
       return $moved
         ? 'public_html ativado como symlink; conteúdo anterior preservado em ' . basename((string) $backup)
-        : 'public_html criado como symlink para aculta-site/web';
+        : 'public_html criado como symlink para web/ na raiz do projeto';
     } finally {
       flock($lock, LOCK_UN);
       fclose($lock);

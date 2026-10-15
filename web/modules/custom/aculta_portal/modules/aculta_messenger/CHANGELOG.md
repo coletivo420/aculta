@@ -2,6 +2,13 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.17 — mensagens só pela barra; preferências de e-mail em Configurações — 2026-10-15
+
+- Páginas nativas do Private Message fora da experiência do membro: a caixa de entrada redireciona para a página inicial da conta e a página de conversa responde 404. Os formulários de excluir, limpar histórico e bloquear continuam; a página de nova mensagem (usada pelo botão do perfil) continua até o início de conversa existir na barra.
+- Preferências de e-mail voltam como aba "Notificações por e-mail" em Minha conta > Configurações (`/configuracoes/email`). A aba aparece para quem pode mensagens, e o formulário mostra os controles desabilitados quando as notificações estão desligadas no site.
+- Notificações de e-mail seguem desligadas no runtime de teste (`enable_notifications` ausente). Ligar exige decisão, porque envia e-mails reais.
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.1.1-dev.16 — mensagens saem da Minha conta; permissões das rotas corrigidas — 2026-10-15
 
 - Mensagens passam a existir só na barra multidomínio. Saem da Minha conta a seção, a aba de configurações de comunicação, as páginas de conversas, avisos e notificações (rotas removidas) e o formulário de preferências. As preferências de e-mail (`private_message.receive_notification`) continuam salvas.

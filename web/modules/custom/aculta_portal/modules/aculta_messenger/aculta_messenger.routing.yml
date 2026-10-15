@@ -90,3 +90,15 @@ aculta_messenger.admin_persistent_notice_add:
       node_type:
         type: entity:node_type
         with_config_overrides: true
+
+aculta_messenger.communication_settings:
+  path: '/configuracoes/email'
+  defaults:
+    _form: '\Drupal\aculta_messenger\Form\CommunicationSettingsForm'
+    _title: 'Notificações por e-mail'
+  requirements:
+    _permission: 'access aculta portal,use private messaging system'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: account

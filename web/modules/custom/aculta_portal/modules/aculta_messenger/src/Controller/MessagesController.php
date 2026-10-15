@@ -171,14 +171,6 @@ final class MessagesController extends ControllerBase {
       $drawerConversationUrl = Url::fromRoute('aculta_messenger.drawer_conversation', [
         'private_message_thread' => $thread->id(),
       ]);
-      $accountConversationUrl = $this->domainPurposeManager->routeUrl(
-        'account',
-        'entity.private_message_thread.canonical',
-        ['private_message_thread' => $thread->id()],
-      );
-      if ($accountConversationUrl === NULL) {
-        continue;
-      }
       $lastMessageTimestamp = (int) $thread->getNewestMessageCreationTimestamp();
       $sentDate = $this->dateFormatter->format(
         $lastMessageTimestamp > 0 ? $lastMessageTimestamp : (int) $thread->getUpdatedTime(),
@@ -192,8 +184,8 @@ final class MessagesController extends ControllerBase {
       $openLink = [
         '#type' => 'link',
         '#title' => $linkTitle,
-        // Without JavaScript, retain a useful native Private Message page.
-        '#url' => $accountConversationUrl,
+        // Conversations are read in the bar drawer only; without JavaScript the link opens the same drawer route.
+        '#url' => $drawerConversationUrl,
         '#attributes' => [
           'class' => ['aculta-messenger-sender__link'],
           'data-aculta-conversation-url' => $drawerConversationUrl->toString(),
