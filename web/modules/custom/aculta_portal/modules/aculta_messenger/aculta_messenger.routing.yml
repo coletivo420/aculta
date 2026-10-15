@@ -1,24 +1,10 @@
-aculta_messenger.messages:
-  path: '/mensagens'
-  defaults:
-    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::overview'
-    _title: 'Mensagens'
-  requirements:
-    _permission: 'access aculta portal, use private messaging system, access user profiles'
-    _user_is_logged_in: 'TRUE'
-  options:
-    no_cache: true
-    _aculta_domain_purpose: account
-
-# Same-origin dialog fragment, available on each public purpose so Drupal AJAX
-# never crosses hosts. Conversation actions still link canonically to ACCOUNT.
 aculta_messenger.preview:
   path: '/mensagens/resumo'
   defaults:
     _controller: '\Drupal\aculta_messenger\Controller\MessagesController::preview'
     _title: 'Mensagens'
   requirements:
-    _permission: 'use private messaging system, access user profiles'
+    _permission: 'use private messaging system,access user profiles'
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
@@ -33,25 +19,13 @@ aculta_messenger.alerts_preview:
   options:
     no_cache: true
 
-aculta_messenger.conversations:
-  path: '/mensagens/conversas'
-  defaults:
-    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::conversations'
-    _title: 'Conversas'
-  requirements:
-    _permission: 'access aculta portal, use private messaging system, access user profiles'
-    _user_is_logged_in: 'TRUE'
-  options:
-    no_cache: true
-    _aculta_domain_purpose: account
-
 aculta_messenger.drawer_conversations:
   path: '/mensagens/conversas/painel'
   defaults:
     _controller: '\Drupal\aculta_messenger\Controller\MessagesController::drawerConversations'
     _title: 'Conversas'
   requirements:
-    _permission: 'use private messaging system, access user profiles'
+    _permission: 'use private messaging system,access user profiles'
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
@@ -63,7 +37,7 @@ aculta_messenger.drawer_conversation:
     _title: 'Conversa'
   requirements:
     _entity_access: 'private_message_thread.view'
-    _permission: 'use private messaging system, access user profiles'
+    _permission: 'use private messaging system,access user profiles'
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
@@ -71,49 +45,13 @@ aculta_messenger.drawer_conversation:
       private_message_thread:
         type: entity:private_message_thread
 
-aculta_messenger.notices:
-  path: '/mensagens/avisos'
-  defaults:
-    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::notices'
-    _title: 'Avisos'
-  requirements:
-    _permission: 'access aculta portal, use private messaging system, access user profiles'
-    _user_is_logged_in: 'TRUE'
-  options:
-    no_cache: true
-    _aculta_domain_purpose: account
-
-aculta_messenger.notifications:
-  path: '/mensagens/notificacoes'
-  defaults:
-    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::notifications'
-    _title: 'Notificações'
-  requirements:
-    _permission: 'access aculta portal, use private messaging system, access user profiles'
-    _user_is_logged_in: 'TRUE'
-  options:
-    no_cache: true
-    _aculta_domain_purpose: account
-
-aculta_messenger.communication_settings:
-  path: '/configuracoes/mensagens'
-  defaults:
-    _form: '\Drupal\aculta_messenger\Form\CommunicationSettingsForm'
-    _title: 'Mensagens e notificações'
-  requirements:
-    _permission: 'access aculta portal, use private messaging system'
-    _user_is_logged_in: 'TRUE'
-  options:
-    no_cache: true
-    _aculta_domain_purpose: account
-
 aculta_messenger.admin_notices:
   path: '/painel-administrativo/avisos'
   defaults:
     _controller: '\Drupal\aculta_messenger\Controller\NoticeAdminController::overview'
     _title: 'Avisos'
   requirements:
-    _permission: 'administer site alert, administer nodes'
+    _permission: 'administer site alert,administer nodes'
   options:
     _admin_route: true
 

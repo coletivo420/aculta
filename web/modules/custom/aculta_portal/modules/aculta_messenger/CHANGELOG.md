@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.16 — mensagens saem da Minha conta; permissões das rotas corrigidas — 2026-10-15
+
+- Mensagens passam a existir só na barra multidomínio. Saem da Minha conta a seção, a aba de configurações de comunicação, as páginas de conversas, avisos e notificações (rotas removidas) e o formulário de preferências. As preferências de e-mail (`private_message.receive_notification`) continuam salvas.
+- O link de volta das conversas aparece só no drawer. O e-mail de nova mensagem leva à página inicial da conta.
+- Correção: as rotas de mensagens usavam `, ` em `_permission`, que o Core lê como E com espaços. Membros com as permissões recebiam 403 em Mensagens. Corrigido para a sintaxe do Core.
+- Teste de ownership das notificações removido com a página que testava.
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.1.1-dev.15 — correções da revisão de código do Messenger — 2026-10-15
 
 Classificação: PATCH (correções; sem API nova).

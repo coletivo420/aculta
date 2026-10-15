@@ -283,7 +283,7 @@ final class ThemeHooks {
    */
   private function presentMessengerPage(array &$variables, ?string $routeName): void {
     $component = match ($routeName) {
-      'aculta_messenger.messages', 'aculta_messenger.conversations', 'aculta_messenger.notifications', 'aculta_messenger.notices', 'private_message.private_message_page' => 'aculta420:messenger-list',
+      'private_message.private_message_page' => 'aculta420:messenger-list',
       'aculta_messenger.preview' => 'aculta420:messenger-list',
       'private_message.private_message_create' => 'aculta420:messenger-compose',
       default => NULL,
@@ -300,19 +300,7 @@ final class ThemeHooks {
     $original = $content;
     $props = [];
     $slot = 'content';
-    if ($routeName === 'aculta_messenger.messages') {
-      $props['label'] = 'Ações de mensagens';
-    }
-    elseif ($routeName === 'aculta_messenger.conversations') {
-      $props['label'] = 'Todas as conversas';
-    }
-    elseif ($routeName === 'aculta_messenger.notifications') {
-      $props['label'] = 'Notificações';
-    }
-    elseif ($routeName === 'aculta_messenger.notices') {
-      $props['label'] = 'Avisos';
-    }
-    elseif ($routeName === 'private_message.private_message_page') {
+    if ($routeName === 'private_message.private_message_page') {
       $props['label'] = 'Conversas';
     }
     elseif ($routeName === 'aculta_messenger.preview') {
@@ -397,21 +385,6 @@ final class ThemeHooks {
         'avatar' => $variables['aculta_messenger_sender_avatar'] ?? [],
         'content' => $content,
       ],
-    ];
-  }
-
-  /** Wraps the account-owned Message output without changing its data or access. */
-  #[Hook('preprocess_message')]
-  public function preprocessMessage(array &$variables): void {
-    if ($this->routeMatch->getRouteName() !== 'aculta_messenger.notifications'
-      || !is_array($variables['content'] ?? NULL)) {
-      return;
-    }
-    $content = $variables['content'];
-    $variables['content'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420:messenger-notification',
-      '#slots' => ['content' => $content],
     ];
   }
 

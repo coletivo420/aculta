@@ -50,10 +50,9 @@ final class PrivateMessageReplyHooks {
       return;
     }
 
+    // Conversations are read in the multidomain bar drawer only; there is no account page to go back to.
     $isDrawerConversation = $this->currentRouteMatch->getRouteName() === 'aculta_messenger.drawer_conversation';
-    $conversationsUrl = $isDrawerConversation
-      ? Url::fromRoute('aculta_messenger.drawer_conversations')
-      : $this->domainPurposeManager->routeUrl('account', 'aculta_messenger.conversations');
+    $conversationsUrl = $isDrawerConversation ? Url::fromRoute('aculta_messenger.drawer_conversations') : NULL;
     if ($conversationsUrl !== NULL) {
       $build['aculta_messenger_back_to_conversations'] = [
         '#type' => 'link',

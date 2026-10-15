@@ -76,37 +76,6 @@ final class MessagesController extends ControllerBase {
     );
   }
 
-  /** Shows the communication entry points and native unread-thread count. */
-  public function overview(): array {
-    $count = $this->unreadThreadCounter->count();
-    $summary = $count === 1
-      ? $this->translation->translate('Você tem 1 conversa não lida.')
-      : $this->translation->translate('Conversas não lidas: @count.', ['@count' => $count]);
-
-    return [
-      'summary' => ['#plain_text' => (string) $summary],
-      'links' => [
-        '#theme' => 'item_list',
-        '#items' => [
-          ['#type' => 'link', '#title' => $this->translation->translate('Conversas'), '#url' => Url::fromRoute('aculta_messenger.conversations')],
-          ['#type' => 'link', '#title' => $this->translation->translate('Avisos'), '#url' => Url::fromRoute('aculta_messenger.notices')],
-          ['#type' => 'link', '#title' => $this->translation->translate('Notificações'), '#url' => Url::fromRoute('aculta_messenger.notifications')],
-        ],
-      ],
-      '#cache' => ['contexts' => ['user'], 'max-age' => 0],
-    ];
-  }
-
-  /** Sends members to the native Private Message inbox. */
-  public function conversations(): TrustedRedirectResponse {
-    $url = $this->domainPurposeManager->routeUrl('account', 'private_message.private_message_page');
-    if ($url === NULL) {
-      throw new NotFoundHttpException();
-    }
-
-    return new TrustedRedirectResponse($url->toString());
-  }
-
   /** Returns the inbox preview used by the existing drawer fetch. */
   public function preview(): Response {
     $build = $this->buildConversationList();
@@ -429,21 +398,6 @@ final class MessagesController extends ControllerBase {
     ]);
   }
 
-  /** Lists published persistent notices visible to this member, with Flag state. */
-  public function notices(): array {
-    $cacheability = (new CacheableMetadata())
-      ->addCacheContexts(['user'])
-      ->addCacheTags($this->entityTypes->getDefinition('node')->getListCacheTags())
-      ->setCacheMaxAge(0);
-    $items = $this->buildPersistentNoticeItems(50, $cacheability);
-    if ($items === []) {
-      $items[] = ['#plain_text' => (string) $this->translation->translate('Não há avisos institucionais disponíveis para sua conta.')];
-    }
-    $build = ['#theme' => 'item_list', '#items' => $items];
-    $cacheability->applyTo($build);
-    return $build;
-  }
-
   /** Builds authorized notice render arrays and native per-member Flag actions. */
   private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability): array {
     $ids = $this->entityTypes->getStorage('node')->getQuery()
@@ -504,53 +458,6 @@ final class MessagesController extends ControllerBase {
     $link['#attributes']['aria-label'] = (string) $this->translation->translate('Dispensar aviso');
     $link['#attributes']['title'] = (string) $this->translation->translate('Dispensar aviso');
     return $link;
-  }
-
-  /** Lists only delivered private-message notices owned by the current user. */
-  public function notifications(): array {
-    $uid = (int) $this->account->id();
-    if ($uid < 1) {
-      throw new NotFoundHttpException();
-    }
-
-    // Message has no owner-scoped access handler. This query deliberately
-    // disables generic access checks and constrains the result to the session UID.
-    $ids = $this->entityTypes->getStorage('message')->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('template', self::PRIVATE_MESSAGE_TEMPLATE)
-      ->condition('uid', $uid)
-      ->condition('field_aculta_msg_delivery', 'sent')
-      ->sort('created', 'DESC')
-      ->range(0, 25)
-      ->execute();
-    $messages = $this->entityTypes->getStorage('message')->loadMultiple($ids);
-    $items = [
-      'friend_requests' => $this->forms->getForm(FriendRequestsForm::class),
-      'messages' => [],
-    ];
-    $cacheability = (new CacheableMetadata())
-      ->addCacheContexts(['user'])
-      ->addCacheTags($this->entityTypes->getDefinition('message')->getListCacheTags());
-    foreach ($messages as $message) {
-      if (!$message instanceof MessageInterface || (int) $message->getOwnerId() !== $uid) {
-        continue;
-      }
-      $items['messages'][] = $this->entityTypes->getViewBuilder('message')->view($message, 'mail_body', 'pt-br');
-      $cacheability->addCacheableDependency($message);
-    }
-
-    if ($items['messages'] === []) {
-      $items['messages'][] = ['#plain_text' => (string) $this->translation->translate('Você ainda não recebeu notificações de mensagens.')];
-    }
-
-    $build = [
-      'friend_requests' => $items['friend_requests'],
-      'messages' => ['#theme' => 'item_list', '#items' => $items['messages']],
-      '#cache' => ['max-age' => 0],
-    ];
-    $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
-    $cacheability->applyTo($build);
-    return $build;
   }
 
   /** A same-site, non-prefetch request, i.e. one the member opened on this site. */
