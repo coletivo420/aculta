@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.5 — pontos de integração do Game no perfil e na atividade — 2026-10-15
+
+- Alters neutros `aculta_user_public_profile` e `aculta_user_activity_content`
+  permitem Game opcional; User não depende dos serviços ou classes do Game.
+- Module Handler injetado nos controllers; nenhuma lógica de conquista no tema.
+- Evidências de G3 em `../aculta_game/docs/EXECUCAO.md`.
+
 ## 0.4.0-dev.4 — integridade da API de conquistas — 2026-10-15
 
 - Novas concessões apenas a contas ativas e sem papel legado.

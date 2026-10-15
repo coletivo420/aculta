@@ -1,5 +1,16 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.3 — G3: conta, perfil e escolhas de exibição — 2026-10-15
+
+- Lista própria e formulário na aba Conquistas; entrada pelos ajustes de privacidade.
+- Projeção pública única, ocultação global/individual, destaques e ordenação.
+- Preferências no User Data do User, preservadas após desinstalar Game.
+- Perfil privado, conta bloqueada e legado não publicam conquistas; sem evidência
+  de curso/pedido na projeção. Render API e tags de invalidação preservados.
+- Helper registrado no Status; nenhum novo componente, CSS ou rota.
+- Renderizações no Homelab verificadas; interação e matriz funcional pendentes,
+  conforme [EXECUCAO.md](docs/EXECUCAO.md).
+
 ## 0.1.0-dev.2 — G2: integridade dos eventos — 2026-10-15
 
 - Aprovação posterior de comentário, publicação de revisão da Wiki e transições

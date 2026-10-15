@@ -10,11 +10,14 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Url;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Integra Game aos pontos de extensão neutros do User. */
 final class ProfileHooks {
+
+  use StringTranslationTrait;
 
   public function __construct(
     #[Autowire(service: 'aculta_game.achievement_presentation')]
@@ -41,11 +44,11 @@ final class ProfileHooks {
   public function privacy(array &$form, FormStateInterface $formState): void {
     $form['conquistas'] = [
       '#type' => 'details',
-      '#title' => 'Conquistas',
+      '#title' => $this->t('Conquistas'),
       '#weight' => 20,
       'link' => [
         '#type' => 'link',
-        '#title' => 'Escolher conquistas públicas e destaques',
+        '#title' => $this->t('Escolher conquistas públicas e destaques'),
         '#url' => Url::fromRoute('aculta_user.atividade', ['aba' => 'conquistas']),
       ],
     ];

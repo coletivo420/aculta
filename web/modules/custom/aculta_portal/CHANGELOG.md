@@ -1,3 +1,13 @@
+## 0.4.0-dev.35 — ACULTA Game G3 — 2026-10-15
+
+Classificação: MINOR (conquistas na conta e no perfil com escolhas de exibição).
+
+- Game `0.1.0-dev.3` usa contratos neutros do User `0.4.0-dev.5`, com ocultação,
+  destaques, ordem e cache; preferências preservadas no User Data do User.
+- Status/gate incluem helper opcional declarado pelo próprio submódulo.
+- Sem alteração do tema ou nova rota; evidências e limites funcionais registrados
+  em `modules/aculta_game/docs/EXECUCAO.md`.
+
 ## 0.4.0-dev.34 — ACULTA Game G2 — 2026-10-15
 
 Classificação: PATCH (integridade dos gatilhos e da API existente).

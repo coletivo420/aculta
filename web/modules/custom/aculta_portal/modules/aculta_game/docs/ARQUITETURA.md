@@ -1,7 +1,7 @@
 # Arquitetura — ACULTA Game
 
-Status: proposta técnica para as decisões de produto aprovadas. Nenhum serviço
-ou schema descrito como futuro foi instalado por esta documentação.
+Status: arquitetura aprovada em evolução. G1–G3 têm código; evidências e limites
+em [EXECUCAO.md](EXECUCAO.md). Partes descritas como futuras continuam propostas.
 
 ## Fontes e responsabilidades
 
@@ -40,9 +40,9 @@ vira backend de conquistas nem recebe acesso irrestrito às fontes por conveniê
 
 ## Transição do que já existe
 
-O checkout mantém `BadgeCatalog`, `BadgeService`, `BadgeEvaluationHooks` e
-`BadgeAward` no `aculta_user`. O primeiro passo do Game é integrar a fonte atual,
-preservando `aculta_badge_award`, IDs, datas e revogações.
+O checkout mantém `BadgeCatalog`, `BadgeService` e `BadgeAward` no `aculta_user`.
+G1 transferiu `BadgeEvaluationHooks` ao Game e preservou `aculta_badge_award`,
+IDs, datas e revogações. G2 modifica as condições dos gatilhos e serializa a API.
 
 Não mover o provider da entidade só para adequar namespace. Mudança de provider
 afeta discovery, instalação e uninstall e exige update/migração próprios com
@@ -92,6 +92,24 @@ respeita tentativas, limites e retomada. Não usar estado de sessão como prova.
 Concessão administrativa exige permissão restrita, motivo e ator auditável.
 
 ## Visibilidade aprovada
+
+G3 implementa o serviço `aculta_game.achievement_presentation`, o formulário
+`AchievementDisplayForm` e hooks nos contratos neutros `aculta_user_public_profile`
+e `aculta_user_activity_content`. A ausência de Game mantém User independente.
+Os alters recebem render arrays, perfil ou aba/UID atual; não transferem Domain
+ou serviços ao tema. Futuras caixas devem reutilizar `publicFor()`.
+
+Preferências usam `UserDataInterface`, namespace `aculta_user`, chave
+`game_achievement_display`: ocultação global, mapa de ocultação/destaque/peso por
+ID do catálogo. O namespace do User preserva escolhas após desinstalar Game.
+O formulário lê a pessoa da sessão e não aceita UID do cliente. Form API protege
+o POST; o link da privacidade usa a rota existente da Conta.
+
+Tags da entidade/lista de conquistas, perfil, usuário e
+`aculta_game:display:<uid>` invalidam a projeção. `savePreferences()` invalida a
+tag da pessoa. Lista própria varia por `user`; a pública contém a mesma seleção
+para qualquer visitante e varia por idioma. Formulário não é cacheável.
+Não há endpoint público de evidências, feed, autocomplete ou contador novo.
 
 Conquistas elegíveis são públicas por padrão. A pessoa pode ocultar tudo,
 ocultar conquistas específicas e escolher destaques/ordem. A política geral do

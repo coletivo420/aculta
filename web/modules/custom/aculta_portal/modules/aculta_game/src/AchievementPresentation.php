@@ -69,7 +69,8 @@ final class AchievementPresentation {
     $cache->addCacheableDependency($owner);
     $public = !$profile->hasField('field_perfil_publico') || $profile->get('field_perfil_publico')->isEmpty()
       || (bool) $profile->get('field_perfil_publico')->value;
-    if (!$this->badges->isEligible($uid) || (!$public && !PublicProfilePolicy::isObrigatorioPublico($owner?->getRoles() ?? []))) {
+    $identified = $profile->bundle() === 'participante' && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty();
+    if (!$identified || !$this->badges->isEligible($uid) || (!$public && !PublicProfilePolicy::isObrigatorioPublico($owner?->getRoles() ?? []))) {
       $build = [];
       $cache->applyTo($build);
       return $build;

@@ -71,7 +71,14 @@ eventual mudança de ownership exigem transição própria. A decisão atual é
 conquistas públicas por padrão com ocultação e destaques, sem ranking ou
 benefícios financeiros; evidências privadas continuam sujeitas a acesso.
 
-Fórum está em documentação; Game inicia implementação em G1. A tabela de capacidades existentes
+Desde G3, escolhas de exibição pertencem ao User Data de `aculta_user`, chave
+`game_achievement_display`. O helper `aculta_game.achievement_presentation`
+entrega conquistas ao perfil público e à própria conta, com cache e privacidade;
+não inclui dados de pedidos, cursos ou avaliadores. Nenhuma concessão é duplicada
+para representar destaque ou ocultação. Caixas adicionais e missões seguem o roadmap.
+
+Fórum está em documentação; Game implementa G1–G3 com homologação funcional
+parcial pendente. A tabela de capacidades existentes
 não significa que seus roadmaps estejam implementados ou homologados.
 
 ### Princípio

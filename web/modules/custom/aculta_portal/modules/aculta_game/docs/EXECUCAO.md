@@ -86,3 +86,54 @@ PHP lint e gates Drupal 11+ (773), fronteira (1036), endereços (1722) PASS;
 anônimo inelegível e os dois registros mantiveram o digest integral de G1. Não foram executadas simulações concorrentes ou fluxos de
 publicação/aprovação de conteúdo. **RUNTIME STATUS: DEFERRED** para a matriz
 funcional de G2; a implementação não encerra sua homologação. G3 permanece pendente.
+
+## G3 — conta, perfil público e privacidade
+
+Classificação MINOR: Game `0.1.0-dev.3`, User `0.4.0-dev.5`, Portal `0.4.0-dev.35`.
+
+O checkout é compartilhado: uma execução paralela incluiu os arquivos iniciais de
+G3 no commit publicado `828b076`, junto de alterações do Messenger. O commit de
+registro da fase preserva esse histórico e reúne marcadores de versão, contratos,
+revisão final e evidência; não representa um segundo backend ou implementação.
+
+- Aba existente `/atividade/conquistas`, no purpose ACCOUNT, passa a mostrar
+  conquistas reais e o formulário da própria pessoa. Sem UID fornecido pelo cliente.
+- Perfil `/u/{apelido}` no MAIN recebe apenas a projeção pública, sem atores,
+  evidências, nomes de cursos, notas, pedidos ou dados cadastrais. Sem conquistas
+  visíveis, nenhum título/contador de itens ocultos é publicado.
+- Perfil privado prevalece, conforme a política existente de perfis públicos
+  obrigatórios. Contas bloqueadas e legadas não têm projeção pública de conquistas.
+- Preferências públicas por padrão; ocultação global/individual, destaques e
+  ordem por peso. Destaque não contorna ocultação. Lista própria mostra os fatos
+  independentemente das escolhas públicas.
+- Preferências via User Data do User; nenhum campo/schema/configuração novo.
+  Desinstalar Game não apaga escolhas mantidas pelo User. Um link em
+  Configurações → Privacidade leva ao formulário já integrado à aba.
+- User oferece alters neutros, sem depender de Game. Renderização usa Form API,
+  details e item list existentes, sem CSS, JS, ícone ou classe visual nova.
+- Helper tem tag e metadados do Status. Gate passa a conferir serviços opcionais
+  no YAML de seus módulos, além dos serviços do Portal principal.
+- Novas caixas de autoria, missões e avisos permanecem nas fases seguintes.
+
+### APIs e cache
+
+[User Data](https://api.drupal.org/api/drupal/core!modules!user!src!UserDataInterface.php/interface/UserDataInterface/11.x)
+e [cache de render arrays](https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays)
+conferidos com o código Core instalado. Preferências invalidam a tag individual;
+entidade/lista de concessões, perfil e usuário propagam suas tags. Formulário
+privado não é cacheável; lista própria varia por pessoa, pública por idioma.
+
+### Validação e limites
+
+Cache rebuild concluído no Runtime previamente confirmado. Container resolveu
+helper e hooks. As listas próprias e públicas dos dois titulares de conquistas
+foram renderizadas sem erro. Form API renderizou as seis escolhas, ocultação
+global e ação de salvar, sob troca transitória de conta em memória, revertida no
+fim; nenhuma preferência, conta, conteúdo ou conquista foi alterada pelo smoke.
+
+PHP lint PASS; gates Drupal 11+ (774), fronteira (1040) e endereços (1726) PASS;
+`git diff --check` PASS.
+
+**RUNTIME STATUS: DEFERRED** para submissão no navegador, duas sessões, ocultação,
+destaques, cache após POST e inspeção de acessibilidade/mobile. Renderização não
+equivale a essas verificações. G3 implementada, homologação funcional pendente.

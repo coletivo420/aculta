@@ -1,9 +1,10 @@
 # ACULTA Game — conquistas e missões
 
 Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
-Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável
-e assume os gatilhos automáticos antes mantidos no User. As demais fases do
-roadmap continuam pendentes; ainda não há interface de missões ou de privacidade.
+Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável;
+G2 corrige os gatilhos; G3 integra conquistas e escolhas de exibição à Minha Conta
+e ao perfil público. Homologação funcional e fases seguintes estão registradas
+em [EXECUCAO.md](docs/EXECUCAO.md). Ainda não há catálogo de missões habilitado.
 
 ## Proposta
 
@@ -64,6 +65,13 @@ Game depende de User e Portal; User/Portal não dependem de Game. A ativação �
 pontual por `drush en aculta_game`, sem dependência Composer nova. Remover Game
 interrompe a avaliação automática; a entidade e suas concessões continuam no
 User. Não desinstalar User como forma de desativar gamificação.
+
+G3: `0.1.0-dev.3`, classificação MINOR. Em Minha Conta → Atividade → Conquistas,
+a pessoa vê suas conquistas e configura ocultação global/individual, destaques e
+ordem. Configurações → Privacidade oferece um link para esses controles. O perfil
+público usa a mesma projeção, respeitando privacidade geral, conta ativa e legado.
+Preferências pertencem ao User Data de `aculta_user`, para sobreviver à remoção
+do Game. Sem rota nova, biblioteca visual nova ou mudança de tema nesta fase.
 
 Evidência por fase: [execução](docs/EXECUCAO.md).
 
