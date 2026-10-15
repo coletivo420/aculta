@@ -1,3 +1,14 @@
+## 0.1.0-rc.1 — release candidate da ACULTA Gallery — 2026-10-15
+
+Classificação: RC (fecha a Fase 10, validação de release no servidor de testes). Versão declarada pelo responsável; tag Git não criada (somente com pedido explícito).
+
+- Fase 10 concluída no servidor de testes em duas rodadas de navegador (`docs/portal/TESTES-NAVEGADOR.md`, seção O):
+  - permissões (visualização na Revista, 403 no principal, edição só pelo administrador), palco (66 slides, teclado, toque, sem erros de JavaScript), lightbox, diálogo "Criar galeria" (upload e "Criar e inserir"), inserção no artigo e renderização na Revista;
+  - defeitos encontrados e corrigidos: lightbox `1 / 1` (PR #274); grupo "Imagem" fechado escondendo o campo obrigatório e o botão de mídia (PR #278); balão de dica sobre o menu do editor interceptando "Criar galeria" (PR #279).
+- Reordenação por arrasto: não existe nesta versão; a ordem é o campo de peso do widget. Fora do escopo da RC.
+- Pendente após a RC: teste com toque em aparelho real; rodada de regressão quando o servidor de testes for atualizado com os merges (configuração e código).
+- RUNTIME STATUS: verificado no servidor de testes (duas rodadas de navegador, verificações por HTTP e banco). Inspeção visual humana pendente.
+
 # Changelog — ACULTA Gallery
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
