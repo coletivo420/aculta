@@ -44,6 +44,11 @@ final class PrivateMessageFormValidator {
 
     foreach ($thread->getMembersId() as $memberId) {
       $memberId = (int) $memberId;
+      // A block by the sender stops the sending. The conversation stays listed; "Opções" unblocks.
+      if ($memberId !== (int) $this->currentUser->id() && $this->banManager->isBanned($memberId)) {
+        $formState->setErrorByName('members', $this->translation->translate('Você bloqueou este membro. Desbloqueie-o nas opções da conversa para enviar mensagens.'));
+        return;
+      }
       if ($memberId !== (int) $this->currentUser->id()
         && $this->banManager->isCurrentUserBannedByUser($memberId)) {
         // Do not disclose whether the recipient exists or who blocked whom.

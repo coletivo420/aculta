@@ -2,6 +2,16 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.26 — bloquear mantém a conversa visível e impede o envio — 2026-10-15
+
+Classificação: MINOR (muda o comportamento de bloqueio do Private Message nesta instalação).
+
+- Quem bloqueia um membro continua vendo a conversa na lista, e pode desbloquear pelas "Opções". Antes, o Private Message escondia a conversa de quem bloqueou, e o desbloqueio ficava inacessível pela gaveta.
+- A troca é feita por `AcultaMessengerServiceProvider`, que troca a classe do serviço `private_message.mapper` por `MessengerPrivateMessageMapper`. A subclasse só muda `getBannedThreads()` (não exclui conversas por bloqueio). O serviço, os argumentos e a consulta de envio do contrib continuam os mesmos.
+- O envio é recusado nos dois sentidos: quem bloqueou não envia (o formulário de resposta fica desabilitado, como já fazia o Private Message), e o bloqueado não envia ao bloqueador (regra que já existia). `PrivateMessageFormValidator::validateBlockedRecipients` ganhou a recusa para quem bloqueou, com mensagem em português.
+- Verificado por POST no runtime de testes: a conversa segue na lista do bloqueador; o envio é recusado; "Desbloquear" restaura o formulário de resposta.
+- Pendência: o aviso que o Private Message mostra a quem bloqueou, "User is unable to receive your message", vem da configuração `private_message.settings:ban_message`, que não é exportada no repositório. Trocar o texto exige decisão sobre a configuração versionada.
+
 ## 0.1.1-dev.25 — "Opções" da conversa: amizade, bloqueio e menu — 2026-10-15
 
 Classificação: MINOR (novas ações na conversa: amizade e bloqueio; menu novo).
