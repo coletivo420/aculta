@@ -13,7 +13,7 @@ Plataforma Drupal 11 multidomínio da Associação Cultural Antiproibicionista.
 | `wiki` | `wiki420.aculta.org` | Wiki420 |
 | `shop` | `loja.aculta.org` | comércio (produtos, camisetas) |
 | `courses` | `cursos.aculta.org` | aprendizagem (LMS) |
-| `forum` | `forum.aculta.org` | comunidade (fórum) |
+| `forum` | `growroom420.aculta.org` | comunidade (fórum) |
 | `links` | `links.aculta.org` | redes sociais da ACULTA (página `/redes-sociais`) |
 
 Os hosts de teste são `*.aculta.toca.net.br` (Homelab, noindex). Os hosts de produção são os da coluna acima.

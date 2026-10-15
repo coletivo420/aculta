@@ -32,7 +32,7 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | wiki | wiki420.aculta.org | wiki420.aculta.toca.net.br | ativo |
 | shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo futuro |
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |
-| forum | forum.aculta.org | forum.aculta.toca.net.br | ativo (0.2.0-dev.57) |
+| forum | growroom420.aculta.org | growroom420.aculta.toca.net.br | ativo (0.2.0-dev.57) |
 | links | links.aculta.org | links.aculta.toca.net.br | perfil público de redes sociais; produção ainda não provisionada |
 
 ## Redes sociais (LINKS)

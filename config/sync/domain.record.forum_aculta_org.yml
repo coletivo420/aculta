@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 id: forum_aculta_org
 domain_id: 74050399
-hostname: forum.aculta.org
+hostname: growroom420.aculta.org
 name: 'ACULTA - Fórum'
 scheme: https
 weight: 8

@@ -57,8 +57,8 @@
       },
       {
         "domain_id": "forum_aculta_org",
-        "test_host": "forum.aculta.toca.net.br",
-        "production_host": "forum.aculta.org"
+        "test_host": "growroom420.aculta.toca.net.br",
+        "production_host": "growroom420.aculta.org"
       },
       {
         "domain_id": "cursos_aculta_org",
@@ -110,7 +110,7 @@
         "https://apoio.aculta.toca.net.br/",
         "https://revista420.aculta.toca.net.br/",
         "https://loja.aculta.toca.net.br/",
-        "https://forum.aculta.toca.net.br/",
+        "https://growroom420.aculta.toca.net.br/",
         "https://wiki420.aculta.toca.net.br/",
         "https://links.aculta.toca.net.br/"
       ],
@@ -356,7 +356,7 @@
         {
           "file": "config/sync/domain.record.forum_aculta_org.yml",
           "pattern": "^hostname: .*$",
-          "with": "hostname: forum.aculta.org"
+          "with": "hostname: growroom420.aculta.org"
         },
         {
           "file": "config/sync/domain.record.cursos_aculta_org.yml",
@@ -436,7 +436,7 @@
         {
           "file": "config/sync/domain.record.forum_aculta_org.yml",
           "pattern": "^hostname: .*$",
-          "with": "hostname: forum.aculta.toca.net.br"
+          "with": "hostname: growroom420.aculta.toca.net.br"
         },
         {
           "file": "config/sync/domain.record.cursos_aculta_org.yml",
