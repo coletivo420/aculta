@@ -14,6 +14,8 @@
 - [ADR-009 — sitemap multidomínio](../decisions/ADR-009-sitemap-multidominio.md) — submódulo `aculta_portal_sitemap` (linha 0.1.x, opt-in).
 - [ACULTA Associado ID](../modules/ACULTA-ASSOCIADO-ID.md) — escopo de dados dos associados, compatibilidade e migração controlada; Runtime DEFERRED.
 - [ACULTA Gallery — arquitetura](../../web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md) — álbuns e galerias incorporadas (Media Gallery, PhotoSwipe, Entity Embed): decisões, limitações comprovadas e contratos (linha 0.1.x, submódulo opcional).
+- [ACULTA Messenger: documentação do projeto](MESSENGER.md) — módulo, submódulo, rotas, hooks, classes e contratos com o tema.
+- [Auditoria do Messenger](MESSENGER-AUDIT.md) — separação entre módulo, submódulo e tema, com os achados.
 - [ACULTA Messenger](../../web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) — integração de mensagens, modais, avisos persistentes segmentados e estado de leitura individual.
 
 ## Políticas
