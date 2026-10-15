@@ -1,3 +1,11 @@
+## 0.4.0-dev.28 — amizade sem erro fatal e Turnstile fora das Opções da conversa — 2026-10-15
+
+Classificação: PATCH (correção no serviço de amizade e exceção de CAPTCHA).
+
+- `FriendshipManager`: `access()` é chamado com `TRUE` em `loadPair`, `getRelationshipWith` e `transition`. Sem isso, o método devolvia um booleano e o `isAllowed()` que vinha depois quebrava (erro fatal) em qualquer par que já tivesse relação.
+- `TurnstileToggle::EXCEPTION_FORM_IDS` inclui `aculta_messenger_conversation_relationship` (ações de amizade e bloqueio na conversa). Ponto desativado em `config/sync/captcha.captcha_point.aculta_messenger_conversation_relationship.yml`; documentado em `docs/portal/TURNSTILE.md`.
+- Verificado por POST no runtime de testes: rejeitar, aceitar e cancelar pedidos, bloquear e desbloquear, com o estado gravado em `aculta_friendship`.
+
 ## 0.4.0-dev.27 — R4: templates e política de e-mail — 2026-10-15
 
 Classificação: PATCH (localização do e-mail administrativo e precisão da configuração de notificações).

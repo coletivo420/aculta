@@ -70,7 +70,7 @@ final class PrivateMessageReplyHooks {
   }
 
   /**
-   * Translates the thread labels that Private Message hard-codes in English ("Clear history", "Member(s)").
+   * Adjusts the thread view that Private Message renders in the drawer.
    *
    * Alter, not view: the module adds its link in hook_entity_view(), and the order between modules is not ours.
    */
@@ -79,9 +79,8 @@ final class PrivateMessageReplyHooks {
     if (!$entity instanceof PrivateMessageThreadInterface || $display->getMode() !== 'full') {
       return;
     }
-    if (isset($build['clear_history_link'])) {
-      $build['clear_history_link']['#title'] = new TranslatableMarkup('Limpar histórico');
-    }
+    // "Limpar histórico" moved into the conversation's "Opções" (MessagesController::optionsDisclosure).
+    unset($build['clear_history_link']);
   }
 
   /**

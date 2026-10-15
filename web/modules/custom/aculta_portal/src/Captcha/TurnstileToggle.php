@@ -42,6 +42,7 @@ final class TurnstileToggle {
     'aculta_login_popup_form',
     'aculta_messenger_new_conversation',
     'private_message_add_form',
+    'aculta_messenger_conversation_relationship',
   ];
 
   public function __construct(

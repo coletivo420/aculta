@@ -167,7 +167,8 @@
             return;
           }
           // First message of a new conversation: posted with fetch, because the Form API AJAX needs page settings.
-          if (event.target.matches('form[data-aculta-new-conversation-form]')) {
+          // The "Opções" actions (friendship, block) post the same way and answer with the updated conversation.
+          if (event.target.matches('form[data-aculta-new-conversation-form], form[data-aculta-drawer-action]')) {
             event.preventDefault();
             const body = new FormData(event.target);
             if (event.submitter?.name) {

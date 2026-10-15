@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.48 | "Opções" em menu sanfona na mesma linha de "← Todas as conversas"; ações de amizade e bloqueio | Testado no Firefox headless em 1280×800 e 390×844 (alinhamento e ordem do menu medidos); ações conferidas por POST | `messenger-item.css` (grid da barra e menu), `messenger-drawers.js` (envio do formulário de Opções) |
 | 0.6.0-dev.47 | Gaveta de mensagens com rolagem no desktop e no celular; link "← Todas as conversas" no topo, à direita; textos do Private Message em português | Testado no Firefox headless em 1280×800 e 390×844 (rolagem medida, capturas revisadas); RUNTIME STATUS: ACTIVE no teste | `messenger-item.css` (rolagem do corpo da gaveta), `messenger-drawers.js` (envio da nova conversa por fetch) |
 | 0.6.0-dev.46 | Espaçamento superior compacto onde o cabeçalho de domínio é omitido | Visualmente verificado no Runtime em 1440×1000 e 390×844; home principal e Wiki preservadas; RUNTIME STATUS: ACTIVE | `aculta-main--compact-top` reduz o espaço para 0.5rem–1.25rem sem afetar a barra multidomínio |
 | 0.6.0-dev.45 | Cabeçalho principal restrito à home do domínio principal; Wiki420 preservada | Verificado por HTTP no Runtime de testes; RUNTIME STATUS: ACTIVE | Cabeçalho com marca e menu oculto nas demais páginas e purposes; barra multidomínio preservada |

@@ -52,6 +52,7 @@ final class PortalUiHooks {
     'new-conversation-link' => ['btn', 'btn-primary', 'aculta-messenger-new-conversation'],
     'new-conversation-submit' => ['btn', 'btn-primary'],
     'new-conversation-back' => ['btn', 'btn-outline-primary'],
+    'conversation-action' => ['aculta-messenger-options__action'],
     'new-conversation-links' => ['d-flex', 'flex-wrap', 'gap-2', 'mt-2'],
     'new-conversation-message' => ['form-control'],
     'new-conversation-results' => ['list-group'],

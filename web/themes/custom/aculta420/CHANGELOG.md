@@ -1,3 +1,14 @@
+## 0.6.0-dev.48 — "Opções" em menu sanfona na mesma linha da barra — 2026-10-15
+
+Classificação: MINOR (novo menu de ações na conversa).
+
+- A barra da conversa é um grid de duas colunas numa linha: "← Todas as conversas" à esquerda e "Opções" à direita. A regra genérica dos filhos da conversa não sobrescreve mais a barra.
+- O painel de Opções é um menu compacto, com uma ação por linha e separador, alinhado à direita. No celular, só o hambúrguer.
+- Token `conversation-action` passa a usar a classe do menu (`aculta-messenger-options__action`), no lugar dos botões.
+- `messenger-drawers.js` envia também o formulário de Opções por fetch (`form[data-aculta-drawer-action]`).
+- Medido no Firefox headless: link e Opções no mesmo topo (y=72) em 1280 e 390 px.
+- RUNTIME STATUS: ACTIVE no teste.
+
 ## 0.6.0-dev.47 — gaveta de mensagens com rolagem; link de volta no topo — 2026-10-15
 
 Classificação: PATCH (apresentação da gaveta de mensagens).

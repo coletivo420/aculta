@@ -117,7 +117,7 @@ final class FriendshipManager implements FriendshipManagerInterface {
     $requesterIds = [];
     foreach ($relationships as $relationship) {
       if ($relationship instanceof AcultaFriendshipInterface
-        && $relationship->access('view', $this->currentUser)->isAllowed()) {
+        && $relationship->access('view', $this->currentUser, TRUE)->isAllowed()) {
         $requesterIds[] = $relationship->getRequesterId();
       }
     }
@@ -145,7 +145,7 @@ final class FriendshipManager implements FriendshipManagerInterface {
 
   private function transition(AcultaFriendshipInterface $candidate, FriendshipStatus $from, FriendshipStatus $to, string $actorField): void {
     $uid = $this->activeCurrentUid();
-    if (!$candidate->access('update', $this->currentUser)->isAllowed()) {
+    if (!$candidate->access('update', $this->currentUser, TRUE)->isAllowed()) {
       throw new \DomainException('The current member cannot update this relationship.');
     }
     $low = $candidate->getMemberLowId();
@@ -177,7 +177,7 @@ final class FriendshipManager implements FriendshipManagerInterface {
     $storage = $this->entityTypeManager->getStorage('aculta_friendship');
     $entity = $storage->load("$low:$high");
     return $entity instanceof AcultaFriendshipInterface
-      && $entity->access('view', $this->currentUser)->isAllowed()
+      && $entity->access('view', $this->currentUser, TRUE)->isAllowed()
       ? $entity
       : NULL;
   }

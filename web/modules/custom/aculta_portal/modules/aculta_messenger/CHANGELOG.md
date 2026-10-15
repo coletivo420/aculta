@@ -2,6 +2,19 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.25 — "Opções" da conversa: amizade, bloqueio e menu — 2026-10-15
+
+Classificação: MINOR (novas ações na conversa: amizade e bloqueio; menu novo).
+
+- "Opções" é um menu em sanfona, à direita da barra da conversa, na mesma linha de "← Todas as conversas". No celular aparece só o ícone de hambúrguer.
+- Ações do menu, conforme o estado da relação com o outro membro: Adicionar amigo; Cancelar pedido de amizade (pedido enviado por mim); Aceitar pedido de amizade e Rejeitar pedido de amizade (pedido recebido); Desfazer amizade; Bloquear e Desbloquear.
+- Ordem do menu: ações de amizade, "Limpar histórico", e por último Bloquear/Desbloquear.
+- Cada ação roda por POST na rota `aculta_messenger.drawer_relationship` e a gaveta recebe a conversa atualizada, com a mensagem do resultado (por exemplo, o limite de pedidos).
+- O formulário de Opções entra nas exceções do Turnstile (`aculta_messenger_conversation_relationship`, ponto desativado em `config/sync`).
+- Correções encontradas no caminho: o botão de ação só roda se foi enviado (o Form API cai no primeiro botão quando o enviado não é encontrado); a ação é processada com a entrada da requisição e não com o cache de formulário.
+- Testado no Firefox headless em 1280 e 390 px (ordem do menu, alinhamento da barra, cada ação) e por POST com `curl` como o membro que envia e como o que recebe.
+- Pendência: uma conversa com um membro bloqueado some da lista de conversas do Private Message, então "Desbloquear" não aparece pela gaveta; a conversa abre pelo endereço direto. Decisão pendente sobre onde desbloquear.
+
 ## 0.1.1-dev.24 — textos do Private Message em português — 2026-10-15
 
 Classificação: PATCH (rótulos e placeholder).
