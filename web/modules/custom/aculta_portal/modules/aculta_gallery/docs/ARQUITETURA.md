@@ -248,7 +248,7 @@ Versão alvo por fase, conforme `web/themes/custom/aculta420/docs/versioning.md`
 | 7 | 0.1.0-dev.8 | Desempenho com galerias grandes | MINOR |
 | 8 | 0.1.0-dev.9 | Integração multidomínio | MINOR |
 | 9 | 0.1.0-dev.10 | Hardening e testes direcionados | PATCH |
-| 10 | 0.1.0-rc.1 | Validação de release no Homelab | RC |
+| 10 | 0.1.0-rc.1 | Validação de release no Homelab | RC (declarada em 2026-10-15; duas rodadas de navegador no servidor de testes) |
 
 A versão de cada fase é marcada no `aculta_gallery.info.yml` (a partir da Fase 1), no `CHANGELOG.md` do módulo e na descrição da PR. Tag Git só com pedido explícito do responsável.
 
