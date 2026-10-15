@@ -315,6 +315,12 @@ Ambiente: servidor de testes (`*.aculta.toca.net.br`), Firefox por BiDi com ferr
 | Salvar artigo com todos os campos obrigatórios e corpo com galeria incorporada | PASS: artigo salvo na Revista (`/noticias/...`) | BiDi + banco |
 | Renderização do artigo na Revista (visitante) | PASS: HTTP 200; 2 fotos no lightbox; nenhuma incorporação sem processar | HTTP |
 
+Rodada 2 (2026-10-15, após o merge de PR #278 e PR #279; configuração do editor sincronizada com a `main`):
+- Fluxo completo sem defeitos: "Adicionar mídia" pela biblioteca (clique acerta o alvo), "Criar galeria" pela barra do editor (clique acerta o botão), envio de duas fotos, "Criar e inserir", salvamento do artigo na Revista (`/noticias/...`), renderização com HTTP 200, 3 âncoras de lightbox, nenhuma incorporação sem processar.
+- Dados de teste removidos (2 artigos, 1 galeria e as mídias novas; a mídia 194 de antes da rodada foi mantida).
+- Observação: o botão "Carregar fotos" do diálogo não foi localizado pelo teste; as prévias (2) apareceram e o envio foi concluído.
+- `config:status`: o arquivo do editor da Revista na árvore servida estava antigo (sem o separador da barra); foi atualizado para o da `main`. As demais divergências de configuração do ambiente são anteriores e fora destes PRs.
+
 Causas dos defeitos encontrados e corrigidos:
 - **Grupo "Imagem" fechado** (PR #278): o campo de imagem é obrigatório, mas o grupo começava fechado. Com o grupo fechado, o navegador não validava o campo (o envio parecia não fazer nada) e o botão "Adicionar mídia" ficava sob o campo seguinte. Correção: o grupo abre por padrão.
 - **Balão de dica sobre o menu do editor** (PR #279): com a barra cheia, os botões de galeria iam para "Exibir mais itens"; o balão de dica desse botão ficava sobre o primeiro item do menu e interceptava o clique. Correção: quebra de linha na barra antes de "Galeria".
@@ -325,4 +331,4 @@ Observações:
 - Campo de upload do diálogo: o envio das fotos foi concluído (2 prévias), mas o botão "Carregar fotos" não foi localizado pelo teste na última rodada; o envio aconteceu sem ele.
 - Ordem de itens na reordenação: não há alça de arrasto nesta versão; ver a Fase 10 sem reordenação.
 
-Decisão pendente: a Fase 10 leva a `0.1.0-rc.1` após o merge de PR #278 e PR #279 e uma nova rodada de navegador no ambiente de testes, sem defeitos abertos. Por isso a versão do módulo continua `0.1.0-dev.12`.
+Decisão pendente: com a rodada 2 sem defeitos abertos, a Fase 10 pode ser declarada `0.1.0-rc.1` pelo responsável. A versão do módulo continua `0.1.0-dev.12` até essa decisão.
