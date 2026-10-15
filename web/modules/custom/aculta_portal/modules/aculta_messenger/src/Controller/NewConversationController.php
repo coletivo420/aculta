@@ -59,6 +59,7 @@ final class NewConversationController extends ControllerBase {
   /** First step: the member search field, with the hint that the header search also shows. */
   public function start(): Response {
     $build = [
+      'back' => $this->backLink(),
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa')],
       'search' => $this->searchForm(),
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
@@ -128,22 +129,26 @@ final class NewConversationController extends ControllerBase {
           ],
           'thread' => $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full'),
         ],
-        'back' => [
-          '#type' => 'link',
-          '#title' => $this->t('← Todas as conversas'),
-          '#url' => Url::fromRoute('aculta_messenger.preview'),
-          // Same link as the conversation view (PrivateMessageReplyHooks), so it sits in the same place.
-          '#attributes' => ['class' => ['aculta-messenger-back-link'], 'data-aculta-drawer-back' => ''],
-        ],
+        'back' => $this->backLink(),
         '#cache' => ['contexts' => ['user'], 'max-age' => 0],
       ]);
     }
 
     $build = [
+      'back' => $this->backLink(),
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Nova conversa com @name', ['@name' => $user->getDisplayName()])],
       'form' => $form,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
+    // The drawer shows only this fragment, so the form errors (e.g. the send limit) must be listed here too.
+    if ($request->isMethod('POST') && $formState->hasAnyErrors()) {
+      $build['errors'] = [
+        '#theme' => 'item_list',
+        '#items' => array_values(array_map(static fn($message) => (string) $message, $formState->getErrors())),
+        '#attributes' => ['role' => 'alert'],
+        '#weight' => -50,
+      ];
+    }
     return $this->fragment($build);
   }
 
@@ -207,6 +212,17 @@ final class NewConversationController extends ControllerBase {
         '#attributes' => ['id' => 'aculta-new-conversation-preview', 'data-portal-ui' => 'search-preview', 'aria-live' => 'polite'],
         'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => self::MIN_CHARS])],
       ],
+    ];
+  }
+
+  /** "← Todas as conversas", the same link and place as in the conversation view (top, under the drawer's X). */
+  private function backLink(): array {
+    return [
+      '#type' => 'link',
+      '#title' => $this->t('← Todas as conversas'),
+      '#url' => Url::fromRoute('aculta_messenger.drawer_conversations'),
+      '#weight' => -100,
+      '#attributes' => ['class' => ['aculta-messenger-back-link'], 'data-aculta-drawer-back' => ''],
     ];
   }
 

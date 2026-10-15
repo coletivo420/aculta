@@ -1,0 +1,9 @@
+uuid: 9eee6b86-6428-4f48-baa1-fb0205887dab
+langcode: pt-br
+status: false
+dependencies:
+  module:
+    - captcha
+formId: private_message_add_form
+captchaType: default
+label: 'Resposta nas conversas de mensagens (exceção do Turnstile)'

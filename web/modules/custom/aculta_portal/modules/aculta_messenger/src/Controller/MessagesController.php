@@ -120,6 +120,8 @@ final class MessagesController extends ControllerBase {
         'data-aculta-conversation-view' => '',
         'data-aculta-thread-id' => (string) $thread->id(),
       ],
+      // The back link sits above the thread, under the drawer's X (Clear history comes from the thread itself).
+      'back' => $this->backToConversationsLink(),
       'thread' => $threadBuild,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
@@ -127,6 +129,23 @@ final class MessagesController extends ControllerBase {
     return $this->buildDrawerResponse($build, [
       'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
     ]);
+  }
+
+  /**
+   * "← Todas as conversas": back to the drawer's conversation list. Used by every drawer subview, so it sits
+   * in the same place (top, right-aligned, under the X) in each one.
+   */
+  private function backToConversationsLink(): array {
+    return [
+      '#type' => 'link',
+      '#title' => $this->translation->translate('← Todas as conversas'),
+      '#url' => Url::fromRoute('aculta_messenger.drawer_conversations'),
+      '#weight' => -100,
+      '#attributes' => [
+        'class' => ['aculta-messenger-back-link'],
+        'data-aculta-drawer-back' => '',
+      ],
+    ];
   }
 
   /**

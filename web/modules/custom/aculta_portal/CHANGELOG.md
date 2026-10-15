@@ -1,3 +1,12 @@
+## 0.4.0-dev.24 — formulários do Messenger fora do Turnstile — 2026-10-15
+
+Classificação: PATCH (exceções da política de CAPTCHA).
+
+- `Captcha\TurnstileToggle::EXCEPTION_FORM_IDS` passa a incluir `aculta_messenger_new_conversation` (compor a primeira mensagem na gaveta) e `private_message_add_form` (resposta nas conversas). O formulário de mensagens só é acessível a contas com e-mail confirmado; o desafio aparecia para contas sem a confirmação, e o widget não era montado no fragmento da gaveta, o que impedia o envio.
+- Pontos de CAPTCHA desativados em `config/sync`: `captcha.captcha_point.aculta_messenger_new_conversation.yml` e `captcha.captcha_point.private_message_add_form.yml`.
+- `docs/portal/TURNSTILE.md` documenta as duas exceções; `scripts/validate-turnstile-exceptions.php` passa (5 exceções).
+- Verificação: conta confirmada envia sem desafio no runtime de testes. O caso de conta sem confirmação não foi reproduzido, porque `EmailConfirmedRoleGuard` reaplica o papel `email_confirmed`.
+
 ## 0.4.0-dev.23 — produção Hostinger LiteSpeed documentada — 2026-10-15
 
 Classificação: PATCH (correção da fonte de verdade operacional; sem mudança no runtime Drupal).

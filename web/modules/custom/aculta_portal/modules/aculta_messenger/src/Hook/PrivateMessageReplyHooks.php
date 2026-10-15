@@ -9,10 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -29,8 +26,6 @@ final class PrivateMessageReplyHooks {
     private readonly AccountInterface $currentUser,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $domainPurposeManager,
-    #[Autowire(service: 'current_route_match')]
-    private readonly RouteMatchInterface $currentRouteMatch,
   ) {}
 
   /** Adds the native composer when a site's thread display omitted its field. */
@@ -50,21 +45,7 @@ final class PrivateMessageReplyHooks {
       return;
     }
 
-    // Conversations are read in the multidomain bar drawer only; there is no account page to go back to.
-    $isDrawerConversation = $this->currentRouteMatch->getRouteName() === 'aculta_messenger.drawer_conversation';
-    $conversationsUrl = $isDrawerConversation ? Url::fromRoute('aculta_messenger.drawer_conversations') : NULL;
-    if ($conversationsUrl !== NULL) {
-      $build['aculta_messenger_back_to_conversations'] = [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('← Todas as conversas'),
-        '#url' => $conversationsUrl,
-        '#weight' => -100,
-        '#attributes' => [
-          'class' => ['aculta-messenger-back-link'],
-          'data-aculta-drawer-back' => $isDrawerConversation ? '' : NULL,
-        ],
-      ];
-    }
+    // The "← Todas as conversas" link is placed by MessagesController::drawerConversation, above the thread.
     $build['#cache']['contexts'][] = 'user';
     $build['#cache']['max-age'] = 0;
 

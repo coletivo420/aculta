@@ -2,6 +2,16 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.23 — "← Todas as conversas" no topo da gaveta; erros do envio visíveis — 2026-10-15
+
+Classificação: PATCH (posição do link de volta e exibição de erros na gaveta).
+
+- O link "← Todas as conversas" fica no topo, à direita, abaixo do X, em todas as etapas: conversa aberta, Nova conversa, compor e resposta de envio. A conversa aberta não o coloca mais depois do "Clear history" (o hook de entidade deixou de adicioná-lo; a gaveta o põe antes da conversa).
+- A etapa de compor lista os erros do formulário (por exemplo o limite de envio) dentro da própria gaveta, com `role="alert"`. Antes o erro só aparecia como borda vermelha na caixa de mensagem.
+- Os formulários do Messenger (`aculta_messenger_new_conversation` e `private_message_add_form`) estão nas exceções do Turnstile do Portal (ver `aculta_portal` 0.4.0-dev.24).
+- Testado no Firefox headless em 1280 e 390 px: conversa aberta, lista, Nova conversa, compor, envio e erro de limite.
+- Pendência: o widget do Turnstile não era montado no fragmento da gaveta; com a exceção o desafio não aparece mais nesses formulários.
+
 ## 0.1.1-dev.22 — "← Todas as conversas" alinhado à direita, abaixo do X — 2026-10-15
 
 Classificação: PATCH (posição do link de volta na gaveta).
