@@ -90,11 +90,11 @@ Classificação: MINOR (regras de capa e de publicação; sem dependência nova)
 - Restrição D13 implementada: `GalleryPurposeAccessHooks` (hook OOP `entity_access`) nega a visualização de galeria fora do purpose `magazine`, com cache por `domain`. Verificado por HTTP real como visitante anônimo: host da Revista (`revista420.aculta.toca.net.br`) 200; host principal 403.
 - Permissão `view published media gallery entities` concedida ao papel `anonymous` no Runtime. A restrição de purpose continua valendo por cima.
 - Capa (`GalleryCoverHooks`, hook OOP `media_gallery_presave`): a capa é sempre uma das imagens da galeria. Fora das imagens vira a primeira; sem imagens fica vazia. Verificado: capa fora vira a primeira (PASS), remover referência mantém a mídia (PASS), sem imagens limpa a capa (PASS).
-- Importação em lote pelo Core (`#multiple` da Media Library, decisão D4); reordenação pelo `tabledrag` do widget; remoção remove só a referência. `media_library_bulk_upload` não foi instalado.
+- Importação em lote pelo Core (`#multiple` da Media Library, decisão D4); remoção remove só a referência. `media_library_bulk_upload` não foi instalado.
 - Validação de arquivo: extensões do campo de imagem (`png gif jpg jpeg webp`) pelo File API. Sem limite de tamanho próprio no campo; vale o limite do PHP. Batch API e Queue não foram adotadas: avaliar na Fase 7 com medição.
-- Não verificado nesta fase: upload pela interface e reordenação por arrasto no navegador (dependem de teste de navegador, Fase 10).
+- Não verificado nesta fase: upload pela interface no navegador (depende de teste de navegador, Fase 10).
 - Dados de teste criados e apagados nesta fase (regra de teste em GUARDRAILS.md). Galeria 11 não foi alterada.
-- RUNTIME STATUS: verificado no Runtime (regras de capa e desassociação, restrição D13 por HTTP). Upload e arrasto no navegador pendentes (Fase 10).
+- RUNTIME STATUS: verificado no Runtime (regras de capa e desassociação, restrição D13 por HTTP). Upload no navegador pendente (Fase 10).
 
 ## 0.1.0-dev.3 — álbuns independentes — 2026-10-14
 

@@ -294,3 +294,41 @@ RUNTIME STATUS: DEFERRED. Ainda não executado.
 5. Abra `/entrar` direto. Esperado: página de login com o desafio do Turnstile (INV-TS-1).
 6. Abra um modal existente (busca, Editar senha/segredo, termos). Esperado: o fundo escurece da mesma forma (INV-MODAL-1).
 7. Repita 1 e 6 com outro tema ativo (Olivero). Esperado: o login funciona e o modal abre, sem ACULTA420.
+
+## O. Fase 10 da ACULTA Gallery (rodadas de 2026-10-14 e 2026-10-15)
+
+Ambiente: servidor de testes (`*.aculta.toca.net.br`), Firefox por BiDi com ferramentas internas (scripts do agente). Hosts: Revista `revista420.aculta.toca.net.br`, principal `aculta.toca.net.br`. Login de administrador por link de uso único (`drush user:login`, conta do responsável). Dados de teste criados e removidos ao fim de cada rodada.
+
+| Passo | Resultado | Evidência |
+| --- | --- | --- |
+| Visualização do álbum na Revista (anônimo) | PASS (200) | HTTP |
+| Álbum no host principal (anônimo) | PASS (403, regra D13) | HTTP |
+| Coleção administrativa: título aponta para a Revista | PASS | HTML do painel |
+| Edição e exclusão no host principal | PASS (política administrativa) | HTML do painel |
+| Edição de galeria: administrador cria e edita; editor e conta comum não | PASS | `access()` por conta |
+| Palco: 66 slides, rotação, teclado no carrossel, toque, sem erros de JavaScript | PASS | BiDi |
+| Lightbox: abre, seta, Esc (antes: `1 / 1`) | PASS, corrigido em PR #274 | BiDi |
+| Diálogo "Criar galeria" pela URL (administrador, Revista e principal) | PASS | BiDi |
+| Diálogo: upload de 2 fotos e "Criar e inserir" | PASS (galeria com 2 imagens) | banco |
+| Botão "Criar galeria" na barra do editor, por clique do mouse | PASS após PR #279 (antes: o balão de dica de "Exibir mais itens" cobria o item e interceptava o clique) | BiDi |
+| Imagem editorial pela biblioteca ("Adicionar mídia") | PASS após PR #278 (antes: grupo "Imagem" fechado; o campo seguinte cobria o botão) | BiDi |
+| Salvar artigo com todos os campos obrigatórios e corpo com galeria incorporada | PASS: artigo salvo na Revista (`/noticias/...`) | BiDi + banco |
+| Renderização do artigo na Revista (visitante) | PASS: HTTP 200; 2 fotos no lightbox; nenhuma incorporação sem processar | HTTP |
+
+Rodada 2 (2026-10-15, após o merge de PR #278 e PR #279; configuração do editor sincronizada com a `main`):
+- Fluxo completo sem defeitos: "Adicionar mídia" pela biblioteca (clique acerta o alvo), "Criar galeria" pela barra do editor (clique acerta o botão), envio de duas fotos, "Criar e inserir", salvamento do artigo na Revista (`/noticias/...`), renderização com HTTP 200, 3 âncoras de lightbox, nenhuma incorporação sem processar.
+- Dados de teste removidos (2 artigos, 1 galeria e as mídias novas; a mídia 194 de antes da rodada foi mantida).
+- Observação: o botão "Carregar fotos" do diálogo não foi localizado pelo teste; as prévias (2) apareceram e o envio foi concluído.
+- `config:status`: o arquivo do editor da Revista na árvore servida estava antigo (sem o separador da barra); foi atualizado para o da `main`. As demais divergências de configuração do ambiente são anteriores e fora destes PRs.
+
+Causas dos defeitos encontrados e corrigidos:
+- **Grupo "Imagem" fechado** (PR #278): o campo de imagem é obrigatório, mas o grupo começava fechado. Com o grupo fechado, o navegador não validava o campo (o envio parecia não fazer nada) e o botão "Adicionar mídia" ficava sob o campo seguinte. Correção: o grupo abre por padrão.
+- **Balão de dica sobre o menu do editor** (PR #279): com a barra cheia, os botões de galeria iam para "Exibir mais itens"; o balão de dica desse botão ficava sobre o primeiro item do menu e interceptava o clique. Correção: quebra de linha na barra antes de "Galeria".
+- **Campos obrigatórios** (sem defeito de código): resumo, categoria editorial e imagem editorial. O navegador e o servidor rejeitam o envio sem eles. O teste passou a preencher os três.
+
+Observações:
+- Rolagem: `scrollIntoView` não rolou a janela para alguns elementos; o teste passou a rolar o contêiner do elemento antes de medir o alvo do clique. Não é defeito do produto (rolagem manual funciona).
+- Campo de upload do diálogo: o envio das fotos foi concluído (2 prévias), mas o botão "Carregar fotos" não foi localizado pelo teste na última rodada; o envio aconteceu sem ele.
+- Ordem de itens na reordenação: não há alça de arrasto nesta versão; ver a Fase 10 sem reordenação.
+
+Decisão pendente: com a rodada 2 sem defeitos abertos, a Fase 10 pode ser declarada `0.1.0-rc.1` pelo responsável. A versão do módulo continua `0.1.0-dev.12` até essa decisão.
