@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -65,6 +67,32 @@ final class PrivateMessageReplyHooks {
     // Keep the composer after that history in the account page and drawer.
     $replyForm['#weight'] = 10000;
     $build['aculta_messenger_reply_form'] = $replyForm;
+  }
+
+  /**
+   * Translates the thread labels that Private Message hard-codes in English ("Clear history", "Member(s)").
+   *
+   * Alter, not view: the module adds its link in hook_entity_view(), and the order between modules is not ours.
+   */
+  #[Hook('entity_view_alter')]
+  public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
+    if (!$entity instanceof PrivateMessageThreadInterface || $display->getMode() !== 'full') {
+      return;
+    }
+    if (isset($build['clear_history_link'])) {
+      $build['clear_history_link']['#title'] = new TranslatableMarkup('Limpar histórico');
+    }
+  }
+
+  /**
+   * The members field label ("Member(s)") is a base field label: it is set on the field definition, so the
+   * thread view and its forms show the same Portuguese name.
+   */
+  #[Hook('entity_base_field_info_alter')]
+  public function entityBaseFieldInfoAlter(array &$fields, EntityTypeInterface $entity_type): void {
+    if ($entity_type->id() === 'private_message_thread' && isset($fields['members'])) {
+      $fields['members']->setLabel(new TranslatableMarkup('Participantes'));
+    }
   }
 
 }

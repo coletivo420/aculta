@@ -1,3 +1,13 @@
+## 0.6.0-dev.47 — gaveta de mensagens com rolagem; link de volta no topo — 2026-10-15
+
+Classificação: PATCH (apresentação da gaveta de mensagens).
+
+- O corpo da gaveta de mensagens rola quando o conteúdo é maior que a janela, no desktop e no celular. A conversa mantém a altura natural, e a caixa de resposta fica no fim da rolagem.
+- "← Todas as conversas" fica no topo, à direita, abaixo do X, em todas as etapas (conversa, Nova conversa, compor e envio).
+- `messenger-drawers.js`: o envio do formulário de nova conversa usa fetch e troca o conteúdo da gaveta pela resposta; o botão "Iniciar nova conversa" também abre a etapa.
+- Medido no Firefox headless: conversa com 1264 px contra 658 px visíveis rola até o fim (1264 e 658 em desktop, 1214 e 702 em 390 px).
+- RUNTIME STATUS: ACTIVE no teste.
+
 ## 0.6.0-dev.46 — respiro superior compacto sem cabeçalho de domínio — 2026-10-15
 
 Classificação: PATCH (ajuste responsivo de espaçamento do shell existente).

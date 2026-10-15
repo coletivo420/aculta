@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.47 | Gaveta de mensagens com rolagem no desktop e no celular; link "← Todas as conversas" no topo, à direita; textos do Private Message em português | Testado no Firefox headless em 1280×800 e 390×844 (rolagem medida, capturas revisadas); RUNTIME STATUS: ACTIVE no teste | `messenger-item.css` (rolagem do corpo da gaveta), `messenger-drawers.js` (envio da nova conversa por fetch) |
 | 0.6.0-dev.46 | Espaçamento superior compacto onde o cabeçalho de domínio é omitido | Visualmente verificado no Runtime em 1440×1000 e 390×844; home principal e Wiki preservadas; RUNTIME STATUS: ACTIVE | `aculta-main--compact-top` reduz o espaço para 0.5rem–1.25rem sem afetar a barra multidomínio |
 | 0.6.0-dev.45 | Cabeçalho principal restrito à home do domínio principal; Wiki420 preservada | Verificado por HTTP no Runtime de testes; RUNTIME STATUS: ACTIVE | Cabeçalho com marca e menu oculto nas demais páginas e purposes; barra multidomínio preservada |
 | 0.6.0-dev.44 | "Iniciar nova conversa" na primeira janela da barra de mensagens, com busca de membros a partir de 3 caracteres | Rotas verificadas por HTTP no runtime de testes (busca, compor); interação no navegador pendente | Etapa de busca e compor; envio pelo formulário nativo do Private Message |

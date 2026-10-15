@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.24 — textos do Private Message em português — 2026-10-15
+
+Classificação: PATCH (rótulos e placeholder).
+
+- "Clear history" vira "Limpar histórico" (alter do link da conversa, `entity_view_alter`).
+- O rótulo do campo de membros ("Member(s)") vira "Participantes", no próprio campo base (`entity_base_field_info_alter`), então a conversa e os formulários mostram o mesmo nome.
+- O placeholder do campo de resposta ("Message") vira "Escreva sua mensagem". O `text_format` copia o placeholder para o textarea no `#process`, por isso ele é definido no elemento de origem.
+- Testado no Firefox headless em 390 e 1280 px.
+
 ## 0.1.1-dev.23 — "← Todas as conversas" no topo da gaveta; erros do envio visíveis — 2026-10-15
 
 Classificação: PATCH (posição do link de volta e exibição de erros na gaveta).

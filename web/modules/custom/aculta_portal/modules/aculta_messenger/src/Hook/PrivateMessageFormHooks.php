@@ -32,6 +32,9 @@ final class PrivateMessageFormHooks {
         $form['message']['widget'][0]['format']['format']['#value'] = 'plain_text';
         $form['message']['widget'][0]['format']['format']['#default_value'] = 'plain_text';
       }
+      // The native placeholder is the English word "Message"; the site's composer says what to write.
+      // The text_format element copies its #placeholder to the textarea in #process, so set it on the source.
+      $form['message']['widget'][0]['#placeholder'] = new TranslatableMarkup('Escreva sua mensagem');
       $form['#after_build'][] = 'aculta_messenger.private_message_form_validator:hidePlainTextGuidelines';
       $form['#validate'][] = 'aculta_messenger.private_message_form_validator:enforcePlainTextFormat';
     }
