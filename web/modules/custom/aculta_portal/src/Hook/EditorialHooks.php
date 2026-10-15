@@ -206,7 +206,9 @@ final class EditorialHooks {
       $form[$id] = [
         '#type' => 'details',
         '#title' => $title,
-        '#open' => $id === 'editorial_content',
+        // Grupo com campo obrigatório (imagem editorial) abre por padrão: com o grupo fechado, o
+        // navegador não alcança o campo para validar e o botão "Adicionar mídia" fica sob o campo seguinte.
+        '#open' => in_array($id, ['editorial_content', 'editorial_image'], TRUE),
         '#weight' => $weight,
       ];
       foreach ($fields as $field) {
