@@ -7,7 +7,6 @@
 .aculta-messenger-item__bubble > :last-child { margin-bottom: 0; }
 .aculta-messenger-item__bubble .field--name-created { display: block; margin-block-start: 0.25rem; color: var(--aculta-text-secondary); font-size: 0.75rem; text-align: end; }
 .aculta-messenger-item--outgoing .aculta-messenger-item__bubble .field--name-created { color: var(--aculta-interactive-active-text); }
-
 .private-message-thread-inbox .aculta-messenger-item { margin-block: 0.2rem; }
 .private-message-thread-inbox .aculta-messenger-item__avatar { flex-basis: 2rem; width: 2rem; height: 2rem; }
 .private-message-thread-inbox .aculta-messenger-item__bubble { max-width: 100%; padding: 0.4rem 0.6rem; }
@@ -18,9 +17,12 @@
 .aculta-messenger-sender__avatar { display: grid; flex: 0 0 3rem; width: 3rem; height: 3rem; place-items: center; overflow: hidden; border: 2px solid var(--aculta-surface-raised); border-radius: 50%; background: var(--aculta-interactive-hover-bg); box-shadow: 0 0 0 1px var(--aculta-border-strong); color: var(--aculta-interactive-hover-text); font-size: 1.1rem; font-weight: 700; }
 .aculta-messenger-sender__avatar img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .aculta-messenger-preview .item-list > ul { display: grid; gap: 0.65rem; margin: 0; padding: 0; list-style: none; }
-.aculta-messenger-sender__link { display: flex; flex: 1 1 auto; flex-direction: column; align-items: flex-start; justify-content: center; align-self: stretch; min-width: 0; padding-inline-end: 2rem; color: var(--aculta-text-primary); font-size: 1rem; font-weight: 600; line-height: 1.2; text-decoration: none; }
-.aculta-messenger-sender__date { display: block; margin-block-end: 0.1rem; color: var(--aculta-text-secondary); font-size: 0.6875rem; font-weight: 400; line-height: 1.1; }
-.aculta-messenger-sender__name { display: block; }
+.aculta-messenger-sender__link { display: flex; flex: 1 1 auto; flex-direction: column; align-items: flex-start; justify-content: center; align-self: stretch; min-width: 0; padding-inline-end: 2rem; line-height: 1.2; color: var(--aculta-text-primary); font-size: 1rem; font-weight: 600; text-decoration: none; }
+.aculta-messenger-sender__details { display: flex; flex: 1 1 auto; flex-direction: column; justify-content: center; align-self: stretch; min-width: 0; padding-inline-end: 2rem; }
+.aculta-messenger-sender__details .aculta-messenger-sender__link { flex: 0 1 auto; align-self: flex-start; max-width: 100%; padding-inline-end: 0; }
+.aculta-messenger-sender__link::after { position: absolute; z-index: 2; inset: 0; content: ''; }
+.aculta-messenger-sender__link:focus-visible::after { border-radius: var(--bs-border-radius); outline: 3px solid var(--aculta-focus-ring); outline-offset: -3px; }
+.aculta-messenger-sender__date { display: block; overflow: hidden; color: var(--aculta-text-secondary); font-size: 0.7rem; font-weight: 400; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .aculta-messenger-sender__link:hover, .aculta-messenger-sender__link:focus-visible { color: var(--aculta-interactive-hover-text); text-decoration: none; }
 .aculta-messenger-sender.is-unread .aculta-messenger-sender__link { font-weight: 750; }
 .aculta-messenger-sender:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: -3px; }
@@ -35,9 +37,28 @@
 .aculta-messenger-conversation__menu[hidden] { display: none; }
 .aculta-messenger-conversation__menu [role="menuitem"] { display: block; padding: 0.55rem 0.7rem; border-radius: 0.35rem; color: var(--aculta-status-error-text); text-decoration: none; }
 .aculta-messenger-conversation__menu [role="menuitem"]:hover, .aculta-messenger-conversation__menu [role="menuitem"]:focus-visible { background: var(--aculta-status-error-surface); color: var(--aculta-status-error-text); }
-
-.aculta-messenger-conversation-dialog { max-width: calc(100vw - 1.5rem); }
-.aculta-messenger-conversation-dialog .ui-dialog-content { max-height: min(75vh, 52rem); }
-.aculta-messenger-conversation-dialog #private-message-page { padding: 0.5rem; }
-.aculta-messenger-conversation-dialog .field--name-private-messages { max-height: min(52vh, 32rem); overflow-y: auto; padding-inline: 0.25rem; }
-.aculta-messenger-conversation-dialog .field--name-private-message-form { position: sticky; inset-block-end: 0; padding-block-start: 0.75rem; background: var(--aculta-surface-raised); }
+.aculta-messenger-offcanvas .aculta-utility-offcanvas__body.aculta-messenger-drawer-content--conversation { min-height: 0; gap: 0; overflow: hidden; padding: 0.5rem; }
+.aculta-messenger-drawer-conversation { display: flex; flex: 1 1 auto; min-width: 0; min-height: 0; overflow: hidden; }
+.aculta-messenger-drawer-conversation #private-message-page { display: flex; flex: 1 1 auto; width: 100%; height: 100%; min-width: 0; min-height: 0; flex-direction: column; }
+.aculta-messenger-drawer-conversation .private-message-thread-full { display: flex; height: 100%; min-height: 0; flex-direction: column; }
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region { display: flex; height: 100%; min-height: 0; flex-direction: column; }
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .private_message_thread_delete_link_wrapper,
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .private_message_thread_clear_history_link_wrapper,
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .field--name-members,
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .private-message-inbox { display: none; }
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .field--name-private-messages { order: 1; min-height: 0; flex: 1 1 0%; overflow-y: auto; padding-inline: 0.25rem; }
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > div:has(> form.aculta-messenger-reply-form) { display: contents; }
+.aculta-messenger-drawer-conversation .aculta-messenger-back-link { flex: 0 0 auto; align-self: flex-start; margin-block-end: 0.4rem; }
+.aculta-messenger-drawer-conversation .aculta-messenger-reply-form { order: 2; position: static; flex: 0 0 auto; margin-block-start: 0.5rem; padding: 0.75rem 0.25rem 0.5rem; border-top: 1px solid var(--aculta-border-subtle); background: var(--aculta-surface-raised); }
+.aculta-messenger-drawer-conversation .aculta-messenger-reply-form .form-actions { display: flex; justify-content: flex-end; margin-block: 0.5rem 0; }
+.aculta-messenger-drawer-conversation .aculta-messenger-reply-form { display: flex; flex-direction: column; }
+.aculta-messenger-drawer-conversation .aculta-messenger-reply-form .field--name-message { order: 0; }
+.aculta-messenger-drawer-conversation .aculta-messenger-reply-form .form-actions { order: 1; }
+@media (max-width: 575.98px) {
+  .aculta-messenger-offcanvas .aculta-utility-offcanvas__body.aculta-messenger-drawer-content--conversation { padding: 0.35rem; }
+  .aculta-messenger-drawer-conversation .aculta-messenger-reply-form .field--name-message { margin-block-end: 0.25rem; }
+  .aculta-messenger-drawer-conversation .aculta-messenger-reply-form { margin-block-start: 0.35rem; padding: 0.55rem 0.15rem 0.25rem; }
+  .aculta-messenger-drawer-conversation .aculta-messenger-reply-form textarea { height: 5.5rem; min-height: 5.5rem; }
+}
+.aculta-messenger-back-link { display: inline-flex; align-items: center; gap: 0.4rem; margin-block-end: 0.75rem; color: var(--aculta-text-link); font-weight: 600; text-decoration: none; }
+.aculta-messenger-back-link:hover, .aculta-messenger-back-link:focus-visible { text-decoration: underline; }

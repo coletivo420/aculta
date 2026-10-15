@@ -101,13 +101,54 @@ final class MessagesController extends ControllerBase {
     return new TrustedRedirectResponse($url->toString());
   }
 
-  /**
-   * Builds a compact view of the current member's native inbox for the bar modal.
-   *
-   * The endpoint is same-origin on every public purpose. It does not create a
-   * purpose-specific mailbox; conversation links are canonicalized to ACCOUNT.
-   */
+  /** Returns the inbox preview used by the existing drawer fetch. */
   public function preview(): Response {
+    $build = $this->buildConversationList();
+    // The native clear-history action remains a Drupal confirmation form.
+    $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    return $this->buildDrawerResponse($build, [
+      'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
+    ]);
+  }
+
+  /** Returns the conversation list fragment for navigation inside the drawer. */
+  public function drawerConversations(): Response {
+    $build = $this->buildConversationList();
+    return $this->buildDrawerResponse($build, [
+      'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
+    ]);
+  }
+
+  /** Returns a member-authorized thread fragment for the open drawer. */
+  public function drawerConversation(PrivateMessageThreadInterface $private_message_thread): Response {
+    $thread = $private_message_thread;
+    $access = $thread->access('view', $this->currentUser, TRUE);
+    if (!$access->isAllowed() || !$thread->isMember($this->currentUser->id())) {
+      throw new NotFoundHttpException();
+    }
+
+    // Private Message owns the per-member read timestamp. Update it only after
+    // confirming both entity access and active membership.
+    $thread->updateLastAccessTime($this->currentUser);
+    $threadBuild = $this->entityTypeManager->getViewBuilder('private_message_thread')->view($thread, 'full');
+    $build = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['aculta-messenger-drawer-conversation'],
+        'data-aculta-conversation-view' => '',
+        'data-aculta-thread-id' => (string) $thread->id(),
+      ],
+      'thread' => $threadBuild,
+      '#cache' => ['contexts' => ['user'], 'max-age' => 0],
+    ];
+    (new CacheableMetadata())->addCacheableDependency($thread)->addCacheableDependency($access)->applyTo($build);
+    return $this->buildDrawerResponse($build, [
+      'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
+    ]);
+  }
+
+  /** Builds the authorized conversation list for drawer AJAX navigation. */
+  private function buildConversationList(): array {
     $threads = $this->privateMessageService->getThreadsForUser(50)['threads'];
     $items = [];
     $cacheability = (new CacheableMetadata())
@@ -149,11 +190,17 @@ final class MessagesController extends ControllerBase {
       if ($sender !== NULL) {
         $cacheability->addCacheableDependency($sender);
       }
-      $conversationUrl = $this->domainPurposeManager->routeUrl(
+      $drawerConversationUrl = Url::fromRoute('aculta_messenger.drawer_conversation', [
+        'private_message_thread' => $thread->id(),
+      ]);
+      $accountConversationUrl = $this->domainPurposeManager->routeUrl(
         'account',
-        'aculta_messenger.conversation_dialog',
+        'entity.private_message_thread.canonical',
         ['private_message_thread' => $thread->id()],
       );
+      if ($accountConversationUrl === NULL) {
+        continue;
+      }
       $lastMessageTimestamp = (int) $thread->getNewestMessageCreationTimestamp();
       $sentDate = $this->dateFormatter->format(
         $lastMessageTimestamp > 0 ? $lastMessageTimestamp : (int) $thread->getUpdatedTime(),
@@ -164,17 +211,14 @@ final class MessagesController extends ControllerBase {
         '<span class="aculta-messenger-sender__date">' . Html::escape($sentDate) . '</span>'
         . '<span class="aculta-messenger-sender__name">' . Html::escape($senderName) . '</span>'
       );
-      $openLink = $conversationUrl === NULL ? NULL : [
+      $openLink = [
         '#type' => 'link',
         '#title' => $linkTitle,
-        '#url' => $conversationUrl,
+        // Without JavaScript, retain a useful native Private Message page.
+        '#url' => $accountConversationUrl,
         '#attributes' => [
-          'class' => ['use-ajax', 'aculta-messenger-sender__link'],
-          'data-dialog-type' => 'modal',
-          'data-dialog-options' => json_encode([
-            'width' => 760,
-            'classes' => ['ui-dialog' => 'aculta-messenger-conversation-dialog'],
-          ], JSON_THROW_ON_ERROR),
+          'class' => ['aculta-messenger-sender__link'],
+          'data-aculta-conversation-url' => $drawerConversationUrl->toString(),
           'data-aculta-thread-id' => (string) $thread->id(),
           'data-aculta-thread-unread' => $isUnread ? 'true' : 'false',
           'data-aculta-sent-date' => $sentDate,
@@ -287,40 +331,6 @@ final class MessagesController extends ControllerBase {
       '#cache' => ['max-age' => 0],
     ];
     $cacheability->applyTo($build);
-    $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
-    return $this->buildDrawerResponse($build, [
-      'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
-    ]);
-  }
-
-  /** Renders the native thread and reply form for the account message modal. */
-  public function conversationDialog(PrivateMessageThreadInterface $private_message_thread): array {
-    $thread = $private_message_thread;
-    $build = $this->entityTypeManager->getViewBuilder('private_message_thread')->view($thread, 'full');
-
-    // Private Message normally adds its native reply form from the entity view
-    // display. Keep that form when configured; provide the same native Form API
-    // form if a site's display configuration omitted the component.
-    if (!isset($build['private_message_form'])) {
-      $hasActiveRecipient = FALSE;
-      foreach ($thread->getMembers() as $member) {
-        if ($member->isActive() && (int) $member->id() !== (int) $this->currentUser->id()) {
-          $hasActiveRecipient = TRUE;
-          break;
-        }
-      }
-
-      if ($hasActiveRecipient) {
-        $message = $this->entityTypeManager->getStorage('private_message')->create([]);
-        $formObject = $this->entityTypeManager->getFormObject('private_message', 'add')
-          ->setEntity($message);
-        $build['private_message_form'] = $this->formBuilder->getForm($formObject, $thread);
-      }
-      else {
-        $build['no_active_users'] = ['#theme' => 'private_message_no_active_users_notice'];
-      }
-    }
-
     return $build;
   }
 

@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.36 | Conversa no drawer via navegação AJAX | Verificação estática PASS; runtime a validar (RUNTIME STATUS: DEFERRED) | Abre conversa e volta para lista no próprio painel lateral; link da caixa ocupa toda a área clicável |
 | 0.6.0-dev.35 | Data visível na gaveta lateral e apresentação compacta | Validação visual pendente (RUNTIME STATUS: DEFERRED) | Data em elemento explícito acima do nome; fonte secundária pequena |
 | 0.6.0-dev.34 | Data da última mensagem nos contatos | Validação visual pendente (RUNTIME STATUS: DEFERRED) | Data/hora pequena acima do nome, sem ampliar intencionalmente o botão |
 | 0.6.0-dev.33 | Caixa compacta de remetente e ação de amizade no perfil público | Capturas locais desktop/mobile da lista revisadas; fluxo de amizade DEFERRED | Mensagens exibem avatar circular + nome; ação do perfil usa a forma de botão “Ver Perfil” |
