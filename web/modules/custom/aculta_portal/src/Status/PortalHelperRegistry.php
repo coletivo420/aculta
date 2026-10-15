@@ -17,6 +17,11 @@ final class PortalHelperRegistry {
    * @var array<string, array{label: string, summary: string, docs: string}>
    */
   private const DEFINITIONS = [
+    'aculta_user.achievement_definitions' => [
+      'label' => 'Definições de conquistas',
+      'summary' => 'Preserva o catálogo e as formas de concessão na Config API do User, sem motor de regras executáveis.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
+    ],
     'aculta_game.mission_progress' => [
       'label' => 'Missões e progresso',
       'summary' => 'Apresenta missões iniciais e progresso privado a partir das concessões reais, sem pontuação ou storage paralelo.',

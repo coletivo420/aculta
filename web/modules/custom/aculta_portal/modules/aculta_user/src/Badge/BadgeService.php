@@ -22,43 +22,69 @@ final class BadgeService {
     private readonly LockBackendInterface $lock,
     private readonly Connection $database,
     private readonly TimeInterface $time,
+    private readonly AchievementDefinitions $definitions,
   ) {}
 
   /** Concede o troféu se a pessoa ainda não o tem ativo. Retorna TRUE se concedeu agora. */
-  public function award(int $uid, string $badge, ?int $grantedBy = NULL): bool {
-    if (!isset(BadgeCatalog::all()[$badge]) || !$this->isEligible($uid)) {
+  public function award(int $uid, string $badge, ?int $grantedBy = NULL, string $reason = ''): bool {
+    $definition = $this->definitions->all()[$badge] ?? NULL;
+    if ($definition === NULL || empty($definition['enabled']) || !$this->isEligible($uid)
+      || ($grantedBy !== NULL && ($grantedBy <= 0 || !in_array('manual', $definition['triggers'], TRUE)))
+      || ($grantedBy === NULL && $definition['triggers'] === ['manual'])) {
       return FALSE;
     }
-    return $this->serialized($uid, $badge, function () use ($uid, $badge, $grantedBy): bool {
+    return $this->serialized($uid, $badge, function () use ($uid, $badge, $grantedBy, $definition, $reason): bool {
       if ($this->hasActive($uid, $badge)) {
         return FALSE;
       }
       $this->storage()->create([
         'uid' => $uid,
         'badge' => $badge,
-        'origem' => BadgeCatalog::all()[$badge]['origem'],
+        'origem' => $grantedBy !== NULL ? BadgeCatalog::MANUAL : $definition['origem'],
         'concedido_em' => $this->time->getCurrentTime(),
         'concedido_por' => $grantedBy,
+        'motivo_concessao' => $grantedBy !== NULL ? mb_substr(trim($reason), 0, 2000) : NULL,
       ])->save();
       return TRUE;
     });
   }
 
   /** Revoga o troféu manual ativo. Automáticas não são revogadas. Retorna TRUE se revogou. */
-  public function revoke(int $uid, string $badge, int $revokedBy): bool {
-    if (!BadgeCatalog::isManual($badge)) {
+  public function revoke(int $uid, string $badge, int $revokedBy, string $reason = ''): bool {
+    if ($uid <= 0 || $revokedBy <= 0) {
       return FALSE;
     }
-    return $this->serialized($uid, $badge, function () use ($uid, $badge, $revokedBy): bool {
+    return $this->serialized($uid, $badge, function () use ($uid, $badge, $revokedBy, $reason): bool {
       $changed = FALSE;
       foreach ($this->activeAwards($uid, $badge) as $award) {
+        if ($award->get('origem')->value !== BadgeCatalog::MANUAL) {
+          continue;
+        }
         $award->set('revogado_em', $this->time->getCurrentTime());
         $award->set('revogado_por', $revokedBy);
+        $award->set('motivo_revogacao', mb_substr(trim($reason), 0, 2000));
         $award->save();
         $changed = TRUE;
       }
       return $changed;
     });
+  }
+
+  /** Critérios configurados, com defaults estáveis para conquistas existentes. */
+  public function definitions(): array {
+    return $this->definitions->all();
+  }
+
+  /** Cada evento já validado pelo dono da fonte chama a mesma API idempotente. */
+  public function awardForTrigger(int $uid, string $trigger): void {
+    if ($trigger === 'manual' || !isset(AchievementDefinitions::TRIGGERS[$trigger])) {
+      return;
+    }
+    foreach ($this->definitions->all() as $id => $definition) {
+      if (in_array($trigger, $definition['triggers'], TRUE)) {
+        $this->award($uid, $id);
+      }
+    }
   }
 
   /** Contas históricas ou bloqueadas não participam de novas concessões. */

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_game\Hook;
 
-use Drupal\aculta_user\Badge\BadgeCatalog;
 use Drupal\aculta_user\Badge\BadgeService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityInterface;
@@ -43,7 +42,7 @@ final class BadgeEvaluationHooks {
     if (!$topic instanceof NodeInterface || $topic->bundle() !== 'forum' || !$topic->isPublished() || !$this->isLive($topic)) {
       return;
     }
-    $this->badges->award((int) $comment->getOwnerId(), BadgeCatalog::PRIMEIRO_COMENTARIO);
+    $this->badges->awardForTrigger((int) $comment->getOwnerId(), 'forum_comment');
   }
 
   /** Primeira edição na Wiki: a pessoa criou uma revisão de verbete. */
@@ -59,7 +58,7 @@ final class BadgeEvaluationHooks {
     }
     $uid = (int) $node->getRevisionUserId();
     if ($uid > 0) {
-      $this->badges->award($uid, BadgeCatalog::PRIMEIRA_EDICAO_WIKI);
+      $this->badges->awardForTrigger($uid, 'wiki_revision');
     }
   }
 
@@ -84,7 +83,14 @@ final class BadgeEvaluationHooks {
     if ($original !== NULL && $original->getState()->getId() === 'completed') {
       return;
     }
-    $this->badges->award((int) $order->getCustomerId(), BadgeCatalog::APOIADOR);
+    $this->badges->awardForTrigger((int) $order->getCustomerId(), 'order_completed');
+    // Commerce Donation Flow registra apoio como order item donation.
+    foreach ($order->getItems() as $item) {
+      if ($item->bundle() === 'donation') {
+        $this->badges->awardForTrigger((int) $order->getCustomerId(), 'donation_completed');
+        break;
+      }
+    }
   }
 
   /** Curso concluído com status "passed" no LMS. */
@@ -98,7 +104,7 @@ final class BadgeEvaluationHooks {
     if ($original !== NULL && $original->getStatus() === CourseStatusInterface::STATUS_PASSED) {
       return;
     }
-    $this->badges->award((int) $status->getUserId(), BadgeCatalog::PRIMEIRO_CURSO);
+    $this->badges->awardForTrigger((int) $status->getUserId(), 'course_passed');
   }
 
   private function profileBasic(ProfileInterface $profile): void {
@@ -110,7 +116,7 @@ final class BadgeEvaluationHooks {
         return;
       }
     }
-    $this->badges->award((int) $profile->getOwnerId(), BadgeCatalog::PERFIL_BASICO);
+    $this->badges->awardForTrigger((int) $profile->getOwnerId(), 'profile_basic');
   }
 
   /** O Migrate Core marca entidades como syncing; não premiar restauração. */

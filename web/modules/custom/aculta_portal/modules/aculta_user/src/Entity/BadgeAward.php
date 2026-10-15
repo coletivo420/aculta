@@ -49,6 +49,10 @@ final class BadgeAward extends ContentEntityBase {
     $fields['revogado_por'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Revogada por'))
       ->setSetting('target_type', 'user');
+    $fields['motivo_concessao'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Motivo da concessão administrativa'));
+    $fields['motivo_revogacao'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Motivo da revogação administrativa'));
     return $fields;
   }
 

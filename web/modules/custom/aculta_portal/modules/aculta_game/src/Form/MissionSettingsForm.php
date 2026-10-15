@@ -10,6 +10,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Controles iniciais do Game; não altera concessões nem inventa regras. */
@@ -39,6 +40,7 @@ final class MissionSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['intro'] = ['#plain_text' => $this->t('Ative as missões oferecidas às pessoas participantes. Desativar uma missão não apaga conquistas ou altera seu histórico. Os critérios desta versão são fixos.')];
     $form['missions'] = ['#type' => 'container', '#tree' => TRUE];
+    $form['management'] = ['#type' => 'link', '#title' => $this->t('Criar e editar conquistas'), '#url' => Url::fromRoute('aculta_game.achievements'), '#weight' => -10];
     $form['catalog'] = $this->presentation->trophyCatalog();
     $form['catalog']['#weight'] = 10;
     foreach ($this->missions->definitions(FALSE) as $id => $definition) {

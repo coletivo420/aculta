@@ -263,6 +263,8 @@ Os testes de navegador criam dados. Remover contas e conversas de teste pela API
 
 ## 10. Pendências conhecidas
 
+- Tipos de conversa, grupos de até 10 pessoas, fórum, LMS e retenção do curso: ver [`MESSENGER-CONVERSATION-KINDS.md`](MESSENGER-CONVERSATION-KINDS.md). A criação de grupo pela gaveta ainda não existe (fase B).
+
 - Auditoria: A1 a A9 em [`MESSENGER-AUDIT.md`](MESSENGER-AUDIT.md).
 - Conversas em grupo sem "Limpar histórico".
 - Aviso de bloqueio do Private Message em inglês (configuração não exportada; decisão pendente).

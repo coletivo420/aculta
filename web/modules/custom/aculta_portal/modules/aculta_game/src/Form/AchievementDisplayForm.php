@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_game\Form;
 
 use Drupal\aculta_game\AchievementPresentation;
-use Drupal\aculta_user\Badge\BadgeCatalog;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -40,7 +39,7 @@ final class AchievementDisplayForm extends FormBase {
       '#default_value' => !empty($preferences['hide_all']),
     ];
     $form['items'] = ['#type' => 'container', '#tree' => TRUE];
-    foreach (BadgeCatalog::all() as $id => $definition) {
+    foreach ($this->presentation->definitions() as $id => $definition) {
       $choice = $preferences['items'][$id] ?? [];
       $form['items'][$id] = ['#type' => 'details', '#title' => $this->t($definition['label']), '#open' => TRUE];
       $form['items'][$id]['show'] = ['#type' => 'checkbox', '#title' => $this->t('Exibir quando conquistada'), '#default_value' => empty($choice['hidden'])];
@@ -59,7 +58,7 @@ final class AchievementDisplayForm extends FormBase {
       throw new AccessDeniedHttpException();
     }
     $items = [];
-    foreach (BadgeCatalog::all() as $id => $definition) {
+    foreach ($this->presentation->definitions() as $id => $definition) {
       $row = $form_state->getValue(['items', $id], []);
       $items[$id] = ['hidden' => empty($row['show']), 'highlight' => !empty($row['highlight']), 'weight' => (int) ($row['weight'] ?? 0)];
     }

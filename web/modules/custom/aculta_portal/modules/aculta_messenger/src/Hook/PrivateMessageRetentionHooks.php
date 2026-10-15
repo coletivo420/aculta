@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
+use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -14,7 +15,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 /** Applies the six-month inactivity retention policy to private conversations. */
 final class PrivateMessageRetentionHooks {
 
-  private const RETENTION_MONTHS = 6;
 
   private const MAX_THREADS_PER_CRON = 20;
 
@@ -35,7 +35,7 @@ final class PrivateMessageRetentionHooks {
     }
 
     $cutoff = (new \DateTimeImmutable('@' . $this->time->getRequestTime()))
-      ->modify('-' . self::RETENTION_MONTHS . ' months')
+      ->modify('-' . ConversationPolicy::RETENTION_MONTHS . ' months')
       ->getTimestamp();
     $storage = $this->entityTypeManager->getStorage('private_message_thread');
     $ids = $storage->getQuery()

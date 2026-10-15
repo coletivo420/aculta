@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_game;
 
-use Drupal\aculta_user\Badge\BadgeCatalog;
 use Drupal\aculta_user\Badge\BadgeService;
 use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -41,7 +40,7 @@ final class AchievementPresentation {
       throw new \InvalidArgumentException('Preferências exigem uma conta.');
     }
     $items = [];
-    foreach (BadgeCatalog::all() as $id => $definition) {
+    foreach ($this->badges->definitions() as $id => $definition) {
       $item = $preferences['items'][$id] ?? [];
       $items[$id] = [
         'hidden' => !empty($item['hidden']),
@@ -91,7 +90,7 @@ final class AchievementPresentation {
       $cache->applyTo($build);
       return $build;
     }
-    $catalog = BadgeCatalog::all();
+    $catalog = $this->badges->definitions();
     $rows = [];
     foreach ($this->badges->activeFor($uid) as $award) {
       $cache->addCacheableDependency($award);
@@ -134,23 +133,32 @@ final class AchievementPresentation {
   /** Catálogo sem dados de titulares; importar troféu não concede a ninguém. */
   public function trophyCatalog(): array {
     $build = ['#type' => 'details', '#title' => $this->t('Troféus da comunidade'), '#open' => TRUE];
-    $catalog = BadgeCatalog::all();
-    foreach (TrophyCatalog::all() as $id => $trophy) {
+    $catalog = $this->badges->definitions();
+    foreach ($catalog as $id => $definition) {
+      if (empty($definition['enabled'])) {
+        continue;
+      }
+      $trophy = TrophyCatalog::all()[$definition['image'] ?? $id] ?? NULL;
+      if ($trophy === NULL && empty($definition['description'])) {
+        continue;
+      }
       $build[$id] = [
         '#type' => 'details',
         '#title' => $this->t($catalog[$id]['label']),
         '#open' => TRUE,
         'image' => $this->trophyImage($id),
-        'description' => ['#plain_text' => $this->t($trophy['description'])],
-        'source' => ['#type' => 'link', '#title' => $this->t('Conheça a origem deste troféu'), '#url' => Url::fromUri($trophy['source'])],
+        'description' => ['#plain_text' => $this->t($definition['description'] ?: ($trophy['description'] ?? ''))],
+        'source' => $trophy !== NULL ? ['#type' => 'link', '#title' => $this->t('Conheça a origem deste troféu'), '#url' => Url::fromUri($trophy['source'])] : [],
       ];
     }
     $build['#cache']['contexts'] = ['languages:language_interface'];
+    $build['#cache']['tags'] = ['config:aculta_user.achievement_definitions'];
     return $build;
   }
 
   private function trophyImage(string $id): array {
-    $trophy = TrophyCatalog::all()[$id] ?? NULL;
+    $definition = $this->badges->definitions()[$id] ?? [];
+    $trophy = TrophyCatalog::all()[$definition['image'] ?? $id] ?? NULL;
     if ($trophy === NULL) {
       return [];
     }
@@ -164,10 +172,15 @@ final class AchievementPresentation {
     ];
   }
 
+  public function definitions(): array {
+    return $this->badges->definitions();
+  }
+
   private function cache(int $uid): CacheableMetadata {
     return (new CacheableMetadata())->addCacheTags([
       'user:' . $uid,
       'aculta_game:display:' . $uid,
+      'config:aculta_user.achievement_definitions',
       ...$this->entities->getDefinition('aculta_badge_award')->getListCacheTags(),
     ])->addCacheContexts(['languages:language_interface']);
   }

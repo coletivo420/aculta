@@ -24,3 +24,18 @@ function aculta_user_update_10002(): void {
   $type = \Drupal::entityTypeManager()->getDefinition('aculta_friendship');
   $manager->installEntityType($type);
 }
+
+/** Adiciona motivos administrativos sem alterar IDs, datas ou concessões anteriores. */
+function aculta_user_update_10003(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  foreach ([
+    'motivo_concessao' => 'Motivo da concessão administrativa',
+    'motivo_revogacao' => 'Motivo da revogação administrativa',
+  ] as $name => $label) {
+    if ($manager->getFieldStorageDefinition($name, 'aculta_badge_award') !== NULL) {
+      continue;
+    }
+    $field = \Drupal\Core\Field\BaseFieldDefinition::create('string_long')->setLabel($label);
+    $manager->installFieldStorageDefinition($name, 'aculta_badge_award', 'aculta_user', $field);
+  }
+}
