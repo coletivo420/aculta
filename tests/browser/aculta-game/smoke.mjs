@@ -17,21 +17,32 @@ try {
   check('Visão geral mostra Conquistas e missões', await browser.exec(`return document.body.innerText.includes('Conquistas e missões');`));
   check('Entrada da visão geral é navegável', await browser.exec(`const link = [...document.querySelectorAll('a')].find(a => a.textContent.includes('Ver missões e escolher')); if (!link) return false; link.click(); return true;`));
   check('Formulário aparece após navegação AJAX', await browser.waitFor(`document.querySelector('input[name="hide_all"]')`, 'Game'));
+  check('Cada conquista informa estado e condição', await browser.exec(`return document.body.innerText.includes('Ainda não conquistada') && document.body.innerText.includes('Como conquistar');`));
+  check('Conta apresenta uma única área de Conquistas', await browser.exec(`return !document.body.innerText.includes('Troféus da comunidade') && !document.body.innerText.includes('Troféu');`));
   check('Três missões aparecem', await browser.exec(`return ['Primeira contribuição no Growroom420', 'Contribuição ao conhecimento', 'Primeira formação concluída'].every(t => document.body.innerText.includes(t));`));
   await browser.exec(`document.querySelector('[data-portal-account-data-content]')?.scrollIntoView(); return true;`);
   await browser.shot('game-conta-desktop');
   const resized = await fetch(GD + browser.p('/window/rect'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ width: 390, height: 844 }) });
   if (!resized.ok) throw new Error('Falha ao redimensionar janela de teste.');
-  check('Mobile mostra os controles', await browser.exec(`return !!document.querySelector('input[name="hide_all"]');`));
+  check('Mobile mostra os controles', await browser.exec(`const input = document.querySelector('input[name="hide_all"]'); return !!input && input.getBoundingClientRect().width > 0;`));
   check('Mobile sem rolagem horizontal', await browser.exec(`return document.documentElement.scrollWidth <= window.innerWidth + 1;`));
+  await browser.exec(`document.querySelector('input[name="hide_all"]')?.closest('form')?.scrollIntoView(); return true;`);
   await browser.shot('game-conta-mobile');
   // Nova sessão HTTP de admin no mesmo Firefox, sem encerrar processos de outra execução.
   await fetch(GD + browser.p('/cookie'), { method: 'DELETE' });
   await browser.go(oneTimeLogin(adminName));
   await browser.go(mainBase + '/painel-administrativo/game');
-  check('Administração Game mostra três controles', await browser.exec(`return document.querySelectorAll('input[type="checkbox"][name^="missions["]').length === 3;`));
+  check('Administração Game mostra três controles', await browser.waitFor(`document.querySelectorAll('input[type="checkbox"][name^="missions["]').length === 3`, 'controles administrativos Game'));
   await browser.exec(`document.querySelector('input[name="missions[comunidade]"]')?.closest('form')?.scrollIntoView(); return true;`);
   await browser.shot('game-administracao');
+  await browser.go(mainBase + '/painel-administrativo/game/conquistas');
+  check('Lista administrativa usa apenas Conquistas', await browser.exec(`return document.body.innerText.includes('Conquistas') && !document.body.innerText.includes('Troféus');`));
+  await browser.go(mainBase + '/painel-administrativo/game/conquistas/criar');
+  check('Editor organiza nome, imagem e condições legíveis', await browser.exec(`return !!document.querySelector('input[name="identity[label]"]') && !!document.querySelector('input[type="file"]') && document.body.innerText.includes('Participação na comunidade') && document.body.innerText.includes('Apoio à associação') && document.body.innerText.includes('Basta cumprir uma das formas');`));
+  await browser.go(mainBase + '/painel-administrativo/game/conquistas/fundadore/editar');
+  check('Imagem atual tem ação de remoção separada', await browser.exec(`return [...document.querySelectorAll('a')].some(a => a.textContent.includes('Remover imagem atual'));`));
+  await browser.go(mainBase + '/painel-administrativo/game/conquistas/fundadore/imagem/remover');
+  check('Remoção abre confirmação com cancelar e confirmar', await browser.waitFor(`document.body.innerText.includes('não pode ser desfeita') && [...document.querySelectorAll('form input[type="submit"], form button[type="submit"]')].some(button => (button.value || button.innerText).includes('Confirmar remoção da imagem')) && document.body.innerText.includes('Voltar sem remover')`, 'Game'));
   const menu = JSON.parse(drush(`$manager = \\Drupal::service('plugin.manager.menu.link'); $notice = $manager->getDefinition('aculta_messenger.admin_notices'); $game = $manager->getDefinition('aculta_game.admin'); print json_encode(['parent' => $game['parent'], 'after' => $game['weight'] > $notice['weight']]);`));
   check('Game está abaixo de Avisos no menu', menu.parent === 'system.admin' && menu.after);
 }

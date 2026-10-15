@@ -27,4 +27,7 @@ aculta_user.achievement_definitions:
             label: 'Versão do critério'
           image:
             type: string
-            label: 'Imagem do catálogo'
+            label: 'Imagem histórica da conquista'
+          image_uuid:
+            type: string
+            label: 'UUID da imagem enviada'

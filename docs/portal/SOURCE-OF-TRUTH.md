@@ -75,10 +75,17 @@ Desde G3, escolhas de exibição pertencem ao User Data de `aculta_user`, chave
 `game_achievement_display`. O helper `aculta_game.achievement_presentation`
 entrega conquistas ao perfil público e à própria conta, com cache e privacidade;
 não inclui dados de pedidos, cursos ou avaliadores. Nenhuma concessão é duplicada
-para representar destaque ou ocultação. Caixas adicionais e missões seguem o roadmap.
+para representar destaque ou ocultação. Caixas adicionais seguem o roadmap.
 
-Fórum está em documentação; Game implementa G1–G3 com homologação funcional
-parcial pendente. A tabela de capacidades existentes
+Game G4–G5.2 oferece missões unitárias, administração e avisos de conquista.
+Definições/critério:
+Config API de `aculta_user.achievement_definitions`; fatos: `aculta_badge_award`,
+com motivos administrativos privados, ator e datas. Game controla UX e eventos;
+User preserva definições/concessões/privacidade sem dependência inversa. Pedidos
+e itens `donation` continuam no Commerce. Motivos não atravessam a projeção pública.
+
+Fórum está em documentação; Game tem verificação funcional de G3–G5.2,
+com concorrência e jornadas completas ainda pendentes. A tabela de capacidades existentes
 não significa que seus roadmaps estejam implementados ou homologados.
 
 ### Princípio

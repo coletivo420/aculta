@@ -10,7 +10,7 @@ declare(strict_types=1);
 use Drupal\aculta_user\Entity\BadgeAward;
 
 /**
- * Instala a tabela dos troféus concedidos (aculta_badge_award).
+ * Instala o registro das conquistas concedidas (aculta_badge_award).
  */
 function aculta_user_update_10001(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();

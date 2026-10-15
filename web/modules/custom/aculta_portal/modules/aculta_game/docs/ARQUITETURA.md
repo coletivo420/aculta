@@ -1,6 +1,6 @@
 # Arquitetura — ACULTA Game
 
-Status: arquitetura aprovada em evolução. G1–G3 têm código; evidências e limites
+Status: arquitetura aprovada em evolução. G1–G5.1 têm código; evidências e limites
 em [EXECUCAO.md](EXECUCAO.md). Partes descritas como futuras continuam propostas.
 
 ## Fontes e responsabilidades
@@ -76,6 +76,19 @@ Nenhuma dessas observações autoriza apagar concessões existentes ou reclassif
 seus titulares. Reavaliações precisam de uma política explícita de migração.
 
 ## Elegibilidade e integridade
+
+Desde G5.1, o User oferece `AchievementDefinitions` como catálogo configurável,
+fonte de `BadgeService::definitions()`. A Config API de User mantém overrides e
+defaults estáveis, schema e gatilhos enumerados. Game entrega formulários de
+criação/edição; as demais apresentações e fontes consultam a mesma definição.
+Editar gatilhos não executa backfill. Criteria versão avança quando muda o conjunto
+de gatilhos; alteração de nome não muda a identidade ou reconcede um marco.
+
+Cada concessão registra sua origem real: manual com ator/data/motivo interno,
+ou automática. Revogação considera a origem do registro, preservando o fato
+automático mesmo quando a definição passa a permitir concessão administrativa.
+User update 10003 instala somente campos opcionais de motivo na entidade existente.
+Histórico administrativo é consulta paginada dessa entidade, não storage paralelo.
 
 Revalidar publicação, matrícula quando pertinente, conta ativa e fonte antes de
 conceder. Uma ação não confere permissão editorial nem privilégios de matrícula.

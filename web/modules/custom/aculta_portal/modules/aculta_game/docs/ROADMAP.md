@@ -10,9 +10,10 @@ do responsável, as fases são commits próprios na PR #286 existente.
 | G0 — pesquisa e abertura | README, decisões, arquitetura, licenças e evidências de pacotes | Distinguir fonte existente, proposta e compatibilidade ainda não homologada |
 | G1 — concluída; inventário e fonte única | Auditar concessões atuais e ownership; escolher transição/integração | Preservar IDs/datas/revogações; nenhum segundo backend; atualizar fontes de verdade |
 | G2 — implementada; homologação pendente | Aprovação tardia de comentário, revisão Wiki, status LMS e critérios existentes | Repetição/concorrência não duplicam; importações e legados não recebem novas conquistas |
-| G3 — conta/perfil implementados; homologação pendente | Minha Conta, perfil e escolhas de exibição pública; caixas adicionais em G7 | Público por padrão com ocultação, destaques e ordem; zero evidência privada publicada; acessibilidade e cache |
+| G3 — conta/perfil verificados; acessibilidade completa pendente | Minha Conta, perfil e escolhas de exibição pública; caixas adicionais em G7 | Público por padrão com ocultação, destaques e ordem; zero evidência privada publicada; acessibilidade e cache |
 | G4 — implementada e verificada no Homelab | Três missões unitárias, critérios versionados e progresso das conquistas reais | Sem XP/ranking; configuração, navegação, POST, privacidade e acesso verificados |
-| G5 — controles administrativos e avisos | Ampliar Game em `/painel-administrativo/game`, abaixo de Avisos: concessão/revogação manual, motivo, auditoria e avisos permitidos | Permissão própria, deduplicação e preferências; sem conceder privilégios editoriais |
+| G5.1 — implementada/verificada | Criação/edição de conquistas, critérios, concessão/revogação manual, motivos e histórico na área Game | Permissão própria; fontes reais, dados preservados; HTTP 34/34 |
+| G5.2 — avisos pendentes | Avisos de conquistas pelo Messenger e preferências de entrega | Deduplicação, privacidade e revalidação; sem conceder privilégios editoriais |
 | G6 — automação opcional | Spike ECA ou outro backend apenas se houver lacuna demonstrada | Composer e licenças revistos, ownership único, testes de paridade; não instalar ECA e Rules para a mesma regra |
 | G7 — integração continuada | Fórum atual, Wiki, Revista, cursos e participação cultural | Mesma conquista e mesma privacidade em todos os consumidores; legado tratado como memória |
 

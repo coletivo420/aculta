@@ -38,9 +38,7 @@ final class ProfileHooks {
   public function activity(array &$build, string $tab, int $uid): void {
     if ($tab === 'conquistas') {
       $build = [
-        'conquistas' => $this->presentation->own($uid),
         'missions' => $this->missions->build($uid),
-        'catalog' => $this->presentation->trophyCatalog(),
         'preferences' => $this->forms->getForm(AchievementDisplayForm::class),
       ];
     }

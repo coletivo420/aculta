@@ -11,14 +11,14 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Troféu concedido a uma pessoa (plano aculta_user, seção G).
+ * Conquista concedida a uma pessoa (plano aculta_user, seção G).
  *
  * Fato histórico: a linha não é apagada ao revogar. Revogação grava quem revogou e quando.
  */
 #[ContentEntityType(
   id: 'aculta_badge_award',
-  label: new TranslatableMarkup('Troféu concedido'),
-  label_collection: new TranslatableMarkup('Troféus concedidos'),
+  label: new TranslatableMarkup('Conquista concedida'),
+  label_collection: new TranslatableMarkup('Conquistas concedidas'),
   base_table: 'aculta_badge_award',
   entity_keys: ['id' => 'id', 'uuid' => 'uuid'],
 )]
@@ -31,7 +31,7 @@ final class BadgeAward extends ContentEntityBase {
       ->setSetting('target_type', 'user')
       ->setRequired(TRUE);
     $fields['badge'] = BaseFieldDefinition::create('string')
-      ->setLabel(new TranslatableMarkup('Troféu'))
+      ->setLabel(new TranslatableMarkup('Conquista'))
       ->setSetting('max_length', 64)
       ->setRequired(TRUE);
     $fields['origem'] = BaseFieldDefinition::create('string')

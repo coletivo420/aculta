@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * The single definition of the alert and persistent-notice counts shown in the Messenger surfaces.
@@ -23,6 +24,7 @@ final class MessengerCounts {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FlagServiceInterface $flagService,
     private readonly GetAlertsInterface $siteAlerts,
+    private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
   /**
@@ -81,7 +83,9 @@ final class MessengerCounts {
         $query->condition('nid', $flagged, 'NOT IN');
       }
     }
-    return (int) $query->count()->execute();
+    $count = (int) $query->count()->execute();
+    $this->moduleHandler?->alter('aculta_messenger_unread_notice_count', $count, $account);
+    return $count;
   }
 
 }

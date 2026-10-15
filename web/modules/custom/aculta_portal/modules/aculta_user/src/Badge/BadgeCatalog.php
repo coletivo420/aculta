@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Badge;
 
 /**
- * Catálogo de troféus (plano aculta_user, seção G).
+ * Identificadores estáveis das conquistas existentes.
  *
  * Automáticas: concedidas por regra e nunca revogadas. Manuais: concedidas e revogadas só pelo administrador.
  */

@@ -75,6 +75,7 @@ final class BadgeEvaluationHooks {
 
   /** Pedido concluído (apoio ou pagamento) concede Apoiador. */
   #[Hook('commerce_order_update')]
+  #[Hook('commerce_order_insert')]
   public function orderUpdate(OrderInterface $order): void {
     if (!$this->isLive($order) || $order->getState()->getId() !== 'completed') {
       return;

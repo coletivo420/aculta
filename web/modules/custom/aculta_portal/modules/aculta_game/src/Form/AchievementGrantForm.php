@@ -26,7 +26,7 @@ final class AchievementGrantForm extends FormBase {
     $options = [];
     foreach ($this->badges->definitions() as $id => $definition) {
       // Permitir revogar uma concessão manual mesmo após pausar sua definição.
-      $options[$id] = $this->t($definition['label']);
+      $options[$id] = (string) $definition['label'];
     }
     $form['person'] = ['#type' => 'entity_autocomplete', '#title' => $this->t('Pessoa'), '#target_type' => 'user', '#required' => TRUE, '#selection_settings' => ['include_anonymous' => FALSE]];
     $form['achievement'] = ['#type' => 'select', '#title' => $this->t('Conquista'), '#options' => $options, '#required' => TRUE];

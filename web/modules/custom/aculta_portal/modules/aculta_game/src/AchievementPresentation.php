@@ -10,7 +10,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleExtensionList;
-use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
@@ -31,7 +30,7 @@ final class AchievementPresentation {
   /** Preferências ausentes significam exibição pública, sem destaques. */
   public function preferences(int $uid): array {
     $stored = $this->userData->get('aculta_user', $uid, 'game_achievement_display');
-    return is_array($stored) ? $stored + ['hide_all' => FALSE, 'items' => []] : ['hide_all' => FALSE, 'items' => []];
+    return is_array($stored) ? $stored + ['hide_all' => FALSE, 'items' => [], 'email_notifications' => TRUE] : ['hide_all' => FALSE, 'items' => [], 'email_notifications' => TRUE];
   }
 
   /** API interna; o chamador deve autorizar a pessoa que altera as escolhas. */
@@ -52,6 +51,7 @@ final class AchievementPresentation {
     $this->userData->set('aculta_user', $uid, 'game_achievement_display', [
       'hide_all' => !empty($preferences['hide_all']),
       'items' => $items,
+      'email_notifications' => !array_key_exists('email_notifications', $preferences) || !empty($preferences['email_notifications']),
     ]);
     $this->cacheInvalidator->invalidateTags(['aculta_game:display:' . $uid]);
   }
@@ -114,9 +114,9 @@ final class AchievementPresentation {
       foreach ($rows as $row) {
         $items[] = [
           '#type' => 'container',
-          'image' => $this->trophyImage($row['id']),
+          'image' => $this->imageForDefinition($catalog[$row['id']]),
           // ItemList interpreta filhos sem #type como sublistas.
-          'label' => ['#type' => 'container', 'text' => ['#plain_text' => $row['highlight'] ? $this->t('@conquista — em destaque', ['@conquista' => $row['label']]) : $this->t($row['label'])]],
+          'label' => ['#type' => 'container', 'text' => ['#plain_text' => $row['highlight'] ? $this->t('@conquista — em destaque', ['@conquista' => $row['label']]) : (string) $row['label']]],
         ];
       }
       $build = [
@@ -130,46 +130,41 @@ final class AchievementPresentation {
     return $build;
   }
 
-  /** Catálogo sem dados de titulares; importar troféu não concede a ninguém. */
-  public function trophyCatalog(): array {
-    $build = ['#type' => 'details', '#title' => $this->t('Troféus da comunidade'), '#open' => TRUE];
-    $catalog = $this->badges->definitions();
-    foreach ($catalog as $id => $definition) {
-      if (empty($definition['enabled'])) {
-        continue;
-      }
-      $trophy = TrophyCatalog::all()[$definition['image'] ?? $id] ?? NULL;
-      if ($trophy === NULL && empty($definition['description'])) {
-        continue;
-      }
-      $build[$id] = [
-        '#type' => 'details',
-        '#title' => $this->t($catalog[$id]['label']),
-        '#open' => TRUE,
-        'image' => $this->trophyImage($id),
-        'description' => ['#plain_text' => $this->t($definition['description'] ?: ($trophy['description'] ?? ''))],
-        'source' => $trophy !== NULL ? ['#type' => 'link', '#title' => $this->t('Conheça a origem deste troféu'), '#url' => Url::fromUri($trophy['source'])] : [],
-      ];
+  /** IDs concedidos ativos para formar a ficha única de cada conquista. */
+  public function earnedIds(int $uid): array {
+    $ids = [];
+    foreach ($this->badges->activeFor($uid) as $award) {
+      $ids[(string) $award->get('badge')->value] = TRUE;
     }
-    $build['#cache']['contexts'] = ['languages:language_interface'];
-    $build['#cache']['tags'] = ['config:aculta_user.achievement_definitions'];
-    return $build;
+    return $ids;
   }
 
-  private function trophyImage(string $id): array {
-    $definition = $this->badges->definitions()[$id] ?? [];
-    $trophy = TrophyCatalog::all()[$definition['image'] ?? $id] ?? NULL;
-    if ($trophy === NULL) {
-      return [];
+  /** Imagem pública atual, com fallback dos arquivos históricos importados. */
+  public function imageForDefinition(array $definition): array {
+    if (!empty($definition['image_uuid'])) {
+      $files = $this->entities->getStorage('file')->loadByProperties(['uuid' => $definition['image_uuid']]);
+      $file = $files ? reset($files) : NULL;
+      if ($file && str_starts_with($file->getFileUri(), 'public://') && str_starts_with((string) $file->getMimeType(), 'image/')) {
+        return [
+          '#theme' => 'image',
+          '#uri' => $file->getFileUri(),
+          '#alt' => (string) ($definition['label'] ?? ''),
+          '#width' => 96,
+          '#cache' => ['tags' => $file->getCacheTags()],
+        ];
+      }
     }
-    return [
+    $legacy = [
+      'fundadore' => 'fundadore.png',
+      'associado' => 'associado-antiproibicionista.png',
+      'apoiador' => 'apoiadore.png',
+    ][$definition['image'] ?? ''] ?? NULL;
+    return $legacy ? [
       '#theme' => 'image',
-      '#uri' => $this->modules->getPath('aculta_game') . '/assets/trophies/' . $trophy['image'],
+      '#uri' => $this->modules->getPath('aculta_game') . '/assets/conquistas/' . $legacy,
       '#width' => 96,
-      '#height' => 96,
-      // O nome do troféu já aparece ao lado ou no título do catálogo.
-      '#alt' => '',
-    ];
+      '#alt' => (string) ($definition['label'] ?? ''),
+    ] : [];
   }
 
   public function definitions(): array {

@@ -18,6 +18,7 @@ services:
       - '@entity_type.manager'
       - '@flag'
       - '@site_alert.get_alerts'
+      - '@module_handler'
   aculta_messenger.unread_thread_counter:
     class: Drupal\aculta_messenger\Service\UnreadThreadCounter
     arguments:

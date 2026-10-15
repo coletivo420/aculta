@@ -1,3 +1,20 @@
+## 0.4.0-dev.40 — Game G5.2: avisos, e-mail e confirmação de imagem — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.7`, User `0.4.0-dev.8`: catálogo único
+com apresentação inspirada no GamiPress, upload e remoção confirmada de imagem,
+aviso dispensável de nova conquista e e-mail enfileirado com preferência pessoal.
+Homelab: Firefox 14/14; exclusão do arquivo não compartilhado verificada; gates
+Drupal 11, fronteira, endereços e slugs aprovados. Envio real de e-mail não
+verificado. Sem versão de release ou tag.
+
+## 0.4.0-dev.39 — Game G5.1: criação e gestão de conquistas — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.6`, User `0.4.0-dev.7`: catálogo editável,
+concessão/revogação com auditoria e histórico na área Game. Apoiadore reconhece
+pedido, apoio direto concluído ou concessão administrativa. Update User 10003
+aplicado no Homelab; dados anteriores preservados. HTTP 34/34, fontes e limites
+registrados em `modules/aculta_game/docs/EXECUCAO.md`.
+
 ## 0.4.0-dev.38 — troféus históricos no Game — 2026-10-15
 
 Classificação MINOR. Game `0.1.0-dev.5` importa três troféus com imagens originais;

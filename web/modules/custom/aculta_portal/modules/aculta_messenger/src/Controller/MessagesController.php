@@ -25,6 +25,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\message\MessageInterface;
@@ -65,6 +66,7 @@ final class MessagesController extends ControllerBase {
     private readonly MessengerCounts $counts,
     private readonly PrivateMessageFormValidator $replyValidator,
     private readonly CsrfTokenGenerator $csrfToken,
+    private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -85,6 +87,7 @@ final class MessagesController extends ControllerBase {
       $container->get('aculta_messenger.counts'),
       $container->get('aculta_messenger.private_message_form_validator'),
       $container->get('csrf_token'),
+      $container->get('module_handler'),
     );
   }
 
@@ -581,6 +584,7 @@ final class MessagesController extends ControllerBase {
     foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
       $items[] = $item;
     }
+    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account);
 
     if ($items === []) {
       $items[] = ['#plain_text' => (string) $this->translation->translate('Não há avisos ativos neste momento.')];

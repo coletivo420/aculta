@@ -1,5 +1,25 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.7 — G5.2: apresentação e avisos de conquistas — 2026-10-15
+
+- Editor reorganizado por identificação, imagem e condições; critérios separados por participação, formação, apoio e equipe.
+- Imagem administrável por upload validado; remoção exige confirmação e exclui arquivo enviado sem outros usos.
+- Conta exibe catálogo único com estado, condição, privacidade, destaque e ordenação; removida a lista duplicada de troféus.
+- Nova conquista integra Avisos como item dispensável e enfileira e-mail; pessoa pode desativar e-mail.
+- GamiPress serviu de referência de UX para critérios agrupados, progresso por conquista e controles de exibição; sem código copiado ou módulo instalado.
+- Firefox no Homelab 14/14; exclusão de arquivo gerenciado confirmada com fixture removida. Entrega de e-mail não verificada; cron não executado.
+
+## 0.1.0-dev.6 — G5.1: conquistas administráveis — 2026-10-15
+
+- Criação/edição de conquistas com formas de concessão fechadas, disponibilidade, imagem e versão do critério.
+- Apoiadore: pedido concluído, apoio no sistema de doações ou concessão administrativa, conforme decisão explícita.
+- Conceder/revogar manualmente com ator, data e motivos na entidade histórica; consulta administrativa paginada.
+- Definições e histórico permanecem no User; nenhuma tabela de concessões/progresso paralela.
+- Update User 10003 adiciona dois campos opcionais; dados antigos preservados por digest.
+- HTTP 34/34, evento de apoio repetido sob rollback e PNGs servidos com hash original conferidos.
+- Avisos de conquista/deduplicação de entrega permanecem em G5.2; não foi instalado ECA.
+
+
 ## 0.1.0-dev.5 — troféus do site antigo — 2026-10-15
 
 - Importados Fundadore, Associado/a Antiproibicionista e Apoiadore, com PNGs originais e manifesto de origem/hash.

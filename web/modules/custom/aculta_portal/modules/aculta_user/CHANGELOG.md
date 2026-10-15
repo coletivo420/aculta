@@ -1,5 +1,18 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.8 — arquivo de imagem de conquista — 2026-10-15
+
+- Definição referencia o arquivo enviado por UUID e registra uso pela API File Usage.
+- Remoção confirmada desassocia a imagem e exclui o arquivo gerenciado sem outros usos; arquivos compartilhados são preservados.
+
+## 0.4.0-dev.7 — catálogo configurável e auditoria de concessões — 2026-10-15
+
+- `aculta_user.achievement_definitions` e schema preservam definições/critério, inclusive quando Game é removido.
+- API única concede por gatilho predefinido ou administrador; configuração não executa expressões/código.
+- Origem de cada concessão governa revogação: manuais revogáveis, automáticas históricas preservadas.
+- Update 10003 adiciona motivos internos de concessão/revogação, sem alterar campos anteriores.
+- Ator/data/motivo permanecem na entidade; nomes/descrições públicos não incluem dados de origem.
+
 ## 0.4.0-dev.6 — identidade dos troféus importados — 2026-10-15
 
 - Catálogo inclui Fundadore manual e nomes originais Apoiadore e Associado/a Antiproibicionista.
@@ -185,11 +198,6 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
 
 # Changelog — aculta_user
 
-## 0.4.0-dev.6 — identidade dos troféus importados — 2026-10-15
-
-- Catálogo inclui Fundadore manual e nomes originais Apoiadore e Associado/a Antiproibicionista.
-- IDs e concessões antigas preservados. Imagens/metadados de apresentação pertencem ao Game.
-
 ## 0.1.0-dev.1 — perfil público por apelido (U1, RUNTIME STATUS: DEFERRED) — 2026-10-12
 
 - Rota pública `/u/{apelido}` (exceção de slug registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`). Só serve no
@@ -207,11 +215,6 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
   nesta entrega); badges (U4); teste de Kernel da rota e da privacidade; execução no Runtime (`drush en` e
   `config:import` exigem autorização).
 # Changelog — aculta_user
-
-## 0.4.0-dev.6 — identidade dos troféus importados — 2026-10-15
-
-- Catálogo inclui Fundadore manual e nomes originais Apoiadore e Associado/a Antiproibicionista.
-- IDs e concessões antigas preservados. Imagens/metadados de apresentação pertencem ao Game.
 
 ## 0.4.0-dev.1 — workflow de amizade
 

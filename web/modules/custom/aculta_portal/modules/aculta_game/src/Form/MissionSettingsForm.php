@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_game\Form;
 
 use Drupal\aculta_game\MissionProgress;
-use Drupal\aculta_game\AchievementPresentation;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -20,13 +19,12 @@ final class MissionSettingsForm extends ConfigFormBase {
     ConfigFactoryInterface $configFactory,
     TypedConfigManagerInterface $typedConfigManager,
     private readonly MissionProgress $missions,
-    private readonly AchievementPresentation $presentation,
   ) {
     parent::__construct($configFactory, $typedConfigManager);
   }
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('config.factory'), $container->get('config.typed'), $container->get('aculta_game.mission_progress'), $container->get('aculta_game.achievement_presentation'));
+    return new static($container->get('config.factory'), $container->get('config.typed'), $container->get('aculta_game.mission_progress'));
   }
 
   public function getFormId(): string {
@@ -38,11 +36,16 @@ final class MissionSettingsForm extends ConfigFormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $form['intro'] = ['#plain_text' => $this->t('Ative as missões oferecidas às pessoas participantes. Desativar uma missão não apaga conquistas ou altera seu histórico. Os critérios desta versão são fixos.')];
+    $form['intro'] = ['#type' => 'container', 'text' => ['#plain_text' => $this->t('Ative as missões oferecidas às pessoas participantes. Desativar uma missão não apaga conquistas ou altera seu histórico. Os critérios desta versão são fixos.')]];
     $form['missions'] = ['#type' => 'container', '#tree' => TRUE];
-    $form['management'] = ['#type' => 'link', '#title' => $this->t('Criar e editar conquistas'), '#url' => Url::fromRoute('aculta_game.achievements'), '#weight' => -10];
-    $form['catalog'] = $this->presentation->trophyCatalog();
-    $form['catalog']['#weight'] = 10;
+    $form['management'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Gerenciar conquistas'),
+      '#open' => TRUE,
+      '#weight' => -10,
+      'description' => ['#plain_text' => $this->t('Cadastre uma conquista, ajuste suas condições, envie a imagem e conceda reconhecimentos manuais na mesma área.')],
+      'link' => ['#type' => 'link', '#title' => $this->t('Abrir conquistas'), '#url' => Url::fromRoute('aculta_game.achievements')],
+    ];
     foreach ($this->missions->definitions(FALSE) as $id => $definition) {
       $form['missions'][$id] = [
         '#type' => 'checkbox',

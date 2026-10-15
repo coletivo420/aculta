@@ -71,6 +71,26 @@ migrar seu estado. ECA e Rules são motores; Achievements é candidato de backen
 esses papéis não são equivalentes. A ausência de um contrib perfeito não autoriza
 um novo framework genérico nem storage duplicado.
 
+## Referência de UX administrativa: GamiPress
+
+Os documentos oficiais do GamiPress mostram três padrões aproveitáveis sem
+adotar o plugin: a edição da conquista explicita forma de obtenção e etapas
+([Achievements](https://gamipress.com/docs/getting-started/achievements/));
+condições são apresentadas como requisitos compreensíveis
+([Rank Requirements](https://gamipress.com/docs/getting-started/rank-requirements/));
+e a listagem pode exibir conquistas obtidas/não obtidas, busca e apresentação
+configurável ([Achievements shortcode](https://gamipress.com/docs/shortcodes/gamipress_achievements/)).
+O sistema de e-mail também documenta modelos e preferências administrativas
+([Email settings](https://gamipress.com/docs/settings/emails-settings/)).
+
+Aplicamos o princípio de autoria legível: grupos de condições com explicação,
+descrição da conquista e estados por pessoa. O Portal mantém um catálogo de
+critérios fechado: caixas marcadas são alternativas (qualquer uma concede), e
+o editor não cria expressões nem condições arbitrárias. Reconhecimentos permanecem
+sem pontos, ranking ou recompensa financeira, conforme decisão do responsável.
+As páginas documentam o produto atual; não são evidência de compatibilidade ou
+licença para copiar código.
+
 ## Pesquisa sobre desenho de incentivos
 
 [Anderson et al., Steering User Behavior with Badges](https://ai.stanford.edu/~jure/pubs/badges-www13.pdf)

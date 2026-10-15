@@ -443,3 +443,28 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 - Preferências e disponibilidade da missão restauradas; screenshots/resultados
   em `.suite-out/game/`, fora do Git. Suítes Game versionadas em tests/browser e
   tests/runtime. Concorrência de concessões e leitor de tela não validados.
+
+### Game — ampliação G5.1
+
+- `tests/runtime/aculta-game/admin-smoke.py`: **34/34**, incluindo as 17 regressões
+  anteriores, criação/edição via POST, critérios pedido/doação/manual, versão,
+  concessão e revogação com motivos e histórico, imagem pública e motivo privado.
+- Fixture própria removida, configurações restauradas. Duas concessões originais
+  preservadas por digest das colunas anteriores ao update User 10003.
+- URLs novas no MAIN: Game → Conquistas, Criar, Editar, Conceder ou revogar e
+  Histórico. Perfil/conta mantêm as escolhas de exibição do Game.
+- Três PNGs dos troféus servidos com hash original. Evento de pedido donation
+  repetido em transação gerou uma concessão, com rollback integral do ensaio.
+- Não valida concorrência, leitor de tela ou fluxo Mercado Pago ponta a ponta.
+
+### Game — G5.2
+
+- Firefox no Runtime do Homelab: **14/14**; catálogo, editor de imagem e condições,
+  rota de confirmação, controles da conta, viewport móvel e posição no menu.
+- Serviço de definições testado com imagem gerenciada temporária: confirmação
+  removeu vínculo e arquivo sem outros usos; fixture limpa. Assets do módulo preservados.
+- Gates Drupal 11, fronteira módulo/tema, endereços e slugs passaram. Drush cache
+  rebuild concluído em `aculta_runtime`; sem `updb`, import/export ou cron.
+- Aviso dispensável integrado à lista e contagem do Messenger; nova concessão
+  enfileira e-mail com preferência individual. Transporte/entrega real de e-mail
+  não verificado.

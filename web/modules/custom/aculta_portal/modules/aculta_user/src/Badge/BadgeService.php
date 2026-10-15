@@ -12,7 +12,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Concede e revoga troféus. Idempotente: não duplica concessão ativa.
+ * Concede e revoga conquistas. Idempotente: não duplica concessão ativa.
  */
 final class BadgeService {
 
@@ -25,7 +25,7 @@ final class BadgeService {
     private readonly AchievementDefinitions $definitions,
   ) {}
 
-  /** Concede o troféu se a pessoa ainda não o tem ativo. Retorna TRUE se concedeu agora. */
+  /** Concede a conquista se a pessoa ainda não a tem ativa. Retorna TRUE se concedeu agora. */
   public function award(int $uid, string $badge, ?int $grantedBy = NULL, string $reason = ''): bool {
     $definition = $this->definitions->all()[$badge] ?? NULL;
     if ($definition === NULL || empty($definition['enabled']) || !$this->isEligible($uid)
@@ -49,7 +49,7 @@ final class BadgeService {
     });
   }
 
-  /** Revoga o troféu manual ativo. Automáticas não são revogadas. Retorna TRUE se revogou. */
+  /** Revoga a conquista manual ativa. Automáticas não são revogadas. Retorna TRUE se revogou. */
   public function revoke(int $uid, string $badge, int $revokedBy, string $reason = ''): bool {
     if ($uid <= 0 || $revokedBy <= 0) {
       return FALSE;
@@ -129,7 +129,13 @@ final class BadgeService {
     return $this->activeAwards($uid, $badge) !== [];
   }
 
-  /** Troféus ativos da pessoa, mais antigos primeiro. @return \Drupal\aculta_user\Entity\BadgeAward[] */
+  /** Load one stored grant for an authorized integration to present or dismiss. */
+  public function loadAward(int $awardId): ?BadgeAward {
+    $award = $this->storage()->load($awardId);
+    return $award instanceof BadgeAward ? $award : NULL;
+  }
+
+  /** Conquistas ativas da pessoa, mais antigas primeiro. @return \Drupal\aculta_user\Entity\BadgeAward[] */
   public function activeFor(int $uid): array {
     $ids = $this->storage()->getQuery()->accessCheck(FALSE)->condition('uid', $uid)->condition('revogado_em', NULL, 'IS NULL')->sort('concedido_em')->execute();
     return array_values($this->storage()->loadMultiple($ids));

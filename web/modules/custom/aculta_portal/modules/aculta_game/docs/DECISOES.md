@@ -12,6 +12,8 @@ Data: 2026-10-15. Fonte: respostas explícitas do responsável.
 | G-D04 | Reconhecimento e progresso sem benefícios financeiros | Sem desconto, crédito, moeda, prêmio monetário ou vantagem de compra |
 | G-D05 | Conquistas públicas por padrão | Nova decisão de apresentação para o projeto futuro |
 | G-D06 | Pessoa pode ocultar, selecionar destaques e organizar a exibição | Privacidade prevalece nos perfis, caixas, feeds e notificações públicas |
+| G-D08 | Apoiadore por pedido concluído, apoio direto no sistema de doações ou administrador | Critérios combináveis; registros passados preservados |
+| G-D09 | Criar e editar conquistas na administração Game | Formas de concessão predefinidas, disponibilidade e catálogo próprios; sem expressão executável |
 | G-D07 | Reutilizar capacidades e pesquisar licenças antes de adaptar código | Um dono por fato; código de terceiros com proveniência e obrigações respeitadas |
 
 G-D05/06 atualizam as restrições antigas de exibição de badges do plano do
@@ -44,9 +46,9 @@ nova decisão. Regras de participação e permissões não se confundem com conq
 | Tema | O que precisa ser escolhido |
 | --- | --- |
 | Primeiro catálogo de missões | Nomes, critérios, limiares e quais fontes já têm evidência suficiente |
-| Autoria administrativa de regras | Formulário de critérios predefinidos ou modelo visual ECA; sem instalar por antecipação |
+| Autoria administrativa de regras | Formulário com formas predefinidas implementado em G5.1; ECA segue opcional para lacuna futura |
 | Participação opcional | Possibilidade de desligar a experiência além de ocultar conquistas; não decidida nesta sessão |
-| Reconhecimento de apoio existente | Preservar o fato atual, reavaliar critérios/rótulo na fase própria; não criar faixas de gasto |
+| Reconhecimento de apoio existente | Decidido: pedido concluído, apoio direto ou administrador; sem faixas de gasto ou benefícios financeiros |
 | Perfil básico existente | Rever a exigência de dados pessoais para esse reconhecimento antes de ampliá-lo |
 | Uso de backend contrib | Só substituir o atual após prova de conceito e migração de todos os fatos, sem duplicação |
 

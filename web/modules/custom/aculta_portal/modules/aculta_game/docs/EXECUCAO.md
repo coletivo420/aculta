@@ -190,3 +190,106 @@ conforme política existente, inclusive na prévia. Perfil anônimo voltou a res
 G3 agora tem submissão, privacidade e cache entre sessões verificados. Continuam
 pendentes a concorrência e jornadas de concessão de G2, leitor de tela e PHP 8.5.
 Não extrapolar os resultados de G4 para esses casos.
+
+## G5.1 — definições, concessão manual e histórico
+
+Classificação MINOR: Game `0.1.0-dev.6`, User `0.4.0-dev.7`, Portal `0.4.0-dev.39`.
+Parte inicial incluída pela execução paralela em `07fc35c`; o registro da fase
+preserva esse histórico, com versões, controles e evidência.
+
+### Decisão e implementação
+
+- Responsável aprovou Apoiadore por pedido concluído, apoio direto no sistema de
+  doações ou administrador, e criação/edição de conquistas na área Game.
+- `/painel-administrativo/game/conquistas`: catálogo, criação e edição de nome,
+  descrição, disponibilidade, imagem existente e formas de concessão fechadas:
+  manual, pedido, doação, comentário, Wiki, LMS e perfil. Identificador permanente;
+  mudança nas formas avança a versão. Pausar preserva conquistas anteriores.
+- `/painel-administrativo/game/conquistas/conceder`: motivo obrigatório, ator e
+  data. `/painel-administrativo/game/historico`: leitura paginada da entidade real.
+  Motivos administrativos não entram no contrato público.
+- Origem pertence à concessão: manual em definição mista pode ser revogada;
+  automática anterior não se torna revogável por editar a definição.
+- Commerce Donation Flow usa item `donation`; pedido `completed` despacha os
+  gatilhos de pedido e, quando aplicável, doação. Coincidência não duplica prêmio.
+  Sync/importações e contas bloqueadas/legadas continuam excluídos.
+
+### Fonte de verdade e persistência
+
+`AchievementDefinitions` do User usa `aculta_user.achievement_definitions`, com
+schema e defaults compatíveis para os sete IDs existentes. Configuração contém
+somente definições, não concessões/progresso. A
+[Simple Config API](https://www.drupal.org/docs/drupal-apis/configuration-api/simple-configuration-api)
+atende o catálogo pequeno de critérios fechados: não há regras executáveis,
+novo backend ou motor concorrente. Sem configuração, defaults são usados; a
+primeira edição grava override. User preserva os dados se Game for removido.
+
+Edições sob lock atualizam apenas um item. Tags de configuração invalidam perfil,
+conta e catálogo. Labels são texto, não templates confiáveis. Imagens vêm do
+catálogo importado. Core/contrib e o SupportController instalado foram conferidos;
+não há pagamento, carteira, checkout ou matrícula paralelos.
+
+### Atualização e preservação
+
+Antes: somente User 10003 pendente, duas concessões. O update adiciona campos
+opcionais `motivo_concessao` e `motivo_revogacao` pela
+[Entity Definition Update API](https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Entity!EntityDefinitionUpdateManagerInterface.php/function/EntityDefinitionUpdateManagerInterface::installFieldStorageDefinition/11.x).
+Não altera colunas antigas/provider; verifica campos instalados em reexecução.
+Não oferecer rollback automático que apague motivos já registrados.
+
+Update/cache rebuild concluídos no Runtime confirmado. Nove colunas anteriores,
+ordenadas por ID, mantiveram duas linhas e o mesmo SHA-256 antes/depois:
+`5427565f39a84256ee8a01b4c9a61e01a7e4f54dc87a00bc7dc359e9ae918822`.
+Inconsistência preexistente do registro mysql continuou reportada, sem impedir a
+atualização pontual. Sem import/export global de configuração.
+
+### Verificação
+
+- **34/34 HTTP**: 17 regressões de conta/privacidade/admin e 17 de criação/edição,
+  critérios, versão, integração, concessão, imagem, motivo reservado, revogação,
+  histórico e negação de acesso. Fixture/registro próprios removidos ao fim;
+  contas, concessões originais e configuração anterior preservadas.
+- Evento de pedido concluído com item donation repetido em transação: uma
+  concessão ativa. Rollback sem persistir prêmio ou pedido. Não comprova fluxo
+  Mercado Pago ponta a ponta, concorrência ou jornada completa LMS.
+- Três PNGs servidos por HTTP com hashes originais. Nenhum e-mail ou cobrança.
+- Firefox repetido após a integração administrativa e das imagens: **8/8**;
+  entrada pela conta, AJAX, missões, controles mobile e administração preservados.
+- Avisos e preferências de e-mail foram concluídos em G5.2; ECA não foi instalado.
+
+## G5.2 — apresentação, avisos, e-mail e imagem — Runtime validado
+
+Classificação MINOR: Game `0.1.0-dev.7`, User `0.4.0-dev.8`, Portal
+`0.4.0-dev.40`. UX pesquisada no modelo administrativo do GamiPress: critérios
+com nomes e descrições agrupados, estado/condição por conquista e preferências
+de exibição. A implementação preserva o catálogo e a concessão Drupal existentes;
+nenhum código ou plugin GamiPress foi instalado ou copiado.
+
+- Editor separa identificação, imagem e condições por área da comunidade,
+  formação, apoio à associação e equipe. Explica que qualquer condição marcada
+  concede a conquista. Critérios continuam fechados e não executam código.
+- Imagem continua com upload. “Remover imagem atual” abre confirmação dedicada;
+  só o POST confirmado remove a referência. Arquivo gerenciado é apagado quando
+  nenhuma outra área o utiliza; imagens empacotadas permanecem no módulo.
+- Conta oferece uma área unificada de conquistas com estado, condição, visibilidade,
+  destaque e ordenação. Catálogo de troféus duplicado foi removido. Aviso
+  automático aparece em Avisos/Messenger, pode ser dispensado e conta na badge.
+- E-mail é enfileirado no evento de nova concessão. A pessoa pode desativá-lo em
+  suas preferências de conquistas. Worker valida concessão ativa, conta e envio
+  idempotente antes de chamar Mail API. Não executamos cron nem enviamos e-mail real.
+
+### Verificação no Homelab
+
+- `drush cr`: concluído; Drupal local confirmou Runtime `aculta_runtime` e MAIN
+  `aculta.toca.net.br`.
+- Rota de confirmação descoberta pelo router Drupal e aberta no Firefox. Controles
+  “Confirmar remoção da imagem” e “Voltar sem remover” renderizados.
+- Firefox: **14/14**; editor de upload/condições, conta, mobile, catálogo sem
+  duplicação, rota de confirmação e posição do item Game após Avisos.
+- Exclusão real de arquivo `public://` verificada via serviço User com imagem de
+  fixture; referência e fixture removidas. Arquivos originais do catálogo intactos.
+- Gates: Drupal 11 **776**; fronteira módulo/tema **1066**; endereços
+  dependentes de ambiente **1754**; slugs públicos **364** (20 exceções contrib
+  da linha de base). `git diff --check` passou.
+- Entrega de e-mail pelo transporte do ambiente, leitores de tela e concorrência
+  de avisos não foram testados.

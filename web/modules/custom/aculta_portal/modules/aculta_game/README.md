@@ -1,5 +1,7 @@
 # ACULTA Game — conquistas e missões
 
+Versão atual: `0.1.0-dev.7` — G5.2, com apresentação, avisos e e-mail de conquistas.
+
 Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
 Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável;
 G2 corrige os gatilhos; G3 integra conquistas e escolhas de exibição à Minha Conta
@@ -19,9 +21,11 @@ porque uma conquista pode ser exibida.
 
 ## A base já existente
 
-O `aculta_user` mantém `BadgeCatalog`, `BadgeService` e a entidade
+O `aculta_user` mantém `BadgeCatalog` (IDs/defaults), `AchievementDefinitions`
+(Config API), `BadgeService` e a entidade
 `aculta_badge_award`. O `BadgeEvaluationHooks` agora pertence ao Game.
-Há seis conquistas no catálogo: Apoiador, Associado,
+O catálogo inicial tem sete conquistas: Fundadore, Apoiadore,
+Associado/a Antiproibicionista,
 Primeiro comentário no Fórum, Primeira edição na Wiki, Primeiro curso realizado
 e Perfil básico completo. Sua existência em código não comprova cada gatilho em Runtime.
 
@@ -78,11 +82,28 @@ Em `/atividade/conquistas`, acompanhe contribuição no Growroom420, revisão
 publicada da Wiki e primeiro curso aprovado. Progresso consulta conquistas reais,
 sem XP, ranking ou novo storage. Controle administrativo **Game**, abaixo de
 **Avisos**, em `/painel-administrativo/game` no MAIN: ativa/desativa missões;
-concessão manual e auditoria serão ampliadas em G5.
+concessão manual e auditoria disponíveis desde G5.1.
 
 Evidência por fase: [execução](docs/EXECUCAO.md).
 
-Pesquisa sobre o checkout `868626d`, branch `chore/messenger-pendencias`, PR #286,
+Pesquisa no checkout atual, branch `chore/messenger-pendencias`, PR #286,
 com fontes públicas e quatro pacotes de código inspecionados fora da instalação.
-Nenhum código upstream foi incorporado. Documentação não avança versão de runtime;
-o primeiro código deverá classificar a mudança e anotar a subversão antes de codar.
+Nenhum código upstream foi incorporado.
+
+## Administração e apresentação de conquistas — G5.1–G5.2
+
+Em **Game → Conquistas**, crie e edite nome, descrição, disponibilidade,
+imagem do catálogo e formas de concessão. Apoiadore aceita pedido concluído,
+apoio concluído no sistema de doações e administrador. Também há gatilhos para
+resposta publicada, revisão Wiki publicada, curso aprovado e perfil básico.
+
+**Conceder ou revogar** exige motivo e guarda ator/data. **Histórico** consulta
+as entidades reais; concessões automáticas permanecem históricas, e as manuais
+podem ser revogadas. Não são concedidos papéis, descontos, moeda ou privilégios.
+
+As definições pertencem à Config API de User, não ao tema. Remover Game preserva
+concessões, definições e privacidade do User. O editor organiza identificação,
+imagem e condições em grupos; remoção da imagem exige confirmação e exclui o
+arquivo enviado quando não há outro uso. Conquistas novas geram aviso dispensável
+no Messenger e e-mail enfileirado, com preferência individual de recebimento.
+Entrega de e-mail depende do cron e da configuração do ambiente.
