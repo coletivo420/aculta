@@ -106,7 +106,7 @@ final class HostingerLayout {
       }
       return $moved
         ? 'public_html ativado como symlink; conteúdo anterior preservado em ' . basename((string) $backup)
-      : 'public_html criado como symlink relativo para web/ na raiz do projeto';
+        : 'public_html criado como symlink relativo para web/ na raiz do projeto';
     } finally {
       flock($lock, LOCK_UN);
       fclose($lock);
