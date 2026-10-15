@@ -21,6 +21,49 @@ site não provam quantos itens o Wayback preservou. Replay pode escolher a captu
 mais próxima: o manifesto definitivo deve registrar timestamp e URL efetivos,
 sem atribuir automaticamente a todas as amostras a data da página inicial.
 
+## Inventário CDX da F1 — corte em 2025-07-19
+
+Foi consultado o prefixo `growroom.net/board/` com `matchType=prefix`, incluindo
+capturas HTTP/HTTPS e hosts raiz/`www`, todos os status e tipos MIME, até
+`2025-07-19 09:36:40 UTC` (timestamp da captura de referência). A consulta foi
+retomada pelo token CDX: 150.000 registros na primeira página e 121.283 na
+segunda, sem token restante.
+
+| Medida | Resultado |
+| --- | ---: |
+| Capturas CDX | 271.283 |
+| URLs originais distintas | 177.673 |
+| URLs com ao menos uma captura HTTP 200 | 141.851 |
+| URLs sem captura HTTP 200 | 35.822 |
+| Capturas `text/html` | 256.864 |
+| URLs com query string | 103.210 |
+| Capturas HTTP 200 | 209.605 |
+| Capturas nos hosts `www.growroom.net` / `growroom.net` | 202.659 / 68.624 |
+| Intervalo observado | `2002-06-30 23:47:03` a `2025-07-19 09:36:40 UTC` |
+
+Classificação indicativa e mutuamente exclusiva das 177.673 URLs distintas,
+pela primeira regra de caminho correspondente:
+
+| Grupo de caminhos | URLs |
+| --- | ---: |
+| Tópicos e respostas (`topic`, `showtopic.php`, `showthread.php`) | 68.245 |
+| Perfis (`profile`, `user`, `member.php`) | 23.869 |
+| Galerias e mídia (`gallery`, `album`, `uploads`, visualizadores) | 27.423 |
+| Fóruns e índices (`forum`, `forums`, `showforum.php`, `index.php`) | 20.374 |
+| Ações, autenticação, busca e moderação | 23.470 |
+| Outros caminhos e assets | 14.292 |
+
+O JSON completo, com 44.493.503 bytes, está apenas no armazenamento privado do
+Homelab: `/home/aculta/private/aculta/forum/cdx/board-prefix-cdx-to-20250719.json`
+(modo `0640`, `aculta:aculta`), SHA-256
+`346355b77bd9fee58ba9e33c75acf1c137da69e952522d07c36a960718cbed26`. O índice
+CDX não foi adicionado ao Git. Este inventário cobre o prefixo documentado
+`/board/`; não afirma cobertura de outros domínios nem de caminhos fora dele.
+
+O corte usa a captura de referência aprovada no documento de origem. Capturas
+posteriores não entram no piloto até revisão própria; capturas anteriores podem
+ser usadas para preencher lacunas, com seu timestamp efetivo preservado.
+
 ## Inventário e aquisição
 
 1. Enumerar o índice CDX de capturas e variantes históricas HTTP/HTTPS, `www`,

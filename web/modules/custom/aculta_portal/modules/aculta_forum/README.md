@@ -60,10 +60,13 @@ Aplicam-se os [guardrails](../../../../../../docs/portal/GUARDRAILS.md), o
 
 ## Estado verificável
 
-Inventário de código/configuração sobre `868626d`, na branch
-`chore/messenger-pendencias`, PR #286. Amostras do Wayback foram baixadas e lidas;
-isso não equivale a recuperar o acervo inteiro. Nenhuma conta, conteúdo, papel,
-avatar, domínio ou configuração de Runtime foi criado nesta entrega documental.
+F1 executada no servidor de testes em 2026-10-15. O prefixo
+`growroom420.aculta.toca.net.br` resolve para o Homelab, tem certificado TLS
+válido e mantém o purpose `forum`; o hostname anterior responde 404 sem
+redirect. O Deployer mantém `growroom420.aculta.org` como destino de produção,
+sem DNS publicado porque a origem Hostinger ainda não atende o novo hostname.
 
-A documentação não avança versões executáveis. A primeira implementação deverá
-declarar sua linha e subversão antes de codar, conforme o versionamento do projeto.
+O inventário CDX completo do prefixo histórico `/board/`, com corte temporal e
+contagens, está em [Reconstrução](docs/RECONSTRUCAO.md); o JSON está em
+armazenamento privado do Homelab e não no Git. A F1 não migrou conteúdo e não
+criou contas, papéis ou avatares. F2 em diante permanecem pendentes.

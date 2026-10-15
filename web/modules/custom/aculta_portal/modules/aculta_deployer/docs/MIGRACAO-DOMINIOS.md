@@ -12,6 +12,7 @@ Escopo: transição de `*.aculta.toca.net.br` (servidor de testes) para `*.acult
 | coletivo420_aculta_org | revista420.aculta.toca.net.br | revista420.aculta.org | pendente de RC (decisão) |
 | wiki420_aculta_org | wiki420.aculta.toca.net.br | wiki420.aculta.org | alinhado |
 | loja_aculta_org | loja.aculta.toca.net.br | loja.aculta.org | alinhado |
+| forum_aculta_org | growroom420.aculta.toca.net.br | growroom420.aculta.org | alinhado no mapeamento; teste DNS/TLS ativo; DNS de produção aguarda origem |
 | cursos_aculta_org | cursos.aculta.toca.net.br | cursos.aculta.org | alinhado |
 
 ## Decisão pendente
@@ -35,6 +36,17 @@ Importar novamente o backup com `config:import --partial --source=DIR_BACKUP` e 
 ## Fora do repositório
 
 DNS, VirtualHosts e certificados de cada ambiente são configurados fora do Git. Credenciais não entram aqui (ver `GUARDRAILS.md`).
+
+### ACULTA Fórum (F1, 2026-10-15)
+
+- Teste: Cloudflare A direto, sem proxy, `growroom420.aculta.toca.net.br` →
+  `45.191.204.31`; VirtualHost Apache e Let's Encrypt ativos; Domain e alias do
+  Runtime atualizados preservando seus IDs. O host anterior responde 404 sem
+  redirect.
+- Produção: `growroom420.aculta.org` está alinhado no Deployer e no Domain de
+  configuração, mas não recebeu DNS. A conexão TLS direta ao IP de origem
+  Hostinger falhou antes de o novo hostname ser provisionado; validar o domínio
+  na origem e o handler/certificado antes de criar o registro Cloudflare.
 
 ## Loja (SHOP)
 

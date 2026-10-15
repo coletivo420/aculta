@@ -1,5 +1,34 @@
 # Changelog — ACULTA Fórum
 
+## F1 — inventário e domínio no servidor de testes — 2026-10-15
+
+- Inventário completo do prefixo CDX `growroom.net/board/` até
+  `2025-07-19 09:36:40 UTC`: 271.283 capturas e 177.673 URLs distintas. O JSON
+  fica no armazenamento privado do Homelab; resumo, caminho e checksum estão em
+  `docs/RECONSTRUCAO.md`.
+- Cloudflare: criado A direto, sem proxy, para
+  `growroom420.aculta.toca.net.br` → `45.191.204.31`; o registro antigo
+  `forum.aculta.toca.net.br` foi mantido para responder 404 sem redirect.
+- Homelab: VirtualHost e certificado Let's Encrypt do novo host ativos;
+  `trusted_host_patterns`, Domain e alias do Runtime atualizados sem trocar IDs
+  nem purpose. HTTPS `/forum` respondeu 200, canonical e noindex conferidos.
+- Sessão do teste confirmada no container: `.aculta.toca.net.br`, `SameSite=Lax`
+  e `Secure`.
+- Host antigo documentado como 404 sem redirect. Deployer `domains` PASS (9/9),
+  `robots --env=test` PASS e `validate-environment-addresses.php` PASS (1.759
+  arquivos).
+- O helper externo `/home/piradopirata/scripts/forum-setup.sh`, que ainda
+  provisionava o host antigo, foi aposentado por stub seguro; cópia original
+  preservada no backup privado da F1.
+- Sitemap do Fórum responde 200 e o exclui do índice conforme a política
+  instalada. `sitemap --env=test` permanece FAIL por 404 de LINKS, fora desta
+  fase.
+- Produção não foi alterada: não havia DNS do host antigo, e o TLS direto da
+  origem Hostinger para `growroom420.aculta.org` falhou. O novo DNS de produção
+  aguarda o cadastro e a validação do hostname na origem.
+- `RUNTIME STATUS: PASS (Homelab/teste); produção não alterada.` Nenhum `updb`,
+  `cim`, import/export ou conteúdo foi executado.
+
 ## 2026-10-15 — ajuste de identidade aprovado
 
 - Marca futura: Growroom420; prefixo público `growroom420.aculta`.
