@@ -26,6 +26,11 @@ No perfil público, imagens aparecem somente nas conquistas concedidas e visíve
 Importar uma definição/imagem não concede a conquista nem comprova titularidade.
 Não foram importadas listas de pessoas ou direitos estatutários descritos no site.
 
+As imagens históricas acima continuam preservadas. Quatro conquistas de
+participação passaram a usar ilustrações originais próprias; novas artes não
+substituem esses três PNGs importados. Direção, dimensões e proveniência:
+[`IMAGE-ART-DIRECTION.md`](../../../../../../../docs/portal/IMAGE-ART-DIRECTION.md).
+
 ## Apoiadore: decisão de critérios
 
 O responsável aprovou três caminhos: pedido concluído, apoio direto no sistema de

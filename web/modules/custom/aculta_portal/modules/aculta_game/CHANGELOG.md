@@ -1,5 +1,11 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.9 — G5.4: ilustrações antiproibicionistas — 2026-10-15
+
+- Quatro conquistas de participação recebem arte temática própria; novas conquistas sem arquivo usam selo geral canábico e antiproibicionista.
+- PNGs 512 × 512 com transparência; arte final gerada para este Portal, mantendo intactos os três arquivos históricos importados.
+- `README`, documento de direção de arte e smoke browser atualizados.
+
 ## 0.1.0-dev.8 — G5.3: conquistas no perfil público — 2026-10-15
 
 - Perfis públicos exibem conquistas obtidas em cartões com imagem própria ou símbolo ilustrativo, título, descrição e destaque; avatar de pessoa sem foto usa o acervo do `aculta_user`.

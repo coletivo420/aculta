@@ -15,6 +15,7 @@ do responsável, as fases são commits próprios na PR #286 existente.
 | G5.1 — implementada/verificada | Criação/edição de conquistas, critérios, concessão/revogação manual, motivos e histórico na área Game | Permissão própria; fontes reais, dados preservados; HTTP 34/34 |
 | G5.2 — implementada; entrega de e-mail não verificada | Avisos dispensáveis no Messenger e preferência individual por e-mail | Privacidade, revalidação e envio enfileirado; sem conceder privilégios editoriais |
 | G5.3 — perfil público implementado | Cartões de conquistas obtidas em `/u/<apelido>` | Imagem, título, descrição e destaque; preferências respeitadas; evidências privadas excluídas |
+| G5.4 — arte cultural implementada | Ilustrações temáticas nas conquistas de participação e fallback | Paleta ACULTA, cannabis e antiproibicionismo; 512 px, mobile e assets originais preservados |
 | G6 — automação opcional | Spike ECA ou outro backend apenas se houver lacuna demonstrada | Composer e licenças revistos, ownership único, testes de paridade; não instalar ECA e Rules para a mesma regra |
 | G7 — integração continuada | Fórum atual, Wiki, Revista, cursos e participação cultural | Mesma conquista e mesma privacidade em todos os consumidores; legado tratado como memória |
 

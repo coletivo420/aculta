@@ -319,4 +319,37 @@ O ACULTA aplica a lista no perfil já existente `/u/<apelido>`.
   slugs/endereço e `git diff --check` passam.
 - Imagens próprias devem ser quadradas, com **512 × 512 px** recomendados; o
   campo de envio informa esse tamanho, os formatos aceitos, o limite de 2 MB e
-  o máximo de 4096 × 4096 px. Sem arte própria, o perfil exibe o SVG ilustrativo.
+  o máximo de 4096 × 4096 px. Nesta fase, o fallback SVG foi substituído por
+  PNGs temáticos próprios e um selo raster geral.
+
+## G5.4 — arte cultural das conquistas — Runtime a validar
+
+Game `0.1.0-dev.9`, Portal `0.4.0-dev.42`. Os selos históricos importados do
+Coletivo 420 permanecem intactos. As conquistas de primeiro comentário no Fórum,
+primeira edição na Wiki, primeiro curso e perfil básico recebem arte específica;
+novas definições usam o selo geral de cannabis e antiproibicionismo.
+
+- Cinco imagens PNG RGBA otimizadas em 512 × 512 px e com fundo transparente fora
+  do selo. Cores e linguagem visual foram inspiradas nos materiais históricos,
+  sem editar ou reutilizar suas imagens.
+- `AGENTS.md` passa a exigir que futuras imagens considerem a identidade cultural
+  canábica e antiproibicionista; origem, intenção e dimensões estão em
+  `docs/portal/IMAGE-ART-DIRECTION.md`.
+- A associação de imagem à definição respeita imagem enviada por UUID primeiro,
+  arte histórica importada em seguida, arte temática por identificador depois e
+  o selo geral como fallback final.
+
+### Validação e limites
+
+- PHP lint de `AchievementPresentation` e `AchievementDisplayForm`, `node --check`
+  do smoke browser e `git diff --check`: PASS.
+- Gate Drupal 11+ (776), fronteira módulo/tema (1069), endereços de ambiente
+  (1759) e slugs públicos (364 rotas): PASS.
+- As cinco artes novas foram verificadas como PNG 512 × 512; links da documentação
+  resolvem para o guia. O smoke browser foi atualizado para conferir as quatro
+  artes do catálogo e a arte de perfil.
+- **RUNTIME STATUS: DEFERRED**. O Drush deste checkout confirma o banco
+  `aculta_runtime`, mas resolve o site URI como `http://default`; não foi
+  executado cache rebuild nem teste HTTP nesse contexto. O smoke browser e a
+  apresentação das novas imagens precisam ser validados no Runtime com o URI de
+  teste correto.

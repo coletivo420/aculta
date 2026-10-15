@@ -50,7 +50,7 @@ final class AchievementDisplayForm extends FormBase {
     foreach ($this->presentation->definitions() as $id => $definition) {
       $choice = $preferences['items'][$id] ?? [];
       $form['items'][$id] = ['#type' => 'details', '#title' => (string) $definition['label'], '#open' => TRUE];
-      $form['items'][$id]['image'] = $this->presentation->imageForDefinition($definition);
+      $form['items'][$id]['image'] = $this->presentation->imageForDefinition($definition, TRUE, (string) $id);
       $form['items'][$id]['status'] = ['#type' => 'container', 'text' => ['#plain_text' => isset($earned[$id]) ? $this->t('Conquistada') : $this->t('Ainda não conquistada')]];
       if (!empty($definition['description'])) {
         $form['items'][$id]['description'] = ['#type' => 'container', 'text' => ['#plain_text' => $definition['description']]];

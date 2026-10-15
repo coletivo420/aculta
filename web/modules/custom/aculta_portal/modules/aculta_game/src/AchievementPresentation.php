@@ -118,7 +118,7 @@ final class AchievementPresentation {
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'profile-achievement'],
         ];
-        $image = $this->imageForDefinition($definition, TRUE);
+        $image = $this->imageForDefinition($definition, TRUE, (string) $row['id']);
         if ($image !== []) {
           $item['image'] = [
             '#type' => 'container',
@@ -201,7 +201,7 @@ final class AchievementPresentation {
   }
 
   /** Imagem pública atual, com fallback dos arquivos históricos importados. */
-  public function imageForDefinition(array $definition, bool $useFallback = FALSE): array {
+  public function imageForDefinition(array $definition, bool $useFallback = FALSE, string $achievementId = ''): array {
     if (!empty($definition['image_uuid'])) {
       $files = $this->entities->getStorage('file')->loadByProperties(['uuid' => $definition['image_uuid']]);
       $file = $files ? reset($files) : NULL;
@@ -228,9 +228,24 @@ final class AchievementPresentation {
         '#alt' => (string) ($definition['label'] ?? ''),
       ];
     }
+    $illustrations = [
+      'primeiro_comentario_forum' => 'primeiro-comentario-forum.png',
+      'primeira_edicao_wiki' => 'primeira-edicao-wiki.png',
+      'primeiro_curso' => 'primeiro-curso.png',
+      'perfil_basico' => 'perfil-basico.png',
+    ];
+    if (isset($illustrations[$achievementId])) {
+      return [
+        '#theme' => 'image',
+        '#uri' => $this->modules->getPath('aculta_game') . '/assets/conquistas/' . $illustrations[$achievementId],
+        '#width' => 96,
+        '#height' => 96,
+        '#alt' => (string) ($definition['label'] ?? ''),
+      ];
+    }
     return $useFallback ? [
       '#theme' => 'image',
-      '#uri' => $this->modules->getPath('aculta_game') . '/assets/conquistas/conquista-padrao.svg',
+      '#uri' => $this->modules->getPath('aculta_game') . '/assets/conquistas/conquista-padrao.png',
       '#width' => 96,
       '#height' => 96,
       '#alt' => (string) $this->t('Símbolo ilustrativo da conquista @label', ['@label' => $definition['label'] ?? '']),

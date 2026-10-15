@@ -110,5 +110,7 @@ Entrega de e-mail depende do cron e da configuração do ambiente.
 
 Para arte de conquista, recomendamos imagem quadrada de **512 × 512 px**. O
 formulário aceita PNG, JPG ou WebP até 2 MB, com dimensão máxima de 4096 × 4096
-px. No perfil público, definições sem imagem própria usam o símbolo ilustrativo
-`assets/conquistas/conquista-padrao.svg`.
+px. As conquistas de comentário, Wiki, curso e perfil usam ilustrações próprias;
+outras definições sem arte usam `assets/conquistas/conquista-padrao.png`. A
+direção de arte e o inventário estão em
+[`docs/portal/IMAGE-ART-DIRECTION.md`](../../../../../../docs/portal/IMAGE-ART-DIRECTION.md).

@@ -77,7 +77,8 @@ entrega conquistas ao perfil público e à própria conta, com cache e privacida
 não inclui dados de pedidos, cursos ou avaliadores. Nenhuma concessão é duplicada
 para representar destaque ou ocultação. Caixas adicionais seguem o roadmap.
 
-Game G4–G5.3 oferece missões unitárias, administração, avisos e perfil público.
+Game G4–G5.4 oferece missões unitárias, administração, avisos, perfil público e
+arte de conquista sob direção canábica/antiproibicionista documentada.
 Definições/critério:
 Config API de `aculta_user.achievement_definitions`; fatos: `aculta_badge_award`,
 com motivos administrativos privados, ator e datas. Game controla UX e eventos;

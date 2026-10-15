@@ -18,6 +18,7 @@ try {
   check('Entrada da visão geral é navegável', await browser.exec(`const link = [...document.querySelectorAll('a')].find(a => a.textContent.includes('Ver missões e escolher')); if (!link) return false; link.click(); return true;`));
   check('Formulário aparece após navegação AJAX', await browser.waitFor(`document.querySelector('input[name="hide_all"]')`, 'Game'));
   check('Cada conquista informa estado e condição', await browser.exec(`return document.body.innerText.includes('Ainda não conquistada') && document.body.innerText.includes('Como conquistar');`));
+  check('Conquistas de participação exibem as quatro artes temáticas', await browser.exec(`const srcs = [...document.querySelectorAll('img')].map(image => image.src); return ['primeiro-comentario-forum.png', 'primeira-edicao-wiki.png', 'primeiro-curso.png', 'perfil-basico.png'].every(file => srcs.some(src => src.includes(file)));`));
   check('Conta apresenta uma única área de Conquistas', await browser.exec(`return !document.body.innerText.includes('Troféus da comunidade') && !document.body.innerText.includes('Troféu');`));
   check('Três missões aparecem', await browser.exec(`return ['Primeira contribuição no Growroom420', 'Contribuição ao conhecimento', 'Primeira formação concluída'].every(t => document.body.innerText.includes(t));`));
   await browser.exec(`document.querySelector('[data-portal-account-data-content]')?.scrollIntoView(); return true;`);
@@ -33,7 +34,7 @@ try {
   await browser.go(mainBase + '/u/pessoa-5');
   check('Perfil público mostra apenas conquistas obtidas', await browser.waitFor(`document.querySelector('.portal-profile__achievements') && document.body.innerText.includes('Perfil básico completo')`, 'conquistas do perfil'));
   check('Avatar público apresenta uma imagem', await browser.exec(`return !!document.querySelector('.portal-profile__avatar img');`));
-  check('Conquista sem arte recebe símbolo de fallback', await browser.exec(`return !!document.querySelector('.portal-profile__achievement-image img[src*="conquista-padrao.svg"]');`));
+  check('Conquista de perfil usa arte canábica própria', await browser.exec(`return !!document.querySelector('.portal-profile__achievement-image img[src*="perfil-basico.png"]');`));
   check('Conquistas usam cartões e grade responsiva', await browser.exec(`const list = document.querySelector('.portal-profile__achievements-list'); const item = document.querySelector('.portal-profile__achievement'); return !!list && !!item && getComputedStyle(list).display === 'grid' && !document.body.innerText.includes('Pesquisar conquistas');`));
   const profileResized = await fetch(GD + browser.p('/window/rect'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ width: 390, height: 844 }) });
   if (!profileResized.ok) throw new Error('Falha ao redimensionar perfil para celular.');

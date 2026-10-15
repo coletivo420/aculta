@@ -1,3 +1,11 @@
+## 0.4.0-dev.42 — Game G5.4: arte cultural nas conquistas — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.9`: quatro conquistas de participação
+ganham ilustrações próprias vinculadas ao catálogo; um selo antiproibicionista
+fica como fallback das próximas conquistas. Direção permanente de arte registrada
+em `AGENTS.md` e `docs/portal/IMAGE-ART-DIRECTION.md`; os três PNGs históricos
+foram preservados.
+
 ## 0.4.0-dev.41 — Game G5.3: conquistas no perfil público — 2026-10-15
 
 Classificação MINOR. Game `0.1.0-dev.8`, User `0.4.0-dev.9`: perfis

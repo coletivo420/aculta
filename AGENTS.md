@@ -338,6 +338,14 @@ Evitar page builders pesados.
 
 Evitar dependências JavaScript desnecessárias.
 
+## Direção de arte para imagens criadas por agentes
+
+- Toda imagem criada por um agente para este projeto deve considerar a identidade da ACULTA como associação cultural canábica e antiproibicionista; quando a imagem representar a comunidade, a conquista ou a participação no Portal, a relação com cannabis, cultura, direitos ou superação da proibição deve ser reconhecível.
+- Usar enquadramento cultural, comunitário, educativo e de direitos. Não representar o Portal como dispensário, loja de cannabis ou campanha de consumo.
+- Antes de criar, inspecionar os assets próximos e preservar as imagens históricas ou fornecidas pelo responsável. Registrar origem, intenção e dimensões das novas artes na documentação do componente.
+- Para ilustração raster nova, usar a ferramenta imagegen; redimensionar e otimizar a saída para o uso real. Preferir arte original sem texto incorporado, salvo quando o texto exato fizer parte do pedido.
+- Consultar `docs/portal/IMAGE-ART-DIRECTION.md` para a paleta e a linguagem visual das conquistas.
+
 ## Segurança
 
 Nunca expor mensagens de erro detalhadas em produção.
