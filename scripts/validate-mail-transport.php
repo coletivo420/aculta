@@ -31,6 +31,24 @@ $check(isset($locked['drupal/symfony_mailer']) && str_starts_with($locked['drupa
 
 $system_mail = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/system.mail.yml') ?: [];
 $check(($system_mail['interface']['default'] ?? NULL) === 'symfony_mailer', 'system.mail deve manter Symfony Mailer como backend declarado.');
+
+// R4: preserve the safe, text-only contact notification and keep the
+// administrative transport verification message localized.
+$contact = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/webform.webform.aculta_contact.yml') ?: [];
+$contact_handler = $contact['handlers']['institutional_notification']['settings'] ?? [];
+$check(($contact_handler['html'] ?? NULL) === FALSE, 'A notificação pública do contato deve permanecer em texto simples até haver sanitização HTML validada.');
+$check(($contact_handler['twig'] ?? NULL) === FALSE, 'A notificação pública do contato não deve avaliar Twig fornecido por submissões.');
+$check(($contact_handler['body'] ?? NULL) === '[webform_submission:values]', 'A notificação do contato deve incluir os valores usando o formato padrão do Webform.');
+$check(($contact_handler['reply_to'] ?? NULL) === '[webform_submission:values:email:raw]', 'Reply-To do contato deve usar o campo de e-mail validado pelo Webform.');
+$check(($contact_handler['to_mail'] ?? NULL) !== 'advfjpm@gmail.com', 'A configuração exportada não pode enviar notificações ao endereço de teste histórico.');
+$participation = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/webform.webform.aculta_participation.yml') ?: [];
+$check(($participation['handlers'] ?? []) === [], 'O formulário de participação não pode habilitar notificações sem destinatário institucional aprovado.');
+$verify_policy = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/mailer_policy.mailer_policy.symfony_mailer.verify.yml') ?: [];
+$verify_body = (string) ($verify_policy['configuration']['email_body']['content']['value'] ?? '');
+$verify_subject = (string) ($verify_policy['configuration']['email_subject']['value'] ?? '');
+$check(str_contains($verify_body, 'Verificação do transporte de e-mail') && str_contains($verify_subject, 'Verificação do transporte'), 'O template administrativo de verificação deve estar em português.');
+$check(!str_contains($verify_body, 'Have a great') && !str_contains($verify_subject, 'Verification email'), 'O template administrativo de verificação não deve manter texto demonstrativo em inglês.');
+
 $fallback_scheme = (string) ($system_mail['mailer_dsn']['scheme'] ?? '');
 $fallback_fails_closed = FALSE;
 try {

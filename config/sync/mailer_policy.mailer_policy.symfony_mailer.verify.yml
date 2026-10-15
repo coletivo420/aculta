@@ -10,8 +10,8 @@ id: symfony_mailer.verify
 configuration:
   email_body:
     content:
-      value: "<h4>You have mail</h4>\n<p>This is a verification email from <a href=\"[site:url]\">[site:name]</a>.</p>\n<p>Have a great <span class=\"day\">{{ day }}</span>!</p>\n<h4 class=\"text-small\">\n  <a href=\"https://www.drupal.org/project/symfony_mailer\">Mailer Plus</a>\n  <img class=\"symfony-mailer-logo\" src=\"{{ logo_url }}\">\n</h4>"
+      value: "<h4>Verificação do transporte de e-mail</h4>\n<p>Esta mensagem foi enviada pelo recurso de verificação do Mailer Plus do site [site:name].</p>\n<p>Ela ajuda a confirmar o funcionamento do envio de e-mails configurado no Drupal.</p>"
       format: email_html
   email_subject:
-    value: 'Verification email from [site:name]'
+    value: 'Verificação do transporte de e-mail — [site:name]'
 

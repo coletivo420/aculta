@@ -1,3 +1,12 @@
+## 0.4.0-dev.27 — R4: templates e política de e-mail — 2026-10-15
+
+Classificação: PATCH (localização do e-mail administrativo e precisão da configuração de notificações).
+
+- Template de verificação do transporte Mailer Plus localizado para português.
+- Gate de e-mail protege a notificação pública do contato em texto simples, o Reply-To validado, a ausência de notificações não aprovadas na participação e a localização do template de verificação.
+- Configuração do contato permanece `html: false`: os valores da submissão são incluídos e o formato `email_html` exportado não aplica filtros. O teste histórico com HTML ativado temporariamente valida a compatibilidade do Mailer Plus, não altera a configuração ativa.
+- Não houve envio de mensagem nem alteração no Runtime.
+
 ## 0.4.0-dev.26 — SMTP2GO com TLS obrigatório e fallback fechado — 2026-10-15
 
 Classificação: PATCH (segurança do transporte SMTP; mantém SMTP2GO como provedor institucional).

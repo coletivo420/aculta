@@ -1,6 +1,6 @@
 # Transporte de e-mail do Portal (migração para Mailer Plus)
 
-Status: **M0 e M1 concluídas; M1 validada no runtime; M2 concluída no mesmo PR (2026-10-11); R3 endurece TLS e remove o fallback local implícito.** Documento normativo da arquitetura de transporte.
+Status: **M0/M1/M2 e R3 concluídas; R4 alinha o template administrativo e registra a política atual do Webform.** Documento normativo da arquitetura de transporte.
 
 Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05, DT-P09, DT-O07),
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
@@ -290,3 +290,23 @@ relatórios. O transporte não tem uma lista de failover configurada.
 - O transporte e o sentinel do Core são configuração compartilhada por ambiente. Homelab foi validado; Hostinger não
   foi acessada nem testada. A compatibilidade de saída TCP 465 na hospedagem de produção permanece DEFERRED até a
   homologação no ambiente autorizado.
+
+## 11. R4 — Webform e template administrativo
+
+O handler `institutional_notification` do formulário `aculta_contact` continua configurado com `html: false` e
+`twig: false`. Ele envia os valores da submissão no corpo em texto simples e usa o campo de e-mail validado como
+`Reply-To`; o remetente é institucional e seu endereço é substituído pelo `aculta_deployer` conforme o ambiente.
+O destinatário exportado é o endereço institucional publicado na página de contato, não o destinatário controlado
+usado no teste histórico.
+
+O teste registrado na seção 9.5 ligou HTML temporariamente em memória e foi recebido; ele confirma que o caminho
+Mailer Plus/Webform consegue enviar HTML. Não prova que o handler atual esteja em HTML. Mantemos texto simples porque
+`filter.format.email_html` não declara filtros e o corpo contém campos fornecidos por visitantes. Habilitar HTML exige
+um template que escape esses campos e validação específica do conteúdo final.
+
+O formulário `aculta_participation` não declara handlers de e-mail. Não foi escolhido destinatário para notificações
+de participação, então R4 não cria envios para esse formulário. O template de verificação administrativa do Mailer
+Plus foi localizado em português; a política está disponível apenas para a verificação iniciada por administrador.
+
+**Runtime status: DEFERRED.** R4 não importou configuração no Runtime: a linha de base tem divergências conhecidas,
+e a atualização completa não é segura nesta fase. Nenhum e-mail foi enviado nesta fase.
