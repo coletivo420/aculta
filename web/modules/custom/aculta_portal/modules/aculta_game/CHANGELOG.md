@@ -1,5 +1,14 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.2 — G2: integridade dos eventos — 2026-10-15
+
+- Aprovação posterior de comentário, publicação de revisão da Wiki e transições
+  de pedido/LMS verificadas; LMS usa `getUserId()` da API instalada.
+- Migrate/sync, contas bloqueadas e papel legado excluídos de novas concessões.
+- Concessão/revogação pela API serializadas com lock até o commit externo.
+- Sem alteração de critérios pessoais ou de reconhecimento de apoio existentes.
+- Evidências e limites de validação em [EXECUCAO.md](docs/EXECUCAO.md).
+
 ## 0.1.0-dev.1 — G1: integração e fonte única — 2026-10-15
 
 - Extensão opcional do Portal, dependente de User, sem dependência inversa.

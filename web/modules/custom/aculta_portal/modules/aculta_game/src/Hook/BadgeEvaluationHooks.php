@@ -8,10 +8,13 @@ use Drupal\aculta_user\Badge\BadgeCatalog;
 use Drupal\aculta_user\Badge\BadgeService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\lms\Entity\CourseStatusInterface;
 
 /**
  * Avaliação única das conquistas automáticas do Portal.
@@ -27,8 +30,17 @@ final class BadgeEvaluationHooks {
 
   /** Primeiro comentário publicado no Fórum. */
   #[Hook('comment_insert')]
+  #[Hook('comment_update')]
   public function commentInsert(CommentInterface $comment): void {
-    if ($comment->bundle() !== 'comment_forum' || !$comment->isPublished()) {
+    if (!$this->isLive($comment) || $comment->bundle() !== 'comment_forum' || !$comment->isPublished()) {
+      return;
+    }
+    $original = $comment->getOriginal();
+    if ($original !== NULL && $original->isPublished()) {
+      return;
+    }
+    $topic = $comment->getCommentedEntity();
+    if (!$topic instanceof NodeInterface || $topic->bundle() !== 'forum' || !$topic->isPublished() || !$this->isLive($topic)) {
       return;
     }
     $this->badges->award((int) $comment->getOwnerId(), BadgeCatalog::PRIMEIRO_COMENTARIO);
@@ -37,7 +49,12 @@ final class BadgeEvaluationHooks {
   /** Primeira edição na Wiki: a pessoa criou uma revisão de verbete. */
   #[Hook('node_update')]
   public function nodeUpdate(NodeInterface $node): void {
-    if ($node->bundle() !== 'wiki_entry') {
+    if (!$this->isLive($node) || $node->bundle() !== 'wiki_entry' || !$node->isPublished() || !$node->isDefaultRevision()) {
+      return;
+    }
+    $original = $node->getOriginal();
+    // Uma nova revisão publicada ou a aprovação posterior de uma revisão.
+    if (!$node->isNewRevision() && !($original !== NULL && !$original->isPublished())) {
       return;
     }
     $uid = (int) $node->getRevisionUserId();
@@ -59,8 +76,12 @@ final class BadgeEvaluationHooks {
 
   /** Pedido concluído (apoio ou pagamento) concede Apoiador. */
   #[Hook('commerce_order_update')]
-  public function orderUpdate(EntityInterface $order): void {
-    if (!method_exists($order, 'getState') || $order->getState()->getId() !== 'completed') {
+  public function orderUpdate(OrderInterface $order): void {
+    if (!$this->isLive($order) || $order->getState()->getId() !== 'completed') {
+      return;
+    }
+    $original = $order->getOriginal();
+    if ($original !== NULL && $original->getState()->getId() === 'completed') {
       return;
     }
     $this->badges->award((int) $order->getCustomerId(), BadgeCatalog::APOIADOR);
@@ -68,15 +89,20 @@ final class BadgeEvaluationHooks {
 
   /** Curso concluído com status "passed" no LMS. */
   #[Hook('lms_course_status_update')]
-  public function courseStatusUpdate(EntityInterface $status): void {
-    if (!method_exists($status, 'getStatus') || $status->getStatus() !== 'passed') {
+  #[Hook('lms_course_status_insert')]
+  public function courseStatusUpdate(CourseStatusInterface $status): void {
+    if (!$this->isLive($status) || $status->getStatus() !== CourseStatusInterface::STATUS_PASSED) {
       return;
     }
-    $this->badges->award((int) $status->getOwnerId(), BadgeCatalog::PRIMEIRO_CURSO);
+    $original = $status->getOriginal();
+    if ($original !== NULL && $original->getStatus() === CourseStatusInterface::STATUS_PASSED) {
+      return;
+    }
+    $this->badges->award((int) $status->getUserId(), BadgeCatalog::PRIMEIRO_CURSO);
   }
 
   private function profileBasic(ProfileInterface $profile): void {
-    if ($profile->bundle() !== 'participante') {
+    if (!$this->isLive($profile) || $profile->bundle() !== 'participante') {
       return;
     }
     foreach (['field_nickname', 'field_first_name', 'field_last_name', 'field_whatsapp'] as $field) {
@@ -85,6 +111,11 @@ final class BadgeEvaluationHooks {
       }
     }
     $this->badges->award((int) $profile->getOwnerId(), BadgeCatalog::PERFIL_BASICO);
+  }
+
+  /** O Migrate Core marca entidades como syncing; não premiar restauração. */
+  private function isLive(EntityInterface $entity): bool {
+    return !($entity instanceof SynchronizableInterface && $entity->isSyncing());
   }
 
 }

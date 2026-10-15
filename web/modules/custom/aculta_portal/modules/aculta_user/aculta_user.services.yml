@@ -22,7 +22,7 @@ services:
     arguments: ["@entity_type.manager", "@datetime.time", "@file.usage"]
   aculta_user.badge_service:
     class: Drupal\aculta_user\Badge\BadgeService
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@lock.persistent', '@database', '@datetime.time']
   aculta_user.account_bio_card:
     class: Drupal\aculta_user\Bio\AccountBioCard
     arguments: ['@entity_type.manager']

@@ -6,7 +6,10 @@ namespace Drupal\aculta_user\Badge;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\aculta_user\Entity\BadgeAward;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Concede e revoga troféus. Idempotente: não duplica concessão ativa.
@@ -16,21 +19,29 @@ final class BadgeService {
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly LockBackendInterface $lock,
+    private readonly Connection $database,
+    private readonly TimeInterface $time,
   ) {}
 
   /** Concede o troféu se a pessoa ainda não o tem ativo. Retorna TRUE se concedeu agora. */
   public function award(int $uid, string $badge, ?int $grantedBy = NULL): bool {
-    if ($uid <= 0 || !isset(BadgeCatalog::all()[$badge]) || $this->hasActive($uid, $badge)) {
+    if (!isset(BadgeCatalog::all()[$badge]) || !$this->isEligible($uid)) {
       return FALSE;
     }
-    $this->storage()->create([
-      'uid' => $uid,
-      'badge' => $badge,
-      'origem' => BadgeCatalog::all()[$badge]['origem'],
-      'concedido_em' => time(),
-      'concedido_por' => $grantedBy,
-    ])->save();
-    return TRUE;
+    return $this->serialized($uid, $badge, function () use ($uid, $badge, $grantedBy): bool {
+      if ($this->hasActive($uid, $badge)) {
+        return FALSE;
+      }
+      $this->storage()->create([
+        'uid' => $uid,
+        'badge' => $badge,
+        'origem' => BadgeCatalog::all()[$badge]['origem'],
+        'concedido_em' => $this->time->getCurrentTime(),
+        'concedido_por' => $grantedBy,
+      ])->save();
+      return TRUE;
+    });
   }
 
   /** Revoga o troféu manual ativo. Automáticas não são revogadas. Retorna TRUE se revogou. */
@@ -38,14 +49,54 @@ final class BadgeService {
     if (!BadgeCatalog::isManual($badge)) {
       return FALSE;
     }
-    $changed = FALSE;
-    foreach ($this->activeAwards($uid, $badge) as $award) {
-      $award->set('revogado_em', time());
-      $award->set('revogado_por', $revokedBy);
-      $award->save();
-      $changed = TRUE;
+    return $this->serialized($uid, $badge, function () use ($uid, $badge, $revokedBy): bool {
+      $changed = FALSE;
+      foreach ($this->activeAwards($uid, $badge) as $award) {
+        $award->set('revogado_em', $this->time->getCurrentTime());
+        $award->set('revogado_por', $revokedBy);
+        $award->save();
+        $changed = TRUE;
+      }
+      return $changed;
+    });
+  }
+
+  /** Contas históricas ou bloqueadas não participam de novas concessões. */
+  public function isEligible(int $uid): bool {
+    $user = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
+    return $user instanceof UserInterface && $user->isActive() && !$user->hasRole('usuarios_legados_forum');
+  }
+
+  /**
+   * Serializa mutações pela API, mantendo o lock até o commit externo.
+   *
+   * Hooks de entidade já executam em transação. Liberar ao sair de award()
+   * permitiria outra requisição consultar antes do commit do comentário/perfil.
+   * Escritas diretas no storage não fazem parte deste contrato.
+   */
+  private function serialized(int $uid, string $badge, callable $operation): bool {
+    $name = 'aculta_user:badge:' . $uid . ':' . $badge;
+    if (!$this->lock->acquire($name, 120.0)) {
+      $this->lock->wait($name, 1);
+      if (!$this->lock->acquire($name, 120.0)) {
+        throw new \RuntimeException('Concessão ocupada; tente novamente.');
+      }
     }
-    return $changed;
+    $manager = $this->database->transactionManager();
+    $deferred = $manager->inTransaction();
+    if ($deferred) {
+      $manager->addPostTransactionCallback(function (bool $success) use ($name): void {
+        $this->lock->release($name);
+      });
+    }
+    try {
+      return $operation();
+    }
+    finally {
+      if (!$deferred) {
+        $this->lock->release($name);
+      }
+    }
   }
 
   public function hasActive(int $uid, string $badge): bool {

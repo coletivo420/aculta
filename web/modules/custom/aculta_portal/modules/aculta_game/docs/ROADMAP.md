@@ -9,7 +9,7 @@ do responsável, as fases são commits próprios na PR #286 existente.
 | --- | --- | --- |
 | G0 — pesquisa e abertura | README, decisões, arquitetura, licenças e evidências de pacotes | Distinguir fonte existente, proposta e compatibilidade ainda não homologada |
 | G1 — concluída; inventário e fonte única | Auditar concessões atuais e ownership; escolher transição/integração | Preservar IDs/datas/revogações; nenhum segundo backend; atualizar fontes de verdade |
-| G2 — integridade dos eventos | Aprovação tardia de comentário, revisão Wiki, status LMS e critérios existentes | Repetição/concorrência não duplicam; importações e legados não recebem novas conquistas |
+| G2 — implementada; homologação pendente | Aprovação tardia de comentário, revisão Wiki, status LMS e critérios existentes | Repetição/concorrência não duplicam; importações e legados não recebem novas conquistas |
 | G3 — experiência e privacidade | Minha Conta, caixas, catálogo e escolhas de exibição pública | Público por padrão com ocultação, destaques e ordem; zero evidência privada publicada; acessibilidade e cache |
 | G4 — missões iniciais | Critérios e progresso sobre fontes reais aprovadas | Sem XP/ranking; limiares aprovados; fonte, escopo e versão do critério rastreáveis |
 | G5 — administração e avisos | Concessão/revogação manual, motivo, auditoria e avisos permitidos | Permissões restritas, deduplicação e preferências; sem conceder privilégios editoriais |

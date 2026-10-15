@@ -48,3 +48,41 @@ O digest permite comparar preservação sem registrar dados pessoais neste docum
 - Nenhuma importação histórica ou envio de aviso executado. G1 concluída;
   próxima fase G2 corrige critérios e integridade. UI, missões e privacidade ainda
   pendentes; nenhuma declaração de validação ponta a ponta dessas fases.
+
+## G2 — implementação dos gatilhos e proteção da API
+
+Classificação PATCH: Game `0.1.0-dev.2`, User `0.4.0-dev.4`, Portal `0.4.0-dev.34`.
+
+- Comment insert/update: publicado agora, antes não publicado; pai é tópico
+  publicado. Aprovação posterior passa pelo mesmo avaliador idempotente.
+- Wiki: revisão publicada/default nova, ou aprovação de revisão antes não
+  publicada. Um save comum sem nova revisão não concede. Autoria vem da revisão.
+- LMS: interface instalada `CourseStatusInterface::getUserId()`, ausente no
+  caminho anterior que chamava `getOwnerId()`; tratar insert e transição a passed.
+- Pedido: apenas transição para completed; preservar a abrangência anterior de
+  Apoiador até a decisão de critérios, sem introduzir recompensas por gasto.
+- Entidades `isSyncing()` são ignoradas, como usa o Migrate Core instalado.
+  Importadores próprios devem preservar esse contrato. Conta bloqueada ou com
+  papel `usuarios_legados_forum` não recebe nova conquista pela API.
+- Lock persistente por pessoa/conquista, com tentativa adicional após espera
+  curta. Falha de lock lança exceção, em vez de perder uma avaliação silenciosamente.
+  Callback do Transaction Manager libera após a transação externa, inclusive
+  rollback; fora de transação libera ao fim da operação. Revogação usa o mesmo lock.
+- Sem restrição SQL nova: a serialização vale para chamadas pela API única,
+  dentro do prazo do lock (120 segundos). Código não deve criar concessões
+  diretamente pelo storage. Unicidade em escrita arbitrária não está comprovada.
+
+Fontes: [Lock API](https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Lock!LockBackendInterface.php/interface/LockBackendInterface/11.x),
+[callback após transação](https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Database!Transaction!TransactionManagerInterface.php/function/TransactionManagerInterface::addPostTransactionCallback/11.x)
+e [entidade original](https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Entity!EntityInterface.php/function/EntityInterface::getOriginal/11.x).
+Conferidos Core instalado, `EntityContentBase` do Migrate, armazenamento de revisão
+e interface do LMS 1.2.3. Perfil básico/WhatsApp continuam critérios anteriores,
+pendentes de decisão de produto; nenhum dado adicional é solicitado nesta fase.
+
+### Validação e limites
+
+PHP lint e gates Drupal 11+ (773), fronteira (1036), endereços (1722) PASS;
+`git diff --check` PASS. Cache rebuild concluído; container resolveu o serviço com as novas dependências,
+anônimo inelegível e os dois registros mantiveram o digest integral de G1. Não foram executadas simulações concorrentes ou fluxos de
+publicação/aprovação de conteúdo. **RUNTIME STATUS: DEFERRED** para a matriz
+funcional de G2; a implementação não encerra sua homologação. G3 permanece pendente.

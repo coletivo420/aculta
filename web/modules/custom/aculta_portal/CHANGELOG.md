@@ -1,3 +1,12 @@
+## 0.4.0-dev.34 — ACULTA Game G2 — 2026-10-15
+
+Classificação: PATCH (integridade dos gatilhos e da API existente).
+
+- Game `0.1.0-dev.2` trata aprovação tardia, publicação de revisão e API real do
+  LMS; User `0.4.0-dev.4` coordena concessões/revogações sob lock até commit.
+- Sem novas dependências, migração de schema ou alterações das conquistas passadas.
+- Evidências e limites em `modules/aculta_game/docs/EXECUCAO.md`.
+
 ## 0.4.0-dev.33 — ACULTA Game G1 — 2026-10-15
 
 Classificação: MINOR (submódulo opcional; integração inicial da gamificação).

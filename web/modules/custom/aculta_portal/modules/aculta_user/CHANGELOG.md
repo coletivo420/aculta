@@ -1,5 +1,13 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.4 — integridade da API de conquistas — 2026-10-15
+
+- Novas concessões apenas a contas ativas e sem papel legado.
+- Lock persistente por pessoa/conquista coordena concessão e revogação pela API;
+  quando há transação externa, liberação ocorre depois de commit/rollback.
+- Relógio injetado; identidade e histórico da entidade preservados.
+- Validação e limites na fase G2 de `../aculta_game/docs/EXECUCAO.md`.
+
 ## 0.4.0-dev.3 — gatilhos de conquistas no Game — 2026-10-15
 
 - `BadgeEvaluationHooks` passa ao submódulo opcional `aculta_game`.
