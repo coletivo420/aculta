@@ -9,6 +9,7 @@ use Drupal\user\UserInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessage;
 use Drupal\private_message\Entity\PrivateMessageThread;
@@ -55,30 +56,21 @@ final class NewConversationForm extends FormBase {
       '#maxlength' => 5000,
       '#attributes' => ['data-portal-ui' => 'new-conversation-message'],
     ];
+    // Cancelar: discard the draft and return to the member search. Voltar: the conversation list.
+    // PortalLinkElement, not #type link: the theme maps data-portal-ui only on elements with a theme template, so each
+    // one takes its own button colour. The drawer finds them by their data attributes, which the helper keeps.
+    $cancelUrl = Url::fromRoute('aculta_messenger.new_conversation')->toString();
+    $form['links'] = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'new-conversation-links'],
+      'cancel' => PortalLinkElement::build($this->t('Cancelar'), Url::fromRoute('aculta_messenger.new_conversation'), ['data-aculta-conversation-url' => $cancelUrl, 'data-portal-ui' => 'new-conversation-cancel']),
+      'home' => PortalLinkElement::build($this->t('Voltar para o início'), Url::fromRoute('aculta_messenger.preview'), ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'new-conversation-back']),
+    ];
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Enviar'),
       '#attributes' => ['data-portal-ui' => 'new-conversation-submit'],
-    ];
-    // Cancelar: discard the draft and return to the member search. Voltar: the conversation list.
-    // Link elements, not Link::toRenderable(): the drawer finds these links by their data attributes,
-    // and toRenderable() drops the attributes, so the click would load the fragment as a whole page.
-    $form['links'] = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'new-conversation-links'],
-      'cancel' => [
-        '#type' => 'link',
-        '#title' => $this->t('Cancelar'),
-        '#url' => Url::fromRoute('aculta_messenger.new_conversation'),
-        '#attributes' => ['data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(), 'data-portal-ui' => 'new-conversation-back'],
-      ],
-      'home' => [
-        '#type' => 'link',
-        '#title' => $this->t('Voltar para o início'),
-        '#url' => Url::fromRoute('aculta_messenger.preview'),
-        '#attributes' => ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'new-conversation-back'],
-      ],
     ];
     $form['#cache'] = ['max-age' => 0];
     return $form;

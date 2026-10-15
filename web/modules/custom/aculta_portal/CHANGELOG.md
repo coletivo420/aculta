@@ -1,3 +1,9 @@
+## 0.4.0-dev.31 — confirmação para bloquear e botões da nova conversa — 2026-10-15
+
+Classificação: PATCH (confirmação de bloqueio no perfil e na conversa; botões da nova conversa).
+
+- `aculta_messenger` 0.1.1-dev.30: a caixa "Opções" pede confirmação antes de bloquear e de desfazer amizade, e "Cancelar" / "Voltar para o início" ficam acima de "Enviar".
+
 ## 0.4.0-dev.30 — menu "Opções" no perfil público — 2026-10-15
 
 Classificação: PATCH (novo ponto de extensão do perfil público).

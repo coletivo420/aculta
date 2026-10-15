@@ -29,6 +29,26 @@
         });
       });
 
+      // "Bloquear" and "Desfazer amizade" in the Opções menus open their confirmation dialog (inside the same form);
+      // "Cancelar" closes it. The button names its dialog in data-aculta-dialog-open.
+      once('aculta-dialog-open', '[data-aculta-dialog-open]', context).forEach((button) => {
+        button.addEventListener('click', (event) => {
+          // Form API renders these as submit inputs: the click only opens the dialog, it does not post the form.
+          event.preventDefault();
+          const dialog = button.closest('form')?.querySelector(`dialog[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`);
+          if (dialog && typeof dialog.showModal === 'function') {
+            dialog.showModal();
+          }
+        });
+      });
+
+      once('aculta-dialog-close', '[data-aculta-dialog-close]', context).forEach((button) => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          button.closest('dialog')?.close();
+        });
+      });
+
       once('aculta-alert-dismiss', '[data-aculta-alert-dismiss]', context).forEach((link) => {
         link.addEventListener('click', () => {
           const counter = document.querySelector('[data-aculta-alerts-count]');

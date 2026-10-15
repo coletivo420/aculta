@@ -1,3 +1,12 @@
+## 0.6.0-dev.52 — confirmação para bloquear e botões da nova conversa — 2026-10-15
+
+Classificação: PATCH (apresentação da confirmação de bloqueio e dos botões de nova conversa).
+
+- `messenger-drawers.js`: "Bloquear" e "Desfazer amizade" abrem a janela de confirmação (dialog, identificada por `data-aculta-dialog`) e "Cancelar" a fecha; o clique não envia o formulário.
+- `messenger-item.css`: aparência da janela de confirmação (botões "Sim" e "Cancelar"), para bloquear e desfazer amizade.
+- `PortalUiHooks.php`: token `new-conversation-cancel` (botão "Cancelar" da nova conversa, outline secundário); "Voltar para o início" segue outline primário.
+- RUNTIME STATUS: ACTIVE no teste (abrir/cancelar na gaveta; bloquear pelo "Sim" no perfil; desbloqueio restaurado).
+
 ## 0.6.0-dev.51 — menu "Opções" nas conversas e no perfil; largura e fonte — 2026-10-15
 
 Classificação: PATCH (apresentação do menu "Opções").

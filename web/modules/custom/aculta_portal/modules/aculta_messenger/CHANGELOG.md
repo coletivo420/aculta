@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.30 — confirmação para bloquear e botões Cancelar/Voltar — 2026-10-15
+
+Classificação: PATCH (confirmação antes de bloquear em todos os locais e botões da nova conversa).
+
+- "Bloquear" (menu Opções das conversas e do perfil) abre a janela "Você quer mesmo bloquear <usuário>?" com "Sim" e "Cancelar". Só o "Sim" bloqueia.
+- "Desfazer amizade" (mesmo menu) também pede confirmação: "Você quer mesmo desfazer a amizade com <usuário>?", com "Sim" e "Cancelar".
+- Nova conversa: "Cancelar" e "Voltar para o início" ficam acima de "Enviar", cada um com sua cor (`PortalLinkElement`).
+- Validação: no runtime de teste, perfil de teste: abrir, cancelar, bloquear pelo "Sim", desbloquear; desfazer amizade pelo "Sim" e recriar a amizade. Gaveta: abrir e cancelar (sem enviar "Sim" na conta real). O "Sim" pela gaveta não foi exercido.
+
 ## 0.1.1-dev.29 — menu "Opções" nas conversas e no perfil — 2026-10-15
 
 Classificação: PATCH (troca do menu quebrado das conversas pelo menu "Opções" e inclusão do menu no perfil).

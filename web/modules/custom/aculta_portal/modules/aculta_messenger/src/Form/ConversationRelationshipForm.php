@@ -9,6 +9,7 @@ use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Form\FormBase;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
@@ -85,7 +86,7 @@ final class ConversationRelationshipForm extends FormBase {
 
     $targetId = (int) $target->id();
     if ($this->friendshipManager->areFriendsWith($targetId)) {
-      $form['actions']['remove'] = $this->button('remove', $this->t('Desfazer amizade'));
+      $form = $this->confirmedAction($form, 'remove', $this->t('Desfazer amizade'), $this->t('Você quer mesmo desfazer a amizade com @name?', ['@name' => $target->getDisplayName()]), $this->t('Sim'));
     }
     // Only a pending request blocks a new one: a removed or declined relationship is still a row, but not a request.
     elseif (($pending = $this->friendshipManager->getRelationshipWith($targetId)) === NULL || $pending->getStatus() !== FriendshipStatus::Pending->value) {
@@ -119,7 +120,7 @@ final class ConversationRelationshipForm extends FormBase {
       $form['actions']['unban'] = $this->button('unban', $this->t('Desbloquear')) + ['#weight' => 10];
     }
     else {
-      $form['actions']['ban'] = $this->button('ban', $this->t('Bloquear')) + ['#weight' => 10];
+      $form = $this->confirmedAction($form, 'ban', $this->t('Bloquear'), $this->t('Você quer mesmo bloquear @name?', ['@name' => $target->getDisplayName()]), $this->t('Sim'), 10);
     }
     return $form;
   }
@@ -214,6 +215,38 @@ final class ConversationRelationshipForm extends FormBase {
     catch (\DomainException|\RuntimeException|\InvalidArgumentException) {
       $formState->set('message', (string) $this->t('Não foi possível concluir a ação. Tente novamente.'));
     }
+  }
+
+  /**
+   * An action that asks first: the menu button only opens a native dialog inside this form, and "Sim" in the dialog is
+   * the submit that runs the action. "Cancelar" closes the dialog. The drawer and the profile both use it.
+   */
+  private function confirmedAction(array $form, string $name, $openLabel, $question, $confirmLabel, int $weight = 0): array {
+    $form['actions'][$name . '_open'] = [
+      '#type' => 'button',
+      '#value' => $openLabel,
+      '#weight' => $weight,
+      '#attributes' => ['data-portal-ui' => 'conversation-action', 'data-aculta-dialog-open' => $name],
+    ];
+    // The dialog tags are fixed template text: #markup and #prefix are filtered as admin HTML, which drops <dialog>.
+    $form[$name . '_dialog'] = [
+      '#type' => 'container',
+      'open' => ['#type' => 'inline_template', '#template' => '<dialog data-aculta-dialog="' . $name . '" aria-labelledby="aculta-' . $name . '-dialog-title">', '#weight' => -10],
+      'question' => ['#weight' => -5, '#markup' => '<p id="aculta-' . $name . '-dialog-title">' . Html::escape((string) $question) . '</p>'],
+      'actions' => [
+        '#type' => 'actions',
+        '#weight' => 0,
+        $name => $this->button($name, $confirmLabel),
+        $name . '_cancel' => [
+          '#type' => 'button',
+          '#button_type' => 'button',
+          '#value' => $this->t('Cancelar'),
+          '#attributes' => ['data-portal-ui' => 'conversation-action', 'data-aculta-dialog-close' => ''],
+        ],
+      ],
+      'close' => ['#type' => 'inline_template', '#template' => '</dialog>', '#weight' => 10],
+    ];
+    return $form;
   }
 
   /** Only another active member can be the target: never the current account, never an anonymous or blocked one. */
