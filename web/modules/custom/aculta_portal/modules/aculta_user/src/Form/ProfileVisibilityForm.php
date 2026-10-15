@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Minha conta > Configurações > Privacidade.
  *
- * Só as escolhas de visibilidade: perfil público e exibir foto, bio, e-mail e redes no perfil público.
+ * Escolhas de visibilidade do perfil público. A seção "Mensagens privadas" é acrescentada pelo aculta_messenger (form_alter).
  * Apelido é editado em Meus dados; bio e redes sociais, na visão geral. Autores e editores têm o perfil
  * público obrigatório (PublicProfilePolicy).
  */
