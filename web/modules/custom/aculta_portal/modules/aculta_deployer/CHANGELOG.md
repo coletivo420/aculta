@@ -1,3 +1,10 @@
+## 0.1.21 — Política de cookies de sessão por ambiente — 2026-10-14
+
+- `config/deploy.json`: seção `session_cookie` com o `cookie_domain` de cada ambiente (teste `.aculta.toca.net.br`, produção `.aculta.org`) e a transição teste → produção.
+- Comando `cookies` (somente leitura): confere o domínio declarado contra `services.homelab.yml` (teste) e o modelo `services.hostinger.yml.example` (produção). Aponta dívidas em `services*.yml` versionados.
+- `docs/COOKIES-AMBIENTE.md`: política, transição e dívida (`services.local.yml` com `.aculta.test`).
+- `VERSION` e `Cli::VERSION`: 0.1.21.
+
 ## 0.1.20 — Purpose LINKS no servidor de testes — 2026-10-12
 
 - `config/deploy.json`: declara `links.aculta.toca.net.br`, transição do purpose e política noindex de teste; produção permanece sem provisionamento DNS.

@@ -49,3 +49,7 @@ $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.my_data')
 
 Os aliases de host do servidor de testes (`config/sync/domain_alias.alias.*.yml`) estão exportados e declarados em
 `environment_bound`. Migrar para provisionamento por ambiente (fora do `config/sync`) é o próximo passo do deployer.
+
+## Cookies de sessão
+
+O domínio do cookie de sessão compartilhado é endereço de ambiente: declarado em `config/deploy.json` (`session_cookie`) e documentado em `COOKIES-AMBIENTE.md`. Verificação: `aculta-deployer cookies`.
