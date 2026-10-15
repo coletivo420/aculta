@@ -1,3 +1,12 @@
+## 0.6.0-dev.39 — barra multidomínio em uma linha no mobile e destaque de Minha conta por propósito — 2026-10-15
+
+Classificação: PATCH (apresentação da barra multidomínio; sem mudança de API).
+
+- Mobile (até 767,98 px): a barra institucional fica em uma linha. Logo, ícones e links da conta são compactados em vez de quebrar; a altura de toque dos links é mantida.
+- O destaque de "Minha conta" passa a ser decisão do tema, pelo propósito do domínio no contrato `domain_presentation` (`identity.purpose == 'account'`). A barra recebe a classe `aculta-institution-bar--account` só nesse caso. O módulo marca o link com o token `account-home` em todos os domínios e não decide mais a cor.
+- Corrige o dev.38, que aplicava a classe em todos os domínios por posição e depois pelo módulo.
+- Verificado no runtime: principal com cor padrão, conta em vermelho; 360, 390 e 414 px sem quebra de linha. RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.6.0-dev.38 — link Minha conta identificado por token, não por posição — 2026-10-15
 
 Classificação: PATCH (correção visual da barra multidomínio).

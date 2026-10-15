@@ -1,7 +1,7 @@
 {# Semantic layout; Bootstrap5 remains the sole provider of Bootstrap assets. #}
 {% set aculta_wiki_search = domain_presentation.regions.wiki_search|default(null) %}
 {# Institution Bar: global, institutional, no Domain/purpose decisions here. #}
-<div class="aculta-institution-bar">
+<div class="aculta-institution-bar{{ domain_presentation.identity.purpose|default('') == 'account' ? ' aculta-institution-bar--account' : '' }}">
   <div class="container aculta-container aculta-institution-bar__inner">
     <p class="aculta-institution-bar__brand">
       <a class="aculta-institution-bar__home" href="{{ aculta_brand_home }}">
