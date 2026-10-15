@@ -50,7 +50,7 @@ final class NoticeAdminController extends ControllerBase {
     if ($this->noticeAdminAccount->hasPermission('administer site alert')) {
       $items['temporary'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['admin-item']],
+        '#attributes' => ['data-portal-ui' => 'notice-admin-item'],
         'title' => ['#type' => 'link', '#title' => $this->t('Avisos temporários'), '#url' => Url::fromRoute('aculta_messenger.admin_temporary_notices')],
         'description' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Gerencie alertas curtos, com prioridade e período de exibição. Cada visitante pode dispensar o aviso na própria sessão/conta.')],
       ];
@@ -58,7 +58,7 @@ final class NoticeAdminController extends ControllerBase {
     if ($this->noticeAdminAccount->hasPermission('administer nodes')) {
       $items['persistent'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['admin-item']],
+        '#attributes' => ['data-portal-ui' => 'notice-admin-item'],
         'title' => ['#type' => 'link', '#title' => $this->t('Avisos persistentes'), '#url' => Url::fromRoute('aculta_messenger.admin_persistent_notices')],
         'description' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Crie comunicados institucionais segmentados por público, com início, validade, revisão editorial e estado individual de leitura.')],
       ];
@@ -67,7 +67,7 @@ final class NoticeAdminController extends ControllerBase {
     return [
       'intro' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-notice-admin-intro']],
+        '#attributes' => ['data-portal-ui' => 'notice-admin-intro'],
         'title' => [
           '#type' => 'html_tag',
           '#tag' => 'p',
@@ -81,7 +81,7 @@ final class NoticeAdminController extends ControllerBase {
       ],
       'items' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['admin-list', 'aculta-notice-admin-list']],
+        '#attributes' => ['data-portal-ui' => 'notice-admin-list'],
         ...$items,
       ],
       '#cache' => [
@@ -98,7 +98,7 @@ final class NoticeAdminController extends ControllerBase {
     return [
       'intro' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-notice-admin-intro']],
+        '#attributes' => ['data-portal-ui' => 'notice-admin-intro'],
         'description' => [
           '#plain_text' => $this->t('Avisos temporários usam a agenda e a severidade do Site Alert. A lista e as operações abaixo são as nativas do Drupal; os formulários de criação, edição e exclusão continuam respeitando as permissões do módulo.'),
         ],
@@ -183,7 +183,7 @@ final class NoticeAdminController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Ainda não há avisos persistentes. Crie um comunicado para apresentá-lo ao público selecionado.'),
-        '#attributes' => ['class' => ['aculta-notice-admin-table']],
+        '#attributes' => ['data-portal-ui' => 'notice-admin-table'],
       ],
       'pager' => ['#type' => 'pager'],
     ];

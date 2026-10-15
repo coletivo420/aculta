@@ -9,9 +9,12 @@ Regra central: **o tema não decide nada do Messenger.** Ele recebe dados pronto
 | Item | Onde |
 | --- | --- |
 | Componentes SDC do Messenger | `components/patterns/messenger-*`, `components/content/messenger-*`, `components/feedback/messenger-state`, `components/feedback/unread-badge` |
-| CSS do painel | `components/content/messenger-item/messenger-item.css` (ver achado A3 da auditoria) e os CSS dos outros componentes |
+| CSS da gaveta, da lista e do menu | `css/components/messenger-drawer.css` (biblioteca `messenger-drawers`) |
+| CSS da bolha de mensagem | `components/content/messenger-item/messenger-item.css` |
+| CSS dos outros componentes | a pasta de cada componente |
 | JS da gaveta | `js/messenger-drawers.js` (library `messenger-drawers`) |
 | JS dos contadores | `js/counters.js` |
+| JS de "dispensar aviso" | `js/alerts-dismiss.js` (library global) |
 | Tradução de tokens para classes | `src/Hook/PortalUiHooks.php` (`TOKENS`) |
 | Mapeamento de rotas para SDC | `src/Hook/ThemeHooks.php` (`presentMessengerPage`, `presentMessengerTrigger`, `preprocessPrivateMessage`, `preprocessPrivateMessageThread`) |
 | Marcação da barra | `templates/page.html.twig` (imprime `aculta_messenger_trigger`) |
@@ -47,7 +50,7 @@ Regra: o tema **não** lê `private_message_thread`, `aculta_friendship`, `user.
 | `content/messenger-notification` | — | `content` | Notificação de mensagem para o dono |
 | `feedback/messenger-state` | `state` (empty, error, loading) | `content` | Estados vazio, erro e carregando |
 | `feedback/unread-badge` | `count` | — | Contador de não lidas |
-| `patterns/messenger-read-status` | `unread` (obrigatório), `notice` | — | Rótulo acessível de leitura |
+| `patterns/messenger-read-status` | `unread` (obrigatório), `notice` | — | Rótulo acessível de leitura (sem uso atual pelo módulo; ver nota abaixo) |
 
 Os *stories* de cada componente ficam na mesma pasta (`*.story.yml`). Use-os para conferir visual antes de publicar.
 
@@ -59,11 +62,28 @@ O módulo marca o elemento com um token semântico. `PortalUiHooks::TOKENS` troc
 
 | Token | Classes | Onde o módulo põe |
 | --- | --- | --- |
-| `conversation-action` | `aculta-messenger-options__action` | Botões do "Opções" (conversa e perfil) |
+| `conversation-action` | `aculta-messenger-options__action` | Botões do menu "Opções" e das janelas |
 | `conversation-notice-action` | `aculta-messenger-notice__action` | Ação do aviso de bloqueio/privacidade |
-| `messenger-preview` | `aculta-messenger-preview` | Caixa da lista (`MessagesController`) |
-| `notice-read-status` | `aculta-messenger-read-status` | Aviso persistente já lido (`MessagesController`) |
-| `notice-unread-status` | `aculta-messenger-read-status aculta-messenger-read-status--unread` | Aviso persistente não lido (`MessagesController`) |
+| `messenger-back-link` | `aculta-messenger-back-link` | "← Todas as conversas" |
+| `messenger-drawer-conversation` | `aculta-messenger-drawer-conversation` | Contêiner da conversa na gaveta |
+| `messenger-conversation-toolbar` | `aculta-messenger-conversation-toolbar` | Barra da conversa (voltar e Opções) |
+| `messenger-conversation-actions` | `aculta-messenger-conversation__actions` | Menu "Opções" de uma linha da lista |
+| `messenger-options` | `aculta-messenger-options` | Caixa "Opções" (acordeão) |
+| `messenger-options-summary` | `aculta-messenger-options__summary` | Cabeçalho do acordeão |
+| `messenger-options-icon` | `bi bi-list` | Ícone do acordeão |
+| `messenger-options-label` | `aculta-messenger-options__label` | Rótulo "Opções" (oculto em telas estreitas) |
+| `messenger-options-panel` | `aculta-messenger-options__panel` | Painel de itens |
+| `messenger-options-item` | `aculta-messenger-options__item` | Item "Iniciar conversa" do perfil |
+| `messenger-options-status` | `aculta-messenger-options__status` | Linha de resultado ou pergunta no menu |
+| `messenger-notice` | `aculta-messenger-notice` | Aviso no lugar da caixa de resposta |
+| `messenger-sender` | `aculta-messenger-sender aculta-messenger-conversation` | Linha de conversa na lista |
+| `messenger-sender-unread` | `is-unread` | Linha com mensagem não lida |
+| `messenger-sender-link` | `aculta-messenger-sender__link` | Link que abre a conversa |
+| `messenger-sender-date` / `messenger-sender-name` | `aculta-messenger-sender__date` / `__name` | Data e nome na linha |
+| `messenger-sender-avatar` | `aculta-messenger-sender__avatar` | Avatar na linha |
+| `notice-read-status` | `aculta-messenger-read-status` | Aviso persistente já lido |
+| `notice-unread-status` | `aculta-messenger-read-status aculta-messenger-read-status--unread` | Aviso persistente não lido |
+| `notice-admin-item` / `-intro` / `-list` / `-table` | `admin-item` / `aculta-notice-admin-intro` / `admin-list aculta-notice-admin-list` / `aculta-notice-admin-table` | Administração de avisos |
 | `new-conversation-link` | `btn btn-primary aculta-messenger-new-conversation` | Botão "Iniciar nova conversa" |
 | `new-conversation-links` | `d-flex flex-wrap gap-2 mt-2` | Linha de botões do compositor |
 | `new-conversation-back` | `btn btn-outline-primary` | "Voltar para o início" |
@@ -74,7 +94,7 @@ O módulo marca o elemento com um token semântico. `PortalUiHooks::TOKENS` troc
 | `new-conversation-result` | `list-group-item list-group-item-action` | Cada resultado |
 | `search-preview`, `search-preview-input` | ver `docs/portal/TOKENS-E-ATRIBUTOS.md` | Busca de membros |
 
-Tokens do tema sem emissor no módulo (`messenger-preview-inbox-link`, `messenger-read-status`): não aparecem em nenhum lugar do módulo. Candidatos a remoção do mapa `TOKENS`, a confirmar antes de apagar.
+Os tokens `messenger-preview-inbox-link` e `messenger-read-status` foram removidos do mapa: nenhum código os emitia (auditoria A10).
 
 ### Quando o token não vira classe
 
@@ -112,7 +132,8 @@ Se um token "não pinta", confira primeiro o elemento que o módulo montou. O er
 | `data-aculta-dialog` | Janela de confirmação | Nome: `ban` ou `remove` |
 | `data-aculta-dialog-open` | Botão do menu | Abre a janela com esse nome (`preventDefault`: não envia o formulário) |
 | `data-aculta-dialog-close` | "Cancelar" da janela | Fecha a janela |
-| `data-aculta-alert-dismiss` | Aviso | Dispensa o aviso e atualiza o contador |
+| `data-aculta-alert-dismiss` | Aviso | Dispensa o aviso e atualiza o contador (`alerts-dismiss.js`) |
+| `data-aculta-reply-form` | Formulário de resposta | Seletor do CSS e do envio por `fetch` |
 
 Pontos de atenção:
 
@@ -124,7 +145,8 @@ Pontos de atenção:
 
 | Arquivo | Escopo | Carregado por |
 | --- | --- | --- |
-| `components/content/messenger-item/messenger-item.css` | Painel da gaveta: "Opções", avisos, barra da conversa, relação, janela de confirmação | Componente (mesmo nome) e biblioteca `messenger-drawers` |
+| `css/components/messenger-drawer.css` | Gaveta, lista de conversas, menu "Opções", avisos e janela de confirmação | Biblioteca `messenger-drawers` |
+| `components/content/messenger-item/messenger-item.css` | Bolha de mensagem | Componente (mesmo nome) e biblioteca `messenger-drawers` |
 | `components/content/messenger-compose/messenger-compose.css` | Compositor | Componente |
 | `components/content/messenger-notification/messenger-notification.css` | Notificação | Componente |
 | `components/feedback/messenger-state/messenger-state.css` | Estados | Componente |
@@ -138,18 +160,19 @@ Regras do projeto para o CSS do Messenger:
 - Modo escuro é troca de tokens em `css/tokens.css`. Não crie seletor `dark` fora dali.
 - Nada de cor em hexadecimal, `hwb`, `lab`, `lch`, `oklab`, `oklch`, `color()`, `color-mix()` ou `device-cmyk()` em declarações de cor (o gate rejeita).
 - Layout igual nos dois modos e em telas de 390 px. Teste as duas larguras.
-- Hoje há regras mortas de um menu antigo (`.aculta-messenger-conversation__menu-trigger`, achado A4). Não as reaproveite; remova.
+- Os seletores do Messenger são classes de token (`aculta-messenger-*`) ou atributos de comportamento (`data-aculta-*`, `data-aculta-reply-form`). Não crie classe de design no módulo.
 
 ## 8. Hooks PHP do tema que tocam o Messenger
 
 | Classe | Hook | Método | Para que serve |
 | --- | --- | --- | --- |
 | `ThemeHooks` | `preprocess_page` | `preprocessPage` | Chama `presentMessengerPage` e `presentMessengerTrigger`. |
-| `ThemeHooks` | — | `presentMessengerPage(array &$variables, ?string $routeName)` | Mapeia rota → SDC (`messenger-list`, `messenger-compose`). |
+| `ThemeHooks` | — | `presentMessengerPage(array &$variables, ?string $routeName)` | Mapeia a rota `aculta_messenger.preview` → `messenger-list` e a criação nativa → `messenger-compose`. |
 | `ThemeHooks` | — | `presentMessengerTrigger(array &$variables)` | `aculta_messenger` → render array `messenger-trigger`. |
 | `ThemeHooks` | `preprocess_private_message_thread` | `preprocessPrivateMessageThread` | Estado de leitura acessível (`messenger-read-status`). |
 | `ThemeHooks` | `preprocess_private_message` | `preprocessPrivateMessage` | Avatar e direção → `messenger-item`. |
 | `PortalUiHooks` | `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_input`, `preprocess_form_element`, `preprocess_menu`, … | `preprocess` / `preprocessMenu` | Troca tokens por classes (`TOKENS`). |
+| `PortalUiHooks` | `preprocess_details` (ordem última) | `preprocessDetails` | Mapeia a caixa "Opções" depois do acordeão do Bootstrap. |
 
 Ordem de hooks: o módulo injeta em `preprocess_page` e o tema consome depois, em hook OOP. **Não crie** `template_preprocess_*` legado (regra do Portal).
 

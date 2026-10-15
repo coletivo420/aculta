@@ -52,7 +52,7 @@ Um único formulário, `ConversationRelationshipForm`, é usado nos dois lugares
 | Cancelar pedido de amizade | pedido enviado por mim | não |
 | Aceitar / Rejeitar pedido de amizade | pedido recebido | não |
 | Desfazer amizade | amigos | **sim** (diálogo "remove") |
-| Limpar histórico | só na conversa (não no perfil) | **sim**, em duas etapas no próprio menu |
+| Limpar histórico | na conversa (não no perfil); em grupo, é a única ação | **sim**, em duas etapas no próprio menu |
 | Bloquear / Desbloquear | sempre | **sim** no bloquear (diálogo "ban") |
 
 No perfil, "Limpar histórico" é substituído por "Iniciar conversa", que abre a gaveta na etapa de nova conversa com o membro (`data-aculta-open-conversation`).
@@ -79,6 +79,14 @@ No perfil, "Limpar histórico" é substituído por "Iniciar conversa", que abre 
 - `MessengerPrivateMessageMapper` substitui o `private_message.mapper`: bloquear não tira a conversa da lista de quem bloqueou. Quem bloqueou continua vendo o histórico, mas não envia.
 - `ConversationMessagingState::stateFor()` retorna `open`, `blocked_by_me`, `blocked_by_them` ou `friends_only`. É ele que decide o aviso.
 - Preferência "só amigos" (`aculta_messenger.message_privacy`, `user.data`): restringe apenas a abertura de conversa nova. Respostas em conversas existentes não são restringidas.
+
+### 3.7 Conversa em grupo
+
+Uma conversa com mais de duas pessoas não tem amizade nem bloqueio para o menu: o menu "Opções" oferece só "Limpar histórico", com a mesma confirmação em duas etapas. A limpeza vale só para quem confirma (`PrivateMessageThread::clearAccountHistory`). `ConversationRelationshipForm` recebe o estado `group` e o `thread_id` (`MessagesController::threadFormState`).
+
+### 3.8 Janelas de confirmação
+
+"Bloquear" e "Desfazer amizade" abrem a janela "Você quer mesmo …?" com "Sim" e "Cancelar". A janela é montada por `Support\ConfirmDialog::add()`: um contêiner com a abertura e o fechamento do `<dialog>` (modelos inline), a pergunta e os botões. Os botões continuam filhos do formulário, então o Form API os registra. O "Sim" é um envio normal, com o nome da ação; "Cancelar" e o botão do menu não enviam o formulário (o script do tema cancela o clique).
 
 ## 4. Rotas
 
@@ -145,6 +153,7 @@ Hook de `aculta_user` que o Messenger depende: `FriendshipLifecycleHooks::remove
 | `ThemeHooks` | `preprocess_private_message` | `preprocessPrivateMessage` | Entrega avatar do remetente e `outgoing` à `messenger-item`. |
 | `PortalUiHooks` | `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_input`, `preprocess_form_element` (e outros) | `preprocess` | Troca `data-portal-ui` por classes (mapa `TOKENS`). |
 | `PortalUiHooks` | `preprocess_menu` | `preprocessMenu` | Mesmo mapa, para links de menu. |
+| `PortalUiHooks` | `preprocess_details` (ordem última) | `preprocessDetails` | Mapeia a caixa "Opções" depois do acordeão do Bootstrap, que escreve os atributos do `details`. |
 
 ## 6. Classes do submódulo
 
@@ -156,7 +165,9 @@ Hook de `aculta_user` que o Messenger depende: `FriendshipLifecycleHooks::remove
 | `ProfileRelationshipController` | `Controller/` | Recebe o "Opções" do perfil e volta ao perfil. |
 | `NoticeAdminController` | `Controller/` | Páginas administrativas de avisos. |
 | `NativePrivateMessageController` | `Controller/` | Respostas às páginas nativas removidas: redireciona para a conta ou responde com a página de conteúdo removido. |
-| `ConversationRelationshipForm` | `Form/` | "Opções" (amizade, limpar, bloquear) e a confirmação em diálogo. |
+| `ConversationRelationshipForm` | `Form/` | "Opções" (amizade, limpar, bloquear) e o modo de grupo (só limpar). |
+| `ConfirmDialog` | `Support/` | Monta a janela de confirmação de uma ação (abertura, pergunta, Sim e Cancelar). |
+| `OptionsDisclosure` | `Support/` | Monta a caixa "Opções" (acordeão) das conversas e do perfil. |
 | `NewConversationForm` | `Form/` | Primeira mensagem de uma conversa nova. |
 | `PrivateMessageFormValidator` | `Form/` | Regras de envio: bloqueio, só amigos, limite (flood). |
 | `FriendRequestsForm` | `Form/` | Pedidos de amizade pendentes. |
@@ -220,14 +231,15 @@ Um token emitido em `html_tag`, `link` ou `container` só é trocado se o elemen
 | `data-aculta-drawer-back` | módulo (link "← Todas as conversas") | JS | Volta à lista dentro da gaveta |
 | `data-aculta-conversation-url` | módulo | JS | Carrega uma visão na gaveta por `fetch` |
 | `data-aculta-conversation-view` | módulo | JS | Rola a conversa até a última mensagem |
-| `data-aculta-drawer-action` | módulo (formulário "Opções") | JS | Envia o formulário por `fetch` |
+| `data-aculta-drawer-action` | módulo (formulário "Opções") | JS, CSS | Marca o formulário do menu; envia por `fetch` |
 | `data-aculta-new-conversation` | módulo (busca) | JS | Impede o Enter de enviar a busca |
 | `data-aculta-new-conversation-form` | módulo | JS | Envia a primeira mensagem por `fetch` |
 | `data-aculta-open-conversation` | módulo (perfil) | JS | Abre a gaveta na nova conversa |
-| `data-aculta-dialog` | módulo (diálogo) | JS, CSS | Nome da confirmação: `ban` ou `remove` |
+| `data-aculta-dialog` | módulo (`ConfirmDialog`) | JS, CSS | Nome da confirmação: `ban` ou `remove` |
 | `data-aculta-dialog-open` | módulo (botão do menu) | JS | Abre o diálogo com esse nome |
 | `data-aculta-dialog-close` | módulo (Cancelar) | JS | Fecha o diálogo |
-| `data-aculta-alert-dismiss` | módulo (avisos) | JS | Dispensa um aviso |
+| `data-aculta-alert-dismiss` | módulo (avisos) | `alerts-dismiss.js` | Dispensa um aviso e mantém a contagem |
+| `data-aculta-reply-form` | módulo (resposta) | `messenger-drawers.js`, CSS | Marca o formulário de resposta |
 | `data-aculta-thread-id`, `data-aculta-thread-unread`, `data-aculta-sent-date` | módulo (`MessagesController`) | JS | Dados da lista (conversa, não lida, data de envio) |
 
 ## 8. Dados

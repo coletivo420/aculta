@@ -1,7 +1,13 @@
 # Arquitetura do ACULTA Messenger
 
 Documento de referência arquitetural. Dono: `aculta_messenger` no ACULTA
-Portal. Revisão: 2026-10-14.
+Portal. Revisão: 2026-10-15.
+
+> Estado atual do projeto (rotas, serviços, hooks, classes e contratos com o
+> tema) está em [`docs/portal/MESSENGER.md`](../../../../../../docs/portal/MESSENGER.md).
+> A separação entre módulo, submódulo e tema está em
+> [`docs/portal/MESSENGER-AUDIT.md`](../../../../../../docs/portal/MESSENGER-AUDIT.md).
+> As seções deste arquivo descrevem as decisões de cada subfase.
 
 ## Fronteira
 
@@ -255,8 +261,9 @@ visibilidade de origem. Comunicados persistentes usam Node (`aculta_notice`),
 workflow editorial, público por papéis Drupal e validade opcional. O Flag
 `aculta_notice_read` guarda a leitura por usuário. Conversas usam o estado
 nativo por thread de Private Message; nenhuma tabela paralela de recibos é
-criada. O menu global oferece dois modais Drupal same-origin; o centro em
-ACCOUNT continua sendo a navegação canônica para mensagens.
+criada. As mensagens são lidas e enviadas na gaveta da barra multidomínio (ver
+`docs/portal/MESSENGER.md`); a gaveta é carregada por rotas same-origin, e a
+navegação canônica para mensagens continua no ACCOUNT.
 
 
 ## Amizades e preferência de novas conversas (0.1.1)

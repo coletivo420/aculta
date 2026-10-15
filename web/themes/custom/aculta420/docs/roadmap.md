@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.53 | Tokens do Messenger, CSS e JS separados, janelas e acordeão | Suíte de navegador: 70 de 70 | `messenger-drawer.css`, `alerts-dismiss.js`, `PortalUiHooks.php` |
 | 0.6.0-dev.52 | Confirmação para bloquear e desfazer amizade; botões Cancelar/Voltar da nova conversa | Capturas de tela e fluxo no runtime de teste | `messenger-drawers.js`, `messenger-item.css`, `PortalUiHooks.php` |
 | 0.6.0-dev.51 | Menu "Opções" nas conversas e no perfil; largura e fonte | Capturas de tela no runtime de teste | `messenger-item.css`, `messenger-drawers.js` |
 | 0.6.0-dev.50 | Resposta enviada pela gaveta sem navegação | Suíte de navegador: 52 de 52 | `messenger-drawers.js` (envio da resposta) |

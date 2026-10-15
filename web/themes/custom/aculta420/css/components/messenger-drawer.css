@@ -1,0 +1,96 @@
+/* ACULTA Messenger: gaveta, lista de conversas, menu "Opções", avisos e janela de confirmação.
+   Seletores por classe de apresentação (token data-portal-ui) ou por atributo de comportamento
+   (data-aculta-*). A bolha da mensagem fica em messenger-item.css. */
+.private-message-thread-inbox.aculta-messenger-conversation { position: relative; margin-block: 0; padding: 0.75rem; border: 1px solid var(--aculta-border-subtle); border-radius: 0.75rem; background: var(--aculta-surface-raised); }
+.private-message-thread-inbox.aculta-messenger-conversation.unread-thread { border-color: var(--aculta-interactive-border); background: var(--aculta-surface-muted); }
+.aculta-messenger-sender { position: relative; display: flex; align-items: center; gap: 0.8rem; min-height: 4.25rem; margin: 0.25rem 0; padding: 0.55rem 0.75rem; border: 1px solid var(--aculta-border-strong); border-radius: 0.4rem; background: var(--aculta-surface-raised); box-shadow: var(--bs-box-shadow-sm); transition: background-color var(--aculta-motion-quick) ease, border-color var(--aculta-motion-quick) ease, box-shadow var(--aculta-motion-quick) ease; }
+.aculta-messenger-sender:hover, .aculta-messenger-sender:focus-within { border-color: var(--aculta-interactive-border); background: var(--aculta-interactive-bg); box-shadow: var(--bs-box-shadow); }
+.aculta-messenger-sender__avatar { display: grid; flex: 0 0 3rem; width: 3rem; height: 3rem; place-items: center; overflow: hidden; border: 2px solid var(--aculta-surface-raised); border-radius: 50%; background: var(--aculta-interactive-hover-bg); box-shadow: 0 0 0 1px var(--aculta-border-strong); color: var(--aculta-interactive-hover-text); font-size: 1.1rem; font-weight: 700; }
+.aculta-messenger-sender__avatar img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.aculta-messenger-preview .item-list > ul { display: grid; gap: 0.65rem; margin: 0; padding: 0; list-style: none; }
+.aculta-messenger-sender__link { display: flex; flex: 1 1 auto; flex-direction: column; align-items: flex-start; justify-content: center; align-self: stretch; min-width: 0; padding-inline-end: 2rem; line-height: 1.2; color: var(--aculta-text-primary); font-size: 1rem; font-weight: 600; text-decoration: none; }
+.aculta-messenger-sender__details { display: flex; flex: 1 1 auto; flex-direction: column; justify-content: center; align-self: stretch; min-width: 0; padding-inline-end: 2rem; }
+.aculta-messenger-sender__details .aculta-messenger-sender__link { flex: 0 1 auto; align-self: flex-start; max-width: 100%; padding-inline-end: 0; }
+.aculta-messenger-sender__link::after { position: absolute; z-index: 2; inset: 0; content: ''; }
+.aculta-messenger-sender__link:focus-visible::after { border-radius: var(--bs-border-radius); outline: 3px solid var(--aculta-focus-ring); outline-offset: -3px; }
+.aculta-messenger-sender__date { display: block; overflow: hidden; color: var(--aculta-text-secondary); font-size: 0.7rem; font-weight: 400; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.aculta-messenger-sender__link:hover, .aculta-messenger-sender__link:focus-visible { color: var(--aculta-interactive-hover-text); text-decoration: none; }
+.aculta-messenger-sender.is-unread .aculta-messenger-sender__link { font-weight: 750; }
+.aculta-messenger-sender:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: -3px; }
+.private-message-thread-inbox .private-message-inbox-thread-link { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; overflow: hidden; border: 0; border-radius: inherit; font-size: 0; }
+.private-message-thread-inbox .private-message-inbox-thread-link:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.private-message-thread-inbox .private_message_thread_delete_link_wrapper, .private-message-thread-inbox .private_message_thread_clear_history_link_wrapper { display: none; }
+.aculta-messenger-conversation__actions { position: relative; z-index: 3; flex: 0 0 auto; align-self: center; margin-inline-start: auto; }
+/* In a conversation row the menu opens over the list, aligned to the row's right edge, and does not widen the row. */
+.aculta-messenger-conversation__actions .aculta-messenger-options { position: relative; }
+.aculta-messenger-conversation__actions .aculta-messenger-options__panel { position: absolute; inset-inline-end: 0; inset-block-start: 100%; margin-block-start: 0.25rem; z-index: 5; }
+/* Every messenger drawer view scrolls inside the panel when its content is taller than the window (desktop and mobile). */
+.aculta-messenger-offcanvas .aculta-utility-offcanvas__body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.aculta-messenger-offcanvas .aculta-utility-offcanvas__body.aculta-messenger-drawer-content--conversation { min-height: 0; gap: 0; overflow-y: auto; padding: 0.5rem; }
+/* The conversation keeps its natural height, so the panel body scrolls instead of clipping the messages. */
+.aculta-messenger-drawer-conversation { display: flex; flex: 0 0 auto; flex-direction: column; min-width: 0; overflow: visible; }
+.aculta-messenger-drawer-conversation > :not(.aculta-messenger-back-link):not(.aculta-messenger-conversation-toolbar) { display: flex; flex: 0 0 auto; min-width: 0; flex-direction: column; }
+.aculta-messenger-drawer-conversation #private-message-page { display: flex; flex: 1 1 auto; width: 100%; height: 100%; min-width: 0; min-height: 0; flex-direction: column; }
+.aculta-messenger-drawer-conversation .private-message-thread-full { display: flex; height: 100%; min-height: 0; flex-direction: column; }
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region { display: flex; height: 100%; min-height: 0; flex-direction: column; }
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .private_message_thread_delete_link_wrapper,
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .private_message_thread_clear_history_link_wrapper,
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .field--name-members,
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .private-message-inbox { display: none; }
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .field--name-private-messages { order: 1; min-height: 0; flex: 1 1 0%; overflow-y: auto; padding-inline: 0.25rem; }
+.aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > div:has(> form[data-aculta-reply-form]) { display: contents; }
+.aculta-messenger-drawer-conversation .aculta-messenger-back-link { flex: 0 0 auto; align-self: flex-end; margin-block-end: 0.4rem; }
+.aculta-messenger-drawer-conversation [data-aculta-reply-form] { order: 2; position: static; flex: 0 0 auto; margin-block-start: 0.5rem; padding: 0.75rem 0.25rem 0.5rem; border-top: 1px solid var(--aculta-border-subtle); background: var(--aculta-surface-raised); }
+.aculta-messenger-drawer-conversation [data-aculta-reply-form] .form-actions { display: flex; justify-content: flex-end; margin-block: 0.5rem 0; }
+.aculta-messenger-drawer-conversation [data-aculta-reply-form] { display: flex; flex-direction: column; }
+.aculta-messenger-drawer-conversation [data-aculta-reply-form] .field--name-message { order: 0; }
+.aculta-messenger-drawer-conversation [data-aculta-reply-form] .form-actions { order: 1; }
+@media (max-width: 575.98px) {
+  .aculta-messenger-offcanvas .aculta-utility-offcanvas__body.aculta-messenger-drawer-content--conversation { padding: 0.35rem; }
+  .aculta-messenger-drawer-conversation [data-aculta-reply-form] .field--name-message { margin-block-end: 0.25rem; }
+  .aculta-messenger-drawer-conversation [data-aculta-reply-form] { margin-block-start: 0.35rem; padding: 0.55rem 0.15rem 0.25rem; }
+  .aculta-messenger-drawer-conversation [data-aculta-reply-form] textarea { height: 5.5rem; min-height: 5.5rem; }
+}
+.aculta-messenger-back-link { display: flex; width: fit-content; align-items: center; gap: 0.4rem; margin-block-end: 0.75rem; color: var(--aculta-text-link); font-weight: 600; text-decoration: none; }
+/* Toolbar of the conversation: "← Todas as conversas" on the left, "Opções" on the right. */
+/* Two columns on one row: the back link on the left, "Opções" on the right. The menu opens below, inside its column. */
+.aculta-messenger-conversation-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; flex: 0 0 auto; align-items: start; gap: 0.5rem; margin-block-end: 0.25rem; }
+.aculta-messenger-drawer-conversation .aculta-messenger-conversation-toolbar .aculta-messenger-back-link { justify-self: start; align-self: start; margin: 0; }
+/* Closed: only the "Opções" button, at the right. Open: the panel takes the full width below the toolbar. */
+/* "Opções" is an accordion menu: the summary at the right, the list of actions opening below it, aligned right. */
+.aculta-messenger-options { display: flex; flex-direction: column; align-items: flex-end; margin-inline-start: auto; min-width: 0; }
+/* On the same row as the back link: both start at the top of the toolbar, with no inherited block margin. */
+.aculta-messenger-conversation-toolbar .aculta-messenger-options { margin-block: 0; align-self: start; }
+.aculta-messenger-options__summary { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.25rem; padding: 0.3rem 0.65rem; border: 1px solid var(--aculta-border-default); border-radius: 0.4rem; background: var(--aculta-surface-raised); color: var(--aculta-text-primary); font-weight: 600; list-style: none; cursor: pointer; }
+.aculta-messenger-options__summary::-webkit-details-marker { display: none; }
+.aculta-messenger-options__summary:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.aculta-messenger-options__summary .bi { font-size: 1.1rem; line-height: 1; }
+.aculta-messenger-options__panel { display: flex; flex-direction: column; min-width: 14rem; max-width: min(18rem, 80vw); margin-block-start: 0.4rem; padding: 0.25rem; border: 1px solid var(--aculta-border-default); border-radius: 0.5rem; background: var(--aculta-surface-raised); box-shadow: var(--bs-box-shadow); }
+/* Menu rows: one action per line, separated by a rule, the same width. */
+.aculta-messenger-options__item, .aculta-messenger-options__action { display: block; width: 100%; margin: 0; padding: 0.6rem 0.75rem; border: 0; border-bottom: 1px solid var(--aculta-border-subtle); border-radius: 0; background: transparent; color: var(--aculta-text-primary); font: inherit; text-align: start; text-decoration: none; cursor: pointer; }
+.aculta-messenger-options__item:last-child, .aculta-messenger-options__action:last-child { border-bottom: 0; }
+.aculta-messenger-options__item:hover, .aculta-messenger-options__item:focus-visible, .aculta-messenger-options__action:hover, .aculta-messenger-options__action:focus-visible { background: var(--aculta-interactive-hover-bg); color: var(--aculta-interactive-hover-text); outline: none; }
+.aculta-messenger-options__item:focus-visible, .aculta-messenger-options__action:focus-visible { box-shadow: inset 0 0 0 3px var(--aculta-focus-ring); }
+form[data-aculta-drawer-action] { display: flex; flex-direction: column; }
+form[data-aculta-drawer-action] .form-actions { display: flex; flex-direction: column; margin: 0; }
+/* The relationship buttons are Form API submits: they get the same item look and body font as the Opções links. */
+form[data-aculta-drawer-action] .form-actions :is(button, input[type="submit"]) { display: block; width: 100%; margin: 0; padding: 0.6rem 0.75rem; border: 0; border-bottom: 1px solid var(--aculta-border-subtle); border-radius: 0; background: transparent; color: var(--aculta-text-primary); font: inherit; text-align: start; cursor: pointer; }
+form[data-aculta-drawer-action] .aculta-messenger-options__status { margin: 0; padding: 0.6rem 0.75rem; color: var(--aculta-text-secondary); font-size: 0.875rem; }
+/* Narrow screens: only the hamburger icon, so the toolbar always fits next to the back link. */
+@media (max-width: 575.98px) {
+  .aculta-messenger-options__label { display: none; }
+  .aculta-messenger-options__summary { min-width: 2.25rem; justify-content: center; padding-inline: 0.45rem; }
+}
+.aculta-messenger-back-link:hover, .aculta-messenger-back-link:focus-visible { text-decoration: underline; }
+/* Notice in place of the reply box: a blocked or friends-only conversation keeps its history and says why. */
+.aculta-messenger-notice { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; margin-block: 0.75rem; padding: 0.75rem; border: 1px solid var(--aculta-border-subtle); border-radius: 0.5rem; background: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.aculta-messenger-notice form, .aculta-messenger-notice .form-actions { display: inline; margin: 0; }
+.aculta-messenger-notice__action { display: inline; margin: 0; padding: 0; border: 0; background: transparent; color: var(--aculta-text-link); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+.aculta-messenger-notice__action:hover, .aculta-messenger-notice__action:focus-visible { text-decoration: none; }
+.aculta-messenger-notice__action:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+
+/* The confirmation dialogs (block, remove friendship): a native dialog inside the Opções form. Same surface and text as the menu, no palette primitives. */
+dialog[data-aculta-dialog] { width: min(22rem, 90vw); margin: auto; padding: 1rem; border: 1px solid var(--aculta-border-default); border-radius: 0.5rem; background: var(--aculta-surface-raised); color: var(--aculta-text-primary); box-shadow: var(--bs-box-shadow); }
+dialog[data-aculta-dialog] p { margin: 0 0 0.75rem; font-weight: 600; }
+dialog[data-aculta-dialog] .form-actions { display: flex; flex-direction: row; gap: 0.5rem; justify-content: flex-end; }
+dialog[data-aculta-dialog] .form-actions :is(button, input[type="submit"]) { width: auto; margin: 0; padding: 0.5rem 0.9rem; border: 1px solid var(--aculta-border-default); border-radius: 0.4rem; background: var(--aculta-surface-raised); color: var(--aculta-text-primary); text-align: center; }

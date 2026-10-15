@@ -36,6 +36,7 @@ global:
   js:
     js/navigation.js: {}
     js/counters.js: {}
+    js/alerts-dismiss.js: {}
     js/address-layout.js: {}
   dependencies:
     - bootstrap5/global-styling
@@ -67,6 +68,7 @@ messenger-drawers:
   css:
     theme:
       components/content/messenger-item/messenger-item.css: {}
+      css/components/messenger-drawer.css: {}
   js:
     js/messenger-drawers.js: {}
   dependencies:

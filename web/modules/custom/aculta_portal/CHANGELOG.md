@@ -1,3 +1,11 @@
+## 0.4.0-dev.32 — correções do Messenger e fronteira de classes — 2026-10-15
+
+Classificação: PATCH.
+
+- Template `aculta_portal_element` inalterado; `PortalLinkElement` usado pelo Messenger.
+- `aculta_messenger` 0.1.1-dev.31: grupos na lista, menu sem reenvio, tokens no lugar de classes, aviso em português.
+- Gate `validate-module-theme-boundary`: varre os submódulos; dívida conhecida registrada no próprio gate e em `DEBT-REGISTER.md`.
+
 ## 0.4.0-dev.31 — confirmação para bloquear e botões da nova conversa — 2026-10-15
 
 Classificação: PATCH (confirmação de bloqueio no perfil e na conversa; botões da nova conversa).

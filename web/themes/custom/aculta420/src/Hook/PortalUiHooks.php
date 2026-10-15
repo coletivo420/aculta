@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta420\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Template\Attribute;
 
 /**
@@ -205,10 +206,33 @@ final class PortalUiHooks {
     'secret-dialog' => ['aculta-secret-dialog'],
     'messenger-preview' => ['aculta-messenger-preview'],
     'account-home' => ['aculta-account-home'],
-    'messenger-preview-inbox-link' => ['btn', 'btn-primary', 'aculta-messenger-preview__inbox-link'],
-    'messenger-read-status' => ['aculta-messenger-read-status'],
     'notice-read-status' => ['aculta-messenger-read-status'],
     'notice-unread-status' => ['aculta-messenger-read-status', 'aculta-messenger-read-status--unread'],
+    // Gaveta e lista do Messenger: o módulo marca elementos com estes tokens; as classes são as do CSS do tema
+    // (messenger-drawer.css e messenger-item.css). Ver docs/portal/MESSENGER.md.
+    'messenger-back-link' => ['aculta-messenger-back-link'],
+    'messenger-drawer-conversation' => ['aculta-messenger-drawer-conversation'],
+    'messenger-conversation-toolbar' => ['aculta-messenger-conversation-toolbar'],
+    'messenger-conversation-actions' => ['aculta-messenger-conversation__actions'],
+    'messenger-options' => ['aculta-messenger-options'],
+    'messenger-options-summary' => ['aculta-messenger-options__summary'],
+    'messenger-options-icon' => ['bi', 'bi-list'],
+    'messenger-options-label' => ['aculta-messenger-options__label'],
+    'messenger-options-panel' => ['aculta-messenger-options__panel'],
+    'messenger-options-item' => ['aculta-messenger-options__item'],
+    'messenger-options-status' => ['aculta-messenger-options__status'],
+    'messenger-notice' => ['aculta-messenger-notice'],
+    'messenger-sender' => ['aculta-messenger-sender', 'aculta-messenger-conversation'],
+    'messenger-sender-unread' => ['is-unread'],
+    'messenger-sender-link' => ['aculta-messenger-sender__link'],
+    'messenger-sender-date' => ['aculta-messenger-sender__date'],
+    'messenger-sender-name' => ['aculta-messenger-sender__name'],
+    'messenger-sender-avatar' => ['aculta-messenger-sender__avatar'],
+    // Administração de avisos (ACULTA Avisos).
+    'notice-admin-item' => ['admin-item'],
+    'notice-admin-intro' => ['aculta-notice-admin-intro'],
+    'notice-admin-list' => ['admin-list', 'aculta-notice-admin-list'],
+    'notice-admin-table' => ['aculta-notice-admin-table'],
     'account-photo-trigger' => ['portal-account-photo__trigger'],
     'support-form' => ['aculta-support'],
     'security-password-form' => ['aculta-security-password-form'],
@@ -266,6 +290,12 @@ final class PortalUiHooks {
   #[Hook('preprocess_aculta_portal_shell')]
   #[Hook('preprocess_aculta_portal_account_terms_modal')]
   #[Hook('preprocess_aculta_portal_photo_editor')]
+  /** The details of the Opções box: mapped after the Bootstrap accordion has set its attributes. */
+  #[Hook('preprocess_details', order: Order::Last)]
+  public function preprocessDetails(array &$variables): void {
+    $this->preprocess($variables);
+  }
+
   public function preprocess(array &$variables): void {
     $this->addAccountUnreadBadges($variables);
     // #attributes do elemento de render são mesclados em "attributes" depois do preprocess: trata o elemento.

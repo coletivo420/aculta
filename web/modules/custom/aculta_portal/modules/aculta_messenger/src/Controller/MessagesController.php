@@ -11,9 +11,12 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
+use Drupal\aculta_messenger\Support\OptionsDisclosure;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Template\Attribute;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
@@ -22,8 +25,6 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\Component\Utility\Html;
-use Drupal\Core\Render\Markup;
 use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
@@ -198,16 +199,13 @@ final class MessagesController extends ControllerBase {
    * action, and the step of the two-step "Limpar histórico".
    */
   private function runRelationshipAction(PrivateMessageThreadInterface $thread): array {
-    $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
-    if (count($others) !== 1) {
-      return [];
-    }
-    $state = new FormState();
-    $state->set('target', (int) $others[0]->id());
-    $state->set('post_url', Url::fromRoute('aculta_messenger.drawer_relationship', ['private_message_thread' => $thread->id()])->toString());
+    $state = $this->threadFormState($thread);
     // getForm() takes the method from the request; this state is built by hand, so it is set here.
     $state->setRequestMethod('POST');
     $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
+    // No cached form: a form that comes back from the form cache is unserialized without its constructor services,
+    // so its submit would read uninitialized properties. The form is built here, with its services, from the input.
+    unset($input['form_build_id']);
     $state->setUserInput($input);
     // A notice posts its own buttons (for example "Clique aqui para desbloquear"): process them as the notice does.
     if (($input['mode'] ?? '') === 'notice') {
@@ -231,7 +229,13 @@ final class MessagesController extends ControllerBase {
   private function listWithMessage(?string $message): Response {
     $build = $this->newConversationAction() + $this->buildConversationList();
     if ($message !== NULL) {
-      $build['message'] = ['#plain_text' => $message, '#prefix' => '<p role="status" class="aculta-messenger-options__status">', '#suffix' => '</p>', '#weight' => -90];
+      $build['message'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'p',
+        '#element_attributes' => new Attribute(['data-portal-ui' => 'messenger-options-status', 'role' => 'status']),
+        '#value' => $message,
+        '#weight' => -90,
+      ];
     }
     return $this->buildDrawerResponse($build, [
       'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
@@ -244,13 +248,13 @@ final class MessagesController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['aculta-messenger-drawer-conversation'],
+        'data-portal-ui' => 'messenger-drawer-conversation',
         'data-aculta-conversation-view' => '',
         'data-aculta-thread-id' => (string) $thread->id(),
       ],
       'toolbar' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-messenger-conversation-toolbar']],
+        '#attributes' => ['data-portal-ui' => 'messenger-conversation-toolbar'],
         '#weight' => -10,
         'back' => $this->backToConversationsLink(),
         'options' => $this->optionsDisclosure($thread, $panel),
@@ -265,17 +269,18 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The friendship and block form of the other member, or NULL when the thread is not one-to-one. Built from a new
-   * state each time: a rebuilt form comes back from the cache without its constructor dependencies.
+   * The menu of a thread: the friendship and block form of the other member (one-to-one), or only "Limpar histórico"
+   * (group). Built from a new state each time: a rebuilt form comes back from the cache without its constructor
+   * dependencies.
    */
-  private function relationshipForm(PrivateMessageThreadInterface $thread, array $panel = []): ?array {
-    $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
-    if (count($others) !== 1) {
-      return NULL;
-    }
-    $state = new FormState();
-    $state->set('target', (int) $others[0]->id());
-    $state->set('post_url', Url::fromRoute('aculta_messenger.drawer_relationship', ['private_message_thread' => $thread->id()])->toString());
+  private function relationshipForm(PrivateMessageThreadInterface $thread, array $panel = []): array {
+    $state = $this->threadFormState($thread);
+    // A menu shown in a response is built, not submitted: its input is not processed, so a POST of another action does
+    // not submit this form again. The form keeps its token, which the menu's own POST sends back.
+    // Its input is empty: Form API then takes no form_build_id from the request, so no cached copy (without its services)
+    // is loaded and no submit runs again.
+    $state->setUserInput([]);
+    $state->setProcessInput(FALSE);
     if (isset($panel['message'])) {
       $state->set('message', $panel['message']);
     }
@@ -285,30 +290,33 @@ final class MessagesController extends ControllerBase {
     return $this->forms->buildForm(ConversationRelationshipForm::class, $state);
   }
 
+  /** The form state of a thread's menu: the other member for one-to-one, the thread for a group. */
+  private function threadFormState(PrivateMessageThreadInterface $thread): FormState {
+    $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
+    $state = new FormState();
+    if (count($others) === 1) {
+      $state->set('target', (int) $others[0]->id());
+    }
+    else {
+      $state->set('group', TRUE);
+      $state->set('thread_id', (int) $thread->id());
+    }
+    $state->set('post_url', Url::fromRoute('aculta_messenger.drawer_relationship', ['private_message_thread' => $thread->id()])->toString());
+    return $state;
+  }
+
   /**
    * "Opções": a native disclosure (a sanfona). On a narrow screen the label is hidden and only the hamburger
    * icon remains, which is how the CSS decides whether it fits. Its items are the relationship form, which holds
    * the friendship actions, "Limpar histórico" and the block, in that order.
    */
   private function optionsDisclosure(PrivateMessageThreadInterface $thread, array $panel = []): array {
-    $items = [];
-    $relationship = $this->relationshipForm($thread, $panel);
-    if ($relationship !== NULL) {
-      $items['relationship'] = $relationship;
-    }
-    return [
-      '#type' => 'html_tag',
-      '#tag' => 'details',
-      // After an action the menu stays open, so its result (a message, the clear confirmation) is what the member sees.
-      '#attributes' => ['class' => ['aculta-messenger-options']] + ($panel !== [] ? ['open' => 'open'] : []),
-      'summary' => [
-        '#type' => 'html_tag',
-        '#tag' => 'summary',
-        '#attributes' => ['class' => ['aculta-messenger-options__summary'], 'aria-label' => (string) $this->translation->translate('Opções')],
-        '#value' => Markup::create('<i class="bi bi-list" aria-hidden="true"></i><span class="aculta-messenger-options__label">' . Html::escape((string) $this->translation->translate('Opções')) . '</span>'),
-      ],
-      'panel' => ['#type' => 'container', '#attributes' => ['class' => ['aculta-messenger-options__panel']]] + $items,
-    ];
+    // After an action the menu stays open, so its result (a message, the clear confirmation) is what the member sees.
+    return OptionsDisclosure::build(
+      (string) $this->translation->translate('Opções'),
+      ['relationship' => $this->relationshipForm($thread, $panel)],
+      $panel !== [],
+    );
   }
 
   /**
@@ -316,16 +324,11 @@ final class MessagesController extends ControllerBase {
    * in the same place (top, right-aligned, under the X) in each one.
    */
   private function backToConversationsLink(): array {
-    return [
-      '#type' => 'link',
-      '#title' => $this->translation->translate('← Todas as conversas'),
-      '#url' => Url::fromRoute('aculta_messenger.drawer_conversations'),
-      '#weight' => -100,
-      '#attributes' => [
-        'class' => ['aculta-messenger-back-link'],
-        'data-aculta-drawer-back' => '',
-      ],
-    ];
+    return PortalLinkElement::build(
+      $this->translation->translate('← Todas as conversas'),
+      Url::fromRoute('aculta_messenger.drawer_conversations'),
+      ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'messenger-back-link'],
+    ) + ['#weight' => -100];
   }
 
   /**
@@ -373,8 +376,14 @@ final class MessagesController extends ControllerBase {
 
       $cacheability->addCacheableDependency($thread);
       $isUnread = $this->unreadThreadCounter->isUnread($thread);
-      $sender = $this->getConversationSender($thread);
-      $senderName = $sender?->getDisplayName() ?: (string) $this->translation->translate('Membro');
+      $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
+      // A group (more than two members) is its own row, named by its members. It is never merged into the row of one
+      // of them, which would hide the group and its "Limpar histórico".
+      $isGroup = count($others) > 1;
+      $sender = $isGroup ? NULL : $this->getConversationSender($thread);
+      $senderName = $isGroup
+        ? implode(', ', array_map(static fn($member) => $member->getDisplayName(), $others))
+        : ($sender?->getDisplayName() ?: (string) $this->translation->translate('Membro'));
       if ($sender !== NULL) {
         $cacheability->addCacheableDependency($sender);
       }
@@ -387,17 +396,24 @@ final class MessagesController extends ControllerBase {
         'custom',
         'd/m/Y H:i',
       );
-      $linkTitle = Markup::create(
-        '<span class="aculta-messenger-sender__date">' . Html::escape($sentDate) . '</span>'
-        . '<span class="aculta-messenger-sender__name">' . Html::escape($senderName) . '</span>'
-      );
-      $openLink = [
-        '#type' => 'link',
-        '#title' => $linkTitle,
-        // Conversations are read in the bar drawer only; without JavaScript the link opens the same drawer route.
-        '#url' => $drawerConversationUrl,
-        '#attributes' => [
-          'class' => ['aculta-messenger-sender__link'],
+      $linkTitle = [
+        '#type' => 'container',
+        'date' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'span',
+          '#element_attributes' => new Attribute(['data-portal-ui' => 'messenger-sender-date']),
+          '#value' => $sentDate,
+        ],
+        'name' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'span',
+          '#element_attributes' => new Attribute(['data-portal-ui' => 'messenger-sender-name']),
+          '#value' => $senderName,
+        ],
+      ];
+      // Conversations are read in the bar drawer only; without JavaScript the link opens the same drawer route.
+      $openLink = PortalLinkElement::build($linkTitle, $drawerConversationUrl, [
+          'data-portal-ui' => 'messenger-sender-link',
           'data-aculta-conversation-url' => $drawerConversationUrl->toString(),
           'data-aculta-thread-id' => (string) $thread->id(),
           'data-aculta-thread-unread' => $isUnread ? 'true' : 'false',
@@ -406,8 +422,7 @@ final class MessagesController extends ControllerBase {
             '@name' => $senderName,
             '@date' => $sentDate,
           ]),
-        ],
-      ];
+      ]);
       $senderId = $sender?->id() ?? 'thread-' . $thread->id();
       $senderKey = (string) $senderId;
       if (!isset($senderBoxes[$senderKey])) {
@@ -422,7 +437,7 @@ final class MessagesController extends ControllerBase {
         // The same "Opções" box as inside the conversation (friendship, block, clear), per member.
         $actions = [
           '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-messenger-conversation__actions']],
+          '#attributes' => ['data-portal-ui' => 'messenger-conversation-actions'],
           'options' => $this->optionsDisclosure($thread),
         ];
         $senderBoxes[$senderKey] = [
@@ -445,18 +460,14 @@ final class MessagesController extends ControllerBase {
       $box = [
         '#type' => 'container',
         '#attributes' => [
-          'class' => array_values(array_filter([
-            'aculta-messenger-sender',
-            'aculta-messenger-conversation',
-            $senderBox['unread'] ? 'is-unread' : NULL,
-          ])),
+          'data-portal-ui' => $senderBox['unread'] ? 'messenger-sender messenger-sender-unread' : 'messenger-sender',
           'data-aculta-thread-id' => $senderBox['thread_id'],
           'data-aculta-thread-unread' => $senderBox['unread'] ? 'true' : 'false',
           'tabindex' => '0',
         ],
         'avatar' => [
           '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-messenger-sender__avatar'], 'aria-hidden' => 'true'],
+          '#attributes' => ['data-portal-ui' => 'messenger-sender-avatar', 'aria-hidden' => 'true'],
           'image' => $senderBox['avatar'] ?? ['#plain_text' => mb_substr($senderBox['name'], 0, 1)],
         ],
         'name' => $senderBox['open'] ?? ['#plain_text' => $senderBox['name']],
@@ -624,7 +635,6 @@ final class MessagesController extends ControllerBase {
     }
     $link = $flag->getLinkTypePlugin()->getAsFlagLink($flag, $entity, 'default');
     $link['#title'] = ['#markup' => '×'];
-    $link['#attributes']['class'][] = 'aculta-alert-dismiss';
     $link['#attributes']['data-aculta-alert-dismiss'] = 'true';
     $link['#attributes']['aria-label'] = (string) $this->translation->translate('Dispensar aviso');
     $link['#attributes']['title'] = (string) $this->translation->translate('Dispensar aviso');

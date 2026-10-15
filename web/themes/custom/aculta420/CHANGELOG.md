@@ -1,3 +1,14 @@
+## 0.6.0-dev.53 — tokens do Messenger, CSS e JS separados, janelas e acordeão — 2026-10-15
+
+Classificação: PATCH (apresentação do Messenger; sem mudança de comportamento para o membro).
+
+- `PortalUiHooks`: tokens do Messenger (mesmas classes de antes) e `preprocessDetails` (ordem última) para a caixa "Opções". Removidos dois tokens sem emissor.
+- `ThemeHooks`: removido o mapeamento da página nativa do Private Message (redireciona).
+- CSS: `css/components/messenger-drawer.css` (gaveta, lista, menu, avisos, janela); `messenger-item.css` fica só com a bolha. Seletores do formulário de resposta e do menu por atributo (`data-aculta-reply-form`, `data-aculta-drawer-action`).
+- JS: `js/alerts-dismiss.js` (dispensar aviso, biblioteca global), fora de `messenger-drawers.js`.
+- `portal-cart.css`: o "×" do aviso é selecionado por `data-aculta-alert-dismiss`.
+- RUNTIME STATUS: ACTIVE no teste (suíte de navegador 70 de 70).
+
 ## 0.6.0-dev.52 — confirmação para bloquear e botões da nova conversa — 2026-10-15
 
 Classificação: PATCH (apresentação da confirmação de bloqueio e dos botões de nova conversa).

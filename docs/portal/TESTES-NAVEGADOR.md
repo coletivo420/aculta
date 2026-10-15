@@ -413,3 +413,17 @@ Decisão pendente: com a rodada 2 sem defeitos abertos, a Fase 10 pode ser decla
   - Conversas em grupo (mais de duas pessoas) não têm "Limpar histórico" no menu.
   - Recusa do envio por POST em conversa "só amigos" não foi exercitada diretamente (o formulário fica oculto nesse estado).
   - O aviso nativo do bloqueio ("User is unable to receive your message") segue em inglês; é configuração do contrib, sem exportação.
+
+## V. Suíte versionada do Messenger e correções (aculta_messenger 0.1.1-dev.31, 2026-10-15)
+
+### Pré-condições
+- Runtime de teste (`aculta.toca.net.br`), geckodriver e Firefox headless.
+- Preparação idempotente: `tests/browser/aculta-messenger/setup-accounts.php` (contas `teste.b` e `teste.c`, conversa em grupo). Executada pela própria suíte.
+
+### Roteiro
+Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova conversa, menu "Opções", "Limpar histórico" em duas etapas, amizade, "Desfazer amizade" e "Bloquear" em janela de confirmação, avisos de bloqueio e de "só amigos", layout em 390 px, caixa "Opções" do perfil, conversa em grupo (menu só com "Limpar histórico", limpeza só para quem confirma).
+
+### Registro do resultado
+- Execução 12 (final): **70 de 70**, sem erros de JavaScript.
+- Antes dela, três defeitos reais foram corrigidos e reproduzidos isoladamente: (1) conversa em grupo absorvida pela caixa de um dos membros; (2) menu de exibição reprocessando o envio e carregando formulário em cache sem dependências; (3) limpeza de teste que não encontrava a conversa (consulta com duas condições no mesmo campo multivalorado; trocada pelo mapeador do Private Message).
+- Limite: 390 px é aproximação de layout. Não houve teste em dispositivo de toque real nem com leitor de tela.

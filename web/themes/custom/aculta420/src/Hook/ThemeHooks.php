@@ -283,7 +283,6 @@ final class ThemeHooks {
    */
   private function presentMessengerPage(array &$variables, ?string $routeName): void {
     $component = match ($routeName) {
-      'private_message.private_message_page' => 'aculta420:messenger-list',
       'aculta_messenger.preview' => 'aculta420:messenger-list',
       'private_message.private_message_create' => 'aculta420:messenger-compose',
       default => NULL,
@@ -300,10 +299,7 @@ final class ThemeHooks {
     $original = $content;
     $props = [];
     $slot = 'content';
-    if ($routeName === 'private_message.private_message_page') {
-      $props['label'] = 'Conversas';
-    }
-    elseif ($routeName === 'aculta_messenger.preview') {
+    if ($routeName === 'aculta_messenger.preview') {
       $props['label'] = 'Conversas recentes';
     }
     elseif ($routeName === 'private_message.private_message_create') {

@@ -2,6 +2,18 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.31 — correção dos menus e da suíte de navegador; grupos e confirmações — 2026-10-15
+
+Classificação: PATCH (correções encontradas pela suíte de navegador e pela auditoria; sem mudança de regra de negócio).
+
+- Conversa em grupo tem linha própria na lista (antes era absorvida pela caixa de um dos membros) e menu "Opções" com "Limpar histórico" em duas etapas.
+- Menu "Opções": a exibição não processa a entrada nem carrega formulário em cache; a ação é construída de novo com as dependências. Evita o envio repetido e a propriedade não inicializada.
+- Classes de apresentação saíram do módulo: cada uma é um token `data-portal-ui` (mapa em `PortalUiHooks`). Links com token usam `PortalLinkElement`; a caixa "Opções" usa `OptionsDisclosure` (details do Core) e a confirmação usa `ConfirmDialog`.
+- Aviso de bloqueio do Private Message em português (`private_message.settings`, exportado em `config/sync`).
+- Gate de fronteira: a regra de classes varre todos os `src/` do módulo (submódulos inclusos); dívida de `aculta_gallery` registrada como `DT-BOUNDARY-GALLERY`.
+- Validação: suíte de navegador (`tests/browser/aculta-messenger/`) 70 de 70 no runtime de teste.
+- RUNTIME STATUS: ACTIVE no teste.
+
 ## 0.1.1-dev.30 — confirmação para bloquear e botões Cancelar/Voltar — 2026-10-15
 
 Classificação: PATCH (confirmação antes de bloquear em todos os locais e botões da nova conversa).

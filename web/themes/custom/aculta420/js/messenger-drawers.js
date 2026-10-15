@@ -49,17 +49,6 @@
         });
       });
 
-      once('aculta-alert-dismiss', '[data-aculta-alert-dismiss]', context).forEach((link) => {
-        link.addEventListener('click', () => {
-          const counter = document.querySelector('[data-aculta-alerts-count]');
-          const current = Number.parseInt(counter?.dataset.count || '0', 10);
-          if (counter && Number.isFinite(current) && current > 0) {
-            updateCounter('alerts', String(current - 1));
-          }
-          link.closest('li')?.remove();
-        });
-      });
-
       once('aculta-messenger-drawer', '[data-aculta-drawer-url]', context).forEach((drawer) => {
         let request;
         const content = drawer.querySelector('[data-aculta-drawer-content]');
@@ -128,7 +117,7 @@
           }
           // First message of a new conversation: posted with fetch, because the Form API AJAX needs page settings.
           // The "Opções" actions (friendship, block) post the same way and answer with the updated conversation.
-          if (event.target.matches('form[data-aculta-new-conversation-form], form[data-aculta-drawer-action], form.aculta-messenger-reply-form')) {
+          if (event.target.matches('form[data-aculta-new-conversation-form], form[data-aculta-drawer-action], form[data-aculta-reply-form]')) {
             event.preventDefault();
             const body = new FormData(event.target);
             if (event.submitter?.name) {
@@ -136,7 +125,7 @@
             }
             // A reply is posted without Form API keys (form_id would make the native form process it); its token
             // travels as reply_token and the reply route checks it against the reply form.
-            if (event.target.matches('form.aculta-messenger-reply-form')) {
+            if (event.target.matches('form[data-aculta-reply-form]')) {
               const token = body.get('form_token') || '';
               ['form_build_id', 'form_id', 'form_token', 'op'].forEach((key) => body.delete(key));
               body.set('reply_token', token);

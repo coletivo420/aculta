@@ -58,7 +58,7 @@
   display: none;
 }
 
-.aculta-alert-dismiss {
+[data-aculta-alert-dismiss] {
   float: inline-end;
   display: inline-grid;
   width: 2rem;
@@ -73,7 +73,7 @@
   text-decoration: none;
 }
 
-.aculta-alert-dismiss:focus-visible {
+[data-aculta-alert-dismiss]:focus-visible {
   outline: 3px solid var(--aculta-focus-ring);
   outline-offset: 2px;
 }

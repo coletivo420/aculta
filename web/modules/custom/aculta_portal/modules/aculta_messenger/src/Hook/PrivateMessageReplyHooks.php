@@ -74,7 +74,7 @@ final class PrivateMessageReplyHooks {
       ->setEntity($message);
     $replyForm = $this->formBuilder->getForm($formObject, $entity);
     $replyForm['#attributes']['id'] = 'aculta-messenger-reply-form';
-    $replyForm['#attributes']['class'][] = 'aculta-messenger-reply-form';
+    $replyForm['#attributes']['data-aculta-reply-form'] = '';
     // The drawer posts the reply to its own route, so the conversation comes back in the drawer.
     $replyForm['#action'] = Url::fromRoute('aculta_messenger.drawer_reply', ['private_message_thread' => $entity->id()])->toString();
 
@@ -115,7 +115,7 @@ final class PrivateMessageReplyHooks {
   private function notice(PrivateMessageThreadInterface $thread, string $state): array {
     $other = $this->messagingState->otherMember($thread);
     $pending = $other !== NULL && $state === ConversationMessagingState::FRIENDS_ONLY ? $this->messagingState->pendingRequest($other) : NULL;
-    $notice = ['#type' => 'container', '#attributes' => ['class' => ['aculta-messenger-notice'], 'role' => 'status']];
+    $notice = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'messenger-notice', 'role' => 'status']];
     $text = match (TRUE) {
       $state === ConversationMessagingState::BLOCKED_BY_ME => 'Você bloqueou essa pessoa, ',
       $state === ConversationMessagingState::BLOCKED_BY_THEM => 'Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens.',

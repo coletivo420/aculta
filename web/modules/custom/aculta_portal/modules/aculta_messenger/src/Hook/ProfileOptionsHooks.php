@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
+use Drupal\aculta_messenger\Support\OptionsDisclosure;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
-use Drupal\Component\Utility\Html;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -59,32 +59,15 @@ final class ProfileOptionsHooks {
     $state->set('profile', TRUE);
     $state->set('return_path', $returnPath);
     $composeUrl = Url::fromRoute('aculta_messenger.new_conversation_compose', ['user' => $target->id()])->toString();
-    return [
-      '#type' => 'html_tag',
-      '#tag' => 'details',
-      '#attributes' => ['class' => ['aculta-messenger-options']],
-      'summary' => [
-        '#type' => 'html_tag',
-        '#tag' => 'summary',
-        '#attributes' => ['class' => ['aculta-messenger-options__summary'], 'aria-label' => (string) $this->translation->translate('Opções')],
-        '#value' => Markup::create('<i class="bi bi-list" aria-hidden="true"></i><span class="aculta-messenger-options__label">' . Html::escape((string) $this->translation->translate('Opções')) . '</span>'),
-      ],
-      'panel' => [
-        '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-messenger-options__panel']],
-        'chat' => [
-          '#type' => 'link',
-          '#title' => $this->translation->translate('Iniciar conversa'),
-          '#url' => Url::fromUri('base:' . ltrim($composeUrl, '/')),
-          '#attributes' => [
-            'class' => ['aculta-messenger-options__item'],
-            'data-aculta-open-conversation' => $composeUrl,
-          ],
-        ],
-        'relationship' => $this->forms->buildForm(ConversationRelationshipForm::class, $state),
-      ],
-      '#cache' => ['contexts' => ['user'], 'max-age' => 0],
-    ];
+    $box = OptionsDisclosure::build((string) $this->translation->translate('Opções'), [
+      'chat' => PortalLinkElement::build($this->translation->translate('Iniciar conversa'), Url::fromRoute('aculta_messenger.new_conversation_compose', ['user' => $target->id()]), [
+        'data-portal-ui' => 'messenger-options-item',
+        'data-aculta-open-conversation' => $composeUrl,
+      ]),
+      'relationship' => $this->forms->buildForm(ConversationRelationshipForm::class, $state),
+    ]);
+    $box['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
+    return $box;
   }
 
 }

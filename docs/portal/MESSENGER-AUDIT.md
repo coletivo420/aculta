@@ -85,6 +85,24 @@ Tudo o que o tema usa do Messenger chega como dado neutro (URL, contagem, textos
 
 ## 3. Achados
 
+Situação após a correção (2026-10-15): todos os achados abaixo estão tratados. A coluna "Resolução" diz o que foi feito e onde a verificação está.
+
+| ID | Resolução |
+| --- | --- |
+| A1 | As classes de apresentação saíram do módulo: cada uma virou token `data-portal-ui` mapeado em `PortalUiHooks` com as mesmas classes. Links usam `PortalLinkElement`; a caixa "Opções" usa `OptionsDisclosure` (details do Core). A regra 10 do gate `validate-module-theme-boundary` agora varre todos os `src/` do módulo, incluindo submódulos. |
+| A2 | A janela de confirmação não é mais `inline_template` solto: `Support\ConfirmDialog` monta as partes num contêiner e o `<dialog>` vem de modelos inline sem classe. A estrutura continua no módulo (é semântica, não apresentação); o visual é do tema pelo atributo `data-aculta-dialog`. |
+| A3 | O CSS foi dividido: `css/components/messenger-drawer.css` (gaveta, lista, menu, avisos, janela) e `messenger-item.css` (só a bolha). |
+| A4 | Regras mortas do menu antigo removidas do CSS. |
+| A5 | Mapeamento da página nativa `private_message.private_message_page` removido de `ThemeHooks` (ela redireciona). `private_message_create` mantido. |
+| A6 | O tratamento de "dispensar aviso" saiu de `messenger-drawers.js` para `js/alerts-dismiss.js` (biblioteca global). |
+| A7 | A suíte de navegador está versionada em `tests/browser/aculta-messenger/` (com preparação idempotente e README). |
+| A8 | `docs/ARCHITECTURE.md` do submódulo aponta para `MESSENGER.md` e não descreve mais os modais antigos. |
+| A9 | Resolvido pela divisão de A3: `messenger-item` é só a bolha de mensagem. |
+| A10 | Tokens sem emissor (`messenger-preview-inbox-link`, `messenger-read-status`) removidos do mapa. |
+
+Pendências carregadas: "Limpar histórico" em conversa de grupo (feito: menu de grupo, `ConversationRelationshipForm` modo `group`); aviso de bloqueio em inglês (feito: `private_message.settings` com textos em português, exportado em `config/sync`); teste em dispositivo de toque e leitor de tela (não feito, ver README da suíte).
+
+
 Severidade: **alta** = viola regra do projeto; **média** = dívida que contraria a fronteira ou gera risco de manutenção; **baixa** = limpeza.
 
 | ID | Sev. | Camada | Achado | Evidência | Ação recomendada |

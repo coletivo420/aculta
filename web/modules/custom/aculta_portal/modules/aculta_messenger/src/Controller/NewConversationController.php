@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Controller;
 
 use Drupal\aculta_messenger\Form\NewConversationForm;
+use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -209,13 +210,10 @@ final class NewConversationController extends ControllerBase {
 
   /** "← Todas as conversas", the same link and place as in the conversation view (top, under the drawer's X). */
   private function backLink(): array {
-    return [
-      '#type' => 'link',
-      '#title' => $this->t('← Todas as conversas'),
-      '#url' => Url::fromRoute('aculta_messenger.drawer_conversations'),
-      '#weight' => -100,
-      '#attributes' => ['class' => ['aculta-messenger-back-link'], 'data-aculta-drawer-back' => ''],
-    ];
+    return PortalLinkElement::build($this->t('← Todas as conversas'), Url::fromRoute('aculta_messenger.drawer_conversations'), [
+      'data-aculta-drawer-back' => '',
+      'data-portal-ui' => 'messenger-back-link',
+    ]) + ['#weight' => -100];
   }
 
   private function fragment(array $build): Response {
