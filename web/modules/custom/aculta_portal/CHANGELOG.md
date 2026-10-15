@@ -1,3 +1,14 @@
+## 0.4.0-dev.26 — SMTP2GO com TLS obrigatório e fallback fechado — 2026-10-15
+
+Classificação: PATCH (segurança do transporte SMTP; mantém SMTP2GO como provedor institucional).
+
+- O transporte SMTP2GO usa porta 465, que inicia TLS implícito; a verificação de certificado e hostname permanece habilitada.
+- O DSN experimental do Symfony Mailer Core deixou de selecionar `sendmail`; o esquema `aculta-disabled` falha se o backend Core escapar do `mailer_override`.
+- `validate-mail-transport.php` agora confere backend, transporte padrão, TLS real construído pelo Symfony, Key overrides/providers e rejeição do fallback Core.
+- Runtime de testes: transporte padrão `smtp2go`, Keys disponíveis em memória (valores não lidos), porta 465, peer verification ativa; cache rebuild e home HTTP 200. TLS 1.3 e certificado do host SMTP2GO verificados sem autenticação e sem envio.
+- **DEFERRED:** tentativa autenticada por SMTP e teste de falha com credenciais ausentes; não houve envio de mensagem. Hostinger não acessada, então a saída TCP 465 em produção precisa de homologação.
+- R3: commit `6b2d72f`.
+
 ## 0.4.0-dev.25 — confirmação de e-mail resiliente — 2026-10-15
 
 Classificação: PATCH (confiabilidade do envio e proteção contra reenvio abusivo).
