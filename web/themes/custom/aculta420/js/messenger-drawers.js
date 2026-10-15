@@ -21,10 +21,17 @@
           return;
         }
 
+        // Attached only while this menu is open, so closed rows do not keep a document listener.
+        const outsideClick = (event) => {
+          if (!row.contains(event.target)) {
+            close();
+          }
+        };
         const close = (restoreFocus = false) => {
           menu.hidden = true;
           trigger.setAttribute('aria-expanded', 'false');
           row.classList.remove('aculta-messenger-conversation--menu-open');
+          document.removeEventListener('click', outsideClick);
           if (restoreFocus) {
             trigger.focus();
           }
@@ -38,6 +45,7 @@
             }
           });
           menu.hidden = false;
+          document.addEventListener('click', outsideClick);
           row.classList.add('aculta-messenger-conversation--menu-open');
           trigger.setAttribute('aria-expanded', 'true');
           menu.style.position = 'fixed';
@@ -79,11 +87,6 @@
         });
         menu.addEventListener('click', (event) => {
           if (event.target.closest('[role="menuitem"]')) {
-            close();
-          }
-        });
-        document.addEventListener('click', (event) => {
-          if (!row.contains(event.target) && !menu.hidden) {
             close();
           }
         });
@@ -185,6 +188,8 @@
             .then((html) => {
               const template = document.createElement('template');
               template.innerHTML = html;
+              // Detach behaviors of the replaced content, as navigate() does, so listeners do not accumulate.
+              Drupal.detachBehaviors(content, null, 'unload');
               content.replaceChildren(template.content.cloneNode(true));
               Drupal.attachBehaviors(content);
             })
