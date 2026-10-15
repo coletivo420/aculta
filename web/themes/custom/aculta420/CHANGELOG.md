@@ -1,3 +1,11 @@
+## 0.6.0-dev.43 — painel da conta no celular sem texto de carregamento — 2026-10-15
+
+Classificação: PATCH (apresentação da sanfona da conta).
+
+- Removido o texto "Carregando…" dos painéis e do marcador do shell (tema e fallback do módulo), com as regras CSS sem uso.
+- Seção de Mensagens removida do menu e da sanfona (ver `aculta_messenger` 0.1.1-dev.16).
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.6.0-dev.42 — 99+ em todos os contadores, inclusive atualização ao vivo — 2026-10-15
 
 Classificação: PATCH (apresentação dos contadores).

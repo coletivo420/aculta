@@ -8,6 +8,12 @@ Classificação: PATCH (correção da fonte de verdade operacional; sem mudança
 - `aculta.org` respondeu HTTP 200 com `platform: hostinger`, `x-turbo-charged-by: LiteSpeed` e `server: cloudflare` em consulta pública somente leitura. Nenhuma configuração do servidor foi alterada.
 - RUNTIME STATUS: DEFERRED — nenhuma validação no Homelab/Hostinger após alteração documental e do registro do deployer.
 
+## 0.4.0-dev.23 — sanfona da conta no celular: seções independentes e conteúdo no painel certo — 2026-10-15
+
+- Cada seção abre e fecha de forma independente; abrir uma não fecha as outras.
+- Só o corpo da seção entra no painel aberto no celular. Título e cabeçalho compartilhados ficam fora dos painéis, então a troca de seção não altera o título de outra sanfona.
+- RUNTIME STATUS: ACTIVE no runtime de testes (membro comum, 360 px).
+
 ## 0.4.0-dev.22 — central de avisos administrativa e gate de slugs por módulos habilitados — 2026-10-15
 
 - Porta ao `aculta_messenger` a central Avisos em `/painel-administrativo/avisos`, com abas temporários e persistentes; a listagem de persistentes passa IDs escalares às rotas de editar/excluir (corrige o TypeError do dev.21).

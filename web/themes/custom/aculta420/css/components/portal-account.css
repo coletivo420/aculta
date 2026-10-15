@@ -177,15 +177,6 @@
 .portal-account-course__status { font-weight: 700; }
 .portal-account-course .button { margin-block-start: 0.5rem; }
 
-.portal-account__loading {
-  width: fit-content;
-  padding: 0.5rem 0.75rem;
-  margin: 0;
-  color: var(--aculta-text-primary);
-  background: var(--aculta-interactive-bg);
-  border-radius: 0.1875rem;
-  font: 600 0.875rem/1.4 Inter, sans-serif;
-}
 
 .portal-account__status { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
@@ -217,7 +208,6 @@
   .portal-account__chevron { display: inline-block; flex: 0 0 auto; font-size: 1.1rem; color: var(--aculta-text-muted); transition: transform var(--aculta-motion-fast) ease; }
   .portal-account__item[open] .portal-account__chevron { transform: rotate(90deg); }
   .portal-account__panel { padding: 0.5rem 1rem 1rem; }
-  .portal-account__panel-loading { margin: 0; color: var(--aculta-text-secondary); font: 400 0.95rem/1.4 Inter, sans-serif; }
   .portal-account__logout-row { border-block-start: 1px solid var(--aculta-border-subtle); }
   .portal-account__chevron { transition: none; }
   @media (prefers-reduced-motion: no-preference) { .portal-account__chevron { transition: transform var(--aculta-motion-fast) ease; } }
