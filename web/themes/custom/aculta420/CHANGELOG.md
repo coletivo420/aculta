@@ -8,6 +8,7 @@ Classificação: PATCH (apresentação do Messenger; sem mudança de comportamen
 - JS: `js/alerts-dismiss.js` (dispensar aviso, biblioteca global), fora de `messenger-drawers.js`.
 - `portal-cart.css`: o "×" do aviso é selecionado por `data-aculta-alert-dismiss`.
 - RUNTIME STATUS: ACTIVE no teste (suíte de navegador 70 de 70).
+- `messenger-drawer.css`: menu "Opções" da lista só com o ícone (sem rótulo nem seta de acordeão); painel sobre a linha, alinhado à direita.
 - `messenger-drawer.css`: cartão do aviso persistente em cor de aviso (`aculta-notice-summary--persistent`), diferente dos dispensáveis.
 - `messenger-drawer.css` e `PortalUiHooks.php`: resumo de aviso em caixa de botão (tokens `notice-summary*` e `notice-detail`).
 - `messenger-drawers.js`: o menu "Opções" de cada linha da lista é carregado na primeira abertura.

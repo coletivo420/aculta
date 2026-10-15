@@ -24,6 +24,7 @@ Classificação: PATCH (correções encontradas pela suíte de navegador e pela 
 - Aviso de bloqueio do Private Message em português (`private_message.settings`, exportado em `config/sync`).
 - Gate de fronteira: a regra de classes varre todos os `src/` do módulo (submódulos inclusos); dívida de `aculta_gallery` registrada como `DT-BOUNDARY-GALLERY`.
 - Validação: suíte de navegador (`tests/browser/aculta-messenger/`) 70 de 70 no runtime de teste.
+- Lista de conversas: o menu "Opções" de cada linha é só o ícone de três traços; o painel abre sobre a linha, alinhado à direita da caixa (a conversa aberta mantém a caixa completa).
 - Aviso persistente não tem botão de dispensar: cartão em cor de aviso (`notice-summary-persistent`), e a leitura é o link "Marcar como lido" no aviso completo. Avisos do site (dispensáveis) ganham a permissão `flag aculta_site_alert_dismissed` no papel autenticado, que faltava.
 - Avisos na gaveta: cada aviso (persistente ou do site) é um resumo em caixa de botão; o clique abre o aviso completo na mesma gaveta (rotas `aculta_messenger.notice_detail` e `aculta_messenger.alert_detail`, com "← Todos os avisos").
 - Lista de conversas: o menu "Opções" de cada linha não é montado na lista; a linha guarda o endereço do menu e o carrega na primeira abertura (rota `aculta_messenger.drawer_options`).
