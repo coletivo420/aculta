@@ -34,6 +34,21 @@ novas entidades Topic/Reply, outro Messenger, outra galeria ou outro checkout.
 Matrícula não será convertida em um papel global de curso. Amizade não concede
 acesso a conteúdo reservado. Importação não concede conquistas contemporâneas.
 
+## Resultado operacional da F1 — 2026-10-15
+
+- O host de teste `forum.aculta.toca.net.br` foi aposentado sem redirect: HTTP e
+  HTTPS respondem 404. O DNS A e o certificado válidos permanecem no Homelab
+  para manter essa resposta controlada; novas referências usam
+  `growroom420.aculta.toca.net.br`.
+- `forum.aculta.org` não tinha registro DNS na zona Cloudflare de produção. O novo
+  `growroom420.aculta.org` permanece como destino mapeado no Deployer, mas não
+  recebeu DNS: o TLS direto ao IP de origem Hostinger falhou, então o hostname
+  precisa ser cadastrado e validado na origem antes de publicar o registro.
+- No teste, `/sitemap.xml` responde 200 e não lista FORUM. Isso segue a política
+  já instalada em `PurposeNodeUrlGenerator::INDEXABLE_PURPOSES`, que exclui
+  FORUM e ACCOUNT. A verificação global `sitemap --env=test` ainda falha porque
+  LINKS responde 404; a F1 não alterou LINKS.
+
 ## Propostas técnicas a comprovar
 
 - Manter purpose `forum` e os IDs Domain existentes ao trocar hostname/aliases.
