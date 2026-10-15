@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.22 — "← Todas as conversas" alinhado à direita, abaixo do X — 2026-10-15
+
+Classificação: PATCH (posição do link de volta na gaveta).
+
+- O link "← Todas as conversas" da conversa aberta e o da resposta de envio ficam alinhados à direita, logo abaixo do X da gaveta, com o mesmo tamanho de fonte.
+- A resposta de envio usa a mesma classe `aculta-messenger-back-link` que a visão da conversa já usava.
+- Estilo em `components/content/messenger-item/messenger-item.css` do tema (alteração do tema sem versão própria, ver pendência do tema).
+- Medido no Firefox headless: borda direita do link a 8 px da borda do X em 1280 e 390 px, tamanho de fonte inalterado (13 px).
+
 ## 0.1.1-dev.21 — "Iniciar nova conversa" continua visível ao voltar da conversa — 2026-10-15
 
 Classificação: PATCH (correção de um caminho de navegação da gaveta).

@@ -132,7 +132,8 @@ final class NewConversationController extends ControllerBase {
           '#type' => 'link',
           '#title' => $this->t('← Todas as conversas'),
           '#url' => Url::fromRoute('aculta_messenger.preview'),
-          '#attributes' => ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'new-conversation-back'],
+          // Same link as the conversation view (PrivateMessageReplyHooks), so it sits in the same place.
+          '#attributes' => ['class' => ['aculta-messenger-back-link'], 'data-aculta-drawer-back' => ''],
         ],
         '#cache' => ['contexts' => ['user'], 'max-age' => 0],
       ]);
