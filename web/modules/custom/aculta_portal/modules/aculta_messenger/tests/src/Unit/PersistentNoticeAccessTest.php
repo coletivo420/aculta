@@ -54,7 +54,7 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
 
   public function testNoticeIsUnavailableBeforeItsStartAndCacheExpiresAtStart(): void {
     $now = time();
-    $start = date('Y-m-d\TH:i:s', $now + 200);
+    $start = gmdate('Y-m-d\TH:i:s', $now + 200);
     $node = $this->notice(['authenticated'], TRUE, ['field_aculta_notice_start' => $start]);
     $result = $this->hooks($now)->nodeAccess($node, 'view', $this->account(['authenticated']));
 
@@ -64,7 +64,7 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
 
   public function testNoticeIsUnavailableAtItsEnd(): void {
     $now = time();
-    $end = date('Y-m-d\TH:i:s', $now - 200);
+    $end = gmdate('Y-m-d\TH:i:s', $now - 200);
     $node = $this->notice(['authenticated'], TRUE, ['field_aculta_notice_end' => $end]);
     $result = $this->hooks($now)->nodeAccess($node, 'view', $this->account(['authenticated']));
 

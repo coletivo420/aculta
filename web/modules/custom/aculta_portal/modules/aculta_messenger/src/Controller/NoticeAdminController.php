@@ -12,6 +12,7 @@ use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_messenger\Support\StorageDateTime;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -192,11 +193,7 @@ final class NoticeAdminController extends ControllerBase {
 
   /** Converts a Drupal datetime value to a display timestamp. */
   private function timestamp(?string $value): ?int {
-    if ($value === NULL || $value === '') {
-      return NULL;
-    }
-    $timestamp = strtotime($value);
-    return $timestamp === FALSE ? NULL : $timestamp;
+    return StorageDateTime::toTimestamp($value);
   }
 
   /** Formats an optional start/end validity range. */

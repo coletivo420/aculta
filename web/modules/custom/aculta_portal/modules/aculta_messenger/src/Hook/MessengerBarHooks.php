@@ -18,6 +18,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
+use Drupal\aculta_messenger\Support\StorageDateTime;
 use Drupal\site_alert\GetAlertsInterface;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -156,8 +157,8 @@ final class MessengerBarHooks {
       if (!$node->hasField($field) || $node->get($field)->isEmpty()) {
         continue;
       }
-      $timestamp = strtotime((string) $node->get($field)->value);
-      if ($timestamp === FALSE) {
+      $timestamp = StorageDateTime::toTimestamp((string) $node->get($field)->value);
+      if ($timestamp === NULL) {
         return $result;
       }
       if ($timestamp > $now) {
