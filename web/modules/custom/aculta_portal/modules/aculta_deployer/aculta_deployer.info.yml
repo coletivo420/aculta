@@ -1,8 +1,8 @@
 name: 'ACULTA Deployer'
 type: module
-description: 'Complemento opcional do ACULTA Portal: substitui hosts de teste por produção no build de deploy, verifica sitemap, robots e credenciais, e publica o relatório neutro lido pelo painel do Portal. A CLI é standalone (bin/aculta-deployer); o módulo não tem serviços próprios e o Portal funciona sem ele.'
+description: 'Complemento opcional do ACULTA Portal: prepara builds e raiz pública Hostinger por symlink, verifica sitemap, robots e credenciais, e publica o relatório neutro lido pelo painel do Portal. A CLI é standalone (bin/aculta-deployer); o módulo não tem serviços próprios e o Portal funciona sem ele.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.22'
+version: '0.1.23'
 dependencies:
   - aculta_portal:aculta_portal

@@ -20,6 +20,7 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
   - Com entradas bloqueantes abertas, o build é recusado. `--allow-open-blocking` serve
     só para ensaio, e não para publicar.
   - Grava `DIR/deploy-report.json` com os arquivos, as remoções e as substituições.
+- `$CLI hostinger-layout --domain-root=DIR [--project-name=aculta-site]`: valida a instalação e simula a mudança da raiz pública. Só altera o servidor com `--apply`.
 - `$CLI verify`: GET somente leitura nas entradas com `probe` e `expect`. Só aceita HTTPS,
   sem credenciais na URL, sem seguir redirecionamentos. Não altera nenhum arquivo nem o registro.
 - `$CLI version`.
@@ -35,6 +36,56 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
 6. Rollback: cada build fica em seu próprio diretório. Para voltar, aponte o ambiente de
    produção para o diretório do build anterior, pelo processo do responsável. Builds nunca
    são sobrescritos.
+
+## Estrutura Hostinger Cloud Startup (0.1.23)
+
+Na Hostinger, mantenha a instalação Composer numa pasta própria, filha da pasta do domínio,
+e faça `public_html` apontar somente para `web/`:
+
+```text
+<pasta-do-dominio>/
+├── aculta-site/                 # composer.json, composer.lock, vendor/, config/ e web/
+│   └── web/                     # raiz servida; index.php e .htaccess do Drupal
+└── public_html -> aculta-site/web
+```
+
+O caminho absoluto da pasta do domínio varia por conta. Descubra-o em hPanel → FTP Accounts;
+confirme que SSH está habilitado e que a função `symlink` foi removida de `disableFunctions`
+no PHP Configuration do site. Hostinger Web/Cloud desabilita `symlink` por padrão. Use a conta
+SSH da hospedagem, não `root`.
+
+Transfira primeiro a instalação completa para `<pasta-do-dominio>/aculta-site`, instale as
+dependências do `composer.lock` e provisione os settings/secrets do ambiente. O comando abaixo
+somente troca a raiz pública; ele não transfere o projeto, não executa Composer e não altera o
+banco:
+
+```sh
+cd "<pasta-do-dominio>/aculta-site"
+CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
+php "$CLI" hostinger-layout --domain-root="<caminho-absoluto-da-pasta-do-dominio>"
+php "$CLI" hostinger-layout --domain-root="<caminho-absoluto-da-pasta-do-dominio>" --apply
+```
+
+A primeira execução é somente leitura. Antes de `--apply`, revise o caminho e o status. O
+comando exige `composer.json`, `composer.lock`, `vendor/autoload.php`, `web/index.php` e
+`web/sites/default/settings.php`. Se `public_html` já existir como pasta ou symlink, ele é
+renomeado para `public_html.backup.<UTC>`; nenhum conteúdo é apagado. A ativação usa symlink
+temporário e renomeação, é idempotente e tenta restaurar o backup se a criação falhar.
+
+Depois da ativação, valide o domínio HTTPS, rotas Drupal, arquivos estáticos, acesso de escrita
+em `web/sites/default/files`, proteção de arquivos privados e o mecanismo de renovação TLS. Se
+o `public_html` anterior continha `.well-known` ou validações de domínio, esses arquivos ficam
+no backup e precisam ser avaliados antes da troca; não copie outros conteúdos antigos para a
+raiz pública sem revisão.
+
+Rollback manual: pelo SSH, mova o symlink atual para um nome de falha e restaure exatamente o
+`public_html.backup.<UTC>` exibido pelo comando. `mv public_html public_html.failed` move o
+symlink, não o destino. Nunca use `rm -rf` sobre o symlink ou sobre o backup. Teste o rollback
+antes da janela de produção.
+
+Referências: [Drupal — relocated web root em hospedagem compartilhada](https://www.drupal.org/docs/getting-started/system-requirements/relocated-web-root-on-shared-hosting),
+[Hostinger — criar symlink](https://www.hostinger.com/support/1583694-how-to-create-a-symlink-at-hostinger/),
+[Hostinger — habilitar funções PHP](https://www.hostinger.com/support/3212034-how-to-enable-disabled-php-functions-in-hostinger/).
 
 ## Testes
 

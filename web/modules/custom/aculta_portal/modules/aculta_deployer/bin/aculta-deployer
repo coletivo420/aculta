@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 // Ponto de entrada da ferramenta. Standalone: não carrega Drupal, Drush nem vendor.
 $toolRoot = dirname(__DIR__);
-foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'Cli'] as $class) {
+foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'HostingerLayout', 'Cli'] as $class) {
   require_once $toolRoot . '/src/' . $class . '.php';
 }
 try {

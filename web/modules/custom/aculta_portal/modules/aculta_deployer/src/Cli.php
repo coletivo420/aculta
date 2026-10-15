@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.22';
+  public const VERSION = '0.1.23';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -29,6 +29,7 @@ final class Cli {
       'list' => $this->list(),
       'register' => $this->register($options),
       'build' => $this->build($options),
+      'hostinger-layout' => $this->hostingerLayout($options),
       'transition' => $this->transition($options),
       'domains' => $this->domains(),
       'cookies' => $this->cookies(),
@@ -673,6 +674,35 @@ final class Cli {
     return 0;
   }
 
+  /** Prepara public_html para servir web/; por padrão, somente simula. */
+  private function hostingerLayout(array $o): int {
+    $domainRoot = $o['domain-root'] ?? null;
+    if (!is_string($domainRoot) || $domainRoot === '' || $domainRoot[0] !== '/') {
+      $this->err('hostinger-layout: --domain-root absoluto é obrigatório (pasta do domínio na Hostinger)');
+      return 1;
+    }
+    $projectName = is_string($o['project-name'] ?? null) ? $o['project-name'] : 'aculta-site';
+    $layout = new HostingerLayout();
+    try {
+      $plan = $layout->inspect($domainRoot, $projectName);
+      $this->say('instalação: ' . $plan['project_root']);
+      $this->say('raiz pública: ' . $plan['project_root'] . '/web');
+      $this->say('public_html: ' . $plan['status']);
+      if ($plan['backup'] !== null) {
+        $this->say('preservação: ' . basename($plan['backup']));
+      }
+      if (!isset($o['apply'])) {
+        $this->say('simulação: nenhuma alteração feita; use --apply para ativar o symlink');
+        return 0;
+      }
+      $this->say($layout->activate($plan));
+      return 0;
+    } catch (\RuntimeException $e) {
+      $this->err('hostinger-layout: ' . $e->getMessage());
+      return 1;
+    }
+  }
+
   private function removeTree(string $dir): void {
     if (!is_dir($dir)) {
       return;
@@ -907,6 +937,7 @@ Uso:
   aculta-deployer list                 lista as correções de deploy registradas
   aculta-deployer register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]
   aculta-deployer build --out=DIR [--allow-open-blocking]
+  aculta-deployer hostinger-layout --domain-root=DIR [--project-name=aculta-site] [--apply]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
   aculta-deployer environment [show] | environment set --to=production|test  define o ambiente do site (e o endereço) lido pelo Portal
   aculta-deployer cookies               leitura: confere o cookie de sessão por ambiente (session_cookie) contra services.*.yml
@@ -914,6 +945,9 @@ Uso:
   aculta-deployer report [--out=PATH]  relatório neutro para o painel do Portal (sem valores)
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version
+
+hostinger-layout valida a instalação dentro da pasta do domínio e, com --apply, preserva
+public_html existente em backup antes de apontá-lo para <instalação>/web.
 
 Códigos de saída: 0 sucesso; 1 erro de uso, validação ou fronteira; 2 bloqueado (entrada bloqueante aberta).
 

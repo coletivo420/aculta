@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // Testes determinísticos da CLI. Não usam Drupal, Drush nem vendor.
 $toolRoot = dirname(__DIR__);
-foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'Cli'] as $class) {
+foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'HostingerLayout', 'Cli'] as $class) {
   require_once $toolRoot . '/src/' . $class . '.php';
 }
 
@@ -137,6 +137,53 @@ foreach (['a', 'b'] as $d) {
 }
 @unlink($base . '/link-para-repo');
 @rmdir($base);
+
+// Layout Hostinger: instalação permanece na pasta do domínio; public_html só aponta para web/.
+$domainRoot = sys_get_temp_dir() . '/aculta-hostinger-layout-' . getmypid();
+$project = $domainRoot . '/aculta-site';
+mkdir($project . '/web/sites/default', 0775, true);
+mkdir($project . '/vendor', 0775, true);
+file_put_contents($project . '/composer.json', '{}');
+file_put_contents($project . '/composer.lock', '{}');
+file_put_contents($project . '/vendor' . '/autoload.php', '<?php');
+file_put_contents($project . '/web/index.php', '<?php');
+file_put_contents($project . '/web/sites/default/settings.php', '<?php');
+mkdir($domainRoot . '/public_html');
+file_put_contents($domainRoot . '/public_html/index.html', 'site anterior');
+$layout = new AcultaDeployer\HostingerLayout();
+$layoutPlan = $layout->inspect($domainRoot);
+$assert($layoutPlan['status'] === 'directory' && is_dir($domainRoot . '/public_html') && !is_link($domainRoot . '/public_html'), 'layout: inspeção não altera public_html existente');
+$layoutDryRun = $quiet(fn() => $cli->run(['x', 'hostinger-layout', '--domain-root=' . $domainRoot]));
+$assert($layoutDryRun === 0 && is_dir($domainRoot . '/public_html') && !is_link($domainRoot . '/public_html'), 'layout: CLI sem --apply só simula');
+$layoutApply = $quiet(fn() => $cli->run(['x', 'hostinger-layout', '--domain-root=' . $domainRoot, '--apply']));
+$assert(is_link($domainRoot . '/public_html') && readlink($domainRoot . '/public_html') === $project . '/web', 'layout: public_html passa a apontar para aculta-site/web');
+$assert($layoutApply === 0 && $layoutPlan['backup'] !== null && file_get_contents($layoutPlan['backup'] . '/index.html') === 'site anterior', 'layout: CLI preserva o diretório anterior para rollback');
+$assert($layout->inspect($domainRoot)['status'] === 'already_linked' && $layout->activate($layout->inspect($domainRoot)) === 'public_html já aponta para a raiz web da instalação', 'layout: ativação repetida é idempotente');
+$incomplete = $domainRoot . '/incompleta';
+mkdir($incomplete);
+$thrown = false;
+try {
+  $layout->inspect($domainRoot, 'incompleta');
+} catch (RuntimeException) {
+  $thrown = true;
+}
+$assert($thrown && is_link($domainRoot . '/public_html'), 'layout: instalação incompleta é recusada sem desfazer o symlink ativo');
+$removeFixture = null;
+$removeFixture = static function (string $path) use (&$removeFixture): void {
+  if (is_link($path) || is_file($path)) {
+    unlink($path);
+    return;
+  }
+  if (is_dir($path)) {
+    foreach (scandir($path) ?: [] as $entry) {
+      if ($entry !== '.' && $entry !== '..') {
+        $removeFixture($path . '/' . $entry);
+      }
+    }
+    rmdir($path);
+  }
+};
+$removeFixture($domainRoot);
 
 // Fase 3: importação de achados (tudo ou nada).
 $regFile = sys_get_temp_dir() . '/aculta-deployer-p3-' . getmypid() . '.json';
