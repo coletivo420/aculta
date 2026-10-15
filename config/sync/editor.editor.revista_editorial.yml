@@ -28,6 +28,7 @@ settings:
       - heading
       - codeBlock
       - drupalMedia
+      - "-"
       - galeria
       - acultaGalleryCreate
   plugins:
