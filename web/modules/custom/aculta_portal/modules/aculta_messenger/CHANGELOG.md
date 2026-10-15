@@ -2,6 +2,13 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.21 — "Iniciar nova conversa" continua visível ao voltar da conversa — 2026-10-15
+
+Classificação: PATCH (correção de um caminho de navegação da gaveta).
+
+- O "Voltar" de uma conversa carrega a lista pela rota `drawer_conversations`, que não tinha o botão "Iniciar nova conversa" (só a primeira janela, `preview`, tinha). Os dois caminhos agora usam a mesma ação, em `newConversationAction()`.
+- Testado no Firefox headless (geckodriver): abrir a barra, abrir uma conversa, voltar, e o botão aparece. Captura da lista após voltar conferida.
+
 ## 0.1.1-dev.20 — "Iniciar nova conversa" funcionando de ponta a ponta — 2026-10-15
 
 Classificação: PATCH (correção do fluxo da 0.1.1-dev.19, que não tinha sido testado no navegador).
