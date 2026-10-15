@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
+use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Queue\QueueFactoryInterface;
+use Drupal\Core\Queue\QueueFactory;
 
 /** Protects Messenger-owned notification records during module removal. */
 final class LifecycleHooks {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly EntityDefinitionUpdateManagerInterface $entityDefinitionUpdateManager,
     private readonly ModuleHandlerInterface $moduleHandler,
-    private readonly QueueFactoryInterface $queueFactory,
+    private readonly QueueFactory $queueFactory,
   ) {}
 
   /** Prevents activating the upstream notifier with its private-body template. */
@@ -40,20 +42,46 @@ final class LifecycleHooks {
       return;
     }
 
-    if ($this->queueFactory->get('aculta_messenger_private_message_notification')->numberOfItems() > 0) {
+    if ($this->queueFactory->get('aculta_msg_private_notification')->numberOfItems() > 0) {
       throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while private message notifications remain queued. Process or clear the queue explicitly first.');
     }
     if ($this->queueFactory->get('aculta_messenger_message_subscribe_event')->numberOfItems() > 0) {
       throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while subscription events remain queued. Process or clear the queue explicitly first.');
     }
 
-    $count = $this->entityTypeManager->getStorage('message')->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('template', ['aculta_messenger_private_message_notification', 'aculta_messenger_forum_topic_published'], 'IN')
-      ->count()
-      ->execute();
-    if ($count > 0) {
-      throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while notification Message entities remain. Remove or retain the records explicitly first.');
+    // A failed install can leave the module enabled before all upstream entity
+    // storage definitions exist. Check each storage independently.
+    if ($this->entityDefinitionUpdateManager->getEntityType('message') !== NULL) {
+      $count = $this->entityTypeManager->getStorage('message')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('template', ['aculta_msg_private_notification', 'aculta_msg_forum_published'], 'IN')
+        ->count()
+        ->execute();
+      if ($count > 0) {
+        throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while notification Message entities remain. Remove or retain the records explicitly first.');
+      }
+    }
+
+    if ($this->entityDefinitionUpdateManager->getEntityType('node') !== NULL) {
+      $count = $this->entityTypeManager->getStorage('node')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('type', 'aculta_notice')
+        ->count()
+        ->execute();
+      if ($count > 0) {
+        throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while persistent notices remain. Migrate or remove them explicitly first.');
+      }
+    }
+
+    if ($this->entityDefinitionUpdateManager->getEntityType('flagging') !== NULL) {
+      $count = $this->entityTypeManager->getStorage('flagging')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('flag_id', 'aculta_notice_read')
+        ->count()
+        ->execute();
+      if ($count > 0) {
+        throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while persistent notice read states remain. Migrate or remove them explicitly first.');
+      }
     }
   }
 

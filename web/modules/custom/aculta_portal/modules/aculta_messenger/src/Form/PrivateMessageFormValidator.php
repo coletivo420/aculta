@@ -83,6 +83,19 @@ final class PrivateMessageFormValidator {
     }
   }
 
+  /** Forces the native long-text field to persist using Drupal's plain format. */
+  public function enforcePlainTextFormat(array &$form, FormStateInterface $formState): void {
+    $formState->setValue(['message', 0, 'format'], 'plain_text');
+  }
+
+  /** Hides text-format controls and generic guidelines from the chat composer. */
+  public function hidePlainTextGuidelines(array $form, FormStateInterface $formState): array {
+    if (isset($form['message']['widget'][0]['format'])) {
+      $form['message']['widget'][0]['format']['#access'] = FALSE;
+    }
+    return $form;
+  }
+
   /**
    * Validates and registers one message submission in the Core flood backend.
    *

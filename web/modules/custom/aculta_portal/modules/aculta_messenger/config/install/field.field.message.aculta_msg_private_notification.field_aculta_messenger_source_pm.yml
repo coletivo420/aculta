@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.storage.message.field_aculta_messenger_source_pm
-    - message.template.aculta_messenger_private_message_notification
+    - message.template.aculta_msg_private_notification
   module:
     - private_message
   enforced:
@@ -11,7 +11,7 @@ dependencies:
       - aculta_messenger
 field_name: field_aculta_messenger_source_pm
 entity_type: message
-bundle: aculta_messenger_private_message_notification
+bundle: aculta_msg_private_notification
 label: 'Mensagem privada de origem'
 description: 'Referência de idempotência para a notificação.'
 required: true

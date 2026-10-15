@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Datetime\TimeInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
@@ -161,7 +161,10 @@ final class MessengerBarHooks {
         return $result;
       }
       if ($timestamp > $now) {
-        $maxAge = min($maxAge, $timestamp - $now);
+        $untilTransition = $timestamp - $now;
+        $maxAge = $maxAge === Cache::PERMANENT
+          ? $untilTransition
+          : min($maxAge, $untilTransition);
       }
       if (($isStart && $now < $timestamp) || (!$isStart && $now >= $timestamp)) {
         return $result->setCacheMaxAge($maxAge);
@@ -169,7 +172,10 @@ final class MessengerBarHooks {
     }
     $audiences = array_column($node->get('field_aculta_notice_roles')->getValue(), 'value');
     $allowed = (bool) array_intersect($audiences, $account->getRoles());
-    return AccessResult::allowedIf($allowed)
+    // A non-matching audience must deny access, not return neutral: another
+    // node access grant could otherwise make a segmented notice visible.
+    $audienceAccess = $allowed ? AccessResult::allowed() : AccessResult::forbidden();
+    return $audienceAccess
       ->addCacheableDependency($node)
       ->cachePerUser()
       ->setCacheMaxAge($maxAge);

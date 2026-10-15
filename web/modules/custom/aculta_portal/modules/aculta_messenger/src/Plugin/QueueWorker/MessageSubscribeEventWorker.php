@@ -7,7 +7,7 @@ namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
-use Drupal\Core\Path\AliasManagerInterface;
+use Drupal\path_alias\AliasManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
@@ -24,13 +24,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class MessageSubscribeEventWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
-  private const TEMPLATE = 'aculta_messenger_forum_topic_published';
+  private const TEMPLATE = 'aculta_msg_forum_published';
 
-  private const SOURCE_FIELD = 'field_aculta_messenger_source_node';
+  private const SOURCE_FIELD = 'field_aculta_msg_node';
 
-  private const REVISION_FIELD = 'field_aculta_messenger_source_revision';
+  private const REVISION_FIELD = 'field_aculta_msg_revision';
 
-  private const STATUS_FIELD = 'field_aculta_messenger_delivery_status';
+  private const STATUS_FIELD = 'field_aculta_msg_delivery';
 
   private const ATTEMPTS_FIELD = 'field_aculta_messenger_attempts';
 

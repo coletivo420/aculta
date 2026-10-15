@@ -1,0 +1,29 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_body
+    - field.field.message.aculta_msg_forum_published.field_aculta_msg_node
+    - field.field.message.aculta_msg_forum_published.field_aculta_msg_revision
+    - field.field.message.aculta_msg_forum_published.field_aculta_msg_delivery
+    - field.field.message.aculta_msg_forum_published.field_aculta_messenger_attempts
+    - message.template.aculta_msg_forum_published
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_forum_published.mail_body
+targetEntityType: message
+bundle: aculta_msg_forum_published
+mode: mail_body
+content:
+  partial_1:
+    weight: 0
+    region: content
+    settings: {}
+    third_party_settings: {}
+hidden:
+  field_aculta_msg_node: true
+  field_aculta_msg_revision: true
+  field_aculta_msg_delivery: true
+  field_aculta_messenger_attempts: true
+  partial_0: true

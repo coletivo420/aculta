@@ -1,0 +1,6 @@
+aculta_messenger.admin_notices:
+  title: 'Avisos'
+  description: 'Gerencie avisos temporários e comunicados persistentes da ACULTA.'
+  route_name: aculta_messenger.admin_notices
+  parent: system.admin
+  weight: 8

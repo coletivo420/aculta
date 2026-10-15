@@ -1,0 +1,27 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_subject
+    - field.field.message.aculta_msg_private_notification.field_aculta_msg_delivery
+    - field.field.message.aculta_msg_private_notification.field_aculta_messenger_attempts
+    - field.field.message.aculta_msg_private_notification.field_aculta_messenger_source_pm
+    - message.template.aculta_msg_private_notification
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_private_notification.mail_subject
+targetEntityType: message
+bundle: aculta_msg_private_notification
+mode: mail_subject
+content:
+  partial_0:
+    weight: 0
+    region: content
+    settings: {}
+    third_party_settings: {}
+hidden:
+  field_aculta_msg_delivery: true
+  field_aculta_messenger_attempts: true
+  field_aculta_messenger_source_pm: true
+  partial_1: true

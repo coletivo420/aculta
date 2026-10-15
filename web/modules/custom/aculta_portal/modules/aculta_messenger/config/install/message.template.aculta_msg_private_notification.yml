@@ -6,7 +6,7 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
-template: aculta_messenger_private_message_notification
+template: aculta_msg_private_notification
 label: 'Aviso de mensagem privada ACULTA'
 description: 'Aviso por e-mail sem o conteúdo da conversa privada.'
 text:
