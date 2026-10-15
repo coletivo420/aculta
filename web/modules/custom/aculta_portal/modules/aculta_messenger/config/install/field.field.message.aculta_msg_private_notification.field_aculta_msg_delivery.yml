@@ -2,16 +2,16 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - field.storage.message.field_aculta_messenger_delivery_status
-    - message.template.aculta_messenger_private_message_notification
+    - field.storage.message.field_aculta_msg_delivery
+    - message.template.aculta_msg_private_notification
   module:
     - options
   enforced:
     module:
       - aculta_messenger
-field_name: field_aculta_messenger_delivery_status
+field_name: field_aculta_msg_delivery
 entity_type: message
-bundle: aculta_messenger_private_message_notification
+bundle: aculta_msg_private_notification
 label: 'Situação do envio'
 description: 'Estado técnico da entrega do aviso.'
 required: true

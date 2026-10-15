@@ -13,9 +13,9 @@ use Drupal\node\NodeInterface;
 /** Adapts Message Subscribe to the existing Portuguese forum follow flag. */
 final class MessageSubscribeHooks {
 
-  private const TEMPLATE = 'aculta_messenger_forum_topic_published';
+  private const TEMPLATE = 'aculta_msg_forum_published';
 
-  private const SOURCE_FIELD = 'field_aculta_messenger_source_node';
+  private const SOURCE_FIELD = 'field_aculta_msg_node';
 
   public function __construct(
     private readonly FlagServiceInterface $flagService,

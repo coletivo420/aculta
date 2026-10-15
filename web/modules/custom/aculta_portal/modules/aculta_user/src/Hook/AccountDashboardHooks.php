@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Hook;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\Bio\AccountBioCard;
 use Drupal\aculta_user\Social\SocialLinksCard;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -46,10 +47,13 @@ final class AccountDashboardHooks {
   private function overviewActions(AccountInterface $account): array {
     $profile = $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'participante');
     $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
-    if ($nickname === '') {
+    // Preserve display casing, but generate the route from its lowercase slug.
+    // Invalid legacy values omit this action rather than breaking the overview.
+    $publicSlug = AccountNames::publicRouteSlug($nickname);
+    if ($publicSlug === NULL) {
       return [];
     }
-    $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $nickname]);
+    $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
     if ($url === NULL) {
       return [];
     }

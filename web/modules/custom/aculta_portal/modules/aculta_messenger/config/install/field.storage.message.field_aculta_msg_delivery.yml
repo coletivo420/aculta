@@ -7,8 +7,8 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
-id: message.field_aculta_messenger_delivery_status
-field_name: field_aculta_messenger_delivery_status
+id: message.field_aculta_msg_delivery
+field_name: field_aculta_msg_delivery
 entity_type: message
 type: list_string
 settings:

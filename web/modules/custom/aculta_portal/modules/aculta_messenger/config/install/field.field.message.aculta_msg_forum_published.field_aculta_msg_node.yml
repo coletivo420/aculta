@@ -2,14 +2,14 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - field.storage.message.field_aculta_messenger_source_node
-    - message.template.aculta_messenger_forum_topic_published
+    - field.storage.message.field_aculta_msg_node
+    - message.template.aculta_msg_forum_published
   enforced:
     module:
       - aculta_messenger
-field_name: field_aculta_messenger_source_node
+field_name: field_aculta_msg_node
 entity_type: message
-bundle: aculta_messenger_forum_topic_published
+bundle: aculta_msg_forum_published
 label: 'Tópico de origem'
 description: 'Nó que originou o aviso da assinatura.'
 required: true

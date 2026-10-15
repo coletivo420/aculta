@@ -126,3 +126,28 @@ Estas fases dependem de S0–S4. Nenhuma tem versão alvo de 1.0.
 
 Todos os itens do registro do Portal estão em Resolvida, Decisão registrada ou Aberta com
 justificativa aceita pelo responsável. Os gates passam. Não há dívida nova sem registro.
+
+## Primeiro release candidate — preparação do pacote de produção
+
+Ao final da preparação do primeiro RC do ACULTA Portal, iniciar no
+`aculta_deployer` uma etapa de **montagem de pacote enxuto de produção**. O
+objetivo é evitar que arquivos usados somente para desenvolvimento, testes e
+operação de deploy sejam enviados ou mantidos no servidor Hostinger. Esses
+arquivos continuam no Git para desenvolvimento e auditoria, mas não entram no
+artefato de produção quando comprovadamente não forem necessários ao Drupal em
+runtime.
+
+A montagem deve partir de uma lista explícita e revisável de inclusão e exclusão,
+e manter tudo que a instalação precisa para executar: Core, módulos e temas
+ativos, dependências Composer de produção, configuração aplicável e arquivos
+operacionais exigidos pelo ambiente. Testes, fixtures, ferramentas locais de
+desenvolvimento, documentação interna e metadados do repositório podem ser
+excluídos quando não forem dependências de runtime. Não excluir por extensão ou
+nome genérico sem verificar consumidores; por exemplo, arquivos PHP/YAML/JSON
+podem ser necessários em produção. O Deployer deve montar o artefato fora do
+repositório, gerar manifesto auditável e validar tanto arquivos obrigatórios
+quanto ausências esperadas, sem alterar a árvore de trabalho.
+
+Essa etapa define e valida o conteúdo do pacote; não autoriza upload nem deploy
+em produção. Ver também o
+[planejamento do aculta_deployer](../../web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md).

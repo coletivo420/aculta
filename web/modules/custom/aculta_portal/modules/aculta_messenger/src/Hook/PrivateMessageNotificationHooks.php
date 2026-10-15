@@ -6,7 +6,7 @@ namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Queue\QueueFactoryInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 
@@ -14,7 +14,7 @@ use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 final class PrivateMessageNotificationHooks {
 
   public function __construct(
-    private readonly QueueFactoryInterface $queueFactory,
+    private readonly QueueFactory $queueFactory,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
 
@@ -28,7 +28,7 @@ final class PrivateMessageNotificationHooks {
   #[Hook('private_message_new_message')]
   public function newMessage(PrivateMessageInterface $privateMessage, PrivateMessageThreadInterface $thread): void {
     $itemId = $this->queueFactory
-      ->get('aculta_messenger_private_message_notification')
+      ->get('aculta_msg_private_notification')
       ->createItem(['private_message_id' => (int) $privateMessage->id()]);
 
     if ($itemId === FALSE) {

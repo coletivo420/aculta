@@ -6,15 +6,12 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
-id: message.field_aculta_messenger_source_revision
-field_name: field_aculta_messenger_source_revision
+id: message.field_aculta_msg_node
+field_name: field_aculta_msg_node
 entity_type: message
-type: integer
+type: entity_reference
 settings:
-  min: 1
-  max: null
-  prefix: ''
-  suffix: ''
+  target_type: node
 module: core
 locked: false
 cardinality: 1

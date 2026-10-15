@@ -18,7 +18,7 @@ final class CommunicationSettingsForm extends FormBase {
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
     private readonly UserDataInterface $userData,
-    private readonly ConfigFactoryInterface $configFactory,
+    private readonly ConfigFactoryInterface $settingsFactory,
     private readonly SettingsTabs $settingsTabs,
   ) {}
 
@@ -37,7 +37,7 @@ final class CommunicationSettingsForm extends FormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUser->id();
-    $config = $this->configFactory->get('private_message.settings');
+    $config = $this->settingsFactory->get('private_message.settings');
     $savedPreference = $this->userData->get('private_message', $uid, 'receive_notification');
     $default = $savedPreference === NULL
       ? (bool) $config->get('notify_by_default')
@@ -84,7 +84,7 @@ final class CommunicationSettingsForm extends FormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    if (!$this->configFactory->get('private_message.settings')->get('enable_notifications')) {
+    if (!$this->settingsFactory->get('private_message.settings')->get('enable_notifications')) {
       $this->messenger()->addWarning($this->t('Os avisos por e-mail estão desativados pela configuração do site.'));
     }
     else {

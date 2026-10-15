@@ -7,14 +7,14 @@ namespace Drupal\aculta_messenger\Hook;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Queue\QueueFactoryInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\node\NodeInterface;
 
 /** Queues publication events for the forum's existing follow flag. */
 final class MessageSubscribeEventHooks {
 
   public function __construct(
-    private readonly QueueFactoryInterface $queueFactory,
+    private readonly QueueFactory $queueFactory,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
 

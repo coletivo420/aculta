@@ -23,6 +23,7 @@ O Portal integra a experiência de:
 - participação do usuário;
 - mensagens, notificações e avisos institucionais (`aculta_messenger`, em desenvolvimento);
 - administração consolidada;
+- normalização comum de slugs públicos e configuração da sanitização de nomes de uploads pelo Core Drupal;
 - Domain purposes, incluindo o purpose `links` (página de redes sociais em `/redes-sociais`).
 
 Não é sistema próprio de autenticação, endereço, pagamento, LMS, matrícula,
@@ -70,6 +71,29 @@ fontes de verdade.
 `AcultaBreadcrumbBuilder` é a fonte de verdade para purpose público, rotas ocultas, raiz por domínio, hierarquia, cache metadata e resolução segura do título atual. O tema `aculta420` não replica essa política: consome os links Drupal e `currentTitle()` apenas para renderização.
 
 ## Documentação normativa
+
+### Capacidades e extensões ativas
+
+Toda capacidade nova do módulo principal deve ser registrada neste README e na
+documentação específica do seu contrato. Toda extensão em `modules/*/` deve
+declarar nome/descrição no `.info.yml` e manter README ou documentação em
+`docs/`. A tela administrativa **ACULTA Portal > Status** lista o módulo
+principal e as extensões Portal habilitadas diretamente do registro do Drupal;
+ela não mantém uma lista paralela de estados. O gate
+`php scripts/validate-aculta-portal-drupal11.php` verifica esse contrato.
+
+O Status também mantém o inventário **Implementações do ACULTA Portal**, com
+seções de Helpers reutilizáveis e Extras aplicados (adaptações e integrações
+runtime). Serviços são descobertos por tags do container e descritos nos
+registros próprios. Ao adicionar um deles, atualize tags, metadados, documento
+referenciado e gate conforme [Implementações](../../../../docs/portal/IMPLEMENTATIONS.md).
+
+O slug de URL e o valor exibido são dados distintos: use
+`Drupal\aculta_portal\Routing\PublicRouteSlug::normalize()` antes de gerar um
+caminho público, valide depois com as regras da rota e preserve o original para
+exibição. Para upload, o Core aplica `file.settings:filename_sanitization` aos
+novos arquivos. Regras e limites: [guardrails](../../../../docs/portal/GUARDRAILS.md)
+e [slugs públicos](../../../../docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md).
 
 O padrão obrigatório para código humano e gerado/revisado por IA é [Padrão Drupal 11+](../../../../docs/portal/DRUPAL-11-STANDARDS.md).
 

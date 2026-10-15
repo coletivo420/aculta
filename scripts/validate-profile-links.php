@@ -3,12 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Guardrail: links para o perfil público (/u/<apelido>) são sempre gerados a partir do apelido atual, por rota
- * e propósito, nunca escritos à mão, e o código que os gera registra o perfil na cache.
+ * Guardrail: links para o perfil público (/u/<apelido>) são gerados por rota e propósito, com slug minúsculo
+ * derivado do apelido atual; a capitalização de exibição vem do campo original. Links registram cache.
  *
  * Reprova:
  *  - caminho /u/ literal em código (src, templates, twig, js do tema) fora da definição de rota;
- *  - código que referencia a rota aculta_user.perfil_publico sem registrar o perfil na cache (profile tags).
+ *  - código que referencia a rota aculta_user.perfil_publico sem slug canônico ou sem registrar o perfil na cache;
+ *  - controlador que renderiza o slug da rota em vez do apelido salvo para exibição.
  * Regra e motivo: docs/portal/GUARDRAILS.md (seção "Links de perfil").
  */
 
@@ -55,7 +56,32 @@ foreach ($files as $path) {
     if (!$registra) {
       $violations[] = "$rel: gera link de perfil sem registrar o perfil na cache (use getCacheTags()/addCacheableDependency).";
     }
+    if (!str_contains($code, 'PublicRouteSlug::normalize') && !str_contains($code, 'AccountNames::publicRouteSlug')) {
+      $violations[] = "$rel: normalize o parâmetro com aculta_portal PublicRouteSlug antes de gerar a rota pública.";
+    }
   }
+}
+
+$namesPath = $root . '/web/modules/custom/aculta_portal/modules/aculta_user/src/Account/AccountNames.php';
+$namesCode = is_file($namesPath) ? file_get_contents($namesPath) : '';
+if (!str_contains($namesCode, 'public static function publicRouteSlug')
+  || !str_contains($namesCode, 'PublicRouteSlug::normalize($apelido)')
+  || !str_contains($namesCode, 'self::isValid($slug)')) {
+  $violations[] = 'AccountNames::publicRouteSlug() deve usar o normalizador do Portal e validar o slug canônico.';
+}
+
+$normalizerPath = $root . '/web/modules/custom/aculta_portal/src/Routing/PublicRouteSlug.php';
+$normalizerCode = is_file($normalizerPath) ? file_get_contents($normalizerPath) : '';
+if (!str_contains($normalizerCode, 'final class PublicRouteSlug')
+  || !str_contains($normalizerCode, 'public static function normalize')
+  || !str_contains($normalizerCode, 'mb_strtolower(trim($value)')) {
+  $violations[] = 'PublicRouteSlug::normalize() do aculta_portal deve aparar espaços e converter para minúsculas.';
+}
+
+$profileControllerPath = $root . '/web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php';
+$profileControllerCode = is_file($profileControllerPath) ? file_get_contents($profileControllerPath) : '';
+if (!str_contains($profileControllerCode, "get('field_nickname')->value")) {
+  $violations[] = 'O perfil público deve exibir o apelido salvo, preservando maiúsculas/minúsculas.';
 }
 
 if ($violations === []) {

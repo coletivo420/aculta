@@ -21,17 +21,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Sends minimal, deduplicated private-message email notices. */
 #[QueueWorker(
-  id: 'aculta_messenger_private_message_notification',
+  id: 'aculta_msg_private_notification',
   title: new TranslatableMarkup('ACULTA Messenger private message notification'),
   cron: ['time' => 30],
 )]
 final class PrivateMessageNotificationWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
-  private const TEMPLATE = 'aculta_messenger_private_message_notification';
+  private const TEMPLATE = 'aculta_msg_private_notification';
 
   private const SOURCE_FIELD = 'field_aculta_messenger_source_pm';
 
-  private const STATUS_FIELD = 'field_aculta_messenger_delivery_status';
+  private const STATUS_FIELD = 'field_aculta_msg_delivery';
 
   private const ATTEMPTS_FIELD = 'field_aculta_messenger_attempts';
 

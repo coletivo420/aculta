@@ -26,7 +26,7 @@ use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
-use Drupal\aculta_user\Friendship\FriendshipManagerInterface;
+use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\site_alert\GetAlertsInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,19 +36,19 @@ use Symfony\Component\HttpFoundation\Response;
 /** Pages for the account communication center. */
 final class MessagesController extends ControllerBase {
 
-  private const PRIVATE_MESSAGE_TEMPLATE = 'aculta_messenger_private_message_notification';
+  private const PRIVATE_MESSAGE_TEMPLATE = 'aculta_msg_private_notification';
 
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountInterface $currentUser,
+    private readonly EntityTypeManagerInterface $entityTypes,
+    private readonly AccountInterface $account,
     private readonly PrivateMessageServiceInterface $privateMessageService,
     private readonly UnreadThreadCounter $unreadThreadCounter,
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly GetAlertsInterface $siteAlerts,
     private readonly FlagServiceInterface $flagService,
     private readonly TranslationInterface $translation,
-    private readonly FormBuilderInterface $formBuilder,
+    private readonly FormBuilderInterface $forms,
     private readonly RendererInterface $renderer,
     private readonly DateFormatterInterface $dateFormatter,
   ) {}
@@ -122,15 +122,15 @@ final class MessagesController extends ControllerBase {
   /** Returns a member-authorized thread fragment for the open drawer. */
   public function drawerConversation(PrivateMessageThreadInterface $private_message_thread): Response {
     $thread = $private_message_thread;
-    $access = $thread->access('view', $this->currentUser, TRUE);
-    if (!$access->isAllowed() || !$thread->isMember($this->currentUser->id())) {
+    $access = $thread->access('view', $this->account, TRUE);
+    if (!$access->isAllowed() || !$thread->isMember($this->account->id())) {
       throw new NotFoundHttpException();
     }
 
     // Private Message owns the per-member read timestamp. Update it only after
     // confirming both entity access and active membership.
-    $thread->updateLastAccessTime($this->currentUser);
-    $threadBuild = $this->entityTypeManager->getViewBuilder('private_message_thread')->view($thread, 'full');
+    $thread->updateLastAccessTime($this->account);
+    $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
     $build = [
       '#type' => 'container',
       '#attributes' => [
@@ -165,7 +165,7 @@ final class MessagesController extends ControllerBase {
       if (!$thread instanceof PrivateMessageThreadInterface) {
         continue;
       }
-      $access = $thread->access('view', $this->currentUser, TRUE);
+      $access = $thread->access('view', $this->account, TRUE);
       $cacheability->addCacheableDependency($access);
       if (!$access->isAllowed()) {
         continue;
@@ -175,12 +175,12 @@ final class MessagesController extends ControllerBase {
       $isUnread = $this->unreadThreadCounter->isUnread($thread);
       $sender = $this->getConversationSender($thread);
       $senderName = $sender?->getDisplayName() ?: (string) $this->translation->translate('Membro');
-      $clearAccess = $thread->access('clear_personal_history', $this->currentUser, TRUE);
+      $clearAccess = $thread->access('clear_personal_history', $this->account, TRUE);
       $cacheability->addCacheableDependency($clearAccess);
       $clearHistoryUrl = NULL;
       if ($clearAccess->isAllowed()
-        && $this->currentUser->hasPermission('use private messaging system')
-        && $this->currentUser->hasPermission('access user profiles')) {
+        && $this->account->hasPermission('use private messaging system')
+        && $this->account->hasPermission('access user profiles')) {
         $clearHistoryUrl = $this->domainPurposeManager->routeUrl(
           'account',
           'entity.private_message_thread.clear_personal_history_form',
@@ -233,7 +233,7 @@ final class MessagesController extends ControllerBase {
       if (!isset($senderBoxes[$senderKey])) {
         $avatar = NULL;
         if ($sender instanceof UserInterface && $sender->hasField('user_picture') && !$sender->get('user_picture')->isEmpty()) {
-          $avatarAccess = $sender->access('view', $this->currentUser, TRUE);
+          $avatarAccess = $sender->access('view', $this->account, TRUE);
           $cacheability->addCacheableDependency($avatarAccess);
           if ($avatarAccess->isAllowed()) {
             $avatar = $sender->get('user_picture')->view('default');
@@ -339,12 +339,12 @@ final class MessagesController extends ControllerBase {
     $messages = array_values($thread->getMessages());
     $latestMessage = $messages === [] ? NULL : $messages[array_key_last($messages)];
     $sender = $latestMessage?->getOwner();
-    if ($sender !== NULL && (int) $sender->id() !== (int) $this->currentUser->id()) {
+    if ($sender !== NULL && (int) $sender->id() !== (int) $this->account->id()) {
       return $sender;
     }
 
     foreach ($thread->getMembers() as $member) {
-      if ((int) $member->id() !== (int) $this->currentUser->id()) {
+      if ((int) $member->id() !== (int) $this->account->id()) {
         return $member;
       }
     }
@@ -354,12 +354,12 @@ final class MessagesController extends ControllerBase {
 
   /** Displays currently active native Site Alerts in the same-origin modal. */
   public function alertsPreview(): Response {
-    $storage = $this->entityTypeManager->getStorage('site_alert');
+    $storage = $this->entityTypes->getStorage('site_alert');
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['active_site_alerts'])
-      ->addCacheTags($this->entityTypeManager->getDefinition('site_alert')->getListCacheTags())
+      ->addCacheTags($this->entityTypes->getDefinition('site_alert')->getListCacheTags())
       ->setCacheMaxAge($storage->getCacheMaxAge());
-    if ($this->currentUser->isAuthenticated()) {
+    if ($this->account->isAuthenticated()) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     }
     $items = [];
@@ -367,12 +367,12 @@ final class MessagesController extends ControllerBase {
     $activeAlertCount = 0;
     $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
     foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
-      $access = $alert->access('view', $this->currentUser, TRUE);
+      $access = $alert->access('view', $this->account, TRUE);
       $cacheability->addCacheableDependency($alert)->addCacheableDependency($access);
       if (!$access->isAllowed()) {
         continue;
       }
-      if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->currentUser) !== NULL) {
+      if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->account) !== NULL) {
         continue;
       }
       $activeAlertCount++;
@@ -426,16 +426,16 @@ final class MessagesController extends ControllerBase {
     if (!$flag instanceof FlagInterface) {
       return 0;
     }
-    $ids = $this->entityTypeManager->getStorage('node')->getQuery()
+    $ids = $this->entityTypes->getStorage('node')->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'aculta_notice')
       ->condition('status', 1)
       ->execute();
     $count = 0;
-    foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($ids) as $node) {
+    foreach ($this->entityTypes->getStorage('node')->loadMultiple($ids) as $node) {
       if ($node instanceof NodeInterface
-        && $node->access('view', $this->currentUser)
-        && $this->flagService->getFlagging($flag, $node, $this->currentUser) === NULL) {
+        && $node->access('view', $this->account)
+        && $this->flagService->getFlagging($flag, $node, $this->account) === NULL) {
         $count++;
       }
     }
@@ -446,7 +446,7 @@ final class MessagesController extends ControllerBase {
   public function notices(): array {
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user'])
-      ->addCacheTags($this->entityTypeManager->getDefinition('node')->getListCacheTags())
+      ->addCacheTags($this->entityTypes->getDefinition('node')->getListCacheTags())
       ->setCacheMaxAge(0);
     $items = $this->buildPersistentNoticeItems(50, $cacheability);
     if ($items === []) {
@@ -459,32 +459,32 @@ final class MessagesController extends ControllerBase {
 
   /** Builds authorized notice render arrays and native per-member Flag actions. */
   private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability): array {
-    $ids = $this->entityTypeManager->getStorage('node')->getQuery()
+    $ids = $this->entityTypes->getStorage('node')->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'aculta_notice')
       ->condition('status', 1)
       ->sort('created', 'DESC')
       ->range(0, $limit)
       ->execute();
-    $nodes = $this->entityTypeManager->getStorage('node')->loadMultiple($ids);
+    $nodes = $this->entityTypes->getStorage('node')->loadMultiple($ids);
     $flag = $this->flagService->getFlagById('aculta_notice_read');
     $items = [];
     foreach ($nodes as $node) {
       if (!$node instanceof NodeInterface) {
         continue;
       }
-      $access = $node->access('view', $this->currentUser, TRUE);
+      $access = $node->access('view', $this->account, TRUE);
       $cacheability->addCacheableDependency($node)->addCacheableDependency($access);
       if (!$access->isAllowed()) {
         continue;
       }
       $read = FALSE;
       if ($flag instanceof FlagInterface) {
-        $flagging = $this->flagService->getFlagging($flag, $node, $this->currentUser);
+        $flagging = $this->flagService->getFlagging($flag, $node, $this->account);
         $read = $flagging !== NULL;
-        $cacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
+        $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
       }
-      $item = $this->entityTypeManager->getViewBuilder('node')->view($node, 'full');
+      $item = $this->entityTypes->getViewBuilder('node')->view($node, 'full');
       if ($flag instanceof FlagInterface) {
         $item['aculta_notice_read_action'] = $this->buildDismissalLink($flag, $node);
       }
@@ -507,7 +507,7 @@ final class MessagesController extends ControllerBase {
 
   /** Builds the native per-user flag link used to dismiss a notice. */
   private function buildDismissalLink(?FlagInterface $flag, EntityInterface $entity): array {
-    if (!$flag instanceof FlagInterface || !$this->currentUser->isAuthenticated()) {
+    if (!$flag instanceof FlagInterface || !$this->account->isAuthenticated()) {
       return [];
     }
     $link = $flag->getLinkTypePlugin()->getAsFlagLink($flag, $entity, 'default');
@@ -521,34 +521,34 @@ final class MessagesController extends ControllerBase {
 
   /** Lists only delivered private-message notices owned by the current user. */
   public function notifications(): array {
-    $uid = (int) $this->currentUser->id();
+    $uid = (int) $this->account->id();
     if ($uid < 1) {
       throw new NotFoundHttpException();
     }
 
     // Message has no owner-scoped access handler. This query deliberately
     // disables generic access checks and constrains the result to the session UID.
-    $ids = $this->entityTypeManager->getStorage('message')->getQuery()
+    $ids = $this->entityTypes->getStorage('message')->getQuery()
       ->accessCheck(FALSE)
       ->condition('template', self::PRIVATE_MESSAGE_TEMPLATE)
       ->condition('uid', $uid)
-      ->condition('field_aculta_messenger_delivery_status', 'sent')
+      ->condition('field_aculta_msg_delivery', 'sent')
       ->sort('created', 'DESC')
       ->range(0, 25)
       ->execute();
-    $messages = $this->entityTypeManager->getStorage('message')->loadMultiple($ids);
+    $messages = $this->entityTypes->getStorage('message')->loadMultiple($ids);
     $items = [
-      'friend_requests' => $this->formBuilder->getForm(FriendRequestsForm::class),
+      'friend_requests' => $this->forms->getForm(FriendRequestsForm::class),
       'messages' => [],
     ];
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user'])
-      ->addCacheTags($this->entityTypeManager->getDefinition('message')->getListCacheTags());
+      ->addCacheTags($this->entityTypes->getDefinition('message')->getListCacheTags());
     foreach ($messages as $message) {
       if (!$message instanceof MessageInterface || (int) $message->getOwnerId() !== $uid) {
         continue;
       }
-      $items['messages'][] = $this->entityTypeManager->getViewBuilder('message')->view($message, 'mail_body', 'pt-br');
+      $items['messages'][] = $this->entityTypes->getViewBuilder('message')->view($message, 'mail_body', 'pt-br');
       $cacheability->addCacheableDependency($message);
     }
 

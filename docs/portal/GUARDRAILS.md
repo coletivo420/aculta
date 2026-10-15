@@ -102,20 +102,72 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 
 ## Links de perfil (`/u/<apelido>`)
 
-Regra (fixada pelo responsável): todo link para o perfil público é gerado a partir do apelido **atual** do usuário,
-pela rota `aculta_user.perfil_publico` no propósito `main` (`DomainPurposeManager::routeUrl`). Nunca escrever o
-caminho `/u/...` à mão, nunca guardar a URL do perfil em campo, configuração ou cache sem tags do perfil.
+Regra (fixada pelo responsável): valores inseridos em formulários e a apresentação preservam maiúsculas/minúsculas;
+antes de gerar qualquer rota pública navegável, o parâmetro slug passa por
+`Drupal\aculta_portal\Routing\PublicRouteSlug::normalize()`. A normalização comum remove espaços externos e
+converte para minúsculas, sem transliterar, apagar pontuação, truncar ou persistir o resultado. Cada feature continua
+responsável por validar a gramática, unicidade, palavras reservadas e acesso da própria rota. Os caminhos públicos
+canônicos são minúsculos, mas o texto visível conserva a forma salva/editorial.
 
-- **Por quê:** o apelido pode mudar. Um link escrito à mão ou guardado fica apontando para o endereço antigo
-  (que responde 404, conforme a regra de slug estável). Ao gerar pela rota, a URL acompanha o apelido.
+Para `/u/<apelido>`, `AccountNames::publicRouteSlug()` combina o normalizador do Portal com as regras de apelido e
+retorna `NULL` para valores legados que não formam uma rota válida. Todo link é gerado pela rota
+`aculta_user.perfil_publico` no propósito `main` (`DomainPurposeManager::routeUrl`), a partir do apelido **atual**;
+nunca escrever `/u/...` à mão nem guardar a URL sem tags de cache.
+
+- **Por quê:** caminhos duplicados por capitalização são ambíguos, prejudicam canonicalização/SEO e podem falhar na
+  validação estrita do roteador Drupal. Separar o valor de URL da grafia de exibição evita alterar dados autorais;
+  a função do Portal evita reimplementar lowercase de formas diferentes entre formulários.
 - **Cache:** quem gera o link registra o perfil e o usuário na cache (`getCacheTags()` / `addCacheableDependency`),
   para que a troca de apelido invalide as páginas que mostram o link (caixa de autores, faixa da postagem,
   botão "Ver Perfil" da Minha conta).
 - **Domínio:** o link é absoluto para o host do propósito `main` (ex.: a Revista aponta para o domínio principal),
   porque o perfil só existe nele. Relativo só funciona dentro do próprio host principal; por isso o link é
   gerado pelo serviço de domínio, sem host fixo no código.
-- **Gate:** `php scripts/validate-profile-links.php` reprova caminho `/u/` literal e geração de link de perfil
-  sem registro na cache. Deve ser PASS em toda mudança de perfil, caixa de autores ou faixa de postagem.
+- **Gate:** `php scripts/validate-profile-links.php` reprova caminho `/u/` literal, geração do perfil sem a regra
+  de slug canônico, perda da capitalização na exibição e falta de registro na cache. Aplicar a mesma API do Portal
+  em novos formulários e ações que gerem slugs públicos; valide sempre contra o contrato da rota proprietária.
+
+## Nomes de arquivos enviados
+
+- Uploads Drupal passam pela sanitização nativa configurada em `file.settings.yml`: transliteração para ASCII,
+  espaços e caracteres não alfanuméricos convertidos em hífen, separadores repetidos removidos e nome em
+  minúsculas. O Portal converte também a caixa da extensão após essa sanitização e antes da validação final de
+  segurança do Core; o tipo/extensão permanece sujeito à allowlist do campo.
+- A política vale para novos uploads atendidos pela API de upload do Core. Não renomear arquivos existentes nem
+  alterar manualmente URI/entidades File; isso exige migração específica, auditoria de referências e plano de rollback.
+- Não substituir `managed_file`, File API ou validações de extensão por renomeador próprio. Campos continuam donos
+  da lista de extensões/tamanho; nome limpo não torna um arquivo seguro.
+- Por quê: nomes canônicos evitam espaços, diferenças de caixa entre filesystems e caracteres problemáticos em URL;
+  o Core já oferece evento e configuração pública de sanitização, então duplicar o fluxo criaria risco de extensão,
+  colisão e inconsistência entre arquivo físico e entidade.
+- Foram avaliados `file_rename` (renomeação editorial posterior) e `filefield_paths` (padrões de nome/destino por
+  tokens durante o salvamento de entidade). Eles resolvem problemas mais amplos e diferentes; para sanitizar o nome
+  original de uploads, a API de evento e as opções de `file.settings` do Core cobrem o contrato sem nova dependência.
+  Referências: [FileEventSubscriber do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21EventSubscriber%21FileEventSubscriber.php/class/FileEventSubscriber/11.x),
+  [configuração file.settings do Core](https://api.drupal.org/api/drupal/core%21modules%21file%21config%21install%21file.settings.yml/11.x),
+  [File Rename](https://www.drupal.org/project/file_rename) e
+  [File (Field) Paths](https://www.drupal.org/project/filefield_paths).
+
+## Documentação e Status das capacidades do Portal
+
+- Toda capacidade/função funcional nova do módulo principal `aculta_portal` deve ser registrada no README do módulo,
+  na documentação específica do contrato e no resumo `description` do `aculta_portal.info.yml`. O Status administrativo
+  apresenta esse resumo junto das extensões Portal habilitadas.
+- Cada submódulo em `aculta_portal/modules/` declara `name` e `description` no próprio `.info.yml` e mantém um README
+  ou ao menos um documento em `docs/`. O painel **ACULTA Portal > Status** deriva sua lista do registro de extensões
+  habilitadas (`module_handler`), sem uma lista paralela manual.
+- Ao criar uma capacidade, verifique que a documentação explica finalidade, fonte de verdade, fronteiras, segurança,
+  cache/Domain e configuração/testes pertinentes. Atualize o changelog do Portal e a documentação específica no mesmo
+  conjunto de mudanças.
+- O gate `php scripts/validate-aculta-portal-drupal11.php` valida o README/descrição do Portal, a implementação do
+  inventário de Status e a presença de descrição/documentação em cada submódulo.
+- Cada novo serviço reutilizável do Portal deve receber a tag `aculta_portal.helper` e metadados em
+  `PortalHelperRegistry`; cada serviço de integração runtime efetivamente aplicado deve receber a tag
+  `aculta_portal.implementation` e metadados em `PortalImplementationRegistry`. A tela Status mantém seções próprias
+  para Helpers ativos e Extras aplicados dentro de Implementações do ACULTA Portal. Novos registros exigem referência
+  documental existente e atualização do gate; ver [IMPLEMENTATIONS.md](IMPLEMENTATIONS.md).
+- Por quê: evita funcionalidades invisíveis para administradores, reduz divergência entre código e documentação e
+  mantém o Status baseado no estado efetivo de habilitação do Drupal.
 
 ## Usuários de teste criados por agentes
 

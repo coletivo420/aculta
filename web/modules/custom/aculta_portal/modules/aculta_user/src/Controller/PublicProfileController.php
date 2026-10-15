@@ -39,8 +39,8 @@ final class PublicProfileController extends ControllerBase {
     private readonly PublicProfilePolicy $policy,
     private readonly SocialNetworks $networks,
     private readonly FriendshipManagerInterface $friendshipManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly FormBuilderInterface $formBuilder,
+    private readonly AccountProxyInterface $account,
+    private readonly FormBuilderInterface $forms,
   ) {}
 
   /**
@@ -71,6 +71,10 @@ final class PublicProfileController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
+    // The URL slug is canonical lowercase, while the stored nickname is the
+    // user-facing display value and may retain uppercase characters.
+    $displayNickname = (string) $profile->get('field_nickname')->value;
+
     $account = $profile->getOwner();
     $cache = (new CacheableMetadata())
       ->addCacheTags(['profile:' . $profile->id(), 'user:' . $profile->getOwnerId()])
@@ -85,7 +89,7 @@ final class PublicProfileController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'public-profile'],
-      'header' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-header'], 'avatar' => $this->avatar($account, $apelido, isset($items['foto'])), 'identity' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-identity'], 'name' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $apelido, '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-name'])]]],
+      'header' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-header'], 'avatar' => $this->avatar($account, $displayNickname, isset($items['foto'])), 'identity' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-identity'], 'name' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $displayNickname, '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-name'])]]],
     ];
 
     if (isset($items['bio']) && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()) {
@@ -101,14 +105,14 @@ final class PublicProfileController extends ControllerBase {
     if (isset($items['email']) && $account !== NULL && $account->getEmail() !== '') {
       $links[] = $this->emailLink((string) $account->getEmail());
     }
-    if ($account !== NULL && $this->currentUser->isAuthenticated() && (int) $this->currentUser->id() !== (int) $account->id()) {
+    if ($account !== NULL && $this->account->isAuthenticated() && (int) $this->account->id() !== (int) $account->id()) {
       $relationship = $this->friendshipManager->getRelationshipWith((int) $account->id());
       $build['header']['actions'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'public-profile-actions'],
-        'friendship' => $this->formBuilder->getForm(FriendshipActionForm::class, $account, $relationship),
+        'friendship' => $this->forms->getForm(FriendshipActionForm::class, $account, $relationship),
       ];
-      $cache->addCacheContexts(['user'])->addCacheTags(['user:' . $this->currentUser->id()]);
+      $cache->addCacheContexts(['user'])->addCacheTags(['user:' . $this->account->id()]);
       $cache->addCacheTags($this->entityTypeManagerService->getDefinition('aculta_friendship')->getListCacheTags());
       if ($relationship !== NULL) {
         $cache->addCacheableDependency($relationship);

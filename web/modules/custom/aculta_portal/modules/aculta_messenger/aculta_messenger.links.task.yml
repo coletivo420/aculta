@@ -1,0 +1,17 @@
+aculta_messenger.admin_notices.overview:
+  route_name: aculta_messenger.admin_notices
+  title: 'Visão geral'
+  base_route: aculta_messenger.admin_notices
+  weight: 0
+
+aculta_messenger.admin_notices.temporary:
+  route_name: aculta_messenger.admin_temporary_notices
+  title: 'Avisos temporários'
+  base_route: aculta_messenger.admin_notices
+  weight: 1
+
+aculta_messenger.admin_notices.persistent:
+  route_name: aculta_messenger.admin_persistent_notices
+  title: 'Avisos persistentes'
+  base_route: aculta_messenger.admin_notices
+  weight: 2

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_magazine\Presentation;
 
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\aculta_user\Account\AccountNames;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_user\PublicProfilePolicy;
@@ -104,8 +105,9 @@ final class PostPresentation {
       $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
       $publico = $profile ? (bool) $profile->get('field_perfil_publico')->value : TRUE;
       $publico = $publico || PublicProfilePolicy::isObrigatorioPublico($owner->getRoles());
-      if ($publico && $nickname !== '') {
-        $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $nickname]);
+      $publicSlug = AccountNames::publicRouteSlug($nickname);
+      if ($publico && $publicSlug !== NULL) {
+        $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
         if ($url !== NULL) {
           return PortalLinkElement::build($nickname, $url, ['data-portal-ui' => 'post-meta-author']);
         }

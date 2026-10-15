@@ -1,6 +1,6 @@
 name: Portal ACULTA
 type: module
-description: 'Integra a identidade do tema ACULTA aos módulos de conta e ao conteúdo institucional do Drupal.'
+description: 'Integra módulos de conta e conteúdo Drupal, oferece contratos de propósito, slugs públicos canônicos e sanitização nativa de nomes de upload.'
 package: Associação Cultural Antiproibicionista
 version: '0.4.0-dev.17'
 core_version_requirement: ^11.3

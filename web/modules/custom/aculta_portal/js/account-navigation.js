@@ -48,7 +48,10 @@
       event: 'click',
       wrapper: wrapperId,
       method: 'html',
-      progress: { type: 'throbber' },
+      // Navigation replaces the content directly; do not insert a click
+      // spinner. aria-busy remains on the layout for assistive technology.
+      progress: { type: 'none' },
+      effect: 'none',
     });
     // O success do Drupal resolve depois dos comandos (inclui carregar bibliotecas): o estado novo é lido só então.
     const success = ajax.success.bind(ajax);

@@ -1,0 +1,13 @@
+aculta_messenger.add_temporary_notice:
+  route_name: entity.site_alert.add_form
+  title: 'Criar aviso temporário'
+  appears_on:
+    - aculta_messenger.admin_notices
+    - aculta_messenger.admin_temporary_notices
+
+aculta_messenger.add_persistent_notice:
+  route_name: aculta_messenger.admin_persistent_notice_add
+  title: 'Criar aviso persistente'
+  appears_on:
+    - aculta_messenger.admin_notices
+    - aculta_messenger.admin_persistent_notices

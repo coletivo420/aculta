@@ -3,15 +3,15 @@ status: true
 dependencies:
   config:
     - field.storage.message.field_aculta_messenger_attempts
-    - message.template.aculta_messenger_forum_topic_published
+    - message.template.aculta_msg_private_notification
   enforced:
     module:
       - aculta_messenger
 field_name: field_aculta_messenger_attempts
 entity_type: message
-bundle: aculta_messenger_forum_topic_published
-label: 'Tentativas de processamento'
-description: 'Número de tentativas do evento de assinatura.'
+bundle: aculta_msg_private_notification
+label: 'Tentativas de entrega'
+description: 'Contagem limitada de tentativas para o envio do aviso.'
 required: true
 translatable: false
 default_value:

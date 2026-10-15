@@ -1,62 +1,102 @@
 services:
+  aculta_portal.helper_registry:
+    class: Drupal\aculta_portal\Status\PortalHelperRegistry
+    autowire: false
+    arguments: []
+    tags:
+      - { name: service_id_collector, tag: aculta_portal.helper }
+  aculta_portal.implementation_registry:
+    class: Drupal\aculta_portal\Status\PortalImplementationRegistry
+    autowire: false
+    arguments: []
+    tags:
+      - { name: service_id_collector, tag: aculta_portal.implementation }
   aculta_portal.turnstile_key_override:
     class: Drupal\aculta_portal\Captcha\TurnstileKeyOverride
     arguments: ['%app.root%']
     tags:
       - { name: config.factory.override, priority: 90 }
+      - { name: aculta_portal.helper }
   aculta_portal.turnstile_toggle:
     class: Drupal\aculta_portal\Captcha\TurnstileToggle
     arguments: ['@config.factory', '@entity_type.manager', '@key.repository', '@logger.factory']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.registration_mail_policy:
     class: Drupal\aculta_portal\Account\RegistrationMailPolicy
     arguments: ['@entity_type.manager', '@plugin.manager.mail']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.color_mode_preference:
     class: Drupal\aculta_portal\Appearance\ColorModePreference
     arguments: ['@config.factory', '@user.data']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.registration_terms:
     class: Drupal\aculta_portal\Account\RegistrationTerms
     arguments: ['@agreement.handler', '@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.account_terms_policy:
     class: Drupal\aculta_portal\Account\AccountTermsPolicy
     arguments: ['@agreement.handler', '@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.access.protected_route:
     class: Drupal\aculta_portal\Access\ProtectedRouteAccessCheck
     arguments: ['@aculta_portal.access.email_confirmed', '@class_resolver', '@aculta_portal.account_terms_policy']
+    tags:
+      - { name: aculta_portal.implementation }
   aculta_portal.access.email_confirmed:
     class: Drupal\aculta_portal\Access\EmailConfirmedAccessCheck
     arguments: ['@aculta_portal.email_confirmation_policy']
+    tags:
+      - { name: aculta_portal.implementation }
   aculta_portal.email_confirmation_notice:
     class: Drupal\aculta_portal\Account\EmailConfirmationNotice
     arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@csrf_token', '@string_translation']
   aculta_portal.email_confirmation_requester:
     class: Drupal\aculta_portal\Email\EmailConfirmationRequester
     arguments: ['@email_confirmer', '@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.email_confirmation_policy:
     class: Drupal\aculta_portal\Account\EmailConfirmationPolicy
     arguments: ['@user.data', '@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.email_confirmation_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\EmailConfirmationSubscriber
     arguments: ['@aculta_portal.email_confirmation_policy']
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
   aculta_portal.deployer_status_reader:
     class: Drupal\aculta_portal\Deployer\DeployerStatusReader
     arguments: ['%app.root%']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.secrets_manager:
     class: Drupal\aculta_portal\Secrets\SecretsManager
     arguments: ['@key.repository', '@settings', '@logger.factory', '%app.root%']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.secrets_controller:
     class: Drupal\aculta_portal\Secrets\SecretsController
     arguments: ['@aculta_portal.secrets_manager', '@form_builder', '@current_user', '@string_translation']
   aculta_portal.auth_integration:
     class: Drupal\aculta_portal\Auth\AuthIntegrationManager
     arguments: ['@config.factory']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.form_callbacks:
     class: Drupal\aculta_portal\Form\PortalFormCallbacks
     arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.registration_terms', '@aculta_portal.registration_mail_policy']
   aculta_portal.search_results:
     class: Drupal\aculta_portal\Search\SearchResults
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.search_preview_controller:
     class: Drupal\aculta_portal\Search\SearchPreviewController
     arguments: ['@aculta_portal.search_results', '@aculta_portal.domain_purpose', '@renderer', '@string_translation']
@@ -65,36 +105,49 @@ services:
     arguments: ['@aculta_portal.domain_purpose']
     tags:
       - { name: path_processor_inbound, priority: 300 }
+      - { name: aculta_portal.implementation }
   aculta_portal.account_ajax_main_content_renderer:
     class: Drupal\aculta_portal\Render\AccountAjaxMainContentRenderer
     decorates: main_content_renderer.ajax
     arguments: ['@aculta_portal.account_ajax_main_content_renderer.inner', '@title_resolver', '@breadcrumb']
     tags:
       - { name: render.main_content_renderer, format: drupal_ajax }
+      - { name: aculta_portal.implementation }
   aculta_portal.checkout_friendly_path_processor:
     class: Drupal\aculta_portal\PathProcessor\CheckoutFriendlyPathProcessor
     tags:
       - { name: path_processor_inbound, priority: 310 }
       - { name: path_processor_outbound, priority: 310 }
+      - { name: aculta_portal.implementation }
   aculta_portal.account_list_path_processor:
     class: Drupal\aculta_portal\PathProcessor\AccountListPathProcessor
     tags:
       - { name: path_processor_outbound, priority: 300 }
+      - { name: aculta_portal.implementation }
   aculta_portal.cart_ajax:
     class: Drupal\aculta_portal\Cart\AddToCartAjax
     arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger']
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
     arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.search_utility:
     class: Drupal\aculta_portal\Search\SearchUtility
     arguments: ['@aculta_portal.domain_purpose', '@string_translation']
+    tags:
+      - { name: aculta_portal.helper }
+  Drupal\aculta_portal\Domain\DomainPurposeManager: '@aculta_portal.domain_purpose'
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
     arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose', '@group.membership_loader']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.presentation.account_course:
     class: Drupal\aculta_portal\Presentation\AccountCoursePresenter
     arguments: ['@aculta_portal.account_courses', '@string_translation']
@@ -112,90 +165,130 @@ services:
   aculta_portal.content_purpose_resolver:
     class: Drupal\aculta_portal\Domain\ContentPurposeResolver
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.account_shell_builder:
     class: Drupal\aculta_portal\AccountShellBuilder
     arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation', '@aculta_portal.domain_purpose', '@router.route_provider', '@module_handler', '@current_user']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.breadcrumb_builder:
     class: Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder
     arguments: ['@aculta_portal.domain_purpose', '@request_stack', '@title_resolver', '@path.matcher']
     tags:
       - { name: breadcrumb_builder, priority: 100 }
+      - { name: aculta_portal.implementation }
   aculta_portal.domain_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DomainRouteSubscriber
     arguments: ['@config.factory']
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.domain_purpose_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
     arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_purpose_resolver']
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
   # CEP Autocomplete 1.0.0 references this Drupal logger channel but does
   # not define it. Supply the standard Core logger channel without changing
   # contributed code.
   logger.channel.cep_autocomplete:
     parent: logger.channel_base
     arguments: ['cep_autocomplete']
+
   aculta_portal.mercado_pago_environment_override:
     class: Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoEnvironmentOverride
     arguments: ['%app.root%']
     tags:
       - { name: config.factory.override, priority: 100 }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.mercado_pago_webhook_guard:
     class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookGuard
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.mercado_pago_webhook_subscriber:
     class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookEventSubscriber
     arguments: ['@entity_type.manager', '@key.repository', '@aculta_portal.mercado_pago_webhook_guard']
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.account_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber
     arguments: ['@current_user', '@aculta_portal.domain_purpose']
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.cep_lookup_rate_limit_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\CepLookupRateLimitSubscriber
     arguments: ['@flood']
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.lms_friendly_slugs:
     class: Drupal\aculta_portal\Lms\LmsFriendlySlugs
     arguments: ['@entity_type.manager', '@transliteration']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.lms_friendly_slug_converter:
     class: Drupal\aculta_portal\Lms\LmsFriendlySlugConverter
     arguments: ['@aculta_portal.lms_friendly_slugs']
     tags:
       - { name: paramconverter }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.lms_friendly_route_processor:
     class: Drupal\aculta_portal\Lms\LmsFriendlyRouteProcessor
     arguments: ['@entity_type.manager', '@aculta_portal.lms_friendly_slugs']
     tags:
       - { name: route_processor_outbound, priority: 100 }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.donation_friendly_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DonationFriendlyRouteSubscriber
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.cart_friendly_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\CartFriendlyRouteSubscriber
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.lms_friendly_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\LmsFriendlyRouteSubscriber
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.social_auth_user_created_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\SocialAuthUserCreatedSubscriber
     arguments: ['@user.data']
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.social_auth_profile_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\SocialAuthProfileSubscriber
     arguments: ['@entity_type.manager']
     tags:
       - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
   aculta_portal.account_page_title:
     class: Drupal\aculta_portal\Account\AccountPageTitle
     arguments: ['@current_route_match', '@config.factory', '@string_translation']
   aculta_portal.settings_tabs:
     class: Drupal\aculta_portal\Appearance\SettingsTabs
     arguments: ['@module_handler']
+  aculta_portal.uploaded_filename_extension_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\UploadedFilenameExtensionSubscriber
+    tags:
+      - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
