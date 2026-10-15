@@ -1,5 +1,11 @@
 # Changelog — ACULTA Fórum
 
+## 2026-10-15 — ajuste de identidade aprovado
+
+- Marca futura: Growroom420; prefixo público `growroom420.aculta`.
+- Purpose interno `forum` e fontes históricas Growroom preservados.
+- Decisão documental; nenhum domínio provisionado nesta alteração.
+
 ## 2026-10-15 — abertura documental do projeto
 
 - Plano aprovado: Growroom, memória histórica, conversas atuais vinculadas e

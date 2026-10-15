@@ -1,4 +1,4 @@
-# ACULTA Fórum — Growroom
+# ACULTA Fórum — Growroom420
 
 Projeto do futuro submódulo opcional `aculta_forum`, integrante do `aculta_portal`.
 Plano aprovado pelo responsável em **2026-10-15**. Esta entrega abre a documentação;
@@ -13,7 +13,7 @@ atuais de identidade, mensagens, galerias, conhecimento, loja e cursos.
 
 ## Decisões aprovadas
 
-- O endereço público passa do prefixo `forum` para **`growroom.aculta`**. A mudança
+- O endereço público passa do prefixo `forum` para **`growroom420.aculta`**. A mudança
   operacional será provisionada por ambiente pelo Deployer; o purpose interno
   continua `forum`, evitando reconstruir a política multidomínio.
 - Áreas comunitárias têm leitura pública e postagem por conta cadastrada; as

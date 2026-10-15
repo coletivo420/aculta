@@ -1,6 +1,8 @@
 # Decisões — ACULTA Fórum
 
 Data: 2026-10-15. Fonte: decisões explícitas do responsável nesta sessão.
+Atualização do responsável: marca **Growroom420**, prefixo **`growroom420.aculta`**.
+O acervo de origem continua identificado como Growroom nas fontes históricas.
 Este documento governa o projeto futuro; não descreve alterações já aplicadas.
 
 ## Aprovado
@@ -8,7 +10,7 @@ Este documento governa o projeto futuro; não descreve alterações já aplicada
 | ID | Decisão | Consequência |
 | --- | --- | --- |
 | F-D01 | Reconstruir o Growroom usando o Wayback, sem backup próprio disponível | Medir cobertura e preservar lacunas; não prometer conteúdo não arquivado |
-| F-D02 | Prefixo público `growroom` em lugar de `forum` | Deployer, Domain/aliases, infraestrutura e URLs serão atualizados por ambiente |
+| F-D02 | Prefixo público `growroom420` em lugar de `forum` | Deployer, Domain/aliases, infraestrutura e URLs serão atualizados por ambiente |
 | F-D03 | Leitura comunitária pública; postagem por cadastrados | Permissões nativas e regras atuais de participação |
 | F-D04 | Discussões do LMS reservadas a matriculados e equipe | Acesso, busca, cache e notificações dependem do contexto do curso |
 | F-D05 | Acervo fechado e nova conversa vinculada | A postagem atual não modifica a sequência histórica |

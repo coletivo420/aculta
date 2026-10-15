@@ -123,7 +123,7 @@ Consultar [CHANGELOG.md](CHANGELOG.md).
 
 ## Projetos de submódulos
 
-- [ACULTA Fórum — Growroom](modules/aculta_forum/README.md): acervo recuperado do
+- [ACULTA Fórum — Growroom420](modules/aculta_forum/README.md): acervo recuperado do
   Wayback, memorial coletivo com autoria individual e integração comunitária.
 - [ACULTA Game](modules/aculta_game/README.md): conquistas e missões, reaproveitando
   a base atual de badges sem duplicar concessões e com pesquisa de licenças.

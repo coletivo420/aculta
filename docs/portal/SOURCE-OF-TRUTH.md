@@ -56,9 +56,9 @@ dos módulos que integra.
 
 ### Projetos aprovados para evolução — 2026-10-15
 
-O [ACULTA Fórum/Growroom](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
+O [ACULTA Fórum/Growroom420](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
 integra os mesmos Forum/Node/Comment/Taxonomy. A marca e o prefixo público mudam
-para `growroom` na fase operacional, preservando o purpose `forum`. Autores
+para `growroom420` na fase operacional, preservando o purpose `forum`. Autores
 históricos mantêm Users individuais bloqueados; o destino público de todos é
 o memorial coletivo `/u/lendashistoricas`, sem páginas individuais.
 

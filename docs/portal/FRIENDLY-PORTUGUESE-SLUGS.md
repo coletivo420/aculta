@@ -209,7 +209,7 @@ Rotas LMS técnicas podem permanecer internas.
 
 Decisão aprovada em 2026-10-15, com implementação futura no
 [ACULTA Fórum](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md):
-a marca/prefixo público será Growroom; o purpose interno permanece `forum`.
+a marca/prefixo público será Growroom420; o purpose interno permanece `forum`.
 O memorial dos autores legados usa exatamente **`/u/lendashistoricas`**, uma
 página coletiva no contexto MAIN dos perfis. É uma exceção explícita à separação
 de palavras por hífen. Autores preservam nomes individuais, mas não têm página

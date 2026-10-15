@@ -57,9 +57,9 @@
 
 ## Projetos aprovados — 2026-10-15
 
-- [ACULTA Fórum / Growroom](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
+- [ACULTA Fórum / Growroom420](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
   — reconstrução do acervo, autores individuais no memorial coletivo, prefixo
-  `growroom`, conversas atuais vinculadas e integrações do Portal.
+  `growroom420`, conversas atuais vinculadas e integrações do Portal.
 - [ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md)
   — conquistas e missões sem ranking ou benefícios financeiros; exibição pública
   por padrão com privacidade e destaques; pesquisa de módulos e licenças.

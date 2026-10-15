@@ -26,7 +26,7 @@ Mover hooks existentes entre módulos apenas em fase própria, com paridade comp
 
 ## Domínio e publicação
 
-O nome público passa a Growroom. O identificador funcional `forum` permanece para
+O nome público passa a Growroom420. O identificador funcional `forum` permanece para
 DomainPurposeManager, ContentPurposeResolver e políticas já existentes. Um ID
 Domain não é marca pública: renomeá-lo sem necessidade quebraria referências.
 
