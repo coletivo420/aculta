@@ -1,0 +1,29 @@
+uuid: bf429ab4-2789-4c2c-bd07-b8494fd418f3
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - comment
+id: sinalizar_comentario
+label: 'Sinalizar comentário'
+bundles:
+  - comment_forum
+entity_type: comment
+global: false
+flag_short: 'Denunciar comentário'
+flag_long: 'Denunciar este comentário para a moderação.'
+flag_message: 'Comentário denunciado. A equipe vai analisar.'
+unflag_short: 'Retirar denúncia'
+unflag_long: ''
+unflag_message: 'Denúncia retirada.'
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:comment'
+link_type: reload
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: false
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions: {  }
+linkTypeConfig: {  }

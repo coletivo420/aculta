@@ -26,6 +26,7 @@ label: 'Editor de conteúdo'
 weight: 2
 is_admin: false
 permissions:
+  - 'moderar denuncias do forum'
   - 'access administration pages'
   - 'access content overview'
   - 'access content'
