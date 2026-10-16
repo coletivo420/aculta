@@ -8,6 +8,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_user\Forum\RestrictedForumGrants;
@@ -166,6 +167,32 @@ final class RestrictedForumHooks implements ContainerInjectionInterface {
       return;
     }
     node_access_rebuild();
+  }
+
+  /**
+   * Tira do sitemap os nós e contêineres restritos (F9, F-D14, item 5).
+   *
+   * Motivo: o simple_sitemap gera a partir das entidades sem consultar grants. Sem este filtro, um tópico restrito
+   * entraria no sitemap público.
+   */
+  #[Hook('simple_sitemap_links_alter')]
+  public function simpleSitemapLinksAlter(array &$links, object $sitemap): void {
+    foreach ($links as $key => $link) {
+      $caminho = (string) ($link['meta']['path'] ?? '');
+      if (!preg_match('#^(node|taxonomy/term)/(\d+)$#', $caminho, $m)) {
+        continue;
+      }
+      $entidade = $this->entityTypeManager->getStorage($m[1] === 'node' ? 'node' : 'taxonomy_term')->load((int) $m[2]);
+      if ($entidade === NULL) {
+        continue;
+      }
+      $restrito = $entidade instanceof NodeInterface
+        ? $this->realmsRestritos($entidade) !== []
+        : ($entidade instanceof TermInterface && $entidade->bundle() === 'forums' && $this->realmsDoNivel($entidade) !== []);
+      if ($restrito) {
+        unset($links[$key]);
+      }
+    }
   }
 
 }

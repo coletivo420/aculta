@@ -2,7 +2,8 @@
 
 - Papel `associado` versionado (concessão manual). Campo `field_visibilidade` no contêiner: público, e-mail confirmado, associado.
 - Visitante não vê contêiner, tópico nem listagem de fórum restrito. Associado vê; e-mail confirmado sem associado não vê o nível associado.
-- Pendentes antes de criar restritos no site público: processador `content_access` no índice de busca (ainda desativado) e reindexação; exclusão no sitemap; comentários em tópico restrito; nível de curso (F8); política para `content_editor`.
+- Verificado em 2026-10-16: processador `content_access` ativo no índice; tópicos de fórum fora do índice de busca (tipo `forum` não selecionado); restrito fora do sitemap; comentário de tópico restrito invisível para anônimo. Bots recebem 403 nos restritos.
+- Pendentes: nível de curso (F8); política para `content_editor`; exclusão no sitemap precisa ser mantida se o tipo `forum` entrar no sitemap.
 
 ## F5.1 — denúncias e participação com e-mail confirmado — 2026-10-16
 

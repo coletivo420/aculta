@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.14 — F9: sitemap, busca e comentários de fórum restrito — 2026-10-16
+
+Classificação MINOR. Exclusão de nó e contêiner restritos do `simple_sitemap` (hook de links). Conferido no teste:
+restrito fora do sitemap; comentário de tópico restrito invisível para anônimo e visível para administrador; forum
+não está no índice de busca (tipos indexados: activity, article, document, page, project) e no sitemap (sem
+configuração de tipo `forum`).
+
 ## 0.4.0-dev.13 — F9 parcial: fóruns restritos por nível (associado e e-mail confirmado) — 2026-10-16
 
 Classificação MINOR. Papel `associado` versionado em `config/sync` (concessão manual, sem permissões). Campo

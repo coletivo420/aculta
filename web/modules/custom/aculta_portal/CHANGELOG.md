@@ -1,3 +1,8 @@
+## 0.4.0-dev.47 — F9: fóruns restritos verificados — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.14. Sitemap, comentários e busca conferidos no teste. Falta: nível
+de curso (F8) e política do `content_editor`.
+
 ## 0.4.0-dev.46 — F9 parcial: fóruns restritos — 2026-10-16
 
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.13. Fóruns restritos por nível funcionam para visitante,
