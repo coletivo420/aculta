@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.33 — avisos por pessoa para respostas em tópico seguido (F5.2) — 2026-10-16
+
+- Entidade `aculta_aviso` (uma por pessoa e tópico) com contadores do site e do e-mail e marca do último comentário.
+- `Aviso\AvisoService`: conta cada comentário publicado uma vez; autor não recebe aviso do próprio comentário; leitura zera o contador do site.
+- Hooks `comment_insert` e `comment_update` (aprovação) e leitura pela rota canônica do tópico.
+- Entrega por mensagem de tópico seguido desligada (`MessageSubscribeHooks::getSubscribers` retorna vazio) — F-D21.
+- Documentação: `docs/AVISOS-E-MENSAGENS.md` separa mensagens e avisos e descreve cada função do módulo.
+- Pendente: aviso de atualização de tópico, contador na barra, resumo diário por e-mail.
+
 ## 0.1.1-dev.32 — avisos não interrompem perfis anônimos — 2026-10-15
 
 Classificação PATCH. A dispensa de avisos pertence a contas autenticadas: contagem

@@ -19,6 +19,11 @@ threads. Administradores e editores de conteúdo podem iniciar novas threads,
 mas o bloqueio individual nativo do Private Message continua obrigatório.
 Respostas em threads existentes não são restringidas pela preferência.
 
+## Mensagens e avisos
+
+Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A tabela e as funções de cada um estão em
+[docs/AVISOS-E-MENSAGENS.md](docs/AVISOS-E-MENSAGENS.md).
+
 ## Escopo arquitetural
 
 - Private Message mantém conversas, mensagens, participantes e suas regras de
@@ -26,14 +31,15 @@ Respostas em threads existentes não são restringidas pela preferência.
 - Message mantém eventos persistentes configurados como tipos de mensagem.
 - Message Notify entrega mensagens por notificadores existentes e pela
   infraestrutura de e-mail do Drupal.
-- Message Subscribe e Flag mantêm assinaturas; assinar nunca concede acesso.
+- Message Subscribe e Flag mantêm assinaturas; assinar nunca concede acesso. Para tópicos de fórum, a entrega por mensagem foi desligada (F-D21); ver `docs/AVISOS-E-MENSAGENS.md`.
 - Site Alert mantém alertas temporários globais.
 - Comunicados persistentes são Nodes `aculta_notice`, segmentados por papéis
   Drupal existentes, moderados pelo workflow editorial e com validade opcional.
 - A leitura individual dos comunicados usa a flag não global `aculta_notice_read`;
   o Private Message mantém seu estado nativo lido/não lido por conversa.
-- `aculta_messenger` não cria engine de mensagens, tabelas, entidades espelho,
-  transporte SMTP ou regras visuais.
+- `aculta_messenger` não cria engine de mensagens, transporte SMTP ou regras visuais.
+  Exceção documentada: a entidade `aculta_aviso` guarda o aviso por pessoa de respostas em tópico
+  seguido (F5.2). Avisos e mensagens são sistemas separados: ver `docs/AVISOS-E-MENSAGENS.md`.
 - A prévia da barra agrupa conversas em caixas por remetente. Caixas e
   conversas são ordenadas pela atualização mais recente; o cabeçalho do
   remetente abre a conversa mais recente com essa pessoa, e cada conversa
@@ -101,8 +107,8 @@ JavaScript, isolamento real, instalação do bundle editorial e acessibilidade
 do modal ainda não foram verificados.
 
 Para assinaturas, dev.5 reutiliza a flag Drupal `seguir_topico` dos tópicos
-`forum`. A publicação gera evento Message e chama Message Subscribe, que aplica
-status e acesso atual do conteúdo. A URL segue o purpose `forum` e a política de
+`forum`. A publicação de tópico não gera mais mensagem: Message Subscribe não entrega para `forum`
+(F-D21). Respostas viram avisos por pessoa (`aculta_aviso`), ver `docs/AVISOS-E-MENSAGENS.md`. A URL segue o purpose `forum` e a política de
 slug em português. Assinaturas de Group não foram conectadas, pois `gnode` não
 está ativo. O e-mail utiliza a infraestrutura já instalada pelo Drupal; a
 entrega real aguarda teste controlado no Homelab.
