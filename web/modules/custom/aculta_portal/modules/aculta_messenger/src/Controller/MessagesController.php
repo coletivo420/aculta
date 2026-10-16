@@ -444,7 +444,6 @@ final class MessagesController extends ControllerBase {
       );
       $linkTitle = [
         '#type' => 'container',
-        'estado' => $this->readLabel($isUnread),
         'date' => [
           '#theme' => 'aculta_portal_element',
           '#tag' => 'span',
@@ -518,6 +517,8 @@ final class MessagesController extends ControllerBase {
           'image' => $senderBox['avatar'] ?? ['#plain_text' => mb_substr($senderBox['name'], 0, 1)],
         ],
         'name' => $senderBox['open'] ?? ['#plain_text' => $senderBox['name']],
+        // Rótulo Lido / Não lido à direita, fora do link: a caixa inteira continua sendo o link.
+        'estado' => $this->readLabel($senderBox['unread']),
         'actions' => $senderBox['actions'],
       ];
       if ($senderBox['sender'] instanceof UserInterface) {
@@ -727,10 +728,6 @@ final class MessagesController extends ControllerBase {
     $title_parts = [
       '#type' => 'container',
     ];
-    // Rótulo de lido/não lido (avisos do Fórum) fica no topo, à esquerda; o aviso persistente segue com o estado no rodapé.
-    if ($rotulo !== NULL) {
-      $title_parts['rotulo'] = $rotulo;
-    }
     $title_parts['title'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-title']), '#value' => $title];
     if ($excerpt !== '') {
       $title_parts['excerpt'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-excerpt']), '#value' => $excerpt];
@@ -748,6 +745,8 @@ final class MessagesController extends ControllerBase {
         'data-aculta-conversation-url' => $url->toString(),
         'data-portal-ui' => 'notice-summary-link',
       ]),
+      // Rótulo de lido/não lido (avisos do Fórum) à direita, fora do link; o persistente segue com o estado no rodapé.
+      'rotulo' => $rotulo ?? [],
       'dismiss' => $dismiss,
     ];
   }

@@ -1071,3 +1071,12 @@ Classificação: PATCH (navegação da caixa de mensagens existente).
 - Verificações estáticas: PHP lint e `node --check` PASS; gates do Portal/tema pendentes.
 - RUNTIME STATUS: DEFERRED.
 
+## 0.6.0-dev.60 — apresentação do leitor PDF compartilhado — 2026-10-16
+
+Classificação: PATCH (apresentação/acessibilidade sem API visual nova).
+
+- `css/components/pdf-viewer.css` estiliza o contrato neutro de `aculta_pdf_viewer` usando tokens ACULTA420 e controles Bootstrap compatíveis.
+- Layout flexível para toolbar, busca, canvas, estados, fallback de download e tela cheia; alvos de toque de 2,75 rem e foco visível.
+- PDF.js/Media continuam donos do comportamento e acesso; o tema só apresenta os atributos neutros do formatter.
+- Validação visual no Runtime: DEFERRED até anexar PDF de teste temporário.
+

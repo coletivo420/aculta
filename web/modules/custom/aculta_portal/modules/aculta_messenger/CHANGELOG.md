@@ -2,6 +2,13 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.42 — rótulo Lido/Não lido à direita, com cor de fonte por estado (F5.2) — 2026-10-16
+
+Classificação: PATCH (ajuste de apresentação do rótulo criado em dev.41).
+
+- O rótulo sai do lado esquerdo e fica à direita da caixa, no topo, fora do link (a caixa inteira continua clicável).
+- Lido e Não lido têm cores de fonte diferentes; o fundo fica só atrás do texto do rótulo.
+
 ## 0.1.1-dev.41 — rótulo Lido/Não lido e retenção de 6 meses dos avisos do Fórum (F5.2) — 2026-10-16
 
 Classificação: MINOR (nova regra de retenção e novo rótulo de estado).
