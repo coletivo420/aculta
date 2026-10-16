@@ -122,11 +122,104 @@ Contador zero não basta para excluir.
   dois ambientes.
 - Nenhuma fase altera produção; deploy segue a política do responsável.
 
+### 3.7 Sistemas que consomem ou vão consumir imagens
+
+Mapa de 2026-10-17. "Hoje" descreve o código; "Próximo" descreve o que a fase em implementação exige.
+
+| Sistema | Hoje | Próximo (obrigatório via aculta_image) |
+| --- | --- | --- |
+| `aculta_gallery` | `image_style` na view; upload do embed com limite de 10 MB próprio | Finalidades `galeria_miniatura`, `galeria_visualizacao`, `galeria_lightbox`; upload pela política única |
+| `aculta_game` | `managed_file` em `public://conquistas` com 2 MB e 4096 px próprios | Upload pela política única; imagem de conquista como finalidade `conquista`; sem `public://` direto |
+| `aculta_user` | avatar, recorte (`AvatarCropForm`), troca (`AvatarRerollController`), foto (`UserPictureForm`), perfil público e memorial legado | Finalidades `avatar_pequeno`, `avatar_grande`; `AvatarAssetCleanup` vira provedor de limpeza do `aculta_image` |
+| `aculta_magazine` | `ForumOpeningPost` e `ArticleAuthorsHooks` renderizam imagem com estilo | Finalidade `capa_revista` e `card_editorial` pelo render; sem estilo direto |
+| `aculta_pdf_viewer` | `PdfPreviewThumbnailBuilder` (PV4) próprio | Provedor `pdf` do `aculta_image`; leitor consome a finalidade `pdf_capa` |
+| `aculta_messenger` | `MessagesController` usa imagem de avatar | Avatar pelo render do `aculta_image` |
+| Portal (`PortalController`, `PortalRequirementsController`, `TokenHooks`) | verificação de estilos e tokens de imagem | Requisito de catálogo: o Portal consulta o catálogo, não os estilos |
+| LMS (`aculta_lms`) | sem campo de imagem; só `Event`. Capa de curso é previsão | Campo de capa obrigatoriamente com finalidade `capa_curso` e a política única desde o primeiro campo |
+| Fórum (`aculta_forum`) | sem campo de imagem próprio; imagem do tópico vem da Revista (abertura) | Imagens de tópico e respostas pela política; reconstrução do Wayback (F6) entra só por `aculta_image.ingest` |
+| Reconstrução do Fórum (F6) | capturas do Wayback nos diretórios `assets` e `html` de `/home/aculta/private/aculta/forum/restauro` (armazenamento privado, fora do Git) | Importação por `aculta_image.ingest`: hash, quarentena, origem e sem sobrescrita de arquivo atual |
+
+Isso significa que o LMS e o Fórum não podem criar campo de imagem nem importar arquivo de
+imagem sem passar pelo `aculta_image`. A barreira precisa existir antes de o primeiro campo
+ser criado.
+
+### 3.8 Barreiras de uso obrigatório
+
+Objetivo: tornar fora do sistema o que for novo, e medir o que já existe para que a dívida não cresça.
+
+**Regras de documento (B1).** Entram em `AGENTS.md` e `docs/portal/GUARDRAILS.md`:
+- toda imagem e todo arquivo de imagem passam pelo `aculta_image`;
+- novo estilo de imagem só nasce no catálogo;
+- novo campo `image`, `file` ou `media` de imagem declara a política única no `third_party_settings`;
+- importação de qualquer origem externa (Wayback, LMS, arquivos recebidos) passa por `aculta_image.ingest`.
+
+**Gate estático (B2): `scripts/validate-aculta-image.php`.** Varre `web/modules/custom`,
+`web/themes/custom/aculta420` e `config/sync`, e falha quando encontra fora de `aculta_image`:
+
+| Padrão | Motivo |
+| --- | --- |
+| `'image_style'` ou `#theme => 'image_style'` | renderização de estilo direta |
+| `managed_file` com `FileImageDimensions`, `FileSizeLimit` ou `FileExtension` de imagem | limite de upload fora da política |
+| `upload_location` com `public://` para imagens | armazenamento sem regra |
+| `ImageFactory`, `image.factory` | processamento de imagem fora do sistema |
+| `image.style.*` em config nova | estilo fora do catálogo |
+| `->delete()` em `File` ou `file_unmanaged_delete` | exclusão fora da quarentena |
+| `type: image`, `file` ou `media` de imagem sem `aculta_image` em `third_party_settings` | campo sem política |
+
+Linha de base (cliquet): a contagem atual de ocorrências (ver 3.9) fica registrada. O gate
+aceita o que já existe, com identificação do arquivo, e falha se a contagem subir. A dívida
+cai quando cada consumidor é migrado; ninguém pode aumentá-la.
+
+**Gate de tema (B3).** Twig e CSS do ACULTA420 não referenciam nome de estilo, dimensão
+fixa de imagem nem `image_style`. O conteúdo chega como `srcset`, largura, altura e `alt`
+resolvidos pelo Portal, o que já segue a fronteira do Portal e do tema.
+
+**Serviço obrigatório de formulário (B4).** Criar elemento de upload de imagem é feito por
+`aculta_image.upload_element()`. Ele já aplica extensões, tamanho e dimensão da política.
+Um elemento `managed_file` montado à mão vira falha do gate.
+
+**Serviço obrigatório de exclusão (B5).** Apagar `File` de imagem é feito somente pelo
+`aculta_image.quarantine`. Exclusão direta falha no gate e nas revisões de PR.
+
+**Ingestão obrigatória (B6).** `aculta_image.ingest` é a única porta de entrada de arquivo de
+imagem vindo de fora: calcula hash, aplica a política, registra a origem (URL, captura e data)
+e nunca sobrescreve arquivo existente. É pré-requisito da F6 do Fórum, do LMS e de qualquer
+importação futura.
+
+**Registro no Status (B7).** O `aculta_image` tem helpers com a tag `aculta_portal.helper` e
+registro no `PortalHelperRegistry`, para aparecer em ACULTA Portal > Status. O gate do Portal
+já confere esse registro.
+
+**Checklist de PR (B8).** Todo PR que toque imagem responde: "usa `aculta_image`? sim, ou
+justificativa aprovada". Sem resposta, o PR não é mesclado.
+
+**Dívida registrada (B9).** Cada ocorrência existente vai para `docs/operations/DEBT-REGISTER.md`
+com dono, fase de migração e prazo. O cliquet impede aumento.
+
+### 3.9 Linha de base da dívida (2026-10-17)
+
+Contagem de ocorrências em `web/modules/custom` e no tema (ver as buscas em 3.7):
+
+| Padrão | Ocorrências |
+| --- | --- |
+| `image_style` | 10 |
+| `managed_file` | 3 |
+| `FileImageDimensions` | 1 |
+| `FileSizeLimit` | 3 |
+| `FileExtension` | 3 |
+| `public://` (todos os usos, não só imagens) | 22 |
+| `ImageFactory` / `image.factory` | 2 / 1 |
+| `file_unmanaged_delete` / `->delete()` em File | 0 / 0 |
+
+O número é só a linha de base. O gate deve exigir o mesmo conjunto de arquivos e linhas, não só
+o total, para que uma migração não seja compensada por código novo.
+
 ## 4. Fases (uma PR por fase, conforme AGENTS)
 
 | Fase | Entrega | Aceite |
 | --- | --- | --- |
 | M0 | Inventário read-only (`aculta_image.inventory`) e página administrativa; sem dependências novas | Números batem com as consultas acima; nada é alterado |
+| M0.5 | **Barreiras** (seção 3.8): regras em `AGENTS.md` e `GUARDRAILS.md`, gate `validate-aculta-image.php` com cliquet, registro de dívida no `DEBT-REGISTER` e checklist de PR. Antes de qualquer campo novo de LMS ou Fórum | Gate passa com a linha de base; teste de regressão: um `image_style` novo e um `managed_file` novo falham |
 | M1 | Catálogo de finalidades e `aculta_image.render` com estilos existentes; migração da Gallery | Galeria exibe miniatura na grade e lightbox no clique; teste em claro, escuro e 390 px |
 | M2 | Política de upload centralizada | Limites iguais em todos os campos de imagem; mensagens de erro do Form API |
 | M3 | Consolidação dos estilos (3.4) e migração de Magazine, Usuário e Portal | Nenhuma referência a estilo fora do catálogo (gate) |
@@ -160,6 +253,16 @@ decisão sua (pergunta 3).
    imagens do site?
 9. **Ordem.** Começamos pelo M0 (inventário, sem risco) e depois pela Gallery (M1), ou prefere outra
    prioridade, como Magazine ou perfil?
+
+10. **Barreiras.** Implemento agora o gate (M0.5) com a linha de base da seção 3.9, ou só depois de
+    aprovar o plano? Uma barreira mal calibrada bloqueia PRs de outros sistemas, por isso proponho
+    primeiro o modo somente-relatório por uma semana.
+11. **LMS e Fórum.** Confirma que a capa de curso (LMS) e as imagens de tópico (Fórum) entram só pela
+    política do `aculta_image` desde o primeiro campo, mesmo que isso atrase o LMS?
+12. **Game.** A conquista usa limite de 2 MB e 4096 px. Mantenho esses números como limite da política
+    única, ou cada finalidade pode ter o seu limite?
+13. **Obrigatoriedade.** A regra vale para "todo novo código" (com cliquet para o existente) ou também
+    exige migrar o existente antes de qualquer nova funcionalidade? Proponho a primeira opção.
 
 ## 6. Fontes
 
