@@ -1,12 +1,12 @@
-# Modelos de imagem no texto (revisão do plano, 2026-10-17)
+# Modelos de imagem no texto
 
-Status: **planejamento**. Nada foi implementado nesta revisão. Decisão de arquitetura pendente (seção 4).
+Status em 2026-10-17 (0.1.0-dev.9): **parcialmente implementado.** Código e configuração estão no repositório. O Runtime
+ainda não foi atualizado e o seletor não foi testado no navegador. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.
 
 ## 1. Objetivo
 
-Ao inserir uma imagem no texto de uma publicação, o editor escolhe um **modelo** de exibição, como nos grandes veículos
-digitais. Cada modelo tem largura, enquadramento, alinhamento, legenda e crédito. O sistema gera os tamanhos (srcset) e
-o HTML a partir do modelo; o editor não escolhe dimensão em pixels.
+Ao inserir uma imagem no texto de uma publicação, quem edita escolhe um **modelo** de exibição, como nos grandes veículos
+digitais. O sistema gera os tamanhos (`srcset`) e o HTML a partir do modelo. Quem edita não escolhe pixels.
 
 ## 2. Padrão observado nos veículos (HTML público, 2026-10-17)
 
@@ -16,77 +16,96 @@ o HTML a partir do modelo; o editor não escolhe dimensão em pixels.
 | Guardian | 465, 645, 725, 965, 1065, 1225, 1920 | imagem de matéria até 1920 |
 | Folha | 320, 480, 768, 1024, 1200, 2400 | 2400 para largura total |
 
-Padrões comuns: legenda e crédito por imagem; imagem de corpo na largura da coluna ou um pouco acima; destaque em
-largura maior que a coluna; `srcset` com dois ou mais tamanhos; imagem de compartilhamento em 1200×630 com recorte.
+Padrões comuns: legenda por imagem; imagem de corpo na largura da coluna ou um pouco acima; destaque em largura maior que
+a coluna; `srcset` com dois ou mais tamanhos; imagem de compartilhamento em 1200×630 com recorte.
 
-## 3. Modelos propostos para o ACULTA
+Estas medições são de páginas públicas e não são documentação oficial dos veículos.
+
+## 3. Modelos do ACULTA (implementados)
 
 Coluna de leitura da Revista: `68ch`, cerca de 580 px (`revista-post.css`). Retina exige cerca de 1160 px.
 
 | Modelo | Largura de exibição | Tamanhos gerados (srcset, 1x/2x) | Uso |
 | --- | --- | --- | --- |
-| Pequena | 50% da coluna (cerca de 290 px) | 320 e 640 | ao lado de texto (com alinhamento à esquerda ou à direita) |
+| Pequena | 50% da coluna (cerca de 290 px) | 320 e 640 | ao lado de texto |
 | Padrão | coluna (cerca de 580 px) | 480 e 1160 | imagem do corpo, centralizada |
 | Larga | cerca de 900 px, sai da coluna | 800 e 1200 | foto que precisa de respiro |
-| Destaque | largura total do conteúdo | 1024 e 1536 | abertura de seção dentro do texto |
+| Destaque | largura total do conteúdo | 1024 e 1200 | abertura de seção dentro do texto |
 
-Opções por imagem: **legenda** e **crédito** (campos de texto), **alinhamento** (esquerda, centro, direita, só em
-Pequena), e **link** opcional para a imagem ampliada (galeria da lightbox).
+**Destaque em 1200 px, não 1536.** O limite de upload de 1200 px vale para todos os modelos (decisão do responsável). Um
+destaque acima de 1200 px exigiria original maior, o que não foi autorizado.
 
-Limite de upload e de dimensão: já padronizados (10 MB; 1200 px de largura no upload). O modelo **Destaque** pode
-exigir um original maior; a decisão sobre isso está na seção 5.
-
-## 4. Decisão de arquitetura (pendente)
-
-**Opção A: `ckeditor_media_resize` 1.1.1 (comunidade).** Estável, suporta Drupal 11.4, com cobertura de segurança.
-Redimensiona imagens incorporadas como mídia, com estilos. Exige migrar as imagens do texto para o formato de mídia
-(embed), e não cobre o modelo com legenda, crédito e alinhamento. Os uploads diretos atuais ficariam com o comportamento
-antigo até a migração.
-
-**Opção B: código próprio no `aculta_image` (recomendada).** Um plugin de CKEditor 5 com um seletor de modelo na barra
-de imagem, e um filtro de texto que transforma o modelo em `<figure>` com `srcset` explícito (sem o problema de ordem
-alfabética da issue #3523451). Funciona com os uploads diretos atuais, sem migrar acervo. Custo maior: JavaScript do
-plugin (registrado por `hook_ckeditor5_plugin_info`), filtro PHP, CSS dos modelos no tema e testes nos três editores.
-
-Recomendação: **B**, pela mesma razão da compressão: controle total do HTML, sem dependência de mídia, e alinhada à
-política de código próprio para imagens do texto.
-
-## 5. Estilos necessários (B)
-
-Criar, com pipeline `aculta_derivados` e catálogo:
-
-- `aculta_corpo_320` (320 px) e `aculta_corpo_640` (640 px): modelo Pequena;
-- `aculta_corpo_480` (480 px) e `aculta_corpo_1160` (1160 px): modelo Padrão;
-- `aculta_corpo_800` (800 px) e `aculta_corpo_1200` (1200 px): modelo Larga;
-- `aculta_corpo_1024` (1024 px) e `aculta_corpo_1536` (1536 px): modelo Destaque.
-
-1536 px está acima do limite de 1200 px de upload. Duas saídas: (a) o modelo Destaque usa no máximo 1200 px; (b) elevar o
-upload para 1536 px só para o modelo Destaque. Decisão pendente.
+Legenda: **sim, em todos os modelos.** Crédito: **removido** de todos os modelos (decisão do responsável, 2026-10-17).
 
 Os estilos são calculados a partir do original enviado. Se o original for menor que a largura do estilo, o Drupal não
-amplia a imagem (`upscale` falso), e o srcset usa o maior tamanho disponível.
+amplia a imagem (`upscale` falso), e o `srcset` usa o maior tamanho disponível. Originais maiores que 1200 px são
+reduzidos no upload (ver seção 5).
 
-## 6. Fases (se a opção B for aprovada)
+## 4. Arquitetura adotada
 
-| Fase | Entrega | Aceite |
+**Código próprio no `aculta_image`** (decisão de 2026-10-17, recomendação mantida):
+
+- Plugin CKEditor 5 `acultaImage.ImageModel` em JavaScript simples, sem build. Usa os globais `CKEditor5.dll` e
+  `CKEditor5.image` que o core expõe. Grava o modelo em `data-aculta-modelo`.
+- Classe PHP `Plugin\CKEditor5Plugin\ImageModel` (configuração por editor: quais modelos aparecem).
+- Filtro `aculta_imagem_modelo` que transforma o `<img>` em `<figure>` com `srcset`, `sizes` e `figcaption`.
+
+Alternativa avaliada e não adotada: `ckeditor_media_resize` 1.1.1 (GPL-2.0-or-later). Exige migrar as imagens do texto
+para mídia (embed) e não cobre legenda nem alinhamento. Se algum trecho for portado no futuro, registrar a atribuição
+(GPL) no módulo.
+
+## 5. Redução de largura no upload
+
+O core recusava imagens acima do limite de dimensão (`FileImageDimensions`). Decisão: **aceitar e converter**.
+
+- `max_dimensions` do core desligado nos editores com upload (`basic_html`, `full_html`, `revista_editorial`, `usuario_aculta`).
+- `InlineImageHooks` (`file_insert` em `public://inline-images/`) chama `ImageCompressor::redimensionar()`, que roda
+  `mogrify -resize 1200x>`: reduz só se a largura passar de 1200 px, mantendo a proporção.
+- Depois, a compressão sem perda (`optipng`, `jpegoptim`, `gifsicle`).
+- Não usa `ImageFactory`: a regra do projeto proíbe processamento de imagem por esse caminho.
+
+## 6. Formatos e editores
+
+| Formato | Botão de modelo | Modelos | Uso |
+| --- | --- | --- | --- |
+| `full_html` (HTML completo) | sim | todos | editores |
+| `revista_editorial` | sim | todos | textos de revista |
+| `basic_html` (HTML básico) | **não** | — | sem modelo até o formato próprio para usuários comuns e alunos |
+| `usuario_aculta` (Usuário ACULTA) | sim | Pequena e Padrão | respostas do Fórum e formato dos usuários comuns |
+| `webform_default` | não (sem imagem) | — | fora deste sistema |
+
+Tamanhos provisórios do Fórum: Pequena (320 e 640 px) e Padrão (480 e 1160 px), com a mesma política de redimensionamento
+(1200 px de largura no upload). A pesquisa sobre limites de fóruns (Discourse, citado na conversa) não encontrou valor
+oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em uso antes de revisar.
+
+## 7. Fases
+
+| Fase | Entrega | Estado |
 | --- | --- | --- |
-| P1 | Catálogo dos modelos e estilos `aculta_corpo_*` | estilos exportados; gate passa |
-| P2 | Filtro PHP que transforma o modelo em `<figure>` com srcset, legenda e crédito | HTML válido; sem JavaScript na página pública |
-| P3 | Plugin CKEditor 5 com seletor de modelo, legenda, crédito e alinhamento | seleção grava o modelo; edição reabre com o modelo certo, nos três editores |
-| P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | teste visual em 390 px e 1280 px |
-| P5 | Acessibilidade: `alt` obrigatório, legenda ligada com `figcaption`, teclado | revisão com teclado e leitor de tela |
+| P1 | Catálogo dos modelos e estilos `aculta_corpo_*` | **feito** (exportados no pipeline `aculta_derivados`) |
+| P2 | Filtro PHP com `<figure>`, `srcset` e legenda (sem crédito) | **feito** (sem JavaScript na página pública) |
+| P3 | Plugin CKEditor 5 com seletor de modelo | **feito no código; sem Runtime e sem teste no navegador** |
+| P3b | Campo de legenda no seletor | pendente |
+| P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | pendente (exige autorização para o tema) |
+| P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | pendente |
+| P6 | Formato próprio para o HTML básico | pendente (decisão de perfis) |
 
-## 7. Riscos
+## 8. Riscos
 
-- Mudança no HTML de textos já publicados: imagens antigas continuam como estão; o modelo vale só para imagens novas
-  ou editadas, a não ser que haja migração.
-- Legenda e crédito exigem campo novo no editor: alterar a configuração de três formatos de texto.
-- O filtro precisa rodar antes do de limpeza de HTML do formato, senão remove o `<figure>`.
+- Textos já publicados: imagens antigas continuam como estão. O modelo vale para imagens novas ou editadas, a não ser que
+  haja migração.
+- Respostas do Fórum já escritas em `basic_html`: ao editar, o formulário oferece só `usuario_aculta`. Testar antes de liberar.
+- O filtro precisa rodar antes do filtro de limpeza de HTML do formato, senão remove o `<figure>`. No `usuario_aculta` e no
+  `basic_html` a ordem é a do config (peso 20 para o modelo).
+- O downcast do atributo para o `<img>` nunca foi testado no navegador. Se o atributo ficar no `<figure>`, o filtro não
+  encontra o modelo.
 
+## 9. Decisões de 2026-10-17 (responsável)
 
-## Decisões de 2026-10-17 (responsável)
-
-- **Crédito removido** de todos os modelos. Fica só a legenda (`figcaption`).
-- **Formatos:** o HTML completo e o Revista — editorial têm o botão de modelo. O HTML básico ficará sem o botão até o formato próprio para usuários comuns e alunos. O formato `usuario_aculta` (Usuário ACULTA) oferece só **Pequena** e **Padrão**, e é o único formato aceito nas respostas do Fórum.
-- **Fórum:** tamanhos provisórios de Pequena (320 e 640 px) e Padrão (480 e 1160 px), com a mesma política de redimensionamento dos editores. A pesquisa sobre limites de fóruns (Discourse) não confirmou valores oficiais; os números da comunidade não foram adotados.
-- **Limite de 1200 px:** o editor aceita imagens maiores e reduz para 1200 px de largura (`ImageCompressor::LARGURA_MAXIMA`), em vez de recusar o upload. A validação de dimensão do core foi desligada nos editores com upload para isso.
+- **Crédito removido** de todos os modelos. Fica só a legenda.
+- **Destaque em 1200 px**, sem subir o limite de upload.
+- **Formatos:** `full_html` e `revista_editorial` têm o botão. `basic_html` fica sem o botão até o formato próprio.
+  `usuario_aculta` oferece só Pequena e Padrão, e é o único formato aceito nas respostas do Fórum.
+- **Limite de 1200 px:** o editor aceita imagens maiores e reduz para 1200 px de largura.
+- **Plugin em JavaScript simples**, sem toolchain npm.
+- **Fórum:** tamanhos provisórios de Pequena e Padrão.

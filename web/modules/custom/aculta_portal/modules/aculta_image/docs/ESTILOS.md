@@ -64,9 +64,9 @@ Estilos removidos do Runtime em 2026-10-17: `max_325x325`, `max_650x650`, `max_1
 
 O CKEditor 5 do core não oferece escolha de estilo para imagens inseridas no texto. A padronização adotada:
 
-- `image_upload.max_size` de 10 MB e `image_upload.max_dimensions.width` de **1200 px** nos três editores que aceitam
-  upload (`basic_html`, `full_html` e `revista_editorial`). O core redimensiona no servidor as imagens acima desse
-  valor, sem módulo novo.
+- `image_upload.max_size` de 10 MB nos editores que aceitam upload (`basic_html`, `full_html`, `revista_editorial` e
+  `usuario_aculta`). **Dimensão:** 1200 px de largura. O core deixou de recusar imagens maiores (`max_dimensions` nulo);
+  o `aculta_image` reduz para 1200 px no upload (`InlineImageHooks` e `ImageCompressor::redimensionar`). Aceita e converte.
   - Coluna de leitura da Revista: `68ch` (`revista-post.css`), cerca de 580 px no tamanho de fonte do tema. Uma imagem
     do corpo precisa de cerca de 1160 px para ficar nítida em tela retina; 1200 px cobre isso.
   - Jornais, medidos no HTML público: BBC, variantes de 240 a 1536 px, com 1024 px para o corpo; Guardian, de 465 a
@@ -74,12 +74,14 @@ O CKEditor 5 do core não oferece escolha de estilo para imagens inseridas no te
     1600 px foi descartado.
   - Antes de 1600, a referência de 1200 foi confirmada por esses números; o valor pode subir se a coluna mudar.
 - Compressão sem perda do upload: `ImageCompressor` (código próprio) roda no hook `file_insert` para arquivos de
-  `public://inline-images/`, com `optipng`, `jpegoptim` e `gifsicle`. Medido: 1,4% em PNG e JPEG originais; o ganho
-  maior vem de derivados de PNG (13,6%). Em produção depende de `shell_exec` liberado no painel.
+  `public://inline-images/`, com `optipng`, `jpegoptim` e `gifsicle`. Medido: 0,7% em JPEG; o ganho maior vem de
+  derivados de PNG (13,6%). Em produção depende de `shell_exec` liberado no painel.
 - Módulos da comunidade avaliados e não adotados no corpo: `ckeditor_media_resize` (exige migrar as imagens para
   mídias), `editor_image_styles` e `ckeditor_media_image_style` (sem release estável e fora da cobertura de segurança).
 
 ## Pendências de aplicação (não feitas nesta revisão)
+
+Atualização 2026-10-17 (handoff): o modelo de imagem no texto está parcialmente implementado; ver `MODELOS-DE-IMAGEM.md`. Os itens abaixo continuam pendentes.
 
 - Respostas do Fórum usam `aculta_avatar` (256 px) para avatares de 36 px. Trocar para `avatar_pequeno` exige mudar
   a exibição de usuário usada nos comentários, o que altera o design de comentários; ficou para decisão.

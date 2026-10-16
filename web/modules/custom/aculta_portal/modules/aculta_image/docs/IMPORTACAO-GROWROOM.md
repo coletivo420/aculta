@@ -1,5 +1,9 @@
 # Importação do Growroom: alterações, caminhos e estado
 
+> **Atualização de passagem (2026-10-17):** os números de progresso abaixo são da última medição registrada, às 14:05.
+> Não foram remedidos na passagem: a pasta é `root` com acesso por `sudo`. Na passagem não havia processo de download ativo
+> (`ps`). Antes de qualquer decisão, confirmar o estado com `sudo` e somente leitura. Ver também [HANDOFF.md](HANDOFF.md), seção 5.
+
 Revisão: 2026-10-17. Escopo: o que já foi preparado no sistema, onde estão os dados recuperados, o estado observado
 e o que falta. Nenhum conteúdo foi importado para o Drupal.
 

@@ -9,6 +9,7 @@
 - Limite de 1200 px: o core deixou de recusar imagens maiores (`max_dimensions` nulo nos editores com upload). O `aculta_image` reduz para 1200 px de largura as imagens enviadas aos editores, antes da compressão (`ImageCompressor::redimensionar`, `mogrify`). Imagens menores não mudam. Aceita e converte.
 - Testes: 14 testes unitários, incluindo `ImageCompressorTest::testRedimensionamentoParaLargura`.
 - Runtime: pendente. Importação de configuração, cache rebuild e teste no navegador ainda não executados.
+- Documentação revisada para passagem: `docs/HANDOFF.md` (novo), `README.md`, `docs/PLANO.md` (roadmap atual), `docs/MODELOS-DE-IMAGEM.md` (estado e decisões), `docs/ESTILOS.md` e `docs/IMPORTACAO-GROWROOM.md` (correções e atualização de passagem).
 
 ## 0.1.0-dev.8 — og:image de compartilhamento, dimensão máxima e compressão própria no texto — 2026-10-17
 
