@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_messenger\Aviso\AvisoService;
-use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Controller\MessagesController;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Template\Attribute;
@@ -31,6 +31,7 @@ final class AvisosMensagensController extends ControllerBase {
     private readonly AvisoService $avisos,
     private readonly UnreadThreadCounter $conversas,
     private readonly AccountInterface $usuarioAtual,
+    private readonly MessagesController $mensagens,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -38,6 +39,7 @@ final class AvisosMensagensController extends ControllerBase {
       $container->get('aculta_messenger.aviso_service'),
       $container->get('aculta_messenger.unread_thread_counter'),
       $container->get('current_user'),
+      $container->get('class_resolver')->getInstanceFromDefinition(MessagesController::class),
     );
   }
 
@@ -90,25 +92,12 @@ final class AvisosMensagensController extends ControllerBase {
     return $links;
   }
 
-  /** Aba Avisos: avisos da própria pessoa, agrupados por tipo. */
+  /**
+   * Aba Avisos: a mesma lista da gaveta da barra (comunicados, avisos da pessoa e alertas), com o mesmo
+   * comportamento: os links abrem o detalhe e a dispensa segue a regra da gaveta.
+   */
   private function conteudoAvisos(int $uid): array {
-    $avisos = $this->avisos->listarDaPessoa($uid);
-    if ($avisos === []) {
-      return ['#markup' => '<p>' . $this->t('Nenhum aviso por enquanto.') . '</p>'];
-    }
-    $grupos = [];
-    foreach ($avisos as $aviso) {
-      $grupos[(string) $aviso->get('tipo')->value][] = $aviso;
-    }
-    $saida = [];
-    foreach ($grupos as $tipo => $itens) {
-      $saida[$tipo] = [
-        '#type' => 'container',
-        'titulo' => ['#markup' => '<h4>' . $this->rotuloDoTipo($tipo) . '</h4>'],
-        'itens' => ['#theme' => 'item_list', '#items' => array_map(fn (Aviso $a) => $this->linha($a), $itens)],
-      ];
-    }
-    return $saida;
+    return $this->mensagens->alertsBuild()['build'];
   }
 
   /** Aba Mensagens: só contagem e link para as conversas (sistema de mensagens). */
@@ -120,25 +109,6 @@ final class AvisosMensagensController extends ControllerBase {
       'texto' => ['#markup' => '<p>' . $texto . '</p>'],
       'abrir' => ['#type' => 'link', '#title' => $this->t('Abrir conversas'), '#url' => Url::fromRoute('aculta_messenger.drawer_conversations')],
     ];
-  }
-
-  /** Uma linha: título do tópico (link) e o que ainda não foi lido. */
-  private function linha(Aviso $aviso): array {
-    $nid = (int) $aviso->get('assunto_nid')->value;
-    $contador = (int) $aviso->get('contador_site')->value;
-    $sufixo = $contador > 0 ? ' — ' . $this->t('@n não lido(s)', ['@n' => $contador]) : ' — ' . $this->t('lido');
-    $titulo = (string) $aviso->get('titulo')->value;
-    return $nid > 0
-      ? ['#type' => 'link', '#title' => $titulo, '#url' => Url::fromRoute('entity.node.canonical', ['node' => $nid]), '#suffix' => $sufixo]
-      : ['#markup' => htmlspecialchars($titulo, ENT_QUOTES) . $sufixo];
-  }
-
-  private function rotuloDoTipo(string $tipo): string {
-    return match ($tipo) {
-      Aviso::TIPO_RESPOSTA => (string) $this->t('Respostas novas'),
-      Aviso::TIPO_ATUALIZACAO => (string) $this->t('Atualizações de tópicos'),
-      default => $tipo,
-    };
   }
 
 }

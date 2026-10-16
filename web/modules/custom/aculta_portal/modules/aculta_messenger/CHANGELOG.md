@@ -2,6 +2,11 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.36 — aba Avisos da conta com a mesma lista da gaveta da barra (F5.2) — 2026-10-16
+
+- A aba Avisos da conta mostra a mesma lista da gaveta (comunicados, avisos da pessoa e alertas), com os mesmos itens e ações.
+- A montagem da lista saiu da resposta HTTP da gaveta (`alertsBuild`), para ser reutilizada.
+
 ## 0.1.1-dev.35 — central Avisos/Mensagens em Minha conta (F5.2) — 2026-10-16
 
 - Central "Avisos/Mensagens" em Minha conta, com abas Avisos e Mensagens no padrão da conta.

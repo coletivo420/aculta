@@ -552,6 +552,19 @@ final class MessagesController extends ControllerBase {
 
   /** Displays currently active native Site Alerts in the same-origin modal. */
   public function alertsPreview(): Response {
+    $resultado = $this->alertsBuild();
+    return $this->buildDrawerResponse($resultado['build'], [
+      'X-Aculta-Alerts-Count' => (string) $resultado['contador'],
+    ]);
+  }
+
+  /**
+   * Monta a lista de avisos da gaveta (comunicados, avisos da pessoa, alertas). Usada pela gaveta da barra e pela aba
+   * Avisos da conta, para que as duas mostrem a mesma coisa com o mesmo comportamento.
+   *
+   * @return array{build: array, contador: int}
+   */
+  public function alertsBuild(): array {
     $storage = $this->entityTypes->getStorage('site_alert');
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['active_site_alerts'])
@@ -633,9 +646,10 @@ final class MessagesController extends ControllerBase {
       'alerts' => ['#theme' => 'item_list', '#items' => $items],
     ];
     $cacheability->applyTo($build);
-    return $this->buildDrawerResponse($build, [
-      'X-Aculta-Alerts-Count' => (string) ($activeAlertCount + $this->counts->unreadPersistentNoticeCount($this->account)),
-    ]);
+    return [
+      'build' => $build,
+      'contador' => $activeAlertCount + $this->counts->unreadPersistentNoticeCount($this->account),
+    ];
   }
 
   /** Renders a same-origin, uncached HTML fragment for the Bootstrap drawers. */

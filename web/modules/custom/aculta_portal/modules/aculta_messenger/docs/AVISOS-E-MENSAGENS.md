@@ -132,8 +132,9 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
   "Ver todos os avisos" da prévia. A barra multidomínio não mostra o rótulo textual: usa os ícones do aculta_messenger.
   A rota é `/avisos-mensagens` (`aculta_messenger.avisos_raiz`).
 - Duas abas no padrão de Atividade e Meus Dados (`account-data-nav`/`account-data-link`), com a aba atual marcada:
-  - **Avisos** (`/avisos-mensagens/avisos`): avisos da própria pessoa, agrupados por tipo, com contador de não lidos.
-    Só lê os avisos da conta logada; a página não recebe parâmetro de usuário.
+  - **Avisos** (`/avisos-mensagens/avisos`): a **mesma lista da gaveta da barra** (`MessagesController::alertsBuild`):
+    comunicados, avisos da pessoa e alertas do site, com os mesmos itens, links e ações de dispensa. Só lê os avisos da
+    conta logada; a página não recebe parâmetro de usuário.
   - **Mensagens** (`/avisos-mensagens/mensagens`): só a contagem de conversas não lidas e o link para abri-las
     (`aculta_messenger.drawer_conversations`). As conversas continuam no sistema de mensagens; esta aba não grava nada.
 - Acesso: `access aculta portal`, no propósito `account`. Abas inexistentes respondem 404.
