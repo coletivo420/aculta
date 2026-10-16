@@ -149,6 +149,10 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - Kernel: `tests/src/Kernel/AcultaPdfViewerInstallTest.php` valida descoberta
   do submódulo, registro do serviço/formatter e ausência de storage/hooks de
   download próprios.
+- Kernel: `AcultaPdfMediaEmbedTest` percorre o endpoint Core privado com um
+  arquivo local `private://`; usuário autorizado recebe 200 e resposta privada,
+  enquanto acesso anônimo recebe 403. O render não é compartilhado em cache e
+  não gera thumbnail privada. Group/turma, revogação e browser seguem pendentes.
 - O viewer ESM e worker passaram smoke test Firefox headless na fixture oficial
   da distribuição e contra um artigo temporário de Media Embed no Runtime
   `aculta_runtime`: 14 páginas, navegação, zoom 125%, busca (cinco resultados),
@@ -161,7 +165,8 @@ controller nem classe de formulário neste módulo; não existe arquivo
   O primeiro link de login foi emitido no host Magazine e recebeu 403; o
   procedimento correto é emitir no host Conta. Sem ImageMagick/Ghostscript ou
   permissão de policy, só a miniatura fica ausente e o leitor/fallback continua.
-  Geração real, acesso privado, acessibilidade visual e Hostinger seguem DEFERRED.
+  Geração real de miniatura, isolamento Group/turma, revogação, acessibilidade
+  visual e Hostinger seguem DEFERRED.
 
 ## Referências upstream
 

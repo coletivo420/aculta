@@ -181,9 +181,11 @@ arquivo público continua acessível diretamente e não protege arquivos do
 bundle `document`, que segue usando `public://`.
 
 Unit validou URL local do endpoint, max-age zero e ausência do gerador de
-miniaturas para privado. Ainda faltam testes de Kernel/browser para membro e
-não membro de Group, publicação/revogação, cache após mudança de acesso e
-carregamento PDF.js/range. A conversão real de miniaturas permanece DEFERRED
+miniaturas para privado. Kernel confirmou resposta 200 e cache privado para o
+usuário autorizado, e 403 para acesso anônimo. Ainda faltam testes de
+Kernel/browser para membro e não membro de Group, publicação/revogação, cache
+após mudança de acesso e carregamento PDF.js/range. A conversão real de
+miniaturas permanece DEFERRED
 porque não há binário ImageMagick no Homelab. O arquivo
 [ROADMAP.md do submódulo](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md)
 mantém os critérios restantes de PV5–PV7.

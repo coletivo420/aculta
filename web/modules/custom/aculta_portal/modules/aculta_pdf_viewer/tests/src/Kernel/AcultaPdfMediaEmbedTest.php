@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_pdf_viewer\Kernel;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\Render\RenderContext;
+use Drupal\Core\DrupalKernel;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
@@ -17,6 +19,7 @@ use Drupal\media\Entity\MediaType;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Tests the CKEditor Media Embed to shared PDF viewer rendering path.
@@ -26,6 +29,15 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 final class AcultaPdfMediaEmbedTest extends KernelTestBase {
 
   use UserCreationTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $container->register('stream_wrapper.private', 'Drupal\\Core\\StreamWrapper\\PrivateStream')
+      ->addTag('stream_wrapper', ['scheme' => 'private']);
+  }
 
   /**
    * {@inheritdoc}
@@ -152,6 +164,52 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->assertStringContainsString('data-aculta-pdf-control="fullscreen"', $processed);
     $this->assertContains('aculta_pdf_viewer/viewer', $result->getAttachments()['library'] ?? []);
     $this->assertContains('media:' . $media->id(), $result->getCacheTags());
+  }
+
+  /**
+   * Verifies private PDF requests are rechecked by Drupal Core.
+   */
+  public function testPrivatePdfUsesCoreRouteAndDeniesAnonymousAccess(): void {
+    $site_path = DrupalKernel::findSitePath(Request::create('/'));
+    $private_directory = $site_path . '/private';
+    $fixture_directory = $private_directory . '/pdf-viewer';
+    mkdir($fixture_directory, 0775, TRUE);
+    $this->setSetting('file_private_path', $private_directory);
+    $private_path = $fixture_directory . '/aculta-private-fixture.pdf';
+    file_put_contents($private_path, "%PDF-1.4\n% private test fixture\n");
+
+    $user = $this->container->get('current_user')->getAccount();
+    $file = File::create([
+      'uri' => 'private://pdf-viewer/aculta-private-fixture.pdf',
+      'filename' => 'aculta-private-fixture.pdf',
+      'filemime' => 'application/pdf',
+      'uid' => $user->id(),
+    ]);
+    $file->setPermanent();
+    $file->save();
+    $media = Media::create([
+      'bundle' => 'document',
+      'name' => 'PDF privado Kernel fixture',
+      'status' => TRUE,
+      'field_media_document' => [['target_id' => $file->id()]],
+    ]);
+    $media->setOwner($user);
+    $media->save();
+
+    $build = $this->container->get('aculta_pdf_viewer.builder')->build($media);
+    $private_url = $build['#attributes']['data-aculta-pdf-url'];
+    $this->assertSame('/system/files/pdf-viewer/aculta-private-fixture.pdf', $private_url);
+    $this->assertSame(0, $build['#cache']['max-age']);
+    $this->assertArrayNotHasKey('thumbnail', $build);
+
+    $kernel = $this->container->get('http_kernel');
+    $authorized_response = $kernel->handle(Request::create($private_url));
+    $this->assertSame(200, $authorized_response->getStatusCode());
+    $this->assertStringContainsString('private', strtolower($authorized_response->headers->get('Cache-Control') ?? ''));
+
+    $this->container->get('current_user')->setAccount(new \Drupal\Core\Session\AnonymousUserSession());
+    $denied_response = $kernel->handle(Request::create($private_url));
+    $this->assertSame(403, $denied_response->getStatusCode());
   }
 
 }
