@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.22. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.23. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -16,6 +16,7 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.22. Leia este documento antes d
 - Hooks de substituição/exclusão enfileiram arquivos de campos imagem/arquivo e referências usadas em texto rico. O cron e a ação administrativa processam até 100 itens, removendo somente imagens sem `file_usage` nem `entity_usage`.
 - Temporários de imagem sem referências vencem conforme `system.file:temporary_maximum_age` (seis horas no Runtime previamente inspecionado). Conversão inline ocorre sobre o arquivo gerenciado, sem cópia temporária de conversão.
 - A remoção invalida derivados do Image Style e apaga metadados de auditoria/origem/quarentena do FID removido.
+- Derivados públicos gerados por processadores opcionais podem ser registrados como arquivos temporários via `aculta_image.generated_file` e renderizados via `aculta_image.render`; a limpeza existente remove os sem uso após `system.file:temporary_maximum_age`.
 - Painel em `/painel-administrativo/imagens`, abas de relatório, limpeza e quarentena. A permissão existente `administer aculta images` protege todas as rotas; nenhuma configuração de contas ou papéis foi alterada.
 - Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal11.php` passaram. O primeiro `drush status` usou URI padrão; depois o status explícito confirmou `https://aculta.toca.net.br` e o banco `aculta_runtime`. Cache reconstruído e as quatro rotas administrativas confirmadas pelo Drush. Nenhuma configuração de contas ou papéis foi alterada.
 

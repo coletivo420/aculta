@@ -1,0 +1,19 @@
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_pdf_viewer_group
+  module:
+    - file
+    - media
+id: course_document
+label: 'Documento de turma'
+description: 'PDF privado associado a uma turma de aprendizagem.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: true
+source_configuration:
+  source_field: field_media_course_document
+field_map:
+  name: name

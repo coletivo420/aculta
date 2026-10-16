@@ -1,6 +1,6 @@
 name: ACULTA PDF Viewer Group integration
 type: module
-description: 'Adds Group-controlled access for Media documents attached to learning groups.'
+description: 'Adds private course-document Media and Group-controlled access for learning groups.'
 package: ACULTA Portal
 core_version_requirement: ^11.3
 dependencies:

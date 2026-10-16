@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-16: versão **0.1.0-dev.22**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
+Status em 2026-10-16: versão **0.1.0-dev.23**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -12,6 +12,10 @@ O histórico completo das versões e das decisões antigas está no git (`git lo
 Todo o site usa o `aculta_image` para upload, derivados, entrega responsiva, auditoria de uso e limpeza de imagens e
 arquivos de imagem. Nenhum módulo do Portal cria estilo de imagem, processa imagem ou apaga arquivo por conta própria.
 A regra está em `AGENTS.md` ("Imagens e arquivos de imagem") e é verificada pelo gate.
+
+Processadores opcionais que geram derivados fora da Image API devem registrar o resultado por `aculta_image.generated_file`
+e entregar a marcação por `aculta_image.render`. Derivados sem referência são temporários e entram na limpeza pela idade
+`system.file:temporary_maximum_age`.
 
 **Por que existe:** sem um ponto único, cada módulo cria o próprio limite de upload, o próprio estilo e a própria
 exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem verificação de uso.

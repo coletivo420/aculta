@@ -1,0 +1,16 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_course
+    - media.type.course_document
+  module:
+    - aculta_pdf_viewer_group
+    - media
+id: lms_course-af8ec2205541224f9d8c4
+group_type: lms_course
+content_plugin: 'aculta_pdf_viewer_group:course_document'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

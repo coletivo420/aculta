@@ -21,7 +21,7 @@ final class MediaDocumentDeriver extends DeriverBase {
     $this->derivatives = [];
 
     foreach (MediaType::loadMultiple() as $id => $_media_type) {
-      if ($id !== 'document') {
+      if ($id !== 'course_document') {
         continue;
       }
 

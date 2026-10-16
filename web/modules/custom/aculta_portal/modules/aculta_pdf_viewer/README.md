@@ -41,6 +41,10 @@ formatter de Media `document`.
    Arquivo privado tem cache max-age zero e não recebe thumbnail. A resposta contém
    tags/contexts/max-age de Media, File e access, os controles acessíveis e a
    biblioteca local `aculta_pdf_viewer/viewer`.
+   A miniatura pública, quando habilitada, é validada e registrada como File
+   temporário pelo `aculta_image.generated_file`, renderizada por
+   `aculta_image.render` e removida pela limpeza normal após
+   `system.file:temporary_maximum_age`.
 4. `js/pdf-viewer.mjs` importa `pdf.mjs` e aponta o worker para
    `pdf.worker.mjs` da distribuição Mozilla instalada localmente em
    `/libraries/pdf.js`. Usa canvas, navegação, zoom com restauração, busca textual por página e

@@ -16,13 +16,17 @@ global_role: lms_teacher
 group_type: lms_course
 permissions:
   - 'administer members'
+  - 'create aculta_pdf_viewer_group:course_document entity'
+  - 'create aculta_pdf_viewer_group:course_document relationship'
   - 'edit group'
   - 'grade students'
   - 'revert group revisions'
   - 'update own group_membership relationship'
   - 'view all group revisions'
   - 'view any unpublished group'
-  - 'view aculta_pdf_viewer_group:document entity'
+  - 'view aculta_pdf_viewer_group:course_document entity'
+  - 'view any unpublished aculta_pdf_viewer_group:course_document entity'
+  - 'view aculta_pdf_viewer_group:course_document relationship'
   - 'view group'
   - 'view group revisions'
   - 'view group_membership relationship'

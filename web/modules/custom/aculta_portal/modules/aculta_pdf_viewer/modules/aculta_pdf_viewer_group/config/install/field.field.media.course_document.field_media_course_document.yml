@@ -1,0 +1,28 @@
+langcode: pt-br
+dependencies:
+  config:
+    - field.storage.media.field_media_course_document
+    - media.type.course_document
+  module:
+    - file
+  enforced:
+    module:
+      - aculta_pdf_viewer_group
+id: media.course_document.field_media_course_document
+field_name: field_media_course_document
+entity_type: media
+bundle: course_document
+label: 'PDF da turma'
+description: 'Documento privado visível somente a participantes autorizados da turma.'
+required: true
+translatable: false
+default_value: { }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: { }
+  file_directory: 'turmas/[date:custom:Y]-[date:custom:m]'
+  file_extensions: pdf
+  max_filesize: ''
+  description_field: false
+field_type: file

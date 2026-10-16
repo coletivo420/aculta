@@ -1,5 +1,12 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.10 — documentos de turma privados e miniaturas alinhadas
+
+- Bundle `course_document` em `private://`, separado do bundle público institucional `document`; relação de turma Group e guarda de ciclo de vida mantêm as mídias de curso não publicadas.
+- Config Sync define permissões de leitura/criação por papel da turma e instala o bundle junto à integração Group.
+- JPEGs gerados pelo PDFPreview são validados e registrados como arquivos temporários gerenciados pelo `aculta_image`; a limpeza de imagens existente remove os derivados sem uso após a idade configurada.
+- A marcação da miniatura usa `aculta_image.render`, incluindo metadados de cache do arquivo. A ausência ou falha do preview continua sem bloquear o leitor PDF.js.
+
 ## 0.1.0-dev.9 — integração opcional Group↔Media
 
 Adiciona o submódulo opcional `aculta_pdf_viewer_group`, que fornece a relação

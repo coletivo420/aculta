@@ -7,25 +7,29 @@ Group.
 
 ## Funcionamento
 
-`MediaDocument` registra o plugin `aculta_pdf_viewer_group:document` com
-`entity_access: TRUE`. `MediaDocumentDeriver` publica a relação somente para o
-bundle Media `document`. A configuração opcional instala a relação no tipo
-Group `lms_course`; ao vincular Media a um curso, Group passa a avaliar a
-permissão `view aculta_pdf_viewer_group:document entity` no papel da turma.
-Estudante e educador recebem essa permissão no Config Sync; quem não tem
-membership não deve receber acesso mesmo que possua `view media` global. A rota de arquivo privado do Core
-continua sendo a única entrega de bytes e reavalia o acesso em cada requisição.
+`MediaDocument` registra o plugin `aculta_pdf_viewer_group:course_document` com
+`entity_access: TRUE` e relação obrigatória em `lms_course`.
+`MediaDocumentDeriver` publica a relação somente para Media `course_document`.
+Esse bundle é instalado com o submódulo e seu field storage usa `private://`;
+o bundle `document` público existente não é alterado. `CourseDocumentHooks`
+força Media de turma a permanecer não publicada: membros recebem permissões
+Group específicas de leitura (inclusive de conteúdo não publicado), enquanto
+um arquivo solto não ganha acesso por `view media` global. Estudante e educador
+recebem permissões de leitura no Config Sync; educadores também podem criar e
+relacionar documentos. A rota privada do Core continua como única entrega de
+bytes e reavalia o acesso em cada requisição.
 
-Os PDFs de turma precisam usar `private://`. Isso não migra arquivos e não
-transforma o bundle `document` público atual em privado. O enable/config import
-não foi executado no Runtime nesta fase; a verificação ponta a ponta ainda é um
-gate de PV5. Não colocar documentos privados em `public://`.
+Os PDFs de turma usam o novo bundle `course_document` e não são publicados nem
+mesmo quando a caixa de status é submetida. Isso não migra arquivos nem altera
+o bundle institucional `document`. O Runtime precisa validar membership,
+revogação e entrega privada antes do aceite final da PV5.
 
 ## Hooks e classes
 
-O módulo não implementa hooks PHP, rotas, controllers, storage próprio ou
-subscribers. O plugin de relação usa o atributo Drupal Group
-`#[GroupRelationType]`; o deriver associa o plugin ao bundle Media. Group
+O módulo implementa somente o hook OOP `#[Hook('entity_presave')]` em
+`CourseDocumentHooks`, sem hooks procedurais, rotas ou controllers. O plugin de
+relação usa o atributo Drupal Group `#[GroupRelationType]`; o deriver associa o
+plugin ao bundle Media. Group
 continua fonte de verdade de memberships e permissões, Media/File de arquivos
 e metadados, e `aculta_pdf_viewer` da apresentação do PDF.
 

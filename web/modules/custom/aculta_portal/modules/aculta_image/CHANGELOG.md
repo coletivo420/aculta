@@ -1,15 +1,21 @@
 # Changelog — aculta_image
 
-## 0.1.0-dev.21 — auditoria R8 de consumidores e estilos — 2026-10-16
+## 0.1.0-dev.23 — derivados temporários gerados por processadores
 
-- Auditoria do código e do Config Sync não encontrou consumidor `legado_*`; todas as referências de estilo nas configurações nativas correspondem a `ImageCatalog::STYLES`.
-- O gate `validate-aculta-image.php` passou sem usos de imagem fora do submódulo. O plano, handoff e registro de dívida anotam a conclusão de R8.
-- Atualizado comentário de `ImageCatalog` para refletir o critério atual de manutenção de estilos antigos.
+- Novo serviço `aculta_image.generated_file` valida e registra derivados públicos gerados como File temporário; o ciclo existente os remove após `system.file:temporary_maximum_age` quando não há referências.
+- `ImageRenderer::buildManagedImage()` centraliza a marcação da imagem e associa cache tags do File.
+- O PDF Viewer usa esse fluxo para a miniatura pública do PDFPreview.
 
 ## 0.1.0-dev.22 — reconciliação da documentação M10 — 2026-10-16
 
 - `MODELOS-DE-IMAGEM.md` agora reflete as verificações existentes no Runtime: persistência da legenda, viewport de 390 px, página pública e revisão Firefox/Orca/AT-SPI.
 - As fases P3 a P6 foram marcadas como concluídas; as pendências operacionais permanecem no handoff.
+
+## 0.1.0-dev.21 — auditoria R8 de consumidores e estilos — 2026-10-16
+
+- Auditoria do código e do Config Sync não encontrou consumidor `legado_*`; todas as referências de estilo nas configurações nativas correspondem a `ImageCatalog::STYLES`.
+- O gate `validate-aculta-image.php` passou sem usos de imagem fora do submódulo. O plano, handoff e registro de dívida anotam a conclusão de R8.
+- Atualizado comentário de `ImageCatalog` para refletir o critério atual de manutenção de estilos antigos.
 
 ## 0.1.0-dev.20 — seletor de imagem e herança de papéis — 2026-10-16
 

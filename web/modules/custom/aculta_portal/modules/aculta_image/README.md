@@ -4,7 +4,7 @@ Sistema único de imagens do site ACULTA. Todo uso de imagem passa por ele: cat�
 renderização responsiva, modelos de imagem no texto, compressão, leitura de dimensões, exclusão controlada, ingestão de
 origem externa, auditoria, quarentena e comparação visual.
 
-**Versão:** 0.1.0-dev.22 (ver [CHANGELOG](CHANGELOG.md)).
+**Versão:** 0.1.0-dev.23 (ver [CHANGELOG](CHANGELOG.md)).
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
@@ -23,8 +23,9 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 | --- | --- | --- |
 | `aculta_image.catalog` | `ImageCatalog` | Finalidades (`PURPOSES`), estilos (`STYLES`) e modelos de texto (`MODELOS`). Única fonte de nome de estilo. |
 | `aculta_image.upload_policy` | `UploadPolicy` | Extensões (png, gif, jpg, jpeg, webp) e tamanho máximo (10 MB). |
-| `aculta_image.render` | `ImageRenderer` | `build()`, `styleId()`, `styleEntity()`, `displaySettings()`. |
+| `aculta_image.render` | `ImageRenderer` | `build()`, `buildManagedImage()` para imagens gerenciadas pré-derivadas, `styleId()`, `styleEntity()`, `displaySettings()`. |
 | `aculta_image.inspector` | `ImageInspector` | Dimensões de arquivo ou de bytes. |
+| `aculta_image.generated_file` | `GeneratedImageFileManager` | Registra derivados de imagem públicos como arquivos temporários sujeitos à limpeza normal. |
 | `aculta_image.file_remover` | `FileRemover` | Exclusão de imagem após checagem de `file_usage` e `entity_usage`; invalida derivados e metadados internos. |
 | `aculta_image.cleanup` | `ImageCleanup` | Fila de imagens substituídas/removidas e limpeza de temporários vencidos; cron e ação manual. |
 | `aculta_image.ingester` | `ImageIngester` | Ingestão de imagem externa (SHA-256, reaproveitamento, origem). |

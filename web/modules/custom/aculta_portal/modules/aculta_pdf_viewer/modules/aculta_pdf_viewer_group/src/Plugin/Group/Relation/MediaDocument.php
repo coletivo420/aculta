@@ -9,7 +9,7 @@ use Drupal\group\Plugin\Attribute\GroupRelationType;
 use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
 
 /**
- * Provides the Group relation that protects document Media by membership.
+ * Provides the Group relation that protects private course-document Media.
  */
 #[GroupRelationType(
   id: 'aculta_pdf_viewer_group',
@@ -19,6 +19,7 @@ use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
   reference_label: new TranslatableMarkup('Document'),
   reference_description: new TranslatableMarkup('The document Media attached to this group.'),
   entity_access: TRUE,
+  enforced: TRUE,
   deriver: 'Drupal\\aculta_pdf_viewer_group\\Plugin\\Group\\Relation\\MediaDocumentDeriver'
 )]
 final class MediaDocument extends GroupRelationBase {

@@ -30,7 +30,13 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $media_access = $media->access('view', $this->currentUser, TRUE);
     $cacheability->addCacheableDependency($media_access);
 
-    if (!$media_access->isAllowed() || $media->bundle() !== 'document' || !$media->hasField($field_name)) {
+    $bundle = $media->bundle();
+    $expected_field = match ($bundle) {
+      'document' => 'field_media_document',
+      'course_document' => 'field_media_course_document',
+      default => NULL,
+    };
+    if (!$media_access->isAllowed() || $expected_field === NULL || $field_name !== $expected_field || !$media->hasField($field_name)) {
       return $this->denied($cacheability);
     }
 
@@ -53,9 +59,11 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $cacheability->addCacheableDependency($file_download_access);
     $uri = $file->getFileUri();
     $scheme = parse_url($uri, PHP_URL_SCHEME);
+    $expected_scheme = $bundle === 'course_document' ? 'private' : 'public';
     $url = $file->isPermanent()
       && $file_access->isAllowed()
       && $file_download_access->isAllowed()
+      && $scheme === $expected_scheme
       && in_array($scheme, ['public', 'private'], TRUE)
       ? $this->fileUrlGenerator->generateString($uri)
       : '';

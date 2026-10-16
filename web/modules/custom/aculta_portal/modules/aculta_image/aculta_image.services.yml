@@ -17,6 +17,11 @@ services:
     arguments: ['@image.factory']
     tags:
       - { name: aculta_portal.helper }
+  aculta_image.generated_file:
+    class: Drupal\aculta_image\GeneratedImageFileManager
+    arguments: ['@entity_type.manager', '@file_system', '@file.mime_type.guesser', '@aculta_image.inspector', '@datetime.time']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_image.file_remover:
     class: Drupal\aculta_image\FileRemover
     arguments: ['@file.usage', '@entity_type.manager', '@database', '@file_system', '@logger.factory']

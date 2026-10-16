@@ -95,8 +95,13 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
 
       $mime = strtolower((string) $file->getMimeType());
       $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
-      if ($mime === 'application/pdf' && $extension === 'pdf' && $media->bundle() === 'document') {
-        $viewer = $this->viewerBuilder->build($media);
+      $viewer_field = match ($media->bundle()) {
+        'document' => 'field_media_document',
+        'course_document' => 'field_media_course_document',
+        default => NULL,
+      };
+      if ($mime === 'application/pdf' && $extension === 'pdf' && $viewer_field === $items->getName()) {
+        $viewer = $this->viewerBuilder->build($media, $viewer_field);
         if (!isset($viewer['#access']) || $viewer['#access'] !== FALSE) {
           $elements[$delta] = $viewer;
           continue;

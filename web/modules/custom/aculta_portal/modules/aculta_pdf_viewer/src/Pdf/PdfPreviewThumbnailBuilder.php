@@ -7,6 +7,8 @@ namespace Drupal\aculta_pdf_viewer\Pdf;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\aculta_image\GeneratedImageFileManager;
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
@@ -30,6 +32,8 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
     private readonly ?PDFPreviewGenerator $previewGenerator,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
+    private readonly GeneratedImageFileManager $generatedImageFileManager,
+    private readonly ImageRenderer $imageRenderer,
     private readonly ImageInspector $imageInspector,
     private readonly LoggerInterface $logger,
     private readonly ?ImagemagickExecManagerInterface $imagemagickExecManager,
@@ -66,6 +70,10 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
         return NULL;
       }
 
+      $preview_file = $this->generatedImageFileManager->registerTemporaryDerivative($preview_uri);
+      if ($preview_file === NULL) {
+        return NULL;
+      }
       $dimensions = $this->imageInspector->dimensions($preview_uri);
       if ($dimensions === NULL) {
         return NULL;
@@ -73,29 +81,23 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
 
       $url = $this->fileUrlGenerator->generateString($preview_uri);
       $parts = parse_url($url);
-      if (!is_array($parts)
-        || isset($parts['scheme'])
-        || isset($parts['host'])
-        || isset($parts['query'])
-        || !str_starts_with($url, '/')) {
+      if (!is_array($parts) || isset($parts['scheme']) || isset($parts['host']) || isset($parts['query']) || !str_starts_with($url, '/')) {
         return NULL;
       }
 
-      $build = [
-        '#type' => 'html_tag',
-        '#tag' => 'img',
-        '#attributes' => [
-          'src' => $url,
-          'alt' => $alt,
-          'width' => $dimensions['width'],
-          'height' => $dimensions['height'],
-          'loading' => 'lazy',
-          'decoding' => 'async',
-          'data-aculta-pdf-control' => 'thumbnail',
-        ],
-        '#cache' => ['contexts' => ['url.site']],
-      ];
-      CacheableMetadata::createFromObject($file)->applyTo($build);
+      $build = $this->imageRenderer->buildManagedImage($preview_file, $alt, [
+        'width' => $dimensions['width'],
+        'height' => $dimensions['height'],
+        'loading' => 'lazy',
+        'decoding' => 'async',
+        'data-aculta-pdf-control' => 'thumbnail',
+      ]);
+      if ($build === NULL) {
+        return NULL;
+      }
+      $cacheability = CacheableMetadata::createFromObject($file);
+      $cacheability->addCacheContexts(['url.site']);
+      $cacheability->applyTo($build);
       return $build;
     }
     catch (Throwable $exception) {
