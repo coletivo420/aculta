@@ -1,3 +1,10 @@
+## F5.1 — denúncias e participação com e-mail confirmado — 2026-10-16
+
+- Sinalização de tópico e comentário pelo Flag (`sinalizar_topico`, `sinalizar_comentario`), uma por conta e por conteúdo.
+- Fila de moderação em `/painel-administrativo/forum/denuncias`, restrita a `moderar denuncias do forum`.
+- Participação no Fórum (criar, editar o próprio conteúdo, comentar, denunciar) exige `email_confirmed` (F-D13).
+- Pendências: sinalização de comentário não testada no teste (não há comentário de fórum); papel `authenticated` com divergência anterior; avisos de resposta e busca ficam para F5.2 e F5.3.
+
 # Changelog — ACULTA Fórum
 
 ## F2 estrutura pronta para a importação — 2026-10-16

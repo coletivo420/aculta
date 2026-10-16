@@ -1,5 +1,13 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.12 — denúncias do Fórum e participação com e-mail confirmado (F5.1) — 2026-10-16
+
+Classificação MINOR. Denúncia de tópico e comentário pelo Flag, deduplicada por conta; fila de moderação em
+`/painel-administrativo/forum/denuncias` (permissão `moderar denuncias do forum`); participação no Fórum (criar,
+editar o próprio conteúdo, comentar e denunciar) exige o papel `email_confirmed`. Seguir e salvar continuam em
+`authenticated`. Testado no Runtime de teste: denúncia registrada, repetição recusada pelo Flag, fila renderiza
+com link pelo alias, acesso anônimo negado (403).
+
 ## 0.4.0-dev.11 — estrutura de identidade histórica do Fórum (F2) — 2026-10-16
 
 Classificação MINOR. Estrutura pronta para a importação; nenhuma conta histórica foi criada.
