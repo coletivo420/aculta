@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Commerce\MercadoPago;
 
+use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use MercadoPago\Exceptions\InvalidWebhookSignatureException;
 use MercadoPago\Webhook\WebhookSignatureValidator;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 /** Validates modern Mercado Pago webhook requests before Commerce receives them. */
 final class WebhookGuard {
+
+  public function __construct(
+    private readonly ?MercadoPagoSubscriptionNotificationService $assinaturas = NULL,
+    private readonly ?LoggerChannelInterface $log = NULL,
+  ) {}
 
   /**
    * Validates and adapts a notification, or returns a fail-closed response.
@@ -74,19 +81,27 @@ final class WebhookGuard {
     }
     $data_id = $data_ids[0];
 
-    // The installed contrib casts its legacy `id` query parameter to an
-    // integer before calling the SDK. Restrict input to a positive PHP integer
-    // so validation and the contrib lookup cannot refer to different IDs.
-    if (filter_var($data_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE) {
-      return new Response('', Response::HTTP_BAD_REQUEST);
-    }
-    if (isset($query['id']) && (string) $query['id'] !== $data_id) {
-      return new Response('', Response::HTTP_BAD_REQUEST);
-    }
-
     $types = $this->extractTypes([$query, $request->request->all(), $json]);
     $types = array_values(array_unique($types));
     if (count($types) !== 1) {
+      return new Response('', Response::HTTP_BAD_REQUEST);
+    }
+    $tipo = $types[0];
+    $assinatura = in_array($tipo, MercadoPagoSubscriptionNotificationService::TIPOS, TRUE);
+
+    // Pagamentos usam ID inteiro (contrib legado). Assinaturas usam IDs alfanuméricos do Mercado Pago.
+    if ($assinatura) {
+      if (preg_match('/^[A-Za-z0-9_-]{1,64}$/', $data_id) !== 1) {
+        return new Response('', Response::HTTP_BAD_REQUEST);
+      }
+    }
+    // The installed contrib casts its legacy `id` query parameter to an
+    // integer before calling the SDK. Restrict input to a positive PHP integer
+    // so validation and the contrib lookup cannot refer to different IDs.
+    elseif (filter_var($data_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === FALSE) {
+      return new Response('', Response::HTTP_BAD_REQUEST);
+    }
+    if (isset($query['id']) && (string) $query['id'] !== $data_id) {
       return new Response('', Response::HTTP_BAD_REQUEST);
     }
 
@@ -99,7 +114,11 @@ final class WebhookGuard {
       return new Response('', Response::HTTP_UNAUTHORIZED);
     }
 
-    if ($types[0] !== 'payment') {
+    if ($assinatura) {
+      return $this->processarAssinatura($tipo, $data_id);
+    }
+
+    if ($tipo !== 'payment') {
       // A signed but unsupported notification is acknowledged without passing
       // it to the older contrib handler, avoiding retries for unhandled types.
       return new Response('', Response::HTTP_OK);
@@ -112,6 +131,23 @@ final class WebhookGuard {
   }
 
   /** Extracts all supported data.id representations for conflict detection. */
+  /**
+   * Processa um tópico de assinatura já validado. 200 quando consumido; 500 para o Mercado Pago reenviar.
+   */
+  private function processarAssinatura(string $tipo, string $id): Response {
+    if ($this->assinaturas === NULL) {
+      return new Response('', Response::HTTP_OK);
+    }
+    try {
+      $this->assinaturas->processar($tipo, $id);
+    }
+    catch (\Throwable $e) {
+      $this->log?->error('Falha ao processar notificação @tipo @id: @erro', ['@tipo' => $tipo, '@id' => $id, '@erro' => $e->getMessage()]);
+      return new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    return new Response('', Response::HTTP_OK);
+  }
+
   private function extractDataIds(array $sources): array {
     $ids = [];
     foreach ($sources as $source) {

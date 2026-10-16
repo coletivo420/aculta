@@ -19,7 +19,7 @@ use MercadoPago\Exceptions\MPApiException;
  * Os webhooks de assinatura (tópicos subscription_preapproval e subscription_authorized_payment) não são
  * tratados aqui; ficam para a fase de integração com a loja e as doações (ver docs/portal/MERCADO-PAGO-PLANO.md).
  */
-final class MercadoPagoRecurrenceService {
+class MercadoPagoRecurrenceService {
 
   public function __construct(
     private readonly MercadoPagoClientFactory $clientes,

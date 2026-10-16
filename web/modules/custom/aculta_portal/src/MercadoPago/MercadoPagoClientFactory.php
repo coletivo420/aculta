@@ -102,9 +102,12 @@ class MercadoPagoClientFactory {
   }
 
   /**
-   * Define o token e o integrador do gateway no SDK.
+   * Token do modo ativo do gateway (test, stage ou live). Falha se o gateway não for Checkout Pro ou não tiver token.
+   *
+   * @throws \InvalidArgumentException
+   * @throws \RuntimeException
    */
-  private function configurar(PaymentGatewayInterface $gateway): void {
+  public function tokenAtivo(PaymentGatewayInterface $gateway): string {
     $plugin = $gateway->getPlugin();
     if (!$plugin instanceof CheckoutPro) {
       throw new \InvalidArgumentException('O gateway não é do Mercado Pago Checkout Pro.');
@@ -114,7 +117,14 @@ class MercadoPagoClientFactory {
     if ($token === '') {
       throw new \RuntimeException('O gateway do Mercado Pago não tem token para o modo ativo.');
     }
-    MercadoPagoConfig::setAccessToken($token);
+    return $token;
+  }
+
+  /**
+   * Define o token e o integrador do gateway no SDK.
+   */
+  private function configurar(PaymentGatewayInterface $gateway): void {
+    MercadoPagoConfig::setAccessToken($this->tokenAtivo($gateway));
     MercadoPagoConfig::setIntegratorId(CheckoutPro::INTEGRATOR_ID);
   }
 
