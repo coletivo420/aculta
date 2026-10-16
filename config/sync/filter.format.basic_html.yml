@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_image
     - editor
 _core:
   default_config_hash: mclCbTlJwWJORez4Y1eX2MqA0aGjSMAoJb3TaBABcK8
@@ -10,6 +11,12 @@ name: 'HTML básico'
 format: basic_html
 weight: 0
 filters:
+  aculta_imagem_modelo:
+    id: aculta_imagem_modelo
+    provider: aculta_image
+    status: true
+    weight: 20
+    settings: {  }
   editor_file_reference:
     id: editor_file_reference
     provider: editor
@@ -34,7 +41,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<br> <p> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <cite> <dl> <dt> <dd> <a hreflang href> <blockquote cite> <ul type> <ol start type> <strong> <em> <code> <li> <img src alt data-entity-uuid data-entity-type height width data-caption data-align>'
+      allowed_html: '<br> <p> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <cite> <dl> <dt> <dd> <a hreflang href> <blockquote cite> <ul type> <ol start type> <strong> <em> <code> <li> <img src alt data-entity-uuid data-entity-type height width data-caption data-align data-aculta-modelo data-aculta-legenda data-aculta-credito data-aculta-alinhamento>'
       filter_html_help: false
       filter_html_nofollow: false
   filter_html_image_secure:
@@ -49,3 +56,4 @@ filters:
     status: true
     weight: 15
     settings: {  }
+

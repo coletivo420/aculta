@@ -1,0 +1,17 @@
+uuid: 10a01c79-817f-4e0e-aec6-601a152788e7
+langcode: pt-br
+status: true
+dependencies: {  }
+name: aculta_corpo_480
+label: 'ACULTA corpo 480px'
+effects:
+  af9cc7ac-3279-4b38-9071-3cda9f91ecf6:
+    uuid: af9cc7ac-3279-4b38-9071-3cda9f91ecf6
+    id: image_scale
+    weight: 0
+    data:
+      width: 480
+      height: null
+      upscale: false
+pipeline: aculta_derivados
+

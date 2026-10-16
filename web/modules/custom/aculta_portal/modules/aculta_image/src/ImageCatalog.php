@@ -22,6 +22,13 @@ final class ImageCatalog {
     'aculta_compartilhamento_1200x630',
     'aculta_card_16x9',
     'aculta_destaque_16x9',
+    'aculta_corpo_1024',
+    'aculta_corpo_1160',
+    'aculta_corpo_1200',
+    'aculta_corpo_320',
+    'aculta_corpo_480',
+    'aculta_corpo_640',
+    'aculta_corpo_800',
     'crop_thumbnail',
     'large',
     'media_gallery_image',
@@ -56,6 +63,22 @@ final class ImageCatalog {
     'destaque' => 'aculta_destaque_16x9',
     'compartilhamento' => 'aculta_compartilhamento_1200x630',
   ];
+
+  /**
+   * Modelos de imagem do texto (padrão de jornais digitais, ver docs/MODELOS-DE-IMAGEM.md): nome => estilos do srcset.
+   * Primeiro estilo: 1x (tela comum). Segundo: 2x (tela retina) ou o maior tamanho disponível para o modelo.
+   */
+  public const MODELOS = [
+    'pequena' => ['aculta_corpo_320', 'aculta_corpo_640'],
+    'padrao' => ['aculta_corpo_480', 'aculta_corpo_1160'],
+    'larga' => ['aculta_corpo_800', 'aculta_corpo_1200'],
+    'destaque' => ['aculta_corpo_1024', 'aculta_corpo_1200'],
+  ];
+
+  /** Estilos do srcset de um modelo de imagem do texto, ou NULL se o modelo não existe. */
+  public function estilosDoModelo(string $modelo): ?array {
+    return self::MODELOS[$modelo] ?? NULL;
+  }
 
   /** Estilo da finalidade, ou NULL se a finalidade não existe no catálogo. */
   public function styleFor(string $purpose): ?string {

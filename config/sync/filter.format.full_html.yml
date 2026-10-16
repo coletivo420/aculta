@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_image
     - editor
     - entity_embed
     - media
@@ -12,6 +13,12 @@ name: 'HTML completo'
 format: full_html
 weight: 2
 filters:
+  aculta_imagem_modelo:
+    id: aculta_imagem_modelo
+    provider: aculta_image
+    status: true
+    weight: 20
+    settings: {  }
   editor_file_reference:
     id: editor_file_reference
     provider: editor
