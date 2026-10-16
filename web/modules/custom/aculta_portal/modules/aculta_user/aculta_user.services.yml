@@ -45,3 +45,10 @@ services:
   aculta_user.report_queue:
     class: Drupal\aculta_user\Moderation\ReportQueue
     arguments: ['@entity_type.manager']
+  aculta_user.restricted_forum_not_found:
+    class: Drupal\aculta_user\EventSubscriber\RestrictedForumNotFoundSubscriber
+    arguments: ['@current_user', '@aculta_user.restricted_forum_grants']
+    tags:
+      - { name: event_subscriber }
+  aculta_user.restricted_forum_grants:
+    class: Drupal\aculta_user\Forum\RestrictedForumGrants

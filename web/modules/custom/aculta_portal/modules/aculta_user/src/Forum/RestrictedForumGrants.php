@@ -6,17 +6,18 @@ namespace Drupal\aculta_user\Forum;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\TermInterface;
 
 /**
- * Visibilidade dos fóruns por grants de nó (ACULTA Fórum, F9, F-D14).
+ * Visibilidade dos fóruns restritos (ACULTA Fórum, F9, F-D14).
  *
- * O nível de visibilidade é do fórum (termo do vocabulário forums, campo field_visibilidade). Cada tópico recebe
- * grants de visualização do nível do seu fórum; os demais tópicos mantêm o grant padrão do Core (público).
- * Motivo: as listagens do Forum, a busca e as contagens já passam pela tag node_access, então a restrição vale
- * em todos esses pontos sem consulta paralela.
+ * Hierarquia de papéis para visualização (do menor ao maior):
+ * authenticated < email_confirmed < associado < content_editor < administrator.
+ * Cada nível enxerga o que o anterior enxerga. A hierarquia é aplicada pelos realms abaixo: o papel superior
+ * recebe o realm do nível inferior. O administrador tem bypass de acesso a nós e não passa por esta regra.
  *
- * Realms: aculta_email_confirmado (papel email_confirmed e associado) e aculta_associado (papel associado).
- * Associados atravessam o nível de e-mail confirmado porque a concessão do papel é manual (F-D14).
+ * Realms: aculta_email_confirmado (email_confirmed, associado e content_editor) e aculta_associado
+ * (associado e content_editor). O content_editor atua como moderador do Fórum (ver docs/portal/PAPEIS-PARTICIPACAO.md).
  */
 final class RestrictedForumGrants {
 
@@ -27,7 +28,7 @@ final class RestrictedForumGrants {
   public const FIELD = 'field_visibilidade';
 
   /**
-   * Grants de visualização para o usuário, por realm.
+   * Grants de visualização do usuário, por realm.
    */
   public function grantsFor(AccountInterface $account, string $op): array {
     if ($op !== 'view' || $account->isAnonymous()) {
@@ -35,36 +36,67 @@ final class RestrictedForumGrants {
     }
     $roles = $account->getRoles();
     $grants = [];
-    if (in_array('associado', $roles, TRUE) || in_array('email_confirmed', $roles, TRUE)) {
+    if (array_intersect($roles, ['email_confirmed', 'associado', 'content_editor']) !== []) {
       $grants[self::REALM_EMAIL] = [1];
     }
-    if (in_array('associado', $roles, TRUE)) {
+    if (array_intersect($roles, ['associado', 'content_editor']) !== []) {
       $grants[self::REALM_ASSOCIADO] = [1];
     }
     return $grants;
   }
 
   /**
-   * Registros de acesso do tópico conforme o nível do fórum. Retorna vazio para público (grant padrão).
+   * Registros de acesso do tópico conforme o nível do fórum. Vazio para público (grant padrão do Core).
    */
   public function recordsFor(NodeInterface $node): array {
     if ($node->bundle() !== 'forum' || !$node->hasField('taxonomy_forums') || $node->get('taxonomy_forums')->isEmpty()) {
       return [];
     }
     $container = $node->get('taxonomy_forums')->entity;
-    if ($container === NULL || !$container->hasField(self::FIELD) || $container->get(self::FIELD)->isEmpty()) {
+    if (!$container instanceof TermInterface) {
       return [];
     }
-    $nivel = (string) $container->get(self::FIELD)->value;
-    $realm = match ($nivel) {
-      'email_confirmado' => self::REALM_EMAIL,
-      'associado' => self::REALM_ASSOCIADO,
-      default => NULL,
+    return array_map(
+      fn(string $realm) => ['realm' => $realm, 'gid' => 1, 'grant_view' => 1, 'grant_update' => 0, 'grant_delete' => 0, 'priority' => 0],
+      $this->realmsDoNivel($container),
+    );
+  }
+
+  /**
+   * Realms exigidos pelo nível de visibilidade de um contêiner de fórum. Vazio para público.
+   *
+   * @return string[]
+   */
+  public function realmsDoNivel(TermInterface $container): array {
+    if ($container->bundle() !== 'forums' || !$container->hasField(self::FIELD) || $container->get(self::FIELD)->isEmpty()) {
+      return [];
+    }
+    return match ((string) $container->get(self::FIELD)->value) {
+      'email_confirmado' => [self::REALM_EMAIL],
+      'associado' => [self::REALM_ASSOCIADO],
+      default => [],
     };
-    if ($realm === NULL) {
-      return [];
+  }
+
+  /**
+   * Realms exigidos pelo nível do contêiner de um tópico. Vazio para público.
+   *
+   * @return string[]
+   */
+  public function realmsDoTopico(NodeInterface $node): array {
+    return array_map(fn(array $r) => $r['realm'], $this->recordsFor($node));
+  }
+
+  /**
+   * Indica se o usuário pode ver algo que exige os realms informados. Vazio exige nada.
+   *
+   * @param string[] $exigidos
+   */
+  public function permite(AccountInterface $account, array $exigidos): bool {
+    if ($exigidos === []) {
+      return TRUE;
     }
-    return [['realm' => $realm, 'gid' => 1, 'grant_view' => 1, 'grant_update' => 0, 'grant_delete' => 0, 'priority' => 0]];
+    return array_intersect($exigidos, array_keys($this->grantsFor($account, 'view'))) !== [];
   }
 
 }

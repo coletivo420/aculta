@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.15 — F9: hierarquia de papéis, moderação do Fórum e 404 para restritos — 2026-10-16
+
+Classificação MINOR. Hierarquia authenticated < email_confirmed < associado < content_editor < administrator
+(documentada em `docs/portal/PAPEIS-PARTICIPACAO.md`). `content_editor` vê os níveis restritos. Visitante e bots
+recebem 404 em contêiner e tópico restritos (subscriber `RestrictedForumNotFoundSubscriber`). Conferido no teste por
+papel: anônimo e e-mail confirmado sem acesso; associado e editor com acesso; anônimo e bot recebem 404.
+
 ## 0.4.0-dev.14 — F9: sitemap, busca e comentários de fórum restrito — 2026-10-16
 
 Classificação MINOR. Exclusão de nó e contêiner restritos do `simple_sitemap` (hook de links). Conferido no teste:

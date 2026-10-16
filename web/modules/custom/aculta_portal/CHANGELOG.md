@@ -1,3 +1,8 @@
+## 0.4.0-dev.48 — F9: papéis e 404 para restritos — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.15. Hierarquia de papéis documentada e aplicada aos fóruns
+restritos; visitante e bots recebem 404 nos restritos.
+
 ## 0.4.0-dev.47 — F9: fóruns restritos verificados — 2026-10-16
 
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.14. Sitemap, comentários e busca conferidos no teste. Falta: nível

@@ -14,35 +14,30 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_user\Forum\RestrictedForumGrants;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Fóruns restritos (ACULTA Fórum, F9, F-D14).
  *
- * O Core aplica o grant padrão a todo nó publicado e não permite negação por grant. Por isso a restrição tem três
- * pontos: grants por realm (node_access_records e node_grants), negação de acesso direto (entity_access) e filtro
- * das consultas com a tag node_access, que cobre listagens, contagens e busca. Motivo: nenhum desses pontos sozinho
- * fecha todas as saídas.
+ * O Core aplica o grant padrão a todo nó publicado e não permite negação por grant. Por isso a restrição tem quatro
+ * pontos: grants por realm (node_access_records e node_grants), negação de acesso direto (entity_access), filtro das
+ * consultas com a tag node_access (listagens e contagens) e exclusão do sitemap. A conversão de 403 para 404 para
+ * páginas restritas fica no subscriber RestrictedForumNotFoundSubscriber.
  */
-final class RestrictedForumHooks implements ContainerInjectionInterface {
+final class RestrictedForumHooks {
 
-  /** Realms que restringem tópicos. */
+  /** Realms que restringem conteúdo. */
   private const RESTRICTED_REALMS = [RestrictedForumGrants::REALM_EMAIL, RestrictedForumGrants::REALM_ASSOCIADO];
 
   private readonly RestrictedForumGrants $grants;
 
   public function __construct(
+    #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
+    #[Autowire(service: 'entity_type.manager')]
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     $this->grants = new RestrictedForumGrants();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container): static {
-    return new static($container->get('current_user'));
   }
 
   /**
@@ -62,7 +57,7 @@ final class RestrictedForumHooks implements ContainerInjectionInterface {
   }
 
   /**
-   * Nega a visualização direta de tópico restrito a quem não tem o realm do nível do fórum.
+   * Nega a visualização direta de tópico ou contêiner restrito a quem não tem o realm exigido.
    */
   #[Hook('entity_access')]
   public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
@@ -70,19 +65,15 @@ final class RestrictedForumHooks implements ContainerInjectionInterface {
       return NULL;
     }
     if ($entity instanceof TermInterface && $entity->bundle() === 'forums') {
-      $exigidos = $this->realmsDoNivel($entity);
+      $exigidos = $this->grants->realmsDoNivel($entity);
     }
     elseif ($entity instanceof NodeInterface) {
-      $exigidos = $this->realmsRestritos($entity);
+      $exigidos = $this->grants->realmsDoTopico($entity);
     }
     else {
       return NULL;
     }
-    if ($exigidos === []) {
-      return NULL;
-    }
-    $permitidos = array_keys($this->grants->grantsFor($account, 'view'));
-    if (array_intersect($exigidos, $permitidos) !== []) {
+    if ($this->grants->permite($account, $exigidos)) {
       return NULL;
     }
     return AccessResult::forbidden('Fórum restrito.')
@@ -99,21 +90,55 @@ final class RestrictedForumHooks implements ContainerInjectionInterface {
     if ($account->hasPermission('bypass node access')) {
       return;
     }
-    $permitidos = array_keys($this->grants->grantsFor($account, 'view'));
     $alias = $this->baseAlias($query);
     if ($alias === NULL) {
       return;
     }
-    $restritos = self::RESTRICTED_REALMS;
-    $permitidos = $permitidos === [] ? ['__nenhum__'] : $permitidos;
+    $permitidos = array_keys($this->grants->grantsFor($account, 'view')) ?: ['__nenhum__'];
     $query->where(
       "{$alias}.nid NOT IN (SELECT na1.nid FROM {node_access} na1 WHERE na1.realm IN (:restritos[]) AND na1.nid NOT IN (SELECT na2.nid FROM {node_access} na2 WHERE na2.realm IN (:permitidos[]) AND na2.grant_view = 1))",
-      [':restritos[]' => $restritos, ':permitidos[]' => $permitidos],
+      [':restritos[]' => self::RESTRICTED_REALMS, ':permitidos[]' => $permitidos],
     );
   }
 
   /**
-   * Alias, na consulta, da tabela que contém o nid do nó. Segue a tabela base declarada ou a primeira tabela de nó.
+   * Tira do sitemap os nós e contêineres restritos (F9).
+   *
+   * Motivo: o simple_sitemap gera a partir das entidades sem consultar grants.
+   */
+  #[Hook('simple_sitemap_links_alter')]
+  public function simpleSitemapLinksAlter(array &$links, object $sitemap): void {
+    foreach ($links as $key => $link) {
+      $caminho = (string) ($link['meta']['path'] ?? '');
+      if (!preg_match('#^(node|taxonomy/term)/(\d+)$#', $caminho, $m)) {
+        continue;
+      }
+      $entidade = $this->entityTypeManager->getStorage($m[1] === 'node' ? 'node' : 'taxonomy_term')->load((int) $m[2]);
+      if ($entidade instanceof NodeInterface && $this->grants->realmsDoTopico($entidade) !== []) {
+        unset($links[$key]);
+      }
+      elseif ($entidade instanceof TermInterface && $this->grants->realmsDoNivel($entidade) !== []) {
+        unset($links[$key]);
+      }
+    }
+  }
+
+  /**
+   * Implements hook_taxonomy_term_update(). Mudança de nível refaz os grants dos tópicos.
+   */
+  #[Hook('taxonomy_term_update')]
+  public function termUpdate(TermInterface $term): void {
+    if ($term->bundle() !== 'forums' || !$term->hasField(RestrictedForumGrants::FIELD)) {
+      return;
+    }
+    if (!$term->original || (string) $term->original->get(RestrictedForumGrants::FIELD)->value === (string) $term->get(RestrictedForumGrants::FIELD)->value) {
+      return;
+    }
+    node_access_rebuild();
+  }
+
+  /**
+   * Alias, na consulta, da tabela que contém o nid do nó.
    */
   private function baseAlias(AlterableInterface $query): ?string {
     $tabela = $query->getMetaData('base_table');
@@ -132,67 +157,6 @@ final class RestrictedForumHooks implements ContainerInjectionInterface {
       }
     }
     return NULL;
-  }
-
-  /**
-   * Realms exigidos pelo nível de visibilidade de um contêiner de fórum, ou vazio para público.
-   */
-  private function realmsDoNivel(TermInterface $term): array {
-    if (!$term->hasField(RestrictedForumGrants::FIELD) || $term->get(RestrictedForumGrants::FIELD)->isEmpty()) {
-      return [];
-    }
-    return match ((string) $term->get(RestrictedForumGrants::FIELD)->value) {
-      'email_confirmado' => [RestrictedForumGrants::REALM_EMAIL],
-      'associado' => [RestrictedForumGrants::REALM_ASSOCIADO],
-      default => [],
-    };
-  }
-
-  /**
-   * Realms exigidos pelo nível do fórum do nó, ou vazio para público.
-   */
-  private function realmsRestritos(NodeInterface $node): array {
-    return array_map(fn(array $r) => $r['realm'], $this->grants->recordsFor($node));
-  }
-
-  /**
-   * Implements hook_taxonomy_term_update(). Mudança de nível refaz os grants dos tópicos.
-   */
-  #[Hook('taxonomy_term_update')]
-  public function termUpdate(TermInterface $term): void {
-    if ($term->bundle() !== 'forums' || !$term->hasField(RestrictedForumGrants::FIELD)) {
-      return;
-    }
-    if (!$term->original || (string) $term->original->get(RestrictedForumGrants::FIELD)->value === (string) $term->get(RestrictedForumGrants::FIELD)->value) {
-      return;
-    }
-    node_access_rebuild();
-  }
-
-  /**
-   * Tira do sitemap os nós e contêineres restritos (F9, F-D14, item 5).
-   *
-   * Motivo: o simple_sitemap gera a partir das entidades sem consultar grants. Sem este filtro, um tópico restrito
-   * entraria no sitemap público.
-   */
-  #[Hook('simple_sitemap_links_alter')]
-  public function simpleSitemapLinksAlter(array &$links, object $sitemap): void {
-    foreach ($links as $key => $link) {
-      $caminho = (string) ($link['meta']['path'] ?? '');
-      if (!preg_match('#^(node|taxonomy/term)/(\d+)$#', $caminho, $m)) {
-        continue;
-      }
-      $entidade = $this->entityTypeManager->getStorage($m[1] === 'node' ? 'node' : 'taxonomy_term')->load((int) $m[2]);
-      if ($entidade === NULL) {
-        continue;
-      }
-      $restrito = $entidade instanceof NodeInterface
-        ? $this->realmsRestritos($entidade) !== []
-        : ($entidade instanceof TermInterface && $entidade->bundle() === 'forums' && $this->realmsDoNivel($entidade) !== []);
-      if ($restrito) {
-        unset($links[$key]);
-      }
-    }
   }
 
 }

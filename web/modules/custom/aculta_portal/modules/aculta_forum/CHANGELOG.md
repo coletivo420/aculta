@@ -1,3 +1,9 @@
+## F9 — hierarquia de papéis e 404 para restritos — 2026-10-16
+
+- Hierarquia documentada (`docs/portal/PAPEIS-PARTICIPACAO.md`); `content_editor` é o moderador do Fórum e vê os níveis restritos.
+- Visitante e bots recebem 404 em contêiner e tópico restritos (F-D15).
+- Dúvidas abertas no documento de papéis, seção 4.
+
 ## F9 parcial — fóruns restritos por nível — 2026-10-16
 
 - Papel `associado` versionado (concessão manual). Campo `field_visibilidade` no contêiner: público, e-mail confirmado, associado.
