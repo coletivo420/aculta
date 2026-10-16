@@ -2,6 +2,8 @@ uuid: 2b2142b4-bf9d-4fbc-a9e0-50a43d122638
 langcode: pt-br
 status: true
 dependencies:
+  module:
+    - aculta_pdf_viewer_group
   config:
     - group.type.lms_course
     - user.role.lms_teacher
@@ -20,6 +22,7 @@ permissions:
   - 'update own group_membership relationship'
   - 'view all group revisions'
   - 'view any unpublished group'
+  - 'view aculta_pdf_viewer_group:document entity'
   - 'view group'
   - 'view group revisions'
   - 'view group_membership relationship'

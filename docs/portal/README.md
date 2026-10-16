@@ -20,6 +20,7 @@
 - [ACULTA Messenger](../../web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) — integração de mensagens, modais, avisos persistentes segmentados e estado de leitura individual.
 - [PDF global](PDF-VIEWER-INTEGRATION.md) — contrato compartilhado de Media, viewer, acesso a arquivos e previews.
 - [ACULTA PDF Viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md) — documentação do submódulo, formatter, serviço, biblioteca, hooks e testes.
+- [ACULTA PDF Viewer Group](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md) — relação opcional de Media `document` com turmas Group e acesso por membership.
 - [Contratos de integração LMS](LMS-INTEGRATION-CONTRACTS.md) — avaliações, certificados, Messenger, User/conquistas e apresentação.
 - [Matriz de segurança e arquivos LMS](SECURITY-ACCESS-FILES-MATRIX.md) — papéis, acesso, upload, cache e isolamento por turma.
 - [Roadmap do aculta_lms](../modules/ACULTA-LMS-ROADMAP.md) e [compatibilidade LMS/PDF](../modules/LMS-COMPATIBILITY.md).

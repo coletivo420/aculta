@@ -15,9 +15,10 @@ formatter de Media `document`.
   leitura. Config Sync concede `view media` aos papéis anônimo e autenticado;
   Media publicada com arquivo privado pode ser lida por ambos. Não usar esse
   fluxo para documentos confidenciais de turma.
-- O Group instalado não tem relação Media configurada. A autorização de um curso
-  não é herdada pela Media; documentos por turma aguardam integração e testes
-  Group↔Media.
+- A integração opcional `aculta_pdf_viewer_group` vincula Media `document` ao
+  Group `lms_course` e faz Group controlar o acesso à entidade. Para conteúdo de
+  turma, use `private://`; o bundle `document` existente continua público e não
+  pode receber arquivos confidenciais.
 - PDF sem viewer conserva o link Core apenas quando `download` access permite.
 - O bundle Media `document` atual usa `public://`. Não o use para trabalhos de
   estudante ou outro documento que exija isolamento por turma.
@@ -75,8 +76,8 @@ serviço e plugin sem storage ou hook de download próprio.
 PHPUnit é executado com a configuração `web/core/phpunit.xml.dist`. Kernel
 valida Media Embed, endpoint privado Core, acesso autorizado/negado, publicação
 da Media e o efeito de `view media` para o papel anônimo. Upload como
-`content_editor`, integração Group↔Media, browser privado, binários/miniaturas e
-Hostinger continuam pendentes. Nenhum `drush cim`, `updb`, CDN, ImageMagick
+`content_editor`, homologação ponta a ponta Group↔Media no Runtime, browser
+privado, binários/miniaturas e Hostinger continuam pendentes. Nenhum `drush cim`, `updb`, CDN, ImageMagick
 policy ou migração de arquivo é executado por este módulo.
 
 ## Documentação de arquitetura

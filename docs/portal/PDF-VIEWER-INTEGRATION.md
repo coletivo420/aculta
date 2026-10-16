@@ -48,11 +48,12 @@ PDFPreview gera a primeira página usando ImageMagick e binários relacionados. 
 `private://` não significa audiência restrita: a rota Core consulta File/Media
 Access. A Config Sync atual concede `view media` aos papéis anônimo e
 autenticado, então uma Media publicada com PDF `private://` pode ser lida por
-ambos. O Group 3.3.5 instalado fornece `gnode`, mas não há relação Media
-configurada para aplicar membership de turma à Media. Não usar PDF privado em
-conteúdo educacional/confidencial até existir uma integração Group↔Media e seus
-testes de usuário membro e não membro. O teste Kernel cobre o acesso permitido
-quando o papel anônimo recebe `view media`.
+ambos. O submódulo opcional `aculta_pdf_viewer_group` agora fornece relação
+Media `document` para Group `lms_course`; os papéis Group estudante e educador
+recebem a permissão específica de visualização. Até instalar e validar a
+relação no Runtime para membro, não membro, revogação e endpoint privado, não
+usar PDF privado como confidencialidade de turma. O teste Kernel existente
+cobre o acesso permitido quando o papel anônimo recebe `view media`.
 
 A página do projeto recomenda permitir leitura de PDF em ImageMagick `policy.xml`; isso não autoriza alteração global de policy, execução de PostScript, nem permissões amplas. Alteração de policy do sistema requer revisão operacional e de segurança própria. A configuração Drupal versionada habilita o formato PDF no toolkit ImageMagick usado pelo PDFPreview; ela não altera a policy do sistema.
 
@@ -196,8 +197,9 @@ anônimo sem `view media`. Ao conceder a permissão ao papel anônimo, a rota
 respondeu 200. Outro usuário com `view media` recebeu 200 para Media publicada
 e 403 após sua despublicação. Config Sync concede `view media` a ambos os papéis
 anônimo e autenticado; portanto, `private://` não torna uma Media publicada
-confidencial. Ainda faltam Group↔Media, membro/não membro, revogação e
-carregamento PDF.js/range. A conversão real de miniaturas permanece DEFERRED
+confidencial. O submódulo Group↔Media e permissões de membro/educador estão
+versionados, mas ainda faltam validação de membro/não membro, revogação e
+carregamento PDF.js/range no Runtime. A conversão real de miniaturas permanece DEFERRED
 porque não há binário ImageMagick no Homelab. O arquivo
 [ROADMAP.md do submódulo](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md)
 mantém os critérios restantes de PV5–PV7.

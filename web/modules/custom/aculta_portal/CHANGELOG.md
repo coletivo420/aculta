@@ -1955,3 +1955,11 @@ pertencer a `aculta_pdf_viewer`, sem dependência funcional de `aculta_portal` o
 habilita o submódulo e vincula o display Media `document` ao formatter. Documentação e contrato de hooks/classes
 ficam no README próprio do submódulo. Nenhuma configuração foi importada no Runtime.
 
+## 0.4.0-dev.60 — PV5: Group controla Media PDF de curso — 2026-10-16
+
+Classificação MINOR. Adiciona integração opcional `aculta_pdf_viewer_group`, relação de Media
+`document` com Group `lms_course` e permissão explícita para estudante e
+educador. O módulo base do PDF Viewer permanece independente de Group. O acesso
+por membership, revogação e entrega privada no Runtime segue DEFERRED; PDFs
+privados de turma ainda não estão homologados. RUNTIME STATUS: DEFERRED.
+

@@ -19,6 +19,7 @@ O Portal integra a experiência de:
   (pane "Envio", método de frete fixo; ver `docs/portal/CHECKOUT-BILLING.md`);
 - cursos/LMS/Group;
 - contrato opcional de eventos educacionais (`aculta_lms`), sem armazenamento paralelo;
+- leitura compartilhada de PDF por `aculta_pdf_viewer`, com Group↔Media opcional para documentos de turma;
 - Wiki420;
 - Fórum e comentários, quando a versão correspondente for implementada;
 - participação do usuário;

@@ -1,0 +1,9 @@
+name: ACULTA PDF Viewer Group integration
+type: module
+description: 'Adds Group-controlled access for Media documents attached to learning groups.'
+package: ACULTA Portal
+core_version_requirement: ^11.3
+dependencies:
+  - aculta_pdf_viewer:aculta_pdf_viewer
+  - drupal:media
+  - group:group

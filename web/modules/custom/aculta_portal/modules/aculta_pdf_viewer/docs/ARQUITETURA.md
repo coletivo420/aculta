@@ -136,10 +136,12 @@ controller nem classe de formulário neste módulo; não existe arquivo
   quem compõe a audiência: a rota Core usa `File::access('download')`, que
   revalida a Media referenciadora e seus campos. A Config Sync atual concede
   `view media` aos papéis anônimo e autenticado; assim, Media publicada com PDF
-  privado também fica acessível a esses papéis. No Group 3.3.5 instalado há a
-  relação `gnode`, mas não existe relação Media habilitada/configurada. A
+  privado também fica acessível a esses papéis. Group 3.3.5 não fornece relação
+  Media; `aculta_pdf_viewer_group` adiciona a relação para `document` em
+  `lms_course` e permissões explícitas para os papéis estudante/educador. A
   autorização do curso não é herdada automaticamente pela Media. Não usar este
-  contrato para PDFs confidenciais de turma até integrar e testar Group↔Media.
+  contrato para PDFs confidenciais de turma até ativar e homologar a integração
+  opcional `aculta_pdf_viewer_group` para membro, não membro e revogação.
 - CSP, entrega de PDF privado em browser, revogação de membership, usuários de
   turmas diferentes e produção LiteSpeed são gates de homologação.
 - PDFPreview 1.2 escreve derivados no scheme padrão e exige toolkit/binaries.

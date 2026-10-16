@@ -1,5 +1,14 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.9 — integração opcional Group↔Media
+
+Adiciona o submódulo opcional `aculta_pdf_viewer_group`, que fornece a relação
+Group para Media `document`, e configuração opcional para `lms_course`. Papéis
+estudante e educador recebem a permissão explícita de visualizar a Media
+relacionada. O módulo base continua independente de Group. Runtime e teste de
+revogação por membership continuam DEFERRED; não usar isso como aprovação para
+arquivos confidenciais até o teste ponta a ponta PV5.
+
 ## 0.1.0-dev.8 — PDFPreview opcional e contrato atualizado
 
 PDFPreview deixa de ser dependência obrigatória de ativação; o serviço de
