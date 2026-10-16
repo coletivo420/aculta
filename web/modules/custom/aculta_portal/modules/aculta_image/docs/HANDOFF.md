@@ -6,8 +6,8 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.10. Leia este documento antes d
 
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
-3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão de 1600×800 para 1200×600 confirmada; os três editores gravam modelos. Faltam reabertura, 390 px, temas e acessibilidade.
-4. O próximo passo é completar **R2**: testar persistência após salvar/reabrir, viewport de 390 px e temas claro/escuro; depois seguir para R3 (legenda).
+3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão de 1600×800 para 1200×600 confirmada; os três editores gravam modelos; persistência após reabrir confirmada. Faltam viewport de 390 px, temas e acessibilidade.
+4. O próximo passo é completar **R2**: testar viewport útil de 390 px e temas claro/escuro; depois seguir para R3 (legenda).
 5. A importação do Growroom está bloqueada pela F3 do Fórum (lista de autores). Não é trabalho deste submódulo.
 
 ## 2. Git e working tree
@@ -71,9 +71,10 @@ o schema do módulo foram carregados pelo rebuild. Depois da atualização dos i
 importados de novo via diretório temporário com apenas esses YAMLs. `config:status` ainda aponta `user.role.authenticated`
 por drift existente de permissões não relacionadas; não importar a role inteira, pois isso reverteria permissões ativas.
 
-Reportado pela sessão de teste (não reproduzido nesta revisão): Firefox headless confirmou em `full_html` que “Imagem: Padrão”
-serializa `data-aculta-modelo="padrao"` no `<img>`. Em `usuario_aculta` e `revista_editorial`, “Imagem: Pequena” também
-funcionou pelo menu de overflow a 488 px. As imagens eram temporárias no editor; nenhum conteúdo foi salvo.
+Firefox headless confirmou em `full_html` que “Imagem: Padrão” serializa `data-aculta-modelo="padrao"` no `<img>`. Em
+`usuario_aculta` e `revista_editorial`, “Imagem: Pequena” também funcionou pelo menu de overflow a 488 px. Uma verificação
+de reabertura salvou um artigo temporário não publicado com o modelo `larga`; o atributo persistiu e o nó foi removido.
+O Firefox headless limitou a viewport útil a 488 px mesmo quando a janela foi solicitada com 402 px; 390 px ainda não foi coberto.
 
 **Revisão de 2026-10-16 (verificado):** filtros e editores de imagem no Runtime batem com o repositório (`config:status`
 sem diferença nesses itens). `user.role.authenticated` tem `use text format usuario_aculta`. O `config:status` total mostra 252
@@ -90,7 +91,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 
 - **Resposta antiga em `basic_html`:** ao editar uma resposta do Fórum que já usa `basic_html`, o formulário passa a oferecer só `usuario_aculta`. Testar no Runtime antes de liberar.
 - **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
-- **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. O downcast foi reportado em `full_html`; falta verificar depois de salvar/reabrir e nos demais formatos.
+- **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. Downcast confirmado nos três editores e persistência após reabertura confirmada em `full_html`.
 - **Condição de ativação do plugin:** `aculta_image.ckeditor5.yml` usa `toolbarItem: acultaImageModelPequena` como condição. Um editor com só outro modelo na barra não ativaria o plugin. Trocar por uma condição que aceite qualquer dos quatro botões, ou confirmar que o caso não ocorre.
 - **Legenda:** o seletor não tem campo de legenda. A legenda do `figcaption` só aparece quando o atributo `data-aculta-legenda` existir no HTML.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
@@ -100,7 +101,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 
 ## 6. Próximos passos (ordem recomendada)
 
-1. **R2 navegador:** Firefox; salvar/reabrir conteúdo de teste e conferir a persistência. Cobrir claro e escuro, 390 px e 1280 px; registrar em `docs/portal/TESTES-NAVEGADOR.md` (AGENTS).
+1. **R2 navegador:** Firefox; cobrir claro e escuro e tentar viewport útil de 390 px. A persistência após salvar/reabrir já foi confirmada. Registrar a cobertura em `docs/portal/TESTES-NAVEGADOR.md` (AGENTS).
 2. **R3 Legenda no editor**, depois **R4 CSS dos modelos** (exige autorização para alterar `web/themes/custom/aculta420/**`) e **R5 acessibilidade**.
 3. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
 

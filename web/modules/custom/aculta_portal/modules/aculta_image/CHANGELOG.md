@@ -4,9 +4,10 @@
 
 - Corrigido o seletor do CKEditor: cada modelo agora é um botão próprio na toolbar, em vez de um dropdown aninhado que não abria no menu de overflow.
 - O Runtime de testes recebeu os novos itens de toolbar em `full_html`, `revista_editorial` e `usuario_aculta`; cache reconstruído.
-- Firefox confirmou a serialização de `data-aculta-modelo="padrao"` em `full_html` e de `pequena` em `usuario_aculta` e `revista_editorial`, inclusive no overflow com viewport útil de 488 px. Nenhum conteúdo foi salvo.
+- Firefox confirmou a serialização de `data-aculta-modelo="padrao"` em `full_html` e de `pequena` em `usuario_aculta` e `revista_editorial`, inclusive no overflow com viewport útil de 488 px.
+- Persistência confirmada: um artigo temporário não publicado preservou `data-aculta-modelo="larga"` ao reabrir o formulário; o nó foi removido depois da verificação.
 - Upload real no Runtime: PNG de teste 1600×800 convertido para 1200×600; arquivo gerenciado removido e limpeza confirmada.
-- Gate `validate-aculta-image.php`, `php -l` do plugin PHP e `node --check` passaram. Reabertura e temas claro/escuro ainda pendentes.
+- Gate `validate-aculta-image.php`, `php -l` do plugin PHP e `node --check` passaram. Temas claro/escuro e viewport útil de 390 px ainda pendentes (o Firefox headless limitou a janela a 488 px).
 
 ## 0.1.0-dev.9 — modelo no CKEditor, formato Usuário ACULTA e conversão para 1200 px — 2026-10-17
 

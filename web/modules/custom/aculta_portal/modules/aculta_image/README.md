@@ -82,8 +82,9 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 - JavaScript do seletor: `node --check web/modules/custom/aculta_portal/modules/aculta_image/js/ckeditor5/aculta-image-model.js`.
 - Runtime de testes: configurações de editor importadas e cache reconstruído. Firefox confirmou a serialização do modelo
   em `full_html`, `usuario_aculta` e `revista_editorial`, incluindo o overflow a 488 px. Um upload de 1600×800 foi
-  convertido a 1200×600; o arquivo de teste foi removido. Não salvamos conteúdo. Tema claro/escuro e reabertura continuam
-  pendentes; ver o handoff.
+  convertido a 1200×600; o arquivo de teste foi removido. Um artigo temporário não publicado preservou o modelo após
+  reabertura e foi excluído. Tema claro/escuro e viewport útil de 390 px continuam pendentes; o Firefox headless ficou em
+  488 px mesmo ao solicitar 402 px. Ver o handoff.
 
 ## Atualizações de banco
 
