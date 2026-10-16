@@ -18,6 +18,8 @@ use Drupal\Core\Url;
 /**
  * Tabela de pedidos com o pagamento de cada um e as ações permitidas (painel de vendas e de doações).
  *
+ * Código no Aculta Portal, Design no ACULTA420: este construtor só marca os elementos com tokens semânticos
+ * (data-portal-ui). Cores, espaçamento e classes ficam no tema (PortalUiHooks e css/components/sales-panel.css).
  * Os links de ação só aparecem quando a permissão do escopo do pedido confere. A permissão é checada de novo
  * no formulário de ação, então um link escondido nunca é a única barreira.
  */
@@ -26,6 +28,11 @@ class SalesOrdersTableBuilder {
   use StringTranslationTrait;
 
   public const POR_PAGINA = 25;
+
+  /**
+   * Atributo de contrato entre módulo e tema (docs/portal/TOKENS-E-ATRIBUTOS.md).
+   */
+  public const ATRIBUTO = 'data-portal-ui';
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -75,11 +82,16 @@ class SalesOrdersTableBuilder {
     return [
       'tabela' => [
         '#type' => 'table',
+        '#attributes' => [self::ATRIBUTO => 'sales-table'],
         '#header' => [$this->t('Pedido'), $this->t('Data'), $this->t('Total'), $this->t('Pagamentos')],
         '#rows' => $linhas,
         '#empty' => $this->t('Nenhum pedido concluído com este tipo de item no intervalo.'),
       ],
-      'paginacao' => $paginacao,
+      'paginacao' => $paginacao === [] ? [] : [
+        '#type' => 'container',
+        '#attributes' => [self::ATRIBUTO => 'sales-pagination'],
+        'links' => $paginacao,
+      ],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args', 'user.permissions']],
     ];
   }
@@ -100,10 +112,19 @@ class SalesOrdersTableBuilder {
         continue;
       }
       $saida[] = [
-        '#markup' => $this->t('@estado — Mercado Pago: @remoto', [
-          '@estado' => $pagamento->getState()->getLabel(),
-          '@remoto' => $pagamento->getRemoteState() ?: $this->t('sem status'),
-        ]) . ' ',
+        '#type' => 'container',
+        '#attributes' => [self::ATRIBUTO => 'sales-payment'],
+        'estado' => [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => [self::ATRIBUTO => $this->tokenDoEstado($pagamento->getState()->getId())],
+          '#value' => $pagamento->getState()->getLabel(),
+        ],
+        'remoto' => [
+          '#markup' => ' ' . $this->t('Mercado Pago: @remoto', [
+            '@remoto' => $pagamento->getRemoteState() ?: $this->t('sem status'),
+          ]),
+        ],
         'acoes' => $podeAgir ? $this->acoes($pedido, $pagamento) : [],
       ];
     }
@@ -117,18 +138,42 @@ class SalesOrdersTableBuilder {
    */
   private function acoes(OrderInterface $pedido, PaymentInterface $pagamento): array {
     $links = [];
-    $links[] = Link::fromTextAndUrl($this->t('Atualizar'), Url::fromRoute('aculta_portal.relatorio_vendas_pagamento_atualizar', ['commerce_payment' => $pagamento->id()]))->toRenderable();
+    $links[] = $this->link($this->t('Atualizar'), Url::fromRoute('aculta_portal.relatorio_vendas_pagamento_atualizar', ['commerce_payment' => $pagamento->id()]), 'sales-action');
     if ($pagamento->getState()->getId() === 'authorization') {
-      $links[] = Link::fromTextAndUrl($this->t('Cancelar'), Url::fromRoute('aculta_portal.relatorio_vendas_pagamento_cancelar', ['commerce_payment' => $pagamento->id()]))->toRenderable();
+      $links[] = $this->link($this->t('Cancelar'), Url::fromRoute('aculta_portal.relatorio_vendas_pagamento_cancelar', ['commerce_payment' => $pagamento->id()]), 'sales-action-danger');
     }
     if (in_array($pagamento->getState()->getId(), MercadoPagoPaymentPolicy::ESTORNAVEIS, TRUE)) {
-      $links[] = Link::fromTextAndUrl($this->t('Estornar'), Url::fromRoute('entity.commerce_payment.operation_form', [
+      $links[] = $this->link($this->t('Estornar'), Url::fromRoute('entity.commerce_payment.operation_form', [
         'commerce_order' => $pedido->id(),
         'commerce_payment' => $pagamento->id(),
         'operation' => 'refund-payment',
-      ]))->toRenderable();
+      ]), 'sales-action-danger');
     }
     return $links;
+  }
+
+  /**
+   * Link com token de ação. Botão ou cor são decididos pelo tema.
+   *
+   * @return array<string, mixed>
+   */
+  private function link(mixed $texto, Url $url, string $token): array {
+    $link = Link::fromTextAndUrl($texto, $url)->toRenderable();
+    $link['#attributes'] = [self::ATRIBUTO => $token];
+    return $link;
+  }
+
+  /**
+   * Token de estado do pagamento. O tema decide a cor de cada token.
+   */
+  private function tokenDoEstado(string $estado): string {
+    return match ($estado) {
+      'completed' => 'sales-state-ok',
+      'authorization' => 'sales-state-pending',
+      'partially_refunded', 'refunded' => 'sales-state-refunded',
+      'authorization_voided', 'voided' => 'sales-state-voided',
+      default => 'sales-state-neutral',
+    };
   }
 
   /**

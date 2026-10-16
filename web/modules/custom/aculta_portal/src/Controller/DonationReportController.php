@@ -76,6 +76,7 @@ final class DonationReportController implements ContainerInjectionInterface {
 
     $tabela = [
       '#type' => 'table',
+      '#attributes' => ['data-portal-ui' => 'sales-table'],
       '#header' => [
         $this->t('Período'),
         $this->t('Doações (pedidos)'),
@@ -87,8 +88,30 @@ final class DonationReportController implements ContainerInjectionInterface {
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
     return [
-      'resumo' => $tabela,
-      'pedidos' => $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_DOACAO, $this->paginaAtual($request), 'aculta_portal.relatorio_doacoes', $this->filtrosDaUrl($request)),
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'sales-panel'],
+      'resumo' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'sales-section'],
+        'titulo' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#attributes' => ['data-portal-ui' => 'sales-heading'],
+          '#value' => $this->t('Doações por período'),
+        ],
+        'conteudo' => $tabela,
+      ],
+      'pedidos' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'sales-section'],
+        'titulo' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#attributes' => ['data-portal-ui' => 'sales-heading'],
+          '#value' => $this->t('Doações e pagamentos'),
+        ],
+        'conteudo' => $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_DOACAO, $this->paginaAtual($request), 'aculta_portal.relatorio_doacoes', $this->filtrosDaUrl($request)),
+      ],
     ];
   }
 

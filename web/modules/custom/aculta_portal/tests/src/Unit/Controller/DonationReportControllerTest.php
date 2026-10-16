@@ -51,8 +51,8 @@ final class DonationReportControllerTest extends UnitTestCase {
 
     $render = $this->controller($consultas)->report(Request::create('/painel-administrativo/loja/doacoes', 'GET', ['de' => '2026-10-01', 'ate' => '2026-10-16']));
 
-    $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['resumo']['#rows']);
-    $this->assertArrayHasKey('#empty', $render['resumo']);
+    $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['resumo']['conteudo']['#rows']);
+    $this->assertArrayHasKey('#empty', $render['resumo']['conteudo']);
   }
 
   public function testSemDoacoesMostraTabelaVazia(): void {
@@ -61,8 +61,8 @@ final class DonationReportControllerTest extends UnitTestCase {
 
     $render = $this->controller($consultas)->report(Request::create('/painel-administrativo/loja/doacoes'));
 
-    $this->assertSame([], $render['resumo']['#rows']);
-    $this->assertSame(['max-age' => 0, 'contexts' => ['url.query_args']], $render['resumo']['#cache']);
+    $this->assertSame([], $render['resumo']['conteudo']['#rows']);
+    $this->assertSame(['max-age' => 0, 'contexts' => ['url.query_args']], $render['resumo']['conteudo']['#cache']);
   }
 
 }

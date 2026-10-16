@@ -65,10 +65,31 @@ final class SalesReportController implements ContainerInjectionInterface {
     }
 
     return [
-      'por_variacao' => $this->tabelaPorVariacao($filtros),
-      'por_periodo' => $this->tabelaPorPeriodo($filtros),
-      'pedidos' => $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_PRODUTO, $this->paginaAtual($request), 'aculta_portal.relatorio_vendas', $this->filtrosDaUrl($request)),
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'sales-panel'],
+      'por_variacao' => $this->secao($this->t('Vendas por variação'), $this->tabelaPorVariacao($filtros)),
+      'por_periodo' => $this->secao($this->t('Vendas por período'), $this->tabelaPorPeriodo($filtros)),
+      'pedidos' => $this->secao($this->t('Pedidos e pagamentos'), $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_PRODUTO, $this->paginaAtual($request), 'aculta_portal.relatorio_vendas', $this->filtrosDaUrl($request))),
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
+    ];
+  }
+
+  /**
+   * Seção do painel: título semântico e conteúdo. Aparência decidida pelo tema (tokens sales-*).
+   *
+   * @return array<string, mixed>
+   */
+  private function secao(mixed $titulo, array $conteudo): array {
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'sales-section'],
+      'titulo' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h2',
+        '#attributes' => ['data-portal-ui' => 'sales-heading'],
+        '#value' => $titulo,
+      ],
+      'conteudo' => $conteudo,
     ];
   }
 
@@ -106,6 +127,7 @@ final class SalesReportController implements ContainerInjectionInterface {
 
     return [
       '#type' => 'table',
+      '#attributes' => ['data-portal-ui' => 'sales-table'],
       '#caption' => $this->t('Vendas por variação'),
       '#header' => [$this->t('Produto'), $this->t('Variação'), $this->t('Quantidade'), $this->t('Total')],
       '#rows' => $linhas,
@@ -129,6 +151,7 @@ final class SalesReportController implements ContainerInjectionInterface {
 
     return [
       '#type' => 'table',
+      '#attributes' => ['data-portal-ui' => 'sales-table'],
       '#caption' => $this->t('Vendas por período'),
       '#header' => [$this->t('Período'), $this->t('Pedidos'), $this->t('Total'), $this->t('Moeda')],
       '#rows' => $linhas,

@@ -1,3 +1,13 @@
+## 0.4.0-dev.70 — apresentação dos painéis de vendas e doações (tokens sales-*) — 2026-10-16
+
+Classificação: MINOR da linha aberta. Autorização do responsável para mudanças visuais no tema e nos módulos relacionados.
+
+- O módulo marca os painéis com tokens `data-portal-ui` (`sales-panel`, `sales-section`, `sales-heading`, `sales-table`, `sales-pagination`, `sales-payment`, `sales-action`, `sales-action-danger` e os estados `sales-state-*`). Nenhuma classe de design no módulo.
+- `SalesOrdersTableBuilder` deixa de ser `final` (duplo de teste) e passa a usar esses tokens. As controllers de vendas e doações envolvem as seções em containers com título semântico (`h2`).
+- Aparência no ACULTA420 (0.6.0-dev.67): `PortalUiHooks::TOKENS` e `css/components/sales-panel.css`.
+- Testes unitários: 154 testes, 399 asserções, OK. Gates do Portal, de fronteira, de mapa e de docs de tokens: PASS.
+- Runtime: cache rebuild feito. Captura visual com administrador e pedidos de teste: DEFERRED.
+
 ## 0.4.0-dev.69 — painéis de vendas e doações com ações de pagamento — 2026-10-16
 
 Classificação MINOR. Fase F1 (painéis), nas partes que não dependem da assinatura de teste nem de decisão nova.
