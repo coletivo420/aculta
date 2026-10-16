@@ -6,6 +6,17 @@ Classificação MINOR. Decisão do responsável: o gerente de loja vê um relat�
 - Testes unitários da agregação (`SalesReportControllerTest`): soma por variação entre pedidos, totais por moeda, itens incompletos ignorados, vazio. 2/2 OK. Smoke no Runtime: rota exige `view commerce_order`; gerente acessa, usuário comum não.
 - Saída em tabela neutra (`#type => table`); o layout visual fica para o tema ACULTA420, sem alteração de tema nesta entrega.
 
+## 0.4.0-dev.63 — visibilidade da apresentação por purpose decidida pelo Portal — 2026-10-16
+
+Classificação: PATCH.
+
+- `domain_presentation` ganha a chave `layout` com quatro flags booleanas: `institution_bar_account`, `show_utility_bar`, `links_page` e `show_site_header`. O Portal as calcula por purpose; a página inicial do `main` usa `path.matcher` com o cache `url.path.is_front`.
+- `DomainPresentationBuilder` recebe `@path.matcher`. `DomainPresentation` recebe o quarto argumento `$layout`.
+- Gate `validate-domain-presentation-contract.php` e teste `DomainPresentationContractTest` verificam o formato e os valores das flags. Contrato documentado em `docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`.
+- Motivo: o tema decidia visibilidade por `identity.purpose` em `page.html.twig`, o que violava a política de domínio e fazia `validate-aculta420-shell-contract` reprovar.
+- Evidência: Unit `aculta_portal` 81/81 (251 asserções) OK; `validate-domain-presentation-contract` PASS (162 checks, via Drush); `validate-aculta-portal-drupal11` PASS; `validate-module-theme-boundary` PASS; `validate-module-theme-map` PASS; `validate-portal-ui-docs` PASS; `validate-public-slugs` PASS; `validate-environment-addresses` PASS.
+- RUNTIME STATUS: cache rebuild no Runtime de teste com a URI de teste. Visual em `main`, `wiki`, `cursos`, `apoio` e `conta` verificado por captura de tela (Firefox headless).
+
 ## 0.4.0-dev.62 — registro do helper de derivados e documentação de tokens — 2026-10-16
 
 Classificação: PATCH.

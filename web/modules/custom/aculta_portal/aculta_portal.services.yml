@@ -153,7 +153,7 @@ services:
     arguments: ['@aculta_portal.account_courses', '@string_translation']
   aculta_portal.presentation.domain:
     class: Drupal\aculta_portal\Presentation\DomainPresentationBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.presentation.wiki_search_form']
+    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.presentation.wiki_search_form', '@path.matcher']
   aculta_portal.presentation.wiki_search_form:
     class: Drupal\aculta_portal\Presentation\WikiSearchFormBuilder
     arguments: ['@string_translation', '@request_stack']

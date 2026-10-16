@@ -139,12 +139,24 @@ domain_presentation
 │   ├── short_title      string|null
 │   ├── home_url         string seguro
 │   └── logo_alt         string|null
-└── regions
-    ├── brand_media      render array|null  (array só no purpose wiki, desde a PR #112; consumido pelo header)
-    ├── navigation       render array|null
-    ├── actions          render array|null
-    └── wiki_search      render array|null  (só Wiki; formulário GET do endpoint existente)
+├── regions
+│   ├── brand_media      render array|null  (array só no purpose wiki, desde a PR #112; consumido pelo header)
+│   ├── navigation       render array|null
+│   ├── actions          render array|null
+│   └── wiki_search      render array|null  (só Wiki; formulário GET do endpoint existente)
+└── layout               flags booleanas de visibilidade, decididas pelo Portal por purpose
+    ├── institution_bar_account  bool  (variante "conta" da barra institucional)
+    ├── show_utility_bar         bool  (busca, carrinho, Messenger, avisos e Minha conta; falso em LINKS)
+    ├── links_page               bool  (shell da página pública LINKS)
+    └── show_site_header         bool  (cabeçalho de domínio: Wiki sempre; main só na página inicial)
 ```
+
+`layout` existe para que o tema não decida por purpose. O Portal calcula cada flag
+a partir do purpose e, no caso da página inicial, do `path.matcher` da requisição (cache
+`url.path.is_front`). O tema só desenha o que as flags permitem. O gate
+`validate-aculta420-shell-contract.php` proíbe comparar `identity.purpose` no tema. Os valores
+ausentes do `layout` valem como falso, exceto `show_utility_bar`, que vale verdadeiro para
+manter a barra visível quando não há apresentação de domínio.
 
 `identity` é **props-ready**: somente escalares/arrays simples que podem ser
 validados por schema quando o shell virar SDC.
@@ -220,7 +232,7 @@ Não pode:
 | access/permissões | Core/Portal | somente resultado autorizado |
 | cache contexts/tags | Portal/Core | metadata preservada |
 | cores/tokens | ACULTA420 | não vem do Portal |
-| layout/header/spacing | ACULTA420 | não vem do Portal |
+| layout/header/spacing | ACULTA420 | não vem do Portal; visibilidade por purpose (`layout`) vem do Portal |
 | dark/light | tokens/etapa futura de preferência | nunca purpose |
 | Collapse/Offcanvas | Bootstrap/ACULTA420 | comportamento visual |
 
