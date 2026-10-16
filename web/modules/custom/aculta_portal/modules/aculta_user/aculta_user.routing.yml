@@ -125,7 +125,7 @@ aculta_user.memorial_legados:
   path: '/u/lendashistoricas'
   defaults:
     _controller: '\Drupal\aculta_user\Controller\LegacyMemorialController::view'
-    _title: 'Memorial da comunidade'
+    _title: 'Perfil'
   requirements:
     _access: 'TRUE'
   options:
