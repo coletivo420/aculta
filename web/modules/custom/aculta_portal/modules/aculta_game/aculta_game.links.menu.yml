@@ -1,0 +1,6 @@
+aculta_game.admin:
+  title: 'Game'
+  description: 'Gerencie as missões e acompanhe os critérios de conquistas.'
+  route_name: aculta_game.admin
+  parent: system.admin
+  weight: 9

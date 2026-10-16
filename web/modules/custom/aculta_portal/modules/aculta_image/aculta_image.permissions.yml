@@ -1,0 +1,3 @@
+administer aculta images:
+  title: 'Ver inventário e relatórios de imagens'
+  restrict access: true

@@ -54,10 +54,10 @@ services:
       - { name: aculta_portal.implementation }
   aculta_portal.email_confirmation_notice:
     class: Drupal\aculta_portal\Account\EmailConfirmationNotice
-    arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@csrf_token', '@string_translation']
+    arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@string_translation']
   aculta_portal.email_confirmation_requester:
     class: Drupal\aculta_portal\Email\EmailConfirmationRequester
-    arguments: ['@email_confirmer', '@entity_type.manager']
+    arguments: ['@email_confirmer', '@entity_type.manager', '@flood', '@lock.persistent', '@logger.channel.mail']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.email_confirmation_policy:
@@ -153,7 +153,7 @@ services:
     arguments: ['@aculta_portal.account_courses', '@string_translation']
   aculta_portal.presentation.domain:
     class: Drupal\aculta_portal\Presentation\DomainPresentationBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.presentation.wiki_search_form']
+    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.presentation.wiki_search_form', '@path.matcher']
   aculta_portal.presentation.wiki_search_form:
     class: Drupal\aculta_portal\Presentation\WikiSearchFormBuilder
     arguments: ['@string_translation', '@request_stack']

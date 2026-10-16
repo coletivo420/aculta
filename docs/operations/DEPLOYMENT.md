@@ -7,7 +7,7 @@ Runbook canônico de deployment da plataforma ACULTA.
 ## Baseline
 
 - Homelab: Debian + Apache + PHP-FPM + MariaDB.
-- Produção: Hostinger + Apache + PHP + MariaDB.
+- Produção: Hostinger Cloud Startup + LiteSpeed + PHP + MariaDB.
 - o deploy transfere código, dependências travadas e configuração aprovada;
 - Estados (backups do banco) são artefatos de desenvolvimento e nunca são enviados para produção;
 - produção não é ambiente de experimento.
@@ -79,24 +79,21 @@ Antes de habilitar integrações externas, confirmar DNS/TLS dos hosts envolvido
 A política de cookie compartilhado só se aplica a hosts ACULTA sob a mesma
 aplicação e trust boundary.
 
-## Apache
+## Servidor web por ambiente
 
-Apache é o baseline.
+No Homelab, validar o document root `web/`, `web/.htaccess`, `mod_rewrite`,
+`mod_headers`, PHP-FPM via `proxy_fcgi`, proteção de arquivos e VirtualHosts.
 
-Validar:
+Na produção Hostinger Cloud Startup, validar que LiteSpeed processa o
+`web/.htaccess`, as regras de rewrite e headers, o handler PHP e a proteção de
+arquivos públicos/privados. A resposta pública de `aculta.org` confirmou
+`platform: hostinger` e `x-turbo-charged-by: LiteSpeed` em 2026-10-15.
+O cabeçalho `server` indica Cloudflare à frente, portanto não é evidência do
+servidor de origem.
 
-- document root para `web/`;
-- `web/.htaccess`;
-- rewrite;
-- headers;
-- PHP-FPM handler;
-- proteção de arquivos públicos/privados;
-- VirtualHosts efetivos.
-
-Não copiar literalmente paths, usuários, certificados ou VirtualHosts do
-Homelab para Hostinger.
-
-Produção não herda o noindex do Homelab.
+Não copiar literalmente paths, usuários, certificados ou configuração de
+VirtualHost entre Homelab e Hostinger. A produção não herda o noindex do
+Homelab.
 
 ## Sequência geral
 

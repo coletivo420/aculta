@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_gallery\Form;
 
+use Drupal\aculta_image\UploadPolicy;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\HtmlCommand;
@@ -42,6 +43,7 @@ final class GalleryEmbedDialogForm extends FormBase {
     EntityTypeManagerInterface $entity_type_manager,
     WidgetPluginManager $widget_manager,
     AccountProxyInterface $current_user,
+    private readonly UploadPolicy $uploadPolicy,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->widgetManager = $widget_manager;
@@ -56,6 +58,7 @@ final class GalleryEmbedDialogForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.field.widget'),
       $container->get('current_user'),
+      $container->get('aculta_image.upload_policy'),
     );
   }
 
@@ -96,8 +99,7 @@ final class GalleryEmbedDialogForm extends FormBase {
       '#multiple' => TRUE,
       '#upload_location' => self::UPLOAD_DIRECTORY,
       '#upload_validators' => [
-        'FileSizeLimit' => ['fileLimit' => 10 * 1024 * 1024],
-        'FileExtension' => ['extensions' => 'png gif jpg jpeg webp'],
+        ...$this->uploadPolicy->validators(),
         'FileIsImage' => [],
       ],
     ];

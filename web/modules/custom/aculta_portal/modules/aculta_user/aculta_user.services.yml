@@ -1,4 +1,9 @@
 services:
+  aculta_user.achievement_definitions:
+    class: Drupal\aculta_user\Badge\AchievementDefinitions
+    arguments: ['@config.factory', '@lock.persistent', '@entity_type.manager', '@file.usage']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_user.friendship_manager:
     class: Drupal\aculta_user\Social\FriendshipManager
     arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood']
@@ -19,10 +24,10 @@ services:
     class: Drupal\aculta_user\Form\PhotoEditorGuard
   aculta_user.avatar_asset_cleanup:
     class: Drupal\aculta_user\Avatar\AvatarAssetCleanup
-    arguments: ["@entity_type.manager", "@datetime.time", "@file.usage"]
+    arguments: ["@entity_type.manager", "@datetime.time", "@file.usage", '@aculta_image.file_remover']
   aculta_user.badge_service:
     class: Drupal\aculta_user\Badge\BadgeService
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@lock.persistent', '@database', '@datetime.time', '@aculta_user.achievement_definitions']
   aculta_user.account_bio_card:
     class: Drupal\aculta_user\Bio\AccountBioCard
     arguments: ['@entity_type.manager']
@@ -34,3 +39,20 @@ services:
   aculta_user.social_links_card:
     class: Drupal\aculta_user\Social\SocialLinksCard
     arguments: ['@entity_type.manager', '@aculta_user.social_networks']
+  aculta_user.legacy_authors:
+    class: Drupal\aculta_user\Legacy\LegacyAuthorManager
+    arguments: ['@entity_type.manager']
+  aculta_user.report_queue:
+    class: Drupal\aculta_user\Moderation\ReportQueue
+    arguments: ['@entity_type.manager']
+  aculta_user.restricted_forum_not_found:
+    class: Drupal\aculta_user\EventSubscriber\RestrictedForumNotFoundSubscriber
+    arguments: ['@current_user', '@aculta_user.restricted_forum_grants']
+    tags:
+      - { name: event_subscriber }
+  aculta_user.restricted_forum_grants:
+    class: Drupal\aculta_user\Forum\RestrictedForumGrants
+    arguments: ['@aculta_user.associado_marker']
+  aculta_user.associado_marker:
+    class: Drupal\aculta_user\Associado\AssociadoMarker
+    arguments: ['@entity_type.manager']

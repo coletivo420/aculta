@@ -1,0 +1,12 @@
+services:
+  aculta_pdf_viewer.builder:
+    class: Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilder
+    arguments: ['@file_url_generator', '@current_user', '@aculta_pdf_viewer.thumbnail_builder']
+
+  aculta_pdf_viewer.thumbnail_builder:
+    class: Drupal\aculta_pdf_viewer\Pdf\PdfPreviewThumbnailBuilder
+    arguments: ['@?pdfpreview.generator', '@config.factory', '@aculta_image.generated_file', '@aculta_image.render', '@aculta_image.inspector', '@logger.channel.aculta_pdf_viewer', '@?Drupal\imagemagick\ImagemagickExecManagerInterface']
+
+  logger.channel.aculta_pdf_viewer:
+    parent: logger.channel_base
+    arguments: ['aculta_pdf_viewer']

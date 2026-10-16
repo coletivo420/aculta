@@ -1,0 +1,39 @@
+uuid: 6f1c2b7e-3a94-4d52-9b1e-8c0d7a4f5e21
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.usuario_aculta
+  module:
+    - ckeditor5
+format: usuario_aculta
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - bold
+      - italic
+      - '|'
+      - link
+      - '|'
+      - bulletedList
+      - numberedList
+      - '|'
+      - blockQuote
+      - drupalInsertImage
+      - acultaImageModel
+      - acultaImageLegenda
+      - '-'
+  plugins:
+    aculta_image_model:
+      modelos:
+        - pequena
+        - padrao
+image_upload:
+  status: true
+  scheme: public
+  directory: inline-images
+  max_size: '10485760'
+  max_dimensions:
+    width: null
+    height: null

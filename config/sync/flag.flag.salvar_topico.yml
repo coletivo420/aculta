@@ -13,7 +13,7 @@ global: false
 flag_short: 'Salvar tópico'
 flag_long: ''
 flag_message: ''
-unflag_short: 'Remover: Salvar tópico'
+unflag_short: 'Salvo'
 unflag_long: ''
 unflag_message: ''
 unflag_denied_text: ''

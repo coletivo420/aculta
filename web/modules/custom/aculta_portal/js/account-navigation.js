@@ -177,28 +177,21 @@
     // (sem placeholder e sem requisição); a coluna de conteúdo sai do DOM para não duplicar IDs.
     const content = layout.querySelector('[data-portal-account-content]');
     const openPanel = layout.querySelector('[data-portal-account-item][open] [data-portal-account-accordion-panel]');
-    if (content && openPanel && openPanel.dataset.loaded !== '1') {
-      openPanel.replaceChildren(...content.childNodes);
+    // Só o corpo da seção vai para o painel. O título e o cabeçalho da página são compartilhados pelo shell: ficam
+    // fora dos painéis, para que a troca de seção nunca altere o título dentro de outra sanfona.
+    const body = content?.querySelector('#portal-account-body');
+    if (body && openPanel && openPanel.dataset.loaded !== '1') {
+      openPanel.replaceChildren(...body.childNodes);
       openPanel.dataset.loaded = '1';
     }
     content?.remove();
     layout.querySelectorAll('[data-portal-account-item]').forEach((details) => {
       if (details.dataset.acultaAccordion === '1') return;
       details.dataset.acultaAccordion = '1';
+      // Cada seção abre e fecha de forma independente: abrir uma não fecha as outras. O painel carrega a seção
+      // na primeira abertura e mantém o conteúdo ao fechar e reabrir.
       details.addEventListener('toggle', () => {
-        if (!details.open) return;
-        layout.querySelectorAll('[data-portal-account-item]').forEach((other) => {
-          if (other === details) return;
-          other.open = false;
-          // Esvazia o painel: sem conteúdo repetido (ids) e a próxima abertura carrega de novo, com URL e título.
-          const otherPanel = other.querySelector('[data-portal-account-accordion-panel]');
-          if (otherPanel) {
-            otherPanel.replaceChildren();
-            otherPanel.dataset.loaded = '0';
-            otherPanel.dataset.loading = '0';
-          }
-        });
-        loadAccordionItem(details, true);
+        if (details.open) loadAccordionItem(details, true);
       });
       if (details.open) loadAccordionItem(details, false);
     });

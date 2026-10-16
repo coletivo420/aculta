@@ -1,0 +1,29 @@
+uuid: 953ba76a-ef44-49cf-9bf9-4fe64546ece1
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+id: sinalizar_topico
+label: 'Sinalizar tópico'
+bundles:
+  - forum
+entity_type: node
+global: false
+flag_short: 'Denunciar tópico'
+flag_long: 'Denunciar este tópico para a moderação.'
+flag_message: 'Tópico denunciado. A equipe vai analisar.'
+unflag_short: 'Retirar denúncia'
+unflag_long: ''
+unflag_message: 'Denúncia retirada.'
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:node'
+link_type: reload
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions: {  }
+linkTypeConfig: {  }

@@ -68,7 +68,7 @@ voltar a testar internals do tema.
 | WIKI | wiki420.aculta.toca.net.br | wiki420.aculta.org |
 | SHOP | loja.aculta.toca.net.br | loja.aculta.org |
 | COURSES | cursos.aculta.toca.net.br | cursos.aculta.org |
-| FORUM *(quando ativo)* | forum.aculta.toca.net.br | forum.aculta.org |
+| FORUM *(quando ativo)* | growroom420.aculta.toca.net.br | growroom420.aculta.org |
 
 Para rota especializada:
 

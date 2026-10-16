@@ -6,6 +6,7 @@ dependencies:
     - field.field.media.document.field_media_document
     - media.type.document
   module:
+    - aculta_pdf_viewer
     - file
 _core:
   default_config_hash: XxUyhaTuM0OUUZpr8G6jdrFBEh5eag7auWxBKhm6cvY
@@ -15,7 +16,7 @@ bundle: document
 mode: default
 content:
   field_media_document:
-    type: file_default
+    type: aculta_pdf_media
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }

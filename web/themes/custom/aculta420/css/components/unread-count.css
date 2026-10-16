@@ -1,0 +1,26 @@
+/* Contador único de não lidos do ACULTA420 (fonte da verdade da aparência).
+
+   Usado pelo carrinho, pelos avisos e pelas mensagens da barra multidomínio, pelo badge de contas (componente
+   feedback/unread-badge) e pelos contadores de conteúdo (Fórum, e o que vier depois: LMS). Os atributos
+   data-aculta-*-count e data-count continuam sendo lidos pelos scripts (counters.js, messenger-drawers.js).
+   Posicionamento (ex.: canto do ícone) fica no gatilho, não aqui. Ver docs/portal/CONTADORES.md. */
+.aculta-unread-count {
+  position: static;
+  display: inline-flex;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.35rem;
+  border-radius: 999px;
+  background: var(--aculta-status-error-border);
+  color: var(--aculta-text-inverse);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Zero não lidos: o contador some (vale para qualquer origem: carrinho, avisos, mensagens). */
+.aculta-unread-count[data-count="0"] {
+  display: none;
+}

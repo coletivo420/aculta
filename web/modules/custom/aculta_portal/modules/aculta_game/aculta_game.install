@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Atualizações incrementais do ACULTA Game.
+ */
+
+declare(strict_types=1);
+
+/** Instala apenas o catálogo G4 em sites onde Game já estava habilitado. */
+function aculta_game_update_10001(): void {
+  $config = \Drupal::configFactory()->getEditable('aculta_game.missions');
+  if (!$config->isNew()) {
+    return;
+  }
+  // Snapshot de G4: não importar configuração global ou alterar concessões.
+  $config->setData(['missions' => [
+    'comunidade' => [
+      'enabled' => TRUE,
+      'label' => 'Primeira contribuição no Growroom420',
+      'description' => 'Publique sua primeira resposta em uma discussão atual. Comentários em moderação contam depois da aprovação.',
+      'criterion_version' => 1,
+      'badge' => 'primeiro_comentario_forum',
+    ],
+    'conhecimento' => [
+      'enabled' => TRUE,
+      'label' => 'Contribuição ao conhecimento',
+      'description' => 'Faça uma revisão de verbete da Wiki420 que seja publicada.',
+      'criterion_version' => 1,
+      'badge' => 'primeira_edicao_wiki',
+    ],
+    'aprendizagem' => [
+      'enabled' => TRUE,
+      'label' => 'Primeira formação concluída',
+      'description' => 'Conclua seu primeiro curso com aprovação. Matrícula e compra não concluem esta missão.',
+      'criterion_version' => 1,
+      'badge' => 'primeiro_curso',
+    ],
+  ]])->save(TRUE);
+}

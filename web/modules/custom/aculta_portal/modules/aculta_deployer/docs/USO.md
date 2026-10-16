@@ -20,6 +20,7 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
   - Com entradas bloqueantes abertas, o build é recusado. `--allow-open-blocking` serve
     só para ensaio, e não para publicar.
   - Grava `DIR/deploy-report.json` com os arquivos, as remoções e as substituições.
+- `$CLI hostinger-layout --domain-root=DIR`: valida a instalação na raiz da pasta do domínio e simula a mudança da raiz pública. Só altera o servidor com `--apply`.
 - `$CLI verify`: GET somente leitura nas entradas com `probe` e `expect`. Só aceita HTTPS,
   sem credenciais na URL, sem seguir redirecionamentos. Não altera nenhum arquivo nem o registro.
 - `$CLI version`.
@@ -35,6 +36,55 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
 6. Rollback: cada build fica em seu próprio diretório. Para voltar, aponte o ambiente de
    produção para o diretório do build anterior, pelo processo do responsável. Builds nunca
    são sobrescritos.
+
+## Estrutura Hostinger Cloud Startup (0.1.25)
+
+Na Hostinger, mantenha a instalação Composer diretamente na raiz da pasta do domínio e faça
+`public_html` apontar somente para `web/`:
+
+```text
+<pasta-do-dominio>/
+├── composer.json, composer.lock, vendor/, config/
+├── web/                         # raiz servida; index.php e .htaccess do Drupal
+└── public_html -> web
+```
+
+O projeto Composer fica diretamente na raiz da pasta do domínio; não crie uma subpasta
+`aculta-site`.
+
+O caminho absoluto da pasta do domínio varia por conta. Descubra-o em hPanel → FTP Accounts;
+confirme que SSH está habilitado e que a função `symlink` foi removida de `disableFunctions`
+no PHP Configuration do site. Hostinger Web/Cloud desabilita `symlink` por padrão. Use a conta
+SSH da hospedagem, não `root`.
+
+Transfira primeiro a instalação completa para a raiz da pasta do domínio, instale as
+dependências do `composer.lock` e provisione os settings/secrets do ambiente. O comando abaixo
+somente troca a raiz pública; ele não transfere o projeto, não executa Composer e não altera o
+banco:
+
+```sh
+cd "<pasta-do-dominio>"
+CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
+php "$CLI" hostinger-layout --domain-root="<caminho-absoluto-da-pasta-do-dominio>"
+php "$CLI" hostinger-layout --domain-root="<caminho-absoluto-da-pasta-do-dominio>" --apply
+```
+
+A primeira execução é somente leitura. Antes de `--apply`, revise o caminho e o status. O
+comando exige `composer.json`, `composer.lock`, `vendor/autoload.php`, `web/index.php` e
+`web/sites/default/settings.php`. Se `public_html` já existir como pasta ou symlink, o comando
+o move temporariamente, ativa o novo symlink relativo e exclui o conteúdo antigo. Se a criação
+falhar antes da ativação, tenta restaurar o caminho anterior. Symlinks no conteúdo antigo são
+removidos sem seguir seus destinos. A operação é idempotente.
+
+Depois da ativação, valide o domínio HTTPS, rotas Drupal, arquivos estáticos, acesso de escrita
+em `web/sites/default/files`, proteção de arquivos privados e o mecanismo de renovação TLS.
+
+Rollback: restaure a cópia do site pelo processo de backup do ambiente. O comando remove o
+conteúdo público anterior depois de ativar o symlink; não há backup local automático.
+
+Referências: [Drupal — relocated web root em hospedagem compartilhada](https://www.drupal.org/docs/getting-started/system-requirements/relocated-web-root-on-shared-hosting),
+[Hostinger — criar symlink](https://www.hostinger.com/support/1583694-how-to-create-a-symlink-at-hostinger/),
+[Hostinger — habilitar funções PHP](https://www.hostinger.com/support/3212034-how-to-enable-disabled-php-functions-in-hostinger/).
 
 ## Testes
 
@@ -57,9 +107,11 @@ php web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php
 
 ### Por que o deployer confere o meta robots
 
-O noindex das páginas privadas é emitido pelo Portal por rota (`meta robots`), não pelo
-Apache. Uma checagem só de `X-Robots-Tag` deixaria de ver essas páginas. Por isso a
-verificação lê o HTML e aceita o noindex em qualquer um dos dois.
+O noindex das páginas privadas é emitido pelo Portal por rota (`meta robots`).
+Uma checagem só de `X-Robots-Tag` deixaria de ver essas páginas; por isso a
+verificação lê o HTML e aceita o noindex no cabeçalho ou no documento, sem
+depender do servidor web. O Homelab usa Apache e a produção Hostinger Cloud
+Startup usa LiteSpeed; o deployer não configura nenhum dos dois.
 
 ### Por que 404/410 contam como não indexável
 
@@ -100,7 +152,7 @@ Configuração que muda entre teste e produção não é editada à mão: está 
 
 ## Painel do Portal (0.1.6)
 
-- `$CLI report` grava `var/deployer/status.json` (ignorado pelo Git). A página `/admin/config/aculta/deployer`
+- `$CLI report` grava `var/deployer/status.json` (ignorado pelo Git). A página `/painel-administrativo/configuracoes/aculta/deployer`
   (permissão `administer aculta deployer`) lê esse arquivo e mostra fronteiras, correções abertas e credenciais
   por nome e estado, com o mesmo sistema de status do diagnóstico (✔, ⚠, ✖).
 - Gere o relatório antes de consultar o painel. Sem o arquivo, a página informa que o relatório está indisponível.

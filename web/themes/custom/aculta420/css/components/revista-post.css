@@ -75,6 +75,53 @@
   background: var(--aculta-surface-muted);
 }
 
+/* Modelos de imagem do texto (`aculta_image`): o módulo escolhe srcset; o tema define largura e apresentação. */
+.node--view-mode-full .field--name-body figure.aculta-imagem {
+  display: block;
+  max-inline-size: 100%;
+  margin-block: 2rem;
+  margin-inline: auto;
+  text-align: start;
+}
+.node--view-mode-full .field--name-body figure.aculta-imagem > img {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  block-size: auto;
+  margin-inline: auto;
+  border-radius: 0.5rem;
+  background: var(--aculta-surface-muted);
+}
+.node--view-mode-full .field--name-body .aculta-imagem--pequena { inline-size: min(50%, 20rem); }
+.node--view-mode-full .field--name-body .aculta-imagem--padrao { inline-size: min(100%, 36.25rem); }
+.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--larga,
+.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--destaque {
+  position: relative;
+  inset-inline-start: 50%;
+  inline-size: min(56.25rem, calc(100vw - 2rem));
+  max-inline-size: calc(100vw - 2rem);
+  margin-inline: 0;
+  transform: translateX(-50%);
+}
+.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--destaque {
+  inline-size: min(60rem, calc(100vw - 2rem));
+}
+.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--esquerda,
+.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--direita {
+  position: static;
+  inset-inline-start: auto;
+  transform: none;
+}
+.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--esquerda { margin-inline-start: 0; margin-inline-end: auto; }
+.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--direita { margin-inline-start: auto; margin-inline-end: 0; }
+.node--view-mode-full .field--name-body .aculta-imagem__legenda {
+  margin-block-start: 0.65rem;
+  color: var(--aculta-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-align: start;
+}
+
 /* Vídeo embutido: responsivo, proporção 16:9, largura da coluna de leitura. */
 .node--view-mode-full .media--type-remote-video {
   inline-size: 100%;
@@ -98,6 +145,16 @@
 
 @media (max-width: 575.98px) {
   .node--view-mode-full .field--name-field-subtitle { font-size: 1.25rem; }
+  .node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--pequena,
+  .node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--padrao,
+  .node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--larga,
+  .node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--destaque {
+    position: static;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    margin-inline: auto;
+    transform: none;
+  }
 }
 
 /* Cabeçalho da postagem: título menor e centralizado; faixa com autor, data e hora; compartilhamento. */

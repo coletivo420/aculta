@@ -1,5 +1,161 @@
 # Changelog — aculta_user
 
+## Não lançado — visibilidade dos fóruns por permissão (Role Inheritance / Role Hierarchy)
+
+Classificação MINOR. Decisões do responsável (2026-10-17): dependências `drupal/role_inheritance` e `drupal/role_hierarchy`
+adicionadas ao `composer.json`; visibilidade dos fóruns por permissão explícita; ações administrativas só para o administrador.
+
+- Permissões `view aculta restricted forum email confirmed` e `view aculta restricted forum associado` (`aculta_user.permissions.yml`).
+- `RestrictedForumGrants::grantsFor()` deriva os realms das permissões. Marcador de associado continua sendo vínculo da conta (`AssociadoMarker`), não papel.
+- Regra composta mantida no código: a permissão de moderação do `content_editor` só vale com `email_confirmed`.
+- Config: `email_confirmed` recebe a permissão de e-mail confirmado; `content_editor` recebe as duas. Com Role Inheritance, a herança de permissões do `content_editor` a partir de `email_confirmed` fica para a Fase 2.
+- Nível `estudante`: permissão `view aculta restricted forum estudante`, realm `aculta_estudante`, valor `estudante` em `field_visibilidade` e papel `estudante` (`user.role.estudante.yml`).
+- Moderador (`content_editor`) sem `email_confirmed` não recebe nenhum nível por permissão; o marcador de associado não depende dessa regra.
+- Testes unitários de `RestrictedForumGrants::grantsFor()` (`tests/src/Unit/RestrictedForumGrantsTest.php`): 8 casos, OK no ambiente local (`aculta_user` inteiro: 26 testes, OK). O marcador de associado é a classe real `AssociadoMarker` sobre storage simulado, porque a classe é `final`.
+- Dependências: `drupal/role_hierarchy` passa de `^2.0` para `^4.0`, porque a linha 2.x declara `drupal/core ^8 || ^9` e não instala no core 11. `drupal/role_inheritance` `^2.1` resolve para 2.1.1. `composer.lock` atualizado com apenas esses dois pacotes (2 instalações, sem atualizações nem remoções).
+- Concessão automática de `estudante` ao se inscrever em qualquer curso (`EnrollmentRoleHooks`, `group_relationship_insert`, decisão de 2026-10-17). O papel não é removido ao sair do curso. Só alunos recebem: a matrícula com papel de professor, criador ou administração do LMS (`group_roles`) não concede (decisão de 2026-10-17).
+- Papel `gerente_loja` (Gerente de Loja, decisão de 2026-10-17): produtos `produto_loja`, variações, atributos e categorias da loja, e relatórios do site. Financeiro só com administrador (pagamentos, gateways, envios, administração de pedidos e loja). Criado no Runtime de testes e exportado em `config/sync/user.role.gerente_loja.yml`. Vê pedidos (`view commerce_order`, decisão de 2026-10-17); relatório próprio de vendas previsto. Smoke: produto, relatório e pedidos liberados; pagamentos, gateways, envios e administração de pedidos e loja negados.
+- `associado` continua atribuído manualmente pelo administrador (decisão de 2026-10-17).
+- Runtime de testes (`aculta_runtime`, `aculta.toca.net.br`, 2026-10-17): criados o papel `estudante` e o valor `estudante` em `field_visibilidade`; permissões de visibilidade concedidas a `email_confirmed` e `content_editor`. Aplicação por API, sem importação completa de configuração, porque o Runtime diverge de `config/sync/` em muitos itens não relacionados. Smoke: `estudante` recebe `aculta_estudante`; `email_confirmed`, `aculta_email_confirmado`; `content_editor` sem e-mail, nenhum nível; matrícula de teste concede `estudante` (usuário e matrícula de teste removidos).
+- Papel `associado` (`config/sync/user.role.associado.yml`, decisão de 2026-10-17): `RestrictedForumGrants` concede o realm de associados também por papel. O marcador de conta continua como fallback (no Runtime não havia marcas). Teste unitário do caso papel sem e-mail: OK.
+- `drupal/role_hierarchy` e `drupal/role_inheritance` habilitados no Runtime e em `core.extension` (sem configuração). Verificado: a ativação só define as permissões `bypass role hierarchy` e `edit user roles`, concedidas apenas ao administrador (já com acesso total). Nenhum papel não-administrador mudou de permissões efetivas.
+- Fase 2 (herança de papéis) aplicada no Runtime e exportada em `config/sync/role_inheritance.settings.yml`: `estudante` ← `email_confirmed`; `associado` ← `estudante`; `lms_teacher` ← `associado`; `content_editor` ← `email_confirmed`. Permissões efetivas medidas pelo mapa (`extendRoles`). Pendente de decisão: `gerente_loja` herdar ou não de `lms_teacher`, e o elo de `content_editor` (ver PAPEIS-PARTICIPACAO.md, seção 9).
+
+## 0.4.0-dev.21 — contagem de respostas e chamada para visitante no tópico do Fórum (F4) — 2026-10-17
+
+Classificação: MINOR (novos dados de apresentação do tópico).
+
+- `ForumTopicPresentationHooks` (`node_view`, tópicos do Fórum, vista completa): conta respostas publicadas do campo `comment_forum` (consulta direta; a estatística do core não devolveu a linha do nó) e, para visitante, a chamada "Entrar para seguir, salvar ou denunciar" com destino de volta ao tópico.
+- Metadados do render array somados, não substituídos (contextos do nó e do tema preservados).
+
+## 0.4.0-dev.19 — fóruns para marcadores de associado (F-D20) e caminhos em /painel-administrativo — 2026-10-16
+
+Classificação MINOR. Nível de visibilidade "Marcadores de associado" para fóruns. Moderadores também veem. Rotas e
+caminhos internos padronizados em `/painel-administrativo/` (relatório em `/painel-administrativo/associados/relatorio`).
+
+## 0.4.0-dev.18 — associado como marcador puro (F-D19) — 2026-10-16
+
+Classificação MINOR. Associado deixa de ser papel: tabela própria `aculta_associado` (marcador, sem acesso a nada).
+Administrador marca e desmarca em `/painel-administrativo/associados/{uid}/marcar`; relatório lê a tabela. Papel
+`associado` removido (config e runtime). Nível "associado" removido da visibilidade dos fóruns.
+
+## 0.4.0-dev.17 — autores históricos fora dos usuários do Drupal (F2) — 2026-10-16
+
+Classificação MINOR. Autores legados viram entidade própria `aculta_legado_autor` (sem conta). Removidos o papel
+`usuarios_legados_forum`, os campos de origem no perfil e o acesso por conta bloqueada. Tópicos e comentários
+históricos apontam para a autoria pelo campo `field_autor_legado` e têm uid 0. Correção: o presave concede
+`wiki_contributor` (antes, um save dentro de hook_user_update quebrava o módulo group).
+
+## 0.4.0-dev.16 — F9: moderação pelo content_editor e papéis múltiplos — 2026-10-16
+
+Classificação MINOR. `content_editor` exige e-mail confirmado para visualizar restritos e moderar. Moderação
+(ocultar, despublicar, excluir) de tópicos e comentários do Fórum, exceto conteúdo histórico (`ForumModerationHooks`).
+Permissões de moderação do `content_editor` conferidas no arquivo e no Runtime. Conferido por papel no teste.
+
+## 0.4.0-dev.15 — F9: hierarquia de papéis, moderação do Fórum e 404 para restritos — 2026-10-16
+
+Classificação MINOR. Hierarquia authenticated < email_confirmed < associado < content_editor < administrator
+(documentada em `docs/portal/PAPEIS-PARTICIPACAO.md`). `content_editor` vê os níveis restritos. Visitante e bots
+recebem 404 em contêiner e tópico restritos (subscriber `RestrictedForumNotFoundSubscriber`). Conferido no teste por
+papel: anônimo e e-mail confirmado sem acesso; associado e editor com acesso; anônimo e bot recebem 404.
+
+## 0.4.0-dev.14 — F9: sitemap, busca e comentários de fórum restrito — 2026-10-16
+
+Classificação MINOR. Exclusão de nó e contêiner restritos do `simple_sitemap` (hook de links). Conferido no teste:
+restrito fora do sitemap; comentário de tópico restrito invisível para anônimo e visível para administrador; forum
+não está no índice de busca (tipos indexados: activity, article, document, page, project) e no sitemap (sem
+configuração de tipo `forum`).
+
+## 0.4.0-dev.13 — F9 parcial: fóruns restritos por nível (associado e e-mail confirmado) — 2026-10-16
+
+Classificação MINOR. Papel `associado` versionado em `config/sync` (concessão manual, sem permissões). Campo
+`field_visibilidade` no contêiner de fórum (público, e-mail confirmado, associado). Grants de nó por realm
+(`aculta_email_confirmado`, `aculta_associado`), negação de acesso direto a contêiner e tópico, e filtro das
+consultas com a tag `node_access`. Testado no Runtime de teste por papel: anônimo e e-mail confirmado não veem
+contêiner, tópico nem listagem; associado vê. Contêineres públicos inalterados. Pendências da F9 no roadmap.
+
+## 0.4.0-dev.12 — denúncias do Fórum e participação com e-mail confirmado (F5.1) — 2026-10-16
+
+Classificação MINOR. Denúncia de tópico e comentário pelo Flag, deduplicada por conta; fila de moderação em
+`/painel-administrativo/forum/denuncias` (permissão `moderar denuncias do forum`); participação no Fórum (criar,
+editar o próprio conteúdo, comentar e denunciar) exige o papel `email_confirmed`. Seguir e salvar continuam em
+`authenticated`. Testado no Runtime de teste: denúncia registrada, repetição recusada pelo Flag, fila renderiza
+com link pelo alias, acesso anônimo negado (403).
+
+## 0.4.0-dev.11 — estrutura de identidade histórica do Fórum (F2) — 2026-10-16
+
+Classificação MINOR. Estrutura pronta para a importação; nenhuma conta histórica foi criada.
+
+- Campos `field_nome_historico` e `field_forum_origem_id` no perfil participante.
+- `LegacyAccountManager` (`aculta_user.legacy_accounts`): cria ou atualiza por origem, idempotente; conta bloqueada,
+  papel `usuarios_legados_forum`, sem e-mail, sem apelido, perfil privado, sem conquista.
+- `LegacyAccessHooks` (`entity_access`): nega página pública individual de conta legada (F-D08).
+- Memorial `/u/lendashistoricas`: busca, paginação de 50 e estado vazio.
+- Avatar especial: definido antes do primeiro save quando `assets/avatars/legado/lendas-historicas.png` existir;
+  sem o arquivo, a conta fica sem foto. O sorteio do acervo nunca atribui avatar a conta legada.
+- Testes unitários: `LegacyAccountManagerTest`, `LegacyMemorialReservedTest`.
+- Pendências: lista de autores comprovados (importação), arte do avatar, texto aprovado do memorial, ligação
+  do link de autoria nos comentários e tópicos do Fórum (depende da importação).
+
+## 0.4.0-dev.10 — F2 estrutural do Fórum: memorial e papel legado — 2026-10-15
+
+Classificação MINOR (rota e papel novos). Entrega estrutural do ACULTA Fórum F2 em
+branch própria; pendências registradas em `aculta_forum/CHANGELOG.md`.
+
+- Papel `usuarios_legados_forum` ("Usuários legados do fórum") em `config/sync`, sem permissões.
+- Apelido `lendashistoricas` reservado em `AccountNames::RESERVED`: conta comum não pode escolhê-lo.
+- Rota `/u/lendashistoricas` (`aculta_user.memorial_legados`), somente no purpose MAIN, com
+  placeholder de pendência. A rota estática vence `/u/{apelido}` no mesmo host.
+- Teste unitário `LegacyMemorialReservedTest`.
+- Pendências: lista de autores comprovados, contas legadas bloqueadas, texto aprovado e avatar especial.
+
+## 0.4.0-dev.9 — avatar ilustrativo em perfis sem foto — 2026-10-15
+
+- `/u/<apelido>` escolhe uma imagem estável por conta do acervo atual de avatares
+  quando não há foto pública. A imagem é apenas apresentação: não grava nem troca
+  a foto da conta.
+- Mantém a inicial como fallback de segurança caso o acervo esteja indisponível.
+
+## 0.4.0-dev.8 — arquivo de imagem de conquista — 2026-10-15
+
+- Definição referencia o arquivo enviado por UUID e registra uso pela API File Usage.
+- Remoção confirmada desassocia a imagem e exclui o arquivo gerenciado sem outros usos; arquivos compartilhados são preservados.
+
+## 0.4.0-dev.7 — catálogo configurável e auditoria de concessões — 2026-10-15
+
+- `aculta_user.achievement_definitions` e schema preservam definições/critério, inclusive quando Game é removido.
+- API única concede por gatilho predefinido ou administrador; configuração não executa expressões/código.
+- Origem de cada concessão governa revogação: manuais revogáveis, automáticas históricas preservadas.
+- Update 10003 adiciona motivos internos de concessão/revogação, sem alterar campos anteriores.
+- Ator/data/motivo permanecem na entidade; nomes/descrições públicos não incluem dados de origem.
+
+## 0.4.0-dev.6 — identidade dos troféus importados — 2026-10-15
+
+- Catálogo inclui Fundadore manual e nomes originais Apoiadore e Associado/a Antiproibicionista.
+- IDs e concessões antigas preservados. Imagens/metadados de apresentação pertencem ao Game.
+
+## 0.4.0-dev.5 — pontos de integração do Game no perfil e na atividade — 2026-10-15
+
+- Alters neutros `aculta_user_public_profile` e `aculta_user_activity_content`
+  permitem Game opcional; User não depende dos serviços ou classes do Game.
+- Module Handler injetado nos controllers; nenhuma lógica de conquista no tema.
+- Evidências de G3 em `../aculta_game/docs/EXECUCAO.md`.
+
+## 0.4.0-dev.4 — integridade da API de conquistas — 2026-10-15
+
+- Novas concessões apenas a contas ativas e sem papel legado.
+- Lock persistente por pessoa/conquista coordena concessão e revogação pela API;
+  quando há transação externa, liberação ocorre depois de commit/rollback.
+- Relógio injetado; identidade e histórico da entidade preservados.
+- Validação e limites na fase G2 de `../aculta_game/docs/EXECUCAO.md`.
+
+## 0.4.0-dev.3 — gatilhos de conquistas no Game — 2026-10-15
+
+- `BadgeEvaluationHooks` passa ao submódulo opcional `aculta_game`.
+- Catálogo, serviço, provider e dados de `aculta_badge_award` preservados no User.
+- Ativar Game acompanha esta mudança para continuar avaliações automáticas.
+- Evidência: `../aculta_game/docs/EXECUCAO.md`, fase G1.
+
 ## 0.4.0-dev.2 — ação de amizade no cabeçalho do perfil público — 2026-10-14
 
 - Coloca a ação de amizade dentro do cabeçalho do cartão `/u/{apelido}` para membros autenticados, ao lado da identidade.
@@ -187,4 +343,5 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
 - Estudo de origem e decisões: `docs/AMIZADES.md`.
 - `RUNTIME STATUS: DEFERRED` — entidade ainda não instalada; interfaces,
   formulários e integração de notificações seguem em desenvolvimento.
+
 

@@ -8,19 +8,23 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\aculta_user\Associado\AssociadoMarker;
 
 /**
  * Relatório de associados (plano aculta_user, seção G2).
  *
- * Papel `associado` só é concedido pelo administrador. Na tela, o RG aparece mascarado; a exportação CSV, com
+ * Associado é marcador puro, mantido pelo administrador em tabela própria (F-D19). Na tela, o RG aparece mascarado; a exportação CSV, com
  * o RG completo, é restrita à permissão `export aculta associados` (somente administrador).
  */
 final class AssociadosController extends ControllerBase {
 
-  public function __construct(private readonly EntityTypeManagerInterface $entityTypeManagerService) {}
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManagerService,
+    private readonly AssociadoMarker $marker,
+  ) {}
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('entity_type.manager'));
+    return new static($container->get('entity_type.manager'), $container->get('aculta_user.associado_marker'));
   }
 
   /** Tabela na tela, com RG mascarado. */
@@ -54,10 +58,8 @@ final class AssociadosController extends ControllerBase {
 
   /** @return array<int, array<string, string>> */
   private function rows(): array {
-    $uids = $this->entityTypeManagerService->getStorage('user')->getQuery()
-      ->accessCheck(FALSE)->condition('roles', 'associado')->sort('uid')->execute();
     $rows = [];
-    foreach ($this->entityTypeManagerService->getStorage('user')->loadMultiple($uids) as $account) {
+    foreach ($this->entityTypeManagerService->getStorage('user')->loadMultiple($this->marker->uids()) as $account) {
       $profile = $this->entityTypeManagerService->getStorage('profile')->loadByUser($account, 'participante');
       $get = static fn (string $field): string => $profile && $profile->hasField($field) ? (string) $profile->get($field)->value : '';
       $rows[] = [

@@ -1,0 +1,19 @@
+uuid: e0c46432-9afd-4660-919c-df4d54d480cc
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_autor_legado
+    - node.type.forum
+id: node.forum.field_autor_legado
+field_name: field_autor_legado
+entity_type: node
+bundle: forum
+label: 'Autoria histórica'
+description: 'Preenchido só em tópico do acervo do Growroom. Tópico com autoria histórica tem uid 0 e não é moderado pela fila atual.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: entity_reference

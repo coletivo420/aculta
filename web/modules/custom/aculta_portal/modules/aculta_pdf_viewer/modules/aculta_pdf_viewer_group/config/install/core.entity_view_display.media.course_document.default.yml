@@ -1,0 +1,30 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.media.course_document.field_media_course_document
+    - media.type.course_document
+  module:
+    - aculta_pdf_viewer
+    - file
+  enforced:
+    module:
+      - aculta_pdf_viewer_group
+id: media.course_document.default
+targetEntityType: media
+bundle: course_document
+mode: default
+content:
+  field_media_course_document:
+    type: aculta_pdf_media
+    label: visually_hidden
+    settings: { }
+    third_party_settings: { }
+    weight: 1
+    region: content
+hidden:
+  created: true
+  langcode: true
+  name: true
+  thumbnail: true
+  uid: true

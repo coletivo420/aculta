@@ -156,7 +156,7 @@ display:
           empty: true
           content:
             value: 'There are no profiles yet.'
-            format: basic_html
+            format: usuario_aculta
           tokenize: false
       sorts:
         is_default:

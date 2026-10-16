@@ -13,3 +13,20 @@ export aculta associados:
 administer aculta friendships:
   title: 'Administrar relacionamentos entre membros'
   restrict access: true
+
+moderar denuncias do forum:
+  title: 'Moderar denúncias do Fórum'
+  restrict access: true
+
+administer aculta legado:
+  title: 'Administrar autorias históricas do Fórum'
+  restrict access: true
+
+view aculta restricted forum email confirmed:
+  title: 'Ver fóruns de nível e-mail confirmado'
+
+view aculta restricted forum associado:
+  title: 'Ver fóruns de nível marcador de associado'
+
+view aculta restricted forum estudante:
+  title: 'Ver fóruns de nível estudante'

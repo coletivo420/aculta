@@ -1,0 +1,19 @@
+uuid: 2d632d93-d8bd-49d4-aedf-a635d1d40e3e
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_autor_legado
+field_name: field_autor_legado
+entity_type: node
+type: entity_reference
+settings:
+  target_type: aculta_legado_autor
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -3,7 +3,6 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - filter.format.basic_html
     - filter.format.webform_default
     - node.type.forum
     - node.type.aculta_notice
@@ -38,23 +37,19 @@ permissions:
   - 'access email confirmation'
   - 'access user profiles'
   - 'create customer profile'
-  - 'create forum content'
   - 'create participante profile'
   - 'delete own files'
-  - 'delete own forum content'
   - 'delete own social auth profile'
-  - 'edit own forum content'
   - 'flag salvar_topico'
   - 'flag seguir_topico'
   - 'flag aculta_notice_read'
-  - 'post comments'
+  - 'flag aculta_site_alert_dismissed'
   - 'unflag salvar_topico'
   - 'unflag seguir_topico'
   - 'unflag aculta_notice_read'
   - 'update own customer profile'
   - 'update own participante profile'
   - 'use private messaging system'
-  - 'use text format basic_html'
   - 'use text format webform_default'
   - 'view commerce_product'
   - 'view media'

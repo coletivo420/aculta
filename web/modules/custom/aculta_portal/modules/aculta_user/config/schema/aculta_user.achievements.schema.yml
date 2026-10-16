@@ -1,0 +1,33 @@
+aculta_user.achievement_definitions:
+  type: config_object
+  label: 'Definições de conquistas'
+  mapping:
+    definitions:
+      type: sequence
+      label: 'Catálogo configurável'
+      sequence:
+        type: mapping
+        mapping:
+          label:
+            type: label
+            label: 'Nome'
+          description:
+            type: text
+            label: 'Descrição'
+          enabled:
+            type: boolean
+            label: 'Disponível para novas concessões'
+          triggers:
+            type: sequence
+            label: 'Formas de concessão'
+            sequence:
+              type: string
+          criterion_version:
+            type: integer
+            label: 'Versão do critério'
+          image:
+            type: string
+            label: 'Imagem histórica da conquista'
+          image_uuid:
+            type: string
+            label: 'UUID da imagem enviada'

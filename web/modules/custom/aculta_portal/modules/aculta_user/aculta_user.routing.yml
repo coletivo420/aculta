@@ -19,7 +19,7 @@ aculta_user.configuracoes_privacidade:
     _permission: 'access aculta portal'
 
 aculta_user.participacao_settings:
-  path: '/admin/config/aculta/portal/participacao'
+  path: '/painel-administrativo/configuracoes/aculta/portal/participacao'
   defaults:
     _form: '\Drupal\aculta_user\Form\ParticipationSettingsForm'
     _title: 'Regras de participação'
@@ -37,7 +37,7 @@ aculta_user.atividade:
     aba: 'wiki|forum|revista|comentarios|conquistas'
 
 aculta_user.associados:
-  path: '/admin/aculta/associados'
+  path: '/painel-administrativo/associados/relatorio'
   defaults:
     _controller: '\Drupal\aculta_user\Controller\AssociadosController::report'
     _title: 'Associados'
@@ -45,7 +45,7 @@ aculta_user.associados:
     _permission: 'administer aculta associados'
 
 aculta_user.associados_csv:
-  path: '/admin/aculta/associados/exportar'
+  path: '/painel-administrativo/associados/exportar'
   defaults:
     _controller: '\Drupal\aculta_user\Controller\AssociadosController::export'
     _title: 'Exportar associados'
@@ -118,3 +118,36 @@ aculta_user.redes_save:
     _csrf_token: 'TRUE'
   options:
     _aculta_domain_purpose: 'account'
+
+# Memorial coletivo do Fórum (ACULTA Fórum, F2). Apelido reservado em AccountNames::RESERVED.
+# Conteúdo pendente: lista de autores e texto aprovado; ver CHANGELOG do aculta_forum.
+aculta_user.memorial_legados:
+  path: '/u/lendashistoricas'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\LegacyMemorialController::view'
+    _title: 'Perfil'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'main'
+
+aculta_user.denuncias_forum:
+  path: '/painel-administrativo/forum/denuncias'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ReportQueueController::view'
+    _title: 'Denúncias do Fórum'
+  requirements:
+    _permission: 'moderar denuncias do forum'
+
+aculta_user.associado_marcar:
+  path: '/painel-administrativo/associados/{user}/marcar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AssociadoMarkForm'
+    _title: 'Marca de associado'
+  requirements:
+    _permission: 'administer aculta associados'
+    user: '\d+'
+  options:
+    parameters:
+      user:
+        type: entity:user

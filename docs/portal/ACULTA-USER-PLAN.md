@@ -4,6 +4,16 @@ Status: **plano de 2026-10-13, com implementação já iniciada**. O submódulo 
 
 Escopo: avatar, perfil público e autoria, integração com Wiki, Fórum e revista, funções sociais e gamificação, dentro de `web/modules/custom/aculta_portal/modules/aculta_user/`.
 
+**Evolução aprovada em 2026-10-15:** o planejamento do Fórum passa a ser mantido
+no [projeto ACULTA Fórum/Growroom](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
+e o de conquistas/missões no [projeto ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md).
+As decisões novas incluem memorial coletivo `/u/lendashistoricas` com nomes e
+autorias individuais, sem perfis públicos individuais de legados, e conquistas
+públicas por padrão com opções de ocultação e destaque. Essas decisões superam
+formulações antigas contraditórias de apresentação/gamificação deste plano;
+não significam migração dos hooks, provider da entidade ou configuração do Runtime.
+A nova pesquisa compara releases e código, inclusive diferenças com páginas antigas.
+
 ## 1. Estado atual (o que já existe)
 
 | Capacidade | Onde está | Situação |
@@ -394,7 +404,7 @@ continuam propostas.
 
 **Painel administrativo (`aculta_user`, linkado pelo hub do `aculta_portal`):**
 
-- Caminho: `/admin/config/aculta/portal/participacao` (técnico, sem slug público). Permissão própria `administer aculta participacao`, com `restrict access`.
+- Caminho: `/painel-administrativo/configuracoes/aculta/portal/participacao` (técnico, sem slug público). Permissão própria `administer aculta participacao`, com `restrict access`.
 - Configuração em `aculta_user.settings` (exportável; sem segredo):
   - `topico_limite_ativo` (liga/desliga o limite de criação de tópico);
   - `topico_comentarios_minimos` (padrão 10; número inteiro não negativo);

@@ -17,3 +17,5 @@
 13. [branding-bloco-sativa420.md](branding-bloco-sativa420.md) — kit de artes do Bloco Sativa 420 (cards e páginas de projeto; fora do cabeçalho global; autoria e licença pendentes).
 
 Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de releases: Git e changelog.
+
+- [Messenger: guia de desenvolvimento do tema](messenger.md): componentes, tokens, atributos, JS e receitas do Messenger.

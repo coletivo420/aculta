@@ -20,6 +20,7 @@ translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
-  allowed_formats: {  }
+  allowed_formats:
+    usuario_aculta: usuario_aculta
 field_type: text_long
 

@@ -1,3 +1,299 @@
+## Não lançado — relatório de vendas da loja (gerente de loja) — 2026-10-17
+
+Classificação MINOR. Decisão do responsável: o gerente de loja vê um relatório próprio de vendas.
+
+- `SalesReportController` (`/painel-administrativo/loja/vendas`, permissão `view commerce_order`): variações vendidas em pedidos concluídos, com quantidade e total por moeda. Sem dados de pagamento (pagamentos seguem só com o administrador). Sem cache.
+- Testes unitários da agregação (`SalesReportControllerTest`): soma por variação entre pedidos, totais por moeda, itens incompletos ignorados, vazio. 2/2 OK. Smoke no Runtime: rota exige `view commerce_order`; gerente acessa, usuário comum não.
+- Saída em tabela neutra (`#type => table`); o layout visual fica para o tema ACULTA420, sem alteração de tema nesta entrega.
+
+## 0.4.0-dev.63 — visibilidade da apresentação por purpose decidida pelo Portal — 2026-10-16
+
+Classificação: PATCH.
+
+- `domain_presentation` ganha a chave `layout` com quatro flags booleanas: `institution_bar_account`, `show_utility_bar`, `links_page` e `show_site_header`. O Portal as calcula por purpose; a página inicial do `main` usa `path.matcher` com o cache `url.path.is_front`.
+- `DomainPresentationBuilder` recebe `@path.matcher`. `DomainPresentation` recebe o quarto argumento `$layout`.
+- Gate `validate-domain-presentation-contract.php` e teste `DomainPresentationContractTest` verificam o formato e os valores das flags. Contrato documentado em `docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`.
+- Motivo: o tema decidia visibilidade por `identity.purpose` em `page.html.twig`, o que violava a política de domínio e fazia `validate-aculta420-shell-contract` reprovar.
+- Evidência: Unit `aculta_portal` 81/81 (251 asserções) OK; `validate-domain-presentation-contract` PASS (162 checks, via Drush); `validate-aculta-portal-drupal11` PASS; `validate-module-theme-boundary` PASS; `validate-module-theme-map` PASS; `validate-portal-ui-docs` PASS; `validate-public-slugs` PASS; `validate-environment-addresses` PASS.
+- RUNTIME STATUS: cache rebuild no Runtime de teste com a URI de teste. Visual em `main`, `wiki`, `cursos`, `apoio` e `conta` verificado por captura de tela (Firefox headless).
+
+## 0.4.0-dev.62 — registro do helper de derivados e documentação de tokens — 2026-10-16
+
+Classificação: PATCH.
+
+- `PortalHelperRegistry` mantém o helper `aculta_image.generated_file` (usado pelo `aculta_pdf_viewer`) com resumo e documentação vigentes.
+- `docs/portal/TOKENS-E-ATRIBUTOS.md`: 54 tokens do mapa do tema e 31 atributos `data-*` que estavam fora do gate passam a constar. Os tokens `public-profile-avatar-image`, `achievement-notices` e `aculta-image-audit` foram mapeados no tema (0.6.0-dev.65).
+- `docs/portal/MAPA-MODULO-TEMA.md` e o gate `scripts/validate-module-theme-map.php`: cada módulo e contrib habilitado tem registro de contraparte no tema.
+- Evidência: `validate-portal-ui-docs` PASS (237 tokens, 189 usados, 82 atributos); `validate-module-theme-map` PASS (130 checks); `validate-module-theme-boundary` PASS; `validate-aculta-portal-drupal11` PASS (803 checks); `validate-public-slugs` PASS; `validate-environment-addresses` PASS.
+- RUNTIME STATUS: sem alteração de configuração; cache rebuild no Runtime de teste.
+
+## 0.4.0-dev.59 — PDF Viewer documenta acesso e preview opcional — 2026-10-16
+
+Classificação PATCH. `aculta_pdf_viewer` 0.1.0-dev.8 remove PDFPreview da lista de
+dependências obrigatórias de ativação, mantendo miniaturas como melhoria
+opcional. README e contrato esclarecem que `private://` obedece Media/File
+access: como Config Sync concede `view media` a anônimo e autenticado, isso não
+garante audiência restrita; Group↔Media não está integrado e PDF privado não é
+aprovado para documento confidencial de turma. Kernel: 9 testes, 131 assertions
+PASS, incluindo ativação sem PDFPreview. RUNTIME STATUS: DEFERRED; URI do Drush
+está como `http://default`.
+
+## 0.4.0-dev.58 — leitor PDF integrado: busca, zoom e tela cheia — 2026-10-16
+
+Classificação MINOR. `aculta_pdf_viewer` 0.1.0-dev.3 acrescenta zoom, busca textual por página e tela cheia ao leitor ESM local; fallback de arquivo autorizado permanece disponível. Kernel valida o fluxo CKEditor Media Embed → formatter e markup dos controles; Node valida sintaxe. Firefox 153.4 ESR contra artigo temporário no Runtime `aculta_runtime` confirmou PDF.js/worker local, 14 páginas, navegação, zoom 125%, busca com cinco resultados, tela cheia e zero erros JS. A UI CKEditor 5 selecionou Media `document`, inseriu o embed, salvou o artigo e a página pública mostrou o leitor. A fixture Media veio de Drush; upload/criação de Media pelo papel `content_editor` segue DEFERRED. Artigos, Media, Files e binários de teste foram removidos. Acessibilidade visual, CSP, PDFs grandes, preview, acesso privado e Hostinger seguem DEFERRED.
+
+## 0.4.0-dev.57 — Revista insere PDF pelo CKEditor — 2026-10-16
+
+Classificação MINOR. O papel `content_editor` pode criar Media `document` para inserção no CKEditor 5 da Revista. O bundle é `public://` e permanece restrito a PDFs destinados à publicação; não usar para documentos confidenciais. `aculta_pdf_viewer` 0.1.0-dev.2 valida o fluxo Core Media Embed → formatter → PDF.js em Kernel. No Runtime de teste, módulo/display/permissão aplicados pontualmente e cache reconstruído; não havia PDF/embed editorial para teste interativo. Sem importação global de Config Sync. RUNTIME STATUS: parcial; fluxo de autoria DEFERRED.
+
+## 0.4.0-dev.53 — política de avisos e notificações (F5.2, documentação) — 2026-10-16
+
+Classificação PATCH (documentação). Define avisos obrigatórios no site, e-mail opt-in agrupado por tópico, uso do
+sistema existente e agrupamento por contador. Implementação na F5.2. Ver `docs/portal/AVISOS-E-NOTIFICACOES.md`.
+
+## 0.4.0-dev.52 — caminhos em /painel-administrativo e fóruns para marcadores — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.19. Caminhos internos do ACULTA padronizados em
+`/painel-administrativo/` (inclusive configurações, em `configuracoes/aculta`). Fóruns podem ser restritos a marcadores.
+
+## 0.4.0-dev.51 — associado como marcador puro — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.18. Associado é marcador em tabela própria, sem efeito em acesso.
+
+## 0.4.0-dev.50 — confirmação manual de e-mail e autores fora dos usuários — 2026-10-16
+
+Classificação MINOR. Confirmação manual de e-mail pelo administrador (permissão própria, lista e formulário com
+registro em log sem o endereço). Autores históricos separados dos usuários (`aculta_user` 0.4.0-dev.17).
+
+## 0.4.0-dev.49 — F9: moderação e papéis múltiplos — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.16. Moderação do Fórum pelo `content_editor` com e-mail confirmado;
+conteúdo histórico fora da moderação. Confirmação manual de e-mail pelo administrador ainda não existe.
+
+## 0.4.0-dev.50 — fundação opcional do aculta_lms (F1) — 2026-10-16
+
+Classificação MINOR. Novo submódulo opcional `aculta_lms` com contrato de evento para status de curso aprovado,
+publisher DI e testes Unit (2/2) e Kernel (1/1) PASS. Sem ativação, alteração de dados/configuração, produtor ou
+consumidor ativo. **RUNTIME STATUS: DEFERRED**; o serviço só foi instalado em fixture Kernel isolada.
+
+## 0.4.0-dev.48 — F9: papéis e 404 para restritos — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.15. Hierarquia de papéis documentada e aplicada aos fóruns
+restritos; visitante e bots recebem 404 nos restritos.
+
+## 0.4.0-dev.47 — F9: fóruns restritos verificados — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.14. Sitemap, comentários e busca conferidos no teste. Falta: nível
+de curso (F8) e política do `content_editor`.
+
+## 0.4.0-dev.46 — F9 parcial: fóruns restritos — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.13. Fóruns restritos por nível funcionam para visitante,
+e-mail confirmado e associado no teste. Ainda não tratados: índice de busca (processador `content_access`
+desativado), sitemap, comentários em tópico restrito e o nível de curso (F8). Ver roadmap do Fórum.
+
+## 0.4.0-dev.45 — denúncias do Fórum e política de e-mail confirmado (F5.1) — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.12 e a documentação da política de confirmação de e-mail, com
+a aplicação no site e no Fórum (`docs/portal/EMAIL-CONFIRMATION-POLICY.md`, seções 9 e 10).
+
+## 0.4.0-dev.44 — estrutura da identidade histórica do Fórum (F2) — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.11: serviço idempotente de contas legadas, acesso negado a
+páginas individuais, memorial com busca e avatar especial pronto para a arte. Gates do Portal e testes unitários
+passam. No Runtime de teste: campos aplicados por importação parcial, memorial 200, `/user/<uid>` de conta
+legada 404 para anônimo, sorteio não atribui avatar a conta legada (defeito encontrado e corrigido no teste).
+
+## 0.4.0-dev.43 — F2 estrutural do ACULTA Fórum — 2026-10-15
+
+Classificação MINOR. Inclui o submódulo `aculta_user` 0.4.0-dev.10 (memorial `/u/lendashistoricas`,
+papel `usuarios_legados_forum` e apelido reservado). Gates do Portal passam: Drupal 11+, fronteira
+módulo/tema, endereços de ambiente e slugs públicos. No Runtime de teste: memorial responde 200,
+`/u/` comum responde 404, cache reconstruído.
+
+## 0.4.0-dev.42 — Game G5.4: arte cultural nas conquistas — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.9`: quatro conquistas de participação
+ganham ilustrações próprias vinculadas ao catálogo; um selo antiproibicionista
+fica como fallback das próximas conquistas. Direção permanente de arte registrada
+em `AGENTS.md` e `docs/portal/IMAGE-ART-DIRECTION.md`; os três PNGs históricos
+foram preservados.
+
+## 0.4.0-dev.41 — Game G5.3: conquistas no perfil público — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.8`, User `0.4.0-dev.9`: perfis
+`/u/<apelido>` apresentam conquistas obtidas em cartões responsivos com imagens
+ou símbolo ilustrativo, descrições e destaque, respeitando escolhas de
+privacidade. Avatar sem foto usa o acervo atual do `aculta_user`. Upload orienta
+imagem quadrada de 512 × 512 px. Firefox de desktop/mobile e gates Drupal 11
+verificados no Homelab.
+
+## 0.4.0-dev.40 — Game G5.2: avisos, e-mail e confirmação de imagem — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.7`, User `0.4.0-dev.8`: catálogo único
+com apresentação inspirada no GamiPress, upload e remoção confirmada de imagem,
+aviso dispensável de nova conquista e e-mail enfileirado com preferência pessoal.
+Homelab: Firefox 14/14; exclusão do arquivo não compartilhado verificada; gates
+Drupal 11, fronteira, endereços e slugs aprovados. Envio real de e-mail não
+verificado. Sem versão de release ou tag.
+
+## 0.4.0-dev.39 — Game G5.1: criação e gestão de conquistas — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.6`, User `0.4.0-dev.7`: catálogo editável,
+concessão/revogação com auditoria e histórico na área Game. Apoiadore reconhece
+pedido, apoio direto concluído ou concessão administrativa. Update User 10003
+aplicado no Homelab; dados anteriores preservados. HTTP 34/34, fontes e limites
+registrados em `modules/aculta_game/docs/EXECUCAO.md`.
+
+## 0.4.0-dev.38 — troféus históricos no Game — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.5` importa três troféus com imagens originais;
+User `0.4.0-dev.6` preserva IDs de Associado/Apoiador e acrescenta Fundadore manual.
+Catálogo na conta/administração; projeção pública continua sujeita à privacidade.
+Origem, autorização e hashes em `modules/aculta_game/assets/trophies/ORIGENS.json`.
+
+## 0.4.0-dev.37 — ACULTA Game G4 — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.4`: missões unitárias, caixa na visão geral e
+administração `/painel-administrativo/game`, abaixo de Avisos, com permissão
+própria. Configuração pontual aplicada no Homelab. Firefox 8/8 e HTTP 17/17;
+privacidade/cache de G3 verificados. Detalhes em `modules/aculta_game/docs/EXECUCAO.md`.
+
+## 0.4.0-dev.36 — perfil público anônimo acessível — 2026-10-15
+
+Classificação PATCH. Messenger `0.1.1-dev.32` evita consultar dispensa de aviso
+para anônimo sem sessão Flag. Corrige erro 500 observado nos testes públicos do
+Game; HTTP anônimo e privacidade entre sessões verificados no Homelab.
+
+## 0.4.0-dev.35 — ACULTA Game G3 — 2026-10-15
+
+Classificação: MINOR (conquistas na conta e no perfil com escolhas de exibição).
+
+- Game `0.1.0-dev.3` usa contratos neutros do User `0.4.0-dev.5`, com ocultação,
+  destaques, ordem e cache; preferências preservadas no User Data do User.
+- Status/gate incluem helper opcional declarado pelo próprio submódulo.
+- Sem alteração do tema ou nova rota; evidências e limites funcionais registrados
+  em `modules/aculta_game/docs/EXECUCAO.md`.
+
+## 0.4.0-dev.34 — ACULTA Game G2 — 2026-10-15
+
+Classificação: PATCH (integridade dos gatilhos e da API existente).
+
+- Game `0.1.0-dev.2` trata aprovação tardia, publicação de revisão e API real do
+  LMS; User `0.4.0-dev.4` coordena concessões/revogações sob lock até commit.
+- Sem novas dependências, migração de schema ou alterações das conquistas passadas.
+- Evidências e limites em `modules/aculta_game/docs/EXECUCAO.md`.
+
+## 0.4.0-dev.33 — ACULTA Game G1 — 2026-10-15
+
+Classificação: MINOR (submódulo opcional; integração inicial da gamificação).
+
+- Game `0.1.0-dev.1` assume os gatilhos automáticos, mantendo catálogo, serviço e
+  entidade de concessões no User `0.4.0-dev.3`. Nenhuma migração de dados/schema.
+- Fonte única, inventário e ativação pontual documentados em
+  `modules/aculta_game/docs/EXECUCAO.md`. Fases posteriores permanecem no roadmap.
+
+## 0.4.0-dev.32 — correções do Messenger e fronteira de classes — 2026-10-15
+
+Classificação: PATCH.
+
+- Template `aculta_portal_element` inalterado; `PortalLinkElement` usado pelo Messenger.
+- `aculta_messenger` 0.1.1-dev.31: grupos na lista, menu sem reenvio, tokens no lugar de classes, aviso em português.
+- Gate `validate-module-theme-boundary`: varre os submódulos; dívida conhecida registrada no próprio gate e em `DEBT-REGISTER.md`.
+- Documentação, sem avanço de versão: abertos os projetos `aculta_forum` (Growroom)
+  e `aculta_game`, com decisões de 2026-10-15, arquitetura, roadmaps, pesquisa e
+  evidência de licenças. Os diretórios ainda não são extensões instaláveis; sem
+  alterações de domínio, identidades, dependências ou configuração de Runtime.
+
+## 0.4.0-dev.31 — confirmação para bloquear e botões da nova conversa — 2026-10-15
+
+Classificação: PATCH (confirmação de bloqueio no perfil e na conversa; botões da nova conversa).
+
+- `aculta_messenger` 0.1.1-dev.30: a caixa "Opções" pede confirmação antes de bloquear e de desfazer amizade, e "Cancelar" / "Voltar para o início" ficam acima de "Enviar".
+
+## 0.4.0-dev.30 — menu "Opções" no perfil público — 2026-10-15
+
+Classificação: PATCH (novo ponto de extensão do perfil público).
+
+- `aculta_user`: `PublicProfileController` passa as ações do cabeçalho por `aculta_user_public_profile_actions` (alter), para que outros módulos as completem.
+- `aculta_messenger` preenche essa caixa com "Opções" (ver `aculta_messenger` 0.1.1-dev.29). Sem o messenger, o perfil continua como antes.
+- Validação: capturas de tela no runtime de teste.
+
+## 0.4.0-dev.29 — traduções pt-BR do Drupal e extensões — 2026-10-15
+
+Classificação: PATCH (localização da interface administrativa).
+
+- Conferidos 62 projetos de tradução associados às 139 extensões habilitadas; atualizados os pacotes pt-BR disponíveis, incluindo Drupal Core 11.4.10 e os módulos `private_message`, `message`, `message_notify`, `message_subscribe` e `site_alert`.
+- Catálogo `translations/modules.pt-br.po` acrescenta nomes e mensagens administrativas de extensões ACULTA e de `flexible_permissions`/`username_enumeration_prevention`, cujas versões instaladas não têm arquivo pt-BR no servidor de traduções.
+- Catálogos existentes do Portal e do tema foram importados sem sobrescrever traduções manuais; no Locale, o total passou de 13.336 para 13.658 strings pt-BR.
+- Verificado pelo serviço de tradução: `Edit` → “Editar”, `Add content` → “Adicionar conteúdo”, `Clear history` → “Limpar histórico”, `Member(s)` → “Membro(s)” e `Private Message Threads` → “Conversas de Mensagens Privadas”.
+- RUNTIME STATUS: ACTIVE no servidor de testes (`aculta_runtime`, `https://aculta.toca.net.br`). `locale:update --langcodes=pt-br` importou 14 pacotes disponíveis (300 strings adicionadas, 10.561 atualizadas); catálogos ACULTA importaram mais 22 strings e atualizaram 27.
+- No arquivo local, fora do Git, `settings.local.php` define `$settings['locale_translation_path'] = 'public://translations'`. Em outros ambientes, executar a importação do catálogo ACULTA com `drush locale:import --type=customized --override=none pt-br web/modules/custom/aculta_portal/translations/modules.pt-br.po`.
+
+## 0.4.0-dev.28 — amizade sem erro fatal e Turnstile fora das Opções da conversa — 2026-10-15
+
+Classificação: PATCH (correção no serviço de amizade e exceção de CAPTCHA).
+
+- `FriendshipManager`: `access()` é chamado com `TRUE` em `loadPair`, `getRelationshipWith` e `transition`. Sem isso, o método devolvia um booleano e o `isAllowed()` que vinha depois quebrava (erro fatal) em qualquer par que já tivesse relação.
+- `TurnstileToggle::EXCEPTION_FORM_IDS` inclui `aculta_messenger_conversation_relationship` (ações de amizade e bloqueio na conversa). Ponto desativado em `config/sync/captcha.captcha_point.aculta_messenger_conversation_relationship.yml`; documentado em `docs/portal/TURNSTILE.md`.
+- Verificado por POST no runtime de testes: rejeitar, aceitar e cancelar pedidos, bloquear e desbloquear, com o estado gravado em `aculta_friendship`.
+
+## 0.4.0-dev.27 — R4: templates e política de e-mail — 2026-10-15
+
+Classificação: PATCH (localização do e-mail administrativo e precisão da configuração de notificações).
+
+- Template de verificação do transporte Mailer Plus localizado para português.
+- Gate de e-mail protege a notificação pública do contato em texto simples, o Reply-To validado, a ausência de notificações não aprovadas na participação e a localização do template de verificação.
+- Configuração do contato permanece `html: false`: os valores da submissão são incluídos e o formato `email_html` exportado não aplica filtros. O teste histórico com HTML ativado temporariamente valida a compatibilidade do Mailer Plus, não altera a configuração ativa.
+- Não houve envio de mensagem nem alteração no Runtime.
+
+## 0.4.0-dev.26 — SMTP2GO com TLS obrigatório e fallback fechado — 2026-10-15
+
+Classificação: PATCH (segurança do transporte SMTP; mantém SMTP2GO como provedor institucional).
+
+- O transporte SMTP2GO usa porta 465, que inicia TLS implícito; a verificação de certificado e hostname permanece habilitada.
+- O DSN experimental do Symfony Mailer Core deixou de selecionar `sendmail`; o esquema `aculta-disabled` falha se o backend Core escapar do `mailer_override`.
+- `validate-mail-transport.php` agora confere backend, transporte padrão, TLS real construído pelo Symfony, Key overrides/providers e rejeição do fallback Core.
+- Runtime de testes: transporte padrão `smtp2go`, Keys disponíveis em memória (valores não lidos), porta 465, peer verification ativa; cache rebuild e home HTTP 200. TLS 1.3 e certificado do host SMTP2GO verificados sem autenticação e sem envio.
+- **DEFERRED:** tentativa autenticada por SMTP e teste de falha com credenciais ausentes; não houve envio de mensagem. Hostinger não acessada, então a saída TCP 465 em produção precisa de homologação.
+- R3: commit `6b2d72f`.
+
+## 0.4.0-dev.25 — confirmação de e-mail resiliente — 2026-10-15
+
+Classificação: PATCH (confiabilidade do envio e proteção contra reenvio abusivo).
+
+- `EmailConfirmationRequester` agora persiste antes do envio, verifica o retorno do MailManager, mantém links anteriores utilizáveis em falhas e só cancela confirmações anteriores após aceitação do novo envio.
+- Reenvio serializado por Lock e limitado a uma solicitação por conta a cada 900 segundos via Flood; a rota passou a usar formulário POST com proteção CSRF nativa da Form API.
+- A resposta do cadastro permanece igual para endereços novos e existentes, sem afirmar entrega final. O resultado `ACCEPTED` significa aceitação pelo MailManager.
+- Testes unitários do requester: 7 testes, 104 assertions; testes unitários incluindo login: 13 testes, 122 assertions. Gate Drupal 11+: PASS (772 checks); cache rebuild no Runtime de testes; home HTTP 200 e rota de reenvio anônima HTTP 403.
+- Confirmação de uso único e geração do link de purpose ACCOUNT permanecem sem teste automatizado nesta fase; o caminho de URL existente foi inspecionado e mantém `DomainPurposeManager`. RUNTIME STATUS: ACTIVE no Runtime de testes; entrega final na caixa postal não comprovada.
+- Implementação: commit `0eac9ef`.
+
+## 0.4.0-dev.24 — formulários do Messenger fora do Turnstile — 2026-10-15
+
+Classificação: PATCH (exceções da política de CAPTCHA).
+
+- `Captcha\TurnstileToggle::EXCEPTION_FORM_IDS` passa a incluir `aculta_messenger_new_conversation` (compor a primeira mensagem na gaveta) e `private_message_add_form` (resposta nas conversas). O formulário de mensagens só é acessível a contas com e-mail confirmado; o desafio aparecia para contas sem a confirmação, e o widget não era montado no fragmento da gaveta, o que impedia o envio.
+- Pontos de CAPTCHA desativados em `config/sync`: `captcha.captcha_point.aculta_messenger_new_conversation.yml` e `captcha.captcha_point.private_message_add_form.yml`.
+- `docs/portal/TURNSTILE.md` documenta as duas exceções; `scripts/validate-turnstile-exceptions.php` passa (5 exceções).
+- Verificação: conta confirmada envia sem desafio no runtime de testes. O caso de conta sem confirmação não foi reproduzido, porque `EmailConfirmedRoleGuard` reaplica o papel `email_confirmed`.
+
+## 0.4.0-dev.23 — produção Hostinger LiteSpeed documentada — 2026-10-15
+
+Classificação: PATCH (correção da fonte de verdade operacional; sem mudança no runtime Drupal).
+
+- Corrige a arquitetura para Homelab Apache e produção Hostinger Cloud Startup/LiteSpeed, observada em cabeçalhos HTTP públicos.
+- O ADR-010 substitui o pressuposto de mesmo servidor; o runbook mantém `.htaccess` e separa validações por ambiente.
+- ACULTA Deployer 0.1.22 atualiza o registro de DEP-0003 e não presume diretivas Apache em produção.
+- `aculta.org` respondeu HTTP 200 com `platform: hostinger`, `x-turbo-charged-by: LiteSpeed` e `server: cloudflare` em consulta pública somente leitura. Nenhuma configuração do servidor foi alterada.
+- RUNTIME STATUS: DEFERRED — nenhuma validação no Homelab/Hostinger após alteração documental e do registro do deployer.
+
+## 0.4.0-dev.23 — sanfona da conta no celular: seções independentes e conteúdo no painel certo — 2026-10-15
+
+- Cada seção abre e fecha de forma independente; abrir uma não fecha as outras.
+- Só o corpo da seção entra no painel aberto no celular. Título e cabeçalho compartilhados ficam fora dos painéis, então a troca de seção não altera o título de outra sanfona.
+- RUNTIME STATUS: ACTIVE no runtime de testes (membro comum, 360 px).
+
 ## 0.4.0-dev.22 — central de avisos administrativa e gate de slugs por módulos habilitados — 2026-10-15
 
 - Porta ao `aculta_messenger` a central Avisos em `/painel-administrativo/avisos`, com abas temporários e persistentes; a listagem de persistentes passa IDs escalares às rotas de editar/excluir (corrige o TypeError do dev.21).
@@ -1658,3 +1954,47 @@ features executáveis preparadas sem Homelab permanecem draft até validação.
 - Caixa "Todos os nossos pagamentos são processados pelo Mercado Pago" em Meus pedidos (texto e link no módulo, config
   `aculta_portal.settings:mercado_pago_account_url`).
 - Gate: seções 12 (ícones Bootstrap Icons) e 13 (pagamentos) em `scripts/validate-module-theme-boundary.php`.
+## 0.4.0-dev.53 — F2: integração PDF.js global — 2026-10-16
+
+Classificação MINOR. Instala `drupal/pdf` 1.3.0 e PDF.js oficial 6.4.299 em distribuição local Composer, com hash fixo;
+adiciona builder reutilizável para Media document que exige access de Media, campo e File, MIME/extension PDF e scheme
+public local, acumula cacheability e oferece fallback abrir/baixar. Não integra PDFPreview nem ativa configuração de
+formatter/Media. Teste Unit de acesso negado PASS. Renderização pública no navegador e Runtime **DEFERRED**: o Drush
+local aponta `http://default`, não o URI canônico de teste.
+
+## 0.4.0-dev.54 — F2: adapter PDF.js no Portal — 2026-10-16
+
+Classificação MINOR. Completa o adapter global ESM no Portal sobre as dependências Composer 1.3.0/6.4.299 já
+registradas em 0.4.0-dev.53: builder de Media autorizado, cacheabilidade, fallback e renderer paginado. Unit 2/2 PASS;
+browser smoke isolado PASS (PDF.js, worker e PDF amostra 14 páginas). Integração Drupal Runtime **DEFERRED**. Nenhum
+display de Media foi alterado, etapa da F3.
+
+## 0.4.0-dev.55 — F3: formatter global para Media document — 2026-10-16
+
+Classificação MINOR. O display padrão de Media `document` usa o formatter do Portal: PDFs públicos
+autorizados são apresentados pelo PDF.js compartilhado; outros documentos conservam o link Core, e PDFs
+privados mantêm somente o fallback File protegido conforme o access atual. A integração com PDFPreview e
+miniaturas fica DEFERRED: o ambiente não tem ImageMagick executável e a combinação estável PDFPreview 1.2 /
+ImageMagick 5.x não é compatível. `RUNTIME STATUS: DEFERRED`; display não importado no Runtime.
+
+## 0.4.0-dev.56 — extração do visualizador PDF para submódulo — 2026-10-16
+
+Classificação MINOR. O serviço, interface, formatter, biblioteca JavaScript e testes do visualizador passam a
+pertencer a `aculta_pdf_viewer`, sem dependência funcional de `aculta_portal` ou `aculta_lms`. Config Sync
+habilita o submódulo e vincula o display Media `document` ao formatter. Documentação e contrato de hooks/classes
+ficam no README próprio do submódulo. Nenhuma configuração foi importada no Runtime.
+
+## 0.4.0-dev.60 — PV5: Group controla Media PDF de curso — 2026-10-16
+
+Classificação MINOR. Adiciona integração opcional `aculta_pdf_viewer_group`, relação de Media
+`document` com Group `lms_course` e permissão explícita para estudante e
+educador. O módulo base do PDF Viewer permanece independente de Group. O acesso
+por membership, revogação e entrega privada no Runtime segue DEFERRED; PDFs
+privados de turma ainda não estão homologados. RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.61 — formatos textuais próprios — 2026-10-16
+
+Decisão de acesso: o papel `email_confirmed` recebe `usuario_aculta`; `authenticated` deixa de receber permissões de edição de texto. O corpo dos tópicos do Fórum aceita somente `usuario_aculta`.
+
+A atualização `aculta_portal_update_11009` migra referências atuais e revisões de `basic_html` para `usuario_aculta` e de `full_html` para `revista_editorial`, preservando texto, revisões, autores e datas. Campos, views e Agreement foram alinhados. Os formatos e editores Core removidos deixam de ser exportados.
+

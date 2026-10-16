@@ -14,13 +14,16 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 
 - [architecture/overview.md](architecture/overview.md) — camadas Core → Portal → tema → Bootstrap.
 - [architecture/multidomain.md](architecture/multidomain.md) — purposes, hosts e cookie compartilhado.
-- [architecture/environments.md](architecture/environments.md) — Homelab e produção; Apache como baseline.
+- [architecture/environments.md](architecture/environments.md) — Homelab Apache e produção Hostinger LiteSpeed.
 - [architecture/data-ownership.md](architecture/data-ownership.md) — quem é dono de cada dado.
 - [decisions/](decisions/) — ADRs vigentes.
+- [ADR-010](decisions/ADR-010-hostinger-litespeed.md) — LiteSpeed na produção Hostinger Cloud Startup; Apache no Homelab.
 
 ## Módulos e integrações
 
 - [modules/README.md](modules/README.md) — referência canônica dos módulos e das regras anti-regressão.
+- [modules/LMS-GROUP.md](modules/LMS-GROUP.md) — ownership e inventário do Drupal LMS/Group.
+- [modules/ACULTA-LMS-ROADMAP.md](modules/ACULTA-LMS-ROADMAP.md) — fases futuras, critérios de aceite e rollback; F0 documental.
 - [ANTI-REGRESSION.md](ANTI-REGRESSION.md) — camadas de anti-regressão.
 - [integrations/README.md](integrations/README.md) — integrações externas: autenticação, CAPTCHA e Google.
 

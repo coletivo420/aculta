@@ -1,0 +1,4 @@
+administer aculta game:
+  title: 'Administrar ACULTA Game'
+  description: 'Criar e editar conquistas, configurar critérios, conceder/revogar manualmente e gerenciar missões.'
+  restrict access: true

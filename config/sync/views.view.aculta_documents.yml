@@ -82,7 +82,7 @@ display:
           empty: false
           content:
             value: '<h2>DOCUMENTOS</h2>'
-            format: full_html
+            format: revista_editorial
           tokenize: false
       display_extenders: {  }
     cache_metadata:

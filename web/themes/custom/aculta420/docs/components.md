@@ -253,3 +253,10 @@ Classes (documentadas aqui porque são de apresentação, não do módulo):
 
 Regras de apresentação que valem para todas as publicações (`css/components/revista-post.css`): não há ajuste por
 publicação; capa, resumo e corpo ficam na mesma coluna de leitura.
+
+## Contador de não lidos (`aculta-unread-count`)
+
+Classe única para todos os contadores (carrinho, avisos, mensagens, badge de conta e contadores de conteúdo, como o
+do fórum). Arquivo: `css/components/unread-count.css`. O módulo entrega o token `data-portal-ui` (ex.: `forum-topic-unread`),
+que `PortalUiHooks` traduz nessa classe. Zero não lidos oculta o contador. A posição fica no gatilho. Contrato completo
+em `docs/portal/CONTADORES.md` (raiz do repositório).

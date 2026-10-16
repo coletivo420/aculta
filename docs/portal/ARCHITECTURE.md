@@ -133,7 +133,7 @@ Purposes atuais:
 | WIKI | wiki420.aculta.org | wiki420.aculta.toca.net.br |
 | SHOP | loja.aculta.org | loja.aculta.toca.net.br |
 | COURSES | cursos.aculta.org | cursos.aculta.toca.net.br |
-| FORUM | forum.aculta.org | forum.aculta.toca.net.br |
+| FORUM | growroom420.aculta.org | growroom420.aculta.toca.net.br |
 
 FORUM é planejado e só passa a ser ativo quando a versão correspondente for
 implementada e validada.

@@ -98,7 +98,7 @@ Pendente: teste em navegador da abertura automática e do fechamento do popup; t
 | Primeiro comentário de quem não tem comentário publicado vai para a fila | Implementado (código; verificação em navegador pendente) | `ParticipationHooks::commentPresave` |
 | Criar tópico exige 10 comentários publicados | Implementado (limite configurável) | `ParticipationHooks::entityCreateAccess` |
 | Bloqueio de publicações enquanto o primeiro comentário aguarda | Implementado | `ParticipationRules` |
-| Painel `/admin/config/aculta/portal/participacao` | Implementado | `ParticipationSettingsForm` |
+| Painel `/painel-administrativo/configuracoes/aculta/portal/participacao` | Implementado | `ParticipationSettingsForm` |
 | Editor de conteúdo e administrador ficam isentos | Implementado | `papeis_isentos` |
 | Discussão vinculada: tópico de Fórum ligado a artigo, atividade, projeto, documento e verbete | Implementado (campo `field_discussao`) | `DiscussionHooks` |
 | Tipos com discussão vinculada (decisão 24) | Usado o padrão do plano; **confirmação pendente** | — |
@@ -149,6 +149,18 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 | O autor é `node.uid`; `field_editorial_author` não entra na caixa | Decidido; documentado |
 | Link para o perfil é construído no purpose `main` (perfil público só existe lá) | Decidido; documentado |
 
+### 1.10 Hierarquia de papéis (2026-10-17)
+| Decisão | Status | Onde está |
+| --- | --- | --- |
+| Hierarquia: authenticated < email_confirmed < estudante < associado < lms_teacher < gerente_loja < content_editor < administrator | Implementado (papéis e herança) | `docs/portal/PAPEIS-PARTICIPACAO.md` seção 1 |
+| Estudante: inscrito em algum curso, concedido na matrícula; só alunos (professor, criador e administração do LMS não concedem) | Implementado | `Hook\EnrollmentRoleHooks` |
+| Associado: atribuído manualmente pelo administrador; realm pelo papel | Implementado | `user.role.associado`, `RestrictedForumGrants` |
+| Gerente de Loja: produtos `produto_loja`, variações, atributos, categorias, pedidos (visualização) e relatório de vendas; financeiro só administrador | Implementado | `user.role.gerente_loja`, `SalesReportController` |
+| Herança unilateral por role_inheritance: estudante ← email_confirmed; associado ← estudante; lms_teacher ← associado. Exceções: content_editor ← email_confirmed; gerente_loja sem herança de lms_teacher | Implementado no Runtime e exportado | `config/sync/role_inheritance.settings.yml` |
+| role_hierarchy e role_inheritance habilitados, sem alterar acesso de não-administradores | Implementado | `core.extension` |
+| Gerente de Loja não herda de lms_teacher (exceção à cadeia unilateral) | Decidido (2026-10-17) e aplicado | `config/sync/role_inheritance.settings.yml` |
+| content_editor herda de email_confirmed (exceção: não herda da cadeia até gerente_loja) | Decidido (2026-10-17) e aplicado | `config/sync/role_inheritance.settings.yml` |
+
 ## 2. Pendências de decisão
 1. Estado da associação (ativa, inativa, suspensa) controlado pelo administrador, com mensagem verde/amarela/vermelha
    para a pessoa, e data de associação preenchida pelo administrador (pedido pelo responsável; não implementado).
@@ -158,7 +170,8 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 4. Tipo de publicação da Revista: a Revista publica hoje com o tipo `article` ("Notícia"). Falta decidir se a
    publicação será um tipo novo "blog" (configuração, sem módulo) ou se `article` continua. Afeta a caixa de autor, que
    só é programada no tipo que o responsável escolher.
-5. Mapeamento dos campos da publicação: "chamada" para `field_subtitle` e "resumo" para `field_summary` (ambos existem
+5. ~~Hierarquia de papéis~~: encerrado (2026-10-17). Cadeia unilateral; `gerente_loja` sem herança de `lms_teacher`; `content_editor` herda de `email_confirmed`.
+6. Mapeamento dos campos da publicação: "chamada" para `field_subtitle` e "resumo" para `field_summary` (ambos existem
    em `article`). Falta confirmar, porque o tipo "blog" pode ter campos próprios.
 
 ## 3. Verificações feitas
@@ -171,7 +184,7 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 | Gate de fundação do tema | `drush scr scripts/validate-aculta420-foundation.php` | **FAIL, anterior a esta série** (DT-T19: durações fora de `tokens.css`) |
 | Testes unitários do submódulo | `vendor/bin/phpunit ... aculta_user/tests/src/Unit` | 8 testes passam |
 | Testes unitários do Portal | `vendor/bin/phpunit ... aculta_portal/tests/src/Unit` | 68 testes passam |
-| Testes de Kernel de e-mail | `SIMPLETEST_DB` com SQLite isolado | 3 testes passam |
+| Testes de Kernel de e-mail | `SIMPLETEST_DB` com MariaDB de teste isolado | 3 testes passam |
 | Páginas do site (home, conta, `/u/`) | HTTP | 200 |
 | Painel com avatares, visualização e link de sortear | HTTP (HTML) | verificado |
 | Sorteio pela web | HTTP (requisição AJAX do link com token CSRF) | verificado: `replaceWith` sobre o avatar; foto troca no banco |

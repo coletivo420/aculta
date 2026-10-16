@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Presentation;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
@@ -61,6 +62,7 @@ final class DomainPresentationBuilder {
     private readonly DomainPurposeManager $domainPurpose,
     private readonly TranslationInterface $translation,
     private readonly WikiSearchFormBuilder $wikiSearchFormBuilder,
+    private readonly PathMatcherInterface $pathMatcher,
   ) {}
 
   /**
@@ -91,6 +93,7 @@ final class DomainPresentationBuilder {
 
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts([
+        'url.path.is_front',
         'domain',
         'languages:language_interface',
         'url.site',
@@ -116,6 +119,12 @@ final class DomainPresentationBuilder {
         'wiki_search' => $purpose === 'wiki' ? $this->wikiSearchFormBuilder->build() : NULL,
       ],
       $cacheability,
+      [
+        'institution_bar_account' => $purpose === 'account',
+        'show_utility_bar' => $purpose !== 'links',
+        'links_page' => $purpose === 'links',
+        'show_site_header' => $purpose === 'wiki' || ($purpose === 'main' && $this->pathMatcher->isFrontPage()),
+      ],
     );
   }
 

@@ -12,6 +12,7 @@ global:
       css/components/breadcrumb.css: {}
       css/components/content.css: {}
       css/components/buttons.css: {}
+      css/components/pdf-viewer.css: {}
       css/drupal-bootstrap.css: {}
       css/components/institutional.css: {}
       css/components/course-card.css: {}
@@ -25,16 +26,20 @@ global:
       css/components/public-profile.css: {}
       css/components/revista-post.css: {}
       css/components/discussion.css: {}
+      css/components/forum-index.css: {}
       css/components/portal-account-terms-modal.css: {}
       css/components/dialog.css: {}
       css/components/portal-address-number.css: {}
       css/components/portal-cart.css: {}
+      css/components/unread-count.css: {}
       css/components/portal-payment-notice.css: {}
       css/components/portal-requirements-report.css: {}
       css/components/portal-support.css: {}
       css/components/auth.css: {}
   js:
     js/navigation.js: {}
+    js/counters.js: {}
+    js/alerts-dismiss.js: {}
     js/address-layout.js: {}
   dependencies:
     - bootstrap5/global-styling
@@ -66,6 +71,7 @@ messenger-drawers:
   css:
     theme:
       components/content/messenger-item/messenger-item.css: {}
+      css/components/messenger-drawer.css: {}
   js:
     js/messenger-drawers.js: {}
   dependencies:

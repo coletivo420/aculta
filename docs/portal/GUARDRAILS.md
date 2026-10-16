@@ -199,6 +199,7 @@ apenas as contas reais e as de teste permanentes.
 Decisão do responsável (2026-10-14). Vale para toda criação e moderação de conteúdo.
 
 - **Uma só função editorial:** `content_editor` (Editor de conteúdo). Autor, editor e revisor da Wiki, e editor, autor e moderador do Fórum, são a mesma função. Não criar papéis novos para isso.
+- O papel `content_editor` pode criar Media do tipo `document` para inserir PDFs editoriais pela biblioteca do CKEditor 5. Esse bundle usa `public://`: somente arquivos destinados à publicação podem ser enviados nele; documentos confidenciais exigem outro fluxo protegido.
 - **Única exceção:** `wiki_contributor` (Colaborador da Wiki420). Continua sendo concedido automaticamente a toda conta com e-mail confirmado (`email_confirmed`).
 - `wiki_editor` foi removido: suas permissões estão em `content_editor`.
 - Perfil público obrigatório para quem edita: somente `content_editor` (`PublicProfilePolicy`).

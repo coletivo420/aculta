@@ -1,10 +1,11 @@
 name: Portal ACULTA
 type: module
-description: 'Integra módulos de conta e conteúdo Drupal, oferece contratos de propósito, slugs públicos canônicos e sanitização nativa de nomes de upload.'
+description: 'Integra módulos de conta, conteúdo, aprendizagem e leitura compartilhada de PDF Drupal, oferece contratos de propósito, slugs públicos canônicos e sanitização nativa de nomes de upload.'
 package: Associação Cultural Antiproibicionista
-version: '0.4.0-dev.22'
+version: '0.4.0-dev.63'
 core_version_requirement: ^11.3
 dependencies:
+  - aculta_portal:aculta_image
   - profile:profile
   - drupal:views
   - domain:domain

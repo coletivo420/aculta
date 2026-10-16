@@ -1,0 +1,136 @@
+/* Theme presentation for the neutral Media/PDF.js contract from aculta_pdf_viewer. */
+[data-aculta-pdf-viewer="true"] {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+[data-aculta-pdf-viewer="true"] [data-aculta-pdf-control="toolbar"],
+[data-aculta-pdf-viewer="true"] [data-aculta-pdf-control="reader-controls"],
+[data-aculta-pdf-viewer="true"] [data-aculta-pdf-control="search-controls"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+[data-aculta-pdf-viewer="true"] button[data-aculta-pdf-control],
+[data-aculta-pdf-viewer="true"] a[data-aculta-pdf-control="download"] {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--aculta-interactive-border);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-interactive-bg);
+  color: var(--aculta-interactive-text);
+  font-family: var(--aculta-font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+[data-aculta-pdf-viewer="true"] button[data-aculta-pdf-control]:is(:hover, :active),
+[data-aculta-pdf-viewer="true"] a[data-aculta-pdf-control="download"]:hover {
+  border-color: var(--aculta-interactive-hover-bg);
+  background-color: var(--aculta-interactive-hover-bg);
+  color: var(--aculta-interactive-hover-text);
+}
+
+[data-aculta-pdf-viewer="true"] button[data-aculta-pdf-control]:focus-visible,
+[data-aculta-pdf-viewer="true"] a[data-aculta-pdf-control="download"]:focus-visible,
+[data-aculta-pdf-viewer="true"] input[data-aculta-pdf-control="search-input"]:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
+[data-aculta-pdf-viewer="true"] button[data-aculta-pdf-control]:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+[data-aculta-pdf-viewer="true"] [data-aculta-pdf-control="status"],
+[data-aculta-pdf-viewer="true"] [data-aculta-pdf-control="zoom-status"],
+[data-aculta-pdf-viewer="true"] [data-aculta-pdf-control="search-status"] {
+  color: var(--aculta-text-secondary);
+  font-family: var(--aculta-font-body);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+[data-aculta-pdf-viewer="true"] [data-aculta-pdf-control="status"] {
+  font-weight: 600;
+}
+
+[data-aculta-pdf-viewer="true"] input[data-aculta-pdf-control="search-input"] {
+  flex: 1 1 14rem;
+  min-width: min(100%, 12rem);
+  min-height: 2.75rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--aculta-control-border);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-interactive);
+  color: var(--aculta-text-primary);
+  font: inherit;
+}
+
+[data-aculta-pdf-viewer="true"] [data-aculta-pdf-control="search-status"] {
+  flex-basis: 100%;
+}
+
+[data-aculta-pdf-viewer="true"] canvas[data-aculta-pdf-control="page"] {
+  display: block;
+  width: 100%;
+  max-width: 72rem;
+  height: auto;
+  margin-inline: auto;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-media-stage-bg);
+}
+
+[data-aculta-pdf-viewer="true"]:fullscreen {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
+  align-content: start;
+  padding: 1rem;
+  border: 0;
+  border-radius: 0;
+  background-color: var(--aculta-surface-page);
+}
+
+[data-aculta-pdf-viewer="true"]:fullscreen canvas[data-aculta-pdf-control="page"] {
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (max-width: 40rem) {
+  [data-aculta-pdf-viewer="true"] {
+    gap: 0.625rem;
+    padding: 0.75rem;
+  }
+
+  [data-aculta-pdf-viewer="true"] button[data-aculta-pdf-control],
+  [data-aculta-pdf-viewer="true"] a[data-aculta-pdf-control="download"] {
+    flex: 1 1 auto;
+  }
+
+  [data-aculta-pdf-viewer="true"] input[data-aculta-pdf-control="search-input"] {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+}

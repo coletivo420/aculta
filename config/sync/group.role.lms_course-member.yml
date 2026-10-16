@@ -2,6 +2,8 @@ uuid: 7574d725-31a1-445b-94fd-9c37faa91f73
 langcode: pt-br
 status: true
 dependencies:
+  module:
+    - aculta_pdf_viewer_group
   config:
     - group.type.lms_course
     - user.role.authenticated
@@ -16,5 +18,8 @@ permissions:
   - 'leave group'
   - 'take course'
   - 'update own group_membership relationship'
+  - 'view aculta_pdf_viewer_group:course_document entity'
+  - 'view any unpublished aculta_pdf_viewer_group:course_document entity'
+  - 'view aculta_pdf_viewer_group:course_document relationship'
   - 'view group'
   - 'view group_membership relationship'

@@ -1,6 +1,6 @@
 # Política de confirmação de e-mail
 
-Status: **proposta registrada; implementação pendente de decisões do responsável** (ver seção 6).
+Status: **parcialmente implementada** (ver seções 9 e 10). As decisões pendentes da seção 6 continuam abertas.
 
 ## 1. Regra
 
@@ -53,8 +53,13 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 ## 6.1 Validade do link (decisão do responsável)
 
 - O link de confirmação **não expira** (`EmailConfirmationEntity::isExpired()` devolve falso; classe trocada no Portal).
-- A segurança depende do hash de 43 caracteres de uso único, do cancelamento dos pedidos anteriores e do reenvio
-  (`aculta_portal.email_resend`, protegido por login e token CSRF). A configuração `hash_expiration` deixa de valer.
+- A segurança depende do hash de 43 caracteres de uso único, do cancelamento dos pedidos anteriores depois que um
+  novo envio é aceito e do reenvio por formulário POST com proteção CSRF (`aculta_portal.email_resend`). A configuração
+  `hash_expiration` deixa de valer.
+- A implementação de `isExpired()` é global: também afeta o realm `email_confirmer_user`, usado na troca de endereço.
+  Portanto, links de troca de e-mail também não expiram; se um link ou a caixa postal for comprometido, ele poderá
+  confirmar o novo endereço enquanto o token permanecer ativo. Esta fase preserva a política existente e não altera
+  sua validade.
 - Antes desta decisão, a premissa era de 24 horas (ver CHANGELOG do Portal 0.2.0-dev.16).
 
 ## 6.2 Decisões já tomadas
@@ -68,14 +73,14 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 
 - Nenhum endereço de e-mail nem valor de link é gravado em log além do necessário para diagnóstico (nome e usuário).
 - O reenvio é limitado pelo intervalo de `resendrequest_delay`.
-- A confirmação segue o hash de 43 caracteres de uso único e com validade; o login automático na confirmação está
+- A confirmação segue o hash de 43 caracteres de uso único e sem expiração; o login automático na confirmação está
   registrado em `docs/portal/` como risco aceito (ver CHANGELOG do Portal 0.2.0-dev.14).
 
 ## 8. Cadastro com e-mail já cadastrado (0.2.0-dev.22, DT-P06)
 
 Decisão do responsável (2026-10-09): a resposta do cadastro não revela se o e-mail já tem conta.
 
-- **Mensagem única** para e-mail novo e já cadastrado: "Se este e-mail ainda não estiver cadastrado, enviaremos um link para confirmar o seu cadastro. Se ele já estiver cadastrado, enviaremos um aviso com as opções para acessar a sua conta. Verifique a caixa de entrada e a pasta de spam." Mesmo destino (página inicial).
+- **Mensagem única** para e-mail novo e já cadastrado: "Sua solicitação foi recebida. Se este endereço tiver uma confirmação ou aviso disponível, verifique a caixa de entrada e a pasta de spam. Se nenhuma mensagem chegar, tente novamente mais tarde." Mesmo destino (página inicial).
 - **Com e-mail já cadastrado:** nenhuma conta é criada, ninguém é logado, e o dono da conta recebe um e-mail (`registration_existing_mail`) com o link para entrar, o link para recuperar a senha e a orientação de que não é preciso fazer nada se não foi ele.
 - **Com e-mail novo:** o cadastro segue como antes (conta bloqueada até a confirmação), só com a mensagem única.
 - **Implementação:** o erro "already taken" do Core sai do formulário (`validateRegistrationMail`); o botão usa `saveRegistration` no lugar de `::save`; a busca e o aviso ficam em `RegistrationMailPolicy`; o texto do aviso está no hook `mail` do módulo. Callbacks que gravam dados ignoram o caso de e-mail existente.
@@ -106,3 +111,52 @@ de conta do Core não oferece o campo de e-mail (`EmailChangeHooks`).
    sem confirmação. Essa lacuna só alcança trocas feitas por código, porque o formulário de administração não tem mais
    o campo de e-mail.
 
+## 9. Aplicação atual no site (2026-10-16)
+
+Verificada no código e na configuração do Runtime de teste. Itens marcados como "a confirmar" não têm verificação
+própria e não devem ser tratados como garantia.
+
+| Área | Regra | Situação | Onde |
+|---|---|---|---|
+| Cursos (matrícula e aulas) | Exige e-mail confirmado | Aplicado | `EmailConfirmedAccessCheck`, via `ProtectedRouteAccessCheck` |
+| Checkout (loja) | Exige e-mail confirmado | Aplicado | `ProtectedRouteAccessCheck` (rota `/checkout`) |
+| Apoio (contribuições) | Exige e-mail confirmado | A confirmar | Sem verificação própria nesta revisão |
+| Wiki: editar e excluir verbete | Exige e-mail confirmado | Aplicado | `EntityHooks::entityAccess`, `update` e `delete` |
+| Wiki: criar verbete | Exige e-mail confirmado | Aplicado pelo papel | Só `email_confirmed` recebe `wiki_contributor`, por `RoleSyncHooks` |
+| Comentários: criar | Exige e-mail confirmado | Aplicado pelo papel | `post comments` só em `email_confirmed` (ver seção 10) |
+| Comentários: editar e excluir | Exige e-mail confirmado | Aplicado | `EntityHooks::entityAccess`, `update` e `delete` |
+| Leitura pública (wiki e páginas institucionais) | Livre | Aplicado | Não restringido |
+| Login, navegação e "Minha conta" | Livre | Aplicado | Aviso de confirmação na conta |
+| Troca de e-mail | Livre | Aplicado | Não é bloqueio (seção 5) |
+
+Notas:
+
+- O papel `email_confirmed` é irreversível pela administração (`EmailConfirmedRoleGuard`). A marca de confirmação
+  fica em `user.data` do módulo `aculta_portal`.
+- O papel `email_confirmed` também pula o CAPTCHA. Isso é independente do bloqueio de escrita.
+- Contas existentes sem confirmação (decisão 6.2) não podem comentar nem participar do fórum até confirmar.
+  No teste, a conta de editor `coletivo420` está nesse caso.
+
+## 10. Aplicação no Fórum (2026-10-16)
+
+Decisão registrada como F-D13 em `web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md`.
+
+| Ação no Fórum | Papel mínimo | Situação |
+|---|---|---|
+| Ler tópicos e comentários | Público (anônimo) | Aplicado |
+| Seguir e salvar tópico | Conta cadastrada (`authenticated`) | Aplicado |
+| Criar tópico | `email_confirmed` | Aplicado (`create forum content`) |
+| Editar e excluir o próprio tópico | `email_confirmed` | Aplicado (permissões do papel) |
+| Comentar | `email_confirmed` | Aplicado (`post comments`) |
+| Editar e excluir o próprio comentário | `email_confirmed` | Aplicado (hook de wiki e comentários, seção 9) |
+| Denunciar tópico e comentário | `email_confirmed` | Aplicado (`flag sinalizar_*`) |
+| Moderar denúncias | `content_editor` e administrador | Aplicado (`moderar denuncias do forum`) |
+
+Motivo: o texto de decisão do responsável é "participação no fórum exige e-mail confirmado". Seguir e salvar ficam
+com `authenticated` por serem leitura, sem conteúdo gravado de outra pessoa.
+
+Lacunas conhecidas:
+
+- O papel `authenticated` ainda concede a permissão `view commerce_shipping_method`, que não está no arquivo do
+  repositório (divergência de configuração anterior à F5.1, não tratada aqui).
+- Conteúdo histórico importado não passa pela confirmação. As autorias legadas não são contas que participam.

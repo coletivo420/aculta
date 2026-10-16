@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Avatar;
 
+use Drupal\aculta_image\FileRemover;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -29,6 +30,7 @@ final class AvatarAssetCleanup {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TimeInterface $time,
     private readonly FileUsageInterface $fileUsage,
+    private readonly FileRemover $fileRemover,
   ) {}
 
   /** Executa a limpeza. Retorna a quantidade de arquivos removidos por tipo. */
@@ -43,7 +45,7 @@ final class AvatarAssetCleanup {
       ->execute();
     foreach ($fileStorage->loadMultiple($temp) as $file) {
       if ($this->isPictureUri($file->getFileUri())) {
-        $file->delete();
+        $this->fileRemover->delete($file, 'upload temporário de avatar não salvo');
         $removed['temporarios']++;
       }
     }
@@ -53,7 +55,7 @@ final class AvatarAssetCleanup {
       ->execute();
     foreach ($fileStorage->loadMultiple($acervo) as $file) {
       if (!$this->isInUse((int) $file->id())) {
-        $file->delete();
+        $this->fileRemover->delete($file, 'cópia do acervo sem conta que a use');
         $removed['acervo_orfao']++;
       }
     }
@@ -66,7 +68,7 @@ final class AvatarAssetCleanup {
       ->execute();
     foreach ($fileStorage->loadMultiple($personal) as $file) {
       if (!$this->isInUse((int) $file->id()) && $this->fileUsage->listUsage($file) === []) {
-        $file->delete();
+        $this->fileRemover->delete($file, 'foto pessoal sem uso');
         $removed['pessoais_orfas']++;
       }
     }

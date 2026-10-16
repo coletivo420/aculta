@@ -249,7 +249,7 @@ tema ou hardcoding caminho Homelab/Hostinger no Portal.
 
 ## Credenciais do ambiente (painel, aculta_portal 0.2.0-dev.11)
 
-Página `/admin/config/aculta/segredos` (permissão `administer aculta secrets`, restrita):
+Página `/painel-administrativo/configuracoes/aculta/segredos` (permissão `administer aculta secrets`, restrita):
 
 1. Mostra duas seções fixas: **Ambiente de Produção** e **Ambiente de Testes**. Cada uma lista as variáveis do
    contrato daquele ambiente (variáveis compartilhadas aparecem nas duas), a Key, se é obrigatória naquele ambiente

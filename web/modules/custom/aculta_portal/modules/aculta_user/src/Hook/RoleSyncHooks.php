@@ -27,18 +27,13 @@ final class RoleSyncHooks {
   private const TARGET_ROLE = 'wiki_contributor';
 
   /**
-   * Implements hook_user_insert().
+   * Implements hook_user_presave().
+   *
+   * Antes do save, e não depois: salvar a conta dentro de hook_user_insert/update zera o original usado pelo módulo
+   * group (hook_user_update) e quebra a gravação.
    */
-  #[Hook('user_insert')]
-  public function userInsert(UserInterface $account): void {
-    $this->grantWikiContributor($account);
-  }
-
-  /**
-   * Implements hook_user_update().
-   */
-  #[Hook('user_update')]
-  public function userUpdate(UserInterface $account): void {
+  #[Hook('user_presave')]
+  public function userPresave(UserInterface $account): void {
     $this->grantWikiContributor($account);
   }
 
@@ -49,9 +44,7 @@ final class RoleSyncHooks {
     if (!$account->hasRole(self::SOURCE_ROLE) || $account->hasRole(self::TARGET_ROLE)) {
       return;
     }
-    // O segundo save cai no ramo de retorno: a conta já tem o papel.
     $account->addRole(self::TARGET_ROLE);
-    $account->save();
   }
 
 }

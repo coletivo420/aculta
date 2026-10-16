@@ -2,6 +2,8 @@ uuid: 0ec68fa3-2c6f-4208-8630-61711376f66e
 langcode: pt-br
 status: true
 dependencies:
+  config:
+    - filter.format.usuario_aculta
   module:
     - captcha
 id: email_confirmed
@@ -9,4 +11,14 @@ label: 'E-mail confirmado'
 weight: 9
 is_admin: false
 permissions:
+  - 'use text format usuario_aculta'
   - 'skip CAPTCHA'
+  - 'create forum content'
+  - 'edit own forum content'
+  - 'delete own forum content'
+  - 'post comments'
+  - 'flag sinalizar_topico'
+  - 'flag sinalizar_comentario'
+  - 'unflag sinalizar_topico'
+  - 'unflag sinalizar_comentario'
+  - 'view aculta restricted forum email confirmed'

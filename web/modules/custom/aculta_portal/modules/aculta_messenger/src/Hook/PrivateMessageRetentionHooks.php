@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
+use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -14,9 +15,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 /** Applies the six-month inactivity retention policy to private conversations. */
 final class PrivateMessageRetentionHooks {
 
-  private const RETENTION_MONTHS = 6;
 
-  private const MAX_THREADS_PER_CRON = 20;
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
@@ -25,6 +24,8 @@ final class PrivateMessageRetentionHooks {
     private readonly TimeInterface $time,
     #[Autowire(service: 'logger.factory')]
     private readonly LoggerChannelFactoryInterface $loggerFactory,
+    #[Autowire(service: 'aculta_messenger.conversation_policy')]
+    private readonly ConversationPolicy $policy,
   ) {}
 
   /** Deletes dormant threads through Private Message's entity lifecycle. */
@@ -35,14 +36,14 @@ final class PrivateMessageRetentionHooks {
     }
 
     $cutoff = (new \DateTimeImmutable('@' . $this->time->getRequestTime()))
-      ->modify('-' . self::RETENTION_MONTHS . ' months')
+      ->modify('-' . $this->policy->retentionMonths() . ' months')
       ->getTimestamp();
     $storage = $this->entityTypeManager->getStorage('private_message_thread');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('updated', $cutoff, '<=')
       ->sort('updated', 'ASC')
-      ->range(0, self::MAX_THREADS_PER_CRON)
+      ->range(0, $this->policy->cleanupBatch())
       ->execute();
     if ($ids === []) {
       return;
@@ -53,7 +54,14 @@ final class PrivateMessageRetentionHooks {
       if (!$thread instanceof PrivateMessageThreadInterface || (int) $thread->getUpdatedTime() > $cutoff) {
         continue;
       }
+      // A kind without retention (the LMS course chat) is never removed by inactivity.
+      if ($this->policy->retentionMonths($this->policy->kindOf($thread)) === NULL) {
+        continue;
+      }
       try {
+        // Notification records point at the private messages that the thread's lifecycle deletes.
+        // Remove them in the same pass so no member still sees a notice for a conversation that is gone.
+        $this->deleteNotificationsFor($thread);
         // The contrib entity's preDelete lifecycle deletes its referenced
         // private messages and participant history using its supported API.
         $thread->delete();
@@ -68,6 +76,26 @@ final class PrivateMessageRetentionHooks {
 
     if ($deleted > 0) {
       $this->loggerFactory->get('aculta_messenger')->notice('Removed @count private conversations after six months without activity.', ['@count' => $deleted]);
+    }
+  }
+
+  /** Deletes the Messenger notification records that reference this thread's private messages. */
+  private function deleteNotificationsFor(PrivateMessageThreadInterface $thread): void {
+    $messageIds = array_values(array_map(
+      static fn($message) => $message->id(),
+      $thread->getMessages(TRUE),
+    ));
+    if ($messageIds === []) {
+      return;
+    }
+    $storage = $this->entityTypeManager->getStorage('message');
+    $notificationIds = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('template', 'aculta_msg_private_notification')
+      ->condition('field_aculta_messenger_source_pm', $messageIds, 'IN')
+      ->execute();
+    if ($notificationIds !== []) {
+      $storage->delete($storage->loadMultiple($notificationIds));
     }
   }
 

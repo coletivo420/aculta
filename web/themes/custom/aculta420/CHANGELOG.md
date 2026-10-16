@@ -1,3 +1,224 @@
+## 0.6.0-dev.66 — barra e cabeçalho por flags do Portal (shell-contract PASS) — 2026-10-16
+
+Classificação: PATCH (troca de decisão; o HTML e a aparência continuam os mesmos por purpose).
+
+- `templates/page.html.twig` deixa de comparar `identity.purpose`. Usa as flags `domain_presentation.layout`: `institution_bar_account` (variante de conta da barra), `show_utility_bar` (busca, carrinho, Messenger, avisos e Minha conta), `links_page` (shell de LINKS) e `show_site_header` (cabeçalho de domínio). As flags vêm do Portal (`aculta_portal` 0.4.0-dev.63).
+- A barra institucional mantém o marcador literal `<div class="aculta-institution-bar">` no ramo padrão, porque o gate `validate-aculta420-shell-contract.php` confere esse texto. A variante de conta usa um ramo próprio com a classe `aculta-institution-bar--account`.
+- Gate de fundação: versão 0.6.0-dev.66.
+- Verificação: `validate-aculta420-shell-contract` PASS (11 checks, antes FAIL pré-existente); `validate-aculta420-foundation` PASS (345); `validate-aculta420-design-foundations` PASS; `validate-aculta420-sdc-schemas` PASS (24 componentes).
+- Visual (Firefox headless, Runtime de teste): `main` com barra e cabeçalho; `wiki` com barra e cabeçalho da Wiki; `cursos` e `apoio` com barra e sem cabeçalho; `conta` com a variante de conta. A página inicial do `main` mostra o cabeçalho, e as demais páginas do `main` não. As capturas foram feitas com sessão de administrador ativa no navegador de teste.
+- Não verificado: `links`, cuja raiz responde 404 no servidor de testes.
+- RUNTIME STATUS: cache rebuild no Runtime de teste com a URI de teste.
+
+## 0.6.0-dev.65 — correspondências do tema com módulos e tokens faltantes — 2026-10-16
+
+Classificação: PATCH (tokens e CSS de apresentação; gate de fundação atualizado).
+
+- `PortalUiHooks::TOKENS` recebe três tokens que o módulo já emitia e o tema não mapeava: `public-profile-avatar-image` (`portal-profile__avatar-image`), `achievement-notices` (`aculta-achievement-notices`) e `aculta-image-audit` (`aculta-image-audit`).
+- `css/components/messenger-drawer.css`: `.aculta-achievement-notices` com espaçamento vertical; a cor vem dos tokens de texto.
+- `css/components/portal-requirements-report.css`: `.aculta-image-audit > * + *` separa as seções do relatório de imagens.
+- Gate de fundação: versão 0.6.0-dev.65 e allowlist de templates com o fórum (`forum-list`, `comment--comment-forum`, `node--forum--full`, dev.62 e dev.63).
+- Mapa de correspondências: `docs/portal/MAPA-MODULO-TEMA.md` (Portal `docs/portal/`).
+- Verificação: `validate-aculta420-foundation` PASS (345 checks, via Drush no Runtime de teste); `validate-aculta420-design-foundations` PASS; `validate-aculta420-sdc-schemas` PASS (24 componentes); `validate-portal-ui-docs` PASS (237 tokens, 82 atributos).
+- Pendente (não corrigido): `validate-aculta420-shell-contract` FAIL, pré-existente. `templates/page.html.twig` decide por `identity.purpose` em cinco pontos (barra institucional, barra de busca, cabeçalho e layout de LINKS). Corrigir exige flags de layout no presenter do Portal e mudança do contrato `domain_presentation`, com verificação visual nos quatro purposes.
+- RUNTIME STATUS: cache rebuild no Runtime de teste (`--uri=https://aculta.toca.net.br`, banco `aculta_runtime`). Validação visual não executada nesta rodada.
+
+## 0.6.0-dev.58 — conversas na conta proporcionais à tela — 2026-10-16
+
+Classificação: PATCH (ajuste de apresentação em um contexto; gaveta da barra inalterada).
+
+- Aba Mensagens de Minha conta: caixa de conversa com largura máxima de 42 rem, linha mais compacta e raio padrão.
+  Regras só dentro de `[data-portal-ui="account-messenger-drawer"]` (messenger-drawer.css).
+- Verificado no Firefox headless, perfil dedicado, conta de teste.
+
+## 0.6.0-dev.57 — foco e alvo de toque padronizados; raio padrão das caixas — 2026-10-16
+
+Classificação: MINOR (novo utilitário e novo padrão de raio).
+
+- `css/base.css`: foco visível único para elementos interativos (`:where`, especificidade zero).
+- `css/base.css`: utilitário `.aculta-touch-target` (alvo de toque de 2,75 rem) para componentes novos.
+- Raio padrão das caixas de superfície: `var(--bs-border-radius)` (0,1875 rem), definido por captura comparativa.
+  Aplicado em 4 regras do messenger e 5 do painel da conta.
+- Documentação: `docs/portal/COMPONENTES-AGRUPAMENTO.md`, seção 6.
+
+## 0.6.0-dev.56 — agrupamento de gatilhos da barra e escaneamento de componentes — 2026-10-16
+
+Classificação: PATCH (sem mudança de marcação nem de aparência).
+
+- Os gatilhos de avisos e de mensagens deixaram de repetir a base do gatilho (`aculta-utility-trigger`); cada um mantém
+  só a posição do contador.
+- Escaneamento de estilos repetidos documentado em `docs/portal/COMPONENTES-AGRUPAMENTO.md` (foco visível em 23 arquivos,
+  pílulas em 4, próximas etapas listadas).
+
+## 0.6.0-dev.55 — contador de não lidos padronizado (token único) — 2026-10-16
+
+Classificação: MINOR (novo contrato de apresentação: `aculta-unread-count`).
+
+- `css/components/unread-count.css` é a fonte da aparência: a mesma do contador da barra multidomínio.
+- Carrinho, avisos, mensagens, badge de conta e contadores de conteúdo (fórum) usam a mesma classe.
+- `PortalUiHooks.php`: token `forum-topic-unread` mapeado para `aculta-unread-count`.
+- Removidas as regras antigas de contador de `portal-cart.css` e do componente `unread-badge.css`; posição do
+  gatilho de avisos e de mensagens mantida, agora sobre a classe única.
+- Documentação: `docs/portal/CONTADORES.md` e `docs/components.md`.
+- Pendente: teste visual no navegador; contador do LMS (sem dado ainda).
+
+## 0.6.0-dev.54 — cartões de conquistas no perfil público — 2026-10-15
+
+Classificação: MINOR (novo contrato de apresentação no tema).
+
+- `PortalUiHooks.php` traduz tokens neutros do Game em classes do perfil ACULTA420.
+- `public-profile.css` apresenta cartões responsivos, imagens, descrições e destaque, em light/dark via tokens semânticos.
+- Firefox no Runtime: 19/19 verificações da integração, incluindo perfil responsivo; Foundation (342) e fronteira módulo/tema aprovados.
+- RUNTIME STATUS: ACTIVE (Homelab).
+
+## 0.6.0-dev.53 — tokens do Messenger, CSS e JS separados, janelas e acordeão — 2026-10-15
+
+Classificação: PATCH (apresentação do Messenger; sem mudança de comportamento para o membro).
+
+- `PortalUiHooks`: tokens do Messenger (mesmas classes de antes) e `preprocessDetails` (ordem última) para a caixa "Opções". Removidos dois tokens sem emissor.
+- `ThemeHooks`: removido o mapeamento da página nativa do Private Message (redireciona).
+- CSS: `css/components/messenger-drawer.css` (gaveta, lista, menu, avisos, janela); `messenger-item.css` fica só com a bolha. Seletores do formulário de resposta e do menu por atributo (`data-aculta-reply-form`, `data-aculta-drawer-action`).
+- JS: `js/alerts-dismiss.js` (dispensar aviso, biblioteca global), fora de `messenger-drawers.js`.
+- `portal-cart.css`: o "×" do aviso é selecionado por `data-aculta-alert-dismiss`.
+- RUNTIME STATUS: ACTIVE no teste (suíte de navegador 70 de 70).
+- `messenger-drawer.css`: menu "Opções" da lista só com o ícone (sem rótulo nem seta de acordeão); painel sobre a linha, alinhado à direita.
+- `messenger-drawer.css`: cartão do aviso persistente em cor de aviso (`aculta-notice-summary--persistent`), diferente dos dispensáveis.
+- `messenger-drawer.css` e `PortalUiHooks.php`: resumo de aviso em caixa de botão (tokens `notice-summary*` e `notice-detail`).
+- `messenger-drawers.js`: o menu "Opções" de cada linha da lista é carregado na primeira abertura.
+- Revisão de código: `PortalUiHooks` com os hooks de `preprocess()` restaurados e `preprocessDetails` separado; mapeamento de classe de link de menu aceita classe em string.
+
+## 0.6.0-dev.52 — confirmação para bloquear e botões da nova conversa — 2026-10-15
+
+Classificação: PATCH (apresentação da confirmação de bloqueio e dos botões de nova conversa).
+
+- `messenger-drawers.js`: "Bloquear" e "Desfazer amizade" abrem a janela de confirmação (dialog, identificada por `data-aculta-dialog`) e "Cancelar" a fecha; o clique não envia o formulário.
+- `messenger-item.css`: aparência da janela de confirmação (botões "Sim" e "Cancelar"), para bloquear e desfazer amizade.
+- `PortalUiHooks.php`: token `new-conversation-cancel` (botão "Cancelar" da nova conversa, outline secundário); "Voltar para o início" segue outline primário.
+- RUNTIME STATUS: ACTIVE no teste (abrir/cancelar na gaveta; bloquear pelo "Sim" no perfil; desbloqueio restaurado).
+
+## 0.6.0-dev.51 — menu "Opções" nas conversas e no perfil; largura e fonte — 2026-10-15
+
+Classificação: PATCH (apresentação do menu "Opções").
+
+- `messenger-item.css`: o painel "Opções" de cada linha abre por cima da lista, alinhado à direita da linha, sem alargar a gaveta.
+- `messenger-item.css`: os botões do menu de relação usam a mesma aparência e fonte dos itens "Opções" (antes saíam com a fonte de títulos).
+- `messenger-drawers.js`: "Iniciar conversa" do perfil abre a gaveta já na etapa de nova conversa (`drawer.acultaNavigate`).
+- RUNTIME STATUS: ACTIVE no teste (capturas de tela); a suíte de 52 verificações não foi reexecutada.
+
+## 0.6.0-dev.50 — envio de resposta na gaveta sem navegação — 2026-10-15
+
+Classificação: PATCH (comportamento do envio de resposta na gaveta).
+
+- `messenger-drawers.js`: o formulário de resposta é enviado por `fetch` (sem os campos de formulário do Drupal, que disparariam o processamento nativo); o token vai em `reply_token`.
+- RUNTIME STATUS: ACTIVE no teste (52 verificações de navegador).
+
+## 0.6.0-dev.49 — aviso de conversa restrita e aviso de bloqueio no lugar da caixa de resposta — 2026-10-15
+
+Classificação: PATCH (apresentação do aviso).
+
+- Token `conversation-notice-action` mapeia o botão do aviso para `aculta-messenger-notice__action` (link discreto dentro do texto).
+- Estilo `aculta-messenger-notice`: caixa de aviso com o texto e a ação na mesma linha, quando couber.
+- RUNTIME STATUS: ACTIVE no teste.
+
+## 0.6.0-dev.48 — "Opções" em menu sanfona na mesma linha da barra — 2026-10-15
+
+Classificação: MINOR (novo menu de ações na conversa).
+
+- A barra da conversa é um grid de duas colunas numa linha: "← Todas as conversas" à esquerda e "Opções" à direita. A regra genérica dos filhos da conversa não sobrescreve mais a barra.
+- O painel de Opções é um menu compacto, com uma ação por linha e separador, alinhado à direita. No celular, só o hambúrguer.
+- Token `conversation-action` passa a usar a classe do menu (`aculta-messenger-options__action`), no lugar dos botões.
+- `messenger-drawers.js` envia também o formulário de Opções por fetch (`form[data-aculta-drawer-action]`).
+- Medido no Firefox headless: link e Opções no mesmo topo (y=72) em 1280 e 390 px.
+- RUNTIME STATUS: ACTIVE no teste.
+
+## 0.6.0-dev.47 — gaveta de mensagens com rolagem; link de volta no topo — 2026-10-15
+
+Classificação: PATCH (apresentação da gaveta de mensagens).
+
+- O corpo da gaveta de mensagens rola quando o conteúdo é maior que a janela, no desktop e no celular. A conversa mantém a altura natural, e a caixa de resposta fica no fim da rolagem.
+- "← Todas as conversas" fica no topo, à direita, abaixo do X, em todas as etapas (conversa, Nova conversa, compor e envio).
+- `messenger-drawers.js`: o envio do formulário de nova conversa usa fetch e troca o conteúdo da gaveta pela resposta; o botão "Iniciar nova conversa" também abre a etapa.
+- Medido no Firefox headless: conversa com 1264 px contra 658 px visíveis rola até o fim (1264 e 658 em desktop, 1214 e 702 em 390 px).
+- RUNTIME STATUS: ACTIVE no teste.
+
+## 0.6.0-dev.46 — respiro superior compacto sem cabeçalho de domínio — 2026-10-15
+
+Classificação: PATCH (ajuste responsivo de espaçamento do shell existente).
+
+- Quando o cabeçalho de domínio não é exibido, o conteúdo começa mais perto da barra multidomínio: 0.5rem–1.25rem, conforme a largura da tela.
+- O espaçamento padrão da home principal e o cabeçalho da Wiki permanecem inalterados.
+- Inspeção visual por Firefox headless no Runtime (1440×1000 e 390×844): o intervalo aparente entre a barra e o primeiro texto caiu de ~70 para ~42 px no desktop e de ~48 para ~30 px no mobile. A home principal e o cabeçalho de busca da Wiki foram comparados e permanecem inalterados. RUNTIME STATUS: ACTIVE.
+
+## 0.6.0-dev.45 — cabeçalho principal somente na home — 2026-10-15
+
+Classificação: PATCH (visibilidade do cabeçalho existente; contrato e barra multidomínio preservados).
+
+- O cabeçalho com marca e menu do site principal aparece somente na página inicial do purpose `main`.
+- Cabeçalho próprio da Wiki420 permanece visível; a barra multidomínio não foi alterada.
+- Verificado por HTTP no Runtime: cabeçalho presente na home principal e Wiki; ausente em páginas internas do domínio principal e nos demais purposes consultados. Barra multidomínio preservada. RUNTIME STATUS: ACTIVE.
+
+## 0.6.0-dev.44 — "Iniciar nova conversa" na barra de mensagens — 2026-10-15
+
+Classificação: MINOR (novo fluxo de conversa na barra de mensagens, com tokens novos).
+
+- Novos tokens `data-portal-ui` para a etapa de nova conversa: `new-conversation-link`, `new-conversation-submit`, `new-conversation-back`, `new-conversation-links`, `new-conversation-message`, `new-conversation-results` e `new-conversation-result`. Documentados em `docs/portal/TOKENS-E-ATRIBUTOS.md`.
+- O script `messenger-drawers.js` ignora o envio do formulário de nova conversa, que é feito pelo AJAX do Drupal dentro da própria gaveta.
+- RUNTIME STATUS: rotas verificadas por HTTP no runtime de testes; interação no navegador ainda não verificada.
+
+## 0.6.0-dev.43 — painel da conta no celular sem texto de carregamento — 2026-10-15
+
+Classificação: PATCH (apresentação da sanfona da conta).
+
+- Removido o texto "Carregando…" dos painéis e do marcador do shell (tema e fallback do módulo), com as regras CSS sem uso.
+- Seção de Mensagens removida do menu e da sanfona (ver `aculta_messenger` 0.1.1-dev.16).
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
+## 0.6.0-dev.42 — 99+ em todos os contadores, inclusive atualização ao vivo — 2026-10-15
+
+Classificação: PATCH (apresentação dos contadores).
+
+- Teste com os valores máximos no runtime de teste: carrinho com 1250 unidades, 120 avisos não lidos e 100 conversas não lidas (também no badge da navegação da conta). Todos mostram 99+; em 320 px e no desktop a barra continua em uma linha, sem quebra.
+- Atualização ao vivo: o carrinho é atualizado após "Adicionar" por um comando AJAX do módulo que grava o número direto no DOM. Novo script `js/counters.js` (biblioteca global) reaplica a regra sempre que `data-count` muda. Verificado em página de teste (120 e 150 viram 99+).
+- O módulo `aculta_portal` ainda grava o número bruto no comando (`AddToCartAjax`); a apresentação é corrigida pelo tema. Ajuste de contrato pendente: o módulo deve enviar só o dado.
+- Dados de teste removidos; contadores de volta a zero. RUNTIME STATUS: ACTIVE no runtime de testes.
+
+## 0.6.0-dev.41 — limite de exibição 99+ nos contadores — 2026-10-15
+
+Classificação: PATCH (apresentação dos contadores).
+
+- Regra: acima de 99 o badge mostra `99+`. Vale para conversas não lidas, avisos, carrinho e o contador da navegação da conta (`unread-badge`).
+- O `data-count` e o `aria-label` mantêm o número exato, para scripts e leitores de tela. O JavaScript (`updateCounter`) aplica a mesma regra nas atualizações ao vivo.
+- Simulado no runtime de teste: 100 conversas com mensagem não lida de um membro de teste. O badge passou a mostrar `99+` em aculta e conta, e coube em uma linha em 320 px e no desktop. Dados de teste removidos e contador de volta a zero.
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
+## 0.6.0-dev.40 — barra multidomínio com contadores de dois dígitos no mobile — 2026-10-15
+
+Classificação: PATCH (apresentação mobile da barra multidomínio).
+
+- Simulação no runtime de teste: carrinho com 12 unidades e 12 comunicados não lidos (dados removidos ao final).
+- Com badges de dois dígitos, a barra mobile cabe em uma linha em 320, 360 e 390 px. Em até 374,98 px o logo da barra sai da área visível (o link continua acessível; o logo do cabeçalho segue visível).
+- Desktop sem mudança.
+- Pendência: badge de mensagens com dois dígitos não foi simulado (exige dez conversas não lidas).
+- RUNTIME STATUS: ACTIVE no runtime de testes.
+
+## 0.6.0-dev.39 — barra multidomínio em uma linha no mobile e destaque de Minha conta por propósito — 2026-10-15
+
+Classificação: PATCH (apresentação da barra multidomínio; sem mudança de API).
+
+- Mobile (até 767,98 px): a barra institucional fica em uma linha. Logo, ícones e links da conta são compactados em vez de quebrar; a altura de toque dos links é mantida.
+- O destaque de "Minha conta" passa a ser decisão do tema, pelo propósito do domínio no contrato `domain_presentation` (`identity.purpose == 'account'`). A barra recebe a classe `aculta-institution-bar--account` só nesse caso. O módulo marca o link com o token `account-home` em todos os domínios e não decide mais a cor.
+- Corrige o dev.38, que aplicava a classe em todos os domínios por posição e depois pelo módulo.
+- Verificado no runtime: principal com cor padrão, conta em vermelho; 360, 390 e 414 px sem quebra de linha. RUNTIME STATUS: ACTIVE no runtime de testes.
+
+## 0.6.0-dev.38 — link Minha conta identificado por token, não por posição — 2026-10-15
+
+Classificação: PATCH (correção visual da barra multidomínio).
+
+- A regra que pintava o link "Minha conta" era posicional (`:first-child`): pintava o primeiro item do menu, não o item de conta. Ela foi removida.
+- O módulo marca o link com o token `account-home`; o tema traduz para a classe `aculta-account-home` no mesmo mapa `PortalUiHooks::TOKENS`. O CSS estiliza essa classe.
+- Duas regras duplicadas em `institution-bar.css` foram unidas em uma.
+- Verificado no runtime: a classe aparece no link em aculta, conta e loja; não sobra atributo `data-portal-ui`. Entrega: PR de pendências do Messenger. RUNTIME STATUS: ACTIVE no runtime de testes.
+
 ## 0.6.0-dev.37 — rota de conversas e token de ação no tema — 2026-10-15
 
 Classificação: PATCH (mapeamento de rota e token documentado; sem mudança visual).
@@ -875,3 +1096,57 @@ Classificação: PATCH (navegação da caixa de mensagens existente).
 - Verificações estáticas: PHP lint e `node --check` PASS; gates do Portal/tema pendentes.
 - RUNTIME STATUS: DEFERRED.
 
+## 0.6.0-dev.63 — tópico do Fórum: ações sociais e respostas organizadas (F4) — 2026-10-17
+
+Classificação: MINOR (novos templates de tópico e de resposta do Fórum).
+
+- `node--forum--full.html.twig`: metadados, abertura da Revista, corpo, barra de ações (seguir, salvar, denunciar) e seção "Respostas".
+- Barra de ações: botões do site; estado marcado em destaque (`.flag.action-unflag a`) e rótulos "Seguindo" e "Salvo".
+- `comment--comment-forum.html.twig`: resposta em cartão, com avatar pequeno, autor, data, texto e rodapé. Respostas diretas recuam (árvore, configurada no campo `comment_forum`).
+- Colunas em `minmax(0, 1fr)`: a imagem da abertura não estica a página no celular.
+- Verificado no Runtime com conta de teste logada: desktop e 390 px; estado marcado; resposta aninhada. Modo escuro: pendente.
+
+## 0.6.0-dev.62 — índice do Fórum em cartões (F4, primeira parte) — 2026-10-17
+
+Classificação: MINOR (novo template de lista e novo componente de apresentação do Fórum).
+
+- `templates/forum-list.html.twig` substitui a tabela do módulo forum: contêineres viram seções, fóruns viram cartões com tópicos, posts e última postagem. Mesmas variáveis do módulo.
+- `css/components/forum-index.css`: tokens semânticos, mobile primeiro; o botão "Entre para publicar" usa o estilo dos botões de ação do site.
+- Verificado no Runtime (growroom420, anônimo) em 1280 px e 390 px. Modo escuro e conta logada: pendentes.
+- Pendência de dados (não de tema): o termo "General discussion" vem do instalador do módulo forum e aparece no índice; remover exige decisão do responsável.
+
+## 0.6.0-dev.61 — "Ver todos os avisos" como botão no rodapé da gaveta — 2026-10-16
+
+Classificação: PATCH (ajuste de apresentação de um componente).
+
+- Gaveta de avisos (`alerts-trigger`): rodapé fixo com o botão "Ver todos os avisos", no estilo `btn btn-primary` do botão do carrinho. Nova prop `all_href`, vinda do Portal.
+- O rodapé não aparece para visitante (sem `all_href`).
+- Gaveta de mensagens (`messenger-trigger`): mesmo rodapé, com "Ver todas as mensagens".
+- Gaveta de avisos: corpo rolável (`min-height: 0`, `overflow-y: auto`) e rodapé fora da rolagem.
+- Verificado por HTML no Runtime (conta de teste): link absoluto no purpose `account`. Visual na gaveta no Firefox: pendente.
+
+## 0.6.0-dev.60 — apresentação do leitor PDF compartilhado — 2026-10-16
+
+Classificação: PATCH (apresentação/acessibilidade sem API visual nova).
+
+- `css/components/pdf-viewer.css` estiliza o contrato neutro de `aculta_pdf_viewer` usando tokens ACULTA420 e controles Bootstrap compatíveis.
+- Layout flexível para toolbar, busca, canvas, estados, fallback de download e tela cheia; alvos de toque de 2,75 rem e foco visível.
+- PDF.js/Media continuam donos do comportamento e acesso; o tema só apresenta os atributos neutros do formatter.
+- Validação visual no Runtime: DEFERRED até anexar PDF de teste temporário.
+
+## 0.6.0-dev.61 — apresentação do leitor PDF compartilhado — 2026-10-16
+
+Classificação: PATCH (apresentação acessível de formatter já funcional).
+
+- ACULTA420 estiliza os atributos neutros emitidos por `aculta_pdf_viewer` com tokens semânticos, foco visível, alvos de toque, layout adaptável e canvas responsivo.
+- PDF.js, Media, autorização e controles continuam sob responsabilidade do módulo; sem markup funcional duplicado no tema.
+- Runtime de teste `revista420.aculta.toca.net.br`: PDF.js sample (14 páginas) renderizou em desktop e em 390 px; canvas 652×844/324×420, controles com 44 px e sem overflow horizontal no mobile.
+- Fixture temporária (node 287, Media 233, File 413) removida e cache reconstruído. RUNTIME STATUS: ACTIVE no Homelab; Hostinger LiteSpeed e PDF privado permanecem pendentes.
+
+## 0.6.0-dev.64 — contagem de respostas, chamada para visitante e modo escuro do tópico (F4) — 2026-10-17
+
+Classificação: PATCH (dados e estilos novos em um tópico; sem mudança de estrutura).
+
+- Título da seção "Respostas" com a contagem (`forum-reply-total`); chamada para visitante (`forum-topic-visitor`) na barra de ações.
+- Verificado no Runtime: visitante (claro e escuro, com o atributo `data-bs-theme` forçado em cópia local), conta logada (desktop e 390 px), respostas em árvore no escuro, índice no escuro.
+- Limitação de teste: o modo de cor é decidido pelo Portal (`aculta_color_mode`); a conta logada no escuro foi verificada só pelo HTML.

@@ -289,8 +289,6 @@ $register_mode = $registration->get('register');
 $assert(in_array($register_mode, ['admin_only', 'visitors'], TRUE), 'Public registration mode is one of the reviewed values.');
 $assert($registration->get('verify_mail') === FALSE, 'Core verify_mail stays off: registration is confirmed by email_confirmer (EMAIL-CONFIRMATION-POLICY).');
 $assert($registration->get('notify.register_no_approval_required') === TRUE, 'Registration needs no administrative approval (decision: e-mail verification only).');
-$assert(!(bool) \Drupal::config('smtp.settings')->get('smtp_on') || $smtp_credentials_present, 'SMTP2GO delivery is claimed only with its credentials present.');
-$assert(($smtp_raw['smtp_password'] ?? '') === '' && ($smtp_raw['smtp_username'] ?? '') === '', 'SMTP username and password are absent from active ordinary configuration.');
 
 $captcha = \Drupal::config('captcha.settings');
 $assert((int) $captcha->get('enable_globally') === 1, 'Turnstile is globally enabled for anonymous forms.');

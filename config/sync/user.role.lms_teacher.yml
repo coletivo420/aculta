@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_pdf_viewer_group
     - group
     - lms
     - system
@@ -16,6 +17,7 @@ permissions:
   - 'create lms_activity entities'
   - 'create lms_course group'
   - 'create lms_lesson entities'
+  - 'create course_document media'
   - 'edit lms_activity entities'
   - 'edit lms_lesson entities'
   - 'view the administration theme'

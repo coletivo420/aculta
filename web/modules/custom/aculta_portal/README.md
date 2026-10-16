@@ -18,6 +18,8 @@ O Portal integra a experiência de:
 - checkout com endereço único, pagamento pelo Mercado Pago e envio pelo Commerce Shipping
   (pane "Envio", método de frete fixo; ver `docs/portal/CHECKOUT-BILLING.md`);
 - cursos/LMS/Group;
+- contrato opcional de eventos educacionais (`aculta_lms`), sem armazenamento paralelo;
+- leitura compartilhada de PDF por `aculta_pdf_viewer`, com Group↔Media opcional para documentos de turma;
 - Wiki420;
 - Fórum e comentários, quando a versão correspondente for implementada;
 - participação do usuário;
@@ -121,6 +123,17 @@ O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime mig
 
 Consultar [CHANGELOG.md](CHANGELOG.md).
 
+## Projetos de submódulos
+
+- [ACULTA Fórum — Growroom420](modules/aculta_forum/README.md): acervo recuperado do
+  Wayback, memorial coletivo com autoria individual e integração comunitária.
+- [ACULTA Game](modules/aculta_game/README.md): conquistas e missões, reaproveitando
+  a base atual de badges sem duplicar concessões e com pesquisa de licenças.
+
+Projetos abertos por decisão do responsável em 2026-10-15. Fórum permanece
+documental. Game é extensão opcional instalável desde G1: assume os gatilhos de
+conquistas e preserva o backend no User. O Portal não passa a depender de Game.
+
 ## Submódulo de dados dos associados
 
 `modules/aculta_associado_id` orquestra dados identificadores e cadastrais dos
@@ -141,7 +154,7 @@ antes de implementar integrações funcionais.
 
 ## Credenciais do ambiente (0.2.0-dev.11)
 
-Painel `/admin/config/aculta/segredos` para cadastrar as credenciais do contrato
+Painel `/painel-administrativo/configuracoes/aculta/segredos` para cadastrar as credenciais do contrato
 (`config/secrets-contract.json`). Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.
 Em teste, são gravados em arquivo; em produção, ficam no banco criptografado, provisionado pelo
 `aculta_deployer` após o deploy. Detalhes e limites em

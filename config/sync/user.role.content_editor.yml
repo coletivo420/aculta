@@ -3,7 +3,9 @@ langcode: pt-br
 status: true
 dependencies:
   config:
+    - filter.format.revista_editorial
     - filter.format.wiki
+    - media.type.document
     - node.type.forum
     - node.type.aculta_notice
     - node.type.wiki_entry
@@ -13,6 +15,7 @@ dependencies:
     - contextual
     - content_lock
     - content_moderation
+    - media
     - file
     - filter
     - navigation
@@ -26,6 +29,7 @@ label: 'Editor de conteúdo'
 weight: 2
 is_admin: false
 permissions:
+  - 'moderar denuncias do forum'
   - 'access administration pages'
   - 'access content overview'
   - 'access content'
@@ -37,8 +41,10 @@ permissions:
   - 'break content lock'
   - 'create url aliases'
   - 'create wiki_entry content'
+  - 'create document media'
   - 'create aculta_notice content'
   - 'delete own files'
+  - 'delete any forum content'
   - 'edit any forum content'
   - 'edit any wiki_entry content'
   - 'edit any aculta_notice content'
@@ -52,6 +58,9 @@ permissions:
   - 'use wiki_editorial transition review_to_published'
   - 'use editorial transition create_new_draft'
   - 'use editorial transition draft_to_review'
+  - 'view aculta restricted forum associado'
+  - 'view aculta restricted forum email confirmed'
+  - 'view aculta restricted forum estudante'
   - 'view all revisions'
   - 'view any unpublished content'
   - 'view latest version'

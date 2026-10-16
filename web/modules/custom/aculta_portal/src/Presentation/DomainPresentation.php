@@ -18,11 +18,14 @@ final class DomainPresentation implements CacheableDependencyInterface {
   /**
    * @param array{purpose: string, title: string, short_title: ?string, home_url: string, logo_alt: ?string} $identity
    * @param array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array} $regions
+   * @param array{institution_bar_account: bool, show_utility_bar: bool, links_page: bool, show_site_header: bool} $layout
+   *   Visibility decided by the Portal per purpose. The theme only draws what these flags allow.
    */
   public function __construct(
     private readonly array $identity,
     private readonly array $regions,
     private readonly CacheableMetadata $cacheability,
+    private readonly array $layout,
   ) {}
 
   /**
@@ -30,13 +33,15 @@ final class DomainPresentation implements CacheableDependencyInterface {
    *
    * @return array{
    *   identity: array{purpose: string, title: string, short_title: ?string, home_url: string, logo_alt: ?string},
-   *   regions: array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array}
+   *   regions: array{brand_media: ?array, navigation: ?array, actions: ?array, wiki_search: ?array},
+   *   layout: array{institution_bar_account: bool, show_utility_bar: bool, links_page: bool, show_site_header: bool}
    * }
    */
   public function toThemeArray(): array {
     return [
       'identity' => $this->identity,
       'regions' => $this->regions,
+      'layout' => $this->layout,
     ];
   }
 

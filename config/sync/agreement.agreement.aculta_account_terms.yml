@@ -9,7 +9,7 @@ settings:
   frequency: -1.0
   title: 'Termos de Uso e Política de Privacidade'
   checkbox: 'Li e aceito os Termos de Uso e a Política de Privacidade.'
-  format: basic_html
+  format: usuario_aculta
   submit: Continuar
   success: 'Aceite registrado. Você pode continuar usando sua conta.'
   revoked: 'O aceite foi revogado.'

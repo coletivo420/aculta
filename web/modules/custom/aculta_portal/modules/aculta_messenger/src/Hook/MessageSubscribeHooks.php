@@ -32,6 +32,8 @@ final class MessageSubscribeHooks {
    */
   #[Hook('message_subscribe_get_subscribers')]
   public function getSubscribers(MessageInterface $message, array $subscribeOptions = [], array $context = []): array {
+    // Notificações do fórum são avisos, não mensagens (F-D21). A entrega por mensagem foi desligada.
+    return [];
     if ($message->bundle() !== self::TEMPLATE || !$message->hasField(self::SOURCE_FIELD)) {
       return [];
     }

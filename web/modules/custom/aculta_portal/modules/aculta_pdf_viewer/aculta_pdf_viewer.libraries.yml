@@ -1,0 +1,7 @@
+viewer:
+  js:
+    js/pdf-viewer.mjs:
+      attributes:
+        type: module
+  dependencies:
+    - core/drupal

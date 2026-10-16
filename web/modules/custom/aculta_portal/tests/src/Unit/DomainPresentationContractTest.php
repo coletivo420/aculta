@@ -20,11 +20,20 @@ final class DomainPresentationContractTest extends UnitTestCase {
       ['purpose' => 'wiki', 'title' => 'Wiki420', 'short_title' => 'Wiki', 'home_url' => 'https://wiki420.example.invalid/', 'logo_alt' => 'Wiki420'],
       ['brand_media' => NULL, 'navigation' => NULL, 'actions' => NULL, 'wiki_search' => NULL],
       (new CacheableMetadata())->addCacheContexts(['domain', 'url.site'])->addCacheTags(['config:domain.record.wiki420_aculta_org']),
+      ['institution_bar_account' => FALSE, 'show_utility_bar' => TRUE, 'links_page' => FALSE, 'show_site_header' => TRUE],
     );
   }
 
-  public function testThemeArrayContainsOnlyIdentityAndRegions(): void {
-    $this->assertSame(['identity', 'regions'], array_keys($this->presentation()->toThemeArray()));
+  public function testThemeArrayContainsOnlyIdentityRegionsAndLayout(): void {
+    $this->assertSame(['identity', 'regions', 'layout'], array_keys($this->presentation()->toThemeArray()));
+  }
+
+  public function testLayoutFlagsAreBooleanVisibilityOnly(): void {
+    $layout = $this->presentation()->toThemeArray()['layout'];
+    $this->assertSame(['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header'], array_keys($layout));
+    foreach ($layout as $flag) {
+      $this->assertIsBool($flag);
+    }
   }
 
   public function testThemeArrayHasNoObjects(): void {

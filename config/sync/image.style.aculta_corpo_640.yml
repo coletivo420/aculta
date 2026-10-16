@@ -1,0 +1,17 @@
+uuid: 4b5497d0-df34-45d1-90c2-8126b6ab5402
+langcode: pt-br
+status: true
+dependencies: {  }
+name: aculta_corpo_640
+label: 'ACULTA corpo 640px'
+effects:
+  a32f2d32-7a70-459b-a899-85282ae72773:
+    uuid: a32f2d32-7a70-459b-a899-85282ae72773
+    id: image_scale
+    weight: 0
+    data:
+      width: 640
+      height: null
+      upscale: false
+pipeline: aculta_derivados
+

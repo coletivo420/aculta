@@ -1,0 +1,18 @@
+aculta_image_model:
+  ckeditor5:
+    plugins:
+      - acultaImage.ImageModel
+  drupal:
+    label: Modelo de imagem
+    class: \Drupal\aculta_image\Plugin\CKEditor5Plugin\ImageModel
+    library: aculta_image/ckeditor5.image_model
+    elements:
+      - <img data-aculta-modelo>
+    toolbar_items:
+      acultaImageModel:
+        label: Modelo da imagem
+      acultaImageLegenda:
+        label: Editar legenda
+    conditions:
+      plugins: [ckeditor5_image]
+      toolbarItem: acultaImageModel

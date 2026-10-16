@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\aculta_image\UploadPolicy;
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -27,8 +29,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class UserPictureForm extends FormBase {
 
-  /** Tamanho máximo do upload, em bytes (2 MB, como o texto de ajuda do campo). */
-  public const MAX_SIZE = 2097152;
 
   /** Pasta dos envios. Prefixo pictures/: a limpeza do cron trata esses temporários. */
   public const UPLOAD_LOCATION = 'public://pictures/uploads';
@@ -39,6 +39,8 @@ final class UserPictureForm extends FormBase {
     private UserDataInterface $userData,
     private CsrfTokenGenerator $csrfToken,
     private AvatarPool $avatarPool,
+    private readonly ImageRenderer $imageRenderer,
+    private readonly UploadPolicy $uploadPolicy,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -48,6 +50,8 @@ final class UserPictureForm extends FormBase {
       $container->get('user.data'),
       $container->get('csrf_token'),
       $container->get('aculta_user.avatar_pool'),
+      $container->get('aculta_image.render'),
+      $container->get('aculta_image.upload_policy'),
     );
   }
 
@@ -89,13 +93,7 @@ final class UserPictureForm extends FormBase {
           '#type' => 'html_tag',
           '#tag' => 'span',
           '#attributes' => ['data-aculta-user-avatar' => ''],
-          'image' => [
-            '#theme' => 'image_style',
-            '#style_name' => 'aculta_avatar',
-            '#uri' => $currentFile->getFileUri(),
-            '#alt' => (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]),
-            '#attributes' => ['data-portal-ui' => 'account-avatar'],
-          ],
+          'image' => $this->imageRenderer->build('avatar', $currentFile->getFileUri(), (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']),
         ],
       ];
     }
@@ -107,12 +105,9 @@ final class UserPictureForm extends FormBase {
     $form['imagem'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Foto'),
-      '#description' => $this->t('Envie uma imagem PNG, JPG, GIF ou WebP de até 2 MB.'),
+      '#description' => $this->t('Envie uma imagem PNG, JPG, GIF ou WebP de até 10 MB.'),
       '#upload_location' => self::UPLOAD_LOCATION,
-      '#upload_validators' => [
-        'FileExtension' => ['extensions' => 'png jpg jpeg gif webp'],
-        'FileSizeLimit' => ['fileLimit' => self::MAX_SIZE],
-      ],
+      '#upload_validators' => $this->uploadPolicy->validators(),
       '#default_value' => NULL,
       '#required' => FALSE,
       // Regra de estado (docs/FOTO-PERFIL.md): avatar do sistema nunca tem botão "Remover".

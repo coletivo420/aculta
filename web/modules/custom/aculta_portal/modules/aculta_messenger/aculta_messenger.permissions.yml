@@ -1,0 +1,7 @@
+administer aculta messenger:
+  title: 'Administrar o chat (limites, limpeza e grupos)'
+  restrict access: true
+
+administer aculta avisos:
+  title: 'Administrar avisos por pessoa (sem conteúdo de mensagens)'
+  restrict access: true

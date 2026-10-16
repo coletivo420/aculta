@@ -1,3 +1,9 @@
+## 0.1.0-dev.6 — abertura do tópico do Fórum sem título repetido (F4) — 2026-10-17
+
+Classificação: PATCH (ajuste de dados apresentados em um bloco; sem mudança de contrato).
+
+- A abertura da Revista no tópico do Fórum não repete o título (a página já tem o título). Continua com a imagem, o resumo e o link "Ler a publicação na Revista".
+
 ## 0.1.0-dev.5 — login repetido nos comentários do Fórum da Revista — 2026-10-14
 
 Classificação: PATCH (correção de apresentação do Core; sem mudança de contrato).

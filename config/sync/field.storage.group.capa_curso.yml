@@ -1,0 +1,30 @@
+uuid: c8c53f5a-47e9-4eef-be26-36fc9985996d
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - file
+    - group
+    - image
+id: group.capa_curso
+field_name: capa_curso
+entity_type: group
+type: image
+settings:
+  target_type: file
+  display_field: false
+  display_default: true
+  uri_scheme: public
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+module: image
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

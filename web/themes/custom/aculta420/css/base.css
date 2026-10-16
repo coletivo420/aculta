@@ -62,3 +62,17 @@ img[src*="/styles/aculta_avatar/"] {
   aspect-ratio: 1 / 1;
   object-fit: cover;
 }
+
+/* Foco visível padrão do ACULTA420: uma única definição para elementos interativos. :where mantém especificidade
+   zero, então qualquer componente com regra própria de foco continua mandando. Ver docs/portal/COMPONENTES-AGRUPAMENTO.md. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Alvo de toque mínimo (requisito de acessibilidade). Utilitário para componentes novos; os existentes mantêm
+   a altura própria até a revisão de cada um. */
+.aculta-touch-target {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+}

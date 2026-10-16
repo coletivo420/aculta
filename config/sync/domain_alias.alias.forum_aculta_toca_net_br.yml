@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 id: forum_aculta_toca_net_br
 domain_id: forum_aculta_org
-pattern: forum.aculta.toca.net.br
+pattern: growroom420.aculta.toca.net.br
 redirect: 0
 environment: homelab
 weight: 8

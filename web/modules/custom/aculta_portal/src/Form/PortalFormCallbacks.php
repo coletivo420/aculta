@@ -39,7 +39,7 @@ final class PortalFormCallbacks {
 
   /** Mensagem única do cadastro, igual com e-mail novo ou já cadastrado (DT-P06). */
   private function registrationStatusMessage(): string {
-    return (string) $this->translation->translate('Se este e-mail ainda não estiver cadastrado, enviaremos um link para confirmar o seu cadastro. Se ele já estiver cadastrado, enviaremos um aviso com as opções para acessar a sua conta. Verifique a caixa de entrada e a pasta de spam.');
+    return (string) $this->translation->translate('Sua solicitação foi recebida. Se este endereço tiver uma confirmação ou aviso disponível, verifique a caixa de entrada e a pasta de spam. Se nenhuma mensagem chegar, tente novamente mais tarde.');
   }
 
   /**
@@ -86,7 +86,12 @@ final class PortalFormCallbacks {
     }
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
     if ($account instanceof \Drupal\user\UserInterface) {
-      $this->confirmationRequester->request($account);
+      $result = $this->confirmationRequester->request($account);
+      if ($result !== \Drupal\aculta_portal\Email\EmailConfirmationRequestResult::ACCEPTED) {
+        // Keep the registration response identical for unknown and existing
+        // addresses; its wording does not claim that an email was delivered.
+        return;
+      }
     }
   }
 

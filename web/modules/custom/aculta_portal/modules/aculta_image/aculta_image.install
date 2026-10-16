@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * @file
+ * Instalação e atualizações do aculta_image.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function aculta_image_schema(): array {
+  $schema['aculta_image_fingerprint'] = [
+    'description' => 'Impressão digital visual (dHash de 64 bits) de cada imagem, para a comparação visual (fase M9).',
+    'fields' => [
+      'fid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'dhash' => ['type' => 'char', 'length' => 16, 'not null' => TRUE],
+    ],
+    'primary key' => ['fid'],
+  ];
+  $schema['aculta_image_quarantine'] = [
+    'description' => 'Imagens candidatas enviadas para a quarentena (fase M7). Excluídas só após o prazo e nova verificação de uso.',
+    'fields' => [
+      'fid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'uri_original' => ['type' => 'varchar', 'length' => 2048, 'not null' => TRUE],
+      'uri_quarentena' => ['type' => 'varchar', 'length' => 2048, 'not null' => TRUE],
+      'motivo' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+      'enviado_em' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+      'vence_em' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['fid'],
+    'indexes' => ['vence_em' => ['vence_em']],
+  ];
+  $schema['aculta_image_origin'] = [
+    'description' => 'Origem de cada imagem ingerida de fora do site (URL e captura), por SHA-256 do conteúdo.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'fid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'description' => 'File entity usado.'],
+      'sha256' => ['type' => 'char', 'length' => 64, 'not null' => TRUE],
+      'source_url' => ['type' => 'varchar', 'length' => 2048, 'not null' => TRUE, 'default' => ''],
+      'captured_at' => ['type' => 'int', 'not null' => FALSE, 'description' => 'Data da captura na origem.'],
+      'imported_at' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'indexes' => ['sha256' => ['sha256'], 'fid' => ['fid']],
+  ];
+  return $schema;
+}
+
+/**
+ * Cria a tabela de origem das imagens ingeridas.
+ */
+function aculta_image_update_10001(): void {
+  $schema = aculta_image_schema();
+  $database = \Drupal::database();
+  if (!$database->schema()->tableExists('aculta_image_origin')) {
+    $database->schema()->createTable('aculta_image_origin', $schema['aculta_image_origin']);
+  }
+}
+
+/**
+ * Cria a tabela da quarentena de imagens (fase M7).
+ */
+function aculta_image_update_10002(): void {
+  $schema = aculta_image_schema();
+  $database = \Drupal::database();
+  if (!$database->schema()->tableExists('aculta_image_quarantine')) {
+    $database->schema()->createTable('aculta_image_quarantine', $schema['aculta_image_quarantine']);
+  }
+}
+
+/**
+ * Cria a tabela de impressões digitais visuais (fase M9).
+ */
+function aculta_image_update_10003(): void {
+  $schema = aculta_image_schema();
+  $database = \Drupal::database();
+  if (!$database->schema()->tableExists('aculta_image_fingerprint')) {
+    $database->schema()->createTable('aculta_image_fingerprint', $schema['aculta_image_fingerprint']);
+  }
+}

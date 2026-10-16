@@ -1,0 +1,19 @@
+aculta_messenger.settings:
+  type: config_object
+  label: 'ACULTA Messenger: controles do chat'
+  mapping:
+    group_creation_enabled:
+      type: boolean
+      label: 'Usuários comuns podem criar grupos'
+    group_max_members:
+      type: integer
+      label: 'Máximo de outras pessoas num grupo'
+    retention_months:
+      type: integer
+      label: 'Meses de inatividade antes da limpeza'
+    cleanup_batch:
+      type: integer
+      label: 'Conversas removidas por execução do cron'
+    send_limit_per_hour:
+      type: integer
+      label: 'Mensagens por hora por conta'

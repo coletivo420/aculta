@@ -7,6 +7,22 @@ services:
   Drupal\message_subscribe\SubscribersInterface: '@message_subscribe.subscribers'
   Drupal\aculta_user\Social\FriendshipManagerInterface: '@aculta_user.friendship_manager'
   Drupal\aculta_messenger\Service\UnreadThreadCounter: '@aculta_messenger.unread_thread_counter'
+  Drupal\aculta_messenger\Aviso\AvisoService: '@aculta_messenger.aviso_service'
+  Drupal\aculta_messenger\Aviso\AvisoPreferencias: '@aculta_messenger.aviso_preferencias'
+  Drupal\aculta_messenger\Form\AvisosPrivacyForm: '@aculta_messenger.avisos_privacy_form'
+  Drupal\aculta_messenger\Aviso\AvisosResumo: '@aculta_messenger.avisos_resumo'
+  aculta_messenger.message_privacy_form:
+    class: Drupal\aculta_messenger\Form\MessagePrivacyForm
+    arguments:
+      - '@current_user'
+      - '@user.data'
+  aculta_messenger.counts:
+    class: Drupal\aculta_messenger\Service\MessengerCounts
+    arguments:
+      - '@entity_type.manager'
+      - '@flag'
+      - '@site_alert.get_alerts'
+      - '@module_handler'
   aculta_messenger.unread_thread_counter:
     class: Drupal\aculta_messenger\Service\UnreadThreadCounter
     arguments:
@@ -21,9 +37,14 @@ services:
       - '@private_message.ban_manager'
       - '@aculta_user.friendship_manager'
       - '@user.data'
+      - '@aculta_messenger.conversation_policy'
     public: true
   aculta_messenger.private_message_account_route_subscriber:
     class: Drupal\aculta_messenger\EventSubscriber\PrivateMessageAccountRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  aculta_messenger.native_private_message_pages:
+    class: Drupal\aculta_messenger\EventSubscriber\NativePrivateMessagePagesSubscriber
     tags:
       - { name: event_subscriber }
   aculta_messenger.notice_admin_route_subscriber:
@@ -33,3 +54,32 @@ services:
   aculta_messenger.persistent_notice_route_access:
     class: Drupal\aculta_messenger\Access\PersistentNoticeRouteAccess
     public: true
+  aculta_messenger.conversation_policy:
+    class: Drupal\aculta_messenger\Service\ConversationPolicy
+    arguments:
+      - '@config.factory'
+
+  aculta_messenger.conversation_messaging:
+    class: Drupal\aculta_messenger\Service\ConversationMessagingState
+    arguments:
+      - '@current_user'
+      - '@private_message.ban_manager'
+      - '@aculta_user.friendship_manager'
+      - '@user.data'
+  aculta_messenger.aviso_service:
+    class: Drupal\aculta_messenger\Aviso\AvisoService
+    arguments: ['@entity_type.manager', '@flag']
+  aculta_messenger.forum_aviso_read_subscriber:
+    class: Drupal\aculta_messenger\EventSubscriber\ForumAvisoReadSubscriber
+    arguments: ['@current_user', '@aculta_messenger.aviso_service']
+    tags:
+      - { name: event_subscriber }
+  aculta_messenger.aviso_preferencias:
+    class: Drupal\aculta_messenger\Aviso\AvisoPreferencias
+    arguments: ['@user.data']
+  aculta_messenger.avisos_privacy_form:
+    class: Drupal\aculta_messenger\Form\AvisosPrivacyForm
+    arguments: ['@current_user', '@aculta_messenger.aviso_preferencias']
+  aculta_messenger.avisos_resumo:
+    class: Drupal\aculta_messenger\Aviso\AvisosResumo
+    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@plugin.manager.mail', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time']

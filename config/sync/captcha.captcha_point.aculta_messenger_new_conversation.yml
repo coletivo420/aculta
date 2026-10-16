@@ -1,0 +1,9 @@
+uuid: 71cc9c12-b180-40f7-9b11-0cd97a7aa203
+langcode: pt-br
+status: false
+dependencies:
+  module:
+    - captcha
+formId: aculta_messenger_new_conversation
+captchaType: default
+label: 'Nova conversa pela barra de mensagens (exceção do Turnstile)'

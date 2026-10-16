@@ -18,7 +18,7 @@ O objetivo inicial é construir um site institucional profissional, acessível, 
 
 - Drupal 11
 - PHP 8.5
-- Apache como baseline definitivo de servidor web
+- Apache no Homelab e LiteSpeed na produção Hostinger Cloud Startup
 - PHP-FPM no Homelab
 - MariaDB para o Runtime de desenvolvimento (Homelab, banco `aculta_runtime`); a pasta `estados/` contém backups privados locais do banco, não versionados
 - MariaDB em produção
@@ -34,7 +34,7 @@ Debian Homelab + Apache + PHP-FPM + MariaDB
 
 Produção:
 
-Hostinger + Apache + PHP + MariaDB
+Hostinger Cloud Startup + LiteSpeed + PHP + MariaDB
 
 Document root do Drupal:
 
@@ -44,7 +44,7 @@ web/
 
 - `*.aculta.toca.net.br` é o **servidor de testes** (Homelab). Nos documentos de arquitetura aparece como Homelab; os dois termos designam o mesmo ambiente.
 - `*.aculta.org` é **produção**.
-- Este checkout em `/home/piradopirata/projetos/aculta-site`, quando executado no host `toca`, é a pasta de trabalho ligada ao Homelab/servidor de testes. O Drupal e o MariaDB Runtime podem ser operados localmente a partir dela; não presumir que seja necessário acessar o próprio Homelab por SSH.
+- A pasta de trabalho do Homelab/servidor de testes é `/home/aculta/` (raiz da instalação: `config/sync`, `secrets/`, `vendor/`, `web/`, `public_html -> web`). O repositório aparece nela como `/home/aculta/aculta-site`. Para Drush e operações de runtime, use essa raiz. Os arquivos `web/sites/default/settings*.php` são `aculta:aculta` com modo `0640`: operar a partir de `/home/aculta` exige estar no grupo `aculta`. Detalhes em `docs/architecture/environments.md`, seção Diretório de trabalho. O Drupal e o MariaDB Runtime podem ser operados localmente a partir dela; não presumir que seja necessário acessar o próprio Homelab por SSH.
 - **Antes de qualquer operação de ambiente**, confirme `hostname`, `pwd`, branch/estado Git e `php vendor/drush/drush/drush.php status`. Confirme no Drush o site URI e o banco conectados antes de executar comandos que alterem estado.
 - Se `hostname` for `toca` e o Drush confirmar o Runtime `aculta_runtime` e um URI `*.aculta.toca.net.br`, trate a sessão como já estando no servidor de testes: use o checkout e o Drush locais. SSH só se justifica quando a operação necessária não estiver disponível localmente e o destino tiver sido confirmado pela documentação de ambientes.
 - **Padrão de desenvolvimento funcional:** em mudanças destinadas ao Portal/tema, implemente no checkout local ligado ao Homelab e aplique imediatamente ao Runtime de testes assim que o escopo estiver coerente para smoke test. Faça cache rebuild e as atualizações estritamente necessárias, verificando antes URI, banco, estado da configuração e efeitos; nunca espere uma etapa final para só então atualizar o ambiente de teste. Mantenha a mudança testável enquanto o trabalho continua. Isso não autoriza operações destrutivas nem qualquer alteração em produção.
@@ -108,12 +108,13 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 
 ## Servidor web
 
-Apache é o baseline definitivo do ACULTA no Homelab e em produção.
+O Homelab usa Apache; a produção na Hostinger Cloud Startup usa LiteSpeed, confirmado por cabeçalhos HTTP públicos em 2026-10-15.
 
 - Não introduzir novos exemplos, regras ou dependências específicas de Nginx.
 - Não manter compatibilidade com Nginx como requisito do projeto.
-- Preservar o `web/.htaccess` do Drupal e validar rewrites/headers/proteção de arquivos em Apache.
+- Preservar o `web/.htaccess` fornecido pelo Drupal e validar as diretivas em ambos os ambientes.
 - No Homelab, validar `mod_rewrite`, `mod_headers` e a integração PHP-FPM por `proxy_fcgi`.
+- Na produção, validar reescrita, headers, proteção de arquivos, processamento de `.htaccess` e handler PHP no LiteSpeed/Hostinger; não presumir acesso a VirtualHost ou `httpd.conf`.
 - VirtualHosts, caminhos, usuários, certificados e configuração Virtualmin/Hostinger continuam específicos de cada ambiente.
 - Referências a Nginx em relatórios antigos são históricas e não definem a arquitetura atual.
 
@@ -210,6 +211,12 @@ Em uma workstation Windows opcional, o equivalente é:
 php .\vendor\drush\drush\drush.php status
 php .\vendor\drush\drush\drush.php cr
 ```
+
+## Banco de teste (Kernel)
+
+Os testes de Kernel usam o MariaDB dedicado `aculta_simpletest`, com a configuração em `secrets/simpletest-db.env`
+(fora do Git). Procedimento, rotação e resultados: `docs/operations/BANCO-DE-TESTE.md`. Nunca usar o Runtime
+`aculta_runtime` nem SQLite para testes; nunca imprimir o conteúdo do arquivo de segredos.
 
 ## Identidade institucional
 
@@ -336,6 +343,28 @@ Prioridades:
 Evitar page builders pesados.
 
 Evitar dependências JavaScript desnecessárias.
+
+## Direção de arte para imagens criadas por agentes
+
+- Toda imagem criada por um agente para este projeto deve considerar a identidade da ACULTA como associação cultural canábica e antiproibicionista; quando a imagem representar a comunidade, a conquista ou a participação no Portal, a relação com cannabis, cultura, direitos ou superação da proibição deve ser reconhecível.
+- Usar enquadramento cultural, comunitário, educativo e de direitos. Não representar o Portal como dispensário, loja de cannabis ou campanha de consumo.
+- Antes de criar, inspecionar os assets próximos e preservar as imagens históricas ou fornecidas pelo responsável. Registrar origem, intenção e dimensões das novas artes na documentação do componente.
+- Para ilustração raster nova, usar a ferramenta imagegen; redimensionar e otimizar a saída para o uso real. Preferir arte original sem texto incorporado, salvo quando o texto exato fizer parte do pedido.
+- Consultar `docs/portal/IMAGE-ART-DIRECTION.md` para a paleta e a linguagem visual das conquistas.
+
+## Imagens e arquivos de imagem (regra permanente)
+
+- Toda imagem e todo arquivo de imagem do site passa pelo submódulo `aculta_image`
+  (`web/modules/custom/aculta_portal/modules/aculta_image/`). Vale para código novo e antigo; código existente
+  fora dele deve ser refatorado.
+- Não usar `image_style` (renderização, referência ou configuração) fora do catálogo `ImageCatalog`. Pedir uma
+  finalidade, não um estilo.
+- Não criar limite de upload de imagem próprio: usar `UploadPolicy`. A exceção aprovada da conquista (aculta_game)
+  fica só no formulário da conquista.
+- Não processar imagem com `ImageFactory` nem excluir arquivos por fora do `aculta_image`. Imagens candidatas à limpeza do acervo seguem a quarentena; no ciclo normal, `aculta_image` pode excluir arquivo substituído/removido de entidade somente após revalidar que `file_usage` e `entity_usage` não apontam para ele. Temporários de imagem sem uso vencem segundo `system.file:temporary_maximum_age`.
+- Campo novo de imagem nasce com a política do `aculta_image` em `third_party_settings`.
+- Importação de qualquer origem externa (Wayback, LMS, arquivo recebido) passa pela ingestão do `aculta_image`.
+- Gate: `php scripts/validate-aculta-image.php` (tolerância zero). Plano e fases: `aculta_image/docs/PLANO.md`.
 
 ## Segurança
 
@@ -525,6 +554,10 @@ aculta_deployer (`web/modules/custom/aculta_portal/modules/aculta_deployer/confi
 
 Rodadas de teste com agente de navegador e o responsável (Felipe), incluindo hosts, contas de teste, limites do agente de navegador e resultados, estão em `docs/portal/TESTES-NAVEGADOR.md`. Consultar antes de pedir teste de navegador e atualizar a seção de resultados a cada rodada.
 
+- O navegador padrão para testes visuais e interativos é o Firefox. Chromium é alternativa quando houver limitação concreta do Firefox.
+- A sessão gráfica disponível nesta máquina foi confirmada como LXQt sobre X11 (`DISPLAY=:0`, `XDG_SESSION_ID=1`), embora shells de agentes possam abrir em TTY sem `DISPLAY`. Antes de concluir que não há interface gráfica, inspecionar a sessão de `lxqt-session` (`pgrep -a lxqt-session` e `/proc/<PID>/environ`) e usar o ambiente dela: `DISPLAY=:0`, `XDG_RUNTIME_DIR=/run/user/1000` e `DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus`. Confirmar os valores atuais no processo; não presumir Wayland nem iniciar outro desktop.
+- O socket X11 observado foi `/tmp/.X11-unix/X0`. Orca e AT-SPI estão disponíveis para revisão de acessibilidade. Não encerrar processos da sessão LXQt; encerrar somente processos de navegador, driver ou leitor de tela iniciados pela própria tarefa.
+
 ## Versionamento obrigatório de mudanças
 
 O versionamento controla as mudanças e os avanços no código. Não criar tags no GitHub sem pedido explícito do responsável.
@@ -545,7 +578,7 @@ A exceção de versão já registrada (0.3.1) não autoriza nova exceção sem d
 
 ### Diretório de trabalho obrigatório
 
-- Trabalhar sempre no checkout local do repositório que o responsável abriu para a tarefa (`cwd` do projeto), mantendo nele o branch da tarefa e as alterações visíveis.
+- Trabalhar sempre no checkout local do repositório que o responsável abriu para a tarefa (`cwd` do projeto), mantendo o branch atual e as alterações visíveis.
 - Não criar nem usar worktrees, clones ou diretórios temporários alternativos (por exemplo, `/tmp/...`) para implementar a tarefa, salvo pedido explícito do responsável.
 - Antes de alterar arquivos, confirmar `pwd`, branch e `git status` nesse checkout. Não trocar de branch nem substituir arquivos com alterações locais; preservar trabalho existente e resolver conflitos com segurança.
 - Quando a tarefa exigir interação com o servidor de testes, usar os meios de acesso autorizados a esse servidor; o checkout local ou um banco local não substitui a validação no servidor.
@@ -615,6 +648,17 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
   ACULTA420 na mesma entrega, cada parte no seu dono.
 - Inventário, dívida e motivo: `docs/portal/FRONTEIRA-MODULO-TEMA.md`. Gate obrigatório:
   `php scripts/validate-module-theme-boundary.php` (deve ser PASS; o cliquet de classes do módulo não pode subir).
+- **Mapa módulo x tema (obrigatório):** todo módulo ou submódulo customizado e todo módulo contrib habilitado precisa de
+  registro em `docs/portal/MAPA-MODULO-TEMA.md`, com os templates, CSS, componentes SDC, JS e tokens `data-portal-ui`
+  do tema que lhe correspondem, ou com o motivo de não haver contraparte. Peça nova de tema para um módulo
+  (template, CSS, JS, SDC ou token) entra no mapa no mesmo commit. Gate obrigatório:
+  `php scripts/validate-module-theme-map.php` (deve ser PASS).
+- **Busca antes de alterar módulo ou contrib:** o agente deve buscar as contrapartes de template, CSS, componentes e
+  tokens do tema, nesta ordem: (1) a linha correspondente em `docs/portal/MAPA-MODULO-TEMA.md`; (2) a documentação do
+  tema (`web/themes/custom/aculta420/docs/`) e `docs/portal/TOKENS-E-ATRIBUTOS.md`; (3) o código do tema (`templates/`,
+  `css/`, `components/`, `js/`, `src/Hook/PortalUiHooks.php`); (4) na web, a documentação oficial do Drupal e do contrib
+  na versão instalada, quando o contrato não estiver claro. Registro "Verificar" ou "Sem contraparte" não autoriza
+  suposição. Se a busca não confirmar o contrato, o agente diz isso e pergunta antes de editar.
 
 ## Pagamentos: processados pelo Mercado Pago (regra permanente)
 
@@ -643,11 +687,11 @@ e não na `main`). Esta regra existe para que nenhum trabalho dependa de estado 
 
 - **Commit antes de encerrar.** Toda alteração concluída vira commit no próprio branch
   antes do fim da sessão. Não deixar trabalho só no working tree.
-- **Um branch por tarefa, do início ao fim.** O agente trabalha sempre no mesmo branch, criado
-  a partir da `origin/main` (ou do branch base declarado no PR), e faz um commit atômico por
-  alteração lógica dentro dele. Não abrir branch novo para cada passo, nem reaproveitar branch
-  de outra entrega.
-- **Publicar o branch** com `git push -u origin <branch>` após cada commit. Não há commit
+- **Um commit por tarefa.** O agente trabalha no branch de trabalho já aberto pelo responsável
+  e registra a tarefa em um commit atômico, sem criar ou trocar de branch por causa da tarefa.
+  Se a tarefa for ampliada e passar a conter entregas independentes, separar em commits atômicos
+  por tarefa antes de encerrar.
+- **Publicar cada commit** no branch atual com `git push` após concluir a tarefa. Não há commit
   "pendente" depois que a sessão termina.
 - **Merge só no final.** O PR é mesclado uma única vez, quando a tarefa estiver concluída e o
   responsável autorizar. Não mesclar entregas parciais nem PRs intermediários.

@@ -41,9 +41,7 @@
               {{ item.unread_badge }}
               <i class="bi bi-chevron-right portal-account__chevron" aria-hidden="true"></i>
             </summary>
-            <div class="portal-account__panel" data-portal-account-accordion-panel data-src="{{ item.href }}">
-              <p class="portal-account__panel-loading">{% trans %}Carregando…{% endtrans %}</p>
-            </div>
+            <div class="portal-account__panel" data-portal-account-accordion-panel data-src="{{ item.href }}"></div>
           </details>
         {% endfor %}
         <a class="portal-account__logout-row portal-account__summary" href="{{ logout.href }}" data-portal-account-summary>
@@ -58,6 +56,5 @@
       <div class="portal-account__body" id="portal-account-body">{{ content }}</div>
     </section>
   </div>
-  <p class="portal-account__loading" data-portal-account-loading hidden>{% trans %}Carregando…{% endtrans %}</p>
   <p class="portal-account__status" data-portal-account-status aria-live="polite" aria-atomic="true"></p>
 </section>

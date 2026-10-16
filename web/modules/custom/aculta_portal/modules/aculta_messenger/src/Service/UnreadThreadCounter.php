@@ -37,16 +37,27 @@ final class UnreadThreadCounter {
     return $count;
   }
 
-  /** Checks a thread using its native per-user access timestamp. */
+  /**
+   * Checks a thread using its native per-user access timestamp.
+   *
+   * A thread is unread when another member sent a message created after this member's last access.
+   * This is the only definition used by the badges, the inbox and the thread indicator.
+   */
   public function isUnread(PrivateMessageThreadInterface $thread): bool {
     if (!$thread->access('view', $this->currentUser, TRUE)->isAllowed()) {
       return FALSE;
     }
 
     $lastAccess = (int) ($thread->getLastAccessTimestamp($this->currentUser) ?: 0);
+    // The thread's updated time is its latest message time. If nothing changed after the last access,
+    // no message can be newer, so the messages do not need to be loaded.
+    if ((int) $thread->get('updated')->value <= $lastAccess) {
+      return FALSE;
+    }
+
     foreach ($thread->getMessages() as $message) {
       if ((int) $message->getOwnerId() !== (int) $this->currentUser->id()
-        && $lastAccess <= (int) $message->getCreatedTime()) {
+        && (int) $message->getCreatedTime() > $lastAccess) {
         return TRUE;
       }
     }

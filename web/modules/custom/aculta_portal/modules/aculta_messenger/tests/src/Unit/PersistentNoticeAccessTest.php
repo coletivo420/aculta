@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\domain\DomainNegotiatorInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -13,7 +16,10 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
+use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Hook\MessengerBarHooks;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\Tests\UnitTestCase;
@@ -54,7 +60,7 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
 
   public function testNoticeIsUnavailableBeforeItsStartAndCacheExpiresAtStart(): void {
     $now = time();
-    $start = date('Y-m-d\TH:i:s', $now + 200);
+    $start = gmdate('Y-m-d\TH:i:s', $now + 200);
     $node = $this->notice(['authenticated'], TRUE, ['field_aculta_notice_start' => $start]);
     $result = $this->hooks($now)->nodeAccess($node, 'view', $this->account(['authenticated']));
 
@@ -64,7 +70,7 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
 
   public function testNoticeIsUnavailableAtItsEnd(): void {
     $now = time();
-    $end = date('Y-m-d\TH:i:s', $now - 200);
+    $end = gmdate('Y-m-d\TH:i:s', $now - 200);
     $node = $this->notice(['authenticated'], TRUE, ['field_aculta_notice_end' => $end]);
     $result = $this->hooks($now)->nodeAccess($node, 'view', $this->account(['authenticated']));
 
@@ -83,6 +89,14 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
       $time,
       $this->createMock(FlagServiceInterface::class),
       $this->createMock(FriendshipManagerInterface::class),
+      new MessengerCounts($this->createMock(EntityTypeManagerInterface::class), $this->createMock(FlagServiceInterface::class), $this->createMock(GetAlertsInterface::class)),
+      new AvisoService($this->createMock(EntityTypeManagerInterface::class), $this->createMock(FlagServiceInterface::class)),
+      new DomainPurposeManager(
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(DomainNegotiatorInterface::class),
+        $this->createMock(ConfigFactoryInterface::class),
+        new RequestStack(),
+      ),
     );
   }
 

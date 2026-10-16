@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_magazine\Presentation;
 
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_magazine\Forum\ForumTopicSync;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -20,13 +21,14 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class ForumOpeningPost {
 
   /** Estilo de imagem da abertura. */
-  private const IMAGE_STYLE = 'large';
 
   public function __construct(
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $purposeManager,
     #[Autowire(service: 'aculta_magazine.forum_topic_sync')]
     private readonly ForumTopicSync $sync,
+    #[Autowire(service: 'aculta_image.render')]
+    private readonly ImageRenderer $imageRenderer,
   ) {}
 
   /**
@@ -46,14 +48,8 @@ final class ForumOpeningPost {
     }
 
     $cache = (new CacheableMetadata())->addCacheableDependency($post)->addCacheableDependency($topic);
-    $children = [
-      'titulo' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h2',
-        '#attributes' => ['data-portal-ui' => 'forum-opening-post-title'],
-        'link' => ['#type' => 'link', '#title' => $post->label(), '#url' => $url],
-      ],
-    ];
+    // O título não se repete aqui: a página do tópico já tem o título, e o link "Ler a publicação na Revista" leva à publicação.
+    $children = [];
 
     $image = $this->image($post, $cache);
     if ($image !== NULL) {
@@ -98,12 +94,7 @@ final class ForumOpeningPost {
       return NULL;
     }
     $cache->addCacheableDependency($media)->addCacheableDependency($file);
-    return [
-      '#theme' => 'image_style',
-      '#style_name' => self::IMAGE_STYLE,
-      '#uri' => $file->getFileUri(),
-      '#alt' => (string) $item->alt,
-    ];
+    return $this->imageRenderer->build('destaque', $file->getFileUri(), (string) $item->alt);
   }
 
 }

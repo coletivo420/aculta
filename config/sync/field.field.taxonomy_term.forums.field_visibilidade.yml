@@ -1,0 +1,20 @@
+uuid: 1e5b4ca6-3ab0-48ee-98b3-6420ab0a8e24
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_visibilidade
+    - taxonomy.vocabulary.forums
+id: taxonomy_term.forums.field_visibilidade
+field_name: field_visibilidade
+entity_type: taxonomy_term
+bundle: forums
+label: 'Visibilidade do fórum'
+description: 'Quem pode ver os tópicos deste fórum. Público: todos. E-mail confirmado: contas com e-mail confirmado. Marcadores de associado: somente contas com a marca de associado (F-D19, F-D20).'
+required: false
+translatable: false
+default_value:
+  -
+    value: publico
+settings: {  }
+field_type: list_string

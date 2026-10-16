@@ -16,30 +16,6 @@
     "active": true
   },
   {
-    "id": "monster-003-furry-smile",
-    "file": "monsters/monster-003-furry-smile.png",
-    "family": "monsters",
-    "label": "Monstrinho peludo",
-    "alt": "Monstrinho verde peludo e sorridente, em estilo cartoon.",
-    "active": true
-  },
-  {
-    "id": "monster-004-horns",
-    "file": "monsters/monster-004-horns.png",
-    "family": "monsters",
-    "label": "Monstrinho com chifres",
-    "alt": "Monstrinho roxo com grandes chifres, em estilo cartoon.",
-    "active": true
-  },
-  {
-    "id": "monster-005-gelatinous",
-    "file": "monsters/monster-005-gelatinous.png",
-    "family": "monsters",
-    "label": "Criatura gelatinosa",
-    "alt": "Criatura verde gelatinosa e relaxada, em estilo cartoon.",
-    "active": true
-  },
-  {
     "id": "monster-006-toothy",
     "file": "monsters/monster-006-toothy.png",
     "family": "monsters",
@@ -69,14 +45,6 @@
     "family": "monsters",
     "label": "Monstro redondo chapado",
     "alt": "Monstro amarelo redondo com expressão relaxada, em estilo cartoon.",
-    "active": true
-  },
-  {
-    "id": "monster-010-small-hoodie",
-    "file": "monsters/monster-010-small-hoodie.png",
-    "family": "monsters",
-    "label": "Monstrinho baixinho de moletom",
-    "alt": "Monstrinho verde usando moletom escuro, em estilo cartoon.",
     "active": true
   }
 ]

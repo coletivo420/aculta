@@ -27,5 +27,21 @@ O gate deve falhar quando tags e metadados divergirem, quando a documentação r
 
 ## Fonte de verdade
 
+Desde Game G3, helpers de submódulos opcionais também são declarados nos próprios
+arquivos de serviços e descritos no registro central. O gate confere o conjunto
+root + submódulos; o painel continua mostrando somente serviços do container ativo.
+`aculta_game.achievement_presentation` aplica a mesma política de exibição à
+conta e ao perfil público. Contrato e evidências em
+[execução do Game](../../web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md).
+
+`aculta_lms.course_completion_publisher` publica o contrato tipado de conclusão
+aprovada após a persistência pelo LMS. Ainda não há produtor nem consumidor
+ativo; ver [contrato do submódulo](../../web/modules/custom/aculta_portal/modules/aculta_lms/docs/CONTRACT.md).
+
+O viewer PDF está no submódulo independente
+[`aculta_pdf_viewer`](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md),
+que registra seu formatter, serviço e biblioteca. Ele não é helper do Portal nem
+depende do LMS; o contrato global está em [integração PDF](PDF-VIEWER-INTEGRATION.md).
+
 O YAML de serviços define a integração registrada; o container ativo define quais serviços estão disponíveis; os registros PHP descrevem esses serviços para administração; a documentação específica define seu contrato. A tela é um relatório, não uma configuração funcional nem uma fonte alternativa de estado.
 

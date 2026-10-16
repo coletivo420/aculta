@@ -49,6 +49,16 @@ final class PortalUiHooks {
     'search-popup' => ['aculta-search-popup'],
     'search-preview' => ['aculta-search-preview'],
     'search-preview-input' => ['aculta-search-preview-input'],
+    'new-conversation-link' => ['btn', 'btn-primary', 'aculta-messenger-new-conversation'],
+    'new-conversation-submit' => ['btn', 'btn-primary'],
+    'new-conversation-back' => ['btn', 'aculta-new-conversation-back'],
+    'new-conversation-cancel' => ['btn', 'aculta-new-conversation-cancel'],
+    'conversation-action' => ['aculta-messenger-options__action'],
+    'conversation-notice-action' => ['aculta-messenger-notice__action'],
+    'new-conversation-links' => ['d-flex', 'flex-wrap', 'gap-2', 'mt-2'],
+    'new-conversation-message' => ['form-control'],
+    'new-conversation-results' => ['list-group'],
+    'new-conversation-result' => ['list-group-item', 'list-group-item-action'],
     'search-preview-list' => ['aculta-search-preview__list', 'list-unstyled'],
     'search-preview-footer' => ['aculta-search-preview__footer', 'd-flex', 'justify-content-center', 'mt-2'],
     'search-preview-full' => ['aculta-search-preview__full', 'btn', 'btn-outline-primary', 'btn-sm'],
@@ -126,7 +136,9 @@ final class PortalUiHooks {
     'public-profile-actions' => ['portal-profile__actions'],
     'friendship-action-form' => ['portal-profile__friendship-form'],
     'friendship-action-button' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
+    'forum-topic-unread' => ['aculta-unread-count'],
     'public-profile-avatar' => ['portal-profile__avatar'],
+    'public-profile-avatar-image' => ['portal-profile__avatar-image'],
     'public-profile-initial' => ['portal-profile__initial'],
     'public-profile-identity' => ['portal-profile__identity'],
     'public-profile-name' => ['portal-profile__name'],
@@ -136,6 +148,15 @@ final class PortalUiHooks {
     'public-profile-link-facebook' => ['portal-profile__link', 'bi', 'bi-facebook'],
     'public-profile-link-reddit' => ['portal-profile__link', 'bi', 'bi-reddit'],
     'public-profile-link-email' => ['portal-profile__link', 'bi', 'bi-envelope'],
+    'profile-achievements' => ['portal-profile__achievements'],
+    'profile-achievements-title' => ['portal-profile__achievements-title'],
+    'profile-achievements-list' => ['portal-profile__achievements-list'],
+    'profile-achievement' => ['portal-profile__achievement'],
+    'profile-achievement-image' => ['portal-profile__achievement-image'],
+    'profile-achievement-content' => ['portal-profile__achievement-content'],
+    'profile-achievement-name' => ['portal-profile__achievement-name'],
+    'profile-achievement-description' => ['portal-profile__achievement-description'],
+    'profile-achievement-highlight' => ['portal-profile__achievement-highlight'],
     // Redes sociais (caixa embaixo da bio, Minha conta).
     'account-social-card' => ['portal-account-social'],
     'account-social-list' => ['portal-account-social__list'],
@@ -194,10 +215,59 @@ final class PortalUiHooks {
     'social-link-dialog' => ['aculta-social-link-dialog'],
     'secret-dialog' => ['aculta-secret-dialog'],
     'messenger-preview' => ['aculta-messenger-preview'],
-    'messenger-preview-inbox-link' => ['btn', 'btn-primary', 'aculta-messenger-preview__inbox-link'],
-    'messenger-read-status' => ['aculta-messenger-read-status'],
+    'account-home' => ['aculta-account-home'],
     'notice-read-status' => ['aculta-messenger-read-status'],
     'notice-unread-status' => ['aculta-messenger-read-status', 'aculta-messenger-read-status--unread'],
+    // Gaveta e lista do Messenger: o módulo marca elementos com estes tokens; as classes são as do CSS do tema
+    // (messenger-drawer.css e messenger-item.css). Ver docs/portal/MESSENGER.md.
+    'messenger-back-link' => ['aculta-messenger-back-link'],
+    'messenger-drawer-conversation' => ['aculta-messenger-drawer-conversation'],
+    'messenger-conversation-toolbar' => ['aculta-messenger-conversation-toolbar'],
+    'messenger-conversation-actions' => ['aculta-messenger-conversation__actions'],
+    'messenger-options' => ['aculta-messenger-options'],
+    'messenger-options-summary' => ['aculta-messenger-options__summary'],
+    'messenger-options-icon' => ['bi', 'bi-list'],
+    'messenger-options-label' => ['aculta-messenger-options__label'],
+    'messenger-options-panel' => ['aculta-messenger-options__panel'],
+    'messenger-options-item' => ['aculta-messenger-options__item'],
+    'messenger-options-status' => ['aculta-messenger-options__status'],
+    'messenger-notice' => ['aculta-messenger-notice'],
+    'messenger-sender' => ['aculta-messenger-sender', 'aculta-messenger-conversation'],
+    // Rótulo Lido / Não lido no topo da caixa (sem cor de marcação): ver css/components/messenger-drawer.css.
+    // Tópico do Fórum: contagem de respostas no título da seção e chamada para visitante.
+    'forum-reply-total' => ['aculta-forum-topic__replies-count'],
+    'forum-topic-visitor' => ['aculta-forum-topic__visitor'],
+    'read-label' => ['aculta-read-label'],
+    'read-label-unread' => ['aculta-read-label--unread'],
+    'messenger-sender-link' => ['aculta-messenger-sender__link'],
+    'messenger-sender-date' => ['aculta-messenger-sender__date'],
+    'messenger-sender-name' => ['aculta-messenger-sender__name'],
+    'messenger-sender-avatar' => ['aculta-messenger-sender__avatar'],
+    // Avisos na gaveta: resumo em caixa de botão (como uma conversa); o aviso completo abre na mesma gaveta.
+    'notice-summary' => ['aculta-messenger-sender', 'aculta-notice-summary'],
+    'notice-summary-link' => ['aculta-messenger-sender__link'],
+    'notice-summary-persistent' => ['aculta-notice-summary--persistent'],
+    // Cor de cada tipo de aviso (ver Support\NoticeType): informação, atenção e urgente.
+    'notice-type-info' => ['aculta-notice-type--info'],
+    'notice-type-warning' => ['aculta-notice-type--warning'],
+    'notice-type-danger' => ['aculta-notice-type--danger'],
+    'notice-summary-title' => ['aculta-notice-summary__title'],
+    'notice-summary-excerpt' => ['aculta-notice-summary__excerpt'],
+    'notice-summary-state' => ['aculta-notice-summary__state'],
+    'notice-detail' => ['aculta-notice-detail'],
+    'achievement-notices' => ['aculta-achievement-notices'],
+    'aculta-image-audit' => ['aculta-image-audit'],
+    // Seleção de membros da nova conversa (estilo Gmail): resultados e o campo com os chips.
+    'new-conversation-add' => ['aculta-new-conversation-add'],
+    'new-conversation-chips' => ['aculta-chips'],
+    'new-conversation-chip' => ['aculta-chip'],
+    'new-conversation-chip-name' => ['aculta-chip__name'],
+    'new-conversation-chip-remove' => ['aculta-chip__remove'],
+    // Administração de avisos (ACULTA Avisos).
+    'notice-admin-item' => ['admin-item'],
+    'notice-admin-intro' => ['aculta-notice-admin-intro'],
+    'notice-admin-list' => ['admin-list', 'aculta-notice-admin-list'],
+    'notice-admin-table' => ['aculta-notice-admin-table'],
     'account-photo-trigger' => ['portal-account-photo__trigger'],
     'support-form' => ['aculta-support'],
     'security-password-form' => ['aculta-security-password-form'],
@@ -214,6 +284,35 @@ final class PortalUiHooks {
     'status-attention' => ['aculta-portal-requirements__status--attention'],
     'breadcrumb-list' => ['breadcrumb'],
   ];
+
+  /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */
+  #[Hook('preprocess_menu')]
+  public function preprocessMenu(array &$variables): void {
+    if (!empty($variables['items']) && is_array($variables['items'])) {
+      $this->mapMenuLinkTokens($variables['items']);
+    }
+  }
+
+  /** @param array<int|string, mixed> $items */
+  private function mapMenuLinkTokens(array &$items): void {
+    foreach ($items as &$item) {
+      $url = $item['url'] ?? NULL;
+      if ($url instanceof \Drupal\Core\Url) {
+        $attributes = $url->getOption('attributes') ?? [];
+        $token = $attributes[self::ATTRIBUTE] ?? NULL;
+        if (is_string($token) && isset(self::TOKENS[$token])) {
+          unset($attributes[self::ATTRIBUTE]);
+          $existing = $attributes['class'] ?? [];
+          $attributes['class'] = array_values(array_unique(array_merge(is_array($existing) ? $existing : [$existing], self::TOKENS[$token])));
+          $url->setOption('attributes', $attributes);
+        }
+      }
+      if (!empty($item['below']) && is_array($item['below'])) {
+        $this->mapMenuLinkTokens($item['below']);
+      }
+    }
+    unset($item);
+  }
 
   #[Hook('preprocess_container')]
   #[Hook('preprocess_html_tag')]
@@ -261,6 +360,12 @@ final class PortalUiHooks {
         $this->applyArray($item['#wrapper_attributes'], $variables['items'][$key], '#wrapper_attributes');
       }
     }
+  }
+
+  /** The details of the Opções box: mapped after the Bootstrap accordion has set its attributes. */
+  #[Hook('preprocess_details')]
+  public function preprocessDetails(array &$variables): void {
+    $this->preprocess($variables);
   }
 
   /** Maps the neutral unread count from the account contract to the theme SDC. */

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_gallery\Hook;
 
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -27,6 +28,8 @@ final class GalleryViewHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'views.executable')]
     private readonly ViewExecutableFactory $viewExecutableFactory,
+    #[Autowire(service: 'aculta_image.render')]
+    private readonly ImageRenderer $imageRenderer,
   ) {}
 
   /**
@@ -84,13 +87,7 @@ final class GalleryViewHooks {
           'data-aculta-album-thumb' => (string) $position,
           'aria-label' => 'Foto ' . $position,
         ],
-        'image' => [
-          '#theme' => 'image_style',
-          '#style_name' => 'media_gallery_thumb',
-          '#uri' => $file->getFileUri(),
-          '#alt' => (string) ($media->get('field_media_image')->alt ?: $media->label()),
-          '#attributes' => ['loading' => 'lazy'],
-        ],
+        'image' => $this->imageRenderer->build('galeria_miniatura', $file->getFileUri(), (string) ($media->get('field_media_image')->alt ?: $media->label()), ['loading' => 'lazy']),
       ];
     }
     return $thumbs;

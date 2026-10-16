@@ -1,0 +1,58 @@
+# Traduções administrativas para extensões sem pacote pt-BR disponível.
+# Importar com: drush locale:import --type=customized --override=none pt-br <este arquivo>
+msgid ""
+msgstr ""
+"Project-Id-Version: ACULTA Portal — módulos e extensões\n"
+"Language: pt-br\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "ACULTA Associado ID"
+msgstr "Identificação de associado ACULTA"
+
+msgid "ACULTA Associado ID (legado)"
+msgstr "Identificação de associado ACULTA (legado)"
+
+msgid "ACULTA Deployer"
+msgstr "Implantador ACULTA"
+
+msgid "ACULTA Gallery (Galerias)"
+msgstr "Galerias ACULTA"
+
+msgid "ACULTA Magazine (Revista)"
+msgstr "Revista ACULTA"
+
+msgid "ACULTA Messenger"
+msgstr "Mensagens ACULTA"
+
+msgid "ACULTA Portal Sitemap"
+msgstr "Mapa do site do Portal ACULTA"
+
+msgid "ACULTA User (perfil público)"
+msgstr "ACULTA Usuários (perfil público)"
+
+msgid "Flexible permissions"
+msgstr "Permissões flexíveis"
+
+msgid "Allows you to gather, calculate and cache permissions from a myriad of sources"
+msgstr "Permite reunir, calcular e armazenar em cache permissões provenientes de diversas fontes."
+
+msgid "Username Enumeration Prevention"
+msgstr "Prevenção à enumeração de nomes de usuário"
+
+msgid "Username enumeration prevention"
+msgstr "Prevenção à enumeração de nomes de usuário"
+
+msgid "Removes the error message produced by the forgot password form, when an invalid user has been supplied."
+msgstr "Remove a mensagem de erro do formulário de recuperação de senha quando é informado um usuário inválido."
+
+msgid "WARNING! Anonymous users have permission to access user profiles."
+msgstr "ATENÇÃO! Pessoas visitantes têm permissão para acessar perfis de usuário."
+
+msgid "Anonymous users do not have permission to access user profiles."
+msgstr "Pessoas visitantes não têm permissão para acessar perfis de usuário."
+
+msgid "Granting anonymous users permission to access user\n        profiles poses a security risk because it allows users who are not logged\n        into the site to obtain usernames. More information is available in the\n        module README or on the <a href=\":url\">@link_text</a>"
+msgstr "Conceder a pessoas visitantes permissão para acessar perfis\n        representa um risco de segurança, pois permite que pessoas não autenticadas\n        obtenham nomes de usuário. Mais informações estão disponíveis no arquivo README\n        do módulo ou na <a href=\":url\">página do projeto</a>."

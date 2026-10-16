@@ -52,7 +52,20 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
   $assert($presentation !== NULL, 'Presentation builds for purpose: ' . $purpose);
 
   $theme = $presentation->toThemeArray();
-  $assert(array_keys($theme) === ['identity', 'regions'], 'Theme contract has only identity and regions: ' . $purpose);
+  $assert(array_keys($theme) === ['identity', 'regions', 'layout'], 'Theme contract has only identity, regions and layout: ' . $purpose);
+  $layout = $theme['layout'];
+  $assert(
+    array_keys($layout) === ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header'],
+    'Layout flags are the reviewed visibility set: ' . $purpose,
+  );
+  $assert($layout['institution_bar_account'] === ($purpose === 'account'), 'Account bar variant only for account: ' . $purpose);
+  $assert($layout['show_utility_bar'] === ($purpose !== 'links'), 'Utility bar is hidden only for links: ' . $purpose);
+  $assert($layout['links_page'] === ($purpose === 'links'), 'Links page layout only for links: ' . $purpose);
+  // A página inicial de main depende da requisição; o gate só confere o tipo, não o valor.
+  $assert(
+    is_bool($layout['show_site_header']) && ($purpose === 'main' || $layout['show_site_header'] === ($purpose === 'wiki')),
+    'Site header is shown for wiki (and main front page only): ' . $purpose,
+  );
   $assert(
     array_keys($theme['identity']) === ['purpose', 'title', 'short_title', 'home_url', 'logo_alt'],
     'Identity contract has the stable key set: ' . $purpose,

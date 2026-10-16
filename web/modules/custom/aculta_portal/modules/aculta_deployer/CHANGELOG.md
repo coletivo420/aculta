@@ -1,3 +1,32 @@
+## 0.1.25 — substituição e remoção da raiz pública anterior — 2026-10-15
+
+- `hostinger-layout --apply` substitui diretórios ou symlinks `public_html` por `public_html -> web` relativo e exclui o conteúdo anterior após a ativação.
+- A remoção não segue symlinks para fora de `public_html`.
+- Remove o caminho de backup, a mensagem de preservação e a rotina que gerava nomes de backup.
+- Revisa fixture para confirmar remoção do conteúdo e preservação do destino externo de symlink.
+- Validação focada da troca de diretório e segurança do destino externo passou; gates Drupal 11+ (768 verificações) e endereços de ambiente (1702 arquivos) passaram no checkout conectado ao Runtime de testes.
+
+## 0.1.24 — symlink público relativo — 2026-10-15
+
+- `hostinger-layout` ativa `public_html -> web` com destino relativo e o reconhece de forma idempotente.
+- Atualiza fixture e versão da CLI para 0.1.24.
+
+## 0.1.23 — raiz pública Hostinger por symlink — 2026-10-15
+
+- Adiciona `hostinger-layout --domain-root=DIR [--apply]`.
+- A instalação Composer fica diretamente na raiz da pasta do domínio; `public_html` aponta para `<pasta-do-domínio>/web`.
+- A execução é dry-run por padrão. Com `--apply`, uma pasta/symlink `public_html` existente é renomeada para backup antes da ativação; nada é apagado e falha na ativação tenta restaurá-la.
+- Recusa instalação incompleta e destinos que sejam arquivo comum; repetição quando o symlink já está correto é idempotente.
+- Testes determinísticos da simulação, preservação, ativação, idempotência e recusa de instalação incompleta.
+- Nenhuma alteração foi aplicada na Hostinger ou no Runtime do Homelab.
+
+## 0.1.22 — plataforma LiteSpeed da Hostinger — 2026-10-15
+
+- Registra que produção usa Hostinger Cloud Startup com LiteSpeed, confirmado em cabeçalho HTTP público; Homelab permanece Apache.
+- Atualiza DEP-0003 para evitar pressupor configuração Apache no servidor gerenciado; as verificações HTTP do deployer não dependem do servidor.
+- Versão sincronizada em `VERSION`, `Cli::VERSION` e `aculta_deployer.info.yml`.
+- Nenhuma alteração foi aplicada no servidor de produção; ele já responde com cabeçalho LiteSpeed. Build/testes do deployer não executados nesta etapa.
+
 ## 0.1.21 — Política de cookies de sessão por ambiente — 2026-10-14
 
 - `config/deploy.json`: seção `session_cookie` com o `cookie_domain` de cada ambiente (teste `.aculta.toca.net.br`, produção `.aculta.org`) e a transição teste → produção.
@@ -175,3 +204,4 @@
 - Barreiras de separação verificadas por `boundaries`: tema e Portal (fora do submódulo) não referenciam a ferramenta; a ferramenta não depende de Drupal, Drush, vendor, tema ou Portal.
 - Testes determinísticos em `tests/run.php`.
 - Entradas iniciais: DEP-0001 (canonical da página de apoio) e DEP-0002 (sitemap sem o host de apoio), ambas bloqueantes e abertas.
+

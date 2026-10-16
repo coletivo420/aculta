@@ -1,12 +1,16 @@
 _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
-  aculta_portal: 0
   aculta_gallery: 0
-  aculta_messenger: 0
+  aculta_image: 0
   aculta_magazine: 0
+  aculta_messenger: 0
+  aculta_pdf_viewer: 0
+  aculta_pdf_viewer_group: 0
+  aculta_portal: 0
   aculta_portal_sitemap: 0
   address: 0
+  agreement: 9999
   announcements_feed: 0
   automated_cron: 0
   big_pipe: 0
@@ -41,6 +45,7 @@ module:
   domain: 0
   domain_alias: 0
   domain_config: 0
+  domain_source: 30
   dynamic_page_cache: 0
   editor: 0
   email_confirmer: 0
@@ -49,9 +54,11 @@ module:
   entity: 0
   entity_embed: 0
   entity_reference_revisions: 0
+  entity_usage: 0
   field: 0
   field_ui: 0
   file: 0
+  file_mdm: 0
   filter: 0
   flag: 0
   flexible_permissions: 0
@@ -63,6 +70,9 @@ module:
   history: 0
   image: 0
   image_widget_crop: 0
+  imageapi_optimize: 0
+  imageapi_optimize_binaries: 0
+  imagemagick: 0
   inline_entity_form: 0
   key: 0
   language: 0
@@ -77,13 +87,14 @@ module:
   mailer_policy: 0
   mailer_transport: 0
   media: 0
+  media_duplicates: 0
   media_gallery: 0
-  message: 0
-  message_notify: 0
-  message_subscribe: 0
   media_library: 0
   menu_link_content: 0
   menu_ui: 0
+  message: 0
+  message_notify: 0
+  message_subscribe: 0
   metatag: 0
   metatag_open_graph: 0
   navigation: 0
@@ -93,13 +104,17 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
+  pathauto: 1
+  pdfpreview: 0
   photoswipe: 0
   photoswipe_dynamic_caption: 0
   physical: 0
-  profile: 0
   private_message: 0
+  profile: 0
   redirect: 0
   rename_admin_paths: 0
+  role_hierarchy: 0
+  role_inheritance: 0
   schema_article: 0
   schema_event: 0
   schema_image_object: 0
@@ -117,6 +132,8 @@ module:
   social_api: 0
   social_auth: 0
   social_auth_google: 0
+  sophron: 0
+  standard: 1000
   state_machine: 0
   symfony_mailer: 0
   system: 0
@@ -129,17 +146,13 @@ module:
   update: 0
   user: 0
   username_enumeration_prevention: 0
+  views: 10
   views_ui: 0
   vvj_core: 0
   vvjb: 0
   webform: 0
   webform_ui: 0
   workflows: 0
-  pathauto: 1
-  views: 10
-  domain_source: 30
-  standard: 1000
-  agreement: 9999
 theme:
   claro: 0
   stable9: 0

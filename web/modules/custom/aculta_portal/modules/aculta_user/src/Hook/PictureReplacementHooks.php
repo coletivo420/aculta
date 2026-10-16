@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
+use Drupal\aculta_image\FileRemover;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -28,6 +29,8 @@ final class PictureReplacementHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_user.avatar_pool')]
     private readonly AvatarPool $avatarPool,
+    #[Autowire(service: 'aculta_image.file_remover')]
+    private readonly FileRemover $fileRemover,
   ) {}
 
   /**
@@ -46,7 +49,7 @@ final class PictureReplacementHooks {
     }
     $file = $this->entityTypeManager->getStorage('file')->load($old);
     if ($file !== NULL && !str_starts_with($file->getFileUri(), self::ACERVO_PREFIX) && !$this->isUsedByOthers($old)) {
-      $file->delete();
+      $this->fileRemover->delete($file, 'troca de foto de perfil');
     }
   }
 

@@ -3,7 +3,7 @@ _core:
 interface:
   default: symfony_mailer
 mailer_dsn:
-  scheme: sendmail
+  scheme: aculta-disabled
   host: default
   user: null
   password: null

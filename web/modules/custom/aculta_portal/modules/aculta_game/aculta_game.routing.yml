@@ -1,0 +1,78 @@
+aculta_game.admin:
+  path: '/painel-administrativo/game'
+  defaults:
+    _form: '\Drupal\aculta_game\Form\MissionSettingsForm'
+    _title: 'Game'
+  requirements:
+    _permission: 'administer aculta game'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_game.achievements:
+  path: '/painel-administrativo/game/conquistas'
+  defaults:
+    _controller: '\Drupal\aculta_game\Controller\AchievementAdminController::overview'
+    _title: 'Conquistas'
+  requirements:
+    _permission: 'administer aculta game'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_game.achievement_add:
+  path: '/painel-administrativo/game/conquistas/criar'
+  defaults:
+    _form: '\Drupal\aculta_game\Form\AchievementDefinitionForm'
+    _title: 'Criar conquista'
+  requirements:
+    _permission: 'administer aculta game'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_game.achievement_edit:
+  path: '/painel-administrativo/game/conquistas/{conquista}/editar'
+  defaults:
+    _form: '\Drupal\aculta_game\Form\AchievementDefinitionForm'
+    _title: 'Editar conquista'
+  requirements:
+    _permission: 'administer aculta game'
+    conquista: '[a-z][a-z0-9_]{2,63}'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_game.achievement_image_remove_confirm:
+  path: '/painel-administrativo/game/conquistas/{conquista}/imagem/remover'
+  defaults:
+    _form: '\Drupal\aculta_game\Form\AchievementImageDeleteConfirmForm'
+    _title: 'Confirmar remoção da imagem'
+  requirements:
+    _permission: 'administer aculta game'
+    conquista: '[a-z][a-z0-9_]{2,63}'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_game.achievement_grant:
+  path: '/painel-administrativo/game/conquistas/conceder'
+  defaults:
+    _form: '\Drupal\aculta_game\Form\AchievementGrantForm'
+    _title: 'Conceder ou revogar conquista'
+  requirements:
+    _permission: 'administer aculta game'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_game.achievement_history:
+  path: '/painel-administrativo/game/historico'
+  defaults:
+    _controller: '\Drupal\aculta_game\Controller\AchievementAdminController::history'
+    _title: 'Histórico de concessões'
+  requirements:
+    _permission: 'administer aculta game'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main

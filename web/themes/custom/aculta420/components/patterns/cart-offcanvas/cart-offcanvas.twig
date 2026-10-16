@@ -2,7 +2,7 @@
 {# O badge fica sempre no DOM; com zero itens o CSS o esconde. O módulo atualiza data-aculta-cart-count após "Adicionar ao carrinho". #}
 <button type="button" class="btn btn-link p-0 aculta-cart-utility aculta-utility-trigger" data-bs-toggle="offcanvas" data-bs-target="#aculta-cart-offcanvas" aria-controls="aculta-cart-offcanvas" aria-label="Abrir carrinho ({{ count }} itens)" data-aculta-cart-trigger>
   <i class="bi bi-cart3" aria-hidden="true"></i>
-  <span class="badge aculta-cart-utility__count" data-aculta-cart-count data-count="{{ count }}">{{ count }}</span>
+  <span class="aculta-unread-count" data-aculta-cart-count data-count="{{ count }}">{{ count > 99 ? '99+' : count }}</span>
 </button>
 
 <div class="offcanvas offcanvas-end aculta-cart-offcanvas aculta-utility-offcanvas" tabindex="-1" id="aculta-cart-offcanvas" aria-labelledby="aculta-cart-offcanvas-label">

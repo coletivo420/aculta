@@ -17,9 +17,12 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
+use Drupal\aculta_messenger\Support\StorageDateTime;
 use Drupal\site_alert\GetAlertsInterface;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Supplies the neutral, per-member Messenger action to the global shell. */
@@ -42,20 +45,21 @@ final class MessengerBarHooks {
     private readonly FlagServiceInterface $flagService,
     #[Autowire(service: 'aculta_user.friendship_manager')]
     private readonly FriendshipManagerInterface $friendshipManager,
+    #[Autowire(service: 'aculta_messenger.counts')]
+    private readonly MessengerCounts $counts,
+    #[Autowire(service: 'aculta_messenger.aviso_service')]
+    private readonly \Drupal\aculta_messenger\Aviso\AvisoService $avisos,
+    #[Autowire(service: 'aculta_portal.domain_purpose')]
+    private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
-    if (!$this->currentUser->isAuthenticated()) {
-      $variables['aculta_alerts_trigger'] = [];
-      $variables['aculta_messenger_trigger'] = [];
-      return;
-    }
-
+    // Site Alerts are public: visitors see the active-alert count, and members also see
+    // their unread persistent notices. Only the private messenger is member-only.
     if (isset($variables['page']) && is_array($variables['page'])) {
       $alertStorage = $this->entityTypeManager->getStorage('site_alert');
-      $alerts = $this->siteAlerts->getActiveAlerts();
       $alertCacheability = (new CacheableMetadata())
         ->addCacheContexts(['active_site_alerts'])
         ->addCacheTags($this->entityTypeManager->getDefinition('site_alert')->getListCacheTags())
@@ -64,31 +68,22 @@ final class MessengerBarHooks {
         // The alert badge includes this member's unread Flag state.
         $alertCacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
       }
-      $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
-      foreach ($alerts as $alert) {
-        $alertCacheability->addCacheableDependency($alert);
-      }
       $alertUrl = Url::fromRoute('aculta_messenger.alerts_preview')->toString(TRUE);
-      $alertCount = 0;
-      foreach ($alerts as $alert) {
-        $access = $alert->access('view', $this->currentUser, TRUE);
-        $alertCacheability->addCacheableDependency($access);
-        if (!$access->isAllowed()) {
-          continue;
-        }
-        if ($dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->currentUser) !== NULL) {
-          continue;
-        }
-        $alertCount++;
-      }
+      $alertCount = $this->counts->visibleActiveAlertCount($this->currentUser, $alertCacheability);
       $alertCacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
+      // Ícone de avisos: alertas + comunicados não lidos + avisos por pessoa não lidos (um por tópico, agrupado).
       $unreadNoticeCount = $this->currentUser->isAuthenticated()
-        ? $alertCount + $this->getUnreadNoticeCount()
+        ? $alertCount + $this->counts->unreadPersistentNoticeCount($this->currentUser) + $this->avisos->naoLidosTotal((int) $this->currentUser->id())
         : $alertCount;
       $variables['aculta_alerts'] = [
         'url' => $alertUrl->getGeneratedUrl(),
         'count' => $unreadNoticeCount,
         'count_kind' => $this->currentUser->isAuthenticated() ? 'attention' : 'active',
+        // Botão "Ver todos os avisos" no rodapé da gaveta: só para a própria pessoa (a aba da conta exige login).
+        // A aba é da conta: a URL absoluta do purpose "account", não um caminho relativo ao host atual.
+        'all_url' => $this->currentUser->isAuthenticated()
+          ? ($this->domainPurposeManager->canonicalRouteUrl('account', 'aculta_messenger.avisos', ['aba' => 'avisos'])?->toString() ?? '')
+          : '',
       ];
       $this->renderer->addCacheableDependency($variables['page'], $alertCacheability);
       $this->renderer->addCacheableDependency($variables['page'], $alertUrl);
@@ -97,6 +92,7 @@ final class MessengerBarHooks {
     if (!$this->currentUser->isAuthenticated()
       || !$this->currentUser->hasPermission('use private messaging system')
       || !$this->currentUser->hasPermission('access user profiles')) {
+      $variables['aculta_messenger_trigger'] = [];
       return;
     }
 
@@ -104,6 +100,8 @@ final class MessengerBarHooks {
     $variables['aculta_messenger'] = [
       'url' => $url->getGeneratedUrl(),
       'unread_count' => $this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests()),
+      // Botão "Ver todas as mensagens" no rodapé da gaveta: aba Mensagens da conta, no purpose account.
+      'all_url' => $this->domainPurposeManager->canonicalRouteUrl('account', 'aculta_messenger.avisos', ['aba' => 'mensagens'])?->toString() ?? '',
     ];
 
     if (isset($variables['page']) && is_array($variables['page'])) {
@@ -113,6 +111,21 @@ final class MessengerBarHooks {
         ->addCacheableDependency($url);
       $this->renderer->addCacheableDependency($variables['page'], $cacheability);
     }
+  }
+
+  /**
+   * The drawer's new-conversation search is loaded by fetch, so its script must already be on the page.
+   * Attaching it through page_attachments reaches every page, not only the region render array.
+   */
+  #[Hook('page_attachments')]
+  public function pageAttachments(array &$attachments): void {
+    if (!$this->currentUser->isAuthenticated()
+      || !$this->currentUser->hasPermission('use private messaging system')
+      || !$this->currentUser->hasPermission('access user profiles')) {
+      return;
+    }
+    $attachments['#attached']['library'][] = 'aculta_portal/search-preview';
+    $attachments['#cache']['contexts'][] = 'user.permissions';
   }
 
   /** Supplies the per-member native thread state as a presentation-neutral value. */
@@ -125,14 +138,7 @@ final class MessengerBarHooks {
     if (!$thread instanceof PrivateMessageThreadInterface) {
       return;
     }
-    $lastAccess = $thread->getLastAccessTimestamp($this->currentUser);
-    $variables['aculta_messenger_read_status'] = 'read';
-    foreach ($thread->getMessages() as $message) {
-      if ($lastAccess <= $message->getCreatedTime() && $message->getOwnerId() != $this->currentUser->id()) {
-        $variables['aculta_messenger_read_status'] = 'unread';
-        break;
-      }
-    }
+    $variables['aculta_messenger_read_status'] = $this->unreadThreadCounter->isUnread($thread) ? 'unread' : 'read';
     $variables['elements']['#cache']['contexts'][] = 'user';
     $variables['elements']['#cache']['max-age'] = 0;
   }
@@ -156,8 +162,8 @@ final class MessengerBarHooks {
       if (!$node->hasField($field) || $node->get($field)->isEmpty()) {
         continue;
       }
-      $timestamp = strtotime((string) $node->get($field)->value);
-      if ($timestamp === FALSE) {
+      $timestamp = StorageDateTime::toTimestamp((string) $node->get($field)->value);
+      if ($timestamp === NULL) {
         return $result;
       }
       if ($timestamp > $now) {
@@ -179,31 +185,6 @@ final class MessengerBarHooks {
       ->addCacheableDependency($node)
       ->cachePerUser()
       ->setCacheMaxAge($maxAge);
-  }
-
-  /** Counts visible persistent notices not yet flagged as read by this member. */
-  private function getUnreadNoticeCount(): int {
-    $flag = $this->entityTypeManager->getStorage('flag')->load('aculta_notice_read');
-    if ($flag === NULL) {
-      return 0;
-    }
-    $ids = $this->entityTypeManager->getStorage('node')->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'aculta_notice')
-      ->condition('status', 1)
-      ->sort('created', 'DESC')
-      ->execute();
-    $nodes = $this->entityTypeManager->getStorage('node')->loadMultiple($ids);
-    $count = 0;
-    foreach ($nodes as $node) {
-      if (!$node instanceof NodeInterface || !$node->access('view', $this->currentUser)) {
-        continue;
-      }
-      if ($flag instanceof FlagInterface && $this->flagService->getFlagging($flag, $node, $this->currentUser) === NULL) {
-        $count++;
-      }
-    }
-    return $count;
   }
 
 }

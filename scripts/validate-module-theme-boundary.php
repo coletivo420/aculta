@@ -140,8 +140,12 @@ foreach ($files($module . '/js', ['js']) as $path) {
 // 10. Zero classes de design no módulo. Exceções: use-ajax (comportamento do Drupal) e is-active (estado da aba,
 //     que o tema também estiliza). Lê só o conteúdo de 'class' => [...] e de addClass(...).
 $allowedClasses = ['use-ajax', 'is-active'];
+// Dívida conhecida fora do Messenger, registrada em docs/operations/DEBT-REGISTER.md (DT-BOUNDARY-GALLERY): a galeria
+// de fotos monta a classe do PhotoSwipe. Sai desta lista quando o token data-portal-ui for criado.
+$knownDebt = ['modules/aculta_gallery/src/Hook/GalleryViewHooks.php: photoswipe-gallery'];
 $classAttrs = [];
-foreach ($files($module . '/src', ['php']) as $path) {
+// Every src/ of the module, including its submodules (aculta_messenger, aculta_user): a submodule is not exempt.
+foreach (array_filter($files($module, ['php']), static fn (string $p): bool => str_contains($p, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR)) as $path) {
   $text = (string) file_get_contents($path);
   $rel = substr($path, strlen($module) + 1);
   preg_match_all("/'class'\s*=>\s*\[([^\]]*)\]/", $text, $arrays);
@@ -164,6 +168,7 @@ foreach ($files($module . '/src', ['php']) as $path) {
     $classAttrs[] = $rel . ': class="..." em string';
   }
 }
+$classAttrs = array_values(array_diff($classAttrs, $knownDebt));
 $assert($classAttrs === [], 'Classe de design no módulo (use data-portal-ui e mapeie no tema): ' . implode('; ', array_slice($classAttrs, 0, 6)));
 
 // 10b. Todo token de data-portal-ui usado pelo módulo existe no mapa do tema (PortalUiHooks::TOKENS).

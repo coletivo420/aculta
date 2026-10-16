@@ -16,30 +16,6 @@
     "active": true
   },
   {
-    "id": "monster-003-furry-smile",
-    "file": "monsters/monster-003-furry-smile.png",
-    "family": "monsters",
-    "label": "Monstrinho peludo",
-    "alt": "Monstrinho verde peludo e sorridente, em estilo cartoon.",
-    "active": true
-  },
-  {
-    "id": "monster-004-horns",
-    "file": "monsters/monster-004-horns.png",
-    "family": "monsters",
-    "label": "Monstrinho com chifres",
-    "alt": "Monstrinho roxo com grandes chifres, em estilo cartoon.",
-    "active": true
-  },
-  {
-    "id": "monster-005-gelatinous",
-    "file": "monsters/monster-005-gelatinous.png",
-    "family": "monsters",
-    "label": "Criatura gelatinosa",
-    "alt": "Criatura verde gelatinosa e relaxada, em estilo cartoon.",
-    "active": true
-  },
-  {
     "id": "monster-006-toothy",
     "file": "monsters/monster-006-toothy.png",
     "family": "monsters",
@@ -72,14 +48,6 @@
     "active": true
   },
   {
-    "id": "monster-010-small-hoodie",
-    "file": "monsters/monster-010-small-hoodie.png",
-    "family": "monsters",
-    "label": "Monstrinho baixinho de moletom",
-    "alt": "Monstrinho verde usando moletom escuro, em estilo cartoon.",
-    "active": true
-  },
-  {
     "id": "plant-001-broto-humanoide",
     "file": "plants/plant-001-broto-humanoide.png",
     "family": "plants",
@@ -103,15 +71,6 @@
     "family": "plants",
     "label": "Arbusto maconheiro",
     "alt": "Arbusto antropomórfico com óculos e expressão relaxada.",
-    "presentation": "neutral",
-    "active": true
-  },
-  {
-    "id": "plant-004-carnivora-chapada",
-    "file": "plants/plant-004-carnivora-chapada.png",
-    "family": "plants",
-    "label": "Planta carnívora chapada",
-    "alt": "Planta carnívora em vaso com olhos relaxados e língua grande.",
     "presentation": "neutral",
     "active": true
   },
@@ -149,24 +108,6 @@
     "label": "Pequeno guardião da floresta",
     "alt": "Pequena criatura vegetal guardiã da floresta cercada por cogumelos.",
     "presentation": "neutral",
-    "active": true
-  },
-  {
-    "id": "plant-009-monstro-musgo",
-    "file": "plants/plant-009-monstro-musgo.png",
-    "family": "plants",
-    "label": "Monstro de musgo",
-    "alt": "Monstro coberto de musgo e pequenos cogumelos, com expressão relaxada.",
-    "presentation": "neutral",
-    "active": true
-  },
-  {
-    "id": "plant-010-mutante-sorridente",
-    "file": "plants/plant-010-mutante-sorridente.png",
-    "family": "plants",
-    "label": "Planta mutante sorridente",
-    "alt": "Criatura vegetal mutante feminina, sorridente e psicodélica.",
-    "presentation": "feminine",
     "active": true
   },
   {
@@ -826,14 +767,6 @@
     "active": true
   },
   {
-    "id": "cerrado-005-irara",
-    "file": "cerrado/cerrado-005-irara.png",
-    "family": "cerrado",
-    "label": "Irara",
-    "alt": "Irara antropomórfica sobre rochas do Cerrado ao pôr do sol, em avatar quadrado nativo.",
-    "active": true
-  },
-  {
     "id": "cerrado-006-paca",
     "file": "cerrado/cerrado-006-paca.png",
     "family": "cerrado",
@@ -850,27 +783,463 @@
     "active": true
   },
   {
-    "id": "cerrado-008-carcara",
-    "file": "cerrado/cerrado-008-carcara.png",
-    "family": "cerrado",
-    "label": "Carcará",
-    "alt": "Carcará antropomórfico sobre rocha em paisagem do Cerrado ao pôr do sol, em avatar quadrado nativo.",
-    "active": true
-  },
-  {
-    "id": "cerrado-009-mutum-de-penacho",
-    "file": "cerrado/cerrado-009-mutum-de-penacho.png",
-    "family": "cerrado",
-    "label": "Mutum-de-penacho",
-    "alt": "Mutum-de-penacho antropomórfico em paisagem do Cerrado ao entardecer, em avatar quadrado nativo.",
-    "active": true
-  },
-  {
     "id": "cerrado-010-gralha-do-campo",
     "file": "cerrado/cerrado-010-gralha-do-campo.png",
     "family": "cerrado",
     "label": "Gralha-do-campo",
     "alt": "Gralha-do-campo antropomórfica em paisagem do Cerrado ao pôr do sol, em avatar quadrado nativo.",
     "active": true
+  },
+  {
+    "id": "undead-001-caveira-rastafari",
+    "file": "undead/undead-001-caveira-rastafari.png",
+    "family": "undead",
+    "label": "Caveira rastafari",
+    "alt": "Caveira rastafari de óculos com folhas de cannabis, boina rasta e baseado.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-002-catrina-canabica",
+    "file": "undead/undead-002-catrina-canabica.png",
+    "family": "undead",
+    "label": "Catrina canábica",
+    "alt": "Catrina esquelética com coroa floral e folhas de cannabis, fumando em pose elegante.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-003-ceifador-verde",
+    "file": "undead/undead-003-ceifador-verde.png",
+    "family": "undead",
+    "label": "Ceifador verde",
+    "alt": "Ceifador esquelético com capuz, foice e medalhão de folha de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-004-zumbi-punk",
+    "file": "undead/undead-004-zumbi-punk.png",
+    "family": "undead",
+    "label": "Zumbi punk",
+    "alt": "Zumbi punk de moicano verde e vermelho, jaqueta com spikes e baseado.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-005-jardineiro-esqueleto",
+    "file": "undead/undead-005-jardineiro-esqueleto.png",
+    "family": "undead",
+    "label": "Jardineiro esqueleto",
+    "alt": "Esqueleto jardineiro com chapéu, pazinha e vaso de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-006-dj-esqueleto",
+    "file": "undead/undead-006-dj-esqueleto.png",
+    "family": "undead",
+    "label": "DJ esqueleto",
+    "alt": "Esqueleto DJ com fones, boné e toca-discos em ambiente verde esfumaçado.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-007-cientista-zumbi",
+    "file": "undead/undead-007-cientista-zumbi.png",
+    "family": "undead",
+    "label": "Cientista zumbi",
+    "alt": "Zumbi cientista segurando frasco químico com símbolo de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-008-pirata-esqueleto",
+    "file": "undead/undead-008-pirata-esqueleto.png",
+    "family": "undead",
+    "label": "Pirata esqueleto",
+    "alt": "Pirata esquelético com chapéu tricórnio, tapa-olho e baseado ao pôr do sol.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-009-zumbi-skatista",
+    "file": "undead/undead-009-zumbi-skatista.png",
+    "family": "undead",
+    "label": "Zumbi skatista",
+    "alt": "Zumbi skatista com boné e shape com folha de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-010-rei-esqueleto",
+    "file": "undead/undead-010-rei-esqueleto.png",
+    "family": "undead",
+    "label": "Rei esqueleto",
+    "alt": "Rei esqueleto com coroa dourada, manto real e medalhão de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-001-deusa-verde",
+    "file": "mixed/mixed-001-deusa-verde.png",
+    "family": "mixed",
+    "label": "Deusa verde",
+    "active": true,
+    "alt": "Mulher de cabelos longos e folhagem de cannabis na cabeça, com flores brancas, fumando um baseado em paisagem de cerrado ao pôr do sol.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-002-anciao-mistico",
+    "file": "mixed/mixed-002-anciao-mistico.png",
+    "family": "mixed",
+    "label": "Ancião místico",
+    "active": true,
+    "alt": "Ancião de barba e dreads brancos, com chapéu de aba larga, cajado e folhas de cannabis, em paisagem de savana.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-003-explorador-reggae",
+    "file": "mixed/mixed-003-explorador-reggae.png",
+    "family": "mixed",
+    "label": "Explorador reggae",
+    "active": true,
+    "alt": "Jovem de dreadlocks e fones de ouvido, com moletom de folha de cannabis, fazendo joia, em paisagem de pôr do sol.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-004-cao-aventureiro",
+    "file": "mixed/mixed-004-cao-aventureiro.png",
+    "family": "mixed",
+    "label": "Cão aventureiro",
+    "active": true,
+    "alt": "Cão com chapéu verde, óculos escuros, lenço com folha de cannabis e mochila, em paisagem de savana.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-005-gato-aventureiro",
+    "file": "mixed/mixed-005-gato-aventureiro.png",
+    "family": "mixed",
+    "label": "Gato aventureiro",
+    "active": true,
+    "alt": "Gato preto com capuz e lenço vermelho, fumando um baseado, com mochila e folhas de cannabis.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-006-alien-verde",
+    "file": "mixed/mixed-006-alien-verde.png",
+    "family": "mixed",
+    "label": "Alien verde",
+    "active": true,
+    "alt": "Alien verde de capuz, fazendo sinal de paz, sob céu noturno estrelado com folha de cannabis no peito.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-007-chimpanze-rastafari",
+    "file": "mixed/mixed-007-chimpanze-rastafari.png",
+    "family": "mixed",
+    "label": "Chimpanzé rastafari",
+    "active": true,
+    "alt": "Chimpanzé de dreadlocks, boné rasta e óculos escuros, com baseado e colar de paz, em paisagem de savana.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-008-capivara-aventureira",
+    "file": "mixed/mixed-008-capivara-aventureira.png",
+    "family": "mixed",
+    "label": "Capivara aventureira",
+    "active": true,
+    "alt": "Capivara com mochila e folha de cannabis no peito, em paisagem de savana à beira de um lago.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-009-guardiao-arboreo",
+    "file": "mixed/mixed-009-guardiao-arboreo.png",
+    "family": "mixed",
+    "label": "Guardião arbóreo",
+    "active": true,
+    "alt": "Guardião arbóreo com rosto coberto de folhas de cannabis, em paisagem vermelha e verde.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-010-tartaruga-aventureira",
+    "file": "mixed/mixed-010-tartaruga-aventureira.png",
+    "family": "mixed",
+    "label": "Tartaruga aventureira",
+    "active": true,
+    "alt": "Tartaruga com óculos escuros, mochila e folha de cannabis no casco, em paisagem de savana ao pôr do sol.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "robots-001-robo-420",
+    "file": "robots/robots-001-robo-420.png",
+    "family": "robots",
+    "label": "Robô 420",
+    "alt": "Avatar ilustrado de robô 420 com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 295,
+    "height": 480
+  },
+  {
+    "id": "robots-002-androide-verde",
+    "file": "robots/robots-002-androide-verde.png",
+    "family": "robots",
+    "label": "Androide verde",
+    "alt": "Avatar ilustrado de androide verde com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 298,
+    "height": 480
+  },
+  {
+    "id": "robots-003-cyborg-chapado",
+    "file": "robots/robots-003-cyborg-chapado.png",
+    "family": "robots",
+    "label": "Cyborg chapado",
+    "alt": "Avatar ilustrado de cyborg chapado com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 295,
+    "height": 480
+  },
+  {
+    "id": "robots-004-robo-olhos-vermelhos",
+    "file": "robots/robots-004-robo-olhos-vermelhos.png",
+    "family": "robots",
+    "label": "Robô de olhos vermelhos",
+    "alt": "Avatar ilustrado de robô de olhos vermelhos com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 299,
+    "height": 480
+  },
+  {
+    "id": "robots-005-bot-maconheiro",
+    "file": "robots/robots-005-bot-maconheiro.png",
+    "family": "robots",
+    "label": "Bot maconheiro",
+    "alt": "Avatar ilustrado de bot maconheiro com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 291,
+    "height": 480
+  },
+  {
+    "id": "robots-006-maquina-fumaca-viva",
+    "file": "robots/robots-006-maquina-fumaca-viva.png",
+    "family": "robots",
+    "label": "Máquina de fumaça viva",
+    "alt": "Avatar ilustrado de máquina de fumaça viva com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 295,
+    "height": 513
+  },
+  {
+    "id": "robots-007-robo-rastafari",
+    "file": "robots/robots-007-robo-rastafari.png",
+    "family": "robots",
+    "label": "Robô rastafari",
+    "alt": "Avatar ilustrado de robô rastafari com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 298,
+    "height": 513
+  },
+  {
+    "id": "robots-008-ia-monstruosa",
+    "file": "robots/robots-008-ia-monstruosa.png",
+    "family": "robots",
+    "label": "Inteligência artificial monstruosa",
+    "alt": "Avatar ilustrado de inteligência artificial monstruosa com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 295,
+    "height": 513
+  },
+  {
+    "id": "robots-009-drone-personalidade",
+    "file": "robots/robots-009-drone-personalidade.png",
+    "family": "robots",
+    "label": "Drone com personalidade",
+    "alt": "Avatar ilustrado de drone com personalidade com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 299,
+    "height": 513
+  },
+  {
+    "id": "robots-010-robo-sucata",
+    "file": "robots/robots-010-robo-sucata.png",
+    "family": "robots",
+    "label": "Robô de sucata",
+    "alt": "Avatar ilustrado de robô de sucata com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 291,
+    "height": 513
+  },
+  {
+    "id": "pirates-002-polvo-pirata",
+    "file": "pirates/pirates-002-polvo-pirata.png",
+    "family": "pirates",
+    "label": "Polvo pirata",
+    "alt": "Polvo pirata com tapa-olho, sabre e mapa do tesouro temático.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-003-caveira-pirata-420",
+    "file": "pirates/pirates-003-caveira-pirata-420.png",
+    "family": "pirates",
+    "label": "Caveira pirata 420",
+    "alt": "Caveira pirata com colares 420, tapa-olho e baseado.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-004-alien-corsario",
+    "file": "pirates/pirates-004-alien-corsario.png",
+    "family": "pirates",
+    "label": "Alien corsário",
+    "alt": "Alienígena corsário de estilo pirata com cenário cósmico tropical.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-005-monstro-marinheiro",
+    "file": "pirates/pirates-005-monstro-marinheiro.png",
+    "family": "pirates",
+    "label": "Monstro marinheiro",
+    "alt": "Monstro marinho pirata com muitos tentáculos e acessórios navais.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-006-papagaio-chapado",
+    "file": "pirates/pirates-006-papagaio-chapado.png",
+    "family": "pirates",
+    "label": "Papagaio chapado",
+    "alt": "Arara pirata colorida com lenço, chapéu e estética canábica.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-008-sapo-bucaneiro",
+    "file": "pirates/pirates-008-sapo-bucaneiro.png",
+    "family": "pirates",
+    "label": "Sapo bucaneiro",
+    "alt": "Sapo bucaneiro com roupa de pirata e cenário de porto tropical.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-009-criatura-de-tapa-olho",
+    "file": "pirates/pirates-009-criatura-de-tapa-olho.png",
+    "family": "pirates",
+    "label": "Criatura de tapa-olho",
+    "alt": "Criatura fantástica pirata com tapa-olho, presas e adornos 420.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-010-fantasma-pirata",
+    "file": "pirates/pirates-010-fantasma-pirata.png",
+    "family": "pirates",
+    "label": "Fantasma pirata",
+    "alt": "Fantasma pirata luminoso surgindo no cais sob a lua cheia.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "insects-001-abelha-420",
+    "file": "insects/insects-001-abelha-420.png",
+    "family": "insects",
+    "label": "Abelha 420",
+    "alt": "Avatar ilustrado: Abelha 420, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-002-besouro-psicodelico",
+    "file": "insects/insects-002-besouro-psicodelico.png",
+    "family": "insects",
+    "label": "Besouro psicodélico",
+    "alt": "Avatar ilustrado: Besouro psicodélico, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-003-louva-a-deus-zen",
+    "file": "insects/insects-003-louva-a-deus-zen.png",
+    "family": "insects",
+    "label": "Louva-a-deus zen",
+    "alt": "Avatar ilustrado: Louva-a-deus zen, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-004-borboleta-cosmica",
+    "file": "insects/insects-004-borboleta-cosmica.png",
+    "family": "insects",
+    "label": "Borboleta cósmica",
+    "alt": "Avatar ilustrado: Borboleta cósmica, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-005-aranha-cartoon",
+    "file": "insects/insects-005-aranha-cartoon.png",
+    "family": "insects",
+    "label": "Aranha cartoon",
+    "alt": "Avatar ilustrado: Aranha cartoon, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-006-joaninha-rastafari",
+    "file": "insects/insects-006-joaninha-rastafari.png",
+    "family": "insects",
+    "label": "Joaninha rastafari",
+    "alt": "Avatar ilustrado: Joaninha rastafari, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-007-formiga-maconheira",
+    "file": "insects/insects-007-formiga-maconheira.png",
+    "family": "insects",
+    "label": "Formiga maconheira",
+    "alt": "Avatar ilustrado: Formiga maconheira, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-008-mariposa-mistica",
+    "file": "insects/insects-008-mariposa-mistica.png",
+    "family": "insects",
+    "label": "Mariposa mística",
+    "alt": "Avatar ilustrado: Mariposa mística, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-009-libelula-neon",
+    "file": "insects/insects-009-libelula-neon.png",
+    "family": "insects",
+    "label": "Libélula neon",
+    "alt": "Avatar ilustrado: Libélula neon, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-010-cigarra-reggae",
+    "file": "insects/insects-010-cigarra-reggae.png",
+    "family": "insects",
+    "label": "Cigarra reggae",
+    "alt": "Avatar ilustrado: Cigarra reggae, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
   }
 ]

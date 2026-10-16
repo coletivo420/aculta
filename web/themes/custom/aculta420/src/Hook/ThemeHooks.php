@@ -99,30 +99,6 @@ final class ThemeHooks {
   }
 
   /**
-   * Adds a 2x source to the project card image (1x style: 256 px).
-   *
-   * The 1x file is the img src; retina screens take the 512 px variant. Only the
-   * card style is touched, so other images keep their single source.
-   */
-  #[Hook('preprocess_image_style')]
-  public function preprocessImageStyle(array &$variables): void {
-    if (($variables['style_name'] ?? '') !== 'aculta_card_1x' || empty($variables['uri'])) {
-      return;
-    }
-    $styles = $this->entityTypeManager->getStorage('image_style');
-    $one_x = $styles->load('aculta_card_1x');
-    $two_x = $styles->load('aculta_card_2x');
-    if ($one_x === NULL || $two_x === NULL) {
-      return;
-    }
-    if (!isset($variables['image']['#attributes'])) {
-      return;
-    }
-    $variables['image']['#attributes']['srcset'] = $one_x->buildUrl($variables['uri']) . ' 1x, '
-      . $two_x->buildUrl($variables['uri']) . ' 2x';
-  }
-
-  /**
    * Marks editorial body fields as prose without styling unrelated links.
    */
   #[Hook('preprocess_field')]
@@ -283,7 +259,6 @@ final class ThemeHooks {
    */
   private function presentMessengerPage(array &$variables, ?string $routeName): void {
     $component = match ($routeName) {
-      'aculta_messenger.messages', 'aculta_messenger.conversations', 'aculta_messenger.notifications', 'aculta_messenger.notices', 'private_message.private_message_page' => 'aculta420:messenger-list',
       'aculta_messenger.preview' => 'aculta420:messenger-list',
       'private_message.private_message_create' => 'aculta420:messenger-compose',
       default => NULL,
@@ -300,22 +275,7 @@ final class ThemeHooks {
     $original = $content;
     $props = [];
     $slot = 'content';
-    if ($routeName === 'aculta_messenger.messages') {
-      $props['label'] = 'Ações de mensagens';
-    }
-    elseif ($routeName === 'aculta_messenger.conversations') {
-      $props['label'] = 'Todas as conversas';
-    }
-    elseif ($routeName === 'aculta_messenger.notifications') {
-      $props['label'] = 'Notificações';
-    }
-    elseif ($routeName === 'aculta_messenger.notices') {
-      $props['label'] = 'Avisos';
-    }
-    elseif ($routeName === 'private_message.private_message_page') {
-      $props['label'] = 'Conversas';
-    }
-    elseif ($routeName === 'aculta_messenger.preview') {
+    if ($routeName === 'aculta_messenger.preview') {
       $props['label'] = 'Conversas recentes';
     }
     elseif ($routeName === 'private_message.private_message_create') {
@@ -344,6 +304,7 @@ final class ThemeHooks {
       '#props' => [
         'href' => $messenger['url'],
         'count' => max(0, (int) ($messenger['unread_count'] ?? 0)),
+        'all_href' => is_string($messenger['all_url'] ?? NULL) ? $messenger['all_url'] : '',
       ],
     ];
     unset($variables['aculta_messenger']);
@@ -363,6 +324,7 @@ final class ThemeHooks {
         'href' => $alerts['url'],
         'count' => max(0, (int) ($alerts['count'] ?? 0)),
         'count_kind' => $alerts['count_kind'] ?? 'active',
+        'all_href' => is_string($alerts['all_url'] ?? NULL) ? $alerts['all_url'] : '',
       ],
     ];
     unset($variables['aculta_alerts']);
@@ -397,21 +359,6 @@ final class ThemeHooks {
         'avatar' => $variables['aculta_messenger_sender_avatar'] ?? [],
         'content' => $content,
       ],
-    ];
-  }
-
-  /** Wraps the account-owned Message output without changing its data or access. */
-  #[Hook('preprocess_message')]
-  public function preprocessMessage(array &$variables): void {
-    if ($this->routeMatch->getRouteName() !== 'aculta_messenger.notifications'
-      || !is_array($variables['content'] ?? NULL)) {
-      return;
-    }
-    $content = $variables['content'];
-    $variables['content'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420:messenger-notification',
-      '#slots' => ['content' => $content],
     ];
   }
 

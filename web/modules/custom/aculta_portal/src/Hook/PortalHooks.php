@@ -252,6 +252,7 @@ final class PortalHooks {
     $resolver = $this->domainPurposeManager;
     $this->decorateLoginPopupItems($variables['items']);
     $this->rewriteDomainMenuItems($variables['items'], $resolver);
+    $this->markAccountHomeItems($variables['items']);
     if (isset($variables['#cache']) && is_array($variables['#cache'])) {
       $variables['#cache']['contexts'] = array_values(array_unique(array_merge(
         $variables['#cache']['contexts'] ?? [],
@@ -307,6 +308,26 @@ final class PortalHooks {
    * "Entrar" para visitante anônimo abre o popup de login no próprio host (use-ajax modal, mesma origem). O link
    * /entrar continua valendo sem JavaScript: a rota do popup também mostra o formulário em página.
    */
+  /**
+   * Marks the "Minha conta" link with a semantic token. The item is identified by its menu link, so a
+   * domain rewrite of its URL does not affect the marking. Whether it is highlighted is a theme decision
+   * taken from the purpose presented by the domain_presentation contract.
+   */
+  private function markAccountHomeItems(array &$items): void {
+    foreach ($items as &$item) {
+      $link = $item['original_link'] ?? NULL;
+      $url = $item['url'] ?? NULL;
+      if ($link instanceof \Drupal\Core\Menu\MenuLinkInterface && $link->getPluginId() === 'aculta_portal.dashboard' && $url instanceof Url) {
+        $attributes = $url->getOption('attributes') ?? [];
+        $url->setOption('attributes', array_merge($attributes, ['data-portal-ui' => 'account-home']));
+      }
+      if (!empty($item['below']) && is_array($item['below'])) {
+        $this->markAccountHomeItems($item['below']);
+      }
+    }
+    unset($item);
+  }
+
   private function decorateLoginPopupItems(array &$items): void {
     if ($this->currentUser->isAuthenticated()) {
       return;

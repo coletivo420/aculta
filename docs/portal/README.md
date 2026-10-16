@@ -14,7 +14,16 @@
 - [ADR-009 — sitemap multidomínio](../decisions/ADR-009-sitemap-multidominio.md) — submódulo `aculta_portal_sitemap` (linha 0.1.x, opt-in).
 - [ACULTA Associado ID](../modules/ACULTA-ASSOCIADO-ID.md) — escopo de dados dos associados, compatibilidade e migração controlada; Runtime DEFERRED.
 - [ACULTA Gallery — arquitetura](../../web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md) — álbuns e galerias incorporadas (Media Gallery, PhotoSwipe, Entity Embed): decisões, limitações comprovadas e contratos (linha 0.1.x, submódulo opcional).
+- [ACULTA Messenger: documentação do projeto](MESSENGER.md) — módulo, submódulo, rotas, hooks, classes e contratos com o tema.
+- [Tipos de conversa do Messenger: grupos, fórum, LMS, retenção e integrações](MESSENGER-CONVERSATION-KINDS.md) — base preparada, decisões pendentes e fases.
+- [Auditoria do Messenger](MESSENGER-AUDIT.md) — separação entre módulo, submódulo e tema, com os achados.
 - [ACULTA Messenger](../../web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) — integração de mensagens, modais, avisos persistentes segmentados e estado de leitura individual.
+- [PDF global](PDF-VIEWER-INTEGRATION.md) — contrato compartilhado de Media, viewer, acesso a arquivos e previews.
+- [ACULTA PDF Viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md) — documentação do submódulo, formatter, serviço, biblioteca, hooks e testes.
+- [ACULTA PDF Viewer Group](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md) — relação opcional de Media `document` com turmas Group e acesso por membership.
+- [Contratos de integração LMS](LMS-INTEGRATION-CONTRACTS.md) — avaliações, certificados, Messenger, User/conquistas e apresentação.
+- [Matriz de segurança e arquivos LMS](SECURITY-ACCESS-FILES-MATRIX.md) — papéis, acesso, upload, cache e isolamento por turma.
+- [Roadmap do aculta_lms](../modules/ACULTA-LMS-ROADMAP.md) e [compatibilidade LMS/PDF](../modules/LMS-COMPATIBILITY.md).
 
 ## Políticas
 
@@ -52,3 +61,16 @@
 ## Roadmap
 
 - [ROADMAP.md](ROADMAP.md) — saneamento e features de produto.
+
+## Projetos aprovados — 2026-10-15
+
+- [ACULTA Fórum / Growroom420](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
+  — reconstrução do acervo, autores individuais no memorial coletivo, prefixo
+  `growroom420`, conversas atuais vinculadas e integrações do Portal.
+- [ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md)
+  — conquistas e missões sem ranking ou benefícios financeiros; exibição pública
+  por padrão com privacidade e destaques; pesquisa de módulos e licenças.
+
+Fórum permanece documental. Game é instalável desde G1 e integra o backend de
+conquistas do User. Seus READMEs separam o estado do código, as decisões aprovadas
+e as fases de implementação.

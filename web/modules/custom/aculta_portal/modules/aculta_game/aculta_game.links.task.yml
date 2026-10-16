@@ -1,0 +1,20 @@
+aculta_game.admin:
+  title: 'Visão geral'
+  route_name: aculta_game.admin
+  base_route: aculta_game.admin
+  weight: 0
+aculta_game.achievements:
+  title: 'Conquistas'
+  route_name: aculta_game.achievements
+  base_route: aculta_game.admin
+  weight: 1
+aculta_game.achievement_grant:
+  title: 'Conceder ou revogar'
+  route_name: aculta_game.achievement_grant
+  base_route: aculta_game.admin
+  weight: 2
+aculta_game.achievement_history:
+  title: 'Histórico'
+  route_name: aculta_game.achievement_history
+  base_route: aculta_game.admin
+  weight: 3

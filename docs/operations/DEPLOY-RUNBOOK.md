@@ -15,8 +15,8 @@ deployment, credential setup, or payment was performed in the local phase.
 
 ## Database policy: development States versus production
 
-- Development uses the mutable SQLite Runtime at `var/database/aculta-runtime.sqlite`.
-- The immutable SQLite snapshots in `estados/` are integral development States, not production backups or deployment artifacts. Never upload, restore, or point production at one.
+- Development uses the mutable MariaDB Runtime `aculta_runtime` (Homelab).
+- The immutable Estados in `estados/` are integral development States, not production backups or deployment artifacts. Never upload, restore, or point production at one.
 - Production remains MariaDB. Production credentials and MariaDB settings come only from private environment configuration on the production host.
 - A deployment transfers code, locked Composer dependencies, and full `config/sync`; it does not transfer the Runtime, an Estado, SQL dumps, or uploaded/private files.
 - The first Estado contains the source database's complete records and may include personal data and values already persisted in the source database. Keep the repository private before publishing it.
@@ -57,17 +57,17 @@ Do not share it with an independent or SaaS-hosted subdomain.
 
 ## Web server: Homelab versus production
 
-The Homelab uses Apache since the migration of 2026-10-06 (ADR-006). Hostinger production uses Apache.
+The Homelab uses Apache. Hostinger Cloud Startup production uses LiteSpeed; the public response from `aculta.org` reported `platform: hostinger` and `x-turbo-charged-by: LiteSpeed` on 2026-10-15. Cloudflare is in front, so the `server` header identifies Cloudflare rather than the origin server.
 
 Do not copy Nginx directives such as `server_name`, `location`, `try_files`
-or `add_header` into production. Preserve Drupal's Apache `.htaccess` and
-validate the production equivalents using `mod_rewrite`, `mod_headers` or
-VirtualHost configuration where Hostinger permits it.
+or `add_header` into production. Preserve Drupal's standard `.htaccess`.
+Validate rewrite, response headers, PHP handling and file protection separately
+on Apache in Homelab and LiteSpeed at Hostinger. Do not assume access to
+Hostinger VirtualHost or `httpd.conf` configuration.
 
-A Homelab header such as `add_header ... always` requires an Apache-specific
-review; the semantic equivalent is generally based on `Header always set ...`,
-but it must only be added after inspecting the real production context.
-Production must not inherit the Homelab noindex policy.
+An Apache directive such as `Header always set` is Homelab-specific and must
+not be copied into Hostinger configuration. Production must not inherit the
+Homelab noindex policy.
 
 The Courses subsystem is already implemented in code with Drupal LMS and Group.
 A future deploy installs the locked dependencies and imports full configuration
@@ -156,14 +156,12 @@ the local configuration phase.
 
 ## Web server: Homelab versus Produção
 
-- Homelab (`toca`) uses Apache since 2026-10-06 (ADR-006). Production at Hostinger uses Apache.
+- Homelab (`toca`) uses Apache. Production at Hostinger Cloud Startup uses LiteSpeed (confirmed by public response headers on 2026-10-15).
 - Do not copy Nginx directives such as `server_name`, `location`, `try_files`,
   `add_header`, or `nginx reload` into production instructions.
-- Preserve Drupal's standard `.htaccess` in the Apache document root. Configure
-  redirects with `mod_rewrite` or the actual Apache VirtualHost only after
-  checking the production hosting context. Use `mod_headers` for response
-  headers; where the equivalent of Nginx `add_header ... always` is required,
-  Apache's semantic form is `Header always set ...`, after validating that
-  directive in the real Apache context.
+- Preserve Drupal's standard `.htaccess`. Validate its rewrite, header and
+  protection rules on Apache in Homelab and LiteSpeed at Hostinger. Apache
+  directives such as `mod_rewrite`, `mod_headers` and `Header always set` are
+  Homelab-specific; do not copy them into Hostinger configuration.
 - Do not add a production `noindex` rule. Production hosts are intended to be
   indexable when published. The Homelab noindex policy is environment-specific.

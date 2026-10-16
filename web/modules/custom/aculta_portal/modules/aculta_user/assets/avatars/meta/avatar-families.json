@@ -60,8 +60,9 @@
   {
     "id": "undead",
     "label": "Caveiras e mortos-vivos",
-    "count": 10,
-    "active": true
+    "count": 20,
+    "active": true,
+    "notes": "Acervo v1 (10 avatares do conjunto anexo) somado aos 10 originais."
   },
   {
     "id": "reggae",
@@ -71,5 +72,41 @@
     "version": "3",
     "crop": "wide-field-portrait-fit",
     "format": "square-original"
+  },
+  {
+    "id": "mixed",
+    "label": "Mistos aventureiros",
+    "count": 10,
+    "active": true,
+    "version": "1",
+    "format": "square-original",
+    "notes": "Família montada a partir da prancha enviada pelo usuário, com assets individuais 1:1."
+  },
+  {
+    "id": "robots",
+    "label": "Robôs e tecnologia",
+    "count": 10,
+    "active": true,
+    "version": "1",
+    "format": "square-1x1-from-portrait",
+    "notes": "Recortes da prancha em retrato, convertidos para 1:1 a partir do topo (512 px). Ver meta/avatars-robots.json."
+  },
+  {
+    "id": "pirates",
+    "label": "Piratas e aventureiros",
+    "count": 8,
+    "active": true,
+    "version": "1",
+    "format": "square-original",
+    "notes": "Família gerada individualmente em estilo retrô ilustrado, temática pirata e 420. Dois itens do manifesto (pirates-001 e pirates-007) não vieram no zip e não foram registrados."
+  },
+  {
+    "id": "insects",
+    "label": "Insetos e pequenos bichos",
+    "count": 10,
+    "active": true,
+    "version": "1",
+    "format": "square-1x1-from-portrait",
+    "notes": "Recortes da prancha em retrato. Faixas claras das bordas removidas e quadrado a partir do topo, 512 px."
   }
 ]

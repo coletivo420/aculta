@@ -20,4 +20,8 @@ props:
       enum: [active, attention]
       default: active
       title: Tipo do contador
+    all_href:
+      type: string
+      title: URL de "Ver todos os avisos" (rodapé da gaveta; vazio sem login)
+      default: ''
 slots: {}

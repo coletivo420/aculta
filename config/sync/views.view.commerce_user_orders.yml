@@ -404,7 +404,7 @@ display:
           empty: true
           content:
             value: 'You have not placed any orders with us yet.'
-            format: basic_html
+            format: usuario_aculta
           tokenize: false
       sorts: {  }
       arguments:

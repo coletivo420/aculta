@@ -342,3 +342,169 @@ Observações:
 - Ordem de itens na reordenação: não há alça de arrasto nesta versão; ver a Fase 10 sem reordenação.
 
 Decisão pendente: com a rodada 2 sem defeitos abertos, a Fase 10 pode ser declarada `0.1.0-rc.1` pelo responsável. A versão do módulo continua `0.1.0-dev.12` até essa decisão.
+
+## T. Iniciar nova conversa na barra de mensagens (aculta_messenger 0.1.1-dev.20, 2026-10-15)
+
+### Pré-condições
+
+- Host: servidor de testes `aculta.toca.net.br` (Homelab, runtime `aculta_runtime`).
+- Conta: membro comum `teste.comum`, login por link único gerado com `drush uli`.
+- Destinatário: `teste.destino.nova` (criado só para o teste).
+- Navegador: Firefox ESR 153 headless, controlado pelo geckodriver 0.37.1 (protocolo WebDriver). O Chromium do host travou a aba nesta rodada e não foi usado.
+- Larguras: 1280 px (desktop) e 390 px (celular).
+
+### Roteiro
+
+1. Abrir a barra de mensagens; a primeira ação da janela é o botão "Iniciar nova conversa".
+2. Clicar no botão: a janela mostra "Nova conversa", o campo "Buscar membro pelo nome" e a dica de três caracteres.
+3. Digitar `teste`: aparece o resultado `teste.destino.nova`, sem abrir a busca completa.
+4. Escolher o membro: aparecem "Nova conversa com teste.destino.nova", a caixa de mensagem, Enviar, Cancelar e Voltar para o início.
+5. Cancelar: volta à busca. Voltar para o início: volta à lista de conversas.
+6. Escrever a mensagem e clicar em Enviar: a janela mostra a conversa com a mensagem enviada.
+
+### Registro do resultado
+
+- Passos 1 a 6 passaram nas duas larguras, com capturas de tela. Sem erros de JavaScript no console.
+- Defeitos encontrados nesta rodada e corrigidos antes desta entrega:
+  - O botão saía como texto puro: o mapeamento de tokens do tema não alcança links nem `html_tag` (são montados como string no pre-render do Core). Passou a ser um elemento de botão.
+  - O campo de busca não recebia a classe do tema e o script de busca não era carregado na página. O campo passou a ser `#type => search`, e a biblioteca passou a ser anexada por `hook_page_attachments`.
+  - O envio recarregava a página: o AJAX do Form API depende de `drupalSettings`, que o fragmento buscado não traz. O envio passou a ser feito por `fetch` na própria gaveta.
+  - O envio falhava com `Call to a member function id() on int`: o Private Message espera entidades de usuário, não IDs.
+  - Depois do envio, o Form API redirecionava com 303 para a própria página: o redirecionamento foi desativado, e a gaveta recebe a conversa.
+  - Cancelar e Voltar para o início saíam sem os atributos `data-*`, e a gaveta carregava o fragmento como página inteira: os links passaram a ser elementos `#type => link` com atributos.
+- Não testado nesta rodada: toque em dispositivo real, leitor de tela, membro com privacidade "somente amigos", envio com mensagem vazia e bloqueio entre membros.
+- Observação de produto, não corrigida: a conversa aberta na gaveta mostra "Clear history" e "Member(s)" em inglês, vindos da visão nativa do Private Message. Já existia antes desta mudança.
+
+## U. Revisão completa da barra de mensagens (aculta_messenger 0.1.1-dev.28, 2026-10-15)
+
+### Pré-condições
+
+- Host: servidor de testes `aculta.toca.net.br` (Homelab, runtime `aculta_runtime`).
+- Contas: `teste.comum` (uid 5, confirmada) e `teste.b` (uid 31, criada para o teste). A suíte zera, no início, a privacidade, as amizades, os bloqueios e os contadores de envio das duas contas, e apaga as conversas entre elas.
+- Privacidade "só amigos" de `teste.b` definida pelo `user.data` (o mesmo dado que o formulário de Configurações grava). Não passou pela interface de Configurações.
+- Navegador: Firefox ESR 153 headless, geckodriver 0.37.1 (protocolo WebDriver). Chromium não usado (travou a aba).
+- Larguras: 1280 px (desktop) e 390 px (celular).
+
+### Roteiro (suíte de navegador, 52 verificações)
+
+1. Nova conversa: busca com 2 caracteres (dica, sem resultados) e com 3 (resultado); composição; Cancelar; Voltar para o início; primeiro envio.
+2. Barra da conversa: "← Todas as conversas" à esquerda e Opções à direita, na mesma linha; ordem do menu sem relação (Adicionar amigo, Limpar histórico, Bloquear); Limpar histórico em duas etapas.
+3. Amizade nos dois lados: pedido (Cancelar pedido de amizade no menu de quem enviou); aceite e recusa (Aceitar, Rejeitar, Limpar histórico, Bloquear no menu de quem recebeu); desfazer.
+4. Só amigos: aviso no lugar da caixa de resposta; link "clique aqui para enviar um pedido de Amizade."; depois do pedido, "você já enviou pedido de amizade, aguarde."; aceite pelo menu e volta da caixa.
+5. Bloqueio nos dois lados: aviso de quem bloqueou (com o link "Clique aqui para desbloquear"); aviso de quem foi bloqueado (sem ação); conversa continua na lista; desbloqueio pelo menu e pelo link do aviso.
+6. Resposta depois do desbloqueio, enviada pela gaveta.
+7. Limpar histórico: primeira etapa pede confirmação; a segunda limpa só para quem confirmou, e o outro membro continua vendo as mensagens.
+8. Celular (390 px): alinhamento da barra, rótulo "Opções" oculto (só o hambúrguer), menu abre, sem rolagem horizontal da página.
+9. Erros de JavaScript no console: nenhum nas etapas verificadas.
+
+### Registro do resultado
+
+- 52 de 52 verificações passaram na última rodada, a partir do estado limpo.
+- Defeitos encontrados pela suíte e corrigidos antes desta entrega:
+  - Resposta enviada pela gaveta navegava para `/private-messages/…` (404): a resposta passou a ser enviada por `fetch` para a rota da gaveta, com as mesmas regras do compositor.
+  - "Limpar histórico" apontava para uma rota do domínio da conta (404 no principal): virou ação em duas etapas dentro do menu.
+  - Desbloquear pelo link do aviso não funcionava: o aviso e o menu tinham rótulos diferentes e o Form API não identificava o botão enviado.
+  - Confirmação da limpeza não era identificada pelo mesmo motivo; a conversa limpa ainda aparecia na resposta por cache. A resposta depois da limpeza passou a ser a lista de conversas.
+  - Depois de uma ação o menu fechava (e a confirmação da limpeza ficava escondida): agora fica aberto.
+  - Primeira mensagem na etapa "Nova conversa" saía sem a barra de Opções.
+  - Restrição "só amigos" não valia para conversas já existentes: agora vale na tela e na validação de envio.
+- Limites desta rodada:
+  - Sem toque em aparelho real e sem leitor de tela.
+  - Conversas em grupo (mais de duas pessoas) não têm "Limpar histórico" no menu.
+  - Recusa do envio por POST em conversa "só amigos" não foi exercitada diretamente (o formulário fica oculto nesse estado).
+  - O aviso nativo do bloqueio ("User is unable to receive your message") segue em inglês; é configuração do contrib, sem exportação.
+
+## V. Suíte versionada do Messenger e correções (aculta_messenger 0.1.1-dev.31, 2026-10-15)
+
+### Pré-condições
+- Runtime de teste (`aculta.toca.net.br`), geckodriver e Firefox headless.
+- Preparação idempotente: `tests/browser/aculta-messenger/setup-accounts.php` (contas `teste.b` e `teste.c`, conversa em grupo). Executada pela própria suíte.
+
+### Roteiro
+Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova conversa, menu "Opções", "Limpar histórico" em duas etapas, amizade, "Desfazer amizade" e "Bloquear" em janela de confirmação, avisos de bloqueio e de "só amigos", layout em 390 px, caixa "Opções" do perfil, conversa em grupo (menu só com "Limpar histórico", limpeza só para quem confirma).
+
+### Registro do resultado
+- Execução 12 (final): **70 de 70**, sem erros de JavaScript.
+- Antes dela, três defeitos reais foram corrigidos e reproduzidos isoladamente: (1) conversa em grupo absorvida pela caixa de um dos membros; (2) menu de exibição reprocessando o envio e carregando formulário em cache sem dependências; (3) limpeza de teste que não encontrava a conversa (consulta com duas condições no mesmo campo multivalorado; trocada pelo mapeador do Private Message).
+- Limite: 390 px é aproximação de layout. Não houve teste em dispositivo de toque real nem com leitor de tela.
+
+
+## Game — rodada de 2026-10-15 (G4)
+
+- Runtime confirmado: `aculta_runtime`, hosts MAIN/ACCOUNT do mapeamento de testes.
+- Conta existente `teste.comum`; admin para área restrita, visitante em sessão
+  independente. Sem criação de contas/conteúdo ou concessão de conquistas.
+- Firefox 8/8: entrada Visão geral → Conquistas e missões, AJAX, formulário,
+  missões, mobile 390 px sem overflow, controles Game e ordem após Avisos.
+- HTTP 17/17: POST de preferências, ocultação global/individual e destaque vistos
+  por visitante; invalidação de cache; administração, controle de disponibilidade
+  e política MAIN (GET canonicalizado, POST errado negado).
+- Corrigido 500 anônimo em contagem de avisos/Flag (`a0afe29`).
+- Preferências e disponibilidade da missão restauradas; screenshots/resultados
+  em `.suite-out/game/`, fora do Git. Suítes Game versionadas em tests/browser e
+  tests/runtime. Concorrência de concessões e leitor de tela não validados.
+
+### Game — ampliação G5.1
+
+- `tests/runtime/aculta-game/admin-smoke.py`: **34/34**, incluindo as 17 regressões
+  anteriores, criação/edição via POST, critérios pedido/doação/manual, versão,
+  concessão e revogação com motivos e histórico, imagem pública e motivo privado.
+- Fixture própria removida, configurações restauradas. Duas concessões originais
+  preservadas por digest das colunas anteriores ao update User 10003.
+- URLs novas no MAIN: Game → Conquistas, Criar, Editar, Conceder ou revogar e
+  Histórico. Perfil/conta mantêm as escolhas de exibição do Game.
+- Três PNGs dos troféus servidos com hash original. Evento de pedido donation
+  repetido em transação gerou uma concessão, com rollback integral do ensaio.
+- Não valida concorrência, leitor de tela ou fluxo Mercado Pago ponta a ponta.
+
+### Game — G5.2
+
+- Firefox no Runtime do Homelab: **14/14**; catálogo, editor de imagem e condições,
+  rota de confirmação, controles da conta, viewport móvel e posição no menu.
+- Serviço de definições testado com imagem gerenciada temporária: confirmação
+  removeu vínculo e arquivo sem outros usos; fixture limpa. Assets do módulo preservados.
+- Gates Drupal 11, fronteira módulo/tema, endereços e slugs passaram. Drush cache
+  rebuild concluído em `aculta_runtime`; sem `updb`, import/export ou cron.
+- Aviso dispensável integrado à lista e contagem do Messenger; nova concessão
+  enfileira e-mail com preferência individual. Transporte/entrega real de e-mail
+  não verificado.
+
+## PDF Viewer — CKEditor Media Embed e leitor compartilhado (2026-10-16)
+
+- **Ambiente:** Firefox 153.4 ESR headless + geckodriver 0.37.1 no Homelab;
+  Drupal 11.4.10, URI `https://revista420.aculta.toca.net.br`, banco
+  `aculta_runtime`. A amostra foi o PDF público que acompanha PDF.js 6.4.299.
+- **Autoria e render Drupal/Media:** com sessão uid 1 criada pelo link de login
+  único no host da Conta, a edição do artigo abriu no host Magazine com CKEditor
+  5. Na biblioteca, a aba “Documento” listou a Media PDF temporária; “Inserir
+  Mídia” a colocou no corpo e “Salvar” publicou o artigo. A página pública
+  respondeu HTTP 200 e exibiu o formatter, PDF.js local e link autorizado.
+  O primeiro 403 ocorreu ao gerar o link de login no host Magazine; usar o host
+  da Conta conforme o procedimento resolveu. A Media foi criada por Drush para
+  o ensaio; o upload/criação de Media via UI por `content_editor` não foi
+  homologado (o gate de permissões confirma `create document media`).
+- **Interação real do viewer:** carregamento `Página 1 de 14`, canvas
+  `655 × 848`, avanço `Página 2 de 14`, zoom `125%`, busca `Trace-based` com
+  cinco resultados, botão de tela cheia ativado e console sem erros JS.
+- **Limpeza:** removidos os nodes temporários 284 e 285, Media 231 e 232, Files
+  407, 410, 411 e 412, além dos binários permanentes/temporários usados no teste.
+  Drush confirmou zero Media `document` e ausência dos arquivos temporários.
+  Nenhum conteúdo preexistente foi alterado.
+- **Escopo pendente:** upload/criação de Media via UI como `content_editor`, leitura `private://`,
+  preview/ImageMagick, CSP, acessibilidade visual/leitor de tela, outros
+  browsers e hospedagem LiteSpeed.
+
+## Imagens inline da Revista — revisão integrada (2026-10-16)
+
+- **Ambiente:** servidor de testes, host `revista420.aculta.toca.net.br`, Firefox 153.4 ESR e geckodriver 0.37.1; Drupal 11.4.10, banco `aculta_runtime`.
+- **Acesso:** Firefox/geckodriver em sessão privada sem autenticação. Fixture foi artigo temporário `published`, domínio `coletivo420_aculta_org`, quatro imagens com modelo e legenda. Todas as fixtures criadas nesta rodada foram removidas; conteúdo preexistente não foi alterado.
+- **Desktop (1366 px):** as quatro figuras públicas renderizaram com `<figcaption>`. Larguras aferidas: Pequena 320 px, Padrão 580 px, Larga 900 px e Destaque 960 px. As imagens carregadas sob demanda foram verificadas após rolagem.
+- **Janela estreita na primeira rodada:** ao pedir 390 px pelo redimensionamento tradicional do geckodriver, o Firefox informou viewport útil de 500 px. Nessa largura, os quatro modelos e imagens mediram 456 px, as legendas apareceram e `document.documentElement.scrollWidth` não excedeu o viewport.
+- **Complemento (mesmo dia):** Firefox 153.4 ESR via WebDriver BiDi aplicou viewport CSS de 390 px na página pública anônima de um artigo existente. Quatro figuras demonstrativas, inseridas somente no DOM da sessão e com as classes reais dos modelos, mediram 346 px cada; todas exibiram `figcaption`, sem overflow horizontal (documento: 378 px). As quatro imagens de teste carregaram, com largura natural de 960 px. O modo escuro integrado foi aferido com `aculta_portal.appearance:default_mode` temporariamente em `dark`, restaurado para `light` ao fim; o HTML veio com `data-bs-theme="dark"` e tokens computados de fundo `rgb(23, 21, 19)`, texto `rgb(244, 239, 232)` e legenda `rgb(183, 174, 165)`. Os modelos mantiveram 346 px sem overflow. Nenhum conteúdo foi salvo. A revisão com Orca/AT-SPI foi registrada na rodada seguinte.
+
+## Imagens inline da Revista — persistência e leitor de tela (2026-10-16)
+
+- **Ambiente:** Firefox 153.4 ESR visível no LXQt/X11 (`DISPLAY=:0`), Drupal 11.4.10 e Runtime `aculta_runtime`. Orca/AT-SPI habilitados.
+- **Persistência:** formulário de legenda no CKEditor salvou “Legenda salva no Firefox visível” em artigo temporário válido. O corpo armazenou `data-aculta-legenda`; ao reabrir a edição, o campo trouxe o mesmo valor. Artigo(s) temporário(s) removido(s) e confirmado(s) no cleanup.
+- **Leitor de tela:** o Orca anunciou o nome e valor do campo de legenda. Em fixture DOM não persistida na página pública, ao focar a imagem o Orca anunciou a legenda “Legenda acessível de teste” e o `alt` “Imagem de teste com texto alternativo”; AT-SPI expôs a legenda e a imagem como elementos filhos do painel/figura. A fixture foi removida e a sessão Firefox fechada.
+- **Limite:** a figura foi fixture DOM temporária com as classes reais do modelo; não foi salva em conteúdo. A configuração de runtime permaneceu inalterada.

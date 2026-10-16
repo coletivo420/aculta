@@ -10,6 +10,10 @@ props:
     href:
       type: string
       title: URL same-origin do resumo de conversas
+    all_href:
+      type: string
+      title: URL de "Ver todas as mensagens" (rodapé da gaveta; vazio sem login)
+      default: ''
     count:
       type: integer
       minimum: 0

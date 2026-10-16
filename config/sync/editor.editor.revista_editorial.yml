@@ -23,6 +23,8 @@ settings:
       - numberedList
       - blockQuote
       - drupalInsertImage
+      - acultaImageModel
+      - acultaImageLegenda
       - insertTable
       - horizontalLine
       - heading
@@ -105,7 +107,7 @@ image_upload:
   status: true
   scheme: public
   directory: inline-images
-  max_size: null
+  max_size: '10485760'
   max_dimensions:
     width: null
     height: null

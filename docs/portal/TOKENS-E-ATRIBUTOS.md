@@ -20,32 +20,63 @@
 
 | Atributo | Família | Uso (JS) | Arquivos |
 | --- | --- | --- | ---: |
+| `data-aculta-account-list` | exato | sim | 2 |
+| `data-aculta-add-member` | exato | sim | 2 |
+| `data-aculta-album-open` | exato | sim | 2 |
+| `data-aculta-album-stage` | exato | sim | 3 |
+| `data-aculta-album-thumb` | exato | sim | 3 |
+| `data-aculta-album-thumbs` | exato | sim | 2 |
+| `data-aculta-album-toggle` | exato | sim | 2 |
+| `data-aculta-alert-dismiss` | exato | sim | 1 |
+| `data-aculta-alerts-count` | exato | sim | 2 |
+| `data-aculta-alinhamento` | exato | sim | 1 |
 | `data-aculta-bio-clear` | exato | sim | 2 |
 | `data-aculta-bio-form` | exato | sim | 2 |
 | `data-aculta-cart-count` | exato | não | 2 |
 | `data-aculta-cart-trigger` | exato | não | 2 |
-| `data-aculta-alert-dismiss` | exato | sim | 1 |
-| `data-aculta-alerts-count` | exato | sim | 2 |
 | `data-aculta-cep-status` | exato | sim | 1 |
+| `data-aculta-chip` | exato | sim | 2 |
+| `data-aculta-chip-name` | exato | sim | 1 |
+| `data-aculta-chip-remove` | exato | sim | 2 |
+| `data-aculta-chips` | exato | sim | 2 |
 | `data-aculta-clear` | exato | sim | 2 |
 | `data-aculta-conversation-url` | exato | não | 1 |
 | `data-aculta-conversation-view` | exato | sim | 2 |
+| `data-aculta-dialog` | exato | sim | 3 |
+| `data-aculta-dialog-close` | exato | sim | 2 |
+| `data-aculta-dialog-open` | exato | sim | 2 |
+| `data-aculta-drawer-action` | exato | sim | 3 |
+| `data-aculta-drawer-back` | exato | sim | 4 |
 | `data-aculta-drawer-content` | exato | sim | 2 |
 | `data-aculta-drawer-count` | exato | sim | 2 |
 | `data-aculta-drawer-label` | exato | não | 2 |
 | `data-aculta-drawer-url` | exato | sim | 2 |
+| `data-aculta-group-max` | exato | sim | 1 |
 | `data-aculta-json-form` | exato | sim | 2 |
+| `data-aculta-legenda` | exato | sim | 2 |
+| `data-aculta-member-name` | exato | sim | 1 |
 | `data-aculta-messenger-count` | exato | sim | 2 |
+| `data-aculta-modelo` | exato | sim | 3 |
+| `data-aculta-new-conversation` | exato | sim | 2 |
+| `data-aculta-new-conversation-form` | exato | sim | 2 |
 | `data-aculta-number` | exato | sim | 2 |
 | `data-aculta-number-sn` | exato | não | 1 |
+| `data-aculta-open-conversation` | exato | sim | 2 |
+| `data-aculta-options-url` | exato | sim | 2 |
+| `data-aculta-pdf-control` | exato | sim | 4 |
+| `data-aculta-pdf-title` | exato | sim | 1 |
+| `data-aculta-pdf-url` | exato | sim | 1 |
+| `data-aculta-pdf-viewer` | exato | sim | 3 |
 | `data-aculta-photo-editor` | exato | não | 2 |
 | `data-aculta-photo-open` | exato | não | 1 |
 | `data-aculta-portal-link` | exato | não | 2 |
+| `data-aculta-reply-form` | exato | sim | 3 |
+| `data-aculta-sent-date` | exato | sim | 1 |
+| `data-aculta-thread-id` | exato | não | 1 |
+| `data-aculta-thread-unread` | exato | não | 1 |
 | `data-aculta-user` | exato | não | 1 |
 | `data-aculta-user-avatar` | exato | não | 3 |
 | `data-aculta-user-picture` | exato | não | 1 |
-| `data-aculta-thread-id` | exato | não | 1 |
-| `data-aculta-thread-unread` | exato | não | 1 |
 | `data-dialog-options` | exato | sim | 6 |
 | `data-dialog-title` | exato | não | 2 |
 | `data-dialog-type` | exato | sim | 7 |
@@ -101,6 +132,16 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `requirements-indexing` | `aculta-portal-requirements__indexing` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `new-conversation-link` | `btn`, `btn-primary`, `aculta-messenger-new-conversation` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `new-conversation-submit` | `btn`, `btn-primary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-back` | `btn`, `btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `conversation-action` | `aculta-messenger-options__action` |
+| `conversation-notice-action` | `aculta-messenger-notice__action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php` |
+| `new-conversation-links` | `d-flex`, `flex-wrap`, `gap-2`, `mt-2` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-message` | `form-control` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-results` | `list-group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
+| `new-conversation-result` | `list-group-item`, `list-group-item-action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
+| `account-home` | `aculta-account-home` | `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` (link Minha conta do menu da conta; o tema aplica a classe ao link) |
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
@@ -247,6 +288,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `secret-dialog` | `aculta-secret-dialog` | `web/modules/custom/aculta_portal/src/Secrets/Form/SecretClearForm.php`<br>`web/modules/custom/aculta_portal/src/Secrets/Form/SecretEditForm.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | (montado pelo tema para link da inbox) |
+| `account-home` | `aculta-account-home` | (montado pelo tema no link Minha conta, a partir do token do módulo) |
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
@@ -265,3 +307,61 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `aculta-button-outline` | `aculta-button`, `aculta-button--outline` | `web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php` |
 | `status-attention` | `aculta-portal-requirements__status--attention` | (montado dinamicamente ou só no tema) |
 | `breadcrumb-list` | `breadcrumb` | `web/modules/custom/aculta_portal/src/Render/AccountAjaxMainContentRenderer.php` |
+
+| `new-conversation-cancel` | `btn`, `aculta-new-conversation-cancel` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `public-profile-actions` | `portal-profile__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
+| `friendship-action-form` | `portal-profile__friendship-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
+| `friendship-action-button` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
+| `forum-topic-unread` | `aculta-unread-count` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/ForumTopicCounterHooks.php` |
+| `profile-achievements` | `portal-profile__achievements` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `profile-achievements-title` | `portal-profile__achievements-title` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `profile-achievements-list` | `portal-profile__achievements-list` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `profile-achievement` | `portal-profile__achievement` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `profile-achievement-image` | `portal-profile__achievement-image` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `profile-achievement-content` | `portal-profile__achievement-content` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `profile-achievement-name` | `portal-profile__achievement-name` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `profile-achievement-description` | `portal-profile__achievement-description` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `profile-achievement-highlight` | `portal-profile__achievement-highlight` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
+| `messenger-back-link` | `aculta-messenger-back-link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-drawer-conversation` | `aculta-messenger-drawer-conversation` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-conversation-toolbar` | `aculta-messenger-conversation-toolbar` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-conversation-actions` | `aculta-messenger-conversation__actions` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-options` | `aculta-messenger-options` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
+| `messenger-options-summary` | `aculta-messenger-options__summary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
+| `messenger-options-icon` | `bi`, `bi-list` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
+| `messenger-options-label` | `aculta-messenger-options__label` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
+| `messenger-options-panel` | `aculta-messenger-options__panel` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
+| `messenger-options-item` | `aculta-messenger-options__item` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/ProfileOptionsHooks.php` |
+| `messenger-options-status` | `aculta-messenger-options__status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-notice` | `aculta-messenger-notice` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageReplyHooks.php` |
+| `messenger-sender` | `aculta-messenger-sender`, `aculta-messenger-conversation` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `forum-reply-total` | `aculta-forum-topic__replies-count` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumTopicPresentationHooks.php` |
+| `forum-topic-visitor` | `aculta-forum-topic__visitor` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumTopicPresentationHooks.php` |
+| `read-label` | `aculta-read-label` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `read-label-unread` | `aculta-read-label--unread` | (montado dinamicamente ou só no tema) |
+| `messenger-sender-link` | `aculta-messenger-sender__link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-sender-date` | `aculta-messenger-sender__date` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-sender-name` | `aculta-messenger-sender__name` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-sender-avatar` | `aculta-messenger-sender__avatar` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-summary` | `aculta-messenger-sender`, `aculta-notice-summary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-summary-link` | `aculta-messenger-sender__link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-summary-persistent` | `aculta-notice-summary--persistent` | (montado dinamicamente ou só no tema) |
+| `notice-type-info` | `aculta-notice-type--info` | (montado dinamicamente ou só no tema) |
+| `notice-type-warning` | `aculta-notice-type--warning` | (montado dinamicamente ou só no tema) |
+| `notice-type-danger` | `aculta-notice-type--danger` | (montado dinamicamente ou só no tema) |
+| `notice-summary-title` | `aculta-notice-summary__title` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-summary-excerpt` | `aculta-notice-summary__excerpt` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-summary-state` | `aculta-notice-summary__state` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-detail` | `aculta-notice-detail` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `new-conversation-add` | `aculta-new-conversation-add` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
+| `new-conversation-chips` | `aculta-chips` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-chip` | `aculta-chip` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-chip-name` | `aculta-chip__name` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-chip-remove` | `aculta-chip__remove` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `notice-admin-item` | `admin-item` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NoticeAdminController.php` |
+| `notice-admin-intro` | `aculta-notice-admin-intro` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NoticeAdminController.php` |
+| `notice-admin-list` | `admin-list`, `aculta-notice-admin-list` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NoticeAdminController.php` |
+| `notice-admin-table` | `aculta-notice-admin-table` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NoticeAdminController.php` |
+| `public-profile-avatar-image` | `portal-profile__avatar-image` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
+| `achievement-notices` | `aculta-achievement-notices` | `web/modules/custom/aculta_portal/modules/aculta_game/src/Hook/MessengerNotificationHooks.php` |
+| `aculta-image-audit` | `aculta-image-audit` | `web/modules/custom/aculta_portal/modules/aculta_image/src/Controller/ImageAuditController.php` |

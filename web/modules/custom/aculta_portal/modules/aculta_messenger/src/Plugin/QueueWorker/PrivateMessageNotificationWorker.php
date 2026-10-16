@@ -155,8 +155,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       return;
     }
 
-    // Send members to the Portuguese ACCOUNT communication center.
-    $url = $this->domainPurposeManager->routeUrl('account', 'aculta_messenger.messages');
+    // Messages are read in the multidomain bar; the notice links to the member's account home.
+    $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
     if ($url === NULL) {
       if ($notification === NULL) {
         $notification = $this->entityTypeManager->getStorage('message')->create([
