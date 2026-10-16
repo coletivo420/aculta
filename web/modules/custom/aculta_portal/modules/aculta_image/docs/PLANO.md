@@ -26,7 +26,7 @@ exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem 
 | M4 miniatura de PDF | feito no Homelab | ImageMagick 7 com Ghostscript; `pdfpreview` com JPEG 480×640; teste com PDF real: 480×621. Produção depende de confirmação da Hostinger |
 | M5 duplicatas exatas | feito | `media_duplicates` 2.0.4; os dois grupos reais da galeria 11 foram mesclados, uma ocorrência por arquivo, mantendo o `alt` do menor ID |
 | M6 auditoria de uso | feito | `entity_usage` 5.0.1; candidatas com motivos |
-| M7 quarentena | feito | 30 dias; restauração e exclusão só com nova verificação de uso |
+| M7 quarentena | feito | 30 dias; restauração e exclusão só com nova verificação de uso. A limpeza de ciclo normal (troca/exclusão de campo) usa fila própria e apaga apenas após checar `file_usage` e `entity_usage`. |
 | M8 compressão | feito no Homelab | `imageapi_optimize` 4.2.0 + `imageapi_optimize_binaries` 1.2.0-beta1 (aprovado pelo responsável); pipeline `aculta_derivados`. Ganho medido: JPEG 0,7%, PNG 13,6% |
 | M9 comparação visual | feito | dHash de 64 bits com GD, código próprio; cron em lotes de 200; limiar 6 bits |
 | og:image | feito | estilo `aculta_compartilhamento_1200x630`; verificado HTTP 200 |
@@ -133,9 +133,12 @@ pelos estilos), `media_dupe_detect`, `duplicate_images`, `media_dedupe` (ver a t
 
 ## 10. Limpeza sem perda
 
-Ordem obrigatória: inventário e classificação; revisão de referências fora do banco; quarentena com janela de 30 dias,
-em área privada; exclusão só após confirmação e nova verificação de uso. Arquivos do tema ficam fora da limpeza de Media.
-Contador zero não basta para excluir.
+Imagens candidatas do inventário continuam na quarentena privada por 30 dias, com restauração e nova checagem antes
+da exclusão. Há uma exceção operacional para ciclo de vida normal: quando uma entidade substitui ou remove um campo de
+imagem, o FID anterior entra na fila e pode ser excluído pelo `FileRemover` se `file_usage` e `entity_usage` estiverem
+vazios no momento da execução. Revisões e outras entidades mantêm a imagem. Temporários de imagem sem referência são
+removidos depois de `system.file:temporary_maximum_age` (seis horas no Runtime), em lotes de 100. Arquivos do tema
+continuam fora da limpeza de Media. O administrador pode executar a mesma rotina em `/painel-administrativo/imagens/limpeza`.
 
 ## 11. Fontes
 

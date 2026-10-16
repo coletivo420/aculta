@@ -6,7 +6,7 @@ namespace Drupal\aculta_image\Controller;
 
 use Drupal\aculta_image\Audit\ImageAudit;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Template\Attribute;
+use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,6 +18,42 @@ final class ImageAuditController extends ControllerBase {
 
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_image.audit'));
+  }
+
+  public function dashboard(): array {
+    $resumo = $this->audit->resumo();
+    return [
+      '#cache' => ['max-age' => 0],
+      'intro' => ['#markup' => '<p>' . $this->t('Administre o acervo, revise imagens sem referência, acompanhe duplicatas e limpe arquivos temporários ou substituídos.') . '</p>'],
+      'resumo' => [
+        '#type' => 'table',
+        '#header' => [$this->t('Indicador'), $this->t('Quantidade')],
+        '#rows' => [
+          [$this->t('Imagens gerenciadas'), (string) $resumo['total']],
+          [$this->t('Espaço aproximado'), round($resumo['bytes'] / 1048576, 1) . ' MB'],
+          [$this->t('Com referência em file_usage'), (string) $resumo['com_uso']],
+          [$this->t('Sem referência em file_usage'), (string) $resumo['sem_uso']],
+          [$this->t('Mídias'), (string) $resumo['midias']],
+        ],
+      ],
+      'acoes' => [
+        '#theme' => 'item_list',
+        '#title' => $this->t('Funções administrativas'),
+        '#items' => [
+          $this->t('Relatório: resumo, duplicatas e candidatas à revisão.'),
+          $this->t('Limpeza: executar a fila de imagens substituídas e temporários vencidos.'),
+          $this->t('Quarentena: revisar candidatas, restaurar arquivos e excluir entradas vencidas.'),
+        ],
+      ],
+      'links' => [
+        '#theme' => 'item_list',
+        '#items' => [
+          Link::createFromRoute($this->t('Abrir relatório'), 'aculta_image.audit_report'),
+          Link::createFromRoute($this->t('Executar limpeza'), 'aculta_image.cleanup'),
+          Link::createFromRoute($this->t('Gerenciar quarentena'), 'aculta_image.quarantine'),
+        ],
+      ],
+    ];
   }
 
   public function report(): array {

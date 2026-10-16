@@ -4,7 +4,7 @@ Sistema único de imagens do site ACULTA. Todo uso de imagem passa por ele: cat�
 renderização responsiva, modelos de imagem no texto, compressão, leitura de dimensões, exclusão controlada, ingestão de
 origem externa, auditoria, quarentena e comparação visual.
 
-**Versão:** 0.1.0-dev.18 (ver [CHANGELOG](CHANGELOG.md)).
+**Versão:** 0.1.0-dev.19 (ver [CHANGELOG](CHANGELOG.md)).
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
@@ -25,7 +25,8 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 | `aculta_image.upload_policy` | `UploadPolicy` | Extensões (png, gif, jpg, jpeg, webp) e tamanho máximo (10 MB). |
 | `aculta_image.render` | `ImageRenderer` | `build()`, `styleId()`, `styleEntity()`, `displaySettings()`. |
 | `aculta_image.inspector` | `ImageInspector` | Dimensões de arquivo ou de bytes. |
-| `aculta_image.file_remover` | `FileRemover` | Exclusão que recusa arquivo com referência. |
+| `aculta_image.file_remover` | `FileRemover` | Exclusão de imagem após checagem de `file_usage` e `entity_usage`; invalida derivados e metadados internos. |
+| `aculta_image.cleanup` | `ImageCleanup` | Fila de imagens substituídas/removidas e limpeza de temporários vencidos; cron e ação manual. |
 | `aculta_image.ingester` | `ImageIngester` | Ingestão de imagem externa (SHA-256, reaproveitamento, origem). |
 | `aculta_image.audit` | `ImageAudit` | Resumo, duplicatas exatas, impressões visuais e candidatas. Somente leitura. |
 | `aculta_image.quarantine` | `ImageQuarantine` | Envio, restauração e exclusão de vencidas à quarentena. |
@@ -52,7 +53,9 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 
 ## Rotas e permissões
 
-- `/painel-administrativo/imagens`: relatório (resumo, duplicatas exatas, pares visuais, candidatas).
+- `/painel-administrativo/imagens`: painel com resumo e atalhos administrativos.
+- `/painel-administrativo/imagens/relatorio`: resumo, duplicatas exatas, pares visuais e candidatas.
+- `/painel-administrativo/imagens/limpeza`: executar até 100 itens da fila e temporários vencidos.
 - `/painel-administrativo/imagens/quarentena`: enviar candidatas, restaurar e excluir vencidas. Arquivos já quarentenados não voltam a aparecer como candidatas.
 - Permissão: `administer aculta images`.
 
@@ -66,6 +69,9 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 
 ## Regras de negócio
 
+- **Substituição:** ao atualizar ou excluir uma entidade com campo de imagem/arquivo, ou ao alterar/excluir texto rico com imagem, os arquivos registrados para ela entram na fila. O cron confere novamente `file_usage` e `entity_usage`; arquivo em uso por qualquer post, revisão, nó, mídia, página ou outra entidade permanece. A checagem ocorre também no próprio serviço de exclusão.
+- **Temporários:** uploads temporários de imagem de qualquer formulário sem referências são removidos após `system.file:temporary_maximum_age` (Runtime atual: 6 horas; fallback: 6 horas), no máximo 100 itens por execução. Arquivos enviados em formulários ainda em andamento não são removidos antes desse prazo. O compressor de inline reduz o próprio arquivo gerenciado, sem criar cópia temporária de conversão.
+- **Derivados:** ao excluir o original elegível, o módulo invalida os derivados dos estilos de imagem do Core para aquele URI.
 - **Quarentena:** 30 dias. Exclusão só depois do prazo e com nova verificação de uso.
 - **Comparação visual:** dHash de 64 bits com GD. Impressões são calculadas no cron, em lotes de 200. Pares com até 6
   bits de diferença aparecem para revisão. Imagens lisas e não lidas são excluídas dos pares.

@@ -355,7 +355,7 @@ Evitar dependências JavaScript desnecessárias.
   finalidade, não um estilo.
 - Não criar limite de upload de imagem próprio: usar `UploadPolicy`. A exceção aprovada da conquista (aculta_game)
   fica só no formulário da conquista.
-- Não processar imagem com `ImageFactory` e não apagar arquivo de imagem fora da quarentena do `aculta_image`.
+- Não processar imagem com `ImageFactory` nem excluir arquivos por fora do `aculta_image`. Imagens candidatas à limpeza do acervo seguem a quarentena; no ciclo normal, `aculta_image` pode excluir arquivo substituído/removido de entidade somente após revalidar que `file_usage` e `entity_usage` não apontam para ele. Temporários de imagem sem uso vencem segundo `system.file:temporary_maximum_age`.
 - Campo novo de imagem nasce com a política do `aculta_image` em `third_party_settings`.
 - Importação de qualquer origem externa (Wayback, LMS, arquivo recebido) passa pela ingestão do `aculta_image`.
 - Gate: `php scripts/validate-aculta-image.php` (tolerância zero). Plano e fases: `aculta_image/docs/PLANO.md`.

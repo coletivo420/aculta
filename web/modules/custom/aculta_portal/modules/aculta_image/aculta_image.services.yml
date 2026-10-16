@@ -19,7 +19,12 @@ services:
       - { name: aculta_portal.helper }
   aculta_image.file_remover:
     class: Drupal\aculta_image\FileRemover
-    arguments: ['@file.usage', '@entity_type.manager', '@logger.factory']
+    arguments: ['@file.usage', '@entity_type.manager', '@database', '@file_system', '@logger.factory']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.cleanup:
+    class: Drupal\aculta_image\ImageCleanup
+    arguments: ['@database', '@entity_type.manager', '@queue', '@config.factory', '@datetime.time', '@aculta_image.file_remover']
     tags:
       - { name: aculta_portal.helper }
   aculta_image.ingester:

@@ -1,8 +1,16 @@
 aculta_image.audit:
   path: '/painel-administrativo/imagens'
   defaults:
+    _controller: '\Drupal\aculta_image\Controller\ImageAuditController::dashboard'
+    _title: 'Administração de imagens'
+  requirements:
+    _permission: 'administer aculta images'
+
+aculta_image.audit_report:
+  path: '/painel-administrativo/imagens/relatorio'
+  defaults:
     _controller: '\Drupal\aculta_image\Controller\ImageAuditController::report'
-    _title: 'Imagens'
+    _title: 'Relatório de imagens'
   requirements:
     _permission: 'administer aculta images'
 
@@ -11,5 +19,13 @@ aculta_image.quarantine:
   defaults:
     _form: '\Drupal\aculta_image\Form\ImageQuarantineForm'
     _title: 'Quarentena de imagens'
+  requirements:
+    _permission: 'administer aculta images'
+
+aculta_image.cleanup:
+  path: '/painel-administrativo/imagens/limpeza'
+  defaults:
+    _form: '\Drupal\aculta_image\Form\ImageCleanupForm'
+    _title: 'Limpeza de imagens'
   requirements:
     _permission: 'administer aculta images'

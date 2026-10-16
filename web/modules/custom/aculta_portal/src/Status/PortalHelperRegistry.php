@@ -54,8 +54,13 @@ final class PortalHelperRegistry {
     ],
     'aculta_image.file_remover' => [
       'label' => 'Exclusão controlada de imagem',
-      'summary' => 'Apaga arquivo de imagem somente quando nenhuma entidade o referencia; registra o motivo.',
+      'summary' => 'Apaga arquivo de imagem somente quando file_usage e entity_usage não apontam para ele; invalida derivados e metadados.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.cleanup' => [
+      'label' => 'Limpeza do ciclo de vida de imagens',
+      'summary' => 'Revalida imagens substituídas e remove uploads temporários vencidos em lotes pelo cron ou painel.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/README.md',
     ],
     'aculta_image.ingester' => [
       'label' => 'Ingestão de imagem externa',

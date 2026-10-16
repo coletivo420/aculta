@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.18. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.19. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -10,6 +10,14 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.18. Leia este documento antes d
 4. Formatos Core migrados para os formatos ACULTA; o seletor de `usuario_aculta` pertence ao papel `email_confirmed`.
 5. A galeria 11 teve as mídias duplicadas mescladas com o `alt` do menor ID; arquivos redundantes aguardam o prazo da quarentena até 2026-11-15. A importação do Growroom segue bloqueada pela F3 do Fórum.
 6. O R7 adicionou `capa_curso` com política `aculta_image`; as Views usam o cartão com finalidade `destaque`. A configuração foi aplicada ao Runtime e os catálogos respondem 200. Firefox confirmou a capa usando uma imagem existente atribuída temporariamente ao curso 1: o cartão gerou e carregou `aculta_destaque_16x9` em 1280×720; `capa_curso` foi limpo logo depois. `config:status` não aponta diferença nos seis arquivos de configuração deste R7.
+
+## Implementação dev.19 — limpeza e painel
+
+- Hooks de substituição/exclusão enfileiram arquivos de campos imagem/arquivo e referências usadas em texto rico. O cron e a ação administrativa processam até 100 itens, removendo somente imagens sem `file_usage` nem `entity_usage`.
+- Temporários de imagem sem referências vencem conforme `system.file:temporary_maximum_age` (seis horas no Runtime previamente inspecionado). Conversão inline ocorre sobre o arquivo gerenciado, sem cópia temporária de conversão.
+- A remoção invalida derivados do Image Style e apaga metadados de auditoria/origem/quarentena do FID removido.
+- Painel em `/painel-administrativo/imagens`, abas de relatório, limpeza e quarentena. A permissão existente `administer aculta images` protege todas as rotas; nenhuma configuração de contas ou papéis foi alterada.
+- Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal11.php` passaram. O Drush local conectou ao banco `aculta_runtime`, mas reportou URI `http://default`; por isso não foi executado `cr` nem outro comando de Runtime nesta tarefa.
 
 ## 2. Git e working tree
 

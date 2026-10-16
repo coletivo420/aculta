@@ -1,3 +1,12 @@
+# Changelog — aculta_image
+
+## 0.1.0-dev.19 — limpeza do ciclo de vida e painel administrativo — 2026-10-16
+
+- Substituições e remoções em campos de imagem/arquivo e textos ricos entram em fila; o cron revalida referências de `file_usage` e `entity_usage` antes de excluir.
+- Temporários de imagem sem uso são limpos após `system.file:temporary_maximum_age` (seis horas no padrão), em lotes de até 100 por cron ou execução administrativa.
+- A exclusão controlada invalida derivados do Image Style e remove metadados internos órfãos.
+- Painel em `/painel-administrativo/imagens` com visão geral, relatório, limpeza e quarentena. Documentação, registro de helpers e regra para agentes atualizados.
+
 ## 0.1.0-dev.18 — limite de upload da capa do curso — 2026-10-16
 
 - O widget de imagem de `capa_curso` agora aplica o limite de 10 MB de `UploadPolicy`; dimensões seguem sem limite máximo.
@@ -11,8 +20,6 @@
 - Os cartões das Views `courses` e `courses_catalog` usam `capa_curso` com a finalidade visual `destaque` (`aculta_destaque_16x9`).
 - Formulário de edição e exibição padrão do curso incluem a capa.
 - Configuração aplicada no Runtime via Entity API após bloqueio da importação parcial por dependência inválida alheia (`field.field.lms_activity.no_answer.field_content` → `filter.format.0`); cache reconstruído. `/courses` e `/cursos/catalogo` respondem 200. O curso atual está sem capa, então a imagem ainda aguarda conteúdo para conferência visual. Esta etapa não altera contas nem papéis.
-
-# Changelog — aculta_image
 
 ## 0.1.0-dev.16 — mesclagem de mídias repetidas e quarentena — 2026-10-16
 
@@ -132,6 +139,3 @@
 - Catálogo de finalidades (`ImageCatalog`): 18 estilos existentes mapeados; única fonte de nome de estilo.
 - Política única de upload (`UploadPolicy`): png, jpg, jpeg, webp, 10 MB. Sem dimensão máxima; o limite de 2 MB e 4096 px da conquista fica em `aculta_game`.
 - Helpers registrados no Status do Portal (`aculta_portal.helper`).
-- Gate `scripts/validate-aculta-image.php` com tolerância zero (regras R1 a R8). Reprova enquanto o código existente não for migrado; a lista de ocorrências é o roteiro das fases M1 a M3.
-- Regra permanente em `AGENTS.md` ("Imagens e arquivos de imagem").
-- Testes: `ImageCatalogTest` (3 testes).
