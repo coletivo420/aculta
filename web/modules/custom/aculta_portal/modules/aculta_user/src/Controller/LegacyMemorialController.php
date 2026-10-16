@@ -66,7 +66,9 @@ final class LegacyMemorialController extends ControllerBase {
         'max-age' => 3600,
       ],
       'texto' => [
-        '#markup' => '<p>' . $this->t('Memorial da comunidade. O texto aprovado está pendente de aprovação.') . '</p>',
+        '#markup' => '<p>' . $this->t('Este é o memorial coletivo do Growroom, o fórum que reuniu, entre 2002 e 2025, pessoas interessadas em cultivo, cultura canábica e debate sobre políticas de drogas.') . '</p>'
+          . '<p>' . $this->t('Aqui ficam registrados os nomes de quem participou, ligados às suas próprias publicações, como memória da comunidade.') . '</p>'
+          . '<p>' . $this->t('Este memorial não indica falecimento de ninguém.') . '</p>',
       ],
       'busca' => [
         '#markup' => '<form method="get" action="" role="search"><label for="memorial-busca">'
