@@ -22,6 +22,8 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 ## Módulos e integrações
 
 - [modules/README.md](modules/README.md) — referência canônica dos módulos e das regras anti-regressão.
+- [modules/LMS-GROUP.md](modules/LMS-GROUP.md) — ownership e inventário do Drupal LMS/Group.
+- [modules/ACULTA-LMS-ROADMAP.md](modules/ACULTA-LMS-ROADMAP.md) — fases futuras, critérios de aceite e rollback; F0 documental.
 - [ANTI-REGRESSION.md](ANTI-REGRESSION.md) — camadas de anti-regressão.
 - [integrations/README.md](integrations/README.md) — integrações externas: autenticação, CAPTCHA e Google.
 

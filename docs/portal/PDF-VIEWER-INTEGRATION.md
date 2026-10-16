@@ -1,0 +1,73 @@
+# Integração compartilhada de documentos PDF
+
+Revisado em 2026-10-16. Esta norma define arquitetura e critérios de integração compartilhada.
+
+## Fontes de verdade e escopo
+
+Media (`document`) e File são os registros do arquivo e metadados. Drupal PDF é o formatter/integração contrib em avaliação; PDF.js é o viewer local, com versão fixada e proveniência/licença preservadas; PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha de preview ou ausência de ferramenta de imagem jamais pode impedir leitura ou download autorizado.
+
+O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Revista420, Wiki420, Fórum, projetos, documentos institucionais e arquivo público usam a mesma política e o mesmo componente funcional. ACULTA420 é o único dono da apresentação SDC; a decisão de abrir/autorizar Media pertence ao Drupal/Portal.
+
+## Inventário confirmado
+
+- Há Media bundle `document`, source `file`, campo obrigatório `field_media_document`, cardinalidade 1 e esquema `public://`. O campo permite PDF e diversos formatos de documento (txt, rtf, Office/ODF e Apple); o fluxo PDF deve rejeitar ou degradar tipos não PDF, não assumir que todo `document` é PDF.
+- Existe tipo de conteúdo `document` para documentos institucionais, com `field_document` limitado a `pdf`; coexistem, portanto, referência direta e Media. A integração deve consolidar a UX sem migração implícita ou remoção de conteúdo.
+- `filter.format.full_html` e `revista_editorial` habilitam `entity_embed` e incluem `document` na lista de bundles. Confirmar as configurações CKEditor/Entity Embed completas por uso em conteúdo e validar acesso de mídia embutida; configuração habilitada não prova que o viewer funciona nem que o acesso está correto.
+- PDF, PDFPreview, ImageMagick, H5P e Entity Print não fazem parte do lock atual. Dependência operacional de ImageMagick/Ghostscript precisa ser verificada separadamente por ambiente; ImageMagick não deve ser selecionado como toolkit padrão só para previews.
+- Source exato do tag `8.x-1.3` consultado em 2026-10-16: `pdf.libraries.yml` registra `/libraries/pdf.js/build/pdf.js`; formatter `PdfDefault` escolhe `pdf.settings:custom_viewer` ou `/libraries/pdf.js/web/viewer.html`, forma iframe para o viewer com `?file=` contendo URL absoluta, e o JS/worker de `PdfPages` também usam `.js`. O caminho padrão fixa localização/nome e não tem alternativa configurável para os imports `.mjs`; somente o arquivo do viewer pode ser substituído pela configuração `custom_viewer`. Issue #3417349 pede troca para `.mjs` e `type="module"`, segue sem release estável com essa alteração confirmada. PDF.js 6.3.289 distribui `build/pdf.mjs`, `build/pdf.worker.mjs`, `web/viewer.html`, `web/viewer.mjs`, CSS e assets do viewer. Compatibilidade direta do PDF 1.3 com 6.3.289 está, portanto, **incompatível no loader/API conforme fonte examinada**, não apenas não confirmada.
+- Código exato do PDFPreview 8.x-1.2 também foi lido. `PDFPreviewGenerator` usa ImageToolkit (`arguments()`), define source format PDF, source frame `[0]`, resize/quality e salva derivado; o módulo não chama `proc_open()` diretamente: execução externa cabe ao toolkit contrib e ainda requer auditoria. Caminho do derivado usa `system.file:default_scheme`, não o scheme original do PDF. Se o default for `public`, o preview pode expor visualmente um PDF privado por URL pública. Até provar access equivalente, PDFPreview não pode atender arquivos privados; indisponibilidade/falha deve cair para ícone neutro.
+- PDFPreview 8.x-1.2 é estável para Drupal 10/11. Seu Composer metadata requer `drupal/imagemagick ^3.7 || ^4.0`, incompatível com ImageMagick 5.x; a issue upstream “Support for ImageMagick 5.x” não torna uma branch dev adequada para produção. ImageMagick 5.0.1 declara Drupal 11.3+ e PHP 8.5. A combinação estável precisa de release compatível antes de ser proposta.
+
+## Decisão de integração para F2/F3
+
+1. Configurar `custom_viewer` não resolve a incompatibilidade de `.js` no `pdf.libraries.yml`/`PdfPages`; não é adaptação suficiente para PDF.js 6.3.289. O formatter padrão requer nomes antigos `pdf.js`/`pdf.worker.js` e API global `pdfjsLib`, enquanto PDF.js moderno distribui módulos ES.
+2. Recomendação: adapter pequeno em `aculta_portal` (formatter/plugin ou controller de renderização) para viewer moderno local e API modular, com Media/File access validado e render arrays/cacheability. Alternativamente, só considerar um build oficial de PDF.js compatível com loader PDF 1.3 depois de pin, licença, CVE review e teste, se isso cumprir o requisito de versão atualizada. Não aplicar patch contrib preventivamente nem manter um fork como padrão.
+3. O viewer recebe somente referência de entidade autorizada (Media ID/revisão e campo/file associado), modo de exibição e título acessível. Não aceitar URL arbitrária de request, querystring controlada pelo editor, nem URL externa. A URL de bytes deve ser produzida pelo Drupal com File Access e contexto de acesso atual.
+4. Media sem PDF, arquivo ausente, viewer indisponível, erro JS ou PDFPreview indisponível mantém título, descrição e ação de abrir/baixar conforme access. Fallback não eleva acesso e oferece link comum somente se autorizado.
+5. ACULTA420 recebe render array autorizado e dimensões/estado neutros. Paginação, contagem de páginas ou erro só aparecem se obtidos pelo viewer sem divulgar conteúdo não autorizado. `CacheableMetadata` agrega Media, File, usuário/grupo/turma e access result; respostas de arquivo privado usam cache privado/no-store conforme implementação Core e nunca cache público compartilhado.
+
+### Contrato de apresentação
+
+| Campo neutro | Regra |
+| --- | --- |
+| Mídia | Entidade Media ou render array já autorizado; sem hostname/ID em estado visual desnecessário |
+| Modo | `embedded`, `link` ou `download`; decisão de configuração do display, não parâmetro livre do usuário |
+| Arquivo | URL Drupal gerada a partir do objeto File; respeita esquema, entidade e File Access |
+| Título/alternativa | Título Media e nome/descrição acessíveis; controles com nome acessível |
+| Acesso | Resultado de access e membership da turma avaliados no servidor em cada request |
+| Fallback | Download/link somente com permissão; caso contrário mensagem genérica e nenhum endereço de arquivo |
+| Layout | Largura fluida, altura com proporção adequada e limites para viewport pequena; tema controla aparência |
+| Estado | Paginação e erro de renderização, sem tornar estado de viewer prova de conclusão LMS |
+| Cache | Tags da Media/File/configuração, contexts de usuário/permissão/grupo necessários e max-age privado quando houver conteúdo privado |
+
+## PDFPreview, miniaturas e risco operacional
+
+PDFPreview gera a primeira página usando ImageMagick e binários relacionados. O código 1.2 escreve o derivado em scheme baseado em `system.file:default_scheme`, não no scheme do source. Definir ou manter o default global como `public` pode expor um derivado de documento originalmente privado, mesmo que o PDF fonte permaneça protegido. Não usar PDFPreview em conteúdo privado antes de uma implementação/teste que preserve File Access para derivado (ou escolha um destino privado e entrega autorizada).
+
+A página do projeto recomenda permitir leitura de PDF em ImageMagick `policy.xml`; isso não autoriza alteração global de policy, execução de PostScript, nem permissões amplas. Alteração de policy do sistema requer revisão operacional e de segurança própria.
+
+Antes de F3, revisar o código/tag de PDFPreview e ImageMagick: chamada `proc_open`/processo, argumentos sem shell injection, binários e timeout, Ghostscript e configuração de delegates, policies PDF/PS, limites CPU/memória/tamanho/páginas, diretório temporário, permissões, validade de derivados, concorrência e invalidação em replace/delete. Preferir limites operacionais restritivos e PDFs não processados se o ambiente não puder satisfazê-los. ImageMagick não será o toolkit Drupal padrão apenas por instalar PDFPreview.
+
+Preview é cache derivado e reconstruível; testar falhas, fila/lote, aquecimento de cache e respostas idempotentes. Se thumbnail falhar/estiver atrasada, exibir ícone genérico e continuar viewer/download autorizado. Verificar Hostinger/LiteSpeed com suporte de binários e policy sem presumir acesso a `httpd.conf` ou execução de processos.
+
+## Segurança e validação antes de release
+
+- Testes de Media/File publicados e não publicados, público e privado, usuários A/B, duas turmas, usuário sem membership e administrador; tentativa direta pela URL de arquivo e URL de viewer.
+- Não confundir ausência de botão de download com proteção; não expor `public://` para material que deva ser privado. A configuração atual `document` usa esquema público, logo F3 não deve usá-la para trabalhos de estudante sem decisão e migração próprias.
+- Avaliar CSP, iframe sandbox/allowlist, origem same-origin, `X-Content-Type-Options`, MIME e `Content-Disposition`; não liberar URL remota; não usar CDN em produção.
+- PDFs grandes e maliciosos, timeout, worker `.mjs`, MIME JavaScript, CSP, cache, bloqueio de acesso após mudança de membership e falhas de thumbnail.
+- Confirmar aviso de licença e proveniência de cada arquivo distribuído do PDF.js. Atualização exige pin de versão e revisão de segurança.
+
+## Pesquisa e fontes upstream
+
+- [PDF module e instruções da biblioteca](https://www.drupal.org/project/pdf)
+- [PDF releases](https://www.drupal.org/project/pdf/releases)
+- [Issue PDF: referências `.mjs` (#3417349)](https://www.drupal.org/project/pdf/issues/3417349)
+- [PDFPreview](https://www.drupal.org/project/pdfpreview)
+- [PDFPreview releases](https://www.drupal.org/project/pdfpreview/releases)
+- [Issue queue PDFPreview: compatibilidade ImageMagick 5.x](https://www.drupal.org/project/issues/pdfpreview)
+- [ImageMagick releases](https://www.drupal.org/project/imagemagick/releases)
+- [PDF.js v6.3.289](https://github.com/mozilla/pdf.js/releases/tag/v6.3.289) e [layout prebuilt/API](https://mozilla.github.io/pdf.js/getting_started/)
+- [Source `pdf.libraries.yml` do tag 8.x-1.3](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/pdf.libraries.yml), [`PdfDefault`](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/src/Plugin/Field/FieldFormatter/PdfDefault.php) e [`PdfPages`](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/src/Plugin/Field/FieldFormatter/PdfPages.php)
+- [Source PDFPreview 8.x-1.2 `PDFPreviewGenerator`](https://git.drupalcode.org/project/pdfpreview/-/blob/8.x-1.2/src/PDFPreviewGenerator.php) e [Composer metadata](https://git.drupalcode.org/project/pdfpreview/-/blob/8.x-1.2/composer.json)
+

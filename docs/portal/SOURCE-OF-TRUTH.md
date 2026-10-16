@@ -34,6 +34,10 @@ dos módulos que integra.
 | Cursos | Group LMS Course | Drupal LMS | catálogo/resumo | COURSES/ACCOUNT | Não |
 | Matrícula | Group membership | Group | leitura/apresentação | COURSES/ACCOUNT | Não |
 | Progresso | LMS Course Status | Drupal LMS | leitura/apresentação | COURSES/ACCOUNT | Não |
+| Lições, atividades, respostas e notas | entidades Drupal LMS | Drupal LMS + Group access | integração educacional futura (`aculta_lms`) | COURSES/ACCOUNT | Não |
+| Documentos/PDF | Media + File | Media/File Access + viewer PDF compartilhado | presenter autorizado global, sem cópia/URL livre | conforme conteúdo e turma | Não |
+| Miniatura PDF | derivado reconstruível | PDFPreview, condicionado a binários/policy | melhoria opcional de apresentação | conforme conteúdo | Não |
+| Certificado | conclusão/nota LMS; emissão depende de decisão F11 | Entity Print futuro | gerar representação autorizada | COURSES/ACCOUNT | Ainda não definido; sem score/progresso paralelo |
 | Wiki | Node wiki_entry | Core Node | landing/participação | WIKI/ACCOUNT | Não |
 | Categorias Wiki | Taxonomy | Core Taxonomy | navegação | WIKI | Não |
 | Revisões Wiki | Node revisions/Diff | Core + Diff | atividade/links | WIKI/ACCOUNT | Não |
