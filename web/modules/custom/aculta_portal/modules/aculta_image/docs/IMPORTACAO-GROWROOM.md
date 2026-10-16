@@ -64,6 +64,20 @@ são a única descrição de como os manifestos foram gerados.
   (`docs/RECONSTRUCAO.md` do `aculta_forum`).
 - Lacunas: itens não recuperados ficam com motivo registrado; nenhuma porcentagem é divulgada sem denominador.
 
+## Fóruns fora da importação (decisão do responsável, 2026-10-16)
+
+Não serão importados os fóruns abaixo (identificadores do Growroom, lidos dos links de navegação das páginas baixadas):
+
+| Fórum (nome no Growroom) | Identificador (`showforum`) | Observação |
+| --- | --- | --- |
+| Avisos | 2 e 52 | dois fóruns com o mesmo nome |
+| Multimidia Cannabica | 48 | |
+| Cannabis Medicinal (interpretado como "Cultivo Medicinal") | 76 | o nome "Cultivo Medicinal" não existe no Growroom; confirmar com o responsável |
+
+Escopo: a decisão vale para a **importação**. O download do Wayback não exclui esses fóruns, porque os tópicos
+não trazem o identificador do fórum na URL; excluí-los do download exige mapear cada tópico à sua seção (a partir
+das páginas de listagem `showforum`). Fica como etapa separada, se o responsável quiser.
+
 ## Bloqueio atual
 
 A F3 (migração piloto) depende da lista de autores extraída do HTML. A F6 (reconstrução em lotes) depende da F3.
