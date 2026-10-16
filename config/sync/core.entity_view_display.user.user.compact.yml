@@ -23,7 +23,7 @@ content:
     label: hidden
     settings:
       image_link: content
-      image_style: thumbnail
+      image_style: aculta_avatar_pequeno
       image_loading:
         attribute: lazy
     third_party_settings: {  }
