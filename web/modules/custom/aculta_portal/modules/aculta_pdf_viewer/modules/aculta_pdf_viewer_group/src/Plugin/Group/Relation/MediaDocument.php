@@ -19,7 +19,7 @@ use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
   reference_label: new TranslatableMarkup('Document'),
   reference_description: new TranslatableMarkup('The document Media attached to this group.'),
   entity_access: TRUE,
-  enforced: TRUE,
+  enforced: FALSE,
   deriver: 'Drupal\\aculta_pdf_viewer_group\\Plugin\\Group\\Relation\\MediaDocumentDeriver'
 )]
 final class MediaDocument extends GroupRelationBase {

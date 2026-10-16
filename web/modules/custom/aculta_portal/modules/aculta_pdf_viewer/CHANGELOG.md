@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## Submódulo aculta_pdf_viewer_group 0.1.0-dev.2 — relação de turma restrita a lms_course — 2026-10-16
+
+Classificação: PATCH (submódulo; o módulo pai não mudou de versão).
+
+- `MediaDocument` passa a `enforced: FALSE`. Antes, `enforced: TRUE` instalava a relação de documento em todo tipo de grupo criado. Agora a relação existe só onde está configurada: `lms_course`, pela configuração `group.relationship_type.lms_course-af8ec2205541224f9d8c4` em `config/sync/`.
+- Evidência: Kernel `aculta_pdf_viewer_group` 1/1 (37 asserções) OK, com 23 deprecações de contrib, no banco `aculta_simpletest`.
+- RUNTIME STATUS: DEFERRED. No Runtime de teste, o tipo de mídia `course_document` e o submódulo ainda não existem; a configuração está só no sync. A relação em `lms_course` deve ser verificada depois da importação de configuração, que é operação separada.
+
 ## 0.1.0-dev.12 — mapeamento único de documentos, miniatura sem checagem morta, versão do submódulo de turma — 2026-10-16
 
 Classificação: PATCH.
