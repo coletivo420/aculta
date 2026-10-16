@@ -1079,5 +1079,77 @@
     "source": "recorte-da-prancha-convertido-1x1",
     "width": 291,
     "height": 513
+  },
+  {
+    "id": "pirates-002-polvo-pirata",
+    "file": "pirates/pirates-002-polvo-pirata.png",
+    "family": "pirates",
+    "label": "Polvo pirata",
+    "alt": "Polvo pirata com tapa-olho, sabre e mapa do tesouro temático.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-003-caveira-pirata-420",
+    "file": "pirates/pirates-003-caveira-pirata-420.png",
+    "family": "pirates",
+    "label": "Caveira pirata 420",
+    "alt": "Caveira pirata com colares 420, tapa-olho e baseado.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-004-alien-corsario",
+    "file": "pirates/pirates-004-alien-corsario.png",
+    "family": "pirates",
+    "label": "Alien corsário",
+    "alt": "Alienígena corsário de estilo pirata com cenário cósmico tropical.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-005-monstro-marinheiro",
+    "file": "pirates/pirates-005-monstro-marinheiro.png",
+    "family": "pirates",
+    "label": "Monstro marinheiro",
+    "alt": "Monstro marinho pirata com muitos tentáculos e acessórios navais.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-006-papagaio-chapado",
+    "file": "pirates/pirates-006-papagaio-chapado.png",
+    "family": "pirates",
+    "label": "Papagaio chapado",
+    "alt": "Arara pirata colorida com lenço, chapéu e estética canábica.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-008-sapo-bucaneiro",
+    "file": "pirates/pirates-008-sapo-bucaneiro.png",
+    "family": "pirates",
+    "label": "Sapo bucaneiro",
+    "alt": "Sapo bucaneiro com roupa de pirata e cenário de porto tropical.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-009-criatura-de-tapa-olho",
+    "file": "pirates/pirates-009-criatura-de-tapa-olho.png",
+    "family": "pirates",
+    "label": "Criatura de tapa-olho",
+    "alt": "Criatura fantástica pirata com tapa-olho, presas e adornos 420.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "pirates-010-fantasma-pirata",
+    "file": "pirates/pirates-010-fantasma-pirata.png",
+    "family": "pirates",
+    "label": "Fantasma pirata",
+    "alt": "Fantasma pirata luminoso surgindo no cais sob a lua cheia.",
+    "active": true,
+    "source": "generated-from-user-collage"
   }
 ]

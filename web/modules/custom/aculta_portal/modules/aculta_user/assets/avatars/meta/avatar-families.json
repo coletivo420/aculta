@@ -90,5 +90,14 @@
     "version": "1",
     "format": "square-1x1-from-portrait",
     "notes": "Recortes da prancha em retrato, convertidos para 1:1 a partir do topo (512 px). Ver meta/avatars-robots.json."
+  },
+  {
+    "id": "pirates",
+    "label": "Piratas e aventureiros",
+    "count": 8,
+    "active": true,
+    "version": "1",
+    "format": "square-original",
+    "notes": "Família gerada individualmente em estilo retrô ilustrado, temática pirata e 420. Dois itens do manifesto (pirates-001 e pirates-007) não vieram no zip e não foram registrados."
   }
 ]
