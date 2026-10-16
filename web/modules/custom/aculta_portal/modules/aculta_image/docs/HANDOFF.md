@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.16. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.17. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -9,6 +9,7 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.16. Leia este documento antes d
 3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário, persistência e reabertura da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Firefox/Orca/AT-SPI confirmaram foco e leitura da legenda e do `alt`, além da semântica de imagem/legenda.
 4. Formatos Core migrados para os formatos ACULTA; o seletor de `usuario_aculta` pertence ao papel `email_confirmed`.
 5. A galeria 11 teve as mídias duplicadas mescladas com o `alt` do menor ID; arquivos redundantes aguardam o prazo da quarentena até 2026-11-15. A importação do Growroom segue bloqueada pela F3 do Fórum.
+6. O R7 de LMS adicionou `capa_curso` com política `aculta_image`; as Views de cursos usam o cartão com finalidade `destaque`. Falta importar esta configuração no Runtime e conferir o cartão visualmente.
 
 ## 2. Git e working tree
 
@@ -31,6 +32,8 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.16. Leia este documento antes d
 | `0941388b` | política de IA: um commit por tarefa no branch atual; sem branch por tarefa |
 | `e52c402d` | correção dos botões de modelo no overflow (dev.10): um botão por modelo |
 | `b66646ef` | migração `basic_html`/`full_html` para formatos ACULTA, seletor para `email_confirmed`, Fórum restrito |
+| `16016400` | mesclagem de duplicatas de mídia e correção da lista de candidatas em quarentena (dev.16) |
+| (este commit) | R7: campo `capa_curso` do LMS com política `aculta_image`, uso nos cartões e atualização da documentação (dev.17) |
 
 - **Não commitar** o que é de outras sessões. No momento da passagem havia 25 entradas em `git status`. Todas as do submódulo `aculta_image` são desta frente. As demais são de outra frente e **não** devem entrar nos commits de imagem:
   - `config/sync/group.role.lms_course-member.yml`, `group.role.lms_course-teacher.yml`, `user.role.lms_teacher.yml`;
@@ -64,7 +67,6 @@ editores foram reimportados com o dropdown único `acultaImageModel`.
 | `editor.editor.basic_html.yml` | `max_dimensions` nulo | `fdc4c0ad` |
 | `editor.editor.full_html.yml` | botão de modelo e `max_dimensions` nulo | `42a0d5eb`, `fdc4c0ad` |
 | `editor.editor.revista_editorial.yml` | botão de modelo e `max_dimensions` nulo | `19b779eb`, `fdc4c0ad` |
-| `user.role.authenticated.yml` | permissão `use text format usuario_aculta` | `fdc4c0ad` |
 | `field.field.comment.comment_forum.comment_body.yml` | `allowed_formats` = só `usuario_aculta` | `fdc4c0ad` |
 
 Foi executado `config:status`, importação parcial só dos alvos revisados e `cr`. O filtro, a biblioteca CKEditor, o plugin e
@@ -88,6 +90,8 @@ O arquivo gerenciado foi excluído e a ausência confirmada. O upload está cobe
 
 O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplicado nesta passagem executou `aculta_portal_update_11009` para migrar os formatos de texto do site.
 
+**R7 (2026-10-16):** foi preparado o campo nativo `capa_curso`, com política `aculta_image`, no Config Sync e o estilo de finalidade `destaque` nas Views `courses` e `courses_catalog`. A importação parcial foi bloqueada na validação por uma dependência preexistente em `field.field.lms_activity.no_answer.field_content` para `filter.format.0` (ausente). Nenhuma configuração foi aplicada nesta tentativa. Não corrigir isso alterando contas/papéis; revisar separadamente a configuração de formato/atividade antes de tentar a importação novamente.
+
 ## 5. Riscos conhecidos
 
 - **Valores de formato antigos:** textos e revisões foram migrados antes da exclusão dos formatos Core; respostas antigas do Fórum usam `usuario_aculta` após a migração.
@@ -104,12 +108,14 @@ O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplica
 - **Revisão a 390 px e tema escuro (2026-10-16):** em página pública anônima de artigo existente, Firefox 153.4 ESR via WebDriver BiDi manteve `innerWidth=390`. Quatro figuras demonstrativas adicionadas apenas ao DOM usaram as classes reais Pequena/Padrão/Larga/Destaque; todas mediram 346 px, exibiram `figcaption` e o documento mediu 378 px, sem rolagem horizontal. As quatro imagens carregaram (largura natural 960 px). No tema escuro integrado, definido temporariamente em `aculta_portal.appearance:default_mode` e depois restaurado para `light`, o HTML público veio com `data-bs-theme="dark"`; corpo `rgb(23, 21, 19)`, texto `rgb(244, 239, 232)`, legenda `rgb(183, 174, 165)`. As figuras permaneceram em 346 px, sem overflow. As figuras de verificação existiram só no DOM da sessão; nenhum conteúdo foi salvo.
 - **Fórum:** tópicos e respostas usam somente `usuario_aculta`. O formato está disponível ao papel `email_confirmed`; `content_editor` elegível tem também esse papel conforme a hierarquia documentada.
 - **Formatos textuais (2026-10-16):** `basic_html` foi migrado para `usuario_aculta` e `full_html` para `revista_editorial`, incluindo revisões. Campos, views, Agreement e permissões foram atualizados; os formatos e editores Core foram removidos do Runtime e do Config Sync. O update `aculta_portal_update_11009` exige que os dois formatos de destino existam antes de rodar.
-- **Downloads do Wayback (2026-10-16, 15:42):** assets concluído (9.314 arquivos). HTML em andamento como root, com processo ativo: 6.480 arquivos; fila de tópicos e galerias (perfis fora até o mapeamento). Seções excluídas da importação: Avisos (2 e 52), Multimídia Cannábica (48), Cannabis Medicinal (76, a confirmar) e Notícias (24). **Não interromper nem apagar** sem consulta ao responsável. O script está fora do repositório (`scratchpad` da sessão); ver `IMPORTACAO-GROWROOM.md`, seção de estado.
+- **Downloads do Wayback (2026-10-16, 15:42):** assets concluído (9.314 arquivos). A coleta HTML não tinha processo ativo na última verificação; os números anteriores não foram remedidos. A fila de tópicos e galerias segue dependente do mapeamento de perfis. Seções excluídas da importação: Avisos (2 e 52), Multimídia Cannábica (48), Cannabis Medicinal (76, a confirmar) e Notícias (24). **Não interromper nem apagar** sem consulta ao responsável. O script está fora do repositório (`scratchpad` da sessão); ver `IMPORTACAO-GROWROOM.md`, seção de estado.
 - **Binários de produção:** ImageMagick e Ghostscript não foram confirmados na Hostinger. A miniatura de PDF e a redução de largura dependem disso em produção.
 
 ## 6. Próximos passos (ordem recomendada)
 
-1. **Intervenção necessária:** decidir a política de `alt` e ocorrências repetidas na galeria para mesclar as mídias duplicadas (ver `PLANO.md`, seção 6). Os formatos e o Fórum foram decididos e aplicados. A confirmação dos binários na Hostinger segue pendente (RC).
+1. Importar apenas as configurações do campo `capa_curso`, displays e Views `courses`/`courses_catalog` no Runtime; conferir `config:status`, cache e cartões em navegador.
+2. Continuar R8 (consumidores restantes e estilos legados) mantendo a frente de contas e permissões aberta, sem alterar contas nesta tarefa.
+3. A confirmação dos binários na Hostinger segue pendente (RC). A mesclagem da galeria foi concluída; arquivos redundantes continuam na quarentena até 2026-11-15.
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)
 

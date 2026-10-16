@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   config:
+    - field.field.group.lms_course.capa_curso
     - field.field.group.lms_course.field_description
     - group.type.lms_course
   module:
@@ -13,6 +14,15 @@ targetEntityType: group
 bundle: lms_course
 mode: default
 content:
+  capa_curso:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: aculta_destaque_16x9
+    third_party_settings: {  }
+    weight: -4
+    region: content
   field_description:
     type: text_default
     label: hidden

@@ -85,7 +85,8 @@ display:
       row:
         type: course_card_row
         options:
-          background_image_field: ''
+          background_image_field: capa_curso
+          image_style: aculta_destaque_16x9
           media_view_mode: ''
           description_field: field_description
           description_display_type: full

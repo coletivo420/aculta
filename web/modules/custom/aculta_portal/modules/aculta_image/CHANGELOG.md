@@ -1,3 +1,10 @@
+## 0.1.0-dev.17 — capa de curso no LMS (R7) — 2026-10-16
+
+- Criado o campo nativo `group.lms_course.capa_curso`, com upload pela política `aculta_image` desde a configuração inicial.
+- Os cartões das Views `courses` e `courses_catalog` usam `capa_curso` com a finalidade visual `destaque` (`aculta_destaque_16x9`).
+- Formulário de edição e exibição padrão do curso incluem a capa.
+- Importação no Runtime e conferência visual do cartão ainda pendentes. Esta etapa não altera contas nem papéis.
+
 # Changelog — aculta_image
 
 ## 0.1.0-dev.16 — mesclagem de mídias repetidas e quarentena — 2026-10-16
