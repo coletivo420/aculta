@@ -12,8 +12,8 @@ funcional posterior terá PR rastreável, sem merge parcial automático ou tags.
 | F1 — inventário e domínio | Inventário CDX completo do prefixo histórico `/board/`, corte temporal; troca do prefixo por ambiente | **Executada no teste** (2026-10-15): inventário mensurável; Deployer/Domain, DNS/TLS, sessão, canonical e sitemap do Fórum verificados; política do host antigo registrada. Ver [Reconstrução](RECONSTRUCAO.md) e [Decisões](DECISOES.md). |
 | F2 — identidades históricas | Papel, Users bloqueados, memorial coletivo, nomes individuais e avatar especial | **Estrutura pronta no teste** (2026-10-16): campos de identidade no perfil, serviço idempotente de contas legadas, acesso negado a página individual, memorial com busca e avatar especial aguardando arte. **Pendente, depende de dados ou aprovação**: contas legadas criadas pela importação, link de autoria em tópicos e comentários, arte aprovada do avatar. Texto do memorial aprovado em 2026-10-16 (2002 a 2025, sem canal de contato). Toda autoria aponta ao coletivo; sem perfis individuais ou onboarding |
 | F3 — migração piloto | Estrutura, autores, tópicos, respostas e arquivos de amostra | IDs/datas/quotes corretos, comentários fechados, reexecução sem duplicação, sem e-mails/conquistas |
-| F4 — experiência atual | Home, listagens, tópico, ações sociais e conversa vinculada | Desktop/mobile, teclado, fallback sem JS, dois modos de cor; vínculo novo → histórico sem modificar original |
-| F5 — participação e descoberta | Denúncias, moderação, busca e avisos de respostas | Permissões reais, publicação após aprovação, opt-in e deduplicação; limites de participação preservados |
+| F4 — experiência atual (próxima fase, 2026-10-17) | Home, listagens, tópico, ações sociais e conversa vinculada | Desktop/mobile, teclado, fallback sem JS, dois modos de cor; vínculo novo → histórico sem modificar original |
+| F5 — participação e descoberta (F5.1 e F5.2 implementadas no teste) | Denúncias, moderação, busca e avisos de respostas | Permissões reais, publicação após aprovação, opt-in e deduplicação; limites de participação preservados |
 | F5.2 — avisos de resposta | Aviso obrigatório no site para quem segue o tópico; e-mail opt-in pela fila existente, agrupado por tópico; contador por tópico; avisos gerais semelhantes agrupados | Política em `docs/portal/AVISOS-E-NOTIFICACOES.md` e F-D21. Aceite: uma entrada por tópico com contador; um e-mail por tópico por janela; deduplicação por comentário; nada para conteúdo restrito ou histórico; desligado por padrão |
 | F6 — reconstrução em lotes | Conteúdo e mídia de todo o inventário aprovado | Cobertura reconciliada, ausências explicadas, origem rastreável; sem overwrite de dados atuais |
 | F7 — Portal e loja | Revista/Wiki/projetos/galerias e discussão por produto | Uma discussão por vínculo, Galeria na Revista, pedidos privados, transações em MAIN |
@@ -24,6 +24,16 @@ A F9 (fóruns restritos) deve entrar antes do piloto F8: os fóruns de curso dep
 lotes pode ser intercalada, mantendo o Runtime testável. O acervo público não
 depende da conclusão da integração LMS. Gamificação depende do contrato do Game,
 sem conceder conquistas durante a migração histórica.
+
+## Estado em 2026-10-17
+
+- F1: executada no teste. F2: estrutura pronta; pendente importação e arte do avatar.
+- F5.1: denúncias e fila de moderação. F5.2: avisos de resposta e de atualização, contador por tópico,
+  rótulo Lido/Não lido, alertas do site com rótulo, retenção de 6 meses dos avisos do Fórum. Documentado em
+  `aculta_messenger/docs/AVISOS-E-MENSAGENS.md`.
+- F9: parcial. Pendentes: nível de curso (depende da F8) e a exclusão no sitemap se o tipo `forum` entrar nele.
+- F3: aguarda a lista de autores da importação.
+- F4: próxima fase.
 
 ## Antes da primeira alteração funcional
 

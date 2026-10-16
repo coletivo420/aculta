@@ -1,3 +1,9 @@
+## Documentação de estado e referência de classes — 2026-10-17
+
+- README: estado do código por parte do fórum (F2, F5.1, F5.2, F9), com o documento de cada módulo.
+- Roadmap: resumo por fase em 2026-10-17. A próxima fase é a F4.
+- Referência gerada de classes e hooks em `aculta_user/docs/CLASSES-E-HOOKS.md` e `aculta_messenger/docs/CLASSES-E-HOOKS.md` (23 e 30 hooks OOP; cada classe com a primeira frase do docblock).
+
 ## F5.2 — política de avisos de resposta (documentação) — 2026-10-16
 
 - Política em `docs/portal/AVISOS-E-NOTIFICACOES.md` e decisão F-D21: sistema existente, aviso obrigatório no site, e-mail opt-in agrupado por tópico, contadores.

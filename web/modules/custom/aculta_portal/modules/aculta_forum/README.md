@@ -1,8 +1,18 @@
 # ACULTA Fórum — Growroom420
 
 Projeto do futuro submódulo opcional `aculta_forum`, integrante do `aculta_portal`.
-Plano aprovado pelo responsável em **2026-10-15**. Esta entrega abre a documentação;
-ainda não fornece `.info.yml`, rotas, importadores, configuração instalável ou ativação.
+Plano aprovado pelo responsável em **2026-10-15**.
+
+**Estado do código (2026-10-17).** Este submódulo ainda contém só documentação (sem `.info.yml`,
+rotas ou importadores). A funcionalidade do fórum já existe em outros módulos do Portal:
+
+| Parte do fórum | Onde está | Documento |
+| --- | --- | --- |
+| Identidade histórica e memorial (F2) | `aculta_user` (`LegacyAuthor`, `LegacyMemorialController`) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
+| Fóruns restritos e marcador de associado (F9) | `aculta_user` (`RestrictedForumGrants`, `AssociadoMarcador`) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
+| Denúncias e moderação (F5.1) | `aculta_user` (`ReportQueue`) e `aculta_portal` (confirmação de e-mail) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
+| Avisos de resposta e de atualização (F5.2) | `aculta_messenger` (`AvisoService`, `AvisoRetencao`) | `aculta_messenger/docs/AVISOS-E-MENSAGENS.md` |
+| Classes e hooks completos | cada módulo | `aculta_user/docs/CLASSES-E-HOOKS.md`, `aculta_messenger/docs/CLASSES-E-HOOKS.md` |
 
 ## Missão
 
@@ -59,6 +69,11 @@ Aplicam-se os [guardrails](../../../../../../docs/portal/GUARDRAILS.md), o
 [design system](../../../../../../docs/portal/COMPONENT-DESIGN-SYSTEM.md).
 
 ## Estado verificável
+
+Situação por fase (ver [Roadmap](docs/ROADMAP.md)): F1 executada; F2 com estrutura
+pronta e pendente de dados e da arte do avatar; F5.1 e F5.2 implementadas no
+servidor de testes; F9 parcial (nível de curso depende da F8). F3 depende da lista
+de autores da importação. A próxima fase é a F4.
 
 F1 executada no servidor de testes em 2026-10-15. O prefixo
 `growroom420.aculta.toca.net.br` resolve para o Homelab, tem certificado TLS
