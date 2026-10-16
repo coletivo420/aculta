@@ -2,6 +2,10 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.39 — cliques nas abas da central abrem o item no lugar (F5.2) — 2026-10-16
+
+- A área das abas Avisos e Mensagens é um contêiner da gaveta (`data-aculta-drawer-url`/`-content`), e os cliques abrem o aviso ou a conversa no mesmo lugar, como na barra.
+
 ## 0.1.1-dev.38 — aba Mensagens com a lista de conversas da gaveta (F5.2) — 2026-10-16
 
 - A aba Mensagens da conta mostra a mesma lista de conversas da gaveta da barra (`conversasBuild`), no lugar do link "Abrir conversas".

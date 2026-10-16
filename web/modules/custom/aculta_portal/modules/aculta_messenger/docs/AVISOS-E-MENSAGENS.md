@@ -139,6 +139,10 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
   - **Mensagens** (`/avisos-mensagens/mensagens`): a **mesma lista de conversas da gaveta da barra**
     (`MessagesController::conversasBuild`), com o mesmo botão de nova conversa e os mesmos links. As conversas continuam
     no sistema de mensagens; a aba não cria nem altera conversas.
+- Clique em um aviso ou em uma conversa dentro da central abre o item completo **no mesmo lugar**, como na gaveta da barra:
+  a área das abas é um contêiner `data-aculta-drawer-url` com `data-aculta-drawer-content`, e o script da gaveta
+  (`messenger-drawers.js`) busca o fragmento e o mostra ali. O botão Voltar retorna à lista da gaveta. A biblioteca do
+  script é anexada pelos gatilhos da barra; o módulo não anexa biblioteca do tema.
 - Acesso: `access aculta portal`, no propósito `account`. Abas inexistentes respondem 404.
 - A prévia da barra multidomínio mostra até 5 avisos da pessoa, seguidos do link **Ver todos os avisos**, que abre a
   aba Avisos. O contador do ícone de avisos soma esses avisos (seção 5).

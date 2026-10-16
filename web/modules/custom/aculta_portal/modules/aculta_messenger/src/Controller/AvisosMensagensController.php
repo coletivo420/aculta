@@ -68,7 +68,20 @@ final class AvisosMensagensController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
         'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t(self::ABAS[$aba]), '#element_attributes' => new Attribute(['tabindex' => '-1'])],
-        'list' => $conteudo,
+        // Mesmo comportamento da gaveta da barra: a área abaixo do cabeçalho é trocada pelo script da gaveta
+        // (messenger-drawers.js), que busca o aviso ou a conversa e mostra no lugar, sem navegar para outra página.
+        'list' => [
+          '#type' => 'container',
+          '#attributes' => [
+            'data-aculta-drawer-url' => Url::fromRoute('aculta_messenger.avisos', ['aba' => $aba])->toString(),
+            'data-portal-ui' => 'account-messenger-drawer',
+          ],
+          'conteudo' => [
+            '#type' => 'container',
+            '#attributes' => ['data-aculta-drawer-content' => ''],
+            'itens' => $conteudo,
+          ],
+        ],
       ],
     ];
   }
