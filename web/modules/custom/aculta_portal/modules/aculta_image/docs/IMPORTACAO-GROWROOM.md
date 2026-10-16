@@ -64,6 +64,16 @@ são a única descrição de como os manifestos foram gerados.
   (`docs/RECONSTRUCAO.md` do `aculta_forum`).
 - Lacunas: itens não recuperados ficam com motivo registrado; nenhuma porcentagem é divulgada sem denominador.
 
+## Estado do download do Wayback (2026-10-16, 15:21)
+
+- **Assets:** concluído. 9.468 registros no manifesto; 9.314 arquivos em disco (`restauro/assets`). Os 17 pendentes da última passagem foram baixados.
+- **HTML:** em andamento, processo ativo (Python em segundo plano, como root). 6.186 registros no manifesto; 6.156 arquivos em disco. Fila: 66.050 pendentes no início desta rodada; ordem de prioridade: usuários, depois fórum (tópicos), depois galerias.
+- **Ritmo observado:** cerca de 18 páginas por minuto com 2 conexões. Previsão de 2 a 3 dias para o restante, sujeita ao Wayback.
+- **Falhas:** cerca de 5% das requisições viram `None` (sem resposta após as tentativas). Não são repetidas automaticamente em cada rodada além das quatro tentativas.
+- **Caminho de conflito:** páginas que colidem com um arquivo do mesmo nome vão para `html/__conflitos/<hash da URL>`.
+
+Para acompanhar: `sudo sh -c 'tail -n 2 /home/aculta/private/aculta/forum/restauro/progress-html.log'`.
+
 ## Fóruns fora da importação (decisão do responsável, 2026-10-16)
 
 Não serão importados os fóruns abaixo (identificadores do Growroom, lidos dos links de navegação das páginas baixadas):
@@ -73,6 +83,7 @@ Não serão importados os fóruns abaixo (identificadores do Growroom, lidos dos
 | Avisos | 2 e 52 | dois fóruns com o mesmo nome |
 | Multimidia Cannabica | 48 | |
 | Cannabis Medicinal (interpretado como "Cultivo Medicinal") | 76 | o nome "Cultivo Medicinal" não existe no Growroom; confirmar com o responsável |
+| Notícias | 24 | incluído em 2026-10-16 (pedido do responsável) |
 
 Escopo: a decisão vale para a **importação**. O download do Wayback não exclui esses fóruns, porque os tópicos
 não trazem o identificador do fórum na URL; excluí-los do download exige mapear cada tópico à sua seção (a partir
