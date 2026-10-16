@@ -1,3 +1,8 @@
+## 0.4.0-dev.53 — política de avisos e notificações (F5.2, documentação) — 2026-10-16
+
+Classificação PATCH (documentação). Define avisos obrigatórios no site, e-mail opt-in agrupado por tópico, uso do
+sistema existente e agrupamento por contador. Implementação na F5.2. Ver `docs/portal/AVISOS-E-NOTIFICACOES.md`.
+
 ## 0.4.0-dev.52 — caminhos em /painel-administrativo e fóruns para marcadores — 2026-10-16
 
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.19. Caminhos internos do ACULTA padronizados em

@@ -29,6 +29,7 @@ Este documento governa o projeto futuro; não descreve alterações já aplicada
 | F-D18 | Confirmação manual de e-mail pelo administrador, com permissão própria, registro em log sem o endereço | **Aprovado e implementado (2026-10-16)**, `PAPEIS-PARTICIPACAO.md`, seção 5 |
 | F-D19 | Associado é marcador puro: tabela própria separada dos usuários e dos papéis, sem acesso a nenhuma função do site. Usado em relatórios e páginas da associação. Remove o nível \"associado\" da visibilidade dos fóruns e o papel `associado` | **Aprovado pelo responsável (2026-10-16).** Supera o papel `associado` de F-D14 e F-D16. Ver `docs/portal/PAPEIS-PARTICIPACAO.md` |
 | F-D20 | Nível de visibilidade "marcadores de associado": fóruns visíveis somente para contas com a marca de associado e para moderadores. Padronização: caminhos internos em `/painel-administrativo/` | **Aprovado pelo responsável (2026-10-16).** Ver `docs/portal/PAPEIS-PARTICIPACAO.md` |
+| F-D21 | Avisos de resposta: aviso no site obrigatório para quem segue o tópico; e-mail opt-in pela fila existente; uma entrada por tópico com contador; avisos gerais semelhantes agrupados com contador; nenhum sistema novo | **Aprovado pelo responsável (2026-10-16).** Ver `docs/portal/AVISOS-E-NOTIFICACOES.md`. Dúvidas: janela do e-mail agrupado e chave de agrupamento dos avisos gerais |
 
 "Memorial" significa memória da comunidade; não afirma falecimento das pessoas.
 O bloqueio é técnico e não constitui punição, expulsão ou avaliação da pessoa.

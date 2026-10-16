@@ -1,3 +1,8 @@
+## F5.2 — política de avisos de resposta (documentação) — 2026-10-16
+
+- Política em `docs/portal/AVISOS-E-NOTIFICACOES.md` e decisão F-D21: sistema existente, aviso obrigatório no site, e-mail opt-in agrupado por tópico, contadores.
+- Dúvidas abertas: janela de envio do e-mail e chave de agrupamento dos avisos gerais.
+
 ## F9 — associado como marcador puro (F-D19) — 2026-10-16
 
 - Associado não é papel. Marcador em tabela própria, sem efeito de acesso. Nível "associado" dos fóruns removido.
