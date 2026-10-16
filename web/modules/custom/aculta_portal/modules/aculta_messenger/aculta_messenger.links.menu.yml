@@ -4,3 +4,9 @@ aculta_messenger.admin_notices:
   route_name: aculta_messenger.admin_notices
   parent: system.admin
   weight: 8
+aculta_messenger.avisos_conta:
+  title: 'Avisos/Mensagens'
+  description: 'Avisos dos tópicos que você segue e suas conversas.'
+  route_name: aculta_messenger.avisos_raiz
+  menu_name: account
+  weight: 6

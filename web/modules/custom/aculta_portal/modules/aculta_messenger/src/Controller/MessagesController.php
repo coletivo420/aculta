@@ -10,6 +10,8 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
 use Drupal\aculta_messenger\Support\NoticeType;
 use Drupal\aculta_messenger\Support\OptionsDisclosure;
@@ -67,6 +69,7 @@ final class MessagesController extends ControllerBase {
     private readonly MessengerCounts $counts,
     private readonly PrivateMessageFormValidator $replyValidator,
     private readonly CsrfTokenGenerator $csrfToken,
+    private readonly AvisoService $avisos,
     private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
@@ -88,6 +91,7 @@ final class MessagesController extends ControllerBase {
       $container->get('aculta_messenger.counts'),
       $container->get('aculta_messenger.private_message_form_validator'),
       $container->get('csrf_token'),
+      $container->get('aculta_messenger.aviso_service'),
       $container->get('module_handler'),
     );
   }
@@ -561,6 +565,34 @@ final class MessagesController extends ControllerBase {
     // Persistent notices always lead the list, ahead of the dismissable site alerts.
     foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
       $items[] = $item;
+    }
+
+    // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.
+    if ($this->account->isAuthenticated()) {
+      $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0)->addCacheTags(['aculta_aviso_list']);
+      $pessoais = $this->avisos->listarDaPessoa((int) $this->account->id(), 5);
+      foreach ($pessoais as $aviso) {
+        $nid = (int) $aviso->get('assunto_nid')->value;
+        $contador = (int) $aviso->get('contador_site')->value;
+        $items[] = $this->noticeSummary(
+          (string) $aviso->get('titulo')->value,
+          $contador > 0 ? (string) $this->translation->translate('@n novas', ['@n' => $contador]) : (string) $this->translation->translate('Lido'),
+          Url::fromRoute('entity.node.canonical', ['node' => $nid]),
+          [],
+          NULL,
+          FALSE,
+          NoticeType::INFO,
+        );
+      }
+      $items[] = $this->noticeSummary(
+        (string) $this->translation->translate('Ver todos os avisos'),
+        '',
+        Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos']),
+        [],
+        NULL,
+        FALSE,
+        NoticeType::INFO,
+      );
     }
 
     // Same criteria as the header bar, from the shared service.

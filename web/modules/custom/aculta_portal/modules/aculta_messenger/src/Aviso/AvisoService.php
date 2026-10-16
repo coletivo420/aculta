@@ -64,6 +64,22 @@ final class AvisoService {
     return $atualizados;
   }
 
+  /**
+   * Avisos da própria pessoa, do mais recente para o mais antigo. Mostra lidos e não lidos (contador > 0 primeiro).
+   *
+   * @return \Drupal\aculta_messenger\Entity\Aviso[]
+   */
+  public function listarDaPessoa(int $uid, int $limite = 100): array {
+    $ids = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('uid', $uid)
+      ->sort('contador_site', 'DESC')
+      ->sort('changed', 'DESC')
+      ->range(0, $limite)
+      ->execute();
+    return array_values($this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids));
+  }
+
   /** Quantos tópicos (avisos agrupados por tipo + assunto) têm itens não lidos para a pessoa. */
   public function naoLidosTotal(int $uid): int {
     return (int) $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()

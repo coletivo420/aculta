@@ -125,6 +125,19 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
 - `src/Plugin/QueueWorker/MessageSubscribeEventWorker.php`: atualização de tópico seguido vira aviso.
 - `src/Hook/MessengerBarHooks.php`: soma os avisos por pessoa ao ícone de avisos.
 
+## 8.1 Central "Avisos/Mensagens" em Minha conta
+
+- Rótulo no menu da conta: **Avisos/Mensagens** (`aculta_messenger.avisos_raiz`, em `/avisos-mensagens`).
+- Duas abas no padrão de Atividade e Meus Dados (`account-data-nav`/`account-data-link`), com a aba atual marcada:
+  - **Avisos** (`/avisos-mensagens/avisos`): avisos da própria pessoa, agrupados por tipo, com contador de não lidos.
+    Só lê os avisos da conta logada; a página não recebe parâmetro de usuário.
+  - **Mensagens** (`/avisos-mensagens/mensagens`): só a contagem de conversas não lidas e o link para abri-las
+    (`aculta_messenger.drawer_conversations`). As conversas continuam no sistema de mensagens; esta aba não grava nada.
+- Acesso: `access aculta portal`, no propósito `account`. Abas inexistentes respondem 404.
+- A prévia da barra multidomínio mostra até 5 avisos da pessoa, seguidos do link **Ver todos os avisos**, que abre a
+  aba Avisos. O contador do ícone de avisos soma esses avisos (seção 5).
+- Visitante não vê a central (403).
+
 ## 9. Mudanças desta etapa e pendências
 
 **Feito (2026-10-16):**
@@ -145,6 +158,6 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
 
 **Pendente:**
 
-- Página "Meus avisos" com a lista agrupada de cada pessoa. Hoje só o contador existe; a lista ainda não.
+- Contador de não lidos no item do menu da conta (o rótulo do menu é estático).
 - Teste do worker de atualização com alias real (exige tópico com alias publicado).
 - Limpeza do tipo antigo de mensagem `aculta_msg_forum_published` (configuração e registros antigos).

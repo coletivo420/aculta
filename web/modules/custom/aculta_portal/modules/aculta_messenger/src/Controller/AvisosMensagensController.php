@@ -1,0 +1,144 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_messenger\Controller;
+
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Service\UnreadThreadCounter;
+use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\Core\Template\Attribute;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Central "Avisos/Mensagens" dentro de Minha conta (ACULTA Messenger, F5.2).
+ *
+ * Duas abas no mesmo padrão de Atividade e Meus Dados: Avisos (avisos por pessoa, só da própria conta) e Mensagens
+ * (conversas, que continuam no sistema de mensagens; aqui só aparece a contagem e o link para abri-las). Os dois
+ * sistemas não se misturam: esta página não grava nada e não cria conversa.
+ */
+final class AvisosMensagensController extends ControllerBase {
+
+  /** Abas: id => rótulo. */
+  public const ABAS = ['avisos' => 'Avisos', 'mensagens' => 'Mensagens'];
+
+  public function __construct(
+    private readonly AvisoService $avisos,
+    private readonly UnreadThreadCounter $conversas,
+    private readonly AccountInterface $usuarioAtual,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('aculta_messenger.aviso_service'),
+      $container->get('aculta_messenger.unread_thread_counter'),
+      $container->get('current_user'),
+    );
+  }
+
+  /** Renderiza a aba pedida. */
+  public function view(string $aba = 'avisos'): array {
+    if (!isset(self::ABAS[$aba])) {
+      $aba = 'avisos';
+    }
+    $uid = (int) $this->usuarioAtual->id();
+    $naoLidosAvisos = $this->avisos->naoLidosTotal($uid);
+    $naoLidasConversas = $this->conversas->count();
+
+    $conteudo = $aba === 'mensagens'
+      ? $this->conteudoMensagens($naoLidasConversas)
+      : $this->conteudoAvisos($uid);
+
+    return [
+      '#cache' => ['contexts' => ['user'], 'max-age' => 0, 'tags' => ['aculta_aviso_list']],
+      'description' => ['#plain_text' => $this->t('Respostas e atualizações dos tópicos que você segue, e suas conversas.')],
+      'tabs' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => $this->t('Seções de avisos e mensagens'), 'data-portal-account-data-nav' => 'true'],
+        'links' => $this->tabLinks($aba, $naoLidosAvisos, $naoLidasConversas),
+      ],
+      'content' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
+        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t(self::ABAS[$aba]), '#element_attributes' => new Attribute(['tabindex' => '-1'])],
+        'list' => $conteudo,
+      ],
+    ];
+  }
+
+  /** Links das abas, com contador não lido no rótulo, e a aba atual marcada. */
+  private function tabLinks(string $atual, int $avisos, int $conversas): array {
+    $links = [];
+    foreach (self::ABAS as $id => $rotulo) {
+      $texto = (string) $this->t($rotulo);
+      $contador = $id === 'avisos' ? $avisos : $conversas;
+      if ($contador > 0) {
+        $texto .= ' (' . $contador . ')';
+      }
+      $link = PortalLinkElement::build($texto, Url::fromRoute('aculta_messenger.avisos', ['aba' => $id]), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      if ($id === $atual) {
+        $link['#element_attributes']->setAttribute('aria-current', 'page');
+        $link['#element_attributes']->addClass('is-active');
+      }
+      $links[] = $link;
+    }
+    return $links;
+  }
+
+  /** Aba Avisos: avisos da própria pessoa, agrupados por tipo. */
+  private function conteudoAvisos(int $uid): array {
+    $avisos = $this->avisos->listarDaPessoa($uid);
+    if ($avisos === []) {
+      return ['#markup' => '<p>' . $this->t('Nenhum aviso por enquanto.') . '</p>'];
+    }
+    $grupos = [];
+    foreach ($avisos as $aviso) {
+      $grupos[(string) $aviso->get('tipo')->value][] = $aviso;
+    }
+    $saida = [];
+    foreach ($grupos as $tipo => $itens) {
+      $saida[$tipo] = [
+        '#type' => 'container',
+        'titulo' => ['#markup' => '<h4>' . $this->rotuloDoTipo($tipo) . '</h4>'],
+        'itens' => ['#theme' => 'item_list', '#items' => array_map(fn (Aviso $a) => $this->linha($a), $itens)],
+      ];
+    }
+    return $saida;
+  }
+
+  /** Aba Mensagens: só contagem e link para as conversas (sistema de mensagens). */
+  private function conteudoMensagens(int $naoLidas): array {
+    $texto = $naoLidas > 0
+      ? $this->t('Você tem @n conversa(s) não lida(s).', ['@n' => $naoLidas])
+      : $this->t('Nenhuma conversa não lida.');
+    return [
+      'texto' => ['#markup' => '<p>' . $texto . '</p>'],
+      'abrir' => ['#type' => 'link', '#title' => $this->t('Abrir conversas'), '#url' => Url::fromRoute('aculta_messenger.drawer_conversations')],
+    ];
+  }
+
+  /** Uma linha: título do tópico (link) e o que ainda não foi lido. */
+  private function linha(Aviso $aviso): array {
+    $nid = (int) $aviso->get('assunto_nid')->value;
+    $contador = (int) $aviso->get('contador_site')->value;
+    $sufixo = $contador > 0 ? ' — ' . $this->t('@n não lido(s)', ['@n' => $contador]) : ' — ' . $this->t('lido');
+    $titulo = (string) $aviso->get('titulo')->value;
+    return $nid > 0
+      ? ['#type' => 'link', '#title' => $titulo, '#url' => Url::fromRoute('entity.node.canonical', ['node' => $nid]), '#suffix' => $sufixo]
+      : ['#markup' => htmlspecialchars($titulo, ENT_QUOTES) . $sufixo];
+  }
+
+  private function rotuloDoTipo(string $tipo): string {
+    return match ($tipo) {
+      Aviso::TIPO_RESPOSTA => (string) $this->t('Respostas novas'),
+      Aviso::TIPO_ATUALIZACAO => (string) $this->t('Atualizações de tópicos'),
+      default => $tipo,
+    };
+  }
+
+}

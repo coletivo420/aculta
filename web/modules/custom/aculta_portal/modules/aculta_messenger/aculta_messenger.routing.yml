@@ -240,3 +240,26 @@ aculta_messenger.new_conversation_compose:
     parameters:
       user:
         type: entity:user
+
+aculta_messenger.avisos:
+  path: '/avisos-mensagens/{aba}'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\AvisosMensagensController::view'
+    _title: 'Avisos/Mensagens'
+    aba: 'avisos'
+  requirements:
+    _permission: 'access aculta portal'
+    aba: 'avisos|mensagens'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_messenger.avisos_raiz:
+  path: '/avisos-mensagens'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\AvisosMensagensController::view'
+    _title: 'Avisos/Mensagens'
+    aba: 'avisos'
+  requirements:
+    _permission: 'access aculta portal'
+  options:
+    _aculta_domain_purpose: 'account'

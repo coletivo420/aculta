@@ -2,6 +2,12 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.35 — central Avisos/Mensagens em Minha conta (F5.2) — 2026-10-16
+
+- Central "Avisos/Mensagens" em Minha conta, com abas Avisos e Mensagens no padrão da conta.
+- Prévia da barra: avisos da própria pessoa seguidos do link "Ver todos os avisos".
+- Correção: o controller da central não redeclara a propriedade `$currentUser` da classe base.
+
 ## 0.1.1-dev.34 — avisos por pessoa: atualizações, contador do ícone, controles e resumo diário (F5.2) — 2026-10-16
 
 - Atualização de tópico seguido vira aviso `forum_atualizacao` (worker reescrito), sem mensagem.
