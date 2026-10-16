@@ -21,6 +21,7 @@ Este documento governa o projeto futuro; não descreve alterações já aplicada
 | F-D10 | Reutilizar galerias do Portal | Respeitar a publicação atual na Revista; referências a partir do Fórum |
 | F-D11 | Loja integrada por discussões e dúvidas | Dados de pedidos e contato pessoal não viram conteúdo público |
 | F-D12 | Abrir projetos opcionais `aculta_forum` e `aculta_game` | Documentação agora; runtime por fases posteriores |
+| F-D13 | Participação no Fórum (criar, editar o próprio conteúdo, comentar e denunciar) exige e-mail confirmado (papel `email_confirmed`); leitura e seguir/salvar ficam para contas cadastradas | Ver `EMAIL-CONFIRMATION-POLICY.md`, seção 10. Lacuna: conteúdo histórico importado não passa por essa regra |
 
 "Memorial" significa memória da comunidade; não afirma falecimento das pessoas.
 O bloqueio é técnico e não constitui punição, expulsão ou avaliação da pessoa.

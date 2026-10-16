@@ -1,6 +1,6 @@
 # Política de confirmação de e-mail
 
-Status: **proposta registrada; implementação pendente de decisões do responsável** (ver seção 6).
+Status: **parcialmente implementada** (ver seções 9 e 10). As decisões pendentes da seção 6 continuam abertas.
 
 ## 1. Regra
 
@@ -111,3 +111,52 @@ de conta do Core não oferece o campo de e-mail (`EmailChangeHooks`).
    sem confirmação. Essa lacuna só alcança trocas feitas por código, porque o formulário de administração não tem mais
    o campo de e-mail.
 
+## 9. Aplicação atual no site (2026-10-16)
+
+Verificada no código e na configuração do Runtime de teste. Itens marcados como "a confirmar" não têm verificação
+própria e não devem ser tratados como garantia.
+
+| Área | Regra | Situação | Onde |
+|---|---|---|---|
+| Cursos (matrícula e aulas) | Exige e-mail confirmado | Aplicado | `EmailConfirmedAccessCheck`, via `ProtectedRouteAccessCheck` |
+| Checkout (loja) | Exige e-mail confirmado | Aplicado | `ProtectedRouteAccessCheck` (rota `/checkout`) |
+| Apoio (contribuições) | Exige e-mail confirmado | A confirmar | Sem verificação própria nesta revisão |
+| Wiki: editar e excluir verbete | Exige e-mail confirmado | Aplicado | `EntityHooks::entityAccess`, `update` e `delete` |
+| Wiki: criar verbete | Exige e-mail confirmado | Aplicado pelo papel | Só `email_confirmed` recebe `wiki_contributor`, por `RoleSyncHooks` |
+| Comentários: criar | Exige e-mail confirmado | Aplicado pelo papel | `post comments` só em `email_confirmed` (ver seção 10) |
+| Comentários: editar e excluir | Exige e-mail confirmado | Aplicado | `EntityHooks::entityAccess`, `update` e `delete` |
+| Leitura pública (wiki e páginas institucionais) | Livre | Aplicado | Não restringido |
+| Login, navegação e "Minha conta" | Livre | Aplicado | Aviso de confirmação na conta |
+| Troca de e-mail | Livre | Aplicado | Não é bloqueio (seção 5) |
+
+Notas:
+
+- O papel `email_confirmed` é irreversível pela administração (`EmailConfirmedRoleGuard`). A marca de confirmação
+  fica em `user.data` do módulo `aculta_portal`.
+- O papel `email_confirmed` também pula o CAPTCHA. Isso é independente do bloqueio de escrita.
+- Contas existentes sem confirmação (decisão 6.2) não podem comentar nem participar do fórum até confirmar.
+  No teste, a conta de editor `coletivo420` está nesse caso.
+
+## 10. Aplicação no Fórum (2026-10-16)
+
+Decisão registrada como F-D13 em `web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md`.
+
+| Ação no Fórum | Papel mínimo | Situação |
+|---|---|---|
+| Ler tópicos e comentários | Público (anônimo) | Aplicado |
+| Seguir e salvar tópico | Conta cadastrada (`authenticated`) | Aplicado |
+| Criar tópico | `email_confirmed` | Aplicado (`create forum content`) |
+| Editar e excluir o próprio tópico | `email_confirmed` | Aplicado (permissões do papel) |
+| Comentar | `email_confirmed` | Aplicado (`post comments`) |
+| Editar e excluir o próprio comentário | `email_confirmed` | Aplicado (hook de wiki e comentários, seção 9) |
+| Denunciar tópico e comentário | `email_confirmed` | Aplicado (`flag sinalizar_*`) |
+| Moderar denúncias | `content_editor` e administrador | Aplicado (`moderar denuncias do forum`) |
+
+Motivo: o texto de decisão do responsável é "participação no fórum exige e-mail confirmado". Seguir e salvar ficam
+com `authenticated` por serem leitura, sem conteúdo gravado de outra pessoa.
+
+Lacunas conhecidas:
+
+- O papel `authenticated` ainda concede a permissão `view commerce_shipping_method`, que não está no arquivo do
+  repositório (divergência de configuração anterior à F5.1, não tratada aqui).
+- Conteúdo histórico importado não passa pela confirmação. As autorias legadas não são contas que participam.
