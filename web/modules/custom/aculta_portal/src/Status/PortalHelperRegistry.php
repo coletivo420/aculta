@@ -72,6 +72,11 @@ final class PortalHelperRegistry {
       'summary' => 'Envia candidatas sem referência para área privada, restaura, e exclui só após 30 dias e nova verificação de uso.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
+    'aculta_image.compressor' => [
+      'label' => 'Compressão de imagens do texto',
+      'summary' => 'Compressão sem perda (optipng, jpegoptim, gifsicle) dos uploads dos editores, com argumentos fixos e tempo limite.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/ESTILOS.md',
+    ],
     'aculta_portal.account_courses' => [
       'label' => 'Cursos da conta',
       'summary' => 'Consulta participação e situação de cursos a partir das entidades LMS e Group.',

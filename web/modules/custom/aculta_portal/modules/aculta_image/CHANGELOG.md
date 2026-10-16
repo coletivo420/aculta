@@ -1,5 +1,13 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.8 — og:image de compartilhamento, dimensão máxima e compressão própria no texto — 2026-10-17
+
+- Estilo `aculta_compartilhamento_1200x630` (purpose `compartilhamento`) e hook `metatags_alter` que aponta `og_image` ao derivado da imagem da publicação (campos `field_media_image` e `field_image`). Verificado: publicação da Revista responde com `og:image` 1200×630, HTTP 200.
+- Upload de imagem nos editores: dimensão máxima de 1200 px de largura (campo do core, que redimensiona no servidor) e 10 MB, nos três editores. Referência: coluna de leitura de cerca de 580 px (retina 1160 px) e variantes de jornais de 1024 px no corpo.
+- Compressão sem perda do upload de texto (`ImageCompressor`, código próprio): optipng, jpegoptim e gifsicle, via hook `file_insert` em `public://inline-images/`. Testado sobre cópias de arquivos reais; o hook em si ainda não foi exercitado por upload real (o diretório `inline-images` pertence ao usuário `aculta` e não é gravável pelo terminal).
+- Avatar das respostas do Fórum: estilo `aculta_avatar_pequeno` no modo `compact` do usuário.
+- Testes unitários: 13 no total com `ImageCompressorTest`.
+
 ## 0.1.0-dev.7 — estilos revisados, criados e documentados; importação documentada — 2026-10-17
 
 - Pesquisa de estilos (`docs/ESTILOS.md`): responsividade, 2× para alta densidade, recorte por proporção e a issue

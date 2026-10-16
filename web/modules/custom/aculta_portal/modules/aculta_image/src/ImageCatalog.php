@@ -19,6 +19,7 @@ final class ImageCatalog {
     'aculta_avatar_pequeno',
     'aculta_card_1x',
     'aculta_card_2x',
+    'aculta_compartilhamento_1200x630',
     'aculta_card_16x9',
     'aculta_destaque_16x9',
     'crop_thumbnail',
@@ -53,6 +54,7 @@ final class ImageCatalog {
     'avatar_pequeno' => 'aculta_avatar_pequeno',
     'card_16x9' => 'aculta_card_16x9',
     'destaque' => 'aculta_destaque_16x9',
+    'compartilhamento' => 'aculta_compartilhamento_1200x630',
   ];
 
   /** Estilo da finalidade, ou NULL se a finalidade não existe no catálogo. */

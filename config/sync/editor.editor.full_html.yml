@@ -107,6 +107,6 @@ image_upload:
   directory: inline-images
   max_size: 10485760
   max_dimensions:
-    width: null
+    width: 1200
     height: null
 

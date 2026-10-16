@@ -35,6 +35,7 @@ de estilos automático enquanto a issue #3523451 estiver aberta.
 | `grande` | `large` | 480 × 480 | sem recorte | mídias da Revista na exibição padrão (ver pendências) |
 | `media` | `medium` | 220 × 220 | sem recorte | biblioteca de mídias |
 | `miniatura` | `thumbnail` | 100 × 100 | sem recorte | campos de recorte do usuário |
+| `compartilhamento` | `aculta_compartilhamento_1200x630` | 1200 × 630 | recorte central 1,91:1 | **novo**: `og:image` das publicações (Revista e projetos), via `metatags_alter` |
 | `largo` | `wide` | 1090 px de largura | sem recorte | corpo de publicações |
 | `recorte_quadrado` | `crop_thumbnail` | 400 px de largura | sem recorte | prévia do recorte de avatar |
 | `galeria_miniatura` | `media_gallery_thumb` | 160 × 160 | recorte | grade de galerias |
@@ -47,12 +48,36 @@ de estilos automático enquanto a issue #3523451 estiver aberta.
 Estilos removidos do Runtime em 2026-10-17: `max_325x325`, `max_650x650`, `max_1300x1300` e `max_2600x2600`
 (sem consumidor; existiam só no Runtime).
 
+## Capa e compartilhamento
+
+- Capa do site: `aculta_destaque_16x9` (1280×720). Compartilhamento: `aculta_compartilhamento_1200x630`, usado no
+  `og:image` (decisão de 2026-10-17). O Guardian publica o `og:image` em 1200×630 com recorte por enquadramento
+  (`fit=crop`) e declara `og:image:width`; a BBC publica a imagem sem recorte social. Adotamos o modelo do Guardian.
+  Recomendação de implementação: declarar `og:image:width` e `og:image:height` no metatag. A dimensão 1200×630 é o padrão de compartilhamento de Facebook, LinkedIn e
+  WhatsApp, e funciona no X (que recorta para 16:9). Mantenha o assunto principal na faixa central de 1080×600.
+- Peso: mantenha o derivado abaixo de cerca de 300 KB (fonte secundária indica que o WhatsApp reduz imagens acima
+  disso). O pipeline `aculta_derivados` aplica compressão sem perda.
+- Google Discover: pede largura de pelo menos 1200 px e proporção 16:9 para imagem grande; o destaque 1280×720 atende.
+  Pedir `max-image-preview:large` é responsabilidade do metatag.
+
 ## Imagens dentro de publicações e posts
 
-O CKEditor 5 do core não oferece escolha de estilo para imagens inseridas no texto: elas são gravadas e exibidas no
-tamanho original. O que o sistema controla é o upload: `image_upload.max_size` é de 10 MB (`basic_html`,
-`full_html` e `revista_editorial`), igual à política única. Reduzir o tamanho exibido das imagens do corpo exige um
-filtro de texto ou um plugin próprio, e fica como decisão separada.
+O CKEditor 5 do core não oferece escolha de estilo para imagens inseridas no texto. A padronização adotada:
+
+- `image_upload.max_size` de 10 MB e `image_upload.max_dimensions.width` de **1200 px** nos três editores que aceitam
+  upload (`basic_html`, `full_html` e `revista_editorial`). O core redimensiona no servidor as imagens acima desse
+  valor, sem módulo novo.
+  - Coluna de leitura da Revista: `68ch` (`revista-post.css`), cerca de 580 px no tamanho de fonte do tema. Uma imagem
+    do corpo precisa de cerca de 1160 px para ficar nítida em tela retina; 1200 px cobre isso.
+  - Jornais, medidos no HTML público: BBC, variantes de 240 a 1536 px, com 1024 px para o corpo; Guardian, de 465 a
+    1920 px; Folha, de 320 a 2400 px. Nenhum grande veículo serve imagem de corpo acima de cerca de 1536 px. Por isso
+    1600 px foi descartado.
+  - Antes de 1600, a referência de 1200 foi confirmada por esses números; o valor pode subir se a coluna mudar.
+- Compressão sem perda do upload: `ImageCompressor` (código próprio) roda no hook `file_insert` para arquivos de
+  `public://inline-images/`, com `optipng`, `jpegoptim` e `gifsicle`. Medido: 1,4% em PNG e JPEG originais; o ganho
+  maior vem de derivados de PNG (13,6%). Em produção depende de `shell_exec` liberado no painel.
+- Módulos da comunidade avaliados e não adotados no corpo: `ckeditor_media_resize` (exige migrar as imagens para
+  mídias), `editor_image_styles` e `ckeditor_media_image_style` (sem release estável e fora da cobertura de segurança).
 
 ## Pendências de aplicação (não feitas nesta revisão)
 

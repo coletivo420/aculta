@@ -37,3 +37,8 @@ services:
     arguments: ['@database', '@file.repository', '@file_system', '@file.usage', '@aculta_image.file_remover', '@datetime.time', '@entity_type.manager']
     tags:
       - { name: aculta_portal.helper }
+  aculta_image.compressor:
+    class: Drupal\aculta_image\Compression\ImageCompressor
+    arguments: ['@logger.factory']
+    tags:
+      - { name: aculta_portal.helper }
