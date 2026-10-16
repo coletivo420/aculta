@@ -16,7 +16,6 @@ personal data. Security Review was run without autofix.
 | Turnstile account forms | RESOLVED |
 | Shared ACCOUNT/COURSES session and global logout | RESOLVED |
 | Domain isolation | RESOLVED |
-| SQLite functional and concurrency checks | RESOLVED |
 | Webform Default text format | ACCEPTED_KNOWN; internal Webform format, not edited |
 | Basic HTML permits `img` for authenticated users | EXISTING_REVIEW_ITEM; HTML filter remains enabled, no automatic format changes |
 | Custom Views access | RESOLVED; public custom Views require `access content` |

@@ -184,7 +184,7 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 | Gate de fundação do tema | `drush scr scripts/validate-aculta420-foundation.php` | **FAIL, anterior a esta série** (DT-T19: durações fora de `tokens.css`) |
 | Testes unitários do submódulo | `vendor/bin/phpunit ... aculta_user/tests/src/Unit` | 8 testes passam |
 | Testes unitários do Portal | `vendor/bin/phpunit ... aculta_portal/tests/src/Unit` | 68 testes passam |
-| Testes de Kernel de e-mail | `SIMPLETEST_DB` com SQLite isolado | 3 testes passam |
+| Testes de Kernel de e-mail | `SIMPLETEST_DB` com MariaDB de teste isolado | 3 testes passam |
 | Páginas do site (home, conta, `/u/`) | HTTP | 200 |
 | Painel com avatares, visualização e link de sortear | HTTP (HTML) | verificado |
 | Sorteio pela web | HTTP (requisição AJAX do link com token CSRF) | verificado: `replaceWith` sobre o avatar; foto troca no banco |

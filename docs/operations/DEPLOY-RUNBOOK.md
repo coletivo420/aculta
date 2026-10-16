@@ -15,8 +15,8 @@ deployment, credential setup, or payment was performed in the local phase.
 
 ## Database policy: development States versus production
 
-- Development uses the mutable SQLite Runtime at `var/database/aculta-runtime.sqlite`.
-- The immutable SQLite snapshots in `estados/` are integral development States, not production backups or deployment artifacts. Never upload, restore, or point production at one.
+- Development uses the mutable MariaDB Runtime `aculta_runtime` (Homelab).
+- The immutable Estados in `estados/` are integral development States, not production backups or deployment artifacts. Never upload, restore, or point production at one.
 - Production remains MariaDB. Production credentials and MariaDB settings come only from private environment configuration on the production host.
 - A deployment transfers code, locked Composer dependencies, and full `config/sync`; it does not transfer the Runtime, an Estado, SQL dumps, or uploaded/private files.
 - The first Estado contains the source database's complete records and may include personal data and values already persisted in the source database. Keep the repository private before publishing it.

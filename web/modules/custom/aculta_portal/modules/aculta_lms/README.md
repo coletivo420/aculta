@@ -33,11 +33,13 @@ Não possui `config/install`, schema, entidade, rota ou hook de instalação.
   própria/hook de instalação.
 
 Execute os testes a partir de `web/core` com PHPUnit do Composer. Para o Kernel
-test, use um banco SQLite temporário exclusivo e diretório de saída em `/tmp`:
+test, use um banco MariaDB de teste isolado (nunca o Runtime) e diretório de
+saída em `/tmp`. Substitua usuário, senha e nome do banco pelos do seu ambiente
+de teste; não grave credenciais no repositório:
 
 ```sh
 mkdir -p /tmp/aculta-lms-test-output
-SIMPLETEST_DB=sqlite://localhost//tmp/aculta-lms-test.sqlite \
+SIMPLETEST_DB="mysql://<usuario>:<senha>@localhost/<banco-de-teste>" \
 BROWSERTEST_OUTPUT_DIRECTORY=/tmp/aculta-lms-test-output \
 ../../vendor/bin/phpunit -c phpunit.xml.dist \
   ../modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AcultaLmsInstallTest.php
