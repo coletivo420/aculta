@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_user\Unit;
 
 use Drupal\aculta_user\Hook\EnrollmentRoleHooks;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -20,11 +21,14 @@ class EnrollmentRoleHooksTest extends UnitTestCase {
   /**
    * Relação de grupo com plugin, tipo de grupo e conta informados.
    */
-  private function relacao(string $plugin, string $tipoGrupo, ?UserInterface $conta): GroupRelationshipInterface {
+  private function relacao(string $plugin, string $tipoGrupo, ?UserInterface $conta, array $papeisDeGrupo = []): GroupRelationshipInterface {
+    $campo = $this->createMock(FieldItemListInterface::class);
+    $campo->method('getValue')->willReturn(array_map(static fn (string $id) => ['target_id' => $id], $papeisDeGrupo));
     $relacao = $this->createMock(GroupRelationshipInterface::class);
     $relacao->method('getPluginId')->willReturn($plugin);
     $relacao->method('getGroupTypeId')->willReturn($tipoGrupo);
     $relacao->method('getEntity')->willReturn($conta);
+    $relacao->method('get')->with('group_roles')->willReturn($campo);
     return $relacao;
   }
 
@@ -56,6 +60,42 @@ class EnrollmentRoleHooksTest extends UnitTestCase {
     (new EnrollmentRoleHooks())->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta));
     $this->assertTrue($adicionou);
     $this->assertTrue($salvou);
+  }
+
+  /**
+   * Matrícula de aluno (sem papel de professor ou administração) concede estudante.
+   */
+  public function testMatriculaDeAlunoConcedeEstudante(): void {
+    $salvou = FALSE;
+    $adicionou = FALSE;
+    $conta = $this->conta(FALSE, FALSE, $salvou, $adicionou);
+    (new EnrollmentRoleHooks())->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta, []));
+    $this->assertTrue($adicionou);
+  }
+
+  /**
+   * Matrícula com papel de professor, criador ou administração não concede estudante.
+   */
+  #[DataProvider('papeisNaoAlunoCasos')]
+  public function testMatriculaComPapelNaoAlunoNaoConcede(string $papel): void {
+    $salvou = FALSE;
+    $adicionou = FALSE;
+    $conta = $this->conta(FALSE, FALSE, $salvou, $adicionou);
+    (new EnrollmentRoleHooks())->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta, [$papel]));
+    $this->assertFalse($adicionou);
+    $this->assertFalse($salvou);
+  }
+
+  /**
+   * Papéis de grupo que não são de aluno.
+   */
+  public static function papeisNaoAlunoCasos(): array {
+    return [
+      'professor' => ['lms_course-teacher'],
+      'criador do curso' => ['lms_course-course_creator'],
+      'administrador do LMS' => ['lms_course-lms_admin'],
+      'membro administrador do LMS' => ['lms_course-lms_admin_member'],
+    ];
   }
 
   /**
