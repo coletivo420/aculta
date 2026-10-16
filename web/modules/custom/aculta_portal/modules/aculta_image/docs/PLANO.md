@@ -35,14 +35,18 @@ Verificado nas páginas oficiais em drupal.org (2026-10-17). Core do projeto: **
 | WebP | `imageapi_optimize_webp` | — | Issues abertas de compatibilidade com Drupal 11.3 | **Não adotar**: WebP já é gerado pelos estilos do core |
 | Hash SHA-256 de arquivos | `filehash` (File Hash) | **4.0.2** (03/10/2026) | ^11.3 \|\| ^12 | **Adotar** na fase de duplicatas |
 | Rastreio de referências (inclui Entity Embed, links em texto e Layout Builder) | `entity_usage` | **5.0.1** (23/09/2026) | Drupal 11.4 e 12 | **Adotar** na fase de auditoria. A página indica 8.x-2.3 apenas para Drupal 10.3 e 11 |
-| "Media Duplicates 2.0.4" (proposta anterior) | — | — | Projeto com este nome não encontrado | **Descartar** |
-| Equivalente encontrado: `media_dedupe` | `media_dedupe` | 1.0.0-alpha1 (11/08/2026) | ^10 \|\| ^11 | **Não adotar**: sem release estável e fora da política de segurança do Drupal |
+| Duplicatas de Media por checksum, com modos relatório, restringir novas e restringir todas | `media_duplicates` | **2.0.4** (19/03/2026) | ^9.2 \|\| ^10 \|\| ^11; release estável coberta pela política de segurança; sem dependência fora do core | **Adotar** na fase M5 |
+| Duplicatas por hash com reuso sugerido no upload | `media_dupe_detect` | 1.0.0-beta2 (26/03/2025) | ^10 \|\| ^11; sem release estável; "minimally maintained"; fora da política de segurança; exige File Hash | **Não adotar** |
+| Duplicatas visuais (pHash/dHash) | nenhum módulo encontrado | — | — | Sem módulo: se for necessário, implementação própria com biblioteca justificada (fase posterior) |
+| Duplicatas de arquivo por tamanho e MD5, com revisão de miniaturas | `duplicate_images` | sem release suportada | sem suporte a versões do Drupal declarado; último update em 2019 | **Não adotar** |
+| Media Dedupe (alternativa) | `media_dedupe` | 1.0.0-alpha1 | ^10 \|\| ^11 | **Não adotar**: sem release estável |
 | Relatório de duplicatas | `filehash_noo` / `filehash_report` | a verificar | exigem File Hash 3.x na documentação consultada | **Opcional**; avaliar após o File Hash 4.0.2 |
 | Miniatura de PDF | `pdfpreview` (1.2) + ImageMagick | já escolhido pelo PV4 | — | **Reaproveitar** o que o `aculta_pdf_viewer` já tem |
 
 Correções em relação à proposta anterior: Image Optimize 4.2.0 confirmado; Entity Usage deve
-ser 5.0.1 neste core; File Hash deve ser 4.0.2 (não 3.2); "Media Duplicates" não existe com
-esse nome. Não adotaremos nenhum módulo sem verificar a versão instalada e o código.
+ser 5.0.1 neste core; File Hash deve ser 4.0.2 (não 3.2); o "Media Duplicates 2.0.4" da proposta
+existe (`media_duplicates`, estável e coberto pela política de segurança), e não foi encontrado
+em uma busca inicial. Ele entra como ferramenta de duplicatas exatas de Media. Não adotaremos nenhum módulo sem verificar a versão instalada e o código.
 
 **Dependências Composer (AGENTS, regra 14).** Cada uma só entra com a fase correspondente:
 - `imageapi_optimize`: compressão dos derivados gerados pelos estilos. O core não comprime
@@ -224,7 +228,7 @@ o total, para que uma migração não seja compensada por código novo.
 | M2 | Política de upload centralizada | Limites iguais em todos os campos de imagem; mensagens de erro do Form API |
 | M3 | Consolidação dos estilos (3.4) e migração de Magazine, Usuário e Portal | Nenhuma referência a estilo fora do catálogo (gate) |
 | M4 | Miniatura de PDF movida para o `aculta_image` (3.3) | Sem `pdfpreview` ativo: leitor e download continuam; com ativo: miniatura só para PDF público |
-| M5 | `filehash` 4.0.2 e relatório de duplicatas (sem prevenção) | Relatório de duplicatas exatas com mesmo arquivo binário; nenhuma Media mesclada |
+| M5 | `media_duplicates` 2.0.4 em modo relatório; `filehash` 4.0.2 só se o relatório precisar de hash de arquivo | Relatório de duplicatas exatas; nenhuma Media mesclada ou apagada; restrição só após aprovação (pergunta 3) |
 | M6 | `entity_usage` 5.0.1 e auditoria de candidatas | Lista com motivos; comparação com a auditoria manual |
 | M7 | Quarentena e exclusão supervisionada | Teste com arquivos de teste; exclusão só após confirmação; restauração testada |
 | M8 | Compressão de derivados com `imageapi_optimize` 4.2.0 em lotes pequenos (CPU e memória limitadas) | Originais intactos; derivados comparados em qualidade |
