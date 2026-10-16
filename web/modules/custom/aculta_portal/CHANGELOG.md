@@ -1,10 +1,9 @@
-## 0.4.0-dev.42 — Game G5.4: arte cultural nas conquistas — 2026-10-15
+## 0.4.0-dev.44 — estrutura da identidade histórica do Fórum (F2) — 2026-10-16
 
-Classificação MINOR. Game `0.1.0-dev.9`: quatro conquistas de participação
-ganham ilustrações próprias vinculadas ao catálogo; um selo antiproibicionista
-fica como fallback das próximas conquistas. Direção permanente de arte registrada
-em `AGENTS.md` e `docs/portal/IMAGE-ART-DIRECTION.md`; os três PNGs históricos
-foram preservados.
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.11: serviço idempotente de contas legadas, acesso negado a
+páginas individuais, memorial com busca e avatar especial pronto para a arte. Gates do Portal e testes unitários
+passam. No Runtime de teste: campos aplicados por importação parcial, memorial 200, `/user/<uid>` de conta
+legada 404 para anônimo, sorteio não atribui avatar a conta legada (defeito encontrado e corrigido no teste).
 
 ## 0.4.0-dev.43 — F2 estrutural do ACULTA Fórum — 2026-10-15
 
@@ -12,6 +11,14 @@ Classificação MINOR. Inclui o submódulo `aculta_user` 0.4.0-dev.10 (memorial 
 papel `usuarios_legados_forum` e apelido reservado). Gates do Portal passam: Drupal 11+, fronteira
 módulo/tema, endereços de ambiente e slugs públicos. No Runtime de teste: memorial responde 200,
 `/u/` comum responde 404, cache reconstruído.
+
+## 0.4.0-dev.42 — Game G5.4: arte cultural nas conquistas — 2026-10-15
+
+Classificação MINOR. Game `0.1.0-dev.9`: quatro conquistas de participação
+ganham ilustrações próprias vinculadas ao catálogo; um selo antiproibicionista
+fica como fallback das próximas conquistas. Direção permanente de arte registrada
+em `AGENTS.md` e `docs/portal/IMAGE-ART-DIRECTION.md`; os três PNGs históricos
+foram preservados.
 
 ## 0.4.0-dev.41 — Game G5.3: conquistas no perfil público — 2026-10-15
 

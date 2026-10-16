@@ -1,5 +1,16 @@
 # Changelog — ACULTA Fórum
 
+## F2 estrutura pronta para a importação — 2026-10-16
+
+- Campos `field_nome_historico` e `field_forum_origem_id` no perfil participante, aplicados no Runtime de teste.
+- Serviço `aculta_user.legacy_accounts`: cria ou atualiza a autoria pela origem, sem duplicar; conta bloqueada
+  com papel `usuarios_legados_forum`; sem e-mail, apelido ou conquista.
+- Conta legada não tem página pública individual (404 para anônimo) e não recebe avatar do sorteio.
+- Memorial `/u/lendashistoricas` com busca, paginação e estado vazio.
+- Pendências que dependem da importação ou de aprovação: lista de autores comprovados e importação das contas;
+  arte do avatar especial; texto aprovado do memorial; link de autoria nos tópicos e comentários; verificação
+  de colisões de apelido em produção.
+
 ## F2 estrutural — memorial e papel legado — 2026-10-15
 
 - Papel `usuarios_legados_forum` criado no Runtime de teste e em `config/sync`.

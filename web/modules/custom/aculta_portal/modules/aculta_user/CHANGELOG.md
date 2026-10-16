@@ -1,5 +1,20 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.11 — estrutura de identidade histórica do Fórum (F2) — 2026-10-16
+
+Classificação MINOR. Estrutura pronta para a importação; nenhuma conta histórica foi criada.
+
+- Campos `field_nome_historico` e `field_forum_origem_id` no perfil participante.
+- `LegacyAccountManager` (`aculta_user.legacy_accounts`): cria ou atualiza por origem, idempotente; conta bloqueada,
+  papel `usuarios_legados_forum`, sem e-mail, sem apelido, perfil privado, sem conquista.
+- `LegacyAccessHooks` (`entity_access`): nega página pública individual de conta legada (F-D08).
+- Memorial `/u/lendashistoricas`: busca, paginação de 50 e estado vazio.
+- Avatar especial: definido antes do primeiro save quando `assets/avatars/legado/lendas-historicas.png` existir;
+  sem o arquivo, a conta fica sem foto. O sorteio do acervo nunca atribui avatar a conta legada.
+- Testes unitários: `LegacyAccountManagerTest`, `LegacyMemorialReservedTest`.
+- Pendências: lista de autores comprovados (importação), arte do avatar, texto aprovado do memorial, ligação
+  do link de autoria nos comentários e tópicos do Fórum (depende da importação).
+
 ## 0.4.0-dev.10 — F2 estrutural do Fórum: memorial e papel legado — 2026-10-15
 
 Classificação MINOR (rota e papel novos). Entrega estrutural do ACULTA Fórum F2 em
