@@ -15,7 +15,7 @@ Os números seguem a ordem do Drupal no projeto: **quanto menor o número, maior
 | 5 | `estudante` | Estudante | Usuário inscrito em algum curso; acesso a fóruns exclusivos. Concedido automaticamente na matrícula (`EnrollmentRoleHooks`) |
 | 4 | `associado` | Associado | Associado ao ACULTA; acesso a fóruns exclusivos. Atribuído manualmente |
 | 3 | `lms_teacher` | Professor | Professores dos Cursos Aculta (papel existente, rótulo atual "Educador") |
-| 2 | `gerente_loja` | Gerente de Loja | Gerentes da loja Aculta. Cria e edita produtos (tipo `produto_loja`), variações, atributos e categorias da loja, e vê relatórios do site. Financeiro (pagamentos, gateways, envios, pedidos, configuração da loja) só com administrador |
+| 2 | `gerente_loja` | Gerente de Loja | Gerentes da loja Aculta. Cria e edita produtos (tipo `produto_loja`), variações, atributos e categorias da loja, vê pedidos e relatórios do site. Financeiro (pagamentos, gateways, envios, administração de pedidos e da loja) só com administrador. Relatório próprio de vendas previsto |
 | 1 | `content_editor` | Editor de conteúdo | Administrativa, só com `email_confirmed`; moderador do Fórum, revisor e moderador da Wiki |
 | 0 | `administrator` | Administrador | Administrativa; bypass total |
 
