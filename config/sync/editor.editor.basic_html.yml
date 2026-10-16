@@ -23,7 +23,6 @@ settings:
       - '|'
       - blockQuote
       - drupalInsertImage
-      - acultaImageModel
       - '|'
       - heading
       - code

@@ -25,7 +25,6 @@ settings:
       - numberedList
       - blockQuote
       - drupalInsertImage
-      - acultaImageModel
       - insertTable
       - horizontalLine
       - heading
