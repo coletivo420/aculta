@@ -6,6 +6,13 @@ fica como fallback das próximas conquistas. Direção permanente de arte regist
 em `AGENTS.md` e `docs/portal/IMAGE-ART-DIRECTION.md`; os três PNGs históricos
 foram preservados.
 
+## 0.4.0-dev.43 — F2 estrutural do ACULTA Fórum — 2026-10-15
+
+Classificação MINOR. Inclui o submódulo `aculta_user` 0.4.0-dev.10 (memorial `/u/lendashistoricas`,
+papel `usuarios_legados_forum` e apelido reservado). Gates do Portal passam: Drupal 11+, fronteira
+módulo/tema, endereços de ambiente e slugs públicos. No Runtime de teste: memorial responde 200,
+`/u/` comum responde 404, cache reconstruído.
+
 ## 0.4.0-dev.41 — Game G5.3: conquistas no perfil público — 2026-10-15
 
 Classificação MINOR. Game `0.1.0-dev.8`, User `0.4.0-dev.9`: perfis
