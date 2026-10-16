@@ -1,11 +1,18 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.12 — estilos responsivos para os modelos de texto — 2026-10-16
+
+- `revista-post.css` define largura de Pequena (50%), Padrão (580 px), Larga (900 px) e Destaque (960 px), com quebra para largura do corpo em telas até 575 px.
+- A legenda usa tokens semânticos e mantém contraste nos modos claro e escuro.
+- Firefox mediu os quatro modelos com o CSS e tokens reais do ACULTA420: 1366 px (larguras 320/580/900/960) e 500 px (484 px para todos, sem transformação lateral). Fundo/legenda mudaram corretamente entre claro e escuro.
+- Aferição foi feita numa fixture local com o HTML emitido pelo filtro; uma página pública do Runtime ainda precisa ser revisada em navegador com sessão válida.
+
 ## 0.1.0-dev.11 — edição da legenda no CKEditor — 2026-10-16
 
 - Botão “Editar legenda” abre um formulário contextual com campo rotulado e ações Salvar/Cancelar.
 - A legenda é gravada em `data-aculta-legenda`, preservada no upcast/downcast e removida quando salva vazia. O filtro do servidor transforma o atributo em `figcaption`.
 - A ação foi adicionada a `full_html`, `revista_editorial` e `usuario_aculta`; configurações importadas e cache reconstruído no Runtime.
-- Firefox confirmou o formulário e a serialização do atributo. Reabertura e renderização pública serão validadas na etapa seguinte.
+- Firefox confirmou o formulário e a serialização do atributo; chamada direta ao filtro gerou `<figure>` e `<figcaption>` com legenda escapada. Reabertura em conteúdo salvo e página pública ainda precisam de validação integrada.
 
 ## 0.1.0-dev.10 — botões de modelo funcionam no overflow do CKEditor — 2026-10-16
 

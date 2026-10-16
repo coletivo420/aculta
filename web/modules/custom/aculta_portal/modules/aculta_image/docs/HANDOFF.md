@@ -1,13 +1,13 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.11. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.12. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
-3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão de 1600×800 para 1200×600 confirmada; modelos persistem; formulário de legenda grava o atributo. Falta validar `figcaption` público, viewport de 390 px, temas e acessibilidade.
-4. O próximo passo é completar **R3/R4**: validar legenda no HTML público e aferir o CSS de modelo no tema claro/escuro e em tela móvel.
+3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário e filtro da legenda confirmados; CSS dos quatro modelos medido a 1366/500 px em claro/escuro numa fixture local. Falta a revisão integrada numa página pública, 390 px e acessibilidade.
+4. Próximos passos: cobertura integrada da legenda/CSS numa página pública; tentar 390 px útil; fazer revisão de acessibilidade e leitor de tela.
 5. A importação do Growroom está bloqueada pela F3 do Fórum (lista de autores). Não é trabalho deste submódulo.
 
 ## 2. Git e working tree
@@ -92,6 +92,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 - **Resposta antiga em `basic_html`:** ao editar uma resposta do Fórum que já usa `basic_html`, o formulário passa a oferecer só `usuario_aculta`. Testar no Runtime antes de liberar.
 - **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
 - **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. Downcast confirmado nos três editores e persistência após reabertura confirmada em `full_html`.
+- **Estilos dos modelos:** em `revista-post.css`, medidos em fixture local com o CSS e tokens do tema: 1366 px (320/580/900/960 px) e 500 px (484 px, sem breakout); modo claro/escuro troca fundo e cor da legenda. Ainda falta ver na página pública.
 - **Condição de ativação do plugin:** `aculta_image.ckeditor5.yml` usa `toolbarItem: acultaImageModelPequena` como condição. Um editor com só outro modelo na barra não ativaria o plugin. Trocar por uma condição que aceite qualquer dos quatro botões, ou confirmar que o caso não ocorre.
 - **Legenda:** o formulário contextual grava `data-aculta-legenda`; a exibição pública em `<figcaption>` precisa ser confirmada com imagem do Runtime.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.

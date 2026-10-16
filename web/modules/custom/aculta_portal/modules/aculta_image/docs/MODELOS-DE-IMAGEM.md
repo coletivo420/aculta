@@ -1,9 +1,9 @@
 # Modelos de imagem no texto
 
-Status em 2026-10-16 (0.1.0-dev.11): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
-atributo no `<img>` nos três editores testados, inclusive no overflow a 488 px. Upload real de 1600×800 resultou em
-1200×600. A persistência de `larga` após salvar/reabrir também foi confirmada com conteúdo temporário não publicado,
-depois excluído. Ainda faltam tema claro/escuro e viewport útil de 390 px. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.
+Status em 2026-10-16 (0.1.0-dev.12): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
+modelo nos três editores e a persistência de `larga` ao reabrir. Upload real de 1600×800 resultou em 1200×600. CSS dos
+quatro modelos aferido em fixture local a 1366/500 px e nos modos claro/escuro. Ainda faltam viewport útil de 390 px,
+leitor de tela e uma revisão numa página pública com sessão válida. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.
 
 ## 1. Objetivo
 
@@ -90,7 +90,7 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 | P2 | Filtro PHP com `<figure>`, `srcset` e legenda (sem crédito) | **feito** (sem JavaScript na página pública) |
 | P3 | Plugin CKEditor 5 com seletor de modelo | **botões e gravação testados no Runtime; upload e reabertura confirmados; faltam viewport de 390 px, tema e acessibilidade** |
 | P3b | Campo contextual de legenda | **implementado e serializado; falta verificar renderização pública e reabertura** |
-| P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | pendente (exige autorização para o tema) |
+| P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | **implementado; fixture aferida a 1366/500 px em claro/escuro; falta revisar em página pública** |
 | P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | pendente |
 | P6 | Formato próprio para o HTML básico | pendente (decisão de perfis) |
 
