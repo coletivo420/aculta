@@ -32,6 +32,16 @@ final class PortalHelperRegistry {
       'summary' => 'Aplica privacidade, destaques e ordem às conquistas do perfil e da conta, sem expor evidências privadas.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
     ],
+    'aculta_image.catalog' => [
+      'label' => 'Catálogo de imagens',
+      'summary' => 'Finalidades de imagem do site mapeadas para os estilos existentes. Única fonte de nome de estilo; o gate proíbe uso fora dele.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.upload_policy' => [
+      'label' => 'Política de upload de imagem',
+      'summary' => 'Extensões e tamanho máximo únicos para imagens do site. A exceção da conquista fica em aculta_game.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
     'aculta_portal.account_courses' => [
       'label' => 'Cursos da conta',
       'summary' => 'Consulta participação e situação de cursos a partir das entidades LMS e Group.',

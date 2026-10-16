@@ -346,6 +346,20 @@ Evitar dependências JavaScript desnecessárias.
 - Para ilustração raster nova, usar a ferramenta imagegen; redimensionar e otimizar a saída para o uso real. Preferir arte original sem texto incorporado, salvo quando o texto exato fizer parte do pedido.
 - Consultar `docs/portal/IMAGE-ART-DIRECTION.md` para a paleta e a linguagem visual das conquistas.
 
+## Imagens e arquivos de imagem (regra permanente)
+
+- Toda imagem e todo arquivo de imagem do site passa pelo submódulo `aculta_image`
+  (`web/modules/custom/aculta_portal/modules/aculta_image/`). Vale para código novo e antigo; código existente
+  fora dele deve ser refatorado.
+- Não usar `image_style` (renderização, referência ou configuração) fora do catálogo `ImageCatalog`. Pedir uma
+  finalidade, não um estilo.
+- Não criar limite de upload de imagem próprio: usar `UploadPolicy`. A exceção aprovada da conquista (aculta_game)
+  fica só no formulário da conquista.
+- Não processar imagem com `ImageFactory` e não apagar arquivo de imagem fora da quarentena do `aculta_image`.
+- Campo novo de imagem nasce com a política do `aculta_image` em `third_party_settings`.
+- Importação de qualquer origem externa (Wayback, LMS, arquivo recebido) passa pela ingestão do `aculta_image`.
+- Gate: `php scripts/validate-aculta-image.php` (tolerância zero). Plano e fases: `aculta_image/docs/PLANO.md`.
+
 ## Segurança
 
 Nunca expor mensagens de erro detalhadas em produção.

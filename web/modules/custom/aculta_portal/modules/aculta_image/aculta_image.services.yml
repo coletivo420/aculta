@@ -1,0 +1,9 @@
+services:
+  aculta_image.catalog:
+    class: Drupal\aculta_image\ImageCatalog
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.upload_policy:
+    class: Drupal\aculta_image\UploadPolicy
+    tags:
+      - { name: aculta_portal.helper }

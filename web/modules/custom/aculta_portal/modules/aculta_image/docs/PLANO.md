@@ -232,6 +232,7 @@ o total, para que uma migração não seja compensada por código novo.
 | M6 | `entity_usage` 5.0.1 e auditoria de candidatas | Lista com motivos; comparação com a auditoria manual |
 | M7 | Quarentena e exclusão supervisionada | Teste com arquivos de teste; exclusão só após confirmação; restauração testada |
 | M8 | Compressão de derivados com `imageapi_optimize` 4.2.0 em lotes pequenos (CPU e memória limitadas) | Originais intactos; derivados comparados em qualidade |
+| M9 | **Comparação visual própria** (decisão do responsável, 2026-10-17): fingerprint perceptual (dHash, com GD do core, sem dependência nova; pHash se a precisão exigir) para detectar imagens parecidas mas não idênticas, em modo relatório com revisão humana. Código próprio, com referência a projetos similares e bibliotecas avaliadas uma a uma (justificativa escrita antes de qualquer dependência) | Relatório com pares de possíveis duplicatas e a precisão medida em um conjunto de teste rotulado; nenhuma Media alterada |
 | RC | Validação no Homelab e verificação de viabilidade na Hostinger | Relatório de ambientes |
 
 Prevenção de duplicata (bloquear upload) fica fora deste ciclo: depende do resultado do M5 e de
@@ -267,6 +268,14 @@ decisão sua (pergunta 3).
     única, ou cada finalidade pode ter o seu limite?
 13. **Obrigatoriedade.** A regra vale para "todo novo código" (com cliquet para o existente) ou também
     exige migrar o existente antes de qualquer nova funcionalidade? Proponho a primeira opção.
+
+### 3.10 Comparação visual (decisão)
+
+Não há módulo de Drupal para comparação visual. Será código próprio do `aculta_image`, na fase M9.
+Caminho preferido: dHash calculado com GD (já disponível no Runtime e no Homelab), sem dependência
+Composer. Biblioteca só entra se o teste da fase mostrar precisão insuficiente, com justificativa
+escrita pela regra 14 do AGENTS. Qualquer resultado é sugestão: não há restrição nem mesclagem
+automática.
 
 ## 6. Fontes
 
