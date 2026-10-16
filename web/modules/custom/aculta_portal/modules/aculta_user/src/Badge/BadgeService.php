@@ -90,7 +90,7 @@ final class BadgeService {
   /** Contas históricas ou bloqueadas não participam de novas concessões. */
   public function isEligible(int $uid): bool {
     $user = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
-    return $user instanceof UserInterface && $user->isActive() && !$user->hasRole('usuarios_legados_forum');
+    return $user instanceof UserInterface && $user->isActive();
   }
 
   /**

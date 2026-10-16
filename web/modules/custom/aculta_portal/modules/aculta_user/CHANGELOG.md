@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.17 — autores históricos fora dos usuários do Drupal (F2) — 2026-10-16
+
+Classificação MINOR. Autores legados viram entidade própria `aculta_legado_autor` (sem conta). Removidos o papel
+`usuarios_legados_forum`, os campos de origem no perfil e o acesso por conta bloqueada. Tópicos e comentários
+históricos apontam para a autoria pelo campo `field_autor_legado` e têm uid 0. Correção: o presave concede
+`wiki_contributor` (antes, um save dentro de hook_user_update quebrava o módulo group).
+
 ## 0.4.0-dev.16 — F9: moderação pelo content_editor e papéis múltiplos — 2026-10-16
 
 Classificação MINOR. `content_editor` exige e-mail confirmado para visualizar restritos e moderar. Moderação

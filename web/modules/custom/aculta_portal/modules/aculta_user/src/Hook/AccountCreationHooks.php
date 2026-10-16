@@ -6,7 +6,6 @@ namespace Drupal\aculta_user\Hook;
 
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\Avatar\AvatarPool;
-use Drupal\aculta_user\Legacy\LegacyAccountManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -51,10 +50,6 @@ final class AccountCreationHooks {
     if ($file !== NULL && !$file->isPermanent() && !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/')) {
       $file->setPermanent();
       $file->save();
-      return;
-    }
-    // Conta histórica do Fórum nunca recebe avatar do acervo comum (ver LegacyAccountManager).
-    if ($account->hasRole(LegacyAccountManager::ROLE)) {
       return;
     }
     $this->avatarPool->assignPresave($account);

@@ -18,3 +18,7 @@ administer aculta deployer:
   description: Consultar o relatório neutro de fronteiras, correções abertas e credenciais (somente leitura).
   restrict access: true
 
+confirmar email de conta manualmente:
+  title: Confirmar o e-mail de uma conta manualmente
+  description: Marca o e-mail de uma conta como confirmado pela administração. A ação é registrada no log (administrador e conta, sem o endereço).
+  restrict access: true

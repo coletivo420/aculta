@@ -52,16 +52,24 @@ Cada nível enxerga o que o nível anterior enxerga. Na implementação, os real
   contagens, sitemap nem busca (decisão F-D15).
 - Visitante **não vê o nome** do fórum restrito: o contêiner não aparece no índice do fórum nem tem página.
 
-## 5. Confirmação de e-mail pelo administrador: lacuna
+## 5. Confirmação manual de e-mail pelo administrador
 
-**Hoje não existe** função no painel administrativo para o administrador confirmar o e-mail de uma conta. A confirmação
-acontece só por: link enviado ao e-mail, login com provedor externo (OAuth) e troca de e-mail confirmado. O
-administrador precisa, então, de uma ação própria: marcar a confirmação (flag do Portal em `user.data`) **e** conceder
-o papel `email_confirmed`, registrando quem fez e quando. Essa ação não está implementada. Até lá, a confirmação manual
-não é possível pela interface.
+Implementada em 2026-10-16. Quem tem a permissão **confirmar email de conta manualmente** (administrador) acessa
+`/painel-administrativo/contas/nao-confirmadas`, lista as contas ativas sem e-mail confirmado e confirma cada uma
+em `/painel-administrativo/contas/{uid}/confirmar-email`, com confirmação explícita (formulário com token).
 
-## 6. Dúvidas abertas
+A ação usa a mesma política do fluxo normal: grava a confirmação do Portal e concede o papel `email_confirmed`.
+Não envia nenhum e-mail. Repetir a ação numa conta já confirmada não muda nada. Cada confirmação é registrada no
+log do canal `aculta_portal` com o administrador e a conta, **sem o endereço de e-mail**.
+
+## 6. Autores históricos do Fórum (acervo do Growroom)
+
+Decisão de 2026-10-16: autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na
+lista de usuários do administrador. A autoria fica na entidade própria `aculta_legado_autor`, com tabela própria,
+acessível só pela permissão **administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para
+a autoria pelo campo `field_autor_legado`. Conteúdo com esse campo preenchido não é moderado pela fila atual.
+
+## 7. Dúvidas abertas
 
 1. `associado` precisa sempre vir junto de `email_confirmed`? Hoje não é exigido: uma conta só com `associado` ganha o
    nível de e-mail confirmado pela regra de visibilidade. Confirma que deve ser exigido?
-2. A ação de confirmação manual pelo administrador (seção 5) deve ser implementada agora, ou fica para outra fase?

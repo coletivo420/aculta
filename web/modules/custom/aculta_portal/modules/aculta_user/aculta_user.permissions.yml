@@ -17,3 +17,7 @@ administer aculta friendships:
 moderar denuncias do forum:
   title: 'Moderar denúncias do Fórum'
   restrict access: true
+
+administer aculta legado:
+  title: 'Administrar autorias históricas do Fórum'
+  restrict access: true

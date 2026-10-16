@@ -290,3 +290,24 @@ aculta_portal.login_popup:
     _title: Entrar
   requirements:
     _user_is_logged_in: 'FALSE'
+
+aculta_portal.email_confirmacao_pendentes:
+  path: '/painel-administrativo/contas/nao-confirmadas'
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PendingEmailConfirmationController::list'
+    _title: 'Contas sem e-mail confirmado'
+  requirements:
+    _permission: 'confirmar email de conta manualmente'
+
+aculta_portal.email_confirmar_manual:
+  path: '/painel-administrativo/contas/{user}/confirmar-email'
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\AdminEmailConfirmForm'
+    _title: 'Confirmar e-mail'
+  requirements:
+    _permission: 'confirmar email de conta manualmente'
+    user: '\d+'
+  options:
+    parameters:
+      user:
+        type: entity:user

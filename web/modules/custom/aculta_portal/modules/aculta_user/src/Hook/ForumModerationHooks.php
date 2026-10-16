@@ -9,7 +9,6 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_user\Legacy\LegacyAccountManager;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
 
@@ -17,7 +16,7 @@ use Drupal\node\NodeInterface;
  * Moderação do Fórum pelo content_editor (ACULTA Fórum, F9, decisões de 2026-10-16).
  *
  * O moderador pode ocultar, despublicar ou excluir tópicos e comentários, com estas exceções:
- * - conteúdo de autoria histórica (conta com o papel usuarios_legados_forum) não é moderado;
+ * - conteúdo de autoria histórica (campo field_autor_legado preenchido) não é moderado;
  * - o moderador precisa ter e-mail confirmado;
  * - o administrador tem bypass total e não passa por esta regra.
  *
@@ -42,7 +41,7 @@ final class ForumModerationHooks {
       return NULL;
     }
     $autor = $entity->getOwner();
-    if ($autor !== NULL && $autor->hasRole(LegacyAccountManager::ROLE)) {
+    if ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty()) {
       return AccessResult::forbidden('Conteúdo histórico não é moderado pela fila atual.')
         ->addCacheableDependency($entity)
         ->addCacheContexts(['user.roles']);

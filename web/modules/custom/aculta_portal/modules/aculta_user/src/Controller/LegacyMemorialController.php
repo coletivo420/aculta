@@ -9,7 +9,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Template\Attribute;
-use Drupal\aculta_user\Legacy\LegacyAccountManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,6 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
  * mostra o estado vazio. O texto aprovado do memorial é pendência da F2.
  */
 final class LegacyMemorialController extends ControllerBase {
+
+  /** Arte aprovada do avatar especial, quando existir. */
+  public const AVATAR_SOURCE = 'assets/avatars/legado/lendas-historicas.png';
 
   /** Itens por página. */
   private const PAGE_SIZE = 50;
@@ -53,27 +55,25 @@ final class LegacyMemorialController extends ControllerBase {
   public function view(Request $request): array {
     $termo = mb_substr(trim((string) $request->query->get('q', '')), 0, self::QUERY_MAX);
 
-    $query = $this->entityTypeManagerService->getStorage('profile')->getQuery()
+    $storage = $this->entityTypeManagerService->getStorage('aculta_legado_autor');
+    $query = $storage->getQuery()
       ->accessCheck(FALSE)
-      ->condition('type', LegacyAccountManager::PROFILE_TYPE)
-      ->condition('field_forum_origem_id', '', '<>')
-      ->condition('field_nome_historico', '', '<>')
-      ->sort('field_nome_historico', 'ASC')
+      ->sort('nome', 'ASC')
       ->pager(self::PAGE_SIZE);
     if ($termo !== '') {
-      $query->condition('field_nome_historico', $termo, 'CONTAINS');
+      $query->condition('nome', $termo, 'CONTAINS');
     }
-    $perfis = $this->entityTypeManagerService->getStorage('profile')->loadMultiple($query->execute());
+    $autorias = $storage->loadMultiple($query->execute());
 
     $nomes = [];
-    foreach ($perfis as $perfil) {
-      $nomes[] = Html::escape((string) $perfil->get('field_nome_historico')->value);
+    foreach ($autorias as $autoria) {
+      $nomes[] = Html::escape((string) $autoria->get('nome')->value);
     }
 
     $build = [
       '#cache' => [
         'contexts' => ['url.query_args', 'user.permissions'],
-        'tags' => ['profile_list', 'user_list'],
+        'tags' => ['aculta_legado_autor_list'],
         'max-age' => 3600,
       ],
       'perfil' => $this->profileBox(),
@@ -135,13 +135,13 @@ final class LegacyMemorialController extends ControllerBase {
    */
   private function avatar(): array {
     $wrap = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-avatar']];
-    $arquivo = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/' . LegacyAccountManager::AVATAR_SOURCE;
+    $arquivo = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/' . self::AVATAR_SOURCE;
     if (is_file($arquivo)) {
       $wrap['image'] = [
         '#type' => 'html_tag',
         '#tag' => 'img',
         '#attributes' => [
-          'src' => '/' . $this->modules->getPath('aculta_user') . '/' . LegacyAccountManager::AVATAR_SOURCE,
+          'src' => '/' . $this->modules->getPath('aculta_user') . '/' . self::AVATAR_SOURCE,
           'alt' => self::NOME,
           'data-portal-ui' => 'public-profile-avatar-image',
         ],

@@ -41,14 +41,14 @@ submetem no próprio host correto; requisições mutáveis não cruzam hosts por
 
 ## Autoria histórica e memorial
 
-- Cada autor comprovado tem seu User bloqueado, com ID de origem estável e papel
-  `usuarios_legados_forum` (machine name proposto; rótulo aprovado).
+- Cada autor comprovado tem uma autoria própria (`aculta_legado_autor`), sem User. Decisão F-D17 (2026-10-16),
+  que substitui a regra anterior de User bloqueado com papel `usuarios_legados_forum`.
 - A conta guarda a autoria individual de Nodes/Comments. Não usar um único User
   para todo o acervo e não misturar autores homônimos de IDs diferentes.
 - Separar o nome técnico único da conta do nome histórico de exibição. Não inventar
   identidade, e-mail, registro, datas ou vínculo com conta atual.
-- Profile/Entity API guardam metadados necessários. Não criar tabela de autores
-  paralela à identidade User. Mapas de importação pertencem à Migrate API.
+- Decisão F-D17 (2026-10-16): a autoria histórica fica em entidade própria
+  (`aculta_legado_autor`), separada de User e de Profile. Mapas de importação pertencem à Migrate API.
 - `/u/lendashistoricas` é a única página pública de memorial: pode listar, pesquisar
   e paginar nomes no mesmo caminho. Não há subrota pública por pessoa.
 - O link "Nome histórico" em uma publicação aponta ao memorial coletivo; o texto

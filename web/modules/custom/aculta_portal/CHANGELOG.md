@@ -1,3 +1,8 @@
+## 0.4.0-dev.50 — confirmação manual de e-mail e autores fora dos usuários — 2026-10-16
+
+Classificação MINOR. Confirmação manual de e-mail pelo administrador (permissão própria, lista e formulário com
+registro em log sem o endereço). Autores históricos separados dos usuários (`aculta_user` 0.4.0-dev.17).
+
 ## 0.4.0-dev.49 — F9: moderação e papéis múltiplos — 2026-10-16
 
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.16. Moderação do Fórum pelo `content_editor` com e-mail confirmado;
