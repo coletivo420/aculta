@@ -117,14 +117,15 @@ class SalesReportQuery {
    * @return array{ids: int[], total: int}
    */
   public function pedidos(SalesReportFilters $filtros, string $escopo, int $pagina, int $porPagina): array {
+    // A contagem é uma consulta separada: fetchField() lê a primeira coluna, então não pode herdar o campo de id.
+    $contagem = $this->pedidosDoEscopo($filtros, $escopo);
+    $contagem->addExpression('COUNT(DISTINCT o.order_id)', 'total');
+    $total = (int) $contagem->execute()->fetchField();
+
     $consulta = $this->pedidosDoEscopo($filtros, $escopo);
     $consulta->addField('o', 'order_id');
     $consulta->orderBy('o.placed', 'DESC');
     $consulta->orderBy('o.order_id', 'DESC');
-
-    $contagem = clone $consulta;
-    $contagem->addExpression('COUNT(DISTINCT o.order_id)', 'total');
-    $total = (int) $contagem->execute()->fetchField();
 
     $consulta->range($pagina * $porPagina, $porPagina);
     $ids = array_map('intval', $consulta->execute()->fetchCol());
