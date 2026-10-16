@@ -130,7 +130,7 @@ O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplica
 
 1. Adicionar uma capa a um curso quando a edição de cursos estiver disponível pela frente de contas/permissões; conferir a imagem no cartão via Firefox.
 2. Revisar a dependência inválida `filter.format.0` antes de futuras importações parciais do Config Sync.
-3. Continuar R8 (consumidores restantes e estilos legados) mantendo a frente de contas e permissões aberta, sem alterar contas nesta tarefa.
+3. R8 concluída: auditoria estática não encontrou consumidores `legado_*`; os IDs de estilos usados nas configurações nativas do Config Sync estão no catálogo. O gate passou e o registro de dívida foi atualizado.
 4. A confirmação dos binários na Hostinger segue pendente (RC). A mesclagem da galeria foi concluída; arquivos redundantes continuam na quarentena até 2026-11-15.
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)

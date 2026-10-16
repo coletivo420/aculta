@@ -1,5 +1,11 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.21 — auditoria R8 de consumidores e estilos — 2026-10-16
+
+- Auditoria do código e do Config Sync não encontrou consumidor `legado_*`; todas as referências de estilo nas configurações nativas correspondem a `ImageCatalog::STYLES`.
+- O gate `validate-aculta-image.php` passou sem usos de imagem fora do submódulo. O plano, handoff e registro de dívida anotam a conclusão de R8.
+- Atualizado comentário de `ImageCatalog` para refletir o critério atual de manutenção de estilos antigos.
+
 ## 0.1.0-dev.20 — seletor de imagem e herança de papéis — 2026-10-16
 
 - Documentação alinhada à hierarquia da PR #286: `email_confirmed` mantém a permissão direta de `usuario_aculta`; `estudante`, `associado`, `lms_teacher` e `content_editor` a herdam pela configuração atual.

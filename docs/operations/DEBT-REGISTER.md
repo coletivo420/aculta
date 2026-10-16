@@ -56,6 +56,12 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-P24 | Erro do Core Navigation ao pressionar Esc no popup de busca, só para usuário logado: `Drupal.behaviors.navigation` chama `click()` em um seletor de gatilho mobile inexistente (`TypeError: Cannot read properties of null (reading 'click')`) | Core (módulo Navigation, `data-admin-toolbar="expanded"`), não é código do Portal ou do tema; observado no reteste da F3 (2026-10-11) | Baixa | Não | P | Aberta (fora do Portal; corrigir no Core ou desativar a barra admin no tema administrativo) |
 | DT-P19 | Credencial root exposta no chat | `P10-R` item 7 e seção 14: rotacionada pelo responsável em 2026-10-09 | Alta | Não | — | Resolvida (informada pelo responsável) |
 
+## ACULTA Image (`aculta_image`)
+
+| ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-IMAGE-R8 | Consumidores de estilos antigos e estilos `legado_*` fora do catálogo | Auditoria em 2026-10-16: nenhuma ocorrência `legado_*`; IDs de estilos das configurações nativas em `config/sync` pertencem a `ImageCatalog::STYLES`; `php scripts/validate-aculta-image.php` PASS | Média | Não | R8 | Resolvida (0.1.0-dev.21) |
+
 ## Tema (`aculta420`)
 
 | ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |

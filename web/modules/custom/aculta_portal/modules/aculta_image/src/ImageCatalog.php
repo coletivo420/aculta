@@ -9,7 +9,8 @@ namespace Drupal\aculta_image;
  *
  * Única fonte de nomes de estilo de imagem do site. Quem precisa de uma imagem pede uma finalidade, não um estilo.
  * Os estilos listados em STYLES são os que existem em config/sync; o gate (scripts/validate-aculta-image.php) reprova
- * estilo exportado que não esteja aqui. Estilos `legado_*` são mantidos até a revisão da fase M3.
+ * estilo exportado que não esteja aqui. Nomes antigos só podem permanecer enquanto houver configuração consumidora
+ * identificada e registrada no plano de migração (R8).
  */
 final class ImageCatalog {
 
