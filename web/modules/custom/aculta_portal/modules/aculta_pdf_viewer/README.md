@@ -37,8 +37,9 @@ formatter de Media `document`.
    `pdf.worker.mjs` da distribuição Mozilla instalada localmente em
    `/libraries/pdf.js`. Usa canvas, navegação, zoom com restauração, busca textual por página e
    tela cheia; erro de carregamento informa o usuário e preserva o link de
-   fallback. Firefox 153.4 ESR validou o leitor no Runtime com uma Media pública
-   e artigo temporários; o registro, inclusive dos itens limpos, está em
+   fallback. Firefox 153.4 ESR validou leitor e inserção/salvamento de uma Media
+   já existente via CKEditor no Runtime; a criação/upload pela UI como
+   `content_editor` ainda não foi verificada. O registro, inclusive dos itens limpos, está em
    [TESTES-NAVEGADOR](../../../../../../docs/portal/TESTES-NAVEGADOR.md).
 
 ## Hooks e integração Drupal
@@ -64,9 +65,9 @@ nega o PDF. O Kernel test em `tests/src/Kernel/` verifica descoberta do módulo,
 serviço e plugin sem storage ou hook de download próprio.
 
 PHPUnit é executado com a configuração `web/core/phpunit.xml.dist`. Descoberta
-de plugin e renderização pública foram validadas em Drupal; autoria pela UI
-CKEditor (retornou 403), links privados, binários/miniaturas e Hostinger
-continuam pendentes. Nenhum `drush cim`, `updb`, CDN, ImageMagick policy ou
+de plugin, renderização pública e inserção de Media existente via CKEditor foram
+validadas em Drupal; upload como `content_editor`, links privados,
+binários/miniaturas e Hostinger continuam pendentes. Nenhum `drush cim`, `updb`, CDN, ImageMagick policy ou
 migração de arquivo é executado por este módulo.
 
 ## Documentação de arquitetura

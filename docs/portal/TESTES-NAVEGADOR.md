@@ -474,19 +474,22 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 - **Ambiente:** Firefox 153.4 ESR headless + geckodriver 0.37.1 no Homelab;
   Drupal 11.4.10, URI `https://revista420.aculta.toca.net.br`, banco
   `aculta_runtime`. A amostra foi o PDF público que acompanha PDF.js 6.4.299.
-- **Render Drupal/Media:** Media `document` pública e artigo `article`
-  temporários usaram o markup `drupal-media` com formato `revista_editorial`.
-  O endpoint respondeu HTTP 200 e apresentou o formatter compartilhado, a
-  biblioteca local PDF.js e o link autorizado. O fluxo confirmou render de
-  Media Embed no texto; a seleção pela UI CKEditor não foi concluída. A tentativa
-  de abrir a edição com link de login único retornou 403, sem confirmação
-  independente de sessão/permissão; não inferir que a interface de autoria passou.
+- **Autoria e render Drupal/Media:** com sessão uid 1 criada pelo link de login
+  único no host da Conta, a edição do artigo abriu no host Magazine com CKEditor
+  5. Na biblioteca, a aba “Documento” listou a Media PDF temporária; “Inserir
+  Mídia” a colocou no corpo e “Salvar” publicou o artigo. A página pública
+  respondeu HTTP 200 e exibiu o formatter, PDF.js local e link autorizado.
+  O primeiro 403 ocorreu ao gerar o link de login no host Magazine; usar o host
+  da Conta conforme o procedimento resolveu. A Media foi criada por Drush para
+  o ensaio; o upload/criação de Media via UI por `content_editor` não foi
+  homologado (o gate de permissões confirma `create document media`).
 - **Interação real do viewer:** carregamento `Página 1 de 14`, canvas
   `655 × 848`, avanço `Página 2 de 14`, zoom `125%`, busca `Trace-based` com
   cinco resultados, botão de tela cheia ativado e console sem erros JS.
-- **Limpeza:** removidos o node temporário 284, Media 231, File 407 e o arquivo
-  em `public://`. Drush confirmou zero Media `document` e ausência do binário
-  temporário. Nenhum conteúdo preexistente foi alterado.
-- **Escopo pendente:** autoria pela UI CKEditor (tentativa 403 não diagnosticada), leitura `private://`,
+- **Limpeza:** removidos os nodes temporários 284 e 285, Media 231 e 232, Files
+  407, 410, 411 e 412, além dos binários permanentes/temporários usados no teste.
+  Drush confirmou zero Media `document` e ausência dos arquivos temporários.
+  Nenhum conteúdo preexistente foi alterado.
+- **Escopo pendente:** upload/criação de Media via UI como `content_editor`, leitura `private://`,
   preview/ImageMagick, CSP, acessibilidade visual/leitor de tela, outros
   browsers e hospedagem LiteSpeed.

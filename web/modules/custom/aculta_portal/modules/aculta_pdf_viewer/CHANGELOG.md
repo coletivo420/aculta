@@ -5,10 +5,11 @@
 O viewer adiciona zoom/restauração, busca textual por página, navegação dos resultados e
 modo tela cheia, mantendo o PDF.js local e o link autorizado. O Kernel valida
 markup dos controles e o fluxo Media Embed; `node --check` valida sintaxe ESM.
-Firefox 153.4 ESR confirmou a interação no Runtime com PDF público temporário:
-14 páginas, navegação, zoom, busca, tela cheia e zero erros JS. Os objetos de
-teste foram removidos. A tentativa de acessar edição CKEditor com login único
-retornou 403 sem diagnóstico de sessão/permissão; autoria via UI, leitura privada,
+Firefox 153.4 ESR confirmou no Runtime o leitor público (14 páginas, navegação,
+zoom, busca, tela cheia e zero erros JS) e a inserção da Media existente pelo
+CKEditor 5 seguida de salvamento e renderização do artigo. Todas as fixtures
+foram removidas. A Media foi criada por Drush; upload/criação pelo papel
+`content_editor`, leitura privada,
 acessibilidade visual, CSP, preview e Hostinger continuam pendentes.
 
 ## 0.1.0-dev.2 — inserção editorial pelo CKEditor 5

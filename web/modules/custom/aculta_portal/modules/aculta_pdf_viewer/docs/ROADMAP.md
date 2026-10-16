@@ -40,7 +40,7 @@ validação de custo, acessibilidade e desempenho em PDFs extensos.
 |---|---|---|---|
 | PV0 — Contrato e fundação | Submódulo separado; serviço e formatter com DI; fronteiras Media/File/access/cache documentadas; nenhuma persistência paralela. | Implementado no código desta PR; Unit e Kernel isolados PASS. Runtime DEFERRED. | Desabilitar o submódulo após restaurar o formatter Core no display Media e sincronizar configuração somente em mudança aprovada. |
 | PV1 — PDF.js local | PDF.js oficial com versão e proveniência fixas, worker local, ESM, controles básicos e fallback. Sem CDN e sem patch direto em contrib. | Implementado e smoke test isolado PASS. Versão atual indicada no Composer; Runtime DEFERRED. | Reverter dependência/library e selecionar formatter Core; não remover arquivos Media. |
-| PV2 — Inserção de PDF na Revista pelo CKEditor 5 | Confirmar o fluxo de autoria com `drupalMedia` no formato `revista_editorial`: selecionar/criar Media `document`, inserir no corpo, salvar, reabrir e renderizar pelo formatter compartilhado. Confirmar filtro `media_embed`, view mode, permissão de criação para `content_editor` e saída sem URL manual. O bundle usa `public://`, portanto o papel só deve enviar PDFs destinados à publicação. | Módulo/display, permissão e render Media Embed→formatter→PDF.js confirmados por Kernel e por artigo temporário no Runtime. A tentativa de abrir a edição com link de login único retornou 403, sem diagnóstico de sessão/permissão; a seleção/autoria CKEditor segue DEFERRED. | Revogar `create document media` do papel editorial, retirar o bundle `document` da seleção do editor ou voltar ao render Core; manter os Media/File e textos já publicados. |
+| PV2 — Inserção de PDF na Revista pelo CKEditor 5 | Selecionar Media `document` na aba Documento da Media Library, inserir no formato `revista_editorial`, salvar e reabrir; o formatter compartilhado deve renderizar sem URL manual. O papel editorial deve poder criar Media PDF destinada à publicação. O bundle usa `public://`; não subir conteúdo confidencial. | Kernel e navegador confirmaram inserção de Media PDF existente pelo CKEditor, salvamento do artigo publicado e render PDF.js no Runtime. A Media fixture foi criada por Drush; upload/criação de Media via UI como `content_editor` segue DEFERRED, embora permissão e gate de papéis estejam presentes. | Revogar `create document media` do papel editorial, retirar o bundle `document` da seleção do editor ou voltar ao render Core; manter os Media/File e textos já publicados. |
 | PV3 — Leitor integrado ao site | Leitura inline paginada responsiva e acessível em páginas com Media PDF. Implementa página anterior/próxima, zoom, busca textual por página, controles acessíveis, tela cheia e fallback autorizado. Realce textual, rolagem contínua, sumário/bookmarks e apresentação ACULTA420 são incrementos próprios após validação/acesso ao tema. Sem JavaScript permanece o fallback autorizado. | Firefox 153.4 ESR no Runtime confirmou render de 14 páginas, navegação, zoom, busca, tela cheia e zero erros JS. CSP, responsividade visual, acessibilidade, outros browsers e PDF grande permanecem pendentes. | Retirar a biblioteca de interação e manter link Core autorizado; arquivos Media permanecem. |
 | PV4 — Miniaturas e preview | Investigar/ativar PDFPreview apenas com toolkit, ImageMagick, Ghostscript e policies seguros por ambiente. Medir timeout, memória, CPU, cache de derivados e execução em lote. Leitor permanece funcional se geração falhar. | Bloqueado até compatibilidade estável do PDFPreview com ImageMagick disponível (1.2 declara `^3.7 || ^4.0`; ImageMagick 5.x não está confirmado), revisão de segurança e validação em Hostinger LiteSpeed. | Desabilitar formatter/gerador de preview e manter ícone/link Media; não enfraquecer policy global. |
 | PV5 — Arquivos privados e públicos | Decidir e implementar, se necessário, entrega controlada compatível com File access para leitura embutida de `private://`; validar não publicado, acesso revogado, turma/Group, cache privado e fallback. Testar URLs assinadas/endpoint autorizado sem expor caminho. | A implementação atual dá viewer apenas a `public://` e não transforma link de download em leitor privado. Não usar PDFs confidenciais no bundle público `document`. Requer arquitetura e testes integrados de autorização/cache antes de código. | Voltar a bloquear embed privado; manter somente resposta de acesso e download servido pelo Core quando autorizados. |
@@ -50,14 +50,14 @@ validação de custo, acessibilidade e desempenho em PDFs extensos.
 ## Próxima entrega
 
 PV2 está aplicada no código e Config Sync: o Kernel percorre CKEditor Media
-Embed → Media `document` → formatter → PDF.js, e um artigo temporário da Revista
-validou essa saída no Runtime. Um PDF público oficial foi usado como fixture,
-com File, Media e node temporários removidos após o teste. A interação foi
-validada no Firefox 153.4 ESR contra `revista420.aculta.toca.net.br`: 14 páginas,
-próxima página, zoom 125%, busca com cinco resultados, tela cheia e zero erros
-JavaScript. A tentativa de abrir a tela de edição CKEditor com link de login
-único recebeu HTTP 403, sem diagnóstico de sessão/permissão, então o fluxo de
-autoria pela interface não foi validado. Nenhum Config Sync global foi importado. O LMS continua
+Embed → Media `document` → formatter → PDF.js. Com login único gerado no host
+Conta, Firefox 153.4 ESR validou no Runtime a aba Documento da Media Library,
+inserção da Media existente pelo botão CKEditor, salvamento e render do artigo
+publicado. O leitor validou 14 páginas, navegação, zoom 125%, busca com cinco
+resultados, tela cheia e zero erros JavaScript. O Media de teste foi criado por
+Drush; upload/criação via UI pelo papel `content_editor` segue sem homologação.
+Todos os nodes, Media e Files temporários foram removidos. Nenhum Config Sync
+global foi importado. O LMS continua
 pausado até o foco do projeto retornar a ele.
 
 PV3 está funcional para Media público e testado no Runtime. A finalização de

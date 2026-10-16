@@ -121,10 +121,12 @@ controller nem classe de formulário neste módulo; não existe arquivo
   `aculta_runtime`: 14 páginas, navegação, zoom 125%, busca (cinco resultados),
   tela cheia e zero erros JS. O node, Media, File e binário temporários foram
   removidos e a contagem do bundle `document` voltou a zero.
-- A tentativa de abrir a edição CKEditor com link de login único recebeu 403,
-  sem diagnóstico independente de sessão/permissão; o fluxo de autoria pela UI
-  segue DEFERRED, embora o filtro `media_embed` → formatter esteja coberto pelo
-  Kernel e tenha renderizado no artigo de teste. PDFPreview, acesso privado,
+- A biblioteca CKEditor 5 abriu no Runtime após autenticar pelo host Conta; a
+  aba Documento selecionou a Media PDF existente, inseriu o widget, salvou o
+  artigo e a página publicada mostrou o leitor. A Media fixture foi criada por
+  Drush, então upload/criação por usuário `content_editor` ainda é DEFERRED.
+  O primeiro link de login foi emitido no host Magazine e recebeu 403; o
+  procedimento correto é emitir no host Conta. PDFPreview, acesso privado,
   acessibilidade visual e Hostinger seguem DEFERRED.
 
 ## Referências upstream

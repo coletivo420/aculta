@@ -151,9 +151,13 @@ Runtime `aculta_runtime` foi atualizado pontualmente, sem import global. Um
 Media `document` e artigo temporários usaram o PDF de amostra oficial e
 renderizaram via CKEditor Media Embed → formatter. Firefox 153.4 ESR confirmou
 14 páginas, navegação, zoom 125%, busca (cinco resultados), tela cheia e zero
-erros JavaScript. Os três objetos e o arquivo foram removidos; o bundle voltou
-a zero itens. A tentativa de abrir a edição CKEditor com link de login único
-recebeu 403, sem diagnóstico independente de sessão/permissão, e segue DEFERRED.
+erros JavaScript. A UI CKEditor 5, autenticada por link único gerado no host
+Conta, selecionou uma Media `document` existente, inseriu o widget e salvou o
+artigo publicado. A primeira tentativa de edição, com link de login emitido no
+host Magazine, retornou 403; ao repetir pelo fluxo documentado no host Conta,
+a edição funcionou. A fixture Media foi criada
+por Drush, portanto upload/criação como `content_editor` ainda segue DEFERRED.
+Todos os objetos e arquivos temporários foram removidos; o bundle voltou a zero.
 PHPUnit/gates e resolução Composer estão registrados na PR. Acesso privado por
 usuário/turma, PDFPreview/thumbnails, CSP, acessibilidade visual e Hostinger
 seguem **DEFERRED**. Não executar `drush cim` com URI `http://default`.
