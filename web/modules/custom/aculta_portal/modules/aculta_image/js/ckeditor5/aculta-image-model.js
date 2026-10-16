@@ -12,7 +12,7 @@
   'use strict';
 
   const { Plugin } = CKEditor5.dll('./src/core.js');
-  const { createDropdown, addListToDropdown, Model } = CKEditor5.dll('./src/ui.js');
+  const { ButtonView } = CKEditor5.dll('./src/ui.js');
 
   /** Modelos aceitos (mesmos nomes de ImageCatalog::MODELOS). */
   const MODELOS = [
@@ -29,6 +29,14 @@
    * Plugin do atributo acultaModelo e do seletor na barra de ferramentas.
    */
   class ImageModel extends Plugin {
+
+    static get requires() {
+      // Register both image model elements before extending their schema.
+      return [
+        CKEditor5.image.ImageBlockEditing,
+        CKEditor5.image.ImageInlineEditing,
+      ];
+    }
 
     static get pluginName() {
       return 'ImageModel';
@@ -68,30 +76,24 @@
         });
       });
 
-      editor.ui.componentFactory.add('acultaImageModel', (locale) => {
-        const dropdown = createDropdown(locale);
-        dropdown.buttonView.set({ label: 'Modelo de imagem', tooltip: true, withText: true });
-
-        // Modelos oferecidos por este editor (configuração do plugin); sem configuração, todos.
-        const permitidos = editor.config.get('acultaImageModel.models') || MODELOS.map((modelo) => modelo.value);
-        const items = MODELOS.filter((modelo) => permitidos.includes(modelo.value)).map((modelo) => ({
-          type: 'button',
-          model: new Model({ commandParam: modelo.value, label: modelo.label, withText: true }),
-        }));
-        addListToDropdown(dropdown, items);
-
-        dropdown.on('execute', (evt) => {
-          const selecionado = this._imagemSelecionada();
-          if (!selecionado) {
-            return;
-          }
-          editor.model.change((writer) => {
-            writer.setAttribute('acultaModelo', evt.source.commandParam, selecionado);
+      // Cada opção é um item da toolbar por conta própria. Isso mantém as opções usáveis
+      // quando o CKEditor move itens para o menu de overflow em telas estreitas.
+      const permitidos = editor.config.get('acultaImageModel.models') || MODELOS.map((modelo) => modelo.value);
+      MODELOS.filter((modelo) => permitidos.includes(modelo.value)).forEach((modelo) => {
+        const nome = `acultaImageModel${modelo.value.charAt(0).toUpperCase()}${modelo.value.slice(1)}`;
+        editor.ui.componentFactory.add(nome, (locale) => {
+          const botao = new ButtonView(locale);
+          botao.set({ label: `Imagem: ${modelo.label}`, tooltip: true, withText: true });
+          botao.on('execute', () => {
+            const selecionado = this._imagemSelecionada();
+            if (!selecionado) {
+              return;
+            }
+            editor.model.change((writer) => writer.setAttribute('acultaModelo', modelo.value, selecionado));
+            editor.editing.view.focus();
           });
-          editor.editing.view.focus();
+          return botao;
         });
-
-        return dropdown;
       });
     }
 

@@ -6,3 +6,16 @@ field.field.*.third_party.aculta_image:
     policy:
       type: string
       label: 'Política de upload'
+
+ckeditor5.plugin.aculta_image_model:
+  type: mapping
+  label: 'ACULTA Image: modelos do editor'
+  constraints:
+    FullyValidatable: ~
+  mapping:
+    modelos:
+      type: sequence
+      label: 'Modelos disponíveis'
+      sequence:
+        type: string
+        label: 'Modelo'

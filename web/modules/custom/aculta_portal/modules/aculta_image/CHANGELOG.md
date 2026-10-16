@@ -1,5 +1,13 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.10 — botões de modelo funcionam no overflow do CKEditor — 2026-10-16
+
+- Corrigido o seletor do CKEditor: cada modelo agora é um botão próprio na toolbar, em vez de um dropdown aninhado que não abria no menu de overflow.
+- O Runtime de testes recebeu os novos itens de toolbar em `full_html`, `revista_editorial` e `usuario_aculta`; cache reconstruído.
+- Firefox confirmou a serialização de `data-aculta-modelo="padrao"` em `full_html` e de `pequena` em `usuario_aculta` e `revista_editorial`, inclusive no overflow com viewport útil de 488 px. Nenhum conteúdo foi salvo.
+- Upload real no Runtime: PNG de teste 1600×800 convertido para 1200×600; arquivo gerenciado removido e limpeza confirmada.
+- Gate `validate-aculta-image.php`, `php -l` do plugin PHP e `node --check` passaram. Reabertura e temas claro/escuro ainda pendentes.
+
 ## 0.1.0-dev.9 — modelo no CKEditor, formato Usuário ACULTA e conversão para 1200 px — 2026-10-17
 
 - Plugin `acultaImage.ImageModel` no CKEditor 5, em JavaScript simples (sem build), com a biblioteca `ckeditor5.image_model`. Seletor de modelo na barra de ferramentas; a lista de modelos vem da configuração do editor (`acultaImageModel.models`).

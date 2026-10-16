@@ -6,8 +6,8 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.10. Leia este documento antes d
 
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
-3. **M10 (modelos de imagem no texto) está parcial.** A configuração foi importada e o seletor foi exercitado em `full_html`; faltam upload real, reabertura, outras viewports e temas.
-4. O próximo passo é completar **R1/R2**: medir a conversão de upload acima de 1200 px e cobrir o seletor em `usuario_aculta`, `revista_editorial`, mobile, claro/escuro e após salvar/reabrir.
+3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão de 1600×800 para 1200×600 confirmada; os três editores gravam modelos. Faltam reabertura, 390 px, temas e acessibilidade.
+4. O próximo passo é completar **R2**: testar persistência após salvar/reabrir, viewport de 390 px e temas claro/escuro; depois seguir para R3 (legenda).
 5. A importação do Growroom está bloqueada pela F3 do Fórum (lista de autores). Não é trabalho deste submódulo.
 
 ## 2. Git e working tree
@@ -71,15 +71,19 @@ o schema do módulo foram carregados pelo rebuild. Depois da atualização dos i
 importados de novo via diretório temporário com apenas esses YAMLs. `config:status` ainda aponta `user.role.authenticated`
 por drift existente de permissões não relacionadas; não importar a role inteira, pois isso reverteria permissões ativas.
 
-Firefox headless confirmou em `full_html` que “Imagem: Padrão” serializa `data-aculta-modelo="padrao"` no `<img>`, inclusive
-quando o item precisa ser aberto pelo menu de overflow. A imagem era apenas do modelo em memória: nenhum conteúdo foi salvo.
+Firefox headless confirmou em `full_html` que “Imagem: Padrão” serializa `data-aculta-modelo="padrao"` no `<img>`. Em
+`usuario_aculta` e `revista_editorial`, “Imagem: Pequena” também funcionou pelo menu de overflow a 488 px. As imagens eram
+temporárias no editor; nenhum conteúdo foi salvo.
+
+Upload real: PNG sintético de 1600×800 foi enviado em `revista_editorial`, convertido a 1200×600 e removido em seguida.
+O arquivo gerenciado foi excluído e a ausência confirmada. O upload está coberto para este caminho.
 
 Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_image_update_10003`.
 
 ## 5. Riscos conhecidos
 
 - **Resposta antiga em `basic_html`:** ao editar uma resposta do Fórum que já usa `basic_html`, o formulário passa a oferecer só `usuario_aculta`. Testar no Runtime antes de liberar.
-- **Upload acima de 1200 px:** a conversão é do `aculta_image` (hook `file_insert` em `public://inline-images/`). Não foi exercitada com upload real; testar com um arquivo de teste pela interface.
+- **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
 - **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. Firefox confirmou o downcast em `full_html`; falta verificar depois de salvar/reabrir e nos demais formatos.
 - **Legenda:** o seletor não tem campo de legenda. A legenda do `figcaption` só aparece quando o atributo `data-aculta-legenda` existir no HTML.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
@@ -89,10 +93,9 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 
 ## 6. Próximos passos (ordem recomendada)
 
-1. **R1 upload:** enviar uma imagem acima de 1200 px num editor (`revista_editorial`) e confirmar que o arquivo resultante tem 1200 px de largura.
-2. **R2 navegador:** Firefox; testar o seletor em `usuario_aculta` e `revista_editorial`, salvar/reabrir conteúdo de teste e conferir a persistência. Cobrir claro e escuro, 390 px e 1280 px; registrar em `docs/portal/TESTES-NAVEGADOR.md` (AGENTS).
-4. **R3 Legenda no editor**, depois **R4 CSS dos modelos** (exige autorização para alterar `web/themes/custom/aculta420/**`) e **R5 acessibilidade**.
-5. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
+1. **R2 navegador:** Firefox; salvar/reabrir conteúdo de teste e conferir a persistência. Cobrir claro e escuro, 390 px e 1280 px; registrar em `docs/portal/TESTES-NAVEGADOR.md` (AGENTS).
+2. **R3 Legenda no editor**, depois **R4 CSS dos modelos** (exige autorização para alterar `web/themes/custom/aculta420/**`) e **R5 acessibilidade**.
+3. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)
 

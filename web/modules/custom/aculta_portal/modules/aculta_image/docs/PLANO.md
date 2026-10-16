@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-17: versão **0.1.0-dev.9**. Gate `scripts/validate-aculta-image.php` em PASS. 14 testes unitários passam.
+Status em 2026-10-16: versão **0.1.0-dev.10**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -51,9 +51,10 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 
 **Ainda não feito (ordem sugerida):**
 
-1. **Runtime** (bloqueia qualquer teste real): importar a configuração dos formatos e editores, reconstruir o cache e
-   verificar a configuração. Ver [HANDOFF.md](HANDOFF.md), seção "Próximos passos".
-2. **Teste no navegador** do seletor (claro e escuro, 390 px e 1280 px), com o gate de acessibilidade da seção 4.
+1. **Runtime:** configuração importada e cache reconstruído. Upload de 1600×800 convertido para 1200×600; `user.role.authenticated`
+   ainda tem drift de permissões alheias à imagem.
+2. **Teste no navegador:** os três editores gravam o modelo; `usuario_aculta` e `revista_editorial` foram exercitados a
+   488 px. Faltam salvar/reabrir, temas claro/escuro, 390 px e gate de acessibilidade da seção 4. Ver [HANDOFF.md](HANDOFF.md), seção 6.
 3. **Legenda na UI do editor:** hoje o plugin só grava o modelo. Legenda (`acultaLegenda`) não tem campo no editor.
 4. **CSS dos modelos** no ACULTA420 (`aculta-imagem--pequena`, `--padrao`, etc.). O tema exige autorização explícita
    para alteração (AGENTS, "Coordenação Portal, tema e documentação").
@@ -81,8 +82,8 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 
 | Fase | Entrega | Aceite | Depende de |
 | --- | --- | --- | --- |
-| **R1 — Runtime do M10** | importar configuração, cache rebuild, verificar formatos e editores | `config:status` sem diferença; seletor aparece só onde deve; upload de imagem acima de 1200 px vira 1200 px | inspeção de estado e autorização |
-| **R2 — Teste do seletor** | teste no navegador (Firefox, perfil dedicado, login via `drush uli`) | seleção grava o modelo; reabrir mantém o modelo; claro e escuro; 390 e 1280 px | R1 |
+| **R1 — Runtime do M10** | configuração importada em partes; cache rebuild; upload de teste | PNG de 1600×800 convertido a 1200×600; `user.role.authenticated` ainda tem drift alheio à imagem | feito; ampliar só se necessário após os demais testes |
+| **R2 — Teste do seletor** | Firefox, login via `drush uli`; imagens temporárias sem salvar | três editores gravam modelos; `usuario_aculta` e `revista_editorial` funcionam no overflow a 488 px; faltam reabertura, claro/escuro e 390 px | feito parcialmente; ampliar cobertura |
 | **R3 — Legenda no editor** | campo de legenda no seletor, gravado como `acultaLegenda` | legenda aparece no `figcaption` na página pública | R2 |
 | **R4 — CSS dos modelos** | estilos no ACULTA420 | gate de tema do ACULTA420 (`scripts/validate-aculta-image.php`, regra R8, em PASS); sem `image_style` no tema | autorização para alterar o tema |
 | **R5 — Acessibilidade** | `alt` obrigatório, teclado, `figcaption` | revisão com teclado e leitor de tela | R3 |

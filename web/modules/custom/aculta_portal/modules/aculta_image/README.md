@@ -4,7 +4,7 @@ Sistema único de imagens do site ACULTA. Todo uso de imagem passa por ele: cat�
 renderização responsiva, modelos de imagem no texto, compressão, leitura de dimensões, exclusão controlada, ingestão de
 origem externa, auditoria, quarentena e comparação visual.
 
-**Versão:** 0.1.0-dev.9 (ver [CHANGELOG](CHANGELOG.md)).
+**Versão:** 0.1.0-dev.10 (ver [CHANGELOG](CHANGELOG.md)).
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
@@ -37,7 +37,8 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
   reduz para 1200 px de largura (só se for maior), depois comprime. A validação de dimensão do core foi desligada nos
   editores com upload: a imagem é aceita e convertida, não recusada.
 - **Modelo:** o plugin `acultaImage.ImageModel` (`js/ckeditor5/aculta-image-model.js`, JavaScript simples, sem build)
-  adiciona o seletor "Modelo de imagem" na barra. Grava `data-aculta-modelo` no `<img>`. A lista de modelos oferecidos
+  adiciona um botão por modelo na barra. Os botões funcionam também no menu de overflow do CKEditor. Grava
+  `data-aculta-modelo` no `<img>`. A lista de modelos oferecidos
   vem da configuração do editor (classe PHP `Plugin\CKEditor5Plugin\ImageModel`).
 - **Filtro:** `aculta_imagem_modelo` (`Plugin\Filter\ImagemModelo`, peso 20) transforma o `<img>` em `<figure>` com
   `srcset` e `sizes` do modelo, e legenda em `<figcaption>` quando houver `data-aculta-legenda`. Crédito não existe.
@@ -79,7 +80,10 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
   php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Unit
   ```
 - JavaScript do seletor: `node --check web/modules/custom/aculta_portal/modules/aculta_image/js/ckeditor5/aculta-image-model.js`.
-- **Ainda não testado no navegador nem no Runtime.** Ver o handoff, seção 4.
+- Runtime de testes: configurações de editor importadas e cache reconstruído. Firefox confirmou a serialização do modelo
+  em `full_html`, `usuario_aculta` e `revista_editorial`, incluindo o overflow a 488 px. Um upload de 1600×800 foi
+  convertido a 1200×600; o arquivo de teste foi removido. Não salvamos conteúdo. Tema claro/escuro e reabertura continuam
+  pendentes; ver o handoff.
 
 ## Atualizações de banco
 

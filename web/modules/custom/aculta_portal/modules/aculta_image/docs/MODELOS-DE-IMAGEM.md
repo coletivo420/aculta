@@ -1,7 +1,8 @@
 # Modelos de imagem no texto
 
-Status em 2026-10-17 (0.1.0-dev.9): **parcialmente implementado.** Código e configuração estão no repositório. O Runtime
-ainda não foi atualizado e o seletor não foi testado no navegador. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.
+Status em 2026-10-16 (0.1.0-dev.10): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
+atributo no `<img>` nos três editores testados, inclusive no overflow a 488 px. Upload real de 1600×800 resultou em
+1200×600. Ainda faltam salvar/reabrir e testar tema claro/escuro. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.
 
 ## 1. Objetivo
 
@@ -84,7 +85,7 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 | --- | --- | --- |
 | P1 | Catálogo dos modelos e estilos `aculta_corpo_*` | **feito** (exportados no pipeline `aculta_derivados`) |
 | P2 | Filtro PHP com `<figure>`, `srcset` e legenda (sem crédito) | **feito** (sem JavaScript na página pública) |
-| P3 | Plugin CKEditor 5 com seletor de modelo | **feito no código; sem Runtime e sem teste no navegador** |
+| P3 | Plugin CKEditor 5 com seletor de modelo | **botões e gravação testados no Runtime; falta cobrir viewports, tema, upload real e reabertura** |
 | P3b | Campo de legenda no seletor | pendente |
 | P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | pendente (exige autorização para o tema) |
 | P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | pendente |
@@ -97,8 +98,8 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 - Respostas do Fórum já escritas em `basic_html`: ao editar, o formulário oferece só `usuario_aculta`. Testar antes de liberar.
 - O filtro precisa rodar antes do filtro de limpeza de HTML do formato, senão remove o `<figure>`. No `usuario_aculta` e no
   `basic_html` a ordem é a do config (peso 20 para o modelo).
-- O downcast do atributo para o `<img>` nunca foi testado no navegador. Se o atributo ficar no `<figure>`, o filtro não
-  encontra o modelo.
+- O downcast do atributo para o `<img>` foi confirmado em `full_html` no Firefox. Ainda falta confirmar a persistência
+  após salvar/reabrir e testar o fluxo de upload real.
 
 ## 9. Decisões de 2026-10-17 (responsável)
 

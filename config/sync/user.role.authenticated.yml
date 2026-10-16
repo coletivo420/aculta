@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - filter.format.basic_html
+    - filter.format.usuario_aculta
     - filter.format.webform_default
     - node.type.forum
     - node.type.aculta_notice
