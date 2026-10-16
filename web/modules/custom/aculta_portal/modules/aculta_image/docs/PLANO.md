@@ -1,11 +1,23 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status: **planejamento** (2026-10-17). Nenhum código, configuração ou dependência foi instalado.
-O submódulo `aculta_image` ainda não existe; este diretório contém só a documentação.
+Status: **pronto para uso** (2026-10-17, versão 0.1.0-dev.2). Gate `scripts/validate-aculta-image.php` em PASS.
+Fases concluídas: M0.5 (barreiras), M1 a M3 (consumidores migrados) e a ingestão de origem externa. Pendentes: M4 (miniatura de PDF
+só ativa com ImageMagick e `pdfpreview`), M5 a M9.
 
 Política do responsável: **todo o site usa o `aculta_image`** para upload, derivados, entrega
 responsiva, auditoria de uso e limpeza de imagens e arquivos de imagem. Nenhum módulo do Portal
 cria estilo de imagem, processa imagem ou apaga arquivo por conta própria.
+
+## 0. Prontidão para importação (Growroom)
+
+Contrato para qualquer importação de imagem de origem externa, incluindo a reconstrução do Fórum (F6):
+
+- Usar somente `aculta_image.ingester->ingest($caminho, $urlOrigem, $capturadoEm)`. Nunca gravar arquivo diretamente.
+- Resultado: `created` (arquivo novo), `reused` (mesmo conteúdo já existente) ou `rejected` (com motivo). Recusas: extensão fora da política, tamanho fora do limite, conteúdo que não é PNG, JPEG, GIF ou WebP, arquivo ausente.
+- Destino: `public://importacao/<2 primeiros caracteres do SHA-256>/<SHA-256>.<ext>`. Nunca sobrescreve.
+- Origem: tabela `aculta_image_origin`, uma linha por arquivo e URL de origem. Repetir a importação não duplica.
+- Imagens do Wayback ficam no armazenamento privado; a importação copia só o que for aceito pela política.
+- Verificado no Runtime: criação, reaproveitamento, recusa de conteúdo falso, extensão fora da política e arquivo ausente.
 
 ## 1. Estado verificado (Runtime de teste, 2026-10-17)
 

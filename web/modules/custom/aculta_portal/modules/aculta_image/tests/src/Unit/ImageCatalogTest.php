@@ -32,7 +32,7 @@ class ImageCatalogTest extends UnitTestCase {
   /** A política aceita só as extensões e o limite de 10 MB. */
   public function testPoliticaUnicaDeUpload(): void {
     $validadores = (new UploadPolicy())->validators();
-    $this->assertSame('png jpg jpeg webp', $validadores['FileExtension']['extensions']);
+    $this->assertSame('png gif jpg jpeg webp', $validadores['FileExtension']['extensions']);
     $this->assertSame(10485760, $validadores['FileSizeLimit']['fileLimit']);
     $this->assertArrayNotHasKey('FileImageDimensions', $validadores);
   }

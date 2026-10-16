@@ -5,6 +5,7 @@ package: Associação Cultural Antiproibicionista
 version: '0.1.0-dev.6'
 core_version_requirement: ^11.3
 dependencies:
+  - aculta_portal:aculta_image
   - aculta_portal:aculta_user
   - node:node
   - metatag:metatag

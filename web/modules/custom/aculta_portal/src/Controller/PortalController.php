@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Form\AccountOtherDataForm;
@@ -58,6 +59,7 @@ final class PortalController extends ControllerBase {
     private readonly KeyRepositoryInterface $keys,
     private readonly CurrencyFormatterInterface $currencyFormatter,
     private readonly ?AccountDocumentInterface $accountDocument,
+    private readonly ImageRenderer $imageRenderer,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -78,6 +80,7 @@ final class PortalController extends ControllerBase {
       $container->get('key.repository'),
       $container->get('commerce_price.currency_formatter'),
       self::accountDocumentService($container),
+      $container->get('aculta_image.render'),
     );
   }
 
@@ -110,13 +113,7 @@ final class PortalController extends ControllerBase {
     $first_name = $profile && !$profile->get('field_first_name')->isEmpty() ? $profile->get('field_first_name')->value : '';
     $display_name = $nickname ?: ($first_name ?: $account->getDisplayName());
     $file = $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty() ? $account->get('user_picture')->entity : NULL;
-    $photo = $file ? [
-      '#theme' => 'image_style',
-      '#style_name' => 'aculta_avatar',
-      '#uri' => $file->getFileUri(),
-      '#alt' => $this->t('Foto de perfil de @name', ['@name' => $display_name]),
-      '#attributes' => ['data-portal-ui' => 'account-avatar'],
-    ] : [
+    $photo = $file ? $this->imageRenderer->build('avatar', $file->getFileUri(), (string) $this->t('Foto de perfil de @name', ['@name' => $display_name]), ['data-portal-ui' => 'account-avatar']) : [
       '#theme' => 'aculta_portal_element',
       '#tag' => 'span',
       '#value' => mb_strtoupper(mb_substr($display_name, 0, 1)),

@@ -99,30 +99,6 @@ final class ThemeHooks {
   }
 
   /**
-   * Adds a 2x source to the project card image (1x style: 256 px).
-   *
-   * The 1x file is the img src; retina screens take the 512 px variant. Only the
-   * card style is touched, so other images keep their single source.
-   */
-  #[Hook('preprocess_image_style')]
-  public function preprocessImageStyle(array &$variables): void {
-    if (($variables['style_name'] ?? '') !== 'aculta_card_1x' || empty($variables['uri'])) {
-      return;
-    }
-    $styles = $this->entityTypeManager->getStorage('image_style');
-    $one_x = $styles->load('aculta_card_1x');
-    $two_x = $styles->load('aculta_card_2x');
-    if ($one_x === NULL || $two_x === NULL) {
-      return;
-    }
-    if (!isset($variables['image']['#attributes'])) {
-      return;
-    }
-    $variables['image']['#attributes']['srcset'] = $one_x->buildUrl($variables['uri']) . ' 1x, '
-      . $two_x->buildUrl($variables['uri']) . ' 2x';
-  }
-
-  /**
    * Marks editorial body fields as prose without styling unrelated links.
    */
   #[Hook('preprocess_field')]

@@ -42,6 +42,26 @@ final class PortalHelperRegistry {
       'summary' => 'Extensões e tamanho máximo únicos para imagens do site. A exceção da conquista fica em aculta_game.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
+    'aculta_image.render' => [
+      'label' => 'Renderização de imagem por finalidade',
+      'summary' => 'Entrega imagens pelo catálogo de finalidades (estilo oculto do chamador); configuração de campo e de formulário pelo mesmo ponto.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.inspector' => [
+      'label' => 'Leitura de dimensões de imagem',
+      'summary' => 'Único acesso à leitura de imagens do Drupal no site: dimensões de arquivo em disco ou em memória.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.file_remover' => [
+      'label' => 'Exclusão controlada de imagem',
+      'summary' => 'Apaga arquivo de imagem somente quando nenhuma entidade o referencia; registra o motivo.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.ingester' => [
+      'label' => 'Ingestão de imagem externa',
+      'summary' => 'Porta única para imagens de origem externa: valida pela política, calcula SHA-256, reaproveita, nunca sobrescreve e registra a origem.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
     'aculta_portal.account_courses' => [
       'label' => 'Cursos da conta',
       'summary' => 'Consulta participação e situação de cursos a partir das entidades LMS e Group.',

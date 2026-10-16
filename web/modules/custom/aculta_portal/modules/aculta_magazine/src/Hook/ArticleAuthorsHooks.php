@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_magazine\Hook;
 
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Account\AccountNames;
@@ -45,6 +46,8 @@ final class ArticleAuthorsHooks {
     private readonly PostPresentation $presentation,
     #[Autowire(service: 'aculta_magazine.forum_opening_post')]
     private readonly ForumOpeningPost $forumOpening,
+    #[Autowire(service: 'aculta_image.render')]
+    private readonly ImageRenderer $imageRenderer,
   ) {}
 
   /**
@@ -122,7 +125,7 @@ final class ArticleAuthorsHooks {
 
     $photo = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'article-author-photo']];
     if (isset($items['foto']) && !$user->get('user_picture')->isEmpty()) {
-      $photo['image'] = ['#theme' => 'image_style', '#style_name' => 'aculta_avatar', '#uri' => $user->get('user_picture')->entity->getFileUri(), '#alt' => $name];
+      $photo['image'] = $this->imageRenderer->build('avatar', $user->get('user_picture')->entity->getFileUri(), $name);
     }
     else {
       $photo['initial'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => mb_strtoupper(mb_substr($name, 0, 1)), '#element_attributes' => new Attribute(['data-portal-ui' => 'article-author-initial', 'aria-hidden' => 'true'])];

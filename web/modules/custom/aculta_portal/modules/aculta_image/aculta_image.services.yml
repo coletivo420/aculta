@@ -7,3 +7,23 @@ services:
     class: Drupal\aculta_image\UploadPolicy
     tags:
       - { name: aculta_portal.helper }
+  aculta_image.render:
+    class: Drupal\aculta_image\ImageRenderer
+    arguments: ['@aculta_image.catalog', '@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.inspector:
+    class: Drupal\aculta_image\ImageInspector
+    arguments: ['@image.factory']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.file_remover:
+    class: Drupal\aculta_image\FileRemover
+    arguments: ['@file.usage', '@entity_type.manager', '@logger.factory']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.ingester:
+    class: Drupal\aculta_image\ImageIngester
+    arguments: ['@file.repository', '@file_system', '@database', '@aculta_image.inspector', '@datetime.time', '@logger.factory']
+    tags:
+      - { name: aculta_portal.helper }

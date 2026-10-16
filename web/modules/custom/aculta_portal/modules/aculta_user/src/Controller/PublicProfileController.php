@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Controller;
 
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -45,6 +46,7 @@ final class PublicProfileController extends ControllerBase {
     private readonly FormBuilderInterface $forms,
     private readonly ModuleHandlerInterface $modules,
     private readonly AvatarPool $avatarPool,
+    private readonly ImageRenderer $imageRenderer,
   ) {}
 
   /**
@@ -61,6 +63,7 @@ final class PublicProfileController extends ControllerBase {
       $container->get('form_builder'),
       $container->get('module_handler'),
       $container->get('aculta_user.avatar_pool'),
+      $container->get('aculta_image.render'),
     );
   }
 
@@ -145,12 +148,7 @@ final class PublicProfileController extends ControllerBase {
   private function avatar($account, string $apelido, bool $showPhoto): array {
     $wrap = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-avatar']];
     if ($showPhoto && $account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
-      $wrap['image'] = [
-        '#theme' => 'image_style',
-        '#style_name' => 'aculta_avatar',
-        '#uri' => $account->get('user_picture')->entity->getFileUri(),
-        '#alt' => $apelido,
-      ];
+      $wrap['image'] = $this->imageRenderer->build('avatar', $account->get('user_picture')->entity->getFileUri(), $apelido);
     }
     else {
       $fallback = $this->avatarPool->fallbackEntry((int) $account?->id());

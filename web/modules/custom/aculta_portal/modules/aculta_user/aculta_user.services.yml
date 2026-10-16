@@ -24,7 +24,7 @@ services:
     class: Drupal\aculta_user\Form\PhotoEditorGuard
   aculta_user.avatar_asset_cleanup:
     class: Drupal\aculta_user\Avatar\AvatarAssetCleanup
-    arguments: ["@entity_type.manager", "@datetime.time", "@file.usage"]
+    arguments: ["@entity_type.manager", "@datetime.time", "@file.usage", '@aculta_image.file_remover']
   aculta_user.badge_service:
     class: Drupal\aculta_user\Badge\BadgeService
     arguments: ['@entity_type.manager', '@lock.persistent', '@database', '@datetime.time', '@aculta_user.achievement_definitions']

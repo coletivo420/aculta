@@ -7,7 +7,7 @@ namespace Drupal\aculta_pdf_viewer\Pdf;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_image\ImageInspector;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\imagemagick\ImagemagickExecManagerInterface;
@@ -30,7 +30,7 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
     private readonly ?PDFPreviewGenerator $previewGenerator,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
-    private readonly ImageFactory $imageFactory,
+    private readonly ImageInspector $imageInspector,
     private readonly LoggerInterface $logger,
     private readonly ?ImagemagickExecManagerInterface $imagemagickExecManager,
   ) {}
@@ -66,8 +66,8 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
         return NULL;
       }
 
-      $image = $this->imageFactory->get($preview_uri);
-      if (!$image->isValid() || $image->getWidth() < 1 || $image->getHeight() < 1) {
+      $dimensions = $this->imageInspector->dimensions($preview_uri);
+      if ($dimensions === NULL) {
         return NULL;
       }
 
@@ -87,8 +87,8 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
         '#attributes' => [
           'src' => $url,
           'alt' => $alt,
-          'width' => $image->getWidth(),
-          'height' => $image->getHeight(),
+          'width' => $dimensions['width'],
+          'height' => $dimensions['height'],
           'loading' => 'lazy',
           'decoding' => 'async',
           'data-aculta-pdf-control' => 'thumbnail',

@@ -94,7 +94,13 @@ foreach ($dirs as $dir) {
       if (str_starts_with($trim, '//') || str_starts_with($trim, '*') || str_starts_with($trim, '/*') || str_starts_with($trim, '#')) {
         continue;
       }
-      if (preg_match("/image_style|#theme.*image_style|'image_style'/", $linha) && !$excecaoPara($rel, 'image_style')) {
+      // R1: uso da API de estilo (renderização, storage, carga) ou nome literal de estilo em chave de configuração.
+      $usoApi = preg_match("/#theme.*image_style|getStorage\(['\"]image_style|ImageStyle::load|image_style_url/", $linha);
+      $nomeLiteral = $estilos !== [] && preg_match(
+        "/(image_style|style_name|preview_image_style)['\"]?\\s*(=>|:)\\s*['\"](" . implode('|', array_map('preg_quote', $estilos)) . ")['\"]/",
+        $linha,
+      );
+      if (($usoApi || $nomeLiteral) && !$excecaoPara($rel, 'image_style')) {
         if ($ehTema && str_ends_with($rel, '.css')) {
           $registrar('R8', $rel, $n, $linha);
         }

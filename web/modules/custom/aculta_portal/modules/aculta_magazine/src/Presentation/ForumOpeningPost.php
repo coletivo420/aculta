@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_magazine\Presentation;
 
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_magazine\Forum\ForumTopicSync;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -20,13 +21,14 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class ForumOpeningPost {
 
   /** Estilo de imagem da abertura. */
-  private const IMAGE_STYLE = 'large';
 
   public function __construct(
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $purposeManager,
     #[Autowire(service: 'aculta_magazine.forum_topic_sync')]
     private readonly ForumTopicSync $sync,
+    #[Autowire(service: 'aculta_image.render')]
+    private readonly ImageRenderer $imageRenderer,
   ) {}
 
   /**
@@ -92,12 +94,7 @@ final class ForumOpeningPost {
       return NULL;
     }
     $cache->addCacheableDependency($media)->addCacheableDependency($file);
-    return [
-      '#theme' => 'image_style',
-      '#style_name' => self::IMAGE_STYLE,
-      '#uri' => $file->getFileUri(),
-      '#alt' => (string) $item->alt,
-    ];
+    return $this->imageRenderer->build('grande', $file->getFileUri(), (string) $item->alt);
   }
 
 }

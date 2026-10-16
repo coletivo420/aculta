@@ -1,0 +1,8 @@
+# Configuração de terceiros do aculta_image nos campos de imagem (regra R7 do gate).
+field.field.*.third_party.aculta_image:
+  type: mapping
+  label: 'ACULTA Image: política de imagem do campo'
+  mapping:
+    policy:
+      type: string
+      label: 'Política de upload'

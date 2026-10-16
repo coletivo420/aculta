@@ -41,3 +41,6 @@ settings:
     width: null
     height: null
 field_type: image
+third_party_settings:
+  aculta_image:
+    policy: default

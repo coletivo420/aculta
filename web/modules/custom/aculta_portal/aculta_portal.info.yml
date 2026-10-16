@@ -5,6 +5,7 @@ package: Associação Cultural Antiproibicionista
 version: '0.4.0-dev.60'
 core_version_requirement: ^11.3
 dependencies:
+  - aculta_portal:aculta_image
   - profile:profile
   - drupal:views
   - domain:domain

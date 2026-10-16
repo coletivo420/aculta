@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_user\Avatar\AvatarPool;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -49,6 +50,7 @@ final class AvatarCropForm extends FormBase {
     private AccountInterface $currentUserService,
     private UserDataInterface $userData,
     private RequestStack $cropRequestStack,
+    private readonly ImageRenderer $imageRenderer,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -58,6 +60,7 @@ final class AvatarCropForm extends FormBase {
       $container->get('current_user'),
       $container->get('user.data'),
       $container->get('request_stack'),
+      $container->get('aculta_image.render'),
     );
   }
 
@@ -106,7 +109,7 @@ final class AvatarCropForm extends FormBase {
       '#crop_type_list' => [self::CROP_TYPE],
       // Base do canvas de recorte: estilo só de redimensionamento. O estilo aculta_avatar já aplica o recorte,
       // e recortar sobre uma imagem já recortada não funciona.
-      '#crop_preview_image_style' => 'crop_thumbnail',
+      '#crop_preview_image_style' => $this->imageRenderer->styleId('recorte_quadrado'),
       '#show_default_crop' => TRUE,
       '#show_crop' => TRUE,
       '#warn_multiple_usages' => FALSE,
@@ -198,7 +201,7 @@ final class AvatarCropForm extends FormBase {
 
   /** Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo. */
   private function flushDerivatives(FileInterface $file): void {
-    $style = $this->entityTypeManagerService->getStorage('image_style')->load(self::STYLE);
+    $style = $this->imageRenderer->styleEntity('avatar');
     if ($style !== NULL) {
       $style->flush($file->getFileUri());
     }

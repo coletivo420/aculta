@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_image;
+
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\image\ImageStyleInterface;
+
+/**
+ * Renderização de imagem por finalidade (aculta_image, seção 3.1 do plano).
+ *
+ * Único ponto do site que entrega estilo de imagem ao Render API, à configuração de campo e aos formulários. Quem
+ * chama pede uma finalidade do catálogo; nunca um nome de estilo.
+ */
+final class ImageRenderer {
+
+  public function __construct(
+    private readonly ImageCatalog $catalog,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {}
+
+  /** Render array de imagem para a finalidade, ou NULL se a finalidade não existe. */
+  public function build(string $purpose, string $uri, string $alt, array $attributes = []): ?array {
+    $style = $this->catalog->styleFor($purpose);
+    if ($style === NULL) {
+      return NULL;
+    }
+    $build = [
+      '#theme' => 'image_style',
+      '#style_name' => $style,
+      '#uri' => $uri,
+      '#alt' => $alt,
+    ];
+    if ($attributes !== []) {
+      $build['#attributes'] = $attributes;
+    }
+    return $build;
+  }
+
+  /** Nome do estilo da finalidade, para campos e formulários que o recebem como configuração. */
+  public function styleId(string $purpose): ?string {
+    return $this->catalog->styleFor($purpose);
+  }
+
+  /** Entidade do estilo da finalidade, ou NULL (por exemplo, para descarregar derivados). */
+  public function styleEntity(string $purpose): ?ImageStyleInterface {
+    $style = $this->catalog->styleFor($purpose);
+    if ($style === NULL) {
+      return NULL;
+    }
+    $entity = $this->entityTypeManager->getStorage('image_style')->load($style);
+    return $entity instanceof ImageStyleInterface ? $entity : NULL;
+  }
+
+  /** Configuração de exibição de campo (`settings`) para a finalidade. */
+  public function displaySettings(string $purpose): array {
+    $style = $this->catalog->styleFor($purpose);
+    return $style === NULL ? [] : ['image_style' => $style];
+  }
+
+}
