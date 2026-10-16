@@ -40,6 +40,7 @@ permissions:
   - 'create wiki_entry content'
   - 'create aculta_notice content'
   - 'delete own files'
+  - 'delete any forum content'
   - 'edit any forum content'
   - 'edit any wiki_entry content'
   - 'edit any aculta_notice content'

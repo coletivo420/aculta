@@ -1,3 +1,9 @@
+## F9 — moderação e papéis múltiplos — 2026-10-16
+
+- `content_editor` exige e-mail confirmado para restritos e moderação. Moderação (ocultar, despublicar, excluir) de tópicos e comentários, exceto conteúdo histórico. Administrador com bypass total (F-D16).
+- Papéis múltiplos: `associado` é papel extra. Regras em `docs/portal/PAPEIS-PARTICIPACAO.md`.
+- Lacuna: confirmação manual de e-mail pelo administrador não existe.
+
 ## F9 — hierarquia de papéis e 404 para restritos — 2026-10-16
 
 - Hierarquia documentada (`docs/portal/PAPEIS-PARTICIPACAO.md`); `content_editor` é o moderador do Fórum e vê os níveis restritos.

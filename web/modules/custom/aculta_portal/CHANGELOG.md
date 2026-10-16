@@ -1,3 +1,14 @@
+## 0.4.0-dev.49 — F9: moderação e papéis múltiplos — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.16. Moderação do Fórum pelo `content_editor` com e-mail confirmado;
+conteúdo histórico fora da moderação. Confirmação manual de e-mail pelo administrador ainda não existe.
+
+## 0.4.0-dev.49 — fundação opcional do aculta_lms (F1) — 2026-10-16
+
+Classificação MINOR. Novo submódulo opcional `aculta_lms` com contrato de evento para status de curso aprovado,
+publisher DI e testes Unit (2/2) e Kernel (1/1) PASS. Sem ativação, alteração de dados/configuração, produtor ou
+consumidor ativo. **RUNTIME STATUS: DEFERRED**; o serviço só foi instalado em fixture Kernel isolada.
+
 ## 0.4.0-dev.48 — F9: papéis e 404 para restritos — 2026-10-16
 
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.15. Hierarquia de papéis documentada e aplicada aos fóruns

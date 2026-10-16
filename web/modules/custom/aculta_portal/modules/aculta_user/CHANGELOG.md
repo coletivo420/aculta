@@ -1,5 +1,11 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.16 — F9: moderação pelo content_editor e papéis múltiplos — 2026-10-16
+
+Classificação MINOR. `content_editor` exige e-mail confirmado para visualizar restritos e moderar. Moderação
+(ocultar, despublicar, excluir) de tópicos e comentários do Fórum, exceto conteúdo histórico (`ForumModerationHooks`).
+Permissões de moderação do `content_editor` conferidas no arquivo e no Runtime. Conferido por papel no teste.
+
 ## 0.4.0-dev.15 — F9: hierarquia de papéis, moderação do Fórum e 404 para restritos — 2026-10-16
 
 Classificação MINOR. Hierarquia authenticated < email_confirmed < associado < content_editor < administrator

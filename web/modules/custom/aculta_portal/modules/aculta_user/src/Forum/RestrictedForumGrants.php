@@ -16,8 +16,8 @@ use Drupal\taxonomy\TermInterface;
  * Cada nível enxerga o que o anterior enxerga. A hierarquia é aplicada pelos realms abaixo: o papel superior
  * recebe o realm do nível inferior. O administrador tem bypass de acesso a nós e não passa por esta regra.
  *
- * Realms: aculta_email_confirmado (email_confirmed, associado e content_editor) e aculta_associado
- * (associado e content_editor). O content_editor atua como moderador do Fórum (ver docs/portal/PAPEIS-PARTICIPACAO.md).
+ * Realms: aculta_email_confirmado (email_confirmed ou associado) e aculta_associado (associado, ou content_editor
+ * com email_confirmed). O content_editor atua como moderador do Fórum (ver docs/portal/PAPEIS-PARTICIPACAO.md).
  */
 final class RestrictedForumGrants {
 
@@ -35,11 +35,14 @@ final class RestrictedForumGrants {
       return [];
     }
     $roles = $account->getRoles();
+    // Usuários podem ter vários papéis. content_editor só vale com e-mail confirmado (decisão de 2026-10-16).
+    $emailConfirmado = in_array('email_confirmed', $roles, TRUE);
+    $moderador = in_array('content_editor', $roles, TRUE) && $emailConfirmado;
     $grants = [];
-    if (array_intersect($roles, ['email_confirmed', 'associado', 'content_editor']) !== []) {
+    if ($emailConfirmado || in_array('associado', $roles, TRUE)) {
       $grants[self::REALM_EMAIL] = [1];
     }
-    if (array_intersect($roles, ['associado', 'content_editor']) !== []) {
+    if (in_array('associado', $roles, TRUE) || $moderador) {
       $grants[self::REALM_ASSOCIADO] = [1];
     }
     return $grants;
