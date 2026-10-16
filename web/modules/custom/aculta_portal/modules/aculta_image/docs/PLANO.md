@@ -18,6 +18,33 @@ Política do responsável: **todo o site usa o `aculta_image`** para upload, der
 responsiva, auditoria de uso e limpeza de imagens e arquivos de imagem. Nenhum módulo do Portal
 cria estilo de imagem, processa imagem ou apaga arquivo por conta própria.
 
+## Hostinger: o que está confirmado (2026-10-17)
+
+Fontes: páginas de suporte da Hostinger e especificação pública da API (busca e leitura em 2026-10-17).
+
+| Item | Situação confirmada |
+| --- | --- |
+| Binários de otimização documentados para planos Web e Cloud | `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools` (`cwebp`). Exigem `shell_exec` habilitado no painel |
+| `exec` e `shell_exec` | desabilitados por padrão nos planos Web e Cloud; liberam-se em Websites, PHP Configuration, PHP options, removendo a função de `disableFunctions` |
+| ImageMagick e Ghostscript | **não citados** em nenhuma página consultada. Sem confirmação de disponibilidade |
+| Extensões PHP | SimpleXML e SOAP habilitadas por padrão; Zend OPcache pré-instalada (habilitar por site); ionCube disponível para PHP 8.1 ou superior; `dl()` desabilitado. A lista completa não é publicada; a API lista extensões por conta, sem enumeração pública |
+| Limites de PHP | `upload_max_filesize` padrão 128M, opções 128M, 256M e 512M (especificação da API) |
+
+Consequências: a miniatura de PDF (M4) não pode ser prometida em produção sem confirmação da Hostinger.
+A compressão (M8) é viável na Hostinger com os binários documentados, após habilitar `shell_exec` no painel.
+
+Homelab (paridade, feita em 2026-10-17): ImageMagick 7.1.1 com Ghostscript 10.05; `optipng`, `jpegoptim`,
+`gifsicle` e `cwebp`; SOAP (`php8.4-soap`); limites de upload `128M` no CLI e no FPM via
+`/etc/php/8.4/{cli,fpm}/conf.d/90-aculta.ini`. O PHP-FPM foi reiniciado.
+
+Decisões pendentes:
+1. **Política de PDF do ImageMagick** (`/etc/ImageMagick-7/policy.xml`): o Debian bloqueia PDF. Liberar leitura de PDF
+   é mudança de segurança (processo que lê arquivos enviados pelo público). Aguarda aprovação para liberar só
+   o necessário.
+2. **Processador da compressão (M8):** o `imageapi_optimize_binaries` (único processador para estes binários) está só em
+   beta e fora da política de segurança do Drupal. Alternativas: (a) processador próprio em `aculta_image`, chamando
+   os binários documentados com limite de tempo e lista fechada de argumentos; (b) aceitar o beta. Recomendo (a).
+
 ## 0. Prontidão para importação (Growroom)
 
 Contrato para qualquer importação de imagem de origem externa, incluindo a reconstrução do Fórum (F6):

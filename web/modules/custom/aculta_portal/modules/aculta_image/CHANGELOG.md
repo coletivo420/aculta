@@ -1,5 +1,13 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.5 — recálculo de referências corrigido; paridade de binários e PHP com a Hostinger — 2026-10-17
+
+- Recálculo de referências (`entity-usage:recreate`): causa — no nó 92 (blog "Bloco Sativa é objeto de Pesquisa na FIOCRUZ") a citação bibliográfica foi digitada no campo de URL de `field_references`. O link ficou inválido e o `entity_usage` lançava `InvalidArgumentException`.
+- Correção no banco (`node__field_references` e `node_revision__field_references`, delta 0): a citação foi movida para o título do link e a URL ficou vazia. Nenhum conteúdo foi apagado. O recálculo passa a rodar sem exceção (538 entidades).
+- Homelab: ImageMagick 7.1.1, Ghostscript, optipng, jpegoptim, gifsicle, cwebp e SOAP instalados. Limites de upload 128M via `90-aculta.ini`. PHP-FPM reiniciado.
+- Hostinger: ver `docs/PLANO.md`, seção "Hostinger: o que está confirmado".
+- Pendentes: política de PDF do ImageMagick (segurança) e processador da compressão (arquitetura). Ver o plano.
+
 ## 0.1.0-dev.4 — auditoria, duplicatas, quarentena e comparação visual (M4 a M7 e M9) — 2026-10-17
 
 - Relatório `/painel-administrativo/imagens` (somente leitura): resumo do acervo, grupos de duplicatas exatas, pares visualmente parecidos e candidatas à revisão com motivos.
