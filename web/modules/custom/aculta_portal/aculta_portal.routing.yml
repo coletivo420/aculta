@@ -311,3 +311,11 @@ aculta_portal.email_confirmar_manual:
     parameters:
       user:
         type: entity:user
+
+aculta_portal.relatorio_vendas:
+  path: '/painel-administrativo/loja/vendas'
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\SalesReportController::report'
+    _title: 'Relatório de vendas'
+  requirements:
+    _permission: 'view commerce_order'

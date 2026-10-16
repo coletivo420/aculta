@@ -1,3 +1,11 @@
+## Não lançado — relatório de vendas da loja (gerente de loja) — 2026-10-17
+
+Classificação MINOR. Decisão do responsável: o gerente de loja vê um relatório próprio de vendas.
+
+- `SalesReportController` (`/painel-administrativo/loja/vendas`, permissão `view commerce_order`): variações vendidas em pedidos concluídos, com quantidade e total por moeda. Sem dados de pagamento (pagamentos seguem só com o administrador). Sem cache.
+- Testes unitários da agregação (`SalesReportControllerTest`): soma por variação entre pedidos, totais por moeda, itens incompletos ignorados, vazio. 2/2 OK. Smoke no Runtime: rota exige `view commerce_order`; gerente acessa, usuário comum não.
+- Saída em tabela neutra (`#type => table`); o layout visual fica para o tema ACULTA420, sem alteração de tema nesta entrega.
+
 ## 0.4.0-dev.59 — PDF Viewer documenta acesso e preview opcional — 2026-10-16
 
 Classificação PATCH. `aculta_pdf_viewer` 0.1.0-dev.8 remove PDFPreview da lista de
