@@ -3,7 +3,7 @@
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.16. Moderação do Fórum pelo `content_editor` com e-mail confirmado;
 conteúdo histórico fora da moderação. Confirmação manual de e-mail pelo administrador ainda não existe.
 
-## 0.4.0-dev.49 — fundação opcional do aculta_lms (F1) — 2026-10-16
+## 0.4.0-dev.50 — fundação opcional do aculta_lms (F1) — 2026-10-16
 
 Classificação MINOR. Novo submódulo opcional `aculta_lms` com contrato de evento para status de curso aprovado,
 publisher DI e testes Unit (2/2) e Kernel (1/1) PASS. Sem ativação, alteração de dados/configuração, produtor ou

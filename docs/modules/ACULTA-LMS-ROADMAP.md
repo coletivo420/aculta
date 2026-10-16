@@ -32,6 +32,13 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | RC — Homologação integrada | testes no Homelab, browser, config sync, documento e gate de release | checklist/testes completos, Runtime PASS, versão e rollback anotados | Nenhum deploy/merge automático; interromper RC se access/cache, segurança ou banco divergir |
 | F17 — Google Classroom (opcional e última) | Após RC aprovado e nova decisão; publicar somente link para atividade ACULTA | OAuth/scopes, consentimento e link para fonte LMS aprovados | Nenhum pacote/token/rota/storage nesta linha; desabilitar integração sem afetar LMS |
 
+## Estado de fase
+
+**F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
+DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; o módulo não foi
+habilitado no Runtime e não tem produtor ou consumidor educacional ativo (**RUNTIME STATUS: DEFERRED**). A fase
+seguinte do roadmap é F2, condicionada à resolução documentada de PDF.js e da compatibilidade do formatter.
+
 ## Ordem, PR e status
 
 Cada fase é uma unidade pequena, commitada e descrita em PR própria conforme a regra do repositório. Este roadmap não autoriza execução de código, instalação de dependências, importação de curso, atualização persistente, merge ou deploy; cada fase futura precisa de decisão e PR própria.

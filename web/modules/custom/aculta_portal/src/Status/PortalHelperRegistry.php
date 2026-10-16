@@ -92,6 +92,11 @@ final class PortalHelperRegistry {
       'summary' => 'Converte títulos de cursos, lições e atividades em slugs e os resolve para entidades LMS.',
       'docs' => 'docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md',
     ],
+    'aculta_lms.course_completion_publisher' => [
+      'label' => 'Eventos de conclusão do LMS',
+      'summary' => 'Publica fatos de conclusão aprovada já persistidos pelo LMS, sem armazenar progresso ou nota.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/docs/CONTRACT.md',
+    ],
     'aculta_portal.mercado_pago_webhook_guard' => [
       'label' => 'Proteção de webhook de pagamento',
       'summary' => 'Valida estrutura e autenticidade das notificações recebidas do gateway.',

@@ -22,6 +22,7 @@ Esta pasta é a referência canônica dos módulos Core/contrib usados pelo proj
 - [Cursos, grupos e progresso](LMS-GROUP.md)
 - [Matriz de compatibilidade LMS/PDF](LMS-COMPATIBILITY.md)
 - [Roadmap do aculta_lms](ACULTA-LMS-ROADMAP.md)
+- [Fundação e contrato do submódulo aculta_lms](../../web/modules/custom/aculta_portal/modules/aculta_lms/README.md)
 - [Editorial, mídia e formulários](EDITORIAL-MEDIA.md)
 - [Operação, segurança e infraestrutura Drupal](OPERATIONS.md)
 

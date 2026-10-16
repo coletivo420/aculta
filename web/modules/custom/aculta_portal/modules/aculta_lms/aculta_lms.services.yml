@@ -1,0 +1,6 @@
+services:
+  aculta_lms.course_completion_publisher:
+    class: Drupal\aculta_lms\Event\CourseCompletionPublisher
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: aculta_portal.helper }
