@@ -1,5 +1,15 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.12 — mapeamento único de documentos, miniatura sem checagem morta, versão do submódulo de turma — 2026-10-16
+
+Classificação: PATCH.
+
+- `DocumentFieldMap::fieldForBundle()` passa a ser a única fonte do mapeamento bundle → campo, usada por `PdfViewerBuilder` e `AcultaPdfMediaFormatter`. Um novo bundle de PDF não pode ser aceito em um ponto e recusado no outro.
+- `PdfPreviewThumbnailBuilder`: removida a checagem da URL gerada. A marcação usa a URI do arquivo gerenciado (`buildManagedImage`), então a checagem não protegia o `src` renderizado. Sai também a dependência `file_url_generator` desse serviço.
+- `aculta_pdf_viewer_group` 0.1.0-dev.1: versão declarada no `info.yml` (não tinha). O README registra que `enforced: TRUE` instala a relação em todos os tipos de grupo; restringir a `lms_course` é decisão do responsável antes do Runtime.
+- Evidência: PHPUnit Unit `aculta_pdf_viewer` 7/7 (82 asserções) OK. Kernel: DEFERRED. Não há banco MariaDB de teste disponível nesta sessão; a rodada anterior usou SQLite em memória, o que não é mais permitido no projeto.
+- RUNTIME STATUS: DEFERRED para testes de Kernel; cache rebuild feito no Runtime de teste com a URI de teste.
+
 ## 0.1.0-dev.11 — correções de testes e formulário dos documentos de turma — 2026-10-16
 
 - Kernel tests `AcultaPdfViewerInstallTest`, `AcultaPdfMediaEmbedTest` e `CourseDocumentAccessTest` passam a instalar com dependências (`install(..., TRUE)`). Com `FALSE`, `aculta_image` não era ativado e o container falhava em `aculta_pdf_viewer.thumbnail_builder` (4 erros).

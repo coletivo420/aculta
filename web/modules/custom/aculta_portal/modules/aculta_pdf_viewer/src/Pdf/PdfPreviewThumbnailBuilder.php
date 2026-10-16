@@ -6,7 +6,6 @@ namespace Drupal\aculta_pdf_viewer\Pdf;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\aculta_image\GeneratedImageFileManager;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_image\ImageInspector;
@@ -31,7 +30,6 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
   public function __construct(
     private readonly ?PDFPreviewGenerator $previewGenerator,
     private readonly ConfigFactoryInterface $configFactory,
-    private readonly FileUrlGeneratorInterface $fileUrlGenerator,
     private readonly GeneratedImageFileManager $generatedImageFileManager,
     private readonly ImageRenderer $imageRenderer,
     private readonly ImageInspector $imageInspector,
@@ -76,12 +74,6 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
       }
       $dimensions = $this->imageInspector->dimensions($preview_uri);
       if ($dimensions === NULL) {
-        return NULL;
-      }
-
-      $url = $this->fileUrlGenerator->generateString($preview_uri);
-      $parts = parse_url($url);
-      if (!is_array($parts) || isset($parts['scheme']) || isset($parts['host']) || isset($parts['query']) || !str_starts_with($url, '/')) {
         return NULL;
       }
 

@@ -42,6 +42,11 @@ final class GeneratedImageFileManager {
       return NULL;
     }
 
+    $size = filesize($realpath);
+    if ($size === FALSE || $size < 1) {
+      return NULL;
+    }
+
     $storage = $this->entityTypeManager->getStorage('file');
     $existing = $storage->loadByProperties(['uri' => $uri]);
     $file = reset($existing);
@@ -50,17 +55,16 @@ final class GeneratedImageFileManager {
       if ($file->isPermanent()) {
         return $file;
       }
-      $file->setTemporary();
-      $file->set('created', $this->time->getRequestTime());
-      $file->set('changed', $this->time->getRequestTime());
-      $file->save();
+      // ImageCleanup selects temporaries by `created`, so the lifetime starts at the first registration and is not
+      // renewed on each render. Only a derivative replaced on disk gets its size and status refreshed.
+      if ((int) $file->getSize() !== $size || !$file->isTemporary()) {
+        $file->setTemporary();
+        $file->setSize($size);
+        $file->save();
+      }
       return $file;
     }
 
-    $size = filesize($realpath);
-    if ($size === FALSE || $size < 1) {
-      return NULL;
-    }
     $file = File::create([
       'uid' => 0,
       'filename' => basename($uri),

@@ -8,7 +8,10 @@ Group.
 ## Funcionamento
 
 `MediaDocument` registra o plugin `aculta_pdf_viewer_group:course_document` com
-`entity_access: TRUE` e relação obrigatória em `lms_course`.
+`entity_access: TRUE` e `enforced: TRUE`. Com `enforced`, o Group instala a
+relação em todos os tipos de grupo: hoje só `lms_course` existe, então o efeito
+atual é esse. Restringir a relação a `lms_course` exige decisão do responsável
+antes do Runtime (`enforced: FALSE` e configuração explícita do tipo de grupo).
 `MediaDocumentDeriver` publica a relação somente para Media `course_document`.
 Esse bundle é instalado com o submódulo e seu field storage usa `private://`;
 o bundle `document` público existente não é alterado. `CourseDocumentHooks`

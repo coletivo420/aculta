@@ -31,11 +31,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $cacheability->addCacheableDependency($media_access);
 
     $bundle = $media->bundle();
-    $expected_field = match ($bundle) {
-      'document' => 'field_media_document',
-      'course_document' => 'field_media_course_document',
-      default => NULL,
-    };
+    $expected_field = DocumentFieldMap::fieldForBundle($bundle);
     if (!$media_access->isAllowed() || $expected_field === NULL || $field_name !== $expected_field || !$media->hasField($field_name)) {
       return $this->denied($cacheability);
     }

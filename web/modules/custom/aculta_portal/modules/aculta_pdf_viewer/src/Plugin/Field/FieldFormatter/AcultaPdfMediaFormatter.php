@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_pdf_viewer\Plugin\Field\FieldFormatter;
 
+use Drupal\aculta_pdf_viewer\Pdf\DocumentFieldMap;
 use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\Attribute\FieldFormatter;
@@ -95,11 +96,7 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
 
       $mime = strtolower((string) $file->getMimeType());
       $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
-      $viewer_field = match ($media->bundle()) {
-        'document' => 'field_media_document',
-        'course_document' => 'field_media_course_document',
-        default => NULL,
-      };
+      $viewer_field = DocumentFieldMap::fieldForBundle($media->bundle());
       if ($mime === 'application/pdf' && $extension === 'pdf' && $viewer_field === $items->getName()) {
         $viewer = $this->viewerBuilder->build($media, $viewer_field);
         if (!isset($viewer['#access']) || $viewer['#access'] !== FALSE) {

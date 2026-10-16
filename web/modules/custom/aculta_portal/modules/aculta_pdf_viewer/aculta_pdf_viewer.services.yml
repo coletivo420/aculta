@@ -5,7 +5,7 @@ services:
 
   aculta_pdf_viewer.thumbnail_builder:
     class: Drupal\aculta_pdf_viewer\Pdf\PdfPreviewThumbnailBuilder
-    arguments: ['@?pdfpreview.generator', '@config.factory', '@file_url_generator', '@aculta_image.generated_file', '@aculta_image.render', '@aculta_image.inspector', '@logger.channel.aculta_pdf_viewer', '@?Drupal\imagemagick\ImagemagickExecManagerInterface']
+    arguments: ['@?pdfpreview.generator', '@config.factory', '@aculta_image.generated_file', '@aculta_image.render', '@aculta_image.inspector', '@logger.channel.aculta_pdf_viewer', '@?Drupal\imagemagick\ImagemagickExecManagerInterface']
 
   logger.channel.aculta_pdf_viewer:
     parent: logger.channel_base

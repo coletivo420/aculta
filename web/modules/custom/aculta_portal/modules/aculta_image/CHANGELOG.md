@@ -1,5 +1,14 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.24 — derivados temporários: vida útil preservada e tamanho atualizado — 2026-10-16
+
+Classificação: PATCH.
+
+- `GeneratedImageFileManager::registerTemporaryDerivative()` não renova mais `created` a cada renderização. O `ImageCleanup` seleciona temporários por `created`; renovar a cada render impedia a limpeza do derivado.
+- Derivado já registrado e substituído no disco tem `filesize` atualizado e volta a temporário; a gravação só ocorre quando algo muda.
+- Evidência: PHPUnit Unit `aculta_image` 14/14 OK (47 asserções). Kernel: DEFERRED (sem banco MariaDB de teste nesta sessão). Serviço instanciado no Runtime de teste após cache rebuild.
+- RUNTIME STATUS: DEFERRED para Kernel; a limpeza de temporários por idade ainda não foi observada no Runtime.
+
 ## 0.1.0-dev.23 — derivados temporários gerados por processadores
 
 - Novo serviço `aculta_image.generated_file` valida e registra derivados públicos gerados como File temporário; o ciclo existente os remove após `system.file:temporary_maximum_age` quando não há referências.
