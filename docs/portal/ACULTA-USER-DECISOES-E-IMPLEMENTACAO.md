@@ -158,8 +158,8 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 | Gerente de Loja: produtos `produto_loja`, variações, atributos, categorias, pedidos (visualização) e relatório de vendas; financeiro só administrador | Implementado | `user.role.gerente_loja`, `SalesReportController` |
 | Herança unilateral por role_inheritance: estudante ← email_confirmed; associado ← estudante; lms_teacher ← associado. Exceções: content_editor ← email_confirmed; gerente_loja sem herança de lms_teacher | Implementado no Runtime e exportado | `config/sync/role_inheritance.settings.yml` |
 | role_hierarchy e role_inheritance habilitados, sem alterar acesso de não-administradores | Implementado | `core.extension` |
-| Gerente de Loja não herda de lms_teacher (exceção à cadeia unilateral) | Decidido (2026-10-18) e aplicado | `config/sync/role_inheritance.settings.yml` |
-| content_editor herda de email_confirmed (exceção: não herda da cadeia até gerente_loja) | Decidido (2026-10-18) e aplicado | `config/sync/role_inheritance.settings.yml` |
+| Gerente de Loja não herda de lms_teacher (exceção à cadeia unilateral) | Decidido (2026-10-17) e aplicado | `config/sync/role_inheritance.settings.yml` |
+| content_editor herda de email_confirmed (exceção: não herda da cadeia até gerente_loja) | Decidido (2026-10-17) e aplicado | `config/sync/role_inheritance.settings.yml` |
 
 ## 2. Pendências de decisão
 1. Estado da associação (ativa, inativa, suspensa) controlado pelo administrador, com mensagem verde/amarela/vermelha
@@ -170,7 +170,7 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 4. Tipo de publicação da Revista: a Revista publica hoje com o tipo `article` ("Notícia"). Falta decidir se a
    publicação será um tipo novo "blog" (configuração, sem módulo) ou se `article` continua. Afeta a caixa de autor, que
    só é programada no tipo que o responsável escolher.
-5. ~~Hierarquia de papéis~~: encerrado (2026-10-18). Cadeia unilateral; `gerente_loja` sem herança de `lms_teacher`; `content_editor` herda de `email_confirmed`.
+5. ~~Hierarquia de papéis~~: encerrado (2026-10-17). Cadeia unilateral; `gerente_loja` sem herança de `lms_teacher`; `content_editor` herda de `email_confirmed`.
 6. Mapeamento dos campos da publicação: "chamada" para `field_subtitle` e "resumo" para `field_summary` (ambos existem
    em `article`). Falta confirmar, porque o tipo "blog" pode ter campos próprios.
 
