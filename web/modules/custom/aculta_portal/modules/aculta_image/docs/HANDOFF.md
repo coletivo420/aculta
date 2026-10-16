@@ -6,8 +6,8 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.15. Leia este documento antes d
 
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
-3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário e filtro da legenda confirmados; CSS dos quatro modelos medido a 1366/500 px em claro/escuro numa fixture local. Falta a revisão integrada numa página pública, 390 px e acessibilidade.
-4. Próximos passos: cobertura integrada da legenda/CSS numa página pública; tentar 390 px útil; fazer revisão de acessibilidade e leitor de tela.
+3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário e filtro da legenda confirmados; CSS dos quatro modelos medido a 1366/500 px em claro/escuro numa fixture local. Em 2026-10-16, uma página pública temporária no domínio da Revista respondeu HTTP 200 anonimamente e exibiu `<figure>` e `<figcaption>`. Falta revisão visual no navegador, viewport útil de 390 px e leitor de tela.
+4. Próximos passos: revisar o resultado visual integrado no navegador; tentar 390 px útil; fazer revisão com leitor de tela.
 5. A importação do Growroom está bloqueada pela F3 do Fórum (lista de autores). Não é trabalho deste submódulo.
 
 ## 2. Git e working tree
@@ -95,7 +95,8 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 - **Barra multilinha:** o marcador `-` na toolbar desliga o overflow automático do CKEditor. `revista_editorial` já o usava; foi aplicado a `full_html` e `usuario_aculta`. Firefox mediu três linhas e nenhum botão de overflow a 500 px em `full_html`.
 - **Estilos dos modelos:** em `revista-post.css`, medidos em fixture local com o CSS e tokens do tema: 1366 px (320/580/900/960 px) e 500 px (484 px, sem breakout); modo claro/escuro troca fundo e cor da legenda. Ainda falta ver na página pública.
 - **Texto alternativo:** o Drupal core mostra aviso quando falta `alt`, permite abrir o formulário por teclado e remove o aviso após salvar. Fluxo testado no Firefox; conteúdo temporário removido. Imagem decorativa pode ter `alt` vazio quando marcada como decorativa.
-- **Legenda:** o formulário contextual grava e reabre `data-aculta-legenda`; Firefox no Runtime confirmou abertura por Enter, foco no campo e Escape fechando sem alterar dados. Nó temporário foi removido. Falta confirmar `<figcaption>` numa página pública.
+- **Legenda:** o formulário contextual grava e reabre `data-aculta-legenda`; Firefox no Runtime confirmou abertura por Enter, foco no campo e Escape fechando sem alterar dados. O HTML anônimo de um artigo temporário confirmou `<figcaption>`; o nó foi removido.
+- **Renderização pública integrada (2026-10-16):** no host correto `revista420.aculta.toca.net.br`, foi criado um artigo temporário com estado editorial `published`, domínio `coletivo420_aculta_org` e imagem existente `exame-toxicologico-cnh-e-maconha.jpg`. A requisição anônima ao alias do artigo respondeu HTTP 200; o HTML continha `<figure>`, `<figcaption>` e a imagem. O nó foi removido em seguida. Um controle sem imagem também respondeu HTTP 200. Uma tentativa anterior de teste gerou um 500 porque o nó temporário foi criado sem `moderation_state`; esse resultado não reproduzia o fluxo editorial válido e não indica falha do módulo.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
 - **Formato do básico sem botão:** conteúdo de quem usa só o básico não ganha modelo até o formato próprio.
 - **Downloads do Wayback (2026-10-16, 15:42):** assets concluído (9.314 arquivos). HTML em andamento como root, com processo ativo: 6.480 arquivos; fila de tópicos e galerias (perfis fora até o mapeamento). Seções excluídas da importação: Avisos (2 e 52), Multimídia Cannábica (48), Cannabis Medicinal (76, a confirmar) e Notícias (24). **Não interromper nem apagar** sem consulta ao responsável. O script está fora do repositório (`scratchpad` da sessão); ver `IMPORTACAO-GROWROOM.md`, seção de estado.
@@ -103,8 +104,8 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 
 ## 6. Próximos passos (ordem recomendada)
 
-1. **R2 navegador:** Firefox; cobrir claro e escuro e tentar viewport útil de 390 px. A persistência após salvar/reabrir já foi confirmada. Registrar a cobertura em `docs/portal/TESTES-NAVEGADOR.md` (AGENTS).
-2. **R5 acessibilidade:** Escape/foco da legenda e aviso/edição de `alt` foram verificados no Firefox. Falta revisão com leitor de tela e confirmação de `<figcaption>` numa página pública.
+1. **R2 navegador:** Firefox; revisar a página integrada em claro e escuro e tentar viewport útil de 390 px. A persistência após salvar/reabrir já foi confirmada. A integração foi confirmada por HTTP anônimo; o CSS ainda não foi revisado numa página publicada.
+2. **R5 acessibilidade:** Escape/foco da legenda e aviso/edição de `alt` foram verificados no Firefox. `<figcaption>` foi confirmado no HTML público; falta revisão com leitor de tela.
 3. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)
