@@ -7,7 +7,7 @@ Mudanças relevantes do ACULTA Messenger.
 - Central "Avisos/Mensagens" em Minha conta, com abas Avisos e Mensagens no padrão da conta.
 - Prévia da barra: avisos da própria pessoa seguidos do link "Ver todos os avisos".
 - Correção: o controller da central não redeclara a propriedade `$currentUser` da classe base.
-- Removido o item "Avisos/Mensagens" do menu da conta (a barra usa os ícones do aculta_messenger).
+- Item "Avisos/Mensagens" na navegação de Minha conta (conta.aculta), com badge de não lidos, pelos pontos de extensão do shell da conta. A barra usa os ícones do aculta_messenger.
 
 ## 0.1.1-dev.34 — avisos por pessoa: atualizações, contador do ícone, controles e resumo diário (F5.2) — 2026-10-16
 
