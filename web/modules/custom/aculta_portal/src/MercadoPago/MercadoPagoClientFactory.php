@@ -36,7 +36,7 @@ use MercadoPago\MercadoPagoConfig;
  * O SDK guarda o token de forma estática; a fábrica o redefine a cada criação, então o cliente sempre usa
  * as credenciais do gateway recebido.
  */
-final class MercadoPagoClientFactory {
+class MercadoPagoClientFactory {
 
   /**
    * Alias técnico-neutro => classe do cliente do SDK.
