@@ -62,6 +62,16 @@ palette tokens → semantic tokens → components
 Um componente usa o token semântico que descreve sua função. A paleta continua
 centralizada e não deve ser espalhada para representar contexto.
 
+## Leitor PDF compartilhado
+
+O `aculta_pdf_viewer` fornece marcação funcional neutra via atributos
+`data-aculta-pdf-*`; Media/File/PDF.js continuam donos do arquivo, autorização e
+comportamento. ACULTA420 apresenta esse contrato em
+`css/components/pdf-viewer.css`, usando tokens semânticos de superfície,
+interação, foco, borda e tipografia. A folha não declara cores por modo nem
+depende do LMS ou de host. O módulo continua responsável pelo DOM e controles
+dinâmicos do canvas, portanto o tema não cria um SDC que replique esse markup.
+
 O contrato de superfície e shell inclui:
 
 ```css

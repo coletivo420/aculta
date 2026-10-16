@@ -12,6 +12,7 @@ global:
       css/components/breadcrumb.css: {}
       css/components/content.css: {}
       css/components/buttons.css: {}
+      css/components/pdf-viewer.css: {}
       css/drupal-bootstrap.css: {}
       css/components/institutional.css: {}
       css/components/course-card.css: {}

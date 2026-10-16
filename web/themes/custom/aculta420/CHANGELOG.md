@@ -1080,3 +1080,12 @@ Classificação: PATCH (apresentação/acessibilidade sem API visual nova).
 - PDF.js/Media continuam donos do comportamento e acesso; o tema só apresenta os atributos neutros do formatter.
 - Validação visual no Runtime: DEFERRED até anexar PDF de teste temporário.
 
+## 0.6.0-dev.61 — apresentação do leitor PDF compartilhado — 2026-10-16
+
+Classificação: PATCH (apresentação acessível de formatter já funcional).
+
+- ACULTA420 estiliza os atributos neutros emitidos por `aculta_pdf_viewer` com tokens semânticos, foco visível, alvos de toque, layout adaptável e canvas responsivo.
+- PDF.js, Media, autorização e controles continuam sob responsabilidade do módulo; sem markup funcional duplicado no tema.
+- Runtime de teste `revista420.aculta.toca.net.br`: PDF.js sample (14 páginas) renderizou em desktop e em 390 px; canvas 652×844/324×420, controles com 44 px e sem overflow horizontal no mobile.
+- Fixture temporária (node 287, Media 233, File 413) removida e cache reconstruído. RUNTIME STATUS: ACTIVE no Homelab; Hostinger LiteSpeed e PDF privado permanecem pendentes.
+
