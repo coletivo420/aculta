@@ -1,3 +1,17 @@
+## 0.4.0-dev.65 — API do Mercado Pago: recorrência, ações de pagamento e consultas de vendas — 2026-10-16
+
+Classificação MINOR. Decisão do responsável: implementar as APIs do Mercado Pago disponíveis no SDK e planejar a integração com a loja e as doações. Painéis visuais ficam para a fase seguinte.
+
+- Fábrica `MercadoPagoClientFactory`: os 20 clientes concretos do SDK 3.16.0, com credenciais do gateway no modo ativo. Teste confirma que as classes existem.
+- Recorrência (`MercadoPagoRecurrenceService` e `RecurrenceRequestBuilder`): planos (`preapproval_plan`) e assinaturas (`preapproval`) com validação de valor, moeda, frequência, `back_url` https e e-mail. Pausar, reativar e cancelar assinatura.
+- Pagamentos (`MercadoPagoPaymentService` e `MercadoPagoPaymentPolicy`): atualizar status pela API, espelhando estorno e estados locais; cancelar pendente (`in_process`, `pending` e `authorized`, conforme a documentação) com transição `void`. Estorno continua pela operação `refund-payment` do Commerce.
+- Relatório de vendas (`SalesReportQuery` e `SalesReportFilters`): consultas sobre as tabelas do Commerce, sem tabela paralela, com filtros de data, loja e granularidade. Ainda não ligadas ao controller; a ligação entra com os painéis.
+- Serviços registrados em `aculta_portal.services.yml`.
+- Plano de integração com a loja e as doações, perguntas em aberto e fases: `docs/portal/MERCADO-PAGO-PLANO.md`.
+- Testes unitários: 130 testes, 351 asserções, OK. Gates `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-module-theme-map` e `validate-environment-addresses`: PASS.
+- Limites: sem teste Kernel (DEFERRED: banco `aculta_simpletest`). Sem chamada real ao Mercado Pago (DEFERRED: gateway não provisionado no Runtime). Tópicos de webhook de assinatura e `authorized_payments` não confirmados na documentação.
+- Risco aberto: tokens do gateway estão em configuração do módulo contrib; migrar para Drupal Key antes de produção.
+
 ## 0.4.0-dev.64 — relatório de vendas da loja e correções da revisão — 2026-10-16
 
 Classificação MINOR. Decisão do responsável: o gerente de loja vê um relatório próprio de vendas.
