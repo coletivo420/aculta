@@ -5,7 +5,11 @@
 O viewer adiciona zoom/restauração, busca textual por página, navegação dos resultados e
 modo tela cheia, mantendo o PDF.js local e o link autorizado. O Kernel valida
 markup dos controles e o fluxo Media Embed; `node --check` valida sintaxe ESM.
-Browser/Runtime sem PDF para teste: interação visual segue DEFERRED.
+Firefox 153.4 ESR confirmou a interação no Runtime com PDF público temporário:
+14 páginas, navegação, zoom, busca, tela cheia e zero erros JS. Os objetos de
+teste foram removidos. A tentativa de acessar edição CKEditor com login único
+retornou 403 sem diagnóstico de sessão/permissão; autoria via UI, leitura privada,
+acessibilidade visual, CSP, preview e Hostinger continuam pendentes.
 
 ## 0.1.0-dev.2 — inserção editorial pelo CKEditor 5
 

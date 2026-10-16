@@ -96,8 +96,9 @@ File e resultados de acesso. Não recebe URL por query/formulário, não aceita
 host/URL externa, e entrega link de fallback somente junto ao mesmo arquivo
 público autorizado. O JS importa `pdf.mjs`, define `pdf.worker.mjs` local, mostra
 uma página por vez e oferece navegação anterior/próxima, zoom, busca textual por
-página, tela cheia e link de fallback. A interação precisa de smoke test em
-navegador antes de declarar a entrega visual concluída.
+página, tela cheia e link de fallback. A interação pública foi validada por
+Firefox headless no Runtime; seleção editorial via UI, privacidade, acessibilidade
+visual e produção seguem gates separados em [TESTES-NAVEGADOR](TESTES-NAVEGADOR.md).
 
 O renderer `PdfDefault` do contrib 1.3 permanece incompatível com o pacote ESM
 moderno (`.js`/global `pdfjsLib` versus `.mjs`). O adapter não usa o formatter
@@ -145,10 +146,17 @@ sem advisories); `composer.json`/`composer.lock` permaneceram intactos. Essa
 resolução PHP não verifica binários, PHP-FPM, policy nem a segurança do
 processamento PDF no servidor.
 
-**Validação F3:** formatter e display adicionados no código e em `config/sync`;
-PHPUnit/gates e resolução Composer registrados na PR. Importação no Runtime,
-renderização real, arquivos privados por usuário/turma, geração de thumbnail e
-Hostinger ficam **DEFERRED**. Não executar `drush cim` com URI `http://default`.
+**Validação F3:** formatter e display estão no código e em `config/sync`; o
+Runtime `aculta_runtime` foi atualizado pontualmente, sem import global. Um
+Media `document` e artigo temporários usaram o PDF de amostra oficial e
+renderizaram via CKEditor Media Embed → formatter. Firefox 153.4 ESR confirmou
+14 páginas, navegação, zoom 125%, busca (cinco resultados), tela cheia e zero
+erros JavaScript. Os três objetos e o arquivo foram removidos; o bundle voltou
+a zero itens. A tentativa de abrir a edição CKEditor com link de login único
+recebeu 403, sem diagnóstico independente de sessão/permissão, e segue DEFERRED.
+PHPUnit/gates e resolução Composer estão registrados na PR. Acesso privado por
+usuário/turma, PDFPreview/thumbnails, CSP, acessibilidade visual e Hostinger
+seguem **DEFERRED**. Não executar `drush cim` com URI `http://default`.
 
 Composer dry-run inicialmente propunha atualizações indiretas. A resolução final
 foi limitada a `drupal/pdf` e `mozilla/pdfjs-dist`, usando `--with-dependencies

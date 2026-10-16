@@ -1,6 +1,6 @@
 ## 0.4.0-dev.58 — leitor PDF integrado: busca, zoom e tela cheia — 2026-10-16
 
-Classificação MINOR. `aculta_pdf_viewer` 0.1.0-dev.3 acrescenta zoom, busca textual por página e tela cheia ao leitor ESM local; fallback de arquivo autorizado permanece disponível. Kernel valida o fluxo CKEditor Media Embed → formatter e markup dos controles; Node valida sintaxe. Browser smoke não completou porque Chromium não carregou o servidor HTTP local; interação JS, acessibilidade visual, CSP, PDFs grandes e Hostinger ficam DEFERRED. Runtime do site tem módulo/display/permissão ativos, mas nenhum PDF/embed editorial para teste interativo.
+Classificação MINOR. `aculta_pdf_viewer` 0.1.0-dev.3 acrescenta zoom, busca textual por página e tela cheia ao leitor ESM local; fallback de arquivo autorizado permanece disponível. Kernel valida o fluxo CKEditor Media Embed → formatter e markup dos controles; Node valida sintaxe. Firefox 153.4 ESR contra artigo temporário no Runtime `aculta_runtime` confirmou PDF.js/worker local, 14 páginas, navegação, zoom 125%, busca com cinco resultados, tela cheia e zero erros JS. Artigo, Media, File e binário de teste foram removidos. Tentativa de abrir a edição via link de login único retornou 403, sem diagnóstico de sessão/permissão; autoria via UI segue DEFERRED. Acessibilidade visual, CSP, PDFs grandes, preview, acesso privado e Hostinger seguem DEFERRED.
 
 ## 0.4.0-dev.57 — Revista insere PDF pelo CKEditor — 2026-10-16
 

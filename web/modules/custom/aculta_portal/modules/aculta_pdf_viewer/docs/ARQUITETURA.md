@@ -116,8 +116,16 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - Kernel: `tests/src/Kernel/AcultaPdfViewerInstallTest.php` valida descoberta
   do submódulo, registro do serviço/formatter e ausência de storage/hooks de
   download próprios.
-- O viewer ESM e o worker tiveram smoke test em browser isolado na F2. Runtime,
-  preview, acesso privado integrado e Hostinger seguem DEFERRED.
+- O viewer ESM e worker passaram smoke test Firefox headless na fixture oficial
+  da distribuição e contra um artigo temporário de Media Embed no Runtime
+  `aculta_runtime`: 14 páginas, navegação, zoom 125%, busca (cinco resultados),
+  tela cheia e zero erros JS. O node, Media, File e binário temporários foram
+  removidos e a contagem do bundle `document` voltou a zero.
+- A tentativa de abrir a edição CKEditor com link de login único recebeu 403,
+  sem diagnóstico independente de sessão/permissão; o fluxo de autoria pela UI
+  segue DEFERRED, embora o filtro `media_embed` → formatter esteja coberto pelo
+  Kernel e tenha renderizado no artigo de teste. PDFPreview, acesso privado,
+  acessibilidade visual e Hostinger seguem DEFERRED.
 
 ## Referências upstream
 
@@ -126,3 +134,17 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - [Drupal FileAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21FileAccessControlHandler.php/main)
 - [PDF 1.3](https://www.drupal.org/project/pdf/releases) e [PDFPreview 1.2](https://www.drupal.org/project/pdfpreview/releases)
 - [PDF.js 6.4.299](https://github.com/mozilla/pdf.js/releases/tag/v6.4.299)
+- [Drupal 3D Flipbook 11.0.2](https://www.drupal.org/project/flipbook/releases/11.0.2)
+
+### Auditoria e proveniência do Drupal 3D Flipbook
+
+O release 11.0.2 foi lido no commit upstream
+`79e9cd35b74f2045b97dc71fc8a73d0c4b2cfbd5`. O módulo fornece uma entidade
+`flipbook` com campo File próprio e integração com Views; seu runtime inclui
+jQuery, Bootstrap, Three.js, PDF.js e `3dflipbook.min.js`. O próprio projeto
+alerta que não é coberto pela política de avisos de segurança do Drupal e que
+uso pago da biblioteca 3D exige licença CodeCanyon. Não houve cópia de código,
+CSS ou asset deste contrib: o formatter Media ACULTA já cobre a apresentação do
+PDF sem storage paralelo, e não depende do componente 3D. Ideias de controles
+foram reimplementadas sobre a distribuição PDF.js local. A proveniência é
+registrada para diferenciar esta auditoria do TNC FlipBook (plugin WordPress).

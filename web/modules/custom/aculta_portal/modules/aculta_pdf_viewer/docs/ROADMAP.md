@@ -13,20 +13,26 @@ resolvido por entidade Media autorizada; conteúdo embutido não aceita URL
 arbitrária. A ausência de miniatura nunca bloqueia o leitor nem o download
 permitido.
 
-O TNC FlipBook 3D consultado é um plugin **WordPress**, não um módulo Drupal.
-Usaremos como referência apenas ideias de produto: embed no conteúdo, leitor
-responsivo, controles configuráveis, navegação por página, zoom, busca textual,
-modos de rolagem, tela cheia e link acessível para abrir em área maior. O TNC
-oferece ainda efeito 3D, mas ele não é requisito inicial: a leitura paginada
-acessível do PDF.js é prioritária. Não copiar código, CSS, nomes, assets ou
-interface proprietária; reaproveitar somente comportamentos, reimplementados
-com Drupal Media/CKEditor 5, PDF.js oficial, Bootstrap e SDC ACULTA420 quando
-aprovado.
+Há duas referências distintas nesta linha. O TNC FlipBook 3D consultado é um
+plugin **WordPress**; serve para ideias de produto como embed, toolbar, zoom,
+busca, modos de leitura e tela cheia. O contrib Drupal [3D Flipbook] também foi
+auditado no tag 11.0.2 (`79e9cd35b74f2045b97dc71fc8a73d0c4b2cfbd5`, de
+2026-07-06). Seu conceito de formatter/visualização de PDF e integração com
+Views foi comparado ao adapter Media do ACULTA. Não foi copiado código neste
+release: a implementação Drupal cria entidade e armazenamento de PDF próprios,
+e depende de assets jQuery/Bootstrap/Three.js e de uma biblioteca 3D cuja
+licença comercial é exigida para certos usos. O projeto Drupal informa que não
+é coberto pela política de avisos de segurança. Esses custos e a duplicação de
+fonte de verdade não se justificam para o leitor ACULTA.
 
-O projeto Drupal contrib `flipbook` é distinto do TNC e não será instalado como
-atalho: a página do projeto informa que não é coberto pela política de avisos de
-segurança do Drupal. Qualquer alternativa contrib futura exige revisão própria
-de licença, segurança, API e compatibilidade.
+O que faz sentido portar é o contrato de apresentação de um arquivo escolhido
+pelo editor e os comportamentos de leitura, reimplementados sobre Media/File e
+PDF.js oficial. A base ACULTA já oferece formatter compartilhado, embed por
+CKEditor 5, página, zoom, busca textual por página, tela cheia e fallback de
+download autorizado. Efeito 3D, CSS, templates, nomes e assets do Flipbook não
+fazem parte da integração. A leitura paginada continua o baseline acessível;
+sumário/bookmarks e rolagem contínua ficam como incrementos próprios após
+validação de custo, acessibilidade e desempenho em PDFs extensos.
 
 ## Fases
 
@@ -34,8 +40,8 @@ de licença, segurança, API e compatibilidade.
 |---|---|---|---|
 | PV0 — Contrato e fundação | Submódulo separado; serviço e formatter com DI; fronteiras Media/File/access/cache documentadas; nenhuma persistência paralela. | Implementado no código desta PR; Unit e Kernel isolados PASS. Runtime DEFERRED. | Desabilitar o submódulo após restaurar o formatter Core no display Media e sincronizar configuração somente em mudança aprovada. |
 | PV1 — PDF.js local | PDF.js oficial com versão e proveniência fixas, worker local, ESM, controles básicos e fallback. Sem CDN e sem patch direto em contrib. | Implementado e smoke test isolado PASS. Versão atual indicada no Composer; Runtime DEFERRED. | Reverter dependência/library e selecionar formatter Core; não remover arquivos Media. |
-| PV2 — Inserção de PDF na Revista pelo CKEditor 5 | Confirmar o fluxo de autoria com `drupalMedia` no formato `revista_editorial`: selecionar/criar Media `document`, inserir no corpo, salvar, reabrir e renderizar pelo formatter compartilhado. Confirmar filtro `media_embed`, view mode, permissão de criação para `content_editor` e saída sem URL manual. O bundle usa `public://`, portanto o papel só deve enviar PDFs destinados à publicação. | Módulo/display e permissão estão aplicados no Runtime de teste; Kernel testa `drupal-media` → Media Embed → formatter → PDF.js. Ainda não há Media PDF ou embed publicado de Revista no Runtime para smoke test editorial; interação de autoria DEFERRED. | Revogar `create document media` do papel editorial, retirar o bundle `document` da seleção do editor ou voltar ao render Core; manter os Media/File e textos já publicados. |
-| PV3 — Leitor integrado ao site | Leitura inline responsiva e acessível em páginas que exibam Media PDF. Já implementa página anterior/próxima, zoom, busca textual por página, controles acessíveis e fullscreen. Próximos itens: localizar/realçar o termo no canvas/text layer, modo de rolagem contínua, sumário/bookmarks e ajuste visual ACULTA420 autorizado. O modo de página deve funcionar sem 3D e sem depender de JavaScript para manter fallback autorizado. | Markup e pipeline de render Media Embed→formatter passam em Kernel. JavaScript passa `node --check`; browser smoke de interação não validado nesta sessão, Runtime sem PDF de amostra. Segurança/CSP, responsividade, acessibilidade, múltiplos browsers e PDF grande continuam pendentes. | Remover os controles novos/liberar biblioteca anterior e manter navegação básica com link Core; arquivos Media permanecem. |
+| PV2 — Inserção de PDF na Revista pelo CKEditor 5 | Confirmar o fluxo de autoria com `drupalMedia` no formato `revista_editorial`: selecionar/criar Media `document`, inserir no corpo, salvar, reabrir e renderizar pelo formatter compartilhado. Confirmar filtro `media_embed`, view mode, permissão de criação para `content_editor` e saída sem URL manual. O bundle usa `public://`, portanto o papel só deve enviar PDFs destinados à publicação. | Módulo/display, permissão e render Media Embed→formatter→PDF.js confirmados por Kernel e por artigo temporário no Runtime. A tentativa de abrir a edição com link de login único retornou 403, sem diagnóstico de sessão/permissão; a seleção/autoria CKEditor segue DEFERRED. | Revogar `create document media` do papel editorial, retirar o bundle `document` da seleção do editor ou voltar ao render Core; manter os Media/File e textos já publicados. |
+| PV3 — Leitor integrado ao site | Leitura inline paginada responsiva e acessível em páginas com Media PDF. Implementa página anterior/próxima, zoom, busca textual por página, controles acessíveis, tela cheia e fallback autorizado. Realce textual, rolagem contínua, sumário/bookmarks e apresentação ACULTA420 são incrementos próprios após validação/acesso ao tema. Sem JavaScript permanece o fallback autorizado. | Firefox 153.4 ESR no Runtime confirmou render de 14 páginas, navegação, zoom, busca, tela cheia e zero erros JS. CSP, responsividade visual, acessibilidade, outros browsers e PDF grande permanecem pendentes. | Retirar a biblioteca de interação e manter link Core autorizado; arquivos Media permanecem. |
 | PV4 — Miniaturas e preview | Investigar/ativar PDFPreview apenas com toolkit, ImageMagick, Ghostscript e policies seguros por ambiente. Medir timeout, memória, CPU, cache de derivados e execução em lote. Leitor permanece funcional se geração falhar. | Bloqueado até compatibilidade estável do PDFPreview com ImageMagick disponível (1.2 declara `^3.7 || ^4.0`; ImageMagick 5.x não está confirmado), revisão de segurança e validação em Hostinger LiteSpeed. | Desabilitar formatter/gerador de preview e manter ícone/link Media; não enfraquecer policy global. |
 | PV5 — Arquivos privados e públicos | Decidir e implementar, se necessário, entrega controlada compatível com File access para leitura embutida de `private://`; validar não publicado, acesso revogado, turma/Group, cache privado e fallback. Testar URLs assinadas/endpoint autorizado sem expor caminho. | A implementação atual dá viewer apenas a `public://` e não transforma link de download em leitor privado. Não usar PDFs confidenciais no bundle público `document`. Requer arquitetura e testes integrados de autorização/cache antes de código. | Voltar a bloquear embed privado; manter somente resposta de acesso e download servido pelo Core quando autorizados. |
 | PV6 — Uso compartilhado e apresentação | Homologar o mesmo formatter/contrato para Revista420, artigos/blog, Wiki420, Fórum, projetos, documentos institucionais e LMS, sem acoplamento funcional ao LMS. Criar apresentação SDC/ACULTA420 somente após o contrato funcional ser aprovado e com autorização de mudança no tema. | Depende de PV2–PV5 conforme o caso; tema protegido por regra do repositório. | Consumidores retornam ao display Media/Core sem alterar arquivos ou conteúdo. |
@@ -43,14 +49,35 @@ de licença, segurança, API e compatibilidade.
 
 ## Próxima entrega
 
-PV2 está parcialmente aplicada: módulo, formatter, permissão editorial e
-Config Sync conferem; o teste Kernel percorre CKEditor Media Embed → Media
-`document` → formatter → PDF.js. Para o smoke editorial real, falta PDF público
-de teste e embed publicado no Runtime. O URI do Runtime foi confirmado para
-`revista420.aculta.toca.net.br`; não houve importação ampla de Config Sync.
-Próxima validação do viewer: browser com PDF de teste não confidencial para
-interação de busca/zoom/tela cheia e publicação por CKEditor. O LMS continua
+PV2 está aplicada no código e Config Sync: o Kernel percorre CKEditor Media
+Embed → Media `document` → formatter → PDF.js, e um artigo temporário da Revista
+validou essa saída no Runtime. Um PDF público oficial foi usado como fixture,
+com File, Media e node temporários removidos após o teste. A interação foi
+validada no Firefox 153.4 ESR contra `revista420.aculta.toca.net.br`: 14 páginas,
+próxima página, zoom 125%, busca com cinco resultados, tela cheia e zero erros
+JavaScript. A tentativa de abrir a tela de edição CKEditor com link de login
+único recebeu HTTP 403, sem diagnóstico de sessão/permissão, então o fluxo de
+autoria pela interface não foi validado. Nenhum Config Sync global foi importado. O LMS continua
 pausado até o foco do projeto retornar a ele.
+
+PV3 está funcional para Media público e testado no Runtime. A finalização de
+release continua condicionada à homologação da tela de edição/autoria, revisão
+visual/acessível e matriz de navegador/CSP, além das etapas PV4 (miniaturas,
+opcional e bloqueada por toolkit/policy), PV5 (entrega privada) e PV6 (uso
+compartilhado/apresentação). Não usar este estado para PDFs confidenciais.
+
+### Auditoria do contrib Drupal 3D Flipbook
+
+O release 11.0.2 foi inspecionado diretamente no commit registrado acima. Ele
+define entidade `flipbook` com campo File PDF e capa própria, e seu JS inicializa
+Three.js/3dflipbook via jQuery. A descrição do projeto requer licença da
+biblioteca CodeCanyon para uso pago e a página do Drupal.org informa que o
+projeto não está coberto pela política de avisos de segurança. Resultado: não
+instalar nem copiar runtime/assets; a funcionalidade de apresentação de um PDF
+é atendida pelo formatter Media do ACULTA sem entidade nem arquivo paralelo.
+Referências a funções equivalentes devem ser implementações próprias com a
+distribuição PDF.js já fixada. O leitor funcional base fica limitado ao fluxo
+Media público até a fase de entrega privada e homologação de acesso/cache.
 
 ## Referências
 
@@ -59,5 +86,6 @@ pausado até o foco do projeto retornar a ele.
 - [TNC FlipBook — opções e personalização](https://docs.tncflipbook.com/article/349-customization-options)
 - [TNC — controles de toolbar](https://docs.tncflipbook.com/article/391-toolbar-defaults)
 - [Drupal contrib 3D Flipbook — projeto distinto, fora da política de segurança](https://www.drupal.org/project/flipbook)
+- [Drupal contrib 3D Flipbook — release 11.0.2](https://www.drupal.org/project/flipbook/releases/11.0.2)
 - [PDF.js oficial](https://github.com/mozilla/pdf.js)
 - [Contrato de integração e acesso PDF ACULTA](../../../../../../docs/portal/PDF-VIEWER-INTEGRATION.md)

@@ -468,3 +468,25 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 - Aviso dispensável integrado à lista e contagem do Messenger; nova concessão
   enfileira e-mail com preferência individual. Transporte/entrega real de e-mail
   não verificado.
+
+## PDF Viewer — CKEditor Media Embed e leitor compartilhado (2026-10-16)
+
+- **Ambiente:** Firefox 153.4 ESR headless + geckodriver 0.37.1 no Homelab;
+  Drupal 11.4.10, URI `https://revista420.aculta.toca.net.br`, banco
+  `aculta_runtime`. A amostra foi o PDF público que acompanha PDF.js 6.4.299.
+- **Render Drupal/Media:** Media `document` pública e artigo `article`
+  temporários usaram o markup `drupal-media` com formato `revista_editorial`.
+  O endpoint respondeu HTTP 200 e apresentou o formatter compartilhado, a
+  biblioteca local PDF.js e o link autorizado. O fluxo confirmou render de
+  Media Embed no texto; a seleção pela UI CKEditor não foi concluída. A tentativa
+  de abrir a edição com link de login único retornou 403, sem confirmação
+  independente de sessão/permissão; não inferir que a interface de autoria passou.
+- **Interação real do viewer:** carregamento `Página 1 de 14`, canvas
+  `655 × 848`, avanço `Página 2 de 14`, zoom `125%`, busca `Trace-based` com
+  cinco resultados, botão de tela cheia ativado e console sem erros JS.
+- **Limpeza:** removidos o node temporário 284, Media 231, File 407 e o arquivo
+  em `public://`. Drush confirmou zero Media `document` e ausência do binário
+  temporário. Nenhum conteúdo preexistente foi alterado.
+- **Escopo pendente:** autoria pela UI CKEditor (tentativa 403 não diagnosticada), leitura `private://`,
+  preview/ImageMagick, CSP, acessibilidade visual/leitor de tela, outros
+  browsers e hospedagem LiteSpeed.
