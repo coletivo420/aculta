@@ -50,7 +50,7 @@ reduzidos no upload (ver seção 5).
 - Plugin CKEditor 5 `acultaImage.ImageModel` em JavaScript simples, sem build. Usa os globais `CKEditor5.dll` e
   `CKEditor5.image` que o core expõe. Grava o modelo em `data-aculta-modelo`.
 - O botão contextual “Editar legenda” grava `data-aculta-legenda`; o filtro converte o atributo em `<figcaption>`. A UI
-  serializa corretamente; falta conferir renderização pública e persistência da legenda ao reabrir.
+  serializa corretamente e a renderização pública foi confirmada; persistência ao reabrir o editor segue pendente.
 - Classe PHP `Plugin\CKEditor5Plugin\ImageModel` (configuração por editor: quais modelos aparecem).
 - Filtro `aculta_imagem_modelo` que transforma o `<img>` em `<figure>` com `srcset`, `sizes` e `figcaption`.
 
@@ -88,10 +88,10 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 | --- | --- | --- |
 | P1 | Catálogo dos modelos e estilos `aculta_corpo_*` | **feito** (exportados no pipeline `aculta_derivados`) |
 | P2 | Filtro PHP com `<figure>`, `srcset` e legenda (sem crédito) | **feito** (sem JavaScript na página pública) |
-| P3 | Plugin CKEditor 5 com seletor de modelo | **botões e gravação testados no Runtime; upload e reabertura confirmados; faltam viewport de 390 px, tema e acessibilidade** |
-| P3b | Campo contextual de legenda | **implementado e serializado; falta verificar renderização pública e reabertura** |
-| P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | **implementado; fixture aferida a 1366/500 px em claro/escuro; falta revisar em página pública** |
-| P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | pendente |
+| P3 | Plugin CKEditor 5 com seletor de modelo | **botões e gravação testados no Runtime; upload e reabertura confirmados; falta viewport real de 390 px e revisão com leitor de tela** |
+| P3b | Campo contextual de legenda | **implementado e serializado; `<figcaption>` confirmado em página pública; persistência ao reabrir o editor pendente** |
+| P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | **fixture aferida em claro/escuro; página pública anônima aferida a 1366/500 px; faltam dark integrado e viewport real de 390 px** |
+| P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | **alt, legenda e teclado verificados no Firefox; falta leitor de tela** |
 | P6 | Formato próprio para o HTML básico | pendente (decisão de perfis) |
 
 ## 8. Riscos

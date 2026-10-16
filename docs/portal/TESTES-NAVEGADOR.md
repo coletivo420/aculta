@@ -493,3 +493,11 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 - **Escopo pendente:** upload/criação de Media via UI como `content_editor`, leitura `private://`,
   preview/ImageMagick, CSP, acessibilidade visual/leitor de tela, outros
   browsers e hospedagem LiteSpeed.
+
+## Imagens inline da Revista — revisão integrada (2026-10-16)
+
+- **Ambiente:** servidor de testes, host `revista420.aculta.toca.net.br`, Firefox 153.4 ESR e geckodriver 0.37.1; Drupal 11.4.10, banco `aculta_runtime`.
+- **Acesso:** Firefox/geckodriver em sessão privada sem autenticação. Fixture foi artigo temporário `published`, domínio `coletivo420_aculta_org`, quatro imagens com modelo e legenda. Todas as fixtures criadas nesta rodada foram removidas; conteúdo preexistente não foi alterado.
+- **Desktop (1366 px):** as quatro figuras públicas renderizaram com `<figcaption>`. Larguras aferidas: Pequena 320 px, Padrão 580 px, Larga 900 px e Destaque 960 px. As imagens carregadas sob demanda foram verificadas após rolagem.
+- **Janela estreita:** ao pedir 390 px ao geckodriver, o Firefox informou viewport útil de 500 px. Nessa largura, os quatro modelos e imagens mediram 456 px, as legendas apareceram e `document.documentElement.scrollWidth` não excedeu o viewport. Captura anônima em 500 px mostrou a imagem Destaque e a legenda no fluxo.
+- **Limite:** não foi possível aferir 390 px com este Firefox. Repetir em outro navegador ou ambiente que aceite essa largura. O modo escuro integrado à página e a revisão com leitor de tela seguem pendentes.

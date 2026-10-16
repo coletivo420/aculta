@@ -53,10 +53,10 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 
 1. **Runtime:** configuração importada e cache reconstruído. Upload de 1600×800 convertido para 1200×600; `user.role.authenticated`
    ainda tem drift de permissões alheias à imagem.
-2. **Teste no navegador:** Firefox confirmou no `full_html` as quatro opções, seleção de Larga e gravação do atributo. Barra multilinha: três linhas a 500 px sem overflow. Os três editores foram atualizados parcialmente no Runtime. Faltam temas claro/escuro, viewport útil de 390 px e revisão com leitor de tela. Ver [HANDOFF.md](HANDOFF.md), seção 6.
-3. **Legenda na UI do editor:** formulário contextual implementado; Firefox confirmou `data-aculta-legenda`. Falta validar o `figcaption` renderizado e reabrir o editor.
-4. **CSS dos modelos** no ACULTA420: implementado e medido numa fixture com tokens reais (1366/500 px, claro/escuro); falta revisão numa página pública.
-5. **Acessibilidade:** legenda ligada com `figcaption`, operação por teclado. Firefox confirmou upcast, abertura por Enter, foco e Escape sem alterar dados. O core avisa quando falta `alt`, permite editar por teclado e remove o aviso após salvar; imagem decorativa pode usar `alt` vazio quando marcada como decorativa. Falta leitor de tela e confirmação de `figcaption` numa página pública.
+2. **Teste no navegador:** Firefox confirmou no `full_html` as quatro opções, seleção de Larga e gravação do atributo. Barra multilinha: três linhas a 500 px sem overflow. Página pública anônima: modelos renderizados a 1366 e 500 px sem overflow. Ao solicitar 390 px, o Firefox entrega viewport de 500 px. Faltam viewport real de 390 px, modo escuro integrado e leitor de tela. Ver [HANDOFF.md](HANDOFF.md), seção 6.
+3. **Legenda na UI do editor:** formulário contextual implementado; Firefox confirmou `data-aculta-legenda`. O filtro gerou `<figcaption>` na página pública. Reabrir o editor após salvar a legenda segue pendente.
+4. **CSS dos modelos** no ACULTA420: implementado; fixture local mediu claro/escuro e a página pública anônima confirmou larguras e legenda em 1366/500 px. Modo escuro integrado segue pendente.
+5. **Acessibilidade:** legenda ligada com `figcaption`, operação por teclado. Firefox confirmou upcast, abertura por Enter, foco e Escape sem alterar dados. O core avisa quando falta `alt`, permite editar por teclado e remove o aviso após salvar; imagem decorativa pode usar `alt` vazio quando marcada como decorativa. `figcaption` foi confirmado publicamente; falta leitor de tela.
 6. **Formato próprio para o HTML básico** (usuários comuns e alunos): hoje o básico não tem botão. Decisão de quem
    oferece modelos a cada perfil.
 7. **Tamanhos provisórios do Fórum** (Pequena e Padrão): medir em uso e revisar. Ver `MODELOS-DE-IMAGEM.md`.
