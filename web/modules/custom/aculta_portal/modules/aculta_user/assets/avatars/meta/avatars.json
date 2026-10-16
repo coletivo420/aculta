@@ -16,30 +16,6 @@
     "active": true
   },
   {
-    "id": "monster-003-furry-smile",
-    "file": "monsters/monster-003-furry-smile.png",
-    "family": "monsters",
-    "label": "Monstrinho peludo",
-    "alt": "Monstrinho verde peludo e sorridente, em estilo cartoon.",
-    "active": true
-  },
-  {
-    "id": "monster-004-horns",
-    "file": "monsters/monster-004-horns.png",
-    "family": "monsters",
-    "label": "Monstrinho com chifres",
-    "alt": "Monstrinho roxo com grandes chifres, em estilo cartoon.",
-    "active": true
-  },
-  {
-    "id": "monster-005-gelatinous",
-    "file": "monsters/monster-005-gelatinous.png",
-    "family": "monsters",
-    "label": "Criatura gelatinosa",
-    "alt": "Criatura verde gelatinosa e relaxada, em estilo cartoon.",
-    "active": true
-  },
-  {
     "id": "monster-006-toothy",
     "file": "monsters/monster-006-toothy.png",
     "family": "monsters",
@@ -72,14 +48,6 @@
     "active": true
   },
   {
-    "id": "monster-010-small-hoodie",
-    "file": "monsters/monster-010-small-hoodie.png",
-    "family": "monsters",
-    "label": "Monstrinho baixinho de moletom",
-    "alt": "Monstrinho verde usando moletom escuro, em estilo cartoon.",
-    "active": true
-  },
-  {
     "id": "plant-001-broto-humanoide",
     "file": "plants/plant-001-broto-humanoide.png",
     "family": "plants",
@@ -103,15 +71,6 @@
     "family": "plants",
     "label": "Arbusto maconheiro",
     "alt": "Arbusto antropomórfico com óculos e expressão relaxada.",
-    "presentation": "neutral",
-    "active": true
-  },
-  {
-    "id": "plant-004-carnivora-chapada",
-    "file": "plants/plant-004-carnivora-chapada.png",
-    "family": "plants",
-    "label": "Planta carnívora chapada",
-    "alt": "Planta carnívora em vaso com olhos relaxados e língua grande.",
     "presentation": "neutral",
     "active": true
   },
@@ -149,24 +108,6 @@
     "label": "Pequeno guardião da floresta",
     "alt": "Pequena criatura vegetal guardiã da floresta cercada por cogumelos.",
     "presentation": "neutral",
-    "active": true
-  },
-  {
-    "id": "plant-009-monstro-musgo",
-    "file": "plants/plant-009-monstro-musgo.png",
-    "family": "plants",
-    "label": "Monstro de musgo",
-    "alt": "Monstro coberto de musgo e pequenos cogumelos, com expressão relaxada.",
-    "presentation": "neutral",
-    "active": true
-  },
-  {
-    "id": "plant-010-mutante-sorridente",
-    "file": "plants/plant-010-mutante-sorridente.png",
-    "family": "plants",
-    "label": "Planta mutante sorridente",
-    "alt": "Criatura vegetal mutante feminina, sorridente e psicodélica.",
-    "presentation": "feminine",
     "active": true
   },
   {
@@ -826,14 +767,6 @@
     "active": true
   },
   {
-    "id": "cerrado-005-irara",
-    "file": "cerrado/cerrado-005-irara.png",
-    "family": "cerrado",
-    "label": "Irara",
-    "alt": "Irara antropomórfica sobre rochas do Cerrado ao pôr do sol, em avatar quadrado nativo.",
-    "active": true
-  },
-  {
     "id": "cerrado-006-paca",
     "file": "cerrado/cerrado-006-paca.png",
     "family": "cerrado",
@@ -847,22 +780,6 @@
     "family": "cerrado",
     "label": "Preá",
     "alt": "Preá antropomórfico caminhando pelo Cerrado florido ao pôr do sol, em avatar quadrado nativo.",
-    "active": true
-  },
-  {
-    "id": "cerrado-008-carcara",
-    "file": "cerrado/cerrado-008-carcara.png",
-    "family": "cerrado",
-    "label": "Carcará",
-    "alt": "Carcará antropomórfico sobre rocha em paisagem do Cerrado ao pôr do sol, em avatar quadrado nativo.",
-    "active": true
-  },
-  {
-    "id": "cerrado-009-mutum-de-penacho",
-    "file": "cerrado/cerrado-009-mutum-de-penacho.png",
-    "family": "cerrado",
-    "label": "Mutum-de-penacho",
-    "alt": "Mutum-de-penacho antropomórfico em paisagem do Cerrado ao entardecer, em avatar quadrado nativo.",
     "active": true
   },
   {
