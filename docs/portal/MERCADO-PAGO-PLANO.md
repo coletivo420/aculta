@@ -48,7 +48,7 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 
 - Painéis de vendas e de doações com tabela de pedidos e ações por pagamento.
 - Permissão por escopo do pedido (produto: `gerenciar pagamentos de vendas`; doação: `administrar doacoes`; misto: as duas).
-- Pendências: visual com administrador e pedidos de teste; Kernel do painel; apresentação no ACULTA420 (sem autorização).
+- Apresentação no ACULTA420 aplicada em dev.70 (módulo) e 0.6.0-dev.67 (tema). Pendências: captura visual com administrador e pedidos de teste; Kernel do painel.
 
 ## 1. Inventário das APIs do SDK
 

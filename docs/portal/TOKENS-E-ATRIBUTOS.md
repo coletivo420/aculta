@@ -365,3 +365,21 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `public-profile-avatar-image` | `portal-profile__avatar-image` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `achievement-notices` | `aculta-achievement-notices` | `web/modules/custom/aculta_portal/modules/aculta_game/src/Hook/MessengerNotificationHooks.php` |
 | `aculta-image-audit` | `aculta-image-audit` | `web/modules/custom/aculta_portal/modules/aculta_image/src/Controller/ImageAuditController.php` |
+
+## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)
+
+| Token | Classes no ACULTA420 | Origem no módulo |
+| --- | --- | --- |
+| `sales-panel` | `aculta-sales-panel` | `web/modules/custom/aculta_portal/src/Controller/SalesReportController.php` |
+| `sales-section` | `aculta-sales-panel__section` | `web/modules/custom/aculta_portal/src/Controller/SalesReportController.php` |
+| `sales-heading` | `aculta-sales-panel__heading` | `web/modules/custom/aculta_portal/src/Controller/SalesReportController.php` |
+| `sales-table` | `table table-hover align-middle aculta-sales-panel__table` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-pagination` | `aculta-sales-panel__pagination` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-payment` | `aculta-sales-panel__payment` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-action` | `btn btn-sm btn-outline-primary aculta-sales-panel__action` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-action-danger` | `btn btn-sm btn-outline-danger aculta-sales-panel__action` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-state-ok` | `badge aculta-sales-panel__state aculta-sales-panel__state--ok` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-state-pending` | `badge aculta-sales-panel__state aculta-sales-panel__state--pending` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-state-refunded` | `badge aculta-sales-panel__state aculta-sales-panel__state--refunded` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-state-voided` | `badge aculta-sales-panel__state aculta-sales-panel__state--voided` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-state-neutral` | `badge aculta-sales-panel__state aculta-sales-panel__state--neutral` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
