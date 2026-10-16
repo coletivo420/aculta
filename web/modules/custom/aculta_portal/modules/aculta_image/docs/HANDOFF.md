@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.12. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.13. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -94,7 +94,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 - **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. Downcast confirmado nos três editores e persistência após reabertura confirmada em `full_html`.
 - **Estilos dos modelos:** em `revista-post.css`, medidos em fixture local com o CSS e tokens do tema: 1366 px (320/580/900/960 px) e 500 px (484 px, sem breakout); modo claro/escuro troca fundo e cor da legenda. Ainda falta ver na página pública.
 - **Condição de ativação do plugin:** `aculta_image.ckeditor5.yml` usa `toolbarItem: acultaImageModelPequena` como condição. Um editor com só outro modelo na barra não ativaria o plugin. Trocar por uma condição que aceite qualquer dos quatro botões, ou confirmar que o caso não ocorre.
-- **Legenda:** o formulário contextual grava `data-aculta-legenda`; a exibição pública em `<figcaption>` precisa ser confirmada com imagem do Runtime.
+- **Legenda:** o formulário contextual grava `data-aculta-legenda`; Escape fecha como Cancelar. A exibição pública em `<figcaption>` precisa ser confirmada com imagem do Runtime; a verificação por teclado no navegador também segue pendente.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
 - **Formato do básico sem botão:** conteúdo de quem usa só o básico não ganha modelo até o formato próprio.
 - **Downloads do Wayback (2026-10-16, 15:42):** assets concluído (9.314 arquivos). HTML em andamento como root, com processo ativo: 6.480 arquivos; fila de tópicos e galerias (perfis fora até o mapeamento). Seções excluídas da importação: Avisos (2 e 52), Multimídia Cannábica (48), Cannabis Medicinal (76, a confirmar) e Notícias (24). **Não interromper nem apagar** sem consulta ao responsável. O script está fora do repositório (`scratchpad` da sessão); ver `IMPORTACAO-GROWROOM.md`, seção de estado.
@@ -103,7 +103,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 ## 6. Próximos passos (ordem recomendada)
 
 1. **R2 navegador:** Firefox; cobrir claro e escuro e tentar viewport útil de 390 px. A persistência após salvar/reabrir já foi confirmada. Registrar a cobertura em `docs/portal/TESTES-NAVEGADOR.md` (AGENTS).
-2. **R3 Legenda no editor**, depois **R4 CSS dos modelos** (exige autorização para alterar `web/themes/custom/aculta420/**`) e **R5 acessibilidade**.
+2. **R5 acessibilidade:** Escape foi implementado como Cancelar no formulário de legenda; validar foco, operação por teclado e leitor de tela. O seletor ainda precisa de revisão do texto alternativo (`alt`).
 3. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)

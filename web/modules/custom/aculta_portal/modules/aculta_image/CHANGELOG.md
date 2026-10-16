@@ -1,5 +1,10 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.13 — Escape no formulário de legenda — 2026-10-16
+
+- O formulário contextual da legenda agora trata Escape como Cancelar e libera o handler ao destruir a view.
+- Verificação de teclado no navegador ainda pendente; o teste automatizado do driver encerrou sem produzir resultado legível nesta sessão.
+
 ## 0.1.0-dev.12 — estilos responsivos para os modelos de texto — 2026-10-16
 
 - `revista-post.css` define largura de Pequena (50%), Padrão (580 px), Larga (900 px) e Destaque (960 px), com quebra para largura do corpo em telas até 575 px.

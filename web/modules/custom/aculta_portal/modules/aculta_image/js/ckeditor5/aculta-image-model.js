@@ -21,6 +21,7 @@
     createLabeledInputText,
     submitHandler,
   } = CKEditor5.dll('./src/ui.js');
+  const { KeystrokeHandler } = CKEditor5.dll('./src/utils.js');
 
   /** Modelos aceitos (mesmos nomes de ImageCatalog::MODELOS). */
   const MODELOS = [
@@ -41,6 +42,7 @@
       this.input = new LabeledFieldView(locale, createLabeledInputText);
       this.input.label = 'Legenda da imagem';
       this.input.fieldView.placeholder = 'Digite a legenda';
+      this.keystrokes = new KeystrokeHandler();
       this.saveButton = new ButtonView(locale);
       this.saveButton.set({ label: 'Salvar legenda', withText: true, type: 'submit' });
       this.cancelButton = new ButtonView(locale);
@@ -59,7 +61,17 @@
 
     render() {
       super.render();
+      this.keystrokes.listenTo(this.element);
       submitHandler({ view: this });
+      this.keystrokes.set('Esc', (data, cancel) => {
+        this.fire('cancel');
+        cancel();
+      });
+    }
+
+    destroy() {
+      super.destroy();
+      this.keystrokes.destroy();
     }
 
   }
