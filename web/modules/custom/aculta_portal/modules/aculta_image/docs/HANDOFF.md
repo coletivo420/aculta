@@ -17,7 +17,7 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.19. Leia este documento antes d
 - Temporários de imagem sem referências vencem conforme `system.file:temporary_maximum_age` (seis horas no Runtime previamente inspecionado). Conversão inline ocorre sobre o arquivo gerenciado, sem cópia temporária de conversão.
 - A remoção invalida derivados do Image Style e apaga metadados de auditoria/origem/quarentena do FID removido.
 - Painel em `/painel-administrativo/imagens`, abas de relatório, limpeza e quarentena. A permissão existente `administer aculta images` protege todas as rotas; nenhuma configuração de contas ou papéis foi alterada.
-- Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal11.php` passaram. O Drush local conectou ao banco `aculta_runtime`, mas reportou URI `http://default`; por isso não foi executado `cr` nem outro comando de Runtime nesta tarefa.
+- Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal11.php` passaram. O primeiro `drush status` usou URI padrão; depois o status explícito confirmou `https://aculta.toca.net.br` e o banco `aculta_runtime`. Cache reconstruído e as quatro rotas administrativas confirmadas pelo Drush. Nenhuma configuração de contas ou papéis foi alterada.
 
 ## 2. Git e working tree
 

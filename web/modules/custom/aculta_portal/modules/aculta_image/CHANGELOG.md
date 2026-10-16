@@ -6,6 +6,7 @@
 - Temporários de imagem sem uso são limpos após `system.file:temporary_maximum_age` (seis horas no padrão), em lotes de até 100 por cron ou execução administrativa.
 - A exclusão controlada invalida derivados do Image Style e remove metadados internos órfãos.
 - Painel em `/painel-administrativo/imagens` com visão geral, relatório, limpeza e quarentena. Documentação, registro de helpers e regra para agentes atualizados.
+- Runtime de testes confirmado por `--uri=https://aculta.toca.net.br` (`aculta_runtime`); cache reconstruído e quatro rotas verificadas com Drush.
 
 ## 0.1.0-dev.18 — limite de upload da capa do curso — 2026-10-16
 
