@@ -1,0 +1,29 @@
+role_map:
+  email_confirmed:
+    - authenticated
+  wiki_contributor:
+    - authenticated
+  lms_teacher:
+    - associado
+  content_editor:
+    - email_confirmed
+  lms_admin:
+    - authenticated
+  administrator:
+    - anonymous
+    - authenticated
+    - email_confirmed
+    - wiki_contributor
+    - lms_teacher
+    - content_editor
+    - lms_admin
+    - estudante
+    - gerente_loja
+    - associado
+  estudante:
+    - email_confirmed
+  gerente_loja:
+    - authenticated
+  associado:
+    - estudante
+
