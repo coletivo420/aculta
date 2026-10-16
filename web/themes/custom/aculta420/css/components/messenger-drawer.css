@@ -2,7 +2,6 @@
    Seletores por classe de apresentação (token data-portal-ui) ou por atributo de comportamento
    (data-aculta-*). A bolha da mensagem fica em messenger-item.css. */
 .private-message-thread-inbox.aculta-messenger-conversation { position: relative; margin-block: 0; padding: 0.75rem; border: 1px solid var(--aculta-border-subtle); border-radius: 0.75rem; background: var(--aculta-surface-raised); }
-.private-message-thread-inbox.aculta-messenger-conversation.unread-thread { border-color: var(--aculta-interactive-border); background: var(--aculta-surface-muted); }
 .aculta-messenger-sender { position: relative; display: flex; align-items: center; gap: 0.8rem; min-height: 4.25rem; margin: 0.25rem 0; padding: 0.55rem 0.75rem; border: 1px solid var(--aculta-border-strong); border-radius: 0.4rem; background: var(--aculta-surface-raised); box-shadow: var(--bs-box-shadow-sm); transition: background-color var(--aculta-motion-quick) ease, border-color var(--aculta-motion-quick) ease, box-shadow var(--aculta-motion-quick) ease; }
 .aculta-messenger-sender:not(.aculta-notice-summary):hover, .aculta-messenger-sender:not(.aculta-notice-summary):focus-within { border-color: var(--aculta-interactive-border); background: var(--aculta-interactive-bg); box-shadow: var(--bs-box-shadow); }
 .aculta-messenger-sender__avatar { display: grid; flex: 0 0 3rem; width: 3rem; height: 3rem; place-items: center; overflow: hidden; border: 2px solid var(--aculta-surface-raised); border-radius: 50%; background: var(--aculta-interactive-hover-bg); box-shadow: 0 0 0 1px var(--aculta-border-strong); color: var(--aculta-interactive-hover-text); font-size: 1.1rem; font-weight: 700; }
@@ -15,7 +14,9 @@
 .aculta-messenger-sender__link:focus-visible::after { border-radius: var(--bs-border-radius); outline: 3px solid var(--aculta-focus-ring); outline-offset: -3px; }
 .aculta-messenger-sender__date { display: block; overflow: hidden; color: var(--aculta-text-secondary); font-size: 0.7rem; font-weight: 400; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .aculta-messenger-sender__link:hover, .aculta-messenger-sender__link:focus-visible { color: var(--aculta-interactive-hover-text); text-decoration: none; }
-.aculta-messenger-sender.is-unread .aculta-messenger-sender__link { font-weight: 750; }
+/* Rótulo de estado no topo, à esquerda, dentro da caixa: texto pequeno, sem cor de marcação. Não lido: mais forte. */
+.aculta-read-label { display: block; overflow: hidden; color: var(--aculta-text-secondary); font-size: 0.7rem; font-weight: 400; line-height: 1.2; text-align: start; white-space: nowrap; }
+.aculta-read-label--unread { color: var(--aculta-text-primary); font-weight: 700; }
 .aculta-messenger-sender:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: -3px; }
 .private-message-thread-inbox .private-message-inbox-thread-link { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; overflow: hidden; border: 0; border-radius: inherit; font-size: 0; }
 .private-message-thread-inbox .private-message-inbox-thread-link:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }

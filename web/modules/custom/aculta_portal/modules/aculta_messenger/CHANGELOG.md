@@ -2,6 +2,17 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.41 — rótulo Lido/Não lido e retenção de 6 meses dos avisos do Fórum (F5.2) — 2026-10-16
+
+Classificação: MINOR (nova regra de retenção e novo rótulo de estado).
+
+- Caixas de conversa e avisos do Fórum mostram o rótulo "Lido" ou "Não lido" no topo, à esquerda. Não há mais marcação por cor nem "N novas" nessas caixas.
+- Ler o tópico zera o contador do aviso e troca o rótulo para "Lido". Abrir a conversa faz o mesmo.
+- Avisos do Fórum (`aculta_aviso`, tipos de resposta e atualização) são excluídos automaticamente seis meses após a criação (cron, `AvisoRetencaoHooks`).
+- Fora da regra: avisos persistentes (`aculta_notice`) e alertas do site (`site_alert`), enviados pelo sistema administrativo, não têm rótulo de lido/não lido nem regra temporal. Os avisos do LMS também ficam fora: não são `aculta_aviso` e não têm tipo de Fórum, então não são excluídos nem recebem o rótulo. Conversas seguem a própria política de retenção.
+- Avisos do Fórum não recebem mais a cor do tipo "Informação".
+- Testes: `AvisoRetencaoTest` (limite de seis meses e tipos sujeitos à regra).
+
 ## 0.1.1-dev.39 — cliques nas abas da central abrem o item no lugar (F5.2) — 2026-10-16
 
 - A área das abas Avisos e Mensagens é um contêiner da gaveta (`data-aculta-drawer-url`/`-content`), e os cliques abrem o aviso ou a conversa no mesmo lugar, como na barra.

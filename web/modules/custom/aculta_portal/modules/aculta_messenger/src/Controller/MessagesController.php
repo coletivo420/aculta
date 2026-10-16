@@ -444,6 +444,7 @@ final class MessagesController extends ControllerBase {
       );
       $linkTitle = [
         '#type' => 'container',
+        'estado' => $this->readLabel($isUnread),
         'date' => [
           '#theme' => 'aculta_portal_element',
           '#tag' => 'span',
@@ -506,7 +507,7 @@ final class MessagesController extends ControllerBase {
       $box = [
         '#type' => 'container',
         '#attributes' => [
-          'data-portal-ui' => $senderBox['unread'] ? 'messenger-sender messenger-sender-unread' : 'messenger-sender',
+          'data-portal-ui' => 'messenger-sender',
           'data-aculta-thread-id' => $senderBox['thread_id'],
           'data-aculta-thread-unread' => $senderBox['unread'] ? 'true' : 'false',
           'tabindex' => '0',
@@ -595,14 +596,16 @@ final class MessagesController extends ControllerBase {
       foreach ($pessoais as $aviso) {
         $nid = (int) $aviso->get('assunto_nid')->value;
         $contador = (int) $aviso->get('contador_site')->value;
+        // Aviso do Fórum: rótulo Lido/Não lido no topo da caixa, sem cor de tipo. Ler o tópico zera o contador.
         $items[] = $this->noticeSummary(
           (string) $aviso->get('titulo')->value,
-          $contador > 0 ? (string) $this->translation->translate('@n novas', ['@n' => $contador]) : (string) $this->translation->translate('Lido'),
+          '',
           Url::fromRoute('entity.node.canonical', ['node' => $nid]),
           [],
           NULL,
           FALSE,
-          NoticeType::INFO,
+          NULL,
+          $this->readLabel($contador > 0),
         );
       }
       if ($comVerTodos) {
@@ -720,11 +723,15 @@ final class MessagesController extends ControllerBase {
    *
    * @param array<string, mixed> $dismiss
    */
-  private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state, bool $persistent = FALSE, ?string $type = NULL): array {
+  private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state, bool $persistent = FALSE, ?string $type = NULL, ?array $rotulo = NULL): array {
     $title_parts = [
       '#type' => 'container',
-      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-title']), '#value' => $title],
     ];
+    // Rótulo de lido/não lido (avisos do Fórum) fica no topo, à esquerda; o aviso persistente segue com o estado no rodapé.
+    if ($rotulo !== NULL) {
+      $title_parts['rotulo'] = $rotulo;
+    }
+    $title_parts['title'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-title']), '#value' => $title];
     if ($excerpt !== '') {
       $title_parts['excerpt'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-excerpt']), '#value' => $excerpt];
     }
@@ -742,6 +749,19 @@ final class MessagesController extends ControllerBase {
         'data-portal-ui' => 'notice-summary-link',
       ]),
       'dismiss' => $dismiss,
+    ];
+  }
+
+  /**
+   * Rótulo "Lido" ou "Não lido" de uma caixa de conversa ou de aviso do Fórum. Substitui a marcação por cor: o texto é a
+   * única indicação de estado. Os avisos persistentes não usam este rótulo.
+   */
+  private function readLabel(bool $naoLido): array {
+    return [
+      '#theme' => 'aculta_portal_element',
+      '#tag' => 'span',
+      '#element_attributes' => new Attribute(['data-portal-ui' => $naoLido ? 'read-label read-label-unread' : 'read-label']),
+      '#value' => $naoLido ? (string) $this->translation->translate('Não lido') : (string) $this->translation->translate('Lido'),
     ];
   }
 

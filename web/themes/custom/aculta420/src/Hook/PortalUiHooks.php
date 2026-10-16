@@ -232,7 +232,9 @@ final class PortalUiHooks {
     'messenger-options-status' => ['aculta-messenger-options__status'],
     'messenger-notice' => ['aculta-messenger-notice'],
     'messenger-sender' => ['aculta-messenger-sender', 'aculta-messenger-conversation'],
-    'messenger-sender-unread' => ['is-unread'],
+    // Rótulo Lido / Não lido no topo da caixa (sem cor de marcação): ver css/components/messenger-drawer.css.
+    'read-label' => ['aculta-read-label'],
+    'read-label-unread' => ['aculta-read-label--unread'],
     'messenger-sender-link' => ['aculta-messenger-sender__link'],
     'messenger-sender-date' => ['aculta-messenger-sender__date'],
     'messenger-sender-name' => ['aculta-messenger-sender__name'],
