@@ -5,21 +5,28 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Sales;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Agregações do relatório de vendas, lidas direto das tabelas do Commerce.
+ * Agregações do relatório de vendas e de doações, lidas direto das tabelas do Commerce.
  *
  * Não há tabela de relatório paralela: o relatório é consulta sobre commerce_order e commerce_order_item,
  * então estornos e cancelamentos aparecem assim que o pedido ou o pagamento muda. Consultas usam a
  * Database API do Drupal; a sintaxe de data (DATE_FORMAT/FROM_UNIXTIME) é MariaDB, o banco de produção.
  * Portabilidade entre bancos pertence ao projeto DBTNG-2.
  *
- * Escopo: somente vendas de produto. Itens do tipo doação (commerce_order_item.type = donation) ficam fora
- * de todas as agregações, inclusive quando o pedido mistura produto e doação. Um pedido entra no relatório
- * quando tem pelo menos um item de produto, e seu valor é a soma desses itens.
+ * Escopos (cada consulta recebe um deles, e nunca os dois juntos):
+ * - ESCOPO_PRODUTO: itens que não são doação. Um pedido entra quando tem ao menos um item de produto.
+ * - ESCOPO_DOACAO: itens do tipo donation (commerce_order.commerce_order_item_type.donation). Um pedido
+ *   entra quando tem ao menos um item de doação.
+ * Um pedido que mistura produto e doação aparece nos dois relatórios, cada um com o valor do seu escopo.
  */
-final class SalesReportQuery {
+class SalesReportQuery {
+
+  public const ESCOPO_PRODUTO = 'produto';
+
+  public const ESCOPO_DOACAO = 'doacao';
 
   /**
    * Tipo de item de pedido que representa doação (config commerce_order.commerce_order_item_type.donation).
@@ -41,12 +48,12 @@ final class SalesReportQuery {
   ) {}
 
   /**
-   * Vendas por variação e moeda, ordenadas pela quantidade.
+   * Vendas de produto por variação e moeda, ordenadas pela quantidade.
    *
    * @return array<int, array{variacao_id: int, produto: string, variacao: string, quantidade: string, total: string, moeda: string}>
    */
   public function porVariacao(SalesReportFilters $filtros): array {
-    $consulta = $this->itensDeProduto($filtros);
+    $consulta = $this->itens($filtros, self::ESCOPO_PRODUTO);
     $consulta->addField('i', 'purchased_entity', 'variacao_id');
     $consulta->addField('i', 'title', 'titulo');
     $consulta->addField('i', 'total_price__currency_code', 'moeda');
@@ -79,13 +86,13 @@ final class SalesReportQuery {
   }
 
   /**
-   * Pedidos com produto e receita de produto por período e moeda.
+   * Pedidos e valor por período e moeda, para o escopo informado.
    *
    * @return array<int, array{periodo: string, pedidos: int, total: string, moeda: string}>
    */
-  public function porPeriodo(SalesReportFilters $filtros): array {
+  public function porPeriodo(SalesReportFilters $filtros, string $escopo = self::ESCOPO_PRODUTO): array {
     $formato = self::FORMATOS[$filtros->granularidade] ?? self::FORMATOS['dia'];
-    $consulta = $this->itensDeProduto($filtros);
+    $consulta = $this->itens($filtros, $escopo);
     $consulta->addExpression("DATE_FORMAT(FROM_UNIXTIME(o.placed + :deslocamento), :formato)", 'periodo', [
       ':deslocamento' => $filtros->deslocamentoSegundos(),
       ':formato' => $formato,
@@ -105,12 +112,12 @@ final class SalesReportQuery {
   }
 
   /**
-   * IDs dos pedidos com produto no intervalo, do mais recente ao mais antigo, com paginação.
+   * IDs dos pedidos com itens do escopo no intervalo, do mais recente ao mais antigo, com paginação.
    *
    * @return array{ids: int[], total: int}
    */
-  public function pedidos(SalesReportFilters $filtros, int $pagina, int $porPagina): array {
-    $consulta = $this->pedidosComProduto($filtros);
+  public function pedidos(SalesReportFilters $filtros, string $escopo, int $pagina, int $porPagina): array {
+    $consulta = $this->pedidosDoEscopo($filtros, $escopo);
     $consulta->addField('o', 'order_id');
     $consulta->orderBy('o.placed', 'DESC');
     $consulta->orderBy('o.order_id', 'DESC');
@@ -125,31 +132,42 @@ final class SalesReportQuery {
   }
 
   /**
-   * Itens de produto de pedidos concluídos no intervalo (junção pedido e item, sem doação).
+   * Itens do escopo de pedidos concluídos no intervalo (junção pedido e item).
    */
-  private function itensDeProduto(SalesReportFilters $filtros): \Drupal\Core\Database\Query\SelectInterface {
+  private function itens(SalesReportFilters $filtros, string $escopo): SelectInterface {
     $consulta = $this->base('o', $filtros);
     $consulta->join('commerce_order_item', 'i', 'i.order_id = o.order_id');
-    $consulta->condition('i.type', self::TIPO_DOACAO, '<>');
+    $this->condicaoDeEscopo($consulta, 'i.type', $escopo);
     return $consulta;
   }
 
   /**
-   * Pedidos concluídos no intervalo que têm pelo menos um item de produto.
+   * Pedidos concluídos no intervalo com ao menos um item do escopo.
    */
-  private function pedidosComProduto(SalesReportFilters $filtros): \Drupal\Core\Database\Query\SelectInterface {
+  private function pedidosDoEscopo(SalesReportFilters $filtros, string $escopo): SelectInterface {
     $consulta = $this->base('o', $filtros);
-    $comProduto = $this->database->select('commerce_order_item', 'x');
-    $comProduto->addField('x', 'order_id');
-    $comProduto->condition('x.type', self::TIPO_DOACAO, '<>');
-    $consulta->condition('o.order_id', $comProduto, 'IN');
+    $comItem = $this->database->select('commerce_order_item', 'x');
+    $comItem->addField('x', 'order_id');
+    $this->condicaoDeEscopo($comItem, 'x.type', $escopo);
+    $consulta->condition('o.order_id', $comItem, 'IN');
     return $consulta;
+  }
+
+  /**
+   * Aplica o escopo sobre a coluna de tipo do item.
+   */
+  private function condicaoDeEscopo(SelectInterface $consulta, string $coluna, string $escopo): void {
+    match ($escopo) {
+      self::ESCOPO_PRODUTO => $consulta->condition($coluna, self::TIPO_DOACAO, '<>'),
+      self::ESCOPO_DOACAO => $consulta->condition($coluna, self::TIPO_DOACAO),
+      default => throw new \InvalidArgumentException("Escopo de relatório desconhecido: $escopo."),
+    };
   }
 
   /**
    * Base: pedidos completed no intervalo, opcionalmente de uma loja.
    */
-  private function base(string $alias, SalesReportFilters $filtros): \Drupal\Core\Database\Query\SelectInterface {
+  private function base(string $alias, SalesReportFilters $filtros): SelectInterface {
     $consulta = $this->database->select('commerce_order', $alias);
     $consulta->condition("$alias.state", 'completed');
     [$inicio, $fim] = $filtros->timestamps();
