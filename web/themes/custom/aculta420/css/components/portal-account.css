@@ -8,7 +8,7 @@
   padding: clamp(1.125rem, 2.5vw, 1.75rem);
   background: var(--aculta-surface-raised);
   border-inline-start: 4px solid var(--aculta-border-accent);
-  border-radius: 0.25rem;
+  border-radius: var(--bs-border-radius);
 }
 
 .portal-account__header h1 {
@@ -62,7 +62,7 @@
   color: var(--aculta-text-primary);
   background: var(--aculta-surface-raised);
   border-inline-start: 4px solid transparent;
-  border-radius: 0.1875rem;
+  border-radius: var(--bs-border-radius);
   font: 600 1rem/1.3 Oswald, sans-serif;
   text-decoration: none;
   transition: color var(--aculta-motion-fast) ease, background-color var(--aculta-motion-fast) ease, border-color var(--aculta-motion-fast) ease;
@@ -146,7 +146,7 @@
 .portal-account__body .user-picture .image-widget { max-width: 100%; }
 
 .portal-account-data__nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-block-end: 1rem; margin-block: 1rem; border-block-end: 1px solid var(--aculta-border-accent); }
-.portal-account-data__link { display: inline-flex; min-height: 2.75rem; align-items: center; padding: 0.625rem 0.875rem; color: var(--aculta-text-primary); background: var(--aculta-surface-raised); border: 1px solid var(--aculta-text-primary); border-radius: 0.1875rem; font: 600 0.9375rem/1.25 Oswald, sans-serif; text-decoration: none; transition: color var(--aculta-motion-fast) ease, background-color var(--aculta-motion-fast) ease; }
+.portal-account-data__link { display: inline-flex; min-height: 2.75rem; align-items: center; padding: 0.625rem 0.875rem; color: var(--aculta-text-primary); background: var(--aculta-surface-raised); border: 1px solid var(--aculta-text-primary); border-radius: var(--bs-border-radius); font: 600 0.9375rem/1.25 Oswald, sans-serif; text-decoration: none; transition: color var(--aculta-motion-fast) ease, background-color var(--aculta-motion-fast) ease; }
 .portal-account-data__link:is(:hover, :focus-visible) { color: var(--aculta-interactive-text); background: var(--aculta-interactive-bg); text-decoration: none; }
 .portal-account-data__link:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 .portal-account-data__link.is-active,
@@ -184,7 +184,7 @@
   /* Menu da conta no celular: sanfona. Cada item expande e mostra descrição e link para a página. Só mobile. */
   .portal-account__nav { padding: 0; border-inline-start: 0; background: transparent; }
   .portal-account__menu-desktop { display: none; }
-  .portal-account__accordion { display: block; background: var(--aculta-surface-raised); border-radius: 0.25rem; }
+  .portal-account__accordion { display: block; background: var(--aculta-surface-raised); border-radius: var(--bs-border-radius); }
   .portal-account__item { border-block-end: 1px solid var(--aculta-border-subtle); }
   .portal-account__summary,
   .portal-account__logout-row {
@@ -245,7 +245,7 @@
   padding: 1rem;
   border: 1px solid var(--aculta-border-accent);
   border-inline-start: 3px solid var(--aculta-interactive-border);
-  border-radius: 0.25rem;
+  border-radius: var(--bs-border-radius);
   background: var(--aculta-surface-raised);
 }
 .portal-account-course h3 { margin-top: 0; }

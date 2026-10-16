@@ -70,11 +70,11 @@
 .aculta-messenger-options { display: flex; flex-direction: column; align-items: flex-end; margin-inline-start: auto; min-width: 0; }
 /* On the same row as the back link: both start at the top of the toolbar, with no inherited block margin. */
 .aculta-messenger-conversation-toolbar .aculta-messenger-options { margin-block: 0; align-self: start; }
-.aculta-messenger-options__summary { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.25rem; padding: 0.3rem 0.65rem; border: 1px solid var(--aculta-border-default); border-radius: 0.4rem; background: var(--aculta-surface-raised); color: var(--aculta-text-primary); font-weight: 600; list-style: none; cursor: pointer; }
+.aculta-messenger-options__summary { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.25rem; padding: 0.3rem 0.65rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); font-weight: 600; list-style: none; cursor: pointer; }
 .aculta-messenger-options__summary::-webkit-details-marker { display: none; }
 .aculta-messenger-options__summary:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 .aculta-messenger-options__summary .bi { font-size: 1.1rem; line-height: 1; }
-.aculta-messenger-options__panel { display: flex; flex-direction: column; min-width: 14rem; max-width: min(18rem, 80vw); margin-block-start: 0.4rem; padding: 0.25rem; border: 1px solid var(--aculta-border-default); border-radius: 0.5rem; background: var(--aculta-surface-raised); box-shadow: var(--bs-box-shadow); }
+.aculta-messenger-options__panel { display: flex; flex-direction: column; min-width: 14rem; max-width: min(18rem, 80vw); margin-block-start: 0.4rem; padding: 0.25rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); box-shadow: var(--bs-box-shadow); }
 /* Menu rows: one action per line, separated by a rule, the same width. */
 .aculta-messenger-options__item, .aculta-messenger-options__action { display: block; width: 100%; margin: 0; padding: 0.6rem 0.75rem; border: 0; border-bottom: 1px solid var(--aculta-border-subtle); border-radius: 0; background: transparent; color: var(--aculta-text-primary); font: inherit; text-align: start; text-decoration: none; cursor: pointer; }
 .aculta-messenger-options__item:last-child, .aculta-messenger-options__action:last-child { border-bottom: 0; }
@@ -99,10 +99,10 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status { margin: 0; p
 .aculta-messenger-notice__action:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 
 /* The confirmation dialogs (block, remove friendship): a native dialog inside the Opções form. Same surface and text as the menu, no palette primitives. */
-dialog[data-aculta-dialog] { width: min(22rem, 90vw); margin: auto; padding: 1rem; border: 1px solid var(--aculta-border-default); border-radius: 0.5rem; background: var(--aculta-surface-raised); color: var(--aculta-text-primary); box-shadow: var(--bs-box-shadow); }
+dialog[data-aculta-dialog] { width: min(22rem, 90vw); margin: auto; padding: 1rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); box-shadow: var(--bs-box-shadow); }
 dialog[data-aculta-dialog] p { margin: 0 0 0.75rem; font-weight: 600; }
 dialog[data-aculta-dialog] .form-actions { display: flex; flex-direction: row; gap: 0.5rem; justify-content: flex-end; }
-dialog[data-aculta-dialog] .form-actions :is(button, input[type="submit"]) { width: auto; margin: 0; padding: 0.5rem 0.9rem; border: 1px solid var(--aculta-border-default); border-radius: 0.4rem; background: var(--aculta-surface-raised); color: var(--aculta-text-primary); text-align: center; }
+dialog[data-aculta-dialog] .form-actions :is(button, input[type="submit"]) { width: auto; margin: 0; padding: 0.5rem 0.9rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); text-align: center; }
 
 /* Avisos na gaveta: resumo em caixa de botão (como uma conversa). O aviso completo abre na mesma gaveta. */
 .aculta-notice-summary { position: relative; }

@@ -1,3 +1,13 @@
+## 0.6.0-dev.57 — foco e alvo de toque padronizados; raio padrão das caixas — 2026-10-16
+
+Classificação: MINOR (novo utilitário e novo padrão de raio).
+
+- `css/base.css`: foco visível único para elementos interativos (`:where`, especificidade zero).
+- `css/base.css`: utilitário `.aculta-touch-target` (alvo de toque de 2,75 rem) para componentes novos.
+- Raio padrão das caixas de superfície: `var(--bs-border-radius)` (0,1875 rem), definido por captura comparativa.
+  Aplicado em 4 regras do messenger e 5 do painel da conta.
+- Documentação: `docs/portal/COMPONENTES-AGRUPAMENTO.md`, seção 6.
+
 ## 0.6.0-dev.56 — agrupamento de gatilhos da barra e escaneamento de componentes — 2026-10-16
 
 Classificação: PATCH (sem mudança de marcação nem de aparência).

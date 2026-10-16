@@ -57,3 +57,54 @@ Próximas etapas recomendadas:
 1. Foco visível em uma única regra (seção 3, item 1). Afeta o painel e o tema inteiro.
 2. Alvo de toque: utilitário único de altura mínima para botões e links de ação.
 3. Caixa de superfície: escolher o raio canônico com o responsável e agrupar os 15 arquivos.
+
+## 6. Aplicado: passos 1, 2 e 3 (2026-10-16)
+
+Teste visual: capturas com Firefox headless da página pública (`https://aculta.toca.net.br/`) e uma página comparativa
+de raios com os tokens do tema, renderizada com Chromium.
+
+### 6.1 Foco visível (passo 1)
+
+- Uma definição para os elementos interativos (`a`, `button`, `input`, `select`, `textarea`, `summary`, `[tabindex]`),
+  em `css/base.css`, com `:where(...)` (especificidade zero: componentes com regra própria continuam mandando).
+- Cor e espessura vêm do token `--aculta-focus-ring`. Verificado na captura comparativa (contorno amarelo em claro).
+- As 23 regras de foco específicas por componente continuam. Removê-las agora perderia o foco de elementos que não são
+  interativos por tag (ex.: contêineres com classe). Remoção fica para a revisão de cada componente.
+
+### 6.2 Alvo de toque (passo 2)
+
+- Utilitário `.aculta-touch-target` (altura e largura mínimas de 2,75 rem) em `css/base.css`, para componentes novos.
+- Os 16 usos existentes não foram alterados: cada um tem altura própria e muda de aparência se for padronizado sem
+  revisão. Ficam para a revisão de cada componente.
+
+### 6.3 Raio padrão das caixas de superfície (passo 3)
+
+Decisão: **`var(--bs-border-radius)`** (0,1875 rem), o raio-base do tema.
+
+Motivo, pela captura comparativa:
+
+| Raio | Leitura visual |
+|---|---|
+| 0,1875 rem (`--bs-border-radius`) | Nítido, combina com os botões e com os campos (todos já usam essa variável) |
+| 0,25 rem (`--bs-border-radius-lg`) | Levemente mais suave; destoa dos controles |
+| 0,5 rem | Arredondado demais para caixas de conteúdo |
+| 0,75 rem | Forma de cartão, não de caixa de painel |
+
+Também é o valor mais usado (22 regras já o usam por variável).
+
+Aplicado:
+
+- Regras de caixa com fundo e borda de superfície que tinham raio literal (0,25 rem, 0,5 rem, 0,1875 rem ou 0,4 rem)
+  passaram para `var(--bs-border-radius)`: 4 regras em `messenger-drawer.css` e 5 no painel da conta
+  (`portal-account.css`: cabeçalho, navegação, conteúdo, sanfona, curso e links de aba).
+- Não alterados, por não serem caixas: itens de mensagem em balão (`messenger-drawer` com 0,4 rem), e o estilo de
+  12,5 rem de avatares (círculos, 50%).
+
+Pendente: outras caixas que usam fundo de superfície com raio literal em componentes ainda não revisados
+(ver seção 5).
+
+### 6.4 Resultado
+
+- Gate de design do tema: sem falhas. Gate de fronteira módulo/tema: passa.
+- Captura do Firefox da página pública: renderiza com as mudanças; contador de avisos com a cor de alerta do tema.
+- Versão do tema: `0.6.0-dev.57` (ver changelog do tema).
