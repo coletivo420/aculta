@@ -30,3 +30,38 @@
   .aculta-forum-index__item { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
   .aculta-forum-index__last { grid-column: 1 / -1; }
 }
+
+/* Tópico do Fórum (templates/node--forum--full.html.twig): metadados, barra de ações e seção de respostas. */
+.aculta-forum-topic { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.aculta-forum-topic__meta { margin: 0; color: var(--aculta-text-secondary); font-size: 0.9rem; }
+.aculta-forum-topic__body { line-height: 1.6; }
+.aculta-forum-topic__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.aculta-forum-topic__actions .flag { margin: 0; }
+.aculta-forum-topic__actions .flag a, .aculta-forum-topic__actions .flag button { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0.5rem 0.9rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); font-weight: 600; text-decoration: none; }
+.aculta-forum-topic__actions .flag a:hover, .aculta-forum-topic__actions .flag a:focus-visible { background: var(--aculta-interactive-hover-bg); border-color: var(--aculta-interactive-hover-bg); color: var(--aculta-interactive-hover-text); }
+.aculta-forum-topic__actions .flag a:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+/* Estado "marcado" (Seguindo, Salvo): o link de remoção do flag leva a cor de ação. */
+.aculta-forum-topic__actions .flag.action-unflag a { background: var(--aculta-interactive-bg); border-color: var(--aculta-interactive-border); color: var(--aculta-interactive-text); }
+.aculta-forum-topic__actions .flag-sinalizar-topico a { color: var(--aculta-text-secondary); font-weight: 400; }
+.aculta-forum-topic__replies { display: grid; gap: 0.75rem; padding-block-start: 1rem; border-top: 1px solid var(--aculta-border-subtle); }
+.aculta-forum-topic__replies-title { margin: 0; font-size: 1.35rem; }
+
+/* Respostas do tópico (templates/comment--comment-forum.html.twig): cabeçalho com avatar pequeno, texto e recuo das respostas diretas. */
+.aculta-forum-replies-list, .aculta-forum-topic__replies .indented { display: grid; gap: 0.75rem; }
+.aculta-forum-topic__replies .indented { margin-inline-start: 1.25rem; padding-inline-start: 0.75rem; border-inline-start: 3px solid var(--aculta-border-subtle); }
+.aculta-forum-reply { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; padding: 0.75rem 1rem; border: 1px solid var(--aculta-border-subtle); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); }
+.aculta-forum-reply__head { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
+.aculta-forum-reply__avatar { flex: 0 0 auto; }
+.aculta-forum-reply__avatar img { display: block; width: 2.25rem; height: 2.25rem; border-radius: 50%; object-fit: cover; }
+.aculta-forum-reply__submitted { margin: 0; color: var(--aculta-text-secondary); font-size: 0.875rem; }
+.aculta-forum-reply__submitted a { color: var(--aculta-text-primary); font-weight: 600; }
+.aculta-forum-reply__body { line-height: 1.6; overflow-wrap: anywhere; }
+.aculta-forum-reply__body > :first-child { margin-block-start: 0; }
+.aculta-forum-reply__body > :last-child { margin-block-end: 0; }
+.aculta-forum-reply__footer { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.85rem; }
+.aculta-forum-reply__footer a { color: var(--aculta-text-secondary); }
+.aculta-forum-reply__footer .links, .aculta-forum-reply__footer ul { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.aculta-forum-reply .new { display: inline-block; padding: 0.05rem 0.4rem; border-radius: var(--bs-border-radius); background: var(--aculta-interactive-bg); color: var(--aculta-interactive-text); font-size: 0.75rem; font-weight: 700; }
+/* O link de bloqueio do módulo de mensagens fica dentro do avatar: a coluna do avatar fica à esquerda e o texto, pequeno. */
+.aculta-forum-reply__avatar { display: grid; justify-items: start; gap: 0.15rem; }
+.aculta-forum-reply__avatar .block-unblock { font-size: 0.75rem; line-height: 1.2; }

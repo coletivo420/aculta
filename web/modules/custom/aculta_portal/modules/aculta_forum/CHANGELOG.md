@@ -1,3 +1,12 @@
+## F4 — tópico: ações sociais, respostas e limpeza de termos — 2026-10-17
+
+- Termo "General discussion" (instalador do módulo forum, sem tópicos, sem referências) removido no teste. `/forum/39` responde 404.
+- Denunciar tópico visível para membros (`flag.flag.sinalizar_topico`, `show_as_field: true`).
+- Rótulos dos flags quando marcados: "Seguindo" e "Salvo" (antes "Remover: …").
+- Campo `comment_forum` em modo encadeado (`default_mode: 1`): respostas diretas aparecem sob a resposta a que respondem.
+- Abertura da Revista sem o título repetido (`aculta_magazine` 0.1.0-dev.6).
+- Pendentes da F4: conversa vinculada ao histórico (depende da F3); modo escuro; contagem de respostas no cabeçalho.
+
 ## Documentação de estado e referência de classes — 2026-10-17
 
 - README: estado do código por parte do fórum (F2, F5.1, F5.2, F9), com o documento de cada módulo.

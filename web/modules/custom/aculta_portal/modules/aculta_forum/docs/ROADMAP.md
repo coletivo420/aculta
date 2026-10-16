@@ -33,9 +33,10 @@ sem conceder conquistas durante a migração histórica.
   `aculta_messenger/docs/AVISOS-E-MENSAGENS.md`.
 - F9: parcial. Pendentes: nível de curso (depende da F8) e a exclusão no sitemap se o tipo `forum` entrar nele.
 - F3: aguarda a lista de autores da importação.
-- F4: em andamento. Primeira parte no teste (2026-10-17): índice do fórum em cartões (`forum-list.html.twig` do tema),
-  botão de publicar no estilo do site. Pendentes: tópico (ações sociais), conversa vinculada ao histórico (depende da F3),
-  verificação em modo escuro e com conta logada.
+- F4: em andamento. Feito no teste (2026-10-17): índice em cartões; tópico com barra de ações (seguir, salvar,
+  denunciar) e estado marcado; respostas em cartões com árvore; abertura da Revista sem título repetido; termo
+  "General discussion" removido. Pendentes: conversa vinculada ao histórico (depende da F3), contagem de respostas,
+  verificação em modo escuro.
 
 ## Antes da primeira alteração funcional
 

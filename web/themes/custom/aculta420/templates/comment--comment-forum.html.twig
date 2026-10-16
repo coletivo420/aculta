@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Resposta de tópico do Fórum (ACULTA420, F4): avatar pequeno, autor e data em uma linha, texto e rodapé.
+ *
+ * Respostas diretas ficam dentro de .indented (marcação do core); o recuo é feito em css/components/forum-index.css.
+ * Os links de ação (responder, editar, denunciar) vêm em content.links, como no core.
+ */
+#}
+<article{{ attributes.addClass('aculta-forum-reply') }}>
+  {{ title_prefix }}
+  <header class="aculta-forum-reply__head">
+    {% if user_picture %}
+      <div class="aculta-forum-reply__avatar">{{ user_picture }}</div>
+    {% endif %}
+    <p class="aculta-forum-reply__submitted">{{ submitted }}</p>
+  </header>
+  <div{{ content_attributes.addClass('aculta-forum-reply__body') }}>
+    {{ content|without('links') }}
+  </div>
+  <footer class="aculta-forum-reply__footer">
+    {{ permalink }}
+    {{ content.links }}
+  </footer>
+  {{ title_suffix }}
+</article>

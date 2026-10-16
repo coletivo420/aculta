@@ -46,14 +46,8 @@ final class ForumOpeningPost {
     }
 
     $cache = (new CacheableMetadata())->addCacheableDependency($post)->addCacheableDependency($topic);
-    $children = [
-      'titulo' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h2',
-        '#attributes' => ['data-portal-ui' => 'forum-opening-post-title'],
-        'link' => ['#type' => 'link', '#title' => $post->label(), '#url' => $url],
-      ],
-    ];
+    // O título não se repete aqui: a página do tópico já tem o título, e o link "Ler a publicação na Revista" leva à publicação.
+    $children = [];
 
     $image = $this->image($post, $cache);
     if ($image !== NULL) {

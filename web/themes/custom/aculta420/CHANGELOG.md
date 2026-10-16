@@ -1071,6 +1071,16 @@ Classificação: PATCH (navegação da caixa de mensagens existente).
 - Verificações estáticas: PHP lint e `node --check` PASS; gates do Portal/tema pendentes.
 - RUNTIME STATUS: DEFERRED.
 
+## 0.6.0-dev.63 — tópico do Fórum: ações sociais e respostas organizadas (F4) — 2026-10-17
+
+Classificação: MINOR (novos templates de tópico e de resposta do Fórum).
+
+- `node--forum--full.html.twig`: metadados, abertura da Revista, corpo, barra de ações (seguir, salvar, denunciar) e seção "Respostas".
+- Barra de ações: botões do site; estado marcado em destaque (`.flag.action-unflag a`) e rótulos "Seguindo" e "Salvo".
+- `comment--comment-forum.html.twig`: resposta em cartão, com avatar pequeno, autor, data, texto e rodapé. Respostas diretas recuam (árvore, configurada no campo `comment_forum`).
+- Colunas em `minmax(0, 1fr)`: a imagem da abertura não estica a página no celular.
+- Verificado no Runtime com conta de teste logada: desktop e 390 px; estado marcado; resposta aninhada. Modo escuro: pendente.
+
 ## 0.6.0-dev.62 — índice do Fórum em cartões (F4, primeira parte) — 2026-10-17
 
 Classificação: MINOR (novo template de lista e novo componente de apresentação do Fórum).

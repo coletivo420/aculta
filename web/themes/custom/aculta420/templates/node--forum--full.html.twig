@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Tópico do Fórum na página completa (ACULTA420, F4).
+ *
+ * Ordem: abertura da Revista (quando o tópico veio dela), corpo, barra de ações (seguir, salvar, denunciar) e as
+ * respostas em uma seção própria. Os dados e o acesso vêm do Drupal e dos módulos do Portal; o tema só organiza.
+ */
+#}
+<article{{ attributes.addClass('node', 'node--type-forum', 'node--view-mode-full', 'aculta-forum-topic') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {% if display_submitted %}
+    <p class="aculta-forum-topic__meta">{{ 'Enviado por'|t }} {{ author_name }} {{ 'em'|t }} {{ node.created.value|date('d/m/Y H:i') }}</p>
+  {% endif %}
+  {{ content.abertura }}
+  {% if content.body %}
+    <div class="aculta-forum-topic__body">{{ content.body }}</div>
+  {% endif %}
+  <div class="aculta-forum-topic__actions" role="group" aria-label="{{ 'Ações deste tópico'|t }}">
+    {{ content.flag_seguir_topico }}
+    {{ content.flag_salvar_topico }}
+    {{ content.flag_sinalizar_topico }}
+  </div>
+  {{ content|without('abertura', 'body', 'flag_seguir_topico', 'flag_salvar_topico', 'flag_sinalizar_topico', 'comment_forum', 'links') }}
+  <section class="aculta-forum-topic__replies" aria-labelledby="aculta-forum-replies-title">
+    <h2 id="aculta-forum-replies-title" class="aculta-forum-topic__replies-title">{{ 'Respostas'|t }}</h2>
+    {{ content.comment_forum }}
+  </section>
+</article>

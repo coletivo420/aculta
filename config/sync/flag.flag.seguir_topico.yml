@@ -13,7 +13,7 @@ global: false
 flag_short: 'Seguir tópico'
 flag_long: ''
 flag_message: ''
-unflag_short: 'Remover: Seguir tópico'
+unflag_short: 'Seguindo'
 unflag_long: ''
 unflag_message: ''
 unflag_denied_text: ''
