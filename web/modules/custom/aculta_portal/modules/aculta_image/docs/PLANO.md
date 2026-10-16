@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-16: versão **0.1.0-dev.21**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
+Status em 2026-10-16: versão **0.1.0-dev.22**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -31,7 +31,7 @@ exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem 
 | M9 comparação visual | feito | dHash de 64 bits com GD, código próprio; cron em lotes de 200; limiar 6 bits |
 | og:image | feito | estilo `aculta_compartilhamento_1200x630`; verificado HTTP 200 |
 | Upload do texto (1200 px) | feito | redução para 1200 px de largura antes da compressão (`ImageCompressor::redimensionar`); imagens maiores são convertidas, não recusadas |
-| M10 modelos de imagem no texto | **parcial** | ver seção 3 |
+| M10 modelos de imagem no texto | feito | Runtime, Firefox, Orca/AT-SPI, persistência da legenda e renderização pública conferidos; detalhes em `MODELOS-DE-IMAGEM.md` |
 | R8 migração e dívida | feito | Auditoria estática sem consumidores `legado_*`; todas as referências de estilo no Config Sync existem no catálogo. Gate sem ocorrências fora do `aculta_image`. |
 
 ## 3. M10 — Modelos de imagem no texto

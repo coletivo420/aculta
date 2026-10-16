@@ -1,9 +1,9 @@
 # Modelos de imagem no texto
 
-Status em 2026-10-16 (0.1.0-dev.20): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
-modelo nos três editores e a persistência de `larga` ao reabrir. Upload real de 1600×800 resultou em 1200×600. CSS dos
-quatro modelos aferido em fixture local a 1366/500 px e nos modos claro/escuro. Ainda faltam viewport útil de 390 px,
-leitor de tela e uma revisão numa página pública com sessão válida. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.
+Status em 2026-10-16 (0.1.0-dev.22): **implementado e verificado no Runtime.** Firefox confirmou seletor, persistência
+do modelo e da legenda, upload convertido de 1600×800 para 1200×600 e renderização pública. Os quatro modelos foram
+medidos a 1366, 500 e 390 px, em temas claro e escuro; Firefox/Orca/AT-SPI verificaram teclado e semântica acessível.
+Pendências de operação e dependências externas: [HANDOFF.md](HANDOFF.md), seção 6.
 
 ## 1. Objetivo
 
@@ -49,8 +49,8 @@ reduzidos no upload (ver seção 5).
 
 - Plugin CKEditor 5 `acultaImage.ImageModel` em JavaScript simples, sem build. Usa os globais `CKEditor5.dll` e
   `CKEditor5.image` que o core expõe. Grava o modelo em `data-aculta-modelo`.
-- O botão contextual “Editar legenda” grava `data-aculta-legenda`; o filtro converte o atributo em `<figcaption>`. A UI
-  serializa corretamente e a renderização pública foi confirmada; persistência ao reabrir o editor segue pendente.
+- O botão contextual “Editar legenda” grava `data-aculta-legenda`; o filtro converte o atributo em `<figcaption>`. Firefox
+  no Runtime confirmou gravação, persistência ao reabrir o editor e renderização pública.
 - Classe PHP `Plugin\CKEditor5Plugin\ImageModel` (configuração por editor: quais modelos aparecem).
 - Filtro `aculta_imagem_modelo` que transforma o `<img>` em `<figure>` com `srcset`, `sizes` e `figcaption`.
 
@@ -86,21 +86,21 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 | --- | --- | --- |
 | P1 | Catálogo dos modelos e estilos `aculta_corpo_*` | **feito** (exportados no pipeline `aculta_derivados`) |
 | P2 | Filtro PHP com `<figure>`, `srcset` e legenda (sem crédito) | **feito** (sem JavaScript na página pública) |
-| P3 | Plugin CKEditor 5 com seletor de modelo | **botões e gravação testados no Runtime; upload e reabertura confirmados; falta viewport real de 390 px e revisão com leitor de tela** |
-| P3b | Campo contextual de legenda | **implementado e serializado; `<figcaption>` confirmado em página pública; persistência ao reabrir o editor pendente** |
-| P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | **fixture aferida em claro/escuro; página pública anônima aferida a 1366/500 px; faltam dark integrado e viewport real de 390 px** |
-| P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | **alt, legenda e teclado verificados no Firefox; falta leitor de tela** |
-| P6 | Formato próprio para usuários e confirmação de e-mail | concluído: permissão direta em `email_confirmed`; a herança vigente estende o acesso a estudante, associado, professor e editor de conteúdo |
+| P3 | Plugin CKEditor 5 com seletor de modelo | **feito**: seletor, gravação/reabertura, upload e renderização pública confirmados; quatro modelos aferidos a 390 px |
+| P3b | Campo contextual de legenda | **feito**: gravação, persistência ao reabrir e `<figcaption>` público confirmados |
+| P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | **feito**: página pública aferida a 1366/500/390 px, claro e escuro, sem overflow |
+| P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | **feito**: Firefox e Orca/AT-SPI verificaram texto alternativo, legenda e operação por teclado |
+| P6 | Formato próprio para usuários e confirmação de e-mail | **feito**: permissão direta em `email_confirmed`; herança efetiva para estudante, associado, professor e editor de conteúdo |
 
 ## 8. Riscos
 
 - Textos já publicados: imagens antigas continuam como estão. O modelo vale para imagens novas ou editadas, a não ser que
   haja migração.
 - As referências `basic_html` e `full_html`, inclusive revisões, foram migradas para os formatos ACULTA pelo update `aculta_portal_update_11009`.
-- O filtro precisa rodar antes do filtro de limpeza de HTML do formato, senão remove o `<figure>`. No `usuario_aculta` e no
-  `basic_html` a ordem é a do config (peso 20 para o modelo).
-- O downcast do atributo para o `<img>` foi confirmado nos três editores no Firefox. A persistência após salvar/reabrir
-  foi confirmada em `full_html`; o upload real foi confirmado em `revista_editorial`.
+- O filtro precisa rodar antes do filtro de limpeza de HTML do formato, senão remove o `<figure>`. Os formatos ACULTA
+  configurados usam peso 20 para o filtro do modelo.
+- O downcast do atributo para o `<img>` e a persistência após salvar/reabrir foram confirmados no Firefox. O upload real
+  foi exercitado em `revista_editorial`; a revisão visual pública anônima verificou os quatro modelos.
 
 ## 9. Decisões de 2026-10-17 (responsável)
 

@@ -6,6 +6,11 @@
 - O gate `validate-aculta-image.php` passou sem usos de imagem fora do submódulo. O plano, handoff e registro de dívida anotam a conclusão de R8.
 - Atualizado comentário de `ImageCatalog` para refletir o critério atual de manutenção de estilos antigos.
 
+## 0.1.0-dev.22 — reconciliação da documentação M10 — 2026-10-16
+
+- `MODELOS-DE-IMAGEM.md` agora reflete as verificações existentes no Runtime: persistência da legenda, viewport de 390 px, página pública e revisão Firefox/Orca/AT-SPI.
+- As fases P3 a P6 foram marcadas como concluídas; as pendências operacionais permanecem no handoff.
+
 ## 0.1.0-dev.20 — seletor de imagem e herança de papéis — 2026-10-16
 
 - Documentação alinhada à hierarquia da PR #286: `email_confirmed` mantém a permissão direta de `usuario_aculta`; `estudante`, `associado`, `lms_teacher` e `content_editor` a herdam pela configuração atual.

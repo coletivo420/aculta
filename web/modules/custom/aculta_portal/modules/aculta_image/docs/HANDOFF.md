@@ -1,12 +1,12 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.20. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.22. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
-3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário, persistência e reabertura da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Firefox/Orca/AT-SPI confirmaram foco e leitura da legenda e do `alt`, além da semântica de imagem/legenda.
+3. **M10 (modelos de imagem no texto) está concluída.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário, persistência e reabertura da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Firefox/Orca/AT-SPI confirmaram foco e leitura da legenda e do `alt`, além da semântica de imagem/legenda.
 4. Formatos Core migrados para os formatos ACULTA; a permissão direta do seletor de `usuario_aculta` pertence a `email_confirmed`. A herança atual também a concede efetivamente a `estudante`, `associado`, `lms_teacher` e `content_editor`; `gerente_loja` não herda essa permissão.
 5. A galeria 11 teve as mídias duplicadas mescladas com o `alt` do menor ID; arquivos redundantes aguardam o prazo da quarentena até 2026-11-15. A importação do Growroom segue bloqueada pela F3 do Fórum.
 6. O R7 adicionou `capa_curso` com política `aculta_image`; as Views usam o cartão com finalidade `destaque`. A configuração foi aplicada ao Runtime e os catálogos respondem 200. Firefox confirmou a capa usando uma imagem existente atribuída temporariamente ao curso 1: o cartão gerou e carregou `aculta_destaque_16x9` em 1280×720; `capa_curso` foi limpo logo depois. `config:status` não aponta diferença nos seis arquivos de configuração deste R7.
