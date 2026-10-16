@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.14. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.15. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -92,6 +92,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 - **Resposta antiga em `basic_html`:** ao editar uma resposta do Fórum que já usa `basic_html`, o formulário passa a oferecer só `usuario_aculta`. Testar no Runtime antes de liberar.
 - **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
 - **Seletor de modelo:** dropdown único importado nos três editores. Firefox confirmou as quatro opções do `full_html`, seleção de Larga e `data-aculta-modelo="larga"` serializado. `usuario_aculta` recebe Pequena e Padrão pela configuração dinâmica.
+- **Barra multilinha:** o marcador `-` na toolbar desliga o overflow automático do CKEditor. `revista_editorial` já o usava; foi aplicado a `full_html` e `usuario_aculta`. Firefox mediu três linhas e nenhum botão de overflow a 500 px em `full_html`.
 - **Estilos dos modelos:** em `revista-post.css`, medidos em fixture local com o CSS e tokens do tema: 1366 px (320/580/900/960 px) e 500 px (484 px, sem breakout); modo claro/escuro troca fundo e cor da legenda. Ainda falta ver na página pública.
 - **Texto alternativo:** o Drupal core mostra aviso quando falta `alt`, permite abrir o formulário por teclado e remove o aviso após salvar. Fluxo testado no Firefox; conteúdo temporário removido. Imagem decorativa pode ter `alt` vazio quando marcada como decorativa.
 - **Legenda:** o formulário contextual grava e reabre `data-aculta-legenda`; Firefox no Runtime confirmou abertura por Enter, foco no campo e Escape fechando sem alterar dados. Nó temporário foi removido. Falta confirmar `<figcaption>` numa página pública.

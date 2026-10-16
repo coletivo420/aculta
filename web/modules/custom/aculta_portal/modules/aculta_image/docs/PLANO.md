@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-16: versão **0.1.0-dev.14**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
+Status em 2026-10-16: versão **0.1.0-dev.15**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -53,7 +53,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 
 1. **Runtime:** configuração importada e cache reconstruído. Upload de 1600×800 convertido para 1200×600; `user.role.authenticated`
    ainda tem drift de permissões alheias à imagem.
-2. **Teste no navegador:** Firefox confirmou no `full_html` as quatro opções, seleção de Larga e gravação do atributo. Os três editores foram atualizados parcialmente no Runtime. Faltam temas claro/escuro, viewport útil de 390 px e revisão com leitor de tela. O Firefox headless limitou a janela em 488 px. Ver [HANDOFF.md](HANDOFF.md), seção 6.
+2. **Teste no navegador:** Firefox confirmou no `full_html` as quatro opções, seleção de Larga e gravação do atributo. Barra multilinha: três linhas a 500 px sem overflow. Os três editores foram atualizados parcialmente no Runtime. Faltam temas claro/escuro, viewport útil de 390 px e revisão com leitor de tela. Ver [HANDOFF.md](HANDOFF.md), seção 6.
 3. **Legenda na UI do editor:** formulário contextual implementado; Firefox confirmou `data-aculta-legenda`. Falta validar o `figcaption` renderizado e reabrir o editor.
 4. **CSS dos modelos** no ACULTA420: implementado e medido numa fixture com tokens reais (1366/500 px, claro/escuro); falta revisão numa página pública.
 5. **Acessibilidade:** legenda ligada com `figcaption`, operação por teclado. Firefox confirmou upcast, abertura por Enter, foco e Escape sem alterar dados. O core avisa quando falta `alt`, permite editar por teclado e remove o aviso após salvar; imagem decorativa pode usar `alt` vazio quando marcada como decorativa. Falta leitor de tela e confirmação de `figcaption` numa página pública.

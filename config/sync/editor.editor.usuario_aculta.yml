@@ -23,6 +23,7 @@ settings:
       - drupalInsertImage
       - acultaImageModel
       - acultaImageLegenda
+      - '-'
   plugins:
     aculta_image_model:
       modelos:

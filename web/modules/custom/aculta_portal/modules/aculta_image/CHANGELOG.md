@@ -1,5 +1,11 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.15 — barra do CKEditor multilinha — 2026-10-16
+
+- `full_html` e `usuario_aculta` usam a opção multilinha nativa do CKEditor; `revista_editorial` já tinha essa opção.
+- No Drupal core, o marcador `-` remove o agrupamento automático e permite que a barra passe para novas linhas.
+- Firefox no Runtime confirmou três linhas de botões a 500 px, sem botão de overflow. Nó temporário removido.
+
 ## 0.1.0-dev.14 — dropdown de modelos e revisão do texto alternativo — 2026-10-16
 
 - Os quatro botões foram substituídos pelo dropdown `Modelo da imagem`, que indica o modelo da imagem selecionada e lista apenas as opções permitidas no formato.

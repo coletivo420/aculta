@@ -33,6 +33,7 @@ settings:
       - codeBlock
       - sourceEditing
       - drupalMedia
+      - '-'
   plugins:
     ckeditor5_codeBlock:
       languages:
