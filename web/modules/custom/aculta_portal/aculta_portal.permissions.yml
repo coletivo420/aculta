@@ -22,3 +22,7 @@ confirmar email de conta manualmente:
   title: Confirmar o e-mail de uma conta manualmente
   description: Marca o e-mail de uma conta como confirmado pela administração. A ação é registrada no log (administrador e conta, sem o endereço).
   restrict access: true
+
+gerenciar pagamentos de vendas:
+  title: Cancelar e estornar pagamentos de vendas
+  description: Cancelar pagamento pendente e estornar venda de produto pelo Mercado Pago. Concedido ao gerente de loja. Não inclui doações.

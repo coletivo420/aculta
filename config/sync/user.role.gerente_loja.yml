@@ -18,6 +18,7 @@ permissions:
   - 'access commerce_product overview'
   - 'access commerce_product_attribute overview'
   - 'access site reports'
+  - 'gerenciar pagamentos de vendas'
   - 'create commerce_product_attribute'
   - 'create produto_loja commerce_product'
   - 'create terms in categoria_loja'

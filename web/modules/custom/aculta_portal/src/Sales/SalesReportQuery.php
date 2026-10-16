@@ -15,13 +15,19 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  * Database API do Drupal; a sintaxe de data (DATE_FORMAT/FROM_UNIXTIME) é MariaDB, o banco de produção.
  * Portabilidade entre bancos pertence ao projeto DBTNG-2.
  *
- * Vendas consideram pedidos no estado completed, com placed dentro do intervalo. Itens de qualquer tipo
- * (produto e apoio) entram no total, como no relatório anterior.
+ * Escopo: somente vendas de produto. Itens do tipo doação (commerce_order_item.type = donation) ficam fora
+ * de todas as agregações, inclusive quando o pedido mistura produto e doação. Um pedido entra no relatório
+ * quando tem pelo menos um item de produto, e seu valor é a soma desses itens.
  */
 final class SalesReportQuery {
 
   /**
-   * Formato MariaDB por granularidade, em torno do dia local.
+   * Tipo de item de pedido que representa doação (config commerce_order.commerce_order_item_type.donation).
+   */
+  public const TIPO_DOACAO = 'donation';
+
+  /**
+   * Formato MariaDB por granularidade.
    */
   private const FORMATOS = [
     'dia' => '%Y-%m-%d',
@@ -40,7 +46,7 @@ final class SalesReportQuery {
    * @return array<int, array{variacao_id: int, produto: string, variacao: string, quantidade: string, total: string, moeda: string}>
    */
   public function porVariacao(SalesReportFilters $filtros): array {
-    $consulta = $this->base('commerce_order_item', 'i', 'i.order_id', $filtros);
+    $consulta = $this->itensDeProduto($filtros);
     $consulta->addField('i', 'purchased_entity', 'variacao_id');
     $consulta->addField('i', 'title', 'titulo');
     $consulta->addField('i', 'total_price__currency_code', 'moeda');
@@ -73,20 +79,20 @@ final class SalesReportQuery {
   }
 
   /**
-   * Pedidos e receita por período e moeda.
+   * Pedidos com produto e receita de produto por período e moeda.
    *
    * @return array<int, array{periodo: string, pedidos: int, total: string, moeda: string}>
    */
   public function porPeriodo(SalesReportFilters $filtros): array {
     $formato = self::FORMATOS[$filtros->granularidade] ?? self::FORMATOS['dia'];
-    $consulta = $this->base('commerce_order', 'o', 'o.order_id', $filtros);
+    $consulta = $this->itensDeProduto($filtros);
     $consulta->addExpression("DATE_FORMAT(FROM_UNIXTIME(o.placed + :deslocamento), :formato)", 'periodo', [
       ':deslocamento' => $filtros->deslocamentoSegundos(),
       ':formato' => $formato,
     ]);
     $consulta->addExpression('COUNT(DISTINCT o.order_id)', 'pedidos');
-    $consulta->addExpression('SUM(o.total_price__number)', 'total');
-    $consulta->addField('o', 'total_price__currency_code', 'moeda');
+    $consulta->addExpression('SUM(i.total_price__number)', 'total');
+    $consulta->addField('i', 'total_price__currency_code', 'moeda');
     $consulta->groupBy('periodo');
     $consulta->groupBy('moeda');
     $consulta->orderBy('periodo', 'DESC');
@@ -99,12 +105,12 @@ final class SalesReportQuery {
   }
 
   /**
-   * IDs dos pedidos concluídos no intervalo, do mais recente ao mais antigo, com paginação.
+   * IDs dos pedidos com produto no intervalo, do mais recente ao mais antigo, com paginação.
    *
    * @return array{ids: int[], total: int}
    */
   public function pedidos(SalesReportFilters $filtros, int $pagina, int $porPagina): array {
-    $consulta = $this->base('commerce_order', 'o', 'o.order_id', $filtros);
+    $consulta = $this->pedidosComProduto($filtros);
     $consulta->addField('o', 'order_id');
     $consulta->orderBy('o.placed', 'DESC');
     $consulta->orderBy('o.order_id', 'DESC');
@@ -119,18 +125,37 @@ final class SalesReportQuery {
   }
 
   /**
-   * Consulta base: pedidos completed no intervalo, opcionalmente de uma loja.
+   * Itens de produto de pedidos concluídos no intervalo (junção pedido e item, sem doação).
    */
-  private function base(string $tabela, string $alias, string $chaveJoin, SalesReportFilters $filtros) {
-    $consulta = $this->database->select('commerce_order', 'o');
-    if ($tabela !== 'commerce_order') {
-      $consulta->join($tabela, $alias, "$chaveJoin = o.order_id");
-    }
-    $consulta->condition('o.state', 'completed');
+  private function itensDeProduto(SalesReportFilters $filtros): \Drupal\Core\Database\Query\SelectInterface {
+    $consulta = $this->base('o', $filtros);
+    $consulta->join('commerce_order_item', 'i', 'i.order_id = o.order_id');
+    $consulta->condition('i.type', self::TIPO_DOACAO, '<>');
+    return $consulta;
+  }
+
+  /**
+   * Pedidos concluídos no intervalo que têm pelo menos um item de produto.
+   */
+  private function pedidosComProduto(SalesReportFilters $filtros): \Drupal\Core\Database\Query\SelectInterface {
+    $consulta = $this->base('o', $filtros);
+    $comProduto = $this->database->select('commerce_order_item', 'x');
+    $comProduto->addField('x', 'order_id');
+    $comProduto->condition('x.type', self::TIPO_DOACAO, '<>');
+    $consulta->condition('o.order_id', $comProduto, 'IN');
+    return $consulta;
+  }
+
+  /**
+   * Base: pedidos completed no intervalo, opcionalmente de uma loja.
+   */
+  private function base(string $alias, SalesReportFilters $filtros): \Drupal\Core\Database\Query\SelectInterface {
+    $consulta = $this->database->select('commerce_order', $alias);
+    $consulta->condition("$alias.state", 'completed');
     [$inicio, $fim] = $filtros->timestamps();
-    $consulta->condition('o.placed', [$inicio, $fim], 'BETWEEN');
+    $consulta->condition("$alias.placed", [$inicio, $fim], 'BETWEEN');
     if ($filtros->lojaId !== NULL) {
-      $consulta->condition('o.store_id', $filtros->lojaId);
+      $consulta->condition("$alias.store_id", $filtros->lojaId);
     }
     return $consulta;
   }

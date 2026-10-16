@@ -10,6 +10,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\aculta_portal\Sales\SalesReportQuery;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -51,6 +52,10 @@ final class SalesReportController implements ContainerInjectionInterface {
 
     foreach ($orderStorage->loadMultiple($ids) as $pedido) {
       foreach ($pedido->getItems() as $item) {
+        // Doações ficam fora do relatório de vendas de produto (decisão do responsável).
+        if ($item->bundle() === SalesReportQuery::TIPO_DOACAO) {
+          continue;
+        }
         $variacao = $item->getPurchasedEntity();
         $preco = $item->getTotalPrice();
         if ($variacao === NULL || $preco === NULL) {
