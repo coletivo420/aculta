@@ -52,6 +52,7 @@ permissions:
   - 'update own participante profile'
   - 'use private messaging system'
   - 'use text format basic_html'
+  - 'use text format usuario_aculta'
   - 'use text format webform_default'
   - 'view commerce_product'
   - 'view media'
