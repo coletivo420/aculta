@@ -60,8 +60,9 @@
   {
     "id": "undead",
     "label": "Caveiras e mortos-vivos",
-    "count": 10,
-    "active": true
+    "count": 20,
+    "active": true,
+    "notes": "Acervo v1 (10 avatares do conjunto anexo) somado aos 10 originais."
   },
   {
     "id": "reggae",
