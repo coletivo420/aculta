@@ -97,7 +97,8 @@ final class AvisosMensagensController extends ControllerBase {
    * comportamento: os links abrem o detalhe e a dispensa segue a regra da gaveta.
    */
   private function conteudoAvisos(int $uid): array {
-    return $this->mensagens->alertsBuild()['build'];
+    // Dentro da própria aba a lista já é completa: sem o link Ver todos.
+    return $this->mensagens->alertsBuild(FALSE)['build'];
   }
 
   /** Aba Mensagens: só contagem e link para as conversas (sistema de mensagens). */

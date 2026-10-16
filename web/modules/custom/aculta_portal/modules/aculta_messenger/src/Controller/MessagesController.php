@@ -564,7 +564,7 @@ final class MessagesController extends ControllerBase {
    *
    * @return array{build: array, contador: int}
    */
-  public function alertsBuild(): array {
+  public function alertsBuild(bool $comVerTodos = TRUE): array {
     $storage = $this->entityTypes->getStorage('site_alert');
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['active_site_alerts'])
@@ -597,6 +597,7 @@ final class MessagesController extends ControllerBase {
           NoticeType::INFO,
         );
       }
+      if ($comVerTodos) {
       $items[] = $this->noticeSummary(
         (string) $this->translation->translate('Ver todos os avisos'),
         '',
@@ -606,6 +607,7 @@ final class MessagesController extends ControllerBase {
         FALSE,
         NoticeType::INFO,
       );
+      }
     }
 
     // Same criteria as the header bar, from the shared service.

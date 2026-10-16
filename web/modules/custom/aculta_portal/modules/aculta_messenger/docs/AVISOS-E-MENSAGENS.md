@@ -134,7 +134,8 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
 - Duas abas no padrão de Atividade e Meus Dados (`account-data-nav`/`account-data-link`), com a aba atual marcada:
   - **Avisos** (`/avisos-mensagens/avisos`): a **mesma lista da gaveta da barra** (`MessagesController::alertsBuild`):
     comunicados, avisos da pessoa e alertas do site, com os mesmos itens, links e ações de dispensa. Só lê os avisos da
-    conta logada; a página não recebe parâmetro de usuário.
+    conta logada; a página não recebe parâmetro de usuário. Dentro da aba não há o link "Ver todos", porque a aba já é a
+    lista completa; a gaveta da barra mantém o link (`alertsBuild(FALSE)` na aba).
   - **Mensagens** (`/avisos-mensagens/mensagens`): só a contagem de conversas não lidas e o link para abri-las
     (`aculta_messenger.drawer_conversations`). As conversas continuam no sistema de mensagens; esta aba não grava nada.
 - Acesso: `access aculta portal`, no propósito `account`. Abas inexistentes respondem 404.

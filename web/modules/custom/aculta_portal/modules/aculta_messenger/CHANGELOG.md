@@ -2,6 +2,10 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.37 — aba Avisos sem "Ver todos" (F5.2) — 2026-10-16
+
+- A aba Avisos da conta não mostra o link "Ver todos", porque já é a lista completa. A gaveta da barra mantém o link.
+
 ## 0.1.1-dev.36 — aba Avisos da conta com a mesma lista da gaveta da barra (F5.2) — 2026-10-16
 
 - A aba Avisos da conta mostra a mesma lista da gaveta (comunicados, avisos da pessoa e alertas), com os mesmos itens e ações.
