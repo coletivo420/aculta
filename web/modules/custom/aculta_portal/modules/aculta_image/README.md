@@ -4,7 +4,7 @@ Sistema único de imagens do site ACULTA. Todo uso de imagem passa por ele: cat�
 renderização responsiva, modelos de imagem no texto, compressão, leitura de dimensões, exclusão controlada, ingestão de
 origem externa, auditoria, quarentena e comparação visual.
 
-**Versão:** 0.1.0-dev.13 (ver [CHANGELOG](CHANGELOG.md)).
+**Versão:** 0.1.0-dev.14 (ver [CHANGELOG](CHANGELOG.md)).
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
@@ -37,15 +37,15 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
   reduz para 1200 px de largura (só se for maior), depois comprime. A validação de dimensão do core foi desligada nos
   editores com upload: a imagem é aceita e convertida, não recusada.
 - **Modelo:** o plugin `acultaImage.ImageModel` (`js/ckeditor5/aculta-image-model.js`, JavaScript simples, sem build)
-  adiciona um botão por modelo na barra. Os botões funcionam também no menu de overflow do CKEditor. Grava
-  `data-aculta-modelo` no `<img>`. A lista de modelos oferecidos
+  adiciona um dropdown único na barra, com rótulo do modelo selecionado. Grava `data-aculta-modelo` no `<img>`.
+  A lista de modelos oferecidos
   vem da configuração do editor (classe PHP `Plugin\CKEditor5Plugin\ImageModel`).
 - **Legenda:** o botão contextual “Editar legenda” grava `data-aculta-legenda`; o filtro transforma o atributo em
   `<figcaption>`. A interface e a serialização foram verificadas no Firefox.
 - **Filtro:** `aculta_imagem_modelo` (`Plugin\Filter\ImagemModelo`, peso 20) transforma o `<img>` em `<figure>` com
   `srcset` e `sizes` do modelo, e legenda em `<figcaption>` quando houver `data-aculta-legenda`. Crédito não existe.
 - **Modelos:** Pequena (320 e 640), Padrão (480 e 1160), Larga (800 e 1200), Destaque (1024 e 1200). Ver `ImageCatalog::MODELOS`.
-- **Editores:** botão de modelo em `full_html` e `revista_editorial`. `basic_html` sem botão. Formato `usuario_aculta`
+- **Editores:** dropdown de modelo em `full_html` e `revista_editorial`. `basic_html` sem seletor. Formato `usuario_aculta`
   com Pequena e Padrão (é o formato das respostas do Fórum).
 - Configuração: `config/sync/filter.format.{basic_html,usuario_aculta}.yml`, `config/sync/editor.editor.{basic_html,full_html,revista_editorial,usuario_aculta}.yml`.
 - Plugin: `aculta_image.ckeditor5.yml` (biblioteca `ckeditor5.image_model`, dependente de `ckeditor5/internal.drupal.ckeditor5.image`).

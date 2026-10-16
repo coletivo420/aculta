@@ -1,6 +1,6 @@
 # Modelos de imagem no texto
 
-Status em 2026-10-16 (0.1.0-dev.13): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
+Status em 2026-10-16 (0.1.0-dev.14): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
 modelo nos três editores e a persistência de `larga` ao reabrir. Upload real de 1600×800 resultou em 1200×600. CSS dos
 quatro modelos aferido em fixture local a 1366/500 px e nos modos claro/escuro. Ainda faltam viewport útil de 390 px,
 leitor de tela e uma revisão numa página pública com sessão válida. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.

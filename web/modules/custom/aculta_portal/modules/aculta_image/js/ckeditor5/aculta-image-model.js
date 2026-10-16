@@ -15,13 +15,17 @@
   const {
     ButtonView,
     ContextualBalloon,
+    DropdownButtonView,
     LabeledFieldView,
     View,
+    ViewModel,
+    addListToDropdown,
     clickOutsideHandler,
+    createDropdown,
     createLabeledInputText,
     submitHandler,
   } = CKEditor5.dll('./src/ui.js');
-  const { KeystrokeHandler } = CKEditor5.dll('./src/utils.js');
+  const { Collection, KeystrokeHandler } = CKEditor5.dll('./src/utils.js');
 
   /** Modelos aceitos (mesmos nomes de ImageCatalog::MODELOS). */
   const MODELOS = [
@@ -132,24 +136,39 @@
         }));
       });
 
-      // Cada opção é um item da toolbar por conta própria. Isso mantém as opções usáveis
-      // quando o CKEditor move itens para o menu de overflow em telas estreitas.
       const permitidos = editor.config.get('acultaImageModel.models') || MODELOS.map((modelo) => modelo.value);
-      MODELOS.filter((modelo) => permitidos.includes(modelo.value)).forEach((modelo) => {
-        const nome = `acultaImageModel${modelo.value.charAt(0).toUpperCase()}${modelo.value.slice(1)}`;
-        editor.ui.componentFactory.add(nome, (locale) => {
-          const botao = new ButtonView(locale);
-          botao.set({ label: `Imagem: ${modelo.label}`, tooltip: true, withText: true });
-          botao.on('execute', () => {
-            const selecionado = this._imagemSelecionada();
-            if (!selecionado) {
-              return;
-            }
-            editor.model.change((writer) => writer.setAttribute('acultaModelo', modelo.value, selecionado));
-            editor.editing.view.focus();
+      const modelosDisponiveis = MODELOS.filter((modelo) => permitidos.includes(modelo.value));
+      editor.ui.componentFactory.add('acultaImageModel', (locale) => {
+        const dropdown = createDropdown(locale, DropdownButtonView);
+        const opcoes = new Collection();
+        const botao = dropdown.buttonView;
+        botao.set({ label: 'Modelo da imagem', tooltip: true, withText: true });
+
+        modelosDisponiveis.forEach((modelo) => {
+          opcoes.add({
+            type: 'button',
+            model: new ViewModel({
+              commandValue: modelo.value,
+              label: `Imagem: ${modelo.label}`,
+              withText: true,
+            }),
           });
-          return botao;
         });
+        addListToDropdown(dropdown, opcoes);
+        this.listenTo(dropdown, 'execute', (evt) => {
+          const selecionado = this._imagemSelecionada();
+          if (!selecionado) {
+            return;
+          }
+          editor.model.change((writer) => writer.setAttribute('acultaModelo', evt.source.commandValue, selecionado));
+          editor.editing.view.focus();
+        });
+        this.listenTo(editor.ui, 'update', () => {
+          const selecionado = this._imagemSelecionada();
+          const modeloAtual = selecionado && modelosDisponiveis.find((modelo) => modelo.value === selecionado.getAttribute('acultaModelo'));
+          botao.label = modeloAtual ? `Imagem: ${modeloAtual.label}` : 'Modelo da imagem';
+        });
+        return dropdown;
       });
 
       this._balloon = editor.plugins.get(ContextualBalloon);

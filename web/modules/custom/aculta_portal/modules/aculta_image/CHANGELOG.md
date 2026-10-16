@@ -1,5 +1,11 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.14 — dropdown de modelos e revisão do texto alternativo — 2026-10-16
+
+- Os quatro botões foram substituídos pelo dropdown `Modelo da imagem`, que indica o modelo da imagem selecionada e lista apenas as opções permitidas no formato.
+- Configuração dos três editores importada parcialmente no Runtime; cache reconstruído. Firefox confirmou as quatro opções no `full_html`, seleção de Larga e gravação de `data-aculta-modelo="larga"`.
+- O Drupal core avisa quando falta `alt`, permite abrir a edição por teclado e remove o aviso após salvar texto alternativo. Fluxo confirmado no Firefox; conteúdo temporário removido.
+
 ## 0.1.0-dev.13 — Escape no formulário de legenda — 2026-10-16
 
 - O formulário contextual da legenda agora trata Escape como Cancelar e libera o handler ao destruir a view.

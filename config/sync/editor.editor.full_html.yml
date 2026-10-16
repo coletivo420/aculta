@@ -25,10 +25,7 @@ settings:
       - numberedList
       - blockQuote
       - drupalInsertImage
-      - acultaImageModelPequena
-      - acultaImageModelPadrao
-      - acultaImageModelLarga
-      - acultaImageModelDestaque
+      - acultaImageModel
       - acultaImageLegenda
       - insertTable
       - horizontalLine

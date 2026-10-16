@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-16: versão **0.1.0-dev.13**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
+Status em 2026-10-16: versão **0.1.0-dev.14**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -42,7 +42,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 - Filtro `aculta_imagem_modelo` (peso 20): transforma `<img data-aculta-modelo>` em `<figure>` com `srcset` e `sizes`,
   e legenda em `<figcaption>`. **Crédito removido** de todos os modelos.
 - Plugin CKEditor 5 `acultaImage.ImageModel`, em JavaScript simples (sem build), com a biblioteca `ckeditor5.image_model`.
-  Seletor de modelo na barra; a lista de modelos vem da configuração do editor (`acultaImageModel.models`).
+  Dropdown único na barra, com rótulo do modelo selecionado; opções vêm da configuração do editor (`acultaImageModel.models`).
 - Classe PHP `Plugin\CKEditor5Plugin\ImageModel`: configura quais modelos cada editor oferece.
 - Botão de modelo presente em: `full_html` e `revista_editorial`. Ausente em: `basic_html` (até o formato próprio) e `webform_default`.
 - Formato `usuario_aculta` ("Usuário ACULTA"): HTML básico com o botão de imagem limitado a Pequena e Padrão. Permissão no papel autenticado.
@@ -53,12 +53,10 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 
 1. **Runtime:** configuração importada e cache reconstruído. Upload de 1600×800 convertido para 1200×600; `user.role.authenticated`
    ainda tem drift de permissões alheias à imagem.
-2. **Teste no navegador:** os três editores gravam o modelo; `usuario_aculta` e `revista_editorial` funcionaram no
-   overflow a 488 px; persistência após reabrir foi confirmada. Faltam temas claro/escuro, viewport útil de 390 px e gate
-   de acessibilidade da seção 4. O Firefox headless limitou a janela em 488 px. Ver [HANDOFF.md](HANDOFF.md), seção 6.
+2. **Teste no navegador:** Firefox confirmou no `full_html` as quatro opções, seleção de Larga e gravação do atributo. Os três editores foram atualizados parcialmente no Runtime. Faltam temas claro/escuro, viewport útil de 390 px e revisão com leitor de tela. O Firefox headless limitou a janela em 488 px. Ver [HANDOFF.md](HANDOFF.md), seção 6.
 3. **Legenda na UI do editor:** formulário contextual implementado; Firefox confirmou `data-aculta-legenda`. Falta validar o `figcaption` renderizado e reabrir o editor.
 4. **CSS dos modelos** no ACULTA420: implementado e medido numa fixture com tokens reais (1366/500 px, claro/escuro); falta revisão numa página pública.
-5. **Acessibilidade:** legenda ligada com `figcaption`, operação por teclado. Firefox no Runtime confirmou upcast, abertura por Enter, foco e Escape sem alterar dados. Falta leitor de tela, `alt` e confirmação do `figcaption` numa página pública.
+5. **Acessibilidade:** legenda ligada com `figcaption`, operação por teclado. Firefox confirmou upcast, abertura por Enter, foco e Escape sem alterar dados. O core avisa quando falta `alt`, permite editar por teclado e remove o aviso após salvar; imagem decorativa pode usar `alt` vazio quando marcada como decorativa. Falta leitor de tela e confirmação de `figcaption` numa página pública.
 6. **Formato próprio para o HTML básico** (usuários comuns e alunos): hoje o básico não tem botão. Decisão de quem
    oferece modelos a cada perfil.
 7. **Tamanhos provisórios do Fórum** (Pequena e Padrão): medir em uso e revisar. Ver `MODELOS-DE-IMAGEM.md`.
@@ -86,7 +84,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R2 — Teste do seletor** | Firefox, login via `drush uli`; artigo não publicado removido após verificação | três editores gravam modelos; persistência após reabrir confirmada; falta claro/escuro e viewport útil de 390 px (Firefox limitou a 488 px) | feito parcialmente; ampliar cobertura |
 | **R3 — Legenda no editor** | formulário contextual grava `data-aculta-legenda` | UI e serialização verificadas; falta confirmar `figcaption` público e persistência após reabertura | R2 |
 | **R4 — CSS dos modelos** | estilos responsivos em `revista-post.css` | fixture medida em claro/escuro e 1366/500 px; falta confirmar numa página pública | R3 |
-| **R5 — Acessibilidade** | texto alternativo, teclado, `figcaption` | Enter abre e focaliza o formulário; Escape fecha sem alterar dados (Firefox/Runtime); leitor de tela, fluxo de `alt` e página pública pendentes | R3 |
+| **R5 — Acessibilidade** | texto alternativo, teclado, `figcaption` | aviso/edição de `alt` pelo core e teclado da legenda verificados no Firefox/Runtime; leitor de tela e página pública pendentes | R3 |
 | **R6 — Formato do básico** | botão de modelo no HTML básico para perfis definidos | decisão de perfis | responsável |
 | **R7 — Fórum e LMS** | Fórum usa `usuario_aculta` (feito na configuração); LMS com campo de capa `capa_curso` pela política | campo de capa do LMS com a política desde o primeiro campo | F3/F6 do Fórum e LMS |
 | **R8 — Migração e dívida** | consumidores restantes e estilos `legado_*` (ausentes do catálogo) | gate sem aumento de dívida; `DEBT-REGISTER` atualizado | — |

@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.13. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.14. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -53,7 +53,7 @@ Ambiente: checkout de teste em `/home/piradopirata/projetos/aculta-site`, branch
 ## 4. Estado do Runtime
 
 As oito configurações de imagem listadas abaixo já foram importadas em operações parciais e revisadas por diff. Os três
-editores foram reimportados após substituir `acultaImageModel` pelos botões individuais.
+editores foram reimportados com o dropdown único `acultaImageModel`.
 
 | Arquivo em `config/sync/` | Mudança aplicada | Commit |
 | --- | --- | --- |
@@ -91,9 +91,9 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 
 - **Resposta antiga em `basic_html`:** ao editar uma resposta do Fórum que já usa `basic_html`, o formulário passa a oferecer só `usuario_aculta`. Testar no Runtime antes de liberar.
 - **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
-- **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. Downcast confirmado nos três editores e persistência após reabertura confirmada em `full_html`.
+- **Seletor de modelo:** dropdown único importado nos três editores. Firefox confirmou as quatro opções do `full_html`, seleção de Larga e `data-aculta-modelo="larga"` serializado. `usuario_aculta` recebe Pequena e Padrão pela configuração dinâmica.
 - **Estilos dos modelos:** em `revista-post.css`, medidos em fixture local com o CSS e tokens do tema: 1366 px (320/580/900/960 px) e 500 px (484 px, sem breakout); modo claro/escuro troca fundo e cor da legenda. Ainda falta ver na página pública.
-- **Condição de ativação do plugin:** `aculta_image.ckeditor5.yml` usa `toolbarItem: acultaImageModelPequena` como condição. Um editor com só outro modelo na barra não ativaria o plugin. Trocar por uma condição que aceite qualquer dos quatro botões, ou confirmar que o caso não ocorre.
+- **Texto alternativo:** o Drupal core mostra aviso quando falta `alt`, permite abrir o formulário por teclado e remove o aviso após salvar. Fluxo testado no Firefox; conteúdo temporário removido. Imagem decorativa pode ter `alt` vazio quando marcada como decorativa.
 - **Legenda:** o formulário contextual grava e reabre `data-aculta-legenda`; Firefox no Runtime confirmou abertura por Enter, foco no campo e Escape fechando sem alterar dados. Nó temporário foi removido. Falta confirmar `<figcaption>` numa página pública.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
 - **Formato do básico sem botão:** conteúdo de quem usa só o básico não ganha modelo até o formato próprio.
@@ -103,7 +103,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 ## 6. Próximos passos (ordem recomendada)
 
 1. **R2 navegador:** Firefox; cobrir claro e escuro e tentar viewport útil de 390 px. A persistência após salvar/reabrir já foi confirmada. Registrar a cobertura em `docs/portal/TESTES-NAVEGADOR.md` (AGENTS).
-2. **R5 acessibilidade:** Escape e foco no campo foram verificados no Firefox; falta revisão com leitor de tela. Conferir o fluxo de texto alternativo (`alt`) do CKEditor core e exigir valor quando aplicável.
+2. **R5 acessibilidade:** Escape/foco da legenda e aviso/edição de `alt` foram verificados no Firefox. Falta revisão com leitor de tela e confirmação de `<figcaption>` numa página pública.
 3. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)

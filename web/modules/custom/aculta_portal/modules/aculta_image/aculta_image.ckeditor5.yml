@@ -9,16 +9,10 @@ aculta_image_model:
     elements:
       - <img data-aculta-modelo>
     toolbar_items:
-      acultaImageModelPequena:
-        label: Imagem pequena
-      acultaImageModelPadrao:
-        label: Imagem padrão
-      acultaImageModelLarga:
-        label: Imagem larga
-      acultaImageModelDestaque:
-        label: Imagem destaque
+      acultaImageModel:
+        label: Modelo da imagem
       acultaImageLegenda:
         label: Editar legenda
     conditions:
       plugins: [ckeditor5_image]
-      toolbarItem: acultaImageModelPequena
+      toolbarItem: acultaImageModel

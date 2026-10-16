@@ -21,8 +21,7 @@ settings:
       - '|'
       - blockQuote
       - drupalInsertImage
-      - acultaImageModelPequena
-      - acultaImageModelPadrao
+      - acultaImageModel
       - acultaImageLegenda
   plugins:
     aculta_image_model:
