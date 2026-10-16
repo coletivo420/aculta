@@ -1,0 +1,24 @@
+uuid: 5789ba80-e059-44fc-a617-a24e4a5c1cdf
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_nome_historico
+    - profile.type.participante
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: false
+id: profile.participante.field_nome_historico
+field_name: field_nome_historico
+entity_type: profile
+bundle: participante
+label: 'Nome histórico'
+description: 'Nome de exibição de conta legada do Fórum (ACULTA Fórum, F2). Vazio para membros atuais.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

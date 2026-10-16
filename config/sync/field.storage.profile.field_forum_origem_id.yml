@@ -1,0 +1,21 @@
+uuid: c8380ac3-50e6-48f1-8189-235f32f627e9
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_forum_origem_id
+field_name: field_forum_origem_id
+entity_type: profile
+type: string
+settings:
+  max_length: 64
+  case_sensitive: true
+  is_ascii: true
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
