@@ -299,6 +299,9 @@ services:
   aculta_portal.sales_report_query:
     class: Drupal\aculta_portal\Sales\SalesReportQuery
     arguments: ['@database', '@entity_type.manager']
+  aculta_portal.sales_orders_table_builder:
+    class: Drupal\aculta_portal\Sales\SalesOrdersTableBuilder
+    arguments: ['@entity_type.manager', '@aculta_portal.sales_report_query', '@commerce_price.currency_formatter', '@date.formatter', '@current_user', '@string_translation']
   aculta_portal.mercado_pago.logger:
     class: Drupal\Core\Logger\LoggerChannelInterface
     factory: ['@logger.factory', 'get']

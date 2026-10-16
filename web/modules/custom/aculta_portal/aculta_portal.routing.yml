@@ -312,6 +312,30 @@ aculta_portal.email_confirmar_manual:
       user:
         type: entity:user
 
+aculta_portal.relatorio_vendas_pagamento_atualizar:
+  path: '/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/atualizar'
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\SalesPaymentRefreshForm'
+    _title: 'Atualizar pagamento'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    parameters:
+      commerce_payment:
+        type: entity:commerce_payment
+
+aculta_portal.relatorio_vendas_pagamento_cancelar:
+  path: '/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/cancelar'
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\SalesPaymentCancelForm'
+    _title: 'Cancelar pagamento'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    parameters:
+      commerce_payment:
+        type: entity:commerce_payment
+
 aculta_portal.relatorio_doacoes:
   path: '/painel-administrativo/loja/doacoes'
   defaults:
