@@ -96,7 +96,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 - **Legenda:** o seletor não tem campo de legenda. A legenda do `figcaption` só aparece quando o atributo `data-aculta-legenda` existir no HTML.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
 - **Formato do básico sem botão:** conteúdo de quem usa só o básico não ganha modelo até o formato próprio.
-- **Downloads do Wayback (2026-10-16, 15:21):** assets concluído (9.314 arquivos). HTML em andamento como root, com processo ativo, 6.156 arquivos e fila com prioridade usuários → fórum → galerias. Seções excluídas da importação: Avisos (2 e 52), Multimídia Cannábica (48), Cannabis Medicinal (76, a confirmar) e Notícias (24). **Não interromper nem apagar** sem consulta ao responsável. O script está fora do repositório (`scratchpad` da sessão); ver `IMPORTACAO-GROWROOM.md`, seção de estado.
+- **Downloads do Wayback (2026-10-16, 15:42):** assets concluído (9.314 arquivos). HTML em andamento como root, com processo ativo: 6.480 arquivos; fila de tópicos e galerias (perfis fora até o mapeamento). Seções excluídas da importação: Avisos (2 e 52), Multimídia Cannábica (48), Cannabis Medicinal (76, a confirmar) e Notícias (24). **Não interromper nem apagar** sem consulta ao responsável. O script está fora do repositório (`scratchpad` da sessão); ver `IMPORTACAO-GROWROOM.md`, seção de estado.
 - **Binários de produção:** ImageMagick e Ghostscript não foram confirmados na Hostinger. A miniatura de PDF e a redução de largura dependem disso em produção.
 
 ## 6. Próximos passos (ordem recomendada)
