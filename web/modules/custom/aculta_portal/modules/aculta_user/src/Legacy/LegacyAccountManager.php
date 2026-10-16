@@ -6,6 +6,11 @@ namespace Drupal\aculta_user\Legacy;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ExtensionList;
+use Drupal\Core\File\FileExists;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\file\FileRepositoryInterface;
+use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -28,12 +33,23 @@ final class LegacyAccountManager {
 
   public const USERNAME_PREFIX = 'legado-';
 
+  /** Arquivo do avatar especial, quando a arte for aprovada (sem ele, a conta usa a inicial). */
+  public const AVATAR_SOURCE = 'assets/avatars/legado/lendas-historicas.png';
+
+  /** Destino público do avatar especial. */
+  public const AVATAR_DIRECTORY = 'public://pictures/legado';
+
   /** Limite do nome técnico da conta e do nome histórico (campo string do perfil). */
   private const NAME_MAX = 255;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly Connection $database,
+    private readonly ExtensionList $modules,
+    private readonly FileSystemInterface $fileSystem,
+    private readonly FileRepositoryInterface $fileRepository,
+    private readonly FileUsageInterface $fileUsage,
+    private readonly string $appRoot,
   ) {}
 
   /**
@@ -83,12 +99,16 @@ final class LegacyAccountManager {
         throw new \InvalidArgumentException('Nome técnico ocupado por outra conta.');
       }
 
-      $account = User::create([
-        'name' => $name,
-        'status' => 0,
-        'roles' => [self::ROLE],
-      ]);
+      $fid = $this->legacyAvatarFid();
+      $values = ['name' => $name, 'status' => 0, 'roles' => [self::ROLE]];
+      if ($fid !== NULL) {
+        $values['user_picture'] = $fid;
+      }
+      $account = User::create($values);
       $account->save();
+      if ($fid !== NULL) {
+        $this->fileUsage->add($this->entityTypeManager->getStorage('file')->load($fid), 'aculta_user', 'user', $account->id());
+      }
       $this->createProfile($account, $sourceId, $nome);
       return ['uid' => (int) $account->id(), 'created' => TRUE];
     }
@@ -112,6 +132,28 @@ final class LegacyAccountManager {
       return NULL;
     }
     return $this->entityTypeManager->getStorage('profile')->load(reset($ids));
+  }
+
+  /**
+   * Prepara o avatar especial como arquivo permanente, antes de a conta ser salva.
+   *
+   * Feito antes do save para que o user_presave não sorteie um avatar do acervo comum. Sem o arquivo da arte
+   * aprovada, retorna NULL e a conta fica sem foto (inicial).
+   */
+  private function legacyAvatarFid(): ?int {
+    $origem = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/' . self::AVATAR_SOURCE;
+    if (!is_file($origem)) {
+      return NULL;
+    }
+    $this->fileSystem->prepareDirectory(self::AVATAR_DIRECTORY, FileSystemInterface::CREATE_DIRECTORY);
+    $file = $this->fileRepository->writeData(
+      file_get_contents($origem) ?: '',
+      self::AVATAR_DIRECTORY . '/' . basename(self::AVATAR_SOURCE),
+      FileExists::Replace,
+    );
+    $file->setPermanent();
+    $file->save();
+    return (int) $file->id();
   }
 
   private function createProfile(UserInterface $account, string $sourceId, string $nome): void {

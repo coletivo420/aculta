@@ -41,4 +41,4 @@ services:
     arguments: ['@entity_type.manager', '@aculta_user.social_networks']
   aculta_user.legacy_accounts:
     class: Drupal\aculta_user\Legacy\LegacyAccountManager
-    arguments: ['@entity_type.manager', '@database']
+    arguments: ['@entity_type.manager', '@database', '@extension.list.module', '@file_system', '@file.repository', '@file.usage', '%app.root%']
