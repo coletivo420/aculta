@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.61', 'Theme metadata marks the current version 0.6.0-dev.61.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.65', 'Theme metadata marks the current version 0.6.0-dev.65.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -255,6 +255,10 @@ $expectedTemplates = [
   'node--wiki-entry--teaser.html.twig',
   // Página pública LINKS (0.6.0-dev.11): presenter neutro e configuração do Portal.
   'node--social-links.html.twig',
+  // Fórum em cartões (0.6.0-dev.62) e tópico do Fórum (0.6.0-dev.63): índice, resposta e tópico.
+  'forum-list.html.twig',
+  'comment--comment-forum.html.twig',
+  'node--forum--full.html.twig',
   'page.html.twig',
   'portal-cart-status.html.twig',
   'portal-payment-notice.html.twig',

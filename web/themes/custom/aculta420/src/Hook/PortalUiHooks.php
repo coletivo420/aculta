@@ -138,6 +138,7 @@ final class PortalUiHooks {
     'friendship-action-button' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
     'forum-topic-unread' => ['aculta-unread-count'],
     'public-profile-avatar' => ['portal-profile__avatar'],
+    'public-profile-avatar-image' => ['portal-profile__avatar-image'],
     'public-profile-initial' => ['portal-profile__initial'],
     'public-profile-identity' => ['portal-profile__identity'],
     'public-profile-name' => ['portal-profile__name'],
@@ -254,6 +255,8 @@ final class PortalUiHooks {
     'notice-summary-excerpt' => ['aculta-notice-summary__excerpt'],
     'notice-summary-state' => ['aculta-notice-summary__state'],
     'notice-detail' => ['aculta-notice-detail'],
+    'achievement-notices' => ['aculta-achievement-notices'],
+    'aculta-image-audit' => ['aculta-image-audit'],
     // Seleção de membros da nova conversa (estilo Gmail): resultados e o campo com os chips.
     'new-conversation-add' => ['aculta-new-conversation-add'],
     'new-conversation-chips' => ['aculta-chips'],

@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.65 | Tokens faltantes do módulo mapeados (avatar do perfil, avisos de conquista, relatório de imagens) | Gates de fundação, design e SDC PASS; shell-contract FAIL pré-existente (`page.html.twig`) registrado | `PortalUiHooks.php`, `messenger-drawer.css`, `portal-requirements-report.css` |
 | 0.6.0-dev.61 | Apresentação do leitor PDF compartilhado | Chromium headless no Runtime: 14 páginas; viewport 1440 px e 390 px sem overflow mobile; RUNTIME STATUS: ACTIVE no Homelab | `css/components/pdf-viewer.css` |
 | 0.6.0-dev.54 | Conquistas no perfil público | Firefox desktop/mobile e contrato módulo/tema verificados | `public-profile.css`, `PortalUiHooks.php` |
 | 0.6.0-dev.53 | Tokens do Messenger, CSS e JS separados, janelas e acordeão | Suíte de navegador: 70 de 70 | `messenger-drawer.css`, `alerts-dismiss.js`, `PortalUiHooks.php` |

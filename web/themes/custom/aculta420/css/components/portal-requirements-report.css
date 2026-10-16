@@ -68,3 +68,6 @@
   color: var(--aculta-status-error-text);
   font-weight: 600;
 }
+
+/* Relatório de imagens (somente leitura): separa as seções sem caixa própria. */
+.aculta-image-audit > * + * { margin-block-start: 1.5rem; }

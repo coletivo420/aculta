@@ -1,3 +1,16 @@
+## 0.6.0-dev.65 — correspondências do tema com módulos e tokens faltantes — 2026-10-16
+
+Classificação: PATCH (tokens e CSS de apresentação; gate de fundação atualizado).
+
+- `PortalUiHooks::TOKENS` recebe três tokens que o módulo já emitia e o tema não mapeava: `public-profile-avatar-image` (`portal-profile__avatar-image`), `achievement-notices` (`aculta-achievement-notices`) e `aculta-image-audit` (`aculta-image-audit`).
+- `css/components/messenger-drawer.css`: `.aculta-achievement-notices` com espaçamento vertical; a cor vem dos tokens de texto.
+- `css/components/portal-requirements-report.css`: `.aculta-image-audit > * + *` separa as seções do relatório de imagens.
+- Gate de fundação: versão 0.6.0-dev.65 e allowlist de templates com o fórum (`forum-list`, `comment--comment-forum`, `node--forum--full`, dev.62 e dev.63).
+- Mapa de correspondências: `docs/portal/MAPA-MODULO-TEMA.md` (Portal `docs/portal/`).
+- Verificação: `validate-aculta420-foundation` PASS (345 checks, via Drush no Runtime de teste); `validate-aculta420-design-foundations` PASS; `validate-aculta420-sdc-schemas` PASS (24 componentes); `validate-portal-ui-docs` PASS (237 tokens, 82 atributos).
+- Pendente (não corrigido): `validate-aculta420-shell-contract` FAIL, pré-existente. `templates/page.html.twig` decide por `identity.purpose` em cinco pontos (barra institucional, barra de busca, cabeçalho e layout de LINKS). Corrigir exige flags de layout no presenter do Portal e mudança do contrato `domain_presentation`, com verificação visual nos quatro purposes.
+- RUNTIME STATUS: cache rebuild no Runtime de teste (`--uri=https://aculta.toca.net.br`, banco `aculta_runtime`). Validação visual não executada nesta rodada.
+
 ## 0.6.0-dev.58 — conversas na conta proporcionais à tela — 2026-10-16
 
 Classificação: PATCH (ajuste de apresentação em um contexto; gaveta da barra inalterada).
