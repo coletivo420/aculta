@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_pdf_viewer\Unit\Pdf;
 
 use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilder;
+use Drupal\aculta_pdf_viewer\Pdf\PdfPreviewThumbnailBuilderInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -31,6 +32,7 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     $builder = new PdfViewerBuilder(
       $this->createMock(FileUrlGeneratorInterface::class),
       $this->createMock(AccountInterface::class),
+      $this->createMock(PdfPreviewThumbnailBuilderInterface::class),
     );
 
     $build = $builder->build($media);
@@ -75,7 +77,14 @@ final class PdfViewerBuilderTest extends UnitTestCase {
       ->with('public://documento.pdf')
       ->willReturn('/sites/default/files/documento.pdf');
 
-    $build = (new PdfViewerBuilder($url_generator, $account))->build($media);
+    $thumbnail = ['#type' => 'html_tag', '#tag' => 'img'];
+    $thumbnail_builder = $this->createMock(PdfPreviewThumbnailBuilderInterface::class);
+    $thumbnail_builder->expects(self::once())
+      ->method('build')
+      ->with($file, 'Documento de teste — miniatura da primeira página')
+      ->willReturn($thumbnail);
+
+    $build = (new PdfViewerBuilder($url_generator, $account, $thumbnail_builder))->build($media);
 
     self::assertArrayNotHasKey('#access', $build);
     self::assertSame('true', $build['#attributes']['data-aculta-pdf-viewer']);
@@ -85,6 +94,7 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     self::assertContains('media:7', $build['#cache']['tags']);
     self::assertContains('file:11', $build['#cache']['tags']);
     self::assertSame('/sites/default/files/documento.pdf', $build['download']['#attributes']['href']);
+    self::assertSame($thumbnail, $build['thumbnail']['image']);
   }
 
 }

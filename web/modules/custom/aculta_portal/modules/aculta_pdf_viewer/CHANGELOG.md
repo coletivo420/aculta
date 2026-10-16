@@ -1,5 +1,14 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.4 — miniaturas seguras da primeira página
+
+Integra PDFPreview 1.2.0 com ImageMagick contrib 4.0.2. Gera miniatura somente
+para PDFs permanentes em `public://`, com pasta e dimensões controladas, limite
+de 20 MB e timeout de conversão de 15 s. Falhas ou ausência de binários/policy
+mantêm o leitor PDF.js e o link. Nenhum PDF privado passa pelo gerador, que usa
+o esquema padrão do Drupal para derivados. `imagemagick` e `pdfpreview` ficam
+declarados no Config Sync; política de imagem do host não foi relaxada.
+
 ## 0.1.0-dev.3 — controles do leitor integrado
 
 O viewer adiciona zoom/restauração, busca textual por página, navegação dos resultados e

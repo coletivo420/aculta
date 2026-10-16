@@ -14,10 +14,10 @@ O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Re
 - Existe tipo de conteúdo `document` para documentos institucionais, com `field_document` limitado a `pdf`; coexistem, portanto, referência direta e Media. A integração deve consolidar a UX sem migração implícita ou remoção de conteúdo.
 - `filter.format.full_html` e `revista_editorial` habilitam `entity_embed` e incluem `document` na lista de bundles. Confirmar as configurações CKEditor/Entity Embed completas por uso em conteúdo e validar acesso de mídia embutida; configuração habilitada não prova que o viewer funciona nem que o acesso está correto.
 - O papel editorial único `content_editor` recebe `create document media` para permitir o upload/seletor de PDF pela biblioteca do CKEditor 5. O bundle `document` usa `public://`; arquivos nesse bundle devem ser destinados à publicação e nunca conter material confidencial.
-- `drupal/pdf` 1.3.0 e PDF.js 6.4.299 fazem parte do Composer lock. PDFPreview, ImageMagick, H5P e Entity Print não fazem parte do lock. O código local do viewer está em `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer`; dependências operacionais ImageMagick/Ghostscript precisam ser verificadas separadamente por ambiente e ImageMagick não deve ser selecionado como toolkit padrão só para previews.
+- `drupal/pdf` 1.3.0, PDF.js 6.4.299, PDFPreview 1.2.0 e ImageMagick contrib 4.0.2 fazem parte do Composer lock nesta entrega. H5P e Entity Print não fazem parte do lock. O código local do viewer está em `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer`; dependências operacionais ImageMagick/Ghostscript precisam ser verificadas separadamente por ambiente e ImageMagick não deve ser selecionado como toolkit padrão só para previews.
 - Source exato do tag `8.x-1.3` consultado em 2026-10-16: `pdf.libraries.yml` registra `/libraries/pdf.js/build/pdf.js`; formatter `PdfDefault` escolhe `pdf.settings:custom_viewer` ou `/libraries/pdf.js/web/viewer.html`, forma iframe para o viewer com `?file=` contendo URL absoluta, e o JS/worker de `PdfPages` também usam `.js`. O caminho padrão fixa localização/nome e não tem alternativa configurável para os imports `.mjs`; somente o arquivo do viewer pode ser substituído pela configuração `custom_viewer`. Issue #3417349 pede troca para `.mjs` e `type="module"`, segue sem release estável com essa alteração confirmada. PDF.js 6.3.289 distribui `build/pdf.mjs`, `build/pdf.worker.mjs`, `web/viewer.html`, `web/viewer.mjs`, CSS e assets do viewer. Compatibilidade direta do PDF 1.3 com 6.3.289 está, portanto, **incompatível no loader/API conforme fonte examinada**, não apenas não confirmada.
 - Código exato do PDFPreview 8.x-1.2 também foi lido. `PDFPreviewGenerator` usa ImageToolkit (`arguments()`), define source format PDF, source frame `[0]`, resize/quality e salva derivado; o módulo não chama `proc_open()` diretamente: execução externa cabe ao toolkit contrib e ainda requer auditoria. Caminho do derivado usa `system.file:default_scheme`, não o scheme original do PDF. Se o default for `public`, o preview pode expor visualmente um PDF privado por URL pública. Até provar access equivalente, PDFPreview não pode atender arquivos privados; indisponibilidade/falha deve cair para ícone neutro.
-- PDFPreview 8.x-1.2 é estável para Drupal 10/11. Seu Composer metadata requer `drupal/imagemagick ^3.7 || ^4.0`, incompatível com ImageMagick 5.x; a issue upstream “Support for ImageMagick 5.x” não torna uma branch dev adequada para produção. ImageMagick 5.0.1 declara Drupal 11.3+ e PHP 8.5. A combinação estável precisa de release compatível antes de ser proposta.
+- PDFPreview 8.x-1.2 é estável para Drupal 10/11 e seu metadata requer `drupal/imagemagick ^3.7 || ^4.0`. A combinação Composer validada é PDFPreview 1.2.0 + ImageMagick 4.0.2; ImageMagick 5.x não resolve com esse release estável. ImageMagick 5.0.1 declara Drupal 11.3+ e PHP 8.5, mas a compatibilidade de PDFPreview não foi liberada em stable.
 
 ## Decisão de integração para F2/F3
 
@@ -45,9 +45,9 @@ O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Re
 
 PDFPreview gera a primeira página usando ImageMagick e binários relacionados. O código 1.2 escreve o derivado em scheme baseado em `system.file:default_scheme`, não no scheme do source. Definir ou manter o default global como `public` pode expor um derivado de documento originalmente privado, mesmo que o PDF fonte permaneça protegido. Não usar PDFPreview em conteúdo privado antes de uma implementação/teste que preserve File Access para derivado (ou escolha um destino privado e entrega autorizada).
 
-A página do projeto recomenda permitir leitura de PDF em ImageMagick `policy.xml`; isso não autoriza alteração global de policy, execução de PostScript, nem permissões amplas. Alteração de policy do sistema requer revisão operacional e de segurança própria.
+A página do projeto recomenda permitir leitura de PDF em ImageMagick `policy.xml`; isso não autoriza alteração global de policy, execução de PostScript, nem permissões amplas. Alteração de policy do sistema requer revisão operacional e de segurança própria. A configuração Drupal versionada habilita o formato PDF no toolkit ImageMagick usado pelo PDFPreview; ela não altera a policy do sistema.
 
-Antes de F3, revisar o código/tag de PDFPreview e ImageMagick: chamada `proc_open`/processo, argumentos sem shell injection, binários e timeout, Ghostscript e configuração de delegates, policies PDF/PS, limites CPU/memória/tamanho/páginas, diretório temporário, permissões, validade de derivados, concorrência e invalidação em replace/delete. Preferir limites operacionais restritivos e PDFs não processados se o ambiente não puder satisfazê-los. ImageMagick não será o toolkit Drupal padrão apenas por instalar PDFPreview.
+Para habilitar conversão real em cada ambiente, revisar binários e timeout, Ghostscript e configuração de delegates, policies PDF/PS, limites CPU/memória/tamanho/páginas, diretório temporário, permissões, validade de derivados, concorrência e invalidação em replace/delete. Preferir limites operacionais restritivos e PDFs não processados se o ambiente não puder satisfazê-los. ImageMagick não será o toolkit Drupal padrão apenas por instalar PDFPreview.
 
 Preview é cache derivado e reconstruível; testar falhas, fila/lote, aquecimento de cache e respostas idempotentes. Se thumbnail falhar/estiver atrasada, exibir ícone genérico e continuar viewer/download autorizado. Verificar Hostinger/LiteSpeed com suporte de binários e policy sem presumir acesso a `httpd.conf` ou execução de processos.
 
@@ -131,20 +131,40 @@ confidencialidade por turma. O download de arquivo público não é restringido 
 access da entidade no Core, então esconder o link ou validar Media não protege a
 URL direta existente.
 
-PDFPreview 8.x-1.2 não foi instalado/configurado. Não há binário ImageMagick
-(`magick`, `convert`, `identify`) disponível neste checkout; `gs` existe, mas não
-supre o conversor. O release estável do ImageMagick 5.0.1 é compatível com Core
-11.3/PHP 8.5, enquanto PDFPreview 1.2 declara `^3.7 || ^4.0` para o módulo
-ImageMagick; a issue de suporte a 5.x permanece em revisão. Instalar o 4.x sem
-binários funcionais não produziria thumbnails, e liberar política PDF/PS não foi
-feito. Hostinger/LiteSpeed segue sem verificação operacional. Preview permanece
-opcional: falta/erro dele não afeta o viewer nem o link autorizado.
+PDFPreview 1.2.0 e ImageMagick contrib 4.0.2 foram resolvidos e adicionados ao
+Composer, com configurações versionadas para uso opcional. No Runtime de teste,
+os módulos permanecem desativados. Não há binário ImageMagick (`magick`,
+`convert`, `identify`) disponível neste Homelab; `gs` existe, mas não supre o
+conversor. A policy global não foi alterada. Hostinger/LiteSpeed segue sem
+verificação operacional. A geração real permanece DEFERRED; falta/erro de
+preview não afeta o viewer nem o link autorizado.
 
 Composer `--dry-run` resolveu PDFPreview 1.2.0 + ImageMagick 4.0.2 e cinco
-dependências transitivas (sete instalações no total, sem updates ou remoções e
-sem advisories); `composer.json`/`composer.lock` permaneceram intactos. Essa
-resolução PHP não verifica binários, PHP-FPM, policy nem a segurança do
-processamento PDF no servidor.
+dependências transitivas. A instalação foi então registrada em
+`composer.json`/`composer.lock`, sem advisories; essa resolução PHP não verifica
+binários, PHP-FPM, policy nem a segurança do processamento PDF no servidor.
+
+## PV4 — miniaturas opcionais implementadas
+
+O serviço `PdfPreviewThumbnailBuilder` chama o gerador PDFPreview somente para
+File permanente `public://` identificado como PDF, com tamanho entre 1 byte e
+20 MiB, `system.file:default_scheme` em `public` e configuração fixa do derivado
+em `public://pdfpreview`, JPEG 480×640 e qualidade 82. O processo recebe limite
+de 15 segundos e o timeout padrão do serviço ImageMagick é restaurado ao fim.
+URL e dimensões do resultado são validadas antes de compor o render array. O
+preview tem alt text, dimensões, lazy loading, cache tags do File e falha de
+forma silenciosa para o usuário, registrada no log; o leitor e o fallback
+autorizado continuam disponíveis.
+
+Os serviços contrib são referências opcionais no container. Assim, o
+`aculta_pdf_viewer` existente inicializa mesmo antes de PDFPreview/ImageMagick
+serem habilitados. Uma falha de container identificada durante a implementação
+por referência obrigatória a `pdfpreview.generator` foi corrigida dessa forma;
+após a correção, Drush iniciou e os hosts de teste principal, cursos, revista e
+fórum responderam HTTP 200. Unit e Kernel passaram em execução isolada. A
+miniatura efetiva continua não testada porque os módulos estão desativados e o
+binário ImageMagick não existe no Homelab. Nenhuma configuração ativa foi
+importada e nenhuma policy de sistema foi modificada.
 
 **Validação F3:** formatter e display estão no código e em `config/sync`; o
 Runtime `aculta_runtime` foi atualizado pontualmente, sem import global. Um

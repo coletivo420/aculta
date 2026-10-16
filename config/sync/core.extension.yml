@@ -3,6 +3,8 @@ _core:
 module:
   aculta_portal: 0
   aculta_pdf_viewer: 0
+  imagemagick: 0
+  pdfpreview: 0
   aculta_gallery: 0
   aculta_messenger: 0
   aculta_magazine: 0

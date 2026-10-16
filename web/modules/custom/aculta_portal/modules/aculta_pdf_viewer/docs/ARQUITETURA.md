@@ -15,7 +15,7 @@ Wiki420, Fórum, projetos e documentos institucionais que referenciem Media.
   ou proxy privado implementado nesta fase.
 - O viewer não cria rotas, armazenamento, permissões, dados de LMS ou política
   de autorização independente.
-- PDFPreview é uma melhoria de miniatura futura. Falha/ausência de preview não
+- PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha/ausência de preview não
   muda a leitura nem o fallback autorizado.
 
 ## Serviço e classes
@@ -29,21 +29,41 @@ construam URLs ou markup de viewer diretamente.
 
 ### `PdfViewerBuilder`
 
-Serviço `aculta_pdf_viewer.builder`, com DI de `file_url_generator` e
-`current_user`. A sequência é fail-closed:
+Serviço `aculta_pdf_viewer.builder`, com DI de `file_url_generator`,
+`current_user` e `aculta_pdf_viewer.thumbnail_builder`. A sequência é fail-closed:
 
 1. Confere Media `view`, bundle `document` e presença do campo.
 2. Confere `view` no campo e obtém a referência File.
-3. Confere File `view`, permanência, esquema `public://`, MIME e extensão PDF.
-4. Gera uma URL local pelo File URL Generator; rejeita URL com scheme/host ou
+3. Confere File `view` e `download`, permanência, esquema `public://`, MIME e extensão PDF.
+4. Opcionalmente inclui a miniatura da primeira página. Se binário, policy,
+   formato, tamanho ou conversão falhar, segue com o leitor sem miniatura.
+5. Gera uma URL local pelo File URL Generator; rejeita URL com scheme/host ou
    fora de path local.
-5. Cria o render array acessível com canvas, estado e controles, anexa a
+6. Cria o render array acessível com miniatura, canvas, estado e controles, anexa a
    biblioteca local e borbulha cache tags/contexts/max-age de Media, File e
    resultados de acesso.
 
 Arquivo `private://`, stream wrapper remoto, MIME divergente ou entidade sem
 acesso não recebe viewer. O builder não aceita URL enviada pela pessoa, por
 querystring ou pelo editor.
+
+### `PdfPreviewThumbnailBuilder`
+
+O serviço `aculta_pdf_viewer.thumbnail_builder` usa `pdfpreview.generator` para
+obter uma miniatura da primeira página. Só processa File permanente `public://`,
+PDF até 20 MiB, com scheme padrão público e configuração fixa
+`public://pdfpreview`, 480×640, JPEG e nome derivado do ID. O processo
+ImageMagick recebe timeout de 15 segundos. A imagem usa texto alternativo
+derivado do título Media; File cache tags e contexto `url.site` acompanham o
+elemento.
+
+Exceção, binário ausente, policy que negue PDF, arquivo inválido ou resultado
+não local retornam `NULL`; canvas e link seguem disponíveis. Arquivo privado
+nunca é enviado ao gerador, e miniaturas fora de `public://pdfpreview/` são
+recusadas. A configuração do toolkit Drupal habilita só o formato de leitura
+PDF; a policy global do sistema não é alterada. Ghostscript permanece
+dependência operacional cuja disponibilidade e policy serão validadas por
+ambiente.
 
 ### `AcultaPdfMediaFormatter`
 
@@ -83,6 +103,10 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - `.info.yml` declara Core 11.3+, File e Media. Não depende do módulo geral
   `aculta_portal`, do LMS ou de Drupal PDF.
 - `aculta_pdf_viewer.services.yml` registra o builder.
+- Registra também `PdfPreviewThumbnailBuilder`, adapter fail-soft do serviço
+  `pdfpreview.generator` com limites de tamanho e duração. Referências a
+  PDFPreview e ImageMagick são opcionais no container para permitir que o
+  viewer continue iniciando enquanto os contribs estiverem desativados.
 - `aculta_pdf_viewer.libraries.yml` registra o ES module e `core/drupal`.
 - `core.entity_view_display.media.document.default` escolhe o formatter e
   declara dependência no submódulo.
@@ -104,10 +128,12 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - CSP, tamanho/tempo de PDF, renderização browser, troca de membership, usuários
   de turmas diferentes e produção LiteSpeed são gates de homologação.
 - PDFPreview 1.2 escreve derivados no scheme padrão e exige toolkit/binaries.
-  ImageMagick 5 não é aceito pela constraint estável 1.2; nenhum binário ou
-  policy PDF/PS foi habilitado neste trabalho.
-- O tema ACULTA420 ainda não recebeu apresentação própria; primeiro é necessário
-  aprovar a integração funcional do formatter/viewer em ambiente Drupal.
+  Seu código converte sincronamente no primeiro render e não captura exceções.
+  A integração ACULTA limita tamanho/timeout e omite a miniatura em caso de
+  falha. PDFPreview 1.2.0 aceita ImageMagick contrib 3.7/4.x; Composer resolve
+  ImageMagick 4.0.2, mas não 5.0.1. O binário não está instalado neste Homelab e
+  a policy global não foi liberada, então a geração real permanece DEFERRED até
+  provisionamento operacional seguro.
 
 ## Testes
 
@@ -126,8 +152,9 @@ controller nem classe de formulário neste módulo; não existe arquivo
   artigo e a página publicada mostrou o leitor. A Media fixture foi criada por
   Drush, então upload/criação por usuário `content_editor` ainda é DEFERRED.
   O primeiro link de login foi emitido no host Magazine e recebeu 403; o
-  procedimento correto é emitir no host Conta. PDFPreview, acesso privado,
-  acessibilidade visual e Hostinger seguem DEFERRED.
+  procedimento correto é emitir no host Conta. Sem ImageMagick/Ghostscript ou
+  permissão de policy, só a miniatura fica ausente e o leitor/fallback continua.
+  Geração real, acesso privado, acessibilidade visual e Hostinger seguem DEFERRED.
 
 ## Referências upstream
 

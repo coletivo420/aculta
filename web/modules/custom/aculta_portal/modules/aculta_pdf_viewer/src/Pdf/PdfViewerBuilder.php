@@ -19,6 +19,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
     private readonly AccountInterface $currentUser,
+    private readonly PdfPreviewThumbnailBuilderInterface $thumbnailBuilder,
   ) {}
 
   /**
@@ -48,8 +49,10 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $cacheability->addCacheableDependency($file);
     $file_access = $file->access('view', $this->currentUser, TRUE);
     $cacheability->addCacheableDependency($file_access);
+    $file_download_access = $file->access('download', $this->currentUser, TRUE);
+    $cacheability->addCacheableDependency($file_download_access);
     $uri = $file->getFileUri();
-    $url = $file->isPermanent() && $file_access->isAllowed() && str_starts_with($uri, 'public://')
+    $url = $file->isPermanent() && $file_access->isAllowed() && $file_download_access->isAllowed() && str_starts_with($uri, 'public://')
       ? $this->fileUrlGenerator->generateString($uri)
       : '';
 
@@ -225,6 +228,15 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       ],
       '#attached' => ['library' => ['aculta_pdf_viewer/viewer']],
     ];
+    $thumbnail = $this->thumbnailBuilder->build($file, $title . ' — miniatura da primeira página');
+    if ($thumbnail !== NULL) {
+      $build['thumbnail'] = [
+        '#type' => 'container',
+        '#attributes' => ['data-aculta-pdf-control' => 'thumbnail-container'],
+        '#weight' => -10,
+        'image' => $thumbnail,
+      ];
+    }
     $cacheability->applyTo($build);
     return $build;
   }
