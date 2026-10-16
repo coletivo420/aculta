@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_portal\Unit\Controller;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\aculta_portal\Controller\DonationReportController;
 use Drupal\aculta_portal\Sales\SalesReportFilters;
+use Drupal\aculta_portal\Sales\SalesOrdersTableBuilder;
 use Drupal\aculta_portal\Sales\SalesReportQuery;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
@@ -33,7 +34,10 @@ final class DonationReportControllerTest extends UnitTestCase {
     $traducao = $this->createMock(TranslationInterface::class);
     $traducao->method('translateString')->willReturnCallback(static fn ($markup) => $markup->getUntranslatedString());
 
-    return new DonationReportController($consultas, $configs, $formatador, $traducao);
+    $pedidos = $this->createMock(SalesOrdersTableBuilder::class);
+    $pedidos->method('construir')->willReturn(['tabela' => []]);
+
+    return new DonationReportController($consultas, $configs, $formatador, $pedidos, $traducao);
   }
 
   public function testConsultaSoDoEscopoDeDoacaoEFormataAsLinhas(): void {
@@ -47,8 +51,8 @@ final class DonationReportControllerTest extends UnitTestCase {
 
     $render = $this->controller($consultas)->report(Request::create('/painel-administrativo/loja/doacoes', 'GET', ['de' => '2026-10-01', 'ate' => '2026-10-16']));
 
-    $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['#rows']);
-    $this->assertArrayHasKey('#empty', $render);
+    $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['resumo']['#rows']);
+    $this->assertArrayHasKey('#empty', $render['resumo']);
   }
 
   public function testSemDoacoesMostraTabelaVazia(): void {
@@ -57,8 +61,8 @@ final class DonationReportControllerTest extends UnitTestCase {
 
     $render = $this->controller($consultas)->report(Request::create('/painel-administrativo/loja/doacoes'));
 
-    $this->assertSame([], $render['#rows']);
-    $this->assertSame(['max-age' => 0, 'contexts' => ['url.query_args']], $render['#cache']);
+    $this->assertSame([], $render['resumo']['#rows']);
+    $this->assertSame(['max-age' => 0, 'contexts' => ['url.query_args']], $render['resumo']['#cache']);
   }
 
 }

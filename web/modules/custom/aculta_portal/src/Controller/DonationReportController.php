@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Controller;
 
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\aculta_portal\Sales\SalesReportFilters;
+use Drupal\aculta_portal\Sales\SalesOrdersTableBuilder;
 use Drupal\aculta_portal\Sales\SalesReportQuery;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -36,6 +37,7 @@ final class DonationReportController implements ContainerInjectionInterface {
     private readonly SalesReportQuery $consultas,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly CurrencyFormatterInterface $currencyFormatter,
+    private readonly SalesOrdersTableBuilder $pedidosTabela,
     TranslationInterface $stringTranslation,
   ) {
     $this->stringTranslation = $stringTranslation;
@@ -46,6 +48,7 @@ final class DonationReportController implements ContainerInjectionInterface {
       $container->get('aculta_portal.sales_report_query'),
       $container->get('config.factory'),
       $container->get('commerce_price.currency_formatter'),
+      $container->get('aculta_portal.sales_orders_table_builder'),
       $container->get('string_translation'),
     );
   }
@@ -71,7 +74,7 @@ final class DonationReportController implements ContainerInjectionInterface {
       ];
     }
 
-    return [
+    $tabela = [
       '#type' => 'table',
       '#header' => [
         $this->t('Período'),
@@ -83,6 +86,23 @@ final class DonationReportController implements ContainerInjectionInterface {
       '#empty' => $this->t('Nenhuma doação concluída no intervalo.'),
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
+    return [
+      'resumo' => $tabela,
+      'pedidos' => $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_DOACAO, $this->paginaAtual($request), 'aculta_portal.relatorio_doacoes', $this->filtrosDaUrl($request)),
+    ];
+  }
+
+  private function paginaAtual(Request $request): int {
+    return max(0, (int) $request->query->get('pagina', 0));
+  }
+
+  /**
+   * Filtros da URL repassados à paginação (sem o parâmetro de página).
+   *
+   * @return array<string, string>
+   */
+  private function filtrosDaUrl(Request $request): array {
+    return array_filter($request->query->all(), static fn ($valor, $chave): bool => $chave !== 'pagina' && is_scalar($valor), ARRAY_FILTER_USE_BOTH);
   }
 
 }
