@@ -130,3 +130,11 @@ aculta_user.memorial_legados:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: 'main'
+
+aculta_user.denuncias_forum:
+  path: '/admin/aculta/denuncias'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ReportQueueController::view'
+    _title: 'Denúncias do Fórum'
+  requirements:
+    _permission: 'moderar denuncias do forum'
