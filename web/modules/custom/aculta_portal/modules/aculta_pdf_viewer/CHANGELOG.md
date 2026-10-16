@@ -1,12 +1,23 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.7 — contrato de acesso do arquivo privado
+
+Kernel confirma que o endpoint Core revalida a permissão efetiva da Media:
+nega sem `view media` e para Media despublicada sem permissão de proprietário,
+mas permite Media publicada ao papel anônimo quando ele tem `view media`.
+Config Sync concede `view media` a anônimo e autenticado, então `private://`
+protege a entrega direta do servidor web, mas não define audiência restrita.
+O Group instalado não tem relação Media habilitada; documentos confidenciais
+por turma aguardam integração de access Group↔Media.
+
 ## 0.1.0-dev.6 — validar entrega privada pelo Core
 
 O teste Kernel cria um PDF `private://`, confirma a URL local da rota Core,
-resposta 200 para o usuário autorizado, cabeçalho de cache privado e resposta 403
-para usuário autenticado sem permissão e acesso anônimo. Confirma também max-age
-zero no render e ausência de miniatura privada. Integração com Group/turmas,
-revogação após mudança de acesso, unpublished e browser/PDF.js continuam pendentes.
+resposta 200 para o proprietário autorizado e 403 para usuário autenticado sem
+permissão e acesso anônimo. Outro usuário com `view media` recebe 200 enquanto a
+Media está publicada e 403 após ela ser despublicada. Confirma cache privado,
+max-age zero no render e ausência de miniatura privada. Group/turmas, revogação
+após mudança de membership e browser/PDF.js continuam pendentes.
 
 ## 0.1.0-dev.5 — leitura privada pela rota Core
 

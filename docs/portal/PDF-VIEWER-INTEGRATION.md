@@ -45,6 +45,15 @@ O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Re
 
 PDFPreview gera a primeira página usando ImageMagick e binários relacionados. O código 1.2 escreve o derivado em scheme baseado em `system.file:default_scheme`, não no scheme do source. Definir ou manter o default global como `public` pode expor um derivado de documento originalmente privado, mesmo que o PDF fonte permaneça protegido. Não usar PDFPreview em conteúdo privado antes de uma implementação/teste que preserve File Access para derivado (ou escolha um destino privado e entrega autorizada).
 
+`private://` não significa audiência restrita: a rota Core consulta File/Media
+Access. A Config Sync atual concede `view media` aos papéis anônimo e
+autenticado, então uma Media publicada com PDF `private://` pode ser lida por
+ambos. O Group 3.3.5 instalado fornece `gnode`, mas não há relação Media
+configurada para aplicar membership de turma à Media. Não usar PDF privado em
+conteúdo educacional/confidencial até existir uma integração Group↔Media e seus
+testes de usuário membro e não membro. O teste Kernel cobre o acesso permitido
+quando o papel anônimo recebe `view media`.
+
 A página do projeto recomenda permitir leitura de PDF em ImageMagick `policy.xml`; isso não autoriza alteração global de policy, execução de PostScript, nem permissões amplas. Alteração de policy do sistema requer revisão operacional e de segurança própria. A configuração Drupal versionada habilita o formato PDF no toolkit ImageMagick usado pelo PDFPreview; ela não altera a policy do sistema.
 
 Para habilitar conversão real em cada ambiente, revisar binários e timeout, Ghostscript e configuração de delegates, policies PDF/PS, limites CPU/memória/tamanho/páginas, diretório temporário, permissões, validade de derivados, concorrência e invalidação em replace/delete. Preferir limites operacionais restritivos e PDFs não processados se o ambiente não puder satisfazê-los. ImageMagick não será o toolkit Drupal padrão apenas por instalar PDFPreview.
@@ -183,10 +192,12 @@ bundle `document`, que segue usando `public://`.
 Unit validou URL local do endpoint, max-age zero e ausência do gerador de
 miniaturas para privado. Kernel confirmou resposta 200 e cache privado para o
 usuário autorizado, e 403 para usuário autenticado sem permissão e acesso
-anônimo. Ainda faltam testes de
-Kernel/browser para membro e não membro de Group, publicação/revogação, cache
-após mudança de acesso e carregamento PDF.js/range. A conversão real de
-miniaturas permanece DEFERRED
+anônimo sem `view media`. Ao conceder a permissão ao papel anônimo, a rota
+respondeu 200. Outro usuário com `view media` recebeu 200 para Media publicada
+e 403 após sua despublicação. Config Sync concede `view media` a ambos os papéis
+anônimo e autenticado; portanto, `private://` não torna uma Media publicada
+confidencial. Ainda faltam Group↔Media, membro/não membro, revogação e
+carregamento PDF.js/range. A conversão real de miniaturas permanece DEFERRED
 porque não há binário ImageMagick no Homelab. O arquivo
 [ROADMAP.md do submódulo](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md)
 mantém os critérios restantes de PV5–PV7.

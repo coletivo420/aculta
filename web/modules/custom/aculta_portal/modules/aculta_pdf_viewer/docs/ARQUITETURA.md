@@ -132,6 +132,14 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - Ocultar o botão não protege arquivo `public://`; a URL pública é acessível
   diretamente. Material confidencial deve usar `private://`; não mudar o
   esquema do bundle existente sem migração e decisão próprias.
+- `private://` protege o caminho de entrega do servidor web, mas não decide
+  quem compõe a audiência: a rota Core usa `File::access('download')`, que
+  revalida a Media referenciadora e seus campos. A Config Sync atual concede
+  `view media` aos papéis anônimo e autenticado; assim, Media publicada com PDF
+  privado também fica acessível a esses papéis. No Group 3.3.5 instalado há a
+  relação `gnode`, mas não existe relação Media habilitada/configurada. A
+  autorização do curso não é herdada automaticamente pela Media. Não usar este
+  contrato para PDFs confidenciais de turma até integrar e testar Group↔Media.
 - CSP, entrega de PDF privado em browser, revogação de membership, usuários de
   turmas diferentes e produção LiteSpeed são gates de homologação.
 - PDFPreview 1.2 escreve derivados no scheme padrão e exige toolkit/binaries.
@@ -152,8 +160,11 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - Kernel: `AcultaPdfMediaEmbedTest` percorre o endpoint Core privado com um
   arquivo local `private://`; usuário autorizado recebe 200 e resposta privada,
   enquanto usuário autenticado sem permissão e acesso anônimo recebem 403. O
-  render não é compartilhado em cache e não gera thumbnail privada. Group/turma,
-  revogação e browser seguem pendentes.
+  usuário com `view media` recebe 200 para Media publicada e 403 após
+  despublicação. O teste confirma também que conceder `view media` ao papel
+  anônimo permite a entrega Core, espelhando a política da Config Sync atual.
+  O render não é compartilhado em cache e não gera thumbnail privada.
+  Group/turma, revogação e browser seguem pendentes.
 - O viewer ESM e worker passaram smoke test Firefox headless na fixture oficial
   da distribuição e contra um artigo temporário de Media Embed no Runtime
   `aculta_runtime`: 14 páginas, navegação, zoom 125%, busca (cinco resultados),
@@ -174,6 +185,8 @@ controller nem classe de formulário neste módulo; não existe arquivo
 - [Drupal module metadata/dependencies](https://www.drupal.org/docs/develop/creating-modules/let-drupal-know-about-your-module-with-an-infoyml-file)
 - [Drupal FormatterBase e DI](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Field%21FormatterBase.php/class/FormatterBase/main)
 - [Drupal FileAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21FileAccessControlHandler.php/main)
+- [Drupal FileDownloadController](https://api.drupal.org/api/drupal/core%21modules%21system%21src%21FileDownloadController.php/function/FileDownloadController%3A%3Adownload/main) e [hook_file_download](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21File%21file.api.php/function/hook_file_download/main)
+- [Drupal MediaAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21media%21src%21MediaAccessControlHandler.php/main)
 - [PDF 1.3](https://www.drupal.org/project/pdf/releases) e [PDFPreview 1.2](https://www.drupal.org/project/pdfpreview/releases)
 - [PDF.js 6.4.299](https://github.com/mozilla/pdf.js/releases/tag/v6.4.299)
 - [Drupal 3D Flipbook 11.0.2](https://www.drupal.org/project/flipbook/releases/11.0.2)

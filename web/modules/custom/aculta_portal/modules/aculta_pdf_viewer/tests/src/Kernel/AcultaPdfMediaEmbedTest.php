@@ -17,6 +17,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use Drupal\user\Entity\Role;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
@@ -169,7 +170,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   /**
    * Verifies private PDF requests are rechecked by Drupal Core.
    */
-  public function testPrivatePdfUsesCoreRouteAndDeniesAnonymousAccess(): void {
+  public function testPrivatePdfUsesCoreRouteAndRespectsMediaAccess(): void {
     $site_path = DrupalKernel::findSitePath(Request::create('/'));
     $private_directory = $site_path . '/private';
     $fixture_directory = $private_directory . '/pdf-viewer';
@@ -214,6 +215,41 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount(new \Drupal\Core\Session\AnonymousUserSession());
     $denied_response = $kernel->handle(Request::create($private_url));
     $this->assertSame(403, $denied_response->getStatusCode());
+
+    // Private storage is still governed by Media access. In the production
+    // Config Sync the anonymous role has 'view media', which grants access to
+    // published Media and therefore to its referenced private file.
+    $anonymous_role = Role::load('anonymous') ?? Role::create([
+      'id' => 'anonymous',
+      'label' => 'Anonymous',
+      'weight' => 0,
+      'is_admin' => FALSE,
+      'permissions' => [],
+    ]);
+    $anonymous_role->grantPermission('view media')->save();
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getAccessControlHandler('media')->resetCache();
+    $entity_type_manager->getAccessControlHandler('file')->resetCache();
+    $anonymous_with_media_access = new \Drupal\Core\Session\AnonymousUserSession();
+    $this->container->get('current_user')->setAccount($anonymous_with_media_access);
+    $this->assertTrue($anonymous_with_media_access->hasPermission('view media'));
+    $this->assertTrue($media->access('view', $anonymous_with_media_access, TRUE)->isAllowed());
+    $this->assertTrue($file->access('download', $anonymous_with_media_access, TRUE)->isAllowed());
+    $anonymous_allowed_response = $kernel->handle(Request::create($private_url));
+    $this->assertSame(200, $anonymous_allowed_response->getStatusCode());
+
+    $media_viewer = $this->createUser(['view media']);
+    $this->container->get('current_user')->setAccount($media_viewer);
+    $published_response = $kernel->handle(Request::create($private_url));
+    $this->assertSame(200, $published_response->getStatusCode());
+
+    $media->setUnpublished();
+    $media->save();
+    // Model a fresh request after the entity's access state changed.
+    $entity_type_manager->getAccessControlHandler('media')->resetCache();
+    $entity_type_manager->getAccessControlHandler('file')->resetCache();
+    $unpublished_response = $kernel->handle(Request::create($private_url));
+    $this->assertSame(403, $unpublished_response->getStatusCode());
   }
 
 }
