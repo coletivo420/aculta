@@ -38,3 +38,22 @@ Busca nos arquivos de CSS do tema (`css/` e `components/`) por declarações rep
 - Agrupar só quando o padrão visual é o mesmo. Se a aparência diverge, o padrão continua separado.
 - Não alterar a marcação do módulo: o agrupamento é de CSS e de classe no tema.
 - Cada etapa com teste visual e de teclado no navegador (não feito daqui).
+
+## 5. Segunda varredura: painel da conta e demais áreas (2026-10-16)
+
+Escopo: `css/components/portal-account*.css`, `account.css` e os componentes que usam a caixa de superfície.
+Critério de agrupamento: só quando a aparência é igual; divergência de valor exige decisão visual antes.
+
+| Padrão | Onde | Achado | Decisão |
+|---|---|---|---|
+| Caixa de superfície (`surface-raised` + `border-default`) | 15 arquivos (painel, cursos, conteúdo, perfil, wiki, avisos, mensagens, autenticação) | Raio diverge: 0,25 rem (painel), 0,1875 rem, 0,5 rem | Não agrupar sem decisão visual. Candidato: um componente de caixa com o raio de 0,25 rem, após conferir cada uso |
+| Botão de altura mínima 2,75 rem (toque) | 16 ocorrências | Mesma altura de toque (requisito de acessibilidade) | Agrupar em um utilitário de "alvo de toque" com a mesma regra |
+| Link de aba da conta (`account-data-link`) | Meus dados, Atividade, central Avisos/Mensagens | Já usa o mesmo token e a mesma classe no painel | Já agrupado; sem ação |
+| Foco visível | 14 ocorrências no painel, 23 no tema | Mesma declaração | Agrupar junto com a seção 3 (foco único) |
+| Layout de lista de itens (`display: flex` + `align-items: center`) | muitos | Usos variados | Sem ação: são layouts locais |
+
+Próximas etapas recomendadas:
+
+1. Foco visível em uma única regra (seção 3, item 1). Afeta o painel e o tema inteiro.
+2. Alvo de toque: utilitário único de altura mínima para botões e links de ação.
+3. Caixa de superfície: escolher o raio canônico com o responsável e agrupar os 15 arquivos.
