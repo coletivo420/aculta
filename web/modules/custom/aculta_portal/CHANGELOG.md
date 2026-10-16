@@ -1,3 +1,16 @@
+## 0.4.0-dev.68 — webhooks de assinatura do Mercado Pago — 2026-10-16
+
+Classificação MINOR. Autorização do responsável para o segredo do webhook: a Key `mercadopago_webhook_secret` (provedor env, variável `MERCADOPAGO_WEBHOOK_SECRET`) já existia e está no contrato de segredos. Nenhuma credencial nova foi criada.
+
+- Verificação de assinatura: o guard usa o `WebhookSignatureValidator` do SDK instalado (HMAC-SHA256, manifesto `id;request-id;ts`), em vez de uma cópia própria.
+- Tópicos de assinatura (`subscription_preapproval`, `subscription_preapproval_plan`, `subscription_authorized_payment`) deixam de ser descartados: são consultados e registrados em log. A cobrança recorrente usa `GET /authorized_payments/{id}`, porque o SDK 3.16.0 não tem cliente para esse recurso.
+- Assinatura de id não numérico aceita só para tópicos de assinatura; pagamentos seguem com o id inteiro.
+- Falha ao consultar devolve 500, para o Mercado Pago reenviar.
+- Nada é gravado no Commerce nesta versão: o vínculo assinatura-pedido de doação é a fase F3.
+- Testes unitários: 146 testes, 387 asserções, OK.
+- Runtime: POST sem assinatura e com assinatura inválida devolvem 401. POST com assinatura válida e id inexistente devolve 500 e registra a falha. O caminho de sucesso (200) fica DEFERRED até existir uma assinatura real de teste.
+- Cache rebuild do Runtime feito. Antes dele, o container não tinha o serviço novo e os tópicos de assinatura eram só reconhecidos.
+
 ## 0.4.0-dev.67 — pendências da linha 0.4.0 resolvidas — 2026-10-16
 
 Classificação MINOR. Fecha as pendências de F0 que não dependem de decisão nova: ligação do relatório à consulta, testes Kernel e verificação no Runtime.

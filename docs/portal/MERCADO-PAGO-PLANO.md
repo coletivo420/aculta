@@ -33,6 +33,14 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 | Vínculo assinatura ↔ pedido de doação (F3) | **Bloqueado**: depende do webhook e do desenho do pedido de doação |
 | Painéis e ações de pagamento (F1) | Adiado pelo responsável para a fase visual |
 
+## 0.3 Webhooks de assinatura (dev.68)
+
+- Segredo: Key `mercadopago_webhook_secret` (env `MERCADOPAGO_WEBHOOK_SECRET`), já no contrato de segredos. Autorizado pelo responsável.
+- Verificação: `WebhookSignatureValidator` do SDK, sem cópia própria.
+- Endpoint: o mesmo da notificação do gateway, `/integracoes/pagamentos/mercado_pago/notificacao` (a rota é reescrita pelo Portal). Nenhuma URL nova no código.
+- Tópicos consultados: assinatura, plano e cobrança (`GET /authorized_payments/{id}`). Nenhuma gravação no Commerce ainda (F3).
+- Verificado no Runtime: sem assinatura e com assinatura inválida, 401; assinatura válida com id inexistente, 500 com registro em log. Caminho de sucesso (200): DEFERRED até existir assinatura real de teste.
+
 ## 1. Inventário das APIs do SDK
 
 O SDK tem 21 arquivos `*Client.php`: 20 clientes concretos e a classe base `MercadoPagoClient`. A fábrica `MercadoPagoClientFactory::CLIENTES` mapeia os 20 e um teste confirma que as classes existem no SDK instalado.
