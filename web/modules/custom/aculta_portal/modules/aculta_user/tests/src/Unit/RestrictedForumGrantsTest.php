@@ -6,6 +6,9 @@ namespace Drupal\Tests\aculta_user\Unit;
 
 use Drupal\aculta_user\Associado\AssociadoMarker;
 use Drupal\aculta_user\Forum\RestrictedForumGrants;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -35,12 +38,32 @@ class RestrictedForumGrantsTest extends UnitTestCase {
   }
 
   /**
-   * Marcador de associado: só o uid informado é associado.
+   * Marcador de associado real (a classe é final e não pode ser duplicada), sobre um storage simulado.
+   *
+   * Só o uid informado tem marca: a consulta por uid devolve uma entidade apenas para ele.
    */
   private function marker(int $associadoUid = -1): AssociadoMarker {
-    $marker = $this->createMock(AssociadoMarker::class);
-    $marker->method('isAssociado')->willReturnCallback(static fn (int $uid): bool => $uid === $associadoUid);
-    return $marker;
+    $uidConsultado = NULL;
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('condition')->willReturnCallback(
+      static function (string $campo, int $valor) use (&$uidConsultado, $query): QueryInterface {
+        $uidConsultado = $valor;
+        return $query;
+      },
+    );
+    $query->method('execute')->willReturnCallback(
+      static function () use (&$uidConsultado, $associadoUid): array {
+        return $uidConsultado === $associadoUid ? [1] : [];
+      },
+    );
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('getQuery')->willReturn($query);
+    $storage->method('load')->willReturn(new \stdClass());
+    $etm = $this->createMock(EntityTypeManagerInterface::class);
+    $etm->method('getStorage')->with('aculta_associado')->willReturn($storage);
+    return new AssociadoMarker($etm);
   }
 
   /**

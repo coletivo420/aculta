@@ -11,8 +11,9 @@ adicionadas ao `composer.json`; visibilidade dos fóruns por permissão explíci
 - Config: `email_confirmed` recebe a permissão de e-mail confirmado; `content_editor` recebe as duas. Com Role Inheritance, a herança de permissões do `content_editor` a partir de `email_confirmed` fica para a Fase 2.
 - Nível `estudante`: permissão `view aculta restricted forum estudante`, realm `aculta_estudante`, valor `estudante` em `field_visibilidade` e papel `estudante` (`user.role.estudante.yml`).
 - Moderador (`content_editor`) sem `email_confirmed` não recebe nenhum nível por permissão; o marcador de associado não depende dessa regra.
-- Testes unitários de `RestrictedForumGrants::grantsFor()` (`tests/src/Unit/RestrictedForumGrantsTest.php`), ainda não executados.
-- Pendente: `composer.lock` (não atualizado, pois o acesso a packages.drupal.org não estava disponível), `role_hierarchy` sem configuração e testes de integração no Runtime de testes.
+- Testes unitários de `RestrictedForumGrants::grantsFor()` (`tests/src/Unit/RestrictedForumGrantsTest.php`): 8 casos, OK no ambiente local (`aculta_user` inteiro: 26 testes, OK). O marcador de associado é a classe real `AssociadoMarker` sobre storage simulado, porque a classe é `final`.
+- Dependências: `drupal/role_hierarchy` passa de `^2.0` para `^4.0`, porque a linha 2.x declara `drupal/core ^8 || ^9` e não instala no core 11. `drupal/role_inheritance` `^2.1` resolve para 2.1.1. `composer.lock` atualizado com apenas esses dois pacotes (2 instalações, sem atualizações nem remoções).
+- Pendente: `role_hierarchy` e `role_inheritance` ainda não estão habilitados nem configurados no Runtime de testes; a herança de papéis só será ativada após decisão do responsável, pois altera permissões efetivas. Testes de integração no Runtime seguem pendentes.
 
 ## 0.4.0-dev.21 — contagem de respostas e chamada para visitante no tópico do Fórum (F4) — 2026-10-17
 
