@@ -149,6 +149,18 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 | O autor é `node.uid`; `field_editorial_author` não entra na caixa | Decidido; documentado |
 | Link para o perfil é construído no purpose `main` (perfil público só existe lá) | Decidido; documentado |
 
+### 1.10 Hierarquia de papéis (2026-10-17)
+| Decisão | Status | Onde está |
+| --- | --- | --- |
+| Hierarquia: authenticated < email_confirmed < estudante < associado < lms_teacher < gerente_loja < content_editor < administrator | Implementado (papéis e herança) | `docs/portal/PAPEIS-PARTICIPACAO.md` seção 1 |
+| Estudante: inscrito em algum curso, concedido na matrícula; só alunos (professor, criador e administração do LMS não concedem) | Implementado | `Hook\EnrollmentRoleHooks` |
+| Associado: atribuído manualmente pelo administrador; realm pelo papel | Implementado | `user.role.associado`, `RestrictedForumGrants` |
+| Gerente de Loja: produtos `produto_loja`, variações, atributos, categorias, pedidos (visualização) e relatório de vendas; financeiro só administrador | Implementado | `user.role.gerente_loja`, `SalesReportController` |
+| Herança por role_inheritance: estudante ← email_confirmed; associado ← estudante; lms_teacher ← associado; content_editor ← email_confirmed | Implementado no Runtime e exportado | `config/sync/role_inheritance.settings.yml` |
+| role_hierarchy e role_inheritance habilitados, sem alterar acesso de não-administradores | Implementado | `core.extension` |
+| Gerente de Loja herdar ou não de lms_teacher | **Aberto** (ver 2, item 5) | — |
+| Elo de content_editor (email_confirmed, ou cadeia literal até gerente_loja) | **Aberto** (ver 2, item 5) | — |
+
 ## 2. Pendências de decisão
 1. Estado da associação (ativa, inativa, suspensa) controlado pelo administrador, com mensagem verde/amarela/vermelha
    para a pessoa, e data de associação preenchida pelo administrador (pedido pelo responsável; não implementado).
@@ -158,7 +170,8 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 4. Tipo de publicação da Revista: a Revista publica hoje com o tipo `article` ("Notícia"). Falta decidir se a
    publicação será um tipo novo "blog" (configuração, sem módulo) ou se `article` continua. Afeta a caixa de autor, que
    só é programada no tipo que o responsável escolher.
-5. Mapeamento dos campos da publicação: "chamada" para `field_subtitle` e "resumo" para `field_summary` (ambos existem
+5. Hierarquia de papéis: (a) `gerente_loja` herdar ou não de `lms_teacher` (herdar daria administração de páginas e criação de cursos do LMS); (b) elo de `content_editor`: `email_confirmed` (Fase 2 registrada) ou cadeia literal até `gerente_loja`.
+6. Mapeamento dos campos da publicação: "chamada" para `field_subtitle` e "resumo" para `field_summary` (ambos existem
    em `article`). Falta confirmar, porque o tipo "blog" pode ter campos próprios.
 
 ## 3. Verificações feitas

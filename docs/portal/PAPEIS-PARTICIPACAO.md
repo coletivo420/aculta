@@ -59,7 +59,7 @@ de moderação). O nível de associado não dá nenhuma outra função além do 
 | Criar tópico, editar e excluir o próprio, comentar, denunciar | `email_confirmed` | Aplicado |
 | Ver contêiner ou tópico de nível "e-mail confirmado" | `email_confirmed` (ou `content_editor` com `email_confirmed`) | Aplicado |
 | Ver contêiner ou tópico de nível "estudante" | `estudante` (ou `content_editor` com `email_confirmed`) | Aplicado; testes unitários e smoke no Runtime de testes OK |
-| Ver contêiner ou tópico de nível "associado" | `associado` (ou `content_editor` com `email_confirmed`) | Aplicado no código como marcador; migrar para papel pendente |
+| Ver contêiner ou tópico de nível "associado" | `associado` (ou `content_editor` com `email_confirmed`) | Aplicado: realm pelo papel `associado`; o marcador de conta segue como fallback |
 | Denunciar e ver a fila de denúncias | `content_editor` com `email_confirmed` | Aplicado |
 | Ocultar, despublicar ou excluir tópico e comentário (exceto histórico) | `content_editor` com `email_confirmed` | Aplicado |
 
@@ -103,5 +103,22 @@ Pendências:
 3. ~~Permissão de visibilidade do nível `estudante`~~: criada e aplicada no Runtime de testes (realm `aculta_estudante`).
 4. ~~Migração do marcador de associado para papel~~: papel `associado` criado (`config/sync/user.role.associado.yml`) e concedendo o realm de associados. O Runtime não tinha marcas (`aculta_associado` vazia), então não há contas a migrar. O marcador segue como fallback até decisão de remoção.
 5. ~~Permissões de Wiki do `content_editor`~~: a configuração atual já concede revisão e moderação da Wiki (transições de `wiki_editorial`); nada a alterar.
-6. **Aberta (decisão do responsável):** se `estudante` e `associado` exigem `email_confirmed`. Hoje o realm é concedido pelo papel, sem exigir e-mail confirmado (o `content_editor` é a única exceção, por regra de código).
+6. ~~Se `estudante` e `associado` exigem `email_confirmed`~~: encerrado (2026-10-17). E-mail confirmado é papel, e a herança de papéis (item 7) faz `estudante` e `associado` herdarem `email_confirmed`.
 7. **Fase 2 (herança de papéis, 2026-10-17):** aplicada no Runtime por `role_inheritance`, exportada em `config/sync/role_inheritance.settings.yml`. Elos: `email_confirmed` ← `authenticated`; `estudante` ← `email_confirmed`; `associado` ← `estudante`; `lms_teacher` ← `associado`; `content_editor` ← `email_confirmed`. **Aberto (decisão do responsável):** (a) `gerente_loja` não herda de `lms_teacher`, porque daria acesso a administração de páginas e criação de cursos do LMS; (b) o elo de `content_editor` segue a Fase 2 registrada (`email_confirmed`), e não a cadeia literal da hierarquia, que o faria herdar de `gerente_loja`. Responda (a) e (b) para fechar.
+
+## 10. Implementação (hooks e classes)
+
+Hooks são classes com `#[Hook]`, descobertas automaticamente pelo Core; não são serviços com tag de Status. Por isso o inventário de Status não as enumera (docs/portal/IMPLEMENTATIONS.md).
+
+| Papel ou regra | Classe | Hook ou ponto de entrada |
+|---|---|---|
+| Estudante por matrícula em curso, só alunos | `Hook\EnrollmentRoleHooks` | `group_relationship_insert` (plugin `group_membership`, tipo `lms_course`) |
+| Wiki para quem confirmou o e-mail | `Hook\RoleSyncHooks` | `user_presave` |
+| Realms de visibilidade dos fóruns (papel, permissão, marcador) | `Forum\RestrictedForumGrants` | `grantsFor()` consumido pelos hooks de acesso de fórum |
+| Acesso e listagens dos fóruns restritos | `Hook\RestrictedForumHooks` | node access e entity access |
+| Associado: concessão e marcador de conta | `Associado\AssociadoMarker`, `Form\AssociadoMarkForm` | fallback do realm de associados |
+| Relatório de associados (só administrador) | `Controller\AssociadosController` | `/painel-administrativo/associados/relatorio` |
+| Relatório de vendas (gerente de loja) | `aculta_portal` `Controller\SalesReportController` | `/painel-administrativo/loja/vendas`, permissão `view commerce_order` |
+| Herança de papéis (Fase 2) | configuração `role_inheritance.settings` | mapa em `config/sync/role_inheritance.settings.yml` |
+
+Testes: `aculta_user/tests/src/Unit/EnrollmentRoleHooksTest.php`, `RestrictedForumGrantsTest.php`; `aculta_portal/tests/src/Unit/Controller/SalesReportControllerTest.php`.

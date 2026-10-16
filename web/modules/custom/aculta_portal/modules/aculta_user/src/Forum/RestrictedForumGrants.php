@@ -12,13 +12,13 @@ use Drupal\taxonomy\TermInterface;
 /**
  * Visibilidade dos fóruns restritos (ACULTA Fórum, F9, F-D14).
  *
- * Hierarquia de papéis para visualização (do menor ao maior):
- * authenticated < email_confirmed < associado < content_editor < administrator.
- * Cada nível enxerga o que o anterior enxerga. A hierarquia é aplicada pelos realms abaixo: o papel superior
- * recebe o realm do nível inferior. O administrador tem bypass de acesso a nós e não passa por esta regra.
+ * Hierarquia de papéis (decisão de 2026-10-17, docs/portal/PAPEIS-PARTICIPACAO.md, seção 1): authenticated <
+ * email_confirmed < estudante < associado < lms_teacher < gerente_loja < content_editor < administrator. A herança
+ * de permissões é configurada no role_inheritance (Fase 2); estes grants dependem das permissões efetivas do papel.
+ * O administrador tem bypass de acesso a nós e não passa por esta regra.
  *
- * Realms: aculta_email_confirmado (email_confirmed ou associado) e aculta_associado (associado, ou content_editor
- * com email_confirmed). O content_editor atua como moderador do Fórum (ver docs/portal/PAPEIS-PARTICIPACAO.md).
+ * Realms: aculta_email_confirmado (permissão de e-mail confirmado), aculta_estudante (permissão de estudante),
+ * aculta_marcador_associado (papel associado, ou marcador de conta como fallback, ou content_editor com e-mail).
  */
 final class RestrictedForumGrants {
 
