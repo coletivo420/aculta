@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit\Controller;
 
+use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\aculta_portal\Controller\SalesReportController;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -61,7 +62,10 @@ class SalesReportControllerTest extends UnitTestCase {
     $etm->method('getStorage')->with('commerce_order')->willReturn($storage);
     $traducao = $this->createMock(TranslationInterface::class);
     $traducao->method('translateString')->willReturnCallback(static fn ($markup) => $markup->getUntranslatedString());
-    return new SalesReportController($etm, $traducao);
+    // Formatador de teste: reproduz o formato pt-BR da saída; o real é o commerce_price.currency_formatter.
+    $formatador = $this->createMock(CurrencyFormatterInterface::class);
+    $formatador->method('format')->willReturnCallback(static fn ($numero, $moeda) => number_format((float) $numero, 2, ',', '.') . ' ' . $moeda);
+    return new SalesReportController($etm, $formatador, $traducao);
   }
 
   /**
