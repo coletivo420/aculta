@@ -4,6 +4,14 @@ Status: **plano de trabalho** para a linha 0.4.0-dev.65 (`aculta_portal`). Pain�
 
 Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_mercado_pago` 3.0.0-rc3 (Checkout Pro).
 
+## 0. Decisões do responsável (2026-10-16)
+
+- **Cancelar e estornar:** somente o gerente de loja (papel `gerente_loja`, permissão `gerenciar pagamentos de vendas`). A permissão já está concedida ao papel em `config/sync`. A tela de ações entra na fase de painéis.
+- **Doação recorrente:** pela API de assinaturas do Mercado Pago (`preapproval`); a pessoa autoriza e acompanha a assinatura no Mercado Pago. Não usar `commerce_recurring`.
+- **Assinatura de produto da loja:** fora desta fase.
+- **Relatório de vendas:** exclui doações. Itens com `commerce_order_item.type = donation` ficam fora de todas as agregações; um pedido entra quando tem ao menos um item de produto.
+- **Migração de tokens para Drupal Key:** **não autorizada.** Os tokens de teste ficam onde já estão (configuração do gateway `mercado_pago`, modo `test`) e são usados pela aplicação. A migração não entra nesta linha.
+
 ## 1. Inventário das APIs do SDK
 
 O SDK tem 21 arquivos `*Client.php`: 20 clientes concretos e a classe base `MercadoPagoClient`. A fábrica `MercadoPagoClientFactory::CLIENTES` mapeia os 20 e um teste confirma que as classes existem no SDK instalado.
@@ -60,7 +68,7 @@ Inconsistência registrada: o docblock de `PaymentClient::cancel` diz que só `p
 
 Pagamentos do Checkout Pro entram como `authorization` e viram `completed` na aprovação (IPN ou retorno). Por isso o cancelamento de um pendente usa a transição `void` nativa do Commerce.
 
-Os painéis com botões de cancelar, estornar e atualizar ficam para a fase visual. Cancelar e estornar são restritos a administração (permissão `restrict access`).
+Os painéis com botões de cancelar, estornar e atualizar ficam para a fase visual. Cancelar e estornar são concedidos ao gerente de loja (permissão `gerenciar pagamentos de vendas`, papel `gerente_loja`).
 
 ## 4. Relatório de vendas
 
@@ -99,16 +107,13 @@ Pontos que dependem de confirmação: tópicos de webhook (seção 2), e se o pe
 
 ### 5.4 Credenciais
 
-- Os tokens do gateway estão em configuração do módulo contrib (`access_token_test`, `access_token_stage`, `access_token_prod`). O AGENTS.md exige Drupal Key com provider `env`. **Risco aberto:** verificar se o valor está em config exportável; se estiver, migrar para Key antes de qualquer ativação em produção.
+- Os tokens do gateway estão em configuração do módulo contrib (`access_token_test`, `access_token_stage`, `access_token_prod`). O AGENTS.md exige Drupal Key com provider `env`.
+- **Decisão:** a migração para Drupal Key não foi autorizada. Nesta linha, a aplicação usa os tokens de teste já configurados. Antes de produção, a migração precisa de nova autorização do responsável.
 - Esta fase lê o token, não o grava.
 
-## 6. Perguntas para o responsável
+## 6. Perguntas
 
-1. Cancelar e estornar devem ser só de administração, ou o gerente de loja também pode?
-2. Doações recorrentes devem usar a API de assinaturas do Mercado Pago (recomendado, por este plano), ou ativar `commerce_recurring`?
-3. Assinatura de produto da loja entra nesta fase, ou fica para depois?
-4. O relatório de vendas deve incluir doações (apoio) no total, ou só produtos? Hoje inclui tudo.
-5. Autorizo a migração dos tokens para Drupal Key antes de produção?
+Respondidas em 2026-10-16; ver a seção 0.
 
 ## 7. Fases
 
@@ -118,11 +123,12 @@ Pontos que dependem de confirmação: tópicos de webhook (seção 2), e se o pe
 | F1 | Painéis: vendas, loja e produto (visual, ações com confirmação) | Próxima, a pedido do responsável |
 | F2 | Webhooks de assinatura e cobrança recorrente; tópicos confirmados | Depende da pergunta 2 e da pesquisa |
 | F3 | Integração com doações (fluxo da seção 5.2) | Depende de F2 |
-| F4 | Migração de credenciais para Drupal Key; testes Kernel no banco `aculta_simpletest` | Antes de produção |
+| F4 | Migração de credenciais para Drupal Key (não autorizada ainda); testes Kernel no banco `aculta_simpletest` | Antes de produção |
 
 ## 8. Testes e evidências
 
 - Unit `aculta_portal`: 130 testes, 351 asserções, OK (inclui `RecurrenceRequestBuilderTest`, `MercadoPagoPaymentPolicyTest`, `SalesReportFiltersTest`, `MercadoPagoClientFactoryTest`).
 - Gates: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-module-theme-map` e `validate-environment-addresses` PASS.
 - **Kernel: DEFERRED.** `SalesReportQuery` e os serviços que chamam o SDK precisam de banco de teste. Usar `aculta_simpletest` (`docs/operations/BANCO-DE-TESTE.md`).
-- **Runtime: DEFERRED.** O gateway Mercado Pago não está provisionado no Runtime (consulta a `commerce_payment_gateway` voltou vazia), e o URI do Drush é `default`, não um host de teste confirmado. Não houve chamada real ao Mercado Pago. Testar em modo `test` quando houver credencial de teste provisionada por ambiente.
+- **Runtime (verificado em 2026-10-16):** o gateway `mercado_pago` (plugin `mercado_pago_checkout_pro`, modo `test`) existe, com token de teste. Uma chamada somente leitura `UserClient::get` autenticou com o token de teste (site `MLB`). O Runtime carrega este checkout (`web/modules/custom/aculta_portal` aponta para o mesmo repositório). As consultas do relatório executam no MariaDB sem erro; o banco de teste não tem pedidos concluídos, então os valores não foram conferidos.
+- **Runtime: DEFERRED** para: ações de cancelar e estornar (sem tela ainda), criação de planos e assinaturas (escrevem na conta de teste; aguardam confirmação), e conferência de valores do relatório (sem pedidos de teste).
