@@ -1,6 +1,6 @@
 # Modelos de imagem no texto
 
-Status em 2026-10-16 (0.1.0-dev.15): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
+Status em 2026-10-16 (0.1.0-dev.20): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
 modelo nos três editores e a persistência de `larga` ao reabrir. Upload real de 1600×800 resultou em 1200×600. CSS dos
 quatro modelos aferido em fixture local a 1366/500 px e nos modos claro/escuro. Ainda faltam viewport útil de 390 px,
 leitor de tela e uma revisão numa página pública com sessão válida. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.
@@ -73,7 +73,7 @@ O core recusava imagens acima do limite de dimensão (`FileImageDimensions`). De
 | Formato | Botão de modelo | Modelos | Uso |
 | --- | --- | --- | --- |
 | `revista_editorial` | sim | todos | textos editoriais |
-| `usuario_aculta` (Usuário ACULTA) | sim | Pequena e Padrão | tópicos e respostas do Fórum; permissão para `email_confirmed` |
+| `usuario_aculta` (Usuário ACULTA) | sim | Pequena e Padrão | tópicos e respostas do Fórum; permissão direta para `email_confirmed`, herdada por `estudante`, `associado`, `lms_teacher` e `content_editor` |
 | `webform_default` | não (sem imagem) | — | fora deste sistema |
 
 Tamanhos provisórios do Fórum: Pequena (320 e 640 px) e Padrão (480 e 1160 px), com a mesma política de redimensionamento
@@ -90,7 +90,7 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 | P3b | Campo contextual de legenda | **implementado e serializado; `<figcaption>` confirmado em página pública; persistência ao reabrir o editor pendente** |
 | P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | **fixture aferida em claro/escuro; página pública anônima aferida a 1366/500 px; faltam dark integrado e viewport real de 390 px** |
 | P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | **alt, legenda e teclado verificados no Firefox; falta leitor de tela** |
-| P6 | Formato próprio para usuários e confirmação de e-mail | concluído: `email_confirmed` recebe `usuario_aculta` |
+| P6 | Formato próprio para usuários e confirmação de e-mail | concluído: permissão direta em `email_confirmed`; a herança vigente estende o acesso a estudante, associado, professor e editor de conteúdo |
 
 ## 8. Riscos
 
@@ -106,7 +106,7 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 
 - **Crédito removido** de todos os modelos. Fica só a legenda.
 - **Destaque em 1200 px**, sem subir o limite de upload.
-- **Formatos:** os formatos próprios são `revista_editorial` e `usuario_aculta`. Este último oferece Pequena e Padrão e é aceito nos tópicos e respostas do Fórum; `email_confirmed` recebe a permissão. Os valores existentes de `basic_html` e `full_html` foram migrados antes da remoção dos formatos Core.
+- **Formatos:** os formatos próprios são `revista_editorial` e `usuario_aculta`. Este último oferece Pequena e Padrão e é aceito nos tópicos e respostas do Fórum. A permissão direta está em `email_confirmed`; a configuração vigente de herança inclui `estudante`, `associado`, `lms_teacher` e `content_editor`, mas não `gerente_loja`. Os valores existentes de `basic_html` e `full_html` foram migrados antes da remoção dos formatos Core.
 - **Limite de 1200 px:** o editor aceita imagens maiores e reduz para 1200 px de largura.
 - **Plugin em JavaScript simples**, sem toolchain npm.
 - **Fórum:** tamanhos provisórios de Pequena e Padrão.
