@@ -1,5 +1,15 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.9 — modelo no CKEditor, formato Usuário ACULTA e conversão para 1200 px — 2026-10-17
+
+- Plugin `acultaImage.ImageModel` no CKEditor 5, em JavaScript simples (sem build), com a biblioteca `ckeditor5.image_model`. Seletor de modelo na barra de ferramentas; a lista de modelos vem da configuração do editor (`acultaImageModel.models`).
+- Botão de modelo ligado ao HTML completo e ao Revista — editorial. O HTML básico fica sem o botão até o formato próprio para usuários comuns e alunos.
+- Crédito removido de todos os modelos (filtro e marcação). Fica somente a legenda.
+- Formato `usuario_aculta` (Usuário ACULTA): HTML básico restrito, com o botão de imagem nos modelos Pequena e Padrão. Permissão concedida ao papel autenticado. O campo de resposta do fórum (`comment_forum`) passa a aceitar só esse formato.
+- Limite de 1200 px: o core deixou de recusar imagens maiores (`max_dimensions` nulo nos editores com upload). O `aculta_image` reduz para 1200 px de largura as imagens enviadas aos editores, antes da compressão (`ImageCompressor::redimensionar`, `mogrify`). Imagens menores não mudam. Aceita e converte.
+- Testes: 14 testes unitários, incluindo `ImageCompressorTest::testRedimensionamentoParaLargura`.
+- Runtime: pendente. Importação de configuração, cache rebuild e teste no navegador ainda não executados.
+
 ## 0.1.0-dev.8 — og:image de compartilhamento, dimensão máxima e compressão própria no texto — 2026-10-17
 
 - Estilo `aculta_compartilhamento_1200x630` (purpose `compartilhamento`) e hook `metatags_alter` que aponta `og_image` ao derivado da imagem da publicação (campos `field_media_image` e `field_image`). Verificado: publicação da Revista responde com `og:image` 1200×630, HTTP 200.

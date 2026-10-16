@@ -25,7 +25,9 @@ final class InlineImageHooks {
     private readonly FileSystemInterface $fileSystem,
   ) {}
 
-  /** Implements hook_file_insert(). */
+  /**
+   * Implements hook_file_insert(). Reduz a largura para 1200 px (aceita e converte) e comprime sem perda.
+   */
   #[Hook('file_insert')]
   public function fileInsert(FileInterface $file): void {
     $uri = $file->getFileUri();
@@ -33,7 +35,13 @@ final class InlineImageHooks {
       return;
     }
     $caminho = $this->fileSystem->realpath($uri);
-    if ($caminho === FALSE || !$this->compressor->comprimir($caminho, (string) $file->getMimeType())) {
+    if ($caminho === FALSE) {
+      return;
+    }
+    $mime = (string) $file->getMimeType();
+    $redimensionou = $this->compressor->redimensionar($caminho, $mime);
+    $comprimiu = $this->compressor->comprimir($caminho, $mime);
+    if (!$redimensionou && !$comprimiu) {
       return;
     }
     clearstatcache(TRUE, $caminho);

@@ -94,13 +94,9 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
     $srcset = implode(', ', array_map(fn(array $u): string => Html::escape($u['url']) . ' ' . $u['largura'] . 'w', $urls));
     $img = '<img src="' . Html::escape($urls[0]['url']) . '" srcset="' . $srcset . '" sizes="' . self::TAMANHOS[$modelo] . '"'
       . ' alt="' . Html::escape($atributos['alt'] ?? '') . '" loading="lazy" decoding="async">';
+    // Só legenda: o crédito foi removido de todos os modelos a pedido do responsável.
     $legenda = Html::escape($atributos['data-aculta-legenda'] ?? '');
-    $credito = Html::escape($atributos['data-aculta-credito'] ?? '');
-    $rodape = '';
-    if ($legenda !== '' || $credito !== '') {
-      $rodape = '<figcaption class="aculta-imagem__legenda">' . $legenda
-        . ($credito !== '' ? '<span class="aculta-imagem__credito">' . $credito . '</span>' : '') . '</figcaption>';
-    }
+    $rodape = $legenda !== '' ? '<figcaption class="aculta-imagem__legenda">' . $legenda . '</figcaption>' : '';
     return '<figure class="aculta-imagem aculta-imagem--' . $modelo . ' aculta-imagem--' . $alinhamento . '">' . $img . $rodape . '</figure>';
   }
 

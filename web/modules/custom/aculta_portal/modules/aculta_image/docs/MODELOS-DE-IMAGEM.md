@@ -82,3 +82,11 @@ amplia a imagem (`upscale` falso), e o srcset usa o maior tamanho disponível.
   ou editadas, a não ser que haja migração.
 - Legenda e crédito exigem campo novo no editor: alterar a configuração de três formatos de texto.
 - O filtro precisa rodar antes do de limpeza de HTML do formato, senão remove o `<figure>`.
+
+
+## Decisões de 2026-10-17 (responsável)
+
+- **Crédito removido** de todos os modelos. Fica só a legenda (`figcaption`).
+- **Formatos:** o HTML completo e o Revista — editorial têm o botão de modelo. O HTML básico ficará sem o botão até o formato próprio para usuários comuns e alunos. O formato `usuario_aculta` (Usuário ACULTA) oferece só **Pequena** e **Padrão**, e é o único formato aceito nas respostas do Fórum.
+- **Fórum:** tamanhos provisórios de Pequena (320 e 640 px) e Padrão (480 e 1160 px), com a mesma política de redimensionamento dos editores. A pesquisa sobre limites de fóruns (Discourse) não confirmou valores oficiais; os números da comunidade não foram adotados.
+- **Limite de 1200 px:** o editor aceita imagens maiores e reduz para 1200 px de largura (`ImageCompressor::LARGURA_MAXIMA`), em vez de recusar o upload. A validação de dimensão do core foi desligada nos editores com upload para isso.

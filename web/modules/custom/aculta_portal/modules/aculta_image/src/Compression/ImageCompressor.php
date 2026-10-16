@@ -19,7 +19,25 @@ final class ImageCompressor {
   /** Tempo máximo, em segundos, por arquivo. */
   public const TIMEOUT = 60;
 
+  /**
+   * Largura máxima, em px, das imagens do texto. Imagens maiores são reduzidas para esta largura (aceita e converte);
+   * imagens menores não mudam. Substitui a validação de dimensão do core, que recusava o upload.
+   */
+  public const LARGURA_MAXIMA = 1200;
+
+  /** Tipos que a redução de largura aceita. */
+  private const TIPOS_REDIMENSIONAVEIS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
   public function __construct(private readonly LoggerChannelFactoryInterface $loggerFactory) {}
+
+  /**
+   * Comando de redução de largura (só reduz, mantém a proporção). Pura: testável sem executar nada.
+   *
+   * @return string[]
+   */
+  public static function redimensionamento(string $caminho, int $largura = self::LARGURA_MAXIMA): array {
+    return ['mogrify', '-resize', $largura . 'x>', $caminho];
+  }
 
   /**
    * Comando de compressão sem perda para o tipo MIME, ou NULL se o tipo não é comprimido.
@@ -36,10 +54,19 @@ final class ImageCompressor {
     };
   }
 
+  /** Reduz $caminho para LARGURA_MAXIMA in place, se for maior. Retorna TRUE se o processo terminou com sucesso. */
+  public function redimensionar(string $caminho, string $mime): bool {
+    return $this->executar(in_array($mime, self::TIPOS_REDIMENSIONAVEIS, TRUE) && is_file($caminho) ? self::redimensionamento($caminho) : NULL, $caminho);
+  }
+
   /** Comprime $caminho in place. Retorna TRUE se o processo terminou com sucesso. */
   public function comprimir(string $caminho, string $mime): bool {
-    $comando = self::comando($mime, $caminho);
-    if ($comando === NULL || !is_file($caminho)) {
+    return $this->executar(is_file($caminho) ? self::comando($mime, $caminho) : NULL, $caminho);
+  }
+
+  /** Executa um comando fixo de otimização. NULL ou falha retornam FALSE e não alteram o arquivo original. */
+  private function executar(?array $comando, string $caminho): bool {
+    if ($comando === NULL) {
       return FALSE;
     }
     try {

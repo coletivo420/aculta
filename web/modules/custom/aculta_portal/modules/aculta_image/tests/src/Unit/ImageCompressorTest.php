@@ -20,6 +20,13 @@ class ImageCompressorTest extends UnitTestCase {
     $this->assertSame(['gifsicle', '-O2', '--batch', '/a.gif'], ImageCompressor::comando('image/gif', '/a.gif'));
   }
 
+  /** Redução de largura: só reduz (sufixo ">"), com argumentos fixos e sem shell. */
+  public function testRedimensionamentoParaLargura(): void {
+    $this->assertSame(['mogrify', '-resize', '1200x>', '/a.jpg'], ImageCompressor::redimensionamento('/a.jpg'));
+    $this->assertSame(['mogrify', '-resize', '480x>', '/a.png'], ImageCompressor::redimensionamento('/a.png', 480));
+    $this->assertSame(1200, ImageCompressor::LARGURA_MAXIMA);
+  }
+
   /** WebP e outros tipos não têm compressão sem perda neste sistema: não geram comando. */
   public function testTiposSemCompressao(): void {
     $this->assertNull(ImageCompressor::comando('image/webp', '/a.webp'));

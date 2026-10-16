@@ -4,6 +4,7 @@ aculta_image_model:
       - acultaImage.ImageModel
   drupal:
     label: Modelo de imagem
+    class: \Drupal\aculta_image\Plugin\CKEditor5Plugin\ImageModel
     library: aculta_image/ckeditor5.image_model
     elements:
       - <img data-aculta-modelo>

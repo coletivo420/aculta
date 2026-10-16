@@ -72,7 +72,9 @@
         const dropdown = createDropdown(locale);
         dropdown.buttonView.set({ label: 'Modelo de imagem', tooltip: true, withText: true });
 
-        const items = MODELOS.map((modelo) => ({
+        // Modelos oferecidos por este editor (configuração do plugin); sem configuração, todos.
+        const permitidos = editor.config.get('acultaImageModel.models') || MODELOS.map((modelo) => modelo.value);
+        const items = MODELOS.filter((modelo) => permitidos.includes(modelo.value)).map((modelo) => ({
           type: 'button',
           model: new Model({ commandParam: modelo.value, label: modelo.label, withText: true }),
         }));
