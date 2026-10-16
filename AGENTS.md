@@ -568,7 +568,7 @@ A exceção de versão já registrada (0.3.1) não autoriza nova exceção sem d
 
 ### Diretório de trabalho obrigatório
 
-- Trabalhar sempre no checkout local do repositório que o responsável abriu para a tarefa (`cwd` do projeto), mantendo nele o branch da tarefa e as alterações visíveis.
+- Trabalhar sempre no checkout local do repositório que o responsável abriu para a tarefa (`cwd` do projeto), mantendo o branch atual e as alterações visíveis.
 - Não criar nem usar worktrees, clones ou diretórios temporários alternativos (por exemplo, `/tmp/...`) para implementar a tarefa, salvo pedido explícito do responsável.
 - Antes de alterar arquivos, confirmar `pwd`, branch e `git status` nesse checkout. Não trocar de branch nem substituir arquivos com alterações locais; preservar trabalho existente e resolver conflitos com segurança.
 - Quando a tarefa exigir interação com o servidor de testes, usar os meios de acesso autorizados a esse servidor; o checkout local ou um banco local não substitui a validação no servidor.
@@ -666,11 +666,11 @@ e não na `main`). Esta regra existe para que nenhum trabalho dependa de estado 
 
 - **Commit antes de encerrar.** Toda alteração concluída vira commit no próprio branch
   antes do fim da sessão. Não deixar trabalho só no working tree.
-- **Um branch por tarefa, do início ao fim.** O agente trabalha sempre no mesmo branch, criado
-  a partir da `origin/main` (ou do branch base declarado no PR), e faz um commit atômico por
-  alteração lógica dentro dele. Não abrir branch novo para cada passo, nem reaproveitar branch
-  de outra entrega.
-- **Publicar o branch** com `git push -u origin <branch>` após cada commit. Não há commit
+- **Um commit por tarefa.** O agente trabalha no branch de trabalho já aberto pelo responsável
+  e registra a tarefa em um commit atômico, sem criar ou trocar de branch por causa da tarefa.
+  Se a tarefa for ampliada e passar a conter entregas independentes, separar em commits atômicos
+  por tarefa antes de encerrar.
+- **Publicar cada commit** no branch atual com `git push` após concluir a tarefa. Não há commit
   "pendente" depois que a sessão termina.
 - **Merge só no final.** O PR é mesclado uma única vez, quando a tarefa estiver concluída e o
   responsável autorizar. Não mesclar entregas parciais nem PRs intermediários.

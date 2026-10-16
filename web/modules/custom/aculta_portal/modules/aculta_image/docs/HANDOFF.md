@@ -13,7 +13,7 @@ Data da passagem: 2026-10-17. Versão: 0.1.0-dev.9. Leia este documento antes de
 ## 2. Git e working tree
 
 - Branch: `chore/messenger-pendencias`, publicado em `origin` (o remoto mudou de nome para `coletivo420/aculta`; o `origin` local ainda aponta para `coletivo420/aculta-site` e o push funciona).
-- **Observação de processo:** o trabalho de imagem está num branch com nome de outra frente. A política do projeto pede um branch por tarefa. Antes do merge, criar um branch próprio (ex.: `feat/aculta-image-modelos`) a partir do commit `fdc4c0ad`, ou abrir PR com a base correta. Não fazer isso sem decisão do responsável.
+- **Observação de processo:** o responsável decidiu que não haverá um branch por tarefa. A tarefa de imagem continua no branch atual e deve ser registrada em um commit atômico próprio, sem incluir alterações de outras frentes. Não criar ou trocar de branch para esta entrega.
 - Commits desta frente (do mais antigo ao mais novo, a partir de `b5260eef`):
 
 | Commit | Conteúdo |
