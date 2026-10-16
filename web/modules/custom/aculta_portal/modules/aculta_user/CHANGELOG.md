@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.21 — contagem de respostas e chamada para visitante no tópico do Fórum (F4) — 2026-10-17
+
+Classificação: MINOR (novos dados de apresentação do tópico).
+
+- `ForumTopicPresentationHooks` (`node_view`, tópicos do Fórum, vista completa): conta respostas publicadas do campo `comment_forum` (consulta direta; a estatística do core não devolveu a linha do nó) e, para visitante, a chamada "Entrar para seguir, salvar ou denunciar" com destino de volta ao tópico.
+- Metadados do render array somados, não substituídos (contextos do nó e do tema preservados).
+
 ## 0.4.0-dev.19 — fóruns para marcadores de associado (F-D20) e caminhos em /painel-administrativo — 2026-10-16
 
 Classificação MINOR. Nível de visibilidade "Marcadores de associado" para fóruns. Moderadores também veem. Rotas e

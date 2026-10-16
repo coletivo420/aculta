@@ -35,8 +35,8 @@ sem conceder conquistas durante a migração histórica.
 - F3: aguarda a lista de autores da importação.
 - F4: em andamento. Feito no teste (2026-10-17): índice em cartões; tópico com barra de ações (seguir, salvar,
   denunciar) e estado marcado; respostas em cartões com árvore; abertura da Revista sem título repetido; termo
-  "General discussion" removido. Pendentes: conversa vinculada ao histórico (depende da F3), contagem de respostas,
-  verificação em modo escuro.
+  "General discussion" removido; contagem de respostas; chamada para visitante; modo escuro verificado no tópico e no
+  índice. Pendente: conversa vinculada ao histórico (depende da F3).
 
 ## Antes da primeira alteração funcional
 

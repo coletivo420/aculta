@@ -1118,3 +1118,10 @@ Classificação: PATCH (apresentação acessível de formatter já funcional).
 - Runtime de teste `revista420.aculta.toca.net.br`: PDF.js sample (14 páginas) renderizou em desktop e em 390 px; canvas 652×844/324×420, controles com 44 px e sem overflow horizontal no mobile.
 - Fixture temporária (node 287, Media 233, File 413) removida e cache reconstruído. RUNTIME STATUS: ACTIVE no Homelab; Hostinger LiteSpeed e PDF privado permanecem pendentes.
 
+## 0.6.0-dev.64 — contagem de respostas, chamada para visitante e modo escuro do tópico (F4) — 2026-10-17
+
+Classificação: PATCH (dados e estilos novos em um tópico; sem mudança de estrutura).
+
+- Título da seção "Respostas" com a contagem (`forum-reply-total`); chamada para visitante (`forum-topic-visitor`) na barra de ações.
+- Verificado no Runtime: visitante (claro e escuro, com o atributo `data-bs-theme` forçado em cópia local), conta logada (desktop e 390 px), respostas em árvore no escuro, índice no escuro.
+- Limitação de teste: o modo de cor é decidido pelo Portal (`aculta_color_mode`); a conta logada no escuro foi verificada só pelo HTML.

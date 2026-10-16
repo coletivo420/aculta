@@ -233,6 +233,9 @@ final class PortalUiHooks {
     'messenger-notice' => ['aculta-messenger-notice'],
     'messenger-sender' => ['aculta-messenger-sender', 'aculta-messenger-conversation'],
     // Rótulo Lido / Não lido no topo da caixa (sem cor de marcação): ver css/components/messenger-drawer.css.
+    // Tópico do Fórum: contagem de respostas no título da seção e chamada para visitante.
+    'forum-reply-total' => ['aculta-forum-topic__replies-count'],
+    'forum-topic-visitor' => ['aculta-forum-topic__visitor'],
     'read-label' => ['aculta-read-label'],
     'read-label-unread' => ['aculta-read-label--unread'],
     'messenger-sender-link' => ['aculta-messenger-sender__link'],

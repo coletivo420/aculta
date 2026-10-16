@@ -65,3 +65,10 @@
 /* O link de bloqueio do módulo de mensagens fica dentro do avatar: a coluna do avatar fica à esquerda e o texto, pequeno. */
 .aculta-forum-reply__avatar { display: grid; justify-items: start; gap: 0.15rem; }
 .aculta-forum-reply__avatar .block-unblock { font-size: 0.75rem; line-height: 1.2; }
+
+/* Chamada para visitante (tópico) e contagem de respostas no título da seção. */
+.aculta-forum-topic__visitor { flex: 1 1 100%; color: var(--aculta-text-secondary); font-size: 0.95rem; }
+.aculta-forum-topic__visitor a { margin-inline-start: 0.5rem; padding: 0.4rem 0.9rem; border: 1px solid var(--aculta-interactive-border); border-radius: var(--bs-border-radius); background: var(--aculta-interactive-bg); color: var(--aculta-interactive-text); font-weight: 600; text-decoration: none; display: inline-flex; min-height: 2.75rem; align-items: center; }
+.aculta-forum-topic__visitor a:hover, .aculta-forum-topic__visitor a:focus-visible { background: var(--aculta-interactive-hover-bg); color: var(--aculta-interactive-hover-text); }
+.aculta-forum-topic__visitor a:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.aculta-forum-topic__replies-count { display: inline-block; min-width: 1.75rem; margin-inline-start: 0.35rem; padding: 0.05rem 0.5rem; border-radius: 999px; background: var(--aculta-surface-muted); color: var(--aculta-text-primary); font-size: 0.9rem; font-weight: 600; text-align: center; }

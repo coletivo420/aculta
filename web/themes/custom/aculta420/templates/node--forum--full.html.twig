@@ -21,10 +21,11 @@
     {{ content.flag_seguir_topico }}
     {{ content.flag_salvar_topico }}
     {{ content.flag_sinalizar_topico }}
+    {{ content.aculta_visitante }}
   </div>
-  {{ content|without('abertura', 'body', 'flag_seguir_topico', 'flag_salvar_topico', 'flag_sinalizar_topico', 'comment_forum', 'links') }}
+  {{ content|without('abertura', 'body', 'flag_seguir_topico', 'flag_salvar_topico', 'flag_sinalizar_topico', 'aculta_visitante', 'aculta_respostas_total', 'comment_forum', 'links') }}
   <section class="aculta-forum-topic__replies" aria-labelledby="aculta-forum-replies-title">
-    <h2 id="aculta-forum-replies-title" class="aculta-forum-topic__replies-title">{{ 'Respostas'|t }}</h2>
+    <h2 id="aculta-forum-replies-title" class="aculta-forum-topic__replies-title">{{ 'Respostas'|t }} {{ content.aculta_respostas_total }}</h2>
     {{ content.comment_forum }}
   </section>
 </article>
