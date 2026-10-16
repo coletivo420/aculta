@@ -7,6 +7,18 @@ Este documento responde, para cada módulo e submódulo customizado, três pergu
 **quem desenha** e **onde fica cada peça no tema**. Antes de editar CSS, template, SDC ou JavaScript de um módulo,
 leia a linha dele. Não procure a contraparte por busca textual: use esta tabela.
 
+## Procedimento de busca (obrigatório antes de alterar um módulo)
+
+Antes de alterar template, CSS, componente, JavaScript ou token de um módulo ou contrib, o agente faz nesta ordem:
+
+1. **Mapa.** Localiza a linha do módulo ou do contrib neste documento e lista as peças do tema que lhe correspondem.
+2. **Documentação do tema.** Consulta `web/themes/custom/aculta420/docs/` (sobretudo `development.md`, `components.md`, `design-system.md` e os guias por tema, como `messenger.md`) e `docs/portal/TOKENS-E-ATRIBUTOS.md` para o contrato `data-portal-ui`.
+3. **Código do tema.** Procura o nome do módulo, do hook de tema e das classes nos caminhos do tema: `templates/`, `css/`, `components/`, `js/`, `src/Hook/PortalUiHooks.php` e `aculta420.libraries.yml`.
+4. **Web, se o contrato não estiver claro.** Para contrib ou para comportamento do Core que o mapa não cobre, pesquisa a documentação oficial (`api.drupal.org`, `drupal.org/docs`, a página do módulo e o changelog da versão instalada). Confere a versão instalada em `web/modules/contrib/<nome>/`. Cita as fontes na resposta. Se a pesquisa não confirmar o contrato, diz isso e pergunta.
+5. **Só depois, edita.** Se a alteração criar ou remover uma peça do tema, atualiza a linha do mapa no mesmo commit.
+
+Um registro marcado como "Verificar" ou "Sem contraparte" não autoriza suposição: trate como não documentado e siga os passos 2 a 4.
+
 ## Regras para manter o mapa
 
 1. **Cobertura.** Todo módulo customizado (diretório com `*.info.yml` em `web/modules/custom/**`) precisa de uma linha nas

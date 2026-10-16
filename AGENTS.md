@@ -647,6 +647,12 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
   do tema que lhe correspondem, ou com o motivo de não haver contraparte. Peça nova de tema para um módulo
   (template, CSS, JS, SDC ou token) entra no mapa no mesmo commit. Gate obrigatório:
   `php scripts/validate-module-theme-map.php` (deve ser PASS).
+- **Busca antes de alterar módulo ou contrib:** o agente deve buscar as contrapartes de template, CSS, componentes e
+  tokens do tema, nesta ordem: (1) a linha correspondente em `docs/portal/MAPA-MODULO-TEMA.md`; (2) a documentação do
+  tema (`web/themes/custom/aculta420/docs/`) e `docs/portal/TOKENS-E-ATRIBUTOS.md`; (3) o código do tema (`templates/`,
+  `css/`, `components/`, `js/`, `src/Hook/PortalUiHooks.php`); (4) na web, a documentação oficial do Drupal e do contrib
+  na versão instalada, quando o contrato não estiver claro. Registro "Verificar" ou "Sem contraparte" não autoriza
+  suposição. Se a busca não confirmar o contrato, o agente diz isso e pergunta antes de editar.
 
 ## Pagamentos: processados pelo Mercado Pago (regra permanente)
 

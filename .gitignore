@@ -77,6 +77,9 @@ __pycache__/
 # A pasta estados/ é local: armazena o backup do banco de dados e nunca vai para o Git (ver estados/README.md).
 /estados/
 
+# Saídas dos testes de Kernel e de navegador do Drupal (fixtures e capturas): geradas, nunca versionadas.
+/web/sites/simpletest/
+
 # Relatório neutro do ACULTA Deployer para o painel (sem valores; gerado localmente)
 /var/deployer/
 # Permissões locais do Claude Code: pessoais, não versionadas
