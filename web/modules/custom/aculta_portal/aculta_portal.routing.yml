@@ -312,6 +312,14 @@ aculta_portal.email_confirmar_manual:
       user:
         type: entity:user
 
+aculta_portal.relatorio_doacoes:
+  path: '/painel-administrativo/loja/doacoes'
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\DonationReportController::report'
+    _title: 'Relatório de doações'
+  requirements:
+    _permission: 'administrar doacoes'
+
 aculta_portal.relatorio_vendas:
   path: '/painel-administrativo/loja/vendas'
   defaults:
