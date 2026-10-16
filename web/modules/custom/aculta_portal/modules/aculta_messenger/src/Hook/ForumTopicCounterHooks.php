@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_messenger\Aviso\AvisoService;
@@ -47,8 +48,16 @@ final class ForumTopicCounterHooks {
       if ($contador <= 0) {
         continue;
       }
-      $variables['topics']['#rows'][$indice]['data'][1]['#title_link'] = $titulo['#title_link']
-        . ' <span data-portal-ui="forum-topic-unread" aria-label="' . $contador . ' não lidos">' . $contador . ' não lidos</span>';
+      // Link original preservado; o contador é um elemento com data-portal-ui, que o tema traduz em aparência.
+      $variables['topics']['#rows'][$indice]['data'][1]['#title_link'] = [
+        'link' => ['#markup' => $titulo['#title_link']],
+        'contador' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'span',
+          '#value' => t('@n não lidos', ['@n' => $contador]),
+          '#element_attributes' => new Attribute(['data-portal-ui' => 'forum-topic-unread']),
+        ],
+      ];
     }
     CacheableMetadata::createFromRenderArray($variables['topics'])->addCacheContexts(['user'])->setCacheMaxAge(0)->applyTo($variables['topics']);
   }

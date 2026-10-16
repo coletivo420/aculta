@@ -143,6 +143,8 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
   a área das abas é um contêiner `data-aculta-drawer-url` com `data-aculta-drawer-content`, e o script da gaveta
   (`messenger-drawers.js`) busca o fragmento e o mostra ali. O botão Voltar retorna à lista da gaveta. A biblioteca do
   script é anexada pelos gatilhos da barra; o módulo não anexa biblioteca do tema.
+- Lista de conversas na conta: caixa proporcional (largura máxima de 42 rem, linha compacta). A regra fica no tema, no
+  atributo de comportamento `data-aculta-account-list`, e não vale para a gaveta da barra.
 - Acesso: `access aculta portal`, no propósito `account`. Abas inexistentes respondem 404.
 - A prévia da barra multidomínio mostra até 5 avisos da pessoa, seguidos do link **Ver todos os avisos**, que abre a
   aba Avisos. O contador do ícone de avisos soma esses avisos (seção 5).

@@ -1,3 +1,11 @@
+## 0.6.0-dev.58 — conversas na conta proporcionais à tela — 2026-10-16
+
+Classificação: PATCH (ajuste de apresentação em um contexto; gaveta da barra inalterada).
+
+- Aba Mensagens de Minha conta: caixa de conversa com largura máxima de 42 rem, linha mais compacta e raio padrão.
+  Regras só dentro de `[data-portal-ui="account-messenger-drawer"]` (messenger-drawer.css).
+- Verificado no Firefox headless, perfil dedicado, conta de teste.
+
 ## 0.6.0-dev.57 — foco e alvo de toque padronizados; raio padrão das caixas — 2026-10-16
 
 Classificação: MINOR (novo utilitário e novo padrão de raio).

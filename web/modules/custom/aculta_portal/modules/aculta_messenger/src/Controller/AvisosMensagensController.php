@@ -74,7 +74,7 @@ final class AvisosMensagensController extends ControllerBase {
           '#type' => 'container',
           '#attributes' => [
             'data-aculta-drawer-url' => Url::fromRoute('aculta_messenger.avisos', ['aba' => $aba])->toString(),
-            'data-portal-ui' => 'account-messenger-drawer',
+            'data-aculta-account-list' => '',
           ],
           'conteudo' => [
             '#type' => 'container',

@@ -140,3 +140,11 @@ dialog[data-aculta-dialog] .form-actions :is(button, input[type="submit"]) { wid
 /* New conversation: Cancelar and Voltar keep their own colours, apart from the yellow Enviar (the outline variants are shared with other buttons). */
 .btn.aculta-new-conversation-cancel { --bs-btn-color: var(--aculta-text-primary); --bs-btn-bg: transparent; --bs-btn-border-color: var(--aculta-border-strong); --bs-btn-hover-color: var(--aculta-interactive-hover-text); --bs-btn-hover-bg: var(--aculta-interactive-hover-bg); --bs-btn-hover-border-color: var(--aculta-interactive-hover-bg); color: var(--aculta-text-primary); background-color: transparent; border: 2px solid var(--aculta-border-strong); }
 .btn.aculta-new-conversation-back { --bs-btn-color: var(--aculta-text-primary); --bs-btn-bg: var(--aculta-surface-muted); --bs-btn-border-color: var(--aculta-control-border); --bs-btn-hover-color: var(--aculta-interactive-hover-text); --bs-btn-hover-bg: var(--aculta-interactive-hover-bg); --bs-btn-hover-border-color: var(--aculta-interactive-hover-bg); color: var(--aculta-text-primary); background-color: var(--aculta-surface-muted); border: 1px solid var(--aculta-control-border); }
+
+/* Conversas na área da conta (aba Mensagens): caixa proporcional à tela, em vez de ocupar toda a largura.
+   A gaveta da barra não é afetada: o seletor só vale dentro do contêiner da central de Minha conta. */
+[data-aculta-account-list] { max-width: 42rem; }
+[data-aculta-account-list] .private-message-thread-inbox.aculta-messenger-conversation { padding: 0.5rem; border-radius: var(--bs-border-radius-lg); }
+[data-aculta-account-list] .aculta-messenger-sender { min-height: 3.25rem; margin: 0; padding: 0.4rem 0.6rem; gap: 0.6rem; }
+[data-aculta-account-list] .aculta-messenger-sender__avatar { flex-basis: 2.5rem; width: 2.5rem; height: 2.5rem; font-size: 0.95rem; }
+[data-aculta-account-list] .aculta-messenger-sender__link { font-size: 0.95rem; }

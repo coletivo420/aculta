@@ -108,3 +108,15 @@ Pendente: outras caixas que usam fundo de superfície com raio literal em compon
 - Gate de design do tema: sem falhas. Gate de fronteira módulo/tema: passa.
 - Captura do Firefox da página pública: renderiza com as mudanças; contador de avisos com a cor de alerta do tema.
 - Versão do tema: `0.6.0-dev.57` (ver changelog do tema).
+
+## 7. Teste visual com Firefox (2026-10-16)
+
+Capturas com Firefox headless, perfil dedicado (login por link de uso único em conta de teste), nas abas da conta:
+
+- **Mensagens**: a caixa de conversa ocupava toda a largura da aba (≈838 px) e tinha altura de 4,25 rem. Agora tem
+  largura máxima de 42 rem e linha compacta (`[data-aculta-account-list]` em `messenger-drawer.css`). A gaveta da
+  barra não muda.
+- **Avisos**: conferido, sem regressão do raio nem do foco.
+- Decisão técnica: o atributo `data-portal-ui` do contêiner não chegava ao HTML final (o tema troca tokens por classes
+  e remove os não mapeados). Por isso usei um atributo de comportamento (`data-aculta-*`), que o tema não troca.
+- Contas e conversas de teste criadas para o teste foram removidas ao final.
