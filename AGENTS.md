@@ -642,6 +642,11 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
   ACULTA420 na mesma entrega, cada parte no seu dono.
 - Inventário, dívida e motivo: `docs/portal/FRONTEIRA-MODULO-TEMA.md`. Gate obrigatório:
   `php scripts/validate-module-theme-boundary.php` (deve ser PASS; o cliquet de classes do módulo não pode subir).
+- **Mapa módulo x tema (obrigatório):** todo módulo ou submódulo customizado e todo módulo contrib habilitado precisa de
+  registro em `docs/portal/MAPA-MODULO-TEMA.md`, com os templates, CSS, componentes SDC, JS e tokens `data-portal-ui`
+  do tema que lhe correspondem, ou com o motivo de não haver contraparte. Peça nova de tema para um módulo
+  (template, CSS, JS, SDC ou token) entra no mapa no mesmo commit. Gate obrigatório:
+  `php scripts/validate-module-theme-map.php` (deve ser PASS).
 
 ## Pagamentos: processados pelo Mercado Pago (regra permanente)
 

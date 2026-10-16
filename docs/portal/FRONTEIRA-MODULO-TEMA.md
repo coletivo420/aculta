@@ -152,6 +152,8 @@ Verificação específica: `php scripts/validate-module-theme-boundary.php` PASS
 
 ## Documentos e gates complementares (2026-10-14)
 
+- Correspondência de cada módulo e submódulo customizado, e de cada módulo contrib habilitado, com os templates, CSS, componentes e tokens do tema: `docs/portal/MAPA-MODULO-TEMA.md`. Gate: `php scripts/validate-module-theme-map.php`.
+
 - Tokens `data-portal-ui` e atributos `data-portal-*`, `data-aculta-*`, `data-dialog-*`: `docs/portal/TOKENS-E-ATRIBUTOS.md`. Gate: `php scripts/validate-portal-ui-docs.php` (todo token e atributo usado precisa estar documentado).
 - Popup padrão (modal do Drupal) e exceções explícitas: `docs/portal/POPUP-PADRAO.md`. Gate: `php scripts/validate-portal-popup-rule.php` (sem `<dialog>` nativo, sem tamanho de diálogo no módulo, `data-dialog-type` só `modal`).
 
