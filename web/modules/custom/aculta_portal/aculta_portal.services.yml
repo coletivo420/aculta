@@ -1,4 +1,9 @@
 services:
+  aculta_portal.pdf_viewer_builder:
+    class: Drupal\aculta_portal\Pdf\PdfViewerBuilder
+    arguments: ['@file_url_generator', '@current_user']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.helper_registry:
     class: Drupal\aculta_portal\Status\PortalHelperRegistry
     autowire: false

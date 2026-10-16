@@ -38,5 +38,10 @@ conta e ao perfil público. Contrato e evidências em
 aprovada após a persistência pelo LMS. Ainda não há produtor nem consumidor
 ativo; ver [contrato do submódulo](../../web/modules/custom/aculta_portal/modules/aculta_lms/docs/CONTRACT.md).
 
+`aculta_portal.pdf_viewer_builder` prepara o viewer PDF.js local para Media
+`document` autorizado. O builder é global ao Portal, exige arquivo PDF público
+local e acumula cacheability de Media/File/access. Ativação em display e acesso
+privado são fases seguintes; contrato em [integração PDF](PDF-VIEWER-INTEGRATION.md).
+
 O YAML de serviços define a integração registrada; o container ativo define quais serviços estão disponíveis; os registros PHP descrevem esses serviços para administração; a documentação específica define seu contrato. A tela é um relatório, não uma configuração funcional nem uma fonte alternativa de estado.
 

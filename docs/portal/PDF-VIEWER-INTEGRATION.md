@@ -71,3 +71,43 @@ Preview é cache derivado e reconstruível; testar falhas, fila/lote, aqueciment
 - [Source `pdf.libraries.yml` do tag 8.x-1.3](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/pdf.libraries.yml), [`PdfDefault`](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/src/Plugin/Field/FieldFormatter/PdfDefault.php) e [`PdfPages`](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/src/Plugin/Field/FieldFormatter/PdfPages.php)
 - [Source PDFPreview 8.x-1.2 `PDFPreviewGenerator`](https://git.drupalcode.org/project/pdfpreview/-/blob/8.x-1.2/src/PDFPreviewGenerator.php) e [Composer metadata](https://git.drupalcode.org/project/pdfpreview/-/blob/8.x-1.2/composer.json)
 
+## F2 — integração implementada
+
+Em 2026-10-16, F2 instalou `drupal/pdf` 1.3.0 e a distribuição oficial Mozilla
+PDF.js 6.4.299 pelo Composer. A versão 6.4.299 era a release estável marcada
+como Latest no upstream consultado. O ZIP de distribuição tem SHA-1
+`fd7b4405be7d5f41db503c5c5ebf898f8ab8fd71` e SHA-256
+`f2245eb7ef3f674c872fe568a177bfec15874f5c034613e55d8e307f93ebd86d`; a
+proveniência e pin Composer estão em `composer.json`/`composer.lock`. O pacote
+inclui licença Apache-2.0 e arquivos `.mjs` oficiais.
+
+`aculta_portal.pdf_viewer_builder` é o adapter de renderização neutro do site.
+Ele verifica `Media::access('view')`, acesso ao campo e ao File, exige bundle
+`document`, MIME/extensão PDF, arquivo permanente e `public://` com URL local
+gerada pelo File URL Generator. Acrescenta as dependências de cache de Media,
+File e resultados de acesso. Não recebe URL por query/formulário, não aceita
+host/URL externa, e entrega link de fallback somente junto ao mesmo arquivo
+público autorizado. O JS importa `pdf.mjs`, define `pdf.worker.mjs` local, mostra
+uma página por vez e mantém controles anterior/próxima e link de fallback.
+
+O renderer `PdfDefault` do contrib 1.3 permanece incompatível com o pacote ESM
+moderno (`.js`/global `pdfjsLib` versus `.mjs`). O adapter não usa o formatter
+legado nem altera contrib. F3 decidirá como ligar o builder aos displays e
+formatters de Media.
+
+**Validação F2:** browser smoke em Chrome headless isolado validou o import
+ESM, worker local e renderização de 14 páginas do PDF de amostra incluído na
+distribuição oficial. O builder também passou Unit para acesso permitido e
+negado. Não foi feita validação em Drupal Runtime; o Drush aponta
+`http://default`, fora do URI canônico do Homelab. O builder rejeita arquivos
+privados nesta etapa. Os arquivos do bundle Media `document` usam
+`public://`, portanto essa configuração não deve ser usada para conteúdo
+privado/estudantil; F3 deve validar um delivery path protegido antes de exibir
+PDF privado e nunca inferir proteção a partir da ocultação do link.
+
+Composer dry-run inicialmente propunha atualizações indiretas. A resolução final
+foi limitada a `drupal/pdf` e `mozilla/pdfjs-dist`, usando `--with-dependencies
+--minimal-changes`; o Composer ainda alinhou `drupal/core-dev` 11.4.8→11.4.10,
+PhotoSwipe 5.0.11→5.0.12 e instalou o plugin de captions 1.2.7 já exigido pelo
+manifesto. Nenhuma configuração Drupal ou estado do Runtime foi alterado.
+

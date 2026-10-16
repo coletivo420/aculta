@@ -1914,3 +1914,10 @@ public local, acumula cacheability e oferece fallback abrir/baixar. Não integra
 formatter/Media. Teste Unit de acesso negado PASS. Renderização pública no navegador e Runtime **DEFERRED**: o Drush
 local aponta `http://default`, não o URI canônico de teste.
 
+## 0.4.0-dev.54 — F2: adapter PDF.js no Portal — 2026-10-16
+
+Classificação MINOR. Completa o adapter global ESM no Portal sobre as dependências Composer 1.3.0/6.4.299 já
+registradas em 0.4.0-dev.53: builder de Media autorizado, cacheabilidade, fallback e renderer paginado. Unit 2/2 PASS;
+browser smoke isolado PASS (PDF.js, worker e PDF amostra 14 páginas). Integração Drupal Runtime **DEFERRED**. Nenhum
+display de Media foi alterado, etapa da F3.
+
