@@ -1,3 +1,8 @@
+## F9 — associado como marcador puro (F-D19) — 2026-10-16
+
+- Associado não é papel. Marcador em tabela própria, sem efeito de acesso. Nível "associado" dos fóruns removido.
+- Visibilidade de fóruns restritos: somente e-mail confirmado (e moderador com e-mail confirmado).
+
 ## F9 — moderação e papéis múltiplos — 2026-10-16
 
 - `content_editor` exige e-mail confirmado para restritos e moderação. Moderação (ocultar, despublicar, excluir) de tópicos e comentários, exceto conteúdo histórico. Administrador com bypass total (F-D16).

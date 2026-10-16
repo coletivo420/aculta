@@ -1,9 +1,0 @@
-uuid: 3bb6216c-3e75-45ae-a8c8-721e73669562
-langcode: pt-br
-status: true
-dependencies: {  }
-id: associado
-label: Associado
-weight: -6
-is_admin: false
-permissions: {  }

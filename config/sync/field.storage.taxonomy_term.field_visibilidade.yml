@@ -16,9 +16,6 @@ settings:
     -
       value: email_confirmado
       label: 'E-mail confirmado'
-    -
-      value: associado
-      label: 'Associados'
 module: core
 locked: false
 cardinality: 1

@@ -23,8 +23,6 @@ final class RestrictedForumGrants {
 
   public const REALM_EMAIL = 'aculta_email_confirmado';
 
-  public const REALM_ASSOCIADO = 'aculta_associado';
-
   public const FIELD = 'field_visibilidade';
 
   /**
@@ -35,17 +33,9 @@ final class RestrictedForumGrants {
       return [];
     }
     $roles = $account->getRoles();
-    // Usuários podem ter vários papéis. content_editor só vale com e-mail confirmado (decisão de 2026-10-16).
+    // content_editor só vale com e-mail confirmado (decisão de 2026-10-16).
     $emailConfirmado = in_array('email_confirmed', $roles, TRUE);
-    $moderador = in_array('content_editor', $roles, TRUE) && $emailConfirmado;
-    $grants = [];
-    if ($emailConfirmado || in_array('associado', $roles, TRUE)) {
-      $grants[self::REALM_EMAIL] = [1];
-    }
-    if (in_array('associado', $roles, TRUE) || $moderador) {
-      $grants[self::REALM_ASSOCIADO] = [1];
-    }
-    return $grants;
+    return $emailConfirmado ? [self::REALM_EMAIL => [1]] : [];
   }
 
   /**
@@ -76,7 +66,6 @@ final class RestrictedForumGrants {
     }
     return match ((string) $container->get(self::FIELD)->value) {
       'email_confirmado' => [self::REALM_EMAIL],
-      'associado' => [self::REALM_ASSOCIADO],
       default => [],
     };
   }

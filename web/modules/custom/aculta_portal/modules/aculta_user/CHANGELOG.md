@@ -1,5 +1,11 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.18 — associado como marcador puro (F-D19) — 2026-10-16
+
+Classificação MINOR. Associado deixa de ser papel: tabela própria `aculta_associado` (marcador, sem acesso a nada).
+Administrador marca e desmarca em `/painel-administrativo/associados/{uid}/marcar`; relatório lê a tabela. Papel
+`associado` removido (config e runtime). Nível "associado" removido da visibilidade dos fóruns.
+
 ## 0.4.0-dev.17 — autores históricos fora dos usuários do Drupal (F2) — 2026-10-16
 
 Classificação MINOR. Autores legados viram entidade própria `aculta_legado_autor` (sem conta). Removidos o papel

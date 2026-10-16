@@ -1,3 +1,7 @@
+## 0.4.0-dev.51 — associado como marcador puro — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.18. Associado é marcador em tabela própria, sem efeito em acesso.
+
 ## 0.4.0-dev.50 — confirmação manual de e-mail e autores fora dos usuários — 2026-10-16
 
 Classificação MINOR. Confirmação manual de e-mail pelo administrador (permissão própria, lista e formulário com

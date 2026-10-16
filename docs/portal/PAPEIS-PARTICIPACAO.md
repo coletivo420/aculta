@@ -11,19 +11,19 @@ Do menor para o maior:
 | Ordem | Papel (machine name) | Rótulo | Como é concedido |
 |---|---|---|---|
 | 1 | `authenticated` | Usuário autenticado | Toda conta com login |
-| 2 | `email_confirmed` | E-mail confirmado | Automático, ao confirmar o e-mail (irreversível) |
-| 3 | `associado` | Associado | **Manual**: pessoas associadas à Aculta |
-| 4 | `content_editor` | Editor de conteúdo (moderador do Fórum) | Administrativa |
-| 5 | `administrator` | Administrador | Administrativa |
+| 2 | `email_confirmed` | E-mail confirmado | Automático, ao confirmar o e-mail (irreversível), ou pela confirmação manual do administrador |
+| 3 | `content_editor` | Editor de conteúdo (moderador do Fórum) | Administrativa, com e-mail confirmado |
+| 4 | `administrator` | Administrador | Administrativa |
 
-**Usuários podem ter mais de um papel.** `associado` é um papel extra: pode acompanhar qualquer outro papel. No futuro,
-outros papéis com o mesmo comportamento poderão ser integrados. Por enquanto, a regra de visibilidade considera
-`associado` mais qualquer outro papel.
+**Associado não é papel.** É um marcador puro (F-D19): fica em tabela própria, separada da identidade User e dos papéis.
+Não concede acesso a nenhum conteúdo nem função do site. Serve a relatórios e páginas da associação. O administrador
+marca e desmarca em `/painel-administrativo/associados/{uid}/marcar`, e o relatório de associados lista as marcas em
+`/admin/aculta/associados`.
 
-Cada nível enxerga o que o nível anterior enxerga. Na implementação, os realms de visibilidade são concedidos assim:
+Usuários podem ter mais de um papel. A regra de visibilidade considera só `email_confirmed` e os papéis acima.
 
-- `aculta_email_confirmado`: `email_confirmed` ou `associado`.
-- `aculta_associado`: `associado`, ou `content_editor` com `email_confirmed`.
+Na implementação, o realm de visibilidade é concedido assim: `aculta_email_confirmado` para `email_confirmed`, e para
+`content_editor` somente com `email_confirmed`.
 
 ## 2. Regras do content_editor
 
@@ -41,8 +41,7 @@ Cada nível enxerga o que o nível anterior enxerga. Na implementação, os real
 | Ler tópicos públicos | Anônimo | Aplicado |
 | Seguir e salvar tópico | `authenticated` | Aplicado |
 | Criar tópico, editar e excluir o próprio, comentar, denunciar | `email_confirmed` | Aplicado |
-| Ver contêiner ou tópico de nível "e-mail confirmado" | `email_confirmed` ou `associado` | Aplicado |
-| Ver contêiner ou tópico de nível "associado" | `associado`, ou `content_editor` com `email_confirmed` | Aplicado |
+| Ver contêiner ou tópico de nível "e-mail confirmado" | `email_confirmed` (ou `content_editor` com `email_confirmed`) | Aplicado |
 | Denunciar e ver a fila de denúncias | `content_editor` com `email_confirmed` | Aplicado |
 | Ocultar, despublicar ou excluir tópico e comentário (exceto histórico) | `content_editor` com `email_confirmed` | Aplicado |
 
@@ -71,5 +70,4 @@ a autoria pelo campo `field_autor_legado`. Conteúdo com esse campo preenchido n
 
 ## 7. Dúvidas abertas
 
-1. `associado` precisa sempre vir junto de `email_confirmed`? Hoje não é exigido: uma conta só com `associado` ganha o
-   nível de e-mail confirmado pela regra de visibilidade. Confirma que deve ser exigido?
+Nenhuma no momento.

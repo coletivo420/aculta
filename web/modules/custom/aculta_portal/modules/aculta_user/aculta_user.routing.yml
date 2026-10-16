@@ -138,3 +138,16 @@ aculta_user.denuncias_forum:
     _title: 'Denúncias do Fórum'
   requirements:
     _permission: 'moderar denuncias do forum'
+
+aculta_user.associado_marcar:
+  path: '/painel-administrativo/associados/{user}/marcar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AssociadoMarkForm'
+    _title: 'Marca de associado'
+  requirements:
+    _permission: 'administer aculta associados'
+    user: '\d+'
+  options:
+    parameters:
+      user:
+        type: entity:user

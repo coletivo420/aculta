@@ -10,7 +10,7 @@ field_name: field_visibilidade
 entity_type: taxonomy_term
 bundle: forums
 label: 'Visibilidade do fórum'
-description: 'Quem pode ver os tópicos deste fórum. Público: todos. E-mail confirmado: contas com e-mail confirmado. Associados: somente associados (concessão manual). Fóruns restritos ficam fora da busca pública após a F9.'
+description: 'Quem pode ver os tópicos deste fórum. Público: todos. E-mail confirmado: contas com e-mail confirmado. Associado é marcador e não entra nesta regra (F-D19).'
 required: false
 translatable: false
 default_value:

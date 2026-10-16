@@ -52,3 +52,6 @@ services:
       - { name: event_subscriber }
   aculta_user.restricted_forum_grants:
     class: Drupal\aculta_user\Forum\RestrictedForumGrants
+  aculta_user.associado_marker:
+    class: Drupal\aculta_user\Associado\AssociadoMarker
+    arguments: ['@entity_type.manager']
