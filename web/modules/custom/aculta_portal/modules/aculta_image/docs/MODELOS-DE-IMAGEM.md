@@ -62,7 +62,7 @@ para mídia (embed) e não cobre legenda nem alinhamento. Se algum trecho for po
 
 O core recusava imagens acima do limite de dimensão (`FileImageDimensions`). Decisão: **aceitar e converter**.
 
-- `max_dimensions` do core desligado nos editores com upload (`basic_html`, `full_html`, `revista_editorial`, `usuario_aculta`).
+- `max_dimensions` do core desligado nos editores com upload (`usuario_aculta`, `revista_editorial`).
 - `InlineImageHooks` (`file_insert` em `public://inline-images/`) chama `ImageCompressor::redimensionar()`, que roda
   `mogrify -resize 1200x>`: reduz só se a largura passar de 1200 px, mantendo a proporção.
 - Depois, a compressão sem perda (`optipng`, `jpegoptim`, `gifsicle`).
@@ -72,10 +72,8 @@ O core recusava imagens acima do limite de dimensão (`FileImageDimensions`). De
 
 | Formato | Botão de modelo | Modelos | Uso |
 | --- | --- | --- | --- |
-| `full_html` (HTML completo) | sim | todos | editores |
-| `revista_editorial` | sim | todos | textos de revista |
-| `basic_html` (HTML básico) | **não** | — | sem modelo até o formato próprio para usuários comuns e alunos |
-| `usuario_aculta` (Usuário ACULTA) | sim | Pequena e Padrão | respostas do Fórum e formato dos usuários comuns |
+| `revista_editorial` | sim | todos | textos editoriais |
+| `usuario_aculta` (Usuário ACULTA) | sim | Pequena e Padrão | tópicos e respostas do Fórum; permissão para `email_confirmed` |
 | `webform_default` | não (sem imagem) | — | fora deste sistema |
 
 Tamanhos provisórios do Fórum: Pequena (320 e 640 px) e Padrão (480 e 1160 px), com a mesma política de redimensionamento
@@ -92,13 +90,13 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 | P3b | Campo contextual de legenda | **implementado e serializado; `<figcaption>` confirmado em página pública; persistência ao reabrir o editor pendente** |
 | P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | **fixture aferida em claro/escuro; página pública anônima aferida a 1366/500 px; faltam dark integrado e viewport real de 390 px** |
 | P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | **alt, legenda e teclado verificados no Firefox; falta leitor de tela** |
-| P6 | Formato próprio para o HTML básico | pendente (decisão de perfis) |
+| P6 | Formato próprio para usuários e confirmação de e-mail | concluído: `email_confirmed` recebe `usuario_aculta` |
 
 ## 8. Riscos
 
 - Textos já publicados: imagens antigas continuam como estão. O modelo vale para imagens novas ou editadas, a não ser que
   haja migração.
-- Respostas do Fórum já escritas em `basic_html`: ao editar, o formulário oferece só `usuario_aculta`. Testar antes de liberar.
+- As referências `basic_html` e `full_html`, inclusive revisões, foram migradas para os formatos ACULTA pelo update `aculta_portal_update_11009`.
 - O filtro precisa rodar antes do filtro de limpeza de HTML do formato, senão remove o `<figure>`. No `usuario_aculta` e no
   `basic_html` a ordem é a do config (peso 20 para o modelo).
 - O downcast do atributo para o `<img>` foi confirmado nos três editores no Firefox. A persistência após salvar/reabrir
@@ -108,8 +106,7 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 
 - **Crédito removido** de todos os modelos. Fica só a legenda.
 - **Destaque em 1200 px**, sem subir o limite de upload.
-- **Formatos:** `full_html` e `revista_editorial` têm o botão. `basic_html` fica sem o botão até o formato próprio.
-  `usuario_aculta` oferece só Pequena e Padrão, e é o único formato aceito nas respostas do Fórum.
+- **Formatos:** os formatos próprios são `revista_editorial` e `usuario_aculta`. Este último oferece Pequena e Padrão e é aceito nos tópicos e respostas do Fórum; `email_confirmed` recebe a permissão. Os valores existentes de `basic_html` e `full_html` foram migrados antes da remoção dos formatos Core.
 - **Limite de 1200 px:** o editor aceita imagens maiores e reduz para 1200 px de largura.
 - **Plugin em JavaScript simples**, sem toolchain npm.
 - **Fórum:** tamanhos provisórios de Pequena e Padrão.

@@ -44,7 +44,7 @@ display:
           empty: true
           content:
             value: '<p>Os registros de atividades serão publicados neste espaço conforme sua organização editorial.</p>'
-            format: full_html
+            format: revista_editorial
       sorts:
         field_event_start_value:
           id: field_event_start_value
@@ -130,7 +130,7 @@ display:
           empty: true
           content:
             value: '<p>Acompanhe este espaço para conhecer as próximas atividades abertas à comunidade.</p>'
-            format: full_html
+            format: revista_editorial
       sorts:
         field_event_start_value:
           id: field_event_start_value

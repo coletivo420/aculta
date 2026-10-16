@@ -46,9 +46,8 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 - **Filtro:** `aculta_imagem_modelo` (`Plugin\Filter\ImagemModelo`, peso 20) transforma o `<img>` em `<figure>` com
   `srcset` e `sizes` do modelo, e legenda em `<figcaption>` quando houver `data-aculta-legenda`. Crédito não existe.
 - **Modelos:** Pequena (320 e 640), Padrão (480 e 1160), Larga (800 e 1200), Destaque (1024 e 1200). Ver `ImageCatalog::MODELOS`.
-- **Editores:** dropdown de modelo em `full_html` e `revista_editorial`. `basic_html` sem seletor. Formato `usuario_aculta`
-  com Pequena e Padrão (é o formato das respostas do Fórum).
-- Configuração: `config/sync/filter.format.{basic_html,usuario_aculta}.yml`, `config/sync/editor.editor.{basic_html,full_html,revista_editorial,usuario_aculta}.yml`.
+- **Editores:** dropdown de modelo em `revista_editorial` e `usuario_aculta`. `usuario_aculta` oferece Pequena e Padrão e é usado nos tópicos e respostas do Fórum. `email_confirmed` recebe a permissão; `authenticated` não recebe permissão de edição de texto.
+- Configuração: `config/sync/filter.format.{revista_editorial,usuario_aculta}.yml`, `config/sync/editor.editor.{revista_editorial,usuario_aculta}.yml`.
 - Plugin: `aculta_image.ckeditor5.yml` (biblioteca `ckeditor5.image_model`, dependente de `ckeditor5/internal.drupal.ckeditor5.image`).
 
 ## Rotas e permissões
@@ -84,10 +83,9 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
   ```
 - JavaScript do seletor: `node --check web/modules/custom/aculta_portal/modules/aculta_image/js/ckeditor5/aculta-image-model.js`.
 - Runtime de testes: configurações de editor importadas e cache reconstruído. Firefox confirmou a serialização do modelo
-  em `full_html`, `usuario_aculta` e `revista_editorial`, incluindo o overflow a 488 px. Um upload de 1600×800 foi
+  em `usuario_aculta` e `revista_editorial`, incluindo o overflow a 488 px. Um upload de 1600×800 foi
   convertido a 1200×600; o arquivo de teste foi removido. Um artigo temporário não publicado preservou o modelo após
-  reabertura e foi excluído. Tema claro/escuro e viewport útil de 390 px continuam pendentes; o Firefox headless ficou em
-  488 px mesmo ao solicitar 402 px. Ver o handoff.
+  reabertura e foi excluído. Tema claro/escuro e viewport de 390 px foram confirmados em sessão Firefox com viewport CSS real. Ver o handoff.
 
 ## Atualizações de banco
 

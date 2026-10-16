@@ -7,8 +7,8 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.15. Leia este documento antes d
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
 3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário, persistência e reabertura da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Firefox/Orca/AT-SPI confirmaram foco e leitura da legenda e do `alt`, além da semântica de imagem/legenda.
-4. Próximos passos: resolver as decisões do responsável listadas na seção 6.
-5. A importação do Growroom está bloqueada pela F3 do Fórum (lista de autores). Não é trabalho deste submódulo.
+4. Formatos Core migrados para os formatos ACULTA; o seletor de `usuario_aculta` pertence ao papel `email_confirmed`.
+5. Falta decidir como preservar `alt` e usos repetidos na mesclagem das mídias duplicadas; a importação do Growroom segue bloqueada pela F3 do Fórum.
 
 ## 2. Git e working tree
 
@@ -89,7 +89,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 
 ## 5. Riscos conhecidos
 
-- **Resposta antiga em `basic_html`:** ao editar uma resposta do Fórum que já usa `basic_html`, o formulário passa a oferecer só `usuario_aculta`. Testar no Runtime antes de liberar.
+- **Valores de formato antigos:** textos e revisões foram migrados antes da exclusão dos formatos Core; respostas antigas do Fórum usam `usuario_aculta` após a migração.
 - **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
 - **Seletor de modelo:** dropdown único importado nos três editores. Firefox confirmou as quatro opções do `full_html`, seleção de Larga e `data-aculta-modelo="larga"` serializado. `usuario_aculta` recebe Pequena e Padrão pela configuração dinâmica.
 - **Barra multilinha:** o marcador `-` na toolbar desliga o overflow automático do CKEditor. `revista_editorial` já o usava; foi aplicado a `full_html` e `usuario_aculta`. Firefox mediu três linhas e nenhum botão de overflow a 500 px em `full_html`.
@@ -100,14 +100,14 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 - **Persistência da legenda (2026-10-16):** em artigo temporário válido no Runtime, o formulário do CKEditor aceitou “Legenda salva no Firefox visível”; após salvar, `data-aculta-legenda` apareceu no corpo salvo no banco e o formulário de edição reaberto recuperou o mesmo texto. O formulário estava válido e o nó temporário foi removido (IDs 370 e 371 confirmados no cleanup).
 - **Revisão com Orca/AT-SPI (2026-10-16):** Firefox 153.4 na sessão LXQt/X11. O Orca anunciou o campo como “Legenda da imagem”, entry e o valor salvo. Ao focar a imagem da fixture DOM na página pública, anunciou “Legenda acessível de teste” e “Imagem de teste com texto alternativo image”. A árvore AT-SPI expôs a figura como painel, imagem com nome acessível derivado do `alt` e o filho de legenda. A fixture foi removida sem salvar conteúdo.
 - **Revisão a 390 px e tema escuro (2026-10-16):** em página pública anônima de artigo existente, Firefox 153.4 ESR via WebDriver BiDi manteve `innerWidth=390`. Quatro figuras demonstrativas adicionadas apenas ao DOM usaram as classes reais Pequena/Padrão/Larga/Destaque; todas mediram 346 px, exibiram `figcaption` e o documento mediu 378 px, sem rolagem horizontal. As quatro imagens carregaram (largura natural 960 px). No tema escuro integrado, definido temporariamente em `aculta_portal.appearance:default_mode` e depois restaurado para `light`, o HTML público veio com `data-bs-theme="dark"`; corpo `rgb(23, 21, 19)`, texto `rgb(244, 239, 232)`, legenda `rgb(183, 174, 165)`. As figuras permaneceram em 346 px, sem overflow. As figuras de verificação existiram só no DOM da sessão; nenhum conteúdo foi salvo.
-- **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
-- **Formato do básico sem botão:** conteúdo de quem usa só o básico não ganha modelo até o formato próprio.
+- **Fórum:** tópicos e respostas usam somente `usuario_aculta`. O formato está disponível ao papel `email_confirmed`; `content_editor` elegível tem também esse papel conforme a hierarquia documentada.
+- **Formatos textuais (2026-10-16):** `basic_html` foi migrado para `usuario_aculta` e `full_html` para `revista_editorial`, incluindo revisões. Campos, views, Agreement e permissões foram atualizados; os formatos e editores Core foram removidos do Runtime e do Config Sync. O update `aculta_portal_update_11009` exige que os dois formatos de destino existam antes de rodar.
 - **Downloads do Wayback (2026-10-16, 15:42):** assets concluído (9.314 arquivos). HTML em andamento como root, com processo ativo: 6.480 arquivos; fila de tópicos e galerias (perfis fora até o mapeamento). Seções excluídas da importação: Avisos (2 e 52), Multimídia Cannábica (48), Cannabis Medicinal (76, a confirmar) e Notícias (24). **Não interromper nem apagar** sem consulta ao responsável. O script está fora do repositório (`scratchpad` da sessão); ver `IMPORTACAO-GROWROOM.md`, seção de estado.
 - **Binários de produção:** ImageMagick e Ghostscript não foram confirmados na Hostinger. A miniatura de PDF e a redução de largura dependem disso em produção.
 
 ## 6. Próximos passos (ordem recomendada)
 
-1. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
+1. **Intervenção necessária:** decidir a política de `alt` e ocorrências repetidas na galeria para mesclar as mídias duplicadas (ver `PLANO.md`, seção 6). Os formatos e o Fórum foram decididos e aplicados. A confirmação dos binários na Hostinger segue pendente (RC).
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)
 

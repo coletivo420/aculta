@@ -106,7 +106,7 @@ display:
           empty: false
           content:
             value: '<h2>CULTURA, INFORMAÇÃO E CUIDADO</h2><p class="aculta-page-intro">Diferentes frentes de uma atuação que conecta produção cultural, conhecimento, direitos e cuidado coletivo.</p>'
-            format: full_html
+            format: revista_editorial
           tokenize: false
       display_extenders: {  }
     cache_metadata:

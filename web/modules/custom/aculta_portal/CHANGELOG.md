@@ -1963,3 +1963,9 @@ educador. O módulo base do PDF Viewer permanece independente de Group. O acesso
 por membership, revogação e entrega privada no Runtime segue DEFERRED; PDFs
 privados de turma ainda não estão homologados. RUNTIME STATUS: DEFERRED.
 
+## 0.4.0-dev.61 — formatos textuais próprios — 2026-10-16
+
+Decisão de acesso: o papel `email_confirmed` recebe `usuario_aculta`; `authenticated` deixa de receber permissões de edição de texto. O corpo dos tópicos do Fórum aceita somente `usuario_aculta`.
+
+A atualização `aculta_portal_update_11009` migra referências atuais e revisões de `basic_html` para `usuario_aculta` e de `full_html` para `revista_editorial`, preservando texto, revisões, autores e datas. Campos, views e Agreement foram alinhados. Os formatos e editores Core removidos deixam de ser exportados.
+

@@ -468,3 +468,73 @@ function aculta_portal_update_11008(&$sandbox): string {
 
   return 'Moved participant address data into the Drupal Commerce customer Address profile and removed the duplicate participant address fields.';
 }
+
+/**
+ * Reassigns stored text from core formats to the ACULTA formats.
+ *
+ * All current and revision field tables are updated without rewriting text,
+ * revision IDs, authors, or timestamps. The config import must first provide
+ * both target formats; remove the old format configs only after this update.
+ */
+function aculta_portal_update_11009(): string {
+  $targets = [
+    'basic_html' => 'usuario_aculta',
+    'full_html' => 'revista_editorial',
+  ];
+  foreach (array_unique(array_values($targets)) as $target) {
+    if (!\Drupal\filter\Entity\FilterFormat::load($target)) {
+      throw new \Drupal\Core\Utility\UpdateException(sprintf(
+        'The target text format "%s" must be imported before running this update.',
+        $target,
+      ));
+    }
+  }
+
+  $database = \Drupal::database();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_manager = \Drupal::service('entity_field.manager');
+  $transaction = $database->startTransaction();
+  $updated = [];
+
+  try {
+    foreach ($entity_type_manager->getDefinitions() as $entity_type_id => $entity_type) {
+      $storage = $entity_type_manager->getStorage($entity_type_id);
+      if (!$storage instanceof \Drupal\Core\Entity\Sql\SqlEntityStorageInterface) {
+        continue;
+      }
+      $table_mapping = $storage->getTableMapping();
+      foreach ($field_manager->getFieldStorageDefinitions($entity_type_id) as $field_name => $field_definition) {
+        if (!isset($field_definition->getPropertyDefinitions()['format'])) {
+          continue;
+        }
+        $columns = $table_mapping->getColumnNames($field_name);
+        if (!isset($columns['format'])) {
+          continue;
+        }
+        $column = $columns['format'];
+        foreach ($table_mapping->getAllFieldTableNames($field_name) as $table) {
+          foreach ($targets as $source => $target) {
+            $count = $database->update($table)
+              ->fields([$column => $target])
+              ->condition($column, $source)
+              ->execute();
+            if ($count) {
+              $updated[$source] = ($updated[$source] ?? 0) + $count;
+            }
+          }
+        }
+      }
+    }
+    unset($transaction);
+  }
+  catch (\Throwable $exception) {
+    $transaction->rollBack();
+    throw $exception;
+  }
+
+  return sprintf(
+    'Reassigned stored text formats: basic_html=%d to usuario_aculta; full_html=%d to revista_editorial, including revision tables.',
+    $updated['basic_html'] ?? 0,
+    $updated['full_html'] ?? 0,
+  );
+}

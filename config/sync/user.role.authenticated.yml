@@ -3,8 +3,6 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - filter.format.basic_html
-    - filter.format.usuario_aculta
     - filter.format.webform_default
     - node.type.forum
     - node.type.aculta_notice
@@ -52,8 +50,6 @@ permissions:
   - 'update own customer profile'
   - 'update own participante profile'
   - 'use private messaging system'
-  - 'use text format basic_html'
-  - 'use text format usuario_aculta'
   - 'use text format webform_default'
   - 'view commerce_product'
   - 'view media'
