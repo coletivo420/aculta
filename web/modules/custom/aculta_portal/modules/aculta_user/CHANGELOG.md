@@ -1,5 +1,13 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.13 — F9 parcial: fóruns restritos por nível (associado e e-mail confirmado) — 2026-10-16
+
+Classificação MINOR. Papel `associado` versionado em `config/sync` (concessão manual, sem permissões). Campo
+`field_visibilidade` no contêiner de fórum (público, e-mail confirmado, associado). Grants de nó por realm
+(`aculta_email_confirmado`, `aculta_associado`), negação de acesso direto a contêiner e tópico, e filtro das
+consultas com a tag `node_access`. Testado no Runtime de teste por papel: anônimo e e-mail confirmado não veem
+contêiner, tópico nem listagem; associado vê. Contêineres públicos inalterados. Pendências da F9 no roadmap.
+
 ## 0.4.0-dev.12 — denúncias do Fórum e participação com e-mail confirmado (F5.1) — 2026-10-16
 
 Classificação MINOR. Denúncia de tópico e comentário pelo Flag, deduplicada por conta; fila de moderação em

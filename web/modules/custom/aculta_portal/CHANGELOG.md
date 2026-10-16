@@ -1,3 +1,9 @@
+## 0.4.0-dev.46 — F9 parcial: fóruns restritos — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.13. Fóruns restritos por nível funcionam para visitante,
+e-mail confirmado e associado no teste. Ainda não tratados: índice de busca (processador `content_access`
+desativado), sitemap, comentários em tópico restrito e o nível de curso (F8). Ver roadmap do Fórum.
+
 ## 0.4.0-dev.45 — denúncias do Fórum e política de e-mail confirmado (F5.1) — 2026-10-16
 
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.12 e a documentação da política de confirmação de e-mail, com

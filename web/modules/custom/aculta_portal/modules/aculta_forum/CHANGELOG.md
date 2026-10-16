@@ -1,3 +1,9 @@
+## F9 parcial — fóruns restritos por nível — 2026-10-16
+
+- Papel `associado` versionado (concessão manual). Campo `field_visibilidade` no contêiner: público, e-mail confirmado, associado.
+- Visitante não vê contêiner, tópico nem listagem de fórum restrito. Associado vê; e-mail confirmado sem associado não vê o nível associado.
+- Pendentes antes de criar restritos no site público: processador `content_access` no índice de busca (ainda desativado) e reindexação; exclusão no sitemap; comentários em tópico restrito; nível de curso (F8); política para `content_editor`.
+
 ## F5.1 — denúncias e participação com e-mail confirmado — 2026-10-16
 
 - Sinalização de tópico e comentário pelo Flag (`sinalizar_topico`, `sinalizar_comentario`), uma por conta e por conteúdo.
