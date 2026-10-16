@@ -81,5 +81,14 @@
     "version": "1",
     "format": "square-original",
     "notes": "Família montada a partir da prancha enviada pelo usuário, com assets individuais 1:1."
+  },
+  {
+    "id": "robots",
+    "label": "Robôs e tecnologia",
+    "count": 10,
+    "active": true,
+    "version": "1",
+    "format": "square-1x1-from-portrait",
+    "notes": "Recortes da prancha em retrato, convertidos para 1:1 a partir do topo (512 px). Ver meta/avatars-robots.json."
   }
 ]

@@ -969,5 +969,115 @@
     "active": true,
     "alt": "Tartaruga com óculos escuros, mochila e folha de cannabis no casco, em paisagem de savana ao pôr do sol.",
     "source": "generated-from-user-collage"
+  },
+  {
+    "id": "robots-001-robo-420",
+    "file": "robots/robots-001-robo-420.png",
+    "family": "robots",
+    "label": "Robô 420",
+    "alt": "Avatar ilustrado de robô 420 com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 295,
+    "height": 480
+  },
+  {
+    "id": "robots-002-androide-verde",
+    "file": "robots/robots-002-androide-verde.png",
+    "family": "robots",
+    "label": "Androide verde",
+    "alt": "Avatar ilustrado de androide verde com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 298,
+    "height": 480
+  },
+  {
+    "id": "robots-003-cyborg-chapado",
+    "file": "robots/robots-003-cyborg-chapado.png",
+    "family": "robots",
+    "label": "Cyborg chapado",
+    "alt": "Avatar ilustrado de cyborg chapado com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 295,
+    "height": 480
+  },
+  {
+    "id": "robots-004-robo-olhos-vermelhos",
+    "file": "robots/robots-004-robo-olhos-vermelhos.png",
+    "family": "robots",
+    "label": "Robô de olhos vermelhos",
+    "alt": "Avatar ilustrado de robô de olhos vermelhos com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 299,
+    "height": 480
+  },
+  {
+    "id": "robots-005-bot-maconheiro",
+    "file": "robots/robots-005-bot-maconheiro.png",
+    "family": "robots",
+    "label": "Bot maconheiro",
+    "alt": "Avatar ilustrado de bot maconheiro com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 291,
+    "height": 480
+  },
+  {
+    "id": "robots-006-maquina-fumaca-viva",
+    "file": "robots/robots-006-maquina-fumaca-viva.png",
+    "family": "robots",
+    "label": "Máquina de fumaça viva",
+    "alt": "Avatar ilustrado de máquina de fumaça viva com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 295,
+    "height": 513
+  },
+  {
+    "id": "robots-007-robo-rastafari",
+    "file": "robots/robots-007-robo-rastafari.png",
+    "family": "robots",
+    "label": "Robô rastafari",
+    "alt": "Avatar ilustrado de robô rastafari com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 298,
+    "height": 513
+  },
+  {
+    "id": "robots-008-ia-monstruosa",
+    "file": "robots/robots-008-ia-monstruosa.png",
+    "family": "robots",
+    "label": "Inteligência artificial monstruosa",
+    "alt": "Avatar ilustrado de inteligência artificial monstruosa com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 295,
+    "height": 513
+  },
+  {
+    "id": "robots-009-drone-personalidade",
+    "file": "robots/robots-009-drone-personalidade.png",
+    "family": "robots",
+    "label": "Drone com personalidade",
+    "alt": "Avatar ilustrado de drone com personalidade com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 299,
+    "height": 513
+  },
+  {
+    "id": "robots-010-robo-sucata",
+    "file": "robots/robots-010-robo-sucata.png",
+    "family": "robots",
+    "label": "Robô de sucata",
+    "alt": "Avatar ilustrado de robô de sucata com referências à cultura canábica.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1",
+    "width": 291,
+    "height": 513
   }
 ]
