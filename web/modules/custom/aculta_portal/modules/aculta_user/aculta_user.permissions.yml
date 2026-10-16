@@ -13,3 +13,7 @@ export aculta associados:
 administer aculta friendships:
   title: 'Administrar relacionamentos entre membros'
   restrict access: true
+
+moderar denuncias do forum:
+  title: 'Moderar denúncias do Fórum'
+  restrict access: true

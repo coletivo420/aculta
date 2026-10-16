@@ -42,3 +42,6 @@ services:
   aculta_user.legacy_accounts:
     class: Drupal\aculta_user\Legacy\LegacyAccountManager
     arguments: ['@entity_type.manager', '@database', '@extension.list.module', '@file_system', '@file.repository', '@file.usage', '%app.root%']
+  aculta_user.report_queue:
+    class: Drupal\aculta_user\Moderation\ReportQueue
+    arguments: ['@entity_type.manager']
