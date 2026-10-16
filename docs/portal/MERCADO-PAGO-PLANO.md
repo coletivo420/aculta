@@ -39,7 +39,10 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 - Verificação: `WebhookSignatureValidator` do SDK, sem cópia própria.
 - Endpoint: o mesmo da notificação do gateway, `/integracoes/pagamentos/mercado_pago/notificacao` (a rota é reescrita pelo Portal). Nenhuma URL nova no código.
 - Tópicos consultados: assinatura, plano e cobrança (`GET /authorized_payments/{id}`). Nenhuma gravação no Commerce ainda (F3).
-- Verificado no Runtime: sem assinatura e com assinatura inválida, 401; assinatura válida com id inexistente, 500 com registro em log. Caminho de sucesso (200): DEFERRED até existir assinatura real de teste.
+- Verificado no Runtime: sem assinatura e com assinatura inválida, 401; assinatura válida com id inexistente, 500 com registro em log.
+- Caminho de sucesso verificado com plano real de teste (`subscription_preapproval_plan`): 200, plano consultado (status `active`). Plano criado na conta de teste; não pode ser apagado pela API.
+- Assinatura de teste (`subscription_preapproval`): **bloqueada**. O Mercado Pago exige `payer_email` de um comprador diferente da conta vendedora, e o e-mail do usuário de teste não é retornado pela API. Falta o e-mail do comprador de teste, que está no painel (Suas integrações > aplicação > Contas de teste).
+- Diagnóstico registrado: criar assinatura com `preapproval_plan_id` exige `card_token_id` (não usado pelo projeto); sem plano, a API recusou o pagador (`User bad request`).
 
 ## 1. Inventário das APIs do SDK
 
