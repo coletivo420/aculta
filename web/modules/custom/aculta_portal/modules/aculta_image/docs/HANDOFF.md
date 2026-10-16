@@ -29,7 +29,7 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.10. Leia este documento antes d
 | `fdc4c0ad` | configuração: formato `usuario_aculta`, permissão no autenticado, comentários do Fórum, limites do core desligados |
 | (este commit) | documentação: README, PLANO, MODELOS, ESTILOS, IMPORTAÇÃO, este handoff |
 | `0941388b` | política de IA: um commit por tarefa no branch atual; sem branch por tarefa |
-| (próximo commit) | correção dos botões de modelo no overflow, configuração do Runtime e documentação dev.10 |
+| `e52c402d` | correção dos botões de modelo no overflow (dev.10): um botão por modelo |
 
 - **Não commitar** o que é de outras sessões. No momento da passagem havia 25 entradas em `git status`. Todas as do submódulo `aculta_image` são desta frente. As demais são de outra frente e **não** devem entrar nos commits de imagem:
   - `config/sync/group.role.lms_course-member.yml`, `group.role.lms_course-teacher.yml`, `user.role.lms_teacher.yml`;
@@ -71,9 +71,15 @@ o schema do módulo foram carregados pelo rebuild. Depois da atualização dos i
 importados de novo via diretório temporário com apenas esses YAMLs. `config:status` ainda aponta `user.role.authenticated`
 por drift existente de permissões não relacionadas; não importar a role inteira, pois isso reverteria permissões ativas.
 
-Firefox headless confirmou em `full_html` que “Imagem: Padrão” serializa `data-aculta-modelo="padrao"` no `<img>`. Em
-`usuario_aculta` e `revista_editorial`, “Imagem: Pequena” também funcionou pelo menu de overflow a 488 px. As imagens eram
-temporárias no editor; nenhum conteúdo foi salvo.
+Reportado pela sessão de teste (não reproduzido nesta revisão): Firefox headless confirmou em `full_html` que “Imagem: Padrão”
+serializa `data-aculta-modelo="padrao"` no `<img>`. Em `usuario_aculta` e `revista_editorial`, “Imagem: Pequena” também
+funcionou pelo menu de overflow a 488 px. As imagens eram temporárias no editor; nenhum conteúdo foi salvo.
+
+**Revisão de 2026-10-16 (verificado):** filtros e editores de imagem no Runtime batem com o repositório (`config:status`
+sem diferença nesses itens). `user.role.authenticated` tem `use text format usuario_aculta`. O `config:status` total mostra 252
+itens com diferença, quase todos fora desta frente. Três estilos (`aculta_avatar`, `aculta_card_1x`, `aculta_card_2x`) também
+aparecem com diferença, mas efeitos e rótulo são iguais aos do repositório; a diferença está em outro metadado, ainda não
+investigado.
 
 Upload real: PNG sintético de 1600×800 foi enviado em `revista_editorial`, convertido a 1200×600 e removido em seguida.
 O arquivo gerenciado foi excluído e a ausência confirmada. O upload está coberto para este caminho.
@@ -84,7 +90,8 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 
 - **Resposta antiga em `basic_html`:** ao editar uma resposta do Fórum que já usa `basic_html`, o formulário passa a oferecer só `usuario_aculta`. Testar no Runtime antes de liberar.
 - **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
-- **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. Firefox confirmou o downcast em `full_html`; falta verificar depois de salvar/reabrir e nos demais formatos.
+- **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. O downcast foi reportado em `full_html`; falta verificar depois de salvar/reabrir e nos demais formatos.
+- **Condição de ativação do plugin:** `aculta_image.ckeditor5.yml` usa `toolbarItem: acultaImageModelPequena` como condição. Um editor com só outro modelo na barra não ativaria o plugin. Trocar por uma condição que aceite qualquer dos quatro botões, ou confirmar que o caso não ocorre.
 - **Legenda:** o seletor não tem campo de legenda. A legenda do `figcaption` só aparece quando o atributo `data-aculta-legenda` existir no HTML.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
 - **Formato do básico sem botão:** conteúdo de quem usa só o básico não ganha modelo até o formato próprio.
