@@ -153,7 +153,7 @@ antes de implementar integrações funcionais.
 
 ## Credenciais do ambiente (0.2.0-dev.11)
 
-Painel `/admin/config/aculta/segredos` para cadastrar as credenciais do contrato
+Painel `/painel-administrativo/configuracoes/aculta/segredos` para cadastrar as credenciais do contrato
 (`config/secrets-contract.json`). Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.
 Em teste, são gravados em arquivo; em produção, ficam no banco criptografado, provisionado pelo
 `aculta_deployer` após o deploy. Detalhes e limites em
