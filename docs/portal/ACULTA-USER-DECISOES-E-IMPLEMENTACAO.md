@@ -98,7 +98,7 @@ Pendente: teste em navegador da abertura automática e do fechamento do popup; t
 | Primeiro comentário de quem não tem comentário publicado vai para a fila | Implementado (código; verificação em navegador pendente) | `ParticipationHooks::commentPresave` |
 | Criar tópico exige 10 comentários publicados | Implementado (limite configurável) | `ParticipationHooks::entityCreateAccess` |
 | Bloqueio de publicações enquanto o primeiro comentário aguarda | Implementado | `ParticipationRules` |
-| Painel `/admin/config/aculta/portal/participacao` | Implementado | `ParticipationSettingsForm` |
+| Painel `/painel-administrativo/configuracoes/aculta/portal/participacao` | Implementado | `ParticipationSettingsForm` |
 | Editor de conteúdo e administrador ficam isentos | Implementado | `papeis_isentos` |
 | Discussão vinculada: tópico de Fórum ligado a artigo, atividade, projeto, documento e verbete | Implementado (campo `field_discussao`) | `DiscussionHooks` |
 | Tipos com discussão vinculada (decisão 24) | Usado o padrão do plano; **confirmação pendente** | — |

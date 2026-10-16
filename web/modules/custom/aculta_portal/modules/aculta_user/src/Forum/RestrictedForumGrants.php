@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Forum;
 
 use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_user\Associado\AssociadoMarker;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 
@@ -21,6 +22,13 @@ use Drupal\taxonomy\TermInterface;
  */
 final class RestrictedForumGrants {
 
+  /** Realm dos fóruns restritos a marcadores de associado (F-D20). */
+  public const REALM_MARCADOR = 'aculta_marcador_associado';
+
+  public function __construct(
+    private readonly AssociadoMarker $marker,
+  ) {}
+
   public const REALM_EMAIL = 'aculta_email_confirmado';
 
   public const FIELD = 'field_visibilidade';
@@ -33,9 +41,16 @@ final class RestrictedForumGrants {
       return [];
     }
     $roles = $account->getRoles();
-    // content_editor só vale com e-mail confirmado (decisão de 2026-10-16).
+    // content_editor só vale com e-mail confirmado (decisão de 2026-10-16). O moderador vê os níveis restritos.
     $emailConfirmado = in_array('email_confirmed', $roles, TRUE);
-    return $emailConfirmado ? [self::REALM_EMAIL => [1]] : [];
+    $grants = [];
+    if ($emailConfirmado) {
+      $grants[self::REALM_EMAIL] = [1];
+    }
+    if ($this->marker->isAssociado((int) $account->id()) || ($emailConfirmado && in_array('content_editor', $roles, TRUE))) {
+      $grants[self::REALM_MARCADOR] = [1];
+    }
+    return $grants;
   }
 
   /**
@@ -66,6 +81,7 @@ final class RestrictedForumGrants {
     }
     return match ((string) $container->get(self::FIELD)->value) {
       'email_confirmado' => [self::REALM_EMAIL],
+      'marcador_associado' => [self::REALM_MARCADOR],
       default => [],
     };
   }

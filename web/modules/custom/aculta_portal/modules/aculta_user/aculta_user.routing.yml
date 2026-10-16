@@ -19,7 +19,7 @@ aculta_user.configuracoes_privacidade:
     _permission: 'access aculta portal'
 
 aculta_user.participacao_settings:
-  path: '/admin/config/aculta/portal/participacao'
+  path: '/painel-administrativo/configuracoes/aculta/portal/participacao'
   defaults:
     _form: '\Drupal\aculta_user\Form\ParticipationSettingsForm'
     _title: 'Regras de participação'
@@ -37,7 +37,7 @@ aculta_user.atividade:
     aba: 'wiki|forum|revista|comentarios|conquistas'
 
 aculta_user.associados:
-  path: '/admin/aculta/associados'
+  path: '/painel-administrativo/associados/relatorio'
   defaults:
     _controller: '\Drupal\aculta_user\Controller\AssociadosController::report'
     _title: 'Associados'
@@ -45,7 +45,7 @@ aculta_user.associados:
     _permission: 'administer aculta associados'
 
 aculta_user.associados_csv:
-  path: '/admin/aculta/associados/exportar'
+  path: '/painel-administrativo/associados/exportar'
   defaults:
     _controller: '\Drupal\aculta_user\Controller\AssociadosController::export'
     _title: 'Exportar associados'

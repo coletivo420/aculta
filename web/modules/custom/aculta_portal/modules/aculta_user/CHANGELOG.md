@@ -1,5 +1,10 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.19 — fóruns para marcadores de associado (F-D20) e caminhos em /painel-administrativo — 2026-10-16
+
+Classificação MINOR. Nível de visibilidade "Marcadores de associado" para fóruns. Moderadores também veem. Rotas e
+caminhos internos padronizados em `/painel-administrativo/` (relatório em `/painel-administrativo/associados/relatorio`).
+
 ## 0.4.0-dev.18 — associado como marcador puro (F-D19) — 2026-10-16
 
 Classificação MINOR. Associado deixa de ser papel: tabela própria `aculta_associado` (marcador, sem acesso a nada).

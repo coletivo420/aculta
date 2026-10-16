@@ -27,18 +27,16 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class RestrictedForumHooks {
 
   /** Realms que restringem conteúdo (o associado é marcador e não restringe, F-D19). */
-  private const RESTRICTED_REALMS = [RestrictedForumGrants::REALM_EMAIL];
-
-  private readonly RestrictedForumGrants $grants;
+  private const RESTRICTED_REALMS = [RestrictedForumGrants::REALM_EMAIL, RestrictedForumGrants::REALM_MARCADOR];
 
   public function __construct(
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-  ) {
-    $this->grants = new RestrictedForumGrants();
-  }
+    #[Autowire(service: 'aculta_user.restricted_forum_grants')]
+    private readonly RestrictedForumGrants $grants,
+  ) {}
 
   /**
    * Implements hook_node_grants().

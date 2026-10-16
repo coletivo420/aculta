@@ -18,12 +18,22 @@ Do menor para o maior:
 **Associado não é papel.** É um marcador puro (F-D19): fica em tabela própria, separada da identidade User e dos papéis.
 Não concede acesso a nenhum conteúdo nem função do site. Serve a relatórios e páginas da associação. O administrador
 marca e desmarca em `/painel-administrativo/associados/{uid}/marcar`, e o relatório de associados lista as marcas em
-`/admin/aculta/associados`.
+`/painel-administrativo/associados/relatorio`.
 
 Usuários podem ter mais de um papel. A regra de visibilidade considera só `email_confirmed` e os papéis acima.
 
-Na implementação, o realm de visibilidade é concedido assim: `aculta_email_confirmado` para `email_confirmed`, e para
-`content_editor` somente com `email_confirmed`.
+Níveis de visibilidade de um fórum (F-D20):
+
+| Nível | Quem vê |
+|---|---|
+| Público | Todos |
+| E-mail confirmado | `email_confirmed` e moderadores (`content_editor` com `email_confirmed`) |
+| Marcadores de associado | Contas com a marca de associado e moderadores |
+
+O marcador de associado libera apenas os fóruns com esse nível. Ele não dá nenhuma outra função.
+
+Padronização de caminhos internos: todo caminho do ACULTA fica em `/painel-administrativo/` (não em `/admin/`).
+O segmento de configuração aparece traduzido, como `configuracoes`, conforme a regra de slugs do projeto.
 
 ## 2. Regras do content_editor
 

@@ -1,3 +1,8 @@
+## 0.4.0-dev.52 — caminhos em /painel-administrativo e fóruns para marcadores — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.19. Caminhos internos do ACULTA padronizados em
+`/painel-administrativo/` (inclusive configurações, em `configuracoes/aculta`). Fóruns podem ser restritos a marcadores.
+
 ## 0.4.0-dev.51 — associado como marcador puro — 2026-10-16
 
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.18. Associado é marcador em tabela própria, sem efeito em acesso.
@@ -1896,3 +1901,11 @@ features executáveis preparadas sem Homelab permanecem draft até validação.
 - Caixa "Todos os nossos pagamentos são processados pelo Mercado Pago" em Meus pedidos (texto e link no módulo, config
   `aculta_portal.settings:mercado_pago_account_url`).
 - Gate: seções 12 (ícones Bootstrap Icons) e 13 (pagamentos) em `scripts/validate-module-theme-boundary.php`.
+## 0.4.0-dev.53 — F2: integração PDF.js global — 2026-10-16
+
+Classificação MINOR. Instala `drupal/pdf` 1.3.0 e PDF.js oficial 6.4.299 em distribuição local Composer, com hash fixo;
+adiciona builder reutilizável para Media document que exige access de Media, campo e File, MIME/extension PDF e scheme
+public local, acumula cacheability e oferece fallback abrir/baixar. Não integra PDFPreview nem ativa configuração de
+formatter/Media. Teste Unit de acesso negado PASS. Renderização pública no navegador e Runtime **DEFERRED**: o Drush
+local aponta `http://default`, não o URI canônico de teste.
+

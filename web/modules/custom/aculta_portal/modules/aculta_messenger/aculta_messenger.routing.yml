@@ -125,7 +125,7 @@ aculta_messenger.notice_detail:
         type: entity:node
 
 aculta_messenger.settings_form:
-  path: '/admin/config/aculta/portal/mensagens'
+  path: '/painel-administrativo/configuracoes/aculta/portal/mensagens'
   defaults:
     _form: '\Drupal\aculta_messenger\Form\MessengerSettingsForm'
     _title: 'Chat: limites e limpeza'

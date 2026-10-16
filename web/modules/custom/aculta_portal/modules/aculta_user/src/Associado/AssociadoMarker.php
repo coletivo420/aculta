@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Associado;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -38,6 +39,7 @@ final class AssociadoMarker {
       'uid' => $uid,
       'concedido_por' => $concedidoPor,
     ])->save();
+    $this->invalidar($uid);
     return TRUE;
   }
 
@@ -48,7 +50,13 @@ final class AssociadoMarker {
       return FALSE;
     }
     $marca->delete();
+    $this->invalidar($uid);
     return TRUE;
+  }
+
+  /** Marca mudou: listagens e páginas que dependem do acesso da conta são recalculadas. */
+  private function invalidar(int $uid): void {
+    Cache::invalidateTags(['user:' . $uid, 'node_list', 'taxonomy_term_list']);
   }
 
   private function marcaDe(int $uid): ?object {
