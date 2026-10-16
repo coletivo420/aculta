@@ -11,8 +11,9 @@ Wiki420, Fórum, projetos e documentos institucionais que referenciem Media.
 - Media/File são donos da entidade, URI, metadados e arquivo.
 - Core Media/File decide acesso a Media, campo e arquivo; o submódulo aplica
   esses resultados antes de criar render arrays.
-- PDF.js oficial fixado no Composer lê o arquivo no browser. Não existe cópia
-  ou proxy privado implementado nesta fase.
+- PDF.js oficial fixado no Composer lê o arquivo no browser. Para `private://`,
+  o File URL Generator aponta à rota privada do Core, que revalida o acesso ao
+  File e às entidades/campos referenciadores a cada requisição.
 - O viewer não cria rotas, armazenamento, permissões, dados de LMS ou política
   de autorização independente.
 - PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha/ausência de preview não
@@ -34,18 +35,23 @@ Serviço `aculta_pdf_viewer.builder`, com DI de `file_url_generator`,
 
 1. Confere Media `view`, bundle `document` e presença do campo.
 2. Confere `view` no campo e obtém a referência File.
-3. Confere File `view` e `download`, permanência, esquema `public://`, MIME e extensão PDF.
-4. Opcionalmente inclui a miniatura da primeira página. Se binário, policy,
+3. Confere File `view` e `download`, permanência, esquema `public://` ou
+   `private://`, MIME e extensão PDF.
+4. Para arquivos privados, limita o cache do render a max-age zero. A entrega
+   de bytes permanece na rota Core `system.private_file_download`; não há rota,
+   token ou política paralela no submódulo.
+5. Opcionalmente inclui miniatura da primeira página somente para arquivo
+   público. Se binário, policy,
    formato, tamanho ou conversão falhar, segue com o leitor sem miniatura.
-5. Gera uma URL local pelo File URL Generator; rejeita URL com scheme/host ou
+6. Gera uma URL local pelo File URL Generator; rejeita URL com scheme/host ou
    fora de path local.
-6. Cria o render array acessível com miniatura, canvas, estado e controles, anexa a
+7. Cria o render array acessível com miniatura, canvas, estado e controles, anexa a
    biblioteca local e borbulha cache tags/contexts/max-age de Media, File e
    resultados de acesso.
 
-Arquivo `private://`, stream wrapper remoto, MIME divergente ou entidade sem
-acesso não recebe viewer. O builder não aceita URL enviada pela pessoa, por
-querystring ou pelo editor.
+Stream wrapper remoto, MIME divergente ou entidade sem acesso não recebe
+viewer. O builder não aceita URL enviada pela pessoa, por querystring ou pelo
+editor. Arquivos temporários não recebem viewer.
 
 ### `PdfPreviewThumbnailBuilder`
 
@@ -75,12 +81,12 @@ usam `file_link`, preservando o comportamento Core.
 
 Se o builder negar o viewer, o formatter mantém `file_link` somente quando o
 access de download permite e acumula também a cacheabilidade do motivo de
-negação. Para arquivo privado, a URL gerada pelo Core volta ao endpoint de
-download privado, cuja autorização é recalculada por Core sobre as referências
-e campo. Isso oferece fallback de arquivo; não implementa leitura privada
-embutida nem comprova isolamento por turma. O bundle `document` exportado usa
-`public://`; arquivo público pode ser acessado diretamente e não deve conter
-trabalhos confidenciais.
+negação. Para arquivo privado, tanto o viewer quanto o link fallback usam a URL
+da rota Core de download; Core recalcula autorização sobre referências,
+entidades e campos. Isso reaproveita a política Core, mas não substitui testes
+de isolamento por Group/turma. O bundle `document` exportado continua usando
+`public://`; conteúdo confidencial deve usar um campo/bundle configurado para
+`private://`.
 
 ## JavaScript e carregamento
 
@@ -121,12 +127,13 @@ controller nem classe de formulário neste módulo; não existe arquivo
 ## Segurança, acessibilidade e limites conhecidos
 
 - Cache inclui entidades e `AccessResult`; links e viewer só são montados após
-  checagem no servidor. A URL de bytes vem do File URL Generator local.
+  checagem no servidor. Para `private://`, o render não é armazenado e a URL de
+  bytes passa pela rota Core de arquivo privado.
 - Ocultar o botão não protege arquivo `public://`; a URL pública é acessível
-  diretamente. Material privado deve usar `private://` e não recebe viewer nesta
-  versão.
-- CSP, tamanho/tempo de PDF, renderização browser, troca de membership, usuários
-  de turmas diferentes e produção LiteSpeed são gates de homologação.
+  diretamente. Material confidencial deve usar `private://`; não mudar o
+  esquema do bundle existente sem migração e decisão próprias.
+- CSP, entrega de PDF privado em browser, revogação de membership, usuários de
+  turmas diferentes e produção LiteSpeed são gates de homologação.
 - PDFPreview 1.2 escreve derivados no scheme padrão e exige toolkit/binaries.
   Seu código converte sincronamente no primeiro render e não captura exceções.
   A integração ACULTA limita tamanho/timeout e omite a miniatura em caso de

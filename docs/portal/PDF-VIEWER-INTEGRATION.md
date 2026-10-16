@@ -24,7 +24,7 @@ O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Re
 1. Configurar `custom_viewer` não resolve a incompatibilidade de `.js` no `pdf.libraries.yml`/`PdfPages`; não é adaptação suficiente para PDF.js 6.3.289. O formatter padrão requer nomes antigos `pdf.js`/`pdf.worker.js` e API global `pdfjsLib`, enquanto PDF.js moderno distribui módulos ES.
 2. Decisão implementada: adapter pequeno no submódulo independente `aculta_pdf_viewer` (formatter de campo + builder) para viewer moderno local e API ESM, com Media/File access validado e render arrays/cacheability. Alternativamente, só considerar um build oficial de PDF.js compatível com loader PDF 1.3 depois de pin, licença, CVE review e teste, se isso cumprir o requisito de versão atualizada. Não aplicar patch contrib preventivamente nem manter um fork como padrão.
 3. O viewer recebe somente referência de entidade autorizada (Media ID/revisão e campo/file associado), modo de exibição e título acessível. Não aceitar URL arbitrária de request, querystring controlada pelo editor, nem URL externa. A URL de bytes deve ser produzida pelo Drupal com File Access e contexto de acesso atual.
-4. Media sem PDF, arquivo ausente, viewer indisponível, erro JS ou PDFPreview indisponível mantém título, descrição e ação de abrir/baixar conforme access. Fallback não eleva acesso e oferece link comum somente se autorizado.
+4. Media sem PDF, arquivo ausente, viewer indisponível, erro JS ou PDFPreview indisponível mantém título, descrição e ação de abrir/baixar conforme access. Fallback não eleva acesso e oferece link comum somente se autorizado. Para `private://`, a URL local do File URL Generator usa a rota privada Core, que revalida referência e acesso no request de bytes; o render do viewer recebe max-age zero. PDFPreview é exclusivamente público.
 5. ACULTA420 recebe render array autorizado e dimensões/estado neutros. Paginação, contagem de páginas ou erro só aparecem se obtidos pelo viewer sem divulgar conteúdo não autorizado. `CacheableMetadata` agrega Media, File, usuário/grupo/turma e access result; respostas de arquivo privado usam cache privado/no-store conforme implementação Core e nunca cache público compartilhado.
 
 ### Contrato de apresentação
@@ -133,11 +133,14 @@ URL direta existente.
 
 PDFPreview 1.2.0 e ImageMagick contrib 4.0.2 foram resolvidos e adicionados ao
 Composer, com configurações versionadas para uso opcional. No Runtime de teste,
-os módulos permanecem desativados. Não há binário ImageMagick (`magick`,
-`convert`, `identify`) disponível neste Homelab; `gs` existe, mas não supre o
-conversor. A policy global não foi alterada. Hostinger/LiteSpeed segue sem
-verificação operacional. A geração real permanece DEFERRED; falta/erro de
-preview não afeta o viewer nem o link autorizado.
+os módulos permanecem desativados. O host tem Ghostscript 10.05.1 e os dados
+comuns do ImageMagick 7, mas não os executáveis `magick`, `convert` ou
+`identify`. A policy instalada foi inspecionada: mantém `Undefined` sem acesso,
+limites de recursos e nega coders URL/HTTP/HTTPS; não foi encontrada regra
+específica permitindo PDF. Como o executável está ausente, conversão não foi
+testada. Nenhuma policy foi alterada. Hostinger/LiteSpeed segue sem verificação
+operacional. A geração real permanece DEFERRED; falta/erro de preview não afeta
+o viewer nem o link autorizado.
 
 Composer `--dry-run` resolveu PDFPreview 1.2.0 + ImageMagick 4.0.2 e cinco
 dependências transitivas. A instalação foi então registrada em
@@ -165,6 +168,25 @@ fórum responderam HTTP 200. Unit e Kernel passaram em execução isolada. A
 miniatura efetiva continua não testada porque os módulos estão desativados e o
 binário ImageMagick não existe no Homelab. Nenhuma configuração ativa foi
 importada e nenhuma policy de sistema foi modificada.
+
+## PV5 — arquivos privados
+
+O adapter permite PDF `private://` por URL local gerada pelo Core somente após
+access de Media, campo e File (`view` e `download`). A rota Core
+`system.private_file_download` e `hook_file_download` do módulo File repetem a
+autorização pelas entidades e campos que referenciam o arquivo e devolvem uma
+resposta privada. O render recebe max-age zero; não há endpoint ou token próprio
+do PDF Viewer. Preview permanece bloqueado para scheme privado. A URL de
+arquivo público continua acessível diretamente e não protege arquivos do
+bundle `document`, que segue usando `public://`.
+
+Unit validou URL local do endpoint, max-age zero e ausência do gerador de
+miniaturas para privado. Ainda faltam testes de Kernel/browser para membro e
+não membro de Group, publicação/revogação, cache após mudança de acesso e
+carregamento PDF.js/range. A conversão real de miniaturas permanece DEFERRED
+porque não há binário ImageMagick no Homelab. O arquivo
+[ROADMAP.md do submódulo](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md)
+mantém os critérios restantes de PV5–PV7.
 
 **Validação F3:** formatter e display estão no código e em `config/sync`; o
 Runtime `aculta_runtime` foi atualizado pontualmente, sem import global. Um

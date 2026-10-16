@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.5 — leitura privada pela rota Core
+
+O viewer aceita PDFs permanentes `private://` quando Media, campo e File
+autorizam `view` e `download`. O File URL Generator produz a rota privada do
+Drupal Core, que revalida as referências e o acesso no pedido dos bytes; o
+render privado usa max-age zero. Miniaturas continuam limitadas a arquivos
+públicos. Testes de integração por turma, revogação e browser seguem pendentes.
+
 ## 0.1.0-dev.4 — miniaturas seguras da primeira página
 
 Integra PDFPreview 1.2.0 com ImageMagick contrib 4.0.2. Gera miniatura somente

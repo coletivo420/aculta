@@ -12,7 +12,7 @@ use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 
 /**
- * Builds an access-checked viewer using only local public Media PDF files.
+ * Builds an access-checked viewer using local public or private Media PDFs.
  */
 final class PdfViewerBuilder implements PdfViewerBuilderInterface {
 
@@ -52,7 +52,11 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $file_download_access = $file->access('download', $this->currentUser, TRUE);
     $cacheability->addCacheableDependency($file_download_access);
     $uri = $file->getFileUri();
-    $url = $file->isPermanent() && $file_access->isAllowed() && $file_download_access->isAllowed() && str_starts_with($uri, 'public://')
+    $scheme = parse_url($uri, PHP_URL_SCHEME);
+    $url = $file->isPermanent()
+      && $file_access->isAllowed()
+      && $file_download_access->isAllowed()
+      && in_array($scheme, ['public', 'private'], TRUE)
       ? $this->fileUrlGenerator->generateString($uri)
       : '';
 
@@ -61,6 +65,11 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $parts = parse_url($url);
     if ($url === '' || !is_array($parts) || isset($parts['scheme']) || isset($parts['host']) || !str_starts_with($url, '/')) {
       return $this->denied($cacheability);
+    }
+    if ($scheme === 'private') {
+      // Core rechecks File references and field/entity access on each private
+      // file request. Avoid caching a page that contains this protected URL.
+      $cacheability->setCacheMaxAge(0);
     }
 
     $mime = strtolower((string) $file->getMimeType());
@@ -228,7 +237,9 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       ],
       '#attached' => ['library' => ['aculta_pdf_viewer/viewer']],
     ];
-    $thumbnail = $this->thumbnailBuilder->build($file, $title . ' — miniatura da primeira página');
+    $thumbnail = $scheme === 'public'
+      ? $this->thumbnailBuilder->build($file, $title . ' — miniatura da primeira página')
+      : NULL;
     if ($thumbnail !== NULL) {
       $build['thumbnail'] = [
         '#type' => 'container',

@@ -105,8 +105,7 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
       }
 
       // Preserve the Core file link for non-PDF documents and for PDFs whose
-      // viewer cannot be built (including protected PDFs awaiting a secure
-      // streaming endpoint).
+      // viewer cannot be built. Core rechecks authorization for private files.
       $elements[$delta] = [
         '#theme' => 'file_link',
         '#file' => $file,

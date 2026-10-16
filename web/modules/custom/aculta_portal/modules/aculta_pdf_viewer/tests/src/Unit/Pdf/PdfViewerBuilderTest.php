@@ -97,4 +97,50 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     self::assertSame($thumbnail, $build['thumbnail']['image']);
   }
 
+  /**
+   * Ensures private PDFs use only Drupal's protected file route.
+   */
+  public function testAuthorizedPrivatePdfUsesProtectedRouteWithoutThumbnail(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $media = $this->createMock(MediaInterface::class);
+    $media->method('access')->willReturn(AccessResult::allowed()->addCacheContexts(['user.permissions']));
+    $media->method('getCacheTags')->willReturn(['media:8']);
+    $media->method('getCacheContexts')->willReturn([]);
+    $media->method('getCacheMaxAge')->willReturn(-1);
+    $media->method('bundle')->willReturn('document');
+    $media->method('hasField')->with('field_media_document')->willReturn(TRUE);
+    $media->method('label')->willReturn('Trabalho privado');
+
+    $file = $this->createMock(FileInterface::class);
+    $file->method('access')->willReturn(AccessResult::allowed()->addCacheContexts(['user.permissions']));
+    $file->method('getCacheTags')->willReturn(['file:12']);
+    $file->method('getCacheContexts')->willReturn([]);
+    $file->method('getCacheMaxAge')->willReturn(-1);
+    $file->method('getFileUri')->willReturn('private://turma/trabalho.pdf');
+    $file->method('isPermanent')->willReturn(TRUE);
+    $file->method('getMimeType')->willReturn('application/pdf');
+    $file->method('getFilename')->willReturn('trabalho.pdf');
+
+    $field = $this->createMock(FieldItemListInterface::class);
+    $field->method('access')->willReturn(AccessResult::allowed()->addCacheContexts(['user.permissions']));
+    $field->method('isEmpty')->willReturn(FALSE);
+    $field->method('__get')->with('entity')->willReturn($file);
+    $media->method('get')->with('field_media_document')->willReturn($field);
+
+    $url_generator = $this->createMock(FileUrlGeneratorInterface::class);
+    $url_generator->expects(self::once())
+      ->method('generateString')
+      ->with('private://turma/trabalho.pdf')
+      ->willReturn('/system/files/turma/trabalho.pdf');
+    $thumbnail_builder = $this->createMock(PdfPreviewThumbnailBuilderInterface::class);
+    $thumbnail_builder->expects(self::never())->method('build');
+
+    $build = (new PdfViewerBuilder($url_generator, $account, $thumbnail_builder))->build($media);
+
+    self::assertSame('/system/files/turma/trabalho.pdf', $build['#attributes']['data-aculta-pdf-url']);
+    self::assertSame('/system/files/turma/trabalho.pdf', $build['download']['#attributes']['href']);
+    self::assertSame(0, $build['#cache']['max-age']);
+    self::assertArrayNotHasKey('thumbnail', $build);
+  }
+
 }
