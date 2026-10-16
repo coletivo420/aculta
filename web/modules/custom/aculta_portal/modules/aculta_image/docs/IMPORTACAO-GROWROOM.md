@@ -82,6 +82,15 @@ Para acompanhar: `sudo sh -c 'tail -n 2 /home/aculta/private/aculta/forum/restau
 - Perfis (`profile/` e `v_profile`) baixados de usuários fora desse conjunto não entram na importação. O download pode ser reduzido para só esses perfis, se o responsável quiser; ver a seção de estado.
 - Para aplicar a regra é preciso mapear cada tópico ao fórum de origem a partir das páginas de listagem (`showforum`) e listar os autores dos comentários dos tópicos importados. Esse mapeamento ainda não existe.
 
+## Mapeamento tópico → fórum → usuário (2026-10-16)
+
+- **Fórum do tópico:** `<link rel='up' href='.../forum/<id>-...'>` da própria página (o identificador é o número antes do hífen).
+- **Autores:** texto de `<span class="author vcard">` em cada post. O nome aparece sem link de perfil.
+- **Perfil:** casamento pelo nome (slug) com as URLs `/board/profile/<id>-<slug>/` do índice CDX. Perfis com IDs diferentes para o mesmo nome ficam em relatório. Variações `http`/`https`/`www` do mesmo ID entram juntas.
+- **Estado parcial:** 606 tópicos baixados (605 com fórum identificado). Dos 1.837 autores de tópicos importados até agora, 441 casam com perfil, 3 são ambíguos e 1.393 não têm perfil no índice CDX. O arquivo `perfis-permitidos.json` ainda não foi gravado; enquanto isso, nenhum perfil entra na fila.
+- **Fila de download:** tópicos primeiro, galerias depois, perfis só quando permitidos. Fila de HTML atual: 54.762 itens selecionados (sem perfis).
+- **Pesquisa no archive.org (nome de usuário "usuário unegro" / "usuarioNEGRO"):** o índice CDX de `growroom.net/board/*` não tem perfil nem URL com esses nomes; as 12 ocorrências de "negro" são outras (ex.: `diamante-negro`, `japonegro`). A busca geral na web também não encontrou nada.
+
 ## Fóruns fora da importação (decisão do responsável, 2026-10-16)
 
 Não serão importados os fóruns abaixo (identificadores do Growroom, lidos dos links de navegação das páginas baixadas):
