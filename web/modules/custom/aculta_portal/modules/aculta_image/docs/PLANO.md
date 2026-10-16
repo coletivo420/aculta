@@ -1,6 +1,9 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status: **pronto para uso** (2026-10-17, versão 0.1.0-dev.4). Gate `scripts/validate-aculta-image.php` em PASS.
+Status: **pronto para uso** (revisado em 2026-10-17, versão 0.1.0-dev.6). Gate `scripts/validate-aculta-image.php` em PASS.
+
+Documentos relacionados: [README](../README.md) (serviços e rotas), [ESTILOS](ESTILOS.md) (pesquisa e catálogo),
+[IMPORTAÇÃO DO GROWROOM](IMPORTACAO-GROWROOM.md) (alterações, caminhos e estado). Este plano guarda as decisões e o histórico das fases.
 
 | Fase | Estado |
 | --- | --- |
@@ -46,7 +49,7 @@ A ordem importa: o ImageMagick 7 aplica a regra da posição seguinte à regra g
 Divergência registrada: os estilos `max_325x325`, `max_650x650`, `max_1300x1300` e `max_2600x2600` existem no
 Runtime, mas não em `config/sync`. O gate só compara o repositório. Decidir se são exportados ou removidos.
 
-Decisões pendentes (anteriores à liberação):
+Decisões ainda abertas (históricas, a revisar antes da próxima fase):
 1. **Política de PDF do ImageMagick** (`/etc/ImageMagick-7/policy.xml`): o Debian bloqueia PDF. Liberar leitura de PDF
    é mudança de segurança (processo que lê arquivos enviados pelo público). Aguarda aprovação para liberar só
    o necessário.
@@ -118,7 +121,8 @@ em uma busca inicial. Ele entra como ferramenta de duplicatas exatas de Media. N
 
 - `drupal/entity_usage` 5.0.1: rastreia referências que o `file_usage` do core não vê (links e imagens em texto formatado, Entity Embed). Sem isso a auditoria de candidatas fica incompleta.
 - `drupal/media_duplicates` 2.0.4: duplicatas exatas de Media por checksum, com modos de relatório e restrição. Estável, coberto pela política de segurança, sem dependências fora do core.
-- Não adicionadas: `filehash` (o `media_duplicates` calcula o próprio checksum) e `imageapi_optimize` (fase M8, pendente de decisão).
+- Adicionadas depois: `imageapi_optimize` 4.2.0 e `imageapi_optimize_binaries` 1.2.0-beta1 (M8, decisão do responsável).
+- Não adicionada: `filehash` (o `media_duplicates` calcula o próprio checksum).
 
 ## 3. Arquitetura proposta
 
@@ -162,14 +166,9 @@ silenciosa) são mantidas. A decisão de ativar `pdfpreview` e ImageMagick fica 
 
 ### 3.4 Estilos: consolidar antes de criar
 
-Nenhum estilo novo sem medir o uso. Revisão planejada (M3):
-- `aculta_card_1x` (256) e `aculta_card_2x` (512) como finalidade `card`;
-- `aculta_avatar` (256) como `avatar`; `thumbnail`/`medium` (100 e 220) reavaliados como
-  miniaturas de Media Library;
-- `media_gallery_*` como finalidades `galeria_*`;
-- `large`, `wide` e `produto_galeria` mapeados sem alteração de dimensões.
-Mudança de dimensão de estilo existente altera componentes do ACULTA420 e exige teste visual
-em claro e escuro.
+Revisado em 2026-10-17. Estilos existentes mantidos; três criados para lacunas comprovadas (`aculta_destaque_16x9`,
+`aculta_card_16x9`, `aculta_avatar_pequeno`); quatro `max_*` sem uso removidos do Runtime. Pesquisa, catálogo e
+pendências de aplicação: [ESTILOS.md](ESTILOS.md).
 
 ### 3.5 Limpeza sem perda
 

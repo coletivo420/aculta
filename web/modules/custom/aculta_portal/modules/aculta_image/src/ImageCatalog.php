@@ -16,14 +16,13 @@ final class ImageCatalog {
   /** Todos os estilos de imagem aceitos no projeto (espelho de config/sync/image.style.*.yml). */
   public const STYLES = [
     'aculta_avatar',
+    'aculta_avatar_pequeno',
     'aculta_card_1x',
     'aculta_card_2x',
+    'aculta_card_16x9',
+    'aculta_destaque_16x9',
     'crop_thumbnail',
     'large',
-    'max_1300x1300',
-    'max_2600x2600',
-    'max_325x325',
-    'max_650x650',
     'media_gallery_image',
     'media_gallery_lightbox',
     'media_gallery_stage',
@@ -51,10 +50,9 @@ final class ImageCatalog {
     'largo' => 'wide',
     'recorte_quadrado' => 'crop_thumbnail',
     'produto_galeria' => 'produto_galeria',
-    'legado_max_325' => 'max_325x325',
-    'legado_max_650' => 'max_650x650',
-    'legado_max_1300' => 'max_1300x1300',
-    'legado_max_2600' => 'max_2600x2600',
+    'avatar_pequeno' => 'aculta_avatar_pequeno',
+    'card_16x9' => 'aculta_card_16x9',
+    'destaque' => 'aculta_destaque_16x9',
   ];
 
   /** Estilo da finalidade, ou NULL se a finalidade não existe no catálogo. */

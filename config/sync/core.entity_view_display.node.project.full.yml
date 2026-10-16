@@ -60,7 +60,7 @@ content:
     label: hidden
     settings:
       image_link: ''
-      image_style: large
+      image_style: aculta_destaque_16x9
       image_loading:
         attribute: lazy
     third_party_settings: {  }

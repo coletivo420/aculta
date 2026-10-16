@@ -1,5 +1,15 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.7 — estilos revisados, criados e documentados; importação documentada — 2026-10-17
+
+- Pesquisa de estilos (`docs/ESTILOS.md`): responsividade, 2× para alta densidade, recorte por proporção e a issue
+  #3523451 (ordenação de `srcset` no Drupal 11), que obriga a manter o 1x/2x explícito.
+- Criados: `aculta_destaque_16x9` (1280×720, recorte 16:9), `aculta_card_16x9` (640×360) e `aculta_avatar_pequeno` (96×96). Todos com o pipeline `aculta_derivados`.
+- Removidos do Runtime: `max_325x325`, `max_650x650`, `max_1300x1300`, `max_2600x2600` (sem consumidor; só existiam no Runtime).
+- Aplicação: abertura de tópico do Fórum usa `destaque`; página completa do projeto usa `aculta_destaque_16x9`.
+- Upload de imagem nos editores de texto (`basic_html`, `full_html`, `revista_editorial`): limite de 10 MB, igual à política.
+- Documentação: `README.md`, `docs/ESTILOS.md` e `docs/IMPORTACAO-GROWROOM.md` (alterações, caminhos, estado e bloqueio pela F3); `docs/PLANO.md` revisado.
+
 ## 0.1.0-dev.6 — PDF liberado no ImageMagick; compressão com pipeline (M4 e M8) — 2026-10-17
 
 - Política do ImageMagick (`/etc/ImageMagick-7/policy.xml`, backup `.aculta-bak`): leitura de PDF, Ghostscript como delegate de execução e JPG nos formatos. Ver `docs/PLANO.md`.

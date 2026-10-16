@@ -94,7 +94,7 @@ final class ForumOpeningPost {
       return NULL;
     }
     $cache->addCacheableDependency($media)->addCacheableDependency($file);
-    return $this->imageRenderer->build('grande', $file->getFileUri(), (string) $item->alt);
+    return $this->imageRenderer->build('destaque', $file->getFileUri(), (string) $item->alt);
   }
 
 }
