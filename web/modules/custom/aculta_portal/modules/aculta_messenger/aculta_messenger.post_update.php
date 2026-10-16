@@ -42,3 +42,41 @@ function aculta_messenger_post_update_site_alert_dismissal_flag(array &$sandbox)
 
   return 'Added the per-user dismissal Flag for Site Alerts.';
 }
+
+/**
+ * Adds the per-member read Flag for temporary Site Alerts (rótulo Lido / Não lido).
+ */
+function aculta_messenger_post_update_site_alert_read_flag(array &$sandbox): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('flag');
+  if ($storage->load('aculta_site_alert_read') !== NULL) {
+    return 'The Site Alert read flag was already present.';
+  }
+
+  $storage->create([
+    'id' => 'aculta_site_alert_read',
+    'label' => 'Aviso temporário lido',
+    'bundles' => [],
+    'entity_type' => 'site_alert',
+    'global' => FALSE,
+    'flag_short' => 'Marcar como lido',
+    'flag_long' => 'Marcar este aviso temporário como lido somente para sua conta.',
+    'flag_message' => 'Aviso marcado como lido para sua conta.',
+    'unflag_short' => 'Marcar como não lido',
+    'unflag_long' => 'Marcar este aviso temporário como não lido somente para sua conta.',
+    'unflag_message' => 'Aviso marcado como não lido para sua conta.',
+    'unflag_denied_text' => '',
+    'weight' => 0,
+    'flag_type' => 'entity:site_alert',
+    'link_type' => 'ajax_link',
+    'flagTypeConfig' => [
+      'show_in_links' => [],
+      'show_as_field' => TRUE,
+      'show_on_form' => FALSE,
+      'show_contextual_link' => FALSE,
+      'extra_permissions' => [],
+    ],
+    'linkTypeConfig' => [],
+  ])->save();
+
+  return 'Added the per-user read Flag for Site Alerts.';
+}

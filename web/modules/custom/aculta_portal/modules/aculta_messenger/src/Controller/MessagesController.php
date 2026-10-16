@@ -637,6 +637,13 @@ final class MessagesController extends ControllerBase {
       // Match the public render contract of SiteAlertBlock; formatted text and
       // severity remain owned by the contrib entity and its theme hook.
       // The drawer lists a summary; the full alert opens in the same drawer (alertDetail).
+      // Alerta do site: rótulo Lido / Não lido (o aviso persistente não tem rótulo). Abrir o alerta marca como lido.
+      $rotulo = NULL;
+      if ($this->account->isAuthenticated()) {
+        $leituraFlag = $this->flagService->getFlagById('aculta_site_alert_read');
+        $lido = $leituraFlag instanceof FlagInterface && $this->flagService->getFlagging($leituraFlag, $alert, $this->account) !== NULL;
+        $rotulo = $this->readLabel(!$lido);
+      }
       $items[] = $this->noticeSummary(
         (string) $alert->getLabel(),
         $this->excerpt((string) $alert->getMessage()),
@@ -645,6 +652,7 @@ final class MessagesController extends ControllerBase {
         NULL,
         FALSE,
         NoticeType::fromSeverity($alert->getSeverity()),
+        $rotulo,
       );
     }
 
@@ -794,6 +802,12 @@ final class MessagesController extends ControllerBase {
     $access = $site_alert->access('view', $this->account, TRUE);
     if (!$access->isAllowed()) {
       throw new NotFoundHttpException();
+    }
+    // Ler o alerta marca como lido. Pré-buscas e pedidos de terceiros não contam como leitura.
+    $leituraFlag = $this->flagService->getFlagById('aculta_site_alert_read');
+    if ($this->account->isAuthenticated() && $leituraFlag instanceof FlagInterface && $this->isMemberInitiatedRequest()
+      && $this->flagService->getFlagging($leituraFlag, $site_alert, $this->account) === NULL) {
+      $this->flagService->flag($leituraFlag, $site_alert, $this->account);
     }
     $build = [
       '#type' => 'container',

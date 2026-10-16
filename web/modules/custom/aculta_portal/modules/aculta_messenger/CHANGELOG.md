@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.43 — rótulo Lido/Não lido nos alertas do site (F5.2) — 2026-10-16
+
+Classificação: MINOR (novo flag de leitura e rótulo nos alertas do site).
+
+- Alertas do site (não persistentes) mostram "Lido" ou "Não lido", à direita da caixa. Avisos persistentes não têm rótulo.
+- Novo flag `aculta_site_alert_read` por pessoa (config em `config/install` e na configuração do projeto). Abrir o alerta marca como lido, só quando a própria pessoa abre (sem pré-busca).
+- Post-update `aculta_messenger_post_update_site_alert_read_flag` cria o flag no Runtime.
+- Regra de vida útil documentada em `docs/AVISOS-E-MENSAGENS.md`, seção 8.2.
+
 ## 0.1.1-dev.42 — rótulo Lido/Não lido à direita, com cor de fonte por estado (F5.2) — 2026-10-16
 
 Classificação: PATCH (ajuste de apresentação do rótulo criado em dev.41).

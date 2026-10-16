@@ -150,6 +150,21 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
   aba Avisos. O contador do ícone de avisos soma esses avisos (seção 5).
 - Visitante não vê a central (403).
 
+## 8.2 Rótulo Lido / Não lido e retenção
+
+Regra de apresentação e de vida útil, por tipo de aviso (decisão do responsável, 2026-10-16):
+
+| Tipo | Rótulo Lido / Não lido | Regra temporal |
+| --- | --- | --- |
+| Alertas do site (`site_alert`, não persistentes) | sim: flag `aculta_site_alert_read`, marcado ao abrir o alerta | nenhuma |
+| Avisos persistentes (`aculta_notice`) | não | nenhuma |
+| Avisos do Fórum (`aculta_aviso`, respostas e atualizações) | sim: contador zerado ao ler o tópico | excluídos 6 meses após a criação (cron, `AvisoRetencaoHooks`) |
+| Avisos de cursos (LMS) | sim, quando existirem | nenhuma |
+| Conversas | sim, pelo estado de não lida da conversa | política de conversas (`ConversationPolicy`) |
+
+- O rótulo fica à direita da caixa, em texto pequeno (`read-label` e `read-label-unread`), com fundo só atrás do texto.
+- Avisos de cursos ainda não têm código neste repositório: quando existirem, devem usar o mesmo rótulo e não entram na exclusão.
+
 ## 9. Mudanças desta etapa e pendências
 
 **Feito (2026-10-16):**
