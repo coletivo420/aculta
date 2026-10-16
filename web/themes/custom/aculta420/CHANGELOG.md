@@ -1,3 +1,15 @@
+## 0.6.0-dev.66 — barra e cabeçalho por flags do Portal (shell-contract PASS) — 2026-10-16
+
+Classificação: PATCH (troca de decisão; o HTML e a aparência continuam os mesmos por purpose).
+
+- `templates/page.html.twig` deixa de comparar `identity.purpose`. Usa as flags `domain_presentation.layout`: `institution_bar_account` (variante de conta da barra), `show_utility_bar` (busca, carrinho, Messenger, avisos e Minha conta), `links_page` (shell de LINKS) e `show_site_header` (cabeçalho de domínio). As flags vêm do Portal (`aculta_portal` 0.4.0-dev.63).
+- A barra institucional mantém o marcador literal `<div class="aculta-institution-bar">` no ramo padrão, porque o gate `validate-aculta420-shell-contract.php` confere esse texto. A variante de conta usa um ramo próprio com a classe `aculta-institution-bar--account`.
+- Gate de fundação: versão 0.6.0-dev.66.
+- Verificação: `validate-aculta420-shell-contract` PASS (11 checks, antes FAIL pré-existente); `validate-aculta420-foundation` PASS (345); `validate-aculta420-design-foundations` PASS; `validate-aculta420-sdc-schemas` PASS (24 componentes).
+- Visual (Firefox headless, Runtime de teste): `main` com barra e cabeçalho; `wiki` com barra e cabeçalho da Wiki; `cursos` e `apoio` com barra e sem cabeçalho; `conta` com a variante de conta. A página inicial do `main` mostra o cabeçalho, e as demais páginas do `main` não. As capturas foram feitas com sessão de administrador ativa no navegador de teste.
+- Não verificado: `links`, cuja raiz responde 404 no servidor de testes.
+- RUNTIME STATUS: cache rebuild no Runtime de teste com a URI de teste.
+
 ## 0.6.0-dev.65 — correspondências do tema com módulos e tokens faltantes — 2026-10-16
 
 Classificação: PATCH (tokens e CSS de apresentação; gate de fundação atualizado).
