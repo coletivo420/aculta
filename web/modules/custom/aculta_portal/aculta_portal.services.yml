@@ -292,3 +292,22 @@ services:
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
+  aculta_portal.sales_report_query:
+    class: Drupal\aculta_portal\Sales\SalesReportQuery
+    arguments: ['@database', '@entity_type.manager']
+  aculta_portal.mercado_pago.logger:
+    class: Drupal\Core\Logger\LoggerChannelInterface
+    factory: ['@logger.factory', 'get']
+    arguments: ['aculta_portal']
+  aculta_portal.mercado_pago.client_factory:
+    class: Drupal\aculta_portal\MercadoPago\MercadoPagoClientFactory
+  aculta_portal.mercado_pago.recurrence_request_builder:
+    class: Drupal\aculta_portal\MercadoPago\RecurrenceRequestBuilder
+  aculta_portal.mercado_pago.payment_policy:
+    class: Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy
+  aculta_portal.mercado_pago.payment_service:
+    class: Drupal\aculta_portal\MercadoPago\MercadoPagoPaymentService
+    arguments: ['@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.payment_policy', '@aculta_portal.mercado_pago.logger']
+  aculta_portal.mercado_pago.recurrence_service:
+    class: Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService
+    arguments: ['@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.recurrence_request_builder', '@aculta_portal.mercado_pago.logger']
