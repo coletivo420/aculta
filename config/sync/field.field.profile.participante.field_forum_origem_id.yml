@@ -1,0 +1,24 @@
+uuid: 6416127e-54cb-40fb-85bb-b5d774e12d1c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_forum_origem_id
+    - profile.type.participante
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.participante.field_forum_origem_id
+field_name: field_forum_origem_id
+entity_type: profile
+bundle: participante
+label: 'Identificador de origem do Fórum'
+description: 'Identificador estável da autoria no acervo histórico. Marca a conta como legada; não é exibido.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
