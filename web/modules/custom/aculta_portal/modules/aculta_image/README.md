@@ -4,7 +4,7 @@ Sistema único de imagens do site ACULTA. Todo uso de imagem passa por ele: cat�
 renderização responsiva, modelos de imagem no texto, compressão, leitura de dimensões, exclusão controlada, ingestão de
 origem externa, auditoria, quarentena e comparação visual.
 
-**Versão:** 0.1.0-dev.17 (ver [CHANGELOG](CHANGELOG.md)).
+**Versão:** 0.1.0-dev.18 (ver [CHANGELOG](CHANGELOG.md)).
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
@@ -13,7 +13,7 @@ origem externa, auditoria, quarentena e comparação visual.
 
 Toda imagem e todo arquivo de imagem do site passa por este módulo (AGENTS, "Imagens e arquivos de imagem"). Módulos e
 temas pedem uma **finalidade**, não um estilo. Novo estilo nasce no catálogo. Novo campo de imagem declara a política
-no `third_party_settings`. Para capas de curso, `capa_curso` alimenta os cartões do LMS na finalidade `destaque`. Importação externa passa pela ingestão.
+no `third_party_settings`. Para capas de curso, `capa_curso` alimenta os cartões do LMS na finalidade `destaque`, aceita arquivos até 10 MB e não limita dimensões. Importação externa passa pela ingestão.
 
 ## Serviços
 

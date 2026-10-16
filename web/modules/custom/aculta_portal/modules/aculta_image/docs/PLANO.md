@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-16: versão **0.1.0-dev.17**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
+Status em 2026-10-16: versão **0.1.0-dev.18**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -85,7 +85,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R4 — CSS dos modelos** | estilos responsivos em `revista-post.css` | fixture e página pública medidas em claro/escuro; página pública aferida a 1366/500/390 px | feito |
 | **R5 — Acessibilidade** | texto alternativo, teclado, `figcaption` | Firefox/Orca/AT-SPI confirmaram aviso/edição por teclado, legenda e texto alternativo anunciados, além da semântica de imagem/legenda | R3 |
 | **R6 — Formato do usuário** | `usuario_aculta` com seletor para `email_confirmed` | papel confirmado | feito |
-| **R7 — Fórum e LMS** | Fórum usa `usuario_aculta`; LMS recebe campo `capa_curso` com política `aculta_image` e finalidade `destaque` nos cartões | Configuração adicionada ao Config Sync; importação e conferência visual no Runtime pendentes | F3/F6 do Fórum e LMS |
+| **R7 — Fórum e LMS** | Fórum usa `usuario_aculta`; LMS recebe campo `capa_curso` com política `aculta_image` e finalidade `destaque` nos cartões | Configuração adicionada ao Config Sync e aplicada no Runtime; páginas de catálogo respondem 200. O curso atual não tem capa, então renderização da imagem aguarda conteúdo | F3/F6 do Fórum e LMS |
 | **R8 — Migração e dívida** | consumidores restantes e estilos `legado_*` (ausentes do catálogo) | gate sem aumento de dívida; `DEBT-REGISTER` atualizado | — |
 | **RC — Validação de ambientes** | Homelab e Hostinger: `shell_exec`, ImageMagick e Ghostscript confirmados no painel | relatório de ambientes | responsável |
 

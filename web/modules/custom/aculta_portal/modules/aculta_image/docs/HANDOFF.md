@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.17. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.18. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -9,7 +9,7 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.17. Leia este documento antes d
 3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário, persistência e reabertura da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Firefox/Orca/AT-SPI confirmaram foco e leitura da legenda e do `alt`, além da semântica de imagem/legenda.
 4. Formatos Core migrados para os formatos ACULTA; o seletor de `usuario_aculta` pertence ao papel `email_confirmed`.
 5. A galeria 11 teve as mídias duplicadas mescladas com o `alt` do menor ID; arquivos redundantes aguardam o prazo da quarentena até 2026-11-15. A importação do Growroom segue bloqueada pela F3 do Fórum.
-6. O R7 de LMS adicionou `capa_curso` com política `aculta_image`; as Views de cursos usam o cartão com finalidade `destaque`. Falta importar esta configuração no Runtime e conferir o cartão visualmente.
+6. O R7 adicionou `capa_curso` com política `aculta_image`; as Views usam o cartão com finalidade `destaque`. A configuração foi aplicada ao Runtime e os catálogos respondem 200. O curso existente está sem capa, então a imagem não pôde ser conferida visualmente. `config:status` não aponta diferença nos seis arquivos de configuração deste R7.
 
 ## 2. Git e working tree
 
@@ -33,7 +33,8 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.17. Leia este documento antes d
 | `e52c402d` | correção dos botões de modelo no overflow (dev.10): um botão por modelo |
 | `b66646ef` | migração `basic_html`/`full_html` para formatos ACULTA, seletor para `email_confirmed`, Fórum restrito |
 | `16016400` | mesclagem de duplicatas de mídia e correção da lista de candidatas em quarentena (dev.16) |
-| (este commit) | R7: campo `capa_curso` do LMS com política `aculta_image`, uso nos cartões e atualização da documentação (dev.17) |
+| `a2380003` | R7: campo `capa_curso` do LMS com política `aculta_image`, uso nos cartões e documentação (dev.17) |
+| (este commit) | limite de upload de 10 MB no widget de `capa_curso` e documentação do Runtime (dev.18) |
 
 - **Não commitar** o que é de outras sessões. No momento da passagem havia 25 entradas em `git status`. Todas as do submódulo `aculta_image` são desta frente. As demais são de outra frente e **não** devem entrar nos commits de imagem:
   - `config/sync/group.role.lms_course-member.yml`, `group.role.lms_course-teacher.yml`, `user.role.lms_teacher.yml`;
@@ -90,7 +91,7 @@ O arquivo gerenciado foi excluído e a ausência confirmada. O upload está cobe
 
 O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplicado nesta passagem executou `aculta_portal_update_11009` para migrar os formatos de texto do site.
 
-**R7 (2026-10-16):** foi preparado o campo nativo `capa_curso`, com política `aculta_image`, no Config Sync e o estilo de finalidade `destaque` nas Views `courses` e `courses_catalog`. A importação parcial foi bloqueada na validação por uma dependência preexistente em `field.field.lms_activity.no_answer.field_content` para `filter.format.0` (ausente). Nenhuma configuração foi aplicada nesta tentativa. Não corrigir isso alterando contas/papéis; revisar separadamente a configuração de formato/atividade antes de tentar a importação novamente.
+**R7 (2026-10-16):** foi preparado o campo nativo `capa_curso`, com política `aculta_image`, no Config Sync e o estilo de finalidade `destaque` nas Views `courses` e `courses_catalog`. A importação parcial falhou na validação por uma dependência preexistente em `field.field.lms_activity.no_answer.field_content` para `filter.format.0` (ausente). Para não alterar essa configuração fora da tarefa, o campo, displays e Views foram aplicados ao Runtime com Entity API e o cache foi reconstruído. `config:status` não aponta diferença nos seis arquivos do R7. O display já incluía `search_api_excerpt` oculto no Runtime; esse estado foi preservado no Config Sync. Os catálogos `/courses` e `/cursos/catalogo` respondem 200; o único curso ativo está sem capa, então falta conteúdo de imagem para uma conferência visual real. A dependência inválida segue bloqueando futuras importações parciais e requer revisão separada.
 
 ## 5. Riscos conhecidos
 
@@ -113,9 +114,10 @@ O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplica
 
 ## 6. Próximos passos (ordem recomendada)
 
-1. Importar apenas as configurações do campo `capa_curso`, displays e Views `courses`/`courses_catalog` no Runtime; conferir `config:status`, cache e cartões em navegador.
-2. Continuar R8 (consumidores restantes e estilos legados) mantendo a frente de contas e permissões aberta, sem alterar contas nesta tarefa.
-3. A confirmação dos binários na Hostinger segue pendente (RC). A mesclagem da galeria foi concluída; arquivos redundantes continuam na quarentena até 2026-11-15.
+1. Adicionar uma capa a um curso quando a edição de cursos estiver disponível pela frente de contas/permissões; conferir a imagem no cartão via Firefox.
+2. Revisar a dependência inválida `filter.format.0` antes de futuras importações parciais do Config Sync.
+3. Continuar R8 (consumidores restantes e estilos legados) mantendo a frente de contas e permissões aberta, sem alterar contas nesta tarefa.
+4. A confirmação dos binários na Hostinger segue pendente (RC). A mesclagem da galeria foi concluída; arquivos redundantes continuam na quarentena até 2026-11-15.
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)
 

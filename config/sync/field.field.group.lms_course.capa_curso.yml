@@ -6,7 +6,11 @@ dependencies:
     - field.storage.group.capa_curso
     - group.type.lms_course
   module:
+    - aculta_image
     - image
+third_party_settings:
+  aculta_image:
+    policy: default
 id: group.lms_course.capa_curso
 field_name: capa_curso
 entity_type: group
@@ -15,14 +19,14 @@ label: 'Capa do curso'
 description: 'Imagem de fundo exibida no cartão do curso.'
 required: false
 translatable: true
-default_value: { }
+default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:file'
-  handler_settings: { }
+  handler_settings: {  }
   file_directory: cursos
   file_extensions: 'png gif jpg jpeg webp'
-  max_filesize: ''
+  max_filesize: '10 MB'
   max_resolution: ''
   min_resolution: ''
   alt_field: true
@@ -36,6 +40,3 @@ settings:
     width: null
     height: null
 field_type: image
-third_party_settings:
-  aculta_image:
-    policy: default

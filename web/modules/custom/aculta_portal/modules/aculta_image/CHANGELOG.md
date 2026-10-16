@@ -1,9 +1,15 @@
+## 0.1.0-dev.18 — limite de upload da capa do curso — 2026-10-16
+
+- O widget de imagem de `capa_curso` agora aplica o limite de 10 MB de `UploadPolicy`; dimensões seguem sem limite máximo.
+- Campo atualizado no Runtime via Field API e exportado; `config:status` não mostra diferenças nos seis arquivos do R7.
+- Gate `validate-aculta-image.php` passou.
+
 ## 0.1.0-dev.17 — capa de curso no LMS (R7) — 2026-10-16
 
 - Criado o campo nativo `group.lms_course.capa_curso`, com upload pela política `aculta_image` desde a configuração inicial.
 - Os cartões das Views `courses` e `courses_catalog` usam `capa_curso` com a finalidade visual `destaque` (`aculta_destaque_16x9`).
 - Formulário de edição e exibição padrão do curso incluem a capa.
-- Importação no Runtime e conferência visual do cartão ainda pendentes. Esta etapa não altera contas nem papéis.
+- Configuração aplicada no Runtime via Entity API após bloqueio da importação parcial por dependência inválida alheia (`field.field.lms_activity.no_answer.field_content` → `filter.format.0`); cache reconstruído. `/courses` e `/cursos/catalogo` respondem 200. O curso atual está sem capa, então a imagem ainda aguarda conteúdo para conferência visual. Esta etapa não altera contas nem papéis.
 
 # Changelog — aculta_image
 
