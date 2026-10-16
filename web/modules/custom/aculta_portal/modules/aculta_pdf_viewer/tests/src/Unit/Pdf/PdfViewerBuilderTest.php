@@ -107,8 +107,8 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     $media->method('getCacheTags')->willReturn(['media:8']);
     $media->method('getCacheContexts')->willReturn([]);
     $media->method('getCacheMaxAge')->willReturn(-1);
-    $media->method('bundle')->willReturn('document');
-    $media->method('hasField')->with('field_media_document')->willReturn(TRUE);
+    $media->method('bundle')->willReturn('course_document');
+    $media->method('hasField')->with('field_media_course_document')->willReturn(TRUE);
     $media->method('label')->willReturn('Trabalho privado');
 
     $file = $this->createMock(FileInterface::class);
@@ -125,7 +125,7 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     $field->method('access')->willReturn(AccessResult::allowed()->addCacheContexts(['user.permissions']));
     $field->method('isEmpty')->willReturn(FALSE);
     $field->method('__get')->with('entity')->willReturn($file);
-    $media->method('get')->with('field_media_document')->willReturn($field);
+    $media->method('get')->with('field_media_course_document')->willReturn($field);
 
     $url_generator = $this->createMock(FileUrlGeneratorInterface::class);
     $url_generator->expects(self::once())
@@ -135,7 +135,8 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     $thumbnail_builder = $this->createMock(PdfPreviewThumbnailBuilderInterface::class);
     $thumbnail_builder->expects(self::never())->method('build');
 
-    $build = (new PdfViewerBuilder($url_generator, $account, $thumbnail_builder))->build($media);
+    $build = (new PdfViewerBuilder($url_generator, $account, $thumbnail_builder))
+      ->build($media, 'field_media_course_document');
 
     self::assertSame('/system/files/turma/trabalho.pdf', $build['#attributes']['data-aculta-pdf-url']);
     self::assertSame('/system/files/turma/trabalho.pdf', $build['download']['#attributes']['href']);

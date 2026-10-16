@@ -42,7 +42,7 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
 
     $viewer = ['#type' => 'container', '#attributes' => ['data-aculta-pdf-viewer' => 'true']];
     $builder = $this->createMock(PdfViewerBuilderInterface::class);
-    $builder->expects(self::once())->method('build')->with($media)->willReturn($viewer);
+    $builder->expects(self::once())->method('build')->with($media, 'field_media_document')->willReturn($viewer);
 
     $elements = $this->formatter($builder)->viewElements($items, 'pt-br');
 
@@ -82,6 +82,36 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
   }
 
   /**
+   * Tests that the private course bundle uses its private source field.
+   */
+  public function testCoursePdfUsesPrivateMediaField(): void {
+    $media = $this->createMock(MediaInterface::class);
+    $media->method('access')->willReturn(AccessResult::allowed());
+    $media->method('getCacheTags')->willReturn(['media:10']);
+    $media->method('getCacheContexts')->willReturn([]);
+    $media->method('getCacheMaxAge')->willReturn(-1);
+    $media->method('bundle')->willReturn('course_document');
+
+    $file = $this->createMock(FileInterface::class);
+    $file->method('access')->with('download', NULL, TRUE)->willReturn(AccessResult::allowed());
+    $file->method('getCacheTags')->willReturn(['file:14']);
+    $file->method('getCacheContexts')->willReturn([]);
+    $file->method('getCacheMaxAge')->willReturn(-1);
+    $file->method('getMimeType')->willReturn('application/pdf');
+    $file->method('getFilename')->willReturn('material-da-turma.pdf');
+
+    $items = $this->fieldItems($media, $file, 'field_media_course_document');
+    $viewer = ['#type' => 'container', '#attributes' => ['data-aculta-pdf-viewer' => 'true']];
+    $builder = $this->createMock(PdfViewerBuilderInterface::class);
+    $builder->expects(self::once())
+      ->method('build')
+      ->with($media, 'field_media_course_document')
+      ->willReturn($viewer);
+
+    self::assertSame($viewer, $this->formatter($builder)->viewElements($items, 'pt-br')[0]);
+  }
+
+  /**
    * Tests that an unavailable viewer keeps its authorized download fallback.
    */
   public function testPdfWithoutViewerKeepsDownloadFallback(): void {
@@ -102,7 +132,7 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     $items = $this->fieldItems($media, $file);
 
     $builder = $this->createMock(PdfViewerBuilderInterface::class);
-    $builder->expects(self::once())->method('build')->with($media)->willReturn([
+    $builder->expects(self::once())->method('build')->with($media, 'field_media_document')->willReturn([
       '#access' => FALSE,
       '#cache' => ['contexts' => ['user.permissions']],
     ]);
@@ -135,9 +165,10 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
   /**
    * Creates a file field list referencing the given media and file.
    */
-  private function fieldItems(MediaInterface $media, FileInterface $file): FileFieldItemList {
+  private function fieldItems(MediaInterface $media, FileInterface $file, string $field_name = 'field_media_document'): FileFieldItemList {
     $items = $this->createMock(FileFieldItemList::class);
     $items->method('getEntity')->willReturn($media);
+    $items->method('getName')->willReturn($field_name);
     $items->method('access')->with('view', NULL, TRUE)->willReturn(AccessResult::allowed());
     $items->method('referencedEntities')->willReturn([$file]);
     $item = $this->createMock(FieldItemInterface::class);

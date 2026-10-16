@@ -26,7 +26,7 @@ final class AcultaPdfViewerInstallTest extends KernelTestBase {
    * Tests service and formatter registration without module-owned storage.
    */
   public function testInstallWorksWithoutPdfPreviewAndRegistersFormatter(): void {
-    $this->assertTrue($this->container->get('module_installer')->install(['aculta_pdf_viewer'], FALSE));
+    $this->assertTrue($this->container->get('module_installer')->install(['aculta_pdf_viewer'], TRUE));
     $container = \Drupal::getContainer();
     $module_handler = $container->get('module_handler');
 

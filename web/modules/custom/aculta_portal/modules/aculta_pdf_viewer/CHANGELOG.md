@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.11 — correções de testes e formulário dos documentos de turma — 2026-10-16
+
+- Kernel tests `AcultaPdfViewerInstallTest`, `AcultaPdfMediaEmbedTest` e `CourseDocumentAccessTest` passam a instalar com dependências (`install(..., TRUE)`). Com `FALSE`, `aculta_image` não era ativado e o container falhava em `aculta_pdf_viewer.thumbnail_builder` (4 erros).
+- Formulário do bundle `course_document`: `status` deixa de constar em `hidden` e permanece como checkbox em `content`, conforme o README. A regra de `entity_presave` continua mantendo a mídia de turma não publicada.
+- Testes unitários do formatter e do builder passam bundle e campo de origem (`course_document` / `field_media_course_document`).
+- Evidência: PHPUnit Unit (pdf_viewer e aculta_image) 21/21; Kernel (pdf_viewer e group) 4/4 com SQLite em memória; gates `validate-aculta-image`, `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-public-slugs` e `validate-environment-addresses` em PASS.
+- RUNTIME STATUS: DEFERRED. A config da turma (`course_document`, `lms_course`, papéis) ainda não foi importada no Runtime `aculta_runtime`, que tem 273 itens de drift pré-existentes; importar exige revisão separada.
+
 ## 0.1.0-dev.10 — documentos de turma privados e miniaturas alinhadas
 
 - Bundle `course_document` em `private://`, separado do bundle público institucional `document`; relação de turma Group e guarda de ciclo de vida mantêm as mídias de curso não publicadas.

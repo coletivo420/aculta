@@ -65,7 +65,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
-    $this->assertTrue($this->container->get('module_installer')->install(['aculta_pdf_viewer'], FALSE));
+    $this->assertTrue($this->container->get('module_installer')->install(['aculta_pdf_viewer'], TRUE));
 
     $media_type = MediaType::create([
       'id' => 'document',
@@ -89,6 +89,30 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
       'required' => TRUE,
       'settings' => ['file_extensions' => 'pdf'],
     ])->save();
+
+    $course_media_type = MediaType::create([
+      'id' => 'course_document',
+      'label' => 'Course document',
+      'source' => 'file',
+      'source_configuration' => ['source_field' => 'field_media_course_document'],
+    ]);
+    $course_media_type->getSource()->setConfiguration(['source_field' => 'field_media_course_document']);
+    $course_media_type->save();
+    $course_field_storage = FieldStorageConfig::create([
+      'field_name' => 'field_media_course_document',
+      'entity_type' => 'media',
+      'type' => 'file',
+      'cardinality' => 1,
+      'settings' => ['uri_scheme' => 'private'],
+    ]);
+    $course_field_storage->save();
+    FieldConfig::create([
+      'field_storage' => $course_field_storage,
+      'bundle' => 'course_document',
+      'label' => 'Course PDF',
+      'required' => TRUE,
+      'settings' => ['file_extensions' => 'pdf'],
+    ])->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->container->get('current_user')->setAccount($this->createUser(['view media']));
 
@@ -98,6 +122,19 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
       'mode' => 'default',
       'status' => TRUE,
     ])->setComponent('field_media_document', [
+      'type' => 'aculta_pdf_media',
+      'label' => 'visually_hidden',
+      'settings' => [],
+      'third_party_settings' => [],
+      'weight' => 0,
+      'region' => 'content',
+    ])->save();
+    EntityViewDisplay::create([
+      'targetEntityType' => 'media',
+      'bundle' => 'course_document',
+      'mode' => 'default',
+      'status' => TRUE,
+    ])->setComponent('field_media_course_document', [
       'type' => 'aculta_pdf_media',
       'label' => 'visually_hidden',
       'settings' => [],
@@ -189,15 +226,15 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $file->setPermanent();
     $file->save();
     $media = Media::create([
-      'bundle' => 'document',
+      'bundle' => 'course_document',
       'name' => 'PDF privado Kernel fixture',
       'status' => TRUE,
-      'field_media_document' => [['target_id' => $file->id()]],
+      'field_media_course_document' => [['target_id' => $file->id()]],
     ]);
     $media->setOwner($user);
     $media->save();
 
-    $build = $this->container->get('aculta_pdf_viewer.builder')->build($media);
+    $build = $this->container->get('aculta_pdf_viewer.builder')->build($media, 'field_media_course_document');
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
     $this->assertSame('/system/files/pdf-viewer/aculta-private-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);
