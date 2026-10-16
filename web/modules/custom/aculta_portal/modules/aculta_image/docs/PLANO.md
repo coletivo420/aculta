@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-16: versão **0.1.0-dev.20**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
+Status em 2026-10-16: versão **0.1.0-dev.18**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -45,7 +45,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
   Dropdown único na barra, com rótulo do modelo selecionado; opções vêm da configuração do editor (`acultaImageModel.models`).
 - Classe PHP `Plugin\CKEditor5Plugin\ImageModel`: configura quais modelos cada editor oferece.
 - Botão de modelo presente em `revista_editorial` e `usuario_aculta`; ausente em `webform_default`.
-- Formato `usuario_aculta` ("Usuário ACULTA"): HTML restrito com Pequena e Padrão. A permissão direta pertence a `email_confirmed`; a herança atual também concede acesso efetivo a `estudante`, `associado`, `lms_teacher` e `content_editor`. `gerente_loja` não herda essa permissão.
+- Formato `usuario_aculta` ("Usuário ACULTA"): HTML restrito com Pequena e Padrão. A permissão pertence a `email_confirmed`.
 - Tópicos e respostas do Fórum aceitam só `usuario_aculta`.
 - Limite de upload: `max_dimensions` do core **desligado** nos editores com upload (o core recusava, e a decisão é converter). A conversão para 1200 px é feita pelo `aculta_image`.
 
@@ -57,7 +57,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 3. **Legenda:** formulário contextual grava `data-aculta-legenda`; no Firefox, um artigo temporário foi salvo e reaberto, preservando a legenda. O filtro público gera `<figcaption>`.
 4. **CSS:** implementado no ACULTA420 e medido em 1366/500/390 px, claro e escuro. A configuração do modo escuro foi restaurada para `light` após o ensaio.
 5. **Acessibilidade:** operação por teclado, aviso/edição de `alt`, foco da legenda e Escape verificados no Firefox. Orca/AT-SPI anunciou a legenda e o texto alternativo da imagem e expôs a relação semântica na árvore acessível.
-6. **Formato do usuário:** concluído; `email_confirmed` recebe diretamente `usuario_aculta`; a herança da PR #286 estende o acesso efetivo a estudante, associado, professor e editor de conteúdo. `authenticated` isolado e `gerente_loja` não recebem esse formato.
+6. **Formato do usuário:** concluído; `email_confirmed` recebe `usuario_aculta`, e `authenticated` não recebe a permissão de edição.
 7. **Tamanhos provisórios do Fórum** (Pequena e Padrão): medir em uso e revisar. Ver `MODELOS-DE-IMAGEM.md`.
 
 ## 4. Decisões tomadas
@@ -70,7 +70,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | 2026-10-17 | Limite de dimensão do texto: 1200 px de largura, convertido (não recusado) | responsável |
 | 2026-10-17 | Destaque **não** sobe para 1536 px; permanece em 1200 px | responsável |
 | 2026-10-17 | Crédito removido de todos os modelos; legenda mantida | responsável |
-| 2026-10-17 | `usuario_aculta` é o formato dos usuários e do Fórum; permissão direta em `email_confirmed`, com alcance efetivo conforme a hierarquia vigente | responsável |
+| 2026-10-17 | `usuario_aculta` é o formato dos usuários e do Fórum; o papel `email_confirmed` recebe o seletor | responsável |
 | 2026-10-17 | Modelos do Fórum: Pequena e Padrão (tamanhos provisórios) | responsável |
 | 2026-10-17 | Modelos no CKEditor em JavaScript simples, sem build npm | responsável |
 | 2026-10-17 | Pesquisa de limites de fórum: fontes da comunidade, sem valor oficial; não adotados | agente (com ressalva) |
@@ -84,7 +84,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R3 — Legenda no editor** | formulário contextual grava `data-aculta-legenda` | UI, serialização, `<figcaption>` público, persistência e reabertura do editor verificadas | R2 |
 | **R4 — CSS dos modelos** | estilos responsivos em `revista-post.css` | fixture e página pública medidas em claro/escuro; página pública aferida a 1366/500/390 px | feito |
 | **R5 — Acessibilidade** | texto alternativo, teclado, `figcaption` | Firefox/Orca/AT-SPI confirmaram aviso/edição por teclado, legenda e texto alternativo anunciados, além da semântica de imagem/legenda | R3 |
-| **R6 — Formato do usuário** | `usuario_aculta` com permissão direta em `email_confirmed`; papéis herdados conforme `role_inheritance.settings` | `authenticated` isolado e `gerente_loja` sem acesso; estudante, associado, lms_teacher e content_editor com acesso efetivo | feito |
+| **R6 — Formato do usuário** | `usuario_aculta` com seletor para `email_confirmed` | papel confirmado | feito |
 | **R7 — Fórum e LMS** | Fórum usa `usuario_aculta`; LMS recebe campo `capa_curso` com política `aculta_image` e finalidade `destaque` nos cartões | Campo de capa, limite de 10 MB e Views configurados no Runtime; Firefox confirmou o derivado 1280×720 num teste temporário, removido depois. Catálogos respondem 200 | F3/F6 do Fórum e LMS |
 | **R8 — Migração e dívida** | consumidores restantes e estilos `legado_*` (ausentes do catálogo) | gate sem aumento de dívida; `DEBT-REGISTER` atualizado | — |
 | **RC — Validação de ambientes** | Homelab e Hostinger: `shell_exec`, ImageMagick e Ghostscript confirmados no painel | relatório de ambientes | responsável |

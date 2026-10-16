@@ -1,10 +1,5 @@
 # Changelog — aculta_image
 
-## 0.1.0-dev.20 — seletor de imagem e herança de papéis — 2026-10-16
-
-- Documentação alinhada à hierarquia da PR #286: `email_confirmed` mantém a permissão direta de `usuario_aculta`; `estudante`, `associado`, `lms_teacher` e `content_editor` a herdam pela configuração atual.
-- `gerente_loja` não herda `email_confirmed` na configuração verificada. Nenhum papel, conta ou permissão foi alterado nesta atualização.
-
 ## 0.1.0-dev.19 — limpeza do ciclo de vida e painel administrativo — 2026-10-16
 
 - Substituições e remoções em campos de imagem/arquivo e textos ricos entram em fila; o cron revalida referências de `file_usage` e `entity_usage` antes de excluir.

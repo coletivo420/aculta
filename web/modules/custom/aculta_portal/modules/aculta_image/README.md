@@ -4,7 +4,7 @@ Sistema único de imagens do site ACULTA. Todo uso de imagem passa por ele: cat�
 renderização responsiva, modelos de imagem no texto, compressão, leitura de dimensões, exclusão controlada, ingestão de
 origem externa, auditoria, quarentena e comparação visual.
 
-**Versão:** 0.1.0-dev.20 (ver [CHANGELOG](CHANGELOG.md)).
+**Versão:** 0.1.0-dev.19 (ver [CHANGELOG](CHANGELOG.md)).
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
@@ -47,7 +47,7 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 - **Filtro:** `aculta_imagem_modelo` (`Plugin\Filter\ImagemModelo`, peso 20) transforma o `<img>` em `<figure>` com
   `srcset` e `sizes` do modelo, e legenda em `<figcaption>` quando houver `data-aculta-legenda`. Crédito não existe.
 - **Modelos:** Pequena (320 e 640), Padrão (480 e 1160), Larga (800 e 1200), Destaque (1024 e 1200). Ver `ImageCatalog::MODELOS`.
-- **Editores:** dropdown de modelo em `revista_editorial` e `usuario_aculta`. `usuario_aculta` oferece Pequena e Padrão e é usado nos tópicos e respostas do Fórum. A permissão direta está em `email_confirmed`; com a herança atual, também chega a `estudante`, `associado`, `lms_teacher` e `content_editor`. `gerente_loja` não a herda. `authenticated` isolado não pode editar esse formato.
+- **Editores:** dropdown de modelo em `revista_editorial` e `usuario_aculta`. `usuario_aculta` oferece Pequena e Padrão e é usado nos tópicos e respostas do Fórum. `email_confirmed` recebe a permissão; `authenticated` não recebe permissão de edição de texto.
 - Configuração: `config/sync/filter.format.{revista_editorial,usuario_aculta}.yml`, `config/sync/editor.editor.{revista_editorial,usuario_aculta}.yml`.
 - Plugin: `aculta_image.ckeditor5.yml` (biblioteca `ckeditor5.image_model`, dependente de `ckeditor5/internal.drupal.ckeditor5.image`).
 

@@ -1,13 +1,13 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.20. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.19. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
 3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário, persistência e reabertura da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Firefox/Orca/AT-SPI confirmaram foco e leitura da legenda e do `alt`, além da semântica de imagem/legenda.
-4. Formatos Core migrados para os formatos ACULTA; a permissão direta do seletor de `usuario_aculta` pertence a `email_confirmed`. A herança atual também a concede efetivamente a `estudante`, `associado`, `lms_teacher` e `content_editor`; `gerente_loja` não herda essa permissão.
+4. Formatos Core migrados para os formatos ACULTA; o seletor de `usuario_aculta` pertence ao papel `email_confirmed`.
 5. A galeria 11 teve as mídias duplicadas mescladas com o `alt` do menor ID; arquivos redundantes aguardam o prazo da quarentena até 2026-11-15. A importação do Growroom segue bloqueada pela F3 do Fórum.
 6. O R7 adicionou `capa_curso` com política `aculta_image`; as Views usam o cartão com finalidade `destaque`. A configuração foi aplicada ao Runtime e os catálogos respondem 200. Firefox confirmou a capa usando uma imagem existente atribuída temporariamente ao curso 1: o cartão gerou e carregou `aculta_destaque_16x9` em 1280×720; `capa_curso` foi limpo logo depois. `config:status` não aponta diferença nos seis arquivos de configuração deste R7.
 
@@ -18,12 +18,6 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.20. Leia este documento antes d
 - A remoção invalida derivados do Image Style e apaga metadados de auditoria/origem/quarentena do FID removido.
 - Painel em `/painel-administrativo/imagens`, abas de relatório, limpeza e quarentena. A permissão existente `administer aculta images` protege todas as rotas; nenhuma configuração de contas ou papéis foi alterada.
 - Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal11.php` passaram. O primeiro `drush status` usou URI padrão; depois o status explícito confirmou `https://aculta.toca.net.br` e o banco `aculta_runtime`. Cache reconstruído e as quatro rotas administrativas confirmadas pelo Drush. Nenhuma configuração de contas ou papéis foi alterada.
-
-## Hierarquia atual e o seletor de texto
-
-- PR [#286](https://github.com/coletivo420/aculta/pull/286) está aberta como draft, no HEAD `1c8b0c99`; a seção 9 de `docs/portal/PAPEIS-PARTICIPACAO.md` contém as decisões e duas pendências em aberto.
-- A configuração do Runtime `role_inheritance.settings` foi consultada em modo somente leitura. `extendRoles()` confirmou: `estudante`, `associado`, `lms_teacher` e `content_editor` herdam `email_confirmed`; `gerente_loja` herda apenas `authenticated`.
-- Não alterei contas, atribuições de papéis nem permissões. A configuração direta de `use text format usuario_aculta` continua em `email_confirmed`; consulte a versão efetiva acima ao documentar o seletor.
 
 ## 2. Git e working tree
 
