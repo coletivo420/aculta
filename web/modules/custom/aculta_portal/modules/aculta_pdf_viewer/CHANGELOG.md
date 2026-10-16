@@ -4,9 +4,9 @@
 
 O teste Kernel cria um PDF `private://`, confirma a URL local da rota Core,
 resposta 200 para o usuário autorizado, cabeçalho de cache privado e resposta 403
-para acesso anônimo. Confirma também max-age zero no render e ausência de
-miniatura privada. Integração com Group/turmas, usuário não membro, revogação
-após cache, unpublished e browser/PDF.js continuam pendentes.
+para usuário autenticado sem permissão e acesso anônimo. Confirma também max-age
+zero no render e ausência de miniatura privada. Integração com Group/turmas,
+revogação após mudança de acesso, unpublished e browser/PDF.js continuam pendentes.
 
 ## 0.1.0-dev.5 — leitura privada pela rota Core
 

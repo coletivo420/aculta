@@ -182,7 +182,8 @@ bundle `document`, que segue usando `public://`.
 
 Unit validou URL local do endpoint, max-age zero e ausência do gerador de
 miniaturas para privado. Kernel confirmou resposta 200 e cache privado para o
-usuário autorizado, e 403 para acesso anônimo. Ainda faltam testes de
+usuário autorizado, e 403 para usuário autenticado sem permissão e acesso
+anônimo. Ainda faltam testes de
 Kernel/browser para membro e não membro de Group, publicação/revogação, cache
 após mudança de acesso e carregamento PDF.js/range. A conversão real de
 miniaturas permanece DEFERRED

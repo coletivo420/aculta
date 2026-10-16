@@ -207,6 +207,10 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->assertSame(200, $authorized_response->getStatusCode());
     $this->assertStringContainsString('private', strtolower($authorized_response->headers->get('Cache-Control') ?? ''));
 
+    $this->container->get('current_user')->setAccount($this->createUser());
+    $unauthorized_response = $kernel->handle(Request::create($private_url));
+    $this->assertSame(403, $unauthorized_response->getStatusCode());
+
     $this->container->get('current_user')->setAccount(new \Drupal\Core\Session\AnonymousUserSession());
     $denied_response = $kernel->handle(Request::create($private_url));
     $this->assertSame(403, $denied_response->getStatusCode());

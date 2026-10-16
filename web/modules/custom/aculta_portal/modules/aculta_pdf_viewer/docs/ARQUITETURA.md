@@ -151,8 +151,9 @@ controller nem classe de formulário neste módulo; não existe arquivo
   download próprios.
 - Kernel: `AcultaPdfMediaEmbedTest` percorre o endpoint Core privado com um
   arquivo local `private://`; usuário autorizado recebe 200 e resposta privada,
-  enquanto acesso anônimo recebe 403. O render não é compartilhado em cache e
-  não gera thumbnail privada. Group/turma, revogação e browser seguem pendentes.
+  enquanto usuário autenticado sem permissão e acesso anônimo recebem 403. O
+  render não é compartilhado em cache e não gera thumbnail privada. Group/turma,
+  revogação e browser seguem pendentes.
 - O viewer ESM e worker passaram smoke test Firefox headless na fixture oficial
   da distribuição e contra um artigo temporário de Media Embed no Runtime
   `aculta_runtime`: 14 páginas, navegação, zoom 125%, busca (cinco resultados),
