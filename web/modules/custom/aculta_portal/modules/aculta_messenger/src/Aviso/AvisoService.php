@@ -80,6 +80,21 @@ final class AvisoService {
     return array_values($this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids));
   }
 
+  /** Itens não lidos da pessoa em um tópico, somando todos os tipos (contador individual do tópico). */
+  public function contadorDoTopico(int $uid, int $nid): int {
+    $total = 0;
+    foreach ($this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple(
+      $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('uid', $uid)
+        ->condition('assunto_nid', $nid)
+        ->execute()
+    ) as $aviso) {
+      $total += (int) $aviso->get('contador_site')->value;
+    }
+    return $total;
+  }
+
   /** Quantos tópicos (avisos agrupados por tipo + assunto) têm itens não lidos para a pessoa. */
   public function naoLidosTotal(int $uid): int {
     return (int) $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
