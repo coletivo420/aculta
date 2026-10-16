@@ -118,3 +118,15 @@ aculta_user.redes_save:
     _csrf_token: 'TRUE'
   options:
     _aculta_domain_purpose: 'account'
+
+# Memorial coletivo do Fórum (ACULTA Fórum, F2). Apelido reservado em AccountNames::RESERVED.
+# Conteúdo pendente: lista de autores e texto aprovado; ver CHANGELOG do aculta_forum.
+aculta_user.memorial_legados:
+  path: '/u/lendashistoricas'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\LegacyMemorialController::view'
+    _title: 'Memorial da comunidade'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'main'

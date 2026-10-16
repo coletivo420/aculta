@@ -25,6 +25,8 @@ final class AccountNames {
     'admin', 'u', 'perfil', 'entrar', 'sair', 'cadastro', 'minha-conta', 'atividade', 'configuracoes',
     'dados', 'pedidos', 'seguranca', 'conexoes', 'cursos', 'curso', 'busca', 'carrinho', 'pagamento',
     'user', 'node', 'lms', 'api', 'autores',
+    // Memorial coletivo do Fórum (ACULTA Fórum, F-D07); reservado antes da rota /u/{apelido}.
+    'lendashistoricas',
   ];
 
   /**

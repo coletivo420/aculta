@@ -1,5 +1,17 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.10 — F2 estrutural do Fórum: memorial e papel legado — 2026-10-15
+
+Classificação MINOR (rota e papel novos). Entrega estrutural do ACULTA Fórum F2 em
+branch própria; pendências registradas em `aculta_forum/CHANGELOG.md`.
+
+- Papel `usuarios_legados_forum` ("Usuários legados do fórum") em `config/sync`, sem permissões.
+- Apelido `lendashistoricas` reservado em `AccountNames::RESERVED`: conta comum não pode escolhê-lo.
+- Rota `/u/lendashistoricas` (`aculta_user.memorial_legados`), somente no purpose MAIN, com
+  placeholder de pendência. A rota estática vence `/u/{apelido}` no mesmo host.
+- Teste unitário `LegacyMemorialReservedTest`.
+- Pendências: lista de autores comprovados, contas legadas bloqueadas, texto aprovado e avatar especial.
+
 ## 0.4.0-dev.9 — avatar ilustrativo em perfis sem foto — 2026-10-15
 
 - `/u/<apelido>` escolhe uma imagem estável por conta do acervo atual de avatares

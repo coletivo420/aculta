@@ -1,5 +1,14 @@
 # Changelog — ACULTA Fórum
 
+## F2 estrutural — memorial e papel legado — 2026-10-15
+
+- Papel `usuarios_legados_forum` criado no Runtime de teste e em `config/sync`.
+- Apelido `lendashistoricas` reservado; rota `/u/lendashistoricas` respondendo 200 com placeholder.
+- Pendências da F2 (não executadas): lista de autores comprovados e Users bloqueados; arte do
+  avatar especial; texto aprovado do memorial; nomes individuais; verificação de colisões de
+  apelido em produção.
+- Gates do Portal passam. Nada aplicado em produção.
+
 ## F1 — inventário e domínio no servidor de testes — 2026-10-15
 
 - Inventário completo do prefixo CDX `growroom.net/board/` até
