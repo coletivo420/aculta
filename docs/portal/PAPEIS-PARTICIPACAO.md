@@ -1,6 +1,6 @@
 # Papéis e hierarquia
 
-Status: **hierarquia definida pelo responsável (2026-10-16)**. Pendências na seção 7.
+Status: **hierarquia atualizada pelo responsável (2026-10-17)**. Pendências na seção 7.
 Escopo: visualização, participação e moderação no Fórum e na Wiki, além da área de contas. Não substitui as políticas
 de cursos, loja e wiki em `EMAIL-CONFIRMATION-POLICY.md`.
 
@@ -10,12 +10,14 @@ Os números seguem a ordem do Drupal no projeto: **quanto menor o número, maior
 
 | Nível | Papel (machine name) | Rótulo | Como é concedido |
 |---|---|---|---|
-| 5 | `authenticated` | Usuário autenticado | Toda conta com login |
-| 4 | `email_confirmed` | E-mail confirmado | Automático ao confirmar o e-mail (irreversível), ou pela confirmação manual do administrador |
-| 3 | `estudante` | Estudante | Concedido automaticamente ao se inscrever em qualquer curso (decisão de 2026-10-17); acesso a fóruns exclusivos. Não é removido ao sair do curso |
-| 2 | `associado` | Associado | Associado ao ACULTA. Atribuído manualmente pelo administrador (decisão de 2026-10-17) |
-| 1 | `content_editor` | Editor de conteúdo | Administrativa, somente com e-mail confirmado |
-| 0 | `administrator` | Administrador | Administrativa |
+| 7 | `authenticated` | Usuário autenticado | Todo login |
+| 6 | `email_confirmed` | E-mail confirmado | Automática ao confirmar o e-mail (irreversível), ou manual pelo administrador |
+| 5 | `estudante` | Estudante | Usuário inscrito em algum curso; acesso a fóruns exclusivos. Concedido automaticamente na matrícula (`EnrollmentRoleHooks`) |
+| 4 | `associado` | Associado | Associado ao ACULTA; acesso a fóruns exclusivos. Atribuído manualmente |
+| 3 | `lms_teacher` | Professor | Professores dos Cursos Aculta (papel existente, rótulo atual "Educador") |
+| 2 | Gerente de Loja | Gerente de Loja | Gerentes da loja Aculta. Papel ainda não criado: aguarda a definição das permissões (seção 9) |
+| 1 | `content_editor` | Editor de conteúdo | Administrativa, só com `email_confirmed`; moderador do Fórum, revisor e moderador da Wiki |
+| 0 | `administrator` | Administrador | Administrativa; bypass total |
 
 Um usuário pode ter mais de um papel. Se `estudante` e `associado` exigem ou não `email_confirmed`, é pendência (seção 9).
 
