@@ -6,6 +6,16 @@ Classificação MINOR. Decisão do responsável: o gerente de loja vê um relat�
 - Testes unitários da agregação (`SalesReportControllerTest`): soma por variação entre pedidos, totais por moeda, itens incompletos ignorados, vazio. 2/2 OK. Smoke no Runtime: rota exige `view commerce_order`; gerente acessa, usuário comum não.
 - Saída em tabela neutra (`#type => table`); o layout visual fica para o tema ACULTA420, sem alteração de tema nesta entrega.
 
+## 0.4.0-dev.62 — registro do helper de derivados e documentação de tokens — 2026-10-16
+
+Classificação: PATCH.
+
+- `PortalHelperRegistry` mantém o helper `aculta_image.generated_file` (usado pelo `aculta_pdf_viewer`) com resumo e documentação vigentes.
+- `docs/portal/TOKENS-E-ATRIBUTOS.md`: 54 tokens do mapa do tema e 31 atributos `data-*` que estavam fora do gate passam a constar. Os tokens `public-profile-avatar-image`, `achievement-notices` e `aculta-image-audit` foram mapeados no tema (0.6.0-dev.65).
+- `docs/portal/MAPA-MODULO-TEMA.md` e o gate `scripts/validate-module-theme-map.php`: cada módulo e contrib habilitado tem registro de contraparte no tema.
+- Evidência: `validate-portal-ui-docs` PASS (237 tokens, 189 usados, 82 atributos); `validate-module-theme-map` PASS (130 checks); `validate-module-theme-boundary` PASS; `validate-aculta-portal-drupal11` PASS (803 checks); `validate-public-slugs` PASS; `validate-environment-addresses` PASS.
+- RUNTIME STATUS: sem alteração de configuração; cache rebuild no Runtime de teste.
+
 ## 0.4.0-dev.59 — PDF Viewer documenta acesso e preview opcional — 2026-10-16
 
 Classificação PATCH. `aculta_pdf_viewer` 0.1.0-dev.8 remove PDFPreview da lista de
