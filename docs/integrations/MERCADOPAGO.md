@@ -104,3 +104,9 @@ navegador, para evitar erros de duplicidade de credenciais.
 - Configurar as notificações da aplicação no painel do Mercado Pago (URL de teste e URL de produção), salvar e
   copiar a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
 - Provisionar as credenciais de produção pelo ACULTA Deployer (não pelo painel do Runtime de teste).
+- Endereço de notificação do ambiente de teste: `https://aculta.toca.net.br/integracoes/pagamentos/mercado_pago/notificacao`
+  (a rota de `commerce_payment.notify` é reescrita pelo Portal). Cadastrar esse endereço no painel do Mercado Pago
+  para os tópicos `payment`, `subscription_preapproval`, `subscription_preapproval_plan` e `subscription_authorized_payment`.
+  Produção usa o endereço equivalente do domínio de produção, declarado pelo `aculta_deployer`.
+- Assinatura de doação recorrente: pendente o vínculo com o pedido (DT-MP-02) e o e-mail do comprador de teste (DT-MP-03).
+- Registro das dívidas desta integração: `docs/operations/DEBT-REGISTER.md`, seção "Mercado Pago".

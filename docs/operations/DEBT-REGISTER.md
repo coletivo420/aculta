@@ -105,6 +105,19 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-O08 | PRs obsoletas acumuladas | PR antiga fechada em 2026-10-09 com arquivo em `archive/pr63` | Baixa | Não | — | Resolvida |
 | DT-O13 | Importação da configuração da turma no Runtime de teste (`course_document`, `media.type.course_document`, `group.relationship_type.lms_course-af8ec2205541224f9d8c4`, papéis do LMS). Hoje o Runtime não tem o bundle nem o submódulo `aculta_pdf_viewer_group` habilitado, e a relação de `lms_course` só existe no sync. Sem a importação, a relação de `lms_course` não pode ser verificada no Runtime | `docs/operations/BANCO-DE-TESTE.md`; `config:status` no Runtime de teste (itens "Onl" do sync) | Média | Não decidido | S2 | Aberta: aguarda decisão sobre importação de configuração no Runtime |
 
+## Mercado Pago (registrado em 2026-10-16)
+
+| ID | Dívida | Evidência | Risco | Bloqueia produção? | Fase | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-MP-01 | Tokens do gateway `mercado_pago` ficam na configuração do módulo contrib (banco), e não em Key `env` como exige o AGENTS.md. As Keys `mercadopago_*_access_token` existem, mas o gateway não as usa | `commerce_payment.commerce_payment_gateway.mercado_pago` (config exportada com campos vazios; valores no banco); `key.key.mercadopago_*` | Alta | Sim | F4 | Aberta: migração **não autorizada** pelo responsável |
+| DT-MP-02 | Vínculo assinatura de doação ↔ pedido (F3) não implementado; webhook de assinatura só consulta e registra em log | `MercadoPagoSubscriptionNotificationService`; `docs/portal/MERCADO-PAGO-PLANO.md` seção 0.3 | Média | Sim (para doação recorrente) | F3 | Aberta: depende de decisão de desenho (um pedido por assinatura ou por cobrança) e de assinatura de teste |
+| DT-MP-03 | Caminho de sucesso de assinatura (`subscription_preapproval` com 200) não verificado: falta o e-mail do comprador de teste | Teste no Runtime, 2026-10-16 (401/500 verificados; 200 só com plano) | Média | Não | F2 | Aberta: aguarda e-mail do comprador de teste |
+| DT-MP-04 | Recurso `authorized_payments` sem cliente no SDK 3.16.0; a consulta usa cliente HTTP do Drupal com endpoint da documentação | `MercadoPagoSubscriptionNotificationService::cobranca`; pesquisa de 2026-10-16 | Média | Não | F2 | Aberta: reavaliar a cada atualização do SDK |
+| DT-MP-05 | Painel visual dos pedidos sem apresentação no ACULTA420 (tabelas padrão), sem autorização para mexer no tema | `SalesOrdersTableBuilder`; AGENTS.md (tema protegido) | Baixa | Não | F1-visual | Aberta: aguarda autorização |
+| DT-MP-06 | Kernel e teste visual do painel de pedidos e dos formulários de ação não executados (sem pedido de teste no Runtime) | `CHANGELOG` do módulo, 0.4.0-dev.69 | Média | Sim (antes de usar as ações) | F1 | Aberta |
+| DT-MP-07 | Plano de teste criado na conta de teste (`763715780e834403864cf3c154e3167b`); a API não permite apagar plano | Teste de 2026-10-16 | Baixa | Não | — | Aberta: limpeza manual no painel do Mercado Pago |
+| DT-MP-08 | Docblock de `PaymentClient::cancel` no SDK diz só `pending`; a documentação oficial lista também `in_process` e `authorized` | `vendor/mercadopago/dx-php` (3.16.0) | Baixa | Não | — | Aberta: código segue a documentação |
+
 ## Governança
 
 | ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
