@@ -1,3 +1,12 @@
+## 0.6.0-dev.56 — agrupamento de gatilhos da barra e escaneamento de componentes — 2026-10-16
+
+Classificação: PATCH (sem mudança de marcação nem de aparência).
+
+- Os gatilhos de avisos e de mensagens deixaram de repetir a base do gatilho (`aculta-utility-trigger`); cada um mantém
+  só a posição do contador.
+- Escaneamento de estilos repetidos documentado em `docs/portal/COMPONENTES-AGRUPAMENTO.md` (foco visível em 23 arquivos,
+  pílulas em 4, próximas etapas listadas).
+
 ## 0.6.0-dev.55 — contador de não lidos padronizado (token único) — 2026-10-16
 
 Classificação: MINOR (novo contrato de apresentação: `aculta-unread-count`).
