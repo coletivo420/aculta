@@ -1,13 +1,13 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.10. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.11. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
-3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão de 1600×800 para 1200×600 confirmada; os três editores gravam modelos; persistência após reabrir confirmada. Faltam viewport de 390 px, temas e acessibilidade.
-4. O próximo passo é completar **R2**: testar viewport útil de 390 px e temas claro/escuro; depois seguir para R3 (legenda).
+3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão de 1600×800 para 1200×600 confirmada; modelos persistem; formulário de legenda grava o atributo. Falta validar `figcaption` público, viewport de 390 px, temas e acessibilidade.
+4. O próximo passo é completar **R3/R4**: validar legenda no HTML público e aferir o CSS de modelo no tema claro/escuro e em tela móvel.
 5. A importação do Growroom está bloqueada pela F3 do Fórum (lista de autores). Não é trabalho deste submódulo.
 
 ## 2. Git e working tree
@@ -93,7 +93,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 - **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
 - **Seletor de modelo:** a primeira UI, com dropdown dentro do overflow, falhava. Foi substituída por botões individuais. Downcast confirmado nos três editores e persistência após reabertura confirmada em `full_html`.
 - **Condição de ativação do plugin:** `aculta_image.ckeditor5.yml` usa `toolbarItem: acultaImageModelPequena` como condição. Um editor com só outro modelo na barra não ativaria o plugin. Trocar por uma condição que aceite qualquer dos quatro botões, ou confirmar que o caso não ocorre.
-- **Legenda:** o seletor não tem campo de legenda. A legenda do `figcaption` só aparece quando o atributo `data-aculta-legenda` existir no HTML.
+- **Legenda:** o formulário contextual grava `data-aculta-legenda`; a exibição pública em `<figcaption>` precisa ser confirmada com imagem do Runtime.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
 - **Formato do básico sem botão:** conteúdo de quem usa só o básico não ganha modelo até o formato próprio.
 - **Downloads do Wayback (2026-10-16, 15:42):** assets concluído (9.314 arquivos). HTML em andamento como root, com processo ativo: 6.480 arquivos; fila de tópicos e galerias (perfis fora até o mapeamento). Seções excluídas da importação: Avisos (2 e 52), Multimídia Cannábica (48), Cannabis Medicinal (76, a confirmar) e Notícias (24). **Não interromper nem apagar** sem consulta ao responsável. O script está fora do repositório (`scratchpad` da sessão); ver `IMPORTACAO-GROWROOM.md`, seção de estado.

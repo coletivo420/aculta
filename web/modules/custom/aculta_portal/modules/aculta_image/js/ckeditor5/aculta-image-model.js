@@ -6,13 +6,21 @@
  * Guarda o modelo escolhido num atributo do elemento de imagem (acultaModelo), que é exportado como data-aculta-modelo
  * no <img>. O filtro aculta_imagem_modelo lê esse atributo e monta o <figure> com os estilos do modelo.
  *
- * Ainda não faz parte desta entrega: legenda e crédito na UI do editor (ver docs/MODELOS-DE-IMAGEM.md).
+ * A legenda é editada num formulário contextual e gravada como data-aculta-legenda no <img>.
  */
 (function (CKEditor5) {
   'use strict';
 
   const { Plugin } = CKEditor5.dll('./src/core.js');
-  const { ButtonView } = CKEditor5.dll('./src/ui.js');
+  const {
+    ButtonView,
+    ContextualBalloon,
+    LabeledFieldView,
+    View,
+    clickOutsideHandler,
+    createLabeledInputText,
+    submitHandler,
+  } = CKEditor5.dll('./src/ui.js');
 
   /** Modelos aceitos (mesmos nomes de ImageCatalog::MODELOS). */
   const MODELOS = [
@@ -25,6 +33,37 @@
   /** Elementos de imagem do modelo de dados do core. */
   const ELEMENTOS_IMAGEM = ['imageBlock', 'imageInline'];
 
+  /** Formulário simples para editar a legenda da imagem selecionada. */
+  class LegendaFormView extends View {
+
+    constructor(locale) {
+      super(locale);
+      this.input = new LabeledFieldView(locale, createLabeledInputText);
+      this.input.label = 'Legenda da imagem';
+      this.input.fieldView.placeholder = 'Digite a legenda';
+      this.saveButton = new ButtonView(locale);
+      this.saveButton.set({ label: 'Salvar legenda', withText: true, type: 'submit' });
+      this.cancelButton = new ButtonView(locale);
+      this.cancelButton.set({ label: 'Cancelar', withText: true });
+      this.cancelButton.delegate('execute').to(this, 'cancel');
+
+      this.setTemplate({
+        tag: 'form',
+        attributes: {
+          class: ['ck', 'ck-aculta-image-caption-form', 'ck-responsive-form'],
+          tabindex: '-1',
+        },
+        children: [this.input, this.saveButton, this.cancelButton],
+      });
+    }
+
+    render() {
+      super.render();
+      submitHandler({ view: this });
+    }
+
+  }
+
   /**
    * Plugin do atributo acultaModelo e do seletor na barra de ferramentas.
    */
@@ -35,6 +74,7 @@
       return [
         CKEditor5.image.ImageBlockEditing,
         CKEditor5.image.ImageInlineEditing,
+        ContextualBalloon,
       ];
     }
 
@@ -46,7 +86,7 @@
       const editor = this.editor;
 
       ELEMENTOS_IMAGEM.forEach((nome) => {
-        editor.model.schema.extend(nome, { allowAttributes: ['acultaModelo'] });
+        editor.model.schema.extend(nome, { allowAttributes: ['acultaModelo', 'acultaLegenda'] });
       });
 
       // Leitura: <img data-aculta-modelo="..."> vira o atributo do modelo de dados.
@@ -54,10 +94,14 @@
         view: { name: 'img', key: 'data-aculta-modelo' },
         model: 'acultaModelo',
       });
+      editor.conversion.for('upcast').attributeToAttribute({
+        view: { name: 'img', key: 'data-aculta-legenda' },
+        model: 'acultaLegenda',
+      });
 
       // Gravação: o atributo vai para o <img>, que é o elemento que o filtro do servidor lê.
       editor.conversion.for('downcast').add((dispatcher) => {
-        dispatcher.on('attribute:acultaModelo', (evt, data, conversionApi) => {
+        ['acultaModelo', 'acultaLegenda'].forEach((nomeAtributo) => dispatcher.on(`attribute:${nomeAtributo}`, (evt, data, conversionApi) => {
           const { writer, mapper } = conversionApi;
           if (!ELEMENTOS_IMAGEM.includes(data.item.name)) {
             return;
@@ -68,12 +112,12 @@
             return;
           }
           if (data.attributeNewValue === null) {
-            writer.removeAttribute('data-aculta-modelo', img);
+            writer.removeAttribute(nomeAtributo === 'acultaModelo' ? 'data-aculta-modelo' : 'data-aculta-legenda', img);
           }
           else {
-            writer.setAttribute('data-aculta-modelo', data.attributeNewValue, img);
+            writer.setAttribute(nomeAtributo === 'acultaModelo' ? 'data-aculta-modelo' : 'data-aculta-legenda', data.attributeNewValue, img);
           }
-        });
+        }));
       });
 
       // Cada opção é um item da toolbar por conta própria. Isso mantém as opções usáveis
@@ -95,6 +139,76 @@
           return botao;
         });
       });
+
+      this._balloon = editor.plugins.get(ContextualBalloon);
+      this._captionForm = new LegendaFormView(editor.locale);
+      this._captionForm.render();
+      clickOutsideHandler({
+        emitter: this._captionForm,
+        activator: () => this._isCaptionFormVisible,
+        contextElements: [this._balloon.view.element],
+        callback: () => this._ocultarLegenda(),
+      });
+      this._captionForm.on('submit', () => {
+        const selecionado = this._imagemSelecionada();
+        if (selecionado) {
+          const legenda = this._captionForm.input.fieldView.element.value.trim();
+          editor.model.change((writer) => {
+            if (legenda === '') {
+              writer.removeAttribute('acultaLegenda', selecionado);
+            }
+            else {
+              writer.setAttribute('acultaLegenda', legenda, selecionado);
+            }
+          });
+        }
+        this._ocultarLegenda();
+      });
+      this._captionForm.on('cancel', () => this._ocultarLegenda());
+
+      editor.ui.componentFactory.add('acultaImageLegenda', (locale) => {
+        const botao = new ButtonView(locale);
+        botao.set({ label: 'Editar legenda', tooltip: true, withText: true });
+        botao.on('execute', () => this._mostrarLegenda());
+        return botao;
+      });
+
+      this.listenTo(editor.ui, 'update', () => {
+        if (this._isCaptionFormVisible && !this._imagemSelecionada()) {
+          this._ocultarLegenda();
+        }
+      });
+    }
+
+    destroy() {
+      super.destroy();
+      this._captionForm.destroy();
+    }
+
+    _mostrarLegenda() {
+      const selecionado = this._imagemSelecionada();
+      if (!selecionado) {
+        return;
+      }
+      const input = this._captionForm.input.fieldView;
+      input.element.value = selecionado.getAttribute('acultaLegenda') || '';
+      input.value = input.element.value;
+      if (!this._isCaptionFormVisible) {
+        this._balloon.add({
+          view: this._captionForm,
+          position: { target: this.editor.ui.getEditableElement() },
+        });
+      }
+      this._isCaptionFormVisible = true;
+      input.focus();
+    }
+
+    _ocultarLegenda() {
+      if (this._isCaptionFormVisible) {
+        this._balloon.remove(this._captionForm);
+        this._isCaptionFormVisible = false;
+      }
+      this.editor.editing.view.focus();
     }
 
     /**

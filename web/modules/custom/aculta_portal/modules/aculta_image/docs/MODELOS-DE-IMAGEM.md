@@ -1,6 +1,6 @@
 # Modelos de imagem no texto
 
-Status em 2026-10-16 (0.1.0-dev.10): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
+Status em 2026-10-16 (0.1.0-dev.11): **parcialmente implementado.** Runtime atualizado; Firefox confirmou a gravação do
 atributo no `<img>` nos três editores testados, inclusive no overflow a 488 px. Upload real de 1600×800 resultou em
 1200×600. A persistência de `larga` após salvar/reabrir também foi confirmada com conteúdo temporário não publicado,
 depois excluído. Ainda faltam tema claro/escuro e viewport útil de 390 px. Próximos passos: [HANDOFF.md](HANDOFF.md), seção 6.
@@ -49,6 +49,8 @@ reduzidos no upload (ver seção 5).
 
 - Plugin CKEditor 5 `acultaImage.ImageModel` em JavaScript simples, sem build. Usa os globais `CKEditor5.dll` e
   `CKEditor5.image` que o core expõe. Grava o modelo em `data-aculta-modelo`.
+- O botão contextual “Editar legenda” grava `data-aculta-legenda`; o filtro converte o atributo em `<figcaption>`. A UI
+  serializa corretamente; falta conferir renderização pública e persistência da legenda ao reabrir.
 - Classe PHP `Plugin\CKEditor5Plugin\ImageModel` (configuração por editor: quais modelos aparecem).
 - Filtro `aculta_imagem_modelo` que transforma o `<img>` em `<figure>` com `srcset`, `sizes` e `figcaption`.
 
@@ -87,7 +89,7 @@ oficial. Os números da comunidade (690 × 500 px) não foram adotados. Medir em
 | P1 | Catálogo dos modelos e estilos `aculta_corpo_*` | **feito** (exportados no pipeline `aculta_derivados`) |
 | P2 | Filtro PHP com `<figure>`, `srcset` e legenda (sem crédito) | **feito** (sem JavaScript na página pública) |
 | P3 | Plugin CKEditor 5 com seletor de modelo | **botões e gravação testados no Runtime; upload e reabertura confirmados; faltam viewport de 390 px, tema e acessibilidade** |
-| P3b | Campo de legenda no seletor | pendente |
+| P3b | Campo contextual de legenda | **implementado e serializado; falta verificar renderização pública e reabertura** |
 | P4 | CSS dos modelos no ACULTA420 (claro e escuro, mobile primeiro) | pendente (exige autorização para o tema) |
 | P5 | Acessibilidade: `alt` obrigatório, legenda com `figcaption`, teclado | pendente |
 | P6 | Formato próprio para o HTML básico | pendente (decisão de perfis) |

@@ -17,6 +17,8 @@ aculta_image_model:
         label: Imagem larga
       acultaImageModelDestaque:
         label: Imagem destaque
+      acultaImageLegenda:
+        label: Editar legenda
     conditions:
       plugins: [ckeditor5_image]
       toolbarItem: acultaImageModelPequena

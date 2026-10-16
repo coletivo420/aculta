@@ -1,5 +1,12 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.11 — edição da legenda no CKEditor — 2026-10-16
+
+- Botão “Editar legenda” abre um formulário contextual com campo rotulado e ações Salvar/Cancelar.
+- A legenda é gravada em `data-aculta-legenda`, preservada no upcast/downcast e removida quando salva vazia. O filtro do servidor transforma o atributo em `figcaption`.
+- A ação foi adicionada a `full_html`, `revista_editorial` e `usuario_aculta`; configurações importadas e cache reconstruído no Runtime.
+- Firefox confirmou o formulário e a serialização do atributo. Reabertura e renderização pública serão validadas na etapa seguinte.
+
 ## 0.1.0-dev.10 — botões de modelo funcionam no overflow do CKEditor — 2026-10-16
 
 - Corrigido o seletor do CKEditor: cada modelo agora é um botão próprio na toolbar, em vez de um dropdown aninhado que não abria no menu de overflow.

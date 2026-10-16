@@ -29,6 +29,7 @@ settings:
       - acultaImageModelPadrao
       - acultaImageModelLarga
       - acultaImageModelDestaque
+      - acultaImageLegenda
       - insertTable
       - horizontalLine
       - heading
