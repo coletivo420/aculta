@@ -1071,6 +1071,16 @@ Classificação: PATCH (navegação da caixa de mensagens existente).
 - Verificações estáticas: PHP lint e `node --check` PASS; gates do Portal/tema pendentes.
 - RUNTIME STATUS: DEFERRED.
 
+## 0.6.0-dev.61 — "Ver todos os avisos" como botão no rodapé da gaveta — 2026-10-16
+
+Classificação: PATCH (ajuste de apresentação de um componente).
+
+- Gaveta de avisos (`alerts-trigger`): rodapé fixo com o botão "Ver todos os avisos", no estilo `btn btn-primary` do botão do carrinho. Nova prop `all_href`, vinda do Portal.
+- O rodapé não aparece para visitante (sem `all_href`).
+- Gaveta de mensagens (`messenger-trigger`): mesmo rodapé, com "Ver todas as mensagens".
+- Gaveta de avisos: corpo rolável (`min-height: 0`, `overflow-y: auto`) e rodapé fora da rolagem.
+- Verificado por HTML no Runtime (conta de teste): link absoluto no purpose `account`. Visual na gaveta no Firefox: pendente.
+
 ## 0.6.0-dev.60 — apresentação do leitor PDF compartilhado — 2026-10-16
 
 Classificação: PATCH (apresentação/acessibilidade sem API visual nova).

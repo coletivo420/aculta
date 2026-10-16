@@ -574,7 +574,7 @@ final class MessagesController extends ControllerBase {
    *
    * @return array{build: array, contador: int}
    */
-  public function alertsBuild(bool $comVerTodos = TRUE): array {
+  public function alertsBuild(): array {
     $storage = $this->entityTypes->getStorage('site_alert');
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['active_site_alerts'])
@@ -608,17 +608,6 @@ final class MessagesController extends ControllerBase {
           NULL,
           $this->readLabel($contador > 0),
         );
-      }
-      if ($comVerTodos) {
-      $items[] = $this->noticeSummary(
-        (string) $this->translation->translate('Ver todos os avisos'),
-        '',
-        Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos']),
-        [],
-        NULL,
-        FALSE,
-        NoticeType::INFO,
-      );
       }
     }
 

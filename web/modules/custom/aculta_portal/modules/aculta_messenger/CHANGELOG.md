@@ -2,6 +2,17 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.44 — "Ver todos os avisos" como botão no rodapé da gaveta (F5.2) — 2026-10-16
+
+Classificação: PATCH (ajuste de apresentação e de URL; sem regra nova).
+
+- O link "Ver todos os avisos" sai da lista e vira botão no rodapé fixo da gaveta de avisos da barra, abaixo de todos os avisos.
+- A URL é absoluta no purpose `account` (`DomainPurposeManager::canonicalRouteUrl`), e não mais relativa ao host atual.
+- O rodapé só aparece para quem está logado.
+- Gaveta de mensagens: botão "Ver todas as mensagens" no mesmo rodapé, apontando para a aba Mensagens da conta (`all_url` em `aculta_messenger`).
+- Gaveta de avisos: a lista rola dentro da gaveta e o rodapé fica fora da rolagem (verificado no Firefox com lista longa).
+- Teste unitário `PersistentNoticeAccessTest` corrigido: o construtor de `MessengerBarHooks` agora recebe `AvisoService` e `DomainPurposeManager`. Os 33 testes do módulo passam.
+
 ## 0.1.1-dev.43 — rótulo Lido/Não lido nos alertas do site (F5.2) — 2026-10-16
 
 Classificação: MINOR (novo flag de leitura e rótulo nos alertas do site).

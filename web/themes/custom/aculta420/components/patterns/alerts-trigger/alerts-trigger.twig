@@ -30,4 +30,10 @@
   <div class="offcanvas-body aculta-utility-offcanvas__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
     <p>{{ 'Abra para atualizar os avisos.'|t }}</p>
   </div>
+  {# Rodapé fixo da gaveta, abaixo de todos os avisos (persistentes, alertas e do Fórum). Mesmo estilo do botão do carrinho. #}
+  {% if all_href %}
+    <div class="aculta-alerts-offcanvas__footer">
+      <a class="btn btn-primary aculta-alerts-offcanvas__action" href="{{ all_href }}">{{ 'Ver todos os avisos'|t }}</a>
+    </div>
+  {% endif %}
 </div>

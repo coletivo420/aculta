@@ -27,4 +27,10 @@
   <div class="offcanvas-body aculta-utility-offcanvas__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
     <p>{{ 'Abra para atualizar suas conversas.'|t }}</p>
   </div>
+  {# Rodapé fixo da gaveta, abaixo de todas as conversas. Mesmo botão e posição do rodapé de avisos. #}
+  {% if all_href %}
+    <div class="aculta-messenger-offcanvas__footer">
+      <a class="btn btn-primary aculta-messenger-offcanvas__action" href="{{ all_href }}">{{ 'Ver todas as mensagens'|t }}</a>
+    </div>
+  {% endif %}
 </div>

@@ -22,6 +22,7 @@ use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_messenger\Support\StorageDateTime;
 use Drupal\site_alert\GetAlertsInterface;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Supplies the neutral, per-member Messenger action to the global shell. */
@@ -48,6 +49,8 @@ final class MessengerBarHooks {
     private readonly MessengerCounts $counts,
     #[Autowire(service: 'aculta_messenger.aviso_service')]
     private readonly \Drupal\aculta_messenger\Aviso\AvisoService $avisos,
+    #[Autowire(service: 'aculta_portal.domain_purpose')]
+    private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
@@ -76,6 +79,11 @@ final class MessengerBarHooks {
         'url' => $alertUrl->getGeneratedUrl(),
         'count' => $unreadNoticeCount,
         'count_kind' => $this->currentUser->isAuthenticated() ? 'attention' : 'active',
+        // Botão "Ver todos os avisos" no rodapé da gaveta: só para a própria pessoa (a aba da conta exige login).
+        // A aba é da conta: a URL absoluta do purpose "account", não um caminho relativo ao host atual.
+        'all_url' => $this->currentUser->isAuthenticated()
+          ? ($this->domainPurposeManager->canonicalRouteUrl('account', 'aculta_messenger.avisos', ['aba' => 'avisos'])?->toString() ?? '')
+          : '',
       ];
       $this->renderer->addCacheableDependency($variables['page'], $alertCacheability);
       $this->renderer->addCacheableDependency($variables['page'], $alertUrl);
@@ -92,6 +100,8 @@ final class MessengerBarHooks {
     $variables['aculta_messenger'] = [
       'url' => $url->getGeneratedUrl(),
       'unread_count' => $this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests()),
+      // Botão "Ver todas as mensagens" no rodapé da gaveta: aba Mensagens da conta, no purpose account.
+      'all_url' => $this->domainPurposeManager->canonicalRouteUrl('account', 'aculta_messenger.avisos', ['aba' => 'mensagens'])?->toString() ?? '',
     ];
 
     if (isset($variables['page']) && is_array($variables['page'])) {

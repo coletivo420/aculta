@@ -146,8 +146,11 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
 - Lista de conversas na conta: caixa proporcional (largura máxima de 42 rem, linha compacta). A regra fica no tema, no
   atributo de comportamento `data-aculta-account-list`, e não vale para a gaveta da barra.
 - Acesso: `access aculta portal`, no propósito `account`. Abas inexistentes respondem 404.
-- A prévia da barra multidomínio mostra até 5 avisos da pessoa, seguidos do link **Ver todos os avisos**, que abre a
-  aba Avisos. O contador do ícone de avisos soma esses avisos (seção 5).
+- A gaveta da barra multidomínio lista os avisos da pessoa (persistentes, alertas e do Fórum). O botão **Ver todos os
+  avisos** fica no rodapé fixo da gaveta, abaixo da lista, com o estilo dos botões do site (mesma posição do rodapé do
+  carrinho). A URL vem do Portal (`MessengerBarHooks`, chave `all_url`), gerada no purpose `account` pelo
+  `DomainPurposeManager`; o tema só desenha o botão (`alerts-trigger`, prop `all_href`). Visitante não vê o botão.
+  O contador do ícone de avisos soma esses avisos (seção 5).
 - Visitante não vê a central (403).
 
 ## 8.2 Rótulo Lido / Não lido e retenção

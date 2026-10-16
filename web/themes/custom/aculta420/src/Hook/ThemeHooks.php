@@ -328,6 +328,7 @@ final class ThemeHooks {
       '#props' => [
         'href' => $messenger['url'],
         'count' => max(0, (int) ($messenger['unread_count'] ?? 0)),
+        'all_href' => is_string($messenger['all_url'] ?? NULL) ? $messenger['all_url'] : '',
       ],
     ];
     unset($variables['aculta_messenger']);
@@ -347,6 +348,7 @@ final class ThemeHooks {
         'href' => $alerts['url'],
         'count' => max(0, (int) ($alerts['count'] ?? 0)),
         'count_kind' => $alerts['count_kind'] ?? 'active',
+        'all_href' => is_string($alerts['all_url'] ?? NULL) ? $alerts['all_url'] : '',
       ],
     ];
     unset($variables['aculta_alerts']);

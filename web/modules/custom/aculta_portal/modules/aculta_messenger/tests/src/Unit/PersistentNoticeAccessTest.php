@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\domain\DomainNegotiatorInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -13,7 +16,9 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
+use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Hook\MessengerBarHooks;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
@@ -85,6 +90,13 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
       $this->createMock(FlagServiceInterface::class),
       $this->createMock(FriendshipManagerInterface::class),
       new MessengerCounts($this->createMock(EntityTypeManagerInterface::class), $this->createMock(FlagServiceInterface::class), $this->createMock(GetAlertsInterface::class)),
+      new AvisoService($this->createMock(EntityTypeManagerInterface::class), $this->createMock(FlagServiceInterface::class)),
+      new DomainPurposeManager(
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(DomainNegotiatorInterface::class),
+        $this->createMock(ConfigFactoryInterface::class),
+        new RequestStack(),
+      ),
     );
   }
 
