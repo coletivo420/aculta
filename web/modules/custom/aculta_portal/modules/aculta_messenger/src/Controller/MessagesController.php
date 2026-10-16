@@ -112,7 +112,7 @@ final class MessagesController extends ControllerBase {
    * The "Voltar" links of a conversation load this fragment, so it carries the same first action as preview().
    */
   public function drawerConversations(): Response {
-    $build = $this->newConversationAction() + $this->buildConversationList();
+    $build = $this->conversasBuild();
     return $this->buildDrawerResponse($build, [
       'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
     ]);
@@ -386,6 +386,14 @@ final class MessagesController extends ControllerBase {
       ],
       '#weight' => -100,
     ]];
+  }
+
+  /**
+   * Lista de conversas da gaveta (ação de nova conversa + lista). Usada pela gaveta da barra e pela aba Mensagens da
+   * conta, para que as duas mostrem a mesma coisa com o mesmo comportamento.
+   */
+  public function conversasBuild(): array {
+    return $this->newConversationAction() + $this->buildConversationList();
   }
 
   /** Builds the authorized conversation list for drawer AJAX navigation. */

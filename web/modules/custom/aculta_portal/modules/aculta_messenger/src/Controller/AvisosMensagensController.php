@@ -101,15 +101,13 @@ final class AvisosMensagensController extends ControllerBase {
     return $this->mensagens->alertsBuild(FALSE)['build'];
   }
 
-  /** Aba Mensagens: só contagem e link para as conversas (sistema de mensagens). */
+  /**
+   * Aba Mensagens: a mesma lista de conversas da gaveta da barra (MessagesController::conversasBuild), com o mesmo
+   * comportamento. As conversas continuam no sistema de mensagens.
+   */
   private function conteudoMensagens(int $naoLidas): array {
-    $texto = $naoLidas > 0
-      ? $this->t('Você tem @n conversa(s) não lida(s).', ['@n' => $naoLidas])
-      : $this->t('Nenhuma conversa não lida.');
-    return [
-      'texto' => ['#markup' => '<p>' . $texto . '</p>'],
-      'abrir' => ['#type' => 'link', '#title' => $this->t('Abrir conversas'), '#url' => Url::fromRoute('aculta_messenger.drawer_conversations')],
-    ];
+    return $this->mensagens->conversasBuild();
   }
+
 
 }

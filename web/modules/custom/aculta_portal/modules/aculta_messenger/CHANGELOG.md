@@ -2,6 +2,10 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.38 — aba Mensagens com a lista de conversas da gaveta (F5.2) — 2026-10-16
+
+- A aba Mensagens da conta mostra a mesma lista de conversas da gaveta da barra (`conversasBuild`), no lugar do link "Abrir conversas".
+
 ## 0.1.1-dev.37 — aba Avisos sem "Ver todos" (F5.2) — 2026-10-16
 
 - A aba Avisos da conta não mostra o link "Ver todos", porque já é a lista completa. A gaveta da barra mantém o link.

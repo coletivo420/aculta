@@ -136,8 +136,9 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
     comunicados, avisos da pessoa e alertas do site, com os mesmos itens, links e ações de dispensa. Só lê os avisos da
     conta logada; a página não recebe parâmetro de usuário. Dentro da aba não há o link "Ver todos", porque a aba já é a
     lista completa; a gaveta da barra mantém o link (`alertsBuild(FALSE)` na aba).
-  - **Mensagens** (`/avisos-mensagens/mensagens`): só a contagem de conversas não lidas e o link para abri-las
-    (`aculta_messenger.drawer_conversations`). As conversas continuam no sistema de mensagens; esta aba não grava nada.
+  - **Mensagens** (`/avisos-mensagens/mensagens`): a **mesma lista de conversas da gaveta da barra**
+    (`MessagesController::conversasBuild`), com o mesmo botão de nova conversa e os mesmos links. As conversas continuam
+    no sistema de mensagens; a aba não cria nem altera conversas.
 - Acesso: `access aculta portal`, no propósito `account`. Abas inexistentes respondem 404.
 - A prévia da barra multidomínio mostra até 5 avisos da pessoa, seguidos do link **Ver todos os avisos**, que abre a
   aba Avisos. O contador do ícone de avisos soma esses avisos (seção 5).
