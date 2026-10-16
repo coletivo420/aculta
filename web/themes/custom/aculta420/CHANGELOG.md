@@ -1,3 +1,15 @@
+## 0.6.0-dev.55 — contador de não lidos padronizado (token único) — 2026-10-16
+
+Classificação: MINOR (novo contrato de apresentação: `aculta-unread-count`).
+
+- `css/components/unread-count.css` é a fonte da aparência: a mesma do contador da barra multidomínio.
+- Carrinho, avisos, mensagens, badge de conta e contadores de conteúdo (fórum) usam a mesma classe.
+- `PortalUiHooks.php`: token `forum-topic-unread` mapeado para `aculta-unread-count`.
+- Removidas as regras antigas de contador de `portal-cart.css` e do componente `unread-badge.css`; posição do
+  gatilho de avisos e de mensagens mantida, agora sobre a classe única.
+- Documentação: `docs/portal/CONTADORES.md` e `docs/components.md`.
+- Pendente: teste visual no navegador; contador do LMS (sem dado ainda).
+
 ## 0.6.0-dev.54 — cartões de conquistas no perfil público — 2026-10-15
 
 Classificação: MINOR (novo contrato de apresentação no tema).

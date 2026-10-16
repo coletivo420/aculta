@@ -136,6 +136,7 @@ final class PortalUiHooks {
     'public-profile-actions' => ['portal-profile__actions'],
     'friendship-action-form' => ['portal-profile__friendship-form'],
     'friendship-action-button' => ['btn', 'btn-outline-secondary', 'portal-account-overview__profile'],
+    'forum-topic-unread' => ['aculta-unread-count'],
     'public-profile-avatar' => ['portal-profile__avatar'],
     'public-profile-initial' => ['portal-profile__initial'],
     'public-profile-identity' => ['portal-profile__identity'],

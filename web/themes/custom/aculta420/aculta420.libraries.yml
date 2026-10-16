@@ -29,6 +29,7 @@ global:
       css/components/dialog.css: {}
       css/components/portal-address-number.css: {}
       css/components/portal-cart.css: {}
+      css/components/unread-count.css: {}
       css/components/portal-payment-notice.css: {}
       css/components/portal-requirements-report.css: {}
       css/components/portal-support.css: {}
