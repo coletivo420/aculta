@@ -1,3 +1,13 @@
+## 0.4.0-dev.66 — gerente de loja administra doações — 2026-10-16
+
+Classificação MINOR. Mudança de escopo do gerente de loja: além de vendas, administra doações.
+
+- Permissão `administrar doacoes` (concedida ao papel `gerente_loja` em `config/sync`) e rota `/painel-administrativo/loja/doacoes`, com o relatório de doações por período e moeda (`DonationReportController`).
+- `SalesReportQuery` passa a receber o escopo (`ESCOPO_PRODUTO` ou `ESCOPO_DOACAO`), com a mesma regra de período, loja e moeda. Vendas e doações nunca se somam.
+- Testes: `DonationReportControllerTest` (escopo de doação, formatação, tabela vazia). Unit `aculta_portal`: 132 testes, 362 asserções, OK.
+- Pendente: ações de pagamento e de recorrência para doações (estornar, cancelar assinatura) ligadas à permissão `administrar doacoes`; a tela entra na fase de painéis. Vincular a assinatura ao pedido de doação é F3 do plano.
+- Runtime: DEFERRED (importação de config do papel e teste visual do relatório).
+
 ## 0.4.0-dev.65 — API do Mercado Pago: recorrência, ações de pagamento e consultas de vendas — 2026-10-16
 
 Classificação MINOR. Decisão do responsável: implementar as APIs do Mercado Pago disponíveis no SDK e planejar a integração com a loja e as doações. Painéis visuais ficam para a fase seguinte.

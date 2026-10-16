@@ -12,6 +12,13 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 - **Relatório de vendas:** exclui doações. Itens com `commerce_order_item.type = donation` ficam fora de todas as agregações; um pedido entra quando tem ao menos um item de produto.
 - **Migração de tokens para Drupal Key:** **não autorizada.** Os tokens de teste ficam onde já estão (configuração do gateway `mercado_pago`, modo `test`) e são usados pela aplicação. A migração não entra nesta linha.
 
+## 0.1 Atualização: gerente de loja administra doações (dev.66)
+
+- Permissão `administrar doacoes` (papel `gerente_loja`) e rota `/painel-administrativo/loja/doacoes` com o relatório de doações por período e moeda.
+- `SalesReportQuery` recebe o escopo (`produto` ou `doacao`). Vendas e doações ficam em relatórios separados, mesmo quando um pedido mistura os dois.
+- Ações de pagamento de doação (estornar, cancelar) usam a permissão `administrar doacoes`, e não `gerenciar pagamentos de vendas`. A tela entra na fase de painéis.
+- Cancelar a assinatura de uma doação recorrente exige guardar o id da assinatura no pedido. Isso é a F3 do plano.
+
 ## 1. Inventário das APIs do SDK
 
 O SDK tem 21 arquivos `*Client.php`: 20 clientes concretos e a classe base `MercadoPagoClient`. A fábrica `MercadoPagoClientFactory::CLIENTES` mapeia os 20 e um teste confirma que as classes existem no SDK instalado.
