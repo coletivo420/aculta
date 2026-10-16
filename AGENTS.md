@@ -212,6 +212,12 @@ php .\vendor\drush\drush\drush.php status
 php .\vendor\drush\drush\drush.php cr
 ```
 
+## Banco de teste (Kernel)
+
+Os testes de Kernel usam o MariaDB dedicado `aculta_simpletest`, com a configuração em `secrets/simpletest-db.env`
+(fora do Git). Procedimento, rotação e resultados: `docs/operations/BANCO-DE-TESTE.md`. Nunca usar o Runtime
+`aculta_runtime` nem SQLite para testes; nunca imprimir o conteúdo do arquivo de segredos.
+
 ## Identidade institucional
 
 Nome:

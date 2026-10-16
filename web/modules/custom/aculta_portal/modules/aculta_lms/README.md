@@ -32,14 +32,14 @@ Não possui `config/install`, schema, entidade, rota ou hook de instalação.
   sem instalar a cadeia de dependências, registro DI e ausência de configuração
   própria/hook de instalação.
 
-Execute os testes a partir de `web/core` com PHPUnit do Composer. Para o Kernel
-test, use um banco MariaDB de teste isolado (nunca o Runtime) e diretório de
-saída em `/tmp`. Substitua usuário, senha e nome do banco pelos do seu ambiente
-de teste; não grave credenciais no repositório:
+Execute os testes a partir de `web/core` com PHPUnit do Composer. O Kernel test usa o banco MariaDB
+de teste dedicado (nunca o Runtime, nunca SQLite). Configuração, procedimento e resultados estão em
+`docs/operations/BANCO-DE-TESTE.md`; a senha fica em `secrets/simpletest-db.env` e não entra no repositório:
 
 ```sh
+cd web/core
+set -a && . ../../secrets/simpletest-db.env && set +a
 mkdir -p /tmp/aculta-lms-test-output
-SIMPLETEST_DB="mysql://<usuario>:<senha>@localhost/<banco-de-teste>" \
 BROWSERTEST_OUTPUT_DIRECTORY=/tmp/aculta-lms-test-output \
 ../../vendor/bin/phpunit -c phpunit.xml.dist \
   ../modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AcultaLmsInstallTest.php

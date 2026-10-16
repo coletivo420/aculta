@@ -7,8 +7,8 @@ Classificação: PATCH.
 - `DocumentFieldMap::fieldForBundle()` passa a ser a única fonte do mapeamento bundle → campo, usada por `PdfViewerBuilder` e `AcultaPdfMediaFormatter`. Um novo bundle de PDF não pode ser aceito em um ponto e recusado no outro.
 - `PdfPreviewThumbnailBuilder`: removida a checagem da URL gerada. A marcação usa a URI do arquivo gerenciado (`buildManagedImage`), então a checagem não protegia o `src` renderizado. Sai também a dependência `file_url_generator` desse serviço.
 - `aculta_pdf_viewer_group` 0.1.0-dev.1: versão declarada no `info.yml` (não tinha). O README registra que `enforced: TRUE` instala a relação em todos os tipos de grupo; restringir a `lms_course` é decisão do responsável antes do Runtime.
-- Evidência: PHPUnit Unit `aculta_pdf_viewer` 7/7 (82 asserções) OK. Kernel: DEFERRED. Não há banco MariaDB de teste disponível nesta sessão; a rodada anterior usou SQLite em memória, o que não é mais permitido no projeto.
-- RUNTIME STATUS: DEFERRED para testes de Kernel; cache rebuild feito no Runtime de teste com a URI de teste.
+- Evidência: PHPUnit Unit `aculta_pdf_viewer` 7/7 (82 asserções) OK. Kernel `aculta_pdf_viewer` 3/3 (61 asserções) OK, com 4 deprecações; Kernel `aculta_pdf_viewer_group` 1/1 (37 asserções) OK, com 23 deprecações de contrib. Os testes rodaram no banco MariaDB dedicado `aculta_simpletest`, conforme `docs/operations/BANCO-DE-TESTE.md`. Nenhum teste usou SQLite.
+- RUNTIME STATUS: cache rebuild feito no Runtime de teste com a URI de teste. Testes de Kernel executados fora do Runtime.
 
 ## 0.1.0-dev.11 — correções de testes e formulário dos documentos de turma — 2026-10-16
 
