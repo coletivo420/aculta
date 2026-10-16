@@ -1071,6 +1071,15 @@ Classificação: PATCH (navegação da caixa de mensagens existente).
 - Verificações estáticas: PHP lint e `node --check` PASS; gates do Portal/tema pendentes.
 - RUNTIME STATUS: DEFERRED.
 
+## 0.6.0-dev.62 — índice do Fórum em cartões (F4, primeira parte) — 2026-10-17
+
+Classificação: MINOR (novo template de lista e novo componente de apresentação do Fórum).
+
+- `templates/forum-list.html.twig` substitui a tabela do módulo forum: contêineres viram seções, fóruns viram cartões com tópicos, posts e última postagem. Mesmas variáveis do módulo.
+- `css/components/forum-index.css`: tokens semânticos, mobile primeiro; o botão "Entre para publicar" usa o estilo dos botões de ação do site.
+- Verificado no Runtime (growroom420, anônimo) em 1280 px e 390 px. Modo escuro e conta logada: pendentes.
+- Pendência de dados (não de tema): o termo "General discussion" vem do instalador do módulo forum e aparece no índice; remover exige decisão do responsável.
+
 ## 0.6.0-dev.61 — "Ver todos os avisos" como botão no rodapé da gaveta — 2026-10-16
 
 Classificação: PATCH (ajuste de apresentação de um componente).
