@@ -127,7 +127,9 @@ O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + *
 
 ## 8.1 Central "Avisos/Mensagens" em Minha conta
 
-- Rótulo no menu da conta: **Avisos/Mensagens** (`aculta_messenger.avisos_raiz`, em `/avisos-mensagens`).
+- Acesso à central: pelos ícones do aculta_messenger (barra multidomínio) e pelo link "Ver todos os avisos" da prévia.
+  O rótulo textual "Avisos/Mensagens" **não** aparece na barra nem no menu da conta: removido por decisão do responsável.
+  A rota é `/avisos-mensagens` (`aculta_messenger.avisos_raiz`).
 - Duas abas no padrão de Atividade e Meus Dados (`account-data-nav`/`account-data-link`), com a aba atual marcada:
   - **Avisos** (`/avisos-mensagens/avisos`): avisos da própria pessoa, agrupados por tipo, com contador de não lidos.
     Só lê os avisos da conta logada; a página não recebe parâmetro de usuário.
