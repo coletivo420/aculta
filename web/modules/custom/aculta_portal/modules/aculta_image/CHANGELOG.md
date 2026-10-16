@@ -1,5 +1,13 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.6 — PDF liberado no ImageMagick; compressão com pipeline (M4 e M8) — 2026-10-17
+
+- Política do ImageMagick (`/etc/ImageMagick-7/policy.xml`, backup `.aculta-bak`): leitura de PDF, Ghostscript como delegate de execução e JPG nos formatos. Ver `docs/PLANO.md`.
+- Miniatura de PDF testada com o PV4: JPEG 480×621, gerado pelo `pdfpreview` (configuração do repositório aplicada no Runtime, que tinha valores padrão).
+- Compressão: dependências `drupal/imageapi_optimize` 4.2 e `drupal/imageapi_optimize_binaries` 1.2.0-beta1 (beta, fora da política de segurança do Drupal; escolha do responsável). Pipeline `aculta_derivados` com optipng e jpegoptim; 14 estilos exportados com `pipeline: aculta_derivados`; os 4 estilos `max_*` estão só no Runtime.
+- Módulos habilitados e registrados em `core.extension`: `aculta_image`, `entity_usage`, `file_mdm`, `imageapi_optimize`, `imageapi_optimize_binaries`, `media_duplicates`, `sophron`.
+- Homelab: optipng, jpegoptim, gifsicle, cwebp, ImageMagick 7 e SOAP instalados; `90-aculta.ini` com limites de upload de 128M.
+
 ## 0.1.0-dev.5 — recálculo de referências corrigido; paridade de binários e PHP com a Hostinger — 2026-10-17
 
 - Recálculo de referências (`entity-usage:recreate`): causa — no nó 92 (blog "Bloco Sativa é objeto de Pesquisa na FIOCRUZ") a citação bibliográfica foi digitada no campo de URL de `field_references`. O link ficou inválido e o `entity_usage` lançava `InvalidArgumentException`.

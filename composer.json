@@ -287,6 +287,7 @@
         "drupal/freelinking": "^4.0",
         "drupal/group": "^3.3",
         "drupal/image_widget_crop": "^3.0",
+        "drupal/imageapi_optimize_binaries": "^1.2.0-beta1",
         "drupal/imagemagick": "^4.0",
         "drupal/key": "^1.22",
         "drupal/lms": "^1.2",

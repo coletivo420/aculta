@@ -6,6 +6,7 @@ _core:
   default_config_hash: kBWDXFUkmY7M1o2V-9QO9iU-EyXnu6h2pOXHH0Ea1wc
 name: media_gallery_image
 label: 'Media Gallery Image (300x180)'
+pipeline: aculta_derivados
 effects:
   8e172310-8ff8-413b-b8ae-3226ee51c865:
     uuid: 8e172310-8ff8-413b-b8ae-3226ee51c865

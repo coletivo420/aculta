@@ -1,0 +1,27 @@
+uuid: 203e7cd0-ee1c-4169-9826-fe277a2bf582
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - imageapi_optimize_binaries
+name: aculta_derivados
+label: null
+processors:
+  18151fb9-d8d0-42c3-9654-80c873c2c76c:
+    id: optipng
+    data:
+      manual_executable_path: ''
+      interlace: false
+      level: 5
+    weight: 1
+    uuid: 18151fb9-d8d0-42c3-9654-80c873c2c76c
+  79c6b68a-529f-4835-a4ef-cb279f9e43f1:
+    id: jpegoptim
+    data:
+      manual_executable_path: ''
+      progressive: null
+      quality: null
+      size: null
+    weight: 2
+    uuid: 79c6b68a-529f-4835-a4ef-cb279f9e43f1
+

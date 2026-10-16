@@ -7,11 +7,11 @@ Status: **pronto para uso** (2026-10-17, versão 0.1.0-dev.4). Gate `scripts/val
 | M0 inventário | feito: relatório `/painel-administrativo/imagens` |
 | M0.5 barreiras | feito |
 | M1 a M3 consumidores | feito |
-| M4 miniatura de PDF no sistema | código no `aculta_pdf_viewer`; ativação depende de ImageMagick e `pdfpreview` (decisão de ambiente) |
+| M4 miniatura de PDF no sistema | **feito no Homelab**: ImageMagick 7 com Ghostscript; PDF liberado para leitura e `gs` como delegate de execução (ver abaixo); `pdfpreview` com JPEG 480×640. Teste com PDF real: miniatura 480×621. Em produção, depende de confirmação da Hostinger |
 | M5 duplicatas exatas | feito: `media_duplicates` 2.0.4 em modo relatório; 2 grupos encontrados no Runtime |
 | M6 auditoria de uso | feito: `entity_usage` 5.0.1; candidatas com motivos |
 | M7 quarentena | feito: envio, restauração e exclusão só após 30 dias e nova verificação de uso |
-| M8 compressão | **pendente de decisão**: sem binários de compressão no sistema; alternativa é serviço externo com chave |
+| M8 compressão | **feito no Homelab** com `imageapi_optimize` 4.2 e `imageapi_optimize_binaries` 1.2.0-beta1 (decisão do responsável). Pipeline `aculta_derivados` (optipng nível 5, jpegoptim sem perda) ligado aos 18 estilos do catálogo. Originais não são alterados. Ganho medido em JPEG: 0,7%; o ganho esperado é maior em PNG (a medir) |
 | M9 comparação visual | feito: dHash próprio com GD, calculado no cron em lotes de 200 |
 
 Política do responsável: **todo o site usa o `aculta_image`** para upload, derivados, entrega
@@ -37,7 +37,16 @@ Homelab (paridade, feita em 2026-10-17): ImageMagick 7.1.1 com Ghostscript 10.05
 `gifsicle` e `cwebp`; SOAP (`php8.4-soap`); limites de upload `128M` no CLI e no FPM via
 `/etc/php/8.4/{cli,fpm}/conf.d/90-aculta.ini`. O PHP-FPM foi reiniciado.
 
-Decisões pendentes:
+Alterações de segurança aplicadas no Homelab (autorizadas em 2026-10-17), em `/etc/ImageMagick-7/policy.xml`
+(cópia em `policy.xml.aculta-bak`):
+- `coder` `PDF` com direito `read`, e `coder` `JPG` acrescentado aos formatos de leitura e escrita de imagem;
+- `delegate` `gs` com direito `execute` (Ghostscript), e só ele. Demais delegates continuam bloqueados.
+A ordem importa: o ImageMagick 7 aplica a regra da posição seguinte à regra geral `none`.
+
+Divergência registrada: os estilos `max_325x325`, `max_650x650`, `max_1300x1300` e `max_2600x2600` existem no
+Runtime, mas não em `config/sync`. O gate só compara o repositório. Decidir se são exportados ou removidos.
+
+Decisões pendentes (anteriores à liberação):
 1. **Política de PDF do ImageMagick** (`/etc/ImageMagick-7/policy.xml`): o Debian bloqueia PDF. Liberar leitura de PDF
    é mudança de segurança (processo que lê arquivos enviados pelo público). Aguarda aprovação para liberar só
    o necessário.

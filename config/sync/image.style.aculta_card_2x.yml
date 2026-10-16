@@ -4,6 +4,7 @@ status: true
 dependencies: {  }
 name: aculta_card_2x
 label: 'Cartão de projeto 2x (512)'
+pipeline: aculta_derivados
 effects:
   21d36b1c-8511-4e8e-963c-7eba0bc235a7:
     uuid: 21d36b1c-8511-4e8e-963c-7eba0bc235a7
