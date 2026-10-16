@@ -12,8 +12,8 @@ Os números seguem a ordem do Drupal no projeto: **quanto menor o número, maior
 |---|---|---|---|
 | 5 | `authenticated` | Usuário autenticado | Toda conta com login |
 | 4 | `email_confirmed` | E-mail confirmado | Automático ao confirmar o e-mail (irreversível), ou pela confirmação manual do administrador |
-| 3 | `estudante` | Estudante | Usuário que participa ou participou de algum curso; acesso a fóruns exclusivos. Forma exata de concessão: pendência (seção 9) |
-| 2 | `associado` | Associado | Associado ao ACULTA. Forma exata de concessão: pendência (seção 7) |
+| 3 | `estudante` | Estudante | Concedido automaticamente ao se inscrever em qualquer curso (decisão de 2026-10-17); acesso a fóruns exclusivos. Não é removido ao sair do curso |
+| 2 | `associado` | Associado | Associado ao ACULTA. Atribuído manualmente pelo administrador (decisão de 2026-10-17) |
 | 1 | `content_editor` | Editor de conteúdo | Administrativa, somente com e-mail confirmado |
 | 0 | `administrator` | Administrador | Administrativa |
 
@@ -56,7 +56,7 @@ de moderação). O nível de associado não dá nenhuma outra função além do 
 | Seguir e salvar tópico | `authenticated` | Aplicado |
 | Criar tópico, editar e excluir o próprio, comentar, denunciar | `email_confirmed` | Aplicado |
 | Ver contêiner ou tópico de nível "e-mail confirmado" | `email_confirmed` (ou `content_editor` com `email_confirmed`) | Aplicado |
-| Ver contêiner ou tópico de nível "estudante" | `estudante` (ou `content_editor` com `email_confirmed`) | Aplicado (permissão e realm criados; execução dos testes pendente) |
+| Ver contêiner ou tópico de nível "estudante" | `estudante` (ou `content_editor` com `email_confirmed`) | Aplicado; testes unitários e smoke no Runtime de testes OK |
 | Ver contêiner ou tópico de nível "associado" | `associado` (ou `content_editor` com `email_confirmed`) | Aplicado no código como marcador; migrar para papel pendente |
 | Denunciar e ver a fila de denúncias | `content_editor` com `email_confirmed` | Aplicado |
 | Ocultar, despublicar ou excluir tópico e comentário (exceto histórico) | `content_editor` com `email_confirmed` | Aplicado |
@@ -96,8 +96,8 @@ Mudanças em relação ao documento de 2026-10-16 anterior:
 
 Pendências:
 
-1. Forma de concessão do `estudante` (automática ao concluir curso, ou matrícula?).
-2. Forma de concessão do `associado` (hoje é marcador administrativo em `/painel-administrativo/associados`).
+1. ~~Forma de concessão do `estudante`~~: decidido em 2026-10-17 — automática ao se inscrever em qualquer curso (`EnrollmentRoleHooks`).
+2. ~~Forma de concessão do `associado`~~: decidido em 2026-10-17 — atribuído manualmente pelo administrador. Ainda é marcador administrativo em `/painel-administrativo/associados`; migração para papel segue na pendência 4.
 3. Permissão de visibilidade do nível `estudante`: criada no código (realm `aculta_estudante`).
 4. Migração do marcador de associado para papel, e o tratamento das contas já marcadas.
 5. Permissões de Wiki de revisão e moderação do `content_editor`.
