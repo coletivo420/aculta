@@ -6,7 +6,9 @@ dependencies:
     - field.field.group.lms_course.capa_curso
     - field.field.group.lms_course.field_description
     - group.type.lms_course
+    - image.style.thumbnail
   module:
+    - image
     - lms
     - path
     - text
@@ -15,6 +17,14 @@ targetEntityType: group
 bundle: lms_course
 mode: default
 content:
+  capa_curso:
+    type: image_image
+    weight: 0
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
   field_description:
     type: text_textarea
     weight: 1
@@ -22,14 +32,6 @@ content:
     settings:
       rows: 4
       placeholder: ''
-    third_party_settings: {  }
-  capa_curso:
-    type: image_image
-    weight: 0
-    region: content
-    settings:
-      progress_indicator: throbber
-      preview_image: thumbnail
     third_party_settings: {  }
   free_navigation:
     type: boolean_checkbox

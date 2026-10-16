@@ -2,6 +2,7 @@
 
 - O widget de imagem de `capa_curso` agora aplica o limite de 10 MB de `UploadPolicy`; dimensões seguem sem limite máximo.
 - Campo atualizado no Runtime via Field API e exportado; `config:status` não mostra diferenças nos seis arquivos do R7.
+- Firefox, na sessão X11, confirmou o cartão usando uma imagem atribuída temporariamente ao curso 1; o estilo retornou JPEG 1280×720 (HTTP 200). O campo foi limpo e o cache reconstruído após o teste.
 - Gate `validate-aculta-image.php` passou.
 
 ## 0.1.0-dev.17 — capa de curso no LMS (R7) — 2026-10-16

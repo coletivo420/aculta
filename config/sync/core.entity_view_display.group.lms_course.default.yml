@@ -6,7 +6,9 @@ dependencies:
     - field.field.group.lms_course.capa_curso
     - field.field.group.lms_course.field_description
     - group.type.lms_course
+    - image.style.aculta_destaque_16x9
   module:
+    - image
     - lms
     - text
 id: group.lms_course.default
@@ -20,6 +22,8 @@ content:
     settings:
       image_link: ''
       image_style: aculta_destaque_16x9
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
     weight: -4
     region: content
@@ -51,4 +55,5 @@ hidden:
   created: true
   langcode: true
   lessons: true
+  search_api_excerpt: true
   uid: true
