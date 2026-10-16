@@ -1,0 +1,92 @@
+[
+  {
+    "id": "insects-001-abelha-420",
+    "file": "insects/insects-001-abelha-420.png",
+    "family": "insects",
+    "label": "Abelha 420",
+    "alt": "Avatar ilustrado: Abelha 420, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-002-besouro-psicodelico",
+    "file": "insects/insects-002-besouro-psicodelico.png",
+    "family": "insects",
+    "label": "Besouro psicodélico",
+    "alt": "Avatar ilustrado: Besouro psicodélico, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-003-louva-a-deus-zen",
+    "file": "insects/insects-003-louva-a-deus-zen.png",
+    "family": "insects",
+    "label": "Louva-a-deus zen",
+    "alt": "Avatar ilustrado: Louva-a-deus zen, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-004-borboleta-cosmica",
+    "file": "insects/insects-004-borboleta-cosmica.png",
+    "family": "insects",
+    "label": "Borboleta cósmica",
+    "alt": "Avatar ilustrado: Borboleta cósmica, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-005-aranha-cartoon",
+    "file": "insects/insects-005-aranha-cartoon.png",
+    "family": "insects",
+    "label": "Aranha cartoon",
+    "alt": "Avatar ilustrado: Aranha cartoon, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-006-joaninha-rastafari",
+    "file": "insects/insects-006-joaninha-rastafari.png",
+    "family": "insects",
+    "label": "Joaninha rastafari",
+    "alt": "Avatar ilustrado: Joaninha rastafari, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-007-formiga-maconheira",
+    "file": "insects/insects-007-formiga-maconheira.png",
+    "family": "insects",
+    "label": "Formiga maconheira",
+    "alt": "Avatar ilustrado: Formiga maconheira, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-008-mariposa-mistica",
+    "file": "insects/insects-008-mariposa-mistica.png",
+    "family": "insects",
+    "label": "Mariposa mística",
+    "alt": "Avatar ilustrado: Mariposa mística, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-009-libelula-neon",
+    "file": "insects/insects-009-libelula-neon.png",
+    "family": "insects",
+    "label": "Libélula neon",
+    "alt": "Avatar ilustrado: Libélula neon, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  },
+  {
+    "id": "insects-010-cigarra-reggae",
+    "file": "insects/insects-010-cigarra-reggae.png",
+    "family": "insects",
+    "label": "Cigarra reggae",
+    "alt": "Avatar ilustrado: Cigarra reggae, personagem de cultura 420 em estilo quadrinhos.",
+    "active": true,
+    "source": "recorte-da-prancha-convertido-1x1"
+  }
+]

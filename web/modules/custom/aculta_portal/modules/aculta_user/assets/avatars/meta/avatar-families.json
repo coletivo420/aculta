@@ -99,5 +99,14 @@
     "version": "1",
     "format": "square-original",
     "notes": "Família gerada individualmente em estilo retrô ilustrado, temática pirata e 420. Dois itens do manifesto (pirates-001 e pirates-007) não vieram no zip e não foram registrados."
+  },
+  {
+    "id": "insects",
+    "label": "Insetos e pequenos bichos",
+    "count": 10,
+    "active": true,
+    "version": "1",
+    "format": "square-1x1-from-portrait",
+    "notes": "Recortes da prancha em retrato. Faixas claras das bordas removidas e quadrado a partir do topo, 512 px."
   }
 ]
