@@ -49,16 +49,15 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 - Respostas do Fórum (`comment_forum`) aceitam só `usuario_aculta`.
 - Limite de upload: `max_dimensions` do core **desligado** nos editores com upload (o core recusava, e a decisão é converter). A conversão para 1200 px é feita pelo `aculta_image`.
 
-**Ainda não feito (ordem sugerida):**
+**Entregas e próximos passos:**
 
 1. **Runtime:** configuração importada e cache reconstruído. Upload de 1600×800 convertido para 1200×600; `user.role.authenticated`
    ainda tem drift de permissões alheias à imagem.
-2. **Teste no navegador:** Firefox confirmou no `full_html` as quatro opções, seleção de Larga e gravação do atributo. Barra multilinha: três linhas a 500 px sem overflow. Página pública anônima: modelos renderizados a 1366, 500 e 390 px sem overflow; claro e escuro integrados aferidos a 390 px. Falta revisão com leitor de tela. Ver [HANDOFF.md](HANDOFF.md), seção 6.
-3. **Legenda na UI do editor:** formulário contextual implementado; Firefox confirmou `data-aculta-legenda`. O filtro gerou `<figcaption>` na página pública. Reabrir o editor após salvar a legenda segue pendente.
-4. **CSS dos modelos** no ACULTA420: implementado; fixture local mediu claro/escuro e a página pública anônima confirmou larguras e legenda em 1366/500/390 px. Em 390 px, as quatro classes foram conferidas no DOM da página integrada. O modo escuro foi conferido com o valor padrão do Portal temporariamente em `dark`; a configuração foi restaurada para `light` após o ensaio.
-5. **Acessibilidade:** legenda ligada com `figcaption`, operação por teclado. Firefox confirmou upcast, abertura por Enter, foco e Escape sem alterar dados. O core avisa quando falta `alt`, permite editar por teclado e remove o aviso após salvar; imagem decorativa pode usar `alt` vazio quando marcada como decorativa. `figcaption` foi confirmado publicamente; falta leitor de tela.
-6. **Formato próprio para o HTML básico** (usuários comuns e alunos): hoje o básico não tem botão. Decisão de quem
-   oferece modelos a cada perfil.
+2. **Navegador:** Firefox confirmou no `full_html` as quatro opções, seleção e persistência do modelo. A barra multilinha ocupa três linhas a 500 px sem overflow. Página pública anônima: modelos renderizados a 1366, 500 e 390 px sem overflow; claro e escuro integrados aferidos a 390 px.
+3. **Legenda:** formulário contextual grava `data-aculta-legenda`; no Firefox, um artigo temporário foi salvo e reaberto, preservando a legenda. O filtro público gera `<figcaption>`.
+4. **CSS:** implementado no ACULTA420 e medido em 1366/500/390 px, claro e escuro. A configuração do modo escuro foi restaurada para `light` após o ensaio.
+5. **Acessibilidade:** operação por teclado, aviso/edição de `alt`, foco da legenda e Escape verificados no Firefox. Orca/AT-SPI anunciou a legenda e o texto alternativo da imagem e expôs a relação semântica na árvore acessível.
+6. **Formato próprio para o HTML básico** (usuários comuns e alunos): hoje o básico não tem botão. Decidir quais perfis recebem modelos antes de implementar.
 7. **Tamanhos provisórios do Fórum** (Pequena e Padrão): medir em uso e revisar. Ver `MODELOS-DE-IMAGEM.md`.
 
 ## 4. Decisões tomadas
@@ -82,9 +81,9 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | --- | --- | --- | --- |
 | **R1 — Runtime do M10** | configuração importada em partes; cache rebuild; upload de teste | PNG de 1600×800 convertido a 1200×600; `user.role.authenticated` ainda tem drift alheio à imagem | feito; ampliar só se necessário após os demais testes |
 | **R2 — Teste do seletor** | Firefox, login via `drush uli`; artigo não publicado removido após verificação | três editores gravam modelos; persistência após reabrir confirmada; modelos conferidos em página pública a 390 px, claro e escuro | feito |
-| **R3 — Legenda no editor** | formulário contextual grava `data-aculta-legenda` | UI, serialização e `<figcaption>` público verificados; falta conferir persistência após salvar e reabrir o editor | R2 |
+| **R3 — Legenda no editor** | formulário contextual grava `data-aculta-legenda` | UI, serialização, `<figcaption>` público, persistência e reabertura do editor verificadas | R2 |
 | **R4 — CSS dos modelos** | estilos responsivos em `revista-post.css` | fixture e página pública medidas em claro/escuro; página pública aferida a 1366/500/390 px | feito |
-| **R5 — Acessibilidade** | texto alternativo, teclado, `figcaption` | aviso/edição de `alt` pelo core e teclado da legenda verificados no Firefox/Runtime; `figcaption` público e semântica estrutural dos quatro modelos verificados no Firefox; falta leitor de tela | R3 |
+| **R5 — Acessibilidade** | texto alternativo, teclado, `figcaption` | Firefox/Orca/AT-SPI confirmaram aviso/edição por teclado, legenda e texto alternativo anunciados, além da semântica de imagem/legenda | R3 |
 | **R6 — Formato do básico** | botão de modelo no HTML básico para perfis definidos | decisão de perfis | responsável |
 | **R7 — Fórum e LMS** | Fórum usa `usuario_aculta` (feito na configuração); LMS com campo de capa `capa_curso` pela política | campo de capa do LMS com a política desde o primeiro campo | F3/F6 do Fórum e LMS |
 | **R8 — Migração e dívida** | consumidores restantes e estilos `legado_*` (ausentes do catálogo) | gate sem aumento de dívida; `DEBT-REGISTER` atualizado | — |

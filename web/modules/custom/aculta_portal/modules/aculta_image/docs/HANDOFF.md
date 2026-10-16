@@ -6,8 +6,8 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.15. Leia este documento antes d
 
 1. O `aculta_image` é o sistema único de imagens do site (upload, derivados, render, compressão, auditoria, quarentena, ingestão). A regra está em `AGENTS.md`.
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
-3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário e filtro da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Falta revisão com leitor de tela.
-4. Próximos passos: confirmar reabertura da legenda após salvar; fazer revisão com leitor de tela; resolver as decisões do responsável listadas na seção 6.
+3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário, persistência e reabertura da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Firefox/Orca/AT-SPI confirmaram foco e leitura da legenda e do `alt`, além da semântica de imagem/legenda.
+4. Próximos passos: resolver as decisões do responsável listadas na seção 6.
 5. A importação do Growroom está bloqueada pela F3 do Fórum (lista de autores). Não é trabalho deste submódulo.
 
 ## 2. Git e working tree
@@ -97,6 +97,8 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 - **Texto alternativo:** o Drupal core mostra aviso quando falta `alt`, permite abrir o formulário por teclado e remove o aviso após salvar. Fluxo testado no Firefox; conteúdo temporário removido. Imagem decorativa pode ter `alt` vazio quando marcada como decorativa.
 - **Legenda:** o formulário contextual grava e reabre `data-aculta-legenda`; Firefox no Runtime confirmou abertura por Enter, foco no campo e Escape fechando sem alterar dados. O HTML anônimo de um artigo temporário confirmou `<figcaption>`; o nó foi removido.
 - **Renderização pública integrada (2026-10-16):** no host correto `revista420.aculta.toca.net.br`, artigos temporários com estado editorial `published`, domínio `coletivo420_aculta_org` e a imagem existente `exame-toxicologico-cnh-e-maconha.jpg` responderam HTTP 200 anonimamente. O HTML continha `<figure>` e `<figcaption>`. Com Firefox/geckodriver sem sessão autenticada, os quatro modelos foram renderizados e suas imagens carregaram após rolagem. Em 1366 px mediram 320/580/900/960 px; em 500 px, cada figura mediu 456 px sem overflow horizontal. Os nós temporários foram removidos. O 500 antigo veio de um nó de teste sem `moderation_state` e não reproduzia um artigo editorial válido.
+- **Persistência da legenda (2026-10-16):** em artigo temporário válido no Runtime, o formulário do CKEditor aceitou “Legenda salva no Firefox visível”; após salvar, `data-aculta-legenda` apareceu no corpo salvo no banco e o formulário de edição reaberto recuperou o mesmo texto. O formulário estava válido e o nó temporário foi removido (IDs 370 e 371 confirmados no cleanup).
+- **Revisão com Orca/AT-SPI (2026-10-16):** Firefox 153.4 na sessão LXQt/X11. O Orca anunciou o campo como “Legenda da imagem”, entry e o valor salvo. Ao focar a imagem da fixture DOM na página pública, anunciou “Legenda acessível de teste” e “Imagem de teste com texto alternativo image”. A árvore AT-SPI expôs a figura como painel, imagem com nome acessível derivado do `alt` e o filho de legenda. A fixture foi removida sem salvar conteúdo.
 - **Revisão a 390 px e tema escuro (2026-10-16):** em página pública anônima de artigo existente, Firefox 153.4 ESR via WebDriver BiDi manteve `innerWidth=390`. Quatro figuras demonstrativas adicionadas apenas ao DOM usaram as classes reais Pequena/Padrão/Larga/Destaque; todas mediram 346 px, exibiram `figcaption` e o documento mediu 378 px, sem rolagem horizontal. As quatro imagens carregaram (largura natural 960 px). No tema escuro integrado, definido temporariamente em `aculta_portal.appearance:default_mode` e depois restaurado para `light`, o HTML público veio com `data-bs-theme="dark"`; corpo `rgb(23, 21, 19)`, texto `rgb(244, 239, 232)`, legenda `rgb(183, 174, 165)`. As figuras permaneceram em 346 px, sem overflow. As figuras de verificação existiram só no DOM da sessão; nenhum conteúdo foi salvo.
 - **Tópicos do Fórum:** o corpo do tópico (`node.forum`) continua aceitando `full_html` e `basic_html`. Só as respostas foram restringidas.
 - **Formato do básico sem botão:** conteúdo de quem usa só o básico não ganha modelo até o formato próprio.
@@ -105,9 +107,7 @@ Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_ima
 
 ## 6. Próximos passos (ordem recomendada)
 
-1. **R3 legenda:** confirmar que a legenda persiste ao salvar e reabrir o editor.
-2. **R5 acessibilidade:** Escape/foco da legenda e aviso/edição de `alt` foram verificados no Firefox. `<figcaption>` foi confirmado no HTML público; falta revisão com leitor de tela.
-3. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
+1. **Decisões do responsável** (ver `PLANO.md`, seção 6): formato do básico (R6); tópicos do Fórum; prevenção de duplicata; confirmação dos binários na Hostinger (RC).
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)
 

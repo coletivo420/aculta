@@ -548,6 +548,10 @@ aculta_deployer (`web/modules/custom/aculta_portal/modules/aculta_deployer/confi
 
 Rodadas de teste com agente de navegador e o responsável (Felipe), incluindo hosts, contas de teste, limites do agente de navegador e resultados, estão em `docs/portal/TESTES-NAVEGADOR.md`. Consultar antes de pedir teste de navegador e atualizar a seção de resultados a cada rodada.
 
+- O navegador padrão para testes visuais e interativos é o Firefox. Chromium é alternativa quando houver limitação concreta do Firefox.
+- A sessão gráfica disponível nesta máquina foi confirmada como LXQt sobre X11 (`DISPLAY=:0`, `XDG_SESSION_ID=1`), embora shells de agentes possam abrir em TTY sem `DISPLAY`. Antes de concluir que não há interface gráfica, inspecionar a sessão de `lxqt-session` (`pgrep -a lxqt-session` e `/proc/<PID>/environ`) e usar o ambiente dela: `DISPLAY=:0`, `XDG_RUNTIME_DIR=/run/user/1000` e `DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus`. Confirmar os valores atuais no processo; não presumir Wayland nem iniciar outro desktop.
+- O socket X11 observado foi `/tmp/.X11-unix/X0`. Orca e AT-SPI estão disponíveis para revisão de acessibilidade. Não encerrar processos da sessão LXQt; encerrar somente processos de navegador, driver ou leitor de tela iniciados pela própria tarefa.
+
 ## Versionamento obrigatório de mudanças
 
 O versionamento controla as mudanças e os avanços no código. Não criar tags no GitHub sem pedido explícito do responsável.
