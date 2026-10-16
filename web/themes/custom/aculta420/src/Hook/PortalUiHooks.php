@@ -283,6 +283,20 @@ final class PortalUiHooks {
     'aculta-button-outline' => ['aculta-button', 'aculta-button--outline'],
     'status-attention' => ['aculta-portal-requirements__status--attention'],
     'breadcrumb-list' => ['breadcrumb'],
+    // Painéis de vendas e doações (módulo aculta_portal, SalesOrdersTableBuilder e controllers de relatório).
+    'sales-panel' => ['aculta-sales-panel'],
+    'sales-section' => ['aculta-sales-panel__section'],
+    'sales-heading' => ['aculta-sales-panel__heading'],
+    'sales-table' => ['table', 'table-hover', 'align-middle', 'aculta-sales-panel__table'],
+    'sales-pagination' => ['aculta-sales-panel__pagination'],
+    'sales-payment' => ['aculta-sales-panel__payment'],
+    'sales-action' => ['btn', 'btn-sm', 'btn-outline-primary', 'aculta-sales-panel__action'],
+    'sales-action-danger' => ['btn', 'btn-sm', 'btn-outline-danger', 'aculta-sales-panel__action'],
+    'sales-state-ok' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--ok'],
+    'sales-state-pending' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--pending'],
+    'sales-state-refunded' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--refunded'],
+    'sales-state-voided' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--voided'],
+    'sales-state-neutral' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--neutral'],
   ];
 
   /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */

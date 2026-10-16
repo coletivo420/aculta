@@ -1,3 +1,13 @@
+## 0.6.0-dev.67 — painéis de vendas e doações (tokens sales-*) — 2026-10-16
+
+Classificação: MINOR da linha aberta (componente de apresentação compatível; nenhum contrato stable quebrado).
+
+- `src/Hook/PortalUiHooks.php`: 13 tokens `sales-*` (painel, seção, título, tabela, paginação, pagamento, ações normal e perigosa, e cinco estados de pagamento).
+- `css/components/sales-panel.css` (novo, na biblioteca `global`): só tokens semânticos (`--aculta-status-*`, `--aculta-surface-muted`, `--aculta-text-muted`, `--aculta-border-subtle`, `--aculta-space-section`); tabela rola dentro do painel, sem rolagem horizontal da página.
+- Gate de fundação: versão 0.6.0-dev.67.
+- Verificação: `validate-portal-ui-docs` PASS (250 tokens no mapa); `validate-module-theme-map` PASS; `validate-module-theme-boundary` PASS; `validate-aculta420-design-foundations` PASS; `validate-aculta420-sdc-schemas` PASS; `validate-aculta420-foundation` e `validate-aculta420-shell-contract` PASS (executados via `drush php:script`, como indica `docs/development.md`).
+- Pendente: captura visual com administrador logado e pedidos de teste (DEFERRED).
+
 ## 0.6.0-dev.66 — barra e cabeçalho por flags do Portal (shell-contract PASS) — 2026-10-16
 
 Classificação: PATCH (troca de decisão; o HTML e a aparência continuam os mesmos por purpose).
