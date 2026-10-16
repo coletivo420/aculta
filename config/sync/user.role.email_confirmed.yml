@@ -10,3 +10,11 @@ weight: 9
 is_admin: false
 permissions:
   - 'skip CAPTCHA'
+  - 'create forum content'
+  - 'edit own forum content'
+  - 'delete own forum content'
+  - 'post comments'
+  - 'flag sinalizar_topico'
+  - 'flag sinalizar_comentario'
+  - 'unflag sinalizar_topico'
+  - 'unflag sinalizar_comentario'
