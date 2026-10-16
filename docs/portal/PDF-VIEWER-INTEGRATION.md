@@ -68,6 +68,8 @@ Preview é cache derivado e reconstruível; testar falhas, fila/lote, aqueciment
 - [Issue queue PDFPreview: compatibilidade ImageMagick 5.x](https://www.drupal.org/project/issues/pdfpreview)
 - [ImageMagick releases](https://www.drupal.org/project/imagemagick/releases)
 - [PDF.js v6.3.289](https://github.com/mozilla/pdf.js/releases/tag/v6.3.289) e [layout prebuilt/API](https://mozilla.github.io/pdf.js/getting_started/)
+- [Drupal FileAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21FileAccessControlHandler.php/main) e [FileDownloadController](https://api.drupal.org/api/drupal/core%21modules%21system%21src%21FileDownloadController.php/function/FileDownloadController%3A%3Adownload/main)
+- [Drupal Field Formatter API](https://api.drupal.org/api/drupal/core%21modules%21field%21field.api.php/group/field_formatter/main)
 - [Source `pdf.libraries.yml` do tag 8.x-1.3](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/pdf.libraries.yml), [`PdfDefault`](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/src/Plugin/Field/FieldFormatter/PdfDefault.php) e [`PdfPages`](https://git.drupalcode.org/project/pdf/-/blob/8.x-1.3/src/Plugin/Field/FieldFormatter/PdfPages.php)
 - [Source PDFPreview 8.x-1.2 `PDFPreviewGenerator`](https://git.drupalcode.org/project/pdfpreview/-/blob/8.x-1.2/src/PDFPreviewGenerator.php) e [Composer metadata](https://git.drupalcode.org/project/pdfpreview/-/blob/8.x-1.2/composer.json)
 
@@ -104,6 +106,42 @@ privados nesta etapa. Os arquivos do bundle Media `document` usam
 `public://`, portanto essa configuração não deve ser usada para conteúdo
 privado/estudantil; F3 deve validar um delivery path protegido antes de exibir
 PDF privado e nunca inferir proteção a partir da ocultação do link.
+
+## F3 — integração do display Media
+
+O display padrão do Media `document` agora seleciona `aculta_pdf_media`. O formatter
+valida acesso à entidade Media, campo e arquivo; PDFs locais públicos passam ao
+builder PDF.js. Arquivos não PDF preservam o link Core. Para PDF privado, o viewer
+é negado e o fallback usa a URL privada gerada pelo File URL Generator somente
+quando `File::access('download')` autoriza; a rota de arquivo privado Core volta a
+validar o acesso à entidade referenciadora e ao campo. Este fallback não prova
+isolamento de turma em runtime e não converte o viewer em leitor privado.
+
+O bundle `document` continua `public://`; não se alterou esquema nem se migrou
+arquivo existente. Logo, o bundle não pode ser usado para documentos que exigem
+confidencialidade por turma. O download de arquivo público não é restringido por
+access da entidade no Core, então esconder o link ou validar Media não protege a
+URL direta existente.
+
+PDFPreview 8.x-1.2 não foi instalado/configurado. Não há binário ImageMagick
+(`magick`, `convert`, `identify`) disponível neste checkout; `gs` existe, mas não
+supre o conversor. O release estável do ImageMagick 5.0.1 é compatível com Core
+11.3/PHP 8.5, enquanto PDFPreview 1.2 declara `^3.7 || ^4.0` para o módulo
+ImageMagick; a issue de suporte a 5.x permanece em revisão. Instalar o 4.x sem
+binários funcionais não produziria thumbnails, e liberar política PDF/PS não foi
+feito. Hostinger/LiteSpeed segue sem verificação operacional. Preview permanece
+opcional: falta/erro dele não afeta o viewer nem o link autorizado.
+
+Composer `--dry-run` resolveu PDFPreview 1.2.0 + ImageMagick 4.0.2 e cinco
+dependências transitivas (sete instalações no total, sem updates ou remoções e
+sem advisories); `composer.json`/`composer.lock` permaneceram intactos. Essa
+resolução PHP não verifica binários, PHP-FPM, policy nem a segurança do
+processamento PDF no servidor.
+
+**Validação F3:** formatter e display adicionados no código e em `config/sync`;
+PHPUnit/gates e resolução Composer registrados na PR. Importação no Runtime,
+renderização real, arquivos privados por usuário/turma, geração de thumbnail e
+Hostinger ficam **DEFERRED**. Não executar `drush cim` com URI `http://default`.
 
 Composer dry-run inicialmente propunha atualizações indiretas. A resolução final
 foi limitada a `drupal/pdf` e `mozilla/pdfjs-dist`, usando `--with-dependencies

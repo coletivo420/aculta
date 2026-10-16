@@ -1921,3 +1921,11 @@ registradas em 0.4.0-dev.53: builder de Media autorizado, cacheabilidade, fallba
 browser smoke isolado PASS (PDF.js, worker e PDF amostra 14 páginas). Integração Drupal Runtime **DEFERRED**. Nenhum
 display de Media foi alterado, etapa da F3.
 
+## 0.4.0-dev.55 — F3: formatter global para Media document — 2026-10-16
+
+Classificação MINOR. O display padrão de Media `document` usa o formatter do Portal: PDFs públicos
+autorizados são apresentados pelo PDF.js compartilhado; outros documentos conservam o link Core, e PDFs
+privados mantêm somente o fallback File protegido conforme o access atual. A integração com PDFPreview e
+miniaturas fica DEFERRED: o ambiente não tem ImageMagick executável e a combinação estável PDFPreview 1.2 /
+ImageMagick 5.x não é compatível. `RUNTIME STATUS: DEFERRED`; display não importado no Runtime.
+
