@@ -90,17 +90,18 @@ administrador. A autoria fica na entidade própria `aculta_legado_autor`, acess�
 
 Mudanças em relação ao documento de 2026-10-16 anterior:
 
-- **Associado passa a ser papel** (nível 2), não marcador. Isso **substitui a decisão F-D19** (associado como marcador
-  sem acesso a conteúdo). Confirmar antes de implementar.
-- **Novos papéis:** `estudante` (nível 3). Não existia antes.
+- **Associado passa a ser papel** (`associado`, nível 4), atribuído manualmente. Substitui a decisão F-D19 (associado como
+  marcador sem acesso a conteúdo). O marcador de conta continua como fallback; no Runtime não há marcas a migrar.
+- **Novos papéis:** `estudante`, `associado`, `lms_teacher` (Professor) e `gerente_loja` (Gerente de Loja). Não existiam antes.
 - **Wiki:** `content_editor` passa a ser revisor e moderador da Wiki. A configuração atual da Wiki (`wiki_contributor`,
   concedido a `email_confirmed`) não foi alterada.
 
 Pendências:
 
 1. ~~Forma de concessão do `estudante`~~: decidido em 2026-10-17 — automática ao se inscrever em qualquer curso (`EnrollmentRoleHooks`).
-2. ~~Forma de concessão do `associado`~~: decidido em 2026-10-17 — atribuído manualmente pelo administrador. Ainda é marcador administrativo em `/painel-administrativo/associados`; migração para papel segue na pendência 4.
-3. Permissão de visibilidade do nível `estudante`: criada no código (realm `aculta_estudante`).
-4. Migração do marcador de associado para papel, e o tratamento das contas já marcadas.
-5. Permissões de Wiki de revisão e moderação do `content_editor`.
-6. Se `estudante` e `associado` exigem `email_confirmed`, como o `content_editor`.
+2. ~~Forma de concessão do `associado`~~: decidido em 2026-10-17 — atribuído manualmente pelo administrador.
+3. ~~Permissão de visibilidade do nível `estudante`~~: criada e aplicada no Runtime de testes (realm `aculta_estudante`).
+4. ~~Migração do marcador de associado para papel~~: papel `associado` criado (`config/sync/user.role.associado.yml`) e concedendo o realm de associados. O Runtime não tinha marcas (`aculta_associado` vazia), então não há contas a migrar. O marcador segue como fallback até decisão de remoção.
+5. ~~Permissões de Wiki do `content_editor`~~: a configuração atual já concede revisão e moderação da Wiki (transições de `wiki_editorial`); nada a alterar.
+6. **Aberta (decisão do responsável):** se `estudante` e `associado` exigem `email_confirmed`. Hoje o realm é concedido pelo papel, sem exigir e-mail confirmado (o `content_editor` é a única exceção, por regra de código).
+7. **Fase 2 (não iniciada):** herança de permissões pelo `role_inheritance`. Os módulos `role_hierarchy` e `role_inheritance` estão habilitados no Runtime sem configuração: a ativação não altera o acesso de nenhum papel não-administrador. Configurar herança muda permissões efetivas e exige decisão do responsável.
