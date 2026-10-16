@@ -1,0 +1,12 @@
+aculta_image_model:
+  ckeditor5:
+    plugins:
+      - acultaImage.ImageModel
+  drupal:
+    label: Modelo de imagem
+    library: aculta_image/ckeditor5.image_model
+    elements:
+      - <img data-aculta-modelo>
+    conditions:
+      plugins: [ckeditor5_image]
+      toolbarItem: acultaImageModel
