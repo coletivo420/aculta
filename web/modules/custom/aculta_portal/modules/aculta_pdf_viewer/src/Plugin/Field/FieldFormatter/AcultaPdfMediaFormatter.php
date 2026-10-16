@@ -39,7 +39,9 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $plugin_id,
@@ -53,7 +55,9 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
     );
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = [];
     if (!$items instanceof FileFieldItemList) {

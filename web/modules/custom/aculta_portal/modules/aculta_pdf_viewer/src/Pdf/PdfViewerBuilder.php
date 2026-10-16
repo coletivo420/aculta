@@ -11,7 +11,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 
-/** Builds an access-checked viewer using only local public Media PDF files. */
+/**
+ * Builds an access-checked viewer using only local public Media PDF files.
+ */
 final class PdfViewerBuilder implements PdfViewerBuilderInterface {
 
   public function __construct(
@@ -19,7 +21,9 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     private readonly AccountInterface $currentUser,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function build(MediaInterface $media, string $field_name = 'field_media_document'): array {
     $cacheability = CacheableMetadata::createFromObject($media);
     $media_access = $media->access('view', $this->currentUser, TRUE);
@@ -75,11 +79,144 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       'toolbar' => [
         '#type' => 'container',
         '#attributes' => ['data-aculta-pdf-control' => 'toolbar'],
-        'previous' => ['#type' => 'html_tag', '#tag' => 'button', '#value' => new TranslatableMarkup('Página anterior'), '#attributes' => ['type' => 'button', 'data-aculta-pdf-control' => 'previous', 'disabled' => 'disabled']],
-        'status' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => new TranslatableMarkup('Carregando PDF…'), '#attributes' => ['data-aculta-pdf-control' => 'status', 'aria-live' => 'polite']],
-        'next' => ['#type' => 'html_tag', '#tag' => 'button', '#value' => new TranslatableMarkup('Próxima página'), '#attributes' => ['type' => 'button', 'data-aculta-pdf-control' => 'next', 'disabled' => 'disabled']],
+        'previous' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Página anterior'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'previous',
+            'disabled' => 'disabled',
+          ],
+        ],
+        'status' => [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#value' => new TranslatableMarkup('Carregando PDF…'),
+          '#attributes' => [
+            'data-aculta-pdf-control' => 'status',
+            'aria-live' => 'polite',
+          ],
+        ],
+        'next' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Próxima página'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'next',
+            'disabled' => 'disabled',
+          ],
+        ],
       ],
-      'page' => ['#type' => 'html_tag', '#tag' => 'canvas', '#attributes' => ['data-aculta-pdf-control' => 'page', 'aria-label' => new TranslatableMarkup('Página do documento')]],
+      'reader_controls' => [
+        '#type' => 'container',
+        '#attributes' => ['data-aculta-pdf-control' => 'reader-controls'],
+        'zoom_out' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Reduzir zoom'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'zoom-out',
+            'aria-label' => new TranslatableMarkup('Reduzir zoom'),
+          ],
+        ],
+        'zoom_status' => [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#value' => '100%',
+          '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
+        ],
+        'zoom_in' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Aumentar zoom'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'zoom-in',
+            'aria-label' => new TranslatableMarkup('Aumentar zoom'),
+          ],
+        ],
+        'zoom_reset' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Restaurar zoom'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'zoom-reset',
+          ],
+        ],
+        'fullscreen' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Tela cheia'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'fullscreen',
+            'aria-label' => new TranslatableMarkup('Abrir leitor em tela cheia'),
+            'aria-pressed' => 'false',
+          ],
+        ],
+      ],
+      'search_controls' => [
+        '#type' => 'container',
+        '#attributes' => ['data-aculta-pdf-control' => 'search-controls'],
+        'input' => [
+          '#type' => 'html_tag',
+          '#tag' => 'input',
+          '#attributes' => [
+            'type' => 'search',
+            'data-aculta-pdf-control' => 'search-input',
+            'aria-label' => new TranslatableMarkup('Buscar texto no PDF'),
+          ],
+        ],
+        'submit' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Buscar'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'search-submit',
+          ],
+        ],
+        'previous' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Resultado anterior'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'search-previous',
+            'disabled' => 'disabled',
+          ],
+        ],
+        'next' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Próximo resultado'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'search-next',
+            'disabled' => 'disabled',
+          ],
+        ],
+        'status' => [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => [
+            'data-aculta-pdf-control' => 'search-status',
+            'aria-live' => 'polite',
+          ],
+        ],
+      ],
+      'page' => [
+        '#type' => 'html_tag',
+        '#tag' => 'canvas',
+        '#attributes' => [
+          'data-aculta-pdf-control' => 'page',
+          'aria-label' => new TranslatableMarkup('Página do documento'),
+        ],
+      ],
       'download' => [
         '#type' => 'html_tag',
         '#tag' => 'a',
@@ -92,7 +229,9 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     return $build;
   }
 
-  /** Returns an empty render array with the dependencies that decided access. */
+  /**
+   * Returns an empty render array with the dependencies that decided access.
+   */
   private function denied(CacheableMetadata $cacheability): array {
     $build = ['#access' => FALSE];
     $cacheability->applyTo($build);

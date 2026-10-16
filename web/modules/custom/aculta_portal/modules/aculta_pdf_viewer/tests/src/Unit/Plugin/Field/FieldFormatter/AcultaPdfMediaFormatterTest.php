@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_pdf_viewer\Unit\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\aculta_pdf_viewer\Plugin\Field\FieldFormatter\AcultaPdfMediaFormatter;
 use Drupal\Core\Access\AccessResult;
@@ -13,9 +14,14 @@ use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
 
-/** Tests the Media document formatter's viewer and fallback behavior. */
+/**
+ * Tests the Media document formatter's viewer and fallback behavior.
+ */
 final class AcultaPdfMediaFormatterTest extends UnitTestCase {
 
+  /**
+   * Tests that authorized PDFs use the shared viewer builder.
+   */
   public function testAuthorizedPdfUsesSharedViewerBuilder(): void {
     $media = $this->createMock(MediaInterface::class);
     $media->method('access')->willReturn(AccessResult::allowed());
@@ -43,6 +49,9 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     self::assertSame($viewer, $elements[0]);
   }
 
+  /**
+   * Tests that non-PDF documents retain the Core file link.
+   */
   public function testNonPdfKeepsCoreFileLink(): void {
     $media = $this->createMock(MediaInterface::class);
     $media->method('access')->willReturn(AccessResult::allowed());
@@ -72,6 +81,9 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     self::assertContains('file:12', $elements[0]['#cache']['tags']);
   }
 
+  /**
+   * Tests that an unavailable viewer keeps its authorized download fallback.
+   */
   public function testPdfWithoutViewerKeepsDownloadFallback(): void {
     $media = $this->createMock(MediaInterface::class);
     $media->method('access')->willReturn(AccessResult::allowed());
@@ -104,6 +116,9 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     self::assertContains('user.permissions', $elements[0]['#cache']['contexts']);
   }
 
+  /**
+   * Creates a formatter using the provided viewer builder.
+   */
   private function formatter(PdfViewerBuilderInterface $builder): AcultaPdfMediaFormatter {
     return new AcultaPdfMediaFormatter(
       'aculta_pdf_media',
@@ -117,12 +132,15 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Creates a file field list referencing the given media and file.
+   */
   private function fieldItems(MediaInterface $media, FileInterface $file): FileFieldItemList {
     $items = $this->createMock(FileFieldItemList::class);
     $items->method('getEntity')->willReturn($media);
     $items->method('access')->with('view', NULL, TRUE)->willReturn(AccessResult::allowed());
     $items->method('referencedEntities')->willReturn([$file]);
-    $item = $this->createMock(\Drupal\Core\Field\FieldItemInterface::class);
+    $item = $this->createMock(FieldItemInterface::class);
     $item->method('__get')->with('description')->willReturn('');
     $items->method('get')->with(0)->willReturn($item);
     return $items;

@@ -4,17 +4,26 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_pdf_viewer\Kernel;
 
+use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-/** Verifies extension discovery, plugin discovery, and service registration. */
+/**
+ * Verifies extension discovery, plugin discovery, and service registration.
+ */
 #[Group('aculta_pdf_viewer')]
 #[RunTestsInSeparateProcesses]
 final class AcultaPdfViewerInstallTest extends KernelTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['system', 'file', 'media'];
 
+  /**
+   * Tests service and formatter registration without module-owned storage.
+   */
   public function testInstallRegistersFormatterAndBuilderWithoutHooksOrStorage(): void {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_pdf_viewer'], FALSE));
     $container = \Drupal::getContainer();
@@ -22,7 +31,7 @@ final class AcultaPdfViewerInstallTest extends KernelTestBase {
 
     $this->assertTrue($module_handler->moduleExists('aculta_pdf_viewer'));
     $this->assertInstanceOf(
-      \Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface::class,
+      PdfViewerBuilderInterface::class,
       $container->get('aculta_pdf_viewer.builder'),
     );
     $this->assertArrayHasKey(

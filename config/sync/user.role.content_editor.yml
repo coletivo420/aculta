@@ -3,7 +3,9 @@ langcode: pt-br
 status: true
 dependencies:
   config:
+    - filter.format.revista_editorial
     - filter.format.wiki
+    - media.type.document
     - node.type.forum
     - node.type.aculta_notice
     - node.type.wiki_entry
@@ -13,6 +15,7 @@ dependencies:
     - contextual
     - content_lock
     - content_moderation
+    - media
     - file
     - filter
     - navigation
@@ -38,6 +41,7 @@ permissions:
   - 'break content lock'
   - 'create url aliases'
   - 'create wiki_entry content'
+  - 'create document media'
   - 'create aculta_notice content'
   - 'delete own files'
   - 'delete any forum content'

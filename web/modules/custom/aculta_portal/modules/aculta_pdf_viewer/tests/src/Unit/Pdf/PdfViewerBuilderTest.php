@@ -13,10 +13,12 @@ use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
 
-/** Tests access handling for the shared PDF viewer builder. */
+/**
+ * Tests access handling for the shared PDF viewer builder. */
 final class PdfViewerBuilderTest extends UnitTestCase {
 
-  /** Ensures a denied Media entity produces no viewer output and keeps cache. */
+  /**
+   * Ensures a denied Media entity produces no viewer output and keeps cache. */
   public function testDeniedMediaIsNotRendered(): void {
     $media = $this->createMock(MediaInterface::class);
     $media->method('access')
@@ -38,7 +40,8 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     self::assertArrayNotHasKey('#attached', $build);
   }
 
-  /** Ensures a permitted public PDF receives the local viewer and fallback. */
+  /**
+   * Ensures a permitted public PDF receives the local viewer and fallback. */
   public function testAuthorizedPublicPdfBuildsLocalViewer(): void {
     $account = $this->createMock(AccountInterface::class);
     $media = $this->createMock(MediaInterface::class);

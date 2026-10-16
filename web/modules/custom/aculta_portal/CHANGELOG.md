@@ -1,3 +1,11 @@
+## 0.4.0-dev.58 — leitor PDF integrado: busca, zoom e tela cheia — 2026-10-16
+
+Classificação MINOR. `aculta_pdf_viewer` 0.1.0-dev.3 acrescenta zoom, busca textual por página e tela cheia ao leitor ESM local; fallback de arquivo autorizado permanece disponível. Kernel valida o fluxo CKEditor Media Embed → formatter e markup dos controles; Node valida sintaxe. Browser smoke não completou porque Chromium não carregou o servidor HTTP local; interação JS, acessibilidade visual, CSP, PDFs grandes e Hostinger ficam DEFERRED. Runtime do site tem módulo/display/permissão ativos, mas nenhum PDF/embed editorial para teste interativo.
+
+## 0.4.0-dev.57 — Revista insere PDF pelo CKEditor — 2026-10-16
+
+Classificação MINOR. O papel `content_editor` pode criar Media `document` para inserção no CKEditor 5 da Revista. O bundle é `public://` e permanece restrito a PDFs destinados à publicação; não usar para documentos confidenciais. `aculta_pdf_viewer` 0.1.0-dev.2 valida o fluxo Core Media Embed → formatter → PDF.js em Kernel. No Runtime de teste, módulo/display/permissão aplicados pontualmente e cache reconstruído; não havia PDF/embed editorial para teste interativo. Sem importação global de Config Sync. RUNTIME STATUS: parcial; fluxo de autoria DEFERRED.
+
 ## 0.4.0-dev.53 — política de avisos e notificações (F5.2, documentação) — 2026-10-16
 
 Classificação PATCH (documentação). Define avisos obrigatórios no site, e-mail opt-in agrupado por tópico, uso do

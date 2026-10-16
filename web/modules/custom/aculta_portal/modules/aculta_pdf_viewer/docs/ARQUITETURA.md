@@ -67,8 +67,10 @@ trabalhos confidenciais.
 `js/pdf-viewer.mjs` é carregado pela biblioteca `aculta_pdf_viewer/viewer`,
 anexada somente ao render array autorizado. Importa `pdf.mjs` e configura
 `pdf.worker.mjs` da distribuição Mozilla local em `web/libraries/pdf.js`.
-Carrega o PDF no canvas, oferece navegação anterior/próxima e informa erro sem
-remover o link do documento.
+Carrega o PDF no canvas, oferece navegação anterior/próxima, zoom, busca de
+texto por página e tela cheia. A busca usa `getTextContent()` do PDF.js; os
+resultados navegam até a página correspondente, sem criar armazenamento,
+anotação ou estado persistente. Erro de leitura mantém o link autorizado.
 
 O arquivo registra `Drupal.behaviors.acultaPdfViewer.attach(context)` para
 renderizações Drupal e também faz bootstrap em `DOMContentLoaded`. Isso é um

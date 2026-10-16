@@ -6,7 +6,8 @@ namespace Drupal\aculta_pdf_viewer\Pdf;
 
 use Drupal\media\MediaInterface;
 
-/** Builds an access-checked PDF.js render array for a Media document. */
+/**
+ * Builds an access-checked PDF.js render array for a Media document. */
 interface PdfViewerBuilderInterface {
 
   /**

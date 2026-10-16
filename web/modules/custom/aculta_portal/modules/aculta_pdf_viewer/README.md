@@ -35,8 +35,9 @@ formatter de Media `document`.
    biblioteca local `aculta_pdf_viewer/viewer`.
 4. `js/pdf-viewer.mjs` importa `pdf.mjs` e aponta o worker para
    `pdf.worker.mjs` da distribuição Mozilla instalada localmente em
-   `/libraries/pdf.js`. Usa canvas e controles de página; erro de carregamento
-   informa o usuário e preserva o link de fallback.
+   `/libraries/pdf.js`. Usa canvas, navegação, zoom com restauração, busca textual por página e
+   tela cheia; erro de carregamento informa o usuário e preserva o link de
+   fallback. A interação JS ainda requer smoke test em navegador/Runtime.
 
 ## Hooks e integração Drupal
 
