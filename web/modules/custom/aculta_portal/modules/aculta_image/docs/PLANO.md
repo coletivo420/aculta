@@ -58,7 +58,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
    de acessibilidade da seção 4. O Firefox headless limitou a janela em 488 px. Ver [HANDOFF.md](HANDOFF.md), seção 6.
 3. **Legenda na UI do editor:** formulário contextual implementado; Firefox confirmou `data-aculta-legenda`. Falta validar o `figcaption` renderizado e reabrir o editor.
 4. **CSS dos modelos** no ACULTA420: implementado e medido numa fixture com tokens reais (1366/500 px, claro/escuro); falta revisão numa página pública.
-5. **Acessibilidade:** legenda ligada com `figcaption`, operação por teclado. Escape foi ligado a Cancelar no formulário; revisar em navegador e com leitor de tela. Conferir o fluxo de texto alternativo (`alt`) do CKEditor core e exigir valor quando aplicável.
+5. **Acessibilidade:** legenda ligada com `figcaption`, operação por teclado. Firefox no Runtime confirmou upcast, abertura por Enter, foco e Escape sem alterar dados. Falta leitor de tela, `alt` e confirmação do `figcaption` numa página pública.
 6. **Formato próprio para o HTML básico** (usuários comuns e alunos): hoje o básico não tem botão. Decisão de quem
    oferece modelos a cada perfil.
 7. **Tamanhos provisórios do Fórum** (Pequena e Padrão): medir em uso e revisar. Ver `MODELOS-DE-IMAGEM.md`.
@@ -86,7 +86,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R2 — Teste do seletor** | Firefox, login via `drush uli`; artigo não publicado removido após verificação | três editores gravam modelos; persistência após reabrir confirmada; falta claro/escuro e viewport útil de 390 px (Firefox limitou a 488 px) | feito parcialmente; ampliar cobertura |
 | **R3 — Legenda no editor** | formulário contextual grava `data-aculta-legenda` | UI e serialização verificadas; falta confirmar `figcaption` público e persistência após reabertura | R2 |
 | **R4 — CSS dos modelos** | estilos responsivos em `revista-post.css` | fixture medida em claro/escuro e 1366/500 px; falta confirmar numa página pública | R3 |
-| **R5 — Acessibilidade** | `alt` obrigatório, teclado, `figcaption` | Escape fecha o formulário no código; revisão com teclado e leitor de tela ainda pendente | R3 |
+| **R5 — Acessibilidade** | texto alternativo, teclado, `figcaption` | Enter abre e focaliza o formulário; Escape fecha sem alterar dados (Firefox/Runtime); leitor de tela, fluxo de `alt` e página pública pendentes | R3 |
 | **R6 — Formato do básico** | botão de modelo no HTML básico para perfis definidos | decisão de perfis | responsável |
 | **R7 — Fórum e LMS** | Fórum usa `usuario_aculta` (feito na configuração); LMS com campo de capa `capa_curso` pela política | campo de capa do LMS com a política desde o primeiro campo | F3/F6 do Fórum e LMS |
 | **R8 — Migração e dívida** | consumidores restantes e estilos `legado_*` (ausentes do catálogo) | gate sem aumento de dívida; `DEBT-REGISTER` atualizado | — |

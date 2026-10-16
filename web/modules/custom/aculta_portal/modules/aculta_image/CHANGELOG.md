@@ -3,7 +3,8 @@
 ## 0.1.0-dev.13 — Escape no formulário de legenda — 2026-10-16
 
 - O formulário contextual da legenda agora trata Escape como Cancelar e libera o handler ao destruir a view.
-- Verificação de teclado no navegador ainda pendente; o teste automatizado do driver encerrou sem produzir resultado legível nesta sessão.
+- Firefox no Runtime confirmou upcast da legenda salva, abertura pelo teclado (Enter), foco no campo e fechamento por Escape sem alterar os dados. Nó temporário não publicado removido após o teste.
+- Leitor de tela, fluxo de `alt` e confirmação de `figcaption` numa página pública continuam pendentes.
 
 ## 0.1.0-dev.12 — estilos responsivos para os modelos de texto — 2026-10-16
 
