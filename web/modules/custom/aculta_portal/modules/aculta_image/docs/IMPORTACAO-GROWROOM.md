@@ -74,6 +74,14 @@ são a única descrição de como os manifestos foram gerados.
 
 Para acompanhar: `sudo sh -c 'tail -n 2 /home/aculta/private/aculta/forum/restauro/progress-html.log'`.
 
+## Regra de usuários (decisão do responsável, 2026-10-16)
+
+- Serão importados **somente** os usuários que comentaram nos fóruns e tópicos que estão na importação.
+- Não serão importados usuários que aparecem apenas em fóruns excluídos (Avisos, Multimídia Cannábica, Cannabis Medicinal e Notícias) ou em tópicos desses fóruns.
+- Usuário que comentou em um tópico importado e em um excluído entra, pelo primeiro caso.
+- Perfis (`profile/` e `v_profile`) baixados de usuários fora desse conjunto não entram na importação. O download pode ser reduzido para só esses perfis, se o responsável quiser; ver a seção de estado.
+- Para aplicar a regra é preciso mapear cada tópico ao fórum de origem a partir das páginas de listagem (`showforum`) e listar os autores dos comentários dos tópicos importados. Esse mapeamento ainda não existe.
+
 ## Fóruns fora da importação (decisão do responsável, 2026-10-16)
 
 Não serão importados os fóruns abaixo (identificadores do Growroom, lidos dos links de navegação das páginas baixadas):
