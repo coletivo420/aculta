@@ -99,13 +99,11 @@ $databases = [];
  *
  * The "driver" property indicates what Drupal database driver the
  * connection should use.  This is usually the same as the name of the
- * database type, such as mysql or sqlite, but not always.  The other
- * properties will vary depending on the driver.  For SQLite, you must
- * specify a database file name in a directory that is writable by the
- * webserver.  For most other drivers, you must specify a
- * username, password, host, and database name.
+ * database type, such as mysql, but not always.  The other
+ * properties will vary depending on the driver.  For most drivers, you must
+ * specify a username, password, host, and database name.
  *
- * Drupal core implements drivers for mysql, pgsql, and sqlite. Other drivers
+ * Drupal core implements drivers for mysql and pgsql. Other drivers
  * can be provided by contributed or custom modules. To use a contributed or
  * custom driver, the "namespace" property must be set to the namespace of the
  * driver. The code in this namespace must be autoloadable prior to connecting
@@ -187,7 +185,6 @@ $databases = [];
  * More details can be found in the constructor methods for each driver:
  * - \Drupal\mysql\Driver\Database\mysql\Connection::__construct()
  * - \Drupal\pgsql\Driver\Database\pgsql\Connection::__construct()
- * - \Drupal\sqlite\Driver\Database\sqlite\Connection::__construct()
  *
  * Sample Database configuration format for PostgreSQL (pgsql):
  * @code
@@ -198,14 +195,6 @@ $databases = [];
  *     'password' => 'sql_password',
  *     'host' => 'localhost',
  *     'prefix' => '',
- *   ];
- * @endcode
- *
- * Sample Database configuration format for SQLite (sqlite):
- * @code
- *   $databases['default']['default'] = [
- *     'driver' => 'sqlite',
- *     'database' => '/path/to/database_filename',
  *   ];
  * @endcode
  *

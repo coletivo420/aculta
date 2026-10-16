@@ -76,10 +76,6 @@ __pycache__/
 
 # A pasta estados/ é local: armazena o backup do banco de dados e nunca vai para o Git (ver estados/README.md).
 /estados/
-/var/database/*.db
-/var/database/*.db-wal
-/var/database/*.db-shm
-/var/database/*.bak
 
 # Relatório neutro do ACULTA Deployer para o painel (sem valores; gerado localmente)
 /var/deployer/
