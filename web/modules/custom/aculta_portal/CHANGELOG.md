@@ -1,3 +1,16 @@
+## 0.4.0-dev.69 — painéis de vendas e doações com ações de pagamento — 2026-10-16
+
+Classificação MINOR. Fase F1 (painéis), nas partes que não dependem da assinatura de teste nem de decisão nova.
+
+- Painel de vendas (`/painel-administrativo/loja/vendas`) e de doações (`/painel-administrativo/loja/doacoes`): tabela de pedidos paginada, com número, data, total e pagamentos. Cada pagamento mostra estado local e status do Mercado Pago.
+- Ações por pagamento: **atualizar** (consulta a API e espelha o status), **cancelar** (só com estado `authorization`, com confirmação) e **estornar** (operação `refund-payment` do Commerce).
+- Regra de acesso (`SalesPaymentAccess`): o pedido com produto exige `gerenciar pagamentos de vendas`; com doação, `administrar doacoes`; pedido misto exige as duas. Os links só aparecem com permissão, e os formulários checam de novo e devolvem 403.
+- Formulários `SalesPaymentRefreshForm` e `SalesPaymentCancelForm` com injeção de dependências (sem `\Drupal::`).
+- `SalesReportController` e `DonationReportController` passam a devolver `resumo` (doações) e `pedidos`; testes unitários ajustados.
+- Testes unitários: 154 testes, 399 asserções, OK. Gates de Portal, tema, endereços de ambiente e slugs: PASS.
+- Runtime: cache rebuild feito; rotas `atualizar` e `cancelar` registradas; construtor da tabela executado sem erro.
+- Pendências: teste visual com administrador logado e pedidos de teste (DEFERRED); teste Kernel do painel e dos formulários (DEFERRED); painel visual no tema ACULTA420 (não autorizado: a apresentação usa tabelas padrão); painel de produto dedicado (a tabela por variação já está no relatório de vendas).
+
 ## 0.4.0-dev.68 — webhooks de assinatura do Mercado Pago — 2026-10-16
 
 Classificação MINOR. Autorização do responsável para o segredo do webhook: a Key `mercadopago_webhook_secret` (provedor env, variável `MERCADOPAGO_WEBHOOK_SECRET`) já existia e está no contrato de segredos. Nenhuma credencial nova foi criada.

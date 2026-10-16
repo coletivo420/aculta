@@ -31,7 +31,7 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 | Webhook com verificação de assinatura | **Bloqueado**: exige segredo do aplicativo (credencial nova, Key). Sem autorização |
 | URL de notificação | **Bloqueado**: precisa de entrada em `environment_bound` do `aculta_deployer` |
 | Vínculo assinatura ↔ pedido de doação (F3) | **Bloqueado**: depende do webhook e do desenho do pedido de doação |
-| Painéis e ações de pagamento (F1) | Adiado pelo responsável para a fase visual |
+| Painéis e ações de pagamento (F1) | Feito em dev.69: tabela de pedidos, atualizar, cancelar e estornar com permissão por escopo. Pendente: teste visual com pedidos de teste, teste Kernel e tema ACULTA420 (não autorizado) |
 
 ## 0.3 Webhooks de assinatura (dev.68)
 
@@ -43,6 +43,12 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 - Caminho de sucesso verificado com plano real de teste (`subscription_preapproval_plan`): 200, plano consultado (status `active`). Plano criado na conta de teste; não pode ser apagado pela API.
 - Assinatura de teste (`subscription_preapproval`): **bloqueada**. O Mercado Pago exige `payer_email` de um comprador diferente da conta vendedora, e o e-mail do usuário de teste não é retornado pela API. Falta o e-mail do comprador de teste, que está no painel (Suas integrações > aplicação > Contas de teste).
 - Diagnóstico registrado: criar assinatura com `preapproval_plan_id` exige `card_token_id` (não usado pelo projeto); sem plano, a API recusou o pagador (`User bad request`).
+
+## 0.4 Painéis (F1, dev.69)
+
+- Painéis de vendas e de doações com tabela de pedidos e ações por pagamento.
+- Permissão por escopo do pedido (produto: `gerenciar pagamentos de vendas`; doação: `administrar doacoes`; misto: as duas).
+- Pendências: visual com administrador e pedidos de teste; Kernel do painel; apresentação no ACULTA420 (sem autorização).
 
 ## 1. Inventário das APIs do SDK
 
