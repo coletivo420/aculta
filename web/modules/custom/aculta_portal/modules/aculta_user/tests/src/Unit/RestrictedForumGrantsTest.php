@@ -97,6 +97,9 @@ class RestrictedForumGrantsTest extends UnitTestCase {
       'content_editor sem e-mail não recebe e-mail nem estudante por permissão' => [
         [], [6, ['authenticated', 'content_editor'], [$email, $estudante, $marcador]],
       ],
+      'papel associado vê marcador sem e-mail confirmado' => [
+        [$marcadorRealm], [8, ['authenticated', 'associado'], []],
+      ],
       'content_editor sem e-mail mantém o marcador de associado' => [
         [$marcadorRealm], [7, ['authenticated', 'content_editor'], [$email, $estudante], 7],
       ],

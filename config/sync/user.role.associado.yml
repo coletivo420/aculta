@@ -1,0 +1,13 @@
+uuid: bc407948-1f08-4463-bb6f-57c02cb9a6c1
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_user
+id: associado
+label: Associado
+weight: 10
+is_admin: false
+permissions:
+  - 'view aculta restricted forum associado'
+

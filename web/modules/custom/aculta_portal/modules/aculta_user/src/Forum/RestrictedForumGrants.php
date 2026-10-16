@@ -40,6 +40,9 @@ final class RestrictedForumGrants {
   /** Permissão que libera os fóruns de nível "estudante" (concedida por papel, em config). */
   public const PERM_ESTUDANTE = 'view aculta restricted forum estudante';
 
+  /** Papel de associado (nível 4 da hierarquia). */
+  public const ROLE_ASSOCIADO = 'associado';
+
   /** Permissão que libera os fóruns de nível "marcador de associado" (concedida por papel, em config). */
   public const PERM_MARCADOR = 'view aculta restricted forum associado';
 
@@ -68,7 +71,10 @@ final class RestrictedForumGrants {
     if (!$moderadorSemEmail && $account->hasPermission(self::PERM_ESTUDANTE)) {
       $grants[self::REALM_ESTUDANTE] = [1];
     }
-    if ($this->marker->isAssociado((int) $account->id()) || ($emailConfirmado && $account->hasPermission(self::PERM_MARCADOR))) {
+    // Associado: papel concedido pelo administrador (decisão de 2026-10-17). O marcador de conta é mantido como fallback
+    // enquanto não houver decisão de remoção; no Runtime não há marcas a migrar.
+    $associado = in_array(self::ROLE_ASSOCIADO, $roles, TRUE) || $this->marker->isAssociado((int) $account->id());
+    if ($associado || ($emailConfirmado && $account->hasPermission(self::PERM_MARCADOR))) {
       $grants[self::REALM_MARCADOR] = [1];
     }
     return $grants;
