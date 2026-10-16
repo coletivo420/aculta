@@ -1,3 +1,14 @@
+## 0.4.0-dev.59 — PDF Viewer documenta acesso e preview opcional — 2026-10-16
+
+Classificação PATCH. `aculta_pdf_viewer` 0.1.0-dev.8 remove PDFPreview da lista de
+dependências obrigatórias de ativação, mantendo miniaturas como melhoria
+opcional. README e contrato esclarecem que `private://` obedece Media/File
+access: como Config Sync concede `view media` a anônimo e autenticado, isso não
+garante audiência restrita; Group↔Media não está integrado e PDF privado não é
+aprovado para documento confidencial de turma. Kernel: 9 testes, 131 assertions
+PASS, incluindo ativação sem PDFPreview. RUNTIME STATUS: DEFERRED; URI do Drush
+está como `http://default`.
+
 ## 0.4.0-dev.58 — leitor PDF integrado: busca, zoom e tela cheia — 2026-10-16
 
 Classificação MINOR. `aculta_pdf_viewer` 0.1.0-dev.3 acrescenta zoom, busca textual por página e tela cheia ao leitor ESM local; fallback de arquivo autorizado permanece disponível. Kernel valida o fluxo CKEditor Media Embed → formatter e markup dos controles; Node valida sintaxe. Firefox 153.4 ESR contra artigo temporário no Runtime `aculta_runtime` confirmou PDF.js/worker local, 14 páginas, navegação, zoom 125%, busca com cinco resultados, tela cheia e zero erros JS. A UI CKEditor 5 selecionou Media `document`, inseriu o embed, salvou o artigo e a página pública mostrou o leitor. A fixture Media veio de Drush; upload/criação de Media pelo papel `content_editor` segue DEFERRED. Artigos, Media, Files e binários de teste foram removidos. Acessibilidade visual, CSP, PDFs grandes, preview, acesso privado e Hostinger seguem DEFERRED.

@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.8 — PDFPreview opcional e contrato atualizado
+
+PDFPreview deixa de ser dependência obrigatória de ativação; o serviço de
+miniaturas continua fail-soft quando o contrib não está habilitado. README e
+metadados passam a refletir leitura `private://` conforme Media/File access,
+incluindo que permissões amplas podem permitir acesso anônimo. Kernel verifica
+registro do formatter e serviço de miniaturas sem habilitar PDFPreview.
+
 ## 0.1.0-dev.7 — contrato de acesso do arquivo privado
 
 Kernel confirma que o endpoint Core revalida a permissão efetiva da Media:
