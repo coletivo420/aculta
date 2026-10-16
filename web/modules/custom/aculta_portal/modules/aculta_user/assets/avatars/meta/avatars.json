@@ -879,5 +879,95 @@
     "alt": "Rei esqueleto com coroa dourada, manto real e medalhão de cannabis.",
     "active": true,
     "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-001-deusa-verde",
+    "file": "mixed/mixed-001-deusa-verde.png",
+    "family": "mixed",
+    "label": "Deusa verde",
+    "active": true,
+    "alt": "Mulher de cabelos longos e folhagem de cannabis na cabeça, com flores brancas, fumando um baseado em paisagem de cerrado ao pôr do sol.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-002-anciao-mistico",
+    "file": "mixed/mixed-002-anciao-mistico.png",
+    "family": "mixed",
+    "label": "Ancião místico",
+    "active": true,
+    "alt": "Ancião de barba e dreads brancos, com chapéu de aba larga, cajado e folhas de cannabis, em paisagem de savana.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-003-explorador-reggae",
+    "file": "mixed/mixed-003-explorador-reggae.png",
+    "family": "mixed",
+    "label": "Explorador reggae",
+    "active": true,
+    "alt": "Jovem de dreadlocks e fones de ouvido, com moletom de folha de cannabis, fazendo joia, em paisagem de pôr do sol.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-004-cao-aventureiro",
+    "file": "mixed/mixed-004-cao-aventureiro.png",
+    "family": "mixed",
+    "label": "Cão aventureiro",
+    "active": true,
+    "alt": "Cão com chapéu verde, óculos escuros, lenço com folha de cannabis e mochila, em paisagem de savana.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-005-gato-aventureiro",
+    "file": "mixed/mixed-005-gato-aventureiro.png",
+    "family": "mixed",
+    "label": "Gato aventureiro",
+    "active": true,
+    "alt": "Gato preto com capuz e lenço vermelho, fumando um baseado, com mochila e folhas de cannabis.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-006-alien-verde",
+    "file": "mixed/mixed-006-alien-verde.png",
+    "family": "mixed",
+    "label": "Alien verde",
+    "active": true,
+    "alt": "Alien verde de capuz, fazendo sinal de paz, sob céu noturno estrelado com folha de cannabis no peito.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-007-chimpanze-rastafari",
+    "file": "mixed/mixed-007-chimpanze-rastafari.png",
+    "family": "mixed",
+    "label": "Chimpanzé rastafari",
+    "active": true,
+    "alt": "Chimpanzé de dreadlocks, boné rasta e óculos escuros, com baseado e colar de paz, em paisagem de savana.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-008-capivara-aventureira",
+    "file": "mixed/mixed-008-capivara-aventureira.png",
+    "family": "mixed",
+    "label": "Capivara aventureira",
+    "active": true,
+    "alt": "Capivara com mochila e folha de cannabis no peito, em paisagem de savana à beira de um lago.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-009-guardiao-arboreo",
+    "file": "mixed/mixed-009-guardiao-arboreo.png",
+    "family": "mixed",
+    "label": "Guardião arbóreo",
+    "active": true,
+    "alt": "Guardião arbóreo com rosto coberto de folhas de cannabis, em paisagem vermelha e verde.",
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "mixed-010-tartaruga-aventureira",
+    "file": "mixed/mixed-010-tartaruga-aventureira.png",
+    "family": "mixed",
+    "label": "Tartaruga aventureira",
+    "active": true,
+    "alt": "Tartaruga com óculos escuros, mochila e folha de cannabis no casco, em paisagem de savana ao pôr do sol.",
+    "source": "generated-from-user-collage"
   }
 ]

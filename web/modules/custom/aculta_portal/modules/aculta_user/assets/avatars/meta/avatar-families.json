@@ -72,5 +72,14 @@
     "version": "3",
     "crop": "wide-field-portrait-fit",
     "format": "square-original"
+  },
+  {
+    "id": "mixed",
+    "label": "Mistos aventureiros",
+    "count": 10,
+    "active": true,
+    "version": "1",
+    "format": "square-original",
+    "notes": "Família montada a partir da prancha enviada pelo usuário, com assets individuais 1:1."
   }
 ]
