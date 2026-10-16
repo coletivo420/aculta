@@ -1,0 +1,15 @@
+aculta_image.audit:
+  path: '/painel-administrativo/imagens'
+  defaults:
+    _controller: '\Drupal\aculta_image\Controller\ImageAuditController::report'
+    _title: 'Imagens'
+  requirements:
+    _permission: 'administer aculta images'
+
+aculta_image.quarantine:
+  path: '/painel-administrativo/imagens/quarentena'
+  defaults:
+    _form: '\Drupal\aculta_image\Form\ImageQuarantineForm'
+    _title: 'Quarentena de imagens'
+  requirements:
+    _permission: 'administer aculta images'

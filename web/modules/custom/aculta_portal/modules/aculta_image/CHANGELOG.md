@@ -1,5 +1,15 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.4 — auditoria, duplicatas, quarentena e comparação visual (M4 a M7 e M9) — 2026-10-17
+
+- Relatório `/painel-administrativo/imagens` (somente leitura): resumo do acervo, grupos de duplicatas exatas, pares visualmente parecidos e candidatas à revisão com motivos.
+- Duplicatas exatas com `media_duplicates` 2.0.4 (checksum). No Runtime: 2 grupos, com 3 e 2 mídias.
+- Candidatas com `entity_usage` 5.0.1: as sem referência em `file_usage` e sem entidade registrada. No Runtime: 13 candidatas, quase todas cópias de galerias.
+- Quarentena (`ImageQuarantine`): envio move para `private://aculta-image-quarentena`; restauração; exclusão só após 30 dias e nova verificação de uso. Atualização `aculta_image_update_10002`. Testada no Runtime com arquivo de teste.
+- Comparação visual (`DHash`): dHash de 64 bits com GD, sem dependência nova. Impressões calculadas no cron, 200 por execução (`aculta_image_update_10003`). Imagens que o GD não lê e imagens lisas são excluídas dos pares. Pares de cópias reais têm distância 0; fotos sequenciais muito parecidas ficam entre 4 e 6 bits. Sugestão para revisão, nada é alterado.
+- Pendente (M8): compressão com `imageapi_optimize` depende de binários (`optipng`, `jpegoptim` etc.), que não estão no sistema, ou de serviço externo com chave. Decisão do responsável.
+- Testes unitários: `DHashTest`, `QuarantineRulesTest` e `ImageIngesterTest` (11 no total).
+
 ## 0.1.0-dev.2 — migração dos consumidores e ingestão de imagem externa (pronto para importação) — 2026-10-17
 
 - Migração (gate `validate-aculta-image.php` em PASS): estilos e limites de upload saem dos consumidores. Portal (painel da conta, instalação), aculta_user (foto de perfil, recorte, perfil público, limpeza de avatar, troca de foto), aculta_magazine (autoria, abertura do Fórum), aculta_gallery (grade e formulário de envio) e aculta_pdf_viewer (miniatura de PDF).

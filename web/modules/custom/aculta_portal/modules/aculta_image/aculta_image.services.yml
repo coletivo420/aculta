@@ -27,3 +27,13 @@ services:
     arguments: ['@file.repository', '@file_system', '@database', '@aculta_image.inspector', '@datetime.time', '@logger.factory']
     tags:
       - { name: aculta_portal.helper }
+  aculta_image.audit:
+    class: Drupal\aculta_image\Audit\ImageAudit
+    arguments: ['@database', '@?media_duplicates.checksum_statistics', '@file_system']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.quarantine:
+    class: Drupal\aculta_image\Quarantine\ImageQuarantine
+    arguments: ['@database', '@file.repository', '@file_system', '@file.usage', '@aculta_image.file_remover', '@datetime.time', '@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }

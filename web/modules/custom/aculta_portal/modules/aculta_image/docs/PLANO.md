@@ -1,8 +1,18 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status: **pronto para uso** (2026-10-17, versão 0.1.0-dev.2). Gate `scripts/validate-aculta-image.php` em PASS.
-Fases concluídas: M0.5 (barreiras), M1 a M3 (consumidores migrados) e a ingestão de origem externa. Pendentes: M4 (miniatura de PDF
-só ativa com ImageMagick e `pdfpreview`), M5 a M9.
+Status: **pronto para uso** (2026-10-17, versão 0.1.0-dev.4). Gate `scripts/validate-aculta-image.php` em PASS.
+
+| Fase | Estado |
+| --- | --- |
+| M0 inventário | feito: relatório `/painel-administrativo/imagens` |
+| M0.5 barreiras | feito |
+| M1 a M3 consumidores | feito |
+| M4 miniatura de PDF no sistema | código no `aculta_pdf_viewer`; ativação depende de ImageMagick e `pdfpreview` (decisão de ambiente) |
+| M5 duplicatas exatas | feito: `media_duplicates` 2.0.4 em modo relatório; 2 grupos encontrados no Runtime |
+| M6 auditoria de uso | feito: `entity_usage` 5.0.1; candidatas com motivos |
+| M7 quarentena | feito: envio, restauração e exclusão só após 30 dias e nova verificação de uso |
+| M8 compressão | **pendente de decisão**: sem binários de compressão no sistema; alternativa é serviço externo com chave |
+| M9 comparação visual | feito: dHash próprio com GD, calculado no cron em lotes de 200 |
 
 Política do responsável: **todo o site usa o `aculta_image`** para upload, derivados, entrega
 responsiva, auditoria de uso e limpeza de imagens e arquivos de imagem. Nenhum módulo do Portal
@@ -67,6 +77,12 @@ em uma busca inicial. Ele entra como ferramenta de duplicatas exatas de Media. N
   de duplicata exata exige leitura de todos os arquivos a cada consulta.
 - `entity_usage`: referências que o `file_usage` do core não vê (links e imagens em texto
   formatado, Entity Embed). Sem isso a auditoria de candidatas fica incompleta.
+
+## Dependências Composer adicionadas (regra 14 do AGENTS)
+
+- `drupal/entity_usage` 5.0.1: rastreia referências que o `file_usage` do core não vê (links e imagens em texto formatado, Entity Embed). Sem isso a auditoria de candidatas fica incompleta.
+- `drupal/media_duplicates` 2.0.4: duplicatas exatas de Media por checksum, com modos de relatório e restrição. Estável, coberto pela política de segurança, sem dependências fora do core.
+- Não adicionadas: `filehash` (o `media_duplicates` calcula o próprio checksum) e `imageapi_optimize` (fase M8, pendente de decisão).
 
 ## 3. Arquitetura proposta
 

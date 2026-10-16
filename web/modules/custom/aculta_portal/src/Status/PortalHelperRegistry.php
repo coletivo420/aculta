@@ -62,6 +62,16 @@ final class PortalHelperRegistry {
       'summary' => 'Porta única para imagens de origem externa: valida pela política, calcula SHA-256, reaproveita, nunca sobrescreve e registra a origem.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
+    'aculta_image.audit' => [
+      'label' => 'Inventário e auditoria de imagens',
+      'summary' => 'Resumo do acervo, grupos de duplicatas exatas e candidatas à revisão com motivos. Somente leitura.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.quarantine' => [
+      'label' => 'Quarentena de imagens',
+      'summary' => 'Envia candidatas sem referência para área privada, restaura, e exclui só após 30 dias e nova verificação de uso.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
     'aculta_portal.account_courses' => [
       'label' => 'Cursos da conta',
       'summary' => 'Consulta participação e situação de cursos a partir das entidades LMS e Group.',
