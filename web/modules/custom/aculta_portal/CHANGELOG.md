@@ -1,3 +1,8 @@
+## 0.4.0-dev.45 — denúncias do Fórum e política de e-mail confirmado (F5.1) — 2026-10-16
+
+Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.12 e a documentação da política de confirmação de e-mail, com
+a aplicação no site e no Fórum (`docs/portal/EMAIL-CONFIRMATION-POLICY.md`, seções 9 e 10).
+
 ## 0.4.0-dev.44 — estrutura da identidade histórica do Fórum (F2) — 2026-10-16
 
 Classificação MINOR. Inclui `aculta_user` 0.4.0-dev.11: serviço idempotente de contas legadas, acesso negado a

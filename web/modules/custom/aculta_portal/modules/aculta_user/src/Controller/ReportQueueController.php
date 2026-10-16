@@ -11,7 +11,7 @@ use Drupal\aculta_user\Moderation\ReportQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Fila de denúncias do Fórum em /admin/aculta/denuncias (ACULTA Fórum, F5.1).
+ * Fila de denúncias do Fórum em /painel-administrativo/forum/denuncias (ACULTA Fórum, F5.1).
  *
  * Mostra o que foi denunciado, quantas denúncias cada conteúdo tem e o link para editar. A moderação (publicar,
  * ocultar ou manter) continua nos formulários nativos do Drupal; esta fila não altera nenhum conteúdo.
@@ -62,7 +62,7 @@ final class ReportQueueController extends ControllerBase {
         $this->labelOf($entity),
         $item['total'],
         $this->dateFormatter->format($item['ultima'], 'short'),
-        $entity->toLink($this->t('Abrir'))->toRenderable(),
+        ['data' => ['#type' => 'link', '#title' => $this->t('Abrir'), '#url' => $entity->toUrl()]],
       ];
     }
 
