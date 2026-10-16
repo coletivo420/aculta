@@ -34,6 +34,12 @@ final class RestrictedForumGrants {
   /** Permissão que libera os fóruns de nível "e-mail confirmado" (concedida por papel, em config). */
   public const PERM_EMAIL = 'view aculta restricted forum email confirmed';
 
+  /** Realm dos fóruns de nível "estudante". */
+  public const REALM_ESTUDANTE = 'aculta_estudante';
+
+  /** Permissão que libera os fóruns de nível "estudante" (concedida por papel, em config). */
+  public const PERM_ESTUDANTE = 'view aculta restricted forum estudante';
+
   /** Permissão que libera os fóruns de nível "marcador de associado" (concedida por papel, em config). */
   public const PERM_MARCADOR = 'view aculta restricted forum associado';
 
@@ -50,10 +56,17 @@ final class RestrictedForumGrants {
     if ($op !== 'view' || $account->isAnonymous()) {
       return [];
     }
-    $emailConfirmado = in_array('email_confirmed', $account->getRoles(), TRUE);
+    $roles = $account->getRoles();
+    $emailConfirmado = in_array('email_confirmed', $roles, TRUE);
+    // Regra composta: moderador (content_editor) sem e-mail confirmado não recebe os níveis por permissão.
+    // O marcador de associado é vínculo da conta e não depende dessa regra.
+    $moderadorSemEmail = in_array('content_editor', $roles, TRUE) && !$emailConfirmado;
     $grants = [];
-    if ($account->hasPermission(self::PERM_EMAIL)) {
+    if (!$moderadorSemEmail && $account->hasPermission(self::PERM_EMAIL)) {
       $grants[self::REALM_EMAIL] = [1];
+    }
+    if (!$moderadorSemEmail && $account->hasPermission(self::PERM_ESTUDANTE)) {
+      $grants[self::REALM_ESTUDANTE] = [1];
     }
     if ($this->marker->isAssociado((int) $account->id()) || ($emailConfirmado && $account->hasPermission(self::PERM_MARCADOR))) {
       $grants[self::REALM_MARCADOR] = [1];
@@ -89,6 +102,7 @@ final class RestrictedForumGrants {
     }
     return match ((string) $container->get(self::FIELD)->value) {
       'email_confirmado' => [self::REALM_EMAIL],
+      'estudante' => [self::REALM_ESTUDANTE],
       'marcador_associado' => [self::REALM_MARCADOR],
       default => [],
     };

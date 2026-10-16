@@ -9,6 +9,9 @@ adicionadas ao `composer.json`; visibilidade dos fóruns por permissão explíci
 - `RestrictedForumGrants::grantsFor()` deriva os realms das permissões. Marcador de associado continua sendo vínculo da conta (`AssociadoMarker`), não papel.
 - Regra composta mantida no código: a permissão de moderação do `content_editor` só vale com `email_confirmed`.
 - Config: `email_confirmed` recebe a permissão de e-mail confirmado; `content_editor` recebe as duas. Com Role Inheritance, a herança de permissões do `content_editor` a partir de `email_confirmed` fica para a Fase 2.
+- Nível `estudante`: permissão `view aculta restricted forum estudante`, realm `aculta_estudante`, valor `estudante` em `field_visibilidade` e papel `estudante` (`user.role.estudante.yml`).
+- Moderador (`content_editor`) sem `email_confirmed` não recebe nenhum nível por permissão; o marcador de associado não depende dessa regra.
+- Testes unitários de `RestrictedForumGrants::grantsFor()` (`tests/src/Unit/RestrictedForumGrantsTest.php`), ainda não executados.
 - Pendente: `composer.lock` (não atualizado, pois o acesso a packages.drupal.org não estava disponível), `role_hierarchy` sem configuração e testes de integração no Runtime de testes.
 
 ## 0.4.0-dev.21 — contagem de respostas e chamada para visitante no tópico do Fórum (F4) — 2026-10-17

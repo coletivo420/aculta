@@ -27,3 +27,6 @@ view aculta restricted forum email confirmed:
 
 view aculta restricted forum associado:
   title: 'Ver fóruns de nível marcador de associado'
+
+view aculta restricted forum estudante:
+  title: 'Ver fóruns de nível estudante'

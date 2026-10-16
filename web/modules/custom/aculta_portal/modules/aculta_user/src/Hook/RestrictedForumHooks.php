@@ -27,7 +27,11 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class RestrictedForumHooks {
 
   /** Realms que restringem conteúdo (o associado é marcador e não restringe, F-D19). */
-  private const RESTRICTED_REALMS = [RestrictedForumGrants::REALM_EMAIL, RestrictedForumGrants::REALM_MARCADOR];
+  private const RESTRICTED_REALMS = [
+    RestrictedForumGrants::REALM_EMAIL,
+    RestrictedForumGrants::REALM_ESTUDANTE,
+    RestrictedForumGrants::REALM_MARCADOR,
+  ];
 
   public function __construct(
     #[Autowire(service: 'current_user')]
