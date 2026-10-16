@@ -17,11 +17,6 @@ final class PortalHelperRegistry {
    * @var array<string, array{label: string, summary: string, docs: string}>
    */
   private const DEFINITIONS = [
-    'aculta_portal.pdf_viewer_builder' => [
-      'label' => 'Preparação do visualizador PDF',
-      'summary' => 'Cria render array PDF.js para Media document autorizado, com acesso/cache e arquivos públicos locais apenas.',
-      'docs' => 'docs/portal/PDF-VIEWER-INTEGRATION.md',
-    ],
     'aculta_user.achievement_definitions' => [
       'label' => 'Definições de conquistas',
       'summary' => 'Preserva o catálogo e as formas de concessão na Config API do User, sem motor de regras executáveis.',

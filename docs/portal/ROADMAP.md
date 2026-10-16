@@ -126,7 +126,7 @@ Estas fases dependem de S0–S4. Nenhuma tem versão alvo de 1.0.
 
 O inventário e planejamento da evolução educacional estão em [roadmap do aculta_lms](../modules/ACULTA-LMS-ROADMAP.md). A linha educacional deve seguir fases independentes e não altera a ordem de saneamento deste roadmap. Cada etapa requer decisão e critérios próprios.
 
-As fontes de verdade e o estado exportado de Group/LMS estão em [LMS-GROUP.md](../modules/LMS-GROUP.md) e [ADR-005](../decisions/ADR-005-lms-integration.md). Contratos globais do viewer PDF: [PDF-VIEWER-INTEGRATION.md](PDF-VIEWER-INTEGRATION.md). Integração com Messenger, User, Forum, Gallery e apresentação ACULTA420: [LMS-INTEGRATION-CONTRACTS.md](LMS-INTEGRATION-CONTRACTS.md). A matriz de segurança/arquivos está em [SECURITY-ACCESS-FILES-MATRIX.md](SECURITY-ACCESS-FILES-MATRIX.md).
+As fontes de verdade e o estado exportado de Group/LMS estão em [LMS-GROUP.md](../modules/LMS-GROUP.md) e [ADR-005](../decisions/ADR-005-lms-integration.md). O viewer global e seu contrato estão em [aculta_pdf_viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md) e [PDF-VIEWER-INTEGRATION.md](PDF-VIEWER-INTEGRATION.md). Integração com Messenger, User, Forum, Gallery e apresentação ACULTA420: [LMS-INTEGRATION-CONTRACTS.md](LMS-INTEGRATION-CONTRACTS.md). A matriz de segurança/arquivos está em [SECURITY-ACCESS-FILES-MATRIX.md](SECURITY-ACCESS-FILES-MATRIX.md).
 
 **Restrições técnicas:** PDFPreview 8.x-1.2 declara ImageMagick `^3.7 || ^4.0`; PDF 1.3 carrega `.js` enquanto PDF.js 6.3.289 distribui `.mjs`; viewer e preview de arquivo privado precisam preservar File Access. Ver [matriz de compatibilidade](../modules/LMS-COMPATIBILITY.md) e [contrato PDF](PDF-VIEWER-INTEGRATION.md).
 

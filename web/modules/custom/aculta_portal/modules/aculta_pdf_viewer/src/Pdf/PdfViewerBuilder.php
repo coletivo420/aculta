@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Pdf;
+namespace Drupal\aculta_pdf_viewer\Pdf;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\File\FileUrlGeneratorInterface;
@@ -86,7 +86,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#value' => new TranslatableMarkup('Abrir ou baixar PDF'),
         '#attributes' => ['href' => $url, 'data-aculta-pdf-control' => 'download'],
       ],
-      '#attached' => ['library' => ['aculta_portal/pdf_viewer']],
+      '#attached' => ['library' => ['aculta_pdf_viewer/viewer']],
     ];
     $cacheability->applyTo($build);
     return $build;

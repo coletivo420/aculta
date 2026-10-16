@@ -1929,3 +1929,10 @@ privados mantêm somente o fallback File protegido conforme o access atual. A in
 miniaturas fica DEFERRED: o ambiente não tem ImageMagick executável e a combinação estável PDFPreview 1.2 /
 ImageMagick 5.x não é compatível. `RUNTIME STATUS: DEFERRED`; display não importado no Runtime.
 
+## 0.4.0-dev.56 — extração do visualizador PDF para submódulo — 2026-10-16
+
+Classificação MINOR. O serviço, interface, formatter, biblioteca JavaScript e testes do visualizador passam a
+pertencer a `aculta_pdf_viewer`, sem dependência funcional de `aculta_portal` ou `aculta_lms`. Config Sync
+habilita o submódulo e vincula o display Media `document` ao formatter. Documentação e contrato de hooks/classes
+ficam no README próprio do submódulo. Nenhuma configuração foi importada no Runtime.
+

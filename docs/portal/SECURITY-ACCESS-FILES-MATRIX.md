@@ -21,7 +21,7 @@ Revisado em 2026-10-16. As linhas definem critérios de acesso e homologação.
 - Revalidar acesso pelo handler de entidade e Group membership/papel no request atual. Flag/assinatura é preferência, nunca access grant.
 - Queries EntityQuery declaram conscientemente `accessCheck(TRUE|FALSE)`; exceções limitam resultados a principal autorizado e passam por verificação de entidade/access posterior.
 - Uploads avaliativos devem usar storage privado, allowlist específica, limite de bytes e MIME, nome seguro, sem executar conteúdo, scanner conforme disponibilidade e política de retenção. O tipo Media `document` atual usa `public://` e extensões amplas: não é destino apropriado para trabalhos privados.
-- A URL de viewer/arquivo é gerada pelo Portal/Core a partir de referência Media/File; bloquear URLs externas/arbitrárias, path traversal e parâmetros de viewer que alterem source.
+- A URL de viewer/arquivo é gerada por `aculta_pdf_viewer`/Core a partir de referência Media/File; bloquear URLs externas/arbitrárias, path traversal e parâmetros de viewer que alterem source.
 - Conteúdo privado jamais recebe cache compartilhado sem contextos corretos. Mudança de membership deve invalidar cache e cortar acesso a arquivo já conhecido.
 - Log não registra resposta, nota, corpo de aviso nem token de acesso. Auditoria de correção/certificado limita campos e retém o mínimo necessário.
 - CSP, MIME, iframe, PDF.js worker, `.mjs`, tamanho de PDF e timeouts são gates da fase PDF. H5P executável requer hardening e isolamento antes de habilitar bibliotecas ou upload de pacotes.

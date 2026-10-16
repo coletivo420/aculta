@@ -36,8 +36,3 @@ cart-status:
     - core/drupal
     - core/once
 
-pdf_viewer:
-  js:
-    js/pdf-viewer.mjs:
-      attributes:
-        type: module

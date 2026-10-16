@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_portal\Unit\Plugin\Field\FieldFormatter;
+namespace Drupal\Tests\aculta_pdf_viewer\Unit\Plugin\Field\FieldFormatter;
 
-use Drupal\aculta_portal\Pdf\PdfViewerBuilderInterface;
-use Drupal\aculta_portal\Plugin\Field\FieldFormatter\AcultaPdfMediaFormatter;
+use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
+use Drupal\aculta_pdf_viewer\Plugin\Field\FieldFormatter\AcultaPdfMediaFormatter;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\file\FileInterface;

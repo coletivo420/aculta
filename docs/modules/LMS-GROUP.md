@@ -11,14 +11,14 @@ Revisão técnica: 2026-10-16.
 | Lições, atividades e plugins de resposta | Drupal LMS | Adaptar contratos; não duplicar entidades ou respostas |
 | Tentativa, resposta, status e nota | Entidades `lms_course_status`, `lms_lesson_status`, `lms_answer` e `TrainingManager` | Consultar APIs LMS e construir projeções autorizadas |
 | Arquivos/documentos | Media + File + File Access | Referenciar mídia autorizada, nunca copiar arquivo/URL para storage próprio |
-| PDF viewer | Drupal PDF + PDF.js local (pendente de compatibilidade) | Integração global conforme `PDF-VIEWER-INTEGRATION.md` |
+| PDF viewer | Submódulo independente `aculta_pdf_viewer`; Media/File guardam arquivo e metadados | Integração global compartilhada; não pertence ao `aculta_lms` |
 | Conquistas/identidade | `aculta_user` e `aculta_game` | Consumir serviço/evento público, sem gravar score duplicado |
 | Mensagens e avisos | `aculta_messenger`, Message, Message Notify | Consumir contratos educacionais aprovados e revalidar acesso |
 
 ## Estado encontrado
 
 - `composer.json` requer `drupal/lms:^1.2`, `drupal/group:^3.3` e `drupal/webform:^6.3`. O lock fixa LMS 1.2.3, Group 3.3.5 e Webform 6.3.1. Drupal local: 11.4.10.
-- `lms_answer_plugins` e `lms_classes` são submódulos no repositório distribuído de `drupal/lms`, não pacotes Composer independentes. `lms_file_upload` é projeto Composer independente (`drupal/lms_file_upload`); não está instalado. `webform_score`, H5P, Entity Print, PDF, PDFPreview e ImageMagick também não estão instalados.
+- `lms_answer_plugins` e `lms_classes` são submódulos no repositório distribuído de `drupal/lms`, não pacotes Composer independentes. `lms_file_upload` é projeto Composer independente (`drupal/lms_file_upload`); não está instalado. `webform_score`, H5P, Entity Print, PDFPreview e ImageMagick também não estão instalados. `drupal/pdf` e PDF.js estão no Composer, mas o formatter de PDF contrib não é usado pelo `aculta_pdf_viewer` por incompatibilidade `.js`/ESM.
 - `config/sync/lms.settings.yml`: `allow_to_enter_ungraded: false`, `use_revisions: false`. Não alterar sem plano de migração e validação dos dados existentes.
 - `group.type.lms_course` habilita membership do criador e define o papel de criador. Membership tem cardinalidade de grupo ilimitada e de entidade 1.
 - Papéis Group configurados: estudante (`member`, inclui `take course`); educador (`teacher`, global `lms_teacher`, pode administrar membros, editar/avaliar e ver revisões não publicadas); criador local; administradores Group interno/externo; outsiders e anônimos. Roles globais `lms_admin` e `lms_teacher` têm permissão global de criar grupos `lms_course`. Validar sobreposição de grants e comportamento de autor/educador antes de ampliar acesso.
@@ -37,3 +37,4 @@ Revisão técnica: 2026-10-16.
 5. Não atribuir nota oficial a resultado sem autenticação, autoria, tentativa válida e método de cálculo auditável.
 
 Ver também: [ADR-005](../decisions/ADR-005-lms-integration.md), [contratos LMS](../portal/LMS-INTEGRATION-CONTRACTS.md) e [roadmap do aculta_lms](ACULTA-LMS-ROADMAP.md).
+O visualizador global pertence ao submódulo independente [aculta_pdf_viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md), sem dependência do LMS.

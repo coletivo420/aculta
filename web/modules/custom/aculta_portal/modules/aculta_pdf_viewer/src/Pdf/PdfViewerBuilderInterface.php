@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Pdf;
+namespace Drupal\aculta_pdf_viewer\Pdf;
 
 use Drupal\media\MediaInterface;
 

@@ -1,0 +1,4 @@
+services:
+  aculta_pdf_viewer.builder:
+    class: Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilder
+    arguments: ['@file_url_generator', '@current_user']

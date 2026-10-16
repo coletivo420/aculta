@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Plugin\Field\FieldFormatter;
+namespace Drupal\aculta_pdf_viewer\Plugin\Field\FieldFormatter;
 
-use Drupal\aculta_portal\Pdf\PdfViewerBuilderInterface;
+use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -18,11 +18,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Displays authorized Media documents with the shared PDF.js viewer.
- *
  */
 #[FieldFormatter(
   id: 'aculta_pdf_media',
-  label: new TranslatableMarkup('ACULTA shared PDF viewer and document link'),
+  label: new TranslatableMarkup('Visualizador PDF ACULTA e link de documento'),
   field_types: ['file'],
 )]
 final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
@@ -50,7 +49,7 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('aculta_portal.pdf_viewer_builder'),
+      $container->get('aculta_pdf_viewer.builder'),
     );
   }
 
