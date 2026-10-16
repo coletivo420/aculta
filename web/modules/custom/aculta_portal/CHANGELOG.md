@@ -1,10 +1,13 @@
-## Não lançado — relatório de vendas da loja (gerente de loja) — 2026-10-17
+## 0.4.0-dev.64 — relatório de vendas da loja e correções da revisão — 2026-10-16
 
 Classificação MINOR. Decisão do responsável: o gerente de loja vê um relatório próprio de vendas.
 
 - `SalesReportController` (`/painel-administrativo/loja/vendas`, permissão `view commerce_order`): variações vendidas em pedidos concluídos, com quantidade e total por moeda. Sem dados de pagamento (pagamentos seguem só com o administrador). Sem cache.
-- Testes unitários da agregação (`SalesReportControllerTest`): soma por variação entre pedidos, totais por moeda, itens incompletos ignorados, vazio. 2/2 OK. Smoke no Runtime: rota exige `view commerce_order`; gerente acessa, usuário comum não.
-- Saída em tabela neutra (`#type => table`); o layout visual fica para o tema ACULTA420, sem alteração de tema nesta entrega.
+- Revisão de código aplicada: totais somados com `Price::add()` (sem `float`), agrupados por variação e moeda, e formatados pelo `commerce_price.currency_formatter` (sem `number_format` próprio).
+- Correção no tema (`page.html.twig`): `show_utility_bar|default(true)` trocava `false` por `true`, e a barra utilitária aparecia no purpose `links`. Agora usa `?? true`. Esta correção toca `web/themes/custom/aculta420/` por pedido explícito do responsável.
+- Saída em tabela neutra (`#type => table`); o layout visual fica para o tema ACULTA420.
+- Limite conhecido: o relatório carrega todos os pedidos concluídos (`loadMultiple`), sem agregação no banco nem paginação. Aceitável enquanto o volume for pequeno; revisar quando a loja crescer.
+- Testes: `SalesReportControllerTest` (`tests/src/Unit/Controller/`) cobre a soma por variação entre pedidos, os totais por moeda, itens incompletos ignorados e o estado vazio. O formatador é um duplo de teste com o formato pt-BR; a formatação real do Commerce não é coberta por este teste.
 
 ## 0.4.0-dev.63 — visibilidade da apresentação por purpose decidida pelo Portal — 2026-10-16
 
