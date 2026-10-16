@@ -1,5 +1,16 @@
 # Changelog — aculta_user
 
+## Não lançado — visibilidade dos fóruns por permissão (Role Inheritance / Role Hierarchy)
+
+Classificação MINOR. Decisões do responsável (2026-10-17): dependências `drupal/role_inheritance` e `drupal/role_hierarchy`
+adicionadas ao `composer.json`; visibilidade dos fóruns por permissão explícita; ações administrativas só para o administrador.
+
+- Permissões `view aculta restricted forum email confirmed` e `view aculta restricted forum associado` (`aculta_user.permissions.yml`).
+- `RestrictedForumGrants::grantsFor()` deriva os realms das permissões. Marcador de associado continua sendo vínculo da conta (`AssociadoMarker`), não papel.
+- Regra composta mantida no código: a permissão de moderação do `content_editor` só vale com `email_confirmed`.
+- Config: `email_confirmed` recebe a permissão de e-mail confirmado; `content_editor` recebe as duas. Com Role Inheritance, a herança de permissões do `content_editor` a partir de `email_confirmed` fica para a Fase 2.
+- Pendente: `composer.lock` (não atualizado, pois o acesso a packages.drupal.org não estava disponível), `role_hierarchy` sem configuração e testes de integração no Runtime de testes.
+
 ## 0.4.0-dev.21 — contagem de respostas e chamada para visitante no tópico do Fórum (F4) — 2026-10-17
 
 Classificação: MINOR (novos dados de apresentação do tópico).

@@ -21,3 +21,4 @@ permissions:
   - 'flag sinalizar_comentario'
   - 'unflag sinalizar_topico'
   - 'unflag sinalizar_comentario'
+  - 'view aculta restricted forum email confirmed'

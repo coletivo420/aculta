@@ -58,6 +58,8 @@ permissions:
   - 'use wiki_editorial transition review_to_published'
   - 'use editorial transition create_new_draft'
   - 'use editorial transition draft_to_review'
+  - 'view aculta restricted forum associado'
+  - 'view aculta restricted forum email confirmed'
   - 'view all revisions'
   - 'view any unpublished content'
   - 'view latest version'

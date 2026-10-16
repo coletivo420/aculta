@@ -307,6 +307,8 @@
         "drupal/profile": "^1.14",
         "drupal/redirect": "^1.13",
         "drupal/rename_admin_paths": "^3.1",
+        "drupal/role_hierarchy": "^2.0",
+        "drupal/role_inheritance": "^2.1",
         "drupal/schema_metatag": "^3.0",
         "drupal/search_api": "^1.40",
         "drupal/security_review": "^3.1",

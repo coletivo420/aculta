@@ -1,50 +1,54 @@
-# Papéis e participação
+# Papéis e hierarquia
 
-Status: **decisões aprovadas pelo responsável (2026-10-16)**. Dúvidas abertas na seção 6.
-Escopo: visualização, participação e moderação no Fórum e na área de contas. Não substitui as políticas de cursos,
-loja e wiki, que continuam em `EMAIL-CONFIRMATION-POLICY.md`.
+Status: **hierarquia definida pelo responsável (2026-10-16)**. Pendências na seção 7.
+Escopo: visualização, participação e moderação no Fórum e na Wiki, além da área de contas. Não substitui as políticas
+de cursos, loja e wiki em `EMAIL-CONFIRMATION-POLICY.md`.
 
-## 1. Papéis e hierarquia
+## 1. Hierarquia de papéis
 
-Do menor para o maior:
+Os números seguem a ordem do Drupal no projeto: **quanto menor o número, maior o privilégio**.
 
-| Ordem | Papel (machine name) | Rótulo | Como é concedido |
+| Nível | Papel (machine name) | Rótulo | Como é concedido |
 |---|---|---|---|
-| 1 | `authenticated` | Usuário autenticado | Toda conta com login |
-| 2 | `email_confirmed` | E-mail confirmado | Automático, ao confirmar o e-mail (irreversível), ou pela confirmação manual do administrador |
-| 3 | `content_editor` | Editor de conteúdo (moderador do Fórum) | Administrativa, com e-mail confirmado |
-| 4 | `administrator` | Administrador | Administrativa |
+| 5 | `authenticated` | Usuário autenticado | Toda conta com login |
+| 4 | `email_confirmed` | E-mail confirmado | Automático ao confirmar o e-mail (irreversível), ou pela confirmação manual do administrador |
+| 3 | `estudante` | Estudante | Usuário que participa ou participou de algum curso; acesso a fóruns exclusivos. Forma exata de concessão: pendência (seção 9) |
+| 2 | `associado` | Associado | Associado ao ACULTA. Forma exata de concessão: pendência (seção 7) |
+| 1 | `content_editor` | Editor de conteúdo | Administrativa, somente com e-mail confirmado |
+| 0 | `administrator` | Administrador | Administrativa |
 
-**Associado não é papel.** É um marcador puro (F-D19): fica em tabela própria, separada da identidade User e dos papéis.
-Não concede acesso a nenhum conteúdo nem função do site. Serve a relatórios e páginas da associação. O administrador
-marca e desmarca em `/painel-administrativo/associados/{uid}/marcar`, e o relatório de associados lista as marcas em
-`/painel-administrativo/associados/relatorio`.
+Um usuário pode ter mais de um papel. Se `estudante` e `associado` exigem ou não `email_confirmed`, é pendência (seção 9).
 
-Usuários podem ter mais de um papel. A regra de visibilidade considera só `email_confirmed` e os papéis acima.
+## 2. Papel `content_editor`
 
-Níveis de visibilidade de um fórum (F-D20):
+- Acumula as funções de **moderador do Fórum**, **revisor da Wiki** e **moderador da Wiki**.
+- **Precisa ter `email_confirmed`.** Sem ele, não recebe acesso aos níveis restritos nem poderes de moderação. Decisão de
+  2026-10-16.
+- Como moderador do Fórum, pode **ocultar, despublicar ou excluir** tópicos e comentários.
+- **Exceção**: conteúdo de autoria histórica (acervo do Growroom, seção 6) não pode ser moderado pela fila atual. A regra
+  é aplicada no ponto único de acesso (`ForumModerationHooks`).
+- Concedido somente pelo administrador.
+
+## 3. Papel `administrator`
+
+- Concedido somente pelo administrador.
+- Tem **bypass total**: pode tudo, inclusive moderar conteúdo histórico e ver restritos.
+- É o único que atribui papéis administrativos, edita contas e confirma e-mail manualmente. Essas ações não ficam com
+  nenhum outro papel.
+
+## 4. Níveis de visibilidade do Fórum
 
 | Nível | Quem vê |
 |---|---|
 | Público | Todos |
-| E-mail confirmado | `email_confirmed` e moderadores (`content_editor` com `email_confirmed`) |
-| Marcadores de associado | Contas com a marca de associado e moderadores |
+| E-mail confirmado | Papéis `email_confirmed` e acima |
+| Estudante | `estudante` e moderadores (`content_editor` com `email_confirmed`) |
+| Associado | `associado` e moderadores (`content_editor` com `email_confirmed`) |
 
-O marcador de associado libera apenas os fóruns com esse nível. Ele não dá nenhuma outra função.
+Fóruns exclusivos de estudantes e de associados são acessíveis somente a quem tem o papel do nível (ou o papel superior
+de moderação). O nível de associado não dá nenhuma outra função além do acesso aos seus fóruns.
 
-Padronização de caminhos internos: todo caminho do ACULTA fica em `/painel-administrativo/` (não em `/admin/`).
-O segmento de configuração aparece traduzido, como `configuracoes`, conforme a regra de slugs do projeto.
-
-## 2. Regras do content_editor
-
-- O `content_editor` **precisa ter e-mail confirmado** (`email_confirmed`). Sem ele, não recebe acesso aos níveis
-  restritos nem poderes de moderação. Decisão de 2026-10-16.
-- Como moderador, pode **ocultar, despublicar ou excluir** tópicos e comentários do Fórum.
-- **Exceção**: conteúdo de autoria histórica (conta com o papel `usuarios_legados_forum`, importada do Growroom)
-  não pode ser moderado pela fila atual. A regra é aplicada no ponto único de acesso (`ForumModerationHooks`).
-- O administrador tem **bypass total**: pode tudo, inclusive moderar conteúdo histórico e ver restritos.
-
-## 3. Participação no Fórum
+## 5. Participação no Fórum
 
 | Ação | Papel mínimo | Situação |
 |---|---|---|
@@ -52,32 +56,49 @@ O segmento de configuração aparece traduzido, como `configuracoes`, conforme a
 | Seguir e salvar tópico | `authenticated` | Aplicado |
 | Criar tópico, editar e excluir o próprio, comentar, denunciar | `email_confirmed` | Aplicado |
 | Ver contêiner ou tópico de nível "e-mail confirmado" | `email_confirmed` (ou `content_editor` com `email_confirmed`) | Aplicado |
+| Ver contêiner ou tópico de nível "estudante" | `estudante` (ou `content_editor` com `email_confirmed`) | Pendente (permissão ainda não criada) |
+| Ver contêiner ou tópico de nível "associado" | `associado` (ou `content_editor` com `email_confirmed`) | Aplicado no código como marcador; migrar para papel pendente |
 | Denunciar e ver a fila de denúncias | `content_editor` com `email_confirmed` | Aplicado |
 | Ocultar, despublicar ou excluir tópico e comentário (exceto histórico) | `content_editor` com `email_confirmed` | Aplicado |
 
-## 4. Visitante e bots
+## 6. Visitante e bots
 
-- Quem não tem o nível exigido recebe **404**, inclusive bots. O conteúdo restrito não aparece em listagens,
-  contagens, sitemap nem busca (decisão F-D15).
+- Quem não tem o nível exigido recebe **404**, inclusive bots. O conteúdo restrito não aparece em listagens, contagens,
+  sitemap nem busca (decisão F-D15).
 - Visitante **não vê o nome** do fórum restrito: o contêiner não aparece no índice do fórum nem tem página.
 
-## 5. Confirmação manual de e-mail pelo administrador
+## 7. Confirmação manual de e-mail pelo administrador
 
-Implementada em 2026-10-16. Quem tem a permissão **confirmar email de conta manualmente** (administrador) acessa
+Quem tem a permissão **confirmar email de conta manualmente** (administrador) acessa
 `/painel-administrativo/contas/nao-confirmadas`, lista as contas ativas sem e-mail confirmado e confirma cada uma
 em `/painel-administrativo/contas/{uid}/confirmar-email`, com confirmação explícita (formulário com token).
 
 A ação usa a mesma política do fluxo normal: grava a confirmação do Portal e concede o papel `email_confirmed`.
-Não envia nenhum e-mail. Repetir a ação numa conta já confirmada não muda nada. Cada confirmação é registrada no
-log do canal `aculta_portal` com o administrador e a conta, **sem o endereço de e-mail**.
+Não envia nenhum e-mail. Cada confirmação é registrada no log do canal `aculta_portal` com o administrador e a conta,
+**sem o endereço de e-mail**.
 
-## 6. Autores históricos do Fórum (acervo do Growroom)
+## 8. Autores históricos do Fórum (acervo do Growroom)
 
-Decisão de 2026-10-16: autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na
-lista de usuários do administrador. A autoria fica na entidade própria `aculta_legado_autor`, com tabela própria,
-acessível só pela permissão **administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para
-a autoria pelo campo `field_autor_legado`. Conteúdo com esse campo preenchido não é moderado pela fila atual.
+Autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na lista de usuários do
+administrador. A autoria fica na entidade própria `aculta_legado_autor`, acessível só pela permissão
+**administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para a autoria pelo campo
+`field_autor_legado`. Conteúdo com esse campo preenchido não é moderado pela fila atual.
 
-## 7. Dúvidas abertas
+## 9. Mudanças em relação à versão anterior e pendências
 
-Nenhuma no momento.
+Mudanças em relação ao documento de 2026-10-16 anterior:
+
+- **Associado passa a ser papel** (nível 2), não marcador. Isso **substitui a decisão F-D19** (associado como marcador
+  sem acesso a conteúdo). Confirmar antes de implementar.
+- **Novos papéis:** `estudante` (nível 3). Não existia antes.
+- **Wiki:** `content_editor` passa a ser revisor e moderador da Wiki. A configuração atual da Wiki (`wiki_contributor`,
+  concedido a `email_confirmed`) não foi alterada.
+
+Pendências:
+
+1. Forma de concessão do `estudante` (automática ao concluir curso, ou matrícula?).
+2. Forma de concessão do `associado` (hoje é marcador administrativo em `/painel-administrativo/associados`).
+3. Permissão de visibilidade do nível `estudante` no código (ainda não criada).
+4. Migração do marcador de associado para papel, e o tratamento das contas já marcadas.
+5. Permissões de Wiki de revisão e moderação do `content_editor`.
+6. Se `estudante` e `associado` exigem `email_confirmed`, como o `content_editor`.

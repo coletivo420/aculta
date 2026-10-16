@@ -31,23 +31,31 @@ final class RestrictedForumGrants {
 
   public const REALM_EMAIL = 'aculta_email_confirmado';
 
+  /** Permissão que libera os fóruns de nível "e-mail confirmado" (concedida por papel, em config). */
+  public const PERM_EMAIL = 'view aculta restricted forum email confirmed';
+
+  /** Permissão que libera os fóruns de nível "marcador de associado" (concedida por papel, em config). */
+  public const PERM_MARCADOR = 'view aculta restricted forum associado';
+
   public const FIELD = 'field_visibilidade';
 
   /**
    * Grants de visualização do usuário, por realm.
+   *
+   * Os realms vêm das permissões explícitas. Marcador de associado é um vínculo da conta (AssociadoMarker), não um
+   * papel, e continua valendo por si só. Regra composta: a permissão de moderação do content_editor só vale com
+   * e-mail confirmado (decisão de 2026-10-16), por isso essa verificação fica no código e não na config.
    */
   public function grantsFor(AccountInterface $account, string $op): array {
     if ($op !== 'view' || $account->isAnonymous()) {
       return [];
     }
-    $roles = $account->getRoles();
-    // content_editor só vale com e-mail confirmado (decisão de 2026-10-16). O moderador vê os níveis restritos.
-    $emailConfirmado = in_array('email_confirmed', $roles, TRUE);
+    $emailConfirmado = in_array('email_confirmed', $account->getRoles(), TRUE);
     $grants = [];
-    if ($emailConfirmado) {
+    if ($account->hasPermission(self::PERM_EMAIL)) {
       $grants[self::REALM_EMAIL] = [1];
     }
-    if ($this->marker->isAssociado((int) $account->id()) || ($emailConfirmado && in_array('content_editor', $roles, TRUE))) {
+    if ($this->marker->isAssociado((int) $account->id()) || ($emailConfirmado && $account->hasPermission(self::PERM_MARCADOR))) {
       $grants[self::REALM_MARCADOR] = [1];
     }
     return $grants;
