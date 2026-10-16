@@ -1,3 +1,16 @@
+## 0.4.0-dev.67 — pendências da linha 0.4.0 resolvidas — 2026-10-16
+
+Classificação MINOR. Fecha as pendências de F0 que não dependem de decisão nova: ligação do relatório à consulta, testes Kernel e verificação no Runtime.
+
+- Relatório de vendas (`SalesReportController`) usa `SalesReportQuery`, com filtros de data, loja e granularidade. Some a carga de todos os pedidos na memória, que era a dívida registrada nas versões anteriores.
+- `SalesReportQuery` deixa de ser `final` e corrige a paginação: a contagem de pedidos lia a coluna de id, não o total.
+- `MercadoPagoClientFactory` deixa de ser `final`, para permitir duplo de teste.
+- Testes Kernel `SalesReportQueryKernelTest` (6 casos) no banco `aculta_simpletest`: escopo de produto e de doação, estado, intervalo, loja e paginação. Passam.
+- Testes unitários dos serviços do Mercado Pago com cliente do SDK substituído: atualização de status, estorno total, cancelamento de pendente, recusa de cancelamento de aprovado, pagamento sem id remoto, recorrência com payload e status. Unit `aculta_portal`: 139 testes, 369 asserções, OK.
+- Runtime: permissões `gerenciar pagamentos de vendas` e `administrar doacoes` concedidas ao papel `gerente_loja` (escopo do papel; import completo não feito, porque o diff de configuração do Runtime é grande). Cache rebuild concluído. Rotas `/painel-administrativo/loja/vendas` e `/painel-administrativo/loja/doacoes` registradas.
+- Pesquisa de webhooks: tópicos `subscription_preapproval`, `subscription_preapproval_plan` e `subscription_authorized_payment` confirmados na documentação. A verificação de assinatura (`x-signature`) exige o segredo do aplicativo, que seria uma credencial nova: não adicionada sem autorização.
+- Pendente: painéis e ações de pagamento (F1, a pedido do responsável); webhooks e vínculo de assinatura ao pedido de doação (F2 e F3, bloqueados pela decisão do segredo e pelo desenho do fluxo de doação).
+
 ## 0.4.0-dev.66 — gerente de loja administra doações — 2026-10-16
 
 Classificação MINOR. Mudança de escopo do gerente de loja: além de vendas, administra doações.

@@ -19,6 +19,20 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 - Ações de pagamento de doação (estornar, cancelar) usam a permissão `administrar doacoes`, e não `gerenciar pagamentos de vendas`. A tela entra na fase de painéis.
 - Cancelar a assinatura de uma doação recorrente exige guardar o id da assinatura no pedido. Isso é a F3 do plano.
 
+## 0.2 Pendências resolvidas (dev.67)
+
+| Pendência | Situação |
+|---|---|
+| Ligar relatório de vendas à consulta | Feito. Controller usa `SalesReportQuery`; dívida de carga em memória removida |
+| Testes Kernel de vendas | Feito: 6 casos em `aculta_simpletest`, passam |
+| Testes dos serviços do SDK | Feito, com cliente substituído por duplo (sem rede) |
+| Permissões no Runtime | Feito por escopo do papel `gerente_loja`; import completo de config não feito |
+| Tópicos de webhook | Confirmados: `subscription_preapproval`, `subscription_preapproval_plan`, `subscription_authorized_payment` |
+| Webhook com verificação de assinatura | **Bloqueado**: exige segredo do aplicativo (credencial nova, Key). Sem autorização |
+| URL de notificação | **Bloqueado**: precisa de entrada em `environment_bound` do `aculta_deployer` |
+| Vínculo assinatura ↔ pedido de doação (F3) | **Bloqueado**: depende do webhook e do desenho do pedido de doação |
+| Painéis e ações de pagamento (F1) | Adiado pelo responsável para a fase visual |
+
 ## 1. Inventário das APIs do SDK
 
 O SDK tem 21 arquivos `*Client.php`: 20 clientes concretos e a classe base `MercadoPagoClient`. A fábrica `MercadoPagoClientFactory::CLIENTES` mapeia os 20 e um teste confirma que as classes existem no SDK instalado.
@@ -134,8 +148,8 @@ Respondidas em 2026-10-16; ver a seção 0.
 
 ## 8. Testes e evidências
 
-- Unit `aculta_portal`: 130 testes, 351 asserções, OK (inclui `RecurrenceRequestBuilderTest`, `MercadoPagoPaymentPolicyTest`, `SalesReportFiltersTest`, `MercadoPagoClientFactoryTest`).
+- Unit `aculta_portal`: 139 testes, 369 asserções, OK (dev.67) (inclui `RecurrenceRequestBuilderTest`, `MercadoPagoPaymentPolicyTest`, `SalesReportFiltersTest`, `MercadoPagoClientFactoryTest`).
 - Gates: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-module-theme-map` e `validate-environment-addresses` PASS.
-- **Kernel: DEFERRED.** `SalesReportQuery` e os serviços que chamam o SDK precisam de banco de teste. Usar `aculta_simpletest` (`docs/operations/BANCO-DE-TESTE.md`).
+- **Kernel (dev.67): feito.** `SalesReportQueryKernelTest`, 6 casos, no banco `aculta_simpletest`.
 - **Runtime (verificado em 2026-10-16):** o gateway `mercado_pago` (plugin `mercado_pago_checkout_pro`, modo `test`) existe, com token de teste. Uma chamada somente leitura `UserClient::get` autenticou com o token de teste (site `MLB`). O Runtime carrega este checkout (`web/modules/custom/aculta_portal` aponta para o mesmo repositório). As consultas do relatório executam no MariaDB sem erro; o banco de teste não tem pedidos concluídos, então os valores não foram conferidos.
 - **Runtime: DEFERRED** para: ações de cancelar e estornar (sem tela ainda), criação de planos e assinaturas (escrevem na conta de teste; aguardam confirmação), e conferência de valores do relatório (sem pedidos de teste).
