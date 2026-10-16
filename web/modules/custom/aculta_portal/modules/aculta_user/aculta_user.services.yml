@@ -39,3 +39,6 @@ services:
   aculta_user.social_links_card:
     class: Drupal\aculta_user\Social\SocialLinksCard
     arguments: ['@entity_type.manager', '@aculta_user.social_networks']
+  aculta_user.legacy_accounts:
+    class: Drupal\aculta_user\Legacy\LegacyAccountManager
+    arguments: ['@entity_type.manager', '@database']
