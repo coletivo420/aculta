@@ -17,8 +17,9 @@ funcional posterior terá PR rastreável, sem merge parcial automático ou tags.
 | F6 — reconstrução em lotes | Conteúdo e mídia de todo o inventário aprovado | Cobertura reconciliada, ausências explicadas, origem rastreável; sem overwrite de dados atuais |
 | F7 — Portal e loja | Revista/Wiki/projetos/galerias e discussão por produto | Uma discussão por vínculo, Galeria na Revista, pedidos privados, transações em MAIN |
 | F8 — LMS reservado | Piloto por curso e atividade/contexto | Dois cursos e usuários de acesso distinto; zero exposição por rota, lista, busca, cache, perfil, arquivo ou e-mail |
+| F9 — Fóruns restritos (associados e cursos) | Visibilidade por fórum e por tópico: público, e-mail confirmado, associado ou contexto de curso; aplicada em acesso, listagens, busca, feeds, sitemap, Revista, contagens, último autor, notificações e cache. Antes do piloto F8. | **Proposta, não iniciada** (2026-10-16). Pré-requisitos: critério de associado definido e versionado (papel `associado` existe no Runtime sem permissões e sem regra de concessão, e não está em `config/sync`); modelo de visibilidade decidido (ver `DECISOES.md`, F-D14). Aceite: zero vazamento de título, trecho, contagem, autor, URL ou índice para visitante e para conta sem o papel; teste com contas de cada papel nos dois modos de cor e em mobile; `/forum` público continua igual para conteúdo público |
 
-Fases extensas podem ser divididas em subfases com PR próprio. A ordem entre UX e
+A F9 (fóruns restritos) deve entrar antes do piloto F8: os fóruns de curso dependem do mesmo controle de acesso. Fases extensas podem ser divididas em subfases com PR próprio. A ordem entre UX e
 lotes pode ser intercalada, mantendo o Runtime testável. O acervo público não
 depende da conclusão da integração LMS. Gamificação depende do contrato do Game,
 sem conceder conquistas durante a migração histórica.
