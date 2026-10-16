@@ -1,5 +1,11 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.16 — mesclagem de mídias repetidas e quarentena — 2026-10-16
+
+- Mesclados os grupos de arquivos idênticos da galeria 11, mantendo uma ocorrência por arquivo e o `alt` do menor ID de mídia em cada grupo (`126` e `128`). Mídias duplicadas `127`, `159` e `129` foram removidas; seus arquivos `223`, `255` e `225` foram enviados à quarentena `aculta_image` para retenção até 2026-11-15.
+- O relatório de duplicatas exatas não aponta mais esses grupos. O inventário de candidatas agora exclui arquivos que já estão na quarentena, evitando reenvio duplicado.
+
+
 ## 0.1.0-dev.15 — barra do CKEditor multilinha — 2026-10-16
 
 - `full_html` e `usuario_aculta` usam a opção multilinha nativa do CKEditor; `revista_editorial` já tinha essa opção.

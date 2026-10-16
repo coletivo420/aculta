@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.15. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-16. Versão: 0.1.0-dev.16. Leia este documento antes de qualquer alteração no submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -8,7 +8,7 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.15. Leia este documento antes d
 2. Fases M0 a M9 e og:image estão prontas no Homelab e no código. A conversão de imagens do texto para 1200 px está pronta no código.
 3. **M10 (modelos de imagem no texto) está parcial.** Runtime atualizado; conversão e persistência do modelo confirmadas; formulário, persistência e reabertura da legenda confirmados; CSS dos quatro modelos medido em página pública anônima a 1366, 500 e 390 px, em modo claro e escuro. Firefox/Orca/AT-SPI confirmaram foco e leitura da legenda e do `alt`, além da semântica de imagem/legenda.
 4. Formatos Core migrados para os formatos ACULTA; o seletor de `usuario_aculta` pertence ao papel `email_confirmed`.
-5. Falta decidir como preservar `alt` e usos repetidos na mesclagem das mídias duplicadas; a importação do Growroom segue bloqueada pela F3 do Fórum.
+5. A galeria 11 teve as mídias duplicadas mescladas com o `alt` do menor ID; arquivos redundantes aguardam o prazo da quarentena até 2026-11-15. A importação do Growroom segue bloqueada pela F3 do Fórum.
 
 ## 2. Git e working tree
 
@@ -30,6 +30,7 @@ Data da passagem: 2026-10-16. Versão: 0.1.0-dev.15. Leia este documento antes d
 | (este commit) | documentação: README, PLANO, MODELOS, ESTILOS, IMPORTAÇÃO, este handoff |
 | `0941388b` | política de IA: um commit por tarefa no branch atual; sem branch por tarefa |
 | `e52c402d` | correção dos botões de modelo no overflow (dev.10): um botão por modelo |
+| `b66646ef` | migração `basic_html`/`full_html` para formatos ACULTA, seletor para `email_confirmed`, Fórum restrito |
 
 - **Não commitar** o que é de outras sessões. No momento da passagem havia 25 entradas em `git status`. Todas as do submódulo `aculta_image` são desta frente. As demais são de outra frente e **não** devem entrar nos commits de imagem:
   - `config/sync/group.role.lms_course-member.yml`, `group.role.lms_course-teacher.yml`, `user.role.lms_teacher.yml`;
@@ -85,11 +86,12 @@ investigado.
 Upload real: PNG sintético de 1600×800 foi enviado em `revista_editorial`, convertido a 1200×600 e removido em seguida.
 O arquivo gerenciado foi excluído e a ausência confirmada. O upload está coberto para este caminho.
 
-Nenhum `updb` é necessário: o submódulo não mudou o schema desde `aculta_image_update_10003`.
+O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplicado nesta passagem executou `aculta_portal_update_11009` para migrar os formatos de texto do site.
 
 ## 5. Riscos conhecidos
 
 - **Valores de formato antigos:** textos e revisões foram migrados antes da exclusão dos formatos Core; respostas antigas do Fórum usam `usuario_aculta` após a migração.
+- **Mesclagem de mídias duplicadas (2026-10-16):** a galeria 11 mantém uma ocorrência por arquivo, com o `alt` do menor ID (`126` e `128`). Mídias `127`, `159` e `129` foram removidas. Arquivos redundantes `223`, `255` e `225` estão na quarentena `aculta_image`, vencendo em 2026-11-15; excluí-los somente pelo fluxo normal da quarentena após confirmar que continuam sem uso. `gruposDeDuplicatas()` voltou vazio.
 - **Upload acima de 1200 px:** o fluxo em `revista_editorial` foi exercitado com PNG 1600×800 e resultou em 1200×600. Falta avaliar outros formatos de imagem se necessário.
 - **Seletor de modelo:** dropdown único importado nos três editores. Firefox confirmou as quatro opções do `full_html`, seleção de Larga e `data-aculta-modelo="larga"` serializado. `usuario_aculta` recebe Pequena e Padrão pela configuração dinâmica.
 - **Barra multilinha:** o marcador `-` na toolbar desliga o overflow automático do CKEditor. `revista_editorial` já o usava; foi aplicado a `full_html` e `usuario_aculta`. Firefox mediu três linhas e nenhum botão de overflow a 500 px em `full_html`.

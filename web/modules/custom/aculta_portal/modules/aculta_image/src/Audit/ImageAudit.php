@@ -79,6 +79,7 @@ final class ImageAudit {
       ->fields('f', ['fid', 'uri', 'filesize'])
       ->condition('f.filemime', 'image/%', 'LIKE')
       ->condition('f.fid', $this->database->select('file_usage', 'fu')->fields('fu', ['fid']), 'NOT IN')
+      ->condition('f.fid', $this->database->select('aculta_image_quarantine', 'q')->fields('q', ['fid']), 'NOT IN')
       ->orderBy('f.fid', 'ASC')
       ->range(0, $limite)
       ->execute()

@@ -89,16 +89,13 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R8 — Migração e dívida** | consumidores restantes e estilos `legado_*` (ausentes do catálogo) | gate sem aumento de dívida; `DEBT-REGISTER` atualizado | — |
 | **RC — Validação de ambientes** | Homelab e Hostinger: `shell_exec`, ImageMagick e Ghostscript confirmados no painel | relatório de ambientes | responsável |
 
-Fora deste ciclo: prevenção de duplicata no upload (bloquear), que depende de decisão sobre mesclagem (ver seção 6).
+Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 
 ## 6. Perguntas abertas
 
-1. **Mesclagem de mídias duplicadas.** Os arquivos são byte a byte iguais, mas os registros têm `alt` diferentes e aparecem em posições distintas da mesma galeria. Definir se as posições repetidas devem continuar e qual `alt` usar antes de remover entidades.
+1. **Prevenção automática de duplicatas.** A mesclagem do acervo existente foi concluída. Decidir separadamente se o upload deve bloquear arquivos repetidos ou continuar apenas com relatório para revisão.
 2. **ImageMagick e Ghostscript na Hostinger.** Não citados na documentação pública consultada em 2026-10-17. Miniatura de PDF
    e redução de largura dependem disso em produção. Confirmar pelo painel ou com o suporte.
-3. **Destaque acima de 1200 px.** Decidido manter 1200 px. Reabrir só se o responsável pedir.
-4. **Tópicos do Fórum.** Decidido: corpo de tópico e comentário aceitam somente `usuario_aculta`; configuração e Runtime ajustados.
-5. **Formatos Core duplicados.** Decidido migrar `basic_html` para `usuario_aculta` e `full_html` para `revista_editorial`; execução e remoção concluídas pelo update do Portal.
 
 ## 7. Hostinger: o que está confirmado (2026-10-17)
 

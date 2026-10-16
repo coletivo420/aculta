@@ -53,7 +53,7 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 ## Rotas e permissões
 
 - `/painel-administrativo/imagens`: relatório (resumo, duplicatas exatas, pares visuais, candidatas).
-- `/painel-administrativo/imagens/quarentena`: enviar candidatas, restaurar e excluir vencidas.
+- `/painel-administrativo/imagens/quarentena`: enviar candidatas, restaurar e excluir vencidas. Arquivos já quarentenados não voltam a aparecer como candidatas.
 - Permissão: `administer aculta images`.
 
 ## Dependências
