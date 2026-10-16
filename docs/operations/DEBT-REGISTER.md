@@ -85,6 +85,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-T17 | 331 strings do LMS (contrib) estavam em inglês | corrigido em 0.4.0-dev.3 via `translations/lms.pt-br.po`; a extração é por expressão regular, então pode haver strings em Twig/JS não capturadas | Média | Não | T2 | Resolvida (verificar em nova release do LMS) |
 | DT-T19 | Gate Foundation do tema reprovava durações literais fora de `tokens.css` (`portal-account.css`, `180ms` e `150ms`). Corrigido em 0.6.0-dev.22: durações viraram `var(--aculta-motion-fast)` e `var(--aculta-motion-quick)`. Verificado em 2026-10-15: `drush --uri=https://aculta.toca.net.br scr scripts/validate-aculta420-foundation.php` → 341 checks passed (código de `origin/main` 56f99c3, Runtime `aculta_runtime`, leitura apenas). | Alta | Não | — | Resolvida (0.6.0-dev.22) |
 | DT-T14 | Foundation de 0.1.0 descrita como "preserva o shell existente" em documentos atuais | `architecture.md` e `development.md` reescritos (0.4.0-dev.2) | Baixa | Não | T0 | Resolvida |
+| DT-T20 | Página pública `links` responde 404 na raiz do host de teste `links.aculta.toca.net.br`; o shell de LINKS (`layout.links_page`) não foi verificado visualmente | Verificação visual de 2026-10-16 (`web/themes/custom/aculta420/CHANGELOG.md`, 0.6.0-dev.66) | Média | Não decidido | S2 | Aberta: causa não investigada (provisionamento do host ou rota) |
 
 ## Operação e Runtime
 
@@ -102,6 +103,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-O12 | `aculta_deployer` com falhas de teste e de `check`, Em 2026-10-15, `tests/run.php` aborta no teste de build (`RecursiveDirectoryIterator` sobre diretório temporário inexistente, linha 132), e `check` avisa que `services.local.yml` define `cookie_domain .aculta.test`, sem ambiente declarado. Detalhe de 2026-10-12: 27 PASS / 2 FAIL, `check` exit 1 e 52 avisos de perfil production | `tests/run.php` e `bin/aculta-deployer check` no submódulo | Média | Não | S6 | Aberta |
 | DT-BOUNDARY-GALLERY | Classe de design `photoswipe-gallery` montada no módulo `aculta_gallery` (`GalleryViewHooks.php`), que o gate de fronteira passou a enxergar | Gate `validate-module-theme-boundary`, regra 10 (lista `$knownDebt`). Achado ao ampliar a regra para todos os `src/` do módulo, em 2026-10-15 | Média | Não | Fora do Messenger | Aberta (registrada no gate) |
 | DT-O08 | PRs obsoletas acumuladas | PR antiga fechada em 2026-10-09 com arquivo em `archive/pr63` | Baixa | Não | — | Resolvida |
+| DT-O13 | Importação da configuração da turma no Runtime de teste (`course_document`, `media.type.course_document`, `group.relationship_type.lms_course-af8ec2205541224f9d8c4`, papéis do LMS). Hoje o Runtime não tem o bundle nem o submódulo `aculta_pdf_viewer_group` habilitado, e a relação de `lms_course` só existe no sync. Sem a importação, a relação de `lms_course` não pode ser verificada no Runtime | `docs/operations/BANCO-DE-TESTE.md`; `config:status` no Runtime de teste (itens "Onl" do sync) | Média | Não decidido | S2 | Aberta: aguarda decisão sobre importação de configuração no Runtime |
 
 ## Governança
 
