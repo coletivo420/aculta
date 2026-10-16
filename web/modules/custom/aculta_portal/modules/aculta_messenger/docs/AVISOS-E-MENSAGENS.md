@@ -22,7 +22,8 @@ mensagem (ver seção 5).
 
 ## 2. Avisos por pessoa (`aculta_aviso`)
 
-Um registro por **pessoa e por tópico** (tipo `forum_resposta`). Cada campo:
+Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (comentário novo em tópico seguido) e
+`forum_atualizacao` (revisão nova de tópico seguido). Cada campo:
 
 | Campo | Função |
 |---|---|
@@ -32,14 +33,17 @@ Um registro por **pessoa e por tópico** (tipo `forum_resposta`). Cada campo:
 | `titulo` | Título do tópico na época do aviso |
 | `contador_site` | Respostas novas não lidas. Zera quando a pessoa lê o tópico |
 | `contador_email` | Respostas ainda não enviadas no resumo por e-mail. Zera pelo resumo |
-| `ultimo_comentario` | Último comentário contado. Garante que cada comentário conta uma vez |
+| `ultimo_comentario` | Último comentário contado (tipo resposta). Garante que cada comentário conta uma vez |
+| `ultimo_evento` | Última revisão contada (tipo atualização). Garante que cada revisão conta uma vez |
 
 Regras (implementadas em `Aviso\AvisoService`):
 
 - Quem segue o tópico (flag `seguir_topico`) recebe o aviso. Quem escreveu o comentário não recebe aviso dele.
 - Só comentário **publicado** conta. Comentário criado não publicado conta quando for aprovado (`comment_update`).
 - Um comentário nunca conta duas vezes: se o identificador não for maior que `ultimo_comentario`, nada muda.
-- Ler o tópico (requisição à rota canônica do nó, usuário autenticado) zera `contador_site` daquele aviso.
+- Ler o tópico (requisição à rota canônica do nó, usuário autenticado) zera `contador_site` de **todos os tipos**
+  daquele tópico.
+- Atualização de tópico seguido (fila de publicação) cria aviso `forum_atualizacao`, sem mensagem.
 - O aviso é visível só para a própria pessoa (`AvisoAccessControlHandler`). Administrar avisos exige
   `administer aculta avisos`.
 
@@ -87,20 +91,60 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 - `administer aculta messenger`: limites, limpeza e grupos do chat.
 - `administer aculta avisos`: administrar avisos por pessoa (sem conteúdo de mensagens).
 
-## 5. Mudanças nesta etapa e pendências
+## 5. Contador do ícone de avisos
+
+O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + **avisos por pessoa não lidos**
+(`AvisoService::naoLidosTotal`). Cada entrada é um grupo tipo + assunto com contador > 0. O contador de conversas
+(outro ícone) não inclui avisos.
+
+## 6. Controles individuais (Minha conta > Privacidade, bloco "Avisos")
+
+- Os avisos no site são **sempre exibidos**: não há opção para desligá-los.
+- **Resumo diário por e-mail**: desligado por padrão. Quando ligado, dois sub-controles escolhem o que entra:
+  respostas novas e atualizações de tópicos. Preferências em `user.data` (`aculta_messenger`).
+- Desligar o resumo zera os contadores de e-mail pendentes, para não acumular um resumo antigo.
+
+## 7. Resumo diário por e-mail
+
+- Roda no cron (`AvisosResumoHooks::cron`) e chama `AvisosResumo::enviarResumos()`.
+- Envia para contas **ativas, com e-mail e e-mail confirmado** (`EmailConfirmationPolicy`), com o resumo ligado.
+- Um e-mail por conta por dia, no máximo (intervalo de 20 horas), e só quando há contador de e-mail > 0.
+- Linhas agrupadas por tópico: tipo, título e quantidade. O contador de e-mail zera **somente após envio com sucesso**.
+- Sistema de e-mail do Drupal, com o modelo `avisos_resumo` (`hook_mail`).
+
+## 8. Funções do módulo, resumo dos novos componentes
+
+- `src/Entity/Aviso.php`: entidade `aculta_aviso`. `AvisoAccessControlHandler`: a pessoa vê só os próprios avisos.
+- `src/Aviso/AvisoService.php`: regras de contagem (`isNewComment`, `isNewRevision`), `registrarResposta`,
+  `notificarAtualizacao`, `marcarLido`, `naoLidosTotal`.
+- `src/Aviso/AvisoPreferencias.php`: preferências individuais de e-mail.
+- `src/Aviso/AvisosResumo.php`: envio do resumo diário.
+- `src/Form/AvisosPrivacyForm.php` + `src/Hook/AvisosPrivacyHooks.php`: bloco "Avisos" na privacidade da conta.
+- `src/Hook/ForumAvisoHooks.php`: `comment_insert` e `comment_update` (aprovação de comentário).
+- `src/EventSubscriber/ForumAvisoReadSubscriber.php`: leitura do tópico.
+- `src/Plugin/QueueWorker/MessageSubscribeEventWorker.php`: atualização de tópico seguido vira aviso.
+- `src/Hook/MessengerBarHooks.php`: soma os avisos por pessoa ao ícone de avisos.
+
+## 9. Mudanças desta etapa e pendências
 
 **Feito (2026-10-16):**
 
-- Avisos por pessoa (`aculta_aviso`), com contadores, deduplicação e leitura, conforme a seção 2.
-- Respostas em tópico seguido viram aviso. Nenhuma mensagem é criada por isso.
-- `MessageSubscribeHooks::getSubscribers` passou a retornar vazio. Motivo: a regra de F-D21 proíbe notificação de
-  fórum como mensagem. Antes, a publicação de tópico seguido era entregue como mensagem.
+- Respostas e atualizações de tópico seguido viram avisos por pessoa, agrupados por tipo + assunto. Nenhuma
+  mensagem é criada (conferido).
+- Entrega de atualização por mensagem substituída por aviso (worker reescrito).
+- Contador do ícone de avisos soma os avisos por pessoa.
+- Bloco de controles individuais na privacidade da conta, e resumo diário por e-mail com as regras da seção 7.
+- Testes unitários das regras de deduplicação e do intervalo. Testes no Runtime de teste: resposta, atualização
+  (revisão repetida não conta), soma no ícone, leitura por todos os tipos, preferências, envio do resumo e zeragem
+  ao desligar.
 
-**Pendente (F5.2):**
+**Verificado com limite:**
 
-- Aviso de **atualização** de tópico seguido (antes entregue como mensagem) deve migrar para `aculta_aviso` com
-  tipo próprio. Até lá, essas notificações não são entregues.
-- Exibição do contador de avisos na barra e na lista de avisos da pessoa.
-- Resumo diário por e-mail, só quando houve atualização (`contador_email` > 0), opt-in, pela fila do módulo.
-- Testes de integração no Runtime de teste (já testado: contagem, deduplicação, aprovação, autor, leitura, nenhuma
-  mensagem criada). Testes de página e de e-mail ainda não.
+- O envio real de e-mail não foi confirmado: o domínio de teste foi recusado pelo servidor SMTP (esperado). A
+  entrega real precisa de teste com endereço real no Homelab.
+
+**Pendente:**
+
+- Página "Meus avisos" com a lista agrupada de cada pessoa. Hoje só o contador existe; a lista ainda não.
+- Teste do worker de atualização com alias real (exige tópico com alias publicado).
+- Limpeza do tipo antigo de mensagem `aculta_msg_forum_published` (configuração e registros antigos).

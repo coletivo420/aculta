@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.34 — avisos por pessoa: atualizações, contador do ícone, controles e resumo diário (F5.2) — 2026-10-16
+
+- Atualização de tópico seguido vira aviso `forum_atualizacao` (worker reescrito), sem mensagem.
+- Contador do ícone de avisos soma os avisos por pessoa não lidos.
+- Bloco "Avisos" na privacidade da conta: resumo diário por e-mail (opt-in) e tipos incluídos.
+- Resumo diário por e-mail pelo cron, agrupado por tópico, só com novidade e e-mail confirmado.
+- Pendente: página "Meus avisos" e teste de entrega real de e-mail.
+
 ## 0.1.1-dev.33 — avisos por pessoa para respostas em tópico seguido (F5.2) — 2026-10-16
 
 - Entidade `aculta_aviso` (uma por pessoa e tópico) com contadores do site e do e-mail e marca do último comentário.

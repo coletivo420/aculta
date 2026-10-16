@@ -8,6 +8,9 @@ services:
   Drupal\aculta_user\Social\FriendshipManagerInterface: '@aculta_user.friendship_manager'
   Drupal\aculta_messenger\Service\UnreadThreadCounter: '@aculta_messenger.unread_thread_counter'
   Drupal\aculta_messenger\Aviso\AvisoService: '@aculta_messenger.aviso_service'
+  Drupal\aculta_messenger\Aviso\AvisoPreferencias: '@aculta_messenger.aviso_preferencias'
+  Drupal\aculta_messenger\Form\AvisosPrivacyForm: '@aculta_messenger.avisos_privacy_form'
+  Drupal\aculta_messenger\Aviso\AvisosResumo: '@aculta_messenger.avisos_resumo'
   aculta_messenger.message_privacy_form:
     class: Drupal\aculta_messenger\Form\MessagePrivacyForm
     arguments:
@@ -71,3 +74,12 @@ services:
     arguments: ['@current_user', '@aculta_messenger.aviso_service']
     tags:
       - { name: event_subscriber }
+  aculta_messenger.aviso_preferencias:
+    class: Drupal\aculta_messenger\Aviso\AvisoPreferencias
+    arguments: ['@user.data']
+  aculta_messenger.avisos_privacy_form:
+    class: Drupal\aculta_messenger\Form\AvisosPrivacyForm
+    arguments: ['@current_user', '@aculta_messenger.aviso_preferencias']
+  aculta_messenger.avisos_resumo:
+    class: Drupal\aculta_messenger\Aviso\AvisosResumo
+    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@plugin.manager.mail', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time']

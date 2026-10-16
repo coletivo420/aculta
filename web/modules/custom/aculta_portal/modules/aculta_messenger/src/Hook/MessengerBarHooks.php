@@ -46,6 +46,8 @@ final class MessengerBarHooks {
     private readonly FriendshipManagerInterface $friendshipManager,
     #[Autowire(service: 'aculta_messenger.counts')]
     private readonly MessengerCounts $counts,
+    #[Autowire(service: 'aculta_messenger.aviso_service')]
+    private readonly \Drupal\aculta_messenger\Aviso\AvisoService $avisos,
   ) {}
 
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
@@ -66,8 +68,9 @@ final class MessengerBarHooks {
       $alertUrl = Url::fromRoute('aculta_messenger.alerts_preview')->toString(TRUE);
       $alertCount = $this->counts->visibleActiveAlertCount($this->currentUser, $alertCacheability);
       $alertCacheability->addCacheTags($this->entityTypeManager->getDefinition('flagging')->getListCacheTags());
+      // Ícone de avisos: alertas + comunicados não lidos + avisos por pessoa não lidos (um por tópico, agrupado).
       $unreadNoticeCount = $this->currentUser->isAuthenticated()
-        ? $alertCount + $this->counts->unreadPersistentNoticeCount($this->currentUser)
+        ? $alertCount + $this->counts->unreadPersistentNoticeCount($this->currentUser) + $this->avisos->naoLidosTotal((int) $this->currentUser->id())
         : $alertCount;
       $variables['aculta_alerts'] = [
         'url' => $alertUrl->getGeneratedUrl(),

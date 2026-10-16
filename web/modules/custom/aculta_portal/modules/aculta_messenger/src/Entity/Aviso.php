@@ -39,6 +39,9 @@ final class Aviso extends ContentEntityBase {
   /** Tipo do aviso de resposta em tópico seguido. */
   public const TIPO_RESPOSTA = 'forum_resposta';
 
+  /** Tipo do aviso de atualização de tópico seguido (revisão editada). */
+  public const TIPO_ATUALIZACAO = 'forum_atualizacao';
+
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
@@ -63,6 +66,9 @@ final class Aviso extends ContentEntityBase {
       ->setDefaultValue(0);
     $fields['ultimo_comentario'] = BaseFieldDefinition::create('integer')
       ->setLabel(new TranslatableMarkup('Último comentário contado'))
+      ->setDefaultValue(0);
+    $fields['ultimo_evento'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Última revisão contada'))
       ->setDefaultValue(0);
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(new TranslatableMarkup('Criado em'));
