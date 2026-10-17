@@ -1,3 +1,13 @@
+## 0.4.0-dev.90 — apelido com maiúsculas; slug não canônico responde 404 — 2026-10-17
+
+Classificação: PATCH (correção de regra de apelido e de um 500 no perfil público).
+
+- Validação do apelido (`AccountNames::isValid`) vale para o slug normalizado (`PublicRouteSlug::normalize`); o apelido guardado preserva maiúsculas.
+- `/u/<apelido com maiúsculas>` responde 404, sem redirecionamento (AGENTS.md: não há redirecionamento de slug). Antes, respondia 500: o roteador casa sem diferenciar maiúsculas, o `metatag` e o normalizador do `redirect` geram a URL com o apelido bruto. `PublicProfileNotCanonicalSubscriber` (prioridade 31) retira a rota e responde 404 antes da renderização.
+- Gate `validate-profile-links`: exceção única e justificada para esse subscriber (não gera link de perfil).
+- Conta só autenticada (sem e-mail confirmado): sem dados básicos na tela de dados; decisão do responsável.
+- RUNTIME STATUS: APLICADO e verificado por HTTP (`/u/PiradoPirata` 404; `/u/piradopirata` 200; perfil de teste-b 200; apelido inexistente 404). Testes unitários do aculta_user passam (37).
+
 ## 0.4.0-dev.88 — participante removido; chamadores por hierarquia — 2026-10-17
 
 Classificação: MINOR (remoção do tipo participante e troca de todos os seus chamadores).

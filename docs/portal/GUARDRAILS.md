@@ -123,6 +123,11 @@ nunca escrever `/u/...` à mão nem guardar a URL sem tags de cache.
 - **Domínio:** o link é absoluto para o host do propósito `main` (ex.: a Revista aponta para o domínio principal),
   porque o perfil só existe nele. Relativo só funciona dentro do próprio host principal; por isso o link é
   gerado pelo serviço de domínio, sem host fixo no código.
+- **Maiúsculas no caminho:** o apelido guardado e exibido preserva a capitalização; só o segmento de URL é minúsculo.
+  Não há redirecionamento de slug (AGENTS.md): `/u/<apelido com maiúsculas>` responde 404. O roteador casa o padrão sem
+  diferenciar maiúsculas; `PublicProfileNotCanonicalSubscriber` (prioridade 31, entre roteador e normalizador) retira a
+  rota da requisição e responde 404 antes da renderização. Sem isso, o `metatag` e o normalizador do `redirect` geram a
+  URL com o apelido bruto e a página falha com 500. Não registra cache de perfil porque não renderiza perfil.
 - **Gate:** `php scripts/validate-profile-links.php` reprova caminho `/u/` literal, geração do perfil sem a regra
   de slug canônico, perda da capitalização na exibição e falta de registro na cache. Aplicar a mesma API do Portal
   em novos formulários e ações que gerem slugs públicos; valide sempre contra o contrato da rota proprietária.
