@@ -1,3 +1,11 @@
+## 0.4.0-dev.71 — autocompletar de CEP não apaga campos digitados — 2026-10-17
+
+Classificação: PATCH (correção de comportamento; sem API nova).
+
+- `js/cep-address.js`: a busca do CEP preenche só os campos vazios. Antes, cidade, estado, rua e bairro digitados pela pessoa eram sobrescritos, e a troca de estado reconstruía o formulário e apagava o restante.
+- Trade-off: se a pessoa já digitou um endereço antigo e troca o CEP, a cidade e a rua antigas permanecem e precisam ser corrigidas à mão.
+- Verificação: `node --check` no arquivo; cache rebuild no Runtime. Não foi refeito o fluxo completo de checkout no navegador nesta versão (pendente).
+
 ## 0.4.0-dev.70 — apresentação dos painéis de vendas e doações (tokens sales-*) — 2026-10-16
 
 Classificação: MINOR da linha aberta. Autorização do responsável para mudanças visuais no tema e nos módulos relacionados.

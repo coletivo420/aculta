@@ -177,7 +177,8 @@
               dependent_locality: data.dependent_locality || '',
             };
             pendingFill.set(prefix, values);
-            applyFill(prefix, container, values);
+            // Só preenche campos vazios: o que a pessoa já digitou (cidade, estado, rua, bairro) não é apagado.
+            applyFill(prefix, container, values, { onlyEmpty: true });
             postal.value = formatCep(requestedCep);
             postal.dataset.acultaCepResolved = requestedCep;
             announce(status, Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
