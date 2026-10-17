@@ -9,7 +9,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Cadeia efetiva e detecção de ciclos da hierarquia de papéis.
+ * Cadeia de papéis: herança transitiva, ciclos, administrador, papel novo, exclusão e herdados.
  */
 #[Group('aculta_portal')]
 final class RoleHierarchyTest extends UnitTestCase {
@@ -21,6 +21,10 @@ final class RoleHierarchyTest extends UnitTestCase {
     'content_editor' => ['lms_teacher'],
     'gerente_loja' => ['content_editor'],
   ];
+
+  private const CADEIA_ATUAL = ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'];
+
+  private const TODOS = ['anonymous', 'authenticated', 'email_confirmed', 'estudante', 'associado', 'lms_teacher', 'content_editor', 'gerente_loja', 'administrator'];
 
   public function testEfetivosSaoTransitivos(): void {
     $this->assertSame(
@@ -49,26 +53,32 @@ final class RoleHierarchyTest extends UnitTestCase {
     $this->assertSame(['b'], RoleHierarchy::efetivos(['a' => ['b'], 'b' => ['a']], 'a'));
   }
 
-  public function testMapaDerivadoDaCadeiaEDosLaterais(): void {
-    $mapa = RoleHierarchy::derivarMapa(
-      ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'],
-      ['wiki_contributor' => 'email_confirmed', 'lms_admin' => 'lms_teacher'],
-      ['anonymous', 'authenticated', 'email_confirmed', 'estudante', 'associado', 'lms_teacher', 'content_editor', 'gerente_loja', 'wiki_contributor', 'lms_admin', 'administrator'],
-    );
+  public function testMapaDerivadoDaCadeia(): void {
+    $mapa = RoleHierarchy::derivarMapa(self::CADEIA_ATUAL, self::TODOS);
     $this->assertSame(['content_editor'], $mapa['gerente_loja']);
     $this->assertSame(['lms_teacher'], $mapa['content_editor']);
     $this->assertSame(['email_confirmed'], $mapa['estudante']);
+    $this->assertSame(['authenticated'], $mapa['email_confirmed']);
     $this->assertArrayNotHasKey('authenticated', $mapa);
-    $this->assertSame(['email_confirmed'], $mapa['wiki_contributor']);
-    $this->assertSame(['lms_teacher'], $mapa['lms_admin']);
-    $this->assertCount(10, $mapa['administrator']);
     $this->assertFalse(RoleHierarchy::temCiclo($mapa));
   }
 
-  public function testMoverNaCadeiaMudaOPai(): void {
-    $mapa = RoleHierarchy::derivarMapa(['content_editor', 'gerente_loja', 'authenticated'], [], ['authenticated', 'content_editor', 'gerente_loja', 'administrator']);
+  public function testAdministradorHerdaDeTodosOsOutrosPapeis(): void {
+    $mapa = RoleHierarchy::derivarMapa(self::CADEIA_ATUAL, self::TODOS);
+    $this->assertContains('anonymous', $mapa['administrator']);
+    $this->assertNotContains('administrator', $mapa['administrator']);
+    $this->assertCount(count(self::TODOS) - 1, $mapa['administrator']);
+  }
+
+  public function testReordenarMudaOPai(): void {
+    $mapa = RoleHierarchy::derivarMapa(['content_editor', 'gerente_loja', 'authenticated'], ['authenticated', 'content_editor', 'gerente_loja', 'administrator']);
     $this->assertSame(['gerente_loja'], $mapa['content_editor']);
     $this->assertSame(['authenticated'], $mapa['gerente_loja']);
+  }
+
+  public function testPapelForaDaCadeiaHerdaDoAutenticado(): void {
+    $mapa = RoleHierarchy::derivarMapa(self::CADEIA_ATUAL, array_merge(self::TODOS, ['papel_novo']));
+    $this->assertSame(['authenticated'], $mapa['papel_novo']);
   }
 
   public function testHerdadosNaoIncluemOsPapeisDados(): void {
@@ -76,19 +86,21 @@ final class RoleHierarchyTest extends UnitTestCase {
     $this->assertSame([], RoleHierarchy::herdados(['authenticated'], self::CADEIA));
   }
 
-  public function testCompletarRemoveOPapelExcluidoEDeixaCategoriaOrfaNoAutenticado(): void {
-    $existentes = ['gerente_loja', 'content_editor', 'lms_teacher', 'authenticated', 'wiki_contributor'];
-    $r = RoleHierarchy::completar(['gerente_loja', 'lms_teacher', 'authenticated'], ['wiki_contributor' => 'lms_teacher'], $existentes);
-    $this->assertSame(['gerente_loja', 'lms_teacher', 'authenticated'], $r['cadeia']);
-    $this->assertSame(['wiki_contributor' => 'lms_teacher', 'content_editor' => 'authenticated'], $r['laterais']);
-    // Categoria excluída (lms_teacher sai da cadeia): o lateral volta ao autenticado.
-    $r = RoleHierarchy::completar(['gerente_loja', 'authenticated'], ['wiki_contributor' => 'lms_teacher'], ['gerente_loja', 'authenticated', 'wiki_contributor']);
-    $this->assertSame(['wiki_contributor' => 'authenticated'], $r['laterais']);
+  public function testCompletarRemoveOPapelExcluido(): void {
+    $existentes = ['gerente_loja', 'content_editor', 'lms_teacher', 'authenticated'];
+    $this->assertSame(['gerente_loja', 'lms_teacher', 'authenticated'], RoleHierarchy::completar(['gerente_loja', 'content_editor', 'lms_teacher', 'authenticated'], array_diff($existentes, ['content_editor'])));
   }
 
-  public function testCompletarMantemPapelNovoComoLateralDoAutenticado(): void {
-    $r = RoleHierarchy::completar(['authenticated'], [], ['authenticated', 'papel_novo']);
-    $this->assertSame(['papel_novo' => 'authenticated'], $r['laterais']);
+  public function testCompletarNaoRepeteNemInventaPapel(): void {
+    $this->assertSame(['authenticated'], RoleHierarchy::completar(['authenticated', 'authenticated', 'fantasma'], ['authenticated']));
+  }
+
+  public function testPapelExcluidoNaoAparecePeloMapa(): void {
+    // Papel excluído sai da cadeia e não tem entrada no mapa; o mapa não fica com referências órfãs.
+    $cadeia = RoleHierarchy::completar(self::CADEIA_ATUAL, array_diff(self::TODOS, ['content_editor']));
+    $mapa = RoleHierarchy::derivarMapa($cadeia, array_diff(self::TODOS, ['content_editor']));
+    $this->assertNotContains('content_editor', $cadeia);
+    $this->assertSame(['lms_teacher'], $mapa['gerente_loja']);
   }
 
 }

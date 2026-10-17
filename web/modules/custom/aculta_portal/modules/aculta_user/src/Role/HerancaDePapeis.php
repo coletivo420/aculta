@@ -13,7 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Herança de papéis do ACULTA: substitui o módulo contrib role_inheritance.
  *
- * O mapa vem de aculta_portal.role_hierarchy (cadeia e laterais), com a função pura RoleHierarchy. Os papéis herdados
+ * O mapa vem de aculta_portal.role_hierarchy (cadeia), com a função pura RoleHierarchy. Os papéis herdados
  * são somados à conta em memória ao carregá-la (user_load) e retirados ao salvá-la (user_presave), para que nunca sejam
  * gravados como papel direto. O usuário logado recebe a mesma extensão (RoleInheritanceCurrentUserSubscriber).
  */
@@ -35,13 +35,13 @@ class HerancaDePapeis {
   public function mapa(): array {
     $configuracao = $this->configFactory->get('aculta_portal.role_hierarchy');
     $todos = array_keys($this->entityTypeManager->getStorage('user_role')->loadMultiple());
-    $existentes = array_values(array_diff($todos, ['anonymous', 'administrator']));
-    $completo = RoleHierarchy::completar((array) ($configuracao->get('cadeia') ?? []), (array) ($configuracao->get('laterais') ?? []), $existentes);
-    return RoleHierarchy::derivarMapa($completo['cadeia'], $completo['laterais'], $todos);
+    $existentes = array_values(array_diff($todos, RoleHierarchy::FORA_DA_CADEIA));
+    $cadeia = RoleHierarchy::completar((array) ($configuracao->get('cadeia') ?? []), $existentes);
+    return RoleHierarchy::derivarMapa($cadeia, $todos);
   }
 
   /**
-   * Papéis herdados (sem os básicos) dos papéis informados.
+   * Herdados (sem os básicos) dos papéis informados.
    *
    * @param string[] $papeis
    *
@@ -68,17 +68,14 @@ class HerancaDePapeis {
   }
 
   /**
-   * Remove o papel excluído da configuração da cadeia (equivale à limpeza do mapa no hook de exclusão do contrib).
+   * Remove o papel excluído da cadeia salva (equivale à limpeza do mapa no hook de exclusão do contrib).
    */
   public function removerPapel(string $papel): void {
     $configuracao = $this->configFactory->getEditable('aculta_portal.role_hierarchy');
     $todos = array_keys($this->entityTypeManager->getStorage('user_role')->loadMultiple());
-    $existentes = array_values(array_diff($todos, ['anonymous', 'administrator', $papel]));
+    $existentes = array_values(array_diff($todos, RoleHierarchy::FORA_DA_CADEIA, [$papel]));
     $cadeia = array_values(array_diff((array) $configuracao->get('cadeia'), [$papel]));
-    $laterais = (array) $configuracao->get('laterais');
-    unset($laterais[$papel]);
-    $completo = RoleHierarchy::completar($cadeia, $laterais, $existentes);
-    $configuracao->set('cadeia', $completo['cadeia'])->set('laterais', $completo['laterais'])->save();
+    $configuracao->set('cadeia', RoleHierarchy::completar($cadeia, $existentes))->save();
   }
 
   /**

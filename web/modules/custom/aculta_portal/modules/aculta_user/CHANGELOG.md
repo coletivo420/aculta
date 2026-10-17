@@ -1,5 +1,10 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.24 — sem papéis laterais
+
+- `HerancaDePapeis` deriva o mapa só da cadeia; a limpeza ao excluir papel mexe só na cadeia.
+- Testes: `HerancaDePapeisTest` (4) e `RoleInheritanceHooksTest` (2) atualizados.
+
 ## 0.4.0-dev.23 — limpeza ao excluir papel; documentação e testes da hierarquia — 2026-10-17
 
 - Limpeza ao excluir papel (equivale ao hook do contrib): `RoleInheritanceHooks::userRoleDelete` → `HerancaDePapeis::removerPapel`, que recalcula a configuração com `RoleHierarchy::completar`. Laterais cuja categoria foi excluída voltam ao autenticado.

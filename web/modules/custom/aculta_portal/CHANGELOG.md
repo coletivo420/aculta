@@ -1,3 +1,10 @@
+## 0.4.0-dev.98 — papéis laterais removidos; cadeia única — 2026-10-17
+
+- Não há mais papel lateral nem categoria: a cadeia é a única classificação. Papel fora da cadeia herda do autenticado (regra implícita em `RoleHierarchy::derivarMapa`).
+- Tela sem a coluna "Entram nesta categoria"; a configuração `laterais` e seu schema foram removidos.
+- Funções simplificadas: `derivarMapa(cadeia, todos)`, `completar(cadeia, existentes)`; `herdados` e `efetivos` inalterados.
+- Testes: `RoleHierarchyTest` (14); `HerancaDePapeisTest` (4, no aculta_user).
+- RUNTIME STATUS: APLICADO e verificado por HTTP: coluna removida, coluna de herança efetiva presente, salvar com a ordem atual responde 303 e mantém a cadeia.
 ## 0.4.0-dev.98 — PV6: Wiki e Fórum no viewer compartilhado — 2026-10-17
 
 Classificação: MINOR (CKEditor Media Embed compartilhado em Wiki e Fórum).

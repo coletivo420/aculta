@@ -89,8 +89,3 @@ aculta_portal.role_hierarchy:
       label: 'Papéis da cadeia, do mais alto ao mais baixo'
       sequence:
         type: string
-    laterais:
-      type: sequence
-      label: 'Papéis sem categoria e seu pai'
-      sequence:
-        type: string
