@@ -611,7 +611,7 @@ herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha a
 - Para acesso novo, conceda **permissão** ao papel certo e verifique com `hasPermission()`. Não use `hasRole('nome')` nem
   `in_array('nome', getRoles())` para liberar funcionalidade: isso ignora a hierarquia de quem não está logado e cria
   exceção difícil de auditar. Checagens existentes por nome são dívida registrada no gate.
-- Para mudar a cadeia de papéis, use `/painel-administrativo/pessoas/papeis` (página Papéis e perfis do ACULTA;
+- Para mudar a cadeia de papéis, use `/painel-administrativo/pessoas/roles` (página Papéis e perfis do ACULTA;
   permissão `administer aculta role hierarchy`). Não edite `role_inheritance.settings` à mão no Runtime. Depois de mudar a
   cadeia, exporte a configuração e atualize a decisão em `docs/portal/PAPEIS-PARTICIPACAO.md` no mesmo commit.
 - Ao mudar a cadeia, avalie o efeito: papel acima herda todas as permissões de baixo (ex.: `gerente_loja` herda o que é
@@ -698,13 +698,6 @@ herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha a
 - Não usar outros pacotes de ícones nem SVG solto (inline ou arquivo) para ícone de interface.
 - **Exceção:** logos de marcas de terceiros (ex.: Mercado Pago), em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
 - Gate: `php scripts/validate-module-theme-boundary.php`, seção 12 (sem `<svg` inline e sem SVG fora de `assets/brands/`).
-
-## Slugs da administração (decisão do responsável, 2026-10-17)
-
-- Nas raízes `/painel-administrativo/configuracoes/pessoas` e `/painel-administrativo/pessoas`, os segmentos são em português
-  (ex.: `campos-de-perfil`, `papeis`, `permissoes`, `gerenciar`). A tradução está em `AdministrativeRouteSubscriber::SEGMENTOS`.
-- Esta decisão amplia a exceção de administração desta seção (que previa `/admin` sem tradução); novas raízes do painel
-  seguem a mesma regra quando o responsável pedir.
 
 ## Política de commits para agentes de IA (regra permanente)
 
