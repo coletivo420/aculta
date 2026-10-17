@@ -123,6 +123,13 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
    * @return array
    *   A render array.
    */
+  /**
+   * Valores padrão: os mesmos da página de apoio (R$ 5, 10, 20, 50 e 100). Sem isso o bloco novo não tem botões.
+   */
+  public function defaultConfiguration() {
+    return ['levels' => [0 => 5, 1 => 10, 2 => 20, 3 => 50, 4 => 100]] + parent::defaultConfiguration();
+  }
+
   public function build() {
     $levels = $this->configuration['levels'];
     $links = [];

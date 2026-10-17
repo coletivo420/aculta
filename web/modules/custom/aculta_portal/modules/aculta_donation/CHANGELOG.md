@@ -1,5 +1,15 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.6 — blocos posicionados — 2026-10-17
+
+- "Doar" (pequeno) na página inicial do domínio principal, na região de conteúdo, antes da seção de apoio.
+- "Valores de doação rápida" (grande) no topo da página inicial do domínio de apoio (região de destaque). Valores padrão
+  R$ 5, 10, 20, 50 e 100, os mesmos da página de apoio.
+- Os links de valor no apoio apontam para `/apoiar/{valor}/agora`; a visita no apoio é redirecionada ao domínio principal
+  (política de transação).
+- RUNTIME STATUS: APLICADO no Runtime de testes (HTML verificado nos dois hosts; capturas do headless não mostram seções
+  animadas pelo tema).
+
 ## 0.1.0-dev.5 — tipos de pedido próprios e convite para criar conta — 2026-10-17
 
 - O fluxo de doação não estava sendo usado: o tipo de pedido `default` (da loja) não tinha fluxo associado e o pedido de
