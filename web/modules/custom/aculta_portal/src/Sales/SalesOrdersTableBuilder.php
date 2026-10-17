@@ -142,7 +142,8 @@ class SalesOrdersTableBuilder {
     if ($pagamento->getState()->getId() === 'authorization') {
       $links[] = $this->link($this->t('Cancelar'), Url::fromRoute('aculta_portal.relatorio_vendas_pagamento_cancelar', ['commerce_payment' => $pagamento->id()]), 'sales-action-danger');
     }
-    if (in_array($pagamento->getState()->getId(), MercadoPagoPaymentPolicy::ESTORNAVEIS, TRUE)) {
+    // Doações não podem ser estornadas (decisão do responsável): o link só aparece para pedido sem item de doação.
+    if (in_array($pagamento->getState()->getId(), MercadoPagoPaymentPolicy::ESTORNAVEIS, TRUE) && !$this->pedidoTemDoacao($pedido)) {
       $links[] = $this->link($this->t('Estornar'), Url::fromRoute('entity.commerce_payment.operation_form', [
         'commerce_order' => $pedido->id(),
         'commerce_payment' => $pagamento->id(),
@@ -150,6 +151,16 @@ class SalesOrdersTableBuilder {
       ]), 'sales-action-danger');
     }
     return $links;
+  }
+
+  /** Indica se o pedido tem item de doação (o Portal não depende do submódulo aculta_donation). */
+  private function pedidoTemDoacao(OrderInterface $pedido): bool {
+    foreach ($pedido->getItems() as $item) {
+      if ($item->bundle() === SalesReportQuery::TIPO_DOACAO) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**

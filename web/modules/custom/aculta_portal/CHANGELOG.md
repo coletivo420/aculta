@@ -1,3 +1,8 @@
+## 0.4.0-dev.110 — estorno bloqueado para doações — 2026-10-17
+
+- Tabela de vendas não mostra "Estornar" para pedido com item de doação (doações e assinaturas não têm estorno). Loja inalterada.
+- RUNTIME STATUS: APLICADO e verificado por API no Runtime de testes (checagem de rota negou o estorno de pedido de doação).
+
 ## 0.4.0-dev.109 — port do commerce_donation_flow para o aculta_donation — 2026-10-17
 
 - O fluxo de doação passa a ser do submódulo `aculta_donation` (port). Rotas `aculta_donation.*`; referências do Portal
