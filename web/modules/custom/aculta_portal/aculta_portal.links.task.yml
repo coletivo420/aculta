@@ -1,0 +1,5 @@
+aculta_portal.campos_de_perfil:
+  title: 'Campos de Perfil'
+  route_name: entity.profile_type.collection
+  base_route: entity.user.collection
+  weight: 20

@@ -1,3 +1,8 @@
+## 0.4.0-dev.101 — Campos de Perfil como aba de Pessoas — 2026-10-17
+
+- Tipos de perfil (Core) viram a aba "Campos de Perfil" da seção Pessoas (`aculta_portal.links.task.yml`, base `entity.user.collection`).
+- Título da página de tipos de perfil passa a ser "Campos de Perfil".
+- RUNTIME STATUS: APLICADO e verificado por HTTP (aba presente em Pessoas; título na página de tipos).
 ## 0.4.0-dev.101 — MIME de módulos PDF.js e homologação PV7 — 2026-10-17
 
 - `web/.htaccess` declara `.mjs` como `application/javascript`, necessário para o PDF.js e seu worker módulo; Apache do Runtime retorna esse MIME nos dois assets. A produção ainda retorna `text/plain` no worker antes do deploy desta mudança.

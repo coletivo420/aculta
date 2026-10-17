@@ -48,6 +48,12 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
       $requisitos['_permission'] = 'administer permissions,administer aculta role hierarchy';
       $lista->setRequirements($requisitos);
     }
+    // Tipos de perfil (Core) aparecem em Pessoas como a aba "Campos de Perfil".
+    if ($tipos = $collection->get('entity.profile_type.collection')) {
+      $padroes = $tipos->getDefaults();
+      $padroes['_title'] = 'Campos de Perfil';
+      $tipos->setDefaults($padroes);
+    }
     foreach ($collection->all() as $route) {
       // Só rotas sem decisão explícita: `FALSE` definido por um módulo (ex.: biblioteca de componentes do ui_patterns) é respeitado.
       if (str_starts_with($route->getPath(), self::PREFIXO) && $route->getOption('_admin_route') === NULL) {
