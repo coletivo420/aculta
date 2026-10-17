@@ -1,4 +1,4 @@
-uuid: 7d55a0d2-ac69-4a45-85b6-4a72cef37dfc
+uuid: 3a2ec075-fae9-404c-9d6f-f242ed434b9b
 langcode: pt-br
 status: true
 dependencies:
@@ -19,6 +19,11 @@ settings:
   label: 'Valores de doação rápida (apoio)'
   label_display: ''
   provider: aculta_donation
+  levels:
+    - 5
+    - 10
+    - 20
+    - 50
 visibility:
   request_path:
     id: request_path

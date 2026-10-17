@@ -1,5 +1,12 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.7 — valores do bloco de apoio — 2026-10-17
+
+- O bloco de valores rápidos mostra R$ 5, 10, 20 e 50, e "Outros valores" leva ao passo de doação, onde o visitante
+  digita o valor (campo "Outro valor" do widget). Sem valores salvos, o bloco usa esses mesmos valores.
+- A configuração padrão do bloco saiu: a mesclagem com a configuração salva duplicava os valores.
+- RUNTIME STATUS: APLICADO no Runtime de testes (página de apoio verificada por HTTP; campo de digitação verificado).
+
 ## 0.1.0-dev.6 — blocos posicionados — 2026-10-17
 
 - "Doar" (pequeno) na página inicial do domínio principal, na região de conteúdo, antes da seção de apoio.
