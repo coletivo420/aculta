@@ -87,6 +87,13 @@ gera links para a rota nativa LMS (com slugs portugueses do Portal); não cria
 progresso, matrícula ou status. RUNTIME STATUS: DEFERRED até smoke test de
 membro, não membro e visitante; a fase não está homologada.
 
+**F7 — Inventário técnico iniciado.** `lms_classes` 1.2.4 está no checkout, mas
+desabilitado. A revisão local identificou matrícula direta liberada a
+`authenticated`, incompatibilidade do hook de papel `estudante` com memberships
+de `lms_class` e grants ausentes para os mapeamentos padrão de educador. O módulo
+permanece desabilitado até definir política de entrada e fechar a matriz de
+permissões; detalhes em [LMS-GROUP.md](LMS-GROUP.md). Nenhuma mudança de Runtime.
+
 ## Ordem, PR e status
 
 Cada fase é uma unidade pequena, commitada e descrita em PR própria conforme a regra do repositório. Este roadmap não autoriza execução de código, instalação de dependências, importação de curso, atualização persistente, merge ou deploy; cada fase futura precisa de decisão e PR própria.
