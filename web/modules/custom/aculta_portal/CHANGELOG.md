@@ -1,3 +1,11 @@
+## 0.4.0-dev.74 — apoio somente no subdomínio — 2026-10-17
+
+Classificação: PATCH (roteamento de domínio).
+
+- O formulário de apoio é servido só na raiz do subdomínio de apoio. `/apoio` responde 404 em qualquer host (antes havia redirecionamento 301 para a raiz).
+- Escolha de valor no subdomínio de apoio; finalização (pedido e checkout) no domínio principal, como na loja.
+- Verificação: `apoio.../apoio` → 404; `apoio.../` → 200 com os valores sugeridos; `aculta.../apoio` → 404.
+
 ## 0.4.0-dev.73 — formulário de apoio com valores sugeridos e fluxo de doação liberado — 2026-10-17
 
 Classificação: MINOR (novo bloco de valores sugeridos no formulário de apoio).
