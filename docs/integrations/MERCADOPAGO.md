@@ -103,7 +103,9 @@ Para simular o resultado, use o status no nome do titular. Documento de teste (C
 | Senha | **não versionada e não recuperável pela API**: a senha só vem na resposta da criação. Guardar na variável `MERCADOPAGO_TEST_BUYER_PASSWORD` (painel "Credenciais do ambiente", Ambiente de Testes). Se não houver registro, criar outro comprador |
 | Uso | Autorizar a assinatura de teste `4e7c1e310e84410985a281431511bdd3` pelo `init_point`, para testar `subscription_authorized_payment` |
 
-Este endpoint não aparece na documentação oficial de contas de teste do Mercado Pago (que descreve a criação pelo painel).
+Este endpoint não aparece na documentação oficial de contas de teste do Mercado Pago
+
+Credenciais do comprador de teste da aplicação (login e senha) estão no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). Esse arquivo não é lido por código nem versionado. A variável padrão `MERCADOPAGO_TEST_BUYER_PASSWORD` ainda não está no carregador de segredos do ambiente (`secrets/aculta.secrets.env` pertence ao usuário `aculta`). (que descreve a criação pelo painel).
 
 Como usar: entrar no Mercado Pago Developers com o usuário e a senha da conta de teste, em janela anônima do
 navegador, para evitar erros de duplicidade de credenciais.
