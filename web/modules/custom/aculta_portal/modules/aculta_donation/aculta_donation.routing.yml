@@ -5,6 +5,8 @@ aculta_donation.donation.default:
     _title: 'Donate'
   requirements:
     _custom_access: '\Drupal\aculta_donation\Controller\DonationController::checkAccess'
+  options:
+    no_cache: true
 
 aculta_donation.donation_controller_formPage:
   path: '/donate/{commerce_order}/{step}'
@@ -14,6 +16,7 @@ aculta_donation.donation_controller_formPage:
   requirements:
     _custom_access: '\Drupal\aculta_donation\Controller\DonationController::checkAccess'
   options:
+    no_cache: true
     parameters:
       commerce_order:
         type: entity:commerce_order
@@ -26,6 +29,8 @@ aculta_donation.donation.quick:
   requirements:
     _permission: 'make donation'
     amount: \d+
+  options:
+    no_cache: true
 
 aculta_donation.donation_settings:
   path: '/painel-administrativo/configuracoes/aculta/doacoes/fluxo'

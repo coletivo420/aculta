@@ -1,5 +1,13 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.15 — checkout da doação no domínio principal — 2026-10-17
+
+- As etapas de checkout da doação são geradas no MAIN (`routeUrl('main', …)`, redirecionamento confiável); a escolha do
+  valor fica no SUPPORT.
+- Rotas de entrada e de etapas marcadas como `no_cache` (cada visita tem o próprio pedido e a própria sessão).
+- Tipo de pedido e item de cursos (`curso`) criados, para o separador de cursos do carrinho único.
+- RUNTIME STATUS: APLICADO no Runtime de testes.
+
 ## 0.1.0-dev.14 — fluxo de doação no domínio de apoio — 2026-10-17
 
 - O botão "Doar" da página inicial e os valores do bloco apontam ao domínio de apoio (`routeUrl('support', …)`).

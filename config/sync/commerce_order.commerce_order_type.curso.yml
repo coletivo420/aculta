@@ -1,0 +1,17 @@
+uuid: abf66e6c-bca3-4dcb-b89e-043bbf4ba853
+langcode: pt-br
+status: true
+dependencies: {  }
+id: curso
+label: Curso
+traits: {  }
+locked: false
+workflow: order_default
+showOrderEditLinks: false
+numberPattern: order_default
+refresh_mode: customer
+refresh_frequency: 300
+sendReceipt: true
+receiptBcc: ''
+receiptSubject: ''
+
