@@ -1,4 +1,5 @@
-{# Carrinho: botão com contagem e gaveta lateral (offcanvas do Bootstrap). Dados vêm do Portal. #}
+{# Carrinho: botão com contagem e gaveta lateral (offcanvas do Bootstrap). Um carrinho, com um separador por tipo de pedido
+   (loja, cursos, apoio) e um botão de checkout em cada separador. Dados vêm do Portal. #}
 {# O badge fica sempre no DOM; com zero itens o CSS o esconde. O módulo atualiza data-aculta-cart-count após "Adicionar ao carrinho". #}
 <button type="button" class="btn btn-link p-0 aculta-cart-utility aculta-utility-trigger" data-bs-toggle="offcanvas" data-bs-target="#aculta-cart-offcanvas" aria-controls="aculta-cart-offcanvas" aria-label="Abrir carrinho ({{ count }} itens)" data-aculta-cart-trigger>
   <i class="bi bi-cart3" aria-hidden="true"></i>
@@ -14,17 +15,40 @@
     {% if empty %}
       <p class="aculta-cart-offcanvas__empty">Sem produto(s) no carrinho.</p>
     {% else %}
-      <ul class="aculta-cart-offcanvas__items">
-        {% for item in items %}
-          <li class="aculta-cart-offcanvas__item">
-            <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
-            <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+      <ul class="nav nav-tabs aculta-cart-offcanvas__tabs" role="tablist">
+        {% for site in sites %}
+          <li class="nav-item" role="presentation">
+            <button class="nav-link{{ loop.first ? ' active' : '' }}" id="aculta-cart-tab-{{ site.key }}" data-bs-toggle="tab" data-bs-target="#aculta-cart-pane-{{ site.key }}" type="button" role="tab" aria-controls="aculta-cart-pane-{{ site.key }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">
+              {{ site.label }} <span class="aculta-cart-offcanvas__tab-count">({{ site.count }})</span>
+            </button>
           </li>
         {% endfor %}
       </ul>
-      <p class="aculta-cart-offcanvas__total"><strong>Total:</strong> {{ total }}</p>
+      <div class="tab-content aculta-cart-offcanvas__panes">
+        {% for site in sites %}
+          <div class="tab-pane fade{{ loop.first ? ' show active' : '' }}" id="aculta-cart-pane-{{ site.key }}" role="tabpanel" aria-labelledby="aculta-cart-tab-{{ site.key }}" tabindex="0">
+            {% if site.empty %}
+              <p class="aculta-cart-offcanvas__empty">Sem itens em {{ site.label|lower }}.</p>
+            {% else %}
+              <ul class="aculta-cart-offcanvas__items">
+                {% for item in site.items %}
+                  <li class="aculta-cart-offcanvas__item">
+                    <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+                    <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+              <p class="aculta-cart-offcanvas__total"><strong>Total ({{ site.label }}):</strong> {{ site.total }}</p>
+              {% if site.checkout_url %}
+                <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ site.checkout_url }}">Finalizar {{ site.label|lower }}</a>
+              {% endif %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <p class="aculta-cart-offcanvas__total"><strong>Total geral:</strong> {{ total }}</p>
       {% if url %}
-        <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ url }}">Ver carrinho</a>
+        <a class="btn btn-link p-0 aculta-cart-offcanvas__cart-link" href="{{ url }}">Ver carrinho completo</a>
       {% endif %}
     {% endif %}
   </div>
