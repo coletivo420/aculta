@@ -2,6 +2,7 @@
 
 Classificação: PATCH da linha aberta (ajuste visual, sem contrato novo).
 
+- Cartões de produto com borda de 2 px (`border-2`).
 - Carrinho lateral: rodapé "Compre na loja…" com superfície neutra e borda de destaque (tokens claro e escuro), distinto dos
   botões. O corpo rola dentro do painel, como as gavetas de mensagens e avisos; o rodapé fica fixo embaixo.
 - Cartões de produto da página inicial da loja com borda neutra (classe `border`), sem cor de botão.

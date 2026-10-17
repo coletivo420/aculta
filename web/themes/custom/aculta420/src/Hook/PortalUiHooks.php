@@ -42,7 +42,7 @@ final class PortalUiHooks {
     // Loja: vitrine da página inicial (produtos publicados).
     'shop-products' => ['d-grid', 'gap-3', 'mt-4'],
     // Cartão do produto: caixa com borda neutra (sem cor de botão), texto alinhado à esquerda.
-    'shop-product-card' => ['d-block', 'border', 'rounded-3', 'text-start', 'p-3', 'text-decoration-none'],
+    'shop-product-card' => ['d-block', 'border', 'border-2', 'rounded-3', 'text-start', 'p-3', 'text-decoration-none'],
     // Relatórios de requisitos e segredos (administração do Portal).
     'requirements' => ['aculta-portal-requirements'],
     'requirements-legend' => ['aculta-portal-requirements__legend'],

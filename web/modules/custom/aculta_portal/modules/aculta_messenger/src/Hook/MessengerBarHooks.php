@@ -56,9 +56,13 @@ final class MessengerBarHooks {
   /** Adds a same-origin popup endpoint only for accounts allowed to message. */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
-    // Site Alerts are public: visitors see the active-alert count, and members also see
-    // their unread persistent notices. Only the private messenger is member-only.
-    if (isset($variables['page']) && is_array($variables['page'])) {
+    // Avisos são só para contas: visitante não vê o ícone nem a contagem (decisão do responsável, 2026-10-17).
+    // A mensagem privada também é só para contas.
+    if (isset($variables['page']) && is_array($variables['page']) && !$this->currentUser->isAuthenticated()) {
+      $variables['aculta_alerts'] = [];
+      $this->renderer->addCacheableDependency($variables['page'], (new CacheableMetadata())->addCacheContexts(['user.roles:authenticated']));
+    }
+    elseif (isset($variables['page']) && is_array($variables['page'])) {
       $alertStorage = $this->entityTypeManager->getStorage('site_alert');
       $alertCacheability = (new CacheableMetadata())
         ->addCacheContexts(['active_site_alerts'])
