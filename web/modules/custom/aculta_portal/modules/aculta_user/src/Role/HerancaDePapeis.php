@@ -47,8 +47,12 @@ class HerancaDePapeis {
    *
    * @return string[]
    */
-  public function herdados(array $papeis): array {
-    return array_values(array_diff(RoleHierarchy::herdados($papeis, $this->mapa()), self::PAPEIS_BASICOS));
+  public function herdados(array $papeis, bool $emailConfirmado = TRUE): array {
+    $herdados = array_values(array_diff(RoleHierarchy::herdados($papeis, $this->mapa()), self::PAPEIS_BASICOS));
+    if (!$emailConfirmado && !in_array('email_confirmed', $papeis, TRUE)) {
+      $herdados = array_values(array_diff($herdados, ['email_confirmed']));
+    }
+    return $herdados;
   }
 
   /**
@@ -83,9 +87,9 @@ class HerancaDePapeis {
    *
    * @return string[]
    */
-  public function herdadosNaoGravados(int $uid): array {
+  public function herdadosNaoGravados(int $uid, bool $emailConfirmado = TRUE): array {
     $diretos = $this->papeisDiretos($uid);
-    return array_values(array_diff($this->herdados($diretos), $diretos));
+    return array_values(array_diff($this->herdados($diretos, $emailConfirmado), $diretos));
   }
 
   /**
@@ -93,8 +97,8 @@ class HerancaDePapeis {
    *
    * @return string[]
    */
-  public function papeisEstendidos(AccountInterface $conta): array {
-    return array_values(array_unique(array_merge($conta->getRoles(), $this->herdados($conta->getRoles()))));
+  public function papeisEstendidos(AccountInterface $conta, bool $emailConfirmado = TRUE): array {
+    return array_values(array_unique(array_merge($conta->getRoles(), $this->herdados($conta->getRoles(), $emailConfirmado))));
   }
 
 }

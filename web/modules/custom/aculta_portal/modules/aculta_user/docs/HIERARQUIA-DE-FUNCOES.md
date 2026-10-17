@@ -5,7 +5,7 @@ Decisões do responsável: `PAPEIS-PARTICIPACAO.md` (seções 7 e 8). Este docum
 
 ## 1. O que a hierarquia faz
 
-Um papel herda as permissões de todos os papéis abaixo dele na cadeia. A herança é transitiva.
+Um papel herda as permissões de todos os papéis abaixo dele na cadeia. A herança é transitiva, com uma condição de segurança para o papel `email_confirmed`: a herança automática desse papel só ocorre quando `EmailConfirmationPolicy` registra a confirmação real da conta. Um papel `email_confirmed` atribuído diretamente pelo administrador continua explícito.
 Exemplo: `gerente_loja` herda de `content_editor`, que herda de `lms_teacher`, e assim por diante até `authenticated`.
 Quem tem `gerente_loja` recebe, sem gravação extra, as permissões de todos os papéis abaixo.
 
@@ -21,6 +21,7 @@ Quem tem `gerente_loja` recebe, sem gravação extra, as permissões de todos os
 Cadeia vigente (2026-10-17):
 `gerente_loja > content_editor > lms_teacher > associado > estudante > email_confirmed > authenticated`
 Os papéis `wiki_contributor` e `lms_admin` foram mesclados em `email_confirmed` e `lms_teacher` (ver PAPEIS-PARTICIPACAO.md).
+Matrícula pode conceder `estudante` antes da confirmação de e-mail; essa concessão não concede as permissões de `email_confirmed`. O marcador de `EmailConfirmationPolicy` é a fonte de verdade dessa condição.
 
 ## 3. Como se edita
 

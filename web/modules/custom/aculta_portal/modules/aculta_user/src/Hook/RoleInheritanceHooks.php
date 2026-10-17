@@ -4,19 +4,25 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_user\Role\HerancaDePapeis;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Herança de papéis: estende a conta ao carregar, retira os papéis herdados ao salvar e não os mostra como marcados.
  */
 final class RoleInheritanceHooks {
 
-  public function __construct(#[Autowire(service: 'aculta_user.heranca_papeis')] private readonly HerancaDePapeis $heranca) {}
+  public function __construct(
+    #[Autowire(service: 'aculta_user.heranca_papeis')]
+    private readonly HerancaDePapeis $heranca,
+    #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
+    private readonly ?EmailConfirmationPolicy $emailConfirmationPolicy = NULL,
+  ) {}
 
   #[Hook('user_load')]
   public function userLoad(array $users): void {
@@ -24,7 +30,8 @@ final class RoleInheritanceHooks {
       if (!$user instanceof UserInterface) {
         continue;
       }
-      foreach ($this->heranca->herdados($user->getRoles()) as $papel) {
+      $emailConfirmado = $this->emailConfirmationPolicy?->isConfirmed($user) ?? TRUE;
+      foreach ($this->heranca->herdados($user->getRoles(), $emailConfirmado) as $papel) {
         if (!$user->hasRole($papel)) {
           $user->addRole($papel);
         }
@@ -34,7 +41,8 @@ final class RoleInheritanceHooks {
 
   #[Hook('user_presave')]
   public function userPresave(UserInterface $user): void {
-    foreach ($this->heranca->herdadosNaoGravados((int) $user->id()) as $papel) {
+    $emailConfirmado = $this->emailConfirmationPolicy?->isConfirmed($user) ?? TRUE;
+    foreach ($this->heranca->herdadosNaoGravados((int) $user->id(), $emailConfirmado) as $papel) {
       if ($user->hasRole($papel)) {
         $user->removeRole($papel);
       }
@@ -49,7 +57,10 @@ final class RoleInheritanceHooks {
     }
     $form['account']['roles']['#default_value'] = array_values(array_diff(
       $form['account']['roles']['#default_value'],
-      $this->heranca->herdadosNaoGravados((int) $conta->id()),
+      $this->heranca->herdadosNaoGravados(
+        (int) $conta->id(),
+        $this->emailConfirmationPolicy?->isConfirmed($conta) ?? TRUE,
+      ),
     ));
   }
 

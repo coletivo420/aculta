@@ -19,7 +19,7 @@ Os números seguem a ordem do Drupal no projeto: **quanto menor o número, maior
 | 1 | `content_editor` | Editor de conteúdo | Administrativa, só com `email_confirmed`; moderador do Fórum, revisor e moderador da Wiki |
 | 0 | `administrator` | Administrador | Administrativa; bypass total |
 
-Um usuário pode ter mais de um papel. Se `estudante` e `associado` exigem ou não `email_confirmed`, é pendência (seção 9).
+Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula mesmo antes de confirmar o e-mail, mas só herda as permissões de `email_confirmed` depois que `EmailConfirmationPolicy` registra a confirmação real.
 
 ## 2. Papel `content_editor`
 
@@ -103,8 +103,8 @@ Pendências:
 3. ~~Permissão de visibilidade do nível `estudante`~~: criada e aplicada no Runtime de testes (realm `aculta_estudante`).
 4. ~~Migração do marcador de associado para papel~~: papel `associado` criado (`config/sync/user.role.associado.yml`) e concedendo o realm de associados. O Runtime não tinha marcas (`aculta_associado` vazia), então não há contas a migrar. O marcador segue como fallback até decisão de remoção.
 5. ~~Permissões de Wiki do `content_editor`~~: a configuração atual já concede revisão e moderação da Wiki (transições de `wiki_editorial`); nada a alterar.
-6. ~~Se `estudante` e `associado` exigem `email_confirmed`~~: encerrado (2026-10-17). E-mail confirmado é papel, e a herança de papéis (item 7) faz `estudante` e `associado` herdarem `email_confirmed`.
-7. **Fase 2 (herança de papéis, 2026-10-17), atualizada (2026-10-17):** cadeia unilateral e transitiva, de baixo para cima: `authenticated` < `email_confirmed` < `estudante` < `associado` < `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. Aplicada no Runtime e exportada em `config/sync/role_inheritance.settings.yml`. `administrator` herda de todos os papéis de negócio. `wiki_contributor` e `lms_admin` herdam de `authenticated`. Papel de cima recebe as permissões de tudo abaixo dele. Edição pelo painel: ACULTA > Configurações > Papéis e perfis (`/painel-administrativo/configuracoes/aculta/papeis`), permissão `administer aculta role hierarchy`. Na mesma tela, cada tipo de perfil (`participante`, `customer`) declara os papéis que o usam (`aculta_portal.profile_roles`); o vínculo não move nem altera dados de perfil, e `customer` segue no checkout. Gate: `php scripts/validate-role-hierarchy.php`.
+6. ~~Se `estudante` e `associado` exigem `email_confirmed`~~: matrícula não exige confirmação, decisão F7. Como `estudante` recebe permissões de fórum e a cadeia inclui `email_confirmed`, a herança condicional consulta `EmailConfirmationPolicy`; matrícula não marca nem herda confirmação de e-mail.
+7. **Fase 2 (herança de papéis, 2026-10-17), atualizada:** cadeia unilateral e transitiva, de baixo para cima: `authenticated` < `email_confirmed` < `estudante` < `associado` < `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. `administrator` herda de todos os papéis de negócio. A herança do papel `email_confirmed` depende do marcador confirmado em `EmailConfirmationPolicy`; os demais papéis mantêm a cadeia. `wiki_contributor` e `lms_admin` herdam de `authenticated`. Edição pelo painel: ACULTA > Configurações > Papéis e perfis (`/painel-administrativo/configuracoes/aculta/papeis`), permissão `administer aculta role hierarchy`. Na mesma tela, cada tipo de perfil (`participante`, `customer`) declara os papéis que o usam (`aculta_portal.profile_roles`); o vínculo não move nem altera dados de perfil, e `customer` segue no checkout. Gate: `php scripts/validate-role-hierarchy.php`.
 
 ## 10. Implementação (hooks e classes)
 

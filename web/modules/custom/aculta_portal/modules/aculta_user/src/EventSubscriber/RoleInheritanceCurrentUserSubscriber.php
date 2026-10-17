@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\EventSubscriber;
 
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_user\Role\HerancaDePapeis;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Session\UserSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -21,6 +23,8 @@ final class RoleInheritanceCurrentUserSubscriber implements EventSubscriberInter
   public function __construct(
     private readonly HerancaDePapeis $heranca,
     private readonly AccountProxyInterface $usuario,
+    #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
+    private readonly ?EmailConfirmationPolicy $emailConfirmationPolicy = NULL,
   ) {}
 
   public static function getSubscribedEvents(): array {
@@ -39,7 +43,10 @@ final class RoleInheritanceCurrentUserSubscriber implements EventSubscriberInter
       'uid' => $conta->id(),
       'mail' => $conta->getEmail(),
       'name' => $conta->getAccountName(),
-      'roles' => $this->heranca->papeisEstendidos($conta),
+      'roles' => $this->heranca->papeisEstendidos(
+        $conta,
+        $this->emailConfirmationPolicy?->isConfirmed($conta) ?? TRUE,
+      ),
       'access' => $conta->getLastAccessedTime(),
       'timezone' => $conta->getTimeZone(),
       'preferred_langcode' => $conta->getPreferredLangcode(),

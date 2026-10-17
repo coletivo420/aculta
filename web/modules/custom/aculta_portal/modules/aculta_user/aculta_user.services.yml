@@ -66,6 +66,6 @@ services:
     arguments: ['@config.factory', '@entity_type.manager', '@database']
   aculta_user.role_inheritance_current_user:
     class: Drupal\aculta_user\EventSubscriber\RoleInheritanceCurrentUserSubscriber
-    arguments: ['@aculta_user.heranca_papeis', '@current_user']
+    arguments: ['@aculta_user.heranca_papeis', '@current_user', '@aculta_portal.email_confirmation_policy']
     tags:
       - { name: event_subscriber }

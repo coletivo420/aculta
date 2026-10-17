@@ -1,5 +1,11 @@
 # Changelog — aculta_user
 
+## Não lançado — manter e-mail não confirmado na matrícula LMS
+
+- A herança automática de `email_confirmed` agora depende do marcador real de `EmailConfirmationPolicy`, inclusive no carregamento da conta, no usuário da sessão e ao remover papéis herdados antes de salvar.
+- Conceder `estudante` pela matrícula de turma não confirma o endereço nem concede permissões que dependem de confirmação.
+- RUNTIME STATUS: DEFERRED; precisa de smoke test com conta não confirmada após F7.
+
 ## 0.4.0-dev.24 — sem papéis laterais
 
 - `HerancaDePapeis` deriva o mapa só da cadeia; a limpeza ao excluir papel mexe só na cadeia.
