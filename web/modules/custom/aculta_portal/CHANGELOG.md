@@ -1,3 +1,11 @@
+## 0.4.0-dev.103 — tradução restrita à configuração de pessoas; duplicações do menu removidas — 2026-10-17
+
+- Tradução da árvore `configuracoes/people` para `configuracoes/pessoas` (ex.: `campos-de-perfil`, `contas`, `acordo`). A área operacional `pessoas/...` mantém os caminhos do Core. A tradução anterior (0.4.0-dev.102) foi revertida.
+- Subscriber executa depois da renomeação do prefixo admin (prioridade -3000).
+- Hook `menu_links_discovered_alter` desativa os itens de menu duplicados das abas de Pessoas ("Papéis e perfis" e "Profile types").
+- Link duplicado "Permissões por papel" removido da caixa de telas do núcleo.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: configuração em `configuracoes/pessoas`, caminhos antigos 404, nenhum destino com dois nomes nas páginas de Pessoas.
+
 ## 0.4.0-dev.101 — Campos de Perfil como aba de Pessoas — 2026-10-17
 
 - Tipos de perfil (Core) viram a aba "Campos de Perfil" da seção Pessoas (`aculta_portal.links.task.yml`, base `entity.user.collection`).

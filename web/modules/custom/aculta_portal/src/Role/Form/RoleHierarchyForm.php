@@ -137,7 +137,6 @@ final class RoleHierarchyForm extends ConfigFormBase {
       'lista' => [
         '#theme' => 'item_list',
         '#items' => [
-          Link::fromTextAndUrl($this->t('Permissões por papel'), Url::fromRoute('user.admin_permissions'))->toRenderable(),
           Link::fromTextAndUrl($this->t('Tipos de perfil (campos e exibição)'), Url::fromRoute('entity.profile_type.collection'))->toRenderable(),
         ],
       ],

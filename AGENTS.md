@@ -699,6 +699,14 @@ herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha a
 - **Exceção:** logos de marcas de terceiros (ex.: Mercado Pago), em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
 - Gate: `php scripts/validate-module-theme-boundary.php`, seção 12 (sem `<svg` inline e sem SVG fora de `assets/brands/`).
 
+## Slugs da administração de pessoas (decisão do responsável, 2026-10-17)
+
+- Só a árvore de configuração de pessoas tem slugs em português: `/painel-administrativo/configuracoes/pessoas/...`
+  (ex.: `campos-de-perfil`, `contas`, `acordo`, `controle-sobrecarga`). A tradução está em
+  `AdministrativeRouteSubscriber::SEGMENTOS` e roda depois da renomeação /admin -> /painel-administrativo.
+- A área operacional `/painel-administrativo/pessoas/...` mantém os caminhos do Core (`roles`, `permissions`).
+- Caminhos antigos respondem 404, sem redirecionamento.
+
 ## Política de commits para agentes de IA (regra permanente)
 
 Motivo: trabalho que ficou só no working tree, em stash ou em branch sem PR gerou
