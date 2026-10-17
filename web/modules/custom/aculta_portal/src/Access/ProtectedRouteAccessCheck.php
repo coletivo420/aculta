@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Access;
 
 use Drupal\aculta_portal\Account\AccountTermsPolicy;
 use Drupal\commerce_checkout\Controller\CheckoutController;
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -29,8 +30,12 @@ final class ProtectedRouteAccessCheck {
   /** Checkout do Commerce: rota /checkout/{pedido}/{etapa}. */
   public function checkout(RouteMatchInterface $routeMatch, AccountInterface $account): AccessResult {
     $commerce = $this->classResolver->getInstanceFromDefinition(CheckoutController::class);
+    $order = $routeMatch->getParameter('commerce_order');
+    $emailAccess = $order instanceof OrderInterface && $order->bundle() === 'curso'
+      ? AccessResult::allowed()->cachePerUser()
+      : $this->emailCheck->access($account);
     return $commerce->checkAccess($routeMatch, $account)
-      ->andIf($this->emailCheck->access($account))
+      ->andIf($emailAccess)
       ->andIf($this->terms($account));
   }
 

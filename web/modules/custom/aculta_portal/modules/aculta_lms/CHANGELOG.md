@@ -3,11 +3,14 @@
 ## Não lançado — F7: matrícula sempre associada a turma
 
 - Config Sync habilita `lms_classes`, desativa criação automática de turma e configura grants de educador.
-- `EnrollmentFormHooks` valida a turma selecionada contra as turmas do curso original, inclusive após a conversão da membership pelo módulo LMS Classes. Matrícula de estudante é bloqueada quando não há turma; memberships de educador/admin podem continuar no nível do curso.
-- Educadores podem remover pela interface Group as matrículas manuais. O novo campo oculto `field_course_order` guarda a origem comercial; a exclusão de membership ligada a pedido de curso é negada enquanto houver pagamento ativo, inclusive reembolso parcial e pedido gratuito concluído. Só pedidos cancelados sem pagamento ou com todos os pagamentos estornados liberam a exclusão. A criação e revogação automática de memberships pelo ciclo de vida de pedidos continua pendente.
+- `EnrollmentFormHooks` valida a turma das memberships da equipe contra as turmas do curso original, bloqueia autoinscrição direta e exige que a turma pertença ao curso. Educadores e administradores podem manter sua membership no nível do curso.
+- Educadores podem remover pela interface Group as matrículas manuais. O campo oculto `field_course_order` guarda a origem comercial; a exclusão de membership ligada a pedido de curso é negada enquanto houver pagamento ativo, inclusive reembolso parcial e pedido gratuito concluído. Só pedidos cancelados sem pagamento ou com todos os pagamentos estornados liberam a exclusão.
+- O curso pode referenciar produto Commerce próprio. A página pública oferece turma/preço e envia item `curso` com turma ao checkout dedicado; cursos de preço zero também passam pelo pedido. O fluxo exige conta, permite cadastro e dispensa confirmação de e-mail no checkout de curso, mantendo a política geral de termos.
+- `CourseOrderEnrollmentManager` concede membership Group após pedido de curso concluído e pago; reembolso parcial conserva acesso e estorno integral remove somente a origem do pedido, preservando memberships manuais e compras válidas. A autoinscrição direta do LMS é bloqueada.
+- Render do formulário varia por usuário/permissões e Domain, e invalida conforme curso, turmas, produto e variações referenciados.
 - `EnrollmentRoleHooks` em `aculta_user` concede `estudante` para membership de turma e preserva a exclusão de papéis de educador/admin.
-- Autoinscrição e matrícula pela equipe foram escolhidas; sem confirmação de e-mail/termos, com aviso por e-mail (entrega F13). Sem turma padrão. O LMS ainda não associa pagamento Commerce à matrícula paga.
-- RUNTIME STATUS: DEFERRED. A checagem recente confirmou `aculta_runtime` com URI explícito `https://aculta.toca.net.br`, mas `lms_classes` continua desabilitado no Runtime. A configuração F7 não foi importada e nenhum smoke de matrícula foi executado; o gate Commerce para cursos pagos segue pendente.
+- Matrícula por checkout e por equipe foram escolhidas; sem confirmação de e-mail/termos para matricular, com aviso por e-mail (entrega F13). Sem turma padrão.
+- RUNTIME STATUS: DEFERRED. Drush confirmou `aculta_runtime` com URI explícito `https://aculta.toca.net.br`, mas `lms_classes` continua desabilitado no Runtime. A configuração F7 e checkout não foram importados; smoke de matrícula, turma cruzada, compra, reembolso e isolamento A/B não foram executados.
 
 ## 0.1.0-dev.2 — F6: página de curso e sala (implementação inicial)
 

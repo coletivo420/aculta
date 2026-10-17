@@ -1,0 +1,14 @@
+uuid: 4b081057-26c9-4824-a88e-75492a5ab506
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_order.commerce_order_item_type.curso
+  module:
+    - commerce_order
+id: curso
+label: Curso
+traits: {  }
+locked: false
+orderItemType: curso
+generateTitle: true

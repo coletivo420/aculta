@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Hook;
 
-use Drupal\Core\Entity\ContentEntityFormInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\Form\GroupRelationshipDeleteForm;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms_classes\ClassHelper;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -29,6 +30,8 @@ final class EnrollmentFormHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'current_user')]
+    private readonly AccountProxyInterface $currentUser,
   ) {}
 
   /** Prevents deleting a class membership granted by a still-paid course order. */
@@ -112,6 +115,19 @@ final class EnrollmentFormHooks {
     $form_state->set('aculta_lms_enrollment_course_id', (string) $course->id());
     $form['#validate'][] = [$this, 'validateCourseClassSelection'];
 
+    if ($relationship->getOwnerId() === $relationship->getEntityId()
+      && !$course->hasPermission('administer members', $this->currentUser)) {
+      $form['class'] = [
+        '#type' => 'item',
+        '#title' => $this->translation->translate('Matrícula'),
+        '#markup' => $this->translation->translate('Para entrar no curso, escolha uma turma e finalize a inscrição pela página do curso, inclusive quando ele for gratuito.'),
+      ];
+      if (isset($form['actions']['submit'])) {
+        $form['actions']['submit']['#access'] = FALSE;
+      }
+      return;
+    }
+
     if (!isset($form['class'])) {
       return;
     }
@@ -139,6 +155,15 @@ final class EnrollmentFormHooks {
     $course = $this->entityTypeManager->getStorage('group')->load($course_id);
     if (!$course instanceof CourseInterface) {
       $form_state->setErrorByName('class', $this->translation->translate('Não foi possível validar a turma deste curso.'));
+      return;
+    }
+
+    $form_object = $form_state->getFormObject();
+    $relationship = $form_object instanceof ContentEntityFormInterface ? $form_object->getEntity() : NULL;
+    if ($relationship instanceof GroupRelationshipInterface
+      && $relationship->getOwnerId() === $relationship->getEntityId()
+      && !$course->hasPermission('administer members', $this->currentUser)) {
+      $form_state->setErrorByName('class', $this->translation->translate('A autoinscrição é feita pelo checkout do curso.'));
       return;
     }
 

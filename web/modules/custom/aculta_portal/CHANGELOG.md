@@ -8,6 +8,7 @@
 - Cursos apontam a um produto Commerce próprio; a página do curso inclui escolha de turma e envia a turma no item Commerce.
 - O checkout `curso` exige conta e mantém os termos gerais, com exceção pontual da confirmação de e-mail nessa rota.
 - Pedidos concluídos concedem membership; reembolso parcial mantém acesso e estorno integral revoga apenas a membership de origem, preservando associação manual e outras compras válidas.
+- A autoinscrição direta do LMS é bloqueada; matrícula da equipe permanece nativa do Group e exige turma. Educador pode remover origem manual, com proteção de memberships comerciais ainda ativas.
 - Lint PHP e gate Drupal 11+ PASS (948 checks). RUNTIME STATUS: DEFERRED; configuração não importada, `lms_classes` segue desativado.
 
 ## 0.4.0-dev.123 — situação da última cobrança da doação mensal — 2026-10-17

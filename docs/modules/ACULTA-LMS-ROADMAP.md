@@ -87,17 +87,20 @@ gera links para a rota nativa LMS (com slugs portugueses do Portal); não cria
 progresso, matrícula ou status. RUNTIME STATUS: DEFERRED até smoke test de
 membro, não membro e visitante; a fase não está homologada.
 
-**F7 — Implementação inicial na branch.** Config Sync habilita `lms_classes`
+**F7 — Implementação na branch, Runtime deferred.** Config Sync habilita `lms_classes`
 1.2.4, inclui configuração opcional, exige criação explícita de turmas e concede
-ao educador permissões de criação/gestão; o hook de papel global agora reconhece
-matrículas em turma. `EnrollmentFormHooks` obriga estudante a selecionar turma
-do próprio curso e bloqueia autoinscrição enquanto nenhuma turma existir;
-memberships de educador/admin podem permanecer no curso. Decisões: autoinscrição
-em cursos gratuitos e pagos, equipe também pode matricular, estudante é
-concedido ao entrar em qualquer turma, sem
-confirmação de e-mail ou termos (aviso por e-mail), e sem turma padrão. Envio do
-aviso está reservado à F13. RUNTIME STATUS: DEFERRED; falta smoke test A/B e o
-LMS ainda não integra matrícula paga ao Commerce. Detalhes em
+ao educador permissões de criação/gestão; o hook de papel global reconhece
+matrículas em turma. A página do curso oferece produto Commerce próprio, escolha
+de turma e checkout para preço pago ou zero. Pedido concluído efetiva membership
+Group; reembolso parcial preserva acesso e reembolso integral revoga apenas a
+origem comercial, mantendo memberships manuais e outras compras válidas.
+Educadores podem remover matrículas manuais, mas não memberships de pedido ativo.
+Decisões: equipe também pode matricular, estudante é concedido ao entrar em
+qualquer turma, curso não recebe turma padrão e matrícula não exige confirmação
+de e-mail/termos (aviso por e-mail, entrega reservada à F13). Checkout permite
+cadastro e dispensa confirmação de e-mail, mantendo termos gerais da conta.
+RUNTIME STATUS: DEFERRED; falta importar configuração e executar smoke tests A/B,
+checkout pago/gratuito e reembolso. Detalhes em
 [LMS-GROUP.md](LMS-GROUP.md).
 
 ## Ordem, PR e status

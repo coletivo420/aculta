@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -17,6 +18,7 @@ final class CourseRoomBuilder {
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
     private readonly TranslationInterface $translation,
+    private readonly FormBuilderInterface $formBuilder,
   ) {}
 
   /**
@@ -38,6 +40,9 @@ final class CourseRoomBuilder {
     ];
 
     if (!$takeAccess->isAllowed()) {
+      if (!$course->hasPermission('administer members', $this->currentUser)) {
+        $build['enrollment'] = $this->formBuilder->getForm(CourseEnrollmentPurchaseForm::class, $course);
+      }
       $cacheability->applyTo($build);
       return $build;
     }

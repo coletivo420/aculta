@@ -6,6 +6,12 @@ services:
       - { name: aculta_portal.helper }
   aculta_lms.course_room_builder:
     class: Drupal\aculta_lms\CourseRoomBuilder
-    arguments: ['@current_user', '@string_translation']
+    arguments: ['@current_user', '@string_translation', '@form_builder']
     tags:
       - { name: aculta_portal.helper }
+  aculta_lms.course_order_enrollment:
+    class: Drupal\aculta_lms\CourseOrderEnrollmentManager
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
+      - { name: aculta_portal.implementation }

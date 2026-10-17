@@ -157,6 +157,11 @@ final class PortalHelperRegistry {
       'summary' => 'Apresenta o índice de lições com access e cache do Group/LMS nas páginas canônicas de curso.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/README.md',
     ],
+    'aculta_lms.course_order_enrollment' => [
+      'label' => 'Matrícula de curso pelo Commerce',
+      'summary' => 'Sincroniza matrículas Group com pedidos pagos de curso e preserva memberships manuais e outras compras válidas.',
+      'docs' => 'docs/modules/LMS-GROUP.md',
+    ],
     'aculta_portal.mercado_pago_webhook_guard' => [
       'label' => 'Proteção de webhook de pagamento',
       'summary' => 'Valida estrutura e autenticidade das notificações recebidas do gateway.',

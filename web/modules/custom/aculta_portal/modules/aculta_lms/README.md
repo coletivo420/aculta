@@ -40,17 +40,25 @@ integrado com usuário matriculado, visitante e não membro no Runtime.
 
 ## F7 — Matrícula em turmas
 
-`EnrollmentFormHooks` guarda o ID do curso antes do módulo LMS Classes converter
-a membership e valida que a turma selecionada pertence àquele curso.
-Autoinscrição de estudante não prossegue quando o curso não tem turma; o
-formulário informa que a equipe precisa criar uma. Educadores e administradores
-podem manter memberships no nível do curso, sem serem convertidos em estudantes
-de turma. Group e LMS continuam donos dos dados e da autorização. O módulo
-depende de `lms_classes` nesta fase.
+`EnrollmentFormHooks` valida turmas de memberships criadas pela equipe e bloqueia
+a autoinscrição direta do LMS. Na página do curso, `CourseEnrollmentPurchaseForm`
+mostra turmas publicadas e o valor do produto Commerce ligado ao curso. Cursos
+pagos e gratuitos passam pelo checkout `curso`; o item registra a turma escolhida.
+`CourseOrderEnrollmentManager` concede membership Group quando o pedido está
+concluído e pago. Reembolso integral revoga somente membership originada pelo
+pedido; outra compra válida mantém acesso e matrícula manual permanece
+independente. Educadores podem remover memberships manuais, mas não memberships
+protegidas por pagamento ativo.
 
-F7 aguarda smoke test de matrícula, turma cruzada e isolamento de educadores no
-Runtime. O aviso por e-mail integra-se na F13. Matrícula paga requer gate Commerce
-próprio antes de associar produto/cobrança a curso.
+Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
+esse produto ao Group do curso. A variação possui preço zero ou pago; a página
+canônica do produto não tem formulário de compra para evitar matrícula sem turma.
+
+O checkout permite criar conta, não exige e-mail confirmado nessa rota e mantém
+a política geral de aceite de termos. O aviso de matrícula por e-mail integra-se
+na F13. RUNTIME STATUS: DEFERRED; configuração ainda não foi importada e smoke
+tests de matrícula, turma cruzada, educador, pagamento, reembolso e isolamento
+A/B permanecem pendentes.
 
 ## Testes
 
