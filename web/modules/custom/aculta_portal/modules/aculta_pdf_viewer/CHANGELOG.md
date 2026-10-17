@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## Submódulo aculta_pdf_viewer_group 0.1.0-dev.3 — regressão de relação removida — 2026-10-17
+
+Classificação: PATCH (cobertura de segurança, sem alteração funcional).
+
+- O Kernel agora confirma que a URL privada conhecida retorna 403 quando a relação Media↔Group é removida; religa a Media para testar separadamente não membro e revogação de membership.
+- PHPUnit Kernel: 1 teste, 39 asserções, PASS; execução isolada no MariaDB `aculta_simpletest`.
+- RUNTIME STATUS: DEFERRED; o import de configuração e a homologação com memberships reais continuam pendentes.
+
 ## Submódulo aculta_pdf_viewer_group 0.1.0-dev.2 — relação de turma restrita a lms_course — 2026-10-16
 
 Classificação: PATCH (submódulo; o módulo pai não mudou de versão).

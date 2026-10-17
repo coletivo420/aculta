@@ -37,12 +37,15 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 **F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
 DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; o módulo não foi
 habilitado no Runtime e não tem produtor ou consumidor educacional ativo (**RUNTIME STATUS: DEFERRED**). A fase
-F2 e integração do display F3 estão no código da PR #286; o viewer compartilhado pertence ao submódulo
-`aculta_pdf_viewer`, documentado em seu [README](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md).
-O teste de runtime do display, entrega privada
-protegida e geração de miniatura estão **DEFERRED**; ImageMagick está ausente no checkout e Hostinger não
-foi verificada. A próxima atividade é resolver a operação segura de preview e estabelecer um endpoint de
-leitura privada com validação no Runtime antes de habilitar documentos educacionais privados.
+F2 e o display compartilhado foram implementados nos submódulos `aculta_pdf_viewer` e
+`aculta_pdf_viewer_group`. Para documentos privados de turma, o Kernel valida a rota privada do Core com
+membro, não membro, remoção da relação Media↔Group e revogação de membership (14 testes e 195 asserções no
+conjunto Unit/Kernel em 2026-10-17). A validação local usa o MariaDB dedicado `aculta_simpletest`; não
+substitui o teste no Runtime. A importação da configuração do bundle
+`course_document`, o acesso de membros reais, cache após revogação, leitura PDF.js no navegador e Hostinger
+continuam **DEFERRED**. A próxima etapa é homologar a configuração e o fluxo no ambiente de teste após
+confirmar URI, banco, estado de configuração e caminho de recuperação; nenhuma operação Runtime é feita por
+esta entrega.
 
 ## Ordem, PR e status
 

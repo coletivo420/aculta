@@ -24,8 +24,10 @@ bytes e reavalia o acesso em cada requisição.
 
 Os PDFs de turma usam o novo bundle `course_document` e não são publicados nem
 mesmo quando a caixa de status é submetida. Isso não migra arquivos nem altera
-o bundle institucional `document`. O Runtime precisa validar membership,
-revogação e entrega privada antes do aceite final da PV5.
+o bundle institucional `document`. O Kernel verifica o endpoint privado do Core
+para membro, não membro, remoção da relação Group e revogação de membership. A
+homologação dessas condições no Runtime continua necessária antes do aceite
+final da PV5.
 
 ## Hooks e classes
 

@@ -173,6 +173,20 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     $member_response = $kernel->handle(Request::create($private_url));
     $this->assertSame(200, $member_response->getStatusCode());
 
+    // Removing the Group relationship must revoke a previously known URL too.
+    $relationship->delete();
+    $entity_access->resetCache();
+    $file_access->resetCache();
+    $detached_response = $kernel->handle(Request::create($private_url));
+    $this->assertSame(403, $detached_response->getStatusCode());
+
+    // Reattach the Media so outsider and membership-revocation checks exercise
+    // their own access conditions rather than the detached state above.
+    $group->addRelationship($media, 'aculta_pdf_viewer_group:course_document');
+    $entity_access->resetCache();
+    $file_access->resetCache();
+    $this->assertSame(200, $kernel->handle(Request::create($private_url))->getStatusCode());
+
     $this->container->get('current_user')->setAccount($outsider);
     $entity_access->resetCache();
     $file_access->resetCache();

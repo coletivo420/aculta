@@ -89,6 +89,12 @@ MYSQL_PWD="$2" mysql -u "$1" -h localhost aculta_simpletest -e "SELECT CURRENT_U
 
 As deprecações vêm de contrib (Group e media) e não impedem o teste. Ficam registradas para revisão.
 
+Execução adicional em 2026-10-17: Unit e Kernel de `aculta_lms`, Unit e Kernel de
+`aculta_pdf_viewer` e Kernel de `aculta_pdf_viewer_group` passaram em conjunto
+(14 testes, 195 asserções). A cobertura Group inclui membro, não membro,
+remoção da relação Media↔Group e revogação de membership. Foram reportadas 23
+deprecações de Core/contrib; nenhuma falha. Runtime permanece DEFERRED.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.
