@@ -24,6 +24,18 @@ final class PortalUiHooks {
     'notice-warning' => ['messages', 'messages--warning'],
     'notice-error' => ['messages', 'messages--error'],
     'email-notice' => ['aculta-email-notice'],
+    // Doação (aculta_donation): resumo da etapa de revisão e links de edição.
+    'donation-summaries' => ['d-grid', 'gap-3'],
+    'donation-summary' => ['card', 'card-body'],
+    'donation-summary-edit' => ['btn', 'btn-sm', 'btn-outline-primary'],
+    'donation-document-link' => ['link-primary'],
+    'donation-thanks' => ['card', 'card-body', 'text-center'],
+    'donation-donor-name' => ['fw-semibold'],
+    'donation-clause' => ['text-muted'],
+    'donation-amount-block' => ['my-3'],
+    'donation-amount' => ['display-6', 'fw-bold'],
+    'donation-monthly' => ['badge', 'text-bg-secondary'],
+    'donation-in-honor' => ['fst-italic'],
     // Relatórios de requisitos e segredos (administração do Portal).
     'requirements' => ['aculta-portal-requirements'],
     'requirements-legend' => ['aculta-portal-requirements__legend'],

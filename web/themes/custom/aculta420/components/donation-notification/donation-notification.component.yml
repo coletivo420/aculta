@@ -1,0 +1,46 @@
+# Everything in this file is optional. Still, the file needs to exist. Adding
+# metadata here will improve the DX when using components.
+
+# This is so your IDE knows about the syntax for fixes and autocomplete.
+$schema: https://git.drupalcode.org/project/sdc/-/raw/1.x/src/metadata.schema.json
+
+# The human-readable name.
+name: Notification
+
+# Status can be: "experimental", "stable", "deprecated", "obsolete".
+status: stable
+
+# Use this key to organize components together.
+group: Fieldset
+
+# Schema for the props. We support www.json-schema.org. Learn more about the
+# syntax there.
+props:
+  # Props are always an object with keys. Each key is a variable in your
+  # component template.
+  type: object
+
+  properties:
+    notify:
+      title: Send notification
+      type: string
+    legend:
+      title: Legend
+      type: string
+    message:
+      title: Message
+      type: string
+    notify_first:
+      title: Recipient's first name
+      type: string
+    notify_last:
+      title: Recipient's last name
+      type: string
+    notify_email:
+      title: Recipient's email
+      type: string
+
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once

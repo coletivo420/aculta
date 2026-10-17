@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Valores de doação rápida
+status: experimental
+group: Doações
+description: 'Botões com os valores sugeridos de doação; cada um leva à doação rápida daquele valor (aculta_donation).'
+props:
+  type: object
+  required: [links]
+  properties:
+    links:
+      type: array
+      title: Valores sugeridos
+      items:
+        type: object
+        required: [title, url]
+        properties:
+          title:
+            type: string
+            title: Texto do botão (valor formatado)
+          url:
+            type: string
+            title: URL da doação rápida daquele valor
+slots: {}
