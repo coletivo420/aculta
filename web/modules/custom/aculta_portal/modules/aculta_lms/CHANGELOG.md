@@ -10,7 +10,7 @@
 - Render do formulário varia por usuário/permissões e Domain, e invalida conforme curso, turmas, produto e variações referenciados.
 - `EnrollmentRoleHooks` em `aculta_user` concede `estudante` para membership de turma e preserva a exclusão de papéis de educador/admin.
 - Matrícula por checkout e por equipe foram escolhidas; sem confirmação de e-mail/termos para matricular, com aviso por e-mail (entrega F13). Sem turma padrão.
-- RUNTIME STATUS: DEFERRED. Drush confirmou `aculta_runtime` com URI explícito `https://aculta.toca.net.br`, mas `lms_classes` continua desabilitado no Runtime. A configuração F7 e checkout não foram importados; smoke de matrícula, turma cruzada, compra, reembolso e isolamento A/B não foram executados.
+- RUNTIME STATUS: DEFERRED. Drush confirmou `aculta_runtime` com URI explícito `https://aculta.toca.net.br`, mas `lms_classes` continua desabilitado no Runtime. O Config Sync apresenta 315 diferenças contra o Runtime, inclusive configurações alheias ao F7; por isso, a importação global não é segura sem reconciliar e revisar cada diferença. A configuração F7 e checkout não foram importados; smoke de matrícula, turma cruzada, compra, reembolso e isolamento A/B não foram executados.
 
 ## 0.1.0-dev.2 — F6: página de curso e sala (implementação inicial)
 
