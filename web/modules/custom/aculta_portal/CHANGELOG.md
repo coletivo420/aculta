@@ -1,3 +1,13 @@
+## 0.4.0-dev.123 — situação da última cobrança da doação mensal — 2026-10-17
+
+- Cada cobrança da assinatura guarda sua situação no pedido: `paga`, `nao_cobrada`, `recusada`, `processando`, `agendada`,
+  `cancelada` e `desconhecida` (`MercadoPagoSubscriptionRecorder::situacaoCobranca`). Só `paga` grava pagamento.
+- Meu apoio mostra a situação da última cobrança; o painel de doações recorrentes tem a coluna "Situação da última cobrança".
+- Testes unitários: mapeamento de cada status de cobrança, cobrança recusada sem pagamento, cobrança paga (48 no grupo).
+- Verificado no sandbox: pausar em `pending` é recusado; cancelar em `pending` funciona (ver `docs/portal/MERCADO-PAGO-PLANO.md`, 7.1).
+- RUNTIME STATUS: APLICADO em código no Runtime de testes (rótulos e relatório verificados por script). DEFERRED: cobranças e
+  ações sobre assinatura `authorized` (bloqueadas pela recusa de criação, ver 7.1).
+
 ## 0.4.0-dev.122 — corrige erro na página de credenciais — 2026-10-17
 
 - Corrigido o namespace de `Markup` usado na listagem de credenciais. O namespace incorreto causava erro fatal

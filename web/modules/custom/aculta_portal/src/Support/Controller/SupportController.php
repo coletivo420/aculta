@@ -57,6 +57,13 @@ final class SupportController extends ControllerBase {
       if ($order->bundle() === MercadoPagoSubscriptionRecorder::TIPO_PEDIDO) {
         // Doação mensal: a situação é a da assinatura no Mercado Pago, e o doador pode pausar, reativar ou cancelar.
         $status = MercadoPagoSubscriptionRecorder::rotulo($this->assinaturas->statusDoPedido($order) ?: MercadoPagoSubscriptionRecorder::STATUS_PENDENTE);
+        $cobranca = $this->assinaturas->situacaoDaUltimaCobranca($order);
+        if ($cobranca !== '') {
+          $status = $this->t('@situacao. Última cobrança: @cobranca', [
+            '@situacao' => $status,
+            '@cobranca' => MercadoPagoSubscriptionRecorder::rotuloCobranca($cobranca),
+          ]);
+        }
         foreach (array_keys(MercadoPagoSubscriptionRecorder::ACOES) as $acao) {
           if ($this->assinaturas->podeAlterar($order, $acao)) {
             $acoes[] = [

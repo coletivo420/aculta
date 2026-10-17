@@ -177,10 +177,18 @@ Respondidas em 2026-10-16; ver a seção 0.
 - Status da cobrança (`authorized_payments`), na documentação oficial consultada: `processed` (cobrado com sucesso, ou parcela que esgotou as tentativas), `waiting for gateway` (em processamento), `recycling` (recusada, em nova tentativa). O exemplo da referência usa `scheduled`. Só `payment.status = approved` vira pagamento no pedido.
 - Ações do doador em "Meu apoio": pausar (de `authorized`), reativar (de `paused`) e cancelar (de `pending`, `authorized` ou `paused`). Cada ação chama `PUT /preapproval/{id}` antes de mudar o pedido. Doações não são estornadas.
 - Painel "Doações recorrentes", em Relatório de doações: resumo por situação e as 100 assinaturas mais recentes.
+- Situação da última cobrança, guardada no pedido (`mp_cobranca_situacao`): `paga` (pagamento aprovado), `nao_cobrada` (`processed` sem aprovação: tentativas esgotadas), `recusada` (`recycling`), `processando` (`waiting for gateway`), `agendada` (`scheduled`), `cancelada` (`cancelled`, não documentado: rótulo conservador), `desconhecida` (demais). Só `paga` grava pagamento.
+
+**Verificado no sandbox (2026-10-17, conta de teste):**
+- `PUT /preapproval/{id}` com `paused` em assinatura `pending` → HTTP 400 `Invalid transition from pending to paused`. Confirma que pausar só vale para `authorized` (regra de `MercadoPagoSubscriptionRecorder::ACOES`).
+- `PUT /preapproval/{id}` com `cancelled` em assinatura `pending` → HTTP 200, `cancelled`.
+- Criação de assinatura `pending` com `back_url` do domínio `aculta.toca.net.br` e do Mercado Pago: aceita em algumas tentativas. `back_url` `https://aculta.org/` foi recusado pela conta de teste.
+- **Não verificado:** assinatura `authorized` criada com cartão de teste (HTTP 400 `Unsupported_credit_card_for_recurring_payment` no Mastercard e `User bad request` nos Visa), e, por consequência, pausar e reativar a partir de `authorized`, e as cobranças reais (`authorized_payments`). A partir de certo momento da sessão, até a criação `pending` passou a ser recusada com `User bad request`; a causa não foi identificada.
+- Criação de compradores de teste (`POST /users/test_user`) teve limite de taxa local (HTTP 429).
 
 ## 7.2 Pendências de F2 e F3
 
-- Ponta a ponta no sandbox (criar assinatura, autorizar pelo `init_point`, receber webhooks, pausar e cancelar). Depende de confirmação do responsável para escrever na conta de teste.
+- Ponta a ponta no sandbox: criar assinatura `authorized`, pausar, reativar e receber cobranças. Bloqueado pela recusa da criação de assinatura `authorized` (ver 7.1).
 - Confirmar no sandbox os valores de `status` que não estão documentados acima.
 - Mensagem de erro no checkout: implementada com mensagem geral e detalhe no log; falta verificar a tela no Runtime.
 

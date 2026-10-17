@@ -102,7 +102,7 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     // `processed` sem pagamento aprovado (parcela que esgotou as tentativas) não é receita.
     [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
     $pagamentos->expects($this->never())->method('create');
-    $pedido->expects($this->never())->method('save');
+    $pedido->expects($this->once())->method('save');
 
     $servico->cobranca($this->gateway(), [
       'id' => 'cob-2',
@@ -115,7 +115,8 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
   public function testMesmoPagamentoNotificadoDuasVezesGravaUmaVez(): void {
     [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'completed', [], [$this->createMock(PaymentInterface::class)]);
     $pagamentos->expects($this->never())->method('create');
-    $pedido->expects($this->never())->method('save');
+    // A situação da cobrança é atualizada no pedido, mas o pagamento não é gravado de novo.
+    $pedido->expects($this->once())->method('save');
 
     $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
   }
@@ -134,6 +135,40 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
     $pedido->expects($this->never())->method('save');
 
     $servico->assinatura((object) ['id' => 'pre-9', 'external_reference' => '7', 'status' => 'authorized']);
+  }
+
+  public function testSituacaoDaCobrancaMapeiaCadaStatusDocumentado(): void {
+    $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_PAGA, MercadoPagoSubscriptionRecorder::situacaoCobranca('processed', TRUE));
+    $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_NAO_COBRADA, MercadoPagoSubscriptionRecorder::situacaoCobranca('processed', FALSE));
+    $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_RECUSADA, MercadoPagoSubscriptionRecorder::situacaoCobranca('recycling', FALSE));
+    $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_PROCESSANDO, MercadoPagoSubscriptionRecorder::situacaoCobranca('waiting for gateway', FALSE));
+    $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_AGENDADA, MercadoPagoSubscriptionRecorder::situacaoCobranca('scheduled', FALSE));
+    $this->assertSame(MercadoPagoSubscriptionRecorder::COBRANCA_DESCONHECIDA, MercadoPagoSubscriptionRecorder::situacaoCobranca('qualquer', FALSE));
+  }
+
+  public function testCobrancaRecusadaGravaASituacaoSemCriarPagamento(): void {
+    [$servico, $pedido, $pagamentos] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
+    $pedido->expects($this->once())->method('setData')
+      ->with(MercadoPagoSubscriptionRecorder::CHAVE_COBRANCA, MercadoPagoSubscriptionRecorder::COBRANCA_RECUSADA);
+    $pedido->expects($this->once())->method('save');
+    $pagamentos->expects($this->never())->method('create');
+
+    $servico->cobranca($this->gateway(), [
+      'id' => 'cob-3',
+      'preapproval_id' => 'pre-9',
+      'status' => 'recycling',
+      'payment' => ['id' => '557', 'status' => 'rejected'],
+    ]);
+  }
+
+  public function testCobrancaAprovadaGravaASituacaoComoPaga(): void {
+    [$servico, $pedido, $pagamentos, $item] = $this->contexto('assinatura', 'needs_payment', ['mark_paid'], []);
+    $pedido->expects($this->once())->method('setData')
+      ->with(MercadoPagoSubscriptionRecorder::CHAVE_COBRANCA, MercadoPagoSubscriptionRecorder::COBRANCA_PAGA);
+    $pagamentos->method('create')->willReturn($this->createMock(PaymentInterface::class));
+    $item->method('applyTransitionById');
+
+    $servico->cobranca($this->gateway(), $this->cobrancaAprovada());
   }
 
 }

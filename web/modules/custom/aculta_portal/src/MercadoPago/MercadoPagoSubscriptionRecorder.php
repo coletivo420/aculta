@@ -63,6 +63,17 @@ final class MercadoPagoSubscriptionRecorder {
   /** Status de cobrança (authorized_payments) conhecidos; os demais são registrados como desconhecidos. */
   public const STATUS_COBRANCA = ['processed', 'recycling', 'waiting for gateway', 'scheduled'];
 
+  /** Chave em `data` do pedido com a situação da última cobrança (ver situacaoCobranca). */
+  public const CHAVE_COBRANCA = 'mp_cobranca_situacao';
+
+  public const COBRANCA_PAGA = 'paga';
+  public const COBRANCA_RECUSADA = 'recusada';
+  public const COBRANCA_PROCESSANDO = 'processando';
+  public const COBRANCA_AGENDADA = 'agendada';
+  public const COBRANCA_NAO_COBRADA = 'nao_cobrada';
+  public const COBRANCA_CANCELADA = 'cancelada';
+  public const COBRANCA_DESCONHECIDA = 'desconhecida';
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MercadoPagoRecurrenceService $recorrencia,
@@ -146,24 +157,58 @@ final class MercadoPagoSubscriptionRecorder {
   }
 
   /**
-   * Grava uma cobrança aprovada como pagamento do pedido, uma vez (tópico subscription_authorized_payment).
+   * Situação da última cobrança, a partir do status da cobrança (authorized_payments) e de o pagamento estar aprovado.
+   */
+  public static function situacaoCobranca(string $status, bool $aprovado): string {
+    if ($aprovado) {
+      return self::COBRANCA_PAGA;
+    }
+    return match ($status) {
+      'processed' => self::COBRANCA_NAO_COBRADA,
+      'recycling' => self::COBRANCA_RECUSADA,
+      'waiting for gateway' => self::COBRANCA_PROCESSANDO,
+      'scheduled' => self::COBRANCA_AGENDADA,
+      'cancelled' => self::COBRANCA_CANCELADA,
+      default => self::COBRANCA_DESCONHECIDA,
+    };
+  }
+
+  /**
+   * Rótulo da situação da última cobrança para o doador e para o painel.
+   */
+  public static function rotuloCobranca(string $situacao): TranslatableMarkup {
+    return match ($situacao) {
+      self::COBRANCA_PAGA => new TranslatableMarkup('Paga'),
+      self::COBRANCA_RECUSADA => new TranslatableMarkup('Recusada, nova tentativa'),
+      self::COBRANCA_PROCESSANDO => new TranslatableMarkup('Em processamento'),
+      self::COBRANCA_AGENDADA => new TranslatableMarkup('Agendada'),
+      self::COBRANCA_NAO_COBRADA => new TranslatableMarkup('Não cobrada (tentativas esgotadas)'),
+      self::COBRANCA_CANCELADA => new TranslatableMarkup('Cancelada no Mercado Pago'),
+      default => new TranslatableMarkup('Situação não informada'),
+    };
+  }
+
+  /**
+   * Situação da última cobrança guardada no pedido (vazia se ainda não há cobrança).
+   */
+  public function situacaoDaUltimaCobranca(OrderInterface $pedido): string {
+    return (string) $pedido->getData(self::CHAVE_COBRANCA, '');
+  }
+
+  /**
+   * Grava a cobrança (tópico subscription_authorized_payment): a situação fica no pedido; só cobrança com pagamento
+   * aprovado vira pagamento, uma vez.
    *
    * @param array<string, mixed> $cobranca
    *   Resposta de GET /authorized_payments/{id}.
    */
   public function cobranca(PaymentGatewayInterface $gateway, array $cobranca): void {
     $status = (string) ($cobranca['status'] ?? '');
-    if (!in_array($status, self::STATUS_COBRANCA, TRUE)) {
-      $this->logger->warning('Cobrança @id com status desconhecido: @status.', ['@id' => (string) ($cobranca['id'] ?? ''), '@status' => $status]);
-    }
     $pagamento = is_array($cobranca['payment'] ?? NULL) ? $cobranca['payment'] : [];
     $remoto = (string) ($pagamento['id'] ?? '');
-    if (($pagamento['status'] ?? '') !== 'approved' || $remoto === '') {
-      $this->logger->notice('Cobrança @id sem pagamento aprovado (status @status); nada gravado.', [
-        '@id' => (string) ($cobranca['id'] ?? ''),
-        '@status' => $status,
-      ]);
-      return;
+    $aprovado = ($pagamento['status'] ?? '') === 'approved' && $remoto !== '';
+    if (!$aprovado && !in_array($status, self::STATUS_COBRANCA, TRUE)) {
+      $this->logger->warning('Cobrança @id com status desconhecido: @status.', ['@id' => (string) ($cobranca['id'] ?? ''), '@status' => $status]);
     }
     $assinatura = $this->recorrencia->obterAssinatura($gateway, (string) ($cobranca['preapproval_id'] ?? ''));
     $pedido = $this->pedido((string) ($assinatura->external_reference ?? ''));
@@ -171,21 +216,30 @@ final class MercadoPagoSubscriptionRecorder {
       $this->logger->warning('Cobrança @id sem pedido de doação correspondente.', ['@id' => (string) ($cobranca['id'] ?? '')]);
       return;
     }
-    if ($this->pagamentoExiste($pedido, $remoto)) {
+    $pedido->setData(self::CHAVE_COBRANCA, self::situacaoCobranca($status, $aprovado));
+    if (!$aprovado) {
+      $pedido->save();
+      $this->logger->notice('Cobrança @id do pedido @pedido: status @status, sem pagamento aprovado.', [
+        '@id' => (string) ($cobranca['id'] ?? ''),
+        '@pedido' => $pedido->id(),
+        '@status' => $status,
+      ]);
       return;
     }
-    $pagamento = $this->entidades('commerce_payment')->create([
-      'state' => 'completed',
-      'amount' => new Price((string) ($cobranca['transaction_amount'] ?? '0'), $pedido->getTotalPrice()->getCurrencyCode()),
-      'payment_gateway' => $gateway->id(),
-      'order_id' => $pedido->id(),
-      'remote_id' => $remoto,
-      'remote_state' => 'approved',
-      'authorized' => $this->time->getRequestTime(),
-    ]);
-    $pagamento->save();
-    if ($pedido->getState()->getId() === 'needs_payment') {
-      $this->transicionar($pedido, 'mark_paid');
+    if (!$this->pagamentoExiste($pedido, $remoto)) {
+      $pagamento = $this->entidades('commerce_payment')->create([
+        'state' => 'completed',
+        'amount' => new Price((string) ($cobranca['transaction_amount'] ?? '0'), $pedido->getTotalPrice()->getCurrencyCode()),
+        'payment_gateway' => $gateway->id(),
+        'order_id' => $pedido->id(),
+        'remote_id' => $remoto,
+        'remote_state' => 'approved',
+        'authorized' => $this->time->getRequestTime(),
+      ]);
+      $pagamento->save();
+      if ($pedido->getState()->getId() === 'needs_payment') {
+        $this->transicionar($pedido, 'mark_paid');
+      }
     }
     $pedido->save();
   }

@@ -63,6 +63,9 @@ final class RecurringDonationsReport {
         MercadoPagoSubscriptionRecorder::rotulo($status),
         (string) $cobrancas,
         $ultima ? gmdate('d/m/Y', $ultima) : new TranslatableMarkup('Nenhuma ainda'),
+        ($situacaoCobranca = $this->assinaturas->situacaoDaUltimaCobranca($pedido)) === ''
+          ? new TranslatableMarkup('Nenhuma ainda')
+          : MercadoPagoSubscriptionRecorder::rotuloCobranca($situacaoCobranca),
       ];
     }
 
@@ -87,6 +90,7 @@ final class RecurringDonationsReport {
           new TranslatableMarkup('Situação'),
           new TranslatableMarkup('Cobranças aprovadas'),
           new TranslatableMarkup('Última cobrança'),
+          new TranslatableMarkup('Situação da última cobrança'),
         ],
         '#rows' => $linhas,
         '#empty' => new TranslatableMarkup('Nenhuma doação recorrente ainda.'),
