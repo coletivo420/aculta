@@ -1,12 +1,12 @@
 # Matriz de compatibilidade LMS, PDF e avaliação
 
-Revisão técnica: 2026-10-16. Versões externas devem ser rechecadas no changelog e Composer antes de atualizar/instalar.
+Revisão técnica: 2026-10-17. Versões externas devem ser rechecadas no changelog e Composer antes de atualizar/instalar.
 
 | Projeto/API | Metadata/versão encontrada | Drupal/PHP observado | Estado e decisão |
 | --- | --- | --- | --- |
-| `drupal/lms` | composer lock 1.2.3; `lms.info.yml` 1.2.3; upstream stable 1.2.4 | info: Core `^10.3 || ^11` | Instalado e em uso; 1.2.4 não deve ser adotado sem revisão do changelog, Composer dry-run, testes de atualização e validação de PHP 8.5 |
-| `lms_answer_plugins` | submódulo no diretório `lms/modules`, info 1.2.3 | acompanha LMS `^10.3 || ^11` | Não é pacote Composer independente; parte do repo LMS |
-| `lms_classes` | submódulo no diretório `lms/modules`, info 1.2.3 | acompanha LMS `^10.3 || ^11` | Não é pacote Composer independente; auditar necessidade/uso antes de ativação |
+| `drupal/lms` | composer lock 1.2.4; `lms.info.yml` 1.2.4; release estável com cobertura Drupal Security Team | Core `^10.3 || ^11`; o CLI Drush deste checkout reporta PHP 8.4.26, então PHP 8.5 não foi comprovado | Instalado; audit sem advisories, dry-run isolado alterou somente LMS 1.2.3 → 1.2.4. Update 12002 aplicado no Runtime de teste; `lms.settings` validado pelo schema, 10 Kernel tests upstream (990 assertions) e 3 testes `aculta_lms` (13 assertions) PASS. A release corrige FreeText, back navigation e course storage, adiciona `activity_page_title` e contém correções de depreciação Drupal 12. FunctionalJavascript exige `SIMPLETEST_BASE_URL` e ficou DEFERRED. PHP 8.5 continua DEFERRED (DT-P04) |
+| `lms_answer_plugins` | submódulo no diretório `lms/modules`, info 1.2.4 | acompanha LMS `^10.3 || ^11` | Não é pacote Composer independente; parte do repo LMS |
+| `lms_classes` | submódulo no diretório `lms/modules`, info 1.2.4 | acompanha LMS `^10.3 || ^11` | Não é pacote Composer independente; auditar necessidade/uso antes de ativação |
 | `drupal/lms_file_upload` | release 1.0.2 | projeto declara `^10 || ^11`; upload para private file system | Não instalado; revisar source/issue de persistência/usage e testes de access antes de F9 |
 | `drupal/webform` | lock 6.3.1 | lock instalado; Drupal 11 atual | Usado no site. Não converter submissions atuais em gradebook automaticamente |
 | `drupal/webform_score` | release 2.4.0 | release declara compatibilidade Drupal 11 | Não instalado. Pontuação separada não é nota LMS até adapter oficial, identidade e transação serem provadas |

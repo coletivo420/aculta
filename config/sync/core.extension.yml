@@ -97,6 +97,7 @@ module:
   message_subscribe: 0
   metatag: 0
   metatag_open_graph: 0
+  mysql: 0
   navigation: 0
   node: 0
   node_co_authors: 0

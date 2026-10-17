@@ -17,7 +17,7 @@ Revisão técnica: 2026-10-16.
 
 ## Estado encontrado
 
-- `composer.json` requer `drupal/lms:^1.2`, `drupal/group:^3.3` e `drupal/webform:^6.3`. O lock fixa LMS 1.2.3, Group 3.3.5 e Webform 6.3.1. Drupal local: 11.4.10.
+- `composer.json` requer `drupal/lms:^1.2`, `drupal/group:^3.3` e `drupal/webform:^6.3`. O lock fixa LMS 1.2.4, Group 3.3.5 e Webform 6.3.1. Drupal local: 11.4.10.
 - `lms_answer_plugins` e `lms_classes` são submódulos no repositório distribuído de `drupal/lms`, não pacotes Composer independentes. `lms_file_upload` é projeto Composer independente (`drupal/lms_file_upload`); não está instalado. `webform_score`, H5P, Entity Print, PDFPreview e ImageMagick também não estão instalados. `drupal/pdf` e PDF.js estão no Composer, mas o formatter de PDF contrib não é usado pelo `aculta_pdf_viewer` por incompatibilidade `.js`/ESM.
 - `config/sync/lms.settings.yml`: `allow_to_enter_ungraded: false`, `use_revisions: false`. Não alterar sem plano de migração e validação dos dados existentes.
 - `group.type.lms_course` habilita membership do criador e define o papel de criador. Membership tem cardinalidade de grupo ilimitada e de entidade 1.

@@ -47,14 +47,27 @@ ou a membership. A rota Core `/system/files?file=...` foi usada porque `/system/
 404 nesse ambiente. Evidências e limite de escopo estão no
 [changelog do viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/CHANGELOG.md).
 
-O PDF privado de turma está validado no Runtime, mas isso não homologa o restante do LMS. **F4 está em
-andamento:** o responsável escolheu `scripts/content/courses/introducao-antiproibicionismo.json` como fonte
-editorial canônica; `scripts/institution/provision-lms-pilot.php` foi consolidado como entrada compatível que
-delegará ao loader dessa fonte. A fase ainda depende de Composer audit/dry-run, revisão de atualização/schema,
-reconciliação do conteúdo piloto com preview/backup e validação de permissões antes de qualquer importação no
-Runtime. Nenhuma operação Drupal persistente foi executada nesta etapa. F5/F6 e as demais fases seguem com
-critérios próprios. PV6, CSP, matriz ampliada de navegadores, produção Hostinger e o fluxo de conteúdo
-editorial continuam com gates separados.
+O PDF privado de turma está validado no Runtime, mas isso não homologa o restante do LMS. **F4 — consolidação
+do Drupal LMS — concluída no Runtime de teste em 2026-10-17.** O responsável escolheu
+`scripts/content/courses/introducao-antiproibicionismo.json` como fonte editorial canônica; o caminho histórico
+`scripts/institution/provision-lms-pilot.php` delega ao loader. Composer audit passou sem advisories e o dry-run
+isolado previu somente a atualização LMS 1.2.3 → 1.2.4. O update 12002 foi aplicado; `updatedb:status` ficou
+sem pendências; `lms.settings` e o Config Sync receberam `activity_page_title`. O conteúdo existente do curso
+piloto foi comparado ao JSON no Runtime: 7 lições e 14 atividades correspondem, sem divergência. Foi
+reconciliada a permissão versionada `create course_document media` no papel `lms_teacher`, que faltava no
+Runtime. Teste temporário no Runtime confirmou: estudante membro pode `take course` e não pode `grade
+students`; educador membro pode avaliar e criar Media `course_document`; usuário fora da turma, mesmo com
+papel global `lms_teacher`, não pode iniciar nem avaliar; anônimo não pode iniciar curso. Contas temporárias
+foram removidas e a turma voltou ao número original de membros. O curso publicado continua visível a
+anônimos/visitantes conforme a configuração outsider. Os Kernel tests do LMS passaram (10 testes, 990
+asserções); `aculta_lms` (3/13); documento privado sob Group (1/39, membro e outsider). A suíte
+FunctionalJavascript upstream não foi executada porque este ambiente não fornece `SIMPLETEST_BASE_URL`. O
+update adicionou `activity_page_title`; schema config validado sem erros e `updatedb:status` está NONE. O
+provider Core `mysql` também foi ativado após o requisito de status apontar que estava ausente e foi registrado
+no Config Sync. Não houve importação global de Config Sync por causa das divergências pré-existentes do site.
+O Runtime Drush usa PHP 8.4.26; PHP 8.5 continua aberto como DT-P04 e não foi inferido. F5 — Catálogo — é a
+próxima fase, com autorização e gates próprios. PV6, CSP, matriz ampliada de navegadores, produção Hostinger
+e o fluxo editorial mantêm gates separados.
 
 ## Ordem, PR e status
 
