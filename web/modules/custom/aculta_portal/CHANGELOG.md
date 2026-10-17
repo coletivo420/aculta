@@ -1,3 +1,12 @@
+## 0.4.0-dev.86 — um tipo de perfil por papel (helper) — 2026-10-17
+
+Classificação: MINOR (novo helper de perfil por papel; migração em andamento).
+
+- `PerfilDoPapel`: tipo do perfil pelo papel mais alto (associado > email_confirmed > authenticated), com `principal()` e `obter()` que recebem o EntityTypeManager injetado. Sem efeito em código existente ainda; os chamadores migram na sequência.
+- Runtime: tipos `associado`, `email_confirmed` e `authenticated` criados com os 20 campos do `participante`; 6 perfis copiados por papel mais alto e verificados campo a campo (0 divergências). Os perfis `participante` originais continuam no banco até a troca do código.
+- Pendente: troca dos chamadores de `participante`, remoção do tipo `participante`, e remoção do tipo `customer` (exige decisão sobre o endereço de cobrança e a conta; ver PAPEIS-PARTICIPACAO.md).
+- RUNTIME STATUS: APLICADO (tipos e cópias, aditivo). Nada apagado.
+
 ## 0.4.0-dev.85 — Papéis e perfis em uma tela — 2026-10-17
 
 Classificação: MINOR (nova tela unificada e vínculo entre tipos de perfil e papéis).
