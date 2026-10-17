@@ -18,7 +18,7 @@ use Drupal\user\UserInterface;
  * removido quando a pessoa sai do curso, porque a concessão é garantida. O associado não é concedido aqui.
  *
  * A gravação da conta ocorre na relação de grupo, e não dentro de um hook de usuário, para não interferir no original
- * usado pelo módulo group (ver RoleSyncHooks).
+ * usado pelo módulo group.
  */
 final class EnrollmentRoleHooks {
 

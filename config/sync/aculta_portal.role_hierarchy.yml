@@ -6,6 +6,4 @@ cadeia:
   - estudante
   - email_confirmed
   - authenticated
-laterais:
-  wiki_contributor: email_confirmed
-  lms_admin: lms_teacher
+laterais: {}

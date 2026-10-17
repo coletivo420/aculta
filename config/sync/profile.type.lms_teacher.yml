@@ -3,8 +3,8 @@ langcode: pt-br
 status: true
 dependencies: {  }
 id: lms_teacher
-label: Professor
-display_label: 'Perfil de professor'
+label: Educador
+display_label: 'Perfil de educador'
 multiple: false
 registration: false
 roles:

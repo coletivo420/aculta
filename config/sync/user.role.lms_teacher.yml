@@ -16,6 +16,7 @@ is_admin: false
 permissions:
   - 'access administration pages'
   - 'access group overview'
+  - 'administer lms'
   - 'create course_document media'
   - 'create lms_activity entities'
   - 'create lms_course group'

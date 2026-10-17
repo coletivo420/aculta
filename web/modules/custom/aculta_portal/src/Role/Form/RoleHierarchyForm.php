@@ -9,7 +9,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
@@ -18,10 +17,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Papéis e perfis (painel ACULTA).
  *
- * Cadeia de papéis: lista ordenada pela classificação de cada categoria, do mais alto ao mais baixo; cada papel herda do papel imediatamente abaixo.
- * Move-se um papel por setas (botões, funcionam sem JavaScript) ou por arraste (mouse e toque; módulo
- * js/role-hierarchy.js). Papéis sem categoria ficam fora da cadeia e herdam do autenticado. O administrador herda
- * de todos. O mapa de herança do role_inheritance é derivado da cadeia e dos laterais ao salvar.
+ * Cadeia de papéis: tabela arrastável do próprio Drupal (#tabledrag, como na tela de blocos), com setas e peso por
+ * linha. A ordem final vem dos pesos. Cada papel herda do papel imediatamente abaixo; papéis listados junto de uma
+ * categoria entram nela. O administrador herda de todos. O mapa do role_inheritance é derivado ao salvar.
  *
  * Tipos de perfil: cada tipo corresponde a um papel (um tipo por função), então a tela só os lista.
  */
@@ -60,37 +58,41 @@ final class RoleHierarchyForm extends ConfigFormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $papeis = $this->papeis();
-    [$cadeia, $laterais] = $this->estadoAtual($form_state, $papeis);
+    [$cadeia, $laterais] = $this->estadoAtual($papeis);
 
-    $form['#attached']['library'][] = 'aculta_portal/role-hierarchy';
     $form['intro'] = [
-      '#markup' => '<p>' . $this->t('Cadeia de papéis: quem está mais alto herda do papel imediatamente abaixo, e o administrador herda de todos. Papéis listados junto de uma categoria entram nela e herdam o que ela herda. Mova um papel com as setas ou arrastando (mouse ou toque).') . '</p>',
+      '#markup' => '<p>' . $this->t('Cadeia de papéis: quem está mais alto herda do papel imediatamente abaixo, e o administrador herda de todos. Papéis listados junto de uma categoria entram nela e herdam o que ela herda. Arraste as linhas pelas setas para reordenar.') . '</p>',
     ];
 
-    $form['ordem'] = ['#type' => 'hidden', '#default_value' => json_encode($cadeia), '#attributes' => ['data-portal-role-order' => '']];
-    $form['laterais'] = ['#type' => 'hidden', '#default_value' => json_encode($laterais), '#attributes' => ['data-portal-role-laterals' => '']];
-
-    $form['cadeia'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Cadeia de papéis (do mais alto ao mais baixo)'),
-      'lista' => ['#type' => 'container', '#attributes' => ['data-portal-role-list' => '']],
-    ];
-    $total = count($cadeia);
     $membrosDe = [];
     foreach ($laterais as $papel => $categoria) {
       $membrosDe[$categoria][] = $papel;
     }
+
+    $form['cadeia'] = [
+      '#type' => 'table',
+      '#header' => [$this->t('Papel'), $this->t('Entram nesta categoria'), $this->t('Peso')],
+      '#tabledrag' => [
+        ['action' => 'order', 'relationship' => 'sibling', 'group' => 'role-weight'],
+      ],
+      '#empty' => $this->t('Nenhum papel.'),
+    ];
     foreach ($cadeia as $i => $papel) {
-      $form['cadeia']['lista'][$papel] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-role-item' => $papel],
-        'rotulo' => ['#markup' => '<strong>' . Html::escape($papeis[$papel]) . '</strong>'],
-        'membros' => array_map(fn (string $m): array => ['#markup' => '<span>' . Html::escape($papeis[$m]) . '</span>'], $membrosDe[$papel] ?? []),
-        'subir' => $this->botao($papel, 'up', $this->t('Subir'), $i === 0),
-        'descer' => $this->botao($papel, 'down', $this->t('Descer'), $i === $total - 1),
+      $nomesMembros = array_map(fn (string $m): string => $papeis[$m], $membrosDe[$papel] ?? []);
+      $form['cadeia'][$papel] = [
+        '#attributes' => ['class' => ['draggable']],
+        'papel' => ['#plain_text' => $papeis[$papel]],
+        'membros' => ['#plain_text' => implode(', ', $nomesMembros)],
+        'peso' => [
+          '#type' => 'weight',
+          '#title' => $this->t('Peso de @papel', ['@papel' => $papeis[$papel]]),
+          '#title_display' => 'invisible',
+          '#default_value' => $i,
+          '#delta' => max(20, count($cadeia)),
+          '#attributes' => ['class' => ['role-weight']],
+        ],
       ];
     }
-
 
     $form['perfis'] = [
       '#type' => 'fieldset',
@@ -127,22 +129,17 @@ final class RoleHierarchyForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $papeis = $this->papeis();
-    $cadeia = $this->lerLista($form_state->getValue('ordem'));
-    $laterais = $this->lerMapa($form_state->getValue('laterais'));
-    $esperados = array_values(array_diff(array_keys($papeis), self::FORA, array_keys($laterais)));
-    if ($cadeia === NULL || $laterais === NULL || array_diff($cadeia, $esperados) !== [] || array_diff($esperados, $cadeia) !== []) {
-      $form_state->setErrorByName('ordem', $this->t('A cadeia de papéis está incompleta. Recarregue a página e tente de novo.'));
-      return;
-    }
+    $cadeia = $this->ordemDoEnvio($form_state);
+    $laterais = $this->laterais($papeis, $cadeia);
     if (RoleHierarchy::temCiclo(RoleHierarchy::derivarMapa($cadeia, $laterais, array_keys($papeis)))) {
-      $form_state->setErrorByName('ordem', $this->t('A hierarquia tem ciclo. Corrija antes de salvar.'));
+      $form_state->setErrorByName('cadeia', $this->t('A hierarquia tem ciclo. Corrija antes de salvar.'));
     }
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $papeis = $this->papeis();
-    $cadeia = $this->lerLista($form_state->getValue('ordem')) ?? [];
-    $laterais = $this->lerMapa($form_state->getValue('laterais')) ?? [];
+    $cadeia = $this->ordemDoEnvio($form_state);
+    $laterais = $this->laterais($papeis, $cadeia);
     $mapa = RoleHierarchy::derivarMapa($cadeia, $laterais, array_keys($papeis));
     $this->config(self::ESTADO)->set('cadeia', $cadeia)->set('laterais', $laterais)->save();
     $this->config(self::HIERARQUIA)->set('role_map', $mapa)->save();
@@ -151,40 +148,40 @@ final class RoleHierarchyForm extends ConfigFormBase {
   }
 
   /**
-   * Botões de setas: troca o papel com o vizinho e refaz a tela com a nova ordem (sem salvar).
+   * Papéis da cadeia na ordem dos pesos enviados (empate: ordem atual).
+   *
+   * @return string[]
    */
-  public function alterarEstado(array &$form, FormStateInterface $form_state): void {
-    $nome = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
-    $partes = explode('__', $nome);
-    $entrada = $form_state->getUserInput();
-    if (($partes[0] ?? '') === 'cadeia' && count($partes) === 3) {
-      $cadeia = $this->lerLista($entrada['ordem'] ?? NULL) ?? [];
-      $i = array_search($partes[1], $cadeia, TRUE);
-      $j = $partes[2] === 'up' ? $i - 1 : $i + 1;
-      if ($i !== FALSE && isset($cadeia[$j])) {
-        [$cadeia[$i], $cadeia[$j]] = [$cadeia[$j], $cadeia[$i]];
-        $entrada['ordem'] = json_encode(array_values($cadeia));
+  private function ordemDoEnvio(FormStateInterface $form_state): array {
+    $linhas = $form_state->getValue('cadeia') ?? [];
+    $ordem = [];
+    foreach ($linhas as $papel => $linha) {
+      if (is_array($linha) && isset($linha['peso'])) {
+        $ordem[] = ['papel' => (string) $papel, 'peso' => (int) $linha['peso']];
       }
     }
-    $form_state->setUserInput($entrada);
-    $form_state->setRebuild();
+    usort($ordem, fn (array $a, array $b): int => $a['peso'] <=> $b['peso']);
+    return array_column($ordem, 'papel');
   }
 
   /**
-   * Botão de seta. Sem JavaScript, o clique envia o formulário e a ordem é refeita pelo servidor.
+   * Papéis fora da cadeia e a categoria em que entram (somente os que pertencem à cadeia enviada).
    *
-   * @return array<string, mixed>
+   * @param array<string, string> $papeis
+   * @param string[] $cadeia
+   *
+   * @return array<string, string>
    */
-  private function botao(string $papel, string $direcao, mixed $rotulo, bool $desabilitado): array {
-    return [
-      '#type' => 'submit',
-      '#name' => 'cadeia__' . $papel . '__' . $direcao,
-      '#value' => $rotulo,
-      '#limit_validation_errors' => [],
-      '#submit' => ['::alterarEstado'],
-      '#disabled' => $desabilitado,
-      '#attributes' => ['aria-label' => (string) $rotulo . ' ' . $papel],
-    ];
+  private function laterais(array $papeis, array $cadeia): array {
+    $laterais = [];
+    foreach (array_keys($papeis) as $papel) {
+      if (in_array($papel, self::FORA, TRUE) || in_array($papel, $cadeia, TRUE)) {
+        continue;
+      }
+      $categoria = (string) $this->config(self::ESTADO)->get('laterais.' . $papel);
+      $laterais[$papel] = in_array($categoria, $cadeia, TRUE) ? $categoria : 'authenticated';
+    }
+    return $laterais;
   }
 
   /**
@@ -194,14 +191,9 @@ final class RoleHierarchyForm extends ConfigFormBase {
    *
    * @return array{0: string[], 1: array<string, string>}
    */
-  private function estadoAtual(FormStateInterface $form_state, array $papeis): array {
-    $entrada = $form_state->getUserInput();
-    $cadeia = isset($entrada['ordem']) ? $this->lerLista($entrada['ordem']) : NULL;
-    $laterais = isset($entrada['laterais']) ? $this->lerMapa($entrada['laterais']) : NULL;
-    if ($cadeia === NULL || $laterais === NULL) {
-      $cadeia = $this->config(self::ESTADO)->get('cadeia');
-      $laterais = $this->config(self::ESTADO)->get('laterais');
-    }
+  private function estadoAtual(array $papeis): array {
+    $cadeia = $this->config(self::ESTADO)->get('cadeia');
+    $laterais = $this->config(self::ESTADO)->get('laterais');
     $existentes = array_values(array_diff(array_keys($papeis), self::FORA));
     if (!is_array($cadeia) || !is_array($laterais)) {
       $cadeia = ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'];
@@ -222,28 +214,6 @@ final class RoleHierarchyForm extends ConfigFormBase {
     }
     $laterais = array_filter($laterais, fn (string $pai, string $papel): bool => in_array($papel, $existentes, TRUE) && !in_array($papel, $cadeia, TRUE), ARRAY_FILTER_USE_BOTH);
     return [$cadeia, $laterais];
-  }
-
-  /**
-   * @return string[]|null
-   */
-  private function lerLista(mixed $valor): ?array {
-    if (is_array($valor)) {
-      return array_values(array_map('strval', $valor));
-    }
-    $dados = is_string($valor) ? json_decode($valor, TRUE) : NULL;
-    return is_array($dados) ? array_values(array_map('strval', $dados)) : NULL;
-  }
-
-  /**
-   * @return array<string, string>|null
-   */
-  private function lerMapa(mixed $valor): ?array {
-    if (is_array($valor)) {
-      return array_map('strval', $valor);
-    }
-    $dados = is_string($valor) ? json_decode($valor, TRUE) : NULL;
-    return is_array($dados) ? array_map('strval', $dados) : NULL;
   }
 
   /**

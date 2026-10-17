@@ -1,3 +1,14 @@
+## 0.4.0-dev.94 — papéis mesclados e nomes alinhados — 2026-10-17
+
+Classificação: MINOR (remoção de dois papéis, com mesclagem de permissões e de contas).
+
+- Colaborador da Wiki420 (`wiki_contributor`) mesclado em E-mail confirmado (`email_confirmed`); Administrador de cursos (`lms_admin`) mesclado em Educador (`lms_teacher`). Permissões somadas aos papéis que ficam; contas com o papel antigo passam a ter só o que ficou. Ações de papel e arquivos de configuração dos papéis antigos removidos.
+- Hook que concedia o colaborador da wiki a quem tinha e-mail confirmado removido (não tem mais função).
+- Nomes alinhados em tipos de perfil e papéis: Usuário autenticado (antes "Autenticado" no tipo de perfil) e Educador (antes "Professor").
+- Opções de papel dos avisos: removidos os papéis antigos; rótulos iguais aos nomes dos papéis.
+- Gates: papéis de usuário sem exceção editorial; linha de base de checagens por nome de papel reduzida para 13.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: tela de papéis mostra a cadeia com os nomes novos; páginas de perfil e de papéis respondem 200; contas da wiki mantêm o e-mail confirmado.
+
 ## 0.4.0-dev.93 — colaborador da wiki e administrador de cursos entram em categorias — 2026-10-17
 
 Classificação: PATCH (ajuste de classificação de papéis na cadeia).

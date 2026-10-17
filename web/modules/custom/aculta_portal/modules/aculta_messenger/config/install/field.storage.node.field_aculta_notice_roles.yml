@@ -9,12 +9,10 @@ entity_type: node
 type: list_string
 settings:
   allowed_values:
-    - { value: authenticated, label: 'Todos os membros' }
+    - { value: authenticated, label: 'Usuário autenticado' }
     - { value: email_confirmed, label: 'E-mail confirmado' }
-    - { value: content_editor, label: 'Editores de conteúdo' }
-    - { value: lms_teacher, label: 'Educadores' }
-    - { value: lms_admin, label: 'Administração LMS' }
-    - { value: wiki_contributor, label: 'Colaboradores Wiki' }
+    - { value: content_editor, label: 'Editor de conteúdo' }
+    - { value: lms_teacher, label: 'Educador' }
   allowed_values_function: ''
 module: options
 locked: false

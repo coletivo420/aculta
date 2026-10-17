@@ -3,8 +3,8 @@ langcode: pt-br
 status: true
 dependencies: {  }
 id: authenticated
-label: Autenticado
-display_label: 'Perfil de conta autenticada'
+label: Usuário autenticado
+display_label: 'Perfil de usuário autenticado'
 multiple: false
 registration: false
 roles:

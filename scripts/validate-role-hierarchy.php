@@ -41,7 +41,7 @@ $decidida = [
 ];
 
 /** Linha de base de checagens por nome de papel em código customizado (dívida: não pode subir). */
-const LINHA_DE_BASE_HASROLE = 15;
+const LINHA_DE_BASE_HASROLE = 13;
 const LINHA_DE_BASE_IN_ARRAY_PAPEL = 4;
 
 $mapa = Yaml::parseFile($root . '/config/sync/role_inheritance.settings.yml')['role_map'] ?? [];
