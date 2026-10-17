@@ -1055,7 +1055,7 @@ Classificação: PATCH (ferramenta de deploy e documentação; sem código de ru
 
 - `aculta_deployer` 0.1.15: `domain_transition` em `config/deploy.json` e o comando `domains` (somente leitura), que confere a tabela contra `config/sync/domain.record.*.yml`.
 - Guia `aculta_deployer/docs/MIGRACAO-DOMINIOS.md` e fase 11 no `PLANEJAMENTO.md`.
-- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `coletivo420.aculta.org`). Produção só muda no deploy do RC.
+- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `revista420.aculta.org`). Produção só muda no deploy do RC.
 
 ## 0.2.0-dev.48 — Deployer 0.1.15: tabela de migração de domínios (teste → produção) — 2026-10-11
 
@@ -1063,13 +1063,13 @@ Classificação: PATCH (ferramenta de deploy e documentação; sem código de ru
 
 - `aculta_deployer` 0.1.15: `domain_transition` em `config/deploy.json` e o comando `domains` (somente leitura), que confere a tabela contra `config/sync/domain.record.*.yml`.
 - Guia `aculta_deployer/docs/MIGRACAO-DOMINIOS.md` e fase 11 no `PLANEJAMENTO.md`.
-- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `coletivo420.aculta.org`). Produção só muda no deploy do RC.
+- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `revista420.aculta.org`). Produção só muda no deploy do RC.
 
 ## 0.2.0-dev.47 — Host de teste da revista: coletivo420 → revista420 (servidor de testes) — 2026-10-10
 
 Classificação: PATCH (configuração de deploy e documentação; sem código de runtime).
 
-- `aculta_deployer/config/deploy.json`: host de teste da revista em `revista420.aculta.toca.net.br` (lista de hosts do sitemap/robots e substituição de `hostname` no domínio). Produção (`coletivo420.aculta.org`) não muda nesta versão.
+- `aculta_deployer/config/deploy.json`: host de teste da revista em `revista420.aculta.toca.net.br` (lista de hosts do sitemap/robots e substituição de `hostname` no domínio). Produção (`revista420.aculta.org`) não muda nesta versão.
 - `config/sync/domain_alias.alias.coletivo420_aculta_toca_net_br.yml`: padrão do alias de teste passa a `revista420.aculta.toca.net.br`. O `id` e o nome do arquivo permanecem, para não alterar a identidade da configuração importada.
 - Documentação: `docs/operations/TESTING.md`, `docs/architecture/multidomain.md`, `docs/portal/ARCHITECTURE.md` (coluna do servidor de testes).
 - Pendências fora do repositório (DEFERRED): (1) `trusted_host_patterns` em `settings.local.php` do servidor de testes; (2) `config import` do alias no Runtime e limpeza de cache; (3) DNS e VirtualHost/certificado no Cloudflare e no Virtualmin; (4) mudança equivalente em produção (`*.aculta.org`), registrada para deploy só no RC.
@@ -1124,7 +1124,7 @@ Classificação: correção de comportamento de busca (PATCH).
 - A busca geral segue centralizada no MAIN (`/busca`). Cada resultado passa a abrir no host do próprio conteúdo, pelo purpose do nó (`field_domain_source`). Antes, o link era o caminho relativo do host onde a busca rodava.
 - A Wiki420 mantém o próprio motor (`/wiki/busca`, `WikiController::search`); os verbetes `wiki_entry` não entram no índice geral.
 - Política em `docs/portal/SEARCH.md`.
-- Verificado no Runtime de teste: resultado de "Notícias" abre em `coletivo420.aculta.toca.net.br/noticias`.
+- Verificado no Runtime de teste: resultado de "Notícias" abre em `revista420.aculta.toca.net.br/noticias`.
 
 ## 0.2.0-dev.40 — F3: busca com content_access e testes de Kernel — 2026-10-10
 

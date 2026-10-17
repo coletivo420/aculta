@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 id: coletivo420_aculta_test_8080
 domain_id: coletivo420_aculta_org
-pattern: 'coletivo420.aculta.test:8080'
+pattern: 'revista420.aculta.test:8080'
 redirect: 0
 environment: local
 weight: 7

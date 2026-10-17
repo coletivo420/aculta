@@ -1,5 +1,12 @@
 # Changelog — aculta_pdf_viewer
 
+## Submódulo aculta_pdf_viewer_group 0.1.0-dev.4 — relação Group após habilitação — 2026-10-17
+
+Classificação: PATCH (corrige a ordem de instalação da configuração Group).
+
+- A relação `lms_course` deixa de ficar em `config/optional`; permanece no Config Sync, que a importa após habilitar o submódulo e descobrir o plugin `aculta_pdf_viewer_group:course_document`.
+- O Runtime confirmou que a tentativa de habilitação falhava ao resolver o plugin na importação opcional antecipada. A habilitação do módulo e os bundles/campos foram concluídos; a relação aguarda a sincronização dirigida.
+
 ## 0.1.0-dev.13 — zoom visível fora da tela cheia — 2026-10-17
 
 Classificação: PATCH (correção de apresentação; sem mudança no formato de arquivo ou contrato de acesso).

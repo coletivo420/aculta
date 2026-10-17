@@ -6,7 +6,7 @@ Status: vigente desde 0.2.0-dev.41.
 
 - **Busca geral centralizada no MAIN.** `/busca` (e `/busca/sugestoes`) é atendido só no domínio principal. Não há busca geral nos subdomínios.
 - **Índice cobre o conteúdo público dos subdomínios.** O índice `aculta_conteudo` (Search API, backend de banco) inclui os tipos `activity`, `article`, `document`, `page` e `project`, publicados em qualquer purpose.
-- **Cada resultado abre no seu host.** O link é gerado pelo purpose do nó (`field_domain_source`), via `DomainPurposeManager::canonicalPathUrl`. Um item do magazine abre em `coletivo420.aculta.org`, um item da home abre em `aculta.org`.
+- **Cada resultado abre no seu host.** O link é gerado pelo purpose do nó (`field_domain_source`), via `DomainPurposeManager::canonicalPathUrl`. Um item do magazine abre em `revista420.aculta.org`, um item da home abre em `aculta.org`.
 - **Visibilidade por acesso.** `content_access` filtra no índice; o controller confere `node->access('view')` por item.
 
 ## Exceções

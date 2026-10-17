@@ -10,7 +10,7 @@ $entries = @(
   '127.0.0.1 aculta.test'
   '127.0.0.1 conta.aculta.test'
   '127.0.0.1 apoio.aculta.test'
-  '127.0.0.1 coletivo420.aculta.test'
+  '127.0.0.1 revista420.aculta.test'
   '127.0.0.1 wiki420.aculta.test'
   '127.0.0.1 loja.aculta.test'
   '127.0.0.1 cursos.aculta.test'
@@ -47,7 +47,7 @@ if ($start -ge 0) {
 }
 
 if (-not $Remove) {
-  $managedHosts = @('aculta.test','conta.aculta.test','apoio.aculta.test','coletivo420.aculta.test','wiki420.aculta.test','loja.aculta.test','cursos.aculta.test')
+  $managedHosts = @('aculta.test','conta.aculta.test','apoio.aculta.test','revista420.aculta.test','wiki420.aculta.test','loja.aculta.test','cursos.aculta.test')
   $lines = $content -split "`r?`n"
   $content = (($lines | Where-Object {
     $tokens = $_.Trim() -split '\s+'
@@ -64,7 +64,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if (-not $Remove) {
-  foreach ($domain in @('aculta.test','conta.aculta.test','apoio.aculta.test','coletivo420.aculta.test','wiki420.aculta.test','loja.aculta.test','cursos.aculta.test')) {
+  foreach ($domain in @('aculta.test','conta.aculta.test','apoio.aculta.test','revista420.aculta.test','wiki420.aculta.test','loja.aculta.test','cursos.aculta.test')) {
     $addresses = [Net.Dns]::GetHostAddresses($domain) | ForEach-Object { $_.IPAddressToString }
     if ($addresses -notcontains '127.0.0.1') {
       throw "A validação DNS falhou para $domain. Backup: $backupPath"

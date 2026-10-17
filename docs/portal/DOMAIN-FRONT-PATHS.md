@@ -16,7 +16,7 @@ Regra uniforme, implementada em `src/Domain/FrontPathPolicy.php` e aplicada por 
 | `wiki420.aculta.toca.net.br` | 200 (wiki) | 404 | |
 | `revista420.aculta.toca.net.br` | 200 | 404 | |
 | `loja.aculta.toca.net.br` | **404: pendência de conteúdo** | 404 | A vitrine (nó 69, alias `/loja-da-aculta`) não existe no Runtime de testes. Decisão do responsável: criar o conteúdo |
-| `coletivo420.aculta.toca.net.br` | não resolve no servidor de testes | — | Pendência de ambiente |
+| `revista420.aculta.toca.net.br` | não resolve no servidor de testes | — | Pendência de ambiente |
 | `aculta.toca.net.br` (principal) | 200 | 404 para `/apoio` (não é finalidade do principal) | Carrinho e checkout pertencem ao principal |
 | `conta.aculta.toca.net.br` | 302 para `/entrar` (anônimo) ou visão geral (logado) | `/dashboard` direto: 404 | |
 

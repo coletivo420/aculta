@@ -17,7 +17,7 @@ Escopo: transição de `*.aculta.toca.net.br` (servidor de testes) para `*.acult
 
 ## Decisão pendente
 
-O host de teste da revista passou a ser `revista420.aculta.toca.net.br`. A produção hoje é `coletivo420.aculta.org`. A tabela assume `revista420.aculta.org`, mas isso precisa ser confirmado pelo responsável antes do RC. Se a decisão for manter `coletivo420.aculta.org`, o destino da linha muda em `deploy.json` e o registro de domínio em `config/sync` continua igual.
+O host de teste da revista passou a ser `revista420.aculta.toca.net.br`. A produção hoje é `revista420.aculta.org`. A tabela assume `revista420.aculta.org`, mas isso precisa ser confirmado pelo responsável antes do RC. Se a decisão for manter `revista420.aculta.org`, o destino da linha muda em `deploy.json` e o registro de domínio em `config/sync` continua igual.
 
 ## Passos no RC (não executar antes)
 
