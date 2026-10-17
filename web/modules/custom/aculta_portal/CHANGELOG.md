@@ -1,3 +1,11 @@
+## 0.4.0-dev.122 — corrige erro na página de credenciais — 2026-10-17
+
+- Corrigido o namespace de `Markup` usado na listagem de credenciais. O namespace incorreto causava erro fatal
+  quando a página renderizava uma credencial já preenchida.
+- Verificação no Runtime de testes: Drush conectado a `aculta_runtime` com URI explícito `https://aculta.toca.net.br`;
+  cache rebuild concluído e controller retornou as duas seções do render array. A requisição HTTP anônima continua
+  recebendo 403 pela permissão administrativa; não havia sessão autenticada disponível para smoke visual.
+
 ## 0.4.0-dev.121 — gravação das assinaturas de doação — 2026-10-17
 
 - `MercadoPagoSubscriptionRecorder`: grava no pedido `assinatura` o status da assinatura (tópico `subscription_preapproval`) e
