@@ -1,3 +1,12 @@
+## 0.4.0-dev.111 — cadastro em modal para o checkout de doação — 2026-10-17
+
+- Cadastro em modal (`/criar-conta/janela`): formulário `RegisterPopupForm` (estende o cadastro do Core) registrado como
+  handler `register_popup` da entidade de usuário (`RegisterPopupHooks`). Após o cadastro, volta ao destino.
+- Sem Turnstile no cadastro em modal, por decisão do responsável: exceção em `TurnstileToggle::EXCEPTION_FORM_IDS`,
+  ponto de CAPTCHA desligado em config/sync e documentação em `docs/portal/TURNSTILE.md`. O cadastro comum
+  (`user_register_form`) continua protegido.
+- RUNTIME STATUS: APLICADO no Runtime de testes (modal responde 200, sem campos de CAPTCHA).
+
 ## 0.4.0-dev.110 — estorno bloqueado para doações — 2026-10-17
 
 - Tabela de vendas não mostra "Estornar" para pedido com item de doação (doações e assinaturas não têm estorno). Loja inalterada.

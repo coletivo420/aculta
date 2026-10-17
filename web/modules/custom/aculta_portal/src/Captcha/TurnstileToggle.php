@@ -40,6 +40,7 @@ final class TurnstileToggle {
     'commerce_order_item_add_to_cart_form',
     'commerce_checkout_flow_default',
     'aculta_login_popup_form',
+    'aculta_register_popup_form',
     'aculta_messenger_new_conversation',
     'private_message_add_form',
     'aculta_messenger_conversation_relationship',

@@ -311,6 +311,15 @@ aculta_portal.login_popup:
   requirements:
     _user_is_logged_in: 'FALSE'
 
+# Cadastro em modal (convite do checkout de doação). Sem Turnstile: exceção em TurnstileToggle e docs/portal/TURNSTILE.md.
+aculta_portal.register_popup:
+  path: /criar-conta/janela
+  defaults:
+    _entity_form: 'user.register_popup'
+    _title: 'Criar conta'
+  requirements:
+    _access_user_register: 'TRUE'
+
 aculta_portal.email_confirmacao_pendentes:
   path: '/painel-administrativo/contas/nao-confirmadas'
   defaults:
