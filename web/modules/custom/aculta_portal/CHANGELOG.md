@@ -6,6 +6,7 @@ Classificação: PATCH (roteamento; sem API nova).
 - Testes unitários da política (172 testes no módulo, OK).
 - Gate `scripts/validate-domain-front-paths.php` (estático; `--live` consulta os hosts): falha se o assinante deixar de usar a política ou se surgir um 301 novo sem revisão.
 - Documentado em `docs/portal/DOMAIN-FRONT-PATHS.md`, com a matriz por host e a lista de 301 legados permitidos.
+- Gate `validate-aculta-portal-drupal11`: o contrato P5.1 do `SupportForm` foi atualizado do link do módulo de doação (`blockManager`) para os valores sugeridos no domínio principal (0.4.0-dev.73). O contrato continua exigindo injeção de dependências.
 - Pendências fora do código: vitrine da loja (nó 69 / alias `/loja-da-aculta`) ausente no Runtime de testes, então a raiz da loja responde 404; host `coletivo420` não resolve no servidor de testes.
 
 ## 0.4.0-dev.74 — apoio somente no subdomínio — 2026-10-17
