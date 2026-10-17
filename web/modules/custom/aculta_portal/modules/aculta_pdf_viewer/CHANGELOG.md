@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.16 — Media Embed da Wiki compartilha o display PDF — 2026-10-17
+
+Classificação: PATCH (habilita processamento de Media `document` no formato Wiki existente).
+
+- `filter.format.wiki` permite o elemento `drupal-media` e processa Media Embed após os filtros HTML, restrito ao bundle `document`; o display Media compartilhado mantém as verificações de acesso do Core.
+- Kernel confirma que embed em formato compatível renderiza o formatter PDF compartilhado. A inclusão de botão CKEditor na Wiki fica pendente: a lista histórica de HTML não valida com CKEditor 5 e requer trabalho de compatibilidade separado.
+- Runtime de teste `https://aculta.toca.net.br`: formato `wiki` atualizado pela entidade de configuração e cache reconstruído; a configuração ativa corresponde ao YAML. Não há embed PDF existente em páginas Wiki para smoke visual. O import global segue bloqueado por erro YAML preexistente em outra configuração. RUNTIME STATUS: APLICADO; smoke de conteúdo: DEFERRED.
+
 ## 0.1.0-dev.15 — viewer compartilhado em campos File institucionais — 2026-10-17
 
 Classificação: MINOR (novo formatter compatível com File API e sem storage próprio).

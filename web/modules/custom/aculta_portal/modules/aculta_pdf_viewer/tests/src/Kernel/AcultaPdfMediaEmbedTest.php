@@ -12,6 +12,7 @@ use Drupal\Core\DrupalKernel;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
+use Drupal\filter\Entity\FilterFormat;
 use Drupal\filter\FilterPluginCollection;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
@@ -282,6 +283,81 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->assertStringContainsString('data-aculta-pdf-control="fullscreen"', $processed);
     $this->assertContains('aculta_pdf_viewer/viewer', $result->getAttachments()['library'] ?? []);
     $this->assertContains('media:' . $media->id(), $result->getCacheTags());
+  }
+
+  /**
+   * Tests that a Wiki text format renders a PDF through the shared formatter.
+   */
+  public function testWikiFormatUsesSharedPdfFormatter(): void {
+    $file_uri = $this->container->get('file_system')->saveData(
+      "%PDF-1.4\n% ACULTA Wiki PDF Kernel fixture\n",
+      'public://aculta-pdf-wiki-fixture.pdf',
+      FileExists::Replace,
+    );
+    $user = $this->container->get('current_user')->getAccount();
+    $file = File::create([
+      'uri' => $file_uri,
+      'filename' => 'aculta-pdf-wiki-fixture.pdf',
+      'filemime' => 'application/pdf',
+      'uid' => $user->id(),
+    ]);
+    $file->setPermanent();
+    $file->save();
+
+    $media = Media::create([
+      'bundle' => 'document',
+      'name' => 'Wiki PDF Kernel fixture',
+      'status' => TRUE,
+      'field_media_document' => [['target_id' => $file->id()]],
+    ]);
+    $media->setOwner($user);
+    $media->save();
+
+    $format = FilterFormat::create([
+      'format' => 'wiki_pdf_test',
+      'name' => 'Wiki PDF test',
+      'filters' => [
+        'filter_html' => [
+          'id' => 'filter_html',
+          'provider' => 'filter',
+          'status' => TRUE,
+          'weight' => -10,
+          'settings' => [
+            'allowed_html' => '<drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt>',
+            'filter_html_help' => FALSE,
+            'filter_html_nofollow' => FALSE,
+          ],
+        ],
+        'media_embed' => [
+          'id' => 'media_embed',
+          'provider' => 'media',
+          'status' => TRUE,
+          'weight' => 40,
+          'settings' => [
+            'default_view_mode' => 'default',
+            'allowed_view_modes' => [],
+            'allowed_media_types' => ['document' => 'document'],
+          ],
+        ],
+      ],
+    ]);
+    $format->save();
+
+    $text = sprintf(
+      '<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>',
+      $media->uuid(),
+    );
+    $build = [
+      '#type' => 'processed_text',
+      '#text' => $text,
+      '#format' => 'wiki_pdf_test',
+      '#langcode' => 'pt-br',
+    ];
+    $processed = $this->container->get('renderer')->renderRoot($build);
+
+    self::assertStringNotContainsString('<drupal-media', (string) $processed);
+    self::assertStringContainsString('data-aculta-pdf-viewer="true"', (string) $processed);
+    self::assertStringContainsString('aculta-pdf-wiki-fixture.pdf', (string) $processed);
   }
 
   /**

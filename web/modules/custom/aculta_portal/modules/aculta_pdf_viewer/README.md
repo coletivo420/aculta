@@ -30,6 +30,10 @@ de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
   formatter verifica acesso à entidade, ao campo e ao download do File; tipos
   não PDF preservam o link Core. Arquivos privados continuam usando o formatter
   Core, que entrega pela rota protegida e revalida acesso.
+- A Wiki processa Media Embed do Core com `document` como único tipo permitido;
+  a autorização da Media continua sendo verificada pelo Core durante o embed.
+  A inserção pela barra CKEditor permanece pendente porque o formato histórico
+  não valida integralmente com CKEditor 5.
 
 ## Classes e fluxo
 

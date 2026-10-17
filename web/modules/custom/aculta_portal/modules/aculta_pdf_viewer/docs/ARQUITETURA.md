@@ -16,6 +16,9 @@ Wiki420, Fórum, projetos e documentos institucionais que referenciem Media.
   File e às entidades/campos referenciadores a cada requisição.
 - O viewer não cria rotas, armazenamento, permissões, dados de LMS ou política
   de autorização independente.
+- Formatos que embutem Media usam o filtro `media_embed` do Core depois dos
+  filtros de HTML; a Wiki permite somente o bundle público `document`. O
+  render continua passando pelo display Media e pela checagem Core de acesso.
 - PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha/ausência de preview não
   muda a leitura nem o fallback autorizado.
 
@@ -106,6 +109,16 @@ Os displays `node.document.default` e `node.document.full` usam esse formatter
 para o campo institucional `field_document`. Isso amplia o contrato existente
 sem alterar a fonte de verdade: o node e o campo continuam donos da associação,
 enquanto o File continua dono do arquivo e seus metadados.
+
+### Wiki e formatos de texto
+
+O formato `wiki` processa tokens `drupal-media` pelo filtro `media_embed` após a
+sanitização HTML e permite somente Media `document`. Assim, a Wiki e os formatos
+editoriais que já oferecem `document` compartilham o display Media, sem construir
+uma URL ou política de acesso própria. A Media continua sujeita ao acesso do
+Core e o bundle `course_document` privado não pode ser selecionado nesse formato.
+O formato histórico ainda não é compatível com CKEditor 5; habilitar nele a
+inserção pela barra exigirá tratar a compatibilidade de HTML em trabalho separado.
 
 ## JavaScript e carregamento
 

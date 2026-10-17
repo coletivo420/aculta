@@ -1,3 +1,12 @@
+## 0.4.0-dev.92 — Media Embed de PDF compartilhado com a Wiki — 2026-10-17
+
+Classificação: PATCH (habilita o processamento do embed de documento no formato Wiki existente).
+
+- `filter.format.wiki` permite o elemento `drupal-media` e processa Media Embed após a sanitização HTML, somente para Media `document`. A Wiki resolve o display Media compartilhado e mantém autorização Core.
+- Kernel valida o pipeline de renderização. O botão CKEditor fica pendente: a lista histórica de HTML da Wiki falha na validação CKEditor 5, então a habilitação exigiria compatibilização separada.
+- Runtime de teste `https://aculta.toca.net.br`: formato `wiki` atualizado por entidade de configuração e cache reconstruído; configuração ativa corresponde ao YAML. Não existe embed PDF em conteúdo Wiki para smoke visual. Config Sync global segue bloqueado por erro YAML preexistente em outro arquivo.
+- RUNTIME STATUS: APLICADO; smoke de conteúdo: DEFERRED.
+
 ## 0.4.0-dev.91 — tema administrativo em todas as rotas do painel — 2026-10-17
 
 Classificação: PATCH (correção de tema em páginas administrativas).
