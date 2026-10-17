@@ -100,7 +100,7 @@ Foi criado um comprador de teste por `POST /users/test_user` sem autorização d
 
 Só a conta de `secrets/mercadolivre_test_user` está autorizada para os testes.
 
-As credenciais do comprador autorizado (login e senha) ficam no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). Esse arquivo não é lido por código nem versionado. A variável `MERCADOPAGO_TEST_BUYER_PASSWORD` ainda não está no carregador de segredos do ambiente; `secrets/aculta.secrets.env` pertence ao usuário `aculta`. O comprador autorizado foi criado pelo painel.
+Credenciais do comprador de teste da aplicação (login e senha) estão no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). Esse arquivo não é lido por código nem versionado. A variável padrão `MERCADOPAGO_TEST_BUYER_PASSWORD` ainda não está no carregador de segredos do ambiente (`secrets/aculta.secrets.env` pertence ao usuário `aculta`). (que descreve a criação pelo painel).
 
 Como usar: entrar no Mercado Pago Developers com o usuário e a senha da conta de teste, em janela anônima do
 navegador, para evitar erros de duplicidade de credenciais.
