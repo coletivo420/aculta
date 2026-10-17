@@ -1,3 +1,10 @@
+## 0.4.0-dev.119 — página inicial da loja com os produtos disponíveis — 2026-10-17
+
+- A raiz de `loja.aculta` (rota `/loja`) mostra o texto da página inicial da loja e, abaixo, um cartão por produto publicado,
+  do mais recente para o mais antigo, com o menor preço das variações publicadas. Cada cartão leva à página do produto.
+- Cartões com a apresentação do tema (token `shop-product-card`), pelo elemento `aculta_portal_element`.
+- RUNTIME STATUS: APLICADO no Runtime de testes (raiz da loja 200 com o produto e o preço; página do produto 200).
+
 ## 0.4.0-dev.118 — raiz da loja pela rota /loja, como os outros subdomínios — 2026-10-17
 
 - A raiz de `loja.aculta` é servida pela rota `aculta_portal.shop_home` (`/loja`), no mesmo padrão de `/apoio`, `/wiki` e

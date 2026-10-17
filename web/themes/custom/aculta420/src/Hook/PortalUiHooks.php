@@ -39,6 +39,9 @@ final class PortalUiHooks {
     'donation-account-invite' => ['alert', 'alert-info', 'mt-3'],
     'donation-account-invite-link' => ['btn', 'btn-outline-primary'],
     'register-popup' => ['d-grid', 'gap-3'],
+    // Loja: vitrine da página inicial (produtos publicados).
+    'shop-products' => ['d-grid', 'gap-3', 'mt-4'],
+    'shop-product-card' => ['btn', 'btn-outline-primary', 'text-start', 'p-3'],
     // Relatórios de requisitos e segredos (administração do Portal).
     'requirements' => ['aculta-portal-requirements'],
     'requirements-legend' => ['aculta-portal-requirements__legend'],
