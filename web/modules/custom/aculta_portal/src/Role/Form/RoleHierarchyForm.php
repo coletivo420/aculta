@@ -172,15 +172,8 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * @return array<string, string>
    */
   private function laterais(array $papeis, array $cadeia): array {
-    $laterais = [];
-    foreach (array_keys($papeis) as $papel) {
-      if (in_array($papel, self::FORA, TRUE) || in_array($papel, $cadeia, TRUE)) {
-        continue;
-      }
-      $categoria = (string) $this->config(self::ESTADO)->get('laterais.' . $papel);
-      $laterais[$papel] = in_array($categoria, $cadeia, TRUE) ? $categoria : 'authenticated';
-    }
-    return $laterais;
+    $laterais = (array) $this->config(self::ESTADO)->get('laterais');
+    return RoleHierarchy::completar($cadeia, $laterais, array_values(array_diff(array_keys($papeis), self::FORA)))['laterais'];
   }
 
   /**
@@ -191,28 +184,11 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * @return array{0: string[], 1: array<string, string>}
    */
   private function estadoAtual(array $papeis): array {
-    $cadeia = $this->config(self::ESTADO)->get('cadeia');
-    $laterais = $this->config(self::ESTADO)->get('laterais');
-    $existentes = array_values(array_diff(array_keys($papeis), self::FORA));
-    if (!is_array($cadeia) || !is_array($laterais)) {
-      $cadeia = ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'];
-      $laterais = ['wiki_contributor' => 'email_confirmed', 'lms_admin' => 'lms_teacher'];
-    }
-    // Papéis do site que ainda não estão em lugar nenhum entram como laterais presos ao autenticado.
-    $cadeia = array_values(array_filter($cadeia, fn (string $p): bool => in_array($p, $existentes, TRUE) && !isset($laterais[$p])));
-    foreach ($existentes as $papel) {
-      if (!in_array($papel, $cadeia, TRUE) && !isset($laterais[$papel])) {
-        $laterais[$papel] = 'authenticated';
-      }
-    }
-    // Categoria inexistente na cadeia: volta ao autenticado.
-    foreach ($laterais as $papel => $categoria) {
-      if (!in_array($categoria, $cadeia, TRUE)) {
-        $laterais[$papel] = 'authenticated';
-      }
-    }
-    $laterais = array_filter($laterais, fn (string $pai, string $papel): bool => in_array($papel, $existentes, TRUE) && !in_array($papel, $cadeia, TRUE), ARRAY_FILTER_USE_BOTH);
-    return [$cadeia, $laterais];
+    $configuracao = $this->config(self::ESTADO);
+    $cadeia = (array) ($configuracao->get('cadeia') ?? ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated']);
+    $laterais = (array) ($configuracao->get('laterais') ?? ['wiki_contributor' => 'email_confirmed', 'lms_admin' => 'lms_teacher']);
+    $completo = RoleHierarchy::completar($cadeia, $laterais, array_values(array_diff(array_keys($papeis), self::FORA)));
+    return [$completo['cadeia'], $completo['laterais']];
   }
 
   /**

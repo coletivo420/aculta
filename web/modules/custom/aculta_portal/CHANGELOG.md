@@ -1,3 +1,9 @@
+## 0.4.0-dev.97 — função única para a configuração de papéis — 2026-10-17
+
+- `RoleHierarchy::completar`: uma só regra para cadeia e laterais de papéis existentes (papel excluído, papel novo, categoria órfã). Usada pelo formulário (estado inicial e laterais) e pelo aculta_user (mapa e exclusão). Antes havia duas cópias da regra.
+- Testes: `RoleHierarchyTest` (11).
+- RUNTIME STATUS: APLICADO (ver aculta_user 0.4.0-dev.23).
+
 ## 0.4.0-dev.96 — herança de papéis no aculta_user; contrib removido — 2026-10-17
 
 Classificação: PATCH (troca de dependência de herança e ajuste de barreira).

@@ -1,5 +1,13 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.23 — limpeza ao excluir papel; documentação e testes da hierarquia — 2026-10-17
+
+- Limpeza ao excluir papel (equivale ao hook do contrib): `RoleInheritanceHooks::userRoleDelete` → `HerancaDePapeis::removerPapel`, que recalcula a configuração com `RoleHierarchy::completar`. Laterais cuja categoria foi excluída voltam ao autenticado.
+- Regra de papel novo sem categoria em `completar` (antes duplicada no formulário): mesma função nas duas pontas.
+- Testes unitários: `HerancaDePapeisTest` (4), `RoleInheritanceHooksTest` (2).
+- Documentação: `docs/HIERARQUIA-DE-FUNCOES.md` (comparação função a função com o contrib e cobertura de testes) e `docs/CLASSES-E-HOOKS.md`.
+- RUNTIME STATUS: APLICADO. Testes de exclusão feitos com papéis temporários (lateral e categoria), com a configuração restaurada e conferida; papéis efetivos das contas de teste e páginas administrativas verificados.
+
 ## 0.4.0-dev.22 — herança de papéis própria (substitui role_inheritance) — 2026-10-17
 
 - Herança de papéis portada para o aculta_user: `HerancaDePapeis` (mapa derivado de `aculta_portal.role_hierarchy`), `RoleInheritanceHooks` (user_load, user_presave e formulário de usuário) e `RoleInheritanceCurrentUserSubscriber` (usuário logado, prioridade 299).

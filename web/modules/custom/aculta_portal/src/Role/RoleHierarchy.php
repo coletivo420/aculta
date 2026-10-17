@@ -110,4 +110,44 @@ final class RoleHierarchy {
     return $herdados;
   }
 
+
+  /**
+   * Configuração da cadeia coerente com os papéis existentes.
+   *
+   * - Cadeia: só papéis existentes que não são laterais.
+   * - Laterais: papel existente fora da cadeia, com a categoria na cadeia; sem categoria válida, herda do autenticado.
+   * - Papel existente que não está em lugar nenhum entra como lateral do autenticado (papel novo).
+   * - Categoria que deixou de existir (papel excluído) volta ao autenticado.
+   *
+   * @param string[] $cadeia
+   * @param array<string, string> $laterais
+   * @param string[] $existentes
+   *   Papéis que existem no site, sem anônimo e administrador.
+   *
+   * @return array{cadeia: string[], laterais: array<string, string>}
+   */
+  public static function completar(array $cadeia, array $laterais, array $existentes): array {
+    $cadeia = array_values(array_filter(
+      $cadeia,
+      static fn (string $papel): bool => in_array($papel, $existentes, TRUE) && !array_key_exists($papel, $laterais),
+    ));
+    $saida = [];
+    foreach ($laterais as $papel => $categoria) {
+      if (!in_array($papel, $existentes, TRUE) || in_array($papel, $cadeia, TRUE)) {
+        continue;
+      }
+      $saida[$papel] = in_array($categoria, $cadeia, TRUE) ? $categoria : 'authenticated';
+    }
+    foreach ($existentes as $papel) {
+      if (!in_array($papel, $cadeia, TRUE) && !array_key_exists($papel, $saida)) {
+        $saida[$papel] = 'authenticated';
+      }
+    }
+    // Sem autenticado na cadeia não há onde pendurar os laterais: eles ficam sem pai.
+    if (!in_array('authenticated', $cadeia, TRUE)) {
+      $saida = array_filter($saida, static fn (string $categoria): bool => in_array($categoria, $cadeia, TRUE));
+    }
+    return ['cadeia' => $cadeia, 'laterais' => $saida];
+  }
+
 }

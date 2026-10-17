@@ -17,7 +17,7 @@ use Drupal\Core\Session\AccountInterface;
  * são somados à conta em memória ao carregá-la (user_load) e retirados ao salvá-la (user_presave), para que nunca sejam
  * gravados como papel direto. O usuário logado recebe a mesma extensão (RoleInheritanceCurrentUserSubscriber).
  */
-final class HerancaDePapeis {
+class HerancaDePapeis {
 
   private const PAPEIS_BASICOS = ['anonymous', 'authenticated'];
 
@@ -35,11 +35,9 @@ final class HerancaDePapeis {
   public function mapa(): array {
     $configuracao = $this->configFactory->get('aculta_portal.role_hierarchy');
     $todos = array_keys($this->entityTypeManager->getStorage('user_role')->loadMultiple());
-    return RoleHierarchy::derivarMapa(
-      (array) ($configuracao->get('cadeia') ?? []),
-      (array) ($configuracao->get('laterais') ?? []),
-      $todos,
-    );
+    $existentes = array_values(array_diff($todos, ['anonymous', 'administrator']));
+    $completo = RoleHierarchy::completar((array) ($configuracao->get('cadeia') ?? []), (array) ($configuracao->get('laterais') ?? []), $existentes);
+    return RoleHierarchy::derivarMapa($completo['cadeia'], $completo['laterais'], $todos);
   }
 
   /**
@@ -67,6 +65,20 @@ final class HerancaDePapeis {
       ->condition('entity_id', $uid)
       ->execute()
       ->fetchCol()));
+  }
+
+  /**
+   * Remove o papel excluído da configuração da cadeia (equivale à limpeza do mapa no hook de exclusão do contrib).
+   */
+  public function removerPapel(string $papel): void {
+    $configuracao = $this->configFactory->getEditable('aculta_portal.role_hierarchy');
+    $todos = array_keys($this->entityTypeManager->getStorage('user_role')->loadMultiple());
+    $existentes = array_values(array_diff($todos, ['anonymous', 'administrator', $papel]));
+    $cadeia = array_values(array_diff((array) $configuracao->get('cadeia'), [$papel]));
+    $laterais = (array) $configuracao->get('laterais');
+    unset($laterais[$papel]);
+    $completo = RoleHierarchy::completar($cadeia, $laterais, $existentes);
+    $configuracao->set('cadeia', $completo['cadeia'])->set('laterais', $completo['laterais'])->save();
   }
 
   /**

@@ -8,6 +8,7 @@ use Drupal\aculta_user\Role\HerancaDePapeis;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -50,6 +51,14 @@ final class RoleInheritanceHooks {
       $form['account']['roles']['#default_value'],
       $this->heranca->herdadosNaoGravados((int) $conta->id()),
     ));
+  }
+
+  /**
+   * Ao excluir um papel, ele sai da cadeia; laterais que dependiam dele voltam ao autenticado.
+   */
+  #[Hook('user_role_delete')]
+  public function userRoleDelete(RoleInterface $papel): void {
+    $this->heranca->removerPapel($papel->id());
   }
 
 }

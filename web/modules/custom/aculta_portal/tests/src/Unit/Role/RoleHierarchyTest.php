@@ -76,4 +76,19 @@ final class RoleHierarchyTest extends UnitTestCase {
     $this->assertSame([], RoleHierarchy::herdados(['authenticated'], self::CADEIA));
   }
 
+  public function testCompletarRemoveOPapelExcluidoEDeixaCategoriaOrfaNoAutenticado(): void {
+    $existentes = ['gerente_loja', 'content_editor', 'lms_teacher', 'authenticated', 'wiki_contributor'];
+    $r = RoleHierarchy::completar(['gerente_loja', 'lms_teacher', 'authenticated'], ['wiki_contributor' => 'lms_teacher'], $existentes);
+    $this->assertSame(['gerente_loja', 'lms_teacher', 'authenticated'], $r['cadeia']);
+    $this->assertSame(['wiki_contributor' => 'lms_teacher', 'content_editor' => 'authenticated'], $r['laterais']);
+    // Categoria excluída (lms_teacher sai da cadeia): o lateral volta ao autenticado.
+    $r = RoleHierarchy::completar(['gerente_loja', 'authenticated'], ['wiki_contributor' => 'lms_teacher'], ['gerente_loja', 'authenticated', 'wiki_contributor']);
+    $this->assertSame(['wiki_contributor' => 'authenticated'], $r['laterais']);
+  }
+
+  public function testCompletarMantemPapelNovoComoLateralDoAutenticado(): void {
+    $r = RoleHierarchy::completar(['authenticated'], [], ['authenticated', 'papel_novo']);
+    $this->assertSame(['papel_novo' => 'authenticated'], $r['laterais']);
+  }
+
 }
