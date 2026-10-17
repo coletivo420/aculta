@@ -2,3 +2,13 @@ services:
   aculta_donation.campaigns:
     class: Drupal\aculta_donation\Campaign\DonationCampaignSelector
     arguments: ['@entity_type.manager', '@config.factory']
+
+  aculta_donation.new_order:
+    class: Drupal\aculta_donation\NewOrder
+    arguments: ['@commerce_store.current_store', '@current_user', '@request_stack', '@entity_type.manager']
+
+  aculta_donation.route_subscriber:
+    class: Drupal\aculta_donation\EventSubscriber\CartCheckoutRouteSubscriber
+    arguments: ['@config.factory']
+    tags:
+      - { name: event_subscriber }

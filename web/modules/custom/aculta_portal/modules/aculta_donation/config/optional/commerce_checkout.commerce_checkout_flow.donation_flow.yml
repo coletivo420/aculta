@@ -1,0 +1,53 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - aculta_donation
+    - commerce_payment
+id: donation_flow
+label: 'Donation Flow'
+plugin: donation_checkout_flow
+configuration:
+  display_checkout_progress: true
+  panes:
+    commerce_donation_pane:
+      step: donation
+      weight: 0
+      message: ''
+    commerce_memorial_pane:
+      step: dedication
+      weight: 1
+    payment_information:
+      step: billing
+      weight: 3
+    payment_process:
+      capture: true
+      step: payment
+      weight: 4
+    donation_thank_you:
+      step: complete
+      weight: 5
+    completion_message:
+      step: _disabled
+      weight: 6
+    order_summary:
+      view: ''
+      step: _disabled
+      weight: 7
+    completion_register:
+      step: _disabled
+      weight: 8
+    login:
+      allow_guest_checkout: true
+      allow_registration: false
+      step: _disabled
+      weight: 9
+    review:
+      step: _disabled
+      weight: 10
+    contact_information:
+      double_entry: true
+      step: billing
+      weight: 2
+  offline_link_title: ''
+  offline_link_url: ''

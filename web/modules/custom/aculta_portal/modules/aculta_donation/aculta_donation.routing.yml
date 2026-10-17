@@ -1,0 +1,36 @@
+aculta_donation.donation.default:
+  path: '/donate'
+  defaults:
+    _controller: '\Drupal\aculta_donation\Controller\DonationController::frontController'
+    _title: 'Donate'
+  requirements:
+    _custom_access: '\Drupal\aculta_donation\Controller\DonationController::checkAccess'
+
+aculta_donation.donation_controller_formPage:
+  path: '/donate/{commerce_order}/{step}'
+  defaults:
+    _controller: '\Drupal\aculta_donation\Controller\DonationController::nextStep'
+    _title: 'Donate'
+  requirements:
+    _custom_access: '\Drupal\aculta_donation\Controller\DonationController::checkAccess'
+  options:
+    parameters:
+      commerce_order:
+        type: entity:commerce_order
+
+aculta_donation.donation.quick:
+  path: '/donate/{amount}/now'
+  defaults:
+    _controller: '\Drupal\aculta_donation\Controller\DonationController::quickDonation'
+    _title: 'Donate'
+  requirements:
+    _permission: 'make donation'
+    amount: \d+
+
+aculta_donation.donation_settings:
+  path: '/painel-administrativo/configuracoes/aculta/doacoes/fluxo'
+  defaults:
+    _title: 'Fluxo de doação'
+    _form: 'Drupal\aculta_donation\Form\DonationSettingsForm'
+  requirements:
+    _permission: 'administer commerce_order_type'

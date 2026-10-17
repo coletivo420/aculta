@@ -1,0 +1,117 @@
+field.widget.settings.aculta_donation_level_widget:
+  type: mapping
+  label: 'Donation level widget settings'
+  mapping:
+    currency:
+      type: string
+      label: 'Currency Code'
+    levels:
+      type: mapping
+      label: 'Donation levels'
+      mapping:
+        single:
+          type: mapping
+          label: 'Single Amounts'
+          mapping:
+            level_1:
+              type: string
+              label: 'Level 1'
+            level_2:
+              type: string
+              label: 'Level 2'
+            level_3:
+              type: string
+              label: 'Level 3'
+            level_4:
+              type: string
+              label: 'Level 4'
+            level_5:
+              type: string
+              label: 'Level 5'
+        monthly:
+          type: mapping
+          label: 'Monthly Amounts'
+          mapping:
+            level_1:
+              type: string
+              label: 'Level 1'
+            level_2:
+              type: string
+              label: 'Level 2'
+            level_3:
+              type: string
+              label: 'Level 3'
+            level_4:
+              type: string
+              label: 'Level 4'
+            level_5:
+              type: string
+              label: 'Level 5'
+
+block.settings.aculta_donation_link:
+  type: block_settings
+  label: 'Donation link block'
+  mapping:
+    return_path:
+      type: boolean
+      label: 'Add a return path to urls.'
+
+block.settings.aculta_donation_quick:
+  type: block_settings
+  label: 'Quick donation block'
+  mapping:
+    levels:
+      type: sequence
+      label: 'Preset donation levels'
+      sequence:
+        type: integer
+
+commerce_checkout.commerce_checkout_flow.plugin.donation_checkout_flow:
+  type: commerce_checkout_flow_with_panes_configuration
+  mapping:
+    offline_link_title:
+      type: string
+      label: 'Offline donation link title'
+    offline_link_url:
+      type: uri
+      label: 'Offline donation link URL'
+
+commerce_checkout.commerce_checkout_pane.commerce_donation_pane:
+  type: commerce_checkout_pane_configuration
+  mapping:
+    message:
+      type: string
+      label: 'Monthly giving message'
+
+# Schema for the configuration files of the Commerce Donation Flow module.
+commerce_donation_flow.settings:
+  type: config_object
+  label: 'Commerce Donation Flow settings'
+  mapping:
+    donation_route:
+      type: string
+      label: 'Configure donation routes'
+    donate_item_type:
+      type: string
+      nullable: true
+      label: "The order item type to use on the /donation route"
+    donate_order_type:
+      type: string
+      nullable: true
+      label: "The order type to use on the /donation route"
+    donate_checkout_flow:
+      type: string
+      nullable: true
+      label: "The checkout flow to use on the /donation route"
+    cart_item_type:
+      type: string
+      nullable: true
+      label: "The order item type to use on the /donation route"
+    cart_order_type:
+      type: string
+      nullable: true
+      label: "The order type to use on the /cart route"
+    cart_checkout_flow:
+      type: string
+      nullable: true
+      label: "The checkout flow to use on the /cart route"

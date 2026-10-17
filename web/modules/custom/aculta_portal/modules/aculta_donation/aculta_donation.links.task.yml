@@ -1,0 +1,19 @@
+# Seção Doações do painel (Configurações > ACULTA > Doações). As três telas dividem a mesma base (lista de campanhas),
+# para que as abas apareçam em todas elas.
+aculta_donation.tab_campanhas:
+  title: 'Campanhas'
+  route_name: entity.aculta_donation_campaign.collection
+  base_route: entity.aculta_donation_campaign.collection
+  weight: 0
+
+aculta_donation.tab_valores:
+  title: 'Valores padrão'
+  route_name: aculta_portal.support_settings
+  base_route: entity.aculta_donation_campaign.collection
+  weight: 10
+
+aculta_donation.tab_fluxo:
+  title: 'Fluxo de doação'
+  route_name: aculta_donation.donation_settings
+  base_route: entity.aculta_donation_campaign.collection
+  weight: 20

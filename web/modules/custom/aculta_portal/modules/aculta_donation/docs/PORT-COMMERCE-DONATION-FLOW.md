@@ -1,6 +1,6 @@
 # Port do commerce_donation_flow para o aculta_donation
 
-Status: **plano** (2026-10-17). Nenhuma mudança de código ou de Runtime feita ainda.
+Status (2026-10-17): **port aplicado** (código, blocos, configuração, corte no Runtime e Composer). Pendente: recorrência (ver fim do documento).
 
 ## Decisões do responsável (2026-10-17)
 
@@ -51,4 +51,4 @@ Verificar antes de portar: os blocos `DonateBlock`, `QuickDonationBlock` e `Back
 
 ## Recorrência (`commerce_recurring`)
 
-Pendente: o código não está no projeto e a análise do `commerce_recurring` ainda não começou. Próximo passo: ler o modelo de assinatura e de cobrança e decidir o que portar (ver "Decisões do responsável").
+Pendente. Fonte: `commerce_recurring` 1.0.0-rc3 (Drupal 9.2 a 11; Commerce 2.36 a 3). O branch `master` do repositório é Drupal 7 e não serve. Próximo passo: portar só o necessário (entidade de assinatura e cobrança) e ligar ao Mercado Pago (F3, `MercadoPagoRecurrenceService`), com um tipo único de pedido por assinatura e sem estorno.
