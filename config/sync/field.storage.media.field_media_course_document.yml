@@ -1,4 +1,6 @@
+uuid: 62c5c285-5971-4f83-8199-1dec7a0dfca8
 langcode: pt-br
+status: true
 dependencies:
   module:
     - file
@@ -6,6 +8,8 @@ dependencies:
   enforced:
     module:
       - aculta_pdf_viewer_group
+_core:
+  default_config_hash: YN6sbSX8Htott6if-5n2RecUYhXpkA8lwyWDg4BHnpY
 id: media.field_media_course_document
 field_name: field_media_course_document
 entity_type: media
@@ -19,6 +23,6 @@ module: file
 locked: false
 cardinality: 1
 translatable: true
-indexes: { }
+indexes: {  }
 persist_with_no_fields: false
 custom_storage: false

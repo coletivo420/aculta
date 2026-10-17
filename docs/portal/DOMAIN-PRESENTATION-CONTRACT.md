@@ -46,7 +46,7 @@ Purposes existentes:
 | `main` | `aculta_org` | institucional/principal |
 | `account` | `conta_aculta_org` | conta |
 | `support` | `apoio_aculta_org` | apoio |
-| `magazine` | `coletivo420_aculta_org` | Observatório/Coletivo 420 |
+| `magazine` | `revista420_aculta_org` | Observatório/Coletivo 420 |
 | `wiki` | `wiki420_aculta_org` | Wiki420 |
 | `shop` | `loja_aculta_org` | loja |
 | `courses` | `cursos_aculta_org` | cursos |

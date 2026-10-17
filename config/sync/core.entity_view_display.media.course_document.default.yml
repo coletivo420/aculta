@@ -1,3 +1,4 @@
+uuid: 75f700aa-f696-4710-a0b5-ad2ceff39256
 langcode: pt-br
 status: true
 dependencies:
@@ -6,10 +7,11 @@ dependencies:
     - media.type.course_document
   module:
     - aculta_pdf_viewer
-    - file
   enforced:
     module:
       - aculta_pdf_viewer_group
+_core:
+  default_config_hash: A1M77DsxQn8py1vPkHRo62hUNChAv2GrFhaAR4xtvIo
 id: media.course_document.default
 targetEntityType: media
 bundle: course_document
@@ -18,13 +20,14 @@ content:
   field_media_course_document:
     type: aculta_pdf_media
     label: visually_hidden
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     weight: 1
     region: content
 hidden:
   created: true
   langcode: true
   name: true
+  search_api_excerpt: true
   thumbnail: true
   uid: true

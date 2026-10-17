@@ -22,7 +22,7 @@
     },
     "note": "Migração de domínios do servidor de testes (*.aculta.toca.net.br) para produção (*.aculta.org), por domínio registrado no Portal. Dado declarado: o comando `domains` confere os registros de config/sync contra esta tabela (somente leitura). A troca em produção só acontece no deploy do RC.",
     "decision_pending": [
-      "coletivo420_aculta_org: host de produção da revista é revista420.aculta.org (decisão do responsável, 2026-10-11)."
+      "revista420_aculta_org: host de produção da revista é revista420.aculta.org (decisão do responsável, 2026-10-11)."
     ],
     "entries": [
       {
@@ -41,7 +41,7 @@
         "production_host": "conta.aculta.org"
       },
       {
-        "domain_id": "coletivo420_aculta_org",
+        "domain_id": "revista420_aculta_org",
         "test_host": "revista420.aculta.toca.net.br",
         "production_host": "revista420.aculta.org"
       },
@@ -167,7 +167,7 @@
       "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
     },
     {
-      "file": "config/sync/domain.record.coletivo420_aculta_org.yml",
+      "file": "config/sync/domain.record.revista420_aculta_org.yml",
       "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
     },
     {
@@ -203,11 +203,11 @@
       "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
     },
     {
-      "file": "config/sync/domain_alias.alias.coletivo420_aculta_test_8080.yml",
+      "file": "config/sync/domain_alias.alias.revista420_aculta_test_8080.yml",
       "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
     },
     {
-      "file": "config/sync/domain_alias.alias.coletivo420_aculta_toca_net_br.yml",
+      "file": "config/sync/domain_alias.alias.revista420_aculta_toca_net_br.yml",
       "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
     },
     {
@@ -247,11 +247,11 @@
       "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
     },
     {
-      "file": "config/sync/domain.coletivo420_aculta_org/metatag.metatag_defaults.front.yml",
+      "file": "config/sync/domain.revista420_aculta_org/metatag.metatag_defaults.front.yml",
       "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
     },
     {
-      "file": "config/sync/domain/coletivo420_aculta_org/metatag.metatag_defaults.front.yml",
+      "file": "config/sync/domain/revista420_aculta_org/metatag.metatag_defaults.front.yml",
       "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
     },
     {
@@ -339,7 +339,7 @@
           "with": "hostname: conta.aculta.org"
         },
         {
-          "file": "config/sync/domain.record.coletivo420_aculta_org.yml",
+          "file": "config/sync/domain.record.revista420_aculta_org.yml",
           "pattern": "^hostname: .*$",
           "with": "hostname: revista420.aculta.org"
         },
@@ -419,7 +419,7 @@
           "with": "hostname: conta.aculta.toca.net.br"
         },
         {
-          "file": "config/sync/domain.record.coletivo420_aculta_org.yml",
+          "file": "config/sync/domain.record.revista420_aculta_org.yml",
           "pattern": "^hostname: .*$",
           "with": "hostname: revista420.aculta.toca.net.br"
         },

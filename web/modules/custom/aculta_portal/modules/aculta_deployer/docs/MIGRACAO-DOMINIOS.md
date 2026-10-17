@@ -9,7 +9,7 @@ Escopo: transição de `*.aculta.toca.net.br` (servidor de testes) para `*.acult
 | aculta_org | aculta.toca.net.br | aculta.org | alinhado |
 | apoio_aculta_org | apoio.aculta.toca.net.br | apoio.aculta.org | alinhado |
 | conta_aculta_org | conta.aculta.toca.net.br | conta.aculta.org | alinhado |
-| coletivo420_aculta_org | revista420.aculta.toca.net.br | revista420.aculta.org | pendente de RC (decisão) |
+| revista420_aculta_org | revista420.aculta.toca.net.br | revista420.aculta.org | pendente de RC (decisão) |
 | wiki420_aculta_org | wiki420.aculta.toca.net.br | wiki420.aculta.org | alinhado |
 | loja_aculta_org | loja.aculta.toca.net.br | loja.aculta.org | alinhado |
 | forum_aculta_org | growroom420.aculta.toca.net.br | growroom420.aculta.org | alinhado no mapeamento; teste DNS/TLS ativo; DNS de produção aguarda origem |

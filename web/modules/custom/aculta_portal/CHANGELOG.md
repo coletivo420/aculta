@@ -1,3 +1,13 @@
+## 0.4.0-dev.76 — identificador da revista: revista420; vitrine da loja — 2026-10-17
+
+Classificação: PATCH (renomeação de identificador e conteúdo da vitrine).
+
+- Identificador interno do domínio da revista: `coletivo420_aculta_org` → `revista420_aculta_org` (código, configuração, deploy e referências de campo). Nome de exibição: "Revista 420".
+- Migração do Runtime de testes executada com autorização do responsável: 17 referências de nós, aliases, ação de origem e sobreposições de configuração por domínio (`domain.revista420_aculta_org`).
+- Vitrine da loja criada (página `Loja da Associação`, alias `/loja-da-aculta`, origem `loja_aculta_org`). Raiz da loja responde 200; caminho interno responde 404.
+- Pendência: o `canonical` da vitrine aponta para o caminho interno `/loja-da-aculta`; deve apontar para a raiz do host.
+- Ocorrência restante de "O Observatório da Maconha" em texto editorial de notícia (`scripts/content/editorial/noticia-anvisa-canhamo-autocultivo.json`), mantida por ser texto de matéria.
+
 ## 0.4.0-dev.75 — raiz dos subdomínios com comportamento uniforme — 2026-10-17
 
 Classificação: PATCH (roteamento; sem API nova).
@@ -1070,7 +1080,7 @@ Classificação: PATCH (ferramenta de deploy e documentação; sem código de ru
 Classificação: PATCH (configuração de deploy e documentação; sem código de runtime).
 
 - `aculta_deployer/config/deploy.json`: host de teste da revista em `revista420.aculta.toca.net.br` (lista de hosts do sitemap/robots e substituição de `hostname` no domínio). Produção (`revista420.aculta.org`) não muda nesta versão.
-- `config/sync/domain_alias.alias.coletivo420_aculta_toca_net_br.yml`: padrão do alias de teste passa a `revista420.aculta.toca.net.br`. O `id` e o nome do arquivo permanecem, para não alterar a identidade da configuração importada.
+- `config/sync/domain_alias.alias.revista420_aculta_toca_net_br.yml`: padrão do alias de teste passa a `revista420.aculta.toca.net.br`. O `id` e o nome do arquivo permanecem, para não alterar a identidade da configuração importada.
 - Documentação: `docs/operations/TESTING.md`, `docs/architecture/multidomain.md`, `docs/portal/ARCHITECTURE.md` (coluna do servidor de testes).
 - Pendências fora do repositório (DEFERRED): (1) `trusted_host_patterns` em `settings.local.php` do servidor de testes; (2) `config import` do alias no Runtime e limpeza de cache; (3) DNS e VirtualHost/certificado no Cloudflare e no Virtualmin; (4) mudança equivalente em produção (`*.aculta.org`), registrada para deploy só no RC.
 

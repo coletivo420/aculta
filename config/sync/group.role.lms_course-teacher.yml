@@ -2,11 +2,11 @@ uuid: 2b2142b4-bf9d-4fbc-a9e0-50a43d122638
 langcode: pt-br
 status: true
 dependencies:
-  module:
-    - aculta_pdf_viewer_group
   config:
     - group.type.lms_course
     - user.role.lms_teacher
+  module:
+    - aculta_pdf_viewer_group
 id: lms_course-teacher
 label: Educador
 weight: 10

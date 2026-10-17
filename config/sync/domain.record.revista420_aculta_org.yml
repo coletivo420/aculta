@@ -2,10 +2,10 @@ uuid: 1229b1a6-4878-4d17-9d3b-de3ef51e5644
 langcode: pt-br
 status: true
 dependencies: {  }
-id: coletivo420_aculta_org
+id: revista420_aculta_org
 domain_id: 5376482
 hostname: revista420.aculta.org
-name: 'Observatório da Maconha Coletivo 420'
+name: 'Revista 420'
 scheme: https
 weight: 7
 is_default: false

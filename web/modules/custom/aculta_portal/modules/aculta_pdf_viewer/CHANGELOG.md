@@ -6,6 +6,7 @@ Classificação: PATCH (corrige a ordem de instalação da configuração Group)
 
 - A relação `lms_course` deixa de ficar em `config/optional`; permanece no Config Sync, que a importa após habilitar o submódulo e descobrir o plugin `aculta_pdf_viewer_group:course_document`.
 - O Runtime confirmou que a tentativa de habilitação falhava ao resolver o plugin na importação opcional antecipada. A habilitação do módulo e os bundles/campos foram concluídos; a relação aguarda a sincronização dirigida.
+- O formulário de `course_document` mantém o checkbox de status visível como projetado; o hook continua impedindo que esses Media sejam publicados.
 
 ## 0.1.0-dev.13 — zoom visível fora da tela cheia — 2026-10-17
 
