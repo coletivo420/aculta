@@ -232,6 +232,15 @@ aculta_portal.courses_home:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: courses
+aculta_portal.shop_home:
+  path: /loja
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\ShopController::home'
+    _title: 'Loja da Associação'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: shop
 aculta_portal.secrets_import:
   path: /painel-administrativo/configuracoes/aculta/segredos
   defaults:

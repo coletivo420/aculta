@@ -15,6 +15,11 @@ use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
  */
 final class FrontPathPolicy {
 
+  /** Caminho do nó que é a página inicial do subdomínio (não público). */
+  private const NO_DA_RAIZ = [
+    'shop' => '/node/372',
+  ];
+
   /**
    * TRUE quando a requisição deve responder 404 por ser o caminho interno da raiz do purpose atual.
    */
@@ -23,7 +28,12 @@ final class FrontPathPolicy {
       return FALSE;
     }
     $caminho = PurposeFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL;
-    return $caminho !== NULL && $path === $caminho;
+    if ($caminho !== NULL && $path === $caminho) {
+      return TRUE;
+    }
+    // Nó que é a página inicial de um subdomínio (loja): o endereço do nó também não é público; a raiz o serve.
+    $noDaRaiz = self::NO_DA_RAIZ[$purpose] ?? NULL;
+    return $noDaRaiz !== NULL && $path === $noDaRaiz;
   }
 
 }

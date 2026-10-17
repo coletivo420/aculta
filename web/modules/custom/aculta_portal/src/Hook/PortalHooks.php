@@ -64,6 +64,7 @@ final class PortalHooks {
     'aculta_portal.support_form',
     'aculta_portal.wiki_home',
     'aculta_portal.courses_home',
+    'aculta_portal.shop_home',
   ];
 
   public function __construct(

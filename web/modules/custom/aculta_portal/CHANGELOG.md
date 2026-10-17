@@ -1,3 +1,10 @@
+## 0.4.0-dev.118 — raiz da loja pela rota /loja, como os outros subdomínios — 2026-10-17
+
+- A raiz de `loja.aculta` é servida pela rota `aculta_portal.shop_home` (`/loja`), no mesmo padrão de `/apoio`, `/wiki` e
+  `/cursos`. A rota mostra o nó 372 "Loja da Associação".
+- `/loja` e o nó 372 não são públicos direto: 404 (como as outras raízes). Nenhum redirecionamento.
+- RUNTIME STATUS: APLICADO no Runtime de testes (raiz da loja 200, sem redirecionamento; produto na loja 200, no principal 404).
+
 ## 0.4.0-dev.117 — produtos da loja no domínio da loja — 2026-10-17
 
 - A raiz de `loja.aculta` serve a página inicial da loja (nó 372) sem redirecionar. Os aliases públicos antigos da loja
