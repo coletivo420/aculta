@@ -7,5 +7,5 @@ cadeia:
   - email_confirmed
   - authenticated
 laterais:
-  wiki_contributor: authenticated
-  lms_admin: authenticated
+  wiki_contributor: email_confirmed
+  lms_admin: lms_teacher

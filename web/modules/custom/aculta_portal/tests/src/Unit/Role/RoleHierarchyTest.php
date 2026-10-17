@@ -52,14 +52,15 @@ final class RoleHierarchyTest extends UnitTestCase {
   public function testMapaDerivadoDaCadeiaEDosLaterais(): void {
     $mapa = RoleHierarchy::derivarMapa(
       ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'],
-      ['wiki_contributor' => 'authenticated', 'lms_admin' => 'authenticated'],
+      ['wiki_contributor' => 'email_confirmed', 'lms_admin' => 'lms_teacher'],
       ['anonymous', 'authenticated', 'email_confirmed', 'estudante', 'associado', 'lms_teacher', 'content_editor', 'gerente_loja', 'wiki_contributor', 'lms_admin', 'administrator'],
     );
     $this->assertSame(['content_editor'], $mapa['gerente_loja']);
     $this->assertSame(['lms_teacher'], $mapa['content_editor']);
     $this->assertSame(['email_confirmed'], $mapa['estudante']);
     $this->assertArrayNotHasKey('authenticated', $mapa);
-    $this->assertSame(['authenticated'], $mapa['wiki_contributor']);
+    $this->assertSame(['email_confirmed'], $mapa['wiki_contributor']);
+    $this->assertSame(['lms_teacher'], $mapa['lms_admin']);
     $this->assertCount(10, $mapa['administrator']);
     $this->assertFalse(RoleHierarchy::temCiclo($mapa));
   }

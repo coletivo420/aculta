@@ -1,3 +1,11 @@
+## 0.4.0-dev.93 — colaborador da wiki e administrador de cursos entram em categorias — 2026-10-17
+
+Classificação: PATCH (ajuste de classificação de papéis na cadeia).
+
+- Colaborador da Wiki420 (`wiki_contributor`) entra na categoria E-mail confirmado; Administrador de cursos (`lms_admin`) entra na categoria Educador (`lms_teacher`). Cada um herda da própria categoria, e por ela recebe tudo o que a categoria herda.
+- Na tela, esses papéis aparecem só com o nome, dentro da linha da categoria.
+- RUNTIME STATUS: APLICADO e verificado por HTTP; testes unitários de papéis (8) passam; gate de papéis passa.
+
 ## 0.4.0-dev.92 — cadeia de papéis por setas e arraste — 2026-10-17
 
 Classificação: MINOR (nova interação da tela de papéis; configuração própria da cadeia).

@@ -64,7 +64,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
 
     $form['#attached']['library'][] = 'aculta_portal/role-hierarchy';
     $form['intro'] = [
-      '#markup' => '<p>' . $this->t('Cadeia de papéis: quem está mais alto herda do papel imediatamente abaixo, e o administrador herda de todos. Mova um papel com as setas ou arrastando (mouse ou toque).') . '</p>',
+      '#markup' => '<p>' . $this->t('Cadeia de papéis: quem está mais alto herda do papel imediatamente abaixo, e o administrador herda de todos. Papéis listados junto de uma categoria entram nela e herdam o que ela herda. Mova um papel com as setas ou arrastando (mouse ou toque).') . '</p>',
     ];
 
     $form['ordem'] = ['#type' => 'hidden', '#default_value' => json_encode($cadeia), '#attributes' => ['data-portal-role-order' => '']];
@@ -76,27 +76,21 @@ final class RoleHierarchyForm extends ConfigFormBase {
       'lista' => ['#type' => 'container', '#attributes' => ['data-portal-role-list' => '']],
     ];
     $total = count($cadeia);
+    $membrosDe = [];
+    foreach ($laterais as $papel => $categoria) {
+      $membrosDe[$categoria][] = $papel;
+    }
     foreach ($cadeia as $i => $papel) {
       $form['cadeia']['lista'][$papel] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-role-item' => $papel],
         'rotulo' => ['#markup' => '<strong>' . Html::escape($papeis[$papel]) . '</strong>'],
+        'membros' => array_map(fn (string $m): array => ['#markup' => '<span>' . Html::escape($papeis[$m]) . '</span>'], $membrosDe[$papel] ?? []),
         'subir' => $this->botao($papel, 'up', $this->t('Subir'), $i === 0),
         'descer' => $this->botao($papel, 'down', $this->t('Descer'), $i === $total - 1),
       ];
     }
 
-    if ($laterais !== []) {
-      // Papéis sem categoria na cadeia: herdam do autenticado, sem controle na tela.
-      $form['sem_categoria'] = [
-        '#type' => 'fieldset',
-        '#title' => $this->t('Sem categoria'),
-        '#description' => $this->t('Estes papéis não estão na cadeia.'),
-      ];
-      foreach (array_keys($laterais) as $papel) {
-        $form['sem_categoria'][$papel] = ['#markup' => '<p><strong>' . Html::escape($papeis[$papel]) . '</strong></p>'];
-      }
-    }
 
     $form['perfis'] = [
       '#type' => 'fieldset',
@@ -211,12 +205,18 @@ final class RoleHierarchyForm extends ConfigFormBase {
     $existentes = array_values(array_diff(array_keys($papeis), self::FORA));
     if (!is_array($cadeia) || !is_array($laterais)) {
       $cadeia = ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'];
-      $laterais = ['wiki_contributor' => 'authenticated', 'lms_admin' => 'authenticated'];
+      $laterais = ['wiki_contributor' => 'email_confirmed', 'lms_admin' => 'lms_teacher'];
     }
     // Papéis do site que ainda não estão em lugar nenhum entram como laterais presos ao autenticado.
     $cadeia = array_values(array_filter($cadeia, fn (string $p): bool => in_array($p, $existentes, TRUE) && !isset($laterais[$p])));
     foreach ($existentes as $papel) {
       if (!in_array($papel, $cadeia, TRUE) && !isset($laterais[$papel])) {
+        $laterais[$papel] = 'authenticated';
+      }
+    }
+    // Categoria inexistente na cadeia: volta ao autenticado.
+    foreach ($laterais as $papel => $categoria) {
+      if (!in_array($categoria, $cadeia, TRUE)) {
         $laterais[$papel] = 'authenticated';
       }
     }

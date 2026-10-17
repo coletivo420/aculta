@@ -62,7 +62,7 @@ final class RoleHierarchy {
    * Mapa de herança derivado da lista ordenada (cadeia) e dos papéis laterais.
    *
    * - Cadeia: de cima para baixo; cada papel herda do papel imediatamente abaixo dele.
-   * - Laterais: papel fora da cadeia com um único pai escolhido.
+   * - Laterais: papel que entra em uma categoria da cadeia; herda dela.
    * - Administrador: herda de todos os papéis do site.
    *
    * @param string[] $cadeia
@@ -80,8 +80,10 @@ final class RoleHierarchy {
     for ($i = 0; $i < $total - 1; $i++) {
       $mapa[$cadeia[$i]] = [$cadeia[$i + 1]];
     }
-    foreach ($laterais as $papel => $pai) {
-      $mapa[$papel] = [$pai];
+    // Papel que entra em uma categoria (ex.: colaborador da wiki em e-mail confirmado) herda da própria categoria,
+    // e por ela recebe tudo o que a categoria herda.
+    foreach ($laterais as $papel => $categoria) {
+      $mapa[$papel] = [$categoria];
     }
     $mapa['administrator'] = array_values(array_diff($todos, ['administrator']));
     return $mapa;
