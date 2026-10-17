@@ -225,12 +225,17 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           ],
         ],
       ],
-      'page' => [
-        '#type' => 'html_tag',
-        '#tag' => 'canvas',
-        '#attributes' => [
-          'data-aculta-pdf-control' => 'page',
-          'aria-label' => new TranslatableMarkup('Página do documento'),
+      'page_stage' => [
+        '#type' => 'container',
+        '#attributes' => ['data-aculta-pdf-control' => 'page-stage'],
+        'page' => [
+          '#type' => 'html_tag',
+          '#tag' => 'canvas',
+          '#attributes' => [
+            'data-aculta-pdf-control' => 'page',
+            'aria-label' => new TranslatableMarkup('Página do documento'),
+            'hidden' => 'hidden',
+          ],
         ],
       ],
       'download' => [

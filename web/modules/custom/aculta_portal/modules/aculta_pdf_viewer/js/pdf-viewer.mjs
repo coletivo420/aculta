@@ -83,6 +83,7 @@ async function initialize(viewer) {
         return;
       }
       renderTask = undefined;
+      canvas.hidden = false;
       status.textContent = `Página ${pageNumber} de ${pdf.numPages}`;
       previous.disabled = pageNumber <= 1;
       next.disabled = pageNumber >= pdf.numPages;

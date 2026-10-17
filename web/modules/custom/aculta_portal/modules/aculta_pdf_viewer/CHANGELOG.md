@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.13 — zoom visível fora da tela cheia — 2026-10-17
+
+Classificação: PATCH (correção de apresentação; sem mudança no formato de arquivo ou contrato de acesso).
+
+- A página do PDF passa a ficar em uma área rolável; o canvas mantém o tamanho de renderização definido pelo zoom do PDF.js, sem ser reduzido pelo CSS para a largura do container.
+- O canvas permanece oculto até a primeira renderização bem-sucedida, evitando uma página em branco quando o PDF.js falha.
+- RUNTIME STATUS: cache rebuild feito no host de teste para carregar o código; revisão visual no Firefox e no mobile segue pendente.
+
 ## Submódulo aculta_pdf_viewer_group 0.1.0-dev.3 — regressão de relação removida — 2026-10-17
 
 Classificação: PATCH (cobertura de segurança, sem alteração funcional).

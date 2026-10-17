@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.68 | Viewer PDF: página em área rolável preserva o zoom escolhido em telas menores | Implementação; revisão visual no Firefox pendente | `css/components/pdf-viewer.css`, marcação do `aculta_pdf_viewer` |
 | 0.6.0-dev.66 | Barra e cabeçalho do shell decididos pelo Portal (`domain_presentation.layout`); shell-contract PASS | Gates de shell, fundação, design e SDC PASS; capturas em main, wiki, cursos, apoio e conta; `links` não verificado (404 no teste) | `templates/page.html.twig` |
 | 0.6.0-dev.67 | Painéis de vendas e doações: tokens `sales-*` (tabela de pedidos, estados e ações de pagamento) e `css/components/sales-panel.css` | Gates de fundação, design, shell, SDC, fronteira módulo-tema, mapa e docs de tokens PASS |
 | 0.6.0-dev.65 | Tokens faltantes do módulo mapeados (avatar do perfil, avisos de conquista, relatório de imagens) | Gates de fundação, design e SDC PASS; shell-contract FAIL pré-existente (`page.html.twig`) registrado | `PortalUiHooks.php`, `messenger-drawer.css`, `portal-requirements-report.css` |

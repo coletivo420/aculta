@@ -1,3 +1,12 @@
+## 0.6.0-dev.68 — zoom do viewer PDF preservado em viewport estreito — 2026-10-17
+
+Classificação: PATCH (apresentação responsiva; sem alterar o contrato de acesso ou markup semântico).
+
+- `css/components/pdf-viewer.css`: a área da página passa a rolar quando o zoom excede o viewport; o canvas deixa de ser redimensionado para caber em 100% da largura.
+- A marcação neutra do módulo envolve o canvas em `page-stage`, que recebe a rolagem visual.
+- O canvas só aparece depois de renderizado, evitando espaço vazio quando o carregamento falha.
+- Cache rebuild aplicado no Runtime de teste; verificação visual em Firefox e mobile continua pendente.
+
 ## 0.6.0-dev.67 — painéis de vendas e doações (tokens sales-*) — 2026-10-16
 
 Classificação: MINOR da linha aberta (componente de apresentação compatível; nenhum contrato stable quebrado).
