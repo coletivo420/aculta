@@ -1,4 +1,4 @@
-field.widget.settings.aculta_donation_level_widget:
+field.widget.settings.commerce_donation_flow_level_widget:
   type: mapping
   label: 'Donation level widget settings'
   mapping:

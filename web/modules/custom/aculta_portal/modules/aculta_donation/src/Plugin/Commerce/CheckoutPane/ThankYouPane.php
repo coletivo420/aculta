@@ -51,7 +51,7 @@ class ThankYouPane extends CheckoutPaneBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    CheckoutFlowInterface $checkout_flow = NULL,
+    ?CheckoutFlowInterface $checkout_flow = NULL,
   ) {
     $instance = parent::create(
       $container,

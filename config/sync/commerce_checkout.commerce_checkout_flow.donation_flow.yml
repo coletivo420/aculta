@@ -3,7 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
-    - commerce_donation_flow
+    - aculta_donation
     - commerce_payment
 _core:
   default_config_hash: F0kSVUuDZPcYf9M5AShqAqH4yaibXumSyHtbyTGdlVo

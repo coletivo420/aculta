@@ -42,7 +42,7 @@ class DonationItemPaneBase extends CheckoutPaneBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, CheckoutFlowInterface $checkout_flow = NULL) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
     // Parent constructor populates $this->order.
     $instance->moduleHandler = $container->get('module_handler');

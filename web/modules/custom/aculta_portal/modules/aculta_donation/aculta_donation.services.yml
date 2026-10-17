@@ -12,3 +12,11 @@ services:
     arguments: ['@config.factory']
     tags:
       - { name: event_subscriber }
+
+  aculta_donation.refund_access:
+    class: Drupal\aculta_donation\Access\DonationRefundAccess
+
+  aculta_donation.refund_route_subscriber:
+    class: Drupal\aculta_donation\EventSubscriber\DonationRefundRouteSubscriber
+    tags:
+      - { name: event_subscriber }

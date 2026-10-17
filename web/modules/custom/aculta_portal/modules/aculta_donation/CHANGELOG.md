@@ -1,5 +1,19 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.4 — estorno, testes de Kernel e checkout com e sem visitante — 2026-10-17
+
+- Doações e assinaturas não têm estorno (decisão do responsável). Bloqueio no servidor: `DonationRefundAccess` soma uma
+  checagem à rota `entity.commerce_payment.operation_form` (operação `refund-payment`), e a tabela de vendas não mostra o
+  link para pedidos com item de doação. A política da loja (produtos) não muda. Assinatura terá cancelamento, não estorno.
+- Teste de Kernel `DonationPortKernelTest` (4 testes, passam no banco `aculta_simpletest`): plugins, blocos, criação do
+  pedido de doação e regra de estorno.
+- Correções achadas pelo teste: widget `commerce_donation_flow_level_widget` (a configuração optional tinha o nome
+  renomeado por engano); tipos anuláveis explícitos nas fábricas dos painéis (Core 11.4).
+- Checkout: a doação avulsa continua aceitando visitante (`donation_flow` como estava). Novo fluxo
+  `assinatura_flow` (mesmo plugin) exige conta: login e cadastro na etapa de cobrança, sem visitante e sem painel de
+  e-mail (o e-mail vem da conta). Nenhum endereço é pedido em nenhum dos dois, porque o gateway não coleta cobrança.
+- Pendente: vincular o `assinatura_flow` ao tipo de pedido de assinatura quando a F3 existir.
+
 ## 0.1.0-dev.3 — port do commerce_donation_flow — 2026-10-17
 
 - Port de `commerce_donation_flow` 1.2.0 para o submódulo. Contrib removido do `composer.json` e do lock; `commerce_cart` e
