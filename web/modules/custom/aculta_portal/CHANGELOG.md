@@ -1,3 +1,11 @@
+## 0.4.0-dev.104 — separação Pessoas x Configurações > Pessoas — 2026-10-17
+
+- Pessoas (`/painel-administrativo/pessoas`) fica com usuários individuais: Lista, Adicionar usuário, Perfis (`pessoas/perfis`) e Social auth (OAuth).
+- Ferramentas de administração de contas saem de Pessoas para Configurações > Pessoas, com caminhos e subpáginas: papéis (`configuracoes/pessoas/papeis`), permissões por papel (`permissoes`), configuração de papel (`configuracoes-de-papel`) e desbloqueio de sobrecarga (`desbloqueio-sobrecarga`). Campos de Perfil já estava lá.
+- Abas de Pessoas correspondentes são removidas (`AdministrativeLocalTaskHooks`); itens de menu de conta em Configurações > Pessoas (`aculta_portal.links.menu.yml`, pai `user.admin_index`).
+- Caixa "Telas do núcleo" removida da página de papéis (as ferramentas agora estão em Configurações > Pessoas).
+- RUNTIME STATUS: APLICADO e verificado por HTTP: abas de Pessoas = Lista, Social auth profiles, Perfis; caminhos antigos 404; novos 200; nenhum destino com dois nomes nas páginas de Pessoas e de Configurações > Pessoas.
+
 ## 0.4.0-dev.103 — tradução restrita à configuração de pessoas; duplicações do menu removidas — 2026-10-17
 
 - Tradução da árvore `configuracoes/people` para `configuracoes/pessoas` (ex.: `campos-de-perfil`, `contas`, `acordo`). A área operacional `pessoas/...` mantém os caminhos do Core. A tradução anterior (0.4.0-dev.102) foi revertida.

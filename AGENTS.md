@@ -611,7 +611,7 @@ herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha a
 - Para acesso novo, conceda **permissão** ao papel certo e verifique com `hasPermission()`. Não use `hasRole('nome')` nem
   `in_array('nome', getRoles())` para liberar funcionalidade: isso ignora a hierarquia de quem não está logado e cria
   exceção difícil de auditar. Checagens existentes por nome são dívida registrada no gate.
-- Para mudar a cadeia de papéis, use `/painel-administrativo/pessoas/roles` (página Papéis e perfis do ACULTA;
+- Para mudar a cadeia de papéis, use `/painel-administrativo/configuracoes/pessoas/papeis` (página Papéis e perfis do ACULTA;
   permissão `administer aculta role hierarchy`). Não edite `role_inheritance.settings` à mão no Runtime. Depois de mudar a
   cadeia, exporte a configuração e atualize a decisão em `docs/portal/PAPEIS-PARTICIPACAO.md` no mesmo commit.
 - Ao mudar a cadeia, avalie o efeito: papel acima herda todas as permissões de baixo (ex.: `gerente_loja` herda o que é
@@ -699,13 +699,14 @@ herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha a
 - **Exceção:** logos de marcas de terceiros (ex.: Mercado Pago), em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
 - Gate: `php scripts/validate-module-theme-boundary.php`, seção 12 (sem `<svg` inline e sem SVG fora de `assets/brands/`).
 
-## Slugs da administração de pessoas (decisão do responsável, 2026-10-17)
+## Separação de Pessoas e Configurações > Pessoas (decisão do responsável, 2026-10-17)
 
-- Só a árvore de configuração de pessoas tem slugs em português: `/painel-administrativo/configuracoes/pessoas/...`
-  (ex.: `campos-de-perfil`, `contas`, `acordo`, `controle-sobrecarga`). A tradução está em
-  `AdministrativeRouteSubscriber::SEGMENTOS` e roda depois da renomeação /admin -> /painel-administrativo.
-- A área operacional `/painel-administrativo/pessoas/...` mantém os caminhos do Core (`roles`, `permissions`).
-- Caminhos antigos respondem 404, sem redirecionamento.
+- `/painel-administrativo/pessoas`: administração de usuários individuais (lista, cadastro, edição, perfis e OAuth/Social auth).
+- `/painel-administrativo/configuracoes/pessoas`: ferramentas de administração de contas: papéis (`papeis`), permissões
+  por papel (`permissoes`), configuração de papel (`configuracoes-de-papel`), campos de perfil (`campos-de-perfil`),
+  desbloqueio de sobrecarga (`desbloqueio-sobrecarga`), opções da conta (`contas`), CAPTCHA, acordos e controle de sobrecarga.
+- Só a árvore de configuração e as ferramentas listadas são traduzidas (`AdministrativeRouteSubscriber`). Caminhos antigos
+  respondem 404, sem redirecionamento.
 
 ## Política de commits para agentes de IA (regra permanente)
 

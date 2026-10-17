@@ -24,7 +24,7 @@ Os papéis `wiki_contributor` e `lms_admin` foram mesclados em `email_confirmed`
 
 ## 3. Como se edita
 
-`/painel-administrativo/pessoas/roles`, página "Papéis e perfis" do ACULTA (substitui a lista de papéis do Core).
+`/painel-administrativo/configuracoes/pessoas/papeis`, página "Papéis e perfis" do ACULTA (substitui a lista de papéis do Core).
 Permissão: `administer permissions` ou `administer aculta role hierarchy`.
 - Ordem: arraste pelas alças ou use as setas (`#tabledrag` do Drupal, mesmo padrão da tela de blocos). Os pesos definem a ordem.
 - A coluna "Herda de (efetivo)" mostra a herança transitiva calculada.

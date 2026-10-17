@@ -10,7 +10,6 @@ use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -130,17 +129,6 @@ final class RoleHierarchyForm extends ConfigFormBase {
       '#empty' => $this->t('Nenhum tipo de perfil.'),
     ];
 
-    $form['telas'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Telas do núcleo'),
-      '#open' => FALSE,
-      'lista' => [
-        '#theme' => 'item_list',
-        '#items' => [
-          Link::fromTextAndUrl($this->t('Tipos de perfil (campos e exibição)'), Url::fromRoute('entity.profile_type.collection'))->toRenderable(),
-        ],
-      ],
-    ];
     return parent::buildForm($form, $form_state);
   }
 

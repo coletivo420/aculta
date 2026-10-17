@@ -29,6 +29,24 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   private const RAIZ_CONFIGURACAO_PESSOAS = '/painel-administrativo/configuracoes/people';
 
   /**
+   * Ferramentas de administração de contas que saem de /pessoas (usuário individual) para Configurações > Pessoas.
+   * Cada entrada move o caminho e todas as subpáginas dele. OAuth e perfis individuais continuam em /pessoas.
+   */
+  /**
+   * Caminhos de usuário individual que ficam em /pessoas, com o nome em português.
+   */
+  private const RENOMEADOS_EM_PESSOAS = [
+    '/painel-administrativo/pessoas/profiles' => '/painel-administrativo/pessoas/perfis',
+  ];
+
+  private const MOVIDOS_PARA_CONFIGURACAO = [
+    '/painel-administrativo/pessoas/roles' => '/painel-administrativo/configuracoes/pessoas/papeis',
+    '/painel-administrativo/pessoas/permissions' => '/painel-administrativo/configuracoes/pessoas/permissoes',
+    '/painel-administrativo/pessoas/role-settings' => '/painel-administrativo/configuracoes/pessoas/configuracoes-de-papel',
+    '/painel-administrativo/pessoas/flood-unblock' => '/painel-administrativo/configuracoes/pessoas/desbloqueio-sobrecarga',
+  ];
+
+  /**
    * Segmentos traduzidos dentro da árvore de configuração de pessoas.
    */
   private const SEGMENTOS = [
@@ -68,7 +86,18 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
    * Caminho com os segmentos traduzidos, se está na árvore de configuração de pessoas; senão, o próprio caminho.
    */
   private function traduzirCaminho(string $caminho): string {
-    if (!str_starts_with($caminho, self::RAIZ_CONFIGURACAO_PESSOAS)) {
+    foreach (self::RENOMEADOS_EM_PESSOAS as $antigo => $novo) {
+      if ($caminho === $antigo) {
+        return $novo;
+      }
+    }
+    foreach (self::MOVIDOS_PARA_CONFIGURACAO as $antigo => $novo) {
+      if ($caminho === $antigo || str_starts_with($caminho, $antigo . '/')) {
+        $caminho = $novo . substr($caminho, strlen($antigo));
+        break;
+      }
+    }
+    if (!str_starts_with($caminho, self::RAIZ_CONFIGURACAO_PESSOAS) && !str_starts_with($caminho, '/painel-administrativo/configuracoes/pessoas')) {
       return $caminho;
     }
     return implode('/', array_map(fn (string $segmento): string => self::SEGMENTOS[$segmento] ?? $segmento, explode('/', $caminho)));
