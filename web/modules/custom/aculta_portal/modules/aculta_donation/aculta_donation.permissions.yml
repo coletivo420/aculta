@@ -1,0 +1,4 @@
+administer aculta donation campaigns:
+  title: Administrar campanhas de doação
+  description: Criar, editar e encerrar campanhas com valores sugeridos e período de vigência.
+  restrict access: true

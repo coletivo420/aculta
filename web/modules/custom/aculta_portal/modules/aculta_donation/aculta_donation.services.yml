@@ -1,0 +1,4 @@
+services:
+  aculta_donation.campaigns:
+    class: Drupal\aculta_donation\Campaign\DonationCampaignSelector
+    arguments: ['@entity_type.manager', '@config.factory']

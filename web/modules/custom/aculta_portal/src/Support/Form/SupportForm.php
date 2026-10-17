@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Support\Form;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\aculta_portal\Support\SupportAmountsProviderInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -25,6 +26,7 @@ final class SupportForm extends FormBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly BlockManagerInterface $blockManager,
     private readonly DomainPurposeManager $purposes,
+    private readonly ?SupportAmountsProviderInterface $campanhas = NULL,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -33,6 +35,7 @@ final class SupportForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.block'),
       $container->get('aculta_portal.domain_purpose'),
+      $container->has('aculta_donation.campaigns') ? $container->get('aculta_donation.campaigns') : NULL,
     );
   }
 
@@ -58,14 +61,18 @@ final class SupportForm extends FormBase {
     if ($gateway_ready) {
       // O fluxo de doação (criação do pedido e checkout) é do módulo commerce_donation_flow, no domínio principal.
       // Aqui só se apresentam os valores sugeridos e a opção de outro valor.
+      // Campanha vigente define os valores e se há valor personalizado; sem ela, valem os padrões.
+      $campanha = $this->campanhas?->valoresSugeridos();
+      $valores = $campanha['amounts'] ?? self::VALORES_SUGERIDOS;
+      $valorPersonalizado = $campanha['customAmount'] ?? TRUE;
       $links = [];
-      foreach (self::VALORES_SUGERIDOS as $valor) {
+      foreach ($valores as $valor) {
         $url = $this->purposes->routeUrl('main', 'commerce_donation_flow.donation.quick', ['amount' => $valor]);
         if ($url !== NULL) {
           $links[] = PortalLinkElement::build($this->t('R$ @valor', ['@valor' => number_format((float) $valor, 0, ',', '.')]), $url, ['data-portal-ui' => 'aculta-button-primary']);
         }
       }
-      $outro = $this->purposes->routeUrl('main', 'commerce_donation_flow.donation.default');
+      $outro = $valorPersonalizado ? $this->purposes->routeUrl('main', 'commerce_donation_flow.donation.default') : NULL;
       if ($outro !== NULL) {
         $links[] = PortalLinkElement::build($this->t('Outro valor'), $outro, ['data-portal-ui' => 'aculta-button-outline']);
       }

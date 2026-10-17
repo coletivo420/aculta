@@ -1,3 +1,15 @@
+## 0.4.0-dev.79 — campanhas de doação (submódulo aculta_donation) — 2026-10-17
+
+Classificação: MINOR (novo submódulo e nova fonte de valores na página de apoio).
+
+- Novo submódulo `aculta_donation` (0.1.0-dev.1): entidade de configuração `aculta_donation_campaign` com nome, início e término (inclusivos), valores sugeridos, valor personalizado e status; formulário com validação de datas e valores; permissão `administer aculta donation campaigns`.
+- `DonationCampaignSelector::vigente()`: campanha ativa cuja janela contém a data de hoje; em sobreposição, vence a de início mais recente.
+- Página de apoio (`SupportForm`): valores e opção de valor personalizado vêm do contrato neutro `SupportAmountsProviderInterface`. Sem campanha vigente ou sem o submódulo habilitado, valem os valores padrão (10, 20, 50, 100).
+- Testes unitários: `DonationCampaignSelectorTest` (4 testes, 28 asserções) passam.
+- Gates: `validate-aculta-portal-drupal11` PASS; `validate-module-theme-map` PASS; `validate-module-theme-boundary` PASS; `validate-environment-addresses` PASS.
+- RUNTIME STATUS: DEFERRED. O submódulo ainda não está habilitado no `aculta_runtime`. Em 2026-10-17 o Drush do Homelab reportou URI `http://default`, que não confirma o servidor de testes `*.aculta.toca.net.br`; por isso nada foi habilitado nem importado.
+- Pendente nesta entrega: pedido de doação recorrente (F3), fluxo de checkout com resumo e testes de navegador.
+
 ## 0.4.0-dev.78 — achados de endereço de produção corrigidos — 2026-10-17
 
 Classificação: PATCH.
