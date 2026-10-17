@@ -1,3 +1,10 @@
+## 0.6.0-dev.71 — carrinho com um botão de checkout e assinatura em espaço próprio — 2026-10-17
+
+Classificação: MINOR da linha aberta (estrutura do painel do carrinho).
+
+- Um botão "Finalizar carrinho" para as categorias (loja, cursos, apoio); caixas e separadores mantidos.
+- Assinatura em bloco próprio, com botão "Finalizar assinatura".
+
 ## 0.6.0-dev.70 — carrinho com rolagem e rodapé neutro; cartões de produto com borda — 2026-10-17
 
 Classificação: PATCH da linha aberta (ajuste visual, sem contrato novo).

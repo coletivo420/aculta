@@ -18,15 +18,18 @@ final class CartSite {
 
   public const APOIO = 'apoio';
 
+  /** Assinatura: espaço próprio no carrinho, com checkout próprio (fora do carrinho unificado). */
+  public const ASSINATURA = 'assinatura';
+
   /** Ordem dos separadores no painel. */
-  public const ORDEM = [self::LOJA, self::CURSOS, self::APOIO];
+  public const ORDEM = [self::LOJA, self::CURSOS, self::APOIO, self::ASSINATURA];
 
   /** Tipo de pedido → separador. Tipo não listado cai na loja. */
   private const POR_TIPO = [
     'default' => self::LOJA,
     'curso' => self::CURSOS,
     'doacao' => self::APOIO,
-    'assinatura' => self::APOIO,
+    'assinatura' => self::ASSINATURA,
   ];
 
   /** Rótulo visível do separador (texto fixo do painel). */
@@ -34,6 +37,7 @@ final class CartSite {
     self::LOJA => 'Loja',
     self::CURSOS => 'Cursos',
     self::APOIO => 'Apoio',
+    self::ASSINATURA => 'Assinatura',
   ];
 
   public static function paraTipo(string $tipoDePedido): string {

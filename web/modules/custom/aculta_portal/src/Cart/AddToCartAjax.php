@@ -80,6 +80,7 @@ final class AddToCartAjax {
       '#total' => $cart['total'],
       '#url' => $cart['url'],
       '#empty' => $cart['empty'],
+      '#checkout_url' => $cart['checkout_url'],
     ];
     $response->addCommand(new ReplaceCommand('#aculta-cart-offcanvas .aculta-cart-offcanvas__body', $this->renderer->renderInIsolation($painel)));
 

@@ -42,7 +42,7 @@ final class CartUtility {
     foreach ($this->cartProvider->getCarts() as $cart) {
       $cache->addCacheableDependency($cart);
       $site = CartSite::paraTipo($cart->bundle());
-      $checkout = $this->urlDoCheckout($cart);
+      $checkout = $site === CartSite::ASSINATURA ? $this->urlDoCheckout($cart) : '';
       foreach ($cart->getItems() as $item) {
         $quantity = (int) $item->getQuantity();
         $total = $item->getTotalPrice();
@@ -53,7 +53,7 @@ final class CartUtility {
         }
         $grupos[$site]['site'] = $site;
         $grupos[$site]['label'] = CartSite::rotulo($site);
-        $grupos[$site]['checkout_url'] = $checkout;
+        $grupos[$site]['checkout_url'] = $checkout !== '' ? $checkout : ($grupos[$site]['checkout_url'] ?? '');
         $grupos[$site]['ultimo'] = max($grupos[$site]['ultimo'] ?? 0, (int) $item->id());
         $grupos[$site]['items'][] = [
           'id' => (int) $item->id(),
@@ -83,6 +83,8 @@ final class CartUtility {
     }
 
     $url = $this->domainPurposeManager->routeUrl('main', 'commerce_cart.page');
+    // Um botão para todo o carrinho (exceto assinatura): junta os itens e abre o checkout do pedido único.
+    $finalizar = $this->domainPurposeManager->routeUrl('main', 'aculta_portal.cart_checkout');
 
     return [
       'count' => $count,
@@ -90,6 +92,7 @@ final class CartUtility {
       'url' => $url !== NULL ? $url->toString() : '',
       'total' => $count === 0 ? '' : $this->formatPrice($soma, (string) $moeda),
       'sites' => $sites,
+      'checkout_url' => $finalizar !== NULL ? $finalizar->toString() : '',
       'cache' => $cache,
     ];
   }

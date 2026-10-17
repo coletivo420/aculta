@@ -1,3 +1,15 @@
+## 0.4.0-dev.120 — carrinho unificado em um pedido, com o fluxo mais exigente — 2026-10-17
+
+- Decisão do responsável (2026-10-17): todo o carrinho (exceto assinatura) é finalizado num pedido só, com o fluxo de
+  checkout mais exigente entre as categorias presentes: LMS (`curso`) > loja (`default`) > doação (`doacao`).
+- `Cart\CartConsolidator` move os itens dos carrinhos para o pedido de destino, apaga os carrinhos vazios e torna o pedido
+  o carrinho ativo. Rota `/carrinho/finalizar` (`aculta_portal.cart_checkout`) junta e abre o checkout no MAIN.
+- Painel: um botão "Finalizar carrinho" para as categorias; assinatura em espaço próprio, com botão próprio.
+- Pendente: o tipo `curso` usa, por enquanto, o fluxo padrão da loja; o fluxo do LMS com o painel de CPF
+  (`aculta_id_cpf`) ainda será criado.
+- RUNTIME STATUS: APLICADO no Runtime de testes (consolidação verificada: dois carrinhos viraram um pedido, o carrinho antigo
+  foi apagado).
+
 ## 0.4.0-dev.119 — página inicial da loja com os produtos disponíveis — 2026-10-17
 
 - A raiz de `loja.aculta` (rota `/loja`) mostra o texto da página inicial da loja e, abaixo, um cartão por produto publicado,

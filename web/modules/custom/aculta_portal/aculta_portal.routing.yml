@@ -399,3 +399,13 @@ aculta_portal.relatorio_vendas:
   options:
     _admin_route: true
 
+
+aculta_portal.cart_checkout:
+  path: /carrinho/finalizar
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\CartCheckoutController::finalizar'
+    _title: 'Finalizar carrinho'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: true

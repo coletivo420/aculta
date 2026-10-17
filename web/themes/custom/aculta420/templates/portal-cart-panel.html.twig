@@ -18,10 +18,27 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar item"></button>
         </div>
       {% endfor %}
-      {% if site.checkout_url %}
-        <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ site.checkout_url }}">Finalizar {{ site.label|lower }}</a>
+      {% endfor %}
+      {% if checkout_url %}
+        <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ checkout_url }}">Finalizar carrinho</a>
       {% endif %}
-    {% endfor %}
+      {% for site in sites if site.key == 'assinatura' %}
+        <div class="aculta-cart-offcanvas__separador" role="separator">
+          <span class="aculta-cart-offcanvas__separador-nome">{{ site.label }}</span>
+          <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
+        </div>
+        {% for item in site.items %}
+          <div class="alert alert-info alert-dismissible aculta-cart-offcanvas__caixa fade show" role="listitem">
+            <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+            <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar item"></button>
+          </div>
+        {% endfor %}
+        {% if site.checkout_url %}
+          <a class="btn btn-outline-primary aculta-cart-offcanvas__action" href="{{ site.checkout_url }}">Finalizar assinatura</a>
+        {% endif %}
+      {% endfor %}
+    </div>
   </div>
   <p class="aculta-cart-offcanvas__total"><strong>Total geral:</strong> {{ total }}</p>
   {% if url %}

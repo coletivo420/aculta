@@ -1,7 +1,12 @@
 uuid: abf66e6c-bca3-4dcb-b89e-043bbf4ba853
 langcode: pt-br
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - commerce_checkout
+third_party_settings:
+  commerce_checkout:
+    checkout_flow: default
 id: curso
 label: Curso
 traits: {  }

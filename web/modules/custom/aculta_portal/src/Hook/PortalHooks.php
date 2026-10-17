@@ -685,6 +685,7 @@ final class PortalHooks {
           'sites' => [],
           'total' => '',
           'url' => '',
+          'checkout_url' => '',
           'empty' => TRUE,
         ],
         'template' => 'portal-cart-panel',

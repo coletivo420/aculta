@@ -27,6 +27,10 @@ props:
       type: array
       description: 'Separadores do carrinho único (loja, cursos, apoio): key, label, count, empty, total, items (title, quantity, total) e checkout_url (botão de checkout do separador, no MAIN).'
       default: []
+    checkout_url:
+      type: string
+      description: 'URL do checkout único do carrinho (todas as categorias, exceto assinatura).'
+      default: ''
     banner:
       type: string
       description: 'Frase fixa do rodapé da gaveta.'
