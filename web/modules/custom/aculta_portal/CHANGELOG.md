@@ -1,3 +1,10 @@
+## 0.4.0-dev.83 — gerente da loja gerencia campanhas de doação — 2026-10-17
+
+Classificação: PATCH (permissão concedida a um papel existente, por decisão do responsável).
+
+- Papel `gerente_loja` recebe `administer aculta donation campaigns` diretamente (sem herança). Dependência de módulo `aculta_donation` declarada no papel.
+- RUNTIME STATUS: APLICADO no Runtime `aculta.toca.net.br`; verificado com a conta de teste: campanhas 200, Formas de apoio 200.
+
 ## 0.4.0-dev.82 — gerente da loja acessa Formas de apoio — 2026-10-17
 
 Classificação: PATCH (permissão concedida a um papel existente).
