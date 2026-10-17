@@ -22,6 +22,11 @@ $scan = [
 $allowedLiteral = [
   $root . '/web/modules/custom/aculta_portal/modules/aculta_user/aculta_user.routing.yml',
 ];
+// Redirecionamento canônico do slug (maiúsculas -> minúsculas): responde 301 e não renderiza conteúdo de perfil,
+// então não há cache de perfil a registrar. Justificativa no GUARDRAILS (Links de perfil).
+$semCacheDePerfil = [
+  $root . '/web/modules/custom/aculta_portal/modules/aculta_user/src/EventSubscriber/PublicProfileSlugRedirectSubscriber.php',
+];
 
 $violations = [];
 $files = [];
@@ -51,7 +56,7 @@ foreach ($files as $path) {
   }
 
   // 2. Geração de link de perfil exige registro do perfil na cache.
-  if (str_contains($code, 'aculta_user.perfil_publico') && str_ends_with($path, '.php')) {
+  if (str_contains($code, 'aculta_user.perfil_publico') && str_ends_with($path, '.php') && !in_array($path, $semCacheDePerfil, TRUE)) {
     $registra = str_contains($code, 'getCacheTags') || str_contains($code, 'addCacheableDependency') || str_contains($code, "'#cache'");
     if (!$registra) {
       $violations[] = "$rel: gera link de perfil sem registrar o perfil na cache (use getCacheTags()/addCacheableDependency).";

@@ -56,3 +56,8 @@ services:
   aculta_user.associado_marker:
     class: Drupal\aculta_user\Associado\AssociadoMarker
     arguments: ['@entity_type.manager']
+  aculta_user.public_profile_slug_redirect:
+    class: Drupal\aculta_user\EventSubscriber\PublicProfileSlugRedirectSubscriber
+    arguments: ['@router.route_provider']
+    tags:
+      - { name: event_subscriber }
