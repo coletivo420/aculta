@@ -19,6 +19,11 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 - Ações de pagamento de doação (estornar, cancelar) usam a permissão `administrar doacoes`, e não `gerenciar pagamentos de vendas`. A tela entra na fase de painéis.
 - Cancelar a assinatura de uma doação recorrente exige guardar o id da assinatura no pedido. Isso é a F3 do plano.
 
+## 0.0 Correção de 2026-10-16 (leia antes do resto)
+
+- O modo `test` do gateway usa credenciais `APP_USR-` (produção). As afirmações anteriores de "ambiente de teste autenticado" valem só para a conta de produção. Ver DT-MP-09.
+- Não criar pagamentos nem assinaturas de teste até o gateway ter credenciais `TEST-`. O plano `763715780e834403864cf3c154e3167b` foi criado com essas credenciais; cancelar depende de autorização.
+
 ## 0.2 Pendências resolvidas (dev.67)
 
 | Pendência | Situação |
