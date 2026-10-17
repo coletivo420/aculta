@@ -39,6 +39,7 @@ Estado do checkout em 2026-10-17: `lms_classes` 1.2.4 está sendo integrado pela
 - `aculta_user` concede `estudante` em memberships de `lms_course` e `lms_class`, exceto relações com papel explícito de educador, criador ou administrador. O papel global permanece após sair da turma, conforme decisão anterior do responsável.
 - Os mapeamentos de `lms_classes` exigem `add students` no curso para herdar `administer members` na turma e `view students` para listar memberships. Os grants foram acrescentados ao papel Group de educador. O papel global `lms_teacher` pode criar grupos `lms_class` e a relação curso→turma pode ser gerida no escopo do curso.
 - A matrícula não exige confirmação de e-mail nem aceite de termos; a pessoa recebe aviso por e-mail sem bloquear a entrada. A entrega e retries ficam na fase de notificações educacionais F13.
+- Educadores administram memberships de turma pela interface nativa do Group; a permissão herdada `administer members` permite adicionar e remover alunos matriculados manualmente. O campo oculto `field_course_order` registra a origem de matrículas comerciais. A exclusão é negada enquanto o pedido de curso associado estiver pago; a integração que efetiva e revoga matrículas por pedido continua pendente nesta etapa.
 - O controle de confirmação de e-mail e termos continua protegendo início do curso e atividades, sem bloquear a matrícula. O LMS não tem vínculo nativo entre curso, produto Commerce e pagamento concluído; o gate comercial para cursos pagos precisa de integração própria antes de associar cobrança aos cursos.
 
 ### Decisões e estado da implementação F7
@@ -49,7 +50,7 @@ Estado do checkout em 2026-10-17: `lms_classes` 1.2.4 está sendo integrado pela
 4. Matrícula sem confirmação de e-mail e sem aceite de termos; somente aviso por e-mail.
 5. Curso novo não recebe turma automática; educador/admin cria explicitamente.
 
-A configuração versionada habilita `lms_classes`, inclui a configuração opcional upstream, define `create_default_class: false`, declara o papel estudante de turma e atualiza grants de educador. `EnrollmentRoleHooks` foi ampliado para memberships de turma. `EnrollmentFormHooks` exige turma para estudante, rejeita classe que não pertence ao curso e mantém educador/admin no nível do curso. Ainda faltam smoke tests de isolamento A/B, educador, admin, autoinscrição e conta sem e-mail confirmado no Runtime.
+A configuração versionada habilita `lms_classes`, inclui a configuração opcional upstream, define `create_default_class: false`, declara o papel estudante de turma e atualiza grants de educador. `EnrollmentRoleHooks` foi ampliado para memberships de turma. `EnrollmentFormHooks` exige turma para estudante, rejeita classe que não pertence ao curso, mantém educador/admin no nível do curso e protege memberships vinculadas a pedidos pagos contra exclusão manual. O campo de origem do pedido não é editável pela equipe. Ainda faltam integração do checkout/estorno e smoke tests de isolamento A/B, educador, admin, autoinscrição e conta sem e-mail confirmado no Runtime.
 
 **RUNTIME STATUS: DEFERRED.** O Drush local não confirmou URI de teste (`http://default`), então não foi importada configuração, reconstruído cache nem criado conteúdo/membership no banco. O gate de pagamento para cursos pagos também não existe no LMS atual.
 

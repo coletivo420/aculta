@@ -1,0 +1,29 @@
+uuid: a625a244-a1ec-41e1-bac2-95c6df5c7006
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.group_relationship.field_course_order
+    - group.relationship_type.lms_class-group_membership
+  module:
+    - commerce_order
+id: group_relationship.lms_class-group_membership.field_course_order
+field_name: field_course_order
+entity_type: group_relationship
+bundle: lms_class-group_membership
+label: 'Pedido de matrícula'
+description: 'Pedido Commerce que concedeu esta matrícula. Preenchido pela integração de compras de cursos.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:commerce_order'
+  handler_settings:
+    target_bundles:
+      - curso
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

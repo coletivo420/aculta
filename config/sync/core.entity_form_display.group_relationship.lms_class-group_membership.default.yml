@@ -2,6 +2,7 @@ status: true
 dependencies:
   config:
     - field.field.group_relationship.lms_class-group_membership.group_roles
+    - field.field.group_relationship.lms_class-group_membership.field_course_order
     - group.relationship_type.lms_class-group_membership
 id: group_relationship.lms_class-group_membership.default
 targetEntityType: group_relationship
@@ -25,4 +26,5 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_course_order: true
   uid: true

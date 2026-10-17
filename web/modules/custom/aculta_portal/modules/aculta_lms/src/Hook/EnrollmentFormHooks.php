@@ -6,11 +6,17 @@ namespace Drupal\aculta_lms\Hook;
 
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\Form\GroupRelationshipDeleteForm;
 use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms_classes\ClassHelper;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -24,6 +30,61 @@ final class EnrollmentFormHooks {
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
   ) {}
+
+  /** Prevents deleting a class membership granted by a still-paid course order. */
+  #[Hook('entity_access')]
+  public function protectPaidEnrollment(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+    if ($operation !== 'delete'
+      || !$entity instanceof GroupRelationshipInterface
+      || $entity->getPluginId() !== 'group_membership'
+      || $entity->getGroup()?->bundle() !== 'lms_class'
+      || !$entity->hasField('field_course_order')
+      || $entity->get('field_course_order')->isEmpty()) {
+      return AccessResult::neutral();
+    }
+
+    $order = $entity->get('field_course_order')->entity;
+    if (!$order instanceof OrderInterface) {
+      // Missing provenance is not permission to revoke access.
+      return AccessResult::forbidden('A matrícula está vinculada a um pedido; a origem não pôde ser validada.')
+        ->addCacheableDependency($entity);
+    }
+    if ($order->bundle() !== 'curso') {
+      return AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($order);
+    }
+
+    $access = AccessResult::neutral()->addCacheableDependency($entity)->addCacheableDependency($order);
+    $payments = $this->entityTypeManager->getStorage('commerce_payment')->loadMultipleByOrder($order);
+    $has_payment = $payments !== [];
+    if (!$has_payment && $order->getState()->getId() === 'canceled') {
+      return $access;
+    }
+    foreach ($payments as $payment) {
+      if ($payment instanceof PaymentInterface) {
+        $access->addCacheableDependency($payment);
+      }
+      // A partial refund does not revoke a course enrollment. Only an order
+      // whose every payment is fully refunded releases the manual-delete lock.
+      if (!$payment instanceof PaymentInterface || $payment->getState()->getId() !== 'refunded') {
+        return AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
+          ->addCacheableDependency($entity)
+          ->addCacheableDependency($order)
+          ->addCacheableDependency($payment);
+      }
+    }
+
+    if (!$has_payment) {
+      // Commerce treats placed zero-value orders as paid; they also grant
+      // access and remain protected from manual deletion.
+      return AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($order);
+    }
+
+    return $access;
+  }
 
   /**
    * Require a class selection on native course membership forms.
