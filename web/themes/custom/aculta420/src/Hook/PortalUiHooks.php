@@ -36,6 +36,9 @@ final class PortalUiHooks {
     'donation-amount' => ['display-6', 'fw-bold'],
     'donation-monthly' => ['badge', 'text-bg-secondary'],
     'donation-in-honor' => ['fst-italic'],
+    'donation-account-invite' => ['alert', 'alert-info', 'mt-3'],
+    'donation-account-invite-link' => ['btn', 'btn-outline-primary'],
+    'register-popup' => ['d-grid', 'gap-3'],
     // Relatórios de requisitos e segredos (administração do Portal).
     'requirements' => ['aculta-portal-requirements'],
     'requirements-legend' => ['aculta-portal-requirements__legend'],
