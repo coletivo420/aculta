@@ -1,5 +1,13 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.9 — cartões de valor do bloco de apoio — 2026-10-17
+
+- Os valores do bloco de doação rápida viram cartões (não botões), no mesmo estilo dos cartões da página de apoio. A
+  opção "Outro valor" tem borda tracejada, por ser um campo digitável. O formato compacto continua com "Outro".
+- Estilo do componente `donation-quick` em CSS próprio, com tokens semânticos do tema (superfície, borda, texto, foco e
+  movimento), inclusive para o modo de redução de movimento.
+- RUNTIME STATUS: APLICADO no Runtime de testes (cartões verificados por captura do topo da página de apoio).
+
 ## 0.1.0-dev.8 — variante compacta do bloco de valores — 2026-10-17
 
 - Opção "Espaço reduzido" no bloco de valores: até 3 sugestões e a opção curta "Outro", para locais pequenos. Sem a opção,
