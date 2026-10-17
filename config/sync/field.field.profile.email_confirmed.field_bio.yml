@@ -1,0 +1,20 @@
+uuid: 4bce5d5a-160e-4d19-acaf-161bbd15a845
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_bio
+    - profile.type.email_confirmed
+id: profile.email_confirmed.field_bio
+field_name: field_bio
+entity_type: profile
+bundle: email_confirmed
+label: Bio
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
+

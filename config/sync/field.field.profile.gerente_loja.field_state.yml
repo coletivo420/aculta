@@ -1,0 +1,26 @@
+uuid: 9218ab57-db3a-435d-adf3-ac864efa4483
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_state
+    - profile.type.gerente_loja
+  module:
+    - options
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.gerente_loja.field_state
+field_name: field_state
+entity_type: profile
+bundle: gerente_loja
+label: UF
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
+

@@ -1,0 +1,14 @@
+uuid: 82c260d0-9fb9-4af3-ace6-334c9075de4f
+langcode: pt-br
+status: true
+dependencies: {  }
+id: authenticated
+label: Autenticado
+display_label: 'Perfil de conta autenticada'
+multiple: false
+registration: false
+roles:
+  - authenticated
+allow_revisions: false
+new_revision: false
+

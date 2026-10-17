@@ -1,3 +1,14 @@
+## 0.4.0-dev.87 — um tipo de perfil por papel: endereço no autenticado, tipo customer removido — 2026-10-17
+
+Classificação: MINOR (remoção do tipo customer, novo endereço no perfil autenticado, novos tipos por função).
+
+- Tipo `customer` (Cliente) removido. Os 3 perfis foram copiados para `authenticated` (campo `field_address`), verificados (0 divergências) e os pedidos reapontados. Checkout, "Meus dados > Endereço", callback de CEP e o hook de endereço passam a usar `authenticated` e `field_address`.
+- Tipos de perfil por função: `associado` (documentos de identidade), `email_confirmed`, `authenticated` (endereço), `lms_teacher` (Professor), `gerente_loja` (Gerente de Loja) e `administrator` (Administrador). Cada um com os 20 campos e displays de formulário e de visualização.
+- `PerfilDoPapel`: prioridade administrator > gerente_loja > lms_teacher > associado > email_confirmed > authenticated.
+- Configuração exportada em `config/sync` (tipos, campos e displays); arquivos de `customer` removidos.
+- Pendente: os chamadores de `participante` (cerca de 25 arquivos) ainda usam esse tipo; o tipo `participante` não foi removido. Dados de `participante` ainda não foram redistribuídos para as funções.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: "Meus dados > Endereço" (logado como a conta de teste) mostra o endereço salvo. Verificação do checkout completo e do ViaCEP no navegador feita pelo responsável.
+
 ## 0.4.0-dev.86 — um tipo de perfil por papel (helper) — 2026-10-17
 
 Classificação: MINOR (novo helper de perfil por papel; migração em andamento).

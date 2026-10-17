@@ -11,14 +11,14 @@ use Drupal\profile\Entity\ProfileInterface;
 /**
  * Um tipo de perfil por papel: o perfil de uma conta é do tipo do papel mais alto que ela tem.
  *
- * Ordem de prioridade (do mais específico ao genérico): associado, email_confirmed, authenticated. Os papéis acima de
- * associado (lms_teacher, content_editor, gerente_loja, administrator) herdam associado, então a conta é do tipo associado.
+ * Ordem de prioridade (do mais alto ao mais baixo): administrator, gerente_loja, lms_teacher, associado, email_confirmed,
+ * authenticated. A hierarquia de papéis faz o papel superior herdar o inferior, então a prioridade segue a cadeia.
  * Sem tipo fixo no código: quem precisa do perfil chama principal() ou obter(), com o EntityTypeManager injetado.
  */
 final class PerfilDoPapel {
 
   /** Tipos de perfil por papel, em ordem de prioridade. */
-  public const TIPOS = ['associado', 'email_confirmed', 'authenticated'];
+  public const TIPOS = ['administrator', 'gerente_loja', 'lms_teacher', 'associado', 'email_confirmed', 'authenticated'];
 
   /**
    * Tipo do perfil da conta: o primeiro tipo cujo papel ela tem.

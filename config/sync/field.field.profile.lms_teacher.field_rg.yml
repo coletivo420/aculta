@@ -1,0 +1,20 @@
+uuid: 5bba9d13-a8a7-4f7f-885b-351fe2e24a65
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_rg
+    - profile.type.lms_teacher
+id: profile.lms_teacher.field_rg
+field_name: field_rg
+entity_type: profile
+bundle: lms_teacher
+label: RG
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

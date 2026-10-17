@@ -1,0 +1,25 @@
+uuid: c7796df8-2218-4bc4-b97b-da9fc5e2a04c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_nickname
+    - profile.type.gerente_loja
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.gerente_loja.field_nickname
+field_name: field_nickname
+entity_type: profile
+bundle: gerente_loja
+label: Apelido
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

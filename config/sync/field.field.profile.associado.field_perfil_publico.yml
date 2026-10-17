@@ -1,0 +1,24 @@
+uuid: 83fdde14-8fff-415a-949d-5d2597879297
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_perfil_publico
+    - profile.type.associado
+id: profile.associado.field_perfil_publico
+field_name: field_perfil_publico
+entity_type: profile
+bundle: associado
+label: 'Perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

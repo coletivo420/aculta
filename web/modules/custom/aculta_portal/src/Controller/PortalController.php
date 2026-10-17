@@ -498,9 +498,9 @@ final class PortalController extends ControllerBase {
     }
     $parts = $this->savedParts($profile);
     $display = $profile;
-    if (($parts['number'] !== '' || $parts['sn']) && !$profile->get('address')->isEmpty()) {
+    if (($parts['number'] !== '' || $parts['sn']) && !$profile->get('field_address')->isEmpty()) {
       $display = clone $profile;
-      $address = $display->get('address')->first();
+      $address = $display->get('field_address')->first();
       $value = $address->getValue();
       $value['address_line1'] = $parts['street'];
       $address->setValue($value);
@@ -511,10 +511,10 @@ final class PortalController extends ControllerBase {
 
   /** Rua, número e S/N salvos no logradouro. */
   private function savedParts($profile): array {
-    if (!$profile->hasField('address') || $profile->get('address')->isEmpty()) {
+    if (!$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    return \Drupal\aculta_portal\Account\StreetNumberField::split((string) $profile->get('address')->first()->getAddressLine1());
+    return \Drupal\aculta_portal\Account\StreetNumberField::split((string) $profile->get('field_address')->first()->getAddressLine1());
   }
 
   private function loadParticipantProfile(UserInterface $account) {
@@ -535,13 +535,13 @@ final class PortalController extends ControllerBase {
    */
   private function loadCommerceAddressProfile(UserInterface $account) {
     $storage = $this->entities->getStorage('profile');
-    $existing = $storage->loadByUser($account, 'customer');
+    $existing = $storage->loadByUser($account, 'authenticated');
     if (!$existing) {
-      $profiles = $storage->loadByProperties(['uid' => $account->id(), 'type' => 'customer']);
+      $profiles = $storage->loadByProperties(['uid' => $account->id(), 'type' => 'authenticated']);
       $existing = $profiles ? reset($profiles) : NULL;
     }
     return $existing ?: $storage->create([
-      'type' => 'customer',
+      'type' => 'authenticated',
       'uid' => $account->id(),
       'status' => TRUE,
       'is_default' => TRUE,

@@ -1,0 +1,87 @@
+uuid: f3e69dc0-c8ca-4349-98f3-3e7005b21793
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.profile.email_confirmed.field_address
+    - field.field.profile.email_confirmed.field_bio
+    - field.field.profile.email_confirmed.field_city
+    - field.field.profile.email_confirmed.field_data_nascimento
+    - field.field.profile.email_confirmed.field_documento
+    - field.field.profile.email_confirmed.field_documento_indice
+    - field.field.profile.email_confirmed.field_exibir_bio
+    - field.field.profile.email_confirmed.field_exibir_email
+    - field.field.profile.email_confirmed.field_exibir_foto
+    - field.field.profile.email_confirmed.field_exibir_redes
+    - field.field.profile.email_confirmed.field_first_name
+    - field.field.profile.email_confirmed.field_last_name
+    - field.field.profile.email_confirmed.field_nickname
+    - field.field.profile.email_confirmed.field_orgao_emissor
+    - field.field.profile.email_confirmed.field_perfil_publico
+    - field.field.profile.email_confirmed.field_profissao
+    - field.field.profile.email_confirmed.field_redes_sociais
+    - field.field.profile.email_confirmed.field_rg
+    - field.field.profile.email_confirmed.field_state
+    - field.field.profile.email_confirmed.field_whatsapp
+    - profile.type.email_confirmed
+id: profile.email_confirmed.default
+targetEntityType: profile
+bundle: email_confirmed
+mode: default
+content:
+  field_first_name:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_last_name:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_nickname:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: -1
+    region: content
+  field_whatsapp:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  field_address: true
+  field_bio: true
+  field_city: true
+  field_data_nascimento: true
+  field_documento: true
+  field_documento_indice: true
+  field_exibir_bio: true
+  field_exibir_email: true
+  field_exibir_foto: true
+  field_exibir_redes: true
+  field_orgao_emissor: true
+  field_perfil_publico: true
+  field_profissao: true
+  field_redes_sociais: true
+  field_rg: true
+  field_state: true
+  private_message_link: true
+  search_api_excerpt: true
+

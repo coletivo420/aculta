@@ -1,0 +1,20 @@
+uuid: 631ceb31-12a9-4873-9cdc-e85fe8663aba
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_bio
+    - profile.type.authenticated
+id: profile.authenticated.field_bio
+field_name: field_bio
+entity_type: profile
+bundle: authenticated
+label: Bio
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
+

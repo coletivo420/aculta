@@ -1,0 +1,24 @@
+uuid: 88f22c4e-38d0-403c-953c-3f3c4afab10c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_bio
+    - profile.type.gerente_loja
+id: profile.gerente_loja.field_exibir_bio
+field_name: field_exibir_bio
+entity_type: profile
+bundle: gerente_loja
+label: 'Exibir bio no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

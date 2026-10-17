@@ -1,0 +1,54 @@
+uuid: 2b305169-f1e6-474c-a95b-e92562d4a340
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.profile.associado.field_address
+    - field.field.profile.associado.field_bio
+    - field.field.profile.associado.field_city
+    - field.field.profile.associado.field_data_nascimento
+    - field.field.profile.associado.field_documento
+    - field.field.profile.associado.field_documento_indice
+    - field.field.profile.associado.field_exibir_bio
+    - field.field.profile.associado.field_exibir_email
+    - field.field.profile.associado.field_exibir_foto
+    - field.field.profile.associado.field_exibir_redes
+    - field.field.profile.associado.field_first_name
+    - field.field.profile.associado.field_last_name
+    - field.field.profile.associado.field_nickname
+    - field.field.profile.associado.field_orgao_emissor
+    - field.field.profile.associado.field_perfil_publico
+    - field.field.profile.associado.field_profissao
+    - field.field.profile.associado.field_redes_sociais
+    - field.field.profile.associado.field_rg
+    - field.field.profile.associado.field_state
+    - field.field.profile.associado.field_whatsapp
+    - profile.type.associado
+id: profile.associado.default
+targetEntityType: profile
+bundle: associado
+mode: default
+content: {  }
+hidden:
+  field_address: true
+  field_bio: true
+  field_city: true
+  field_data_nascimento: true
+  field_documento: true
+  field_documento_indice: true
+  field_exibir_bio: true
+  field_exibir_email: true
+  field_exibir_foto: true
+  field_exibir_redes: true
+  field_first_name: true
+  field_last_name: true
+  field_nickname: true
+  field_orgao_emissor: true
+  field_perfil_publico: true
+  field_profissao: true
+  field_redes_sociais: true
+  field_rg: true
+  field_state: true
+  field_whatsapp: true
+  is_default: true
+

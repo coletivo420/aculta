@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * - Hierarquia: edita o mapa do role_inheritance (cada papel herda dos papéis marcados; a herança é transitiva).
  *   Mostra a cadeia efetiva e recusa ciclo ou autorreferência antes de salvar.
  * - Tipos de perfil: cada tipo declara quais papéis o usam (aculta_portal.profile_roles). Não altera dados já
- *   armazenados nem o tipo 'customer', usado pelo checkout.
+ *   armazenados. O endereço do checkout fica no tipo authenticated.
  * - Links: papéis, permissões, tipos de perfil e herança do contrib continuam nas telas do núcleo; daqui se chega a elas.
  */
 final class RoleHierarchyForm extends ConfigFormBase {

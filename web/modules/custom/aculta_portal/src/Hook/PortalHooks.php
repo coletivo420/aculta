@@ -549,18 +549,18 @@ final class PortalHooks {
       return;
     }
 
-    if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'customer'
+    if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'authenticated'
       && $path === '/dados/endereco'
       && (int) $entity->getOwnerId() === (int) $this->currentUser->id()) {
       // The Portal and Commerce edit the same customer Profile Address.
-      $allowed = ['address', 'actions', 'form_build_id', 'form_token', 'form_id'];
+      $allowed = ['field_address', 'actions', 'form_build_id', 'form_token', 'form_id'];
       foreach (array_keys($form) as $key) {
         if (!str_starts_with((string) $key, '#') && !in_array($key, $allowed, TRUE)) {
           unset($form[$key]);
         }
       }
-      if (isset($form['address']['widget'][0]['address'])) {
-        $address_element = &$form['address']['widget'][0]['address'];
+      if (isset($form['field_address']['widget'][0]['address'])) {
+        $address_element = &$form['field_address']['widget'][0]['address'];
         $address_element['#default_value']['country_code'] ??= 'BR';
         $participant = $this->entityTypeManager->getStorage('profile')->loadByUser($this->currentUser, 'participante');
         if ($participant) {
@@ -592,12 +592,12 @@ final class PortalHooks {
       $parts = ['street' => '', 'number' => '', 'sn' => FALSE];
       if ($entity->id()) {
         $saved = $this->entityTypeManager->getStorage('profile')->load($entity->id());
-        if ($saved && $saved->hasField('address') && !$saved->get('address')->isEmpty()) {
-          $parts = \Drupal\aculta_portal\Account\StreetNumberField::split((string) $saved->get('address')->first()->getAddressLine1());
+        if ($saved && $saved->hasField('field_address') && !$saved->get('field_address')->isEmpty()) {
+          $parts = \Drupal\aculta_portal\Account\StreetNumberField::split((string) $saved->get('field_address')->first()->getAddressLine1());
         }
       }
-      if (isset($form['address']['widget'][0]['address'])) {
-        \Drupal\aculta_portal\Account\StreetNumberField::attach($form['address']['widget'][0]['address'], $parts['number'], $parts['sn']);
+      if (isset($form['field_address']['widget'][0]['address'])) {
+        \Drupal\aculta_portal\Account\StreetNumberField::attach($form['field_address']['widget'][0]['address'], $parts['number'], $parts['sn']);
       }
       // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
       $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';

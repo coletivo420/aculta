@@ -29,6 +29,18 @@ final class PerfilDoPapelTest extends UnitTestCase {
     $this->assertSame('email_confirmed', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'email_confirmed', 'wiki_contributor'])));
   }
 
+  public function testProfessorTemTipoProfessor(): void {
+    $this->assertSame('lms_teacher', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'associado', 'lms_teacher'])));
+  }
+
+  public function testGerenteDeLojaTemTipoGerente(): void {
+    $this->assertSame('gerente_loja', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'associado', 'gerente_loja'])));
+  }
+
+  public function testAdministradorTemTipoAdministrador(): void {
+    $this->assertSame('administrator', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'administrator', 'gerente_loja'])));
+  }
+
   public function testSoAutenticadoTemTipoAutenticado(): void {
     $this->assertSame('authenticated', PerfilDoPapel::tipoDaConta($this->conta(['authenticated'])));
   }

@@ -1,0 +1,20 @@
+uuid: 8cebaf5e-acf2-4da1-b97c-9b49e6c0fd1f
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_profissao
+    - profile.type.lms_teacher
+id: profile.lms_teacher.field_profissao
+field_name: field_profissao
+entity_type: profile
+bundle: lms_teacher
+label: Profissão
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

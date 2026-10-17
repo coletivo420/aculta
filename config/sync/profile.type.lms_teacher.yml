@@ -1,0 +1,14 @@
+uuid: 67231b07-496c-4847-8616-9f839a22ee4f
+langcode: pt-br
+status: true
+dependencies: {  }
+id: lms_teacher
+label: Professor
+display_label: 'Perfil de professor'
+multiple: false
+registration: false
+roles:
+  - lms_teacher
+allow_revisions: false
+new_revision: false
+

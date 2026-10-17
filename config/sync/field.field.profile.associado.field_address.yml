@@ -1,0 +1,42 @@
+uuid: a62395e9-6bb3-49fa-bd16-23c28a2507c4
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_address
+    - profile.type.associado
+  module:
+    - address
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.associado.field_address
+field_name: field_address
+entity_type: profile
+bundle: associado
+label: Endereço
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  available_countries: {  }
+  langcode_override: null
+  field_overrides:
+    addressLine3:
+      override: hidden
+    organization:
+      override: hidden
+    givenName:
+      override: hidden
+    additionalName:
+      override: hidden
+    familyName:
+      override: hidden
+    dependentLocality:
+      override: required
+  fields: {  }
+field_type: address
+
