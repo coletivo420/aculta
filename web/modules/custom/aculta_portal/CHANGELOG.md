@@ -1,3 +1,12 @@
+## 0.4.0-dev.121 — gravação das assinaturas de doação — 2026-10-17
+
+- `MercadoPagoSubscriptionRecorder`: grava no pedido `assinatura` o status da assinatura (tópico `subscription_preapproval`) e
+  cobranças aprovadas como pagamentos (tópico `subscription_authorized_payment`), uma vez por id do pagamento. Cobrança só é
+  gravada com `payment.status = approved`; `processed` sozinho não basta.
+- `MercadoPagoSubscriptionNotificationService` passa a chamar o gravador, em vez de só registrar log.
+- Testes unitários: `MercadoPagoSubscriptionRecorderTest` (5) e `MercadoPagoSubscriptionNotificationServiceTest` (3, com gravador real).
+- RUNTIME STATUS: DEFERRED para o ponta a ponta no sandbox do Mercado Pago (depende de confirmação; ver `aculta_donation` 0.1.0-dev.16).
+
 ## 0.4.0-dev.120 — carrinho unificado em um pedido, com o fluxo mais exigente — 2026-10-17
 
 - Decisão do responsável (2026-10-17): todo o carrinho (exceto assinatura) é finalizado num pedido só, com o fluxo de

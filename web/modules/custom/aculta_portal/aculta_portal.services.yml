@@ -221,7 +221,10 @@ services:
 
   aculta_portal.mercado_pago.subscription_notifications:
     class: Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService
-    arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.recurrence_service', '@http_client', '@aculta_portal.mercado_pago.logger']
+    arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.recurrence_service', '@http_client', '@aculta_portal.mercado_pago.logger', '@aculta_portal.mercado_pago.subscription_recorder']
+  aculta_portal.mercado_pago.subscription_recorder:
+    class: Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder
+    arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.recurrence_service', '@aculta_portal.mercado_pago.logger', '@datetime.time']
   aculta_portal.mercado_pago_webhook_guard:
     class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookGuard
     arguments: ['@aculta_portal.mercado_pago.subscription_notifications', '@aculta_portal.mercado_pago.logger']

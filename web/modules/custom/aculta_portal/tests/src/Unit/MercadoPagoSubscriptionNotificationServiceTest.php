@@ -8,7 +8,9 @@ use Drupal\aculta_portal\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoClientFactory;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService;
+use Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -59,6 +61,12 @@ final class MercadoPagoSubscriptionNotificationServiceTest extends UnitTestCase 
       $this->createMock(MercadoPagoRecurrenceService::class),
       $http,
       $this->createMock(LoggerChannelInterface::class),
+      new MercadoPagoSubscriptionRecorder(
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(MercadoPagoRecurrenceService::class),
+        $this->createMock(LoggerChannelInterface::class),
+        $this->createMock(TimeInterface::class),
+      ),
     );
   }
 

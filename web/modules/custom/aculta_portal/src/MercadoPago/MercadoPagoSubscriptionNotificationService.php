@@ -20,7 +20,7 @@ use GuzzleHttp\Exception\GuzzleException;
  * - subscription_authorized_payment: consulta a cobrança recorrente em GET /authorized_payments/{id}. O SDK
  *   3.16.0 não tem cliente para esse recurso, então a chamada usa o cliente HTTP do Drupal com o token do gateway.
  *
- * Nenhuma mudança é gravada no Commerce aqui: o vínculo assinatura-pedido de doação é a fase F3. Os dados
+ * A gravação no pedido de doação (status, pagamento aprovado uma vez) fica em MercadoPagoSubscriptionRecorder. Os dados
  * registrados em log não incluem e-mail, cartão nem outro dado de pagador.
  */
 class MercadoPagoSubscriptionNotificationService {
@@ -39,6 +39,7 @@ class MercadoPagoSubscriptionNotificationService {
     private readonly MercadoPagoRecurrenceService $recorrencia,
     private readonly ClientInterface $http,
     private readonly LoggerChannelInterface $logger,
+    private readonly MercadoPagoSubscriptionRecorder $gravador,
   ) {}
 
   /**
@@ -61,6 +62,7 @@ class MercadoPagoSubscriptionNotificationService {
   private function assinatura(PaymentGatewayInterface $gateway, string $id): void {
     $assinatura = $this->recorrencia->obterAssinatura($gateway, $id);
     $this->logger->notice('Notificação de assinatura @id: status @status.', ['@id' => $id, '@status' => (string) ($assinatura->status ?? '')]);
+    $this->gravador->assinatura($assinatura);
   }
 
   private function plano(PaymentGatewayInterface $gateway, string $id): void {
@@ -87,6 +89,7 @@ class MercadoPagoSubscriptionNotificationService {
     }
     $dados = json_decode((string) $resposta->getBody(), TRUE);
     $this->logger->notice('Notificação de cobrança recorrente @id: status @status.', ['@id' => $id, '@status' => (string) ($dados['status'] ?? '')]);
+    $this->gravador->cobranca($gateway, is_array($dados) ? $dados : []);
   }
 
   private function gateway(): PaymentGatewayInterface {

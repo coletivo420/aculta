@@ -2,7 +2,7 @@ name: Portal ACULTA
 type: module
 description: 'Integra módulos de conta, conteúdo, aprendizagem e leitura compartilhada de PDF por Media e campos File, oferece contratos de propósito, slugs públicos canônicos e sanitização nativa de nomes de upload.'
 package: Associação Cultural Antiproibicionista
-version: '0.4.0-dev.120'
+version: '0.4.0-dev.121'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_image
