@@ -8,8 +8,6 @@ id: administrator
 label: Administrador
 weight: 3
 is_admin: true
-permissions: {  }
-
 permissions:
   - 'create administrator profile'
   - 'update own administrator profile'

@@ -1,3 +1,15 @@
+## 0.4.0-dev.125 — corrige duplicidade na configuração de administrador — 2026-10-17
+
+- Removida a chave `permissions` vazia duplicada de `user.role.administrator`; Drush recusava carregar todo o Config Sync por YAML inválido.
+- Nenhuma mudança de permissões do administrador. `config:status` voltou a funcionar; importação adiada porque há mudanças não relacionadas ao F7 no Sync, inclusive checkout, gateway, Key e Domain, e faltam diffs/recuperação específicos.
+
+## 0.4.0-dev.124 — matrícula comercial no LMS — 2026-10-17
+
+- Cursos apontam a um produto Commerce próprio; a página do curso inclui escolha de turma e envia a turma no item Commerce.
+- O checkout `curso` exige conta e mantém os termos gerais, com exceção pontual da confirmação de e-mail nessa rota.
+- Pedidos concluídos concedem membership; reembolso parcial mantém acesso e estorno integral revoga apenas a membership de origem, preservando associação manual e outras compras válidas.
+- Lint PHP e gate Drupal 11+ PASS (948 checks). RUNTIME STATUS: DEFERRED; configuração não importada, `lms_classes` segue desativado.
+
 ## 0.4.0-dev.123 — situação da última cobrança da doação mensal — 2026-10-17
 
 - Cada cobrança da assinatura guarda sua situação no pedido: `paga`, `nao_cobrada`, `recusada`, `processando`, `agendada`,
