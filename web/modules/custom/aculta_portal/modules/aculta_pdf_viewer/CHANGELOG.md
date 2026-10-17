@@ -1,5 +1,15 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.18 — MIME do PDF.js e evidências da PV7 — 2026-10-17
+
+Classificação: PATCH (compatibilidade de entrega dos módulos PDF.js).
+
+- `.mjs` agora recebe `application/javascript` via `.htaccess`; verificado no Apache do Runtime para `pdf.mjs` e `pdf.worker.mjs`.
+- Firefox 153.4 ESR no Runtime renderizou PDFs de 1 MiB e 22 MiB (14 páginas cada); arquivo inválido manteve o link autorizado com mensagem fail-soft.
+- Unit 11/11, Kernel 5/5 (106 assertions; quatro deprecações) e gate Drupal 11+ (892 checks) PASS.
+- Chromium, rede lenta e CSP estrita permanecem sem evidência. Produção Hostinger/Cloudflare ainda entrega o worker como `text/plain`; validar após deploy, sem deploy nesta fase.
+- RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
+
 ## 0.1.0-dev.17 — PV6 homologada em Wiki, Fórum e apresentações — 2026-10-17
 
 Classificação: MINOR (autoria Media Embed compartilhada e conclusão da homologação PV6).

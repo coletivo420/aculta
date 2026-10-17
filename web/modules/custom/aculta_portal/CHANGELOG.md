@@ -1,3 +1,11 @@
+## 0.4.0-dev.101 — MIME de módulos PDF.js e homologação PV7 — 2026-10-17
+
+- `web/.htaccess` declara `.mjs` como `application/javascript`, necessário para o PDF.js e seu worker módulo; Apache do Runtime retorna esse MIME nos dois assets. A produção ainda retorna `text/plain` no worker antes do deploy desta mudança.
+- PDF.js 6.4.299 e licença Apache-2.0 conferidos no Composer e distribuição instalada. Unit 11/11 (145 assertions), Kernel 5/5 (106 assertions; quatro deprecações preexistentes), gate Drupal 11+ (892 checks) PASS.
+- Firefox 153.4 ESR no Runtime: PDF de 1 MiB e PDF de 22 MiB renderizaram 14 páginas; o grande transferiu 23.036.752 bytes em 2,0 s. PDF inválido exibiu fallback autorizado. Homologação Chromium e rede lenta não executadas.
+- Runtime sem cabeçalho CSP; produção envia apenas `upgrade-insecure-requests` nas respostas verificadas. Isso não equivale a validar uma política CSP estrita. Acesso privado já tem matriz PV5; sem nova mutação dos fixtures nesta rodada.
+- RUNTIME STATUS: APLICADO. Produção LiteSpeed/Hostinger e MIME pós-deploy DEFERRED; nenhum deploy executado.
+
 ## 0.4.0-dev.100 — operações e caixa de controle na página Papéis e perfis — 2026-10-17
 
 - Biblioteca `core/drupal.dropbutton` anexada ao formulário: o menu de operações (editar, permissões, excluir) depende dela.

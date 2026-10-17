@@ -25,6 +25,10 @@ AddEncoding gzip svgz
 # Add correct encoding for webp.
 AddType image/webp .webp
 
+# PDF.js ships ES modules with the .mjs extension. Module scripts require a
+# JavaScript MIME type; some hosts otherwise serve these files as text/plain.
+AddType application/javascript .mjs
+
 # Most of the following PHP settings cannot be changed at runtime. See
 # sites/default/default.settings.php and
 # Drupal\Core\DrupalKernel::bootEnvironment() for settings that can be
