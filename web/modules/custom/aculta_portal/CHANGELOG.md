@@ -1,3 +1,10 @@
+## 0.4.0-dev.108 — remove aba vazia de Configurações > Pessoas — 2026-10-17
+
+- Remove a aba "Pessoas": a página só mostrava uma frase e não tinha ferramenta.
+- `/painel-administrativo/configuracoes/pessoas` agora abre a aba Papéis (redirecionamento). Sem isso, a página-base não teria aba nenhuma.
+- As cinco abas restantes (Papéis, Campos de Perfil, Segurança, Conta) continuam.
+- RUNTIME STATUS: APLICADO e verificado com o gerenciador de abas do Core no Runtime de testes.
+
 ## 0.4.0-dev.106 — abas agrupadas em Configurações > Pessoas — 2026-10-17
 
 - Dez abas viram cinco abas principais: Pessoas, Papéis, Campos de Perfil, Segurança e Conta.

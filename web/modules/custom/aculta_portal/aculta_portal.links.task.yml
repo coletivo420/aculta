@@ -4,14 +4,8 @@ aculta_portal.campos_de_perfil:
   base_route: entity.user.collection
   weight: 20
 
-# Abas de Configurações > Pessoas (administração de contas). Base: a página user.admin_index. Três abas principais
+# Abas de Configurações > Pessoas (administração de contas). Base: a página user.admin_index. Cinco abas principais
 # agrupam as ferramentas; as sub-abas (base_route = rota da aba principal) mantêm cada ferramenta em sua página.
-aculta_portal.config_pessoas_visao:
-  title: 'Pessoas'
-  route_name: user.admin_index
-  base_route: user.admin_index
-  weight: 0
-
 aculta_portal.config_tab_papeis:
   title: 'Papéis'
   route_name: entity.user_role.collection
