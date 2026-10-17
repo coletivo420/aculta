@@ -1,3 +1,12 @@
+## 0.4.0-dev.117 — produtos da loja no domínio da loja — 2026-10-17
+
+- A raiz de `loja.aculta` passa a servir a página inicial da loja (caminho `/loja-da-associacao`, nó 372). O caminho
+  anterior (`/loja-da-aculta`) não existia mais e a raiz redirecionava para um 404.
+- Produto da loja: a página do produto responde no domínio da loja (200) e 404 no principal, como manda a política.
+- RUNTIME STATUS: APLICADO no Runtime de testes. Conteúdo da página inicial da loja mudou de formato de texto (`basic_html`,
+  inexistente no Runtime, para `restricted_html`), sem alterar o texto.
+- Pendente: listagem de produtos no domínio da loja (ainda não há catálogo; só a página de produto).
+
 ## 0.4.0-dev.116 — painel do carrinho com itens e contador corretos — 2026-10-17
 
 - Correção: o painel do carrinho derrubava a página inteira (erro 500) quando havia pedido de doação no carrinho, porque o
