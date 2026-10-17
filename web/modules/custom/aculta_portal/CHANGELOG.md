@@ -1,3 +1,11 @@
+## 0.4.0-dev.115 — carrinho em lista única — 2026-10-17
+
+- O carrinho deixa de ter abas: uma lista única com uma linha de separador por site (Loja, Cursos, Apoio), com total do site.
+- Ordem: o site do item adicionado por último vem primeiro; dentro de cada site, do item mais recente para o mais antigo.
+- Cada item é uma caixa igual às de aviso e mensagens (alerta do Bootstrap com tokens do tema), com X para fechar a caixa.
+  O X só fecha a caixa na tela; não remove o item do carrinho.
+- RUNTIME STATUS: APLICADO no Runtime de testes (ordenação verificada com três itens de sites diferentes).
+
 ## 0.4.0-dev.114 — carrinho único com separadores e checkout no principal — 2026-10-17
 
 - Decisão do responsável (2026-10-17, versão final): um carrinho único. O painel da barra agrupa os itens em separadores

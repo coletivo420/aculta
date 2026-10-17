@@ -37,47 +37,49 @@ final class CartUtility {
   public function build(): array {
     $cache = (new CacheableMetadata())->addCacheContexts(['cart', 'user', 'session']);
     $grupos = [];
-    foreach (CartSite::ORDEM as $site) {
-      $grupos[$site] = ['key' => $site, 'label' => CartSite::rotulo($site), 'count' => 0, 'empty' => TRUE, 'total' => '', 'items' => [], 'checkout_url' => '', '_soma' => 0.0, '_moeda' => NULL];
-    }
+    $count = 0;
+    $soma = 0.0;
+    $moeda = NULL;
 
     foreach ($this->cartProvider->getCarts() as $cart) {
       $cache->addCacheableDependency($cart);
       $site = CartSite::paraTipo($cart->bundle());
-      if ($grupos[$site]['checkout_url'] === '') {
-        $grupos[$site]['checkout_url'] = $this->urlDoCheckout($cart);
-      }
+      $checkout = $this->urlDoCheckout($cart);
       foreach ($cart->getItems() as $item) {
         $quantity = (int) $item->getQuantity();
         $total = $item->getTotalPrice();
-        $grupos[$site]['count'] += $quantity;
+        $count += $quantity;
         if ($total !== NULL) {
-          $grupos[$site]['_soma'] += (float) $total->getNumber();
-          $grupos[$site]['_moeda'] = $total->getCurrencyCode();
+          $soma += (float) $total->getNumber();
+          $moeda = $total->getCurrencyCode();
         }
+        $grupos[$site]['site'] = $site;
+        $grupos[$site]['label'] = CartSite::rotulo($site);
+        $grupos[$site]['checkout_url'] = $checkout;
+        $grupos[$site]['ultimo'] = max($grupos[$site]['ultimo'] ?? 0, (int) $item->id());
         $grupos[$site]['items'][] = [
+          'id' => (int) $item->id(),
           'title' => (string) $item->getTitle(),
           'quantity' => (string) $quantity,
           'total' => $total !== NULL ? $this->formatPrice((float) $total->getNumber(), $total->getCurrencyCode()) : '',
+          'total_value' => $total !== NULL ? (float) $total->getNumber() : 0.0,
         ];
       }
     }
 
-    $count = 0;
-    $soma = 0.0;
-    $moeda = NULL;
+    // Lista única: separadores (grupos) pelo item adicionado por último; itens do mais recente para o mais antigo.
+    uasort($grupos, static fn(array $a, array $b): int => $b['ultimo'] <=> $a['ultimo']);
     $sites = [];
     foreach ($grupos as $grupo) {
-      $count += $grupo['count'];
-      $soma += $grupo['_soma'];
-      $moeda = $grupo['_moeda'] ?? $moeda;
+      usort($grupo['items'], static fn(array $a, array $b): int => $b['id'] <=> $a['id']);
+      $soma_grupo = array_sum(array_column($grupo['items'], 'total_value'));
       $sites[] = [
-        'key' => $grupo['key'],
+        'key' => $grupo['site'],
         'label' => $grupo['label'],
-        'count' => $grupo['count'],
-        'empty' => $grupo['count'] === 0,
-        'total' => $grupo['items'] === [] ? '' : $this->formatPrice($grupo['_soma'], (string) $grupo['_moeda']),
-        'items' => $grupo['items'],
+        'count' => array_sum(array_map(static fn(array $i): int => (int) $i['quantity'], $grupo['items'])),
+        'empty' => FALSE,
+        'total' => $this->formatPrice($soma_grupo, (string) $moeda),
+        'items' => array_map(static fn(array $i): array => array_diff_key($i, ['id' => TRUE, 'total_value' => TRUE]), $grupo['items']),
         'checkout_url' => $grupo['checkout_url'],
       ];
     }

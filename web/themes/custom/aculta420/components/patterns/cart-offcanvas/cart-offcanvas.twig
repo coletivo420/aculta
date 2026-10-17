@@ -15,35 +15,23 @@
     {% if empty %}
       <p class="aculta-cart-offcanvas__empty">Sem produto(s) no carrinho.</p>
     {% else %}
-      <ul class="nav nav-tabs aculta-cart-offcanvas__tabs" role="tablist">
+      <div class="aculta-cart-offcanvas__lista" role="list">
         {% for site in sites %}
-          <li class="nav-item" role="presentation">
-            <button class="nav-link{{ loop.first ? ' active' : '' }}" id="aculta-cart-tab-{{ site.key }}" data-bs-toggle="tab" data-bs-target="#aculta-cart-pane-{{ site.key }}" type="button" role="tab" aria-controls="aculta-cart-pane-{{ site.key }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">
-              {{ site.label }} <span class="aculta-cart-offcanvas__tab-count">({{ site.count }})</span>
-            </button>
-          </li>
-        {% endfor %}
-      </ul>
-      <div class="tab-content aculta-cart-offcanvas__panes">
-        {% for site in sites %}
-          <div class="tab-pane fade{{ loop.first ? ' show active' : '' }}" id="aculta-cart-pane-{{ site.key }}" role="tabpanel" aria-labelledby="aculta-cart-tab-{{ site.key }}" tabindex="0">
-            {% if site.empty %}
-              <p class="aculta-cart-offcanvas__empty">Sem itens em {{ site.label|lower }}.</p>
-            {% else %}
-              <ul class="aculta-cart-offcanvas__items">
-                {% for item in site.items %}
-                  <li class="aculta-cart-offcanvas__item">
-                    <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
-                    <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
-                  </li>
-                {% endfor %}
-              </ul>
-              <p class="aculta-cart-offcanvas__total"><strong>Total ({{ site.label }}):</strong> {{ site.total }}</p>
-              {% if site.checkout_url %}
-                <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ site.checkout_url }}">Finalizar {{ site.label|lower }}</a>
-              {% endif %}
-            {% endif %}
+          <div class="aculta-cart-offcanvas__separador" role="separator">
+            <span class="aculta-cart-offcanvas__separador-nome">{{ site.label }}</span>
+            <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
           </div>
+          {% for item in site.items %}
+            {# Caixa igual às de aviso e mensagens (alerta do Bootstrap, tokens do tema); o X fecha a caixa. #}
+            <div class="alert alert-info alert-dismissible aculta-cart-offcanvas__caixa fade show" role="listitem">
+              <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+              <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar item"></button>
+            </div>
+          {% endfor %}
+          {% if site.checkout_url %}
+            <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ site.checkout_url }}">Finalizar {{ site.label|lower }}</a>
+          {% endif %}
         {% endfor %}
       </div>
       <p class="aculta-cart-offcanvas__total"><strong>Total geral:</strong> {{ total }}</p>

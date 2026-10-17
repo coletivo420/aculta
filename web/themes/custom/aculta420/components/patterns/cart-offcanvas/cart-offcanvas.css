@@ -12,3 +12,25 @@
   font-weight: 600;
   text-align: center;
 }
+
+/* Lista única do carrinho: separador por site (linha de título) e caixas iguais às de aviso (alert do Bootstrap). */
+.aculta-cart-offcanvas__lista { display: flex; flex-direction: column; gap: 0.5rem; }
+.aculta-cart-offcanvas__separador {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 0.75rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--aculta-border-accent);
+  font-family: var(--aculta-font-display);
+  color: var(--aculta-text-primary);
+}
+.aculta-cart-offcanvas__caixa {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-right: 2.5rem;
+  position: relative;
+  margin-bottom: 0;
+}
+.aculta-cart-offcanvas__caixa .btn-close { position: absolute; top: 0.5rem; right: 0.5rem; }
