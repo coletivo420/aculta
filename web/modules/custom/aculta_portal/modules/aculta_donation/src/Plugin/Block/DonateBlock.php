@@ -48,6 +48,11 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
    */
   protected ConfigFactoryInterface $configFactory;
 
+  /**
+   * Gerenciador de domínio: o botão Doar aponta para o domínio de apoio.
+   */
+  protected \Drupal\aculta_portal\Domain\DomainPurposeManager $purposes;
+
   // phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
 
   /**
@@ -72,7 +77,21 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $instance->aliasManager = $container->get('path_alias.manager');
     }
     $instance->configFactory = $container->get('config.factory');
+    $instance->purposes = $container->get('aculta_portal.domain_purpose');
     return $instance;
+  }
+
+  /**
+   * URL do passo inicial da doação, no domínio de apoio, com a query de retorno quando houver.
+   *
+   * @param array<string, mixed> $options
+   */
+  private function urlDoacao(array $options): string {
+    $url = $this->purposes->routeUrl('support', 'aculta_donation.donation.default') ?? Url::fromRoute('aculta_donation.donation.default');
+    if (isset($options['query'])) {
+      $url->setOption('query', $options['query']);
+    }
+    return $url->toString();
   }
 
   /**
@@ -131,7 +150,8 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
     $build = [
       '#theme' => 'aculta_donation_donate',
       '#label' => $this->t('Doar'),
-      '#href' => Url::fromRoute('aculta_donation.donation.default', [], $options)->toString(),
+      // Apoio e assinatura: o botão leva ao domínio de apoio (o fluxo de doação roda lá).
+      '#href' => $this->urlDoacao($options),
       '#cache' => ['contexts' => ['url.path', 'url.query_args']],
     ];
     return $build;

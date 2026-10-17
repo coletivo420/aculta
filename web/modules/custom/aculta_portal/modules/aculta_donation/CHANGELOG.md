@@ -1,5 +1,10 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.14 — fluxo de doação no domínio de apoio — 2026-10-17
+
+- O botão "Doar" da página inicial e os valores do bloco apontam ao domínio de apoio (`routeUrl('support', …)`).
+- RUNTIME STATUS: APLICADO no Runtime de testes.
+
 ## 0.1.0-dev.13 — cartões compactos e quebra automática — 2026-10-17
 
 - Os valores e o "Doar" usam o mesmo componente SDC `donation-card`: cartão compacto, com quebra automática do texto

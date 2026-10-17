@@ -134,14 +134,14 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
     foreach ($valores as $delta => $amount) {
       $links[$delta] = [
         'title' => 'R$ ' . number_format((float) $amount, 0, ',', '.'),
-        'url' => $this->purposes->routeUrl('main', 'aculta_donation.donation.quick', ['amount' => $amount])?->toString() ?? Url::fromRoute('aculta_donation.donation.quick', ['amount' => $amount])->toString(),
+        'url' => $this->purposes->routeUrl('support', 'aculta_donation.donation.quick', ['amount' => $amount])?->toString() ?? Url::fromRoute('aculta_donation.donation.quick', ['amount' => $amount])->toString(),
       ];
     }
     // "Outro": o visitante digita o valor no fluxo de doação (campo "Outro valor" do widget).
     if ($permiteOutro) {
       $links['outro'] = [
         'title' => (string) $this->t('Outro'),
-        'url' => $this->purposes->routeUrl('main', 'aculta_donation.donation.default')?->toString() ?? Url::fromRoute('aculta_donation.donation.default')->toString(),
+        'url' => $this->purposes->routeUrl('support', 'aculta_donation.donation.default')?->toString() ?? Url::fromRoute('aculta_donation.donation.default')->toString(),
       ];
     }
     // Dados neutros: o tema apresenta os valores (componente SDC donation-quick do tema).
