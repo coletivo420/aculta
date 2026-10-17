@@ -6,7 +6,6 @@ namespace Drupal\aculta_portal\Cart;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\commerce_cart\CartProviderInterface;
-use Drupal\commerce_checkout\CheckoutOrderManagerInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -23,7 +22,6 @@ final class CartUtility {
   public function __construct(
     private readonly CartProviderInterface $cartProvider,
     private readonly DomainPurposeManager $domainPurposeManager,
-    private readonly CheckoutOrderManagerInterface $checkoutOrderManager,
     TranslationInterface $translation,
   ) {
     $this->setStringTranslation($translation);
@@ -100,7 +98,9 @@ final class CartUtility {
    * Botão de checkout do separador: o checkout do Commerce, no domínio principal, no passo atual do pedido.
    */
   private function urlDoCheckout(OrderInterface $pedido): string {
-    $passo = $this->checkoutOrderManager->getCheckoutStepId($pedido);
+    // Usa o passo guardado no pedido, sem resolver o fluxo aqui (o resolvedor falha para alguns fluxos, como o de doação,
+    // e derruba a página inteira). Passo ausente ou inválido: o Commerce redireciona ao passo correto na própria etapa.
+    $passo = $pedido->get('checkout_step')->value ?: 'login';
     $url = $this->domainPurposeManager->routeUrl('main', 'commerce_checkout.form', [
       'commerce_order' => $pedido->id(),
       'step' => $passo,

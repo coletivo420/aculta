@@ -1,0 +1,30 @@
+{#
+  Corpo do painel do carrinho (aculta_portal). Mesma apresentação do corpo da gaveta (cart-offcanvas): usado quando o
+  carrinho é atualizado pelo AJAX "Adicionar ao carrinho", sem recarregar a página.
+#}
+{% if empty %}
+  <p class="aculta-cart-offcanvas__empty">Sem produto(s) no carrinho.</p>
+{% else %}
+  <div class="aculta-cart-offcanvas__lista" role="list">
+    {% for site in sites %}
+      <div class="aculta-cart-offcanvas__separador" role="separator">
+        <span class="aculta-cart-offcanvas__separador-nome">{{ site.label }}</span>
+        <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
+      </div>
+      {% for item in site.items %}
+        <div class="alert alert-info alert-dismissible aculta-cart-offcanvas__caixa fade show" role="listitem">
+          <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+          <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar item"></button>
+        </div>
+      {% endfor %}
+      {% if site.checkout_url %}
+        <a class="btn btn-primary aculta-cart-offcanvas__action" href="{{ site.checkout_url }}">Finalizar {{ site.label|lower }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <p class="aculta-cart-offcanvas__total"><strong>Total geral:</strong> {{ total }}</p>
+  {% if url %}
+    <a class="btn btn-link p-0 aculta-cart-offcanvas__cart-link" href="{{ url }}">Ver carrinho completo</a>
+  {% endif %}
+{% endif %}

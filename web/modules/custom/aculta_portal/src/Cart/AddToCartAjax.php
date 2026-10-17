@@ -8,6 +8,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -71,6 +72,16 @@ final class AddToCartAjax {
     ];
     $response->addCommand(new HtmlCommand('#' . $statusId, $this->renderer->renderInIsolation($box)));
     $response->addAttachments(['library' => ['aculta_portal/cart-status']]);
+
+    // Corpo do painel do carrinho: a lista e os totais são atualizados sem recarregar a página.
+    $painel = [
+      '#theme' => 'aculta_portal_cart_panel',
+      '#sites' => $cart['sites'],
+      '#total' => $cart['total'],
+      '#url' => $cart['url'],
+      '#empty' => $cart['empty'],
+    ];
+    $response->addCommand(new ReplaceCommand('#aculta-cart-offcanvas .aculta-cart-offcanvas__body', $this->renderer->renderInIsolation($painel)));
 
     $count = (string) $cart['count'];
     $response->addCommand(new InvokeCommand('[data-aculta-cart-count]', 'text', [$count]));

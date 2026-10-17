@@ -1,3 +1,14 @@
+## 0.4.0-dev.116 — painel do carrinho com itens e contador corretos — 2026-10-17
+
+- Correção: o painel do carrinho derrubava a página inteira (erro 500) quando havia pedido de doação no carrinho, porque o
+  passo do checkout era resolvido dentro da montagem do painel. O painel agora usa o passo guardado no pedido; o Commerce
+  corrige o passo na própria etapa.
+- O contador e a lista do carrinho são atualizados pelo "Adicionar ao carrinho" sem recarregar a página: a resposta AJAX
+  substitui o corpo do painel (`aculta_portal_cart_panel`, com template do tema).
+- RUNTIME STATUS: APLICADO no Runtime de testes (página inicial com carrinho de visitante responde 200 com o contador e o
+  separador; página completo do carrinho no principal mostra o item). Clique real de "Adicionar ao carrinho" não disparado
+  por HTTP (exige o formulário do produto).
+
 ## 0.4.0-dev.115 — carrinho em lista única — 2026-10-17
 
 - O carrinho deixa de ter abas: uma lista única com uma linha de separador por site (Loja, Cursos, Apoio), com total do site.
