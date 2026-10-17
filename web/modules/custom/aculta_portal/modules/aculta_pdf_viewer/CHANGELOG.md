@@ -9,6 +9,7 @@ Classificação: PATCH (estabilidade de versão da API/worker em cache e evidên
 - CSP simulada por proxy de loopback com `worker-src 'self'` renderizou o viewer. A política permitiu inline scripts/styles do Drupal e bloqueou fontes externas; não substitui auditoria de uma CSP estrita nos servidores.
 - Cache Runtime: HTML privado sem cache, PDF/JS público max-age de um ano; Range retornou 206. Produção retorna `text/plain` para os três módulos `.mjs`; corrigir header depende da regra `.htaccess` chegar via deploy e de validação pós-deploy.
 - A permissão `content_editor:create document media` está ativa; upload/criação por essa identidade na UI segue pendente por falta de sessão de teste autorizada.
+- A sessão temporária chegou à tela de termos obrigatórios. O aceite não foi marcado; nenhum arquivo/Media foi enviado. A identidade temporária e o perfil automático foram removidos após confirmar que não tinham conteúdo nem pedidos próprios.
 - RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
 
 ## 0.1.0-dev.18 — MIME do PDF.js e evidências da PV7 — 2026-10-17

@@ -15,6 +15,7 @@
 - API e worker PDF.js recebem `?v=6.4.299`, sincronizado com Composer, para não reutilizar uma combinação antiga com cache público de um ano.
 - Chromium 155.0.8059.39 no Runtime renderizou PDFs de 1 MiB e 22 MiB (14 páginas), sem erros JS severos; PDF inválido exibiu fallback. Com cache desabilitado, throttling de 700 ms/64 KiB/s concluiu em 20,9 s. Proxy local simulou 503 e o fallback apareceu. CSP local com `worker-src 'self'` renderizou; fontes externas foram bloqueadas pela política.
 - Cache/Range no Runtime: documentos HTML privados sem cache; PDF e assets estáticos com `max-age=31536000`; Range PDF respondeu 206/1024 bytes. `content_editor` tem permissão `create document media`; autoria/upload via UI não testado por falta de sessão de teste do papel.
+- A tentativa com identidade temporária `content_editor` chegou ao formulário, mas a tela obrigatória de aceite de termos bloqueou a autoria. Nenhum aceite foi registrado e nenhum Media/File foi enviado. A conta temporária e seu perfil automático foram removidos após confirmar que não possuíam node, Media, pedido ou perfil remanescente.
 - Produção pública serve `pdf-viewer.mjs`, `pdf.mjs` e `pdf.worker.mjs` como `text/plain`, com cache de um ano. A regra `.htaccess` foi aplicada apenas ao Runtime; confirmar MIME e viewer na produção após deploy normal.
 - RUNTIME STATUS: APLICADO. CSP estrita, acessibilidade ampliada e autoria/UI seguem DEFERRED.
 
