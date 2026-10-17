@@ -10,6 +10,7 @@ use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -60,6 +61,8 @@ final class RoleHierarchyForm extends ConfigFormBase {
     $entidades = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
     $lista = $this->entityTypeManager->getListBuilder('user_role');
 
+    // Menu de operações (dropbutton do Core) precisa do próprio script; a lista do Core anexava isso, a nossa não.
+    $form['#attached']['library'][] = 'core/drupal.dropbutton';
     $form['intro'] = [
       '#markup' => '<p>' . $this->t('Cadeia de papéis: quem está mais alto herda do papel imediatamente abaixo, e o administrador herda de todos. Arraste as linhas pelas setas para reordenar.') . '</p>',
     ];
@@ -127,6 +130,18 @@ final class RoleHierarchyForm extends ConfigFormBase {
       '#empty' => $this->t('Nenhum tipo de perfil.'),
     ];
 
+    $form['telas'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Telas do núcleo'),
+      '#open' => FALSE,
+      'lista' => [
+        '#theme' => 'item_list',
+        '#items' => [
+          Link::fromTextAndUrl($this->t('Permissões por papel'), Url::fromRoute('user.admin_permissions'))->toRenderable(),
+          Link::fromTextAndUrl($this->t('Tipos de perfil (campos e exibição)'), Url::fromRoute('entity.profile_type.collection'))->toRenderable(),
+        ],
+      ],
+    ];
     return parent::buildForm($form, $form_state);
   }
 

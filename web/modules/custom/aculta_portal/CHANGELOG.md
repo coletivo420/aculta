@@ -1,3 +1,9 @@
+## 0.4.0-dev.100 — operações e caixa de controle na página Papéis e perfis — 2026-10-17
+
+- Biblioteca `core/drupal.dropbutton` anexada ao formulário: o menu de operações (editar, permissões, excluir) depende dela.
+- Caixa "Telas do núcleo" (permissões por papel e tipos de perfil) restaurada na página.
+- Exclusão de papel pela página testada no Runtime: papel temporário excluído pelo formulário de confirmação do Core; cadeia inalterada.
+- RUNTIME STATUS: APLICADO. Abertura do menu de operações no navegador não verificada.
 ## 0.4.0-dev.99 — página Papéis e perfis substitui a lista de papéis do Core — 2026-10-17
 
 - `/painel-administrativo/pessoas/roles` passa a ser a página Papéis e perfis do ACULTA (formulário `RoleHierarchyForm`, rota do Core com `_form`). A lista do Core sai dessa página.
