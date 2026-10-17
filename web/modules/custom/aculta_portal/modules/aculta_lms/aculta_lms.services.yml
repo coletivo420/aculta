@@ -4,3 +4,8 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: aculta_portal.helper }
+  aculta_lms.course_room_builder:
+    class: Drupal\aculta_lms\CourseRoomBuilder
+    arguments: ['@current_user', '@string_translation']
+    tags:
+      - { name: aculta_portal.helper }

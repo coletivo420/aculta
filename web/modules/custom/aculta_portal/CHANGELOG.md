@@ -2450,3 +2450,10 @@ Decisão de acesso: o papel `email_confirmed` recebe `usuario_aculta`; `authenti
 
 A atualização `aculta_portal_update_11009` migra referências atuais e revisões de `basic_html` para `usuario_aculta` e de `full_html` para `revista_editorial`, preservando texto, revisões, autores e datas. Campos, views e Agreement foram alinhados. Os formatos e editores Core removidos deixam de ser exportados.
 
+## 0.4.0-dev.110 — início da F6 do LMS: visão geral da sala de curso
+
+- `aculta_lms` integra um índice de lições à página canônica existente do curso;
+  acesso é revalidado pelo Group/LMS e as atividades usam rota nativa.
+- Sem mudança de tema, entidades, memberships ou progresso.
+- RUNTIME STATUS: DEFERRED; falta smoke test com membro, não membro e visitante.
+

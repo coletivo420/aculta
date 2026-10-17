@@ -3,6 +3,7 @@ _core:
 module:
   aculta_gallery: 0
   aculta_image: 0
+  aculta_lms: 0
   aculta_magazine: 0
   aculta_messenger: 0
   aculta_pdf_viewer: 0

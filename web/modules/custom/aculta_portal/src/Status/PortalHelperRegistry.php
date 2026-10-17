@@ -152,6 +152,11 @@ final class PortalHelperRegistry {
       'summary' => 'Publica fatos de conclusão aprovada já persistidos pelo LMS, sem armazenar progresso ou nota.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/docs/CONTRACT.md',
     ],
+    'aculta_lms.course_room_builder' => [
+      'label' => 'Sala do curso LMS',
+      'summary' => 'Apresenta o índice de lições com access e cache do Group/LMS nas páginas canônicas de curso.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/README.md',
+    ],
     'aculta_portal.mercado_pago_webhook_guard' => [
       'label' => 'Proteção de webhook de pagamento',
       'summary' => 'Valida estrutura e autenticidade das notificações recebidas do gateway.',

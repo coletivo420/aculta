@@ -8,6 +8,7 @@ dependencies:
     - group.type.lms_course
     - image.style.aculta_destaque_16x9
   module:
+    - aculta_lms
     - image
     - lms
     - text
@@ -16,6 +17,9 @@ targetEntityType: group
 bundle: lms_course
 mode: default
 content:
+  aculta_lms_course_room:
+    weight: 20
+    region: content
   capa_curso:
     type: image
     label: hidden

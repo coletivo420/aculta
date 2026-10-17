@@ -24,6 +24,20 @@ quando o módulo estiver habilitado. A extensão depende de `aculta_portal`,
 Drupal LMS e Group, mas não é habilitada automaticamente pelo `aculta_portal`.
 Não possui `config/install`, schema, entidade, rota ou hook de instalação.
 
+## F6 — Página de curso e sala (implementação inicial)
+
+O serviço `aculta_lms.course_room_builder` adiciona à página canônica de Group
+do tipo `lms_course` uma seção configurável de conteúdo do curso. O índice
+respeita `view` de cada lição e o acesso `take course`; links de aula continuam
+na rota nativa do LMS, com os slugs portugueses do Portal. Sem autorização para
+fazer o curso, a seção fica vazia e não revela os títulos das lições. O módulo
+não cria progresso, matrícula, resposta ou armazenamento.
+
+O campo extra pode ser posicionado no Manage Display do bundle `lms_course`.
+Render arrays incluem cacheability do curso, lições e resultados de acesso,
+variando por usuário e permissões do Group. F6 ainda precisa de smoke test
+integrado com usuário matriculado, visitante e não membro no Runtime.
+
 ## Testes
 
 - `tests/src/Unit/CourseCompletionPublisherTest.php`: publicação apenas de

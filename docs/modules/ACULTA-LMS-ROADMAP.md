@@ -80,6 +80,13 @@ Tab, o rail manteve nome acessível e foco nativo, e não houve JavaScript neces
 Somente um curso publicado existe no Runtime; não há curso não publicado no acervo para um caso
 negativo da listagem. PHP no Runtime continua em 8.4.26.
 
+**F6 — Página de curso e sala — implementação inicial nesta branch.** O campo
+extra configurável `aculta_lms_course_room` integra um índice na visualização
+canônica do curso. A seção consulta `take course`, verifica `view` por lição e
+gera links para a rota nativa LMS (com slugs portugueses do Portal); não cria
+progresso, matrícula ou status. RUNTIME STATUS: DEFERRED até smoke test de
+membro, não membro e visitante; a fase não está homologada.
+
 ## Ordem, PR e status
 
 Cada fase é uma unidade pequena, commitada e descrita em PR própria conforme a regra do repositório. Este roadmap não autoriza execução de código, instalação de dependências, importação de curso, atualização persistente, merge ou deploy; cada fase futura precisa de decisão e PR própria.
