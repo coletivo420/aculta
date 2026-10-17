@@ -28,7 +28,24 @@ final class DomainRoutePolicyTest extends UnitTestCase {
       'checkout' => ['commerce_checkout.form'],
       'payment checkout' => ['commerce_payment.checkout.return'],
       'payment notify' => ['commerce_payment.notify'],
-      'donation flow' => ['aculta_donation.form'],
+    ];
+  }
+
+  /**
+   * Apoio e assinatura (aculta_donation) pertencem ao purpose SUPPORT; só o gateway (retorno e notificação) fica no MAIN.
+   */
+  #[DataProvider('donationFlowRoutes')]
+  public function testDonationFlowBelongsToSupport(string $route): void {
+    $this->assertTrue(DomainRoutePolicy::isDonationFlowRouteName($route));
+    $this->assertFalse(DomainRoutePolicy::isCentralTransactionRouteName($route));
+    $this->assertTrue(DomainRoutePolicy::isTransactionalSeoRouteName($route));
+  }
+
+  public static function donationFlowRoutes(): array {
+    return [
+      'donation entry' => ['aculta_donation.donation.default'],
+      'donation quick' => ['aculta_donation.donation.quick'],
+      'donation step' => ['aculta_donation.donation_controller_formPage'],
     ];
   }
 

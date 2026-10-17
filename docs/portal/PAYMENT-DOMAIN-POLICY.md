@@ -28,9 +28,9 @@ de rotas centrais de carrinho/checkout/pagamento que pertencem a MAIN:
 - `commerce_cart.*`;
 - `commerce_checkout.*`;
 - `commerce_payment.checkout.*`;
-- `commerce_payment.notify`;
-- `aculta_donation.*`.
+- `commerce_payment.notify`.
 
+O fluxo de apoio e assinatura (`aculta_donation.*`) pertence a SUPPORT (ver "Donation Flow").
 A política é reutilizada por:
 
 - `DomainRouteSubscriber`, para classificar as rotas e anotar navegação browser-facing com `_aculta_cross_domain_canonical_purpose=main`;
@@ -146,9 +146,18 @@ responsável: a página de apoio fica a cargo do subdomínio da plataforma de do
 (`apoio.aculta.toca.net.br` no homelab, `apoio.aculta.org` em produção); o host
 principal não serve a rota de apoio (ver `docs/architecture/multidomain.md`).
 
-Quando Commerce Donation Flow inicia seu fluxo dedicado, suas rotas
-`aculta_donation.*` pertencem a MAIN. Isso evita manter um checkout
-financeiro paralelo em SUPPORT.
+Decisão do responsável (2026-10-17): o fluxo inteiro de apoio e assinatura
+(`aculta_donation.*`) roda no purpose SUPPORT, no subdomínio de apoio. Doações e
+assinaturas não têm estorno; a assinatura terá cancelamento.
+
+Só o gateway fica no MAIN: a notificação do Mercado Pago (`commerce_payment.notify`)
+e o retorno e cancelamento do pagamento (`commerce_payment.checkout.*`). A regra
+está em `Routing\PaymentDomainPathProcessor`, que gera essas URLs com o domínio
+principal, qualquer que seja o host da requisição. A sessão atravessa os dois
+hosts pelo `cookie_domain` do ambiente (`services.homelab.yml` no Homelab), e o
+retorno do navegador volta ao MAIN com essa sessão.
+
+A loja (carrinho, checkout e pagamento de produtos) continua no MAIN.
 
 ## Segurança
 

@@ -122,7 +122,7 @@ services:
   aculta_portal.account_list_path_processor:
     class: Drupal\aculta_portal\PathProcessor\AccountListPathProcessor
     tags:
-      - { name: path_processor_outbound, priority: 300 }
+      - { name: path_processor_outbound, priority: 1000 }
       - { name: aculta_portal.implementation }
   aculta_portal.cart_ajax:
     class: Drupal\aculta_portal\Cart\AddToCartAjax
@@ -143,6 +143,12 @@ services:
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.payment_domain_path_processor:
+    class: Drupal\aculta_portal\Routing\PaymentDomainPathProcessor
+    arguments: ['@aculta_portal.domain_purpose']
+    tags:
+      - { name: path_processor_outbound, priority: 1000 }
+
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
     arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose', '@group.membership_loader']

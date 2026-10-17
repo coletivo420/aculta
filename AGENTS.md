@@ -419,10 +419,10 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - não depender de empate de prioridade entre response subscribers quando a ordem afeta redirect safety;
 - sessão compartilhada entre purposes deve ser validada via `session.storage.options.cookie_domain` do ambiente; baseline `cookie_samesite: Lax`;
 - AJAX/fetch do Portal é same-origin; não habilitar CORS para transportar estado/formulários entre purposes;
-- carrinho/checkout/pagamento Drupal Commerce pertencem sempre ao purpose `main`, independentemente de origem SHOP/COURSES/SUPPORT; usar `DomainRoutePolicy`, nunca listas paralelas de rotas ou zona transacional por subdomínio;
+- carrinho/checkout/pagamento da loja (Drupal Commerce) pertencem sempre ao purpose `main`, independentemente de origem SHOP/COURSES; o fluxo de apoio e assinatura (`aculta_donation.*`) pertence ao purpose `support` (decisão do responsável, 2026-10-17); o retorno e a notificação do gateway continuam no `main`, gerados por `PaymentDomainPathProcessor`; usar `DomainRoutePolicy`, nunca listas paralelas de rotas ou zona transacional por subdomínio;
 - futura UI de carrinho na barra multidomínio deve usar presenter no Portal baseado em `CartProviderInterface`, preservando cache context `cart` e gerando `commerce_cart.page` no MAIN via `DomainPurposeManager`; não reutilizar o Cart Block cru se ele mantiver URL relativa ao host corrente; ACULTA420 só apresenta URL/contagem/estado neutros;
 - centralizar a UI do carrinho em MAIN não proíbe o `Add to cart` nativo em SHOP/COURSES; esse formulário continua usando o Commerce para atualizar a mesma `commerce_order` antes da navegação ao carrinho MAIN;
-- links de entrada no checkout devem apontar diretamente a MAIN quando o Portal puder resolvê-los; POST/PUT/PATCH/DELETE de payment/checkout em host errado não são redirecionados;
+- links de entrada no checkout da loja devem apontar diretamente a MAIN quando o Portal puder resolvê-los; links de entrada de apoio e assinatura apontam ao purpose `support`; POST/PUT/PATCH/DELETE de payment/checkout em host errado não são redirecionados;
 - referências canônicas: `docs/portal/ADMIN-DOMAIN-POLICY.md`, `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md` e `docs/portal/PAYMENT-DOMAIN-POLICY.md`.
 
 ## Fronteira de autenticação e anti-bot

@@ -671,8 +671,8 @@ foreach (["get('config.factory')", "get('entity_type.manager')", "get('plugin.ma
 $quickBlockSource = $read($srcRoot . '/../modules/aculta_donation/src/Plugin/Block/QuickDonationBlock.php');
 $check(
   str_contains($supportFormSource, "getStorage('commerce_payment_gateway')->load('mercado_pago')")
-    && str_contains($quickBlockSource, "\$this->purposes->routeUrl('main', 'aculta_donation.donation.quick'"),
-  'P5.1 SupportForm must use injected storage; the suggested amounts (quick donation block) must route to the main domain (0.4.0-dev.73, 0.4.0-dev.111).',
+    && str_contains($quickBlockSource, "\$this->purposes->routeUrl('support', 'aculta_donation.donation.quick'"),
+  'P5.1 SupportForm must use injected storage; the suggested amounts (quick donation block) must route to the support domain (decisão de 2026-10-17).',
 );
 $check(
   !str_contains($supportFormSource, 'PaymentGateway::load(')

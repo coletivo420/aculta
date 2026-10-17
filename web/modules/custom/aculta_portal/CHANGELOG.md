@@ -1,3 +1,16 @@
+## 0.4.0-dev.113 — fluxo de apoio e assinatura no domínio de apoio — 2026-10-17
+
+- Decisão do responsável (2026-10-17): o fluxo de apoio e assinatura (`aculta_donation.*`) roda no purpose SUPPORT.
+  Carrinho, checkout e pagamento da loja continuam no MAIN.
+- Só o gateway fica no MAIN: notificação e retorno/cancelamento do pagamento. `PaymentDomainPathProcessor` gera essas URLs
+  com o domínio principal, qualquer que seja o host da requisição (prioridade 1000, antes da troca de alias).
+- `DomainRoutePolicy` separa o fluxo de doação (SUPPORT) da transação da loja (MAIN). Teste unitário atualizado.
+- Gates: `validate-payment-domain-policy` confere o propósito de cada rota de doação; `validate-aculta-portal-drupal11`
+  confere a rota de valores no bloco.
+- Documentação: `PAYMENT-DOMAIN-POLICY`, `CROSS-DOMAIN-REQUEST-POLICY`, `ANTI-REGRESSION` e `AGENTS.md` atualizados.
+- RUNTIME STATUS: APLICADO no Runtime de testes (URLs de pagamento verificadas no MAIN; entrada de doação no apoio verificada).
+  Pagamento real no Mercado Pago não foi concluído nesta verificação (exige o comprador de teste).
+
 ## 0.4.0-dev.112 — um só conjunto de valores na página de apoio — 2026-10-17
 
 - A lista de valores do formulário de apoio ("Escolha um valor") saiu. Os valores ficam só no bloco de doação rápida

@@ -66,11 +66,16 @@ $assert(
 
 $modules = \Drupal::moduleHandler();
 if ($modules->moduleExists('aculta_donation')) {
-  $donationRoutes = array_filter(
-    array_keys($centralRoutes),
-    static fn(string $name): bool => str_starts_with($name, 'aculta_donation.'),
-  );
-  $assert($donationRoutes !== [], 'Commerce Donation Flow exposes central routes.');
+  // Apoio e assinatura (decisão de 2026-10-17): o fluxo de doação pertence ao purpose SUPPORT, não ao MAIN.
+  $donationRoutes = \Drupal::service('router.route_provider')->getRoutesByNames([
+    'aculta_donation.donation.default',
+    'aculta_donation.donation.quick',
+    'aculta_donation.donation_controller_formPage',
+  ]);
+  $assert(count($donationRoutes) === 3, 'Donation flow routes exist.');
+  foreach ($donationRoutes as $name => $route) {
+    $assert($route->getOption('_aculta_domain_purpose') === 'support', "Donation route {$name} belongs to the support purpose.");
+  }
 }
 
 $domainPurpose = \Drupal::service('aculta_portal.domain_purpose');

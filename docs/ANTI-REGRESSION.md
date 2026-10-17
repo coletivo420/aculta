@@ -42,7 +42,7 @@ Refactor de infraestrutura não pode alterar comportamento, access, cache, Domai
 - subscribers que retargetam redirects antes do Core devem usar prioridade explícita, não empate de priority/module weight;
 - sessão cross-subdomain exige `session.storage.options.cookie_domain` compartilhado por ambiente e `cookie_samesite: Lax` como baseline para preservar retorno OAuth top-level GET;
 - AJAX/fetch do Portal permanece same-origin; CORS não é mecanismo de comunicação entre purposes;
-- carrinho, checkout e pagamento são centralizados em `main`: `commerce_cart.*`, `commerce_checkout.*`, `commerce_payment.checkout.*`, `commerce_payment.notify` e `aculta_donation.*` usam a política única `DomainRoutePolicy`; não duplicar zona transacional por SHOP/COURSES/SUPPORT;
+- carrinho, checkout e pagamento da loja são centralizados em `main`: `commerce_cart.*`, `commerce_checkout.*`, `commerce_payment.checkout.*` e `commerce_payment.notify` usam a política única `DomainRoutePolicy`; o fluxo de apoio e assinatura (`aculta_donation.*`) é do purpose `support` (decisão de 2026-10-17); não duplicar zona transacional por SHOP/COURSES/SUPPORT;
 - catálogos/origem comercial e o `Add to cart` nativo podem permanecer em seus purposes; a UI de carrinho, checkout e pagamento fica em MAIN. Requests mutáveis das rotas centrais wrong-host falham fechado, sem bloquear o AddToCartForm da página de produto;
 - navegação GET/HEAD para `/painel-administrativo/**` em purpose secundário é canonicalizada para MAIN via `DomainPurposeManager`; métodos mutáveis em host errado permanecem fail-closed, sem redirect cross-domain;
 - wrong-purpose público/funcional continua 404; canonicalização administrativa não vira redirect genérico de Domain;

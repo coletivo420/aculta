@@ -235,6 +235,11 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       if ($route->getOption('_admin_route')) {
         $route->setOption('_aculta_domain_purpose', 'main');
       }
+      if (DomainRoutePolicy::isDonationFlowRouteName((string) $name)) {
+        // Apoio e assinatura: o fluxo inteiro fica no purpose SUPPORT (decisão de 2026-10-17).
+        $route->setOption('_aculta_domain_purpose', 'support');
+        $route->setOption('_aculta_cross_domain_canonical_purpose', 'support');
+      }
       if (DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
         $route->setOption('_aculta_domain_purpose', 'main');
         if ($name !== 'commerce_payment.notify') {
