@@ -40,7 +40,7 @@ validação de custo, acessibilidade e desempenho em PDFs extensos.
 |---|---|---|---|
 | PV0 — Contrato e fundação | Submódulo separado; serviço e formatter com DI; fronteiras Media/File/access/cache documentadas; nenhuma persistência paralela. | Implementado no código desta PR; Unit e Kernel isolados PASS. Runtime DEFERRED. | Desabilitar o submódulo após restaurar o formatter Core no display Media e sincronizar configuração somente em mudança aprovada. |
 | PV1 — PDF.js local | PDF.js oficial com versão e proveniência fixas, worker local, ESM, controles básicos e fallback. Sem CDN e sem patch direto em contrib. | Implementado e smoke test isolado PASS. Versão atual indicada no Composer; Runtime DEFERRED. | Reverter dependência/library e selecionar formatter Core; não remover arquivos Media. |
-| PV2 — Inserção de PDF na Revista pelo CKEditor 5 | Selecionar Media `document` na aba Documento da Media Library, inserir no formato `revista_editorial`, salvar e reabrir; o formatter compartilhado deve renderizar sem URL manual. O papel editorial deve poder criar Media PDF destinada à publicação. O bundle usa `public://`; não subir conteúdo confidencial. | Kernel e navegador confirmaram inserção de Media PDF existente pelo CKEditor, salvamento do artigo publicado e render PDF.js no Runtime. A Media fixture foi criada por Drush; upload/criação de Media via UI como `content_editor` segue DEFERRED, embora permissão e gate de papéis estejam presentes. | Revogar `create document media` do papel editorial, retirar o bundle `document` da seleção do editor ou voltar ao render Core; manter os Media/File e textos já publicados. |
+| PV2 — Inserção de PDF na Revista pelo CKEditor 5 | Selecionar Media `document` na aba Documento da Media Library, inserir no formato `revista_editorial`, salvar e reabrir; o formatter compartilhado deve renderizar sem URL manual. O papel editorial deve poder criar Media PDF destinada à publicação. O bundle usa `public://`; não subir conteúdo confidencial. | Firefox confirmou no Runtime upload de PDF pelo formulário Drupal como `content_editor`, abertura da edição da Media e, em rodada anterior, seleção de Media existente pelo botão CKEditor, salvamento do artigo publicado e render PDF.js. Upload direto dentro do diálogo Media Library não foi verificado. | Revogar `create document media` e `edit own document media` do papel editorial, retirar o bundle `document` da seleção do editor ou voltar ao render Core; manter os Media/File e textos já publicados. |
 | PV3 — Leitor integrado ao site | Leitura inline paginada responsiva e acessível em páginas com Media PDF. Implementa página anterior/próxima, zoom, busca textual por página, controles acessíveis, tela cheia e fallback autorizado. Realce textual, rolagem contínua e sumário/bookmarks são incrementos próprios. Sem JavaScript permanece o fallback autorizado. | Firefox 153.4 ESR no Runtime confirmou render de 14 páginas, navegação, zoom, busca, tela cheia e zero erros JS. Revisão visual da área rolável e smoke de acessibilidade inicial concluídos em PV6: desktop/viewport estreito, foco visível 3 px, nomes dos controles, live regions e alvos ≥44 px. CSP, WCAG ampliado, outros browsers e PDF grande permanecem no gate PV7. | Retirar a biblioteca de interação e manter link Core autorizado; arquivos Media permanecem. |
 | PV4 — Miniaturas e preview | Integrar PDFPreview com miniatura da primeira página só para PDF público até 20 MiB; ImageMagick com timeout de 15 s; `public://pdfpreview`, JPEG 480×640 e erro fail-soft. Validar política/recursos no ambiente antes de habilitar processamento real. | Adapter fail-soft e referências opcionais implementados. Firefox no Runtime gerou e exibiu a miniatura JPEG da primeira página de um PDF público de 14 páginas pelo pipeline `aculta_image`; o arquivo de preview de teste foi removido após a homologação. Limites continuam sendo 20 MiB e timeout de 15 s; revisar com arquivos grandes e erro de conversão na PV7. | Desabilitar PDFPreview e manter leitor/link; não liberar PS nem modificar policy global sem revisão operacional. |
 | PV5 — Arquivos privados e públicos | Usar somente a rota privada do Drupal Core para `private://`, com File/Media/campo autorizados, cache de render max-age zero e sem thumbnail; validar unpublished, revogação de acesso, Group/turma, endpoint e fallback em Runtime. | Código e Config Sync usam o bundle privado `course_document`, relação Group obrigatória e guarda de ciclo de vida para mantê-lo não publicado. O bundle público `document` permanece inalterado. No Runtime de teste, submódulo, bundle, relação e permissões de estudante/educador estão ativos; os itens de configuração PV5 não têm drift. Firefox 153.4 ESR renderizou o Media privado embutido em página (14 páginas); o endpoint Core devolveu 200 para membro e 403 para não membro e anônimo. Remover membership ou relação Media↔Group negou a URL conhecida com 403; restaurar cada uma devolveu 200. A Media ficou não publicada. Os fixtures e uploads foram removidos depois da execução. A confidencialidade base de Group está homologada; CSP, cache em múltiplos proxies e navegadores adicionais permanecem no gate PV7. | Desabilitar a relação e o submódulo; manter o formatter/link Core; não alterar nem apagar Media/File. |
@@ -54,12 +54,10 @@ Embed → Media `document` → formatter → PDF.js. Com login único gerado no 
 Conta, Firefox 153.4 ESR validou no Runtime a aba Documento da Media Library,
 inserção da Media existente pelo botão CKEditor, salvamento e render do artigo
 publicado. O leitor validou 14 páginas, navegação, zoom 125%, busca com cinco
-resultados, tela cheia e zero erros JavaScript. O Media de teste foi criado por
-Drush; upload/criação via UI pelo papel `content_editor` segue sem homologação.
-Todos os nodes, Media e Files temporários foram removidos. Nenhum Config Sync
-global foi importado. O LMS foi retomado nesta frente para implementar PDFs
-privados de turma; edição de cursos e outras mudanças do LMS continuam fora do
-escopo.
+resultados, tela cheia e zero erros JavaScript. Uma segunda rodada confirmou
+upload/criação de Media pela UI como `content_editor` e acesso à edição após
+conceder `edit own document media`. Todas as entidades e arquivos temporários
+foram removidos. Nenhum Config Sync global foi importado.
 
 PV3 está funcional para Media público e testado no Runtime. PV4 tem integração e
 configuração versionadas com fallback fail-soft; o erro de bootstrap por serviço
@@ -70,10 +68,10 @@ relação Group, papéis de turma e campos estão ativos no Runtime após import
 parcial dirigida. O Config Sync não mostra drift nos itens PV5. Firefox confirmou
 o render privado e a matriz de acesso: membro 200; não membro/anônimo 403;
 remoção de membership/relação 403. Os fixtures foram removidos. A frente de
-contas/permissões não foi alterada. PV6 concluiu o uso compartilhado e a
+contas/permissões não foi alterada para o LMS. PV6 concluiu o uso compartilhado e a
 homologação visual/acessível inicial em 2026-10-17. A finalização de release
-continua condicionada à homologação da tela de edição/autoria para PDF público e
-à matriz de navegador/CSP da PV7. Não usar o bundle `document`
+continua condicionada à CSP, revisão acessível ampliada e validação pós-deploy
+na PV7. Não usar o bundle `document`
 público para PDFs confidenciais.
 
 PV7 segue como gate de release parcial: Firefox e Chromium, PDFs pequeno/grande,
