@@ -1,5 +1,15 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.5 — tipos de pedido próprios e convite para criar conta — 2026-10-17
+
+- O fluxo de doação não estava sendo usado: o tipo de pedido `default` (da loja) não tinha fluxo associado e o pedido de
+  doação caía no fluxo da loja. Criados os tipos `doacao` (fluxo `donation_flow`) e `assinatura` (fluxo `assinatura_flow`).
+  O item de doação passa a usar `doacao`, e a configuração do fluxo aponta para `doacao`. A loja não muda.
+- Convite para criar conta no painel de doação, só para visitante: link que abre o cadastro em modal
+  (`aculta_portal.register_popup`) e volta para a etapa atual. O cadastro em modal não usa Turnstile (ver o CHANGELOG do
+  aculta_portal).
+- RUNTIME STATUS: APLICADO no Runtime de testes (tipos de pedido, configuração e convite verificados por HTTP).
+
 ## 0.1.0-dev.4 — estorno, testes de Kernel e checkout com e sem visitante — 2026-10-17
 
 - Doações e assinaturas não têm estorno (decisão do responsável). Bloqueio no servidor: `DonationRefundAccess` soma uma

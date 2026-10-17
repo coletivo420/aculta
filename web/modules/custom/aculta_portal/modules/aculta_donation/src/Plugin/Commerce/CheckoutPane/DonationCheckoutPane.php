@@ -10,6 +10,8 @@ use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -150,7 +152,51 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
     $pane_form['#attributes']['class'] = $pane_form['#attributes']['class'] ?? [];
     $complete_form["actions"]['#attributes']['class'][] = 'js-show';
     $pane_form['#attributes']['class'][] = 'js-show';
+    $pane_form['conta_convite'] = $this->contaConvite();
     return $pane_form;
+  }
+
+  /**
+   * Convite para criar conta, para o visitante (o checkout de doação aceita visitante, mas a conta acompanha a doação).
+   *
+   * O link abre o cadastro em modal (aculta_portal.register_popup) e volta para a etapa atual depois do cadastro.
+   *
+   * @return array<string, mixed>
+   */
+  private function contaConvite(): array {
+    if (!$this->order || \Drupal::currentUser()->isAuthenticated()) {
+      return [];
+    }
+    $destino = Url::fromRoute('aculta_donation.donation_controller_formPage', [
+      'commerce_order' => $this->order->id(),
+      'step' => $this->getStepId(),
+    ])->toString();
+    $link = Url::fromRoute('aculta_portal.register_popup', [], [
+      'query' => ['destination' => $destino],
+      'attributes' => [
+        'class' => ['use-ajax'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode([
+          'title' => (string) $this->t('Criar conta'),
+          'width' => 480,
+        ]),
+      ],
+    ]);
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'donation-account-invite'],
+      '#attached' => ['library' => ['core/drupal.dialog.ajax']],
+      '#cache' => ['contexts' => ['user.roles:anonymous']],
+      'texto' => [
+        '#markup' => '<p>' . $this->t('Crie uma conta para acompanhar suas doações.') . '</p>',
+      ],
+      'link' => [
+        '#type' => 'link',
+        '#title' => $this->t('Criar conta'),
+        '#url' => $link,
+        '#attributes' => ['data-portal-ui' => 'donation-account-invite-link'],
+      ],
+    ];
   }
 
   /**
