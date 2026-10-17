@@ -1,3 +1,12 @@
+## 0.4.0-dev.106 — abas agrupadas em Configurações > Pessoas — 2026-10-17
+
+- Dez abas viram cinco abas principais: Pessoas, Papéis, Campos de Perfil, Segurança e Conta.
+- Sub-abas (`parent_id`, o mecanismo de dois níveis do Core): Papéis > Hierarquia, Permissões por papel, Configurações de papel;
+  Segurança > Controle de sobrecarga, Desbloqueio, CAPTCHA; Conta > Opções da conta, Acordos.
+- Todas as páginas mantêm a linha principal, inclusive Permissões por papel e Configurações de papel (antes só aparecia a sub-linha).
+- Sem mudança de rotas nem de caminhos: as ferramentas continuam nas mesmas URLs.
+- RUNTIME STATUS: APLICADO e verificado com o gerenciador de abas do Core no Runtime de testes (`aculta.toca.net.br`, `aculta_runtime`).
+
 ## 0.4.0-dev.105 — Configurações > Pessoas em abas — 2026-10-17
 
 - `/painel-administrativo/configuracoes/pessoas` vira página de abas (Pessoas, Papéis e perfis, Permissões por papel, Configurações de papel, Campos de Perfil, Flood Unblock, CAPTCHA, Controle de sobrecarga, Opções da conta, Acordos), como a seção Pessoas.
