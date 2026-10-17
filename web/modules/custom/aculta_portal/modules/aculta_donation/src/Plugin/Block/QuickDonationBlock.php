@@ -10,6 +10,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Support\SupportAmountsProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,6 +37,16 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * Valores da campanha vigente (mesma fonte da página de apoio); NULL se o módulo não estiver disponível.
+   */
+  protected ?SupportAmountsProviderInterface $campanhas = NULL;
+
+  /**
+   * Gerenciador de domínio: os links de doação apontam direto ao domínio principal (rota transacional).
+   */
+  protected DomainPurposeManager $purposes;
 
 
   // phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
@@ -65,6 +77,8 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
     );
     $instance->formBuilder = $container->get('form_builder');
     $instance->configFactory = $container->get('config.factory');
+    $instance->campanhas = $container->has('aculta_donation.campaigns') ? $container->get('aculta_donation.campaigns') : NULL;
+    $instance->purposes = $container->get('aculta_portal.domain_purpose');
     return $instance;
 
   }
@@ -89,28 +103,6 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
     FormStateInterface $form_state,
   ) {
     $form = parent::blockForm($form, $form_state);
-    $levels = $this->configuration['levels'] ?? [];
-    $form['levels'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Valores de doação rápida'),
-      '#description' => $this->t(
-        'These are fixed amounts offered for choice to a user.'
-      ),
-      '#tree' => TRUE,
-    ];
-    $form['compacto'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Espaço reduzido (até 3 sugestões e a opção "Outro")'),
-      '#default_value' => $this->configuration['compacto'] ?? FALSE,
-    ];
-    for ($index = 0; $index < 4; $index++) {
-      $form['levels'][$index] = [
-        '#type' => 'number',
-        '#default_value' => $levels[$index] ?? 5,
-        '#min' => 5,
-        '#step' => 5,
-      ];
-    }
 
     return $form;
   }
@@ -119,7 +111,6 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
    * {@inheritdoc}
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
-    $this->configuration['levels'] = $form_state->getValue('levels');
     $this->configuration['compacto'] = (bool) $form_state->getValue('compacto');
   }
 
@@ -130,28 +121,29 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
    *   A render array.
    */
   public function build() {
-    // Valores padrão quando o bloco não tem valores salvos (R$ 5, 10, 20 e 50). Sem isso o bloco novo sai sem botões.
-    $compacto = (bool) ($this->configuration['compacto'] ?? FALSE);
-    $levels = array_values($this->configuration['levels'] ?? [5, 10, 20, 50]);
+    // Mesma fonte da página de apoio: campanha vigente; sem campanha, os valores padrão de "Valores padrão" (painel).
+    $campanha = $this->campanhas?->valoresSugeridos();
+    $padrao = $this->configFactory->get('aculta_portal.support');
+    $valores = array_values($campanha['amounts'] ?? ($padrao->get('amounts') ?: [5, 10, 20, 50]));
+    $permiteOutro = (bool) ($campanha['customAmount'] ?? ($padrao->get('custom_amount') ?? TRUE));
     // Espaço reduzido: no máximo 3 sugestões e a opção curta "Outro", para caber em locais pequenos.
-    if ($compacto) {
-      $levels = array_slice($levels, 0, 3);
+    if ($this->configuration['compacto'] ?? FALSE) {
+      $valores = array_slice($valores, 0, 3);
     }
     $links = [];
-    foreach ($levels as $delta => $amount) {
+    foreach ($valores as $delta => $amount) {
       $links[$delta] = [
-        'title' => 'R$ ' . $amount,
-        'url' => Url::fromRoute(
-          'aculta_donation.donation.quick',
-          ['amount' => $amount]
-        )->toString(),
+        'title' => 'R$ ' . number_format((float) $amount, 0, ',', '.'),
+        'url' => $this->purposes->routeUrl('main', 'aculta_donation.donation.quick', ['amount' => $amount])?->toString() ?? Url::fromRoute('aculta_donation.donation.quick', ['amount' => $amount])->toString(),
       ];
     }
-    // "Outros valores": o visitante digita o valor no fluxo de doação (campo "Other Amount" do widget).
-    $links['outros'] = [
-      'title' => (string) $this->t('Outro'),
-      'url' => Url::fromRoute('aculta_donation.donation.default')->toString(),
-    ];
+    // "Outro": o visitante digita o valor no fluxo de doação (campo "Outro valor" do widget).
+    if ($permiteOutro) {
+      $links['outro'] = [
+        'title' => (string) $this->t('Outro'),
+        'url' => $this->purposes->routeUrl('main', 'aculta_donation.donation.default')?->toString() ?? Url::fromRoute('aculta_donation.donation.default')->toString(),
+      ];
+    }
     // Dados neutros: o tema apresenta os valores (componente SDC donation-quick do tema).
     $build = [
       '#theme' => 'aculta_donation_quick',

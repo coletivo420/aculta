@@ -1,5 +1,12 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.11 — fonte única dos valores — 2026-10-17
+
+- O bloco de doação rápida é a única lista de valores da página de apoio. Lê a campanha vigente ou os "Valores padrão"
+  do painel. O campo de valores manual saiu do bloco; o botão "Outro" aparece quando o painel permite valor personalizado.
+- Links de doação do bloco apontam direto ao domínio principal (`DomainPurposeManager`).
+- RUNTIME STATUS: APLICADO no Runtime de testes.
+
 ## 0.1.0-dev.10 — sem duplicação na página de apoio — 2026-10-17
 
 - O bloco de valores sai da página de apoio: os valores aparecem só nos cartões do formulário de apoio (sem repetição).

@@ -1,0 +1,32 @@
+uuid: 55699d32-504d-42b2-8006-6d163fe0a091
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_donation
+    - aculta_portal
+    - system
+  theme:
+    - aculta420
+id: aculta_donation_quick_apoio
+theme: aculta420
+region: highlighted
+weight: 0
+provider: null
+plugin: aculta_donation_quick
+settings:
+  id: aculta_donation_quick
+  label: 'Valores de doação rápida (apoio)'
+  label_display: ''
+  provider: aculta_donation
+  compacto: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: support
+    negate: false
+
