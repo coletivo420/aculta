@@ -83,8 +83,12 @@ da Media e o efeito de `view media` para o papel anônimo. O Kernel
 `aculta_pdf_viewer_group` valida membro, não membro, remoção da relação Group e
 revogação de membership pela URL privada conhecida. Upload como
 `content_editor`, homologação ponta a ponta Group↔Media no Runtime, browser
-privado, binários/miniaturas e Hostinger continuam pendentes. Nenhum `drush cim`, `updb`, CDN, ImageMagick
-policy ou migração de arquivo é executado por este módulo.
+privado, binários/miniaturas e Hostinger continuam pendentes. No Runtime de teste,
+PV5 já está ativa por importação parcial dirigida: submódulo, bundle privado,
+relação `lms_course` e permissões de turma estão sincronizados; nenhum Media
+`course_document` foi criado. A validação de acesso por membership e revogação
+continua pendente. Nesta reconciliação não houve `drush cim` global nem `updb`;
+CDN, policy ImageMagick e migração de arquivos também não fazem parte do módulo.
 
 ## Documentação de arquitetura
 
