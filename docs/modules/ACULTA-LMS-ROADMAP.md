@@ -1,12 +1,12 @@
 # Roadmap do aculta_lms e visualizador PDF global
 
-Revisado em 2026-10-16. A implementação segue fases independentes, com autorização e critérios próprios. `RUNTIME STATUS: DEFERRED` até homologação explícita no Runtime canônico.
+Revisado em 2026-10-17. A implementação segue fases independentes, com autorização e critérios próprios. O status é registrado por fase; a homologação de PDF privado não ativa automaticamente o módulo `aculta_lms`.
 
 ## Princípios e estado inicial
 
 `aculta_lms` será opcional, integrador e educacional. Group mantém cursos/memberships; Drupal LMS mantém lições/atividades/respostas/status/notas; Media/File mantém arquivos; `aculta_messenger` controla comunicações; `aculta_user`/`aculta_game` controlam identidade/conquistas. O serviço compartilhado de PDF pertence a `aculta_pdf_viewer`, não ao LMS. O inventário está em [LMS-GROUP.md](LMS-GROUP.md), contratos em [LMS-INTEGRATION-CONTRACTS.md](../portal/LMS-INTEGRATION-CONTRACTS.md), segurança em [SECURITY-ACCESS-FILES-MATRIX.md](../portal/SECURITY-ACCESS-FILES-MATRIX.md) e PDF em [PDF-VIEWER-INTEGRATION.md](../portal/PDF-VIEWER-INTEGRATION.md).
 
-Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via Composer; PDF 1.3 usa referências `.js`, incompatíveis com a distribuição PDF.js `.mjs` moderna; acesso/cache de viewer e miniaturas privadas requer prova; H5P segue beta e precisa de auditoria de segurança; PHP 8.5 e ferramentas de imagem precisam ser validados em ambiente correspondente.
+Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via Composer; PDF 1.3 usa referências `.js`, incompatíveis com a distribuição PDF.js `.mjs` moderna; miniaturas privadas continuam desativadas; H5P segue beta e precisa de auditoria de segurança; PHP 8.5 e a produção Hostinger precisam de validação nos ambientes correspondentes.
 
 ## Fases e gates
 
@@ -14,8 +14,8 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | --- | --- | --- | --- |
 | F0 — Documentação, inventário e auditoria | Fontes, versões, Composer, acesso, contratos, roadmap e revisão upstream | Documentos normativos atualizados; evidência PASS/FAIL/DEFERRED; nenhum estado Drupal alterado | `git diff --check`; commits documentais separados; rollback pelo revert dos commits |
 | F1 — Fundação `aculta_lms` | Módulo opcional, DI, contratos públicos e testes de instalação; sem mover serviços LMS ativos no Portal | Instalação em site de teste, sem mudança automática de dados/config, sem storage paralelo; gates Drupal 11.3+ | Não ativar no Runtime antes de target/URI/config confirmados; desinstalação preserva dados LMS |
-| F2 — PDF.js e formatter global | `drupal/pdf` 1.3 e PDF.js 6.4.299 pinados localmente; viewer ESM implementado em `aculta_pdf_viewer`, sem usar o formatter legado | Unit e browser smoke isolado PASS (PDF.js + worker local, amostra oficial 14 páginas). Runtime DEFERRED | Sem patch direto em contrib. Rollback remove o módulo/asset após retirar o formatter do display |
-| F3 — PDFPreview e integração Media | `aculta_pdf_viewer` independente; formatter no display Media `document`; preview opcional e política de acesso a derivados | Formatter e filtro Core Media Embed testados em Kernel; módulo/display ativos pontualmente no Runtime. `content_editor` pode criar PDF público pelo CKEditor da Revista; falta embed de teste para validação de autoria no navegador. | Preview, leitura privada, interação browser/PDF real e Hostinger DEFERRED. PDFPreview 1.2 requer ImageMagick 3.7/4.x; ImageMagick 5.x sem suporte estável e binários locais ausentes. Não importar Config Sync global, aplicar policy PDF/PS nem migrar arquivos. Detalhes no roadmap próprio `aculta_pdf_viewer`. |
+| F2 — PDF.js e formatter global | `drupal/pdf` 1.3 e PDF.js 6.4.299 pinados localmente; viewer ESM implementado em `aculta_pdf_viewer`, sem usar o formatter legado | Unit, browser smoke isolado e leitura pública/privada no Runtime PASS (PDF oficial de 14 páginas; acesso privado sob Group descrito em PV5). | Sem patch direto em contrib. CSP, proxy, matriz ampliada de browsers e Hostinger ficam no PV7; rollback remove o módulo/asset após retirar o formatter do display |
+| F3 — PDFPreview e integração Media | `aculta_pdf_viewer` independente; formatter no display Media `document`; preview opcional e política de acesso a derivados | Formatter e filtro Core Media Embed testados em Kernel; CKEditor e criação de documento por educador, PDF público e miniatura gerada por `aculta_image` foram verificados no Runtime. A miniatura permanece restrita a PDF público; documentos de turma usam PV5. | PDFs grandes e falhas de conversão seguem para PV7. PDFPreview 1.2 requer ImageMagick 3.7/4.x; versões e policy do host exigem validação específica. Não aplicar policy PDF/PS nem migrar arquivos. Detalhes no roadmap próprio `aculta_pdf_viewer`. |
 | F4 — Consolidar Drupal LMS | Atualizar LMS/Group controladamente, rotas, papéis e provisionamento piloto | Composer audit/dry-run, config/schema update, conteúdo piloto reconciliado, regressões e permissões aprovadas | Não consolidar scripts antes de escolher fonte canônica. Backup e retorno de código/config; nunca deletar conteúdo como rollback |
 | F5 — Catálogo | SDC ACULTA420 sobre `courses_catalog` e Views existentes | Anônimo/aluno vê somente cursos elegíveis; access/cache e teclado validado; sem JS essencial | Reverte presenter/SDC/config da view; manter rota catálogo anterior |
 | F6 — Página de curso e sala | Overview, índice de lições, leitura/atividade, viewer compartilhado | Form/rota nativa LMS continua; membership e acesso de atividade testados | Sem alterar entidades LMS; desligar componente e voltar render padrão |
@@ -35,17 +35,23 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 ## Estado de fase
 
 **F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
-DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; o módulo não foi
-habilitado no Runtime e não tem produtor ou consumidor educacional ativo (**RUNTIME STATUS: DEFERRED**). A fase
-F2 e o display compartilhado foram implementados nos submódulos `aculta_pdf_viewer` e
-`aculta_pdf_viewer_group`. Para documentos privados de turma, o Kernel valida a rota privada do Core com
-membro, não membro, remoção da relação Media↔Group e revogação de membership (14 testes e 195 asserções no
-conjunto Unit/Kernel em 2026-10-17). A validação local usa o MariaDB dedicado `aculta_simpletest`; não
-substitui o teste no Runtime. A importação da configuração do bundle
-`course_document`, o acesso de membros reais, cache após revogação, leitura PDF.js no navegador e Hostinger
-continuam **DEFERRED**. A próxima etapa é homologar a configuração e o fluxo no ambiente de teste após
-confirmar URI, banco, estado de configuração e caminho de recuperação; nenhuma operação Runtime é feita por
-esta entrega.
+DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`
+continua desativado no Runtime e ainda não tem produtor ou consumidor educacional ativo (**RUNTIME STATUS:
+DEFERRED**).
+
+O viewer compartilhado e a relação Media↔Group para documentos privados de turma foram desenvolvidos nos
+submódulos `aculta_pdf_viewer` e `aculta_pdf_viewer_group`. O Kernel cobre membro, não membro, remoção da
+relação e revogação de membership. **PV5 foi homologada no Runtime de teste em 2026-10-17**: membro leu o
+PDF; anônimo e não membro receberam 403; a mesma URL conhecida voltou a receber 403 após remover a relação
+ou a membership. A rota Core `/system/files?file=...` foi usada porque `/system/files/{filepath}` retornava
+404 nesse ambiente. Evidências e limite de escopo estão no
+[changelog do viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/CHANGELOG.md).
+
+O PDF privado de turma está validado no Runtime, mas isso não homologa o restante do LMS. F4 — consolidação
+do Drupal LMS — permanece pendente: antes de consolidar provisionadores do curso piloto, o responsável deve
+escolher a fonte versionada canônica, conforme [LMS-GROUP.md](LMS-GROUP.md). F5/F6 e as demais fases seguem
+com critérios e autorização próprios. PV6, CSP, matriz ampliada de navegadores, produção Hostinger e o fluxo
+de conteúdo editorial continuam com gates separados.
 
 ## Ordem, PR e status
 
