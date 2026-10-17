@@ -1,3 +1,12 @@
+## 0.4.0-dev.72 — redirecionamento de e-mails da conta de teste — 2026-10-17
+
+Classificação: PATCH (comportamento de teste; sem API pública nova).
+
+- `src/Mail/TestMailRedirect.php` e hook `mail_alter` em `MailHooks`: mensagens endereçadas às contas de teste listadas em `settings.local.php` vão para o endereço interno de teste. Demais destinatários não são alterados.
+- Sem a configuração local, a classe não altera nenhuma mensagem (produção não é afetada).
+- Testes unitários: 158 testes, 409 asserções, OK.
+- Verificação no Runtime: a mensagem para a conta de teste foi redirecionada. O servidor de envio respondeu com cota mensal esgotada (552), o que é um limite externo e não um erro deste código.
+
 ## 0.4.0-dev.71 — autocompletar de CEP não apaga campos digitados — 2026-10-17
 
 Classificação: PATCH (correção de comportamento; sem API nova).

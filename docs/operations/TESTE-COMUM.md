@@ -18,3 +18,10 @@ Documento para humanos e agentes. **Não contém a senha.** O valor fica em `sec
 
 ## Histórico
 - 2026-10-17: senha definida pelo responsável e registrada em `secrets/teste_comum.env`. Antes, a senha foi trocada várias vezes por geração automática durante testes; essa prática está proibida pela regra 2.
+
+## E-mails da conta teste.comum (ambiente de testes)
+- Só as mensagens endereçadas à conta `teste.comum` são redirecionadas. Nenhum outro destinatário é alterado.
+- O destino interno é `4e20coletivo@gmail.com`. O assunto ganha o prefixo `[TESTE para <endereço original>]`, e o cabeçalho `X-Aculta-Destino-Original` guarda o endereço original.
+- A configuração fica em `web/sites/default/settings.local.php` (bloco do ambiente de teste, não versionado): `aculta_mail_redirect` e `aculta_mail_redirect_for`. A lógica está em `src/Mail/TestMailRedirect.php`.
+- Teste de 2026-10-17: a mensagem para `teste.comum` foi redirecionada e o servidor respondeu `552 Your monthly email allowance is exhausted`. A cota mensal do SMTP2GO está esgotada: nenhum e-mail sai até a cota renovar ou o plano mudar. Decisão pendente do responsável.
+
