@@ -1,3 +1,14 @@
+## 0.6.0-dev.70 — carrinho com rolagem e rodapé neutro; cartões de produto com borda — 2026-10-17
+
+Classificação: PATCH da linha aberta (ajuste visual, sem contrato novo).
+
+- Carrinho lateral: rodapé "Compre na loja…" com superfície neutra e borda de destaque (tokens claro e escuro), distinto dos
+  botões. O corpo rola dentro do painel, como as gavetas de mensagens e avisos; o rodapé fica fixo embaixo.
+- Cartões de produto da página inicial da loja com borda neutra (classe `border`), sem cor de botão.
+- SDC: descrições acrescentadas aos quatro componentes de doação (`donation-dedication`, `donation-notification`,
+  `donation-pane`, `donation-summary-container`); schema SDC PASS.
+- Verificação: `validate-module-theme-boundary` PASS; `validate-aculta420-sdc-schemas` PASS.
+
 ## 0.6.0-dev.69 — F5: cartão ACULTA420 no catálogo LMS — 2026-10-17
 
 Classificação: MINOR da linha aberta (novo SDC experimental com contrato compatível).

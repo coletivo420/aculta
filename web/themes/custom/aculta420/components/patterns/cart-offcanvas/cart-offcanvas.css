@@ -4,13 +4,25 @@
 .aculta-cart-offcanvas__item { display: flex; flex-direction: column; padding-block: 0.75rem; border-bottom: 1px solid var(--aculta-border-subtle); }
 .aculta-cart-offcanvas__meta { color: var(--aculta-text-secondary); font-size: 0.9rem; }
 .aculta-cart-offcanvas__total { margin: 0; }
+/* Rodapé fixo do carrinho: superfície neutra com borda de destaque, distinta dos botões (claro e escuro pelos tokens). */
 .aculta-cart-offcanvas__banner {
-  padding: 1rem;
-  background: var(--aculta-interactive-bg);
-  color: var(--aculta-interactive-text);
+  flex: 0 0 auto;
+  padding: 0.85rem 1rem;
+  background: var(--aculta-surface-muted);
+  border-top: 2px solid var(--aculta-border-accent);
+  color: var(--aculta-text-primary);
   font-family: var(--aculta-font-display);
   font-weight: 600;
   text-align: center;
+}
+
+/* Rolagem igual à gaveta de avisos e mensagens: o corpo rola dentro do painel; o rodapé fica fixo embaixo. */
+.aculta-cart-offcanvas { display: flex; flex-direction: column; }
+.aculta-cart-offcanvas .aculta-cart-offcanvas__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* Lista única do carrinho: separador por site (linha de título) e caixas iguais às de aviso (alert do Bootstrap). */

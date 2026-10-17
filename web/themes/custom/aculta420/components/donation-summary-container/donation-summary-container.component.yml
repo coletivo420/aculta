@@ -6,6 +6,7 @@ $schema: https://git.drupalcode.org/project/sdc/-/raw/1.x/src/metadata.schema.js
 
 # The human-readable name.
 name: Summaries
+description: 'Contêiner dos resumos do pedido de doação, na etapa de revisão.'
 
 # Status can be: "experimental", "stable", "deprecated", "obsolete".
 status: stable

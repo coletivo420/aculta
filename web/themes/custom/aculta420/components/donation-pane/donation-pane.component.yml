@@ -6,6 +6,7 @@ $schema: https://git.drupalcode.org/project/sdc/-/raw/1.x/src/metadata.schema.js
 
 # The human-readable name.
 name: Donation
+description: 'Painel de valor da doação, com o campo de valor e a frequência.'
 
 # Status can be: "experimental", "stable", "deprecated", "obsolete".
 status: stable
