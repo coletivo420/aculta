@@ -42,6 +42,7 @@ permissions:
   - 'create url aliases'
   - 'create wiki_entry content'
   - 'create document media'
+  - 'edit own document media'
   - 'create aculta_notice content'
   - 'delete own files'
   - 'delete any forum content'

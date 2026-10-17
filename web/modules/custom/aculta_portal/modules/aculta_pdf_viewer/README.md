@@ -102,9 +102,11 @@ submódulo, bundle privado, relação `lms_course` e permissões de turma estão
 sincronizados. Firefox 153.4 ESR validou o viewer privado embutido em página:
 membro recebeu 200 e renderizou 14 páginas; não membro e anônimo receberam 403;
 remover a relação Media↔Group ou a membership negou a mesma URL (403), e
-restaurar cada relação restabeleceu 200. O upload/criação foi exercitado pela UI
-com educador. A miniatura pública foi gerada no Runtime pelo pipeline
-`aculta_image`. A rota Core `/system/files?file=...` é necessária neste Runtime,
+restaurar cada relação restabeleceu 200. O upload/criação foi confirmado na UI
+Firefox como `content_editor`: o arquivo foi selecionado pelo input nativo, a
+Media `document` foi salva e a tela de edição abriu após conceder somente
+`edit own document media` ao papel editorial. A miniatura pública foi gerada no
+Runtime pelo pipeline `aculta_image`. A rota Core `/system/files?file=...` é necessária neste Runtime,
 pois `/system/files/{filepath}` responde 404. Fixtures, uploads, miniatura,
 contas, conteúdo e tokens de login de teste foram removidos. Nesta homologação
 não houve `drush cim` global nem `updb`;

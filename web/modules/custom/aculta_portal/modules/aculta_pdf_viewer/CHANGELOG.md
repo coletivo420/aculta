@@ -1,5 +1,17 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.20 — upload editorial pela UI e acesso próprio — 2026-10-17
+
+Classificação: PATCH (completar criação e acesso do Media pelo papel editorial).
+
+- Firefox no Runtime de testes confirmou aceite dos termos pela rota real, upload pelo input nativo e criação da Media `document`.
+- O fluxo revelou que o redirect pós-criação caía em acesso negado. O papel `content_editor` recebeu `edit own document media`, conforme o controle de acesso do Core; não recebeu edição de Media de outras pessoas.
+- Repetição no Firefox confirmou mensagem de criação e abertura de `/media/239/edit`. Media, File, perfil e usuário temporários foram removidos após verificar ownership e `file_usage`.
+- Unit 11/11 (145 assertions), Kernel 5/5 (106 assertions, 4 deprecações de Core/contrib) e gate Drupal 11+ (904 checks) PASS.
+- `config:status` não pôde ser executado: `config/sync/user.role.administrator.yml` já contém duas chaves `permissions`. Não foi feito import global; a permissão foi alinhada no Runtime e no Config Sync do papel `content_editor`.
+- CSP estrita, revisão acessível ampliada e validação LiteSpeed/Cloudflare pós-deploy continuam pendentes.
+- RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
+
 ## 0.1.0-dev.19 — cache versionado e matriz Chromium PV7 — 2026-10-17
 
 Classificação: PATCH (estabilidade de versão da API/worker em cache e evidências de compatibilidade).
