@@ -1,3 +1,10 @@
+## 0.4.0-dev.82 — gerente da loja acessa Formas de apoio — 2026-10-17
+
+Classificação: PATCH (permissão concedida a um papel existente).
+
+- Papel `gerente_loja` recebe `administer aculta support settings` (Formas de apoio). A permissão de campanhas de doação (`administer aculta donation campaigns`) não foi concedida.
+- RUNTIME STATUS: APLICADO no Runtime `aculta.toca.net.br`; verificado com a conta de teste (papel gerente_loja): página de Formas de apoio responde 200 com o campo de valores; campanhas responde 403.
+
 ## 0.4.0-dev.81 — valores padrão da doação editáveis no painel — 2026-10-17
 
 Classificação: MINOR (nova configuração editorial e mudança do valor padrão de apoio).
