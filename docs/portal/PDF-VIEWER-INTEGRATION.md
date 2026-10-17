@@ -1,17 +1,18 @@
 # Integração compartilhada de documentos PDF
 
-Revisado em 2026-10-16. Esta norma define arquitetura e critérios de integração compartilhada.
+Revisado em 2026-10-17. Esta norma define arquitetura e critérios de integração compartilhada.
 
 ## Fontes de verdade e escopo
 
-Media (`document`) e File são os registros do arquivo e metadados. O submódulo próprio `aculta_pdf_viewer` integra o formatter Media ao PDF.js local, com versão fixada e proveniência/licença preservadas. O contrib Drupal PDF 1.3 permanece no Composer como referência, mas seu formatter não é usado devido ao loader legado; PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha de preview ou ausência de ferramenta de imagem jamais pode impedir leitura ou download autorizado.
+Media (`document`), entidades que referenciam campos File e File são os registros do documento, associação e metadados. O submódulo próprio `aculta_pdf_viewer` integra formatters de Media e File ao PDF.js local, com versão fixada e proveniência/licença preservadas. O contrib Drupal PDF 1.3 permanece no Composer como referência, mas seu formatter não é usado devido ao loader legado; PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha de preview ou ausência de ferramenta de imagem jamais pode impedir leitura ou download autorizado.
 
-O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Revista420, Wiki420, Fórum, projetos, documentos institucionais e arquivo público usam a mesma política e o mesmo componente funcional. ACULTA420 é o único dono da apresentação SDC; a decisão de abrir/autorizar Media pertence ao Drupal/Portal.
+O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Revista420, Wiki420, Fórum, projetos, documentos institucionais e arquivo público usam a mesma política e o mesmo componente funcional. ACULTA420 é o único dono da apresentação SDC; as decisões de acesso a Media, entidade, campo e File pertencem ao Drupal/Portal.
 
 ## Inventário confirmado
 
 - Há Media bundle `document`, source `file`, campo obrigatório `field_media_document`, cardinalidade 1 e esquema `public://`. O campo permite PDF e diversos formatos de documento (txt, rtf, Office/ODF e Apple); o fluxo PDF deve rejeitar ou degradar tipos não PDF, não assumir que todo `document` é PDF.
 - Existe tipo de conteúdo `document` para documentos institucionais, com `field_document` limitado a `pdf`; coexistem, portanto, referência direta e Media. A integração deve consolidar a UX sem migração implícita ou remoção de conteúdo.
+- O formatter `aculta_pdf_file` atende esse campo File direto nos displays `node.document.default` e `node.document.full`. Só PDFs permanentes públicos recebem viewer; acesso da entidade, do campo e de download é acumulado no render. Outros formatos e arquivos privados mantêm o link Core autorizado.
 - `filter.format.full_html` e `revista_editorial` habilitam `entity_embed` e incluem `document` na lista de bundles. Confirmar as configurações CKEditor/Entity Embed completas por uso em conteúdo e validar acesso de mídia embutida; configuração habilitada não prova que o viewer funciona nem que o acesso está correto.
 - O papel editorial único `content_editor` recebe `create document media` para permitir o upload/seletor de PDF pela biblioteca do CKEditor 5. O bundle `document` usa `public://`; arquivos nesse bundle devem ser destinados à publicação e nunca conter material confidencial.
 - `drupal/pdf` 1.3.0, PDF.js 6.4.299, PDFPreview 1.2.0 e ImageMagick contrib 4.0.2 fazem parte do Composer lock nesta entrega. H5P e Entity Print não fazem parte do lock. O código local do viewer está em `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer`; dependências operacionais ImageMagick/Ghostscript precisam ser verificadas separadamente por ambiente e ImageMagick não deve ser selecionado como toolkit padrão só para previews.

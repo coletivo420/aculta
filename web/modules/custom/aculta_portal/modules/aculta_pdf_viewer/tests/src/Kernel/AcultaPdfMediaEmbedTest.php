@@ -52,6 +52,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     'media',
     'filter',
     'text',
+    'node',
   ];
 
   /**
@@ -60,11 +61,13 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->installConfig(['system', 'user', 'media', 'filter', 'image']);
+    $this->installConfig(['system', 'user', 'media', 'filter', 'image', 'node']);
     $this->installSchema('file', ['file_usage']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('node');
+    $this->installSchema('node', ['node_access']);
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_pdf_viewer'], TRUE));
 
     $media_type = MediaType::create([
@@ -145,6 +148,71 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   }
 
   /**
+   * Tests the shared formatter on an institutional document's File field.
+   */
+  public function testInstitutionalDocumentFileFieldUsesSharedPdfViewer(): void {
+    $node_type = \Drupal\node\Entity\NodeType::create([
+      'type' => 'document',
+      'name' => 'Institutional document',
+    ]);
+    $node_type->save();
+    $storage = FieldStorageConfig::create([
+      'field_name' => 'field_document',
+      'entity_type' => 'node',
+      'type' => 'file',
+      'cardinality' => 1,
+    ]);
+    $storage->save();
+    FieldConfig::create([
+      'field_storage' => $storage,
+      'bundle' => 'document',
+      'label' => 'PDF',
+      'settings' => ['file_extensions' => 'pdf'],
+    ])->save();
+    EntityViewDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => 'document',
+      'mode' => 'default',
+      'status' => TRUE,
+    ])->setComponent('field_document', [
+      'type' => 'aculta_pdf_file',
+      'label' => 'hidden',
+      'settings' => [],
+      'third_party_settings' => [],
+      'weight' => 0,
+      'region' => 'content',
+    ])->save();
+
+    $file_uri = $this->container->get('file_system')->saveData(
+      "%PDF-1.4\n% ACULTA institutional PDF Kernel fixture\n",
+      'public://aculta-pdf-institutional-fixture.pdf',
+      FileExists::Replace,
+    );
+    $file = File::create([
+      'uri' => $file_uri,
+      'filename' => 'aculta-pdf-institutional-fixture.pdf',
+      'filemime' => 'application/pdf',
+      'uid' => $this->container->get('current_user')->id(),
+    ]);
+    $file->setPermanent();
+    $file->save();
+
+    $node = \Drupal\node\Entity\Node::create([
+      'type' => 'document',
+      'title' => 'Institutional PDF fixture',
+      'status' => TRUE,
+      'field_document' => [['target_id' => $file->id(), 'description' => 'Open the PDF']],
+    ]);
+    $node->save();
+    $render = $this->container->get('entity_type.manager')->getViewBuilder('node')->view($node);
+    $context = new RenderContext();
+    $markup = $this->container->get('renderer')->executeInRenderContext($context, fn () => $this->container->get('renderer')->renderRoot($render));
+
+    $this->assertStringContainsString('data-aculta-pdf-viewer="true"', (string) $markup);
+    $this->assertStringContainsString('aculta-pdf-institutional-fixture.pdf', (string) $markup);
+  }
+
+  /**
    * Tests that CKEditor Media Embed invokes the shared PDF formatter.
    */
   public function testCkeditorMediaEmbedUsesSharedPdfFormatter(): void {
@@ -182,7 +250,19 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
       '<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>',
       $media->uuid(),
     );
-    $filter_collection = new FilterPluginCollection($this->container->get('plugin.manager.filter'), []);
+    $filter_collection = new FilterPluginCollection($this->container->get('plugin.manager.filter'), [
+      'media_embed' => [
+        'id' => 'media_embed',
+        'provider' => 'media',
+        'status' => TRUE,
+        'weight' => 20,
+        'settings' => [
+          'default_view_mode' => 'default',
+          'allowed_view_modes' => [],
+          'allowed_media_types' => ['document' => 'document'],
+        ],
+      ],
+    ]);
     $filter = $filter_collection->get('media_embed');
     $render_context = new RenderContext();
     $result = $this->container->get('renderer')->executeInRenderContext($render_context, function () use ($filter, $markup) {

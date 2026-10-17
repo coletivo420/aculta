@@ -1,8 +1,8 @@
 # ACULTA PDF Viewer
 
 `aculta_pdf_viewer` é o submódulo que fornece a leitura de PDFs compartilhada
-pelas experiências do site. Não pertence ao LMS: qualquer conteúdo pode usar o
-formatter de Media `document`.
+pelas experiências do site. Não pertence ao LMS: conteúdo pode usar o formatter
+de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
 
 ## Responsabilidade e limites
 
@@ -26,6 +26,10 @@ formatter de Media `document`.
   `hook_file_download`; a entrega privada continua sob Core.
 - PDFPreview/ImageMagick gera miniatura fail-soft somente para PDFs públicos;
   serviço e dependências contrib não são requisito para habilitar o viewer.
+- Campos File diretos usam o viewer somente para PDFs permanentes públicos. O
+  formatter verifica acesso à entidade, ao campo e ao download do File; tipos
+  não PDF preservam o link Core. Arquivos privados continuam usando o formatter
+  Core, que entrega pela rota protegida e revalida acesso.
 
 ## Classes e fluxo
 
@@ -33,9 +37,14 @@ formatter de Media `document`.
    atributo `#[FieldFormatter]` com ID `aculta_pdf_media`. Ele valida Media,
    acesso ao campo e `File::access('download')`; delega PDFs ao builder, e usa o
    tema Core `file_link` para documentos que não entram no viewer/fallback.
-2. `Pdf/PdfViewerBuilderInterface` define o contrato para construir um render
-   array a partir da Media autorizada e do campo de arquivo.
-3. `Pdf/PdfViewerBuilder` exige Media `document`, acesso de visualização à Media,
+2. `Plugin/Field/FieldFormatter/AcultaPdfFileFormatter` aplica o mesmo viewer a
+   campos File de entidades como o tipo de conteúdo `document`. Confere acesso
+   da entidade, do campo e `File::access('download')`; só embute PDF permanente
+   público. Para arquivo privado ou outro formato, mantém o link Core autorizado.
+3. `Pdf/PdfViewerBuilderInterface` define o contrato para construir um render
+   array a partir de Media ou de um File com cacheabilidade fornecida pelo
+   consumidor.
+4. `Pdf/PdfViewerBuilder` exige Media `document`, acesso de visualização à Media,
    ao campo e ao File, arquivo permanente, URI `public://` ou `private://`, MIME
    `application/pdf`, extensão `.pdf` e URL local gerada pelo File URL Generator.
    Arquivo privado tem cache max-age zero e não recebe thumbnail. A resposta contém
@@ -45,7 +54,7 @@ formatter de Media `document`.
    temporário pelo `aculta_image.generated_file`, renderizada por
    `aculta_image.render` e removida pela limpeza normal após
    `system.file:temporary_maximum_age`.
-4. `js/pdf-viewer.mjs` importa `pdf.mjs` e aponta o worker para
+5. `js/pdf-viewer.mjs` importa `pdf.mjs` e aponta o worker para
    `pdf.worker.mjs` da distribuição Mozilla instalada localmente em
    `/libraries/pdf.js`. Usa canvas, navegação, zoom com restauração, busca textual por página e
    tela cheia; erro de carregamento informa o usuário e preserva o link de
@@ -62,7 +71,9 @@ JavaScript registra `Drupal.behaviors.acultaPdfViewer.attach()` e também inicia
 em `DOMContentLoaded` para renderizações fora de attach Drupal. A biblioteca é
 anexada pelo render array somente quando o builder autoriza e reconhece PDF.
 
-O display padrão `media.document` seleciona `aculta_pdf_media` em Config Sync.
+O display padrão `media.document` seleciona `aculta_pdf_media`; os displays
+`node.document.default` e `node.document.full` selecionam `aculta_pdf_file` em
+Config Sync.
 O módulo exige apenas Core File e Media; PDFPreview e ImageMagick são opcionais
 no runtime. Não depende do módulo geral `aculta_portal`, LMS, PDF contrib, nem de
 configuração ativa importada. O PDF.js é gerenciado pelo Composer do site. O

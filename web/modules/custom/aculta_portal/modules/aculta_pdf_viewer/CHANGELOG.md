@@ -1,5 +1,14 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.15 — viewer compartilhado em campos File institucionais — 2026-10-17
+
+Classificação: MINOR (novo formatter compatível com File API e sem storage próprio).
+
+- Adicionado `aculta_pdf_file`, formatter para campos File diretos. Ele usa o builder compartilhado somente para PDF público permanente, depois de validar acesso da entidade, do campo e de download do File. Tipos não PDF, arquivos privados e falhas do viewer mantêm o link Core autorizado.
+- Os displays `node.document.default` e `node.document.full` passam a usar o formatter para `field_document`; nenhum node, Media ou File é migrado ou regravado.
+- PHPUnit: Unit 11/11 (145 asserções) e Kernel 4/4 (87 asserções) PASS no MariaDB dedicado `aculta_simpletest`; quatro deprecações de Core/contrib registradas. Drupal 11+ Gate (888 checks), image, public-slugs e module/theme-boundary gates PASS.
+- Drush confirmou no Runtime de teste que `aculta_pdf_viewer` está ativo e que ambos os displays já usam `aculta_pdf_file`; não alterei configuração nesta sessão. RUNTIME STATUS: DEFERRED para smoke visual/HTTP do novo campo; Kernel confirma o render funcional.
+
 ## 0.1.0-dev.14 — corrigir entrega do PDF privado no Runtime — 2026-10-17
 
 Classificação: PATCH (mantém a rota e as checagens de acesso do Drupal Core).

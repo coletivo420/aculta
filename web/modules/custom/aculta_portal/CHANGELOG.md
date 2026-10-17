@@ -1,3 +1,12 @@
+## 0.4.0-dev.91 — viewer PDF também em campos File institucionais — 2026-10-17
+
+Classificação: MINOR (novo formatter compartilhado, sem storage de documentos paralelo).
+
+- `aculta_pdf_file` renderiza PDFs públicos permanentes de campos File diretos usando o builder do `aculta_pdf_viewer`; acesso da entidade, campo e download é acumulado no render. Arquivos privados e formatos não PDF mantêm o link Core autorizado.
+- Os displays `node.document.default` e `node.document.full` passam a usar o formatter em `field_document`. Unit 11/11 (145 asserções) e Kernel 4/4 (87 asserções) PASS no MariaDB dedicado; quatro deprecações Core/contrib.
+- Gates Drupal 11+ (888 checks), image, public-slugs e module/theme-boundary PASS. No Runtime de teste o módulo e os displays já estavam ativos; nenhum import foi executado. Smoke visual/HTTP do campo permanece DEFERRED.
+- RUNTIME STATUS: DEFERRED para homologação visual/HTTP; código e configuração estão no checkout e a configuração equivalente já está ativa no Runtime.
+
 ## 0.4.0-dev.90 — apelido com maiúsculas; slug não canônico responde 404 — 2026-10-17
 
 Classificação: PATCH (correção de regra de apelido e de um 500 no perfil público).

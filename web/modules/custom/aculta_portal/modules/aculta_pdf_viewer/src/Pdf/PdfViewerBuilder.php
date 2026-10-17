@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_pdf_viewer\Pdf;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -51,14 +52,23 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       return $this->denied($cacheability);
     }
 
+    $expected_scheme = $bundle === 'course_document' ? 'private' : 'public';
+    return $this->buildFile($file, $media->label() ?: $file->getFilename(), $expected_scheme, $cacheability, TRUE);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildFile(FileInterface $file, string $title, string $expected_scheme, CacheableMetadata $cacheability, bool $require_file_view_access = FALSE): array {
     $cacheability->addCacheableDependency($file);
-    $file_access = $file->access('view', $this->currentUser, TRUE);
+    $file_access = $require_file_view_access
+      ? $file->access('view', $this->currentUser, TRUE)
+      : AccessResult::allowed();
     $cacheability->addCacheableDependency($file_access);
     $file_download_access = $file->access('download', $this->currentUser, TRUE);
     $cacheability->addCacheableDependency($file_download_access);
     $uri = $file->getFileUri();
     $scheme = parse_url($uri, PHP_URL_SCHEME);
-    $expected_scheme = $bundle === 'course_document' ? 'private' : 'public';
     $url = '';
     if (
       $file->isPermanent()
@@ -90,7 +100,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       return $this->denied($cacheability);
     }
 
-    $title = $media->label() ?: $file->getFilename();
+    $title = trim($title) ?: $file->getFilename();
     $build = [
       '#type' => 'container',
       '#attributes' => [
