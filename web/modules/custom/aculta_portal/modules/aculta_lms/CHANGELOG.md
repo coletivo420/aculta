@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## Não lançado — F7: matrícula sempre associada a turma
+
+- Config Sync habilita `lms_classes`, desativa criação automática de turma e configura grants de educador.
+- `EnrollmentFormHooks` valida a turma selecionada contra as turmas do curso original, inclusive após a conversão da membership pelo módulo LMS Classes. Matrícula de estudante é bloqueada quando não há turma; memberships de educador/admin podem continuar no nível do curso.
+- `EnrollmentRoleHooks` em `aculta_user` concede `estudante` para membership de turma e preserva a exclusão de papéis de educador/admin.
+- Autoinscrição e matrícula pela equipe foram escolhidas; sem confirmação de e-mail/termos, com aviso por e-mail (entrega F13). Sem turma padrão. O LMS ainda não associa pagamento Commerce à matrícula paga.
+- RUNTIME STATUS: DEFERRED. Drush aponta `http://default`, não um URI `*.aculta.toca.net.br`; não houve import de configuração nem smoke test.
+
 ## 0.1.0-dev.2 — F6: página de curso e sala (implementação inicial)
 
 - Acrescentado `CourseRoomBuilder` e campo extra configurável na página canônica

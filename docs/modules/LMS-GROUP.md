@@ -49,7 +49,7 @@ Estado do checkout em 2026-10-17: `lms_classes` 1.2.4 está sendo integrado pela
 4. Matrícula sem confirmação de e-mail e sem aceite de termos; somente aviso por e-mail.
 5. Curso novo não recebe turma automática; educador/admin cria explicitamente.
 
-A configuração versionada habilita `lms_classes`, inclui a configuração opcional upstream, define `create_default_class: false`, declara o papel estudante de turma e atualiza grants de educador. `EnrollmentRoleHooks` foi ampliado para memberships de turma. Ainda faltam smoke tests de isolamento A/B, educador, admin, autoinscrição e conta sem e-mail confirmado no Runtime.
+A configuração versionada habilita `lms_classes`, inclui a configuração opcional upstream, define `create_default_class: false`, declara o papel estudante de turma e atualiza grants de educador. `EnrollmentRoleHooks` foi ampliado para memberships de turma. `EnrollmentFormHooks` exige turma para estudante, rejeita classe que não pertence ao curso e mantém educador/admin no nível do curso. Ainda faltam smoke tests de isolamento A/B, educador, admin, autoinscrição e conta sem e-mail confirmado no Runtime.
 
 **RUNTIME STATUS: DEFERRED.** O Drush local não confirmou URI de teste (`http://default`), então não foi importada configuração, reconstruído cache nem criado conteúdo/membership no banco. O gate de pagamento para cursos pagos também não existe no LMS atual.
 

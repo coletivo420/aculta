@@ -38,6 +38,20 @@ Render arrays incluem cacheability do curso, lições e resultados de acesso,
 variando por usuário e permissões do Group. F6 ainda precisa de smoke test
 integrado com usuário matriculado, visitante e não membro no Runtime.
 
+## F7 — Matrícula em turmas
+
+`EnrollmentFormHooks` guarda o ID do curso antes do módulo LMS Classes converter
+a membership e valida que a turma selecionada pertence àquele curso.
+Autoinscrição de estudante não prossegue quando o curso não tem turma; o
+formulário informa que a equipe precisa criar uma. Educadores e administradores
+podem manter memberships no nível do curso, sem serem convertidos em estudantes
+de turma. Group e LMS continuam donos dos dados e da autorização. O módulo
+depende de `lms_classes` nesta fase.
+
+F7 aguarda smoke test de matrícula, turma cruzada e isolamento de educadores no
+Runtime. O aviso por e-mail integra-se na F13. Matrícula paga requer gate Commerce
+próprio antes de associar produto/cobrança a curso.
+
 ## Testes
 
 - `tests/src/Unit/CourseCompletionPublisherTest.php`: publicação apenas de

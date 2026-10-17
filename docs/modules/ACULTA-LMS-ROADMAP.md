@@ -90,8 +90,11 @@ membro, não membro e visitante; a fase não está homologada.
 **F7 — Implementação inicial na branch.** Config Sync habilita `lms_classes`
 1.2.4, inclui configuração opcional, exige criação explícita de turmas e concede
 ao educador permissões de criação/gestão; o hook de papel global agora reconhece
-matrículas em turma. Decisões: autoinscrição em cursos gratuitos e pagos, equipe
-também pode matricular, estudante é concedido ao entrar em qualquer turma, sem
+matrículas em turma. `EnrollmentFormHooks` obriga estudante a selecionar turma
+do próprio curso e bloqueia autoinscrição enquanto nenhuma turma existir;
+memberships de educador/admin podem permanecer no curso. Decisões: autoinscrição
+em cursos gratuitos e pagos, equipe também pode matricular, estudante é
+concedido ao entrar em qualquer turma, sem
 confirmação de e-mail ou termos (aviso por e-mail), e sem turma padrão. Envio do
 aviso está reservado à F13. RUNTIME STATUS: DEFERRED; falta smoke test A/B e o
 LMS ainda não integra matrícula paga ao Commerce. Detalhes em
