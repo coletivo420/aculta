@@ -1,3 +1,13 @@
+## 0.4.0-dev.75 — raiz dos subdomínios com comportamento uniforme — 2026-10-17
+
+Classificação: PATCH (roteamento; sem API nova).
+
+- Política única `Domain/FrontPathPolicy`: caminho interno da raiz de qualquer subdomínio responde 404 em acesso direto, sem 301 (antes `/apoio` tinha 301 e `/cursos` e `/wiki` também). Aplicada por `DomainPurposeRequestSubscriber`.
+- Testes unitários da política (172 testes no módulo, OK).
+- Gate `scripts/validate-domain-front-paths.php` (estático; `--live` consulta os hosts): falha se o assinante deixar de usar a política ou se surgir um 301 novo sem revisão.
+- Documentado em `docs/portal/DOMAIN-FRONT-PATHS.md`, com a matriz por host e a lista de 301 legados permitidos.
+- Pendências fora do código: vitrine da loja (nó 69 / alias `/loja-da-aculta`) ausente no Runtime de testes, então a raiz da loja responde 404; host `coletivo420` não resolve no servidor de testes.
+
 ## 0.4.0-dev.74 — apoio somente no subdomínio — 2026-10-17
 
 Classificação: PATCH (roteamento de domínio).

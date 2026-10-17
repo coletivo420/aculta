@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\EventSubscriber;
 
+use Drupal\aculta_portal\Domain\FrontPathPolicy;
+use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
@@ -211,10 +213,14 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
     $request = $event->getRequest();
     $routeName = (string) $request->attributes->get('_route');
-    // The support form is routed at /apoio but is the public home of the SUPPORT
-    // subdomain: it is served only when the original request path is /. Any direct
-    // request to /apoio fails closed with 404 (sem redirecionamento: o caminho /apoio não existe no subdomínio de apoio).
-    if ($routeName === 'aculta_portal.support_form' && $request->getPathInfo() !== '/' && !$request->attributes->get(\Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor::FRONT_ATTRIBUTE)) {
+    // Caminho interno da raiz de cada subdomínio (PurposeFrontPathProcessor::FRONT_PATHS, ex.: /apoio, /wiki, /cursos,
+    // /loja-da-aculta, /forum, /redes-sociais) não é público: a raiz do host serve esse conteúdo. Requisição direta ao
+    // caminho interno responde 404 (sem redirecionamento 301), antes do normalizador do módulo redirect.
+    if (FrontPathPolicy::bloqueiaCaminhoInterno(
+      $this->domainPurposeManager->getCurrentPurpose(),
+      $request->getPathInfo(),
+      (bool) $request->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE),
+    )) {
       throw new NotFoundHttpException();
     }
     // The account overview is served only at the ACCOUNT root. Its internal
