@@ -43,6 +43,7 @@ final class TurnstileToggle {
     'commerce_checkout_flow',
     'commerce_checkout_flow_default',
     'commerce_checkout_flow_fluxo_doacao',
+    'aculta_support_form',
     'aculta_login_popup_form',
     'aculta_register_popup_form',
     'aculta_messenger_new_conversation',
