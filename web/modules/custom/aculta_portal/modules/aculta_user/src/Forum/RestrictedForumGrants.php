@@ -12,9 +12,9 @@ use Drupal\taxonomy\TermInterface;
 /**
  * Visibilidade dos fóruns restritos (ACULTA Fórum, F9, F-D14).
  *
- * Hierarquia de papéis (decisão de 2026-10-17, docs/portal/PAPEIS-PARTICIPACAO.md, seção 1): authenticated <
- * email_confirmed < estudante < associado < lms_teacher < gerente_loja < content_editor < administrator. A herança
- * de permissões é configurada no role_inheritance (Fase 2); estes grants dependem das permissões efetivas do papel.
+ * Herança de papéis (role_inheritance, decisão de 2026-10-17): cadeia authenticated < email_confirmed < estudante <
+ * associado < lms_teacher < content_editor < gerente_loja < administrator (herança transitiva). Estes grants dependem
+ * das permissões efetivas do papel, não do nome do papel. Configuração: config/sync/role_inheritance.settings.yml.
  * O administrador tem bypass de acesso a nós e não passa por esta regra.
  *
  * Realms: aculta_email_confirmado (permissão de e-mail confirmado), aculta_estudante (permissão de estudante),

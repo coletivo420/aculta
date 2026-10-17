@@ -217,3 +217,16 @@ Regra do responsável (2026-10-14). Vale para toda alteração de exibição dos
 - Gate: `php scripts/validate-content-visual-parity.php` (deve ser PASS em toda mudança de exibição de Notícia ou Editorial).
 
 Motivo: o leitor percebe a mesma página com dois layouts diferentes quando os tipos divergem, e a manutenção dobra.
+
+## Papéis e hierarquia
+
+Barreiras contra regressão (gate `php scripts/validate-role-hierarchy.php`):
+
+- A cadeia de herança em `config/sync/role_inheritance.settings.yml` deve ser a decidida em `docs/portal/PAPEIS-PARTICIPACAO.md`. Mudança exige decisão do responsável e atualização do gate no mesmo commit.
+- O mapa de herança não pode ter ciclo nem autorreferência (o formulário do painel também recusa).
+- `administrator` herda de todos os papéis de negócio.
+- Checagens por nome de papel em código customizado (`->hasRole(` e `in_array('papel', ...)`) não podem subir acima da linha de base registrada no gate (15 e 4). Acesso novo usa permissão.
+- Papéis efetivos: para o usuário logado, o `role_inheritance` estende os papéis a cada requisição (`CurrentUserRoleShim`); para entidades de usuário, a herança também aparece em `getRoles()`. Confirme no Runtime antes de depender de um caso de borda.
+
+Motivo: a hierarquia é decisão do responsável. Um comentário de código ou uma checagem por nome podem contradizê-la sem que nenhum teste pegue.
+

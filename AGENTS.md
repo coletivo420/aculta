@@ -599,6 +599,26 @@ Não criar funcionalidades que não foram solicitadas.
 
 Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alteração destrutiva.
 
+## Papéis e hierarquia (regra permanente)
+
+Motivo: o site tem uma hierarquia de papéis decidida pelo responsável. Quando o acesso é checado pelo nome do papel ou a
+herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha acesso que não deveria.
+
+- Cadeia vigente (de baixo para cima, herança transitiva): `authenticated` < `email_confirmed` < `estudante` < `associado`
+  < `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. `wiki_contributor` e `lms_admin` herdam de
+  `authenticated`. Fonte: `config/sync/role_inheritance.settings.yml`; decisões em `docs/portal/PAPEIS-PARTICIPACAO.md`.
+- Não crie hierarquia paralela no código nem lista de papéis fixa para decidir acesso. A herança é do `role_inheritance`.
+- Para acesso novo, conceda **permissão** ao papel certo e verifique com `hasPermission()`. Não use `hasRole('nome')` nem
+  `in_array('nome', getRoles())` para liberar funcionalidade: isso ignora a hierarquia de quem não está logado e cria
+  exceção difícil de auditar. Checagens existentes por nome são dívida registrada no gate.
+- Para mudar a cadeia, use ACULTA > Configurações > Hierarquia de papéis (`/painel-administrativo/configuracoes/aculta/papeis`,
+  permissão `administer aculta role hierarchy`). Não edite `role_inheritance.settings` à mão no Runtime. Depois de mudar a
+  cadeia, exporte a configuração e atualize a decisão em `docs/portal/PAPEIS-PARTICIPACAO.md` no mesmo commit.
+- Ao mudar a cadeia, avalie o efeito: papel acima herda todas as permissões de baixo (ex.: `gerente_loja` herda o que é
+  de `content_editor`). Confirme com `php scripts/validate-role-hierarchy.php` e com a tela do painel.
+- Gate obrigatório: `php scripts/validate-role-hierarchy.php` (cadeia decidida, sem ciclo, administrator herda de todos,
+  e contagem de checagens por nome de papel sem subir acima da linha de base).
+
 ## Indexação e sitemap (política do projeto)
 
 ### Política de indexação (decisão do responsável, 2026-10-09)

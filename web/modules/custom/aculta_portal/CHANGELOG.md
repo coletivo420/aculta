@@ -1,3 +1,15 @@
+## 0.4.0-dev.84 — hierarquia de papéis corrigida e editável no painel — 2026-10-17
+
+Classificação: MINOR (nova tela administrativa e mudança da cadeia de herança, por decisão do responsável).
+
+- Cadeia de herança (`role_inheritance.settings`): `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. `content_editor` herda de `lms_teacher` (antes, de `email_confirmed`); `gerente_loja` herda de `content_editor` (antes, de `authenticated`). Herança transitiva: `gerente_loja` passa a ter as permissões de `content_editor`, `lms_teacher`, `associado`, `estudante`, `email_confirmed` e `authenticated`.
+- Painel: ACULTA > Configurações > Hierarquia de papéis (`/painel-administrativo/configuracoes/aculta/papeis`), permissão `administer aculta role hierarchy` (restrita). Mostra a cadeia efetiva de cada papel e recusa ciclo ou autorreferência antes de salvar.
+- `RoleHierarchy` (cálculo puro): cadeia efetiva e detecção de ciclo. Testes unitários: 6 testes passam.
+- Gate `scripts/validate-role-hierarchy.php`: cadeia decidida, sem ciclo, administrator herda de todos, checagens por nome de papel não sobem acima da linha de base (15 `hasRole`, 4 `in_array`).
+- Comentário de `RestrictedForumGrants` alinhado à cadeia vigente.
+- Instruções para agentes (`AGENTS.md`, seção Papéis e hierarquia) e barreiras (`docs/portal/GUARDRAILS.md`).
+- RUNTIME STATUS: APLICADO no Runtime `aculta.toca.net.br`. Verificado: cadeia efetiva de `gerente_loja`; tela do painel como administrador (200, 10 papéis, cadeias calculadas); reenvio do mapa atual mantém a configuração; envio com ciclo é recusado e não altera a configuração. Não verificado no navegador.
+
 ## 0.4.0-dev.83 — gerente da loja gerencia campanhas de doação — 2026-10-17
 
 Classificação: PATCH (permissão concedida a um papel existente, por decisão do responsável).

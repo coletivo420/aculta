@@ -6,7 +6,7 @@ role_map:
   lms_teacher:
     - associado
   content_editor:
-    - email_confirmed
+    - lms_teacher
   lms_admin:
     - authenticated
   administrator:
@@ -23,7 +23,7 @@ role_map:
   estudante:
     - email_confirmed
   gerente_loja:
-    - authenticated
+    - content_editor
   associado:
     - estudante
 

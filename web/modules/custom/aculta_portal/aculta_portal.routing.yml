@@ -351,3 +351,11 @@ aculta_portal.relatorio_vendas:
     _title: 'Relatório de vendas'
   requirements:
     _permission: 'view commerce_order'
+
+aculta_portal.role_hierarchy_settings:
+  path: /painel-administrativo/configuracoes/aculta/papeis
+  defaults:
+    _form: '\Drupal\aculta_portal\Role\Form\RoleHierarchyForm'
+    _title: Hierarquia de papéis
+  requirements:
+    _permission: administer aculta role hierarchy

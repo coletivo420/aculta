@@ -42,3 +42,9 @@ aculta_portal.footer_participation:
     webform: aculta_participation
   menu_name: aculta-footer-participation
   weight: -5
+aculta_portal.role_hierarchy_settings:
+  title: Hierarquia de papéis
+  description: Definir de quais papéis cada papel herda permissões.
+  route_name: aculta_portal.role_hierarchy_settings
+  parent: aculta_portal.admin
+  weight: 3
