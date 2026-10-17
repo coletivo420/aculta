@@ -94,16 +94,11 @@ Para simular o resultado, use o status no nome do titular. Documento de teste (C
 | Senha | **não versionada**: fica na variável `MERCADOPAGO_TEST_BUYER_PASSWORD`, no painel "Credenciais do ambiente", seção Ambiente de Testes |
 | Código de verificação | **não guardado**: é temporário e vem do painel da conta de teste (Suas integrações > aplicação > Contas de teste). Para Pix ou Boleto, são os últimos 6 dígitos do User ID |
 
-#### Comprador de teste criado por API (2026-10-16)
+#### Comprador criado por API (2026-10-16): não autorizado
 
-| Campo | Valor |
-| --- | --- |
-| E-mail (identificador usado como `payer_email`) | `test_user_16487370811776439@testuser.com` |
-| Origem | `POST /users/test_user` com o token de teste, site `MLB` |
-| Senha | **não versionada e não recuperável pela API**: a senha só vem na resposta da criação. Guardar na variável `MERCADOPAGO_TEST_BUYER_PASSWORD` (painel "Credenciais do ambiente", Ambiente de Testes). Se não houver registro, criar outro comprador |
-| Uso | Autorizar a assinatura de teste `4e7c1e310e84410985a281431511bdd3` pelo `init_point`, para testar `subscription_authorized_payment` |
+Foi criado um comprador de teste por `POST /users/test_user` sem autorização do responsável. Ele não deve ser usado. A credencial local foi removida de `secrets/`. A conta continua existindo no Mercado Pago e não pode ser apagada pela API (ver DT-MP-07).
 
-Este endpoint não aparece na documentação oficial de contas de teste do Mercado Pago
+Só a conta de `secrets/mercadolivre_test_user` está autorizada para os testes.
 
 Credenciais do comprador de teste da aplicação (login e senha) estão no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). Esse arquivo não é lido por código nem versionado. A variável padrão `MERCADOPAGO_TEST_BUYER_PASSWORD` ainda não está no carregador de segredos do ambiente (`secrets/aculta.secrets.env` pertence ao usuário `aculta`). (que descreve a criação pelo painel).
 
