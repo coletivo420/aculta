@@ -1,5 +1,13 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.8 — variante compacta do bloco de valores — 2026-10-17
+
+- Opção "Espaço reduzido" no bloco de valores: até 3 sugestões e a opção curta "Outro", para locais pequenos. Sem a opção,
+  4 valores e "Outros valores".
+- Testes visuais (Firefox headless, topo das páginas): a versão compacta cabe bem; a versão grande precisava de margem
+  em relação ao texto de introdução. O componente ganhou espaçamento vertical (`my-3`).
+- RUNTIME STATUS: APLICADO no Runtime de testes. Instância de teste removida.
+
 ## 0.1.0-dev.7 — valores do bloco de apoio — 2026-10-17
 
 - O bloco de valores rápidos mostra R$ 5, 10, 20 e 50, e "Outros valores" leva ao passo de doação, onde o visitante

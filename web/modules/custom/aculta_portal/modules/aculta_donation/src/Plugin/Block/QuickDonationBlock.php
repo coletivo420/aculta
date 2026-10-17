@@ -98,6 +98,11 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
       ),
       '#tree' => TRUE,
     ];
+    $form['compacto'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Espaço reduzido (até 3 sugestões e a opção "Outro")'),
+      '#default_value' => $this->configuration['compacto'] ?? FALSE,
+    ];
     for ($index = 0; $index < 4; $index++) {
       $form['levels'][$index] = [
         '#type' => 'number',
@@ -115,6 +120,7 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['levels'] = $form_state->getValue('levels');
+    $this->configuration['compacto'] = (bool) $form_state->getValue('compacto');
   }
 
   /**
@@ -125,7 +131,12 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   public function build() {
     // Valores padrão quando o bloco não tem valores salvos (R$ 5, 10, 20 e 50). Sem isso o bloco novo sai sem botões.
+    $compacto = (bool) ($this->configuration['compacto'] ?? FALSE);
     $levels = array_values($this->configuration['levels'] ?? [5, 10, 20, 50]);
+    // Espaço reduzido: no máximo 3 sugestões e a opção curta "Outro", para caber em locais pequenos.
+    if ($compacto) {
+      $levels = array_slice($levels, 0, 3);
+    }
     $links = [];
     foreach ($levels as $delta => $amount) {
       $links[$delta] = [
@@ -138,7 +149,7 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
     }
     // "Outros valores": o visitante digita o valor no fluxo de doação (campo "Other Amount" do widget).
     $links['outros'] = [
-      'title' => (string) $this->t('Outros valores'),
+      'title' => (string) ($compacto ? $this->t('Outro') : $this->t('Outros valores')),
       'url' => Url::fromRoute('aculta_donation.donation.default')->toString(),
     ];
     // Dados neutros: o tema apresenta os valores (componente SDC donation-quick do tema).

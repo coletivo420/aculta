@@ -1,7 +1,7 @@
 {#
   Valores de doação rápida (aculta_donation). Os links já chegam resolvidos pelo módulo.
 #}
-<div class="aculta-donation-quick d-flex flex-wrap gap-2" role="list">
+<div class="aculta-donation-quick d-flex flex-wrap gap-2 my-3" role="list">
   {% for link in links %}
     <a class="btn btn-outline-primary" role="listitem" href="{{ link.url }}">{{ link.title }}</a>
   {% endfor %}
