@@ -167,6 +167,20 @@ aculta_portal.support_my:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
+aculta_portal.support_subscription_action:
+  path: '/meu-apoio/assinatura/{commerce_order}/{acao}'
+  defaults:
+    _form: '\Drupal\aculta_portal\Support\Form\SubscriptionActionForm'
+    _title: 'Doação mensal'
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+    acao: 'pausar|reativar|cancelar'
+  options:
+    no_cache: true
+    parameters:
+      commerce_order:
+        type: entity:commerce_order
 
 
 

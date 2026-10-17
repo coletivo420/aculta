@@ -222,6 +222,9 @@ services:
   aculta_portal.mercado_pago.subscription_notifications:
     class: Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionNotificationService
     arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.recurrence_service', '@http_client', '@aculta_portal.mercado_pago.logger', '@aculta_portal.mercado_pago.subscription_recorder']
+  aculta_portal.recurring_donations_report:
+    class: Drupal\aculta_portal\Donation\RecurringDonationsReport
+    arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.subscription_recorder', '@commerce_price.currency_formatter']
   aculta_portal.mercado_pago.subscription_recorder:
     class: Drupal\aculta_portal\MercadoPago\MercadoPagoSubscriptionRecorder
     arguments: ['@entity_type.manager', '@aculta_portal.mercado_pago.recurrence_service', '@aculta_portal.mercado_pago.logger', '@datetime.time']

@@ -4,7 +4,9 @@ Status: **plano de trabalho** para a linha 0.4.0-dev.65 (`aculta_portal`). Pain�
 
 Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_mercado_pago` 3.0.0-rc3 (Checkout Pro).
 
-## 0. Decisões do responsável (2026-10-16)
+## 0. Decisões do responsável (2026-10-16 e 2026-10-17)
+
+- **Recorrência (2026-10-17):** só a API de assinaturas do Mercado Pago (preapproval), com reaproveitamento de código do `commerce_recurring` 8.x-1.0-rc3 (workflow `order_recurring`, copiado para `aculta_donation`). Resolve a pergunta 2 da seção 6. Os detalhes estão em `aculta_donation/docs/PORT-COMMERCE-DONATION-FLOW.md`.
 
 - **Cancelar e estornar:** somente o gerente de loja (papel `gerente_loja`, permissão `gerenciar pagamentos de vendas`). A permissão já está concedida ao papel em `config/sync`. A tela de ações entra na fase de painéis.
 - **Doação recorrente:** pela API de assinaturas do Mercado Pago (`preapproval`); a pessoa autoriza e acompanha a assinatura no Mercado Pago. Não usar `commerce_recurring`.
@@ -35,7 +37,7 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_
 | Tópicos de webhook | Confirmados: `subscription_preapproval`, `subscription_preapproval_plan`, `subscription_authorized_payment` |
 | Webhook com verificação de assinatura | **Bloqueado**: exige segredo do aplicativo (credencial nova, Key). Sem autorização |
 | URL de notificação | **Bloqueado**: precisa de entrada em `environment_bound` do `aculta_deployer` |
-| Vínculo assinatura ↔ pedido de doação (F3) | **Bloqueado**: depende do webhook e do desenho do pedido de doação |
+| Vínculo assinatura ↔ pedido de doação (F3) | Feito em `aculta_portal` 0.4.0-dev.121 e `aculta_donation` 0.1.0-dev.16 (código e testes unitários). Ponta a ponta no sandbox: DEFERRED |
 | Painéis e ações de pagamento (F1) | Feito em dev.69: tabela de pedidos, atualizar, cancelar e estornar com permissão por escopo. Pendente: teste visual com pedidos de teste, teste Kernel e tema ACULTA420 (não autorizado) |
 
 ## 0.3 Webhooks de assinatura (dev.68)
@@ -165,9 +167,22 @@ Respondidas em 2026-10-16; ver a seção 0.
 |---|---|---|
 | F0 | Inventário, camada de API, recorrência, ações de pagamento, relatório (consultas) | Nesta linha 0.4.0-dev.65 |
 | F1 | Painéis: vendas, loja e produto (visual, ações com confirmação) | Próxima, a pedido do responsável |
-| F2 | Webhooks de assinatura e cobrança recorrente; tópicos confirmados | Depende da pergunta 2 e da pesquisa |
-| F3 | Integração com doações (fluxo da seção 5.2) | Depende de F2 |
+| F2 | Webhooks de assinatura e cobrança recorrente; tópicos confirmados | Feito em código (dev.121): gravação no pedido, cobrança aprovada uma vez. Ponta a ponta: DEFERRED |
+| F3 | Integração com doações (fluxo da seção 5.2) | Feito em código (dev.121 e aculta_donation 0.1.0-dev.16). Pendências: ver seção 7.2 |
 | F4 | Migração de credenciais para Drupal Key (não autorizada ainda); testes Kernel no banco `aculta_simpletest` | Antes de produção |
+
+## 7.1 Assinaturas: status e ações (2026-10-17)
+
+- Status da assinatura (`preapproval`) usados no código: `pending` (aguardando autorização), `authorized` (ativa), `paused` (pausada), `cancelled` (cancelada). Os valores `paused`, `authorized` e `cancelled` para alteração vêm deste plano (seção 2). **Não confirmados na referência da API nesta sessão**: a página `…/reference/subscriptions/_preapproval_id/put` não pôde ser lida (HTTP 404 na tentativa).
+- Status da cobrança (`authorized_payments`), na documentação oficial consultada: `processed` (cobrado com sucesso, ou parcela que esgotou as tentativas), `waiting for gateway` (em processamento), `recycling` (recusada, em nova tentativa). O exemplo da referência usa `scheduled`. Só `payment.status = approved` vira pagamento no pedido.
+- Ações do doador em "Meu apoio": pausar (de `authorized`), reativar (de `paused`) e cancelar (de `pending`, `authorized` ou `paused`). Cada ação chama `PUT /preapproval/{id}` antes de mudar o pedido. Doações não são estornadas.
+- Painel "Doações recorrentes", em Relatório de doações: resumo por situação e as 100 assinaturas mais recentes.
+
+## 7.2 Pendências de F2 e F3
+
+- Ponta a ponta no sandbox (criar assinatura, autorizar pelo `init_point`, receber webhooks, pausar e cancelar). Depende de confirmação do responsável para escrever na conta de teste.
+- Confirmar no sandbox os valores de `status` que não estão documentados acima.
+- Mensagem de erro no checkout: implementada com mensagem geral e detalhe no log; falta verificar a tela no Runtime.
 
 ## 8. Testes e evidências
 

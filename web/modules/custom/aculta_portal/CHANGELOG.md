@@ -6,6 +6,21 @@
   cache rebuild concluído e controller retornou as duas seções do render array. A requisição HTTP anônima continua
   recebendo 403 pela permissão administrativa; não havia sessão autenticada disponível para smoke visual.
 
+## 0.4.0-dev.122 — ações da doação mensal e painel de recorrentes — 2026-10-17
+
+- "Meu apoio": doação mensal mostra a situação da assinatura e as ações pausar, reativar e cancelar (com confirmação).
+  Só o dono do pedido aplica a ação, e só no status que permite (`MercadoPagoSubscriptionRecorder::ACOES`). Falha do
+  Mercado Pago não altera o pedido.
+- Rota `/meu-apoio/assinatura/{commerce_order}/{acao}` (`SubscriptionActionForm`), no domínio da conta.
+- Relatório de doações (`/painel-administrativo/loja/doacoes`): seção "Doações recorrentes" com o resumo por situação e as
+  100 assinaturas mais recentes (`Donation\RecurringDonationsReport`).
+- Status de assinatura e de cobrança tratados explicitamente; cobrança com status desconhecido é registrada no log.
+- Testes unitários: `MercadoPagoSubscriptionActionsTest` (6). Teste do relatório de doações atualizado.
+- RUNTIME STATUS: APLICADO em código no Runtime de testes (rotas e relatório verificados por script, sem pedidos de assinatura
+  no banco). DEFERRED: ações e pagamentos reais no sandbox do Mercado Pago (escrevem na conta de teste).
+- Gate `validate-role-hierarchy` em FAIL por checagem de papel de `aculta_user` (`ForumModerationHooks`, commit e35aecc0),
+  fora deste trabalho: não foi alterada a linha de base do gate.
+
 ## 0.4.0-dev.121 — gravação das assinaturas de doação — 2026-10-17
 
 - `MercadoPagoSubscriptionRecorder`: grava no pedido `assinatura` o status da assinatura (tópico `subscription_preapproval`) e

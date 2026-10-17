@@ -10,9 +10,10 @@ use Drupal\commerce_price\Price;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Grava no pedido de assinatura o que o Mercado Pago informa (webhooks de assinatura).
+ * Grava no pedido de assinatura o que o Mercado Pago informa, e aplica as ações do doador (pausar, reativar, cancelar).
  *
  * O pedido de assinatura (tipo `assinatura`, workflow order_recurring) agrupa as cobranças. A ligação com o Mercado Pago
  * é o id da assinatura (preapproval), guardado em `data` do pedido, e o `external_reference` da assinatura, que é o id
@@ -25,6 +26,10 @@ use Drupal\Core\Logger\LoggerChannelInterface;
  * - doações não são estornadas: não há tratamento de estorno aqui.
  *
  * Não grava método de pagamento (o Mercado Pago cobra o cartão da autorização) e não registra e-mail nem dados do pagador.
+ *
+ * Status da assinatura (preapproval) no Mercado Pago: `pending`, `authorized`, `paused`, `cancelled`. Os status de
+ * alteração (`paused`, `authorized`, `cancelled`) vêm do plano de integração (docs/portal/MERCADO-PAGO-PLANO.md); a
+ * referência da API não pôde ser lida na sessão, então a confirmação com o sandbox fica pendente.
  */
 final class MercadoPagoSubscriptionRecorder {
 
@@ -37,12 +42,85 @@ final class MercadoPagoSubscriptionRecorder {
   /** Tipo de pedido de assinatura de doação. */
   public const TIPO_PEDIDO = 'assinatura';
 
+  /** Status de assinatura (preapproval) conhecidos. */
+  public const STATUS_PENDENTE = 'pending';
+  public const STATUS_ATIVA = 'authorized';
+  public const STATUS_PAUSADA = 'paused';
+  public const STATUS_CANCELADA = 'cancelled';
+
+  /** Ordem de exibição dos status no painel. */
+  public const STATUS_ORDEM = [self::STATUS_PENDENTE, self::STATUS_ATIVA, self::STATUS_PAUSADA, self::STATUS_CANCELADA];
+
+  /**
+   * Ações do doador: status de origem permitidos e status de destino no Mercado Pago.
+   */
+  public const ACOES = [
+    'pausar' => ['de' => [self::STATUS_ATIVA], 'para' => self::STATUS_PAUSADA],
+    'reativar' => ['de' => [self::STATUS_PAUSADA], 'para' => self::STATUS_ATIVA],
+    'cancelar' => ['de' => [self::STATUS_PENDENTE, self::STATUS_ATIVA, self::STATUS_PAUSADA], 'para' => self::STATUS_CANCELADA],
+  ];
+
+  /** Status de cobrança (authorized_payments) conhecidos; os demais são registrados como desconhecidos. */
+  public const STATUS_COBRANCA = ['processed', 'recycling', 'waiting for gateway', 'scheduled'];
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MercadoPagoRecurrenceService $recorrencia,
     private readonly LoggerChannelInterface $logger,
     private readonly TimeInterface $time,
   ) {}
+
+  /**
+   * Rótulo da situação da assinatura para o doador e para o painel.
+   */
+  public static function rotulo(string $status): TranslatableMarkup {
+    return match ($status) {
+      self::STATUS_PENDENTE => new TranslatableMarkup('Aguardando autorização'),
+      self::STATUS_ATIVA => new TranslatableMarkup('Ativa'),
+      self::STATUS_PAUSADA => new TranslatableMarkup('Pausada'),
+      self::STATUS_CANCELADA => new TranslatableMarkup('Cancelada'),
+      default => new TranslatableMarkup('Situação não informada'),
+    };
+  }
+
+  /**
+   * Status atual da assinatura guardado no pedido (vazio se não há assinatura).
+   */
+  public function statusDoPedido(OrderInterface $pedido): string {
+    return (string) $pedido->getData(self::CHAVE_STATUS, '');
+  }
+
+  /**
+   * Indica se a ação pode ser aplicada agora: pedido de assinatura com id no Mercado Pago e status de origem permitido.
+   */
+  public function podeAlterar(OrderInterface $pedido, string $acao): bool {
+    if (!isset(self::ACOES[$acao]) || $pedido->bundle() !== self::TIPO_PEDIDO || !$pedido->getData(self::CHAVE_ASSINATURA)) {
+      return FALSE;
+    }
+    return in_array($this->statusDoPedido($pedido), self::ACOES[$acao]['de'], TRUE);
+  }
+
+  /**
+   * Aplica a ação no Mercado Pago e atualiza o pedido.
+   *
+   * @throws \InvalidArgumentException
+   *   Ação ou situação não permitida.
+   * @throws \Drupal\aculta_portal\MercadoPago\MercadoPagoApiException
+   *   Falha do Mercado Pago (nada é gravado no pedido).
+   */
+  public function alterar(PaymentGatewayInterface $gateway, OrderInterface $pedido, string $acao): void {
+    if (!$this->podeAlterar($pedido, $acao)) {
+      throw new \InvalidArgumentException('Ação não permitida para esta assinatura.');
+    }
+    $destino = self::ACOES[$acao]['para'];
+    $resposta = $this->recorrencia->alterarStatusAssinatura($gateway, (string) $pedido->getData(self::CHAVE_ASSINATURA), $destino);
+    $pedido->setData(self::CHAVE_STATUS, (string) ($resposta->status ?? $destino));
+    if ($destino === self::STATUS_CANCELADA) {
+      $this->transicionar($pedido, 'cancel');
+    }
+    $pedido->save();
+    $this->logger->notice('Assinatura de doação do pedido @pedido: ação @acao.', ['@pedido' => $pedido->id(), '@acao' => $acao]);
+  }
 
   /**
    * Atualiza o pedido com o status da assinatura (tópico subscription_preapproval).
@@ -57,8 +135,11 @@ final class MercadoPagoSubscriptionRecorder {
       return;
     }
     $status = (string) ($assinatura->status ?? '');
+    if (!in_array($status, [self::STATUS_PENDENTE, self::STATUS_ATIVA, self::STATUS_PAUSADA, self::STATUS_CANCELADA], TRUE)) {
+      $this->logger->warning('Assinatura @id com status desconhecido: @status.', ['@id' => (string) ($assinatura->id ?? ''), '@status' => $status]);
+    }
     $pedido->setData(self::CHAVE_STATUS, $status);
-    if ($status === 'cancelled') {
+    if ($status === self::STATUS_CANCELADA) {
       $this->transicionar($pedido, 'cancel');
     }
     $pedido->save();
@@ -71,12 +152,16 @@ final class MercadoPagoSubscriptionRecorder {
    *   Resposta de GET /authorized_payments/{id}.
    */
   public function cobranca(PaymentGatewayInterface $gateway, array $cobranca): void {
+    $status = (string) ($cobranca['status'] ?? '');
+    if (!in_array($status, self::STATUS_COBRANCA, TRUE)) {
+      $this->logger->warning('Cobrança @id com status desconhecido: @status.', ['@id' => (string) ($cobranca['id'] ?? ''), '@status' => $status]);
+    }
     $pagamento = is_array($cobranca['payment'] ?? NULL) ? $cobranca['payment'] : [];
     $remoto = (string) ($pagamento['id'] ?? '');
     if (($pagamento['status'] ?? '') !== 'approved' || $remoto === '') {
       $this->logger->notice('Cobrança @id sem pagamento aprovado (status @status); nada gravado.', [
         '@id' => (string) ($cobranca['id'] ?? ''),
-        '@status' => (string) ($cobranca['status'] ?? ''),
+        '@status' => $status,
       ]);
       return;
     }

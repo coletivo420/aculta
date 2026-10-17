@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Controller;
 
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
+use Drupal\aculta_portal\Donation\RecurringDonationsReport;
 use Drupal\aculta_portal\Sales\SalesReportFilters;
 use Drupal\aculta_portal\Sales\SalesOrdersTableBuilder;
 use Drupal\aculta_portal\Sales\SalesReportQuery;
@@ -38,6 +39,7 @@ final class DonationReportController implements ContainerInjectionInterface {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly CurrencyFormatterInterface $currencyFormatter,
     private readonly SalesOrdersTableBuilder $pedidosTabela,
+    private readonly RecurringDonationsReport $recorrentes,
     TranslationInterface $stringTranslation,
   ) {
     $this->stringTranslation = $stringTranslation;
@@ -49,6 +51,7 @@ final class DonationReportController implements ContainerInjectionInterface {
       $container->get('config.factory'),
       $container->get('commerce_price.currency_formatter'),
       $container->get('aculta_portal.sales_orders_table_builder'),
+      $container->get('aculta_portal.recurring_donations_report'),
       $container->get('string_translation'),
     );
   }
@@ -111,6 +114,17 @@ final class DonationReportController implements ContainerInjectionInterface {
           '#value' => $this->t('Doações e pagamentos'),
         ],
         'conteudo' => $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_DOACAO, $this->paginaAtual($request), 'aculta_portal.relatorio_doacoes', $this->filtrosDaUrl($request)),
+      ],
+      'recorrentes' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'sales-section'],
+        'titulo' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#attributes' => ['data-portal-ui' => 'sales-heading'],
+          '#value' => $this->t('Doações recorrentes'),
+        ],
+        'conteudo' => $this->recorrentes->construir(),
       ],
     ];
   }
