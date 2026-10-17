@@ -1,3 +1,12 @@
+## 0.4.0-dev.96 — herança de papéis no aculta_user; contrib removido — 2026-10-17
+
+Classificação: PATCH (troca de dependência de herança e ajuste de barreira).
+
+- Herança de papéis agora é do aculta_user (ver CHANGELOG do módulo). `RoleHierarchyForm` deixou de gravar `role_inheritance.settings`.
+- `RoleHierarchy::herdados` (função pura) e testes.
+- Barreira `validate-role-hierarchy`: linha de base de `hasRole` em 15, com justificativa (chamadas da própria herança).
+- RUNTIME STATUS: APLICADO (ver aculta_user 0.4.0-dev.22).
+
 ## 0.4.0-dev.95 — tela de papéis do ACULTA como única tela de herança — 2026-10-17
 
 Classificação: PATCH (ocultação de tela duplicada do contrib e coluna de herança efetiva).

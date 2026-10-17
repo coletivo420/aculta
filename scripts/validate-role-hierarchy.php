@@ -41,7 +41,9 @@ $decidida = [
 ];
 
 /** Linha de base de checagens por nome de papel em código customizado (dívida: não pode subir). */
-const LINHA_DE_BASE_HASROLE = 13;
+// 15: as duas chamadas novas (aculta_user, RoleInheritanceHooks) são da própria herança (adicionar e retirar o papel
+// herdado da conta), não decisões de acesso. Acesso novo continua por permissão.
+const LINHA_DE_BASE_HASROLE = 15;
 const LINHA_DE_BASE_IN_ARRAY_PAPEL = 4;
 
 $mapa = Yaml::parseFile($root . '/config/sync/role_inheritance.settings.yml')['role_map'] ?? [];

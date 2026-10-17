@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cdc2beff2bc266512cb01c0088ee36f4",
+    "content-hash": "6dd0c05f43d6c3d733a6eaead96f1e04",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5820,50 +5820,6 @@
             "homepage": "https://www.drupal.org/project/role_hierarchy",
             "support": {
                 "source": "https://git.drupalcode.org/project/role_hierarchy"
-            }
-        },
-        {
-            "name": "drupal/role_inheritance",
-            "version": "2.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/role_inheritance.git",
-                "reference": "2.1.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/role_inheritance-2.1.1.zip",
-                "reference": "2.1.1",
-                "shasum": "6fea560227176d839a6479193f6f42e84a792dce"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11 || ^12"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.1.1",
-                    "datestamp": "1760633975",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "richgerdes",
-                    "homepage": "https://www.drupal.org/user/3437973"
-                }
-            ],
-            "description": "Allows roles to be structured in a hierarchy and inherit privileges of child roles",
-            "homepage": "https://www.drupal.org/project/role_inheritance",
-            "support": {
-                "source": "https://git.drupalcode.org/project/role_inheritance"
             }
         },
         {

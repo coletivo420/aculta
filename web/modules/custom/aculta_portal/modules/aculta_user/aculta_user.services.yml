@@ -61,3 +61,11 @@ services:
     arguments: ['@router.route_provider']
     tags:
       - { name: event_subscriber }
+  aculta_user.heranca_papeis:
+    class: Drupal\aculta_user\Role\HerancaDePapeis
+    arguments: ['@config.factory', '@entity_type.manager', '@database']
+  aculta_user.role_inheritance_current_user:
+    class: Drupal\aculta_user\EventSubscriber\RoleInheritanceCurrentUserSubscriber
+    arguments: ['@aculta_user.heranca_papeis', '@current_user']
+    tags:
+      - { name: event_subscriber }

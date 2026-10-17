@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.22 — herança de papéis própria (substitui role_inheritance) — 2026-10-17
+
+- Herança de papéis portada para o aculta_user: `HerancaDePapeis` (mapa derivado de `aculta_portal.role_hierarchy`), `RoleInheritanceHooks` (user_load, user_presave e formulário de usuário) e `RoleInheritanceCurrentUserSubscriber` (usuário logado, prioridade 299).
+- Papéis herdados são somados à conta em memória e retirados ao salvar; nunca são gravados como papel direto.
+- Módulo contrib `role_inheritance` desinstalado no Runtime e removido do `composer.json` e do `composer.lock`.
+- RUNTIME STATUS: APLICADO e verificado: papéis efetivos de 4 contas de teste idênticos ao baseline antes da desinstalação; páginas administrativas e de loja respondem conforme o papel.
+
 ## Não lançado — visibilidade dos fóruns por permissão (Role Inheritance / Role Hierarchy)
 
 Classificação MINOR. Decisões do responsável (2026-10-17): dependências `drupal/role_inheritance` e `drupal/role_hierarchy`

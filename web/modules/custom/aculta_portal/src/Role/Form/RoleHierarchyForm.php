@@ -25,8 +25,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class RoleHierarchyForm extends ConfigFormBase {
 
-  private const HIERARQUIA = 'role_inheritance.settings';
-
   private const ESTADO = 'aculta_portal.role_hierarchy';
 
   /** Papéis que não entram na hierarquia editável. */
@@ -53,7 +51,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
   }
 
   protected function getEditableConfigNames(): array {
-    return [self::HIERARQUIA, self::ESTADO];
+    return [self::ESTADO];
   }
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
@@ -143,9 +141,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
     $papeis = $this->papeis();
     $cadeia = $this->ordemDoEnvio($form_state);
     $laterais = $this->laterais($papeis, $cadeia);
-    $mapa = RoleHierarchy::derivarMapa($cadeia, $laterais, array_keys($papeis));
     $this->config(self::ESTADO)->set('cadeia', $cadeia)->set('laterais', $laterais)->save();
-    $this->config(self::HIERARQUIA)->set('role_map', $mapa)->save();
     $this->messenger()->addStatus($this->t('Hierarquia de papéis salva.'));
     parent::submitForm($form, $form_state);
   }

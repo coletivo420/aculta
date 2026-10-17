@@ -71,4 +71,9 @@ final class RoleHierarchyTest extends UnitTestCase {
     $this->assertSame(['authenticated'], $mapa['gerente_loja']);
   }
 
+  public function testHerdadosNaoIncluemOsPapeisDados(): void {
+    $this->assertSame(['associado', 'estudante', 'email_confirmed'], RoleHierarchy::herdados(['lms_teacher'], self::CADEIA));
+    $this->assertSame([], RoleHierarchy::herdados(['authenticated'], self::CADEIA));
+  }
+
 }

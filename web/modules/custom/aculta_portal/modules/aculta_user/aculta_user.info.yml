@@ -2,7 +2,7 @@ name: ACULTA User (perfil público)
 type: module
 description: 'Perfil público por apelido (/u/<apelido>) e visibilidade por item. Submódulo do Portal ACULTA.'
 package: Associação Cultural Antiproibicionista
-version: '0.4.0-dev.21'
+version: '0.4.0-dev.22'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_image

@@ -89,4 +89,25 @@ final class RoleHierarchy {
     return $mapa;
   }
 
+
+  /**
+   * Papéis herdados pelos papéis informados (sem os próprios), a partir do mapa de herança.
+   *
+   * @param string[] $papeis
+   * @param array<string, string[]> $mapa
+   *
+   * @return string[]
+   */
+  public static function herdados(array $papeis, array $mapa): array {
+    $herdados = [];
+    foreach ($papeis as $papel) {
+      foreach (self::efetivos($mapa, $papel) as $herdado) {
+        if (!in_array($herdado, $papeis, TRUE) && !in_array($herdado, $herdados, TRUE)) {
+          $herdados[] = $herdado;
+        }
+      }
+    }
+    return $herdados;
+  }
+
 }
