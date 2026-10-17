@@ -1,5 +1,16 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.19 — cache versionado e matriz Chromium PV7 — 2026-10-17
+
+Classificação: PATCH (estabilidade de versão da API/worker em cache e evidências de compatibilidade).
+
+- As URLs da API e do worker PDF.js levam `?v=6.4.299`, igual à versão fixada em `composer.lock`; evita misturar módulos de releases diferentes em cache público de um ano.
+- Chromium 155.0.8059.39 no Runtime renderizou PDFs de 1 MiB e 22 MiB (14 páginas), sem erros JS severos. PDF inválido e 503 simulado exibiram fallback. Com cache desabilitado, rede limitada a 700 ms e 64 KiB/s renderizou o PDF pequeno em 20,9 s.
+- CSP simulada por proxy de loopback com `worker-src 'self'` renderizou o viewer. A política permitiu inline scripts/styles do Drupal e bloqueou fontes externas; não substitui auditoria de uma CSP estrita nos servidores.
+- Cache Runtime: HTML privado sem cache, PDF/JS público max-age de um ano; Range retornou 206. Produção retorna `text/plain` para os três módulos `.mjs`; corrigir header depende da regra `.htaccess` chegar via deploy e de validação pós-deploy.
+- A permissão `content_editor:create document media` está ativa; upload/criação por essa identidade na UI segue pendente por falta de sessão de teste autorizada.
+- RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
+
 ## 0.1.0-dev.18 — MIME do PDF.js e evidências da PV7 — 2026-10-17
 
 Classificação: PATCH (compatibilidade de entrega dos módulos PDF.js).

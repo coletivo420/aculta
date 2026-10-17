@@ -3,6 +3,14 @@
 - Tipos de perfil (Core) viram a aba "Campos de Perfil" da seção Pessoas (`aculta_portal.links.task.yml`, base `entity.user.collection`).
 - Título da página de tipos de perfil passa a ser "Campos de Perfil".
 - RUNTIME STATUS: APLICADO e verificado por HTTP (aba presente em Pessoas; título na página de tipos).
+## 0.4.0-dev.102 — cache versionado e matriz Chromium PV7 — 2026-10-17
+
+- API e worker PDF.js recebem `?v=6.4.299`, sincronizado com Composer, para não reutilizar uma combinação antiga com cache público de um ano.
+- Chromium 155.0.8059.39 no Runtime renderizou PDFs de 1 MiB e 22 MiB (14 páginas), sem erros JS severos; PDF inválido exibiu fallback. Com cache desabilitado, throttling de 700 ms/64 KiB/s concluiu em 20,9 s. Proxy local simulou 503 e o fallback apareceu. CSP local com `worker-src 'self'` renderizou; fontes externas foram bloqueadas pela política.
+- Cache/Range no Runtime: documentos HTML privados sem cache; PDF e assets estáticos com `max-age=31536000`; Range PDF respondeu 206/1024 bytes. `content_editor` tem permissão `create document media`; autoria/upload via UI não testado por falta de sessão de teste do papel.
+- Produção pública serve `pdf-viewer.mjs`, `pdf.mjs` e `pdf.worker.mjs` como `text/plain`, com cache de um ano. A regra `.htaccess` foi aplicada apenas ao Runtime; confirmar MIME e viewer na produção após deploy normal.
+- RUNTIME STATUS: APLICADO. CSP estrita, acessibilidade ampliada e autoria/UI seguem DEFERRED.
+
 ## 0.4.0-dev.101 — MIME de módulos PDF.js e homologação PV7 — 2026-10-17
 
 - `web/.htaccess` declara `.mjs` como `application/javascript`, necessário para o PDF.js e seu worker módulo; Apache do Runtime retorna esse MIME nos dois assets. A produção ainda retorna `text/plain` no worker antes do deploy desta mudança.
