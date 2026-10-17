@@ -1,3 +1,13 @@
+## 0.4.0-dev.85 — Papéis e perfis em uma tela — 2026-10-17
+
+Classificação: MINOR (nova tela unificada e vínculo entre tipos de perfil e papéis).
+
+- A tela de hierarquia passa a se chamar **Papéis e perfis** (`/painel-administrativo/configuracoes/aculta/papeis`) e reúne: a hierarquia de papéis, o vínculo de cada tipo de perfil aos papéis (`aculta_portal.profile_roles`) e atalhos para as telas do núcleo (papéis, permissões, tipos de perfil e herança).
+- Vínculo entre perfis e papéis: registro para a administração. Não move nem altera dados de perfis existentes; o tipo `customer` (checkout) fica fora do vínculo de uso.
+- Correção: `anonymous` volta a aparecer como papel pai de `administrator` na tela; antes, salvar a tela o removia silenciosamente.
+- A tela do núcleo de tipos de perfil continua acessível (não foi redirecionada); redirecionamento ainda não decidido.
+- RUNTIME STATUS: APLICADO e verificado por HTTP (tela como administrador, salvamento de vínculo de teste com estado restaurado). Não verificado no navegador.
+
 ## 0.4.0-dev.84 — hierarquia de papéis corrigida e editável no painel — 2026-10-17
 
 Classificação: MINOR (nova tela administrativa e mudança da cadeia de herança, por decisão do responsável).

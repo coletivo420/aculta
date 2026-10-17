@@ -79,3 +79,16 @@ aculta_portal.support:
     custom_amount:
       type: boolean
       label: 'Permite valor personalizado'
+
+aculta_portal.profile_roles:
+  type: config_object
+  label: 'Vínculo entre tipos de perfil e papéis'
+  mapping:
+    vinculos:
+      type: sequence
+      label: 'Papéis que usam cada tipo de perfil'
+      sequence:
+        type: sequence
+        label: 'Papéis'
+        sequence:
+          type: string

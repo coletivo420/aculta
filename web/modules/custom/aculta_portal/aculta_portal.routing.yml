@@ -356,6 +356,6 @@ aculta_portal.role_hierarchy_settings:
   path: /painel-administrativo/configuracoes/aculta/papeis
   defaults:
     _form: '\Drupal\aculta_portal\Role\Form\RoleHierarchyForm'
-    _title: Hierarquia de papéis
+    _title: Papéis e perfis
   requirements:
     _permission: administer aculta role hierarchy
