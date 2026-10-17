@@ -29,7 +29,7 @@ de rotas centrais de carrinho/checkout/pagamento que pertencem a MAIN:
 - `commerce_checkout.*`;
 - `commerce_payment.checkout.*`;
 - `commerce_payment.notify`;
-- `commerce_donation_flow.*`.
+- `aculta_donation.*`.
 
 A política é reutilizada por:
 
@@ -147,7 +147,7 @@ responsável: a página de apoio fica a cargo do subdomínio da plataforma de do
 principal não serve a rota de apoio (ver `docs/architecture/multidomain.md`).
 
 Quando Commerce Donation Flow inicia seu fluxo dedicado, suas rotas
-`commerce_donation_flow.*` pertencem a MAIN. Isso evita manter um checkout
+`aculta_donation.*` pertencem a MAIN. Isso evita manter um checkout
 financeiro paralelo em SUPPORT.
 
 ## Segurança

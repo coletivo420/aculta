@@ -1,3 +1,15 @@
+## 0.4.0-dev.109 — port do commerce_donation_flow para o aculta_donation — 2026-10-17
+
+- O fluxo de doação passa a ser do submódulo `aculta_donation` (port). Rotas `aculta_donation.*`; referências do Portal
+  (`DonationSummaryController`, `SupportForm`, `DonationFriendlyRouteSubscriber`, `DomainRouteSubscriber`,
+  `DomainRoutePolicy`) atualizadas.
+- Entrada de requisito do contrib removida de `PortalRequirementsController`. O gate de segurança de comércio passa a
+  conferir que o pacote contrib não está instalado.
+- Gates atualizados: `validate-aculta-portal-drupal11`, `validate-payment-domain-policy`, `validate-portal-commerce-security`.
+- Documentação de política (`ANTI-REGRESSION`, `CROSS-DOMAIN-REQUEST-POLICY`, `PAYMENT-DOMAIN-POLICY`) e mapa de módulo x tema.
+- RUNTIME STATUS: APLICADO no Runtime de testes (corte com backup; ver CHANGELOG do `aculta_donation`). Gates locais: PASS.
+  Pendente: recorrência e testes de Kernel do fluxo.
+
 ## 0.4.0-dev.108 — remove aba vazia de Configurações > Pessoas — 2026-10-17
 
 - Remove a aba "Pessoas": a página só mostrava uma frase e não tinha ferramenta.

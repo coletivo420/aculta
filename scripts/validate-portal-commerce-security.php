@@ -495,8 +495,8 @@ $gateway_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment_ga
 $stored_gateway = $gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['mercado_pago'];
 $assert(($stored_gateway->getPluginConfiguration()['access_token_test'] ?? '') === '', 'Gateway runtime override is not persisted in active config.');
 $assert(!$gateway->access('update', $administrator, TRUE)->isAllowed(), 'The contrib gateway edit form is locked to prevent credential persistence.');
-$assert(\Drupal::moduleHandler()->moduleExists('commerce_donation_flow'), 'Stable Commerce Donation Flow is enabled.');
-$assert(class_exists(\Composer\InstalledVersions::class) && ltrim(\Composer\InstalledVersions::getPrettyVersion('drupal/commerce_donation_flow') ?: '', 'v') === '1.2.0', 'Commerce Donation Flow 1.2.0 is installed.');
+$assert(\Drupal::moduleHandler()->moduleExists('aculta_donation'), 'ACULTA Donation (port do fluxo de doação) is enabled.');
+$assert(!class_exists(\Composer\InstalledVersions::class) || !\Composer\InstalledVersions::isInstalled('drupal/commerce_donation_flow'), 'The contrib donation flow package is no longer installed (replaced by aculta_donation).');
 $gift_storage = \Drupal\field\Entity\FieldStorageConfig::loadByName('commerce_order_item', 'field_gift_type');
 $assert($gift_storage && array_keys($gift_storage->getSetting('allowed_values')) === ['single'], 'Only one-time support is allowed by the Donation Flow gift type.');
 $donation_form_display = \Drupal::config('core.entity_form_display.commerce_order_item.donation.donation');

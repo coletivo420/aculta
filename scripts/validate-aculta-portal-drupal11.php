@@ -670,7 +670,7 @@ foreach (["get('config.factory')", "get('entity_type.manager')", "get('plugin.ma
 }
 $check(
   str_contains($supportFormSource, "getStorage('commerce_payment_gateway')->load('mercado_pago')")
-    && str_contains($supportFormSource, "\$this->purposes->routeUrl('main', 'commerce_donation_flow.donation.quick'"),
+    && str_contains($supportFormSource, "\$this->purposes->routeUrl('main', 'aculta_donation.donation.quick'"),
   'P5.1 SupportForm must use injected storage and route the suggested amounts to the main domain (0.4.0-dev.73).',
 );
 $check(

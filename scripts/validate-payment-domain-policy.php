@@ -65,10 +65,10 @@ $assert(
 );
 
 $modules = \Drupal::moduleHandler();
-if ($modules->moduleExists('commerce_donation_flow')) {
+if ($modules->moduleExists('aculta_donation')) {
   $donationRoutes = array_filter(
     array_keys($centralRoutes),
-    static fn(string $name): bool => str_starts_with($name, 'commerce_donation_flow.'),
+    static fn(string $name): bool => str_starts_with($name, 'aculta_donation.'),
   );
   $assert($donationRoutes !== [], 'Commerce Donation Flow exposes central routes.');
 }
@@ -92,7 +92,7 @@ foreach ([
   'commerce_checkout.',
   'commerce_payment.checkout.',
   'commerce_payment.notify',
-  'commerce_donation_flow.',
+  'aculta_donation.',
 ] as $family) {
   $assert(
     str_contains($routePolicySource, $family),
@@ -128,7 +128,7 @@ foreach ([
   'commerce_checkout.',
   'commerce_payment.checkout.',
   'commerce_payment.notify',
-  'commerce_donation_flow.',
+  'aculta_donation.',
 ] as $family) {
   $assert(
     !str_contains($hooksSource, $family),

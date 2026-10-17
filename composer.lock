@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6dd0c05f43d6c3d733a6eaead96f1e04",
+    "content-hash": "e1c15638f4b81665e63b1cdac6892a7c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1976,57 +1976,6 @@
             "homepage": "https://www.drupal.org/project/commerce",
             "support": {
                 "source": "https://git.drupalcode.org/project/commerce"
-            }
-        },
-        {
-            "name": "drupal/commerce_donation_flow",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/commerce_donation_flow.git",
-                "reference": "1.2.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/commerce_donation_flow-1.2.0.zip",
-                "reference": "1.2.0",
-                "shasum": "191691de745ec744a0e114d23f501ab33101069b"
-            },
-            "require": {
-                "drupal/commerce": "^2.0 || ^3.0.2",
-                "drupal/commerce_checkout": "*",
-                "drupal/commerce_order": "*",
-                "drupal/commerce_payment": "*",
-                "drupal/commerce_price": "*",
-                "drupal/core": "^10.3 || ^11",
-                "php": ">=8.1"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.2.0",
-                    "datestamp": "1747657358",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "Shawn Duncan",
-                    "homepage": "https://www.drupal.org/user/628748",
-                    "role": "Project Lead"
-                }
-            ],
-            "description": "Provides donation specific configuration and checkout.",
-            "homepage": "https://www.drupal.org/project/commerce_donation_flow",
-            "support": {
-                "source": "https://git.drupalcode.org/project/commerce_donation_flow"
             }
         },
         {

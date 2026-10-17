@@ -28,7 +28,7 @@ final class DomainRoutePolicyTest extends UnitTestCase {
       'checkout' => ['commerce_checkout.form'],
       'payment checkout' => ['commerce_payment.checkout.return'],
       'payment notify' => ['commerce_payment.notify'],
-      'donation flow' => ['commerce_donation_flow.form'],
+      'donation flow' => ['aculta_donation.form'],
     ];
   }
 

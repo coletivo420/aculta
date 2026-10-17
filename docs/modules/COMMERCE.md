@@ -14,7 +14,7 @@ Drupal Commerce é a fonte de verdade para pedidos, preços, checkout, pagamento
 | commerce_price | valores/moeda |
 | commerce_store | lojas |
 | commerce_number_pattern | numeração |
-| commerce_donation_flow | apoio/doação |
+| aculta_donation (port de commerce_donation_flow) | apoio/doação |
 | commerce_mercado_pago | gateway Mercado Pago |
 | state_machine | estados usados por Commerce |
 | inline_entity_form | edição de entidades associadas |

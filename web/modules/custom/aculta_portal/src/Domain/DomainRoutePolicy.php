@@ -22,7 +22,7 @@ final class DomainRoutePolicy {
 
   /** Returns TRUE for Commerce Donation Flow routes. */
   public static function isDonationFlowRouteName(string $routeName): bool {
-    return str_starts_with($routeName, 'commerce_donation_flow.');
+    return str_starts_with($routeName, 'aculta_donation.');
   }
 
   /** Returns TRUE for private transaction routes that must not be indexed. */

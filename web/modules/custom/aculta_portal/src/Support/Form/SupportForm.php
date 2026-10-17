@@ -57,7 +57,7 @@ final class SupportForm extends FormBase {
       && !empty($gateway_configuration['public_key_test'])
       && !empty($gateway_configuration['access_token_test']);
     if ($gateway_ready) {
-      // O fluxo de doação (criação do pedido e checkout) é do módulo commerce_donation_flow, no domínio principal.
+      // O fluxo de doação (criação do pedido e checkout) é do submódulo aculta_donation, no domínio principal.
       // Aqui só se apresentam os valores sugeridos e a opção de outro valor.
       // Campanha vigente define os valores e se há valor personalizado; sem ela, valem os padrões.
       // Sem campanha vigente, valem os valores padrão configurados em Formas de apoio (aculta_portal.support).
@@ -67,12 +67,12 @@ final class SupportForm extends FormBase {
       $valorPersonalizado = $campanha['customAmount'] ?? ($padrao->get('custom_amount') ?? TRUE);
       $links = [];
       foreach ($valores as $valor) {
-        $url = $this->purposes->routeUrl('main', 'commerce_donation_flow.donation.quick', ['amount' => $valor]);
+        $url = $this->purposes->routeUrl('main', 'aculta_donation.donation.quick', ['amount' => $valor]);
         if ($url !== NULL) {
           $links[] = PortalLinkElement::build($this->t('R$ @valor', ['@valor' => number_format((float) $valor, 0, ',', '.')]), $url, ['data-portal-ui' => 'aculta-button-primary']);
         }
       }
-      $outro = $valorPersonalizado ? $this->purposes->routeUrl('main', 'commerce_donation_flow.donation.default') : NULL;
+      $outro = $valorPersonalizado ? $this->purposes->routeUrl('main', 'aculta_donation.donation.default') : NULL;
       if ($outro !== NULL) {
         $links[] = PortalLinkElement::build($this->t('Outro valor'), $outro, ['data-portal-ui' => 'aculta-button-outline']);
       }

@@ -9,7 +9,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\commerce_cart\CartSessionInterface;
-use Drupal\commerce_donation_flow\Controller\DonationController;
+use Drupal\aculta_donation\Controller\DonationController;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Doação rápida (/apoiar/{valor}/agora) com etapa de resumo antes do pagamento.
  *
- * Reaproveita a criação de pedido do módulo commerce_donation_flow e só muda o passo de destino: `review` (resumo)
+ * Reaproveita a criação de pedido do submódulo aculta_donation (port de commerce_donation_flow) e só muda o passo de destino: `review` (resumo)
  * em vez de `payment`. O resumo lista a doação e os demais panes ativos, com link para editar, e o botão leva ao pagamento.
  */
 final class DonationSummaryController implements ContainerInjectionInterface {
@@ -48,7 +48,7 @@ final class DonationSummaryController implements ContainerInjectionInterface {
     $pedidoId = end($ids);
     $pedido = $pedidoId ? $this->entityTypeManager->getStorage('commerce_order')->load($pedidoId) : NULL;
     if ($pedido === NULL) {
-      return new RedirectResponse(Url::fromRoute('commerce_donation_flow.donation.default')->toString());
+      return new RedirectResponse(Url::fromRoute('aculta_donation.donation.default')->toString());
     }
     // O atalho grava o valor em field_donation_amount, mas o preço unitário só é definido ao enviar o passo de
     // doação (DonationItemPaneBase::buildDonationItem), que este atalho pula. Sem isto, o pedido sai com total zero.
@@ -61,7 +61,7 @@ final class DonationSummaryController implements ContainerInjectionInterface {
     $pedido->set('checkout_step', 'review');
     $pedido->save();
 
-    $url = Url::fromRoute('commerce_donation_flow.donation_controller_formPage', [
+    $url = Url::fromRoute('aculta_donation.donation_controller_formPage', [
       'commerce_order' => $pedido->id(),
       'step' => 'review',
     ]);

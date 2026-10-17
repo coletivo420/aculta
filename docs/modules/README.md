@@ -46,7 +46,7 @@ Esta pasta é a referência canônica dos módulos Core/contrib usados pelo proj
 | profile | dados de perfil | Profile |
 | address | estrutura de endereço | Address |
 | commerce | base e-commerce | Drupal Commerce |
-| commerce_donation_flow | fluxo de apoio/doação | Commerce |
+| aculta_donation (port de commerce_donation_flow) | fluxo de apoio/doação | Portal (submódulo) |
 | commerce_mercado_pago | gateway Mercado Pago | Commerce Payment |
 | group | memberships/grupos | Group |
 | lms | cursos e progresso | Drupal LMS |
