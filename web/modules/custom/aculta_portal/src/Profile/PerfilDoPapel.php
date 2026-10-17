@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Profile;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\profile\ProfileStorageInterface;
 
 /**
  * Um tipo de perfil por papel: o perfil de uma conta é do tipo do papel mais alto que ela tem.
@@ -37,8 +37,7 @@ final class PerfilDoPapel {
    * Perfil publicado da conta, procurando pelos tipos em ordem de prioridade. Preserva o perfil do papel anterior
    * enquanto a conta não tem o novo tipo.
    */
-  public static function principal(EntityTypeManagerInterface $entityTypeManager, AccountInterface $conta): ?ProfileInterface {
-    $storage = $entityTypeManager->getStorage('profile');
+  public static function principal(ProfileStorageInterface $storage, AccountInterface $conta): ?ProfileInterface {
     foreach (self::TIPOS as $tipo) {
       $perfil = $storage->loadByUser($conta, $tipo);
       if ($perfil instanceof ProfileInterface) {
@@ -51,8 +50,8 @@ final class PerfilDoPapel {
   /**
    * Perfil principal da conta, ou um perfil novo (ainda não salvo) do tipo do papel atual.
    */
-  public static function obter(EntityTypeManagerInterface $entityTypeManager, AccountInterface $conta): ProfileInterface {
-    return self::principal($entityTypeManager, $conta) ?? $entityTypeManager->getStorage('profile')->create([
+  public static function obter(ProfileStorageInterface $storage, AccountInterface $conta): ProfileInterface {
+    return self::principal($storage, $conta) ?? $storage->create([
       'type' => self::tipoDaConta($conta),
       'uid' => (int) $conta->id(),
     ]);

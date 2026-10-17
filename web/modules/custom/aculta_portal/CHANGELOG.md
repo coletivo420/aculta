@@ -1,3 +1,16 @@
+## 0.4.0-dev.88 — participante removido; chamadores por hierarquia — 2026-10-17
+
+Classificação: MINOR (remoção do tipo participante e troca de todos os seus chamadores).
+
+- Todos os chamadores de `participante` passam a usar `PerfilDoPapel` (principal por hierarquia; criação pelo tipo do papel). Consultas por tipo usam `PerfilDoPapel::TIPOS`. Documentos de identidade (`aculta_id_cpf`, `aculta_associado_id`) usam o tipo `associado`.
+- Criação de conta cria o perfil do papel da própria conta.
+- Tipo `participante`, seus campos, displays e perfis removidos do Runtime; arquivos de configuração removidos do repositório (`config/sync` e `config/install` dos módulos).
+- Permissões de perfil por função: `authenticated` perde as de `participante` e `customer`; cada papel recebe criar, editar e ver o próprio perfil.
+- Displays de dados básicos (nome, apelido, WhatsApp, cidade, UF) em `associado`, `email_confirmed`, `lms_teacher`, `gerente_loja` e `administrator`. `authenticated` mantém só o endereço.
+- Testes: unitários do Portal (187), `aculta_user` (37), `aculta_id_cpf` e `aculta_associado_id` (47 cada) passam.
+- Pendente: `.install` com hooks históricos que citam `participante` (revisar fresh install); textos de comentário; contas sem e-mail confirmado (autenticado) não têm dados básicos na tela de dados; testes Kernel e de navegador não executados.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: páginas de conta (dados, endereço, pedidos) para as contas de teste; perfil público; resumo de doação logado; telas administrativas de pessoas, perfis, papéis e hierarquia.
+
 ## 0.4.0-dev.87 — um tipo de perfil por papel: endereço no autenticado, tipo customer removido — 2026-10-17
 
 Classificação: MINOR (remoção do tipo customer, novo endereço no perfil autenticado, novos tipos por função).

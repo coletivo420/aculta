@@ -32,6 +32,7 @@ use Drupal\key\KeyRepositoryInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /** Private user account area. */
 final class PortalController extends ControllerBase {
@@ -108,7 +109,7 @@ final class PortalController extends ControllerBase {
 
   public function dashboard(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
-    $profile = $this->loadParticipantProfile($account);
+    $profile = $this->loadRoleProfile($account);
     $nickname = $profile && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty() ? $profile->get('field_nickname')->value : '';
     $first_name = $profile && !$profile->get('field_first_name')->isEmpty() ? $profile->get('field_first_name')->value : '';
     $display_name = $nickname ?: ($first_name ?: $account->getDisplayName());
@@ -440,7 +441,7 @@ final class PortalController extends ControllerBase {
     $profile = match ($section) {
       'address' => $this->loadCommerceAddressProfile($account),
       'other' => NULL,
-      default => $this->loadParticipantProfile($account),
+      default => $this->loadRoleProfile($account),
     };
     $route = match ($section) {
       'address' => 'aculta_portal.my_data_address',
@@ -517,10 +518,10 @@ final class PortalController extends ControllerBase {
     return \Drupal\aculta_portal\Account\StreetNumberField::split((string) $profile->get('field_address')->first()->getAddressLine1());
   }
 
-  private function loadParticipantProfile(UserInterface $account) {
-    $profiles = $this->entities->getStorage('profile')->loadByUser($account, 'participante');
+  private function loadRoleProfile(UserInterface $account) {
+    $profiles = PerfilDoPapel::principal($this->entities->getStorage('profile'), $account);
     return $profiles ?: $this->entities->getStorage('profile')->create([
-      'type' => 'participante',
+      'type' => PerfilDoPapel::tipoDaConta($account),
       'uid' => $account->id(),
       'status' => TRUE,
       'is_default' => TRUE,

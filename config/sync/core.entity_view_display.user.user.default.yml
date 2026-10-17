@@ -33,7 +33,5 @@ content:
     region: content
 hidden:
   commerce_remote_id: true
-  customer_profiles: true
   field_domain_admin: true
   langcode: true
-  participante_profiles: true

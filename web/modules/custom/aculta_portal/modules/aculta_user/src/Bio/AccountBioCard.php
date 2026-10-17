@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Caixa Bio da Minha conta: textarea bloqueado com a bio (ou o aviso quando vazia) e o lápis que abre o modal.
@@ -25,7 +26,7 @@ final class AccountBioCard {
    * Monta a caixa da conta informada.
    */
   public function build(AccountInterface $account): array {
-    $profile = $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'participante');
+    $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
     $bio = $profile && $profile->hasField('field_bio') ? trim((string) $profile->get('field_bio')->value) : '';
 
     return [

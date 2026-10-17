@@ -28,7 +28,43 @@ id: profile.administrator.default
 targetEntityType: profile
 bundle: administrator
 mode: default
-content: {  }
+content:
+  field_first_name:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_last_name:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_nickname:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: -1
+    region: content
+  field_whatsapp:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 3
+    region: content
 hidden:
   field_address: true
   field_bio: true
@@ -40,16 +76,12 @@ hidden:
   field_exibir_email: true
   field_exibir_foto: true
   field_exibir_redes: true
-  field_first_name: true
-  field_last_name: true
-  field_nickname: true
   field_orgao_emissor: true
   field_perfil_publico: true
   field_profissao: true
   field_redes_sociais: true
   field_rg: true
   field_state: true
-  field_whatsapp: true
   private_message_link: true
   search_api_excerpt: true
 

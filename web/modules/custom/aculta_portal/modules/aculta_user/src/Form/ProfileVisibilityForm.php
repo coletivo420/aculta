@@ -12,6 +12,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Minha conta > Configurações > Privacidade.
@@ -113,8 +114,7 @@ final class ProfileVisibilityForm extends FormBase {
   private function loadOrCreateProfile(): ProfileInterface {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
-    return $storage->loadByUser($account, 'participante')
-      ?? $storage->create(['type' => 'participante', 'uid' => (int) $account->id()]);
+    return PerfilDoPapel::obter($storage, $account);
   }
 
 }

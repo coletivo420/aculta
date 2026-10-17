@@ -33,6 +33,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Drupal hooks for the ACULTA account portal.
@@ -518,7 +519,7 @@ final class PortalHooks {
     }
 
     $path = $this->currentPath->getPath();
-    if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'participante') {
+    if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity)) {
       if ($path === '/dados') {
         // Keep this tab limited to personal basics, even if older active
         // Profile display configuration still contains address components.
@@ -562,7 +563,7 @@ final class PortalHooks {
       if (isset($form['field_address']['widget'][0]['address'])) {
         $address_element = &$form['field_address']['widget'][0]['address'];
         $address_element['#default_value']['country_code'] ??= 'BR';
-        $participant = $this->entityTypeManager->getStorage('profile')->loadByUser($this->currentUser, 'participante');
+        $participant = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $this->currentUser);
         if ($participant) {
           $address_element['#default_value']['given_name'] ??= $participant->get('field_first_name')->value ?? '';
           $address_element['#default_value']['family_name'] ??= $participant->get('field_last_name')->value ?? '';

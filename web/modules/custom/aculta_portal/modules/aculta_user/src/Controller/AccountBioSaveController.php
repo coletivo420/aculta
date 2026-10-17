@@ -11,6 +11,7 @@ use Drupal\aculta_user\Form\AccountBioForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Gravação da bio pelo modal (JSON). O JS do formulário chama esta rota, atualiza a caixa e fecha o modal.
@@ -39,8 +40,7 @@ final class AccountBioSaveController extends ControllerBase {
     }
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
-    $profile = $storage->loadByUser($account, 'participante')
-      ?? $storage->create(['type' => 'participante', 'uid' => (int) $account->id()]);
+    $profile = PerfilDoPapel::obter($storage, $account);
     $profile->set('field_bio', $bio);
     $profile->save();
     return new JsonResponse(['ok' => TRUE, 'bio' => $bio]);

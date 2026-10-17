@@ -17,6 +17,7 @@ use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserFloodControlInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Dependency-injected callbacks used by altered Core/contrib forms.
@@ -275,7 +276,7 @@ final class PortalFormCallbacks {
   /** Synchronizes Commerce address names with the participant profile. */
   public function syncCustomerAddressNames(array &$form, FormStateInterface $formState): void {
     $participant = $formState->getFormObject()->getEntity();
-    if (!$participant instanceof ProfileInterface || $participant->bundle() !== 'participante') {
+    if (!$participant instanceof ProfileInterface || !PerfilDoPapel::ehTipoDePapel($participant)) {
       return;
     }
 
