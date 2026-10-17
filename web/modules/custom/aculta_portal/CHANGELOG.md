@@ -1,3 +1,10 @@
+## 0.4.0-dev.102 — slugs em português na administração de pessoas — 2026-10-17
+
+- Raízes `/painel-administrativo/configuracoes/pessoas` e `/painel-administrativo/pessoas` com segmentos traduzidos: `people`→`pessoas`, `profile-types`→`campos-de-perfil`, `roles`→`papeis`, `permissions`→`permissoes`, `manage`→`gerenciar`, `add`→`adicionar`, `edit`→`editar`, `delete`→`excluir`, `translate`→`traduzir`, entre outros (`AdministrativeRouteSubscriber::SEGMENTOS`).
+- Subscriber executa depois da renomeação /admin → /painel-administrativo (prioridade -3000); antes ele rodava cedo demais e não via as raízes.
+- Rotas substituídas por novas (não só o caminho trocado), porque a rota já compilada mantinha o caminho antigo.
+- Caminhos antigos respondem 404, sem redirecionamento (regra de slug).
+- RUNTIME STATUS: APLICADO e verificado por HTTP: novos caminhos 200, antigos 404, links internos atualizados.
 ## 0.4.0-dev.101 — Campos de Perfil como aba de Pessoas — 2026-10-17
 
 - Tipos de perfil (Core) viram a aba "Campos de Perfil" da seção Pessoas (`aculta_portal.links.task.yml`, base `entity.user.collection`).

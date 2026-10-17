@@ -7,6 +7,7 @@ namespace Drupal\aculta_portal\EventSubscriber;
 use Drupal\Core\Routing\RouteBuildEvent;
 use Drupal\Core\Routing\RoutingEvents;
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -22,14 +23,60 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   private const PREFIXO = '/painel-administrativo';
 
   /**
+   * Raízes de configuração e de pessoas com slugs em português (decisão do responsável, 2026-10-17).
+   */
+  private const RAIZES_TRADUZIDAS = ['/painel-administrativo/configuracoes/people', '/painel-administrativo/pessoas'];
+
+  /**
+   * Segmentos traduzidos nas raízes acima. Segmento fora da lista permanece como está.
+   */
+  private const SEGMENTOS = [
+    'people' => 'pessoas',
+    'accounts' => 'contas',
+    'profile-types' => 'campos-de-perfil',
+    'fields' => 'campos',
+    'add-field' => 'adicionar-campo',
+    'form-display' => 'formulario-exibicao',
+    'display' => 'exibicao',
+    'roles' => 'papeis',
+    'permissions' => 'permissoes',
+    'manage' => 'gerenciar',
+    'translate' => 'traduzir',
+    'add' => 'adicionar',
+    'edit' => 'editar',
+    'delete' => 'excluir',
+    'duplicate' => 'duplicar',
+    'disable' => 'desativar',
+    'enable' => 'ativar',
+    'profiles' => 'perfis',
+    'captcha-points' => 'pontos-captcha',
+    'agreement' => 'acordo',
+    'agreements' => 'acordos',
+  ];
+
+  /**
    * Roda por último: rotas registradas por outros alteradores (ex.: ui_patterns_library) também recebem a regra.
    */
   public static function getSubscribedEvents(): array {
-    return [RoutingEvents::ALTER => [['onAlterRoutes', -1000]]];
+    // Roda depois da renomeação /admin -> /painel-administrativo (prioridade -2048, no Drupal e no DomainRouteSubscriber):
+    // sem isso, as raízes do painel ainda não existem no caminho quando esta classe troca os segmentos.
+    return [RoutingEvents::ALTER => [['onAlterRoutes', -3000]]];
   }
 
   public function onAlterRoutes(RouteBuildEvent $event): void {
     $this->alterRoutes($event->getRouteCollection());
+  }
+
+  /**
+   * Caminho com os segmentos traduzidos, se o caminho está em uma das raízes; senão, o próprio caminho.
+   */
+  private function traduzirCaminho(string $caminho): string {
+    foreach (self::RAIZES_TRADUZIDAS as $raiz) {
+      if (str_starts_with($caminho, $raiz)) {
+        return implode('/', array_map(fn (string $segmento): string => self::SEGMENTOS[$segmento] ?? $segmento, explode('/', $caminho)));
+      }
+    }
+    return $caminho;
   }
 
   protected function alterRoutes(RouteCollection $collection): void {
@@ -54,7 +101,14 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
       $padroes['_title'] = 'Campos de Perfil';
       $tipos->setDefaults($padroes);
     }
-    foreach ($collection->all() as $route) {
+    // Slugs em português nas raízes de configuração e de pessoas. A rota é substituída por uma nova, e não só tem o
+    // caminho trocado: rota já compilada mantém o caminho antigo no índice de rotas.
+    foreach ($collection->all() as $nome => $route) {
+      $traduzido = $this->traduzirCaminho($route->getPath());
+      if ($traduzido !== $route->getPath()) {
+        $collection->add($nome, new Route($traduzido, $route->getDefaults(), $route->getRequirements(), $route->getOptions(), $route->getHost(), $route->getSchemes(), $route->getMethods(), $route->getCondition()));
+        $route = $collection->get($nome);
+      }
       // Só rotas sem decisão explícita: `FALSE` definido por um módulo (ex.: biblioteca de componentes do ui_patterns) é respeitado.
       if (str_starts_with($route->getPath(), self::PREFIXO) && $route->getOption('_admin_route') === NULL) {
         $route->setOption('_admin_route', TRUE);
