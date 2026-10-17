@@ -149,7 +149,7 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
     }
     // "Outros valores": o visitante digita o valor no fluxo de doação (campo "Other Amount" do widget).
     $links['outros'] = [
-      'title' => (string) ($compacto ? $this->t('Outro') : $this->t('Outro valor')),
+      'title' => (string) $this->t('Outro'),
       'url' => Url::fromRoute('aculta_donation.donation.default')->toString(),
     ];
     // Dados neutros: o tema apresenta os valores (componente SDC donation-quick do tema).

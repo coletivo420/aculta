@@ -1,5 +1,12 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.10 — sem duplicação na página de apoio — 2026-10-17
+
+- O bloco de valores sai da página de apoio: os valores aparecem só nos cartões do formulário de apoio (sem repetição).
+  O bloco continua disponível para outros lugares, se for colocado de novo.
+- A opção "Outro valor" passa a se chamar "Outro", em todos os formatos.
+- RUNTIME STATUS: APLICADO no Runtime de testes (página de apoio verificada: 5 valores, uma vez cada).
+
 ## 0.1.0-dev.9 — cartões de valor do bloco de apoio — 2026-10-17
 
 - Os valores do bloco de doação rápida viram cartões (não botões), no mesmo estilo dos cartões da página de apoio. A
