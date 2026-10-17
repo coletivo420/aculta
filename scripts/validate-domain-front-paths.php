@@ -41,6 +41,14 @@ foreach ($mapa as $purpose => $caminho) {
 }
 $check(count($mapa) >= 6, 'mapa de raiz tem as seis finalidades');
 
+// Endereços de produção não podem voltar nas sobreposições de metadados por domínio (canonical e og:url usam o token [site:url]).
+$sobreposicoes = glob($raiz . '/config/sync/domain*/metatag.metatag_defaults.front.yml') ?: [];
+foreach ($sobreposicoes as $arquivo) {
+  $texto = file_get_contents($arquivo) ?: '';
+  $check(preg_match('~(canonical_url|og_url): .https?://[a-z0-9.-]*aculta\.org~', $texto) !== 1, 'sem endereço de produção em ' . basename(dirname($arquivo)) . '/metatag front');
+}
+$check(count($sobreposicoes) >= 1, 'sobreposições de metatag por domínio encontradas');
+
 if (in_array('--live', $argv, TRUE)) {
   $hosts = ['apoio', 'cursos', 'wiki420', 'revista420'];
   foreach ($hosts as $host) {

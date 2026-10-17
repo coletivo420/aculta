@@ -29,3 +29,8 @@ Qualquer outro 301 novo é regressão, a menos que esta lista seja atualizada co
 
 ## Gate anti-regressão
 `php scripts/validate-domain-front-paths.php` (estático, sem rede). Com `--live`, também consulta os hosts do Runtime e compara com a matriz acima.
+
+## Metadados da raiz
+- `canonical_url` e `og_url` das raízes usam `[site:url]` (ou a raiz do host, para página de finalidade). Endereço de produção não aparece em sobreposição por domínio: o gate `validate-domain-front-paths` confere.
+- JSON-LD de organização e site: o endereço principal vem do ambiente (`aculta_deployer`); no teste, `settings.local.php` define os valores.
+

@@ -1,3 +1,14 @@
+## 0.4.0-dev.78 — achados de endereço de produção corrigidos — 2026-10-17
+
+Classificação: PATCH.
+
+- Sobreposições de metatag por domínio (repositório e Runtime): `canonical_url` e `og_url` usam `[site:url]`, não o endereço de produção.
+- `metatag.metatag_defaults.front` (padrão): `og_url` usa `[site:url]`.
+- Canonical e `og:url` das raízes de finalidade (`FRONT_PATHS`) apontam para a raiz do host, também quando a página não é um nó (`EditorialHooks`).
+- JSON-LD de organização e site: no ambiente de testes, sobreposição em `settings.local.php` com o endereço do deployer; o token `[institution:url]` usa o endereço do ambiente (`DeployerEnvironment::siteUrl`).
+- Gate `validate-domain-front-paths`: falha se uma sobreposição de metatag por domínio voltar a usar endereço de produção.
+- Não alterado: texto editorial (corpo de nós) com menção a aculta.org, e dados do bloco de instituição (sobrepostos pelo token).
+
 ## 0.4.0-dev.77 — canonical da vitrine aponta para a raiz — 2026-10-17
 
 Classificação: PATCH.
