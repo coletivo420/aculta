@@ -47,11 +47,14 @@ ou a membership. A rota Core `/system/files?file=...` foi usada porque `/system/
 404 nesse ambiente. Evidências e limite de escopo estão no
 [changelog do viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/CHANGELOG.md).
 
-O PDF privado de turma está validado no Runtime, mas isso não homologa o restante do LMS. F4 — consolidação
-do Drupal LMS — permanece pendente: antes de consolidar provisionadores do curso piloto, o responsável deve
-escolher a fonte versionada canônica, conforme [LMS-GROUP.md](LMS-GROUP.md). F5/F6 e as demais fases seguem
-com critérios e autorização próprios. PV6, CSP, matriz ampliada de navegadores, produção Hostinger e o fluxo
-de conteúdo editorial continuam com gates separados.
+O PDF privado de turma está validado no Runtime, mas isso não homologa o restante do LMS. **F4 está em
+andamento:** o responsável escolheu `scripts/content/courses/introducao-antiproibicionismo.json` como fonte
+editorial canônica; `scripts/institution/provision-lms-pilot.php` foi consolidado como entrada compatível que
+delegará ao loader dessa fonte. A fase ainda depende de Composer audit/dry-run, revisão de atualização/schema,
+reconciliação do conteúdo piloto com preview/backup e validação de permissões antes de qualquer importação no
+Runtime. Nenhuma operação Drupal persistente foi executada nesta etapa. F5/F6 e as demais fases seguem com
+critérios próprios. PV6, CSP, matriz ampliada de navegadores, produção Hostinger e o fluxo de conteúdo
+editorial continuam com gates separados.
 
 ## Ordem, PR e status
 

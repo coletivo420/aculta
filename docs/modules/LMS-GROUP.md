@@ -25,12 +25,12 @@ Revisão técnica: 2026-10-16.
 - Tipos de atividade exportados: `true_false` e `no_answer`. Exibição, formulários e campos estão no Config Sync. `lms.settings.yml` não usa revisões LMS por padrão.
 - Views existentes: `courses_catalog`, `courses` e `courses_admin`; controller `CoursesController` apresenta o catálogo COURSES usando a View e seus próprios access/cache. O catálogo não substitui o access handler de cada curso.
 - Conta usa `AccountCoursesManager` e `AccountCoursePresenter`: carregamento de membership Group, `Group::access('view', $account)` antes de metadados/status, `TrainingManager::loadCourseStatus()`, URL por `DomainPurposeManager`, sem escrita. `LmsFriendlyRouteSubscriber`, converter e processor resolvem slugs amigáveis. Preservar rotas canônicas e política de slug em português.
-- Há duas fontes versionadas para o curso piloto (“Introdução ao Antiproibicionismo”): JSON + loader idempotente em `scripts/content/courses/` e `scripts/content/load-course-*`; `scripts/institution/provision-lms-pilot.php` é um provisionador distinto. Ambos escrevem entidades e usam `\Drupal::...` por serem scripts operacionais. Antes de novas importações, declarar qual é a fonte editorial canônica e se estes caminhos devem ser consolidados.
+- A fonte editorial canônica do curso piloto (“Introdução ao Antiproibicionismo”) é `scripts/content/courses/introducao-antiproibicionismo.json`, carregada pelo script idempotente `scripts/content/load-course-introducao-antiproibicionismo.php`. O caminho histórico `scripts/institution/provision-lms-pilot.php` delega ao loader e não mantém conteúdo próprio. Ambos os comandos operacionais escrevem entidades e usam `\Drupal::...` por serem scripts executados pelo Drush.
 - `validate-lms-skin.php` protege o skin do LMS.
 
 ## Critérios para consolidar o LMS
 
-1. Registrar uma só fonte versionada para o curso piloto e executar importação apenas em fase autorizada, após backup/preview e confirmação de alvo.
+1. Manter uma só fonte versionada para o curso piloto e executar importação apenas em fase autorizada, após backup/preview e confirmação de alvo.
 2. Fazer diff entre código, Config Sync e Runtime canônico antes de atualizar contrib ou importar configuração.
 3. Atualizar `drupal/lms` somente com Composer dry-run, changelog upstream, teste de atualização e checagem de compatibilidade de plugins e configurações.
 4. Preservar Group/LMS access e cache em todos os presenters, Views e SDC; testar usuário A/B, educador e turma cruzada.
