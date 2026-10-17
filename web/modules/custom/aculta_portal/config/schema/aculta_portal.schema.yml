@@ -63,3 +63,19 @@ aculta_portal.social_links:
           url:
             type: string
             label: 'Link do botão'
+
+aculta_portal.support:
+  type: config_object
+  label: 'Formas de apoio'
+  mapping:
+    intro:
+      type: text
+      label: 'Introdução pública'
+    amounts:
+      type: sequence
+      label: 'Valores padrão (R$)'
+      sequence:
+        type: integer
+    custom_amount:
+      type: boolean
+      label: 'Permite valor personalizado'

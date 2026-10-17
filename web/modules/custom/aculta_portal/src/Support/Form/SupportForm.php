@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Support\Form;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\aculta_portal\Support\Form\SettingsForm;
 use Drupal\aculta_portal\Support\SupportAmountsProviderInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -17,9 +18,6 @@ use Drupal\Component\Utility\Html;
 
 /** Institutional support page, integrated with Commerce Donation Flow. */
 final class SupportForm extends FormBase {
-
-  /** Valores sugeridos em reais. Cada um leva à rota de valor rápido do módulo de doação (/apoiar/{valor}/agora). */
-  private const VALORES_SUGERIDOS = [10, 20, 50, 100];
 
   public function __construct(
     private readonly ConfigFactoryInterface $configs,
@@ -62,9 +60,11 @@ final class SupportForm extends FormBase {
       // O fluxo de doação (criação do pedido e checkout) é do módulo commerce_donation_flow, no domínio principal.
       // Aqui só se apresentam os valores sugeridos e a opção de outro valor.
       // Campanha vigente define os valores e se há valor personalizado; sem ela, valem os padrões.
+      // Sem campanha vigente, valem os valores padrão configurados em Formas de apoio (aculta_portal.support).
       $campanha = $this->campanhas?->valoresSugeridos();
-      $valores = $campanha['amounts'] ?? self::VALORES_SUGERIDOS;
-      $valorPersonalizado = $campanha['customAmount'] ?? TRUE;
+      $padrao = $this->configs->get('aculta_portal.support');
+      $valores = $campanha['amounts'] ?? ($padrao->get('amounts') ?: SettingsForm::VALORES_PADRAO);
+      $valorPersonalizado = $campanha['customAmount'] ?? ($padrao->get('custom_amount') ?? TRUE);
       $links = [];
       foreach ($valores as $valor) {
         $url = $this->purposes->routeUrl('main', 'commerce_donation_flow.donation.quick', ['amount' => $valor]);

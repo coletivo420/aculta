@@ -1,3 +1,15 @@
+## 0.4.0-dev.81 — valores padrão da doação editáveis no painel — 2026-10-17
+
+Classificação: MINOR (nova configuração editorial e mudança do valor padrão de apoio).
+
+- Painel: ACULTA > Configurações > Formas de apoio (`/painel-administrativo/configuracoes/aculta/apoio`) passa a editar os valores padrão (lista separada por vírgula, até 8 valores, inteiros maiores que zero) e a permissão de "Outro valor" quando não há campanha vigente.
+- Valor inicial de instalação: R$ 5,00 (lista padrão 5, 10, 20, 50, 100).
+- Página de apoio (`SupportForm`): sem campanha vigente, lê `aculta_portal.support` em vez da constante fixa. A campanha do submódulo aculta_donation continua tendo prioridade.
+- Schema `aculta_portal.support` criado; `config/sync/aculta_portal.support.yml` com os valores padrão.
+- Testes: `SettingsFormValoresTest` (2 testes, 8 asserções) passam.
+- Gates: Drupal 11, mapa módulo x tema, fronteira e endereços de ambiente PASS.
+- RUNTIME STATUS: APLICADO por configuração (`aculta_portal.support` gravado no Runtime `aculta.toca.net.br`); página de apoio verificada por HTTP (cards 5, 10, 20, 50, 100; "Outro valor" presente). Não verificado: o formulário no painel (exige login de administrador) e a gravação pelo formulário.
+
 ## 0.4.0-dev.80 — etapa de resumo na doação rápida e campanhas no Runtime — 2026-10-17
 
 Classificação: MINOR (nova etapa de resumo antes do pagamento; cards de valor no tema).
