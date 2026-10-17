@@ -1,0 +1,26 @@
+uuid: a8a07d08-b451-4a2b-bcc4-a14bf90d4e5a
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_state
+    - profile.type.authenticated
+  module:
+    - options
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.authenticated.field_state
+field_name: field_state
+entity_type: profile
+bundle: authenticated
+label: UF
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
+

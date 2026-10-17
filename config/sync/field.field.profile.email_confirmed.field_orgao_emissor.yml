@@ -1,0 +1,20 @@
+uuid: 692487b7-7fd8-4025-9adb-2b1dc4afdb31
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_orgao_emissor
+    - profile.type.email_confirmed
+id: profile.email_confirmed.field_orgao_emissor
+field_name: field_orgao_emissor
+entity_type: profile
+bundle: email_confirmed
+label: 'Órgão emissor do RG'
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

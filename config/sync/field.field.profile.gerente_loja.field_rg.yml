@@ -1,0 +1,20 @@
+uuid: efe3ffee-acab-45e1-aa05-081dcae15c4b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_rg
+    - profile.type.gerente_loja
+id: profile.gerente_loja.field_rg
+field_name: field_rg
+entity_type: profile
+bundle: gerente_loja
+label: RG
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

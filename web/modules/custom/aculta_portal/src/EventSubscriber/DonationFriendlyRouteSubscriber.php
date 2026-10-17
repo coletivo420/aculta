@@ -17,9 +17,9 @@ final class DonationFriendlyRouteSubscriber extends RouteSubscriberBase {
 
   protected function alterRoutes(RouteCollection $collection): void {
     $paths = [
-      'commerce_donation_flow.donation.default' => '/apoiar',
-      'commerce_donation_flow.donation.quick' => '/apoiar/{amount}/agora',
-      'commerce_donation_flow.donation_controller_formPage' => '/apoiar/{commerce_order}/{step}',
+      'aculta_donation.donation.default' => '/apoiar',
+      'aculta_donation.donation.quick' => '/apoiar/{amount}/agora',
+      'aculta_donation.donation_controller_formPage' => '/apoiar/{commerce_order}/{step}',
     ];
     foreach ($paths as $name => $path) {
       $route = $collection->get($name);

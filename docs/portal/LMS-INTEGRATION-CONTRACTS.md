@@ -47,9 +47,9 @@ Antes da implementação, decidir: certificado como artefato imutável arquivado
 
 ## Contrato de apresentação ACULTA420
 
-`aculta_lms` fornece ao Portal dados, access results e cacheability; Portal prepara navegação, purpose e URLs; ACULTA420 mapeia o contrato neutro para SDCs Bootstrap/Drupal. Itens apresentados podem incluir curso, estado, progresso permitido, ação e render arrays da entidade; nunca expor `GroupInterface`, serviços ou host a Twig. Deve haver navegação completa e fallback sem JavaScript. Catálogo usa Views existente (`courses_catalog`) como fonte; room/dashboard podem compor Views + serviços LMS com acesso nativo.
+`aculta_lms` fornece ao Portal dados, access results e cacheability; Portal prepara navegação, purpose e URLs; ACULTA420 mapeia o contrato neutro para SDCs Bootstrap/Drupal. Itens apresentados podem incluir curso, estado, progresso permitido, ação e render arrays da entidade; nunca expor `GroupInterface`, serviços ou host a Twig. Deve haver navegação completa e fallback sem JavaScript. O catálogo usa Views existente (`courses_catalog`) e o SDC `aculta420:course_card` substitui `lms:course_card` mantendo o schema compatível; Views/LMS seguem donos de acesso, dados e cacheability. Room/dashboard podem compor Views + serviços LMS com acesso nativo.
 
-SDCs planejados: catálogo/listagem de cursos; cartão de curso; apresentação de curso; sala/índice de lições; lista/estado de atividades; painel de progresso do estudante; painel de correção do educador; status de entrega/feedback; badge/aviso de acesso. São contratos/componentes novos, não substitutos de formulários/rotas contrib. Reusar tokens e SDCs existentes. Não copiar CSS/templates Opigno.
+SDCs planejados após F5: apresentação de curso; sala/índice de lições; lista/estado de atividades; painel de progresso do estudante; painel de correção do educador; status de entrega/feedback; badge/aviso de acesso. São contratos/componentes novos, não substitutos de formulários/rotas contrib. Reusar tokens e SDCs existentes. Não copiar CSS/templates Opigno.
 
 ## Segurança, cache e acesso
 

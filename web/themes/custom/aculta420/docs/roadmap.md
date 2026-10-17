@@ -1,6 +1,6 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-15 (revisão documental, PR #281). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-17 (F5 Catálogo). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
@@ -8,7 +8,10 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.69 | F5 Catálogo: SDC ACULTA420 substitui o cartão LMS na View existente | SDC schema, View access/cache, Firefox keyboard e host de testes verificados; RUNTIME STATUS: ACTIVE | `components/content/course_card/`, catálogo `courses_catalog` |
+| 0.6.0-dev.68 | Viewer PDF: página em área rolável preserva o zoom escolhido em telas menores | Firefox 153.4 ESR no Runtime: PDF de 14 páginas, zoom 125%, controles e foco visível; viewport 1440 px e viewport estreito 500 px sem overflow horizontal da página. Smoke visual/acessível PASS em PV6; matriz de navegadores e CSP segue na PV7. | `css/components/pdf-viewer.css`, marcação do `aculta_pdf_viewer` |
 | 0.6.0-dev.66 | Barra e cabeçalho do shell decididos pelo Portal (`domain_presentation.layout`); shell-contract PASS | Gates de shell, fundação, design e SDC PASS; capturas em main, wiki, cursos, apoio e conta; `links` não verificado (404 no teste) | `templates/page.html.twig` |
+| 0.6.0-dev.67 | Painéis de vendas e doações: tokens `sales-*` (tabela de pedidos, estados e ações de pagamento) e `css/components/sales-panel.css` | Gates de fundação, design, shell, SDC, fronteira módulo-tema, mapa e docs de tokens PASS |
 | 0.6.0-dev.65 | Tokens faltantes do módulo mapeados (avatar do perfil, avisos de conquista, relatório de imagens) | Gates de fundação, design e SDC PASS; shell-contract FAIL pré-existente (`page.html.twig`) registrado | `PortalUiHooks.php`, `messenger-drawer.css`, `portal-requirements-report.css` |
 | 0.6.0-dev.61 | Apresentação do leitor PDF compartilhado | Chromium headless no Runtime: 14 páginas; viewport 1440 px e 390 px sem overflow mobile; RUNTIME STATUS: ACTIVE no Homelab | `css/components/pdf-viewer.css` |
 | 0.6.0-dev.54 | Conquistas no perfil público | Firefox desktop/mobile e contrato módulo/tema verificados | `public-profile.css`, `PortalUiHooks.php` |

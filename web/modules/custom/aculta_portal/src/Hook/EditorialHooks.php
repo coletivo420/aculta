@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
@@ -27,6 +28,8 @@ final class EditorialHooks {
     private readonly DomainPurposeManager $domainPurposeManager,
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'path.current')]
+    private readonly CurrentPathStack $currentPath,
   ) {}
 
   /**
@@ -96,6 +99,20 @@ final class EditorialHooks {
         $canonicalUrl = $canonical->toString();
         $tags['canonical_url'] = $canonicalUrl;
         $tags['og_url'] = $canonicalUrl;
+      }
+    }
+
+    // Página que é a raiz do host (caminho interno de FRONT_PATHS, ex.: /loja-da-aculta): o canonical é a raiz do host.
+    $purpose = $this->domainPurposeManager->getCurrentPurpose();
+    $frontPath = \Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL;
+    $paginaRaiz = $frontPath !== NULL && ($node === NULL
+      ? $this->currentPath->getPath() === $frontPath
+      : $node->toUrl()->setAbsolute(FALSE)->toString() === $frontPath);
+    if ($paginaRaiz) {
+      $root = $this->domainPurposeManager->pathUrl($purpose, '/');
+      if ($root !== NULL) {
+        $tags['canonical_url'] = $root->toString();
+        $tags['og_url'] = $root->toString();
       }
     }
 

@@ -2,10 +2,12 @@ uuid: 74d2f2d6-7b75-4bbc-826e-c8259971f28b
 langcode: pt-br
 status: true
 dependencies:
+  config:
+    - media.type.course_document
   module:
-    - aculta_pdf_viewer_group
     - group
     - lms
+    - media
     - system
 id: lms_teacher
 label: Educador
@@ -14,10 +16,15 @@ is_admin: false
 permissions:
   - 'access administration pages'
   - 'access group overview'
+  - 'administer lms'
+  - 'create course_document media'
   - 'create lms_activity entities'
   - 'create lms_course group'
+  - 'create lms_class group'
   - 'create lms_lesson entities'
-  - 'create course_document media'
+  - 'create lms_teacher profile'
   - 'edit lms_activity entities'
   - 'edit lms_lesson entities'
+  - 'update own lms_teacher profile'
+  - 'view own lms_teacher profile'
   - 'view the administration theme'

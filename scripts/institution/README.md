@@ -21,10 +21,12 @@ confirmar os dados institucionais usados pelo script.
 
 ### `provision-lms-pilot.php`
 
-Provisiona o curso piloto nativo do Drupal LMS/Group.
+Compatibilidade com o caminho histórico de execução do curso piloto. O script
+delega ao loader de `scripts/content/`, cuja fonte editorial canônica é
+`scripts/content/courses/introducao-antiproibicionismo.json`.
 
-Não executar em produção por rotina; usar apenas em ambiente/aplicação em que o
-curso piloto foi explicitamente aprovado.
+Não mantém conteúdo próprio. Não executar em produção por rotina; usar apenas
+em ambiente/aplicação em que o curso piloto foi explicitamente aprovado.
 
 ### `phase6-account-email-test.php`
 

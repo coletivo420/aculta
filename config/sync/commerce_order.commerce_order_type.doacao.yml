@@ -1,0 +1,22 @@
+uuid: 62380122-ef5e-4cd4-bcd5-a1f9ab6aa023
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_checkout
+third_party_settings:
+  commerce_checkout:
+    checkout_flow: doacao
+id: doacao
+label: Doação
+traits: {  }
+locked: false
+workflow: order_default
+showOrderEditLinks: false
+numberPattern: order_default
+refresh_mode: customer
+refresh_frequency: 300
+sendReceipt: true
+receiptBcc: ''
+receiptSubject: ''
+

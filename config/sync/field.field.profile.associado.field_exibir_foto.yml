@@ -1,0 +1,24 @@
+uuid: 564ec7e0-86cd-43d4-9c14-b88048803965
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_foto
+    - profile.type.associado
+id: profile.associado.field_exibir_foto
+field_name: field_exibir_foto
+entity_type: profile
+bundle: associado
+label: 'Exibir foto no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

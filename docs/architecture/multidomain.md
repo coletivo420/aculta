@@ -28,7 +28,7 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | main | aculta.org | aculta.toca.net.br | ativo |
 | account | conta.aculta.org | conta.aculta.toca.net.br | ativo |
 | support | apoio.aculta.org | apoio.aculta.toca.net.br | ativo |
-| magazine | coletivo420.aculta.org | revista420.aculta.toca.net.br | ativo |
+| magazine | revista420.aculta.org | revista420.aculta.toca.net.br | ativo |
 | wiki | wiki420.aculta.org | wiki420.aculta.toca.net.br | ativo |
 | shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo futuro |
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |

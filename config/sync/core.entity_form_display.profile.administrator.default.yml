@@ -1,0 +1,94 @@
+uuid: 49e11d87-64ba-4e3f-a18b-c40cf2bda815
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.profile.administrator.field_address
+    - field.field.profile.administrator.field_bio
+    - field.field.profile.administrator.field_city
+    - field.field.profile.administrator.field_data_nascimento
+    - field.field.profile.administrator.field_documento
+    - field.field.profile.administrator.field_documento_indice
+    - field.field.profile.administrator.field_exibir_bio
+    - field.field.profile.administrator.field_exibir_email
+    - field.field.profile.administrator.field_exibir_foto
+    - field.field.profile.administrator.field_exibir_redes
+    - field.field.profile.administrator.field_first_name
+    - field.field.profile.administrator.field_last_name
+    - field.field.profile.administrator.field_nickname
+    - field.field.profile.administrator.field_orgao_emissor
+    - field.field.profile.administrator.field_perfil_publico
+    - field.field.profile.administrator.field_profissao
+    - field.field.profile.administrator.field_redes_sociais
+    - field.field.profile.administrator.field_rg
+    - field.field.profile.administrator.field_state
+    - field.field.profile.administrator.field_whatsapp
+    - profile.type.administrator
+id: profile.administrator.default
+targetEntityType: profile
+bundle: administrator
+mode: default
+content:
+  field_city:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_first_name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_last_name:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_nickname:
+    type: string_textfield
+    weight: -1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_state:
+    type: options_select
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_whatsapp:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  field_address: true
+  field_bio: true
+  field_data_nascimento: true
+  field_documento: true
+  field_documento_indice: true
+  field_exibir_bio: true
+  field_exibir_email: true
+  field_exibir_foto: true
+  field_exibir_redes: true
+  field_orgao_emissor: true
+  field_perfil_publico: true
+  field_profissao: true
+  field_redes_sociais: true
+  field_rg: true
+  is_default: true
+

@@ -1,0 +1,9 @@
+uuid: 6cfde0f5-6019-4968-a8f6-7f4d525e9d8d
+langcode: pt-br
+status: false
+dependencies:
+  module:
+    - captcha
+formId: aculta_support_form
+captchaType: default
+label: 'Página de apoio (entrada das doações): sem Turnstile'

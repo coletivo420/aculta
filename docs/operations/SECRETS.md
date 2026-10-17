@@ -270,3 +270,5 @@ Limites: valores novos valem a partir da próxima requisição (o Key lê o ambi
 formulário não grava (ver acima). O painel não substitui cofre de senhas: a revelação é restrita aos
 administradores e fica registrada.
 
+## Usuário de teste teste.comum
+A senha do usuário de teste do site fica em `secrets/teste_comum.env`. Não alterar sem decisão do responsável. Procedimento e guardrail: `docs/operations/TESTE-COMUM.md` e `scripts/guard-teste-comum.sh`.

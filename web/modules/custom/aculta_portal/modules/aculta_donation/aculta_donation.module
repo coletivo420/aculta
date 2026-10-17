@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @file
+ * Needed hook implementations for aculta_donation (port de commerce_donation_flow, GPL-2.0-or-later).
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function aculta_donation_theme() {
+  return [
+    // Blocos do fluxo de doação. O módulo entrega dados neutros; o tema escolhe a apresentação.
+    'aculta_donation_quick' => [
+      'variables' => [
+        'links' => [],
+      ],
+    ],
+    'aculta_donation_donate' => [
+      'variables' => [
+        'label' => NULL,
+        'href' => NULL,
+      ],
+    ],
+    'aculta_donation_back' => [
+      'variables' => [
+        'label' => NULL,
+        'href' => NULL,
+      ],
+    ],
+    'aculta_donation_summary' => [
+      'variables' => [
+        'content' => NULL,
+        'order_item' => NULL,
+        'attributes' => NULL,
+      ],
+    ],
+    'aculta_donation_summary_container' => [
+      'variables' => [
+        'content' => NULL,
+        'attributes' => NULL,
+      ],
+    ],
+    'commerce_checkout_pane__commerce_donation_pane' => [
+      'base hook' => 'commerce_checkout_pane',
+    ],
+    'commerce_checkout_pane__commerce_memorial_pane' => [
+      'base hook' => 'commerce_checkout_pane',
+    ],
+  ];
+}

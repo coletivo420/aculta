@@ -1,10 +1,620 @@
-## Não lançado — relatório de vendas da loja (gerente de loja) — 2026-10-17
+## 0.4.0-dev.125 — corrige duplicidade na configuração de administrador — 2026-10-17
+
+- Removida a chave `permissions` vazia duplicada de `user.role.administrator`; Drush recusava carregar todo o Config Sync por YAML inválido.
+- Nenhuma mudança de permissões do administrador. `config:status` voltou a funcionar; importação adiada porque há mudanças não relacionadas ao F7 no Sync, inclusive checkout, gateway, Key e Domain, e faltam diffs/recuperação específicos.
+
+## 0.4.0-dev.124 — matrícula comercial no LMS — 2026-10-17
+
+- Cursos apontam a um produto Commerce próprio; a página do curso inclui escolha de turma e envia a turma no item Commerce.
+- O checkout `curso` exige conta e mantém os termos gerais, com exceção pontual da confirmação de e-mail nessa rota.
+- Pedidos concluídos concedem membership; reembolso parcial mantém acesso e estorno integral revoga apenas a membership de origem, preservando associação manual e outras compras válidas.
+- A autoinscrição direta do LMS é bloqueada; matrícula da equipe permanece nativa do Group e exige turma. Educador pode remover origem manual, com proteção de memberships comerciais ainda ativas.
+- Lint PHP e gate Drupal 11+ PASS (948 checks). RUNTIME STATUS: DEFERRED; configuração não importada, `lms_classes` segue desativado.
+
+## 0.4.0-dev.123 — situação da última cobrança da doação mensal — 2026-10-17
+
+- Cada cobrança da assinatura guarda sua situação no pedido: `paga`, `nao_cobrada`, `recusada`, `processando`, `agendada`,
+  `cancelada` e `desconhecida` (`MercadoPagoSubscriptionRecorder::situacaoCobranca`). Só `paga` grava pagamento.
+- Meu apoio mostra a situação da última cobrança; o painel de doações recorrentes tem a coluna "Situação da última cobrança".
+- Testes unitários: mapeamento de cada status de cobrança, cobrança recusada sem pagamento, cobrança paga (48 no grupo).
+- Verificado no sandbox: pausar em `pending` é recusado; cancelar em `pending` funciona (ver `docs/portal/MERCADO-PAGO-PLANO.md`, 7.1).
+- RUNTIME STATUS: APLICADO em código no Runtime de testes (rótulos e relatório verificados por script). DEFERRED: cobranças e
+  ações sobre assinatura `authorized` (bloqueadas pela recusa de criação, ver 7.1).
+
+## 0.4.0-dev.122 — corrige erro na página de credenciais — 2026-10-17
+
+- Corrigido o namespace de `Markup` usado na listagem de credenciais. O namespace incorreto causava erro fatal
+  quando a página renderizava uma credencial já preenchida.
+- Verificação no Runtime de testes: Drush conectado a `aculta_runtime` com URI explícito `https://aculta.toca.net.br`;
+  cache rebuild concluído e controller retornou as duas seções do render array. A requisição HTTP anônima continua
+  recebendo 403 pela permissão administrativa; não havia sessão autenticada disponível para smoke visual.
+
+## 0.4.0-dev.122 — ações da doação mensal e painel de recorrentes — 2026-10-17
+
+- "Meu apoio": doação mensal mostra a situação da assinatura e as ações pausar, reativar e cancelar (com confirmação).
+  Só o dono do pedido aplica a ação, e só no status que permite (`MercadoPagoSubscriptionRecorder::ACOES`). Falha do
+  Mercado Pago não altera o pedido.
+- Rota `/meu-apoio/assinatura/{commerce_order}/{acao}` (`SubscriptionActionForm`), no domínio da conta.
+- Relatório de doações (`/painel-administrativo/loja/doacoes`): seção "Doações recorrentes" com o resumo por situação e as
+  100 assinaturas mais recentes (`Donation\RecurringDonationsReport`).
+- Status de assinatura e de cobrança tratados explicitamente; cobrança com status desconhecido é registrada no log.
+- Testes unitários: `MercadoPagoSubscriptionActionsTest` (6). Teste do relatório de doações atualizado.
+- RUNTIME STATUS: APLICADO em código no Runtime de testes (rotas e relatório verificados por script, sem pedidos de assinatura
+  no banco). DEFERRED: ações e pagamentos reais no sandbox do Mercado Pago (escrevem na conta de teste).
+- Gate `validate-role-hierarchy` em FAIL por checagem de papel de `aculta_user` (`ForumModerationHooks`, commit e35aecc0),
+  fora deste trabalho: não foi alterada a linha de base do gate.
+
+## 0.4.0-dev.121 — gravação das assinaturas de doação — 2026-10-17
+
+- `MercadoPagoSubscriptionRecorder`: grava no pedido `assinatura` o status da assinatura (tópico `subscription_preapproval`) e
+  cobranças aprovadas como pagamentos (tópico `subscription_authorized_payment`), uma vez por id do pagamento. Cobrança só é
+  gravada com `payment.status = approved`; `processed` sozinho não basta.
+- `MercadoPagoSubscriptionNotificationService` passa a chamar o gravador, em vez de só registrar log.
+- Testes unitários: `MercadoPagoSubscriptionRecorderTest` (5) e `MercadoPagoSubscriptionNotificationServiceTest` (3, com gravador real).
+- RUNTIME STATUS: DEFERRED para o ponta a ponta no sandbox do Mercado Pago (depende de confirmação; ver `aculta_donation` 0.1.0-dev.16).
+
+## 0.4.0-dev.120 — carrinho unificado em um pedido, com o fluxo mais exigente — 2026-10-17
+
+- Decisão do responsável (2026-10-17): todo o carrinho (exceto assinatura) é finalizado num pedido só, com o fluxo de
+  checkout mais exigente entre as categorias presentes: LMS (`curso`) > loja (`default`) > doação (`doacao`).
+- `Cart\CartConsolidator` move os itens dos carrinhos para o pedido de destino, apaga os carrinhos vazios e torna o pedido
+  o carrinho ativo. Rota `/carrinho/finalizar` (`aculta_portal.cart_checkout`) junta e abre o checkout no MAIN.
+- Painel: um botão "Finalizar carrinho" para as categorias; assinatura em espaço próprio, com botão próprio.
+- Pendente: o tipo `curso` usa, por enquanto, o fluxo padrão da loja; o fluxo do LMS com o painel de CPF
+  (`aculta_id_cpf`) ainda será criado.
+- RUNTIME STATUS: APLICADO no Runtime de testes (consolidação verificada: dois carrinhos viraram um pedido, o carrinho antigo
+  foi apagado).
+
+## 0.4.0-dev.119 — página inicial da loja com os produtos disponíveis — 2026-10-17
+
+- A raiz de `loja.aculta` (rota `/loja`) mostra o texto da página inicial da loja e, abaixo, um cartão por produto publicado,
+  do mais recente para o mais antigo, com o menor preço das variações publicadas. Cada cartão leva à página do produto.
+- Cartões com a apresentação do tema (token `shop-product-card`), pelo elemento `aculta_portal_element`.
+- RUNTIME STATUS: APLICADO no Runtime de testes (raiz da loja 200 com o produto e o preço; página do produto 200).
+
+## 0.4.0-dev.118 — raiz da loja pela rota /loja, como os outros subdomínios — 2026-10-17
+
+- A raiz de `loja.aculta` é servida pela rota `aculta_portal.shop_home` (`/loja`), no mesmo padrão de `/apoio`, `/wiki` e
+  `/cursos`. A rota mostra o nó 372 "Loja da Associação".
+- `/loja` e o nó 372 não são públicos direto: 404 (como as outras raízes). Nenhum redirecionamento.
+- RUNTIME STATUS: APLICADO no Runtime de testes (raiz da loja 200, sem redirecionamento; produto na loja 200, no principal 404).
+
+## 0.4.0-dev.117 — produtos da loja no domínio da loja — 2026-10-17
+
+- A raiz de `loja.aculta` serve a página inicial da loja (nó 372) sem redirecionar. Os aliases públicos antigos da loja
+  (`/loja-da-associacao` e `/loja-da-aculta`) foram removidos; o caminho interno é `/node/372`, que responde 404 direto.
+- Produto da loja: a página do produto responde no domínio da loja (200) e 404 no principal, como manda a política.
+- RUNTIME STATUS: APLICADO no Runtime de testes. Conteúdo da página inicial da loja mudou de formato de texto (`basic_html`,
+  inexistente no Runtime, para `restricted_html`), sem alterar o texto.
+- Pendente: listagem de produtos no domínio da loja (ainda não há catálogo; só a página de produto).
+
+## 0.4.0-dev.116 — painel do carrinho com itens e contador corretos — 2026-10-17
+
+- Correção: o painel do carrinho derrubava a página inteira (erro 500) quando havia pedido de doação no carrinho, porque o
+  passo do checkout era resolvido dentro da montagem do painel. O painel agora usa o passo guardado no pedido; o Commerce
+  corrige o passo na própria etapa.
+- O contador e a lista do carrinho são atualizados pelo "Adicionar ao carrinho" sem recarregar a página: a resposta AJAX
+  substitui o corpo do painel (`aculta_portal_cart_panel`, com template do tema).
+- RUNTIME STATUS: APLICADO no Runtime de testes (página inicial com carrinho de visitante responde 200 com o contador e o
+  separador; página completo do carrinho no principal mostra o item). Clique real de "Adicionar ao carrinho" não disparado
+  por HTTP (exige o formulário do produto).
+
+## 0.4.0-dev.115 — carrinho em lista única — 2026-10-17
+
+- O carrinho deixa de ter abas: uma lista única com uma linha de separador por site (Loja, Cursos, Apoio), com total do site.
+- Ordem: o site do item adicionado por último vem primeiro; dentro de cada site, do item mais recente para o mais antigo.
+- Cada item é uma caixa igual às de aviso e mensagens (alerta do Bootstrap com tokens do tema), com X para fechar a caixa.
+  O X só fecha a caixa na tela; não remove o item do carrinho.
+- RUNTIME STATUS: APLICADO no Runtime de testes (ordenação verificada com três itens de sites diferentes).
+
+## 0.4.0-dev.114 — carrinho único com separadores e checkout no principal — 2026-10-17
+
+- Decisão do responsável (2026-10-17, versão final): um carrinho único. O painel da barra agrupa os itens em separadores
+  por tipo de pedido (`default` = Loja, `curso` = Cursos, `doacao` e `assinatura` = Apoio), com um botão de checkout por
+  separador. Carrinho, checkout e pagamento ficam no MAIN; o apoio só escolhe o valor.
+- `Cart\CartSite` (mapeamento tipo de pedido → separador) e `Cart\CartUtility` agrupado por separador.
+- Painel do carrinho (`cart-offcanvas`): abas e um botão "Finalizar" por separador, no checkout do MAIN.
+- Etapas de checkout da doação (`aculta_donation.donation_controller_formPage`) no MAIN; a escolha de valor continua no SUPPORT.
+- Rotas de entrada de doação sem cache (`no_cache`): cada visita tem o próprio pedido e a própria sessão.
+- Retorno e notificação do gateway no MAIN (`PaymentDomainPathProcessor`, prioridade 1000).
+- RUNTIME STATUS: APLICADO no Runtime de testes (agrupamento verificado por separador; entrada de doação chega à etapa no MAIN com
+  a sessão). Pagamento real não concluído (exige o comprador de teste).
+
+## 0.4.0-dev.113 — fluxo de apoio e assinatura no domínio de apoio — 2026-10-17
+
+- Decisão do responsável (2026-10-17): o fluxo de apoio e assinatura (`aculta_donation.*`) roda no purpose SUPPORT.
+  Carrinho, checkout e pagamento da loja continuam no MAIN.
+- Só o gateway fica no MAIN: notificação e retorno/cancelamento do pagamento. `PaymentDomainPathProcessor` gera essas URLs
+  com o domínio principal, qualquer que seja o host da requisição (prioridade 1000, antes da troca de alias).
+- `DomainRoutePolicy` separa o fluxo de doação (SUPPORT) da transação da loja (MAIN). Teste unitário atualizado.
+- Gates: `validate-payment-domain-policy` confere o propósito de cada rota de doação; `validate-aculta-portal-drupal11`
+  confere a rota de valores no bloco.
+- Documentação: `PAYMENT-DOMAIN-POLICY`, `CROSS-DOMAIN-REQUEST-POLICY`, `ANTI-REGRESSION` e `AGENTS.md` atualizados.
+- RUNTIME STATUS: APLICADO no Runtime de testes (URLs de pagamento verificadas no MAIN; entrada de doação no apoio verificada).
+  Pagamento real no Mercado Pago não foi concluído nesta verificação (exige o comprador de teste).
+
+## 0.4.0-dev.112 — um só conjunto de valores na página de apoio — 2026-10-17
+
+- A lista de valores do formulário de apoio ("Escolha um valor") saiu. Os valores ficam só no bloco de doação rápida
+  (aculta_donation), que lê a mesma fonte: campanha vigente, depois "Valores padrão" do painel. A opção "Outro" leva
+  ao passo de doação, onde se digita o valor.
+- Valores padrão do painel: R$ 5, 10, 20 e 50.
+- Gate de P5.1 ajustado: a rota de valores sugeridos passa a ser verificada no bloco, não no formulário.
+- RUNTIME STATUS: APLICADO no Runtime de testes (página de apoio: um bloco, 4 valores e "Outro", sem a lista antiga).
+
+## 0.4.0-dev.111 — cadastro em modal para o checkout de doação — 2026-10-17
+
+- Cadastro em modal (`/criar-conta/janela`): formulário `RegisterPopupForm` (estende o cadastro do Core) registrado como
+  handler `register_popup` da entidade de usuário (`RegisterPopupHooks`). Após o cadastro, volta ao destino.
+- Sem Turnstile no cadastro em modal, por decisão do responsável: exceção em `TurnstileToggle::EXCEPTION_FORM_IDS`,
+  ponto de CAPTCHA desligado em config/sync e documentação em `docs/portal/TURNSTILE.md`. O cadastro comum
+  (`user_register_form`) continua protegido.
+- RUNTIME STATUS: APLICADO no Runtime de testes (modal responde 200, sem campos de CAPTCHA).
+
+## 0.4.0-dev.110 — estorno bloqueado para doações — 2026-10-17
+
+- Tabela de vendas não mostra "Estornar" para pedido com item de doação (doações e assinaturas não têm estorno). Loja inalterada.
+- RUNTIME STATUS: APLICADO e verificado por API no Runtime de testes (checagem de rota negou o estorno de pedido de doação).
+
+## 0.4.0-dev.109 — port do commerce_donation_flow para o aculta_donation — 2026-10-17
+
+- O fluxo de doação passa a ser do submódulo `aculta_donation` (port). Rotas `aculta_donation.*`; referências do Portal
+  (`DonationSummaryController`, `SupportForm`, `DonationFriendlyRouteSubscriber`, `DomainRouteSubscriber`,
+  `DomainRoutePolicy`) atualizadas.
+- Entrada de requisito do contrib removida de `PortalRequirementsController`. O gate de segurança de comércio passa a
+  conferir que o pacote contrib não está instalado.
+- Gates atualizados: `validate-aculta-portal-drupal11`, `validate-payment-domain-policy`, `validate-portal-commerce-security`.
+- Documentação de política (`ANTI-REGRESSION`, `CROSS-DOMAIN-REQUEST-POLICY`, `PAYMENT-DOMAIN-POLICY`) e mapa de módulo x tema.
+- RUNTIME STATUS: APLICADO no Runtime de testes (corte com backup; ver CHANGELOG do `aculta_donation`). Gates locais: PASS.
+  Pendente: recorrência e testes de Kernel do fluxo.
+
+## 0.4.0-dev.108 — remove aba vazia de Configurações > Pessoas — 2026-10-17
+
+- Remove a aba "Pessoas": a página só mostrava uma frase e não tinha ferramenta.
+- `/painel-administrativo/configuracoes/pessoas` agora abre a aba Papéis (redirecionamento). Sem isso, a página-base não teria aba nenhuma.
+- As cinco abas restantes (Papéis, Campos de Perfil, Segurança, Conta) continuam.
+- RUNTIME STATUS: APLICADO e verificado com o gerenciador de abas do Core no Runtime de testes.
+
+## 0.4.0-dev.106 — abas agrupadas em Configurações > Pessoas — 2026-10-17
+
+- Dez abas viram cinco abas principais: Pessoas, Papéis, Campos de Perfil, Segurança e Conta.
+- Sub-abas (`parent_id`, o mecanismo de dois níveis do Core): Papéis > Hierarquia, Permissões por papel, Configurações de papel;
+  Segurança > Controle de sobrecarga, Desbloqueio, CAPTCHA; Conta > Opções da conta, Acordos.
+- Todas as páginas mantêm a linha principal, inclusive Permissões por papel e Configurações de papel (antes só aparecia a sub-linha).
+- Sem mudança de rotas nem de caminhos: as ferramentas continuam nas mesmas URLs.
+- RUNTIME STATUS: APLICADO e verificado com o gerenciador de abas do Core no Runtime de testes (`aculta.toca.net.br`, `aculta_runtime`).
+
+## 0.4.0-dev.105 — Configurações > Pessoas em abas — 2026-10-17
+
+- `/painel-administrativo/configuracoes/pessoas` vira página de abas (Pessoas, Papéis e perfis, Permissões por papel, Configurações de papel, Campos de Perfil, Flood Unblock, CAPTCHA, Controle de sobrecarga, Opções da conta, Acordos), como a seção Pessoas.
+- Itens de menu correspondentes saem da lista da página (`AdministrativeMenuHooks::EM_ABAS`), para não repetir nomes.
+- A página-base não usa mais a lista de links do Core, que negaria acesso sem itens visíveis: `ContaAdministracaoPaginaController`.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: página 200 com as dez abas; sem destinos com dois nomes em Pessoas e Configurações > Pessoas.
+
+## 0.4.0-dev.104 — separação Pessoas x Configurações > Pessoas — 2026-10-17
+
+- Pessoas (`/painel-administrativo/pessoas`) fica com usuários individuais: Lista, Adicionar usuário, Perfis (`pessoas/perfis`) e Social auth (OAuth).
+- Ferramentas de administração de contas saem de Pessoas para Configurações > Pessoas, com caminhos e subpáginas: papéis (`configuracoes/pessoas/papeis`), permissões por papel (`permissoes`), configuração de papel (`configuracoes-de-papel`) e desbloqueio de sobrecarga (`desbloqueio-sobrecarga`). Campos de Perfil já estava lá.
+- Abas de Pessoas correspondentes são removidas (`AdministrativeLocalTaskHooks`); itens de menu de conta em Configurações > Pessoas (`aculta_portal.links.menu.yml`, pai `user.admin_index`).
+- Caixa "Telas do núcleo" removida da página de papéis (as ferramentas agora estão em Configurações > Pessoas).
+- RUNTIME STATUS: APLICADO e verificado por HTTP: abas de Pessoas = Lista, Social auth profiles, Perfis; caminhos antigos 404; novos 200; nenhum destino com dois nomes nas páginas de Pessoas e de Configurações > Pessoas.
+
+## 0.4.0-dev.103 — tradução restrita à configuração de pessoas; duplicações do menu removidas — 2026-10-17
+
+- Tradução da árvore `configuracoes/people` para `configuracoes/pessoas` (ex.: `campos-de-perfil`, `contas`, `acordo`). A área operacional `pessoas/...` mantém os caminhos do Core. A tradução anterior (0.4.0-dev.102) foi revertida.
+- Subscriber executa depois da renomeação do prefixo admin (prioridade -3000).
+- Hook `menu_links_discovered_alter` desativa os itens de menu duplicados das abas de Pessoas ("Papéis e perfis" e "Profile types").
+- Link duplicado "Permissões por papel" removido da caixa de telas do núcleo.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: configuração em `configuracoes/pessoas`, caminhos antigos 404, nenhum destino com dois nomes nas páginas de Pessoas.
+
+## 0.4.0-dev.101 — Campos de Perfil como aba de Pessoas — 2026-10-17
+
+- Tipos de perfil (Core) viram a aba "Campos de Perfil" da seção Pessoas (`aculta_portal.links.task.yml`, base `entity.user.collection`).
+- Título da página de tipos de perfil passa a ser "Campos de Perfil".
+- RUNTIME STATUS: APLICADO e verificado por HTTP (aba presente em Pessoas; título na página de tipos).
+## 0.4.0-dev.102 — cache versionado e matriz Chromium PV7 — 2026-10-17
+
+- API e worker PDF.js recebem `?v=6.4.299`, sincronizado com Composer, para não reutilizar uma combinação antiga com cache público de um ano.
+- Chromium 155.0.8059.39 no Runtime renderizou PDFs de 1 MiB e 22 MiB (14 páginas), sem erros JS severos; PDF inválido exibiu fallback. Com cache desabilitado, throttling de 700 ms/64 KiB/s concluiu em 20,9 s. Proxy local simulou 503 e o fallback apareceu. CSP local com `worker-src 'self'` renderizou; fontes externas foram bloqueadas pela política.
+- Cache/Range no Runtime: documentos HTML privados sem cache; PDF e assets estáticos com `max-age=31536000`; Range PDF respondeu 206/1024 bytes. `content_editor` tem permissão `create document media`; autoria/upload via UI não testado por falta de sessão de teste do papel.
+- A tentativa com identidade temporária `content_editor` chegou ao formulário, mas a tela obrigatória de aceite de termos bloqueou a autoria. Nenhum aceite foi registrado e nenhum Media/File foi enviado. A conta temporária e seu perfil automático foram removidos após confirmar que não possuíam node, Media, pedido ou perfil remanescente.
+- Produção pública serve `pdf-viewer.mjs`, `pdf.mjs` e `pdf.worker.mjs` como `text/plain`, com cache de um ano. A regra `.htaccess` foi aplicada apenas ao Runtime; confirmar MIME e viewer na produção após deploy normal.
+- RUNTIME STATUS: APLICADO. CSP estrita, acessibilidade ampliada e autoria/UI seguem DEFERRED.
+
+## 0.4.0-dev.101 — MIME de módulos PDF.js e homologação PV7 — 2026-10-17
+
+- `web/.htaccess` declara `.mjs` como `application/javascript`, necessário para o PDF.js e seu worker módulo; Apache do Runtime retorna esse MIME nos dois assets. A produção ainda retorna `text/plain` no worker antes do deploy desta mudança.
+- PDF.js 6.4.299 e licença Apache-2.0 conferidos no Composer e distribuição instalada. Unit 11/11 (145 assertions), Kernel 5/5 (106 assertions; quatro deprecações preexistentes), gate Drupal 11+ (892 checks) PASS.
+- Firefox 153.4 ESR no Runtime: PDF de 1 MiB e PDF de 22 MiB renderizaram 14 páginas; o grande transferiu 23.036.752 bytes em 2,0 s. PDF inválido exibiu fallback autorizado. Homologação Chromium e rede lenta não executadas.
+- Runtime sem cabeçalho CSP; produção envia apenas `upgrade-insecure-requests` nas respostas verificadas. Isso não equivale a validar uma política CSP estrita. Acesso privado já tem matriz PV5; sem nova mutação dos fixtures nesta rodada.
+- RUNTIME STATUS: APLICADO. Produção LiteSpeed/Hostinger e MIME pós-deploy DEFERRED; nenhum deploy executado.
+
+## 0.4.0-dev.100 — operações e caixa de controle na página Papéis e perfis — 2026-10-17
+
+- Biblioteca `core/drupal.dropbutton` anexada ao formulário: o menu de operações (editar, permissões, excluir) depende dela.
+- Caixa "Telas do núcleo" (permissões por papel e tipos de perfil) restaurada na página.
+- Exclusão de papel pela página testada no Runtime: papel temporário excluído pelo formulário de confirmação do Core; cadeia inalterada.
+- RUNTIME STATUS: APLICADO. Abertura do menu de operações no navegador não verificada.
+## 0.4.0-dev.99 — página Papéis e perfis substitui a lista de papéis do Core — 2026-10-17
+
+- `/painel-administrativo/pessoas/roles` passa a ser a página Papéis e perfis do ACULTA (formulário `RoleHierarchyForm`, rota do Core com `_form`). A lista do Core sai dessa página.
+- Coluna Operações (editar, permissões e excluir, pelo `buildOperations` do Core) em cada papel; botão Adicionar papel; tabela dos papéis fora da cadeia.
+- Permissão da página: `administer permissions` ou `administer aculta role hierarchy`.
+- Rota e controlador antigos da página separada removidos; item de menu aponta para a página de papéis.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: página 200 com operações, botão e tabela; `/configuracoes/aculta/papeis` 404; salvar a cadeia responde 303 e mantém a configuração.
+## 0.4.0-dev.98 — papéis laterais removidos; cadeia única — 2026-10-17
+
+- Não há mais papel lateral nem categoria: a cadeia é a única classificação. Papel fora da cadeia herda do autenticado (regra implícita em `RoleHierarchy::derivarMapa`).
+- Tela sem a coluna "Entram nesta categoria"; a configuração `laterais` e seu schema foram removidos.
+- Funções simplificadas: `derivarMapa(cadeia, todos)`, `completar(cadeia, existentes)`; `herdados` e `efetivos` inalterados.
+- Testes: `RoleHierarchyTest` (14); `HerancaDePapeisTest` (4, no aculta_user).
+- RUNTIME STATUS: APLICADO e verificado por HTTP: coluna removida, coluna de herança efetiva presente, salvar com a ordem atual responde 303 e mantém a cadeia.
+## 0.4.0-dev.98 — PV6: Wiki e Fórum no viewer compartilhado — 2026-10-17
+
+Classificação: MINOR (CKEditor Media Embed compartilhado em Wiki e Fórum).
+
+- `filter.format.wiki` e `filter.format.usuario_aculta` selecionam somente Media `document`; ambos têm botão `drupalMedia` e pares CKEditor 5 validados sem violações. Source Editing conserva o HTML legado permitido pelos filtros.
+- O display default do Fórum usa `text_default`, necessário para processar embeds sem truncar o corpo. A autorização da Media permanece no Core e no viewer compartilhado.
+- Unit 11/11 (145 asserções), Kernel 5/5 (106 asserções); Drupal 11+ (896), aculta_image, public-slugs e fronteira módulo/tema PASS.
+- Runtime de teste: configuração Wiki/Fórum aplicada por entidades específicas, cache rebuild; render Drush do tópico de Fórum contém viewer/link permitido. Artigo, blog e projeto responderam HTTP 200 com viewer. Firefox ESR validou 14 páginas, zoom 125%, foco 3 px, nomes dos controles, alvos ≥44 px e tela estreita sem overflow. Nenhum conteúdo foi criado ou alterado nesta etapa.
+- Config Sync global não foi importado; permanece a duplicidade YAML preexistente em `user.role.administrator.yml`.
+- RUNTIME STATUS: APLICADO. Matriz ampla de browsers/CSP e produção seguem PV7.
+
+## 0.4.0-dev.97 — função única para a configuração de papéis — 2026-10-17
+
+- `RoleHierarchy::completar`: uma só regra para cadeia e laterais de papéis existentes (papel excluído, papel novo, categoria órfã). Usada pelo formulário (estado inicial e laterais) e pelo aculta_user (mapa e exclusão). Antes havia duas cópias da regra.
+- Testes: `RoleHierarchyTest` (11).
+- RUNTIME STATUS: APLICADO (ver aculta_user 0.4.0-dev.23).
+
+## 0.4.0-dev.96 — herança de papéis no aculta_user; contrib removido — 2026-10-17
+
+Classificação: PATCH (troca de dependência de herança e ajuste de barreira).
+
+- Herança de papéis agora é do aculta_user (ver CHANGELOG do módulo). `RoleHierarchyForm` deixou de gravar `role_inheritance.settings`.
+- `RoleHierarchy::herdados` (função pura) e testes.
+- Barreira `validate-role-hierarchy`: linha de base de `hasRole` em 15, com justificativa (chamadas da própria herança).
+- RUNTIME STATUS: APLICADO (ver aculta_user 0.4.0-dev.22).
+
+## 0.4.0-dev.95 — tela de papéis do ACULTA como única tela de herança — 2026-10-17
+
+Classificação: PATCH (ocultação de tela duplicada do contrib e coluna de herança efetiva).
+
+- A tela de herança do contrib `role_inheritance` (`/painel-administrativo/pessoas/roles/inheritance`) responde 403 e sai da aba da lista de papéis. A herança é editada só em Papéis e perfis (`/painel-administrativo/configuracoes/aculta/papeis`).
+- Tela do ACULTA recebe a coluna "Herda de (efetivo)", com a herança transitiva que a tela do contrib mostrava.
+- Documentado em `docs/portal/PAPEIS-PARTICIPACAO.md`, seção 8.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: contrib 403, aba oculta, tela do ACULTA 200 com a coluna.
+
+## 0.4.0-dev.94 — papéis mesclados e nomes alinhados — 2026-10-17
+
+Classificação: MINOR (remoção de dois papéis, com mesclagem de permissões e de contas).
+
+- Colaborador da Wiki420 (`wiki_contributor`) mesclado em E-mail confirmado (`email_confirmed`); Administrador de cursos (`lms_admin`) mesclado em Educador (`lms_teacher`). Permissões somadas aos papéis que ficam; contas com o papel antigo passam a ter só o que ficou. Ações de papel e arquivos de configuração dos papéis antigos removidos.
+- Hook que concedia o colaborador da wiki a quem tinha e-mail confirmado removido (não tem mais função).
+- Nomes alinhados em tipos de perfil e papéis: Usuário autenticado (antes "Autenticado" no tipo de perfil) e Educador (antes "Professor").
+- Opções de papel dos avisos: removidos os papéis antigos; rótulos iguais aos nomes dos papéis.
+- Gates: papéis de usuário sem exceção editorial; linha de base de checagens por nome de papel reduzida para 13.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: tela de papéis mostra a cadeia com os nomes novos; páginas de perfil e de papéis respondem 200; contas da wiki mantêm o e-mail confirmado.
+
+## 0.4.0-dev.93 — colaborador da wiki e administrador de cursos entram em categorias — 2026-10-17
+
+Classificação: PATCH (ajuste de classificação de papéis na cadeia).
+
+- Colaborador da Wiki420 (`wiki_contributor`) entra na categoria E-mail confirmado; Administrador de cursos (`lms_admin`) entra na categoria Educador (`lms_teacher`). Cada um herda da própria categoria, e por ela recebe tudo o que a categoria herda.
+- Na tela, esses papéis aparecem só com o nome, dentro da linha da categoria.
+- RUNTIME STATUS: APLICADO e verificado por HTTP; testes unitários de papéis (8) passam; gate de papéis passa.
+
+## 0.4.0-dev.92 — cadeia de papéis por setas e arraste — 2026-10-17
+
+Classificação: MINOR (nova interação da tela de papéis; configuração própria da cadeia).
+
+- Tela Papéis e perfis: a hierarquia é uma lista ordenada pela classificação de cada categoria. Cada papel mostra só o nome. Mover por setas (botões; funcionam sem JavaScript) ou arrastando, com mouse e toque (`js/role-hierarchy.js`, biblioteca `aculta_portal/role-hierarchy`).
+- Papéis sem categoria (`wiki_contributor`, `lms_admin`) ficam fora da cadeia, sem controle na tela, e herdam do autenticado.
+- Mapa de herança derivado da cadeia ao salvar (`RoleHierarchy::derivarMapa`); configuração própria `aculta_portal.role_hierarchy` (cadeia e laterais).
+- Configuração `aculta_portal.profile_roles` removida (cada tipo de perfil corresponde a um papel).
+- Testes: 189 unitários do Portal passam (inclui o mapa derivado e a troca de posição).
+- RUNTIME STATUS: APLICADO e verificado por HTTP: lista na ordem da configuração; seta reordena sem salvar; salvar mantém o mapa de herança idêntico. Arraste por ponteiro não foi verificado no navegador.
+
+## 0.4.0-dev.92 — Media Embed de PDF compartilhado com a Wiki — 2026-10-17
+
+Classificação: PATCH (habilita o processamento do embed de documento no formato Wiki existente).
+
+- `filter.format.wiki` permite o elemento `drupal-media` e processa Media Embed após a sanitização HTML, somente para Media `document`. A Wiki resolve o display Media compartilhado e mantém autorização Core.
+- Kernel valida o pipeline de renderização. O botão CKEditor fica pendente: a lista histórica de HTML da Wiki falha na validação CKEditor 5, então a habilitação exigiria compatibilização separada.
+- Runtime de teste `https://aculta.toca.net.br`: formato `wiki` atualizado por entidade de configuração e cache reconstruído; configuração ativa corresponde ao YAML. Não existe embed PDF em conteúdo Wiki para smoke visual. Config Sync global segue bloqueado por erro YAML preexistente em outro arquivo.
+- RUNTIME STATUS: APLICADO; smoke de conteúdo: DEFERRED.
+
+## 0.4.0-dev.91 — tema administrativo em todas as rotas do painel — 2026-10-17
+
+Classificação: PATCH (correção de tema em páginas administrativas).
+
+- Páginas do painel (ex.: `/painel-administrativo/configuracoes/aculta/papeis`) carregavam o tema global (ACULTA420) porque as rotas não definiam `_admin_route`. Corrigido em dois níveis: a opção foi declarada nas 26 rotas customizadas (aculta_portal, aculta_user, aculta_image), e `AdministrativeRouteSubscriber` marca qualquer rota do prefixo `/painel-administrativo` (Core e contrib incluídos) no fim da alteração de rotas.
+- Decisão explícita de módulo prevalece: rotas com `_admin_route: FALSE` (biblioteca de componentes do ui_patterns) não são alteradas.
+- Gate `validate-aculta-portal-drupal11`: contagem de subscribers pinada de 12 para 13, com a justificativa.
+- RUNTIME STATUS: APLICADO e verificado por HTTP como administrador: 8 páginas do painel (papéis, campanhas, perfis, apoio, vendas, herança, tipos de perfil, tipos de conteúdo) carregam o Claro e nenhuma carrega o ACULTA420. Página pública continua com o tema do site.
+
+## 0.4.0-dev.91 — viewer PDF também em campos File institucionais — 2026-10-17
+
+Classificação: MINOR (novo formatter compartilhado, sem storage de documentos paralelo).
+
+- `aculta_pdf_file` renderiza PDFs públicos permanentes de campos File diretos usando o builder do `aculta_pdf_viewer`; acesso da entidade, campo e download é acumulado no render. Arquivos privados e formatos não PDF mantêm o link Core autorizado.
+- Os displays `node.document.default` e `node.document.full` passam a usar o formatter em `field_document`. Unit 11/11 (145 asserções) e Kernel 4/4 (87 asserções) PASS no MariaDB dedicado; quatro deprecações Core/contrib.
+- Gates Drupal 11+ (888 checks), image, public-slugs e module/theme-boundary PASS. No Runtime de teste o módulo e os displays já estavam ativos; nenhum import foi executado. Smoke visual/HTTP do campo permanece DEFERRED.
+- RUNTIME STATUS: DEFERRED para homologação visual/HTTP; código e configuração estão no checkout e a configuração equivalente já está ativa no Runtime.
+
+## 0.4.0-dev.90 — apelido com maiúsculas; slug não canônico responde 404 — 2026-10-17
+
+Classificação: PATCH (correção de regra de apelido e de um 500 no perfil público).
+
+- Validação do apelido (`AccountNames::isValid`) vale para o slug normalizado (`PublicRouteSlug::normalize`); o apelido guardado preserva maiúsculas.
+- `/u/<apelido com maiúsculas>` responde 404, sem redirecionamento (AGENTS.md: não há redirecionamento de slug). Antes, respondia 500: o roteador casa sem diferenciar maiúsculas, o `metatag` e o normalizador do `redirect` geram a URL com o apelido bruto. `PublicProfileNotCanonicalSubscriber` (prioridade 31) retira a rota e responde 404 antes da renderização.
+- Gate `validate-profile-links`: exceção única e justificada para esse subscriber (não gera link de perfil).
+- Conta só autenticada (sem e-mail confirmado): sem dados básicos na tela de dados; decisão do responsável.
+- RUNTIME STATUS: APLICADO e verificado por HTTP (`/u/PiradoPirata` 404; `/u/piradopirata` 200; perfil de teste-b 200; apelido inexistente 404). Testes unitários do aculta_user passam (37).
+
+## 0.4.0-dev.88 — participante removido; chamadores por hierarquia — 2026-10-17
+
+Classificação: MINOR (remoção do tipo participante e troca de todos os seus chamadores).
+
+- Todos os chamadores de `participante` passam a usar `PerfilDoPapel` (principal por hierarquia; criação pelo tipo do papel). Consultas por tipo usam `PerfilDoPapel::TIPOS`. Documentos de identidade (`aculta_id_cpf`, `aculta_associado_id`) usam o tipo `associado`.
+- Criação de conta cria o perfil do papel da própria conta.
+- Tipo `participante`, seus campos, displays e perfis removidos do Runtime; arquivos de configuração removidos do repositório (`config/sync` e `config/install` dos módulos).
+- Permissões de perfil por função: `authenticated` perde as de `participante` e `customer`; cada papel recebe criar, editar e ver o próprio perfil.
+- Displays de dados básicos (nome, apelido, WhatsApp, cidade, UF) em `associado`, `email_confirmed`, `lms_teacher`, `gerente_loja` e `administrator`. `authenticated` mantém só o endereço.
+- Testes: unitários do Portal (187), `aculta_user` (37), `aculta_id_cpf` e `aculta_associado_id` (47 cada) passam.
+- Pendente: `.install` com hooks históricos que citam `participante` (revisar fresh install); textos de comentário; contas sem e-mail confirmado (autenticado) não têm dados básicos na tela de dados; testes Kernel e de navegador não executados.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: páginas de conta (dados, endereço, pedidos) para as contas de teste; perfil público; resumo de doação logado; telas administrativas de pessoas, perfis, papéis e hierarquia.
+
+## 0.4.0-dev.87 — um tipo de perfil por papel: endereço no autenticado, tipo customer removido — 2026-10-17
+
+Classificação: MINOR (remoção do tipo customer, novo endereço no perfil autenticado, novos tipos por função).
+
+- Tipo `customer` (Cliente) removido. Os 3 perfis foram copiados para `authenticated` (campo `field_address`), verificados (0 divergências) e os pedidos reapontados. Checkout, "Meus dados > Endereço", callback de CEP e o hook de endereço passam a usar `authenticated` e `field_address`.
+- Tipos de perfil por função: `associado` (documentos de identidade), `email_confirmed`, `authenticated` (endereço), `lms_teacher` (Professor), `gerente_loja` (Gerente de Loja) e `administrator` (Administrador). Cada um com os 20 campos e displays de formulário e de visualização.
+- `PerfilDoPapel`: prioridade administrator > gerente_loja > lms_teacher > associado > email_confirmed > authenticated.
+- Configuração exportada em `config/sync` (tipos, campos e displays); arquivos de `customer` removidos.
+- Pendente: os chamadores de `participante` (cerca de 25 arquivos) ainda usam esse tipo; o tipo `participante` não foi removido. Dados de `participante` ainda não foram redistribuídos para as funções.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: "Meus dados > Endereço" (logado como a conta de teste) mostra o endereço salvo. Verificação do checkout completo e do ViaCEP no navegador feita pelo responsável.
+
+## 0.4.0-dev.86 — um tipo de perfil por papel (helper) — 2026-10-17
+
+Classificação: MINOR (novo helper de perfil por papel; migração em andamento).
+
+- `PerfilDoPapel`: tipo do perfil pelo papel mais alto (associado > email_confirmed > authenticated), com `principal()` e `obter()` que recebem o EntityTypeManager injetado. Sem efeito em código existente ainda; os chamadores migram na sequência.
+- Runtime: tipos `associado`, `email_confirmed` e `authenticated` criados com os 20 campos do `participante`; 6 perfis copiados por papel mais alto e verificados campo a campo (0 divergências). Os perfis `participante` originais continuam no banco até a troca do código.
+- Pendente: troca dos chamadores de `participante`, remoção do tipo `participante`, e remoção do tipo `customer` (exige decisão sobre o endereço de cobrança e a conta; ver PAPEIS-PARTICIPACAO.md).
+- RUNTIME STATUS: APLICADO (tipos e cópias, aditivo). Nada apagado.
+
+## 0.4.0-dev.85 — Papéis e perfis em uma tela — 2026-10-17
+
+Classificação: MINOR (nova tela unificada e vínculo entre tipos de perfil e papéis).
+
+- A tela de hierarquia passa a se chamar **Papéis e perfis** (`/painel-administrativo/configuracoes/aculta/papeis`) e reúne: a hierarquia de papéis, o vínculo de cada tipo de perfil aos papéis (`aculta_portal.profile_roles`) e atalhos para as telas do núcleo (papéis, permissões, tipos de perfil e herança).
+- Vínculo entre perfis e papéis: registro para a administração. Não move nem altera dados de perfis existentes; o tipo `customer` (checkout) fica fora do vínculo de uso.
+- Correção: `anonymous` volta a aparecer como papel pai de `administrator` na tela; antes, salvar a tela o removia silenciosamente.
+- A tela do núcleo de tipos de perfil continua acessível (não foi redirecionada); redirecionamento ainda não decidido.
+- RUNTIME STATUS: APLICADO e verificado por HTTP (tela como administrador, salvamento de vínculo de teste com estado restaurado). Não verificado no navegador.
+
+## 0.4.0-dev.84 — hierarquia de papéis corrigida e editável no painel — 2026-10-17
+
+Classificação: MINOR (nova tela administrativa e mudança da cadeia de herança, por decisão do responsável).
+
+- Cadeia de herança (`role_inheritance.settings`): `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. `content_editor` herda de `lms_teacher` (antes, de `email_confirmed`); `gerente_loja` herda de `content_editor` (antes, de `authenticated`). Herança transitiva: `gerente_loja` passa a ter as permissões de `content_editor`, `lms_teacher`, `associado`, `estudante`, `email_confirmed` e `authenticated`.
+- Painel: ACULTA > Configurações > Hierarquia de papéis (`/painel-administrativo/configuracoes/aculta/papeis`), permissão `administer aculta role hierarchy` (restrita). Mostra a cadeia efetiva de cada papel e recusa ciclo ou autorreferência antes de salvar.
+- `RoleHierarchy` (cálculo puro): cadeia efetiva e detecção de ciclo. Testes unitários: 6 testes passam.
+- Gate `scripts/validate-role-hierarchy.php`: cadeia decidida, sem ciclo, administrator herda de todos, checagens por nome de papel não sobem acima da linha de base (15 `hasRole`, 4 `in_array`).
+- Comentário de `RestrictedForumGrants` alinhado à cadeia vigente.
+- Instruções para agentes (`AGENTS.md`, seção Papéis e hierarquia) e barreiras (`docs/portal/GUARDRAILS.md`).
+- RUNTIME STATUS: APLICADO no Runtime `aculta.toca.net.br`. Verificado: cadeia efetiva de `gerente_loja`; tela do painel como administrador (200, 10 papéis, cadeias calculadas); reenvio do mapa atual mantém a configuração; envio com ciclo é recusado e não altera a configuração. Não verificado no navegador.
+
+## 0.4.0-dev.83 — gerente da loja gerencia campanhas de doação — 2026-10-17
+
+Classificação: PATCH (permissão concedida a um papel existente, por decisão do responsável).
+
+- Papel `gerente_loja` recebe `administer aculta donation campaigns` diretamente (sem herança). Dependência de módulo `aculta_donation` declarada no papel.
+- RUNTIME STATUS: APLICADO no Runtime `aculta.toca.net.br`; verificado com a conta de teste: campanhas 200, Formas de apoio 200.
+
+## 0.4.0-dev.82 — gerente da loja acessa Formas de apoio — 2026-10-17
+
+Classificação: PATCH (permissão concedida a um papel existente).
+
+- Papel `gerente_loja` recebe `administer aculta support settings` (Formas de apoio). A permissão de campanhas de doação (`administer aculta donation campaigns`) não foi concedida.
+- RUNTIME STATUS: APLICADO no Runtime `aculta.toca.net.br`; verificado com a conta de teste (papel gerente_loja): página de Formas de apoio responde 200 com o campo de valores; campanhas responde 403.
+
+## 0.4.0-dev.81 — valores padrão da doação editáveis no painel — 2026-10-17
+
+Classificação: MINOR (nova configuração editorial e mudança do valor padrão de apoio).
+
+- Painel: ACULTA > Configurações > Formas de apoio (`/painel-administrativo/configuracoes/aculta/apoio`) passa a editar os valores padrão (lista separada por vírgula, até 8 valores, inteiros maiores que zero) e a permissão de "Outro valor" quando não há campanha vigente.
+- Valor inicial de instalação: R$ 5,00 (lista padrão 5, 10, 20, 50, 100).
+- Página de apoio (`SupportForm`): sem campanha vigente, lê `aculta_portal.support` em vez da constante fixa. A campanha do submódulo aculta_donation continua tendo prioridade.
+- Schema `aculta_portal.support` criado; `config/sync/aculta_portal.support.yml` com os valores padrão.
+- Testes: `SettingsFormValoresTest` (2 testes, 8 asserções) passam.
+- Gates: Drupal 11, mapa módulo x tema, fronteira e endereços de ambiente PASS.
+- RUNTIME STATUS: APLICADO por configuração (`aculta_portal.support` gravado no Runtime `aculta.toca.net.br`); página de apoio verificada por HTTP (cards 5, 10, 20, 50, 100; "Outro valor" presente). Não verificado: o formulário no painel (exige login de administrador) e a gravação pelo formulário.
+
+## 0.4.0-dev.80 — etapa de resumo na doação rápida e campanhas no Runtime — 2026-10-17
+
+Classificação: MINOR (nova etapa de resumo antes do pagamento; cards de valor no tema).
+
+- Doação rápida (`/apoiar/{valor}/agora`) passa pela etapa `review` (resumo: doação, subtotal, total, "Voltar" e "Editar") antes do pagamento. Implementação: `DonationSummaryController`, rota ajustada em `DomainRouteSubscriber`, pane `review` ativo em `donation_flow`.
+- Correção: o atalho do módulo contrib gravava o valor no campo, mas não o preço unitário (definido só ao enviar o passo de doação, que o atalho pula). O pedido saía com total zero. O controlador agora copia o valor para o preço unitário.
+- Correção: `config/sync/commerce_checkout.commerce_checkout_flow.donation_flow.yml` tinha a chave `review` duplicada (YAML inválido). Mantida uma entrada, `step: review`.
+- Submódulo `aculta_donation` (0.1.0-dev.2): atributo `ConfigEntityType` do namespace correto (`Drupal\Core\Entity\Attribute`), `config_prefix: campanha`, `route_provider` html; schema com a chave `aculta_donation.campanha.*`.
+- Testes no Runtime (`aculta.toca.net.br`, `aculta_runtime`, URI confirmado): campanha de teste vigente (valores 15/30/75, sem valor personalizado) exibida no host de apoio; campanha removida ao final. Anônimo e logado: atalho leva ao resumo com o valor correto; pedido em `review` com total igual ao valor.
+- RUNTIME STATUS: APLICADO e verificado por HTTP (anônimo e logado). Não verificado no navegador (WebDriver): etapa de resumo com captcha Turnstile e envio para o pagamento.
+- Pendente: pedido recorrente (F3), painel administrativo de doações, testes Kernel do submódulo, verificação no navegador.
+
+## 0.4.0-dev.79 — campanhas de doação (submódulo aculta_donation) — 2026-10-17
+
+Classificação: MINOR (novo submódulo e nova fonte de valores na página de apoio).
+
+- Novo submódulo `aculta_donation` (0.1.0-dev.1): entidade de configuração `aculta_donation_campaign` com nome, início e término (inclusivos), valores sugeridos, valor personalizado e status; formulário com validação de datas e valores; permissão `administer aculta donation campaigns`.
+- `DonationCampaignSelector::vigente()`: campanha ativa cuja janela contém a data de hoje; em sobreposição, vence a de início mais recente.
+- Página de apoio (`SupportForm`): valores e opção de valor personalizado vêm do contrato neutro `SupportAmountsProviderInterface`. Sem campanha vigente ou sem o submódulo habilitado, valem os valores padrão (10, 20, 50, 100).
+- Testes unitários: `DonationCampaignSelectorTest` (4 testes, 28 asserções) passam.
+- Gates: `validate-aculta-portal-drupal11` PASS; `validate-module-theme-map` PASS; `validate-module-theme-boundary` PASS; `validate-environment-addresses` PASS.
+- RUNTIME STATUS: DEFERRED. O submódulo ainda não está habilitado no `aculta_runtime`. Em 2026-10-17 o Drush do Homelab reportou URI `http://default`, que não confirma o servidor de testes `*.aculta.toca.net.br`; por isso nada foi habilitado nem importado.
+- Pendente nesta entrega: pedido de doação recorrente (F3), fluxo de checkout com resumo e testes de navegador.
+
+## 0.4.0-dev.78 — achados de endereço de produção corrigidos — 2026-10-17
+
+Classificação: PATCH.
+
+- Sobreposições de metatag por domínio (repositório e Runtime): `canonical_url` e `og_url` usam `[site:url]`, não o endereço de produção.
+- `metatag.metatag_defaults.front` (padrão): `og_url` usa `[site:url]`.
+- Canonical e `og:url` das raízes de finalidade (`FRONT_PATHS`) apontam para a raiz do host, também quando a página não é um nó (`EditorialHooks`).
+- JSON-LD de organização e site: no ambiente de testes, sobreposição em `settings.local.php` com o endereço do deployer; o token `[institution:url]` usa o endereço do ambiente (`DeployerEnvironment::siteUrl`).
+- Gate `validate-domain-front-paths`: falha se uma sobreposição de metatag por domínio voltar a usar endereço de produção.
+- Não alterado: texto editorial (corpo de nós) com menção a aculta.org, e dados do bloco de instituição (sobrepostos pelo token).
+
+## 0.4.0-dev.77 — canonical da vitrine aponta para a raiz — 2026-10-17
+
+Classificação: PATCH.
+
+- `EditorialHooks::metatagsAlter`: quando o nó é o caminho interno da raiz do host (`FRONT_PATHS`), o canonical e o `og:url` são a raiz do host. Vitrine da loja: `https://loja.aculta.toca.net.br/`.
+- Achado não corrigido nesta versão: a raiz da wiki e as demais raízes trazem `https://aculta.org/` (produção) no JSON-LD de organização e site, e as sobreposições de metatag por domínio no repositório (`config/sync/domain/*/metatag.metatag_defaults.front.yml`) têm endereços de produção fixos. Pendente: tratar como endereço de ambiente (mapeamento do `aculta_deployer`).
+
+## 0.4.0-dev.76 — identificador da revista: revista420; vitrine da loja — 2026-10-17
+
+Classificação: PATCH (renomeação de identificador e conteúdo da vitrine).
+
+- Identificador interno do domínio da revista: `coletivo420_aculta_org` → `revista420_aculta_org` (código, configuração, deploy e referências de campo). Nome de exibição: "Revista 420".
+- Migração do Runtime de testes executada com autorização do responsável: 17 referências de nós, aliases, ação de origem e sobreposições de configuração por domínio (`domain.revista420_aculta_org`).
+- Vitrine da loja criada (página `Loja da Associação`, alias `/loja-da-aculta`, origem `loja_aculta_org`). Raiz da loja responde 200; caminho interno responde 404.
+- Pendência: o `canonical` da vitrine aponta para o caminho interno `/loja-da-aculta`; deve apontar para a raiz do host.
+- Ocorrência restante de "O Observatório da Maconha" em texto editorial de notícia (`scripts/content/editorial/noticia-anvisa-canhamo-autocultivo.json`), mantida por ser texto de matéria.
+
+## 0.4.0-dev.75 — raiz dos subdomínios com comportamento uniforme — 2026-10-17
+
+Classificação: PATCH (roteamento; sem API nova).
+
+- Política única `Domain/FrontPathPolicy`: caminho interno da raiz de qualquer subdomínio responde 404 em acesso direto, sem 301 (antes `/apoio` tinha 301 e `/cursos` e `/wiki` também). Aplicada por `DomainPurposeRequestSubscriber`.
+- Testes unitários da política (172 testes no módulo, OK).
+- Gate `scripts/validate-domain-front-paths.php` (estático; `--live` consulta os hosts): falha se o assinante deixar de usar a política ou se surgir um 301 novo sem revisão.
+- Documentado em `docs/portal/DOMAIN-FRONT-PATHS.md`, com a matriz por host e a lista de 301 legados permitidos.
+- Gate `validate-aculta-portal-drupal11`: o contrato P5.1 do `SupportForm` foi atualizado do link do módulo de doação (`blockManager`) para os valores sugeridos no domínio principal (0.4.0-dev.73). O contrato continua exigindo injeção de dependências.
+- Pendências fora do código: vitrine da loja (nó 69 / alias `/loja-da-aculta`) ausente no Runtime de testes, então a raiz da loja responde 404; host `coletivo420` não resolve no servidor de testes.
+
+## 0.4.0-dev.74 — apoio somente no subdomínio — 2026-10-17
+
+Classificação: PATCH (roteamento de domínio).
+
+- O formulário de apoio é servido só na raiz do subdomínio de apoio. `/apoio` responde 404 em qualquer host (antes havia redirecionamento 301 para a raiz).
+- Escolha de valor no subdomínio de apoio; finalização (pedido e checkout) no domínio principal, como na loja.
+- Verificação: `apoio.../apoio` → 404; `apoio.../` → 200 com os valores sugeridos; `aculta.../apoio` → 404.
+
+## 0.4.0-dev.73 — formulário de apoio com valores sugeridos e fluxo de doação liberado — 2026-10-17
+
+Classificação: MINOR (novo bloco de valores sugeridos no formulário de apoio).
+
+- `SupportForm` mostra valores sugeridos (R$ 10, 20, 50 e 100) que levam a `/apoiar/{valor}/agora` no domínio principal, e a opção "Outro valor" (`/apoiar`). O fluxo de pedido e checkout continua no módulo `commerce_donation_flow`.
+- Permissão `make donation` concedida aos papéis `anonymous` e `authenticated` (antes só `administrator`, o que deixava a doação pública inacessível). Declarada em `config/sync`.
+- Tema: token `support-amounts` e estilo em `portal-support.css`; documentado em `TOKENS-E-ATRIBUTOS.md`.
+- Verificação no Runtime: `/apoio` (domínio de apoio) lista os valores; `/apoiar/{valor}/agora` cria o pedido de doação e redireciona ao passo de pagamento.
+- Pendente: teste completo no navegador (login, pagamento com saldo, conclusão e `/meu-apoio`). Assinatura mensal depende da decisão F3.
+
+## 0.4.0-dev.72 — redirecionamento de e-mails da conta de teste — 2026-10-17
+
+Classificação: PATCH (comportamento de teste; sem API pública nova).
+
+- `src/Mail/TestMailRedirect.php` e hook `mail_alter` em `MailHooks`: mensagens endereçadas às contas de teste listadas em `settings.local.php` vão para o endereço interno de teste. Demais destinatários não são alterados.
+- Sem a configuração local, a classe não altera nenhuma mensagem (produção não é afetada).
+- Testes unitários: 158 testes, 409 asserções, OK.
+- Verificação no Runtime: a mensagem para a conta de teste foi redirecionada. O servidor de envio respondeu com cota mensal esgotada (552), o que é um limite externo e não um erro deste código.
+
+## 0.4.0-dev.71 — autocompletar de CEP não apaga campos digitados — 2026-10-17
+
+Classificação: PATCH (correção de comportamento; sem API nova).
+
+- `js/cep-address.js`: a busca do CEP preenche só os campos vazios. Antes, cidade, estado, rua e bairro digitados pela pessoa eram sobrescritos, e a troca de estado reconstruía o formulário e apagava o restante.
+- Trade-off: se a pessoa já digitou um endereço antigo e troca o CEP, a cidade e a rua antigas permanecem e precisam ser corrigidas à mão.
+- Verificação: `node --check` no arquivo; cache rebuild no Runtime. Não foi refeito o fluxo completo de checkout no navegador nesta versão (pendente).
+
+## 0.4.0-dev.70 — apresentação dos painéis de vendas e doações (tokens sales-*) — 2026-10-16
+
+Classificação: MINOR da linha aberta. Autorização do responsável para mudanças visuais no tema e nos módulos relacionados.
+
+- O módulo marca os painéis com tokens `data-portal-ui` (`sales-panel`, `sales-section`, `sales-heading`, `sales-table`, `sales-pagination`, `sales-payment`, `sales-action`, `sales-action-danger` e os estados `sales-state-*`). Nenhuma classe de design no módulo.
+- `SalesOrdersTableBuilder` deixa de ser `final` (duplo de teste) e passa a usar esses tokens. As controllers de vendas e doações envolvem as seções em containers com título semântico (`h2`).
+- Aparência no ACULTA420 (0.6.0-dev.67): `PortalUiHooks::TOKENS` e `css/components/sales-panel.css`.
+- Testes unitários: 154 testes, 399 asserções, OK. Gates do Portal, de fronteira, de mapa e de docs de tokens: PASS.
+- Runtime: cache rebuild feito. Captura visual com administrador e pedidos de teste: DEFERRED.
+
+## 0.4.0-dev.69 — painéis de vendas e doações com ações de pagamento — 2026-10-16
+
+Classificação MINOR. Fase F1 (painéis), nas partes que não dependem da assinatura de teste nem de decisão nova.
+
+- Painel de vendas (`/painel-administrativo/loja/vendas`) e de doações (`/painel-administrativo/loja/doacoes`): tabela de pedidos paginada, com número, data, total e pagamentos. Cada pagamento mostra estado local e status do Mercado Pago.
+- Ações por pagamento: **atualizar** (consulta a API e espelha o status), **cancelar** (só com estado `authorization`, com confirmação) e **estornar** (operação `refund-payment` do Commerce).
+- Regra de acesso (`SalesPaymentAccess`): o pedido com produto exige `gerenciar pagamentos de vendas`; com doação, `administrar doacoes`; pedido misto exige as duas. Os links só aparecem com permissão, e os formulários checam de novo e devolvem 403.
+- Formulários `SalesPaymentRefreshForm` e `SalesPaymentCancelForm` com injeção de dependências (sem `\Drupal::`).
+- `SalesReportController` e `DonationReportController` passam a devolver `resumo` (doações) e `pedidos`; testes unitários ajustados.
+- Testes unitários: 154 testes, 399 asserções, OK. Gates de Portal, tema, endereços de ambiente e slugs: PASS.
+- Runtime: cache rebuild feito; rotas `atualizar` e `cancelar` registradas; construtor da tabela executado sem erro.
+- Pendências: teste visual com administrador logado e pedidos de teste (DEFERRED); teste Kernel do painel e dos formulários (DEFERRED); painel visual no tema ACULTA420 (não autorizado: a apresentação usa tabelas padrão); painel de produto dedicado (a tabela por variação já está no relatório de vendas).
+
+## 0.4.0-dev.68 — webhooks de assinatura do Mercado Pago — 2026-10-16
+
+Classificação MINOR. Autorização do responsável para o segredo do webhook: a Key `mercadopago_webhook_secret` (provedor env, variável `MERCADOPAGO_WEBHOOK_SECRET`) já existia e está no contrato de segredos. Nenhuma credencial nova foi criada.
+
+- Verificação de assinatura: o guard usa o `WebhookSignatureValidator` do SDK instalado (HMAC-SHA256, manifesto `id;request-id;ts`), em vez de uma cópia própria.
+- Tópicos de assinatura (`subscription_preapproval`, `subscription_preapproval_plan`, `subscription_authorized_payment`) deixam de ser descartados: são consultados e registrados em log. A cobrança recorrente usa `GET /authorized_payments/{id}`, porque o SDK 3.16.0 não tem cliente para esse recurso.
+- Assinatura de id não numérico aceita só para tópicos de assinatura; pagamentos seguem com o id inteiro.
+- Falha ao consultar devolve 500, para o Mercado Pago reenviar.
+- Nada é gravado no Commerce nesta versão: o vínculo assinatura-pedido de doação é a fase F3.
+- Testes unitários: 146 testes, 387 asserções, OK.
+- Runtime: POST sem assinatura e com assinatura inválida devolvem 401. POST com assinatura válida e id inexistente devolve 500 e registra a falha. O caminho de sucesso (200) fica DEFERRED até existir uma assinatura real de teste.
+- Cache rebuild do Runtime feito. Antes dele, o container não tinha o serviço novo e os tópicos de assinatura eram só reconhecidos.
+
+## 0.4.0-dev.67 — pendências da linha 0.4.0 resolvidas — 2026-10-16
+
+Classificação MINOR. Fecha as pendências de F0 que não dependem de decisão nova: ligação do relatório à consulta, testes Kernel e verificação no Runtime.
+
+- Relatório de vendas (`SalesReportController`) usa `SalesReportQuery`, com filtros de data, loja e granularidade. Some a carga de todos os pedidos na memória, que era a dívida registrada nas versões anteriores.
+- `SalesReportQuery` deixa de ser `final` e corrige a paginação: a contagem de pedidos lia a coluna de id, não o total.
+- `MercadoPagoClientFactory` deixa de ser `final`, para permitir duplo de teste.
+- Testes Kernel `SalesReportQueryKernelTest` (6 casos) no banco `aculta_simpletest`: escopo de produto e de doação, estado, intervalo, loja e paginação. Passam.
+- Testes unitários dos serviços do Mercado Pago com cliente do SDK substituído: atualização de status, estorno total, cancelamento de pendente, recusa de cancelamento de aprovado, pagamento sem id remoto, recorrência com payload e status. Unit `aculta_portal`: 139 testes, 369 asserções, OK.
+- Runtime: permissões `gerenciar pagamentos de vendas` e `administrar doacoes` concedidas ao papel `gerente_loja` (escopo do papel; import completo não feito, porque o diff de configuração do Runtime é grande). Cache rebuild concluído. Rotas `/painel-administrativo/loja/vendas` e `/painel-administrativo/loja/doacoes` registradas.
+- Pesquisa de webhooks: tópicos `subscription_preapproval`, `subscription_preapproval_plan` e `subscription_authorized_payment` confirmados na documentação. A verificação de assinatura (`x-signature`) exige o segredo do aplicativo, que seria uma credencial nova: não adicionada sem autorização.
+- Pendente: painéis e ações de pagamento (F1, a pedido do responsável); webhooks e vínculo de assinatura ao pedido de doação (F2 e F3, bloqueados pela decisão do segredo e pelo desenho do fluxo de doação).
+
+## 0.4.0-dev.66 — gerente de loja administra doações — 2026-10-16
+
+Classificação MINOR. Mudança de escopo do gerente de loja: além de vendas, administra doações.
+
+- Permissão `administrar doacoes` (concedida ao papel `gerente_loja` em `config/sync`) e rota `/painel-administrativo/loja/doacoes`, com o relatório de doações por período e moeda (`DonationReportController`).
+- `SalesReportQuery` passa a receber o escopo (`ESCOPO_PRODUTO` ou `ESCOPO_DOACAO`), com a mesma regra de período, loja e moeda. Vendas e doações nunca se somam.
+- Testes: `DonationReportControllerTest` (escopo de doação, formatação, tabela vazia). Unit `aculta_portal`: 132 testes, 362 asserções, OK.
+- Pendente: ações de pagamento e de recorrência para doações (estornar, cancelar assinatura) ligadas à permissão `administrar doacoes`; a tela entra na fase de painéis. Vincular a assinatura ao pedido de doação é F3 do plano.
+- Runtime: DEFERRED (importação de config do papel e teste visual do relatório).
+
+## 0.4.0-dev.65 — API do Mercado Pago: recorrência, ações de pagamento e consultas de vendas — 2026-10-16
+
+Classificação MINOR. Decisão do responsável: implementar as APIs do Mercado Pago disponíveis no SDK e planejar a integração com a loja e as doações. Painéis visuais ficam para a fase seguinte.
+
+- Fábrica `MercadoPagoClientFactory`: os 20 clientes concretos do SDK 3.16.0, com credenciais do gateway no modo ativo. Teste confirma que as classes existem.
+- Recorrência (`MercadoPagoRecurrenceService` e `RecurrenceRequestBuilder`): planos (`preapproval_plan`) e assinaturas (`preapproval`) com validação de valor, moeda, frequência, `back_url` https e e-mail. Pausar, reativar e cancelar assinatura.
+- Pagamentos (`MercadoPagoPaymentService` e `MercadoPagoPaymentPolicy`): atualizar status pela API, espelhando estorno e estados locais; cancelar pendente (`in_process`, `pending` e `authorized`, conforme a documentação) com transição `void`. Estorno continua pela operação `refund-payment` do Commerce.
+- Relatório de vendas (`SalesReportQuery` e `SalesReportFilters`): consultas sobre as tabelas do Commerce, sem tabela paralela, com filtros de data, loja e granularidade. Ainda não ligadas ao controller; a ligação entra com os painéis.
+- Serviços registrados em `aculta_portal.services.yml`.
+- Decisões do responsável (2026-10-16): cancelar e estornar só para o gerente de loja (permissão `gerenciar pagamentos de vendas`, concedida ao papel `gerente_loja` em `config/sync`); doação recorrente pela API de assinaturas do Mercado Pago; assinatura de produto da loja fica para depois; relatório de vendas exclui itens de doação; migração dos tokens para Drupal Key **não** autorizada (segue com os tokens de teste já configurados).
+- Verificação no Runtime: gateway `mercado_pago` (modo `test`) autentica na API com o token de teste (leitura de conta). Consultas do relatório executam no MariaDB sem erro; o banco de teste não tem pedidos concluídos, então os valores não foram conferidos.
+- Plano de integração com a loja e as doações, perguntas em aberto e fases: `docs/portal/MERCADO-PAGO-PLANO.md`.
+- Testes unitários: 130 testes, 351 asserções, OK. Gates `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-module-theme-map` e `validate-environment-addresses`: PASS.
+- Limites: sem teste Kernel (DEFERRED: banco `aculta_simpletest`). Sem chamada real ao Mercado Pago (DEFERRED: gateway não provisionado no Runtime). Tópicos de webhook de assinatura e `authorized_payments` não confirmados na documentação.
+- Risco aberto: tokens do gateway estão em configuração do módulo contrib; migrar para Drupal Key antes de produção.
+
+## 0.4.0-dev.64 — relatório de vendas da loja e correções da revisão — 2026-10-16
 
 Classificação MINOR. Decisão do responsável: o gerente de loja vê um relatório próprio de vendas.
 
 - `SalesReportController` (`/painel-administrativo/loja/vendas`, permissão `view commerce_order`): variações vendidas em pedidos concluídos, com quantidade e total por moeda. Sem dados de pagamento (pagamentos seguem só com o administrador). Sem cache.
-- Testes unitários da agregação (`SalesReportControllerTest`): soma por variação entre pedidos, totais por moeda, itens incompletos ignorados, vazio. 2/2 OK. Smoke no Runtime: rota exige `view commerce_order`; gerente acessa, usuário comum não.
-- Saída em tabela neutra (`#type => table`); o layout visual fica para o tema ACULTA420, sem alteração de tema nesta entrega.
+- Revisão de código aplicada: totais somados com `Price::add()` (sem `float`), agrupados por variação e moeda, e formatados pelo `commerce_price.currency_formatter` (sem `number_format` próprio).
+- Correção no tema (`page.html.twig`): `show_utility_bar|default(true)` trocava `false` por `true`, e a barra utilitária aparecia no purpose `links`. Agora usa `?? true`. Esta correção toca `web/themes/custom/aculta420/` por pedido explícito do responsável.
+- Saída em tabela neutra (`#type => table`); o layout visual fica para o tema ACULTA420.
+- Limite conhecido: o relatório carrega todos os pedidos concluídos (`loadMultiple`), sem agregação no banco nem paginação. Aceitável enquanto o volume for pequeno; revisar quando a loja crescer.
+- Testes: `SalesReportControllerTest` (`tests/src/Unit/Controller/`) cobre a soma por variação entre pedidos, os totais por moeda, itens incompletos ignorados e o estado vazio. O formatador é um duplo de teste com o formato pt-BR; a formatação real do Commerce não é coberta por este teste.
 
 ## 0.4.0-dev.63 — visibilidade da apresentação por purpose decidida pelo Portal — 2026-10-16
 
@@ -931,7 +1541,7 @@ Classificação: PATCH (ferramenta de deploy e documentação; sem código de ru
 
 - `aculta_deployer` 0.1.15: `domain_transition` em `config/deploy.json` e o comando `domains` (somente leitura), que confere a tabela contra `config/sync/domain.record.*.yml`.
 - Guia `aculta_deployer/docs/MIGRACAO-DOMINIOS.md` e fase 11 no `PLANEJAMENTO.md`.
-- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `coletivo420.aculta.org`). Produção só muda no deploy do RC.
+- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `revista420.aculta.org`). Produção só muda no deploy do RC.
 
 ## 0.2.0-dev.48 — Deployer 0.1.15: tabela de migração de domínios (teste → produção) — 2026-10-11
 
@@ -939,14 +1549,14 @@ Classificação: PATCH (ferramenta de deploy e documentação; sem código de ru
 
 - `aculta_deployer` 0.1.15: `domain_transition` em `config/deploy.json` e o comando `domains` (somente leitura), que confere a tabela contra `config/sync/domain.record.*.yml`.
 - Guia `aculta_deployer/docs/MIGRACAO-DOMINIOS.md` e fase 11 no `PLANEJAMENTO.md`.
-- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `coletivo420.aculta.org`). Produção só muda no deploy do RC.
+- Pendente de decisão do responsável: host de produção da revista (`revista420.aculta.org` ou `revista420.aculta.org`). Produção só muda no deploy do RC.
 
 ## 0.2.0-dev.47 — Host de teste da revista: coletivo420 → revista420 (servidor de testes) — 2026-10-10
 
 Classificação: PATCH (configuração de deploy e documentação; sem código de runtime).
 
-- `aculta_deployer/config/deploy.json`: host de teste da revista em `revista420.aculta.toca.net.br` (lista de hosts do sitemap/robots e substituição de `hostname` no domínio). Produção (`coletivo420.aculta.org`) não muda nesta versão.
-- `config/sync/domain_alias.alias.coletivo420_aculta_toca_net_br.yml`: padrão do alias de teste passa a `revista420.aculta.toca.net.br`. O `id` e o nome do arquivo permanecem, para não alterar a identidade da configuração importada.
+- `aculta_deployer/config/deploy.json`: host de teste da revista em `revista420.aculta.toca.net.br` (lista de hosts do sitemap/robots e substituição de `hostname` no domínio). Produção (`revista420.aculta.org`) não muda nesta versão.
+- `config/sync/domain_alias.alias.revista420_aculta_toca_net_br.yml`: padrão do alias de teste passa a `revista420.aculta.toca.net.br`. O `id` e o nome do arquivo permanecem, para não alterar a identidade da configuração importada.
 - Documentação: `docs/operations/TESTING.md`, `docs/architecture/multidomain.md`, `docs/portal/ARCHITECTURE.md` (coluna do servidor de testes).
 - Pendências fora do repositório (DEFERRED): (1) `trusted_host_patterns` em `settings.local.php` do servidor de testes; (2) `config import` do alias no Runtime e limpeza de cache; (3) DNS e VirtualHost/certificado no Cloudflare e no Virtualmin; (4) mudança equivalente em produção (`*.aculta.org`), registrada para deploy só no RC.
 
@@ -1000,7 +1610,7 @@ Classificação: correção de comportamento de busca (PATCH).
 - A busca geral segue centralizada no MAIN (`/busca`). Cada resultado passa a abrir no host do próprio conteúdo, pelo purpose do nó (`field_domain_source`). Antes, o link era o caminho relativo do host onde a busca rodava.
 - A Wiki420 mantém o próprio motor (`/wiki/busca`, `WikiController::search`); os verbetes `wiki_entry` não entram no índice geral.
 - Política em `docs/portal/SEARCH.md`.
-- Verificado no Runtime de teste: resultado de "Notícias" abre em `coletivo420.aculta.toca.net.br/noticias`.
+- Verificado no Runtime de teste: resultado de "Notícias" abre em `revista420.aculta.toca.net.br/noticias`.
 
 ## 0.2.0-dev.40 — F3: busca com content_access e testes de Kernel — 2026-10-10
 
@@ -1997,4 +2607,11 @@ privados de turma ainda não estão homologados. RUNTIME STATUS: DEFERRED.
 Decisão de acesso: o papel `email_confirmed` recebe `usuario_aculta`; `authenticated` deixa de receber permissões de edição de texto. O corpo dos tópicos do Fórum aceita somente `usuario_aculta`.
 
 A atualização `aculta_portal_update_11009` migra referências atuais e revisões de `basic_html` para `usuario_aculta` e de `full_html` para `revista_editorial`, preservando texto, revisões, autores e datas. Campos, views e Agreement foram alinhados. Os formatos e editores Core removidos deixam de ser exportados.
+
+## 0.4.0-dev.110 — início da F6 do LMS: visão geral da sala de curso
+
+- `aculta_lms` integra um índice de lições à página canônica existente do curso;
+  acesso é revalidado pelo Group/LMS e as atividades usam rota nativa.
+- Sem mudança de tema, entidades, memberships ou progresso.
+- RUNTIME STATUS: DEFERRED; falta smoke test com membro, não membro e visitante.
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cdc2beff2bc266512cb01c0088ee36f4",
+    "content-hash": "e1c15638f4b81665e63b1cdac6892a7c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1976,57 +1976,6 @@
             "homepage": "https://www.drupal.org/project/commerce",
             "support": {
                 "source": "https://git.drupalcode.org/project/commerce"
-            }
-        },
-        {
-            "name": "drupal/commerce_donation_flow",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/commerce_donation_flow.git",
-                "reference": "1.2.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/commerce_donation_flow-1.2.0.zip",
-                "reference": "1.2.0",
-                "shasum": "191691de745ec744a0e114d23f501ab33101069b"
-            },
-            "require": {
-                "drupal/commerce": "^2.0 || ^3.0.2",
-                "drupal/commerce_checkout": "*",
-                "drupal/commerce_order": "*",
-                "drupal/commerce_payment": "*",
-                "drupal/commerce_price": "*",
-                "drupal/core": "^10.3 || ^11",
-                "php": ">=8.1"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.2.0",
-                    "datestamp": "1747657358",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "Shawn Duncan",
-                    "homepage": "https://www.drupal.org/user/628748",
-                    "role": "Project Lead"
-                }
-            ],
-            "description": "Provides donation specific configuration and checkout.",
-            "homepage": "https://www.drupal.org/project/commerce_donation_flow",
-            "support": {
-                "source": "https://git.drupalcode.org/project/commerce_donation_flow"
             }
         },
         {
@@ -4504,17 +4453,17 @@
         },
         {
             "name": "drupal/lms",
-            "version": "1.2.3",
+            "version": "1.2.4",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/lms.git",
-                "reference": "1.2.3"
+                "reference": "1.2.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/lms-1.2.3.zip",
-                "reference": "1.2.3",
-                "shasum": "ad8a2a99d64c8460e568b5542aa58a3f3bca81de"
+                "url": "https://ftp.drupal.org/files/projects/lms-1.2.4.zip",
+                "reference": "1.2.4",
+                "shasum": "44544ef49fde6aa1c26a63afbc677aaca1425e7d"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11",
@@ -4529,8 +4478,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.2.3",
-                    "datestamp": "1790154247",
+                    "version": "1.2.4",
+                    "datestamp": "1791379273",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -5820,50 +5769,6 @@
             "homepage": "https://www.drupal.org/project/role_hierarchy",
             "support": {
                 "source": "https://git.drupalcode.org/project/role_hierarchy"
-            }
-        },
-        {
-            "name": "drupal/role_inheritance",
-            "version": "2.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/role_inheritance.git",
-                "reference": "2.1.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/role_inheritance-2.1.1.zip",
-                "reference": "2.1.1",
-                "shasum": "6fea560227176d839a6479193f6f42e84a792dce"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11 || ^12"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.1.1",
-                    "datestamp": "1760633975",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "richgerdes",
-                    "homepage": "https://www.drupal.org/user/3437973"
-                }
-            ],
-            "description": "Allows roles to be structured in a hierarchy and inherit privileges of child roles",
-            "homepage": "https://www.drupal.org/project/role_inheritance",
-            "support": {
-                "source": "https://git.drupalcode.org/project/role_inheritance"
             }
         },
         {

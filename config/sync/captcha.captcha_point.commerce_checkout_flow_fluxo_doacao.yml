@@ -1,0 +1,9 @@
+uuid: 62950078-1e3c-47f7-9d12-3c52ded55d55
+langcode: pt-br
+status: false
+dependencies:
+  module:
+    - captcha
+formId: commerce_checkout_flow_fluxo_doacao
+captchaType: default
+label: 'Checkout de doação (apoio): sem Turnstile para visitante'

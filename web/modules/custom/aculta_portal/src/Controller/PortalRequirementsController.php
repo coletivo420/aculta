@@ -136,13 +136,6 @@ final class PortalRequirementsController extends ControllerBase {
       'purpose' => 'Store, checkout, pedidos e pagamentos; fonte de verdade financeira.',
     ],
     [
-      'name' => 'Commerce Donation Flow',
-      'modules' => ['commerce_donation_flow'],
-      'package' => 'drupal/commerce_donation_flow',
-      'minimum' => '^1.2',
-      'purpose' => 'Fluxo de apoio único e Donation Order Item.',
-    ],
-    [
       'name' => 'Commerce Mercado Pago',
       'modules' => ['commerce_mercado_pago'],
       'package' => 'drupal/commerce_mercado_pago',

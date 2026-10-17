@@ -12,6 +12,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Modal de edição do link de uma rede social (Minha conta). Salva pela rota JSON aculta_user.redes_save.
@@ -107,8 +108,7 @@ final class SocialLinkForm extends FormBase {
   private function profile(): \Drupal\profile\Entity\ProfileInterface {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
-    return $storage->loadByUser($account, 'participante')
-      ?? $storage->create(['type' => 'participante', 'uid' => (int) $account->id()]);
+    return PerfilDoPapel::obter($storage, $account);
   }
 
 }

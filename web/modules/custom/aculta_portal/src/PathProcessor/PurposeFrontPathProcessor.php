@@ -28,7 +28,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
    *
    * - support: a raiz serve o formulário de apoio (rota `aculta_portal.support_form`, `/apoio`).
    * - wiki e courses: a raiz serve a página inicial da wiki (`/wiki`) e dos cursos (`/cursos`). Verificado: texto igual.
-   * - shop: a raiz serve a página inicial da loja (nó 69, alias `/loja-da-aculta`).
+   * - shop: a raiz serve a página inicial da loja (rota `aculta_portal.shop_home`, `/loja`, que mostra o nó 372).
    * - forum: a raiz serve o índice do fórum (rota `forum.index`, `/forum`).
    * - magazine e main: sem reescrita. A raiz é o `<front>` (página inicial do site, com a marca do host).
    */
@@ -36,7 +36,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
     'support' => '/apoio',
     'wiki' => '/wiki',
     'courses' => '/cursos',
-    'shop' => '/loja-da-aculta',
+    'shop' => '/loja',
     'forum' => '/forum',
     'links' => '/redes-sociais',
   ];

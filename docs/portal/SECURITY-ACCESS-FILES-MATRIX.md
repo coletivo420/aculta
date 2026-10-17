@@ -6,7 +6,7 @@ Revisado em 2026-10-16. As linhas definem critérios de acesso e homologação.
 | --- | --- | --- | --- | --- | --- |
 | Catálogo | View `courses_catalog` + Group access | público conforme config da View | igual ao access concedido | igual ao access concedido | View access e Group entity access, conteúdo publicado |
 | Metadados/curso privado | Group access + revision access | só membership/papel autorizado | papel da turma conforme Group | criador/admin conforme handler e papel | membro de outra turma, anônimo e não publicado |
-| Matrícula | Group membership | própria associação | gestão limitada à turma | gestão conforme papel | não editar membership por ID fornecido pelo cliente |
+| Matrícula | Group membership + LMS Classes | própria associação a turma do curso | criar/gerir turmas e alunos dos cursos autorizados | gestão conforme papel | rejeitar turma de outro curso, curso sem turma e alteração de membership por ID cliente; usuário A/B e educador A/B |
 | Lições/atividades | LMS routes + TrainingManager + Group access | tentativa própria, sequência LMS | correção conforme permission `grade students` | conforme capability LMS/Group | acesso direto, delta alterado e turma cruzada |
 | Respostas/status/notas | LMS entity access | próprio resultado permitido | só resultados de turma autorizada | acesso restrito e auditável | IDOR por answer/status/course e cache A/B |
 | Arquivo de atividade submetido | Media/File privado + LMS File Upload | próprio arquivo | avaliador da turma, apenas após autorização | privilegiado conforme política | URL direta, expiração/revogação de membership, MIME/tamanho e upload malicioso |

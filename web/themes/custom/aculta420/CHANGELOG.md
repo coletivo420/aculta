@@ -1,3 +1,59 @@
+## 0.6.0-dev.71 — carrinho com um botão de checkout e assinatura em espaço próprio — 2026-10-17
+
+Classificação: MINOR da linha aberta (estrutura do painel do carrinho).
+
+- Um botão "Finalizar carrinho" para as categorias (loja, cursos, apoio); caixas e separadores mantidos.
+- Assinatura em bloco próprio, com botão "Finalizar assinatura".
+
+## 0.6.0-dev.70 — carrinho com rolagem e rodapé neutro; cartões de produto com borda — 2026-10-17
+
+Classificação: PATCH da linha aberta (ajuste visual, sem contrato novo).
+
+- Cartões de produto com borda de 2 px (`border-2`).
+- Carrinho lateral: rodapé "Compre na loja…" com superfície neutra e borda de destaque (tokens claro e escuro), distinto dos
+  botões. O corpo rola dentro do painel, como as gavetas de mensagens e avisos; o rodapé fica fixo embaixo.
+- Cartões de produto da página inicial da loja com borda neutra (classe `border`), sem cor de botão.
+- SDC: descrições acrescentadas aos quatro componentes de doação (`donation-dedication`, `donation-notification`,
+  `donation-pane`, `donation-summary-container`); schema SDC PASS.
+- Verificação: `validate-module-theme-boundary` PASS; `validate-aculta420-sdc-schemas` PASS.
+
+## 0.6.0-dev.69 — F5: cartão ACULTA420 no catálogo LMS — 2026-10-17
+
+Classificação: MINOR da linha aberta (novo SDC experimental com contrato compatível).
+
+- `components/content/course_card/` substitui `lms:course_card` por SDC negotiation. O schema aceita
+  os props/slots existentes e inclui `description`, que o row plugin do LMS já fornece.
+- Drupal LMS e a View `courses_catalog` continuam donos dos dados, filtro de publicação, URL,
+  botão de entrada, access e cacheability; não houve alteração de configuração da View nem no contrib.
+- O tema assume o markup e o CSS do cartão, aplica tokens semânticos, limita a descrição visual a
+  seis linhas e mantém foco visível de 3 px. O rail continua nativo e não requer JavaScript.
+- Verificação: SDC schemas PASS (25 componentes/377 checks); design foundations PASS (1895);
+  `validate-lms-skin` PASS (17 checks); Core negociou o componente como `aculta420:course_card`;
+  `drush cr` PASS; View executada como anônimo e
+  como conta autenticada com papel estudante; HTTP 200 e Firefox headless com Tab, nome acessível
+  e contorno de foco. Há somente um curso publicado e nenhum não publicado no Runtime para testar
+  o caso negativo de listagem. Homelab PHP 8.4.26; produção não verificada.
+- RUNTIME STATUS: ACTIVE no servidor de testes (`aculta_runtime`, `https://aculta.toca.net.br`).
+
+## 0.6.0-dev.68 — zoom do viewer PDF preservado em viewport estreito — 2026-10-17
+
+Classificação: PATCH (apresentação responsiva; sem alterar o contrato de acesso ou markup semântico).
+
+- `css/components/pdf-viewer.css`: a área da página passa a rolar quando o zoom excede o viewport; o canvas deixa de ser redimensionado para caber em 100% da largura.
+- A marcação neutra do módulo envolve o canvas em `page-stage`, que recebe a rolagem visual.
+- O canvas só aparece depois de renderizado, evitando espaço vazio quando o carregamento falha.
+- Cache rebuild aplicado no Runtime de teste; verificação visual em Firefox e mobile continua pendente.
+
+## 0.6.0-dev.67 — painéis de vendas e doações (tokens sales-*) — 2026-10-16
+
+Classificação: MINOR da linha aberta (componente de apresentação compatível; nenhum contrato stable quebrado).
+
+- `src/Hook/PortalUiHooks.php`: 13 tokens `sales-*` (painel, seção, título, tabela, paginação, pagamento, ações normal e perigosa, e cinco estados de pagamento).
+- `css/components/sales-panel.css` (novo, na biblioteca `global`): só tokens semânticos (`--aculta-status-*`, `--aculta-surface-muted`, `--aculta-text-muted`, `--aculta-border-subtle`, `--aculta-space-section`); tabela rola dentro do painel, sem rolagem horizontal da página.
+- Gate de fundação: versão 0.6.0-dev.67.
+- Verificação: `validate-portal-ui-docs` PASS (250 tokens no mapa); `validate-module-theme-map` PASS; `validate-module-theme-boundary` PASS; `validate-aculta420-design-foundations` PASS; `validate-aculta420-sdc-schemas` PASS; `validate-aculta420-foundation` e `validate-aculta420-shell-contract` PASS (executados via `drush php:script`, como indica `docs/development.md`).
+- Pendente: captura visual com administrador logado e pedidos de teste (DEFERRED).
+
 ## 0.6.0-dev.66 — barra e cabeçalho por flags do Portal (shell-contract PASS) — 2026-10-16
 
 Classificação: PATCH (troca de decisão; o HTML e a aparência continuam os mesmos por purpose).

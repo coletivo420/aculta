@@ -15,7 +15,8 @@ aculta_messenger.alerts_preview:
     _controller: '\Drupal\aculta_messenger\Controller\MessagesController::alertsPreview'
     _title: 'Avisos ativos'
   requirements:
-    _access: 'TRUE'
+    # Avisos são só para contas (decisão do responsável, 2026-10-17).
+    _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
 

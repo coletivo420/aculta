@@ -1,0 +1,10 @@
+uuid: ded6b2e7-bd22-46f9-bf9a-c0ff01af8895
+langcode: pt-br
+status: true
+dependencies: {  }
+id: revista420_aculta_toca_net_br
+domain_id: revista420_aculta_org
+pattern: revista420.aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 4

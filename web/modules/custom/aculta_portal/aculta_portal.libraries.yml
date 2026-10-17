@@ -35,4 +35,3 @@ cart-status:
   dependencies:
     - core/drupal
     - core/once
-

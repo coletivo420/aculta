@@ -1,5 +1,31 @@
 # Changelog — aculta_user
 
+## Não lançado — manter e-mail não confirmado na matrícula LMS
+
+- A herança automática de `email_confirmed` agora depende do marcador real de `EmailConfirmationPolicy`, inclusive no carregamento da conta, no usuário da sessão e ao remover papéis herdados antes de salvar.
+- Conceder `estudante` pela matrícula de turma não confirma o endereço nem concede permissões que dependem de confirmação.
+- RUNTIME STATUS: DEFERRED; precisa de smoke test com conta não confirmada após F7.
+
+## 0.4.0-dev.24 — sem papéis laterais
+
+- `HerancaDePapeis` deriva o mapa só da cadeia; a limpeza ao excluir papel mexe só na cadeia.
+- Testes: `HerancaDePapeisTest` (4) e `RoleInheritanceHooksTest` (2) atualizados.
+
+## 0.4.0-dev.23 — limpeza ao excluir papel; documentação e testes da hierarquia — 2026-10-17
+
+- Limpeza ao excluir papel (equivale ao hook do contrib): `RoleInheritanceHooks::userRoleDelete` → `HerancaDePapeis::removerPapel`, que recalcula a configuração com `RoleHierarchy::completar`. Laterais cuja categoria foi excluída voltam ao autenticado.
+- Regra de papel novo sem categoria em `completar` (antes duplicada no formulário): mesma função nas duas pontas.
+- Testes unitários: `HerancaDePapeisTest` (4), `RoleInheritanceHooksTest` (2).
+- Documentação: `docs/HIERARQUIA-DE-FUNCOES.md` (comparação função a função com o contrib e cobertura de testes) e `docs/CLASSES-E-HOOKS.md`.
+- RUNTIME STATUS: APLICADO. Testes de exclusão feitos com papéis temporários (lateral e categoria), com a configuração restaurada e conferida; papéis efetivos das contas de teste e páginas administrativas verificados.
+
+## 0.4.0-dev.22 — herança de papéis própria (substitui role_inheritance) — 2026-10-17
+
+- Herança de papéis portada para o aculta_user: `HerancaDePapeis` (mapa derivado de `aculta_portal.role_hierarchy`), `RoleInheritanceHooks` (user_load, user_presave e formulário de usuário) e `RoleInheritanceCurrentUserSubscriber` (usuário logado, prioridade 299).
+- Papéis herdados são somados à conta em memória e retirados ao salvar; nunca são gravados como papel direto.
+- Módulo contrib `role_inheritance` desinstalado no Runtime e removido do `composer.json` e do `composer.lock`.
+- RUNTIME STATUS: APLICADO e verificado: papéis efetivos de 4 contas de teste idênticos ao baseline antes da desinstalação; páginas administrativas e de loja respondem conforme o papel.
+
 ## Não lançado — visibilidade dos fóruns por permissão (Role Inheritance / Role Hierarchy)
 
 Classificação MINOR. Decisões do responsável (2026-10-17): dependências `drupal/role_inheritance` e `drupal/role_hierarchy`

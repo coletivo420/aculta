@@ -1,0 +1,18 @@
+{#
+  Corpo do painel do carrinho (aculta_portal). Fallback neutro: sem aparência. O tema ACULTA420 sobrescreve este template.
+#}
+{% if empty %}
+  <p>Sem produto(s) no carrinho.</p>
+{% else %}
+  {% for site in sites %}
+    <p><strong>{{ site.label }}</strong> {{ site.total }}</p>
+    <ul>
+      {% for item in site.items %}
+        <li>{{ item.title }} — {{ item.quantity }} × {{ item.total }}</li>
+      {% endfor %}
+    </ul>
+    {% if site.checkout_url %}<a href="{{ site.checkout_url }}">Finalizar {{ site.label|lower }}</a>{% endif %}
+  {% endfor %}
+  <p><strong>Total geral:</strong> {{ total }}</p>
+  {% if url %}<a href="{{ url }}">Ver carrinho completo</a>{% endif %}
+{% endif %}

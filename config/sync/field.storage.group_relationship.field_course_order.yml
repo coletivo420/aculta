@@ -1,0 +1,20 @@
+uuid: 8b70db7d-a1f0-45ce-a8f7-97a29f1dab21
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_order
+    - group
+id: group_relationship.field_course_order
+field_name: field_course_order
+entity_type: group_relationship
+type: entity_reference
+settings:
+  target_type: commerce_order
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

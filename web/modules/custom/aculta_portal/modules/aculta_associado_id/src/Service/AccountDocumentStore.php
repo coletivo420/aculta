@@ -133,13 +133,13 @@ final class AccountDocumentStore implements AccountDocumentInterface {
    * @return array<string, mixed>
    */
   private function profileFields(): array {
-    return $this->profileFields ??= $this->fieldManager->getFieldDefinitions('profile', 'participante');
+    return $this->profileFields ??= $this->fieldManager->getFieldDefinitions('profile', 'associado');
   }
 
   private function indexInUseByOther(string $index, int $uid): bool {
     $ids = $this->entities->getStorage('profile')->getQuery()
       ->accessCheck(FALSE)
-      ->condition('type', 'participante')
+      ->condition('type', 'associado')
       ->condition(self::INDEX_FIELD, $index)
       ->condition('uid', $uid, '<>')
       ->range(0, 1)
@@ -155,7 +155,7 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('uid', $account->id())
-      ->condition('type', 'participante')
+      ->condition('type', 'associado')
       ->sort('is_default', 'DESC')
       ->sort('profile_id', 'DESC')
       ->range(0, 1)
@@ -165,7 +165,7 @@ final class AccountDocumentStore implements AccountDocumentInterface {
 
   private function createParticipantProfile(UserInterface $account): ProfileInterface {
     return $this->entities->getStorage('profile')->create([
-      'type' => 'participante',
+      'type' => 'associado',
       'uid' => $account->id(),
       'status' => TRUE,
       'is_default' => TRUE,

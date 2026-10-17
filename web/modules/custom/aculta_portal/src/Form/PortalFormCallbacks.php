@@ -17,6 +17,7 @@ use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserFloodControlInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Dependency-injected callbacks used by altered Core/contrib forms.
@@ -47,11 +48,11 @@ final class PortalFormCallbacks {
    * do checkout. Roda na montagem da entidade, antes do save.
    */
   public function buildStreetNumber(string $entityTypeId, $profile, array &$form, FormStateInterface $formState): void {
-    if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $profile->get('address')->isEmpty()) {
+    if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $profile->get('field_address')->isEmpty()) {
       return;
     }
     [$number, $sn] = \Drupal\aculta_portal\Account\StreetNumberField::values($form, $formState);
-    $address = $profile->get('address')->first();
+    $address = $profile->get('field_address')->first();
     $value = $address->getValue();
     $value['address_line1'] = \Drupal\aculta_portal\Account\StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
     $address->setValue($value);
@@ -275,7 +276,7 @@ final class PortalFormCallbacks {
   /** Synchronizes Commerce address names with the participant profile. */
   public function syncCustomerAddressNames(array &$form, FormStateInterface $formState): void {
     $participant = $formState->getFormObject()->getEntity();
-    if (!$participant instanceof ProfileInterface || $participant->bundle() !== 'participante') {
+    if (!$participant instanceof ProfileInterface || !PerfilDoPapel::ehTipoDePapel($participant)) {
       return;
     }
 
@@ -285,12 +286,12 @@ final class PortalFormCallbacks {
     }
 
     $storage = $this->entityTypeManager->getStorage('profile');
-    $customer = $storage->loadByUser($user, 'customer');
-    if ($customer === NULL || $customer->get('address')->isEmpty()) {
+    $customer = $storage->loadByUser($user, 'authenticated');
+    if ($customer === NULL || $customer->get('field_address')->isEmpty()) {
       return;
     }
 
-    $address = $customer->get('address')->first();
+    $address = $customer->get('field_address')->first();
     $changed = FALSE;
     foreach ([
       'given_name' => 'field_first_name',

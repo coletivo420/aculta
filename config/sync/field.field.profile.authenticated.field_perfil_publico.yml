@@ -1,0 +1,24 @@
+uuid: f1a8252e-1d23-408b-87ae-3b1c28d1687a
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_perfil_publico
+    - profile.type.authenticated
+id: profile.authenticated.field_perfil_publico
+field_name: field_perfil_publico
+entity_type: profile
+bundle: authenticated
+label: 'Perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

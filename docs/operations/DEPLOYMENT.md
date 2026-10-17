@@ -68,7 +68,7 @@ Todos os purposes ativos apontam para a mesma aplicação Drupal, banco e sessã
 | MAIN | `aculta.org` |
 | ACCOUNT | `conta.aculta.org` |
 | SUPPORT | `apoio.aculta.org` |
-| MAGAZINE | `coletivo420.aculta.org` |
+| MAGAZINE | `revista420.aculta.org` |
 | WIKI | `wiki420.aculta.org` |
 | SHOP | `loja.aculta.org` |
 | COURSES | `cursos.aculta.org` |
@@ -196,7 +196,7 @@ permanente neste repositório.
 Política aprovada pelo responsável em 2026-10-09.
 
 - **Produção indexável:** todos os domínios e subdomínios de produção (`aculta.org`,
-  `conta.`, `apoio.`, `coletivo420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
+  `conta.`, `apoio.`, `revista420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
   com `noindex`.
 - **Servidor de testes não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`.
 - **Páginas privadas da conta** continuam com `noindex` em nível de rota (meta `robots` do

@@ -1,0 +1,6 @@
+{#
+  Cartão-link de doação (aculta_donation). Usado pelos valores sugeridos, pela opção "Outro" e pelo botão "Doar".
+#}
+<a class="aculta-donation-card{{ other ? ' aculta-donation-card--other' : '' }}{{ inline ? ' aculta-donation-card--inline' : '' }}" href="{{ href }}">
+  <span class="aculta-donation-card__value">{{ label }}</span>
+</a>

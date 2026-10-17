@@ -20,7 +20,7 @@ final class DomainPurposeManager {
     'main' => 'aculta_org',
     'account' => 'conta_aculta_org',
     'support' => 'apoio_aculta_org',
-    'magazine' => 'coletivo420_aculta_org',
+    'magazine' => 'revista420_aculta_org',
     'wiki' => 'wiki420_aculta_org',
     'shop' => 'loja_aculta_org',
     'courses' => 'cursos_aculta_org',

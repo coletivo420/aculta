@@ -1,0 +1,17 @@
+uuid: 7774250b-1f7f-4527-a542-a88b4996c5bd
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_variation_type.curso
+  module:
+    - commerce_product
+id: produto_curso
+label: 'Produto de curso'
+traits: {  }
+locked: false
+description: 'Vínculo de compra para matrícula em um curso do Portal.'
+variationTypes:
+  - curso
+multipleVariations: false
+injectVariationFields: true

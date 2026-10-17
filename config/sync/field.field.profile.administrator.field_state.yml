@@ -1,0 +1,26 @@
+uuid: 1e66ddab-3c3f-4143-838e-e7465711729f
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_state
+    - profile.type.administrator
+  module:
+    - options
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.administrator.field_state
+field_name: field_state
+entity_type: profile
+bundle: administrator
+label: UF
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
+

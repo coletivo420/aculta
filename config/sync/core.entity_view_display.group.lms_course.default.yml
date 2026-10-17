@@ -5,9 +5,11 @@ dependencies:
   config:
     - field.field.group.lms_course.capa_curso
     - field.field.group.lms_course.field_description
+    - field.field.group.lms_course.field_course_product
     - group.type.lms_course
     - image.style.aculta_destaque_16x9
   module:
+    - aculta_lms
     - image
     - lms
     - text
@@ -16,6 +18,9 @@ targetEntityType: group
 bundle: lms_course
 mode: default
 content:
+  aculta_lms_course_room:
+    weight: 20
+    region: content
   capa_curso:
     type: image
     label: hidden
@@ -52,6 +57,7 @@ content:
     region: content
 hidden:
   changed: true
+  field_course_product: true
   created: true
   langcode: true
   lessons: true

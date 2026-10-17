@@ -23,6 +23,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
 
   /** {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
+    // Doação rápida passa pelo resumo antes do pagamento (Portal\Donation\DonationSummaryController).
+    if ($quick = $collection->get('aculta_donation.donation.quick')) {
+      $quick->setDefault('_controller', '\\Drupal\\aculta_portal\\Donation\\DonationSummaryController::quick');
+    }
     // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado, somado à regra original do dono
     // do recurso (ProtectedRouteAccessCheck). Rota sem recurso (/checkout) só recebe a checagem de e-mail; mantém _permission.
     $protected = [
@@ -186,7 +190,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       $route->setOption('parameters', []);
       $route->setOption('_aculta_domain_purpose', 'account');
     }
-    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.my_data_other', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.security_password', 'aculta_portal.support_my', 'aculta_portal.account_courses', 'aculta_portal.account_settings'] as $name) {
+    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.my_data_other', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.security_password', 'aculta_portal.support_my', 'aculta_portal.support_subscription_action', 'aculta_portal.account_courses', 'aculta_portal.account_settings'] as $name) {
       if ($route = $collection->get($name)) {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
@@ -230,6 +234,12 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     foreach ($collection as $name => $route) {
       if ($route->getOption('_admin_route')) {
         $route->setOption('_aculta_domain_purpose', 'main');
+      }
+      if (DomainRoutePolicy::isDonationFlowRouteName((string) $name)) {
+        // Escolha do valor (apoio) fica no SUPPORT; as etapas de checkout ficam no MAIN, com as rotas do Commerce.
+        $purpose = DomainRoutePolicy::purposeForDonationRoute((string) $name);
+        $route->setOption('_aculta_domain_purpose', $purpose);
+        $route->setOption('_aculta_cross_domain_canonical_purpose', $purpose);
       }
       if (DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
         $route->setOption('_aculta_domain_purpose', 'main');

@@ -28,8 +28,31 @@ final class DomainRoutePolicyTest extends UnitTestCase {
       'checkout' => ['commerce_checkout.form'],
       'payment checkout' => ['commerce_payment.checkout.return'],
       'payment notify' => ['commerce_payment.notify'],
-      'donation flow' => ['commerce_donation_flow.form'],
     ];
+  }
+
+  /**
+   * Escolha de valor de apoio e assinatura (aculta_donation) pertence ao purpose SUPPORT.
+   */
+  #[DataProvider('donationFlowRoutes')]
+  public function testDonationFlowBelongsToSupport(string $route): void {
+    $this->assertTrue(DomainRoutePolicy::isDonationFlowRouteName($route));
+    $this->assertFalse(DomainRoutePolicy::isCentralTransactionRouteName($route));
+    $this->assertTrue(DomainRoutePolicy::isTransactionalSeoRouteName($route));
+  }
+
+  public static function donationFlowRoutes(): array {
+    return [
+      'donation entry' => ['aculta_donation.donation.default'],
+      'donation quick' => ['aculta_donation.donation.quick'],
+    ];
+  }
+
+  /** Escolha do valor no apoio; etapa de checkout da doação no principal (rota do Commerce). */
+  public function testDonationStepBelongsToMainAndValueChoiceToSupport(): void {
+    $this->assertSame('support', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation.default'));
+    $this->assertSame('support', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation.quick'));
+    $this->assertSame('main', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation_controller_formPage'));
   }
 
   #[DataProvider('publicRoutes')]

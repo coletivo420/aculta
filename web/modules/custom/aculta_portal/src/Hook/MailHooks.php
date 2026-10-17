@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\Account\RegistrationMailPolicy;
+use Drupal\aculta_portal\Mail\TestMailRedirect;
 use Drupal\Core\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 
@@ -16,7 +18,15 @@ final class MailHooks {
   public function __construct(
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'settings')]
+    private readonly Settings $settings,
   ) {}
+
+  /** Redirecionamento de e-mails do ambiente de testes (inativo sem a configuração local). */
+  #[Hook('mail_alter')]
+  public function redirecionarTeste(array &$message): void {
+    (new TestMailRedirect($this->settings))->aplicar($message);
+  }
 
   #[Hook('mail')]
   public function mail(string $key, array &$message, array $params): void {

@@ -1,0 +1,27 @@
+aculta_donation.campanha.*:
+  type: config_entity
+  label: 'Campanha de doação'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Nome'
+    status:
+      type: boolean
+      label: 'Ativa'
+    start:
+      type: string
+      label: 'Início (AAAA-MM-DD)'
+    end:
+      type: string
+      label: 'Término (AAAA-MM-DD)'
+    amounts:
+      type: sequence
+      label: 'Valores sugeridos'
+      sequence:
+        type: integer
+    customAmount:
+      type: boolean
+      label: 'Permite valor personalizado'

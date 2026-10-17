@@ -56,7 +56,7 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
   /** {@inheritdoc} */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
     $profile = $this->customerProfile() ?? $this->entityTypeManager->getStorage('profile')->create([
-      'type' => 'customer',
+      'type' => 'authenticated',
       'uid' => (int) $this->order->getCustomerId(),
       'status' => TRUE,
       'is_default' => TRUE,
@@ -66,7 +66,7 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $editable = $profile;
     if ($parts['number'] !== '' || $parts['sn']) {
       $editable = clone $profile;
-      $address = $editable->get('address')->first();
+      $address = $editable->get('field_address')->first();
       $value = $address->getValue();
       $value['address_line1'] = $parts['street'];
       $address->setValue($value);
@@ -102,7 +102,7 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       return;
     }
     // Campo de número enviado (modo edição): a validação do próprio campo já rodou.
-    $submitted = $form_state->getValue(array_merge($pane_form['#parents'], ['profile', 'address', 0, 'address']));
+    $submitted = $form_state->getValue(array_merge($pane_form['#parents'], ['profile', 'field_address', 0, 'address']));
     if (is_array($submitted) && array_key_exists('street_number', $submitted)) {
       return;
     }
@@ -122,8 +122,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $inline_form = $pane_form['profile']['#inline_form'];
     $profile = $inline_form->getEntity();
     [$number, $sn] = StreetNumberField::values($pane_form, $form_state);
-    if ($profile->hasField('address') && !$profile->get('address')->isEmpty()) {
-      $address = $profile->get('address')->first();
+    if ($profile->hasField('field_address') && !$profile->get('field_address')->isEmpty()) {
+      $address = $profile->get('field_address')->first();
       $value = $address->getValue();
       $value['address_line1'] = StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
       $address->setValue($value);
@@ -135,13 +135,13 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $this->order->setBillingProfile($this->syncBillingCopy($profile));
   }
 
-  /** Perfil customer do cliente do pedido (Meus Dados > Endereço), ou NULL. */
+  /** Perfil do cliente do pedido (Meus Dados > Endereço, tipo authenticated), ou NULL. */
   private function customerProfile(): ?ProfileInterface {
     if ((int) $this->order->getCustomerId() <= 0) {
       return NULL;
     }
     $account = $this->entityTypeManager->getStorage('user')->load($this->order->getCustomerId());
-    return $account ? $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'customer') : NULL;
+    return $account ? $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'authenticated') : NULL;
   }
 
   /**
@@ -159,10 +159,10 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
   /** Copia o endereço do perfil do cliente para o perfil de cobrança do pedido e salva o pedido se houve troca. */
   private function syncBillingCopy(ProfileInterface $customer): ProfileInterface {
     $storage = $this->entityTypeManager->getStorage('profile');
-    $billing = $this->order->getBillingProfile() ?? $storage->create(['type' => 'customer', 'uid' => 0]);
-    $address = $customer->get('address')->getValue();
-    if ($billing->isNew() || $billing->get('address')->getValue() !== $address) {
-      $billing->set('address', $address);
+    $billing = $this->order->getBillingProfile() ?? $storage->create(['type' => 'authenticated', 'uid' => 0]);
+    $address = $customer->get('field_address')->getValue();
+    if ($billing->isNew() || $billing->get('field_address')->getValue() !== $address) {
+      $billing->set('field_address', $address);
       $billing->save();
     }
     if ($this->order->getBillingProfile()?->id() !== $billing->id()) {
@@ -174,18 +174,18 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
 
   /** Bairro (dependent_locality) obrigatório: o endereço salvo precisa ter bairro preenchido. */
   private function hasNeighborhood($profile): bool {
-    if (!$profile || !$profile->hasField('address') || $profile->get('address')->isEmpty()) {
+    if (!$profile || !$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return FALSE;
     }
-    return trim((string) $profile->get('address')->first()->getDependentLocality()) !== '';
+    return trim((string) $profile->get('field_address')->first()->getDependentLocality()) !== '';
   }
 
   /** Rua, número e S/N salvos no logradouro (para preencher o formulário ao voltar à etapa). */
   private function savedParts($profile): array {
-    if (!$profile || !$profile->hasField('address') || $profile->get('address')->isEmpty()) {
+    if (!$profile || !$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    return StreetNumberField::split((string) $profile->get('address')->first()->getAddressLine1());
+    return StreetNumberField::split((string) $profile->get('field_address')->first()->getAddressLine1());
   }
 
 }

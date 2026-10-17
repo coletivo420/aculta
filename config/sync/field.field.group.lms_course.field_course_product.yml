@@ -1,0 +1,28 @@
+uuid: 1de48a8f-89e4-4ecf-b39a-833bcc93d4a4
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.produto_curso
+    - field.storage.group.field_course_product
+    - group.type.lms_course
+id: group.lms_course.field_course_product
+field_name: field_course_product
+entity_type: group
+bundle: lms_course
+label: 'Produto Commerce do curso'
+description: 'Produto único usado para compra e matrícula neste curso.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:commerce_product'
+  handler_settings:
+    target_bundles:
+      - produto_curso
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

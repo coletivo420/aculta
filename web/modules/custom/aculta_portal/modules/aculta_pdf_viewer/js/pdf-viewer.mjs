@@ -1,6 +1,7 @@
-import * as pdfjsLib from '/libraries/pdf.js/build/pdf.mjs';
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/libraries/pdf.js/build/pdf.worker.mjs';
+// Keep this value in sync with the mozilla/pdfjs-dist version pinned in
+// composer.json. Query versioning prevents a year-long cache from pairing a
+// stale API module with a freshly fetched worker (or the reverse).
+const PDFJS_VERSION = '6.4.299';
 
 const initialized = new WeakSet();
 
@@ -30,6 +31,8 @@ async function initialize(viewer) {
   }
 
   try {
+    const pdfjsLib = await import(`/libraries/pdf.js/build/pdf.mjs?v=${PDFJS_VERSION}`);
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `/libraries/pdf.js/build/pdf.worker.mjs?v=${PDFJS_VERSION}`;
     const pdf = await pdfjsLib.getDocument({ url }).promise;
     let pageNumber = 1;
     let zoom = 1;
@@ -83,6 +86,7 @@ async function initialize(viewer) {
         return;
       }
       renderTask = undefined;
+      canvas.hidden = false;
       status.textContent = `Página ${pageNumber} de ${pdf.numPages}`;
       previous.disabled = pageNumber <= 1;
       next.disabled = pageNumber >= pdf.numPages;

@@ -24,6 +24,25 @@ final class PortalUiHooks {
     'notice-warning' => ['messages', 'messages--warning'],
     'notice-error' => ['messages', 'messages--error'],
     'email-notice' => ['aculta-email-notice'],
+    // Doação (aculta_donation): resumo da etapa de revisão e links de edição.
+    'donation-summaries' => ['d-grid', 'gap-3'],
+    'donation-summary' => ['card', 'card-body'],
+    'donation-summary-edit' => ['btn', 'btn-sm', 'btn-outline-primary'],
+    'donation-document-link' => ['link-primary'],
+    'donation-thanks' => ['card', 'card-body', 'text-center'],
+    'donation-donor-name' => ['fw-semibold'],
+    'donation-clause' => ['text-muted'],
+    'donation-amount-block' => ['my-3'],
+    'donation-amount' => ['display-6', 'fw-bold'],
+    'donation-monthly' => ['badge', 'text-bg-secondary'],
+    'donation-in-honor' => ['fst-italic'],
+    'donation-account-invite' => ['alert', 'alert-info', 'mt-3'],
+    'donation-account-invite-link' => ['btn', 'btn-outline-primary'],
+    'register-popup' => ['d-grid', 'gap-3'],
+    // Loja: vitrine da página inicial (produtos publicados).
+    'shop-products' => ['d-grid', 'gap-3', 'mt-4'],
+    // Cartão do produto: caixa com borda neutra (sem cor de botão), texto alinhado à esquerda.
+    'shop-product-card' => ['d-block', 'border', 'border-2', 'rounded-3', 'text-start', 'p-3', 'text-decoration-none'],
     // Relatórios de requisitos e segredos (administração do Portal).
     'requirements' => ['aculta-portal-requirements'],
     'requirements-legend' => ['aculta-portal-requirements__legend'],
@@ -283,6 +302,22 @@ final class PortalUiHooks {
     'aculta-button-outline' => ['aculta-button', 'aculta-button--outline'],
     'status-attention' => ['aculta-portal-requirements__status--attention'],
     'breadcrumb-list' => ['breadcrumb'],
+    // Formulário de apoio: valores sugeridos (módulo aculta_portal, SupportForm).
+    'support-amounts' => ['aculta-support-amounts'],
+    // Painéis de vendas e doações (módulo aculta_portal, SalesOrdersTableBuilder e controllers de relatório).
+    'sales-panel' => ['aculta-sales-panel'],
+    'sales-section' => ['aculta-sales-panel__section'],
+    'sales-heading' => ['aculta-sales-panel__heading'],
+    'sales-table' => ['table', 'table-hover', 'align-middle', 'aculta-sales-panel__table'],
+    'sales-pagination' => ['aculta-sales-panel__pagination'],
+    'sales-payment' => ['aculta-sales-panel__payment'],
+    'sales-action' => ['btn', 'btn-sm', 'btn-outline-primary', 'aculta-sales-panel__action'],
+    'sales-action-danger' => ['btn', 'btn-sm', 'btn-outline-danger', 'aculta-sales-panel__action'],
+    'sales-state-ok' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--ok'],
+    'sales-state-pending' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--pending'],
+    'sales-state-refunded' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--refunded'],
+    'sales-state-voided' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--voided'],
+    'sales-state-neutral' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--neutral'],
   ];
 
   /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */

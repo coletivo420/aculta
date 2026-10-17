@@ -9,7 +9,7 @@ Escopo: transição de `*.aculta.toca.net.br` (servidor de testes) para `*.acult
 | aculta_org | aculta.toca.net.br | aculta.org | alinhado |
 | apoio_aculta_org | apoio.aculta.toca.net.br | apoio.aculta.org | alinhado |
 | conta_aculta_org | conta.aculta.toca.net.br | conta.aculta.org | alinhado |
-| coletivo420_aculta_org | revista420.aculta.toca.net.br | revista420.aculta.org | pendente de RC (decisão) |
+| revista420_aculta_org | revista420.aculta.toca.net.br | revista420.aculta.org | pendente de RC (decisão) |
 | wiki420_aculta_org | wiki420.aculta.toca.net.br | wiki420.aculta.org | alinhado |
 | loja_aculta_org | loja.aculta.toca.net.br | loja.aculta.org | alinhado |
 | forum_aculta_org | growroom420.aculta.toca.net.br | growroom420.aculta.org | alinhado no mapeamento; teste DNS/TLS ativo; DNS de produção aguarda origem |
@@ -17,7 +17,7 @@ Escopo: transição de `*.aculta.toca.net.br` (servidor de testes) para `*.acult
 
 ## Decisão pendente
 
-O host de teste da revista passou a ser `revista420.aculta.toca.net.br`. A produção hoje é `coletivo420.aculta.org`. A tabela assume `revista420.aculta.org`, mas isso precisa ser confirmado pelo responsável antes do RC. Se a decisão for manter `coletivo420.aculta.org`, o destino da linha muda em `deploy.json` e o registro de domínio em `config/sync` continua igual.
+O host de teste da revista passou a ser `revista420.aculta.toca.net.br`. A produção hoje é `revista420.aculta.org`. A tabela assume `revista420.aculta.org`, mas isso precisa ser confirmado pelo responsável antes do RC. Se a decisão for manter `revista420.aculta.org`, o destino da linha muda em `deploy.json` e o registro de domínio em `config/sync` continua igual.
 
 ## Passos no RC (não executar antes)
 

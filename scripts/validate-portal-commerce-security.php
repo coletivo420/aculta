@@ -401,9 +401,9 @@ $support_settings = \Drupal::config('aculta_portal.support')->getRawData();
 foreach (['access_token', 'client_secret', 'webhook_secret', 'pix_key', 'pix_copy_paste'] as $forbidden) {
   $assert(!array_key_exists($forbidden, $support_settings), 'No payment credential or direct Pix data exists in support settings: ' . $forbidden);
 }
-$donation_flow = \Drupal\commerce_checkout\Entity\CheckoutFlow::load('donation_flow');
-$assert($donation_flow && $donation_flow->getPluginId() === 'donation_checkout_flow', 'Donation Flow has a dedicated checkout flow.');
-$donation_flow_configuration = $donation_flow ? $donation_flow->getPlugin()->getConfiguration() : [];
+$doacao = \Drupal\commerce_checkout\Entity\CheckoutFlow::load('doacao');
+$assert($doacao && $doacao->getPluginId() === 'fluxo_doacao', 'Donation Flow has a dedicated checkout flow.');
+$donation_flow_configuration = $doacao ? $doacao->getPlugin()->getConfiguration() : [];
 $assert(($donation_flow_configuration['panes']['login']['allow_guest_checkout'] ?? FALSE) === TRUE, 'Donation checkout supports guest users.');
 $assert(!isset($donation_flow_configuration['panes']['shipping']), 'Donation checkout does not use shipping.');
 $support_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/Controller/SupportController.php');
@@ -495,8 +495,8 @@ $gateway_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment_ga
 $stored_gateway = $gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['mercado_pago'];
 $assert(($stored_gateway->getPluginConfiguration()['access_token_test'] ?? '') === '', 'Gateway runtime override is not persisted in active config.');
 $assert(!$gateway->access('update', $administrator, TRUE)->isAllowed(), 'The contrib gateway edit form is locked to prevent credential persistence.');
-$assert(\Drupal::moduleHandler()->moduleExists('commerce_donation_flow'), 'Stable Commerce Donation Flow is enabled.');
-$assert(class_exists(\Composer\InstalledVersions::class) && ltrim(\Composer\InstalledVersions::getPrettyVersion('drupal/commerce_donation_flow') ?: '', 'v') === '1.2.0', 'Commerce Donation Flow 1.2.0 is installed.');
+$assert(\Drupal::moduleHandler()->moduleExists('aculta_donation'), 'ACULTA Donation (port do fluxo de doação) is enabled.');
+$assert(!class_exists(\Composer\InstalledVersions::class) || !\Composer\InstalledVersions::isInstalled('drupal/commerce_donation_flow'), 'The contrib donation flow package is no longer installed (replaced by aculta_donation).');
 $gift_storage = \Drupal\field\Entity\FieldStorageConfig::loadByName('commerce_order_item', 'field_gift_type');
 $assert($gift_storage && array_keys($gift_storage->getSetting('allowed_values')) === ['single'], 'Only one-time support is allowed by the Donation Flow gift type.');
 $donation_form_display = \Drupal::config('core.entity_form_display.commerce_order_item.donation.donation');

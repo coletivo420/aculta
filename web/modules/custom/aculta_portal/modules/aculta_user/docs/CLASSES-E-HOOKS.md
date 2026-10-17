@@ -32,6 +32,9 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `user_presave` | `RoleSyncHooks::userPresave` | `src/Hook/RoleSyncHooks.php` |
 | `user_update` | `PictureReplacementHooks::userUpdate` | `src/Hook/PictureReplacementHooks.php` |
 
+### Herança de papéis (0.4.0-dev.22–23)
+- `user_load`, `user_presave`, `form_user_form_alter`, `user_role_delete` — `Hook/RoleInheritanceHooks.php`. Ver `HIERARQUIA-DE-FUNCOES.md`.
+
 ## Classes por pasta
 
 ### `Access`
@@ -173,3 +176,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `ParticipationRules` | `src/ParticipationRules.php` | Regras de participação no Fórum (plano aculta_user, seções E6 e E7). |
 | `PublicProfilePolicy` | `src/PublicProfilePolicy.php` | Decide, campo a campo, o que do perfil participante pode aparecer em público. |
 
+### Role/
+- `HerancaDePapeis.php` — mapa derivado de `aculta_portal.role_hierarchy`; herdados; papéis não gravados; remoção de papel excluído.
+
+### EventSubscriber/
+- `RoleInheritanceCurrentUserSubscriber.php` — estende o usuário logado (REQUEST, prioridade 299).

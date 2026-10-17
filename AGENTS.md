@@ -419,10 +419,10 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - não depender de empate de prioridade entre response subscribers quando a ordem afeta redirect safety;
 - sessão compartilhada entre purposes deve ser validada via `session.storage.options.cookie_domain` do ambiente; baseline `cookie_samesite: Lax`;
 - AJAX/fetch do Portal é same-origin; não habilitar CORS para transportar estado/formulários entre purposes;
-- carrinho/checkout/pagamento Drupal Commerce pertencem sempre ao purpose `main`, independentemente de origem SHOP/COURSES/SUPPORT; usar `DomainRoutePolicy`, nunca listas paralelas de rotas ou zona transacional por subdomínio;
+- carrinho, checkout e pagamento (Drupal Commerce) pertencem sempre ao purpose `main`, inclusive os de loja, cursos e apoio: há um carrinho único, com separador por tipo de pedido (`default` = Loja, `curso` = Cursos, `doacao` e `assinatura` = Apoio) e um botão de checkout por separador (decisão do responsável, 2026-10-17). Só a escolha do valor de apoio (`aculta_donation.donation.default` e `.quick`) é do purpose `support`. O retorno e a notificação do gateway são gerados no `main` por `PaymentDomainPathProcessor`; usar `DomainRoutePolicy`, nunca listas paralelas de rotas ou zona transacional por subdomínio;
 - futura UI de carrinho na barra multidomínio deve usar presenter no Portal baseado em `CartProviderInterface`, preservando cache context `cart` e gerando `commerce_cart.page` no MAIN via `DomainPurposeManager`; não reutilizar o Cart Block cru se ele mantiver URL relativa ao host corrente; ACULTA420 só apresenta URL/contagem/estado neutros;
 - centralizar a UI do carrinho em MAIN não proíbe o `Add to cart` nativo em SHOP/COURSES; esse formulário continua usando o Commerce para atualizar a mesma `commerce_order` antes da navegação ao carrinho MAIN;
-- links de entrada no checkout devem apontar diretamente a MAIN quando o Portal puder resolvê-los; POST/PUT/PATCH/DELETE de payment/checkout em host errado não são redirecionados;
+- links de entrada no checkout devem apontar diretamente a MAIN quando o Portal puder resolvê-los; a escolha de valor do apoio aponta ao purpose `support`; POST/PUT/PATCH/DELETE de payment/checkout em host errado não são redirecionados;
 - referências canônicas: `docs/portal/ADMIN-DOMAIN-POLICY.md`, `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md` e `docs/portal/PAYMENT-DOMAIN-POLICY.md`.
 
 ## Fronteira de autenticação e anti-bot
@@ -599,12 +599,32 @@ Não criar funcionalidades que não foram solicitadas.
 
 Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alteração destrutiva.
 
+## Papéis e hierarquia (regra permanente)
+
+Motivo: o site tem uma hierarquia de papéis decidida pelo responsável. Quando o acesso é checado pelo nome do papel ou a
+herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha acesso que não deveria.
+
+- Cadeia vigente (de baixo para cima, herança transitiva): `authenticated` < `email_confirmed` < `estudante` < `associado`
+  < `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. `wiki_contributor` e `lms_admin` herdam de
+  `authenticated`. Fonte: `config/sync/role_inheritance.settings.yml`; decisões em `docs/portal/PAPEIS-PARTICIPACAO.md`.
+- Não crie hierarquia paralela no código nem lista de papéis fixa para decidir acesso. A herança é do `role_inheritance`.
+- Para acesso novo, conceda **permissão** ao papel certo e verifique com `hasPermission()`. Não use `hasRole('nome')` nem
+  `in_array('nome', getRoles())` para liberar funcionalidade: isso ignora a hierarquia de quem não está logado e cria
+  exceção difícil de auditar. Checagens existentes por nome são dívida registrada no gate.
+- Para mudar a cadeia de papéis, use `/painel-administrativo/configuracoes/pessoas/papeis` (página Papéis e perfis do ACULTA;
+  permissão `administer aculta role hierarchy`). Não edite `role_inheritance.settings` à mão no Runtime. Depois de mudar a
+  cadeia, exporte a configuração e atualize a decisão em `docs/portal/PAPEIS-PARTICIPACAO.md` no mesmo commit.
+- Ao mudar a cadeia, avalie o efeito: papel acima herda todas as permissões de baixo (ex.: `gerente_loja` herda o que é
+  de `content_editor`). Confirme com `php scripts/validate-role-hierarchy.php` e com a tela do painel.
+- Gate obrigatório: `php scripts/validate-role-hierarchy.php` (cadeia decidida, sem ciclo, administrator herda de todos,
+  e contagem de checagens por nome de papel sem subir acima da linha de base).
+
 ## Indexação e sitemap (política do projeto)
 
 ### Política de indexação (decisão do responsável, 2026-10-09)
 
 - **Produção indexável:** todos os domínios e subdomínios de produção (`aculta.org`,
-  `conta.`, `apoio.`, `coletivo420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
+  `conta.`, `apoio.`, `revista420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
   com `noindex`.
 - **Servidor de testes não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`.
 - **Páginas privadas da conta** continuam com `noindex` em nível de rota (meta `robots` do
@@ -678,6 +698,15 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
 - Não usar outros pacotes de ícones nem SVG solto (inline ou arquivo) para ícone de interface.
 - **Exceção:** logos de marcas de terceiros (ex.: Mercado Pago), em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
 - Gate: `php scripts/validate-module-theme-boundary.php`, seção 12 (sem `<svg` inline e sem SVG fora de `assets/brands/`).
+
+## Separação de Pessoas e Configurações > Pessoas (decisão do responsável, 2026-10-17)
+
+- `/painel-administrativo/pessoas`: administração de usuários individuais (lista, cadastro, edição, perfis e OAuth/Social auth).
+- `/painel-administrativo/configuracoes/pessoas`: ferramentas de administração de contas: papéis (`papeis`), permissões
+  por papel (`permissoes`), configuração de papel (`configuracoes-de-papel`), campos de perfil (`campos-de-perfil`),
+  desbloqueio de sobrecarga (`desbloqueio-sobrecarga`), opções da conta (`contas`), CAPTCHA, acordos e controle de sobrecarga.
+- Só a árvore de configuração e as ferramentas listadas são traduzidas (`AdministrativeRouteSubscriber`). Caminhos antigos
+  respondem 404, sem redirecionamento.
 
 ## Política de commits para agentes de IA (regra permanente)
 

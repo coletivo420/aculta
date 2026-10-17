@@ -1,7 +1,7 @@
 services:
   aculta_pdf_viewer.builder:
     class: Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilder
-    arguments: ['@file_url_generator', '@current_user', '@aculta_pdf_viewer.thumbnail_builder']
+    arguments: ['@file_url_generator', '@url_generator', '@current_user', '@aculta_pdf_viewer.thumbnail_builder']
 
   aculta_pdf_viewer.thumbnail_builder:
     class: Drupal\aculta_pdf_viewer\Pdf\PdfPreviewThumbnailBuilder

@@ -2,6 +2,12 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.45 — avisos só para contas — 2026-10-17
+
+- O ícone de avisos e a contagem não aparecem para visitante anônimo (decisão do responsável).
+- A prévia de avisos (`/avisos/resumo`) exige conta: visitante recebe 403.
+- RUNTIME STATUS: APLICADO no Runtime de testes (página inicial anônima sem ícone de aviso; prévia 403 para anônimo).
+
 ## 0.1.1-dev.44 — "Ver todos os avisos" como botão no rodapé da gaveta (F5.2) — 2026-10-16
 
 Classificação: PATCH (ajuste de apresentação e de URL; sem regra nova).

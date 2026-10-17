@@ -12,7 +12,7 @@
   <img class="aculta-institution-bar__logo" src="{{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-78x26.webp" srcset="{{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-78x26.webp 1x, {{ base_path ~ directory }}/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-156x52.webp 2x" width="78" height="26" alt="{{ 'ACULTA - Associação Cultural Antiproibicionista'|t }}" decoding="async">
       </a>
     </p>
-    {% if domain_presentation.layout.show_utility_bar|default(true) and (aculta_search_utility or aculta_cart or aculta_messenger_trigger or aculta_alerts_trigger or aculta_account_menu) %}
+    {% if (domain_presentation.layout.show_utility_bar ?? true) and (aculta_search_utility or aculta_cart or aculta_messenger_trigger or aculta_alerts_trigger or aculta_account_menu) %}
       <div class="aculta-utility">
         {{ aculta_search_utility }}
         {% if aculta_cart %}
@@ -21,7 +21,8 @@
             empty: aculta_cart.empty,
             url: aculta_cart.url,
             total: aculta_cart.total,
-            items: aculta_cart.items,
+            sites: aculta_cart.sites,
+            checkout_url: aculta_cart.checkout_url,
             banner: 'Compre na loja e apoie a luta antiproibicionista!',
           }, with_context = false) }}
         {% endif %}

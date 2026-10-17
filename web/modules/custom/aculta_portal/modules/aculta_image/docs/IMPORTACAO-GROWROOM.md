@@ -64,13 +64,14 @@ são a única descrição de como os manifestos foram gerados.
   (`docs/RECONSTRUCAO.md` do `aculta_forum`).
 - Lacunas: itens não recuperados ficam com motivo registrado; nenhuma porcentagem é divulgada sem denominador.
 
-## Estado do download do Wayback (2026-10-16, 15:42)
+## Estado do download do Wayback (2026-10-17, 09:40)
 
-- **Assets:** concluído. 9.468 registros no manifesto; 9.314 arquivos em disco (`restauro/assets`).
-- **HTML:** em andamento, processo ativo (Python em segundo plano, como root). 6.512 registros no manifesto; 6.480 arquivos em disco. Nesta rodada: 182 de 49.517 pendentes, cerca de 15 por minuto (2 conexões).
-- **Fila:** tópicos e galerias; perfis fora da fila até o mapeamento (`perfis-permitidos.json`). Fila de HTML: 54.762 itens selecionados.
-- **Falhas:** cerca de 1% das últimas 300 requisições viram `None` (sem resposta após as tentativas).
-- **Caminho de conflito:** páginas que colidem com um arquivo do mesmo nome vão para `html/__conflitos/<hash da URL>`.
+- **Scripts:** em `/home/piradopirata/projetos/aculta-tools/growroom/` (fora do repositório): `wayback_fetch.py` (download) e `build_mapping.py` (mapeamento). Os originais estavam no scratchpad da sessão e se perderam na troca de sessão; foram recriados a partir das versões finais, com as mesmas regras.
+- **Assets:** concluído. 9.468 registros no manifesto; 9.314 arquivos em disco.
+- **HTML:** em andamento, processo ativo como root. 24.507 registros válidos no início desta rodada; 31.309 pendentes; fila de 54.762 itens (tópicos e galerias; perfis só quando permitidos). Ritmo: cerca de 17 por minuto, com 2 conexões.
+- **Mapeamento (somente leitura, 2026-10-17):** 10.555 tópicos baixados (10.514 com fórum identificado). Em fóruns importados: 8.552; excluídos: 1.962. Autores nesses tópicos: 8.591; casados com perfil: 1.063; ambíguos: 5; sem perfil: 7.523. `perfis-permitidos.json` ainda não foi gravado.
+- **Falhas:** cerca de 1% das requisições viram `None`.
+- **Conflitos:** páginas que colidem com um arquivo do mesmo nome vão para `html/__conflitos/<hash da URL>`.
 
 Para acompanhar: `sudo sh -c 'tail -n 2 /home/aculta/private/aculta/forum/restauro/progress-html.log'`.
 

@@ -1,0 +1,14 @@
+administer aculta donation campaigns:
+  title: Administrar campanhas de doação
+  description: Criar, editar e encerrar campanhas com valores sugeridos e período de vigência.
+  restrict access: true
+
+# Herdadas de commerce_donation_flow (port). Mantidas com o mesmo nome: estão concedidas em config de papel.
+make donation:
+  title: 'Make donation'
+  description: 'Complete a donation via the /donation route.'
+
+view any donation complete:
+  title: 'View any donation complete'
+  description: 'View the "Thank you" display for any donation.'
+  restrict access: true

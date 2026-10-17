@@ -192,9 +192,10 @@ $check(
 // 0.3.0-dev.5 adds DonationFriendlyRouteSubscriber (donation route paths /apoiar, slug em português).
 // 0.4.0-dev.18 adds UploadedFilenameExtensionSubscriber after Core's configured filename sanitizer.
 // 0.4.0-dev.19 adjusts the account-owned Messenger conversation presentation.
+// 0.4.0-dev.90 adds AdministrativeRouteSubscriber (every /painel-administrativo route uses the administrative theme; runs last).
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 12,
-  'Portal must register exactly twelve canonical event_subscriber tags.',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 13,
+  'Portal must register exactly thirteen canonical event_subscriber tags.',
 );
 
 $legacyProceduralFunctions = [];
@@ -667,10 +668,11 @@ foreach (["get('config.factory')", "get('entity_type.manager')", "get('plugin.ma
     'P5.1 SupportForm must inject ' . $dependency . '.',
   );
 }
+$quickBlockSource = $read($srcRoot . '/../modules/aculta_donation/src/Plugin/Block/QuickDonationBlock.php');
 $check(
   str_contains($supportFormSource, "getStorage('commerce_payment_gateway')->load('mercado_pago')")
-    && str_contains($supportFormSource, "\$this->blockManager->createInstance("),
-  'P5.1 SupportForm must use injected storage and BlockManager.',
+    && str_contains($quickBlockSource, "\$this->purposes->routeUrl('support', 'aculta_donation.donation.quick'"),
+  'P5.1 SupportForm must use injected storage; the suggested amounts (quick donation block) must route to the support domain (decisão de 2026-10-17).',
 );
 $check(
   !str_contains($supportFormSource, 'PaymentGateway::load(')

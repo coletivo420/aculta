@@ -94,6 +94,14 @@ Para simular o resultado, use o status no nome do titular. Documento de teste (C
 | Senha | **não versionada**: fica na variável `MERCADOPAGO_TEST_BUYER_PASSWORD`, no painel "Credenciais do ambiente", seção Ambiente de Testes |
 | Código de verificação | **não guardado**: é temporário e vem do painel da conta de teste (Suas integrações > aplicação > Contas de teste). Para Pix ou Boleto, são os últimos 6 dígitos do User ID |
 
+#### Comprador criado por API (2026-10-16): não autorizado
+
+Foi criado um comprador de teste por `POST /users/test_user` sem autorização do responsável. Ele não deve ser usado. A credencial local foi removida de `secrets/`. A conta continua existindo no Mercado Pago e não pode ser apagada pela API (ver DT-MP-07).
+
+Só a conta de `secrets/mercadolivre_test_user` está autorizada para os testes.
+
+Credenciais do comprador de teste da aplicação (login e senha) estão no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). Esse arquivo não é lido por código nem versionado. A variável padrão `MERCADOPAGO_TEST_BUYER_PASSWORD` ainda não está no carregador de segredos do ambiente (`secrets/aculta.secrets.env` pertence ao usuário `aculta`). (que descreve a criação pelo painel).
+
 Como usar: entrar no Mercado Pago Developers com o usuário e a senha da conta de teste, em janela anônima do
 navegador, para evitar erros de duplicidade de credenciais.
 
@@ -104,3 +112,9 @@ navegador, para evitar erros de duplicidade de credenciais.
 - Configurar as notificações da aplicação no painel do Mercado Pago (URL de teste e URL de produção), salvar e
   copiar a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
 - Provisionar as credenciais de produção pelo ACULTA Deployer (não pelo painel do Runtime de teste).
+- Endereço de notificação do ambiente de teste: `https://aculta.toca.net.br/integracoes/pagamentos/mercado_pago/notificacao`
+  (a rota de `commerce_payment.notify` é reescrita pelo Portal). Cadastrar esse endereço no painel do Mercado Pago
+  para os tópicos `payment`, `subscription_preapproval`, `subscription_preapproval_plan` e `subscription_authorized_payment`.
+  Produção usa o endereço equivalente do domínio de produção, declarado pelo `aculta_deployer`.
+- Assinatura de doação recorrente: pendente o vínculo com o pedido (DT-MP-02) e o e-mail do comprador de teste (DT-MP-03).
+- Registro das dívidas desta integração: `docs/operations/DEBT-REGISTER.md`, seção "Mercado Pago".

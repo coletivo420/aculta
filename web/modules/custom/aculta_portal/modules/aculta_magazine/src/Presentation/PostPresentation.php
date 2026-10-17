@@ -15,6 +15,7 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Cabeçalho de apresentação das publicações da Revista: autor, data, hora e compartilhamento.
@@ -98,7 +99,7 @@ final class PostPresentation {
     $name = $owner ? $owner->getDisplayName() : '';
     if ($owner) {
       $tags = array_merge($tags, $owner->getCacheTags());
-      $profile = $this->entityTypeManager->getStorage('profile')->loadByUser($owner, 'participante');
+      $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $owner);
       if ($profile) {
         $tags = array_merge($tags, $profile->getCacheTags());
       }

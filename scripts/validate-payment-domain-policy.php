@@ -65,12 +65,18 @@ $assert(
 );
 
 $modules = \Drupal::moduleHandler();
-if ($modules->moduleExists('commerce_donation_flow')) {
-  $donationRoutes = array_filter(
-    array_keys($centralRoutes),
-    static fn(string $name): bool => str_starts_with($name, 'commerce_donation_flow.'),
-  );
-  $assert($donationRoutes !== [], 'Commerce Donation Flow exposes central routes.');
+if ($modules->moduleExists('aculta_donation')) {
+  // Escolha do valor no apoio (SUPPORT); etapa de checkout da doação no MAIN (decisão de 2026-10-17).
+  $donationRoutes = \Drupal::service('router.route_provider')->getRoutesByNames([
+    'aculta_donation.donation.default',
+    'aculta_donation.donation.quick',
+    'aculta_donation.donation_controller_formPage',
+  ]);
+  $assert(count($donationRoutes) === 3, 'Donation flow routes exist.');
+  foreach ($donationRoutes as $name => $route) {
+    $esperado = \Drupal\aculta_portal\Domain\DomainRoutePolicy::purposeForDonationRoute($name);
+    $assert($route->getOption('_aculta_domain_purpose') === $esperado, "Donation route {$name} belongs to the {$esperado} purpose.");
+  }
 }
 
 $domainPurpose = \Drupal::service('aculta_portal.domain_purpose');
@@ -92,7 +98,7 @@ foreach ([
   'commerce_checkout.',
   'commerce_payment.checkout.',
   'commerce_payment.notify',
-  'commerce_donation_flow.',
+  'aculta_donation.',
 ] as $family) {
   $assert(
     str_contains($routePolicySource, $family),
@@ -128,7 +134,7 @@ foreach ([
   'commerce_checkout.',
   'commerce_payment.checkout.',
   'commerce_payment.notify',
-  'commerce_donation_flow.',
+  'aculta_donation.',
 ] as $family) {
   $assert(
     !str_contains($hooksSource, $family),

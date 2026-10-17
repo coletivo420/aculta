@@ -12,7 +12,8 @@ use Drupal\aculta_portal\Routing\PublicRouteSlug;
  * - O nome de usuário da conta vira o apelido inicial (a pessoa pode trocar depois).
  * - Conta OAuth usa a parte local do e-mail recebido, sem o domínio (ex.: fulano.silva@gmail.com -> fulano.silva).
  * - Apelido armazenado preserva a capitalização escolhida; seu segmento de URL é minúsculo.
- * - O segmento público usa letras minúsculas, números e hífen, de 3 a 40 caracteres, único e fora das palavras reservadas.
+ * - O segmento público (slug) usa letras minúsculas, números e hífen, de 3 a 40 caracteres, único e fora das palavras
+ *   reservadas. A regra de minúsculas vale só para o slug, não para o apelido digitado.
  */
 final class AccountNames {
 
@@ -42,8 +43,10 @@ final class AccountNames {
    * Indica se o apelido atende às regras de formato e não é reservado.
    */
   public static function isValid(string $apelido): bool {
-    return (bool) preg_match('/^[a-z0-9][a-z0-9-]{' . (self::MIN - 1) . ',' . (self::MAX - 1) . '}$/', $apelido)
-      && !in_array($apelido, self::RESERVED, TRUE);
+    // A regra vale para o segmento de URL (slug). O apelido guardado preserva a capitalização escolhida.
+    $slug = PublicRouteSlug::normalize($apelido);
+    return (bool) preg_match('/^[a-z0-9][a-z0-9-]{' . (self::MIN - 1) . ',' . (self::MAX - 1) . '}$/', $slug)
+      && !in_array($slug, self::RESERVED, TRUE);
   }
 
   /**

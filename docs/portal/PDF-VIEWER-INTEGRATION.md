@@ -1,17 +1,19 @@
 # Integração compartilhada de documentos PDF
 
-Revisado em 2026-10-16. Esta norma define arquitetura e critérios de integração compartilhada.
+Revisado em 2026-10-17. Esta norma define arquitetura e critérios de integração compartilhada.
 
 ## Fontes de verdade e escopo
 
-Media (`document`) e File são os registros do arquivo e metadados. O submódulo próprio `aculta_pdf_viewer` integra o formatter Media ao PDF.js local, com versão fixada e proveniência/licença preservadas. O contrib Drupal PDF 1.3 permanece no Composer como referência, mas seu formatter não é usado devido ao loader legado; PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha de preview ou ausência de ferramenta de imagem jamais pode impedir leitura ou download autorizado.
+Media (`document`), entidades que referenciam campos File e File são os registros do documento, associação e metadados. O submódulo próprio `aculta_pdf_viewer` integra formatters de Media e File ao PDF.js local, com versão fixada e proveniência/licença preservadas. O contrib Drupal PDF 1.3 permanece no Composer como referência, mas seu formatter não é usado devido ao loader legado; PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha de preview ou ausência de ferramenta de imagem jamais pode impedir leitura ou download autorizado.
 
-O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Revista420, Wiki420, Fórum, projetos, documentos institucionais e arquivo público usam a mesma política e o mesmo componente funcional. ACULTA420 é o único dono da apresentação SDC; a decisão de abrir/autorizar Media pertence ao Drupal/Portal.
+O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Revista420, Wiki420, Fórum, projetos, documentos institucionais e arquivo público usam a mesma política e o mesmo componente funcional. ACULTA420 é o único dono da apresentação SDC; as decisões de acesso a Media, entidade, campo e File pertencem ao Drupal/Portal.
 
 ## Inventário confirmado
 
 - Há Media bundle `document`, source `file`, campo obrigatório `field_media_document`, cardinalidade 1 e esquema `public://`. O campo permite PDF e diversos formatos de documento (txt, rtf, Office/ODF e Apple); o fluxo PDF deve rejeitar ou degradar tipos não PDF, não assumir que todo `document` é PDF.
 - Existe tipo de conteúdo `document` para documentos institucionais, com `field_document` limitado a `pdf`; coexistem, portanto, referência direta e Media. A integração deve consolidar a UX sem migração implícita ou remoção de conteúdo.
+- O formatter `aculta_pdf_file` atende esse campo File direto nos displays `node.document.default` e `node.document.full`. Só PDFs permanentes públicos recebem viewer; acesso da entidade, do campo e de download é acumulado no render. Outros formatos e arquivos privados mantêm o link Core autorizado.
+- Revista/editorial, Wiki e Fórum usam `media_embed` do Core para resolver Media `document` ao display comum, sempre restrito ao bundle `document`. Os editores CKEditor 5 da Wiki e do Fórum foram validados com seus formatos; Source Editing preserva as construções HTML históricas que não têm botão dedicado. A autorização do conteúdo continua sob Media/Core.
 - `filter.format.full_html` e `revista_editorial` habilitam `entity_embed` e incluem `document` na lista de bundles. Confirmar as configurações CKEditor/Entity Embed completas por uso em conteúdo e validar acesso de mídia embutida; configuração habilitada não prova que o viewer funciona nem que o acesso está correto.
 - O papel editorial único `content_editor` recebe `create document media` para permitir o upload/seletor de PDF pela biblioteca do CKEditor 5. O bundle `document` usa `public://`; arquivos nesse bundle devem ser destinados à publicação e nunca conter material confidencial.
 - `drupal/pdf` 1.3.0, PDF.js 6.4.299, PDFPreview 1.2.0 e ImageMagick contrib 4.0.2 fazem parte do Composer lock nesta entrega. H5P e Entity Print não fazem parte do lock. O código local do viewer está em `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer`; dependências operacionais ImageMagick/Ghostscript precisam ser verificadas separadamente por ambiente e ImageMagick não deve ser selecionado como toolkit padrão só para previews.
@@ -50,10 +52,12 @@ Access. A Config Sync atual concede `view media` aos papéis anônimo e
 autenticado, então uma Media publicada com PDF `private://` pode ser lida por
 ambos. O submódulo opcional `aculta_pdf_viewer_group` agora fornece relação
 Media `document` para Group `lms_course`; os papéis Group estudante e educador
-recebem a permissão específica de visualização. Até instalar e validar a
-relação no Runtime para membro, não membro, revogação e endpoint privado, não
-usar PDF privado como confidencialidade de turma. O teste Kernel existente
-cobre o acesso permitido quando o papel anônimo recebe `view media`.
+recebem a permissão específica de visualização. O Kernel do submódulo valida
+membro, não membro, remoção da relação e revogação pelo endpoint privado Core.
+Essa evidência isolada não substitui a homologação no Runtime: não usar PDF
+privado como confidencialidade de turma até validar a configuração e esses
+fluxos no ambiente de teste. O Kernel do viewer base também cobre o acesso
+anônimo quando o papel anônimo recebe `view media`.
 
 A página do projeto recomenda permitir leitura de PDF em ImageMagick `policy.xml`; isso não autoriza alteração global de policy, execução de PostScript, nem permissões amplas. Alteração de policy do sistema requer revisão operacional e de segurança própria. A configuração Drupal versionada habilita o formato PDF no toolkit ImageMagick usado pelo PDFPreview; ela não altera a policy do sistema.
 
@@ -106,9 +110,10 @@ File e resultados de acesso. Não recebe URL por query/formulário, não aceita
 host/URL externa, e entrega link de fallback somente junto ao mesmo arquivo
 público autorizado. O JS importa `pdf.mjs`, define `pdf.worker.mjs` local, mostra
 uma página por vez e oferece navegação anterior/próxima, zoom, busca textual por
-página, tela cheia e link de fallback. A interação pública foi validada por
-Firefox headless no Runtime; seleção editorial via UI, privacidade, acessibilidade
-visual e produção seguem gates separados em [TESTES-NAVEGADOR](TESTES-NAVEGADOR.md).
+página, tela cheia e link de fallback. Firefox headless no Runtime homologou
+14 páginas e controles em desktop/viewport estreito; nomes acessíveis, foco
+visível, live regions e alvos de toque passaram no smoke de PV6. A matriz ampla
+de browsers, CSP e produção LiteSpeed continua em [TESTES-NAVEGADOR](TESTES-NAVEGADOR.md).
 
 O renderer `PdfDefault` do contrib 1.3 permanece incompatível com o pacote ESM
 moderno (`.js`/global `pdfjsLib` versus `.mjs`). O adapter não usa o formatter
@@ -198,8 +203,10 @@ respondeu 200. Outro usuário com `view media` recebeu 200 para Media publicada
 e 403 após sua despublicação. Config Sync concede `view media` a ambos os papéis
 anônimo e autenticado; portanto, `private://` não torna uma Media publicada
 confidencial. O submódulo Group↔Media e permissões de membro/educador estão
-versionados, mas ainda faltam validação de membro/não membro, revogação e
-carregamento PDF.js/range no Runtime. A conversão real de miniaturas permanece DEFERRED
+versionados. Kernel valida 200 para membro e 403 para não membro, relação
+removida e membership revogada; ainda faltam importação da configuração e
+validação destes casos, do cache e do carregamento PDF.js/range no Runtime. A
+conversão real de miniaturas permanece DEFERRED
 porque não há binário ImageMagick no Homelab. O arquivo
 [ROADMAP.md do submódulo](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md)
 mantém os critérios restantes de PV5–PV7.
@@ -217,7 +224,7 @@ a edição funcionou. A fixture Media foi criada
 por Drush, portanto upload/criação como `content_editor` ainda segue DEFERRED.
 Todos os objetos e arquivos temporários foram removidos; o bundle voltou a zero.
 PHPUnit/gates e resolução Composer estão registrados na PR. Acesso privado por
-usuário/turma, PDFPreview/thumbnails, CSP, acessibilidade visual e Hostinger
+usuário/turma, PDFPreview/thumbnails, CSP, auditoria ampliada com tecnologias assistivas e Hostinger
 seguem **DEFERRED**. Não executar `drush cim` com URI `http://default`.
 
 Composer dry-run inicialmente propunha atualizações indiretas. A resolução final

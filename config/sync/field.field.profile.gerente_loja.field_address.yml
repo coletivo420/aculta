@@ -1,0 +1,42 @@
+uuid: 24838e76-0449-44ea-8873-d394eee80d08
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_address
+    - profile.type.gerente_loja
+  module:
+    - address
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.gerente_loja.field_address
+field_name: field_address
+entity_type: profile
+bundle: gerente_loja
+label: Endereço
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  available_countries: {  }
+  langcode_override: null
+  field_overrides:
+    addressLine3:
+      override: hidden
+    organization:
+      override: hidden
+    givenName:
+      override: hidden
+    additionalName:
+      override: hidden
+    familyName:
+      override: hidden
+    dependentLocality:
+      override: required
+  fields: {  }
+field_type: address
+
