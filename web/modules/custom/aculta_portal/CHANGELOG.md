@@ -1,3 +1,10 @@
+## 0.4.0-dev.77 — canonical da vitrine aponta para a raiz — 2026-10-17
+
+Classificação: PATCH.
+
+- `EditorialHooks::metatagsAlter`: quando o nó é o caminho interno da raiz do host (`FRONT_PATHS`), o canonical e o `og:url` são a raiz do host. Vitrine da loja: `https://loja.aculta.toca.net.br/`.
+- Achado não corrigido nesta versão: a raiz da wiki e as demais raízes trazem `https://aculta.org/` (produção) no JSON-LD de organização e site, e as sobreposições de metatag por domínio no repositório (`config/sync/domain/*/metatag.metatag_defaults.front.yml`) têm endereços de produção fixos. Pendente: tratar como endereço de ambiente (mapeamento do `aculta_deployer`).
+
 ## 0.4.0-dev.76 — identificador da revista: revista420; vitrine da loja — 2026-10-17
 
 Classificação: PATCH (renomeação de identificador e conteúdo da vitrine).

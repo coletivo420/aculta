@@ -99,6 +99,17 @@ final class EditorialHooks {
       }
     }
 
+    // Página que é a raiz do host (caminho interno de FRONT_PATHS, ex.: /loja-da-aculta): o canonical é a raiz do host.
+    $purpose = $this->domainPurposeManager->getCurrentPurpose();
+    $frontPath = \Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL;
+    if ($node !== NULL && $frontPath !== NULL && $node->toUrl()->setAbsolute(FALSE)->toString() === $frontPath) {
+      $root = $this->domainPurposeManager->pathUrl($purpose, '/');
+      if ($root !== NULL) {
+        $tags['canonical_url'] = $root->toString();
+        $tags['og_url'] = $root->toString();
+      }
+    }
+
     if ($node !== NULL && $node->bundle() === 'wiki_entry') {
       $canonical = $this->domainPurposeManager->canonicalRouteUrl(
         'wiki',
