@@ -123,10 +123,6 @@ nunca escrever `/u/...` à mão nem guardar a URL sem tags de cache.
 - **Domínio:** o link é absoluto para o host do propósito `main` (ex.: a Revista aponta para o domínio principal),
   porque o perfil só existe nele. Relativo só funciona dentro do próprio host principal; por isso o link é
   gerado pelo serviço de domínio, sem host fixo no código.
-- **Maiúsculas no caminho:** o apelido guardado e exibido preserva a capitalização; só o segmento de URL é minúsculo. Uma
-  requisição a `/u/<apelido com maiúsculas>` recebe 301 para o slug canônico (`PublicProfileSlugRedirectSubscriber`,
-  prioridade acima do roteador). Sem isso, o pipeline do Drupal falha com 500. O redirecionamento não renderiza perfil
-  e por isso não registra cache de perfil; é a única exceção a esse registro, declarada no gate.
 - **Gate:** `php scripts/validate-profile-links.php` reprova caminho `/u/` literal, geração do perfil sem a regra
   de slug canônico, perda da capitalização na exibição e falta de registro na cache. Aplicar a mesma API do Portal
   em novos formulários e ações que gerem slugs públicos; valide sempre contra o contrato da rota proprietária.

@@ -1,13 +1,3 @@
-## 0.4.0-dev.89 — apelido com maiúsculas; minúsculas só no slug — 2026-10-17
-
-Classificação: PATCH (correção de regra de apelido e de um 500 no perfil público).
-
-- Validação do apelido (`AccountNames::isValid`) passa a valer para o slug normalizado (`PublicRouteSlug::normalize`). O apelido digitado e guardado preserva maiúsculas.
-- `/u/<apelido com maiúsculas>` recebe 301 para o slug minúsculo (`PublicProfileSlugRedirectSubscriber`, prioridade 40). Antes, respondia 500.
-- Gate `validate-profile-links`: exceção única e justificada para o redirecionamento canônico (não renderiza perfil).
-- Conta só autenticada (sem e-mail confirmado): sem dados básicos na tela de dados; decisão do responsável.
-- RUNTIME STATUS: APLICADO e verificado por HTTP (perfil público com maiúsculas e minúsculas; contas de teste; testes unitários do aculta_user, 37 passam).
-
 ## 0.4.0-dev.88 — participante removido; chamadores por hierarquia — 2026-10-17
 
 Classificação: MINOR (remoção do tipo participante e troca de todos os seus chamadores).
