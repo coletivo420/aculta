@@ -1,5 +1,12 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.14 — corrigir entrega do PDF privado no Runtime — 2026-10-17
+
+Classificação: PATCH (mantém a rota e as checagens de acesso do Drupal Core).
+
+- O viewer gera URLs privadas como `/system/files?file=...`, usando a rota Core `system.files`. No Runtime, `/system/files/{filepath}` retornava 404 mesmo para membros autorizados; a forma com `file` na query entrega o arquivo e mantém a autorização do Core em cada requisição.
+- Firefox 153.4 ESR no Runtime validou o PDF público e o PDF privado de turma (14 páginas), navegação, zoom, busca e renderização do canvas. A miniatura JPEG pública foi gerada pelo pipeline `aculta_image`. O membro recebeu 200; não membro e anônimo receberam 403. Remover membership ou relação Group negou imediatamente a mesma URL conhecida (403); restaurá-los retornou 200. A URL privada usa `?file=` porque a forma `/system/files/{filepath}` retornava 404 nesse Runtime.
+
 ## Submódulo aculta_pdf_viewer_group 0.1.0-dev.4 — relação Group após habilitação — 2026-10-17
 
 Classificação: PATCH (corrige a ordem de instalação da configuração Group).

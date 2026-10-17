@@ -42,8 +42,8 @@ validação de custo, acessibilidade e desempenho em PDFs extensos.
 | PV1 — PDF.js local | PDF.js oficial com versão e proveniência fixas, worker local, ESM, controles básicos e fallback. Sem CDN e sem patch direto em contrib. | Implementado e smoke test isolado PASS. Versão atual indicada no Composer; Runtime DEFERRED. | Reverter dependência/library e selecionar formatter Core; não remover arquivos Media. |
 | PV2 — Inserção de PDF na Revista pelo CKEditor 5 | Selecionar Media `document` na aba Documento da Media Library, inserir no formato `revista_editorial`, salvar e reabrir; o formatter compartilhado deve renderizar sem URL manual. O papel editorial deve poder criar Media PDF destinada à publicação. O bundle usa `public://`; não subir conteúdo confidencial. | Kernel e navegador confirmaram inserção de Media PDF existente pelo CKEditor, salvamento do artigo publicado e render PDF.js no Runtime. A Media fixture foi criada por Drush; upload/criação de Media via UI como `content_editor` segue DEFERRED, embora permissão e gate de papéis estejam presentes. | Revogar `create document media` do papel editorial, retirar o bundle `document` da seleção do editor ou voltar ao render Core; manter os Media/File e textos já publicados. |
 | PV3 — Leitor integrado ao site | Leitura inline paginada responsiva e acessível em páginas com Media PDF. Implementa página anterior/próxima, zoom, busca textual por página, controles acessíveis, tela cheia e fallback autorizado. Realce textual, rolagem contínua, sumário/bookmarks e apresentação ACULTA420 são incrementos próprios após validação/acesso ao tema. Sem JavaScript permanece o fallback autorizado. | Firefox 153.4 ESR no Runtime confirmou render de 14 páginas, navegação, zoom, busca, tela cheia e zero erros JS. Corrigido o CSS que reduzia o canvas e anulava o zoom fora de tela cheia; revisão visual da área rolável pendente. CSP, acessibilidade, outros browsers e PDF grande permanecem pendentes. | Retirar a biblioteca de interação e manter link Core autorizado; arquivos Media permanecem. |
-| PV4 — Miniaturas e preview | Integrar PDFPreview com miniatura da primeira página só para PDF público até 20 MiB; ImageMagick com timeout de 15 s; `public://pdfpreview`, JPEG 480×640 e erro fail-soft. Validar política/recursos no ambiente antes de habilitar processamento real. | Adapter fail-soft e referências opcionais implementados. A saída válida agora é registrada/renderizada pelo `aculta_image` e entra na limpeza de temporários. Binário ausente neste Homelab, módulos contrib desativados no Runtime e policy global intacta; conversão real DEFERRED. ImageMagick 5.0.1 não resolve com PDFPreview 1.2. | Desabilitar PDFPreview e manter leitor/link; não liberar PS nem modificar policy global sem revisão operacional. |
-| PV5 — Arquivos privados e públicos | Usar somente a rota privada do Drupal Core para `private://`, com File/Media/campo autorizados, cache de render max-age zero e sem thumbnail; validar unpublished, revogação de acesso, Group/turma, endpoint e fallback em Runtime. | Código e Config Sync usam o bundle privado `course_document`, relação Group obrigatória e guarda de ciclo de vida para mantê-lo não publicado. O bundle público `document` permanece inalterado. No Runtime de teste, submódulo, bundle, relação e permissões de estudante/educador estão ativos; os itens de configuração PV5 não têm drift. Nenhuma Media de teste foi criada. Falta homologar endpoint como membro/não membro, remoção da relação, revogação de membership, cache e browser; PV5 ainda não tem aceite de segurança para confidencialidade em turma. | Desabilitar a relação e o submódulo; manter o formatter/link Core; não alterar nem apagar Media/File. |
+| PV4 — Miniaturas e preview | Integrar PDFPreview com miniatura da primeira página só para PDF público até 20 MiB; ImageMagick com timeout de 15 s; `public://pdfpreview`, JPEG 480×640 e erro fail-soft. Validar política/recursos no ambiente antes de habilitar processamento real. | Adapter fail-soft e referências opcionais implementados. Firefox no Runtime gerou e exibiu a miniatura JPEG da primeira página de um PDF público de 14 páginas pelo pipeline `aculta_image`; o arquivo de preview de teste foi removido após a homologação. Limites continuam sendo 20 MiB e timeout de 15 s; revisar com arquivos grandes e erro de conversão na PV7. | Desabilitar PDFPreview e manter leitor/link; não liberar PS nem modificar policy global sem revisão operacional. |
+| PV5 — Arquivos privados e públicos | Usar somente a rota privada do Drupal Core para `private://`, com File/Media/campo autorizados, cache de render max-age zero e sem thumbnail; validar unpublished, revogação de acesso, Group/turma, endpoint e fallback em Runtime. | Código e Config Sync usam o bundle privado `course_document`, relação Group obrigatória e guarda de ciclo de vida para mantê-lo não publicado. O bundle público `document` permanece inalterado. No Runtime de teste, submódulo, bundle, relação e permissões de estudante/educador estão ativos; os itens de configuração PV5 não têm drift. Firefox 153.4 ESR renderizou o Media privado embutido em página (14 páginas); o endpoint Core devolveu 200 para membro e 403 para não membro e anônimo. Remover membership ou relação Media↔Group negou a URL conhecida com 403; restaurar cada uma devolveu 200. A Media ficou não publicada. Os fixtures e uploads foram removidos depois da execução. A confidencialidade base de Group está homologada; CSP, cache em múltiplos proxies e navegadores adicionais permanecem no gate PV7. | Desabilitar a relação e o submódulo; manter o formatter/link Core; não alterar nem apagar Media/File. |
 | PV6 — Uso compartilhado e apresentação | Homologar o mesmo formatter/contrato para Revista420, artigos/blog, Wiki420, Fórum, projetos, documentos institucionais e LMS, sem acoplamento funcional ao LMS. Criar apresentação SDC/ACULTA420 somente após o contrato funcional ser aprovado e com autorização de mudança no tema. | Depende de PV2–PV5 conforme o caso; tema protegido por regra do repositório. | Consumidores retornam ao display Media/Core sem alterar arquivos ou conteúdo. |
 | PV7 — Release candidate | Executar matriz de browsers, arquivos pequenos/grandes, erro/rede lenta, PDF.js/worker, CSP, acessibilidade, cache, acesso, performance e produção LiteSpeed; rever licença e atualização de PDF.js. Registrar evidências e gates na PR/release. | Todas as fases necessárias aprovadas. Runtime e produção são gates distintos; sem deploy automático. | Reverter a fase liberando formatter Core/link; manter dependências até verificar referências no Composer/configuração. |
 
@@ -64,16 +64,16 @@ escopo.
 PV3 está funcional para Media público e testado no Runtime. PV4 tem integração e
 configuração versionadas com fallback fail-soft; o erro de bootstrap por serviço
 contrib ausente foi corrigido com referências opcionais. Drush e os quatro hosts
-de teste responderam sem erro 500; geração real continua DEFERRED até o
-provisionamento do binário e a revisão da policy no ambiente. PV5 usa o bundle
-privado `course_document`; submódulo, relação Group, papéis de turma e campos
-estão ativos no Runtime após importação parcial dirigida. O estado do Config Sync
-não mostra drift nos itens PV5, e nenhuma Media de curso foi criada. Ainda falta
-homologar endpoint para membro/não membro, remoção da relação, revogação, cache e
-browser; a frente de contas/permissões não deve ser alterada nesta etapa. A
-finalização de release continua condicionada à homologação da
-tela de edição/autoria, revisão visual/acessível, matriz de navegador/CSP e PV6.
-Não usar o bundle `document` público para PDFs confidenciais.
+de teste responderam sem erro 500, e Firefox gerou uma miniatura pública pelo
+pipeline `aculta_image`. PV5 usa o bundle privado `course_document`; submódulo,
+relação Group, papéis de turma e campos estão ativos no Runtime após importação
+parcial dirigida. O Config Sync não mostra drift nos itens PV5. Firefox confirmou
+o render privado e a matriz de acesso: membro 200; não membro/anônimo 403;
+remoção de membership/relação 403. Os fixtures foram removidos. A frente de
+contas/permissões não foi alterada. A finalização de release continua
+condicionada à homologação da tela de edição/autoria para PDF público, revisão
+visual/acessível, matriz de navegador/CSP e PV6. Não usar o bundle `document`
+público para PDFs confidenciais.
 
 ### Auditoria do contrib Drupal 3D Flipbook
 
@@ -87,7 +87,7 @@ instalar nem copiar runtime/assets; a funcionalidade de apresentação de um PDF
 Referências a funções equivalentes devem ser implementações próprias com a
 distribuição PDF.js já fixada. O adapter agora usa a rota privada do Core para
 `private://`; validação ponta a ponta de Group, revogação, cache e browser
-permanece DEFERRED antes de usar PDFs privados em cursos.
+foi homologada no Runtime de teste: membro recebeu o PDF, e remover membership ou relação retornou 403. CSP, proxy e matriz de browsers seguem pendentes no gate de release.
 
 ## Referências
 

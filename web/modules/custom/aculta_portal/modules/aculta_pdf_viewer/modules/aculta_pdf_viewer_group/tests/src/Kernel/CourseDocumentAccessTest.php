@@ -161,7 +161,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount($member);
     $build = $this->container->get('aculta_pdf_viewer.builder')->build($media, 'field_media_course_document');
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
-    $this->assertSame('/system/files/course-pdf/membership-fixture.pdf', $private_url);
+    $this->assertSame('/system/files?file=course-pdf/membership-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);
     $this->assertArrayNotHasKey('thumbnail', $build);
 

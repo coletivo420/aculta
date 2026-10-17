@@ -6,8 +6,10 @@ namespace Drupal\aculta_pdf_viewer\Pdf;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 
@@ -18,6 +20,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
 
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
+    private readonly UrlGeneratorInterface $urlGenerator,
     private readonly AccountInterface $currentUser,
     private readonly PdfPreviewThumbnailBuilderInterface $thumbnailBuilder,
   ) {}
@@ -56,13 +59,18 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $uri = $file->getFileUri();
     $scheme = parse_url($uri, PHP_URL_SCHEME);
     $expected_scheme = $bundle === 'course_document' ? 'private' : 'public';
-    $url = $file->isPermanent()
+    $url = '';
+    if (
+      $file->isPermanent()
       && $file_access->isAllowed()
       && $file_download_access->isAllowed()
       && $scheme === $expected_scheme
       && in_array($scheme, ['public', 'private'], TRUE)
-      ? $this->fileUrlGenerator->generateString($uri)
-      : '';
+    ) {
+      $url = $scheme === 'private'
+        ? $this->privateFileUrl($uri)
+        : $this->fileUrlGenerator->generateString($uri);
+    }
 
     // A generated local URL is required. Reject remote stream wrappers/CDNs so
     // the browser never receives an arbitrary or third-party PDF URL.
@@ -268,6 +276,22 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $build = ['#access' => FALSE];
     $cacheability->applyTo($build);
     return $build;
+  }
+
+  /**
+   * Generates a Core private-file URL with an explicit file query parameter.
+   *
+   * The Runtime's front controller does not resolve Core's path-processor
+   * form `/system/files/{filepath}` reliably. The same Core route accepts
+   * `?file={filepath}` and still rechecks the Media/File access on each request.
+   */
+  private function privateFileUrl(string $uri): string {
+    $path = substr($uri, strlen('private://'));
+    $url = Url::fromRoute('system.files', ['scheme' => 'private'], [
+      'query' => ['file' => $path],
+    ]);
+    $url->setUrlGenerator($this->urlGenerator);
+    return $url->toString();
   }
 
 }

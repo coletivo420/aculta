@@ -236,7 +236,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
 
     $build = $this->container->get('aculta_pdf_viewer.builder')->build($media, 'field_media_course_document');
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
-    $this->assertSame('/system/files/pdf-viewer/aculta-private-fixture.pdf', $private_url);
+    $this->assertSame('/system/files?file=pdf-viewer/aculta-private-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);
     $this->assertArrayNotHasKey('thumbnail', $build);
 
