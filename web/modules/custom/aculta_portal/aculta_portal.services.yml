@@ -178,6 +178,11 @@ services:
     tags:
       - { name: breadcrumb_builder, priority: 100 }
       - { name: aculta_portal.implementation }
+  aculta_portal.administrative_route_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\AdministrativeRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
   aculta_portal.domain_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DomainRouteSubscriber
     arguments: ['@config.factory']

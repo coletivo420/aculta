@@ -110,6 +110,8 @@ aculta_portal.appearance_settings:
     _title: Aparência do site
   requirements:
     _permission: administer aculta appearance settings
+  options:
+    _admin_route: true
 aculta_portal.support_settings:
   path: /painel-administrativo/configuracoes/aculta/apoio
   defaults:
@@ -117,6 +119,8 @@ aculta_portal.support_settings:
     _title: Formas de apoio
   requirements:
     _permission: administer aculta support settings
+  options:
+    _admin_route: true
 aculta_portal.social_links_settings:
   path: /painel-administrativo/configuracoes/aculta/portal/redes-sociais
   defaults:
@@ -133,6 +137,8 @@ aculta_portal.admin:
     _title: ACULTA Portal
   requirements:
     _permission: administer site configuration
+  options:
+    _admin_route: true
 aculta_portal.turnstile_settings:
   path: /painel-administrativo/configuracoes/aculta/portal/turnstile
   defaults:
@@ -140,6 +146,8 @@ aculta_portal.turnstile_settings:
     _title: Turnstile
   requirements:
     _permission: administer site configuration
+  options:
+    _admin_route: true
 aculta_portal.requirements:
   path: /painel-administrativo/configuracoes/aculta/portal/requisitos
   defaults:
@@ -147,6 +155,8 @@ aculta_portal.requirements:
     _title: Status do Portal Aculta
   requirements:
     _permission: administer site configuration
+  options:
+    _admin_route: true
 aculta_portal.support_my:
   path: /meu-apoio
   defaults:
@@ -229,6 +239,8 @@ aculta_portal.secrets_import:
     _title: Credenciais do ambiente
   requirements:
     _permission: administer aculta secrets
+  options:
+    _admin_route: true
 aculta_portal.secrets_clear:
   path: /painel-administrativo/configuracoes/aculta/segredos/apagar/{name}
   defaults:
@@ -237,6 +249,8 @@ aculta_portal.secrets_clear:
   requirements:
     _permission: administer aculta secrets
     name: '[A-Z][A-Z0-9_]*'
+  options:
+    _admin_route: true
 aculta_portal.secrets_edit:
   path: /painel-administrativo/configuracoes/aculta/segredos/editar/{name}
   defaults:
@@ -245,6 +259,8 @@ aculta_portal.secrets_edit:
   requirements:
     _permission: administer aculta secrets
     name: '[A-Z][A-Z0-9_]*'
+  options:
+    _admin_route: true
 aculta_portal.secrets_show:
   path: /painel-administrativo/configuracoes/aculta/segredos/mostrar/{name}
   defaults:
@@ -253,6 +269,8 @@ aculta_portal.secrets_show:
   requirements:
     _permission: administer aculta secrets
     name: '[A-Z][A-Z0-9_]*'
+  options:
+    _admin_route: true
 aculta_portal.deployer_status:
   path: /painel-administrativo/configuracoes/aculta/deployer
   defaults:
@@ -260,6 +278,8 @@ aculta_portal.deployer_status:
     _title: ACULTA Deployer
   requirements:
     _permission: administer aculta deployer
+  options:
+    _admin_route: true
 aculta_portal.email_resend:
   path: /confirmar-email/reenviar
   defaults:
@@ -298,6 +318,8 @@ aculta_portal.email_confirmacao_pendentes:
     _title: 'Contas sem e-mail confirmado'
   requirements:
     _permission: 'confirmar email de conta manualmente'
+  options:
+    _admin_route: true
 
 aculta_portal.email_confirmar_manual:
   path: '/painel-administrativo/contas/{user}/confirmar-email'
@@ -308,6 +330,7 @@ aculta_portal.email_confirmar_manual:
     _permission: 'confirmar email de conta manualmente'
     user: '\d+'
   options:
+    _admin_route: true
     parameters:
       user:
         type: entity:user
@@ -320,6 +343,7 @@ aculta_portal.relatorio_vendas_pagamento_atualizar:
   requirements:
     _user_is_logged_in: 'TRUE'
   options:
+    _admin_route: true
     parameters:
       commerce_payment:
         type: entity:commerce_payment
@@ -332,6 +356,7 @@ aculta_portal.relatorio_vendas_pagamento_cancelar:
   requirements:
     _user_is_logged_in: 'TRUE'
   options:
+    _admin_route: true
     parameters:
       commerce_payment:
         type: entity:commerce_payment
@@ -343,6 +368,8 @@ aculta_portal.relatorio_doacoes:
     _title: 'Relatório de doações'
   requirements:
     _permission: 'administrar doacoes'
+  options:
+    _admin_route: true
 
 aculta_portal.relatorio_vendas:
   path: '/painel-administrativo/loja/vendas'
@@ -351,6 +378,8 @@ aculta_portal.relatorio_vendas:
     _title: 'Relatório de vendas'
   requirements:
     _permission: 'view commerce_order'
+  options:
+    _admin_route: true
 
 aculta_portal.role_hierarchy_settings:
   path: /painel-administrativo/configuracoes/aculta/papeis
@@ -359,3 +388,5 @@ aculta_portal.role_hierarchy_settings:
     _title: Papéis e perfis
   requirements:
     _permission: administer aculta role hierarchy
+  options:
+    _admin_route: true

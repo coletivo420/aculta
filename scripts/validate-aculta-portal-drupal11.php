@@ -192,9 +192,10 @@ $check(
 // 0.3.0-dev.5 adds DonationFriendlyRouteSubscriber (donation route paths /apoiar, slug em português).
 // 0.4.0-dev.18 adds UploadedFilenameExtensionSubscriber after Core's configured filename sanitizer.
 // 0.4.0-dev.19 adjusts the account-owned Messenger conversation presentation.
+// 0.4.0-dev.90 adds AdministrativeRouteSubscriber (every /painel-administrativo route uses the administrative theme; runs last).
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 12,
-  'Portal must register exactly twelve canonical event_subscriber tags.',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 13,
+  'Portal must register exactly thirteen canonical event_subscriber tags.',
 );
 
 $legacyProceduralFunctions = [];

@@ -1,3 +1,12 @@
+## 0.4.0-dev.91 — tema administrativo em todas as rotas do painel — 2026-10-17
+
+Classificação: PATCH (correção de tema em páginas administrativas).
+
+- Páginas do painel (ex.: `/painel-administrativo/configuracoes/aculta/papeis`) carregavam o tema global (ACULTA420) porque as rotas não definiam `_admin_route`. Corrigido em dois níveis: a opção foi declarada nas 26 rotas customizadas (aculta_portal, aculta_user, aculta_image), e `AdministrativeRouteSubscriber` marca qualquer rota do prefixo `/painel-administrativo` (Core e contrib incluídos) no fim da alteração de rotas.
+- Decisão explícita de módulo prevalece: rotas com `_admin_route: FALSE` (biblioteca de componentes do ui_patterns) não são alteradas.
+- Gate `validate-aculta-portal-drupal11`: contagem de subscribers pinada de 12 para 13, com a justificativa.
+- RUNTIME STATUS: APLICADO e verificado por HTTP como administrador: 8 páginas do painel (papéis, campanhas, perfis, apoio, vendas, herança, tipos de perfil, tipos de conteúdo) carregam o Claro e nenhuma carrega o ACULTA420. Página pública continua com o tema do site.
+
 ## 0.4.0-dev.91 — viewer PDF também em campos File institucionais — 2026-10-17
 
 Classificação: MINOR (novo formatter compartilhado, sem storage de documentos paralelo).
