@@ -16,8 +16,8 @@ provider: null
 plugin: aculta_donation_quick
 settings:
   id: aculta_donation_quick
-  label: 'Valores de doação rápida (apoio)'
-  label_display: ''
+  label: 'Escolha um valor'
+  label_display: visible
   provider: aculta_donation
   compacto: false
 visibility:

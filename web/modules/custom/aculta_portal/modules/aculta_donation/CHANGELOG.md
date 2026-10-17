@@ -1,5 +1,10 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.12 — título do bloco de valores — 2026-10-17
+
+- O bloco de valores da página de apoio tem título visível, "Escolha um valor" (H2, tipografia dos títulos de seção).
+- RUNTIME STATUS: APLICADO no Runtime de testes (título verificado no HTML e por captura do topo da página de apoio).
+
 ## 0.1.0-dev.11 — fonte única dos valores — 2026-10-17
 
 - O bloco de doação rápida é a única lista de valores da página de apoio. Lê a campanha vigente ou os "Valores padrão"
