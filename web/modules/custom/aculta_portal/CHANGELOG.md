@@ -1,3 +1,12 @@
+## 0.4.0-dev.112 — um só conjunto de valores na página de apoio — 2026-10-17
+
+- A lista de valores do formulário de apoio ("Escolha um valor") saiu. Os valores ficam só no bloco de doação rápida
+  (aculta_donation), que lê a mesma fonte: campanha vigente, depois "Valores padrão" do painel. A opção "Outro" leva
+  ao passo de doação, onde se digita o valor.
+- Valores padrão do painel: R$ 5, 10, 20 e 50.
+- Gate de P5.1 ajustado: a rota de valores sugeridos passa a ser verificada no bloco, não no formulário.
+- RUNTIME STATUS: APLICADO no Runtime de testes (página de apoio: um bloco, 4 valores e "Outro", sem a lista antiga).
+
 ## 0.4.0-dev.111 — cadastro em modal para o checkout de doação — 2026-10-17
 
 - Cadastro em modal (`/criar-conta/janela`): formulário `RegisterPopupForm` (estende o cadastro do Core) registrado como

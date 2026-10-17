@@ -56,34 +56,8 @@ final class SupportForm extends FormBase {
     $gateway_ready = $gateway && $gateway->status()
       && !empty($gateway_configuration['public_key_test'])
       && !empty($gateway_configuration['access_token_test']);
-    if ($gateway_ready) {
-      // O fluxo de doação (criação do pedido e checkout) é do submódulo aculta_donation, no domínio principal.
-      // Aqui só se apresentam os valores sugeridos e a opção de outro valor.
-      // Campanha vigente define os valores e se há valor personalizado; sem ela, valem os padrões.
-      // Sem campanha vigente, valem os valores padrão configurados em Formas de apoio (aculta_portal.support).
-      $campanha = $this->campanhas?->valoresSugeridos();
-      $padrao = $this->configs->get('aculta_portal.support');
-      $valores = $campanha['amounts'] ?? ($padrao->get('amounts') ?: SettingsForm::VALORES_PADRAO);
-      $valorPersonalizado = $campanha['customAmount'] ?? ($padrao->get('custom_amount') ?? TRUE);
-      $links = [];
-      foreach ($valores as $valor) {
-        $url = $this->purposes->routeUrl('main', 'aculta_donation.donation.quick', ['amount' => $valor]);
-        if ($url !== NULL) {
-          $links[] = PortalLinkElement::build($this->t('R$ @valor', ['@valor' => number_format((float) $valor, 0, ',', '.')]), $url, ['data-portal-ui' => 'aculta-button-primary']);
-        }
-      }
-      $outro = $valorPersonalizado ? $this->purposes->routeUrl('main', 'aculta_donation.donation.default') : NULL;
-      if ($outro !== NULL) {
-        $links[] = PortalLinkElement::build($this->t('Outro valor'), $outro, ['data-portal-ui' => 'aculta-button-outline']);
-      }
-      $form['suggested_amounts'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'support-amounts'],
-        'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Escolha um valor')],
-        'links' => $links,
-      ];
-    }
-    else {
+    // Os valores sugeridos ficam no bloco de doação rápida (aculta_donation), a única fonte da lista de valores.
+    if (!$gateway_ready) {
       $form['status'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-warning'],
