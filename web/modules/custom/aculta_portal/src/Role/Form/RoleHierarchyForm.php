@@ -71,18 +71,21 @@ final class RoleHierarchyForm extends ConfigFormBase {
 
     $form['cadeia'] = [
       '#type' => 'table',
-      '#header' => [$this->t('Papel'), $this->t('Entram nesta categoria'), $this->t('Peso')],
+      '#header' => [$this->t('Papel'), $this->t('Entram nesta categoria'), $this->t('Herda de (efetivo)'), $this->t('Peso')],
       '#tabledrag' => [
         ['action' => 'order', 'relationship' => 'sibling', 'group' => 'role-weight'],
       ],
       '#empty' => $this->t('Nenhum papel.'),
     ];
+    $mapa = RoleHierarchy::derivarMapa($cadeia, $laterais, array_keys($papeis));
     foreach ($cadeia as $i => $papel) {
       $nomesMembros = array_map(fn (string $m): string => $papeis[$m], $membrosDe[$papel] ?? []);
+      $herdados = array_map(fn (string $h): string => $papeis[$h] ?? $h, RoleHierarchy::efetivos($mapa, $papel));
       $form['cadeia'][$papel] = [
         '#attributes' => ['class' => ['draggable']],
         'papel' => ['#plain_text' => $papeis[$papel]],
         'membros' => ['#plain_text' => implode(', ', $nomesMembros)],
+        'efetivo' => ['#plain_text' => $herdados === [] ? $this->t('nenhum') : implode(', ', $herdados)],
         'peso' => [
           '#type' => 'weight',
           '#title' => $this->t('Peso de @papel', ['@papel' => $papeis[$papel]]),

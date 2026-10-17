@@ -1,3 +1,12 @@
+## 0.4.0-dev.95 — tela de papéis do ACULTA como única tela de herança — 2026-10-17
+
+Classificação: PATCH (ocultação de tela duplicada do contrib e coluna de herança efetiva).
+
+- A tela de herança do contrib `role_inheritance` (`/painel-administrativo/pessoas/roles/inheritance`) responde 403 e sai da aba da lista de papéis. A herança é editada só em Papéis e perfis (`/painel-administrativo/configuracoes/aculta/papeis`).
+- Tela do ACULTA recebe a coluna "Herda de (efetivo)", com a herança transitiva que a tela do contrib mostrava.
+- Documentado em `docs/portal/PAPEIS-PARTICIPACAO.md`, seção 8.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: contrib 403, aba oculta, tela do ACULTA 200 com a coluna.
+
 ## 0.4.0-dev.94 — papéis mesclados e nomes alinhados — 2026-10-17
 
 Classificação: MINOR (remoção de dois papéis, com mesclagem de permissões e de contas).

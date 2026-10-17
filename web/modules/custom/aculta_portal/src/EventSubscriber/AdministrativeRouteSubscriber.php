@@ -33,6 +33,14 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   }
 
   protected function alterRoutes(RouteCollection $collection): void {
+    // A tela de herança do módulo contrib role_inheritance duplica Papéis e perfis (ACULTA). Fica sem acesso: a aba
+    // e o link de menu dela somem junto. A herança é editada só na tela do ACULTA (docs/portal/PAPEIS-PARTICIPACAO.md).
+    if ($route = $collection->get('role_inheritance.config_role_inheritance')) {
+      $requisitos = $route->getRequirements();
+      unset($requisitos['_permission']);
+      $requisitos['_access'] = 'FALSE';
+      $route->setRequirements($requisitos);
+    }
     foreach ($collection->all() as $route) {
       // Só rotas sem decisão explícita: `FALSE` definido por um módulo (ex.: biblioteca de componentes do ui_patterns) é respeitado.
       if (str_starts_with($route->getPath(), self::PREFIXO) && $route->getOption('_admin_route') === NULL) {
