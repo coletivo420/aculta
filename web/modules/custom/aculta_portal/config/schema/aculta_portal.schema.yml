@@ -80,15 +80,17 @@ aculta_portal.support:
       type: boolean
       label: 'Permite valor personalizado'
 
-aculta_portal.profile_roles:
+aculta_portal.role_hierarchy:
   type: config_object
-  label: 'Vínculo entre tipos de perfil e papéis'
+  label: 'Cadeia de papéis'
   mapping:
-    vinculos:
+    cadeia:
       type: sequence
-      label: 'Papéis que usam cada tipo de perfil'
+      label: 'Papéis da cadeia, do mais alto ao mais baixo'
       sequence:
-        type: sequence
-        label: 'Papéis'
-        sequence:
-          type: string
+        type: string
+    laterais:
+      type: sequence
+      label: 'Papéis sem categoria e seu pai'
+      sequence:
+        type: string

@@ -57,4 +57,34 @@ final class RoleHierarchy {
     return FALSE;
   }
 
+
+  /**
+   * Mapa de herança derivado da lista ordenada (cadeia) e dos papéis laterais.
+   *
+   * - Cadeia: de cima para baixo; cada papel herda do papel imediatamente abaixo dele.
+   * - Laterais: papel fora da cadeia com um único pai escolhido.
+   * - Administrador: herda de todos os papéis do site.
+   *
+   * @param string[] $cadeia
+   *   Papéis da cadeia, do mais alto para o mais baixo (sem administrator).
+   * @param array<string, string> $laterais
+   *   Papel lateral => papel pai.
+   * @param string[] $todos
+   *   Todos os papéis do site (inclui anonymous).
+   *
+   * @return array<string, string[]>
+   */
+  public static function derivarMapa(array $cadeia, array $laterais, array $todos): array {
+    $mapa = [];
+    $total = count($cadeia);
+    for ($i = 0; $i < $total - 1; $i++) {
+      $mapa[$cadeia[$i]] = [$cadeia[$i + 1]];
+    }
+    foreach ($laterais as $papel => $pai) {
+      $mapa[$papel] = [$pai];
+    }
+    $mapa['administrator'] = array_values(array_diff($todos, ['administrator']));
+    return $mapa;
+  }
+
 }

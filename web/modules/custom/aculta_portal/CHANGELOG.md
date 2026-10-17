@@ -1,3 +1,14 @@
+## 0.4.0-dev.92 — cadeia de papéis por setas e arraste — 2026-10-17
+
+Classificação: MINOR (nova interação da tela de papéis; configuração própria da cadeia).
+
+- Tela Papéis e perfis: a hierarquia é uma lista ordenada pela classificação de cada categoria. Cada papel mostra só o nome. Mover por setas (botões; funcionam sem JavaScript) ou arrastando, com mouse e toque (`js/role-hierarchy.js`, biblioteca `aculta_portal/role-hierarchy`).
+- Papéis sem categoria (`wiki_contributor`, `lms_admin`) ficam fora da cadeia, sem controle na tela, e herdam do autenticado.
+- Mapa de herança derivado da cadeia ao salvar (`RoleHierarchy::derivarMapa`); configuração própria `aculta_portal.role_hierarchy` (cadeia e laterais).
+- Configuração `aculta_portal.profile_roles` removida (cada tipo de perfil corresponde a um papel).
+- Testes: 189 unitários do Portal passam (inclui o mapa derivado e a troca de posição).
+- RUNTIME STATUS: APLICADO e verificado por HTTP: lista na ordem da configuração; seta reordena sem salvar; salvar mantém o mapa de herança idêntico. Arraste por ponteiro não foi verificado no navegador.
+
 ## 0.4.0-dev.92 — Media Embed de PDF compartilhado com a Wiki — 2026-10-17
 
 Classificação: PATCH (habilita o processamento do embed de documento no formato Wiki existente).

@@ -36,3 +36,9 @@ cart-status:
     - core/drupal
     - core/once
 
+role-hierarchy:
+  js:
+    js/role-hierarchy.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

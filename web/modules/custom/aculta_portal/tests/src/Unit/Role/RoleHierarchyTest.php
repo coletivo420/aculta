@@ -49,4 +49,25 @@ final class RoleHierarchyTest extends UnitTestCase {
     $this->assertSame(['b'], RoleHierarchy::efetivos(['a' => ['b'], 'b' => ['a']], 'a'));
   }
 
+  public function testMapaDerivadoDaCadeiaEDosLaterais(): void {
+    $mapa = RoleHierarchy::derivarMapa(
+      ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'],
+      ['wiki_contributor' => 'authenticated', 'lms_admin' => 'authenticated'],
+      ['anonymous', 'authenticated', 'email_confirmed', 'estudante', 'associado', 'lms_teacher', 'content_editor', 'gerente_loja', 'wiki_contributor', 'lms_admin', 'administrator'],
+    );
+    $this->assertSame(['content_editor'], $mapa['gerente_loja']);
+    $this->assertSame(['lms_teacher'], $mapa['content_editor']);
+    $this->assertSame(['email_confirmed'], $mapa['estudante']);
+    $this->assertArrayNotHasKey('authenticated', $mapa);
+    $this->assertSame(['authenticated'], $mapa['wiki_contributor']);
+    $this->assertCount(10, $mapa['administrator']);
+    $this->assertFalse(RoleHierarchy::temCiclo($mapa));
+  }
+
+  public function testMoverNaCadeiaMudaOPai(): void {
+    $mapa = RoleHierarchy::derivarMapa(['content_editor', 'gerente_loja', 'authenticated'], [], ['authenticated', 'content_editor', 'gerente_loja', 'administrator']);
+    $this->assertSame(['gerente_loja'], $mapa['content_editor']);
+    $this->assertSame(['authenticated'], $mapa['gerente_loja']);
+  }
+
 }
