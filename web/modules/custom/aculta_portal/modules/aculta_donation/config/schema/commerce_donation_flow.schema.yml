@@ -66,7 +66,7 @@ block.settings.aculta_donation_quick:
       sequence:
         type: integer
 
-commerce_checkout.commerce_checkout_flow.plugin.donation_checkout_flow:
+commerce_checkout.commerce_checkout_flow.plugin.fluxo_doacao:
   type: commerce_checkout_flow_with_panes_configuration
   mapping:
     offline_link_title:

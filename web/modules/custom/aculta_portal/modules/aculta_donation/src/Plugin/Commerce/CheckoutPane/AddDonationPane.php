@@ -129,7 +129,7 @@ class AddDonationPane extends CheckoutPaneBase {
    */
   public function isVisible() {
     // This pane is designed to be used outside our custom flow.
-    return $this->checkoutFlow->getPluginId() !== 'donation_checkout_flow';
+    return $this->checkoutFlow->getPluginId() !== 'fluxo_doacao';
   }
 
   /**

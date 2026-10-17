@@ -3,7 +3,7 @@ _core:
 donation_route: both
 donate_item_type: donation
 donate_order_type: doacao
-donate_checkout_flow: donation_flow
+donate_checkout_flow: doacao
 cart_item_type: null
 cart_order_type: null
 cart_checkout_flow: null

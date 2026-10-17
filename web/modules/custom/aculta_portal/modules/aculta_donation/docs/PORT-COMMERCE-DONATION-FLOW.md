@@ -22,7 +22,7 @@ Status (2026-10-17): **port aplicado** (código, blocos, configuração, corte n
 | `NewOrder` | `Drupal\aculta_donation\Order\DonationOrderFactory` | Cria pedido e item de doação |
 | `Controller\DonationController` | `Controller\DonationController` | `/donate`, passos do checkout, doação rápida |
 | `EventSubscriber\CartCheckoutRouteSubscriber` | `EventSubscriber\...` | Redireciona o carrinho para o checkout de doação |
-| `Plugin\Commerce\CheckoutFlow\DonationCheckoutFlow` (+ `MultistepWithDonation`, `PaneSummaryData`) | `Plugin\Commerce\CheckoutFlow\...` | Fluxo `donation_flow` |
+| `Plugin\Commerce\CheckoutFlow\DonationCheckoutFlow` (+ `MultistepWithDonation`, `PaneSummaryData`) | `Plugin\Commerce\CheckoutFlow\...` | Fluxo `doacao` |
 | `Plugin\Commerce\CheckoutPane\*` (DonationItemPaneBase, DonationCheckoutPane, AddDonationPane, MemorialCheckoutPane, ThankYouPane) | mesmos nomes | Painéis de doação, homenagem e agradecimento |
 | `Plugin\Field\FieldWidget\DonationLevelWidget` | mesmo nome | Campo de valor |
 | `Plugin\Field\FieldFormatter\DonationSummaryFormatter` | mesmo nome | Resumo |
@@ -35,8 +35,8 @@ Verificar antes de portar: os blocos `DonateBlock`, `QuickDonationBlock` e `Back
 ## Riscos do corte
 
 1. **Dados existentes:** o Runtime tem 14 itens de pedido do tipo `donation`. O corte não pode apagá-los.
-2. **Desinstalação apaga configuração dependente:** o `commerce_donation_flow` é dependência do tipo de item `donation`, dos campos `field_*` e do fluxo `donation_flow`. Desinstalar o contrib sem reapontar essas dependências apaga a configuração e pode apagar os itens. Antes: reapontar as dependências para `aculta_donation` em config e exportar, e só depois desinstalar.
-3. **Colisão de IDs:** plugins (`donation_checkout_flow`, `commerce_donation_pane`, `commerce_memorial_pane`), serviços (`commerce_donation_flow.*`) e rotas (`/donate`) não podem existir ativos em duplicidade. Desenvolver e testar com o contrib desativado e a cópia ativa só no corte.
+2. **Desinstalação apaga configuração dependente:** o `commerce_donation_flow` é dependência do tipo de item `donation`, dos campos `field_*` e do fluxo `doacao`. Desinstalar o contrib sem reapontar essas dependências apaga a configuração e pode apagar os itens. Antes: reapontar as dependências para `aculta_donation` em config e exportar, e só depois desinstalar.
+3. **Colisão de IDs:** plugins (`fluxo_doacao`, `commerce_donation_pane`, `commerce_memorial_pane`), serviços (`commerce_donation_flow.*`) e rotas (`/donate`) não podem existir ativos em duplicidade. Desenvolver e testar com o contrib desativado e a cópia ativa só no corte.
 4. **Dependências no Portal:** `DonationSummaryController`, `SupportForm`, `DonationFriendlyRouteSubscriber`, `DomainRouteSubscriber`, `DomainRoutePolicy`, `PortalRequirementsController` e os scripts `validate-payment-domain-policy.php`, `validate-portal-commerce-security.php` citam o contrib. Precisam apontar para o novo namespace no mesmo corte.
 5. **Composer:** remover `drupal/commerce_donation_flow` de `composer.json` é uma mudança de dependência. Exige confirmação antes do `composer remove`.
 6. **Licença:** o código copiado é GPL-2.0-or-later. Manter o aviso de origem nos arquivos portados.

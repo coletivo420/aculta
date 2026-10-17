@@ -8,8 +8,8 @@ dependencies:
 _core:
   default_config_hash: F0kSVUuDZPcYf9M5AShqAqH4yaibXumSyHtbyTGdlVo
 label: 'Donation Flow'
-id: donation_flow
-plugin: donation_checkout_flow
+id: doacao
+plugin: fluxo_doacao
 configuration:
   display_checkout_progress: true
   display_checkout_progress_breadcrumb_links: false

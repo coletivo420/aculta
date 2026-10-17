@@ -10,7 +10,7 @@ Submódulo do `aculta_portal` (versão 0.1.0-dev.3). Reúne a doação do site: 
   `/painel-administrativo/configuracoes/aculta/doacoes/campanhas`.
 - **Seleção da campanha vigente** (`DonationCampaignSelector`): a campanha ativa cuja janela contém a data de hoje. Sem
   campanha, a página de apoio usa os valores padrão (`aculta_portal.support`).
-- **Fluxo de doação** (`donation_checkout_flow`, `donation_multistep_flow`): pedido, painéis de doação, dedicatória
+- **Fluxo de doação** (`fluxo_doacao`, `donation_multistep_flow`): pedido, painéis de doação, dedicatória
   (homenagem), resumo, agradecimento e o widget de valor. Entrada: `/apoiar` e `/apoiar/{valor}/agora`.
 - **Blocos** (`aculta_donation_donate`, `aculta_donation_quick`, `aculta_donation_back`): dados neutros; a apresentação
   é do tema ACULTA420 (SDC `donation-quick`, templates do tema).

@@ -29,7 +29,9 @@ final class TurnstileToggle {
    */
   public const SHOP_FORM_IDS = [
     'commerce_order_item_add_to_cart_form',
+    'commerce_checkout_flow',
     'commerce_checkout_flow_default',
+    'commerce_checkout_flow_fluxo_doacao',
   ];
 
   /**
@@ -38,7 +40,9 @@ final class TurnstileToggle {
    */
   public const EXCEPTION_FORM_IDS = [
     'commerce_order_item_add_to_cart_form',
+    'commerce_checkout_flow',
     'commerce_checkout_flow_default',
+    'commerce_checkout_flow_fluxo_doacao',
     'aculta_login_popup_form',
     'aculta_register_popup_form',
     'aculta_messenger_new_conversation',

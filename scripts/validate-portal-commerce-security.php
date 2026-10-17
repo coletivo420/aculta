@@ -401,9 +401,9 @@ $support_settings = \Drupal::config('aculta_portal.support')->getRawData();
 foreach (['access_token', 'client_secret', 'webhook_secret', 'pix_key', 'pix_copy_paste'] as $forbidden) {
   $assert(!array_key_exists($forbidden, $support_settings), 'No payment credential or direct Pix data exists in support settings: ' . $forbidden);
 }
-$donation_flow = \Drupal\commerce_checkout\Entity\CheckoutFlow::load('donation_flow');
-$assert($donation_flow && $donation_flow->getPluginId() === 'donation_checkout_flow', 'Donation Flow has a dedicated checkout flow.');
-$donation_flow_configuration = $donation_flow ? $donation_flow->getPlugin()->getConfiguration() : [];
+$doacao = \Drupal\commerce_checkout\Entity\CheckoutFlow::load('doacao');
+$assert($doacao && $doacao->getPluginId() === 'fluxo_doacao', 'Donation Flow has a dedicated checkout flow.');
+$donation_flow_configuration = $doacao ? $doacao->getPlugin()->getConfiguration() : [];
 $assert(($donation_flow_configuration['panes']['login']['allow_guest_checkout'] ?? FALSE) === TRUE, 'Donation checkout supports guest users.');
 $assert(!isset($donation_flow_configuration['panes']['shipping']), 'Donation checkout does not use shipping.');
 $support_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/Controller/SupportController.php');

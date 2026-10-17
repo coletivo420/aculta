@@ -108,8 +108,8 @@ final class DonationSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Fluxo de checkout da doação'),
       '#options' => $fluxosDeDoacao,
       '#empty_option' => $this->t('- Escolha um fluxo -'),
-      '#default_value' => $config->get('donate_checkout_flow') ?? 'donation_flow',
-      '#description' => $this->t('O fluxo precisa usar o plugin de doação (donation_checkout_flow).'),
+      '#default_value' => $config->get('donate_checkout_flow') ?? 'doacao',
+      '#description' => $this->t('O fluxo precisa usar o plugin de doação (fluxo_doacao).'),
       '#states' => ['required' => [':input[name="donation_route"]' => ['!value' => self::ROTA_CART]]],
     ];
 

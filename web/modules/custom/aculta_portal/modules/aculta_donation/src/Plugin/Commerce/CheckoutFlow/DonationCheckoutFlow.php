@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * A custom checkout flow for donations.
  */
 #[CommerceCheckoutFlow(
-  id: 'donation_checkout_flow',
+  id: 'fluxo_doacao',
   label: new TranslatableMarkup('Fluxo de doação'),
 )]
 class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements CheckoutFlowWithPanesInterface {
