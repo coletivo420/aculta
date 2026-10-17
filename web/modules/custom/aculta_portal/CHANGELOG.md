@@ -1,3 +1,13 @@
+## 0.4.0-dev.73 — formulário de apoio com valores sugeridos e fluxo de doação liberado — 2026-10-17
+
+Classificação: MINOR (novo bloco de valores sugeridos no formulário de apoio).
+
+- `SupportForm` mostra valores sugeridos (R$ 10, 20, 50 e 100) que levam a `/apoiar/{valor}/agora` no domínio principal, e a opção "Outro valor" (`/apoiar`). O fluxo de pedido e checkout continua no módulo `commerce_donation_flow`.
+- Permissão `make donation` concedida aos papéis `anonymous` e `authenticated` (antes só `administrator`, o que deixava a doação pública inacessível). Declarada em `config/sync`.
+- Tema: token `support-amounts` e estilo em `portal-support.css`; documentado em `TOKENS-E-ATRIBUTOS.md`.
+- Verificação no Runtime: `/apoio` (domínio de apoio) lista os valores; `/apoiar/{valor}/agora` cria o pedido de doação e redireciona ao passo de pagamento.
+- Pendente: teste completo no navegador (login, pagamento com saldo, conclusão e `/meu-apoio`). Assinatura mensal depende da decisão F3.
+
 ## 0.4.0-dev.72 — redirecionamento de e-mails da conta de teste — 2026-10-17
 
 Classificação: PATCH (comportamento de teste; sem API pública nova).

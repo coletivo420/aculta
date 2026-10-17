@@ -11,3 +11,13 @@
 .aculta-support-other { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--aculta-border-default); }
 @media (max-width: 480px) { :is(.aculta-support, [data-portal-ui="support-form"]) fieldset { padding: 16px; } :is(.aculta-support, [data-portal-ui="support-form"]) .form-actions input { width: 100%; white-space: normal; } }
 @media (prefers-reduced-motion: reduce) { :is(.aculta-support, [data-portal-ui="support-form"]) * { scroll-behavior: auto; transition: none; animation: none; } }
+
+/* Valores sugeridos do formulário de apoio (tokens do módulo: support-amounts). */
+.aculta-support-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-block: var(--aculta-space-section);
+}
+

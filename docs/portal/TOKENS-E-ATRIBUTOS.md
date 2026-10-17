@@ -383,3 +383,4 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `sales-state-refunded` | `badge aculta-sales-panel__state aculta-sales-panel__state--refunded` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
 | `sales-state-voided` | `badge aculta-sales-panel__state aculta-sales-panel__state--voided` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
 | `sales-state-neutral` | `badge aculta-sales-panel__state aculta-sales-panel__state--neutral` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `support-amounts` | `aculta-support-amounts` | `web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php` |

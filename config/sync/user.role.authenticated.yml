@@ -30,6 +30,7 @@ label: 'Usuário autenticado'
 weight: 1
 is_admin: false
 permissions:
+  - 'make donation'
   - 'access aculta portal'
   - 'access checkout'
   - 'access comments'

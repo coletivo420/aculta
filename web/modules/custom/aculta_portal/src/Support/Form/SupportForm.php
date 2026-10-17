@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Support\Form;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -16,10 +17,14 @@ use Drupal\Component\Utility\Html;
 /** Institutional support page, integrated with Commerce Donation Flow. */
 final class SupportForm extends FormBase {
 
+  /** Valores sugeridos em reais. Cada um leva à rota de valor rápido do módulo de doação (/apoiar/{valor}/agora). */
+  private const VALORES_SUGERIDOS = [10, 20, 50, 100];
+
   public function __construct(
     private readonly ConfigFactoryInterface $configs,
     private readonly EntityTypeManagerInterface $entities,
     private readonly BlockManagerInterface $blockManager,
+    private readonly DomainPurposeManager $purposes,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -27,6 +32,7 @@ final class SupportForm extends FormBase {
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.block'),
+      $container->get('aculta_portal.domain_purpose'),
     );
   }
 
@@ -50,16 +56,25 @@ final class SupportForm extends FormBase {
       && !empty($gateway_configuration['public_key_test'])
       && !empty($gateway_configuration['access_token_test']);
     if ($gateway_ready) {
-      // Donation Flow owns the route and order creation; the portal only
-      // presents its native link when the reviewed gateway is enabled.
-      $donation_link = $this->blockManager->createInstance(
-        'commerce_donation_flow_link',
-        ['return_path' => FALSE]
-      )->build();
-      if (isset($donation_link['#links']['default']['title'])) {
-        $donation_link['#links']['default']['title'] = $this->t('Continuar para pagamento');
+      // O fluxo de doação (criação do pedido e checkout) é do módulo commerce_donation_flow, no domínio principal.
+      // Aqui só se apresentam os valores sugeridos e a opção de outro valor.
+      $links = [];
+      foreach (self::VALORES_SUGERIDOS as $valor) {
+        $url = $this->purposes->routeUrl('main', 'commerce_donation_flow.donation.quick', ['amount' => $valor]);
+        if ($url !== NULL) {
+          $links[] = PortalLinkElement::build($this->t('R$ @valor', ['@valor' => number_format((float) $valor, 0, ',', '.')]), $url, ['data-portal-ui' => 'aculta-button-primary']);
+        }
       }
-      $form['donation_flow'] = $donation_link;
+      $outro = $this->purposes->routeUrl('main', 'commerce_donation_flow.donation.default');
+      if ($outro !== NULL) {
+        $links[] = PortalLinkElement::build($this->t('Outro valor'), $outro, ['data-portal-ui' => 'aculta-button-outline']);
+      }
+      $form['suggested_amounts'] = [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'support-amounts'],
+        'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Escolha um valor')],
+        'links' => $links,
+      ];
     }
     else {
       $form['status'] = [

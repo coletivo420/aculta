@@ -283,6 +283,8 @@ final class PortalUiHooks {
     'aculta-button-outline' => ['aculta-button', 'aculta-button--outline'],
     'status-attention' => ['aculta-portal-requirements__status--attention'],
     'breadcrumb-list' => ['breadcrumb'],
+    // Formulário de apoio: valores sugeridos (módulo aculta_portal, SupportForm).
+    'support-amounts' => ['aculta-support-amounts'],
     // Painéis de vendas e doações (módulo aculta_portal, SalesOrdersTableBuilder e controllers de relatório).
     'sales-panel' => ['aculta-sales-panel'],
     'sales-section' => ['aculta-sales-panel__section'],
