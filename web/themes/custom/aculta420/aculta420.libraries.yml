@@ -15,7 +15,6 @@ global:
       css/components/pdf-viewer.css: {}
       css/drupal-bootstrap.css: {}
       css/components/institutional.css: {}
-      css/components/course-card.css: {}
       css/components/footer.css: {}
       css/components/forms.css: {}
       css/components/search.css: {}

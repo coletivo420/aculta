@@ -65,9 +65,20 @@ FunctionalJavascript upstream não foi executada porque este ambiente não forne
 update adicionou `activity_page_title`; schema config validado sem erros e `updatedb:status` está NONE. O
 provider Core `mysql` também foi ativado após o requisito de status apontar que estava ausente e foi registrado
 no Config Sync. Não houve importação global de Config Sync por causa das divergências pré-existentes do site.
-O Runtime Drush usa PHP 8.4.26; PHP 8.5 continua aberto como DT-P04 e não foi inferido. F5 — Catálogo — é a
-próxima fase, com autorização e gates próprios. PV6, CSP, matriz ampliada de navegadores, produção Hostinger
-e o fluxo editorial mantêm gates separados.
+O Runtime Drush usa PHP 8.4.26; PHP 8.5 continua aberto como DT-P04 e não foi inferido. F6 — Página de
+curso e sala — é a próxima fase e exige decisão/autorização próprias. PV6, CSP, matriz ampliada de
+navegadores, produção Hostinger e o fluxo editorial mantêm gates separados.
+
+**F5 — Catálogo — implementada e validada no servidor de testes em 2026-10-17.** A View `courses_catalog`
+continua como fonte, com filtros de curso publicados e o row plugin nativo do LMS. O tema negocia
+`lms:course_card` para `aculta420:course_card` por substituição SDC compatível; o LMS mantém URL,
+ação de entrada, access e cacheability. A execução da View produziu o curso publicado para anônimo
+e para a conta autenticada com papel `estudante`; os resultados carregaram contextos `user.permissions`,
+`user.group_permissions`, `session.exists` e tags do curso/status. `drush cr` e a requisição HTTP do
+catálogo responderam com sucesso. No Firefox headless, o cartão ficou com foco visível de 3 px por
+Tab, o rail manteve nome acessível e foco nativo, e não houve JavaScript necessário ao catálogo.
+Somente um curso publicado existe no Runtime; não há curso não publicado no acervo para um caso
+negativo da listagem. PHP no Runtime continua em 8.4.26.
 
 ## Ordem, PR e status
 

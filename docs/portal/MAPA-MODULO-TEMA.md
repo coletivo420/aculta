@@ -107,7 +107,7 @@ customizado próprio". A regra de cobertura do gate vale para cada nome de máqu
 | `domain`, `domain_alias`, `domain_config`, `domain_source` | Domínios, propósitos e apresentação por domínio | Cabeçalho por propósito `css/components/header.css`; barra institucional `institution-bar.css`; navegação `navigation.css`. Contrato: `DOMAIN-PRESENTATION-CONTRACT.md` | Ativo |
 | `flag` | Ações de tópico (fórum) | `css/components/forum-index.css` (`.flag` nas ações do tópico); `js/alerts-dismiss.js`; `templates/views/views-view-table.html.twig` | Ativo |
 | `forum` | Fórum do Core/contrib | `templates/forum-list.html.twig`; `templates/comment--comment-forum.html.twig`; `templates/node--forum--full.html.twig`; `css/components/forum-index.css`; `css/components/discussion.css` | Ativo |
-| `lms` | Cursos, cartão de curso e lições | `css/components/course-card.css` (skin do cartão `lms:course_card`); o LMS mantém dados e marcação | Ativo |
+| `lms` | Cursos, cartão de curso e lições | SDC `content/course_card` substitui `lms:course_card`; View `courses_catalog` usa rail nativo | Ativo |
 | `message`, `private_message`, `message_notify`, `message_subscribe` | Mensagens privadas, notificações e assinaturas | SDC `content/messenger-item`, `content/messenger-compose`, `content/messenger-notification`, `patterns/messenger-list`, `feedback/messenger-state`; template `private-message-thread.html.twig`; `css/components/messenger-drawer.css`. Guia: `web/themes/custom/aculta420/docs/messenger.md` | Ativo |
 | `profile` | Perfil do usuário (entidade) | `css/components/public-profile.css`; SDC `patterns/social-links-page` | Ativo |
 | `site_alert` | Avisos do site | `templates/site-alert.html.twig` | Ativo |

@@ -1,3 +1,21 @@
+## 0.6.0-dev.69 — F5: cartão ACULTA420 no catálogo LMS — 2026-10-17
+
+Classificação: MINOR da linha aberta (novo SDC experimental com contrato compatível).
+
+- `components/content/course_card/` substitui `lms:course_card` por SDC negotiation. O schema aceita
+  os props/slots existentes e inclui `description`, que o row plugin do LMS já fornece.
+- Drupal LMS e a View `courses_catalog` continuam donos dos dados, filtro de publicação, URL,
+  botão de entrada, access e cacheability; não houve alteração de configuração da View nem no contrib.
+- O tema assume o markup e o CSS do cartão, aplica tokens semânticos, limita a descrição visual a
+  seis linhas e mantém foco visível de 3 px. O rail continua nativo e não requer JavaScript.
+- Verificação: SDC schemas PASS (25 componentes/377 checks); design foundations PASS (1895);
+  `validate-lms-skin` PASS (17 checks); Core negociou o componente como `aculta420:course_card`;
+  `drush cr` PASS; View executada como anônimo e
+  como conta autenticada com papel estudante; HTTP 200 e Firefox headless com Tab, nome acessível
+  e contorno de foco. Há somente um curso publicado e nenhum não publicado no Runtime para testar
+  o caso negativo de listagem. Homelab PHP 8.4.26; produção não verificada.
+- RUNTIME STATUS: ACTIVE no servidor de testes (`aculta_runtime`, `https://aculta.toca.net.br`).
+
 ## 0.6.0-dev.68 — zoom do viewer PDF preservado em viewport estreito — 2026-10-17
 
 Classificação: PATCH (apresentação responsiva; sem alterar o contrato de acesso ou markup semântico).

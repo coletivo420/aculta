@@ -1,6 +1,6 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-15 (revisão documental, PR #281). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-17 (F5 Catálogo). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.69 | F5 Catálogo: SDC ACULTA420 substitui o cartão LMS na View existente | SDC schema, View access/cache, Firefox keyboard e host de testes verificados; RUNTIME STATUS: ACTIVE | `components/content/course_card/`, catálogo `courses_catalog` |
 | 0.6.0-dev.68 | Viewer PDF: página em área rolável preserva o zoom escolhido em telas menores | Implementação; revisão visual no Firefox pendente | `css/components/pdf-viewer.css`, marcação do `aculta_pdf_viewer` |
 | 0.6.0-dev.66 | Barra e cabeçalho do shell decididos pelo Portal (`domain_presentation.layout`); shell-contract PASS | Gates de shell, fundação, design e SDC PASS; capturas em main, wiki, cursos, apoio e conta; `links` não verificado (404 no teste) | `templates/page.html.twig` |
 | 0.6.0-dev.67 | Painéis de vendas e doações: tokens `sales-*` (tabela de pedidos, estados e ações de pagamento) e `css/components/sales-panel.css` | Gates de fundação, design, shell, SDC, fronteira módulo-tema, mapa e docs de tokens PASS |
