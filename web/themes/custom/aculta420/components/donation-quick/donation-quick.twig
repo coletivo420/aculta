@@ -1,11 +1,10 @@
 {#
-  Valores de doação rápida (aculta_donation). Os links já chegam resolvidos pelo módulo; o último é "Outro valor".
-  Cartões, não botões: a aparência é do componente (donation-quick.css) e usa tokens semânticos.
+  Valores de doação rápida (aculta_donation). Cada valor é um cartão (componente donation-card); o último é "Outro".
 #}
 <div class="aculta-donation-quick" role="list">
   {% for link in links %}
-    <a class="aculta-donation-quick__card{{ loop.last ? ' aculta-donation-quick__card--other' : '' }}" role="listitem" href="{{ link.url }}">
-      <span class="aculta-donation-quick__value">{{ link.title }}</span>
-    </a>
+    <div role="listitem">
+      {{ include('aculta420:donation-card', { label: link.title, href: link.url, other: loop.last }) }}
+    </div>
   {% endfor %}
 </div>

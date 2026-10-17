@@ -1,4 +1,4 @@
 {#
-  Link "Doar" (aculta_donation). Apresentação do ACULTA420, com classes Bootstrap.
+  Botão "Doar" (aculta_donation), no mesmo estilo de cartão dos valores (componente donation-card).
 #}
-<a class="btn btn-primary" href="{{ href }}">{{ label }}</a>
+{{ include('aculta420:donation-card', { label: label, href: href, inline: true }) }}

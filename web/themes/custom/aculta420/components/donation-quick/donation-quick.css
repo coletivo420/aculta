@@ -1,63 +1,7 @@
-/* Valores de doação rápida: cartões em grade (aculta_donation). Cores e tipografia vêm dos tokens semânticos. */
+/* Grade dos cartões de valor de doação rápida (aculta_donation). Cada cartão é o componente donation-card. */
 .aculta-donation-quick {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
-  gap: 0.75rem;
-  margin: 1rem 0;
-}
-
-.aculta-donation-quick__card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 4.5rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--aculta-border-default);
-  border-radius: 0.75rem;
-  background-color: var(--aculta-surface-raised);
-  color: var(--aculta-text-primary);
-  font-family: var(--aculta-font-display);
-  text-decoration: none;
-  transition:
-    background-color var(--aculta-motion-fast) var(--aculta-ease-standard),
-    border-color var(--aculta-motion-fast) var(--aculta-ease-standard),
-    transform var(--aculta-motion-fast) var(--aculta-ease-standard);
-}
-
-.aculta-donation-quick__value {
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.aculta-donation-quick__card:hover {
-  background-color: var(--aculta-interactive-hover-bg);
-  border-color: var(--aculta-border-accent);
-  color: var(--aculta-interactive-hover-text);
-  transform: translateY(-2px);
-}
-
-.aculta-donation-quick__card:active {
-  background-color: var(--aculta-interactive-active-bg);
-  color: var(--aculta-interactive-active-text);
-  transform: translateY(0);
-}
-
-.aculta-donation-quick__card:focus-visible {
-  outline: 3px solid var(--aculta-focus-ring);
-  outline-offset: 2px;
-}
-
-/* A opção "Outro valor" fica com borda tracejada: é um campo digitável, não um valor fixo. */
-.aculta-donation-quick__card--other {
-  border-style: dashed;
-  border-color: var(--aculta-border-strong);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .aculta-donation-quick__card {
-    transition: none;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: 0.5rem;
+  margin: 0.75rem 0;
 }

@@ -1,5 +1,13 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.13 — cartões compactos e quebra automática — 2026-10-17
+
+- Os valores e o "Doar" usam o mesmo componente SDC `donation-card`: cartão compacto, com quebra automática do texto
+  e linhas que quebram quando não cabem na largura.
+- O "Doar" da página inicial ocupa só a largura do texto (botão avulso).
+- RUNTIME STATUS: APLICADO no Runtime de testes (verificado por captura estreita e larga na página de apoio e por captura
+  da página inicial).
+
 ## 0.1.0-dev.12 — título do bloco de valores — 2026-10-17
 
 - O bloco de valores da página de apoio tem título visível, "Escolha um valor" (H2, tipografia dos títulos de seção).
