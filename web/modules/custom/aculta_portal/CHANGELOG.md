@@ -1,3 +1,15 @@
+## 0.4.0-dev.80 — etapa de resumo na doação rápida e campanhas no Runtime — 2026-10-17
+
+Classificação: MINOR (nova etapa de resumo antes do pagamento; cards de valor no tema).
+
+- Doação rápida (`/apoiar/{valor}/agora`) passa pela etapa `review` (resumo: doação, subtotal, total, "Voltar" e "Editar") antes do pagamento. Implementação: `DonationSummaryController`, rota ajustada em `DomainRouteSubscriber`, pane `review` ativo em `donation_flow`.
+- Correção: o atalho do módulo contrib gravava o valor no campo, mas não o preço unitário (definido só ao enviar o passo de doação, que o atalho pula). O pedido saía com total zero. O controlador agora copia o valor para o preço unitário.
+- Correção: `config/sync/commerce_checkout.commerce_checkout_flow.donation_flow.yml` tinha a chave `review` duplicada (YAML inválido). Mantida uma entrada, `step: review`.
+- Submódulo `aculta_donation` (0.1.0-dev.2): atributo `ConfigEntityType` do namespace correto (`Drupal\Core\Entity\Attribute`), `config_prefix: campanha`, `route_provider` html; schema com a chave `aculta_donation.campanha.*`.
+- Testes no Runtime (`aculta.toca.net.br`, `aculta_runtime`, URI confirmado): campanha de teste vigente (valores 15/30/75, sem valor personalizado) exibida no host de apoio; campanha removida ao final. Anônimo e logado: atalho leva ao resumo com o valor correto; pedido em `review` com total igual ao valor.
+- RUNTIME STATUS: APLICADO e verificado por HTTP (anônimo e logado). Não verificado no navegador (WebDriver): etapa de resumo com captcha Turnstile e envio para o pagamento.
+- Pendente: pedido recorrente (F3), painel administrativo de doações, testes Kernel do submódulo, verificação no navegador.
+
 ## 0.4.0-dev.79 — campanhas de doação (submódulo aculta_donation) — 2026-10-17
 
 Classificação: MINOR (novo submódulo e nova fonte de valores na página de apoio).

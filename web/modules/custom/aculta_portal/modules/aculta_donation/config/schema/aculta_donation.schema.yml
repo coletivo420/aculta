@@ -1,4 +1,4 @@
-aculta_donation_campaign.*:
+aculta_donation.campanha.*:
   type: config_entity
   label: 'Campanha de doação'
   mapping:

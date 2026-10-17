@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Drupal\aculta_donation\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Config\Entity\Attribute\ConfigEntityType;
+use Drupal\Core\Entity\Attribute\ConfigEntityType;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 #[ConfigEntityType(
   id: 'aculta_donation_campaign',
+  config_prefix: 'campanha',
   label: new TranslatableMarkup('Campanha de doação'),
   label_collection: new TranslatableMarkup('Campanhas de doação'),
   handlers: [
@@ -17,6 +18,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'form' => [
       'default' => 'Drupal\\aculta_donation\\Form\\DonationCampaignForm',
       'delete' => 'Drupal\\Core\\Entity\\EntityDeleteForm',
+    ],
+    'route_provider' => [
+      'html' => 'Drupal\\Core\\Entity\\Routing\\DefaultHtmlRouteProvider',
     ],
   ],
   admin_permission: 'administer aculta donation campaigns',

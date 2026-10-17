@@ -28,6 +28,9 @@ configuration:
     payment_information:
       step: billing
       weight: 3
+    review:
+      step: review
+      weight: 4
     payment_process:
       step: payment
       weight: 4
@@ -50,9 +53,6 @@ configuration:
       weight: 9
       allow_guest_checkout: true
       allow_registration: false
-    review:
-      step: _disabled
-      weight: 10
     contact_information:
       step: billing
       weight: 2

@@ -23,6 +23,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
 
   /** {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
+    // Doação rápida passa pelo resumo antes do pagamento (Portal\Donation\DonationSummaryController).
+    if ($quick = $collection->get('commerce_donation_flow.donation.quick')) {
+      $quick->setDefault('_controller', '\\Drupal\\aculta_portal\\Donation\\DonationSummaryController::quick');
+    }
     // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado, somado à regra original do dono
     // do recurso (ProtectedRouteAccessCheck). Rota sem recurso (/checkout) só recebe a checagem de e-mail; mantém _permission.
     $protected = [
