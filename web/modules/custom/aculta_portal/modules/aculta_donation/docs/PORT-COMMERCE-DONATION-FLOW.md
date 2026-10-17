@@ -1,6 +1,6 @@
 # Port do commerce_donation_flow para o aculta_donation
 
-Status (2026-10-17): **port aplicado** (código, blocos, configuração, Composer) e **recorrência aplicada no código** (ver "Recorrência"). Pendente: ponta a ponta no sandbox do Mercado Pago, cancelar/pausar em "Meu apoio" e painel de doações recorrentes.
+Status (2026-10-17): **port aplicado** (código, blocos, configuração, Composer), **recorrência aplicada no código** (ver "Recorrência"), com ações do doador em "Meu apoio" e painel de doações recorrentes. Pendente: ponta a ponta no sandbox do Mercado Pago (plano em `docs/portal/MERCADO-PAGO-PLANO.md`, seção 7.2).
 
 ## Decisões do responsável (2026-10-17)
 
@@ -71,7 +71,7 @@ Regras e limites:
 - O `external_reference` da cobrança não é usado para achar o pedido. O pedido vem do `preapproval_id`, consultando a assinatura.
 - Doações não são estornadas (decisão do responsável). Não há tratamento de estorno.
 - Pedido `assinatura` fica fora do carrinho unificado (`CartConsolidator::TIPO_ASSINATURA`).
-- Não implementado: cancelar/pausar pela conta ("Meu apoio") e o painel de doações recorrentes.
+- Ações do doador: pausar, reativar e cancelar em "Meu apoio" (`SubscriptionActionForm`). Painel: seção "Doações recorrentes" no relatório de doações.
 - Não verificado: o corpo real das notificações de assinatura no sandbox (a referência consultada não lista todos os valores de `status`). Testes unitários cobrem as regras, mas o fluxo ponta a ponta ficou DEFERRED, porque criar assinatura no sandbox depende de confirmação do responsável.
 
 Cobertura: `tests/src/Unit/MercadoPago/MercadoPagoSubscriptionRecorderTest.php` (5 testes) e `tests/src/Unit/MercadoPagoSubscriptionNotificationServiceTest.php` (3 testes).

@@ -1,5 +1,14 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.17 — erro de autorização da doação mensal no checkout — 2026-10-17
+
+- Falha ao criar a assinatura no Mercado Pago volta ao passo de pagamento com mensagem geral, em vez de erro de página. O
+  detalhe técnico vai para o log.
+- Pane `donation_recurring_authorization`: serviço de mensagens injetado com o nome `$avisos`. A classe base herda a propriedade
+  `$messenger` do `MessengerTrait`, e o nome igual causava erro fatal no Runtime.
+- RUNTIME STATUS: APLICADO em código no Runtime de testes (a pane carrega). DEFERRED: a tela de erro, que exige pedido em
+  checkout e falha provocada no Mercado Pago.
+
 ## 0.1.0-dev.16 — doação mensal como assinatura no Mercado Pago — 2026-10-17
 
 - Doação mensal (`recurring`) vira pedido do tipo `assinatura`, com o workflow `order_recurring` (`aculta_donation.workflows.yml`,

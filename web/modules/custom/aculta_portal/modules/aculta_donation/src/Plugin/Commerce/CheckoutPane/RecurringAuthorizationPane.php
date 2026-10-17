@@ -15,6 +15,8 @@ use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneBase;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,7 +28,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * e leva o doador ao init_point. Por lançar redirecionamento, esta pane impede que o pagamento avulso
  * (payment_process) rode no mesmo passo. O retorno cai na etapa de conclusão; a cobrança aprovada chega pelo webhook.
  *
- * Não cobra no checkout e não guarda cartão: o Mercado Pago cobra na autorização.
+ * Falha ao criar a assinatura não quebra a página: o doador vê uma mensagem geral no mesmo passo, e o detalhe técnico
+ * vai para o log. Não cobra no checkout e não guarda cartão: o Mercado Pago cobra na autorização.
  */
 #[CommerceCheckoutPane(
   id: 'donation_recurring_authorization',
@@ -47,6 +50,8 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
     EntityTypeManagerInterface $entity_type_manager,
     private readonly MercadoPagoRecurrenceService $recorrencia,
     private readonly DomainPurposeManager $purposes,
+    private readonly LoggerChannelInterface $logger,
+    private readonly MessengerInterface $avisos,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $checkout_flow, $entity_type_manager);
   }
@@ -63,6 +68,8 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
       $container->get('entity_type.manager'),
       $container->get('aculta_portal.mercado_pago.recurrence_service'),
       $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.mercado_pago.logger'),
+      $container->get('messenger'),
     );
   }
 
@@ -88,9 +95,9 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
    * {@inheritdoc}
    *
    * @throws \Drupal\commerce\Response\NeedsRedirectException
-   *   Leva ao Mercado Pago para autorizar a assinatura.
+   *   Leva ao Mercado Pago para autorizar a assinatura, ou volta ao passo com a mensagem de erro.
    * @throws \Drupal\commerce_payment\Exception\PaymentGatewayException
-   *   Falha ao criar a assinatura no Mercado Pago.
+   *   Gateway do Mercado Pago ausente (configuração).
    */
   public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
     $gateway = $this->entityTypeManager->getStorage('commerce_payment_gateway')->load(self::GATEWAY);
@@ -112,15 +119,21 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
         'moeda' => $total->getCurrencyCode(),
         'frequencia' => 1,
       ]);
+      if (empty($assinatura['init_point'])) {
+        throw new MercadoPagoApiException('O Mercado Pago não devolveu o link de autorização.');
+      }
     }
     catch (MercadoPagoApiException | \InvalidArgumentException $e) {
-      throw new PaymentGatewayException($e->getMessage(), 0, $e);
+      $this->logger->error('Autorização da doação mensal do pedido @pedido falhou: @motivo', [
+        '@pedido' => $this->order->id(),
+        '@motivo' => $e->getMessage(),
+      ]);
+      $this->avisos->addError($this->t('Não foi possível iniciar a autorização da doação mensal no Mercado Pago. Confira o e-mail do pedido e tente novamente em instantes.'));
+      $this->checkoutFlow->redirectToStep($this->checkoutFlow->getStepId());
     }
-    if (empty($assinatura['init_point'])) {
-      throw new PaymentGatewayException('O Mercado Pago não devolveu o link de autorização.');
-    }
+
     $this->order->setData(MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA, $assinatura['id']);
-    $this->order->setData(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, (string) ($assinatura['status'] ?? 'pending'));
+    $this->order->setData(MercadoPagoSubscriptionRecorder::CHAVE_STATUS, (string) ($assinatura['status'] ?? MercadoPagoSubscriptionRecorder::STATUS_PENDENTE));
     $estado = $this->order->getState();
     if (isset($estado->getTransitions()['place'])) {
       $estado->applyTransitionById('place');
