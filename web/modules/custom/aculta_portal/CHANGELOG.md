@@ -1,3 +1,10 @@
+## 0.4.0-dev.105 — Configurações > Pessoas em abas — 2026-10-17
+
+- `/painel-administrativo/configuracoes/pessoas` vira página de abas (Pessoas, Papéis e perfis, Permissões por papel, Configurações de papel, Campos de Perfil, Flood Unblock, CAPTCHA, Controle de sobrecarga, Opções da conta, Acordos), como a seção Pessoas.
+- Itens de menu correspondentes saem da lista da página (`AdministrativeMenuHooks::EM_ABAS`), para não repetir nomes.
+- A página-base não usa mais a lista de links do Core, que negaria acesso sem itens visíveis: `ContaAdministracaoPaginaController`.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: página 200 com as dez abas; sem destinos com dois nomes em Pessoas e Configurações > Pessoas.
+
 ## 0.4.0-dev.104 — separação Pessoas x Configurações > Pessoas — 2026-10-17
 
 - Pessoas (`/painel-administrativo/pessoas`) fica com usuários individuais: Lista, Adicionar usuário, Perfis (`pessoas/perfis`) e Social auth (OAuth).

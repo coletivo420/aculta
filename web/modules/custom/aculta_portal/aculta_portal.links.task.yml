@@ -3,3 +3,64 @@ aculta_portal.campos_de_perfil:
   route_name: entity.profile_type.collection
   base_route: entity.user.collection
   weight: 20
+
+# Abas de Configurações > Pessoas (administração de contas). Base: a página user.admin_index.
+aculta_portal.config_pessoas_visao:
+  title: 'Pessoas'
+  route_name: user.admin_index
+  base_route: user.admin_index
+  weight: 0
+
+aculta_portal.config_tab_papeis:
+  title: 'Papéis e perfis'
+  route_name: entity.user_role.collection
+  base_route: user.admin_index
+  weight: 10
+
+aculta_portal.config_tab_permissoes:
+  title: 'Permissões por papel'
+  route_name: user.admin_permissions
+  base_route: user.admin_index
+  weight: 11
+
+aculta_portal.config_tab_configuracoes_de_papel:
+  title: 'Configurações de papel'
+  route_name: user.role.settings
+  base_route: user.admin_index
+  weight: 12
+
+aculta_portal.config_tab_campos_de_perfil:
+  title: 'Campos de Perfil'
+  route_name: entity.profile_type.collection
+  base_route: user.admin_index
+  weight: 13
+
+aculta_portal.config_tab_flood_unblock:
+  title: 'Flood Unblock'
+  route_name: flood_control.unblock_form
+  base_route: user.admin_index
+  weight: 14
+
+aculta_portal.config_tab_captcha:
+  title: 'CAPTCHA'
+  route_name: captcha_settings
+  base_route: user.admin_index
+  weight: 15
+
+aculta_portal.config_tab_controle_sobrecarga:
+  title: 'Controle de sobrecarga'
+  route_name: flood_control.settings
+  base_route: user.admin_index
+  weight: 16
+
+aculta_portal.config_tab_opcoes_da_conta:
+  title: 'Opções da conta'
+  route_name: entity.user.admin_form
+  base_route: user.admin_index
+  weight: 17
+
+aculta_portal.config_tab_acordos:
+  title: 'Acordos'
+  route_name: entity.agreement.collection
+  base_route: user.admin_index
+  weight: 18

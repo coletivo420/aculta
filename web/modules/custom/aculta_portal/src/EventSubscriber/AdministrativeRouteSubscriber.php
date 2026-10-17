@@ -125,6 +125,15 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
       $padroes['_title'] = 'Campos de Perfil';
       $tipos->setDefaults($padroes);
     }
+    // Configurações > Pessoas: página-base das abas de administração de contas (sem a lista de links do Core).
+    if ($base = $collection->get('user.admin_index')) {
+      $padroes = $base->getDefaults();
+      $padroes['_controller'] = '\\Drupal\\aculta_portal\\Controller\\ContaAdministracaoPaginaController::pagina';
+      $base->setDefaults($padroes);
+      $requisitos = $base->getRequirements();
+      unset($requisitos['_access_admin_menu_block_page']);
+      $base->setRequirements($requisitos);
+    }
     // Slugs em português na árvore de configuração de pessoas. A rota é substituída por outra, e não só tem o caminho
     // trocado: rota já compilada mantém o caminho antigo no índice de rotas.
     foreach ($collection->all() as $nome => $route) {

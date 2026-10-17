@@ -20,9 +20,25 @@ final class AdministrativeMenuHooks {
     'entity.profile_type.collection',
   ];
 
+  /**
+   * Itens de Configurações > Pessoas que viram abas da própria página (ver aculta_portal.links.task.yml). Saem da lista
+   * da página para que cada ferramenta tenha um único nome.
+   */
+  private const EM_ABAS = [
+    'aculta_portal.config_papeis_e_perfis',
+    'aculta_portal.config_permissoes_por_papel',
+    'aculta_portal.config_configuracoes_de_papel',
+    'aculta_portal.config_campos_de_perfil',
+    'aculta_portal.config_flood_unblock',
+    'captcha.settings',
+    'flood_control.admin',
+    'entity.user.admin_form',
+    'agreement.admin',
+  ];
+
   #[Hook('menu_links_discovered_alter')]
   public function menuLinksDiscoveredAlter(array &$links): void {
-    foreach (self::DUPLICADOS as $id) {
+    foreach (array_merge(self::DUPLICADOS, self::EM_ABAS) as $id) {
       if (isset($links[$id])) {
         $links[$id]['enabled'] = FALSE;
       }
