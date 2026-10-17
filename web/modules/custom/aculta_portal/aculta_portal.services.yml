@@ -129,7 +129,7 @@ services:
     arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger']
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
-    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation']
+    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@commerce_checkout.checkout_order_manager', '@string_translation']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.search_utility:

@@ -66,7 +66,7 @@ $assert(
 
 $modules = \Drupal::moduleHandler();
 if ($modules->moduleExists('aculta_donation')) {
-  // Apoio e assinatura (decisão de 2026-10-17): o fluxo de doação pertence ao purpose SUPPORT, não ao MAIN.
+  // Escolha do valor no apoio (SUPPORT); etapa de checkout da doação no MAIN (decisão de 2026-10-17).
   $donationRoutes = \Drupal::service('router.route_provider')->getRoutesByNames([
     'aculta_donation.donation.default',
     'aculta_donation.donation.quick',
@@ -74,7 +74,8 @@ if ($modules->moduleExists('aculta_donation')) {
   ]);
   $assert(count($donationRoutes) === 3, 'Donation flow routes exist.');
   foreach ($donationRoutes as $name => $route) {
-    $assert($route->getOption('_aculta_domain_purpose') === 'support', "Donation route {$name} belongs to the support purpose.");
+    $esperado = \Drupal\aculta_portal\Domain\DomainRoutePolicy::purposeForDonationRoute($name);
+    $assert($route->getOption('_aculta_domain_purpose') === $esperado, "Donation route {$name} belongs to the {$esperado} purpose.");
   }
 }
 

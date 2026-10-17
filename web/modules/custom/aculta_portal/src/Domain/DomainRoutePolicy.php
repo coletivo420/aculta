@@ -28,6 +28,14 @@ final class DomainRoutePolicy {
     return str_starts_with($routeName, 'aculta_donation.');
   }
 
+  /**
+   * Propósito de uma rota de doação: a escolha do valor (entrada e valores) é do SUPPORT; as etapas de checkout
+   * (formulário do pedido) são rotas do Commerce e ficam no MAIN.
+   */
+  public static function purposeForDonationRoute(string $routeName): string {
+    return $routeName === 'aculta_donation.donation_controller_formPage' ? 'main' : 'support';
+  }
+
   /** Returns TRUE for private transaction routes that must not be indexed. */
   public static function isTransactionalSeoRouteName(string $routeName): bool {
     return self::isCentralTransactionRouteName($routeName)

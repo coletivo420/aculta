@@ -141,23 +141,26 @@ nesta correção.
 
 ## Donation Flow
 
-A página institucional de apoio pode permanecer em SUPPORT. Informado pelo
-responsável: a página de apoio fica a cargo do subdomínio da plataforma de doações
-(`apoio.aculta.toca.net.br` no homelab, `apoio.aculta.org` em produção); o host
-principal não serve a rota de apoio (ver `docs/architecture/multidomain.md`).
+Decisão do responsável (2026-10-17, versão final):
 
-Decisão do responsável (2026-10-17): o fluxo inteiro de apoio e assinatura
-(`aculta_donation.*`) roda no purpose SUPPORT, no subdomínio de apoio. Doações e
-assinaturas não têm estorno; a assinatura terá cancelamento.
+- **Carrinho único.** Loja, cursos e apoio compartilham um carrinho. O painel
+  da barra agrupa os itens por separador, conforme o tipo do pedido: `default`
+  (Loja), `curso` (Cursos) e `doacao` e `assinatura` (Apoio). Cada separador tem
+  seu botão de checkout.
+- **Carrinho, checkout e pagamento no MAIN.** As rotas do Commerce
+  (`commerce_cart.*`, `commerce_checkout.*`, `commerce_payment.checkout.*` e
+  `commerce_payment.notify`) pertencem ao MAIN. Cada botão de checkout leva ao
+  checkout do Commerce no domínio principal.
+- **Apoio escolhe o valor.** A página de apoio (`/apoiar` e `/apoiar/{valor}/agora`)
+  fica no purpose SUPPORT e só escolhe o valor. Ao escolher, o visitante vai para a
+  etapa de checkout no MAIN, com a sessão compartilhada pelo `cookie_domain` do ambiente.
+- **Gateway no MAIN.** A notificação do Mercado Pago, o retorno e o cancelamento
+  são gerados no domínio principal por `Routing\PaymentDomainPathProcessor`.
+- **Sem estorno** para doações e assinaturas. A assinatura terá cancelamento.
+- **Entrada de apoio sem cache.** As rotas que criam pedido de doação são
+  `no_cache`, para que cada visita tenha o próprio pedido e a própria sessão.
 
-Só o gateway fica no MAIN: a notificação do Mercado Pago (`commerce_payment.notify`)
-e o retorno e cancelamento do pagamento (`commerce_payment.checkout.*`). A regra
-está em `Routing\PaymentDomainPathProcessor`, que gera essas URLs com o domínio
-principal, qualquer que seja o host da requisição. A sessão atravessa os dois
-hosts pelo `cookie_domain` do ambiente (`services.homelab.yml` no Homelab), e o
-retorno do navegador volta ao MAIN com essa sessão.
-
-A loja (carrinho, checkout e pagamento de produtos) continua no MAIN.
+A loja (produtos) segue a mesma regra de checkout no MAIN.
 
 ## Segurança
 

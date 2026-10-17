@@ -32,7 +32,7 @@ final class DomainRoutePolicyTest extends UnitTestCase {
   }
 
   /**
-   * Apoio e assinatura (aculta_donation) pertencem ao purpose SUPPORT; só o gateway (retorno e notificação) fica no MAIN.
+   * Escolha de valor de apoio e assinatura (aculta_donation) pertence ao purpose SUPPORT.
    */
   #[DataProvider('donationFlowRoutes')]
   public function testDonationFlowBelongsToSupport(string $route): void {
@@ -45,8 +45,14 @@ final class DomainRoutePolicyTest extends UnitTestCase {
     return [
       'donation entry' => ['aculta_donation.donation.default'],
       'donation quick' => ['aculta_donation.donation.quick'],
-      'donation step' => ['aculta_donation.donation_controller_formPage'],
     ];
+  }
+
+  /** Escolha do valor no apoio; etapa de checkout da doação no principal (rota do Commerce). */
+  public function testDonationStepBelongsToMainAndValueChoiceToSupport(): void {
+    $this->assertSame('support', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation.default'));
+    $this->assertSame('support', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation.quick'));
+    $this->assertSame('main', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation_controller_formPage'));
   }
 
   #[DataProvider('publicRoutes')]

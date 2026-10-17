@@ -1,3 +1,16 @@
+## 0.4.0-dev.114 — carrinho único com separadores e checkout no principal — 2026-10-17
+
+- Decisão do responsável (2026-10-17, versão final): um carrinho único. O painel da barra agrupa os itens em separadores
+  por tipo de pedido (`default` = Loja, `curso` = Cursos, `doacao` e `assinatura` = Apoio), com um botão de checkout por
+  separador. Carrinho, checkout e pagamento ficam no MAIN; o apoio só escolhe o valor.
+- `Cart\CartSite` (mapeamento tipo de pedido → separador) e `Cart\CartUtility` agrupado por separador.
+- Painel do carrinho (`cart-offcanvas`): abas e um botão "Finalizar" por separador, no checkout do MAIN.
+- Etapas de checkout da doação (`aculta_donation.donation_controller_formPage`) no MAIN; a escolha de valor continua no SUPPORT.
+- Rotas de entrada de doação sem cache (`no_cache`): cada visita tem o próprio pedido e a própria sessão.
+- Retorno e notificação do gateway no MAIN (`PaymentDomainPathProcessor`, prioridade 1000).
+- RUNTIME STATUS: APLICADO no Runtime de testes (agrupamento verificado por separador; entrada de doação chega à etapa no MAIN com
+  a sessão). Pagamento real não concluído (exige o comprador de teste).
+
 ## 0.4.0-dev.113 — fluxo de apoio e assinatura no domínio de apoio — 2026-10-17
 
 - Decisão do responsável (2026-10-17): o fluxo de apoio e assinatura (`aculta_donation.*`) roda no purpose SUPPORT.
