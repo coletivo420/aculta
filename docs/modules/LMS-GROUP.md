@@ -28,59 +28,30 @@ Revisão técnica: 2026-10-17.
 - A fonte editorial canônica do curso piloto (“Introdução ao Antiproibicionismo”) é `scripts/content/courses/introducao-antiproibicionismo.json`, carregada pelo script idempotente `scripts/content/load-course-introducao-antiproibicionismo.php`. O caminho histórico `scripts/institution/provision-lms-pilot.php` delega ao loader e não mantém conteúdo próprio. Ambos os comandos operacionais escrevem entidades e usam `\Drupal::...` por serem scripts executados pelo Drush.
 - `validate-lms-skin.php` protege o skin do LMS.
 
-## F7 — Inventário de turmas e memberships
+## F7 — Turmas e memberships
 
-Estado do checkout em 2026-10-17: o código `lms_classes` 1.2.4 está presente
-como submódulo de `drupal/lms`, mas ainda não consta em
-`config/sync/core.extension.yml`. Os arquivos opcionais da versão instalada
-definem o grupo `lms_class`, a relação curso→turma (`lms_classes`) e a
-membership pessoa→turma (`group_membership`). O `ClassPermissionCalculator`
-herda permissões entre curso e turma; não cria uma segunda fonte de matrícula.
+Estado do checkout em 2026-10-17: `lms_classes` 1.2.4 está sendo integrado pela configuração versionada. Os arquivos opcionais upstream definem o grupo `lms_class`, a relação curso→turma (`lms_classes`) e a membership pessoa→turma (`group_membership`). O `ClassPermissionCalculator` herda permissões entre curso e turma; não cria uma segunda fonte de matrícula.
 
 ### Comportamentos upstream confirmados no código instalado
 
-- `lms_classes.settings:create_default_class` vem como `TRUE`. Quando habilitado,
-  o hook `group_insert` cria uma turma padrão para cursos criados fora de uma
-  sincronização. Isso não matricula alunos. O hook de membership modifica o
-  formulário nativo de matrícula do curso e pode converter a relação em uma
-  membership da turma selecionada.
-- A permissão `join group` está concedida ao papel Group
-  `lms_course-outsider`, cujo papel global é `authenticated`. Hoje, portanto,
-  qualquer conta autenticada pode pedir/realizar matrícula direta no curso.
-  Com `lms_classes` habilitado e turma disponível, o formulário nativo pode
-  encaminhar essa matrícula à turma. Nenhuma decisão escrita no contrato F7
-  define se essa autoinscrição deve continuar, exigir aprovação ou ser fechada.
-- `aculta_user` concede `estudante` em `group_relationship_insert` somente para
-  memberships cujo tipo de grupo seja `lms_course`. A matrícula convertida para
-  um grupo `lms_class` não passa nesse critério; habilitar Classes sem adaptar e
-  testar essa regra deixaria o usuário fora do fluxo documentado de papel.
-- Os mapeamentos padrão de `lms_classes` exigem `add students` no curso para
-  herdar `administer members` na turma e `view students` para herdar a permissão
-  de listar memberships. O papel atual `lms_course-teacher` tem
-  `administer members`, mas não tem `add students` nem `view students`; logo,
-  esses acessos padrão não são concedidos pela configuração atual.
-- O controle de confirmação de e-mail e termos do Portal está ligado às rotas
-  `lms.course.start` e `lms.group.answer_form`. O hook não adiciona essa política
-  ao fluxo de membership do Group. A proteção de matrícula precisa ser decidida
-  e verificada separadamente.
+- `lms_classes.settings:create_default_class` vem como `TRUE`. Quando habilitado, o hook `group_insert` cria uma turma padrão para cursos criados fora de uma sincronização. O hook de membership modifica o formulário nativo e pode converter a matrícula de curso em membership da turma selecionada.
+- `join group` está concedida ao papel `lms_course-outsider`, ligado a `authenticated`. Decisão F7: autoinscrição em cursos gratuitos e pagos; a equipe também pode matricular diretamente.
+- `aculta_user` concede `estudante` em memberships de `lms_course` e `lms_class`, exceto relações com papel explícito de educador, criador ou administrador. O papel global permanece após sair da turma, conforme decisão anterior do responsável.
+- Os mapeamentos de `lms_classes` exigem `add students` no curso para herdar `administer members` na turma e `view students` para listar memberships. Os grants foram acrescentados ao papel Group de educador. O papel global `lms_teacher` pode criar grupos `lms_class` e a relação curso→turma pode ser gerida no escopo do curso.
+- A matrícula não exige confirmação de e-mail nem aceite de termos; a pessoa recebe aviso por e-mail sem bloquear a entrada. A entrega e retries ficam na fase de notificações educacionais F13.
+- O controle de confirmação de e-mail e termos continua protegendo início do curso e atividades, sem bloquear a matrícula. O LMS não tem vínculo nativo entre curso, produto Commerce e pagamento concluído; o gate comercial para cursos pagos precisa de integração própria antes de associar cobrança aos cursos.
 
-### Trabalho restante antes de habilitar F7
+### Decisões e estado da implementação F7
 
-1. Decidir a política de entrada: autoinscrição imediata, pedido sujeito a
-   aprovação, ou matrícula somente por educador/administrador. A permissão
-   `join group` atual torna essa decisão funcional, não apenas de interface.
-2. Definir como memberships de turmas afetam `estudante`, incluindo retirada e
-   pertencimento a várias turmas; alinhar `EnrollmentRoleHooks` ao contrato e
-   garantir que memberships de educadores/criadores não recebam papel de aluno.
-3. Configurar e verificar permissões de criação/gestão/listagem de turmas para
-   educador, criador e admin, incluindo os mapeamentos `add students` e
-   `view students` exigidos pelo upstream instalado.
-4. Só então habilitar `lms_classes` e importar sua configuração opcional. Testar
-   aluno A/B, educador A/B, criador, admin, conta sem e-mail confirmado e conta
-   sem membership; revisar acesso ao curso, turma e lista de alunos.
+1. Autoinscrição para cursos gratuitos e pagos; a equipe também pode matricular.
+2. Educadores criam e administram turmas.
+3. Conceder `estudante` ao entrar em qualquer turma. O papel global não é removido ao sair, mantendo a decisão já registrada.
+4. Matrícula sem confirmação de e-mail e sem aceite de termos; somente aviso por e-mail.
+5. Curso novo não recebe turma automática; educador/admin cria explicitamente.
 
-Até fechar essas decisões, F7 permanece em inventário, sem habilitar o módulo,
-alterar `join group`, ou criar memberships/turmas no Runtime.
+A configuração versionada habilita `lms_classes`, inclui a configuração opcional upstream, define `create_default_class: false`, declara o papel estudante de turma e atualiza grants de educador. `EnrollmentRoleHooks` foi ampliado para memberships de turma. Ainda faltam smoke tests de isolamento A/B, educador, admin, autoinscrição e conta sem e-mail confirmado no Runtime.
+
+**RUNTIME STATUS: DEFERRED.** O Drush local não confirmou URI de teste (`http://default`), então não foi importada configuração, reconstruído cache nem criado conteúdo/membership no banco. O gate de pagamento para cursos pagos também não existe no LMS atual.
 
 ## Critérios para consolidar o LMS
 

@@ -20,6 +20,7 @@ permissions:
   - 'create course_document media'
   - 'create lms_activity entities'
   - 'create lms_course group'
+  - 'create lms_class group'
   - 'create lms_lesson entities'
   - 'create lms_teacher profile'
   - 'edit lms_activity entities'

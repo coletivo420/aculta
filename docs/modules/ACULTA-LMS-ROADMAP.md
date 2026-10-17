@@ -87,12 +87,15 @@ gera links para a rota nativa LMS (com slugs portugueses do Portal); não cria
 progresso, matrícula ou status. RUNTIME STATUS: DEFERRED até smoke test de
 membro, não membro e visitante; a fase não está homologada.
 
-**F7 — Inventário técnico iniciado.** `lms_classes` 1.2.4 está no checkout, mas
-desabilitado. A revisão local identificou matrícula direta liberada a
-`authenticated`, incompatibilidade do hook de papel `estudante` com memberships
-de `lms_class` e grants ausentes para os mapeamentos padrão de educador. O módulo
-permanece desabilitado até definir política de entrada e fechar a matriz de
-permissões; detalhes em [LMS-GROUP.md](LMS-GROUP.md). Nenhuma mudança de Runtime.
+**F7 — Implementação inicial na branch.** Config Sync habilita `lms_classes`
+1.2.4, inclui configuração opcional, exige criação explícita de turmas e concede
+ao educador permissões de criação/gestão; o hook de papel global agora reconhece
+matrículas em turma. Decisões: autoinscrição em cursos gratuitos e pagos, equipe
+também pode matricular, estudante é concedido ao entrar em qualquer turma, sem
+confirmação de e-mail ou termos (aviso por e-mail), e sem turma padrão. Envio do
+aviso está reservado à F13. RUNTIME STATUS: DEFERRED; falta smoke test A/B e o
+LMS ainda não integra matrícula paga ao Commerce. Detalhes em
+[LMS-GROUP.md](LMS-GROUP.md).
 
 ## Ordem, PR e status
 
