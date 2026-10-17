@@ -13,7 +13,7 @@ O visualizador é uma capacidade global: aulas e atividades LMS, artigos/blog/Re
 - Há Media bundle `document`, source `file`, campo obrigatório `field_media_document`, cardinalidade 1 e esquema `public://`. O campo permite PDF e diversos formatos de documento (txt, rtf, Office/ODF e Apple); o fluxo PDF deve rejeitar ou degradar tipos não PDF, não assumir que todo `document` é PDF.
 - Existe tipo de conteúdo `document` para documentos institucionais, com `field_document` limitado a `pdf`; coexistem, portanto, referência direta e Media. A integração deve consolidar a UX sem migração implícita ou remoção de conteúdo.
 - O formatter `aculta_pdf_file` atende esse campo File direto nos displays `node.document.default` e `node.document.full`. Só PDFs permanentes públicos recebem viewer; acesso da entidade, do campo e de download é acumulado no render. Outros formatos e arquivos privados mantêm o link Core autorizado.
-- Revista/editorial e a Wiki usam `media_embed` do Core para resolver Media `document` ao display comum; o formato Wiki restringe o processamento ao bundle `document`. A Wiki ainda não oferece botão de inserção CKEditor: seu HTML legado não valida com CKEditor 5 sem uma migração de formato separada. A autorização do conteúdo continua sob Media/Core.
+- Revista/editorial, Wiki e Fórum usam `media_embed` do Core para resolver Media `document` ao display comum, sempre restrito ao bundle `document`. Os editores CKEditor 5 da Wiki e do Fórum foram validados com seus formatos; Source Editing preserva as construções HTML históricas que não têm botão dedicado. A autorização do conteúdo continua sob Media/Core.
 - `filter.format.full_html` e `revista_editorial` habilitam `entity_embed` e incluem `document` na lista de bundles. Confirmar as configurações CKEditor/Entity Embed completas por uso em conteúdo e validar acesso de mídia embutida; configuração habilitada não prova que o viewer funciona nem que o acesso está correto.
 - O papel editorial único `content_editor` recebe `create document media` para permitir o upload/seletor de PDF pela biblioteca do CKEditor 5. O bundle `document` usa `public://`; arquivos nesse bundle devem ser destinados à publicação e nunca conter material confidencial.
 - `drupal/pdf` 1.3.0, PDF.js 6.4.299, PDFPreview 1.2.0 e ImageMagick contrib 4.0.2 fazem parte do Composer lock nesta entrega. H5P e Entity Print não fazem parte do lock. O código local do viewer está em `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer`; dependências operacionais ImageMagick/Ghostscript precisam ser verificadas separadamente por ambiente e ImageMagick não deve ser selecionado como toolkit padrão só para previews.
@@ -110,9 +110,10 @@ File e resultados de acesso. Não recebe URL por query/formulário, não aceita
 host/URL externa, e entrega link de fallback somente junto ao mesmo arquivo
 público autorizado. O JS importa `pdf.mjs`, define `pdf.worker.mjs` local, mostra
 uma página por vez e oferece navegação anterior/próxima, zoom, busca textual por
-página, tela cheia e link de fallback. A interação pública foi validada por
-Firefox headless no Runtime; seleção editorial via UI, privacidade, acessibilidade
-visual e produção seguem gates separados em [TESTES-NAVEGADOR](TESTES-NAVEGADOR.md).
+página, tela cheia e link de fallback. Firefox headless no Runtime homologou
+14 páginas e controles em desktop/viewport estreito; nomes acessíveis, foco
+visível, live regions e alvos de toque passaram no smoke de PV6. A matriz ampla
+de browsers, CSP e produção LiteSpeed continua em [TESTES-NAVEGADOR](TESTES-NAVEGADOR.md).
 
 O renderer `PdfDefault` do contrib 1.3 permanece incompatível com o pacote ESM
 moderno (`.js`/global `pdfjsLib` versus `.mjs`). O adapter não usa o formatter
@@ -223,7 +224,7 @@ a edição funcionou. A fixture Media foi criada
 por Drush, portanto upload/criação como `content_editor` ainda segue DEFERRED.
 Todos os objetos e arquivos temporários foram removidos; o bundle voltou a zero.
 PHPUnit/gates e resolução Composer estão registrados na PR. Acesso privado por
-usuário/turma, PDFPreview/thumbnails, CSP, acessibilidade visual e Hostinger
+usuário/turma, PDFPreview/thumbnails, CSP, auditoria ampliada com tecnologias assistivas e Hostinger
 seguem **DEFERRED**. Não executar `drush cim` com URI `http://default`.
 
 Composer dry-run inicialmente propunha atualizações indiretas. A resolução final

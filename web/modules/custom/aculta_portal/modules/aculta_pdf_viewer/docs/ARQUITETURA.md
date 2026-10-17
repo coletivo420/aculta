@@ -112,13 +112,14 @@ enquanto o File continua dono do arquivo e seus metadados.
 
 ### Wiki e formatos de texto
 
-O formato `wiki` processa tokens `drupal-media` pelo filtro `media_embed` após a
-sanitização HTML e permite somente Media `document`. Assim, a Wiki e os formatos
-editoriais que já oferecem `document` compartilham o display Media, sem construir
-uma URL ou política de acesso própria. A Media continua sujeita ao acesso do
-Core e o bundle `course_document` privado não pode ser selecionado nesse formato.
-O formato histórico ainda não é compatível com CKEditor 5; habilitar nele a
-inserção pela barra exigirá tratar a compatibilidade de HTML em trabalho separado.
+Os formatos `wiki` e `usuario_aculta` processam tokens `drupal-media` pelo filtro
+`media_embed` após a sanitização HTML e permitem somente Media `document`. Ambos
+oferecem o botão Media no CKEditor 5 e foram aprovados pelo `CKEditor5::validatePair()`.
+Source Editing mantém os elementos históricos que não têm controles visuais; o
+filtro HTML continua limitando o que é persistido. Wiki, Fórum e formatos
+editoriais compartilham o display Media, sem URL ou política de acesso própria.
+A Media continua sujeita ao acesso Core e o bundle privado `course_document` não
+pode ser selecionado nesses formatos.
 
 ## JavaScript e carregamento
 

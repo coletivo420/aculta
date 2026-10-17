@@ -1,12 +1,24 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.17 — PV6 homologada em Wiki, Fórum e apresentações — 2026-10-17
+
+Classificação: MINOR (autoria Media Embed compartilhada e conclusão da homologação PV6).
+
+- Wiki e Fórum usam `media_embed` restrito a `document`; CKEditor 5 validado nos dois formatos com `CKEditor5::validatePair()` e zero violações. Source Editing mantém markup legado sanitizado sem mudar conteúdos/revisões.
+- O Fórum renderiza o embed por `text_default`; o formatter Media/File não muda e o tema ACULTA420 já apresenta os atributos neutros usando tokens.
+- PHPUnit Unit 11/11 (145 asserções) e Kernel 5/5 (106 asserções) PASS no MariaDB `aculta_simpletest`; quatro deprecações Core/contrib.
+- Runtime de teste `https://aculta.toca.net.br`: filtros e editor aplicados individualmente, cache rebuild; Wiki/Fórum sem migration de conteúdo. Drush render do tópico restrito confirma viewer e fallback autorizado. Artigo, blog e projeto retornam HTTP 200 com viewer.
+- Firefox 153.4 ESR: PDF de 14 páginas, navegação, zoom a 125%, screenshot revisado em desktop 1440 px e viewport estreito (500 px de largura interna mínima do Firefox headless); sem overflow horizontal da página, controles nomeados com 44 px ou mais, foco 3 px, live regions e link fallback. Smoke visual/acessível PASS; PV7 continua com matriz ampla de navegadores/CSP.
+- Config Sync global não foi importado; `user.role.administrator.yml` continua com chave YAML duplicada preexistente.
+- RUNTIME STATUS: APLICADO.
+
 ## 0.1.0-dev.16 — Media Embed da Wiki compartilha o display PDF — 2026-10-17
 
 Classificação: PATCH (habilita processamento de Media `document` no formato Wiki existente).
 
 - `filter.format.wiki` permite o elemento `drupal-media` e processa Media Embed após os filtros HTML, restrito ao bundle `document`; o display Media compartilhado mantém as verificações de acesso do Core.
-- Kernel confirma que embed em formato compatível renderiza o formatter PDF compartilhado. A inclusão de botão CKEditor na Wiki fica pendente: a lista histórica de HTML não valida com CKEditor 5 e requer trabalho de compatibilidade separado.
-- Runtime de teste `https://aculta.toca.net.br`: formato `wiki` atualizado pela entidade de configuração e cache reconstruído; a configuração ativa corresponde ao YAML. Não há embed PDF existente em páginas Wiki para smoke visual. O import global segue bloqueado por erro YAML preexistente em outra configuração. RUNTIME STATUS: APLICADO; smoke de conteúdo: DEFERRED.
+- Kernel confirma que embed em formato compatível renderiza o formatter PDF compartilhado. Na PV6, CKEditor também foi habilitado e validado sem incompatibilizar a lista HTML histórica.
+- Runtime de teste `https://aculta.toca.net.br`: formato `wiki` atualizado por entidade de configuração e cache reconstruído. Esta entrega foi homologada na versão .17, sem conteúdo PDF preexistente na Wiki para screenshot dedicado.
 
 ## 0.1.0-dev.15 — viewer compartilhado em campos File institucionais — 2026-10-17
 

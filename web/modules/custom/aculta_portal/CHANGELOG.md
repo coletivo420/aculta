@@ -1,3 +1,14 @@
+## 0.4.0-dev.98 — PV6: Wiki e Fórum no viewer compartilhado — 2026-10-17
+
+Classificação: MINOR (CKEditor Media Embed compartilhado em Wiki e Fórum).
+
+- `filter.format.wiki` e `filter.format.usuario_aculta` selecionam somente Media `document`; ambos têm botão `drupalMedia` e pares CKEditor 5 validados sem violações. Source Editing conserva o HTML legado permitido pelos filtros.
+- O display default do Fórum usa `text_default`, necessário para processar embeds sem truncar o corpo. A autorização da Media permanece no Core e no viewer compartilhado.
+- Unit 11/11 (145 asserções), Kernel 5/5 (106 asserções); Drupal 11+ (896), aculta_image, public-slugs e fronteira módulo/tema PASS.
+- Runtime de teste: configuração Wiki/Fórum aplicada por entidades específicas, cache rebuild; render Drush do tópico de Fórum contém viewer/link permitido. Artigo, blog e projeto responderam HTTP 200 com viewer. Firefox ESR validou 14 páginas, zoom 125%, foco 3 px, nomes dos controles, alvos ≥44 px e tela estreita sem overflow. Nenhum conteúdo foi criado ou alterado nesta etapa.
+- Config Sync global não foi importado; permanece a duplicidade YAML preexistente em `user.role.administrator.yml`.
+- RUNTIME STATUS: APLICADO. Matriz ampla de browsers/CSP e produção seguem PV7.
+
 ## 0.4.0-dev.97 — função única para a configuração de papéis — 2026-10-17
 
 - `RoleHierarchy::completar`: uma só regra para cadeia e laterais de papéis existentes (papel excluído, papel novo, categoria órfã). Usada pelo formulário (estado inicial e laterais) e pelo aculta_user (mapa e exclusão). Antes havia duas cópias da regra.
