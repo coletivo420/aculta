@@ -29,6 +29,9 @@ configuration:
     review:
       step: review
       weight: 4
+    donation_recurring_authorization:
+      step: payment
+      weight: 3
     payment_process:
       step: payment
       weight: 4

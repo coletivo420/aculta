@@ -2,7 +2,7 @@ name: ACULTA Doações
 type: module
 description: 'Campanhas de doação com valores sugeridos, período de vigência e fluxo de checkout próprio (port de commerce_donation_flow).'
 package: Associação Cultural Antiproibicionista
-version: '0.1.0-dev.15'
+version: '0.1.0-dev.16'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal

@@ -11,7 +11,7 @@ id: assinatura
 label: 'Assinatura de doação'
 traits: {  }
 locked: false
-workflow: order_default
+workflow: order_recurring
 showOrderEditLinks: false
 numberPattern: order_default
 refresh_mode: customer

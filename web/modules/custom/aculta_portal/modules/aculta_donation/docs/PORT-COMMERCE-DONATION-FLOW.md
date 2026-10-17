@@ -1,6 +1,6 @@
 # Port do commerce_donation_flow para o aculta_donation
 
-Status (2026-10-17): **port aplicado** (código, blocos, configuração, corte no Runtime e Composer). Pendente: recorrência (ver fim do documento).
+Status (2026-10-17): **port aplicado** (código, blocos, configuração, Composer) e **recorrência aplicada no código** (ver "Recorrência"). Pendente: ponta a ponta no sandbox do Mercado Pago, cancelar/pausar em "Meu apoio" e painel de doações recorrentes.
 
 ## Decisões do responsável (2026-10-17)
 
@@ -19,7 +19,7 @@ Status (2026-10-17): **port aplicado** (código, blocos, configuração, corte n
 
 | Origem (contrib) | Destino (`aculta_donation`) | Uso no site |
 |---|---|---|
-| `NewOrder` | `Drupal\aculta_donation\Order\DonationOrderFactory` | Cria pedido e item de doação |
+| `NewOrder` | `Drupal\aculta_donation\NewOrder` (mesmo nome de classe, sem subpasta) | Cria pedido e item de doação; doação mensal cria pedido `assinatura` |
 | `Controller\DonationController` | `Controller\DonationController` | `/donate`, passos do checkout, doação rápida |
 | `EventSubscriber\CartCheckoutRouteSubscriber` | `EventSubscriber\...` | Redireciona o carrinho para o checkout de doação |
 | `Plugin\Commerce\CheckoutFlow\DonationCheckoutFlow` (+ `MultistepWithDonation`, `PaneSummaryData`) | `Plugin\Commerce\CheckoutFlow\...` | Fluxo `doacao` |
@@ -49,6 +49,29 @@ Verificar antes de portar: os blocos `DonateBlock`, `QuickDonationBlock` e `Back
 4. Corte no Runtime, com backup do banco antes e confirmação do responsável. Reapontar config, depois desativar e remover o contrib.
 5. Atualizar Portal, gates e `composer.json`.
 
-## Recorrência (`commerce_recurring`)
+## Recorrência
 
-Pendente. Fonte: `commerce_recurring` 1.0.0-rc3 (Drupal 9.2 a 11; Commerce 2.36 a 3). O branch `master` do repositório é Drupal 7 e não serve. Próximo passo: portar só o necessário (entidade de assinatura e cobrança) e ligar ao Mercado Pago (F3, `MercadoPagoRecurrenceService`), com um tipo único de pedido por assinatura e sem estorno.
+Decisão do responsável (2026-10-17): recorrência pela **API de assinaturas do Mercado Pago** (preapproval), reaproveitando código do `commerce_recurring` 8.x-1.0-rc3 (GPL-2.0-or-later), sem adicionar dependência Composer. Fonte lida em `git.drupalcode.org/project/commerce_recurring`, tag `8.x-1.0-rc3`.
+
+O que foi reaproveitado e o que ficou de fora:
+
+- **Reaproveitado:** o workflow `order_recurring` (estados `draft`, `needs_payment`, `failed`, `completed`, `canceled` e as transições), copiado para `aculta_donation.workflows.yml`. Adaptação: `cancel` também parte de `completed`, porque a assinatura continua ativa depois da primeira cobrança.
+- **Não reaproveitado:** a entidade `commerce_subscription`, a cobrança pelo próprio Commerce (`RecurringOrderManager`, `Cron`, cobradores) e o meio de pagamento guardado. O Mercado Pago cobra o cartão da autorização, e o portal não guarda meio de pagamento.
+
+Modelo:
+
+1. Doação mensal (`field_gift_type = recurring`) cria pedido do tipo `assinatura` (`NewOrder::get`). O tipo usa o fluxo `assinatura_flow`, que tem a mesma sequência de panes do fluxo de doação, mais a pane `donation_recurring_authorization`.
+2. A pane (passo de pagamento, peso 3, antes do `payment_process`) cria a assinatura (`criarAssinatura`: valor do pedido, frequência de 1 mês, BRL, `external_reference` = id do pedido, `back_url` na etapa de conclusão do domínio principal). Guarda o id em `data` (`mp_preapproval_id`), manda o pedido para `needs_payment` e leva o doador ao `init_point` por `NeedsRedirectException`.
+3. Webhook `subscription_preapproval` (`MercadoPagoSubscriptionRecorder::assinatura`): guarda o status em `data` (`mp_status`); `cancelled` leva o pedido a `canceled`.
+4. Webhook `subscription_authorized_payment` (`MercadoPagoSubscriptionRecorder::cobranca`): consulta `GET /authorized_payments/{id}` e, **só com `payment.status = approved`**, cria um `commerce_payment` (estado `completed`, `remote_id` = id do pagamento no Mercado Pago). Grava uma vez por id. A primeira cobrança leva o pedido a `completed`.
+
+Regras e limites:
+
+- `processed` não é aprovação. A documentação oficial diz que `processed` também marca parcela que esgotou as tentativas (ver [authorized-payments](https://www.mercadopago.com.br/developers/pt/docs/subscriptions/integration-configuration/subscription-no-associated-plan/authorized-payments)).
+- O `external_reference` da cobrança não é usado para achar o pedido. O pedido vem do `preapproval_id`, consultando a assinatura.
+- Doações não são estornadas (decisão do responsável). Não há tratamento de estorno.
+- Pedido `assinatura` fica fora do carrinho unificado (`CartConsolidator::TIPO_ASSINATURA`).
+- Não implementado: cancelar/pausar pela conta ("Meu apoio") e o painel de doações recorrentes.
+- Não verificado: o corpo real das notificações de assinatura no sandbox (a referência consultada não lista todos os valores de `status`). Testes unitários cobrem as regras, mas o fluxo ponta a ponta ficou DEFERRED, porque criar assinatura no sandbox depende de confirmação do responsável.
+
+Cobertura: `tests/src/Unit/MercadoPago/MercadoPagoSubscriptionRecorderTest.php` (5 testes) e `tests/src/Unit/MercadoPagoSubscriptionNotificationServiceTest.php` (3 testes).

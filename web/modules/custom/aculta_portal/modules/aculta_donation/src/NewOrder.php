@@ -88,6 +88,10 @@ class NewOrder {
       $type = $itemType->get('orderType');
       $orderType = $type ?? $orderType;
     }
+    // Doação mensal vira assinatura: pedido próprio, com o workflow recorrente e o fluxo de autorização.
+    if ($giftType === 'recurring') {
+      $orderType = 'assinatura';
+    }
     $order = Order::create(
       [
         'type' => $orderType,

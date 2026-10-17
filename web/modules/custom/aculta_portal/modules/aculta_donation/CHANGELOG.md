@@ -1,5 +1,22 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.16 — doação mensal como assinatura no Mercado Pago — 2026-10-17
+
+- Doação mensal (`recurring`) vira pedido do tipo `assinatura`, com o workflow `order_recurring` (`aculta_donation.workflows.yml`,
+  copiado do commerce_recurring 8.x-1.0-rc3, GPL-2.0-or-later). Adaptação: cancelar também a partir de `completed`, porque a
+  assinatura continua ativa depois da primeira cobrança.
+- Pane `donation_recurring_authorization` (passo de pagamento, antes do pagamento avulso): cria a assinatura pela API de
+  assinaturas do Mercado Pago (sem plano; valor, frequência mensal e moeda BRL), envia o pedido para aguardando autorização e
+  leva o doador ao `init_point`. Não cobra no checkout e não guarda cartão.
+- Retorno do Mercado Pago na etapa de conclusão, no domínio principal.
+- Webhook (`MercadoPagoSubscriptionRecorder`, no aculta_portal): status da assinatura no pedido; cobrança grava pagamento só
+  com `payment.status = approved`, uma vez por id do pagamento (`processed` sozinho não basta).
+- Não implementado: cancelar/pausar pela conta ("Meu apoio") e o painel de doações recorrentes.
+- Documento do port atualizado em `docs/PORT-COMMERCE-DONATION-FLOW.md`.
+- RUNTIME STATUS: APLICADO no Runtime de testes em configuração (workflow do tipo `assinatura` e pane no `assinatura_flow`);
+  verificado por descoberta dos plugins e por `NewOrder` (sem salvar). DEFERRED: fluxo ponta a ponta no sandbox do Mercado Pago
+  (cria assinatura real na conta de teste; depende de confirmação do responsável).
+
 ## 0.1.0-dev.15 — checkout da doação no domínio principal — 2026-10-17
 
 - As etapas de checkout da doação são geradas no MAIN (`routeUrl('main', …)`, redirecionamento confiável); a escolha do
