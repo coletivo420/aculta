@@ -611,7 +611,7 @@ herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha a
 - Para acesso novo, conceda **permissão** ao papel certo e verifique com `hasPermission()`. Não use `hasRole('nome')` nem
   `in_array('nome', getRoles())` para liberar funcionalidade: isso ignora a hierarquia de quem não está logado e cria
   exceção difícil de auditar. Checagens existentes por nome são dívida registrada no gate.
-- Para mudar a cadeia e os vínculos de perfil, use ACULTA > Configurações > Papéis e perfis (`/painel-administrativo/configuracoes/aculta/papeis`,
+- Para mudar a cadeia de papéis, use `/painel-administrativo/pessoas/roles` (página Papéis e perfis do ACULTA;
   permissão `administer aculta role hierarchy`). Não edite `role_inheritance.settings` à mão no Runtime. Depois de mudar a
   cadeia, exporte a configuração e atualize a decisão em `docs/portal/PAPEIS-PARTICIPACAO.md` no mesmo commit.
 - Ao mudar a cadeia, avalie o efeito: papel acima herda todas as permissões de baixo (ex.: `gerente_loja` herda o que é

@@ -35,12 +35,18 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   protected function alterRoutes(RouteCollection $collection): void {
     // A tela do módulo contrib role_inheritance sai da coleção de rotas (sem aba nem link de menu).
     $collection->remove('role_inheritance.config_role_inheritance');
-    // A página de papéis do Core ganha a seção Papéis e perfis do ACULTA (mesmo caminho, outro controlador).
+    // A página de papéis do Core (/painel-administrativo/pessoas/roles) é substituída pela página Papéis e perfis do
+    // ACULTA: cadeia de papéis, operações de cada papel (mesmo menu do Core) e criação de papel.
     if ($lista = $collection->get('entity.user_role.collection')) {
-      $lista->setDefault('_controller', '\\Drupal\\aculta_portal\\Role\\Controller\\RolesPageController::build');
       $padroes = $lista->getDefaults();
       unset($padroes['_entity_list']);
+      $padroes['_form'] = '\\Drupal\\aculta_portal\\Role\\Form\\RoleHierarchyForm';
+      $padroes['_title'] = 'Papéis e perfis';
       $lista->setDefaults($padroes);
+      $requisitos = $lista->getRequirements();
+      unset($requisitos['_permission']);
+      $requisitos['_permission'] = 'administer permissions,administer aculta role hierarchy';
+      $lista->setRequirements($requisitos);
     }
     foreach ($collection->all() as $route) {
       // Só rotas sem decisão explícita: `FALSE` definido por um módulo (ex.: biblioteca de componentes do ui_patterns) é respeitado.

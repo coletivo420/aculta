@@ -10,7 +10,6 @@ use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -58,14 +57,21 @@ final class RoleHierarchyForm extends ConfigFormBase {
     $papeis = $this->papeis();
     $cadeia = $this->cadeiaAtual($papeis);
     $mapa = RoleHierarchy::derivarMapa($cadeia, array_keys($papeis));
+    $entidades = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
+    $lista = $this->entityTypeManager->getListBuilder('user_role');
 
     $form['intro'] = [
       '#markup' => '<p>' . $this->t('Cadeia de papéis: quem está mais alto herda do papel imediatamente abaixo, e o administrador herda de todos. Arraste as linhas pelas setas para reordenar.') . '</p>',
     ];
+    $form['adicionar'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Adicionar papel'),
+      '#url' => Url::fromRoute('user.role_add'),
+    ];
 
     $form['cadeia'] = [
       '#type' => 'table',
-      '#header' => [$this->t('Papel'), $this->t('Herda de (efetivo)'), $this->t('Peso')],
+      '#header' => [$this->t('Papel'), $this->t('Herda de (efetivo)'), $this->t('Peso'), $this->t('Operações')],
       '#tabledrag' => [
         ['action' => 'order', 'relationship' => 'sibling', 'group' => 'role-weight'],
       ],
@@ -85,7 +91,24 @@ final class RoleHierarchyForm extends ConfigFormBase {
           '#delta' => max(20, count($cadeia)),
           '#attributes' => ['class' => ['role-weight']],
         ],
+        'operacoes' => $lista->buildOperations($entidades[$papel]),
       ];
+    }
+
+    $fora = array_values(array_diff(array_keys($papeis), $cadeia));
+    if ($fora !== []) {
+      $form['fora'] = [
+        '#type' => 'table',
+        '#caption' => $this->t('Fora da cadeia (herdam do autenticado, ou nada, no caso do anônimo e do administrador)'),
+        '#header' => [$this->t('Papel'), $this->t('Operações')],
+        '#empty' => $this->t('Nenhum papel fora da cadeia.'),
+      ];
+      foreach ($fora as $papel) {
+        $form['fora'][$papel] = [
+          'papel' => ['#plain_text' => $papeis[$papel]],
+          'operacoes' => $lista->buildOperations($entidades[$papel]),
+        ];
+      }
     }
 
     $form['perfis'] = [
@@ -104,19 +127,6 @@ final class RoleHierarchyForm extends ConfigFormBase {
       '#empty' => $this->t('Nenhum tipo de perfil.'),
     ];
 
-    $form['telas'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Telas do núcleo'),
-      '#open' => FALSE,
-      'lista' => [
-        '#theme' => 'item_list',
-        '#items' => [
-          Link::fromTextAndUrl($this->t('Papéis (criar, editar e excluir papéis)'), Url::fromRoute('entity.user_role.collection'))->toRenderable(),
-          Link::fromTextAndUrl($this->t('Permissões por papel'), Url::fromRoute('user.admin_permissions'))->toRenderable(),
-          Link::fromTextAndUrl($this->t('Tipos de perfil (campos e exibição)'), Url::fromRoute('entity.profile_type.collection'))->toRenderable(),
-        ],
-      ],
-    ];
     return parent::buildForm($form, $form_state);
   }
 

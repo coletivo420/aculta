@@ -381,12 +381,3 @@ aculta_portal.relatorio_vendas:
   options:
     _admin_route: true
 
-aculta_portal.role_hierarchy_settings:
-  path: /painel-administrativo/configuracoes/aculta/papeis
-  defaults:
-    _form: '\Drupal\aculta_portal\Role\Form\RoleHierarchyForm'
-    _title: Papéis e perfis
-  requirements:
-    _permission: administer aculta role hierarchy
-  options:
-    _admin_route: true

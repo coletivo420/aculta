@@ -1,3 +1,10 @@
+## 0.4.0-dev.99 — página Papéis e perfis substitui a lista de papéis do Core — 2026-10-17
+
+- `/painel-administrativo/pessoas/roles` passa a ser a página Papéis e perfis do ACULTA (formulário `RoleHierarchyForm`, rota do Core com `_form`). A lista do Core sai dessa página.
+- Coluna Operações (editar, permissões e excluir, pelo `buildOperations` do Core) em cada papel; botão Adicionar papel; tabela dos papéis fora da cadeia.
+- Permissão da página: `administer permissions` ou `administer aculta role hierarchy`.
+- Rota e controlador antigos da página separada removidos; item de menu aponta para a página de papéis.
+- RUNTIME STATUS: APLICADO e verificado por HTTP: página 200 com operações, botão e tabela; `/configuracoes/aculta/papeis` 404; salvar a cadeia responde 303 e mantém a configuração.
 ## 0.4.0-dev.98 — papéis laterais removidos; cadeia única — 2026-10-17
 
 - Não há mais papel lateral nem categoria: a cadeia é a única classificação. Papel fora da cadeia herda do autenticado (regra implícita em `RoleHierarchy::derivarMapa`).

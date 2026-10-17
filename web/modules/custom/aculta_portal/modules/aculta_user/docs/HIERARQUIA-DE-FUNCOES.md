@@ -11,23 +11,25 @@ Quem tem `gerente_loja` recebe, sem gravação extra, as permissões de todos os
 
 ## 2. Onde fica a configuração
 
-- Fonte: `aculta_portal.role_hierarchy` (`cadeia` e `laterais`). Exportada em `config/sync/aculta_portal.role_hierarchy.yml`.
+- Fonte: `aculta_portal.role_hierarchy` (`cadeia`). Exportada em `config/sync/aculta_portal.role_hierarchy.yml`.
 - `cadeia`: lista do mais alto ao mais baixo. Cada papel herda do papel imediatamente abaixo.
-- `laterais`: mapa papel → categoria. O papel entra na categoria e herda dela (ex.: `wiki_contributor` → `email_confirmed`).
+- Não há papel lateral nem categoria (removidos em 0.4.0-dev.98): papel fora da cadeia herda do autenticado.
 - Administrador (`administrator`) herda de todos os papéis do site. Não aparece na cadeia.
 - Anônimo (`anonymous`) não entra na hierarquia.
 - O mapa efetivo não é gravado: é derivado a cada uso (`HerancaDePapeis::mapa()`).
 
 Cadeia vigente (2026-10-17):
 `gerente_loja > content_editor > lms_teacher > associado > estudante > email_confirmed > authenticated`
-Laterais: `wiki_contributor` → `email_confirmed`; `lms_admin` → `lms_teacher` (ver nota sobre mesclagem em PAPEIS-PARTICIPACAO.md).
+Os papéis `wiki_contributor` e `lms_admin` foram mesclados em `email_confirmed` e `lms_teacher` (ver PAPEIS-PARTICIPACAO.md).
 
 ## 3. Como se edita
 
-ACULTA > Configurações > Papéis e perfis, que é a seção "Papéis e perfis" da página de papéis
-(`/painel-administrativo/pessoas/roles`). A permissão é `administer aculta role hierarchy`.
+`/painel-administrativo/pessoas/roles`, página "Papéis e perfis" do ACULTA (substitui a lista de papéis do Core).
+Permissão: `administer permissions` ou `administer aculta role hierarchy`.
 - Ordem: arraste pelas alças ou use as setas (`#tabledrag` do Drupal, mesmo padrão da tela de blocos). Os pesos definem a ordem.
 - A coluna "Herda de (efetivo)" mostra a herança transitiva calculada.
+- Operações de cada papel (editar, permissões, excluir): mesmo menu do Core. "Adicionar papel" leva à criação de papel do Core.
+- Papéis fora da cadeia (anônimo, administrador e qualquer papel novo) aparecem na tabela "Fora da cadeia".
 - Ao salvar, a configuração é validada: ciclo ou autorreferência é recusado.
 
 ## 4. Ciclo de vida de um papel
@@ -38,8 +40,8 @@ ACULTA > Configurações > Papéis e perfis, que é a seção "Papéis e perfis"
 | Salvar conta (`user_presave`) | Retira os herdados que não estavam gravados no banco. Não grava herança. | `RoleInheritanceHooks::userPresave` |
 | Formulário de usuário | Não marca como selecionado um papel herdado. | `RoleInheritanceHooks::formUserAlter` |
 | Usuário logado (requisição) | Estende os papéis da sessão, com prioridade 299. | `RoleInheritanceCurrentUserSubscriber` |
-| Criar papel novo | Sem gravação: o papel sem categoria herda do autenticado. | `RoleHierarchy::completar` (via `mapa()`) |
-| Excluir papel | Sai da cadeia; laterais que dependiam dele voltam ao autenticado. | `RoleInheritanceHooks::userRoleDelete` → `HerancaDePapeis::removerPapel` |
+| Criar papel novo | Sem gravação: papel fora da cadeia herda do autenticado. | `RoleHierarchy::derivarMapa` (via `mapa()`) |
+| Excluir papel | Sai da cadeia. | `RoleInheritanceHooks::userRoleDelete` → `HerancaDePapeis::removerPapel` |
 
 ## 5. Comparação com o módulo contrib (`role_inheritance` 2.1.1)
 

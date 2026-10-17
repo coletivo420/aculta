@@ -125,7 +125,8 @@ Testes: `aculta_user/tests/src/Unit/EnrollmentRoleHooksTest.php`, `RestrictedFor
 
 ## 8. Painel de papéis (tela única)
 
-- **Tela de herança:** única tela de cadeia de papéis e herança é ACULTA > Configurações > Papéis e perfis (`/painel-administrativo/configuracoes/aculta/papeis`). Permissão `administer aculta role hierarchy`.
-- **Herança sem contrib:** o módulo contrib `role_inheritance` foi desinstalado e removido do `composer.json`. A herança é do `aculta_user` (`HerancaDePapeis`, `RoleInheritanceHooks`, `RoleInheritanceCurrentUserSubscriber`), calculada a partir de `aculta_portal.role_hierarchy`. A tela de herança do contrib deixou de existir.
-- **Página de papéis:** `/painel-administrativo/pessoas/roles` é a página de papéis do núcleo. A seção Papéis e perfis do ACULTA aparece nela, abaixo da lista de papéis (`RolesPageController`).
-- **Herança efetiva:** a coluna "Herda de (efetivo)" da tela do ACULTA mostra a herança transitiva calculada por `RoleHierarchy::efetivos`.
+- **Página:** `/painel-administrativo/pessoas/roles` é a página "Papéis e perfis" do ACULTA. Substituiu a lista de papéis do Core: cadeia de papéis (arrastar ou setas), coluna "Herda de (efetivo)", coluna "Operações" (editar, permissões e excluir, com o mesmo menu do Core), botão "Adicionar papel" e tabela dos papéis fora da cadeia.
+- **Permissão:** `administer permissions` (Core) ou `administer aculta role hierarchy`.
+- **Herança sem contrib:** o módulo `role_inheritance` foi desinstalado e removido do `composer.json`. A herança é do `aculta_user` (`HerancaDePapeis`, `RoleInheritanceHooks`, `RoleInheritanceCurrentUserSubscriber`), calculada a partir de `aculta_portal.role_hierarchy` (só `cadeia`). Documentação: `aculta_user/docs/HIERARQUIA-DE-FUNCOES.md`.
+- **Herança efetiva:** a coluna "Herda de (efetivo)" mostra a herança transitiva calculada por `RoleHierarchy::efetivos`.
+- **Tela de herança do contrib:** a rota `role_inheritance.config_role_inheritance` sai da coleção de rotas (sem aba nem link).
