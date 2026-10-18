@@ -124,8 +124,8 @@ descrito em `docs/operations/BANCO-DE-TESTE.md`.
 - `tests/src/Unit/FreeTextReviewFeedbackTest.php`: frases orientam somente o
   feedback formativo e nunca finalizam a nota sem avaliação do educador.
 - `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada do submódulo
-  sem instalar a cadeia de dependências, registro DI e ausência de configuração
-  própria/hook de instalação.
+  com registro DI e ausência de configuração própria; persistência do arquivo,
+  bloqueio de edição por access e limpeza quando a conta é removida.
 
 Execute os testes a partir de `web/core` com PHPUnit do Composer. O Kernel test usa o banco MariaDB
 de teste dedicado (nunca o Runtime, nunca SQLite). Configuração, procedimento e resultados estão em

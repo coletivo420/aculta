@@ -8,7 +8,7 @@
 - `lms_answer_comments` e Core Comment fornecem diálogo ligado à resposta e avaliação manual, sem campo ou gradebook paralelo.
 - Não mexe diretamente em contrib/Core e não altera respostas existentes.
 - `AttemptArchive` preserva cópias das versões anteriores antes de edição, reavaliação ou reinício de resposta e mantém a conversa da resposta; histórico exige membership/acesso atual e é removido com o progresso, conta ou curso.
-- Verificação incremental: 6 testes Unit (33 assertions), Kernel de instalação isolada (1 teste, 6 assertions), gates Portal (950 checks), imagem e slugs passaram; PHP lint passou. Executado com PHP 8.4.26; PHP 8.5 ainda não foi validado.
+- Verificação incremental: 6 testes Unit (33 assertions), Kernel (2 testes, 11 assertions; persistência, acesso somente leitura e limpeza por conta), gates Portal (950 checks), imagem e slugs passaram; PHP lint passou. Executado com PHP 8.4.26; PHP 8.5 ainda não foi validado.
 - F8 segue aberta até revisão de segurança, testes de ciclo de vida/access e smoke no Runtime. Nenhum histórico preexistente foi alterado ou migrado.
 - RUNTIME STATUS: DEFERRED. Drush retornou URI `http://default`, fora do critério de identificação do Homelab; nenhuma operação persistente foi executada.
 

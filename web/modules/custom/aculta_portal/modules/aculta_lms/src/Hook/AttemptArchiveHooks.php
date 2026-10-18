@@ -70,7 +70,7 @@ final class AttemptArchiveHooks {
 
     if ($operation === 'view' || $operation === 'view label') {
       if ($account->hasPermission('administer lms')) {
-        return AccessResult::allowed()->addCacheableDependency($entity)->addCacheableDependency($account);
+        return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($entity);
       }
       $course = $this->entityTypeManager->getStorage('group')->load($entity->get('group_id')->value);
       if (!$course instanceof GroupInterface) {
@@ -81,8 +81,7 @@ final class AttemptArchiveHooks {
         : ['grade students'];
       return GroupAccessResult::allowedIfHasGroupPermissions($course, $account, $permissions)
         ->addCacheableDependency($entity)
-        ->addCacheableDependency($course)
-        ->addCacheableDependency($account);
+        ->addCacheableDependency($course);
     }
 
     return AccessResult::forbidden()->addCacheableDependency($entity);
@@ -94,7 +93,7 @@ final class AttemptArchiveHooks {
       return AccessResult::neutral();
     }
     return AccessResult::allowedIfHasPermission($account, 'administer lms')
-      ->addCacheableDependency($account);
+      ->cachePerPermissions();
   }
 
   #[Hook('lms_answer_details_alter')]
