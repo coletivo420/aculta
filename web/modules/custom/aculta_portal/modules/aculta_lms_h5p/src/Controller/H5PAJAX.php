@@ -29,7 +29,6 @@ final class H5PAJAX extends ControllerBase {
       $container->get('event_dispatcher'),
       $container->get('aculta_lms_h5p.course_access'),
     );
-    $controller->setContainer($container);
     return $controller;
   }
 

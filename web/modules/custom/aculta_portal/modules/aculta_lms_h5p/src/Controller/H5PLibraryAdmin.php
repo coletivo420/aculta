@@ -9,6 +9,7 @@ use Drupal\aculta_lms_h5p\Entity\H5PContent;
 use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Form\FormBuilderInterface;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,12 +22,12 @@ class H5PLibraryAdmin extends ControllerBase {
   /**
    * constructor.
    */
-  public function __construct(Connection $database) {
+  public function __construct(Connection $database, private readonly FormBuilderInterface $h5pFormBuilder) {
     $this->database = $database;
   }
 
   public static function create(ContainerInterface $container) {
-    $controller = new static(\Drupal::database());
+    $controller = new static($container->get('database'), $container->get('form_builder'));
     return $controller;
   }
 
@@ -70,7 +71,7 @@ class H5PLibraryAdmin extends ControllerBase {
         }
 
         $option = [
-          'query' => \Drupal::destination()->getAsArray(),
+          'query' => $this->getDestinationArray(),
         ];
         $deleteUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id . '/delete', $option);
         //$detailsUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id);
@@ -106,7 +107,7 @@ class H5PLibraryAdmin extends ControllerBase {
     $build['#attached']['library'][] = 'aculta_lms_h5p/h5p.admin.library.list';
 
     $build['title_add'] = ['#markup' => '<h3 class="h5p-admin-header">' . t('Add libraries') . '</h3>'];
-    $build['form'] = \Drupal::formBuilder()->getForm('Drupal\aculta_lms_h5p\Form\H5PLibraryUploadForm');
+    $build['form'] = $this->h5pFormBuilder->getForm('Drupal\aculta_lms_h5p\Form\H5PLibraryUploadForm');
     $build['title_installed'] = ['#markup' => '<h3 class="h5p-admin-header">' . t('Installed libraries') . '</h3>'];
     $build['container'] = ['#markup' => '<div id="h5p-admin-container"></div>'];
 
@@ -125,7 +126,7 @@ class H5PLibraryAdmin extends ControllerBase {
       'num' => $num,
       'url' => $url->toString(),
       'message' => t('Not all content has gotten their cache rebuilt. This is required to be able to delete libraries, and to display how many contents that uses the library.'),
-      'progress' => \Drupal::translation()->formatPlural($num, '1 content need to get its cache rebuilt.', '@count contents needs to get their cache rebuilt.'),
+      'progress' => $this->formatPlural($num, '1 conteúdo precisa reconstruir o cache.', '@count conteúdos precisam reconstruir o cache.'),
       'button' => t('Rebuild cache')
     ];
   }
@@ -203,7 +204,7 @@ class H5PLibraryAdmin extends ControllerBase {
    * @param integer $library_id
    */
   public static function libraryDetailsTitle($library_id) {
-    $query = \Drupal::database()->select('h5p_libraries', 'l');
+    $query = $this->database->select('h5p_libraries', 'l');
     $query->condition('l.library_id', $library_id, '=');
     $query->fields('l', ['title']);
     return $query->execute()->fetchField();

@@ -26,7 +26,7 @@ class H5PContentUpgrade extends ControllerBase {
   }
 
   public static function create(ContainerInterface $container) {
-    $controller = new static(\Drupal::database());
+    $controller = new static($container->get('database'));
     return $controller;
   }
 
@@ -38,7 +38,7 @@ class H5PContentUpgrade extends ControllerBase {
    * @return array
    */
   public static function getLibraryVersions($library_id) {
-    $query = \Drupal::database()->select('h5p_libraries', 'hl1');
+    $query = $this->database->select('h5p_libraries', 'hl1');
     $query->join('h5p_libraries', 'hl2', 'hl1.machine_name = hl2.machine_name');
     $query->condition('hl1.library_id', $library_id, '=');
     $query->addField('hl2', 'library_id', 'id');

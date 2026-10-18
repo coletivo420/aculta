@@ -125,6 +125,26 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     self::assertSame(['extensions' => 'h5p'], $built['package']['#upload_validators']['FileExtension']);
   }
 
+  /** Verifies failed progress requests cannot be cached by browser or proxy. */
+  public function testProgressResponsesArePrivateAndNotCacheable(): void {
+    $controller = \Drupal\aculta_lms_h5p\Controller\H5PAJAX::create($this->container);
+    $finished = $controller->setFinished(1, \Symfony\Component\HttpFoundation\Request::create('/', 'POST'));
+    self::assertSame(403, $finished->getStatusCode());
+    self::assertStringContainsString('private', $finished->headers->get('Cache-Control'));
+    self::assertStringContainsString('no-store', $finished->headers->get('Cache-Control'));
+    self::assertSame('nosniff', $finished->headers->get('X-Content-Type-Options'));
+    $state = $controller->contentUserData(1, 0, 'state', 0, \Symfony\Component\HttpFoundation\Request::create('/', 'GET'));
+    self::assertSame(403, $state->getStatusCode());
+    self::assertStringContainsString('private', $state->headers->get('Cache-Control'));
+    self::assertStringContainsString('no-store', $state->headers->get('Cache-Control'));
+  }
+
+  /** Ensures the routed H5P controllers can be constructed with Drupal 11 DI. */
+  public function testDatabaseControllersUseContainerInjection(): void {
+    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Controller\H5PContentUpgrade::class, \Drupal\aculta_lms_h5p\Controller\H5PContentUpgrade::create($this->container));
+    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin::class, \Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin::create($this->container));
+  }
+
   /** Creates a temporary ZIP package with the requested entries. */
   private function createPackage(array $entries): string {
     $path = $this->siteDirectory . '/library-' . bin2hex(random_bytes(6)) . '.h5p';
