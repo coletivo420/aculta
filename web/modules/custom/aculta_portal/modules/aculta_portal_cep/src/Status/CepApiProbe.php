@@ -22,6 +22,9 @@ final class CepApiProbe {
 
   public const STATE_KEY = 'aculta_portal_cep.api_status';
 
+  /** Intervalo da verificação automática: uma vez por dia, não a cada execução do cron. */
+  public const INTERVAL = 86400;
+
   private const APIS = [
     'viacep' => ['label' => 'ViaCEP', 'url' => 'https://viacep.com.br/ws/%s/json/', 'key' => 'logradouro'],
     'brasilapi' => ['label' => 'BrasilAPI', 'url' => 'https://brasilapi.com.br/api/cep/v2/%s', 'key' => 'street'],
@@ -62,6 +65,19 @@ final class CepApiProbe {
     }
     $this->state->set(self::STATE_KEY, $result);
     return $result;
+  }
+
+  /**
+   * Verifica só quando a última verificação tem mais de INTERVAL segundos (ou não existe). Retorna o resultado
+   * quando executou, ou NULL quando ainda não está vencida.
+   */
+  public function checkIfDue(): ?array {
+    $last = $this->last();
+    $checked = $last === [] ? 0 : max(array_map(static fn (array $api): int => (int) $api['checked_at'], $last));
+    if ($checked > 0 && $this->time->getRequestTime() - $checked < self::INTERVAL) {
+      return NULL;
+    }
+    return $this->check();
   }
 
   /** Último resultado gravado pelo cron, por API (vazio antes da primeira verificação). */

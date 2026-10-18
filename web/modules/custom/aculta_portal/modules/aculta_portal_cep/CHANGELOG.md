@@ -1,3 +1,8 @@
+## 0.3.0-dev.5 — verificação das APIs de CEP diária (não a cada cron) — 2026-10-18
+
+- `CepApiProbe::checkIfDue()`: consulta ViaCEP e BrasilAPI só quando a última verificação tem mais de 24 horas (`INTERVAL` 86400). O cron chama esse método, e não mais `check()`.
+- Verificado no Runtime de teste pelo cron: com verificação de 1 hora, o cron não consulta; com 25 horas, consulta e grava o novo horário.
+
 ## 0.3.0-dev.4 — base local legível pelo processo web (status mostrava "sem base") — 2026-10-18
 
 - Causa verificada: a base foi importada pelo usuário da CLI (`piradopirata`) com `file_chmod_directory 02770` e `file_chmod_file 0660` (settings.local.php). Os PHP-FPM do site rodam como outros usuários (`aculta`, `toca`, `bdtgn`, `www-data`), que não liam a pasta. O status então via a base como ausente.

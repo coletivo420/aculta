@@ -28,6 +28,6 @@
 ## Status e versão (0.4.0-dev.148)
 
 - A importação grava `private://aculta_portal_cep/manifest.json` (versão = data da importação, quantidade de CEPs e arquivo de origem). O status do Portal calcula a idade pela data de hoje: até 90 dias é OK, de 91 a 180 é atenção, acima disso ou sem base é erro.
-- As APIs (ViaCEP e BrasilAPI) são verificadas no cron com um CEP fixo; o status mostra o último resultado. Resultado com mais de 2 dias é atenção (cron possivelmente parado).
+- As APIs (ViaCEP e BrasilAPI) são verificadas no cron, no máximo uma vez por dia, com um CEP fixo; o status mostra o último resultado. Resultado com mais de 2 dias é atenção (cron possivelmente parado).
 - Em produção, a base deve ser reimportada ao menos a cada 180 dias; o status acusa erro quando passa desse prazo.
 - Permissões: a base precisa ser legível pelos processos PHP-FPM do site. A importação deixa a pasta `0755` e os arquivos `0644` (`CepLocalStore::makeReadable()`). Sem isso, o status mostra "Sem base importada" mesmo com a base presente, porque o processo web não enxerga a pasta.

@@ -18,7 +18,8 @@ final class CepStatusCronHooks {
 
   #[Hook('cron')]
   public function cron(): void {
-    $this->probe->check();
+    // Diária: o probe só consulta as APIs quando a última verificação tem mais de um dia.
+    $this->probe->checkIfDue();
   }
 
 }
