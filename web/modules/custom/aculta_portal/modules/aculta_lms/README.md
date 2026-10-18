@@ -99,15 +99,15 @@ proporcional aos acertos, desconta opções erradas e limita o resultado mínimo
 a zero. O educador pode ajustar a nota de respostas abertas pela avaliação
 nativa do LMS.
 
-**F8 ainda não está concluída.** O arquivo de histórico e as regras de acesso
-estão implementados nesta branch, incluindo captura da versão anterior em
-edições, reavaliações e reinícios. Kernel já cobre persistência, bloqueio de
-edição e limpeza por conta. Ainda faltam testes de integração que percorram
-resposta LMS real, reavaliação, reinício, exclusão do progresso e isolamento
-entre turmas; cobertura de comentários reais; revisão de segurança; e smoke
-pela interface para estudante e educador matriculados. A versão upstream não
-guarda histórico por si; por isso o adaptador local permanece pequeno,
-documentado e isolado em `aculta_lms`.
+**F8 está implementada nesta branch e seus testes automatizados passaram.** A
+suíte Unit e Kernel do `aculta_lms` passou (15 testes, 259 assertions), cobrindo
+Answer/Comment reais, versões anteriores, reavaliação, exclusão, limpeza por
+progresso/conta/curso, acesso de aluno e educador, isolamento entre turmas,
+saída em texto e cache de permissões. O teste Unit de seleção do `lms_answer_plugins`
+contrib também passou (2 testes, 4 assertions). Gates Portal, imagem, slugs e
+lint passaram. Os Kernel tests reportaram 34 depreciações upstream em Group,
+LMS, Views e API de entidades do Core. O smoke visual no navegador ainda não
+foi executado; a adaptação local segue pequena e isolada em `aculta_lms`.
 
 RUNTIME STATUS: TABELA INSTALADA E SMOKE PARCIAL. Em 2026-10-18, Drush
 confirmou `http://cursos.aculta.toca.net.br` e `aculta_runtime`; foi aplicado
@@ -117,8 +117,7 @@ de leitura para educador com `lms_teacher`; edição foi negada e o registro foi
 removido ao fim do teste. As contas `teste.estudante` e `teste.educador` ficam
 no Runtime; as credenciais estão em `secrets/lms-test-accounts.env` (local,
 ignorado pelo Git, modo `0600`). A conta estudante só recebe o papel global ao
-entrar em uma turma. Smoke pela interface, matrícula, comentários reais,
-isolamento entre turmas e testes de ciclo de vida permanecem pendentes.
+entrar em uma turma. Smoke visual pela interface ainda está pendente. Comentários, isolamento entre turmas e ciclo de vida foram exercitados nos Kernel tests no banco dedicado; não são mutações do Runtime.
 
 Os testes de plugins F8 devem ser executados a partir de `web/core` com o
 PHPUnit do Composer; os Kernel tests usam exclusivamente o MariaDB dedicado
@@ -133,9 +132,9 @@ descrito em `docs/operations/BANCO-DE-TESTE.md`.
   alteração.
 - `tests/src/Unit/FreeTextReviewFeedbackTest.php`: frases orientam somente o
   feedback formativo e nunca finalizam a nota sem avaliação do educador.
-- `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada do submódulo
-  com registro DI e ausência de configuração própria; persistência do arquivo,
-  bloqueio de edição por access e limpeza quando a conta é removida.
+- `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada, registro DI, persistência, bloqueio de edição e limpeza por conta.
+- `tests/src/Kernel/AttemptArchiveLifecycleTest.php`: ciclo real de Answer/Comment, comentários publicados, acesso e cache por turma/permissão, saída em texto e limpeza por progresso/conta/curso.
+- `web/modules/contrib/lms/modules/lms_answer_plugins/tests/src/Unit/SelectBaseAnsweringFormTest.php`: teste upstream do formulário de seleção.
 
 Execute os testes a partir de `web/core` com PHPUnit do Composer. O Kernel test usa o banco MariaDB
 de teste dedicado (nunca o Runtime, nunca SQLite). Configuração, procedimento e resultados estão em

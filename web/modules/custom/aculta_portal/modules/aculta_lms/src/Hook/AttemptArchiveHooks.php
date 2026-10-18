@@ -40,8 +40,8 @@ final class AttemptArchiveHooks {
     }
   }
 
-  #[Hook('entity_postdelete')]
-  public function entityPostdelete(EntityInterface $entity): void {
+  #[Hook('entity_delete')]
+  public function entityDelete(EntityInterface $entity): void {
     if ($entity instanceof CourseStatusInterface) {
       $this->attemptArchiveManager->purgeByCourseStatus($entity);
       return;

@@ -121,12 +121,15 @@ branch implementa uma cópia interna de auditoria em `aculta_lms`, sem substitui
 o estado operacional do LMS. A cópia inclui a resposta anterior, nota,
 timestamps e a conversa vinculada à resposta; é visível só com `take course` ou
 `grade students` atuais e removida com o progresso do curso, conta ou curso.
-Kernel cobre persistência, acesso somente leitura e limpeza por conta. No
-Runtime de teste, o update de schema foi aplicado após backup restrito e smoke
-sintético confirmou persistência, negação para estudante sem matrícula, leitura
-por educador `lms_teacher` e negação de edição. Smoke pela interface, matrícula,
-comentários reais e isolamento entre turmas seguem pendentes. RUNTIME STATUS:
-UPDATE APLICADO; homologação integral DEFERRED.
+Unit e Kernel do `aculta_lms` passaram (15 testes, 259 assertions); o teste upstream
+de seleção passou (2 testes, 4 assertions). Kernel cobre Answer/Comment reais,
+edição, reavaliação, exclusão, limpeza por progresso/conta/curso, isolamento entre
+turmas, permissões, saída em texto e cacheability. Gates Portal (950 checks),
+imagem, slugs e PHP lint passaram. O Kernel registra 34 depreciações no
+ecosistema Group/LMS/Views/Core, sem alterações em contrib/Core. No Runtime de
+teste, o update de schema segue aplicado e o cache foi reconstruído após a
+correção; o smoke visual por navegador está pendente. RUNTIME STATUS: UPDATE
+APLICADO; homologação visual DEFERRED.
 
 ## Ordem, PR e status
 

@@ -144,13 +144,23 @@ final class AttemptArchiveManager {
     }
 
     $comments = [];
-    foreach ($answer->get('comments')->referencedEntities() as $comment) {
+    $comment_storage = $this->entityTypeManager->getStorage('comment');
+    $comment_ids = $comment_storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('entity_type', 'lms_answer')
+      ->condition('entity_id', $answer->id())
+      ->condition('field_name', 'comments')
+      ->condition('status', CommentInterface::PUBLISHED)
+      ->sort('created', 'ASC')
+      ->execute();
+    foreach ($comment_storage->loadMultiple($comment_ids) as $comment) {
       if (!$comment instanceof CommentInterface) {
         continue;
       }
       $author = $comment->getOwner();
+      $author_name = $author?->label() ?? $comment->getAuthorName();
       $comments[] = [
-        'author' => $author?->label() ?? 'Conta removida',
+        'author' => $author_name !== '' ? $author_name : 'Conta removida',
         'author_type' => (string) $comment->getOwnerId() === $answer->getUserId() ? 'student' : 'educator',
         'created' => $comment->getCreatedTime(),
         'body' => $comment->get('comment_body')->value,
