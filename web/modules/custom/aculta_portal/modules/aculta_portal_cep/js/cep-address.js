@@ -158,6 +158,10 @@
       if (numInput) bindStreetNumber(numInput, snInput);
 
       Object.entries(labels).forEach(([key, label]) => setLabel(getField(prefix, key, container), label));
+      // CEP já salvo no formulário é a base da comparação: digitar outro CEP troca o endereço inteiro.
+      if (!resolvedCep.has(prefix) && digits(postal.value).length === 8) {
+        resolvedCep.set(prefix, digits(postal.value));
+      }
       const pending = pendingFill.get(prefix);
       if (pending) {
         applyFill(prefix, container, pending, { onlyEmpty: false });

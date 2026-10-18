@@ -152,6 +152,15 @@ try:
     time.sleep(4)
     saved_ok = js('return document.querySelector("[role=alert]") === null;') is True and value_of('street_number') == '100'
     check('salvar endereço responde sem erro', saved_ok)
+
+    # Página recarregada com endereço salvo: um CEP diferente troca o endereço inteiro (sem salvar)
+    call('POST', f'/session/{SID}/url', {'url': ACCOUNT})
+    wait_for(lambda: find(f'[name="{F}[postal_code]"]'))
+    type_into('postal_code', '74711020')
+    ok = wait_for(lambda: value_of('locality') == 'Goiânia')
+    check('recarregada: CEP de outro estado troca a cidade', bool(ok), value_of('locality') or '')
+    check('recarregada: CEP troca a rua', wait_for(lambda: value_of('address_line1') == 'Rua 11') is not None and value_of('address_line1') == 'Rua 11', value_of('address_line1') or '')
+    check('recarregada: CEP troca o bairro', wait_for(lambda: value_of('dependent_locality') == 'Vila Bandeirantes') is not None and value_of('dependent_locality') == 'Vila Bandeirantes', value_of('dependent_locality') or '')
 finally:
     try:
         if SID:

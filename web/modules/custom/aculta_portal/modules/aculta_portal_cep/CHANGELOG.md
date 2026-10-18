@@ -1,3 +1,10 @@
+## 0.2.1-dev.1 — troca de CEP em página com endereço salvo — 2026-10-18
+
+- Bug: em página recarregada com endereço salvo, digitar outro CEP só preenchia o bairro vazio; cidade, UF e rua ficavam com o endereço antigo. Causa: a primeira busca da página era tratada como preenchimento de campos vazios.
+- Correção: o CEP já salvo no formulário é a base da comparação. Qualquer CEP diferente troca o endereço inteiro; um formulário vazio continua sendo preenchido só nos campos vazios.
+- Teste de navegador ampliado (20 verificações, incluindo página recarregada com CEP de outro estado).
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild); CEP 74711020 conferido.
+
 ## 0.2.0-dev.1 — base local de CEPs em arquivos — 2026-10-18
 
 - Base local em arquivos privados, divididos por prefixo (`private://aculta_portal_cep/shards`), sem banco de dados. A consulta local tem prioridade; ViaCEP e BrasilAPI só são usadas quando o CEP não está na base.
