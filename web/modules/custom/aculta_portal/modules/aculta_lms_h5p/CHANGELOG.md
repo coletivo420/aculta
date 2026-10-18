@@ -12,5 +12,7 @@
 - Kernel H5P: 3 testes, 40 assertions; Unit H5P: 11 testes, 46 assertions. Runtime e navegador: DEFERRED.
 - Restringe endpoints de progresso aos métodos HTTP usados pelo H5P e marca respostas com dados pessoais como `private, no-store`; rota validada em Kernel.
 - Corrige leituras e resets de configuração que ainda usavam nomes do módulo contrib; teste instala em diretório privado customizado e o Unit do upload confere o destino configurado.
+- Valida entradas do ZIP antes do extrator H5P para bloquear caminhos absolutos, traversal, caminhos malformados e links simbólicos; upload de bibliotecas agora usa o diretório privado configurado e o limite de tamanho nativo do PHP/Core.
+- Verificação atual: Kernel H5P 5 testes/60 assertions; Unit H5P 12 testes/52 assertions.
 - RUNTIME STATUS: DEFERRED.
 

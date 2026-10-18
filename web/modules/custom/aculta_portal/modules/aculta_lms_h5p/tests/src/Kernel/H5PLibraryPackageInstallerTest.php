@@ -117,6 +117,14 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     self::assertSame(['GET', 'POST'], $provider->getRouteByName('aculta_lms_h5p.ajax.content_user_data')->getMethods());
   }
 
+  /** Verifies package uploads follow the configured private storage location. */
+  public function testLibraryUploadFormUsesConfiguredPrivateDirectory(): void {
+    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\H5PLibraryUploadForm::class);
+    $built = $form->buildForm([], new \Drupal\Core\Form\FormState());
+    self::assertSame('private://h5p-kernel-test/packages', $built['package']['#upload_location']);
+    self::assertSame(['extensions' => 'h5p'], $built['package']['#upload_validators']['FileExtension']);
+  }
+
   /** Creates a temporary ZIP package with the requested entries. */
   private function createPackage(array $entries): string {
     $path = $this->siteDirectory . '/library-' . bin2hex(random_bytes(6)) . '.h5p';

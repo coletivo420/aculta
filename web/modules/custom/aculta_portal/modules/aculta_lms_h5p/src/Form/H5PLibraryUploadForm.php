@@ -6,6 +6,7 @@ namespace Drupal\aculta_lms_h5p\Form;
 
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryPackageInstaller;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Validation\FileValidatorSettingsTrait;
@@ -19,10 +20,15 @@ final class H5PLibraryUploadForm extends FormBase {
   public function __construct(
     private readonly H5PLibraryPackageInstaller $installer,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ConfigFactoryInterface $h5pConfigFactory,
   ) {}
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_lms_h5p.library_package_installer'), $container->get('entity_type.manager'));
+    return new static(
+      $container->get('aculta_lms_h5p.library_package_installer'),
+      $container->get('entity_type.manager'),
+      $container->get('config.factory'),
+    );
   }
 
   public function getFormId(): string {
@@ -30,6 +36,10 @@ final class H5PLibraryUploadForm extends FormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
+    $storagePath = (string) ($this->h5pConfigFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
+    if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@iD', $storagePath)) {
+      throw new \RuntimeException('The private H5P storage path is invalid.');
+    }
     $form['description'] = [
       '#type' => 'item',
       '#title' => $this->t('Instalar um pacote de bibliotecas'),
@@ -39,7 +49,7 @@ final class H5PLibraryUploadForm extends FormBase {
       '#type' => 'managed_file',
       '#title' => $this->t('Pacote H5P'),
       '#required' => TRUE,
-      '#upload_location' => 'private://h5p/packages',
+      '#upload_location' => "private://{$storagePath}/packages",
       '#upload_validators' => $this->getFileUploadValidators(['file_extensions' => 'h5p']),
     ];
     $form['actions']['#type'] = 'actions';
