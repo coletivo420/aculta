@@ -9,7 +9,10 @@ use Drupal\Core\File\FileSystemInterface;
 /** Installs locally reviewed H5P library packages with the official validator. */
 final class H5PLibraryPackageInstaller {
 
-  public function __construct(private readonly FileSystemInterface $fileSystem) {}
+  public function __construct(
+    private readonly FileSystemInterface $fileSystem,
+    private readonly H5PStoragePathInterface $storagePath,
+  ) {}
 
   /**
    * Validates and installs the libraries in a package, without importing content.
@@ -20,7 +23,7 @@ final class H5PLibraryPackageInstaller {
       throw new \InvalidArgumentException('Selecione um pacote H5P válido.');
     }
     $this->assertSafeArchivePaths($source);
-    $root = H5PDrupal::getStoragePath();
+    $root = $this->storagePath->getPath();
     $tempDirectory = $root . '/package-' . bin2hex(random_bytes(16));
     if (!mkdir($tempDirectory, 0700) || !chmod($tempDirectory, 0700)) {
       throw new \RuntimeException('Não foi possível preparar o armazenamento temporário do pacote.');

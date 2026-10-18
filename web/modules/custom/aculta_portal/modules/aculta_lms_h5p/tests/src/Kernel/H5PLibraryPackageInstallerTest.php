@@ -52,6 +52,10 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
       ->set('aculta_lms_h5p_send_usage_statistics', 0)
       ->save();
     $this->container->get('current_user')->setAccount($this->createUser(['update h5p libraries']));
+    self::assertSame(
+      $this->container->get('file_system')->realpath('private://h5p-kernel-test'),
+      $this->container->get('aculta_lms_h5p.storage_path')->getPath(),
+    );
   }
 
   /** Verifies a valid package installs private, managed library files. */

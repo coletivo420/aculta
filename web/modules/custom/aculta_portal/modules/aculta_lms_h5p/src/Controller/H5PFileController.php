@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms_h5p\Controller;
 
 use Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager;
-use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PStoragePathInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,10 +20,11 @@ final class H5PFileController implements ContainerInjectionInterface {
   public function __construct(
     private readonly H5PCourseAccessManager $courseAccess,
     private readonly AccountInterface $currentUser,
+    private readonly H5PStoragePathInterface $storagePath,
   ) {}
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_lms_h5p.course_access'), $container->get('current_user'));
+    return new static($container->get('aculta_lms_h5p.course_access'), $container->get('current_user'), $container->get('aculta_lms_h5p.storage_path'));
   }
 
   /** Serves a content asset only to members who can access its course. */
@@ -31,12 +32,12 @@ final class H5PFileController implements ContainerInjectionInterface {
     if (!$this->courseAccess->studentAccess($group_id, $content_id, $this->currentUser)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
-    return $this->serve(H5PDrupal::getStoragePath() . '/content/' . $content_id, $file_path, FALSE);
+    return $this->serve($this->storagePath->getPath() . '/content/' . $content_id, $file_path, FALSE);
   }
 
   /** Serves installed library runtime assets; package uploads are not exposed. */
   public function libraryFile(string $file_path): Response {
-    return $this->serve(H5PDrupal::getStoragePath() . '/libraries', $file_path, TRUE);
+    return $this->serve($this->storagePath->getPath() . '/libraries', $file_path, TRUE);
   }
 
   private function serve(string $base, string $relative, bool $library): Response {

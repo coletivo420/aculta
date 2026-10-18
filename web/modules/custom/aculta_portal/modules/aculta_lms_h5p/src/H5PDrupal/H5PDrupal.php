@@ -96,20 +96,10 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /** Returns the validated private directory used by H5P content and libraries. */
   public static function getStoragePath(): string {
-    $relativePath = (string) (\Drupal::config('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
-    if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@i', $relativePath)) {
-      throw new \RuntimeException('The private H5P storage path is invalid.');
-    }
-    $fileSystem = \Drupal::service('file_system');
-    $uri = 'private://' . $relativePath;
-    if (!$fileSystem->prepareDirectory($uri, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY | \Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS)) {
-      throw new \RuntimeException('The private H5P storage directory is unavailable.');
-    }
-    $path = $fileSystem->realpath($uri);
-    if ($path === FALSE) {
-      throw new \RuntimeException('The private H5P storage directory could not be resolved.');
-    }
-    return $path;
+    // H5P's framework interface is a legacy static integration point. Keep
+    // path policy in an injectable service so application controllers do not
+    // depend on this service locator.
+    return \Drupal::service('aculta_lms_h5p.storage_path')->getPath();
   }
 
   /**
