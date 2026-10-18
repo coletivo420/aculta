@@ -680,6 +680,28 @@ herança é ignorada, um gerente perde acesso que deveria ter e um papel ganha a
   na versão instalada, quando o contrato não estiver claro. Registro "Verificar" ou "Sem contraparte" não autoriza
   suposição. Se a busca não confirmar o contrato, o agente diz isso e pergunta antes de editar.
 
+## Compras de teste: usuário teste.comum e comprador de teste do Mercado Pago (regra permanente)
+
+Decisão do responsável (2026-10-18). Vale para qualquer agente.
+
+- **Compra de teste sempre pelo usuário `teste.comum`** (uid 5), inclusive quando o fluxo passa pelo Mercado Pago. Não usar
+  conta do responsável, conta real nem outra conta de teste para montar o pedido.
+- **Pagamento no Mercado Pago de teste:** o checkout é concluído com o **comprador de teste** do Mercado Pago, cujas
+  credenciais estão em `secrets/` (nunca no repositório):
+  - usuário (login do comprador): campo "Usuário de teste" em `secrets/mercadolivre_test_user`;
+  - senha: `MERCADOPAGO_TEST_BUYER_PASSWORD` em `secrets/aculta.secrets.env`;
+  - chaves do gateway de teste: `MERCADOPAGO_TEST_PUBLIC_KEY` e `MERCADOPAGO_TEST_ACCESS_TOKEN` em `secrets/aculta.secrets.env`.
+- **Pendência de verificação:** o `User ID` de `secrets/mercadolivre_test_user` coincide com a conta vendedora do
+  token de teste. Antes de usar esse usuário como comprador, confirmar com o responsável que é o comprador e não a
+  conta vendedora (o Mercado Pago recusa pagamento em que comprador e vendedor são a mesma conta).
+- Não exibir, copiar nem registrar senhas, tokens ou o conteúdo desses arquivos em saídas, commits, documentos ou
+  mensagens. Referenciar só o nome do arquivo e do campo.
+- Antes de cada rodada de compra de teste, rodar `scripts/guard-teste-comum.sh` (senha do `teste.comum` confere com
+  `secrets/teste_comum.env`). FAIL: parar e relatar.
+- Motivo: uma compra feita com a conta do responsável ou sem comprador de teste mistura o dinheiro e o histórico real
+  com o teste, e o incidente de 2026-10-11 (`docs/portal/CHECKOUT-BILLING.md`) mostrou o Mercado Pago abrindo com a
+  conta logada do responsável.
+
 ## Pagamentos: processados pelo Mercado Pago (regra permanente)
 
 - Todo pagamento é processado pelo **Mercado Pago**. O portal **não guarda** nem **exibe** meios de pagamento salvos
