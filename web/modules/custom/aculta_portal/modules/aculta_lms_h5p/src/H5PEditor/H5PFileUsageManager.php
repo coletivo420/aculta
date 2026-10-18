@@ -23,7 +23,7 @@ final class H5PFileUsageManager {
 
   /** Marks a media file retained by a saved H5P content entity. */
   public function keep(string $absolutePath): void {
-    $base = (string) ($this->configFactory->get('aculta_lms_h5p.settings')->get('h5p_default_path') ?? 'h5p');
+    $base = (string) ($this->configFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
     if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@iD', $base)) {
       throw new \RuntimeException('The H5P private storage path is invalid.');
     }

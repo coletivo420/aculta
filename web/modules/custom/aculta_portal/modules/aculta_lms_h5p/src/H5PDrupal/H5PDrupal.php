@@ -96,7 +96,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /** Returns the validated private directory used by H5P content and libraries. */
   public static function getStoragePath(): string {
-    $relativePath = (string) (\Drupal::config('aculta_lms_h5p.settings')->get('h5p_default_path') ?? 'h5p');
+    $relativePath = (string) (\Drupal::config('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
     if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@i', $relativePath)) {
       throw new \RuntimeException('The private H5P storage path is invalid.');
     }
@@ -1224,10 +1224,10 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function resetHubOrganizationData() {
     $config = \Drupal::configFactory()->getEditable('aculta_lms_h5p.settings');
-    $config->clear('h5p_site_uuid');
-    $config->clear('h5p_hub_secret');
-    $config->set('h5p_hub_is_enabled', 0);
-    $config->set('h5p_send_usage_statistics', 0);
+    $config->clear('aculta_lms_h5p_site_uuid');
+    $config->clear('aculta_lms_h5p_hub_secret');
+    $config->set('aculta_lms_h5p_hub_is_enabled', 0);
+    $config->set('aculta_lms_h5p_send_usage_statistics', 0);
     $config->save();
   }
 

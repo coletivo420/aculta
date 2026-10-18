@@ -11,5 +11,6 @@
 - Instalação real via Kernel passou com biblioteca, asset JavaScript privado e SVG gerenciado pelo `aculta_image`; pacote sem biblioteca é rejeitado sem escrita no banco.
 - Kernel H5P: 3 testes, 40 assertions; Unit H5P: 11 testes, 46 assertions. Runtime e navegador: DEFERRED.
 - Restringe endpoints de progresso aos métodos HTTP usados pelo H5P e marca respostas com dados pessoais como `private, no-store`; rota validada em Kernel.
+- Corrige leituras e resets de configuração que ainda usavam nomes do módulo contrib; teste instala em diretório privado customizado e o Unit do upload confere o destino configurado.
 - RUNTIME STATUS: DEFERRED.
 

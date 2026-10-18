@@ -61,7 +61,7 @@ final class H5PEditorUploadManagerTest extends UnitTestCase {
     $managedFile = $this->createMock(FileInterface::class);
     $managedFile->method('getFilename')->willReturn('capa.png');
     $managedFile->method('getMimeType')->willReturn('image/png');
-    $managedFile->method('getFileUri')->willReturn('private://h5p/editor/images/capa.png');
+    $managedFile->method('getFileUri')->willReturn('private://h5p-custom/editor/images/capa.png');
     $uploadResult = (new FileUploadResult())->setFile($managedFile);
     $handler = $this->createMock(FileUploadHandlerInterface::class);
     $handler->expects(self::once())
@@ -69,7 +69,7 @@ final class H5PEditorUploadManagerTest extends UnitTestCase {
       ->with(
         self::isInstanceOf(\Drupal\file\Upload\FormUploadedFile::class),
         ['FileExtension' => ['extensions' => 'png gif jpg jpeg webp'], 'FileSizeLimit' => ['fileLimit' => 10485760]],
-        'private://h5p/editor/images',
+        'private://h5p-custom/editor/images',
         FileExists::Rename,
       )
       ->willReturn($uploadResult);
@@ -78,13 +78,13 @@ final class H5PEditorUploadManagerTest extends UnitTestCase {
     $image->method('getWidth')->willReturn(1);
     $image->method('getHeight')->willReturn(1);
     $imageFactory = $this->createMock(ImageFactory::class);
-    $imageFactory->method('get')->with('private://h5p/editor/images/capa.png')->willReturn($image);
+    $imageFactory->method('get')->with('private://h5p-custom/editor/images/capa.png')->willReturn($image);
     $inspector = new ImageInspector($imageFactory);
     $imageIngestor = new ImageUploadIngestor(new UploadPolicy(), $inspector, $handler);
     $fileSystem = $this->createMock(FileSystemInterface::class);
     $fileSystem->expects(self::once())->method('prepareDirectory')->willReturn(TRUE);
     $config = $this->createMock(\Drupal\Core\Config\ImmutableConfig::class);
-    $config->method('get')->with('h5p_default_path')->willReturn('h5p');
+    $config->method('get')->with('aculta_lms_h5p_default_path')->willReturn('h5p-custom');
     $configFactory = $this->createMock(ConfigFactoryInterface::class);
     $configFactory->method('get')->with('aculta_lms_h5p.settings')->willReturn($config);
     $manager = new H5PEditorUploadManager(

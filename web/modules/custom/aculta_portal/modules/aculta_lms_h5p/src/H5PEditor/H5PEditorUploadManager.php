@@ -72,7 +72,7 @@ final class H5PEditorUploadManager {
       }
     }
 
-    $basePath = (string) ($this->configFactory->get('aculta_lms_h5p.settings')->get('h5p_default_path') ?? 'h5p');
+    $basePath = (string) ($this->configFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
     if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@iD', $basePath)) {
       return $this->error('O armazenamento de atividades está indisponível.');
     }

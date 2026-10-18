@@ -47,7 +47,7 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
       'h5p_counters',
     ]);
     $this->container->get('config.factory')->getEditable('aculta_lms_h5p.settings')
-      ->set('aculta_lms_h5p_default_path', 'h5p')
+      ->set('aculta_lms_h5p_default_path', 'h5p-kernel-test')
       ->set('aculta_lms_h5p_hub_is_enabled', 0)
       ->set('aculta_lms_h5p_send_usage_statistics', 0)
       ->save();
@@ -77,12 +77,12 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
         ->condition('machine_name', 'H5P.Test')
         ->execute()->fetchAssoc();
       self::assertSame(['machine_name' => 'H5P.Test', 'major_version' => '1', 'minor_version' => '0'], $library);
-      $file = $this->container->get('file.repository')->loadByUri('private://h5p/libraries/H5P.Test-1.0/script.js');
+      $file = $this->container->get('file.repository')->loadByUri('private://h5p-kernel-test/libraries/H5P.Test-1.0/script.js');
       self::assertNotNull($file);
       self::assertFalse($file->isTemporary());
       self::assertSame('window.H5PTest = true;', file_get_contents($this->container->get('file_system')->realpath($file->getFileUri())));
       self::assertNotEmpty($this->container->get('file.usage')->listUsage($file)['aculta_lms_h5p']['h5p_library']['H5P.Test-1.0'] ?? NULL);
-      $image = $this->container->get('file.repository')->loadByUri('private://h5p/libraries/H5P.Test-1.0/assets/icon.svg');
+      $image = $this->container->get('file.repository')->loadByUri('private://h5p-kernel-test/libraries/H5P.Test-1.0/assets/icon.svg');
       self::assertNotNull($image);
       self::assertTrue(is_file($this->container->get('file_system')->realpath($image->getFileUri())));
       self::assertNotEmpty($this->container->get('file.usage')->listUsage($image)['aculta_image']['h5p_library_asset'] ?? NULL);
