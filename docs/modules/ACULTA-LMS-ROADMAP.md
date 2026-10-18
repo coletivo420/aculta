@@ -138,13 +138,18 @@ três pacotes novos e zero atualizações/remoções. Os módulos estão habilit
 `see_details` sem revalidar matrícula. `aculta_lms` agora adiciona `take course` atual à rota de download
 de anexos do LMS File Upload, preservando a autorização LMS para educadores. Kernel usa arquivo no
 filesystem privado temporário, valida a rota descoberta, transmite os bytes, nega a rota após revogar
-membership e preserva acesso do educador; a suíte do submódulo passou (9 testes, 300 assertions; 35
+membership e preserva acesso do educador; a suíte do submódulo passou (10 testes, 311 assertions; 77
 deprecações Core/contrib). Unit passou (15 testes, 81 assertions), incluindo permissões de leitura própria,
 leitura ampla e bloqueio de edição de score Webform. Auditoria somente leitura no Runtime confirmou que
 nenhum papel atualmente tem as permissões `view any submission score` ou `view own submission score`.
+Kernel também passou com uma submissão Webform persistida e autoria real: o dono com a permissão de leitura
+própria pode ver a nota, outra conta é negada e edição direta permanece proibida (1 teste, 11 assertions;
+42 deprecações de Core/contrib). O Runtime não tem atividade de upload, resposta de arquivo, atividade de quiz
+ou formulário com score; por isso, smoke HTTP/browser no Runtime continua pendente e não foram criadas fixtures
+persistentes nele.
 Webform Score continua restrito às submissões Webform; não há integração que promova resultado
-automaticamente para a nota LMS. Ainda pendem teste de submissão Webform com autoria real, revogação de membership e download no
-Runtime/browser. A tentativa automática de baixar traduções
+automaticamente para a nota LMS. Ainda pendem revogação de membership e download no Runtime/browser. A tentativa
+automática de baixar traduções
 pt-BR dos três módulos durante `drush en` falhou porque `translations://` não está configurado neste
 Runtime; o código e a ativação terminaram com sucesso. RUNTIME STATUS: MÓDULOS HABILITADOS; homologação
 de acesso a arquivos DEFERRED.

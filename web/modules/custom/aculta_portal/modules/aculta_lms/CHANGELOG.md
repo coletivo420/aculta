@@ -6,6 +6,7 @@
 - A navegação administrativa lateral recebe um ícone SVG próprio de livro aberto pelo Icon API do Drupal Navigation; a barra Toolbar clássica mantém seu fallback customizado. Core e contrib não foram editados.
 - O painel `/painel-administrativo/lms` e suas subpáginas usam traduções pt-BR para menus, descrições, cursos, turmas, aulas, atividades e configurações; sem alterar rotas ou títulos de conteúdo.
 - F9 adiciona Webform Score e LMS File Upload via Composer; o download privado em `/resposta/{lms_answer}/baixar-arquivo` exige acesso atual ao curso para o autor e mantém a permissão de avaliação para educadores.
+- Kernel F9 verifica autoria em uma submissão Webform persistida: proprietário com permissão pode visualizar a nota, outra conta não pode e edição direta é negada; Runtime ainda não contém fixture educacional para smoke HTTP/browser.
 - O plugin `free_text_review_feedback`, adaptado do Drupal LMS 1.2.4 sob GPL-2.0-or-later, oferece feedback formativo por frases e mantém a correção final exclusivamente manual pelo educador.
 - O Drupal LMS já fornece múltipla escolha/seleção múltipla, verdadeiro/falso e completar lacunas, com variantes de feedback; o LMS mantém resposta, nota e progresso.
 - `lms_answer_comments` e Core Comment fornecem diálogo ligado à resposta e avaliação manual, sem campo ou gradebook paralelo.
