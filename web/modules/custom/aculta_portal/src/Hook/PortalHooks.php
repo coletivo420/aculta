@@ -520,7 +520,9 @@ final class PortalHooks {
     }
 
     $path = $this->currentPath->getPath();
-    if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity)) {
+    // /dados/endereco é tratado pelo bloco de endereço logo abaixo (país padrão, número e S/N). Este bloco de papel
+    // retorna antes e não pode engolir essa página: o tipo authenticated também é tipo de papel.
+    if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity) && $path !== '/dados/endereco') {
       if ($path === '/dados') {
         // Keep this tab limited to personal basics, even if older active
         // Profile display configuration still contains address components.
@@ -563,6 +565,7 @@ final class PortalHooks {
       }
       if (isset($form['field_address']['widget'][0]['address'])) {
         $address_element = &$form['field_address']['widget'][0]['address'];
+        // Endereço do projeto é só do Brasil: o país fica fixo (BR), sem seletor (a regressão mostrava a lista).
         $address_element['#default_value']['country_code'] ??= 'BR';
         $participant = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $this->currentUser);
         if ($participant) {
@@ -600,6 +603,8 @@ final class PortalHooks {
       }
       if (isset($form['field_address']['widget'][0]['address'])) {
         \Drupal\aculta_portal\Account\StreetNumberField::attach($form['field_address']['widget'][0]['address'], $parts['number'], $parts['sn']);
+        // Depois do attach (que define o #process do número): o país some ao final do processamento do widget.
+        $form['field_address']['widget'][0]['address']['#process'][] = [self::class, 'hideCountrySelect'];
       }
       // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
       $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';
@@ -777,6 +782,20 @@ final class PortalHooks {
         $tags['title'] = 'Apoio | Associação Cultural Antiproibicionista';
       }
     }
+  }
+
+  /**
+   * Process callback do endereço da conta: o país fica fixo em Brasil, sem seletor.
+   *
+   * @param array<string, mixed> $element
+   *
+   * @return array<string, mixed>
+   */
+  public static function hideCountrySelect(array $element): array {
+    if (isset($element['country_code'])) {
+      $element['country_code']['#access'] = FALSE;
+    }
+    return $element;
   }
 
 }

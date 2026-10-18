@@ -183,6 +183,9 @@ final class EditorialHooks {
       // Keep the contrib endpoint/client/cache, while using the local behavior
       // for accessible status, stale-response protection, and post-fill focus.
       $libraries['viacep']['dependencies'][] = 'aculta_portal/cep-address';
+      // O cliente do contrib chama o endpoint sem X-Requested-With e recebe 403 (o Portal exige AJAX). Disputa o mesmo
+      // once('cep-autocomplete') com o comportamento do Portal, que envia o cabeçalho e preenche os campos.
+      unset($libraries['viacep']['js']['js/viacep.js']);
     }
   }
 

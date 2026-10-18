@@ -2,15 +2,6 @@
 
 - Cria a View `aculta_shop_catalog` com página pública `/produtos` e bloco para uso no purpose SHOP. A consulta mantém fixos produto publicado e bundle `produto_loja`; filtros não são expostos nem alteráveis por CTools.
 - Adiciona o modo Commerce `catalog` com título ligado ao produto, resumo e formulário de compra das variações. CTools Views no bloco permite ajustar somente pager e itens por página.
-- A rota da página recebe o purpose `shop`; a permissão anônima `view commerce_product` já estava ativa e não foi alterada. Nenhum produto, checkout ou gateway foi alterado nesta etapa funcional.
-- Configuração aplicada no Runtime de teste `aculta_runtime` em `loja.aculta.toca.net.br`; rota validada como purpose SHOP, execução da View retornou 1 produto e HTTP `/produtos` respondeu 200. Inspeção visual DEFERRED.
-- A sincronização inicial apontou configuração órfã de um tema removido (`bootstrap5.settings` e seu bloco de busca); após confirmar que o tema não está ativo nem instalado, os dois objetos sem equivalente funcional foram preservados em `/tmp` e removidos do Runtime. O import parcial então concluiu com sucesso.
-- RUNTIME STATUS: CONFIG APLICADA; inspeção visual DEFERRED.
-
-## 0.4.0-dev.143 — View pública do catálogo da loja — 2026-10-18
-
-- Cria a View `aculta_shop_catalog` com página pública `/produtos` e bloco para uso no purpose SHOP. A consulta mantém fixos produto publicado e bundle `produto_loja`; filtros não são expostos nem alteráveis por CTools.
-- Adiciona o modo Commerce `catalog` com título ligado ao produto, resumo e formulário de compra das variações. CTools Views no bloco permite ajustar somente pager e itens por página.
 - A rota da página recebe o purpose `shop`; a permissão anônima `view commerce_product` já estava ativa e não foi alterada. Nenhum produto, checkout, gateway ou tema foi modificado.
 - Configuração aplicada no Runtime de teste `aculta_runtime` em `loja.aculta.toca.net.br`; rota validada como purpose SHOP, execução da View retornou 1 produto e HTTP `/produtos` respondeu 200. Inspeção visual DEFERRED.
 - A sincronização inicial apontou configuração órfã de um tema removido (`bootstrap5.settings` e seu bloco de busca); após confirmar que o tema não está ativo nem instalado, os dois objetos sem equivalente funcional foram preservados em `/tmp` e removidos do Runtime. O import parcial então concluiu com sucesso.
