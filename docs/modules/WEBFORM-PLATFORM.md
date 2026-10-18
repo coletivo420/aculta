@@ -21,8 +21,13 @@ avaliação sem nota oficial do LMS, pedidos de informação e coleta documental
 Atividades avaliadas, tentativas e notas de cursos permanecem no LMS. Não
 converter submissões Webform em notas LMS automaticamente.
 
-CTools não é o construtor de formulários; sua API de wizard não oferece a UI de
+Webform e Webform UI já estão habilitados na configuração versionada; portanto,
+a decisão de plataforma não exige adicionar outro construtor nem dependência.
+CTools não é o construtor de formulários: sua API de wizard não oferece a UI de
 criação para editores. O Webform já possui a navegação em etapas necessária.
+CTools permanece por funções atuais não relacionadas à construção de
+formulários (opções do bloco Views de próximas atividades e condição de grupo
+da integração H5P); veja [`CTOOLS.md`](../../web/modules/custom/aculta_portal/docs/CTOOLS.md).
 
 ## Inventário versionado
 
@@ -171,6 +176,7 @@ ativar proteção indiscriminada em todos os formulários do site.
 ## Referências
 
 - [Webform: recursos, elementos, wizard, submissões e controle de acesso](https://www.drupal.org/docs/contributed-modules/webform/webform-features)
+- [Webform UI: interface administrativa para construir formulários](https://www.drupal.org/docs/contributed-modules/webform/webform-sub-modules)
 - [Projeto e releases do Webform](https://www.drupal.org/project/webform)
 - [Release Webform 6.3.1](https://www.drupal.org/project/webform/releases/6.3.1)
 - [Aviso SA-CONTRIB-2026-175 (execução remota)](https://www.drupal.org/sa-contrib-2026-175)

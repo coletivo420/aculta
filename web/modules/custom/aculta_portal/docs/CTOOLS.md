@@ -1,11 +1,19 @@
 # CTools no ACULTA Portal
 
-O projeto usa CTools 4.1 como API de apoio ao Views, por meio do submódulo
-`ctools_views`. O pacote já chegava ao Composer de forma transitiva pelo
-Pathauto; agora é dependência direta porque `aculta_portal` exige os módulos
-`ctools` e `ctools_views`. O submódulo `ctools_entity_mask` também está
-habilitado como capacidade disponível, mas nenhum tipo de entidade do projeto
-declara atualmente uma máscara.
+O CTools 4.1 permanece no projeto porque há dois usos funcionais identificados:
+`ctools_views` permite configurar a paginação e a quantidade de itens do bloco
+editorial de próximas atividades; a integração H5P do LMS fornece uma condição
+de grupo para a API de plugins do CTools. O `aculta_portal` declara a
+dependência de `ctools` e `ctools_views`; o submódulo H5P declara `ctools`.
+Além disso, o Composer já recebe CTools transitivamente por dependências de
+terceiros. Remover o pacote exige primeiro migrar esses consumidores e revisar
+a árvore Composer.
+
+O `ctools_entity_mask` está habilitado na configuração versionada, mas nenhum
+tipo de entidade do projeto declara atualmente uma máscara. Ele não é necessário
+para os dois usos acima; sua desativação pode ser considerada separadamente,
+depois de confirmar o estado de configuração do Runtime e avaliar o histórico
+da decisão que o habilitou.
 
 ## Uso aplicado
 
@@ -31,6 +39,9 @@ uso revisado.
   apresentação editorial de cada bloco.
 - CTools é extensão da experiência de configuração do bloco; a View e o Core
   continuam donos da consulta, access e cache.
+- No LMS, a condição CTools de grupo é uma integração de contexto para
+  atividades H5P; ela não substitui permissões do Drupal nem controla acesso a
+  submissões Webform.
 
 ## Entity Mask
 
