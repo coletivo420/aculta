@@ -1,3 +1,11 @@
+## 0.6.0-dev.83 — centraliza popup da busca — 2026-10-18
+
+Classificação: PATCH de apresentação; sem alteração na busca, formulário ou acesso.
+
+- O diálogo da busca fica centralizado nos dois eixos da viewport, em telas grandes e pequenas, mantendo o limite de largura e altura existente.
+- Corrige o quoting de uma story YAML do catálogo visual que impedia o parser/validator do tema de concluir.
+- RUNTIME STATUS: aplicado ao Runtime de testes; verificação visual DEFERRED.
+
 ## 0.6.0-dev.82 — catálogo visual e extensão semântica de UI Styles — 2026-10-18
 
 Classificação: PATCH de documentação e site building; sem alteração de dados ou contrato funcional do Portal.

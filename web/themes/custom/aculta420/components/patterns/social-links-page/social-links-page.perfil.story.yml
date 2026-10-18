@@ -6,7 +6,7 @@ props:
   has_links: true
 slots:
   description:
-    markup: <p>Associação cultural antiproibicionista: cultura, direitos e participação.</p>
+    markup: '<p>Associação cultural antiproibicionista: cultura, direitos e participação.</p>'
   links:
     markup: '<a class="btn btn-primary" href="#site-exemplo">Conheça a associação</a><a class="btn btn-outline-primary" href="#canal-exemplo">Canal cultural (exemplo)</a>'
   projects:

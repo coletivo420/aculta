@@ -322,6 +322,14 @@ comportamento: não remova ao mudar o visual. Inventário: `docs/portal/FRONTEIR
   (hoje: `assets/brands/mercado-pago/mercado-pago.svg`, na caixa de pagamentos de Meus pedidos).
 - Gate: `php scripts/validate-module-theme-boundary.php`, seção 12.
 
+## Diálogo da busca
+
+O popup acionado pela barra multidomínio usa Drupal Dialog e é centralizado nos
+dois eixos da viewport pelo seletor `[data-portal-ui="search-popup"]` em
+`css/components/dialog.css`. Largura e altura máximas preservam margem de tela
+em dispositivos menores; o tema controla apenas a apresentação, e o Portal
+continua responsável pela rota e pelo formulário.
+
 ## Cores só em tokens (regra permanente)
 
 - Fora de `css/tokens.css`, nenhum CSS do tema usa cor literal (hex, `rgb()`, `hsl()`, `color-mix()` etc.). Use um token
