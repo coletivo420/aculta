@@ -81,6 +81,58 @@ final class PackagedAssetPublisher {
     return TRUE;
   }
 
+  /** Publishes an image from an H5P package into private managed storage. */
+  public function publishH5PLibraryImage(string $source, string $destination, string $packageRoot, string $origin): bool {
+    $sourcePath = realpath($source);
+    $rootPath = realpath($packageRoot);
+    if ($sourcePath === FALSE || $rootPath === FALSE || !str_starts_with($sourcePath, $rootPath . DIRECTORY_SEPARATOR)
+      || !is_file($sourcePath) || !is_readable($sourcePath) || !preg_match('@^private://(?:[A-Za-z0-9_-]+/)*libraries/.+$@D', $destination)) {
+      return FALSE;
+    }
+    $relative = preg_replace('@^private://(?:[A-Za-z0-9_-]+/)*libraries/@', '', $destination);
+    if (!is_string($relative)) {
+      return FALSE;
+    }
+    if ($relative === '' || str_contains($relative, '\\') || preg_match('@(?:^|/)\.\.?(/|$)|[^\pL\pN._/-]@u', $relative)) {
+      return FALSE;
+    }
+    $bytes = file_get_contents($sourcePath);
+    if (!is_string($bytes) || strlen($bytes) > UploadPolicy::MAX_BYTES
+      || ($bytes = $this->validatedBytes($bytes, $destination)) === NULL) {
+      return FALSE;
+    }
+    $sha = hash('sha256', $bytes);
+    $existingPath = $this->fileSystem->realpath($destination);
+    if ($existingPath !== FALSE) {
+      if (!hash_equals($sha, hash_file('sha256', $existingPath) ?: '')) {
+        return FALSE;
+      }
+      $files = $this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $destination]);
+      $file = reset($files);
+      if (!$file) {
+        return FALSE;
+      }
+    }
+    else {
+      if (!$this->fileSystem->prepareDirectory(dirname($destination), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+        return FALSE;
+      }
+      $file = $this->fileRepository->writeData($bytes, $destination, FileExists::Error);
+      if ($file === FALSE) {
+        return FALSE;
+      }
+      $file->setPermanent();
+      $file->save();
+    }
+    $this->record((int) $file->id(), $sha, $origin);
+    $usageId = hash('sha256', dirname($relative));
+    $usage = $this->fileUsage->listUsage($file);
+    if (empty($usage['aculta_image']['h5p_library_asset'][$usageId])) {
+      $this->fileUsage->add($file, 'aculta_image', 'h5p_library_asset', $usageId);
+    }
+    return TRUE;
+  }
+
   /** Verifies provenance against the two pinned H5P Composer package roots. */
   private function trustedH5pSource(string $sourcePath, string $origin): bool {
     if (!preg_match('@^composer://h5p/(h5p-core|h5p-editor)/([A-Za-z0-9._/-]+)$@D', $origin, $matches)
@@ -123,7 +175,16 @@ final class PackagedAssetPublisher {
       ) ?? $bytes;
       return $this->validSvg($bytes) ? $bytes : NULL;
     }
-    return ImageIngester::extensaoAceita($destination) && $this->inspector->fromBytes($bytes) !== NULL ? $bytes : NULL;
+    $image = $this->inspector->fromBytes($bytes);
+    $extension = strtolower(pathinfo($destination, PATHINFO_EXTENSION));
+    $extensions = match ($image['mime'] ?? '') {
+      'image/png' => ['png'],
+      'image/jpeg' => ['jpg', 'jpeg'],
+      'image/gif' => ['gif'],
+      'image/webp' => ['webp'],
+      default => [],
+    };
+    return ImageIngester::extensaoAceita($destination) && in_array($extension, $extensions, TRUE) ? $bytes : NULL;
   }
 
   /** Rejects active SVG markup; these files are pinned package assets, not user uploads. */

@@ -1,41 +1,82 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; upload path disabled pending image ingestion.
-
 declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\Form;
 
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryPackageInstaller;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Validation\FileValidatorSettingsTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Explains why direct third-party H5P package uploads are currently disabled.
- */
+/** Adds reviewed local H5P library packages through the H5P validator. */
 final class H5PLibraryUploadForm extends FormBase {
 
-  /**
-   * {@inheritdoc}
-   */
+  use FileValidatorSettingsTrait;
+
+  public function __construct(
+    private readonly H5PLibraryPackageInstaller $installer,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static($container->get('aculta_lms_h5p.library_package_installer'), $container->get('entity_type.manager'));
+  }
+
   public function getFormId(): string {
     return 'aculta_lms_h5p_library_upload_form';
   }
 
-  /**
-   * {@inheritdoc}
-   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $form['status'] = [
+    $form['description'] = [
       '#type' => 'item',
-      '#title' => $this->t('Library package upload unavailable'),
-      '#description' => $this->t('Upload will be enabled after embedded images are ingested and tracked by the ACULTA image system.'),
+      '#title' => $this->t('Instalar um pacote de bibliotecas'),
+      '#description' => $this->t('Envie um pacote .h5p confiável. As bibliotecas serão validadas e instaladas; atividades e conteúdos incluídos no pacote serão ignorados.'),
+    ];
+    $form['package'] = [
+      '#type' => 'managed_file',
+      '#title' => $this->t('Pacote H5P'),
+      '#required' => TRUE,
+      '#upload_location' => 'private://h5p/packages',
+      '#upload_validators' => $this->getFileUploadValidators(['file_extensions' => 'h5p']),
+    ];
+    $form['actions']['#type'] = 'actions';
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Instalar bibliotecas'),
+      '#button_type' => 'primary',
     ];
     return $form;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state): void {}
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
+    $fids = $form_state->getValue('package');
+    $file = is_array($fids) && isset($fids[0]) ? $this->entityTypeManager->getStorage('file')->load($fids[0]) : NULL;
+    if (!$file || !str_ends_with(strtolower($file->getFilename()), '.h5p') || $file->getFileUri() === '') {
+      $form_state->setErrorByName('package', $this->t('Selecione um pacote .h5p válido.'));
+    }
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $fids = $form_state->getValue('package');
+    $file = $this->entityTypeManager->getStorage('file')->load($fids[0] ?? 0);
+    if (!$file) {
+      $form_state->setErrorByName('package', $this->t('Não foi possível localizar o pacote enviado.'));
+      return;
+    }
+    try {
+      $count = $this->installer->install($file->getFileUri());
+      $this->messenger()->addStatus($this->formatPlural($count, 'Uma biblioteca H5P foi instalada.', '@count bibliotecas H5P foram instaladas.'));
+    }
+    catch (\Throwable $exception) {
+      $this->getLogger('aculta_lms_h5p')->warning('H5P library package installation failed: @message', ['@message' => $exception->getMessage()]);
+      $this->messenger()->addError($this->t('Não foi possível instalar o pacote. Verifique se ele contém bibliotecas H5P válidas e compatíveis.'));
+    }
+    finally {
+      $file->getEntityType()->getStorage()->delete([$file]);
+    }
+  }
 
 }

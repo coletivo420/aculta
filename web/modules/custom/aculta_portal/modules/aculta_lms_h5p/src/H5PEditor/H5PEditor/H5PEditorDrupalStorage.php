@@ -4,8 +4,6 @@
 namespace Drupal\aculta_lms_h5p\H5PEditor;
 
 use Drupal\aculta_lms_h5p\H5PEditor\H5PFileUsageManager;
-use Drupal\Core\File\FileSystemInterface;
-use Drupal\file\Entity\File;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 
 class H5PEditorDrupalStorage implements \H5peditorStorage {
@@ -210,35 +208,9 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    * @return bool|false|string Real absolute path of the temporary folder
    */
   public static function saveFileTemporarily($data, $move_file = FALSE) {
-
-    $interface = H5PDrupal::getInstance();
-    $h5p_path = $interface->getOption('default_path', 'h5p');
-    $temp_id = uniqid('h5p-');
-
-    $temporary_file_path = "public://{$h5p_path}/temp/{$temp_id}";
-    $file_service = \Drupal::service('file_system');
-    $file_service->prepareDirectory($temporary_file_path, FileSystemInterface::CREATE_DIRECTORY);
-    $name = $temp_id . '.h5p';
-    $target = $temporary_file_path . DIRECTORY_SEPARATOR . $name;
-    if ($move_file) {
-      $file = move_uploaded_file($data, $target);
-    }
-    else {
-      $file = $file_service->saveData($data, $target);
-    }
-    if (!$file) {
-      return FALSE;
-    }
-
-    // Set session variables necessary for finding the files
-    $dir = $file_service->realpath($temporary_file_path);
-    $interface->getUploadedH5pFolderPath($dir);
-    $interface->getUploadedH5pPath("{$dir}/{$name}");
-
-    return (object) array(
-      'dir' => $dir,
-      'fileName' => $name
-    );
+    // Package import must go through H5PLibraryPackageInstaller; this legacy
+    // editor callback cannot provide the required managed-file lifecycle.
+    return FALSE;
   }
 
   /**
@@ -249,32 +221,7 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    * @param int $content_id
    */
   public static function markFileForCleanup($file, $content_id = null) {
-    // Determine URI
-    $file_type = $file->getType();
-    $file_name = $file->getName();
-    $interface = H5PDrupal::getInstance('interface');
-    $h5p_path = $interface->getOption('default_path', 'h5p');
-    $uri = "public://{$h5p_path}/";
-
-    if ($content_id) {
-      $uri .= "content/{$content_id}/{$file_type}s/{$file_name}";
-    }
-    else {
-      $uri .= "editor/{$file_type}s/{$file_name}";
-    }
-
-    // Keep track of temporary files so they can be cleaned up later by Drupal
-    $file_data = [
-      'uid' => \Drupal::currentUser()->id(),
-      'filename' => $file->getName(),
-      'uri' => $uri,
-      'filemime' => $file->type,
-      'filesize' => $file->size,
-      'status' => 0,
-      'timestamp' => \Drupal::time()->getRequestTime(),
-    ];
-    $file_managed = File::create($file_data);
-    $file_managed->save();
+    throw new \LogicException('Legacy H5P editor file cleanup is disabled; use managed H5P uploads.');
   }
 
   /**
@@ -283,11 +230,6 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    * @param string $filePath Path to file or directory
    */
   public static function removeTemporarilySavedFiles($filePath) {
-    if (is_dir($filePath)) {
-      \H5PCore::deleteFileTree($filePath);
-    }
-    else {
-      unlink($filePath);
-    }
+    throw new \LogicException('Legacy H5P temporary package cleanup is disabled.');
   }
 }

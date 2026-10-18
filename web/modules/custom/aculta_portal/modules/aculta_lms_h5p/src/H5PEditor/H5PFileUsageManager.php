@@ -51,7 +51,9 @@ final class H5PFileUsageManager {
       $this->fileUsage->add($file, 'aculta_lms_h5p', 'h5p_content', (string) $contentId);
     }
     if (str_starts_with((string) $file->getMimeType(), 'image/')) {
-      $this->imageUsage->addH5PReference($file, $contentId);
+      if (!$this->imageUsage->addH5PReference($file, $contentId)) {
+        throw new \RuntimeException('H5P image could not be retained by aculta_image.');
+      }
     }
   }
 

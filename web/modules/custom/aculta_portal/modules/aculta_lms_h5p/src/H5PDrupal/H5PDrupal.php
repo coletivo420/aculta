@@ -426,6 +426,12 @@ class H5PDrupal implements \H5PFrameworkInterface {
     return $this->h5pPath;
   }
 
+  /** Clears transient package paths after an import request. */
+  public function resetUploadedH5pPaths(): void {
+    $this->folderPath = NULL;
+    $this->h5pPath = NULL;
+  }
+
   /**
    * Implements loadLibraries
    * @return array
@@ -818,8 +824,16 @@ class H5PDrupal implements \H5PFrameworkInterface {
       [':id' => $libraryId]
     )->fetchObject();
 
-    // Delete files
-    \H5PCore::deleteFileTree(self::getStoragePath() . "/libraries/{$library->machine_name}-{$library->major_version}.{$library->minor_version}");
+    // Delete files through Drupal's managed storage lifecycle.
+    if (!$library) {
+      return;
+    }
+    $managedLibrary = [
+      'machineName' => $library->machine_name,
+      'majorVersion' => $library->major_version,
+      'minorVersion' => $library->minor_version,
+    ];
+    self::getInstance('core')->fs->removeLibraryFiles($managedLibrary);
 
     // Delete data in database (won't delete content)
     $database->delete('h5p_libraries_libraries')->condition('library_id', $libraryId)->execute();

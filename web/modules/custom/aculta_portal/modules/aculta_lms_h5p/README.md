@@ -36,13 +36,19 @@ aula/turma com acesso validado pelo Drupal e pelo LMS.
   uma atividade entre várias.
 
 O painel do educador é, nesta etapa, uma visão dos cursos administráveis. O
-adapter do editor cobre listagem e metadados de bibliotecas locais, traduções e
-validação de parâmetros, com autorização Group e token H5P. O envio de arquivos,
-importação de pacotes, instalação e Hub seguem indisponíveis. O módulo continua
-desabilitado até portar e testar o ciclo de edição completo, incluindo o fluxo
-de arquivos. Exportação pública e estatísticas externas ficam desabilitadas.
+adapter do editor cobre listagem e metadados de bibliotecas locais, traduções,
+validação de parâmetros e upload privado de mídia, com autorização Group e token
+H5P. Administradores podem instalar pacotes `.h5p` locais pelo validador oficial
+do H5P; o conteúdo do pacote é ignorado e apenas bibliotecas aprovadas são
+instaladas. Imagens raster e SVG passam pelo `aculta_image`, e os demais assets
+ficam como arquivos privados gerenciados. Hub, telemetria e instalação remota
+continuam desabilitados. O módulo continua desabilitado até testes funcionais de
+edição, acesso, progresso, cache e validação visual. Exportação pública e
+estatísticas externas ficam desabilitadas.
 
 ## Proveniência
 
 Origem: projeto Drupal H5P, release 2.0.0-beta1. Consulte LICENSE.txt e
 `docs/modules/LMS-H5P-AUDIT.md` para proveniência e riscos conhecidos.
+
+Entregas da integração ACULTA: [CHANGELOG.md](CHANGELOG.md).

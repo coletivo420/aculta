@@ -72,6 +72,28 @@ final class PackagedAssetPublisherTest extends UnitTestCase {
     self::assertNull($validator->invoke($publisher, '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>', 'public://h5p/h5p-core/images/unsafe.svg'));
   }
 
+  /** @covers ::publishH5PLibraryImage */
+  public function testH5pImagePublisherRejectsSourcesOutsideExtractedPackage(): void {
+    $root = sys_get_temp_dir() . '/aculta-h5p-extract-' . bin2hex(random_bytes(4));
+    mkdir($root, 0700);
+    $source = tempnam(sys_get_temp_dir(), 'aculta-h5p-outside-');
+    self::assertNotFalse($source);
+    file_put_contents($source, 'not an image');
+    try {
+      $publisher = (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor();
+      self::assertFalse($publisher->publishH5PLibraryImage(
+        $source,
+        'private://h5p/libraries/H5P.Test-1.0/image.png',
+        $root,
+        'h5p-library://H5P.Test/1.0/image.png',
+      ));
+    }
+    finally {
+      unlink($source);
+      rmdir($root);
+    }
+  }
+
   private function publisher(): PackagedAssetPublisher {
     return new PackagedAssetPublisher(
       $this->createMock(FileRepositoryInterface::class),
