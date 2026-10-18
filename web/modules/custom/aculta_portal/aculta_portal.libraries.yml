@@ -6,14 +6,6 @@ account-navigation:
     - core/once
 
 
-cep-address:
-  js:
-    js/cep-address.js: {}
-  dependencies:
-    - core/drupal
-    - core/once
-
-
 search-preview:
   js:
     js/search-preview.js: {}

@@ -605,6 +605,7 @@ final class PortalHooks {
         \Drupal\aculta_portal\Account\StreetNumberField::attach($form['field_address']['widget'][0]['address'], $parts['number'], $parts['sn']);
         // Depois do attach (que define o #process do número): o país some ao final do processamento do widget.
         $form['field_address']['widget'][0]['address']['#process'][] = [self::class, 'hideCountrySelect'];
+        $form['#attached']['library'][] = 'aculta_portal_cep/cep-address';
       }
       // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
       $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';

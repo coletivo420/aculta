@@ -1,0 +1,7 @@
+services:
+  aculta_portal_cep.rate_limit_subscriber:
+    class: Drupal\aculta_portal_cep\EventSubscriber\CepLookupRateLimitSubscriber
+    arguments: ['@flood']
+    tags:
+      - { name: event_subscriber }
+      - { name: aculta_portal.implementation }

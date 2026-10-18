@@ -205,13 +205,6 @@ services:
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
-  # CEP Autocomplete 1.0.0 references this Drupal logger channel but does
-  # not define it. Supply the standard Core logger channel without changing
-  # contributed code.
-  logger.channel.cep_autocomplete:
-    parent: logger.channel_base
-    arguments: ['cep_autocomplete']
-
   aculta_portal.mercado_pago_environment_override:
     class: Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoEnvironmentOverride
     arguments: ['%app.root%']
@@ -243,13 +236,6 @@ services:
   aculta_portal.account_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber
     arguments: ['@current_user', '@aculta_portal.domain_purpose']
-    tags:
-      - { name: event_subscriber }
-      - { name: aculta_portal.implementation }
-
-  aculta_portal.cep_lookup_rate_limit_subscriber:
-    class: Drupal\aculta_portal\EventSubscriber\CepLookupRateLimitSubscriber
-    arguments: ['@flood']
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }

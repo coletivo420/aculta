@@ -193,9 +193,10 @@ $check(
 // 0.4.0-dev.18 adds UploadedFilenameExtensionSubscriber after Core's configured filename sanitizer.
 // 0.4.0-dev.19 adjusts the account-owned Messenger conversation presentation.
 // 0.4.0-dev.90 adds AdministrativeRouteSubscriber (every /painel-administrativo route uses the administrative theme; runs last).
+// 0.4.0-dev.145 moves CepLookupRateLimitSubscriber to the aculta_portal_cep submodule (its own services.yml), so the Portal registers twelve.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 13,
-  'Portal must register exactly thirteen canonical event_subscriber tags.',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 12,
+  'Portal must register exactly twelve canonical event_subscriber tags (the CEP rate limiter lives in aculta_portal_cep).',
 );
 
 $legacyProceduralFunctions = [];
@@ -215,7 +216,7 @@ $check(
 $editorialHooks = $srcRoot . '/Hook/EditorialHooks.php';
 $editorialHooksSource = $read($editorialHooks);
 $check(is_file($editorialHooks), 'P2.2 EditorialHooks class must exist.');
-foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter', 'library_info_alter'] as $hookName) {
+foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter'] as $hookName) {
   $check(
     substr_count($editorialHooksSource, "#[Hook('" . $hookName . "')]") === 1,
     'P2 EditorialHooks must implement ' . $hookName . ' as an OOP hook.',
@@ -232,7 +233,6 @@ $p2MigratedHooks = [
   'metatag_tags_alter',
   'node_presave',
   'metatags_alter',
-  'library_info_alter',
 ];
 $p2HookOwners = [
   'token_info' => $tokenHooksSource,
@@ -240,7 +240,6 @@ $p2HookOwners = [
   'metatag_tags_alter' => $editorialHooksSource,
   'node_presave' => $editorialHooksSource,
   'metatags_alter' => $editorialHooksSource,
-  'library_info_alter' => $editorialHooksSource,
 ];
 // Drupal 11.1+ runs every #[Hook] method of a module, so distinct concerns may
 // live in different classes (e.g. PortalHooks owns route-based metatags_alter
@@ -282,10 +281,6 @@ $check(
   preg_match('/function\\s+metatagsAlter\\s*\\(array\\s*&\\$tags,\\s*array\\s*&\\$context\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
   'P2-R metatags_alter must preserve both tags and context references.',
 );
-$check(
-  preg_match('/function\\s+libraryInfoAlter\\s*\\(array\\s*&\\$libraries,\\s*string\\s+\\$extension\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
-  'P2-R library_info_alter signature must match Drupal 11.',
-);
 foreach ([
   'config.factory',
   'entity_type.manager',
@@ -306,7 +301,7 @@ $check(
   'P2-R TokenHooks must keep config and node cacheability.',
 );
 $check(
-  str_contains($editorialHooksSource, "'aculta_portal/cep-address'")
+  str_contains($read($srcRoot . '/Hook/PortalHooks.php'), "'aculta_portal_cep/cep-address'")
     && str_contains($editorialHooksSource, 'SchemaMetatagManager::serialize')
     && str_contains($editorialHooksSource, "'courses'")
     && str_contains($editorialHooksSource, "'wiki'"),
@@ -804,7 +799,7 @@ $check(
 // P7.3: every Portal request-phase listener ignores subrequests.
 foreach ([
   'src/EventSubscriber/AccountRouteSubscriber.php',
-  'src/EventSubscriber/CepLookupRateLimitSubscriber.php',
+  'modules/aculta_portal_cep/src/EventSubscriber/CepLookupRateLimitSubscriber.php',
   'src/EventSubscriber/DomainPurposeRequestSubscriber.php',
   'src/Commerce/MercadoPago/WebhookEventSubscriber.php',
 ] as $requestListener) {

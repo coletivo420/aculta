@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\EventSubscriber;
+namespace Drupal\aculta_portal_cep\EventSubscriber;
 
 use Drupal\Core\Flood\FloodInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,7 +25,7 @@ final class CepLookupRateLimitSubscriber implements EventSubscriberInterface {
       return;
     }
     $request = $event->getRequest();
-    if ($request->attributes->get('_route') !== 'cep_autocomplete.viacep_lookup') {
+    if ($request->attributes->get('_route') !== 'aculta_portal_cep.lookup') {
       return;
     }
 

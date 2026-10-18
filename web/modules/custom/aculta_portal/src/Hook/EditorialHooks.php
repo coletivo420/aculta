@@ -176,20 +176,6 @@ final class EditorialHooks {
   }
 
 
-  /** Extends CEP Autocomplete with the accessible Portal behavior. */
-  #[Hook('library_info_alter')]
-  public function libraryInfoAlter(array &$libraries, string $extension): void {
-    if ($extension === 'cep_autocomplete' && isset($libraries['viacep'])) {
-      // Keep the contrib endpoint/client/cache, while using the local behavior
-      // for accessible status, stale-response protection, and post-fill focus.
-      $libraries['viacep']['dependencies'][] = 'aculta_portal/cep-address';
-      // O cliente do contrib chama o endpoint sem X-Requested-With e recebe 403 (o Portal exige AJAX). Disputa o mesmo
-      // once('cep-autocomplete') com o comportamento do Portal, que envia o cabeçalho e preenche os campos.
-      unset($libraries['viacep']['js']['js/viacep.js']);
-    }
-  }
-
-
   /** Groups editorial fields on node forms and attaches service validation. */
   #[Hook('form_node_form_alter')]
   public function formNodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {

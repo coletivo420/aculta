@@ -11,6 +11,7 @@ module:
   aculta_pdf_viewer: 0
   aculta_pdf_viewer_group: 0
   aculta_portal: 0
+  aculta_portal_cep: 0
   aculta_portal_sitemap: 0
   address: 0
   agreement: 9999
@@ -21,7 +22,6 @@ module:
   block_content: 0
   breakpoint: 0
   captcha: 0
-  cep_autocomplete: 0
   change_mail_page: 0
   ckeditor5: 0
   comment: 0

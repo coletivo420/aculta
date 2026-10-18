@@ -76,14 +76,6 @@ final class PortalRequirementsController extends ControllerBase {
       'purpose' => 'Estrutura de endereço compartilhada com o Commerce.',
     ],
     [
-      'name' => 'CEP Autocomplete',
-      'modules' => ['cep_autocomplete'],
-      'package' => 'drupal/cep_autocomplete',
-      'minimum' => '^1.0',
-      'purpose' => 'Consulta ViaCEP sobre o campo Address.',
-      'warning' => 'O projeto não está coberto pela Drupal Security Advisory Policy.',
-    ],
-    [
       'name' => 'Login por usuário ou e-mail',
       'modules' => ['login_emailusername'],
       'package' => 'drupal/login_emailusername',

@@ -35,7 +35,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneInterface {
 
   /** Biblioteca do CEP compartilhada com "Meus Dados" (estendida pelo Portal). */
-  private const CEP_LIBRARY = 'cep_autocomplete/viacep';
+  private const CEP_LIBRARY = 'aculta_portal_cep/cep-address';
 
   private InlineFormManager $inlineFormManager;
 

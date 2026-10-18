@@ -26,8 +26,8 @@ $read = static function (string $relative) use ($root): string {
 
 $hooks = $read('web/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
 $editorial = $read('web/modules/custom/aculta_portal/src/Hook/EditorialHooks.php');
-$cep = $read('web/modules/custom/aculta_portal/js/cep-address.js');
-$controller = $read('web/modules/custom/aculta_portal/src/Controller/CepLookupController.php');
+$cep = $read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/js/cep-address.js');
+$controller = $read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Controller/CepLookupController.php');
 $fieldConfig = $read('config/sync/field.field.profile.authenticated.field_address.yml');
 
 // 1. O bloco de papel não pode capturar /dados/endereco (authenticated é tipo de papel; isso sumiu número e país).
@@ -48,8 +48,12 @@ $check(
 
 // 3. Cliente ViaCEP do contrib não carregado; o Portal faz a busca com o cabeçalho que o endpoint exige.
 $check(
-  str_contains($editorial, "unset(\$libraries['viacep']['js']['js/viacep.js'])"),
-  'EditorialHooks: a biblioteca viacep do contrib não carrega o cliente dele',
+  !str_contains($editorial, "'cep_autocomplete'") && !str_contains($cep, 'viacep'),
+  'sem dependência do cep_autocomplete (módulo desinstalado e portado)',
+);
+$check(
+  str_contains($read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/aculta_portal_cep.routing.yml'), "path: '/aculta_portal_cep/{cep}'"),
+  'rota de consulta de CEP em /aculta_portal_cep/{cep}',
 );
 $check(
   str_contains($cep, "'X-Requested-With': 'XMLHttpRequest'") || str_contains($cep, 'X-Requested-With'),

@@ -1,3 +1,14 @@
+## 0.4.0-dev.145 — cep_autocomplete portado para aculta_portal_cep (sem contrib) — 2026-10-18
+
+- Porte do `drupal/cep_autocomplete` 1.0.0 para o submódulo `aculta_portal_cep`: controlador de consulta (ViaCEP com fallback BrasilAPI), cache, limite por IP, biblioteca `cep-address` e rota `/aculta_portal_cep/{cep}` (antes `/cep-autocomplete/viacep/{cep}`).
+- Módulo contrib desinstalado no Runtime de teste (backup antes: `aculta_runtime-antes-cep-20261018-1248.sql.gz`, fora do repositório) e removido do `composer.json`, do `composer.lock` e do `core.extension.yml`.
+- Não portado: `viacep.js` e `ViaCepClient` do contrib (cliente sem o cabeçalho AJAX; código morto).
+- Correção no porte: a checagem de limite comparava o nome da rota antigo; agora compara `aculta_portal_cep.lookup`.
+- Biblioteca `cep-address` anexada ao formulário de endereço da conta pelo `PortalHooks`; removidos o `library_info_alter` e o requisito de contrib do `EditorialHooks`/`PortalRequirementsController`.
+- Gates: `validate-account-address.php` PASS; `validate-aculta-portal-drupal11.php` PASS (invariantes do hook removido e da contagem de subscribers ajustados, com o motivo no próprio gate).
+- Verificado no Runtime de teste: endpoint novo responde 200 com cabeçalho AJAX e 403 sem ele; caminho antigo 404; teste de navegador do endereço 17/17.
+- RUNTIME STATUS: APLICADO no Runtime de teste (módulo habilitado, contrib desinstalado, cache rebuild).
+
 ## 0.4.0-dev.144 — alias address de volta para o Mercado Pago (campo computado) — 2026-10-18
 
 - Campo `address` nos perfis, computado, sem armazenamento: lê o `field_address` do mesmo perfil. O contrib `commerce_mercado_pago` lê `address` (DT-MP-10). O formulário da conta foi testado com o alias presente: 17/17 no navegador.

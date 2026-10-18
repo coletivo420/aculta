@@ -57,7 +57,7 @@
   async function lookup(cep) {
     const base = drupalSettings?.path?.baseUrl || '/';
     const prefix = drupalSettings?.path?.pathPrefix || '';
-    const response = await fetch(`${base}${prefix}cep-autocomplete/viacep/${cep}?v=2`, {
+    const response = await fetch(`${base}${prefix}aculta_portal_cep/${cep}`, {
       credentials: 'same-origin',
       headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
     });
@@ -143,7 +143,7 @@
 
   function attach(context) {
     // Reivindica os campos com o mesmo id do contrib (data-once): o behavior do contrib não os processa de novo.
-    const postalFields = once('cep-autocomplete', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
+    const postalFields = once('aculta-portal-cep', 'input[name$="[address][postal_code]"], input[name$="[postal_code]"]', context);
     postalFields.forEach((postal) => {
       const name = postal.name || '';
       const marker = '[address][';

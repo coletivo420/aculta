@@ -10,7 +10,7 @@ ou no checkout que lê o mesmo endereço deve manter o que está aqui. Não repe
 - Formulário: CEP, Endereço/Logradouro, Número, S/N, Complemento, Bairro, Cidade, Estado. **Sem seletor de país**: o país é
   Brasil (campo oculto `country_code = BR`).
 - Número: obrigatório, só dígitos, até 10. S/N desabilita o número e o limpa.
-- CEP digitado (8 dígitos) consulta `cep-autocomplete/viacep` (endpoint do Portal, que exige o cabeçalho AJAX) e preenche:
+- CEP digitado (8 dígitos) consulta `aculta_portal_cep/{cep}` (endpoint do submódulo `aculta_portal_cep`, que exige o cabeçalho AJAX) e preenche:
   - no **primeiro** preenchimento: só os campos vazios (não apaga o que a pessoa digitou);
   - ao **trocar** o CEP depois do preenchimento: rua, bairro, cidade e estado são substituídos pelo endereço do novo CEP;
   - número, S/N e complemento **nunca** são alterados pela busca.
