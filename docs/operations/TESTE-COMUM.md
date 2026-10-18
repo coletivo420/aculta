@@ -16,6 +16,10 @@ Documento para humanos e agentes. **Não contém a senha.** O valor fica em `sec
 3. Antes de cada rodada de teste, rode `scripts/guard-teste-comum.sh`. Se der FAIL, pare e relate ao responsável.
 4. Não copie a senha para documentos, commits, mensagens ou saídas de comando.
 
+## E-mail da conta e comprador do Mercado Pago (2026-10-18)
+- A conta `teste.comum` teve o e-mail trocado para `testecomum@testuser.com` no Runtime de testes, pelo caminho de administrador (`email_confirmer`, bypass do `administrator`). Não há confirmação pendente.
+- Teste no sandbox do Mercado Pago: a criação de assinatura com esse e-mail como pagador foi recusada (HTTP 400, `User bad request`), enquanto outro endereço `@testuser.com` foi aceito na mesma conta. Causa não identificada; verificar no painel do Mercado Pago (Contas de teste) se o endereço já pertence a outra conta.
+
 ## Histórico
 - 2026-10-17: senha definida pelo responsável e registrada em `secrets/teste_comum.env`. Antes, a senha foi trocada várias vezes por geração automática durante testes; essa prática está proibida pela regra 2.
 
