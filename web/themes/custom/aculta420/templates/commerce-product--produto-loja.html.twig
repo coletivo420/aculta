@@ -1,41 +1,65 @@
 {#
-  Página do produto da loja (tipo produto_loja). Composição só com componentes SDC:
-  galeria em carrossel à esquerda; categoria, título e compra à direita; abas abaixo.
-  O Commerce renderiza o formulário de compra; o tema só apresenta.
+  Página do produto da loja (tipo produto_loja). O modo catalog é um card da
+  listagem; os demais modos mantêm a página completa, com galeria e abas.
 #}
-{% set category = product.field_categoria ? product.field_categoria|render|striptags|trim : '' %}
-{% set details %}
-  {{ include('aculta420:product-details', { category: category, sizes: 'P, M, G, GG e XXG', weight: 'Não aplicável', dimensions: 'Não aplicável' }, with_context = false) }}
-{% endset %}
-{% set reviews %}
-  <p>Não há avaliações ainda.</p>
-{% endset %}
 {% set default_variation = product_entity.getDefaultVariation() %}
 {% set default_price = default_variation and default_variation.getPrice() ? default_variation.getPrice() : null %}
 {% set price = default_price ? 'R$ ' ~ default_price.getNumber()|number_format(2, ',', '.') : '' %}
-{% set description = product.field_descricao ? product.field_descricao : '<p>Descrição em breve.</p>' %}
 
-<article class="aculta-product">
-  <div class="row g-4 g-lg-5 aculta-product__main">
-    <div class="col-12 col-lg-6">
-      {{ aculta_product_gallery }}
-    </div>
-    <div class="col-12 col-lg-6">
-      {{ include('aculta420:product-buy', {
-        category: category,
-        title: product_entity.label(),
-        summary: product.field_resumo,
-        price: price,
-        purchase: product.variations,
-      }, with_context = false) }}
-    </div>
-  </div>
+{% if elements['#view_mode']|default('default') == 'catalog' %}
+  {% set catalog_header %}
+    <h2 class="h5"><a href="{{ product_url }}" rel="bookmark">{{ product_entity.label() }}</a></h2>
+  {% endset %}
+  {% set catalog_content %}
+    {% if product.field_resumo %}<div class="aculta-product-card__summary">{{ product.field_resumo }}</div>{% endif %}
+    {% if price %}<p class="aculta-product-card__price">{{ price }}</p>{% endif %}
+    {{ product.variations }}
+  {% endset %}
+  {% set catalog_footer %}
+    <a href="{{ product_url }}" class="btn btn-outline-primary" rel="bookmark">Ver detalhes</a>
+  {% endset %}
+  <article{{ attributes.addClass('aculta-product-card') }}>
+    {{ title_prefix }}
+    {{ title_suffix }}
+    {{ include('aculta420:card', {
+      image: aculta_product_gallery,
+      header: catalog_header,
+      content: catalog_content,
+      footer: catalog_footer,
+    }, with_context = false) }}
+  </article>
+{% else %}
+  {% set category = product.field_categoria ? product.field_categoria|render|striptags|trim : '' %}
+  {% set details %}
+    {{ include('aculta420:product-details', { category: category, sizes: 'P, M, G, GG e XXG', weight: 'Não aplicável', dimensions: 'Não aplicável' }, with_context = false) }}
+  {% endset %}
+  {% set reviews %}
+    <p>Não há avaliações ainda.</p>
+  {% endset %}
+  {% set description = product.field_descricao ? product.field_descricao : '<p>Descrição em breve.</p>' %}
 
-  {{ include('aculta420:product-tabs', {
-    id: 'aculta-produto-abas',
-    review_count: 0,
-    description: description,
-    details: details,
-    reviews: reviews,
-  }, with_context = false) }}
-</article>
+  <article class="aculta-product">
+    <div class="row g-4 g-lg-5 aculta-product__main">
+      <div class="col-12 col-lg-6">
+        {{ aculta_product_gallery }}
+      </div>
+      <div class="col-12 col-lg-6">
+        {{ include('aculta420:product-buy', {
+          category: category,
+          title: product_entity.label(),
+          summary: product.field_resumo,
+          price: price,
+          purchase: product.variations,
+        }, with_context = false) }}
+      </div>
+    </div>
+
+    {{ include('aculta420:product-tabs', {
+      id: 'aculta-produto-abas',
+      review_count: 0,
+      description: description,
+      details: details,
+      reviews: reviews,
+    }, with_context = false) }}
+  </article>
+{% endif %}

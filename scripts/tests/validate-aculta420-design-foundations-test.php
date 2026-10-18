@@ -361,8 +361,8 @@ try {
   file_put_contents($tokens_path, $original_tokens);
 
   $uppercase_missing_alias = str_replace(
-    ['--aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);', '--aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);'],
-    ['--aculta-shadow-hover: VAR(--aculta-missing-shadow);', '--aculta-shadow-hover: VAR(--aculta-missing-shadow);'],
+    '--aculta-shadow-hover: var(--aculta-shadow-raised);',
+    '--aculta-shadow-hover: VAR(--aculta-missing-shadow);',
     $original_tokens,
   );
   file_put_contents($tokens_path, $uppercase_missing_alias);

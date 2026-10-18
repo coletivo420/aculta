@@ -330,6 +330,14 @@ dois eixos da viewport pelo seletor `[data-portal-ui="search-popup"]` em
 em dispositivos menores; o tema controla apenas a apresentação, e o Portal
 continua responsável pela rota e pelo formulário.
 
+## Catálogo Commerce
+
+A View `aculta_shop_catalog` solicita o view mode Commerce `catalog`. O template
+`commerce-product--produto-loja.html.twig` apresenta esse modo usando o SDC
+`aculta420:card`, com a galeria renderizada pelo Portal, título, resumo, preço,
+formulário Commerce e link para o detalhe. O modo completo do produto mantém a
+composição existente de galeria e abas.
+
 ## Cores só em tokens (regra permanente)
 
 - Fora de `css/tokens.css`, nenhum CSS do tema usa cor literal (hex, `rgb()`, `hsl()`, `color-mix()` etc.). Use um token

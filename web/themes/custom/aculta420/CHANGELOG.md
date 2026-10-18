@@ -1,3 +1,13 @@
+## 0.6.0-dev.84 — cards no catálogo da loja — 2026-10-18
+
+Classificação: PATCH de apresentação do novo modo Commerce `catalog`; a página completa do produto permanece inalterada.
+
+- A View pública usa grid responsivo com o SDC `aculta420:card`; cada card apresenta galeria existente, título/link, resumo, preço e formulário de compra Commerce das variações.
+- O template detalhado do produto só usa a composição de galeria/abas no modo normal; o modo `catalog` é renderizado como cartão.
+- Atualiza fixture de regressão do token `--aculta-shadow-hover`, que ainda esperava valores literais removidos na migração semântica; o caso passa a exercitar `VAR()` com referência ausente.
+- Runtime de teste: `/produtos` retorna HTTP 200 com card, título, resumo, preço e formulário de compra; a rota canônica do produto retorna HTTP 200 e mantém o layout completo com abas. Revisão visual em navegador DEFERRED.
+- RUNTIME STATUS: aplicado ao Runtime de teste.
+
 ## 0.6.0-dev.83 — centraliza popup da busca — 2026-10-18
 
 Classificação: PATCH de apresentação; sem alteração na busca, formulário ou acesso.

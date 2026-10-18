@@ -80,12 +80,16 @@ display:
             produto_loja: produto_loja
           group: 1
       style:
-        type: default
+        type: grid
         options:
           grouping: {  }
           row_class: ''
           default_row_class: true
           uses_fields: false
+          columns: 3
+          automatic_width: true
+          alignment: horizontal
+          row_class_default: true
       row:
         type: 'entity:commerce_product'
         options:
