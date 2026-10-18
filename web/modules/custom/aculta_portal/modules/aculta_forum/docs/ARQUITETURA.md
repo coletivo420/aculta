@@ -24,6 +24,22 @@ um controller próprio sem demonstrar uma lacuna real. Usar as rotas, view modes
 templates do Forum e Views conforme seu papel. Navegação usa Menu API quando aplicável.
 Mover hooks existentes entre módulos apenas em fase própria, com paridade comprovada.
 
+### Tópicos recentes na página inicial
+
+A página nativa do Forum continua responsável pelo índice de categorias e pelas
+listas de tópicos dentro de cada categoria. A View `aculta_forum_topics` adiciona
+um bloco de tópicos recentes à página inicial do purpose `forum`, como resumo
+complementar, sem substituir nem duplicar o controlador das categorias. Usa o
+teaser do Node, filtra tipo `forum`, publicação e domínio atual, e herda a
+proteção de `node_access` do Views. O CTools Views libera somente quantidade de
+itens e tipo de pager por bloco; filtros, ordenação e domínio ficam protegidos
+na View. A listagem não usa AJAX.
+
+A colocação `aculta_forum_recent_topics` está limitada ao caminho interno
+`/forum` e ao purpose `forum`; o host público continua resolvido pela política
+de Domain. A validação de produção continua pendente e nenhum Runtime foi
+alterado por esta configuração.
+
 ## Domínio e publicação
 
 O nome público passa a Growroom420. O identificador funcional `forum` permanece para

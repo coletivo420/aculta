@@ -7,6 +7,7 @@ dependencies:
   - drupal:field
   - drupal:file
   - aculta_portal:aculta_portal
+  - aculta_portal:aculta_image
   - aculta_portal:aculta_lms
   - group:group
   - ctools:ctools

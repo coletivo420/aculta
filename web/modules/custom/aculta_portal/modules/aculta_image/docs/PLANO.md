@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-18: versão **0.1.0-dev.25**. Gate `scripts/validate-aculta-image.php` em PASS (inclui R9 para Views e modos de exibição). Os testes unitários anteriores registram 14 casos.
+Status em 2026-10-18: versão **0.1.0-dev.26**. Gate `scripts/validate-aculta-image.php` em PASS (inclui R10 para cópia direta em árvores de assets). A suíte unitária do submódulo agora possui 17 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -25,7 +25,7 @@ exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem 
 | Fase | Estado | Observação |
 | --- | --- | --- |
 | M0 inventário | feito | relatório `/painel-administrativo/imagens` |
-| M0.5 barreiras | feito | gate com tolerância zero (R1 a R9), incluindo Views e modos de exibição |
+| M0.5 barreiras | feito | gate com tolerância zero (R1 a R10), incluindo Views, modos de exibição e assets |
 | M1 a M3 consumidores | feito | Gallery, Magazine, Usuário, Portal, PDF migrados para o `aculta_image` |
 | M4 miniatura de PDF | feito no Homelab | ImageMagick 7 com Ghostscript; `pdfpreview` com JPEG 480×640; teste com PDF real: 480×621. Produção depende de confirmação da Hostinger |
 | M5 duplicatas exatas | feito | `media_duplicates` 2.0.4; os dois grupos reais da galeria 11 foram mesclados, uma ocorrência por arquivo, mantendo o `alt` do menor ID |
@@ -146,7 +146,23 @@ vazios no momento da execução. Revisões e outras entidades mantêm a imagem. 
 removidos depois de `system.file:temporary_maximum_age` (seis horas no Runtime), em lotes de 100. Arquivos do tema
 continuam fora da limpeza de Media. O administrador pode executar a mesma rotina em `/painel-administrativo/imagens/limpeza`.
 
-## 11. Fontes
+## 11. Assets estáticos de dependências Composer
+
+O `PackagedAssetPublisher` publica imagens estáticas dos pacotes H5P Composer
+sob seus caminhos estáveis em `public://h5p`, que correspondem ao wrapper
+`assets://` do Drupal. Ele só aceita arquivos dentro das instalações Composer
+de `h5p/h5p-core` e `h5p/h5p-editor`, mantém destinos imutáveis, registra
+proveniência e `file_usage`, valida imagens raster por `UploadPolicy` e
+`ImageInspector`, e filtra SVG ativo mantendo somente os elementos dos assets
+H5P atuais. Isso preserva URLs relativas de CSS sem criar outro catálogo ou
+storage de imagens.
+
+Esse mecanismo é para assets versionados do Composer; não é API de upload.
+Imagens de conteúdo enviadas por educadores continuam exigindo o fluxo Drupal
+de upload e ingestão normal. O módulo H5P segue desabilitado até esse fluxo e os
+testes de integração serem concluídos.
+
+## 12. Fontes
 
 - Image Optimize: https://www.drupal.org/project/imageapi_optimize
 - Entity Usage: https://www.drupal.org/project/entity_usage

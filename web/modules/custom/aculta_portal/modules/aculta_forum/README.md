@@ -81,6 +81,10 @@ válido e mantém o purpose `forum`; o hostname anterior responde 404 sem
 redirect. O Deployer mantém `growroom420.aculta.org` como destino de produção,
 sem DNS publicado porque a origem Hostinger ainda não atende o novo hostname.
 
+A configuração versionada inclui a View `aculta_forum_topics` com um bloco
+CTools Views de tópicos recentes, colocado somente na página inicial do purpose
+`forum`. O Runtime permanece sem atualização: `RUNTIME STATUS: DEFERRED`.
+
 O inventário CDX completo do prefixo histórico `/board/`, com corte temporal e
 contagens, está em [Reconstrução](docs/RECONSTRUCAO.md); o JSON está em
 armazenamento privado do Homelab e não no Git. A F1 não migrou conteúdo e não

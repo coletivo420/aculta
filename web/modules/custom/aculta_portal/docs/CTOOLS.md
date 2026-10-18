@@ -1,9 +1,10 @@
 # CTools no ACULTA Portal
 
 O CTools 4.1 permanece no projeto porque há dois usos funcionais identificados:
-`ctools_views` permite configurar a paginação e a quantidade de itens do bloco
-editorial de próximas atividades; a integração H5P do LMS fornece uma condição
-de grupo para a API de plugins do CTools. O `aculta_portal` declara a
+`ctools_views` permite configurar a paginação e a quantidade de itens dos
+blocos editoriais de próximas atividades e tópicos recentes do Fórum; a
+integração H5P do LMS fornece uma condição de grupo para a API de plugins do
+CTools. O `aculta_portal` declara a
 dependência de `ctools` e `ctools_views`; o submódulo H5P declara `ctools`.
 Além disso, o Composer já recebe CTools transitivamente por dependências de
 terceiros. Remover o pacote exige primeiro migrar esses consumidores e revisar
@@ -25,9 +26,17 @@ quantidade naquela colocação, sem duplicar a View.
 
 Os filtros e ordenação da View continuam sendo a fonte de verdade: somente
 atividades publicadas, do tipo `activity`, com início futuro, em ordem
-cronológica. CTools não altera acesso, cache, domínio, entidade ou conteúdo. Os
-outros blocos Views não ganham opções de configuração até que exista um caso de
-uso revisado.
+cronológica. CTools não altera acesso, cache, domínio, entidade ou conteúdo.
+
+A View `aculta_forum_topics`, base `node_field_data`, apresenta tópicos do tipo
+`forum` publicados e associados ao domínio corrente. Ela usa o teaser do Node,
+ordena fixos primeiro e depois por criação, e fica posicionada apenas na página
+inicial do purpose `forum`. O bloco permite ao administrador ajustar quantidade
+de itens e tipo de pager. A consulta mantém o query tag `node_access` do Views e
+o contexto de cache `user.node_grants:view`; filtros de tipo, domínio e
+publicação não podem ser alterados por configuração do bloco. A listagem nativa
+do Forum continua sendo a fonte das categorias e dos tópicos dentro de cada
+categoria.
 
 ## Limites
 
@@ -42,6 +51,8 @@ uso revisado.
 - No LMS, a condição CTools de grupo é uma integração de contexto para
   atividades H5P; ela não substitui permissões do Drupal nem controla acesso a
   submissões Webform.
+- A View do Fórum não usa AJAX; o pager e os overrides de bloco permanecem
+  configurados no Views/CTools e não alteram filtros de acesso.
 
 ## Entity Mask
 
@@ -63,3 +74,9 @@ encontrado no código de desenvolvimento tem campos próprios e storage/schema
 próprios; ele não é candidato a mascarar Webform ou Commerce. Reavaliar somente
 se surgir um novo tipo de entidade customizado que precise compartilhar
 intencionalmente o conjunto de campos e displays de outro tipo.
+
+## Referências upstream
+
+- [CTools 4.1, compatibilidade com Drupal 11](https://www.drupal.org/project/ctools/releases/4.1.0)
+- [CTools Views: opções do formulário de bloco](https://api.drupal.org/api/ctools/modules%21ctools_views%21src%21Plugin%21Display%21Block.php/function/Block%3A%3AblockForm/4.0.x)
+- [Node Views data: tag de consulta `node_access`](https://api.drupal.org/api/drupal/core%21modules%21node%21src%21NodeViewsData.php/class/NodeViewsData/11.x)

@@ -36,9 +36,11 @@ aula/turma com acesso validado pelo Drupal e pelo LMS.
   uma atividade entre várias.
 
 O painel do educador é, nesta etapa, uma visão dos cursos administráveis. O
-editor de atividades e os uploads seguem indisponíveis até o port seguro do
-editor por Group e a ingestão de imagens `aculta_image`. Exportação pública,
-Hub e estatísticas externas ficam desabilitados por padrão.
+adapter do editor cobre listagem e metadados de bibliotecas locais, traduções e
+validação de parâmetros, com autorização Group e token H5P. O envio de arquivos,
+importação de pacotes, instalação e Hub seguem indisponíveis. O módulo continua
+desabilitado até portar e testar o ciclo de edição completo, incluindo o fluxo
+de arquivos. Exportação pública e estatísticas externas ficam desabilitadas.
 
 ## Proveniência
 

@@ -1,3 +1,11 @@
+## 0.4.0-dev.140 — preparar assets Composer e adapter do editor H5P — 2026-10-18
+
+- Cria adapter AJAX H5P por Group para bibliotecas instaladas, metadados, traduções e validação de parâmetros. Todos os pedidos exigem token H5P e autorização de educador no curso; tipos restritos são filtrados e uploads/Hub/instalação continuam fechados.
+- Liga o campo H5P ao formulário de curso e valida biblioteca, tipo restrito, conteúdo semântico e acesso antes de salvar. A funcionalidade ainda não está pronta para educadores porque upload de arquivos continua indisponível.
+- Publica imagens estáticas dos pacotes H5P Composer através de `aculta_image`, mantendo caminhos `assets://`, proveniência e uso de arquivo; SVG ativo e destinos mutáveis são recusados. O gate de imagens agora detecta regressão de cópia direta em árvores de assets.
+- Testes unitários do publisher: 3 aprovados. Gates Drupal 11+, pacotes, slugs e aculta_image: PASS. `RUNTIME STATUS: DEFERRED`; módulo continua sem ser habilitado ou atualizado no Runtime.
+- Próxima unidade: adaptar upload de arquivos do editor ao Drupal File API e `aculta_image`, depois executar Kernel/integração e validar visualmente o editor antes de habilitar.
+
 ## 0.4.0-dev.138 — remove callbacks legados do editor H5P — 2026-10-18
 
 - Remove o controller H5P copiado que chamava `exit()` e lia `$_POST`/`$_FILES`; nenhuma rota o utilizava. Os endpoints do editor seguem indisponíveis até serem refeitos com Request/Response e autorização Group/LMS.

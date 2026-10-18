@@ -39,22 +39,21 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 
 1. Portar o editor por Group, sem endpoints herdados que chamam `exit()` ou
    leem superglobais; manter uploads desabilitados até ingestão `aculta_image`.
-   O widget atual ainda não está ligado ao formulário de edição do Group e
-   referencia uma biblioteca Drupal inexistente (`h5peditor/h5peditor`).
-   O controller que chamava `exit()` foi removido. Há agora um adapter
+   O campo agora está ligado ao formulário Group e usa uma biblioteca Drupal
+   própria. O controller que chamava `exit()` foi removido. Há um adapter
    Request/Response por curso para listar bibliotecas locais, carregar metadados,
    traduções e validar parâmetros. Ele exige autorização Group e token H5P;
    uploads, Hub e instalação de pacotes respondem como indisponíveis. Isso ainda
-   não habilita o editor para educadores: o widget e a publicação dos assets
-   continuam bloqueados até o fluxo completo de arquivos passar pela política
-   `aculta_image`.
+   não habilita o editor para educadores: upload de arquivos de conteúdo segue
+   bloqueado e o módulo permanece desabilitado até concluir e testar o ciclo de
+   edição completo.
 2. Corrigir a publicação de assets antes de expor qualquer parte do editor:
-   `aculta_lms_h5p_library_info_build()` chama `AssetFileStorage::mirrorAssets()`,
-   que copia imagens dos pacotes Composer diretamente para `assets://`. Isso
-   conflita com a regra de que arquivos de imagem passam por `aculta_image`.
-   O editor também precisa dos caminhos relativos originais de imagens em CSS e
-   bibliotecas; não basta trocar o destino por uma URL de arquivo sem manter
-   essa relação.
+   `AssetFileStorage::mirrorAssets()` agora encaminha imagens estáticas Composer
+   ao `aculta_image.PackagedAssetPublisher`, que mantém o caminho `public://h5p`
+   compatível com `assets://`, valida PNG/JPEG/GIF/WebP e filtra SVG ativo,
+   registra proveniência e preserva os caminhos relativos usados por CSS.
+   Assets não-imagem continuam sendo publicados pelo adaptador H5P. O fluxo
+   ainda precisa de Kernel test e smoke test visual antes da habilitação.
 3. Refatorar hooks e classes herdados para o padrão Drupal 11.3+ do Portal: DI,
    hooks OOP quando suportados, auditoria de acesso/cacheability.
 4. Testar conteúdo Div, isolamento entre estudantes, revogação de matrícula,
@@ -69,7 +68,7 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 | --- | --- | --- |
 | Campo H5P, entidade/conteúdo, formatter e bibliotecas de reprodução | Adaptados; armazenamento privado e rota de asset checa matrícula e relação Group/conteúdo | Player não usa embed independente. Conteúdo antigo em `public://` exige inventário/migração explícitos; update hook não muda os arquivos automaticamente. |
 | Administração de bibliotecas e configurações | Controladores/formulários e rotas base copiados; corrigidos requisitos de parâmetro e páginas ligadas ao painel | Relevante para curadoria; validar operações e CSRF/cache antes de habilitar. Upload de pacote continua bloqueado. |
-| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter inicial por Group para listagem, metadados, traduções e filtro; operações de arquivo, Hub e instalação falham fechadas | Ainda não funcional para educadores. Fechar o fluxo de arquivos e os assets por `aculta_image`, depois cobrir com testes de acesso e integração antes de expor o widget. |
+| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter inicial por Group para listagem, metadados, traduções e filtro; operações de arquivo, Hub e instalação falham fechadas | Ainda não funcional para educadores. Fechar o fluxo de arquivos e cobrir com testes de acesso e integração antes de habilitar o módulo. |
 | Salvar resultado (`set-finished`) e estado do estudante | Endpoints adaptados: sessão, token, validação de nota e associação curso/conteúdo | Ainda precisa teste funcional entre estudantes/turmas e contrato separado antes de alimentar notas LMS. |
 | Importação/upload de pacote e imagens incorporadas | Desabilitada | Relevante para adoção de conteúdo existente, mas exige ingestão via `aculta_image`, verificação de pacote e restrições de biblioteca. |
 | Embed independente | Rota removida | Não portar sem autorização da entidade/curso pai; o issue upstream documenta exposição por URL direta. |
@@ -78,7 +77,8 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 
 Comparação conferida com a release `2.0.0-beta1`: o editor tem um adapter
 parcial seguro por Group; upload de biblioteca, tipos do Hub e callbacks de
-arquivo ainda não foram portados. O código de callbacks legado foi removido para que
+arquivo ainda não foram portados. Assets estáticos de imagem usam a ingestão
+controlada do `aculta_image`. O código de callbacks legado foi removido para que
 nenhuma rota futura passe a chamar `exit()` ou ler arquivos globais sem revisão.
 Tipos restritos podiam ser enviados como pacote, então
 uploads continuam fechados. A condição CTools `aculta_lms_h5p_group_has_activities`
@@ -87,11 +87,10 @@ instalado. A implementação deve reutilizar `field_h5p_activities`, a entidade 
 o schema H5P Core já portados, `H5PCourseAccessManager` para autorização e os
 serviços existentes de CTools. `aculta_image.ImageIngester` é para arquivos
 externos com origem rastreável; não é um uploader genérico, e `UploadPolicy`
-define a política comum de imagem. Antes de habilitar o editor, definir como os
-assets de imagem de Composer preservam caminhos relativos ao passarem pelo
-`aculta_image`; não criar outro catálogo, storage de conteúdo ou política de
-upload no H5P. Próxima unidade: resolver essa fronteira de assets e validar o
-editor por Group antes de publicar a biblioteca do widget ou endpoints AJAX.
+define a política comum de imagem. Não criar outro catálogo, storage de conteúdo
+ou política de upload no H5P. Próxima unidade: adaptar os uploads do editor ao
+Drupal File API e ao `aculta_image`, preservar armazenamento privado H5P e
+validar o editor por Group antes de habilitar o módulo.
 
 ## Fontes da auditoria
 

@@ -72,6 +72,11 @@ final class PortalHelperRegistry {
       'summary' => 'Porta única para imagens de origem externa: valida pela política, calcula SHA-256, reaproveita, nunca sobrescreve e registra a origem.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
+    'aculta_image.packaged_asset_publisher' => [
+      'label' => 'Publicação de imagens estáticas Composer',
+      'summary' => 'Publica assets H5P fixos dos pacotes Composer por caminho estável, valida imagens/SVG e registra uso e proveniência sem aceitar uploads.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
     'aculta_image.audit' => [
       'label' => 'Inventário e auditoria de imagens',
       'summary' => 'Resumo do acervo, grupos de duplicatas exatas e candidatas à revisão com motivos. Somente leitura.',

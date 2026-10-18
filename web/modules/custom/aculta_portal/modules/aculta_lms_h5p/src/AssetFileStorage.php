@@ -7,6 +7,7 @@ use Composer\InstalledVersions;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Logger\LoggerChannelTrait;
+use Drupal\aculta_image\PackagedAssetPublisher;
 
 /**
  * Class AssetFileStorage.
@@ -27,7 +28,10 @@ class AssetFileStorage {
    */
   protected FileSystemInterface $fileSystem;
 
-  public function __construct(FileSystemInterface $fileSystem) {
+  public function __construct(
+    FileSystemInterface $fileSystem,
+    private readonly PackagedAssetPublisher $imagePublisher,
+  ) {
     $this->fileSystem = $fileSystem;
     $this->assetPrefix = 'h5p';
   }
@@ -110,8 +114,17 @@ class AssetFileStorage {
         }
 
         foreach ($files as $source_path => $destination_path) {
+          $extension = strtolower(pathinfo($source_path, PATHINFO_EXTENSION));
+          if (in_array($extension, ['png', 'gif', 'jpg', 'jpeg', 'webp', 'svg'], TRUE)) {
+            $public_uri = preg_replace('/^assets:/', 'public:', $destination_path);
+            $origin = "composer://h5p/{$project_name}/" . substr($source_path, strlen($source_root) + 1);
+            if ($public_uri === NULL || !$this->imagePublisher->publish($source_path, $public_uri, $origin)) {
+              throw new \UnexpectedValueException("Unable to publish reviewed H5P image asset: {$origin}");
+            }
+            continue;
+          }
           $this->prepareFile($destination_path);
-          $this->fileSystem->copy($source_path, $destination_path, fileExists::Replace);
+          $this->fileSystem->copy($source_path, $destination_path, FileExists::Replace);
 
         }
       }
