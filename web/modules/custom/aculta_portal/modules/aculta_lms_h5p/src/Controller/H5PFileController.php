@@ -28,20 +28,49 @@ final class H5PFileController implements ContainerInjectionInterface {
   }
 
   /** Serves a content asset only to members who can access its course. */
-  public function contentFile(int $group_id, int $content_id, string $file_path): Response {
+  public function contentFile(
+    int $group_id,
+    int $content_id,
+    string $file_path,
+    string $path_2 = '',
+    string $path_3 = '',
+    string $path_4 = '',
+    string $path_5 = '',
+    string $path_6 = '',
+    string $path_7 = '',
+    string $path_8 = '',
+    string $path_9 = '',
+    string $path_10 = '',
+  ): Response {
     if (!$this->courseAccess->studentAccess($group_id, $content_id, $this->currentUser)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
-    return $this->serve($this->storagePath->getPath() . '/content/' . $content_id, $file_path, FALSE);
+    $relative = implode('/', array_filter([$file_path, $path_2, $path_3, $path_4, $path_5, $path_6, $path_7, $path_8, $path_9, $path_10], static fn (string $part): bool => $part !== ''));
+    return $this->serve($this->storagePath->getPath() . '/content/' . $content_id, $relative, FALSE);
   }
 
   /** Serves installed library runtime assets; package uploads are not exposed. */
-  public function libraryFile(string $file_path): Response {
-    return $this->serve($this->storagePath->getPath() . '/libraries', $file_path, TRUE);
+  public function libraryFile(
+    string $library,
+    string $file_path,
+    string $path_3 = '',
+    string $path_4 = '',
+    string $path_5 = '',
+    string $path_6 = '',
+    string $path_7 = '',
+    string $path_8 = '',
+    string $path_9 = '',
+    string $path_10 = '',
+    string $path_11 = '',
+    string $path_12 = '',
+  ): Response {
+    $relative = implode('/', array_filter([$library, $file_path, $path_3, $path_4, $path_5, $path_6, $path_7, $path_8, $path_9, $path_10, $path_11, $path_12], static fn (string $part): bool => $part !== ''));
+    return $this->serve($this->storagePath->getPath() . '/libraries', $relative, TRUE);
   }
 
   private function serve(string $base, string $relative, bool $library): Response {
-    if ($relative === '' || str_contains($relative, "\0") || str_contains($relative, '\\') || preg_match('@(^|/)\.\.?(/|$)@', $relative)) {
+    if ($relative === '' || strlen($relative) > 2048 || count(explode('/', $relative)) > 12
+      || str_contains($relative, "\0") || str_contains($relative, '\\') || preg_match('@(^|/)\.\.?(/|$)@', $relative)) {
       throw new NotFoundHttpException();
     }
     $extension = strtolower(pathinfo($relative, PATHINFO_EXTENSION));

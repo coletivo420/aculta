@@ -14,6 +14,8 @@ aculta_lms_h5p.student_dashboard:
     _title: 'Atividades interativas'
   requirements:
     _role: estudante
+  options:
+    _aculta_domain_purpose: account
 
 aculta_lms_h5p.educator_dashboard:
   path: '/educador/atividades-interativas'
@@ -22,6 +24,8 @@ aculta_lms_h5p.educator_dashboard:
     _title: 'Atividades interativas dos cursos'
   requirements:
     _role: lms_teacher
+  options:
+    _aculta_domain_purpose: courses
 
 # ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 aculta_lms_h5p.admin.config.system.h5p:
@@ -117,6 +121,8 @@ aculta_lms_h5p.ajax.set_finished:
      _user_is_logged_in: 'TRUE'
      group_id: '\d+'
   methods: [POST]
+  options:
+    _aculta_domain_purpose: courses
 
 aculta_lms_h5p.ajax.content_user_data:
   path: '/h5p-ajax/{group_id}/content-user-data/{content_main_id}/{data_id}/{sub_content_id}'
@@ -130,30 +136,84 @@ aculta_lms_h5p.ajax.content_user_data:
      content_main_id: '\d+'
      sub_content_id: '\d+'
   methods: [GET, POST]
+  options:
+    _aculta_domain_purpose: courses
 
 aculta_lms_h5p.content_file:
-  path: '/h5p-content/{group_id}/{content_id}/{file_path}'
+  path: '/h5p-content/{group_id}/{content_id}/{file_path}/{path_2}/{path_3}/{path_4}/{path_5}/{path_6}/{path_7}/{path_8}/{path_9}/{path_10}'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PFileController::contentFile'
+    path_2: ''
+    path_3: ''
+    path_4: ''
+    path_5: ''
+    path_6: ''
+    path_7: ''
+    path_8: ''
+    path_9: ''
+    path_10: ''
   requirements:
     _permission: 'access content'
     group_id: '\d+'
     content_id: '\d+'
-    file_path: '.+'
+    file_path: '[A-Za-z0-9._~-]+'
+    path_2: '[A-Za-z0-9._~-]+'
+    path_3: '[A-Za-z0-9._~-]+'
+    path_4: '[A-Za-z0-9._~-]+'
+    path_5: '[A-Za-z0-9._~-]+'
+    path_6: '[A-Za-z0-9._~-]+'
+    path_7: '[A-Za-z0-9._~-]+'
+    path_8: '[A-Za-z0-9._~-]+'
+    path_9: '[A-Za-z0-9._~-]+'
+    path_10: '[A-Za-z0-9._~-]+'
+  options:
+    _aculta_domain_purpose: courses
 
 aculta_lms_h5p.library_file:
-  path: '/h5p-library-assets/libraries/{file_path}'
+  path: '/h5p-library-assets/libraries/{library}/{file_path}/{path_3}/{path_4}/{path_5}/{path_6}/{path_7}/{path_8}/{path_9}/{path_10}/{path_11}/{path_12}'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PFileController::libraryFile'
+    path_3: ''
+    path_4: ''
+    path_5: ''
+    path_6: ''
+    path_7: ''
+    path_8: ''
+    path_9: ''
+    path_10: ''
+    path_11: ''
+    path_12: ''
   requirements:
     _access: 'TRUE'
-    file_path: '.+'
+    library: '[A-Za-z0-9._~-]+'
+    file_path: '[A-Za-z0-9._~-]+'
+    path_3: '[A-Za-z0-9._~-]+'
+    path_4: '[A-Za-z0-9._~-]+'
+    path_5: '[A-Za-z0-9._~-]+'
+    path_6: '[A-Za-z0-9._~-]+'
+    path_7: '[A-Za-z0-9._~-]+'
+    path_8: '[A-Za-z0-9._~-]+'
+    path_9: '[A-Za-z0-9._~-]+'
+    path_10: '[A-Za-z0-9._~-]+'
+    path_11: '[A-Za-z0-9._~-]+'
+    path_12: '[A-Za-z0-9._~-]+'
+  options:
+    _aculta_domain_purpose: courses
 
 aculta_lms_h5p.editor_ajax:
-  path: '/h5peditor/{group_id}/{token}/{content_id}/{action}/{arguments}'
+  path: '/h5peditor/{group_id}/{token}/{content_id}/{action}/{arguments}/{argument_2}/{argument_3}/{argument_4}/{argument_5}/{argument_6}/{argument_7}/{argument_8}/{argument_9}/{argument_10}'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PEditorAjaxController::handle'
     arguments: ''
+    argument_2: ''
+    argument_3: ''
+    argument_4: ''
+    argument_5: ''
+    argument_6: ''
+    argument_7: ''
+    argument_8: ''
+    argument_9: ''
+    argument_10: ''
   requirements:
     _permission: 'access content'
     _user_is_logged_in: 'TRUE'
@@ -161,5 +221,16 @@ aculta_lms_h5p.editor_ajax:
     token: '[A-Za-z0-9._~-]+'
     content_id: '\d+'
     action: '[a-z-]+'
-    arguments: '.*'
+    arguments: '[A-Za-z0-9._~-]+'
+    argument_2: '[A-Za-z0-9._~-]+'
+    argument_3: '[A-Za-z0-9._~-]+'
+    argument_4: '[A-Za-z0-9._~-]+'
+    argument_5: '[A-Za-z0-9._~-]+'
+    argument_6: '[A-Za-z0-9._~-]+'
+    argument_7: '[A-Za-z0-9._~-]+'
+    argument_8: '[A-Za-z0-9._~-]+'
+    argument_9: '[A-Za-z0-9._~-]+'
+    argument_10: '[A-Za-z0-9._~-]+'
   methods: [GET, POST]
+  options:
+    _aculta_domain_purpose: courses

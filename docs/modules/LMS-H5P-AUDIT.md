@@ -53,15 +53,20 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
    H5P Core. Kernel com entidades reais confirma que matrícula/`takeAccess`,
    papel de educador/`edit group`, referência do conteúdo e revogação de matrícula
    controlam o acesso, e avalia a condição CTools com contexto de Group. O ciclo
-   de edição no navegador não foi validado: a rota de edição canonicalizou para
-   o host principal e respondeu “Acesso negado”.
+   de edição no navegador não foi validado: o login de teste permaneceu numa
+   página vazia de autenticação única; sem sessão, a rota canonicalizada para o
+   host principal respondeu “Acesso negado”. O endpoint HTTP de biblioteca foi
+   validado em GET e entregou `library.json` com `200` e MIME correto.
 2. Publicar assets estáticos sem contornar `aculta_image`:
    `AssetFileStorage::mirrorAssets()` agora encaminha imagens estáticas Composer
    ao `aculta_image.PackagedAssetPublisher`, que mantém o caminho `public://h5p`
    compatível com `assets://`, valida PNG/JPEG/GIF/WebP e filtra SVG ativo,
    registra proveniência e preserva os caminhos relativos usados por CSS.
    Assets não-imagem continuam sendo publicados pelo adaptador H5P. A publicação
-   passou no Runtime; falta smoke test visual do editor.
+   passou no Runtime; falta smoke test visual do editor. Rotas H5P usam limites
+   explícitos de segmentos porque parâmetros de rota Drupal ocupam um segmento
+   completo; os caminhos de assets H5P são divididos em segmentos antes do
+   controller validar e resolver o arquivo.
 3. Os hooks runtime de bibliotecas, cron e exclusão de usuário foram migrados
    para `#[Hook]` com DI; as assinaturas do framework H5P receberam contratos de
    retorno compatíveis com o H5P Core instalado. Controllers administrativos e
@@ -84,10 +89,10 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 | --- | --- | --- |
 | Campo H5P, entidade/conteúdo, formatter e bibliotecas de reprodução | Adaptados; armazenamento privado e rota de asset checa matrícula e relação Group/conteúdo | Player não usa embed independente. Conteúdo antigo em `public://` exige inventário/migração explícitos; update hook não muda os arquivos automaticamente. |
 | Administração de bibliotecas e configurações | Controladores/formulários adaptados; pacote local usa validação H5P Core e escrita privada pelo File API, com imagens em `aculta_image` | Upload exige permissão administrativa; substituição silenciosa de arquivos instalados é recusada. Instalação de pacote e publicação dos assets Composer passaram no Runtime; remoção ainda precisa de smoke test. |
-| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter por Group para listagem, metadados, traduções, filtro e upload de mídia privado; acesso usa token H5P e permissões de biblioteca | Kernel valida acesso real por curso e a condição CTools; falta validar o ciclo no navegador por canonicalização/acesso negado. Hub segue desligado. |
+| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter por Group para listagem, metadados, traduções, filtro e upload de mídia privado; acesso usa token H5P e permissões de biblioteca | Kernel valida acesso real por curso e CTools, e resolve rotas com paths H5P aninhados; HTTP serviu biblioteca local. Falta validar o ciclo no navegador porque o login de teste não estabeleceu sessão. Hub segue desligado. |
 | Salvar resultado (`set-finished`) e estado do estudante | Endpoints adaptados: sessão, token, validação de nota e associação curso/conteúdo; Kernel exercita salvamento de pontuação, estado e isolamento de acesso | Falta teste HTTP/browser de continuidade de tentativa entre sessões e contrato separado antes de alimentar notas LMS. |
 | Upload de mídia do editor | Ativo no adapter, sujeito a autorização Group e token; imagens raster passam por `aculta_image`, ficam privadas e têm File API usage | Falta teste Kernel de cópia, persistência e remoção, além de browser test. |
-| Importação/upload de pacote | Pacote local habilitado para administradores; usa validador H5P, ignora conteúdo, preserva allowlist e mantém assets privados gerenciados | Executar testes com pacote real benigno e pacote malformado; instalação remota/Hub continua desligada. |
+| Importação/upload de pacote | Pacote local habilitado para administradores; usa validador H5P, ignora conteúdo, preserva allowlist e mantém assets privados gerenciados | Pacote real benigno instalado no Runtime e seus assets passaram por HTTP; Kernel rejeita pacote malformado. Smoke test de remoção pendente; instalação remota/Hub continua desligada. |
 | Embed independente | Rota removida | Não portar sem autorização da entidade/curso pai; o issue upstream documenta exposição por URL direta. |
 | Telemetria do H5P Hub e instalação automática de tipos | Desligadas por padrão; hooks de instalação não iniciam chamadas externas | Habilitar manualmente exige decisão explícita sobre consentimento, tráfego externo e política de bibliotecas. |
 | Hooks runtime, instalação/desinstalação e segurança `.htaccess` | Hooks runtime usam `#[Hook]` e DI; lifecycle usa procedimentos exigidos pelo Drupal. Não contactam Hub, não alteram `.htaccess` e preservam arquivos privados na desinstalação | O schema segue o lifecycle Drupal; arquivos privados mantêm-se para recuperação e remoção manual controlada. |

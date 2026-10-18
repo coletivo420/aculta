@@ -113,6 +113,24 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     self::assertTrue($access->editorAccess((int) $course->id(), (int) $content->id(), $educator)->isAllowed());
     self::assertFalse($access->editorAccess((int) $course->id(), (int) $content->id(), $outsider)->isAllowed());
 
+    // Rendering denied H5P on a private course must preserve its cache access
+    // metadata without calling methods that AccessResult does not provide.
+    $this->container->get('current_user')->setAccount($outsider);
+    $formatter = $this->container->get('plugin.manager.field.formatter')->getInstance([
+      'configuration' => [
+        'type' => 'h5p_default',
+        'label' => 'hidden',
+        'settings' => [],
+        'third_party_settings' => [],
+      ],
+      'field_definition' => $course->getFieldDefinition('field_h5p_activities'),
+      'view_mode' => 'default',
+    ]);
+    $deniedElements = $formatter->viewElements($course->get('field_h5p_activities'), 'en');
+    self::assertFalse($deniedElements[0]['#access']);
+    self::assertContains('user', $deniedElements[0]['#cache']['contexts']);
+    $this->container->get('current_user')->setAccount($student);
+
     $condition = $this->container->get('plugin.manager.condition')->createInstance('aculta_lms_h5p_group_has_activities');
     $condition->setContextValue('group', $course);
     self::assertTrue($condition->evaluate());

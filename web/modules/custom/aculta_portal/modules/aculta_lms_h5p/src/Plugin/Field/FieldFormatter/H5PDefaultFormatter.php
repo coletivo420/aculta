@@ -96,8 +96,9 @@ class H5PDefaultFormatter extends FormatterBase {
         ->addCacheableDependency($updateAccess)
         ->addCacheContexts(['user', 'user.group_permissions']);
       if (!$fieldAccess->isAllowed()) {
-        $fieldAccess->applyTo($element);
-        return $element;
+        $denied = ['#access' => FALSE];
+        CacheableMetadata::createFromObject($fieldAccess)->applyTo($denied);
+        return [$denied];
       }
     }
 

@@ -46,7 +46,34 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
   }
 
   /** Dispatches the editor's non-mutating requests after course authorization. */
-  public function handle(int $group_id, string $token, int $content_id, string $action, string $arguments = ''): JsonResponse {
+  public function handle(
+    int $group_id,
+    string $token,
+    int $content_id,
+    string $action,
+    string $arguments = '',
+    string $argument_2 = '',
+    string $argument_3 = '',
+    string $argument_4 = '',
+    string $argument_5 = '',
+    string $argument_6 = '',
+    string $argument_7 = '',
+    string $argument_8 = '',
+    string $argument_9 = '',
+    string $argument_10 = '',
+  ): JsonResponse {
+    $arguments = implode('/', array_filter([
+      $arguments,
+      $argument_2,
+      $argument_3,
+      $argument_4,
+      $argument_5,
+      $argument_6,
+      $argument_7,
+      $argument_8,
+      $argument_9,
+      $argument_10,
+    ], static fn (string $part): bool => $part !== ''));
     $request = $this->requestStack->getCurrentRequest();
     if ($request === NULL
       || !$this->courseAccess->editorAccess($group_id, $content_id, $this->currentUser)->isAllowed()
