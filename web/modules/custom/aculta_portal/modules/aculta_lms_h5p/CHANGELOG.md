@@ -35,3 +35,4 @@
 - Corrige a chamada de metadados do editor: o H5P usa a ação `libraries` também para buscar semântica individual por segmentos de rota; a resposta passa pela autorização da biblioteca. O editor visual no Runtime carregou `H5P.HelloWorld 1.0`, e o submit serializou biblioteca e parâmetros no formulário Drupal. A gravação foi bloqueada pela validação do curso de teste sem aulas; nenhuma nova atividade foi persistida.
 - Kernel H5P: 10 testes/180 assertions; Unit H5P: 12/52. As 40 deprecações Kernel são de Core/contrib. Runtime de teste: smoke visual do editor e requisições de listagem/semântica concluídos; salvar e reproduzir estudante ainda pendentes.
 - RUNTIME STATUS: DEFERRED para salvamento/reprodução fim a fim; produção não foi alterada.
+- Preserva os idiomas `language` e `default-language` enviados pelo editor na busca de semântica e valida o formato antes de chamar o H5P Editor. A URL visual do Runtime confirmou o parâmetro `language=pt-br`.

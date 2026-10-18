@@ -15,6 +15,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -86,11 +87,21 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
       // complete list and a single library's semantics. In the latter case
       // getAjaxUrl() appends machine name and version as path segments.
       'libraries' => $arguments !== ''
-        ? $this->singleLibrary($request->getMethod(), $arguments)
+        ? $this->singleLibrary(
+          $request->getMethod(),
+          $arguments,
+          $request->query->getString('language'),
+          $request->query->getString('default-language'),
+        )
         : ($request->query->has('machineName')
           ? $this->singleLibraryFromQuery($request)
           : $this->libraries($request->getMethod())),
-      'single-library' => $this->singleLibrary($request->getMethod(), $arguments),
+      'single-library' => $this->singleLibrary(
+        $request->getMethod(),
+        $arguments,
+        $request->query->getString('language'),
+        $request->query->getString('default-language'),
+      ),
       'translations' => $this->translations($request->getMethod(), $request->query->getString('language')),
       'filter' => $this->filter($request->getMethod()),
       'files' => $this->files($request->getMethod(), $content_id),
@@ -118,7 +129,12 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
   }
 
   /** Returns metadata and assets for one installed, permitted library. */
-  private function singleLibrary(string $method, string $arguments): JsonResponse {
+  private function singleLibrary(
+    string $method,
+    string $arguments,
+    string $language = '',
+    string $defaultLanguage = '',
+  ): JsonResponse {
     if ($method !== 'GET' || !preg_match('@^([A-Za-z][A-Za-z0-9_.-]*)/(\d{1,4})/(\d{1,4})$@D', $arguments, $matches)) {
       throw new NotFoundHttpException();
     }
@@ -127,21 +143,25 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
       throw new NotFoundHttpException();
     }
 
-    $language = $this->languageManager->getCurrentLanguage()->getId();
+    $language = $language !== '' ? $language : $this->languageManager->getCurrentLanguage()->getId();
+    if (!preg_match('/^[a-zA-Z0-9_-]{2,12}$/D', $language)
+      || ($defaultLanguage !== '' && !preg_match('/^[a-zA-Z0-9_-]{2,12}$/D', $defaultLanguage))) {
+      throw new NotFoundHttpException();
+    }
     $data = H5PEditorUtilities::getInstance()->getLibraryData(
       $machine,
       $major,
       $minor,
       $language,
       'libraries/',
-      '',
+      $defaultLanguage,
       '',
     );
     return new JsonResponse($data);
   }
 
   /** Resolves the parameter format emitted by H5P's editor JavaScript API. */
-  private function singleLibraryFromQuery(\Symfony\Component\HttpFoundation\Request $request): JsonResponse {
+  private function singleLibraryFromQuery(Request $request): JsonResponse {
     $machine = $request->query->getString('machineName');
     $major = $request->query->getString('majorVersion');
     $minor = $request->query->getString('minorVersion');
@@ -150,7 +170,12 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
       || !preg_match('/^\d{1,4}$/D', $minor)) {
       throw new NotFoundHttpException();
     }
-    return $this->singleLibrary($request->getMethod(), "$machine/$major/$minor");
+    return $this->singleLibrary(
+      $request->getMethod(),
+      "$machine/$major/$minor",
+      $request->query->getString('language'),
+      $request->query->getString('default-language'),
+    );
   }
 
   /** Returns only requested translations for installed local libraries. */

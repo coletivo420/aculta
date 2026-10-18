@@ -123,7 +123,8 @@ O editor abriu no formulário de edição da sala de curso e carregou
 `H5P.HelloWorld 1.0`. Isso revelou e corrigiu a dispatch da rota `libraries`: o
 H5P Editor usa essa mesma ação para a lista e para os metadados individuais,
 com segmentos adicionais de máquina/versão. A resposta individual agora passa
-pela verificação de acesso à biblioteca; o formato por query também é aceito.
+pela verificação de acesso à biblioteca e preserva `language` e
+`default-language`; o formato por query também é aceito.
 O submit serializou os parâmetros e a biblioteca nos campos Drupal. O curso de
 teste recusou salvar por não ter nenhuma aula, portanto não foi persistida nova
 atividade. O próximo smoke test precisa usar curso de teste válido com aula,
