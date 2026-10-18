@@ -5,15 +5,24 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_donation\Kernel;
 
 use Drupal\aculta_donation\Access\DonationRefundAccess;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\commerce_order\Entity\OrderItemType;
 use Drupal\commerce_order\Entity\OrderType;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Routing\RouteMatch;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Port do fluxo de doação: plugins descobertos, criação do pedido de doação e regra de não estorno.
+ *
+ * O `aculta_donation` depende do `aculta_portal` (pane de assinatura, blocos e rotas), mas este teste não habilita o
+ * Portal inteiro: a árvore de dependências dele (group, lms, commerce_mercado_pago, domain, etc.) não é necessária para
+ * estes casos. Os três serviços que o pane consome são registrados como sintéticos e recebem instâncias de teste.
  */
 #[Group('aculta_donation')]
 #[RunTestsInSeparateProcesses]
@@ -24,8 +33,26 @@ final class DonationPortKernelTest extends OrderKernelTestBase {
    */
   protected static $modules = ['commerce_cart', 'commerce_checkout', 'commerce_payment', 'aculta_donation'];
 
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    foreach (['aculta_portal.domain_purpose', 'aculta_portal.mercado_pago.logger', 'aculta_portal.mercado_pago.recurrence_service'] as $id) {
+      $container->register($id)->setSynthetic(TRUE);
+    }
+  }
+
   protected function setUp(): void {
     parent::setUp();
+    $this->container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+      $this->container->get('entity_type.manager'),
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->container->get('config.factory'),
+      $this->container->get('request_stack'),
+    ));
+    $this->container->set('aculta_portal.mercado_pago.logger', $this->createMock(LoggerChannelInterface::class));
+    $this->container->set('aculta_portal.mercado_pago.recurrence_service', $this->createMock(MercadoPagoRecurrenceService::class));
     $this->installConfig(['aculta_donation']);
     $this->container->get('commerce_price.currency_importer')->import('BRL');
     if (!OrderItemType::load('donation')) {

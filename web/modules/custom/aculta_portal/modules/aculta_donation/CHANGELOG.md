@@ -1,5 +1,16 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.19 — teste Kernel do fluxo de doação sem habilitar o Portal inteiro — 2026-10-18
+
+- `DonationPortKernelTest` falhava: o pane de assinatura consome três serviços do `aculta_portal`, e o teste não os tinha.
+  Habilitar o Portal inteiro puxava a árvore de dependências dele (group, lms, commerce_mercado_pago, domain, etc.).
+- Os três serviços (`aculta_portal.domain_purpose`, `aculta_portal.mercado_pago.logger`,
+  `aculta_portal.mercado_pago.recurrence_service`) passam a ser sintéticos no teste, com `DomainPurposeManager` real e
+  mocks do negociador de domínio, do logger e do serviço de recorrência.
+- Somente teste; nenhuma mudança de código de produção nem de configuração.
+- Evidência: Kernel no banco `aculta_simpletest`: 4 testes, 155 asserções, OK (com deprecações de Core e contrib).
+- RUNTIME STATUS: não aplicável (somente arquivo de teste).
+
 ## 0.1.0-dev.18 — configuração sob o módulo proprietário — 2026-10-18
 
 - O setting passa de `commerce_donation_flow.settings` para `aculta_donation.settings`, conforme o provider instalado.
