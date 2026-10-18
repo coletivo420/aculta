@@ -43,7 +43,7 @@ final class H5PAJAX extends ControllerBase {
     $token = (string) $request->query->get('token', '');
 
     if (!$uid || $content_id < 1 || $score < 0 || $max_score < 0 || $score > $max_score || $opened < 1 || !\H5PCore::validToken('result', $token) || !$this->courseAccess->studentAccess($group_id, $content_id, $this->currentUser())->isAllowed()) {
-      return new JsonResponse(['success' => FALSE, 'message' => $this->t('Invalid request.')], 403);
+      return $this->privateResponse(['success' => FALSE, 'message' => $this->t('Invalid request.')], 403);
     }
 
     $existing = $this->database->select('h5p_points', 'p')
@@ -63,20 +63,20 @@ final class H5PAJAX extends ControllerBase {
     }
     $this->database->merge('h5p_points')->keys(['uid' => $uid, 'content_id' => $content_id])->fields($fields)->execute();
     $this->eventDispatcher->dispatch(new FinishedEvent($fields), FinishedEvent::FINISHED_EVENT);
-    return new JsonResponse(['success' => TRUE]);
+    return $this->privateResponse(['success' => TRUE]);
   }
 
   /** Loads or saves user state for content accessible through this course. */
   public function contentUserData(int $group_id, int $content_main_id, string $data_id, int $sub_content_id, Request $request): JsonResponse {
     $user = $this->currentUser();
     if (!$user->isAuthenticated() || $content_main_id < 1 || !preg_match('/^[a-zA-Z0-9_.-]{1,128}$/', $data_id) || $sub_content_id < 0 || !$this->courseAccess->studentAccess($group_id, $content_main_id, $user)->isAllowed() || !\H5PCore::validToken('contentuserdata', (string) $request->query->get('token', ''))) {
-      return new JsonResponse(['success' => FALSE, 'message' => $this->t('Invalid request.')], 403);
+      return $this->privateResponse(['success' => FALSE, 'message' => $this->t('Invalid request.')], 403);
     }
 
     if ($request->request->has('data')) {
       $data = (string) $request->request->get('data');
       if (strlen($data) > 1048576) {
-        return new JsonResponse(['success' => FALSE], 413);
+        return $this->privateResponse(['success' => FALSE], 413);
       }
       $delete = $data === '0';
       if ($delete) {
@@ -98,11 +98,19 @@ final class H5PAJAX extends ControllerBase {
         }
       }
       Cache::invalidateTags(['h5p_content:' . $content_main_id]);
-      return new JsonResponse(['success' => TRUE]);
+      return $this->privateResponse(['success' => TRUE]);
     }
 
     $data = $this->database->select('h5p_content_user_data', 'd')->fields('d', ['data'])->condition('user_id', $user->id())->condition('content_main_id', $content_main_id)->condition('sub_content_id', $sub_content_id)->condition('data_id', $data_id)->execute()->fetchField();
-    return new JsonResponse(['success' => TRUE, 'data' => $data === FALSE ? NULL : $data]);
+    return $this->privateResponse(['success' => TRUE, 'data' => $data === FALSE ? NULL : $data]);
+  }
+
+  /** Returns personalized progress data with browser and proxy caching disabled. */
+  private function privateResponse(array $data, int $status = 200): JsonResponse {
+    $response = new JsonResponse($data, $status);
+    $response->headers->set('Cache-Control', 'private, no-store, max-age=0');
+    $response->headers->set('X-Content-Type-Options', 'nosniff');
+    return $response;
   }
 
 }

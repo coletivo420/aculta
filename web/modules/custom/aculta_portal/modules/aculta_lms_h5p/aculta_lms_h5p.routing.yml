@@ -112,6 +112,7 @@ aculta_lms_h5p.ajax.set_finished:
      _permission: 'access content'
      _user_is_logged_in: 'TRUE'
      group_id: '\d+'
+  methods: [POST]
 
 aculta_lms_h5p.ajax.content_user_data:
   path: '/h5p-ajax/{group_id}/content-user-data/{content_main_id}/{data_id}/{sub_content_id}'
@@ -124,6 +125,7 @@ aculta_lms_h5p.ajax.content_user_data:
      group_id: '\d+'
      content_main_id: '\d+'
      sub_content_id: '\d+'
+  methods: [GET, POST]
 
 aculta_lms_h5p.content_file:
   path: '/h5p-content/{group_id}/{content_id}/{file_path}'

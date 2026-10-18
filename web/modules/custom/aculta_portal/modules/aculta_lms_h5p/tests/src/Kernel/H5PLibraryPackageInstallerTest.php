@@ -110,6 +110,13 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     }
   }
 
+  /** Verifies progress endpoints expose only the methods required by H5P. */
+  public function testProgressRoutesRestrictHttpMethods(): void {
+    $provider = $this->container->get('router.route_provider');
+    self::assertSame(['POST'], $provider->getRouteByName('aculta_lms_h5p.ajax.set_finished')->getMethods());
+    self::assertSame(['GET', 'POST'], $provider->getRouteByName('aculta_lms_h5p.ajax.content_user_data')->getMethods());
+  }
+
   /** Creates a temporary ZIP package with the requested entries. */
   private function createPackage(array $entries): string {
     $path = $this->siteDirectory . '/library-' . bin2hex(random_bytes(6)) . '.h5p';
