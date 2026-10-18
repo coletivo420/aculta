@@ -56,9 +56,13 @@ canônica do produto não tem formulário de compra para evitar matrícula sem t
 
 O checkout permite criar conta, não exige e-mail confirmado nessa rota e mantém
 a política geral de aceite de termos. O aviso de matrícula por e-mail integra-se
-na F13. RUNTIME STATUS: DEFERRED; configuração ainda não foi importada e smoke
-tests de matrícula, turma cruzada, educador, pagamento, reembolso e isolamento
-A/B permanecem pendentes.
+na F13. No Runtime de teste, `aculta_lms` e `lms_classes` estão habilitados e 29
+objetos de configuração F7 foram aplicados após backup; nenhuma configuração
+ausente foi removida e o curso existente foi preservado. `create_default_class`
+permanece desligado. RUNTIME STATUS: CONFIG APLICADA; a homologação funcional
+segue DEFERRED para matrícula manual/online, turma cruzada, educadores,
+checkout pago/gratuito, estorno/reembolso e isolamento entre usuários A/B.
+Detalhes, limites e caminho de recuperação estão no [changelog](CHANGELOG.md).
 
 ## Testes
 
