@@ -5,6 +5,25 @@
 (function (Drupal, once) {
   'use strict';
 
+  // Load the active photo and one slide ahead. This prevents browsers such as
+  // Firefox from downloading every hidden 1000 px stage image at page load.
+  const loadSlideImages = (slideshow, current) => {
+    const slides = slideshow.querySelectorAll('.vvjs-item');
+    const total = slides.length;
+    if (!total) {
+      return;
+    }
+
+    [current, (current % total) + 1].forEach((index) => {
+      const image = slides[index - 1]?.querySelector('img[data-aculta-lazy-src]');
+      if (!image) {
+        return;
+      }
+      image.setAttribute('src', image.dataset.acultaLazySrc);
+      image.removeAttribute('data-aculta-lazy-src');
+    });
+  };
+
   Drupal.behaviors.acultaAlbumStage = {
     attach(context) {
       once('aculta-album-stage', '[data-aculta-album-stage]', context).forEach((stage) => {
@@ -14,10 +33,14 @@
           return;
         }
 
+        loadSlideImages(slideshow, slideshow.getCurrentSlide?.() || 1);
+
         // Thumbnails use the 1-based slide index in VVJS's public API.
         thumbs.forEach((button) => {
           button.addEventListener('click', () => {
-            slideshow.goToSlide?.(Number(button.dataset.acultaAlbumThumb));
+            const target = Number(button.dataset.acultaAlbumThumb);
+            loadSlideImages(slideshow, target);
+            slideshow.goToSlide?.(target);
           });
         });
 
@@ -36,6 +59,7 @@
             const eventStage = source?.closest?.('[data-aculta-album-stage]');
             if (source?.matches?.('vvjs-slideshow') && eventStage) {
               const current = event.detail.slide || source.getCurrentSlide?.() || 1;
+              loadSlideImages(source, current);
               eventStage.querySelectorAll('[data-aculta-album-thumb]').forEach((button) => {
                 button.setAttribute('aria-current', Number(button.dataset.acultaAlbumThumb) === current ? 'true' : 'false');
               });

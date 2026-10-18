@@ -1,3 +1,11 @@
+## 0.6.0-dev.77 — adia imagens de slides inativos do álbum — 2026-10-18
+
+Classificação: PATCH de performance, sem alteração dos controles ou da sequência do álbum.
+
+- `aculta_album_fotos` mantém no HTML o `src` do slide ativo e adia o `src` dos slides restantes até a navegação; ACULTA420 carrega o slide atual e o próximo pelo evento público `vvj:slideChanged`.
+- Diagnóstico no Firefox com o álbum de Goiânia: antes do ajuste, 63 imagens de palco (~8,8 MB) e 20 miniaturas eram baixadas no acesso inicial, apesar do `loading="lazy"`.
+- Firefox no Runtime de teste: requisições iniciais de imagens de palco caíram de 63 (8,8 MB) para 4 (572 KB); 20 miniaturas próximas à área visível somaram 62 KB. Clique na miniatura 60 ativou o slide 60 e carregou sua imagem. RUNTIME STATUS: PASS.
+
 ## 0.6.0-dev.76 — auditoria de consumidores VVJ e smoke test — 2026-10-18
 
 Classificação: PATCH documental da implantação VVJ.

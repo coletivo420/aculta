@@ -11,9 +11,11 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Path\PathMatcherInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\node\NodeInterface;
+use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -44,6 +46,49 @@ final class ThemeHooks {
       $variables['options']['show_play_pause'] = FALSE;
       $variables['options']['show_progress_bar'] = FALSE;
       $variables['options']['show_page_counter'] = FALSE;
+    }
+  }
+
+  /**
+   * Defers inactive album slide images until VVJS approaches each slide.
+   *
+   * Firefox requests lazy images in hidden slides in this 60+ item View. The
+   * rendered PhotoSwipe formatter markup stays intact except for moving the
+   * inactive image source to a data attribute. The album behavior restores
+   * `src` for the active slide and its next slide.
+   */
+  #[Hook('preprocess_views_view_vvjs_fields')]
+  public function deferInactiveAlbumSlideImages(array &$variables): void {
+    $view = $variables['view'] ?? NULL;
+    $row = $variables['row'] ?? NULL;
+    if (!$view instanceof ViewExecutable
+      || $view->id() !== 'aculta_album_fotos'
+      || $view->current_display !== 'block_1'
+      || !is_object($row)
+      || (int) ($row->index ?? 0) === 0) {
+      return;
+    }
+
+    $field = $variables['fields']['field_media_image'] ?? NULL;
+    $content = $field->content ?? NULL;
+    if (!is_string($content) && !$content instanceof \Stringable) {
+      return;
+    }
+
+    $deferred = preg_replace_callback(
+      '/<img\\b[^>]*>/i',
+      static fn(array $matches): string => preg_replace(
+        "/\\s+src=(\"[^\"]*\"|'[^']*')/i",
+        ' data-aculta-lazy-src=$1',
+        $matches[0],
+        1,
+      ) ?? $matches[0],
+      (string) $content,
+      1,
+    );
+    if (is_string($deferred) && $deferred !== (string) $content) {
+      // The formatter has already produced sanitized image/link markup.
+      $field->content = Markup::create($deferred);
     }
   }
 
