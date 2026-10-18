@@ -1,5 +1,9 @@
 # Componentes
 
+O catálogo visual e suas regras estão em
+[`component-catalog.md`](component-catalog.md). Os stories ficam junto dos
+SDCs e aparecem na biblioteca protegida do UI Patterns.
+
 ## Organização
 
 Drupal Core permite SDCs aninhados. A organização alvo é:

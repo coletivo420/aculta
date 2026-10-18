@@ -5,7 +5,7 @@ props:
   variant: horizontal
 slots:
   image:
-    markup: '<img src="/themes/custom/aculta420/assets/branding/podplant420/web/horizontal/podplant420-horizontal-on-light-480w.webp" alt="Marca PodPlant420">'
+    markup: '<div class="ratio ratio-4x3 bg-body-secondary" role="img" aria-label="Área reservada para mídia de exemplo"></div>'
   content:
     markup: '<h3>Projeto comunitário</h3><p>A apresentação mantém conteúdo e mídia em fluxo responsivo.</p>'
   footer:

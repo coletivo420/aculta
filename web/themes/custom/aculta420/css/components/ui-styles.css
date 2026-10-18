@@ -48,3 +48,7 @@
 .aculta-uistyle--border-accent {
   border: 1px solid var(--aculta-border-accent);
 }
+
+.aculta-uistyle--elevation-raised {
+  box-shadow: var(--aculta-shadow-raised);
+}

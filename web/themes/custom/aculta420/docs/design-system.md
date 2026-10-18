@@ -235,12 +235,26 @@ aceita legenda/crédito opcionais. `aculta420:quote` apresenta citação, autori
 fonte; citações antigas em HTML rico da Revista recebem a mesma tipografia e
 superfície sem reprocessar o corpo ou alterar o conteúdo salvo.
 
+O catálogo UI Styles também oferece elevação de superfície por
+`--aculta-shadow-raised`, com o mesmo contrato de markup e valores próprios dos
+tokens de cada modo. A opção é única e não substitui a sombra de foco/interação
+nem permite escolher valores livres.
+
 Os SDCs `project-card` e `course_card` compõem esse pattern em sua variante
 vertical, mantendo seus contratos especializados. Projetos preservam mídia já
 renderizada, categoria, resumo e CTA; o cartão do LMS mantém props/slots,
 marcação de integração e dados/access/cache fornecidos pelo Drupal LMS. A
 variante sobreposta segue reservada a mídias editoriais apropriadas, sem forçar
 recorte de logos de projeto ou depender de URL de imagem do curso.
+
+### Consumidores UI Patterns
+
+Adotar UI Patterns em um consumidor novo somente quando houver uma necessidade
+real e repetível de montagem editorial. Confirmar que o contrato do SDC é neutro
+e estável, que a integração preserva render arrays/access/cache e que Bootstrap,
+Core ou um consumidor existente não resolvem o caso. Registrar consumidor e
+story no mesmo commit. Não converter displays em lote nem substituir VVJB/VVJS,
+Form API, view modes ou lógica do Portal por conveniência.
 
 ## Variants
 

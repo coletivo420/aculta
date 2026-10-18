@@ -1,3 +1,13 @@
+## 0.6.0-dev.82 — catálogo visual e extensão semântica de UI Styles — 2026-10-18
+
+Classificação: PATCH de documentação e site building; sem alteração de dados ou contrato funcional do Portal.
+
+- Completa stories demonstrativos para os 34 SDCs no UI Patterns Library; previews usam conteúdo fictício, links de exemplo e placeholders, sem iniciar ações.
+- Documenta o catálogo visual em `/admin/appearance/ui/components`, protegido para administradores, sem aplicação Storybook independente.
+- Acrescenta UI Style de elevação apoiado pelo token semântico `--aculta-shadow-raised`, com valor próprio nos modos claro e escuro; as sombras de hover passam a reutilizar esse token.
+- Registra critérios para adotar UI Patterns em novos consumidores e limites para expandir o catálogo de estilos.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.81 — cards de projeto e curso no pattern compartilhado — 2026-10-18
 
 Classificação: PATCH de integração do design system; contratos e dados funcionais preservados.

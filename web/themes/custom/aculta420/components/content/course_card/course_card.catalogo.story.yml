@@ -1,0 +1,11 @@
+name: Catálogo de cursos
+description: Exemplo estático com título, resumo e chamada; dados e acesso reais vêm do Drupal LMS.
+component: aculta420:course_card
+props:
+  title: Formação cultural e direitos
+  url: '#curso-exemplo'
+  description: Conteúdo introdutório sobre cultura, participação social e direitos humanos.
+  extra_fields: []
+slots:
+  start_link:
+    markup: '<a class="btn btn-primary" href="#curso-exemplo">Conheça o curso</a>'

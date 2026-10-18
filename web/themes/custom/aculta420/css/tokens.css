@@ -81,7 +81,8 @@
   --aculta-motion-fast: 180ms;
   --aculta-motion-quick: 150ms;
   --aculta-ease-standard: ease;
-  --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
+  --aculta-shadow-raised: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
+  --aculta-shadow-hover: var(--aculta-shadow-raised);
   --aculta-scrim: rgba(12, 60, 41, 0.58);
   /* Moldura de mídia (palco de galeria): areia quente da família do creme da marca; combina com o verde escuro e deixa a foto em destaque. */
   --aculta-media-stage-bg: #e8dfcc;
@@ -262,7 +263,8 @@
   --aculta-border: var(--aculta-border-default);
   --aculta-control-border: var(--aculta-border-strong);
   --aculta-focus: var(--aculta-focus-ring);
-  --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+  --aculta-shadow-raised: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+  --aculta-shadow-hover: var(--aculta-shadow-raised);
   --aculta-scrim: rgba(0, 0, 0, 0.6);
   /* Moldura de mídia no escuro: mais escura que a página, para continuar lida como moldura. */
   --aculta-media-stage-bg: #0d0b0a;
@@ -413,7 +415,8 @@
     --aculta-border: var(--aculta-border-default);
     --aculta-control-border: var(--aculta-border-strong);
     --aculta-focus: var(--aculta-focus-ring);
-    --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+    --aculta-shadow-raised: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+    --aculta-shadow-hover: var(--aculta-shadow-raised);
   --aculta-scrim: rgba(0, 0, 0, 0.6);
   /* Moldura de mídia no escuro: mais escura que a página, para continuar lida como moldura. */
   --aculta-media-stage-bg: #0d0b0a;

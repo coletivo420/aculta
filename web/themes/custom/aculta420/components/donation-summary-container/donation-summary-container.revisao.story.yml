@@ -1,0 +1,6 @@
+name: Resumo da contribuição
+description: Conteúdo de revisão ilustrativo, sem pedido ou dados pessoais reais.
+component: aculta420:donation-summary-container
+props:
+  classes: aculta-donation-summary
+  content: Resumo de exemplo fornecido pelo formulário de revisão.
