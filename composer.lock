@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e6b406108dffb3736affa2d898280df",
+    "content-hash": "11452326014ec824a2fcf0fb6ec7df7c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7434,27 +7434,97 @@
         },
         {
             "name": "drupal/vvj_core",
-            "version": "2.0.0",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/vvj_core.git",
-                "reference": "2.0.0"
+                "reference": "2.0.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/vvj_core-2.0.0.zip",
-                "reference": "2.0.0",
-                "shasum": "b6d5eb6454e0d3287f9eb1f8af368dc47cb6c852"
+                "url": "https://ftp.drupal.org/files/projects/vvj_core-2.0.2.zip",
+                "reference": "2.0.2",
+                "shasum": "6d06c096c811c0ccc2e5a9ff274e4a8d1da883c4"
             },
             "require": {
                 "drupal/core": "^11.3 || ^12",
                 "php": ">=8.3"
             },
+            "require-dev": {
+                "drupal/ai": "^1.2",
+                "drupal/key": "^1.18"
+            },
+            "suggest": {
+                "drupal/ai": "^1.2 — required by the vvj_core_ai sub-module, which is optional. vvj_core itself does not need it."
+            },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.0",
-                    "datestamp": "1783195183",
+                    "version": "2.0.2",
+                    "datestamp": "1791767994",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "scripts": {
+                "phpcs": [
+                    "phpcs --standard=phpcs.xml.dist"
+                ],
+                "phpcbf": [
+                    "phpcbf --standard=phpcs.xml.dist"
+                ],
+                "phpstan": [
+                    "phpstan analyse -c phpstan.neon --memory-limit=512M"
+                ],
+                "lint": [
+                    "@phpcs",
+                    "@phpstan"
+                ]
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alaa Haddad (alaahaddad.com)",
+                    "homepage": "https://www.drupal.org/u/flashwebcenter",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Foundation module for the VVJ Views renderer family — abstract Style plugin base, shared services, custom-element JS base, cascade-layer CSS contract. Required by every drupal/vvjX module.",
+            "homepage": "https://drupal.org/project/vvj_core",
+            "support": {
+                "source": "https://git.drupalcode.org/project/vvj_core",
+                "issues": "https://drupal.org/project/issues/vvj_core"
+            }
+        },
+        {
+            "name": "drupal/vvja",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/vvja.git",
+                "reference": "2.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/vvja-2.0.1.zip",
+                "reference": "2.0.1",
+                "shasum": "b105617466fc3f506dd55d73d3324b2c2492bcd4"
+            },
+            "require": {
+                "drupal/core": "^11.3 || ^12",
+                "drupal/vvj_core": "^2.0.1",
+                "php": ">=8.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.1",
+                    "datestamp": "1791260968",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -7472,11 +7542,11 @@
                     "role": "Maintainer"
                 }
             ],
-            "description": "Foundation module for the VVJ Views renderer family — abstract Style plugin base, shared services, custom-element JS base, cascade-layer CSS contract. Required by every drupal/vvjX module.",
-            "homepage": "https://drupal.org/project/vvj_core",
+            "description": "Provides a vanilla-JavaScript Accordion format for Views. APEX-grade v2 — SDC component, OOP hooks, dynamic library loading, AAA-leaning a11y, CSS-variable bridge to APEX themes.",
+            "homepage": "https://drupal.org/project/vvja",
             "support": {
-                "source": "https://git.drupalcode.org/project/vvj_core",
-                "issues": "https://drupal.org/project/issues/vvj_core"
+                "source": "https://git.drupalcode.org/project/vvja",
+                "issues": "https://drupal.org/project/issues/vvja"
             }
         },
         {
@@ -7525,6 +7595,294 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/vvjb",
                 "issues": "https://drupal.org/project/issues/vvjb"
+            }
+        },
+        {
+            "name": "drupal/vvjf",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/vvjf.git",
+                "reference": "2.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/vvjf-2.0.1.zip",
+                "reference": "2.0.1",
+                "shasum": "bd61af6bf4e677e694bf4de2179b516561503d98"
+            },
+            "require": {
+                "drupal/core": "^11.3 || ^12",
+                "drupal/vvj_core": "^2.0.1",
+                "php": ">=8.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.1",
+                    "datestamp": "1791260690",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alaa Haddad (alaahaddad.com)",
+                    "homepage": "https://www.drupal.org/u/flashwebcenter",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides a Vanilla Javascript 3D Flipbox format for Views. v2 builds on the vvj_core foundation.",
+            "homepage": "https://drupal.org/project/vvjf",
+            "support": {
+                "source": "https://git.drupalcode.org/project/vvjf",
+                "issues": "https://drupal.org/project/issues/vvjf"
+            }
+        },
+        {
+            "name": "drupal/vvjh",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/vvjh.git",
+                "reference": "2.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/vvjh-2.0.1.zip",
+                "reference": "2.0.1",
+                "shasum": "d9790d849d3c0fcbd8bf7cb3b062982006830250"
+            },
+            "require": {
+                "drupal/core": "^11.3 || ^12",
+                "drupal/vvj_core": "^2.0.1",
+                "php": ">=8.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.1",
+                    "datestamp": "1791260619",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alaa Haddad (alaahaddad.com)",
+                    "homepage": "https://www.drupal.org/u/flashwebcenter",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides a Vanilla Javascript Hero format for Views. v2 builds on the vvj_core foundation.",
+            "homepage": "https://drupal.org/project/vvjh",
+            "support": {
+                "source": "https://git.drupalcode.org/project/vvjh",
+                "issues": "https://drupal.org/project/issues/vvjh"
+            }
+        },
+        {
+            "name": "drupal/vvjl",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/vvjl.git",
+                "reference": "2.0.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/vvjl-2.0.2.zip",
+                "reference": "2.0.2",
+                "shasum": "89c1227ad33f25fe80a94534d7653de9a5fadbcd"
+            },
+            "require": {
+                "drupal/core": "^11.3 || ^12",
+                "drupal/vvj_core": "^2.0.1",
+                "php": ">=8.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.2",
+                    "datestamp": "1791780125",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alaa Haddad (alaahaddad.com)",
+                    "homepage": "https://www.drupal.org/u/flashwebcenter",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides a Vanilla Javascript Lightbox format for Views. v2 builds on the vvj_core foundation.",
+            "homepage": "https://drupal.org/project/vvjl",
+            "support": {
+                "source": "https://git.drupalcode.org/project/vvjl",
+                "issues": "https://drupal.org/project/issues/vvjl"
+            }
+        },
+        {
+            "name": "drupal/vvjr",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/vvjr.git",
+                "reference": "2.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/vvjr-2.0.1.zip",
+                "reference": "2.0.1",
+                "shasum": "0a162495cbb862932f2ddb3123275014f621729a"
+            },
+            "require": {
+                "drupal/core": "^11.3 || ^12",
+                "drupal/vvj_core": "^2.0.1",
+                "php": ">=8.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.1",
+                    "datestamp": "1791260218",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alaa Haddad (alaahaddad.com)",
+                    "homepage": "https://www.drupal.org/u/flashwebcenter",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides a Vanilla Javascript Reveal format for Views. v2 builds on the vvj_core foundation.",
+            "homepage": "https://drupal.org/project/vvjr",
+            "support": {
+                "source": "https://git.drupalcode.org/project/vvjr",
+                "issues": "https://drupal.org/project/issues/vvjr"
+            }
+        },
+        {
+            "name": "drupal/vvjs",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/vvjs.git",
+                "reference": "2.0.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/vvjs-2.0.2.zip",
+                "reference": "2.0.2",
+                "shasum": "90cfffdaf9a5b88bafcf5d5fd1cccc00b4702918"
+            },
+            "require": {
+                "drupal/core": "^11.3 || ^12",
+                "drupal/vvj_core": "^2.0.1",
+                "php": ">=8.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.2",
+                    "datestamp": "1791779919",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alaa Haddad (alaahaddad.com)",
+                    "homepage": "https://www.drupal.org/u/flashwebcenter",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides a Vanilla Javascript Slideshow format for Views. v2 builds on the vvj_core foundation.",
+            "homepage": "https://drupal.org/project/vvjs",
+            "support": {
+                "source": "https://git.drupalcode.org/project/vvjs",
+                "issues": "https://drupal.org/project/issues/vvjs"
+            }
+        },
+        {
+            "name": "drupal/vvjt",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/vvjt.git",
+                "reference": "2.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/vvjt-2.0.1.zip",
+                "reference": "2.0.1",
+                "shasum": "7d18bae422a0a188953774337ab7dbfb978cfb12"
+            },
+            "require": {
+                "drupal/core": "^11.3 || ^12",
+                "drupal/vvj_core": "^2.0.1",
+                "php": ">=8.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.1",
+                    "datestamp": "1791260088",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alaa Haddad (alaahaddad.com)",
+                    "homepage": "https://www.drupal.org/u/flashwebcenter",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides a Vanilla Javascript Tabs format for Views. v2 builds on the vvj_core foundation.",
+            "homepage": "https://drupal.org/project/vvjt",
+            "support": {
+                "source": "https://git.drupalcode.org/project/vvjt",
+                "issues": "https://drupal.org/project/issues/vvjt"
             }
         },
         {

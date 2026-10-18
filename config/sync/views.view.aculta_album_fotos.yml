@@ -10,11 +10,11 @@ dependencies:
     - media
     - media_gallery
     - photoswipe
-    - vvjb
+    - vvjs
 id: aculta_album_fotos
-label: 'Fotos do álbum (slideshow)'
+label: 'Fotos do álbum (slideshow VVJS)'
 module: views
-description: 'Fotos de um álbum, uma por slide (VVJB), com paginação real.'
+description: 'Fotos de um álbum, uma por slide (VVJS), com paginação real.'
 tag: ''
 base_table: media_gallery_field_data
 base_field: id
@@ -95,26 +95,27 @@ display:
           exposed: false
       filters: {  }
       style:
-        type: views_vvjb
+        type: views_vvjs
         options:
-          orientation: horizontal
-          items_small: 1
-          items_big: 1
-          gap: 0
-          item_width: 0
-          looping: true
-          slide_time: 3000
-          navigation: both
-          dot_style: circle
-          breakpoints: '768'
+          grouping: {  }
+          hero_slideshow: false
+          enable_css: true
+          arrows: arrows-sides
+          time_in_seconds: 3000
+          navigation: none
+          animation: none
+          transition_type: crossfade-classic
+          transition_duration: 400
+          show_total_slides: true
+          show_slide_progress: false
           show_play_pause: true
-          show_progress_bar: false
-          show_page_counter: true
-          enable_keyboard_nav: true
-          enable_touch_swipe: true
-          enable_pause_on_hover: true
-          pause_on_reduced_motion: true
-          enable_deeplink: false
+          pause_on_hover: true
+          enable_swipe: true
+          enable_keyboard: true
+          enable_looping: true
+          start_index: 1
+          available_breakpoints: '768'
+          scrollable_dots_width: 0
       row:
         type: fields
       query:

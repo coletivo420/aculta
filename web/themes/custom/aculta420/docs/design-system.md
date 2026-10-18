@@ -169,6 +169,14 @@ https://getbootstrap.com/docs/5.3/customize/color-modes/
 - Exceção: carrossel fora do VVJB só com decisão registrada no `DEBT-REGISTER.md` ou no roadmap do tema, com justificativa.
 - Motivo: uma só engine de carrossel, com navegação, teclado, reduced-motion e foco já tratados (`editorial-carousel.css` e `editorial-carousel.js`).
 
+## VVJS para sequências de fotos
+
+- O palco dos álbuns usa VVJS (`views_vvjs`) porque apresenta uma sequência fotográfica paginada com miniaturas próprias. Esse uso não muda os carrosséis editoriais Home/Projetos, que continuam VVJB.
+- A ampliação PhotoSwipe continua responsável pelo lightbox da imagem; VVJS controla somente o slide atual, navegação e movimento reduzido.
+- A integração do palco fica no tema por `data-aculta-album-*` e pela API/evento público VVJ; o submódulo Gallery mantém conteúdo, ordem, paginação, acesso e cache.
+- VVJA, VVJF, VVJH, VVJL, VVJR e VVJT ficam disponíveis para Views, mas não substituem por conveniência componentes SDC, páginas de rota, formulários ou navegação da Conta. Aplicar um formato somente com View e necessidade editorial compatíveis.
+- VVJC (3D Carousel) e VVJP (Parallax) não fazem parte do catálogo instalado do ACULTA.
+
 ## Motion
 
 Motion deve ser foundation, não decisão local de cada componente.

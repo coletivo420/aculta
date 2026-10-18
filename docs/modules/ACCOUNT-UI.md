@@ -11,7 +11,7 @@ A área ACCOUNT usa rotas Drupal, access, Domain, controllers, Form API e progre
 
 ## VVJT — decisão arquitetural
 
-`drupal/vvjt` não está instalado atualmente e **não deve substituir a navegação principal da Minha Conta**.
+`drupal/vvjt` está instalado como formato de Views e **não deve substituir a navegação principal da Minha Conta**.
 
 VVJT é um style plugin de Views: ele transforma linhas/campos de uma View em tabs. As seções da Conta são responsabilidades heterogêneas e rotas reais, com Form API, dados privados, OAuth, LMS/Group e Commerce.
 
@@ -31,7 +31,7 @@ Não usar VVJT para substituir Dashboard, Dados, Segurança, Conexões, OAuth, c
 ## VVJ atualmente instalado
 
 - `vvj_core`: fundação compartilhada da família VVJ 2.x;
-- `vvjb`: carousel como formato de Views.
+- `vvja`, `vvjb`, `vvjf`, `vvjh`, `vvjl`, `vvjr`, `vvjs` e `vvjt`: formatos de Views instalados; `vvjc` (3D Carousel) e `vvjp` (Parallax) foram excluídos por decisão do responsável.
 
 VVJ Core é infraestrutura da família VVJ, não framework geral do Portal.
 

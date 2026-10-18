@@ -11,6 +11,15 @@ Classificação: RC (fecha a Fase 10, validação de release no servidor de test
 
 # Changelog — ACULTA Gallery
 
+## 0.1.0-rc.2 — slideshow VVJS no palco do álbum — 2026-10-18
+
+- A View `aculta_album_fotos` passa de VVJB a VVJS; preserva o pager até 150 fotos, o formatador PhotoSwipe e as regras de acesso da galeria.
+- As miniaturas chamam a API pública `goToSlide()`; o estado atual é sincronizado pelo evento público `vvj:slideChanged` de VVJ Core. Removido o `MutationObserver` acoplado às classes internas do VVJB.
+- O tema mantém o layout ACULTA420, tokens semânticos, ícones Bootstrap Icons, moldura estável e miniaturas recolhíveis em telas estreitas.
+- Os carrosséis da Home e Projetos seguem em VVJB. VVJL não substitui PhotoSwipe.
+- Módulo e View aplicados ao Runtime de teste; veja o plano do tema para estado das demais entregas e validação visual pendente.
+- RUNTIME STATUS: módulos VVJ habilitados e cache reconstruído; View convertida após atualização direcionada. Verificação visual em navegador ainda pendente.
+
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 
 ## 0.1.0-dev.12 — palco do álbum e links para a Revista — 2026-10-14

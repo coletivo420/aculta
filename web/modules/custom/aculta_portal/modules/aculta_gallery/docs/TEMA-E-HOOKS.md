@@ -8,7 +8,7 @@ Status: referência vigente da linha 0.1.x. Complementa `ARQUITETURA.md` (decis�
 | --- | --- | --- |
 | `entity_access` (OOP `#[Hook]`) | `Hook/GalleryPurposeAccessHooks` | Nega visualizar galeria fora do purpose `magazine` (D13). Cache por `domain`. |
 | `views_query_alter` (OOP `#[Hook]`) | `Hook/GalleryListingHooks` | Na view `aculta_albuns` (listagem `/albuns`), fora do purpose `magazine` zera o resultado (`1 = 0`). Evita vazar títulos no MAIN. |
-| `media_gallery_view` (OOP `#[Hook]`) | `Hook/GalleryViewHooks` | Monta o palco do álbum (`album_stage`): slideshow VVJB da view `aculta_album_fotos` e painel de miniaturas. Roda em `default` e `full`. |
+| `media_gallery_view` (OOP `#[Hook]`) | `Hook/GalleryViewHooks` | Monta o palco do álbum (`album_stage`): slideshow VVJS da view `aculta_album_fotos` e painel de miniaturas. Roda em `default` e `full`. |
 | `entity_type_alter` (OOP `#[Hook]`) | `Hook/GalleryListBuilderHooks` | Troca o list builder de `media_gallery` pela classe do submódulo. |
 | Classe `ListBuilder/AcultaGalleryListBuilder` (estende `MediaGalleryListBuilder`) | `ListBuilder/AcultaGalleryListBuilder` | Coleção administrativa: o título aponta para a Revista (`DomainPurposeManager::pathUrl('magazine', ...)`). Edição e exclusão seguem no MAIN. |
 | `media_gallery_presave` (OOP `#[Hook]`) | `Hook/GalleryCoverHooks` | Mantém a capa entre as imagens da própria galeria. Sem imagens, a capa fica vazia. |
@@ -24,7 +24,7 @@ Classes de marcação do palco (contrato `data-*` completo em [FRONTEIRA-MODULO-
 | `data-aculta-album-thumbs` | módulo (`GalleryViewHooks::thumbs`) | Painel de miniaturas. |
 | `data-aculta-album-thumb="N"` | módulo | Botão da miniatura N; corresponde ao slide N. |
 | `data-aculta-album-toggle` | tema (`js/album-slideshow.js`) | Botão do celular que recolhe o painel. |
-| `vvjb-carousel`, `.vvjb-item`, `.vvjb-carousel-options` | contrib (`views_vvjb`) | Marcação do VVJB, estilizada pelo tema dentro do palco. |
+| `vvjs-slideshow`, `.vvjs-item`, `.vvjs-inner` | contrib (`views_vvjs`) | Marcação do VVJS, estilizada pelo tema dentro do palco. Miniaturas usam `goToSlide()` e o evento público `vvj:slideChanged`. |
 | `photoswipe`, `photoswipe-gallery` | contrib (`photoswipe`) | Lightbox das fotos. |
 
 Regras:
@@ -34,7 +34,7 @@ Regras:
 
 ## 2. Marcação que a galeria entrega ao tema
 
-**Palco do álbum (página `/albuns/...`):** o módulo entrega o contêiner `data-aculta-album-stage` com o slideshow VVJB e o painel `data-aculta-album-thumbs` (miniaturas `data-aculta-album-thumb="N"`). A aparência é do tema. Contrato completo, donos e pendências: [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md).
+**Palco do álbum (página `/albuns/...`):** o módulo entrega o contêiner `data-aculta-album-stage` com o slideshow VVJS e o painel `data-aculta-album-thumbs` (miniaturas `data-aculta-album-thumb="N"`). A aparência é do tema. Contrato completo, donos e pendências: [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md).
 
 Nas listagens e no corpo das notícias, a galeria usa o markup do PhotoSwipe (contrib) e as classes do Bootstrap que o tema já carrega:
 

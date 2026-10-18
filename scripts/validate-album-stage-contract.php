@@ -1,17 +1,18 @@
 <?php
 
 /**
- * Gate: contrato do palco do álbum entre aculta_gallery (módulo), aculta420 (tema) e VVJB (contrib).
+ * Gate: contrato do palco do álbum entre aculta_gallery (módulo), aculta420 (tema) e VVJS (contrib).
  *
  * Regra (docs: web/modules/custom/aculta_portal/modules/aculta_gallery/docs/FRONTEIRA-MODULO-TEMA.md):
  * 1. o módulo emite data-aculta-album-stage, data-aculta-album-thumbs e data-aculta-album-thumb, sem classes;
  * 2. o tema usa os mesmos atributos e cria data-aculta-album-toggle no JS;
  * 3. o tema não depende do nome da view do módulo (aculta_album_fotos);
- * 4. cada seletor .vvjb-* usado pelo CSS do palco existe no VVJB instalado;
- * 5. o VVJB instalado expõe o elemento vvjb-carousel com goToSlide(), getCurrentSlide(), pause() e resume().
+ * 4. a View do álbum usa o formato views_vvjs;
+ * 5. cada seletor .vvjs-* usado pelo CSS do palco existe no VVJS instalado;
+ * 6. VVJS expõe vvjs-slideshow com goToSlide()/getCurrentSlide(), e VVJ Core publica vvj:slideChanged.
  *
  * Só lê arquivos. Não consulta o Runtime. Sai com código 1 em caso de falha.
- * O VVJB é lido de web/modules/contrib/vvjb; se não existir, o gate falha (não pode passar sem a dependência).
+ * VVJS e VVJ Core são lidos de web/modules/contrib; se não existirem, o gate falha.
  */
 
 declare(strict_types=1);
@@ -19,7 +20,8 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $module = $root . '/web/modules/custom/aculta_portal/modules/aculta_gallery';
 $theme = $root . '/web/themes/custom/aculta420';
-$vvjb = $root . '/web/modules/contrib/vvjb';
+$vvjs = $root . '/web/modules/contrib/vvjs';
+$vvjCore = $root . '/web/modules/contrib/vvj_core';
 $errors = [];
 
 $read = static function (string $path) use (&$errors): string {
@@ -34,6 +36,7 @@ $hooks = $read($module . '/src/Hook/GalleryViewHooks.php');
 $css = $read($theme . '/css/components/album-slideshow.css');
 $js = $read($theme . '/js/album-slideshow.js');
 $twig = $read($theme . '/templates/views-view-vvjb.html.twig');
+$view = $read($root . '/config/sync/views.view.aculta_album_fotos.yml');
 $info = $read($theme . '/aculta420.info.yml');
 $libs = $read($theme . '/aculta420.libraries.yml');
 
@@ -72,37 +75,57 @@ foreach (['aculta_album_fotos', 'views-view-aculta_album'] as $name) {
 if (!str_contains($info, 'aculta420/album-slideshow')) {
   $errors[] = 'biblioteca aculta420/album-slideshow não está declarada em aculta420.info.yml';
 }
+if (!preg_match('/^\s+type:\s+views_vvjs\s*$/m', $view)) {
+  $errors[] = 'View aculta_album_fotos não usa o formato views_vvjs';
+}
+if (!preg_match('/^\s+- vvjs\s*$/m', $view)) {
+  $errors[] = 'View aculta_album_fotos não declara dependência de vvjs';
+}
 
-// 4. Seletores .vvjb-* do CSS existem no VVJB instalado.
-if (!is_dir($vvjb)) {
-  $errors[] = 'VVJB ausente em web/modules/contrib/vvjb (dependência do palco)';
+// 5. Seletores .vvjs-* do CSS existem no VVJS instalado.
+if (!is_dir($vvjs)) {
+  $errors[] = 'VVJS ausente em web/modules/contrib/vvjs (dependência do palco)';
 }
 else {
-  $vvjbText = '';
-  $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($vvjb, FilesystemIterator::SKIP_DOTS));
+  $vvjsText = '';
+  $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($vvjs, FilesystemIterator::SKIP_DOTS));
   foreach ($it as $file) {
     if (in_array($file->getExtension(), ['css', 'js', 'twig', 'php'], true)) {
-      $vvjbText .= (string) file_get_contents($file->getPathname());
+      $vvjsText .= (string) file_get_contents($file->getPathname());
     }
   }
-  preg_match_all('/\.(vvjb[a-z0-9_-]*)/', $css, $m);
+  preg_match_all('/\.(vvjs[a-z0-9_-]*)/', $css, $m);
   foreach (array_unique($m[1]) as $class) {
-    if (!str_contains($vvjbText, $class)) {
-      $errors[] = "seletor .$class do palco não existe no VVJB instalado";
+    if (!str_contains($vvjsText, $class)) {
+      $errors[] = "seletor .$class do palco não existe no VVJS instalado";
     }
   }
 
-  // 5. API pública do elemento vvjb-carousel.
-  $element = $vvjb . '/js/vvjb-carousel-element.js';
+  // 6. API pública e evento do elemento VVJS.
+  $element = $vvjs . '/js/vvjs-slideshow-element.js';
   $elementText = is_file($element) ? (string) file_get_contents($element) : '';
-  if (!str_contains($elementText, "customElements.define('vvjb-carousel'")) {
-    $errors[] = 'elemento vvjb-carousel não definido em js/vvjb-carousel-element.js';
+  if (!str_contains($elementText, "customElements.define('vvjs-slideshow'")) {
+    $errors[] = 'elemento vvjs-slideshow não definido em js/vvjs-slideshow-element.js';
   }
-  foreach (['goToSlide(', 'getCurrentSlide(', 'pause(', 'resume('] as $method) {
+  foreach (['goToSlide(', 'getCurrentSlide('] as $method) {
     if (!str_contains($elementText, $method)) {
-      $errors[] = "VVJB não expõe $method";
+      $errors[] = "VVJS não expõe $method";
     }
   }
+}
+if (!is_dir($vvjCore)) {
+  $errors[] = 'VVJ Core ausente em web/modules/contrib/vvj_core';
+}
+else {
+  $base = $read($vvjCore . '/js/vvj-element-base.js');
+  foreach (["emit('slideChanged'", 'source: this'] as $contract) {
+    if (!str_contains($base, $contract)) {
+      $errors[] = "VVJ Core não publica o contrato $contract";
+    }
+  }
+}
+if (!str_contains($js, 'vvjs-slideshow') || !str_contains($js, 'vvj:slideChanged')) {
+  $errors[] = 'tema não liga miniaturas ao elemento/evento público VVJS';
 }
 
 if ($errors !== []) {
@@ -112,4 +135,4 @@ if ($errors !== []) {
   }
   exit(1);
 }
-echo "ALBUM STAGE CONTRACT GATE: PASS (módulo, tema e VVJB alinhados; sem nome de view no tema)\n";
+echo "ALBUM STAGE CONTRACT GATE: PASS (módulo, tema e VVJS alinhados; sem nome de view no tema)\n";

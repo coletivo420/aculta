@@ -1,6 +1,6 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-18 (tradução LMS, nomenclatura de aulas e migração da base Bootstrap com validação pendente). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-18 (VVJ pattern modules e porte do palco de álbum; tradução LMS, nomenclatura de aulas e migração da base Bootstrap com validação pendente). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.73 | VVJ patterns aprovados instalados; palco de álbum portado de VVJB para VVJS | RUNTIME STATUS: VVJ habilitados e View atualizada; validação visual DEFERRED | Mantém VVJB na Home/Projetos e PhotoSwipe na galeria |
 | 0.6.0-dev.72 | LMS em pt-BR; “Lições” passa a “Aulas” em toda a interface traduzida | Catálogos `lms.pt-br.po` e `lms-terms.pt-br.po` importados; exportações do Runtime sem “lição/lições” | Catálogo LMS |
 | 0.6.0-dev.69 | F5 Catálogo: SDC ACULTA420 substitui o cartão LMS na View existente | SDC schema, View access/cache, Firefox keyboard e host de testes verificados; RUNTIME STATUS: ACTIVE | `components/content/course_card/`, catálogo `courses_catalog` |
 | 0.6.0-dev.68 | Viewer PDF: página em área rolável preserva o zoom escolhido em telas menores | Firefox 153.4 ESR no Runtime: PDF de 14 páginas, zoom 125%, controles e foco visível; viewport 1440 px e viewport estreito 500 px sem overflow horizontal da página. Smoke visual/acessível PASS em PV6; matriz de navegadores e CSP segue na PV7. | `css/components/pdf-viewer.css`, marcação do `aculta_pdf_viewer` |

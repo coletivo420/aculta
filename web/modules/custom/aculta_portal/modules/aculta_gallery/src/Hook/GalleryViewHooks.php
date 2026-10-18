@@ -13,10 +13,10 @@ use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Página do álbum: as fotos do álbum atual aparecem num carrossel VVJB (uma por slide).
+ * Página do álbum: as fotos do álbum atual aparecem numa sequência VVJS (uma por slide).
  *
- * A view aculta_album_fotos traz as imagens do álbum com paginação real. O tema envolve o VVJB no componente
- * de carrossel na apresentação do tema. Aqui só entra o contexto do álbum (argumento da view).
+ * A view aculta_album_fotos traz as imagens do álbum com paginação real. O tema apresenta o VVJS
+ * e a navegação por miniaturas. Aqui só entra o contexto do álbum (argumento da view).
  */
 final class GalleryViewHooks {
 
@@ -49,7 +49,7 @@ final class GalleryViewHooks {
     $build['album_stage'] = [
       '#type' => 'container',
       '#weight' => -10,
-      // Comportamento e ligação com o VVJB ficam em data-*; a aparência é do tema.
+      // Comportamento e ligação com o VVJS ficam em data-*; a aparência é do tema.
       // photoswipe-gallery é classe de comportamento do PhotoSwipe (agrupa as fotos num só lightbox), não de design.
       '#attributes' => ['data-aculta-album-stage' => 'true', 'class' => ['photoswipe-gallery']],
       'slideshow' => $slideshow,
@@ -58,10 +58,10 @@ final class GalleryViewHooks {
   }
 
   /**
-   * Miniaturas do álbum. Cada botão leva o número do slide (1 a N) no VVJB.
+   * Miniaturas do álbum. Cada botão leva o número do slide (1 a N) no VVJS.
    *
    * @return array<string, mixed>
-   *   Render array com um botão por foto do álbum, na mesma ordem do carrossel.
+   *   Render array com um botão por foto do álbum, na mesma ordem da sequência.
    */
   private function thumbs(EntityInterface $entity): array {
     $thumbs = [

@@ -1,3 +1,12 @@
+## 0.6.0-dev.73 — módulos VVJ e slideshow de álbuns — 2026-10-18
+
+Classificação: MINOR (novos formatos de Views disponíveis; o palco de fotos migra para o VVJS apropriado a uma sequência editorial).
+
+- Incluídos VVJA, VVJB, VVJF, VVJH, VVJL, VVJR, VVJS e VVJT; VVJC (3D Carousel) e VVJP (Parallax) ficam excluídos por decisão do responsável.
+- A View `aculta_album_fotos` usa VVJS com API pública de miniaturas/eventos. Home e Projetos permanecem VVJB; PhotoSwipe continua responsável pelo lightbox.
+- O plano mapeia os usos adequados e registra limites para não converter SDCs, navegação, formulário ou conteúdo que não seja uma View.
+- Runtime de teste: módulos habilitados, cache reconstruído e View atualizada por configuração direcionada. Inspeção visual do slideshow pendente; não houve importação global de configuração.
+
 ## 0.6.0-dev.72 — LMS em português e “Aulas” — 2026-10-18
 
 Classificação: PATCH de tradução e vocabulário, sem mudança de contrato visual.

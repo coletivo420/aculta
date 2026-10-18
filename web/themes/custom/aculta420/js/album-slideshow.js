@@ -1,6 +1,6 @@
 /**
  * @file
- * Presentation behavior for the album stage: thumbnails drive the VVJB slides.
+ * Presentation behavior for the album stage: thumbnails drive the VVJS slides.
  */
 (function (Drupal, once) {
   'use strict';
@@ -8,28 +8,40 @@
   Drupal.behaviors.acultaAlbumStage = {
     attach(context) {
       once('aculta-album-stage', '[data-aculta-album-stage]', context).forEach((stage) => {
-        const carousel = stage.querySelector('vvjb-carousel');
+        const slideshow = stage.querySelector('vvjs-slideshow');
         const thumbs = [...stage.querySelectorAll('[data-aculta-album-thumb]')];
-        if (!carousel || thumbs.length === 0) {
+        if (!slideshow || thumbs.length === 0) {
           return;
         }
 
-        // Thumbnails are 1-based slide numbers in the VVJB public API (goToSlide).
+        // Thumbnails use the 1-based slide index in VVJS's public API.
         thumbs.forEach((button) => {
           button.addEventListener('click', () => {
-            carousel.goToSlide?.(Number(button.dataset.acultaAlbumThumb));
+            slideshow.goToSlide?.(Number(button.dataset.acultaAlbumThumb));
           });
         });
 
-        // Mirror the current slide on its thumbnail, from the VVJB markup (no VVJB event API needed).
-        const markCurrent = () => {
-          const current = carousel.getCurrentSlide?.();
+        const markCurrent = (current = slideshow.getCurrentSlide?.() || 1) => {
           thumbs.forEach((button) => {
             button.setAttribute('aria-current', Number(button.dataset.acultaAlbumThumb) === current ? 'true' : 'false');
           });
         };
-        new MutationObserver(markCurrent).observe(carousel, { subtree: true, attributes: true, attributeFilter: ['class'] });
         markCurrent();
+
+        // VVJS publishes slide changes through the VVJ Core event contract.
+        // Listen once globally and update only the stage that owns the source.
+        once('aculta-album-stage-events', document.documentElement).forEach(() => {
+          document.addEventListener('vvj:slideChanged', (event) => {
+            const source = event.detail?.source;
+            const eventStage = source?.closest?.('[data-aculta-album-stage]');
+            if (source?.matches?.('vvjs-slideshow') && eventStage) {
+              const current = event.detail.slide || source.getCurrentSlide?.() || 1;
+              eventStage.querySelectorAll('[data-aculta-album-thumb]').forEach((button) => {
+                button.setAttribute('aria-current', Number(button.dataset.acultaAlbumThumb) === current ? 'true' : 'false');
+              });
+            }
+          });
+        });
 
         // Mobile: the thumbnail panel is collapsed behind a toggle button.
         const toggle = document.createElement('button');
