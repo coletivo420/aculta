@@ -691,9 +691,8 @@ Decisão do responsável (2026-10-18). Vale para qualquer agente.
   - usuário (login do comprador): campo "Usuário de teste" em `secrets/mercadolivre_test_user`;
   - senha: `MERCADOPAGO_TEST_BUYER_PASSWORD` em `secrets/aculta.secrets.env`;
   - chaves do gateway de teste: `MERCADOPAGO_TEST_PUBLIC_KEY` e `MERCADOPAGO_TEST_ACCESS_TOKEN` em `secrets/aculta.secrets.env`.
-- **Pendência de verificação:** o `User ID` de `secrets/mercadolivre_test_user` coincide com a conta vendedora do
-  token de teste. Antes de usar esse usuário como comprador, confirmar com o responsável que é o comprador e não a
-  conta vendedora (o Mercado Pago recusa pagamento em que comprador e vendedor são a mesma conta).
+  - **e-mail do comprador de teste (pagador das assinaturas de teste): `test_user_fluxo@testuser.com`** (decisão do responsável, 2026-10-18). É o único endereço `@testuser.com` que o sandbox aceitou como pagador; não trocar sem decisão do responsável.
+- O responsável confirmou que o usuário `TESTUSER…` de `secrets/mercadolivre_test_user` é o comprador de teste (2026-10-18).
 - Não exibir, copiar nem registrar senhas, tokens ou o conteúdo desses arquivos em saídas, commits, documentos ou
   mensagens. Referenciar só o nome do arquivo e do campo.
 - Antes de cada rodada de compra de teste, rodar `scripts/guard-teste-comum.sh` (senha do `teste.comum` confere com
