@@ -25,6 +25,9 @@ ou status de PR para índices e READMEs.
 - Mantenha nesse mapa todos os caminhos ativos do escopo alterado, além de
   caminhos internos, administrativos, desabilitados/removidos e redirects
   relacionados. Atualize-o no mesmo commit da mudança funcional ou documental.
+- Registre uma rota por linha e dê a cada uma um título ou descrição clara do
+  objeto atendido. Não agrupe caminhos diferentes numa linha sem identificar
+  individualmente o objeto de cada caminho.
 - Registre caminhos relativos a partir de `/`; para domínios, use identificadores
   estáveis como `main.aculta`, `conta.aculta` e `loja.aculta`, nunca hostname
   específico de Homelab/produção como identificador do mapa.

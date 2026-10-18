@@ -17,6 +17,8 @@ redirecionamentos. Ele complementa o sitemap XML de indexação; não o substitu
   módulo, conteúdo, autenticação ou configuração), **interno** (não navegável
   diretamente), **redirecionado** ou **desabilitado/404**. Não inferir estado
   ativo apenas porque há uma definição de rota no código.
+- Cada rota deve ter uma linha própria e um título ou explicação do objeto
+  atendido. Não agrupe paths diferentes numa linha só para economizar espaço.
 - Rotas de entidades e aliases de conteúdo são dinâmicos: documentar o padrão e
   a regra de acesso, sem copiar conteúdo de banco para este arquivo. Inventários
   de aliases concretos, quando necessários, devem ser gerados por ambiente e
@@ -41,90 +43,145 @@ desabilitadas. Nunca use um caminho de teste como evidência de produção.
 
 ## Hosts e páginas iniciais
 
-| Identificador | Raiz `/` | Estado e observação |
-| --- | --- | --- |
-| `main.aculta` | Página institucional principal | Ativo. Administração, Commerce (carrinho/checkout/pagamentos) e checkout pertencem a este purpose. |
-| `conta.aculta` | Painel da conta; visitante recebe `302` para `/entrar` | Ativo e condicionado a autenticação/permissões. O caminho interno da visão geral não é público diretamente. |
-| `apoio.aculta` | Formulário público de apoio | Ativo; caminho interno `/apoio` responde `404` diretamente. |
-| `revista.aculta` | Início da revista | Ativo; aliases de conteúdo dependem dos nós publicados. |
-| `wiki.aculta` | Início da wiki | Ativo; criação e edição dependem de autenticação/permissões. |
-| `loja.aculta` | Vitrine da loja | Domain ativo; caminhos de produto dependem de conteúdo publicado. Carrinho e checkout vão para `main.aculta`. |
-| `cursos.aculta` | Catálogo/início de cursos | Ativo; ações dependem de matrícula, acesso e conteúdo. |
-| `forum.aculta` | Índice do fórum | Ativo; tópicos/respostas dependem de acesso e conteúdo. |
-| `links.aculta` | Página pública de redes sociais | Código/configuração existente; provisionamento DNS de produção deve ser confirmado no documento de multidomínio. |
+| Identificador | Caminho | Título / objeto da página inicial | Estado |
+| --- | --- | --- | --- |
+| `main.aculta` | `/` | Início institucional da ACULTA | Ativo. Administração, carrinho, checkout e pagamentos pertencem a este purpose. |
+| `conta.aculta` | `/` | Visão geral da conta da pessoa autenticada | Ativo para membro; visitante anônimo recebe `302` para `/entrar`. |
+| `apoio.aculta` | `/` | Formulário público para escolher valor de apoio | Ativo; caminho interno `/apoio` responde `404` diretamente. |
+| `revista.aculta` | `/` | Início editorial da Revista420 | Ativo; publicações dependem de nós publicados. |
+| `wiki.aculta` | `/` | Início da Wiki420 | Ativo; edição/criação depende de autenticação e permissões. |
+| `loja.aculta` | `/` | Vitrine da loja da associação | Domain ativo; produtos dependem de conteúdo publicado. Carrinho e checkout vão para `main.aculta`. |
+| `cursos.aculta` | `/` | Catálogo inicial de cursos | Ativo; cursos e ações dependem de conteúdo, matrícula e access. |
+| `forum.aculta` | `/` | Índice do fórum | Ativo; tópicos e respostas dependem de conteúdo e permissões. |
+| `links.aculta` | `/` | Página pública de perfis e links sociais | Código/configuração existentes; confirmar provisionamento DNS de produção em multidomínio. |
 
 ## Caminhos humanos ativos ou condicionais
 
 Os padrões dinâmicos abaixo são ativos quando a rota, o módulo e o conteúdo
 correspondentes estão habilitados no ambiente.
 
-| Host | Caminho | Estado / finalidade |
-| --- | --- | --- |
-| `main.aculta` | `/` | Início institucional. |
-| `main.aculta` | `/busca` e `/busca?q={termo}` | Busca; o envio do formulário redireciona para a forma com query. |
-| `main.aculta` | `/carrinho` | Carrinho Commerce. |
-| `main.aculta` | `/finalizar-compra/{pedido}/{etapa}` | Fluxo de checkout; protegido pelos requisitos do Commerce e do acordo. |
-| `main.aculta` | `/apoiar` e `/apoiar/{valor}/agora` | Fluxo Commerce de apoio/doação, conforme configuração. |
-| `main.aculta` | `/termos/aceitar` | Endpoint de aceite autenticado; `POST` processa e redireciona ao destino seguro. |
-| `main.aculta` | `/painel-administrativo/**` | Administração Drupal central. Acesso continua sob permissões/access do Core e contrib. |
-| `main.aculta` | `/painel-administrativo/perfil/editar` | Edição do perfil próprio no painel. |
-| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/redes-sociais` | Configuração administrativa de links sociais. |
-| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/cep` | Configuração administrativa do serviço CEP, se o submódulo estiver habilitado. |
-| `main.aculta` | `/painel-administrativo/game` | Administração do jogo; exige permissão específica. |
-| `main.aculta` | `/painel-administrativo/configuracoes/aculta/aparencia`, `/painel-administrativo/configuracoes/aculta/apoio`, `/painel-administrativo/configuracoes/aculta/portal`, `/painel-administrativo/configuracoes/aculta/portal/turnstile`, `/painel-administrativo/configuracoes/aculta/portal/requisitos` | Configuração ACULTA do Portal, com permissões administrativas. |
-| `main.aculta` | `/painel-administrativo/configuracoes/aculta/segredos`, `/painel-administrativo/configuracoes/aculta/deployer` | Ferramentas de configuração/deploy; acesso restrito e credenciais continuam fora do mapa. |
-| `main.aculta` | `/painel-administrativo/loja/vendas`, `/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/atualizar`, `/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/cancelar`, `/painel-administrativo/loja/doacoes` | Administração de vendas e doações, conforme módulos ativos e permissões. |
-| `main.aculta` | `/painel-administrativo/contas/nao-confirmadas`, `/painel-administrativo/contas/{user}/confirmar-email` | Ferramentas administrativas de confirmação de conta. |
-| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/mensagens`, `/painel-administrativo/avisos`, `/painel-administrativo/avisos/temporarios`, `/painel-administrativo/avisos/persistentes`, `/painel-administrativo/avisos/persistentes/criar` | Administração de mensagens/avisos, condicional ao Messenger ativo. |
-| `conta.aculta` | `/entrar` | Login. |
-| `conta.aculta` | `/sair` | Logout; destino canônico retorna ao login. |
-| `conta.aculta` | `/sair/confirmar` | Confirmação de logout do Core. |
-| `conta.aculta` | `/recuperar-senha` | Recuperação de senha. |
-| `conta.aculta` | `/criar-conta` | Cadastro, quando aberto/configurado. |
-| `conta.aculta` | `/recuperar-acesso/{uid}/{timestamp}/{hash}/entrar` | Reset temporário de senha, com token válido. |
-| `conta.aculta` | `/entrar/janela`, `/criar-conta/janela` | Formulários de login/cadastro em janela; fallback sem JavaScript é preservado. |
-| `conta.aculta` | `/confirmar-email/reenviar` | Reenvio de confirmação de e-mail, conforme estado da conta. |
-| `conta.aculta` | `/dados` | Meus dados. |
-| `conta.aculta` | `/dados/endereco` | Endereço único de perfil/checkout. |
-| `conta.aculta` | `/dados/outros-dados` | Condicional ao submódulo de identificação habilitado. |
-| `conta.aculta` | `/foto` | Foto de perfil, conforme configuração da conta. |
-| `conta.aculta` | `/seguranca` | Segurança e operações de conta. |
-| `conta.aculta` | `/seguranca/senha`, `/seguranca/email`, `/seguranca/email/{user}`, `/seguranca/email/cancelar/{user}` | Senha e fluxo de troca/cancelamento de e-mail, autenticados e sujeitos à validação de token. |
-| `conta.aculta` | `/conexoes` | Conexões OAuth/social, conforme provedores habilitados. |
-| `conta.aculta` | `/meus-cursos` | Cursos do usuário, conforme integração/matrículas. |
-| `conta.aculta` | `/meu-apoio` | Histórico de apoio do usuário. |
-| `conta.aculta` | `/minha-participacao` | Área de participação, conforme módulos/permissões. |
-| `conta.aculta` | `/pedidos` e `/pedidos/{pedido}` | Pedidos próprios; propriedade/access verificados pelo Commerce. |
-| `conta.aculta` | `/meu-apoio/assinatura/{commerce_order}/{acao}` | Ação de assinatura de apoio, quando o fluxo estiver habilitado. |
-| `conta.aculta` | `/configuracoes/mensagens` | Preferências de mensagem do Messenger; módulo opcional, requer conta autenticada. |
-| `conta.aculta` | `/mensagens`, `/mensagens/notificacoes`, `/mensagens/avisos` | Caixa postal, avisos privados e comunicados; rotas do Messenger condicional ao módulo ativo e às permissões nativas. |
-| `conta.aculta` | `/mensagens/resumo`, `/mensagens/conversas/painel`, `/mensagens/conversa/{private_message_thread}/responder`, `/mensagens/conversa/{private_message_thread}/opcoes`, `/mensagens/conversa/{private_message_thread}/relacao`, `/mensagens/conversa/{private_message_thread}/painel`, `/mensagens/nova`, `/mensagens/nova/buscar`, `/mensagens/nova/grupo/painel`, `/mensagens/nova/{user}/painel`, `/mensagens/perfil/{user}/relacao` | Subrotas do Messenger; condicionais ao módulo ativo, acesso à conversa e permissões nativas Private Message. |
-| `conta.aculta` | `/avisos/resumo`, `/avisos/alerta/{site_alert}`, `/avisos/aviso/{node}`, `/avisos-mensagens`, `/avisos-mensagens/{aba}` | Rotas de avisos do Messenger/Site Alert; condicionais ao módulo e access. |
-| `conta.aculta` | `/oauth/{provedor}` e `/oauth/{provedor}/retorno` | Início e callback técnico OAuth; provedores ativos variam por ambiente. |
-| `apoio.aculta` | `/` | Formulário público servido na raiz. |
-| `main.aculta` | `/{titulo}`, `/atividades/{titulo}`, `/projetos/{titulo}`, `/transparencia/documentos/{titulo}` | Aliases Pathauto do conteúdo institucional; cada endereço depende de conteúdo publicado e da política de domínio do nó. |
-| `loja.aculta` | `/loja/produto/{categoria}/{titulo}` | Páginas de produto publicadas; fora do purpose loja respondem `404`. Padrão Pathauto vigente. |
-| `revista.aculta` | `/{sessao}/{titulo}` | Artigos editoriais publicados, incluindo textos de blog; padrão Pathauto vigente e aliases concretos são conteúdo dinâmico. |
-| `wiki.aculta` | `/verbete/{titulo}`, `/wiki/busca`, `/wiki/busca/previa` | Padrões de conteúdo/busca da Wiki; páginas e resultados dependem de conteúdo e permissões. `/wiki` é caminho interno da raiz e responde `404` direto. |
-| `cursos.aculta` | `/curso/{alias}` | Detalhe conforme conteúdo/módulos ativos. `/cursos` é caminho interno da raiz e responde `404` direto. |
-| `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download protegido de anexo de resposta, com matrícula validada. |
-| `forum.aculta` | `/topico/{titulo}` | Tópicos do fórum com alias Pathauto; conteúdo publicado e acesso determinam disponibilidade. `/forum` é caminho interno da raiz e responde `404` direto. |
-| `links.aculta` | `/` | Página pública de links sociais; `/redes-sociais` é caminho interno e responde `404` direto. |
-| `magazine.aculta` | `/u/{apelido}` | Perfil público de autor quando habilitado; apelidos não canônicos respondem `404`. |
-| `magazine.aculta` | `/albuns/{alias}` | Condicional: `aculta_gallery` permanece desabilitado até validação e habilitação autorizada. |
+| Host | Caminho | Título / objeto | Estado |
+| --- | --- | --- | --- |
+| `main.aculta` | `/` | Início institucional | Ativo. |
+| `main.aculta` | `/busca` | Formulário de busca | Ativo; envio direciona para a busca com query. |
+| `main.aculta` | `/busca?q={termo}` | Resultados da busca pelo termo | Ativo. |
+| `main.aculta` | `/busca/popup` | Formulário de busca em janela | Endpoint de interface; access conforme a busca pública. |
+| `main.aculta` | `/busca/previa` | Prévia de resultados da busca geral | Endpoint de interface; resultados respeitam access/cache da busca. |
+| `main.aculta` | `/busca/sugestoes` | Sugestões/autocomplete da busca | Endpoint de interface; resposta controlada pela configuração da busca. |
+| `main.aculta` | `/carrinho` | Carrinho de compras/apoio Commerce | Ativo, sujeito às regras Commerce. |
+| `main.aculta` | `/finalizar-compra/{pedido}/{etapa}` | Etapa do checkout do pedido | Ativo; exige requisitos de acesso do Commerce e aceite quando aplicável. |
+| `main.aculta` | `/apoiar` | Formulário de apoio/doação | Ativo conforme configuração do fluxo Commerce. |
+| `main.aculta` | `/apoiar/{valor}/agora` | Doação rápida de valor informado | Ativo conforme configuração do fluxo Commerce. |
+| `main.aculta` | `/termos/aceitar` | Ação de aceite dos termos | Endpoint autenticado; `POST` processa e redireciona ao destino seguro. |
+| `main.aculta` | `/painel-administrativo/**` | Árvore do painel administrativo ACULTA | Rotas administrativas; access do Core/contrib decide cada operação. |
+| `main.aculta` | `/painel-administrativo/perfil/editar` | Edição do perfil do usuário autenticado | Requer access administrativo próprio. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/redes-sociais` | Configuração de perfis e links sociais | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/cep` | Configuração da integração de CEP | Condicional ao submódulo CEP; rota administrativa. |
+| `main.aculta` | `/painel-administrativo/game` | Visão geral administrativa do jogo | Condicional ao módulo; exige permissão específica. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/aparencia` | Configuração da aparência institucional | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/apoio` | Configuração dos meios/valores de apoio | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal` | Configurações gerais do Portal | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/turnstile` | Configuração do CAPTCHA Turnstile | Rota administrativa protegida; credenciais não são documentadas aqui. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/requisitos` | Relatório de requisitos do Portal | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/segredos` | Lista de integrações/segredos configurados | Rota administrativa restrita; nenhum valor secreto é registrado neste mapa. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/segredos/apagar/{name}` | Remoção de configuração de credencial | Rota administrativa restrita; nunca documentar valores de segredo. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/segredos/editar/{name}` | Edição de metadados de credencial | Rota administrativa restrita; segredo não é exposto no mapa. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/segredos/mostrar/{name}` | Visualização controlada de estado da credencial | Rota administrativa restrita; não copiar segredo para documentação. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/deployer` | Configuração/operações do deployer | Rota administrativa restrita. |
+| `main.aculta` | `/painel-administrativo/loja/vendas` | Lista administrativa de vendas | Condicional aos módulos Commerce e permissões. |
+| `main.aculta` | `/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/atualizar` | Atualização administrativa de pagamento | Condicional ao Commerce; operação protegida. |
+| `main.aculta` | `/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/cancelar` | Cancelamento administrativo de pagamento | Condicional ao Commerce; operação protegida. |
+| `main.aculta` | `/painel-administrativo/loja/doacoes` | Lista administrativa de doações | Condicional ao fluxo de doações e permissões. |
+| `main.aculta` | `/carrinho/finalizar` | Continuação do carrinho para o checkout | Ativo conforme Commerce; checkout permanece no domínio principal. |
+| `main.aculta` | `/painel-administrativo/contas/nao-confirmadas` | Lista de contas sem confirmação | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/contas/{user}/confirmar-email` | Confirmação administrativa do e-mail de uma conta | Rota administrativa protegida; `{user}` identifica a conta-alvo. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/mensagens` | Configuração do Messenger | Condicional ao módulo Messenger; rota administrativa. |
+| `main.aculta` | `/painel-administrativo/avisos` | Lista administrativa de avisos | Condicional ao Messenger/Site Alert; access administrativo. |
+| `main.aculta` | `/painel-administrativo/avisos/temporarios` | Lista de avisos temporários | Condicional ao Messenger/Site Alert; access administrativo. |
+| `main.aculta` | `/painel-administrativo/avisos/persistentes` | Lista de comunicados persistentes | Condicional ao Messenger; access editorial/administrativo. |
+| `main.aculta` | `/painel-administrativo/avisos/persistentes/criar` | Criação de comunicado persistente | Condicional ao Messenger; access editorial/administrativo. |
+| `conta.aculta` | `/entrar` | Formulário de login | Ativo; CAPTCHA e autenticação conforme configuração. |
+| `conta.aculta` | `/sair` | Ação de logout | Ativo; ao sair, destino canônico é login. |
+| `conta.aculta` | `/sair/confirmar` | Confirmação de logout do Core | Ativo, sujeito à sessão. |
+| `conta.aculta` | `/recuperar-senha` | Solicitação de recuperação de senha | Ativo. |
+| `conta.aculta` | `/criar-conta` | Formulário de cadastro | Condicional à abertura/configuração de cadastro. |
+| `conta.aculta` | `/recuperar-acesso/{uid}/{timestamp}/{hash}/entrar` | Redefinição temporária de senha | Ativo somente com token válido e não expirado. |
+| `conta.aculta` | `/entrar/janela` | Formulário de login para janela/modal | Ativo; fallback de página sem JavaScript. |
+| `conta.aculta` | `/criar-conta/janela` | Formulário de cadastro para janela/modal | Condicional ao cadastro; fallback sem JavaScript. |
+| `conta.aculta` | `/confirmar-email/reenviar` | Reenvio de confirmação de e-mail | Ativo conforme estado da conta e access. |
+| `conta.aculta` | `/dados` | Formulário de dados pessoais | Conta autenticada; próprio usuário. |
+| `conta.aculta` | `/dados/endereco` | Cadastro/edição do endereço único | Conta autenticada; próprio usuário. |
+| `conta.aculta` | `/dados/outros-dados` | Dados adicionais de identificação | Condicional ao submódulo de identificação; próprio usuário. |
+| `conta.aculta` | `/foto` | Foto de perfil | Condicional à configuração de perfil/imagens; próprio usuário. |
+| `conta.aculta` | `/seguranca` | Painel de segurança e e-mail da conta | Conta autenticada; próprio usuário. |
+| `conta.aculta` | `/seguranca/senha` | Alteração de senha | Conta autenticada; validação de senha vigente. |
+| `conta.aculta` | `/seguranca/email` | Início da alteração de e-mail | Conta autenticada e validações de confirmação. |
+| `conta.aculta` | `/seguranca/email/{user}` | Formulário/token de alteração de e-mail | Condicional a token válido; `{user}` é validado no fluxo. |
+| `conta.aculta` | `/seguranca/email/cancelar/{user}` | Cancelamento de alteração de e-mail | Condicional a token válido; `{user}` é validado no fluxo. |
+| `conta.aculta` | `/identidade/editar` | Edição técnica/legada do perfil próprio | Navegação redirecionada para `/seguranca`; acesso alheio é negado. |
+| `conta.aculta` | `/identidade/{user}` | Perfil técnico/legado de usuário | Para o próprio usuário redireciona à raiz da Conta; perfil alheio não é exibido. |
+| `conta.aculta` | `/confirmar-email/{email_confirmer_confirmation}/{hash}` | Confirmação de endereço de e-mail | Token temporário; usuário e hash precisam ser válidos. |
+| `conta.aculta` | `/confirmar-email/reenviar/{confirmation}` | Reenvio de confirmação de uma solicitação | Registro/token de confirmação validado pelo módulo. |
+| `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
+| `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
+| `conta.aculta` | `/meu-apoio` | Histórico de apoio/doações da pessoa | Conta autenticada; dados próprios. |
+| `conta.aculta` | `/minha-participacao` | Área de participação da pessoa | Condicional a módulos e permissões ativos. |
+| `conta.aculta` | `/pedidos` | Lista de pedidos da pessoa | Conta autenticada; Commerce verifica propriedade. |
+| `conta.aculta` | `/pedidos/{pedido}` | Detalhe de um pedido | Conta autenticada; Commerce verifica propriedade do pedido. |
+| `conta.aculta` | `/meu-apoio/assinatura/{commerce_order}/{acao}` | Ação da assinatura de apoio | Condicional ao fluxo de recorrência; operação validada no pedido próprio. |
+| `conta.aculta` | `/configuracoes/mensagens` | Preferências de notificações de mensagem | Condicional ao Messenger; conta autenticada. |
+| `conta.aculta` | `/mensagens` | Caixa de entrada de conversas privadas | Condicional ao Messenger/Private Message; permissões nativas. |
+| `conta.aculta` | `/mensagens/notificacoes` | Lista de avisos/notificações privados | Condicional ao Messenger; usuário vê somente os próprios avisos. |
+| `conta.aculta` | `/mensagens/avisos` | Comunicados institucionais visíveis ao usuário | Condicional ao Messenger; acesso editorial e segmentação aplicados. |
+| `conta.aculta` | `/mensagens/resumo` | Resumo de conversas não lidas | Condicional ao Messenger; dados da própria conta. |
+| `conta.aculta` | `/mensagens/conversas/painel` | Painel/fragmento da lista de conversas | Condicional ao Messenger; acesso da própria conta. |
+| `conta.aculta` | `/mensagens/conversa/{private_message_thread}/responder` | Formulário de resposta à conversa | Condicional ao Messenger; valida acesso à thread. |
+| `conta.aculta` | `/mensagens/conversa/{private_message_thread}/opcoes` | Opções disponíveis para a conversa | Condicional ao Messenger; valida acesso à thread. |
+| `conta.aculta` | `/mensagens/conversa/{private_message_thread}/relacao` | Relação de participantes da conversa | Condicional ao Messenger; valida acesso à thread. |
+| `conta.aculta` | `/mensagens/conversa/{private_message_thread}/painel` | Painel/fragmento de uma conversa | Condicional ao Messenger; valida acesso à thread. |
+| `conta.aculta` | `/mensagens/nova` | Início de nova conversa | Condicional ao Messenger; permissões e bloqueios nativos. |
+| `conta.aculta` | `/mensagens/nova/buscar` | Busca de destinatário para conversa | Condicional ao Messenger; resultado sujeito às regras de perfil. |
+| `conta.aculta` | `/mensagens/nova/grupo/painel` | Painel de criação de conversa em grupo | Condicional ao Messenger e permissões. |
+| `conta.aculta` | `/mensagens/nova/{user}/painel` | Painel para iniciar conversa com uma pessoa | Condicional ao Messenger; aplica bloqueios e privacidade. |
+| `conta.aculta` | `/mensagens/perfil/{user}/relacao` | Ação/estado de relação com outra pessoa | Condicional ao Messenger; valida usuários e permissões. |
+| `conta.aculta` | `/avisos/resumo` | Resumo de avisos visíveis | Condicional ao Messenger/Site Alert; sujeito a access/cache. |
+| `conta.aculta` | `/avisos/alerta/{site_alert}` | Ação/visualização de alerta temporário | Condicional ao Site Alert; valida entidade e usuário. |
+| `conta.aculta` | `/avisos/aviso/{node}` | Ação/visualização de comunicado persistente | Condicional ao Messenger; valida publicação, segmentação e usuário. |
+| `conta.aculta` | `/avisos-mensagens` | Página de avisos e mensagens | Condicional ao Messenger; conteúdo filtrado por access. |
+| `conta.aculta` | `/avisos-mensagens/{aba}` | Aba específica de avisos ou mensagens | Condicional ao Messenger; `{aba}` limitado às opções válidas. |
+| `conta.aculta` | `/oauth/{provedor}` | Início de autenticação com provedor externo | Endpoint técnico; depende do provedor habilitado. |
+| `conta.aculta` | `/oauth/{provedor}/retorno` | Retorno/callback de autenticação externa | Endpoint técnico; URI cadastrada e validada por ambiente. |
+| `apoio.aculta` | `/` | Página de apoio com formulário e valores sugeridos | Ativo; fluxo de pagamento continua em `main.aculta`. |
+| `main.aculta` | `/{titulo}` | Página institucional por alias editorial | Dinâmico; depende de nó publicado e domínio associado. |
+| `main.aculta` | `/atividades/{titulo}` | Página de uma atividade cultural | Dinâmico; depende de atividade publicada e domínio. |
+| `main.aculta` | `/projetos/{titulo}` | Página de um projeto cultural/social | Dinâmico; depende de projeto publicado e domínio. |
+| `main.aculta` | `/transparencia/documentos/{titulo}` | Documento institucional público | Dinâmico; depende de documento publicado e access. |
+| `loja.aculta` | `/loja/produto/{categoria}/{titulo}` | Página de produto da loja | Dinâmico; produto publicado; fora do purpose loja responde `404`. |
+| `revista.aculta` | `/{sessao}/{titulo}` | Artigo editorial ou publicação de blog | Dinâmico; padrão Pathauto, depende de conteúdo publicado. |
+| `main.aculta` | `/avisos/{titulo}` | Comunicado institucional persistente | Dinâmico; depende de publicação, segmentação de público e access. |
+| `wiki.aculta` | `/verbete/{titulo}` | Verbete da Wiki | Dinâmico; depende de conteúdo e permissão de acesso. |
+| `wiki.aculta` | `/wiki/busca` | Busca de verbetes | Ativo conforme View/feature; a raiz interna `/wiki` responde `404` diretamente. |
+| `wiki.aculta` | `/wiki/busca/previa` | Prévia de resultados da busca da Wiki | Endpoint de interface; access/cache conforme busca. |
+| `cursos.aculta` | `/curso/{alias}` | Página de um curso | Dinâmico; depende de curso publicado e acesso. O caminho interno `/cursos` responde `404` diretamente. |
+| `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de arquivo anexado a uma resposta LMS | Condicional; valida resposta e matrícula vigente. |
+| `forum.aculta` | `/topico/{titulo}` | Tópico do fórum | Dinâmico; depende de tópico publicado e access. O caminho interno `/forum` responde `404` diretamente. |
+| `links.aculta` | `/` | Página pública de perfis e links sociais | Condicional ao provisionamento do host e conteúdo de configuração. `/redes-sociais` é interno. |
+| `revista.aculta` | `/u/{apelido}` | Perfil público de autor | Condicional a perfil público habilitado; apelido não canônico responde `404`. |
+| `revista.aculta` | `/albuns/{titulo}` | Álbum de galeria | Condicional ao módulo e conteúdo; confirmar estado efetivo do Runtime. |
 
 ## Rotas técnicas ativas
 
 Estes padrões não são itens de navegação. Sua existência depende do módulo
 correspondente e sua proteção deve ser mantida no dono da feature.
 
-| Host | Caminho/padrão | Uso |
-| --- | --- | --- |
-| `main.aculta` | `/webhook/{...}` e callbacks Commerce/gateway | Callbacks técnicos de pagamento, conforme configuração do gateway. |
-| `main.aculta` | `/admin/**` e endpoints Drupal técnicos | Administração/rotas técnicas que continuam protegidas por Core/contrib. O painel humano ACULTA usa `/painel-administrativo/**`. |
-| `main.aculta` | `/aculta_portal_cep/{cep}` | Consulta AJAX de CEP; só com integração correspondente habilitada. |
-| `main.aculta` | `/oauth/{provedor}/retorno` | Callback OAuth técnico, restrito aos provedores configurados. |
-| `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Endpoint de arquivo protegido pela matrícula e access da resposta. |
+| Host | Caminho/padrão | Título / objeto | Estado |
+| --- | --- | --- | --- |
+| `main.aculta` | `/webhook/{endpoint}` | Recepção de evento de integração/gateway | Padrão genérico; caminhos concretos definidos pelo módulo ativo e configuração. Nunca presumir acesso público irrestrito. |
+| `main.aculta` | `/admin/**` | Administração técnica Drupal Core/contrib | Rotas individuais variam por módulo e continuam sob access upstream; navegação humana ACULTA usa `/painel-administrativo/**`. |
+| `main.aculta` | `/aculta_portal_cep/{cep}` | Consulta AJAX de CEP | Condicional ao submódulo CEP; endpoint técnico com resposta controlada. |
+| `main.aculta` | `/integracoes/pagamentos/{commerce_payment_gateway}/notificacao` | Notificação enviada pelo gateway de pagamento | Callback técnico, sem navegação humana; endereço declarado por ambiente e validado pelo gateway. |
+| `conta.aculta` | `/oauth/{provedor}/retorno` | Callback de autenticação OAuth | Endpoint técnico, restrito a provedores e URIs configurados. |
+| `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de anexo de resposta | Condicional; verifica access à resposta e matrícula. |
 
 O inventário técnico exaustivo deve ser preenchido a partir do roteador Drupal
 do ambiente validado. Não copiar indiscriminadamente endpoints de todos os
@@ -132,32 +189,51 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 
 ## Caminhos internos, desabilitados e removidos
 
-| Caminho | Host | Estado / comportamento |
-| --- | --- | --- |
-| `/apoio`, `/wiki`, `/cursos`, `/loja`, `/forum`, `/redes-sociais` | respectivos purposes | Caminho interno usado para resolver a raiz; acesso direto responde `404`, sem 301. |
-| `/minha-conta` | `conta.aculta` | Caminho interno da raiz de conta; direto responde `404`. A página pública é `/`. |
-| `/conta-interna` | `conta.aculta` | Removido; `404` para visitante. |
-| `/cart`, `/donate`, `/donate/{...}` | `main.aculta` | Removidos; `404`, sem redirecionamento de slug. |
-| `/user/{uid}/orders`, `/user/{uid}/payment-methods` | `conta.aculta` | Caminhos com UID removidos; usar `/pedidos` e caminhos atuais. |
-| `/user/{uid}/address-book*` | `conta.aculta` | `404`; endereço único fica em `/dados/endereco`. |
-| `/pagamentos/novo`, `/pagamentos/{id}/editar`, `/pagamentos/{id}/excluir`, `/pagamentos/{id}/padrao` | `conta.aculta` | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
-| `/aceite-termos` | todos | Rota antiga removida; `404`. O fluxo usa o popup e `POST /termos/aceitar`. |
-| `/albuns/{titulo}` | `revista.aculta` | O código/configuração do submódulo prevê esse padrão. O estado efetivo do Runtime precisa ser confirmado; não inferir habilitação pelo YAML instalado. |
-| Rotas `aculta_lms_h5p` | `cursos.aculta` | Desabilitadas; não registrar como ativas até habilitação e validação funcional. |
+| Caminho | Host | Título / objeto | Estado / comportamento |
+| --- | --- | --- | --- |
+| `/apoio` | `apoio.aculta` | Caminho interno da página inicial de apoio | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
+| `/wiki` | `wiki.aculta` | Caminho interno da página inicial da Wiki | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
+| `/cursos` | `cursos.aculta` | Caminho interno do catálogo de cursos | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
+| `/loja` | `loja.aculta` | Caminho interno da vitrine | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
+| `/forum` | `forum.aculta` | Caminho interno do índice do fórum | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
+| `/redes-sociais` | `links.aculta` | Caminho interno da página de links | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
+| `/minha-conta` | `conta.aculta` | Rota interna de visão geral da conta | A página pública é `/`; acesso direto responde `404`. |
+| `/conta-interna` | `conta.aculta` | Antigo caminho interno do painel da conta | Removido; visitante recebe `404`; comportamento para usuário autenticado segue política documentada. |
+| `/cart` | `main.aculta` | Antigo alias inglês do carrinho | Removido; `404`, sem redirect de slug. |
+| `/donate` | `main.aculta` | Antigo caminho inglês do formulário de doação | Removido; `404`, sem redirect de slug. |
+| `/donate/{valor}/now` | `main.aculta` | Antigo caminho inglês de doação rápida | Removido; `404`, sem redirect de slug. |
+| `/donate/{pedido}/{etapa}` | `main.aculta` | Antigo caminho inglês das etapas de doação | Removido; `404`, sem redirect de slug. |
+| `/user/{uid}/orders` | `conta.aculta` | Antiga lista de pedidos com UID explícito | Removido; usar `/pedidos`, que verifica propriedade pela sessão. |
+| `/user/{uid}/payment-methods` | `conta.aculta` | Antiga lista de meios de pagamento com UID | Removido; meios de pagamento pessoais não são armazenados/exibidos. |
+| `/user/{uid}/address-book*` | `conta.aculta` | Antigo catálogo de endereços por UID | Removido; endereço único fica em `/dados/endereco`. |
+| `/pagamentos/novo` | `conta.aculta` | Cadastro de meio de pagamento pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
+| `/pagamentos/{id}/editar` | `conta.aculta` | Edição de meio de pagamento pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
+| `/pagamentos/{id}/excluir` | `conta.aculta` | Exclusão de meio de pagamento pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
+| `/pagamentos/{id}/padrao` | `conta.aculta` | Seleção de meio de pagamento padrão pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
+| `/aceite-termos` | Todos os purposes | Antiga página dedicada ao aceite dos termos | Removida; `404`. O fluxo atual usa popup e `POST /termos/aceitar`. |
+| `/albuns/{titulo}` | `revista.aculta` | Álbum da galeria | Rota condicional do submódulo; confirmar estado efetivo do Runtime, não inferir pelo YAML. |
+| Rotas `aculta_lms_h5p` | `cursos.aculta` | Editor, player e endpoints de atividades H5P | Módulo desabilitado; endpoints não devem ser considerados ativos até habilitação e validação funcional. |
 
 ## Redirecionamentos documentados
 
-| Origem | Destino | Código/condição |
-| --- | --- | --- |
-| `/` | `conta.aculta:/entrar` | `302` para visitante anônimo; usuário autenticado recebe a experiência da conta. |
-| `/user` | `conta.aculta:/` | `302`, página legada do Core. |
-| `/user/{uid}` | `conta.aculta:/` | `302` para o próprio perfil legado; usuário alheio não tem acesso. |
-| `/user/{uid}/edit` e rotas de troca de e-mail | `conta.aculta:/seguranca` | `302` para operações próprias; acesso alheio é negado. |
-| `/carrinho` em `loja.aculta` | `/carrinho` em `main.aculta` | `302`, política de pagamento/Commerce. |
-| `/enderecos*` | `conta.aculta:/dados/endereco` | `302` para o formulário de endereço único nos caminhos legados listados em `REDIRECTS.md`. |
-| `/pagamentos` | `/pedidos` | `301` legado registrado em `DOMAIN-FRONT-PATHS.md`; confirmar status no ambiente antes de alteração. |
-| `/product/{id}` | alias canônico de produto | `301` pelo Redirect/Pathauto, se houver registro e produto publicado. |
-| `/busca` (envio do formulário) | `/busca?q={termo}` | `302`, submissão do formulário de busca. |
+| Origem | Destino | Título / objeto | Código/condição |
+| --- | --- | --- | --- |
+| `/` | `conta.aculta:/entrar` | Entrada da área de conta para visitante anônimo | `302`; usuário autenticado recebe a visão geral da conta. |
+| `/user` | `conta.aculta:/` | Página legada de usuário do Core | `302` para a raiz da Conta. |
+| `/user/{uid}` | `conta.aculta:/` | Perfil legado do próprio usuário | `302` para o dono; acesso ao perfil de outra pessoa é negado. |
+| `/identidade/editar` | `conta.aculta:/seguranca` | Edição legada do próprio perfil | `302` para o painel de segurança; usuário alheio recebe negação. |
+| `/identidade/{user}` | `conta.aculta:/` | Perfil legado do próprio usuário | `302` para a raiz da conta; usuário alheio recebe negação. |
+| `/seguranca/email` | `conta.aculta:/seguranca` | Tela legada de troca de e-mail | `302` para segurança, após validar titularidade. |
+| `/seguranca/email/{user}` | `conta.aculta:/seguranca` | Formulário legado de troca de e-mail | `302` para segurança, após validar titularidade/token. |
+| `/carrinho` em `loja.aculta` | `/carrinho` em `main.aculta` | Continuação da compra no domínio responsável pelo checkout | `302` cross-purpose confiável, via política de domínio. |
+| `/enderecos` | `conta.aculta:/dados/endereco` | Lista legada de endereços | `302` para endereço único. |
+| `/enderecos/novo/{tipo}` | `conta.aculta:/dados/endereco` | Criação legada de endereço | `302` para endereço único. |
+| `/enderecos/{perfil}/editar` | `conta.aculta:/dados/endereco` | Edição legada de endereço | `302` para endereço único. |
+| `/enderecos/{perfil}/excluir` | `conta.aculta:/dados/endereco` | Exclusão legada de endereço | `302` para endereço único. |
+| `/enderecos/{perfil}/padrao` | `conta.aculta:/dados/endereco` | Seleção legada de endereço padrão | `302` para endereço único. |
+| `/pagamentos` | `/pedidos` | Página antiga de meios de pagamento pessoais | `301` legado registrado; confirmar comportamento no ambiente antes de alterar. |
+| `/product/{id}` | Alias canônico `/loja/produto/{categoria}/{titulo}` | URL técnica antiga de produto Commerce | `301` quando houver redirect/alias e produto publicado. |
+| Submissão de `/busca` | `/busca?q={termo}` | Envio do formulário de busca | `302`; termo vai na query string. |
 
 Esta tabela é um resumo; as listas de regras e exceções completas permanecem em
 [`REDIRECTS.md`](../portal/REDIRECTS.md) e
