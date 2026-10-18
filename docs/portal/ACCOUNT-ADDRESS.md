@@ -24,7 +24,7 @@ ou no checkout que lê o mesmo endereço deve manter o que está aqui. Não repe
   `country_code` não vem no POST, e a lista de cidades passa a usar o endereço salvo.
 - A biblioteca `viacep` do contrib não carrega o cliente dele (chama o endpoint sem o cabeçalho e recebe 403). A busca é a do Portal.
 - O CEP resolvido fica por campo no módulo, e não no elemento: o AJAX de estado troca o elemento.
-- Não criar campo alias de endereço nos perfis: um segundo campo do tipo `address` quebrou os formulários e a busca de CEP.
+- Alias `address` nos perfis: campo computado, sem armazenamento, que lê o `field_address` do mesmo perfil. É o que o contrib do Mercado Pago espera. Não pode virar campo com armazenamento nem cópia.
 
 ## Como validar antes de mesclar
 

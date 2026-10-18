@@ -1,3 +1,10 @@
+## 0.4.0-dev.144 — alias address de volta para o Mercado Pago (campo computado) — 2026-10-18
+
+- Campo `address` nos perfis, computado, sem armazenamento: lê o `field_address` do mesmo perfil. O contrib `commerce_mercado_pago` lê `address` (DT-MP-10). O formulário da conta foi testado com o alias presente: 17/17 no navegador.
+- Gate `scripts/validate-account-address.php` exige o alias como campo computado.
+- Pendência: o gateway do Mercado Pago não aceita o tipo `doacao` (a condição `order_type` voltou a `default` pela reversão), então a doação avulsa ainda não chega ao pagamento.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild).
+
 ## 0.4.0-dev.142 — endereço da conta: troca de CEP, país fixo e gate — 2026-10-18
 
 - Troca de CEP depois do primeiro preenchimento: rua, bairro, cidade e estado são substituídos pelo endereço do novo CEP. Antes a busca só preenchia campos vazios e não atualizava. Número, S/N e complemento não são alterados.

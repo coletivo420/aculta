@@ -65,8 +65,12 @@ $check(str_contains($cep, 'const resolvedCep = new Map()'), 'cep-address.js: CEP
 $check(str_contains($cep, 'function keysToWrite') && str_contains($cep, 'if (replace) return values;'), 'cep-address.js: troca de CEP substitui o endereço');
 $check(str_contains($cep, 'pendingFill.delete(prefix)'), 'cep-address.js: preenchimento pendente vale só para o próprio rebuild');
 
-// 5. Nenhum campo alias de endereço nos perfis (a tentativa anterior quebrou o formulário).
-$check(!is_file($root . '/web/modules/custom/aculta_portal/src/Hook/ProfileAddressAliasHooks.php'), 'sem campo alias de endereço nos perfis');
+// 5. Alias `address` nos perfis: campo computado, sem armazenamento, lendo o field_address (o contrib do Mercado Pago lê
+// `address`). Campo com armazenamento, ou cópia, seria dado duplicado.
+$alias = $read('web/modules/custom/aculta_portal/src/Hook/ProfileAddressAliasHooks.php');
+$aliasList = $read('web/modules/custom/aculta_portal/src/Commerce/MercadoPago/BillingAddressAliasItemList.php');
+$check(str_contains($alias, "setComputed(TRUE)") && str_contains($alias, "BillingAddressAliasItemList::class"), 'alias address é campo computado (sem armazenamento)');
+$check(str_contains($aliasList, "ComputedItemListTrait") && str_contains($aliasList, "'field_address'"), 'alias address lê o field_address do mesmo perfil');
 
 // 6. Teste de navegador presente (a barreira só vale se o teste existir).
 $check(is_file($root . '/scripts/test-account-address-browser.py'), 'teste de navegador do endereço presente');
