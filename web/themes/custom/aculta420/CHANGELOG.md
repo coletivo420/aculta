@@ -1283,10 +1283,13 @@ Classificação: PATCH (dados e estilos novos em um tópico; sem mudança de est
 - Limitação de teste: o modo de cor é decidido pelo Portal (`aculta_color_mode`); a conta logada no escuro foi verificada só pelo HTML.
 # Unreleased — migração do tema base — 2026-10-18
 
+- Removidos Display Suite e `ui_patterns_ds`: nenhum módulo ACULTA ou display exportado consumia os plugins; os layouts do tema estavam sem consumidor e foram excluídos.
+- Removidos do `core.extension` e do catálogo do tema os layouts, templates e CSS específicos de Display Suite.
+- RUNTIME STATUS: `ds` desinstalado no Runtime de teste; pacotes Composer removidos, cache reconstruído e rota `ds.structure` ausente.
+- Verificação: Composer válido, `git diff --check` sem erros e Runtime confirma `ds_enabled=false`, `ds_route_exists=false`; o gate Foundation não concluiu porque `social-links-page.perfil.story.yml:9` contém um valor YAML HTML com `:` sem aspas.
 - Trocada a base `bootstrap5` pela base Drupal Bootstrap (`drupal/bootstrap` 5.0.2), compatível com Drupal 11.
 - Framework Bootstrap atualizado para 5.3.8 e carregado localmente via Composer.
 - Bootstrap Icons 1.11.0 copiado para os assets do ACULTA420 com licença MIT preservada, desacoplando os ícones da base anterior.
-- Integrado Display Suite 3.37.0, habilitado na configuração exportada, com layouts responsivos ACULTA420 de duas e três colunas.
 - RUNTIME HOMELAB: DEFERRED; falta importar a configuração e fazer smoke test visual no ambiente de testes.
 
 ## 0.6.0-dev.74 — galeria de produto em VVJS — 2026-10-18

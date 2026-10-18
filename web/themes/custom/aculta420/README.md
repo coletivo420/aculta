@@ -9,7 +9,6 @@ plataforma Drupal da Associação Cultural Antiproibicionista.
 - base theme: `bootstrap` (`drupal/bootstrap` 5.0.2);
 - Bootstrap Framework: `5.3.8`, instalado pelo Composer em `web/libraries/bootstrap`;
 - Bootstrap Icons: `1.11.0`, distribuído pelo ACULTA420 com licença MIT;
-- Display Suite: `3.37.0`, com layouts ACULTA420 responsivos de duas e três colunas;
 - SDC: Drupal Core;
 - build tooling: nenhum por padrão.
 
@@ -30,10 +29,6 @@ Drupal Core + contrib
         v
 Bootstrap 5.3.8 + Bootstrap Icons
 ```
-
-Display Suite administra os layouts e modos de visualização das entidades; os
-layouts adicionados pelo tema usam a grade Bootstrap sem substituir o controle
-editorial do módulo.
 
 Os arquivos CSS/JS públicos do Bootstrap são sincronizados de `vendor/twbs/bootstrap`
 para `web/libraries/bootstrap` pelos scripts Composer `post-install-cmd` e

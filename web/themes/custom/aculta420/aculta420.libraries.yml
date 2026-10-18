@@ -56,12 +56,6 @@ bootstrap-icons:
     component:
       assets/icons/bootstrap-icons/font/bootstrap-icons.min.css: {}
 
-display-suite:
-  version: 1.x
-  css:
-    component:
-      css/components/display-suite.css: {}
-
 album-slideshow:
   css:
     theme:

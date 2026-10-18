@@ -260,9 +260,6 @@ $expectedTemplates = [
   'aculta-portal-shell.html.twig',
   'aculta-section.html.twig',
   'content/off-canvas-page-wrapper.html.twig',
-  // Layouts exportados pelo Display Suite, apresentados com a grade Bootstrap do tema.
-  'layouts/ds-three-column.html.twig',
-  'layouts/ds-two-column.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
   'node--project--teaser.html.twig',

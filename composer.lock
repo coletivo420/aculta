@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fca2c9877ead05f2a05337f05aceec6d",
+    "content-hash": "c07c5fa6ab6bced1aee5d502b59d245f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3154,122 +3154,6 @@
             "homepage": "https://www.drupal.org/project/domain",
             "support": {
                 "source": "https://git.drupalcode.org/project/domain"
-            }
-        },
-        {
-            "name": "drupal/ds",
-            "version": "3.37.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/ds.git",
-                "reference": "8.x-3.37"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ds-8.x-3.37.zip",
-                "reference": "8.x-3.37",
-                "shasum": "52112770f7050252d8f7235aad30a902831d185f"
-            },
-            "require": {
-                "drupal/core": "^10.2 || ^11"
-            },
-            "require-dev": {
-                "drupal/devel": "^5",
-                "drupal/field_group": "3.x-dev"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-3.37",
-                    "datestamp": "1771000261",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Bram Goffings",
-                    "homepage": "https://www.drupal.org/user/172527",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Kristof De Jaeger",
-                    "homepage": "http://realize.be/",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Brecht Ceyssens",
-                    "homepage": "https://www.drupal.org/user/591438",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "swentel",
-                    "homepage": "https://www.drupal.org/user/107403"
-                }
-            ],
-            "description": "Extend the display options for every entity type.",
-            "homepage": "https://www.drupal.org/project/ds",
-            "keywords": [
-                "drupal",
-                "layout",
-                "php"
-            ],
-            "support": {
-                "source": "http://git.drupal.org/project/ds.git",
-                "issues": "https://www.drupal.org/project/issues/ds",
-                "irc": "irc://irc.freenode.org/drupal-contribute"
-            }
-        },
-        {
-            "name": "drupal/ds_extras",
-            "version": "3.37.0",
-            "require": {
-                "drupal/core": "^10.2 || ^11",
-                "drupal/ds": "*"
-            },
-            "type": "metapackage",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-3.37",
-                    "datestamp": "1771000261",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "aspilicious",
-                    "homepage": "https://www.drupal.org/user/172527"
-                },
-                {
-                    "name": "bceyssens",
-                    "homepage": "https://www.drupal.org/user/2743951"
-                },
-                {
-                    "name": "jyve",
-                    "homepage": "https://www.drupal.org/user/591438"
-                },
-                {
-                    "name": "swentel",
-                    "homepage": "https://www.drupal.org/user/107403"
-                }
-            ],
-            "description": "Contains additional features for Display Suite.",
-            "homepage": "https://www.drupal.org/project/ds",
-            "support": {
-                "source": "https://git.drupalcode.org/project/ds"
             }
         },
         {
@@ -7196,63 +7080,6 @@
             "homepage": "https://www.drupal.org/project/ui_patterns",
             "support": {
                 "source": "https://git.drupalcode.org/project/ui_patterns"
-            }
-        },
-        {
-            "name": "drupal/ui_patterns_ds",
-            "version": "1.0.0-alpha3",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/ui_patterns_ds.git",
-                "reference": "1.0.0-alpha3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ui_patterns_ds-1.0.0-alpha3.zip",
-                "reference": "1.0.0-alpha3",
-                "shasum": "8a34dc7fac61a7311ef8f0c3e44e3ff0865ca4d4"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11",
-                "drupal/ds": "^3.28",
-                "drupal/ds_extras": "*",
-                "drupal/ui_patterns": "^2.0",
-                "drupal/ui_patterns_layouts": "*"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha3",
-                    "datestamp": "1787607158",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "just_like_good_vibes",
-                    "homepage": "https://www.drupal.org/user/792018"
-                },
-                {
-                    "name": "pdureau",
-                    "homepage": "https://www.drupal.org/user/1903334"
-                },
-                {
-                    "name": "sharique",
-                    "homepage": "https://www.drupal.org/user/73545"
-                }
-            ],
-            "description": "Provides integration between UI Patterns and Display Suite.",
-            "homepage": "https://www.drupal.org/project/ui_patterns_ds",
-            "support": {
-                "source": "https://git.drupalcode.org/project/ui_patterns_ds",
-                "issues": "https://www.drupal.org/project/issues/ui_patterns_ds"
             }
         },
         {
@@ -20182,7 +20009,6 @@
     "stability-flags": {
         "drupal/commerce_mercado_pago": 5,
         "drupal/imageapi_optimize_binaries": 10,
-        "drupal/ui_patterns_ds": 15,
         "drupal/ui_patterns_field_group": 10
     },
     "prefer-stable": true,
