@@ -72,6 +72,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 php scripts/validate-aculta-portal-drupal11.php
 php scripts/validate-public-slugs.php
 php scripts/validate-aculta-portal-conta-root.php
+php scripts/validate-own-module-packages.php
 php vendor/drush/drush/drush.php --uri=https://aculta.toca.net.br scr scripts/validate-aculta420-foundation.php
 php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests
 php web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/run.php

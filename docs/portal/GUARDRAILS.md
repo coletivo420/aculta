@@ -13,6 +13,11 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) e
 [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md).
 
+## Componentes próprios
+
+- Todo módulo próprio em `web/modules/custom/` declara `package: 'ACULTA Portal'`, sem exceção, inclusive o `aculta_portal`.
+- Gate: `php scripts/validate-own-module-packages.php`. Motivo e como criar um componente novo: `docs/portal/COMPONENTES-PROPRIOS.md`.
+
 ## Fronteiras gerais
 
 - O Portal integra capacidades existentes. Não substitui storage, regra de negócio ou

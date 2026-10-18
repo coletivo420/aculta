@@ -1,3 +1,9 @@
+## 0.4.0-dev.128 — move o módulo pai para "ACULTA Portal" e cria barreira de pacote — 2026-10-18
+
+- O módulo `aculta_portal` passa a declarar `package: 'ACULTA Portal'`, junto com todos os submódulos próprios. A caixa "Associação Cultural Antiproibicionista" deixa de ter módulos próprios em `/painel-administrativo/modulos`.
+- Novo gate `scripts/validate-own-module-packages.php`: todo módulo próprio em `web/modules/custom` deve declarar `ACULTA Portal`, sem exceção. Orientação em `docs/portal/COMPONENTES-PROPRIOS.md`.
+- Sem mudança funcional.
+
 ## 0.4.0-dev.127 — agrupa os submódulos próprios em "ACULTA Portal" — 2026-10-18
 
 - Os submódulos próprios (`aculta_associado_id`, `aculta_donation`, `aculta_gallery`, `aculta_game`, `aculta_id_cpf`, `aculta_image`, `aculta_magazine`, `aculta_messenger` e `aculta_user`) passam a declarar `package: 'ACULTA Portal'`, a mesma caixa de `aculta_deployer`, `aculta_lms`, `aculta_pdf_viewer` e `aculta_portal_sitemap`, em `/painel-administrativo/modulos`.
