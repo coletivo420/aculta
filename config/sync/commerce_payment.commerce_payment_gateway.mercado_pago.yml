@@ -3,7 +3,7 @@ langcode: pt-br
 status: false
 dependencies:
   module:
-    - commerce_mercado_pago
+    - aculta_pagamentos_mercadopago
 id: mercado_pago
 label: 'Mercado Pago'
 weight: 0

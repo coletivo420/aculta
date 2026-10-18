@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\MercadoPago;
 
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
-use Drupal\commerce_mercado_pago\Plugin\Commerce\PaymentGateway\CheckoutPro;
+use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\CheckoutPro;
 use MercadoPago\Client\AdvancedPayment\AdvancedPaymentClient;
 use MercadoPago\Client\CardToken\CardTokenClient;
 use MercadoPago\Client\Chargeback\ChargebackClient;
@@ -32,7 +32,7 @@ use MercadoPago\MercadoPagoConfig;
  * Entrega os clientes do SDK do Mercado Pago com as credenciais do gateway do ambiente.
  *
  * Todos os 20 clientes concretos do SDK 3.x (dx-php) estão mapeados em CLIENTES. O token vem do próprio
- * gateway (commerce_mercado_pago), no modo ativo (test, stage ou prod), e nunca de constante no código.
+ * gateway (aculta_pagamentos_mercadopago), no modo ativo (test, stage ou prod), e nunca de constante no código.
  * O SDK guarda o token de forma estática; a fábrica o redefine a cada criação, então o cliente sempre usa
  * as credenciais do gateway recebido.
  */

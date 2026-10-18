@@ -18,7 +18,7 @@
 
 1. **Dado da loja:** `commerce_store` 1 tinha `billing_countries` vazio. O formulário de cobrança do Commerce usa esses países, então sem país não renderiza campos. Corrigido no runtime: `billing_countries = [BR]`. O campo não está no `config/sync` (é dado de entidade, não configuração exportada); o responsável deve manter esse valor no ambiente de produção.
 2. **Pane removido pelo Commerce:** `commerce_payment` implementa `hook_commerce_checkout_pane_info_alter` com `unset($definitions['billing_information'])`. O pane `payment_information` substitui o `billing_information`. O fluxo `default` ainda lista `billing_information` em `order_information`, e o plugin não está registrado. Quem coleta cobrança passa a ser o pane de pagamento.
-3. **Gateway de redirecionamento:** o Mercado Pago (`commerce_mercado_pago`, contrib, não editado) exige no formulário de redirecionamento um perfil de cobrança com endereço (`RedirectCheckoutForm`). O pane de pagamento só monta o formulário de cobrança quando `collectsBillingInformation()` é verdadeiro. Ativado em `config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml` (`collect_billing_information: true`) e no runtime. **Mesmo assim**, na etapa `payment` o pane não renderiza o formulário; o pedido 5 segue sem perfil de cobrança e o erro continua.
+3. **Gateway de redirecionamento:** o Mercado Pago (`aculta_pagamentos_mercadopago`, porte próprio) exige no formulário de redirecionamento um perfil de cobrança com endereço (`RedirectCheckoutForm`). O pane de pagamento só monta o formulário de cobrança quando `collectsBillingInformation()` é verdadeiro. Ativado em `config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml` (`collect_billing_information: true`) e no runtime. **Mesmo assim**, na etapa `payment` o pane não renderiza o formulário; o pedido 5 segue sem perfil de cobrança e o erro continua.
 
 ## Correções aplicadas (0.3.0-dev.14)
 
@@ -36,7 +36,7 @@
 ## Onde está o código
 
 - `web/modules/contrib/commerce/modules/payment/src/Hook/CommercePaymentHooks.php` (unset do `billing_information`; contrib, não editar).
-- `web/modules/contrib/commerce_mercado_pago/src/PluginForm/Checkout/RedirectCheckoutForm.php` (mensagem de erro; contrib).
+- `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/PluginForm/Checkout/RedirectCheckoutForm.php` (mensagem de erro; porte próprio).
 - `web/modules/contrib/commerce/modules/payment/src/Plugin/Commerce/CheckoutPane/PaymentInformation.php` (formulário de cobrança).
 - `web/modules/contrib/agreement/src/Form/AgreementForm.php` (`settings.destination` e destino salvo).
 
@@ -71,7 +71,7 @@
 
 - **Preferência analisada (leitura pela API):** site MLB, vendedor e comprador são contas de teste distintas, moeda BRL, um item de R$ 30,00, não expirada, `binary_mode` true, `installments` 1, `auto_return` approved, `payer.identification` vazio, `payer.email` com domínio `.invalid`.
 - **Alteração no servidor de testes:** e-mail do usuário `teste.comum` e do pedido 5 trocados para `teste.comum@testuser.com`. A troca pelo fluxo do Drupal exige confirmação na caixa de entrada, por isso foi aplicada direto na tabela `users_field_data`, só no servidor de testes. Confirmação de conta e aceite dos termos permanecem.
-- **Limitações (contrib, não alteradas):** o módulo `commerce_mercado_pago` envia `binary_mode` fixo em true e não envia CPF no pagador. O envio de `excluded_payment_methods` vazio também é decidido pelo módulo. Mudar qualquer um desses pontos exige alteração no módulo ou um ajuste no Portal, o que ainda não foi decidido.
+- **Limitações herdadas do porte (não alteradas):** o submódulo `aculta_pagamentos_mercadopago` envia `binary_mode` fixo em true e não envia CPF no pagador. O envio de `excluded_payment_methods` vazio também é decidido pelo módulo. Mudar qualquer um desses pontos exige alteração no módulo ou um ajuste no Portal, o que ainda não foi decidido.
 - **Pendente:** se "Pagar" continuar desabilitado com o novo e-mail, o caminho seguinte é avaliar CPF no pagador (módulo) e binary_mode.
 
 ## Endereço único (decisão do responsável, 2026-10-12)
@@ -79,7 +79,7 @@
 - **Decisão:** o site tem um único endereço, chamado "Endereço". Não há endereço de cobrança nem de envio separados. O pagamento é feito no Mercado Pago.
 - **Como fica no código:** o pane `aculta_billing_address` (rótulo "Endereço") usa o perfil `customer` do cliente quando o pedido ainda não tem um. Assim o checkout e Meus dados > Endereço editam o mesmo registro. O Commerce exibe "Billing information" como "Endereço" (tradução em `aculta_ui.pt-br.po`).
 - **Dados existentes:** pedidos já criados (ex.: 5 e 6) mantêm o perfil que já tinham. Nenhuma migração foi feita.
-- **Mercado Pago:** o módulo contrib usa o perfil de cobrança do pedido para o payer (nome, e-mail, endereço). Como o pedido aponta para o endereço do cliente, esse dado continua chegando.
+- **Mercado Pago:** o submódulo `aculta_pagamentos_mercadopago` usa o perfil de cobrança do pedido para o payer (nome, e-mail, endereço). Como o pedido aponta para o endereço do cliente, esse dado continua chegando.
 - **Pendente:** o tipo de perfil `participante` tem um campo de endereço (`field_address`) que as telas atuais não usam. Antes de remover, conferir se há dados nele. O Commerce Shipping está instalado desde 2026-10-12 (ver a seção "Envio com o endereço único").
 
 ## Meios de pagamento e histórico de pagamentos (decisão do responsável, 2026-10-12)
@@ -120,7 +120,7 @@ Endereço único do cliente (Meus dados > Endereço, checkout, revisão, pedido 
 do Commerce (inclusive o Commerce Shipping quando instalado, que usa o mesmo tipo de perfil). Também saiu `addressLine3`
 (já estava oculto). Valores antigos de Empresa em pedidos de teste foram descartados pela regra; não aparecem mais.
 
-**Payer do Mercado Pago:** o módulo `commerce_mercado_pago` monta o payer com nome, sobrenome e endereço (CEP, logradouro,
+**Payer do Mercado Pago:** o submódulo `aculta_pagamentos_mercadopago` monta o payer com nome, sobrenome e endereço (CEP, logradouro,
 bairro, cidade, estado, país). Não envia Empresa.
 
 **Teste da próxima rodada:** conferir que "Empresa" não aparece em Meus dados > Endereço, no checkout (informações e

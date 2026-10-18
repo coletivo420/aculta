@@ -2,7 +2,7 @@
 
 Status: **plano de trabalho** para a linha 0.4.0-dev.65 (`aculta_portal`). Painéis visuais (vendas, loja e produto) ficam para a fase seguinte, por decisão do responsável.
 
-Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `commerce_mercado_pago` 3.0.0-rc3 (Checkout Pro).
+Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `aculta_pagamentos_mercadopago` 0.1.0-dev.2, porte do `commerce_mercado_pago` 3.0.0-rc3 (Checkout Pro).
 
 ## 0. Decisões do responsável (2026-10-16 e 2026-10-17)
 
@@ -129,7 +129,7 @@ Origem das ideias: o `commerce_reports` (GPL-2.0-or-later) inspirou a granularid
 
 ### 5.1 Com a loja (produtos e pedidos)
 
-- Compras avulsas continuam no Checkout Pro, pelo `commerce_mercado_pago`. Nada muda no fluxo de pagamento.
+- Compras avulsas continuam no Checkout Pro, pelo `aculta_pagamentos_mercadopago`. Nada muda no fluxo de pagamento.
 - Assinatura de produto da loja (ex.: clube de assinatura) **não está no escopo** até decisão do responsável (pergunta 3).
 - Pedidos da loja entram no relatório de vendas pela consulta da seção 4.
 

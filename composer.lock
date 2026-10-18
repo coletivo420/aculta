@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d18a124403ed9e91400a7d80ebd575a",
+    "content-hash": "518607935d15414da9f73893e35af747",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1945,57 +1945,6 @@
             }
         },
         {
-            "name": "drupal/commerce_mercado_pago",
-            "version": "3.0.0-rc3",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/commerce_mercado_pago.git",
-                "reference": "3.0.0-rc3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/commerce_mercado_pago-3.0.0-rc3.zip",
-                "reference": "3.0.0-rc3",
-                "shasum": "6bda5758007a4901581f3483dc8cb3aa672fe25a"
-            },
-            "require": {
-                "drupal/commerce": "^2.0 || ^3.0",
-                "drupal/commerce_payment": "*",
-                "drupal/core": "^9 || ^10 || ^11",
-                "mercadopago/dx-php": "^3"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "3.0.0-rc3",
-                    "datestamp": "1771264998",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "drupal entity",
-                    "homepage": "https://www.drupal.org/user/402078"
-                }
-            ],
-            "description": "Provides Commerce integration for Mercado Pago",
-            "homepage": "http://drupal.org/project/commerce_mercado_pago",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "http://cgit.drupalcode.org/commerce_mercado_pago",
-                "issues": "https://www.drupal.org/project/issues/commerce_mercado_pago"
-            }
-        },
-        {
             "name": "drupal/commerce_number_pattern",
             "version": "3.3.10",
             "require": {
@@ -2081,50 +2030,6 @@
                 }
             ],
             "description": "Defines the Order entity and associated features.",
-            "homepage": "https://www.drupal.org/project/commerce",
-            "support": {
-                "source": "https://git.drupalcode.org/project/commerce"
-            }
-        },
-        {
-            "name": "drupal/commerce_payment",
-            "version": "3.3.10",
-            "require": {
-                "drupal/commerce": "*",
-                "drupal/commerce_order": "*",
-                "drupal/core": "^10.3 || ^11",
-                "drupal/entity_reference_revisions": "*"
-            },
-            "type": "metapackage",
-            "extra": {
-                "drupal": {
-                    "version": "3.3.10",
-                    "datestamp": "1790160108",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "centarro",
-                    "homepage": "https://www.drupal.org/user/3661446"
-                },
-                {
-                    "name": "jsacksick",
-                    "homepage": "https://www.drupal.org/user/972218"
-                },
-                {
-                    "name": "rszrama",
-                    "homepage": "https://www.drupal.org/user/49344"
-                }
-            ],
-            "description": "Provides payment functionality.",
             "homepage": "https://www.drupal.org/project/commerce",
             "support": {
                 "source": "https://git.drupalcode.org/project/commerce"
@@ -19957,7 +19862,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "drupal/commerce_mercado_pago": 5,
         "drupal/imageapi_optimize_binaries": 10,
         "drupal/ui_patterns_field_group": 10
     },

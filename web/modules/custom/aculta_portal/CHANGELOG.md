@@ -1,3 +1,12 @@
+## 0.4.0-dev.151 — Mercado Pago com submódulo próprio; contrib removido — 2026-10-18
+
+- Novo submódulo `aculta_pagamentos_mercadopago` (0.1.0-dev.2): porte do `commerce_mercado_pago` 3.0.0-rc3 com IDs de plugin, chave de dados do pedido e caminho de retorno mantidos. O Portal passa a depender dele no lugar do contrib.
+- Removidos do `composer.json` e do `composer.lock`: `drupal/commerce_mercado_pago` e o metapacote `drupal/commerce_payment` (só era exigido pelo contrib; o módulo `commerce_payment` vem de `drupal/commerce`). `mercadopago/dx-php ^3` passa a ser dependência direta do projeto, para atualizar o SDK oficial com `composer update mercadopago/dx-php`.
+- `core.extension` e a configuração do gateway `mercado_pago` apontam para o submódulo. Sem a troca, desinstalar o contrib apagaria a configuração do gateway.
+- Status de requisitos: a linha do Mercado Pago agora mede o SDK (`mercadopago/dx-php`) e o submódulo.
+- Documentação atualizada: integração, comércio, checkout/cobrança, plano Mercado Pago, mapa módulo-tema e runbook.
+- RUNTIME STATUS: DEFERRED. Não aplicado no Runtime de teste: a desinstalação do contrib e o `cim` dependem de backup e inspeção do estado do gateway antes da alteração.
+
 ## 0.4.0-dev.150 — opções administrativas: link para Consulta de CEP — 2026-10-18
 
 - Lista de opções administrativas do ACULTA Portal ganha "Consulta de CEP" (`aculta_portal_cep.settings`), com o banco padrão e a ordem das fontes. Ver CHANGELOG do submódulo aculta_portal_cep 0.3.0-dev.6.

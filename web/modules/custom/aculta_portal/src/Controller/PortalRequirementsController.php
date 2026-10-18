@@ -131,12 +131,12 @@ final class PortalRequirementsController extends ControllerBase {
       'purpose' => 'Store, checkout, pedidos e pagamentos; fonte de verdade financeira.',
     ],
     [
-      'name' => 'Commerce Mercado Pago',
-      'modules' => ['commerce_mercado_pago'],
-      'package' => 'drupal/commerce_mercado_pago',
-      'minimum' => '^3.0@RC',
-      'purpose' => 'Gateway de pagamento. Até a versão 1.0 é habilitado com chaves de teste; chaves de produção dependem de decisão do responsável.',
-      'warning' => 'Versão RC sem cobertura da Drupal Security Advisory Policy. Enquanto a versão não for estável, o gateway fica restrito às chaves de teste.',
+      'name' => 'Mercado Pago (SDK e gateway)',
+      'modules' => ['aculta_pagamentos_mercadopago'],
+      'package' => 'mercadopago/dx-php',
+      'minimum' => '^3',
+      'purpose' => 'SDK oficial e gateway Checkout Pro próprio do Portal (submódulo aculta_pagamentos_mercadopago). Chaves de produção dependem de decisão do responsável.',
+      'warning' => 'Porte próprio do gateway, sem cobertura da Drupal Security Advisory Policy do upstream.',
     ],
     [
       'name' => 'Key',

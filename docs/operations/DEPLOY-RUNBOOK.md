@@ -110,8 +110,9 @@ SUPPORT portal at `apoio.aculta.org/` then communicates that financial support
 is unavailable and does not link into payment checkout. No real or sandbox payment credentials
 belong in Git, configuration sync, logs, or reports.
 
-The installed `commerce_mercado_pago` release is 3.0.0-rc3, a release
-candidate outside the Drupal Security Advisory Policy. Its local code uses the
+The Mercado Pago gateway is the ACULTA port `aculta_pagamentos_mercadopago`
+(0.1.0-dev.2), from `commerce_mercado_pago` 3.0.0-rc3, a release candidate outside
+the Drupal Security Advisory Policy. Its local code uses the
 Checkout Pro Preferences API. Preferences is legacy/classic but still
 supported; Mercado Pago recommends Orders API for new integrations. This
 release keeps Preferences and records a future migration debt. Do not edit the

@@ -479,12 +479,12 @@ finally {
 $assert(!str_contains($admin_form_html, $fake_access_token), 'Gateway admin HTML never reveals the runtime Access Token.');
 $assert(($gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['mercado_pago']->getPluginConfiguration()[$mp_token_field] ?? '') === '', 'Fake runtime credentials were not persisted.');
 $gateway = \Drupal\commerce_payment\Entity\PaymentGateway::load('mercado_pago');
-$assert((bool) $gateway, 'The Commerce Mercado Pago gateway config entity exists.');
+$assert((bool) $gateway, 'The Mercado Pago gateway config entity exists.');
 // Regra de ambiente do deployer: o gateway fica ligado somente quando o ambiente tem o access token (variável de ambiente).
 $mp_token_env = $mp_environment === 'test' ? 'MERCADOPAGO_TEST_ACCESS_TOKEN' : 'MERCADOPAGO_PRODUCTION_ACCESS_TOKEN';
 $mp_credential_present = (string) getenv($mp_token_env) !== '';
 $assert($gateway->status() === $mp_credential_present, 'The Mercado Pago gateway is enabled exactly when this environment has its access token.');
-$assert($gateway->getPluginId() === 'mercado_pago_checkout_pro', 'The gateway uses the installed Commerce Mercado Pago plugin.');
+$assert($gateway->getPluginId() === 'mercado_pago_checkout_pro', 'The gateway uses the installed Mercado Pago Checkout Pro plugin.');
 $assert(count($gateway->getConditions()) === 3, 'The gateway is constrained by Store, order type, and currency.');
 // Configuração persistida (sem os overrides de ambiente, que trazem a credencial em runtime).
 $gateway_config = \Drupal::config('commerce_payment.commerce_payment_gateway.mercado_pago')->getRawData()['configuration'] ?? [];

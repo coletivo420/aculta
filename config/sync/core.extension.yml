@@ -4,6 +4,7 @@ module:
   aculta_donation: 0
   aculta_gallery: 0
   aculta_image: 0
+  aculta_pagamentos_mercadopago: 0
   aculta_lms: 0
   aculta_magazine: 0
   aculta_messenger: 0
@@ -28,7 +29,6 @@ module:
   commerce: 0
   commerce_cart: 0
   commerce_checkout: 0
-  commerce_mercado_pago: 0
   commerce_number_pattern: 0
   commerce_order: 0
   commerce_payment: 0
