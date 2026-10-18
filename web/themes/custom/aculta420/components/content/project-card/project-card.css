@@ -20,25 +20,37 @@
 .aculta-project h3 a:is(:hover, :focus-visible) { text-decoration: underline; }
 .aculta-project .aculta-category { font-size: 1rem; letter-spacing: 0.025em; }
 .aculta-project { text-align: center; }
-.aculta-project-image { display: flex; justify-content: center; margin-bottom: 1.5rem; }
-.aculta-project-text .aculta-category { display: block; }
 .aculta-project .aculta-editorial-link { display: inline-block; }
-.aculta-project-image { margin-bottom: 1.5rem; }
-/* The card image is a 1:1 frame capped at 16rem (256 css px): the 1x derivative is
-   256 px and the 2x (512 px) source covers retina screens. object-fit: contain keeps
-   every logo whole (no cropping); the muted surface frames transparent art. */
-.aculta-project-image img {
+.aculta-project > .aculta-card {
+  height: 100%;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.aculta-project > .aculta-card > .card-img-top {
   display: block;
   width: 100%;
   max-width: 16rem;
   height: auto;
-  margin-inline: auto;
+  margin: 0 auto 1.5rem;
   aspect-ratio: 1 / 1;
   object-fit: contain;
   border-radius: var(--bs-border-radius);
   background-color: var(--aculta-surface-muted);
 }
-
+.aculta-project > .aculta-card > .card-header,
+.aculta-project > .aculta-card > .card-body,
+.aculta-project > .aculta-card > .card-footer {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.aculta-project > .aculta-card > .card-body { flex: 1 1 auto; }
+.aculta-project > .aculta-card > .card-footer { margin-top: 1rem; }
+/* The card image is a 1:1 frame capped at 16rem (256 css px): the 1x derivative is
+   256 px and the 2x (512 px) source covers retina screens. object-fit: contain keeps
+   every logo whole (no cropping); the muted surface frames transparent art. */
 @media (prefers-reduced-motion: reduce) {
   .aculta-project { transition: none; }
   .aculta-project:is(:hover, :focus-within) { transform: none; }

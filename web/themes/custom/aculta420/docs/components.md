@@ -91,15 +91,17 @@ Status: experimental (0.3.0). Local: `components/content/project-card/`.
 
 Slots: `media` (omitido quando vazio), `category`, `title` (link), `summary`, `cta` (link).
 O presenter `node--project--teaser.html.twig` mantém `<article>`, attributes e links;
-o SDC mantém a marcação interna, com as mesmas classes do teaser anterior (DOM idêntico
-medido). Sem props, JavaScript ou consulta de dados.
+o SDC compõe o pattern `aculta420:card` e mantém os slots e classes semânticas do
+projeto. A mídia continua renderizada pelo Drupal e contida sem recorte. Sem props,
+JavaScript ou consulta de dados.
 
 ### `aculta420:course_card`
 
 Status: experimental. Substitui `lms:course_card` via `replaces`, com props e slots
 compatíveis. O Drupal LMS segue dono dos dados, URL canônica, botão de entrada e cacheability;
-ACULTA420 apresenta o cartão e seus estados com tokens semânticos no CSS do próprio SDC.
-O template mantém os nomes de classe usados pelo row do LMS, sem alterar o plugin nem a View.
+ACULTA420 compõe `aculta420:card` na variante vertical e apresenta o cartão e seus
+estados com tokens semânticos no CSS do próprio SDC. O template mantém os nomes de
+classe usados pelo row do LMS, sem alterar o plugin nem a View.
 O foco é visível por teclado, o cartão respeita movimento reduzido e não exige JavaScript.
 
 ### `aculta420:editorial-card`

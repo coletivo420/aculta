@@ -1,3 +1,13 @@
+## 0.6.0-dev.81 — cards de projeto e curso no pattern compartilhado — 2026-10-18
+
+Classificação: PATCH de integração do design system; contratos e dados funcionais preservados.
+
+- `project-card` e `course_card` passam a compor `aculta420:card` na variante vertical, reaproveitando sua estrutura Bootstrap e os tokens ACULTA420.
+- O presenter de projetos conserva artigo, atributos e links; a mídia permanece renderizada pelo Drupal e contida sem recorte.
+- `course_card` mantém `replaces: lms:course_card`, props/slots e classes esperadas pelo Drupal LMS; URLs, conteúdo, acesso e cache continuam sob responsabilidade do LMS. Não usa o prop de URL como origem direta de imagem.
+- A folha do pattern passa a ser anexada pelo componente SDC; o overlay continua reservado aos álbuns editoriais.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.80 — figuras, citações e cards sobrepostos — 2026-10-18
 
 Classificação: PATCH de composição editorial; sem mudança em conteúdo, acesso ou processamento de imagens.
@@ -5,7 +15,7 @@ Classificação: PATCH de composição editorial; sem mudança em conteúdo, ace
 - Adiciona `aculta420:figure` com mídia Drupal renderizada e slots opcionais de legenda/crédito; substitui o wrapper `<figure>` simples da capa de artigo/blog da Revista.
 - Adiciona `aculta420:quote` com citação, autoria e fonte; citações `<blockquote>` já presentes no corpo da Revista recebem apresentação equivalente sem alterar o texto armazenado.
 - Acrescenta a variante `overlay` ao `aculta420:card` e usa a listagem `aculta_albuns` como consumidor, mantendo campos, ordem, acesso e configuração da View.
-- Mantém `project-card` e `course_card` porque possuem contratos de mídia e dados específicos.
+- `project-card` e `course_card` ainda não compunham o pattern compartilhado nesta etapa.
 - RUNTIME STATUS: smoke test técnico e gates Drupal PASS; revisão visual da listagem de álbuns DEFERRED.
 
 ## 0.6.0-dev.79 — porta padrões úteis do UI Suite Bootstrap — 2026-10-18

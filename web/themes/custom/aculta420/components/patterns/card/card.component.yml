@@ -43,3 +43,7 @@ slots:
     title: Conteúdo
   footer:
     title: Rodapé
+assets:
+  css:
+    component:
+      card.css: {}

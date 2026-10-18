@@ -235,6 +235,13 @@ aceita legenda/crédito opcionais. `aculta420:quote` apresenta citação, autori
 fonte; citações antigas em HTML rico da Revista recebem a mesma tipografia e
 superfície sem reprocessar o corpo ou alterar o conteúdo salvo.
 
+Os SDCs `project-card` e `course_card` compõem esse pattern em sua variante
+vertical, mantendo seus contratos especializados. Projetos preservam mídia já
+renderizada, categoria, resumo e CTA; o cartão do LMS mantém props/slots,
+marcação de integração e dados/access/cache fornecidos pelo Drupal LMS. A
+variante sobreposta segue reservada a mídias editoriais apropriadas, sem forçar
+recorte de logos de projeto ou depender de URL de imagem do curso.
+
 ## Variants
 
 Drupal Core suporta variants SDC em 11.2+.
