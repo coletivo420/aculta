@@ -1,97 +1,56 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
+
+declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\Controller;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
+use Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager;
 use Drupal\aculta_lms_h5p\Event\FinishedEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
-class H5PAJAX extends ControllerBase {
+/** Handles authenticated, course-scoped H5P progress requests. */
+final class H5PAJAX extends ControllerBase {
 
-  /**
-   * The database connection.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected $database;
+  public function __construct(
+    private readonly Connection $database,
+    private readonly EventDispatcherInterface $eventDispatcher,
+    private readonly H5PCourseAccessManager $courseAccess,
+  ) {}
 
-  /**
-   * The Symfony Event dispatcher.
-   *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
-   */
-  protected $eventDispatcher;
-
-  /**
-   * Constructs a new H%PAJAX controller.
-   *
-   * @param \Drupal\Core\Database\Connection $database
-   *   The database connection.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
-   *   The Symfony Event dispatcher.
-   */
-  public function __construct(Connection $database, EventDispatcherInterface $event_dispatcher) {
-    $this->database = $database;
-    $this->eventDispatcher = $event_dispatcher;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-
+  public static function create(ContainerInterface $container): static {
     $controller = new static(
       $container->get('database'),
-      $container->get('event_dispatcher')
+      $container->get('event_dispatcher'),
+      $container->get('aculta_lms_h5p.course_access'),
     );
+    $controller->setContainer($container);
     return $controller;
   }
 
-  /**
-   * Access callback for the setFinished feature
-   *
-   * @return \Symfony\Component\HttpFoundation\JsonResponse
-   *   The AJAX response.
-   */
-  public function setFinished() {
-    // Inputs are found as POST parameters
-    $content_id = filter_input(INPUT_POST, 'contentId', FILTER_VALIDATE_INT);
-    $score = filter_input(INPUT_POST, 'score', FILTER_VALIDATE_INT);
-    $max_score = filter_input(INPUT_POST, 'maxScore', FILTER_VALIDATE_INT);
-    $opened = filter_input(INPUT_POST, 'opened', FILTER_VALIDATE_INT);
-    $token = filter_input(INPUT_GET, 'token');
+  /** Stores a completed score after validating membership and the H5P token. */
+  public function setFinished(int $group_id, Request $request): JsonResponse {
+    $uid = (int) $this->currentUser()->id();
+    $content_id = $request->request->getInt('contentId');
+    $score = $request->request->getInt('score', -1);
+    $max_score = $request->request->getInt('maxScore', -1);
+    $opened = $request->request->getInt('opened');
+    $token = (string) $request->query->get('token', '');
 
-    $uid = $this->currentUser()->id();
-
-    // Validate input - all parameters needed
-    if (! ($content_id && $score !== NULL && $score !== FALSE && $max_score !== NULL && $max_score !== FALSE && $opened && $token && $uid)) {
-      return new JsonResponse([
-        'success' => FALSE,
-        'message' => t('Wrong usage'),
-      ]);
+    if (!$uid || $content_id < 1 || $score < 0 || $max_score < 0 || $score > $max_score || $opened < 1 || !\H5PCore::validToken('result', $token) || !$this->courseAccess->studentAccess($group_id, $content_id, $this->currentUser())->isAllowed()) {
+      return new JsonResponse(['success' => FALSE, 'message' => $this->t('Invalid request.')], 403);
     }
 
-    // Check token
-    if (! \H5PCore::validToken('result', $token)) {
-      return new JsonResponse([
-        'success' => FALSE,
-        'message' => t('Invalid security token'),
-      ]);
-    }
-
-    // Everything is OK - let's update db
-    // Check if it exists
-    $exists = $this->database->query('SELECT 1 FROM {h5p_points} WHERE content_id = :content_id AND uid = :uid', [
-        ':content_id' => $content_id,
-        ':uid' => $uid,
-      ])->fetchField();
-
-    // which fields to update
+    $existing = $this->database->select('h5p_points', 'p')
+      ->fields('p', ['started'])
+      ->condition('content_id', $content_id)
+      ->condition('uid', $uid)
+      ->execute()->fetchField();
     $fields = [
       'content_id' => $content_id,
       'uid' => $uid,
@@ -99,129 +58,51 @@ class H5PAJAX extends ControllerBase {
       'points' => $score,
       'max_points' => $max_score,
     ];
-
-    // Only set started time if it does not exist
-    if (! $exists) {
+    if ($existing === FALSE) {
       $fields['started'] = $opened;
     }
-
-    $this->database->merge('h5p_points')
-      ->keys([
-        'uid' => $uid,
-        'content_id' => $content_id,
-      ])
-      ->fields($fields)
-      ->execute();
-
+    $this->database->merge('h5p_points')->keys(['uid' => $uid, 'content_id' => $content_id])->fields($fields)->execute();
     $this->eventDispatcher->dispatch(new FinishedEvent($fields), FinishedEvent::FINISHED_EVENT);
-
     return new JsonResponse(['success' => TRUE]);
   }
 
-  /**
-   * Handles insert, updating and deleteing content user data through AJAX.
-   *
-   * @param string $content_main_id
-   * @param string $data_id
-   * @param string $sub_content_id
-   *
-   * @return \Symfony\Component\HttpFoundation\JsonResponse
-   *   The AJAX response.
-   */
-  public function contentUserData($content_main_id, $data_id, $sub_content_id) {
+  /** Loads or saves user state for content accessible through this course. */
+  public function contentUserData(int $group_id, int $content_main_id, string $data_id, int $sub_content_id, Request $request): JsonResponse {
     $user = $this->currentUser();
-
-    $response = (object) array(
-      'success' => TRUE
-    );
-
-    $data = filter_input(INPUT_POST, 'data');
-    $preload = filter_input(INPUT_POST, 'preload');
-    $invalidate = filter_input(INPUT_POST, 'invalidate');
-    if ($data !== NULL && $preload !== NULL && $invalidate !== NULL) {
-      if (! \H5PCore::validToken('contentuserdata', filter_input(INPUT_GET, 'token'))) {
-        $response->success = FALSE;
-        $response->message = t('Invalid security token.');
-        return new JsonResponse($response);
-      }
-
-      if ($data === '0') {
-        // Remove data
-        $this->database->delete('h5p_content_user_data')
-          ->condition('content_main_id', $content_main_id)
-          ->condition('data_id', $data_id)
-          ->condition('user_id', $user->id())
-          ->condition('sub_content_id', $sub_content_id)
-          ->execute();
-      } else {
-        // Wash values to ensure 0 or 1.
-        $preload = ($preload === '0' ? 0 : 1);
-        $invalidate = ($invalidate === '0' ? 0 : 1);
-
-        // Determine if we should update or insert
-        $update = $this->database->query("
-          SELECT content_main_id
-          FROM {h5p_content_user_data}
-          WHERE content_main_id = :content_main_id
-          AND user_id = :user_id
-          AND data_id = :data_id
-          AND sub_content_id = :sub_content_id",
-          [
-            ':content_main_id' => $content_main_id,
-            ':user_id' => $user->id(),
-            ':data_id' => $data_id,
-            ':sub_content_id' => $sub_content_id,
-          ])->fetchField();
-
-        if ($update === FALSE) {
-          // Insert new data
-          $this->database->insert('h5p_content_user_data')
-            ->fields([
-              'user_id' => $user->id(),
-              'content_main_id' => $content_main_id,
-              'sub_content_id' => $sub_content_id,
-              'data_id' => $data_id,
-              'timestamp' => time(),
-              'data' => $data,
-              'preloaded' => $preload,
-              'delete_on_content_change' => $invalidate
-            ])
-            ->execute();
-        }
-        else {
-          // Update old data
-          $this->database->update('h5p_content_user_data')
-            ->fields([
-              'timestamp' => time(),
-              'data' => $data,
-              'preloaded' => $preload,
-              'delete_on_content_change' => $invalidate
-            ])
-            ->condition('user_id', $user->id())
-            ->condition('content_main_id', $content_main_id)
-            ->condition('data_id', $data_id)
-            ->condition('sub_content_id', $sub_content_id)
-            ->execute();
-        }
-      }
-
-      Cache::invalidateTags(['h5p_content:' . $content_main_id]);
-    } else {
-      // Fetch data
-      $response->data = $this->database->query("
-        SELECT data FROM {h5p_content_user_data}
-        WHERE user_id = :user_id
-        AND content_main_id = :content_main_id
-        AND data_id = :data_id
-        AND sub_content_id = :sub_content_id",
-        [
-          ':user_id' => $user->id(),
-          ':content_main_id' => $content_main_id,
-          ':sub_content_id' => $sub_content_id,
-          ':data_id' => $data_id,
-        ])->fetchField();
+    if (!$user->isAuthenticated() || $content_main_id < 1 || !preg_match('/^[a-zA-Z0-9_.-]{1,128}$/', $data_id) || $sub_content_id < 0 || !$this->courseAccess->studentAccess($group_id, $content_main_id, $user)->isAllowed() || !\H5PCore::validToken('contentuserdata', (string) $request->query->get('token', ''))) {
+      return new JsonResponse(['success' => FALSE, 'message' => $this->t('Invalid request.')], 403);
     }
 
-    return new JsonResponse($response);
+    if ($request->request->has('data')) {
+      $data = (string) $request->request->get('data');
+      if (strlen($data) > 1048576) {
+        return new JsonResponse(['success' => FALSE], 413);
+      }
+      $delete = $data === '0';
+      if ($delete) {
+        $this->database->delete('h5p_content_user_data')->condition('content_main_id', $content_main_id)->condition('data_id', $data_id)->condition('user_id', $user->id())->condition('sub_content_id', $sub_content_id)->execute();
+      }
+      else {
+        $values = [
+          'timestamp' => time(),
+          'data' => $data,
+          'preloaded' => $request->request->get('preload') === '0' ? 0 : 1,
+          'delete_on_content_change' => $request->request->get('invalidate') === '0' ? 0 : 1,
+        ];
+        $query = $this->database->select('h5p_content_user_data', 'd')->fields('d', ['content_main_id'])->condition('content_main_id', $content_main_id)->condition('user_id', $user->id())->condition('data_id', $data_id)->condition('sub_content_id', $sub_content_id);
+        if ($query->execute()->fetchField() === FALSE) {
+          $this->database->insert('h5p_content_user_data')->fields($values + ['user_id' => $user->id(), 'content_main_id' => $content_main_id, 'sub_content_id' => $sub_content_id, 'data_id' => $data_id])->execute();
+        }
+        else {
+          $this->database->update('h5p_content_user_data')->fields($values)->condition('user_id', $user->id())->condition('content_main_id', $content_main_id)->condition('data_id', $data_id)->condition('sub_content_id', $sub_content_id)->execute();
+        }
+      }
+      Cache::invalidateTags(['h5p_content:' . $content_main_id]);
+      return new JsonResponse(['success' => TRUE]);
+    }
+
+    $data = $this->database->select('h5p_content_user_data', 'd')->fields('d', ['data'])->condition('user_id', $user->id())->condition('content_main_id', $content_main_id)->condition('sub_content_id', $sub_content_id)->condition('data_id', $data_id)->execute()->fetchField();
+    return new JsonResponse(['success' => TRUE, 'data' => $data === FALSE ? NULL : $data]);
   }
+
 }

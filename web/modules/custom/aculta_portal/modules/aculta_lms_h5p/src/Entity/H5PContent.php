@@ -195,13 +195,9 @@ class H5PContent extends ContentEntityBase implements ContentEntityInterface {
   }
 
   protected function getExportURL() {
-    $interface = H5PDrupal::getInstance();
-    if (empty($interface->getOption('export', TRUE))) {
-      return '';
-    }
-
-    $h5p_path = $interface->getOption('default_path', 'h5p');
-    return \Drupal::service('file_url_generator')->generateAbsoluteString("public://{$h5p_path}/exports/interactive-content-" . $this->id() . '.h5p');
+    // Exports contain all package source files. Do not expose a direct URL;
+    // an authenticated export endpoint requires a separate access contract.
+    return '';
   }
 
   /**

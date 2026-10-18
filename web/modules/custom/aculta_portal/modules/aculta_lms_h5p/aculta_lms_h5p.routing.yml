@@ -104,17 +104,41 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache:
   requirements:
     _permission: 'administer h5p libraries'
 aculta_lms_h5p.ajax.set_finished:
-  path: '/h5p-ajax/set-finished.json'
+  path: '/h5p-ajax/{group_id}/set-finished.json'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PAJAX::setFinished'
     _title: 'Store Grades Information'
   requirements:
      _permission: 'access content'
+     _user_is_logged_in: 'TRUE'
+     group_id: '\d+'
 
 aculta_lms_h5p.ajax.content_user_data:
-  path: '/h5p-ajax/content-user-data/{content_main_id}/{data_id}/{sub_content_id}'
+  path: '/h5p-ajax/{group_id}/content-user-data/{content_main_id}/{data_id}/{sub_content_id}'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PAJAX::contentUserData'
     _title: 'Store Content User Data'
   requirements:
      _permission: 'access content'
+     _user_is_logged_in: 'TRUE'
+     group_id: '\d+'
+     content_main_id: '\d+'
+     sub_content_id: '\d+'
+
+aculta_lms_h5p.content_file:
+  path: '/h5p-content/{group_id}/{content_id}/{file_path}'
+  defaults:
+    _controller: '\Drupal\aculta_lms_h5p\Controller\H5PFileController::contentFile'
+  requirements:
+    _permission: 'access content'
+    group_id: '\d+'
+    content_id: '\d+'
+    file_path: '.+'
+
+aculta_lms_h5p.library_file:
+  path: '/h5p-library-assets/libraries/{file_path}'
+  defaults:
+    _controller: '\Drupal\aculta_lms_h5p\Controller\H5PFileController::libraryFile'
+  requirements:
+    _access: 'TRUE'
+    file_path: '.+'

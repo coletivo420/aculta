@@ -15,6 +15,13 @@ O Portal cuida de integração funcional, rotas, dados, acesso, cache e presente
 O tema cuida de templates, componentes e estilo. O Portal não deve criar storage
 paralelo nem depender do tema para funcionar.
 
+## Capacidades e extensões ativas
+
+As extensões próprias incluem o LMS com atividades H5P vinculadas a cursos,
+slugs públicos canônicos por `PublicRouteSlug::normalize()` e a política
+`filename_sanitization` para nomes de upload. Cada capacidade documenta seus
+limites no README do respectivo submódulo.
+
 ## Navegação documental
 
 - [Índice normativo do Portal](../../../../docs/portal/README.md) — contratos,
@@ -34,6 +41,12 @@ paralelo nem depender do tema para funcionar.
 
 Cada extensão tem seu próprio README como referência local. O índice raiz mantém
 a lista navegável de todos os componentes: [Submódulos do Portal](../../../../README.md#submódulos-do-portal).
+
+O submódulo `aculta_lms_h5p` conecta conteúdo interativo H5P às turmas do LMS,
+com verificação de acesso do Group para reprodução, arquivos privados e
+progresso. Sua condição contextual CTools identifica cursos que contêm essas
+atividades; veja o [README do H5P](modules/aculta_lms_h5p/README.md) para limites
+do editor e habilitação.
 
 ## Desenvolvimento
 

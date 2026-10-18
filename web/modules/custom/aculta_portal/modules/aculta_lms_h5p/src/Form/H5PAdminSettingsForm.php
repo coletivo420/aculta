@@ -100,12 +100,12 @@ class H5PAdminSettingsForm extends FormBase {
     _aculta_lms_h5p_add_display_option($form['h5p_display_options'], 'h5p_copyright', t('Copyright button'), $interface->getOption('copyright'));
     _aculta_lms_h5p_add_display_option($form['h5p_display_options'], 'h5p_icon', t('About H5P button'), $interface->getOption('icon'));
 
-    $dir = \Drupal::service('file_system')->realpath('public://');
+    $dir = \Drupal::service('file_system')->realpath('private://');
     $form['h5p_default_path'] = array(
       '#type' => 'textfield',
       '#title' => t('Default h5p package path'),
       '#default_value' => $interface->getOption('default_path', 'h5p'),
-      '#description' => t('Subdirectory in the directory %dir where files will be stored. Do not include trailing slash.', array('%dir' => $dir)),
+      '#description' => t('Subdirectory in the private files directory %dir where H5P content is stored. Use letters, numbers, hyphens, underscores, and nested folders only.', array('%dir' => $dir)),
     );
 
     $form['h5p_revisioning'] = array(
@@ -155,7 +155,7 @@ class H5PAdminSettingsForm extends FormBase {
     $form['h5p_hub_is_enabled'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use H5P Hub'),
-      '#default_value' => $interface->getOption('hub_is_enabled', 1),
+      '#default_value' => $interface->getOption('hub_is_enabled', 0),
       '#attributes' => array('class' => array('h5p-settings-disable-hub-checkbox')),
       '#description' => t("It's strongly encouraged to keep this option <strong>enabled</strong>. The H5P Hub provides an easy interface for getting new content types and keeping existing content types up to date. In the future, it will also make it easier to share and reuse content. If this option is disabled you'll have to install and update content types through file upload forms."),
     );
@@ -177,7 +177,7 @@ class H5PAdminSettingsForm extends FormBase {
     $form['h5p_send_usage_statistics'] = array(
       '#type' => 'checkbox',
       '#title' => t('Automatically contribute usage statistics'),
-      '#default_value' => $interface->getOption('send_usage_statistics', 1),
+      '#default_value' => $interface->getOption('send_usage_statistics', 0),
       '#description' => t('Usage statistics numbers will automatically be reported to help the developers better understand how H5P is used and to determine potential areas of improvement.'),
     );
 
@@ -215,7 +215,11 @@ class H5PAdminSettingsForm extends FormBase {
 
     // Try to create directories and warn the user of errors.
     $h5p_default_path = $values['h5p_default_path'];
-    $path = \Drupal::service('file_system')->realpath('public://') . '/' . $h5p_default_path;
+    if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@i', (string) $h5p_default_path)) {
+      $form_state->setErrorByName('h5p_default_path', t('The directory must be a relative path using letters, numbers, hyphens, underscores, and slashes.'));
+      return;
+    }
+    $path = 'private://' . $h5p_default_path;
     $temp_path = $path . '/' . 'temp';
 
     if (! \Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {

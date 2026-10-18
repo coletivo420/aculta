@@ -27,11 +27,18 @@ aula/turma com acesso validado pelo Drupal e pelo LMS.
 - A autorização e a cacheabilidade são calculadas com os resultados de access
   do Group/LMS; a lista acrescenta contextos de usuário/permissões e tags dos
   cursos. O serviço `DomainPurposeManager` resolve o host dos cursos.
+- O player serve assets de conteúdo por `private://` após conferir matrícula e
+  vínculo do H5P com o Group; os estados e resultados aplicam a mesma relação.
+- Integração com CTools: a condição `Course has interactive activities (H5P)`
+  recebe contexto `entity:group` e permite condicionar displays/contextos CTools
+  à existência de atividades. O projeto não tem Page Manager instalado; não
+  foi criado um painel/layout paralelo nem uma relação que escolha arbitrariamente
+  uma atividade entre várias.
 
 O painel do educador é, nesta etapa, uma visão dos cursos administráveis. O
-editor de atividades ainda não fica disponível: abrir o formulário nativo do
-Group antes de portar com segurança os serviços do editor exporia uma interface
-incompleta.
+editor de atividades e os uploads seguem indisponíveis até o port seguro do
+editor por Group e a ingestão de imagens `aculta_image`. Exportação pública,
+Hub e estatísticas externas ficam desabilitados por padrão.
 
 ## Proveniência
 

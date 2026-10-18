@@ -1,3 +1,12 @@
+## 0.4.0-dev.136 — isolamento de player e progresso H5P — 2026-10-18
+
+- Conteúdo e bibliotecas H5P passam a usar armazenamento privado e uma rota de arquivos com allowlist de extensões, checagem de caminho canônico e controle de matrícula no curso para assets de conteúdo.
+- Player envia progresso/estado somente por endpoints com token H5P, usuário autenticado e vínculo entre conteúdo e curso; exportação pública, Hub e telemetria ficam desabilitados por padrão.
+- Integra CTools pela condição contextual `Course has interactive activities (H5P)`, baseada no Group do curso. Não instala Page Manager nem cria layout alternativo.
+- Configuração do diretório H5P valida caminho relativo e prepara o diretório privado. Nenhuma ativação/schema foi aplicado ao Runtime nesta unidade.
+- Hooks de instalação não contactam o Hub; desinstalação preserva arquivos privados e a rotina não modifica `.htaccess`. Atualização histórica de arquivos públicos fica sem efeito até haver migração explícita.
+- Limite: o editor completo, uploads e instalação de bibliotecas ainda não foram portados; o módulo continua desabilitado. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.135 — Entity Mask disponível para tipos customizados — 2026-10-18
 
 - Habilita `ctools_entity_mask` na configuração exportável e no Runtime de testes, conforme solicitado.

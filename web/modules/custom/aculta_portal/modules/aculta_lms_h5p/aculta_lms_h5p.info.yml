@@ -9,5 +9,6 @@ dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_lms
   - group:group
+  - ctools:ctools
   - lms:lms
 configure: aculta_lms_h5p.admin.config.system.h5p

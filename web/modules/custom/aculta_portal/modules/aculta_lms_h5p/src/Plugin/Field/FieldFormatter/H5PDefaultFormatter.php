@@ -117,11 +117,19 @@ class H5PDefaultFormatter extends FormatterBase {
       }
 
       // Grab generic integration settings
-      $h5p_integration = H5PDrupal::getGenericH5PIntegrationSettings();
+      $course = $item->getEntity();
+      $h5p_integration = H5PDrupal::getGenericH5PIntegrationSettings($course instanceof CourseInterface ? $course : NULL);
 
       // Add content specific settings
       $content_id_string = 'cid-' . $h5p_content->id();
-      $h5p_integration['contents'][$content_id_string] = $h5p_content->getH5PIntegrationSettings($item->getEntity()->access('update'));
+      $content_settings = $h5p_content->getH5PIntegrationSettings($item->getEntity()->access('update'));
+      if ($course instanceof CourseInterface) {
+        $content_settings['contentUrl'] = base_path() . 'h5p-content/' . $course->id() . '/' . $h5p_content->id();
+      }
+      $content_settings['exportUrl'] = '';
+      $content_settings['displayOptions']['download'] = FALSE;
+      $content_settings['displayOptions']['embed'] = FALSE;
+      $h5p_integration['contents'][$content_id_string] = $content_settings;
 
       $core = H5PDrupal::getInstance('core');
       $preloaded_dependencies = $core->loadContentDependencies($h5p_content->id(), 'preloaded');
@@ -168,10 +176,10 @@ class H5PDefaultFormatter extends FormatterBase {
       // Collect the cacheability metadata for the element.
       $cacheability = CacheableMetadata::createFromObject($h5p_content)
         ->addCacheTags(['h5p_content'])
-        ->addCacheTags($this->config->getCacheTags());
-      if (H5PDrupal::getInstance()->getOption('save_content_state', FALSE)) {
-        $cacheability->addCacheContexts(['user']);
-      }
+        ->addCacheTags($this->config->getCacheTags())
+        // H5P tokens and saved state are user/session-specific even when the
+        // optional periodic state save setting is disabled.
+        ->addCacheContexts(['user', 'session']);
 
       // H5P core uses a hash token that becomes invalid between 12 and 24
       // hours. To be sure the cache doesn't serve an out-of-date token, set

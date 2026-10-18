@@ -5,10 +5,10 @@ namespace Drupal\aculta_lms_h5p\H5PDrupal;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Url;
-use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 use Drupal\aculta_lms_h5p\H5PEditor;
 use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalStorage;
+use Drupal\lms\Entity\Bundle\CourseInterface;
 
 class H5PDrupal implements \H5PFrameworkInterface {
 
@@ -52,8 +52,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
       $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
 
       // Prepare file storage.
-      $h5p_path = $interface->getOption('default_path', 'h5p');
-      $file_path = \Drupal::service('file_system')->realpath("public://{$h5p_path}");
+      $file_path = self::getStoragePath();
       $fs = new \H5PDefaultStorage($file_path);
 
       // Determine if exports should be generated
@@ -91,19 +90,32 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return string
    */
   public static function getRelativeH5PPath() {
-    $interface = self::getInstance();
-    return PublicStream::basePath() . '/' . $interface->getOption('default_path', 'h5p');
+    // H5P library code is served through a narrow route from private storage.
+    return 'h5p-library-assets';
+  }
+
+  /** Returns the validated private directory used by H5P content and libraries. */
+  public static function getStoragePath(): string {
+    $relativePath = (string) (\Drupal::config('aculta_lms_h5p.settings')->get('h5p_default_path') ?? 'h5p');
+    if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@i', $relativePath)) {
+      throw new \RuntimeException('The private H5P storage path is invalid.');
+    }
+    $fileSystem = \Drupal::service('file_system');
+    $uri = 'private://' . $relativePath;
+    if (!$fileSystem->prepareDirectory($uri, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY | \Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS)) {
+      throw new \RuntimeException('The private H5P storage directory is unavailable.');
+    }
+    $path = $fileSystem->realpath($uri);
+    if ($path === FALSE) {
+      throw new \RuntimeException('The private H5P storage directory could not be resolved.');
+    }
+    return $path;
   }
 
   /**
    * Prepares the generic H5PIntegration settings
    */
-  public static function getGenericH5PIntegrationSettings() {
-    static $settings;
-
-    if (!empty($settings)) {
-      return $settings; // Only needs to be generated the first time
-    }
+  public static function getGenericH5PIntegrationSettings(?CourseInterface $course = NULL): array {
 
     // Load current user
     $user = \Drupal::currentUser();
@@ -112,11 +124,21 @@ class H5PDrupal implements \H5PFrameworkInterface {
     $interface = self::getInstance();
     $h5p_save_content_state = $interface->getOption('save_content_state', FALSE);
     $h5p_save_content_frequency = $interface->getOption('save_content_frequency', 30);
-    $h5p_hub_is_enabled = $interface->getOption('hub_is_enabled', TRUE);
+    $h5p_hub_is_enabled = $interface->getOption('hub_is_enabled', FALSE);
 
     // Create AJAX URLs
-    $set_finished_url = Url::fromUri('internal:/h5p-ajax/set-finished.json', ['query' => ['token' => \H5PCore::createToken('result')]])->toString(TRUE)->getGeneratedUrl();
-    $content_user_data_url = Url::fromUri('internal:/h5p-ajax/content-user-data/:contentId/:dataType/:subContentId', ['query' => ['token' => \H5PCore::createToken('contentuserdata')]])->toString(TRUE)->getGeneratedUrl();
+    $set_finished_url = '';
+    $content_user_data_url = '';
+    if ($course) {
+      $set_finished_url = Url::fromRoute('aculta_lms_h5p.ajax.set_finished', ['group_id' => $course->id(), 'query' => ['token' => \H5PCore::createToken('result')]])->toString(TRUE)->getGeneratedUrl();
+      $content_user_data_url = Url::fromRoute('aculta_lms_h5p.ajax.content_user_data', [
+        'group_id' => $course->id(),
+        'content_main_id' => ':contentId',
+        'data_id' => ':dataType',
+        'sub_content_id' => ':subContentId',
+        'query' => ['token' => \H5PCore::createToken('contentuserdata')],
+      ])->toString(TRUE)->getGeneratedUrl();
+    }
     $h5p_url = base_path() . self::getRelativeH5PPath();
 
     // Define the generic H5PIntegration settings
@@ -124,17 +146,17 @@ class H5PDrupal implements \H5PFrameworkInterface {
     $settings = array(
       'baseUrl' => base_path(),
       'url' => $h5p_url,
-      'postUserStatistics' => $user->id() > 0,
+      'postUserStatistics' => $user->id() > 0 && $course !== NULL,
       'ajax' => array(
         'setFinished' => $set_finished_url,
-        'contentUserData' => str_replace('%3A', ':', $content_user_data_url),
+        'contentUserData' => $content_user_data_url === '' ? '' : str_replace('%3A', ':', $content_user_data_url),
       ),
       'saveFreq' => $h5p_save_content_state ? $h5p_save_content_frequency : FALSE,
       'l10n' => array(
         'H5P' => $core->getLocalization(),
       ),
       'hubIsEnabled' => $h5p_hub_is_enabled,
-      'reportingIsEnabled' => ($interface->getOption('enable_lrs_content_types', FALSE) === 1) ? TRUE : FALSE,
+      'reportingIsEnabled' => FALSE,
       'libraryConfig' => $core->h5pF->getLibraryConfig(),
       'pluginCacheBuster' => '?' . \Drupal::service('asset.query_string')->get(),
       'libraryUrl' => \Drupal::service('file_url_generator')->generate('assets://h5p/h5p-core/js', [
@@ -240,8 +262,8 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function fetchLibrariesMetadata($fetchingDisabled = FALSE) {
 
-    $hub_is_enabled = $this->getOption('hub_is_enabled', TRUE);
-    $send_usage_statistics = $this->getOption('send_usage_statistics', TRUE);
+    $hub_is_enabled = $this->getOption('hub_is_enabled', FALSE);
+    $send_usage_statistics = $this->getOption('send_usage_statistics', FALSE);
     $last_fetched_at = intval($this->getOption('fetched_library_metadata_on', 0));
 
     if ($fetchingDisabled || (($hub_is_enabled) || $send_usage_statistics) &&
@@ -258,7 +280,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function getPlatformInfo() {
 
-    $h5p_info = \Drupal::service('extension.list.module')->getExtensionInfo('h5p');
+    $h5p_info = \Drupal::service('extension.list.module')->getExtensionInfo('aculta_lms_h5p');
 
     return [
       'name' => 'drupal',
@@ -781,7 +803,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
     )->fetchObject();
 
     // Delete files
-    \H5PCore::deleteFileTree(self::getRelativeH5PPath() . "/libraries/{$library->machine_name}-{$library->major_version}.{$library->minor_version}");
+    \H5PCore::deleteFileTree(self::getStoragePath() . "/libraries/{$library->machine_name}-{$library->major_version}.{$library->minor_version}");
 
     // Delete data in database (won't delete content)
     $database->delete('h5p_libraries_libraries')->condition('library_id', $libraryId)->execute();
