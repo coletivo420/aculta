@@ -139,6 +139,17 @@ rebuild em `conta` e `cursos`, ambos os containers constroem o hook e o editor
 carrega a semântica novamente. O watchdog mantém somente os erros históricos
 anteriores à reconstrução; não houve novo erro de construção após a correção.
 
+Ao tentar persistir uma edição Group, o Runtime revelou outro caso de ciclo de
+vida: o `DependencySerializationTrait` herdado por `WidgetBase` não serializa
+dependências declaradas como propriedades privadas. `H5PEditorWidget` agora
+declara seus serviços como propriedades protegidas mutáveis, e um Kernel
+serializa/restaura o plugin e confirma os três serviços. Após limpar o cache, o
+formulário Group não repetiu o erro de propriedade não inicializada. O ciclo de
+salvamento/player ainda não passou: a validação Drupal recebeu parâmetros H5P
+vazios no formulário e o conteúdo de teste incompleto foi removido pelo Entity
+API; o grupo `H5P smoke` voltou ao estado inicial (sem aulas/atividades H5P).
+Produção não foi acessada.
+
 ## Fontes da auditoria
 
 - [Drupal H5P releases](https://www.drupal.org/project/h5p/releases/2.0.0-beta1)

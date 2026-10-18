@@ -37,9 +37,14 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    private readonly H5PCourseAccessManager $courseAccess,
-    private readonly H5PLibraryAccessManager $libraryAccess,
-    private readonly AccountProxyInterface $currentUser,
+    // Keep injected services protected and mutable: WidgetBase inherits
+    // PluginBase's DependencySerializationTrait, which serializes protected
+    // dependencies by service ID for Form API's cached build. Private readonly
+    // properties are omitted by the inherited trait and become uninitialized
+    // when Drupal rebuilds a cached Group form.
+    protected H5PCourseAccessManager $courseAccess,
+    protected H5PLibraryAccessManager $libraryAccess,
+    protected AccountProxyInterface $currentUser,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }

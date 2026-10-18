@@ -101,6 +101,14 @@ asserções). A suíte Unit H5P passou (4 testes, 10 asserções) sem deprecaç�
 adapter; a suíte Unit `aculta_image` passou (19 testes, 69 asserções). A
 integração no Runtime e o teste visual do editor seguem DEFERRED.
 
+Execução adicional em 2026-10-18: Kernel `H5PCourseAccessIntegrationTest`
+passou com 2 testes e 62 asserções, incluindo ida e volta de serialização do
+widget H5P e restauração de seus serviços injetados. Na suíte H5P completa,
+passaram 11 testes e 204 asserções. As 40 depreciações vieram de
+Core/Group/LMS/Views instalados. O smoke no Runtime `cursos` confirmou que o
+fatal de serviço não inicializado foi corrigido; o ciclo completo de salvar e
+reproduzir conteúdo continua DEFERRED. Unit H5P: 12 testes/52 asserções.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

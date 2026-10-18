@@ -68,6 +68,29 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     ])->save();
   }
 
+  /** Form-cache serialization restores injected widget services. */
+  public function testEditorWidgetDependenciesSurviveFormSerialization(): void {
+    $fieldDefinition = $this->container->get('entity_field.manager')
+      ->getFieldDefinitions('group', 'lms_course')['field_h5p_activities'];
+    $widget = $this->container->get('plugin.manager.field.widget')->getInstance([
+      'field_definition' => $fieldDefinition,
+      'configuration' => ['type' => 'h5p_editor'],
+    ]);
+    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget\H5PEditorWidget::class, $widget);
+
+    $restored = unserialize(serialize($widget));
+    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget\H5PEditorWidget::class, $restored);
+    foreach ([
+      'courseAccess' => 'aculta_lms_h5p.course_access',
+      'libraryAccess' => 'aculta_lms_h5p.library_access',
+      'currentUser' => 'current_user',
+    ] as $propertyName => $serviceId) {
+      $property = new \ReflectionProperty($restored, $propertyName);
+      self::assertTrue($property->isInitialized($restored), $propertyName . ' is initialized after form cache restore.');
+      self::assertSame($this->container->get($serviceId), $property->getValue($restored));
+    }
+  }
+
   /** A learner can open only H5P content referenced by a course they can take. */
   public function testPlaybackRequiresCurrentCourseMembershipAndFieldReference(): void {
     $owner = $this->createUser();
