@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.79', 'Theme metadata marks the current version 0.6.0-dev.79.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.80', 'Theme metadata marks the current version 0.6.0-dev.80.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -292,6 +292,8 @@ $expectedTemplates = [
   'views-view-unformatted--aculta-projects.html.twig',
   'views-view-unformatted--courses-catalog.html.twig',
   'views-view-vvjb.html.twig',
+  // Álbumes: os campos e a View permanecem Drupal; o tema compõe o SDC card overlay.
+  'views-view-fields--aculta-albuns.html.twig',
   'views/views-view-table.html.twig',
 ];
 $actualTemplates = [];
@@ -305,6 +307,12 @@ sort($expectedTemplates);
 sort($actualTemplates);
 $assert($actualTemplates === $expectedTemplates, 'Twig override set matches the reviewed Foundation allowlist.');
 $sdc = \Drupal::service('plugin.manager.sdc');
+$assert($sdc->hasDefinition('aculta420:card'), 'Drupal discovers aculta420:card.');
+$assert($sdc->hasDefinition('aculta420:figure'), 'Drupal discovers aculta420:figure.');
+$assert($sdc->hasDefinition('aculta420:quote'), 'Drupal discovers aculta420:quote.');
+$cardMetadata = Yaml::parseFile($themeRoot . '/components/patterns/card/card.component.yml');
+$assert(isset($cardMetadata['variants']['overlay']), 'The composed card exposes the overlay presentation.');
+$assert(is_file($themeRoot . '/templates/views-view-fields--aculta-albuns.html.twig'), 'Album View fields use the theme card presenter.');
 $assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers aculta420:editorial-card.');
 $componentMetadata = Yaml::parseFile($themeRoot . '/components/content/editorial-card/editorial-card.component.yml');
 $assert(($componentMetadata['status'] ?? NULL) === 'stable', 'Editorial card keeps its documented stable status.');

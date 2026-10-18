@@ -35,3 +35,7 @@ slots:
     title: Author box
   discussion:
     title: Forum discussion link
+assets:
+  css:
+    component:
+      revista-publication.css: {}

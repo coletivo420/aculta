@@ -1,3 +1,13 @@
+## 0.6.0-dev.80 — figuras, citações e cards sobrepostos — 2026-10-18
+
+Classificação: PATCH de composição editorial; sem mudança em conteúdo, acesso ou processamento de imagens.
+
+- Adiciona `aculta420:figure` com mídia Drupal renderizada e slots opcionais de legenda/crédito; substitui o wrapper `<figure>` simples da capa de artigo/blog da Revista.
+- Adiciona `aculta420:quote` com citação, autoria e fonte; citações `<blockquote>` já presentes no corpo da Revista recebem apresentação equivalente sem alterar o texto armazenado.
+- Acrescenta a variante `overlay` ao `aculta420:card` e usa a listagem `aculta_albuns` como consumidor, mantendo campos, ordem, acesso e configuração da View.
+- Mantém `project-card` e `course_card` porque possuem contratos de mídia e dados específicos.
+- RUNTIME STATUS: smoke test técnico e gates Drupal PASS; revisão visual da listagem de álbuns DEFERRED.
+
 ## 0.6.0-dev.79 — porta padrões úteis do UI Suite Bootstrap — 2026-10-18
 
 Classificação: PATCH de integração visual/editorial; preserva `bootstrap` como tema base e ACULTA420 como tema público.

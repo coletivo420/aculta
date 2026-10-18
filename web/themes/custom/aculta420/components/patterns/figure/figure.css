@@ -1,0 +1,32 @@
+.aculta-figure {
+  margin: 0;
+}
+
+.aculta-figure > img,
+.aculta-figure > picture,
+.aculta-figure > a {
+  display: block;
+}
+
+.aculta-figure img {
+  max-width: 100%;
+  height: auto;
+}
+
+.aculta-figure__caption {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  color: var(--aculta-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.aculta-figure__text {
+  display: block;
+}
+
+.aculta-figure__credit {
+  color: var(--aculta-text-muted);
+  font-size: 0.8125rem;
+}

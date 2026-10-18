@@ -1,7 +1,11 @@
 {# Modelo padrão da publicação da Revista. Função: dados e acesso vêm do Drupal; aparência fica aqui. #}
 <div class="aculta-revista-publication">
   {% if meta %}<div class="aculta-revista-publication__meta">{{ meta }}</div>{% endif %}
-  {% if has_cover %}<figure class="aculta-revista-publication__cover">{{ cover }}</figure>{% endif %}
+  {% if has_cover %}
+    <div class="aculta-revista-publication__cover">
+      {{ include('aculta420:figure', { image: cover }, with_context = false) }}
+    </div>
+  {% endif %}
   {% if has_subtitle %}<div class="aculta-revista-publication__subtitle">{{ subtitle }}</div>{% endif %}
   {% if has_summary %}<div class="aculta-revista-publication__summary">{{ summary }}</div>{% endif %}
   <div class="aculta-revista-publication__body">{{ body }}</div>

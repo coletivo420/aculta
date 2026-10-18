@@ -72,6 +72,11 @@ album-slideshow:
     - core/drupal
     - core/once
 
+editorial-content:
+  css:
+    theme:
+      css/components/editorial-content.css: {}
+
 editorial-carousel:
   css:
     theme:

@@ -1,5 +1,6 @@
 {# Publicação da Revista (blog): usa o modelo padrão aculta420:revista-publication. Conteúdo e acesso vêm do Drupal. #}
 <article{{ attributes.addClass('node', 'node--type-blog', 'node--view-mode-full', 'aculta-revista-article') }}>
+  {{ attach_library('aculta420/editorial-content') }}
   {{ title_prefix }}
   {{ title_suffix }}
   {% set footer %}

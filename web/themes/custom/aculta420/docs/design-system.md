@@ -228,6 +228,13 @@ usa classes Bootstrap estruturais e tokens semânticos ACULTA420 para superfíci
 texto e borda. Botões e demais primitives simples continuam sendo Bootstrap
 direto; não importamos a folha global nem os helpers do UI Suite Bootstrap.
 
+O mesmo card inclui a variante `overlay`, usada na listagem de álbuns com a
+imagem ao fundo e metadados em painel sobreposto de contraste controlado por
+tokens de interação. `aculta420:figure` envolve mídia Drupal já renderizada e
+aceita legenda/crédito opcionais. `aculta420:quote` apresenta citação, autoria e
+fonte; citações antigas em HTML rico da Revista recebem a mesma tipografia e
+superfície sem reprocessar o corpo ou alterar o conteúdo salvo.
+
 ## Variants
 
 Drupal Core suporta variants SDC em 11.2+.

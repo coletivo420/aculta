@@ -1,0 +1,10 @@
+name: Citação com autoria e fonte
+description: Exemplo editorial com valores identificados como demonstração.
+component: aculta420:quote
+slots:
+  quote:
+    markup: <p>Texto da citação editorial (exemplo).</p>
+  author:
+    markup: Autoria identificada (exemplo)
+  source:
+    markup: <a href="#">Fonte publicada (exemplo)</a>

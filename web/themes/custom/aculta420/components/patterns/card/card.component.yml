@@ -8,9 +8,20 @@ variants:
     title: Vertical
   horizontal:
     title: Horizontal
+  overlay:
+    title: Imagem sobreposta
 props:
   type: object
   properties:
+    variant:
+      type: string
+      title: Variante de apresentação
+      description: Variante visual limitada a uma das apresentações nomeadas do cartão.
+      enum:
+        - default
+        - horizontal
+        - overlay
+      default: default
     image_position:
       type: string
       title: Posição da imagem

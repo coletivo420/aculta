@@ -1,0 +1,11 @@
+{% if image %}
+  <figure{{ attributes.addClass('aculta-figure') }}>
+    {{ image }}
+    {% if caption or credit %}
+      <figcaption class="aculta-figure__caption">
+        {% if caption %}<span class="aculta-figure__text">{{ caption }}</span>{% endif %}
+        {% if credit %}<span class="aculta-figure__credit">{{ 'Crédito'|t }}: {{ credit }}</span>{% endif %}
+      </figcaption>
+    {% endif %}
+  </figure>
+{% endif %}
