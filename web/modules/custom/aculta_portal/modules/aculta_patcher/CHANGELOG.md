@@ -6,10 +6,11 @@
   permissão administrativa restrita, status para o próximo build e exclusão
   confirmada.
 - Comando Drush exporta somente registros ativos depois de validar versão no
-  `composer.lock` e compatibilidade com `patch --dry-run`.
-- Incluído patch Composer para H5P issue #3548290; Composer repatch e o
-  exportador Drush validaram sua aplicação. H5P segue desativado até teste
-  funcional das permissões e revisão dos outros gates F10.
+  `composer.lock`, encontra o caminho instalado com `Composer\InstalledVersions`
+  e valida compatibilidade com `git apply --check` em cópia temporária.
+- Mantido um patch Composer para o upload AJAX do editor H5P; o upload do
+  widget de campo está desabilitado no fork até integrar imagens com `aculta_image`. O exportador resolve
+  pacotes por `Composer\InstalledVersions` e valida o patch em cópia temporária.
 - RUNTIME STATUS: `aculta_patcher` habilitado no Runtime de teste após backup privado
-  (0600); entidade e rota verificadas por Drush. H5P segue desativado e a
-  conferência visual HTTP fica DEFERRED (request 404 no alias MAIN).
+  (0600); o registro obsoleto do pacote Drupal H5P foi removido. O patch do editor
+  permanece registrado; H5P segue desativado e não foi habilitado no Runtime.

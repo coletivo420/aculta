@@ -1,0 +1,6 @@
+# ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
+aculta_lms_aculta_lms_h5p.admin.library.list:
+  title: 'Bibliotecas H5P'
+  weight: 1
+  base_route: system.admin_content
+  route_name: aculta_lms_h5p.admin.content.h5p

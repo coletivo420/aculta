@@ -1,0 +1,13 @@
+name: 'ACULTA LMS H5P'
+type: module
+description: 'Integração H5P própria do LMS ACULTA, adaptada e mantida pela associação.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:field
+  - drupal:file
+  - aculta_portal:aculta_portal
+  - aculta_portal:aculta_lms
+  - group:group
+  - lms:lms
+configure: aculta_lms_h5p.admin.config.system.h5p

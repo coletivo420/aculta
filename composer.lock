@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c3c54e37584034bbd70f7bc18bc5f306",
+    "content-hash": "fca2c9877ead05f2a05337f05aceec6d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4297,88 +4297,6 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/group",
                 "issues": "https://drupal.org/project/issues/group"
-            }
-        },
-        {
-            "name": "drupal/h5p",
-            "version": "2.0.0-beta1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/h5p.git",
-                "reference": "2.0.0-beta1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/h5p-2.0.0-beta1.zip",
-                "reference": "2.0.0-beta1",
-                "shasum": "daa9b6079f44744549f82a066d9fe6b5d8b89094"
-            },
-            "require": {
-                "drupal/core": "^10.2 || ^11",
-                "h5p/h5p-core": "^1.27",
-                "h5p/h5p-editor": "^1.24.4"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.0-beta1",
-                    "datestamp": "1758708141",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "catch",
-                    "homepage": "https://www.drupal.org/user/35733"
-                },
-                {
-                    "name": "franksj",
-                    "homepage": "https://www.drupal.org/user/2743481"
-                },
-                {
-                    "name": "icc",
-                    "homepage": "https://www.drupal.org/user/823190"
-                },
-                {
-                    "name": "ldpm",
-                    "homepage": "https://www.drupal.org/user/598884"
-                },
-                {
-                    "name": "ongdesign",
-                    "homepage": "https://www.drupal.org/user/297503"
-                },
-                {
-                    "name": "otacke",
-                    "homepage": "https://www.drupal.org/user/3566173"
-                },
-                {
-                    "name": "paalj",
-                    "homepage": "https://www.drupal.org/user/1091732"
-                },
-                {
-                    "name": "sim_1",
-                    "homepage": "https://www.drupal.org/user/3515959"
-                },
-                {
-                    "name": "thomasmars",
-                    "homepage": "https://www.drupal.org/user/3205159"
-                },
-                {
-                    "name": "ydahi",
-                    "homepage": "https://www.drupal.org/user/1848632"
-                }
-            ],
-            "description": "Drupal H5P Module.",
-            "homepage": "http://drupal.org/project/h5p",
-            "support": {
-                "source": "https://git.drupalcode.org/project/h5p"
             }
         },
         {
@@ -20263,7 +20181,6 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "drupal/commerce_mercado_pago": 5,
-        "drupal/h5p": 10,
         "drupal/imageapi_optimize_binaries": 10,
         "drupal/ui_patterns_ds": 15,
         "drupal/ui_patterns_field_group": 10

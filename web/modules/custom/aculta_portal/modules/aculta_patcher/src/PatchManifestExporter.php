@@ -64,11 +64,13 @@ final class PatchManifestExporter {
         throw new \RuntimeException(sprintf('O patch %s aponta para um caminho fora do pacote.', $id));
       }
 
-      $parts = explode('/', $package, 2);
-      $packagePath = $projectRoot . '/vendor/' . $parts[0] . '/' . $parts[1];
-      $realPackagePath = realpath($packagePath);
-      if ($realPackagePath === FALSE || !str_starts_with($realPackagePath, realpath($projectRoot . '/vendor') . DIRECTORY_SEPARATOR)) {
-        throw new \RuntimeException(sprintf('O pacote %s não está instalado em vendor/.', $package));
+      $installPath = class_exists(\Composer\InstalledVersions::class)
+        ? \Composer\InstalledVersions::getInstallPath($package)
+        : NULL;
+      $realPackagePath = is_string($installPath) ? realpath($installPath) : FALSE;
+      $realProjectRoot = realpath($projectRoot);
+      if ($realPackagePath === FALSE || $realProjectRoot === FALSE || !str_starts_with($realPackagePath, $realProjectRoot . DIRECTORY_SEPARATOR)) {
+        throw new \RuntimeException(sprintf('O pacote %s não está instalado dentro da raiz do projeto pelo Composer.', $package));
       }
       $applyCheck = $this->checkWithGitApply($realPackagePath, $diff, FALSE);
       if (!$applyCheck['success'] && !$this->checkWithGitApply($realPackagePath, $diff, TRUE)['success']) {

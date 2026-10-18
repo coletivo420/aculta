@@ -1,0 +1,6 @@
+# ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
+aculta_lms_aculta_lms_h5p.admin.config.system.h5p:
+  title: 'Conteúdo interativo'
+  description: 'Configure a integração de conteúdo interativo do LMS.'
+  parent: system.admin_config_system
+  route_name: aculta_lms_h5p.admin.config.system.h5p

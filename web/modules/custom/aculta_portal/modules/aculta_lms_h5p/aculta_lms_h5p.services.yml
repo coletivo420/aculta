@@ -1,0 +1,4 @@
+services:
+  aculta_lms_h5p.asset_file_manager:
+    class: Drupal\aculta_lms_h5p\AssetFileStorage
+    arguments: ['@file_system']

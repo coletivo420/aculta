@@ -1,3 +1,11 @@
+## 0.4.0-dev.132 — inicia o fork ACULTA H5P — 2026-10-18
+
+- Remove `drupal/h5p` do Composer e cria o submódulo `aculta_lms_h5p`, preservando licenças e atribuição do código derivado. Core/Editor PHP permanecem como dependências explícitas.
+- O fork remove a rota pública de embed sem autorização do curso, falha fechado para conteúdos que exigem iframe e desabilita upload de pacotes até integrar imagens via `aculta_image`.
+- `aculta_patcher` permanece ativo como ferramenta genérica; o patch Composer fica somente no `h5p/h5p-editor`.
+- H5P permanece desabilitado. A implementação contém APIs herdadas que precisam de refatoração DI/Hook e testes de autorização por turma antes da habilitação.
+- RUNTIME STATUS: pacote Drupal removido da árvore Composer local; nenhum schema/configuração do novo módulo instalado. O registro de patch antigo para `drupal/h5p` foi removido do Runtime de teste após consulta e backup privado disponível.
+
 ## 0.4.0-dev.128 — move o módulo pai para "ACULTA Portal" e cria barreira de pacote — 2026-10-18
 
 - O módulo `aculta_portal` passa a declarar `package: 'ACULTA Portal'`, junto com todos os submódulos próprios. A caixa "Associação Cultural Antiproibicionista" deixa de ter módulos próprios em `/painel-administrativo/modulos`.
