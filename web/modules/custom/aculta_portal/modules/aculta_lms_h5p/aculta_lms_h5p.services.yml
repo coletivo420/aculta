@@ -5,3 +5,8 @@ services:
   aculta_lms_h5p.course_access:
     class: Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager
     arguments: ['@entity_type.manager']
+  aculta_lms_h5p.editor_storage:
+    class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalStorage
+  aculta_lms_h5p.library_access:
+    class: Drupal\aculta_lms_h5p\Access\H5PLibraryAccessManager
+    arguments: ['@aculta_lms_h5p.editor_storage']

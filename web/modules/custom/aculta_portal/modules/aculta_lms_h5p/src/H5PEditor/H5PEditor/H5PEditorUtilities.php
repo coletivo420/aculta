@@ -5,6 +5,7 @@ namespace Drupal\aculta_lms_h5p\H5PEditor;
 
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\Core\Url;
+use Drupal\lms\Entity\Bundle\CourseInterface;
 
 class H5PEditorUtilities {
 
@@ -34,7 +35,7 @@ class H5PEditorUtilities {
    *
    * @return array Settings needed for view
    */
-  public static function getEditorSettings() {
+  public static function getEditorSettings(CourseInterface $course) {
     $contentValidator = H5PDrupal::getInstance('contentvalidator');
 
     $settings = [
@@ -47,7 +48,7 @@ class H5PEditorUtilities {
         'width'  => 50,
         'height' => 50,
       ],
-      'ajaxPath' => str_replace('%3A', ':', self::getAjaxPath()),
+      'ajaxPath' => str_replace('%3A', ':', self::getAjaxPath($course)),
       'libraryPath' => \Drupal::service('file_url_generator')->generate("assets://h5p/h5p-editor/", [
           'absolute' => TRUE,
           'language' => FALSE,
@@ -151,10 +152,10 @@ class H5PEditorUtilities {
    *
    * @return \Drupal\Core\GeneratedUrl|string Uri for AJAX
    */
-  private static function getAjaxPath() {
+  private static function getAjaxPath(CourseInterface $course) {
     $securityToken = \H5PCore::createToken('editorajax');
     return Url::fromUri(
-      "internal:/h5peditor/{$securityToken}/:contentId/"
+      "internal:/h5peditor/{$course->id()}/{$securityToken}/:contentId/"
     )->toString();
   }
 

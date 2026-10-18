@@ -142,3 +142,18 @@ aculta_lms_h5p.library_file:
   requirements:
     _access: 'TRUE'
     file_path: '.+'
+
+aculta_lms_h5p.editor_ajax:
+  path: '/h5peditor/{group_id}/{token}/{content_id}/{action}/{arguments}'
+  defaults:
+    _controller: '\Drupal\aculta_lms_h5p\Controller\H5PEditorAjaxController::handle'
+    arguments: ''
+  requirements:
+    _permission: 'access content'
+    _user_is_logged_in: 'TRUE'
+    group_id: '\d+'
+    token: '[A-Za-z0-9._~-]+'
+    content_id: '\d+'
+    action: '[a-z-]+'
+    arguments: '.*'
+  methods: [GET, POST]

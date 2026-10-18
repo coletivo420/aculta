@@ -41,8 +41,13 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
    leem superglobais; manter uploads desabilitados até ingestão `aculta_image`.
    O widget atual ainda não está ligado ao formulário de edição do Group e
    referencia uma biblioteca Drupal inexistente (`h5peditor/h5peditor`).
-   O controller copiado que chamava `exit()` foi removido; nenhum endpoint de
-   AJAX do editor está registrado até haver um adapter Drupal Request/Response.
+   O controller que chamava `exit()` foi removido. Há agora um adapter
+   Request/Response por curso para listar bibliotecas locais, carregar metadados,
+   traduções e validar parâmetros. Ele exige autorização Group e token H5P;
+   uploads, Hub e instalação de pacotes respondem como indisponíveis. Isso ainda
+   não habilita o editor para educadores: o widget e a publicação dos assets
+   continuam bloqueados até o fluxo completo de arquivos passar pela política
+   `aculta_image`.
 2. Corrigir a publicação de assets antes de expor qualquer parte do editor:
    `aculta_lms_h5p_library_info_build()` chama `AssetFileStorage::mirrorAssets()`,
    que copia imagens dos pacotes Composer diretamente para `assets://`. Isso
@@ -64,16 +69,16 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 | --- | --- | --- |
 | Campo H5P, entidade/conteúdo, formatter e bibliotecas de reprodução | Adaptados; armazenamento privado e rota de asset checa matrícula e relação Group/conteúdo | Player não usa embed independente. Conteúdo antigo em `public://` exige inventário/migração explícitos; update hook não muda os arquivos automaticamente. |
 | Administração de bibliotecas e configurações | Controladores/formulários e rotas base copiados; corrigidos requisitos de parâmetro e páginas ligadas ao painel | Relevante para curadoria; validar operações e CSRF/cache antes de habilitar. Upload de pacote continua bloqueado. |
-| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | **Ainda não portado** como integração funcional; o controller legado foi removido e o widget não é apresentado no formulário do curso | Essencial para educadores criarem/alterarem atividades. Implementar endpoints com Request/Response, token e autorização por curso/Group; manter upload e instalação de bibliotecas indisponíveis até passar pelos fluxos de arquivo aprovados. |
+| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter inicial por Group para listagem, metadados, traduções e filtro; operações de arquivo, Hub e instalação falham fechadas | Ainda não funcional para educadores. Fechar o fluxo de arquivos e os assets por `aculta_image`, depois cobrir com testes de acesso e integração antes de expor o widget. |
 | Salvar resultado (`set-finished`) e estado do estudante | Endpoints adaptados: sessão, token, validação de nota e associação curso/conteúdo | Ainda precisa teste funcional entre estudantes/turmas e contrato separado antes de alimentar notas LMS. |
 | Importação/upload de pacote e imagens incorporadas | Desabilitada | Relevante para adoção de conteúdo existente, mas exige ingestão via `aculta_image`, verificação de pacote e restrições de biblioteca. |
 | Embed independente | Rota removida | Não portar sem autorização da entidade/curso pai; o issue upstream documenta exposição por URL direta. |
 | Telemetria do H5P Hub e instalação automática de tipos | Desligadas por padrão; hooks de instalação não iniciam chamadas externas | Habilitar manualmente exige decisão explícita sobre consentimento, tráfego externo e política de bibliotecas. |
 | Hooks de instalação/desinstalação e segurança `.htaccess` | Não contactam Hub, não alteram `.htaccess` e preservam arquivos privados na desinstalação | O schema de banco segue o lifecycle padrão Drupal; arquivos privados mantêm-se para recuperação e remoção manual controlada. |
 
-Comparação conferida com a release `2.0.0-beta1`: o editor e suas rotas AJAX,
-upload de biblioteca, tipos do Hub e callbacks do widget ainda precisam de um
-adapter seguro por Group. O código de callbacks legado foi removido para que
+Comparação conferida com a release `2.0.0-beta1`: o editor tem um adapter
+parcial seguro por Group; upload de biblioteca, tipos do Hub e callbacks de
+arquivo ainda não foram portados. O código de callbacks legado foi removido para que
 nenhuma rota futura passe a chamar `exit()` ou ler arquivos globais sem revisão.
 Tipos restritos podiam ser enviados como pacote, então
 uploads continuam fechados. A condição CTools `aculta_lms_h5p_group_has_activities`

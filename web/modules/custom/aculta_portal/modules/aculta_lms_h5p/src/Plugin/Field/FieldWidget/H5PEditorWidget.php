@@ -3,13 +3,21 @@
 
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget;
 
+use Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager;
+use Drupal\aculta_lms_h5p\Access\H5PLibraryAccessManager;
 use Drupal\aculta_lms_h5p\Plugin\Field\H5PWidgetBase;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 use Drupal\aculta_lms_h5p\Plugin\Field\FieldType\H5PItem;
 use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities;
+use Drupal\lms\Entity\Bundle\CourseInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'h5p_editor' widget.
@@ -22,9 +30,39 @@ use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities;
  *   }
  * )
  */
-class H5PEditorWidget extends H5PWidgetBase {
+class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInterface {
 
   protected static $counter = 0;
+
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    $label,
+    $view_mode,
+    array $third_party_settings,
+    private readonly H5PCourseAccessManager $courseAccess,
+    private readonly H5PLibraryAccessManager $libraryAccess,
+    private readonly AccountProxyInterface $currentUser,
+  ) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+  }
+
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['label'],
+      $configuration['view_mode'],
+      $configuration['third_party_settings'],
+      $container->get('aculta_lms_h5p.course_access'),
+      $container->get('aculta_lms_h5p.library_access'),
+      $container->get('current_user'),
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -36,9 +74,21 @@ class H5PEditorWidget extends H5PWidgetBase {
       return $parentElement; // No content id, use parent element
     }
 
+    $course = $items->getEntity();
+    $h5p_content_id = (int) ($items[$delta]->h5p_content_id ?? 0);
+    if (!$course instanceof CourseInterface || !$course->id()
+      || !$this->courseAccess->editorAccess((int) $course->id(), $h5p_content_id, $this->currentUser)->isAllowed()) {
+      return [
+        'h5p_content' => [
+          '#type' => 'item',
+          '#title' => $this->t('Atividades interativas'),
+          '#markup' => '<p>' . $this->t('A edição de atividades fica disponível após salvar o curso e confirmar o acesso de educador.') . '</p>',
+        ],
+      ];
+    }
+
     $field_name = $items->getName();
 
-    $h5p_content_id = $items[$delta]->h5p_content_id;
     if ($h5p_content_id) {
       // Load H5P Content entity
       $h5p_content = H5PContent::load($h5p_content_id);
@@ -55,6 +105,7 @@ class H5PEditorWidget extends H5PWidgetBase {
       '#attributes' => [
         'id' => "h5p-content-parameters-" . self::$counter,
       ],
+      '#element_validate' => [[$this, 'validateParameters']],
     ];
 
     $element['library'] = [
@@ -77,12 +128,12 @@ class H5PEditorWidget extends H5PWidgetBase {
       '#attached' => [
         'drupalSettings' => [
           'h5p' => [
-            'H5PIntegration' => H5PDrupal::getGenericH5PIntegrationSettings()
+              'H5PIntegration' => H5PDrupal::getGenericH5PIntegrationSettings($course)
           ],
-          'h5peditor' => H5PEditorUtilities::getEditorSettings(),
+          'h5peditor' => H5PEditorUtilities::getEditorSettings($course),
         ],
         'library' => [
-          'h5peditor/h5peditor',
+          'aculta_lms_h5p/h5p.editor',
         ],
       ],
     ];
@@ -94,12 +145,99 @@ class H5PEditorWidget extends H5PWidgetBase {
    * Validate the h5p file upload
    */
   public function validate($element, FormStateInterface $form_state) {
-    // Check that this is the latest version of the content type we have
-    $core = H5PDrupal::getInstance('core');
-    if ($core->h5pF->libraryHasUpgrade(\H5PCore::libraryFromString($element['#value']))) {
-      // We do not allow storing old content due to security concerns
-      $form_state->setError($element, t('Something unexpected happened. We were unable to save this content.'));
+    $value = (string) ($element['#value'] ?? '');
+    $library = \H5PCore::libraryFromString($value);
+    if (!is_array($library) || !$this->courseHasEditorAccess($form_state, $this->contentIdForElement($form_state, $element))) {
+      $form_state->setError($element, $this->t('Não foi possível validar o tipo de atividade para este curso.'));
+      return;
     }
+
+    if (!$this->libraryAccess->canUse(
+      (string) $library['machineName'],
+      (int) $library['majorVersion'],
+      (int) $library['minorVersion'],
+      $this->currentUser,
+    )) {
+      $form_state->setError($element, $this->t('Este tipo de atividade não está disponível para sua conta.'));
+      return;
+    }
+
+    // Prevent saving an outdated content type after its replacement is installed.
+    $core = H5PDrupal::getInstance('core');
+    if ($core->h5pF->libraryHasUpgrade($library)) {
+      // We do not allow storing old content due to security concerns
+      $form_state->setError($element, $this->t('Não foi possível salvar: atualize o tipo de atividade antes.'));
+    }
+  }
+
+  /** Validates submitted editor data before it reaches the H5P storage layer. */
+  public function validateParameters(array &$element, FormStateInterface $form_state): void {
+    $value = (string) ($element['#value'] ?? '');
+    if ($value === '' || strlen($value) > 2_000_000) {
+      $form_state->setError($element, $this->t('O conteúdo da atividade está vazio ou excede o limite permitido.'));
+      return;
+    }
+    $parameters = json_decode($value);
+    if (!$parameters instanceof \stdClass
+      || !(($parameters->params ?? NULL) instanceof \stdClass)
+      || !(($parameters->metadata ?? NULL) instanceof \stdClass)
+      || !$this->courseHasEditorAccess($form_state, $this->contentIdForElement($form_state, $element))) {
+      $form_state->setError($element, $this->t('Os dados da atividade ou o acesso ao curso são inválidos.'));
+      return;
+    }
+
+    $valueParents = $element['#parents'];
+    array_pop($valueParents);
+    $submitted = $form_state->getValue($valueParents, []);
+    $library = \H5PCore::libraryFromString((string) ($submitted['library'] ?? ''));
+    if (!is_array($library) || !$this->libraryAccess->canUse(
+      (string) $library['machineName'],
+      (int) $library['majorVersion'],
+      (int) $library['minorVersion'],
+      $this->currentUser,
+    )) {
+      $form_state->setError($element, $this->t('Este tipo de atividade não está disponível para sua conta.'));
+      return;
+    }
+
+    $validator = H5PDrupal::getInstance('contentvalidator');
+    $validator->validateLibrary($parameters, (object) ['options' => [(string) ($submitted['library'] ?? '')]]);
+    $form_state->setValueForElement($element, json_encode($parameters, JSON_THROW_ON_ERROR));
+  }
+
+  /** Returns whether the submitted Group and content ID are editable here. */
+  private function courseHasEditorAccess(FormStateInterface $form_state, int $contentId): bool {
+    $formObject = $form_state->getFormObject();
+    if (!$formObject instanceof EntityFormInterface) {
+      return FALSE;
+    }
+    $course = $formObject->getEntity();
+    return $course instanceof CourseInterface
+      && $course->id() !== NULL
+      && $this->courseAccess->editorAccess((int) $course->id(), $contentId, $this->currentUser)->isAllowed();
+  }
+
+  /** Reads this delta's original H5P ID from the entity being edited. */
+  private function contentIdForElement(FormStateInterface $form_state, array $element): int {
+    $formObject = $form_state->getFormObject();
+    if (!$formObject instanceof EntityFormInterface) {
+      return 0;
+    }
+    $entity = $formObject->getEntity();
+    $fieldName = $this->fieldDefinition->getName();
+    if (!$entity instanceof CourseInterface || !$entity->hasField($fieldName)) {
+      return 0;
+    }
+    $parents = $element['#parents'] ?? [];
+    $fieldIndex = array_search($fieldName, $parents, TRUE);
+    if ($fieldIndex === FALSE || !isset($parents[$fieldIndex + 1]) || !is_numeric($parents[$fieldIndex + 1])) {
+      return 0;
+    }
+    $item = $entity->get($fieldName)->get((int) $parents[$fieldIndex + 1]);
+    if ($item && $item->h5p_content_id) {
+      return (int) $item->h5p_content_id;
+    }
+    return 0;
   }
 
   /**

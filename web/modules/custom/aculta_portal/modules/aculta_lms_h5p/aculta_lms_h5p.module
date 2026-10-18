@@ -184,6 +184,42 @@ function aculta_lms_h5p_library_info_build() {
   ])->toString(TRUE)->getGeneratedUrl();
   $libraries['h5p.admin.library.details']['js'][$h5p_admin_library_details_js_key] = [];
 
+  // The PHP H5P Editor library supplies editor behavior; this Drupal library
+  // attaches its ordered assets to the Group field widget.
+  $libraries['h5p.editor'] = [
+    'version' => '1.0',
+    'license' => [
+      'name' => 'GPL-3.0-only',
+      'url' => 'https://github.com/h5p/h5p-editor-php-library',
+      'gpl-compatible' => TRUE,
+    ],
+    'dependencies' => [
+      'aculta_lms_h5p/h5p.content',
+      'core/drupal',
+      'core/drupalSettings',
+      'core/jquery',
+      'core/once',
+    ],
+    'js' => [],
+    'css' => ['base' => []],
+  ];
+  foreach (\H5PEditor::$scripts as $script) {
+    $url = \Drupal::service('file_url_generator')->generate("assets://h5p/h5p-editor/{$script}", [
+      'absolute' => TRUE,
+      'language' => FALSE,
+    ])->toString(TRUE)->getGeneratedUrl();
+    $libraries['h5p.editor']['js'][$url] = ['preprocess' => FALSE];
+  }
+  $application_script = \Drupal::service('extension.list.module')->getPath('aculta_lms_h5p') . '/js/h5peditor-application.js';
+  $libraries['h5p.editor']['js'][$application_script] = ['preprocess' => FALSE];
+  foreach (\H5PEditor::$styles as $style) {
+    $url = \Drupal::service('file_url_generator')->generate("assets://h5p/h5p-editor/{$style}", [
+      'absolute' => TRUE,
+      'language' => FALSE,
+    ])->toString(TRUE)->getGeneratedUrl();
+    $libraries['h5p.editor']['css']['base'][$url] = [];
+  }
+
   // Load installed libraries
   $h5p_libraries = $database->query("
     SELECT
