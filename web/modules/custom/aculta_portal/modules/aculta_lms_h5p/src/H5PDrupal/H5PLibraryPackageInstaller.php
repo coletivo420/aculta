@@ -41,6 +41,10 @@ final class H5PLibraryPackageInstaller {
       if (empty($core->librariesJsonData) || !is_array($core->librariesJsonData)) {
         throw new \UnexpectedValueException('O pacote não contém bibliotecas H5P instaláveis.');
       }
+      if (!$core->fs instanceof H5PManagedFileStorage) {
+        throw new \LogicException('H5P library storage does not provide package preflight validation.');
+      }
+      $core->fs->validateLibraries($core->librariesJsonData);
       $number = count($core->librariesJsonData);
       H5PDrupal::getInstance('storage')->savePackage(NULL, NULL, TRUE);
       return $number;

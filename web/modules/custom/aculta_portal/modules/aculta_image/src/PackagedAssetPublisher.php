@@ -134,6 +134,35 @@ final class PackagedAssetPublisher {
     return TRUE;
   }
 
+  /** Checks H5P library image policy and immutable destination without writing. */
+  public function canPublishH5PLibraryImage(string $source, string $destination, string $packageRoot, string $origin): bool {
+    $sourcePath = realpath($source);
+    $rootPath = realpath($packageRoot);
+    if ($sourcePath === FALSE || $rootPath === FALSE || !str_starts_with($sourcePath, $rootPath . DIRECTORY_SEPARATOR)
+      || !is_file($sourcePath) || !is_readable($sourcePath) || !preg_match('@^private://(?:[A-Za-z0-9_-]+/)*libraries/.+$@D', $destination)) {
+      return FALSE;
+    }
+    $relative = preg_replace('@^private://(?:[A-Za-z0-9_-]+/)*libraries/@', '', $destination);
+    if (!is_string($relative) || $relative === '' || str_contains($relative, '\\')
+      || preg_match('@(?:^|/)\.\.?(/|$)|[^\pL\pN._/-]@u', $relative)) {
+      return FALSE;
+    }
+    $bytes = file_get_contents($sourcePath);
+    if (!is_string($bytes) || strlen($bytes) > UploadPolicy::MAX_BYTES
+      || ($bytes = $this->validatedBytes($bytes, $destination)) === NULL) {
+      return FALSE;
+    }
+    $existingPath = $this->fileSystem->realpath($destination);
+    if ($existingPath === FALSE) {
+      return TRUE;
+    }
+    if (!hash_equals(hash('sha256', $bytes), hash_file('sha256', $existingPath) ?: '')) {
+      return FALSE;
+    }
+    $files = $this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $destination]);
+    return (bool) reset($files);
+  }
+
   /** Verifies provenance against the two pinned H5P Composer package roots. */
   private function trustedH5pSource(string $sourcePath, string $origin): bool {
     if (!preg_match('@^composer://h5p/(h5p-core|h5p-editor)/([A-Za-z0-9._/-]+)$@D', $origin, $matches)

@@ -104,6 +104,56 @@ final class H5PManagedFileStorage extends \H5PDefaultStorage {
     }
   }
 
+  /** Preflights every library asset before the H5P package writes any records. */
+  public function validateLibraries(array $libraries): void {
+    foreach ($libraries as $library) {
+      $source = realpath((string) ($library['uploadDirectory'] ?? ''));
+      if ($source === FALSE || !is_dir($source) || !str_starts_with($source, $this->h5pPath . DIRECTORY_SEPARATOR)) {
+        throw new \RuntimeException('The H5P library package directory is unavailable.');
+      }
+      $directoryName = \H5PCore::libraryToFolderName($library);
+      if (!preg_match('@^[A-Za-z0-9_.-]+$@D', $directoryName)) {
+        throw new \InvalidArgumentException('The H5P library package name is invalid.');
+      }
+      $destinationUri = "{$this->h5pUri}/libraries/{$directoryName}";
+      $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \FilesystemIterator::SKIP_DOTS));
+      foreach ($iterator as $sourceFile) {
+        if ($sourceFile->isLink() || !$sourceFile->isFile()) {
+          throw new \RuntimeException('The H5P library contains an unsupported filesystem entry.');
+        }
+        $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($sourceFile->getPathname(), strlen($source) + 1));
+        if (!preg_match('@^[\pL\pN._/-]+$@uD', $relative) || preg_match('@(?:^|/)\.\.?(/|$)@', $relative)) {
+          throw new \RuntimeException('The H5P library contains an unsafe file path.');
+        }
+        if (in_array(basename($relative), ['.h5pignore', '.gitignore'], TRUE) || str_contains($relative, '/.git/')) {
+          continue;
+        }
+        $uri = "{$destinationUri}/{$relative}";
+        $extension = strtolower(pathinfo($relative, PATHINFO_EXTENSION));
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($sourceFile->getPathname()) ?: '';
+        if ($this->isImageAsset($extension, $mime)) {
+          $this->assertSupportedImageExtension($extension);
+          $origin = 'h5p-library://' . $library['machineName'] . '/' . $library['majorVersion'] . '.' . $library['minorVersion'] . '/' . $relative;
+          if (!$this->imagePublisher->canPublishH5PLibraryImage($sourceFile->getPathname(), $uri, $source, $origin)) {
+            throw new \RuntimeException('An H5P library image was rejected by aculta_image.');
+          }
+          continue;
+        }
+        $bytes = file_get_contents($sourceFile->getPathname());
+        if (!is_string($bytes) || strlen($bytes) > 20971520) {
+          throw new \RuntimeException('An H5P library asset exceeds the allowed file size.');
+        }
+        $existing = $this->fileRepository->loadByUri($uri);
+        if ($existing !== NULL) {
+          $storedPath = $this->fileSystem->realpath($uri);
+          if ($storedPath === FALSE || !hash_equals(hash('sha256', $bytes), hash_file('sha256', $storedPath) ?: '')) {
+            throw new \RuntimeException('An installed H5P library cannot be replaced silently.');
+          }
+        }
+      }
+    }
+  }
+
   /** Removes managed files for a library that Core has confirmed deletable. */
   public function removeLibraryFiles($library) {
     $directoryName = \H5PCore::libraryToFolderName((array) $library);

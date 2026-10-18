@@ -110,6 +110,37 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     }
   }
 
+  /** Confirms invalid late assets are rejected before any library is saved. */
+  public function testPreflightsEveryAssetBeforePersistingPackageLibraries(): void {
+    $package = $this->createPackage([
+      'H5P.Bad-1.0/library.json' => json_encode([
+        'title' => 'Pacote inválido',
+        'majorVersion' => 1,
+        'minorVersion' => 0,
+        'patchVersion' => 0,
+        'machineName' => 'H5P.Bad',
+        'runnable' => 1,
+        'preloadedJs' => [['path' => 'script.js']],
+      ], JSON_THROW_ON_ERROR),
+      'H5P.Bad-1.0/script.js' => 'window.H5PBad = true;',
+      'H5P.Bad-1.0/zz-invalid.svg' => '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>',
+    ]);
+    try {
+      try {
+        $this->container->get('aculta_lms_h5p.library_package_installer')->install($package);
+        self::fail('Expected the unsafe SVG asset to be rejected.');
+      }
+      catch (\RuntimeException $exception) {
+        self::assertSame('An H5P library image was rejected by aculta_image.', $exception->getMessage());
+      }
+      self::assertSame(0, (int) $this->container->get('database')->select('h5p_libraries', 'l')->countQuery()->execute()->fetchField());
+      self::assertNull($this->container->get('file.repository')->loadByUri('private://h5p-kernel-test/libraries/H5P.Bad-1.0/script.js'));
+    }
+    finally {
+      unlink($package);
+    }
+  }
+
   /** Verifies progress endpoints expose only the methods required by H5P. */
   public function testProgressRoutesRestrictHttpMethods(): void {
     $provider = $this->container->get('router.route_provider');

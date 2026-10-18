@@ -15,5 +15,6 @@
 - Valida entradas do ZIP antes do extrator H5P para bloquear caminhos absolutos, traversal, caminhos malformados e links simbólicos; upload de bibliotecas agora usa o diretório privado configurado e o limite de tamanho nativo do PHP/Core.
 - Verificação atual: Kernel H5P 5 testes/60 assertions; Unit H5P 12 testes/52 assertions.
 - A revisão dos controllers remove service locators substituíveis por DI e testa sua criação no container; cobertura Kernel atual: 7 testes/85 assertions.
+- Pré-validação integral dos arquivos de todas as bibliotecas antes do savePackage; um pacote com SVG ativo no último arquivo não grava nem a biblioteca nem o JS anterior. Kernel atual: 8 testes/101 assertions; Unit H5P: 12/52.
 - RUNTIME STATUS: DEFERRED.
 
