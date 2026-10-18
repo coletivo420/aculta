@@ -46,9 +46,6 @@ conditions:
     configuration:
       bundles:
         - default
-        - doacao
-        - assinatura
-        - curso
   -
     plugin: order_currency
     configuration:

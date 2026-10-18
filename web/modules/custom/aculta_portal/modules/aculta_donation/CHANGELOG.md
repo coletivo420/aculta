@@ -1,43 +1,5 @@
 # Changelog — aculta_donation
 
-## 0.1.0-dev.21 — doação mensal como assinatura e curso no gateway — 2026-10-18
-
-- Entrada mensal `/apoiar/mensal` (rota `aculta_donation.donation.monthly`): cria pedido do tipo `assinatura` com o valor do nível mensal ou o valor digitado.
-- Passo de valor: "Mensal" redireciona à entrada mensal no SUPPORT (DomainRoutePolicy). O pedido avulso não vira assinatura.
-- Fluxo `assinatura_flow`: `payment_process` desligado (`_disabled`). O Commerce instancia sozinho pane de pagamento não listado, e a página mostrava o Checkout Pro avulso. Agora o único passo de pagamento é o pane de autorização, que cria a assinatura no Mercado Pago e redireciona ao link de autorização.
-- Verificado no Runtime de teste: pedido 94 virou assinatura com valor R$ 50; o envio do pagamento criou a assinatura no Mercado Pago (`preapproval`), o pedido ficou em `needs_payment` e o redirecionamento foi para `subscriptions/checkout`.
-- Pendente: autorização pelo comprador de teste no navegador e os tópicos de webhook da assinatura.
-- Gateway Mercado Pago aceita o tipo `curso`. Compra de curso: DEFERRED (não há produto de curso no Runtime de teste).
-- Pedido 93 é uma tentativa anterior à correção: sem itens, em rascunho, no Runtime de teste.
-- RUNTIME STATUS: APLICADO no Runtime de teste (configuração do campo `field_gift_type` com `recurring`, valores mensais de teste 20/50/100 não exportados, fluxo, gateway e cache rebuild). Os valores mensais de produção dependem de decisão do responsável.
-
-## 0.1.0-dev.20 — checkout de doação chega ao pagamento — 2026-10-18
-
-- Gateway do Mercado Pago aceitava só o tipo de pedido `default` (loja). Doações (`doacao`) e assinaturas (`assinatura`)
-  não encontravam gateway ("Não existem gateways de pagamento disponíveis"). Condição `order_type` ampliada nos dois tipos.
-- Fluxos de doação (`doacao` e `assinatura_flow`) não tinham o pane de endereço do projeto (`aculta_billing_address`).
-  Sem ele, o passo de cobrança não tinha campos e o pagamento falhava com "Billing information is required".
-  O pane entra na etapa `billing`, peso 1, na configuração do fluxo (`configuration.panes`).
-- Achado não corrigido aqui: a doação mensal (`recurring`) não é selecionável no formulário. Só o tipo `single` está
-  nos valores permitidos, e o pedido `assinatura` só é criado por `NewOrder::get('recurring')`, que nenhum caminho da
-  interface chama. A escolha de forma de apoio e de valores mensais depende de decisão do responsável.
-- Achado não corrigido aqui: o `commerce_mercado_pago` (contrib) lê o campo `address` do perfil de cobrança; os tipos
-  de perfil do projeto usam `field_address`. O pagamento falha com "Field address is unknown." antes de chamar a API do
-  Mercado Pago. Afeta também a loja. Correção depende de decisão (patch pelo `aculta_patcher` ou adaptador do Portal).
-- RUNTIME STATUS: APLICADO no Runtime de testes (gateway, dois fluxos e pane de endereço; cache rebuild). Verificado por
-  HTTP com a conta de teste até a tela de pagamento, com o erro de campo descrito acima. Nenhuma assinatura foi criada.
-
-## 0.1.0-dev.19 — teste Kernel do fluxo de doação sem habilitar o Portal inteiro — 2026-10-18
-
-- `DonationPortKernelTest` falhava: o pane de assinatura consome três serviços do `aculta_portal`, e o teste não os tinha.
-  Habilitar o Portal inteiro puxava a árvore de dependências dele (group, lms, commerce_mercado_pago, domain, etc.).
-- Os três serviços (`aculta_portal.domain_purpose`, `aculta_portal.mercado_pago.logger`,
-  `aculta_portal.mercado_pago.recurrence_service`) passam a ser sintéticos no teste, com `DomainPurposeManager` real e
-  mocks do negociador de domínio, do logger e do serviço de recorrência.
-- Somente teste; nenhuma mudança de código de produção nem de configuração.
-- Evidência: Kernel no banco `aculta_simpletest`: 4 testes, 155 asserções, OK (com deprecações de Core e contrib).
-- RUNTIME STATUS: não aplicável (somente arquivo de teste).
-
 ## 0.1.0-dev.18 — configuração sob o módulo proprietário — 2026-10-18
 
 - O setting passa de `commerce_donation_flow.settings` para `aculta_donation.settings`, conforme o provider instalado.

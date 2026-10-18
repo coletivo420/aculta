@@ -16,9 +16,6 @@ settings:
     -
       value: single
       label: 'Uma vez'
-    -
-      value: recurring
-      label: Mensal
   allowed_values_function: ''
 module: options
 locked: false

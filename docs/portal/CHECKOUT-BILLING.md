@@ -164,7 +164,3 @@ provisionamento (país de envio BR, método "Envio" com o valor definido).
 
 **Pendências:** valor real do frete; teste de navegador com pedido novo (aguardando o pagamento do responsável);
 configuração em produção.
-
-## Alias `address` para o contrib do Mercado Pago (0.4.0-dev.141)
-
-O `commerce_mercado_pago` lê `$billing_profile->get('address')` para montar o pagador. Os perfis do projeto guardam o endereço em `field_address`, e não existe campo `address`, o que fazia o pagamento falhar com "Field address is unknown.". A correção é um campo computado `address` nos tipos de perfil (`ProfileAddressAliasHooks` e `BillingAddressAliasItemList`): ele não tem armazenamento, lê o `field_address` do mesmo perfil e não cria cópia nem perfil novo. O contrib não é alterado.
