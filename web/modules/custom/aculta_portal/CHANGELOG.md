@@ -1,3 +1,10 @@
+## 0.4.0-dev.149 — status: tema base Bootstrap corrigido (erro falso) — 2026-10-18
+
+- Causa verificada: a linha "Tema base Bootstrap 5" procurava o tema `bootstrap5` e o pacote `drupal/bootstrap5`. O ACULTA420 declara `base theme: bootstrap` e o projeto instala `drupal/bootstrap` 5.0.2 (`composer.json`: `^5.0`). O resultado era "Não encontrado" e erro.
+- Linha corrigida para o tema `bootstrap` e o pacote `drupal/bootstrap`, com o requisito lido do `composer.json`.
+- Resultado no Runtime de teste: a linha fica OK; o relatório não tem mais erro. As quatro linhas de atenção (Google, Mercado Pago RC, Turnstile e SMTP2GO) são avisos pré-deploy documentados e continuam.
+- Gate: `validate-aculta-portal-drupal11.php` PASS.
+
 ## 0.4.0-dev.148 — status: seção de consulta de CEP (API e base local) — 2026-10-18
 
 - Status do Portal (`aculta_portal.requirements`): nova seção "Consulta de CEP" com o último resultado das APIs ViaCEP e BrasilAPI (cron) e a versão da base local, com a idade em dias a partir de hoje.

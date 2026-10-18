@@ -476,13 +476,14 @@ final class PortalRequirementsController extends ControllerBase {
 
   /** Builds the enabled public theme row. */
   private function buildBaseThemeRow(): array {
-    $exists = $this->themes->themeExists('bootstrap5');
-    $version = $this->packageVersion('drupal/bootstrap5');
-    $minimum = $this->minimumConstraint('drupal/bootstrap5', '4.0.8');
+    // Tema base do ACULTA420 (base theme: bootstrap). O pacote é drupal/bootstrap (Bootstrap 5), não drupal/bootstrap5.
+    $exists = $this->themes->themeExists('bootstrap');
+    $version = $this->packageVersion('drupal/bootstrap');
+    $minimum = $this->minimumConstraint('drupal/bootstrap', '^5.0');
     $compatible = $version !== NULL && $this->versionSatisfies($version, $minimum);
     $status = $exists && $compatible ? 'ok' : 'error';
     return [
-      'name' => ['data' => ['#plain_text' => 'Tema base Bootstrap 5 (bootstrap5)']],
+      'name' => ['data' => ['#plain_text' => 'Tema base Bootstrap 5 (bootstrap)']],
       'purpose' => ['data' => ['#plain_text' => $this->t('Tema base declarado pelo tema público ACULTA420.')]],
       'minimum' => ['data' => ['#plain_text' => $minimum]],
       'installed' => ['data' => ['#plain_text' => $version ?: $this->t('Não encontrado')]],
