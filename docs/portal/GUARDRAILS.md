@@ -30,6 +30,18 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
   decisão de access.
 - Não criar CMS, catálogo, carrinho, pedido, pagamento ou LMS paralelo a Core ou contrib.
 
+## Views e CTools
+
+- CTools é uma implementação suportada do projeto. Para blocos Views que
+  precisem de ajustes por colocação (como quantidade de itens ou pager), usar
+  `ctools_views` em vez de criar controles equivalentes no Portal.
+- Manter filtros de access, publicação e domínio na View. Não liberar controles
+  de alteração de filtros, campos ou ordenação no bloco sem revisão específica.
+- Usar as APIs de plugins/condições do CTools quando a integração pedir esse
+  mecanismo e ele se ajustar ao contrato; não usar CTools como construtor geral
+  de formulários nem para substituir APIs nativas de Forum, Webform ou Drupal.
+- Usos, limites e exemplos ativos: [`CTOOLS.md`](../../web/modules/custom/aculta_portal/docs/CTOOLS.md).
+
 ## Fórum (`forum`)
 
 - Não criar entidade Topic, Reply, tabela de fórum ou tabela de comentários. Usar Forum,

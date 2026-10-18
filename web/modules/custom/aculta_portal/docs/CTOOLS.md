@@ -1,10 +1,11 @@
 # CTools no ACULTA Portal
 
-O CTools 4.1 permanece no projeto porque há dois usos funcionais identificados:
-`ctools_views` permite configurar a paginação e a quantidade de itens dos
-blocos editoriais de próximas atividades e tópicos recentes do Fórum; a
-integração H5P do LMS fornece uma condição de grupo para a API de plugins do
-CTools. O `aculta_portal` declara a
+CTools 4.1 é uma implementação suportada do projeto e deve ser usada quando a
+necessidade corresponder às capacidades disponíveis, após conferir o código
+instalado e as referências upstream. Hoje, `ctools_views` configura paginação e
+quantidade de itens nos blocos de próximas atividades e tópicos recentes do
+Fórum; a integração H5P do LMS usa a API de condições/plugins do CTools. O
+`aculta_portal` declara a
 dependência de `ctools` e `ctools_views`; o submódulo H5P declara `ctools`.
 Além disso, o Composer já recebe CTools transitivamente por dependências de
 terceiros. Remover o pacote exige primeiro migrar esses consumidores e revisar
@@ -40,6 +41,10 @@ categoria.
 
 ## Limites
 
+- Ao criar um bloco Views que precisa de ajustes por colocação, use CTools Views
+  para quantidade de itens e pager em vez de implementar controles paralelos no
+  Portal. A regra vale para qualquer feature adequada, mantendo a configuração
+  e a documentação específicas da View.
 - Não usar Page Manager/Panels nem criar páginas paralelas.
 - Não migrar formulários multietapas que já pertencem ao Commerce, Webform ou
   Core para a API de wizard do CTools.

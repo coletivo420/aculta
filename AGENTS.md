@@ -94,6 +94,24 @@ Antes de qualquer alteração do Portal, leia `docs/portal/GUARDRAILS.md`, `docs
 
 Preserve as fronteiras Core/contrib → `aculta_portal` → contrato neutro → ACULTA420.
 
+## CTools como implementação do Portal
+
+CTools é uma implementação suportada do projeto, não uma dependência a evitar
+por padrão. Antes de criar configuração ou código para uma necessidade que ele
+cobre, leia [`docs/portal/CTOOLS.md`](docs/portal/CTOOLS.md) e verifique o código
+instalado e a documentação upstream. Use `ctools_views` para blocos de Views
+quando for necessário configurar por colocação, por exemplo quantidade de itens
+e pager; use a API de plugins/condições do CTools para integrações contextuais
+compatíveis. Prefira essa implementação existente a recriar no Portal controles
+equivalentes.
+
+CTools não é um construtor geral de formulários nem substitui Views, Forum,
+Form API, Webform, Entity Access, políticas de domínio ou cache. Mantenha filtros
+de acesso e domínio fixos na View. Não libere `configure_filters`,
+`disable_filters`, `hide_fields` ou `sort_fields` em blocos sem revisão explícita
+de segurança e governança editorial. A integração documentada do Fórum
+complementa a listagem nativa; não a substitui.
+
 Regras resumidas:
 - Core/contrib continuam fonte de verdade; não criar storage paralelo quando a capacidade já existir;
 - preferir dependency injection em classes; não introduzir novos service locators `\Drupal::...` em `src/`;
