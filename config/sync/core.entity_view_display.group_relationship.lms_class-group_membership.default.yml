@@ -1,3 +1,5 @@
+uuid: fa6e5093-585d-4aa9-a8b0-1bcb40982597
+langcode: en
 status: true
 dependencies:
   config:
@@ -18,6 +20,9 @@ content:
     weight: -4
     region: content
 hidden:
-  field_course_order: true
   entity_id: true
+  field_course_order: true
+  langcode: true
+  search_api_excerpt: true
   uid: true
+

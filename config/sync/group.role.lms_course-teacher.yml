@@ -39,3 +39,4 @@ permissions:
   - 'view group_membership relationship'
   - 'view latest group version'
   - 'view own unpublished group'
+

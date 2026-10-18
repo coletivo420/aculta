@@ -1,3 +1,5 @@
+uuid: 2d53a869-841b-4efc-a3ad-5461162889d0
+langcode: en
 status: true
 dependencies:
   config:
@@ -18,3 +20,4 @@ settings:
   handler_settings:
     group_type_id: lms_class
 field_type: entity_reference
+

@@ -42,3 +42,4 @@ configuration:
     aculta_billing_address:
       step: order_information
       weight: 2
+

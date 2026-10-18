@@ -12,6 +12,19 @@ targetEntityType: commerce_product
 bundle: produto_curso
 mode: default
 content:
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
   path:
     type: path
     weight: 7
@@ -55,3 +68,4 @@ content:
     third_party_settings: {  }
 hidden:
   variations: true
+

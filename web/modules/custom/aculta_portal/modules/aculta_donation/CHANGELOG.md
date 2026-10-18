@@ -6,7 +6,7 @@
 - Update hook migra os valores atuais preservando as escolhas do painel e remove a configuração órfã do módulo contrib removido.
 - Displays de doação apontam a dependência para `aculta_donation`; Config Sync remove a extensão contrib e habilita o módulo portado.
 - A atualização prepara a importação parcial F7 sem ativar código contrib inexistente nem mexer no fluxo/pedidos de doação.
-- RUNTIME STATUS: DEFERRED até aplicar o update e reconciliar os 29 objetos F7 após backup.
+- RUNTIME STATUS: aplicado no Runtime de teste em 2026-10-18. Update 11001 migrou os valores para `aculta_donation.settings`; os dois displays de doação dependem de `aculta_donation`. Config Sync parcial e cache rebuild concluídos. Backup privado prévio: `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`. Fluxo de doação/pagamento não foi smoke testado nesta mudança.
 
 ## 0.1.0-dev.17 — erro de autorização da doação mensal no checkout — 2026-10-17
 

@@ -87,7 +87,7 @@ gera links para a rota nativa LMS (com slugs portugueses do Portal); não cria
 progresso, matrícula ou status. RUNTIME STATUS: DEFERRED até smoke test de
 membro, não membro e visitante; a fase não está homologada.
 
-**F7 — Implementação na branch, Runtime deferred.** Config Sync habilita `lms_classes`
+**F7 — Configuração aplicada no Runtime de teste; funcionalidade ainda não homologada.** Config Sync habilita `lms_classes`
 1.2.4, inclui configuração opcional, exige criação explícita de turmas e concede
 ao educador permissões de criação/gestão; o hook de papel global reconhece
 matrículas em turma. A página do curso oferece produto Commerce próprio, escolha
@@ -99,8 +99,13 @@ Decisões: equipe também pode matricular, estudante é concedido ao entrar em
 qualquer turma, curso não recebe turma padrão e matrícula não exige confirmação
 de e-mail/termos (aviso por e-mail, entrega reservada à F13). Checkout permite
 cadastro e dispensa confirmação de e-mail, mantendo termos gerais da conta.
-RUNTIME STATUS: DEFERRED; falta importar configuração e executar smoke tests A/B,
-checkout pago/gratuito e reembolso. Detalhes em
+Em 2026-10-18, após backup, `aculta_lms` e `lms_classes` foram habilitados e 29
+objetos F7 entraram por importação parcial; o restante do drift não foi importado.
+`create_default_class` está desligado e o curso existente foi preservado. RUNTIME
+STATUS: CONFIG APLICADA; smoke tests A/B, checkout pago/gratuito e reembolso
+continuam DEFERRED. Backup privado em
+`/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`.
+Detalhes em
 [LMS-GROUP.md](LMS-GROUP.md).
 
 ## Ordem, PR e status

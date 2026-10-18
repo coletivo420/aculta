@@ -1,3 +1,5 @@
+uuid: d5aea0ae-3f65-4889-a1ce-7caaf952283a
+langcode: en
 status: true
 dependencies:
   config:
@@ -25,6 +27,20 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_course_order: true
   uid: true
+

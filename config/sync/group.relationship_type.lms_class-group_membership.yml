@@ -1,3 +1,5 @@
+uuid: 5cfa8891-6e32-4ba2-a1aa-64be6793c879
+langcode: en
 status: true
 dependencies:
   config:
@@ -11,3 +13,4 @@ plugin_config:
   group_cardinality: 0
   entity_cardinality: 1
   use_creation_wizard: false
+

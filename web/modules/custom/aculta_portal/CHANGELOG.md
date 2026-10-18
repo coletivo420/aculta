@@ -1,3 +1,11 @@
+## 0.4.0-dev.126 — reconcilia configuração F7 do LMS — 2026-10-18
+
+- Migra as configurações de doação para o provider `aculta_donation`, removendo referências à extensão contrib que já saiu do Composer.
+- Habilita `aculta_lms`/`lms_classes` no Runtime de teste e importa parcialmente 29 objetos F7, sem remover configurações ausentes.
+- Os objetos F7 preparados coincidem com Config Sync; a configuração de criação automática de turma está desligada.
+- Backup privado prévio: `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz` (gzip verificado).
+- `drush updatedb`, Config Sync parcial e `drush cr` concluídos. RUNTIME STATUS: CONFIG APLICADA; smoke de matrícula, checkout, reembolso e isolamento permanece DEFERRED. Restam 284 diferenças globais registradas em DT-O10.
+
 ## 0.4.0-dev.125 — corrige duplicidade na configuração de administrador — 2026-10-17
 
 - Removida a chave `permissions` vazia duplicada de `user.role.administrator`; Drush recusava carregar todo o Config Sync por YAML inválido.
