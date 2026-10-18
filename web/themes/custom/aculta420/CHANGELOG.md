@@ -1,3 +1,12 @@
+## 0.6.0-dev.78 — adia imagens de galerias VVJS — 2026-10-18
+
+Classificação: PATCH de performance, preserva sequência, controles e modos de exibição.
+
+- A galeria de produto (`galeria_produto`) mantém a imagem do primeiro slide e adia imagens de Media dos demais até que VVJS navegue para eles.
+- A biblioteca compartilhada de slideshow carrega o slide atual e o próximo, inclusive em eventos públicos `vvj:slideChanged` da galeria de produto.
+- Inventário confirmou que as galerias de álbum e produto são as únicas Views de imagem usando VVJS; carrosséis VVJB de Home e Projetos não são afetados.
+- RUNTIME STATUS: implementação e smoke test no Runtime de testes registrados após validação.
+
 ## 0.6.0-dev.77 — adia imagens de slides inativos do álbum — 2026-10-18
 
 Classificação: PATCH de performance, sem alteração dos controles ou da sequência do álbum.

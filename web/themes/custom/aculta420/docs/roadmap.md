@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.78 | Imagens das duas galerias VVJS carregadas progressivamente | Runtime de teste: validar primeira imagem, avanço e clique no último slide do produto; álbum mantém evidência da dev.77 | `ThemeHooks` aplica adiamento também às linhas Media da `galeria_produto`; biblioteca VVJS compartilhada restaura imagem atual e próxima |
 | 0.6.0-dev.77 | Imagens dos slides inativos são carregadas progressivamente | Firefox no Runtime: palco caiu de 63 requisições (8,8 MB) para 4 (572 KB); miniaturas visíveis/adjacentes: 20 (62 KB); clique na miniatura 60 carregou o slide 60 | Slide atual e próximo usam API/evento público VVJS; sequência e miniaturas preservadas |
 | 0.6.0-dev.76 | Auditoria de consumidores VVJ e smoke test de slideshow | Runtime de teste: 7 mídias no produto e 63 no álbum; inspeção visual/teclado/toque DEFERRED | Sem consumidor semântico para VVJA/VVJF/VVJH/VVJR/VVJT identificado no inventário |
 | 0.6.0-dev.75 | Gate Foundation alinhado à base Drupal Bootstrap 5.0.2, ao framework 5.3.8 e aos templates atuais | Gate PASS; mapa de tema do Runtime alinhado ao sync; DT-O14 parcial por configurações órfãs restantes | Revisão dos dois scaffolds 5.0.2; nenhum código novo necessário |

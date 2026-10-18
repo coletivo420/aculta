@@ -85,4 +85,22 @@
     },
   };
 
+  Drupal.behaviors.acultaProductGallery = {
+    attach(context) {
+      once('aculta-product-gallery', '.aculta-galeria-produto vvjs-slideshow', context).forEach((slideshow) => {
+        loadSlideImages(slideshow, slideshow.getCurrentSlide?.() || 1);
+      });
+
+      once('aculta-product-gallery-events', document.documentElement).forEach(() => {
+        document.addEventListener('vvj:slideChanged', (event) => {
+          const source = event.detail?.source;
+          if (!source?.matches?.('.aculta-galeria-produto vvjs-slideshow')) {
+            return;
+          }
+          loadSlideImages(source, event.detail.slide || source.getCurrentSlide?.() || 1);
+        });
+      });
+    },
+  };
+
 })(Drupal, once);

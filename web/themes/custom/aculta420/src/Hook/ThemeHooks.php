@@ -12,6 +12,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\node\NodeInterface;
@@ -21,7 +22,12 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 /**
  * Presentation-only hooks for ACULTA420.
  */
-final class ThemeHooks {
+final class ThemeHooks implements TrustedCallbackInterface {
+
+  /** {@inheritdoc} */
+  public static function trustedCallbacks(): array {
+    return ['deferProductSlideImage'];
+  }
 
   public function __construct(
     private readonly PathMatcherInterface $pathMatcher,
@@ -90,6 +96,57 @@ final class ThemeHooks {
       // The formatter has already produced sanitized image/link markup.
       $field->content = Markup::create($deferred);
     }
+  }
+
+  /**
+   * Defers product gallery images in entity rows until VVJS approaches them.
+   *
+   * The product View uses entity Media rows, so its markup is only available
+   * after rendering each row. A trusted post-render callback keeps the image
+   * formatter output intact while moving the image source for inactive slides.
+   */
+  #[Hook('preprocess_views_view_vvjs')]
+  public function deferInactiveProductSlideImages(array &$variables): void {
+    $view = $variables['view'] ?? NULL;
+    if (!$view instanceof ViewExecutable || $view->id() !== 'galeria_produto') {
+      return;
+    }
+    foreach ($variables['rows'] ?? [] as $index => &$row) {
+      if ((int) $index === 0 || !is_array($row)) {
+        continue;
+      }
+      $content = $row['content'] ?? NULL;
+      if (is_array($content)) {
+        // Wrap the render-cached entity row in an uncached render array. Its
+        // post-render callback still runs when the child is served from cache,
+        // while the child keeps its own cache keys and metadata.
+        $row['content'] = [
+          'slide' => $content,
+          '#post_render' => [[self::class, 'deferProductSlideImage']],
+        ];
+      }
+      elseif (is_string($content) || $content instanceof \Stringable) {
+        $row['content'] = Markup::create(self::deferProductSlideImage((string) $content, []));
+      }
+    }
+    unset($row);
+  }
+
+  /**
+   * Moves the first rendered image source into the VVJS lazy-load attribute.
+   */
+  public static function deferProductSlideImage(string $markup, array $element): string {
+    return preg_replace_callback(
+      '/<img\\b[^>]*>/i',
+      static fn(array $matches): string => preg_replace(
+        "/\\s+src=(\\\"[^\\\"]*\\\"|'[^']*')/i",
+        ' data-aculta-lazy-src=$1',
+        $matches[0],
+        1,
+      ) ?? $matches[0],
+      $markup,
+      1,
+    ) ?? $markup;
   }
 
   /**
