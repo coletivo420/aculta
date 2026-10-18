@@ -8,6 +8,7 @@ ACULTA420 apresenta a experiência.
 ## Comece por aqui
 
 - [Documentação do projeto](docs/README.md) — arquitetura, políticas e operação.
+- [Mapa de caminhos e redirecionamentos](docs/architecture/ROUTES-SITEMAP.md) — caminhos por domínio, rotas administrativas, estados e redirects.
 - [ACULTA Portal](web/modules/custom/aculta_portal/README.md) — módulo principal
   e índice das extensões próprias.
 - [ACULTA420](web/themes/custom/aculta420/README.md) — tema, componentes e índice

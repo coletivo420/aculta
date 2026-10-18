@@ -14,6 +14,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 
 - [architecture/overview.md](architecture/overview.md) — camadas Core → Portal → tema → Bootstrap.
 - [architecture/multidomain.md](architecture/multidomain.md) — purposes, hosts e cookie compartilhado.
+- [architecture/ROUTES-SITEMAP.md](architecture/ROUTES-SITEMAP.md) — inventário de caminhos por domínio, rotas administrativas, desabilitadas e redirecionamentos.
 - [architecture/environments.md](architecture/environments.md) — Homelab Apache e produção Hostinger LiteSpeed.
 - [architecture/data-ownership.md](architecture/data-ownership.md) — quem é dono de cada dado.
 - [decisions/](decisions/) — ADRs vigentes.

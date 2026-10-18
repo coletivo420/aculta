@@ -3,6 +3,7 @@
 ## Mapa de documentação
 
 - [README do projeto](README.md) — entrada geral e índice de módulos/temas.
+- [Mapa de caminhos](docs/architecture/ROUTES-SITEMAP.md) — referência transversal de rotas ativas, administrativas, internas, desabilitadas e redirects.
 - [Índice documental](docs/README.md) — arquitetura, decisões, normas e operação.
 - [Normas do Portal](docs/portal/README.md) — padrões, políticas e contratos do `aculta_portal`.
 - [Módulos e integrações](docs/modules/README.md) — referências transversais Core/contrib.
@@ -14,6 +15,26 @@
 Este arquivo reúne guardrails para agentes; os documentos vinculados são a fonte
 canônica dos contratos detalhados. Evite copiar versões, resultados de validação
 ou status de PR para índices e READMEs.
+
+## Mapa obrigatório de caminhos
+
+- Antes de criar, revisar ou remover rota, alias, redirect, home de domínio,
+  link público ou controle de acesso por purpose, leia
+  `docs/architecture/ROUTES-SITEMAP.md` e os contratos especializados que ele
+  referencia.
+- Mantenha nesse mapa todos os caminhos ativos do escopo alterado, além de
+  caminhos internos, administrativos, desabilitados/removidos e redirects
+  relacionados. Atualize-o no mesmo commit da mudança funcional ou documental.
+- Registre caminhos relativos a partir de `/`; para domínios, use identificadores
+  estáveis como `main.aculta`, `conta.aculta` e `loja.aculta`, nunca hostname
+  específico de Homelab/produção como identificador do mapa.
+- Diferencie rota declarada no código de rota efetivamente ativa no Runtime.
+  Módulo desabilitado, conteúdo ausente e configuração por ambiente devem ficar
+  marcados como condicionais ou desabilitados. Não invente nem afirme cobertura
+  Runtime sem consultar o ambiente seguindo `docs/architecture/environments.md`.
+- Ao encerrar uma tarefa que altera caminhos, confira coerência entre mapa,
+  políticas de domínio/redirect, menus e links gerados. Use `/` nos exemplos de
+  path e preserve os parâmetros dinâmicos entre chaves.
 
 ## Projeto
 
