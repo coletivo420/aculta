@@ -9,6 +9,7 @@ field_name: field_h5p_activities
 entity_type: group
 type: h5p
 module: aculta_lms_h5p
+settings: {  }
 locked: false
 cardinality: -1
 translatable: true
