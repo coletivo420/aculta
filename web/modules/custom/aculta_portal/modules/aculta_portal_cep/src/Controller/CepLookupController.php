@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal_cep\Controller;
 
 use Drupal\aculta_portal_cep\Local\CepLocalStore;
+use Drupal\aculta_portal_cep\Settings\CepSources;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Controller\ControllerBase;
 use GuzzleHttp\ClientInterface;
@@ -18,8 +19,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  *
  * Campos devolvidos: postal_code, address_line1 (logradouro), dependent_locality (bairro), locality (cidade),
  * administrative_area (UF). O complemento do ViaCEP (faixa de numeração, "lado par") não é usado: é do logradouro,
- * não do usuário. Fontes: ViaCEP (com uma nova tentativa) e, se falhar ou não encontrar, BrasilAPI. Resultado em
- * cache por CEP. Só responde a requisição AJAX; nunca em cache de página ou proxy.
+ * não do usuário. Fontes e ordem: configuração em CepSources (padrão: base local, ViaCEP, BrasilAPI). Resultado externo
+ * em cache por CEP. Só responde a requisição AJAX; nunca em cache de página ou proxy.
  */
 final class CepLookupController extends ControllerBase {
 
@@ -34,6 +35,8 @@ final class CepLookupController extends ControllerBase {
     private readonly ClientInterface $http,
     #[Autowire(service: 'cache.data')]
     private readonly CacheBackendInterface $cache,
+    #[Autowire(service: 'aculta_portal_cep.sources')]
+    private readonly CepSources $sources,
   ) {}
 
   public function lookup(string $cep, Request $request): JsonResponse {
@@ -41,22 +44,33 @@ final class CepLookupController extends ControllerBase {
       throw new AccessDeniedHttpException();
     }
     $cep = preg_replace('/\D+/', '', $cep) ?? '';
-    // Base local primeiro (arquivos privados, sem rede). Só consulta as fontes externas quando o CEP não está nela.
-    if ($local = $this->local->lookup($cep)) {
-      return $this->respond($local);
+    // Fontes na ordem da configuração (CepSources): a padrão primeiro, depois as demais. Para na primeira que achar o CEP.
+    $address = NULL;
+    foreach ($this->sources->ordered() as $source) {
+      $address = $source === 'local' ? $this->local->lookup($cep) : $this->external($source, $cep);
+      if ($address !== NULL) {
+        break;
+      }
     }
-    $cacheId = 'aculta_portal:cep:' . $cep;
-    if ($cached = $this->cache->get($cacheId)) {
-      return $this->respond($cached->data);
-    }
-    $address = $this->fromViaCep($cep) ?? $this->fromBrasilApi($cep);
     if ($address === NULL) {
       $response = new JsonResponse(['ok' => FALSE, 'message' => (string) $this->t('Não encontramos este CEP. Confira o número ou preencha o endereço manualmente.')], 404);
       $response->headers->set('Cache-Control', 'private, no-store');
       return $response;
     }
-    $this->cache->set($cacheId, $address, time() + self::CACHE_TTL);
     return $this->respond($address);
+  }
+
+  /** Consulta externa (ViaCEP ou BrasilAPI) com cache por CEP. NULL quando a fonte não acha o CEP. */
+  private function external(string $source, string $cep): ?array {
+    $cacheId = 'aculta_portal:cep:' . $cep;
+    if ($cached = $this->cache->get($cacheId)) {
+      return $cached->data;
+    }
+    $address = $source === 'viacep' ? $this->fromViaCep($cep) : $this->fromBrasilApi($cep);
+    if ($address !== NULL) {
+      $this->cache->set($cacheId, $address, time() + self::CACHE_TTL);
+    }
+    return $address;
   }
 
   private function respond(array $address): JsonResponse {

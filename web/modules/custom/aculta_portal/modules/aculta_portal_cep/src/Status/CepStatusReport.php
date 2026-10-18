@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal_cep\Status;
 
 use Drupal\aculta_portal_cep\Local\CepLocalStore;
+use Drupal\aculta_portal_cep\Settings\CepSources;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -33,6 +34,8 @@ final class CepStatusReport {
     private readonly TimeInterface $time,
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'aculta_portal_cep.sources')]
+    private readonly CepSources $sources,
   ) {}
 
   /**
@@ -55,6 +58,15 @@ final class CepStatusReport {
     $rows = [];
     foreach (['viacep', 'brasilapi'] as $id) {
       $label = $this->translation->translate('Consulta de CEP: @api', ['@api' => $id === 'viacep' ? 'ViaCEP' : 'BrasilAPI']);
+      if (!$this->sources->enabled($id)) {
+        $rows[] = [
+          'item' => (string) $label,
+          'value' => (string) $this->translation->translate('Desativada na configuração'),
+          'detail' => (string) $this->translation->translate('Não é consultada nem verificada pelo cron. Ative em Consulta de CEP.'),
+          'status' => 'attention',
+        ];
+        continue;
+      }
       if (!isset($last[$id])) {
         $rows[] = [
           'item' => (string) $label,
@@ -88,6 +100,14 @@ final class CepStatusReport {
   /** @return array{item: string, value: string, detail: string, status: string} */
   private function localRow(): array {
     $label = (string) $this->translation->translate('Base local de CEPs');
+    if (!$this->sources->enabled('local')) {
+      return [
+        'item' => $label,
+        'value' => (string) $this->translation->translate('Desativada na configuração'),
+        'detail' => (string) $this->translation->translate('A base local não é consultada. Ative em Consulta de CEP.'),
+        'status' => 'attention',
+      ];
+    }
     $manifest = $this->local->manifest();
     if ($manifest === NULL || $this->local->shardCount() === 0) {
       return [

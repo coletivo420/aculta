@@ -1,3 +1,13 @@
+## 0.3.0-dev.6 — configuração de Consulta de CEP: banco padrão e ordem das fontes — 2026-10-18
+
+- Nova tela em Configurações > ACULTA Portal > Consulta de CEP (`aculta_portal_cep.settings`, permissão de configuração do site). Ela escolhe o banco de dados padrão (primeira fonte consultada) e a ordem das demais pela tabela de arrastar do Drupal (tabledrag, peso). Cada fonte pode ser ativada ou desativada.
+- Fontes: base local de arquivos, ViaCEP e BrasilAPI. A consulta segue a ordem configurada e para na primeira fonte que acha o CEP. O padrão é o mesmo de antes (base local, ViaCEP, BrasilAPI).
+- Validações: a fonte padrão precisa estar ativa e pelo menos uma fonte precisa estar ativa.
+- Fonte desativada não é consultada nem verificada pelo cron, e o status mostra "Desativada na configuração".
+- Padrões no código (`CepSources::DEFAULTS`) para o módulo já instalado antes desta configuração, que ainda não tem a configuração no banco.
+- Contrib `cep_autocomplete` (removido): não tinha tela administrativa nem configuração gravada; só o endpoint e o cache fixo de 24 horas, que já foram reproduzidos aqui com outro prazo. Nada a portar.
+- Verificado no Runtime de teste: formulário renderiza com a tabela de ordem; envio válido grava a ordem; padrão desativado e nenhuma fonte ativa são recusados; consulta de CEP responde com a base local desativada e com o ViaCEP desativado; status mostra fonte desativada; configuração restaurada ao padrão.
+
 ## 0.3.0-dev.5 — verificação das APIs de CEP diária (não a cada cron) — 2026-10-18
 
 - `CepApiProbe::checkIfDue()`: consulta ViaCEP e BrasilAPI só quando a última verificação tem mais de 24 horas (`INTERVAL` 86400). O cron chama esse método, e não mais `check()`.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal_cep\Status;
 
+use Drupal\aculta_portal_cep\Settings\CepSources;
 use Drupal\Core\State\StateInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use GuzzleHttp\ClientInterface;
@@ -37,12 +38,19 @@ final class CepApiProbe {
     private readonly StateInterface $state,
     #[Autowire(service: 'datetime.time')]
     private readonly TimeInterface $time,
+    #[Autowire(service: 'aculta_portal_cep.sources')]
+    private readonly CepSources $sources,
   ) {}
 
   /** Consulta cada API e grava o resultado. Retorna o resultado gravado. */
   public function check(): array {
     $result = [];
     foreach (self::APIS as $id => $api) {
+      // Fonte desativada na configuração não é consultada.
+      if (!$this->sources->enabled($id)) {
+        $result[$id] = ['label' => $api['label'], 'ok' => FALSE, 'disabled' => TRUE, 'http_status' => NULL, 'ms' => 0, 'checked_at' => $this->time->getRequestTime()];
+        continue;
+      }
       $started = microtime(TRUE);
       $http_status = NULL;
       $ok = FALSE;

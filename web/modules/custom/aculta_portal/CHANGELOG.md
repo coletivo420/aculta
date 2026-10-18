@@ -1,3 +1,7 @@
+## 0.4.0-dev.150 — opções administrativas: link para Consulta de CEP — 2026-10-18
+
+- Lista de opções administrativas do ACULTA Portal ganha "Consulta de CEP" (`aculta_portal_cep.settings`), com o banco padrão e a ordem das fontes. Ver CHANGELOG do submódulo aculta_portal_cep 0.3.0-dev.6.
+
 ## 0.4.0-dev.149 — status: tema base Bootstrap corrigido (erro falso) — 2026-10-18
 
 - Causa verificada: a linha "Tema base Bootstrap 5" procurava o tema `bootstrap5` e o pacote `drupal/bootstrap5`. O ACULTA420 declara `base theme: bootstrap` e o projeto instala `drupal/bootstrap` 5.0.2 (`composer.json`: `^5.0`). O resultado era "Não encontrado" e erro.
