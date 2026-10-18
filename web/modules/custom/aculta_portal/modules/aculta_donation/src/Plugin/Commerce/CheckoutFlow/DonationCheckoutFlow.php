@@ -38,6 +38,13 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
   protected $requestStack;
 
   /**
+   * Resolve as URLs de cada purpose (escolha de valor no SUPPORT).
+   *
+   * @var \Drupal\aculta_portal\Domain\DomainPurposeManager
+   */
+  protected $purposes;
+
+  /**
    * Current default currency code.
    *
    * @var string
@@ -79,6 +86,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
       'commerce_price.currency_formatter'
     );
     $instance->routeMatch = $container->get('current_route_match');
+    $instance->purposes = $container->get('aculta_portal.domain_purpose');
     if ($instance->order instanceof OrderInterface) {
       $instance->currency = $instance->order->getStore()
         ->getDefaultCurrencyCode();
@@ -315,9 +323,41 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
     // Steps are dynamic based on the submission, so clear to recalculate.
     unset($this->visibleSteps);
     parent::submitForm($form, $form_state);
+    // Doação mensal vira assinatura: pedido próprio, criado pela entrada mensal com o valor escolhido aqui.
+    if ($form['#step_id'] === 'donation' && $this->order->bundle() === 'doacao' && $this->giftIsRecurring($form_state)) {
+      // A entrada de escolha é do SUPPORT (DomainRoutePolicy); o retorno volta ao MAIN pelo próprio pedido.
+      $url = $this->purposes->routeUrl('support', 'aculta_donation.donation.monthly')
+        ?? Url::fromRoute('aculta_donation.donation.monthly');
+      $url->setOption('query', $this->monthlyQuery($form_state));
+      $form_state->setRedirectUrl($url);
+      return;
+    }
     // Override the parent redirect data.
     $nextStepId = $this->getNextStepId($form['#step_id']);
     $form_state->setRedirectUrl($this->getStepUrl($nextStepId));
+  }
+
+  /**
+   * Forma de apoio escolhida no passo de doação é mensal.
+   */
+  private function giftIsRecurring(FormStateInterface $form_state): bool {
+    $gift = $form_state->getValue(['commerce_donation_pane', 'field_gift_type']);
+    $gift = is_array($gift) ? ($gift[0]['value'] ?? $gift['value'] ?? reset($gift)) : $gift;
+    return $gift === 'recurring';
+  }
+
+  /**
+   * Valor escolhido no passo de doação, na forma que a entrada mensal aceita: `nivel` ou `valor`.
+   *
+   * @return array<string, string>
+   */
+  private function monthlyQuery(FormStateInterface $form_state): array {
+    $amounts = $form_state->getValue(['commerce_donation_pane', 'field_donation_amount']);
+    $level = is_array($amounts) ? ($amounts[0]['donation_level'] ?? []) : [];
+    if (($level['value'] ?? NULL) === 'custom_amount') {
+      return ['valor' => (string) ($level['amount'] ?? '')];
+    }
+    return ['nivel' => (string) ($level['value'] ?? '')];
   }
 
   /**

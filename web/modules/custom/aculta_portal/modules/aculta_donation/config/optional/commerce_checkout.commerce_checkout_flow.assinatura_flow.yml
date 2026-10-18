@@ -36,9 +36,8 @@ configuration:
       step: payment
       weight: 3
     payment_process:
-      step: payment
+      step: _disabled
       weight: 4
-      capture: true
     donation_thank_you:
       step: complete
       weight: 5

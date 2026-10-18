@@ -9,6 +9,7 @@ use Drupal\aculta_donation\Form\DonationSettingsForm;
 use Drupal\aculta_donation\NewOrder;
 use Drupal\aculta_donation\Plugin\Commerce\CheckoutFlow\DonationCheckoutFlow;
 use Drupal\aculta_donation\Routing\DonationSecuredRedirectResponse;
+use Drupal\commerce_price\Price;
 use Drupal\commerce_store\CurrentStoreInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -21,6 +22,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -198,6 +200,55 @@ class DonationController implements ContainerInjectionInterface {
       'step' => $stepId,
     ];
     return $this->constructStepRedirect($parameters);
+  }
+
+  /**
+   * Starts a monthly donation: a new order of the assinatura type, with the amount chosen before.
+   *
+   * O valor vem de `nivel` (chave de valor mensal do widget, por exemplo level_2) ou de `valor` (valor digitado). Sem
+   * valor válido, volta à entrada de doação avulsa.
+   */
+  public function monthlyEntry(): RedirectResponse {
+    $query = $this->requestStack->getCurrentRequest()->query;
+    $amount = $this->monthlyAmount($query->get('nivel'), $query->get('valor'));
+    if ($amount <= 0) {
+      return new RedirectResponse(Url::fromRoute('aculta_donation.donation.default')->toString());
+    }
+
+    $config = $this->configFactory->get('aculta_donation.settings');
+    // NewOrder cria o pedido do tipo assinatura para doação mensal e um item de doação com valor zero.
+    $order = $this->newOrders->get('recurring', $config->get('donate_item_type') ?? 'donation');
+    // O pedido precisa de id antes de os itens serem salvos com o valor escolhido.
+    $order->save();
+    foreach ($order->getItems() as $item) {
+      $item->setUnitPrice(new Price((string) $amount, $order->getStore()->getDefaultCurrencyCode()));
+      $item->save();
+    }
+    $order->save();
+    $this->cartSession->addCartId($order->id());
+
+    $stepId = 'placeholder';
+    $checkoutFlowPlugin = $this->checkoutOrderManager->getCheckoutFlow($order)->getPlugin();
+    if ($checkoutFlowPlugin instanceof DonationCheckoutFlow) {
+      $checkoutFlowPlugin->conditionalOrderValue($order);
+      $stepId = $this->checkoutOrderManager->getCheckoutStepId($order);
+    }
+    return $this->constructStepRedirect(['commerce_order' => $order->id(), 'step' => $stepId]);
+  }
+
+  /**
+   * Valor mensal em reais: o valor digitado, ou o valor do nível no widget de doação mensal.
+   */
+  private function monthlyAmount(mixed $level, mixed $custom): int {
+    if (is_numeric($custom) && (float) $custom > 0) {
+      return (int) round((float) $custom);
+    }
+    if (!is_string($level) || $level === '') {
+      return 0;
+    }
+    $display = $this->entityTypeManager->getStorage('entity_form_display')->load('commerce_order_item.donation.donation');
+    $levels = $display?->getComponent('field_donation_amount')['settings']['levels']['monthly'] ?? [];
+    return isset($levels[$level]) && is_numeric($levels[$level]) ? (int) $levels[$level] : 0;
   }
 
   /**

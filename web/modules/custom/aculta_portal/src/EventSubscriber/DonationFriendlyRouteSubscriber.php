@@ -18,6 +18,7 @@ final class DonationFriendlyRouteSubscriber extends RouteSubscriberBase {
   protected function alterRoutes(RouteCollection $collection): void {
     $paths = [
       'aculta_donation.donation.default' => '/apoiar',
+      'aculta_donation.donation.monthly' => '/apoiar/mensal',
       'aculta_donation.donation.quick' => '/apoiar/{amount}/agora',
       'aculta_donation.donation_controller_formPage' => '/apoiar/{commerce_order}/{step}',
     ];

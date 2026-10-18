@@ -1,5 +1,16 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.21 — doação mensal como assinatura e curso no gateway — 2026-10-18
+
+- Entrada mensal `/apoiar/mensal` (rota `aculta_donation.donation.monthly`): cria pedido do tipo `assinatura` com o valor do nível mensal ou o valor digitado.
+- Passo de valor: "Mensal" redireciona à entrada mensal no SUPPORT (DomainRoutePolicy). O pedido avulso não vira assinatura.
+- Fluxo `assinatura_flow`: `payment_process` desligado (`_disabled`). O Commerce instancia sozinho pane de pagamento não listado, e a página mostrava o Checkout Pro avulso. Agora o único passo de pagamento é o pane de autorização, que cria a assinatura no Mercado Pago e redireciona ao link de autorização.
+- Verificado no Runtime de teste: pedido 94 virou assinatura com valor R$ 50; o envio do pagamento criou a assinatura no Mercado Pago (`preapproval`), o pedido ficou em `needs_payment` e o redirecionamento foi para `subscriptions/checkout`.
+- Pendente: autorização pelo comprador de teste no navegador e os tópicos de webhook da assinatura.
+- Gateway Mercado Pago aceita o tipo `curso`. Compra de curso: DEFERRED (não há produto de curso no Runtime de teste).
+- Pedido 93 é uma tentativa anterior à correção: sem itens, em rascunho, no Runtime de teste.
+- RUNTIME STATUS: APLICADO no Runtime de teste (configuração do campo `field_gift_type` com `recurring`, valores mensais de teste 20/50/100 não exportados, fluxo, gateway e cache rebuild). Os valores mensais de produção dependem de decisão do responsável.
+
 ## 0.1.0-dev.20 — checkout de doação chega ao pagamento — 2026-10-18
 
 - Gateway do Mercado Pago aceitava só o tipo de pedido `default` (loja). Doações (`doacao`) e assinaturas (`assinatura`)

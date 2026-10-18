@@ -316,10 +316,11 @@ final class PortalFormCallbacks {
       ? ($giftType[0]['value'] ?? $giftType['value'] ?? reset($giftType))
       : $giftType;
 
-    if ($giftType !== 'single') {
+    // Doação mensal ('recurring') vira assinatura: o submit leva à entrada mensal (DonationCheckoutFlow::submitForm).
+    if (!in_array($giftType, ['single', 'recurring'], TRUE)) {
       $formState->setErrorByName(
         'commerce_donation_pane][field_gift_type',
-        $this->translation->translate('Selecione apoio único.'),
+        $this->translation->translate('Selecione uma forma de apoio válida.'),
       );
       return;
     }

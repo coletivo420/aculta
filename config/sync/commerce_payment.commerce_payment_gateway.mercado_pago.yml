@@ -48,6 +48,7 @@ conditions:
         - default
         - doacao
         - assinatura
+        - curso
   -
     plugin: order_currency
     configuration:

@@ -21,6 +21,16 @@ aculta_donation.donation_controller_formPage:
       commerce_order:
         type: entity:commerce_order
 
+aculta_donation.donation.monthly:
+  path: '/donate/mensal'
+  defaults:
+    _controller: '\Drupal\aculta_donation\Controller\DonationController::monthlyEntry'
+    _title: 'Donate'
+  requirements:
+    _custom_access: '\Drupal\aculta_donation\Controller\DonationController::checkAccess'
+  options:
+    no_cache: true
+
 aculta_donation.donation.quick:
   path: '/donate/{amount}/now'
   defaults:
