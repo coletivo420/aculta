@@ -4,7 +4,7 @@
 - Usa a legenda e as classes de status já existentes (✔ OK, ⚠ Atenção, ✖ Erro; `requirements-status status-*`).
 - Dependência nova do controlador: `aculta_portal_cep.status_report` (o Portal já depende do submódulo).
 - Submódulo aculta_portal_cep 0.3.0-dev.3 (ver o CHANGELOG dele).
-- RUNTIME STATUS: pendente de teste pelo cron no Runtime de teste (ver a execução registrada abaixo).
+- RUNTIME STATUS: APLICADO no Runtime de teste; cron verificado (ViaCEP e BrasilAPI respondendo, base 1.388.509 CEPs versão 2026-10-18); estados de erro, atenção e base ausente verificados com dados simulados e restaurados.
 
 ## 0.4.0-dev.147 — perfis de equipe com o formulário padrão; CEP no checkout — 2026-10-18
 
