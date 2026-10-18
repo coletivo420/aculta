@@ -96,6 +96,56 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     self::assertSame(['answer' => 'Versão anterior'], json_decode($created_values['answer_data'], TRUE));
   }
 
+  public function testRestartArchivesDeletedAnswerWithTimestamps(): void {
+    $answer = $this->buildAnswer(['answer' => 'Resposta da tentativa anterior'], 2, FALSE);
+    $archive_entity = $this->createMock(EntityInterface::class);
+    $archive_entity->expects(self::once())->method('save');
+    $created_values = NULL;
+    $archive_storage = $this->createMock(EntityStorageInterface::class);
+    $archive_storage->expects(self::once())->method('create')->willReturnCallback(
+      function (array $values) use (&$created_values, $archive_entity): EntityInterface {
+        $created_values = $values;
+        return $archive_entity;
+      },
+    );
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->expects(self::once())->method('getStorage')
+      ->with('aculta_lms_attempt_archive')->willReturn($archive_storage);
+
+    $manager = new AttemptArchiveManager(
+      $entity_type_manager,
+      $this->createMock(AccountInterface::class),
+      $this->buildTime(),
+    );
+    $manager->archiveAnswer($answer);
+
+    self::assertSame('deleted', $created_values['event_type']);
+    self::assertSame('answer-uuid-21', $created_values['answer_uuid']);
+    self::assertSame(1200, $created_values['answered']);
+    self::assertSame(2000, $created_values['archived']);
+    self::assertFalse($created_values['evaluated']);
+  }
+
+  public function testUnchangedAnswerDoesNotCreateDuplicateArchive(): void {
+    $answer = $this->buildAnswer(['answer' => 'Sem alterações'], 4, TRUE);
+    $archive_storage = $this->createMock(EntityStorageInterface::class);
+    $archive_storage->expects(self::never())->method('create');
+    $answer_storage = $this->createMock(EntityStorageInterface::class);
+    $answer_storage->expects(self::once())->method('loadUnchanged')->with('21')->willReturn($answer);
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->method('getStorage')->willReturnMap([
+      ['lms_answer', $answer_storage],
+      ['aculta_lms_attempt_archive', $archive_storage],
+    ]);
+    $manager = new AttemptArchiveManager(
+      $entity_type_manager,
+      $this->createMock(AccountInterface::class),
+      $this->buildTime(),
+    );
+
+    $manager->archivePreviousAnswer($answer);
+  }
+
   private function buildAnswer(array $data, int $score, bool $evaluated): AnswerInterface {
     $group = $this->createMock(CourseInterface::class);
     $group->method('id')->willReturn('course-7');

@@ -129,7 +129,8 @@ descrito em `docs/operations/BANCO-DE-TESTE.md`.
 - `tests/src/Unit/CourseCompletionPublisherTest.php`: publicação apenas de
   status passado e finalizado; falha e progresso não publicam evento.
 - `tests/src/Unit/AttemptArchiveManagerTest.php`: preserva dados e notas
-  anteriores antes de edição/reavaliação.
+  anteriores antes de edição/reavaliação/reinício e ignora salvamento sem
+  alteração.
 - `tests/src/Unit/FreeTextReviewFeedbackTest.php`: frases orientam somente o
   feedback formativo e nunca finalizam a nota sem avaliação do educador.
 - `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada do submódulo
