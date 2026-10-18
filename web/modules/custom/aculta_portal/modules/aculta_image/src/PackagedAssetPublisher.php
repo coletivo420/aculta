@@ -51,7 +51,11 @@ final class PackagedAssetPublisher {
 
     $sha = hash('sha256', $bytes);
     $existing = $this->fileSystem->realpath($destination);
-    if ($existing !== FALSE) {
+    // FileSystem::realpath() resolves a stream-wrapper URI to its destination
+    // path even when the file does not exist yet. Treat only an actual regular
+    // file as an immutable existing asset; otherwise the first publication
+    // incorrectly fails while hash_file() receives a missing path.
+    if ($existing !== FALSE && is_file($existing)) {
       if (!hash_equals($sha, hash_file('sha256', $existing) ?: '')) {
         $this->loggerFactory->get('aculta_image')->error('Asset imutável divergiu da origem Composer: {destination}', ['destination' => $destination]);
         return FALSE;
@@ -61,7 +65,7 @@ final class PackagedAssetPublisher {
       if (!$file) {
         return FALSE;
       }
-      $this->record($file->id(), $sha, $origin);
+      $this->record((int) $file->id(), $sha, $origin);
       $this->fileUsage->add($file, 'aculta_image', 'h5p_composer_asset', 'pinned_assets');
       return TRUE;
     }
@@ -103,7 +107,7 @@ final class PackagedAssetPublisher {
     }
     $sha = hash('sha256', $bytes);
     $existingPath = $this->fileSystem->realpath($destination);
-    if ($existingPath !== FALSE) {
+    if ($existingPath !== FALSE && is_file($existingPath)) {
       if (!hash_equals($sha, hash_file('sha256', $existingPath) ?: '')) {
         return FALSE;
       }
@@ -153,7 +157,7 @@ final class PackagedAssetPublisher {
       return FALSE;
     }
     $existingPath = $this->fileSystem->realpath($destination);
-    if ($existingPath === FALSE) {
+    if ($existingPath === FALSE || !is_file($existingPath)) {
       return TRUE;
     }
     if (!hash_equals(hash('sha256', $bytes), hash_file('sha256', $existingPath) ?: '')) {

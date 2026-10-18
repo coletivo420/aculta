@@ -156,6 +156,12 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     $rebuildRoute = $provider->getRouteByName('aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache');
     self::assertSame(['POST'], $rebuildRoute->getMethods());
     self::assertSame('TRUE', $rebuildRoute->getRequirement('_csrf_token'));
+    self::assertInstanceOf(
+      \Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalStorage::class,
+      $this->container->get('aculta_lms_h5p.editor_storage'),
+    );
+    self::assertTrue(class_exists(\Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalAjax::class));
+    self::assertTrue(class_exists(\Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities::class));
     $settings = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\H5PContentUpgradeForm::class);
     $missing = $settings->buildForm([], new \Drupal\Core\Form\FormState(), 999);
     self::assertSame('Biblioteca não encontrada.', (string) $missing['#markup']);

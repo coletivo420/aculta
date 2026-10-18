@@ -16,11 +16,11 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    *
    * @param string $machineName The machine readable name of the library(content type)
    * @param int $majorVersion Major part of version number
-   * @param int $minorVersion Minor part of version number
-   * @param string $languageCode Language code
+   * @param int $minor Minor part of version number
+   * @param string $lang Language code
    * @return string Translation in JSON format
    */
-  public function getLanguage($machineName, $majorVersion, $minorVersion, $languageCode) {
+  public function getLanguage($name, $major, $minor, $lang) {
     $lang = \Drupal::database()->query(
       "SELECT language_json
         FROM {h5p_libraries_languages} hlt
@@ -31,10 +31,10 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
           AND hl.minor_version = :minor
           AND hlt.language_code = :lang",
       [
-        ':name' => $machineName,
-        ':major' => $majorVersion,
-        ':minor' => $minorVersion,
-        ':lang' => $languageCode,
+        ':name' => $name,
+        ':major' => $major,
+        ':minor' => $minor,
+        ':lang' => $lang,
       ])->fetchField();
 
     return ($lang === FALSE ? NULL : $lang);
@@ -45,10 +45,10 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    *
    * @param string $machineName The machine readable name of the library(content type)
    * @param int $majorVersion Major part of version number
-   * @param int $minorVersion Minor part of version number
+   * @param int $minor Minor part of version number
    * @return array List of possible language codes
    */
-  public function getAvailableLanguages($machineName, $majorVersion, $minorVersion) {
+  public function getAvailableLanguages($machineName, $majorVersion, $minor) {
     $results = \Drupal::database()->query(
       "SELECT language_code
       FROM {h5p_libraries_languages} hlt
@@ -60,7 +60,7 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
       [
         ':name' => $machineName,
         ':major' => $majorVersion,
-        ':minor' => $minorVersion
+        ':minor' => $minor
       ]);
 
     $codes = array('en'); // Semantics is 'en' by default.

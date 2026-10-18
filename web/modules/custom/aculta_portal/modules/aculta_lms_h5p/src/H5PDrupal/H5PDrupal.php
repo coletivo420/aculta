@@ -120,14 +120,21 @@ class H5PDrupal implements \H5PFrameworkInterface {
     $set_finished_url = '';
     $content_user_data_url = '';
     if ($course) {
-      $set_finished_url = Url::fromRoute('aculta_lms_h5p.ajax.set_finished', ['group_id' => $course->id(), 'query' => ['token' => \H5PCore::createToken('result')]])->toString(TRUE)->getGeneratedUrl();
+      $set_finished_url = Url::fromRoute(
+        'aculta_lms_h5p.ajax.set_finished',
+        ['group_id' => $course->id()],
+        ['query' => ['token' => \H5PCore::createToken('result')]],
+      )->toString(TRUE)->getGeneratedUrl();
       $content_user_data_url = Url::fromRoute('aculta_lms_h5p.ajax.content_user_data', [
         'group_id' => $course->id(),
-        'content_main_id' => ':contentId',
-        'data_id' => ':dataType',
-        'sub_content_id' => ':subContentId',
-        'query' => ['token' => \H5PCore::createToken('contentuserdata')],
-      ])->toString(TRUE)->getGeneratedUrl();
+        // Route requirements correctly constrain incoming IDs, so generate
+        // with valid sentinels and replace only their path segment afterward.
+        'content_main_id' => 1,
+        'data_id' => 'h5p-placeholder',
+        'sub_content_id' => 0,
+      ], ['query' => ['token' => \H5PCore::createToken('contentuserdata')]])
+        ->toString(TRUE)->getGeneratedUrl();
+      $content_user_data_url = str_replace('/1/h5p-placeholder/0', '/:contentId/:dataType/:subContentId', $content_user_data_url);
     }
     $h5p_url = base_path() . self::getRelativeH5PPath();
 
@@ -139,7 +146,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
       'postUserStatistics' => $user->id() > 0 && $course !== NULL,
       'ajax' => array(
         'setFinished' => $set_finished_url,
-        'contentUserData' => $content_user_data_url === '' ? '' : str_replace('%3A', ':', $content_user_data_url),
+        'contentUserData' => $content_user_data_url,
       ),
       'saveFreq' => $h5p_save_content_state ? $h5p_save_content_frequency : FALSE,
       'l10n' => array(

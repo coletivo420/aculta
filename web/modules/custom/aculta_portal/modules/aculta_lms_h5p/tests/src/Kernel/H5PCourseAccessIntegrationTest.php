@@ -116,6 +116,12 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     $condition = $this->container->get('plugin.manager.condition')->createInstance('aculta_lms_h5p_group_has_activities');
     $condition->setContextValue('group', $course);
     self::assertTrue($condition->evaluate());
+    $integration = \Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal::getGenericH5PIntegrationSettings($course);
+    self::assertStringContainsString(
+      '/h5p-ajax/' . $course->id() . '/content-user-data/:contentId/:dataType/:subContentId?token=',
+      $integration['ajax']['contentUserData'],
+    );
+    self::assertMatchesRegularExpression('/^\/h5p-ajax\/' . $course->id() . '\/set-finished\.json\?token=[a-f0-9]+$/', $integration['ajax']['setFinished']);
 
     // Exercise the real progress endpoint and ensure state is scoped to the
     // authenticated student, course membership, and H5P content.
