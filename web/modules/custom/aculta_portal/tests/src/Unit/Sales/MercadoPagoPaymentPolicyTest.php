@@ -94,4 +94,21 @@ final class MercadoPagoPaymentPolicyTest extends UnitTestCase {
     $this->assertNull($r['estornado']);
   }
 
+
+  public static function estornos(): array {
+    return [
+      'doacao por pedido' => ['doacao', ['donation'], 'doacao', 'donation', TRUE],
+      'doacao por item' => ['default', ['donation'], 'doacao', 'donation', TRUE],
+      'curso por pedido' => ['curso', [], 'doacao', 'donation', TRUE],
+      'curso por item' => ['default', ['curso'], 'doacao', 'donation', TRUE],
+      'compra de loja liberada' => ['default', ['produto'], 'doacao', 'donation', FALSE],
+      'sem configuracao de doacao nao bloqueia' => ['default', ['produto'], '', '', FALSE],
+    ];
+  }
+
+  #[DataProvider('estornos')]
+  public function testBloqueiaEstornoDeDoacaoECurso(string $pedido, array $itens, string $pedidoDoacao, string $itemDoacao, bool $bloqueado): void {
+    $this->assertSame($bloqueado, $this->politica->bloqueiaEstorno($pedido, $itens, $pedidoDoacao, $itemDoacao));
+  }
+
 }

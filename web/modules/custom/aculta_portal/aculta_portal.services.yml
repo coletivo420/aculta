@@ -318,6 +318,11 @@ services:
     class: Drupal\aculta_portal\MercadoPago\RecurrenceRequestBuilder
   aculta_portal.mercado_pago.payment_policy:
     class: Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy
+  aculta_portal.mercado_pago.refund_eligibility_subscriber:
+    class: Drupal\aculta_portal\MercadoPago\RefundEligibilitySubscriber
+    arguments: ['@config.factory', '@aculta_portal.mercado_pago.payment_policy']
+    tags:
+      - { name: event_subscriber }
   aculta_portal.mercado_pago.payment_service:
     class: Drupal\aculta_portal\MercadoPago\MercadoPagoPaymentService
     arguments: ['@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.payment_policy', '@aculta_portal.mercado_pago.logger']

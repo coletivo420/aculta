@@ -194,9 +194,10 @@ $check(
 // 0.4.0-dev.19 adjusts the account-owned Messenger conversation presentation.
 // 0.4.0-dev.90 adds AdministrativeRouteSubscriber (every /painel-administrativo route uses the administrative theme; runs last).
 // 0.4.0-dev.145 moves CepLookupRateLimitSubscriber to the aculta_portal_cep submodule (its own services.yml), so the Portal registers twelve.
+// 0.4.0-dev.153 adds RefundEligibilitySubscriber (nega estorno de doação e de curso no gateway Mercado Pago), so the Portal registers thirteen.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 12,
-  'Portal must register exactly twelve canonical event_subscriber tags (the CEP rate limiter lives in aculta_portal_cep).',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 13,
+  'Portal must register exactly thirteen canonical event_subscriber tags (CEP rate limiter in aculta_portal_cep; refund eligibility subscriber for Mercado Pago).',
 );
 
 $legacyProceduralFunctions = [];

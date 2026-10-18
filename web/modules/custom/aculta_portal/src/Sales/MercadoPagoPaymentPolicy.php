@@ -34,6 +34,37 @@ final class MercadoPagoPaymentPolicy {
   }
 
   /**
+   * Tipo de pedido de curso, criado pela inscrição em turma (aculta_lms).
+   */
+  public const TIPO_CURSO = 'curso';
+
+  /**
+   * Indica se o pedido não pode ser estornado: doação (pedido ou item) e curso não têm estorno.
+   *
+   * Cancelamento de pagamento pendente é operação separada e não passa por esta regra.
+   *
+   * @param string $tipoPedido
+   *   Bundle do pedido.
+   * @param string[] $tiposItens
+   *   Bundles dos itens do pedido.
+   * @param string $tipoPedidoDoacao
+   *   Tipo de pedido de doação configurado em aculta_donation (donate_order_type).
+   * @param string $tipoItemDoacao
+   *   Tipo de item de doação configurado em aculta_donation (donate_item_type).
+   */
+  public function bloqueiaEstorno(string $tipoPedido, array $tiposItens, string $tipoPedidoDoacao, string $tipoItemDoacao): bool {
+    if ($tipoPedido === self::TIPO_CURSO || ($tipoPedidoDoacao !== '' && $tipoPedido === $tipoPedidoDoacao)) {
+      return TRUE;
+    }
+    foreach ($tiposItens as $tipo) {
+      if ($tipo === self::TIPO_CURSO || ($tipoItemDoacao !== '' && $tipo === $tipoItemDoacao)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
    * Pode estornar: o pagamento local está aprovado. O estorno em si é do gateway (refundPayment).
    */
   public function podeEstornar(string $estadoLocal): bool {

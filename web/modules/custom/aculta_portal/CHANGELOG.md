@@ -1,3 +1,15 @@
+## 0.4.0-dev.153 — Mercado Pago: estorno negado para doação e curso; Runtime migrado — 2026-10-18
+
+- Regra: doação (pedido `donate_order_type`, item `donate_item_type`) e curso (pedido ou item `curso`) não têm estorno. Decidida em `MercadoPagoPaymentPolicy::bloqueiaEstorno()` (função pura) e aplicada por `RefundEligibilitySubscriber` ao evento `aculta_pagamentos_mercadopago.refund_eligibility`.
+- Cancelamento de pagamento pendente é operação separada (void), não estorno, e não passa por essa regra.
+- Testes: `MercadoPagoPaymentPolicyTest` 22 testes OK, incluindo o caso de doação, curso e loja. Unit Mercado Pago do Portal: 91 testes, 208 asserções, OK. Kernel do submódulo: OK.
+- Gate Drupal 11+: contagem de assinantes `event_subscriber` passa de 12 para 13 (contrato atualizado com motivo no gate). Resultado: PASS.
+- Runtime de teste (APLICADO e conferido): 3 métodos de pagamento de teste de `teste.comum` apagados (tipo antigo, não reutilizáveis; o pagamento concluído do pedido 13 foi mantido); plugin do gateway `mercado_pago` trocado para `aculta_mercadopago_checkout_pro`; contrib `commerce_mercado_pago` desinstalado; pasta do contrib removida do disco.
+- Incidente no mesmo dia: o `composer install --no-plugins` regenerou o autoload apontando o core para `vendor/`, o que deixou os hosts de teste em 500. Corrigido com `composer install --no-scripts` (plugins ativos). Verificado: Drush, gateway, dados (46 pedidos, 1 pagamento) e hosts principal, conta e retorno respondem 200.
+- Pendente: a loja `/loja-da-aculta` responde 404 porque o alias do caminho não existe no Runtime (já era assim antes desta entrega; ver backup de 2026-10-18).
+- Gate de segurança do commerce (`validate-portal-commerce-security.php`) para na verificação de SMTP2GO, que é do ambiente de e-mail e não foi alterada por esta entrega.
+- RUNTIME STATUS: APLICADO no Runtime de teste (conferido por Drush e HTTP).
+
 ## 0.4.0-dev.152 — método de pagamento único `aculta_mercadopago_checkout_pro` — 2026-10-18
 
 - O único método de pagamento do Portal é `aculta_mercadopago_checkout_pro` (submódulo `aculta_pagamentos_mercadopago` 0.1.0-dev.3). A configuração do gateway `mercado_pago` passa a usar esse plugin.
