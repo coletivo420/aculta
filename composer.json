@@ -283,6 +283,7 @@
         "drupal/email_confirmer": "^1.0",
         "drupal/entity_embed": "^1.7",
         "drupal/entity_usage": "^5.0.1",
+        "drupal/fences": "^3.0",
         "drupal/flag": "^5.1.1",
         "drupal/flood_control": "^3.0",
         "drupal/forum": "^1.1.3",
