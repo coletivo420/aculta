@@ -91,6 +91,31 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     }
   }
 
+  /** An unused unlimited-field editor row passes validation while empty. */
+  public function testEmptyEditorWidgetRowIsAllowed(): void {
+    $owner = $this->createUser();
+    $course = Group::create(['type' => 'lms_course', 'label' => 'Curso H5P vazio', 'uid' => $owner->id()]);
+    $course->save();
+    $widget = $this->container->get('plugin.manager.field.widget')->getInstance([
+      'field_definition' => $course->getFieldDefinition('field_h5p_activities'),
+      'configuration' => ['type' => 'h5p_editor'],
+    ]);
+    $formState = new \Drupal\Core\Form\FormState();
+    $formState->setValue(
+      ['field_h5p_activities', 0, 'h5p_content'],
+      ['library' => '', 'parameters' => ''],
+    );
+    $element = [
+      '#value' => '',
+      '#parents' => ['field_h5p_activities', 0, 'h5p_content', 'parameters'],
+    ];
+
+    $widget->validateParameters($element, $formState);
+    $widget->validate(['#value' => ''], $formState);
+
+    self::assertSame([], $formState->getErrors());
+  }
+
   /** A learner can open only H5P content referenced by a course they can take. */
   public function testPlaybackRequiresCurrentCourseMembershipAndFieldReference(): void {
     $owner = $this->createUser();

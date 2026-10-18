@@ -144,6 +144,12 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
    */
   public function validate($element, FormStateInterface $form_state) {
     $value = (string) ($element['#value'] ?? '');
+    // An unused multiple-value row and a deliberately cleared editor both
+    // submit an empty library. The field item's massage step handles those
+    // values; they are not malformed library names.
+    if ($value === '') {
+      return;
+    }
     $library = \H5PCore::libraryFromString($value);
     if (!is_array($library) || !$this->courseHasEditorAccess($form_state, $this->contentIdForElement($form_state, $element))) {
       $form_state->setError($element, $this->t('Não foi possível validar o tipo de atividade para este curso.'));
@@ -171,6 +177,14 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
   /** Validates submitted editor data before it reaches the H5P storage layer. */
   public function validateParameters(array &$element, FormStateInterface $form_state): void {
     $value = (string) ($element['#value'] ?? '');
+    $valueParents = $element['#parents'];
+    array_pop($valueParents);
+    $submitted = $form_state->getValue($valueParents, []);
+    if ($value === '' && empty($submitted['library'])) {
+      // Field API renders an additional empty row for unlimited fields. Allow
+      // it to remain blank; if a library was selected, parameters are required.
+      return;
+    }
     if ($value === '' || strlen($value) > 2_000_000) {
       $form_state->setError($element, $this->t('O conteúdo da atividade está vazio ou excede o limite permitido.'));
       return;
@@ -184,9 +198,6 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
       return;
     }
 
-    $valueParents = $element['#parents'];
-    array_pop($valueParents);
-    $submitted = $form_state->getValue($valueParents, []);
     $library = \H5PCore::libraryFromString((string) ($submitted['library'] ?? ''));
     if (!is_array($library) || !$this->libraryAccess->canUse(
       (string) $library['machineName'],
@@ -198,8 +209,20 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
       return;
     }
 
+    $libraryName = (string) ($submitted['library'] ?? '');
+    $libraryParameters = (object) [
+      'library' => $libraryName,
+      'params' => $parameters->params,
+      'metadata' => $parameters->metadata,
+    ];
     $validator = H5PDrupal::getInstance('contentvalidator');
-    $validator->validateLibrary($parameters, (object) ['options' => [(string) ($submitted['library'] ?? '')]]);
+    $validator->validateLibrary($libraryParameters, (object) ['options' => [$libraryName]]);
+    if (!($libraryParameters instanceof \stdClass)) {
+      $form_state->setError($element, $this->t('Os parâmetros não correspondem ao tipo de atividade selecionado.'));
+      return;
+    }
+    $parameters->params = $libraryParameters->params;
+    $parameters->metadata = $libraryParameters->metadata;
     $form_state->setValueForElement($element, json_encode($parameters, JSON_THROW_ON_ERROR));
   }
 

@@ -185,7 +185,9 @@ final class H5PLibraryHooks {
     // The PHP H5P Editor library supplies editor behavior; this Drupal library
     // attaches its ordered assets to the Group field widget.
     $libraries['h5p.editor'] = [
-      'version' => '1.0',
+      // Leave the version unset so Drupal hashes asset contents for aggregate
+      // cache keys and uses its resettable asset query string for standalone
+      // files. A fixed version leaves browsers serving stale editor behavior.
       'license' => [
         'name' => 'GPL-3.0-only',
         'url' => 'https://github.com/h5p/h5p-editor-php-library',

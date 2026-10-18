@@ -6,6 +6,12 @@
 - RUNTIME STATUS: DEFERRED.
 ## Continuação — instalação de bibliotecas H5P
 
+- Remove a versão fixa da biblioteca dinâmica `h5p.editor`: no Drupal 11.4 ela impedia a invalidação do URL do editor após mudanças no JS. A descoberta Kernel confirma que todos os assets do editor usam o cache busting nativo baseado em conteúdo/limpeza de cache.
+- Coordena a serialização de todos os editores H5P em um único handler por formulário, usando a API do editor instalado (`getLibrary()`/`getParams()`), ignora widgets vazios/removidos e descarta instâncias após substituição AJAX. O smoke visual detectou que o editor substitui seu nó raiz pelo iframe durante o `detach('unload')`; o registry agora preserva o editor enquanto esse iframe continuar conectado.
+- Permite que a linha vazia padrão de um campo H5P multivalorado seja submetida sem erro; biblioteca selecionada continua exigindo parâmetros válidos.
+- Corrige a sanitização do payload do editor: o H5P Core recebe o envelope `{library, params, metadata}` que sua API valida; os parâmetros sanitizados e metadados voltam ao formato de armazenamento do widget.
+- Runtime UI smoke (Homelab): iframe preservado durante attach/detach, biblioteca selecionada e payload HelloWorld serializado com texto e metadados. A validação do curso exige ao menos uma aula; persistência e playback ponta a ponta seguem DEFERRED.
+
 - Corrige o schema de configuração e os nomes usados pelo adapter H5P para compartilhar o prefixo `aculta_lms_h5p_` definido na configuração de instalação.
 - Migra a entidade e o field type H5P para PHP Attributes do Drupal 11; troca a descoberta de bibliotecas pelo serviço atual do Core.
 - Instalação real via Kernel passou com biblioteca, asset JavaScript privado e SVG gerenciado pelo `aculta_image`; pacote sem biblioteca é rejeitado sem escrita no banco.
