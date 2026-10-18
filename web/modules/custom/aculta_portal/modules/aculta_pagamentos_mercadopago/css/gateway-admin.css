@@ -1,0 +1,25 @@
+/**
+ * @file
+ * Styles for Mercado Pago gateway configuration form (Test/Prod credentials).
+ */
+
+.mercado-pago-credentials {
+  padding: 1rem 1.25rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.mercado-pago-credentials-test {
+  background-color: #f0f7ff;
+  border-color: #b8d4e8;
+}
+
+.mercado-pago-credentials-stage {
+  background-color: #fff8f0;
+  border-color: #e8d4b8;
+}
+
+.mercado-pago-credentials-prod {
+  background-color: #f0fff4;
+  border-color: #b8e8c4;
+}
