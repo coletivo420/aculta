@@ -3,7 +3,9 @@
 O projeto usa CTools 4.1 como API de apoio ao Views, por meio do submódulo
 `ctools_views`. O pacote já chegava ao Composer de forma transitiva pelo
 Pathauto; agora é dependência direta porque `aculta_portal` exige os módulos
-`ctools` e `ctools_views`.
+`ctools` e `ctools_views`. O submódulo `ctools_entity_mask` também está
+habilitado como capacidade disponível, mas nenhum tipo de entidade do projeto
+declara atualmente uma máscara.
 
 ## Uso aplicado
 
@@ -29,3 +31,24 @@ uso revisado.
   apresentação editorial de cada bloco.
 - CTools é extensão da experiência de configuração do bloco; a View e o Core
   continuam donos da consulta, access e cache.
+
+## Entity Mask
+
+`ctools_entity_mask` permite que um **tipo de entidade customizado** declare,
+na definição PHP do tipo, outro tipo do qual copiará campos e configurações de
+formulário/exibição. Não é uma configuração que se ativa para os módulos
+Webform ou Commerce, nem uma forma de copiar a configuração de formulários
+Webform ou panes de checkout.
+
+Webform usa `WebformEntityStorage` e `WebformSubmissionStorage`; Commerce usa
+armazenamentos próprios para pedidos e itens. Entity Mask só troca o storage
+quando a entidade mascarada usa exatamente o storage SQL padrão do Core. Não
+marcar esses tipos transacionais como máscaras: isso não é compatível com seus
+handlers e poderia comprometer persistência e comportamento de domínio.
+
+O LMS customizado não apresenta hoje um tipo de entidade com campos e displays
+equivalentes a outro tipo que justifique a máscara. O tipo H5P `h5p_content`
+encontrado no código de desenvolvimento tem campos próprios e storage/schema
+próprios; ele não é candidato a mascarar Webform ou Commerce. Reavaliar somente
+se surgir um novo tipo de entidade customizado que precise compartilhar
+intencionalmente o conjunto de campos e displays de outro tipo.

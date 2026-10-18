@@ -1,3 +1,10 @@
+## 0.4.0-dev.135 — Entity Mask disponível para tipos customizados — 2026-10-18
+
+- Habilita `ctools_entity_mask` na configuração exportável e no Runtime de testes, conforme solicitado.
+- Webform e Commerce não recebem máscaras: suas entidades de submissão, pedido e item usam storages especializados; a integração exigiria alterar a definição de entidades transacionais e não é compatível com a função do módulo.
+- Revisado o tipo H5P customizado e os plugins do Portal/LMS; nenhum caso atual justifica compartilhar campos/displays por Entity Mask.
+- RUNTIME STATUS: módulo habilitado no Runtime `aculta_runtime`; cache reconstruído. Nenhum tipo de entidade do projeto declara `mask`.
+
 ## 0.4.0-dev.134 — controles CTools para o bloco de próximas atividades — 2026-10-18
 
 - Declara CTools 4.1 como dependência direta e habilita CTools + CTools Views no Runtime/configuração exportada.
