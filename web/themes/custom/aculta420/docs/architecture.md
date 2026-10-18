@@ -74,9 +74,10 @@ which CAPTCHA engine is enabled.
 
 ### Hooks e configuração
 
-Hooks do tema vivem em `src/Hook/ThemeHooks.php`, usam `#[Hook]` e DI/autowiring.
-A Foundation não usa arquivo `.theme` procedural nem service locator
-`\\Drupal::` no tema.
+Hooks do tema vivem em `src/Hook/` e usam `#[Hook]`; a implementação e os
+métodos atuais estão no [inventário de classes e hooks](classes-hooks.md).
+`ThemeHooks` recebe dependências por construtor. O tema não usa arquivo `.theme`
+procedural nem service locator `\\Drupal::` em `src/`.
 
 `aculta420.settings` contém somente apresentação/integração com Bootstrap e
 assets padrão do tema. Referências funcionais institucionais pertencem ao

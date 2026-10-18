@@ -30,12 +30,12 @@ Regra central: **o tema não decide nada do Messenger.** Ele recebe dados pronto
 
 | Variável | Vinda de | Forma | Usado por |
 | --- | --- | --- | --- |
-| `aculta_messenger` | `MessengerBarHooks::preprocessPage` | `{ url, unread_count }` | `ThemeHooks::presentMessengerTrigger` |
-| `aculta_messenger_trigger` | `ThemeHooks` | render array `messenger-trigger` | `page.html.twig` |
+| `aculta_messenger` | `aculta_messenger` → `MessengerBarHooks::preprocessPage()` no módulo | `{ url, unread_count, all_url }` | `ThemeHooks::presentMessengerTrigger()` |
+| `aculta_messenger_trigger` | `ThemeHooks::presentMessengerTrigger()` | render array `messenger-trigger` | `page.html.twig` |
 | `aculta_messenger_outgoing` | `PrivateMessagePresentationHooks` | bool | `messenger-item` (`outgoing`) |
 | `aculta_messenger_sender_avatar` | `PrivateMessagePresentationHooks` | render array do avatar | `messenger-item` (`avatar`) |
 | `aculta_messenger_read_status` | `PrivateMessagePresentationHooks` | estado nativo de leitura | `messenger-read-status` |
-| `aculta_alerts` | `MessengerBarHooks` | avisos ativos | `alerts-trigger` (contagem) |
+| `aculta_alerts` | `MessengerBarHooks::preprocessPage()` | `{ url, count, count_kind, all_url }` | `ThemeHooks::presentAlertsTrigger()` |
 
 Regra: o tema **não** lê `private_message_thread`, `aculta_friendship`, `user.data` nem serviços. Se precisar de um dado novo, peça ao módulo uma variável neutra e documente aqui.
 
@@ -164,6 +164,10 @@ Regras do projeto para o CSS do Messenger:
 
 ## 8. Hooks PHP do tema que tocam o Messenger
 
+O inventário de todos os hooks e classes do tema fica em
+[`classes-hooks.md`](classes-hooks.md). Esta tabela registra somente o fluxo
+específico do Messenger e seus pontos de apresentação.
+
 | Classe | Hook | Método | Para que serve |
 | --- | --- | --- | --- |
 | `ThemeHooks` | `preprocess_page` | `preprocessPage` | Chama `presentMessengerPage` e `presentMessengerTrigger`. |
@@ -174,7 +178,9 @@ Regras do projeto para o CSS do Messenger:
 | `PortalUiHooks` | `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_input`, `preprocess_form_element`, `preprocess_menu`, … | `preprocess` / `preprocessMenu` | Troca tokens por classes (`TOKENS`). |
 | `PortalUiHooks` | `preprocess_details` (ordem última) | `preprocessDetails` | Mapeia a caixa "Opções" depois do acordeão do Bootstrap. |
 
-Ordem de hooks: o módulo injeta em `preprocess_page` e o tema consome depois, em hook OOP. **Não crie** `template_preprocess_*` legado (regra do Portal).
+Ordem de hooks: o módulo `aculta_messenger` prepara as variáveis neutras em
+`preprocess_page`; o tema converte esses dados em componentes durante o mesmo
+hook OOP. **Não crie** `template_preprocess_*` legado.
 
 ## 9. Receitas
 
