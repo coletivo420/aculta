@@ -2,6 +2,10 @@
 
 Índice do tema e do design system. Só documentos normativos e de referência vigentes.
 
+Catálogo visual, stories dos SDCs e referência rápida para desenvolvedores/Agentes:
+[ACULTA420 Storybook](../../../../../storybook/README.md). O Storybook apresenta os mesmos componentes
+implementados no tema; as regras normativas continuam nos documentos abaixo e em `AGENTS.md`.
+
 1. [architecture.md](architecture.md) — camadas, fronteiras e regras de apresentação.
 2. [shell.md](shell.md) — contrato do shell multidomínio.
 3. [components.md](components.md) — componentes SDC, schemas e status.

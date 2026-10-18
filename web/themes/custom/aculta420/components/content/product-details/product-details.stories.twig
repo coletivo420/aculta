@@ -1,0 +1,13 @@
+{% stories product_details with { title: "Content/Informações adicionais do produto" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    category: "Bloco Sativa",
+    sizes: "P, M, G, GG e XXG"
+  } } %}
+    {{ include('aculta420:product-details', {
+      category: "Bloco Sativa",
+      sizes: "P, M, G, GG e XXG"
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

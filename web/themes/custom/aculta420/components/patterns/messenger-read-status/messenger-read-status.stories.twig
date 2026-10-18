@@ -1,0 +1,13 @@
+{% stories messenger_read_status with { title: "Patterns/Estado de leitura da conversa" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    unread: true,
+    notice: false
+  } } %}
+    {{ include('aculta420:messenger-read-status', {
+      unread: true,
+      notice: false
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

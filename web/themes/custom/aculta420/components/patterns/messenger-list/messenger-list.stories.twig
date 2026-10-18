@@ -1,0 +1,15 @@
+{% stories messenger_list with { title: "Patterns/Messenger list" } %}
+
+  {% story lista_de_mensagens with { name: "Lista de mensagens", args: {
+    label: "Conversas"
+  } } %}
+    {% set content %}
+<ul><li>Exemplo de item de mensagem</li></ul>
+    {% endset %}
+    {{ include('aculta420:messenger-list', {
+      content: content,
+      label: "Conversas"
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

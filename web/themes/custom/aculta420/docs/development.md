@@ -12,7 +12,7 @@
 - `once()`;
 - Drupal libraries.
 
-Sem Node/Vite/Sass/PostCSS por padrão.
+O runtime do tema não tem etapa Node/Vite/Sass/PostCSS. O Storybook usa Node/Vite isolado em `/storybook` apenas para documentação e desenvolvimento.
 
 ## Machine name
 
@@ -182,6 +182,7 @@ Após qualquer mudança estrutural do tema:
 
 ```sh
 vendor/bin/drush php:script validate-aculta420-foundation --script-path=../scripts
+php scripts/validate-aculta420-storybook.php
 ```
 
 O gate falha se reaparecerem provider legado, arquivo `.theme`, catch-all CSS,

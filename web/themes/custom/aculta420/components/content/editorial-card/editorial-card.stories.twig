@@ -1,0 +1,43 @@
+{% stories editorial_card with { title: "Cards/Editorial card" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+  } } %}
+    {% set category %}
+Institucional
+    {% endset %}
+    {% set title %}
+Quem somos
+    {% endset %}
+    {% set summary %}
+Conheça a história e a missão da associação.
+    {% endset %}
+    {% set cta %}
+<a href="#">Conheça nossa história</a>
+    {% endset %}
+    {{ include('aculta420:editorial-card', {
+      category: category,
+      title: title,
+      summary: summary,
+      cta: cta
+    }, with_context = false) }}
+  {% endstory %}
+
+  {% story sem_chamada with { name: "Sem chamada", args: {
+  } } %}
+    {% set category %}
+Transparência
+    {% endset %}
+    {% set title %}
+Documentos institucionais
+    {% endset %}
+    {% set summary %}
+Estatuto, atas e relatórios.
+    {% endset %}
+    {{ include('aculta420:editorial-card', {
+      category: category,
+      title: title,
+      summary: summary
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

@@ -4,14 +4,14 @@
 plataforma Drupal da Associação Cultural Antiproibicionista.
 
 - machine name: `aculta420`;
-- versão no código: **0.6.0-dev.72** (`aculta420.info.yml`; linha 0.6.x em desenvolvimento); sem tag Git (tags só por pedido). Histórico em `CHANGELOG.md` e `docs/roadmap.md`;
+- versão no código: **0.6.0-dev.80** (`aculta420.info.yml`; linha 0.6.x em desenvolvimento); sem tag Git (tags só por pedido). Histórico em `CHANGELOG.md` e `docs/roadmap.md`;
 - Drupal: `^11`;
 - base theme: `bootstrap` (`drupal/bootstrap` 5.0.2);
 - Bootstrap Framework: `5.3.8`, instalado pelo Composer em `web/libraries/bootstrap`;
 - Bootstrap Icons: `1.11.0`, distribuído pelo ACULTA420 com licença MIT;
 - Display Suite: `3.37.0`, com layouts ACULTA420 responsivos de duas e três colunas;
 - SDC: Drupal Core;
-- build tooling: nenhum por padrão.
+- documentação visual: Storybook 10 com renderer Drupal Server, stories Twig do módulo `drupal/storybook` e páginas MDX; dependências JS isoladas em `storybook/`.
 
 ## Arquitetura
 
@@ -108,6 +108,14 @@ web/themes/custom/aculta420/
 
 Os componentes podem ser agrupados em subdiretórios de `components/`; o Core
 SDC suporta essa organização.
+
+## Storybook
+
+O [Storybook ACULTA420](../../../../storybook/README.md) cataloga os SDCs e apresenta a documentação navegável do tema para desenvolvedores e agentes. Todo SDC possui `*.stories.twig` que inclui o componente real; a saída JSON é gerada localmente por Drush e não é versionada.
+
+O módulo Drupal Storybook é dependência de desenvolvimento (`require-dev`) e suas stories só devem ser renderizadas para administradores. `storybook.development` permanece `false`; o endpoint não é aberto a anônimos. Consulte o README do Storybook para credenciais/cookies, CORS local restrito e comandos de compilação.
+
+Gate obrigatório: `php scripts/validate-aculta420-storybook.php`.
 
 ## Documentação
 

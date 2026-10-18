@@ -1,0 +1,23 @@
+{% stories rail with { title: "Patterns/Rail" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    label: "Cursos"
+  } } %}
+    {% set items %}
+<div class="card"><div class="card-body">Curso um</div></div><div class="card"><div class="card-body">Curso dois</div></div>
+    {% endset %}
+    {{ include('aculta420:rail', {
+      items: items,
+      label: "Cursos"
+    }, with_context = false) }}
+  {% endstory %}
+
+  {% story vazio with { name: "Vazio", args: {
+    label: "Cursos"
+  } } %}
+    {{ include('aculta420:rail', {
+      label: "Cursos"
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

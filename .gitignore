@@ -45,6 +45,9 @@ secrets.env
 /tmp/
 temp/
 .cache/
+/storybook/node_modules/
+/storybook/storybook-static/
+/web/themes/custom/aculta420/components/**/*.stories.json
 
 # IDEs/editors
 .idea/

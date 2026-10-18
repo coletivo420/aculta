@@ -1,0 +1,51 @@
+{% stories wiki_entry with { title: "Wiki/Wiki entry" } %}
+
+  {% story wiki_entry with { name: "Wiki entry", args: {
+    variant: "article",
+    url: "/wiki/verbetes/exemplo",
+    has_summary: true,
+    has_image: true,
+    has_categories: true,
+    has_related: true,
+    has_references: true
+  } } %}
+    {% set title %}
+Exemplo de verbete
+    {% endset %}
+    {% set summary %}
+<p>Uma síntese breve, com fonte e contexto, apresenta o tema ao leitor.</p>
+    {% endset %}
+    {% set image %}
+<figure><div class="ratio ratio-4x3 bg-body-secondary"></div><figcaption>Imagem ilustrativa</figcaption></figure>
+    {% endset %}
+    {% set categories %}
+<div class="field"><div class="field__label">Categorias</div><div class="field__item"><a href="#">História</a></div></div>
+    {% endset %}
+    {% set body %}
+<p>O texto do verbete usa parágrafos legíveis, títulos claros e ligações internas.</p><h2>História</h2><p>Conteúdo editorial preparado no Drupal.</p>
+    {% endset %}
+    {% set related %}
+<div class="field"><div class="field__label">Ver também</div><div class="field__item"><a href="#">Outro verbete</a></div></div>
+    {% endset %}
+    {% set references %}
+<div class="field"><div class="field__label">Referências</div><ol><li><a href="#">Fonte consultada</a></li></ol></div>
+    {% endset %}
+    {{ include('aculta420:wiki-entry', {
+      title: title,
+      summary: summary,
+      image: image,
+      categories: categories,
+      body: body,
+      related: related,
+      references: references,
+      variant: "article",
+      url: "/wiki/verbetes/exemplo",
+      has_summary: true,
+      has_image: true,
+      has_categories: true,
+      has_related: true,
+      has_references: true
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

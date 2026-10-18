@@ -1,0 +1,39 @@
+{% stories hero with { title: "Patterns/Hero" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    eyebrow: "Associação Cultural",
+    title: "Associação Cultural Antiproibicionista",
+    slogan: "Lutando por um futuro livre da proibição.",
+    lead: "Cultura, informação e cuidado coletivo."
+  } } %}
+    {% set actions %}
+<a class="btn btn-primary" href="#">Conheça a associação</a> <a class="btn btn-outline-primary" href="#">Nossos projetos</a>
+    {% endset %}
+    {{ include('aculta420:hero', {
+      actions: actions,
+      eyebrow: "Associação Cultural",
+      title: "Associação Cultural Antiproibicionista",
+      slogan: "Lutando por um futuro livre da proibição.",
+      lead: "Cultura, informação e cuidado coletivo."
+    }, with_context = false) }}
+  {% endstory %}
+
+  {% story m_nimo with { name: "Mínimo", args: {
+    title: "Associação Cultural Antiproibicionista"
+  } } %}
+    {{ include('aculta420:hero', {
+      title: "Associação Cultural Antiproibicionista"
+    }, with_context = false) }}
+  {% endstory %}
+
+  {% story sem_a_es with { name: "Sem ações", args: {
+    title: "Associação Cultural Antiproibicionista",
+    slogan: "Lutando por um futuro livre da proibição."
+  } } %}
+    {{ include('aculta420:hero', {
+      title: "Associação Cultural Antiproibicionista",
+      slogan: "Lutando por um futuro livre da proibição."
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

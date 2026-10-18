@@ -1,0 +1,15 @@
+{% stories institutional_notice with { title: "Content/Institutional notice" } %}
+
+  {% story aviso_institucional with { name: "Aviso institucional", args: {
+    severity: "medium"
+  } } %}
+    {% set message %}
+<p>Comunicado temporário da associação.</p>
+    {% endset %}
+    {{ include('aculta420:institutional-notice', {
+      message: message,
+      severity: "medium"
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

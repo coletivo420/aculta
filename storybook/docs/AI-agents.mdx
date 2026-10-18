@@ -1,0 +1,26 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="IA e agentes" />
+
+# Guia para IA e agentes
+
+Use esta página como índice visual; as instruções de `AGENTS.md` e os documentos normativos são obrigatórios e prevalecem.
+
+## Antes de editar
+
+- Leia `AGENTS.md`, `docs/portal/GUARDRAILS.md`, `docs/portal/DRUPAL-11-STANDARDS.md`, `docs/operations/DEBT-REGISTER.md` e os documentos específicos do tema.
+- Verifique `git status`, branch, histórico e versão instalada do Core/contrib. Para decisões Drupal 11+, pesquise a API e documentação upstream atual.
+- Não altere Drupal Core, contrib, produção, credenciais ou banco sem autorização adequada e inspeção do efeito/recuperação.
+- Tema não é autorizado automaticamente para alterações do Portal: mantenha fronteiras e peça direção quando o escopo atravessar camadas.
+
+## Ao criar uma story
+
+- Use o componente SDC real e os props/slots declarados no schema.
+- Mock apenas conteúdo de apresentação. Não simule decisões de access, cache, identidade, pagamento, autenticação ou estado de entidades.
+- Não use conteúdo institucional inventado como fato. Exemplos precisam ser marcados como demonstração.
+- Preserve acessibilidade, tokens ACULTA e comportamento Bootstrap existente.
+- Mantenha `*.story.yml` do UI Patterns Library enquanto ela for usada; esse formato é diferente do Twig consumido pelo Storybook.
+
+## Encerramento
+
+Mudanças incrementais, com documentação e testes proporcionais ao risco. Para fases do tema, seguir a regra do repositório de PR próprio, resumo do escopo, limites, evidências e status do Runtime. Storybook não substitui revisão de código nem gates.

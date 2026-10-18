@@ -1,0 +1,39 @@
+{% stories messenger_state with { title: "Feedback/Messenger state" } %}
+
+  {% story estado_vazio with { name: "Estado vazio", args: {
+    state: "empty"
+  } } %}
+    {% set content %}
+<p>Você ainda não recebeu notificações.</p>
+    {% endset %}
+    {{ include('aculta420:messenger-state', {
+      content: content,
+      state: "empty"
+    }, with_context = false) }}
+  {% endstory %}
+
+  {% story erro with { name: "Erro", args: {
+    state: "error"
+  } } %}
+    {% set content %}
+<p>Não foi possível carregar as notificações.</p>
+    {% endset %}
+    {{ include('aculta420:messenger-state', {
+      content: content,
+      state: "error"
+    }, with_context = false) }}
+  {% endstory %}
+
+  {% story carregando with { name: "Carregando", args: {
+    state: "loading"
+  } } %}
+    {% set content %}
+<p>Carregando mensagens…</p>
+    {% endset %}
+    {{ include('aculta420:messenger-state', {
+      content: content,
+      state: "loading"
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

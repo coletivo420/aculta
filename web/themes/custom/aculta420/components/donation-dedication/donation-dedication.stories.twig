@@ -1,0 +1,17 @@
+{% stories donation_dedication with { title: "Fieldset/Dedication" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    legend: "Conteúdo de demonstração",
+    dedication_type: "Conteúdo de demonstração",
+    honoree_first: "Conteúdo de demonstração",
+    honoree_last: "Conteúdo de demonstração"
+  } } %}
+    {{ include('aculta420:donation-dedication', {
+      legend: "Conteúdo de demonstração",
+      dedication_type: "Conteúdo de demonstração",
+      honoree_first: "Conteúdo de demonstração",
+      honoree_last: "Conteúdo de demonstração"
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

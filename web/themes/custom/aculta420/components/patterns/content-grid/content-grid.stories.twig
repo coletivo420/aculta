@@ -1,0 +1,27 @@
+{% stories content_grid with { title: "Patterns/Content grid" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    columns: 2
+  } } %}
+    {% set items %}
+<div class="card"><div class="card-body">Item um</div></div><div class="card"><div class="card-body">Item dois</div></div>
+    {% endset %}
+    {{ include('aculta420:content-grid', {
+      items: items,
+      columns: 2
+    }, with_context = false) }}
+  {% endstory %}
+
+  {% story tr_s_colunas with { name: "Três colunas", args: {
+    columns: 3
+  } } %}
+    {% set items %}
+<div class="card"><div class="card-body">Item um</div></div><div class="card"><div class="card-body">Item dois</div></div><div class="card"><div class="card-body">Item três</div></div>
+    {% endset %}
+    {{ include('aculta420:content-grid', {
+      items: items,
+      columns: 3
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

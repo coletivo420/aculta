@@ -1,0 +1,11 @@
+{% stories donation_pane with { title: "Panes/Donation" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    elements: "Conteúdo de demonstração"
+  } } %}
+    {{ include('aculta420:donation-pane', {
+      elements: "Conteúdo de demonstração"
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

@@ -1,0 +1,17 @@
+{% stories revista_publication with { title: "Revista/Revista publication" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    has_subtitle: true,
+    has_summary: true,
+    has_cover: true,
+    has_footer: true
+  } } %}
+    {{ include('aculta420:revista-publication', {
+      has_subtitle: true,
+      has_summary: true,
+      has_cover: true,
+      has_footer: true
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

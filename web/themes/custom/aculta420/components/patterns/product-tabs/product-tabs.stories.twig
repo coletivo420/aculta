@@ -1,0 +1,13 @@
+{% stories product_tabs with { title: "Patterns/Abas do produto" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    id: "aculta-produto-abas",
+    review_count: 0
+  } } %}
+    {{ include('aculta420:product-tabs', {
+      id: "aculta-produto-abas",
+      review_count: 0
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

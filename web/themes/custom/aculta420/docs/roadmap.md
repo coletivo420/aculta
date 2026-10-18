@@ -171,7 +171,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 - Portal (0.2.0-dev.18): `ColorModePreference` resolve o modo e publica o contrato `aculta_color_mode`. O tema não lê usuário nem configuração.
 - Tema: `ThemeHooks::preprocessHtml` aplica `data-bs-theme` diretamente em `html_attributes`, conforme o contrato resolvido pelo Portal. A base Drupal Bootstrap preserva esses atributos; em `auto`, o tema remove o atributo e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`.
 - Sem JavaScript de modo e sem `localStorage`. Tokens da barra institucional não foram alterados.
-- Evidência no Runtime oficial (`https://aculta.toca.net.br`, código da `main` em `ce87dcb`):
+- Evidência no Runtime oficial, com código da `main` em `ce87dcb` (host omitido para evitar confusão entre ambientes):
   - roteiro automatizado: 7 de 7 checagens (padrão global, escolha da pessoa usuária, HTML anônimo e logado, cache invalidado após salvar);
   - HTTP: `light` → `"light"`, `dark` → `"dark"`, `auto` → `""`;
   - automático no navegador: sistema escuro → fundo `rgb(23,21,19)`; claro → `rgb(242,247,240)`;

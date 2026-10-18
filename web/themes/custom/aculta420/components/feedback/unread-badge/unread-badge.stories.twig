@@ -1,0 +1,11 @@
+{% stories unread_badge with { title: "Feedback/Unread badge" } %}
+
+  {% story contador_n_o_lidas with { name: "Contador não lidas", args: {
+    count: 3
+  } } %}
+    {{ include('aculta420:unread-badge', {
+      count: 3
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

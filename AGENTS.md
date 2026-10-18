@@ -340,6 +340,14 @@ Prioridades:
 - SEO técnico
 - facilidade de manutenção
 
+### Storybook obrigatório para ACULTA420
+
+- Toda alteração em `web/themes/custom/aculta420/` que crie ou mude um SDC, sua aparência, tokens, markup, estados, contrato de props/slots ou integração visual deve atualizar a story e a documentação correspondente no Storybook (`storybook/` e `components/**/*.stories.twig`).
+- Todo SDC novo precisa de `*.stories.twig` que renderize o componente SDC real e demonstre os estados/variantes relevantes; mocks são apenas de apresentação e não simulam acesso, cache, entidades ou regras do Portal.
+- Alterações em hooks, templates, CSS ou JavaScript que mudem comportamento/contrato do tema devem atualizar a página Storybook aplicável (Arquitetura, Desenvolvimento, Acessibilidade, Sistema visual ou Componentes), além da documentação normativa Markdown quando aplicável.
+- Não considerar concluída uma mudança de tema sem executar `php scripts/validate-aculta420-storybook.php`; para uma validação visual, compilar os arquivos Storybook pelo Drush de desenvolvimento e revisar a story no Storybook autenticado.
+- O Markdown normativo continua obrigatório para agentes e permanece fonte de verdade das regras. Storybook é sua referência visual e navegável, não substitui `AGENTS.md`, gates ou revisão.
+
 Evitar page builders pesados.
 
 Evitar dependências JavaScript desnecessárias.

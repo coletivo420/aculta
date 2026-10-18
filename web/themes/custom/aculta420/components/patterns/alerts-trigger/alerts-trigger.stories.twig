@@ -1,0 +1,17 @@
+{% stories alerts_trigger with { title: "Patterns/Avisos na barra multidomínio" } %}
+
+  {% story padr_o with { name: "Padrão", args: {
+    href: "#",
+    count: 0,
+    count_kind: "active",
+    all_href: ""
+  } } %}
+    {{ include('aculta420:alerts-trigger', {
+      href: "#",
+      count: 0,
+      count_kind: "active",
+      all_href: ""
+    }, with_context = false) }}
+  {% endstory %}
+
+{% endstories %}

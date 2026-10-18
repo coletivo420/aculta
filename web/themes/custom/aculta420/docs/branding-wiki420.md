@@ -42,7 +42,7 @@ Não entram: 240w e 320w (sem consumidor), o globo de 180 px (a tabela de aplica
 
 ## Verificação (Homelab, 0.4.0-dev.6)
 
-- Wiki (`wiki420.aculta.toca.net.br`): imagem com `srcset` no HTML; em 1× o Chromium carregou a variante de 480 px. A escolha em 2× não foi verificada no DOM.
+- Wiki no ambiente de teste: imagem com `srcset` no HTML; em 1× o Chromium carregou a variante de 480 px. A escolha em 2× não foi verificada no DOM. Host omitido para evitar confusão entre ambientes.
 - Um único link para a home no cabeçalho (fallback textual removido quando há marca).
 - Cabeçalho: 159 px no desktop (1280 px, modo claro) contra 139 px na principal, +20 px; 141 px no mobile (390 px). Sem rolagem horizontal em 1280 e 390 px. Modo escuro: mesmos tokens e estrutura; altura não medida separadamente.
 - Modo escuro: a marca fica legível sobre o carvão. Não houve transformação de cor. Razão de contraste não medida (risco residual).
