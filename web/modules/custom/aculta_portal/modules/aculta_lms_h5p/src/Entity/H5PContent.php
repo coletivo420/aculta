@@ -4,28 +4,25 @@
 namespace Drupal\aculta_lms_h5p\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PEvent;
 
-/**
- * Defines the h5p content entity.
- *
- * @ContentEntityType(
- *   id = "h5p_content",
- *   label = @Translation("H5P Content"),
- *   handlers = {
- *     "storage_schema" = "Drupal\aculta_lms_h5p\H5PContentStorageSchema",
- *     "views_data" = "Drupal\aculta_lms_h5p\H5PContentViewsData",
- *   },
- *   base_table = "h5p_content",
- *   entity_keys = {
- *     "id" = "id"
- *   },
- * )
- */
+/** Defines the H5P content entity. */
+#[ContentEntityType(
+  id: 'h5p_content',
+  label: new TranslatableMarkup('H5P Content'),
+  handlers: [
+    'storage_schema' => H5PContentStorageSchema::class,
+    'views_data' => H5PContentViewsData::class,
+  ],
+  base_table: 'h5p_content',
+  entity_keys: ['id' => 'id'],
+)]
 class H5PContent extends ContentEntityBase implements ContentEntityInterface {
 
   protected $library;

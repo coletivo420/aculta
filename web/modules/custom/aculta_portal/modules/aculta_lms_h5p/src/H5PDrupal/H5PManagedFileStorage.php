@@ -86,7 +86,10 @@ final class H5PManagedFileStorage extends \H5PDefaultStorage {
         }
       }
       else {
-        $this->fileSystem->prepareDirectory(dirname($uri), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+        $directory = dirname($uri);
+        if (!$this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+          throw new \RuntimeException('An H5P library asset directory could not be prepared.');
+        }
         $managed = $this->fileRepository->writeData($bytes, $uri, FileExists::Error);
         if ($managed === FALSE) {
           throw new \RuntimeException('An H5P library asset could not be stored.');

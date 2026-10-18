@@ -4,24 +4,23 @@
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;
+use Drupal\Core\Field\Attribute\FieldType;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 
-/**
- * Provides a field type of H5P.
- *
- * @FieldType(
- *   id = "h5p",
- *   label = @Translation("Interactive Content – H5P"),
- *   description = @Translation("This field stores the ID of an H5P Content as an integer value."),
- *   category = "reference",
- *   default_formatter = "h5p_default",
- *   default_widget = "h5p_upload",
- * )
- */
+/** Provides the H5P field type. */
+#[FieldType(
+  id: 'h5p',
+  label: new TranslatableMarkup('Conteúdo interativo – H5P'),
+  description: new TranslatableMarkup('Este campo armazena o ID de um conteúdo H5P como valor inteiro.'),
+  category: 'reference',
+  default_formatter: 'h5p_default',
+  default_widget: 'h5p_upload',
+)]
 class H5PItem extends FieldItemBase implements FieldItemInterface {
 
   /**

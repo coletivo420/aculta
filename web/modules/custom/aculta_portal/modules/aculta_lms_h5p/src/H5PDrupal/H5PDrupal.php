@@ -1187,7 +1187,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
       $value = \Drupal::state()->get('h5p.' . $name, $default);
     }
     else {
-      $value = \Drupal::config('aculta_lms_h5p.settings')->get('h5p_' . $name);
+      $value = \Drupal::config('aculta_lms_h5p.settings')->get('aculta_lms_h5p_' . $name);
     }
     return $value !== NULL ? $value : $default;
   }
@@ -1208,7 +1208,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
       }
       else {
         $config = \Drupal::configFactory()->getEditable('aculta_lms_h5p.settings');
-        $config->set("h5p_{$name}", $value);
+        $config->set("aculta_lms_h5p_{$name}", $value);
         $config->save();
       }
     }
@@ -1284,7 +1284,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
     }
 
     // Clear hook_library_info_build() to use updated libraries
-    \Drupal::service('library.discovery.collector')->clear();
+    \Drupal::service('library.discovery')->clear();
 
     // Delete ALL cached JS and CSS files
     \Drupal::service('asset.js.collection_optimizer')->deleteAll();

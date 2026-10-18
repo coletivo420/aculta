@@ -114,7 +114,8 @@ final class PackagedAssetPublisher {
       }
     }
     else {
-      if (!$this->fileSystem->prepareDirectory(dirname($destination), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+      $directory = dirname($destination);
+      if (!$this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
         return FALSE;
       }
       $file = $this->fileRepository->writeData($bytes, $destination, FileExists::Error);
