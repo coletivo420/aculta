@@ -1,3 +1,12 @@
+## 0.6.0-dev.72 — LMS em português e “Aulas” — 2026-10-18
+
+Classificação: PATCH de tradução e vocabulário, sem mudança de contrato visual.
+
+- O catálogo de interface do LMS passa a usar “aula/aulas” em todas as traduções antes exibidas como “lição/lições”.
+- Cobertura pt-BR do LMS 1.2.4 ampliada com as 168 entradas do pacote oficial; o arquivo `lms-terms.pt-br.po` substitui as duas traduções padrão de “Lesson” e “Lesson type” sem alterar outros termos padrão do Drupal.
+- Runtime de teste: catálogo principal importado (7 entradas novas, 334 atualizadas); vocabulário do LMS importado (2 atualizadas). Exportações pt-BR customizadas e padrão não contêm mais “lição/lições”.
+- RUNTIME STATUS: ACTIVE no servidor de testes (`aculta_runtime`, `https://aculta.toca.net.br`).
+
 ## 0.6.0-dev.71 — carrinho com um botão de checkout e assinatura em espaço próprio — 2026-10-17
 
 Classificação: MINOR da linha aberta (estrutura do painel do carrinho).
