@@ -52,3 +52,4 @@ embed own h5ps:
   title: 'Embed enabled for own H5Ps'
   description: "The embed button will be available for H5Ps the user has access to edit even even if embed button is hidden by configuration settings. This won't have any effect if embed button is globally disabled"
   restrict access: TRUE
+

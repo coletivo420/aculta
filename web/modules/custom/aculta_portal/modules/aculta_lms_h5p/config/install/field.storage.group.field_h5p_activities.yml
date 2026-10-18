@@ -1,0 +1,17 @@
+uuid: 63839c46-d39b-46b7-9db9-0ac279d1d004
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_lms_h5p
+id: group.field_h5p_activities
+field_name: field_h5p_activities
+entity_type: group
+type: h5p
+module: aculta_lms_h5p
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

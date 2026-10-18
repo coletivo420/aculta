@@ -46,6 +46,26 @@ acumulando cache contexts/tags corretos.
 5. Só então habilitar no Runtime após backup, plano de reversão e confirmação de
    schema/configuração; nenhum schema H5P foi instalado nesta etapa.
 
+## Inventário de portabilidade do original (revisado em 2026-10-18)
+
+| Parte original | Situação no fork | Prioridade / motivo |
+| --- | --- | --- |
+| Campo H5P, entidade/conteúdo, formatter e bibliotecas de reprodução | Copiados; formatter exige contexto de curso para exibir | Relevante, mas a reprodução só deve ser ativada quando todos os endpoints respeitarem matrícula e acesso do Group. |
+| Administração de bibliotecas e configurações | Controladores/formulários e rotas base copiados; corrigidos requisitos de parâmetro e páginas ligadas ao painel | Relevante para curadoria; validar operações e CSRF/cache antes de habilitar. Upload de pacote continua bloqueado. |
+| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | **Ainda não portado** como integração funcional; o widget não é apresentado no formulário do curso | Essencial para educadores criarem/alterarem atividades. As rotas originais só verificavam permissão global, e callbacks usavam `exit()`; reimplementar com Request/Response, token e autorização por curso/Group, sem copiar o bypass. |
+| Salvar resultado (`set-finished`) e estado do estudante | Código de armazenamento copiado, mas endpoints ainda têm permissão genérica e não validam matrícula | Relevante para continuidade e relatório. Portar depois de amarrar cada `content_id` a curso permitido; resultados não alimentam nota LMS sem contrato próprio. |
+| Importação/upload de pacote e imagens incorporadas | Desabilitada | Relevante para adoção de conteúdo existente, mas exige ingestão via `aculta_image`, verificação de pacote e restrições de biblioteca. |
+| Embed independente | Rota removida | Não portar sem autorização da entidade/curso pai; o issue upstream documenta exposição por URL direta. |
+| Telemetria do H5P Hub e instalação automática de tipos | Ainda requer revisão | Opcional ao fluxo inicial; decidir consentimento, tráfego externo e política de bibliotecas antes de ativar. |
+
+Comparação conferida com a release `2.0.0-beta1`: ela inclui as integrações do
+widget e chamadas AJAX do editor, cache de tipos, upload de biblioteca e
+correções para as chamadas AJAX do editor. A mesma release registra que tipos
+restritos podiam ser enviados como pacote, portanto a função não pode ser
+copiada sem nova validação. A próxima unidade técnica antes de liberar criação
+de conteúdo é o adapter seguro de `h5peditor` por contexto de Group, seguido de
+salvamento e leitura de estado do aluno com a mesma política.
+
 ## Fontes da auditoria
 
 - [Drupal H5P releases](https://www.drupal.org/project/h5p/releases/2.0.0-beta1)

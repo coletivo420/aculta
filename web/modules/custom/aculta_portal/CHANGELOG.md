@@ -1,3 +1,10 @@
+## 0.4.0-dev.133 — painéis H5P vinculados ao LMS — 2026-10-18
+
+- Cria painéis administrativos, de estudante e educador com rotas e navegação próprias. O painel do estudante lista somente cursos cujo `take course` permite acesso e que têm atividades; o do educador lista somente cursos em que pode atualizar o Group. Links de curso usam `DomainPurposeManager`.
+- Vincula o campo de atividades H5P ao bundle `lms_course`, corrige nomes e requisitos de rotas administrativas copiados do original e cria abas de navegação do H5P.
+- O editor ainda não é habilitado: o módulo original não portava a integração completa `h5peditor`; seus endpoints precisam ser refeitos com autorização por Group e sem `exit()`. H5P permanece desabilitado e sem schema no Runtime.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.132 — inicia o fork ACULTA H5P — 2026-10-18
 
 - Remove `drupal/h5p` do Composer e cria o submódulo `aculta_lms_h5p`, preservando licenças e atribuição do código derivado. Core/Editor PHP permanecem como dependências explícitas.

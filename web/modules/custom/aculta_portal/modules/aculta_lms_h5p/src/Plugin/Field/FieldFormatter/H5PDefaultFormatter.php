@@ -3,14 +3,17 @@
 
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
+use Drupal\lms\Entity\Bundle\CourseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -49,6 +52,7 @@ class H5PDefaultFormatter extends FormatterBase {
     array $third_party_settings,
     protected ModuleHandlerInterface $moduleHandler,
     ConfigFactoryInterface $config_factory,
+    protected AccountProxyInterface $currentUser,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->config = $config_factory->get('aculta_lms_h5p.settings');
@@ -67,6 +71,7 @@ class H5PDefaultFormatter extends FormatterBase {
       $configuration['third_party_settings'],
       $container->get('module_handler'),
       $container->get('config.factory'),
+      $container->get('current_user'),
     );
   }
 
@@ -86,6 +91,21 @@ class H5PDefaultFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $element = array();
+
+    $course = $items->getEntity();
+    if ($course instanceof CourseInterface) {
+      $takeAccess = $course->takeAccess($this->currentUser);
+      $updateAccess = $course->access('update', $this->currentUser, TRUE);
+      $fieldAccess = AccessResult::allowedIf($takeAccess->isAllowed() || $updateAccess->isAllowed())
+        ->addCacheableDependency($course)
+        ->addCacheableDependency($takeAccess)
+        ->addCacheableDependency($updateAccess)
+        ->addCacheContexts(['user', 'user.group_permissions']);
+      if (!$fieldAccess->isAllowed()) {
+        $fieldAccess->applyTo($element);
+        return $element;
+      }
+    }
 
     foreach ($items as $delta => $item) {
       $value = $item->getValue();

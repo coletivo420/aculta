@@ -1,17 +1,42 @@
+# ACULTA H5P entry points are split by Drupal/Group access context.
+aculta_lms_h5p.admin_dashboard:
+  path: '/painel-administrativo/lms/h5p'
+  defaults:
+    _controller: '\Drupal\aculta_lms_h5p\Controller\H5PDashboardController::administrator'
+    _title: 'Conteúdo interativo do LMS'
+  requirements:
+    _permission: 'administer h5p libraries'
+
+aculta_lms_h5p.student_dashboard:
+  path: '/minha-conta/atividades-interativas'
+  defaults:
+    _controller: '\Drupal\aculta_lms_h5p\Controller\H5PDashboardController::student'
+    _title: 'Atividades interativas'
+  requirements:
+    _role: estudante
+
+aculta_lms_h5p.educator_dashboard:
+  path: '/educador/atividades-interativas'
+  defaults:
+    _controller: '\Drupal\aculta_lms_h5p\Controller\H5PDashboardController::educator'
+    _title: 'Atividades interativas dos cursos'
+  requirements:
+    _role: lms_teacher
+
 # ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 aculta_lms_h5p.admin.config.system.h5p:
   path: '/admin/config/system/h5p'
   defaults:
     _form: 'Drupal\aculta_lms_h5p\Form\H5PAdminSettingsForm'
-    _title: 'H5P Settings'
+    _title: 'Configurações H5P'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer h5p libraries'
 
 aculta_lms_h5p.admin.content.h5p:
   path: '/admin/content/h5p'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin::libraryList'
-    _title: 'H5P Library List'
+    _title: 'Bibliotecas H5P'
   requirements:
     _permission: 'administer h5p libraries'
 
@@ -31,7 +56,7 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.upgrade-confirm:
     _title_callback: '\Drupal\aculta_lms_h5p\Controller\H5PContentUpgrade::pageTitle'
   requirements:
     _permission: 'administer h5p libraries'
-    id: \d+
+    library_id: '\d+'
 
 aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.upgrade:
   path: '/admin/content/h5p/libraries/{library_id}/upgrade'
@@ -40,7 +65,7 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.upgrade:
     _title_callback: '\Drupal\aculta_lms_h5p\Controller\H5PContentUpgrade::pageTitle'
   requirements:
     _permission: 'administer h5p libraries'
-    id: \d+
+    library_id: '\d+'
 
 aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.restrict:
   path: '/admin/content/h5p/libraries/{library_id}/restrict'
@@ -49,7 +74,7 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.restrict:
     _title: 'Restrict H5P Content'
   requirements:
     _permission: 'administer h5p libraries'
-    id: \d+
+    library_id: '\d+'
 
 aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.delete:
   path: '/admin/content/h5p/libraries/{library_id}/delete'
@@ -58,7 +83,7 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.delete:
     _title: 'Delete H5P Library'
   requirements:
     _permission: 'administer h5p libraries'
-    id: \d+
+    library_id: '\d+'
 
 aculta_lms_h5p.admin.content.aculta_lms_h5p.upgrade.library:
   path: '/admin/content/h5p/upgrade/library/{name}/{major}/{minor}'
@@ -67,7 +92,9 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.upgrade.library:
     _title: 'H5P Content Upgrade Library'
   requirements:
     _permission: 'administer h5p libraries'
-    id: \d+
+    name: '[A-Za-z0-9_.-]+'
+    major: '\d+'
+    minor: '\d+'
 
 aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache:
   path: '/admin/content/h5p/rebuild-cache'
@@ -76,8 +103,6 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache:
     _title: 'H5P Rebuild Content Cache'
   requirements:
     _permission: 'administer h5p libraries'
-    id: \d+
-
 aculta_lms_h5p.ajax.set_finished:
   path: '/h5p-ajax/set-finished.json'
   defaults:
