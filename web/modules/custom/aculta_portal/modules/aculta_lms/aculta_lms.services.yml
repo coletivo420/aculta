@@ -1,4 +1,10 @@
 services:
+  aculta_lms.uploaded_answer_access:
+    class: Drupal\aculta_lms\Access\UploadedAnswerAccessCheck
+  aculta_lms.uploaded_answer_route_subscriber:
+    class: Drupal\aculta_lms\EventSubscriber\UploadedAnswerRouteSubscriber
+    tags:
+      - { name: event_subscriber }
   aculta_lms.course_completion_publisher:
     class: Drupal\aculta_lms\Event\CourseCompletionPublisher
     arguments: ['@event_dispatcher']

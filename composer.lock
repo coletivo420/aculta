@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11452326014ec824a2fcf0fb6ec7df7c",
+    "content-hash": "a0cbf11234f84ea493955e7f5597f9b3",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4115,6 +4115,61 @@
             }
         },
         {
+            "name": "drupal/fraction",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/fraction.git",
+                "reference": "3.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/fraction-3.1.0.zip",
+                "reference": "3.1.0",
+                "shasum": "6611b4680a7556a507300684435987d5c71f0f46"
+            },
+            "require": {
+                "drupal/core": "^10.3 || ^11"
+            },
+            "require-dev": {
+                "drupal/feeds": "^3.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "3.1.0",
+                    "datestamp": "1773869242",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "m.stenta",
+                    "homepage": "https://www.drupal.org/user/581414"
+                },
+                {
+                    "name": "pcambra",
+                    "homepage": "https://www.drupal.org/user/122101"
+                }
+            ],
+            "description": "Provides a field for storing decimals as fractions, for maximum precision.",
+            "homepage": "https://www.drupal.org/project/fraction",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/fraction",
+                "issues": "http://drupal.org/project/issues/fraction"
+            }
+        },
+        {
             "name": "drupal/freelinking",
             "version": "4.0.3",
             "source": {
@@ -4781,6 +4836,65 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/lms",
                 "issues": "https://www.drupal.org/project/issues/lms"
+            }
+        },
+        {
+            "name": "drupal/lms_file_upload",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/lms_file_upload.git",
+                "reference": "1.0.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/lms_file_upload-1.0.2.zip",
+                "reference": "1.0.2",
+                "shasum": "36ec581d2183a0dfcadea76d095a4be3a25c6a89"
+            },
+            "require": {
+                "drupal/core": "^10 || ^11",
+                "drupal/lms": "^1.1"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.0.2",
+                    "datestamp": "1775164612",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Mauricio Dinarte (dinarcon)",
+                    "homepage": "https://www.drupal.org/u/dinarcon",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "dinarcon",
+                    "homepage": "https://www.drupal.org/user/909522"
+                },
+                {
+                    "name": "graber",
+                    "homepage": "https://www.drupal.org/user/1599440"
+                }
+            ],
+            "description": "Provides an ActivityAnswer plugin to allow file uploads to the private file system.",
+            "homepage": "https://www.drupal.org/project/lms_file_upload",
+            "keywords": [
+                "Drupal",
+                "LMS"
+            ],
+            "support": {
+                "source": "https://git.drupalcode.org/project/lms_file_upload",
+                "issues": "https://www.drupal.org/project/issues/lms_file_upload"
             }
         },
         {
@@ -7991,6 +8105,79 @@
                 "issues": "https://www.drupal.org/project/issues/webform?version=8.x",
                 "docs": "https://www.drupal.org/docs/8/modules/webform",
                 "forum": "https://drupal.stackexchange.com/questions/tagged/webform"
+            }
+        },
+        {
+            "name": "drupal/webform_score",
+            "version": "2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/webform_score.git",
+                "reference": "8.x-2.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/webform_score-8.x-2.4.zip",
+                "reference": "8.x-2.4",
+                "shasum": "fbe4d711af3eafb68706449cc05fb8b703234604"
+            },
+            "require": {
+                "drupal/core": "^8.8 || ^9 || ^10 || ^11",
+                "drupal/fraction": "^2 || ^3",
+                "drupal/webform": "^6.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-2.4",
+                    "datestamp": "1736849297",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Mike Miles (mikemiles86)",
+                    "homepage": "https://www.drupal.org/u/mikemiles86",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Rob Powell (robpowell)",
+                    "homepage": "https://www.drupal.org/u/robpowell",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Kay VanValkenburgh (key_v)",
+                    "homepage": "https://www.drupal.org/u/kay_v",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "mikemiles86",
+                    "homepage": "https://www.drupal.org/user/471470"
+                },
+                {
+                    "name": "nigelcunningham",
+                    "homepage": "https://www.drupal.org/user/250105"
+                },
+                {
+                    "name": "robpowell",
+                    "homepage": "https://www.drupal.org/user/3417529"
+                }
+            ],
+            "description": "This module provides scoring functionality to webform elements.",
+            "homepage": "https://www.drupal.org/project/webform_score",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/webform_score",
+                "issues": "https://www.drupal.org/project/issues/webform_score"
             }
         },
         {

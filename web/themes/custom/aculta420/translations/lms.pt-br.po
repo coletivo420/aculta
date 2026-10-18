@@ -1524,3 +1524,124 @@ msgstr "A revisão %title de @type foi apagada."
 
 msgid "@type %title has been reverted."
 msgstr "A revisão %title @type foi revertida."
+
+# Interface administrativa do LMS (menus, subpáginas e listagens).
+msgid "Administer LMS."
+msgstr "Gerenciar o LMS."
+
+msgid "Administer Lessons."
+msgstr "Gerenciar aulas."
+
+msgid "Administer Activities."
+msgstr "Gerenciar atividades."
+
+msgid "Administer Activity types."
+msgstr "Gerenciar tipos de atividade."
+
+msgid "LMS Settings"
+msgstr "Configurações do LMS"
+
+msgid "Global LMS Administrative settings."
+msgstr "Configurações administrativas globais do LMS."
+
+msgid "Global LMS settings."
+msgstr "Configurações gerais do LMS."
+
+msgid "Lesson settings"
+msgstr "Configurações das aulas"
+
+msgid "Manage lesson type fields and form display."
+msgstr "Gerenciar campos dos tipos de aula e a apresentação dos formulários."
+
+msgid "Classes settings"
+msgstr "Configurações das turmas"
+
+msgid "Settings related to LMS classes."
+msgstr "Configurações relacionadas às turmas do LMS."
+
+msgid "Administer Classes"
+msgstr "Gerenciar turmas"
+
+msgid "Administer Courses"
+msgstr "Gerenciar cursos"
+
+msgid "Add activity type"
+msgstr "Adicionar tipo de atividade"
+
+msgid "Add lesson"
+msgstr "Adicionar aula"
+
+msgid "Add class"
+msgstr "Adicionar turma"
+
+msgid "This allows students to re-enter finished courses that still need manual grading by a teacher. Students may make changes to their answers.<br />NOTE: If changed on a site with existing courses in progress, <a href=\":cache_url\">caches need to be cleared</a>."
+msgstr "Permite que estudantes retornem a cursos concluídos que ainda aguardam avaliação manual do educador e alterem suas respostas.<br />Observação: se houver cursos em andamento, limpe o cache após alterar esta opção (<a href=\":cache_url\">limpar cache</a>)."
+
+msgid "When this is enabled and a user starts a course, the exact current version of the course is locked in for that user. Making a new revision of the course, or any of its lessons and activities, will not affect the experience of current students in any way.<br />NOTE: A <a href=\":cache_url\">cache clear</a> is advised if changing this setting on a production site with courses in progress.<br />NOTE: course creators and editors will always see the latest revisions of course content, but the course navigation block is not updated unless their course progress is reset."
+msgstr "Quando esta opção está ativa, a versão atual do curso fica registrada para cada estudante no início do curso. Novas revisões do curso, das aulas ou das atividades não alteram a experiência de quem já começou.<br />Observação: recomendamos <a href=\":cache_url\">limpar o cache</a> ao alterar esta opção em produção com cursos em andamento.<br />Criadores e editores sempre veem as revisões mais recentes; o bloco de navegação do curso só é atualizado após redefinir o progresso."
+
+msgid "\"Reset for updates\" button for course editors"
+msgstr "Botão \"Redefinir para atualizações\" para editores de cursos"
+
+msgid "Display a button in the course navigation block that gives course editors a 1-click reset of their course progress, so they can see the latest version. Not visible to students.<br />NOTE: A <a href=\":cache_url\">cache clear</a> is required for changes to this setting to take effect."
+msgstr "Exibe no bloco de navegação um botão que permite aos editores redefinir o progresso do curso com um clique e ver a versão mais recente. O botão não aparece para estudantes.<br />Observação: é necessário <a href=\":cache_url\">limpar o cache</a> para aplicar alterações nesta opção."
+
+msgid "Activity page title pattern"
+msgstr "Padrão do título da página de atividade"
+
+msgid "The title of the page where students answer activities.<br /><b>Available tokens:</b><br />[group:title] - course title,<br />[lms_lesson:label] - lesson title,<br />[lms_activity:label] - activity title,<br />[lms_lesson_status:lesson_number] - lesson number,<br />[lms_lesson_status:activity_number] - activity number."
+msgstr "Título da página em que estudantes respondem às atividades.<br /><b>Tokens disponíveis:</b><br />[group:title] - título do curso,<br />[lms_lesson:label] - título da aula,<br />[lms_activity:label] - título da atividade,<br />[lms_lesson_status:lesson_number] - número da aula,<br />[lms_lesson_status:activity_number] - número da atividade."
+
+msgid "File upload"
+msgstr "Envio de arquivo"
+
+msgid "Default allowed file extensions"
+msgstr "Extensões de arquivo permitidas por padrão"
+
+msgid "Separate extensions with a comma or space. Each extension can contain alphanumeric characters, '.', and '_', and should start and end with an alphanumeric character. <strong>This value can be overridden on a per-activity basis.</strong>"
+msgstr "Separe as extensões com vírgula ou espaço. Cada extensão pode conter letras, números, ponto e sublinhado e deve começar e terminar com letra ou número. <strong>Este valor pode ser substituído em cada atividade.</strong>"
+
+msgid "Upload a file. Allowed extensions: @extensions."
+msgstr "Envie um arquivo. Extensões permitidas: @extensions."
+
+msgid "No file uploaded"
+msgstr "Nenhum arquivo enviado"
+
+msgid "File not accessible."
+msgstr "Arquivo indisponível."
+
+msgid "Quiz answer"
+msgstr "Resposta do questionário"
+
+msgid "Scoring methodology"
+msgstr "Método de pontuação"
+
+msgid "Specify which logic to use to score an answer."
+msgstr "Escolha a regra usada para pontuar uma resposta."
+
+msgid "Expected answers"
+msgstr "Respostas esperadas"
+
+msgid "Please enter the values of the checkboxes that should be checked, separated by commas. If the chosen set matches this set, the answer to this question is considered correct and the full score is awarded."
+msgstr "Informe, separados por vírgula, os valores das opções que devem ser marcadas. Se o conjunto escolhido corresponder a este conjunto, a resposta será considerada correta e receberá a pontuação total."
+
+msgid "Expected answer"
+msgstr "Resposta esperada"
+
+msgid "Score to award when the question is fully answered."
+msgstr "Pontuação concedida quando a questão é respondida integralmente."
+
+msgid "Maximum score"
+msgstr "Pontuação máxima"
+
+msgid "The answer should contain this string to qualify as correct."
+msgstr "A resposta deve conter este texto para ser considerada correta."
+
+msgid "Whether to compare the answer in case sensitive mode."
+msgstr "Define se a comparação diferencia letras maiúsculas de minúsculas."
+
+msgid "Case sensitive?"
+msgstr "Diferenciar maiúsculas e minúsculas?"
+
+msgid "Match"
+msgstr "Correspondência"

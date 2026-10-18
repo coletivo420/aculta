@@ -19,3 +19,5 @@ dependencies:
   - lms:lms_answer_comments
   - lms:lms_answer_plugins
   - lms:lms_classes
+  - lms_file_upload:lms_file_upload
+  - webform_score:webform_score

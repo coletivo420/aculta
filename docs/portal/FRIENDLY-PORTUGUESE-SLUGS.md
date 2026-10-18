@@ -204,6 +204,11 @@ Padrões humanos:
 - ações de curso devem usar vocabulário em português quando forem rotas Portal.
 
 Rotas LMS técnicas podem permanecer internas.
+O download de anexo de uma resposta é a exceção navegável: o Portal substitui a
+rota contrib `lms_file_upload.answer_file_download` por
+`/resposta/{lms_answer}/baixar-arquivo` em
+`UploadedAnswerRouteSubscriber`, mantendo o mesmo nome de rota para o plugin e
+aplicando a checagem de matrícula vigente descrita no contrato LMS.
 
 ## FORUM
 

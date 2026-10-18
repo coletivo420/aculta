@@ -9,7 +9,7 @@ dependencies:
     - group
     - user
 id: classes_admin
-label: 'Classes admin'
+label: 'Administração de turmas'
 module: views
 description: ''
 tag: ''
@@ -18,11 +18,11 @@ base_field: id
 display:
   default:
     id: default
-    display_title: Default
+    display_title: Padrão
     display_plugin: default
     position: 0
     display_options:
-      title: Classes
+      title: Turmas
       fields:
         id:
           id: id
@@ -100,7 +100,7 @@ display:
           entity_type: null
           entity_field: label
           plugin_id: field
-          label: Title
+          label: Turma
           exclude: false
           alter:
             alter_text: false
@@ -165,7 +165,7 @@ display:
           entity_type: group
           entity_field: status
           plugin_id: field
-          label: Published
+          label: Publicado
           exclude: false
           alter:
             alter_text: false
@@ -232,7 +232,7 @@ display:
           entity_type: group
           entity_field: uid
           plugin_id: field
-          label: 'Created by'
+          label: 'Criado por'
           exclude: false
           alter:
             alter_text: false
@@ -296,7 +296,7 @@ display:
           admin_label: ''
           entity_type: group
           plugin_id: entity_operations
-          label: Operations
+          label: Operações
           exclude: false
           alter:
             alter_text: false
@@ -464,7 +464,7 @@ display:
       tags: {  }
   page:
     id: page
-    display_title: Page
+    display_title: Página
     display_plugin: page
     position: 1
     display_options:
@@ -472,8 +472,8 @@ display:
       path: admin/lms/classes
       menu:
         type: normal
-        title: Classes
-        description: 'Administer Classes'
+        title: Turmas
+        description: 'Gerenciar turmas'
         weight: 10
         expanded: false
         menu_name: admin

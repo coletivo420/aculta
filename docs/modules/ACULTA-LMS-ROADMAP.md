@@ -131,9 +131,23 @@ teste, o update de schema segue aplicado e o cache foi reconstruído após a
 correção; o smoke visual por navegador está pendente. RUNTIME STATUS: UPDATE
 APLICADO; homologação visual DEFERRED. A próxima fase funcional listada é F9 (Webform Score e entregas), ainda dependente de decisão/autorização própria.
 
+**F9 — em implementação nesta branch, autorizada pelo responsável em 2026-10-18.** `webform_score` 2.4.0,
+`lms_file_upload` 1.0.2 e `fraction` 3.1.0 foram adicionados via Composer; o dry-run indicou somente
+três pacotes novos e zero atualizações/remoções. Os módulos estão habilitados no Runtime de teste e em
+`core.extension`. Revisão do código upstream encontrou que o dono de uma resposta LMS mantém acesso a
+`see_details` sem revalidar matrícula. `aculta_lms` agora adiciona `take course` atual à rota de download
+de anexos do LMS File Upload, preservando a autorização LMS para educadores. Unit cobre estudante com
+acesso revogado, estudante ativo e educador autorizado (3 testes, 16 assertions PASS). Webform Score
+continua restrito às submissões Webform; não há integração que promova resultado automaticamente para a
+nota LMS. Ainda pendem teste com arquivo privado real, revogação de membership no Runtime, teste de
+permissões/autoria Webform e homologação da regra no browser. A tentativa automática de baixar traduções
+pt-BR dos três módulos durante `drush en` falhou porque `translations://` não está configurado neste
+Runtime; o código e a ativação terminaram com sucesso. RUNTIME STATUS: MÓDULOS HABILITADOS; homologação
+de acesso a arquivos DEFERRED.
+
 ## Ordem, PR e status
 
-Cada fase é uma unidade pequena, commitada e descrita em PR própria conforme a regra do repositório. Este roadmap não autoriza execução de código, instalação de dependências, importação de curso, atualização persistente, merge ou deploy; cada fase futura precisa de decisão e PR própria.
+Cada fase é uma unidade pequena, commitada e descrita em PR própria conforme a regra do repositório. A autorização explícita do responsável para F9 permite a implementação nesta branch/PR; não autoriza importação de cursos, merge ou deploy.
 
 Antes de operação Homelab: registrar `hostname`, `pwd`, branch/estado Git e Drush; confirmar site URI, banco, estado de configuração e possibilidade de recuperação.
 
