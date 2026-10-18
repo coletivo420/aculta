@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "daca4170eff0de7626182d1239a8d4d3",
+    "content-hash": "ad885467eab7efd863391b2122db47d5",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7513,71 +7513,6 @@
             "homepage": "https://www.drupal.org/project/ui_styles",
             "support": {
                 "source": "https://git.drupalcode.org/project/ui_styles"
-            }
-        },
-        {
-            "name": "drupal/ui_suite_bootstrap",
-            "version": "5.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/ui_suite_bootstrap.git",
-                "reference": "5.2.3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ui_suite_bootstrap-5.2.3.zip",
-                "reference": "5.2.3",
-                "shasum": "8d6106299dfb61077590ee68f31f83440230e285"
-            },
-            "require": {
-                "drupal/core": "^11.3 || ^12",
-                "drupal/ui_patterns": "^2.0.18",
-                "drupal/ui_styles": "^1.20"
-            },
-            "conflict": {
-                "drupal/ui_examples": "<2"
-            },
-            "require-dev": {
-                "drupal/sdc_devel": "^1.0.2",
-                "drupal/ui_icons": "^1.1",
-                "drupal/ui_skins": "^1.0"
-            },
-            "suggest": {
-                "drupal/entity_vdts": "Allows to remove entity template wrappers.",
-                "drupal/fences": "Allows to control wrapping markup and classes of fields.",
-                "drupal/ui_examples": "Allows to have examples pages.",
-                "drupal/ui_icons": "Allows to handle icons.",
-                "drupal/ui_skins": "Allows to switch between themes and to override CSS variables."
-            },
-            "type": "drupal-theme",
-            "extra": {
-                "drupal": {
-                    "version": "5.2.3",
-                    "datestamp": "1785105376",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "grimreaper",
-                    "homepage": "https://www.drupal.org/user/2388214"
-                },
-                {
-                    "name": "pdureau",
-                    "homepage": "https://www.drupal.org/user/1903334"
-                }
-            ],
-            "description": "A site-builder friendly Bootstrap theme, using the UI Suite modules.",
-            "homepage": "https://www.drupal.org/project/ui_suite_bootstrap",
-            "support": {
-                "source": "https://git.drupalcode.org/project/ui_suite_bootstrap"
             }
         },
         {

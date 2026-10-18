@@ -150,7 +150,17 @@ module:
   token: 0
   turnstile: 0
   ui_patterns: 0
+  ui_patterns_blocks: 0
+  ui_patterns_field: 0
+  ui_patterns_field_formatters: 0
+  ui_patterns_layouts: 0
   ui_patterns_library: 0
+  ui_patterns_views: 0
+  ui_styles: 0
+  ui_styles_block: 0
+  ui_styles_layout_builder: 0
+  ui_styles_ui_patterns: 0
+  ui_styles_views: 0
   update: 0
   user: 0
   username_enumeration_prevention: 0

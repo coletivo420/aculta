@@ -24,6 +24,11 @@ Disponível:
 - `content/messenger-item`, `content/messenger-compose`, `content/messenger-notification` e `content/institutional-notice` -> componentes experimentais da central; `messenger-item` recebe avatar renderizado, direção de envio e corpo nativo como slots/props neutros.
 - `patterns/messenger-list` -> moldura de listas do Private Message/Message.
 - `feedback/unread-badge` e `feedback/messenger-state` -> contagem e estados da central.
+- `patterns/card` -> cartão composto reutilizável com slots de mídia, cabeçalho, conteúdo e rodapé; variantes vertical e horizontal usam Bootstrap e tokens ACULTA420.
+
+O cartão composto foi adaptado após análise do SDC Card do UI Suite Bootstrap
+5.2.3 (GPL-2.0-or-later). O markup é próprio do ACULTA420 e não importa assets,
+templates, bibliotecas ou dependências do tema de origem.
 
 Não criar placeholders vazios. Novos diretórios entram com o primeiro componente
 real da categoria.

@@ -1,0 +1,31 @@
+{% set card_classes = ['aculta-card', 'card'] %}
+{% if variant == 'horizontal' %}
+  {% set card_classes = card_classes|merge(['aculta-card--horizontal']) %}
+{% endif %}
+
+<div{{ attributes.addClass(card_classes) }}>
+  {% if variant == 'horizontal' %}
+    <div class="row g-0">
+      {% if image %}
+        <div class="col-md-4">
+          {{ image|add_class('img-fluid rounded-start') }}
+        </div>
+      {% endif %}
+      <div class="col-md-8">
+        {% if header %}<div class="card-header">{{ header }}</div>{% endif %}
+        {% if content %}<div class="card-body">{{ content }}</div>{% endif %}
+        {% if footer %}<div class="card-footer">{{ footer }}</div>{% endif %}
+      </div>
+    </div>
+  {% else %}
+    {% if image and image_position != 'bottom' %}
+      {{ image|add_class('card-img-top') }}
+    {% endif %}
+    {% if header %}<div class="card-header">{{ header }}</div>{% endif %}
+    {% if content %}<div class="card-body">{{ content }}</div>{% endif %}
+    {% if footer %}<div class="card-footer">{{ footer }}</div>{% endif %}
+    {% if image and image_position == 'bottom' %}
+      {{ image|add_class('card-img-bottom') }}
+    {% endif %}
+  {% endif %}
+</div>

@@ -183,6 +183,7 @@ try {
     ['PHP color-mode branch', 'src/Fixture.php', "<?php if (\$theme === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
     ['PHP colorScheme branch', 'src/ColorScheme.php', "<?php if (\$colorScheme === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
     ['PHP color-mode match', 'src/MatchFixture.php', "<?php \$variant = match (\$theme) { 'dark' => 'compact', default => 'standard' };", 'PHP has no color-mode branch'],
+    ['PHP Portal color-mode contract match', 'src/PortalColorMode.php', "<?php \$themeMode = match (\$variables['aculta_color_mode'] ?? 'light') { 'dark' => 'dark', 'auto' => NULL, default => 'light' };", 'PHP has no color-mode branch'],
     ['PHP switch case arm', 'src/SwitchFixture.php', "<?php switch (\$theme) { case 'dark': \$layout = 'compact'; break; default: \$layout = 'standard'; }", 'PHP has no color-mode branch'],
     ['PHP semicolon case mode arm is detected', 'src/SemicolonModeCase.php', "<?php switch (\$theme) { case 'dark'; \$layout = 'compact'; break; }", 'PHP has no color-mode branch'],
     ['PHP alternative switch case arm', 'src/AlternativeSwitch.php', "<?php switch (\$theme): case 'dark': \$layout = 'compact'; break; endswitch;", 'PHP has no color-mode branch'],
@@ -304,7 +305,7 @@ try {
   if ($dark_start === FALSE) {
     throw new RuntimeException('Dark token block is missing from fixture.');
   }
-  $replace_dark = static function (string $old, string $new) use (&$original_tokens, $dark_start, $tokens_path): void {
+  $replace_dark = static function (string $old, string $new, bool $mirror_auto = FALSE) use (&$original_tokens, $dark_start, $tokens_path): void {
     $current_tokens = file_get_contents($tokens_path);
     if (!is_string($current_tokens)) {
       throw new RuntimeException('Could not read current token fixture.');
@@ -314,6 +315,14 @@ try {
       throw new RuntimeException('Expected dark token fixture declaration was not found.');
     }
     $updated = substr_replace($current_tokens, $new, $position, strlen($old));
+    if ($mirror_auto) {
+      $auto_start = strpos($updated, '@media (prefers-color-scheme: dark)');
+      $auto_position = $auto_start === FALSE ? FALSE : strpos($updated, $old, $auto_start);
+      if ($auto_position === FALSE) {
+        throw new RuntimeException('Expected automatic token fixture declaration was not found.');
+      }
+      $updated = substr_replace($updated, $new, $auto_position, strlen($old));
+    }
     file_put_contents($tokens_path, $updated);
   };
   $restore_tokens = static function () use (&$original_tokens, $tokens_path): void {
@@ -364,19 +373,19 @@ try {
   }
   file_put_contents($tokens_path, $original_tokens);
 
-  $replace_dark('--aculta-text-primary: #f4efe8;', '--aculta-text-primary: rgba(244, 239, 232, 1);');
+  $replace_dark('--aculta-text-primary: #f4efe8;', '--aculta-text-primary: rgba(244, 239, 232, 1);', TRUE);
   [$status, $output] = $run_validator();
   $fixtures++;
   if ($status !== 0) {
-    $failures[] = 'fully opaque rgba foreground should retain its valid contrast';
+    $failures[] = 'fully opaque rgba foreground should retain its valid contrast: ' . trim(preg_replace('/\s+/', ' ', $output) ?? $output);
   }
   $restore_tokens();
 
-  $replace_dark('--aculta-surface-page: #171513;', '--aculta-surface-page: rgb(23, 21, 19);');
+  $replace_dark('--aculta-surface-page: #171513;', '--aculta-surface-page: rgb(23, 21, 19);', TRUE);
   [$status, $output] = $run_validator();
   $fixtures++;
   if ($status !== 0) {
-    $failures[] = 'numerically equivalent rgb() dark surface should remain approved';
+    $failures[] = 'numerically equivalent rgb() dark surface should remain approved: ' . trim(preg_replace('/\s+/', ' ', $output) ?? $output);
   }
   $restore_tokens();
 

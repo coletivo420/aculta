@@ -1,0 +1,23 @@
+.aculta-card {
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-raised);
+  border-color: var(--aculta-border-default);
+}
+
+.aculta-card > .card-header,
+.aculta-card > .card-footer,
+.aculta-card .card-header,
+.aculta-card .card-footer {
+  color: inherit;
+  background-color: transparent;
+  border-color: var(--aculta-border-default);
+}
+
+.aculta-card img {
+  max-width: 100%;
+  height: auto;
+}
+
+.aculta-card--horizontal .card-header {
+  border-top: 0;
+}

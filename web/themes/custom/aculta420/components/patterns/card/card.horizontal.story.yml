@@ -1,0 +1,12 @@
+name: Horizontal
+description: Cartão em duas colunas no desktop e empilhado em telas menores.
+component: aculta420:card
+props:
+  variant: horizontal
+slots:
+  image:
+    markup: '<img src="/themes/custom/aculta420/assets/branding/podplant420/web/horizontal/podplant420-horizontal-on-light-480w.webp" alt="Marca PodPlant420">'
+  content:
+    markup: '<h3>Projeto comunitário</h3><p>A apresentação mantém conteúdo e mídia em fluxo responsivo.</p>'
+  footer:
+    markup: '<a href="#">Conheça o projeto</a>'

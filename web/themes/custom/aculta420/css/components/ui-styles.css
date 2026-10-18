@@ -1,0 +1,50 @@
+/**
+ * Semantic UI Styles exposed to Drupal site building integrations.
+ * The classes resolve through ACULTA420 tokens so light/dark share markup.
+ */
+.aculta-uistyle--surface-page {
+  background-color: var(--aculta-surface-page);
+  color: var(--aculta-text-primary);
+}
+
+.aculta-uistyle--surface-raised {
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.aculta-uistyle--surface-muted {
+  background-color: var(--aculta-surface-muted);
+  color: var(--aculta-text-primary);
+}
+
+.aculta-uistyle--text-primary {
+  color: var(--aculta-text-primary);
+}
+
+.aculta-uistyle--text-secondary {
+  color: var(--aculta-text-secondary);
+}
+
+.aculta-uistyle--text-muted {
+  color: var(--aculta-text-muted);
+}
+
+.aculta-uistyle--text-accent {
+  color: var(--aculta-text-accent);
+}
+
+.aculta-uistyle--border-subtle {
+  border: 1px solid var(--aculta-border-subtle);
+}
+
+.aculta-uistyle--border-default {
+  border: 1px solid var(--aculta-border-default);
+}
+
+.aculta-uistyle--border-strong {
+  border: 1px solid var(--aculta-border-strong);
+}
+
+.aculta-uistyle--border-accent {
+  border: 1px solid var(--aculta-border-accent);
+}

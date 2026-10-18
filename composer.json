@@ -327,7 +327,6 @@
         "drupal/ui_patterns_ds": "^1.0@alpha",
         "drupal/ui_patterns_field_group": "^2.0@beta",
         "drupal/ui_styles": "^1.22",
-        "drupal/ui_suite_bootstrap": "^5.2",
         "drupal/username_enumeration_prevention": "^1.4",
         "drupal/vvja": "^2.0",
         "drupal/vvjb": "^2.0",

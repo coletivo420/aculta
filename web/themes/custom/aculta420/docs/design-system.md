@@ -222,6 +222,12 @@ Exemplos:
 - Icon: futuramente via Core Icon API/UI Icons;
 - Media: só abstrair quando cards comprovarem contrato comum.
 
+O SDC `aculta420:card` é um pattern composto para site building, com slots de
+mídia, cabeçalho, conteúdo e rodapé, em variantes vertical e horizontal. Ele
+usa classes Bootstrap estruturais e tokens semânticos ACULTA420 para superfície,
+texto e borda. Botões e demais primitives simples continuam sendo Bootstrap
+direto; não importamos a folha global nem os helpers do UI Suite Bootstrap.
+
 ## Variants
 
 Drupal Core suporta variants SDC em 11.2+.

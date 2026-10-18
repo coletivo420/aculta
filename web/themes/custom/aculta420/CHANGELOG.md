@@ -1,11 +1,12 @@
-## 0.6.0-dev.78 — adia imagens de galerias VVJS — 2026-10-18
+## 0.6.0-dev.79 — porta padrões úteis do UI Suite Bootstrap — 2026-10-18
 
-Classificação: PATCH de performance, preserva sequência, controles e modos de exibição.
+Classificação: PATCH de integração visual/editorial; preserva `bootstrap` como tema base e ACULTA420 como tema público.
 
-- A galeria de produto (`galeria_produto`) mantém a imagem do primeiro slide e adia imagens de Media dos demais até que VVJS navegue para eles.
-- A biblioteca compartilhada de slideshow carrega o slide atual e o próximo, inclusive em eventos públicos `vvj:slideChanged` da galeria de produto.
-- Inventário confirmou que as galerias de álbum e produto são as únicas Views de imagem usando VVJS; carrosséis VVJB de Home e Projetos não são afetados.
-- RUNTIME STATUS: implementação e smoke test no Runtime de testes registrados após validação.
+- Remove UI Suite Bootstrap do Composer e da configuração ativa; nenhum código ou asset global do tema contribuído é carregado.
+- Adiciona o SDC `aculta420:card` com slots de mídia, cabeçalho, conteúdo e rodapé, em variantes vertical e horizontal.
+- Adiciona UI Styles ACULTA420 para superfície, texto e bordas, resolvendo tokens semânticos existentes.
+- Habilita integrações estáveis de UI Patterns/UI Styles para blocos, campos, formatters, layouts e Views; nenhuma View foi alterada.
+- RUNTIME STATUS: aplicado ao Runtime de testes; `drush cr` e gate Drupal do tema concluídos. Revisão visual no navegador DEFERRED.
 
 ## 0.6.0-dev.77 — adia imagens de slides inativos do álbum — 2026-10-18
 

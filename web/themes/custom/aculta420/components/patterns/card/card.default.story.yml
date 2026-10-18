@@ -1,0 +1,14 @@
+name: Vertical com cabeçalho e rodapé
+description: Cartão genérico de conteúdo com imagem opcional e regiões renderizadas.
+component: aculta420:card
+props:
+  variant: default
+slots:
+  image:
+    markup: '<img src="/themes/custom/aculta420/assets/branding/podplant420/web/horizontal/podplant420-horizontal-on-light-480w.webp" alt="Marca PodPlant420">'
+  header:
+    markup: Destaque cultural
+  content:
+    markup: '<h3>Encontro e participação</h3><p>Atividades culturais promovem convivência e debate público.</p>'
+  footer:
+    markup: '<a href="#">Saiba mais</a>'

@@ -1196,6 +1196,7 @@ final class Aculta420DesignFoundationsAnalyzer {
   private static function hasModeDecision(string $expression): bool {
     [$code, $strings] = self::extractQuotedStrings($expression);
     $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode|colorScheme|color_scheme|color-scheme|getTheme|getColorMode|getColorScheme)\b/i', $code) === 1
+      || preg_match('/\[\s*["\']aculta_(?:color_mode|color_scheme)["\']\s*\]/i', $expression) === 1
       || preg_match('/dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])/i', $expression) === 1
       || preg_match('/getAttribute\s*(?:\?\.)?\s*\(\s*["\']data-(?:(?:bs-)?theme|color-mode|color-scheme)["\']/i', $expression) === 1;
     $mode_literal = preg_match('/\b(?:dark|light)\b/i', $code) === 1;

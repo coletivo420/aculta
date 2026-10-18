@@ -1,0 +1,31 @@
+surface:
+  category: "Superfície"
+  label: "Superfície"
+  description: "Aplica uma superfície semântica ACULTA420 que acompanha os modos de cor do tema."
+  options:
+    aculta-uistyle--surface-page: "Fundo da página"
+    aculta-uistyle--surface-raised: "Superfície elevada"
+    aculta-uistyle--surface-muted: "Superfície suave"
+  previewed_as: hidden
+
+text:
+  category: "Texto"
+  label: "Cor semântica do texto"
+  description: "Aplica uma função semântica de texto definida pelos tokens ACULTA420."
+  options:
+    aculta-uistyle--text-primary: "Principal"
+    aculta-uistyle--text-secondary: "Secundário"
+    aculta-uistyle--text-muted: "Suave"
+    aculta-uistyle--text-accent: "Ênfase editorial"
+  previewed_as: hidden
+
+border:
+  category: "Borda"
+  label: "Borda semântica"
+  description: "Aplica uma borda ACULTA420 sem expor cores primitivas ou valores livres."
+  options:
+    aculta-uistyle--border-subtle: "Sutil"
+    aculta-uistyle--border-default: "Padrão"
+    aculta-uistyle--border-strong: "Forte"
+    aculta-uistyle--border-accent: "Acento"
+  previewed_as: hidden
