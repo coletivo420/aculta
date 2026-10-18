@@ -132,6 +132,13 @@ teste recusou salvar por não ter nenhuma aula, portanto não foi persistida nov
 atividade. O próximo smoke test precisa usar curso de teste válido com aula,
 salvar e reproduzir como estudante. Produção não foi acessada.
 
+O Runtime também expôs uma definição de serviço compilada com a antiga ordem de
+parâmetros do construtor de `H5PLibraryHooks`. A classe agora tem uma definição
+explícita com `database`, `asset_file_manager` e `file_url_generator`; após
+rebuild em `conta` e `cursos`, ambos os containers constroem o hook e o editor
+carrega a semântica novamente. O watchdog mantém somente os erros históricos
+anteriores à reconstrução; não houve novo erro de construção após a correção.
+
 ## Fontes da auditoria
 
 - [Drupal H5P releases](https://www.drupal.org/project/h5p/releases/2.0.0-beta1)
