@@ -22,8 +22,6 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 ## Módulos e integrações
 
 - [modules/README.md](modules/README.md) — referência canônica dos módulos e das regras anti-regressão.
-- [modules/LMS-GROUP.md](modules/LMS-GROUP.md) — ownership e inventário do Drupal LMS/Group.
-- [modules/ACULTA-LMS-ROADMAP.md](modules/ACULTA-LMS-ROADMAP.md) — fases futuras, critérios de aceite e rollback; F0 documental.
 - [ANTI-REGRESSION.md](ANTI-REGRESSION.md) — camadas de anti-regressão.
 - [integrations/README.md](integrations/README.md) — integrações externas: autenticação, CAPTCHA e Google.
 
@@ -34,8 +32,8 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [portal/GUARDRAILS.md](portal/GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki e Conta.
 - [portal/ROADMAP.md](portal/ROADMAP.md) — saneamento e, depois, features de produto.
 - [portal/CHECKOUT-BILLING.md](portal/CHECKOUT-BILLING.md) — endereço único, envio (Commerce Shipping) e pagamento pelo Mercado Pago.
-- [portal/SENHA-CONTA-OAUTH.md](portal/SENHA-CONTA-OAUTH.md) — primeira senha em conta criada com Google.
-- [portal/historico/PENDENCIAS-PROXIMA-RODADA.md](portal/historico/PENDENCIAS-PROXIMA-RODADA.md) — pendências abertas.
+- [portal/MERCADO-PAGO-PLANO.md](portal/MERCADO-PAGO-PLANO.md) — contrato e limites da integração de pagamentos.
+- [operations/DEBT-REGISTER.md](operations/DEBT-REGISTER.md) — registro único de pendências transversais.
 
 ## Tema
 
@@ -44,3 +42,11 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 ## Operação
 
 - [operations/README.md](operations/README.md) — testes, releases, segredos, deploy e dados de teste.
+
+## Estado e histórico
+
+CHANGELOGs e manifests dos componentes descrevem entregas e versões; roadmaps
+descrevem trabalho planejado; `operations/DEBT-REGISTER.md` concentra dívidas e
+pendências. Pull requests, commits e resultados pontuais ficam no Git/GitHub.
+Documentos em `portal/historico/` são snapshots arquivados e nunca substituem as
+referências vigentes.
