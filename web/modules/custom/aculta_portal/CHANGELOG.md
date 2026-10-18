@@ -1,3 +1,9 @@
+## 0.4.0-dev.137 — fronteira de assets do editor H5P — 2026-10-18
+
+- Auditoria do port identificou que `mirrorAssets()` publica imagens dos pacotes Composer diretamente em `assets://`, fora do fluxo obrigatório de `aculta_image`; o editor também referencia uma biblioteca Drupal inexistente e ainda não está ligado ao formulário de turma.
+- Mantém editor, endpoints AJAX e uploads fechados até definir como preservar os caminhos relativos dos assets após a ingestão por `aculta_image`. A integração deve reutilizar o campo do Group, o armazenamento do H5P Core, autorização do Group/LMS e a condição CTools existente, sem criar storage ou política de upload paralelos.
+- Sem alteração funcional nem atualização do Runtime. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.136 — isolamento de player e progresso H5P — 2026-10-18
 
 - Conteúdo e bibliotecas H5P passam a usar armazenamento privado e uma rota de arquivos com allowlist de extensões, checagem de caminho canônico e controle de matrícula no curso para assets de conteúdo.

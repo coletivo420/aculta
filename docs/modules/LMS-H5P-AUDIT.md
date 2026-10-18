@@ -39,12 +39,21 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 
 1. Portar o editor por Group, sem endpoints herdados que chamam `exit()` ou
    leem superglobais; manter uploads desabilitados até ingestão `aculta_image`.
-2. Refatorar hooks e classes herdados para o padrão Drupal 11.3+ do Portal: DI,
+   O widget atual ainda não está ligado ao formulário de edição do Group e
+   referencia uma biblioteca Drupal inexistente (`h5peditor/h5peditor`).
+2. Corrigir a publicação de assets antes de expor qualquer parte do editor:
+   `aculta_lms_h5p_library_info_build()` chama `AssetFileStorage::mirrorAssets()`,
+   que copia imagens dos pacotes Composer diretamente para `assets://`. Isso
+   conflita com a regra de que arquivos de imagem passam por `aculta_image`.
+   O editor também precisa dos caminhos relativos originais de imagens em CSS e
+   bibliotecas; não basta trocar o destino por uma URL de arquivo sem manter
+   essa relação.
+3. Refatorar hooks e classes herdados para o padrão Drupal 11.3+ do Portal: DI,
    hooks OOP quando suportados, auditoria de acesso/cacheability.
-3. Testar conteúdo Div, isolamento entre estudantes, revogação de matrícula,
+4. Testar conteúdo Div, isolamento entre estudantes, revogação de matrícula,
    persistência de tentativas, CSP, bibliotecas executáveis e limpeza de arquivos.
-4. Não converter scores em notas LMS sem contrato autenticado e auditável.
-5. Só então habilitar no Runtime após backup, plano de reversão e confirmação de
+5. Não converter scores em notas LMS sem contrato autenticado e auditável.
+6. Só então habilitar no Runtime após backup, plano de reversão e confirmação de
    schema/configuração; nenhum schema H5P foi instalado nesta etapa.
 
 ## Inventário de portabilidade do original (revisado em 2026-10-18)
@@ -65,8 +74,15 @@ upload de biblioteca, tipos do Hub e callbacks do widget ainda precisam de um
 adapter seguro por Group. Tipos restritos podiam ser enviados como pacote, então
 uploads continuam fechados. A condição CTools `aculta_lms_h5p_group_has_activities`
 expõe o contexto do Group para displays condicionais; Page Manager não está
-instalado. Próxima unidade: editor read-only/listagem de bibliotecas por Group,
-depois criação/salvamento somente após integração de uploads com `aculta_image`.
+instalado. A implementação deve reutilizar `field_h5p_activities`, a entidade e
+o schema H5P Core já portados, `H5PCourseAccessManager` para autorização e os
+serviços existentes de CTools. `aculta_image.ImageIngester` é para arquivos
+externos com origem rastreável; não é um uploader genérico, e `UploadPolicy`
+define a política comum de imagem. Antes de habilitar o editor, definir como os
+assets de imagem de Composer preservam caminhos relativos ao passarem pelo
+`aculta_image`; não criar outro catálogo, storage de conteúdo ou política de
+upload no H5P. Próxima unidade: resolver essa fronteira de assets e validar o
+editor por Group antes de publicar a biblioteca do widget ou endpoints AJAX.
 
 ## Fontes da auditoria
 
