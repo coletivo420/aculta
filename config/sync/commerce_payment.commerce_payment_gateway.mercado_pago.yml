@@ -7,12 +7,12 @@ dependencies:
 id: mercado_pago
 label: 'Mercado Pago'
 weight: 0
-plugin: mercado_pago_checkout_pro
+plugin: aculta_mercadopago_checkout_pro
 configuration:
   display_label: 'Mercado Pago'
   mode: test
   payment_method_types:
-    - mercado_pago_checkout_pro
+    - aculta_mercadopago_checkout_pro
   collect_billing_information: false
   public_key_test: ''
   access_token_test: ''

@@ -40,7 +40,7 @@ class CheckoutProTest extends OrderKernelTestBase {
     $payment_gateway = PaymentGateway::create([
       'id' => 'mercado_pago',
       'label' => 'Mercado Pago',
-      'plugin' => 'mercado_pago_checkout_pro',
+      'plugin' => 'aculta_mercadopago_checkout_pro',
       'configuration' => [
         'mode' => 'test',
         'redirect_mode' => 'redirect',
@@ -50,7 +50,7 @@ class CheckoutProTest extends OrderKernelTestBase {
     $payment_gateway->save();
 
     $plugin = $payment_gateway->getPlugin();
-    $this->assertSame('mercado_pago_checkout_pro', $plugin->getPluginId());
+    $this->assertSame('aculta_mercadopago_checkout_pro', $plugin->getPluginId());
     $this->assertSame('test', $plugin->getMode());
 
     $default = $plugin->defaultConfiguration();

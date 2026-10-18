@@ -484,7 +484,7 @@ $assert((bool) $gateway, 'The Mercado Pago gateway config entity exists.');
 $mp_token_env = $mp_environment === 'test' ? 'MERCADOPAGO_TEST_ACCESS_TOKEN' : 'MERCADOPAGO_PRODUCTION_ACCESS_TOKEN';
 $mp_credential_present = (string) getenv($mp_token_env) !== '';
 $assert($gateway->status() === $mp_credential_present, 'The Mercado Pago gateway is enabled exactly when this environment has its access token.');
-$assert($gateway->getPluginId() === 'mercado_pago_checkout_pro', 'The gateway uses the installed Mercado Pago Checkout Pro plugin.');
+$assert($gateway->getPluginId() === 'aculta_mercadopago_checkout_pro', 'The gateway uses the installed Mercado Pago Checkout Pro plugin.');
 $assert(count($gateway->getConditions()) === 3, 'The gateway is constrained by Store, order type, and currency.');
 // Configuração persistida (sem os overrides de ambiente, que trazem a credencial em runtime).
 $gateway_config = \Drupal::config('commerce_payment.commerce_payment_gateway.mercado_pago')->getRawData()['configuration'] ?? [];

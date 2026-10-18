@@ -1,6 +1,6 @@
 # Mercado Pago
 
-Gateway de pagamento do Commerce: submódulo próprio `aculta_pagamentos_mercadopago` (porte do `commerce_mercado_pago` 3.0.0-rc3; plugin `mercado_pago_checkout_pro`).
+Gateway de pagamento do Commerce: submódulo próprio `aculta_pagamentos_mercadopago` (porte do `commerce_mercado_pago` 3.0.0-rc3; plugin `aculta_mercadopago_checkout_pro`).
 Até a versão 1.0, o gateway é **habilitado com chaves de teste** (`MERCADOPAGO_TEST_PUBLIC_KEY` e
 `MERCADOPAGO_TEST_ACCESS_TOKEN`, por variável de ambiente; nunca na configuração). O gateway fica ativo
 quando o ambiente tem o access token correspondente (regra do `aculta_deployer`). Chaves de produção só

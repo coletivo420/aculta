@@ -1,4 +1,4 @@
-commerce_payment.commerce_payment_gateway.plugin.mercado_pago_checkout_pro:
+commerce_payment.commerce_payment_gateway.plugin.aculta_mercadopago_checkout_pro:
   type: commerce_payment_gateway_configuration
   mapping:
     public_key_test:
@@ -32,11 +32,15 @@ commerce_payment.commerce_payment_gateway.plugin.mercado_pago_checkout_pro:
       type: string
       label: 'Store country'
     payment_types:
-      type: array
+      type: sequence
       label: 'Accepted payment types'
+      sequence:
+        type: boolean
     payment_method:
-      type: array
+      type: sequence
       label: 'Accepted payment methods (per payment type)'
+      sequence:
+        type: boolean
     max_installments:
       type: integer
       label: 'Maximum installments'

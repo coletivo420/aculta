@@ -4,14 +4,14 @@ Gateway Mercado Pago Checkout Pro do Commerce, código próprio do Portal. Subst
 
 ## O que faz
 
-- Plugin de gateway `mercado_pago_checkout_pro` (classe `CheckoutPro`), tipo de meio de pagamento `mercado_pago_checkout_pro` e formulário de redirecionamento (`RedirectCheckoutForm`).
+- Plugin de gateway `aculta_mercadopago_checkout_pro` (classe `CheckoutPro`), tipo de meio de pagamento `aculta_mercadopago_checkout_pro` e formulário de redirecionamento (`RedirectCheckoutForm`).
 - Configuração por ambiente (`test`, `stage`, `live`) com chaves de API ligadas a Drupal Key, formulário de parcelamento e exclusão de meios de pagamento.
 - Retorno de popup (`/commerce-mercado-pago/checkout-return`) que fecha a janela e leva a aba principal ao retorno do pedido.
 - Biblioteca `aculta_pagamentos_mercadopago/checkout_popup` e `mp_sdk` (SDK JavaScript oficial, `https://sdk.mercadopago.com/js/v2`).
 
-## Por que IDs estáveis
+## Método de pagamento único
 
-Os IDs de plugin (`mercado_pago_checkout_pro`), a chave de dados do pedido (`commerce_mercado_pago_checkout`) e o caminho `/commerce-mercado-pago/checkout-return` foram mantidos iguais ao contrib. Pedidos, pagamentos, gateway configurado e retornos já enviados ao Mercado Pago continuam válidos. Só o módulo, o namespace PHP, os nomes de rota e de biblioteca e o canal de log mudaram.
+O único método de pagamento do Portal é `aculta_mercadopago_checkout_pro` (tipo de meio de pagamento e plugin do gateway, classe `CheckoutPro`). O ID do gateway configurado continua `mercado_pago`. A chave de dados do pedido (`commerce_mercado_pago_checkout`) e o caminho de retorno `/commerce-mercado-pago/checkout-return` são mantidos para não quebrar pedidos e retornos já enviados ao Mercado Pago.
 
 ## Biblioteca oficial (SDK)
 

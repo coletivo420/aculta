@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Provides the Mercado Pago Checkout payment gateway.
  *
  * @CommercePaymentGateway(
- *   id = "mercado_pago_checkout_pro",
+ *   id = "aculta_mercadopago_checkout_pro",
  *   label = @Translation("Mercado Pago CheckoutPro"),
  *   display_label = @Translation("Mercado Pago"),
  *   modes = {
@@ -41,7 +41,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  *   forms = {
  *     "offsite-payment" = "Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout\RedirectCheckoutForm",
  *   },
- *   payment_method_types = {"mercado_pago_checkout_pro"},
+ *   payment_method_types = {"aculta_mercadopago_checkout_pro"},
  *   credit_card_types = {
  *      "amex", "mastercard", "visa",
  *   },
@@ -387,7 +387,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    */
   protected function buildPaymentOptionsWrapper(array &$wrapper, FormStateInterface $form_state): void {
     // Resolve config key the same way as the AJAX callback: values are stored under
-    // plugin_id (e.g. mercado_pago_checkout_pro), not the form tree key 'form'.
+    // plugin_id (e.g. aculta_mercadopago_checkout_pro), not the form tree key 'form'.
     $values_config = $form_state->getValues()['configuration'] ?? [];
     $request_config = $this->requestStack->getCurrentRequest()?->request->all()['configuration'] ?? [];
     $config_key = array_key_first($values_config) ?? array_key_first($request_config) ?? $this->pluginId;
@@ -623,7 +623,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   public static function ajaxRefreshPaymentOptions(array $form, FormStateInterface $form_state): array {
     $wrapper_id = 'mercado-pago-payment-options-wrapper';
 
-    // Form state stores config under plugin_id (e.g. mercado_pago_checkout_pro), not "form".
+    // Form state stores config under plugin_id (e.g. aculta_mercadopago_checkout_pro), not "form".
     $values_config = $form_state->getValues()['configuration'] ?? [];
     $config_key = array_keys($values_config)[0] ?? array_keys(\Drupal::request()->request->all()['configuration'] ?? [])[0] ?? 'form';
     $country = (string) ($form_state->getValue(['configuration', $config_key, 'country']) ?? '');
@@ -1094,7 +1094,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
               /** @var \Drupal\commerce_payment\PaymentMethodStorageInterface $payment_method_storage */
               $payment_method_storage = $this->entityTypeManager->getStorage('commerce_payment_method');
               $payment_method = $payment_method_storage->createForCustomer(
-                'mercado_pago_checkout_pro',
+                'aculta_mercadopago_checkout_pro',
                 (string) $this->parentEntity->id(),
                 $order->getCustomerId(),
                 $order->getBillingProfile()
@@ -1309,7 +1309,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       $payment_method_storage = $this->entityTypeManager->getStorage('commerce_payment_method');
       assert($payment_method_storage instanceof PaymentMethodStorageInterface);
       $payment_method = $payment_method_storage->createForCustomer(
-        'mercado_pago_checkout_pro',
+        'aculta_mercadopago_checkout_pro',
         (string) $this->parentEntity->id(),
         $order->getCustomerId(),
         $order->getBillingProfile()

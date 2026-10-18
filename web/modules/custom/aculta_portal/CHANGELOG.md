@@ -1,3 +1,9 @@
+## 0.4.0-dev.152 — método de pagamento único `aculta_mercadopago_checkout_pro` — 2026-10-18
+
+- O único método de pagamento do Portal é `aculta_mercadopago_checkout_pro` (submódulo `aculta_pagamentos_mercadopago` 0.1.0-dev.3). A configuração do gateway `mercado_pago` passa a usar esse plugin.
+- Dados existentes com o ID antigo (`mercado_pago_checkout_pro`) ainda precisam de migração no Runtime. Enquanto isso, o contrib não pode ser desinstalado.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.151 — Mercado Pago com submódulo próprio; contrib removido — 2026-10-18
 
 - Novo submódulo `aculta_pagamentos_mercadopago` (0.1.0-dev.2): porte do `commerce_mercado_pago` 3.0.0-rc3 com IDs de plugin, chave de dados do pedido e caminho de retorno mantidos. O Portal passa a depender dele no lugar do contrib.

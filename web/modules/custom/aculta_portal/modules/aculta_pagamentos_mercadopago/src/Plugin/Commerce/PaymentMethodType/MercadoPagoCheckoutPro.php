@@ -9,7 +9,7 @@ use Drupal\commerce_payment\Plugin\Commerce\PaymentMethodType\CreditCard;
  * Provides the Mercado Pago Checkout payment method type.
  *
  * @CommercePaymentMethodType(
- *   id = "mercado_pago_checkout_pro",
+ *   id = "aculta_mercadopago_checkout_pro",
  *   label = @Translation("Mercado Pago Checkout Pro"),
  *   create_label = @Translation("Mercado Pago"),
  * )
