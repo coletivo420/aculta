@@ -170,7 +170,7 @@ class DonationController implements ContainerInjectionInterface {
    *   Redirect to an order specific flow.
    */
   public function frontController(RouteMatchInterface $route_match) {
-    $config = $this->configFactory->get('commerce_donation_flow.settings');
+    $config = $this->configFactory->get('aculta_donation.settings');
     $orderIds = $this->cartSession->getCartIds();
     // If the requested step is not available, both this controller and the
     // default Commerce controller redirect to the order's indicated step.
@@ -286,7 +286,7 @@ class DonationController implements ContainerInjectionInterface {
     RouteMatchInterface $route_match,
     AccountInterface $account,
   ) {
-    $config = $this->configFactory->get('commerce_donation_flow.settings');
+    $config = $this->configFactory->get('aculta_donation.settings');
     $use_route = $config->get('donation_route');
     $route_check = $use_route === DonationSettingsForm::ROTA_DONATE || $use_route === DonationSettingsForm::ROTA_AMBAS;
 

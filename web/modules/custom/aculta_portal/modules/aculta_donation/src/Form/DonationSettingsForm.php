@@ -17,8 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * Port de commerce_donation_flow (DonationSettingsForm), com as correções do port: a chave do tipo de pedido do /donate
  * agora é a mesma gravada (donate_order_type), o teste de "dois caminhos" não usa empty() sobre uma expressão e os
- * campos obrigatórios só são exigidos quando visíveis. A configuração continua em commerce_donation_flow.settings, para
- * não migrar dados do Runtime.
+ * campos obrigatórios só são exigidos quando visíveis. A configuração pertence a aculta_donation.settings.
  */
 final class DonationSettingsForm extends ConfigFormBase {
 
@@ -47,11 +46,11 @@ final class DonationSettingsForm extends ConfigFormBase {
   }
 
   protected function getEditableConfigNames(): array {
-    return ['commerce_donation_flow.settings'];
+    return ['aculta_donation.settings'];
   }
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $config = $this->config('commerce_donation_flow.settings');
+    $config = $this->config('aculta_donation.settings');
     $tiposDePedido = EntityHelper::extractLabels($this->entityTypeManager->getStorage('commerce_order_type')->loadMultiple());
     $tiposDeItem = EntityHelper::extractLabels($this->entityTypeManager->getStorage('commerce_order_item_type')->loadMultiple());
     $fluxos = $this->entityTypeManager->getStorage('commerce_checkout_flow')->loadMultiple();
@@ -169,7 +168,7 @@ final class DonationSettingsForm extends ConfigFormBase {
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $valores = $form_state->getValues();
-    $config = $this->config('commerce_donation_flow.settings');
+    $config = $this->config('aculta_donation.settings');
     foreach (['donation_route', 'donate_item_type', 'donate_order_type', 'donate_checkout_flow', 'cart_item_type', 'cart_order_type', 'cart_checkout_flow'] as $chave) {
       $config->set($chave, $valores[$chave] ?? NULL);
     }

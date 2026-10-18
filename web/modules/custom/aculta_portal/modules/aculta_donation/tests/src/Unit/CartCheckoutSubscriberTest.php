@@ -56,17 +56,17 @@ class CartCheckoutSubscriberTest extends UnitTestCase {
     parent::setUp();
 
     $this->cartDeniedFactory = $this->getConfigFactoryStub([
-      'commerce_donation_flow.settings' => [
+      'aculta_donation.settings' => [
         'donation_route' => DonationSettingsForm::ROTA_DONATE,
       ],
     ]);
     $this->cartOnlyFactory = $this->getConfigFactoryStub([
-      'commerce_donation_flow.settings' => [
+      'aculta_donation.settings' => [
         'donation_route' => DonationSettingsForm::ROTA_CART,
       ],
     ]);
     $this->bothFactory = $this->getConfigFactoryStub([
-      'commerce_donation_flow.settings' => [
+      'aculta_donation.settings' => [
         'donation_route' => DonationSettingsForm::ROTA_AMBAS,
       ],
     ]);

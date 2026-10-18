@@ -1,5 +1,3 @@
-_core:
-  default_config_hash: rYQwe2A5qq4WGIVoRlWzVoYpymBF8LZsnmMPq8mGGV0
 donation_route: both
 donate_item_type: donation
 donate_order_type: doacao

@@ -1,6 +1,6 @@
 # ACULTA Doações (`aculta_donation`)
 
-Submódulo do `aculta_portal` (versão 0.1.0-dev.3). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
+Submódulo do `aculta_portal` (versão 0.1.0-dev.18). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
 (port próprio do `commerce_donation_flow`, que saiu do Composer), blocos, painéis e configuração.
 
 ## O que entrega
@@ -15,8 +15,12 @@ Submódulo do `aculta_portal` (versão 0.1.0-dev.3). Reúne a doação do site: 
 - **Blocos** (`aculta_donation_donate`, `aculta_donation_quick`, `aculta_donation_back`): dados neutros; a apresentação
   é do tema ACULTA420 (SDC `donation-quick`, templates do tema).
 - **Configuração do fluxo** (`/painel-administrativo/configuracoes/aculta/doacoes/fluxo`): rota (`/apoiar`, carrinho
-  padrão ou ambas), tipo de item, tipo de pedido e fluxo de checkout. Grava em `commerce_donation_flow.settings`
-  (nome mantido para não migrar dados).
+  padrão ou ambas), tipo de item, tipo de pedido e fluxo de checkout. Grava em
+  `aculta_donation.settings`; a atualização de 0.1.0-dev.18 migra os valores do nome usado pelo contrib removido.
+
+O nome da configuração segue o provider que atualmente fornece o comportamento (`aculta_donation`). IDs históricos de
+plugins e campos continuam estáveis quando usados por configurações exportadas; o setting migra para o namespace próprio
+porque a dependência de configuração Drupal é validada pelo módulo provider durante importações.
 - **Abas** da seção Doações: Campanhas, Valores padrão (`aculta_portal.support_settings`) e Fluxo de doação.
 
 ## Regras de negócio

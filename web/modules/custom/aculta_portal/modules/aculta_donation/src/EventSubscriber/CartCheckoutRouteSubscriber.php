@@ -27,7 +27,7 @@ final class CartCheckoutRouteSubscriber extends RouteSubscriberBase {
    */
   protected function alterRoutes(RouteCollection $collection): void {
     // @see https://www.drupal.org/node/2187643
-    $config = $this->configFactory->get('commerce_donation_flow.settings');
+    $config = $this->configFactory->get('aculta_donation.settings');
     // Calculate access.
     $use_route = $config->get('donation_route');
     $route_check = $use_route === DonationSettingsForm::ROTA_CART || $use_route === DonationSettingsForm::ROTA_AMBAS;

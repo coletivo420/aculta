@@ -87,7 +87,7 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $donationConfig = $this->configFactory->get('commerce_donation_flow.settings');
+    $donationConfig = $this->configFactory->get('aculta_donation.settings');
     $use_route = $donationConfig->get('donation_route');
     $route_allowed = $use_route === DonationSettingsForm::ROTA_DONATE || $use_route === DonationSettingsForm::ROTA_AMBAS;
     if (!$route_allowed) {
