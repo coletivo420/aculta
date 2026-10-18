@@ -312,6 +312,7 @@
         "drupal/role_hierarchy": "^4.0",
         "drupal/schema_metatag": "^3.0",
         "drupal/search_api": "^1.40",
+        "drupal/section_library": "^2.0",
         "drupal/security_review": "^3.1",
         "drupal/simple_sitemap": "^4.2",
         "drupal/site_alert": "^1.4",
@@ -320,6 +321,10 @@
         "drupal/symfony_mailer": "^2.0",
         "drupal/turnstile": "^1.2",
         "drupal/ui_patterns": "^2.0",
+        "drupal/ui_patterns_ds": "^1.0@alpha",
+        "drupal/ui_patterns_field_group": "^2.0@beta",
+        "drupal/ui_styles": "^1.22",
+        "drupal/ui_suite_bootstrap": "^5.2",
         "drupal/username_enumeration_prevention": "^1.4",
         "drupal/vvjb": "^2.0",
         "drupal/webform": "^6.3",
@@ -455,6 +460,8 @@
         }
     },
     "require-dev": {
-        "drupal/core-dev": "11.4.10"
+        "drupal/core-dev": "11.4.10",
+        "drupal/sdc_devel": "^1.0",
+        "drupal/storybook": "^1.0"
     }
 }
