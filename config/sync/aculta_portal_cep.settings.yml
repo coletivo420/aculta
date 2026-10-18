@@ -1,0 +1,12 @@
+default_source: local
+sources:
+  local:
+    enabled: true
+    weight: 0
+  viacep:
+    enabled: true
+    weight: 1
+  brasilapi:
+    enabled: true
+    weight: 2
+
