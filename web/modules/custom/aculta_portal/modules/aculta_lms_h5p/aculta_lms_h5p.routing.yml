@@ -197,8 +197,6 @@ aculta_lms_h5p.library_file:
     path_10: '[A-Za-z0-9._~-]+'
     path_11: '[A-Za-z0-9._~-]+'
     path_12: '[A-Za-z0-9._~-]+'
-  options:
-    _aculta_domain_purpose: courses
 
 aculta_lms_h5p.editor_ajax:
   path: '/h5peditor/{group_id}/{token}/{content_id}/{action}/{arguments}/{argument_2}/{argument_3}/{argument_4}/{argument_5}/{argument_6}/{argument_7}/{argument_8}/{argument_9}/{argument_10}'
@@ -233,4 +231,4 @@ aculta_lms_h5p.editor_ajax:
     argument_10: '[A-Za-z0-9._~-]+'
   methods: [GET, POST]
   options:
-    _aculta_domain_purpose: courses
+    _aculta_domain_purpose: main

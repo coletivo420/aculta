@@ -39,6 +39,8 @@ final class H5PHookDiscoveryTest extends KernelTestBase {
       ['/h5p-library-assets/libraries/H5P.HelloWorld-1.0/js/main.js', 'aculta_lms_h5p.library_file'],
       ['/h5p-content/1/2/images/nested/figure.png', 'aculta_lms_h5p.content_file'],
       ['/h5peditor/1/editor-token/0/single-library/H5P.MultiChoice/1/0', 'aculta_lms_h5p.editor_ajax'],
+      ['/h5peditor/1/editor-token/0/libraries/H5P.MultiChoice/1/0', 'aculta_lms_h5p.editor_ajax'],
+      ['/h5peditor/1/editor-token/0/libraries?machineName=H5P.MultiChoice&majorVersion=1&minorVersion=0', 'aculta_lms_h5p.editor_ajax'],
     ];
     foreach ($nestedPaths as [$path, $expectedRoute]) {
       $routes = $this->container->get('router.route_provider')->getRouteCollectionForRequest(Request::create($path));

@@ -82,7 +82,14 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
     }
 
     $response = match ($action) {
-      'libraries' => $this->libraries($request->getMethod()),
+      // H5P's editor client uses the "libraries" endpoint for both the
+      // complete list and a single library's semantics. In the latter case
+      // getAjaxUrl() appends machine name and version as path segments.
+      'libraries' => $arguments !== ''
+        ? $this->singleLibrary($request->getMethod(), $arguments)
+        : ($request->query->has('machineName')
+          ? $this->singleLibraryFromQuery($request)
+          : $this->libraries($request->getMethod())),
       'single-library' => $this->singleLibrary($request->getMethod(), $arguments),
       'translations' => $this->translations($request->getMethod(), $request->query->getString('language')),
       'filter' => $this->filter($request->getMethod()),
@@ -131,6 +138,19 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
       '',
     );
     return new JsonResponse($data);
+  }
+
+  /** Resolves the parameter format emitted by H5P's editor JavaScript API. */
+  private function singleLibraryFromQuery(\Symfony\Component\HttpFoundation\Request $request): JsonResponse {
+    $machine = $request->query->getString('machineName');
+    $major = $request->query->getString('majorVersion');
+    $minor = $request->query->getString('minorVersion');
+    if (!preg_match('/^[A-Za-z][A-Za-z0-9_.-]*$/D', $machine)
+      || !preg_match('/^\d{1,4}$/D', $major)
+      || !preg_match('/^\d{1,4}$/D', $minor)) {
+      throw new NotFoundHttpException();
+    }
+    return $this->singleLibrary($request->getMethod(), "$machine/$major/$minor");
   }
 
   /** Returns only requested translations for installed local libraries. */

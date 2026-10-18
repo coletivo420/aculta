@@ -18,9 +18,10 @@ outras mídias usam os limites PHP do Drupal e a allowlist H5P. Os arquivos fica
 privados e seus usos são rastreados pelo File API. Administradores podem instalar
 pacotes `.h5p` locais pelo validador oficial, ignorando conteúdo e mantendo os
 assets privados gerenciados; instalação pelo Hub e descoberta remota continuam
-indisponíveis. O módulo segue desabilitado enquanto faltam ciclo de
-edição/renderização real no navegador, validação visual e revisão das APIs
-legadas herdadas.
+indisponíveis. O módulo está habilitado somente no Runtime de testes. O editor
+visual e o carregamento de semântica passaram por smoke test; salvamento completo
+e reprodução ainda dependem de validar um curso com aula, e a auditoria das APIs
+legadas continua aberta.
 
 ## Decisão e limites da etapa
 
@@ -52,18 +53,19 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
    Group e token H5P; administradores instalam bibliotecas de pacote local pelo
    H5P Core. Kernel com entidades reais confirma que matrícula/`takeAccess`,
    papel de educador/`edit group`, referência do conteúdo e revogação de matrícula
-   controlam o acesso, e avalia a condição CTools com contexto de Group. O ciclo
-   de edição no navegador não foi validado: o login de teste permaneceu numa
-   página vazia de autenticação única; sem sessão, a rota canonicalizada para o
-   host principal respondeu “Acesso negado”. O endpoint HTTP de biblioteca foi
-   validado em GET e entregou `library.json` com `200` e MIME correto.
+   controlam o acesso, e avalia a condição CTools com contexto de Group. No
+   navegador autenticado, a sala do curso carregou a lista de bibliotecas e a
+   semântica `H5P.HelloWorld 1.0`; o formulário exibiu os campos do tipo de
+   conteúdo. A rota AJAX usa propósito MAIN porque o formulário de edição do
+   Group canonicaliza para esse host. O endpoint HTTP de biblioteca entregou
+   `library.json` com `200` e MIME correto.
 2. Publicar assets estáticos sem contornar `aculta_image`:
    `AssetFileStorage::mirrorAssets()` agora encaminha imagens estáticas Composer
    ao `aculta_image.PackagedAssetPublisher`, que mantém o caminho `public://h5p`
    compatível com `assets://`, valida PNG/JPEG/GIF/WebP e filtra SVG ativo,
    registra proveniência e preserva os caminhos relativos usados por CSS.
    Assets não-imagem continuam sendo publicados pelo adaptador H5P. A publicação
-   passou no Runtime; falta smoke test visual do editor. Rotas H5P usam limites
+   e a visualização do editor passaram no Runtime. Rotas H5P usam limites
    explícitos de segmentos porque parâmetros de rota Drupal ocupam um segmento
    completo; os caminhos de assets H5P são divididos em segmentos antes do
    controller validar e resolver o arquivo.
@@ -89,7 +91,7 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 | --- | --- | --- |
 | Campo H5P, entidade/conteúdo, formatter e bibliotecas de reprodução | Adaptados; armazenamento privado e rota de asset checa matrícula e relação Group/conteúdo | Player não usa embed independente. Conteúdo antigo em `public://` exige inventário/migração explícitos; update hook não muda os arquivos automaticamente. |
 | Administração de bibliotecas e configurações | Controladores/formulários adaptados; pacote local usa validação H5P Core e escrita privada pelo File API, com imagens em `aculta_image` | Upload exige permissão administrativa; substituição silenciosa de arquivos instalados é recusada. Instalação de pacote e publicação dos assets Composer passaram no Runtime; remoção ainda precisa de smoke test. |
-| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter por Group para listagem, metadados, traduções, filtro e upload de mídia privado; acesso usa token H5P e permissões de biblioteca | Kernel valida acesso real por curso e CTools, e resolve rotas com paths H5P aninhados; HTTP serviu biblioteca local. Falta validar o ciclo no navegador porque o login de teste não estabeleceu sessão. Hub segue desligado. |
+| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter por Group para listagem, metadados, traduções, filtro e upload de mídia privado; acesso usa token H5P e permissões de biblioteca | Kernel valida acesso real por curso e CTools, e resolve rotas com paths H5P aninhados; navegador autenticado carregou listagem e semântica de biblioteca. Hub segue desligado. |
 | Salvar resultado (`set-finished`) e estado do estudante | Endpoints adaptados: sessão, token, validação de nota e associação curso/conteúdo; Kernel exercita salvamento de pontuação, estado e isolamento de acesso | Falta teste HTTP/browser de continuidade de tentativa entre sessões e contrato separado antes de alimentar notas LMS. |
 | Upload de mídia do editor | Ativo no adapter, sujeito a autorização Group e token; imagens raster passam por `aculta_image`, ficam privadas e têm File API usage | Falta teste Kernel de cópia, persistência e remoção, além de browser test. |
 | Importação/upload de pacote | Pacote local habilitado para administradores; usa validador H5P, ignora conteúdo, preserva allowlist e mantém assets privados gerenciados | Pacote real benigno instalado no Runtime e seus assets passaram por HTTP; Kernel rejeita pacote malformado. Smoke test de remoção pendente; instalação remota/Hub continua desligada. |
@@ -114,6 +116,18 @@ define a política comum de imagem. Não criar outro catálogo, storage de conte
 ou política de upload no H5P. Próxima unidade: testar importação e remoção com
 pacotes reais, concluir browser tests de edição e revisar autorização/cache antes
 de habilitar o módulo.
+
+## Atualização do smoke test — 2026-10-18
+
+O editor abriu no formulário de edição da sala de curso e carregou
+`H5P.HelloWorld 1.0`. Isso revelou e corrigiu a dispatch da rota `libraries`: o
+H5P Editor usa essa mesma ação para a lista e para os metadados individuais,
+com segmentos adicionais de máquina/versão. A resposta individual agora passa
+pela verificação de acesso à biblioteca; o formato por query também é aceito.
+O submit serializou os parâmetros e a biblioteca nos campos Drupal. O curso de
+teste recusou salvar por não ter nenhuma aula, portanto não foi persistida nova
+atividade. O próximo smoke test precisa usar curso de teste válido com aula,
+salvar e reproduzir como estudante. Produção não foi acessada.
 
 ## Fontes da auditoria
 

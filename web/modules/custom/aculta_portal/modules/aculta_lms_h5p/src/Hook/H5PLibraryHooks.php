@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms_h5p\Hook;
 
 use Drupal\aculta_lms_h5p\AssetFileStorage;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -26,8 +26,6 @@ final class H5PLibraryHooks {
     private readonly AssetFileStorage $assetManager,
     #[Autowire(service: 'file_url_generator')]
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
-    #[Autowire(service: 'extension.list.module')]
-    private readonly ModuleExtensionList $extensionListModule,
   ) {}
 
   #[Hook('library_info_build')]
@@ -101,7 +99,7 @@ final class H5PLibraryHooks {
     }
 
     // Register core CSS needed when viewing H5P content.
-    foreach (H5PCore::$styles as $style) {
+    foreach (\H5PCore::$styles as $style) {
       $css = $this->fileUrlGenerator->generate("assets://h5p/h5p-core/{$style}", [
         'absolute' => TRUE,
         'language' => FALSE,
@@ -218,7 +216,9 @@ final class H5PLibraryHooks {
       ])->toString(TRUE)->getGeneratedUrl();
       $libraries['h5p.editor']['js'][$url] = ['preprocess' => FALSE];
     }
-    $application_script = $this->extensionListModule->getPath('aculta_lms_h5p') . '/js/h5peditor-application.js';
+    // Dynamic library paths are relative to this module; including the module
+    // path here makes Drupal prepend it twice and prevents editor startup.
+    $application_script = 'js/h5peditor-application.js';
     $libraries['h5p.editor']['js'][$application_script] = ['preprocess' => FALSE];
     foreach (\H5PEditor::$styles as $style) {
       $url = $this->fileUrlGenerator->generate("assets://h5p/h5p-editor/{$style}", [
