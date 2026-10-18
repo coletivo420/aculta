@@ -8,28 +8,22 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Plugin implementation of the 'h5p_default' formatter.
- *
- * @FieldFormatter(
- *   id = "h5p_default",
- *   label = @Translation("Default"),
- *   field_types = {
- *     "h5p"
- *   },
- *   quickedit = {
- *     "editor" = "disabled"
- *   }
- * )
- */
+/** Plugin implementation of the H5P formatter. */
+#[FieldFormatter(
+  id: 'h5p_default',
+  label: new TranslatableMarkup('Padrão'),
+  field_types: ['h5p'],
+)]
 class H5PDefaultFormatter extends FormatterBase {
 
   /**
@@ -81,7 +75,7 @@ class H5PDefaultFormatter extends FormatterBase {
   public function settingsSummary() {
     $summary = array();
 
-    $summary[] = t('Displays interactive H5P content.');
+    $summary[] = $this->t('Exibe conteúdo interativo H5P.');
 
     return $summary;
   }
@@ -150,7 +144,7 @@ class H5PDefaultFormatter extends FormatterBase {
         $element[$delta] = [
           '#type' => 'container',
           '#attributes' => ['class' => ['h5p-content-unavailable']],
-          'message' => ['#plain_text' => $this->t('This interactive content is unavailable in this course context.')],
+          'message' => ['#plain_text' => $this->t('Esta atividade interativa não está disponível neste curso.')],
         ];
         continue;
       }

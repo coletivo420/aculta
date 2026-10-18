@@ -19,11 +19,11 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/** @coversDefaultClass \Drupal\aculta_lms_h5p\H5PDrupal\H5PManagedFileStorage */
+#[CoversClass(H5PManagedFileStorage::class)]
 final class H5PManagedFileStorageTest extends UnitTestCase {
 
-  /** @covers ::cloneContentFile */
   public function testAllowsUnicodeManagedFilename(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
     mkdir($root . '/h5p/editor/images', 0770, TRUE);
@@ -61,7 +61,6 @@ final class H5PManagedFileStorageTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::cloneContentFile */
   public function testRejectsTraversalBeforeLookingUpFiles(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
     mkdir($root . '/h5p', 0770, TRUE);
@@ -94,7 +93,6 @@ final class H5PManagedFileStorageTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::saveLibrary */
   public function testRejectsLibraryExtractionOutsidePrivateH5pStorage(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
     $outside = sys_get_temp_dir() . '/aculta-h5p-package-' . bin2hex(random_bytes(4));
@@ -134,7 +132,6 @@ final class H5PManagedFileStorageTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::saveLibrary */
   public function testRejectsLegacyRasterFormatsOutsideAcultaImagePolicy(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-private-' . bin2hex(random_bytes(4));
     $source = $root . '/h5p/import/H5P.Test-1.0';

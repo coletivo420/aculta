@@ -7,11 +7,13 @@ use Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager;
 use Drupal\aculta_lms_h5p\Access\H5PLibraryAccessManager;
 use Drupal\aculta_lms_h5p\Plugin\Field\H5PWidgetBase;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 use Drupal\aculta_lms_h5p\Plugin\Field\FieldType\H5PItem;
@@ -19,17 +21,12 @@ use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Plugin implementation of the 'h5p_editor' widget.
- *
- * @FieldWidget(
- *   id = "h5p_editor",
- *   label = @Translation("H5P Editor"),
- *   field_types = {
- *     "h5p"
- *   }
- * )
- */
+/** Plugin implementation of the H5P editor widget. */
+#[FieldWidget(
+  id: 'h5p_editor',
+  label: new TranslatableMarkup('Editor H5P'),
+  field_types: ['h5p'],
+)]
 class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInterface {
 
   protected static $counter = 0;
@@ -123,8 +120,8 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     // Add editor element
     $element['editor'] = [
       '#type' => 'item',
-      '#title' => t('Content type'),
-      '#markup' => '<div class="h5p-editor" data-parametersid="' . $element['parameters']['#attributes']['id'] . '" data-libraryid="' . $element['library']['#attributes']['id'] . '"' . (empty($h5p_content) ? '' : ' data-content-id="' . $h5p_content_id . '"') . '>' . t('Waiting for javascript...') . '</div>',
+      '#title' => $this->t('Tipo de atividade'),
+      '#markup' => '<div class="h5p-editor" data-parametersid="' . $element['parameters']['#attributes']['id'] . '" data-libraryid="' . $element['library']['#attributes']['id'] . '"' . (empty($h5p_content) ? '' : ' data-content-id="' . $h5p_content_id . '"') . '>' . $this->t('Aguardando o JavaScript...') . '</div>',
       '#attached' => [
         'drupalSettings' => [
           'h5p' => [

@@ -7,11 +7,11 @@ namespace Drupal\Tests\aculta_lms_h5p\Unit;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryPackageInstaller;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/** @coversDefaultClass \Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryPackageInstaller */
+#[CoversClass(H5PLibraryPackageInstaller::class)]
 final class H5PLibraryPackageInstallerTest extends UnitTestCase {
 
-  /** @covers ::install */
   public function testRejectsNonH5pFileBeforeBootstrap(): void {
     $file = tempnam(sys_get_temp_dir(), 'aculta-h5p-invalid-');
     self::assertNotFalse($file);
@@ -29,7 +29,6 @@ final class H5PLibraryPackageInstallerTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::assertSafeArchivePaths */
   public function testRejectsZipPathTraversalBeforeH5pExtraction(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-traversal-');
     self::assertNotFalse($path);

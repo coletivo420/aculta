@@ -7,6 +7,8 @@ use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin;
 
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Database\Connection;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 
@@ -14,6 +16,12 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements the H5PLibraryDeleteForm form.
  */
 class H5PLibraryDeleteForm extends FormBase {
+
+  public function __construct(private readonly Connection $database) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static($container->get('database'));
+  }
 
   /**
    * {@inheritdoc}
@@ -48,19 +56,19 @@ class H5PLibraryDeleteForm extends FormBase {
       );
 
       $form['info'] = array(
-        '#markup' => '<div>' . t('Are you sure you would like to delete the @library_name H5P library?', array('@library_name' => H5PLibraryAdmin::libraryDetailsTitle($library_id))) . '</div>'
+        '#markup' => '<div>' . $this->t('Confirma a exclusão da biblioteca H5P @library_name?', ['@library_name' => $this->database->select('h5p_libraries', 'l')->fields('l', ['title'])->condition('library_id', $library_id)->execute()->fetchField()]) . '</div>'
       );
 
       $form['actions']['#type'] = 'actions';
       $form['actions']['submit'] = array(
         '#type' => 'submit',
-        '#value' => t('Delete'),
+        '#value' => $this->t('Excluir'),
       );
     }
     else {
       // May not delete this one
       $form['undeletable'] = [
-        '#markup' => t('Library is in use by content, or is dependent by other librarie(s), and can therefore not be deleted'),
+        '#markup' => $this->t('A biblioteca está em uso por atividades ou por outras bibliotecas e não pode ser excluída.'),
       ];
     }
 

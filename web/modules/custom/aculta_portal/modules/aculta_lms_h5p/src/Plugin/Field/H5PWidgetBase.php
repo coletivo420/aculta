@@ -20,7 +20,7 @@ abstract class H5PWidgetBase extends WidgetBase {
     if ($this->isDefaultValueWidget($form_state)) {
       $element += [
         '#type' => 'markup',
-        '#markup' => '<p>' . t('Currently, not supported.'). '</p>',
+        '#markup' => '<p>' . $this->t('Ainda não há suporte para este campo.') . '</p>',
       ];
       return ['h5p_content' => $element];
     }
@@ -38,8 +38,8 @@ abstract class H5PWidgetBase extends WidgetBase {
     // Make it possible to clear a field
     $element['clear_content'] = [
       '#type' => 'checkbox',
-      '#title' => t('Clear content'),
-      '#description' => t('Warning! Your content will be completely deleted'),
+      '#title' => $this->t('Limpar atividade'),
+      '#description' => $this->t('Atenção: a atividade será excluída permanentemente.'),
       '#default_value' => 0,
       '#weight' => 40,
     ];
@@ -74,11 +74,11 @@ abstract class H5PWidgetBase extends WidgetBase {
     $core = H5PDrupal::getInstance('core');
     $display_options = $core->getDisplayOptionsForEdit($disable === \H5PCore::DISABLE_NONE ? NULL : $disable);
     $labels = [
-      \H5PCore::DISPLAY_OPTION_FRAME => t('Display buttons (download, embed and copyright)'),
-      \H5PCore::DISPLAY_OPTION_DOWNLOAD => t('Allow users to download the content'),
-      \H5PCore::DISPLAY_OPTION_EMBED => t('Embed button'),
-      \H5PCore::DISPLAY_OPTION_COPYRIGHT => t('Copyright button'),
-      \H5PCore::DISPLAY_OPTION_ABOUT => t('About H5P button')
+      \H5PCore::DISPLAY_OPTION_FRAME => $this->t('Exibir botões de download, incorporação e direitos autorais'),
+      \H5PCore::DISPLAY_OPTION_DOWNLOAD => $this->t('Permitir que estudantes baixem a atividade'),
+      \H5PCore::DISPLAY_OPTION_EMBED => $this->t('Botão de incorporação'),
+      \H5PCore::DISPLAY_OPTION_COPYRIGHT => $this->t('Botão de direitos autorais'),
+      \H5PCore::DISPLAY_OPTION_ABOUT => $this->t('Botão Sobre o H5P')
     ];
     foreach ($display_options as $name => $value) {
       $element[$name] = [
@@ -100,7 +100,7 @@ abstract class H5PWidgetBase extends WidgetBase {
       }
 
       if ($name === \H5PCore::DISPLAY_OPTION_DOWNLOAD) {
-        $element[$name]['#description'] = t('If checked a reuse button will always be displayed for this content and allow users to download the content as an .h5p file');
+        $element[$name]['#description'] = $this->t('Quando selecionado, o botão de reutilização permite baixar esta atividade como arquivo .h5p.');
       }
     }
 

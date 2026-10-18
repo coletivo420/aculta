@@ -7,6 +7,7 @@ use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PEvent;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,12 +22,12 @@ class H5PContentUpgrade extends ControllerBase {
   /**
    * constructor.
    */
-  public function __construct(Connection $database) {
+  public function __construct(Connection $database, private readonly RequestStack $requestStack) {
     $this->database = $database;
   }
 
   public static function create(ContainerInterface $container) {
-    $controller = new static($container->get('database'));
+    $controller = new static($container->get('database'), $container->get('request_stack'));
     return $controller;
   }
 
@@ -37,8 +38,8 @@ class H5PContentUpgrade extends ControllerBase {
    *
    * @return array
    */
-  public static function getLibraryVersions($library_id) {
-    $query = $this->database->select('h5p_libraries', 'hl1');
+  public static function getLibraryVersions(Connection $database, $library_id) {
+    $query = $database->select('h5p_libraries', 'hl1');
     $query->join('h5p_libraries', 'hl2', 'hl1.machine_name = hl2.machine_name');
     $query->condition('hl1.library_id', $library_id, '=');
     $query->addField('hl2', 'library_id', 'id');
@@ -68,8 +69,11 @@ class H5PContentUpgrade extends ControllerBase {
     $query->condition('library_id', $library_id, '=');
     $query->fields('l', ['title', 'major_version', 'minor_version', 'patch_version']);
     $library = $query->execute()->fetch();
+    if (!$library) {
+      return $this->t('Biblioteca não encontrada.');
+    }
 
-    return t('Upgrade @library content', ['@library' => $library->title . ' (' . \H5PCore::libraryVersion($library) . ')']);
+    return $this->t('Atualizar atividades da biblioteca @library', ['@library' => $library->title . ' (' . \H5PCore::libraryVersion($library) . ')']);
   }
 
   /**
@@ -80,15 +84,23 @@ class H5PContentUpgrade extends ControllerBase {
    * @return JsonResponse|array
    */
   public function upgrade($library_id) {
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request === NULL || $request->getMethod() !== 'POST') {
+      return new JsonResponse(['error' => (string) $this->t('Método não permitido.')], 405);
+    }
     // Verify security token
-    if (!\H5PCore::validToken('contentupgrade', filter_input(INPUT_POST, 'token'))) {
-      return ['#markup' => t('Error: Invalid security token!')];
+    if (!\H5PCore::validToken('contentupgrade', $request->request->getString('token'))) {
+      return new JsonResponse(['error' => (string) $this->t('Token de segurança inválido.')], 403);
     }
 
     // Get the library we're upgrading to
-    $to_library = $this->database->query('SELECT library_id AS id, machine_name AS name, major_version, minor_version FROM {h5p_libraries} WHERE library_id = :id', [':id' => filter_input(INPUT_POST, 'libraryId')])->fetch();
+    $targetLibraryId = $request->request->getInt('libraryId');
+    if (!ctype_digit((string) $library_id) || $targetLibraryId < 1) {
+      return new JsonResponse(['error' => (string) $this->t('Biblioteca de destino inválida.')], 400);
+    }
+    $to_library = $this->database->query('SELECT library_id AS id, machine_name AS name, major_version, minor_version FROM {h5p_libraries} WHERE library_id = :id', [':id' => $targetLibraryId])->fetch();
     if (!$to_library) {
-      return ['#markup' => t('Error: Your library is missing!')];
+      return new JsonResponse(['error' => (string) $this->t('Biblioteca não encontrada.')], 404);
     }
 
     // Prepare response
@@ -101,13 +113,22 @@ class H5PContentUpgrade extends ControllerBase {
     $interface = H5PDrupal::getInstance('interface');
 
     // Get updated params
-    $params = filter_input(INPUT_POST, 'params');
-    if ($params !== NULL) {
+    $params = $request->request->get('params');
+    if (is_string($params) && $params !== '' && strlen($params) <= 2_000_000) {
       // Update params.
-      $params = json_decode($params);
+      $params = json_decode($params, TRUE, 32);
+      if (!is_array($params)) {
+        return new JsonResponse(['error' => (string) $this->t('Os parâmetros enviados estão inválidos.')], 400);
+      }
       foreach ($params as $id => $param) {
+        if (!ctype_digit((string) $id) || !is_string($param)) {
+          continue;
+        }
         $upgraded = json_decode($param);
-        $metadata = isset($upgraded->metadata) ? $upgraded->metadata : array();
+        if (!is_object($upgraded) || !isset($upgraded->params)) {
+          continue;
+        }
+        $metadata = isset($upgraded->metadata) && (is_object($upgraded->metadata) || is_array($upgraded->metadata)) ? $upgraded->metadata : array();
 
         $fields = array_merge(\H5PMetadata::toDBArray($metadata, false, false), array(
           'library_id' => $to_library->id,
@@ -118,12 +139,13 @@ class H5PContentUpgrade extends ControllerBase {
         $this->database->update('h5p_content')
           ->fields($fields)
           ->condition('id', $id)
+          ->condition('library_id', $library_id)
           ->execute();
 
         // Log content upgrade successful
         new H5PEvent('content', 'upgrade',
           $id,
-          $upgraded->metadata->title ? $upgraded->metadata->title : '',
+          (is_object($metadata) ? ($metadata->title ?? '') : ($metadata['title'] ?? '')),
           $to_library->name,
           $to_library->major_version . '.' . $to_library->minor_version);
 
@@ -133,13 +155,15 @@ class H5PContentUpgrade extends ControllerBase {
     }
 
     // Determine if any content has been skipped during the process
-    $skipped = filter_input(INPUT_POST, 'skipped');
-    if ($skipped !== NULL) {
-      $out['skipped'] = json_decode($skipped);
+    $skipped = $request->request->get('skipped');
+    if (is_string($skipped) && $skipped !== '' && strlen($skipped) <= 65536) {
+      $decodedSkipped = json_decode($skipped, TRUE);
+      $out['skipped'] = is_array($decodedSkipped) ? $decodedSkipped : [];
       // Clean up input, only numbers
-      foreach ($out['skipped'] as $i => $id) {
-        $out['skipped'][$i] = intval($id);
-      }
+      $out['skipped'] = array_values(array_unique(array_filter(array_map(
+        static fn ($id): int => filter_var($id, FILTER_VALIDATE_INT) ?: 0,
+        $out['skipped'],
+      ), static fn (int $id): bool => $id > 0)));
       $skipped = implode(',', $out['skipped']);
     }
     else {

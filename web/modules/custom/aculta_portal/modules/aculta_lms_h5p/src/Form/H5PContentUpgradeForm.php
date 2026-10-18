@@ -8,6 +8,8 @@ use Drupal\aculta_lms_h5p\Controller\H5PContentUpgrade;
 use Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin;
 
 use Drupal\Core\Url;
+use Drupal\Core\Database\Connection;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -16,6 +18,13 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements the H5PContentUpgradeForm form.
  */
 class H5PContentUpgradeForm extends FormBase {
+
+  public function __construct(private readonly Connection $database) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static($container->get('database'));
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -27,37 +36,40 @@ class H5PContentUpgradeForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $library_id = NULL) {
-    $versions = H5PContentUpgrade::getLibraryVersions($library_id);
+    $versions = H5PContentUpgrade::getLibraryVersions($this->database, $library_id);
+    if (!isset($versions[$library_id])) {
+      return ['#markup' => $this->t('Biblioteca não encontrada.')];
+    }
+    if (count($versions) < 2) {
+      return ['#markup' => $this->t('Não há atualizações disponíveis para esta biblioteca.')];
+    }
+
     $library = $versions[$library_id];
     $core = H5PDrupal::getInstance('core');
     $upgrades = $core->getUpgrades($library, $versions);
 
-    if (count($versions) < 2) {
-      return ['#markup' => t('There are no available upgrades for this library.')];
-    }
-
     // Get num of contents that can be upgraded
     $contents = $core->h5pF->getNumContent($library_id);
     if (!$contents) {
-      return ['#markup' => t('There are no content instances to upgrade.')];
+      return ['#markup' => $this->t('Não há atividades para atualizar.')];
     }
 
-    $contents_plural = \Drupal::translation()->formatPlural($contents, '1 content instance', '@count content instances');
-    $returnLink = Link::fromTextAndUrl(t('Return'), Url::fromUri('internal:/admin/content/h5p/'))->toString();
+    $contents_plural = $this->formatPlural($contents, '1 atividade', '@count atividades');
+    $returnLink = Link::fromTextAndUrl($this->t('Voltar'), Url::fromUri('internal:/admin/content/h5p/'))->toString();
     $h5p_module_rel = base_path() . \Drupal::service('extension.list.module')->getPath('aculta_lms_h5p');
     $settings = [
       'libraryInfo' => [
-        'message' => t('You are about to upgrade %num. Please select upgrade version.', ['%num' => $contents_plural]),
-        'inProgress' => t('Upgrading to %ver...'),
-        'error' => t('An error occurred while processing parameters:'),
-        'errorData' => t('Could not load data for library %lib.'),
-        'errorScript' => t('Could not load upgrades script for %lib.'),
-        'errorContent' => t('Could not upgrade content %id:'),
-        'errorParamsBroken' => t('Parameters are broken.'),
-        'errorLibrary' => t('Missing required library %lib.'),
-        'errorTooHighVersion' => t('Parameters contain %used while only %supported or earlier are supported.'),
-        'errorNotSupported' => t('Parameters contain %used which is not supported.'),
-        'done' => t('You have successfully upgraded %num.', ['%num' => $contents_plural]) . $returnLink,
+        'message' => $this->t('Você vai atualizar %num. Selecione a versão de destino.', ['%num' => $contents_plural]),
+        'inProgress' => $this->t('Atualizando para %ver...'),
+        'error' => $this->t('Ocorreu um erro ao processar os parâmetros:'),
+        'errorData' => $this->t('Não foi possível carregar os dados da biblioteca %lib.'),
+        'errorScript' => $this->t('Não foi possível carregar o script de atualização de %lib.'),
+        'errorContent' => $this->t('Não foi possível atualizar a atividade %id:'),
+        'errorParamsBroken' => $this->t('Os parâmetros estão inválidos.'),
+        'errorLibrary' => $this->t('A biblioteca obrigatória %lib não foi encontrada.'),
+        'errorTooHighVersion' => $this->t('Os parâmetros usam %used, mas somente %supported ou versões anteriores são aceitas.'),
+        'errorNotSupported' => $this->t('Os parâmetros usam %used, que não é aceito.'),
+        'done' => $this->t('As atividades foram atualizadas: %num.', ['%num' => $contents_plural]) . $returnLink,
         'library' => [
           'name' => $library->machine_name,
           'version' => $library->major_version . '.' . $library->minor_version,
@@ -67,15 +79,17 @@ class H5PContentUpgradeForm extends FormBase {
         'buster' => '?' . \Drupal::service('asset.query_string')->get(),
         'versions' => $upgrades,
         'contents' => $contents,
-        'buttonLabel' => t('Upgrade'),
-        'infoUrl' => Url::fromUri("internal:/admin/content/h5p/libraries/{$library_id}/upgrade")->toString(),
+        'buttonLabel' => $this->t('Atualizar'),
+        'infoUrl' => Url::fromRoute('aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.upgrade', ['library_id' => $library_id])->toString(),
         'total' => $contents,
         'token' => \H5PCore::createToken('contentupgrade'), // Use token to avoid unauthorized updating
       ]
     ];
 
     // Create page - add settings and JS
-    $build['#markup'] = '<div id="h5p-admin-container">' . t('Please enable JavaScript.') . '</div>';
+    $build['#markup'] = '<div id="h5p-admin-container">' . $this->t('Ative o JavaScript para usar esta página.') . '</div>';
+    // The upgrade endpoint URL contains a session-bound Drupal CSRF token.
+    $build['#cache']['contexts'][] = 'session';
     $build['#attached'] = H5PLibraryAdmin::addSettings($settings);
     $build['#attached']['library'][] = 'aculta_lms_h5p/h5p.admin.library.upgrade';
 

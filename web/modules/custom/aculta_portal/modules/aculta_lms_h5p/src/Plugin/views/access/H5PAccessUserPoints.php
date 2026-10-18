@@ -5,22 +5,18 @@ namespace Drupal\aculta_lms_h5p\Plugin\views\access;
 
 use Drupal\views\Plugin\views\access\AccessPluginBase;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\user\Entity\User;
+use Drupal\views\Attribute\ViewsAccess;
 
 use Symfony\Component\Routing\Route;
 
-/**
- * Access plugin that provides access control for viewing H5P user points
- *
- * @ingroup views_access_plugins
- *
- * @ViewsAccess(
- *   id = "h5paccessuserpoints",
- *   title = @Translation("Access H5P user points"),
- *   help = @Translation("Is the logged in user allowed to see H5P result data for this user?")
- * )
- */
-
+/** Access plugin for viewing H5P user points. */
+#[ViewsAccess(
+  id: 'h5paccessuserpoints',
+  title: new TranslatableMarkup('Acesso aos resultados H5P'),
+  help: new TranslatableMarkup('A pessoa autenticada pode ver os resultados H5P desta conta?'),
+)]
 class H5PAccessUserPoints extends AccessPluginBase {
 
   /**

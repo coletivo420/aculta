@@ -66,12 +66,14 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.upgrade:
   requirements:
     _permission: 'administer h5p libraries'
     library_id: '\d+'
+    _csrf_token: 'TRUE'
+  methods: [POST]
 
 aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.restrict:
   path: '/admin/content/h5p/libraries/{library_id}/restrict'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin::restrict'
-    _title: 'Restrict H5P Content'
+    _title: 'Restringir conteúdo H5P'
   requirements:
     _permission: 'administer h5p libraries'
     library_id: '\d+'
@@ -80,7 +82,7 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.delete:
   path: '/admin/content/h5p/libraries/{library_id}/delete'
   defaults:
     _form: '\Drupal\aculta_lms_h5p\Form\H5PLibraryDeleteForm'
-    _title: 'Delete H5P Library'
+    _title: 'Excluir biblioteca H5P'
   requirements:
     _permission: 'administer h5p libraries'
     library_id: '\d+'
@@ -89,7 +91,7 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.upgrade.library:
   path: '/admin/content/h5p/upgrade/library/{name}/{major}/{minor}'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PContentUpgrade::prepareUpgrade'
-    _title: 'H5P Content Upgrade Library'
+    _title: 'Biblioteca para atualização de conteúdo H5P'
   requirements:
     _permission: 'administer h5p libraries'
     name: '[A-Za-z0-9_.-]+'
@@ -100,14 +102,16 @@ aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache:
   path: '/admin/content/h5p/rebuild-cache'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin::rebuildCache'
-    _title: 'H5P Rebuild Content Cache'
+    _title: 'Reconstruir cache de conteúdo H5P'
   requirements:
     _permission: 'administer h5p libraries'
+    _csrf_token: 'TRUE'
+  methods: [POST]
 aculta_lms_h5p.ajax.set_finished:
   path: '/h5p-ajax/{group_id}/set-finished.json'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PAJAX::setFinished'
-    _title: 'Store Grades Information'
+    _title: 'Salvar resultados da atividade'
   requirements:
      _permission: 'access content'
      _user_is_logged_in: 'TRUE'
@@ -118,7 +122,7 @@ aculta_lms_h5p.ajax.content_user_data:
   path: '/h5p-ajax/{group_id}/content-user-data/{content_main_id}/{data_id}/{sub_content_id}'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PAJAX::contentUserData'
-    _title: 'Store Content User Data'
+    _title: 'Salvar dados da atividade'
   requirements:
      _permission: 'access content'
      _user_is_logged_in: 'TRUE'

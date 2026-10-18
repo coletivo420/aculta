@@ -18,12 +18,12 @@ use Drupal\file\FileInterface;
 use Drupal\file\Upload\FileUploadHandlerInterface;
 use Drupal\file\Upload\FileUploadResult;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-/** @coversDefaultClass \Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUploadManager */
+#[CoversClass(H5PEditorUploadManager::class)]
 final class H5PEditorUploadManagerTest extends UnitTestCase {
 
-  /** @covers ::upload */
   public function testRejectsSvgAsAnUploadedContentImage(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-svg-');
     self::assertNotFalse($path);
@@ -39,7 +39,6 @@ final class H5PEditorUploadManagerTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::upload */
   public function testRejectsMissingH5pFieldType(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-file-');
     self::assertNotFalse($path);
@@ -53,7 +52,6 @@ final class H5PEditorUploadManagerTest extends UnitTestCase {
     }
   }
 
-  /** @covers ::upload */
   public function testStoresRasterUploadThroughAcultaImageAndCoreFileApi(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-image-');
     self::assertNotFalse($path);

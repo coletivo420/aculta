@@ -26,12 +26,10 @@ class H5PAdminSettingsForm extends FormBase {
 
     // make sure core is loaded
     $interface = H5PDrupal::getInstance();
-    $core = H5PDrupal::getInstance('core');
-
-    $path = \Drupal::service('extension.list.module')->getPath('aculta_lms_h5p');
-
-    // Get server setup error messages
-    $server_setup_errors = $core->checkSetupErrorMessage()->errors;
+    $form['h5p_display_options'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Opções de exibição'),
+    ];
 
     // todo $JM
     /*
@@ -67,95 +65,95 @@ class H5PAdminSettingsForm extends FormBase {
     */
 
     $button_behaviours_download = array(
-        \H5PDisplayOptionBehaviour::NEVER_SHOW => t('Never'),
-        \H5PDisplayOptionBehaviour::ALWAYS_SHOW => t('Always'),
-        \H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => t('Only if permitted through permissions'),
-        \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => t('Controlled by author, default is on'),
-        \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => t('Controlled by author, default is off'),
+        \H5PDisplayOptionBehaviour::NEVER_SHOW => $this->t('Nunca'),
+        \H5PDisplayOptionBehaviour::ALWAYS_SHOW => $this->t('Sempre'),
+        \H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => $this->t('Somente quando permitido pelas permissões'),
+        \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => $this->t('Controlado por quem criou, ligado por padrão'),
+        \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => $this->t('Controlado por quem criou, desligado por padrão'),
     );
 
     $button_behaviours = array(
-      \H5PDisplayOptionBehaviour::NEVER_SHOW => t('Never show'),
-      \H5PDisplayOptionBehaviour::ALWAYS_SHOW => t('Always show'),
-      \H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => t('Show only if permitted through permissions'),
-      \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => t('Controlled by author, default is on'),
-      \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => t('Controlled by author, default is off'),
+      \H5PDisplayOptionBehaviour::NEVER_SHOW => $this->t('Nunca exibir'),
+      \H5PDisplayOptionBehaviour::ALWAYS_SHOW => $this->t('Exibir sempre'),
+      \H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => $this->t('Exibir somente quando permitido pelas permissões'),
+      \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => $this->t('Controlado por quem criou, ligado por padrão'),
+      \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => $this->t('Controlado por quem criou, desligado por padrão'),
     );
 
-    $this->addDisplayOption($form['h5p_display_options'], 'h5p_frame', $this->t('Display buttons (download, embed and copyright)'), $interface->getOption('frame', 1), '.form-item-h5p-export, .form-item-h5p-embed, .form-item-h5p-copyright, .form-item-h5p-icon');
+    $this->addDisplayOption($form['h5p_display_options'], 'h5p_frame', $this->t('Exibir botões de download, incorporação e direitos autorais'), $interface->getOption('frame', 1), '.form-item-h5p-export, .form-item-h5p-embed, .form-item-h5p-copyright, .form-item-h5p-icon');
     $form['h5p_display_options']['h5p_export'] = array(
-      '#title' => t('Allow download'),
+      '#title' => $this->t('Permitir download'),
       '#options' => $button_behaviours_download,
       '#default_value' => $interface->getOption('export'),
       '#type' => 'select',
     );
 
     $form['h5p_display_options']['h5p_embed'] = array(
-      '#title' => t('Embed button'),
+      '#title' => $this->t('Botão de incorporação'),
       '#options' => $button_behaviours,
       '#default_value' => $interface->getOption('embed'),
       '#type' => 'select',
     );
 
-    $this->addDisplayOption($form['h5p_display_options'], 'h5p_copyright', $this->t('Copyright button'), $interface->getOption('copyright'));
-    $this->addDisplayOption($form['h5p_display_options'], 'h5p_icon', $this->t('About H5P button'), $interface->getOption('icon'));
+    $this->addDisplayOption($form['h5p_display_options'], 'h5p_copyright', $this->t('Botão de direitos autorais'), $interface->getOption('copyright'));
+    $this->addDisplayOption($form['h5p_display_options'], 'h5p_icon', $this->t('Botão Sobre o H5P'), $interface->getOption('icon'));
 
     $dir = \Drupal::service('file_system')->realpath('private://');
     $form['h5p_default_path'] = array(
       '#type' => 'textfield',
-      '#title' => t('Default h5p package path'),
+      '#title' => $this->t('Diretório privado dos arquivos H5P'),
       '#default_value' => $interface->getOption('default_path', 'h5p'),
-      '#description' => t('Subdirectory in the private files directory %dir where H5P content is stored. Use letters, numbers, hyphens, underscores, and nested folders only.', array('%dir' => $dir)),
+      '#description' => $this->t('Subdiretório em %dir para armazenar os arquivos H5P. Use apenas letras, números, hífen, sublinhado e barras entre pastas.', ['%dir' => $dir]),
     );
 
     $form['h5p_revisioning'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Save content files for each revision'),
+      '#title' => $this->t('Guardar os arquivos de cada revisão'),
       '#default_value' => $interface->getOption('revisioning', 1),
-      '#description' => t("Disable this feature to save disk space. Disabling this does not mean existing revisions will be deleted."),
+      '#description' => $this->t('Desative para economizar espaço. Isso não apaga arquivos de revisões já existentes.'),
     );
 
     $form['h5p_whitelist'] = array(
       '#type' => 'textfield',
       '#maxlength' => 8192,
-      '#title' => t('White list of accepted files.'),
+      '#title' => $this->t('Extensões permitidas para os arquivos de conteúdo'),
       '#default_value' => $interface->getOption('whitelist', \H5PCore::$defaultContentWhitelist),
-      '#description' => t("List accepted content file extensions for uploaded H5Ps. List extensions separated by space, eg. 'png jpg jpeg gif webm mp4 ogg mp3'. Changing this list has security implications. Do not change it if you don't know what you're doing. Adding php to the list is for instance a security risk."),
+      '#description' => $this->t('Separe as extensões por espaço, por exemplo: png jpg jpeg gif webm mp4 ogg mp3. Alterar esta lista afeta a segurança; nunca permita extensões executáveis como php.'),
     );
 
     $form['h5p_library_whitelist_extras'] = array(
       '#type' => 'textfield',
       '#maxlength' => 8192,
-      '#title' => t('White list of extra accepted files in libraries.'),
+      '#title' => $this->t('Extensões adicionais permitidas nas bibliotecas'),
       '#default_value' => $interface->getOption('library_whitelist_extras', \H5PCore::$defaultLibraryWhitelistExtras),
-      '#description' => t("Libraries might need to accept more files that should be allowed in normal contents. Add extra files here. Changing this list has security implications. Do not change it if you don't know what you're doing. Adding php to the list is for instance a security risk."),
+      '#description' => $this->t('Algumas bibliotecas precisam de extensões adicionais. Alterar esta lista afeta a segurança; nunca permita extensões executáveis como php.'),
     );
 
     $form['h5p_save_content_state'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Save content state'),
+      '#title' => $this->t('Salvar o estado das atividades'),
       '#default_value' => $interface->getOption('save_content_state', 0),
-      '#description' => t('Automatically save the current state of interactive content for each user. This means that the user may pick up where he left off.'),
+      '#description' => $this->t('Salva automaticamente o estado da atividade para que cada pessoa possa continuar de onde parou.'),
     );
 
     $form['h5p_save_content_frequency'] = array(
       '#type' => 'textfield',
-      '#title' => t('Save content state frequency'),
+      '#title' => $this->t('Intervalo para salvar o estado'),
       '#default_value' => $interface->getOption('save_content_frequency', 30),
-      '#description' => t("In seconds, how often do you wish the user to auto save their progress. Increasee this number if you're having issues with many ajax request."),
+      '#description' => $this->t('Intervalo em segundos entre salvamentos automáticos do progresso.'),
     );
 
     $form['h5p_enable_lrs_content_types'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable LRS dependent content types'),
+      '#title' => $this->t('Permitir tipos que dependem de um LRS'),
       '#default_value' => $interface->getOption('enable_lrs_content_types', 0),
-      '#description' => t('Makes it possible to use content types that rely upon a Learning Record Store to function properly, like the Questionnaire content type.'),
+      '#description' => $this->t('Permite tipos de atividade que precisam de um Learning Record Store (LRS), como Questionário.'),
     );
 
     $form['h5p_external_services'] = [
       '#type' => 'item',
-      '#title' => $this->t('External H5P services'),
-      '#markup' => '<p>' . $this->t('The Content Hub and usage reporting are disabled for this installation.') . '</p>',
+      '#title' => $this->t('Serviços externos do H5P'),
+      '#markup' => '<p>' . $this->t('O Hub de conteúdo e o envio de estatísticas estão desativados nesta instalação.') . '</p>',
     ];
 
     // TODO: Be able to change site key
@@ -175,13 +173,13 @@ class H5PAdminSettingsForm extends FormBase {
     // Development mode settings.
     $form['h5p_development_mode'] = [
       '#type' => 'select',
-      '#title' => $this->t('Development mode'),
-      '#description' => $this->t('Allows for local development of content and libraries.'),
+      '#title' => $this->t('Modo de desenvolvimento'),
+      '#description' => $this->t('Permite desenvolver conteúdo e bibliotecas localmente.'),
       '#default_value' => $interface->getOption('development_mode', 0),
       '#options' => [
-        \H5PDevelopment::MODE_NONE => $this->t('Disabled'),
-        \H5PDevelopment::MODE_CONTENT => $this->t('Content'),
-        \H5PDevelopment::MODE_LIBRARY => $this->t('Library'),
+        \H5PDevelopment::MODE_NONE => $this->t('Desativado'),
+        \H5PDevelopment::MODE_CONTENT => $this->t('Conteúdo'),
+        \H5PDevelopment::MODE_LIBRARY => $this->t('Biblioteca'),
       ],
     ];
 
@@ -191,7 +189,7 @@ class H5PAdminSettingsForm extends FormBase {
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = array(
       '#type' => 'submit',
-      '#value' => t('Save'),
+      '#value' => $this->t('Salvar'),
     );
 
     return $form;
@@ -207,21 +205,21 @@ class H5PAdminSettingsForm extends FormBase {
     // Try to create directories and warn the user of errors.
     $h5p_default_path = $values['h5p_default_path'];
     if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@i', (string) $h5p_default_path)) {
-      $form_state->setErrorByName('h5p_default_path', t('The directory must be a relative path using letters, numbers, hyphens, underscores, and slashes.'));
+      $form_state->setErrorByName('h5p_default_path', $this->t('Informe um caminho relativo usando letras, números, hífen, sublinhado e barras.'));
       return;
     }
     $path = 'private://' . $h5p_default_path;
     $temp_path = $path . '/' . 'temp';
 
     if (! \Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
-      $form_state->setErrorByName('h5p_default_path', t('You have specified an invalid directory.'));
+      $form_state->setErrorByName('h5p_default_path', $this->t('O diretório informado é inválido.'));
     }
     if (! \Drupal::service('file_system')->prepareDirectory($temp_path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
-      $form_state->setErrorByName('h5p_default_path', t('You have specified an invalid directory.'));
+      $form_state->setErrorByName('h5p_default_path', $this->t('O diretório informado é inválido.'));
     }
 
     if (! is_numeric($values['h5p_save_content_frequency']) || $values['h5p_save_content_frequency'] < 0) {
-      $form_state->setErrorByName('h5p_save_content_frequency', t('You must specify a positive number.'));
+      $form_state->setErrorByName('h5p_save_content_frequency', $this->t('Informe um número maior ou igual a zero.'));
     }
   }
 

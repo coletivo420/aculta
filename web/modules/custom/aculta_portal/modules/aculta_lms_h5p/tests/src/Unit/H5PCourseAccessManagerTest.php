@@ -14,18 +14,17 @@ use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/** @coversDefaultClass \Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager */
+#[CoversClass(H5PCourseAccessManager::class)]
 final class H5PCourseAccessManagerTest extends UnitTestCase {
 
-  /** @covers ::studentAccess */
   public function testStudentCanAccessOnlyContentReferencedByTheirCourse(): void {
     [$manager, $course, $items] = $this->managerForCourse([41]);
     self::assertTrue($manager->studentAccess(8, 41, $this->createMock(AccountInterface::class))->isAllowed());
     self::assertFalse($manager->studentAccess(8, 42, $this->createMock(AccountInterface::class))->isAllowed());
   }
 
-  /** @covers ::studentAccess */
   public function testStudentAccessIncludesGroupAndContentCacheability(): void {
     [$manager, $course] = $this->managerForCourse([41]);
     $result = $manager->studentAccess(8, 41, $this->createMock(AccountInterface::class));
@@ -35,7 +34,6 @@ final class H5PCourseAccessManagerTest extends UnitTestCase {
     self::assertContains('h5p_content:41', $result->getCacheTags());
   }
 
-  /** @covers ::editorAccess */
   public function testEditorNeedsGroupUpdateAccessAndExistingReference(): void {
     [$manager] = $this->managerForCourse([41], FALSE);
     self::assertFalse($manager->editorAccess(8, 41, $this->createMock(AccountInterface::class))->isAllowed());

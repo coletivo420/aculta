@@ -42,7 +42,7 @@ final class H5PAJAX extends ControllerBase {
     $token = (string) $request->query->get('token', '');
 
     if (!$uid || $content_id < 1 || $score < 0 || $max_score < 0 || $score > $max_score || $opened < 1 || !\H5PCore::validToken('result', $token) || !$this->courseAccess->studentAccess($group_id, $content_id, $this->currentUser())->isAllowed()) {
-      return $this->privateResponse(['success' => FALSE, 'message' => $this->t('Invalid request.')], 403);
+      return $this->privateResponse(['success' => FALSE, 'message' => $this->t('Solicitação inválida.')], 403);
     }
 
     $existing = $this->database->select('h5p_points', 'p')
@@ -69,7 +69,7 @@ final class H5PAJAX extends ControllerBase {
   public function contentUserData(int $group_id, int $content_main_id, string $data_id, int $sub_content_id, Request $request): JsonResponse {
     $user = $this->currentUser();
     if (!$user->isAuthenticated() || $content_main_id < 1 || !preg_match('/^[a-zA-Z0-9_.-]{1,128}$/', $data_id) || $sub_content_id < 0 || !$this->courseAccess->studentAccess($group_id, $content_main_id, $user)->isAllowed() || !\H5PCore::validToken('contentuserdata', (string) $request->query->get('token', ''))) {
-      return $this->privateResponse(['success' => FALSE, 'message' => $this->t('Invalid request.')], 403);
+      return $this->privateResponse(['success' => FALSE, 'message' => $this->t('Solicitação inválida.')], 403);
     }
 
     if ($request->request->has('data')) {

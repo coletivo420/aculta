@@ -15,7 +15,7 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
   use UserCreationTrait;
 
   /** {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'file', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p'];
+  protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p'];
 
   /** {@inheritdoc} */
   protected function setUpFilesystem(): void {
@@ -146,6 +146,15 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     $provider = $this->container->get('router.route_provider');
     self::assertSame(['POST'], $provider->getRouteByName('aculta_lms_h5p.ajax.set_finished')->getMethods());
     self::assertSame(['GET', 'POST'], $provider->getRouteByName('aculta_lms_h5p.ajax.content_user_data')->getMethods());
+    $upgradeRoute = $provider->getRouteByName('aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.upgrade');
+    self::assertSame(['POST'], $upgradeRoute->getMethods());
+    self::assertSame('TRUE', $upgradeRoute->getRequirement('_csrf_token'));
+    $rebuildRoute = $provider->getRouteByName('aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache');
+    self::assertSame(['POST'], $rebuildRoute->getMethods());
+    self::assertSame('TRUE', $rebuildRoute->getRequirement('_csrf_token'));
+    $settings = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\H5PContentUpgradeForm::class);
+    $missing = $settings->buildForm([], new \Drupal\Core\Form\FormState(), 999);
+    self::assertSame('Biblioteca não encontrada.', (string) $missing['#markup']);
   }
 
   /** Verifies package uploads follow the configured private storage location. */
@@ -154,6 +163,15 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     $built = $form->buildForm([], new \Drupal\Core\Form\FormState());
     self::assertSame('private://h5p-kernel-test/packages', $built['package']['#upload_location']);
     self::assertSame(['extensions' => 'h5p'], $built['package']['#upload_validators']['FileExtension']);
+  }
+
+  /** Verifies the H5P settings form builds its option fieldset and labels. */
+  public function testH5PSettingsFormBuildsTranslatedOptions(): void {
+    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\H5PAdminSettingsForm::class);
+    $built = $form->buildForm([], new \Drupal\Core\Form\FormState());
+    self::assertSame('fieldset', $built['h5p_display_options']['#type']);
+    self::assertSame('Opções de exibição', (string) $built['h5p_display_options']['#title']);
+    self::assertSame('Diretório privado dos arquivos H5P', (string) $built['h5p_default_path']['#title']);
   }
 
   /** Verifies failed progress requests cannot be cached by browser or proxy. */

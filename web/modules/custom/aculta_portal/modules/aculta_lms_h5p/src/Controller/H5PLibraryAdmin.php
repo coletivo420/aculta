@@ -10,6 +10,8 @@ use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,12 +24,12 @@ class H5PLibraryAdmin extends ControllerBase {
   /**
    * constructor.
    */
-  public function __construct(Connection $database, private readonly FormBuilderInterface $h5pFormBuilder) {
+  public function __construct(Connection $database, private readonly FormBuilderInterface $h5pFormBuilder, private readonly RequestStack $requestStack) {
     $this->database = $database;
   }
 
   public static function create(ContainerInterface $container) {
-    $controller = new static($container->get('database'), $container->get('form_builder'));
+    $controller = new static($container->get('database'), $container->get('form_builder'), $container->get('request_stack'));
     return $controller;
   }
 
@@ -57,8 +59,8 @@ class H5PLibraryAdmin extends ControllerBase {
           $restricted = ($library->restricted === '1' ? TRUE : FALSE);
           $option = [
             'query' => [
-              'token' => \H5PCore::createToken('library_' . $i),
-              'token_id' => $i,
+              'token' => \H5PCore::createToken('library_' . $library->id),
+              'token_id' => $library->id,
               'restrict' => ($library->restricted === '1' ? 0 : 1)
             ]
           ];
@@ -93,7 +95,7 @@ class H5PLibraryAdmin extends ControllerBase {
     }
 
     // All translations are made server side
-    $settings['libraryList']['listHeaders'] = [t('Title'), t('Restricted'), t('Instances'), t('Instance Dependencies'), t('Library dependencies'), t('Actions')];
+    $settings['libraryList']['listHeaders'] = [$this->t('Título'), $this->t('Restrita'), $this->t('Atividades'), $this->t('Dependências de atividades'), $this->t('Dependências da biblioteca'), $this->t('Ações')];
 
     // Make it possible to rebuild all caches.
     if ($numNotFiltered) {
@@ -103,12 +105,14 @@ class H5PLibraryAdmin extends ControllerBase {
     $settings['containerSelector'] = '#h5p-admin-container';
 
     // Add the needed css and javascript
+    // Rebuild-cache links carry Drupal's per-session CSRF token.
+    $build['#cache']['contexts'][] = 'session';
     $build['#attached'] = self::addSettings($settings);
     $build['#attached']['library'][] = 'aculta_lms_h5p/h5p.admin.library.list';
 
-    $build['title_add'] = ['#markup' => '<h3 class="h5p-admin-header">' . t('Add libraries') . '</h3>'];
+    $build['title_add'] = ['#markup' => '<h3 class="h5p-admin-header">' . $this->t('Adicionar bibliotecas') . '</h3>'];
     $build['form'] = $this->h5pFormBuilder->getForm('Drupal\aculta_lms_h5p\Form\H5PLibraryUploadForm');
-    $build['title_installed'] = ['#markup' => '<h3 class="h5p-admin-header">' . t('Installed libraries') . '</h3>'];
+    $build['title_installed'] = ['#markup' => '<h3 class="h5p-admin-header">' . $this->t('Bibliotecas instaladas') . '</h3>'];
     $build['container'] = ['#markup' => '<div id="h5p-admin-container"></div>'];
 
     return $build;
@@ -121,13 +125,13 @@ class H5PLibraryAdmin extends ControllerBase {
    * @return array
    */
   function getNotCachedSettings($num) {
-    $url = Url::fromUri('internal:/admin/content/h5p/rebuild-cache');
+    $url = Url::fromRoute('aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache');
     return [
       'num' => $num,
       'url' => $url->toString(),
-      'message' => t('Not all content has gotten their cache rebuilt. This is required to be able to delete libraries, and to display how many contents that uses the library.'),
+      'message' => $this->t('Ainda há atividades sem cache atualizado. Reconstrua o cache para excluir bibliotecas e ver quantas atividades usam cada uma.'),
       'progress' => $this->formatPlural($num, '1 conteúdo precisa reconstruir o cache.', '@count conteúdos precisam reconstruir o cache.'),
-      'button' => t('Rebuild cache')
+      'button' => $this->t('Reconstruir cache')
     ];
   }
 
@@ -139,12 +143,15 @@ class H5PLibraryAdmin extends ControllerBase {
    * @return JsonResponse
    */
   function restrict($library_id) {
-    $restricted = filter_input(INPUT_GET, 'restrict');
+    $request = $this->requestStack->getCurrentRequest();
+    $restricted = $request?->query->getString('restrict');
     $restrict = ($restricted === '1');
 
-    $token_id = filter_input(INPUT_GET, 'token_id');
-    if (!\H5PCore::validToken('library_' . $token_id, filter_input(INPUT_GET, 'token')) || (!$restrict && $restricted !== '0')) {
-      return new JsonResponse('Not a valid library: library_' . $token_id, 403);
+    $token_id = $request?->query->getString('token_id', '');
+    $token = $request?->query->getString('token', '');
+    if ($request === NULL || !ctype_digit((string) $library_id) || $token_id !== (string) $library_id
+      || !\H5PCore::validToken('library_' . $token_id, $token) || (!$restrict && $restricted !== '0')) {
+      return new JsonResponse('Biblioteca inválida.', 403);
     }
 
     $this->database->update('h5p_libraries')
@@ -169,8 +176,9 @@ class H5PLibraryAdmin extends ControllerBase {
    * @return JsonResponse
    */
   function rebuildCache() {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-      return new JsonResponse('You are not allowed to perform this action trough a ' . $_SERVER['REQUEST_METHOD'], 403);
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request === NULL || $request->getMethod() !== 'POST') {
+      return new JsonResponse('Método não permitido.', 403);
     }
 
     // Do as many as we can in ten seconds.
@@ -199,18 +207,6 @@ class H5PLibraryAdmin extends ControllerBase {
 
 
   /**
-   * Creates the title for the library details page
-   *
-   * @param integer $library_id
-   */
-  public static function libraryDetailsTitle($library_id) {
-    $query = $this->database->select('h5p_libraries', 'l');
-    $query->condition('l.library_id', $library_id, '=');
-    $query->fields('l', ['title']);
-    return $query->execute()->fetchField();
-  }
-
-  /**
    * Helper function - creates admin settings
    *
    * @param array $settings
@@ -219,10 +215,10 @@ class H5PLibraryAdmin extends ControllerBase {
   public static function addSettings($settings = NULL) {
     $settings['containerSelector'] = '#h5p-admin-container';
     $settings['l10n'] = [
-      'NA' => t('N/A'),
+      'NA' => new TranslatableMarkup('Não se aplica'),
       /*'viewLibrary' => t('View library details'),*/
-      'deleteLibrary' => t('Delete library'),
-      'upgradeLibrary' => t('Upgrade library content')
+      'deleteLibrary' => new TranslatableMarkup('Excluir biblioteca'),
+      'upgradeLibrary' => new TranslatableMarkup('Atualizar atividades da biblioteca')
     ];
 
     $build['drupalSettings']['h5p']['drupal_h5p_admin_integration'] = [
