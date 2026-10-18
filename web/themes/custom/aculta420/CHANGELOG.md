@@ -1258,5 +1258,6 @@ Classificação: PATCH de manutenção do tema e do gate.
 - Avaliado também o scaffold `Bootstrap Subtheme` distribuído com `drupal/bootstrap` 5.0.2. Seu `_page.html.twig` demonstra herança do template base, mas redefine a estrutura genérica de página; `global.js` é só um esqueleto de behavior. A integração de Color module e o CSS de cores literais não se encaixam no shell por purpose e nos tokens ACULTA420. Não há função portável que acrescente valor sem duplicar essas responsabilidades.
 - O ACULTA420 mantém o CSS e JavaScript do Bootstrap fornecidos pela dependência Composer e a camada semântica/tokenizada própria; não adiciona um pipeline Sass/Gulp paralelo.
 - `validate-aculta420-foundation.php`: PASS via Drush no Runtime Homelab, somente leitura. Nenhuma configuração ou banco foi alterado.
-- DT-O14 permanece aberta: o estado ativo do Runtime ainda requer reconciliação controlada da referência antiga a `bootstrap5`; esta entrega não alterou configuração ativa.
+- Runtime de teste: mapa `core.extension:theme` alinhado ao sync por remoção dirigida de `bootstrap5`; `aculta420` segue como tema padrão e `claro` como administrativo. Cópia recuperável do mapa anterior em `/tmp/aculta-runtime-core-extension-theme-before-bootstrap5-20261018.yml`.
+- DT-O14 permanece parcial: `bootstrap5.settings` e `block.block.bootstrap5_search_form` ainda existem no banco e apontam para a base antiga; não houve importação global nem exclusão desses objetos.
 
