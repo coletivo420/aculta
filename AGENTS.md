@@ -1,5 +1,20 @@
 # ACULTA - Instruções para agentes
 
+## Mapa de documentação
+
+- [README do projeto](README.md) — entrada geral e índice de módulos/temas.
+- [Índice documental](docs/README.md) — arquitetura, decisões, normas e operação.
+- [Normas do Portal](docs/portal/README.md) — padrões, políticas e contratos do `aculta_portal`.
+- [Módulos e integrações](docs/modules/README.md) — referências transversais Core/contrib.
+- [Documentação ACULTA420](web/themes/custom/aculta420/docs/README.md) — tema e design system.
+- Cada módulo/submódulo mantém seu escopo e guias na própria pasta; o README do
+  componente é a entrada local. CHANGELOGs registram entregas, roadmaps registram
+  planejamento e `docs/operations/DEBT-REGISTER.md` concentra pendências.
+
+Este arquivo reúne guardrails para agentes; os documentos vinculados são a fonte
+canônica dos contratos detalhados. Evite copiar versões, resultados de validação
+ou status de PR para índices e READMEs.
+
 ## Projeto
 
 Este repositório contém o site institucional da:
