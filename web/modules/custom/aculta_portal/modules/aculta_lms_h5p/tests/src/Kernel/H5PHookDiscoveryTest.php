@@ -27,6 +27,9 @@ final class H5PHookDiscoveryTest extends KernelTestBase {
     self::assertSame('h5p_upload', $this->container->get('plugin.manager.field.widget')->getDefinition('h5p_upload')['id']);
     self::assertSame('h5p_default', $this->container->get('plugin.manager.field.formatter')->getDefinition('h5p_default')['id']);
     self::assertSame('h5paccessuserpoints', $this->container->get('plugin.manager.views.access')->getDefinition('h5paccessuserpoints')['id']);
+    $condition = $this->container->get('plugin.manager.condition')->getDefinition('aculta_lms_h5p_group_has_activities');
+    self::assertSame('entity:group', $condition['context_definitions']['group']->getDataType());
+    self::assertSame('O curso tem atividades interativas (H5P)', (string) $condition['label']);
   }
 
 }

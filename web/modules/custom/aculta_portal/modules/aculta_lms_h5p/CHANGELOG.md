@@ -17,7 +17,7 @@
 - A revisão dos controllers remove service locators substituíveis por DI e testa sua criação no container; cobertura Kernel atual: 7 testes/85 assertions.
 - Pré-validação integral dos arquivos de todas as bibliotecas antes do savePackage; um pacote com SVG ativo no último arquivo não grava nem a biblioteca nem o JS anterior. Kernel atual: 8 testes/101 assertions; Unit H5P: 12/52.
 - Migra os quatro plugins anotados para Attributes Drupal 11 e troca `*.views.inc` depreciado por hook OOP com DI; declara `views` como dependência. Descoberta Kernel sem depreciações: 9 testes/119 assertions.
-- Completa traduções da interface administrativa/permissões, corrige tokens da ação de restrição e aplica CSRF do Drupal às operações POST de upgrade/reconstrução; entradas inválidas retornam erros HTTP apropriados e IDs ignorados são normalizados.
-- Corrige instanciação DI dos formulários de manutenção e trata a biblioteca inexistente sem acesso a índice indefinido. Kernel H5P: 9 testes/122 assertions; Unit H5P: 12 testes/52 assertions; gates Portal, imagem, pacotes e slugs aprovados.
+- Completa traduções da interface administrativa/permissões, verifica via descoberta Kernel a condição de curso do CTools, corrige tokens da ação de restrição e aplica CSRF do Drupal às operações POST de upgrade/reconstrução; entradas inválidas retornam erros HTTP apropriados e IDs ignorados são normalizados.
+- Corrige instanciação DI dos formulários de manutenção e trata a biblioteca inexistente sem acesso a índice indefinido. Kernel H5P: 9 testes/124 assertions; Unit H5P: 12 testes/52 assertions; gates Portal, imagem, pacotes e slugs aprovados.
 - RUNTIME STATUS: DEFERRED.
 

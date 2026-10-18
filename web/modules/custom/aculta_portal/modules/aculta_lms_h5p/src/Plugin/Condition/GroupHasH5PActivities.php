@@ -16,10 +16,10 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
  */
 #[Condition(
   id: 'aculta_lms_h5p_group_has_activities',
-  label: new TranslatableMarkup('Course has interactive activities (H5P)'),
-  category: new TranslatableMarkup('ACULTA LMS'),
+  label: new TranslatableMarkup('O curso tem atividades interativas (H5P)'),
+  category: new TranslatableMarkup('LMS ACULTA'),
   context_definitions: [
-    'group' => new EntityContextDefinition('entity:group', new TranslatableMarkup('Course')),
+    'group' => new EntityContextDefinition('entity:group', new TranslatableMarkup('Curso')),
   ],
 )]
 final class GroupHasH5PActivities extends ConditionPluginBase {
@@ -34,7 +34,7 @@ final class GroupHasH5PActivities extends ConditionPluginBase {
   }
 
   public function summary(): string {
-    return (string) $this->t('The course contains at least one H5P activity.');
+    return (string) $this->t('O curso contém pelo menos uma atividade H5P.');
   }
 
   public function getCacheTags(): array {
