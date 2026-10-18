@@ -1,3 +1,12 @@
+## 0.4.0-dev.142 — endereço da conta: troca de CEP, país fixo e gate — 2026-10-18
+
+- Troca de CEP depois do primeiro preenchimento: rua, bairro, cidade e estado são substituídos pelo endereço do novo CEP. Antes a busca só preenchia campos vazios e não atualizava. Número, S/N e complemento não são alterados.
+- O CEP resolvido fica por campo no módulo (sobrevive ao rebuild de AJAX do estado).
+- País fixo em Brasil como campo oculto (`hidden`). O seletor de país não aparece, e o número volta a aparecer (ver `docs/portal/ACCOUNT-ADDRESS.md`).
+- Gate `scripts/validate-account-address.php` e teste de navegador `scripts/test-account-address-browser.py` (17 verificações: formulário, primeiro CEP, troca de CEP em estados diferentes e no mesmo estado, número mantido, S/N e salvar).
+- Verificado no Runtime de teste (Firefox, X11): 17/17 verificações OK; endereço salvo é o do último CEP.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild). Valores de produção não se aplicam (campo de endereço do perfil).
+
 ## 0.4.0-dev.143 — View pública do catálogo da loja — 2026-10-18
 
 - Cria a View `aculta_shop_catalog` com página pública `/produtos` e bloco para uso no purpose SHOP. A consulta mantém fixos produto publicado e bundle `produto_loja`; filtros não são expostos nem alteráveis por CTools.

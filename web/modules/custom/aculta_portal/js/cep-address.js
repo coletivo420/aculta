@@ -77,6 +77,19 @@
   // os campos vêm primeiro, e o Estado por último. O preenchimento fica guardado e é reaplicado nos campos vazios
   // do markup novo (attach), sem disparar outro rebuild.
   const pendingFill = new Map();
+  // CEP já resolvido por endereço (prefixo do campo). Fica no módulo, e não no elemento: o AJAX troca o elemento.
+  const resolvedCep = new Map();
+
+  // Campos que a busca deve escrever: a troca de CEP escreve o endereço inteiro; o primeiro preenchimento só os vazios.
+  function keysToWrite(prefix, container, values, replace) {
+    if (replace) return values;
+    const out = {};
+    Object.keys(values).forEach((key) => {
+      const field = getField(prefix, key, container);
+      if (field && field.value === '' && values[key] !== undefined && values[key] !== null) out[key] = values[key];
+    });
+    return out;
+  }
 
   function applyFill(prefix, container, values, { onlyEmpty = false } = {}) {
     Object.keys(values).filter((key) => key !== 'administrative_area').forEach((key) => {
@@ -147,7 +160,9 @@
       Object.entries(labels).forEach(([key, label]) => setLabel(getField(prefix, key, container), label));
       const pending = pendingFill.get(prefix);
       if (pending) {
-        applyFill(prefix, container, pending, { onlyEmpty: true });
+        applyFill(prefix, container, pending, { onlyEmpty: false });
+        // Vale só para o rebuild que a própria busca disparou: depois disso, o que a pessoa editar fica como está.
+        pendingFill.delete(prefix);
         // O rebuild apaga o aviso de status: anuncia de novo, para leitor de tela.
         announce(statusFor(postal), Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
       }
@@ -159,10 +174,10 @@
       postal.addEventListener('input', () => {
         window.clearTimeout(timer);
         const cep = digits(postal.value);
-        if (cep.length !== 8 || cep === postal.dataset.acultaCepResolved || cep === activeCep) return;
+        if (cep.length !== 8 || cep === resolvedCep.get(prefix) || cep === activeCep) return;
         timer = window.setTimeout(async () => {
           const requestedCep = digits(postal.value);
-          if (requestedCep.length !== 8 || requestedCep === postal.dataset.acultaCepResolved) return;
+          if (requestedCep.length !== 8 || requestedCep === resolvedCep.get(prefix)) return;
           activeCep = requestedCep;
           announce(status, Drupal.t('Consultando o CEP.'));
           try {
@@ -176,9 +191,15 @@
               address_line1: data.address_line1,
               dependent_locality: data.dependent_locality || '',
             };
-            pendingFill.set(prefix, values);
-            // Só preenche campos vazios: o que a pessoa já digitou (cidade, estado, rua, bairro) não é apagado.
-            applyFill(prefix, container, values, { onlyEmpty: true });
+            // Primeiro CEP: só preenche campos vazios, sem apagar o que a pessoa já digitou. Se o CEP mudou depois de um
+            // preenchimento, o endereço é do novo CEP: rua, bairro, cidade e estado são substituídos. Número, S/N e
+            // complemento não fazem parte de values e nunca são alterados.
+            const previous = resolvedCep.get(prefix) || '';
+            const replace = previous !== '' && previous !== requestedCep;
+            const toWrite = keysToWrite(prefix, container, values, replace);
+            pendingFill.set(prefix, toWrite);
+            applyFill(prefix, container, toWrite, { onlyEmpty: false });
+            resolvedCep.set(prefix, requestedCep);
             postal.value = formatCep(requestedCep);
             postal.dataset.acultaCepResolved = requestedCep;
             announce(status, Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));

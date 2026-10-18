@@ -793,7 +793,12 @@ final class PortalHooks {
    */
   public static function hideCountrySelect(array $element): array {
     if (isset($element['country_code'])) {
-      $element['country_code']['#access'] = FALSE;
+      // Campo oculto, e não #access FALSE: o módulo Address descarta toda a entrada do formulário quando o
+      // country_code não vem no POST, e a lista de cidades passa a usar o endereço salvo (ver o teste de CEP).
+      $element['country_code']['#type'] = 'hidden';
+      unset($element['country_code']['#options'], $element['country_code']['#ajax'], $element['country_code']['#empty_value']);
+      $element['country_code']['#default_value'] = 'BR';
+      $element['country_code']['#value'] = 'BR';
     }
     return $element;
   }
