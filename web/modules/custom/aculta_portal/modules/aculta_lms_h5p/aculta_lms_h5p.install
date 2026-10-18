@@ -34,6 +34,7 @@ function aculta_lms_h5p_install(): void {
  * @param string $phase The phase in which requirements are checked
  * @return array $requirements Requirements and their severity
  */
+#[\Drupal\Core\Hook\Attribute\LegacyRequirementsHook]
 function aculta_lms_h5p_requirements($phase) {
   $requirements = [];
 

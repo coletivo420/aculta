@@ -3,11 +3,14 @@
 
 namespace Drupal\aculta_lms_h5p\H5PEditor;
 
+use Drupal\aculta_lms_h5p\H5PEditor\H5PFileUsageManager;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\Entity\File;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 
 class H5PEditorDrupalStorage implements \H5peditorStorage {
+
+  public function __construct(private readonly H5PFileUsageManager $fileUsageManager) {}
 
   /**
    * Load language file(JSON) from database.
@@ -77,15 +80,7 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    * @param string $path To new file
    */
   public function keepFile($path) {
-    // Find URI
-    $public_path = \Drupal::service('file_system')->realpath('public://');
-    $uri = str_replace($public_path . '/', 'public://', $path);
-
-    // No longer mark the file as a tmp file
-    \Drupal::database()
-           ->delete('file_managed')
-           ->condition('uri', $uri)
-           ->execute();
+    $this->fileUsageManager->keep((string) $path);
   }
 
   /**

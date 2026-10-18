@@ -95,6 +95,12 @@ Execução adicional em 2026-10-17: Unit e Kernel de `aculta_lms`, Unit e Kernel
 remoção da relação Media↔Group e revogação de membership. Foram reportadas 23
 deprecações de Core/contrib; nenhuma falha. Runtime permanece DEFERRED.
 
+Execução adicional em 2026-10-18: Kernel de `aculta_lms_h5p` confirmou a
+descoberta dos hooks OOP e a construção dos serviços do módulo (1 teste, 5
+asserções). A suíte Unit H5P passou (4 testes, 10 asserções) sem deprecações do
+adapter; a suíte Unit `aculta_image` passou (19 testes, 69 asserções). A
+integração no Runtime e o teste visual do editor seguem DEFERRED.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

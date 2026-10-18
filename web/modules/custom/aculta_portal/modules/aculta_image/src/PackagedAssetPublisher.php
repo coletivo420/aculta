@@ -38,7 +38,9 @@ final class PackagedAssetPublisher {
   public function publish(string $source, string $destination, string $origin): bool {
     $sourcePath = realpath($source);
     $destinationPath = $this->safeDestination($destination);
-    if ($sourcePath === FALSE || !is_file($sourcePath) || !is_readable($sourcePath) || $destinationPath === NULL || !$this->trustedH5pSource($sourcePath, $origin)) {
+    if ($sourcePath === FALSE || !is_file($sourcePath) || !is_readable($sourcePath)
+      || (int) filesize($sourcePath) > UploadPolicy::MAX_BYTES
+      || $destinationPath === NULL || !$this->trustedH5pSource($sourcePath, $origin)) {
       return FALSE;
     }
     $bytes = file_get_contents($sourcePath);

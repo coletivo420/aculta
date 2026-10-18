@@ -53,7 +53,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
       // Prepare file storage.
       $file_path = self::getStoragePath();
-      $fs = new \H5PDefaultStorage($file_path);
+      $fs = \Drupal::service('aculta_lms_h5p.file_storage_factory')->create($file_path);
 
       // Determine if exports should be generated
       $is_export_enabled = !!$interface->getOption('export', TRUE);
@@ -167,8 +167,9 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
     if ($user->id()) {
       $settings['user'] = [
-        'name' => $user->getAccountName(),
-        'mail' => $user->getEmail(),
+        // The player needs a stable actor label for local H5P events. Do not
+        // expose the Drupal account name or email to content JavaScript.
+        'name' => 'account-' . $user->id(),
       ];
     }
     else {
@@ -277,6 +278,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getPlatformInfo
+   * @return array
    */
   public function getPlatformInfo() {
 
@@ -291,6 +293,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements fetchExternalData
+   * @return string|array
    */
   public function fetchExternalData($url, $data = NULL, $blocking = TRUE, $stream = NULL, $fullData = FALSE, $headers = array(), $files = array(), $method = 'POST') {
 
@@ -370,6 +373,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getMessages
+   * @return array
    */
   public function getMessages($type) {
     if (empty($this->messages[$type])) {
@@ -383,6 +387,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements t
+   * @return string
    */
   public function t($message, $replacements = []) {
     return t($message, $replacements);
@@ -390,6 +395,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getLibraryFileUrl
+   * @return string
    */
   public function getLibraryFileUrl($libraryFolderName, $fileName) {
     // Misplaced; this is something that Core should be able to handle.
@@ -398,6 +404,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getUploadedH5PFolderPath
+   * @return string
    */
   public function getUploadedH5pFolderPath($set = NULL) {
     if (!empty($set)) {
@@ -409,6 +416,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getUploadedH5PPath
+   * @return string
    */
   public function getUploadedH5pPath($set = NULL) {
     if (!empty($set)) {
@@ -420,6 +428,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements loadLibraries
+   * @return array
    */
   public function loadLibraries() {
     $result = \Drupal::database()->query("
@@ -447,6 +456,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getAdminUrl
+   * @return string
    */
   public function getAdminUrl() {
     // Misplaced; not used by Core.
@@ -456,6 +466,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getLibraryId
+   * @return int|false
    */
   public function getLibraryId($machineName, $majorVersion = NULL, $minorVersion = NULL) {
     $library_id = \Drupal::database()->query("
@@ -476,6 +487,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements isPatchedLibrary().
+   * @return bool
    */
   public function isPatchedLibrary($library) {
     if ($this->isInDevMode()) {
@@ -501,6 +513,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements isInDevMode().
+   * @return bool
    */
   public function isInDevMode() {
     $$h5p_dev_mode = $this->getOption('development_mode', FALSE);
@@ -509,6 +522,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements mayUpdateLibraries
+   * @return bool
    */
   public function mayUpdateLibraries() {
 
@@ -597,6 +611,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getLibraryStats
+   * @return array
    */
   public function getLibraryStats($type) {
     $count = [];
@@ -622,6 +637,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getNumAuthors
+   * @return int
    */
   public function getNumAuthors() {
 
@@ -1009,6 +1025,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements loadLibrary
+   * @return array|false
    */
   public function loadLibrary($machineName, $majorVersion, $minorVersion) {
     $database = \Drupal::database();
@@ -1072,6 +1089,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements loadLibrarySemantics().
+   * @return string
    */
   public function loadLibrarySemantics($machineName, $majorVersion, $minorVersion) {
     $semantics = \Drupal::database()->query(
@@ -1101,6 +1119,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements loadContent().
+   * @return array
    */
   public function loadContent($id) {
 
@@ -1110,6 +1129,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements loadContentDependencies().
+   * @return array
    */
   public function loadContentDependencies($id, $type = NULL) {
     $query = "SELECT hl.library_id,
@@ -1178,6 +1198,23 @@ class H5PDrupal implements \H5PFrameworkInterface {
         $config->save();
       }
     }
+  }
+
+  /**
+   * Implements resetHubOrganizationData().
+   *
+   * H5P Core 1.28 added this interface method. The ACULTA installation keeps
+   * Hub communication disabled; clear any legacy registration material and
+   * leave both Hub and usage reporting disabled after an authorization failure.
+   * @return void
+   */
+  public function resetHubOrganizationData() {
+    $config = \Drupal::configFactory()->getEditable('aculta_lms_h5p.settings');
+    $config->clear('h5p_site_uuid');
+    $config->clear('h5p_hub_secret');
+    $config->set('h5p_hub_is_enabled', 0);
+    $config->set('h5p_send_usage_statistics', 0);
+    $config->save();
   }
 
   /**
@@ -1258,6 +1295,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getNumContent.
+   * @return int
    */
   public function getNumContent($library_id, $skip = NULL) {
     $skip_query = empty($skip) ? '' : " AND id NOT IN ($skip)";
@@ -1266,6 +1304,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements isContentSlugAvailable
+   * @return bool
    */
   public function isContentSlugAvailable($slug) {
     return !\Drupal::database()->query('SELECT slug FROM {h5p_content} WHERE slug = :slug', [':slug' => $slug])->fetchField();
@@ -1279,6 +1318,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements deleteCachedAssets
+   * @return array
    */
   public function deleteCachedAssets($library_id) {
   }
@@ -1374,6 +1414,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements loadAddons
+   * @return array
    */
   public function loadAddons() {
     $result = \Drupal::database()->query("
@@ -1397,6 +1438,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getLibraryConfig
+   * @return array
    */
   public function getLibraryConfig($libraries = NULL) {
     return $this->getOption('library_config', NULL);
@@ -1404,6 +1446,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements libraryHasUpgrade
+   * @return bool
    */
   public function libraryHasUpgrade($library) {
     return !!\Drupal::database()->query(
@@ -1419,18 +1462,30 @@ class H5PDrupal implements \H5PFrameworkInterface {
         ':minor' => $library['minorVersion']
       ])->fetchField();
   }
+  /**
+   * @return mixed
+   */
   public function replaceContentHubMetadataCache($metadata, $lang) {
     // TODO: Implement replaceContentHubMetadataCache() method.
   }
 
+  /**
+   * @return \JsonSerializable
+   */
   public function getContentHubMetadataCache($lang = 'en') {
     // TODO: Implement getContentHubMetadataCache() method.
   }
 
+  /**
+   * @return ?string
+   */
   public function getContentHubMetadataChecked($lang = 'en') {
     // TODO: Implement getContentHubMetadataChecked() method.
   }
 
+  /**
+   * @return bool
+   */
   public function setContentHubMetadataChecked($time, $lang = 'en') {
     // TODO: Implement setContentHubMetadataChecked() method.
   }

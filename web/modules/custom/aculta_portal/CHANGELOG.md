@@ -1,3 +1,21 @@
+## 0.4.0-dev.143 — View pública do catálogo da loja — 2026-10-18
+
+- Cria a View `aculta_shop_catalog` com página pública `/produtos` e bloco para uso no purpose SHOP. A consulta mantém fixos produto publicado e bundle `produto_loja`; filtros não são expostos nem alteráveis por CTools.
+- Adiciona o modo Commerce `catalog` com título ligado ao produto, resumo e formulário de compra das variações. CTools Views no bloco permite ajustar somente pager e itens por página.
+- A rota da página recebe o purpose `shop`; a permissão anônima `view commerce_product` já estava ativa e não foi alterada. Nenhum produto, checkout, gateway ou tema foi modificado.
+- Configuração aplicada no Runtime de teste `aculta_runtime` em `loja.aculta.toca.net.br`; rota validada como purpose SHOP, execução da View retornou 1 produto e HTTP `/produtos` respondeu 200. Inspeção visual DEFERRED.
+- A sincronização inicial apontou configuração órfã de um tema removido (`bootstrap5.settings` e seu bloco de busca); após confirmar que o tema não está ativo nem instalado, os dois objetos sem equivalente funcional foram preservados em `/tmp` e removidos do Runtime. O import parcial então concluiu com sucesso.
+- RUNTIME STATUS: CONFIG APLICADA; inspeção visual DEFERRED.
+
+## 0.4.0-dev.142 — armazenamento de mídia do editor H5P — 2026-10-18
+
+- Editor H5P recebe mídia por upload autenticado no contexto Group; imagens raster usam `aculta_image`/UploadPolicy e Drupal File API, enquanto os demais arquivos respeitam allowlist H5P e limites de upload do PHP/Drupal.
+- Armazenamento privado gerenciado registra os usos H5P e de imagem e remove referências com revalidação pelo `aculta_image`; nomes Unicode válidos são aceitos e traversal é recusado. Hub e estatísticas externas ficam desabilitados também na configuração administrativa.
+- Reduz dados enviados ao JavaScript do player: o H5P recebe apenas um identificador de conta opaco, sem nome de usuário ou e-mail. H5P Core 1.28 recebe o método obrigatório `resetHubOrganizationData()`.
+- Migra os hooks runtime de biblioteca, cron e exclusão de usuário para `#[Hook]` com DI; atualiza as anotações de retorno do adapter conforme as interfaces H5P instaladas.
+- Unit tests do uploader/armazenamento (4 testes, 10 assertions), Kernel de descoberta de hooks/serviços (1 teste, 5 assertions) e Image Unit (19 testes, 69 assertions): PASS. Browser, validação visual e ativação no Runtime: DEFERRED; pacote de bibliotecas segue bloqueado.
+- RUNTIME STATUS: DEFERRED; módulo continua desabilitado.
+
 ## 0.4.0-dev.141 — adaptador de endereço para o Mercado Pago — 2026-10-18
 
 - O contrib `commerce_mercado_pago` lê o campo `address` do perfil de cobrança; os perfis do projeto guardam o endereço em `field_address`. O pagamento falhava com "Field address is unknown." antes da API.

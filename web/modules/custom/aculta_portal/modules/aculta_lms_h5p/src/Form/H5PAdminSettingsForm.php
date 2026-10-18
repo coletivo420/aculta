@@ -82,7 +82,7 @@ class H5PAdminSettingsForm extends FormBase {
       \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => t('Controlled by author, default is off'),
     );
 
-    _aculta_lms_h5p_add_display_option($form['h5p_display_options'], 'h5p_frame', t('Display buttons (download, embed and copyright)'), $interface->getOption('frame', 1), '.form-item-h5p-export, .form-item-h5p-embed, .form-item-h5p-copyright, .form-item-h5p-icon');
+    $this->addDisplayOption($form['h5p_display_options'], 'h5p_frame', $this->t('Display buttons (download, embed and copyright)'), $interface->getOption('frame', 1), '.form-item-h5p-export, .form-item-h5p-embed, .form-item-h5p-copyright, .form-item-h5p-icon');
     $form['h5p_display_options']['h5p_export'] = array(
       '#title' => t('Allow download'),
       '#options' => $button_behaviours_download,
@@ -97,8 +97,8 @@ class H5PAdminSettingsForm extends FormBase {
       '#type' => 'select',
     );
 
-    _aculta_lms_h5p_add_display_option($form['h5p_display_options'], 'h5p_copyright', t('Copyright button'), $interface->getOption('copyright'));
-    _aculta_lms_h5p_add_display_option($form['h5p_display_options'], 'h5p_icon', t('About H5P button'), $interface->getOption('icon'));
+    $this->addDisplayOption($form['h5p_display_options'], 'h5p_copyright', $this->t('Copyright button'), $interface->getOption('copyright'));
+    $this->addDisplayOption($form['h5p_display_options'], 'h5p_icon', $this->t('About H5P button'), $interface->getOption('icon'));
 
     $dir = \Drupal::service('file_system')->realpath('private://');
     $form['h5p_default_path'] = array(
@@ -152,13 +152,11 @@ class H5PAdminSettingsForm extends FormBase {
       '#description' => t('Makes it possible to use content types that rely upon a Learning Record Store to function properly, like the Questionnaire content type.'),
     );
 
-    $form['h5p_hub_is_enabled'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use H5P Hub'),
-      '#default_value' => $interface->getOption('hub_is_enabled', 0),
-      '#attributes' => array('class' => array('h5p-settings-disable-hub-checkbox')),
-      '#description' => t("It's strongly encouraged to keep this option <strong>enabled</strong>. The H5P Hub provides an easy interface for getting new content types and keeping existing content types up to date. In the future, it will also make it easier to share and reuse content. If this option is disabled you'll have to install and update content types through file upload forms."),
-    );
+    $form['h5p_external_services'] = [
+      '#type' => 'item',
+      '#title' => $this->t('External H5P services'),
+      '#markup' => '<p>' . $this->t('The Content Hub and usage reporting are disabled for this installation.') . '</p>',
+    ];
 
     // TODO: Be able to change site key
 //  $site_key = variable_get('h5p_site_key', variable_get('h5p_site_uuid', ''));
@@ -173,13 +171,6 @@ class H5PAdminSettingsForm extends FormBase {
 //    '#field_suffix' => '<button type="button" class="h5p-reveal-value" data-control="edit-h5p-site-key" data-hide="' . t('Hide') . '">' . t('Reveal') . '</button>',
 //    '#description' => t("The site key is a secret that uniquely identifies this site with the Hub."),
 //  );
-
-    $form['h5p_send_usage_statistics'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Automatically contribute usage statistics'),
-      '#default_value' => $interface->getOption('send_usage_statistics', 0),
-      '#description' => t('Usage statistics numbers will automatically be reported to help the developers better understand how H5P is used and to determine potential areas of improvement.'),
-    );
 
     // Development mode settings.
     $form['h5p_development_mode'] = [
@@ -263,8 +254,8 @@ class H5PAdminSettingsForm extends FormBase {
     $interface->setOption('save_content_state', $values['h5p_save_content_state']);
     $interface->setOption('save_content_frequency', $values['h5p_save_content_frequency']);
     $interface->setOption('enable_lrs_content_types', $values['h5p_enable_lrs_content_types']);
-    $interface->setOption('hub_is_enabled', $values['h5p_hub_is_enabled']);
-    $interface->setOption('send_usage_statistics', $values['h5p_send_usage_statistics']);
+    $interface->setOption('hub_is_enabled', 0);
+    $interface->setOption('send_usage_statistics', 0);
     $interface->setOption('development_mode', $values['h5p_development_mode']);
 
     Cache::invalidateTags(['h5p_content']);
@@ -276,5 +267,19 @@ class H5PAdminSettingsForm extends FormBase {
 //  }
   }
 
+  /** Adds one H5P display option with an optional visibility selector. */
+  private function addDisplayOption(array &$element, string $name, string $title, mixed $value, ?string $visibilitySubjectId = NULL): void {
+    $element[$name] = [
+      '#type' => 'checkbox',
+      '#title' => $title,
+      '#default_value' => $value,
+    ];
+    if ($visibilitySubjectId !== NULL) {
+      $element[$name]['#attributes'] = [
+        'class' => ['h5p-visibility-toggler'],
+        'data-h5p-visibility-subject-selector' => $visibilitySubjectId,
+      ];
+    }
+  }
 
 }

@@ -22,7 +22,7 @@ class H5PEditorUtilities {
       $core     = H5PDrupal::getInstance('core');
       $instance = new \H5peditor(
         $core,
-        new H5PEditorDrupalStorage(),
+        \Drupal::service('aculta_lms_h5p.editor_storage'),
         new H5PEditorDrupalAjax()
       );
     }

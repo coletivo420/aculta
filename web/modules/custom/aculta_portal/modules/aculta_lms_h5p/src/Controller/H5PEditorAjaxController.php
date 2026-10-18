@@ -8,6 +8,7 @@ use Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager;
 use Drupal\aculta_lms_h5p\Access\H5PLibraryAccessManager;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities;
+use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUploadManager;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -15,15 +16,17 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/** Serves only read and validation requests for an editor scoped to one course. */
+/** Handles Group-authorized H5P editor requests for one course. */
 final class H5PEditorAjaxController implements ContainerInjectionInterface {
 
   public function __construct(
     private readonly H5PCourseAccessManager $courseAccess,
     private readonly H5PLibraryAccessManager $libraryAccess,
+    private readonly H5PEditorUploadManager $uploadManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly LanguageManagerInterface $languageManager,
     private readonly RequestStack $requestStack,
@@ -34,6 +37,7 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
     return new static(
       $container->get('aculta_lms_h5p.course_access'),
       $container->get('aculta_lms_h5p.library_access'),
+      $container->get('aculta_lms_h5p.editor_upload_manager'),
       $container->get('current_user'),
       $container->get('language_manager'),
       $container->get('request_stack'),
@@ -55,7 +59,8 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
       'single-library' => $this->singleLibrary($request->getMethod(), $arguments),
       'translations' => $this->translations($request->getMethod(), $request->query->getString('language')),
       'filter' => $this->filter($request->getMethod()),
-      'files', 'library-upload', 'library-install', 'get-hub-content', 'content-type-cache' => $this->unavailable($request->getMethod()),
+      'files' => $this->files($request->getMethod(), $content_id),
+      'library-upload', 'library-install', 'get-hub-content', 'content-type-cache' => $this->unavailable($request->getMethod()),
       default => throw new NotFoundHttpException(),
     };
     $response->headers->set('Cache-Control', 'private, no-store, max-age=0');
@@ -153,6 +158,30 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
     $validator = H5PDrupal::getInstance('contentvalidator');
     $validator->validateLibrary($parameters, (object) ['options' => [$parameters->library]]);
     return new JsonResponse(['success' => TRUE, 'data' => $parameters]);
+  }
+
+  /** Accepts an H5P media file through Drupal's managed private upload API. */
+  private function files(string $method, int $routeContentId): JsonResponse {
+    if ($method !== 'POST') {
+      throw new NotFoundHttpException();
+    }
+    $request = $this->requestStack->getCurrentRequest();
+    $upload = $request?->files->get('file');
+    $contentId = $request?->request->getInt('contentId', -1) ?? -1;
+    if ($contentId !== $routeContentId || !$upload instanceof UploadedFile) {
+      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O envio não corresponde à atividade aberta.')], 400);
+    }
+    try {
+      $field = json_decode($request->request->getString('field'), TRUE, 16, JSON_THROW_ON_ERROR);
+    }
+    catch (\JsonException) {
+      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O campo de arquivo da atividade está inválido.')], 400);
+    }
+    if (!is_array($field)) {
+      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O campo de arquivo da atividade está inválido.')], 400);
+    }
+    $result = $this->uploadManager->upload($upload, $field);
+    return new JsonResponse($result, ($result['success'] ?? TRUE) === FALSE ? 400 : 200);
   }
 
   /** Explicit JSON failure for upload and remote library actions still closed. */
