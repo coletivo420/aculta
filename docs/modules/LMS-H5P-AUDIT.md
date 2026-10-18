@@ -69,6 +69,30 @@ telemetria no Homelab.
   testados upload, CSP, sandbox/isolamento de iframe, política de bibliotecas ou
   integração de respostas; o módulo permanece desativado.
 
+## Verificação do caminho de upload no tag instalado
+
+Na revisão do checkout `2.0.0-beta1`, a rota
+`h5peditor.library_upload` (`/h5peditor/{token}/{content_id}/library-upload`)
+declara somente `_permission: 'access h5p editor'`. O callback encaminha o
+arquivo para `H5PEditorAjax::libraryUpload()`; `processContent()` valida o
+pacote e chama `H5PStorage::savePackage(..., TRUE)`. A validação de
+`H5PCore::isValidPackage()` usa `mayUpdateLibraries()` para decidir se pode
+instalar bibliotecas, mas não consulta `H5PPermission::CREATE_RESTRICTED`.
+
+A permissão `create restricted h5p content types` aparece no Drupal adapter
+para filtrar a lista de bibliotecas em `H5PEditorDrupalStorage::getLibraries()`.
+Esse filtro da interface não bloqueia um pacote `.h5p` que contenha uma
+biblioteca restrita. Portanto, o source instalado confirma a reprodução da
+issue; um patch exigiria validar todas as dependências e bibliotecas do pacote
+no ponto de ingestão, antes de qualquer gravação. Não foi criado patch local
+porque a mudança atravessaria o contrato do H5P core/editor e requer fixture de
+pacote e teste de regressão contra a versão exata. Manter o módulo desativado
+até existir correção upstream revisada ou patch Composer isolado, acompanhado
+de teste que reproduza a issue e confirme os dois resultados de permissão.
+
+Este achado é inspeção estática do source instalado, não um teste de exploração
+no Runtime. Não foi enviado arquivo de prova nem alterado banco ou configuração.
+
 ## Gate restante da F10
 
 Antes de ativar, repetir a pesquisa em Drupal.org e Composer e exigir

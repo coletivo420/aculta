@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## Não lançado — F10: auditoria H5P
+
+- A inspeção do endpoint de upload H5P `2.0.0-beta1` confirmou que a permissão de
+  tipos restritos não é verificada na ingestão de pacote. H5P permanece
+  desativado até correção upstream ou patch Composer acompanhado de teste de
+  regressão; nenhum estado do Runtime foi alterado.
+
 ## Não lançado — F8: avaliações e feedback (implementação inicial)
 
 - `aculta_lms` depende dos submódulos contrib LMS de plugins de resposta e comentários, sem novo pacote Composer.
