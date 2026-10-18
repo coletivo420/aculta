@@ -1,6 +1,6 @@
 # Roadmap do aculta_lms e visualizador PDF global
 
-Revisado em 2026-10-17. A implementação segue fases independentes, com autorização e critérios próprios. O status é registrado por fase; a homologação de PDF privado não ativa automaticamente o módulo `aculta_lms`.
+Revisado em 2026-10-18. A implementação segue fases independentes, com autorização e critérios próprios. O status é registrado por fase; a homologação de PDF privado não ativa automaticamente o módulo `aculta_lms`.
 
 ## Princípios e estado inicial
 
@@ -129,9 +129,9 @@ imagem, slugs e PHP lint passaram. O Kernel registra 34 depreciações no
 ecosistema Group/LMS/Views/Core, sem alterações em contrib/Core. No Runtime de
 teste, o update de schema segue aplicado e o cache foi reconstruído após a
 correção; o smoke visual por navegador está pendente. RUNTIME STATUS: UPDATE
-APLICADO; homologação visual DEFERRED. A próxima fase funcional listada é F9 (Webform Score e entregas), ainda dependente de decisão/autorização própria.
+APLICADO; homologação visual DEFERRED. A F9 (Webform Score e entregas) está concluída; a F10 (H5P) começou por auditoria de segurança e compatibilidade.
 
-**F9 — em implementação nesta branch, autorizada pelo responsável em 2026-10-18.** `webform_score` 2.4.0,
+**F9 — implementação e critérios automatizados concluídos nesta branch, autorizada pelo responsável em 2026-10-18.** `webform_score` 2.4.0,
 `lms_file_upload` 1.0.2 e `fraction` 3.1.0 foram adicionados via Composer; o dry-run indicou somente
 três pacotes novos e zero atualizações/remoções. Os módulos estão habilitados no Runtime de teste e em
 `core.extension`. Revisão do código upstream encontrou que o dono de uma resposta LMS mantém acesso a
@@ -145,14 +145,16 @@ nenhum papel atualmente tem as permissões `view any submission score` ou `view 
 Kernel também passou com uma submissão Webform persistida e autoria real: o dono com a permissão de leitura
 própria pode ver a nota, outra conta é negada e edição direta permanece proibida (1 teste, 11 assertions;
 42 deprecações de Core/contrib). O Runtime não tem atividade de upload, resposta de arquivo, atividade de quiz
-ou formulário com score; por isso, smoke HTTP/browser no Runtime continua pendente e não foram criadas fixtures
-persistentes nele.
+ou formulário com score; por isso, smoke HTTP/browser no Runtime fica `DEFERRED` e não foram criadas fixtures
+persistentes nele. A suíte automatizada cobre transmissão de arquivo privado, membership revogada, acesso
+preservado de educador e autoria/controle de nota Webform com entidade persistida. Não há integração de nota
+Webform para LMS, conforme fronteira definida.
 Webform Score continua restrito às submissões Webform; não há integração que promova resultado
-automaticamente para a nota LMS. Ainda pendem revogação de membership e download no Runtime/browser. A tentativa
-automática de baixar traduções
+automaticamente para a nota LMS. A tentativa automática de baixar traduções
 pt-BR dos três módulos durante `drush en` falhou porque `translations://` não está configurado neste
 Runtime; o código e a ativação terminaram com sucesso. RUNTIME STATUS: MÓDULOS HABILITADOS; homologação
-de acesso a arquivos DEFERRED.
+de acesso Runtime/browser DEFERRED por ausência de conteúdo de teste. A próxima fase F10 foi iniciada como
+auditoria documental; nenhum pacote H5P foi adicionado nem ativado.
 
 ## Ordem, PR e status
 
