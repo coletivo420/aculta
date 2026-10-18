@@ -79,6 +79,44 @@
   const pendingFill = new Map();
   // CEP já resolvido por endereço (prefixo do campo). Fica no módulo, e não no elemento: o AJAX troca o elemento.
   const resolvedCep = new Map();
+  // Campos do endereço que vieram do CEP (banco) ficam bloqueados para edição, mas visíveis. Número, S/N e complemento
+  // nunca são bloqueados. Campos que a busca não preencheu continuam editáveis.
+  const LOCKABLE = ['address_line1', 'dependent_locality', 'locality', 'administrative_area'];
+  const lockedValues = new Map();
+
+  function applyLocks(prefix, container) {
+    const locks = lockedValues.get(prefix) || {};
+    LOCKABLE.forEach((key) => {
+      const field = getField(prefix, key, container);
+      if (!field) return;
+      const locked = Object.prototype.hasOwnProperty.call(locks, key);
+      field.classList.toggle('aculta-cep-locked', locked);
+      if (field.tagName === 'SELECT') {
+        if (locked) field.setAttribute('aria-disabled', 'true');
+        else field.removeAttribute('aria-disabled');
+        // Select não tem readonly: a mudança é desfeita, e o valor enviado continua o do CEP.
+        if (!field.dataset.acultaLockBound) {
+          field.dataset.acultaLockBound = 'true';
+          field.addEventListener('change', () => {
+            const current = lockedValues.get(prefix) || {};
+            if (Object.prototype.hasOwnProperty.call(current, key) && field.value !== current[key]) {
+              field.value = current[key];
+            }
+          });
+        }
+      }
+      else {
+        field.readOnly = locked;
+        if (locked) field.setAttribute('aria-readonly', 'true');
+        else field.removeAttribute('aria-readonly');
+      }
+    });
+  }
+
+  function clearLocks(prefix, container) {
+    lockedValues.delete(prefix);
+    applyLocks(prefix, container);
+  }
 
   // Campos que a busca deve escrever: a troca de CEP escreve o endereço inteiro; o primeiro preenchimento só os vazios.
   function keysToWrite(prefix, container, values, replace) {
@@ -170,6 +208,7 @@
         // O rebuild apaga o aviso de status: anuncia de novo, para leitor de tela.
         announce(statusFor(postal), Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
       }
+      applyLocks(prefix, container);
       const complement = getField(prefix, 'address_line2', container);
       if (complement) complement.setAttribute('placeholder', Drupal.t('Complemento'));
 
@@ -183,6 +222,7 @@
           const requestedCep = digits(postal.value);
           if (requestedCep.length !== 8 || requestedCep === resolvedCep.get(prefix)) return;
           activeCep = requestedCep;
+          clearLocks(prefix, container);
           announce(status, Drupal.t('Consultando o CEP.'));
           try {
             const result = await lookup(requestedCep);
@@ -204,6 +244,12 @@
             pendingFill.set(prefix, toWrite);
             applyFill(prefix, container, toWrite, { onlyEmpty: false });
             resolvedCep.set(prefix, requestedCep);
+            const locks = {};
+            Object.keys(toWrite).forEach((key) => {
+              if (LOCKABLE.includes(key) && toWrite[key]) locks[key] = toWrite[key];
+            });
+            lockedValues.set(prefix, locks);
+            applyLocks(prefix, container);
             postal.value = formatCep(requestedCep);
             postal.dataset.acultaCepResolved = requestedCep;
             announce(status, Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));

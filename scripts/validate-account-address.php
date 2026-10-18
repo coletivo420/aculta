@@ -69,6 +69,12 @@ $check(str_contains($cep, 'const resolvedCep = new Map()'), 'cep-address.js: CEP
 $check(str_contains($cep, 'function keysToWrite') && str_contains($cep, 'if (replace) return values;'), 'cep-address.js: troca de CEP substitui o endereço');
 $check(str_contains($cep, 'pendingFill.delete(prefix)'), 'cep-address.js: preenchimento pendente vale só para o próprio rebuild');
 
+// 4b. Campos vindos do CEP ficam bloqueados (somente leitura) e o que falta continua editável.
+$check(
+  str_contains($cep, 'applyLocks') && str_contains($cep, "readOnly = locked") && str_contains($cep, "'aculta-cep-locked'"),
+  'cep-address.js: campos vindos do CEP bloqueados, sem bloquear número e complemento',
+);
+
 // 5. Alias `address` nos perfis: campo computado, sem armazenamento, lendo o field_address (o contrib do Mercado Pago lê
 // `address`). Campo com armazenamento, ou cópia, seria dado duplicado.
 $alias = $read('web/modules/custom/aculta_portal/src/Hook/ProfileAddressAliasHooks.php');

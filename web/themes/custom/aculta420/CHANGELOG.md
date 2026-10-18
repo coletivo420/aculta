@@ -1,3 +1,10 @@
+## 0.6.0-dev.85 — campos do endereço bloqueados pelo CEP — 2026-10-18
+
+Classificação: PATCH de apresentação. Estilo do bloqueio do endereço preenchido pelo CEP (classe `aculta-cep-locked`, marcada pelo módulo `aculta_portal_cep`), com tokens semânticos (`--aculta-surface-muted`) e cursor `not-allowed`. Modo claro e escuro usam o mesmo token.
+
+- Gates do tema: design foundations, foundation, shell contract e SDC schemas passam. Fronteira e mapa módulo-tema têm falhas antigas fora desta entrega.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild); estilo verificado pelo teste de navegador do endereço.
+
 ## 0.6.0-dev.84 — cards no catálogo da loja — 2026-10-18
 
 Classificação: PATCH de apresentação do novo modo Commerce `catalog`; a página completa do produto permanece inalterada.

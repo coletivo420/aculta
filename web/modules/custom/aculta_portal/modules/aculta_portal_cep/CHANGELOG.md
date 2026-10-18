@@ -1,3 +1,10 @@
+## 0.3.0-dev.1 — campos do CEP bloqueados para edição — 2026-10-18
+
+- Após a consulta do CEP, rua, bairro, cidade e UF vindos do banco ficam bloqueados (somente leitura; em select, a mudança é desfeita), visíveis para a pessoa. Campos que a busca não preencheu continuam editáveis. Número, S/N e complemento não são bloqueados. Digitar outro CEP desbloqueia e refaz o preenchimento.
+- Classe `aculta-cep-locked` e `aria-readonly`/`aria-disabled` para o tema estilizar; o estilo visual do bloqueio é do ACULTA420 e não foi alterado nesta entrega.
+- Teste de navegador: 26 verificações, incluindo o bloqueio e um CEP sem bairro na fonte (06550000).
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild).
+
 ## 0.2.1-dev.1 — troca de CEP em página com endereço salvo — 2026-10-18
 
 - Bug: em página recarregada com endereço salvo, digitar outro CEP só preenchia o bairro vazio; cidade, UF e rua ficavam com o endereço antigo. Causa: a primeira busca da página era tratada como preenchimento de campos vazios.

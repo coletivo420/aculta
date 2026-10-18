@@ -161,6 +161,21 @@ try:
     check('recarregada: CEP de outro estado troca a cidade', bool(ok), value_of('locality') or '')
     check('recarregada: CEP troca a rua', wait_for(lambda: value_of('address_line1') == 'Rua 11') is not None and value_of('address_line1') == 'Rua 11', value_of('address_line1') or '')
     check('recarregada: CEP troca o bairro', wait_for(lambda: value_of('dependent_locality') == 'Vila Bandeirantes') is not None and value_of('dependent_locality') == 'Vila Bandeirantes', value_of('dependent_locality') or '')
+    # Bloqueio: campos vindos do CEP ficam bloqueados (visíveis), o que faltou continua editável
+    ro = lambda n: js('return document.querySelector(arguments[0]).readOnly;', f'[name="{F}[{n}]"]')
+    check('bloqueio: rua vinda do CEP é somente leitura', ro('address_line1') is True)
+    check('bloqueio: bairro vindo do CEP é somente leitura', ro('dependent_locality') is True)
+    check('bloqueio: número continua editável', ro('street_number') is False)
+    check('bloqueio: estilo do tema aplicado (cursor)', js('return getComputedStyle(document.querySelector(arguments[0])).cursor;', f'[name="{F}[address_line1]"]') == 'not-allowed')
+    js('var s=document.querySelector(arguments[0]); s.value="SP"; s.dispatchEvent(new Event("change",{bubbles:true}));', f'[name="{F}[locality]"]')
+    time.sleep(1)
+    check('bloqueio: troca de cidade pelo select é desfeita', value_of('locality') == 'Goiânia', value_of('locality') or '')
+    type_into('postal_code', '06550000')
+    wait_for(lambda: value_of('locality') == 'Pirapora do Bom Jesus')
+    time.sleep(3)
+    check('bloqueio: CEP sem bairro na fonte deixa o bairro editável', ro('dependent_locality') is False)
+    type_into('dependent_locality', 'Centro Teste')
+    check('bloqueio: o campo editável aceita o preenchimento', value_of('dependent_locality') == 'Centro Teste', value_of('dependent_locality') or '')
 finally:
     try:
         if SID:

@@ -9,6 +9,7 @@ ou no checkout que lê o mesmo endereço deve manter o que está aqui. Não repe
   (`BillingAddressPane`, perfil `authenticated`); o pedido guarda uma cópia sincronizada.
 - Formulário: CEP, Endereço/Logradouro, Número, S/N, Complemento, Bairro, Cidade, Estado. **Sem seletor de país**: o país é
   Brasil (campo oculto `country_code = BR`).
+- Depois que um CEP é resolvido, os campos que vieram dele (rua, bairro, cidade e UF) ficam bloqueados para edição, mas visíveis. Os campos que a busca não preencheu (por exemplo, o bairro de um CEP sem bairro na fonte) continuam editáveis. Número, S/N e complemento nunca são bloqueados. Digitar outro CEP desbloqueia e refaz o preenchimento.
 - Número: obrigatório, só dígitos, até 10. S/N desabilita o número e o limpa.
 - CEP digitado (8 dígitos) consulta `aculta_portal_cep/{cep}` (endpoint do submódulo `aculta_portal_cep`, que exige o cabeçalho AJAX) e preenche:
   - no **primeiro** preenchimento: só os campos vazios (não apaga o que a pessoa digitou);
