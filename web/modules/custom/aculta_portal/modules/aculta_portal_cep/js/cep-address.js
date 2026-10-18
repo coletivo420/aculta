@@ -92,9 +92,27 @@
       const locked = Object.prototype.hasOwnProperty.call(locks, key);
       field.classList.toggle('aculta-cep-locked', locked);
       if (field.tagName === 'SELECT') {
-        if (locked) field.setAttribute('aria-disabled', 'true');
-        else field.removeAttribute('aria-disabled');
-        // Select não tem readonly: a mudança é desfeita, e o valor enviado continua o do CEP.
+        // Select travado: desabilitado (não abre nem mostra as outras opções). Um input hidden com o mesmo nome leva o
+        // valor no envio, já que campo desabilitado não é enviado. Ao destravar, o hidden sai.
+        let mirror = field.parentNode.querySelector(`input[type="hidden"][data-aculta-lock-mirror="1"][name="${field.name}"]`);
+        if (locked) {
+          field.disabled = true;
+          field.setAttribute('aria-disabled', 'true');
+          if (!mirror) {
+            mirror = document.createElement('input');
+            mirror.type = 'hidden';
+            mirror.name = field.name;
+            mirror.dataset.acultaLockMirror = '1';
+            field.insertAdjacentElement('afterend', mirror);
+          }
+          mirror.value = field.value;
+        }
+        else {
+          field.disabled = false;
+          field.removeAttribute('aria-disabled');
+          if (mirror) mirror.remove();
+        }
+        // Mudança desfeita se alguma outra rotina alterar o select travado.
         if (!field.dataset.acultaLockBound) {
           field.dataset.acultaLockBound = 'true';
           field.addEventListener('change', () => {

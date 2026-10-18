@@ -1,3 +1,9 @@
+## 0.3.0-dev.2 — selects de cidade e UF travados após o CEP — 2026-10-18
+
+- Cidade e UF vindos do CEP ficam desabilitados: não abrem nem mostram as outras opções. Um input hidden com o mesmo nome leva o valor no envio. Ao destravar (novo CEP), o hidden é removido.
+- Teste de navegador: 30 verificações, incluindo os selects desabilitados e o valor no envio.
+- RUNTIME STATUS: APLICADO no Runtime de teste; valor gravado conferido no banco.
+
 ## 0.3.0-dev.1 — campos do CEP bloqueados para edição — 2026-10-18
 
 - Após a consulta do CEP, rua, bairro, cidade e UF vindos do banco ficam bloqueados (somente leitura; em select, a mudança é desfeita), visíveis para a pessoa. Campos que a busca não preencheu continuam editáveis. Número, S/N e complemento não são bloqueados. Digitar outro CEP desbloqueia e refaz o preenchimento.
