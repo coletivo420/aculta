@@ -37,9 +37,25 @@ $check(
 );
 
 // 2. País fixo em Brasil: campo oculto (não #access FALSE, que faz o módulo Address descartar a entrada inteira).
+//    O tratamento é único (AccountAddressForm) e usado por Minha conta, checkout, loja e perfis de equipe.
+$form = $read('web/modules/custom/aculta_portal/src/Account/AccountAddressForm.php');
 $check(
-  str_contains($hooks, "['#type'] = 'hidden'") && !str_contains($hooks, "country_code']['#access'] = FALSE"),
-  'PortalHooks: país oculto como campo hidden, sem #access FALSE',
+  str_contains($form, "['#type'] = 'hidden'") && !str_contains($form, "country_code']['#access'] = FALSE"),
+  'AccountAddressForm: país oculto como campo hidden, sem #access FALSE',
+);
+$check(
+  !str_contains($hooks, 'hideCountrySelect') && str_contains($hooks, 'AccountAddressForm::apply('),
+  'PortalHooks: Minha conta usa o formulário único (sem tratamento de país próprio)',
+);
+$checkout = $read('web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/BillingAddressPane.php');
+$check(
+  str_contains($checkout, 'AccountAddressForm::apply('),
+  'checkout: pane de cobrança usa o formulário único',
+);
+$accountHooks = $read('web/modules/custom/aculta_portal/src/Hook/AccountAddressHooks.php');
+$check(
+  str_contains($accountHooks, 'AccountAddressForm::apply(') && str_contains($form, "'commerce_store'") && str_contains($form, 'TEAM_PROFILE_TYPES'),
+  'loja e perfis de equipe usam o formulário único',
 );
 $check(
   (bool) preg_match("/available_countries:\\s*\\n\\s+BR: BR\\s*\\n/", $fieldConfig),

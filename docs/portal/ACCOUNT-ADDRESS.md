@@ -17,6 +17,17 @@ ou no checkout que lê o mesmo endereço deve manter o que está aqui. Não repe
   - número, S/N e complemento **nunca** são alterados pela busca.
 - Salvar grava o endereço do último CEP, com o número digitado.
 
+## Formulário único de endereço
+
+- Um só tratamento de formulário, em `src/Account/AccountAddressForm.php`: país fixo BR, rótulos, Número e S/N (`StreetNumberField`), biblioteca `cep-address` e a gravação do número (`buildStreetNumber`).
+- Quem usa o mesmo formulário:
+  - Minha conta > Endereço (`/dados/endereco`, `PortalHooks`);
+  - checkout, pane de cobrança `aculta_billing_address` (`BillingAddressPane`, inline `customer_profile` do perfil `authenticated`);
+  - cadastro da loja (`commerce_store`, campo `address`) e perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`, campo `field_address`), pelo hook `AccountAddressHooks`.
+- Os dados continuam em cada entidade (perfil do cliente, loja, perfil de equipe). Só o formulário é compartilhado.
+- Estado da equipe: nos formulários de perfil de equipe o `field_address` está oculto (`field_address: true` em `core.entity_form_display.profile.*.default.yml`), então o endereço não aparece para edição. O hook já cobre o caso em que for exibido, mas exibir é mudança de configuração (export) e não foi feita.
+- Verificação no Runtime de teste (2026-10-18): loja monta com país oculto, biblioteca do CEP e gravação do número; teste de navegador da Minha conta 30/30. O checkout não foi testado no navegador nesta entrega.
+
 ## Por que cada regra existe (regressões já ocorridas)
 
 - O perfil `authenticated` também é tipo de papel. O bloco de papel de `PortalHooks` não pode capturar `/dados/endereco`, senão

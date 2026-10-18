@@ -1,3 +1,15 @@
+## 0.4.0-dev.146 — formulário único de endereço (Minha conta, checkout, loja e perfis de equipe) — 2026-10-18
+
+- Novo `Account\AccountAddressForm`: o tratamento do endereço (país fixo BR oculto, rótulos em português, Número e S/N, biblioteca `cep-address` e gravação do número) sai do `PortalHooks` e passa a ser o único formulário de endereço.
+- Checkout: o pane `aculta_billing_address` aplica o mesmo tratamento ao formulário inline do perfil `authenticated` (antes só Número e biblioteca; sem país fixo nem rótulos).
+- Loja (`commerce_store`, campo `address`) e perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`): novo `Hook\AccountAddressHooks` (`form_alter`) aplica o mesmo formulário e a gravação do número.
+- `PortalFormCallbacks::buildStreetNumber` delega ao `AccountAddressForm`; `hideCountrySelect` do `PortalHooks` movido para `AccountAddressForm::finish`.
+- Rótulos (antes aplicados num laço sobre subcampos ainda não criados) passam a ser aplicados no `#process` final, depois do processamento do endereço.
+- Gates: `validate-account-address.php` PASS (19 checks, inclui o formulário único); `validate-aculta-portal-drupal11.php` PASS (961 checks; invariante do CEP movida para `AccountAddressForm` e contagem de `form_alter` de 2 para 3, motivo no próprio gate).
+- Verificado no Runtime de teste (`conta.aculta.toca.net.br`): cache rebuild; teste de navegador da Minha conta 30/30; loja monta com país oculto, biblioteca e gravação do número.
+- Limite: nenhum perfil de equipe exibe `field_address` hoje (oculto nas configurações de formulário); o checkout não foi testado no navegador.
+- RUNTIME STATUS: APLICADO no Runtime de teste (sem alteração de configuração, sem updb).
+
 ## 0.4.0-dev.145 — cep_autocomplete portado para aculta_portal_cep (sem contrib) — 2026-10-18
 
 - Porte do `drupal/cep_autocomplete` 1.0.0 para o submódulo `aculta_portal_cep`: controlador de consulta (ViaCEP com fallback BrasilAPI), cache, limite por IP, biblioteca `cep-address` e rota `/aculta_portal_cep/{cep}` (antes `/cep-autocomplete/viacep/{cep}`).

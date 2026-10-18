@@ -301,7 +301,7 @@ $check(
   'P2-R TokenHooks must keep config and node cacheability.',
 );
 $check(
-  str_contains($read($srcRoot . '/Hook/PortalHooks.php'), "'aculta_portal_cep/cep-address'")
+  str_contains($read($srcRoot . '/Account/AccountAddressForm.php'), "'aculta_portal_cep/cep-address'")
     && str_contains($editorialHooksSource, 'SchemaMetatagManager::serialize')
     && str_contains($editorialHooksSource, "'courses'")
     && str_contains($editorialHooksSource, "'wiki'"),
@@ -458,8 +458,9 @@ foreach ([
   );
 }
 
-// Module-wide totals: owning class + the pre-existing PortalHooks concern.
-foreach (['form_alter' => 2, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
+// Module-wide totals: owning class + the pre-existing PortalHooks concern. form_alter ganha AccountAddressHooks: o
+// formulário de endereço único (loja e perfis de equipe), ver docs/portal/ACCOUNT-ADDRESS.md.
+foreach (['form_alter' => 3, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
   $check(
     substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === $expected,
     'Hook implementation count drifted for ' . $hookName . ' (expected ' . $expected . ').',

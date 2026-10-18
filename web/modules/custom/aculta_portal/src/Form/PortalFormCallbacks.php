@@ -51,11 +51,7 @@ final class PortalFormCallbacks {
     if (!$profile instanceof \Drupal\profile\Entity\ProfileInterface || $profile->get('field_address')->isEmpty()) {
       return;
     }
-    [$number, $sn] = \Drupal\aculta_portal\Account\StreetNumberField::values($form, $formState);
-    $address = $profile->get('field_address')->first();
-    $value = $address->getValue();
-    $value['address_line1'] = \Drupal\aculta_portal\Account\StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
-    $address->setValue($value);
+    \Drupal\aculta_portal\Account\AccountAddressForm::buildStreetNumber($entityTypeId, $profile, $form, $formState);
   }
 
   /** Resposta AJAX do salvamento na Minha conta: mensagens e o formulário, no mesmo bloco. */

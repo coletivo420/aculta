@@ -16,6 +16,7 @@ use Drupal\aculta_portal\Form\LoginPopupForm;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\aculta_portal\Presentation\SocialLinksPagePresenter;
 use Drupal\block_content\BlockContentInterface;
+use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -565,26 +566,10 @@ final class PortalHooks {
       }
       if (isset($form['field_address']['widget'][0]['address'])) {
         $address_element = &$form['field_address']['widget'][0]['address'];
-        // Endereço do projeto é só do Brasil: o país fica fixo (BR), sem seletor (a regressão mostrava a lista).
-        $address_element['#default_value']['country_code'] ??= 'BR';
         $participant = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $this->currentUser);
         if ($participant) {
           $address_element['#default_value']['given_name'] ??= $participant->get('field_first_name')->value ?? '';
           $address_element['#default_value']['family_name'] ??= $participant->get('field_last_name')->value ?? '';
-        }
-        foreach ([
-          'country_code' => 'País',
-          'address_line1' => 'Endereço / Logradouro',
-          'address_line2' => 'Complemento',
-          'locality' => 'Cidade',
-          'dependent_locality' => 'Bairro',
-          'administrative_area' => 'Estado',
-          'postal_code' => 'CEP',
-          'sorting_code' => 'Código postal',
-        ] as $key => $label) {
-          if (isset($address_element[$key])) {
-            $address_element[$key]['#title'] = $this->translation->translate($label);
-          }
         }
         foreach (['given_name', 'additional_name', 'family_name'] as $private_or_duplicate) {
           if (isset($address_element[$private_or_duplicate])) {
@@ -602,10 +587,8 @@ final class PortalHooks {
         }
       }
       if (isset($form['field_address']['widget'][0]['address'])) {
-        \Drupal\aculta_portal\Account\StreetNumberField::attach($form['field_address']['widget'][0]['address'], $parts['number'], $parts['sn']);
-        // Depois do attach (que define o #process do número): o país some ao final do processamento do widget.
-        $form['field_address']['widget'][0]['address']['#process'][] = [self::class, 'hideCountrySelect'];
-        $form['#attached']['library'][] = 'aculta_portal_cep/cep-address';
+        AccountAddressForm::apply($form['field_address']['widget'][0]['address'], $parts['number'], $parts['sn']);
+        $form['#attached']['library'][] = AccountAddressForm::LIBRARY;
       }
       // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
       $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';
@@ -783,25 +766,6 @@ final class PortalHooks {
         $tags['title'] = 'Apoio | Associação Cultural Antiproibicionista';
       }
     }
-  }
-
-  /**
-   * Process callback do endereço da conta: o país fica fixo em Brasil, sem seletor.
-   *
-   * @param array<string, mixed> $element
-   *
-   * @return array<string, mixed>
-   */
-  public static function hideCountrySelect(array $element): array {
-    if (isset($element['country_code'])) {
-      // Campo oculto, e não #access FALSE: o módulo Address descarta toda a entrada do formulário quando o
-      // country_code não vem no POST, e a lista de cidades passa a usar o endereço salvo (ver o teste de CEP).
-      $element['country_code']['#type'] = 'hidden';
-      unset($element['country_code']['#options'], $element['country_code']['#ajax'], $element['country_code']['#empty_value']);
-      $element['country_code']['#default_value'] = 'BR';
-      $element['country_code']['#value'] = 'BR';
-    }
-    return $element;
   }
 
 }

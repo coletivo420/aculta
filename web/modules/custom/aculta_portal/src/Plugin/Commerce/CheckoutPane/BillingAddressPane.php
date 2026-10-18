@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Plugin\Commerce\CheckoutPane;
 
+use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\commerce\InlineFormManager;
 use Drupal\commerce_checkout\Attribute\CommerceCheckoutPane;
@@ -33,9 +34,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
   wrapper_element: 'fieldset',
 )]
 final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneInterface {
-
-  /** Biblioteca do CEP compartilhada com "Meus Dados" (estendida pelo Portal). */
-  private const CEP_LIBRARY = 'aculta_portal_cep/cep-address';
 
   private InlineFormManager $inlineFormManager;
 
@@ -86,9 +84,9 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       '#inline_form' => $inline_form,
     ];
     $pane_form['profile'] = $inline_form->buildInlineForm($pane_form['profile'], $form_state);
-    // O Número é um subcampo do elemento de endereço (ver StreetNumberField), e não um campo solto do pane.
-    StreetNumberField::attachTo($pane_form['profile'], $parts['number'], $parts['sn']);
-    $pane_form['#attached']['library'][] = self::CEP_LIBRARY;
+    // Mesmo formulário de Meus Dados (AccountAddressForm): país fixo, rótulos, Número e S/N como subcampo do endereço.
+    AccountAddressForm::apply($pane_form['profile'], $parts['number'], $parts['sn']);
+    $pane_form['#attached']['library'][] = AccountAddressForm::LIBRARY;
 
     return $pane_form;
   }
