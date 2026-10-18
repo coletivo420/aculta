@@ -93,6 +93,7 @@ final class CepLocalStore {
     finally {
       fclose($handle);
     }
+    $this->makeReadable();
     return $count;
   }
 
@@ -101,6 +102,30 @@ final class CepLocalStore {
     $manifest = ['version' => $version, 'records' => $records, 'source' => $source];
     $this->fileSystem->prepareDirectory(dirname(self::MANIFEST), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
     $this->fileSystem->saveData((string) json_encode($manifest, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), self::MANIFEST, FileSystemInterface::EXISTS_REPLACE);
+    $this->makeReadable();
+  }
+
+  /**
+   * Torna a base legível pelos processos PHP-FPM do site. A base é dado público (DNE dos Correios) e fica em
+   * private://, fora da web. Sem isso, o status do Portal vê a pasta como vazia quando roda com outro usuário
+   * (com file_chmod_directory 02770 e file_chmod_file 0660 do settings.local.php, só o dono e o grupo leem).
+   */
+  private function makeReadable(): void {
+    $directory = $this->fileSystem->realpath(self::DIRECTORY);
+    if ($directory === FALSE) {
+      return;
+    }
+    $root = dirname($directory);
+    foreach ([$root, $directory] as $dir) {
+      @chmod($dir, 0755);
+    }
+    foreach (glob($directory . '/*.tsv') ?: [] as $file) {
+      @chmod($file, 0644);
+    }
+    $manifest = $this->fileSystem->realpath(self::MANIFEST);
+    if ($manifest !== FALSE) {
+      @chmod($manifest, 0644);
+    }
   }
 
   /**

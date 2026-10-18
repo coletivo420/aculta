@@ -2,7 +2,7 @@ name: 'ACULTA Portal CEP'
 type: module
 description: 'Consulta de CEP do Portal (base local em arquivos, ViaCEP e BrasilAPI como fallback) e autocompletar do endereço. Porte do cep_autocomplete, sem dependência de contrib.'
 package: 'ACULTA Portal'
-version: '0.3.0-dev.3'
+version: '0.3.0-dev.4'
 core_version_requirement: ^11.3
 dependencies:
   - address:address

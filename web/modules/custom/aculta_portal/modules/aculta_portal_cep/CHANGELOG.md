@@ -1,3 +1,10 @@
+## 0.3.0-dev.4 — base local legível pelo processo web (status mostrava "sem base") — 2026-10-18
+
+- Causa verificada: a base foi importada pelo usuário da CLI (`piradopirata`) com `file_chmod_directory 02770` e `file_chmod_file 0660` (settings.local.php). Os PHP-FPM do site rodam como outros usuários (`aculta`, `toca`, `bdtgn`, `www-data`), que não liam a pasta. O status então via a base como ausente.
+- `CepLocalStore::makeReadable()`: ao final da importação e ao gravar o manifesto, a pasta fica `0755` e os arquivos `0644`. A base é dado público (DNE dos Correios) em `private://`, fora da web.
+- Mensagem do status: quando a base não é encontrada, o detalhe agora também cita a leitura pelo processo web.
+- Verificado: permissões do caminho inteiro legíveis; status das três linhas OK no Runtime de teste; reimportação de 1.388.509 CEPs.
+
 ## 0.3.0-dev.3 — status das consultas de CEP (API e base local) — 2026-10-18
 
 - `CepApiProbe`: verifica ViaCEP e BrasilAPI com um CEP fixo (`01001000`, timeout de 5 s, mesmo endereço da consulta) e grava o resultado no State (`aculta_portal_cep.api_status`).

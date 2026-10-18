@@ -93,7 +93,7 @@ final class CepStatusReport {
       return [
         'item' => $label,
         'value' => (string) $this->translation->translate('Sem base importada'),
-        'detail' => (string) $this->translation->translate('Importe a base com aculta-portal-cep:import (ver docs/portal/CEP-LOCAL.md).'),
+        'detail' => (string) $this->translation->translate('Importe a base com aculta-portal-cep:import. Se ela existe, confira se o processo web consegue ler private://aculta_portal_cep (ver docs/portal/CEP-LOCAL.md).'),
         'status' => 'error',
       ];
     }
