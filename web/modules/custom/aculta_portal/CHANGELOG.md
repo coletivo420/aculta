@@ -1,3 +1,9 @@
+## 0.4.0-dev.138 — remove callbacks legados do editor H5P — 2026-10-18
+
+- Remove o controller H5P copiado que chamava `exit()` e lia `$_POST`/`$_FILES`; nenhuma rota o utilizava. Os endpoints do editor seguem indisponíveis até serem refeitos com Request/Response e autorização Group/LMS.
+- Mantém uploads, instalação de bibliotecas e Hub desativados. O widget continua sem ser anexado ao formulário do curso; o bloqueio de assets de imagem Composer documentado em dev.137 permanece.
+- Mudança de código sem instalação de módulo, atualização de schema ou alteração do Runtime.
+
 ## 0.4.0-dev.137 — fronteira de assets do editor H5P — 2026-10-18
 
 - Auditoria do port identificou que `mirrorAssets()` publica imagens dos pacotes Composer diretamente em `assets://`, fora do fluxo obrigatório de `aculta_image`; o editor também referencia uma biblioteca Drupal inexistente e ainda não está ligado ao formulário de turma.

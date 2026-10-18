@@ -41,6 +41,8 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
    leem superglobais; manter uploads desabilitados até ingestão `aculta_image`.
    O widget atual ainda não está ligado ao formulário de edição do Group e
    referencia uma biblioteca Drupal inexistente (`h5peditor/h5peditor`).
+   O controller copiado que chamava `exit()` foi removido; nenhum endpoint de
+   AJAX do editor está registrado até haver um adapter Drupal Request/Response.
 2. Corrigir a publicação de assets antes de expor qualquer parte do editor:
    `aculta_lms_h5p_library_info_build()` chama `AssetFileStorage::mirrorAssets()`,
    que copia imagens dos pacotes Composer diretamente para `assets://`. Isso
@@ -62,7 +64,7 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 | --- | --- | --- |
 | Campo H5P, entidade/conteúdo, formatter e bibliotecas de reprodução | Adaptados; armazenamento privado e rota de asset checa matrícula e relação Group/conteúdo | Player não usa embed independente. Conteúdo antigo em `public://` exige inventário/migração explícitos; update hook não muda os arquivos automaticamente. |
 | Administração de bibliotecas e configurações | Controladores/formulários e rotas base copiados; corrigidos requisitos de parâmetro e páginas ligadas ao painel | Relevante para curadoria; validar operações e CSRF/cache antes de habilitar. Upload de pacote continua bloqueado. |
-| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | **Ainda não portado** como integração funcional; o widget não é apresentado no formulário do curso | Essencial para educadores criarem/alterarem atividades. As rotas originais só verificavam permissão global, e callbacks usavam `exit()`; reimplementar com Request/Response, token e autorização por curso/Group, sem copiar o bypass. |
+| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | **Ainda não portado** como integração funcional; o controller legado foi removido e o widget não é apresentado no formulário do curso | Essencial para educadores criarem/alterarem atividades. Implementar endpoints com Request/Response, token e autorização por curso/Group; manter upload e instalação de bibliotecas indisponíveis até passar pelos fluxos de arquivo aprovados. |
 | Salvar resultado (`set-finished`) e estado do estudante | Endpoints adaptados: sessão, token, validação de nota e associação curso/conteúdo | Ainda precisa teste funcional entre estudantes/turmas e contrato separado antes de alimentar notas LMS. |
 | Importação/upload de pacote e imagens incorporadas | Desabilitada | Relevante para adoção de conteúdo existente, mas exige ingestão via `aculta_image`, verificação de pacote e restrições de biblioteca. |
 | Embed independente | Rota removida | Não portar sem autorização da entidade/curso pai; o issue upstream documenta exposição por URL direta. |
@@ -71,7 +73,9 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 
 Comparação conferida com a release `2.0.0-beta1`: o editor e suas rotas AJAX,
 upload de biblioteca, tipos do Hub e callbacks do widget ainda precisam de um
-adapter seguro por Group. Tipos restritos podiam ser enviados como pacote, então
+adapter seguro por Group. O código de callbacks legado foi removido para que
+nenhuma rota futura passe a chamar `exit()` ou ler arquivos globais sem revisão.
+Tipos restritos podiam ser enviados como pacote, então
 uploads continuam fechados. A condição CTools `aculta_lms_h5p_group_has_activities`
 expõe o contexto do Group para displays condicionais; Page Manager não está
 instalado. A implementação deve reutilizar `field_h5p_activities`, a entidade e
