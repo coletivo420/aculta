@@ -108,6 +108,25 @@ continuam DEFERRED. Backup privado em
 Detalhes em
 [LMS-GROUP.md](LMS-GROUP.md).
 
+**F8 — implementação inicial em andamento nesta branch.** Os plugins contrib
+existentes cobrem escolha única/múltipla, verdadeiro/falso, completar lacunas e
+resposta aberta. Há feedback imediato nas variantes correspondentes. A F8
+adiciona um plugin de resposta aberta com feedback formativo, mas mantém a nota
+final pendente para avaliação do educador, e habilita o módulo contrib
+`lms_answer_comments` para comentário ligado à resposta. A avaliação da resposta
+discursiva nunca usa a pontuação automática por frases como nota final.
+
+O código local revela um bloqueio de auditoria histórica: ao reiniciar uma
+aula, LMS 1.2.4 apaga o `lms_lesson_status` anterior e suas respostas; a própria
+classe upstream deixa um TODO para retenção. A solução da F8 deve manter as
+entidades LMS como fonte de verdade da tentativa corrente e implementar uma
+retenção histórica mínima, imutável e com access/ciclo de vida definidos, ou
+propor uma alternativa upstream validada. Essa parte ainda não foi
+implementada. Testes de reavaliação e de acesso aos comentários por estudante,
+educador e usuário de outra turma também estão pendentes. RUNTIME STATUS:
+DEFERRED — Drush local indicou URI `http://default`; nenhum estado do Runtime
+foi alterado.
+
 ## Ordem, PR e status
 
 Cada fase é uma unidade pequena, commitada e descrita em PR própria conforme a regra do repositório. Este roadmap não autoriza execução de código, instalação de dependências, importação de curso, atualização persistente, merge ou deploy; cada fase futura precisa de decisão e PR própria.

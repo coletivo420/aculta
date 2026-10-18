@@ -64,10 +64,54 @@ segue DEFERRED para matrícula manual/online, turma cruzada, educadores,
 checkout pago/gratuito, estorno/reembolso e isolamento entre usuários A/B.
 Detalhes, limites e caminho de recuperação estão no [changelog](CHANGELOG.md).
 
+## F8 — Avaliações e feedback (implementação inicial)
+
+Os tipos objetivos usam os plugins do submódulo contrib `lms_answer_plugins`:
+`select` (resposta única ou seleção múltipla), `select_feedback`, `true_false`,
+`true_false_feedback`, `fill_in_the_blanks` e `fill_in_the_blanks_feedback`.
+O educador escolhe o plugin ao criar um tipo de atividade; uma mesma seleção
+pode ser configurada como resposta única ou múltipla.
+Para resposta discursiva, `free_text` mantém a correção manual. O plugin
+`free_text_review_feedback` acrescenta feedback formativo configurável por
+frases, mas deliberadamente deixa a nota pendente para avaliação do educador;
+correspondência de palavras nunca é tratada como correção final de texto livre.
+Esse adaptador deriva do plugin `FreeTextFeedback` do Drupal LMS 1.2.4, licença
+GPL-2.0-or-later, com origem registrada no código.
+
+`lms_answer_comments` integra a avaliação manual à Comment API do Core e deixa
+aluno e educador manterem comentários ligados à resposta original. Respostas,
+notas, estado, tentativas e cálculo de conclusão continuam em entidades e
+serviços do LMS. Nenhuma nota é importada de Webform, H5P ou outro gradebook.
+
+A nota mínima continua configurável por aula no LMS. Pontos de atividade são
+inteiros nativos do LMS; a nota da aula é a soma ponderada dividida pelo máximo,
+arredondada para percentual inteiro pelo LMS. Múltipla seleção dá crédito
+proporcional aos acertos, desconta opções erradas e limita o resultado mínimo
+a zero. O educador pode ajustar a nota de respostas abertas pela avaliação
+nativa do LMS.
+
+**F8 ainda não está concluída.** O código instalado do LMS exclui a resposta e
+o status anteriores quando reinicia uma aula (`LmsLessonHandlerBase`), apesar
+de registrar um TODO upstream para preservar dados de tentativas. A retenção
+histórica precisa de uma solução que preserve o acesso por turma, o ciclo de
+vida dos dados e a origem imutável das tentativas antes de se considerar
+aprovada. Também faltam Kernel/Functional e smoke tests de reavaliação,
+comentários aluno/educador e estados A/B no Runtime.
+
+RUNTIME STATUS: DEFERRED. O Drush local retornou URI `http://default`, não um
+URI `*.aculta.toca.net.br`; portanto esta implementação não foi aplicada ao
+Runtime nem homologada.
+
+Os testes de plugins F8 devem ser executados a partir de `web/core` com o
+PHPUnit do Composer; os Kernel tests usam exclusivamente o MariaDB dedicado
+descrito em `docs/operations/BANCO-DE-TESTE.md`.
+
 ## Testes
 
 - `tests/src/Unit/CourseCompletionPublisherTest.php`: publicação apenas de
   status passado e finalizado; falha e progresso não publicam evento.
+- `tests/src/Unit/FreeTextReviewFeedbackTest.php`: frases orientam somente o
+  feedback formativo e nunca finalizam a nota sem avaliação do educador.
 - `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada do submódulo
   sem instalar a cadeia de dependências, registro DI e ausência de configuração
   própria/hook de instalação.

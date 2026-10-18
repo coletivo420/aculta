@@ -1,8 +1,9 @@
 name: ACULTA LMS
 type: module
-description: 'Integra cursos, memberships em turmas e pedidos Commerce do Drupal LMS ao ACULTA Portal sem duplicar estado de aprendizagem.'
+description: 'Integra matrículas em turmas, avaliações e pedidos Commerce ao Drupal LMS sem duplicar o estado de aprendizagem.'
 package: ACULTA Portal
-version: '0.1.0-dev.3'
+license: GPL-2.0-or-later
+version: '0.1.0-dev.4'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal
@@ -15,4 +16,6 @@ dependencies:
   - commerce:commerce_store
   - group:group
   - lms:lms
+  - lms:lms_answer_comments
+  - lms:lms_answer_plugins
   - lms:lms_classes

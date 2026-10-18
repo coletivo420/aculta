@@ -23,6 +23,7 @@ module:
   cep_autocomplete: 0
   change_mail_page: 0
   ckeditor5: 0
+  comment: 0
   commerce: 0
   commerce_cart: 0
   commerce_checkout: 0
@@ -81,6 +82,7 @@ module:
   layout_discovery: 0
   link: 0
   lms: 0
+  lms_answer_comments: 0
   lms_answer_plugins: 0
   lms_classes: 0
   locale: 0

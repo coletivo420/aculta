@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## Não lançado — F8: avaliações e feedback (implementação inicial)
+
+- `aculta_lms` depende dos submódulos contrib LMS de plugins de resposta e comentários, sem novo pacote Composer.
+- O plugin `free_text_review_feedback`, adaptado do Drupal LMS 1.2.4 sob GPL-2.0-or-later, oferece feedback formativo por frases e mantém a correção final exclusivamente manual pelo educador.
+- O Drupal LMS já fornece múltipla escolha/seleção múltipla, verdadeiro/falso e completar lacunas, com variantes de feedback; o LMS mantém resposta, nota e progresso.
+- `lms_answer_comments` e Core Comment fornecem diálogo ligado à resposta e avaliação manual, sem campo ou gradebook paralelo.
+- Não mexe diretamente em contrib/Core e não altera respostas existentes.
+- F8 segue aberta: o LMS 1.2.4 apaga Answer e LessonStatus de uma tentativa anterior no reinício da aula. A solução de retenção histórica ainda requer implementação e revisão de access/privacidade; testes integrados e smoke de Runtime também pendentes.
+- RUNTIME STATUS: DEFERRED. Drush retornou URI `http://default`, fora do critério de identificação do Homelab; nenhuma operação persistente foi executada.
+
 ## Não lançado — F7: matrícula sempre associada a turma
 
 - Config Sync habilita `lms_classes`, desativa criação automática de turma e configura grants de educador.
