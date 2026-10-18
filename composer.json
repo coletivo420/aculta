@@ -277,6 +277,7 @@
         "drupal/core-recipe-unpack": "^11.4",
         "drupal/core-recommended": "^11.4",
         "drupal/crop": "^2.6",
+        "drupal/ctools": "^4.1",
         "drupal/diff": "^2.1",
         "drupal/domain": "^3.0",
         "drupal/email_confirmer": "^1.0",

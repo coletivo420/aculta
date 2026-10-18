@@ -1,3 +1,10 @@
+## 0.4.0-dev.134 — controles CTools para o bloco de próximas atividades — 2026-10-18
+
+- Declara CTools 4.1 como dependência direta e habilita CTools + CTools Views no Runtime/configuração exportada.
+- O bloco `aculta_activities:block_upcoming` passa a permitir ao administrador configurar pager e limite por posicionamento. A View mantém seus filtros de publicação, tipo de conteúdo, data e access; o padrão continua herdado da própria View.
+- Nenhum storage de conteúdo ou filtro de acesso foi movido ao CTools.
+- Runtime de teste (`aculta_runtime`, `https://aculta.toca.net.br`): módulos habilitados, configuração ativa confirmada e cache reconstruído. Filtros e ordenação da View foram conferidos após a alteração. A importação automática das traduções pt-br do CTools falhou porque `translations://` não está gravável; isso não impediu a habilitação nem o uso dos controles.
+
 ## 0.4.0-dev.133 — painéis H5P vinculados ao LMS — 2026-10-18
 
 - Cria painéis administrativos, de estudante e educador com rotas e navegação próprias. O painel do estudante lista somente cursos cujo `take course` permite acesso e que têm atividades; o do educador lista somente cursos em que pode atualizar o Group. Links de curso usam `DomainPurposeManager`.

@@ -25,6 +25,7 @@ O Portal integra a experiência de:
 - participação do usuário;
 - mensagens, notificações e avisos institucionais (`aculta_messenger`, em desenvolvimento);
 - administração consolidada;
+- blocos de Views ajustáveis por instância via CTools Views, mantendo os filtros de segurança e a fonte de dados da View;
 - normalização comum de slugs públicos e configuração da sanitização de nomes de uploads pelo Core Drupal;
 - Domain purposes, incluindo o purpose `links` (página de redes sociais em `/redes-sociais`).
 
@@ -118,6 +119,7 @@ O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime mig
 | Confirmação de e-mail | [docs/portal/EMAIL-CONFIRMATION-POLICY.md](../../../../docs/portal/EMAIL-CONFIRMATION-POLICY.md) |
 | Pendências abertas | [docs/portal/historico/PENDENCIAS-PROXIMA-RODADA.md](../../../../docs/portal/historico/PENDENCIAS-PROXIMA-RODADA.md) |
 | Dependências do módulo | `aculta_portal.info.yml`: `commerce_shipping` e `physical` (composer: `drupal/commerce_shipping` 3.0.5, `drupal/physical` 1.5.0) |
+| CTools e blocos de Views | [CTOOLS.md](docs/CTOOLS.md) |
 
 ## Changelog
 
