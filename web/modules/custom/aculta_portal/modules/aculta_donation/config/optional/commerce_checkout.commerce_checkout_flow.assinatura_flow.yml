@@ -23,6 +23,9 @@ configuration:
     commerce_memorial_pane:
       step: dedication
       weight: 1
+    aculta_billing_address:
+      step: billing
+      weight: 1
     payment_information:
       step: billing
       weight: 3

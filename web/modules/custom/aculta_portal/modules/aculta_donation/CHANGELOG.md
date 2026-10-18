@@ -1,5 +1,21 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.20 — checkout de doação chega ao pagamento — 2026-10-18
+
+- Gateway do Mercado Pago aceitava só o tipo de pedido `default` (loja). Doações (`doacao`) e assinaturas (`assinatura`)
+  não encontravam gateway ("Não existem gateways de pagamento disponíveis"). Condição `order_type` ampliada nos dois tipos.
+- Fluxos de doação (`doacao` e `assinatura_flow`) não tinham o pane de endereço do projeto (`aculta_billing_address`).
+  Sem ele, o passo de cobrança não tinha campos e o pagamento falhava com "Billing information is required".
+  O pane entra na etapa `billing`, peso 1, na configuração do fluxo (`configuration.panes`).
+- Achado não corrigido aqui: a doação mensal (`recurring`) não é selecionável no formulário. Só o tipo `single` está
+  nos valores permitidos, e o pedido `assinatura` só é criado por `NewOrder::get('recurring')`, que nenhum caminho da
+  interface chama. A escolha de forma de apoio e de valores mensais depende de decisão do responsável.
+- Achado não corrigido aqui: o `commerce_mercado_pago` (contrib) lê o campo `address` do perfil de cobrança; os tipos
+  de perfil do projeto usam `field_address`. O pagamento falha com "Field address is unknown." antes de chamar a API do
+  Mercado Pago. Afeta também a loja. Correção depende de decisão (patch pelo `aculta_patcher` ou adaptador do Portal).
+- RUNTIME STATUS: APLICADO no Runtime de testes (gateway, dois fluxos e pane de endereço; cache rebuild). Verificado por
+  HTTP com a conta de teste até a tela de pagamento, com o erro de campo descrito acima. Nenhuma assinatura foi criada.
+
 ## 0.1.0-dev.19 — teste Kernel do fluxo de doação sem habilitar o Portal inteiro — 2026-10-18
 
 - `DonationPortKernelTest` falhava: o pane de assinatura consome três serviços do `aculta_portal`, e o teste não os tinha.
