@@ -137,10 +137,12 @@ três pacotes novos e zero atualizações/remoções. Os módulos estão habilit
 `core.extension`. Revisão do código upstream encontrou que o dono de uma resposta LMS mantém acesso a
 `see_details` sem revalidar matrícula. `aculta_lms` agora adiciona `take course` atual à rota de download
 de anexos do LMS File Upload, preservando a autorização LMS para educadores. Unit cobre estudante com
-acesso revogado, estudante ativo e educador autorizado (3 testes, 16 assertions PASS). Webform Score
+acesso revogado, estudante ativo e educador autorizado (3 testes, 16 assertions PASS); Kernel integra
+Group/LMS e comprova estudante matriculado permitido, membership removida negada e educador autorizado
+(8 testes, 250 assertions PASS na suíte do submódulo; 34 deprecações emitidas por Core/contrib). Webform Score
 continua restrito às submissões Webform; não há integração que promova resultado automaticamente para a
-nota LMS. Ainda pendem teste com arquivo privado real, revogação de membership no Runtime, teste de
-permissões/autoria Webform e homologação da regra no browser. A tentativa automática de baixar traduções
+nota LMS. Ainda pendem teste HTTP que transmita arquivo privado real, revogação de membership no Runtime,
+teste de permissões/autoria Webform e homologação da regra no browser. A tentativa automática de baixar traduções
 pt-BR dos três módulos durante `drush en` falhou porque `translations://` não está configurado neste
 Runtime; o código e a ativação terminaram com sucesso. RUNTIME STATUS: MÓDULOS HABILITADOS; homologação
 de acesso a arquivos DEFERRED.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\aculta_lms\Access\UploadedAnswerAccessCheck;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -213,6 +214,40 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertContains('Feedback alert(2)', $plain_text);
     self::assertContains('user', $cacheability->getCacheContexts());
     self::assertContains('user.group_permissions', $cacheability->getCacheContexts());
+  }
+
+  public function testUploadedAnswerAccessTracksMembershipRevocationAndTeacherRole(): void {
+    [$student, , , , $answer] = $this->createAttempt();
+    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $member_role = GroupRole::create([
+      'id' => 'lms_course-upload_test_member',
+      'label' => 'Upload test student',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INSIDER_ID,
+      'global_role' => RoleInterface::AUTHENTICATED_ID,
+      'permissions' => ['take course'],
+    ]);
+    $member_role->save();
+    $teacher_role = GroupRole::create([
+      'id' => 'lms_course-upload_test_teacher',
+      'label' => 'Upload test teacher',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['grade students'],
+    ]);
+    $teacher_role->save();
+
+    $course->addMember($student);
+    $this->setCurrentUser($student);
+    $access_check = new UploadedAnswerAccessCheck();
+    self::assertTrue($access_check->access($answer, $student)->isAllowed(), 'An enrolled answer owner can download their file.');
+
+    $course->removeMember($student);
+    self::assertFalse($access_check->access($answer, $student)->isAllowed(), 'Revoking membership immediately blocks the answer owner.');
+
+    $teacher = $this->createUser();
+    $course->addMember($teacher, ['group_roles' => [$teacher_role->id()]]);
+    self::assertTrue($access_check->access($answer, $teacher)->isAllowed(), 'An educator with grade permission retains access after student membership is revoked.');
   }
 
   /** @return array{0: \Drupal\user\UserInterface, 1: CourseStatus, 2: LessonStatus, 3: Activity, 4: Answer} */
