@@ -18,7 +18,7 @@
 - Pré-validação integral dos arquivos de todas as bibliotecas antes do savePackage; um pacote com SVG ativo no último arquivo não grava nem a biblioteca nem o JS anterior. Kernel atual: 8 testes/101 assertions; Unit H5P: 12/52.
 - Migra os quatro plugins anotados para Attributes Drupal 11 e troca `*.views.inc` depreciado por hook OOP com DI; declara `views` como dependência. Descoberta Kernel sem depreciações: 9 testes/119 assertions.
 - Completa traduções da interface administrativa/permissões, verifica via descoberta Kernel a condição de curso do CTools, corrige tokens da ação de restrição e aplica CSRF do Drupal às operações POST de upgrade/reconstrução; entradas inválidas retornam erros HTTP apropriados e IDs ignorados são normalizados.
-- Corrige instanciação DI dos formulários de manutenção e trata a biblioteca inexistente sem acesso a índice indefinido. Kernel H5P: 9 testes/124 assertions; Unit H5P: 12 testes/52 assertions; gates Portal, imagem, pacotes e slugs aprovados.
+- Migra os controllers administrativos restantes de atalhos do ControllerBase para injeção explícita de serviços. Corrige instanciação DI dos formulários de manutenção e trata a biblioteca inexistente sem acesso a índice indefinido. Kernel H5P: 9 testes/124 assertions; Unit H5P: 12 testes/52 assertions; gates Portal, imagem, pacotes e slugs aprovados.
 - RUNTIME STATUS: DEFERRED.
 
 - Atualiza a orientação do painel do educador para refletir o fluxo já protegido de edição H5P na aba Editar da sala do curso.

@@ -7,7 +7,9 @@ use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 
 use Drupal\Core\Url;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -17,20 +19,27 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class H5PLibraryAdmin extends ControllerBase {
-
-  protected $database;
+final class H5PLibraryAdmin implements ContainerInjectionInterface {
 
   /**
    * constructor.
    */
-  public function __construct(Connection $database, private readonly FormBuilderInterface $h5pFormBuilder, private readonly RequestStack $requestStack) {
-    $this->database = $database;
-  }
+  public function __construct(
+    private readonly Connection $database,
+    private readonly FormBuilderInterface $h5pFormBuilder,
+    private readonly RequestStack $requestStack,
+    private readonly TranslationInterface $translation,
+    private readonly RedirectDestinationInterface $redirectDestination,
+  ) {}
 
-  public static function create(ContainerInterface $container) {
-    $controller = new static($container->get('database'), $container->get('form_builder'), $container->get('request_stack'));
-    return $controller;
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('database'),
+      $container->get('form_builder'),
+      $container->get('request_stack'),
+      $container->get('string_translation'),
+      $container->get('redirect.destination'),
+    );
   }
 
   /**
@@ -73,7 +82,7 @@ class H5PLibraryAdmin extends ControllerBase {
         }
 
         $option = [
-          'query' => $this->getDestinationArray(),
+          'query' => $this->redirectDestination->getAsArray(),
         ];
         $deleteUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id . '/delete', $option);
         //$detailsUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id);
@@ -95,7 +104,7 @@ class H5PLibraryAdmin extends ControllerBase {
     }
 
     // All translations are made server side
-    $settings['libraryList']['listHeaders'] = [$this->t('Título'), $this->t('Restrita'), $this->t('Atividades'), $this->t('Dependências de atividades'), $this->t('Dependências da biblioteca'), $this->t('Ações')];
+    $settings['libraryList']['listHeaders'] = [$this->translation->translate('Título'), $this->translation->translate('Restrita'), $this->translation->translate('Atividades'), $this->translation->translate('Dependências de atividades'), $this->translation->translate('Dependências da biblioteca'), $this->translation->translate('Ações')];
 
     // Make it possible to rebuild all caches.
     if ($numNotFiltered) {
@@ -110,9 +119,9 @@ class H5PLibraryAdmin extends ControllerBase {
     $build['#attached'] = self::addSettings($settings);
     $build['#attached']['library'][] = 'aculta_lms_h5p/h5p.admin.library.list';
 
-    $build['title_add'] = ['#markup' => '<h3 class="h5p-admin-header">' . $this->t('Adicionar bibliotecas') . '</h3>'];
+    $build['title_add'] = ['#markup' => '<h3 class="h5p-admin-header">' . $this->translation->translate('Adicionar bibliotecas') . '</h3>'];
     $build['form'] = $this->h5pFormBuilder->getForm('Drupal\aculta_lms_h5p\Form\H5PLibraryUploadForm');
-    $build['title_installed'] = ['#markup' => '<h3 class="h5p-admin-header">' . $this->t('Bibliotecas instaladas') . '</h3>'];
+    $build['title_installed'] = ['#markup' => '<h3 class="h5p-admin-header">' . $this->translation->translate('Bibliotecas instaladas') . '</h3>'];
     $build['container'] = ['#markup' => '<div id="h5p-admin-container"></div>'];
 
     return $build;
@@ -129,9 +138,9 @@ class H5PLibraryAdmin extends ControllerBase {
     return [
       'num' => $num,
       'url' => $url->toString(),
-      'message' => $this->t('Ainda há atividades sem cache atualizado. Reconstrua o cache para excluir bibliotecas e ver quantas atividades usam cada uma.'),
-      'progress' => $this->formatPlural($num, '1 conteúdo precisa reconstruir o cache.', '@count conteúdos precisam reconstruir o cache.'),
-      'button' => $this->t('Reconstruir cache')
+      'message' => $this->translation->translate('Ainda há atividades sem cache atualizado. Reconstrua o cache para excluir bibliotecas e ver quantas atividades usam cada uma.'),
+      'progress' => $this->translation->formatPlural($num, '1 conteúdo precisa reconstruir o cache.', '@count conteúdos precisam reconstruir o cache.'),
+      'button' => $this->translation->translate('Reconstruir cache')
     ];
   }
 

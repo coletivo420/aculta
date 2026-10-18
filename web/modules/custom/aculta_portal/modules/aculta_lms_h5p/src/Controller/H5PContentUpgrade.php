@@ -5,7 +5,8 @@ namespace Drupal\aculta_lms_h5p\Controller;
 
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PEvent;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -15,20 +16,23 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * The H5PContentUpgrade controller
  */
-class H5PContentUpgrade extends ControllerBase {
-
-  protected $database;
+final class H5PContentUpgrade implements ContainerInjectionInterface {
 
   /**
    * constructor.
    */
-  public function __construct(Connection $database, private readonly RequestStack $requestStack) {
-    $this->database = $database;
-  }
+  public function __construct(
+    private readonly Connection $database,
+    private readonly RequestStack $requestStack,
+    private readonly TranslationInterface $translation,
+  ) {}
 
-  public static function create(ContainerInterface $container) {
-    $controller = new static($container->get('database'), $container->get('request_stack'));
-    return $controller;
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('database'),
+      $container->get('request_stack'),
+      $container->get('string_translation'),
+    );
   }
 
   /**
@@ -70,10 +74,10 @@ class H5PContentUpgrade extends ControllerBase {
     $query->fields('l', ['title', 'major_version', 'minor_version', 'patch_version']);
     $library = $query->execute()->fetch();
     if (!$library) {
-      return $this->t('Biblioteca não encontrada.');
+      return $this->translation->translate('Biblioteca não encontrada.');
     }
 
-    return $this->t('Atualizar atividades da biblioteca @library', ['@library' => $library->title . ' (' . \H5PCore::libraryVersion($library) . ')']);
+    return $this->translation->translate('Atualizar atividades da biblioteca @library', ['@library' => $library->title . ' (' . \H5PCore::libraryVersion($library) . ')']);
   }
 
   /**
@@ -86,21 +90,21 @@ class H5PContentUpgrade extends ControllerBase {
   public function upgrade($library_id) {
     $request = $this->requestStack->getCurrentRequest();
     if ($request === NULL || $request->getMethod() !== 'POST') {
-      return new JsonResponse(['error' => (string) $this->t('Método não permitido.')], 405);
+      return new JsonResponse(['error' => (string) $this->translation->translate('Método não permitido.')], 405);
     }
     // Verify security token
     if (!\H5PCore::validToken('contentupgrade', $request->request->getString('token'))) {
-      return new JsonResponse(['error' => (string) $this->t('Token de segurança inválido.')], 403);
+      return new JsonResponse(['error' => (string) $this->translation->translate('Token de segurança inválido.')], 403);
     }
 
     // Get the library we're upgrading to
     $targetLibraryId = $request->request->getInt('libraryId');
     if (!ctype_digit((string) $library_id) || $targetLibraryId < 1) {
-      return new JsonResponse(['error' => (string) $this->t('Biblioteca de destino inválida.')], 400);
+      return new JsonResponse(['error' => (string) $this->translation->translate('Biblioteca de destino inválida.')], 400);
     }
     $to_library = $this->database->query('SELECT library_id AS id, machine_name AS name, major_version, minor_version FROM {h5p_libraries} WHERE library_id = :id', [':id' => $targetLibraryId])->fetch();
     if (!$to_library) {
-      return new JsonResponse(['error' => (string) $this->t('Biblioteca não encontrada.')], 404);
+      return new JsonResponse(['error' => (string) $this->translation->translate('Biblioteca não encontrada.')], 404);
     }
 
     // Prepare response
@@ -118,7 +122,7 @@ class H5PContentUpgrade extends ControllerBase {
       // Update params.
       $params = json_decode($params, TRUE, 32);
       if (!is_array($params)) {
-        return new JsonResponse(['error' => (string) $this->t('Os parâmetros enviados estão inválidos.')], 400);
+        return new JsonResponse(['error' => (string) $this->translation->translate('Os parâmetros enviados estão inválidos.')], 400);
       }
       foreach ($params as $id => $param) {
         if (!ctype_digit((string) $id) || !is_string($param)) {
