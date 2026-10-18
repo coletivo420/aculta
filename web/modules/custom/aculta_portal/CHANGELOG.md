@@ -1,3 +1,11 @@
+## 0.4.0-dev.141 — adaptador de endereço para o Mercado Pago — 2026-10-18
+
+- O contrib `commerce_mercado_pago` lê o campo `address` do perfil de cobrança; os perfis do projeto guardam o endereço em `field_address`. O pagamento falhava com "Field address is unknown." antes da API.
+- Adaptador: campo computado `address` nos tipos de perfil (`BillingAddressAliasItemList`, registrado por `ProfileAddressAliasHooks` em `entity_bundle_field_info`). Não tem armazenamento próprio: lê o `field_address` do mesmo perfil. O endereço continua sendo um só, e o contrib não é alterado.
+- Verificado no Runtime de teste: o alias devolve o endereço do perfil, o checkout de doação chega ao pagamento sem erro e o Mercado Pago cria a preferência e devolve a URL de checkout (`checkout/v1/redirect`). Nenhuma compra foi concluída.
+- Gate `validate-aculta-portal-drupal11.php`: PASS (963 verificações). O gate de fronteira continua com a falha antiga do README do Portal, que não é desta entrega.
+- RUNTIME STATUS: APLICADO no Runtime de testes (cache rebuild; sem import de configuração).
+
 ## 0.4.0-dev.140 — preparar assets Composer e adapter do editor H5P — 2026-10-18
 
 - Cria adapter AJAX H5P por Group para bibliotecas instaladas, metadados, traduções e validação de parâmetros. Todos os pedidos exigem token H5P e autorização de educador no curso; tipos restritos são filtrados e uploads/Hub/instalação continuam fechados.
