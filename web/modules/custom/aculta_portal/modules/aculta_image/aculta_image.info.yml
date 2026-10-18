@@ -1,7 +1,7 @@
 name: 'ACULTA Image (imagens)'
 type: module
 description: 'Sistema único de imagens do Portal: catálogo, upload, renderização, inventário e limpeza. Submódulo do aculta_portal; ver docs/PLANO.md.'
-package: 'Associação Cultural Antiproibicionista'
+package: 'ACULTA Portal'
 core_version_requirement: ^11.3
 version: '0.1.0-dev.24'
 dependencies:

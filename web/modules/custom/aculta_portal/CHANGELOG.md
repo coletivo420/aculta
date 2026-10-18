@@ -1,3 +1,10 @@
+## 0.4.0-dev.127 — agrupa os submódulos próprios em "ACULTA Portal" — 2026-10-18
+
+- Os submódulos próprios (`aculta_associado_id`, `aculta_donation`, `aculta_gallery`, `aculta_game`, `aculta_id_cpf`, `aculta_image`, `aculta_magazine`, `aculta_messenger` e `aculta_user`) passam a declarar `package: 'ACULTA Portal'`, a mesma caixa de `aculta_deployer`, `aculta_lms`, `aculta_pdf_viewer` e `aculta_portal_sitemap`, em `/painel-administrativo/modulos`.
+- O módulo pai `aculta_portal` permanece em "Associação Cultural Antiproibicionista"; a mudança cobre somente os submódulos.
+- Nenhuma mudança funcional: o rótulo do pacote não é lido por código, gate ou configuração exportada.
+- Runtime de teste (`aculta_runtime`): `drush cr` concluído; rótulos verificados via `extension.list.module`. RUNTIME STATUS: APLICADO; conferência visual de `/painel-administrativo/modulos` pendente.
+
 ## 0.4.0-dev.126 — reconcilia configuração F7 do LMS — 2026-10-18
 
 - Migra as configurações de doação para o provider `aculta_donation`, removendo referências à extensão contrib que já saiu do Composer.
