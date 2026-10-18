@@ -1,0 +1,143 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_lms_h5p\Kernel;
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRole;
+use Drupal\group\PermissionScopeInterface;
+use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\user\Traits\UserCreationTrait;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpFoundation\Request;
+
+/** Verifies H5P access against real Group memberships and LMS course entities. */
+#[RunTestsInSeparateProcesses]
+final class H5PCourseAccessIntegrationTest extends KernelTestBase {
+
+  use UserCreationTrait;
+
+  /** {@inheritdoc} */
+  protected static $modules = ['system', 'user', 'field', 'file', 'text', 'filter', 'entity', 'options', 'entity_usage', 'flexible_permissions', 'group', 'views', 'lms', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p'];
+
+  /** {@inheritdoc} */
+  protected function setUpFilesystem(): void {
+    mkdir($this->siteDirectory, 0775, TRUE);
+    mkdir($this->siteDirectory . '/files', 0775, TRUE);
+    mkdir($this->siteDirectory . '/private', 0775, TRUE);
+    $this->setSetting('file_public_path', $this->siteDirectory . '/files');
+    $this->setSetting('file_private_path', $this->siteDirectory . '/private');
+  }
+
+  /** {@inheritdoc} */
+  public function register(\Symfony\Component\DependencyInjection\ContainerBuilder $container): void {
+    parent::register($container);
+    $container->register('stream_wrapper.private', PrivateStream::class)
+      ->addTag('stream_wrapper', ['scheme' => 'private']);
+  }
+
+  /** {@inheritdoc} */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installConfig(['system', 'user', 'filter', 'group', 'lms']);
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installEntitySchema('h5p_content');
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installSchema('aculta_lms_h5p', ['h5p_content_libraries', 'h5p_points', 'h5p_content_user_data']);
+
+    FieldStorageConfig::create([
+      'field_name' => 'field_h5p_activities',
+      'entity_type' => 'group',
+      'type' => 'h5p',
+      'cardinality' => -1,
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_h5p_activities',
+      'entity_type' => 'group',
+      'bundle' => 'lms_course',
+      'label' => 'Atividades interativas',
+    ])->save();
+  }
+
+  /** A learner can open only H5P content referenced by a course they can take. */
+  public function testPlaybackRequiresCurrentCourseMembershipAndFieldReference(): void {
+    $owner = $this->createUser();
+    $student = $this->createUser();
+    $educator = $this->createUser();
+    $outsider = $this->createUser();
+    $course = Group::create(['type' => 'lms_course', 'label' => 'Curso H5P', 'uid' => $owner->id()]);
+    $course->save();
+
+    $studentRole = GroupRole::create([
+      'id' => 'lms_course-h5p_test_student',
+      'label' => 'H5P test student',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['take course'],
+    ]);
+    $studentRole->save();
+    $educatorRole = GroupRole::create([
+      'id' => 'lms_course-h5p_test_educator',
+      'label' => 'H5P test educator',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['edit group'],
+    ]);
+    $educatorRole->save();
+    $course->addMember($student, ['group_roles' => [$studentRole->id()]]);
+    $course->addMember($educator, ['group_roles' => [$educatorRole->id()]]);
+
+    $content = $this->container->get('entity_type.manager')->getStorage('h5p_content')->create([
+      'library_id' => 1,
+      'parameters' => '{}',
+      'title' => 'Atividade vinculada',
+    ]);
+    $content->save();
+    $course->get('field_h5p_activities')->appendItem(['h5p_content_id' => $content->id()]);
+    $course->save();
+
+    $access = $this->container->get('aculta_lms_h5p.course_access');
+    self::assertTrue($access->studentAccess((int) $course->id(), (int) $content->id(), $student)->isAllowed());
+    self::assertFalse($access->studentAccess((int) $course->id(), (int) $content->id(), $outsider)->isAllowed());
+    self::assertFalse($access->studentAccess((int) $course->id(), (int) $content->id() + 100, $student)->isAllowed());
+    self::assertTrue($access->editorAccess((int) $course->id(), 0, $educator)->isAllowed());
+    self::assertTrue($access->editorAccess((int) $course->id(), (int) $content->id(), $educator)->isAllowed());
+    self::assertFalse($access->editorAccess((int) $course->id(), (int) $content->id(), $outsider)->isAllowed());
+
+    $condition = $this->container->get('plugin.manager.condition')->createInstance('aculta_lms_h5p_group_has_activities');
+    $condition->setContextValue('group', $course);
+    self::assertTrue($condition->evaluate());
+
+    // Exercise the real progress endpoint and ensure state is scoped to the
+    // authenticated student, course membership, and H5P content.
+    $this->container->get('current_user')->setAccount($student);
+    $controller = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Controller\H5PAJAX::class);
+    $token = \H5PCore::createToken('contentuserdata');
+    $saveRequest = Request::create('/?token=' . $token, 'POST', ['data' => '{"answer":"saved"}']);
+    $saved = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $saveRequest);
+    self::assertSame(200, $saved->getStatusCode());
+    $loadRequest = Request::create('/?token=' . $token, 'GET');
+    $loaded = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
+    self::assertSame('{"answer":"saved"}', json_decode((string) $loaded->getContent(), TRUE)['data']);
+    self::assertStringContainsString('private', (string) $loaded->headers->get('Cache-Control'));
+    self::assertStringContainsString('no-store', (string) $loaded->headers->get('Cache-Control'));
+
+    $this->container->get('current_user')->setAccount($outsider);
+    $denied = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
+    self::assertSame(403, $denied->getStatusCode());
+    $this->container->get('current_user')->setAccount($student);
+
+    $course->removeMember($student);
+    self::assertFalse($access->studentAccess((int) $course->id(), (int) $content->id(), $student)->isAllowed());
+  }
+
+}

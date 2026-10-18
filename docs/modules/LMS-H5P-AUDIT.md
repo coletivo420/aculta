@@ -18,8 +18,8 @@ outras mídias usam os limites PHP do Drupal e a allowlist H5P. Os arquivos fica
 privados e seus usos são rastreados pelo File API. Administradores podem instalar
 pacotes `.h5p` locais pelo validador oficial, ignorando conteúdo e mantendo os
 assets privados gerenciados; instalação pelo Hub e descoberta remota continuam
-indisponíveis. O módulo segue desabilitado
-enquanto faltam testes Kernel/integração, validação visual e revisão das APIs
+indisponíveis. O módulo segue desabilitado enquanto faltam ciclo de
+edição/renderização real no navegador, validação visual e revisão das APIs
 legadas herdadas.
 
 ## Decisão e limites da etapa
@@ -50,8 +50,10 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
    Request/Response por curso para listar bibliotecas locais, carregar metadados,
    traduções, validar parâmetros e receber mídia privada. Ele exige autorização
    Group e token H5P; administradores instalam bibliotecas de pacote local pelo
-   H5P Core. O Hub permanece desligado. Isso ainda não habilita o editor para
-   educadores: faltam testes de integração e do ciclo de edição completo.
+   H5P Core. Kernel com entidades reais confirma que matrícula/`takeAccess`,
+   papel de educador/`edit group`, referência do conteúdo e revogação de matrícula
+   controlam o acesso, e avalia a condição CTools com contexto de Group. Ainda
+   faltam o ciclo de edição/renderização real no navegador e a validação visual.
 2. Publicar assets estáticos sem contornar `aculta_image`:
    `AssetFileStorage::mirrorAssets()` agora encaminha imagens estáticas Composer
    ao `aculta_image.PackagedAssetPublisher`, que mantém o caminho `public://h5p`
@@ -61,10 +63,13 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
    test visual antes da habilitação.
 3. Os hooks runtime de bibliotecas, cron e exclusão de usuário foram migrados
    para `#[Hook]` com DI; as assinaturas do framework H5P receberam contratos de
-   retorno compatíveis com o H5P Core instalado. Ainda faltam refatorar os
-   service locators internos do adapter e auditar cacheability/acesso no fluxo.
-4. Testar conteúdo Div, isolamento entre estudantes, revogação de matrícula,
-   persistência de tentativas, CSP, bibliotecas executáveis e limpeza de arquivos.
+   retorno compatíveis com o H5P Core instalado. Controllers administrativos e
+   de progresso usam DI. Ainda faltam refatorar service locators internos do
+   adapter e concluir a auditoria de cacheability no fluxo completo.
+4. Kernel cobre isolamento por curso, revogação de matrícula e gravação/leitura
+   privada de estado do estudante pelo endpoint real. Ainda falta verificar
+   conteúdo Div no navegador, persistência de tentativas entre sessões, CSP
+   final, execução de biblioteca instalada e limpeza/remoção de mídia.
 5. Não converter scores em notas LMS sem contrato autenticado e auditável.
 6. Só então habilitar no Runtime após backup, plano de reversão e confirmação de
    schema/configuração; nenhum schema H5P foi instalado nesta etapa.
@@ -75,8 +80,8 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 | --- | --- | --- |
 | Campo H5P, entidade/conteúdo, formatter e bibliotecas de reprodução | Adaptados; armazenamento privado e rota de asset checa matrícula e relação Group/conteúdo | Player não usa embed independente. Conteúdo antigo em `public://` exige inventário/migração explícitos; update hook não muda os arquivos automaticamente. |
 | Administração de bibliotecas e configurações | Controladores/formulários adaptados; pacote local usa validação H5P Core e escrita privada pelo File API, com imagens em `aculta_image` | Upload exige permissão administrativa; substituição silenciosa de arquivos instalados é recusada. Testar instalação/remoção com pacotes reais antes de habilitar. |
-| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter por Group para listagem, metadados, traduções, filtro e upload de mídia privado; acesso usa token H5P e permissões de biblioteca | Upload coberto por Unit; faltam integração real por curso e validação visual. Hub segue desligado. |
-| Salvar resultado (`set-finished`) e estado do estudante | Endpoints adaptados: sessão, token, validação de nota e associação curso/conteúdo | Ainda precisa teste funcional entre estudantes/turmas e contrato separado antes de alimentar notas LMS. |
+| `h5peditor` (rotas, callbacks AJAX e bibliotecas Drupal) | Adapter por Group para listagem, metadados, traduções, filtro e upload de mídia privado; acesso usa token H5P e permissões de biblioteca | Kernel valida acesso real por curso e a condição CTools; faltam ciclo de edição real e validação visual. Hub segue desligado. |
+| Salvar resultado (`set-finished`) e estado do estudante | Endpoints adaptados: sessão, token, validação de nota e associação curso/conteúdo; Kernel exercita gravação/leitura de estado e isolamento de acesso | Falta teste de persistência de tentativa `set-finished` em navegador/HTTP e contrato separado antes de alimentar notas LMS. |
 | Upload de mídia do editor | Ativo no adapter, sujeito a autorização Group e token; imagens raster passam por `aculta_image`, ficam privadas e têm File API usage | Falta teste Kernel de cópia, persistência e remoção, além de browser test; o módulo continua desabilitado. |
 | Importação/upload de pacote | Pacote local habilitado para administradores; usa validador H5P, ignora conteúdo, preserva allowlist e mantém assets privados gerenciados | Executar testes com pacote real benigno e pacote malformado; instalação remota/Hub continua desligada. |
 | Embed independente | Rota removida | Não portar sem autorização da entidade/curso pai; o issue upstream documenta exposição por URL direta. |

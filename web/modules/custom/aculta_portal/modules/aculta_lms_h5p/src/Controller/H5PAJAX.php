@@ -88,13 +88,15 @@ final class H5PAJAX extends ControllerBase {
           'preloaded' => $request->request->get('preload') === '0' ? 0 : 1,
           'delete_on_content_change' => $request->request->get('invalidate') === '0' ? 0 : 1,
         ];
-        $query = $this->database->select('h5p_content_user_data', 'd')->fields('d', ['content_main_id'])->condition('content_main_id', $content_main_id)->condition('user_id', $user->id())->condition('data_id', $data_id)->condition('sub_content_id', $sub_content_id);
-        if ($query->execute()->fetchField() === FALSE) {
-          $this->database->insert('h5p_content_user_data')->fields($values + ['user_id' => $user->id(), 'content_main_id' => $content_main_id, 'sub_content_id' => $sub_content_id, 'data_id' => $data_id])->execute();
-        }
-        else {
-          $this->database->update('h5p_content_user_data')->fields($values)->condition('user_id', $user->id())->condition('content_main_id', $content_main_id)->condition('data_id', $data_id)->condition('sub_content_id', $sub_content_id)->execute();
-        }
+        $this->database->merge('h5p_content_user_data')
+          ->keys([
+            'user_id' => (int) $user->id(),
+            'content_main_id' => $content_main_id,
+            'sub_content_id' => $sub_content_id,
+            'data_id' => $data_id,
+          ])
+          ->fields($values)
+          ->execute();
       }
       Cache::invalidateTags(['h5p_content:' . $content_main_id]);
       return $this->privateResponse(['success' => TRUE]);

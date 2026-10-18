@@ -22,3 +22,4 @@
 - RUNTIME STATUS: DEFERRED.
 
 - Atualiza a orientação do painel do educador para refletir o fluxo já protegido de edição H5P na aba Editar da sala do curso.
+- Adiciona Kernel com curso Group real, campo H5P e permissões reais: estudante matriculado e educador com `edit group` acessam somente conteúdo do curso; pessoa externa, referência inexistente e matrícula revogada são negadas. A condição CTools é avaliada sobre o mesmo curso. O endpoint real grava e lê estado privado do estudante e nega acesso externo. O salvamento usa `merge()` pela chave primária para evitar corrida entre leitura e gravação. Kernel total: 10 testes/155 assertions; essa integração expõe 40 depreciações provenientes de Core/Group/LMS/Views instalados.
