@@ -162,6 +162,11 @@ final class PortalHelperRegistry {
       'summary' => 'Sincroniza matrículas Group com pedidos pagos de curso e preserva memberships manuais e outras compras válidas.',
       'docs' => 'docs/modules/LMS-GROUP.md',
     ],
+    'aculta_lms.attempt_archive' => [
+      'label' => 'Histórico de tentativas do LMS',
+      'summary' => 'Preserva respostas, notas e comentários anteriores ao reinício de aula, revalidando acesso pelo curso e pelo usuário.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/README.md',
+    ],
     'aculta_portal.mercado_pago_webhook_guard' => [
       'label' => 'Proteção de webhook de pagamento',
       'summary' => 'Valida estrutura e autenticidade das notificações recebidas do gateway.',

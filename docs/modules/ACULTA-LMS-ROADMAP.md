@@ -116,16 +116,14 @@ final pendente para avaliação do educador, e habilita o módulo contrib
 `lms_answer_comments` para comentário ligado à resposta. A avaliação da resposta
 discursiva nunca usa a pontuação automática por frases como nota final.
 
-O código local revela um bloqueio de auditoria histórica: ao reiniciar uma
-aula, LMS 1.2.4 apaga o `lms_lesson_status` anterior e suas respostas; a própria
-classe upstream deixa um TODO para retenção. A solução da F8 deve manter as
-entidades LMS como fonte de verdade da tentativa corrente e implementar uma
-retenção histórica mínima, imutável e com access/ciclo de vida definidos, ou
-propor uma alternativa upstream validada. Essa parte ainda não foi
-implementada. Testes de reavaliação e de acesso aos comentários por estudante,
-educador e usuário de outra turma também estão pendentes. RUNTIME STATUS:
-DEFERRED — Drush local indicou URI `http://default`; nenhum estado do Runtime
-foi alterado.
+O código upstream apaga respostas substituídas, reavaliadas ou reiniciadas. A
+branch implementa uma cópia interna de auditoria em `aculta_lms`, sem substituir
+o estado operacional do LMS. A cópia inclui a resposta anterior, nota,
+timestamps e a conversa vinculada à resposta; é visível só com `take course` ou
+`grade students` atuais e removida com o progresso do curso, conta ou curso.
+Kernel/Functional tests e smoke no Runtime para esses limites de acesso,
+reavaliação e reinício continuam pendentes. RUNTIME STATUS: DEFERRED — Drush
+local indicou URI `http://default`; nenhum estado do Runtime foi alterado.
 
 ## Ordem, PR e status
 

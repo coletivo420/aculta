@@ -79,9 +79,18 @@ Esse adaptador deriva do plugin `FreeTextFeedback` do Drupal LMS 1.2.4, licença
 GPL-2.0-or-later, com origem registrada no código.
 
 `lms_answer_comments` integra a avaliação manual à Comment API do Core e deixa
-aluno e educador manterem comentários ligados à resposta original. Respostas,
-notas, estado, tentativas e cálculo de conclusão continuam em entidades e
-serviços do LMS. Nenhuma nota é importada de Webform, H5P ou outro gradebook.
+aluno e educador manterem comentários ligados à resposta original. LMS continua
+fonte da tentativa corrente, da nota e da conclusão. Como LMS 1.2.4 apaga uma
+resposta ao substituí-la, reiniciar a aula ou reavaliá-la, `aculta_lms` grava
+somente o estado anterior numa entidade interna e protegida de auditoria. Isso
+preserva o texto respondido, pontuação, horário e a conversa da resposta sem
+criar outro gradebook. Nenhuma nota é importada de Webform, H5P ou outro sistema.
+
+O histórico só aparece no detalhe da resposta e revalida acesso no momento da
+leitura: estudantes precisam manter `take course`; educadores precisam de
+`grade students` na turma. Os registros são apagados ao excluir o progresso do
+curso, a conta ou o curso. Assim, matrícula revogada não dá acesso ao arquivo
+histórico, e exclusões previstas pelo ciclo de vida removem as cópias.
 
 A nota mínima continua configurável por aula no LMS. Pontos de atividade são
 inteiros nativos do LMS; a nota da aula é a soma ponderada dividida pelo máximo,
@@ -90,13 +99,13 @@ proporcional aos acertos, desconta opções erradas e limita o resultado mínimo
 a zero. O educador pode ajustar a nota de respostas abertas pela avaliação
 nativa do LMS.
 
-**F8 ainda não está concluída.** O código instalado do LMS exclui a resposta e
-o status anteriores quando reinicia uma aula (`LmsLessonHandlerBase`), apesar
-de registrar um TODO upstream para preservar dados de tentativas. A retenção
-histórica precisa de uma solução que preserve o acesso por turma, o ciclo de
-vida dos dados e a origem imutável das tentativas antes de se considerar
-aprovada. Também faltam Kernel/Functional e smoke tests de reavaliação,
-comentários aluno/educador e estados A/B no Runtime.
+**F8 ainda não está concluída.** O arquivo de histórico e as regras de acesso
+estão implementados nesta branch, incluindo captura da versão anterior em
+edições, reavaliações e reinícios. Faltam Kernel/Functional tests do ciclo de
+vida, dos comentários e do isolamento por turma; revisão de segurança do
+arquivo; e smoke tests no Runtime para estudante, educador, reavaliação e
+tentativas. A versão upstream não guarda histórico por si; por isso o adaptador
+local permanece pequeno, documentado e isolado em `aculta_lms`.
 
 RUNTIME STATUS: DEFERRED. O Drush local retornou URI `http://default`, não um
 URI `*.aculta.toca.net.br`; portanto esta implementação não foi aplicada ao
@@ -110,6 +119,8 @@ descrito em `docs/operations/BANCO-DE-TESTE.md`.
 
 - `tests/src/Unit/CourseCompletionPublisherTest.php`: publicação apenas de
   status passado e finalizado; falha e progresso não publicam evento.
+- `tests/src/Unit/AttemptArchiveManagerTest.php`: preserva dados e notas
+  anteriores antes de edição/reavaliação.
 - `tests/src/Unit/FreeTextReviewFeedbackTest.php`: frases orientam somente o
   feedback formativo e nunca finalizam a nota sem avaliação do educador.
 - `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada do submódulo

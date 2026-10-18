@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA LMS.
+ */
+
+declare(strict_types=1);
+
+/** Installs the append-only attempt archive entity definition. */
+function aculta_lms_update_10001(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_lms_attempt_archive'));
+}

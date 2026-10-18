@@ -15,3 +15,9 @@ services:
     tags:
       - { name: aculta_portal.helper }
       - { name: aculta_portal.implementation }
+  aculta_lms.attempt_archive:
+    class: Drupal\aculta_lms\AttemptArchiveManager
+    arguments: ['@entity_type.manager', '@current_user', '@datetime.time']
+    tags:
+      - { name: aculta_portal.helper }
+      - { name: aculta_portal.implementation }
