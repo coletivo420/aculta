@@ -35,8 +35,9 @@ aula/turma com acesso validado pelo Drupal e pelo LMS.
   foi criado um painel/layout paralelo nem uma relação que escolha arbitrariamente
   uma atividade entre várias.
 
-O painel do educador é, nesta etapa, uma visão dos cursos administráveis. O
-adapter do editor cobre listagem e metadados de bibliotecas locais, traduções,
+O painel do educador lista cursos administráveis; a criação e edição de atividades
+acontece na aba Editar da sala, pelo campo do curso protegido pelas permissões do
+Group. O adapter do editor cobre listagem e metadados de bibliotecas locais, traduções,
 validação de parâmetros e upload privado de mídia, com autorização Group e token
 H5P. Administradores podem instalar pacotes `.h5p` locais pelo validador oficial
 do H5P; o conteúdo do pacote é ignorado e apenas bibliotecas aprovadas são

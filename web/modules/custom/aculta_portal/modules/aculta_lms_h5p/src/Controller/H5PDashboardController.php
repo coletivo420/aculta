@@ -135,7 +135,7 @@ final class H5PDashboardController implements ContainerInjectionInterface {
     ];
     if ($educator) {
       $build['editor_notice'] = [
-        '#plain_text' => $this->translation->translate('A edição de atividades interativas será habilitada após a proteção dos serviços do editor por acesso à turma.'),
+        '#plain_text' => $this->translation->translate('Para criar ou editar atividades H5P, abra a sala do curso e use a aba Editar. O acesso segue as permissões da equipe do curso.'),
         '#weight' => 10,
       ];
     }
