@@ -108,7 +108,7 @@ continuam DEFERRED. Backup privado em
 Detalhes em
 [LMS-GROUP.md](LMS-GROUP.md).
 
-**F8 — implementação inicial em andamento nesta branch.** Os plugins contrib
+**F8 — implementação e testes automatizados entregues nesta branch; smoke visual pendente.** Os plugins contrib
 existentes cobrem escolha única/múltipla, verdadeiro/falso, completar lacunas e
 resposta aberta. Há feedback imediato nas variantes correspondentes. A F8
 adiciona um plugin de resposta aberta com feedback formativo, mas mantém a nota
@@ -129,7 +129,7 @@ imagem, slugs e PHP lint passaram. O Kernel registra 34 depreciações no
 ecosistema Group/LMS/Views/Core, sem alterações em contrib/Core. No Runtime de
 teste, o update de schema segue aplicado e o cache foi reconstruído após a
 correção; o smoke visual por navegador está pendente. RUNTIME STATUS: UPDATE
-APLICADO; homologação visual DEFERRED.
+APLICADO; homologação visual DEFERRED. A próxima fase funcional listada é F9 (Webform Score e entregas), ainda dependente de decisão/autorização própria.
 
 ## Ordem, PR e status
 

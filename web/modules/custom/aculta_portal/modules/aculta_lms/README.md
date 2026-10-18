@@ -107,7 +107,9 @@ saída em texto e cache de permissões. O teste Unit de seleção do `lms_answer
 contrib também passou (2 testes, 4 assertions). Gates Portal, imagem, slugs e
 lint passaram. Os Kernel tests reportaram 34 depreciações upstream em Group,
 LMS, Views e API de entidades do Core. O smoke visual no navegador ainda não
-foi executado; a adaptação local segue pequena e isolada em `aculta_lms`.
+foi executado; a adaptação local segue pequena e isolada em `aculta_lms`. A
+barra administrativa usa o ícone próprio de livro aberto do módulo, em lugar
+do capelo padrão do LMS contrib.
 
 RUNTIME STATUS: TABELA INSTALADA E SMOKE PARCIAL. Em 2026-10-18, Drush
 confirmou `http://cursos.aculta.toca.net.br` e `aculta_runtime`; foi aplicado

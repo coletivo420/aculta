@@ -3,6 +3,7 @@
 ## Não lançado — F8: avaliações e feedback (implementação inicial)
 
 - `aculta_lms` depende dos submódulos contrib LMS de plugins de resposta e comentários, sem novo pacote Composer.
+- A barra administrativa recebe um ícone próprio de livro aberto, carregado apenas para contas com acesso à administração; o ícone padrão do LMS continua a ser fornecido por contrib e não foi editado.
 - O plugin `free_text_review_feedback`, adaptado do Drupal LMS 1.2.4 sob GPL-2.0-or-later, oferece feedback formativo por frases e mantém a correção final exclusivamente manual pelo educador.
 - O Drupal LMS já fornece múltipla escolha/seleção múltipla, verdadeiro/falso e completar lacunas, com variantes de feedback; o LMS mantém resposta, nota e progresso.
 - `lms_answer_comments` e Core Comment fornecem diálogo ligado à resposta e avaliação manual, sem campo ou gradebook paralelo.
