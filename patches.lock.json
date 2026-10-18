@@ -1,5 +1,5 @@
 {
-    "_hash": "e8d350e8c6e79ede2dfe3b6309a85a466d992bd42136b7b8e7009d97156fc59b",
+    "_hash": "492675850695b580ba02f4b18f17d6884ae0dc373235e556d2023e4210632508",
     "patches": {
         "drupal/address": [
             {
@@ -34,6 +34,18 @@
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
+                }
+            }
+        ],
+        "h5p/h5p-editor": [
+            {
+                "package": "h5p/h5p-editor",
+                "description": "H5P: bloquear tipos de conteúdo restritos no upload",
+                "url": "patches/aculta_patcher/h5p_restricted_upload.patch",
+                "sha256": "656137ed2c0ab27992305adc3785328c2f7e20646638f84da14efc8bb01c5e95",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
                 }
             }
         ]

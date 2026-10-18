@@ -84,6 +84,7 @@ Estas regras valem para qualquer contraparte listada aqui. A fonte normativa é 
 | `web/modules/custom/aculta_portal/modules/aculta_portal_sitemap` | 0.1.1 | Sitemap | Sem contraparte visual própria | Sem contraparte |
 | `web/modules/custom/aculta_portal/modules/aculta_game` | 0.1.0-dev.9 | Conquistas e jogo | Sem contraparte identificada no tema | Sem contraparte; verificar |
 | `web/modules/custom/aculta_portal/modules/aculta_lms` | 0.1.0-dev.1 | Integração com o LMS (cursos, lições, matrícula) | Sem contraparte própria; o cartão de curso é do contrib `lms` (ver abaixo) | Sem contraparte própria |
+| `web/modules/custom/aculta_portal/modules/aculta_patcher` | 0.1.0-dev.1 | Registro administrativo de diffs Composer e exportação validada para build | Formulários e tabela administrativa nativos do Drupal/Claro | Sem contraparte de tema |
 | `web/modules/custom/aculta_portal/modules/aculta_id_cpf` | 0.2.0-dev.2 | Validação e campos de CPF | Sem contraparte própria; usa formulários do tema (`forms.css`) | Sem contraparte |
 | `web/modules/custom/aculta_portal/modules/aculta_associado_id` | 0.3.0-dev.1 | Identificador de associado | Sem contraparte própria; usa formulários do tema | Sem contraparte |
 

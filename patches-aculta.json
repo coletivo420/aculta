@@ -1,0 +1,12 @@
+{
+    "patches": {
+        "h5p/h5p-editor": [
+            {
+                "description": "H5P: bloquear tipos de conte\u00fado restritos no upload",
+                "url": "patches/aculta_patcher/h5p_restricted_upload.patch",
+                "sha256": "656137ed2c0ab27992305adc3785328c2f7e20646638f84da14efc8bb01c5e95",
+                "depth": 1
+            }
+        ]
+    }
+}

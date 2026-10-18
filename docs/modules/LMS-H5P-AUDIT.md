@@ -22,6 +22,10 @@ Drush confirmou o Runtime
 `http://cursos.aculta.toca.net.br` / `aculta_runtime`; `h5p` e `h5p_editor`
 continuam desativados e a consulta read-only não encontrou tabelas `h5p_*`.
 
+O submódulo custom `aculta_patcher` está habilitado no Runtime de teste para
+administrar o registro do patch. Foi feito backup privado antes da ativação;
+nenhuma configuração H5P ou schema H5P foi instalado.
+
 Não habilitar `drupal/h5p` ou `drupal/lms_h5p` neste momento. A
 versão Drupal 11 disponível consultada é `2.0.0-beta1`; a página do projeto
 informa que não há release estável atualmente coberta pela política de
@@ -81,14 +85,20 @@ instalar bibliotecas, mas não consulta `H5PPermission::CREATE_RESTRICTED`.
 
 A permissão `create restricted h5p content types` aparece no Drupal adapter
 para filtrar a lista de bibliotecas em `H5PEditorDrupalStorage::getLibraries()`.
-Esse filtro da interface não bloqueia um pacote `.h5p` que contenha uma
-biblioteca restrita. Portanto, o source instalado confirma a reprodução da
-issue; um patch exigiria validar todas as dependências e bibliotecas do pacote
-no ponto de ingestão, antes de qualquer gravação. Não foi criado patch local
-porque a mudança atravessaria o contrato do H5P core/editor e requer fixture de
-pacote e teste de regressão contra a versão exata. Manter o módulo desativado
-até existir correção upstream revisada ou patch Composer isolado, acompanhado
-de teste que reproduza a issue e confirme os dois resultados de permissão.
+Esse filtro da interface não bloqueava um pacote `.h5p` que contivesse uma
+biblioteca restrita. Foi criado um patch Composer local para `h5p/h5p-editor`
+1.25: antes de salvar ou instalar dependências no caminho de upload, ele coleta
+as bibliotecas incluídas e dependências preloaded/dynamic, confere versão
+major/minor contra o inventário local e nega o processamento quando encontra
+tipo restrito sem `CREATE_RESTRICTED`. O pacote continua sem edição manual: o
+patch é aplicado pelo `cweagans/composer-patches` durante Composer build.
+
+O patch passou pelo `git apply --check` e foi aplicado por
+`composer patches-repatch`; o comando Drush do `aculta_patcher` também validou
+o estado aplicado. Ainda falta teste funcional de autorização contra um pacote
+H5P representativo (conta sem permissão negada; conta com permissão aceita).
+Por isso, H5P permanece desativado no Runtime até esse teste e os demais gates
+de privacidade, CSP, isolamento e integração de nota passarem.
 
 Este achado é inspeção estática do source instalado, não um teste de exploração
 no Runtime. Não foi enviado arquivo de prova nem alterado banco ou configuração.

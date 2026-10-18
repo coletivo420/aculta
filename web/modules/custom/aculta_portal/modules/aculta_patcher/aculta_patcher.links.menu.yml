@@ -1,0 +1,6 @@
+aculta_patcher.collection:
+  title: 'Patches e snippets'
+  description: 'Gerenciar patches Composer do ACULTA Portal.'
+  route_name: entity.aculta_patch.collection
+  parent: system.admin_config_development
+  weight: 40

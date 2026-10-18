@@ -1,0 +1,4 @@
+administer aculta patches:
+  title: 'Administrar patches ACULTA'
+  description: 'Criar, revisar, ativar, desativar e remover patches que serão aplicados em builds Composer.'
+  restrict access: true

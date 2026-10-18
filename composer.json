@@ -383,6 +383,9 @@
         ]
     },
     "extra": {
+        "composer-patches": {
+            "patches-file": "patches-aculta.json"
+        },
         "drupal-scaffold": {
             "locations": {
                 "web-root": "web/"
