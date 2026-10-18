@@ -9,8 +9,8 @@
 - Não mexe diretamente em contrib/Core e não altera respostas existentes.
 - `AttemptArchive` preserva cópias das versões anteriores antes de edição, reavaliação ou reinício de resposta e mantém a conversa da resposta; histórico exige membership/acesso atual e é removido com o progresso, conta ou curso.
 - Verificação incremental: 6 testes Unit (33 assertions), Kernel (2 testes, 11 assertions; persistência, acesso somente leitura e limpeza por conta), gates Portal (950 checks), imagem e slugs passaram; PHP lint passou. Executado com PHP 8.4.26; PHP 8.5 ainda não foi validado.
-- F8 segue aberta até revisão de segurança, testes de ciclo de vida/access e smoke no Runtime. Nenhum histórico preexistente foi alterado ou migrado.
-- RUNTIME STATUS: DEFERRED. Drush retornou URI `http://default`, fora do critério de identificação do Homelab; nenhuma operação persistente foi executada.
+- F8 segue aberta para testes de integração com respostas LMS, reavaliação/reinício/exclusão de progresso, comentários reais, isolamento entre turmas, revisão de segurança e smoke pela interface com contas matriculadas. Nenhum histórico preexistente foi alterado ou migrado.
+- Runtime de teste: Drush confirmou `http://cursos.aculta.toca.net.br`/`aculta_runtime`; aplicado apenas o update 10001 após backup privado (modo 0600). Smoke sintético PASS: persistência, estudante sem matrícula negado, educador `lms_teacher` com leitura, edição negada e registro removido. As contas `teste.estudante` e `teste.educador` foram criadas; credenciais apenas em `secrets/lms-test-accounts.env` local (ignorado pelo Git, modo 0600). Autenticação das duas contas validada. RUNTIME STATUS: UPDATE APLICADO; homologação integral DEFERRED (matrícula, comentários, isolamento entre turmas e interface).
 
 ## Não lançado — F7: matrícula sempre associada a turma
 

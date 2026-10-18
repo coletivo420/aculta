@@ -101,15 +101,24 @@ nativa do LMS.
 
 **F8 ainda não está concluída.** O arquivo de histórico e as regras de acesso
 estão implementados nesta branch, incluindo captura da versão anterior em
-edições, reavaliações e reinícios. Faltam Kernel/Functional tests do ciclo de
-vida, dos comentários e do isolamento por turma; revisão de segurança do
-arquivo; e smoke tests no Runtime para estudante, educador, reavaliação e
-tentativas. A versão upstream não guarda histórico por si; por isso o adaptador
-local permanece pequeno, documentado e isolado em `aculta_lms`.
+edições, reavaliações e reinícios. Kernel já cobre persistência, bloqueio de
+edição e limpeza por conta. Ainda faltam testes de integração que percorram
+resposta LMS real, reavaliação, reinício, exclusão do progresso e isolamento
+entre turmas; cobertura de comentários reais; revisão de segurança; e smoke
+pela interface para estudante e educador matriculados. A versão upstream não
+guarda histórico por si; por isso o adaptador local permanece pequeno,
+documentado e isolado em `aculta_lms`.
 
-RUNTIME STATUS: DEFERRED. O Drush local retornou URI `http://default`, não um
-URI `*.aculta.toca.net.br`; portanto esta implementação não foi aplicada ao
-Runtime nem homologada.
+RUNTIME STATUS: TABELA INSTALADA E SMOKE PARCIAL. Em 2026-10-18, Drush
+confirmou `http://cursos.aculta.toca.net.br` e `aculta_runtime`; foi aplicado
+somente `aculta_lms_update_10001`, após dump privado com modo `0600`. O teste
+sintético confirmou persistência, negação para estudante sem matrícula e acesso
+de leitura para educador com `lms_teacher`; edição foi negada e o registro foi
+removido ao fim do teste. As contas `teste.estudante` e `teste.educador` ficam
+no Runtime; as credenciais estão em `secrets/lms-test-accounts.env` (local,
+ignorado pelo Git, modo `0600`). A conta estudante só recebe o papel global ao
+entrar em uma turma. Smoke pela interface, matrícula, comentários reais,
+isolamento entre turmas e testes de ciclo de vida permanecem pendentes.
 
 Os testes de plugins F8 devem ser executados a partir de `web/core` com o
 PHPUnit do Composer; os Kernel tests usam exclusivamente o MariaDB dedicado

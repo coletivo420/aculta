@@ -121,9 +121,12 @@ branch implementa uma cópia interna de auditoria em `aculta_lms`, sem substitui
 o estado operacional do LMS. A cópia inclui a resposta anterior, nota,
 timestamps e a conversa vinculada à resposta; é visível só com `take course` ou
 `grade students` atuais e removida com o progresso do curso, conta ou curso.
-Kernel/Functional tests e smoke no Runtime para esses limites de acesso,
-reavaliação e reinício continuam pendentes. RUNTIME STATUS: DEFERRED — Drush
-local indicou URI `http://default`; nenhum estado do Runtime foi alterado.
+Kernel cobre persistência, acesso somente leitura e limpeza por conta. No
+Runtime de teste, o update de schema foi aplicado após backup restrito e smoke
+sintético confirmou persistência, negação para estudante sem matrícula, leitura
+por educador `lms_teacher` e negação de edição. Smoke pela interface, matrícula,
+comentários reais e isolamento entre turmas seguem pendentes. RUNTIME STATUS:
+UPDATE APLICADO; homologação integral DEFERRED.
 
 ## Ordem, PR e status
 
