@@ -12,6 +12,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 - [Commerce, apoio e pagamentos](COMMERCE.md)
 - [Domains, URLs e SEO](DOMAIN-SEO.md)
 - [Editorial e mídia](EDITORIAL-MEDIA.md)
+- [Plataforma de formulários Webform](WEBFORM-PLATFORM.md)
 - [LMS e Group](LMS-GROUP.md)
 - [Compatibilidade LMS/PDF](LMS-COMPATIBILITY.md)
 - [Operações de módulos e infraestrutura](OPERATIONS.md)

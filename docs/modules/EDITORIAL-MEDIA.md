@@ -32,7 +32,7 @@ O tema não cria pipeline de imagem paralelo.
 
 ## Formulários
 
-`webform` e `webform_ui` atendem formulários estruturados do projeto. Conta pertence a User/Profile/Change Mail; checkout pertence ao Commerce.
+`webform` e `webform_ui` atendem formulários estruturados do projeto. Conta pertence a User/Profile/Change Mail; checkout pertence ao Commerce. Para o modelo de criação, permissões, submissões, uploads e publicação, consulte [Plataforma de formulários Webform](WEBFORM-PLATFORM.md).
 
 ### Bibliotecas externas do Webform
 
