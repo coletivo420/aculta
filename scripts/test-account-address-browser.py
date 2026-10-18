@@ -14,7 +14,7 @@ import time
 import urllib.error
 import urllib.request
 
-PORT = 4444
+PORT = int(os.environ.get('WD_PORT', '4444'))  # use WD_PORT se a porta padrão estiver ocupada
 BASE = f'http://127.0.0.1:{PORT}'
 ULI = open(sys.argv[1], encoding='utf8').read().strip()
 ACCOUNT = 'https://conta.aculta.toca.net.br/dados/endereco'

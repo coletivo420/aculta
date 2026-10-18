@@ -76,6 +76,12 @@ $aliasList = $read('web/modules/custom/aculta_portal/src/Commerce/MercadoPago/Bi
 $check(str_contains($alias, "setComputed(TRUE)") && str_contains($alias, "BillingAddressAliasItemList::class"), 'alias address é campo computado (sem armazenamento)');
 $check(str_contains($aliasList, "ComputedItemListTrait") && str_contains($aliasList, "'field_address'"), 'alias address lê o field_address do mesmo perfil');
 
+// 5b. Base local de CEPs: o controlador consulta a base local antes das APIs externas, e a base não entra no Git.
+$check(
+  str_contains($controller, 'aculta_portal_cep.local_store') && strpos($controller, '->local->lookup(') < strpos($controller, 'fromViaCep('),
+  'CepLookupController: base local consultada antes do ViaCEP/BrasilAPI',
+);
+
 // 6. Teste de navegador presente (a barreira só vale se o teste existir).
 $check(is_file($root . '/scripts/test-account-address-browser.py'), 'teste de navegador do endereço presente');
 

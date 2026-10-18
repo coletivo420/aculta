@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal_cep\Controller;
 
+use Drupal\aculta_portal_cep\Local\CepLocalStore;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Controller\ControllerBase;
 use GuzzleHttp\ClientInterface;
@@ -27,6 +28,8 @@ final class CepLookupController extends ControllerBase {
   private const CACHE_TTL = 2592000;
 
   public function __construct(
+    #[Autowire(service: 'aculta_portal_cep.local_store')]
+    private readonly CepLocalStore $local,
     #[Autowire(service: 'http_client')]
     private readonly ClientInterface $http,
     #[Autowire(service: 'cache.data')]
@@ -38,6 +41,10 @@ final class CepLookupController extends ControllerBase {
       throw new AccessDeniedHttpException();
     }
     $cep = preg_replace('/\D+/', '', $cep) ?? '';
+    // Base local primeiro (arquivos privados, sem rede). Só consulta as fontes externas quando o CEP não está nela.
+    if ($local = $this->local->lookup($cep)) {
+      return $this->respond($local);
+    }
     $cacheId = 'aculta_portal:cep:' . $cep;
     if ($cached = $this->cache->get($cacheId)) {
       return $this->respond($cached->data);

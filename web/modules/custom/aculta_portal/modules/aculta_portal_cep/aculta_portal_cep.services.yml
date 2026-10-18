@@ -5,3 +5,7 @@ services:
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
+
+  aculta_portal_cep.local_store:
+    class: Drupal\aculta_portal_cep\Local\CepLocalStore
+    arguments: ['@file_system']

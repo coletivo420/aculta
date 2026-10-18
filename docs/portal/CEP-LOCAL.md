@@ -1,0 +1,26 @@
+# Base local de CEPs (aculta_portal_cep)
+
+## Decisão
+
+- Em 2026-10-18 o responsável aceitou o risco de licença de usar a base de CEPs do DNE dos Correios, contida na imagem Docker pública `brasilcep/api`, para consulta local.
+- Não há banco de dados para os CEPs: a base fica em arquivos privados, divididos por prefixo (três primeiros dígitos).
+- A base não entra no Git. Fica em `private://aculta_portal_cep/shards`, no diretório privado do ambiente.
+- A consulta local tem prioridade: só quando o CEP não está na base, o Portal consulta ViaCEP e depois BrasilAPI.
+
+## Tamanho e formato
+
+- Importação de 1.388.509 CEPs em 872 arquivos, com cerca de 92 MB no disco do Runtime de teste.
+- Formato de cada linha, separado por TAB: `cep`, `logradouro`, `bairro`, `cidade`, `UF`, `código IBGE`, ordenado por CEP.
+- Verificado contra a ViaCEP em quatro CEPs (São Paulo, Rio de Janeiro, Brasília): logradouro, bairro, cidade e UF iguais.
+
+## Como atualizar
+
+1. Gerar o TSV a partir da imagem (fora do repositório). O script de exportação ficou no diretório de trabalho do responsável, e a origem é a imagem `brasilcep/api` baixada de forma anônima do registry Docker.
+2. Importar no ambiente: `php vendor/drush/drush/drush.php -l <host> aculta-portal-cep:import <arquivo.tsv>`.
+3. Conferir uma amostra contra a ViaCEP antes de considerar a base atualizada.
+
+## Limites
+
+- A base é uma foto da data de extração (imagem de 17/06/2026). CEPs criados depois não estão nela e são resolvidos pelas APIs.
+- Não há processo de atualização automática. Repetir o passo acima quando for preciso.
+- O uso é de consulta interna. Redistribuir a base ou publicá-la está fora da decisão e exige nova decisão do responsável.

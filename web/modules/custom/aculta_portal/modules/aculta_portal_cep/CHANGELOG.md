@@ -1,3 +1,11 @@
+## 0.2.0-dev.1 — base local de CEPs em arquivos — 2026-10-18
+
+- Base local em arquivos privados, divididos por prefixo (`private://aculta_portal_cep/shards`), sem banco de dados. A consulta local tem prioridade; ViaCEP e BrasilAPI só são usadas quando o CEP não está na base.
+- Comando Drush `aculta-portal-cep:import <tsv>`.
+- Verificado no Runtime de teste: 1.388.509 CEPs importados (872 arquivos, ~92 MB); quatro CEPs conferidos contra a ViaCEP; teste de navegador do endereço 17/17.
+- Licença: risco aceito pelo responsável em 2026-10-18 (ver docs/portal/CEP-LOCAL.md).
+- RUNTIME STATUS: APLICADO no Runtime de teste (importação e cache rebuild).
+
 # Changelog — aculta_portal_cep
 
 ## 0.1.0-dev.1 — porte do cep_autocomplete — 2026-10-18
