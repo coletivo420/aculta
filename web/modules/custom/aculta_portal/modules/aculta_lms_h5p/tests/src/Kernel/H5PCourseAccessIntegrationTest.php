@@ -131,9 +131,29 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     self::assertStringContainsString('private', (string) $loaded->headers->get('Cache-Control'));
     self::assertStringContainsString('no-store', (string) $loaded->headers->get('Cache-Control'));
 
+    $resultToken = \H5PCore::createToken('result');
+    $resultRequest = Request::create('/?token=' . $resultToken, 'POST', [
+      'contentId' => $content->id(),
+      'score' => 3,
+      'maxScore' => 5,
+      'opened' => 123456,
+    ]);
+    $result = $controller->setFinished((int) $course->id(), $resultRequest);
+    self::assertSame(200, $result->getStatusCode());
+    $score = $this->container->get('database')->select('h5p_points', 'p')
+      ->fields('p', ['started', 'points', 'max_points'])
+      ->condition('content_id', $content->id())
+      ->condition('uid', $student->id())
+      ->execute()->fetchAssoc();
+    self::assertSame('123456', (string) $score['started']);
+    self::assertSame('3', (string) $score['points']);
+    self::assertSame('5', (string) $score['max_points']);
+
     $this->container->get('current_user')->setAccount($outsider);
     $denied = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
     self::assertSame(403, $denied->getStatusCode());
+    $deniedResult = $controller->setFinished((int) $course->id(), $resultRequest);
+    self::assertSame(403, $deniedResult->getStatusCode());
     $this->container->get('current_user')->setAccount($student);
 
     $course->removeMember($student);
