@@ -39,6 +39,14 @@ publicação não podem ser alterados por configuração do bloco. A listagem na
 do Forum continua sendo a fonte das categorias e dos tópicos dentro de cada
 categoria.
 
+A View `aculta_shop_catalog` apresenta produtos publicados do tipo `produto_loja`.
+Sua página `/produtos` e os detalhes de produto pertencem ao purpose SHOP. O
+bloco `block_catalog` deve ser colocado somente em páginas desse purpose. CTools
+permite ajustar por posicionamento a quantidade de itens e o pager; os filtros
+internos de tipo/publicação permanecem fixos, sem controles para filtros,
+campos ou ordenação. O catálogo usa o view mode Commerce `catalog`, que mostra
+título, resumo e o formulário de compra das variações.
+
 ## Limites
 
 - Ao criar um bloco Views que precisa de ajustes por colocação, use CTools Views

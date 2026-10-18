@@ -216,6 +216,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('entity.commerce_product.canonical')) {
       $route->setOption('_aculta_domain_purpose', 'shop');
     }
+    // Catálogo público da loja; a listagem e o detalhe permanecem no purpose SHOP.
+    if ($route = $collection->get('view.aculta_shop_catalog.page_catalog')) {
+      $route->setOption('_aculta_domain_purpose', 'shop');
+    }
 
     // Listagens por sessão da Revista (view revista_sessoes) pertencem ao purpose MAGAZINE.
     foreach ($collection as $name => $route) {

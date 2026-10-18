@@ -1,0 +1,11 @@
+langcode: pt-br
+uuid: 84d6b071-980f-4f33-ad2f-f5a72ff96aab
+status: true
+dependencies:
+  module:
+    - commerce_product
+id: commerce_product.catalog
+label: Catálogo
+description: 'Apresentação resumida de produtos nas listagens públicas da loja.'
+targetEntityType: commerce_product
+cache: true
