@@ -158,7 +158,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * @return string
    *   The configured access token, or empty string if not set.
    */
-  protected function getAccessToken(): string {
+  public function getAccessToken(): string {
     $mode = $this->getMode();
     $key = $mode === 'test' ? 'access_token_test' : ($mode === 'stage' ? 'access_token_stage' : 'access_token_prod');
     return (string) ($this->configuration[$key] ?? '');
@@ -170,7 +170,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    * @return string
    *   The configured public key, or empty string if not set.
    */
-  protected function getPublicKey(): string {
+  public function getPublicKey(): string {
     $mode = $this->getMode();
     $key = $mode === 'test' ? 'public_key_test' : ($mode === 'stage' ? 'public_key_stage' : 'public_key_prod');
     return (string) ($this->configuration[$key] ?? '');

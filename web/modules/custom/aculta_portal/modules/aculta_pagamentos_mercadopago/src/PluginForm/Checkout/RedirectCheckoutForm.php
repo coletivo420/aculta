@@ -110,11 +110,14 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
     $payment_gateway_plugin = $payment_gateway->getPlugin();
     $configuration = $payment_gateway_plugin->getConfiguration();
 
+    if (!$payment_gateway_plugin instanceof CheckoutPro) {
+      $this->messenger->addError($this->t('Mercado Pago is not configured. Please contact the administrator.'));
+      return $form;
+    }
+
     // Initialize the SDK with the configured access token before any API call.
-    $mode = $configuration['mode'] ?? 'test';
-    $access_token = $mode === 'test' ? ($configuration['access_token_test'] ?? '')
-      : ($mode === 'stage' ? ($configuration['access_token_stage'] ?? '') : ($configuration['access_token_prod'] ?? ''));
-    if (empty($access_token)) {
+    $access_token = $payment_gateway_plugin->getAccessToken();
+    if ($access_token === '') {
       $this->messenger->addError($this->t('Mercado Pago is not configured. Please contact the administrator.'));
       return $form;
     }
@@ -321,9 +324,7 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
 
     $order->save();
 
-    $mode = $configuration['mode'] ?? 'test';
-    $public_key = $mode === 'test' ? ($configuration['public_key_test'] ?? '')
-      : ($mode === 'stage' ? ($configuration['public_key_stage'] ?? '') : ($configuration['public_key_prod'] ?? ''));
+    $public_key = $payment_gateway_plugin->getPublicKey();
 
     $payment_amount = $payment->getAmount();
     if ($payment_amount === NULL) {
