@@ -25,8 +25,9 @@ ou no checkout que lê o mesmo endereço deve manter o que está aqui. Não repe
   - checkout, pane de cobrança `aculta_billing_address` (`BillingAddressPane`, inline `customer_profile` do perfil `authenticated`);
   - cadastro da loja (`commerce_store`, campo `address`) e perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`, campo `field_address`), pelo hook `AccountAddressHooks`.
 - Os dados continuam em cada entidade (perfil do cliente, loja, perfil de equipe). Só o formulário é compartilhado.
-- Estado da equipe: nos formulários de perfil de equipe o `field_address` está oculto (`field_address: true` em `core.entity_form_display.profile.*.default.yml`), então o endereço não aparece para edição. O hook já cobre o caso em que for exibido, mas exibir é mudança de configuração (export) e não foi feita.
-- Verificação no Runtime de teste (2026-10-18): loja monta com país oculto, biblioteca do CEP e gravação do número; teste de navegador da Minha conta 30/30. O checkout não foi testado no navegador nesta entrega.
+- Perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`) exibem `field_address` com o widget padrão `address_default`, igual ao perfil `authenticated` (configuração em `core.entity_form_display.profile.*.default.yml`). Antes estava oculto.
+- O checkout anexa a biblioteca `cep-address` ao formulário da página (`$complete_form`), não ao `#attached` do pane, que o Commerce não leva à página.
+- Verificação no Runtime de teste (2026-10-18): loja e equipe montam com país oculto, biblioteca do CEP e Número/S/N; checkout renderiza o formulário padrão e carrega a biblioteca do CEP. Teste de navegador da Minha conta 30/30 na entrega anterior; conferência visual e teste de navegador do checkout pendentes (ver CHANGELOG 0.4.0-dev.147).
 
 ## Por que cada regra existe (regressões já ocorridas)
 

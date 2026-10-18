@@ -24,11 +24,20 @@ dependencies:
     - field.field.profile.lms_teacher.field_state
     - field.field.profile.lms_teacher.field_whatsapp
     - profile.type.lms_teacher
+  module:
+    - address
 id: profile.lms_teacher.default
 targetEntityType: profile
 bundle: lms_teacher
 mode: default
 content:
+  field_address:
+    type: address_default
+    weight: 20
+    region: content
+    settings:
+      wrapper_type: details
+    third_party_settings: {  }
   field_city:
     type: string_textfield
     weight: 4
@@ -76,7 +85,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
-  field_address: true
   field_bio: true
   field_data_nascimento: true
   field_documento: true

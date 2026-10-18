@@ -62,6 +62,15 @@ $check(
   'config: field_address do authenticated aceita só BR',
 );
 
+// Perfis de equipe usam o formulário padrão de endereço (widget address_default, sem ocultar field_address).
+foreach (['administrator', 'associado', 'gerente_loja', 'lms_teacher'] as $team) {
+  $display = $read("config/sync/core.entity_form_display.profile.$team.default.yml");
+  $check(
+    (bool) preg_match('/content:\n(?:.*\n)*?  field_address:\n    type: address_default\n/', $display) && !preg_match('/hidden:\n(?:.*\n)*?  field_address: true\n/', $display),
+    "config: perfil $team exibe field_address com address_default",
+  );
+}
+
 // 3. Cliente ViaCEP do contrib não carregado; o Portal faz a busca com o cabeçalho que o endpoint exige.
 $check(
   !str_contains($editorial, "'cep_autocomplete'") && !str_contains($cep, 'viacep'),

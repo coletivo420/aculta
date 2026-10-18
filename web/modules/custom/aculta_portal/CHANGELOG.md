@@ -1,3 +1,12 @@
+## 0.4.0-dev.147 — perfis de equipe com o formulário padrão; CEP no checkout — 2026-10-18
+
+- Perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`): `field_address` passa a ser exibido com o widget padrão `address_default` (mesma configuração do perfil `authenticated`). Antes estava oculto nas configurações de formulário, então a equipe não via o endereço. Config: `core.entity_form_display.profile.{administrator,associado,gerente_loja,lms_teacher}.default.yml`.
+- Checkout: a biblioteca `cep-address` passa a ser anexada ao formulário da página (`$complete_form`). Antes ficava no `#attached` do pane, que o Commerce não leva à página, então o CEP não carregava no checkout.
+- Verificado no Runtime de teste: os quatro formulários de equipe montam com país oculto, Número/S/N e biblioteca; o checkout renderiza o formulário padrão e carrega a biblioteca do CEP (confirmado na lista de bibliotecas da página).
+- Não verificado: teste de navegador do checkout e conferência visual dos rótulos. A página de Minha conta estava com erro inesperado no Runtime de teste por causa de alteração não commitada da frente `aculta_lms_h5p` (construtor de `H5PLibraryHooks`), não deste trabalho.
+- Gate: `validate-account-address.php` (inclui a checagem dos perfis de equipe) e `validate-aculta-portal-drupal11.php`. Gates de tema não foram considerados nesta entrega, por decisão do responsável.
+- RUNTIME STATUS: configuração dos perfis de equipe aplicada no Runtime de teste (`entity_form_display` dos quatro perfis, sem importação completa).
+
 ## 0.4.0-dev.146 — formulário único de endereço (Minha conta, checkout, loja e perfis de equipe) — 2026-10-18
 
 - Novo `Account\AccountAddressForm`: o tratamento do endereço (país fixo BR oculto, rótulos em português, Número e S/N, biblioteca `cep-address` e gravação do número) sai do `PortalHooks` e passa a ser o único formulário de endereço.

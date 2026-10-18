@@ -86,7 +86,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $pane_form['profile'] = $inline_form->buildInlineForm($pane_form['profile'], $form_state);
     // Mesmo formulário de Meus Dados (AccountAddressForm): país fixo, rótulos, Número e S/N como subcampo do endereço.
     AccountAddressForm::apply($pane_form['profile'], $parts['number'], $parts['sn']);
-    $pane_form['#attached']['library'][] = AccountAddressForm::LIBRARY;
+    // Anexado ao formulário da página: o Commerce não leva a biblioteca do pane (#attached) até a página.
+    $complete_form['#attached']['library'][] = AccountAddressForm::LIBRARY;
 
     return $pane_form;
   }
