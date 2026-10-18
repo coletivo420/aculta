@@ -1,3 +1,11 @@
+## 0.4.0-dev.148 — status: seção de consulta de CEP (API e base local) — 2026-10-18
+
+- Status do Portal (`aculta_portal.requirements`): nova seção "Consulta de CEP" com o último resultado das APIs ViaCEP e BrasilAPI (cron) e a versão da base local, com a idade em dias a partir de hoje.
+- Usa a legenda e as classes de status já existentes (✔ OK, ⚠ Atenção, ✖ Erro; `requirements-status status-*`).
+- Dependência nova do controlador: `aculta_portal_cep.status_report` (o Portal já depende do submódulo).
+- Submódulo aculta_portal_cep 0.3.0-dev.3 (ver o CHANGELOG dele).
+- RUNTIME STATUS: pendente de teste pelo cron no Runtime de teste (ver a execução registrada abaixo).
+
 ## 0.4.0-dev.147 — perfis de equipe com o formulário padrão; CEP no checkout — 2026-10-18
 
 - Perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`): `field_address` passa a ser exibido com o widget padrão `address_default` (mesma configuração do perfil `authenticated`). Antes estava oculto nas configurações de formulário, então a equipe não via o endereço. Config: `core.entity_form_display.profile.{administrator,associado,gerente_loja,lms_teacher}.default.yml`.

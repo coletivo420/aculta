@@ -24,3 +24,9 @@
 - A base é uma foto da data de extração (imagem de 17/06/2026). CEPs criados depois não estão nela e são resolvidos pelas APIs.
 - Não há processo de atualização automática. Repetir o passo acima quando for preciso.
 - O uso é de consulta interna. Redistribuir a base ou publicá-la está fora da decisão e exige nova decisão do responsável.
+
+## Status e versão (0.4.0-dev.148)
+
+- A importação grava `private://aculta_portal_cep/manifest.json` (versão = data da importação, quantidade de CEPs e arquivo de origem). O status do Portal calcula a idade pela data de hoje: até 90 dias é OK, de 91 a 180 é atenção, acima disso ou sem base é erro.
+- As APIs (ViaCEP e BrasilAPI) são verificadas no cron com um CEP fixo; o status mostra o último resultado. Resultado com mais de 2 dias é atenção (cron possivelmente parado).
+- Em produção, a base deve ser reimportada ao menos a cada 180 dias; o status acusa erro quando passa desse prazo.

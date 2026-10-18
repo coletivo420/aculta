@@ -11,6 +11,7 @@ use Drupal\aculta_portal\Deployer\DeployerStatusReader;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\aculta_portal\Status\PortalHelperRegistry;
 use Drupal\aculta_portal\Status\PortalImplementationRegistry;
+use Drupal\aculta_portal_cep\Status\CepStatusReport;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -45,6 +46,8 @@ final class PortalRequirementsController extends ControllerBase {
     private readonly PortalHelperRegistry $helperRegistry,
     #[Autowire(service: 'aculta_portal.implementation_registry')]
     private readonly PortalImplementationRegistry $implementationRegistry,
+    #[Autowire(service: 'aculta_portal_cep.status_report')]
+    private readonly CepStatusReport $cepStatus,
   ) {}
 
   /**
@@ -261,6 +264,7 @@ final class PortalRequirementsController extends ControllerBase {
         'text' => ['#plain_text' => $this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
       ],
       'indexing' => $this->buildIndexingSection(),
+      'cep' => $this->buildCepSection(),
       '#cache' => [
         'contexts' => ['user.permissions'],
         'tags' => ['config:core.extension', 'config:system.theme'],
@@ -382,6 +386,46 @@ final class PortalRequirementsController extends ControllerBase {
         '#attributes' => ['data-portal-ui' => 'requirements-indexing-table'],
       ],
     ];
+  }
+
+  /**
+   * Consultas de CEP (aculta_portal_cep): último resultado das APIs (cron) e versão da base local, pela data de hoje.
+   * Mesma legenda e mesmas classes de status das demais linhas do relatório.
+   */
+  private function buildCepSection(): array {
+    $rows = [];
+    foreach ($this->cepStatus->rows() as $row) {
+      $rows[] = [
+        'item' => ['data' => ['#plain_text' => $row['item']]],
+        'value' => ['data' => ['#plain_text' => $row['value']]],
+        'status' => [
+          'data' => ['#plain_text' => $this->statusSymbol($row['status']) . ' ' . $this->statusText($row['status'])],
+          'data-portal-ui' => 'requirements-status status-' . $row['status'],
+        ],
+        'detail' => ['data' => ['#plain_text' => $row['detail']]],
+      ];
+    }
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'requirements-cep'],
+      'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Consulta de CEP')],
+      'table' => [
+        '#type' => 'table',
+        '#header' => [$this->t('Item'), $this->t('Valor'), $this->t('Status'), $this->t('Detalhe')],
+        '#rows' => $rows,
+        '#empty' => $this->t('Consulta de CEP não está habilitada.'),
+        '#attributes' => ['data-portal-ui' => 'requirements-cep-table'],
+      ],
+    ];
+  }
+
+  /** Texto do status, junto do símbolo (OK, Atenção ou Erro). */
+  private function statusText(string $status): string {
+    return match ($status) {
+      'ok' => (string) $this->t('OK'),
+      'attention' => (string) $this->t('Atenção'),
+      default => (string) $this->t('Erro'),
+    };
   }
 
   /** Builds one module requirement row. */

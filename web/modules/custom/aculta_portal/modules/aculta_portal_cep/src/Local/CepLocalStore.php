@@ -20,6 +20,9 @@ final class CepLocalStore {
 
   public const DIRECTORY = 'private://aculta_portal_cep/shards';
 
+  /** Versão da base local: data da importação, quantidade de CEPs e origem. Lido pelo status do Portal. */
+  public const MANIFEST = 'private://aculta_portal_cep/manifest.json';
+
   public function __construct(private readonly FileSystemInterface $fileSystem) {}
 
   /**
@@ -91,6 +94,33 @@ final class CepLocalStore {
       fclose($handle);
     }
     return $count;
+  }
+
+  /** Grava a versão da base local (data da importação, quantidade e arquivo de origem). */
+  public function writeManifest(string $version, int $records, string $source): void {
+    $manifest = ['version' => $version, 'records' => $records, 'source' => $source];
+    $this->fileSystem->prepareDirectory(dirname(self::MANIFEST), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    $this->fileSystem->saveData((string) json_encode($manifest, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), self::MANIFEST, FileSystemInterface::EXISTS_REPLACE);
+  }
+
+  /**
+   * Versão registrada da base local (['version' => 'Y-m-d', 'records' => int, 'source' => string]), ou NULL.
+   *
+   * @return array<string, mixed>|null
+   */
+  public function manifest(): ?array {
+    $path = $this->fileSystem->realpath(self::MANIFEST);
+    if ($path === FALSE || !is_file($path)) {
+      return NULL;
+    }
+    $data = json_decode((string) file_get_contents($path), TRUE);
+    return is_array($data) && isset($data['version']) ? $data : NULL;
+  }
+
+  /** Quantidade de arquivos de prefixo (shards) presentes na base local. */
+  public function shardCount(): int {
+    $path = $this->fileSystem->realpath(self::DIRECTORY);
+    return $path === FALSE ? 0 : count(glob($path . '/*.tsv') ?: []);
   }
 
   private function writeShard(string $prefix, string $content): void {

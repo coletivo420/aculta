@@ -1,3 +1,11 @@
+## 0.3.0-dev.3 — status das consultas de CEP (API e base local) — 2026-10-18
+
+- `CepApiProbe`: verifica ViaCEP e BrasilAPI com um CEP fixo (`01001000`, timeout de 5 s, mesmo endereço da consulta) e grava o resultado no State (`aculta_portal_cep.api_status`).
+- `CepStatusCronHooks`: roda o probe no `hook_cron`. O status não consulta a rede.
+- `CepLocalStore::writeManifest()` / `manifest()` / `shardCount()`: a importação (`aculta-portal-cep:import`) grava `private://aculta_portal_cep/manifest.json` com a versão (data da importação), a quantidade de CEPs e a origem.
+- `CepStatusReport`: linhas do status (APIs e base local). Base até 90 dias é `ok`; de 91 a 180, `attention`; acima de 180 ou sem base, `error`. Resultado do cron com mais de 2 dias é `attention`.
+- Ver também a seção "Consulta de CEP" do status do Portal (0.4.0-dev.148).
+
 ## 0.3.0-dev.2 — selects de cidade e UF travados após o CEP — 2026-10-18
 
 - Cidade e UF vindos do CEP ficam desabilitados: não abrem nem mostram as outras opções. Um input hidden com o mesmo nome leva o valor no envio. Ao destravar (novo CEP), o hidden é removido.

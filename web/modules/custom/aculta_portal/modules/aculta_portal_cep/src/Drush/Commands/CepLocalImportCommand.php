@@ -38,6 +38,8 @@ final class CepLocalImportCommand extends Command {
       $output->writeln('<error>' . $exception->getMessage() . '</error>');
       return Command::FAILURE;
     }
+    // Versão da base: data desta importação (a origem é o arquivo informado). Ver CepLocalStore::MANIFEST.
+    $this->store->writeManifest(date('Y-m-d'), $count, basename((string) $input->getArgument('source')));
     $output->writeln('<info>' . $count . ' CEPs importados para ' . CepLocalStore::DIRECTORY . '.</info>');
     return Command::SUCCESS;
   }
