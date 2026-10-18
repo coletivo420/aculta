@@ -8,12 +8,15 @@ use Drupal\aculta_lms\Access\UploadedAnswerAccessCheck;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\KernelTests\KernelTestBase;
-use Drupal\Tests\lms\LmsKernelTestTrait;
-use Drupal\Tests\user\Traits\UserCreationTrait;
+use Drupal\Core\File\FileExists;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\lms\LmsKernelTestTrait;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\lms\Entity\Activity;
 use Drupal\lms\Entity\ActivityType;
 use Drupal\lms\Entity\Answer;
@@ -23,9 +26,11 @@ use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\Entity\Lesson;
 use Drupal\lms\Entity\LessonStatus;
 use Drupal\lms\Entity\LessonStatusInterface;
+use Drupal\lms_file_upload\Controller\FileUploadAnswerController;
 use Drupal\user\RoleInterface;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /** Exercises attempt capture against real LMS and Comment entities. */
 #[TestGroup('aculta_lms')]
@@ -38,6 +43,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
   protected static $modules = [
     'system',
     'user',
+    'file',
     'filter',
     'field',
     'flexible_permissions',
@@ -49,7 +55,26 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     'lms',
     'lms_answer_comments',
     'lms_answer_plugins',
+    'lms_file_upload',
   ];
+
+  /** {@inheritdoc} */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $container->register('stream_wrapper.private', PrivateStream::class)
+      ->addTag('stream_wrapper', ['scheme' => 'private']);
+  }
+
+  /** {@inheritdoc} */
+  protected function setUpFilesystem(): void {
+    mkdir($this->siteDirectory, 0775);
+    mkdir($this->siteDirectory . '/files', 0775);
+    mkdir($this->siteDirectory . '/private', 0775);
+    mkdir($this->siteDirectory . '/files/config/sync', 0775, TRUE);
+    $this->setSetting('file_public_path', $this->siteDirectory . '/files');
+    $this->setSetting('file_private_path', $this->siteDirectory . '/private');
+    $this->setSetting('config_sync_directory', $this->siteDirectory . '/files/config/sync');
+  }
 
   protected function setUp(): void {
     parent::setUp();
@@ -60,7 +85,10 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('file');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('file', ['file_usage']);
+    $this->installConfig(['file']);
     $this->installEntitySchema('lms_activity');
     $this->installEntitySchema('lms_lesson');
     $this->installEntitySchema('lms_course_status');
@@ -250,12 +278,79 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertTrue($access_check->access($answer, $teacher)->isAllowed(), 'An educator with grade permission retains access after student membership is revoked.');
   }
 
+  public function testPrivateUploadRouteStreamsOnlyWhileCourseAccessIsCurrent(): void {
+    [$student, , , , $answer] = $this->createAttempt('Entrega de teste', 'file_upload');
+    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $member_role = GroupRole::create([
+      'id' => 'lms_course-file_test_member',
+      'label' => 'File test student',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INSIDER_ID,
+      'global_role' => RoleInterface::AUTHENTICATED_ID,
+      'permissions' => ['take course'],
+    ]);
+    $member_role->save();
+    $teacher_role = GroupRole::create([
+      'id' => 'lms_course-file_test_teacher',
+      'label' => 'File test teacher',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['grade students'],
+    ]);
+    $teacher_role->save();
+    $course->addMember($student);
+    $this->setCurrentUser($student);
+
+    $upload_directory = 'private://lms_file_upload';
+    self::assertTrue(
+      $this->container->get('file_system')->prepareDirectory(
+        $upload_directory,
+        FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS,
+      ),
+    );
+    $file = $this->container->get('file.repository')->writeData(
+      'private LMS submission content',
+      'private://lms_file_upload/submission.txt',
+      FileExists::Rename,
+    );
+    self::assertNotFalse($file);
+    $file->setPermanent();
+    $file->save();
+    $answer->setData(['file_upload' => [$file->id()]])->save();
+    $this->container->get('file.usage')->add($file, 'lms_file_upload', 'lms_answer', $answer->id());
+
+    $route_name = 'lms_file_upload.answer_file_download';
+    $route = $this->container->get('router.route_provider')->getRouteByName($route_name);
+    self::assertSame('/resposta/{lms_answer}/baixar-arquivo', $route->getPath());
+    $access_manager = $this->container->get('access_manager');
+    self::assertTrue($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $student, TRUE)->isAllowed());
+
+    $response = (new FileUploadAnswerController($this->container->get('lms.training_manager')))->download($answer);
+    ob_start();
+    $response->sendContent();
+    $body = ob_get_clean();
+    self::assertSame('private LMS submission content', $body);
+    self::assertStringContainsString('attachment; filename="submission.txt"', $response->headers->get('Content-Disposition'));
+
+    $course->removeMember($student);
+    self::assertFalse($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $student, TRUE)->isAllowed());
+
+    $teacher = $this->createUser();
+    $course->addMember($teacher, ['group_roles' => [$teacher_role->id()]]);
+    self::assertTrue($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $teacher, TRUE)->isAllowed());
+  }
+
   /** @return array{0: \Drupal\user\UserInterface, 1: CourseStatus, 2: LessonStatus, 3: Activity, 4: Answer} */
-  private function createAttempt(string $answer_text = 'Resposta original'): array {
+  private function createAttempt(string $answer_text = 'Resposta original', string $plugin_id = 'no_answer'): array {
     $owner = $this->createUser(['administer lms']);
     $student = $this->createUser();
     $this->setCurrentUser($owner);
-    ActivityType::create(['id' => 'archive_test', 'name' => 'Teste de arquivo', 'pluginId' => 'no_answer'])->save();
+    ActivityType::create([
+      'id' => 'archive_test',
+      'name' => 'Teste de arquivo',
+      'pluginId' => $plugin_id,
+      'pluginConfiguration' => $plugin_id === 'file_upload' ? ['default_file_extensions' => 'txt'] : [],
+    ])->save();
     $activity = Activity::create([
       'type' => 'archive_test',
       'name' => 'Resposta aberta',

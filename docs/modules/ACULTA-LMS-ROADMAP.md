@@ -136,13 +136,15 @@ APLICADO; homologação visual DEFERRED. A próxima fase funcional listada é F9
 três pacotes novos e zero atualizações/remoções. Os módulos estão habilitados no Runtime de teste e em
 `core.extension`. Revisão do código upstream encontrou que o dono de uma resposta LMS mantém acesso a
 `see_details` sem revalidar matrícula. `aculta_lms` agora adiciona `take course` atual à rota de download
-de anexos do LMS File Upload, preservando a autorização LMS para educadores. Unit cobre estudante com
-acesso revogado, estudante ativo e educador autorizado (3 testes, 16 assertions PASS); Kernel integra
-Group/LMS e comprova estudante matriculado permitido, membership removida negada e educador autorizado
-(8 testes, 250 assertions PASS na suíte do submódulo; 34 deprecações emitidas por Core/contrib). Webform Score
-continua restrito às submissões Webform; não há integração que promova resultado automaticamente para a
-nota LMS. Ainda pendem teste HTTP que transmita arquivo privado real, revogação de membership no Runtime,
-teste de permissões/autoria Webform e homologação da regra no browser. A tentativa automática de baixar traduções
+de anexos do LMS File Upload, preservando a autorização LMS para educadores. Kernel usa arquivo no
+filesystem privado temporário, valida a rota descoberta, transmite os bytes, nega a rota após revogar
+membership e preserva acesso do educador; a suíte do submódulo passou (9 testes, 300 assertions; 35
+deprecações Core/contrib). Unit passou (15 testes, 81 assertions), incluindo permissões de leitura própria,
+leitura ampla e bloqueio de edição de score Webform. Auditoria somente leitura no Runtime confirmou que
+nenhum papel atualmente tem as permissões `view any submission score` ou `view own submission score`.
+Webform Score continua restrito às submissões Webform; não há integração que promova resultado
+automaticamente para a nota LMS. Ainda pendem teste de submissão Webform com autoria real, revogação de membership e download no
+Runtime/browser. A tentativa automática de baixar traduções
 pt-BR dos três módulos durante `drush en` falhou porque `translations://` não está configurado neste
 Runtime; o código e a ativação terminaram com sucesso. RUNTIME STATUS: MÓDULOS HABILITADOS; homologação
 de acesso a arquivos DEFERRED.
