@@ -1,5 +1,13 @@
 # Changelog — aculta_pagamentos_mercadopago
 
+## 0.1.0-dev.4 — evento de elegibilidade de estorno; sem regra de negócio — 2026-10-18
+
+- Novo evento `aculta_pagamentos_mercadopago.refund_eligibility` (`RefundEligibilityEvent`). O gateway pergunta a assinantes se o estorno é permitido; o gateway não conhece doação nem curso.
+- `canRefundPayment()` nega a operação de estorno quando um assinante marca `deny()`. `refundPayment()` recusa com a mesma regra, então a interface e a API não divergem.
+- Cancelamento de pagamento pendente não passa por este evento; é operação separada.
+- Dependência nova: `CheckoutPro::create()` injeta `event_dispatcher`.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild; plugin do gateway conferido). Testes: Kernel OK.
+
 ## 0.1.0-dev.3 — método de pagamento único `aculta_mercadopago_checkout_pro`; schema corrigido — 2026-10-18
 
 - O ID do tipo de meio de pagamento e do plugin do gateway passa de `mercado_pago_checkout_pro` para `aculta_mercadopago_checkout_pro`. É o único método de pagamento do Portal. O ID do gateway (`mercado_pago`) não muda.

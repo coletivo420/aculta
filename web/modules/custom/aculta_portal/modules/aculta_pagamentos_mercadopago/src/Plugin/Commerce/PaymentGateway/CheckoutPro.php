@@ -10,6 +10,7 @@ use Drupal\commerce_payment\PaymentMethodStorageInterface;
 use Drupal\commerce_payment\PaymentStorageInterface;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayBase;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\SupportsRefundsInterface;
+use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
 use Drupal\commerce_price\Price;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
@@ -24,6 +25,7 @@ use MercadoPago\MercadoPagoConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -101,6 +103,13 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
   protected $loggerFactory;
 
   /**
+   * The event dispatcher, used to ask subscribers whether a refund is allowed.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
    * {@inheritdoc}
    *
    * Constructor receives only configuration, plugin_id, and plugin_definition.
@@ -127,6 +136,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     $instance->requestStack = $container->get('request_stack');
     $instance->loggerFactory = $container->get('logger.factory');
+    $instance->eventDispatcher = $container->get('event_dispatcher');
     return $instance;
   }
 
@@ -888,9 +898,26 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
   /**
    * {@inheritdoc}
+   *
+   * O estorno só é oferecido quando o pagamento está aprovado e nenhum assinante negou a operação.
+   */
+  public function canRefundPayment(PaymentInterface $payment) {
+    if (!parent::canRefundPayment($payment)) {
+      return FALSE;
+    }
+    $event = new RefundEligibilityEvent($payment);
+    $this->eventDispatcher->dispatch($event, RefundEligibilityEvent::NAME);
+    return $event->isAllowed();
+  }
+
+  /**
+   * {@inheritdoc}
    */
   public function refundPayment(PaymentInterface $payment, Price $amount = NULL): void {
     $this->assertPaymentState($payment, ['completed', 'partially_refunded']);
+    if (!$this->canRefundPayment($payment)) {
+      throw new PaymentGatewayException('Refund is not allowed for this payment.');
+    }
     $logger = $this->loggerFactory->get('Mercado Pago Refund');
 
     // If not specified, refund the entire amount.
