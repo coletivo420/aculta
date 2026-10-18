@@ -72,8 +72,10 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
 3. Os hooks runtime de bibliotecas, cron e exclusão de usuário foram migrados
    para `#[Hook]` com DI; as assinaturas do framework H5P receberam contratos de
    retorno compatíveis com o H5P Core instalado. Controllers administrativos e
-   de progresso usam DI. Ainda faltam refatorar service locators internos do
-   adapter e concluir a auditoria de cacheability no fluxo completo.
+   de progresso usam DI. A lista de bibliotecas usa a descoberta de assets do
+   Core sem cache paralelo; importação e exclusão invalidam a descoberta nativa
+   após sucesso, validada em Kernel. Ainda faltam refatorar service locators
+   internos do adapter e concluir a auditoria de cacheability no fluxo completo.
 4. Kernel cobre isolamento por curso, revogação de matrícula, gravação/leitura
    privada de estado do estudante e salvamento do resultado pelo endpoint real.
    Ainda falta verificar conteúdo Div no navegador, continuidade de tentativas

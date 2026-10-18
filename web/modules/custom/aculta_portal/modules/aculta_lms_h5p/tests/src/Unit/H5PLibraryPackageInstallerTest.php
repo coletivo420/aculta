@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms_h5p\Unit;
 
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryPackageInstaller;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryCacheInvalidator;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PStoragePathInterface;
+use Drupal\Core\Asset\LibraryDiscoveryCollector;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -19,7 +22,11 @@ final class H5PLibraryPackageInstallerTest extends UnitTestCase {
     $zip = $file . '.zip';
     rename($file, $zip);
     try {
-      $installer = new H5PLibraryPackageInstaller($this->createMock(FileSystemInterface::class), $this->createMock(H5PStoragePathInterface::class));
+      $installer = new H5PLibraryPackageInstaller(
+        $this->createMock(FileSystemInterface::class),
+        $this->createMock(H5PStoragePathInterface::class),
+        $this->createCacheInvalidator(),
+      );
       $this->expectException(\InvalidArgumentException::class);
       $installer->install($zip);
     }
@@ -40,7 +47,11 @@ final class H5PLibraryPackageInstallerTest extends UnitTestCase {
     $package = $path . '.h5p';
     rename($path, $package);
     try {
-      $installer = new H5PLibraryPackageInstaller($this->createMock(FileSystemInterface::class), $this->createMock(H5PStoragePathInterface::class));
+      $installer = new H5PLibraryPackageInstaller(
+        $this->createMock(FileSystemInterface::class),
+        $this->createMock(H5PStoragePathInterface::class),
+        $this->createCacheInvalidator(),
+      );
       $this->expectException(\UnexpectedValueException::class);
       $this->expectExceptionMessage('O pacote H5P contém um caminho inválido.');
       $installer->install($package);
@@ -48,6 +59,13 @@ final class H5PLibraryPackageInstallerTest extends UnitTestCase {
     finally {
       unlink($package);
     }
+  }
+
+  private function createCacheInvalidator(): H5PLibraryCacheInvalidator {
+    return new H5PLibraryCacheInvalidator(
+      $this->createMock(CacheBackendInterface::class),
+      $this->createMock(LibraryDiscoveryCollector::class),
+    );
   }
 
 }

@@ -4,6 +4,7 @@
 namespace Drupal\aculta_lms_h5p\Form;
 
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryCacheInvalidator;
 use Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin;
 
 use Drupal\Core\Form\FormBase;
@@ -17,10 +18,16 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class H5PLibraryDeleteForm extends FormBase {
 
-  public function __construct(private readonly Connection $database) {}
+  public function __construct(
+    private readonly Connection $database,
+    private readonly H5PLibraryCacheInvalidator $cacheInvalidator,
+  ) {}
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('database'));
+    return new static(
+      $container->get('database'),
+      $container->get('aculta_lms_h5p.library_cache_invalidator'),
+    );
   }
 
   /**
@@ -83,6 +90,7 @@ class H5PLibraryDeleteForm extends FormBase {
     $library_id = $form_state->getValue('library_id');
     if ($this->isLibraryDeletable($library_id)) {
       H5PDrupal::getInstance('core')->deleteLibrary($library_id);
+      $this->cacheInvalidator->invalidate();
     }
   }
 }

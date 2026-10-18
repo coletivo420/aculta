@@ -9,17 +9,12 @@ use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Cache\CacheBackendInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Builds dynamic Drupal libraries for installed H5P content types. */
 final class H5PLibraryHooks {
 
-  private const CACHE_ID = 'aculta_lms_h5p_library_info_build';
-
   public function __construct(
-    #[Autowire(service: 'cache.default')]
-    private readonly CacheBackendInterface $cache,
     #[Autowire(service: 'database')]
     private readonly Connection $database,
     #[Autowire(service: 'aculta_lms_h5p.asset_file_manager')]
@@ -30,9 +25,6 @@ final class H5PLibraryHooks {
 
   #[Hook('library_info_build')]
   public function libraryInfoBuild(): array {
-    if ($cached = $this->cache->get(self::CACHE_ID)) {
-      return $cached->data;
-    }
     $database = $this->database;
     $this->assetManager->mirrorAssets();
     $libraries = [];
@@ -285,8 +277,6 @@ final class H5PLibraryHooks {
         'dependencies' => $dependencies,
       ];
     }
-
-    $this->cache->set(self::CACHE_ID, $libraries);
 
     return $libraries;
   }

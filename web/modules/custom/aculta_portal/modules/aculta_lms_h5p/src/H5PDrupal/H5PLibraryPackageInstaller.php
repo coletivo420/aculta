@@ -12,6 +12,7 @@ final class H5PLibraryPackageInstaller {
   public function __construct(
     private readonly FileSystemInterface $fileSystem,
     private readonly H5PStoragePathInterface $storagePath,
+    private readonly H5PLibraryCacheInvalidator $cacheInvalidator,
   ) {}
 
   /**
@@ -50,6 +51,7 @@ final class H5PLibraryPackageInstaller {
       $core->fs->validateLibraries($core->librariesJsonData);
       $number = count($core->librariesJsonData);
       H5PDrupal::getInstance('storage')->savePackage(NULL, NULL, TRUE);
+      $this->cacheInvalidator->invalidate();
       return $number;
     }
     finally {

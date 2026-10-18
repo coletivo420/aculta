@@ -75,7 +75,10 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     ]);
     try {
       $installer = $this->container->get('aculta_lms_h5p.library_package_installer');
+      $libraryDiscovery = $this->container->get('library.discovery');
+      self::assertFalse($libraryDiscovery->getLibraryByName('aculta_lms_h5p', 'h5p.test-1.0'));
       self::assertSame(1, $installer->install($package));
+      self::assertNotFalse($libraryDiscovery->getLibraryByName('aculta_lms_h5p', 'h5p.test-1.0'));
       $library = $this->container->get('database')->select('h5p_libraries', 'l')
         ->fields('l', ['machine_name', 'major_version', 'minor_version'])
         ->condition('machine_name', 'H5P.Test')

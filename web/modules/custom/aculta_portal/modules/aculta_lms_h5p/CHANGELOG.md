@@ -36,3 +36,4 @@
 - Kernel H5P: 10 testes/180 assertions; Unit H5P: 12/52. As 40 deprecações Kernel são de Core/contrib. Runtime de teste: smoke visual do editor e requisições de listagem/semântica concluídos; salvar e reproduzir estudante ainda pendentes.
 - RUNTIME STATUS: DEFERRED para salvamento/reprodução fim a fim; produção não foi alterada.
 - Preserva os idiomas `language` e `default-language` enviados pelo editor na busca de semântica e valida o formato antes de chamar o H5P Editor. A URL visual do Runtime confirmou o parâmetro `language=pt-br`.
+- Remove o cache paralelo das bibliotecas Drupal dinâmicas e invalida a descoberta nativa do Core após instalar ou remover biblioteca. Kernel confirma que uma definição previamente vazia passa a incluir a nova biblioteca após a importação, sem rebuild global. Kernel H5P: 10 testes/182 assertions; Unit H5P: 12/52; 40 deprecações de Core/contrib.
