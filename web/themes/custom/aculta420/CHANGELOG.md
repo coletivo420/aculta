@@ -1215,3 +1215,11 @@ Classificação: PATCH (dados e estilos novos em um tópico; sem mudança de est
 - Título da seção "Respostas" com a contagem (`forum-reply-total`); chamada para visitante (`forum-topic-visitor`) na barra de ações.
 - Verificado no Runtime: visitante (claro e escuro, com o atributo `data-bs-theme` forçado em cópia local), conta logada (desktop e 390 px), respostas em árvore no escuro, índice no escuro.
 - Limitação de teste: o modo de cor é decidido pelo Portal (`aculta_color_mode`); a conta logada no escuro foi verificada só pelo HTML.
+# Unreleased — migração do tema base — 2026-10-18
+
+- Trocada a base `bootstrap5` pela base Drupal Bootstrap (`drupal/bootstrap` 5.0.2), compatível com Drupal 11.
+- Framework Bootstrap atualizado para 5.3.8 e carregado localmente via Composer.
+- Bootstrap Icons 1.11.0 copiado para os assets do ACULTA420 com licença MIT preservada, desacoplando os ícones da base anterior.
+- Integrado Display Suite 3.37.0, habilitado na configuração exportada, com layouts responsivos ACULTA420 de duas e três colunas.
+- RUNTIME HOMELAB: DEFERRED; falta importar a configuração e fazer smoke test visual no ambiente de testes.
+

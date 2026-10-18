@@ -1,6 +1,6 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-18 (tradução LMS e nomenclatura de aulas). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-18 (tradução LMS, nomenclatura de aulas e migração da base Bootstrap com validação pendente). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
@@ -163,7 +163,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 - Decisões do responsável: o controle fica em **Minha Conta > Configurações** (`/configuracoes`, no Portal); a preferência é gravada por usuário no banco (`user.data`); há três estados (claro, escuro, automático); o padrão global do site fica em `/admin/config/aculta/aparencia`.
 - Portal (0.2.0-dev.18): `ColorModePreference` resolve o modo e publica o contrato `aculta_color_mode`. O tema não lê usuário nem configuração.
-- Tema (0.5.0): `ThemeHooks::preprocessHtml` define `b5_theme_mode` (o `html.html.twig` do Bootstrap 5 grava `data-bs-theme` a partir dele). Em `auto` o atributo fica vazio, e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`.
+- Tema: `ThemeHooks::preprocessHtml` aplica `data-bs-theme` diretamente em `html_attributes`, conforme o contrato resolvido pelo Portal. A base Drupal Bootstrap preserva esses atributos; em `auto`, o tema remove o atributo e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`.
 - Sem JavaScript de modo e sem `localStorage`. Tokens da barra institucional não foram alterados.
 - Evidência no Runtime oficial (`https://aculta.toca.net.br`, código da `main` em `ce87dcb`):
   - roteiro automatizado: 7 de 7 checagens (padrão global, escolha da pessoa usuária, HTML anônimo e logado, cache invalidado após salvar);
@@ -178,7 +178,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 **Estado: concluída em 0.5.1 (2026-10-09). Bootstrap Icons 1.11.0; sem dependência nova.**
 
 - Decisão do responsável: ícones pelo Bootstrap Icons.
-- Sem dependência nova: a fonte já vem do pacote `bootstrap5` (`dist/icons/1.11.0`) e é carregada em todas as páginas pela biblioteca `bootstrap5/global-styling`. Verificado no site público: a família `bootstrap-icons` carrega e `bi-house` renderiza o glifo.
+- Bootstrap Icons 1.11.0 foi copiado para `assets/icons/bootstrap-icons/` e é servido pela biblioteca do ACULTA420, sem dependência do tema base. A verificação histórica no site público confirmou a família `bootstrap-icons` e o glifo `bi-house`.
 - Regra: ícone é `<i class="bi bi-NOME" aria-hidden="true"></i>` ao lado de texto visível (ou rótulo acessível no pai). Nenhum SVG inline de ícone nos templates do tema; o gate `validate-aculta420-design-foundations.php` reprova.
 - Sem SDC de ícone até haver consumidor com contrato reutilizável (AGENTS: não criar SDC só para substituir uma classe simples).
 - Fora do tema: o editor de fotos do Portal (`aculta-portal-photo-editor.html.twig`) tem um SVG inline. Não é tratado aqui, porque o Portal não referencia componentes do tema.

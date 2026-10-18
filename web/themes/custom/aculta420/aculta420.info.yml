@@ -4,7 +4,7 @@ description: 'Bootstrap Component Design System público da plataforma ACULTA420
 package: Custom
 version: '0.6.0-dev.72'
 core_version_requirement: ^11
-base theme: bootstrap5
+base theme: bootstrap
 enforce_prop_schemas: true
 libraries:
   - aculta420/global

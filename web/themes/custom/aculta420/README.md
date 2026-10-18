@@ -4,10 +4,12 @@
 plataforma Drupal da Associação Cultural Antiproibicionista.
 
 - machine name: `aculta420`;
-- versão no código: **0.6.0-dev.35** (`aculta420.info.yml`; linha 0.6.x em desenvolvimento); sem tag Git (tags só por pedido). Histórico em `CHANGELOG.md` e `docs/roadmap.md`;
+- versão no código: **0.6.0-dev.72** (`aculta420.info.yml`; linha 0.6.x em desenvolvimento); sem tag Git (tags só por pedido). Histórico em `CHANGELOG.md` e `docs/roadmap.md`;
 - Drupal: `^11`;
-- base theme: `bootstrap5`;
-- Bootstrap fixado pelo projeto: `4.0.8`;
+- base theme: `bootstrap` (`drupal/bootstrap` 5.0.2);
+- Bootstrap Framework: `5.3.8`, instalado pelo Composer em `web/libraries/bootstrap`;
+- Bootstrap Icons: `1.11.0`, distribuído pelo ACULTA420 com licença MIT;
+- Display Suite: `3.37.0`, com layouts ACULTA420 responsivos de duas e três colunas;
 - SDC: Drupal Core;
 - build tooling: nenhum por padrão.
 
@@ -21,12 +23,24 @@ Drupal Core + contrib
         |
         v
      ACULTA420
-  Bootstrap Component
-    Design System
         |
         v
-    Bootstrap 5
+ Drupal Bootstrap base theme
+        |
+        v
+Bootstrap 5.3.8 + Bootstrap Icons
 ```
+
+Display Suite administra os layouts e modos de visualização das entidades; os
+layouts adicionados pelo tema usam a grade Bootstrap sem substituir o controle
+editorial do módulo.
+
+Os arquivos CSS/JS públicos do Bootstrap são sincronizados de `vendor/twbs/bootstrap`
+para `web/libraries/bootstrap` pelos scripts Composer `post-install-cmd` e
+`post-update-cmd`, conforme o caminho esperado pela base Drupal Bootstrap.
+
+RUNTIME HOMELAB: DEFERRED; a configuração exportada ainda precisa ser importada e
+o tema precisa de smoke test visual no ambiente de testes.
 
 Drupal/contrib são donos de dados e regras. `aculta_portal` integra e prepara
 contexto. ACULTA420 apresenta. Bootstrap fornece infraestrutura de layout,

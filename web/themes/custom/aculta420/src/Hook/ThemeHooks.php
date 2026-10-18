@@ -404,18 +404,24 @@ final class ThemeHooks {
   /**
    * Aplica o modo de cor que o Portal resolveu (contrato aculta_color_mode: light, dark ou auto).
    *
-   * O html.html.twig do Bootstrap 5 grava data-bs-theme a partir de b5_theme_mode, e sobrescreve
-   * qualquer atributo colocado em html_attributes. Por isso o modo entra por essa variável. Em auto
-   * o valor fica vazio: o atributo não é "light", e o bloco prefers-color-scheme de tokens.css decide.
+   * O modo chega resolvido pelo Portal. A base Drupal Bootstrap preserva html_attributes,
+   * então ACULTA420 aplica o atributo diretamente. Em auto, removê-lo permite que tokens.css
+   * use prefers-color-scheme sem uma preferência explícita.
    */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
-    $mode = $variables['aculta_color_mode'] ?? 'light';
-    $variables['b5_theme_mode'] = match ($mode) {
+    $themeMode = match ($variables['aculta_color_mode'] ?? 'light') {
       'dark' => 'dark',
-      'auto' => '',
+      'auto' => NULL,
       default => 'light',
     };
+    $attributes = $variables['html_attributes'] ?? NULL;
+    if ($attributes instanceof \Drupal\Core\Template\Attribute) {
+      $attributes->removeAttribute('data-bs-theme');
+      if ($themeMode !== NULL) {
+        $attributes->setAttribute('data-bs-theme', $themeMode);
+      }
+    }
     // Título do documento informado pelo Portal (contrato aculta_head_title). Roda depois do Metatag.
     if (!empty($variables['aculta_head_title'])) {
       $variables['head_title'] = ['title' => (string) $variables['aculta_head_title']];

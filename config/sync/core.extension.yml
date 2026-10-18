@@ -48,6 +48,7 @@ module:
   domain_alias: 0
   domain_config: 0
   domain_source: 30
+  ds: 0
   dynamic_page_cache: 0
   editor: 0
   email_confirmer: 0
@@ -159,8 +160,8 @@ module:
   webform_ui: 0
   workflows: 0
 theme:
+  bootstrap: 0
   claro: 0
   stable9: 0
-  bootstrap5: 0
   aculta420: 0
 profile: standard

@@ -262,7 +262,7 @@
         "composer/semver": "^3.4",
         "cweagans/composer-patches": "^2.0",
         "drupal/agreement": "^3.0",
-        "drupal/bootstrap5": "4.0.8",
+        "drupal/bootstrap": "^5.0",
         "drupal/captcha": "^2.0",
         "drupal/cep_autocomplete": "^1.0",
         "drupal/change_mail_page": "^1.0.2",
@@ -279,6 +279,7 @@
         "drupal/crop": "^2.6",
         "drupal/diff": "^2.1",
         "drupal/domain": "^3.0",
+        "drupal/ds": "^3.37",
         "drupal/email_confirmer": "^1.0",
         "drupal/entity_embed": "^1.7",
         "drupal/entity_usage": "^5.0.1",
@@ -357,6 +358,14 @@
             "cweagans/composer-patches": true
         },
         "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@php scripts/sync-bootstrap-assets.php"
+        ],
+        "post-update-cmd": [
+            "@php scripts/sync-bootstrap-assets.php"
+        ]
     },
     "extra": {
         "drupal-scaffold": {

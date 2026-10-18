@@ -42,10 +42,23 @@ global:
     js/alerts-dismiss.js: {}
     js/address-layout.js: {}
   dependencies:
-    - bootstrap5/global-styling
-    - bootstrap5/bootstrap5-js-latest
+    - bootstrap/bootstrap
+    - bootstrap/global-styling
+    - aculta420/bootstrap-icons
     - core/drupal
     - core/once
+
+bootstrap-icons:
+  version: 1.11.0
+  css:
+    component:
+      assets/icons/bootstrap-icons/font/bootstrap-icons.min.css: {}
+
+display-suite:
+  version: 1.x
+  css:
+    component:
+      css/components/display-suite.css: {}
 
 album-slideshow:
   css:
@@ -77,5 +90,5 @@ messenger-drawers:
   dependencies:
     - core/drupal
     - core/once
-    - bootstrap5/bootstrap5-js-latest
+    - bootstrap/bootstrap
 

@@ -1,0 +1,10 @@
+{# Bootstrap grid layout for Display Suite entity displays. #}
+<{{ outer_wrapper }}{{ attributes.addClass('row', 'g-4', 'aculta420-ds-layout', 'aculta420-ds-layout--two-column') }}>
+  {{ title_suffix.contextual_links }}
+  <{{ first_wrapper }}{{ first_attributes.addClass('col-12', 'col-lg-6') }}>
+    {{ first }}
+  </{{ first_wrapper }}>
+  <{{ second_wrapper }}{{ second_attributes.addClass('col-12', 'col-lg-6') }}>
+    {{ second }}
+  </{{ second_wrapper }}>
+</{{ outer_wrapper }}>
