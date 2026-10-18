@@ -7,11 +7,11 @@ dependencies:
   module:
     - media
     - user
-    - vvjb
+    - vvjs
 id: galeria_produto
-label: 'Galeria do produto (VVJB)'
+label: 'Galeria do produto (VVJS)'
 module: views
-description: 'Carrossel VVJB das imagens de um produto. Recebe os IDs das mídias como argumento (separados por +).'
+description: 'Slideshow VVJS das imagens de um produto. Recebe os IDs das mídias como argumento (separados por +).'
 tag: ''
 base_table: media_field_data
 base_field: mid
@@ -84,26 +84,27 @@ display:
           value:
             image: image
       style:
-        type: views_vvjb
+        type: views_vvjs
         options:
-          orientation: horizontal
-          items_small: 1
-          items_big: 1
-          gap: 0
-          item_width: 0
-          looping: false
-          slide_time: 3000
-          navigation: both
-          dot_style: circle
-          breakpoints: '768'
+          grouping: {  }
+          hero_slideshow: false
+          enable_css: true
+          arrows: arrows-sides
+          time_in_seconds: 0
+          navigation: none
+          animation: none
+          transition_type: crossfade-classic
+          transition_duration: 400
+          show_total_slides: false
+          show_slide_progress: false
           show_play_pause: false
-          show_progress_bar: false
-          show_page_counter: false
-          enable_keyboard_nav: true
-          enable_touch_swipe: true
-          enable_pause_on_hover: true
-          pause_on_reduced_motion: true
-          enable_deeplink: false
+          pause_on_hover: true
+          enable_swipe: true
+          enable_keyboard: true
+          enable_looping: false
+          start_index: 1
+          available_breakpoints: '768'
+          scrollable_dots_width: 0
       row:
         type: 'entity:media'
         options:

@@ -20,6 +20,7 @@ global:
       css/components/search.css: {}
       css/components/wiki.css: {}
       css/components/product.css: {}
+      css/components/product-gallery.css: {}
       css/components/account.css: {}
       css/components/portal-account.css: {}
       css/components/public-profile.css: {}

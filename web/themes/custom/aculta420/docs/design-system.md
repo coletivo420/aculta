@@ -173,6 +173,7 @@ https://getbootstrap.com/docs/5.3/customize/color-modes/
 
 - O palco dos álbuns usa VVJS (`views_vvjs`) porque apresenta uma sequência fotográfica paginada com miniaturas próprias. Esse uso não muda os carrosséis editoriais Home/Projetos, que continuam VVJB.
 - A ampliação PhotoSwipe continua responsável pelo lightbox da imagem; VVJS controla somente o slide atual, navegação e movimento reduzido.
+- A View `galeria_produto` também usa VVJS para percorrer imagens de produto, sem autoplay. O modo de exibição `produto_galeria` e a finalidade de imagem permanecem; `product-gallery.css` mantém a imagem contida e a moldura usa tokens ACULTA420.
 - A integração do palco fica no tema por `data-aculta-album-*` e pela API/evento público VVJ; o submódulo Gallery mantém conteúdo, ordem, paginação, acesso e cache.
 - VVJA, VVJF, VVJH, VVJL, VVJR e VVJT ficam disponíveis para Views, mas não substituem por conveniência componentes SDC, páginas de rota, formulários ou navegação da Conta. Aplicar um formato somente com View e necessidade editorial compatíveis.
 - VVJC (3D Carousel) e VVJP (Parallax) não fazem parte do catálogo instalado do ACULTA.

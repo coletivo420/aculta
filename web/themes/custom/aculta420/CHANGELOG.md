@@ -1232,3 +1232,11 @@ Classificação: PATCH (dados e estilos novos em um tópico; sem mudança de est
 - Integrado Display Suite 3.37.0, habilitado na configuração exportada, com layouts responsivos ACULTA420 de duas e três colunas.
 - RUNTIME HOMELAB: DEFERRED; falta importar a configuração e fazer smoke test visual no ambiente de testes.
 
+## 0.6.0-dev.74 — galeria de produto em VVJS — 2026-10-18
+
+Classificação: PATCH visual. O slideshow de produto preserva o modo de exibição e contém imagens sem autoplay.
+
+- CSS de VVJS escopado à classe existente `aculta-galeria-produto`; usa somente tokens semânticos ACULTA420.
+- Documentação identifica VVJS para sequências fotográficas e VVJB para carrosséis editoriais/de projetos.
+- RUNTIME STATUS: código e configuração da View aplicados ao Runtime de teste; inspeção visual em navegador permanece pendente.
+

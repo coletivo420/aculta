@@ -38,6 +38,12 @@ Regras:
 
 Nas listagens e no corpo das notícias, a galeria usa o markup do PhotoSwipe (contrib) e as classes do Bootstrap que o tema já carrega:
 
+No palco do álbum, `AlbumSlidesAccessHooks` filtra a View pelos IDs de Media com acesso `view` permitido e File de imagem
+presente, ordenados pela ordem `delta` do campo `images`. `GalleryViewHooks` agrega metadados de cache do álbum, Media, File e resultado de
+acesso no contêiner `album_stage`; o conjunto/índice de slides corresponde ao painel de miniaturas. A View de produto
+(`galeria_produto`) usa VVJS com modo `produto_galeria`, enquanto a apresentação visual continua sendo responsabilidade
+do ACULTA420.
+
 | Classe | Onde aparece | Uso |
 | --- | --- | --- |
 | `photoswipe-gallery` | contêiner de cada campo `images` | Agrupa as fotos de uma galeria. Grupos ficam isolados por instância. |

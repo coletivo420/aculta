@@ -1,3 +1,29 @@
+# Changelog — ACULTA Gallery
+
+## 0.1.0-rc.3 — alinhamento de acesso/cache e VVJS de produto — 2026-10-18
+
+- A View `aculta_album_fotos` filtra as linhas por Media com acesso de visualização e File de imagem presente; miniaturas
+  e slides usam a mesma regra e ordem `delta` do campo do álbum. O filtro falha fechado se a relação esperada não existir.
+- O palco agrega metadados cacheáveis do álbum, cada Media, cada File e cada `AccessResult`, inclusive resultados negados,
+  para evitar cache compartilhado de slides/miniaturas entre contextos de acesso incompatíveis.
+- A View `galeria_produto` passa de VVJB para VVJS. Mantém o campo de IDs recebido do produto, o modo `produto_galeria`,
+  a finalidade de imagem, o conjunto de controles e a imagem sem autoplay.
+- O importador parcial continua bloqueado pelo tema órfão `bootstrap5` no `core.extension` ativo (o tema não existe no
+  código); para limitar a alteração à View, seu objeto foi salvo pela Config API após backup do YAML ativo em `/tmp`.
+- Runtime de teste: cache reconstruído; VVJS de produto renderizou 7 linhas (7.995 bytes). No host magazine, o álbum
+  renderizou 63 miniaturas e 63 slides; o palco trouxe 128 tags e o contexto `user.permissions`, sem dependências
+  Media/File/AccessResult ausentes.
+- RUNTIME STATUS: smoke test PASS no Runtime `aculta_runtime`; validação visual em navegador e aparelho ainda pendente.
+
+## 0.1.0-rc.2 — slideshow VVJS no palco do álbum — 2026-10-18
+
+- A View `aculta_album_fotos` passa de VVJB a VVJS; preserva o pager até 150 fotos, o formatador PhotoSwipe e as regras de acesso da galeria.
+- As miniaturas chamam a API pública `goToSlide()`; o estado atual é sincronizado pelo evento público `vvj:slideChanged` de VVJ Core. Removido o `MutationObserver` acoplado às classes internas do VVJB.
+- O tema mantém o layout ACULTA420, tokens semânticos, ícones Bootstrap Icons, moldura estável e miniaturas recolhíveis em telas estreitas.
+- Os carrosséis da Home e Projetos seguem em VVJB. VVJL não substitui PhotoSwipe.
+- Módulo e View aplicados ao Runtime de teste; veja o plano do tema para estado das demais entregas e validação visual pendente.
+- RUNTIME STATUS: módulos VVJ habilitados e cache reconstruído; View convertida após atualização direcionada. Verificação visual em navegador ainda pendente.
+
 ## 0.1.0-rc.1 — release candidate da ACULTA Gallery — 2026-10-15
 
 Classificação: RC (fecha a Fase 10, validação de release no servidor de testes). Versão declarada pelo responsável; tag Git não criada (somente com pedido explícito).
@@ -8,17 +34,6 @@ Classificação: RC (fecha a Fase 10, validação de release no servidor de test
 - Reordenação por arrasto: não existe nesta versão; a ordem é o campo de peso do widget. Fora do escopo da RC.
 - Pendente após a RC: teste com toque em aparelho real; rodada de regressão quando o servidor de testes for atualizado com os merges (configuração e código).
 - RUNTIME STATUS: verificado no servidor de testes (duas rodadas de navegador, verificações por HTTP e banco). Inspeção visual humana pendente.
-
-# Changelog — ACULTA Gallery
-
-## 0.1.0-rc.2 — slideshow VVJS no palco do álbum — 2026-10-18
-
-- A View `aculta_album_fotos` passa de VVJB a VVJS; preserva o pager até 150 fotos, o formatador PhotoSwipe e as regras de acesso da galeria.
-- As miniaturas chamam a API pública `goToSlide()`; o estado atual é sincronizado pelo evento público `vvj:slideChanged` de VVJ Core. Removido o `MutationObserver` acoplado às classes internas do VVJB.
-- O tema mantém o layout ACULTA420, tokens semânticos, ícones Bootstrap Icons, moldura estável e miniaturas recolhíveis em telas estreitas.
-- Os carrosséis da Home e Projetos seguem em VVJB. VVJL não substitui PhotoSwipe.
-- Módulo e View aplicados ao Runtime de teste; veja o plano do tema para estado das demais entregas e validação visual pendente.
-- RUNTIME STATUS: módulos VVJ habilitados e cache reconstruído; View convertida após atualização direcionada. Verificação visual em navegador ainda pendente.
 
 Submódulo opcional do `aculta_portal`. Linha 0.1.x em `-dev.N` até o RC.
 

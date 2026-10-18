@@ -10,7 +10,7 @@ use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Galeria do produto da loja: prepara a view VVJB (galeria_produto) com as mídias do produto.
+ * Galeria do produto da loja: prepara a view VVJS (galeria_produto) com as mídias do produto.
  *
  * O Portal entrega ao tema uma renderização pronta em aculta_product_gallery; o tema só imprime.
  */

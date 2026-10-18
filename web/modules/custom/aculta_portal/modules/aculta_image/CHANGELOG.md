@@ -1,5 +1,13 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.25 — gate de estilos em Views e modos de exibição — 2026-10-18
+
+- R9 lê os formatadores exportados de Views e dos modos de exibição e verifica que cada `image_style` e estilo PhotoSwipe
+  pertence a `ImageCatalog::STYLES`.
+- A verificação permanece estática e somente leitura; IDs são aceitos nas APIs Core/contrib porque são o formato exigido
+  por esses formatadores. A configuração passa a ficar coberta pelo gate, em vez de ser ignorada.
+- `php scripts/validate-aculta-image.php`: PASS (25 estilos). Runtime não foi alterado por este gate.
+
 ## 0.1.0-dev.24 — derivados temporários: vida útil preservada e tamanho atualizado — 2026-10-16
 
 Classificação: PATCH.

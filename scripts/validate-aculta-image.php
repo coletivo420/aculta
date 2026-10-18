@@ -16,6 +16,7 @@
  * - R6: estilo de imagem em config/sync que não está no catálogo;
  * - R7: campo de imagem em config/sync sem a política do aculta_image em third_party_settings;
  * - R8: estilo de imagem em Twig ou CSS do tema.
+ * - R9: estilos configurados em Views e modos de exibição, validados contra o catálogo.
  *
  * Exceção aprovada (EXCECOES): conquista do aculta_game mantém 2 MB e 4096 px, somente no formulário da conquista.
  */
@@ -140,6 +141,23 @@ foreach (glob($root . '/config/sync/field.field.*.yml') ?: [] as $arquivo) {
     || (preg_match('/^field_type: file$/m', $texto) && preg_match('/file_extensions: .*(jpe?g|png|webp|gif)/', $texto));
   if ($ehImagem && !preg_match('/^\s*aculta_image:/m', $texto)) {
     $violacoes[] = sprintf('R7  config/sync/%s  campo de imagem sem política do aculta_image em third_party_settings', basename($arquivo));
+  }
+}
+
+// Views e modos de exibição precisam apontar para estilos pertencentes ao
+// catálogo do aculta_image. Core/contrib ainda recebem o ID exigido pela API,
+// mas a configuração exportada é a fronteira controlada pelo catálogo.
+$configuracoesComFormatadores = array_merge(
+  glob($root . '/config/sync/views.view.*.yml') ?: [],
+  glob($root . '/config/sync/core.entity_view_display.*.yml') ?: [],
+);
+foreach ($configuracoesComFormatadores as $arquivo) {
+  $linhas = file($arquivo, FILE_IGNORE_NEW_LINES) ?: [];
+  foreach ($linhas as $i => $linha) {
+    if (preg_match('/^\s*(?:image_style|photoswipe_(?:thumbnail|image)_style):\s*([a-z0-9_]+)\s*$/', $linha, $m)
+      && !in_array($m[1], $estilos, TRUE)) {
+      $registrar('R9', str_replace($root . '/', '', $arquivo), $i + 1, $linha);
+    }
   }
 }
 

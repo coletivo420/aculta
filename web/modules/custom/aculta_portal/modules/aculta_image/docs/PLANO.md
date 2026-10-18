@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-16: versão **0.1.0-dev.23**. Gate `scripts/validate-aculta-image.php` em PASS. Os testes unitários anteriores registram 14 casos.
+Status em 2026-10-18: versão **0.1.0-dev.25**. Gate `scripts/validate-aculta-image.php` em PASS (inclui R9 para Views e modos de exibição). Os testes unitários anteriores registram 14 casos.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -25,7 +25,7 @@ exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem 
 | Fase | Estado | Observação |
 | --- | --- | --- |
 | M0 inventário | feito | relatório `/painel-administrativo/imagens` |
-| M0.5 barreiras | feito | gate com tolerância zero (R1 a R8) |
+| M0.5 barreiras | feito | gate com tolerância zero (R1 a R9), incluindo Views e modos de exibição |
 | M1 a M3 consumidores | feito | Gallery, Magazine, Usuário, Portal, PDF migrados para o `aculta_image` |
 | M4 miniatura de PDF | feito no Homelab | ImageMagick 7 com Ghostscript; `pdfpreview` com JPEG 480×640; teste com PDF real: 480×621. Produção depende de confirmação da Hostinger |
 | M5 duplicatas exatas | feito | `media_duplicates` 2.0.4; os dois grupos reais da galeria 11 foram mesclados, uma ocorrência por arquivo, mantendo o `alt` do menor ID |
@@ -36,7 +36,7 @@ exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem 
 | og:image | feito | estilo `aculta_compartilhamento_1200x630`; verificado HTTP 200 |
 | Upload do texto (1200 px) | feito | redução para 1200 px de largura antes da compressão (`ImageCompressor::redimensionar`); imagens maiores são convertidas, não recusadas |
 | M10 modelos de imagem no texto | feito | Runtime, Firefox, Orca/AT-SPI, persistência da legenda e renderização pública conferidos; detalhes em `MODELOS-DE-IMAGEM.md` |
-| R8 migração e dívida | feito | Auditoria estática sem consumidores `legado_*`; todas as referências de estilo no Config Sync existem no catálogo. Gate sem ocorrências fora do `aculta_image`. |
+| R8 migração e dívida | feito | Auditoria estática sem consumidores `legado_*`; todas as referências de estilo no Config Sync existem no catálogo. Gate sem ocorrências fora do `aculta_image`. R9 também audita estilos em Views e modos de exibição. |
 
 ## 3. M10 — Modelos de imagem no texto
 
@@ -92,6 +92,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R6 — Formato do usuário** | `usuario_aculta` com permissão direta em `email_confirmed`; papéis herdados conforme `role_inheritance.settings` | `authenticated` isolado e `gerente_loja` sem acesso; estudante, associado, lms_teacher e content_editor com acesso efetivo | feito |
 | **R7 — Fórum e LMS** | Fórum usa `usuario_aculta`; LMS recebe campo `capa_curso` com política `aculta_image` e finalidade `destaque` nos cartões | Campo de capa, limite de 10 MB e Views configurados no Runtime; Firefox confirmou o derivado 1280×720 num teste temporário, removido depois. Catálogos respondem 200 | F3/F6 do Fórum e LMS |
 | **R8 — Migração e dívida** | auditoria de consumidores e estilos legados | nenhuma ocorrência `legado_*`; referências de estilos em configurações nativas correspondem a `ImageCatalog::STYLES`; gate PASS; resultado registrado em `DEBT-REGISTER` | feito em 2026-10-16 |
+| **R9 — Configuração de imagens** | Views e modos de exibição usam estilos presentes no catálogo | gate verifica IDs `image_style` e estilos PhotoSwipe em `views.view.*` e `core.entity_view_display.*`; PASS em 2026-10-18 | feito |
 | **RC — Validação de ambientes** | Homelab e Hostinger: `shell_exec`, ImageMagick e Ghostscript confirmados no painel | relatório de ambientes | responsável |
 
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.

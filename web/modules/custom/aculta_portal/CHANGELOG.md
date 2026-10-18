@@ -2636,3 +2636,11 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - Sem mudança de tema, entidades, memberships ou progresso.
 - RUNTIME STATUS: DEFERRED; falta smoke test com membro, não membro e visitante.
 
+## 0.4.0-dev.129 — declara a integração VVJS das galerias — 2026-10-18
+
+- `aculta_portal` declara `vvjs` como dependência direta, pois a galeria de produto configura `views_vvjs`.
+- `aculta_gallery` também declara `vvjs`; seu slideshow de álbum depende do estilo de View desse módulo.
+- VVJS já fazia parte do conjunto Composer e estava habilitado no Runtime de teste; sem nova dependência Composer ou alteração de dados.
+- `ProductGalleryHooks` documenta o estilo VVJS que a View entrega.
+- RUNTIME STATUS: configuração da View e cache já smoke-tested; a atualização da metadata dos módulos foi seguida por cache rebuild.
+

@@ -1,6 +1,8 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-16. Versão: 0.1.0-dev.23. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-18. Versão: 0.1.0-dev.25. Leia este documento antes de qualquer alteração no submódulo.
+
+Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas configurações exportadas de Views e modos de exibição. O `aculta_gallery` também usa VVJS no álbum e na galeria de produto; a sequência do álbum filtra mídia pela permissão `view` e agrega cacheabilidade do álbum, Media, File e `AccessResult`. Ver [arquitetura da Gallery](../../aculta_gallery/docs/ARQUITETURA.md) e o changelog do submódulo.
 
 ## 1. Resumo em cinco linhas
 

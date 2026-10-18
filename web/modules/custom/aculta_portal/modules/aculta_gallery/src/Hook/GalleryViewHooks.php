@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_gallery\Hook;
 
 use Drupal\aculta_image\ImageRenderer;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -55,6 +56,19 @@ final class GalleryViewHooks {
       'slideshow' => $slideshow,
       'thumbs' => $this->thumbs($entity),
     ];
+    // Access decisions affect both the VVJS result and the thumbnail index.
+    // Bubble every dependency at the shared parent, including denied results.
+    $cacheability = CacheableMetadata::createFromObject($entity);
+    foreach ($entity->get('images')->referencedEntities() as $media) {
+      $access = $media->access('view', NULL, TRUE);
+      $cacheability->addCacheableDependency($media);
+      $cacheability->addCacheableDependency($access);
+      $file = $media->get('field_media_image')->entity;
+      if ($file !== NULL) {
+        $cacheability->addCacheableDependency($file);
+      }
+    }
+    $cacheability->applyTo($build['album_stage']);
   }
 
   /**
@@ -71,7 +85,8 @@ final class GalleryViewHooks {
     ];
     $position = 0;
     foreach ($entity->get('images')->referencedEntities() as $media) {
-      if (!$media->access('view')) {
+      $access = $media->access('view', NULL, TRUE);
+      if (!$access->isAllowed()) {
         continue;
       }
       $file = $media->get('field_media_image')->entity;
