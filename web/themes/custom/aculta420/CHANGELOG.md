@@ -1,15 +1,3 @@
-## 0.6.0-dev.80 — Storybook como catálogo visual e documentação de agentes — 2026-10-18
-
-Classificação: MINOR (nova documentação e cobertura de exemplos; nenhuma mudança no HTML de produção).
-
-- Aplicação Storybook 10.6.2 isolada em `storybook/`, com renderer oficial Server, builder Vite e páginas MDX em português.
-- Stories Twig do módulo Drupal Storybook para os 32 SDCs. Demonstrações existentes da UI Patterns Library são aproveitadas sem remover seus `.story.yml`.
-- Guardrail no `AGENTS.md` e gate `validate-aculta420-storybook.php`: todo SDC precisa story que renderize o SDC real; mudanças de tema atualizam a página Storybook aplicável.
-- Documentação de arquitetura, tokens, acessibilidade, desenvolvimento, catálogo e instruções para IA/agentes, com referências aos Markdown normativos.
-- Segurança: permissão de renderização somente para Administrator; modo `storybook.development` permanece desativado; sem CORS wildcard ou endpoint anônimo. JSON gerado não é versionado para evitar registrar URI de ambiente.
-- Build estático do Storybook validado; compilação Drupal/visual DEFERRED porque este checkout retorna Drush URI `http://default`, não o URI de teste `*.aculta.toca.net.br`.
-
-
 ## 0.6.0-dev.79 — porta padrões úteis do UI Suite Bootstrap — 2026-10-18
 
 Classificação: PATCH de integração visual/editorial; preserva `bootstrap` como tema base e ACULTA420 como tema público.

@@ -1,7 +1,5 @@
 # Componentes
 
-O catálogo visual navegável cobre os SDCs em [Storybook ACULTA420](../../../../../storybook/README.md). A documentação técnica deste arquivo, schemas `*.component.yml`, Twig e CSS permanecem fonte normativa. Cada SDC precisa de story Twig irmã que renderize o próprio componente; o gate `php scripts/validate-aculta420-storybook.php` verifica essa cobertura.
-
 ## Organização
 
 Drupal Core permite SDCs aninhados. A organização alvo é:

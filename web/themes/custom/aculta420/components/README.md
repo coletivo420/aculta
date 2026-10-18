@@ -1,7 +1,36 @@
-# Catálogo de componentes ACULTA420
+# Components
 
-O catálogo visual completo e navegável fica no [Storybook ACULTA420](../../../../../storybook/README.md). Cada SDC deve ter um arquivo `<machine-name>.stories.twig` na própria pasta, renderizando o componente real e apresentando exemplos/estados relevantes.
+ACULTA420 organiza SDCs por responsabilidade visual.
 
-O catálogo técnico e as regras normativas permanecem em [docs/components.md](../docs/components.md), `*.component.yml`, Twig e CSS dos componentes. Os `.story.yml` são demonstrações da UI Patterns Library; são diferentes de `*.stories.twig` do Drupal Storybook e permanecem enquanto a biblioteca for usada.
+Estrutura alvo:
 
-Gate obrigatório: `php scripts/validate-aculta420-storybook.php`.
+```text
+components/
+├── primitives/
+├── content/
+├── navigation/
+├── sections/
+└── feedback/
+```
+
+O Drupal Core permite subdiretórios arbitrários dentro de `components/`.
+
+## 0.1.0
+
+Disponível:
+
+- `content/editorial-card` -> `aculta420:editorial-card`.
+- `content/course_card` -> `aculta420:course_card`, substituto SDC compatível para `lms:course_card`.
+- `content/messenger-item`, `content/messenger-compose`, `content/messenger-notification` e `content/institutional-notice` -> componentes experimentais da central; `messenger-item` recebe avatar renderizado, direção de envio e corpo nativo como slots/props neutros.
+- `patterns/messenger-list` -> moldura de listas do Private Message/Message.
+- `feedback/unread-badge` e `feedback/messenger-state` -> contagem e estados da central.
+- `patterns/card` -> cartão composto reutilizável com slots de mídia, cabeçalho, conteúdo e rodapé; variantes vertical e horizontal usam Bootstrap e tokens ACULTA420.
+
+O cartão composto foi adaptado após análise do SDC Card do UI Suite Bootstrap
+5.2.3 (GPL-2.0-or-later). O markup é próprio do ACULTA420 e não importa assets,
+templates, bibliotecas ou dependências do tema de origem.
+
+Não criar placeholders vazios. Novos diretórios entram com o primeiro componente
+real da categoria.
+
+Regras completas: [../docs/components.md](../docs/components.md).
