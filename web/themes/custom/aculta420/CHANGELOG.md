@@ -1238,5 +1238,16 @@ Classificação: PATCH visual. O slideshow de produto preserva o modo de exibiç
 
 - CSS de VVJS escopado à classe existente `aculta-galeria-produto`; usa somente tokens semânticos ACULTA420.
 - Documentação identifica VVJS para sequências fotográficas e VVJB para carrosséis editoriais/de projetos.
-- RUNTIME STATUS: código e configuração da View aplicados ao Runtime de teste; inspeção visual em navegador permanece pendente.
+- RUNTIME STATUS: código e configuração da View aplicados ao Runtime de teste; inspeção visual em navegador pendente.
+
+## 0.6.0-dev.75 — auditoria da base Bootstrap e reconciliação da Foundation — 2026-10-18
+
+Classificação: PATCH de manutenção do tema e do gate.
+
+- A Foundation agora verifica `drupal/bootstrap` 5.0.2, `twbs/bootstrap` 5.3.8, a ausência do pacote antigo `drupal/bootstrap5` e a allowlist atual de overrides Twig.
+- Avaliado em `/tmp` o pacote oficial `bootstrap_sass` 5.0.2. Ele é um subtema legado de Barrio para Drupal 8/9 e Bootstrap 4.4.1, com Gulp antigo, cópias locais de jQuery/Popper/Bootstrap e hooks procedurais; nenhum código foi portado.
+- Avaliado também o scaffold `Bootstrap Subtheme` distribuído com `drupal/bootstrap` 5.0.2. Seu `_page.html.twig` demonstra herança do template base, mas redefine a estrutura genérica de página; `global.js` é só um esqueleto de behavior. A integração de Color module e o CSS de cores literais não se encaixam no shell por purpose e nos tokens ACULTA420. Não há função portável que acrescente valor sem duplicar essas responsabilidades.
+- O ACULTA420 mantém o CSS e JavaScript do Bootstrap fornecidos pela dependência Composer e a camada semântica/tokenizada própria; não adiciona um pipeline Sass/Gulp paralelo.
+- `validate-aculta420-foundation.php`: PASS via Drush no Runtime Homelab, somente leitura. Nenhuma configuração ou banco foi alterado.
+- DT-O14 permanece aberta: o estado ativo do Runtime ainda requer reconciliação controlada da referência antiga a `bootstrap5`; esta entrega não alterou configuração ativa.
 

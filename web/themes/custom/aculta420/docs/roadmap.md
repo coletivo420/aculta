@@ -1,6 +1,6 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-18 (VVJS em álbum e produto; gate Foundation ainda mantém expectativa antiga de Bootstrap5 e requer revisão própria). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-18 (Foundation reconciliada com Drupal Bootstrap 5.0.2; avaliação do SASS Starter Kit concluída). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.75 | Gate Foundation alinhado à base Drupal Bootstrap 5.0.2, ao framework 5.3.8 e aos templates atuais | Validação do gate somente leitura no Runtime Homelab; nenhuma configuração foi alterada | Revisão dos dois scaffolds 5.0.2; nenhum código novo necessário |
 | 0.6.0-dev.74 | Galeria de produto migrada para VVJS, sem autoplay | Runtime de teste: 7 linhas VVJS renderizadas; inspeção visual DEFERRED | Preserva modo `produto_galeria` e apresenta imagens contidas |
 | 0.6.0-dev.73 | VVJ patterns aprovados instalados; palco de álbum portado de VVJB para VVJS | RUNTIME STATUS: VVJ habilitados e View atualizada; validação visual DEFERRED | Mantém VVJB na Home/Projetos e PhotoSwipe na galeria |
 | 0.6.0-dev.72 | LMS em pt-BR; “Lições” passa a “Aulas” em toda a interface traduzida | Catálogos `lms.pt-br.po` e `lms-terms.pt-br.po` importados; exportações do Runtime sem “lição/lições” | Catálogo LMS |
