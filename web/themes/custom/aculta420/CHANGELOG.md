@@ -1,3 +1,12 @@
+## 0.6.0-dev.76 — auditoria de consumidores VVJ e smoke test — 2026-10-18
+
+Classificação: PATCH documental da implantação VVJ.
+
+- Smoke test no Runtime de teste: `galeria_produto` usa `views_vvjs` com 7 linhas; `aculta_album_fotos` usa `views_vvjs` com 63 linhas. Os render arrays produziram 8.039 e 54.778 bytes, respectivamente, nos purposes Main e Revista.
+- Inventário das Views não encontrou FAQ, conteúdo editorial com imagem dedicada para VVJH, ou agrupamento de resultados que justifique VVJA, VVJF, VVJR ou VVJT. Os formatos ficam disponíveis sem serem forçados em conteúdo essencial; Home e Projetos mantêm VVJB, PhotoSwipe mantém o lightbox e o SDC hero mantém o hero de página.
+- Documentação não fixa URI de teste; o purpose deve ser passado explicitamente ao Drush durante operações de Runtime.
+- Inspeção visual e validação por teclado/toque permanecem pendentes.
+
 ## 0.6.0-dev.73 — módulos VVJ e slideshow de álbuns — 2026-10-18
 
 Classificação: MINOR (novos formatos de Views disponíveis; o palco de fotos migra para o VVJS apropriado a uma sequência editorial).

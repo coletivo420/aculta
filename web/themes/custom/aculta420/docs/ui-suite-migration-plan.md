@@ -2,11 +2,11 @@
 
 **Escopo:** ACULTA420 e a configuração Drupal necessária para adotar SDC/UI Patterns como modelo de componentes integrado ao Bootstrap 5.
 
-**Estado inicial verificado em 2026-10-18:** Drupal 11.4.10; tema base `bootstrap` 5.0.2; UI Patterns 2.0.x ativo; 30 SDCs em `components/`; Display Suite 3.37.0 no projeto. O Runtime de testes é `aculta_runtime` em `https://aculta.toca.net.br`. A configuração Runtime tem diferenças históricas em relação ao sync; cada importação será parcial e revisada.
+**Estado inicial verificado em 2026-10-18:** Drupal 11.4.10; tema base `bootstrap` 5.0.2; UI Patterns 2.0.x ativo; 30 SDCs em `components/`; Display Suite 3.37.0 no projeto. O Runtime de teste usa o banco `aculta_runtime`. A configuração Runtime tem diferenças históricas em relação ao sync; cada importação será parcial e revisada.
 
 **Atualização da execução (2026-10-18):** os oito módulos VVJ aprovados estão no Composer e habilitados no Runtime de teste. A View `aculta_album_fotos` está convertida para `views_vvjs` no sync e Runtime por alteração direcionada do único objeto de configuração; cache reconstruído. Nenhuma importação global foi feita. Inspeção visual e teclado/toque da galeria ficam pendentes; o restante da iniciativa UI Suite segue nas fases abaixo.
 
-**Complemento (2026-10-18):** slides do álbum agora usam a mesma verificação de acesso que as miniaturas, ordenam pelo delta da referência e agregam metadados de cache do álbum, Media, File e AccessResult. A View `galeria_produto` também migra para VVJS, preservando o modo `produto_galeria`, controles, estilo contido e sem autoplay. Alterações em Runtime estão DEFERRED porque Drush neste checkout informa `http://default`, não o URI de teste documentado; nenhum banco foi alterado nesta etapa. Gate ampliado para auditar estilos de Views e modos de exibição.
+**Complemento (2026-10-18):** slides do álbum agora usam a mesma verificação de acesso que as miniaturas, ordenam pelo delta da referência e agregam metadados de cache do álbum, Media, File e AccessResult. A View `galeria_produto` também usa VVJS, preservando o modo `produto_galeria`, controles, estilo contido e sem autoplay. Smoke test no Runtime confirmou `views_vvjs` e 7 linhas na galeria do produto e 63 linhas no álbum; cache renderizado: 8.039 e 54.778 bytes, respectivamente. As duas Views foram verificadas nos purposes Main e Revista. Inspeção visual por navegador permanece pendente. O relatório padrão do Drush sem `--uri` pode dizer `http://default`; operações de Runtime devem informar explicitamente o purpose de teste, sem registrar uma URI de teste fixa nesta documentação. Gate ampliado para auditar estilos de Views e modos de exibição.
 
 ## Decisões e limites
 
