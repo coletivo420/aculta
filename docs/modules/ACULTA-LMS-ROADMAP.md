@@ -153,8 +153,12 @@ Webform Score continua restrito às submissões Webform; não há integração q
 automaticamente para a nota LMS. A tentativa automática de baixar traduções
 pt-BR dos três módulos durante `drush en` falhou porque `translations://` não está configurado neste
 Runtime; o código e a ativação terminaram com sucesso. RUNTIME STATUS: MÓDULOS HABILITADOS; homologação
-de acesso Runtime/browser DEFERRED por ausência de conteúdo de teste. A próxima fase F10 foi iniciada como
-auditoria documental; nenhum pacote H5P foi adicionado nem ativado.
+de acesso Runtime/browser DEFERRED por ausência de conteúdo de teste. A F10 foi iniciada: `drupal/h5p`
+2.0.0-beta1 e suas duas dependências foram adicionadas via Composer, sem upgrades/remoções. O módulo não foi
+habilitado, não foram criadas tabelas H5P nem importadas bibliotecas; configuração e banco do Runtime não foram
+alterados. O código está disponível no checkout, mas sem rotas nem funcionalidades H5P ativas.
+Ativação e acesso ao editor continuam bloqueados pelos gates de segurança e privacidade registrados em
+[LMS-H5P-AUDIT.md](LMS-H5P-AUDIT.md).
 
 ## Ordem, PR e status
 

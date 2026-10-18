@@ -1,11 +1,28 @@
 # Auditoria inicial de H5P para o ACULTA LMS
 
-Revisão em 2026-10-18. Esta é a primeira entrega da F10; não habilita H5P nem
-altera o Composer lock, configuração ou Runtime.
+Revisão em 2026-10-18. Esta é a primeira entrega da F10; inclui os pacotes H5P
+no Composer, mas não habilita o módulo nem altera configuração Drupal ou o banco
+do Runtime.
 
-## Decisão técnica desta etapa
+## Instalação inicial e decisão técnica
 
-Não instalar nem habilitar `drupal/h5p` ou `drupal/lms_h5p` neste momento. A
+`drupal/h5p:^2.0@beta` foi resolvido como `2.0.0-beta1`, com `h5p/h5p-core`
+1.28.0 e `h5p/h5p-editor` 1.25: três instalações, zero upgrades e zero
+remoções no dry-run e na instalação. Composer validate passou (com warnings
+preexistentes de versões exatas) e `composer audit` não reportou advisories.
+Isso não equivale à cobertura de segurança Drupal: H5P não tem release estável
+coberta atualmente.
+
+O Composer scaffold inicialmente tentou substituir `web/.htaccess` e
+`web/sites/default/default.settings.php`; restaurei o `.htaccess` e configurei o
+scaffold para anexar a regra `.mjs` local ao arquivo Core em instalações futuras.
+Uma execução Composer posterior atualizou `default.settings.php` a partir do
+template da versão Core já instalada. Nenhuma configuração Drupal foi importada.
+Drush confirmou o Runtime
+`http://cursos.aculta.toca.net.br` / `aculta_runtime`; `h5p` e `h5p_editor`
+continuam desativados e a consulta read-only não encontrou tabelas `h5p_*`.
+
+Não habilitar `drupal/h5p` ou `drupal/lms_h5p` neste momento. A
 versão Drupal 11 disponível consultada é `2.0.0-beta1`; a página do projeto
 informa que não há release estável atualmente coberta pela política de
 advisories. O release lista como issue conhecida o upload de pacotes `.h5p`
@@ -21,9 +38,15 @@ contrato ACULTA atual: LMS continua a fonte única da tentativa e da nota, e
 nenhuma nota externa é aceita sem API confiável, identidade de tentativa,
 origem/autenticidade, repetição e autoria demonstradas.
 
-O projeto H5P não está no Composer lock nem instalado no Runtime; a verificação
-local de `composer show --locked` confirmou ambos. Não foram resolvidas
-dependências, baixadas bibliotecas H5P, instalados módulos ou criadas entidades.
+O H5P ainda não está habilitado no Runtime e não há connector LMS. Não foram
+baixadas bibliotecas de conteúdo H5P nem criadas entidades.
+
+O código prepara nome e e-mail da conta corrente no objeto `H5PIntegration`
+entregue ao JavaScript de conteúdo. Antes de habilitar conteúdo, é necessário
+confirmar quais tipos consomem ou enviam esses dados e reduzir a superfície de
+PII. A rotina de instalação comunica-se com o H5P Hub para atualizar o cache de
+tipos; instalação/ativação também exige validar esse tráfego e a política de
+telemetria no Homelab.
 
 ## Evidências consultadas
 
@@ -39,14 +62,17 @@ dependências, baixadas bibliotecas H5P, instalados módulos ou criadas entidade
   [LMS H5P](https://www.drupal.org/project/lms_h5p) declara ausência de
   cobertura de security advisory, release alpha, dependência do LMS XAPI e
   suporte a score automático via XAPI/LRS.
-- A análise é documental. Código executável, configuração de upload, CSP,
-  isolamento de iframe, política de bibliotecas e integração de respostas ainda
-  não foram revisados porque o pacote não está instalado.
+- O source local de `H5PDrupal::getGenericH5PIntegrationSettings()` entrega nome
+  e e-mail da conta autenticada ao JavaScript; `h5p_install()` anuncia
+  comunicação periódica com o Hub e envio de estatísticas anônimas de uso.
+- Foi feita inspeção inicial de permissões e rotas do source local. Não foram
+  testados upload, CSP, sandbox/isolamento de iframe, política de bibliotecas ou
+  integração de respostas; o módulo permanece desativado.
 
 ## Gate restante da F10
 
-Antes de qualquer instalação ou ativação, repetir a pesquisa em Drupal.org e
-Composer e exigir release/patch com política de segurança e a correção da issue
+Antes de ativar, repetir a pesquisa em Drupal.org e Composer e exigir
+release/patch com política de segurança e a correção da issue
 de upload demonstrada no tag exato. Em seguida, revisar source e testes de
 permissões, ingestão/validação de `.h5p`, bibliotecas executáveis, storage,
 cacheability, CSP e sandbox de iframe. Exercitar acesso do estudante/educador,
