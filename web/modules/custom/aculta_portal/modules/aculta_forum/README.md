@@ -1,10 +1,11 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo em preparação de `aculta_portal`. Linha do projeto: **0.1.0-dev.3**. O
+Submódulo de `aculta_portal`. Linha do projeto: **0.1.0-dev.4**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
-uma migração segura, por fase própria. Este diretório ainda é documental; não
-há `.info.yml`, rotas ou motor de discussão executável nesta base. `aculta_user`
+uma migração segura, por fase própria. A dev.4 introduz o módulo executável e
+a Context API; configuração de instalação/Config Sync foi aplicada apenas no
+Runtime de teste para smoke test, sem criar conteúdo. `aculta_user`
 já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC
 experimental compartilhado. A integração dos cartões nas discussões atuais e no
 motor novo segue por contexto e fases.
@@ -20,7 +21,7 @@ motor novo segue por contexto e fases.
 - Core/contrib permanecem fonte de verdade para Node, Comment, Taxonomy, Views,
   Search API, History e Flag. Sem storage paralelo de resposta/categoria.
 - Imagens passam por `aculta_image`; avisos pelo `aculta_messenger`.
-- Remoção do Forum contrib e qualquer exclusão de dados não fazem parte de dev.1.
+- Remoção do Forum contrib e qualquer exclusão de dados não fazem parte da dev.4.
 
 ## Documentação
 

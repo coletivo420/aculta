@@ -1,0 +1,27 @@
+uuid: 6e6f4a01-bee3-464f-b568-381bd4f332e7
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.aculta_discussion_post
+    - field.storage.comment.comment_body
+    - filter.format.usuario_aculta
+  module:
+    - text
+_core:
+  default_config_hash: nlxD1UU-BALKNxYY3WFr_HtiOAF-SE5tUsQZH2z-8io
+id: comment.aculta_discussion_post.comment_body
+field_name: comment_body
+entity_type: comment
+bundle: aculta_discussion_post
+label: Comentário
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    usuario_aculta: usuario_aculta
+field_type: text_long
+

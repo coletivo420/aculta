@@ -1,0 +1,10 @@
+services:
+  aculta_forum.discussion_context_resolver:
+    class: Drupal\aculta_forum\Context\DiscussionContextResolver
+    arguments: [!tagged_iterator aculta_forum.discussion_context_provider]
+
+  aculta_forum.discussion_context_provider.public_forum:
+    class: Drupal\aculta_forum\Context\Provider\PublicForumContextProvider
+    arguments: ['@aculta_portal.domain_purpose']
+    tags:
+      - { name: aculta_forum.discussion_context_provider }

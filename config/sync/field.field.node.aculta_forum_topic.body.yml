@@ -1,0 +1,27 @@
+uuid: 0ce254b1-1452-45ab-9e26-4934a06fd250
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.aculta_forum_topic
+  module:
+    - text
+_core:
+  default_config_hash: jen6NQ7gH_NQdNJ-CIyENpVOPijNiDjmLBamiVInPsA
+id: node.aculta_forum_topic.body
+field_name: body
+entity_type: node
+bundle: aculta_forum_topic
+label: Corpo
+description: 'Conteúdo inicial do tópico.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+  allowed_formats: {  }
+field_type: text_with_summary
+

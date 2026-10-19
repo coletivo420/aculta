@@ -1,6 +1,8 @@
 # Matriz de testes por fase
 
-Esta matriz é um plano. Nenhum teste de motor novo foi executado em `0.1.0-dev.1`.
+Esta matriz separa plano das evidências já executadas. Na `0.1.0-dev.4`, a
+Context API pública e configuração nativa foram exercitadas no Runtime de teste;
+os demais contextos e fluxos completos continuam planejados.
 
 | Camada | Casos mínimos | Evidência |
 | --- | --- | --- |
@@ -20,6 +22,22 @@ Esta matriz é um plano. Nenhum teste de motor novo foi executado em `0.1.0-dev.
 | UX/acessibilidade | mobile, teclado, foco, leitor de tela, light/dark, reduced motion e fallback sem JS | Firefox/browser, auditoria manual e automatizada existente. |
 | Performance | listagens, thread grande, Views, Query counts e contagens/cache | profiling comparável; limites definidos na fase de benchmark. |
 | Remoção/migração | dry run, inventário, exclusão escopada, uninstall, composer remove, rollback/restauro e ausência de residuais | prova somente no Runtime de teste e ponto de recuperação revisado. |
+
+## Evidência `0.1.0-dev.4` (2026-10-19)
+
+- Unit aculta_forum: resolver/provider, 7 testes e 25 assertions — executado.
+- Unit Portal `ContentPurposeResolver`: 2 testes/2 assertions para o bundle novo e o legado — PASS.
+- Gate Drupal 11+: 969 checks; fronteira módulo/tema: 1.290 verificações;
+  mapa: 154 checks; pacotes de módulos próprios: 21 checks — PASS.
+- No servidor `toca`, host de teste `growroom420.aculta.toca.net.br`, Drupal
+  11.4.10: módulo instalado, serviço `DiscussionContextResolver` resolvido,
+  campos `body`, `field_aculta_categories` e `field_aculta_discussion` presentes,
+  zero Nodes do novo bundle. Config Sync não mostra divergência nos objetos
+  novos. Nenhum tópico/resposta de usuário foi criado.
+- PHP CLI do servidor reporta 8.4.26; o gate de versão de PHP 8.5 permanece
+  pendente de validação pelo PHP-FPM/runtime web.
+- Nenhum provider de Publicação/LMS/Wiki, acesso de escrita/moderação, Views,
+  UX ou navegação pública foi homologado nesta subfase.
 
 Gates aplicáveis seguem `scripts/validate-aculta-portal-drupal11.php`, fronteira
 módulo/tema, mapa módulo-tema, slugs, rotas, endereços, imagem, hierarquia de

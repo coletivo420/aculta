@@ -1,3 +1,10 @@
+## 0.4.0-dev.165 — Context API do ACULTA Forum — 2026-10-19
+
+- Adicionado o módulo executável `aculta_forum` com Context API extensível, provider do tópico público e configuração de instalação nativa Node/Comment/Taxonomy; configuração instalada apenas no Runtime de teste.
+- Canonicalização multidomínio reconhece `aculta_forum_topic` como pertencente ao purpose `forum`, preservando o roteamento legado durante a migração.
+- Corrigida a orientação ambiental: no servidor de teste `toca`, Drush sem `--uri` mostrar `http://default` é esperado para `aculta_runtime`; o host/purpose deve ser explícito em operações sensíveis a domínio.
+- RUNTIME STATUS: PARTIAL — habilitado no Runtime `aculta_runtime` do servidor de teste em `growroom420.aculta.toca.net.br`; serviço e campos conferidos, zero conteúdo criado. PHP CLI 8.4.26; PHP-FPM/web 8.5 não foi confirmado.
+
 ## 0.4.0-dev.164 — cartões de autoria compartilhados — 2026-10-19
 
 - Registra `aculta_user.author_card_builder` no inventário administrativo de Helpers; serviço com documentação própria e responsabilidade compartilhada entre o submódulo e o ACULTA420.

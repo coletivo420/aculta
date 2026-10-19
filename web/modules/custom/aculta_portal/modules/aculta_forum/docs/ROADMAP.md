@@ -38,11 +38,13 @@ Runtime.
 - Unit e gates estáticos direcionados em execução; browser/Runtime não validados,
   RUNTIME STATUS: DEFERRED.
 
-## `0.1.0-dev.4` — Motor executável
+## `0.1.0-dev.4` — Motor executável (fundação)
 
-- Módulo `aculta_forum`, Context API/providers, Node/Comment/Taxonomy e Views.
-- Configuração exportável, serviços DI, permissões, rotas e testes iniciais.
-- Validar nomes <=32, instalação e uso real de Comment em mais de um contexto.
+- Módulo `aculta_forum`, Context API, resolver extensível e provider do fórum público.
+- Configuração de instalação de Node/Comment/Taxonomy para tópicos independentes.
+- Testes unitários de resolução, suporte e ambiguidade de providers.
+- Views, formulários, permissões contextuais completas, instalação/runtime e prova Kernel multi-contexto seguem para fases posteriores; nenhum update/import é executado aqui.
+- Runtime de teste habilitado com `--uri=https://growroom420.aculta.toca.net.br`; serviço/configuração conferidos, nenhum Node de teste criado. PHP CLI 8.4.26 limita a validação da baseline 8.5; PHP-FPM/web ainda pendente.
 
 ## `0.1.0-dev.5` — Retirada do Forum contrib
 

@@ -47,10 +47,16 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 
 ## Fórum (`forum`)
 
-- Não criar entidade Topic, Reply, tabela de fórum ou tabela de comentários. Usar Forum,
-  Node e Comment nativos.
-- Não criar `ForumController` só para reconstruir a listagem nativa. Mapear rotas nativas antes
-  de escrever subscriber.
+- Estado legado atual: enquanto `drupal/forum` não for removido na fase de migração aprovada,
+  preservar sua operação e não desinstalar/desabilitar nem apagar dados como efeito colateral.
+- Arquitetura alvo ACULTA Forum: tópico público independente é bundle de Node; respostas e
+  comentários contextuais usam Comment; categorias usam Taxonomy; navegação/listagem usa Views.
+  Não criar entidades Topic/Reply próprias, tabelas de discussão ou storage paralelo.
+- Publicações, LMS e Wiki discutem na própria entidade/contexto autorizado; não criar tópico
+  público automático para publicação, atividade, turma ou verbete. O provider LMS é opcional e
+  revalida Group/membership; a Wiki aguarda sua reimplementação.
+- Não criar `ForumController` só para reconstruir a listagem nativa. Mapear rotas e Views nativas
+  antes de escrever controller/subscriber custom.
 - Acesso direto a um tópico em host incorreto é bloqueado pela política multidomínio.
 - Acompanhar tópico e favoritos usam Flag, não storage custom.
 - Moderação reutiliza permissões, Comment, Node, Views e ferramentas administrativas. O Portal
