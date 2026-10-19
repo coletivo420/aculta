@@ -77,13 +77,17 @@ final class ParticipationHooks {
     }
     $settings = $this->rules->settings();
     $uid = (int) $account->id();
-    $result = AccessResult::neutral()->addCacheContexts(['user'])->addCacheTags(['comment_list']);
+    $result = AccessResult::neutral()
+      ->addCacheContexts(['user'])
+      ->addCacheTags(['comment_list', ...$this->rules->settingsCacheTags()]);
 
     $firstCommentPending = $isLegacyForumTopic
       ? $this->rules->firstCommentPending($uid)
       : $this->rules->firstDiscussionCommentPending($uid);
     if ($settings['bloqueio_ate_aprovacao'] && $firstCommentPending) {
-      return AccessResult::forbidden('Seu primeiro comentário aguarda moderação.')->addCacheContexts(['user'])->addCacheTags(['comment_list']);
+      return $this->forbidden(
+        'Seu primeiro comentário aguarda moderação.',
+      );
     }
     if ($settings['topico_limite_ativo']) {
       $published = $isLegacyForumTopic
@@ -91,10 +95,21 @@ final class ParticipationHooks {
         : $this->rules->publishedPublicForumCommentCount($uid);
       $minimum = (int) $settings['topico_comentarios_minimos'];
       if ($published < $minimum) {
-        return AccessResult::forbidden('Você pode criar tópicos a partir de ' . $minimum . ' comentários publicados. Você tem ' . $published . '.')->addCacheContexts(['user'])->addCacheTags(['comment_list']);
+        return $this->forbidden(
+          'Você pode criar tópicos a partir de ' . $minimum . ' comentários publicados. Você tem ' . $published . '.',
+        );
       }
     }
     return $result;
+  }
+
+  /**
+   * Creates a user-specific denial invalidated by comment and settings changes.
+   */
+  private function forbidden(string $reason): AccessResult {
+    return AccessResult::forbidden($reason)
+      ->addCacheContexts(['user'])
+      ->addCacheTags(['comment_list', ...$this->rules->settingsCacheTags()]);
   }
 
 }

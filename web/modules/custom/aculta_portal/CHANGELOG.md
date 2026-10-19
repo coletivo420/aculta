@@ -1,9 +1,14 @@
+## 0.4.0-dev.168 — invalidação de cache nas regras de participação — 2026-10-19
+
+- Resultados de acesso à criação de tópicos agora incluem as cache tags de `aculta_user.settings`, além de usuário e lista de comentários. Mudanças nas opções administrativas invalidam decisões de acesso em cache.
+- Teste Kernel `PublicDiscussionModerationKernelTest`: 5 testes/62 assertions PASS em `aculta_simpletest`; PHPCS, gate Drupal 11+ (969 checks), PHP lint e `git diff --check` PASS. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.167 — moderação inicial compartilhada em discussões públicas — 2026-10-19
 
 - `aculta_user` aplica a aprovação inicial em qualquer Node com `field_aculta_discussion`, exceto `aculta_lms_topic`. Comentário LMS publicado conta como participação aprovada nos demais contextos e remove o bloqueio temporário de criação de tópico.
 - O painel de participação permite desativar a política pública, além dos controles existentes de limite de tópico, bloqueio enquanto há aprovação pendente e papéis isentos.
-- Teste Kernel dedicado: 5 testes/61 assertions PASS em `aculta_simpletest`, incluindo comentário LMS publicado contando como aprovação e removendo bloqueio temporário. Gate Drupal 11+ (969 checks), PHPCS e `git diff --check` PASS. Fields da Revista continuam sem ativação no Runtime.
-- `aculta_user` atualizado para `0.4.0-dev.28`. RUNTIME STATUS: DEFERRED para comentários novos e UI administrativa.
+- Teste Kernel dedicado: 5 testes/62 assertions PASS em `aculta_simpletest`, incluindo comentário LMS publicado contando como aprovação, removendo bloqueio temporário e cache tag para opções administrativas. Gate Drupal 11+ (969 checks), PHPCS e `git diff --check` PASS. Fields da Revista continuam sem ativação no Runtime.
+- `aculta_user` atualizado para `0.4.0-dev.29`. RUNTIME STATUS: DEFERRED para comentários novos e UI administrativa.
 
 ## 0.4.0-dev.166 — provider de contexto para comentários editoriais — 2026-10-19
 

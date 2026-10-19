@@ -184,6 +184,7 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
 
     self::assertNotNull($result);
     self::assertTrue($result->isForbidden());
+    self::assertContains('config:aculta_user.settings', $result->getCacheTags());
   }
 
   /**

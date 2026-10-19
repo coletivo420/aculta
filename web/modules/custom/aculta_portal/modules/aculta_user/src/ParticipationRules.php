@@ -46,6 +46,16 @@ final class ParticipationRules {
   }
 
   /**
+   * Cache tags invalidated when participation settings change.
+   *
+   * @return string[]
+   *   Configuration cache tags.
+   */
+  public function settingsCacheTags(): array {
+    return $this->configFactory->get('aculta_user.settings')->getCacheTags();
+  }
+
+  /**
    * Whether the account is exempt by role.
    */
   public function isExempt(AccountInterface $account): bool {

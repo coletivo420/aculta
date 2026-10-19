@@ -28,7 +28,7 @@ Runtime e fluxos completos continuam pendentes.
 
 ## Evidência dev.5 — política de aprovação inicial compartilhada
 
-- PHPUnit Kernel `PublicDiscussionModerationKernelTest`: 5 testes / 61
+- PHPUnit Kernel `PublicDiscussionModerationKernelTest`: 5 testes / 62
   assertions — PASS em MariaDB `aculta_simpletest` (PHP CLI 8.4.26).
 - Cobertura: comentários LMS permanecem publicados sem moderação; uma publicação
   LMS conta como aprovada para contextos não LMS e libera o bloqueio temporário;
@@ -36,6 +36,8 @@ Runtime e fluxos completos continuam pendentes.
   comentário não LMS pendente bloqueia criação de tópico quando configurado.
 - `phpcs --standard=Drupal` nos arquivos PHP alterados: PASS. Gate Drupal 11+:
   969 checks — PASS. `git diff --check` — PASS.
+- As decisões de acesso incluem a tag `config:aculta_user.settings`; mudar as
+  opções administrativas invalida o resultado cacheado.
 - Runtime editorial e instalação/atualização de configuração continuam
   DEFERRED. Nenhum conteúdo ou configuração persistente foi alterado.
 
