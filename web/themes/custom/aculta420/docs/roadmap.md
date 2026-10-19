@@ -1,6 +1,10 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-19 (Webform no Bootstrap 5 `0.6.0-dev.93`; cartão de autoria experimental `0.6.0-dev.91`; validação visual/Runtime pendente). Dívidas e pendências, com evidência,
+| Versão | Estado | Marcação | Conteúdo |
+| --- | --- | --- | --- |
+| 0.6.0-dev.97 | Apresentação de tópicos ACULTA Forum | Gates PASS; render Runtime não salvo PASS; inspeção visual no navegador pendente | `node--aculta-forum-topic.html.twig`; identidade via `aculta_user`; tokens em `forum-index.css` |
+
+Atualizado em 2026-10-19 (`0.6.0-dev.97`; validação visual no navegador pendente). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 

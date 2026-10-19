@@ -1,0 +1,27 @@
+{#
+/**
+ * @file
+ * Presentation for independent ACULTA Forum topics.
+ *
+ * Author identity is rendered by the authorized author card in content. Core's
+ * submitted-byline can expose an account picture outside aculta_user's privacy
+ * policy, so this presenter keeps only the date.
+ */
+#}
+<article{{ attributes.addClass('aculta-forum-topic') }}>
+  {{ title_prefix }}
+  {% if label and view_mode != 'full' %}
+    <h2{{ title_attributes }}>
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    </h2>
+  {% endif %}
+  {{ title_suffix }}
+
+  {% if display_submitted and date %}
+    <footer class="aculta-forum-topic__meta">{{ date }}</footer>
+  {% endif %}
+
+  <div{{ content_attributes }}>
+    {{ content }}
+  </div>
+</article>

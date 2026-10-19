@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.96', 'Theme metadata marks the current version 0.6.0-dev.96.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.97', 'Theme metadata marks the current version 0.6.0-dev.97.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -264,6 +264,10 @@ $expectedTemplates = [
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
   'node--project--teaser.html.twig',
+  // ACULTA Forum topic uses the aculta_user card and omits Core's unfiltered user picture/byline.
+  'node--aculta-forum-topic.html.twig',
+  // Shared discussion comment presenter added in 0.6.0-dev.96.
+  'comment--aculta-discussion-post.html.twig',
   // Caixa do Google com logo do tema e estado "Conectado" (f96bb4d, já no main; a allowlist não foi atualizada na época).
   'login-with.html.twig',
   // Modelo padrão da Revista (0.6.0-dev.21): Notícia e blog chamam o mesmo componente revista-publication.

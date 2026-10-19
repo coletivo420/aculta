@@ -1,3 +1,12 @@
+## 0.6.0-dev.97 — identidade autorizada em tópicos públicos — 2026-10-19
+
+Classificação: PATCH de apresentação, sem alteração de contrato funcional.
+
+- `node--aculta-forum-topic.html.twig` preserva o markup e atributos do Node, apresenta o cartão preparado pelo `aculta_user` e omite `author_picture`/`author_name` do byline padrão do Core. Isso evita uma segunda fonte de avatar que não aplica a política de privacidade do perfil.
+- `forum-index.css` apresenta teasers, metadados e categorias com tokens semânticos e foco visível, em modos claro/escuro sem ramificação visual.
+- O gate da Foundation também volta a reconhecer `comment--aculta-discussion-post.html.twig`, incluído na dev.96 mas ausente da allowlist anterior; nenhum template foi removido para silenciar o gate.
+- Gates: Foundation 354 checks, SDC 516, design 2078, Portal boundary 1331, map 154 PASS. Runtime `toca`: `renderInIsolation()` de Node não salvo selecionou o presenter e incluiu `aculta-author-card`; o byline/imagem padrão Core ficou ausente. Zero Nodes gravados. Inspeção visual em navegador pendente. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.96 — apresentação dos comentários compartilhados — 2026-10-19
 
 Classificação: PATCH visual para a experiência de discussão.
