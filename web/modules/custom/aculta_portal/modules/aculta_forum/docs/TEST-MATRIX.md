@@ -26,6 +26,19 @@ Runtime e fluxos completos continuam pendentes.
 | Performance | listagens, thread grande, Views, Query counts e contagens/cache | profiling comparável; limites definidos na fase de benchmark. |
 | Remoção/migração | dry run, inventário, exclusão escopada, uninstall, composer remove, rollback/restauro e ausência de residuais | prova somente no Runtime de teste e ponto de recuperação revisado. |
 
+## Evidência dev6 — autorização de moderação por e-mail confirmado
+
+- PHPUnit Unit `ForumModerationHooksTest`: 5 testes / 21 assertions — PASS.
+- Cobertura: editor confirmado pode editar/excluir tópico de outra pessoa;
+  editor sem marcador confirmado é negado mesmo com papel `email_confirmed`;
+  autoria própria segue o access handler normal; bundle alheio não é afetado;
+  bypass administrativo permanece.
+- PHPCS Drupal/DrupalPractice, lint PHP, gate Drupal 11+ (969), pacotes próprios
+  (22), fronteira módulo/tema (1.304), mapa (154) e `git diff --check` — PASS.
+- Runtime de teste: DEFERRED. Nenhuma permissão, configuração ou conteúdo foi
+  aplicado no Runtime. A listagem Views/CTools e o fluxo de moderação ainda
+  precisam de validação integrada.
+
 ## Evidência dev.5 — política de aprovação inicial compartilhada
 
 - PHPUnit Kernel `PublicDiscussionModerationKernelTest`: 5 testes / 63

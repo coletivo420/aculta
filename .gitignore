@@ -7,11 +7,11 @@
 /vendor/
 
 # Drupal Core and contributed dependencies managed by Composer
+# web/libraries/ é versionado: bibliotecas front-end publicadas no GitHub (decisão do responsável).
 /web/core/
 /web/modules/contrib/
 /web/themes/contrib/
 /web/profiles/contrib/
-/web/libraries/
 
 # Local Drupal settings - contains database credentials
 /web/sites/*/settings.php

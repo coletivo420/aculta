@@ -1,5 +1,11 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.30 — moderação segura dos tópicos públicos novos — 2026-10-19
+
+- `ForumModerationHooks` cobre `aculta_forum_topic`: `content_editor` pode moderar tópicos de outros autores somente quando o marcador consultado por `EmailConfirmationPolicy` confirma o e-mail. Não foram concedidas permissões genéricas de editar/excluir qualquer tópico ao papel.
+- A autoria própria continua no access nativo do Node; conteúdo histórico mantém sua exceção; administrador mantém bypass. As decisões incluem variação por `user.roles` e tags da entidade.
+- Teste Unit: 4 testes/18 assertions PASS. Runtime de teste sem alteração persistente; RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.29 — cache das decisões de participação — 2026-10-19
 
 - `ParticipationHooks` adiciona a cache tag `config:aculta_user.settings` e o contexto `user.roles` às decisões de acesso para criação de tópicos, junto à tag `comment_list` e ao contexto `user`. Mudanças de configuração ou papéis invalidam/variam o resultado cacheado.

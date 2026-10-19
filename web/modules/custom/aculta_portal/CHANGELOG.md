@@ -1,3 +1,8 @@
+## 0.4.0-dev.170 — moderação de tópico novo exige confirmação — 2026-10-19
+
+- A autorização para `content_editor` moderar Nodes `aculta_forum_topic` consulta a política central de confirmação real do e-mail. A regra não amplia o papel para `edit any`/`delete any`; criação e edição própria usam permissões nativas.
+- Teste Unit do access hook: 4 testes/18 assertions PASS. Validações estáticas e sintaxe ficam registradas no commit. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.169 — habilitação de permissões do tópico público — 2026-10-19
 
 - Config Sync registra `aculta_forum` como extensão habilitada e declara as permissões nativas do bundle `aculta_forum_topic`: participantes confirmados criam/editam/excluem os próprios tópicos. Moderação por editor fica pendente de access check que valide confirmação de e-mail; não há concessão direta de `edit any`/`delete any`. O bypass administrativo permanece do Core.

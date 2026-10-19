@@ -32,7 +32,7 @@ entidade é carregada pelo Entity API e o acesso é revalidado na operação.
 
 | Nome proposto | Uso | Estado/validação |
 | --- | --- | --- |
-| `aculta_forum_topic` | Node para tópico independente público | Bundle/Comment/Taxonomy em `config/install` e Config Sync; máquina <=32 caracteres. `aculta_forum` está habilitado no Runtime de teste; nenhum tópico foi criado. Permissões de criação e gestão do próprio tópico declaradas na dev.6. Moderação por editor aguarda access check com confirmação de e-mail. |
+| `aculta_forum_topic` | Node para tópico independente público | Bundle/Comment/Taxonomy em `config/install` e Config Sync; máquina <=32 caracteres. `aculta_forum` está habilitado no Runtime de teste; nenhum tópico foi criado. Permissões de criação e gestão do próprio tópico declaradas na dev.6. `content_editor` modera tópicos de outros autores pelo access hook do `aculta_user`, que exige confirmação real de e-mail. |
 | `aculta_lms_topic` | Node para discussão pedagógica reservada | Planejado para adapter LMS; dependência opcional evita ciclo Forum↔LMS. |
 | `aculta_discussion_post` | bundle Comment compartilhado | Configuração de Comment em Node preparada na dev.4; suporte reutilizável em outros bundles Node ainda requer prova Kernel na dev.7/integrações. |
 | `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | Configuração de instalação adicionada na dev.4; a substituição do vocabulário `forums` fica para migração autorizada. |
@@ -53,6 +53,10 @@ não concede autorização para criar configuração ou instalar entidades nesta
 - Pesquisa e aviso: elegível para descoberta pública apenas se publicado e acessível.
 - Identificador estável: `public_forum:node:{uuid}`. O UUID é obtido da entidade; não do request.
 - Nesta fase, acesso de escrita e moderação retorna neutral com dependência de cache da entidade. Ações de Comment ainda exigem a verificação nativa de campo/entidade e serão integradas depois.
+
+### CTools nas listagens do Fórum
+
+Views permanece responsável pela consulta, filtros fixos, acesso e cache. Para blocos de Views do Fórum com ajustes editoriais por posicionamento, usar `ctools_views` para quantidade e pager; não expor controles de filtro, campo ou ordenação e não usar CTools como substituto do Entity Access. A listagem e os filtros do novo Fórum ainda serão implementados na fase dev.6; esta decisão segue `docs/CTOOLS.md`.
 
 ### `publication` — provider adicionado na dev.5
 
