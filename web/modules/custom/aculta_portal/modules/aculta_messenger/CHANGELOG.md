@@ -10,6 +10,13 @@ Mudanças relevantes do ACULTA Messenger.
 - Validação no navegador (Firefox, sessão X11, conta de teste): caixas por membro, diálogos de "Bloquear" e "Desfazer amizade" com título e pergunta, Cancelar fecha e reabre, "Desbloquear" e "Bloquear" (clique em "Sim") gravam e voltam à conversa com "Atualizado.". O clique em "Sim" só funcionou após a correção de `0.1.1-dev.49`/tema `0.6.0-dev.89`.
 - RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild). Estado de teste restaurado: sem bloqueios, amizade preservada.
 
+## 0.1.1-dev.51 — duplicação entre as ações do "Opções" e da caixa de membro
+
+- `submitRelationshipForm()`: o núcleo comum (POST, `form_build_id` fora do input, `setUserInput`, construção do formulário com os serviços) sai de `runRelationshipAction` e `runMemberAction`. `resultMessage()` lê a mensagem do resultado nas duas.
+- Cada ação mantém só o que é dela: modo "notice" e passo de "Limpar histórico" na conversa; o alvo do membro na caixa.
+- Validado no Firefox (X11): "Sim" de bloqueio gravou pelo caminho refatorado; resultado na caixa; "Desbloquear" restaurou (sem bloqueios, amizade preservada).
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild).
+
 ## 0.1.1-dev.50 — revisão do /code-review: resultado na caixa de quem agiu e limpeza
 
 - O resultado de "Bloquear", "Desbloquear" e "Desfazer amizade" aparece na caixa do membro que agiu, aberta, e não no menu "Opções" da conversa (`memberPanel`, `memberBoxes`).

@@ -233,12 +233,6 @@ final class MessagesController extends ControllerBase {
   private function runRelationshipAction(PrivateMessageThreadInterface $thread): array {
     $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
     $state = $this->threadFormState($thread, ($input['mode'] ?? '') === 'notice');
-    // getForm() takes the method from the request; this state is built by hand, so it is set here.
-    $state->setRequestMethod('POST');
-    // No cached form: a form that comes back from the form cache is unserialized without its constructor services,
-    // so its submit would read uninitialized properties. The form is built here, with its services, from the input.
-    unset($input['form_build_id']);
-    $state->setUserInput($input);
     // A notice posts its own buttons (for example "Clique aqui para desbloquear"): process them as the notice does.
     if (($input['mode'] ?? '') === 'notice') {
       $state->set('mode', 'notice');
@@ -246,11 +240,11 @@ final class MessagesController extends ControllerBase {
     if (($input['clear_step'] ?? '') === 'confirm') {
       $state->set('clear_step', 'confirm');
     }
-    $this->forms->buildForm(ConversationRelationshipForm::class, $state);
+    $this->submitRelationshipForm($state, $input);
     // The confirmation step is shown only right after "Limpar histórico" was pressed. Any other action ends it.
     $trigger = (string) ($state->getTriggeringElement()['#name'] ?? '');
     return array_filter([
-      'message' => $state->get('message') === NULL ? NULL : (string) $state->get('message'),
+      'message' => $this->resultMessage($state),
       'clear_step' => $trigger === 'clear' ? $state->get('clear_step') : NULL,
       // After a confirmed clear the answer is the list: the conversation is not rendered in the same response.
       'cleared' => $trigger === 'clear_confirm' ? TRUE : NULL,
@@ -323,15 +317,25 @@ final class MessagesController extends ControllerBase {
   /** Runs the posted action of one member's box with the request's input. Returns the message the box shows. */
   private function runMemberAction(PrivateMessageThreadInterface $thread, UserInterface $user): array {
     $state = $this->memberFormState($thread, $user);
+    $this->submitRelationshipForm($state, $this->requestStack->getCurrentRequest()?->request->all() ?? []);
+    return array_filter(['message' => $this->resultMessage($state)], fn($value) => $value !== NULL);
+  }
+
+  /**
+   * Runs the posted "Opções" form with the request's input, as the drawer's POST does. The form is built here, with
+   * its services, from the input: a cached copy loses its constructor services, and its submit would read uninitialized
+   * properties. The state's target (a member's box) or thread (the conversation's menu) decides what the submit acts on.
+   */
+  private function submitRelationshipForm(FormState $state, array $input): void {
     $state->setRequestMethod('POST');
-    $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
-    // The form is built here, with its services, from the input (a cached copy loses its constructor services).
     unset($input['form_build_id']);
     $state->setUserInput($input);
     $this->forms->buildForm(ConversationRelationshipForm::class, $state);
-    return array_filter([
-      'message' => $state->get('message') === NULL ? NULL : (string) $state->get('message'),
-    ], fn($value) => $value !== NULL);
+  }
+
+  /** The message the submit left for the member, or NULL when the action set none. */
+  private function resultMessage(FormState $state): ?string {
+    return $state->get('message') === NULL ? NULL : (string) $state->get('message');
   }
 
   /**
