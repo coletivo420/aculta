@@ -32,6 +32,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `node_access_records` | `RestrictedForumHooks::nodeAccessRecords` | `src/Hook/RestrictedForumHooks.php` |
 | `node_grants` | `RestrictedForumHooks::nodeGrants` | `src/Hook/RestrictedForumHooks.php` |
 | `node_view` | `DiscussionHooks::nodeView` | `src/Hook/DiscussionHooks.php` |
+| `entity_view` | `PublicForumTopicAuthorHooks::entityView` | `src/Hook/PublicForumTopicAuthorHooks.php` |
 | `page_attachments` | `PhotoFlowPageHooks::pageAttachments` | `src/Hook/PhotoFlowPageHooks.php` |
 | `query_node_access_alter` | `RestrictedForumHooks::queryNodeAccessAlter` | `src/Hook/RestrictedForumHooks.php` |
 | `simple_sitemap_links_alter` | `RestrictedForumHooks::simpleSitemapLinksAlter` | `src/Hook/RestrictedForumHooks.php` |

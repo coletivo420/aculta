@@ -24,6 +24,7 @@ continuam pendentes.
 | Cache | tags/context/max-age em variações por usuário/permissão/Group/membership, revogação e conteúdo despublicado | Kernel + Functional; inspeção de cache. |
 | Notificações | dedupe, agrupamento, opt-in e confirmação, revalidação de acesso na fila, retirada/revogação, zero conteúdo sensível | Unit/Kernel do produtor e messenger + Functional. |
 | Autoria | conta privada, apelido alterado, foto/privacidade, usuário bloqueado, autor legado, dados ausentes | Unit/Kernel + browser e cache. |
+| Autoria de tópico novo | User usa `author_forum`; referência histórica usa `author_growroom_historico`; nenhuma conversão para conta; somente `full`/`teaser` | Unit `PublicForumTopicAuthorHooksTest` e `AuthorIdentityTest`: 6 testes/23 assertions PASS. Runtime: hook registrado; node `unsaved` em memória renderizou `author_forum`, contagem permaneceu 0. Tópico persistido/browser pendentes. |
 | Imagens/anexos | ingestão obrigatória aculta_image, uso/referências, anexo privado, substituição e limpeza | Gate `validate-aculta-image.php`, Kernel + testes de acesso. |
 | Moderação | criar, editar, sinalizar, aprovar, ocultar, despublicar, bloquear, auditoria | Unit/Kernel/Functional por papel. |
 | Acervo Growroom restaurado | autoria por `field_autor_legado`; edição/exclusão/aprovação negadas a qualquer papel; tópico fechado; bulk admin e IDs adulterados rejeitados | Unit `ForumModerationHooksTest`; Kernel/Functional de importação e access pendentes. Não confundir com Nodes `forum` do módulo contrib, cuja retirada é separada. |

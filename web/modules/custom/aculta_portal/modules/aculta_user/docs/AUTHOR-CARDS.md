@@ -1,6 +1,7 @@
 # Cartões de identidade e autoria
 
-Status: etapa `aculta_forum 0.1.0-dev.3`. `aculta_user` possui políticas,
+Status: cartões de `author_forum` integrados aos tópicos do bundle novo na linha
+`aculta_user 0.4.0-dev.33`. `aculta_user` possui políticas,
 links, perfil, avatar e memória histórica. `AuthorIdentityResolver`,
 `AuthorIdentity` e `AuthorCardBuilder` compõem identidade, avatar cacheável e
 render array neutro; ACULTA420 apresenta o cartão SDC. Ações e dados adicionais
@@ -22,6 +23,7 @@ seguem responsabilidade de consumidores autorizados, sem duplicação no Forum.
 | `FriendshipManager` / `FriendshipManagerInterface` | Estado e ações de amizade | perfil e Messenger | `author_forum`, `author_comment`, `profile_full` quando autorizado | Reusar API existente; ocultar ação quando inelegível. |
 | `BadgeService` / `AchievementDefinitions` | Conquistas e fatos | perfil/Game | variantes autorizadas | Reusar sem conceder prémios no render e respeitar privacidade de conquistas. |
 | `DiscussionHooks` em `aculta_user` | Trecho/link de comentário de tópico vinculado | Magazine (hoje links para Node Forum) | `author_comment` | Refatorar para o host comentário; remover acoplamento `comment_forum` após substituição. |
+| `PublicForumTopicAuthorHooks` | Cartão da autoria User ou histórica nos tópicos novos | Node `aculta_forum_topic`, `full`/`teaser` | `author_forum` / `author_growroom_historico` | Integrado pelo `AuthorCardBuilder`; não consulta campos Profile diretamente e não converte autores históricos em User. |
 | `ForumTopicPresentationHooks`, `ForumModerationHooks`, `RestrictedForumHooks`, `RestrictedForumGrants`, `ParticipationRules` | Apresentação/acesso/moderação ligados aos bundles antigos | Forum contrib | `author_forum` + política contextual | Refatorar/migrar conforme paridade e ownership da nova API. |
 | `ActivityController` | Aba de atividade Wiki/Fórum/Revista/Comentários/conquistas | perfil/conta | `profile_compact` ou list views | Estender a nova fonte de tópico/comentário; não duplicar consulta de perfil. |
 | `comment--comment-forum.html.twig` | Avatar/nome/data/resposta em cartão de mensagem | Comment contrib | `author_forum` ou `author_comment` via tema | Ainda usa saída legada; integrar ao novo builder junto do novo motor, sem duplicar dados no tema. |

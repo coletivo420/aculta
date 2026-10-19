@@ -6,6 +6,11 @@
 
 # Changelog — aculta_user
 
+## 0.4.0-dev.33 — cartões de autoria nos tópicos ACULTA Forum — 2026-10-19
+
+- `PublicForumTopicAuthorHooks` usa `AuthorCardBuilder` para `author_forum` em tópicos User e `author_growroom_historico` em tópicos importados com autoria legada. Integra apenas bundles `aculta_forum_topic` em `full`/`teaser`; outros bundles e modos seguem intactos.
+- A policy e cache do resolver de identidade permanecem fonte de verdade; acervo histórico não vira User. `PublicForumTopicAuthorHooksTest` + `AuthorIdentityTest`: 6 testes/23 assertions PASS; PHPCS e lint PASS. Runtime após cache rebuild confirmou o hook OOP registrado; um Node unsaved em memória com uid de teste produziu `author_forum`, com contagem de tópicos inalterada. RUNTIME STATUS: PARTIAL; listagem vazia impede inspeção de um tópico persistido.
+
 ## 0.4.0-dev.31 — acervo Growroom importado em modo somente leitura — 2026-10-19
 
 - Tópicos `aculta_forum_topic` e Comments `aculta_discussion_post` vinculados com `field_autor_legado` não podem ser editados, excluídos ou aprovados; a negação ocorre antes do bypass administrativo. A discussão é fechada no presave de tópicos históricos, inclusive na importação. Bundles contrib `forum`/`comment_forum` não são confundidos com a restauração.

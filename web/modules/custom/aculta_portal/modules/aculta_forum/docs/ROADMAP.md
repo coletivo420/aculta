@@ -104,6 +104,15 @@ Dev.15 adiciona filtro exposto de categoria ao Page display, usando Taxonomy e
 Views Core no vocabulário ACULTA. Runtime confirmou o plugin, renderização do
 seletor e resposta 200 com query; o vocabulário está vazio, sem termos cadastrados.
 
+`aculta_user 0.4.0-dev.33` integra os cartões `author_forum` e
+`author_growroom_historico` nos modos full/teaser de `aculta_forum_topic`. A
+integração não altera cartões de comentários, autoria editorial, LMS ou Wiki;
+Runtime confirmou a implementação OOP e `author_forum` em Node não salvo em
+memória, sem alterar o total de tópicos. Render de tópico persistido e inspeção
+visual seguem pendentes. A última checagem HTTP direta da raiz retornou 301 para
+`/discussoes`; uma requisição com query de diagnóstico retornou 200. A rota direta
+continua restrita e o efeito do cache/normalizador precisa ser esclarecido.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,

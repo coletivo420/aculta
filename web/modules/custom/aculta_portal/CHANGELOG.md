@@ -1,3 +1,8 @@
+## 0.4.0-dev.183 — autoria dos tópicos novos via ACULTA User — 2026-10-19
+
+- `aculta_user 0.4.0-dev.33` integra `AuthorCardBuilder` nos Nodes `aculta_forum_topic`: User usa `author_forum`, autoria legada usa `author_growroom_historico`; apenas full/teaser. O Forum não cria cartão nem consulta dados de perfil.
+- Moderação LMS continua dos Educadores com acesso pedagógico contextual; nenhuma regra LMS alterada. Unit do hook e identidade: 6 testes/23 assertions PASS, PHPCS e lint PASS. Runtime registrou o hook e renderizou `author_forum` num Node em memória; contagem permaneceu 0. A rota raiz com URL sem query respondeu 301 para `/discussoes`, enquanto a requisição de diagnóstico com query respondeu 200; causa/cache da diferença pendente de investigação visual/HTTP. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.182 — filtro de categoria no índice público do Fórum — 2026-10-19
 
 - View pública oferece filtro hierárquico Core Taxonomy para `aculta_forum_categories`; filtro continua no domínio ativo e no bundle público novo, sem afetar o índice legado. Cache da página inclui query args.
