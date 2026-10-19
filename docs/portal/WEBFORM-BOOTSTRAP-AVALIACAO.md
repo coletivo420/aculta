@@ -74,3 +74,49 @@ Os três itens são de baixa prioridade. Nenhum é necessário para os forms atu
 - Código local: `web/modules/contrib/webform/modules/webform_bootstrap/` (módulo, hooks, `install`, `info.yml`, `README.md`, CSS e JS); `web/modules/contrib/webform/src/WebformThemeManager.php` (`getActiveThemeNames`, `isActiveTheme`); `web/themes/contrib/bootstrap/templates/form/form-element.html.twig` e `fieldset.html.twig`.
 - Runtime de teste (leitura): `drush status` e `php:eval` com `class_exists`, `moduleExists`, tema padrão e base do `aculta420`.
 - Web: FAQ do Webform 6.x sobre bibliotecas externas deprecadas, [drupal.org/docs/8/modules/webform/webform-frequently-asked-questions/what-to-do-about-deprecated-external-libraries-in-webform-6x](https://www.drupal.org/docs/8/modules/webform/webform-frequently-asked-questions/what-to-do-about-deprecated-external-libraries-in-webform-6x) (citado pelo `info.yml`; o conteúdo não foi lido diretamente); issue [drupal.org/project/webform/issues/3609423](https://www.drupal.org/project/webform/issues/3609423) (reclamação de requisito Bootstrap 3.x após atualizar para 6.3.0); projeto [drupal.org/project/webform_bootstrap5](https://drupal.org/project/webform_bootstrap5) (sucessor citado; sem release estável no momento da busca).
+
+## 7. Atualização: portagem autorizada e referência `webform_bootstrap5`
+
+### 7.1 Análise do `webform_bootstrap5` (referência, não instalado)
+
+Baixado de `git.drupalcode.org/project/webform_bootstrap5.git` (commit `995434c`, 2024-08-27) para um diretório temporário de análise, sem instalação.
+
+- É um fork quase literal do 3.x: o CSS mantém seletores BS3 (`.panel`, `.form-inline`, `.well`); o JS usa `.panel`.
+- Verifica o tema `bootstrap5` (`isActiveTheme('bootstrap5')`). O tema base do ACULTA420 é `bootstrap` (Bootstrap 5.0.2), então o módulo seria inativo.
+- Anexa a library `webform_bootstrap/webform_bootstrap`, que pertence ao 3.x e não ao próprio módulo.
+- Continua chamando `\Drupal\bootstrap\Bootstrap::getTheme()` e `\Drupal\bootstrap\Bootstrap::glyphicon()`, classes ausentes no Bootstrap 5 contrib instalado.
+- Sem release estável no Drupal.org (busca de 2026-10-19).
+
+Conclusão: o projeto serve como lista de funcionalidades, não como dependência. Adotá-lo exigiria reescrita.
+
+### 7.2 Matriz de cobertura (Bootstrap 5 + tema ACULTA420)
+
+| Item do 3.x | Cobertura atual | Ação |
+|---|---|---|
+| Título de composto sem moldura (`.form-composite legend`) | Não coberto | Portado (`webform.css`) |
+| Título inline de elemento e de composto | Não coberto | Portado (seletores `.form-select`, não `.select-wrapper`) |
+| Likert: ajuda/descrição em telas estreitas | Não coberto | Portado (sem uso nos forms atuais) |
+| Modal de confirmação responsivo | Não coberto | Portado |
+| Flexbox: `.form-inline .form-control` a 100% | Classe BS3 inexistente no BS5 | Não portado |
+| `.alert a.btn` em branco | Coberto: `.btn` usa tokens (`--aculta-button-color`) | Não portado |
+| `.ui-widget-content a.btn` | Coberto pelo tema de diálogos (`dialog.css`) | Não portado |
+| Seta de `image_select` (`.select-wrapper:after`) | Sem wrapper no BS5 | Não portado |
+| `.button` → `.btn` (`link_alter`, `file_managed_file`) | Coberto: `buttons.css` estiliza `.button` e `.btn` | Não portado |
+| Smart description / tooltip do BS3 | Sem suporte no Bootstrap 5 contrib | Não aplicável; `#description_display` do Core |
+| `#field_prefix`/`#field_suffix` → input-group | Coberto pelo `form-element.html.twig` do BS5 | Não portado |
+| Erro de fieldset em `alert-danger` | Coberto pelo `fieldset.html.twig` do BS5 | Não portado |
+| `form-inline` no `tel` | O BS5 contrib não gera a classe | Não aplicável |
+| `image_button` → ícone | Front-end ACULTA não usa `image_button`/`webform_multiple`; `input[type=image]` não comporta ícone | Não portado; abrir item se um form passar a usar |
+| Terms of service / likert: desativar smart description | Sem smart description | Não aplicável |
+
+Os formulários atuais (`aculta_contact`: textfield, email, textarea; `aculta_participation`: webform_markup, textfield, email, tel, checkboxes, checkbox, textarea) usam poucos elementos cobertos pelos itens portados. Os ajustes são preventivos, para formulários futuros.
+
+### 7.3 Entrega
+
+- Tema `0.6.0-dev.92`: `css/components/webform.css` (library `global`), CHANGELOG, roadmap do tema e versão no `info.yml`.
+- Gate de Foundation: versão atualizada e o template `aculta-user-author-card.html.twig` incluído na allowlist de overrides Twig. A reprovação existia desde a 0.6.0-dev.91 e bloqueava a entrega. Gate com 368 checks PASS. Os demais gates (design foundations, SDC schemas, shell contract, fronteira módulo/tema, mapa módulo/tema) passam.
+- Runtime de teste: cache rebuild; `webform.css` confirmado na library `aculta420/global`. Validação visual nos formulários não executada (estado NÃO VALIDADO).
+
+### 7.4 Desinstalação do `webform_bootstrap` 3.x
+
+Verificado no Runtime de teste (2026-10-19): o módulo existe no código do pacote Webform 6.3.1 (`web/modules/contrib/webform/modules/webform_bootstrap/`), mas não está instalado: `moduleExists = false`, sem entrada em `core.extension`, sem schema em `system.schema`. Não há o que desinstalar no banco. O código continua no pacote contrib do Webform, que não pode ser alterado pelo projeto (regra de contrib). A remoção do código acontece com a atualização do Webform que retirar o submódulo.
