@@ -1,3 +1,8 @@
+## 0.4.0-dev.184 — preserva a raiz dos purposes diante do cache de rotas — 2026-10-19
+
+- O `DomainPurposeRequestSubscriber` restaura os marcadores da raiz no evento Request, antes do normalizador do Redirect. O cache de correspondência de rotas do Core conserva caminho e query, mas não os atributos de Request que o path processor define; sem isso, a raiz do Growroom podia redirecionar à rota interna `/discussoes`.
+- Teste Unit: 8 testes/20 assertions PASS, cobrindo os purposes mapeados, caminho não raiz, purpose ausente e prioridade anterior ao Redirect. Runtime `toca`: após cache rebuild, `/` e `/?cache_probe=forum184b` retornaram 200; `/discussoes` permaneceu 404. Nenhum Node, Comment, termo ou configuração do banco foi alterado. RUNTIME STATUS: PARTIAL (fluxos de criação e inspeção visual pendentes).
+
 ## 0.4.0-dev.183 — autoria dos tópicos novos via ACULTA User — 2026-10-19
 
 - `aculta_user 0.4.0-dev.33` integra `AuthorCardBuilder` nos Nodes `aculta_forum_topic`: User usa `author_forum`, autoria legada usa `author_growroom_historico`; apenas full/teaser. O Forum não cria cartão nem consulta dados de perfil.

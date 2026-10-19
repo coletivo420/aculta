@@ -50,14 +50,29 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
       return $path;
     }
     $purpose = $this->domainPurposeManager->getCurrentPurpose();
-    if (!isset(self::FRONT_PATHS[$purpose])) {
+    if (!is_string($purpose) || !isset(self::FRONT_PATHS[$purpose])) {
       return $path;
+    }
+    self::markRootRequest($request, $purpose);
+    return self::FRONT_PATHS[$purpose];
+  }
+
+  /**
+   * Marks a purpose root before Redirect route normalization.
+   *
+   * Inbound path processor results are cached as path/query data; request
+   * attributes set here are not preserved when that cache is reused. The
+   * request subscriber calls this method before Redirect's normalizer too.
+   */
+  public static function markRootRequest(Request $request, ?string $purpose): void {
+    if ($request->getPathInfo() !== '/' || !is_string($purpose)
+      || !isset(self::FRONT_PATHS[$purpose])) {
+      return;
     }
     // A raiz é a URL pública: o normalizador do módulo redirect (prioridade 30) não deve redirecionar o alias
     // interno para a URL canônica. Documentado pelo módulo redirect como _disable_route_normalizer.
     $request->attributes->set('_disable_route_normalizer', TRUE);
     $request->attributes->set(self::FRONT_ATTRIBUTE, TRUE);
-    return self::FRONT_PATHS[$purpose];
   }
 
 }

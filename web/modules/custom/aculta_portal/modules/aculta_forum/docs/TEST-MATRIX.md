@@ -184,3 +184,8 @@ Fase RC executará a cobertura integrada: Unit, Kernel, Functional, Domain matri
 cache/access, browser/mobile, acessibilidade, desempenho, busca, notificações,
 instalação/update/uninstall e rollback. Runtime permanece DEFERRED até validação
 real no servidor de teste.
+
+## Correção Portal dev.184 — raiz e cache de rotas
+
+- A inspeção de `Drupal\Core\Routing\RouteProvider::getRouteCollectionForRequest()` confirmou que o cache conserva caminho, query e rotas, sem os atributos do Request marcados pelo path processor.
+- Após `drush cr` no Runtime `aculta_runtime`, HTTP direto em `/` e com query de diagnóstico retornou 200; `/discussoes` retornou 404. Nenhum Node, Comment ou termo foi criado. RUNTIME STATUS: PARTIAL; criação e apresentação visual ainda pendentes.

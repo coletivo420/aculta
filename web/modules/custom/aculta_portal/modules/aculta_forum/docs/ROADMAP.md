@@ -111,7 +111,10 @@ Runtime confirmou a implementação OOP e `author_forum` em Node não salvo em
 memória, sem alterar o total de tópicos. Render de tópico persistido e inspeção
 visual seguem pendentes. A última checagem HTTP direta da raiz retornou 301 para
 `/discussoes`; uma requisição com query de diagnóstico retornou 200. A rota direta
-continua restrita e o efeito do cache/normalizador precisa ser esclarecido.
+continua restrita. A análise do Core e do Redirect confirmou que os atributos do
+Request não sobrevivem ao cache de correspondência de rotas; a correção está em
+Portal `0.4.0-dev.184`; após cache rebuild, `/` retornou 200 e `/discussoes`
+continuou 404. Nenhum conteúdo novo foi criado.
 
 ## `0.1.0-dev.7` — Comentários universais
 

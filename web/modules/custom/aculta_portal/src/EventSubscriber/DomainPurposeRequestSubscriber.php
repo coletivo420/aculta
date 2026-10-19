@@ -37,11 +37,32 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents(): array {
     // Match the same path before RouterListener/access checks (priority 32).
     return [
-      KernelEvents::REQUEST => [['onRequestBeforeRouter', 33], ['onRequest', 31]],
+      // Set root flags before Redirect's route normalizer (priority 30). The
+      // inbound path processor can have a cached path result without its
+      // request attributes, so the flags must also be restored here.
+      KernelEvents::REQUEST => [
+        ['onRequestDisableFrontNormalizer', 35],
+        ['onRequestBeforeRouter', 33],
+        ['onRequest', 31],
+      ],
       // Run before Core RedirectResponseSubscriber (priority 0) so any
       // intentional cross-domain target is already a secured redirect.
       KernelEvents::RESPONSE => ['onResponse', 1],
     ];
+  }
+
+  /**
+   * Prevents Redirect from canonicalizing a purpose root to its internal path.
+   */
+  public function onRequestDisableFrontNormalizer(RequestEvent $event): void {
+    if (!$event->isMainRequest()) {
+      return;
+    }
+
+    PurposeFrontPathProcessor::markRootRequest(
+      $event->getRequest(),
+      $this->domainPurposeManager->getCurrentPurpose(),
+    );
   }
 
   /** Sends completed logouts to the public account login page. */
