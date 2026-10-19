@@ -43,8 +43,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 
 1. **Drift de configuração (resolvido em 2026-10-09)**: novo baseline (95 arquivos de idioma e
    tradução, sem host de teste e sem credencial). Ficam fora do baseline por serem de ambiente:
-   `simple_sitemap.settings` (`base_url` de teste no runtime) e `smtp.settings` (no runtime de teste,
-   o SMTP está ligado; `smtp_allowhtml` ainda difere do baseline). Classificação em
+   `simple_sitemap.settings` (`base_url` de teste no runtime). O módulo `smtp` e `smtp.settings` foram removidos (M2 do envio). Classificação em
    [Baseline de configuração](#baseline-de-configuração-2026-10-09).
 
 2. **Catálogo da loja (DT-O10), parcial**: a View `aculta_shop_catalog` e o modo
@@ -85,8 +84,7 @@ web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/homologacao
 
 - Método: export do runtime para pasta temporária fora do repositório; comparação com `config/sync`
   por parser YAML (estrutura, ignorando `langcode` e `_core`).
-- Classificação: 906 arquivos iguais; 63 só de `langcode`; 32 de tradução (copiados); `smtp.settings`
-  (estrutural, fora do baseline); `simple_sitemap.settings` (host de teste, fora do baseline).
+- Classificação: 906 arquivos iguais; 63 só de `langcode`; 32 de tradução (copiados); `simple_sitemap.settings` (host de teste, fora do baseline).
 - Varredura antes do commit: nenhum host de teste novo em `config/sync`; nenhum valor de credencial.
 - SMTP no servidor de testes: ativado no runtime (`smtp.settings:smtp_on = true`, 2026-10-09). As
   credenciais `SMTP2GO_USERNAME` e `SMTP2GO_PASSWORD` ainda **não** foram importadas; sem elas o envio

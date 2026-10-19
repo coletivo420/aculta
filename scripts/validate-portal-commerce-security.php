@@ -73,7 +73,7 @@ $authenticated_role = \Drupal\user\Entity\Role::load('authenticated');
 foreach ([
   'access administration pages', 'access toolbar', 'administer users',
   'administer account settings', 'administer permissions', 'administer roles',
-  'administer key', 'administer smtp', 'administer social auth',
+  'administer key', 'administer social auth',
   'administer commerce', 'administer payment',
 ] as $forbidden_permission) {
   $assert(!$authenticated_role->hasPermission($forbidden_permission), 'Authenticated role has no administrative permission: ' . $forbidden_permission);
@@ -251,7 +251,6 @@ $restricted_permissions = [
   'administer CAPTCHA settings',
   'administer social auth',
   'administer social api authentication',
-  'administer smtp module',
   'administer turnstile',
   'administer agreements',
   'administer agreement types',

@@ -139,7 +139,7 @@ Estado após a rodada. Só o que foi verificado está como resolvido.
 - **Pendente de decisão de escopo:** DT-P10 (módulos de administração em produção), DT-P12 (escopo da conta), DT-P13 (adoção de busca, engajamento e fórum; a busca já tem decisão pelo banco), DT-P23 (sitemap de apoio: módulo por domínio ou rota técnica), DT-T13 (módulo da biblioteca na F4).
 - **Pendente de autorização explícita:** DT-O01 (apagar 64 branches remotas já mescladas), DT-O02 (regerar o snapshot versionado em `estados/`; ver nota de 2026-10-10 abaixo).
 - **Pendente de ambiente com privilégio:** DT-O04 (diretório de agregados do Drupal com dono `aculta:www-data`), DT-P04 (PHP 8.5 não instalado neste host).
-- **Pendente de operação:** DT-O05 (rotação de credenciais de teste), DT-P05 e DT-O07 (e-mail em produção e drift de `smtp.settings` e `system.mail`, dependem de credenciais SMTP e de deploy).
+- **Pendente de operação:** DT-O05 (rotação de credenciais de teste) e DT-P05 (e-mail em produção, depende de credenciais SMTP2GO no Mailer Plus e de deploy). DT-O07 resolvida: o módulo `smtp` e `smtp.settings` foram removidos.
 - **Pendente de implementação maior:** DT-P01 (classes `aculta-*` no módulo, com ajuste visual), DT-P03 (testes de Kernel para P5–P7), DT-P08 (login com CAPTCHA por HTTP), DT-P11, DT-P20 (slugs de rotas de contrib), DT-O06 (teste de conta bloqueada).
 
 - **Nota (2026-10-10):** o responsável decidiu que os Estados são backups privados dos servidores. A pasta `estados/` saiu do índice do Git e está inteira no `.gitignore`; os arquivos permanecem no disco. DT-O02 deixa de ser uma regeração versionada e passa a ser apenas inventário e retenção do backup local.
