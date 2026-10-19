@@ -1,3 +1,13 @@
+## 0.1.0-dev.11 — remove API residual de criação de tópico — 2026-10-19
+
+- Serviço `ForumTopicSync` removido e substituído por `LegacyPublicationTopicLookup`, somente leitura. `PublicationTypeConverter` ainda preserva referências históricas e Comments diretos ao trocar o bundle, sem criar nem alterar tópicos antigos.
+- Update 10001 deixa de executar backfill de tópicos em instalação atrasada. Nenhuma atualização persistente foi executada nesta entrega. RUNTIME STATUS: PARTIAL.
+
+## 0.1.0-dev.10 — encerra sincronização automática de tópicos editoriais — 2026-10-19
+
+- `ForumTopicHooks` não cria/atualiza mais tópicos Drupal Forum em insert/update nem despublica tópicos quando uma publicação é excluída. Comentários diretos na publicação estão instalados em `article` e `blog` no Runtime de teste.
+- Mantido `commentLinksAlter` somente para compatibilidade de apresentação dos tópicos históricos. Serviço de sincronização permanece temporariamente para leitura/conversão dos vínculos legados; nenhum dado foi alterado. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.9 — comentários diretos habilitados no Runtime de teste — 2026-10-19
 
 - Config Sync e Runtime de teste agora têm `field_aculta_discussion` nos bundles `article` e `blog`; displays full renderizam o formatter Core Comment. Campos existentes têm status `Open` em memória quando não havia valor persistido; os status explícitos permanecem.
@@ -93,8 +103,3 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
 - Chamada aparece na exibição da Notícia e do blog.
 - Documentação em `docs/README.md` (regras e passo a passo para tipos novos: vídeo, galeria).
 - RUNTIME STATUS: verificado no Homelab (navegador e HTTP). Inspeção visual humana pendente.
-## 0.1.0-dev.10 — encerra sincronização automática de tópicos editoriais — 2026-10-19
-
-- `ForumTopicHooks` não cria/atualiza mais tópicos Drupal Forum em insert/update nem despublica tópicos quando uma publicação é excluída. Comentários diretos na publicação estão instalados em `article` e `blog` no Runtime de teste.
-- Mantido `commentLinksAlter` somente para compatibilidade de apresentação dos tópicos históricos. Serviço de sincronização permanece temporariamente para leitura/conversão dos vínculos legados; nenhum dado foi alterado. RUNTIME STATUS: PARTIAL.
-

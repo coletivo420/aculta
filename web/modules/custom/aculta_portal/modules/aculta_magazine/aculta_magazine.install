@@ -13,10 +13,10 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
- * Cria a categoria de pasta do Fórum e gera os tópicos das publicações existentes.
+ * Prepara apenas o campo de categoria editorial em configurações antigas do Fórum.
  *
  * Campo `field_categoria_revista` em taxonomy_term (vocabulário forums): liga cada pasta à sessão da Revista.
- * Depois, cria o tópico de cada publicação que ainda não tem (ForumTopicSync::backfill()).
+ * A criação de tópicos por publicação foi substituída por Comment direto e não é repetida aqui.
  */
 function aculta_magazine_update_10001(): string {
   $storage = new FileStorage(__DIR__ . '/config/install');
@@ -37,8 +37,7 @@ function aculta_magazine_update_10001(): string {
     }
   }
 
-  $total = \Drupal::service('aculta_magazine.forum_topic_sync')->backfill();
-  return "Campo de categoria do Fórum criado e $total publicação(ões) verificada(s) para tópico.";
+  return 'Campo de categoria do Fórum criado; nenhum tópico de publicação foi criado.';
 }
 
 /**

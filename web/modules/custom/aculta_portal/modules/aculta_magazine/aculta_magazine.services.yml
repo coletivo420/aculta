@@ -5,12 +5,12 @@ services:
   aculta_magazine.forum_section_resolver:
     class: Drupal\aculta_magazine\Forum\ForumSectionResolver
     arguments: ['@entity_type.manager']
-  aculta_magazine.forum_topic_sync:
-    class: Drupal\aculta_magazine\Forum\ForumTopicSync
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_magazine.forum_section_resolver']
+  aculta_magazine.legacy_publication_topic_lookup:
+    class: Drupal\aculta_magazine\Forum\LegacyPublicationTopicLookup
+    arguments: ['@entity_type.manager']
   aculta_magazine.forum_opening_post:
     class: Drupal\aculta_magazine\Presentation\ForumOpeningPost
-    arguments: ['@aculta_portal.domain_purpose', '@aculta_magazine.forum_topic_sync', '@aculta_image.render']
+    arguments: ['@aculta_portal.domain_purpose', '@aculta_magazine.legacy_publication_topic_lookup', '@aculta_image.render']
   aculta_magazine.publication_type_converter:
     class: Drupal\aculta_magazine\Forum\PublicationTypeConverter
-    arguments: ['@entity_type.manager', '@aculta_magazine.forum_topic_sync', '@database']
+    arguments: ['@entity_type.manager', '@aculta_magazine.legacy_publication_topic_lookup', '@database']

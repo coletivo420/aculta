@@ -137,18 +137,19 @@ Referência de leitura usada: largura de linha entre 60 e 75 caracteres (Piccali
 
 Registro histórico: a versão anterior criava um tópico Drupal Forum por publicação. Essa decisão foi substituída: cada publicação mantém a discussão dentro da própria entidade via Comment compartilhado; novos tópicos públicos automáticos estão proibidos.
 
-- Pastas: pasta-mãe "Revista" com uma pasta por categoria (`ForumSectionResolver`). A pasta guarda a categoria em
-  `field_categoria_revista`, então renomear a sessão não quebra o vínculo.
+- Pastas históricas: pasta-mãe "Revista" e pastas por categoria foram usadas somente pelos tópicos antigos.
+  `ForumSectionResolver` não participa da criação ou atualização de publicações.
 - Vínculo histórico: `field_discussao` permanece temporariamente para leitura de tópicos antigos e conversão de tipo.
   Nenhum hook de ciclo de vida de publicação cria, atualiza ou despublica tópicos.
-- Abertura: `ForumOpeningPost` lê resumo e imagem da publicação. Nenhum texto ou arquivo é copiado: a imagem é o
-  mesmo arquivo da mídia, no estilo `large`. Editar a publicação atualiza a abertura.
+- Abertura histórica: `ForumOpeningPost` lê resumo e imagem da publicação vinculada. Nenhum texto ou arquivo é
+  copiado; mudanças editoriais não alteram o Node tópico legado.
 - Estado de migração: `field_aculta_discussion` está instalado em `article` e `blog` no Runtime de teste. `ForumTopicHooks`
-  mantém apenas o ajuste de links de comentários dos tópicos históricos; `ForumTopicSync` continua temporariamente
-  como suporte de leitura/conversão de vínculos históricos. A limpeza de conteúdo legado e remoção do módulo contrib
+  mantém apenas o ajuste de links de comentários dos tópicos históricos; `LegacyPublicationTopicLookup` só lê os
+  vínculos históricos para apresentação/conversão e não pode criar nem alterar tópicos. A limpeza de conteúdo legado e remoção do módulo contrib
   continuam pendentes e protegidas pelo plano de recuperação.
 - URL do tópico: `/topico/<título>` (padrão `aculta_forum_topic`).
-- Moderação: segue o Core. Quem não tem `skip comment approval` vai para a fila do `content_editor`.
+- Moderação atual: comentários diretos seguem a política configurável do primeiro comentário público, fora do LMS.
+  A regra específica do LMS permanece sob Educadores com acesso contextual.
 - Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e recebe configuração de Comment direto.
-- Categoria nova: a pasta correspondente é criada na primeira publicação (ou por `aculta_magazine_update_10002`).
+- Categoria nova: não cria pasta no vocabulário antigo do Forum.
 - Não há criação manual de tópico para publicação. Tópicos de outros tipos (verbete, atividade) seguem o plano E3.

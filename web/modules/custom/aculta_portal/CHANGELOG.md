@@ -1,3 +1,13 @@
+## 0.4.0-dev.178 — remove capacidades residuais de sincronização de tópicos — 2026-10-19
+
+- `ForumTopicSync` foi substituído por `LegacyPublicationTopicLookup`, que só lê vínculos editoriais históricos. Removidos os métodos de criar, sincronizar, despublicar e backfill; o update legado 10001 já não tenta criar tópicos quando executado em ambiente ainda pendente.
+- Conversão de tipo mantém referências antigas sem sincronizar o Node Forum. Nenhum conteúdo/configuração Runtime foi alterado. RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.177 — encerra sincronização automática de tópicos editoriais — 2026-10-19
+
+- Removidos os hooks de insert/update/delete que criavam, atualizavam ou despublicavam Nodes do Forum contribuído ao salvar/excluir publicação. `field_aculta_discussion` está instalado nos dois bundles editoriais do Runtime de teste; as discussões permanecem diretamente na publicação.
+- Mantido somente o ajuste de links repetidos nos comentários dos tópicos históricos. Nenhum Node, Comment, termo ou vínculo legado foi alterado. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.176 — comentários diretos ativos no Runtime da Revista — 2026-10-19
 
 - Aplicadas parcialmente no Runtime de teste as duas instâncias Comment de `article`/`blog` e displays full; status padrão fica `Open` via configuração e hook em memória. Teste Kernel de field compartilhado e política de participação: 6 testes/81 assertions PASS. Sincronização automática de tópico antigo permanece como fallback de código até a próxima unidade; comentários não foram enviados.
@@ -2976,9 +2986,4 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - O exportador Drush exige pacote/versão exatos do `composer.lock`, valida o unified diff com `git apply --check` antes de gerar manifesto e artefatos versionáveis; aplicação permanece no build Composer.
 - Adicionado patch para negar upload H5P que use bibliotecas locais restritas quando a conta não tem `create restricted h5p content types`; segue revisão e teste funcional antes de ativar H5P.
 - RUNTIME STATUS: `aculta_patcher` habilitado no Runtime de teste após backup privado `/home/aculta/private/aculta/aculta-runtime-before-aculta-patcher-20261018.sql.gz.gz` (0600); tabela e entidade foram verificadas via Drush. H5P permanece desativado. A rota existe no Router, mas HTTP visual retornou 404 e fica DEFERRED. Nenhum arquivo de Core/contrib foi editado manualmente.
-
-## 0.4.0-dev.177 — encerra sincronização automática de tópicos editoriais — 2026-10-19
-
-- Removidos os hooks de insert/update/delete que criavam, atualizavam ou despublicavam Nodes do Forum contribuído ao salvar/excluir publicação. `field_aculta_discussion` está instalado nos dois bundles editoriais do Runtime de teste; as discussões permanecem diretamente na publicação.
-- Mantido somente o ajuste de links repetidos nos comentários dos tópicos históricos. Nenhum Node, Comment, termo ou vínculo legado foi alterado. RUNTIME STATUS: PARTIAL.
 

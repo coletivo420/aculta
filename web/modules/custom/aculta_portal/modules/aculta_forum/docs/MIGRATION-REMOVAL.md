@@ -15,7 +15,7 @@ configuração, Composer ou Runtime foi alterado nesta auditoria.
 | Modelo de conteúdo | Node bundle `forum`, vocabulary `forums`, Node field `taxonomy_forums`, Comment bundle `comment_forum`, campo `comment_forum` no Node. Configs opcionais do módulo contrib definem ainda displays, formulário e settings. |
 | Config Sync | `core.entity_*` de node.forum/comment_forum; `node.type.forum.yml`; taxonomy.vocabulary.forums.yml; `views.view.aculta_forum_topics.yml`; `flag.sinalizar_comentario` aponta a bundle `comment_forum`; `field_discussao` exportado em blog aponta à Node bundle `forum`; campos de autoria legada. |
 | `aculta_user` | `ParticipationRules` fixa bundles `forum`/`comment_forum`; `RestrictedForumGrants`, `RestrictedForumHooks`, `ForumModerationHooks`, `ForumTopicPresentationHooks`, `DiscussionHooks`, `ActivityController`; `config/install` declara `field_discussao` em activity/article/document/project/wiki_entry como entity reference à Node bundle `forum`. |
-| `aculta_magazine` | `ForumTopicSync`, `ForumSectionResolver`, `PublicationTypeConverter`, `ForumTopicHooks`, `ForumOpeningPost` e serviços; hooks de ciclo de vida de publicação que criavam/atualizavam/despublicavam Node `forum` removidos em 0.1.0-dev.10; `field_discussao` de `blog` ainda referencia Node bundle `forum`. |
+| `aculta_magazine` | `LegacyPublicationTopicLookup`, `ForumSectionResolver`, `PublicationTypeConverter`, `ForumTopicHooks`, `ForumOpeningPost` e serviços; hooks e API de sincronização/backfill removidos em 0.1.0-dev.10/.11; `field_discussao` de `blog` ainda referencia Node bundle `forum`. |
 | `aculta_messenger` | `MessageSubscribeEventHooks` atende criação/publicação de Node forum; `AvisoService`/`AvisoRetencao` têm política e tipos vinculados ao fórum. |
 | Tema | `forum-list.html.twig`, `node--forum--full.html.twig`, `comment--comment-forum.html.twig`, `forum-index.css`, `discussion.css`, traduções e estilos do padrão Forum. |
 | Documentação/gates | Portal/Forum/LMS/Magazine, mapa módulo-tema, fronteira, sitemap/purpose, slugs, buscas, avisos e políticas de participação referem Forum legado. Fazer `rg` global antes da remoção final. |
@@ -29,8 +29,8 @@ referências de auditoria/changelog sem motivo.
 contagem, enquanto valida publicação do tópico mas não chama explicitamente
 `topic->access('view')` nesse método. Isso é um ponto de migração a revisar para
 paridade de access/cache; não afirma, isoladamente, uma exposição confirmada no
-Runtime. `ForumTopicSync` ainda é usado para leitura/conversão de vínculos
-históricos; `ForumOpeningPost` apresenta o conteúdo editorial como abertura.
+Runtime. `LegacyPublicationTopicLookup` ainda é usado para leitura/conversão de
+vínculos históricos; `ForumOpeningPost` apresenta o conteúdo editorial como abertura.
 
 ## Separação entre Drupal Forum e acervo histórico Growroom
 
@@ -79,10 +79,10 @@ consulta imediatamente anterior deverá confirmar a contagem e os bundles reais
 de Comment, incluindo respostas aninhadas. No inventário de 2026-10-19 havia 30
 tópicos `forum` e zero comentários `comment_forum`.
 
-Os 12 nós que funcionam como abertura/sincronização da Revista não serão
-preservados como tópicos. Antes de removê-los, a Revista deverá usar comentário
-direto na publicação e a sincronização `ForumTopicSync` deverá estar desligada;
-seus conteúdos editoriais e entidades de publicação permanecem intocados. O
+Os 12 nós que funcionam como abertura histórica da Revista não serão
+preservados como tópicos. A Revista já usa comentário direto na publicação e a
+API de sincronização foi removida; `LegacyPublicationTopicLookup` somente lê
+vínculos antigos. Seus conteúdos editoriais e entidades de publicação permanecem intocados. O
 novo campo começa sem comentários, e os outros contextos também começam sem
 posts importados. Não remover contas, Nodes editoriais, cursos, turmas,
 atividades, verbetes, imagens ou arquivos por causa desta limpeza.
@@ -148,7 +148,7 @@ Forum contrib, o pacote Composer, os tópicos e o vocabulário não foram removi
 ## Portas obrigatórias antes de remover
 
 1. Fechar contratos e machine names; implementar bundles/campos/provedores e testes de instalação/update em uma fase não destrutiva.
-2. Migrar consumidores funcionais de `aculta_user`, `aculta_magazine`, `aculta_messenger` e `aculta_game`, com paridade de acesso, apresentação, notificações, URLs e busca. A interrupção de `ForumTopicSync` aguarda o substituto editorial para não deixar publicações sem discussão.
+2. Migrar consumidores funcionais de `aculta_user`, `aculta_magazine`, `aculta_messenger` e `aculta_game`, com paridade de acesso, apresentação, notificações, URLs e busca. A discussão editorial direta está ativa; remover lookup/readers de vínculos antigos somente quando o corte preservar os caminhos acordados.
 3. Repetir no Runtime de teste o inventário de nodes, comments, termos, flags, arquivos, vínculos e dependências imediatamente antes da operação; separar conteúdo histórico, contemporâneo e editorial.
 4. Preparar backup/restauração e plano de rollback verificados conforme `docs/operations/environments.md` e `docs/operations/DEPLOYMENT.md`; ambiente/URI/banco precisam ser confirmados com hostname, pwd, Git e `drush status` antes de qualquer operação persistente.
 5. Conferir a autorização já registrada contra o inventário atual e delimitar os IDs/bundles de conteúdo Forum. Ela não autoriza apagar conteúdo da Revista, Wiki, LMS, usuários ou outros módulos.

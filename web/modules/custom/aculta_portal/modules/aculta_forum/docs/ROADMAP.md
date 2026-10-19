@@ -60,9 +60,10 @@ Runtime.
 - Foram observados 30 nodes `forum`, dos quais 12 publicados vinculam
   discussões a publicações. `aculta_magazine` e `aculta_user` ainda têm
   consumidores ativos; ver `docs/MIGRATION-REMOVAL.md`.
-- Em 0.1.0-dev.10, hooks de insert/update/delete foram removidos. `ForumTopicSync`
-  permanece para leitura/conversão de vínculos históricos, não para sincronização
-  de ciclo de vida. `DiscussionHooks` omite o trecho antigo quando o campo existe.
+- Em Magazine 0.1.0-dev.10/.11, hooks de insert/update/delete e a API
+  `ForumTopicSync` foram removidos. `LegacyPublicationTopicLookup` somente lê
+  vínculos históricos para apresentação/conversão. `DiscussionHooks` omite o
+  trecho antigo quando o campo existe.
   O Forum contrib ainda não foi desinstalado e referências legadas permanecem.
   Os tópicos-casca antigos serão apagados depois; não
   importar tópicos nem comentários antigos para os novos contextos.

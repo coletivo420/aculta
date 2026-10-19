@@ -19,7 +19,7 @@ conquistas na importação).
 | F-D22 | Substituir definitivamente `drupal/forum` por motor ACULTA baseado em Node, Comment, Taxonomy, Views, Search API, History, Flag e APIs Core/contrib | Retirada somente após inventário, implementação substituta, backup/rollback e autorização operacional na fase dev.5; nenhum uninstall nesta fase. |
 | F-D23 | Um motor de discussões compartilha quatro contextos: Growroom público, Publicações, LMS e Wiki | API de contexto/provider; revalidação de Entity Access e política específica por contexto. |
 | F-D24 | Growroom contém somente tópicos públicos independentes; discussões internas de curso/turma/atividade ficam no LMS | Discussão geral sobre cursos pode ser pública; conteúdo pedagógico interno não aparece em busca, listagens ou aviso públicos. |
-| F-D25 | Publicação usa Comments na própria entidade; é proibido criar tópico público automaticamente por publicação | Remover `ForumTopicSync`/conversores dependentes em fase própria e preservar canonical/âncora editorial. |
+| F-D25 | Publicação usa Comments na própria entidade; é proibido criar tópico público automaticamente por publicação | Sincronização e backfill removidos; `LegacyPublicationTopicLookup` somente leitura preserva compatibilidade até corte dos vínculos históricos. |
 | F-D26 | Wiki terá uma discussão Comment por verbete dentro da página; não cria tópico público nem altera revisão editorial | Só contratos/adaptadores preparados agora; reconstrução funcional da Wiki permanece fora de escopo. |
 | F-D27 | `aculta_user` é dono único de cartões e dados de identidade/autoria; `aculta_forum` não possui builder, renderer ou consulta privada própria | Reutilizar/estender serviços de User; ACULTA420 desenha. |
 | F-D28 | ACULTA420 é o único dono de markup visual, SDC, CSS, Bootstrap e presets | Portal fornece contrato neutro com acesso/cache; não referenciar componentes do tema do PHP. |
@@ -32,7 +32,7 @@ conquistas na importação).
   substituída por F-D17; permanece revogada. F-D17 e a entidade
   `aculta_legado_autor` continuam compatíveis e vigentes.
 - Arquitetura antiga que mantinha Forum contrib como fonte dos tópicos e
-  `ForumTopicSync` como estratégia de Magazine está substituída por F-D22/F-D25.
+  estratégia de sincronização da Magazine está substituída por F-D22/F-D25.
 - A afirmação de que a próxima fase era F4 e os planos F1–F9 descrevem uma linha
   anterior; são histórico de execução, não roadmap vigente. Consulte
   `ROADMAP.md` para as versões novas.

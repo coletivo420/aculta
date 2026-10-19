@@ -5,28 +5,29 @@ declare(strict_types=1);
 namespace Drupal\aculta_magazine\Presentation;
 
 use Drupal\aculta_image\ImageRenderer;
-use Drupal\aculta_magazine\Forum\ForumTopicSync;
+use Drupal\aculta_magazine\Forum\LegacyPublicationTopicLookup;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Abertura do tópico: resumo, imagem e link para a publicação da Revista.
+ * Abertura legada: resumo, imagem e link para a publicação da Revista.
  *
- * Nada é copiado. O resumo e a imagem são lidos da publicação de origem, e a imagem é o mesmo arquivo da
- * biblioteca de mídia (`field_media_image`), renderizado de novo. Assim uma troca de imagem ou de resumo na
- * Revista aparece no tópico sem reedição. Só aparece no propósito FORUM.
+ * Nada é copiado. Resumo e imagem são lidos da publicação de origem; a imagem
+ * continua sendo o arquivo de mídia (`field_media_image`) renderizado no
+ * momento da leitura. Só aparece no purpose FORUM.
  */
 final class ForumOpeningPost {
 
-  /** Estilo de imagem da abertura. */
+  use StringTranslationTrait;
 
   public function __construct(
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $purposeManager,
-    #[Autowire(service: 'aculta_magazine.forum_topic_sync')]
-    private readonly ForumTopicSync $sync,
+    #[Autowire(service: 'aculta_magazine.legacy_publication_topic_lookup')]
+    private readonly LegacyPublicationTopicLookup $topicLookup,
     #[Autowire(service: 'aculta_image.render')]
     private readonly ImageRenderer $imageRenderer,
   ) {}
@@ -38,22 +39,30 @@ final class ForumOpeningPost {
     if ($this->purposeManager->getCurrentPurpose() !== 'forum') {
       return;
     }
-    $post = $this->sync->openingPostFor($topic);
+    $post = $this->topicLookup->openingPostFor($topic);
     if ($post === NULL) {
       return;
     }
-    $url = $this->purposeManager->routeUrl('magazine', 'entity.node.canonical', ['node' => $post->id()]);
+    $url = $this->purposeManager->routeUrl(
+      'magazine',
+      'entity.node.canonical',
+      ['node' => $post->id()],
+    );
     if ($url === NULL) {
       return;
     }
 
     $cache = (new CacheableMetadata())->addCacheableDependency($post)->addCacheableDependency($topic);
-    // O título não se repete aqui: a página do tópico já tem o título, e o link "Ler a publicação na Revista" leva à publicação.
+    // O título não se repete: a página do tópico já o apresenta.
     $children = [];
 
     $image = $this->image($post, $cache);
     if ($image !== NULL) {
-      $children['imagem'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'forum-opening-post-image'], 'image' => $image];
+      $children['imagem'] = [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'forum-opening-post-image'],
+        'image' => $image,
+      ];
     }
     if ($post->hasField('field_summary') && !$post->get('field_summary')->isEmpty()) {
       $children['resumo'] = [
@@ -64,7 +73,7 @@ final class ForumOpeningPost {
     }
     $children['link'] = [
       '#type' => 'link',
-      '#title' => t('Ler a publicação na Revista'),
+      '#title' => $this->t('Ler a publicação na Revista'),
       '#url' => $url,
       '#attributes' => ['data-portal-ui' => 'forum-opening-post-link'],
     ];
@@ -85,7 +94,9 @@ final class ForumOpeningPost {
       return NULL;
     }
     $media = $post->get('field_media_image')->entity;
-    if ($media === NULL || !$media->hasField('field_media_image') || $media->get('field_media_image')->isEmpty()) {
+    if ($media === NULL
+      || !$media->hasField('field_media_image')
+      || $media->get('field_media_image')->isEmpty()) {
       return NULL;
     }
     $item = $media->get('field_media_image');
