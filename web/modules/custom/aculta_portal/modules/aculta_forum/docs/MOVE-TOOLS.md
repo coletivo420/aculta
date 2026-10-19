@@ -61,7 +61,9 @@ confirmação explícita, revalidação no submit, nova revisão no mesmo Node e
 com IDs/uid sem conteúdo. `field_autor_legado` nega a operação inclusive para
 administradores. O Domain canônico do purpose `forum` e Entity Access de leitura
 são revalidados. Ainda requer testes Kernel/Functional e validação autenticada no
-Runtime. A permissão de `content_editor` só se efetiva com e-mail confirmado e
+Runtime. O Kernel `ForumTopicMoverKernelTest` comprova em armazenamento real a
+preservação de NID, UUID, nova revisão, alias e Comment/CID, além do bloqueio do
+acervo histórico com permissões de administração. A permissão de `content_editor` só se efetiva com e-mail confirmado e
 não concede edição geral do bundle.
 
 ### C. Mover comentário/resposta

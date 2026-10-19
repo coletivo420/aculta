@@ -5,8 +5,13 @@
 - O serviço revalida permissão, access no purpose `forum`, Domain canônico, tipo
   e destino Taxonomy; recusa tópicos com `field_autor_legado`. O log registra
   apenas IDs de origem/destino e uid.
-- Unit `ForumTopicMoverTest`: 4 testes/31 assertions PASS; gate Drupal 11+,
-  fronteira, mapa, hierarquia de papéis, PHPCS e YAML PASS. Runtime e Functional ainda não executados. Sem incremento de versão e sem
+- Unit `ForumTopicMoverTest`: 4 testes/31 assertions PASS. Kernel
+  `ForumTopicMoverKernelTest`: 2 testes/44 assertions PASS em MariaDB
+  `aculta_simpletest`, cobrindo preservação de NID/UUID, nova revisão, alias e
+  Comment/CID, e bloqueio histórico mesmo com permissão de administração.
+- Os testes Kernel reportam cinco depreciações do contrib Domain 3.0.1. Gates
+  Drupal 11+, fronteira, mapa, hierarquia, PHPCS e YAML PASS. Functional e
+  Runtime ainda não executados. Sem incremento de versão e sem
   alteração persistente no Runtime.
 
 # `0.1.0-dev.28` — índice público de categorias — 2026-10-19
