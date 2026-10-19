@@ -144,7 +144,11 @@ final class MessagesController extends ControllerBase {
     if (!$access->isAllowed() || !$private_message_thread->isMember($this->account->id())) {
       throw new NotFoundHttpException();
     }
-    $build = $this->relationshipForm($private_message_thread);
+    return $this->menuFragment($this->relationshipForm($private_message_thread));
+  }
+
+  /** A menu rendered alone, for the drawer to load: never cached, never sniffed as another type. */
+  private function menuFragment(array $build): Response {
     $content = $this->renderer->renderInIsolation($build);
     return new Response((string) $content, Response::HTTP_OK, [
       'Content-Type' => 'text/html; charset=UTF-8',
@@ -264,12 +268,7 @@ final class MessagesController extends ControllerBase {
     // The same rule as relationshipForm: a menu shown in a response is built, not submitted.
     $state->setUserInput([]);
     $state->setProcessInput(FALSE);
-    $content = $this->renderer->renderInIsolation($this->forms->buildForm(ConversationRelationshipForm::class, $state));
-    return new Response((string) $content, Response::HTTP_OK, [
-      'Content-Type' => 'text/html; charset=UTF-8',
-      'Cache-Control' => 'private, no-store, no-cache, must-revalidate',
-      'X-Content-Type-Options' => 'nosniff',
-    ]);
+    return $this->menuFragment($this->forms->buildForm(ConversationRelationshipForm::class, $state));
   }
 
   /** The action of one member's box, posted from the drawer: the drawer gets the conversation again, with the new state. */
@@ -279,11 +278,24 @@ final class MessagesController extends ControllerBase {
     if (!$this->isMemberInitiatedRequest()) {
       return new Response('', Response::HTTP_NO_CONTENT, ['Cache-Control' => 'private, no-store']);
     }
-    $panel = $this->runMemberAction($private_message_thread, $user);
+    $result = $this->runMemberAction($private_message_thread, $user);
     if (!$private_message_thread->access('view', $this->account, TRUE)->isAllowed()) {
-      return $this->listWithMessage($panel['message'] ?? NULL);
+      return $this->listWithMessage($result['message'] ?? NULL);
     }
-    return $this->conversationResponse($private_message_thread, $access, $panel);
+    // The result belongs to the box that ran the action: that box is rebuilt open, with its message.
+    return $this->conversationResponse($private_message_thread, $access, [], (int) $user->id(), $this->memberPanel($private_message_thread, $user, $result));
+  }
+
+  /** The menu of one member's box, built with the result of the action just run. The box stays open to show it. */
+  private function memberPanel(PrivateMessageThreadInterface $thread, UserInterface $user, array $result): array {
+    $state = $this->memberFormState($thread, $user);
+    // Built, not submitted: the same rule as the conversation's menu in a response.
+    $state->setUserInput([]);
+    $state->setProcessInput(FALSE);
+    if (isset($result['message'])) {
+      $state->set('message', $result['message']);
+    }
+    return ['relationship' => $this->forms->buildForm(ConversationRelationshipForm::class, $state)];
   }
 
   /** The member must be another member of the thread: a box never acts on the current member or on a stranger. */
@@ -326,10 +338,15 @@ final class MessagesController extends ControllerBase {
    * One box per other member of the conversation, above the messages. A group has a box for each member, so the
    * friendship and block actions always name the member they act on.
    */
-  private function memberBoxes(PrivateMessageThreadInterface $thread): array {
+  private function memberBoxes(PrivateMessageThreadInterface $thread, ?int $actedUid = NULL, array $actedPanel = []): array {
     $boxes = ['#type' => 'container', '#weight' => -5];
     foreach ($thread->getMembers() as $member) {
       if ((int) $member->id() === (int) $this->account->id()) {
+        continue;
+      }
+      // The member whose action was just run comes back open, with the result in its own box.
+      if ((int) $member->id() === $actedUid) {
+        $boxes[(int) $member->id()] = OptionsDisclosure::build((string) $member->getDisplayName(), $actedPanel, TRUE);
         continue;
       }
       $box = OptionsDisclosure::build((string) $member->getDisplayName(), []);
@@ -370,7 +387,7 @@ final class MessagesController extends ControllerBase {
   }
 
   /** The conversation container: toolbar (back on the left, "Opções" on the right), then the thread. */
-  private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = []): Response {
+  private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = [], ?int $actedUid = NULL, array $actedPanel = []): Response {
     $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
     $build = [
       '#type' => 'container',
@@ -386,7 +403,7 @@ final class MessagesController extends ControllerBase {
         'back' => $this->backToConversationsLink(),
         'options' => $this->optionsDisclosure($thread, $panel),
       ],
-      'members' => $this->memberBoxes($thread),
+      'members' => $this->memberBoxes($thread, $actedUid, $actedPanel),
       'thread' => $threadBuild,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
@@ -423,8 +440,9 @@ final class MessagesController extends ControllerBase {
    * conversation carries only "Limpar histórico" (group). The notice of a one-to-one conversation keeps its other member.
    */
   private function threadFormState(PrivateMessageThreadInterface $thread, bool $notice = FALSE): FormState {
-    $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
     $state = new FormState();
+    // Only the notice needs the other member: the menu of a conversation is the group form.
+    $others = $notice ? array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id())) : [];
     if ($notice && count($others) === 1) {
       $state->set('target', (int) $others[0]->id());
     }
