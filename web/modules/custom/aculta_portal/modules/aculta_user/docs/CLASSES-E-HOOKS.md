@@ -8,6 +8,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 
 | Hook | Implementação | Arquivo |
 | --- | --- | --- |
+| `preprocess_username` | `UsernameLinkHooks::preprocessUsername` | `src/Hook/UsernameLinkHooks.php` |
+| `preprocess_field` (campos de referência a usuário) | `UsernameLinkHooks::preprocessField` | `src/Hook/UsernameLinkHooks.php` |
 | `aculta_portal_dashboard_alter` | `AccountDashboardHooks::dashboardAlter` | `src/Hook/AccountDashboardHooks.php` |
 | `aculta_portal_photo_editor_alter` | `PhotoEditorHooks::photoEditorAlter` | `src/Hook/PhotoEditorHooks.php` |
 | `aculta_portal_settings_tabs_alter` | `SettingsTabsHooks::settingsTabsAlter` | `src/Hook/SettingsTabsHooks.php` |
