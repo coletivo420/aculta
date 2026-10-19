@@ -158,6 +158,7 @@ Homelab usa Apache; a produção Hostinger Cloud Startup usa LiteSpeed. Detalhes
 - Não introduzir novos exemplos, regras ou dependências específicas de Nginx.
 - Não manter compatibilidade com Nginx como requisito do projeto.
 - Preservar o `web/.htaccess` fornecido pelo Drupal e validar as diretivas em ambos os ambientes.
+- Diretivas próprias do ACULTA no `web/.htaccess` (MIME de `.mjs` do PDF.js) têm gate: `php scripts/validate-htaccess-directives.php`. Remover o bloco reprova o gate.
 - No Homelab, validar `mod_rewrite`, `mod_headers` e a integração PHP-FPM por `proxy_fcgi`.
 - Na produção, validar reescrita, headers, proteção de arquivos, processamento de `.htaccess` e handler PHP no LiteSpeed/Hostinger; não presumir acesso a VirtualHost ou `httpd.conf`.
 - VirtualHosts, caminhos, usuários, certificados e configuração Virtualmin/Hostinger continuam específicos de cada ambiente.
