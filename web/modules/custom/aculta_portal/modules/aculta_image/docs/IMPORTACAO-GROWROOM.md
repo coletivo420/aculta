@@ -156,6 +156,40 @@ do modal. As 506.908 ocorrências de foto sem arquivo estão nas páginas de tó
 - O modal exige alteração no tema ACULTA420, que depende de autorização explícita (AGENTS.md). O texto da história do
   Growroom também precisa de aprovação do responsável antes de ir ao ar.
 
+## Checklist de prontidão (verificado em 2026-10-19)
+
+Verificação somente leitura: `scripts/growroom/verificar_importacao.py` (resultado em `restauro/verificacao-importacao.json`).
+A verificação completa relê os 8 GB e confere o SHA-256 de cada arquivo.
+
+| Checagem | Resultado |
+| --- | --- |
+| C1 Manifestos: último registro válido aponta para arquivo com SHA-256 igual | OK: 67.315 registros, 0 ausentes, 0 divergentes |
+| C2 Duplicatas: caminhos existem e têm o mesmo conteúdo | OK: 2.151 grupos |
+| C3 Truncados: continuam com 1 MiB e sem marcador final | OK: 228 arquivos |
+| C4 Comerciais: marcados existem entre os tópicos | OK: 658 marcados (641 fora + 17 para revisar) |
+| C5 Links: destinos somam o total; fotos de conteúdo nunca descartadas | OK: 738.125 alvos |
+| C6 Perfis permitidos existem no CDX com captura 200 | OK: 2.173 URLs |
+| C7 Mapeamento salvo bate com o `build_mapping.py` atual | OK: 36.077 tópicos, mesmos fóruns |
+| C8 Nenhum e-mail nos arquivos de mapeamento | OK (após omitir 10 nomes com forma de e-mail do mapa) |
+
+**Bloqueios antes da importação** (decisões que cabem ao responsável; nada disso foi decidido por mim):
+
+1. **Remodelagem do fórum na PR #297**: a importação aguarda essa etapa.
+2. **Seleção dos 4.739 tópicos de "outros termos"**: até a marcação, ficam excluídos. Página publicada.
+3. **Revisão dos 17 tópicos marcados como "revisar"** (termos de notícia que também aparecem em anúncios).
+4. **Vida interna do fórum (616 tópicos)**: excluídos por padrão, sem decisão.
+5. **Autores dos 555 tópicos de caso individual**: a proposta é não importá-los como perfis. Isso ainda não foi confirmado.
+6. **Perfis do THWboard**: a lista passaria de 2.173 para 3.915 URLs (1.742 ainda não baixadas). Só o `--aplicar` do
+   `build_mapping.py` muda a lista, e não foi executado.
+7. **Três nomes ambíguos** (`Delta-9-thc`, `Pcgrow`, `Prof. Pardal`): sem decisão de qual perfil vale.
+8. **228 fotos truncadas**: hoje apontam para o arquivo cortado (`imagem_acervo`). Não há fonte alternativa. Pergunta: elas
+   devem usar a imagem padrão ("não recuperada") em vez do arquivo cortado?
+9. **Modal de conteúdo legado**: depende de autorização para alterar o tema ACULTA420 e da aprovação do texto da história.
+10. **Teste dos links contra o site vivo**: inconclusivo; `growroom.net` não resolve por DNS deste servidor. Precisa ser
+    repetido de outra rede.
+11. **Ingestão das 7.805 fotos e da imagem padrão** pelo `aculta_image`, com conversão para WebP na importação.
+12. **Resolução dos 92 mil links `showtopic&st=` / `&pid=`** para o tópico importado pelo ID: ainda não implementada.
+
 ## Bloqueio atual
 
 **Importação adiada (decisão do responsável, 2026-10-19):** a importação do Growroom não começa até a remodelagem do
