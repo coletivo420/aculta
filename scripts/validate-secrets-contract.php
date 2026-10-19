@@ -34,6 +34,12 @@ $expected = [
   'aculta_id_cpf_fingerprint' => ['ACULTA_ID_CPF_FINGERPRINT_KEY', FALSE],
 ];
 
+// Credenciais de envio ficam no arquivo de segredos do servidor, sem Key (regra de segredos do AGENTS.md).
+$file_secrets = [
+  'smtp2go_username' => 'SMTP2GO_USERNAME',
+  'smtp2go_password' => 'SMTP2GO_PASSWORD',
+];
+
 $key_files = glob($root . '/config/sync/key.key.*.yml') ?: [];
 $actual_ids = [];
 foreach ($key_files as $path) {
@@ -62,12 +68,15 @@ foreach ($contract['variables'] as $variable) {
   $environments = (array) ($variable['environments'] ?? []);
   $assert($environments !== [] && array_diff($environments, ['production', 'test']) === [], 'Contract environments are production or test: ' . $name);
   $assert(array_diff((array) ($variable['required_in'] ?? []), $environments) === [], 'Contract required_in is a subset of environments: ' . $name);
-  $assert(isset($expected[(string) ($variable['key_id'] ?? '')]) && $expected[$variable['key_id']][0] === $name, 'Contract variable matches the approved Key and name: ' . $name);
+  $key_id = (string) ($variable['key_id'] ?? '');
+  $is_key = isset($expected[$key_id]) && $expected[$key_id][0] === $name;
+  $is_file_secret = isset($file_secrets[$key_id]) && $file_secrets[$key_id] === $name;
+  $assert($is_key || $is_file_secret, 'Contract variable matches the approved Key or file secret and name: ' . $name);
 }
 sort($contract_names);
-$expected_names = array_map(static fn(array $pair): string => $pair[0], array_values($expected));
+$expected_names = array_merge(array_map(static fn(array $pair): string => $pair[0], array_values($expected)), array_values($file_secrets));
 sort($expected_names);
-$assert($contract_names === $expected_names, 'Contract variables and approved Keys are the same set.');
+$assert($contract_names === $expected_names, 'Contract variables are the approved Keys plus the file secrets, and nothing else.');
 
 $google_sync = $parse($root . '/config/sync/social_auth_google.settings.yml');
 $assert(trim((string) ($google_sync['client_id'] ?? '')) === '', 'Google OAuth client ID is empty in sync.');

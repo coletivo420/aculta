@@ -400,11 +400,16 @@ Não alterar configurações de segurança sem explicar a mudança.
 
 O ambiente local pode utilizar configurações de desenvolvimento diferentes das configurações de produção.
 
-Credenciais de integrações devem usar Drupal Key com provider `env`; nunca
-preencher segredo diretamente em config, exportar configuração com segredo,
-mover credenciais para o tema ou hardcodar caminhos Homelab/Hostinger no
-Portal. Adicionar credencial exige Key, nome de variável, atualização do
-ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
+Credenciais de integrações ficam no arquivo de segredos do servidor, fora do
+Git, e são lidas somente pelo `aculta_portal.secrets_manager`. Não usar Drupal
+Key para credenciais novas: nunca gravar segredo em configuração (`config/sync`
+ou banco), em transporte de e-mail, no tema ou no repositório, e nunca exportar
+configuração com segredo. Adicionar credencial exige nome de variável no ACULTA
+Secrets Contract, gate anti-regressão e provisionamento por ambiente. Integrações
+que ainda usam Key (Mercado Pago, Turnstile, Google OAuth e criptografia de
+documentos) são migradas por decisão do responsável; até lá, não ampliar o uso
+de Key. Credenciais de envio de e-mail não ficam no transporte do Mailer Plus.
+Não hardcodar caminhos Homelab/Hostinger no Portal.
 
 ## Bancos e Sistema de Estados
 
@@ -437,7 +442,7 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 
 - Core/contrib implementam protocolos e desafios; `aculta_portal` mantém política e integração; ACULTA420 cuida apenas da apresentação.
 - Não mover OAuth/CAPTCHA para o tema, consultar configuração de integração no tema, nem adicionar dependências ou segredos de autenticação ao tema.
-- Credenciais usam Drupal Key e ambiente. Consulte `docs/integrations/AUTHENTICATION.md` e `docs/integrations/CAPTCHA.md`.
+- Credenciais ficam no arquivo de segredos do servidor, lidas pelo `aculta_portal.secrets_manager` (regra de segredos acima). Consulte `docs/integrations/AUTHENTICATION.md` e `docs/integrations/CAPTCHA.md`.
 
 - Para detalhes do contrato neutro, Bootstrap/SDC, tokens semânticos, modos de cor e gates, consulte `docs/portal/COMPONENT-DESIGN-SYSTEM.md` e `web/themes/custom/aculta420/docs/design-system.md`.
 - Novos componentes usam tokens semânticos e SDC quando houver contrato reutilizável; não criam lógica de domínio no tema nem seletores de modo fora da política documentada.
