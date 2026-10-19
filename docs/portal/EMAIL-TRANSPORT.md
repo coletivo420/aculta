@@ -23,8 +23,9 @@ são versionados. O `config/sync` traz o transporte sem credenciais; o `config:s
 `553 5.7.1 : Sender address rejected: not owned by user naoresponda@aculta.org`, porque o remetente de teste era
 `naoresponda@toca.net.br`. Com o remetente igual à conta autenticada, a Hostinger aceita o envio.
 
-**Pendência.** O gate do Portal (`transactionalMailReady()`) e os validadores seguem o transporte padrão; a credencial
-continua sendo exigida no próprio Mailer Plus, pois a regra de segredos do `AGENTS.md` está em revisão.
+**Regra.** A credencial de envio pode ficar no banco do Runtime (exceção aprovada em 2026-10-19 e registrada no `AGENTS.md`).
+Nunca vai para `config/sync`, para o repositório ou para exportação. O gate do Portal (`transactionalMailReady()`) e os validadores
+seguem o transporte padrão e verificam que a versão versionada não tem credenciais.
 
 **Tradução do Mailer Plus (2026-10-19).** Os 85 textos do `symfony_mailer` 2.0.2 estão traduzidos para pt-br no
 Runtime de teste (conferidos um a um contra o `.po` oficial). A tradução é estado do banco, não do repositório:

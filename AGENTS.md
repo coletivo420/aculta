@@ -402,14 +402,18 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
 
 Credenciais de integrações ficam no arquivo de segredos do servidor, fora do
 Git, e são lidas somente pelo `aculta_portal.secrets_manager`. Não usar Drupal
-Key para credenciais novas: nunca gravar segredo em configuração (`config/sync`
-ou banco), em transporte de e-mail, no tema ou no repositório, e nunca exportar
-configuração com segredo. Adicionar credencial exige nome de variável no ACULTA
-Secrets Contract, gate anti-regressão e provisionamento por ambiente. Integrações
-que ainda usam Key (Mercado Pago, Turnstile, Google OAuth e criptografia de
-documentos) são migradas por decisão do responsável; até lá, não ampliar o uso
-de Key. Credenciais de envio de e-mail não ficam no transporte do Mailer Plus.
-Não hardcodar caminhos Homelab/Hostinger no Portal.
+Key para credenciais novas. Exceção aprovada pelo responsável (2026-10-19): a
+credencial de envio de e-mail do transporte do Mailer Plus pode ser gravada no
+banco do Runtime. Nessa exceção, a credencial fica somente no banco, nunca em
+`config/sync`, no repositório, no tema, em logs ou em exportação de
+configuração; a configuração versionada do transporte traz usuário e senha
+vazios, e o gate de e-mail verifica a credencial no transporte padrão. Qualquer
+outro segredo continua no arquivo de segredos do servidor. Adicionar credencial
+exige nome de variável no ACULTA Secrets Contract, gate anti-regressão e
+provisionamento por ambiente. Integrações que ainda usam Key (Mercado Pago,
+Turnstile, Google OAuth e criptografia de documentos) são migradas por decisão do
+responsável; até lá, não ampliar o uso de Key. Não hardcodar caminhos
+Homelab/Hostinger no Portal.
 
 ## Bancos e Sistema de Estados
 
@@ -442,7 +446,7 @@ Não hardcodar caminhos Homelab/Hostinger no Portal.
 
 - Core/contrib implementam protocolos e desafios; `aculta_portal` mantém política e integração; ACULTA420 cuida apenas da apresentação.
 - Não mover OAuth/CAPTCHA para o tema, consultar configuração de integração no tema, nem adicionar dependências ou segredos de autenticação ao tema.
-- Credenciais ficam no arquivo de segredos do servidor, lidas pelo `aculta_portal.secrets_manager` (regra de segredos acima). Consulte `docs/integrations/AUTHENTICATION.md` e `docs/integrations/CAPTCHA.md`.
+- Credenciais ficam no arquivo de segredos do servidor, lidas pelo `aculta_portal.secrets_manager`; a exceção de envio de e-mail no banco do Runtime está na regra de segredos acima. Consulte `docs/integrations/AUTHENTICATION.md` e `docs/integrations/CAPTCHA.md`.
 
 - Para detalhes do contrato neutro, Bootstrap/SDC, tokens semânticos, modos de cor e gates, consulte `docs/portal/COMPONENT-DESIGN-SYSTEM.md` e `web/themes/custom/aculta420/docs/design-system.md`.
 - Novos componentes usam tokens semânticos e SDC quando houver contrato reutilizável; não criam lógica de domínio no tema nem seletores de modo fora da política documentada.
