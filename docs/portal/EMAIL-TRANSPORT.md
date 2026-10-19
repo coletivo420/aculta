@@ -25,6 +25,11 @@ no `AUTH`. A única recusa restante é o destinatário de teste `example.invalid
 gravar a credencial no Mailer Plus ou o provisionamento passar a injetá-la.
 Ver a decisão em aberto sobre Keys nesta seção.
 
+**Tradução do Mailer Plus (2026-10-19).** Os 85 textos do `symfony_mailer` 2.0.2 estão traduzidos para pt-br no
+Runtime de teste (conferidos um a um contra o `.po` oficial). A tradução é estado do banco, não do repositório:
+em cada ambiente, importar com `drush locale:update` (ou `drush locale:import pt-br <symfony_mailer-2.0.2.pt-br.po> --type=contrib --override=none`)
+e conferir a contagem. Nenhum arquivo de contrib é editado.
+
 ## 1. Decisão
 
 Migrar o envio de e-mail do `drupal/smtp` (1.4, SMTP via `smtp.settings`) para **Mailer Plus**
