@@ -1,3 +1,8 @@
+## `0.1.0-dev.15` — filtro hierárquico de categorias na View pública — 2026-10-19
+
+- A View `aculta_forum_public_topics` ganhou filtro exposto de categoria pelo plugin Taxonomy nativo `taxonomy_index_tid`, limitado ao vocabulário `aculta_forum_categories` e com hierarquia. Filtros de tipo, domínio, publicação e acesso permanecem fixos; cache inclui query args.
+- Config Sync e config de instalação são equivalentes; Unit de View/config: 6 testes/39 assertions PASS. Runtime `toca`: config isolada aplicada, Core carregou `TaxonomyIndexTid`, raiz e query `?categoria=999999` responderam 200, seletor “Categoria” renderizado. O vocabulário está vazio (0 termos), então seleção real depende da taxonomia editorial. Nenhum termo ou conteúdo foi criado. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.14` — ação contextual de criação de tópico — 2026-10-19
 
 - A View pública acrescenta `/criar-topico` somente quando Entity Create Access permite a ação. O hook OOP `views_pre_render` usa o resultado cacheável da rota tanto na ação quanto na View e aplica o token visual existente `button-primary`.

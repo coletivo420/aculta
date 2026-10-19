@@ -4,11 +4,14 @@ status: true
 dependencies:
   config:
     - field.field.node.aculta_forum_topic.field_domain_source
+    - field.field.node.aculta_forum_topic.field_aculta_categories
     - node.type.aculta_forum_topic
+    - taxonomy.vocabulary.aculta_forum_categories
   module:
     - ctools_views
     - domain_source
     - node
+    - taxonomy
     - user
 id: aculta_forum_public_topics
 label: 'Tópicos públicos do ACULTA Forum'
@@ -99,6 +102,51 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+        field_aculta_categories_target_id:
+          id: field_aculta_categories_target_id
+          table: node__field_aculta_categories
+          field: field_aculta_categories_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_aculta_categories_target_id_op
+            label: Categoria
+            description: ''
+            use_operator: false
+            operator: field_aculta_categories_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: categoria
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: categoria
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: aculta_forum_categories
+          hierarchy: true
+          error_message: false
+          plugin_id: taxonomy_index_tid
       style:
         type: default
         options:
@@ -123,6 +171,7 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -142,6 +191,7 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -162,6 +212,7 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }

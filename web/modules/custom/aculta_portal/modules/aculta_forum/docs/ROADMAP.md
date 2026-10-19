@@ -100,6 +100,10 @@ purpose `forum`, lista vazia e 404 direto para `/discussoes` e `/forum`. O bloco
 do acervo contrib permanece sem colocação. Criação/resposta persistida, tema e
 remoção do legado continuam pendentes.
 
+Dev.15 adiciona filtro exposto de categoria ao Page display, usando Taxonomy e
+Views Core no vocabulário ACULTA. Runtime confirmou o plugin, renderização do
+seletor e resposta 200 com query; o vocabulário está vazio, sem termos cadastrados.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,

@@ -10,6 +10,13 @@ como ponto de inserir `attachment_before`/`attachment_after` antes da renderiza�
 cacheável. Código instalado verificado em `views.api.php`, `ViewExecutable.php`,
 `AccessManagerInterface.php` e `CacheableMetadata.php`. Referências: [Views pre-render](https://api.drupal.org/api/drupal/core%21modules%21views%21views.api.php/function/hook_views_pre_render/11.x), [AccessManagerInterface](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Access%21AccessManagerInterface.php/interface/AccessManagerInterface/11.x).
 
+O filtro categórico usa o plugin Views `taxonomy_index_tid`; Core 11 suporta
+campos `entity_reference` direcionados a `taxonomy_term` e restringe as opções
+por vocabulário. A integração e a atualização da tabela `taxonomy_index` foram
+verificadas em `TaxonomyViewsHooks.php` e `TaxonomyHooks.php`. Referências:
+[plugin TaxonomyIndexTid](https://api.drupal.org/api/drupal/core%21modules%21taxonomy%21src%21Plugin%21views%21filter%21TaxonomyIndexTid.php/11.x),
+[integração de Views Taxonomy](https://api.drupal.org/api/drupal/core%21modules%21taxonomy%21src%21Hook%21TaxonomyViewsHooks.php/class/TaxonomyViewsHooks/11.x).
+
 ## Estado real do repositório
 
 | Evidência | Constatação | Efeito para o projeto |

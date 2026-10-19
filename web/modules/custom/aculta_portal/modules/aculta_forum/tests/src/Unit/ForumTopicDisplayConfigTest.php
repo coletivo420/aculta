@@ -79,6 +79,13 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame(['aculta_forum_topic' => 'aculta_forum_topic'], $options['filters']['type']['value']);
     self::assertSame('domain_source', $options['filters']['field_domain_source_target_id']['plugin_id']);
     self::assertSame(['_active' => '_active'], $options['filters']['field_domain_source_target_id']['value']);
+    $category_filter = $options['filters']['field_aculta_categories_target_id'];
+    self::assertSame('node__field_aculta_categories', $category_filter['table']);
+    self::assertSame('taxonomy_index_tid', $category_filter['plugin_id']);
+    self::assertTrue($category_filter['exposed']);
+    self::assertSame('categoria', $category_filter['expose']['identifier']);
+    self::assertSame('aculta_forum_categories', $category_filter['vid']);
+    self::assertTrue($category_filter['hierarchy']);
     self::assertFalse($options['query']['options']['disable_sql_rewrite']);
     self::assertContains('user.node_grants:view', $view['display']['default']['cache_metadata']['contexts']);
     self::assertSame(
@@ -88,6 +95,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('discussoes', $view['display']['page_discussions']['display_options']['path']);
     self::assertSame('none', $view['display']['page_discussions']['display_options']['menu']['type']);
     self::assertFalse($view['display']['page_discussions']['display_options']['defaults']['title']);
+    self::assertContains('url.query_args', $view['display']['page_discussions']['cache_metadata']['contexts']);
   }
 
   /**

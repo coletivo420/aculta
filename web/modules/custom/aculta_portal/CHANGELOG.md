@@ -1,3 +1,8 @@
+## 0.4.0-dev.182 — filtro de categoria no índice público do Fórum — 2026-10-19
+
+- View pública oferece filtro hierárquico Core Taxonomy para `aculta_forum_categories`; filtro continua no domínio ativo e no bundle público novo, sem afetar o índice legado. Cache da página inclui query args.
+- Unit de configuração: 6 testes/39 assertions PASS. Drupal 11+ (969), fronteira (1328), mapa (154), UI (285) e packages (22) PASS. Runtime `toca`: importação parcial só da View, plugin Core carregado, raiz e query de categoria HTTP 200; seletor presente e vocabulário vazio (0 termos). Nenhum termo ou tópico foi criado. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.181 — ação de criação condicionada por acesso — 2026-10-19
 
 - Na listagem raiz do Growroom, a ação de criar tópico aparece apenas quando a rota Core autoriza a conta atual. Metadados de acesso são propagados para o cache da View para evitar cache cruzado de permissões/participação.
