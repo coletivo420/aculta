@@ -36,6 +36,8 @@ motor novo segue por contexto e fases.
 - [Contextos e API](docs/CONTEXTS.md)
 - [Ownership](docs/OWNERSHIP.md)
 - [Matriz Advanced Forum](docs/ADVANCED-FORUM-PORT.md)
+- [Experiência e ferramentas Discourse](docs/DISCOURSE-EXPERIENCE.md)
+- [Planejamento de movimentação de tópicos e comentários](docs/MOVE-TOOLS.md)
 - [Pesquisa](docs/PESQUISA.md)
 - [Plano de retirada/migração](docs/MIGRATION-REMOVAL.md)
 - [Classes e hooks planejados](docs/CLASSES-AND-HOOKS.md)

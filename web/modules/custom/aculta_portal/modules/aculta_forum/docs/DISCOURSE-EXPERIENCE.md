@@ -37,6 +37,38 @@ contagens de tópicos e atividade do site mudam continuamente. Os guias gerais
 do Discourse explicam padrões de uso, mas não significam que toda capacidade
 esteja habilitada no Ubuntu Discourse.
 
+## Ferramentas de comunidade e moderação pesquisadas
+
+Pesquisa complementar em 2026-10-19 cobriu documentação de administração e o
+código atual do Discourse, além da experiência pública do Ubuntu:
+
+| Ferramenta Discourse | Como funciona no produto/código | Planejamento ACULTA |
+| --- | --- | --- |
+| Alterar categoria do tópico | Edição do tópico e operação em lote alteram a categoria; o índice continua ordenável pela atividade. | Mover Node entre termos Taxonomy do Growroom, incluindo prévia e lote; preservar o Node e não mover acervo histórico. |
+| Selecionar posts e mover | Seleção de posts oferece tópico existente ou novo; split mantém avisos/links de origem e pode preservar ordem cronológica. | Planejar mover Comment/subárvore dentro do mesmo contexto. Split e merge ficam condicionados à decisão sobre URL, origem e recuperação. |
+| Mesclar tópicos | Move posts entre tópicos, recalcula estatísticas e fecha/retém a origem conforme a situação. | Não apagar origem automaticamente. Planejar só após preservar aliases, revisões, comentários, flags e recuperação. |
+| Fila de revisão | Consolida itens revisáveis, filtra por tipo/estado e prioriza revisão; recursos recentes incluem notas e timeline por item. | Manter filas do Portal por contexto/purpose, com filtro/estado, histórico e futura nota interna se houver storage/ACL adequado. Nunca criar fila global que vaze contexto. |
+| Flags/denúncias | Tipos configuráveis; revisão pode ocultar, restaurar, editar ou manter conteúdo e registrar ação. Algumas decisões automatizadas usam sinais de flags e histórico. | Configuração explícita e revisão humana; não importar trust levels, ranking opaco nem ocultação automática sem decisão e análise antiabuso. LMS continua sob Educadores. |
+| Ferramentas de tópico | Ações administrativas incluem fixar, fechar/pausar, agendar fechamento, aviso de equipe e selecionar posts. | Adotar apenas estados que existam no modelo Core/Portal, com permissão e auditoria; preservar a imutabilidade do acervo histórico. |
+
+### Implementação observada e tradução para Drupal
+
+No código upstream, endpoints de merge/move consultam autorização do
+`guardian` antes da operação. O modelo `Topic` delega a movimentação selecionada
+para `PostMover`, em vez de tratar a ação como edição direta do formulário; há
+tratamento de erros e atualização de estatísticas. A interface apresenta a
+seleção, destino e confirmação e adiciona aviso de movimentação. Esses detalhes
+são bons critérios de desenho: validação de acesso no servidor, serviço de
+domínio, execução como unidade consistente, confirmação e trilha de auditoria.
+
+ACULTA implementará os equivalentes através de Entity/Access/Form APIs Drupal,
+sem copiar Ruby/Rails, storage do Discourse ou nomes de papéis. No Fórum,
+categoria é Taxonomy e tópico é Node; resposta é Comment. Por isso, um movimento
+de comentário requer verificar `entity_id`, `field_name`, `pid`, `thread`,
+permalinks e estatísticas do Comment nos dois Nodes. A operação não entra no
+Runtime até uma prova de integridade/rollback. Os detalhes e os casos de teste
+estão em [`MOVE-TOOLS.md`](MOVE-TOOLS.md).
+
 ## Direção visual ACULTA420
 
 O Growroom420 deve parecer uma comunidade de discussão atual com hierarquia
@@ -86,7 +118,9 @@ cacheability e estados neutros.
 | Responder e citar no contexto | Responder ao tópico ou comentário; citação preserva atribuição e não copia dados inacessíveis | Form/Comment access; citações sanitizadas. |
 | Rascunho/auto-save | Pesquisar opções Core/armazenamento antes de implementar; priorizar recuperação local segura | Não criar entidade de resposta paralela nem guardar conteúdo privado sem política. |
 | Bookmark/seguir/notificações | Reutilizar Flag e ACULTA Messenger | Respeitar opt-in e validar acesso no momento de entrega. |
-| Flags e moderação comunitária | Adotar fila/flags com responsabilidade humana e permissões ACULTA | Não adotar trust level como hierarquia paralela. LMS permanece moderado pelos Educadores. |
+| Flags e moderação comunitária | Adotar fila contextual, estados, notas/histórico onde houver contrato adequado e permissões ACULTA | Não adotar trust level, ranking opaco ou automação de ocultação. LMS permanece moderado pelos Educadores. |
+| Mover tópico/comentários, split e merge | Ferramentas com prévia, autorização nas duas pontas, integridade e recuperação | Mesma categoria/contexto público; sem cruzar Fórum/Revista/LMS/Wiki; acervo histórico imutável. Planejamento em `MOVE-TOOLS.md`. |
+| Notas privadas de moderação e timeline de revisão | Avaliar histórico de ações e notas internas com ACL e retenção | Não exibir notas a autores/público nem guardar conteúdo sensível em logs. |
 | Chat em tempo real, AI, tradução automática, SSO/2FA próprios e app nativo | Não são requisitos do fórum novo | Messenger/autenticação existentes continuam donos; sem escopo de replicação por semelhança. |
 | Link previews automáticos | Candidato posterior, condicionado a proteção SSRF e orçamento de desempenho | Não fazer fetch de URL arbitrária em renderização. |
 
@@ -106,6 +140,9 @@ Portal–tema for atualizado.
 - Row de tópico com respostas e última atividade; autores/participantes usam
   variantes `author_forum` do `aculta_user`.
 - Onboarding: orientações de “onde publicar”, tópico fixo e estado vazio útil.
+- Operações editoriais de Taxonomy (reordenar e mover categoria) e mudança de
+  categoria de tópicos ficam planejadas em dev.9; não expor controles antes da
+  permissão e da prévia de impacto estarem prontas.
 - Revisar os fixtures atuais `[TESTE]` e remover apenas por IDs após o ciclo
   de inspeção autorizado.
 
@@ -146,6 +183,12 @@ Portal–tema for atualizado.
 
 - Favoritar/seguir/denunciar por APIs Flag/Messenger; controles aparecem por
   access e decisões de moderação continuam humanas.
+- Incluir ferramentas de mover comentário/subárvore, mover para tópico
+  existente, split/merge condicionado, fila de revisão filtrável e histórico de
+  decisão; observar `MOVE-TOOLS.md` para autorização, atomicidade e isolamento.
+- Avaliar notas privadas de moderação associadas a uma revisão somente depois
+  de definir ACL, retenção, auditoria e integração com a infraestrutura
+  existente.
 - LMS ganha navegação/avisos semelhantes, mas isolados por curso/turma/
   atividade e moderados pelos Educadores.
 - Wiki e Revista ganham conversa dentro da entidade original, sem novos tópicos

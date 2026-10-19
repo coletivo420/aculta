@@ -20,6 +20,15 @@ linear, progresso e resposta contextual; (4) seguir/salvar/denunciar e
 notificações; (5) preferências e acabamento mobile/acessível. IA, chat em tempo
 real, aplicativo nativo e previews remotos não são requisitos deste roadmap.
 
+As ferramentas de comunidade do Discourse foram pesquisadas em produto e no
+código upstream em 2026-10-19. O roadmap incorpora padrões de organização de
+tópicos, seleção/movimento de posts, merge/split, avisos de ação, fila de
+revisão, flags configuráveis, notas e histórico de moderação. Isso é referência
+de produto, não autorização para copiar sua implementação nem seus trust levels;
+o contrato ACULTA e seus quatro contextos prevalecem. Ver
+[`DISCOURSE-EXPERIENCE.md`](DISCOURSE-EXPERIENCE.md) e
+[`MOVE-TOOLS.md`](MOVE-TOOLS.md).
+
 | Versão | Entrega | Estado |
 | --- | --- | --- |
 | `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas e navegação HTTP; visual e hierarquia pendentes |
@@ -226,7 +235,14 @@ Categoria com descrição, subcategoria, índice geral, breadcrumbs, tópicos
 fixados, contagem cacheável de respostas/última atividade e listagem por
 atividade/data. Adotar o padrão observado no Ubuntu Discourse: descrições que
 explicam o destino e listas que expõem título, categoria, respostas e atividade.
-Tópicos-sombra/movidos apenas se um fluxo ACULTA aprovado precisar deles.
+Planejar também ferramentas administrativas de organização: mover um tópico
+entre categoria/subcategoria do Growroom, reorganizar a hierarquia Taxonomy e
+selecionar vários tópicos para mudar categoria em lote. Exigir permissão
+específica mais Entity Access de origem/destino, confirmação com contagem e
+resumo, preservação do Node/revisões/Comments/alias e aviso rastreável. Não
+cruzar propósito/domínio nem mover conteúdo do acervo Growroom histórico. Um
+tópico-sombra/redirect não é padrão: só será considerado com decisão explícita
+de URL e canonical, sem duplicar Nodes.
 
 ## `0.1.0-dev.10` — Advanced Forum: leitura e estatísticas
 
@@ -248,7 +264,24 @@ mobile, reduced-motion e fallback sem JavaScript.
 
 Flags, denúncias, salvar/seguir, citação, aprovação, edição e bloqueio por APIs
 existentes e access real. Permissões de participação não serão derivadas de
-trust levels/ranking do Discourse.
+trust levels/ranking do Discourse. Estudar fila de revisão por tipo/estado com
+filtros contextuais, histórico cronológico da decisão e notas de equipe
+associadas ao item revisável, sem misturar filas administrativas de Fórum,
+Revista, Wiki e LMS. Tipos de denúncia e opções administrativas devem ser
+configuráveis, mas limites, prevenção a abuso e revisão humana precisam de
+decisão ACULTA antes de automação por contagem de flags.
+
+Planejar a ferramenta “Mover comentário” para comentários publicados ou
+moderados dentro do mesmo tópico/contexto público Growroom: mover uma resposta
+e sua subárvore para tópico existente, além de dividir uma discussão quando o
+destino for um tópico novo. Merge de tópicos só poderá ser avaliado como fluxo
+composto e reversível, com confirmação de todos os comentários afetados e
+tratamento explícito do tópico de origem. Não mover comentários entre Fórum,
+Revista, LMS e Wiki; não alterar estados de aprovação/rejeição nem contornar
+moderação. Comentários em contexto LMS continuam sob decisão dos Educadores com
+acesso real ao Group. O acervo Growroom histórico permanece imutável, inclusive
+para administradores. O desenho técnico, as decisões pendentes e os testes
+mínimos ficam em [`MOVE-TOOLS.md`](MOVE-TOOLS.md).
 
 ## `0.1.0-dev.13` — Fóruns internos LMS
 

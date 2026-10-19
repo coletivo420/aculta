@@ -47,7 +47,10 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | Busca em categoria e em tópico | Portar via Search API contextual | Aplicar access igual às rotas. |
 | Pager no topo e paginação contextual | Portar via pager Views/Core | Links preservam query, contexto e canonical. |
 | Seção separada para fixados | Portar se suportado pela entidade/Flag/config validada | Ordenação previsível e acessível. |
-| Tópico movido/sombra | Adaptar se houver caso operacional aprovado | Se não houver, registrar como não pertinente; não criar node duplicado. |
+| Reorganizar categoria/subcategoria | Planejar com Taxonomy parent/weight | dev.9; preservar acesso fixo, validar hierarquia e impacto em Views/breadcrumbs. |
+| Mover tópico entre categorias e em lote | Planejar atualização do Node existente via Entity API | dev.9; mesmo vocabulário/purpose público, access na origem/destino e confirmação; preservar ID, revisão, alias e Comments. Não criar Node duplicado. |
+| Tópico-sombra/redirect | Não padrão; avaliar apenas com decisão específica de URL | Não duplicar entidades; preservar canonical e links conforme política de slug. |
+| Mover resposta, dividir ou mesclar tópico | Planejar movimento de Comment/subárvore no mesmo contexto; split/merge após prova adicional | dev.12; estado de moderação e autoria preservados, sem mover entre Fórum/Revista/LMS/Wiki; acervo histórico imutável. Ver `MOVE-TOOLS.md`. |
 | Tópico popular/hot e contagem de visualizações | Portar contagem com cache/decisão de métrica | Visualização ≠ sessão/pessoa ativa; proteção contra bots e duplicidade. |
 | Contagem de tópico/respostas e estatística breve | Portar por serviço/View cacheável | Sem COUNT caro em cada render e sem contar itens inacessíveis. |
 | Ordenação por atividade/data | Portar com sort Views permitido | Não expor configuração editorial perigosa em bloco. |
