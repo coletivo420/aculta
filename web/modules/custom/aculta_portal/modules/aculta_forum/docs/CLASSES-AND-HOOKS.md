@@ -1,0 +1,26 @@
+# Classes, serviços e hooks — contrato planejado
+
+Dev.4 implementa `DiscussionContextInterface`, `DiscussionContext`,
+`DiscussionContextProviderInterface`, `DiscussionContextResolver` e
+`PublicForumContextProvider`. A expansão deve continuar por serviços tagueados e
+DI explícita. Não criar service locator ou hook procedural migrável.
+
+| Responsabilidade prevista | Candidato/API | Estado |
+| --- | --- | --- |
+| Selecionar contexto/provedor | `DiscussionContextResolver` + `DiscussionContextProviderInterface` | Implementado na dev.4; provider via tag `aculta_forum.discussion_context_provider`, duplicidade falha explicitamente. |
+| Identificar topic/thread | `DiscussionContextInterface` + `DiscussionContext` | Implementado para entidade hospedeira, ID estável, URL canônica, access e cacheability; sem storage duplicado. |
+| Consultar regras | `DiscussionAccessPolicy` ou delegação explícita a entity access/Group | Comparar APIs primeiro; `AccessResultInterface` e cacheability obrigatórios. |
+| Preparar thread/post | View builders e Views/Core Comment render | Não criar renderer paralelo antes de testar APIs existentes. |
+| Listagem e filtro | Views query/access handlers + Search API processors | Filters por domínio/contexto fixos. |
+| Leitura/não lidos | History API e serviço pequeno se histórico nativo não cobrir o contrato | Exige decidir armazenamento e invalidação antes de entidade/tabela. |
+| Estatísticas | agregação/cache service sobre APIs/views existentes | Sem query cara a cada render ou storage redundante. |
+| Evento de resposta | evento interno neutro após persistência, consumido por Messenger | Revalidar access no worker; não duplicar aviso. |
+| Author cards | APIs em `aculta_user` | Forum nunca possui builder. |
+| Provider LMS | submódulo opcional `aculta_forum_lms` | Planejado após contrato e teste de isolamento. |
+| Provider Wiki | adapter futuro | Não implementar antes da reimplementação Wiki. |
+
+Hooks existentes relacionados ao legado aparecem em
+`aculta_user/docs/CLASSES-E-HOOKS.md` e
+`aculta_magazine/docs/README.md`; sua migração ou remoção exige paridade por
+comportamento, não renomeação em massa. Lifecycles Drupal que exigem hook
+procedural continuam procedurais conforme `DRUPAL-11-STANDARDS.md`.

@@ -13,9 +13,11 @@ progresso, certificado, mensagem ou amizade paralelos.
   Group e o viewer `aculta_pdf_viewer`; o acesso ao arquivo é revalidado pela
   rota privada do Core. O módulo declara a dependência do submódulo Group do
   viewer para evitar configuração de curso sem o plugin correspondente.
-- As discussões de curso/atividade serão integradas quando `aculta_forum`
-  tiver implementação executável. Tópicos e comentários continuarão nas APIs
-  Forum/Node/Comment e o acesso seguirá o Group do curso, sem storage paralelo.
+- As discussões de curso/turma/atividade serão integradas por adapter opcional
+  quando `aculta_forum` tiver implementação executável. O alvo usa Node/Comment
+  contextual e revalida Entity Access e membership no Group; papel global
+  `estudante` sozinho não autoriza. Forum contrib 1.1.3 continua no runtime
+  atual até a fase aprovada de substituição, sem alterar conteúdo nesta fase.
   O contrato e as condições estão em
   [LMS-INTEGRATION-CONTRACTS.md](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md).
 

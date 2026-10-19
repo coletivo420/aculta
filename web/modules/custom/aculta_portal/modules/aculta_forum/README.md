@@ -1,91 +1,70 @@
-# ACULTA Fórum — Growroom420
+# ACULTA Forum — Growroom420 e discussões contextuais
 
-Projeto do futuro submódulo opcional `aculta_forum`, integrante do `aculta_portal`.
-Plano aprovado pelo responsável em **2026-10-15**.
+Submódulo de `aculta_portal`. Linha do projeto: **0.1.0-dev.5**. O
+direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
+as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
+uma migração segura, por fase própria. A dev.4 introduz o módulo executável e
+a Context API; configuração de instalação/Config Sync foi aplicada apenas no
+Runtime de teste para smoke test, sem criar conteúdo. `aculta_user`
+já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC
+experimental compartilhado. A integração dos cartões nas discussões atuais e no
+motor novo segue por contexto e fases.
 
-**Estado do código (2026-10-17).** Este submódulo ainda contém só documentação (sem `.info.yml`,
-rotas ou importadores). A funcionalidade do fórum já existe em outros módulos do Portal:
+## Arquitetura e regras
 
-| Parte do fórum | Onde está | Documento |
-| --- | --- | --- |
-| Identidade histórica e memorial (F2) | `aculta_user` (`LegacyAuthor`, `LegacyMemorialController`) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
-| Fóruns restritos e marcador de associado (F9) | `aculta_user` (`RestrictedForumGrants`, `AssociadoMarcador`) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
-| Denúncias e moderação (F5.1) | `aculta_user` (`ReportQueue`) e `aculta_portal` (confirmação de e-mail) | `aculta_user/docs/CLASSES-E-HOOKS.md` |
-| Avisos de resposta e de atualização (F5.2) | `aculta_messenger` (`AvisoService`, `AvisoRetencao`) | `aculta_messenger/docs/AVISOS-E-MENSAGENS.md` |
-| Classes e hooks completos | cada módulo | `aculta_user/docs/CLASSES-E-HOOKS.md`, `aculta_messenger/docs/CLASSES-E-HOOKS.md` |
+- Growroom420 hospeda somente tópicos públicos independentes.
+- Publicações, LMS e Wiki usam comentários no contexto da entidade original; não
+  há tópico público automático para publicação ou verbete.
+- LMS tem adapter opcional e acesso revalidado por Group/membership e Entity Access.
+- `aculta_user` é o dono único de identidade e cartões de autor/participante/perfil. Variantes distinguem `author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki` e `author_growroom_historico`; autoria histórica não passa pelo resolver de User.
+- ACULTA420 é o dono visual; `aculta_forum` entrega contrato neutro, acesso e cache.
+- Core/contrib permanecem fonte de verdade para Node, Comment, Taxonomy, Views,
+  Search API, History e Flag. Sem storage paralelo de resposta/categoria.
+- Imagens passam por `aculta_image`; avisos pelo `aculta_messenger`.
+- Remoção do Forum contrib e qualquer exclusão de dados não fazem parte da dev.4.
 
-## Missão
+## Documentação
 
-Reconstruir a memória pública recuperável do Growroom e oferecer uma comunidade
-canábica, cultural e antiproibicionista integrada ao Portal. Preservar a autoria
-histórica e permitir novas conversas vinculadas ao acervo, com as ferramentas
-atuais de identidade, mensagens, galerias, conhecimento, loja e cursos.
+- [Arquitetura](docs/ARQUITETURA.md)
+- [Contextos e API](docs/CONTEXTS.md)
+- [Ownership](docs/OWNERSHIP.md)
+- [Matriz Advanced Forum](docs/ADVANCED-FORUM-PORT.md)
+- [Pesquisa](docs/PESQUISA.md)
+- [Plano de retirada/migração](docs/MIGRATION-REMOVAL.md)
+- [Classes e hooks planejados](docs/CLASSES-AND-HOOKS.md)
+- [Matriz de testes](docs/TEST-MATRIX.md)
+- [Decisões](docs/DECISOES.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Reconstrução histórica](docs/RECONSTRUCAO.md) — histórico de pesquisa/importação, não autorização de exclusão.
+- [Changelog](CHANGELOG.md)
 
-## Decisões aprovadas
+O contrato de cartões, privacidade e API fica em
+[`aculta_user/docs/AUTHOR-CARDS.md`](../aculta_user/docs/AUTHOR-CARDS.md). Normas
+comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
+[guardrails](../../../../../../docs/portal/GUARDRAILS.md),
+[fronteira módulo-tema](../../../../../../docs/portal/FRONTEIRA-MODULO-TEMA.md),
+[mapa módulo-tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md),
+[fonte da verdade](../../../../../../docs/portal/SOURCE-OF-TRUTH.md),
+[participação](../../../../../../docs/portal/PAPEIS-PARTICIPACAO.md),
+[LMS](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md),
+[Wiki](../../../../../../docs/portal/WIKI.md) e
+[notificações](../../../../../../docs/portal/AVISOS-E-NOTIFICACOES.md).
 
-- O endereço público passa do prefixo `forum` para **`growroom420.aculta`**. A mudança
-  operacional será provisionada por ambiente pelo Deployer; o purpose interno
-  continua `forum`, evitando reconstruir a política multidomínio.
-- Áreas comunitárias têm leitura pública e postagem por conta cadastrada; as
-  discussões futuras do LMS ficam reservadas a matriculados e equipe autorizada.
-- O acervo histórico fica fechado a novas respostas. A ação **Continuar esta
-  discussão** abre uma conversa atual vinculada ao tópico histórico.
-- Autores recuperados têm contas User bloqueadas e o papel **Usuários legados do
-  fórum**. Cada autor mantém seu nome e a autoria individual de suas publicações.
-- Há **um único memorial coletivo em `/u/lendashistoricas`**, sem página pública
-  individual para legados. Links de autoria desses usuários apontam ao memorial.
-- Um avatar especial identifica as lendas históricas, usando o sistema de avatar
-  existente. As caixas de autoria e os componentes do ACULTA420 são reaproveitados.
-- A loja se integra por discussões e dúvidas; pedidos e atendimento pessoal ficam
-  privados. Galerias reutilizam `aculta_gallery`, conforme sua política vigente.
-- `aculta_game` integra conquistas e missões, sem ranking ou benefícios financeiros.
+## Estado confirmado na auditoria
 
-## Fontes de verdade
+Base local/GitHub: `origin/main` `d4a0d66e` (2026-10-19). Composer contém e
+`core.extension.yml` habilita `drupal/forum` 1.1.3. Há Node `forum`, Taxonomy
+`forums`, Comment `comment_forum`, Views, flags, serviços e apresentações
+existentes em `aculta_user`, `aculta_magazine`, `aculta_messenger` e ACULTA420.
+Consulte [inventário de remoção](docs/MIGRATION-REMOVAL.md) e
+[auditoria de cartões](../aculta_user/docs/AUTHOR-CARDS.md).
 
-| Dado | Dono existente | Integração do projeto |
-| --- | --- | --- |
-| Tópico, respostas e estrutura | Forum contrib, Node, Comment e Taxonomy | Experiência, vínculos e apresentação neutra |
-| Autor e estado da conta | User e `aculta_user` | Identidade histórica bloqueada; memorial coletivo |
-| Perfil e avatar | Profile, File/Image e AvatarPool | Metadados históricos e avatar reservado |
-| Amizade e mensagens | `aculta_user` e `aculta_messenger` | Ações permitidas para participantes atuais |
-| Seguir, salvar e sinalizar | Flag | Controles e filas de moderação |
-| Galerias e arquivos | `aculta_gallery`, Media Gallery, Media e File | Recuperação e referências, sem álbum paralelo |
-| Matrícula e progresso | Group e Drupal LMS | Discussões reservadas por contexto de curso |
-| Produto e pedido | Drupal Commerce | Discussão vinculada e URLs corretas |
-| Concessões de conquistas | Base atual `aculta_badge_award`; futuro `aculta_game` | Eventos atuais, excluindo importação histórica |
+## Versão e execução
 
-## Documentos do projeto
-
-- [Decisões](docs/DECISOES.md): aprovado, proposto e pendente.
-- [Arquitetura](docs/ARQUITETURA.md): fronteiras, acesso, autoria e integrações.
-- [Reconstrução](docs/RECONSTRUCAO.md): Wayback, proveniência e importação.
-- [Pesquisa](docs/PESQUISA.md): soluções modernas e evidência de código existente.
-- [Roadmap](docs/ROADMAP.md): entregas, dependências e critérios de aceite.
-- [Changelog](CHANGELOG.md).
-- [ACULTA Game](../aculta_game/README.md).
-
-Aplicam-se os [guardrails](../../../../../../docs/portal/GUARDRAILS.md), o
-[padrão Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md) e o
-[design system](../../../../../../docs/portal/COMPONENT-DESIGN-SYSTEM.md).
-
-## Estado verificável
-
-Situação por fase (ver [Roadmap](docs/ROADMAP.md)): F1 executada; F2 com estrutura
-pronta e pendente de dados e da arte do avatar; F5.1 e F5.2 implementadas no
-servidor de testes; F9 parcial (nível de curso depende da F8). F3 depende da lista
-de autores da importação. A próxima fase é a F4.
-
-F1 executada no servidor de testes em 2026-10-15. O prefixo
-`growroom420.aculta.toca.net.br` resolve para o Homelab, tem certificado TLS
-válido e mantém o purpose `forum`; o hostname anterior responde 404 sem
-redirect. O Deployer mantém `growroom420.aculta.org` como destino de produção,
-sem DNS publicado porque a origem Hostinger ainda não atende o novo hostname.
-
-A configuração versionada inclui a View `aculta_forum_topics` com um bloco
-CTools Views de tópicos recentes, colocado somente na página inicial do purpose
-`forum`. O Runtime permanece sem atualização: `RUNTIME STATUS: DEFERRED`.
-
-O inventário CDX completo do prefixo histórico `/board/`, com corte temporal e
-contagens, está em [Reconstrução](docs/RECONSTRUCAO.md); o JSON está em
-armazenamento privado do Homelab e não no Git. A F1 não migrou conteúdo e não
-criou contas, papéis ou avatares. F2 em diante permanecem pendentes.
+A dev.5 mantém a retirada em andamento: a auditoria identificou vínculos de
+publicações que serão substituídos antes de apagar os tópicos antigos. A fase
+também iniciou o provider editorial e comprovou em Kernel o uso de um storage
+Comment compartilhado em `article`, `blog` e `aculta_forum_topic`. A configuração
+de publicação e sua integração visual ainda não foram aplicadas no Runtime.
+Releases Portal, User e tema conservam linhas próprias. O roadmap detalha os
+gates de migração, limpeza de dados e uninstall.

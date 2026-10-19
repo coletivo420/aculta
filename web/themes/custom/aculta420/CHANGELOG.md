@@ -1,3 +1,10 @@
+## 0.6.0-dev.91 — cartão de autoria experimental — 2026-10-19
+
+- Novo SDC `content/author-card`, com variações visuais inline e empilhada, avatar/nome/link em slots e fallback por inicial; estilos usam tokens semânticos e suportam os modos de cor do tema.
+- Variantes funcionais são distintas por contexto (`author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki`) e a autoria histórica se chama `author_growroom_historico`; o SDC compartilha o shell visual e não recebe dados de entidade.
+- Contraparte Twig do tema chama o componente via o theme hook neutro declarado por `aculta_user`; CSS, estrutura e identidade visual permanecem no ACULTA420.
+- Gate de Foundation alinhado à versão. Validação Runtime/visual não executada nesta etapa; estado: NÃO VALIDADO, RUNTIME STATUS: DEFERRED.
+
 ## 0.6.0-dev.90 — revisão do /code-review: escopo do recorte e clique nativo
 
 - O contêiner de rolagem da gaveta é resolvido uma vez, antes de o diálogo existir (`button.acultaScroller`). Antes, a partir da segunda abertura `closest('.ui-dialog-content')` retornava o próprio diálogo (o jQuery UI adiciona essa classe ao elemento), e o recorte voltava.

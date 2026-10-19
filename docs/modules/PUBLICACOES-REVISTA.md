@@ -23,7 +23,7 @@ Implementação: submódulo `aculta_magazine` (função) e tema ACULTA420 (apar�
 | Créditos | `field_credits` | Crédito de fotos, ilustrações e textos de terceiros | Final da postagem |
 | Referências | `field_references` | Links de fontes citadas | Final da postagem |
 | SEO e compartilhamento | `field_meta_tags` | Metadescrição, Open Graph (título, descrição, imagem) | Cabeçalho HTML |
-| Discussão | `field_discussao` | Tópico de Fórum, criado automaticamente pela publicação (`aculta_magazine`) | Bloco de discussão com trecho e link para o Fórum |
+| Discussão (atual → alvo aprovado) | `field_discussao` atual | Hoje referencia tópico Forum criado por `aculta_magazine`; alvo: Comment na própria publicação via `aculta_forum` | Atual: bloco com trecho/link; alvo: thread no canonical editorial, sem tópico público automático |
 
 Regras de preenchimento:
 - **Chamada e resumo** são textos próprios. Não copie a primeira frase do corpo na chamada; se for igual, a

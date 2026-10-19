@@ -8,6 +8,13 @@ Status: **Implementado** (código commitado e verificado por HTTP/CLI), **Implem
 commitado, sem teste em navegador: a ferramenta de navegador não estava disponível), **Em andamento** (código não
 commitado ou não ligado), **Pendente** (decidido ou perguntado, sem código).
 
+> O inventário abaixo registra decisões e comportamento implementado da linha
+> atual. Em 2026-10-19 foi aprovada a API única de Author Cards do `aculta_user`
+> para a reconstrução contextual do `aculta_forum`; nenhum desses contratos é
+> substituído nesta fase documental. Veja
+> [`AUTHOR-CARDS.md`](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARDS.md)
+> e [`aculta_forum/docs/OWNERSHIP.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/OWNERSHIP.md).
+
 ## 1. Decisões
 
 ### 1.1 Visibilidade e privacidade do perfil

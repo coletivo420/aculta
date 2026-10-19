@@ -1,5 +1,16 @@
 # Componentes
 
+## Discussões ACULTA — contrato futuro
+
+O tema atual apresenta Forum contrib com `forum-list.html.twig`,
+`node--forum--full.html.twig`, `comment--comment-forum.html.twig`,
+`forum-index.css` e `discussion.css`. Esses arquivos não compõem um Author Card
+reutilizável. Na reconstrução, componentes de tópico/thread podem compor dados
+preparados por `aculta_user`; o ACULTA420 é responsável por SDC, presets,
+layout lateral/empilhado, acessibilidade e tokens light/dark. A lista de seis
+presets e capacidades está em `aculta_forum/docs/ADVANCED-FORUM-PORT.md`. Esta
+fase documental não altera markup nem estilos.
+
 O catálogo visual e suas regras estão em
 [`component-catalog.md`](component-catalog.md). Os stories ficam junto dos
 SDCs e aparecem na biblioteca protegida do UI Patterns.
@@ -190,6 +201,17 @@ daquela pessoa. O badge da navegação de Minha Conta usa vermelho dentro do
 shell `.portal-account`, mantendo a cor semântica original fora dele. Cada
 linha tem menu contextual para limpar o histórico pessoal pelo formulário
 nativo do Private Message.
+
+## Cartão de autoria compartilhado (0.6.0-dev.91)
+
+`content/author-card` apresenta variantes de autoria sem consultar entidades ou
+decidir acesso. O `aculta_user` prepara apelido, link canônico, avatar autorizado
+e cache no theme hook neutro; a imagem passa por `aculta_image`. `author_forum`
+e `author_comment` compartilham o layout inline, enquanto
+`author_forum_stacked` altera apenas a disposição. `author_growroom_historico` é somente
+identificação de acervo, sem link individual ou ação de conta. `author_editorial`,
+`author_lms` e `author_wiki` têm chaves reservadas, mas aguardam seus consumidores
+contextuais. Inspeção visual e Runtime: DEFERRED.
 
 A home/lista da Wiki usa css/components/wiki.css, arquivo temático de
 responsabilidade própria na biblioteca global. O markup continua preparado pelo

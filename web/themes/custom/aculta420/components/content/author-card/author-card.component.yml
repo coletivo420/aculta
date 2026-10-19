@@ -1,0 +1,42 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de autoria
+status: experimental
+group: Identity
+description: 'Presentation of an authorized author identity prepared by aculta_user. It does not load entities or decide access.'
+props:
+  type: object
+  required:
+    - variant
+    - display_name
+  properties:
+    variant:
+      type: string
+      enum:
+        - profile_full
+        - profile_compact
+        - author_editorial
+        - author_comment
+        - author_forum
+        - author_forum_stacked
+        - author_lms
+        - author_wiki
+        - author_growroom_historico
+        - author_minimal
+      description: 'Presentation variant selected by the functional owner.'
+    display_name:
+      type: string
+      description: 'Public display name already filtered by aculta_user.'
+    profile_url:
+      type: [string, 'null']
+      description: 'Canonical public profile URL, or null when no public link is available.'
+slots:
+  avatar:
+    title: Avatar
+    description: 'Authorized Drupal render array generated through aculta_image.'
+  actions:
+    title: Ações autorizadas
+    description: 'Optional render arrays whose access was decided by the functional owner.'
+assets:
+  css:
+    component:
+      author-card.css: {}

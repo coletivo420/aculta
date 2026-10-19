@@ -21,8 +21,9 @@ paralelo nem depender do tema para funcionar.
 
 As extensões próprias incluem o LMS com atividades H5P vinculadas a cursos,
 slugs públicos canônicos por `PublicRouteSlug::normalize()` e a política
-`filename_sanitization` para nomes de upload. Cada capacidade documenta seus
-limites no README do respectivo submódulo.
+`filename_sanitization` para nomes de upload. O `aculta_user` também fornece a
+API base cacheável de identidade de autoria para consumidores do Portal. Cada
+capacidade documenta seus limites no README do respectivo submódulo.
 
 ## Navegação documental
 

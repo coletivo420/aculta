@@ -2,6 +2,13 @@
 
 Identidade, perfil, avatar, amizade, associados (marcador), autoria histórica (memorial), restrição de fóruns (F9) e moderação de denúncias. Ver também `docs/` e o `CHANGELOG.md` do módulo.
 
+> As entradas Forum nesta referência descrevem a implementação atual e seus
+> consumidores dos bundles `forum`/`comment_forum`. A reconstrução aprovada em
+> 2026-10-19 os substituirá por contratos contextuais e cartões de autoria
+> preparados por `aculta_user`; ver [AUTHOR-CARDS.md](AUTHOR-CARDS.md) e
+> [MIGRATION-REMOVAL.md](../../aculta_forum/docs/MIGRATION-REMOVAL.md). Não remova nem renomeie hooks nesta
+> fase documental.
+
 Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a primeira frase do próprio docblock; a regra e o motivo completos ficam no código. Quando uma classe mudar, atualize esta tabela na mesma entrega.
 
 ## Hooks (`#[Hook]`)
@@ -130,6 +137,15 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | --- | --- | --- |
 | `RestrictedForumGrants` | `src/Forum/RestrictedForumGrants.php` | Visibilidade dos fóruns restritos (ACULTA Fórum, F9, F-D14). |
 
+### `Identity`
+
+| Classe | Arquivo | Responsabilidade |
+| --- | --- | --- |
+| `AuthorIdentity` | `src/Identity/AuthorIdentity.php` | View-model escalar mínimo com cache tags/contexts da identidade pública. |
+| `AuthorIdentityResolver` | `src/Identity/AuthorIdentityResolver.php` | Resolve apelido e link canônico para variantes User sem expor a entidade. |
+| `AuthorCardBuilder` | `src/Identity/AuthorCardBuilder.php` | Gera render array neutro de cartão, com cache e ações fornecidas por consumidor autorizado. |
+| `AuthorCardThemeHooks` | `src/Hook/AuthorCardThemeHooks.php` | Declara hook neutro do cartão e mantém fallback sem estilo. |
+
 ### `Hook`
 
 | Classe | Arquivo | Responsabilidade |
@@ -175,6 +191,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | --- | --- | --- |
 | `ParticipationRules` | `src/ParticipationRules.php` | Regras de participação no Fórum (plano aculta_user, seções E6 e E7). |
 | `PublicProfilePolicy` | `src/PublicProfilePolicy.php` | Decide, campo a campo, o que do perfil participante pode aparecer em público. |
+| `PublicProfileLink` | `src/PublicProfileLink.php` | Única regra de URL canônica do perfil público; atualiza a cache metadata fornecida pelo consumidor. |
+| `PublicProfileLinkInterface` | `src/PublicProfileLinkInterface.php` | Contrato para resolver e testar links de perfil sem substituir a implementação canônica. |
 
 ### Role/
 - `HerancaDePapeis.php` — mapa derivado de `aculta_portal.role_hierarchy`; herdados; papéis não gravados; remoção de papel excluído.

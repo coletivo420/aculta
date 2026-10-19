@@ -1,0 +1,8 @@
+{# Neutral fallback. ACULTA420 supplies the visual implementation. #}
+<article>
+  {% if avatar %}<div>{{ avatar }}</div>{% endif %}
+  <div>
+    {% if profile_url %}<a href="{{ profile_url }}">{{ display_name }}</a>{% else %}{{ display_name }}{% endif %}
+  </div>
+  {% if actions %}<div>{{ actions }}</div>{% endif %}
+</article>

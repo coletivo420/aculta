@@ -37,10 +37,13 @@ são acessados por symlinks no topo do projeto, fora da árvore pública.
   trabalho precisa estar no grupo `aculta` para o Drush conectar ao runtime. Sem essa
   permissão, o `drush status` não mostra banco nem site URI. Não relaxe o modo dos arquivos
   de configuração nem copie segredos para fora da instalação para contornar isso.
-- Estado verificado em 2026-10-18: `/home/aculta` aponta para o checkout de origem e o Drush alcança
-  o Runtime de teste `aculta_runtime`. Não fixe uma URI de teste nas configurações locais. Em operações
-  por Drush, informe a URI do host/purpose que se quer inspecionar; sem ela, Drush pode reportar
-  `http://default`, que não identifica o purpose do site.
+- Estado verificado em 2026-10-19: o checkout aberto em `/home/piradopirata/projetos/aculta-site`
+  está no servidor de testes (`hostname: toca`) e o Drush alcança o Runtime de teste
+  `aculta_runtime`. Neste servidor, `Site URI: http://default` é uma saída esperada quando o Drush
+  roda sem `--uri`; não indica produção nem conexão errada por si só. Para comandos que dependem do
+  purpose/domínio, informe `--uri` com um host de teste listado em
+  `docs/architecture/multidomain.md`. Confirme sempre hostname, checkout, branch, banco e efeitos
+  antes de qualquer operação persistente. Não fixe uma URI nas configurações locais.
 
 ## Servidor de testes
 

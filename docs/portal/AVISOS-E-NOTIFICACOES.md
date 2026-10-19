@@ -3,6 +3,13 @@
 Status: **política aprovada pelo responsável (2026-10-16)**. Implementação prevista na F5.2 do Fórum.
 Escopo: avisos dentro do site e e-mails de participação (respostas em tópicos seguidos). Não cria sistema novo.
 
+O texto original foi definido para tópicos do Forum contrib. A reconstrução
+aprovada em 2026-10-19 mantém `aculta_messenger` como único dono de entrega e
+estende o contrato a contextos de comentário. Destinatários, agrupamento e
+opt-in devem ser definidos por contexto; todo envio revalida publicação e acesso
+atual. Discussões LMS/Wiki não entram em avisos públicos. Ver
+`aculta_forum/docs/CONTEXTS.md`.
+
 ## 1. Regra geral
 
 - Toda notificação usa o **sistema existente**, nos dois canais: o **sistema de mensagens** do `aculta_messenger`

@@ -1,3 +1,71 @@
+# `0.1.0-dev.5` — auditoria para retirada do Forum contrib — 2026-10-19
+
+- Confirmado em leitura somente no Runtime de teste: 30 nodes `forum` (12
+  publicados e vinculados a publicações, 1 publicado independente e 17 não
+  publicados), 0 comments `comment_forum`, 8 termos `forums` e 2 flaggings no
+  total do site (ambos de `site_alert`). O validador Drupal Core impede
+  uninstall enquanto houver qualquer node `forum` ou termo `forums`.
+- Confirmados consumidores ativos em Magazine e User; a sincronização editorial
+  e os vínculos `field_discussao` permanecem. Desinstalar agora deixaria 12
+  publicações sem o novo campo de comentários; instalar esse fluxo vazio e
+  desligar a sincronização antiga precedem a exclusão dos tópicos-casca. O
+  conteúdo antigo de discussão não será migrado para o sistema novo.
+- Backups encontrados (17 e 18/10) são anteriores e de outras tarefas; nenhum
+  foi validado como restore point desta retirada. Nenhuma exclusão, uninstall,
+  remoção Composer, update ou alteração Runtime executada.
+- Dev5 permanece em andamento. Próximo gate: completar os contratos dos
+  consumidores, disponibilizar novos fluxos vazios e validar restore point atual
+  antes de qualquer operação destrutiva. RUNTIME STATUS: PARTIAL (auditoria
+  somente leitura no teste).
+- Decisão do responsável: o novo Fórum e os contextos de discussão começam sem
+  importação de tópicos ou comentários antigos. Na limpeza autorizada serão
+  apagados os tópicos e comentários legados, preservando publicações, usuários
+  e demais entidades; os 12 tópicos de sincronização da Revista só saem depois
+  que os comentários diretos da publicação estiverem prontos e a sincronização
+  antiga desligada. A contagem registrada é zero comentários `comment_forum`.
+- A API agora registra `PublicationContextProvider`: bundles `article`/`blog`
+  somente com `field_aculta_discussion`, access de leitura do host e campo,
+  escrita via Comment aberto + `post comments`, moderação via `administer comments`,
+  cache por permissões e ID estável. Providers não têm field instances na Revista
+  ainda.
+- Fields da Revista não devem ser ativados ainda: `aculta_user` mantém regras de
+  participação, apresentação e moderação restritas ao bundle `comment_forum`.
+  Estender/testar esse contrato é prerequisite da integração Magazine.
+- Kernel multi-bundle: 1/18 PASS em `aculta_simpletest`; Unit do Forum: 12/52 PASS.
+  Runtime de teste recebeu apenas cache rebuild e smoke de DI: resolver carregou
+  dois providers e recusou Article sem o field novo. Sem importação de config,
+  field editorial ou conteúdo. RUNTIME STATUS: PARTIAL; integração funcional
+  permanece pendente.
+
+# 0.1.0-dev.4 — Context API executável — 2026-10-19
+
+- Criado e habilitado no Runtime de teste o módulo `aculta_forum`, usando somente bundles/campos nativos Node, Comment e Taxonomy, em configuração de instalação e Config Sync.
+- Criados os contratos de contexto, objeto imutável cacheável, resolver extensível por serviços tagueados e provider inicial de tópicos públicos, com leitura negada fora do purpose `forum`.
+- A integração de publicação, LMS e Wiki permanece para suas fases próprias; nenhum adapter declara acesso ou expõe contexto antes de verificar a entidade hospedeira.
+- Registrada a interpretação ambiental: no servidor `toca`, Drush sem `--uri` reportar `http://default` é esperado para o Runtime de teste `aculta_runtime`.
+- Validações direcionadas: ver `docs/TEST-MATRIX.md`; Runtime de teste aplicado e smoke test limitado à descoberta do serviço/configuração, zero conteúdo criado. PHP CLI 8.4.26; validação do PHP-FPM e UX fica pendente.
+
+# 0.1.0-dev.3 — Author Pane moderno — 2026-10-19
+
+- `aculta_user` ganhou `AuthorCardBuilder`, avatar mediado pelo `aculta_image`, policy explícita da foto e tema hook neutro cacheável.
+- ACULTA420 ganhou o SDC experimental do cartão, com variantes separadas de fórum, comentário, editorial, LMS, Wiki e `author_growroom_historico`; fórum empilhado altera apenas layout. Autoria histórica não ganha ações ou perfil individual.
+- Nome conceitual `author_legacy` renomeado para `author_growroom_historico` a pedido do responsável.
+- Testes Unit: 43/87; gates Portal 968, fronteira 1272, mapa 153, SDC 514 e fundações de design 2065 PASS. Integração no motor novo, teste visual no browser e Runtime continuam pendentes. RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.2 — identidade base de autoria (`aculta_user`) — 2026-10-19
+
+- `aculta_user.author_identity_resolver` compõe o User e o perfil principal com o gerador canônico de perfil; retorna `AuthorIdentity`, payload mínimo cacheável de apelido e link.
+- Variantes são identificadores de consumidor, ainda sem payloads ampliados ou renderização específica. `author_legacy` permanece fora do resolver User.
+- Três testes unitários, 12 assertions; RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.1 — auditoria e fundação documental — 2026-10-19
+
+- PRs e base verificadas: PR #291 está mesclada e é de pagamentos; PRs antigas de Fórum #287–#289 estão fechadas; a branch desta fase parte de `origin/main` `d4a0d66e`. A PR #296 é a linha separada do Portal `0.4.0-dev.162`.
+- Inventário confirmou `drupal/forum` 1.1.3 habilitado e dependências de config/código em `aculta_user`, `aculta_magazine`, `aculta_messenger`, Config Sync e ACULTA420.
+- Nova arquitetura documental: Node/Comment/Taxonomy/Views/Search API com quatro contextos; cartões centralizados em `aculta_user`; apresentação exclusiva do ACULTA420.
+- Inventário completo de capacidades históricas do Advanced Forum e plano em fases para retirada segura; não houve alteração de runtime, dependência, configuração exportada ou dados.
+- RUNTIME STATUS: DEFERRED (fase somente documental; nenhuma operação no ambiente).
+
 ## F4 — bloco CTools Views de tópicos recentes — 2026-10-18
 
 - Configuração versionada da View `aculta_forum_topics` e bloco na página

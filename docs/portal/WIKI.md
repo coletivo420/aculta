@@ -1,5 +1,14 @@
 # Wiki420 — conteúdo, apresentação e autoria
 
+## Discussão futura dos verbetes
+
+Decisão de reconstrução do `aculta_forum` (2026-10-19): cada verbete poderá ter
+uma única thread Comment associada ao próprio Node e exibida dentro da página.
+Comentário não altera revisão editorial, não cria Node `forum` nem aparece no
+Growroom420. O contrato e provider são futuros e condicionados à reimplementação
+da Wiki; esta decisão não muda a autoria pública atual, que continua oculta no
+verbete. Ver `aculta_forum/docs/CONTEXTS.md`.
+
 A Wiki420 usa Drupal Node, revisão editorial, Views, taxonomia e controle de
 acesso como fonte de verdade. O Portal organiza páginas e consultas; o ACULTA420
 apresenta os dados com SDC e tokens de tema. A Wiki não cria uma segunda camada

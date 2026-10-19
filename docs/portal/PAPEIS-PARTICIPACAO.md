@@ -1,5 +1,12 @@
 # Papéis e hierarquia
 
+As permissões e hooks listados abaixo descrevem o estado atual do Forum contrib
+e dos conteúdos instalados. A reconstrução `aculta_forum` deve aplicar as regras
+de participação ao provider/contexto correspondente e revalidá-las pela Access
+API; não converter matrícula em papel global nem depender somente de esconder
+links. Migração/retirada é documentada em
+`aculta_forum/docs/MIGRATION-REMOVAL.md`.
+
 Status: **hierarquia atualizada pelo responsável (2026-10-17)**. Pendências na seção 7.
 Escopo: visualização, participação e moderação no Fórum e na Wiki, além da área de contas. Não substitui as políticas
 de cursos, loja e wiki em `EMAIL-CONFIRMATION-POLICY.md`.
@@ -130,3 +137,11 @@ Testes: `aculta_user/tests/src/Unit/EnrollmentRoleHooksTest.php`, `RestrictedFor
 - **Herança sem contrib:** o módulo `role_inheritance` foi desinstalado e removido do `composer.json`. A herança é do `aculta_user` (`HerancaDePapeis`, `RoleInheritanceHooks`, `RoleInheritanceCurrentUserSubscriber`), calculada a partir de `aculta_portal.role_hierarchy` (só `cadeia`). Documentação: `aculta_user/docs/HIERARQUIA-DE-FUNCOES.md`.
 - **Herança efetiva:** a coluna "Herda de (efetivo)" mostra a herança transitiva calculada por `RoleHierarchy::efetivos`.
 - **Tela de herança do contrib:** a rota `role_inheritance.config_role_inheritance` sai da coleção de rotas (sem aba nem link).
+# Participação e discussões contextuais
+
+As permissões e hooks listados abaixo descrevem o estado atual do Forum contrib
+e dos conteúdos instalados. A reconstrução `aculta_forum` deve aplicar as regras
+de participação ao provider/contexto correspondente e revalidá-las pela Access
+API; não converter matrícula em papel global nem depender somente de esconder
+links. Remoção/migração fica em `aculta_forum/docs/MIGRATION-REMOVAL.md`.
+

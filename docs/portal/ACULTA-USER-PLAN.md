@@ -14,6 +14,14 @@ formulações antigas contraditórias de apresentação/gamificação deste plan
 não significam migração dos hooks, provider da entidade ou configuração do Runtime.
 A nova pesquisa compara releases e código, inclusive diferenças com páginas antigas.
 
+**Atualização de arquitetura (2026-10-19):** a reconstrução aprovada em
+`aculta_forum` substitui Forum contrib por um motor compartilhado de tópicos e
+comentários contextuais. O código e as tabelas de implementação desta página
+continuam descrevendo o estado atual; os novos contratos de identidade/cartões
+estão em [`aculta_user/docs/AUTHOR-CARDS.md`](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARDS.md).
+Não apagar hooks ou configurações legadas sem a fase de migração descrita em
+`aculta_forum/docs/MIGRATION-REMOVAL.md`.
+
 ## 1. Estado atual (o que já existe)
 
 | Capacidade | Onde está | Situação |

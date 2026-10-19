@@ -22,6 +22,16 @@ final class PortalHelperRegistry {
       'summary' => 'Preserva o catálogo e as formas de concessão na Config API do User, sem motor de regras executáveis.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
     ],
+    'aculta_user.author_identity_resolver' => [
+      'label' => 'Identidade de autoria',
+      'summary' => 'Resolve apelido público e link canônico em view-model mínimo, sem expor entidades ou campos privados.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md',
+    ],
+    'aculta_user.author_card_builder' => [
+      'label' => 'Cartões de autoria',
+      'summary' => 'Prepara identidade, avatar mediado pelo aculta_image e cache para cartões; ações e decisões de acesso permanecem com os consumidores funcionais.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md',
+    ],
     'aculta_game.mission_progress' => [
       'label' => 'Missões e progresso',
       'summary' => 'Apresenta missões iniciais e progresso privado a partir das concessões reais, sem pontuação ou storage paralelo.',

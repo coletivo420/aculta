@@ -1,5 +1,12 @@
 # aculta_magazine (Revista)
 
+> **Transição aprovada em 2026-10-19:** o código atual ainda sincroniza tópicos
+> Drupal Forum em `ForumTopicSync`. A arquitetura alvo de `aculta_forum` substitui
+> essa sincronização por Comment associado à própria publicação e proíbe novos
+> tópicos públicos automáticos. Esta nota documenta o estado atual e o alvo;
+> não altera nem remove os serviços existentes. Migração descrita em
+> [`MIGRATION-REMOVAL.md`](../../aculta_forum/docs/MIGRATION-REMOVAL.md).
+
 Submódulo do Portal ACULTA (`aculta_portal`). Centraliza tudo que é da Revista: publicações, chamada, resumo,
 SEO, caixa de autores e coautoria. Depende de `aculta_user` (perfil, privacidade e redes), de `node_co_authors`
 (coautores, contrib), de `metatag` (SEO) e de `pathauto` (URL por sessão).

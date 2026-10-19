@@ -4,7 +4,8 @@ Revisão: 2026-10-19. Escopo: o que já foi preparado no sistema, onde estão os
 e o que falta. Nenhum conteúdo foi importado para o Drupal.
 
 Os números de download abaixo foram medidos em 2026-10-19, após a conclusão do reprocessamento. Para conferir de novo,
-usar somente leitura com `sudo`.
+usar somente leitura com `sudo`. A análise completa do acervo, com riscos para a importação, está em
+[AUDITORIA-GROWROOM-2026-10-19.md](AUDITORIA-GROWROOM-2026-10-19.md).
 
 ## Pré-requisito atendido: `aculta_image` pronto
 
@@ -107,6 +108,10 @@ Estes caminhos ficam fora do Git (`estados/` e armazenamento privado). Pasta de 
 Escopo: a decisão vale para a **importação**. O download não exclui esses fóruns; a exclusão é aplicada no mapeamento.
 
 ## Bloqueio atual
+
+**Importação adiada (decisão do responsável, 2026-10-19):** a importação do Growroom não começa até a remodelagem do
+fórum na PR #297 (`docs/aculta-forum-0.1.0-dev.1`). Ajustes desta etapa seguem como commits nessa branch, sem nova
+PR ou branch. Nenhum conteúdo, usuário ou imagem é importado antes disso.
 
 A F3 (migração piloto) depende da lista de autores aprovada. A F6 (reconstrução em lotes) depende da F3.
 Estado das condições:

@@ -1,77 +1,93 @@
-# Pesquisa — Fórum, comunidade e integração
+# Pesquisa e evidências — ACULTA Forum
 
-Consulta: 2026-10-15. Fonte local inicial: `868626d`. Esta pesquisa distingue
-capacidade anunciada, código inspecionado e comportamento que ainda exige Runtime.
+Revisão: 2026-10-19. Base local: `origin/main` `d4a0d66e`. Este documento
+distingue documentação upstream, código instalado e decisões alvo. APIs Drupal
+e dependências devem ser rechecadas no momento de cada implementação.
 
-## Soluções e referências
+## Estado real do repositório
 
-| Fonte primária | Constatação | Aplicação proposta |
+| Evidência | Constatação | Efeito para o projeto |
 | --- | --- | --- |
-| [Forum](https://www.drupal.org/project/forum) e [visão geral](https://www.drupal.org/docs/contributed-modules/forum/overview) | Forum 1.1.3 usa Node, Comment, Taxonomy e History; migrou do Core para contrib no Drupal 11 | Preservar a base instalada |
-| [Drupal.org Forums](https://www.drupal.org/forum) | Áreas com descrição, contagens e última atividade | Referência estrutural; interface atual do ACULTA420 |
-| [Discourse](https://www.discourse.org/features) | Respostas lineares com contexto, navegação pessoal e moderação integrada | Inspiração de UX; não instalar outra plataforma |
-| [Flarum](https://flarum.org/) | Foco em discussões, navegação compacta e interação móvel | Protótipo de listagem e leitura |
-| [NodeBB](https://docs.nodebb.org/activitypub/privileges/) | Privilégios de leitura/postagem por categoria e grupo | Tornar as fronteiras de acesso compreensíveis |
-| [Open Social](https://www.drupal.org/project/social) | Distribuição Drupal de comunidade e conhecimento | Referência de integração; sobreporia a base própria se adotada integralmente |
-| [Growroom arquivado](https://web.archive.org/web/20250719093640/https://growroom.net/board/) | Estrutura histórica e IDs recuperáveis nas amostras baixadas | Fonte da reconstrução; não inferir integralidade |
+| `composer show drupal/forum` e `composer.lock` | `drupal/forum` 1.1.3; exige Core `~11.3 || ~12` e `drupal/history:^1` | Pacote contrib está instalado; não remover até fase própria. |
+| `composer.json` e `config/sync/core.extension.yml` | Forum é dependência Composer e extensão habilitada na configuração exportada | Mudanças em config/Composer são persistentes e fora de dev.1. |
+| `web/modules/contrib/forum` | ForumManager, ForumIndexStorage, controllers, forms, hooks, blocks, routes, validation e config optional | Inventariar APIs/efeitos de uninstall; Forum contém responsabilidades e side effects, não só templates. |
+| Config Sync | Node `forum`, taxonomy `forums`, Node field `taxonomy_forums`, Comment bundle/field `comment_forum`, displays, flags e View `aculta_forum_topics` | Conhecer dependências e references antes de remover configuração/dados. |
+| `aculta_magazine` | `ForumTopicSync`, `ForumSectionResolver`, `PublicationTypeConverter`, `ForumTopicHooks`, `ForumOpeningPost` criam/apresentam tópico relacionado à publicação | F-D25 manda substituí-los por comentário no Node editorial, sem auto tópico. |
+| `aculta_user` | participation, `RestrictedForumGrants`, hooks de access/moderação/apresentação, DiscussionHooks e ActivityController referem bundles atuais | Migrar responsabilidades para contexto sem retirar identidade, moderação ou privacidade. |
+| `aculta_messenger` | `MessageSubscribeEventHooks` e Aviso/retention atendem eventos de fórum | Reutilizar o único transporte e atualizar produtores/consumidores com idempotência/access. |
+| Busca | Search API instalada; config atual não seleciona o Forum nem Comment como fonte pública | Reavaliar índices por contexto, não presumir que a busca cobre tópicos hoje. |
+| ACULTA420 | Templates `forum-list`, `node--forum--full`, `comment--comment-forum`; `forum-index.css`, `discussion.css` | Apresentação atual do contrib será substituída pelo tema a seu tempo; identidade é de `aculta_user`. |
+| `aculta_user` cards | `PublicProfilePolicy`, `PublicProfileController`, `PublicProfileLink`, `AccountBioCard`, `SocialLinksCard`, `AvatarPool`, `LegacyAuthor*`, amizade/conquistas | Há blocos funcionais reutilizáveis, mas não um AuthorCardBuilder unificado. Ver inventário próprio. |
 
-A recomendação de permanecer no Forum resulta do encaixe no Portal, não de
-equivalência de funcionalidades com outras plataformas. Recursos como live chat,
-rolagem contínua e reações complexas exigem escopo e validação próprios.
+O código instalado é fonte de verdade para o estado descrito. Os status de Runtime
+e de conteúdo não foram consultados nesta fase, portanto nada aqui afirma que a
+configuração exportada é idêntica ao servidor.
 
-Comunidades temáticas também foram consultadas: [GrowRoom420](https://www.growroom420.com/app.php/rules)
-(distinto do Growroom brasileiro) e [Percy's Grow Room](https://percysgrowroom.com/forum/forum-guidelines/moderation-policies/).
-Suas regras destacam convivência, privacidade e limites de publicidade. São
-referências de organização comunitária, não normas jurídicas aplicadas à ACULTA.
+## Advanced Forum histórico
 
-## Código e configuração existentes
+Advanced Forum 7.x-2.8 é uma referência Drupal 7 histórica que extendia Core
+Forum, Views/CTools, Node/Comment e Author Pane. A página do projeto lista
+dependências e alerta que linha moderna está sem stable suportada. A feature
+inventory upstream cita: overview com busca, marcar tudo lido, ícones e novos
+posts; subfóruns/containers, contagens e última atividade; View de tópicos,
+fixados, pager, popularidade/views e legends; thread com autor, número/permalink,
+respostas encadeadas, next/previous, preview, citações/ações; Views de ativos,
+novos, próprios e sem resposta; estatísticas; seis styles (Naked, Blue Lagoon,
+Boxy e versões stacked). A lista completa de portabilidade e destino está em
+[`ADVANCED-FORUM-PORT.md`](ADVANCED-FORUM-PORT.md).
 
-| Evidência no repositório | Leitura confirmada | Consequência |
+O pacote `advanced_forum-7.x-2.8.tar.gz` foi inspecionado sem instalação ou
+execução (SHA-256 `e6ab783a0562830363370c269c41c3af81e77daf80fe1cd6533c0f29a9a46edd`).
+Os arquivos `styles/naked/advanced-forum.naked.author-pane.tpl.php`,
+`styles/naked/advanced-forum.naked.post.tpl.php`, `includes/mark-read.inc`,
+`includes/views/advanced_forum_*.view` e `advanced_forum.module` confirmam que o
+Author Pane histórico podia exibir nome, avatar, online/last seen, título,
+badges, data de entrada, total de posts, pontos de gamificação, contato,
+mensagem privada, relações e amizade; o template ainda tinha seção administrativa
+com IP e Fasttoggle. O post tratava first-new, reply-to, unpublished, permalink,
+edição, assinatura, ações e jump-to-top. A ação de marcar lido escrevia
+diretamente na tabela `history` do D7. Esses detalhes informam o inventário e as
+exclusões de privacidade; IP/controles administrativos e pontos de terceiros não
+são campos de cartão público.
+
+Essas capacidades são analisadas como requisitos, não código fonte para executar.
+Não portamos PHPTemplate, procedural hooks, configuração de D7, estilos/imagens
+históricas nem APIs obsoletas. Variantes de estilo são recompostas com SDC,
+Bootstrap, tokens, light/dark e acessibilidade do projeto.
+
+## Melhores práticas/contratos Drupal atuais consultados
+
+| Fonte primária | Evidência consultada | Consequência |
 | --- | --- | --- |
-| `composer.lock`; `web/modules/contrib/forum` | Forum 1.1.3, Flag 5.1.1, LMS 1.2.3, Group 3.3.5 e Private Message 3.0.7 | Não instalar alternativas sem necessidade |
-| `aculta_user/src/Hook/DiscussionHooks.php` | Trechos de comentários do tópico vinculado; checa publicação, não acesso explícito do tópico | Endurecer o contrato antes do LMS privado |
-| `aculta_magazine/src/Forum/ForumTopicSync.php` e `ForumSectionResolver.php` | Um tópico por publicação e subpastas sob Revista | Não duplicar discussão nem reorganizar IDs por estética |
-| `aculta_user/src/Hook/AccountCreationHooks.php` | Cria perfil participante e atribui avatar ao salvar User novo | Importação exige distinguir conta histórica |
-| `aculta_user/src/Social` e `aculta_messenger` | Amizade e mensagens privadas já existem | Reutilizar acesso e APIs; não prometer chat em tempo real |
-| `config/sync/search_api.index.aculta_conteudo.yml` | Lista exportada não inclui `forum` nem datasource de Comment | Busca do Fórum ainda requer entrega própria |
-| `aculta_messenger/src/Hook/MessageSubscribeEventHooks.php` | Eventos de publicação inicial do tópico | Nova resposta ainda precisa de adaptação |
-| `flag/src/Plugin/Flag/CommentFlagType.php` | Tipo `entity:comment` existe | Denúncia depende de configuração/fluxo; a frase contrária em DT-P13 é obsoleta |
-| `aculta_gallery/src/Hook/GalleryPurposeAccessHooks.php` | Acesso a galerias em purpose MAGAZINE | Referenciar a galeria; não embuti-la no Fórum para contornar D13 |
+| [Comment: administrar comentários em entidades](https://www.drupal.org/docs/8/core/modules/comment/administering-a-content-types-comment-settings) | Comments podem se vincular a entity types por field; field storage é configurado por entidade hospedeira | O candidato comum usa Nodes em todos os contexts, mas storage/bundles devem passar testes Kernel. |
+| [Comment API 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentInterface.php/interface/CommentInterface/11.x) | Comment é entidade de conteúdo do Core, com owner/translation/revision; respeitar contratos nativos | Usar Comment, não uma resposta custom. |
+| [Views / Core](https://www.drupal.org/docs/8/core/modules/views) | Views fornece listas configuráveis com query, filtros, sorts e displays | Usar Views, mantendo access/domain/context filtros imutáveis e revisados. |
+| [Cacheability de render arrays](https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays) e [cache contexts](https://www.drupal.org/docs/develop/drupal-apis/cache-api/cache-contexts) | Access e cacheability são parte do resultado renderizado; resultados precisam tags/contexts/max-age corretos | Cartões, comentários, aggregates e contexto privado carregam metadados de cache. |
+| [Group docs](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/group) | Group gerencia collections de conteúdo/usuários e acesso com membership/roles de grupo | LMS revalida membership/Group access real, sem role global estudante. |
+| [Group project/version matrix](https://www.drupal.org/project/group) | Em 2026 releases 3.x suportam Drupal 11; 4.x alpha exige 11.4+ e muda linha de compatibilidade | Confirmar versão instalada/API; não migrar Group ou habilitar adapter sem decisão. |
+| [Drupal 11+ standards local](../../../../../../../docs/portal/DRUPAL-11-STANDARDS.md) | DI, `#[Hook]` quando suportado, EntityQuery access explícito, render/access/cache | Normativo do projeto e aplicável a toda fase funcional. |
 
-O estado de configuração exportada não comprova o estado atual do Runtime.
+Pesquisa obrigatória em Drupal.org e Core instalado será repetida na fase de
+implementação. A documentação pública não prova a configuração particular do
+ACULTA nem substitui inspeção de `web/core`, contrib e testes.
 
-## Dependências candidatas e limites
+## Referências Advanced Forum
 
-- [Message Subscribe](https://www.drupal.org/project/message_subscribe): pilha
-  instalada, compatível com Flag 5 na linha 2.1. Candidato preferencial para
-  estender assinaturas, sem duplicar entrega de e-mail.
-- [Comment Notify](https://www.drupal.org/project/comment_notify): alternativa
-  estável para e-mail de comentários. A fonte de verdade antiga o cita, mas ele
-  não consta dos pacotes instalados conferidos; resolver ownership antes de adotar.
-- [Entity Links do Core 11.3](https://www.drupal.org/node/3524296): autocomplete
-  já existe no código instalado. Avaliar antes de adicionar Linkit.
-- [Mentions](https://www.drupal.org/project/mentions): sem stable suportada na
-  página consultada. [CKEditor5 Mentions](https://www.drupal.org/project/ckeditor5_mentions)
-  declara D11, mas não tem cobertura de security advisories. Nenhum está aprovado.
-- [Achievements](https://www.drupal.org/project/achievements): investigar no
-  `aculta_game`, sem criar concessões paralelas no Fórum.
+- [Projeto Advanced Forum](https://www.drupal.org/project/advanced_forum): propósito, linha 7.x e dependências históricas.
+- [Feature inventory do projeto](https://www.drupal.org/node/841056): funções de listagens, categorias, thread, views e Author Pane.
+- [Styling your forum](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-archive/contrib-modules-for-building-the-site-functionality/social-networking-and-collaboration/community-building-and-social-networking-61): seis combinações de estilo e templates históricos.
+- [Releases](https://www.drupal.org/project/advanced_forum/releases): 7.x-2.8 é security update/unsupported; ramo 8.x-1.x é desenvolvimento, não baseline para dependência.
+- [Pacote-fonte 7.x-2.8](https://ftp.drupal.org/files/projects/advanced_forum-7.x-2.8.tar.gz): snapshot inspecionado para Author Pane, post template, Views e leitura; SHA-256 registrado acima.
 
-## Acesso reservado exige comprovação
+## Decisões ainda sujeitas a prova técnica
 
-[Search API: processors](https://www.drupal.org/docs/8/modules/search-api/getting-started/processors)
-documenta verificações para conteúdo e comentários e ressalva mecanismos de acesso
-de contrib. [Group #3198115](https://www.drupal.org/project/group/issues/3198115)
-discute integração com Search API. O código local de ForumManager usa consultas
-próprias, que também precisam de verificação com Group/`gnode`.
+- Se um único bundle Comment e `field_aculta_discussion` servem todos os Nodes/contextos sem efeitos colaterais em admin, access, history e moderation.
+- Como combinar Group access e node access em Views/Search API, com isolamento observável nos casos A/B.
+- Mecanismo de leitura/não lidos: avaliar History e entidade/source local; ainda não há decisão de novo storage.
+- Modelo de contagens/visualizações e necessidade de agregação persistida/cache.
+- Relevância e risco de assinatura, online, shadow topic, views count e next/previous.
+- Dependências exatas de Comment fields e uninstall validators na versão instalada.
 
-Não assumir que um grupo ou filtro visual garante privacidade. Render arrays
-precisam preservar [cacheability](https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays)
-das decisões reais, inclusive nos links, datas, contagens e autores.
-
-## Protótipo a avaliar
-
-Home híbrida com áreas e recentes; filtros de acervo/comunidade atual; seguidos,
-salvos, sem resposta e participação própria. Tópico cronológico com contexto de
-resposta, caixas de autor atuais ou históricas e ações permitidas. No celular,
-uma coluna e controles curtos. Light/dark compartilham DOM, layout e componentes.
-Não recuperar ranking antigo como funcionalidade contemporânea.
+Cada item deve ser resolvido com fonte upstream e teste no Core/contrib instalado,
+sem afirmar que não confirmado. A fase dev.1 registra pendências em vez de
+codificar hipótese.

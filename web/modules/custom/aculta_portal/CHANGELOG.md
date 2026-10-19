@@ -1,3 +1,29 @@
+## 0.4.0-dev.166 — provider de contexto para comentários editoriais — 2026-10-19
+
+- `aculta_forum` adiciona provider contextual para Nodes `article` e `blog` quando o campo Comment compartilhado está presente. Leitura usa Entity/Field Access; escrita e moderação usam permissões nativas de Comment e propagam cacheability.
+- Testes Unit de `aculta_forum`: 12 testes/52 assertions. Teste Kernel em `aculta_simpletest`: 1 teste/18 assertions provou que o mesmo storage Comment pode ser anexado aos bundles `article`, `blog` e `aculta_forum_topic`.
+- As regras de participação/apresentação/moderação do `aculta_user` ainda precisam reconhecer `aculta_discussion_post`; por isso o campo de publicação ainda não foi ativado.
+- Cache rebuild e smoke de DI no Runtime de teste confirmaram dois providers e recusa de Article sem o field. Nenhum field editorial ou conteúdo foi criado/importado. PHP CLI 8.4.26. Runtime editorial: PARTIAL; comportamento funcional DEFERRED.
+- Cartão `author_comment`, UX e avisos permanecem pendentes.
+
+## 0.4.0-dev.165 — Context API do ACULTA Forum — 2026-10-19
+
+- Adicionado o módulo executável `aculta_forum` com Context API extensível, provider do tópico público e configuração de instalação nativa Node/Comment/Taxonomy; configuração instalada apenas no Runtime de teste.
+- Canonicalização multidomínio reconhece `aculta_forum_topic` como pertencente ao purpose `forum`, preservando o roteamento legado durante a migração.
+- Corrigida a orientação ambiental: no servidor de teste `toca`, Drush sem `--uri` mostrar `http://default` é esperado para `aculta_runtime`; o host/purpose deve ser explícito em operações sensíveis a domínio.
+- RUNTIME STATUS: PARTIAL — habilitado no Runtime `aculta_runtime` do servidor de teste em `growroom420.aculta.toca.net.br`; serviço e campos conferidos, zero conteúdo criado. PHP CLI 8.4.26; PHP-FPM/web 8.5 não foi confirmado.
+
+## 0.4.0-dev.164 — cartões de autoria compartilhados — 2026-10-19
+
+- Registra `aculta_user.author_card_builder` no inventário administrativo de Helpers; serviço com documentação própria e responsabilidade compartilhada entre o submódulo e o ACULTA420.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.163 — identidade base de autoria — 2026-10-19
+
+- O `aculta_user.author_identity_resolver` agora integra o inventário de Helpers ativos e prepara um view-model mínimo cacheável para a futura apresentação de autoria. A policy de perfil/link existente continua como fonte de acesso; não há dados de perfil privados no payload.
+- Entrega coordenada com `aculta_user` `0.4.0-dev.26` e `aculta_forum` `0.1.0-dev.2`. PR #296 (Portal `0.4.0-dev.162`) permanece separado; este marcador usa a versão seguinte da linha em andamento.
+- Teste Unit direcionado: 3 testes/12 assertions. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.161 — gates alinhados ao estado atual e item de menu duplicado
 
 - Removido o item de menu `aculta_portal.role_hierarchy_settings` (Papéis e perfis sob Administração). Ele já estava desativado em tempo de execução por `AdministrativeMenuHooks` (duplicava a aba de Pessoas); a entrada do YAML saiu junto, e o gate `validate-unique-paths-texts` passa. A rota `entity.user_role.collection` continua acessível por `aculta_portal.config_papeis_e_perfis`.
