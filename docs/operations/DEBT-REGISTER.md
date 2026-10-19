@@ -143,3 +143,11 @@ Estado após a rodada. Só o que foi verificado está como resolvido.
 - **Pendente de implementação maior:** DT-P01 (classes `aculta-*` no módulo, com ajuste visual), DT-P03 (testes de Kernel para P5–P7), DT-P08 (login com CAPTCHA por HTTP), DT-P11, DT-P20 (slugs de rotas de contrib), DT-O06 (teste de conta bloqueada).
 
 - **Nota (2026-10-10):** o responsável decidiu que os Estados são backups privados dos servidores. A pasta `estados/` saiu do índice do Git e está inteira no `.gitignore`; os arquivos permanecem no disco. DT-O02 deixa de ser uma regeração versionada e passa a ser apenas inventário e retenção do backup local.
+
+## Gates pendentes de decisão (2026-10-19)
+
+| ID | Pendência | Evidência | Severidade | Bloqueia | Fase | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-G03 | `validate-role-hierarchy` reprova: `in_array('email_confirmed', $papeis)` novo em `HerancaDePapeis::herdados()` (filtro da cadeia de herança, não concessão de acesso); linha de base 4, contagem 5 | `scripts/validate-role-hierarchy.php`; `web/modules/custom/aculta_portal/modules/aculta_user/src/Role/HerancaDePapeis.php`; AGENTS (acesso por permissão). A linha de base não foi ajustada sem decisão de hierarquia | Média | Não | — | Aberta: decidir entre refatorar o filtro ou registrar a exceção e atualizar a linha de base |
+| DT-G04 | `validate-admin-cleanup` reprova: sete Views de exemplo do VVJ (`vvja_example` a `vvjt_example`) estão ativas no Runtime de teste, vindas dos módulos `vvja`…`vvjt` habilitados, e não fazem parte do projeto | `scripts/validate-admin-cleanup.php`; `drush pm:list` (módulos vvj habilitados) | Média | Não | — | Aberta: desabilitar as Views de exemplo no Runtime (mudança persistente, com autorização) ou aceitá-las como exceção |
+| DT-G05 | Gates de ambiente que não passam no servidor de teste: `validate-final-contact`, `validate-final-drupal`, `validate-final-sitemap` e `validate-home-carousel` exigem host local (`localhost`/`127.0.0.1`); `validate-cross-domain-request-policy` reprova porque o host de teste está no cookie compartilhado; `validate-portal-commerce-security` depende do SMTP2GO do ambiente | Saídas dos gates em 2026-10-19 | Baixa | Não | — | Aberta: rodar os de host local em ambiente local; decidir a política de cookie compartilhado e o transporte de e-mail do comércio |

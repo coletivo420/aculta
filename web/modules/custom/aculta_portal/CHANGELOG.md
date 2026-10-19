@@ -1,3 +1,10 @@
+## 0.4.0-dev.161 — gates alinhados ao estado atual e item de menu duplicado
+
+- Removido o item de menu `aculta_portal.role_hierarchy_settings` (Papéis e perfis sob Administração). Ele já estava desativado em tempo de execução por `AdministrativeMenuHooks` (duplicava a aba de Pessoas); a entrada do YAML saiu junto, e o gate `validate-unique-paths-texts` passa. A rota `entity.user_role.collection` continua acessível por `aculta_portal.config_papeis_e_perfis`.
+- Gates corrigidos onde o código estava correto e a expectativa estava desatualizada: `validate-root-policy` (raiz da loja é `/loja`, decisão de `91b0d4ee`), `validate-account-profile-autocreate` (um tipo de perfil por função: `PerfilDoPapel::principal()` e `tipoDaConta()`), `validate-album-stage-contract` (o evento `vvj:slideChanged` é verificado onde o VVJ o emite), `validate-institution` (editor de conteúdo `revista_editorial`, e não `full_html`) e `validate-admin-cleanup` (Views exportadas do projeto e a `message` do Private Message).
+- Pendências que dependem de decisão do responsável estão registradas em `docs/operations/DEBT-REGISTER.md` (DT-G03 e DT-G04).
+- RUNTIME STATUS: não aplicável (sem alteração de configuração; só menu e scripts).
+
 ## 0.4.0-dev.160 — revisão do /code-review das caixas por pessoa e do diálogo do "Sim"
 
 - Resultado de cada ação de membro na própria caixa; "Sim" do diálogo corrigido na segunda abertura (`aculta_messenger` 0.1.1-dev.50, tema `0.6.0-dev.90`).

@@ -42,13 +42,6 @@ aculta_portal.footer_participation:
     webform: aculta_participation
   menu_name: aculta-footer-participation
   weight: -5
-aculta_portal.role_hierarchy_settings:
-  title: Papéis e perfis
-  description: Hierarquia de papéis, vínculo dos tipos de perfil e atalhos para papéis e permissões.
-  route_name: entity.user_role.collection
-  parent: aculta_portal.admin
-  weight: 3
-
 # Administração de contas em Configurações > Pessoas (migradas das abas de Pessoas).
 aculta_portal.config_papeis_e_perfis:
   title: 'Papéis e perfis'

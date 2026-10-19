@@ -118,10 +118,13 @@ if (!is_dir($vvjCore)) {
 }
 else {
   $base = $read($vvjCore . '/js/vvj-element-base.js');
-  foreach (["emit('slideChanged'", 'source: this'] as $contract) {
-    if (!str_contains($base, $contract)) {
-      $errors[] = "VVJ Core não publica o contrato $contract";
-    }
+  // O VVJ Core publica todo evento como CustomEvent `vvj:<nome>` no document, com source: this. O VVJS emite
+  // slideChanged pelo próprio elemento (this.emit), então o contrato se verifica nos dois arquivos.
+  if (!str_contains($base, 'new CustomEvent(`vvj:${name}`') || !str_contains($base, 'source: this')) {
+    $errors[] = 'VVJ Core não publica os eventos vvj:<nome> com source: this';
+  }
+  if (!is_file($element) || !str_contains((string) file_get_contents($element), "this.emit('slideChanged'")) {
+    $errors[] = "VVJS não emite slideChanged (this.emit('slideChanged'))";
   }
 }
 if (!str_contains($js, 'vvjs-slideshow') || !str_contains($js, 'vvj:slideChanged')) {
