@@ -22,7 +22,6 @@ $map = [
     'footer' => ['Rodapé', 'Menu padrão de rodapé do Drupal. O footer institucional utiliza também os menus específicos de instituição, conteúdo e participação.'],
     'aculta-footer-institution' => ['Institucional', 'Navegação institucional do footer: quem somos, projetos e transparência.'],
     'aculta-footer-content' => ['Conteúdo', 'Navegação de notícias, atividades e comunicação no footer.'],
-    'aculta-footer-participation' => ['Participação', 'Navegação de contato, participação e privacidade no footer.'],
   ],
 ];
 foreach ($map as $entity_type => $items) {

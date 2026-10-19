@@ -279,7 +279,6 @@ function aculta_portal_update_11004(): string {
     'user_register_form',
     'user_pass',
     'webform_submission_aculta_contact_add_form',
-    'webform_submission_aculta_participation_add_form',
   ];
   $captcha_points = \Drupal::entityTypeManager()->getStorage('captcha_point');
   foreach ($form_ids as $form_id) {

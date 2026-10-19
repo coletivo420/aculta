@@ -304,8 +304,7 @@ Mailer Plus/Webform consegue enviar HTML. Não prova que o handler atual esteja 
 `filter.format.email_html` não declara filtros e o corpo contém campos fornecidos por visitantes. Habilitar HTML exige
 um template que escape esses campos e validação específica do conteúdo final.
 
-O formulário `aculta_participation` não declara handlers de e-mail. Não foi escolhido destinatário para notificações
-de participação, então R4 não cria envios para esse formulário. O template de verificação administrativa do Mailer
+O formulário de participação `aculta_participation` foi removido; por isso R4 não tem mais envios para ele. O template de verificação administrativa do Mailer
 Plus foi localizado em português; a política está disponível apenas para a verificação iniciada por administrador.
 
 **Runtime status: DEFERRED.** R4 não importou configuração no Runtime: a linha de base tem divergências conhecidas,

@@ -184,7 +184,7 @@ final class PortalRequirementsController extends ControllerBase {
       'modules' => ['webform'],
       'package' => 'drupal/webform',
       'minimum' => '^6.3',
-      'purpose' => 'Formulários institucionais relacionados, como Faça Parte.',
+      'purpose' => 'Formulários institucionais publicados.',
     ],
   ];
 

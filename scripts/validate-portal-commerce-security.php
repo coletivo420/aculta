@@ -300,7 +300,6 @@ $expected_forms = [
   'user_register_form',
   'user_pass',
   'webform_submission_aculta_contact_add_form',
-  'webform_submission_aculta_participation_add_form',
 ];
 foreach ($expected_forms as $form_id) {
   $point = \Drupal::entityTypeManager()->getStorage('captcha_point')->load($form_id);

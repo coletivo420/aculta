@@ -74,7 +74,7 @@ foreach ($views as $view) {
   if (in_array($view->id(), $curated, TRUE) && !$view->get('description')) throw new RuntimeException('Missing View description: ' . $view->id());
   $view->getExecutable()->initDisplay();
 }
-foreach (['admin','content','navigation-user-links','account','main','aculta-footer-content','aculta-footer-institution','aculta-footer-participation'] as $id) {
+foreach (['admin','content','navigation-user-links','account','main','aculta-footer-content','aculta-footer-institution'] as $id) {
   $menu = \Drupal\system\Entity\Menu::load($id);
   if (!$menu || !$menu->getDescription()) throw new RuntimeException('Missing menu/reference: ' . $id);
 }

@@ -50,7 +50,7 @@ if (!empty($state['official_applied'])) {
       $alias->setPath($contact_path)->save();
     }
   }
-  foreach (['main_contact', 'aculta-footer-participation_contact'] as $key) {
+  foreach (['main_contact'] as $key) {
     $link = \Drupal\menu_link_content\Entity\MenuLinkContent::load($state['menus'][$key] ?? 0);
     if ($link && $link->get('link')->uri !== $contact_uri) {
       $link->set('link', ['uri' => $contact_uri])->save();

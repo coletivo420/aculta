@@ -336,7 +336,6 @@ institution_place('aculta_contact_data', 'block_content:' . $institution_data->u
 $footer_menus = [
   'aculta-footer-institution' => ['INSTITUCIONAL', ['institutional' => 'Quem somos', 'projects' => 'Projetos', 'transparency' => 'Transparência']],
   'aculta-footer-content' => ['CONTEÚDO', ['news' => 'Notícias', 'activities' => 'Atividades', 'podplant420' => 'PodPlant420']],
-  'aculta-footer-participation' => ['PARTICIPE', ['contact' => 'Contato', 'activities' => 'Acompanhe nossas atividades']],
 ];
 foreach ($footer_menus as $id => [$label, $links]) {
   if (!Menu::load($id)) {
@@ -348,7 +347,7 @@ foreach ($footer_menus as $id => [$label, $links]) {
   }
   institution_place(str_replace('-', '_', $id), 'system_menu_block:' . $id, 'footer', 10 + array_search($id, array_keys($footer_menus), TRUE), $label, '', ['label_display' => 'visible', 'level' => 1, 'depth' => 1, 'expand_all_items' => FALSE]);
 }
-institution_menu_link('aculta-footer-participation', 'footer_privacy', 'Política de Privacidade', 'entity:node/' . $state['nodes']['privacy'], 10);
+institution_menu_link('aculta-footer-institution', 'footer_privacy', 'Política de Privacidade', 'entity:node/' . $state['nodes']['privacy'], 3);
 
 // Replace the default empty landing route; preserve its View and all existing blocks.
 \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/node/' . $home->id())->set('name', $data['organization'])->save();

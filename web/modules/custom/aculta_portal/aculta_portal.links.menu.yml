@@ -34,14 +34,6 @@ aculta_portal.footer_support:
   route_name: aculta_portal.support_form
   menu_name: aculta-footer-participation
   weight: -10
-aculta_portal.footer_participation:
-  title: Faça Parte
-  description: Envie uma manifestação de interesse em participar das iniciativas da Associação.
-  route_name: entity.webform.canonical
-  route_parameters:
-    webform: aculta_participation
-  menu_name: aculta-footer-participation
-  weight: -5
 # Administração de contas em Configurações > Pessoas (migradas das abas de Pessoas).
 aculta_portal.config_papeis_e_perfis:
   title: 'Papéis e perfis'

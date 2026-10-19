@@ -506,62 +506,6 @@
                 "published": true
             },
             {
-                "id": "50",
-                "uuid": "72ce78d6-b0b7-44f5-a08a-392cb4742857",
-                "bundle": "path_alias",
-                "label": "/faca-parte",
-                "published": true
-            },
-            {
-                "id": "51",
-                "uuid": "59060104-8a9b-4ed5-8403-a848a183005d",
-                "bundle": "path_alias",
-                "label": "/faca-parte",
-                "published": true
-            },
-            {
-                "id": "52",
-                "uuid": "8e0c6b5a-5c0a-4699-85f9-42ccbbe5784f",
-                "bundle": "path_alias",
-                "label": "/faca-parte/confirmation",
-                "published": true
-            },
-            {
-                "id": "53",
-                "uuid": "96b0728e-e3a3-44ba-9f77-6ec9db0d7166",
-                "bundle": "path_alias",
-                "label": "/faca-parte/confirmation",
-                "published": true
-            },
-            {
-                "id": "54",
-                "uuid": "a2e5568d-8e44-4a40-99a9-6caaac102cf0",
-                "bundle": "path_alias",
-                "label": "/faca-parte/submissions",
-                "published": true
-            },
-            {
-                "id": "55",
-                "uuid": "966b4d62-f404-4b85-adea-ddaa81d94090",
-                "bundle": "path_alias",
-                "label": "/faca-parte/submissions",
-                "published": true
-            },
-            {
-                "id": "56",
-                "uuid": "473ebc2e-3508-4f06-a6b4-92e948b0e41a",
-                "bundle": "path_alias",
-                "label": "/faca-parte/drafts",
-                "published": true
-            },
-            {
-                "id": "57",
-                "uuid": "ffae6fea-e8d4-4d38-8f0a-07ce66cf5784",
-                "bundle": "path_alias",
-                "label": "/faca-parte/drafts",
-                "published": true
-            },
-            {
                 "id": "58",
                 "uuid": "695ce24d-d4f1-4a35-ab89-2dcce4c437f4",
                 "bundle": "path_alias",

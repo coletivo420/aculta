@@ -15,7 +15,6 @@
     "captcha.captcha_point.user_pass",
     "captcha.captcha_point.user_register_form",
     "captcha.captcha_point.webform_submission_aculta_contact_add_form",
-    "captcha.captcha_point.webform_submission_aculta_participation_add_form",
     "captcha.settings",
     "core.entity_form_display.profile.participante.default",
     "core.entity_form_display.user.user.default",

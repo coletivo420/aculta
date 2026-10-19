@@ -41,8 +41,7 @@ $check(($contact_handler['twig'] ?? NULL) === FALSE, 'A notificação pública d
 $check(($contact_handler['body'] ?? NULL) === '[webform_submission:values]', 'A notificação do contato deve incluir os valores usando o formato padrão do Webform.');
 $check(($contact_handler['reply_to'] ?? NULL) === '[webform_submission:values:email:raw]', 'Reply-To do contato deve usar o campo de e-mail validado pelo Webform.');
 $check(($contact_handler['to_mail'] ?? NULL) !== 'advfjpm@gmail.com', 'A configuração exportada não pode enviar notificações ao endereço de teste histórico.');
-$participation = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/webform.webform.aculta_participation.yml') ?: [];
-$check(($participation['handlers'] ?? []) === [], 'O formulário de participação não pode habilitar notificações sem destinatário institucional aprovado.');
+$check(!is_file($root . '/config/sync/webform.webform.aculta_participation.yml'), 'O formulário de participação foi removido; não há notificações de participação a validar.');
 $verify_policy = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/mailer_policy.mailer_policy.symfony_mailer.verify.yml') ?: [];
 $verify_body = (string) ($verify_policy['configuration']['email_body']['content']['value'] ?? '');
 $verify_subject = (string) ($verify_policy['configuration']['email_subject']['value'] ?? '');
