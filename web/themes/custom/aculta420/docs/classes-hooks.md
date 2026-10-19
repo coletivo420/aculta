@@ -28,6 +28,14 @@ específicos de Views.
 hooks Drupal. `deferProductSlideImage` é callback de renderização confiável,
 declarado por `TrustedCallbackInterface::trustedCallbacks()`.
 
+## `InputHooks`
+
+Arquivo: [`src/Hook/InputHooks.php`](../src/Hook/InputHooks.php). Dono único de `preprocess_input`, porque o Core aceita uma implementação de cada hook por extensão (`ModuleHandler::invoke()`).
+
+| Hook | Método | Função |
+| --- | --- | --- |
+| `preprocess_input` | `preprocess()` | Troca o `src` dos botões de imagem do Webform (adicionar e remover) pelos SVGs oficiais do Bootstrap Icons em `assets/icons/bootstrap-icons/icons/` e aplica `btn btn-sm btn-outline-primary webform-icon-button`. O elemento continua `input[type=image]`, porque o Form API identifica o clique pelas coordenadas. Depois delega a `PortalUiHooks::preprocess()` a tradução de tokens. |
+
 ## `PortalUiHooks`
 
 Arquivo: [`src/Hook/PortalUiHooks.php`](../src/Hook/PortalUiHooks.php). Traduz o
@@ -37,7 +45,7 @@ atributo neutro `data-portal-ui` em classes de apresentação do tema. O mapa
 | Hook | Método | Responsabilidade |
 | --- | --- | --- |
 | `preprocess_menu` | `preprocessMenu()` | Converte tokens nos atributos dos links de menu, incluindo itens descendentes. |
-| `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_input`, `preprocess_form_element`, `preprocess_image`, `preprocess_aculta_portal_element`, `preprocess_aculta_portal_search_trigger`, `preprocess_aculta_portal_cart_status`, `preprocess_aculta_portal_shell`, `preprocess_aculta_portal_account_terms_modal`, `preprocess_aculta_portal_photo_editor` | `preprocess()` | Converte tokens nos atributos e render arrays desses templates. Também troca o ícone de `image_button` do Webform (adicionar e remover) por SVG do tema e aplica a classe de botão; o clique continua `input[type=image]`. |
+| `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_form_element`, `preprocess_image`, `preprocess_aculta_portal_element`, `preprocess_aculta_portal_search_trigger`, `preprocess_aculta_portal_cart_status`, `preprocess_aculta_portal_shell`, `preprocess_aculta_portal_account_terms_modal`, `preprocess_aculta_portal_photo_editor` | `preprocess()` | Converte tokens nos atributos e render arrays desses templates. |
 | `preprocess_details` | `preprocessDetails()` | Aplica o mesmo mapeamento ao elemento `details` depois da preparação do Bootstrap. |
 
 O hook não cria classe para token desconhecido. Novos tokens precisam ser

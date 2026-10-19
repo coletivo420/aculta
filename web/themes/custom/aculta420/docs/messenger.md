@@ -175,7 +175,7 @@ específico do Messenger e seus pontos de apresentação.
 | `ThemeHooks` | — | `presentMessengerTrigger(array &$variables)` | `aculta_messenger` → render array `messenger-trigger`. |
 | `ThemeHooks` | `preprocess_private_message_thread` | `preprocessPrivateMessageThread` | Estado de leitura acessível (`messenger-read-status`). |
 | `ThemeHooks` | `preprocess_private_message` | `preprocessPrivateMessage` | Avatar e direção → `messenger-item`. |
-| `PortalUiHooks` | `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_input`, `preprocess_form_element`, `preprocess_menu`, … | `preprocess` / `preprocessMenu` | Troca tokens por classes (`TOKENS`). |
+| `InputHooks` / `PortalUiHooks` | `preprocess_input` (`InputHooks` delega a `PortalUiHooks::preprocess()`); `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_form_element`, `preprocess_menu`, … | `preprocess` / `preprocessMenu` | Troca tokens por classes (`TOKENS`). |
 | `PortalUiHooks` | `preprocess_details` (ordem última) | `preprocessDetails` | Mapeia a caixa "Opções" depois do acordeão do Bootstrap. |
 
 Ordem de hooks: o módulo `aculta_messenger` prepara as variáveis neutras em

@@ -44,7 +44,7 @@
 /*
  * Botões de imagem (input[type=image]) do Webform.
  * O clique é identificado pelo Form API pelas coordenadas, por isso o elemento
- * continua sendo imagem. Ícones de adicionar e remover: WebformHooks.
+ * continua sendo imagem. Ícones de adicionar e remover: InputHooks.
  */
 input[type="image"] { cursor: pointer; }
 input[type="image"]:focus-visible {

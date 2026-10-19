@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.94 | Correção de arquitetura do preprocess de input; ícones oficiais do Bootstrap Icons 1.11.0 | Gates estáticos PASS; render no Runtime de teste verificado; validação visual pendente | `InputHooks` (único `preprocess_input`); `assets/icons/bootstrap-icons/icons/`; `docs/verificacao-boas-praticas.md` |
 | 0.6.0-dev.93 | Botões de imagem e webform_multiple do Webform no Bootstrap 5 | Gates estáticos PASS; render do `image_button` verificado no Runtime de teste; validação visual pendente | `PortalUiHooks` troca o `src` dos ícones de adicionar e remover; `input[type=image]`; `css/components/webform.css` (`webform_multiple`) |
 | 0.6.0-dev.92 | Webform no Bootstrap 5: regras portadas do webform_bootstrap 3.x | Gates estáticos PASS; validação visual dos formulários `/contato` e participação pendente | `css/components/webform.css`; itens cobertos pelo Bootstrap 5 não portados |
 | 0.6.0-dev.91 | Cartão de autoria SDC experimental | Gates estáticos de SDC e design PASS; Foundation/Runtime visual DEFERRED porque Drush aponta `aculta_runtime` com URI `http://default` | `content/author-card`, variantes inline/empilhada e `author_growroom_historico` |

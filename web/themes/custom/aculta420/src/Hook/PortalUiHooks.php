@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420\Hook;
 
-use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Template\Attribute;
-use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Design do Aculta Portal: traduz tokens semânticos em classes do ACULTA420.
@@ -20,22 +17,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class PortalUiHooks {
 
   public const ATTRIBUTE = 'data-portal-ui';
-
-  /**
-   * Ícones do Webform substituídos, com o SVG correspondente do tema.
-   *
-   * Portado do webform_bootstrap 3.x (deprecado). O botão continua `input[type=image]`, porque o Form API identifica o
-   * clique pelas coordenadas da imagem; só o `src` muda. Ver docs/portal/WEBFORM-BOOTSTRAP-AVALIACAO.md.
-   */
-  private const WEBFORM_ICONS = [
-    'webform/images/icons/plus.svg' => 'webform/plus.svg',
-    'webform/images/icons/minus.svg' => 'webform/minus.svg',
-  ];
-
-  public function __construct(
-    #[Autowire(service: 'extension.list.theme')]
-    private readonly ExtensionList $themes,
-  ) {}
 
   /** Mapa token → classes de apresentação. A ordem dos tokens define a ordem das classes. */
   public const TOKENS = [
@@ -390,40 +371,11 @@ final class PortalUiHooks {
     unset($item);
   }
 
-  /**
-   * Troca o ícone de adicionar e remover de `image_button` do Webform e aplica a classe de botão.
-   */
-  private function applyWebformImageButton(array &$variables): void {
-    $attributes = $variables['attributes'] ?? NULL;
-    if (($variables['element']['#type'] ?? NULL) !== 'image_button' || !(is_array($attributes) || $attributes instanceof Attribute)) {
-      return;
-    }
-    // Antes da conversão para Attribute o valor ainda é array (ver preprocess()).
-    $src = (string) ($attributes['src'] ?? '');
-    $classes = ['btn', 'btn-sm', 'btn-outline-primary', 'webform-icon-button'];
-    foreach (self::WEBFORM_ICONS as $webformPath => $themePath) {
-      if (!str_contains($src, '/' . $webformPath)) {
-        continue;
-      }
-      $icon = Url::fromUri('base:' . $this->themes->getPath('aculta420') . '/assets/icons/' . $themePath)->toString();
-      if (is_array($attributes)) {
-        $variables['attributes']['src'] = $icon;
-        $variables['attributes']['class'] = [...(array) ($attributes['class'] ?? []), ...$classes];
-      }
-      else {
-        $attributes['src'] = $icon;
-        $attributes->addClass(...$classes);
-      }
-      return;
-    }
-  }
-
   #[Hook('preprocess_container')]
   #[Hook('preprocess_html_tag')]
   #[Hook('preprocess_item_list')]
   #[Hook('preprocess_fieldset')]
   #[Hook('preprocess_table')]
-  #[Hook('preprocess_input')]
   #[Hook('preprocess_form_element')]
   #[Hook('preprocess_image')]
   #[Hook('preprocess_aculta_portal_element')]
@@ -433,7 +385,6 @@ final class PortalUiHooks {
   #[Hook('preprocess_aculta_portal_account_terms_modal')]
   #[Hook('preprocess_aculta_portal_photo_editor')]
   public function preprocess(array &$variables): void {
-    $this->applyWebformImageButton($variables);
     $this->addAccountUnreadBadges($variables);
     // #attributes do elemento de render são mesclados em "attributes" depois do preprocess: trata o elemento.
     if (isset($variables['element']) && is_array($variables['element'])) {

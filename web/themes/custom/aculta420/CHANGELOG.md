@@ -1,3 +1,13 @@
+## 0.6.0-dev.94 — correção de arquitetura do preprocess de input; ícones oficiais — 2026-10-19
+
+Classificação: PATCH de arquitetura e apresentação. Corrige o commit `0.6.0-dev.93` antes de qualquer validação visual.
+
+- `preprocess_input` passa a ter uma única implementação, em `src/Hook/InputHooks.php`, que delega a tradução de tokens a `PortalUiHooks`. A lógica de ícone de `PortalUiHooks` (dev.93) foi removida dele. O Core lança exceção com duas implementações da mesma extensão.
+- Os SVGs de adicionar e remover deixam de ser desenhos próprios: passam a ser `plus-circle.svg` e `dash-circle.svg` do pacote oficial `bootstrap-icons@1.11.0` (npm, MIT), com integridade conferida. A única alteração é `fill` trocado pela cor da marca. Procedimento e regra de origem em `assets/icons/bootstrap-icons/README.md`.
+- Verificação de boas práticas de Drupal 11+, SDC e VVJ em `docs/verificacao-boas-praticas.md`: VVJB, VVJS e a API usada pelo tema conferidas no código instalado.
+- Renderização verificada no Runtime de teste (`renderInIsolation`): ícones oficiais com as classes do botão; tokens do Portal preservados em `input`. Validação visual não executada (NÃO VALIDADO).
+- Gate de Foundation: versão alinhada; 368 checks PASS.
+
 ## 0.6.0-dev.93 — botões de imagem e webform_multiple do Webform — 2026-10-19
 
 Classificação: PATCH de apresentação. Autorizado na solicitação de portar também os itens sem uso atual nos formulários.
