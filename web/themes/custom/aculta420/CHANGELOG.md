@@ -1,3 +1,9 @@
+## 0.6.0-dev.88 — diálogos do messenger: título, conteúdo visível e reabertura — 2026-10-19
+
+- `messenger-drawers.js`: o diálogo de confirmação remove o atributo `hidden` antes de abrir (a regra `[hidden]` do Bootstrap é `!important`), usa o valor do botão como título (o botão é um `<input>`), e tem um `close` próprio que só oculta. O `close` padrão destruía o elemento, e a segunda abertura não mostrava a pergunta.
+- Gate de fundação atualizado para `0.6.0-dev.88`.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild); validado no navegador (X11). Clique do mouse em "Sim" pendente de causa.
+
 ## 0.6.0-dev.87 — diálogos do messenger e da galeria como modal do Drupal — 2026-10-19
 
 Classificação: PATCH de apresentação e comportamento de diálogo. Autorizado na solicitação de validação dos itens do popup-rule.

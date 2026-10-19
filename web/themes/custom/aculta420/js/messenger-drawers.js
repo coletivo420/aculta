@@ -41,11 +41,17 @@
           if (!content || typeof Drupal.dialog !== 'function') {
             return;
           }
+          // Bootstrap's [hidden] rule uses !important, so jQuery UI cannot show the question while the attribute stays.
+          content.removeAttribute('hidden');
           if (!content.acultaDialog) {
             content.acultaDialog = Drupal.dialog(content, {
               appendTo: form,
-              title: button.textContent.trim(),
+              // Form API renders the open button as an <input type="button">: its label is the value, not the text.
+              title: button.value || button.textContent.trim(),
               closeOnEscape: true,
+              // The default close detaches the element's behaviors ('unload'), and jQuery UI then destroys the dialog
+              // with its content: the question is gone at the next opening. Closing only hides the dialog here.
+              close: () => {},
             });
           }
           content.acultaDialog.showModal();
