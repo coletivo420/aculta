@@ -1,3 +1,20 @@
+# `0.1.0-dev.5` — auditoria para retirada do Forum contrib — 2026-10-19
+
+- Confirmado em leitura somente no Runtime de teste: 30 nodes `forum` (12
+  publicados e vinculados a publicações, 1 publicado independente e 17 não
+  publicados), 0 comments `comment_forum`, 8 termos `forums` e 2 flaggings no
+  total do site.
+- Confirmados consumidores ativos em Magazine e User; a sincronização editorial
+  e os vínculos `field_discussao` permanecem. Desinstalar ou excluir agora
+  deixaria 12 publicações sem sua discussão; a migração da Revista da dev.8 e os
+  contratos funcionais correspondentes ainda não existem.
+- Backups encontrados (17 e 18/10) são anteriores e de outras tarefas; nenhum
+  foi validado como restore point desta retirada. Nenhuma exclusão, uninstall,
+  remoção Composer, update ou alteração Runtime executada.
+- Dev5 permanece em andamento. Próximo gate: migrar os consumidores sem perder
+  discussão editorial e validar restore point atual antes de qualquer operação
+  destrutiva. RUNTIME STATUS: PARTIAL (auditoria somente leitura no teste).
+
 # 0.1.0-dev.4 — Context API executável — 2026-10-19
 
 - Criado e habilitado no Runtime de teste o módulo `aculta_forum`, usando somente bundles/campos nativos Node, Comment e Taxonomy, em configuração de instalação e Config Sync.
