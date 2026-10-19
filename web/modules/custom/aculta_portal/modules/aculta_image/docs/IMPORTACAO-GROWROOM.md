@@ -178,15 +178,19 @@ A verificação completa relê os 8 GB e confere o SHA-256 de cada arquivo.
 2. **Seleção dos 4.739 tópicos de "outros termos"**: até a marcação, ficam excluídos. Página publicada.
 3. **Revisão dos 17 tópicos marcados como "revisar"** (termos de notícia que também aparecem em anúncios).
 4. **Vida interna do fórum (616 tópicos)**: excluídos por padrão, sem decisão.
-5. **Autores dos 555 tópicos de caso individual**: a proposta é não importá-los como perfis. Isso ainda não foi confirmado.
-6. **Perfis do THWboard**: a lista passaria de 2.173 para 3.915 URLs (1.742 ainda não baixadas). Só o `--aplicar` do
-   `build_mapping.py` muda a lista, e não foi executado.
+5. **Perfis: só quem tem conteúdo no fórum importado** (decisão do responsável, 2026-10-19). A lista de perfis sai do
+   conjunto de importação (`conjunto-importacao.json`): autores com pelo menos um post em tópico que entra. Autores
+   que só aparecem em tópicos comerciais ou em tópicos excluídos não entram. Resultado: 3.924 URLs de perfil.
+   Consequência: os autores dos 555 tópicos de caso individual têm conteúdo mantido, então entram pela mesma regra.
+   Se isso não for o desejado, é preciso dizer.
+6. **Download dos perfis**: os 1.332 perfis da lista ainda não baixados estão sendo baixados agora. Quando terminar, o
+   mapeamento é regenerado e a verificação roda de novo.
 7. **Três nomes ambíguos** (`Delta-9-thc`, `Pcgrow`, `Prof. Pardal`): sem decisão de qual perfil vale.
-8. **228 fotos truncadas**: hoje apontam para o arquivo cortado (`imagem_acervo`). Não há fonte alternativa. Pergunta: elas
-   devem usar a imagem padrão ("não recuperada") em vez do arquivo cortado?
+8. **228 fotos truncadas: não recuperadas** (decisão do responsável, 2026-10-19). Entram com a imagem padrão, no lugar do
+   arquivo cortado. Também se aplica aos 298 links de download dessas fotos.
 9. **Modal de conteúdo legado**: depende de autorização para alterar o tema ACULTA420 e da aprovação do texto da história.
-10. **Teste dos links contra o site vivo**: inconclusivo; `growroom.net` não resolve por DNS deste servidor. Precisa ser
-    repetido de outra rede.
+10. **Teste dos links contra o site vivo: fechado.** `growroom.net` não existe mais (informado pelo responsável em
+    2026-10-19). Os links quebrados seguem para o modal, e a verificação ao vivo deixa de ser pendência.
 11. **Ingestão das 7.805 fotos e da imagem padrão** pelo `aculta_image`, com conversão para WebP na importação.
 12. **Resolução dos 92 mil links `showtopic&st=` / `&pid=`** para o tópico importado pelo ID: ainda não implementada.
 
