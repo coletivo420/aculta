@@ -1,10 +1,10 @@
 # Plano de retirada do Drupal Forum contrib
 
-Status: dev5 em auditoria; remoção ainda não autorizada operacionalmente. O
-inventário de código/configuração foi atualizado em 2026-10-19 e o Runtime de
-teste foi consultado em modo somente leitura. `drupal/forum` 1.1.3 continua
-instalado e habilitado. Nenhuma entidade, configuração, Composer ou Runtime foi
-alterado nesta auditoria.
+Status: dev5 em auditoria; pré-requisitos operacionais para remoção ainda não
+foram satisfeitos. O inventário de código/configuração foi atualizado em
+2026-10-19 e o Runtime de teste foi consultado em modo somente leitura.
+`drupal/forum` 1.1.3 continua instalado e habilitado. Nenhuma entidade,
+configuração, Composer ou Runtime foi alterado nesta auditoria.
 
 ## Inventário conferido
 
