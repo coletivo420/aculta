@@ -1,3 +1,7 @@
+## 0.4.0-dev.187 — contrato de respostas públicas do Fórum — 2026-10-19
+
+- O teste de configuração do `aculta_forum` verifica equivalência do field Comment entre install/Config Sync, status aberto, formulário inline, tipo compartilhado, bloqueio de anônimos e permissão `post comments` para participantes confirmados: 8 testes / 55 assertions PASS; PHPCS PASS. Runtime de teste confirma o campo e permissão efetivos, sem conteúdo persistido. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.186 — aplica permissões próprias de tópico ao papel confirmado — 2026-10-19
 
 - `user.role.email_confirmed` preserva as dependências, permissões existentes e peso ativos do Runtime; acrescenta só a dependência do bundle novo e `create/edit own/delete own aculta_forum_topic`. Não concede `edit any` ou `delete any`.

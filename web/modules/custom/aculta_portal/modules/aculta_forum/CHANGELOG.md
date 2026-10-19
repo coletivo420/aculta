@@ -1,3 +1,9 @@
+## `0.1.0-dev.18` — contrato de respostas abertas no tópico — 2026-10-19
+
+- O teste de configuração agora fixa que tópicos públicos usam `aculta_discussion_post`, começam com respostas abertas, exibem o formulário no campo Core e restringem envio anônimo; Config Sync deve permanecer equivalente à configuração de instalação.
+- Runtime `toca` confirmado em Drupal 11.4.10: campo ativo com status `Open`, papel `email_confirmed` e uid 5 têm `post comments`; continuam 0 tópicos e 0 comentários. Formulário de resposta em nó persistido não foi renderizado para preservar o acervo vazio. RUNTIME STATUS: PARTIAL.
+- PHPUnit `ForumTopicDisplayConfigTest`: 8 testes / 55 assertions — PASS; PHPCS Drupal/DrupalPractice — PASS.
+
 ## `0.1.0-dev.17` — acesso de participante ao formulário de tópico — 2026-10-19
 
 - Config Sync do papel `email_confirmed` mantém o estado ativo de Wiki/Fórum legado e demais permissões; acrescenta somente a dependência do bundle ACULTA e criar/editar/excluir o próprio tópico. Nenhuma permissão `any` foi concedida.

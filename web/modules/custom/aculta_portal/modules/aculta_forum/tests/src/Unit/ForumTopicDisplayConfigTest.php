@@ -62,6 +62,33 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Public topics keep native replies open and use the shared Comment type.
+   */
+  public function testTopicRepliesUseTheOpenSharedCommentField(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $field_filename = 'field.field.node.aculta_forum_topic.field_aculta_discussion.yml';
+    $field = Yaml::parseFile($module_path . '/config/install/' . $field_filename);
+    $field_sync = Yaml::parseFile($repository_path . '/config/sync/' . $field_filename);
+    unset($field_sync['_core']);
+    self::assertSame($field, $field_sync);
+    $storage_filename = 'field.storage.node.field_aculta_discussion.yml';
+    $storage = Yaml::parseFile($module_path . '/config/install/' . $storage_filename);
+    $storage_sync = Yaml::parseFile($repository_path . '/config/sync/' . $storage_filename);
+    unset($storage_sync['_core']);
+    self::assertSame($storage, $storage_sync);
+
+    self::assertSame('field_aculta_discussion', $field['field_name']);
+    self::assertSame('aculta_discussion_post', $storage['settings']['comment_type']);
+    self::assertSame(2, $field['default_value'][0]['status'], 'New public topics allow replies.');
+    self::assertSame(1, (int) $field['settings']['form_location'], 'Reply form appears inline.');
+    self::assertSame(0, $field['settings']['anonymous']);
+
+    $role = Yaml::parseFile($repository_path . '/config/sync/user.role.email_confirmed.yml');
+    self::assertContains('post comments', $role['permissions']);
+  }
+
+  /**
    * The public listing keeps bundle, domain and access filters fixed.
    */
   public function testPublicListingUsesFixedAccessAwareFilters(): void {

@@ -130,6 +130,14 @@ o formulário Core (título, corpo e categoria). O formulário não foi enviado 
 continuam zero tópicos e comentários. Testes Unit cobrem o contrato da role, não
 substituem o teste funcional de submissão; a fase dev.6 permanece aberta.
 
+Portal `0.4.0-dev.187` / Forum `0.1.0-dev.18` fixam no teste que tópico
+público usa o Comment compartilhado `aculta_discussion_post`, inicia com
+respostas abertas e exibe o formulário Core inline apenas a participantes com
+`post comments`; anônimos não comentam. Runtime confirmou os valores da
+configuração ativa e a permissão da conta uid 5. Como não há tópico salvo, não
+foi possível renderizar o formulário associado a uma entidade persistida nem
+enviar resposta. Nenhum dado foi criado; o fluxo funcional segue pendente.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,
