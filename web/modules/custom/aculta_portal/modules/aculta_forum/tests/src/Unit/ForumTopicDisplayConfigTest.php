@@ -148,6 +148,28 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * The public topic alias pattern selects the replacement bundle only.
+   */
+  public function testPathautoPatternTargetsPublicForumTopics(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $filename = 'pathauto.pattern.aculta_forum_topic.yml';
+    $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
+    $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+    unset($sync['_core']);
+    self::assertSame($install, $sync);
+    self::assertSame('/topico/[node:title]', $install['pattern']);
+    self::assertSame(
+      ['aculta_forum_topic' => 'aculta_forum_topic'],
+      $install['selection_criteria']['09a3b0e7-9f1c-4a86-a200-2d7a2a22bd32']['bundles'],
+    );
+    self::assertSame(
+      ['node.type.aculta_forum_topic'],
+      $install['dependencies']['config'],
+    );
+  }
+
+  /**
    * Friendly topic creation uses Core's Node form and create access.
    */
   public function testFriendlyTopicAddRouteUsesCoreEntityFormAccess(): void {

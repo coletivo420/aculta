@@ -1,0 +1,23 @@
+uuid: 5024b185-596d-4801-bfa2-88a0a6bcd523
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.aculta_forum_topic
+  module:
+    - node
+id: aculta_forum_topic
+label: 'URLs — tópico do Fórum'
+type: 'canonical_entities:node'
+pattern: '/topico/[node:title]'
+selection_criteria:
+  09a3b0e7-9f1c-4a86-a200-2d7a2a22bd32:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      aculta_forum_topic: aculta_forum_topic
+selection_logic: and
+weight: 0
+relationships: {  }
