@@ -1,3 +1,8 @@
+## 0.1.0-dev.8 — default de comentários nas publicações existentes — 2026-10-19
+
+- `PublicationDiscussionHooks` aplica somente em memória o status configurado para itens antigos sem status, sem mudar valores explícitos `Hidden`/`Closed` nem as estatísticas do Comment. Não grava entidades nem altera Runtime.
+- Teste Unit: 4 testes/14 assertions PASS; PHP lint PASS. Homologação no Runtime DEFERRED.
+
 ## 0.1.0-dev.7 — comentários nativos diretamente nas publicações — 2026-10-19
 
 - `article` e `blog` recebem `field_aculta_discussion`, com tipo Comment `aculta_discussion_post`, status padrão aberto e formatter Core no display full.

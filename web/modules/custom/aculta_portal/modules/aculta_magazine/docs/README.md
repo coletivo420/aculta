@@ -31,9 +31,11 @@ configurável de primeiro comentário do `aculta_user` aplica-se aqui como nos d
 expressamente fora dessa moderação global. A troca article ↔ blog copia o item do campo e re-hospeda as entidades
 Comment antes de remover a publicação antiga, preservando autoria, estado e encadeamento.
 
-A configuração foi preparada em `config/sync` e `config/install`; nenhuma importação foi executada neste commit. Em
-ambiente que já tem conteúdo, o status do campo precisa ser inicializado como aberto sem sobrescrever um status
-editorial explicitamente fechado. Essa inicialização deve ser validada antes de ativar o campo no Runtime.
+A configuração foi preparada em `config/sync` e `config/install`; nenhuma importação foi executada neste commit. Para
+Nodes de publicação anteriores à instalação do campo, `PublicationDiscussionHooks` aplica em memória o default
+definido na configuração do campo (fallback aberto), sem gravar o Node. Status editorial explícito fechado ou
+oculto e estatísticas de comentários carregadas pelo Core permanecem intactos. A visibilidade efetiva e a submissão
+de comentários no Runtime continuam pendentes de homologação.
 
 ## Blog é sinônimo de Editorial
 

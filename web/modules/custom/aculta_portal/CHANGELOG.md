@@ -1,3 +1,8 @@
+## 0.4.0-dev.173 — status padrão das discussões editoriais existentes — 2026-10-19
+
+- `PublicationDiscussionHooks` completa em memória o status ausente de `field_aculta_discussion` com o default da configuração do campo (fallback `Open`), sem persistir alterações, preservando status `Hidden`/`Closed` explícitos e estatísticas de comentários carregadas pelo Core.
+- Teste Unit do hook: 4 testes/14 assertions PASS; PHP lint PASS. Config Sync e Runtime não foram alterados; fluxo visual/editorial em Runtime segue DEFERRED.
+
 ## 0.4.0-dev.172 — comentários no contexto das publicações — 2026-10-19
 
 - `article` e `blog` recebem `field_aculta_discussion` com Comment compartilhado; o full display usa o formatter do Core. A conversão de tipo re-hospeda os Comments antes de remover o Node antigo.
