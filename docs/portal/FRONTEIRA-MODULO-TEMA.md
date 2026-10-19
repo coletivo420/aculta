@@ -127,6 +127,13 @@ Política: toda ferramenta do `aculta_user` funciona com outro tema. O módulo e
 | Marcação neutra com `data-portal-ui` (tokens semânticos) | `aculta_user` | `account-view-profile`, `public-profile-link-instagram` |
 | Classes, bordas, cores, tamanhos e ícones | ACULTA420 | `PortalUiHooks::TOKENS`, `css/components/public-profile.css`, `portal-account.css` |
 
+Cartão de autoria usa contrato neutro próprio: `aculta_user` registra o hook
+`aculta_user_author_card` com campos preparados e cacheáveis; o template do
+ACULTA420 compõe o SDC `aculta420:author-card`. O módulo não conhece o SDC nem
+emite classes de design. Ações chegam como render arrays montados por um
+consumidor que já avaliou acesso; imagem e visibilidade seguem `aculta_image` e
+`PublicProfilePolicy`.
+
 Sem o ACULTA420, os elementos continuam funcionando: links com `href` válido, textos e foto. Só a aparência volta ao padrão do tema ativo. Não há classes de design (`btn`, `bi-*`, `portal-*`) no módulo; o gate `validate-module-theme-boundary.php` confere.
 
 ## ACULTA Messenger (auditoria de ownership, 2026-10-14)

@@ -22,6 +22,7 @@ Disponível:
 - `content/editorial-card` -> `aculta420:editorial-card`.
 - `content/course_card` -> `aculta420:course_card`, substituto SDC compatível para `lms:course_card`.
 - `content/messenger-item`, `content/messenger-compose`, `content/messenger-notification` e `content/institutional-notice` -> componentes experimentais da central; `messenger-item` recebe avatar renderizado, direção de envio e corpo nativo como slots/props neutros.
+- `content/author-card` -> apresentação experimental compartilhada de autoria; recebe nome/link/avatar renderizados pelo `aculta_user`, sem carregar entidade ou decidir acesso. `author_forum_stacked` altera só o layout; autoria histórica não recebe perfil ou ações de conta.
 - `patterns/messenger-list` -> moldura de listas do Private Message/Message.
 - `feedback/unread-badge` e `feedback/messenger-state` -> contagem e estados da central.
 - `patterns/card` -> cartão composto reutilizável com slots de mídia, cabeçalho, conteúdo e rodapé; variantes vertical e horizontal usam Bootstrap e tokens ACULTA420.

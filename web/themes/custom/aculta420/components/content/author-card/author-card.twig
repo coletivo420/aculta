@@ -1,0 +1,14 @@
+{% set layout = variant == 'author_forum_stacked' ? 'stacked' : 'inline' %}
+<article class="aculta-author-card aculta-author-card--{{ layout }} aculta-author-card--{{ variant }}">
+  {% if avatar %}
+    <div class="aculta-author-card__avatar">{{ avatar }}</div>
+  {% else %}
+    <div class="aculta-author-card__avatar aculta-author-card__avatar--initial" aria-hidden="true">{{ display_name|slice(0, 1)|upper }}</div>
+  {% endif %}
+  <div class="aculta-author-card__identity">
+    <div class="aculta-author-card__name">
+      {% if profile_url %}<a href="{{ profile_url }}">{{ display_name }}</a>{% else %}{{ display_name }}{% endif %}
+    </div>
+    {% if actions %}<div class="aculta-author-card__actions">{{ actions }}</div>{% endif %}
+  </div>
+</article>

@@ -1,0 +1,10 @@
+name: Autoria em discussão
+description: Cartão público compacto para autor de resposta no fórum.
+component: aculta420:author-card
+props:
+  variant: author_forum
+  display_name: Maria Antônia
+  profile_url: /u/maria
+slots:
+  avatar:
+    markup: <span aria-hidden="true">M</span>

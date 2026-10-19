@@ -202,6 +202,17 @@ shell `.portal-account`, mantendo a cor semântica original fora dele. Cada
 linha tem menu contextual para limpar o histórico pessoal pelo formulário
 nativo do Private Message.
 
+## Cartão de autoria compartilhado (0.6.0-dev.91)
+
+`content/author-card` apresenta variantes de autoria sem consultar entidades ou
+decidir acesso. O `aculta_user` prepara apelido, link canônico, avatar autorizado
+e cache no theme hook neutro; a imagem passa por `aculta_image`. `author_forum`
+e `author_comment` compartilham o layout inline, enquanto
+`author_forum_stacked` altera apenas a disposição. `author_growroom_historico` é somente
+identificação de acervo, sem link individual ou ação de conta. `author_editorial`,
+`author_lms` e `author_wiki` têm chaves reservadas, mas aguardam seus consumidores
+contextuais. Inspeção visual e Runtime: DEFERRED.
+
 A home/lista da Wiki usa css/components/wiki.css, arquivo temático de
 responsabilidade própria na biblioteca global. O markup continua preparado pelo
 Portal por tokens data-portal-ui; Views/VVJB continuam fonte dos itens.
