@@ -54,17 +54,18 @@ Runtime.
 - `article` e `blog` agora têm Config Sync/configuração de instalação para
   `field_aculta_discussion`; o formatter Core está preparado e `author_comment`
   usa o builder compartilhado do `aculta_user`. Kernels confirmam o campo
-  compartilhado e a política pública. Config Sync ainda não foi importada.
-- A abertura das discussões em publicações que já existem requer inicialização
-  explícita do status Comment depois da importação. Não ativar a apresentação
-  antes de validar esse passo.
+  compartilhado e a política pública. A configuração das duas instâncias e dos
+  displays full foi aplicada parcialmente no Runtime; status default aberto
+  verificado em memória, sem persistir Nodes ou Comments.
 - Foram observados 30 nodes `forum`, dos quais 12 publicados vinculam
   discussões a publicações. `aculta_magazine` e `aculta_user` ainda têm
   consumidores ativos; ver `docs/MIGRATION-REMOVAL.md`.
 - `ForumTopicSync` permanece apenas como fallback enquanto o campo novo não
-  estiver instalado. `DiscussionHooks` omite o trecho antigo quando o campo
-  existe. A sincronização antiga ainda não foi removida em definitivo porque
-  há nós/campos consumidores no Runtime e o Forum contrib não foi desinstalado.
+  estiver instalado. No Runtime de teste as instâncias foram aplicadas, então
+  insert/update de publicação não cria tópico; o handler de exclusão ainda pode
+  despublicar um tópico legado. `DiscussionHooks` omite o trecho antigo quando
+  o campo existe. A sincronização antiga ainda não foi removida em definitivo
+  porque há referências/tópicos legados e o Forum contrib não foi desinstalado.
   Os tópicos-casca antigos serão apagados depois; não
   importar tópicos nem comentários antigos para os novos contextos.
 - Inventário imediatamente pré-operação e restore point validado ainda pendentes.

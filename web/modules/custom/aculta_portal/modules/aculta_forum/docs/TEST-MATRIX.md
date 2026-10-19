@@ -3,8 +3,9 @@
 Esta matriz separa plano das evidências já executadas. Na `0.1.0-dev.4`, a
 Context API pública e configuração nativa foram exercitadas no Runtime de teste.
 Na dev.5, um teste Kernel prova storage Comment compartilhado em três bundles
-Node e Unit cobre access/cache do provider editorial; integração editorial no
-Runtime e fluxos completos continuam pendentes.
+Node e Unit cobre access/cache do provider editorial. As field instances da
+Revista estão aplicadas no Runtime de teste; HTTP/browser e envio de Comment
+continuam pendentes.
 
 | Camada | Casos mínimos | Evidência |
 | --- | --- | --- |
@@ -14,7 +15,7 @@ Runtime e fluxos completos continuam pendentes.
 | Formulário/display de tópico público | title/body/categoria editáveis; status de comentário e autoria histórica não editáveis; full apresenta discussão compartilhada; teaser omite thread | Unit verifica contrato YAML e equivalência Config Sync/config install; Functional Runtime pendente. |
 | Acesso público | anônimo/membro/editor; publicação, conteúdo fechado, flags e permissões | Kernel + Functional/browser. |
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
-| Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest`; Runtime editorial ainda DEFERRED. |
+| Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest` PASS; Runtime editorial PARTIAL (field/form renderizados sem envio). |
 | LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel/Functional; Route/View/Search/Cache e teste de navegador. |
 | Wiki | uma thread por verbete, comentário não altera revisão, acesso de edição distinto | Contract tests nesta fase; integração real só após Wiki. |
 | Busca/Views | filtro de contexto fixo, access query, títulos/trechos/contagens/facets e paginação sem vazamento | Kernel/Functional, index rebuild no ambiente de teste. |
@@ -139,6 +140,24 @@ Runtime e fluxos completos continuam pendentes.
 - RUNTIME STATUS: PARTIAL. A View não foi colocada, não há tópico persistido e
   browser/UX seguem pendentes.
 - A View nova não tem caminho de página nem bloco colocado. O bloco existente de `/forum` segue ligado à View do acervo contrib.
+
+## Evidência dev.9 Magazine — comentários diretos no Runtime de teste
+
+- Importação parcial de quatro objetos: fields `field_aculta_discussion` em
+  `article`/`blog` e displays full dos dois bundles. Sem importação integral,
+  update de banco ou gravação em Nodes/Comments.
+- Runtime `https://revista420.aculta.toca.net.br`, Drupal 11.4.10, banco
+  `aculta_runtime`: 14 publicações publicadas; campo existe, component
+  `comment_default` presente e status do campo de amostra `Open` (2). A build do
+  Node usa pré-render do Core. Com o usuário de teste uid 5, permissionado a
+  `post comments`, o formatter renderizou o campo e o formulário em memória.
+  Nenhum formulário foi enviado; saída HTTP/browser ainda não verificada.
+- Após a operação: 0 `aculta_discussion_post`, 30 Nodes legados `forum`, 0
+  `comment_forum` e 0 `aculta_forum_topic`. Os 12 Nodes vinculados às publicações
+  permanecem intocados; os campos `field_discussao` continuam guardando os
+  vínculos durante a transição.
+- RUNTIME STATUS: PARTIAL. Nenhum comentário enviado; acessibilidade, moderação
+  efetiva e UI em navegador pendentes.
 
 Gates aplicáveis seguem `scripts/validate-aculta-portal-drupal11.php`, fronteira
 módulo/tema, mapa módulo-tema, slugs, rotas, endereços, imagem, hierarquia de

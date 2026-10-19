@@ -38,7 +38,7 @@ entidade é carregada pelo Entity API e o acesso é revalidado na operação.
 | `aculta_lms_topic` | Node para discussão pedagógica reservada | Planejado para adapter LMS; dependência opcional evita ciclo Forum↔LMS. |
 | `aculta_discussion_post` | bundle Comment compartilhado | Configuração de Comment em Node preparada na dev.4; suporte reutilizável em outros bundles Node ainda requer prova Kernel na dev.7/integrações. |
 | `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | Configuração de instalação adicionada na dev.4; a substituição do vocabulário `forums` fica para migração autorizada. |
-| `field_aculta_discussion` | campo Comment em Nodes hospedeiros suportados | Configuração do tópico público e fields de `article`/`blog` estão em Config Sync; Runtime editorial ainda não recebeu essas instâncias. Teste Kernel em dev.5 provou o storage compartilhado nos três bundles. |
+| `field_aculta_discussion` | campo Comment em Nodes hospedeiros suportados | Configuração do tópico público e fields de `article`/`blog` estão em Config Sync; as duas instâncias editoriais e os displays full foram aplicados no Runtime de teste. Teste Kernel em dev.5 provou o storage compartilhado nos três bundles. |
 | `field_autor_legado` | referência a `aculta_legado_autor` em tópico/resposta Growroom restaurados | Storage de Node/Comment pertence ao `aculta_user`; instâncias de `aculta_forum_topic` e `aculta_discussion_post` acompanham `aculta_forum`. Conteúdo marcado é imutável; tópico permanece fechado. |
 
 Todos os machine names ficam abaixo do limite local de 32 caracteres, mas isso
@@ -65,10 +65,10 @@ Views permanece responsável pela consulta, filtros fixos, acesso e cache. Para 
 
 - Hospedeiro: Node da publicação, com `field_aculta_discussion`.
 - Um único fluxo de comentários na própria página; nunca criar tópico em outro Node.
-- O provider atende apenas bundles `article` e `blog` que tenham o campo compartilhado; as field instances de publicação estão em Config Sync, mas ainda não foram aplicadas ao Runtime de teste.
+- O provider atende apenas bundles `article` e `blog` que tenham o campo compartilhado; as duas field instances e os displays full estão aplicados no Runtime de teste, sem comentários criados.
 - Leitura combina Node Entity Access com field access. Escrita requer leitura permitida, campo aberto e permissão `post comments`; moderação combina leitura e `administer comments`. As decisões variam por `user.permissions` e carregam cacheability do host/campo.
 - `aculta_user` aplica moderação do primeiro comentário compartilhado a qualquer Node com `field_aculta_discussion`, incluindo Fórum, Revista, Wiki e novos contextos. O host `aculta_lms_topic` não é moderado, mas um comentário LMS publicado conta como participação aprovada nos demais contextos e retira o bloqueio temporário de criação de tópico. A opção fica em `/painel-administrativo/configuracoes/aculta/portal/participacao`; o bundle legado `comment_forum` conserva seu controle separado durante a migração.
-- O provider editorial e a política de moderação estão cobertos por testes Unit/Kernel isolados. `aculta_magazine` aplica em memória o status default configurado a Nodes anteriores sem status persistido; status explícitos e estatísticas são preservados. As instâncias de campo da Revista ainda não foram ativadas; Runtime/editorial permanece DEFERRED.
+- O provider editorial e a política de moderação estão cobertos por testes Unit/Kernel isolados. `aculta_magazine` aplica em memória o status default configurado a Nodes anteriores sem status persistido; status explícitos e estatísticas são preservados. Runtime editorial PARTIAL: campo/display presente e status padrão verificado; renderização HTTP e envio permanecem pendentes.
 - Publicação/despublicação e permissões editoriais condicionam leitura/escrita.
 - Canonical do comentário preserva o caminho editorial e permalink/âncora.
 - Search, aviso e métricas seguem a política editorial e access da publicação.

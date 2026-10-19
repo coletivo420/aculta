@@ -1,3 +1,9 @@
+## 0.1.0-dev.9 — comentários diretos habilitados no Runtime de teste — 2026-10-19
+
+- Config Sync e Runtime de teste agora têm `field_aculta_discussion` nos bundles `article` e `blog`; displays full renderizam o formatter Core Comment. Campos existentes têm status `Open` em memória quando não havia valor persistido; os status explícitos permanecem.
+- Não houve criação de Comments nem edição de publicações. Os 12 tópicos editoriais antigos continuam referenciados e o `ForumTopicSync` permanece como fallback de código até a próxima unidade de migração.
+- Testes Kernel de field compartilhado/moderação: 6 testes/81 assertions PASS em `aculta_simpletest`; Unit do Magazine 4 testes/14 assertions PASS. Teste Runtime: campo e component presentes; status `Open`; 14 publicações publicadas. Com o usuário de teste uid 5, formatter renderizou formulário Comment sem enviá-lo; nenhum tópico/comentário novo. HTTP/browser ainda não validado. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.8 — default de comentários nas publicações existentes — 2026-10-19
 
 - `PublicationDiscussionHooks` aplica somente em memória o status configurado para itens antigos sem status, sem mudar valores explícitos `Hidden`/`Closed` nem as estatísticas do Comment. Não grava entidades nem altera Runtime.

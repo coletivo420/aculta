@@ -1,3 +1,8 @@
+## 0.4.0-dev.176 — comentários diretos ativos no Runtime da Revista — 2026-10-19
+
+- Aplicadas parcialmente no Runtime de teste as duas instâncias Comment de `article`/`blog` e displays full; status padrão fica `Open` via configuração e hook em memória. Teste Kernel de field compartilhado e política de participação: 6 testes/81 assertions PASS. Sincronização automática de tópico antigo permanece como fallback de código até a próxima unidade; comentários não foram enviados.
+- A configuração de exibição mantém oculto o extra field `private_message_link`, já oculto no Runtime, para evitar alteração de apresentação durante a ativação da discussão.
+
 ## 0.4.0-dev.175 — listagem isolada e domínio canônico do Fórum — 2026-10-19
 
 - A View `aculta_forum_public_topics` lista somente tópicos novos publicados no domínio ativo, preservando a reescrita `node_access`; CTools Views permite configurar pager e quantidade por bloco. A View antiga `aculta_forum_topics` não foi alterada.

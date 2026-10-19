@@ -1,7 +1,7 @@
 # aculta_magazine (Revista)
 
 > **Transição em andamento:** publicações recebem o campo Comment compartilhado
-> `field_aculta_discussion` em Config Sync. O sincronizador antigo permanece como
+> `field_aculta_discussion` em Config Sync e no Runtime de teste. O sincronizador antigo permanece como
 > fallback apenas em ambientes onde esse campo ainda não está instalado. A remoção
 > final do Drupal Forum e de seus consumidores exige a sequência segura descrita em
 > [`MIGRATION-REMOVAL.md`](../../aculta_forum/docs/MIGRATION-REMOVAL.md).
@@ -31,11 +31,16 @@ configurável de primeiro comentário do `aculta_user` aplica-se aqui como nos d
 expressamente fora dessa moderação global. A troca article ↔ blog copia o item do campo e re-hospeda as entidades
 Comment antes de remover a publicação antiga, preservando autoria, estado e encadeamento.
 
-A configuração foi preparada em `config/sync` e `config/install`; nenhuma importação foi executada neste commit. Para
-Nodes de publicação anteriores à instalação do campo, `PublicationDiscussionHooks` aplica em memória o default
+A configuração está em `config/sync` e `config/install`; as duas instâncias e displays full foram aplicados no
+Runtime de teste em importação parcial. Para Nodes de publicação anteriores à instalação do campo,
+`PublicationDiscussionHooks` aplica em memória o default
 definido na configuração do campo (fallback aberto), sem gravar o Node. Status editorial explícito fechado ou
 oculto e estatísticas de comentários carregadas pelo Core permanecem intactos. A visibilidade efetiva e a submissão
-de comentários no Runtime continuam pendentes de homologação.
+de comentários via HTTP/browser continuam pendentes de homologação.
+
+Smoke em memória no Runtime de teste confirmou o field/display e renderizou o
+formulário Comment para um participante de teste com `post comments`. Nenhum
+formulário foi enviado, e a contagem de Comments permaneceu zero.
 
 ## Blog é sinônimo de Editorial
 
@@ -139,7 +144,8 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
 - Abertura: `ForumOpeningPost` lê resumo e imagem da publicação. Nenhum texto ou arquivo é copiado: a imagem é o
   mesmo arquivo da mídia, no estilo `large`. Editar a publicação atualiza a abertura.
 - Estado de migração: `ForumTopicHooks` só mantém a criação antiga enquanto `field_aculta_discussion` não existir no
-  bundle da publicação. `DiscussionHooks` omite o trecho antigo quando o campo nativo está presente.
+  bundle da publicação. As instâncias estão presentes no Runtime de teste; `DiscussionHooks` omite o trecho antigo
+  quando o campo nativo está presente. A desativação definitiva do sincronizador e limpeza de tópicos continuam pendentes.
 - URL do tópico: `/topico/<título>` (padrão `aculta_forum_topic`).
 - Moderação: segue o Core. Quem não tem `skip comment approval` vai para a fila do `content_editor`.
 - Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e ganha tópico automaticamente.

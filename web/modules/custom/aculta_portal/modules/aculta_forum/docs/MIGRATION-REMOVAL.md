@@ -106,6 +106,23 @@ Os backups observados em `/home/aculta/private/aculta` datam de 2026-10-17 e
 restore point específico desta retirada; não são base suficiente para exclusão.
 Não foi criado backup nesta subfase.
 
+### Atualização dev.9 — discussão direta na Revista
+
+Após a auditoria read-only acima, foram aplicadas quatro configurações por
+importação parcial no Runtime `aculta_runtime`: field instances Comment de
+`article` e `blog`, mais os dois displays full. Config Sync ficou sem divergência
+nesses objetos. O default aberto foi observado sem persistência em Nodes antigos.
+Com o usuário de teste uid 5, a renderização em memória incluiu o formulário de
+comentário; nenhum comentário foi submetido. Havia 14 publicações publicadas, 30
+Nodes Forum legados, nenhum `comment_forum` e nenhum Comment compartilhado.
+
+Os 12 Nodes `forum` ligados às publicações e seus vínculos `field_discussao`
+continuam intactos. A inserção/atualização de publicações no Runtime já não
+aciona a criação fallback enquanto o campo está instalado; o handler antigo de
+exclusão ainda pode despublicar tópico legado e será removido junto dos demais
+consumidores Magazine. O Forum contrib, o pacote Composer, os tópicos e o
+vocabulário não foram removidos.
+
 ### Decisão operacional desta auditoria
 
 - Não excluir nodes, termos, comments ou flags; não desinstalar `forum`, não
