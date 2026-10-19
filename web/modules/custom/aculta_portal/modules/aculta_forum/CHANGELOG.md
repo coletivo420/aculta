@@ -1,3 +1,24 @@
+## `0.1.0-dev.25` — Fórum separado e correção do 500 — 2026-10-19
+
+- Fórum aparece no menu administrativo `content` como item independente no
+  mesmo nível de Galerias; comentários ficam subordinados a ele. As páginas
+  deixam de ser abas do overview genérico, preservando os caminhos atuais.
+- A coluna Categoria usa o field handler válido `field_aculta_categories`,
+  confirmado em Views Data instalado. O handler anterior apontava para
+  `field_aculta_categories_target_id`, que só oferece filter/argument/sort e
+  carregava como `Broken`, causando `TypeError: array + null` durante render.
+- O filtro de categoria da listagem pública permanece inalterado; a View
+  administrativa mantém somente os filtros que ela já oferecia.
+- RUNTIME STATUS: PARTIAL. Runtime de teste atualizado após backup privado;
+  links do Fórum e comentários usam o menu `content`, as rotas passam no access
+  para uid 5 e ambas as Views renderizam via Render API. Request HTTP autenticada
+  segue pendente; nenhum conteúdo foi alterado.
+
+## `0.1.0-dev.24` — navegação no menu Content como Galerias — 2026-10-19
+
+- Links de Fórum e comentários passam a usar `navigation.content` e o menu
+  `content`, ao lado de Galerias. Views não criam abas no overview genérico.
+
 ## `0.1.0-dev.23` — links de navegação administrativa — 2026-10-19
 
 - O menu Conteúdo expõe a listagem de tópicos; comentários ficam aninhados em

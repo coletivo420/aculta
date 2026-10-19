@@ -38,11 +38,11 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $menu = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum.links.menu.yml');
 
     self::assertSame('view.aculta_forum_admin_topics.page_forum', $menu['aculta_forum.admin_topics']['route_name']);
-    self::assertSame('system.admin_content', $menu['aculta_forum.admin_topics']['parent']);
+    self::assertSame('navigation.content', $menu['aculta_forum.admin_topics']['parent']);
     self::assertSame('view.aculta_forum_admin_comments.page_forum_comments', $menu['aculta_forum.admin_comments']['route_name']);
     self::assertSame('aculta_forum.admin_topics', $menu['aculta_forum.admin_comments']['parent']);
-    self::assertSame('admin', $menu['aculta_forum.admin_topics']['menu_name']);
-    self::assertSame('admin', $menu['aculta_forum.admin_comments']['menu_name']);
+    self::assertSame('content', $menu['aculta_forum.admin_topics']['menu_name']);
+    self::assertSame('content', $menu['aculta_forum.admin_comments']['menu_name']);
   }
 
   /**
@@ -152,7 +152,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
-   * The administrative Forum tab is isolated from legacy and unrelated nodes.
+   * The Forum admin listing excludes unrelated and legacy node content.
    */
   public function testAdministrativeForumListingIsScopedAndAccessAware(): void {
     $module_path = dirname(__DIR__, 3);
@@ -168,10 +168,12 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertFalse($options['filters']['type']['exposed']);
     self::assertFalse($options['query']['options']['disable_sql_rewrite']);
     self::assertArrayNotHasKey('node_bulk_form', $options['fields']);
+    self::assertSame('field', $options['fields']['field_aculta_categories']['plugin_id']);
+    self::assertSame('field_aculta_categories', $options['fields']['field_aculta_categories']['field']);
+    self::assertSame('field_aculta_categories', $options['style']['options']['columns']['field_aculta_categories']);
     self::assertSame('entity_operations', $options['fields']['operations']['plugin_id']);
     self::assertSame('admin/content/forum', $view['display']['page_forum']['display_options']['path']);
-    self::assertSame('tab', $view['display']['page_forum']['display_options']['menu']['type']);
-    self::assertSame('system.admin_content', $view['display']['page_forum']['display_options']['menu']['parent']);
+    self::assertSame('none', $view['display']['page_forum']['display_options']['menu']['type']);
     self::assertContains('user.node_grants:view', $view['display']['default']['cache_metadata']['contexts']);
   }
 
@@ -196,10 +198,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertFalse($options['query']['options']['disable_sql_rewrite']);
     self::assertArrayNotHasKey('comment_bulk_form', $options['fields']);
     self::assertSame('admin/content/forum/comentarios', $view['display']['page_forum_comments']['display_options']['path']);
-    self::assertSame(
-      'views_view:views.aculta_forum_admin_topics.page_forum',
-      $view['display']['page_forum_comments']['display_options']['menu']['parent'],
-    );
+    self::assertSame('none', $view['display']['page_forum_comments']['display_options']['menu']['type']);
   }
 
   /**

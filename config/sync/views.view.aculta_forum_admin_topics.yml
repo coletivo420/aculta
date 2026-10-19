@@ -35,10 +35,10 @@ display:
           label: Título
           settings:
             link_to_entity: true
-        field_aculta_categories_target_id:
-          id: field_aculta_categories_target_id
+        field_aculta_categories:
+          id: field_aculta_categories
           table: node__field_aculta_categories
-          field: field_aculta_categories_target_id
+          field: field_aculta_categories
           relationship: none
           group_type: group
           entity_type: node
@@ -224,7 +224,7 @@ display:
           default_row_class: true
           columns:
             title: title
-            field_aculta_categories_target_id: field_aculta_categories_target_id
+            field_aculta_categories: field_aculta_categories
             name: name
             status: status
             changed: changed
@@ -238,7 +238,7 @@ display:
               separator: ''
               empty_column: false
               responsive: priority-medium
-            field_aculta_categories_target_id:
+            field_aculta_categories:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -316,13 +316,7 @@ display:
       title: Fórum
       path: admin/content/forum
       menu:
-        type: tab
-        title: Fórum
-        description: 'Tópicos públicos do ACULTA Forum'
-        weight: 10
-        menu_name: admin
-        parent: system.admin_content
-        context: '0'
+        type: none
       display_extenders: { }
     cache_metadata:
       max-age: 0

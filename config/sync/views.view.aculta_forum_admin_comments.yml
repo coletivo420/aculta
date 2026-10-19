@@ -711,13 +711,7 @@ display:
       display_extenders: {}
       path: admin/content/forum/comentarios
       menu:
-        type: tab
-        title: Comentários
-        description: Comentários e moderação dos tópicos públicos do Fórum
-        weight: 11
-        menu_name: admin
-        parent: views_view:views.aculta_forum_admin_topics.page_forum
-        context: '0'
+        type: none
     cache_metadata:
       max-age: 0
       contexts:

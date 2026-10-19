@@ -3040,7 +3040,20 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - Adicionado patch para negar upload H5P que use bibliotecas locais restritas quando a conta não tem `create restricted h5p content types`; segue revisão e teste funcional antes de ativar H5P.
 - RUNTIME STATUS: `aculta_patcher` habilitado no Runtime de teste após backup privado `/home/aculta/private/aculta/aculta-runtime-before-aculta-patcher-20261018.sql.gz.gz` (0600); tabela e entidade foram verificadas via Drush. H5P permanece desativado. A rota existe no Router, mas HTTP visual retornou 404 e fica DEFERRED. Nenhum arquivo de Core/contrib foi editado manualmente.
 
-## 0.4.0-dev.192 — navegação administrativa visível para Fórum e Revista — 2026-10-19
+## 0.4.0-dev.194 — Fórum fora da listagem geral e correção do HTTP 500 — 2026-10-19
+
+- O Fórum e seus comentários passam a ser itens próprios no menu administrativo
+  `content`, no mesmo nível de Galerias. As páginas deixam de ser abas do
+  overview genérico; os caminhos permanecem estáveis.
+- A View administrativa volta a usar o campo de categoria com o handler válido
+  de referência a entidade. O handler inválido anterior causava `TypeError`
+  (`array + null`) e HTTP 500 quando havia resultados.
+- RUNTIME STATUS: PARTIAL. Os dois configs do Fórum foram atualizados no
+  Runtime após backup privado; uid 5 tem acesso às rotas e Views de tópicos e
+  comentários renderizam pelo Render API (42.819 e 2.871 bytes). HTTP autenticado
+  no navegador segue pendente. Nenhum conteúdo foi alterado.
+
+## 0.4.0-dev.193 — navegação administrativa visível para Fórum e Revista — 2026-10-19
 
 - Itens explícitos no menu administrativo de Conteúdo dão acesso às listagens do
   Fórum, aos comentários do Fórum como subitem e à área unificada da Revista.

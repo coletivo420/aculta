@@ -2,8 +2,8 @@ aculta_forum.admin_topics:
   title: 'Fórum'
   description: 'Gerenciar tópicos e comentários do Fórum público.'
   route_name: view.aculta_forum_admin_topics.page_forum
-  parent: system.admin_content
-  menu_name: admin
+  parent: navigation.content
+  menu_name: content
   weight: 10
 
 aculta_forum.admin_comments:
@@ -11,5 +11,5 @@ aculta_forum.admin_comments:
   description: 'Revisar e moderar comentários do Fórum público.'
   route_name: view.aculta_forum_admin_comments.page_forum_comments
   parent: aculta_forum.admin_topics
-  menu_name: admin
+  menu_name: content
   weight: 0

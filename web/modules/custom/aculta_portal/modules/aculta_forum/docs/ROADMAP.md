@@ -22,6 +22,8 @@ real, aplicativo nativo e previews remotos não são requisitos deste roadmap.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.25` | Fórum em seção independente no menu Content e correção da View que causava HTTP 500 | Runtime PARTIAL: menu, access e renderização de ambas as Views confirmados; HTTP autenticado pendente |
+| `0.1.0-dev.24` | Links do Fórum no mesmo menu Content usado por Galerias | Implementado com dev.25 |
 | `0.1.0-dev.23` | Links de menu explícitos para Fórum, comentários do Fórum e Revista | Implementado; Runtime PARTIAL, árvore e acesso uid 5 confirmados; HTTP autenticado pendente |
 | `0.1.0-dev.22` | Separação administrativa do Fórum e contratos por contexto; Revista com conteúdo e comentários reunidos em `/painel-administrativo/conteudo/revista` | Implementado; Runtime PARTIAL, sem sessão editorial de navegador |
 
