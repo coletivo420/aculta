@@ -1,7 +1,8 @@
 # Planejamento das ferramentas de movimento
 
-Estado: **planejado; nenhuma ação de mover tópico ou comentário está
-implementada**. Este contrato detalha os itens de organização e moderação do
+Estado: **movimento individual de tópico implementado no código, ainda sem
+homologação de Runtime; movimento de comentários permanece planejado e bloqueado
+até prova técnica**. Este contrato detalha os itens de organização e moderação do
 [`ROADMAP.md`](ROADMAP.md), incorporando padrões observados no Discourse sem
 importar seus papéis, storage ou regras de acesso.
 
@@ -52,6 +53,16 @@ Não criar Node-sombra por padrão, não substituir alias automaticamente e não
 transformar mudança de categoria em alteração de conteúdo que exponha tópico
 privado. Se links históricos exigirem redirecionamento, decidir canonical,
 permalinks e política de URL antes da implementação.
+
+Implementação individual atual: rota administrativa em
+`/painel-administrativo/conteudo/forum/{node}/mover-categoria`, permissão
+`move aculta forum topics`, opção nas operações do Node, destino em Taxonomy,
+confirmação explícita, revalidação no submit, nova revisão no mesmo Node e log
+com IDs/uid sem conteúdo. `field_autor_legado` nega a operação inclusive para
+administradores. O Domain canônico do purpose `forum` e Entity Access de leitura
+são revalidados. Ainda requer testes Kernel/Functional e validação autenticada no
+Runtime. A permissão de `content_editor` só se efetiva com e-mail confirmado e
+não concede edição geral do bundle.
 
 ### C. Mover comentário/resposta
 
@@ -118,6 +129,18 @@ não oferece no contrato da interface Comment um workflow de alto nível para
 mover comentários; não assumir que mudar `entity_id`/`field_name` é suficiente.
 Se a consistência de todos os efeitos derivados não puder ser provada, a
 operação deve falhar fechada.
+
+Verificação nesta implementação em 2026-10-19: Drupal Core instalado 11.4.10 e
+API upstream 11.x expõem getters do entity host, `setFieldName()` e
+`setThread()`, mas não um setter público para reatribuir o host nem uma operação
+de rethread em entidade salva. O `Comment::preSave()` do Core calcula thread e
+obtém lock somente quando o Comment é novo; um update não refaz essa árvore.
+Portanto, mudar campos Entity API não demonstra correção de `pid`/`thread`,
+estatísticas dos dois tópicos, URL/permalink, file usage ou indexação. Mover
+comentários continua bloqueado até uma estratégia transacional auditada provar
+esses efeitos e a preservação CID/UUID. Fontes: [CommentInterface 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentInterface.php/11.x),
+[Comment 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21Entity%21Comment.php/class/Comment/11.x),
+[CommentStorage 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStorage.php/class/CommentStorage/11.x).
 
 Auditar autor, origem, destino, IDs afetados, horário e resultado usando
 infraestrutura de log/auditoria existente; nunca registrar corpo de comentário,

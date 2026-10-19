@@ -1,3 +1,14 @@
+# Implementação não marcada — mover tópico público entre categorias — 2026-10-19
+
+- Ação individual em `/painel-administrativo/conteudo/forum/{node}/mover-categoria`,
+  com permissão específica, confirmação explícita e nova revisão no mesmo Node.
+- O serviço revalida permissão, access no purpose `forum`, Domain canônico, tipo
+  e destino Taxonomy; recusa tópicos com `field_autor_legado`. O log registra
+  apenas IDs de origem/destino e uid.
+- Unit `ForumTopicMoverTest`: 3 testes/27 assertions PASS; gate Drupal 11+,
+  fronteira, mapa, hierarquia de papéis, PHPCS e YAML PASS. Runtime e Functional ainda não executados. Sem incremento de versão e sem
+  alteração persistente no Runtime.
+
 # `0.1.0-dev.28` — índice público de categorias — 2026-10-19
 
 ## Implementação não marcada — contagem na listagem pública

@@ -32,6 +32,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | Versão | Entrega | Estado |
 | --- | --- | --- |
 | Não marcada | Contagem e atividade na View de tópicos | Runtime: oito tópicos com `0 respostas`; sort ACULTA executa fórmula Core `GREATEST(changed, last_comment_timestamp)` em ordem descendente e data renderizada. Caso positivo, invalidação após moderação e inspeção visual pendentes |
+| Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit PASS; Kernel/Functional/Runtime pendentes. Movimento de comentários continua bloqueado pela prova de integridade em `MOVE-TOOLS.md`. |
 | `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas e navegação HTTP; visual e hierarquia pendentes |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
 | `0.1.0-dev.26` | Fórum como aba em Conteúdo; “Comentários e moderação” como subaba; discussões contextuais fora das filas genéricas | Runtime de teste: abas carregadas e filtro exercitado; HTTP autenticado pendente |
@@ -231,6 +232,10 @@ público para publicação. Serviços de leitura/conversão e o módulo legado f
 até a migração dos consumidores e o corte seguro documentado.
 
 ## `0.1.0-dev.9` — Advanced Forum: categorias e navegação
+
+O formulário individual para mover tópico está implementado; aguarda testes
+Kernel/Functional, validação autenticada no Runtime e revisão de URL/histórico.
+Movimento em lote e reorganização Taxonomy seguem planejados.
 
 Categoria com descrição, subcategoria, índice geral, breadcrumbs, tópicos
 fixados, contagem cacheável de respostas/última atividade e listagem por

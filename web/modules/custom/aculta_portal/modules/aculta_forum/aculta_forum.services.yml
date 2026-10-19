@@ -1,4 +1,10 @@
 services:
+  aculta_forum.topic_mover:
+    class: Drupal\aculta_forum\Service\ForumTopicMover
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@logger.channel.aculta_forum']
+  logger.channel.aculta_forum:
+    parent: logger.channel_base
+    arguments: ['aculta_forum']
   aculta_forum.discussion_context_resolver:
     class: Drupal\aculta_forum\Context\DiscussionContextResolver
     arguments: [!tagged_iterator aculta_forum.discussion_context_provider]

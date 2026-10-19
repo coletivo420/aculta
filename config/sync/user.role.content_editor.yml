@@ -30,6 +30,7 @@ weight: 2
 is_admin: false
 permissions:
   - 'moderar denuncias do forum'
+  - 'move aculta forum topics'
   - 'access administration pages'
   - 'access content overview'
   - 'access content'

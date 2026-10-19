@@ -34,6 +34,7 @@ Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula me
 - **Precisa ter `email_confirmed`.** Sem ele, não recebe acesso aos níveis restritos nem poderes de moderação. Decisão de
   2026-10-16.
 - Como moderador do Fórum, pode **ocultar, despublicar ou excluir** tópicos e comentários.
+- Pode mover tópicos novos do Growroom entre categorias pela permissão `move aculta forum topics`; isso não concede edição do bundle e é negado para o acervo histórico. A permissão efetiva continua condicionada à confirmação de e-mail pela hierarquia vigente.
 - Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. O acervo histórico importado do Growroom é congelado: não pode ser editado, excluído, aprovado/desaprovado ou reaberto, inclusive por `content_editor` e `administrator` (F-D31).
 - Concedido somente pelo administrador.
 
