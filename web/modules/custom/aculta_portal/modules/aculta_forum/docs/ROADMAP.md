@@ -49,6 +49,10 @@ Runtime.
 ## `0.1.0-dev.5` — Retirada do Forum contrib
 
 - **Em andamento: auditoria do Runtime de teste concluída; remoção não executada.**
+- Provider editorial iniciado em `aculta_forum`; Unit access/cache PASS e prova
+  Kernel confirma storage Comment compartilhado entre `article`, `blog` e tópico.
+- A configuração de campo na Revista e a migração dos consumidores permanecem
+  pendentes; não apagar os tópicos antigos antes dessa substituição.
 - Foram observados 30 nodes `forum`, dos quais 12 publicados vinculam
   discussões a publicações. `aculta_magazine` e `aculta_user` ainda têm
   consumidores ativos; ver `docs/MIGRATION-REMOVAL.md`.

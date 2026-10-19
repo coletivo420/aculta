@@ -15,6 +15,19 @@
 - Dev5 permanece em andamento. Próximo gate: migrar os consumidores sem perder
   discussão editorial e validar restore point atual antes de qualquer operação
   destrutiva. RUNTIME STATUS: PARTIAL (auditoria somente leitura no teste).
+- A API agora registra `PublicationContextProvider`: bundles `article`/`blog`
+  somente com `field_aculta_discussion`, access de leitura do host e campo,
+  escrita via Comment aberto + `post comments`, moderação via `administer comments`,
+  cache por permissões e ID estável. Providers não têm field instances na Revista
+  ainda.
+- Fields da Revista não devem ser ativados ainda: `aculta_user` mantém regras de
+  participação, apresentação e moderação restritas ao bundle `comment_forum`.
+  Estender/testar esse contrato é prerequisite da integração Magazine.
+- Kernel multi-bundle: 1/18 PASS em `aculta_simpletest`; Unit do Forum: 12/52 PASS.
+  Runtime de teste recebeu apenas cache rebuild e smoke de DI: resolver carregou
+  dois providers e recusou Article sem o field novo. Sem importação de config,
+  field editorial ou conteúdo. RUNTIME STATUS: PARTIAL; integração funcional
+  permanece pendente.
 
 # 0.1.0-dev.4 — Context API executável — 2026-10-19
 

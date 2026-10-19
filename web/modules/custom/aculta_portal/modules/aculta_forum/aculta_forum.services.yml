@@ -8,3 +8,8 @@ services:
     arguments: ['@aculta_portal.domain_purpose']
     tags:
       - { name: aculta_forum.discussion_context_provider }
+
+  aculta_forum.discussion_context_provider.publication:
+    class: Drupal\aculta_forum\Context\Provider\PublicationContextProvider
+    tags:
+      - { name: aculta_forum.discussion_context_provider }

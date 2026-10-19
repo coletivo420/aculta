@@ -1,3 +1,11 @@
+## 0.4.0-dev.166 — provider de contexto para comentários editoriais — 2026-10-19
+
+- `aculta_forum` adiciona provider contextual para Nodes `article` e `blog` quando o campo Comment compartilhado está presente. Leitura usa Entity/Field Access; escrita e moderação usam permissões nativas de Comment e propagam cacheability.
+- Testes Unit de `aculta_forum`: 12 testes/52 assertions. Teste Kernel em `aculta_simpletest`: 1 teste/18 assertions provou que o mesmo storage Comment pode ser anexado aos bundles `article`, `blog` e `aculta_forum_topic`.
+- As regras de participação/apresentação/moderação do `aculta_user` ainda precisam reconhecer `aculta_discussion_post`; por isso o campo de publicação ainda não foi ativado.
+- Cache rebuild e smoke de DI no Runtime de teste confirmaram dois providers e recusa de Article sem o field. Nenhum field editorial ou conteúdo foi criado/importado. PHP CLI 8.4.26. Runtime editorial: PARTIAL; comportamento funcional DEFERRED.
+- Cartão `author_comment`, UX e avisos permanecem pendentes.
+
 ## 0.4.0-dev.165 — Context API do ACULTA Forum — 2026-10-19
 
 - Adicionado o módulo executável `aculta_forum` com Context API extensível, provider do tópico público e configuração de instalação nativa Node/Comment/Taxonomy; configuração instalada apenas no Runtime de teste.

@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Linha do projeto: **0.1.0-dev.4**. O
+Submódulo de `aculta_portal`. Linha do projeto: **0.1.0-dev.5**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
 uma migração segura, por fase própria. A dev.4 introduz o módulo executável e
@@ -61,9 +61,10 @@ Consulte [inventário de remoção](docs/MIGRATION-REMOVAL.md) e
 
 ## Versão e execução
 
-A fase atual `0.1.0-dev.3` entrega a base dos cartões; dev.1 foi documental e
-dev.2 fundou identidade cacheável. Releases Portal, User e tema conservam linhas
-próprias. Fases funcionais precisam de commits rastreáveis, validações reais e
-status Runtime explícito. O roadmap detalha os gates. A retirada do Forum contrib
-continua futura, sem desinstalação, exclusão, import/export de configuração,
-update de banco ou deploy nesta fase.
+A dev.5 mantém a retirada em andamento: a auditoria identificou vínculos de
+publicações que serão substituídos antes de apagar os tópicos antigos. A fase
+também iniciou o provider editorial e comprovou em Kernel o uso de um storage
+Comment compartilhado em `article`, `blog` e `aculta_forum_topic`. A configuração
+de publicação e sua integração visual ainda não foram aplicadas no Runtime.
+Releases Portal, User e tema conservam linhas próprias. O roadmap detalha os
+gates de migração, limpeza de dados e uninstall.

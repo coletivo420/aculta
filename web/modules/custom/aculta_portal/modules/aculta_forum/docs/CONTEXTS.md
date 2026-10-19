@@ -30,7 +30,7 @@ entidade é carregada pelo Entity API e o acesso é revalidado na operação.
 | `aculta_lms_topic` | Node para discussão pedagógica reservada | Planejado para adapter LMS; dependência opcional evita ciclo Forum↔LMS. |
 | `aculta_discussion_post` | bundle Comment compartilhado | Configuração de Comment em Node preparada na dev.4; suporte reutilizável em outros bundles Node ainda requer prova Kernel na dev.7/integrações. |
 | `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | Configuração de instalação adicionada na dev.4; a substituição do vocabulário `forums` fica para migração autorizada. |
-| `field_aculta_discussion` | campo Comment em Nodes hospedeiros suportados | Configuração instalada inicialmente apenas no tópico público. Reuso em publicação/Wiki/LMS depende de prova Kernel e configuração explícita por bundle. |
+| `field_aculta_discussion` | campo Comment em Nodes hospedeiros suportados | Configuração instalada inicialmente apenas no tópico público. Teste Kernel em dev.5 provou que um storage Comment pode ser anexado a `article`, `blog` e `aculta_forum_topic`; os fields de publicação e o provider correspondente ainda aguardam configuração explícita e integração. |
 
 Todos os machine names ficam abaixo do limite local de 32 caracteres, mas isso
 deve ser validado automaticamente antes de registrar configuração. Esta tabela
@@ -48,10 +48,13 @@ não concede autorização para criar configuração ou instalar entidades nesta
 - Identificador estável: `public_forum:node:{uuid}`. O UUID é obtido da entidade; não do request.
 - Nesta fase, acesso de escrita e moderação retorna neutral com dependência de cache da entidade. Ações de Comment ainda exigem a verificação nativa de campo/entidade e serão integradas depois.
 
-### `publication`
+### `publication` — provider adicionado na dev.5
 
 - Hospedeiro: Node da publicação, com `field_aculta_discussion`.
 - Um único fluxo de comentários na própria página; nunca criar tópico em outro Node.
+- O provider atende apenas bundles `article` e `blog` que tenham o campo compartilhado; ainda não há field instance de publicação na Config Sync.
+- Leitura combina Node Entity Access com field access. Escrita requer leitura permitida, campo aberto e permissão `post comments`; moderação combina leitura e `administer comments`. As decisões variam por `user.permissions` e carregam cacheability do host/campo.
+- `aculta_user` ainda limita regras de participação, atividade, apresentação e moderação ao bundle legado `comment_forum`. Não instalar os fields de publicação até estender e testar os contratos para `aculta_discussion_post`.
 - Publicação/despublicação e permissões editoriais condicionam leitura/escrita.
 - Canonical do comentário preserva o caminho editorial e permalink/âncora.
 - Search, aviso e métricas seguem a política editorial e access da publicação.
@@ -81,8 +84,11 @@ Se o Core/configuration exigir bundles Comment ou fields distintos, a camada
 única de contexto e apresentação permanece. O formato nativo de encadeamento,
 aprovação, publicação, autor e acesso deve ser aproveitado.
 
-Dev.4 fornece a configuração inicial para Node e não afirma compatibilidade de
-acesso ou renderização entre todos os contextos. Não habilitar o módulo nem
-importar essa configuração no Runtime sem a etapa de instalação/teste aprovada.
+Dev.4 fornece a configuração inicial para Node. A prova Kernel de dev.5 cobre a
+criação de um único Comment field storage em múltiplos bundles Node, e o provider
+editorial cobre as decisões de access/cache; isso ainda não homologa o formulário,
+a renderização, a integração de cartões ou o comportamento no Runtime. Não
+executar importação de configuração do site sem inspecionar seus efeitos e
+confirmar a recuperação.
 
 Referências: [configuração de comentários em entidade](https://www.drupal.org/docs/8/core/modules/comment/administering-a-content-types-comment-settings), [interface Comment](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentInterface.php/interface/CommentInterface/11.x) e [cacheability de render arrays](https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays).

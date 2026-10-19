@@ -1,8 +1,10 @@
 # Matriz de testes por fase
 
 Esta matriz separa plano das evidências já executadas. Na `0.1.0-dev.4`, a
-Context API pública e configuração nativa foram exercitadas no Runtime de teste;
-os demais contextos e fluxos completos continuam planejados.
+Context API pública e configuração nativa foram exercitadas no Runtime de teste.
+Na dev.5, um teste Kernel prova storage Comment compartilhado em três bundles
+Node e Unit cobre access/cache do provider editorial; integração editorial no
+Runtime e fluxos completos continuam pendentes.
 
 | Camada | Casos mínimos | Evidência |
 | --- | --- | --- |
@@ -38,6 +40,23 @@ os demais contextos e fluxos completos continuam planejados.
   pendente de validação pelo PHP-FPM/runtime web.
 - Nenhum provider de Publicação/LMS/Wiki, acesso de escrita/moderação, Views,
   UX ou navegação pública foi homologado nesta subfase.
+
+## Evidência dev.5 — provider editorial e Comment multi-bundle
+
+- PHPUnit Unit `aculta_forum`: 12 testes / 52 assertions — PASS (PHP CLI 8.4.26).
+- PHPUnit Kernel `SharedDiscussionFieldKernelTest`: 1 teste / 18 assertions —
+  PASS usando exclusivamente MariaDB `aculta_simpletest`; o mesmo storage
+  `field_aculta_discussion` e Comment type podem ser anexados a `article`,
+  `blog` e `aculta_forum_topic`.
+- Unit cobre leitura via Entity/Field Access, permissões nativas `post comments`
+  e `administer comments`, campo fechado, negação de access, stable ID e cache.
+- O Kernel prova a capacidade do Core com a configuração equivalente; não instala
+  `aculta_forum`, não cria conteúdo e não substitui teste Functional/Runtime dos
+  fields reais da Magazine.
+- Runtime de teste: cache rebuild e smoke de DI confirmaram os dois providers; o
+  provider editorial não atende Article enquanto o field ainda não existe.
+  Nenhuma importação, field editorial ou conteúdo foi criado. RUNTIME STATUS:
+  PARTIAL para o registro do serviço; integração editorial segue pendente.
 
 Gates aplicáveis seguem `scripts/validate-aculta-portal-drupal11.php`, fronteira
 módulo/tema, mapa módulo-tema, slugs, rotas, endereços, imagem, hierarquia de
