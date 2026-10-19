@@ -1,3 +1,11 @@
+## 0.4.0-dev.197 — índice público de categorias do Fórum — 2026-10-19
+
+- `aculta_forum 0.1.0-dev.28` acrescenta `/categorias`, View Core limitada ao
+  vocabulário público do Fórum, e liga os índices de categorias e discussões.
+- Runtime de teste: duas Views importadas parcialmente, HTTP 200 nas duas
+  páginas e Config Sync sem diferenças nesses objetos. Sem alterações em
+  conteúdo. Gate local-only de sitemap não é aplicável ao Homelab.
+
 ## 0.4.0-dev.196 — subabas de estado de comentários do Fórum — 2026-10-19
 
 - Fórum administrativo ganhou abas para comentários publicados, rejeitados e
@@ -3101,4 +3109,14 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   listagens com seus adapters e validação contextual de acesso.
 - RUNTIME STATUS: PARTIAL. Views do Fórum foram carregadas no Runtime de teste;
   configuração da Revista aguarda smoke dedicado.
+
+## 0.4.0-dev.197 — índice de categorias do ACULTA Forum — 2026-10-19
+
+- O ACULTA Forum ganha uma página Views própria em `/categorias`, restrita ao
+  vocabulário `aculta_forum_categories`, e uma aba de navegação pública ao lado
+  das discussões. A listagem usa Taxonomy e renderização nativa de termos; não
+  consulta Nodes diretamente nem expõe categorias de outros contextos.
+- Configuração de instalação e Config Sync são idênticas. A apresentação
+  hierárquica refinada e os contadores de tópicos permanecem nas etapas visuais
+  e de estatísticas do Fórum.
 

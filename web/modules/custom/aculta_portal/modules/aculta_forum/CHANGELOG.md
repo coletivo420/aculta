@@ -1,3 +1,16 @@
+# `0.1.0-dev.28` — índice público de categorias — 2026-10-19
+
+- Criada a página `/categorias` com View Core baseada em Taxonomy, limitada ao
+  vocabulário público do ACULTA Forum e com cache por idioma/permissão. A raiz
+  do Fórum e a página de categorias têm links de navegação entre si; as linhas
+  mostram nome e descrição sem encaminhar às páginas genéricas de Taxonomy.
+- PHPUnit `ForumTopicDisplayConfigTest`: 13 testes / 123 assertions PASS; gates
+  Portal 11+, fronteira, mapa e slugs PASS. Runtime de teste Drupal 11.4.10:
+  importação parcial das duas Views, HTTP 200 na raiz e `/categorias`, 12 termos
+  renderizados e zero diferenças de Config Sync para as duas Views. Nenhum
+  conteúdo foi alterado. RUNTIME STATUS: PASS para o escopo HTTP; inspeção
+  visual e hierarquia continuam pendentes.
+
 # `0.1.0-dev.27` — estados de comentários em abas do Fórum — 2026-10-19
 
 - A aba Fórum apresenta três subabas de estado: publicados, rejeitados e
@@ -381,4 +394,12 @@
   conteúdo foi criado, alterado ou removido nesta etapa.
 - Runtime status: a View de tópicos já foi importada no Runtime de teste;
   aplicação da nova View de comentários e smoke de acesso ficam pendentes.
+
+## `0.1.0-dev.28` — índice público de categorias — 2026-10-19
+
+- Criada a página `/categorias` com View Core baseada em Taxonomy, limitada ao
+  vocabulário público do ACULTA Forum e com cache por idioma/permissão.
+- O link “Categorias” integra a navegação local do índice público de discussões.
+- A View usa renderização padrão da entidade Taxonomy. Hierarquia visual,
+  contagens de tópicos e ordenação por atividade ficam para as subfases próprias.
 

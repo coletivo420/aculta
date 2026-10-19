@@ -165,6 +165,41 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Category discovery is a native View restricted to the Forum vocabulary.
+   */
+  public function testPublicCategoryIndexUsesOnlyForumVocabulary(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $filename = 'views.view.aculta_forum_categories.yml';
+    $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
+    $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+    self::assertSame($install, $sync);
+    self::assertSame('taxonomy_term_field_data', $install['base_table']);
+    self::assertSame('categorias', $install['display']['page_categories']['display_options']['path']);
+    self::assertSame(
+      ['aculta_forum_categories' => 'aculta_forum_categories'],
+      $install['display']['default']['display_options']['filters']['vid']['value'],
+    );
+    self::assertSame('fields', $install['display']['default']['display_options']['row']['type']);
+    self::assertFalse($install['display']['default']['display_options']['fields']['name']['alter']['make_link']);
+    self::assertSame(
+      '<p><a href="/">Discussões recentes</a></p>',
+      $install['display']['page_categories']['display_options']['header']['area_text_custom']['content'],
+    );
+    $topics = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_public_topics.yml');
+    $topics_sync = Yaml::parseFile($repository_path . '/config/sync/views.view.aculta_forum_public_topics.yml');
+    self::assertSame($topics, $topics_sync);
+    self::assertSame(
+      '<p><a href="/categorias">Ver categorias</a></p>',
+      $topics['display']['page_discussions']['display_options']['header']['area_text_custom']['content'],
+    );
+
+    $tasks = Yaml::parseFile($module_path . '/aculta_forum.links.task.yml');
+    self::assertSame('view.aculta_forum_categories.page_categories', $tasks['aculta_forum.public_categories']['route_name']);
+    self::assertSame('view.aculta_forum_public_topics.page_discussions', $tasks['aculta_forum.public_categories']['base_route']);
+  }
+
+  /**
    * The Forum admin listing excludes unrelated and legacy node content.
    */
   public function testAdministrativeForumListingIsScopedAndAccessAware(): void {

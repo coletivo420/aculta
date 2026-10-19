@@ -22,6 +22,7 @@ real, aplicativo nativo e previews remotos não são requisitos deste roadmap.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas e navegação HTTP; visual e hierarquia pendentes |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
 | `0.1.0-dev.26` | Fórum como aba em Conteúdo; “Comentários e moderação” como subaba; discussões contextuais fora das filas genéricas | Runtime de teste: abas carregadas e filtro exercitado; HTTP autenticado pendente |
 | `0.1.0-dev.25` | Fórum em seção independente no menu Content e correção da View que causava HTTP 500 | Runtime PARTIAL: menu, access e renderização de ambas as Views confirmados; HTTP autenticado pendente |

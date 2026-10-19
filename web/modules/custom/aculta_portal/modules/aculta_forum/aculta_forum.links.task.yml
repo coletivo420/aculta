@@ -21,3 +21,9 @@ aculta_forum.admin_comments_pending:
   route_name: view.aculta_forum_admin_comments.page_pending
   parent_id: aculta_forum.admin_topics
   weight: 2
+
+aculta_forum.public_categories:
+  title: Categorias
+  route_name: view.aculta_forum_categories.page_categories
+  base_route: view.aculta_forum_public_topics.page_discussions
+  weight: 1

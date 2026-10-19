@@ -45,7 +45,7 @@ display:
             items_per_page_label: 'Itens por página'
             items_per_page_options: '10, 20, 50'
             items_per_page_options_all: false
-            items_per_page_options_all_label: 'Todos'
+            items_per_page_options_all_label: Todos
             offset: false
             offset_label: Offset
           quantity: 9
@@ -137,6 +137,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -169,12 +170,11 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: aculta_forum_categories
+          type: select
           hierarchy: true
+          limit: true
           error_message: false
-          plugin_id: taxonomy_index_tid
       style:
         type: default
         options:
@@ -229,13 +229,26 @@ display:
     display_plugin: page
     position: 2
     display_options:
+      title: 'Discussões do Growroom420'
       defaults:
         title: false
-      title: 'Discussões do Growroom420'
+        header: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<p><a href="/categorias">Ver categorias</a></p>'
+          tokenize: false
+      display_extenders: {  }
       path: discussoes
       menu:
         type: none
-      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -244,3 +257,4 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
+

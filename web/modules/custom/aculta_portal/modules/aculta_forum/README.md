@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.27**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.28**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
 uma migração segura, por fase própria. A dev.4 introduziu o módulo executável e
@@ -8,6 +8,9 @@ a Context API; a View pública já serve a raiz do Runtime de teste e `/criar-to
 usa Entity Form/Entity Create Access do Core. A ação na listagem aparece somente
 quando a rota permite a criação, e a decisão integra o cache da View. O índice
 oferece filtro hierárquico pelo vocabulário próprio, sem termos inventados.
+O índice `/categorias` apresenta nomes e descrições dos termos do Fórum e se
+liga à página de discussões. Ele usa a View `aculta_forum_categories`; a navegação
+visual hierárquica e os contadores de tópicos continuam planejados.
 Fixtures de tópicos do Runtime de teste são inventariadas em
 [TEST-FIXTURES](docs/TEST-FIXTURES.md). `aculta_user`
 já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC

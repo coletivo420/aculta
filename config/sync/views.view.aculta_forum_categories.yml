@@ -1,0 +1,163 @@
+uuid: 38db6b25-f21e-4cb1-9232-4f67cdb42235
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.aculta_forum_categories
+  module:
+    - taxonomy
+    - user
+id: aculta_forum_categories
+label: 'Categorias do ACULTA Forum'
+module: views
+description: 'Categorias e subcategorias públicas do Growroom420.'
+tag: forum
+base_table: taxonomy_term_field_data
+base_field: tid
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Categorias
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: field
+          label: ''
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
+          element_type: h2
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          group_rows: true
+        description__value:
+          id: description__value
+          table: taxonomy_term_field_data
+          field: description__value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 50
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          entity_type: taxonomy_term
+          entity_field: weight
+          plugin_id: standard
+          order: ASC
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: standard
+          order: ASC
+      filters:
+        vid:
+          id: vid
+          table: taxonomy_term_field_data
+          field: vid
+          entity_type: taxonomy_term
+          entity_field: vid
+          plugin_id: bundle
+          value:
+            aculta_forum_categories: aculta_forum_categories
+      style:
+        type: default
+        options:
+          default_row_class: true
+      row:
+        type: fields
+        options: {  }
+      query:
+        type: views_query
+        options: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - user.permissions
+      tags: {  }
+  page_categories:
+    id: page_categories
+    display_title: Categorias
+    display_plugin: page
+    position: 1
+    display_options:
+      title: 'Categorias do Growroom420'
+      defaults:
+        header: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<p><a href="/">Discussões recentes</a></p>'
+          tokenize: false
+      display_extenders: {  }
+      path: categorias
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - user.permissions
+      tags: {  }
+

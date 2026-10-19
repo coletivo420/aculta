@@ -171,6 +171,7 @@ correspondentes estão habilitados no ambiente.
 | `cursos.aculta` | `/curso/{alias}` | Página de um curso | Dinâmico; depende de curso publicado e acesso. O caminho interno `/cursos` responde `404` diretamente. |
 | `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de arquivo anexado a uma resposta LMS | Condicional; valida resposta e matrícula vigente. |
 | `forum.aculta` | `/topico/{titulo}` | Tópico do fórum | Dinâmico; depende de tópico publicado e access. Caminhos internos `/discussoes` e legado `/forum` respondem `404` diretamente. |
+| `forum.aculta` | `/categorias` | Índice público das categorias e subcategorias do Growroom420 | Declarado pela View `aculta_forum_categories`; filtra exclusivamente o vocabulário `aculta_forum_categories`; Runtime de teste pendente de aplicação. |
 | `forum.aculta` | `/criar-topico` | Formulário Core para novo tópico público | Declarado; Runtime de teste resolve no purpose forum; requer Entity Create Access para `aculta_forum_topic`. Anônimo 403; submissão autorizada ainda não homologada. |
 | `links.aculta` | `/` | Página pública de perfis e links sociais | Condicional ao provisionamento do host e conteúdo de configuração. `/redes-sociais` é interno. |
 | `revista.aculta` | `/u/{apelido}` | Perfil público de autor | Condicional a perfil público habilitado; apelido não canônico responde `404`. |

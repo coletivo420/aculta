@@ -1,5 +1,21 @@
 # Matriz de testes por fase
 
+## Evidência dev.28 — índice público de categorias
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 123 assertions PASS;
+  install e Config Sync das Views de categorias e tópicos são equivalentes.
+- YAML parse, `git diff --check` e gates Drupal 11+, fronteira Portal/tema,
+  mapa módulo/tema e slugs PASS.
+- Runtime de teste `toca`, Drupal 11.4.10, banco `aculta_runtime`, URI explícita
+  `https://growroom420.aculta.toca.net.br`: importação parcial somente das duas
+  Views alteradas e cache rebuild. `/` e `/categorias` responderam HTTP 200;
+  a View retornou os 12 termos existentes, com descrições, e os links entre os
+  índices apareceram no HTML. A página não encaminha para Views genéricas de
+  Taxonomy. Config Sync não apresenta diferenças para essas Views. Nenhum termo,
+  Node ou Comment foi criado, alterado ou excluído.
+- RUNTIME STATUS: PASS para rotas, View e navegação HTTP. Inspeção visual e
+  apresentação hierárquica permanecem pendentes para a fase ACULTA420.
+
 Esta matriz separa plano das evidências já executadas. Na `0.1.0-dev.4`, a
 Context API pública e configuração nativa foram exercitadas no Runtime de teste.
 Na dev.5, um teste Kernel prova storage Comment compartilhado em três bundles
