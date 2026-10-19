@@ -107,6 +107,38 @@ Estes caminhos ficam fora do Git (`estados/` e armazenamento privado). Pasta de 
 
 Escopo: a decisão vale para a **importação**. O download não exclui esses fóruns; a exclusão é aplicada no mapeamento.
 
+## Plano de importação: regras decididas (2026-10-19)
+
+Estas regras valem quando a importação começar. Nenhuma está em execução.
+
+**Tópicos excluídos que ficam** (decisões do responsável, 2026-10-19):
+- Tema político e social (legalização, marcha, lei, decisões, notícias de política de drogas): mantidos (1.393 tópicos).
+- Casos de uma pessoa específica (preso, cerco, denúncia): mantidos (555 tópicos). Esses tópicos descrevem pessoas
+  identificáveis em processos criminais. Os autores não entram como perfis (ver regra de usuários).
+- Vida interna do fórum (usuário do mês, rifas, eventos): excluídos por padrão (616 tópicos). Não há decisão sobre eles.
+- Outros termos (4.739 tópicos): seleção manual por caixa, em `scratchpad/selecao_outros.html` (sessão de trabalho, fora do
+  Git). Até a seleção, ficam excluídos.
+
+**Links para growroom.net** (decisão do responsável, 2026-10-19: link quebrado vai para o modal de conteúdo legado).
+Script versionado: `scripts/growroom/mapear_links.py`. Resultado da última execução, sobre 8.801.010 ocorrências
+em 738.125 alvos distintos:
+
+| Destino | Alvos | Regra |
+| --- | --- | --- |
+| Link interno | 72.555 | alvo com captura válida no acervo: vira link para o conteúdo importado |
+| Modal de conteúdo legado | 591.305 | alvo sem captura válida: `data-legado-growroom` abre o modal, em vez de navegar |
+| Descartado | 74.265 | anúncios de terceiros (`openx`) e recursos do tema antigo (CSS, JS, ícones), que não são conteúdo |
+
+- Dos 591.305 alvos que vão para o modal, 305.967 são links de navegação com token de sessão (`s=`, `do=`, `act=`), que
+  não são conteúdo. Eles também vão para o modal, sem mapeamento individual.
+- Os 92 mil alvos de tópico com variação de página (`showtopic&st=`, `&pid=`) podem ser resolvidos para o tópico importado
+  pelo ID antes de cair no modal. Isso ainda precisa ser implementado no plano.
+- **Teste contra o site vivo: inconclusivo.** Deste servidor, `growroom.net` não resolve por DNS, e o teste retornou
+  erro de rede em todas as 80 amostras. Não é possível afirmar se o site está fora do ar. O teste precisa ser repetido
+  de outra rede.
+- O modal exige alteração no tema ACULTA420, que depende de autorização explícita (AGENTS.md). O texto da história do
+  Growroom também precisa de aprovação do responsável antes de ir ao ar.
+
 ## Bloqueio atual
 
 **Importação adiada (decisão do responsável, 2026-10-19):** a importação do Growroom não começa até a remodelagem do

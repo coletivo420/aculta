@@ -32,6 +32,11 @@ RE_FORUM_LINK = re.compile(r"/forum/(\d+)-")
 RE_AUTOR_IPS = re.compile(r"cAuthorPane_author")
 RE_PERFIL_IPS = re.compile(r"/board/profile/(\d+)-")
 RE_NOME_IPS = re.compile(r'itemprop="name">(.*?)</strong>', re.S)
+# THWboard (formato antigo, showtopic.php?threadid=N): fórum no breadcrumb, autor por userid
+EXCLUIDOS_THW = {2, 24, 28}  # boardid do THWboard: Avisos (2), Notícias (24), Cannabis Medicinal (28)
+RE_THW_BC = re.compile(r"board\.php\?boardid=(\d+)[^>]*>([^<]{1,80})</a>\s*(?:&raquo;|»)?\s*(?:<[^>]+>\s*)*"
+                       r"<a[^>]*showtopic\.php\?threadid=\d+")
+RE_THW_AUTOR = re.compile(r'v_profile\.php\?userid=(\d+)"\s*>\s*<img[^>]*alt="Ver o Perfil de ([^"]+)"')
 
 
 def slug(nome: str) -> str:
@@ -39,22 +44,67 @@ def slug(nome: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s).strip("-")
 
 
+_CHARSET_CABECALHO = None
+
+
+def _charset_cabecalho() -> dict:
+    """local -> charset declarado no cabeçalho HTTP da captura (manifesto de html)."""
+    global _CHARSET_CABECALHO
+    if _CHARSET_CABECALHO is None:
+        _CHARSET_CABECALHO = {}
+        with open(os.path.join(BASE, "manifest-html.jsonl"), encoding="utf-8") as fh:
+            for linha in fh:
+                try:
+                    r = json.loads(linha)
+                except ValueError:
+                    continue
+                ct = (r.get("content_type") or "").lower()
+                if r.get("local") and "charset=" in ct:
+                    _CHARSET_CABECALHO[r["local"]] = ct.split("charset=")[-1].strip().strip('"\'')
+    return _CHARSET_CABECALHO
+
+
+def decodificar(dados: bytes, charset_cabecalho: str | None) -> str:
+    """Ordem: cabeçalho HTTP, meta charset, UTF-8 válido e, por último, cp1252 (superconjunto do ISO-8859-1)."""
+    m = re.search(rb"charset=[\"']?([a-zA-Z0-9_-]+)", dados[:4000])
+    candidatos = [charset_cabecalho, m.group(1).decode("ascii") if m else None, "utf-8"]
+    for cs in candidatos:
+        if not cs:
+            continue
+        try:
+            return dados.decode(cs)
+        except (UnicodeDecodeError, LookupError):
+            continue
+    return dados.decode("cp1252", "replace")
+
+
 def ler_pagina(local: str) -> str:
     with open(os.path.join(BASE, local), "rb") as fh:
-        return fh.read().decode("iso-8859-1", "replace")
+        dados = fh.read()
+    return decodificar(dados, _charset_cabecalho().get(local))
 
 
 def topicos_baixados():
-    vistos = {}
+    """URL -> lista de capturas locais válidas (todas, não só a última: capturas antigas podem ter fórum/autor)."""
+    vistos = defaultdict(list)
     with open(os.path.join(BASE, "manifest-html.jsonl"), encoding="utf-8") as fh:
         for linha in fh:
             try:
                 r = json.loads(linha)
             except ValueError:
                 continue
-            if "/topic/" in r["original"] and r.get("local") and r.get("http") == 200:
-                vistos[r["original"]] = r["local"]
-    return vistos
+            o = r["original"]
+            if ("/topic/" in o or "showtopic.php?threadid=" in o.lower()) and r.get("local") and r.get("http") == 200:
+                if r["local"] not in vistos[o]:
+                    vistos[o].append(r["local"])
+    return dict(vistos)
+
+
+def excluido(forum) -> bool:
+    """Fórum excluído pela regra de importação. IDs do THWboard ('thw:N') têm espaço próprio."""
+    if isinstance(forum, str) and forum.startswith("thw:"):
+        return int(forum[4:]) in EXCLUIDOS_THW
+    return forum in EXCLUIDOS
 
 
 def _texto(bruto: str) -> str:
@@ -62,29 +112,34 @@ def _texto(bruto: str) -> str:
 
 
 def analisar_topico(local: str):
-    """Devolve (fórum ou None, [(nome, id do perfil ou None)])."""
+    """Devolve (fórum ou None, [(nome, id de perfil IPS ou None, userid THWboard ou None)])."""
     t = ler_pagina(local)
+    thw = RE_THW_BC.search(t)
+    if thw:
+        autores = [(_texto(nome), None, uid) for uid, nome in RE_THW_AUTOR.findall(t)]
+        return f"thw:{thw.group(1)}", autores
     m = RE_UP.search(t)
     forum = int(m.group(1)) if m else None
     if forum is None:
         ids = [i for nav in RE_BREADCRUMB.finditer(t) for i in RE_FORUM_LINK.findall(nav.group(1))]
         forum = int(ids[-1]) if ids else None
-    autores = [(_texto(a), None) for a in re.findall(r'class="author vcard">(.*?)</span>', t, re.S)]
+    autores = [(_texto(a), None, None) for a in re.findall(r'class="author vcard">(.*?)</span>', t, re.S)]
     for m in RE_AUTOR_IPS.finditer(t):
         bloco = t[m.start():m.start() + 900]
         nome = RE_NOME_IPS.search(bloco)
         if not nome:
             continue
         perfil = RE_PERFIL_IPS.search(nome.group(1))
-        autores.append((_texto(nome.group(1)), perfil.group(1) if perfil else None))
+        autores.append((_texto(nome.group(1)), perfil.group(1) if perfil else None, None))
     return forum, autores
 
 
 def perfis_cdx():
-    """(slug -> {id do perfil: set(URLs)}, id do perfil -> set(URLs))."""
+    """(slug -> {id do perfil: set(URLs)}, id do perfil -> set(URLs), userid THWboard -> set(URLs))."""
     rows = json.load(open(CDX, encoding="utf-8"))[1:]
     por_slug = defaultdict(lambda: defaultdict(set))
     por_id = defaultdict(set)
+    por_uid = defaultdict(set)
     for ts, orig, status, mime, _d, _l in rows:
         if status != "200" or mime.split(";")[0].strip().lower() != "text/html":
             continue
@@ -92,7 +147,10 @@ def perfis_cdx():
         if m:
             por_slug[m.group(2)][m.group(1)].add(orig)
             por_id[m.group(1)].add(orig)
-    return por_slug, por_id
+        m = re.search(r"v_profile\.php\?userid=(\d+)", orig.lower())
+        if m:
+            por_uid[m.group(1)].add(orig)
+    return por_slug, por_id, por_uid
 
 
 def main():
@@ -101,22 +159,33 @@ def main():
     forum_de = {}
     autores_de = defaultdict(set)
     ids_ips = defaultdict(set)  # nome -> IDs de perfil exatos (IPS 4)
+    ids_thw = defaultdict(set)  # nome -> userids exatos (THWboard)
     sem_forum = 0
-    for url, local in topicos.items():
-        forum, autores = analisar_topico(local)
-        if forum is None:
+    for url, capturas in topicos.items():
+        # Fórum: da captura mais recente que o identifica. Autores: de todas as capturas com fórum.
+        analisadas = [analisar_topico(local) for local in capturas]
+        com_forum = [(f, a) for f, a in analisadas if f is not None]
+        if not com_forum:
             sem_forum += 1
             continue
-        forum_de[url] = forum
-        if forum in EXCLUIDOS:
+        forum_de[url] = com_forum[-1][0]
+        if excluido(forum_de[url]):
             continue
-        for nome, perfil in autores:
-            autores_de[nome].add(url)
-            if perfil:
-                ids_ips[nome].add(perfil)
-    por_slug, por_id = perfis_cdx()
+        for forum, autores in com_forum:
+            if excluido(forum):
+                continue
+            for nome, perfil, uid in autores:
+                autores_de[nome].add(url)
+                if perfil:
+                    ids_ips[nome].add(perfil)
+                if uid:
+                    ids_thw[nome].add(uid)
+    por_slug, por_id, por_uid = perfis_cdx()
     casados, ambiguos, sem = {}, [], []
     for nome in sorted(autores_de):
+        if ids_thw.get(nome):
+            casados[nome] = sorted({u for uid in ids_thw[nome] for u in por_uid.get(uid, ())})
+            continue
         if ids_ips.get(nome):
             casados[nome] = sorted({u for pid in ids_ips[nome] for u in por_id.get(pid, ())})
             continue
@@ -129,7 +198,7 @@ def main():
             sem.append(nome)
     permitidos = sorted({u for urls in casados.values() for u in urls})
     contagem = Counter(forum_de.values())
-    topicos_importados = sum(1 for f in forum_de.values() if f not in EXCLUIDOS)
+    topicos_importados = sum(1 for f in forum_de.values() if not excluido(f))
     print(f"tópicos baixados: {len(topicos)}; com fórum identificado: {len(forum_de)}; sem fórum: {sem_forum}")
     print(f"tópicos em fóruns importados: {topicos_importados}; excluídos: {len(forum_de) - topicos_importados}")
     print(f"tópicos por fórum (top 12): {contagem.most_common(12)}")

@@ -138,6 +138,27 @@ O mapeamento (`topicos_baixados()` em `build_mapping.py`) lê apenas URLs com `/
 6. Confirmar com o responsável se o acervo `__conflitos` (5.367 arquivos) deve ser importado. Ele é consultado pelo
    manifesto, mas não é ligado às URLs de origem sem consultar o manifesto.
 
+## 8A. Atualização: achados posteriores
+
+- **Formato antigo é THWboard, não IPB 2.** `showtopic.php?threadid=N` traz fórum em `board.php?boardid=N` (no
+  breadcrumb) e autor em `v_profile.php?userid=N`. Com o parser ajustado, o mapeamento passa de 24.817 para 36.750
+  tópicos. Esta seção corrige a seção 4.1.
+- **Busca no archive.org por capturas mapeáveis:** para os 234 `threadid` sem captura mapeável, a API CDX ao vivo
+  não trouxe capturas novas. Os 133 com captura na API já estavam no manifesto.
+- **Codificação corrigida:** a ordem agora é cabeçalho HTTP, meta charset, UTF-8 válido e cp1252. Antes, o leitor
+  decodificava tudo como ISO-8859-1.
+- **Duplicatas:** 2.151 conteúdos com mais de um caminho, marcados em `duplicatas.jsonl` com SHA-256 real do disco.
+  Trocadas por hard link 6.365 cópias idênticas, após comparação byte a byte (218 MB). 22 pares foram recusados
+  pela comparação. Também há 3.697 grupos de páginas com texto igual e bytes diferentes, em `duplicatas-textuais.jsonl`.
+  Esses não são substituídos.
+- **Imagens truncadas:** 228 JPEG da galeria têm exatamente 1 MiB e não têm o marcador final (FFD9). O SHA-256
+  confere com os bytes truncados, então a verificação de integridade não detecta. Estão marcados em `truncados.jsonl`.
+  Nenhuma captura completa no acervo. Busca por fonte alternativa em andamento.
+- **Links para growroom.net:** 8.801.010 ocorrências em 738.125 alvos. 72.555 resolvem no acervo; 591.305 vão para o
+  modal de conteúdo legado; 74.265 são anúncios e recursos de tema antigo, descartados. Detalhes em
+  `IMPORTACAO-GROWROOM.md`, seção "Plano de importação".
+- **Teste dos links contra o site vivo:** inconclusivo. `growroom.net` não resolve por DNS deste servidor.
+
 ## 9. Método e limites
 
 - Todas as análises foram somente leitura, com `sudo -n` e `python3 -B -I`. Os scripts de checagem estão no
