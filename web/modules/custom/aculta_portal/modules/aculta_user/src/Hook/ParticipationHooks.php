@@ -78,7 +78,7 @@ final class ParticipationHooks {
     $settings = $this->rules->settings();
     $uid = (int) $account->id();
     $result = AccessResult::neutral()
-      ->addCacheContexts(['user'])
+      ->addCacheContexts(['user', 'user.roles'])
       ->addCacheTags(['comment_list', ...$this->rules->settingsCacheTags()]);
 
     $firstCommentPending = $isLegacyForumTopic
@@ -108,7 +108,7 @@ final class ParticipationHooks {
    */
   private function forbidden(string $reason): AccessResult {
     return AccessResult::forbidden($reason)
-      ->addCacheContexts(['user'])
+      ->addCacheContexts(['user', 'user.roles'])
       ->addCacheTags(['comment_list', ...$this->rules->settingsCacheTags()]);
   }
 
