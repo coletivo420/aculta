@@ -102,6 +102,10 @@ HTML;
    * character. Schemes such as javascript: never pass.
    */
   private function isAllowedRedirect(string $url, Request $request): bool {
+    // Browsers drop tabs and line breaks inside URLs, so "/\t/host" becomes "//host": reject controls and spaces.
+    if (preg_match('/[\x00-\x20\x7F]/', $url)) {
+      return FALSE;
+    }
     if ($url === '/' || preg_match('#^/[^/\\\\]#', $url)) {
       return TRUE;
     }

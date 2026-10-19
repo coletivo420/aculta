@@ -5,6 +5,17 @@
 - Portal Unit: 219 testes/551 assertions; `aculta_lms`: 25 testes/392 assertions; `aculta_lms_h5p`: 24 testes/272 assertions. Gates Drupal 11+, imagem e slugs aprovados.
 - Runtime `cursos`: PASS. Conta `agente-teste-20261019-lms-1` sem e-mail confirmado entrou na aula de revisão do curso após associação temporária ao Group; o conteúdo da atividade foi renderizado. Conta e membership removidas via Entity API ao fim; cache rebuild concluído. Nenhum dado do curso foi alterado.
 
+## 0.4.0-dev.157 — revisão de merge: retorno do popup, config órfã e regra de ícones — 2026-10-19
+
+- Popup de retorno rejeita controles e espaços no destino. `/\t/host` vira `//host` no navegador depois que a tab é removida (`CheckoutPopupReturnController`). Casos novos no teste Unit.
+- `composer.json`: removido o `append` de `.htaccess` que apontava para `assets/scaffold/htaccess-aculta-additions.txt`. Esse arquivo foi removido em `0.4.0-dev.155`, e a entrada anterior dizia "sem referências", o que estava errado. `composer.lock` teve só o hash atualizado.
+- Config: removidos `group.role.lms_course-lms_admin` e `group.role.lms_course-lms_admin_member`. Dependiam de `user.role.lms_admin`, que `ddcbdd2c` mesclou em Educador. No Runtime de teste não havia memberships com esses group roles. O import (`cim`) deve ser feito com inspeção antes de produção.
+- Doações: `/donate/{amount}/now` aceita no máximo 9 dígitos (`[1-9]\d{0,8}`).
+- Teste `HerancaDePapeisTest`: sem fallback que tornava a asserção vacuamente verdadeira.
+- Regra de ícones: `AGENTS.md` passa a ter a regra "Bootstrap Icons por padrão", com exceção registrada no componente. O gate de seção 12 foi removido. O ícone SVG do toolbar do LMS (`aculta_lms`) é exceção a registrar.
+- Pendências fora desta entrega: avatares de `aculta_user` (~188 MB em 145 PNGs) já estavam na `main`; `.htaccess` sem o bloco `.mjs` no disco (alteração externa a esta sessão, validar com PDF.js).
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.156 — gates de fronteira Portal–tema corrigidos — 2026-10-19
 
 - Gate de fronteira (`validate-module-theme-boundary.php`): nenhuma classe de design literal no módulo. Classes viraram `data-portal-ui` com tokens no tema; HTML em string virou render array ou atributo de dados (`data-aculta-imagem*` no filtro de imagem, com seletor de atributo no tema). Exceções: `h5p-content` e `h5p-editor`, contrato do H5P core (`vendor/h5p/h5p-core/js/h5p.js`, `vendor/h5p/h5p-editor/scripts/h5peditor-editor.js`), listadas no gate com o motivo. Tabledrag do CEP usa `role-weight`, marcador já previsto no gate.

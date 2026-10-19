@@ -45,6 +45,9 @@ class CheckoutPopupReturnControllerTest extends UnitTestCase {
       'javascript scheme' => ['javascript:alert(1)', '/'],
       'external https' => ['https://evil.example/', '/'],
       'no leading slash' => ['loja', '/'],
+      'tab after slash' => ["/\t/evil.example", '/'],
+      'line break after slash' => ["/\n/evil.example", '/'],
+      'space in path' => ['/loja /x', '/'],
     ];
   }
 

@@ -1,5 +1,10 @@
 # Changelog — aculta_pagamentos_mercadopago
 
+## 0.1.0-dev.7 — popup de retorno rejeita controles no destino — 2026-10-19
+
+- `CheckoutPopupReturnController` rejeita controles e espaços no destino, porque o navegador remove tabs e quebras de linha dentro de URLs (`/\t/host` vira `//host`). Casos novos no teste Unit.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.6 — marcação do checkout e das credenciais por token — 2026-10-19
 
 - Aviso do checkout (`checkout-help`) e fieldsets de credenciais (`mercado-pago-credentials-*`) usam `data-portal-ui`. O mapa das classes fica no tema.
