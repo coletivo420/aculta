@@ -1,5 +1,19 @@
 # Matriz de testes por fase
 
+## Evidência não marcada — contagem na listagem pública
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 131 assertions PASS.
+- No Runtime `toca` (Drupal 11.4.10, `aculta_runtime`, URI
+  `https://growroom420.aculta.toca.net.br`), import parcial da View e cache
+  rebuild; query retorna 8 tópicos com contagem 0, e HTTP 200 apresenta
+  `0 respostas` nas oito linhas. Nenhum Node/Comment foi criado ou alterado.
+- Caso positivo, invalidação após moderação e inspeção visual continuam
+  DEFERRED. Render direto da View por Drush registrou `Missing text format: basic_html`
+  nos oito teasers, drift de formato a investigar separadamente.
+  RUNTIME STATUS: PARTIAL.
+- Rollback do objeto de configuração: cópia pré-alteração em
+  `/home/aculta/private/aculta/forum-topic-count-20261019/views.view.aculta_forum_public_topics.yml`.
+
 ## Evidência dev.28 — índice público de categorias
 
 - PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 123 assertions PASS;
@@ -40,6 +54,7 @@ continuam pendentes.
 | LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel/Functional; Route/View/Search/Cache e teste de navegador. |
 | Wiki | uma thread por verbete, comentário não altera revisão, acesso de edição distinto | Contract tests nesta fase; integração real só após Wiki. |
 | Busca/Views | filtro de contexto fixo, access query, títulos/trechos/contagens/facets e paginação sem vazamento | Kernel/Functional, index rebuild no ambiente de teste. |
+| Contagem de respostas em tópicos | zero e plural; bundle fixo `aculta_forum_topic` com seu campo único de discussão; estados de moderação conforme agregação Core; cache/invalidação | Unit de contrato cobre config install/Sync, estatística Core e exibição de zero. Execução da query em Runtime e invalidação após moderação DEFERRED. |
 | Cache | tags/context/max-age em variações por usuário/permissão/Group/membership, revogação e conteúdo despublicado | Kernel + Functional; inspeção de cache. |
 | Notificações | dedupe, agrupamento, opt-in e confirmação, revalidação de acesso na fila, retirada/revogação, zero conteúdo sensível | Unit/Kernel do produtor e messenger + Functional. |
 | Autoria | conta privada, apelido alterado, foto/privacidade, usuário bloqueado, autor legado, dados ausentes | Unit/Kernel + browser e cache. |

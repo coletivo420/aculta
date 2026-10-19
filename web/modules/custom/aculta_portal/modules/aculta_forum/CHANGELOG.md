@@ -1,5 +1,13 @@
 # `0.1.0-dev.28` — índice público de categorias — 2026-10-19
 
+## Implementação não marcada — contagem na listagem pública
+
+- A View pública prepara o teaser Node existente e `comment_count` do Core,
+  dentro do bundle fixo `aculta_forum_topic`, que possui um único campo de
+  discussão. A View usa o agregado Core e não executa COUNT por linha. A
+  versão segue sem marcação até confirmação de contagens positivas e revisão
+  visual. RUNTIME STATUS: PARTIAL.
+
 - Criada a página `/categorias` com View Core baseada em Taxonomy, limitada ao
   vocabulário público do ACULTA Forum e com cache por idioma/permissão. A raiz
   do Fórum e a página de categorias têm links de navegação entre si; as linhas

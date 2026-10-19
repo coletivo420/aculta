@@ -35,6 +35,8 @@
 .aculta-forum-topic--teaser > h2 a:hover,
 .aculta-forum-topic--teaser > h2 a:focus-visible { color: var(--aculta-interactive-hover-text); text-decoration: underline; }
 .aculta-forum-topic--teaser > h2 a:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 3px; }
+.aculta-forum-topic-list-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.75rem; align-items: center; }
+.aculta-forum-topic-list-row__replies { color: var(--aculta-text-secondary); font-size: 0.85rem; text-align: end; white-space: nowrap; }
 .aculta-forum-topic .aculta-forum-topic__meta { margin: 0; color: var(--aculta-text-secondary); font-size: 0.875rem; }
 .aculta-forum-topic .field--name-field-aculta-categories {
   display: inline-flex;

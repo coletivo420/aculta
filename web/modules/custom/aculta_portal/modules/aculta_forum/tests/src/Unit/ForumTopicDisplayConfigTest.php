@@ -144,6 +144,13 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('aculta_forum_categories', $category_filter['vid']);
     self::assertTrue($category_filter['hierarchy']);
     self::assertFalse($options['query']['options']['disable_sql_rewrite']);
+    self::assertTrue($options['style']['options']['uses_fields']);
+    self::assertSame('fields', $options['row']['type']);
+    self::assertSame('teaser', $options['fields']['rendered_entity']['view_mode']);
+    self::assertSame('comment_entity_statistics', $options['fields']['comment_count']['table']);
+    self::assertFalse($options['fields']['comment_count']['empty_zero']);
+    self::assertFalse($options['fields']['comment_count']['format_plural']);
+    self::assertArrayNotHasKey('discussion_field_name', $options['filters']);
     self::assertContains('user.node_grants:view', $view['display']['default']['cache_metadata']['contexts']);
     self::assertSame(
       ['items_per_page' => TRUE, 'pager' => 'pager'],

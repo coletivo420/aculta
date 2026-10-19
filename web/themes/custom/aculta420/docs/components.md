@@ -231,6 +231,13 @@ seletores teaser/full. Firefox no Runtime de teste confirmou os cartões com
 borda/superfície e categoria em etiqueta; o cartão de autoria continua vindo do
 `aculta_user`. Nenhum conteúdo foi alterado.
 
+O template `views-view-fields--aculta-forum-public-topics.html.twig` preserva
+o teaser renderizado pelo Drupal e apresenta ao lado a contagem de respostas.
+A View do Portal prepara o número; o Twig escolhe o rótulo singular/plural,
+incluindo `0 respostas`. Runtime exibiu oito contagens zero. Inspeção visual
+segue pendente; o gate Foundation está bloqueado por drift do bloco
+administrativo da Revista, então a alteração não recebeu nova versão.
+
 ## Patterns
 
 Patterns não são engines de dados.
