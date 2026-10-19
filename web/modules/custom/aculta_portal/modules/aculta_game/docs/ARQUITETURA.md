@@ -1,7 +1,8 @@
 # Arquitetura — ACULTA Game
 
-Status: arquitetura aprovada em evolução. G1–G5.1 têm código; evidências e limites
-em [EXECUCAO.md](EXECUCAO.md). Partes descritas como futuras continuam propostas.
+Status: arquitetura aprovada em evolução. G1–G5.4 têm código; o início de G7
+(integração Forum dev.10) está implementado com Runtime DEFERRED. Evidências e
+limites em [EXECUCAO.md](EXECUCAO.md). Partes futuras continuam propostas.
 
 ## Fontes e responsabilidades
 
@@ -53,6 +54,23 @@ Cada gatilho tem um único avaliador ativo. Trocar ownership dos hooks requer
 desativar o caminho antigo e provar paridade no mesmo conjunto de mudanças.
 `aculta_user` e o Portal principal não ganham dependência obrigatória do Game.
 Desabilitar Game não apaga identidade, posts, cursos ou concessões.
+
+### Integração com o Fórum público
+
+Em `0.1.0-dev.10`, o hook de Comment do Game escuta o bundle atual
+`aculta_discussion_post`, campo `field_aculta_discussion`, hospedado no Node
+publicado `aculta_forum_topic`. O trigger continua `forum_comment`, então o
+catálogo, a missão e a API de concessões existentes são reutilizados; Fórum não
+passa a depender do Game. Aprovação posterior conta uma vez, enquanto edição de
+comentário já publicado não dispara nova avaliação.
+
+O par contrib antigo (`comment_forum` em `forum`) fica transitoriamente
+reconhecido até a remoção segura prevista no `aculta_forum`; remover esse caminho
+quando os bundles antigos não forem mais suportados. Em ambos os caminhos,
+`field_autor_legado` e `SynchronizableInterface::isSyncing()` bloqueiam
+concessões por conteúdo histórico/restaurado. Não se reavalia o passado e não
+se cria cópia dos comentários ou contadores no Game. O evento atual é o hook de
+entidade Drupal; não há fila assíncrona nem módulo adapter adicional.
 
 ## Lacunas observadas no código atual
 

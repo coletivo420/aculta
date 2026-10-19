@@ -244,6 +244,18 @@ cruzar propósito/domínio nem mover conteúdo do acervo Growroom histórico. Um
 tópico-sombra/redirect não é padrão: só será considerado com decisão explícita
 de URL e canonical, sem duplicar Nodes.
 
+As linhas de tópico também planejam contadores de respostas/comentários
+publicados por tópico e indicação de última atividade. Reutilizar a propriedade
+`comment_count` do campo Comment e a tabela/projeção Core
+`comment_entity_statistics`; pendentes, rejeitados e comentários sem acesso não
+entram no contador público. Invalidação deve cobrir inclusão, aprovação,
+despublicação, remoção e movimentos futuros. A listagem não fará COUNT por linha
+em cada render.
+O Core atualiza esse agregado a partir de Comments publicados e oferece os
+campos para Views ([`CommentStatistics`](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStatistics.php/class/CommentStatistics/11.x),
+[`CommentViewsData`](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentViewsData.php/11.x));
+validar cache/invalidação no campo compartilhado durante a implementação.
+
 ## `0.1.0-dev.10` — Advanced Forum: leitura e estatísticas
 
 Views Latest/Top/New/Unread/sem resposta, histórico de leitura por participante,
@@ -252,6 +264,9 @@ cacheáveis. Antes de juntar novos/não lidos numa navegação unificada, protot
 e validar rótulos e filtros com usuários; a própria comunidade Discourse relata
 trade-offs nesse modelo. Visualizações só após definir deduplicação, retenção,
 bot policy e cache.
+Incluir contadores de tópicos e respostas por pessoa somente em contexto próprio
+e conforme privacidade; agregados públicos por categoria/tópico respeitam
+publicação e Entity Access.
 
 ## `0.1.0-dev.11` — Advanced Forum: apresentação
 
@@ -297,6 +312,11 @@ Não reimplementar Wiki nesta fase.
 ## `0.1.0-dev.15` — Integrações gerais
 
 Messenger, Image, Gallery, PDF, Game, eventos, cache e suas políticas de acesso.
+Integração inicial do gatilho de primeira resposta publicada com `aculta_game`
+foi implementada separadamente em `aculta_game 0.1.0-dev.10`: Game reconhece o
+Comment do tópico público novo e ignora importação/autoria histórica. A
+homologação no Runtime fica pendente; estatísticas completas e novos critérios
+de gamificação continuam nesta fase e na linha própria do Game.
 
 ## `0.1.0-dev.16` — Busca e descoberta
 

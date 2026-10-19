@@ -79,7 +79,7 @@ confiar em identificadores de contexto vindos do cliente sem revalidar a entidad
 | `aculta_lms` / Group | Adapter opcional sem ciclo de dependências; verificar membership, papéis de grupo e autorização real. |
 | `aculta_messenger` | Evento mínimo com referência/contexto; deduplicar pela infraestrutura existente e revalidar acesso/publicação no despacho. |
 | `aculta_image` | Toda imagem passa por catálogo, UploadPolicy, ingestão, render e remoção aprovados. |
-| `aculta_game` | Consumir eventos atuais elegíveis; importação histórica não concede conquistas e o cartão não revela conquistas privadas. |
+| `aculta_game` | Avaliar os hooks de Comment publicados no tópico público atual para o trigger existente `forum_comment`; preservar a concessão única do User. Importação/autoria histórica não concede conquistas. O Game não cria dependência inversa no Fórum. |
 | Gallery/PDF | Referenciar Media/File e viewers existentes; privacidade de anexos acompanha a entidade/contexto. |
 | Wiki420 | Adapter futuro; uma discussão por Node Wiki e sem tópico público do verbete. |
 

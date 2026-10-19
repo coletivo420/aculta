@@ -1,4 +1,7 @@
 services:
+  aculta_game.forum_participation_policy:
+    class: Drupal\aculta_game\ForumParticipationPolicy
+
   aculta_game.mission_progress:
     class: Drupal\aculta_game\MissionProgress
     arguments: ['@config.factory', '@aculta_user.badge_service', '@entity_type.manager']

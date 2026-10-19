@@ -1,5 +1,25 @@
 # Execução por fases — ACULTA Game
 
+## Dev.10 — integração inicial com ACULTA Forum
+
+- `BadgeEvaluationHooks` reusa o trigger `forum_comment` para publicação de
+  `aculta_discussion_post` em `field_aculta_discussion` de um Node
+  `aculta_forum_topic` publicado. Atualização repetida de resposta já publicada
+  não é novo marco; pendência só conta quando passa a publicada.
+- Enquanto a retirada segura do Forum contrib não terminou, o par antigo
+  `comment_forum`/`forum` segue temporariamente coberto. Comentário/tópico com
+  `field_autor_legado` e entidades sincronizadas pelo Migrate ficam excluídos.
+- `ForumParticipationPolicy` concentra esse filtro; Game não depende do módulo
+  Forum, não cria storage/event queue e chama a API única `BadgeService`.
+  Nenhum backfill ou concessão histórica foi executado.
+- PHPUnit Unit `ForumParticipationPolicyTest`: 7 testes / 34 assertions — PASS
+  em PHP CLI 8.4.26. PHP 8.5 não está disponível neste checkout.
+- PHP lint e PHPCS Drupal/DrupalPractice: PASS. Gates Drupal 11+ (969), fronteira
+  Portal/tema (1349), mapa módulo/tema (154), slugs (387 rotas, 20 violações
+  contrib já baselined) e `git diff --check`: PASS.
+- Sem instalação/update/importação, conteúdo de teste, backfill ou alteração no
+  Runtime. **RUNTIME STATUS: DEFERRED.**
+
 Autorização de 2026-10-15: implementar por fases e commits na mesma PR #286.
 Esta autorização substitui a restrição anterior de abertura somente documental.
 

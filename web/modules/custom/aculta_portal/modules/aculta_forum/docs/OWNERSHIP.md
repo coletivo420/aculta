@@ -11,6 +11,7 @@
 | Autoria histórica | entidade `aculta_legado_autor` + `aculta_user` | `LegacyAuthorManager`, campo existente, memorial coletivo | conta User, perfil, login ou cartão independente |
 | Favorito/seguir/denúncia | Flag | flags existentes e access atual | armazenamento paralelo de ações |
 | Notificação | `aculta_messenger` e seu contrato de avisos | evento/referência e chamada ao serviço dono | fila/tabela/email próprios no Forum |
+| Conquistas | `aculta_game` avalia participações atuais; concessões e catálogo têm fonte única no `aculta_user` | trigger existente `forum_comment` ao publicar Comment do tópico público | storage, contagem, XP, ranking ou concessão próprios no Forum |
 | Cursos, atividades, matrícula | LMS + Group | adapter opcional `aculta_forum_lms` | autorização por role global ou cópia da matrícula |
 | Galeria e anexos | Gallery/Media/File/PDF viewer + `aculta_image` para imagens | referências com access revalidado | cópia/download público que contorne os donos |
 | Busca | Search API + Views | datasource e processor por contexto aprovados | índice público com conteúdo LMS/Wiki não autorizado |

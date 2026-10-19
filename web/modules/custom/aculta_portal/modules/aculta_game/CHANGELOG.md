@@ -1,5 +1,18 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.10 — integração com o Fórum ACULTA — 2026-10-19
+
+- O trigger existente `forum_comment` reconhece respostas publicadas em
+  `aculta_discussion_post` hospedadas por `aculta_forum_topic`, incluindo
+  aprovação posterior sem conceder em edições subsequentes.
+- Até a remoção segura do Forum contrib, o par de bundles antigo permanece
+  temporariamente elegível; `field_autor_legado` e entidades em sincronização
+  nunca geram concessões contemporâneas.
+- Nenhum critério, ID de conquista, concessão existente ou storage mudou; não há
+  backfill e o Runtime permanece DEFERRED.
+- Teste Unit direcionado cobre Forum novo, aprovação pendente, outros contextos,
+  acervo histórico e caminho transitório do módulo contrib.
+
 ## 0.1.0-dev.9 — G5.4: ilustrações antiproibicionistas — 2026-10-15
 
 - Quatro conquistas de participação recebem arte temática própria; novas conquistas sem arquivo usam selo geral canábico e antiproibicionista.

@@ -53,6 +53,7 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | Mover resposta, dividir ou mesclar tópico | Planejar movimento de Comment/subárvore no mesmo contexto; split/merge após prova adicional | dev.12; estado de moderação e autoria preservados, sem mover entre Fórum/Revista/LMS/Wiki; acervo histórico imutável. Ver `MOVE-TOOLS.md`. |
 | Tópico popular/hot e contagem de visualizações | Portar contagem com cache/decisão de métrica | Visualização ≠ sessão/pessoa ativa; proteção contra bots e duplicidade. |
 | Contagem de tópico/respostas e estatística breve | Portar por serviço/View cacheável | Sem COUNT caro em cada render e sem contar itens inacessíveis. |
+| Respostas/comentários por tópico criado | Reutilizar `comment_count`/`comment_entity_statistics` do Core e exibir somente comentários publicados e acessíveis | Planejado em dev.9; invalidar em aprovação, despublicação, remoção e movimento; pendências/rejeitados não aparecem ao público. |
 | Ordenação por atividade/data | Portar com sort Views permitido | Não expor configuração editorial perigosa em bloco. |
 | Datas relativas/absolutas e teaser em hover | Portar com formato acessível | Hover tem alternativa de foco; preferir informação disponível sem hover. |
 | Ícones/legenda de estado | Portar como estado textual mais ícone | Novo, fechado, fixado e moderação devem ter rótulo. |

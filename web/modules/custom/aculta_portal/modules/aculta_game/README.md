@@ -1,6 +1,7 @@
 # ACULTA Game — conquistas e missões
 
-Versão atual: `0.1.0-dev.7` — G5.2, com apresentação, avisos e e-mail de conquistas.
+Versão atual: `0.1.0-dev.10` — primeira integração do gatilho de comentário
+publicado no Fórum ACULTA novo, preservando o catálogo e a API de concessões.
 
 Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
 Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável;
@@ -13,6 +14,13 @@ em [EXECUCAO.md](docs/EXECUCAO.md). G4 habilita três missões unitárias com pr
 Reconhecer contribuições culturais, comunitárias e de aprendizagem por conquistas
 e missões. Integrar as fontes reais do Portal e apresentar progresso compreensível,
 sem ranking, pontuação competitiva, XP/níveis ou benefícios financeiros.
+
+O trigger existente de primeira resposta publicada agora inclui o novo Fórum
+ACULTA. A integração observa o Comment por seus bundles/campo; Fórum não passa
+a depender do Game. Comentários históricos/importados e outros contextos nunca
+recebem conquistas contemporâneas. Ver
+[`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) e
+[`docs/PESQUISA.md`](docs/PESQUISA.md).
 
 **Conquistas são públicas por padrão**, com opção de ocultar, escolher quais ficam
 em destaque e organizar sua apresentação. A opção de privacidade da pessoa tem
