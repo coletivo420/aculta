@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -18,7 +19,7 @@ use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Moderação do Fórum pelo content_editor.
+ * Acesso do Fórum e isolamento administrativo das discussões contextuais.
  *
  * O moderador pode ocultar, despublicar ou excluir tópicos e comentários.
  * Conteúdo Growroom com autoria histórica fica congelado, mesmo para
@@ -26,7 +27,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  *
  * No bundle novo, o editor confirmado também recebe acesso contextual sem
  * permissões genéricas de edição/exclusão. A própria autoria segue as
- * permissões nativas do Node.
+ * permissões nativas do Node. A fila genérica Core não mistura Comments
+ * vinculados ao campo compartilhado, cuja moderação pertence ao contexto.
  */
 final class ForumModerationHooks {
 
@@ -96,7 +98,7 @@ final class ForumModerationHooks {
   }
 
   /**
-   * Removes frozen archive comments from moderation and rejects forged IDs.
+   * Keeps contextual discussion comments out of Core's general queue.
    */
   #[Hook('form_comment_admin_overview_alter')]
   public function commentAdminOverviewAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
@@ -105,13 +107,13 @@ final class ForumModerationHooks {
     }
     foreach (array_keys($form['comments']['#options']) as $cid) {
       $comment = $this->entityTypeManager->getStorage('comment')->load($cid);
-      if ($comment instanceof CommentInterface && $this->isGrowroomHistoric($comment)) {
+      if ($comment instanceof CommentInterface
+        && ($this->isContextManagedComment($comment) || $this->isGrowroomHistoric($comment))) {
         unset($form['comments']['#options'][$cid]);
       }
     }
-    // The core bulk publish/unpublish handler saves directly instead of asking
-    // for each entity's access. Validate the submitted IDs independently of
-    // which rows were rendered.
+    // Core bulk moderation saves directly instead of checking entity access.
+    // Validate submitted IDs even when a caller forges a hidden row.
     $form['#validate'][] = [$this, 'validateCommentAdminOverviewSelection'];
   }
 
@@ -127,6 +129,10 @@ final class ForumModerationHooks {
     foreach ($comments as $comment) {
       if ($comment instanceof CommentInterface && $this->isGrowroomHistoric($comment)) {
         $form_state->setErrorByName('comments', 'O acervo histórico do Growroom não pode ser moderado.');
+        return;
+      }
+      if ($comment instanceof CommentInterface && $this->isContextManagedComment($comment)) {
+        $form_state->setErrorByName('comments', 'Comentários de discussões devem ser gerenciados na área própria do contexto.');
         return;
       }
     }
@@ -150,6 +156,18 @@ final class ForumModerationHooks {
     return $host instanceof NodeInterface
       && $host->bundle() === 'aculta_forum_topic'
       && $this->hasHistoricAuthor($host);
+  }
+
+  /**
+   * Checks whether a Comment belongs to a host with contextual discussions.
+   */
+  private function isContextManagedComment(CommentInterface $comment): bool {
+    if ($comment->bundle() !== 'aculta_discussion_post') {
+      return FALSE;
+    }
+    $host = $comment->getCommentedEntity();
+    return $host instanceof FieldableEntityInterface
+      && $host->hasField('field_aculta_discussion');
   }
 
   /**

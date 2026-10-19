@@ -1,0 +1,12 @@
+aculta_forum.admin_topics:
+  title: 'Fórum'
+  route_name: view.aculta_forum_admin_topics.page_forum
+  base_route: system.admin_content
+  weight: 15
+
+aculta_forum.admin_comments:
+  title: 'Comentários e moderação'
+  route_name: view.aculta_forum_admin_comments.page_forum_comments
+  parent_id: aculta_forum.admin_topics
+  base_route: system.admin_content
+  weight: 0

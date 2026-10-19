@@ -351,6 +351,22 @@ display:
       sorts: {  }
       arguments: {  }
       filters:
+        forum_bundle_exclusion:
+          id: forum_bundle_exclusion
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: 'Excluir tópicos do Fórum'
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: 'not in'
+          value:
+            aculta_forum_topic: aculta_forum_topic
+          group: 1
+          exposed: false
+          is_grouped: false
         title:
           id: title
           table: node_field_data

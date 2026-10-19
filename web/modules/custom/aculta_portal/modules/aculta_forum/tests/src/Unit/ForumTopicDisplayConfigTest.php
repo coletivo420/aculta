@@ -34,15 +34,28 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   /**
    * Administrative entries expose Forum topics and their separate comments.
    */
-  public function testAdministrativeMenuLinksExposeForumAndComments(): void {
-    $menu = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum.links.menu.yml');
+  public function testForumViewsAreDedicatedContentTabs(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $topics = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_admin_topics.yml');
+    $comments = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_admin_comments.yml');
+    $tasks = Yaml::parseFile($module_path . '/aculta_forum.links.task.yml');
 
-    self::assertSame('view.aculta_forum_admin_topics.page_forum', $menu['aculta_forum.admin_topics']['route_name']);
-    self::assertSame('navigation.content', $menu['aculta_forum.admin_topics']['parent']);
-    self::assertSame('view.aculta_forum_admin_comments.page_forum_comments', $menu['aculta_forum.admin_comments']['route_name']);
-    self::assertSame('aculta_forum.admin_topics', $menu['aculta_forum.admin_comments']['parent']);
-    self::assertSame('content', $menu['aculta_forum.admin_topics']['menu_name']);
-    self::assertSame('content', $menu['aculta_forum.admin_comments']['menu_name']);
+    self::assertSame('none', $topics['display']['page_forum']['display_options']['menu']['type']);
+    self::assertSame('none', $comments['display']['page_forum_comments']['display_options']['menu']['type']);
+    self::assertSame('view.aculta_forum_admin_topics.page_forum', $tasks['aculta_forum.admin_topics']['route_name']);
+    self::assertSame('system.admin_content', $tasks['aculta_forum.admin_topics']['base_route']);
+    self::assertSame('view.aculta_forum_admin_comments.page_forum_comments', $tasks['aculta_forum.admin_comments']['route_name']);
+    self::assertSame('Comentários e moderação', $tasks['aculta_forum.admin_comments']['title']);
+    self::assertSame('aculta_forum.admin_topics', $tasks['aculta_forum.admin_comments']['parent_id']);
+    self::assertSame('system.admin_content', $tasks['aculta_forum.admin_comments']['base_route']);
+
+    $content = Yaml::parseFile($repository_path . '/config/sync/views.view.content.yml');
+    $filters = $content['display']['default']['display_options']['filters'];
+    self::assertSame('not in', $filters['forum_bundle_exclusion']['operator']);
+    self::assertSame(['aculta_forum_topic' => 'aculta_forum_topic'], $filters['forum_bundle_exclusion']['value']);
+    self::assertFalse($filters['forum_bundle_exclusion']['exposed']);
+    self::assertFileDoesNotExist($module_path . '/aculta_forum.links.menu.yml');
   }
 
   /**

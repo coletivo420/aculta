@@ -40,16 +40,21 @@ são a interface administrativa dos contextos de discussão.
 
 | Contexto | Estrutura administrativa | Estado |
 | --- | --- | --- |
-| Fórum público Growroom420 | `/painel-administrativo/conteudo/forum` para tópicos e `/painel-administrativo/conteudo/forum/comentarios` para respostas; inclui pendentes de aprovação. Item administrativo próprio ao lado de Galerias no menu `content`; não é aba nem parte da listagem genérica de Nodes. | Listagens Views implementadas nesta subfase; acesso por `access content overview` e `administer comments`, filtros fixos por bundle/campo/contexto. |
+| Fórum público Growroom420 | `/painel-administrativo/conteudo/forum` para tópicos e `/painel-administrativo/conteudo/forum/comentarios` para comentários e moderação. Fórum é aba própria em Conteúdo; “Comentários e moderação” é subaba. Tópicos e comentários ficam fora das listas genéricas. | Listagens Views implementadas; acesso por `access content overview` e `administer comments`, filtros fixos por bundle/campo/contexto. |
 | Publicações | Conteúdo e comentários editoriais são reunidos em `/painel-administrativo/conteudo/revista`; nunca aparecem na listagem do Fórum. | Provider Magazine usa Comment compartilhado. View editorial lista `article`/`blog` e mostra seus comentários na mesma página administrativa. |
 | LMS | Espaço administrativo próprio em `/painel-administrativo/lms/forum`, com discussões de curso, turma e atividade separadas e autorização contextual de Educador. | Contrato para o adapter LMS; não criar listagem global até haver filtro por Group/Entity Access demonstrado. Comentários de avaliação (`lms_answer_comment`) são um recurso distinto e não viram comentários do Fórum. |
 | Wiki420 | Espaço administrativo próprio em `/painel-administrativo/wiki/forum`, limitado a comentários de discussão de verbetes; edição/revisão editorial permanece separada. | Contrato futuro, condicionado ao provider e ao bundle Wiki. Não criar agora rota/listagem sem contexto instalável e access validado. |
 
-Rotas futuras LMS/Wiki devem nascer no mesmo commit de seus adapters e serem
-registradas no mapa global de caminhos. A implementação não pode usar Views
-genérica ou confiar somente em `comment_type`: deve fixar host/contexto,
-revalidar Entity Access e, para LMS, membership/Group atuais. A fila pública não
-agrega comentários privados, editoriais ou de verbetes.
+Moderação segue a árvore do sistema dono do conteúdo, sem fila global que
+misture contextos: Fórum → Comentários e moderação; Revista → publicações e
+comentários editoriais; Wiki → Comentários → Moderação; LMS → Cursos → Fórum →
+Comentários, sob responsabilidade contextual dos Educadores. Nesta entrega, a
+subaba do Fórum está ativa; Revista já tem área própria; Wiki/LMS aguardam seus
+adapters e não recebem rotas antecipadas. Rotas futuras devem nascer com os
+adapters e ser registradas no mapa global. A fila genérica do Core exclui
+Comments hospedados por `field_aculta_discussion`; novas integrações devem
+manter seus filtros, Entity Access e, no LMS, membership/Group atuais. Nunca
+usar apenas `comment_type` para autorizar ou listar conteúdo contextual.
 
 ## Modelo inicial a validar
 

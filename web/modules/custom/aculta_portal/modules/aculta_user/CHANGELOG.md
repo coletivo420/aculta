@@ -6,6 +6,16 @@
 
 # Changelog — aculta_user
 
+## 0.4.0-dev.34 — discussões contextuais fora da fila genérica — 2026-10-19
+
+- A alteração OOP da fila Core exclui Comments `aculta_discussion_post` cujo
+  host usa `field_aculta_discussion`; Fórum e publicações permanecem nas suas
+  áreas administrativas de contexto. IDs enviados manualmente também são
+  rejeitados. A proteção do acervo histórico continua ativa.
+- Teste Unit `ForumModerationHooksTest`: 12 testes / 68 assertions PASS;
+  PHPCS Drupal/DrupalPractice PASS. Runtime após cache rebuild confirma as abas
+  do Fórum; HTTP autenticado segue pendente.
+
 ## 0.4.0-dev.33 — cartões de autoria nos tópicos ACULTA Forum — 2026-10-19
 
 - `PublicForumTopicAuthorHooks` usa `AuthorCardBuilder` para `author_forum` em tópicos User e `author_growroom_historico` em tópicos importados com autoria legada. Integra apenas bundles `aculta_forum_topic` em `full`/`teaser`; outros bundles e modos seguem intactos.

@@ -3040,6 +3040,22 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - Adicionado patch para negar upload H5P que use bibliotecas locais restritas quando a conta não tem `create restricted h5p content types`; segue revisão e teste funcional antes de ativar H5P.
 - RUNTIME STATUS: `aculta_patcher` habilitado no Runtime de teste após backup privado `/home/aculta/private/aculta/aculta-runtime-before-aculta-patcher-20261018.sql.gz.gz` (0600); tabela e entidade foram verificadas via Drush. H5P permanece desativado. A rota existe no Router, mas HTTP visual retornou 404 e fica DEFERRED. Nenhum arquivo de Core/contrib foi editado manualmente.
 
+## 0.4.0-dev.195 — Fórum como aba isolada de Conteúdo — 2026-10-19
+
+- Fórum passa a ser aba própria dentro de `/painel-administrativo/conteudo`; a
+  listagem geral de Nodes tem filtro fixo para excluir tópicos do Fórum, mesmo
+  quando o filtro exposto de tipo é usado. “Comentários e moderação” é subaba
+  da seção Fórum; discussões ligadas a `field_aculta_discussion` saem da fila
+  genérica e permanecem no painel do contexto (Fórum ou Revista).
+- Os caminhos administrativos permanecem estáveis. Removidos os links estáticos
+  que duplicavam as abas fornecidas pelas Views.
+- Versões: Portal `0.4.0-dev.195`, Forum `0.1.0-dev.26`, User `0.4.0-dev.34`.
+- RUNTIME STATUS: PARTIAL. Runtime de teste: configuração dirigida das Views
+  aplicada com backup privado; abas Fórum e “Comentários e moderação” carregam
+  com a hierarquia esperada. Existem 8 tópicos de teste e 0 comentários; a View
+  geral responde sem tópicos quando filtrada por esse bundle. HTTP autenticado
+  ainda não foi validado.
+
 ## 0.4.0-dev.194 — Fórum fora da listagem geral e correção do HTTP 500 — 2026-10-19
 
 - O Fórum e seus comentários passam a ser itens próprios no menu administrativo

@@ -1,8 +1,21 @@
+## `0.1.0-dev.26` — Fórum como aba isolada de Conteúdo — 2026-10-19
+
+- A View administrativa de tópicos registra Fórum como aba irmã das demais em
+  `/painel-administrativo/conteudo`. “Comentários e moderação” é subaba da
+  seção do Fórum. As rotas permanecem iguais; links estáticos duplicados foram
+  removidos.
+- `views.view.content` recebe exclusão fixa do bundle `aculta_forum_topic`, que
+  prevalece sobre o filtro exposto de tipo.
+- PHPUnit de configuração valida os pais das abas e a exclusão fixa. Runtime
+  confirma as abas e executou a listagem geral com o tipo de Fórum exposto sem
+  retornar tópicos. Há 8 Nodes `[TESTE]` e 0 Comments; HTTP autenticado pendente.
+  RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.25` — Fórum separado e correção do 500 — 2026-10-19
 
-- Fórum aparece no menu administrativo `content` como item independente no
-  mesmo nível de Galerias; comentários ficam subordinados a ele. As páginas
-  deixam de ser abas do overview genérico, preservando os caminhos atuais.
+- Fórum aparece como aba em Conteúdo, no mesmo nível de Conteúdo, Comentários e
+  Galerias. “Comentários e moderação” é subaba da seção Fórum. Os caminhos
+  permanecem estáveis.
 - A coluna Categoria usa o field handler válido `field_aculta_categories`,
   confirmado em Views Data instalado. O handler anterior apontava para
   `field_aculta_categories_target_id`, que só oferece filter/argument/sort e

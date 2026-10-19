@@ -160,7 +160,7 @@ final class ForumModerationHooksTest extends TestCase {
   }
 
   /**
-   * Core bulk moderation hides archive rows and rejects tampered submissions.
+   * Core bulk moderation hides Forum rows and rejects tampered submissions.
    */
   public function testCommentAdminOverviewCannotModerateHistoricComments(): void {
     $comment = $this->historicComment();
@@ -184,6 +184,49 @@ final class ForumModerationHooksTest extends TestCase {
       'O acervo histórico do Growroom não pode ser moderado.',
     );
     $hook->validateCommentAdminOverviewSelection($form, $form_state);
+  }
+
+  /**
+   * Contextual comments stay out of Core's general moderation queue.
+   */
+  public function testCommentAdminOverviewSeparatesPublicForumComments(): void {
+    $comment = $this->contextualComment('aculta_forum_topic');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->willReturnCallback(static fn (int|string $id) => (int) $id === 32 ? $comment : NULL);
+    $storage->method('loadMultiple')->with([32])->willReturn([32 => $comment]);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('comment')->willReturn($storage);
+    $hook = $this->hook(FALSE, $manager);
+
+    $form = ['comments' => ['#options' => [32 => [], 33 => []]]];
+    $form_state = $this->createMock(FormStateInterface::class);
+    $hook->commentAdminOverviewAlter($form, $form_state, 'comment_admin_overview');
+    self::assertArrayNotHasKey(32, $form['comments']['#options']);
+    self::assertArrayHasKey(33, $form['comments']['#options']);
+
+    $form_state->method('getValue')->with('comments', [])->willReturn([32]);
+    $form_state->expects(self::once())->method('setErrorByName')->with(
+      'comments',
+      'Comentários de discussões devem ser gerenciados na área própria do contexto.',
+    );
+    $hook->validateCommentAdminOverviewSelection($form, $form_state);
+  }
+
+  /**
+   * Publication discussions are managed in the Magazine context as well.
+   */
+  public function testCommentAdminOverviewSeparatesPublicationComments(): void {
+    $comment = $this->contextualComment('article');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->willReturnCallback(static fn (int|string $id) => (int) $id === 40 ? $comment : NULL);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('comment')->willReturn($storage);
+    $hook = $this->hook(FALSE, $manager);
+
+    $form = ['comments' => ['#options' => [40 => [], 41 => []]]];
+    $hook->commentAdminOverviewAlter($form, $this->createMock(FormStateInterface::class), 'comment_admin_overview');
+    self::assertArrayNotHasKey(40, $form['comments']['#options']);
+    self::assertArrayHasKey(41, $form['comments']['#options']);
   }
 
   /**
@@ -213,6 +256,20 @@ final class ForumModerationHooksTest extends TestCase {
     $comment->method('getCacheTags')->willReturn(['comment:30']);
     $comment->method('getCacheContexts')->willReturn([]);
     $comment->method('getCacheMaxAge')->willReturn(-1);
+    return $comment;
+  }
+
+  /**
+   * Creates a comment on an entity with contextual discussions.
+   */
+  private function contextualComment(string $bundle): CommentInterface {
+    $host = $this->createMock(NodeInterface::class);
+    $host->method('bundle')->willReturn($bundle);
+    $host->method('hasField')->willReturnCallback(static fn (string $field) => $field === 'field_aculta_discussion');
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('bundle')->willReturn('aculta_discussion_post');
+    $comment->method('hasField')->with('field_autor_legado')->willReturn(FALSE);
+    $comment->method('getCommentedEntity')->willReturn($host);
     return $comment;
   }
 

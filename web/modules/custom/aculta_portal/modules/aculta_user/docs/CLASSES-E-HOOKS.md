@@ -157,7 +157,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `AccountDashboardHooks` | `src/Hook/AccountDashboardHooks.php` | Caixa de bio na visão geral da Minha conta. Substitui o resumo de Cursos (aculta_portal). |
 | `AvatarCronHooks` | `src/Hook/AvatarCronHooks.php` | Cron do aculta_user: limpeza de assets temporários de avatar (ver AvatarAssetCleanup). |
 | `DiscussionHooks` | `src/Hook/DiscussionHooks.php` | Discussão vinculada: trecho dos últimos comentários do tópico de Fórum e link para a discussão completa. |
-| `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação confirmada de conteúdo ativo; congela o acervo Growroom por `field_autor_legado`, fecha sua discussão no presave e protege o bulk admin de Comments. |
+| `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação confirmada de conteúdo ativo; congela o acervo Growroom por `field_autor_legado`, fecha sua discussão no presave e mantém Comments `aculta_discussion_post` na fila administrativa do seu contexto, rejeitando seleção em lote adulterada. |
 | `FriendshipLifecycleHooks` | `src/Hook/FriendshipLifecycleHooks.php` | Maintains friendship data through account deletion and module lifecycle. */ |
 | `ParticipationHooks` | `src/Hook/ParticipationHooks.php` | Modera comentários iniciais no Forum legado e nos contextos públicos compartilhados; exclui LMS e aplica bloqueio/limite configurável de criação de tópico. |
 | `PhotoEditorHooks` | `src/Hook/PhotoEditorHooks.php` | Editor de foto do painel (ponto de extensão aculta_portal_photo_editor e formulário do painel). |
