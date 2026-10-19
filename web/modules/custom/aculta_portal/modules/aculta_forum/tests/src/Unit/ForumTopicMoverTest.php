@@ -37,6 +37,15 @@ final class ForumTopicMoverTest extends UnitTestCase {
   }
 
   /**
+   * Tests that permission is not inferred from administrative entity access. */
+  public function testMovePermissionIsRequired(): void {
+    [$mover, $node, $account] = $this->subject(TRUE, FALSE);
+    $node->expects(self::never())->method('access');
+
+    self::assertTrue($mover->access($node, $account)->isForbidden());
+  }
+
+  /**
    * Tests that a current public topic requires permission and entity access. */
   public function testPublicTopicRequiresMovePermissionAndViewAccess(): void {
     [$mover, $node, $account] = $this->subject(TRUE);
@@ -71,7 +80,7 @@ final class ForumTopicMoverTest extends UnitTestCase {
    * @return array{\Drupal\aculta_forum\Service\ForumTopicMover, \Drupal\node\NodeInterface, \Drupal\Core\Session\AccountInterface}
    *   The service, node and account under test.
    */
-  private function subject(bool $isPublic): array {
+  private function subject(bool $isPublic, bool $canMove = TRUE): array {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn('forum_aculta_org');
     $domain->method('getCacheContexts')->willReturn([]);
@@ -86,7 +95,7 @@ final class ForumTopicMoverTest extends UnitTestCase {
     $term->method('getCacheTags')->willReturn(['taxonomy_term:12']);
     $term->method('getCacheMaxAge')->willReturn(-1);
     $account = $this->createMock(AccountInterface::class);
-    $account->method('hasPermission')->with('move aculta forum topics')->willReturn(TRUE);
+    $account->method('hasPermission')->with('move aculta forum topics')->willReturn($canMove);
 
     $legacy = $this->createMock(FieldItemListInterface::class);
     $legacy->method('isEmpty')->willReturn($isPublic);

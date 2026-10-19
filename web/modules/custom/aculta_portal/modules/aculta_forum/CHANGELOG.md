@@ -5,7 +5,7 @@
 - O serviço revalida permissão, access no purpose `forum`, Domain canônico, tipo
   e destino Taxonomy; recusa tópicos com `field_autor_legado`. O log registra
   apenas IDs de origem/destino e uid.
-- Unit `ForumTopicMoverTest`: 3 testes/27 assertions PASS; gate Drupal 11+,
+- Unit `ForumTopicMoverTest`: 4 testes/31 assertions PASS; gate Drupal 11+,
   fronteira, mapa, hierarquia de papéis, PHPCS e YAML PASS. Runtime e Functional ainda não executados. Sem incremento de versão e sem
   alteração persistente no Runtime.
 
