@@ -1,0 +1,23 @@
+uuid: 0e58c27e-9c64-48c8-b87d-0a8a3995c2ce
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.aculta_discussion_post
+    - field.storage.comment.field_aculta_rejected
+id: comment.aculta_discussion_post.field_aculta_rejected
+field_name: field_aculta_rejected
+entity_type: comment
+bundle: aculta_discussion_post
+label: Rejeitado
+description: 'Marque somente quando a moderação rejeitar definitivamente este comentário. Comentários não publicados sem esta marca aguardam moderação.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

@@ -5,7 +5,7 @@ dependencies:
   config:
     - comment.type.aculta_discussion_post
     - field.field.comment.aculta_discussion_post.comment_body
-    - field.field.comment.aculta_discussion_post.field_autor_legado
+    - field.field.comment.aculta_discussion_post.field_aculta_rejected
   module:
     - text
 id: comment.aculta_discussion_post.default
@@ -24,6 +24,7 @@ content:
     weight: 100
     region: content
 hidden:
-  field_autor_legado: true
+  field_aculta_rejected: true
   langcode: true
+  private_message_link: true
   search_api_excerpt: true

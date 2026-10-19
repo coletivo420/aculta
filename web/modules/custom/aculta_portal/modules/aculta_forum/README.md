@@ -1,13 +1,15 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.15**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.27**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
 uma migração segura, por fase própria. A dev.4 introduziu o módulo executável e
 a Context API; a View pública já serve a raiz do Runtime de teste e `/criar-topico`
 usa Entity Form/Entity Create Access do Core. A ação na listagem aparece somente
 quando a rota permite a criação, e a decisão integra o cache da View. O índice
-oferece filtro hierárquico pelo vocabulário próprio, sem termos inventados. Nenhum tópico foi criado. `aculta_user`
+oferece filtro hierárquico pelo vocabulário próprio, sem termos inventados.
+Fixtures de tópicos do Runtime de teste são inventariadas em
+[TEST-FIXTURES](docs/TEST-FIXTURES.md). `aculta_user`
 já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC
 experimental compartilhado. A integração dos cartões nas discussões atuais e no
 motor novo segue por contexto e fases.
@@ -70,3 +72,20 @@ e `/criar-topico` verifica Entity Create Access. Ainda faltam submissão
 persistida/homologação visual, migrar consumidores contrib restantes e validar
 restore point antes de excluir conteúdo/desinstalar o módulo. Releases Portal,
 User e tema conservam linhas próprias; o roadmap detalha as próximas entregas.
+## Administração contextual de comentários
+
+A View `aculta_forum_admin_comments` tem página geral e três páginas de estado:
+`/painel-administrativo/conteudo/forum/comentarios/publicados`,
+`/painel-administrativo/conteudo/forum/comentarios/rejeitados` e
+`/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao`.
+Todos os displays exigem `administer comments` e herdam os filtros fixos do
+Fórum público (`aculta_discussion_post`, `field_aculta_discussion`, Node
+`aculta_forum_topic`).
+
+Core Comment distingue publicado de não publicado. Para distinguir uma rejeição
+definitiva de uma pendência, o bundle compartilhado usa `field_aculta_rejected`;
+moderadores com a permissão `administer comments` marcam esse campo no formulário
+de edição de comentário; o acesso ao campo é negado aos demais usuários. A fila
+pendente considera não publicados sem a marca; a rejeitada considera não
+publicados com a marca. Publicar um comentário rejeitado tira-o da fila de
+rejeitados. O campo não aparece no display público.

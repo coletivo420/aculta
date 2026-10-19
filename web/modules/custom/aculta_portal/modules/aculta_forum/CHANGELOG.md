@@ -1,3 +1,20 @@
+# `0.1.0-dev.27` — estados de comentários em abas do Fórum — 2026-10-19
+
+- A aba Fórum apresenta três subabas de estado: publicados, rejeitados e
+  aguardando moderação. O Drupal fornece até dois níveis de tarefas locais;
+  por isso os estados são filhos diretos da aba Fórum.
+- `field_aculta_rejected` distingue a rejeição definitiva de uma pendência
+  (`status=0`) e pode ser visto/editado somente por quem tem `administer comments`.
+  O marcador fica oculto no display público.
+- PHPUnit do Fórum: 37 testes / 220 assertions PASS. Gate Portal, fronteira
+  módulo/tema, mapa módulo/tema, slugs e `git diff --check` PASS.
+- Runtime `toca` (Drupal 11.4.10, `aculta_runtime`): as três Views retornaram
+  somente o estado de Fórum correspondente; a View editorial retornou somente
+  comentários da publicação. Render API público apresentou somente os
+  publicados em cada contexto. Seis Comments `[QA 20261019]` temporários foram
+  removidos e a contagem final nos dois hosts de teste voltou a zero.
+  RUNTIME STATUS: PARTIAL; inspeção HTTP autenticada no navegador pendente.
+
 ## `0.1.0-dev.26` — Fórum como aba isolada de Conteúdo — 2026-10-19
 
 - A View administrativa de tópicos registra Fórum como aba irmã das demais em

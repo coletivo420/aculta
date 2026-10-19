@@ -1,3 +1,13 @@
+## 0.4.0-dev.196 — subabas de estado de comentários do Fórum — 2026-10-19
+
+- Fórum administrativo ganhou abas para comentários publicados, rejeitados e
+  aguardando moderação, com escopo separado dos comentários da Revista.
+- O marcador de rejeição do Comment compartilhado é restrito pela permissão
+  `administer comments` e não aparece em renderização pública.
+- Testes direcionados e importação parcial no Runtime de teste; evidências,
+  contagens pós-limpeza e limite de browser registradas no CHANGELOG do
+  `aculta_forum`.
+
 ## 0.4.0-dev.190 — paginação do índice público Growroom420 — 2026-10-19
 
 - A View `aculta_forum_public_topics` passa a usar pager Core completo, com 20

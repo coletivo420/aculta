@@ -45,10 +45,10 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('none', $comments['display']['page_forum_comments']['display_options']['menu']['type']);
     self::assertSame('view.aculta_forum_admin_topics.page_forum', $tasks['aculta_forum.admin_topics']['route_name']);
     self::assertSame('system.admin_content', $tasks['aculta_forum.admin_topics']['base_route']);
-    self::assertSame('view.aculta_forum_admin_comments.page_forum_comments', $tasks['aculta_forum.admin_comments']['route_name']);
-    self::assertSame('Comentários e moderação', $tasks['aculta_forum.admin_comments']['title']);
-    self::assertSame('aculta_forum.admin_topics', $tasks['aculta_forum.admin_comments']['parent_id']);
-    self::assertSame('system.admin_content', $tasks['aculta_forum.admin_comments']['base_route']);
+    self::assertSame('view.aculta_forum_admin_comments.page_published', $tasks['aculta_forum.admin_comments_published']['route_name']);
+    self::assertSame('aculta_forum.admin_topics', $tasks['aculta_forum.admin_comments_published']['parent_id']);
+    self::assertSame('Comentários rejeitados', $tasks['aculta_forum.admin_comments_rejected']['title']);
+    self::assertSame('Aguardando moderação', $tasks['aculta_forum.admin_comments_pending']['title']);
 
     $content = Yaml::parseFile($repository_path . '/config/sync/views.view.content.yml');
     $filters = $content['display']['default']['display_options']['filters'];
@@ -212,6 +212,36 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertArrayNotHasKey('comment_bulk_form', $options['fields']);
     self::assertSame('admin/content/forum/comentarios', $view['display']['page_forum_comments']['display_options']['path']);
     self::assertSame('none', $view['display']['page_forum_comments']['display_options']['menu']['type']);
+    foreach ([
+      'page_published' => ['admin/content/forum/comentarios/publicados', '1', NULL],
+      'page_rejected' => ['admin/content/forum/comentarios/rejeitados', '0', '1'],
+      'page_pending' => ['admin/content/forum/comentarios/aguardando-moderacao', '0', '0'],
+    ] as $display_id => [$path, $published, $rejected]) {
+      $display = $view['display'][$display_id]['display_options'];
+      self::assertSame($path, $display['path']);
+      self::assertSame($published, $display['filters']['status']['value']);
+      if ($rejected !== NULL) {
+        self::assertSame($rejected, $display['filters']['field_aculta_rejected_value']['value']);
+      }
+    }
+    $tasks = Yaml::parseFile($module_path . '/aculta_forum.links.task.yml');
+    self::assertSame('view.aculta_forum_admin_comments.page_rejected', $tasks['aculta_forum.admin_comments_rejected']['route_name']);
+    self::assertSame('aculta_forum.admin_topics', $tasks['aculta_forum.admin_comments_pending']['parent_id']);
+
+    $storage_filename = 'field.storage.comment.field_aculta_rejected.yml';
+    self::assertSame(
+      Yaml::parseFile($module_path . '/config/install/' . $storage_filename),
+      Yaml::parseFile($repository_path . '/config/sync/' . $storage_filename),
+    );
+    $field_filename = 'field.field.comment.aculta_discussion_post.field_aculta_rejected.yml';
+    self::assertSame(
+      Yaml::parseFile($module_path . '/config/install/' . $field_filename),
+      Yaml::parseFile($repository_path . '/config/sync/' . $field_filename),
+    );
+    $display_filename = 'core.entity_view_display.comment.aculta_discussion_post.default.yml';
+    $display = Yaml::parseFile($module_path . '/config/install/' . $display_filename);
+    self::assertSame($display, Yaml::parseFile($repository_path . '/config/sync/' . $display_filename));
+    self::assertArrayHasKey('field_aculta_rejected', $display['hidden']);
   }
 
   /**

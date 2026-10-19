@@ -1,9 +1,10 @@
+uuid: 8873389d-aaf4-4c10-a071-737bfcb27abf
 langcode: pt-br
 status: true
-uuid: 8873389d-aaf4-4c10-a071-737bfcb27abf
 dependencies:
   config:
   - field.field.node.aculta_forum_topic.field_aculta_discussion
+  - field.field.comment.aculta_discussion_post.field_aculta_rejected
   - node.type.aculta_forum_topic
   module:
   - comment
@@ -721,4 +722,600 @@ display:
       - url.query_args
       - user.permissions
       tags: {}
+      cacheable: false
+  page_pending:
+    id: page_pending
+    display_title: 'Aguardando moderação'
+    display_plugin: page
+    position: 4
+    display_options:
+      filters:
+        comment_type:
+          id: comment_type
+          table: comment_field_data
+          field: comment_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: comment_type
+          plugin_id: bundle
+          operator: in
+          value:
+            aculta_discussion_post: aculta_discussion_post
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_name:
+          id: field_name
+          table: comment_field_data
+          field: field_name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: field_name
+          plugin_id: string
+          operator: '='
+          value: field_aculta_discussion
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        entity_type:
+          id: entity_type
+          table: comment_field_data
+          field: entity_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: entity_type
+          plugin_id: string
+          operator: '='
+          value: node
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: node
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: in
+          value:
+            aculta_forum_topic: aculta_forum_topic
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        status:
+          id: status
+          table: comment_field_data
+          field: status
+          entity_type: comment
+          entity_field: status
+          plugin_id: boolean
+          value: '0'
+        field_aculta_rejected_value:
+          id: field_aculta_rejected_value
+          table: comment__field_aculta_rejected
+          field: field_aculta_rejected_value
+          plugin_id: boolean
+          operator: '='
+          value: '0'
+      defaults:
+        filters: false
+      display_description: 'Comentários não publicados e ainda não rejeitados, exclusivamente em tópicos do Fórum público.'
+      display_extenders: {  }
+      path: admin/content/forum/comentarios/aguardando-moderacao
+      menu:
+        type: none
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user.permissions
+      tags: {  }
+      cacheable: false
+  page_published:
+    id: page_published
+    display_title: 'Comentários publicados'
+    display_plugin: page
+    position: 2
+    display_options:
+      filters:
+        comment_type:
+          id: comment_type
+          table: comment_field_data
+          field: comment_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: comment_type
+          plugin_id: bundle
+          operator: in
+          value:
+            aculta_discussion_post: aculta_discussion_post
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_name:
+          id: field_name
+          table: comment_field_data
+          field: field_name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: field_name
+          plugin_id: string
+          operator: '='
+          value: field_aculta_discussion
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        entity_type:
+          id: entity_type
+          table: comment_field_data
+          field: entity_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: entity_type
+          plugin_id: string
+          operator: '='
+          value: node
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: node
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: in
+          value:
+            aculta_forum_topic: aculta_forum_topic
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        status:
+          id: status
+          table: comment_field_data
+          field: status
+          entity_type: comment
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+      defaults:
+        filters: false
+      display_description: 'Comentários publicados exclusivamente em tópicos do Fórum público.'
+      display_extenders: {  }
+      path: admin/content/forum/comentarios/publicados
+      menu:
+        type: none
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user.permissions
+      tags: {  }
+      cacheable: false
+  page_rejected:
+    id: page_rejected
+    display_title: 'Comentários rejeitados'
+    display_plugin: page
+    position: 3
+    display_options:
+      filters:
+        comment_type:
+          id: comment_type
+          table: comment_field_data
+          field: comment_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: comment_type
+          plugin_id: bundle
+          operator: in
+          value:
+            aculta_discussion_post: aculta_discussion_post
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_name:
+          id: field_name
+          table: comment_field_data
+          field: field_name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: field_name
+          plugin_id: string
+          operator: '='
+          value: field_aculta_discussion
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        entity_type:
+          id: entity_type
+          table: comment_field_data
+          field: entity_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: comment
+          entity_field: entity_type
+          plugin_id: string
+          operator: '='
+          value: node
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: node
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: in
+          value:
+            aculta_forum_topic: aculta_forum_topic
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        status:
+          id: status
+          table: comment_field_data
+          field: status
+          entity_type: comment
+          entity_field: status
+          plugin_id: boolean
+          value: '0'
+        field_aculta_rejected_value:
+          id: field_aculta_rejected_value
+          table: comment__field_aculta_rejected
+          field: field_aculta_rejected_value
+          plugin_id: boolean
+          operator: '='
+          value: '1'
+      defaults:
+        filters: false
+      display_description: 'Comentários rejeitados exclusivamente em tópicos do Fórum público.'
+      display_extenders: {  }
+      path: admin/content/forum/comentarios/rejeitados
+      menu:
+        type: none
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user.permissions
+      tags: {  }
       cacheable: false

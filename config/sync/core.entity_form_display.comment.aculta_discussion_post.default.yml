@@ -1,0 +1,49 @@
+uuid: 5c432095-1d9a-4cec-87c9-7f7d365347d9
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.aculta_discussion_post
+    - field.field.comment.aculta_discussion_post.comment_body
+    - field.field.comment.aculta_discussion_post.field_aculta_rejected
+id: comment.aculta_discussion_post.default
+targetEntityType: comment
+bundle: aculta_discussion_post
+mode: default
+content:
+  author:
+    weight: -2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  comment_body:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_aculta_rejected:
+    type: boolean_checkbox
+    weight: 90
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  subject:
+    type: string_textfield
+    weight: 10
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

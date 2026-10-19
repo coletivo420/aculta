@@ -22,6 +22,7 @@ real, aplicativo nativo e previews remotos não são requisitos deste roadmap.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
 | `0.1.0-dev.26` | Fórum como aba em Conteúdo; “Comentários e moderação” como subaba; discussões contextuais fora das filas genéricas | Runtime de teste: abas carregadas e filtro exercitado; HTTP autenticado pendente |
 | `0.1.0-dev.25` | Fórum em seção independente no menu Content e correção da View que causava HTTP 500 | Runtime PARTIAL: menu, access e renderização de ambas as Views confirmados; HTTP autenticado pendente |
 | `0.1.0-dev.24` | Links do Fórum no mesmo menu Content usado por Galerias | Implementado com dev.25 |
@@ -32,8 +33,9 @@ real, aplicativo nativo e previews remotos não são requisitos deste roadmap.
 
 O conteúdo de discussão não se mistura à listagem genérica em
 `/painel-administrativo/conteudo`. Fórum é uma aba própria nesse painel; seus
-tópicos não entram na View genérica e “Comentários e moderação” fica como aba
-filha da seção Fórum. Revista reúne publicações e comentários em
+tópicos não entram na View genérica. As três filas do Fórum ficam como abas
+secundárias diretas da aba Fórum, porque o Core limita tarefas locais a dois
+níveis; a consulta agregada de comentários mantém seu caminho próprio. Revista reúne publicações e comentários em
 `/painel-administrativo/conteudo/revista`; LMS terá área em
 `/painel-administrativo/lms/forum` restrita a curso/turma/atividade e autorização
 de Educador; Wiki terá área em `/painel-administrativo/wiki/forum` para
