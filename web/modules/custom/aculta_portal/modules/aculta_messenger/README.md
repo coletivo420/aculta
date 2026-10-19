@@ -132,7 +132,7 @@ como lidos/não lidos por conta.
 
 A entidade `aculta_friendship` e o serviço `aculta_user.friendship_manager` são
 a fonte de verdade para pedidos e amizades. O Messenger integra ações na
-página de perfil e pedidos recebidos em `/mensagens/notificacoes`. A preferência
+página de perfil e pedidos recebidos na aba Mensagens de `/avisos-mensagens/mensagens`. A preferência
 individual `message_privacy` usa User Data sob a chave `aculta_messenger`;
 `friends` restringe apenas novas conversas. Respostas em threads existentes e
 bloqueios nativos do Private Message conservam suas regras.

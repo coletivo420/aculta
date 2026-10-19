@@ -129,10 +129,10 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/pedidos` | Lista de pedidos da pessoa | Conta autenticada; Commerce verifica propriedade. |
 | `conta.aculta` | `/pedidos/{pedido}` | Detalhe de um pedido | Conta autenticada; Commerce verifica propriedade do pedido. |
 | `conta.aculta` | `/meu-apoio/assinatura/{commerce_order}/{acao}` | Ação da assinatura de apoio | Condicional ao fluxo de recorrência; operação validada no pedido próprio. |
-| `conta.aculta` | `/configuracoes/mensagens` | Preferências de notificações de mensagem | Condicional ao Messenger; conta autenticada. |
-| `conta.aculta` | `/mensagens` | Caixa de entrada de conversas privadas | Condicional ao Messenger/Private Message; permissões nativas. |
-| `conta.aculta` | `/mensagens/notificacoes` | Lista de avisos/notificações privados | Condicional ao Messenger; usuário vê somente os próprios avisos. |
-| `conta.aculta` | `/mensagens/avisos` | Comunicados institucionais visíveis ao usuário | Condicional ao Messenger; acesso editorial e segmentação aplicados. |
+| `conta.aculta` | `/configuracoes/mensagens` | Preferências de notificações de mensagem (caminho antigo) | Removido: sem rota registrada no código nem no Runtime de teste (consulta de 2026-10-19). A preferência de e-mail está em `/configuracoes/email`. Sem redirecionamento. |
+| `conta.aculta` | `/mensagens` | Caixa de entrada de conversas privadas (caminho antigo) | Não registrado: sem rota no código nem no Runtime de teste (consulta de 2026-10-19). Conversas são abertas pela gaveta da barra e por `/mensagens/conversas/painel`. Sem redirecionamento. |
+| `conta.aculta` | `/mensagens/notificacoes` | Lista de avisos e pedidos privados (caminho antigo) | Removido: sem rota registrada no código nem no Runtime de teste (consulta de 2026-10-19). Os pedidos de amizade recebidos estão na aba Mensagens de `/avisos-mensagens/mensagens`. Sem redirecionamento. |
+| `conta.aculta` | `/mensagens/avisos` | Comunicados institucionais (caminho antigo) | Removido: substituído por `/avisos-mensagens/avisos`. Sem redirecionamento. |
 | `conta.aculta` | `/mensagens/resumo` | Resumo de conversas não lidas | Condicional ao Messenger; dados da própria conta. |
 | `conta.aculta` | `/mensagens/conversas/painel` | Painel/fragmento da lista de conversas | Condicional ao Messenger; acesso da própria conta. |
 | `conta.aculta` | `/mensagens/conversa/{private_message_thread}/responder` | Formulário de resposta à conversa | Condicional ao Messenger; valida acesso à thread. |
