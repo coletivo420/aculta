@@ -49,10 +49,14 @@ final class PortalUiHooks {
     'requirements-status' => ['aculta-portal-requirements__status'],
     'status-ok' => ['aculta-portal-requirements__status--ok'],
     'status-warning' => ['aculta-portal-requirements__status--warning'],
+    'status-attention' => ['aculta-portal-requirements__status--attention'],
     'status-error' => ['aculta-portal-requirements__status--error'],
     'status-pending' => ['aculta-portal-requirements__status--pending'],
     'requirements-indexing' => ['aculta-portal-requirements__indexing'],
     'requirements-indexing-table' => ['aculta-portal-requirements__indexing-table'],
+    'requirements-cep' => ['aculta-portal-requirements__cep'],
+    'requirements-cep-table' => ['aculta-portal-requirements__cep-table'],
+    'cep-sources' => ['aculta-cep-sources'],
     'secrets-section' => ['aculta-portal-secrets-section'],
     'secret-value' => ['aculta-secret-value'],
     'secret-value-text' => ['aculta-secret-value__text'],
@@ -83,6 +87,19 @@ final class PortalUiHooks {
     'search-preview-full' => ['aculta-search-preview__full', 'btn', 'btn-outline-primary', 'btn-sm'],
     'hint' => ['small', 'text-body-secondary'],
     'hint-muted' => ['text-body-secondary'],
+    // Review de texto livre (aculta_lms): seções de retorno e cada frase verificada.
+    'feedback-matched' => ['feedback-section', 'matched-phrases'],
+    'feedback-unmatched' => ['feedback-section', 'unmatched-phrases'],
+    'phrase-match' => ['phrase-match'],
+    'phrase-mismatch' => ['phrase-mismatch'],
+    // Administração do H5P (aculta_lms_h5p) e aviso do checkout Mercado Pago.
+    'h5p-admin-header' => ['h5p-admin-header'],
+    'h5p-content-unavailable' => ['h5p-content-unavailable'],
+    'h5p-dashboard-course' => ['aculta-lms-h5p-course'],
+    'checkout-help' => ['checkout-help'],
+    'mercado-pago-credentials-test' => ['mercado-pago-credentials', 'mercado-pago-credentials-test'],
+    'mercado-pago-credentials-stage' => ['mercado-pago-credentials', 'mercado-pago-credentials-stage'],
+    'mercado-pago-credentials-prod' => ['mercado-pago-credentials', 'mercado-pago-credentials-prod'],
     'icon-search' => ['bi', 'bi-search'],
     'visually-hidden' => ['visually-hidden'],
     // Wiki e cursos.
@@ -203,6 +220,10 @@ final class PortalUiHooks {
     'social-links-channel-instagram' => ['aculta-social-links__channel--instagram'],
     'social-links-channel-youtube' => ['aculta-social-links__channel--youtube'],
     'social-links-channel-facebook' => ['aculta-social-links__channel--facebook'],
+    // Ícone do canal na lista de redes sociais (Bootstrap Icons).
+    'social-links-icon-instagram' => ['bi', 'bi-instagram'],
+    'social-links-icon-youtube' => ['bi', 'bi-youtube'],
+    'social-links-icon-facebook' => ['bi', 'bi-facebook'],
     'social-links-list' => ['aculta-social-links__list', 'list-unstyled'],
     'social-links-footer-inner' => ['aculta-social-links-footer__inner'],
     'social-links-settings-button' => ['aculta-social-links-settings-button'],
@@ -352,6 +373,8 @@ final class PortalUiHooks {
   #[Hook('preprocess_container')]
   #[Hook('preprocess_html_tag')]
   #[Hook('preprocess_item_list')]
+  #[Hook('preprocess_fieldset')]
+  #[Hook('preprocess_table')]
   #[Hook('preprocess_input')]
   #[Hook('preprocess_form_element')]
   #[Hook('preprocess_image')]

@@ -1,3 +1,13 @@
+## 0.6.0-dev.86 — tokens da fronteira Portal–tema e seletores de imagem por atributo — 2026-10-19
+
+Classificação: PATCH de fronteira. Autorizado na solicitação de correção dos gates de fronteira.
+
+- `PortalUiHooks`: tokens novos (feedback de texto livre, `status-attention`, CEP, H5P, ícones de redes sociais, credenciais do Mercado Pago, aviso de checkout) e hooks `preprocess_fieldset` e `preprocess_table`. Antes, tabelas (`sales-table`) e fieldsets não recebiam classes do mapa.
+- `revista-post.css`: imagens do texto são selecionadas por `data-aculta-imagem`, `data-aculta-imagem-modelo`, `data-aculta-imagem-alinhamento` e `data-aculta-imagem-legenda`, em vez de classes `aculta-imagem*`.
+- Gate de fundação (`validate-aculta420-foundation.php`) atualizado para a versão corrente, que estava em `dev.80` no código enquanto o tema já estava em `dev.85`.
+- Gates do tema: boundary, mapa módulo–tema, documentação de tokens, design foundations, SDC schemas e shell contract passam.
+- RUNTIME STATUS: DEFERRED (não aplicado no Runtime de teste).
+
 ## 0.6.0-dev.85 — campos do endereço bloqueados pelo CEP — 2026-10-18
 
 Classificação: PATCH de apresentação. Estilo do bloqueio do endereço preenchido pelo CEP (classe `aculta-cep-locked`, marcada pelo módulo `aculta_portal_cep`), com tokens semânticos (`--aculta-surface-muted`) e cursor `not-allowed`. Modo claro e escuro usam o mesmo token.
