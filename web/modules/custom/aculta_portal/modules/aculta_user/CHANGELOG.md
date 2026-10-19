@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.28 — moderação de comentários públicos contextuais — 2026-10-19
+
+- A regra de moderação inicial cobre `aculta_discussion_post` em qualquer Node com `field_aculta_discussion`; `aculta_lms_topic` é excluído. Comentário LMS publicado conta como participação aprovada fora do LMS e limpa o bloqueio temporário de criação de tópico.
+- O painel de participação ganhou controle para ligar/desligar essa regra pública; os ajustes existentes de limite, bloqueio de tópico pendente e papéis isentos permanecem configuráveis.
+- Adicionada cobertura Kernel (5 testes/61 assertions, PASS em `aculta_simpletest`) para moderação nos contextos compartilhados, exclusão da moderação LMS, participação LMS como aprovação e configuração administrativa. Integração de campos da Revista não ativada.
+- RUNTIME STATUS: DEFERRED para o novo bundle e a UI.
+
 ## 0.4.0-dev.27 — cartão compartilhado de autoria — 2026-10-19
 
 - `AuthorCardBuilder` e hook neutro `aculta_user_author_card` compõem o view-model cacheável; avatar usa `aculta_image`, e ações só entram como render arrays preparados por consumidores autorizados.

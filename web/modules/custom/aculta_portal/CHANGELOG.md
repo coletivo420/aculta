@@ -1,3 +1,10 @@
+## 0.4.0-dev.167 — moderação inicial compartilhada em discussões públicas — 2026-10-19
+
+- `aculta_user` aplica a aprovação inicial em qualquer Node com `field_aculta_discussion`, exceto `aculta_lms_topic`. Comentário LMS publicado conta como participação aprovada nos demais contextos e remove o bloqueio temporário de criação de tópico.
+- O painel de participação permite desativar a política pública, além dos controles existentes de limite de tópico, bloqueio enquanto há aprovação pendente e papéis isentos.
+- Teste Kernel dedicado: 5 testes/61 assertions PASS em `aculta_simpletest`, incluindo comentário LMS publicado contando como aprovação e removendo bloqueio temporário. Gate Drupal 11+ (969 checks), PHPCS e `git diff --check` PASS. Fields da Revista continuam sem ativação no Runtime.
+- `aculta_user` atualizado para `0.4.0-dev.28`. RUNTIME STATUS: DEFERRED para comentários novos e UI administrativa.
+
 ## 0.4.0-dev.166 — provider de contexto para comentários editoriais — 2026-10-19
 
 - `aculta_forum` adiciona provider contextual para Nodes `article` e `blog` quando o campo Comment compartilhado está presente. Leitura usa Entity/Field Access; escrita e moderação usam permissões nativas de Comment e propagam cacheability.

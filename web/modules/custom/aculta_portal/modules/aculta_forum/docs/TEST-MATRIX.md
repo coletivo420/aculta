@@ -13,6 +13,7 @@ Runtime e fluxos completos continuam pendentes.
 | Comment | tipo compartilhado (ou variantes justificadas), host bundles e field settings, thread, revisão, publicação, permalink/ancora, formulário | Kernel + Functional. |
 | Acesso público | anônimo/membro/editor; publicação, conteúdo fechado, flags e permissões | Kernel + Functional/browser. |
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
+| Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest`; Runtime editorial ainda DEFERRED. |
 | LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership, educator/moderator, atividade em cursos múltiplos | Kernel/Functional; Route/View/Search/Cache e teste de navegador. |
 | Wiki | uma thread por verbete, comentário não altera revisão, acesso de edição distinto | Contract tests nesta fase; integração real só após Wiki. |
 | Busca/Views | filtro de contexto fixo, access query, títulos/trechos/contagens/facets e paginação sem vazamento | Kernel/Functional, index rebuild no ambiente de teste. |
@@ -24,6 +25,19 @@ Runtime e fluxos completos continuam pendentes.
 | UX/acessibilidade | mobile, teclado, foco, leitor de tela, light/dark, reduced motion e fallback sem JS | Firefox/browser, auditoria manual e automatizada existente. |
 | Performance | listagens, thread grande, Views, Query counts e contagens/cache | profiling comparável; limites definidos na fase de benchmark. |
 | Remoção/migração | dry run, inventário, exclusão escopada, uninstall, composer remove, rollback/restauro e ausência de residuais | prova somente no Runtime de teste e ponto de recuperação revisado. |
+
+## Evidência dev.5 — política de aprovação inicial compartilhada
+
+- PHPUnit Kernel `PublicDiscussionModerationKernelTest`: 5 testes / 61
+  assertions — PASS em MariaDB `aculta_simpletest` (PHP CLI 8.4.26).
+- Cobertura: comentários LMS permanecem publicados sem moderação; uma publicação
+  LMS conta como aprovada para contextos não LMS e libera o bloqueio temporário;
+  política administrativa desligável; campo compartilhado em Wiki/outros Nodes;
+  comentário não LMS pendente bloqueia criação de tópico quando configurado.
+- `phpcs --standard=Drupal` nos arquivos PHP alterados: PASS. Gate Drupal 11+:
+  969 checks — PASS. `git diff --check` — PASS.
+- Runtime editorial e instalação/atualização de configuração continuam
+  DEFERRED. Nenhum conteúdo ou configuração persistente foi alterado.
 
 ## Evidência `0.1.0-dev.4` (2026-10-19)
 

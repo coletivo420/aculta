@@ -28,9 +28,11 @@
   escrita via Comment aberto + `post comments`, moderação via `administer comments`,
   cache por permissões e ID estável. Providers não têm field instances na Revista
   ainda.
-- Fields da Revista não devem ser ativados ainda: `aculta_user` mantém regras de
-  participação, apresentação e moderação restritas ao bundle `comment_forum`.
-  Estender/testar esse contrato é prerequisite da integração Magazine.
+- Fields da Revista ainda não foram ativados. A política compartilhada de
+  moderação agora cobre o bundle novo em Fórum, Revista, Wiki e qualquer
+  contexto Node que use o campo compartilhado, preservando o controle legado; LMS continua
+  excluído. Field instances da Revista e integração de apresentação ainda
+  aguardam homologação específica.
 - Kernel multi-bundle: 1/18 PASS em `aculta_simpletest`; Unit do Forum: 12/52 PASS.
   Runtime de teste recebeu apenas cache rebuild e smoke de DI: resolver carregou
   dois providers e recusou Article sem o field novo. Sem importação de config,

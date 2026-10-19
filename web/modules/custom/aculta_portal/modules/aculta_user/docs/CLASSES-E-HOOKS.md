@@ -156,7 +156,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `DiscussionHooks` | `src/Hook/DiscussionHooks.php` | Discussão vinculada: trecho dos últimos comentários do tópico de Fórum e link para a discussão completa. |
 | `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação do Fórum pelo content_editor (ACULTA Fórum, F9, decisões de 2026-10-16). |
 | `FriendshipLifecycleHooks` | `src/Hook/FriendshipLifecycleHooks.php` | Maintains friendship data through account deletion and module lifecycle. */ |
-| `ParticipationHooks` | `src/Hook/ParticipationHooks.php` | Moderação do primeiro comentário e limite para criar tópico (seções E6 e E7). |
+| `ParticipationHooks` | `src/Hook/ParticipationHooks.php` | Modera comentários iniciais no Forum legado e nos contextos públicos compartilhados; exclui LMS e aplica bloqueio/limite configurável de criação de tópico. |
 | `PhotoEditorHooks` | `src/Hook/PhotoEditorHooks.php` | Editor de foto do painel (ponto de extensão aculta_portal_photo_editor e formulário do painel). |
 | `PhotoFlowPageHooks` | `src/Hook/PhotoFlowPageHooks.php` | Anexa o fluxo do popup de foto (aculta_user/photo-flow) na página do painel e informa a foto salva ao script. |
 | `PictureReplacementHooks` | `src/Hook/PictureReplacementHooks.php` | Apaga a foto anterior enviada pela pessoa quando ela troca ou remove a foto (economia de disco). |
@@ -189,7 +189,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
-| `ParticipationRules` | `src/ParticipationRules.php` | Regras de participação no Fórum (plano aculta_user, seções E6 e E7). |
+| `ParticipationRules` | `src/ParticipationRules.php` | Contagens via EntityQuery e regras de participação para Forum legado e comentários públicos compartilhados; LMS é excluído. |
 | `PublicProfilePolicy` | `src/PublicProfilePolicy.php` | Decide, campo a campo, o que do perfil participante pode aparecer em público. |
 | `PublicProfileLink` | `src/PublicProfileLink.php` | Única regra de URL canônica do perfil público; atualiza a cache metadata fornecida pelo consumidor. |
 | `PublicProfileLinkInterface` | `src/PublicProfileLinkInterface.php` | Contrato para resolver e testar links de perfil sem substituir a implementação canônica. |

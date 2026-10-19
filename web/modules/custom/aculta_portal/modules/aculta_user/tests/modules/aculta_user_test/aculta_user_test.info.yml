@@ -1,0 +1,5 @@
+name: 'ACULTA User test configuration schema'
+type: module
+description: 'Provides configuration schema for ACULTA User kernel tests.'
+package: Testing
+core_version_requirement: ^11.3

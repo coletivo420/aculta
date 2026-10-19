@@ -60,7 +60,8 @@ não concede autorização para criar configuração ou instalar entidades nesta
 - Um único fluxo de comentários na própria página; nunca criar tópico em outro Node.
 - O provider atende apenas bundles `article` e `blog` que tenham o campo compartilhado; ainda não há field instance de publicação na Config Sync.
 - Leitura combina Node Entity Access com field access. Escrita requer leitura permitida, campo aberto e permissão `post comments`; moderação combina leitura e `administer comments`. As decisões variam por `user.permissions` e carregam cacheability do host/campo.
-- `aculta_user` ainda limita regras de participação, atividade, apresentação e moderação ao bundle legado `comment_forum`. Não instalar os fields de publicação até estender e testar os contratos para `aculta_discussion_post`.
+- `aculta_user` aplica moderação do primeiro comentário compartilhado a qualquer Node com `field_aculta_discussion`, incluindo Fórum, Revista, Wiki e novos contextos. O host `aculta_lms_topic` não é moderado, mas um comentário LMS publicado conta como participação aprovada nos demais contextos e retira o bloqueio temporário de criação de tópico. A opção fica em `/painel-administrativo/configuracoes/aculta/portal/participacao`; o bundle legado `comment_forum` conserva seu controle separado durante a migração.
+- O provider editorial e a política de moderação estão cobertos por testes Unit/Kernel isolados, mas as instâncias de campo da Revista ainda não foram ativadas; Runtime/editorial permanece DEFERRED.
 - Publicação/despublicação e permissões editoriais condicionam leitura/escrita.
 - Canonical do comentário preserva o caminho editorial e permalink/âncora.
 - Search, aviso e métricas seguem a política editorial e access da publicação.

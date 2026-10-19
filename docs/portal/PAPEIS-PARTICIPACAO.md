@@ -70,6 +70,28 @@ de moderação). O nível de associado não dá nenhuma outra função além do 
 | Denunciar e ver a fila de denúncias | `content_editor` com `email_confirmed` | Aplicado |
 | Ocultar, despublicar ou excluir tópico e comentário (exceto histórico) | `content_editor` com `email_confirmed` | Aplicado |
 
+### Moderação inicial de discussões
+
+- O primeiro comentário novo do participante fica não publicado até aprovação.
+  Enquanto a pessoa não tiver um comentário aprovado, os comentários seguintes
+  em qualquer entidade Node com `field_aculta_discussion` também aguardam
+  aprovação. Isso cobre Fórum público, Revista, Wiki e demais contextos que
+  adotem o campo compartilhado.
+- Comentários aprovados são contados entre esses contextos. Um comentário
+  publicado no LMS não é moderado, mas conta como participação aprovada para a
+  moderação inicial nos demais contextos e remove o bloqueio temporário de
+  criação de tópico enquanto houver comentário não LMS pendente.
+- A opção administrativa **Moderar comentários iniciais nos contextos de
+  discussão, exceto LMS** fica em
+  `/painel-administrativo/configuracoes/aculta/portal/participacao` e vem
+  ativada por padrão. O bloqueio de tópico considera pendências em qualquer
+  contexto não LMS, mas deixa de bloquear depois de uma participação publicada
+  no LMS. O limite mínimo de criação continua contando somente comentários do
+  Fórum público.
+- O controle legado do bundle `comment_forum` permanece separado durante a
+  retirada de `drupal/forum`. O fluxo editorial novo ainda não foi ativado no
+  Runtime; a cobertura desta entrega é código e Kernel isolado.
+
 ## 6. Visitante e bots
 
 - Quem não tem o nível exigido recebe **404**, inclusive bots. O conteúdo restrito não aparece em listagens, contagens,

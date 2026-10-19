@@ -1,6 +1,7 @@
 topico_limite_ativo: true
 topico_comentarios_minimos: 10
 primeiro_comentario_moderado: true
+primeiro_comentario_discussao_moderado: true
 bloqueio_ate_aprovacao: true
 papeis_isentos:
   - content_editor
