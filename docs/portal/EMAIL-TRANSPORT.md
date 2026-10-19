@@ -6,43 +6,22 @@ Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
 [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md), `config/secrets-contract.json`.
 
-## 0. Estado atual dos provedores (2026-10-19)
+## 0. Estado atual do envio (2026-10-19)
 
-Há dois transportes SMTP definidos no Mailer Plus. O documento anterior citava só o SMTP2GO; esta seção
-registra o que existe de fato.
+Envio pelo Mailer Plus, com um único transporte ativo: **SMTP2GO** (`mail.smtp2go.com:465`), definido em
+`config/sync/mailer_transport.mailer_transport.smtp2go.yml` e padrão em `config/sync/mailer_transport.settings.yml`.
+O transporte da Hostinger foi removido do Runtime de teste. Não havia versão dele no Git.
 
-| Transporte | Provedor | Host e porta | Onde está definido | Papel |
-|---|---|---|---|---|
-| `smtp2go` | SMTP2GO | `mail.smtp2go.com:465` | `config/sync/mailer_transport.mailer_transport.smtp2go.yml`; senha e usuário por Key (`key.config_override.mailer_smtp2go_*`) | Padrão **no repositório** (`config/sync/mailer_transport.settings.yml`) |
-| `smtp` | Hostinger | `smtp.hostinger.com:465` | **Só no banco do Runtime de teste.** Não está em `config/sync`. Usuário e senha gravados na configuração do transporte, sem Key | Padrão **no Runtime de teste** (`default_transport: smtp`) |
+Remetente: `naoresponda@toca.net.br` no teste (endereço da própria conta SMTP2GO). Em produção, o remetente vem
+do mapeamento do `aculta_deployer`.
 
-**Desvio de configuração.** O Runtime de teste aponta para a Hostinger e o repositório para o SMTP2GO. Os dois
-não estão alinhados, e o transporte da Hostinger não é reproduzível a partir do Git. Isso precisa ser resolvido
-antes de a configuração ser exportada ou importada.
+**Incidente de 2026-10-18 a 2026-10-19 (resolvido).** Os envios pela Hostinger falhavam com
+`553 5.7.1 : Sender address rejected: not owned by user naoresponda@aculta.org`. O remetente não pertencia à conta
+SMTP usada. Com o padrão no SMTP2GO e o remetente da própria conta, o teste de envio é aceito no `MAIL FROM` e
+no `AUTH`. A única recusa restante é o destinatário de teste `example.invalid` (domínio reservado).
 
-**Porta do SMTP2GO.** Este documento dizia `2525` nas seções 3 e 4.1. A configuração versionada usa `465`.
-Vale a porta de `config/sync`.
-
-**Incidente em 2026-10-19: envios falhando pela Hostinger.** Desde 2026-10-18 23:48 (horário de Brasília), todas
-as tentativas de envio pelo transporte da Hostinger falharam (30 registros em `symfony_mailer`, último às
-16:19 de 2026-10-19). A mensagem do servidor é:
-
-> `553 5.7.1 : Sender address rejected: not owned by user naoresponda@aculta.org`
-
-Leitura: a conexão TLS e a autenticação funcionam (a recusa acontece depois do `MAIL FROM`). A Hostinger recusa o
-endereço de remetente `naoresponda@aculta.org`, porque ele não pertence à conta SMTP autenticada. O remetente
-vem de `system.site:mail` e do `from_mail` do Webform `aculta_contact` (ambos `naoresponda@aculta.org` em
-`config/sync`). Para corrigir, é preciso uma das opções:
-
-1. criar `naoresponda@aculta.org` como caixa ou alias da conta SMTP da Hostinger (painel da Hostinger, fora do repositório);
-2. trocar o remetente para o endereço da conta autenticada, em `system.site` e no `from_mail` do Webform, por
-   mudança versionada e aprovada.
-
-Enquanto nenhuma das duas for feita, os envios pela Hostinger não são entregues.
-
-**Pendências de segurança.** A senha do transporte `smtp` (Hostinger) está na configuração do banco do Runtime. A
-regra do projeto exige Key com provider `env` para credenciais (`AGENTS.md`). Deve ser movida para Key antes de
-qualquer exportação.
+**Pendência.** As credenciais do SMTP2GO chegam ao transporte por Keys (`key.config_override.mailer_smtp2go_*`).
+Ver a decisão em aberto sobre Keys nesta seção.
 
 ## 1. Decisão
 
