@@ -1,3 +1,10 @@
+## 0.6.0-dev.98 — estado vazio do índice Growroom420 — 2026-10-19
+
+Classificação: PATCH de apresentação.
+
+- `forum-index.css` apresenta a área vazia da View pública com tokens semânticos, borda e alinhamento responsivos; sem ramo por modo de cor.
+- Foundation 354 checks e design 2078 PASS. Runtime `toca`: raiz HTTP 200 renderiza a lista vazia; nenhum tópico/comentário criado. Inspeção visual no navegador pendente; RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.97 — identidade autorizada em tópicos públicos — 2026-10-19
 
 Classificação: PATCH de apresentação, sem alteração de contrato funcional.

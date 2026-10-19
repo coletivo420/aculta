@@ -1,3 +1,8 @@
+## 0.4.0-dev.185 — estado vazio da listagem do ACULTA Forum — 2026-10-19
+
+- `aculta_forum 0.1.0-dev.16` configura mensagem de estado vazio pela área Core `text_custom` na View; domínio, bundle, publicação e acesso permanecem fixos. Sem resultados, filtros e ação autorizada continuam disponíveis.
+- Unit `ForumTopicDisplayConfigTest`: 6 testes/42 assertions PASS. Runtime `toca`: importação parcial somente da View; HTTP da raiz 200 mostrou título, filtro e a mensagem vazia; `/discussoes` 404. Contagens: 0 tópicos novos e 0 comentários compartilhados. RUNTIME STATUS: PARTIAL; inspeção visual permanece pendente.
+
 ## 0.4.0-dev.184 — preserva a raiz dos purposes diante do cache de rotas — 2026-10-19
 
 - O `DomainPurposeRequestSubscriber` restaura os marcadores da raiz no evento Request, antes do normalizador do Redirect. O cache de correspondência de rotas do Core conserva caminho e query, mas não os atributos de Request que o path processor define; sem isso, a raiz do Growroom podia redirecionar à rota interna `/discussoes`.

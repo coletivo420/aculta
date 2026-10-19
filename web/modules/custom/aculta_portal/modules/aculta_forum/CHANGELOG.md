@@ -1,3 +1,8 @@
+## `0.1.0-dev.16` — mensagem para listagem pública vazia — 2026-10-19
+
+- A View pública informa em português quando ainda não há tópicos publicados. A configuração de instalação e Config Sync mantêm o mesmo texto e plugin Core `text_custom`; listagem, filtro de domínio, bundle, publicação e acesso não foram alterados.
+- Unit `ForumTopicDisplayConfigTest`: 6 testes/42 assertions PASS, incluindo equivalência Sync/install e mensagem. Runtime `toca`: importação parcial só da View; após cache rebuild, raiz 200 mostra a mensagem e o filtro; `/discussoes` permanece 404. Zero tópicos e Comments compartilhados. RUNTIME STATUS: PARTIAL; navegador sem tópico persistido pendente.
+
 ## `0.1.0-dev.15` — filtro hierárquico de categorias na View pública — 2026-10-19
 
 - A View `aculta_forum_public_topics` ganhou filtro exposto de categoria pelo plugin Taxonomy nativo `taxonomy_index_tid`, limitado ao vocabulário `aculta_forum_categories` e com hierarquia. Filtros de tipo, domínio, publicação e acesso permanecem fixos; cache inclui query args.

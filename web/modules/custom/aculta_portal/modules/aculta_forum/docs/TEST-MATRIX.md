@@ -189,3 +189,9 @@ real no servidor de teste.
 
 - A inspeção de `Drupal\Core\Routing\RouteProvider::getRouteCollectionForRequest()` confirmou que o cache conserva caminho, query e rotas, sem os atributos do Request marcados pelo path processor.
 - Após `drush cr` no Runtime `aculta_runtime`, HTTP direto em `/` e com query de diagnóstico retornou 200; `/discussoes` retornou 404. Nenhum Node, Comment ou termo foi criado. RUNTIME STATUS: PARTIAL; criação e apresentação visual ainda pendentes.
+
+## Fórum dev.16 / Portal dev.185 — estado vazio da View pública
+
+- Unit `ForumTopicDisplayConfigTest`: 6/42 PASS. Sync e configuração de instalação equivalentes; mensagem usa Views Core `text_custom` e não tokeniza conteúdo.
+- Runtime `toca`: importação parcial apenas de `views.view.aculta_forum_public_topics`. Após cache rebuild, raiz HTTP 200 mostrou título, seletor de categoria e texto vazio; rota interna `/discussoes` retornou 404. Tópicos e comentários compartilhados continuam em zero.
+- RUNTIME STATUS: PARTIAL; listagem vazia conferida por HTTP, navegador e tópico persistido seguem pendentes.

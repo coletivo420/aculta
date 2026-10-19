@@ -116,6 +116,11 @@ Request não sobrevivem ao cache de correspondência de rotas; a correção est�
 Portal `0.4.0-dev.184`; após cache rebuild, `/` retornou 200 e `/discussoes`
 continuou 404. Nenhum conteúdo novo foi criado.
 
+Portal `0.4.0-dev.185` / Forum `0.1.0-dev.16` adicionam uma mensagem Core
+`text_custom` para a listagem vazia. Após importação parcial só da View, HTTP
+confirmou a mensagem na raiz, filtro presente e `/discussoes` fechado; zero
+tópicos/comentários criados. Inspeção visual segue pendente.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,

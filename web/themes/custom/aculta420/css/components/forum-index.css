@@ -54,6 +54,16 @@
 .node--type-aculta-forum-topic .field--name-field-aculta-categories .field__item a:focus-visible { outline: 2px solid var(--aculta-focus-ring); outline-offset: 2px; }
 .node--type-aculta-forum-topic.node--view-mode-full { display: grid; gap: 1rem; }
 .node--type-aculta-forum-topic.node--view-mode-full > div > .field--name-body { line-height: 1.7; overflow-wrap: anywhere; }
+.view-aculta-forum-public-topics .view-empty {
+  margin-block: 1rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--aculta-border-default);
+  border-radius: var(--bs-border-radius-lg);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-secondary);
+  text-align: center;
+}
+.view-aculta-forum-public-topics .view-empty > :last-child { margin-block-end: 0; }
 
 /* Botão de publicar do Fórum (action-links do módulo): o mesmo estilo dos botões de ação do site. */
 .action-links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1rem; padding: 0; list-style: none; }
