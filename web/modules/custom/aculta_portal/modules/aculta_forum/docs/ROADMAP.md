@@ -127,7 +127,7 @@ automaticamente.
 
 ## Regras de avanço
 
-- Cada fase encerra em PR próprio, com commits pequenos, changelog, documentação,
+- Cada fase encerra em commit próprio na PR já aberta, com commits pequenos, changelog, documentação,
   testes e limitações reais.
 - Fase documental não atualiza versões de runtime de módulos/tema.
 - Para operações de ambiente, seguir `docs/architecture/environments.md` e
