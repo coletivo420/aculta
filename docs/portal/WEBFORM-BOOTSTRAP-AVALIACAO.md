@@ -106,7 +106,7 @@ Conclusão: o projeto serve como lista de funcionalidades, não como dependênci
 | `#field_prefix`/`#field_suffix` → input-group | Coberto pelo `form-element.html.twig` do BS5 | Não portado |
 | Erro de fieldset em `alert-danger` | Coberto pelo `fieldset.html.twig` do BS5 | Não portado |
 | `form-inline` no `tel` | O BS5 contrib não gera a classe | Não aplicável |
-| `image_button` → ícone | Sem uso nos forms atuais; o BS5 não tem glifo para `input[type=image]` | Portado (0.6.0-dev.93): `src` troca para SVG do tema (`assets/icons/webform/`) e recebe classe de botão; continua imagem para preservar o clique do Form API (`PortalUiHooks::preprocess`) |
+| `image_button` → ícone | Sem uso nos forms atuais; o BS5 não tem glifo para `input[type=image]` | Portado (0.6.0-dev.93): `src` troca para o SVG oficial `plus-circle` / `dash-circle` do Bootstrap Icons 1.11.0 (`assets/icons/bootstrap-icons/icons/`) e recebe classe de botão; continua imagem para preservar o clique do Form API (`InputHooks::preprocess`) |
 | `input[type=image]` | Sem tratamento no tema | Portado (0.6.0-dev.93): cursor e foco visível; largura de campo do `form-control` anulada para ícones |
 | `webform_multiple` (tabela, operações, alça, lista vazia, adição) | Não coberto pelo tema; sem uso nos forms atuais | Portado (0.6.0-dev.93) em `webform.css`, com as classes `webform-multiple-table--*` |
 | Terms of service / likert: desativar smart description | Sem smart description | Não aplicável |
