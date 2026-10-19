@@ -1,6 +1,6 @@
 # Verificação de boas práticas — Drupal 11+, SDC e VVJ
 
-Data: 2026-10-19. Versão verificada do tema: `0.6.0-dev.94`.
+Data: 2026-10-19. Versão verificada do tema: `0.6.0-dev.95`.
 Escopo: código do tema (`src/Hook`, `templates`, `js`, `components`, `css`) nos pontos de Drupal 11+, SDC e VVJ (VVJB e VVJS).
 
 ## Versões de referência
@@ -22,7 +22,7 @@ Escopo: código do tema (`src/Hook`, `templates`, `js`, `components`, `css`) nos
 | Serviços por injeção, sem service locator | `\Drupal::` ausente em `src/` do tema; hooks recebem `#[Autowire(service: 'extension.list.theme')]` | OK |
 | Serviços declarados em `services.yml` | Temas não têm `services.yml`: `DrupalKernel` carrega serviços só de módulos (`moduleList`). As classes `#[Hook]` do tema são autowired | OK, com limite: o tema não declara serviços próprios |
 | Renderização segura e tradução de tokens preservada | Teste no Runtime: `image_button` e `textfield` com `data-portal-ui` | OK |
-| Testes automatizados dos hooks do tema | Não há PHPUnit para `InputHooks` nem `PortalUiHooks` | **Lacuna** (ver seção 4) |
+| Testes automatizados dos hooks do tema | `tests/src/Unit/PortalUiHooksTest.php` (5) e `tests/src/Kernel/InputHooksKernelTest.php` (7), versão 0.6.0-dev.95 | OK |
 
 ## 2. SDC (Single Directory Components)
 
@@ -51,6 +51,5 @@ Pesquisa web sem documento oficial conclusivo: a busca sobre hooks OOP em temas 
 
 ## 4. Pendências
 
-1. **Testes dos hooks do tema.** `InputHooks` e `PortalUiHooks` não têm teste automatizado. Recomendado: teste Kernel que renderiza `image_button` e `input` com token (em `aculta_simpletest`, conforme `docs/operations/BANCO-DE-TESTE.md`).
-2. **Validação visual.** VVJB, VVJS e `webform_multiple` não foram validados no navegador nesta etapa (estado NÃO VALIDADO).
-3. **Lista manual de templates.** O gate de Foundation mantém uma allowlist de overrides Twig escrita à mão. Ela já reprovou uma vez (0.6.0-dev.91). Cada novo template precisa entrar nela no mesmo commit.
+1. **Validação visual.** VVJB, VVJS e `webform_multiple` não foram validados no navegador nesta etapa (estado NÃO VALIDADO).
+2. **Lista manual de templates.** O gate de Foundation mantém uma allowlist de overrides Twig escrita à mão. Ela já reprovou uma vez (0.6.0-dev.91). Cada novo template precisa entrar nela no mesmo commit.

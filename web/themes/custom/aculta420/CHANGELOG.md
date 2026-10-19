@@ -1,3 +1,12 @@
+## 0.6.0-dev.95 — testes automatizados de InputHooks e PortalUiHooks — 2026-10-19
+
+Classificação: PATCH sem mudança de comportamento. Testes e documentação.
+
+- `tests/src/Unit/PortalUiHooksTest.php` (5 testes, sem banco): tokens conhecidos viram classes e o atributo `data-portal-ui` é removido; token desconhecido não gera classe; tokens em `#attributes` de elemento de render; atributos em array viram `Attribute`; contador de não lidos só para inteiros positivos.
+- `tests/src/Kernel/InputHooksKernelTest.php` (7 testes, banco `aculta_simpletest`): ícones oficiais de adicionar e remover com as classes de botão; formato array e formato `Attribute`; imagem de outra origem e `submit` não mudam; tokens do Portal continuam valendo em `input`; ícone e token coexistem. Verifica que os SVGs existem no disco.
+- `web/libraries/` deixa de ser ignorado pelo `.gitignore` e passa a ser versionado (repositório público). O arquivo `inputmask-pages/.env` (vazio, do pacote upstream) é versionado com `git add -f`, porque a regra genérica `.env` continua valendo.
+- Validação: Unit 5/5 OK; Kernel 7/7 OK, com banco `aculta_simpletest` via `secrets/simpletest-db.env`.
+
 ## 0.6.0-dev.94 — correção de arquitetura do preprocess de input; ícones oficiais — 2026-10-19
 
 Classificação: PATCH de arquitetura e apresentação. Corrige o commit `0.6.0-dev.93` antes de qualquer validação visual.
