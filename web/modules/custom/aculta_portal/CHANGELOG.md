@@ -1,3 +1,8 @@
+## 0.4.0-dev.174 — formulários e displays nativos do tópico público — 2026-10-19
+
+- O `aculta_forum_topic` ganha formulário com título, corpo e categoria, além de displays `full` (inclui Comment compartilhado) e `teaser` para futuras listagens. Controles de status e autoria histórica ficam fora do formulário.
+- Configuração duplicada em `aculta_forum/config/install` e Config Sync; teste Unit verifica correspondência e campos expostos. No Runtime de teste, importação parcial aplicou somente os três displays; smoke de Form API em Node não salvo confirmou campos esperados e status Comment `Open`. Unit (15 testes/67 assertions) e gates Drupal 11+, fronteira e mapa PASS; Runtime PARTIAL, sem teste de navegador ou fluxo persistido.
+
 ## 0.4.0-dev.173 — status padrão das discussões editoriais existentes — 2026-10-19
 
 - `PublicationDiscussionHooks` completa em memória o status ausente de `field_aculta_discussion` com o default da configuração do campo (fallback `Open`), sem persistir alterações, preservando status `Hidden`/`Closed` explícitos e estatísticas de comentários carregadas pelo Core.

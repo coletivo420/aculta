@@ -1,3 +1,9 @@
+## `0.1.0-dev.10` — formulário e apresentação base do tópico público — 2026-10-19
+
+- Configuração Core de formulário do Node `aculta_forum_topic`: título, corpo e categoria; status de comentário e referência de autoria histórica não ficam editáveis no formulário.
+- Displays Core `full` e `teaser`: página integral apresenta o Comment compartilhado; listagens podem usar teaser de corpo/categoria sem expor thread ou autor histórico.
+- Configs instaláveis e Config Sync permanecem idênticas. Teste Unit: 15 testes/67 assertions PASS. No servidor `toca`, Drupal 11.4.10, Drush URI explícita `https://growroom420.aculta.toca.net.br` e banco `aculta_runtime`, foram importados somente os três displays por `config:import --partial`; `config:status` confirmou os três sem diferenças. Smoke Form API criou Node apenas em memória, expôs título/corpo/categoria e o Core acrescentou `revision_log` no grupo de revisão. Contagens após a operação: 0 tópicos novos, 0 comentários compartilhados e 30 Nodes legados preservados. Nenhum conteúdo foi criado, alterado ou apagado. RUNTIME STATUS: PARTIAL; navegador e envio persistido pendentes.
+
 ## `0.1.0-dev.9` — exibição do Comment compartilhado — 2026-10-19
 
 - Define o display Core `comment.aculta_discussion_post.default` para renderizar o corpo e as ações do Comment; `field_autor_legado` permanece oculto. O `aculta_user` injeta o cartão neutral de autoria.

@@ -1,0 +1,54 @@
+uuid: c4b4aeb0-e217-439e-990e-2d550d0d62aa
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.node.aculta_forum_topic.body
+    - field.field.node.aculta_forum_topic.field_aculta_categories
+    - node.type.aculta_forum_topic
+  module:
+    - text
+id: node.aculta_forum_topic.default
+targetEntityType: node
+bundle: aculta_forum_topic
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 10
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: { }
+  field_aculta_categories:
+    type: options_select
+    weight: 20
+    region: content
+    settings: { }
+    third_party_settings: { }
+  title:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: { }
+hidden:
+  co_authors: true
+  created: true
+  field_aculta_discussion: true
+  field_autor_legado: true
+  field_domain_source: true
+  langcode: true
+  moderation_state: true
+  path: true
+  promote: true
+  simple_sitemap: true
+  status: true
+  sticky: true
+  uid: true
+  url_redirects: true

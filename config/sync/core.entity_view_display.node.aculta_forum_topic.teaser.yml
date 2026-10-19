@@ -1,0 +1,43 @@
+uuid: 178bbb9a-366d-4b14-8c0f-82b2a9158b13
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.aculta_forum_topic.body
+    - field.field.node.aculta_forum_topic.field_aculta_categories
+    - field.field.node.aculta_forum_topic.field_aculta_discussion
+    - node.type.aculta_forum_topic
+  module:
+    - text
+    - user
+id: node.aculta_forum_topic.teaser
+targetEntityType: node
+bundle: aculta_forum_topic
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 400
+    third_party_settings: { }
+    weight: 10
+    region: content
+  field_aculta_categories:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: { }
+    weight: 0
+    region: content
+hidden:
+  co_authors: true
+  field_aculta_discussion: true
+  field_autor_legado: true
+  field_domain_source: true
+  langcode: true
+  links: true
+  private_message_link: true
+  search_api_excerpt: true

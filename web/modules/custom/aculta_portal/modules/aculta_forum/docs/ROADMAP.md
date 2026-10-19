@@ -78,6 +78,14 @@ Runtime.
 Categorias/subcategorias, tópicos, respostas, permissões, Views/navegação e
 Author Cards do `aculta_user` para discussões públicas independentes.
 
+Preparação parcial: formulário e displays Core de `aculta_forum_topic` foram
+adicionados em dev.10 e aplicados ao Runtime de teste. O formulário foi montado
+em memória; nenhum fluxo persistido foi submetido. A fase dev.6 permanece aberta
+até Views/navegação, integração visual, permissões em Runtime e fluxos de
+tópico/resposta serem validados. A retirada contrib dev.5 também permanece
+aberta por depender de aplicação/verificação dos consumidores novos e restore
+point atual.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,

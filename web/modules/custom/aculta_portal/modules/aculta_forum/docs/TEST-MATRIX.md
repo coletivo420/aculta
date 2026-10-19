@@ -11,6 +11,7 @@ Runtime e fluxos completos continuam pendentes.
 | Instalação/configuração | install profile limpo, dependências, IDs e nomes <=32, field Comment nos bundles Node permitidos | Kernel/install tests; validação de config. |
 | Context API | resolver cada contexto, provider ausente/desabilitado, host inválido e URLs canônicas | Unit + Kernel. |
 | Comment | tipo compartilhado (ou variantes justificadas), host bundles e field settings, thread, revisão, publicação, permalink/ancora, formulário | Kernel + Functional. |
+| Formulário/display de tópico público | title/body/categoria editáveis; status de comentário e autoria histórica não editáveis; full apresenta discussão compartilhada; teaser omite thread | Unit verifica contrato YAML e equivalência Config Sync/config install; Functional Runtime pendente. |
 | Acesso público | anônimo/membro/editor; publicação, conteúdo fechado, flags e permissões | Kernel + Functional/browser. |
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
 | Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest`; Runtime editorial ainda DEFERRED. |
@@ -99,6 +100,25 @@ Runtime e fluxos completos continuam pendentes.
   provider editorial não atende Article enquanto o field ainda não existe.
   Nenhuma importação, field editorial ou conteúdo foi criado. RUNTIME STATUS:
   PARTIAL para o registro do serviço; integração editorial segue pendente.
+
+## Evidência dev.10 — formulário e displays do tópico público
+
+- PHPUnit Unit do `aculta_forum`: 15 testes / 67 assertions — PASS.
+- PHPCS Drupal/DrupalPractice no teste novo, PHP lint, YAML parse, gates Portal
+  Drupal 11+, fronteira módulo/tema, mapa módulo/tema e `git diff --check` —
+  resultados registrados no commit desta entrega.
+- No servidor de teste `toca`, Drupal 11.4.10, URI explícita
+  `https://growroom420.aculta.toca.net.br`, banco `aculta_runtime`: importação
+  parcial incluiu somente os displays Form, Full e Teaser. O `config:status`
+  por prefixo confirmou os três sem divergências.
+- Smoke Form API usou Node em memória: título, corpo e categoria aparecem como
+  entradas; o Core inclui `revision_log` no grupo padrão de revisão. O status
+  Comment é `Open`. Nenhum formulário foi salvo.
+- Contagens posteriores: 0 `aculta_forum_topic`, 0 `aculta_discussion_post`,
+  30 Nodes legados `forum` e 0 Comments `comment_forum`. Nenhum conteúdo foi
+  criado, alterado ou excluído.
+- RUNTIME STATUS: PARTIAL. Fluxo persistido de criação/resposta, acesso
+  integrado, apresentação no navegador e UX ainda aguardam a fase funcional.
 
 Gates aplicáveis seguem `scripts/validate-aculta-portal-drupal11.php`, fronteira
 módulo/tema, mapa módulo-tema, slugs, rotas, endereços, imagem, hierarquia de
