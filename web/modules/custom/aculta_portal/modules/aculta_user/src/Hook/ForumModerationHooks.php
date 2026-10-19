@@ -15,6 +15,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Moderação do Fórum pelo content_editor.
@@ -32,6 +33,7 @@ final class ForumModerationHooks {
   private const MODERATION_OPS = ['update', 'delete'];
 
   public function __construct(
+    #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
     private readonly EmailConfirmationPolicy $emailConfirmationPolicy,
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
