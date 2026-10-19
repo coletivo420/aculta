@@ -1,3 +1,9 @@
+## Exclusão de conteúdo H5P tolerante a arquivo retido — 2026-10-19
+
+- `H5PManagedFileStorage::deleteContent()` processa todos os arquivos mesmo quando um é recusado (ainda referenciado ou fora do padrão gerenciado); a pasta do conteúdo só é removida quando nenhum arquivo ficou retido.
+- Pendência: a ponte estática `H5PDrupal::framework()` ainda usa `\Drupal::service()`, por causa das chamadas estáticas do fork H5P.
+- RUNTIME STATUS: DEFERRED.
+
 ## Acesso de Views e formulários administrativos por DI — 2026-10-19
 
 - `H5PAccessUserPoints` agora usa a rota canônica de perfil e a conta carregada

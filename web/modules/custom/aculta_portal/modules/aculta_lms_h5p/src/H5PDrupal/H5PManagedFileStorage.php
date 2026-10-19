@@ -259,7 +259,14 @@ final class H5PManagedFileStorage extends \H5PDefaultStorage {
     }
   }
 
-  /** Removes managed content media before removing the content directory. */
+  /**
+   * Removes managed content media before removing the content directory.
+   *
+   * A file that is still referenced elsewhere, or that is not a valid managed
+   * asset, is kept on disk: the directory is then left in place so the kept
+   * file is not deleted under its other references. The other files are still
+   * processed, so one refusal does not stop the deletion midway.
+   */
   public function deleteContent($content) {
     $contentId = (int) ($content['id'] ?? 0);
     if ($contentId < 1) {
@@ -273,6 +280,7 @@ final class H5PManagedFileStorage extends \H5PDefaultStorage {
       new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS),
       \RecursiveIteratorIterator::CHILD_FIRST,
     );
+    $retained = FALSE;
     foreach ($iterator as $item) {
       if (!$item->isFile()) {
         continue;
@@ -282,9 +290,16 @@ final class H5PManagedFileStorage extends \H5PDefaultStorage {
         $this->fileSystem->unlink($item->getPathname());
         continue;
       }
-      $this->removeContentFile($relative, $contentId);
+      try {
+        $this->removeContentFile($relative, $contentId);
+      }
+      catch (\RuntimeException | \InvalidArgumentException) {
+        $retained = TRUE;
+      }
     }
-    $this->fileSystem->deleteRecursive($directory);
+    if (!$retained) {
+      $this->fileSystem->deleteRecursive($directory);
+    }
   }
 
   /**
