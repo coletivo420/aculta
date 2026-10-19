@@ -138,6 +138,15 @@ configuração ativa e a permissão da conta uid 5. Como não há tópico salvo,
 foi possível renderizar o formulário associado a uma entidade persistida nem
 enviar resposta. Nenhum dado foi criado; o fluxo funcional segue pendente.
 
+### Bloqueio de conteúdo para concluir a criação
+
+O campo `field_aculta_categories` é obrigatório e a View/form restringe termos
+ao vocabulário `aculta_forum_categories`. No Runtime de teste o vocabulário está
+instalado, mas tem zero termos; portanto o formulário abre, mas não permite
+concluir a criação de um tópico categorizado. Não criar categorias por
+inferência: nomes e hierarquia do Growroom420 precisam ser aprovados pelo
+responsável. O fórum continua sem tópicos nem comentários.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,
