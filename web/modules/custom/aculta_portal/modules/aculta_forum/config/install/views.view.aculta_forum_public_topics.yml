@@ -145,3 +145,23 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
+  page_discussions:
+    id: page_discussions
+    display_title: 'Índice público'
+    display_plugin: page
+    position: 2
+    display_options:
+      defaults:
+        title: false
+      title: 'Discussões do Growroom420'
+      path: discussoes
+      menu:
+        type: none
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

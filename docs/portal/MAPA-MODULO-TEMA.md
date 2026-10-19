@@ -141,7 +141,7 @@ Estas peças são de Core, contrib ou configuração exportada. O tema as desenh
 
 | Peça do tema | Origem | Observação |
 | --- | --- | --- |
-| `comment--comment-forum`, `forum-list`, `node--forum--full`, `css/components/forum-index.css` | Fórum Drupal contrib legado | `aculta_magazine` mantém fallback apenas enquanto o campo compartilhado não está instalado |
+| `comment--comment-forum`, `forum-list`, `node--forum--full`, `css/components/forum-index.css` | Fórum Drupal contrib legado | `aculta_magazine` mantém apenas leitores/ajuste visual de dados históricos durante o corte |
 | `comment--aculta-discussion-post`, `css/components/discussion.css` | Comment compartilhado do `aculta_forum` | Identidade preparada pelo `aculta_user`; o tema controla apresentação |
 | `node--editorial-highlight`, `editorial-card`, `editorial-carousel.css`, `editorial-carousel.js` | Tipos de conteúdo de notícias (configuração) | Sem módulo customizado próprio |
 | `node--project--teaser`, `project-card`, `views-view-unformatted--aculta-projects` | Tipo de conteúdo Projeto e view | Configuração exportada |

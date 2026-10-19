@@ -30,7 +30,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 | revista420.aculta.toca.net.br (MAGAZINE) | 200 (`<front>`, com a marca da revista) | 404 | 404 | 404 | 404 | Sem reescrita: página inicial do site com o cabeçalho do host |
 | wiki420.aculta.toca.net.br (WIKI) | 200 (`/wiki` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Página inicial da wiki |
 | cursos.aculta.toca.net.br (COURSES) | 200 (`/cursos` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Página inicial dos cursos |
-| growroom420.aculta.toca.net.br (FORUM) | 200 (`/forum` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Índice do fórum (módulo forum) |
+| growroom420.aculta.toca.net.br (FORUM) | 200 (`/discussoes` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | View `aculta_forum_public_topics`; caminho direto interno |
 
 Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero registros no Runtime de teste).
 
@@ -51,7 +51,7 @@ Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero r
 
 ## Mecanismo único da raiz (decisão de 2026-10-11)
 
-Toda raiz de subdomínio que serve conteúdo passa pelo `PurposeFrontPathProcessor` (`src/PathProcessor/PurposeFrontPathProcessor.php`), um `InboundPathProcessorInterface` com a tag `path_processor_inbound`, mapa único `FRONT_PATHS`. Não há redirecionamento. Sem entrada no mapa, o host usa o `<front>` do Core. Hoje, o `FRONT_PATHS` tem apoio, wiki, cursos, loja e fórum. Revista e principal usam o `<front>`. Para mudar a raiz de um host, altere só esse mapa e rode `php scripts/validate-root-policy.php`.
+Toda raiz de subdomínio que serve conteúdo passa pelo `PurposeFrontPathProcessor` (`src/PathProcessor/PurposeFrontPathProcessor.php`), um `InboundPathProcessorInterface` com a tag `path_processor_inbound`, mapa único `FRONT_PATHS`. Não há redirecionamento. Sem entrada no mapa, o host usa o `<front>` do Core. Hoje, o `FRONT_PATHS` tem apoio, wiki, cursos, loja e Fórum (`/discussoes`). Revista e principal usam o `<front>`. Para mudar a raiz de um host, altere só esse mapa e rode `php scripts/validate-root-policy.php`.
 
 ## Inventário de redirecionamentos e remoções (2026-10-11)
 

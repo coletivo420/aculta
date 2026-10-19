@@ -139,7 +139,14 @@ continuam pendentes.
   sem divergência no `config:status` por prefixo.
 - RUNTIME STATUS: PARTIAL. A View não foi colocada, não há tópico persistido e
   browser/UX seguem pendentes.
-- A View nova não tem caminho de página nem bloco colocado. O bloco existente de `/forum` segue ligado à View do acervo contrib.
+- A View nova tem Page display interno `/discussoes` e serve a raiz do purpose forum; o caminho direto e o antigo `/forum` permanecem fechados. O bloco do acervo contrib continua sem colocação na raiz.
+
+## Evidência dev.12 — índice na raiz do Growroom420
+
+- URI Drush: `https://growroom420.aculta.toca.net.br`; banco `aculta_runtime`.
+- Importação parcial de apenas `views.view.aculta_forum_public_topics`; cache rebuild. A rota `view.aculta_forum_public_topics.page_discussions` resolve `/discussoes` com purpose `forum`; a View executa com zero linhas.
+- HTTP: raiz `/` retorna 200 com título “Discussões do Growroom420”; `/discussoes` e o antigo `/forum` retornam 404.
+- Nenhum Node, Comment ou arquivo criado/alterado/apagado. RUNTIME STATUS: PARTIAL; sem criação/resposta persistida e sem inspeção visual.
 
 ## Evidência dev.9 Magazine — comentários diretos no Runtime de teste
 

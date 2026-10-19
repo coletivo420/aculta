@@ -9,19 +9,28 @@ use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 /**
  * Política uniforme para caminhos internos de raiz de cada subdomínio.
  *
- * Regra: o caminho interno da raiz (PurposeFrontPathProcessor::FRONT_PATHS, ex.: /apoio, /wiki, /cursos) não é público.
- * A raiz do host serve esse conteúdo. Requisição direta ao caminho interno responde 404, sem redirecionamento 301,
- * em qualquer método. Os redirecionamentos 301 que continuam são só os de caminhos legados (ver docs/portal/DOMAIN-FRONT-PATHS.md).
+ * Regra: o caminho interno da raiz não é público. A raiz do host serve esse
+ * conteúdo; acesso direto responde 404 sem redirecionamento. Consulte
+ * docs/portal/DOMAIN-FRONT-PATHS.md para a política completa.
  */
 final class FrontPathPolicy {
 
-  /** Caminho do nó que é a página inicial do subdomínio (não público). */
+  /**
+   * Caminho do nó que é a página inicial do subdomínio (não público).
+   */
   private const NO_DA_RAIZ = [
     'shop' => '/node/372',
   ];
 
   /**
-   * TRUE quando a requisição deve responder 404 por ser o caminho interno da raiz do purpose atual.
+   * Caminhos internos legados que permanecem fechados após a troca da raiz.
+   */
+  private const CAMINHOS_LEGADOS = [
+    'forum' => ['/forum'],
+  ];
+
+  /**
+   * TRUE se a requisição deve responder 404 por ser caminho interno.
    */
   public static function bloqueiaCaminhoInterno(?string $purpose, string $path, bool $servidoComoRaiz): bool {
     if ($purpose === NULL || $servidoComoRaiz) {
@@ -31,7 +40,10 @@ final class FrontPathPolicy {
     if ($caminho !== NULL && $path === $caminho) {
       return TRUE;
     }
-    // Nó que é a página inicial de um subdomínio (loja): o endereço do nó também não é público; a raiz o serve.
+    if (in_array($path, self::CAMINHOS_LEGADOS[$purpose] ?? [], TRUE)) {
+      return TRUE;
+    }
+    // O endereço do Node da loja também é interno; a raiz o serve.
     $noDaRaiz = self::NO_DA_RAIZ[$purpose] ?? NULL;
     return $noDaRaiz !== NULL && $path === $noDaRaiz;
   }

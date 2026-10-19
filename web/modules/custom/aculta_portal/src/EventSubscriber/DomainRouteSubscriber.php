@@ -226,7 +226,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
 
     // Rotas do módulo Forum (fórum, tópicos e containers) pertencem ao purpose FORUM. Admin continua em MAIN (abaixo).
     foreach ($collection as $name => $route) {
-      if (str_starts_with((string) $name, 'forum.') || str_starts_with((string) $name, 'entity.taxonomy_term.forum_')) {
+      if (str_starts_with((string) $name, 'forum.')
+        || str_starts_with((string) $name, 'entity.taxonomy_term.forum_')
+        || str_starts_with((string) $name, 'view.aculta_forum_public_topics.')) {
         $route->setOption('_aculta_domain_purpose', 'forum');
       }
     }

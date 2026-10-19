@@ -229,7 +229,7 @@ de registrar a rota. Esta decisão não altera as rotas atuais nesta entrega.
 
 Na implementação das rotas de produto, definir desde o início aliases amigáveis:
 
-- `/forum` ou root do subdomínio como landing;
+- root do subdomínio Forum como landing; o caminho interno `/discussoes` é oculto e responde 404 diretamente;
 - `/topico/<titulo>`;
 - `/criar-topico`;
 - `/categoria/<termo>` ou equivalente do Forum upstream;

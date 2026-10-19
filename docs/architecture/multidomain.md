@@ -11,6 +11,9 @@ Purpose ativo desde 0.2.0-dev.57:
 O purpose `forum` foi implementado com os módulos `forum` e `flag`. A condição
 anterior (validação da feature de participação, F3) foi substituída por decisão
 do responsável em 2026-10-11, que pediu a raiz do host do fórum servindo `/forum`.
+Em 2026-10-19, esse caminho interno foi substituído pela View pública nova em
+`/discussoes`; a raiz permanece o endereço canônico, e acesso direto aos dois
+caminhos internos responde 404.
 
 Código customizado depende do purpose, não do hostname de ambiente.
 `DomainPurposeManager` centraliza Domain ID, URL correta, canonical de produção

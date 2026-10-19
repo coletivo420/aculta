@@ -85,6 +85,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       ['items_per_page' => TRUE, 'pager' => 'pager'],
       $view['display']['block_recent']['display_options']['allow'],
     );
+    self::assertSame('discussoes', $view['display']['page_discussions']['display_options']['path']);
+    self::assertSame('none', $view['display']['page_discussions']['display_options']['menu']['type']);
+    self::assertFalse($view['display']['page_discussions']['display_options']['defaults']['title']);
   }
 
   /**

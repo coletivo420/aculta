@@ -1,3 +1,9 @@
+## `0.1.0-dev.12` — raiz pública usa a listagem ACULTA Forum — 2026-10-19
+
+- Page display da View `aculta_forum_public_topics` em `/discussoes`; o processador de purpose serve essa rota na raiz `/` do Growroom420. Filtros fixos de bundle, publicação, domínio, access e cache continuam herdados do display padrão.
+- Rotas da View são classificadas como purpose `forum`; o caminho interno novo `/discussoes` e o caminho legado `/forum` continuam 404 diretos. Configuração de instalação e Config Sync equivalentes.
+- Runtime de teste: importação parcial da View e cache rebuild; Drush confirmou rota `/discussoes`, purpose `forum`, zero itens novos. HTTP confirmou raiz 200 e caminhos diretos `/discussoes` e `/forum` 404; título correto no HTML. Nenhum conteúdo criado/movido. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.11` — listagem pública por domínio — 2026-10-19
 
 - View nova `aculta_forum_public_topics`, em Config Sync e config de instalação, consulta somente `aculta_forum_topic` publicado, filtra `field_domain_source` pelo domínio ativo, mantém SQL rewrite/`node_access` e cache contexts de grants. O bloco CTools Views deixa ajustáveis apenas paginação e quantidade.

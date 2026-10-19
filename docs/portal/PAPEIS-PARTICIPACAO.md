@@ -96,8 +96,9 @@ de criação. Administrador mantém o bypass nativo do Drupal.
   no LMS. O limite mínimo de criação continua contando somente comentários do
   Fórum público.
 - O controle legado do bundle `comment_forum` permanece separado durante a
-  retirada de `drupal/forum`. O fluxo editorial novo ainda não foi ativado no
-  Runtime; a cobertura desta entrega é código e Kernel isolado.
+  retirada de `drupal/forum`. Comment direto está instalado em `article` e
+  `blog` no Runtime de teste; formulário foi renderizado em memória para a
+  conta de teste, mas HTTP/envio de comentário segue sem homologação.
 
 ## 6. Visitante e bots
 

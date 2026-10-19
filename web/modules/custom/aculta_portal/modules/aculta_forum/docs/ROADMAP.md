@@ -86,10 +86,12 @@ tópico/resposta serem validados. A retirada contrib dev.5 também permanece
 aberta por depender de aplicação/verificação dos consumidores novos e restore
 point atual.
 
-Dev.11 adiciona a View nova `aculta_forum_public_topics` e o campo de domínio
-canônico. A View continua sem colocação, preservando `/forum` e o bloco legado
-enquanto o Forum contrib e seus Nodes continuam ativos; validar instalação/query
-no Runtime antes de escolher a colocação na etapa de corte.
+Dev.11 adicionou a View `aculta_forum_public_topics` e o campo de domínio
+canônico; dev.12 conectou a Page display à raiz do purpose forum por meio do
+caminho interno `/discussoes`. Runtime confirmou raiz 200, rota classificada no
+purpose `forum`, lista vazia e 404 direto para `/discussoes` e `/forum`. O bloco
+do acervo contrib permanece sem colocação. Criação/resposta persistida, tema e
+remoção do legado continuam pendentes.
 
 ## `0.1.0-dev.7` — Comentários universais
 

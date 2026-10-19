@@ -1,3 +1,8 @@
+## 0.4.0-dev.179 — publica a listagem nova na raiz do Growroom420 — 2026-10-19
+
+- A View `aculta_forum_public_topics` ganhou Page display em `/discussoes` e agora serve `/` no purpose `forum`. Rotas da View são classificadas no purpose correto; `/discussoes` e o índice contrib antigo `/forum` permanecem fechados para acesso direto.
+- Sitemap, política de raiz e gate foram sincronizados. Importação parcial somente de `views.view.aculta_forum_public_topics`; cache rebuild e HTTP: `/` 200 com título da nova View, `/discussoes` e `/forum` 404. Nenhum conteúdo foi criado ou movido. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.178 — remove capacidades residuais de sincronização de tópicos — 2026-10-19
 
 - `ForumTopicSync` foi substituído por `LegacyPublicationTopicLookup`, que só lê vínculos editoriais históricos. Removidos os métodos de criar, sincronizar, despublicar e backfill; o update legado 10001 já não tenta criar tópicos quando executado em ambiente ainda pendente.

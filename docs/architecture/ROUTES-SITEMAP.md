@@ -52,7 +52,7 @@ desabilitadas. Nunca use um caminho de teste como evidência de produção.
 | `wiki.aculta` | `/` | Início da Wiki420 | Ativo; edição/criação depende de autenticação e permissões. |
 | `loja.aculta` | `/` | Vitrine da loja da associação | Domain ativo; produtos dependem de conteúdo publicado. Carrinho e checkout vão para `main.aculta`. |
 | `cursos.aculta` | `/` | Catálogo inicial de cursos | Ativo; cursos e ações dependem de conteúdo, matrícula e access. |
-| `forum.aculta` | `/` | Índice do fórum | Ativo; tópicos e respostas dependem de conteúdo e permissões. |
+| `forum.aculta` | `/` | Índice público do ACULTA Forum / Growroom420 | Declarado; HTTP 200 validado no Runtime de teste com a View nova; itens dependem de Nodes publicados e access. Produção não confirmada. |
 | `links.aculta` | `/` | Página pública de perfis e links sociais | Código/configuração existentes; confirmar provisionamento DNS de produção em multidomínio. |
 
 ## Caminhos humanos ativos ou condicionais
@@ -164,7 +164,7 @@ correspondentes estão habilitados no ambiente.
 | `wiki.aculta` | `/wiki/busca/previa` | Prévia de resultados da busca da Wiki | Endpoint de interface; access/cache conforme busca. |
 | `cursos.aculta` | `/curso/{alias}` | Página de um curso | Dinâmico; depende de curso publicado e acesso. O caminho interno `/cursos` responde `404` diretamente. |
 | `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de arquivo anexado a uma resposta LMS | Condicional; valida resposta e matrícula vigente. |
-| `forum.aculta` | `/topico/{titulo}` | Tópico do fórum | Dinâmico; depende de tópico publicado e access. O caminho interno `/forum` responde `404` diretamente. |
+| `forum.aculta` | `/topico/{titulo}` | Tópico do fórum | Dinâmico; depende de tópico publicado e access. Caminhos internos `/discussoes` e legado `/forum` respondem `404` diretamente. |
 | `links.aculta` | `/` | Página pública de perfis e links sociais | Condicional ao provisionamento do host e conteúdo de configuração. `/redes-sociais` é interno. |
 | `revista.aculta` | `/u/{apelido}` | Perfil público de autor | Condicional a perfil público habilitado; apelido não canônico responde `404`. |
 | `revista.aculta` | `/albuns/{titulo}` | Álbum de galeria | Condicional ao módulo e conteúdo; confirmar estado efetivo do Runtime. |
@@ -195,7 +195,8 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | `/wiki` | `wiki.aculta` | Caminho interno da página inicial da Wiki | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
 | `/cursos` | `cursos.aculta` | Caminho interno do catálogo de cursos | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
 | `/loja` | `loja.aculta` | Caminho interno da vitrine | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
-| `/forum` | `forum.aculta` | Caminho interno do índice do fórum | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
+| `/discussoes` | `forum.aculta` | Rota de Page display da View que serve a raiz do Growroom420 | Declarada e presente no Runtime de teste; caminho interno, acesso direto responde `404`, sem 301. |
+| `/forum` | `forum.aculta` | Antigo índice do Drupal Forum contribuído | Pode continuar declarado enquanto contrib instalado; caminho bloqueado, HTTP 404 validado no Runtime de teste. |
 | `/redes-sociais` | `links.aculta` | Caminho interno da página de links | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
 | `/minha-conta` | `conta.aculta` | Rota interna de visão geral da conta | A página pública é `/`; acesso direto responde `404`. |
 | `/conta-interna` | `conta.aculta` | Antigo caminho interno do painel da conta | Removido; visitante recebe `404`; comportamento para usuário autenticado segue política documentada. |
