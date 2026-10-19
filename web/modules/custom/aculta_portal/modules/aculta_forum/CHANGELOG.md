@@ -1,3 +1,11 @@
+## `0.1.0-dev.23` — links de navegação administrativa — 2026-10-19
+
+- O menu Conteúdo expõe a listagem de tópicos; comentários ficam aninhados em
+  Fórum. Os destinos usam as rotas de Views e mantêm suas permissões de acesso.
+- RUNTIME STATUS: PARTIAL. Fórum e Comentários do Fórum aparecem na árvore
+  administrativa para uid 5, e as rotas passam a checagem de acesso. A sessão
+  HTTP temporária não foi autenticada porque o ULI retornou 404.
+
 ## `0.1.0-dev.21` — paginação do índice público — 2026-10-19
 
 - A listagem pública usa pager Core completo com 20 tópicos por página, controles

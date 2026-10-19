@@ -32,6 +32,20 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Administrative entries expose Forum topics and their separate comments.
+   */
+  public function testAdministrativeMenuLinksExposeForumAndComments(): void {
+    $menu = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum.links.menu.yml');
+
+    self::assertSame('view.aculta_forum_admin_topics.page_forum', $menu['aculta_forum.admin_topics']['route_name']);
+    self::assertSame('system.admin_content', $menu['aculta_forum.admin_topics']['parent']);
+    self::assertSame('view.aculta_forum_admin_comments.page_forum_comments', $menu['aculta_forum.admin_comments']['route_name']);
+    self::assertSame('aculta_forum.admin_topics', $menu['aculta_forum.admin_comments']['parent']);
+    self::assertSame('admin', $menu['aculta_forum.admin_topics']['menu_name']);
+    self::assertSame('admin', $menu['aculta_forum.admin_comments']['menu_name']);
+  }
+
+  /**
    * The field display does not expose comment settings or legacy author data.
    */
   public function testFormDoesNotExposeCommentStatusOrHistoricalAuthor(): void {

@@ -22,6 +22,7 @@ real, aplicativo nativo e previews remotos não são requisitos deste roadmap.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.23` | Links de menu explícitos para Fórum, comentários do Fórum e Revista | Implementado; Runtime PARTIAL, árvore e acesso uid 5 confirmados; HTTP autenticado pendente |
 | `0.1.0-dev.22` | Separação administrativa do Fórum e contratos por contexto; Revista com conteúdo e comentários reunidos em `/painel-administrativo/conteudo/revista` | Implementado; Runtime PARTIAL, sem sessão editorial de navegador |
 
 ## Política estrutural do painel administrativo

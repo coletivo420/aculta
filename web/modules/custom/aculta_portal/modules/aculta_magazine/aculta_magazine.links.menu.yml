@@ -1,0 +1,7 @@
+aculta_magazine.admin_content:
+  title: 'Revista'
+  description: 'Gerenciar publicações e comentários editoriais.'
+  route_name: view.aculta_magazine_admin_content.page_magazine
+  parent: system.admin_content
+  menu_name: admin
+  weight: 20

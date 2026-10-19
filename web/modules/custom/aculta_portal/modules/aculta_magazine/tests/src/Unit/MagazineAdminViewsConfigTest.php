@@ -48,4 +48,15 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
     self::assertSame('main', $block['visibility']['aculta_domain_purpose']['purpose']);
   }
 
+  /**
+   * The unified Magazine page has an explicit entry in admin Content.
+   */
+  public function testAdministrativeMenuLinkTargetsUnifiedMagazinePage(): void {
+    $menu = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_magazine.links.menu.yml');
+
+    self::assertSame('view.aculta_magazine_admin_content.page_magazine', $menu['aculta_magazine.admin_content']['route_name']);
+    self::assertSame('system.admin_content', $menu['aculta_magazine.admin_content']['parent']);
+    self::assertSame('admin', $menu['aculta_magazine.admin_content']['menu_name']);
+  }
+
 }

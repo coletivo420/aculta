@@ -103,6 +103,14 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
 - Chamada aparece na exibição da Notícia e do blog.
 - Documentação em `docs/README.md` (regras e passo a passo para tipos novos: vídeo, galeria).
 - RUNTIME STATUS: verificado no Homelab (navegador e HTTP). Inspeção visual humana pendente.
+## 0.1.0-dev.13 — link de navegação da área unificada — 2026-10-19
+
+- O menu Conteúdo oferece um link direto para a área única da Revista, onde os
+  comentários editoriais já são exibidos junto às publicações.
+- RUNTIME STATUS: PARTIAL. Revista aparece na árvore administrativa para uid 5
+  e a rota passa a checagem de acesso. A sessão HTTP temporária não foi
+  autenticada porque o ULI retornou 404.
+
 ## 0.1.0-dev.12 — área administrativa unificada da Revista — 2026-10-19
 
 - Criada listagem exclusiva de publicações `article` e `blog` em
