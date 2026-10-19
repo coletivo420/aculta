@@ -45,9 +45,10 @@ H5P. Administradores podem instalar pacotes `.h5p` locais pelo validador oficial
 do H5P; o conteúdo do pacote é ignorado e apenas bibliotecas aprovadas são
 instaladas. Imagens raster e SVG passam pelo `aculta_image`, e os demais assets
 ficam como arquivos privados gerenciados. Hub, telemetria e instalação remota
-continuam desabilitados. O módulo continua desabilitado até testes funcionais de
-edição, acesso, progresso, cache e validação visual. Exportação pública e
-estatísticas externas ficam desabilitadas.
+continuam desabilitados. Embora habilitado no Runtime de teste, o módulo ainda
+não está homologado para uso: o salvamento e a reprodução ponta a ponta
+permanecem pendentes. Exportação pública e estatísticas externas ficam
+desabilitadas.
 
 ## Proveniência
 

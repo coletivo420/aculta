@@ -1,3 +1,8 @@
+## Estado do Runtime e roadmap — 2026-10-19
+
+- README e roadmap alinhados: `aculta_lms_h5p` está habilitado no Runtime `cursos` apenas para teste; salvamento e reprodução ponta a ponta seguem pendentes, portanto a integração não está homologada para uso.
+- RUNTIME STATUS: ATIVO PARA TESTE; homologação ponta a ponta DEFERRED.
+
 ## Revisão do salvamento do editor — 2026-10-19
 
 - A revisão encontrou que o envio síncrono com `getParams()` ignorava a validação e a atualização de versão oferecidas pela API `getContent()` do H5P Editor. O formulário agora aguarda a serialização/validação assíncrona de todos os editores antes de submeter.

@@ -22,7 +22,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F7 — Turmas e memberships | LMS Classes conforme existência/metadata real, educadores/alunos, isolamento | Usuário A/B, educador A/B, acesso admin e autocadastro/política aprovados | Não habilitar autoenrollment até política; rollback de grants/config em janela controlada |
 | F8 — Avaliação objetiva | Answer plugins LMS, tentativas, scores e feedback | Cálculo repetível no servidor, regra documentada, audit trail e sem score externo confiado | Remover plugin somente após confirmar atividades referenciadas; preservar respostas existentes |
 | F9 — Webform Score e entregas | Webform Score, LMS File Upload, storage privado | Identidade/autoria e resultados integrados sem gradebook duplicado; revogação de membership corta arquivos | Dependente de APIs Composer e privacidade; desabilitar formulário/integração mantendo submissions e arquivos |
-| F10 — H5P | Auditoria de segurança/compatibilidade e integração de conteúdo | Bibliotecas, permissões, uploads, CSP/isolamento e acesso aprovados; sem nota oficial até API confiável | H5P Drupal 11 é beta nas fontes revisadas; ativação só por decisão. Rollback despublica embed sem apagar conteúdo |
+| F10 — H5P | Integração própria `aculta_lms_h5p`, editor, bibliotecas privadas e reprodução integrada ao curso | Bibliotecas, permissões, uploads, CSP/isolamento, salvamento e acesso de estudante homologados; sem nota oficial até API confiável | Despublicar atividades sem apagar conteúdo válido; preservar bibliotecas enquanto houver referências |
 | F11 — Certificados | Entity Print após conclusão LMS aprovada | emissão/autorização, verificação, reemissão, revogação, auditoria, privacidade e template testados | Definir registro imutável/derivado antes de codar. Reverter emissão sem apagar auditoria/artefatos válidos |
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
 | F13 — Notificações educacionais | Eventos LMS → `aculta_messenger` / Message Notify | dedupe, access atual, preferências, e-mail mínimo e fila testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
@@ -153,12 +153,19 @@ Webform Score continua restrito às submissões Webform; não há integração q
 automaticamente para a nota LMS. A tentativa automática de baixar traduções
 pt-BR dos três módulos durante `drush en` falhou porque `translations://` não está configurado neste
 Runtime; o código e a ativação terminaram com sucesso. RUNTIME STATUS: MÓDULOS HABILITADOS; homologação
-de acesso Runtime/browser DEFERRED por ausência de conteúdo de teste. A F10 foi iniciada: `drupal/h5p`
-2.0.0-beta1 e suas duas dependências foram adicionadas via Composer, sem upgrades/remoções. O módulo não foi
-habilitado, não foram criadas tabelas H5P nem importadas bibliotecas; configuração e banco do Runtime não foram
-alterados. O código está disponível no checkout, mas sem rotas nem funcionalidades H5P ativas.
-Ativação e acesso ao editor continuam bloqueados pelos gates de segurança e privacidade registrados em
-[LMS-H5P-AUDIT.md](LMS-H5P-AUDIT.md).
+de acesso Runtime/browser DEFERRED por ausência de conteúdo de teste. **F10 — em andamento.** A integração própria
+`aculta_lms_h5p` foi portada e revisada; o módulo está habilitado no Runtime `cursos` e a biblioteca de smoke
+`H5P.HelloWorld` está instalada. Testes automatizados cobrem segurança, permissões, arquivos privados, estado,
+progresso, acesso por curso e editor. O smoke visual confirmou carregamento do editor, seleção de biblioteca e
+serialização do conteúdo no formulário. Ainda falta salvar uma atividade descartável, confirmar sua reprodução
+para estudante matriculado e limpar os dados de teste. Portanto, não está homologado para uso. RUNTIME STATUS:
+ATIVO PARA TESTE; persistência/reprodução ponta a ponta DEFERRED. Detalhes em
+[LMS-H5P-AUDIT.md](LMS-H5P-AUDIT.md) e no [changelog do módulo H5P](../../web/modules/custom/aculta_portal/modules/aculta_lms_h5p/CHANGELOG.md).
+
+As etapas depois da F10 continuam na ordem definida acima: F11 certificados (após decisões de produto), F12
+dashboards, F13 notificações educacionais, F14 conexões, F15 integrações de conteúdo, F16 hardening e RC
+integrado. F17 Google Classroom permanece opcional, por último e dependente de nova decisão. Antes de avançar
+para essas fases, fechar as homologações Runtime pendentes de F6–F9 e a aceitação ponta a ponta da F10.
 
 ## Ordem, PR e status
 
