@@ -157,6 +157,22 @@ def c8_pii():
     return {"emails_encontrados": dict(achados), "ok": sum(achados.values()) == 0}
 
 
+def c9_conjunto(topicos):
+    """Conjunto de importação: só tópicos baixados, nenhum comercial e exceções só de fórum excluído."""
+    conjunto = json.load(open(caminho("conjunto-importacao.json"), encoding="utf-8"))
+    comerciais = bm.comerciais_forte()
+    fora_do_acervo = sum(1 for c in conjunto if c["url"] not in topicos)
+    comerciais_dentro = sum(1 for c in conjunto if c["url"] in comerciais)
+    def forum_valor(valor):
+        return valor if valor.startswith("thw:") else int(valor)
+
+    excecao_sem_exclusao = sum(1 for c in conjunto
+                               if c["motivo"] == "excecao_tematica" and not bm.excluido(forum_valor(c["forum"])))
+    return {"tópicos": len(conjunto), "fora_do_acervo": fora_do_acervo, "comerciais_dentro": comerciais_dentro,
+            "excecao_sem_exclusao": excecao_sem_exclusao,
+            "ok": fora_do_acervo == 0 and comerciais_dentro == 0 and excecao_sem_exclusao == 0}
+
+
 def main():
     inicio = time.time()
     topicos = bm.topicos_baixados()
@@ -169,6 +185,7 @@ def main():
         "C6_perfis": c6_perfis(),
         "C7_mapeamento": c7_mapeamento(topicos),
         "C8_dados_pessoais": c8_pii(),
+        "C9_conjunto": c9_conjunto(topicos),
     }
     resultado["_modo"] = "rapido" if RAPIDO else "completo"
     resultado["_segundos"] = round(time.time() - inicio)

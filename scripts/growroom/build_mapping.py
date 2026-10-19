@@ -37,6 +37,15 @@ RE_NOME_IPS = re.compile(r'itemprop="name">(.*?)</strong>', re.S)
 EXCLUIDOS_THW = {2, 24, 28}  # boardid do THWboard: Avisos (2), Notícias (24), Cannabis Medicinal (28)
 RE_THW_BC = re.compile(r"board\.php\?boardid=(\d+)[^>]*>([^<]{1,80})</a>\s*(?:&raquo;|»)?\s*(?:<[^>]+>\s*)*"
                        r"<a[^>]*showtopic\.php\?threadid=\d+")
+# Conjunto de importação: tópicos excluídos que ficam por decisão do responsável (2026-10-19).
+# Critério de título, o mesmo da triagem: temas políticos e sociais e casos individuais ficam; vida interna não.
+_NORM = lambda s: unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower()  # noqa: E731
+RE_INTERNO = re.compile(r"usuario do (mes|ano)|rifa|growroom\b|encontro|evento|promo|sorteio|concurso|votacao", re.I)
+RE_INDIVIDUAL = re.compile(r"\bpreso|\bpresa|cerco|cultivador|portador|motorista|denuncia|acusad|condenad", re.I)
+RE_POLITICO = re.compile(r"legaliz|marcha|descriminal|\blei\b|projeto de lei|stf|stj|politica|governador|deputad|"
+                         r"senador|anvisa|\bsus\b|medicinal|direitos|proibi|guerra|repress|justica", re.I)
+EXCECOES_TEMATICAS = {"politico_social", "caso_individual"}
+COMERCIAIS_ARQUIVO = os.path.join(BASE, "comercial-marcados.jsonl")
 EMAIL_NOME = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+")  # nome com forma de e-mail: omitido do mapa
 RE_THW_AUTOR = re.compile(r'v_profile\.php\?userid=(\d+)"\s*>\s*<img[^>]*alt="Ver o Perfil de ([^"]+)"')
 
@@ -102,6 +111,30 @@ def topicos_baixados():
     return dict(vistos)
 
 
+def categoria_titulo(titulo: str) -> str:
+    n = _NORM(titulo)
+    if RE_INTERNO.search(n):
+        return "vida_interna"
+    if RE_INDIVIDUAL.search(n):
+        return "caso_individual"
+    if RE_POLITICO.search(n):
+        return "politico_social"
+    return "outros"
+
+
+def titulo_da_captura(local: str) -> str:
+    m = re.search(r"<title>(.*?)</title>", ler_pagina(local), re.S | re.I)
+    return re.sub(r"\s+", " ", htmllib.unescape(m.group(1))).split(" - ")[0].strip() if m else ""
+
+
+def comerciais_forte() -> set:
+    """URLs marcadas como comerciais de anúncio (marcar_comercial.py). Saem da importação."""
+    if not os.path.isfile(COMERCIAIS_ARQUIVO):
+        return set()
+    with open(COMERCIAIS_ARQUIVO, encoding="utf-8") as fh:
+        return {r["url"] for r in map(json.loads, filter(str.strip, fh)) if r["nivel"] == "comercial_forte"}
+
+
 def excluido(forum) -> bool:
     """Fórum excluído pela regra de importação. IDs do THWboard ('thw:N') têm espaço próprio."""
     if isinstance(forum, str) and forum.startswith("thw:"):
@@ -165,6 +198,9 @@ def main():
     ids_thw = defaultdict(set)  # nome -> userids exatos (THWboard)
     sem_forum = 0
     omitidos_email = set()
+    comerciais = comerciais_forte()
+    comerciais_fora = 0
+    conjunto = []
     for url, capturas in topicos.items():
         # Fórum: da captura mais recente que o identifica. Autores: de todas as capturas com fórum.
         analisadas = [analisar_topico(local) for local in capturas]
@@ -173,10 +209,18 @@ def main():
             sem_forum += 1
             continue
         forum_de[url] = com_forum[-1][0]
-        if excluido(forum_de[url]):
+        if url in comerciais:
+            comerciais_fora += 1
             continue
+        excecao = False
+        if excluido(forum_de[url]):
+            if categoria_titulo(titulo_da_captura(capturas[-1])) not in EXCECOES_TEMATICAS:
+                continue
+            excecao = True
+        conjunto.append({"url": url, "forum": str(forum_de[url]),
+                         "motivo": "excecao_tematica" if excecao else "forum_importado"})
         for forum, autores in com_forum:
-            if excluido(forum):
+            if excluido(forum) and not excecao:
                 continue
             for nome, perfil, uid in autores:
                 if EMAIL_NOME.search(nome):
@@ -215,6 +259,10 @@ def main():
           f"URLs de perfil permitidas: {len(permitidos)}")
     print("ambíguos (até 5):", ambiguos[:5])
     print(f"nomes com forma de e-mail omitidos do mapa: {len(omitidos_email)}")
+    print(f"conjunto de importação: {len(conjunto)} tópicos "
+          f"({sum(1 for c in conjunto if c['motivo'] == 'forum_importado')} de fóruns importados, "
+          f"{sum(1 for c in conjunto if c['motivo'] == 'excecao_tematica')} por exceção temática); "
+          f"comerciais removidos: {comerciais_fora}")
     if aplicar or so_mapeamento:
         os.makedirs(SAIDA, exist_ok=True)
         if aplicar:
@@ -225,6 +273,8 @@ def main():
             json.dump(forum_de, fh, ensure_ascii=False, indent=0)
         with open(os.path.join(SAIDA, "autor-topicos.json"), "w", encoding="utf-8") as fh:
             json.dump({k: sorted(v) for k, v in autores_de.items()}, fh, ensure_ascii=False, indent=0)
+        with open(os.path.join(BASE, "conjunto-importacao.json"), "w", encoding="utf-8") as fh:
+            json.dump(conjunto, fh, ensure_ascii=False, indent=0)
         print("gravado:", "perfis-permitidos.json e " if aplicar else "", "mapeamento/", sep="")
 
 

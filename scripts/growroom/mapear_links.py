@@ -62,6 +62,9 @@ def tipo(alvo: str) -> str:
         return "recurso_estatico"
     if "openx" in path or "/ads" in path or "delivery" in path:
         return "anuncio_terceiro"
+    if "/gallery/" in path and q.get("do") == ["download"]:
+        # Download de foto da galeria: é a própria imagem, não uma ação de navegação.
+        return "imagem_conteudo"
     if any(k in q for k in ("do", "act", "sortby", "tab", "action", "s")):
         return "acao_navegacao"
     if path in ("", "/", "/board", "/board/"):
@@ -126,12 +129,23 @@ def indices():
     return manif, cdx
 
 
-def classificar(alvo, manif, cdx):
+def truncados():
+    """Caminhos das fotos truncadas (truncados.jsonl): contam como não recuperadas."""
+    caminho = os.path.join(BASE, "truncados.jsonl")
+    if not os.path.isfile(caminho):
+        return set()
+    with open(caminho, encoding="utf-8") as fh:
+        return {loc for r in map(json.loads, filter(str.strip, fh)) for loc in r["capturas_truncadas"]}
+
+
+def classificar(alvo, manif, cdx, cortados=frozenset()):
     k = norm(alvo)
     ok = [r for r in manif.get(k, []) if r.get("local") and r.get("http") == 200
-          and os.path.isfile(os.path.join(BASE, r["local"]))]
+          and os.path.isfile(os.path.join(BASE, r["local"])) and r["local"] not in cortados]
     if ok:
         return "resolve_no_acervo"
+    if any(r.get("local") in cortados for r in manif.get(k, [])):
+        return "truncado_nao_recuperado"
     if k in cdx:
         return "cdx_sem_captura_valida:" + ",".join(sorted(cdx[k]))
     return "fora_do_inventario"
@@ -158,10 +172,11 @@ def testar_vivo(alvos, n):
 def main():
     ocorr, origem = coletar_alvos()
     manif, cdx = indices()
+    cortados = truncados()
     registros = []
     resumo = collections.Counter()
     for alvo, n in ocorr.items():
-        classe = classificar(alvo, manif, cdx)
+        classe = classificar(alvo, manif, cdx, cortados)
         tp = tipo(alvo)
         dest = destino(classe, tp)
         registros.append({"alvo": alvo, "ocorrencias": n, "paginas_origem": len(origem[alvo]),
