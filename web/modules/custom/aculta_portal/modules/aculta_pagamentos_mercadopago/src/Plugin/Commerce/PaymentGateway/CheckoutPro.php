@@ -635,11 +635,12 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
     // Form state stores config under plugin_id (e.g. aculta_mercadopago_checkout_pro), not "form".
     $values_config = $form_state->getValues()['configuration'] ?? [];
-    $config_key = array_keys($values_config)[0] ?? array_keys(\Drupal::request()->request->all()['configuration'] ?? [])[0] ?? 'form';
+    // getUserInput() é o POST desta requisição AJAX: não é preciso o service locator.
+    $user_input = $form_state->getUserInput()['configuration'] ?? [];
+    $config_key = array_keys($values_config)[0] ?? array_keys($user_input)[0] ?? 'form';
     $country = (string) ($form_state->getValue(['configuration', $config_key, 'country']) ?? '');
     if ($country === '') {
-      $input = $form_state->getUserInput()['configuration'][$config_key]['country'] ?? NULL;
-      $country = (string) ($input ?? \Drupal::request()->request->all()['configuration'][$config_key]['country'] ?? '');
+      $country = (string) ($user_input[$config_key]['country'] ?? '');
     }
 
     // Find the wrapper in the form tree (plugin form is under key 'form' in configuration).
@@ -1261,6 +1262,21 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       throw new PaymentGatewayException('Payment was not approved.', 0);
     }
 
+    // Registra o valor que o Mercado Pago confirmou, não o saldo do pedido: um
+    // pagamento parcial ou de valor diferente não pode quitar o pedido.
+    $verified_amount_number = (string) ($mp_payment->transaction_amount ?? '');
+    $verified_currency = (string) ($mp_payment->currency_id ?? '');
+    if (!is_numeric($verified_amount_number) || (float) $verified_amount_number <= 0 || $verified_currency !== $order->getTotalPrice()?->getCurrencyCode()) {
+      $logger->error('Payment @id amount @amount @currency does not match order @order_id currency', [
+        '@id' => $payment_id,
+        '@amount' => $verified_amount_number !== '' ? $verified_amount_number : 'none',
+        '@currency' => $verified_currency !== '' ? $verified_currency : 'none',
+        '@order_id' => $order->id(),
+      ]);
+      throw new PaymentGatewayException('Payment amount could not be verified.', 0);
+    }
+    $verified_amount = new Price($verified_amount_number, $verified_currency);
+
     // Ensure the payment belongs to this order: get merchant order and check
     // external_reference matches our order id. Payment resource uses "order", not "order_id".
     $order_id_mp = NULL;
@@ -1270,7 +1286,20 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     if ($order_id_mp === NULL && isset($mp_payment->order_id)) {
       $order_id_mp = is_object($mp_payment->order_id) ? ($mp_payment->order_id->id ?? NULL) : ($mp_payment->order_id ?? NULL);
     }
-    if ($order_id_mp) {
+    if (!$order_id_mp) {
+      // Sem merchant order no pagamento, o external_reference do próprio pagamento
+      // é a única prova de vínculo: sem ela, o retorno não pode marcar o pedido.
+      $external_ref = $mp_payment->external_reference ?? NULL;
+      if ((string) $external_ref !== (string) $order->id()) {
+        $logger->error('Payment @id external_reference @ext does not match order @order_id', [
+          '@id' => $payment_id,
+          '@ext' => $external_ref ?? 'none',
+          '@order_id' => $order->id(),
+        ]);
+        throw new PaymentGatewayException('Payment does not belong to this order.', 0);
+      }
+    }
+    else {
       $merchantOrderClient = new MerchantOrderClient();
       try {
         $merchant_order = $merchantOrderClient->get((int) $order_id_mp);
@@ -1309,9 +1338,10 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     }
     // If OnNotify method failed for some reason
     // we continue to save the payment information.
-    $order->setData('commerce_mercado_pago_checkout', [
-      'remote_id' => $merchant_order_id,
-    ]);
+    // Merge, não substituir: preference_id é lido na próxima visita ao retorno.
+    $checkout_data = $order->getData('commerce_mercado_pago_checkout') ?? [];
+    $checkout_data['remote_id'] = $merchant_order_id;
+    $order->setData('commerce_mercado_pago_checkout', $checkout_data);
 
     /*
     // If the user is anonymous, add their Mercado Pago e-mail to the order.
@@ -1359,7 +1389,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
     /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
     $payment = $payment_storage->create([
       'state' => 'authorization',
-      'amount' => $order->getBalance(),
+      'amount' => $verified_amount,
       'payment_gateway' => $this->parentEntity->id(),
       'order_id' => $order->id(),
       'remote_id' => $payment_id,

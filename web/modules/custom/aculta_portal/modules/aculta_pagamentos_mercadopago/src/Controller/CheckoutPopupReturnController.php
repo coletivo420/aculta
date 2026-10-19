@@ -39,7 +39,7 @@ final class CheckoutPopupReturnController extends ControllerBase {
       $redirect = '/';
     }
     // Allow only same-origin or relative URLs to avoid open redirect.
-    if (strpos($redirect, '//') === 0 || (preg_match('#^https?://#i', $redirect) && !$this->isSameOrigin($redirect, $request))) {
+    if (!$this->isAllowedRedirect($redirect, $request)) {
       $redirect = '/';
     }
     // Mercado Pago appends payment_id, merchant_order_id, status, etc. to the
@@ -52,7 +52,7 @@ final class CheckoutPopupReturnController extends ControllerBase {
       $redirect = $redirect . $separator . http_build_query($query);
     }
     $redirect_escaped = htmlspecialchars($redirect, ENT_QUOTES, 'UTF-8');
-    $redirect_js = $this->jsEscape($redirect);
+    $redirect_js = $this->jsString($redirect);
 
     $html = <<<HTML
 <!DOCTYPE html>
@@ -65,7 +65,7 @@ final class CheckoutPopupReturnController extends ControllerBase {
 <p>Redirecting...</p>
 <script>
 (function() {
-  var redirect = "{$redirect_js}";
+  var redirect = {$redirect_js};
   if (window.opener) {
     window.opener.location.href = redirect;
     window.close();
@@ -85,10 +85,27 @@ HTML;
   }
 
   /**
-   * Escapes a string for safe use inside JavaScript double-quoted string.
+   * Encodes a value as a JavaScript string literal safe inside a <script> block.
+   *
+   * JSON_HEX_* also escapes '<', '>', '&', quotes and apostrophes, so a value
+   * such as "</script>" cannot close the script element early.
    */
-  private function jsEscape(string $s): string {
-    return addcslashes($s, "\0..\37\"\\");
+  private function jsString(string $value): string {
+    return json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE) ?: '""';
+  }
+
+  /**
+   * Checks whether the redirect target is a same-site path or same-origin URL.
+   *
+   * Browsers treat "//host" and "/\host" as protocol-relative URLs to another
+   * host, so a relative path must have a non-slash, non-backslash second
+   * character. Schemes such as javascript: never pass.
+   */
+  private function isAllowedRedirect(string $url, Request $request): bool {
+    if ($url === '/' || preg_match('#^/[^/\\\\]#', $url)) {
+      return TRUE;
+    }
+    return preg_match('#^https?://#i', $url) === 1 && $this->isSameOrigin($url, $request);
   }
 
   /**

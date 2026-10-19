@@ -1,5 +1,12 @@
 # Changelog — aculta_pagamentos_mercadopago
 
+## 0.1.0-dev.5 — retorno do popup e onReturn endurecidos — 2026-10-19
+
+- Popup de retorno aceita só caminho do mesmo site ou URL de mesma origem, e grava o destino como literal JSON seguro (`JSON_HEX_*`). Teste Unit `CheckoutPopupReturnControllerTest`.
+- `onReturn` falha fechado sem vínculo de pedido (usa `external_reference` do pagamento), registra o `transaction_amount` confirmado (não o saldo) e preserva `preference_id`.
+- AJAX de país usa `getUserInput()` em vez de `\Drupal::request()`.
+- Evidência: Unit 8 testes OK. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.4 — evento de elegibilidade de estorno; sem regra de negócio — 2026-10-18
 
 - Novo evento `aculta_pagamentos_mercadopago.refund_eligibility` (`RefundEligibilityEvent`). O gateway pergunta a assinantes se o estorno é permitido; o gateway não conhece doação nem curso.
