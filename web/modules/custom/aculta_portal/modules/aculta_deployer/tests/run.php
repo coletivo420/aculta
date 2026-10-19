@@ -129,6 +129,10 @@ $assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/link-para-r
 $assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/c'])) === 2, 'build com entradas bloqueantes exige --allow-open-blocking');
 // Limpeza.
 foreach (['a', 'b'] as $d) {
+  // Um build que falhou pode não ter criado o diretório: a limpeza só remove o que existe.
+  if (!is_dir($base . '/' . $d)) {
+    continue;
+  }
   $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base . '/' . $d, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
   foreach ($it as $f) {
     $f->isDir() ? rmdir($f->getPathname()) : unlink($f->getPathname());
