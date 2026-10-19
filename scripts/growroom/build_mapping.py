@@ -45,6 +45,23 @@ RE_INDIVIDUAL = re.compile(r"\bpreso|\bpresa|cerco|cultivador|portador|motorista
 RE_POLITICO = re.compile(r"legaliz|marcha|descriminal|\blei\b|projeto de lei|stf|stj|politica|governador|deputad|"
                          r"senador|anvisa|\bsus\b|medicinal|direitos|proibi|guerra|repress|justica", re.I)
 EXCECOES_TEMATICAS = {"politico_social", "caso_individual"}
+SELECAO_ARQUIVO = os.path.join(BASE, "selecao-manual.json")  # tópicos marcados pelo responsável (página de seleção)
+
+
+def _selecao_manual() -> set:
+    if not os.path.isfile(SELECAO_ARQUIVO):
+        return set()
+    with open(SELECAO_ARQUIVO, encoding="utf-8") as fh:
+        return set(json.load(fh)["topicos"])
+
+
+SELECAO_MANUAL = _selecao_manual()
+
+
+def thread_id(url: str):
+    """Número do tópico (IPB/IPS: /topic/N-slug). Variações de página e âncora têm o mesmo número."""
+    m = re.search(r"/topic/(\d+)", url)
+    return int(m.group(1)) if m else None
 COMERCIAIS_ARQUIVO = os.path.join(BASE, "comercial-marcados.jsonl")
 EMAIL_NOME = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+")  # nome com forma de e-mail: omitido do mapa
 RE_THW_AUTOR = re.compile(r'v_profile\.php\?userid=(\d+)"\s*>\s*<img[^>]*alt="Ver o Perfil de ([^"]+)"')
@@ -209,18 +226,24 @@ def main():
             sem_forum += 1
             continue
         forum_de[url] = com_forum[-1][0]
-        if url in comerciais:
+        excecao = False
+        selecionado = thread_id(url) in SELECAO_MANUAL
+        if url in comerciais and not selecionado:
+            # Escolha explícita do responsável prevalece sobre a marcação automática por título.
             comerciais_fora += 1
             continue
-        excecao = False
-        if excluido(forum_de[url]):
+        if excluido(forum_de[url]) and not selecionado:
             if categoria_titulo(titulo_da_captura(capturas[-1])) not in EXCECOES_TEMATICAS:
                 continue
             excecao = True
-        conjunto.append({"url": url, "forum": str(forum_de[url]),
-                         "motivo": "excecao_tematica" if excecao else "forum_importado"})
+        liberado = excecao or selecionado
+        if selecionado and excluido(forum_de[url]):
+            motivo = "selecao_manual"
+        else:
+            motivo = "excecao_tematica" if excecao else "forum_importado"
+        conjunto.append({"url": url, "forum": str(forum_de[url]), "motivo": motivo})
         for forum, autores in com_forum:
-            if excluido(forum) and not excecao:
+            if excluido(forum) and not liberado:
                 continue
             for nome, perfil, uid in autores:
                 if EMAIL_NOME.search(nome):

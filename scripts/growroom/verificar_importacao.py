@@ -162,7 +162,9 @@ def c9_conjunto(topicos):
     conjunto = json.load(open(caminho("conjunto-importacao.json"), encoding="utf-8"))
     comerciais = bm.comerciais_forte()
     fora_do_acervo = sum(1 for c in conjunto if c["url"] not in topicos)
-    comerciais_dentro = sum(1 for c in conjunto if c["url"] in comerciais)
+    # Comercial só entra por escolha explícita (seleção manual), nunca pela regra automática.
+    comerciais_dentro = sum(1 for c in conjunto
+                            if c["url"] in comerciais and bm.thread_id(c["url"]) not in bm.SELECAO_MANUAL)
     def forum_valor(valor):
         return valor if valor.startswith("thw:") else int(valor)
 

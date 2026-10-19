@@ -175,7 +175,11 @@ A verificação completa relê os 8 GB e confere o SHA-256 de cada arquivo.
 **Bloqueios antes da importação** (decisões que cabem ao responsável; nada disso foi decidido por mim):
 
 1. **Remodelagem do fórum na PR #297**: a importação aguarda essa etapa.
-2. **Seleção dos 4.739 tópicos de "outros termos"**: até a marcação, ficam excluídos. Página publicada.
+2. **Seleção dos 4.739 tópicos de "outros termos": recebida** (2026-10-19). 133 tópicos marcados pelo responsável,
+   guardados em `restauro/selecao-manual.json`. 132 estão no acervo e entram no conjunto, mesmo quando o fórum é excluído.
+   O 133º (tópico 44876) foi removido pela regra comercial por causa da palavra "growshop" no título, mas é notícia sobre
+   uma ação policial. A escolha explícita prevalece, e a regra comercial tem esse falso positivo registrado.
+   Os demais tópicos de "outros termos" não marcados continuam excluídos.
 3. **Revisão dos 17 tópicos marcados como "revisar"** (termos de notícia que também aparecem em anúncios).
 4. **Vida interna do fórum (616 tópicos)**: excluídos por padrão, sem decisão.
 5. **Perfis: só quem tem conteúdo no fórum importado** (decisão do responsável, 2026-10-19). A lista de perfis sai do
