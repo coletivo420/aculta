@@ -56,6 +56,9 @@ def tipo(alvo: str) -> str:
     path = p.path.lower()
     q = urllib.parse.parse_qs(p.query)
     if re.search(r"\.(jpe?g|png|gif|css|js|ico|svg|woff2?|ttf)$", path):
+        # Foto de conteúdo (uploads do fórum e galeria) é conteúdo a restaurar; o resto é tema antigo.
+        if "/uploads/" in path or "/gallery/" in path:
+            return "imagem_conteudo"
         return "recurso_estatico"
     if "openx" in path or "/ads" in path or "delivery" in path:
         return "anuncio_terceiro"
@@ -75,6 +78,9 @@ def tipo(alvo: str) -> str:
 
 
 def destino(classe: str, tp: str) -> str:
+    if tp == "imagem_conteudo":
+        # Imagem sem arquivo no acervo recebe a imagem padrão de restauração, não o modal.
+        return "imagem_acervo" if classe == "resolve_no_acervo" else "imagem_padrao"
     if classe == "resolve_no_acervo":
         return "link_interno"
     if tp in ("anuncio_terceiro", "recurso_estatico"):
