@@ -1,3 +1,8 @@
+## 0.4.0-dev.180 — adiciona rota amigável de criação do tópico — 2026-10-19
+
+- `/criar-topico` usa o formulário Core `node.default` para `aculta_forum_topic`, com `_entity_create_access` por bundle e classificação do purpose `forum`. Sem permissão contextual, a rota nega acesso.
+- Sitemap atualizado. Runtime de teste: rota resolvida no purpose `forum`; conta sem permissão recebe 403 e purpose principal recebe 404. Nenhum conteúdo criado; formulário não submetido. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.179 — publica a listagem nova na raiz do Growroom420 — 2026-10-19
 
 - A View `aculta_forum_public_topics` ganhou Page display em `/discussoes` e agora serve `/` no purpose `forum`. Rotas da View são classificadas no purpose correto; `/discussoes` e o índice contrib antigo `/forum` permanecem fechados para acesso direto.

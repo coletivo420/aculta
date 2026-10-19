@@ -1,11 +1,11 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Linha do projeto: **0.1.0-dev.5**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.13**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
-uma migração segura, por fase própria. A dev.4 introduz o módulo executável e
-a Context API; configuração de instalação/Config Sync foi aplicada apenas no
-Runtime de teste para smoke test, sem criar conteúdo. `aculta_user`
+uma migração segura, por fase própria. A dev.4 introduziu o módulo executável e
+a Context API; a View pública já serve a raiz do Runtime de teste e `/criar-topico`
+usa Entity Form/Entity Create Access do Core. Nenhum tópico foi criado. `aculta_user`
 já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC
 experimental compartilhado. A integração dos cartões nas discussões atuais e no
 motor novo segue por contexto e fases.
@@ -21,7 +21,7 @@ motor novo segue por contexto e fases.
 - Core/contrib permanecem fonte de verdade para Node, Comment, Taxonomy, Views,
   Search API, History e Flag. Sem storage paralelo de resposta/categoria.
 - Imagens passam por `aculta_image`; avisos pelo `aculta_messenger`.
-- Remoção do Forum contrib e qualquer exclusão de dados não fazem parte da dev.4.
+- Remoção do Forum contrib e exclusão de dados aguardam os pré-requisitos da dev.5.
 
 ## Documentação
 
@@ -61,10 +61,10 @@ Consulte [inventário de remoção](docs/MIGRATION-REMOVAL.md) e
 
 ## Versão e execução
 
-A dev.5 mantém a retirada em andamento: a auditoria identificou vínculos de
-publicações que serão substituídos antes de apagar os tópicos antigos. A fase
-também iniciou o provider editorial e comprovou em Kernel o uso de um storage
-Comment compartilhado em `article`, `blog` e `aculta_forum_topic`. A configuração
-de publicação e sua integração visual ainda não foram aplicadas no Runtime.
-Releases Portal, User e tema conservam linhas próprias. O roadmap detalha os
-gates de migração, limpeza de dados e uninstall.
+A dev.5 mantém a retirada em andamento: os Comments diretos de `article`/`blog`
+estão instalados; os hooks e a API capazes de sincronizar tópicos legados foram
+removidos. O índice público do novo bundle está ativo na raiz do Runtime de teste
+e `/criar-topico` verifica Entity Create Access. Ainda faltam submissão
+persistida/homologação visual, migrar consumidores contrib restantes e validar
+restore point antes de excluir conteúdo/desinstalar o módulo. Releases Portal,
+User e tema conservam linhas próprias; o roadmap detalha as próximas entregas.

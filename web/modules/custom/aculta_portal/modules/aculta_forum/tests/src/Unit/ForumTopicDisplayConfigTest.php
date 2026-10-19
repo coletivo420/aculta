@@ -103,4 +103,16 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Friendly topic creation uses Core's Node form and create access.
+   */
+  public function testFriendlyTopicAddRouteUsesCoreEntityFormAccess(): void {
+    $route = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum.routing.yml')['aculta_forum.topic_add'];
+
+    self::assertSame('/criar-topico', $route['path']);
+    self::assertSame('node.default', $route['defaults']['_entity_form']);
+    self::assertSame('aculta_forum_topic', $route['defaults']['node_type']);
+    self::assertSame('node:{node_type}', $route['requirements']['_entity_create_access']);
+  }
+
 }

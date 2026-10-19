@@ -79,12 +79,12 @@ Categorias/subcategorias, tópicos, respostas, permissões, Views/navegação e
 Author Cards do `aculta_user` para discussões públicas independentes.
 
 Preparação parcial: formulário e displays Core de `aculta_forum_topic` foram
-adicionados em dev.10 e aplicados ao Runtime de teste. O formulário foi montado
-em memória; nenhum fluxo persistido foi submetido. A fase dev.6 permanece aberta
-até Views/navegação, integração visual, permissões em Runtime e fluxos de
-tópico/resposta serem validados. A retirada contrib dev.5 também permanece
-aberta por depender de aplicação/verificação dos consumidores novos e restore
-point atual.
+adicionados em dev.10 e aplicados ao Runtime de teste. A Page display serve a
+raiz em dev.12; `/criar-topico` usa o Entity Form Core com Entity Create Access
+em dev.13. Nenhum tópico foi salvo. A fase dev.6 permanece aberta até acesso
+por participantes autorizados, submissão de tópico/resposta, moderação,
+integração visual e UX serem validados. A retirada contrib dev.5 também
+permanece aberta por depender de consumidores migrados e restore point válido.
 
 Dev.11 adicionou a View `aculta_forum_public_topics` e o campo de domínio
 canônico; dev.12 conectou a Page display à raiz do purpose forum por meio do

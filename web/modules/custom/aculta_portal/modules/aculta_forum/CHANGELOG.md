@@ -1,3 +1,8 @@
+## `0.1.0-dev.13` — formulário de criação em slug público — 2026-10-19
+
+- Nova rota `/criar-topico` para o formulário Core `node.default` do bundle `aculta_forum_topic`. Entity Create Access continua sendo a autorização, complementada pela regra de participação existente; a rota pertence ao purpose `forum`.
+- Teste de contrato cobre caminho, form handler, bundle e requisito de acesso. Runtime `toca`: rota resolvida com purpose `forum`; anônimo 403, host principal 404; conta de teste sem permissão negada. Nenhum formulário enviado nem Node criado. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.12` — raiz pública usa a listagem ACULTA Forum — 2026-10-19
 
 - Page display da View `aculta_forum_public_topics` em `/discussoes`; o processador de purpose serve essa rota na raiz `/` do Growroom420. Filtros fixos de bundle, publicação, domínio, access e cache continuam herdados do display padrão.

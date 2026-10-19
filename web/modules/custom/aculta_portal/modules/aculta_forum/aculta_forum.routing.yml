@@ -1,0 +1,15 @@
+aculta_forum.topic_add:
+  path: '/criar-topico'
+  defaults:
+    _entity_form: 'node.default'
+    _title: 'Criar tópico'
+    entity_type_id: node
+    node_type: aculta_forum_topic
+    bundle_parameter: node_type
+  requirements:
+    _entity_create_access: 'node:{node_type}'
+  options:
+    parameters:
+      node_type:
+        type: 'entity:node_type'
+        with_config_overrides: true

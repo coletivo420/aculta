@@ -148,6 +148,12 @@ continuam pendentes.
 - HTTP: raiz `/` retorna 200 com título “Discussões do Growroom420”; `/discussoes` e o antigo `/forum` retornam 404.
 - Nenhum Node, Comment ou arquivo criado/alterado/apagado. RUNTIME STATUS: PARTIAL; sem criação/resposta persistida e sem inspeção visual.
 
+## Evidência dev.13 — criação por formulário Core
+
+- Rota `aculta_forum.topic_add` resolve `/criar-topico`, `node.default`, bundle `aculta_forum_topic` e `_entity_create_access: node:{node_type}`; `DomainRouteSubscriber` classifica a rota no purpose `forum`.
+- Drush no Runtime confirmou URI do fórum e banco `aculta_runtime`. HTTP anônimo no fórum retornou 403; a mesma URL no purpose principal retornou 404. Conta de teste sem a permissão de criação também foi negada.
+- Nenhum formulário foi submetido, nenhum Node/Comment salvo. RUNTIME STATUS: PARTIAL; fluxo autorizado e inspeção visual pendentes.
+
 ## Evidência dev.9 Magazine — comentários diretos no Runtime de teste
 
 - Importação parcial de quatro objetos: fields `field_aculta_discussion` em
