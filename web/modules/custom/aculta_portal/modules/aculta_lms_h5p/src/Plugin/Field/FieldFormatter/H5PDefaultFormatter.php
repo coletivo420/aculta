@@ -48,6 +48,7 @@ class H5PDefaultFormatter extends FormatterBase {
     protected ModuleHandlerInterface $moduleHandler,
     ConfigFactoryInterface $config_factory,
     protected AccountProxyInterface $currentUser,
+    protected H5PDrupal $framework,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->config = $config_factory->get('aculta_lms_h5p.settings');
@@ -67,6 +68,7 @@ class H5PDefaultFormatter extends FormatterBase {
       $container->get('module_handler'),
       $container->get('config.factory'),
       $container->get('current_user'),
+      $container->get('aculta_lms_h5p.framework'),
     );
   }
 
@@ -145,20 +147,19 @@ class H5PDefaultFormatter extends FormatterBase {
       if (!$h5p_content->isDivEmbeddable()) {
         $element[$delta] = [
           '#type' => 'container',
-          '#attributes' => ['class' => ['h5p-content-unavailable']],
+          '#attributes' => ['data-portal-ui' => 'h5p-content-unavailable'],
           'message' => ['#plain_text' => $this->t('Esta atividade interativa não está disponível neste curso.')],
         ];
         continue;
       }
 
       $loadpackages = array_merge($loadpackages, $h5p_packages);
-      $html = '<div class="h5p-content" data-content-id="' . $h5p_content->id() . '"></div>';
-
-      // Render each element as markup.
+      // A classe h5p-content é contrato do H5P core (vendor/h5p/h5p-core/js/h5p.js), não de design.
       $element[$delta] = array(
-        '#type' => 'markup',
-        '#markup' => $html,
-        '#allowed_tags' => ['div'],
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['class' => ['h5p-content'], 'data-content-id' => $h5p_content->id()],
+        '#value' => '',
         '#attached' => [
           'drupalSettings' => [
             'h5p' => [

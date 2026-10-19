@@ -18,6 +18,8 @@ final class H5PLibraryHooks {
   public function __construct(
     #[Autowire(service: 'database')]
     private readonly Connection $database,
+    #[Autowire(service: 'aculta_lms_h5p.framework')]
+    private readonly H5PDrupal $framework,
     #[Autowire(service: 'aculta_lms_h5p.asset_file_manager')]
     private readonly AssetFileStorage $assetManager,
     #[Autowire(service: 'file_url_generator')]

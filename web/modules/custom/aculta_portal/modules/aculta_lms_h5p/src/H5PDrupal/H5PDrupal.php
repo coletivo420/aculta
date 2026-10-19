@@ -28,6 +28,9 @@ use GuzzleHttp\ClientInterface;
 
 class H5PDrupal implements \H5PFrameworkInterface {
 
+  /** DI-initialized adapter used by H5P's legacy static framework API. */
+  private static ?self $frameworkInstance = NULL;
+
   public function __construct(
     private readonly Connection $database,
     private readonly AccountProxyInterface $currentUser,
@@ -48,11 +51,16 @@ class H5PDrupal implements \H5PFrameworkInterface {
     private readonly LibraryDiscoveryCollector $libraryDiscovery,
     private readonly AssetCollectionGroupOptimizerInterface $jsCollectionOptimizer,
     private readonly AssetCollectionGroupOptimizerInterface $cssCollectionOptimizer,
-  ) {}
+  ) {
+    self::$frameworkInstance = $this;
+  }
 
-  /** Resolves the DI-built adapter for the legacy H5P static factory. */
+  /** Returns the adapter registered by Drupal dependency injection. */
   private static function framework(): self {
-    return \Drupal::service('aculta_lms_h5p.framework');
+    if (!self::$frameworkInstance) {
+      throw new \LogicException('The H5P framework adapter must be initialized through Drupal dependency injection before use.');
+    }
+    return self::$frameworkInstance;
   }
 
   /** Returns the platform database connection for legacy H5P entity callbacks. */

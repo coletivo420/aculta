@@ -24,6 +24,7 @@ class H5PEditorUtilities {
     private readonly Connection $database,
     private readonly H5PEditorDrupalStorage $editorStorage,
     private readonly H5PEditorDrupalAjax $editorAjax,
+    private readonly H5PDrupal $framework,
   ) {}
 
   /**

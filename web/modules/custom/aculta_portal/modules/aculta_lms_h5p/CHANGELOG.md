@@ -111,3 +111,17 @@
   `aculta_pdf_reader`) e `aculta_forum`; a parte Forum aguarda API executável e
   testes de isolamento. Não foram criados storages ou módulos duplicados.
 
+## Registro do adapter estático H5P via DI — 2026-10-19
+
+- Remove `\Drupal::service()` de `H5PDrupal::framework()`. O serviço registra
+  a própria instância DI para a API estática legada do framework; a ausência
+  de inicialização falha com mensagem clara em vez de recorrer ao container
+  global.
+- Hooks, serviços, formulários, controllers e plugins de entrada H5P recebem
+  o adapter por DI, incluindo widgets serializados pelo Form API. O Kernel
+  verifica o registro e a restauração do serviço após serialização.
+- Unit H5P: 23 testes/67 assertions. Kernel H5P: 14 testes/266 assertions;
+  40 depreciações upstream de Core/contrib. Runtime `cursos`: cache rebuild e
+  montagem do formulário administrativo (36 elementos) passaram; sem updates
+  de banco. Gates Drupal 11+, imagem e slugs passaram.
+

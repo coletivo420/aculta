@@ -46,6 +46,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     protected H5PLibraryAccessManager $libraryAccess,
     protected AccountProxyInterface $currentUser,
     protected H5PEditorUtilities $editorUtilities,
+    protected H5PDrupal $framework,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -61,6 +62,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
       $container->get('aculta_lms_h5p.library_access'),
       $container->get('current_user'),
       $container->get('aculta_lms_h5p.editor_utilities'),
+      $container->get('aculta_lms_h5p.framework'),
     );
   }
 
@@ -121,10 +123,21 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     self::$counter++;
 
     // Add editor element
-    $element['editor'] = [
+    $element['editor_title'] = [
       '#type' => 'item',
       '#title' => $this->t('Tipo de atividade'),
-      '#markup' => '<div class="h5p-editor" data-parametersid="' . $element['parameters']['#attributes']['id'] . '" data-libraryid="' . $element['library']['#attributes']['id'] . '"' . (empty($h5p_content) ? '' : ' data-content-id="' . $h5p_content_id . '"') . '>' . $this->t('Aguardando o JavaScript...') . '</div>',
+      '#markup' => '',
+    ];
+    // A classe h5p-editor é o contrato do editor do H5P core (h5peditor-editor.js), não de design.
+    $element['editor'] = [
+      '#type' => 'container',
+      '#attributes' => array_filter([
+        'class' => ['h5p-editor'],
+        'data-parametersid' => $element['parameters']['#attributes']['id'],
+        'data-libraryid' => $element['library']['#attributes']['id'],
+        'data-content-id' => empty($h5p_content) ? NULL : $h5p_content_id,
+      ], static fn($value) => $value !== NULL),
+      'waiting' => ['#plain_text' => $this->t('Aguardando o JavaScript...')],
       '#attached' => [
         'drupalSettings' => [
           'h5p' => [

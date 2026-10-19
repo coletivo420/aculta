@@ -85,6 +85,7 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
       'libraryAccess' => 'aculta_lms_h5p.library_access',
       'currentUser' => 'current_user',
       'editorUtilities' => 'aculta_lms_h5p.editor_utilities',
+      'framework' => 'aculta_lms_h5p.framework',
     ] as $propertyName => $serviceId) {
       $property = new \ReflectionProperty($restored, $propertyName);
       self::assertTrue($property->isInitialized($restored), $propertyName . ' is initialized after form cache restore.');
@@ -119,6 +120,11 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
 
   /** A learner can open only H5P content referenced by a course they can take. */
   public function testPlaybackRequiresCurrentCourseMembershipAndFieldReference(): void {
+    // Real editorial entry points receive the framework through DI. Bootstrap
+    // it explicitly here because this integration test writes the field
+    // programmatically, bypassing the injected H5P field widget.
+    $this->container->get('aculta_lms_h5p.framework');
+
     $owner = $this->createUser();
     $student = $this->createUser();
     $educator = $this->createUser();

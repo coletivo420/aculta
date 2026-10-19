@@ -18,15 +18,21 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class H5PLibraryDeleteForm extends FormBase {
 
+  protected H5PDrupal $framework;
+
   public function __construct(
     private readonly Connection $database,
     private readonly H5PLibraryCacheInvalidator $cacheInvalidator,
-  ) {}
+    H5PDrupal $framework,
+  ) {
+    $this->framework = $framework;
+  }
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('database'),
       $container->get('aculta_lms_h5p.library_cache_invalidator'),
+      $container->get('aculta_lms_h5p.framework'),
     );
   }
 

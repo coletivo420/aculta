@@ -19,17 +19,20 @@ class H5PAdminSettingsForm extends FormBase {
   protected FileSystemInterface $fileSystem;
 
   protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
+  protected H5PDrupal $framework;
 
   public function __construct(
     FileSystemInterface $fileSystem,
     CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+    H5PDrupal $framework,
   ) {
     $this->fileSystem = $fileSystem;
     $this->cacheTagsInvalidator = $cacheTagsInvalidator;
+    $this->framework = $framework;
   }
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('file_system'), $container->get('cache_tags.invalidator'));
+    return new static($container->get('file_system'), $container->get('cache_tags.invalidator'), $container->get('aculta_lms_h5p.framework'));
   }
 
   /**
@@ -183,7 +186,6 @@ class H5PAdminSettingsForm extends FormBase {
 //      'data-value' => $site_key,
 //      'placeholder' => ($site_key ? '********-****-****-****-************' : t('Empty'))
 //    ),
-//    '#field_suffix' => '<button type="button" class="h5p-reveal-value" data-control="edit-h5p-site-key" data-hide="' . t('Hide') . '">' . t('Reveal') . '</button>',
 //    '#description' => t("The site key is a secret that uniquely identifies this site with the Hub."),
 //  );
 
@@ -200,8 +202,6 @@ class H5PAdminSettingsForm extends FormBase {
       ],
     ];
 
-    // Set h5p settings class on form container.
-    $form['#attributes'] = array('class' => array('h5p-settings-container'));
 
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = array(
@@ -291,7 +291,6 @@ class H5PAdminSettingsForm extends FormBase {
     ];
     if ($visibilitySubjectId !== NULL) {
       $element[$name]['#attributes'] = [
-        'class' => ['h5p-visibility-toggler'],
         'data-h5p-visibility-subject-selector' => $visibilitySubjectId,
       ];
     }

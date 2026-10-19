@@ -13,6 +13,7 @@ final class H5PLibraryPackageInstaller {
     private readonly FileSystemInterface $fileSystem,
     private readonly H5PStoragePathInterface $storagePath,
     private readonly H5PLibraryCacheInvalidator $cacheInvalidator,
+    private readonly H5PDrupal $framework,
   ) {}
 
   /**

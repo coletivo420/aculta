@@ -29,17 +29,20 @@ class H5PContentUpgradeForm extends FormBase {
   protected FileUrlGeneratorInterface $fileUrlGenerator;
 
   protected AssetQueryStringInterface $assetQueryString;
+  protected H5PDrupal $framework;
 
   public function __construct(
     Connection $database,
     ModuleExtensionList $moduleList,
     FileUrlGeneratorInterface $fileUrlGenerator,
     AssetQueryStringInterface $assetQueryString,
+    H5PDrupal $framework,
   ) {
     $this->database = $database;
     $this->moduleList = $moduleList;
     $this->fileUrlGenerator = $fileUrlGenerator;
     $this->assetQueryString = $assetQueryString;
+    $this->framework = $framework;
   }
 
   public static function create(ContainerInterface $container): static {
@@ -48,6 +51,7 @@ class H5PContentUpgradeForm extends FormBase {
       $container->get('extension.list.module'),
       $container->get('file_url_generator'),
       $container->get('asset.query_string'),
+      $container->get('aculta_lms_h5p.framework'),
     );
   }
 

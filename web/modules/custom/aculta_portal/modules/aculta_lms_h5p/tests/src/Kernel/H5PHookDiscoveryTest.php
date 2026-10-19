@@ -22,7 +22,11 @@ final class H5PHookDiscoveryTest extends KernelTestBase {
     self::assertTrue($moduleHandler->hasImplementations('cron', 'aculta_lms_h5p'));
     self::assertTrue($moduleHandler->hasImplementations('user_delete', 'aculta_lms_h5p'));
     self::assertTrue($moduleHandler->hasImplementations('field_views_data', 'aculta_lms_h5p'));
-    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Hook\H5PLibraryHooks::class, $this->container->get(\Drupal\aculta_lms_h5p\Hook\H5PLibraryHooks::class));
+    $libraryHooks = $this->container->get(\Drupal\aculta_lms_h5p\Hook\H5PLibraryHooks::class);
+    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Hook\H5PLibraryHooks::class, $libraryHooks);
+    $framework = new \ReflectionMethod(\Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal::class, 'framework');
+    $framework->setAccessible(TRUE);
+    self::assertSame($this->container->get('aculta_lms_h5p.framework'), $framework->invoke(NULL));
     self::assertInstanceOf(\Drupal\aculta_lms_h5p\Hook\H5PLifecycleHooks::class, $this->container->get(\Drupal\aculta_lms_h5p\Hook\H5PLifecycleHooks::class));
     self::assertSame('h5p_editor', $this->container->get('plugin.manager.field.widget')->getDefinition('h5p_editor')['id']);
     self::assertSame('h5p_upload', $this->container->get('plugin.manager.field.widget')->getDefinition('h5p_upload')['id']);

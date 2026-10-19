@@ -10,7 +10,10 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Plugin\Field\H5PWidgetBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Field widget placeholder for unavailable legacy content-package uploads. */
 #[FieldWidget(
@@ -18,7 +21,25 @@ use Drupal\aculta_lms_h5p\Plugin\Field\H5PWidgetBase;
   label: new TranslatableMarkup('Envio de pacote H5P indisponível'),
   field_types: ['h5p'],
 )]
-final class H5PUploadWidget extends H5PWidgetBase {
+final class H5PUploadWidget extends H5PWidgetBase implements ContainerFactoryPluginInterface {
+
+  protected H5PDrupal $framework;
+
+  public function __construct($plugin_id, $plugin_definition, $field_definition, array $settings, array $third_party_settings, H5PDrupal $framework) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
+    $this->framework = $framework;
+  }
+
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings'] ?? [],
+      $container->get('aculta_lms_h5p.framework'),
+    );
+  }
 
   /**
    * {@inheritdoc}

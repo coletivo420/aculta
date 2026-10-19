@@ -25,6 +25,7 @@ final class H5PContentUpgrade implements ContainerInjectionInterface {
     private readonly Connection $database,
     private readonly RequestStack $requestStack,
     private readonly TranslationInterface $translation,
+    private readonly H5PDrupal $framework,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -32,6 +33,7 @@ final class H5PContentUpgrade implements ContainerInjectionInterface {
       $container->get('database'),
       $container->get('request_stack'),
       $container->get('string_translation'),
+      $container->get('aculta_lms_h5p.framework'),
     );
   }
 

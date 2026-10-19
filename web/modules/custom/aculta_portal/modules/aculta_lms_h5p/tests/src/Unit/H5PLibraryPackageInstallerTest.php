@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_lms_h5p\Unit;
 
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryPackageInstaller;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryCacheInvalidator;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PStoragePathInterface;
 use Drupal\Core\Asset\LibraryDiscoveryCollector;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -26,6 +27,7 @@ final class H5PLibraryPackageInstallerTest extends UnitTestCase {
         $this->createMock(FileSystemInterface::class),
         $this->createMock(H5PStoragePathInterface::class),
         $this->createCacheInvalidator(),
+        $this->createMock(H5PDrupal::class),
       );
       $this->expectException(\InvalidArgumentException::class);
       $installer->install($zip);
@@ -51,6 +53,7 @@ final class H5PLibraryPackageInstallerTest extends UnitTestCase {
         $this->createMock(FileSystemInterface::class),
         $this->createMock(H5PStoragePathInterface::class),
         $this->createCacheInvalidator(),
+        $this->createMock(H5PDrupal::class),
       );
       $this->expectException(\UnexpectedValueException::class);
       $this->expectExceptionMessage('O pacote H5P contém um caminho inválido.');
