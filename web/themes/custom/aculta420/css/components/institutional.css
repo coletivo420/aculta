@@ -44,11 +44,6 @@
 .aculta-editorial-section.aculta-city { color: var(--aculta-text-inverse); background: var(--aculta-green-dark); }
 .aculta-editorial-section.aculta-city h2 { color: inherit; }
 .aculta-editorial-section.aculta-participation { background-color: var(--aculta-surface-raised); border-inline-start: 3px solid var(--aculta-border-accent); }
-.webform-submission-aculta-participation-form { max-width: 48rem; margin-top: 1.5rem; padding: clamp(1.25rem, 3vw, 2rem); background: var(--aculta-surface-raised); border-inline-start: 3px solid var(--aculta-border-accent); border-radius: var(--bs-border-radius); }
-.webform-submission-aculta-participation-form .form-item-consent { padding: 1rem; border-inline-start: 3px solid var(--aculta-interactive-active-bg); background: var(--aculta-surface-muted); }
-.webform-submission-aculta-participation-form .form-item-consent a { font-weight: 600; }
-.aculta-participation-intro { max-width: 65ch; padding: clamp(1.25rem, 3vw, 2rem); margin-block: 1.5rem; background: var(--aculta-surface-raised); border-inline-start: 3px solid var(--aculta-border-accent); border-radius: var(--bs-border-radius); }
-.aculta-participation-contacts { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; }
 
 @media (max-width: 767.98px) {
   .aculta-areas, .aculta-project-list .view-content { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
