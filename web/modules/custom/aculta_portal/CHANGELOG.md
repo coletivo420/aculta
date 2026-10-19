@@ -5,6 +5,13 @@
 - Portal Unit: 219 testes/551 assertions; `aculta_lms`: 25 testes/392 assertions; `aculta_lms_h5p`: 24 testes/272 assertions. Gates Drupal 11+, imagem e slugs aprovados.
 - Runtime `cursos`: PASS. Conta `agente-teste-20261019-lms-1` sem e-mail confirmado entrou na aula de revisão do curso após associação temporária ao Group; o conteúdo da atividade foi renderizado. Conta e membership removidas via Entity API ao fim; cache rebuild concluído. Nenhum dado do curso foi alterado.
 
+## 0.4.0-dev.158 — popup-rule validado e guardrail do .htaccess — 2026-10-19
+
+- Os 4 itens do gate de popup (`validate-portal-popup-rule.php`) estão corrigidos: `ConfirmDialog` (messenger) e `messenger-drawers.js` usam `Drupal.dialog`; `CreateGallery` (galeria) não informa tamanho, e o tema define a largura pelo token `gallery-dialog`. Gate: PASS, 0 exceções. Validação no navegador: pendente.
+- `web/.htaccess`: o bloco `.mjs` (MIME do PDF.js em `<IfModule mod_mime.c>`) estava removido no disco por alteração externa. Restaurado a partir do commit. Novo gate `scripts/validate-htaccess-directives.php` reprova a remoção (testado com cópia negativa).
+- Submódulos: aculta_messenger 0.1.1-dev.47, aculta_gallery 0.1.0-rc.4. Tema 0.6.0-dev.87.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.157 — revisão de merge: retorno do popup, config órfã e regra de ícones — 2026-10-19
 
 - Popup de retorno rejeita controles e espaços no destino. `/\t/host` vira `//host` no navegador depois que a tab é removida (`CheckoutPopupReturnController`). Casos novos no teste Unit.
