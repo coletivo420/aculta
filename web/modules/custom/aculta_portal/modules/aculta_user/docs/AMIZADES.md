@@ -63,7 +63,7 @@ simultâneo inverso precisa ser resolvido explicitamente pelo destinatário.
 
 A API pública é `aculta_user.friendship_manager`. `FriendshipActionForm` integra
 a solicitação/cancelamento/remoção ao perfil público; `FriendRequestsForm`, no
-Messenger, permitia aceitar/recusar em `/mensagens/notificacoes`, rota removida; o formulário não é renderizado hoje (DT-O15). O contador
+Messenger, permite aceitar/recusar na aba Mensagens de `/avisos-mensagens/mensagens`. O contador
 multidomínio inclui pedidos recebidos pendentes. A entidade é instalada em sites
 existentes pelo update `aculta_user_update_10002()`. O `aculta_messenger` pode
 consultar amizade para aplicar a política de início de conversa; não acessa a
