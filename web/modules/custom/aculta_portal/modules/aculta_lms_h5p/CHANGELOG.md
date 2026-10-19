@@ -1,3 +1,18 @@
+## Continuação F10 — DI e ciclo de imagem H5P (2026-10-19)
+
+- Refatorados os adapters de editor/storage/AJAX para receber serviços por DI;
+  `H5PEditorUtilities` também passou a serviço injetável e widgets/controllers
+  usam o serviço. URLs de assets do editor continuam absolutas pela API atual
+  `FileUrlGeneratorInterface::generateAbsoluteString()` do Core instalado.
+- Kernel verifica o ciclo real de ingestão, uso e remoção de imagem administrada
+  pelo `aculta_image`; LMS/H5P Unit passou (36 testes, 148 assertions; 5
+  deprecações do PHPUnit) e Kernel em MariaDB dedicado passou (24 testes, 573
+  assertions; 83 depreciações de Core/contrib). Gates Portal (966), imagem,
+  slugs e pacotes próprios passaram. PHP local 8.4.26; PHP 8.5 não validado.
+- O contrato LMS passa a explicitar imagem compartilhada, documentos de turma
+  no viewer PDF e discussão futura com `aculta_forum`; não cria leitor PDF,
+  storage de arquivo ou sistema de discussão paralelo no H5P.
+
 ## F10 concluída — H5P ponta a ponta — 2026-10-19
 
 - Corrige a serialização de serviços injetados no formulário de instalação de bibliotecas H5P, resolve URIs privados para caminhos locais antes da validação oficial e exclui o upload temporário pela API da entidade File.

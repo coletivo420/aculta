@@ -3,12 +3,18 @@
 
 namespace Drupal\aculta_lms_h5p\H5PEditor;
 
-use Drupal\aculta_lms_h5p\H5PEditor\H5PFileUsageManager;
-use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 
 class H5PEditorDrupalStorage implements \H5peditorStorage {
 
-  public function __construct(private readonly H5PFileUsageManager $fileUsageManager) {}
+  public function __construct(
+    private readonly Connection $database,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly H5PFileUsageManager $fileUsageManager,
+  ) {}
 
   /**
    * Load language file(JSON) from database.
@@ -21,7 +27,7 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    * @return string Translation in JSON format
    */
   public function getLanguage($name, $major, $minor, $lang) {
-    $lang = \Drupal::database()->query(
+    $lang = $this->database->query(
       "SELECT language_json
         FROM {h5p_libraries_languages} hlt
         JOIN {h5p_libraries} hl
@@ -49,7 +55,7 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    * @return array List of possible language codes
    */
   public function getAvailableLanguages($machineName, $majorVersion, $minor) {
-    $results = \Drupal::database()->query(
+    $results = $this->database->query(
       "SELECT language_code
       FROM {h5p_libraries_languages} hlt
       JOIN {h5p_libraries} hl
@@ -95,8 +101,8 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
    * @return array List of all libraries loaded
    */
   public function getLibraries($libraries = NULL) {
-    $database = \Drupal::database();
-    $user = \Drupal::currentUser();
+    $database = $this->database;
+    $user = $this->currentUser;
     $super_user = $user->hasPermission('create restricted h5p content types');
 
     if ($libraries !== NULL) {
@@ -195,8 +201,8 @@ class H5PEditorDrupalStorage implements \H5peditorStorage {
       ];
     }
 
-    \Drupal::moduleHandler()->alter('h5p_scripts', $files['scripts'], $library_list, $mode);
-    \Drupal::moduleHandler()->alter('h5p_styles', $files['styles'], $library_list, $mode);
+    $this->moduleHandler->alter('h5p_scripts', $files['scripts'], $library_list, $mode);
+    $this->moduleHandler->alter('h5p_styles', $files['styles'], $library_list, $mode);
   }
 
   /**

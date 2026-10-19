@@ -84,6 +84,7 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
       'courseAccess' => 'aculta_lms_h5p.course_access',
       'libraryAccess' => 'aculta_lms_h5p.library_access',
       'currentUser' => 'current_user',
+      'editorUtilities' => 'aculta_lms_h5p.editor_utilities',
     ] as $propertyName => $serviceId) {
       $property = new \ReflectionProperty($restored, $propertyName);
       self::assertTrue($property->isInitialized($restored), $propertyName . ' is initialized after form cache restore.');

@@ -45,6 +45,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     protected H5PCourseAccessManager $courseAccess,
     protected H5PLibraryAccessManager $libraryAccess,
     protected AccountProxyInterface $currentUser,
+    protected H5PEditorUtilities $editorUtilities,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -59,6 +60,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
       $container->get('aculta_lms_h5p.course_access'),
       $container->get('aculta_lms_h5p.library_access'),
       $container->get('current_user'),
+      $container->get('aculta_lms_h5p.editor_utilities'),
     );
   }
 
@@ -128,7 +130,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
           'h5p' => [
               'H5PIntegration' => H5PDrupal::getGenericH5PIntegrationSettings($course)
           ],
-          'h5peditor' => H5PEditorUtilities::getEditorSettings($course),
+              'h5peditor' => $this->editorUtilities->getEditorSettings($course),
         ],
         'library' => [
           'aculta_lms_h5p/h5p.editor',
@@ -301,7 +303,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     // Prepare content values
     $core = H5PDrupal::getInstance('core');
     $content = [
-      'library' => H5PEditorUtilities::getLibraryProperty($value['library']),
+      'library' => $this->editorUtilities->getLibraryProperty($value['library']),
       'params' => json_encode($params->params),
       'metadata' => $params->metadata,
       'disable' => $core->getStorableDisplayOptions($value, !empty($h5p_content) ? $h5p_content->get('disabled_features')->value : 0),
@@ -320,7 +322,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     }
 
     // Keep new files, delete files from old parameters
-    $editor = H5PEditorUtilities::getInstance();
+    $editor = $this->editorUtilities->getEditor();
     $editor->processParameters(
       $return_value['h5p_content_id'],
       $content['library'],

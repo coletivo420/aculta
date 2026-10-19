@@ -3,7 +3,15 @@
 
 namespace Drupal\aculta_lms_h5p\H5PEditor;
 
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Session\AccountProxyInterface;
+
 class H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
+
+  public function __construct(
+    private readonly Connection $database,
+    private readonly AccountProxyInterface $currentUser,
+  ) {}
 
   /**
    * Gets latest library versions that exists locally
@@ -11,7 +19,7 @@ class H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
    * @return array Latest version of all local libraries
    */
   public function getLatestLibraryVersions() {
-    $connection = \Drupal::database();
+    $connection = $this->database;
 
     // Retrieve latest major version
     $max_major_version = $connection->select('h5p_libraries', 'h1');
@@ -72,7 +80,7 @@ class H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
    * @return array|object|null Returns results from querying the database
    */
   public function getContentTypeCache($machineName = NULL) {
-    $database = \Drupal::database();
+    $database = $this->database;
 
     // Get only the specified content type from cache
     if ($machineName !== NULL) {
@@ -95,12 +103,12 @@ class H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
    * recently used.
    */
   public function getAuthorsRecentlyUsedLibraries() {
-    $uid = \Drupal::currentUser()->id();
+    $uid = $this->currentUser->id();
 
     $recently_used = [];
 
     // Get recently used:
-    $result = \Drupal::database()->query("
+    $result = $this->database->query("
       SELECT library_name, max(created_at) AS max_created_at
       FROM {h5p_events}
       WHERE type='content' AND sub_type = 'create' AND user_id = :uid
@@ -139,7 +147,7 @@ class H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
     foreach ($libraries as $library) {
       $parsedLib = \H5PCore::libraryFromString($library);
 
-      $translation = \Drupal::database()->query("
+      $translation = $this->database->query("
         SELECT language_json
         FROM {h5p_libraries} lib
         LEFT JOIN {h5p_libraries_languages} lang ON lib.library_id = lang.library_id

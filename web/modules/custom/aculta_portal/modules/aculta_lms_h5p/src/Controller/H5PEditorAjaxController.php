@@ -28,6 +28,7 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
     private readonly H5PCourseAccessManager $courseAccess,
     private readonly H5PLibraryAccessManager $libraryAccess,
     private readonly H5PEditorUploadManager $uploadManager,
+    private readonly H5PEditorUtilities $editorUtilities,
     private readonly AccountProxyInterface $currentUser,
     private readonly LanguageManagerInterface $languageManager,
     private readonly RequestStack $requestStack,
@@ -39,6 +40,7 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
       $container->get('aculta_lms_h5p.course_access'),
       $container->get('aculta_lms_h5p.library_access'),
       $container->get('aculta_lms_h5p.editor_upload_manager'),
+      $container->get('aculta_lms_h5p.editor_utilities'),
       $container->get('current_user'),
       $container->get('language_manager'),
       $container->get('request_stack'),
@@ -118,7 +120,7 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
     if ($method !== 'GET') {
       throw new NotFoundHttpException();
     }
-    $libraries = H5PEditorUtilities::getInstance()->getLibraries();
+    $libraries = $this->editorUtilities->getEditor()->getLibraries();
     $libraries = array_values(array_filter($libraries, fn (object $library): bool => $this->libraryAccess->canUse(
       (string) $library->name,
       (int) $library->majorVersion,
@@ -148,7 +150,7 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
       || ($defaultLanguage !== '' && !preg_match('/^[a-zA-Z0-9_-]{2,12}$/D', $defaultLanguage))) {
       throw new NotFoundHttpException();
     }
-    $data = H5PEditorUtilities::getInstance()->getLibraryData(
+    $data = $this->editorUtilities->getEditor()->getLibraryData(
       $machine,
       $major,
       $minor,
@@ -196,7 +198,7 @@ final class H5PEditorAjaxController implements ContainerInjectionInterface {
       }
       $valid[] = $name;
     }
-    $data = H5PEditorUtilities::getInstance()->ajaxInterface->getTranslations($valid, $language);
+    $data = $this->editorUtilities->getEditor()->ajaxInterface->getTranslations($valid, $language);
     return new JsonResponse(['success' => TRUE, 'data' => (object) $data]);
   }
 

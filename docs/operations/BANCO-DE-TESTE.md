@@ -110,13 +110,16 @@ fatal de serviço não inicializado foi corrigido; o ciclo completo de salvar e
 reproduzir conteúdo continua DEFERRED. Unit H5P: 12 testes/52 asserções.
 
 Execução adicional em 2026-10-19: Unit LMS/H5P passou com 36 testes e 148
-asserções (5 depreciações do PHPUnit). Kernel LMS/H5P passou com 23 testes e
-549 asserções no MariaDB dedicado; 83 depreciações foram reportadas por
+asserções (5 depreciações do PHPUnit). Kernel LMS/H5P passou com 24 testes e
+573 asserções no MariaDB dedicado; 83 depreciações foram reportadas por
 Drupal Core/contrib instalados. A cobertura H5P inclui instalação e exclusão
-de biblioteca privada, arquivos gerenciados e imagens via `aculta_image`.
-Runtime de teste `cursos` validou salvamento e reprodução por estudante,
-bloqueio anônimo e limpeza via formulário administrativo. Produção não foi
-alterada.
+de biblioteca privada, arquivos gerenciados, widget serializado e ciclo de
+imagens via `aculta_image`. Runtime de teste `cursos` validou salvamento e
+reprodução por estudante, bloqueio anônimo e limpeza via formulário
+administrativo. Após refatorar DI, Drush como conta `aculta` confirmou URLs
+absolutas do editor; os assets H5P CSS/JS e a tradução pt-br responderam HTTP
+200. Cache rebuild executado; nenhum update de banco ou import de configuração
+necessário. Produção não foi alterada.
 
 ## Quem usa
 

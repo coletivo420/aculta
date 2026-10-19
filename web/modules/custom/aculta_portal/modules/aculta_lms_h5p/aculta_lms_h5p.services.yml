@@ -24,7 +24,13 @@ services:
     arguments: ['@file_system', '@file.repository', '@entity_type.manager', '@file.usage', '@aculta_image.file_usage_manager', '@aculta_image.file_remover', '@aculta_image.packaged_asset_publisher', '@aculta_lms_h5p.file_usage_manager']
   aculta_lms_h5p.editor_storage:
     class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalStorage
-    arguments: ['@aculta_lms_h5p.file_usage_manager']
+    arguments: ['@database', '@current_user', '@module_handler', '@aculta_lms_h5p.file_usage_manager']
+  aculta_lms_h5p.editor_ajax:
+    class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalAjax
+    arguments: ['@database', '@current_user']
+  aculta_lms_h5p.editor_utilities:
+    class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities
+    arguments: ['@file_url_generator', '@file_system', '@language_manager', '@asset.query_string', '@database', '@aculta_lms_h5p.editor_storage', '@aculta_lms_h5p.editor_ajax']
   aculta_lms_h5p.editor_upload_manager:
     class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUploadManager
     arguments: ['@file.upload_handler', '@aculta_image.upload_ingester', '@aculta_image.inspector', '@file_system', '@config.factory', '@aculta_lms_h5p.framework']

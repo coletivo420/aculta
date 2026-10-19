@@ -1,5 +1,14 @@
 # Auditoria e implementação do H5P próprio para o ACULTA LMS
 
+> **Snapshot histórico, anterior à conclusão da F10.** As pendências abaixo
+> registram etapas intermediárias da auditoria e não descrevem o estado atual.
+> A F10 foi concluída e homologada no Runtime de teste; consulte o
+> [README atual do módulo](../../web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md)
+> e seu [changelog](../../web/modules/custom/aculta_portal/modules/aculta_lms_h5p/CHANGELOG.md)
+> para testes e limites vigentes. O escopo de integração com imagem, PDF e
+> discussões é acompanhado em
+> [LMS-INTEGRATION-CONTRACTS.md](../portal/LMS-INTEGRATION-CONTRACTS.md).
+
 Atualização em 2026-10-18. O pacote Drupal contrib `drupal/h5p` foi removido do
 Composer. O código de integração foi copiado para o submódulo próprio
 `aculta_lms_h5p`, com preservação da licença GPL e identificação da origem. Os

@@ -4,30 +4,42 @@
 namespace Drupal\aculta_lms_h5p\H5PEditor;
 
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
+use Drupal\Core\Asset\AssetQueryStringInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 
 class H5PEditorUtilities {
+
+  private ?\H5peditor $editor = NULL;
+
+  public function __construct(
+    private readonly FileUrlGeneratorInterface $fileUrlGenerator,
+    private readonly FileSystemInterface $fileSystem,
+    private readonly LanguageManagerInterface $languageManager,
+    private readonly AssetQueryStringInterface $assetQueryString,
+    private readonly Connection $database,
+    private readonly H5PEditorDrupalStorage $editorStorage,
+    private readonly H5PEditorDrupalAjax $editorAjax,
+  ) {}
 
   /**
    * Keeps track of our editor instance, saving valuable resources.
    *
    * @return \H5peditor
    */
-  public static function getInstance() {
-    static $instance;
-
-    if (!$instance) {
-
-      $core     = H5PDrupal::getInstance('core');
-      $instance = new \H5peditor(
-        $core,
-        \Drupal::service('aculta_lms_h5p.editor_storage'),
-        new H5PEditorDrupalAjax()
+  public function getEditor(): \H5peditor {
+    if ($this->editor === NULL) {
+      $this->editor = new \H5peditor(
+        H5PDrupal::getInstance('core'),
+        $this->editorStorage,
+        $this->editorAjax,
       );
     }
-
-    return $instance;
+    return $this->editor;
   }
 
   /**
@@ -35,29 +47,23 @@ class H5PEditorUtilities {
    *
    * @return array Settings needed for view
    */
-  public static function getEditorSettings(CourseInterface $course) {
+  public function getEditorSettings(CourseInterface $course): array {
     $contentValidator = H5PDrupal::getInstance('contentvalidator');
 
     $settings = [
       'filesPath'          => base_path() . H5PDrupal::getRelativeH5PPath(),
       'fileIcon'           => [
-        'path' => \Drupal::service('file_url_generator')->generate("assets://h5p/h5p-editor/images/binary-file.png", [
-          'absolute' => TRUE,
-          'language' => FALSE,
-        ])->toString(TRUE)->getGeneratedUrl(),
+        'path' => $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-editor/images/binary-file.png'),
         'width'  => 50,
         'height' => 50,
       ],
-      'ajaxPath' => str_replace('%3A', ':', self::getAjaxPath($course)),
-      'libraryPath' => \Drupal::service('file_url_generator')->generate("assets://h5p/h5p-editor/", [
-          'absolute' => TRUE,
-          'language' => FALSE,
-        ])->toString(TRUE)->getGeneratedUrl() . base_path(),
+      'ajaxPath' => str_replace('%3A', ':', $this->getAjaxPath($course)),
+      'libraryPath' => $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-editor/') . base_path(),
       'copyrightSemantics' => $contentValidator->getCopyrightSemantics(),
       'metadataSemantics' => $contentValidator->getMetadataSemantics(),
-      'assets'             => self::getEditorAssets(),
+      'assets'             => $this->getEditorAssets(),
       'apiVersion'         => \H5PCore::$coreApi,
-      'language' => \Drupal::languageManager()->getCurrentLanguage()->getId()
+      'language' => $this->languageManager->getCurrentLanguage()->getId(),
     ];
 
     return $settings;
@@ -68,25 +74,19 @@ class H5PEditorUtilities {
    *
    * @return array Js and css for showing the editor
    */
-  private static function getEditorAssets() {
-    $corePath = \Drupal::service('file_url_generator')->generate("assets://h5p/h5p-core/", [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl() . base_path();
-    $editorPath = \Drupal::service('file_url_generator')->generate("assets://h5p/h5p-editor/", [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl() . base_path();
+  private function getEditorAssets(): array {
+    $corePath = $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-core/') . base_path();
+    $editorPath = $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-editor/') . base_path();
 
     $css = array_merge(
-      self::getAssets(\H5PCore::$styles, $corePath),
-      self::getAssets(\H5PEditor::$styles, $editorPath)
+      $this->getAssets(\H5PCore::$styles, $corePath),
+      $this->getAssets(\H5PEditor::$styles, $editorPath)
     );
     $js = array_merge(
-      self::getAssets(\H5PCore::$scripts, $corePath),
-      self::getAssets(\H5PEditor::$scripts, $editorPath, ['scripts/h5peditor-editor.js'])
+      $this->getAssets(\H5PCore::$scripts, $corePath),
+      $this->getAssets(\H5PEditor::$scripts, $editorPath, ['scripts/h5peditor-editor.js'])
     );
-    $js[] = self::getTranslationFilePath();
+    $js[] = $this->getTranslationFilePath();
 
     return ['css' => $css, 'js' => $js];
   }
@@ -100,9 +100,9 @@ class H5PEditorUtilities {
    *
    * @return array Extracted assets from the source collection
    */
-  private static function getAssets($collection, $prefix, $exceptions = NULL) {
+  private function getAssets($collection, $prefix, $exceptions = NULL): array {
     $assets      = [];
-    $cacheBuster = self::getCacheBuster();
+    $cacheBuster = $this->getCacheBuster();
 
     foreach ($collection as $item) {
       // Skip exceptions
@@ -119,8 +119,8 @@ class H5PEditorUtilities {
    *
    * @return string A cache buster that may be applied to resources
    */
-  private static function getCacheBuster() {
-    $cache_buster = \Drupal::service('asset.query_string')->get();
+  private function getCacheBuster(): string {
+    $cache_buster = $this->assetQueryString->get();
     return $cache_buster ? "?{$cache_buster}" : '';
   }
 
@@ -130,21 +130,15 @@ class H5PEditorUtilities {
    *
    * @return string Path to translation file for editor
    */
-  private static function getTranslationFilePath() {
-    $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+  private function getTranslationFilePath(): string {
+    $language = $this->languageManager->getCurrentLanguage()->getId();
 
     $languageFolder = "assets://h5p/h5p-editor/language";
-    $defaultLanguage = \Drupal::service('file_url_generator')->generate("{$languageFolder}/en.js", [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
-    $chosenLanguage = \Drupal::service('file_url_generator')->generate("{$languageFolder}/{$language}.js", [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
-    $cacheBuster = self::getCacheBuster();
+    $defaultLanguage = $this->fileUrlGenerator->generateAbsoluteString("{$languageFolder}/en.js");
+    $chosenLanguage = $this->fileUrlGenerator->generateAbsoluteString("{$languageFolder}/{$language}.js");
+    $cacheBuster = $this->getCacheBuster();
 
-    return (file_exists(DRUPAL_ROOT . $chosenLanguage) ? $chosenLanguage : $defaultLanguage) . $cacheBuster;
+    return ($this->fileSystem->realpath("{$languageFolder}/{$language}.js") !== FALSE ? $chosenLanguage : $defaultLanguage) . $cacheBuster;
   }
 
   /**
@@ -152,7 +146,7 @@ class H5PEditorUtilities {
    *
    * @return \Drupal\Core\GeneratedUrl|string Uri for AJAX
    */
-  private static function getAjaxPath(CourseInterface $course) {
+  private function getAjaxPath(CourseInterface $course): string {
     $securityToken = \H5PCore::createToken('editorajax');
     return Url::fromUri(
       "internal:/h5peditor/{$course->id()}/{$securityToken}/:contentId/"
@@ -168,7 +162,7 @@ class H5PEditorUtilities {
    *
    * @return int|bool|array One or more properties, or false if invalid.
    */
-  public static function getLibraryProperty($library, $property = 'all') {
+  public function getLibraryProperty($library, $property = 'all') {
     $matches = [];
     preg_match_all('/(.+)\s(\d+)\.(\d+)$/', $library, $matches);
     if (count($matches) == 4) {
@@ -180,10 +174,10 @@ class H5PEditorUtilities {
       ];
       switch ($property) {
         case 'all':
-          $libraryData['libraryId'] = self::getLibraryId($libraryData);
+          $libraryData['libraryId'] = $this->getLibraryId($libraryData);
           return $libraryData;
         case 'libraryId':
-          $libraryId = self::getLibraryId($libraryData);
+          $libraryId = $this->getLibraryId($libraryData);
           return $libraryId;
         default:
           return $libraryData[$property];
@@ -202,8 +196,8 @@ class H5PEditorUtilities {
    *
    * @return null|int Library id
    */
-  private static function getLibraryId($libraryData) {
-    $select = \Drupal::database()->select('h5p_libraries');
+  private function getLibraryId($libraryData) {
+    $select = $this->database->select('h5p_libraries');
     $select->fields('h5p_libraries', array('library_id'))
            ->condition('machine_name', $libraryData['machineName'])
            ->condition('major_version', $libraryData['majorVersion'])
