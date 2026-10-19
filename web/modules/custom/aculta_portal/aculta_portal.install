@@ -223,8 +223,6 @@ function aculta_portal_update_11004(): string {
     'turnstile' => ['Cloudflare Turnstile', 'TURNSTILE_KEYS_JSON', 'authentication_multivalue'],
     'google_oauth_client_id' => ['Google OAuth client ID', 'GOOGLE_OAUTH_CLIENT_ID', 'authentication'],
     'google_oauth_client_secret' => ['Google OAuth client secret', 'GOOGLE_OAUTH_CLIENT_SECRET', 'authentication'],
-    'smtp2go_username' => ['SMTP2GO username', 'SMTP2GO_USERNAME', 'authentication'],
-    'smtp2go_password' => ['SMTP2GO password', 'SMTP2GO_PASSWORD', 'authentication'],
   ];
   foreach ($key_definitions as $id => [$label, $environment_variable, $type]) {
     if (!$key_storage->load($id)) {
@@ -244,8 +242,6 @@ function aculta_portal_update_11004(): string {
   $overrides = [
     'google_client_id' => ['Google OAuth client ID', 'social_auth_google.settings', 'client_id', 'google_oauth_client_id'],
     'google_client_secret' => ['Google OAuth client secret', 'social_auth_google.settings', 'client_secret', 'google_oauth_client_secret'],
-    'smtp_username' => ['SMTP2GO username', 'smtp.settings', 'smtp_username', 'smtp2go_username'],
-    'smtp_password' => ['SMTP2GO password', 'smtp.settings', 'smtp_password', 'smtp2go_password'],
   ];
   foreach ($overrides as $id => [$label, $config_name, $config_item, $key_id]) {
     if (!$override_storage->load($id)) {
@@ -290,17 +286,6 @@ function aculta_portal_update_11004(): string {
     $point->setStatus(TRUE);
     $point->save();
   }
-
-  $smtp = \Drupal::configFactory()->getEditable('smtp.settings');
-  $smtp->set('smtp_on', FALSE)
-    ->set('smtp_host', 'mail.smtp2go.com')
-    ->set('smtp_port', '2525')
-    ->set('smtp_protocol', 'standard')
-    ->set('smtp_autotls', TRUE)
-    ->set('smtp_username', '')
-    ->set('smtp_password', '')
-    ->set('smtp_from', '')
-    ->save();
 
   // Keep registration closed until the transactional mail provider passes a
   // real delivery test; preserve the desired password + email-verification

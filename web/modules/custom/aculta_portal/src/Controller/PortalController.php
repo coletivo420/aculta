@@ -28,7 +28,6 @@ use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\email_confirmer\EmailConfirmerManagerInterface;
-use Drupal\key\KeyRepositoryInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -57,7 +56,6 @@ final class PortalController extends ControllerBase {
     private readonly ModuleHandlerInterface $modules,
     private readonly ConfigFactoryInterface $configs,
     private readonly DateFormatterInterface $dateFormatter,
-    private readonly KeyRepositoryInterface $keys,
     private readonly CurrencyFormatterInterface $currencyFormatter,
     private readonly ?AccountDocumentInterface $accountDocument,
     private readonly ImageRenderer $imageRenderer,
@@ -402,21 +400,17 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Mailer Plus (mailer_override) envia pelo transporte SMTP2GO. As credenciais vêm de Keys
-   * (override nativo do módulo Key), nunca da configuração exportada.
+   * O Mailer Plus (mailer_override) é o único controlador de envio: pronto quando o transporte padrão é o SMTP2GO e
+   * esse transporte tem usuário e senha configurados. Nenhuma Key participa.
    */
   private function transactionalMailReady(): bool {
     $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));
+    $transport = $this->configs->get('mailer_transport.mailer_transport.' . self::MAIL_TRANSPORT)->get('configuration') ?? [];
     return $this->modules->moduleExists('mailer_override')
       && $this->configs->get('mailer_transport.settings')->get('default_transport') === self::MAIL_TRANSPORT
-      && $this->keyHasValue('smtp2go_username')
-      && $this->keyHasValue('smtp2go_password')
+      && trim((string) ($transport['user'] ?? '')) !== ''
+      && trim((string) ($transport['pass'] ?? '')) !== ''
       && $site_mail !== '';
-  }
-
-  private function keyHasValue(string $id): bool {
-    $key = $this->keys->getKey($id);
-    return $key !== NULL && trim((string) $key->getKeyValue()) !== '';
   }
 
   private function pendingEmail(int|string $uid): ?string {

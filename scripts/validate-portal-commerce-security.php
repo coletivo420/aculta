@@ -35,14 +35,14 @@ $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email
 $assert($modules->moduleExists('email_confirmer') && $modules->moduleExists('email_confirmer_user'), 'Email Confirmer and its user integration are enabled.');
 $assert($modules->moduleExists('change_mail_page'), 'Change Mail Page supplies the canonical new-address form.');
 $assert(\Drupal::config('email_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'Email Confirmer intercepts user email changes.');
-// E-mail segue o ambiente: o transporte SMTP2GO do Mailer Plus fica ativo somente quando as credenciais SMTP2GO existem como Key/env deste ambiente.
-$smtp_secrets = \Drupal::service('aculta_portal.secrets_manager');
-$smtp_credentials_present = $smtp_secrets->value('SMTP2GO_USERNAME') !== NULL && $smtp_secrets->value('SMTP2GO_PASSWORD') !== NULL;
-$mail_on = \Drupal::config('mailer_transport.settings')->get('default_transport') === 'smtp2go';
-$assert($mail_on === $smtp_credentials_present, 'SMTP2GO transport is the default exactly when its SMTP2GO credentials exist in this environment.');
-// getRawData(): a configuração ativa, sem os overrides de Key (que trazem o valor do ambiente em runtime).
+// O Mailer Plus controla o envio: o transporte SMTP2GO é o padrão somente quando tem usuário e senha configurados.
 $smtp_raw = \Drupal::config('mailer_transport.mailer_transport.smtp2go')->getRawData()['configuration'] ?? [];
-$assert(empty($smtp_raw['user']) && empty($smtp_raw['pass']), 'SMTP2GO credentials are absent from active configuration.');
+$smtp_ready = !empty($smtp_raw['user']) && !empty($smtp_raw['pass']);
+$mail_on = \Drupal::config('mailer_transport.settings')->get('default_transport') === 'smtp2go';
+$assert($mail_on === $smtp_ready, 'SMTP2GO é o transporte padrão exatamente quando tem credenciais configuradas no Mailer Plus.');
+// A configuração versionada não guarda credenciais.
+$smtp_versioned = \Symfony\Component\Yaml\Yaml::parseFile(DRUPAL_ROOT . '/../config/sync/mailer_transport.mailer_transport.smtp2go.yml')['configuration'] ?? [];
+$assert(($smtp_versioned['user'] ?? '') === '' && ($smtp_versioned['pass'] ?? '') === '', 'SMTP2GO credentials are absent from the versioned configuration.');
 $login_composer = json_decode(file_get_contents(DRUPAL_ROOT . '/../composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $login_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/login_emailusername'))[0] ?? NULL;
 $assert(($login_package['version'] ?? NULL) === '3.0.1', 'Login Email or Username remains at the audited 3.0.1 release.');
@@ -316,7 +316,7 @@ $assert(\Drupal::config('turnstile.settings')->get('keys') === ($turnstile_env =
 $assert(\Drupal::config('turnstile.settings')->get('testing_secret_key') === '', 'No Turnstile test secret is saved in configuration.');
 
 $key_storage = \Drupal::entityTypeManager()->getStorage('key');
-foreach (['turnstile', 'google_oauth_client_id', 'google_oauth_client_secret', 'smtp2go_username', 'smtp2go_password'] as $key_id) {
+foreach (['turnstile', 'google_oauth_client_id', 'google_oauth_client_secret'] as $key_id) {
   $key = $key_storage->load($key_id);
   $assert($key && $key->getKeyProvider()->getPluginId() === 'env', 'Secret/public integration reference is environment-backed: ' . $key_id);
 }

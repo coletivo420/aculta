@@ -27,8 +27,6 @@ $expected = [
   'mercadopago_test_access_token' => ['MERCADOPAGO_TEST_ACCESS_TOKEN', FALSE],
   'mercadopago_test_buyer_password' => ['MERCADOPAGO_TEST_BUYER_PASSWORD', FALSE],
   'mercadopago_webhook_secret' => ['MERCADOPAGO_WEBHOOK_SECRET', FALSE],
-  'smtp2go_username' => ['SMTP2GO_USERNAME', FALSE],
-  'smtp2go_password' => ['SMTP2GO_PASSWORD', FALSE],
   'turnstile' => ['TURNSTILE_KEYS_JSON', TRUE],
   'turnstile_test' => ['TURNSTILE_TEST_KEYS_JSON', TRUE],
   // Chaves de aplicação em texto puro (docs/operations/SECRETS.md e config/secrets-contract.json).

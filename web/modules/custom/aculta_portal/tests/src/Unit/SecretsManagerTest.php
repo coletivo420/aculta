@@ -29,7 +29,7 @@ final class SecretsManagerTest extends UnitTestCase {
     file_put_contents($this->base . '/config/secrets-contract.json', json_encode([
       'variables' => [
         ['name' => 'GOOGLE_OAUTH_CLIENT_ID', 'key_id' => 'g_id', 'required_in' => ['production', 'test']],
-        ['name' => 'SMTP2GO_PASSWORD', 'key_id' => 'smtp_pw', 'required_in' => ['test']],
+        ['name' => 'EXEMPLO_SENHA', 'key_id' => 'smtp_pw', 'required_in' => ['test']],
         ['name' => 'TURNSTILE_KEYS_JSON', 'key_id' => 'turnstile', 'required_in' => []],
       ],
     ]));
@@ -53,12 +53,12 @@ final class SecretsManagerTest extends UnitTestCase {
   }
 
   public function testSaveMergesAndKeepsValuesLeftEmpty(): void {
-    file_put_contents($this->store(), "GOOGLE_OAUTH_CLIENT_ID=antigo\nSMTP2GO_PASSWORD=senha-antiga\n");
-    $result = $this->manager()->save(['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'SMTP2GO_PASSWORD' => '', 'TURNSTILE_KEYS_JSON' => '']);
+    file_put_contents($this->store(), "GOOGLE_OAUTH_CLIENT_ID=antigo\nEXEMPLO_SENHA=senha-antiga\n");
+    $result = $this->manager()->save(['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'EXEMPLO_SENHA' => '', 'TURNSTILE_KEYS_JSON' => '']);
     $this->assertTrue($result['ok']);
     $this->assertSame(['GOOGLE_OAUTH_CLIENT_ID'], $result['updated']);
     $this->assertSame(
-      ['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'SMTP2GO_PASSWORD' => 'senha-antiga'],
+      ['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'EXEMPLO_SENHA' => 'senha-antiga'],
       SecretsFormat::parse((string) file_get_contents($this->store())),
     );
     $this->assertSame(0640, fileperms($this->store()) & 0777);

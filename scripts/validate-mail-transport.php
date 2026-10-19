@@ -81,29 +81,9 @@ $check(isset($extensions['module']['symfony_mailer']) && isset($extensions['modu
 $check(isset($extensions['module']['mailer_override']), 'mailer_override deve estar habilitado para substituir o MailManager do Core.');
 $check(is_array($override_settings['override'] ?? NULL), 'A lista de overrides deve estar declarada.');
 
-$key_overrides = [
-  'mailer_smtp2go_username' => ['configuration.user', 'smtp2go_username'],
-  'mailer_smtp2go_password' => ['configuration.pass', 'smtp2go_password'],
-];
-foreach ($key_overrides as $id => [$item, $key_id]) {
-  $file = $root . '/config/sync/key.config_override.' . $id . '.yml';
-  $override = is_file($file) ? (\Symfony\Component\Yaml\Yaml::parseFile($file) ?: []) : [];
-  $check(($override['config_prefix'] ?? NULL) === 'mailer_transport.mailer_transport'
-    && ($override['config_name'] ?? NULL) === 'smtp2go'
-    && ($override['config_item'] ?? NULL) === $item
-    && ($override['key_id'] ?? NULL) === $key_id,
-  "$id deve injetar sua Key no caminho SMTP2GO correto.");
-}
-
-foreach ([
-  'smtp2go_username' => 'SMTP2GO_USERNAME',
-  'smtp2go_password' => 'SMTP2GO_PASSWORD',
-] as $key_id => $environment_variable) {
-  $file = $root . '/config/sync/key.key.' . $key_id . '.yml';
-  $key = is_file($file) ? (\Symfony\Component\Yaml\Yaml::parseFile($file) ?: []) : [];
-  $check(($key['key_provider'] ?? NULL) === 'env'
-    && ($key['key_provider_settings']['env_variable'] ?? NULL) === $environment_variable,
-  "$key_id deve resolver a variável de ambiente aprovada.");
+// Sem Keys: o Mailer Plus é o único controlador de envio. Nenhum override de Key nem Key de SMTP2GO pode existir.
+foreach (['key.config_override.mailer_smtp2go_username', 'key.config_override.mailer_smtp2go_password', 'key.key.smtp2go_username', 'key.key.smtp2go_password'] as $removed) {
+  $check(!is_file($root . '/config/sync/' . $removed . '.yml'), "$removed não pode existir: o envio não usa Keys.");
 }
 
 $controller = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Controller/PortalController.php');
@@ -111,7 +91,7 @@ preg_match('/private function transactionalMailReady\(\): bool \{(.*?)\n  \}/s',
 $body = $match[1] ?? '';
 $check($body !== '', 'PortalController::transactionalMailReady() não encontrado.');
 $check(str_contains($body, 'mailer_override'), 'transactionalMailReady() deve checar mailer_override.');
-$check(str_contains($body, 'smtp2go_password') && str_contains($body, 'smtp2go_username'), 'transactionalMailReady() deve checar as duas Keys SMTP2GO.');
+$check(str_contains($body, "'user'") && str_contains($body, "'pass'"), 'transactionalMailReady() deve checar usuário e senha do transporte do Mailer Plus.');
 $check(str_contains($controller, 'private const MAIL_TRANSPORT'), 'PortalController deve declarar a constante MAIL_TRANSPORT usada por transactionalMailReady().');
 $check(!str_contains($body, 'smtp.settings') && !str_contains($body, 'SMTPMailSystem'), 'transactionalMailReady() não pode depender do legado smtp.settings/SMTPMailSystem.');
 
