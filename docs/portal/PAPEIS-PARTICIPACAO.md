@@ -62,7 +62,8 @@ de moderação). O nível de associado não dá nenhuma outra função além do 
 |---|---|---|
 | Ler tópicos públicos | Anônimo | Aplicado |
 | Seguir e salvar tópico | `authenticated` | Aplicado |
-| Criar tópico, editar e excluir o próprio, comentar, denunciar | `email_confirmed` | Aplicado |
+| Criar tópico e editar/excluir o próprio | `email_confirmed` | Config Sync aplicado; rota e formulário Core autorizados no Runtime de teste. Formulário não submetido; edição/exclusão persistidas não homologadas |
+| Comentar e denunciar | `email_confirmed` | Conforme as permissões e políticas de comentário/moderação documentadas abaixo; fluxo de envio permanece em homologação |
 | Ver contêiner ou tópico de nível "e-mail confirmado" | `email_confirmed` (ou `content_editor` com `email_confirmed`) | Aplicado |
 | Ver contêiner ou tópico de nível "estudante" | `estudante` (ou `content_editor` com `email_confirmed`) | Aplicado; testes unitários e smoke no Runtime de testes OK |
 | Ver contêiner ou tópico de nível "associado" | `associado` (ou `content_editor` com `email_confirmed`) | Aplicado: realm pelo papel `associado`; o marcador de conta segue como fallback |
@@ -76,6 +77,12 @@ real. Moderação de tópicos por editores ainda depende de access check explíc
 com essa confirmação; não conceder `edit any`/`delete any` diretamente ao papel.
 As regras configuráveis de participação continuam aplicadas pelo access check
 de criação. Administrador mantém o bypass nativo do Drupal.
+
+No Runtime de teste, a role ativa foi preservada e recebeu somente a dependência
+do bundle novo e essas três permissões próprias. A conta `teste.comum` (uid 5)
+teve a rota autorizada e o formulário renderizado em memória. Não houve envio,
+Node ou Comment persistido; edição e exclusão de tópico salvo permanecem sem
+homologação funcional.
 
 ### Moderação inicial de discussões
 

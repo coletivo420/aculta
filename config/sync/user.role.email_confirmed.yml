@@ -4,12 +4,24 @@ status: true
 dependencies:
   config:
     - filter.format.usuario_aculta
+    - filter.format.wiki
     - node.type.aculta_forum_topic
+    - node.type.forum
+    - node.type.wiki_entry
+    - workflows.workflow.wiki_editorial
   module:
+    - aculta_user
     - captcha
+    - comment
+    - content_moderation
+    - filter
+    - flag
+    - node
+    - profile
+    - system
 id: email_confirmed
 label: 'E-mail confirmado'
-weight: 9
+weight: -8
 is_admin: false
 permissions:
   - 'access content'

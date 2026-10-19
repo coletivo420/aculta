@@ -121,6 +121,15 @@ Portal `0.4.0-dev.185` / Forum `0.1.0-dev.16` adicionam uma mensagem Core
 confirmou a mensagem na raiz, filtro presente e `/discussoes` fechado; zero
 tópicos/comentários criados. Inspeção visual segue pendente.
 
+Portal `0.4.0-dev.186` / Forum `0.1.0-dev.17` acrescentam ao papel
+`email_confirmed` somente criar, editar e excluir o próprio `aculta_forum_topic`.
+O Config Sync preserva as permissões/dependências e peso observados no Runtime;
+não concede edição/exclusão de qualquer tópico. No Runtime `toca`, a importação
+parcial do papel permitiu à conta de teste acessar a rota e renderizar em memória
+o formulário Core (título, corpo e categoria). O formulário não foi enviado e
+continuam zero tópicos e comentários. Testes Unit cobrem o contrato da role, não
+substituem o teste funcional de submissão; a fase dev.6 permanece aberta.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,

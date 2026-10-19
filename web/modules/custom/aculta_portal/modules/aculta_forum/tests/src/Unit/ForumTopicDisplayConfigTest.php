@@ -132,4 +132,23 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('node:{node_type}', $route['requirements']['_entity_create_access']);
   }
 
+  /**
+   * Email-confirmed participants receive only own-topic Node permissions.
+   */
+  public function testEmailConfirmedRoleCanCreateAndManageOwnTopics(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $role = Yaml::parseFile($repository_path . '/config/sync/user.role.email_confirmed.yml');
+
+    foreach ([
+      'create aculta_forum_topic content',
+      'edit own aculta_forum_topic content',
+      'delete own aculta_forum_topic content',
+    ] as $permission) {
+      self::assertContains($permission, $role['permissions']);
+    }
+    self::assertNotContains('edit any aculta_forum_topic content', $role['permissions']);
+    self::assertNotContains('delete any aculta_forum_topic content', $role['permissions']);
+  }
+
 }

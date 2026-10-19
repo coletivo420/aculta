@@ -1,3 +1,8 @@
+## 0.4.0-dev.186 — aplica permissões próprias de tópico ao papel confirmado — 2026-10-19
+
+- `user.role.email_confirmed` preserva as dependências, permissões existentes e peso ativos do Runtime; acrescenta só a dependência do bundle novo e `create/edit own/delete own aculta_forum_topic`. Não concede `edit any` ou `delete any`.
+- PHPUnit `ForumTopicDisplayConfigTest`: 7 testes/47 assertions PASS; gate de papéis PASS. Runtime `toca`: importação parcial só do papel; uid 5 confirmado recebeu acesso à rota e formulário Core não submetido mostrou título, corpo, categoria e submit. Zero tópicos e comentários. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.185 — estado vazio da listagem do ACULTA Forum — 2026-10-19
 
 - `aculta_forum 0.1.0-dev.16` configura mensagem de estado vazio pela área Core `text_custom` na View; domínio, bundle, publicação e acesso permanecem fixos. Sem resultados, filtros e ação autorizada continuam disponíveis.

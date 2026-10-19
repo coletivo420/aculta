@@ -1,3 +1,8 @@
+## `0.1.0-dev.17` — acesso de participante ao formulário de tópico — 2026-10-19
+
+- Config Sync do papel `email_confirmed` mantém o estado ativo de Wiki/Fórum legado e demais permissões; acrescenta somente a dependência do bundle ACULTA e criar/editar/excluir o próprio tópico. Nenhuma permissão `any` foi concedida.
+- Unit `ForumTopicDisplayConfigTest`: 7 testes/47 assertions PASS. Runtime `toca`: importação parcial apenas do papel; uid 5 confirmado tem acesso à rota e formulário em memória renderiza title/body/categoria. Formulário não enviado; zero tópico/Comment novo. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.16` — mensagem para listagem pública vazia — 2026-10-19
 
 - A View pública informa em português quando ainda não há tópicos publicados. A configuração de instalação e Config Sync mantêm o mesmo texto e plugin Core `text_custom`; listagem, filtro de domínio, bundle, publicação e acesso não foram alterados.
