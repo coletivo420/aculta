@@ -125,9 +125,15 @@ em 738.125 alvos distintos:
 
 | Destino | Alvos | Regra |
 | --- | --- | --- |
-| Link interno | 72.555 | alvo com captura válida no acervo: vira link para o conteúdo importado |
-| Modal de conteúdo legado | 591.305 | alvo sem captura válida: `data-legado-growroom` abre o modal, em vez de navegar |
-| Descartado | 74.265 | anúncios de terceiros (`openx`) e recursos do tema antigo (CSS, JS, ícones), que não são conteúdo |
+| Link interno | 64.750 | página ou recurso com captura válida no acervo: vira link para o conteúdo importado |
+| Imagem do acervo | 7.805 | foto de conteúdo (`uploads/`, galeria) com arquivo válido: entra pelo `aculta_image` |
+| Imagem padrão | 73.717 | foto de conteúdo sem arquivo: usa a imagem padrão "Que pena não conseguimos restaurar essa imagem do antigo growroom" (`scripts/growroom/gerar_imagem_padrao.py`) |
+| Modal de conteúdo legado | 591.305 | link quebrado de página: `data-legado-growroom` abre o modal, em vez de navegar |
+| Descartado | 548 | anúncios de terceiros (`openx`) e recursos do tema antigo (CSS, JS, ícones), que não são conteúdo |
+
+Correção de 2026-10-19: a versão anterior classificava as fotos de `uploads/` e galeria como recursos do tema e as
+descartava (81.522 alvos). Agora são tratadas como conteúdo. Para as fotos sem arquivo, a imagem padrão é usada no lugar
+do modal. As 506.908 ocorrências de foto sem arquivo estão nas páginas de tópico e galeria.
 
 - Dos 591.305 alvos que vão para o modal, 305.967 são links de navegação com token de sessão (`s=`, `do=`, `act=`), que
   não são conteúdo. Eles também vão para o modal, sem mapeamento individual.
