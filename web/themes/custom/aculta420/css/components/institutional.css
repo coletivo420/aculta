@@ -25,7 +25,6 @@
 .aculta-city h2 { color: inherit; }
 .aculta-callout { font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 600; }
 .aculta-institutional-note { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--aculta-border-default); font-size: 0.9375rem; }
-.aculta-participation { padding-block: 2rem; border-top: 1px solid var(--aculta-border-default); }
 .aculta-institution-details { display: grid; gap: 0.875rem; margin: 0; }
 .aculta-institution-details > div { display: grid; grid-template-columns: minmax(9rem, 0.4fr) minmax(0, 1fr); gap: 0.25rem 1rem; }
 .aculta-institution-details dt { font-weight: 600; }
@@ -39,11 +38,9 @@
 .contact-form .form-item, .webform-submission-form .form-item { margin-bottom: 1.25rem; }
 
 /* Purpose-specific institutional sections remain presentation-only. */
-.aculta-editorial-section.aculta-city,
-.aculta-editorial-section.aculta-participation { padding: clamp(1.25rem, 3vw, 2rem); border-radius: var(--bs-border-radius); }
+.aculta-editorial-section.aculta-city { padding: clamp(1.25rem, 3vw, 2rem); border-radius: var(--bs-border-radius); }
 .aculta-editorial-section.aculta-city { color: var(--aculta-text-inverse); background: var(--aculta-green-dark); }
 .aculta-editorial-section.aculta-city h2 { color: inherit; }
-.aculta-editorial-section.aculta-participation { background-color: var(--aculta-surface-raised); border-inline-start: 3px solid var(--aculta-border-accent); }
 
 @media (max-width: 767.98px) {
   .aculta-areas, .aculta-project-list .view-content { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }

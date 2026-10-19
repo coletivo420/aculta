@@ -35,11 +35,11 @@ foreach ($data['work']['areas'] as $index => $area) {
   $work .= '<section><h3>' . $escape($area['title']) . '</h3><p>' . $escape($short['work'][$index]) . '</p></section>';
 }
 $bodies['home_work'] = $work . '</div><p>' . $link('/institucional', 'CONHEÇA NOSSA ATUAÇÃO') . '</p></section>';
-foreach (['city' => ['/atividades', 'VEJA NOSSAS ATIVIDADES'], 'knowledge' => ['/noticias', 'ACOMPANHE AS PUBLICAÇÕES'], 'care' => ['/institucional', 'CONHEÇA NOSSA ATUAÇÃO'], 'research' => ['/institucional', 'CONHEÇA NOSSA HISTÓRIA'], 'transparency' => ['/transparencia', 'CONHEÇA NOSSA TRANSPARÊNCIA'], 'participation' => ['/atividades', 'CONHEÇA NOSSAS ATIVIDADES']] as $key => [$path, $label]) {
-  $class = $key === 'city' ? 'aculta-city' : ($key === 'participation' ? 'aculta-participation' : '');
+foreach (['city' => ['/atividades', 'VEJA NOSSAS ATIVIDADES'], 'knowledge' => ['/noticias', 'ACOMPANHE AS PUBLICAÇÕES'], 'care' => ['/institucional', 'CONHEÇA NOSSA ATUAÇÃO'], 'research' => ['/institucional', 'CONHEÇA NOSSA HISTÓRIA'], 'transparency' => ['/transparencia', 'CONHEÇA NOSSA TRANSPARÊNCIA']] as $key => [$path, $label]) {
+  $class = $key === 'city' ? 'aculta-city' : '';
   $heading = !empty($data[$key]['bar']) ? '<h2 class="aculta-section-title">' . $escape($data[$key]['bar']) . '</h2><h3 class="aculta-editorial-heading">' . $escape($data[$key]['title']) . '</h3>' : '<h2>' . $escape($data[$key]['title']) . '</h2>';
   $extra = $key === 'city' ? '<p class="aculta-callout">CULTURA SE FAZ JUNTO.</p>' : '';
-  $extra .= $key === 'participation' ? '<div class="aculta-actions">' . $link($path, $label, 'btn btn-primary') . $link('/contato', 'ENTRE EM CONTATO', 'btn btn-outline-primary') . '</div>' : '<p>' . $link($path, $label, $key === 'city' ? 'btn btn-primary' : 'aculta-editorial-link') . '</p>';
+  $extra .= '<p>' . $link($path, $label, $key === 'city' ? 'btn btn-primary' : 'aculta-editorial-link') . '</p>';
   $bodies['home_' . $key] = '<section class="aculta-editorial-section ' . $class . '">' . $heading . '<div class="aculta-prose">' . $paragraphs($short[$key]) . $extra . '</div></section>';
 }
 foreach ($bodies as $key => $body) {

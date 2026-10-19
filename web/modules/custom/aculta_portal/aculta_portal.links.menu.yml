@@ -32,7 +32,7 @@ aculta_portal.footer_support:
   title: Apoie
   description: Conheça as formas de apoio institucional disponíveis.
   route_name: aculta_portal.support_form
-  menu_name: aculta-footer-participation
+  menu_name: aculta-footer-institution
   weight: -10
 # Administração de contas em Configurações > Pessoas (migradas das abas de Pessoas).
 aculta_portal.config_papeis_e_perfis:
