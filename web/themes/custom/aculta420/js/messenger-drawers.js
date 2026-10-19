@@ -29,29 +29,54 @@
         });
       });
 
-      // "Bloquear" and "Desfazer amizade" in the Opções menus open their confirmation as a Drupal modal. The question is
-      // a hidden container in the same form; appendTo keeps it inside the form, so "Sim" still submits. "Cancelar" closes
-      // it. The button names its dialog in data-aculta-dialog-open.
+      // "Bloquear" and "Desfazer amizade" in a member's box open their confirmation as a Drupal modal. The question is a
+      // hidden container in the same form, so "Sim" still submits. The modal stays in the drawer and is centred on the
+      // drawer: the scrolling content clips whatever is drawn outside its box, and that part would not receive clicks.
+      // "Cancelar" closes it. The open button names its dialog.
       once('aculta-dialog-open', '[data-aculta-dialog-open]', context).forEach((button) => {
         button.addEventListener('click', (event) => {
           // Form API renders these as submit inputs: the click only opens the dialog, it does not post the form.
           event.preventDefault();
-          const form = button.closest('form');
-          const content = form?.querySelector(`[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`);
+          // Each member's box has its own dialog with the same name: the open button keeps a reference to its own.
+          if (!button.acultaDialogContent) {
+            const form = button.closest('form');
+            button.acultaDialogContent = form?.querySelector(`[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`) || null;
+            button.acultaDialogContent?.querySelectorAll('input[type="submit"]').forEach((submit) => {
+              // The confirm button posts its own form. A mouse click does not give the form its submitter here, so the
+              // button's name and value go in as a hidden field for this one submit, and the answer knows which action ran.
+              if (!submit.hasAttribute('data-aculta-dialog-close')) {
+                submit.addEventListener('click', (submitEvent) => {
+                  submitEvent.preventDefault();
+                  const marker = document.createElement('input');
+                  marker.type = 'hidden';
+                  marker.name = submit.name;
+                  marker.value = submit.value;
+                  submit.form.append(marker);
+                  submit.form.requestSubmit();
+                  marker.remove();
+                });
+              }
+            });
+          }
+          const content = button.acultaDialogContent;
           if (!content || typeof Drupal.dialog !== 'function') {
             return;
           }
           // Bootstrap's [hidden] rule uses !important, so jQuery UI cannot show the question while the attribute stays.
           content.removeAttribute('hidden');
+          // The drawer's scrolling content clips what is drawn outside its box, and the centred modal is partly outside it.
+          // While the question is open that content is not clipped; it goes back to normal when the question closes.
+          const scroller = content.closest('.ui-dialog-content');
+          scroller?.setAttribute('data-aculta-confirming', '');
           if (!content.acultaDialog) {
             content.acultaDialog = Drupal.dialog(content, {
-              appendTo: form,
+              appendTo: button.closest('form'),
               // Form API renders the open button as an <input type="button">: its label is the value, not the text.
               title: button.value || button.textContent.trim(),
               closeOnEscape: true,
               // The default close detaches the element's behaviors ('unload'), and jQuery UI then destroys the dialog
-              // with its content: the question is gone at the next opening. Closing only hides the dialog here.
-              close: () => {},
+              // with its content: the question is gone at the next opening. Closing only restores the scroller here.
+              close: () => scroller?.removeAttribute('data-aculta-confirming'),
             });
           }
           content.acultaDialog.showModal();

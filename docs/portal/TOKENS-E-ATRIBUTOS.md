@@ -60,6 +60,7 @@
 | `data-aculta-imagem-alinhamento` | exato | não | 1 |
 | `data-aculta-imagem-legenda` | exato | não | 1 |
 | `data-aculta-imagem-modelo` | exato | não | 1 |
+| `data-aculta-confirming` | exato | sim | 1 |
 | `data-aculta-lazy-src` | exato | sim | 2 |
 | `data-aculta-lock-mirror` | exato | sim | 1 |
 | `data-aculta-modelo` | exato | sim | 3 |

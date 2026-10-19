@@ -7,6 +7,11 @@
   -webkit-backdrop-filter: blur(4px);
 }
 
+/* A confirmation of a member's box is open: the drawer's scrolling content does not clip the modal drawn over it. */
+.ui-dialog-content[data-aculta-confirming] {
+  overflow: visible !important;
+}
+
 /* The two communication panels use Drupal Core's off-canvas dialog renderer.
    Keep its right-side interaction and match the cart's 420 px width. */
 .ui-dialog-off-canvas.aculta-messenger-drawer,

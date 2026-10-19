@@ -1,3 +1,12 @@
+## 0.6.0-dev.89 — "Sim" do diálogo do messenger envia a ação (clique não era recortado) — 2026-10-19
+
+- Causa: o diálogo de confirmação de uma caixa de membro ficava dentro do conteúdo de rolagem da gaveta (`overflow-y: auto`), que recorta o que sai da caixa. Metade do diálogo ficava fora e recebia cliques no fundo. Correção: enquanto a confirmação está aberta, o contêiner de rolagem recebe `data-aculta-confirming` (`dialog.css`: `overflow: visible`), e volta ao normal ao fechar.
+- O envio do "Sim" informa o botão ao servidor (campo oculto com nome e valor, enviado com o formulário). Antes, o clique com o mouse não levava a ação, e a resposta era "Não foi possível concluir a ação".
+- A regra de `.ui-dialog` com `:has()` aninhado foi descartada pelo navegador; trocada por seletores simples. Removidas as regras `dialog[data-aculta-dialog]` do `messenger-drawer.css` (eram do `<dialog>` nativo, já sem efeito).
+- Gate de fundação atualizado para `0.6.0-dev.89`.
+- Validado no Firefox (X11) com o Runtime de teste: "Sim" de bloqueio grava e reverte; Cancelar fecha e reabre; "Desfazer amizade" abre com a pergunta.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild).
+
 ## 0.6.0-dev.88 — diálogos do messenger: título, conteúdo visível e reabertura — 2026-10-19
 
 - `messenger-drawers.js`: o diálogo de confirmação remove o atributo `hidden` antes de abrir (a regra `[hidden]` do Bootstrap é `!important`), usa o valor do botão como título (o botão é um `<input>`), e tem um `close` próprio que só oculta. O `close` padrão destruía o elemento, e a segunda abertura não mostrava a pergunta.
