@@ -7,8 +7,11 @@ use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\Controller\H5PContentUpgrade;
 use Drupal\aculta_lms_h5p\Controller\H5PLibraryAdmin;
 
-use Drupal\Core\Url;
+use Drupal\Core\Asset\AssetQueryStringInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Form\FormBase;
@@ -19,10 +22,33 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class H5PContentUpgradeForm extends FormBase {
 
-  public function __construct(private readonly Connection $database) {}
+  protected Connection $database;
+
+  protected ModuleExtensionList $moduleList;
+
+  protected FileUrlGeneratorInterface $fileUrlGenerator;
+
+  protected AssetQueryStringInterface $assetQueryString;
+
+  public function __construct(
+    Connection $database,
+    ModuleExtensionList $moduleList,
+    FileUrlGeneratorInterface $fileUrlGenerator,
+    AssetQueryStringInterface $assetQueryString,
+  ) {
+    $this->database = $database;
+    $this->moduleList = $moduleList;
+    $this->fileUrlGenerator = $fileUrlGenerator;
+    $this->assetQueryString = $assetQueryString;
+  }
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('database'));
+    return new static(
+      $container->get('database'),
+      $container->get('extension.list.module'),
+      $container->get('file_url_generator'),
+      $container->get('asset.query_string'),
+    );
   }
 
   /**
@@ -56,7 +82,7 @@ class H5PContentUpgradeForm extends FormBase {
 
     $contents_plural = $this->formatPlural($contents, '1 atividade', '@count atividades');
     $returnLink = Link::fromTextAndUrl($this->t('Voltar'), Url::fromUri('internal:/admin/content/h5p/'))->toString();
-    $h5p_module_rel = base_path() . \Drupal::service('extension.list.module')->getPath('aculta_lms_h5p');
+    $h5p_module_rel = base_path() . $this->moduleList->getPath('aculta_lms_h5p');
     $settings = [
       'libraryInfo' => [
         'message' => $this->t('Você vai atualizar %num. Selecione a versão de destino.', ['%num' => $contents_plural]),
@@ -75,8 +101,8 @@ class H5PContentUpgradeForm extends FormBase {
           'version' => $library->major_version . '.' . $library->minor_version,
         ],
         'libraryBaseUrl' => Url::fromUri('internal:/admin/content/h5p/upgrade/library')->toString(),
-        'scriptBaseUrl' => \Drupal::service('file_url_generator')->generate("assets://h5p/h5p-core/js/")->toString(),
-        'buster' => '?' . \Drupal::service('asset.query_string')->get(),
+        'scriptBaseUrl' => $this->fileUrlGenerator->generate("assets://h5p/h5p-core/js/")->toString(),
+        'buster' => '?' . $this->assetQueryString->get(),
         'versions' => $upgrades,
         'contents' => $contents,
         'buttonLabel' => $this->t('Atualizar'),

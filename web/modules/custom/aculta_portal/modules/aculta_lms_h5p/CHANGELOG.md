@@ -1,3 +1,15 @@
+## Acesso de Views e formulários administrativos por DI — 2026-10-19
+
+- `H5PAccessUserPoints` agora usa a rota canônica de perfil e a conta carregada
+  pelo Route Match, com permissão global separada; remove parsing de caminho e
+  service locator.
+- Formulários de configurações e atualização recebem filesystem, invalidator de
+  cache, banco, gerador de URL e serviços de assets por DI. Os serviços
+  sobrevivem à serialização do Form API. O route access de Views tem testes
+  Unit de dono, outra conta, rota incompatível e permissão administrativa.
+- Unit H5P: 23 testes/67 assertions. Kernel H5P no MariaDB dedicado: 14
+  testes/263 assertions; 40 depreciações upstream Core/Group/LMS/Views.
+
 ## Continuação F10 — DI e ciclo de imagem H5P (2026-10-19)
 
 - Refatorados os adapters de editor/storage/AJAX para receber serviços por DI;

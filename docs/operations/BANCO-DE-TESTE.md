@@ -121,6 +121,13 @@ absolutas do editor; os assets H5P CSS/JS e a tradução pt-br responderam HTTP
 200. Cache rebuild executado; nenhum update de banco ou import de configuração
 necessário. Produção não foi alterada.
 
+Execução adicional em 2026-10-19 após a revisão dos serviços do editor:
+H5P Unit passou com 23 testes e 67 asserções; Kernel H5P passou com 14 testes
+e 263 asserções no MariaDB dedicado. Foram reportadas 40 depreciações de
+Core/contrib e nenhuma falha. O Kernel validou o formulário de configuração
+após serialização, e o acesso próprio/global do plugin de Views está coberto
+em Unit.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

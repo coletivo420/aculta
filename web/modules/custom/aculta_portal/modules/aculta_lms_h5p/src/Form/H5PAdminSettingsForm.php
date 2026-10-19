@@ -7,13 +7,30 @@ use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use \Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\File\FileSystemInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Implements the H5P Admin Settings Form.
  */
 class H5PAdminSettingsForm extends FormBase {
+
+  protected FileSystemInterface $fileSystem;
+
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
+
+  public function __construct(
+    FileSystemInterface $fileSystem,
+    CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+  ) {
+    $this->fileSystem = $fileSystem;
+    $this->cacheTagsInvalidator = $cacheTagsInvalidator;
+  }
+
+  public static function create(ContainerInterface $container): static {
+    return new static($container->get('file_system'), $container->get('cache_tags.invalidator'));
+  }
 
   /**
    * {@inheritdoc}
@@ -98,7 +115,7 @@ class H5PAdminSettingsForm extends FormBase {
     $this->addDisplayOption($form['h5p_display_options'], 'h5p_copyright', $this->t('Botão de direitos autorais'), $interface->getOption('copyright'));
     $this->addDisplayOption($form['h5p_display_options'], 'h5p_icon', $this->t('Botão Sobre o H5P'), $interface->getOption('icon'));
 
-    $dir = \Drupal::service('file_system')->realpath('private://');
+    $dir = $this->fileSystem->realpath('private://');
     $form['h5p_default_path'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Diretório privado dos arquivos H5P'),
@@ -211,10 +228,10 @@ class H5PAdminSettingsForm extends FormBase {
     $path = 'private://' . $h5p_default_path;
     $temp_path = $path . '/' . 'temp';
 
-    if (! \Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+    if (!$this->fileSystem->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
       $form_state->setErrorByName('h5p_default_path', $this->t('O diretório informado é inválido.'));
     }
-    if (! \Drupal::service('file_system')->prepareDirectory($temp_path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+    if (!$this->fileSystem->prepareDirectory($temp_path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
       $form_state->setErrorByName('h5p_default_path', $this->t('O diretório informado é inválido.'));
     }
 
@@ -256,7 +273,7 @@ class H5PAdminSettingsForm extends FormBase {
     $interface->setOption('send_usage_statistics', 0);
     $interface->setOption('development_mode', $values['h5p_development_mode']);
 
-    Cache::invalidateTags(['h5p_content']);
+    $this->cacheTagsInvalidator->invalidateTags(['h5p_content']);
 
     // TODO: Be able to change site key
 //  if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $form_state['values']['h5p_site_key'])) {

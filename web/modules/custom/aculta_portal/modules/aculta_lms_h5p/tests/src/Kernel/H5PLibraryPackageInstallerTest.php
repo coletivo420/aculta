@@ -196,6 +196,7 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     );
     self::assertTrue(class_exists(\Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities::class));
     $settings = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\H5PContentUpgradeForm::class);
+    $settings = unserialize(serialize($settings));
     $missing = $settings->buildForm([], new \Drupal\Core\Form\FormState(), 999);
     self::assertSame('Biblioteca não encontrada.', (string) $missing['#markup']);
   }
@@ -272,6 +273,7 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
   /** Verifies the H5P settings form builds its option fieldset and labels. */
   public function testH5PSettingsFormBuildsTranslatedOptions(): void {
     $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\H5PAdminSettingsForm::class);
+    $form = unserialize(serialize($form));
     $built = $form->buildForm([], new \Drupal\Core\Form\FormState());
     self::assertSame('fieldset', $built['h5p_display_options']['#type']);
     self::assertSame('Opções de exibição', (string) $built['h5p_display_options']['#title']);
