@@ -2,6 +2,13 @@
 
 Identidade, perfil, avatar, amizade, associados (marcador), autoria histórica (memorial), restrição de fóruns (F9) e moderação de denúncias. Ver também `docs/` e o `CHANGELOG.md` do módulo.
 
+> As entradas Forum nesta referência descrevem a implementação atual e seus
+> consumidores dos bundles `forum`/`comment_forum`. A reconstrução aprovada em
+> 2026-10-19 os substituirá por contratos contextuais e cartões de autoria
+> preparados por `aculta_user`; ver [AUTHOR-CARDS.md](AUTHOR-CARDS.md) e
+> [MIGRATION-REMOVAL.md](../../aculta_forum/docs/MIGRATION-REMOVAL.md). Não remova nem renomeie hooks nesta
+> fase documental.
+
 Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a primeira frase do próprio docblock; a regra e o motivo completos ficam no código. Quando uma classe mudar, atualize esta tabela na mesma entrega.
 
 ## Hooks (`#[Hook]`)

@@ -3,7 +3,42 @@
 Data: 2026-10-15. Fonte: decisões explícitas do responsável nesta sessão.
 Atualização do responsável: marca **Growroom420**, prefixo **`growroom420.aculta`**.
 O acervo de origem continua identificado como Growroom nas fontes históricas.
-Este documento governa o projeto futuro; não descreve alterações já aplicadas.
+Este documento registra histórico e decisões vigentes; não descreve alterações já aplicadas.
+
+## Decisões vigentes de reconstrução — 2026-10-19
+
+As decisões abaixo foram fornecidas explicitamente pelo responsável e governam
+as fases novas. Itens antigos incompatíveis são preservados como histórico, mas
+não orientam a implementação futura. Decisões antigas compatíveis continuam
+válidas (purpose `forum`, acesso privado de LMS, e-mail de participação,
+notificações existentes, autoria histórica em entidade própria e não conceder
+conquistas na importação).
+
+| ID | Decisão vigente | Efeito |
+| --- | --- | --- |
+| F-D22 | Substituir definitivamente `drupal/forum` por motor ACULTA baseado em Node, Comment, Taxonomy, Views, Search API, History, Flag e APIs Core/contrib | Retirada somente após inventário, implementação substituta, backup/rollback e autorização operacional na fase dev.5; nenhum uninstall nesta fase. |
+| F-D23 | Um motor de discussões compartilha quatro contextos: Growroom público, Publicações, LMS e Wiki | API de contexto/provider; revalidação de Entity Access e política específica por contexto. |
+| F-D24 | Growroom contém somente tópicos públicos independentes; discussões internas de curso/turma/atividade ficam no LMS | Discussão geral sobre cursos pode ser pública; conteúdo pedagógico interno não aparece em busca, listagens ou aviso públicos. |
+| F-D25 | Publicação usa Comments na própria entidade; é proibido criar tópico público automaticamente por publicação | Remover `ForumTopicSync`/conversores dependentes em fase própria e preservar canonical/âncora editorial. |
+| F-D26 | Wiki terá uma discussão Comment por verbete dentro da página; não cria tópico público nem altera revisão editorial | Só contratos/adaptadores preparados agora; reconstrução funcional da Wiki permanece fora de escopo. |
+| F-D27 | `aculta_user` é dono único de cartões e dados de identidade/autoria; `aculta_forum` não possui builder, renderer ou consulta privada própria | Reutilizar/estender serviços de User; ACULTA420 desenha. |
+| F-D28 | ACULTA420 é o único dono de markup visual, SDC, CSS, Bootstrap e presets | Portal fornece contrato neutro com acesso/cache; não referenciar componentes do tema do PHP. |
+| F-D29 | `aculta_forum` inicia versão própria `0.1.0-dev.1`; cada outro módulo conserva sua linha/versionamento | Fases e commits seguem o roadmap; documentação não avança versões runtime alheias. |
+| F-D30 | Fase `0.1.0-dev.1` é auditoria/documentação sem mudanças no Runtime ou exclusão | Decisão não autoriza `updb`, cim, uninstall, composer remove ou apagar conteúdo. |
+
+### Decisões históricas substituídas
+
+- **F-D06** (contas User bloqueadas para autores históricos) já havia sido
+  substituída por F-D17; permanece revogada. F-D17 e a entidade
+  `aculta_legado_autor` continuam compatíveis e vigentes.
+- Arquitetura antiga que mantinha Forum contrib como fonte dos tópicos e
+  `ForumTopicSync` como estratégia de Magazine está substituída por F-D22/F-D25.
+- A afirmação de que a próxima fase era F4 e os planos F1–F9 descrevem uma linha
+  anterior; são histórico de execução, não roadmap vigente. Consulte
+  `ROADMAP.md` para as versões novas.
+- F-D02 segue válido: purpose interno `forum` e endereços por ambiente continuam
+  sob DomainPurposeManager/Deployer. A substituição do motor não altera domínio
+  por si só.
 
 ## Aprovado
 

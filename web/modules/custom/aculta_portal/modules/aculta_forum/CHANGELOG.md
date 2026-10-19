@@ -1,3 +1,11 @@
+## 0.1.0-dev.1 — auditoria e fundação documental — 2026-10-19
+
+- PRs e base verificadas: PR #291 está mesclada e é de pagamentos; PRs antigas de Fórum #287–#289 estão fechadas; a branch desta fase parte de `origin/main` `d4a0d66e`. A PR #296 é a linha separada do Portal `0.4.0-dev.162`.
+- Inventário confirmou `drupal/forum` 1.1.3 habilitado e dependências de config/código em `aculta_user`, `aculta_magazine`, `aculta_messenger`, Config Sync e ACULTA420.
+- Nova arquitetura documental: Node/Comment/Taxonomy/Views/Search API com quatro contextos; cartões centralizados em `aculta_user`; apresentação exclusiva do ACULTA420.
+- Inventário completo de capacidades históricas do Advanced Forum e plano em fases para retirada segura; não houve alteração de runtime, dependência, configuração exportada ou dados.
+- RUNTIME STATUS: DEFERRED (fase somente documental; nenhuma operação no ambiente).
+
 ## F4 — bloco CTools Views de tópicos recentes — 2026-10-18
 
 - Configuração versionada da View `aculta_forum_topics` e bloco na página
