@@ -91,6 +91,13 @@ e a identificação pública aponta ao memorial coletivo `/u/lendashistoricas`.
 Reutilizar `LegacyAuthor`, `LegacyAuthorManager` e `LegacyMemorialController` de
 `aculta_user`; não copiar nem transformar autores históricos em contas.
 
+Tópicos e comentários importados do acervo Growroom são somente leitura para
+todos os papéis. A discussão chega fechada e não pode ser reaberta; update,
+delete, approve e ações de moderação em lote são negadas. O marcador usado é
+`field_autor_legado`, anexado ao novo Node e ao tipo Comment compartilhado. A
+implementação atual não reinstala nem preserva o módulo contrib `drupal/forum`;
+sua retirada e a limpeza de seus dados seguem `MIGRATION-REMOVAL.md`.
+
 ## Código instalado versus alvo
 
 O código atual ainda usa `drupal/forum` 1.1.3, Node bundle `forum`, vocabulary

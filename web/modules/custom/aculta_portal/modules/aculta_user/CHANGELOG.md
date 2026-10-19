@@ -1,5 +1,11 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.31 — acervo Growroom importado em modo somente leitura — 2026-10-19
+
+- Tópicos `aculta_forum_topic` e Comments `aculta_discussion_post` vinculados com `field_autor_legado` não podem ser editados, excluídos ou aprovados; a negação ocorre antes do bypass administrativo. A discussão é fechada no presave de tópicos históricos, inclusive na importação. Bundles contrib `forum`/`comment_forum` não são confundidos com a restauração.
+- A administração em lote do Core filtra comentários históricos e rejeita IDs forjados no POST; a exclusão do legado contrib `forum` continua uma operação separada da importação do acervo Growroom.
+- Testes Unit de access, fechamento, comentário histórico e distinção dos bundles contrib: 10 testes/53 assertions PASS. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.30 — moderação segura dos tópicos públicos novos — 2026-10-19
 
 - `ForumModerationHooks` cobre `aculta_forum_topic`: `content_editor` pode moderar tópicos de outros autores somente quando o marcador consultado por `EmailConfirmationPolicy` confirma o e-mail. Não foram concedidas permissões genéricas de editar/excluir qualquer tópico ao papel.

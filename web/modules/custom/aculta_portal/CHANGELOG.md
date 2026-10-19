@@ -1,3 +1,9 @@
+## 0.4.0-dev.171 — acervo Growroom congelado — 2026-10-19
+
+- Conteúdo de Fórum importado do Growroom e marcado por `field_autor_legado` é somente leitura, inclusive para administrador. `entity_access` nega alteração, exclusão e aprovação; a discussão do tópico fica fechada no `entity_presave`, inclusive durante a importação.
+- O formulário de administração de comentários oculta posts históricos e valida IDs enviados para impedir publicação/despublicação em lote. Configurações de campo agora permitem vincular autorias legadas ao tópico e ao Comment novos.
+- Drupal Forum contribuído permanece uma frente separada de retirada controlada; o acervo Growroom importado é conteúdo histórico preservado no novo motor. Nenhum Runtime ou conteúdo foi alterado nesta entrega. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.170 — moderação de tópico novo exige confirmação — 2026-10-19
 
 - A autorização para `content_editor` moderar Nodes `aculta_forum_topic` consulta a política central de confirmação real do e-mail. A regra não amplia o papel para `edit any`/`delete any`; criação e edição própria usam permissões nativas.

@@ -1,0 +1,21 @@
+uuid: f9d7b8d2-b588-4006-9aa5-c5ec73dbbc2c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.aculta_discussion_post
+    - field.storage.comment.field_autor_legado
+  module:
+    - aculta_user
+id: comment.aculta_discussion_post.field_autor_legado
+field_name: field_autor_legado
+entity_type: comment
+bundle: aculta_discussion_post
+label: 'Autoria histórica'
+description: 'Preenchido só em resposta importada do acervo do Growroom. A autoria histórica não pode ser moderada.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: entity_reference

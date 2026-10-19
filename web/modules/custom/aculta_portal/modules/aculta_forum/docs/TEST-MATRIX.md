@@ -22,6 +22,7 @@ Runtime e fluxos completos continuam pendentes.
 | Autoria | conta privada, apelido alterado, foto/privacidade, usuário bloqueado, autor legado, dados ausentes | Unit/Kernel + browser e cache. |
 | Imagens/anexos | ingestão obrigatória aculta_image, uso/referências, anexo privado, substituição e limpeza | Gate `validate-aculta-image.php`, Kernel + testes de acesso. |
 | Moderação | criar, editar, sinalizar, aprovar, ocultar, despublicar, bloquear, auditoria | Unit/Kernel/Functional por papel. |
+| Acervo Growroom restaurado | autoria por `field_autor_legado`; edição/exclusão/aprovação negadas a qualquer papel; tópico fechado; bulk admin e IDs adulterados rejeitados | Unit `ForumModerationHooksTest`; Kernel/Functional de importação e access pendentes. Não confundir com Nodes `forum` do módulo contrib, cuja retirada é separada. |
 | UX/acessibilidade | mobile, teclado, foco, leitor de tela, light/dark, reduced motion e fallback sem JS | Firefox/browser, auditoria manual e automatizada existente. |
 | Performance | listagens, thread grande, Views, Query counts e contagens/cache | profiling comparável; limites definidos na fase de benchmark. |
 | Remoção/migração | dry run, inventário, exclusão escopada, uninstall, composer remove, rollback/restauro e ausência de residuais | prova somente no Runtime de teste e ponto de recuperação revisado. |
@@ -38,6 +39,17 @@ Runtime e fluxos completos continuam pendentes.
 - Runtime de teste: DEFERRED. Nenhuma permissão, configuração ou conteúdo foi
   aplicado no Runtime. A listagem Views/CTools e o fluxo de moderação ainda
   precisam de validação integrada.
+
+## Evidência dev.8 — acervo Growroom restaurável em modo somente leitura
+
+- PHPUnit Unit `ForumModerationHooksTest`: 10 testes / 53 assertions — PASS.
+- Cobre tópico histórico imutável mesmo para administrador, comentários do
+  tópico, fechamento do Comment field no presave, filtragem da fila
+  administrativa e rejeição de IDs forjados.
+- A identificação usa `field_autor_legado`, não os bundles `forum` ou
+  `comment_forum` da implementação contrib a retirar.
+- Storage e field instances são instaláveis/sincronizados; importação e Runtime
+  ficam DEFERRED. Nenhum conteúdo ou configuração persistente foi alterado.
 
 ## Evidência dev.5 — política de aprovação inicial compartilhada
 

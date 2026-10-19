@@ -32,6 +32,24 @@ paridade de access/cache; não afirma, isoladamente, uma exposição confirmada 
 Runtime. `ForumTopicSync::sync()` cria Node `forum` por publicação com categoria
 editorial e `ForumOpeningPost` apresenta o conteúdo editorial como abertura.
 
+## Separação entre Drupal Forum e acervo histórico Growroom
+
+O conteúdo do Drupal Forum contribuído descrito nesta auditoria é uma base
+legada local para retirada; sua exclusão permanece no plano operacional e não é
+uma importação. O acervo Growroom a restaurar é uma origem histórica distinta,
+que será importada para Nodes `aculta_forum_topic` e Comments
+`aculta_discussion_post`, com referências `field_autor_legado` a `aculta_legado_autor`.
+
+O acervo importado será preservado como somente leitura: Nodes
+`aculta_forum_topic` e Comments `aculta_discussion_post` marcados com
+`field_autor_legado` e respostas relacionadas
+não podem ser editados, excluídos, aprovados/desaprovados ou reabertos por
+nenhum papel. A discussão deve chegar fechada; `aculta_user` aplica o estado
+fechado no presave e nega operações de alteração. Nenhum item do Drupal Forum
+contrib é convertido nesse acervo. A referência histórica existente nos bundles
+`forum` e `comment_forum` não os classifica como parte da restauração. Ver F-D31
+em `DECISOES.md`.
+
 ## Auditoria do Runtime de teste — 2026-10-19
 
 Ambiente confirmado antes da consulta: `hostname=toca`, checkout

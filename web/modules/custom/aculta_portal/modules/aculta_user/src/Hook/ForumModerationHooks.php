@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
+use Drupal\comment\CommentingStatus;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\comment\CommentInterface;
@@ -17,8 +20,8 @@ use Drupal\node\NodeInterface;
  * Moderação do Fórum pelo content_editor.
  *
  * O moderador pode ocultar, despublicar ou excluir tópicos e comentários.
- * Conteúdo histórico não é moderado; o e-mail do moderador deve estar
- * confirmado; administrador mantém bypass total.
+ * Conteúdo Growroom com autoria histórica fica congelado, mesmo para
+ * administradores; conteúdo ativo novo exige e-mail confirmado para moderação.
  *
  * No bundle novo, o editor confirmado também recebe acesso contextual sem
  * permissões genéricas de edição/exclusão. A própria autoria segue as
@@ -30,6 +33,7 @@ final class ForumModerationHooks {
 
   public function __construct(
     private readonly EmailConfirmationPolicy $emailConfirmationPolicy,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -37,6 +41,10 @@ final class ForumModerationHooks {
    */
   #[Hook('entity_access')]
   public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
+    if (in_array($operation, ['update', 'delete', 'approve'], TRUE) && $this->isGrowroomHistoric($entity)) {
+      return AccessResult::forbidden('O acervo histórico do Growroom é somente leitura.')
+        ->addCacheableDependency($entity);
+    }
     if (!in_array($operation, self::MODERATION_OPS, TRUE) || $account->hasPermission('bypass node access')) {
       return NULL;
     }
@@ -47,11 +55,6 @@ final class ForumModerationHooks {
       return NULL;
     }
     $autor = $entity->getOwner();
-    if ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty()) {
-      return AccessResult::forbidden('Conteúdo histórico não é moderado pela fila atual.')
-        ->addCacheableDependency($entity)
-        ->addCacheContexts(['user.roles']);
-    }
     $moderando = $autor === NULL || (int) $autor->id() !== (int) $account->id();
     $editor = in_array('content_editor', $account->getRoles(), TRUE);
     if ($moderando && $editor && !$this->emailConfirmationPolicy->isConfirmed($account)) {
@@ -69,6 +72,90 @@ final class ForumModerationHooks {
         ->addCacheContexts(['user.roles']);
     }
     return NULL;
+  }
+
+  /**
+   * Closes replies on historic Growroom topics, including on import.
+   */
+  #[Hook('entity_presave')]
+  public function closeGrowroomHistoricDiscussion(EntityInterface $entity): void {
+    if ($entity instanceof NodeInterface
+      && $entity->bundle() === 'aculta_forum_topic'
+      && $this->hasHistoricAuthor($entity)
+      && $entity->hasField('field_aculta_discussion')) {
+      $field = $entity->get('field_aculta_discussion');
+      $values = $field->getValue() ?: [[]];
+      foreach ($values as &$value) {
+        $value['status'] = CommentingStatus::Closed->value;
+      }
+      unset($value);
+      $field->setValue($values);
+    }
+  }
+
+  /**
+   * Removes frozen archive comments from moderation and rejects forged IDs.
+   */
+  #[Hook('form_comment_admin_overview_alter')]
+  public function commentAdminOverviewAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
+    if (!isset($form['comments']['#options']) || !is_array($form['comments']['#options'])) {
+      return;
+    }
+    foreach (array_keys($form['comments']['#options']) as $cid) {
+      $comment = $this->entityTypeManager->getStorage('comment')->load($cid);
+      if ($comment instanceof CommentInterface && $this->isGrowroomHistoric($comment)) {
+        unset($form['comments']['#options'][$cid]);
+      }
+    }
+    // The core bulk publish/unpublish handler saves directly instead of asking
+    // for each entity's access. Validate the submitted IDs independently of
+    // which rows were rendered.
+    $form['#validate'][] = [$this, 'validateCommentAdminOverviewSelection'];
+  }
+
+  /**
+   * Rejects archive comments submitted through the core bulk moderation form.
+   */
+  public function validateCommentAdminOverviewSelection(array &$form, FormStateInterface $form_state): void {
+    $ids = array_filter((array) $form_state->getValue('comments', []));
+    if ($ids === []) {
+      return;
+    }
+    $comments = $this->entityTypeManager->getStorage('comment')->loadMultiple($ids);
+    foreach ($comments as $comment) {
+      if ($comment instanceof CommentInterface && $this->isGrowroomHistoric($comment)) {
+        $form_state->setErrorByName('comments', 'O acervo histórico do Growroom não pode ser moderado.');
+        return;
+      }
+    }
+  }
+
+  /**
+   * Determines whether an entity is part of the read-only Growroom archive.
+   */
+  private function isGrowroomHistoric(EntityInterface $entity): bool {
+    if ($entity instanceof NodeInterface) {
+      return $entity->bundle() === 'aculta_forum_topic'
+        && $this->hasHistoricAuthor($entity);
+    }
+    if (!$entity instanceof CommentInterface || $entity->bundle() !== 'aculta_discussion_post') {
+      return FALSE;
+    }
+    if ($this->hasHistoricAuthor($entity)) {
+      return TRUE;
+    }
+    $host = $entity->getCommentedEntity();
+    return $host instanceof NodeInterface
+      && $host->bundle() === 'aculta_forum_topic'
+      && $this->hasHistoricAuthor($host);
+  }
+
+  /**
+   * Checks the existing field that identifies non-account historic authors.
+   */
+  private function hasHistoricAuthor(EntityInterface $entity): bool {
+    return $entity->hasField('field_autor_legado')
+      && !$entity->get('field_autor_legado')->isEmpty();
   }
 
 }

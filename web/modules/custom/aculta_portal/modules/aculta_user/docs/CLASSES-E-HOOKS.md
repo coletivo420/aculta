@@ -23,6 +23,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `comment_presave` | `ParticipationHooks::commentPresave` | `src/Hook/ParticipationHooks.php` |
 | `cron` | `AvatarCronHooks::cron` | `src/Hook/AvatarCronHooks.php` |
 | `entity_access` | `ForumModerationHooks::entityAccess` | `src/Hook/ForumModerationHooks.php` |
+| `entity_presave` | `ForumModerationHooks::closeGrowroomHistoricDiscussion` | `src/Hook/ForumModerationHooks.php` |
+| `form_comment_admin_overview_alter` | `ForumModerationHooks::commentAdminOverviewAlter` | `src/Hook/ForumModerationHooks.php` |
 | `entity_access` | `RestrictedForumHooks::entityAccess` | `src/Hook/RestrictedForumHooks.php` |
 | `entity_create_access` | `ParticipationHooks::entityCreateAccess` | `src/Hook/ParticipationHooks.php` |
 | `form_user_form_alter` | `PhotoEditorHooks::formUserFormAlter` | `src/Hook/PhotoEditorHooks.php` |
@@ -154,7 +156,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `AccountDashboardHooks` | `src/Hook/AccountDashboardHooks.php` | Caixa de bio na visão geral da Minha conta. Substitui o resumo de Cursos (aculta_portal). |
 | `AvatarCronHooks` | `src/Hook/AvatarCronHooks.php` | Cron do aculta_user: limpeza de assets temporários de avatar (ver AvatarAssetCleanup). |
 | `DiscussionHooks` | `src/Hook/DiscussionHooks.php` | Discussão vinculada: trecho dos últimos comentários do tópico de Fórum e link para a discussão completa. |
-| `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação dos bundles legado e novo; no novo tópico público, concede update/delete ao content_editor apenas com confirmação real do e-mail via `EmailConfirmationPolicy`. |
+| `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação confirmada de conteúdo ativo; congela o acervo Growroom por `field_autor_legado`, fecha sua discussão no presave e protege o bulk admin de Comments. |
 | `FriendshipLifecycleHooks` | `src/Hook/FriendshipLifecycleHooks.php` | Maintains friendship data through account deletion and module lifecycle. */ |
 | `ParticipationHooks` | `src/Hook/ParticipationHooks.php` | Modera comentários iniciais no Forum legado e nos contextos públicos compartilhados; exclui LMS e aplica bloqueio/limite configurável de criação de tópico. |
 | `PhotoEditorHooks` | `src/Hook/PhotoEditorHooks.php` | Editor de foto do painel (ponto de extensão aculta_portal_photo_editor e formulário do painel). |

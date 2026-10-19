@@ -34,14 +34,13 @@ Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula me
 - **Precisa ter `email_confirmed`.** Sem ele, não recebe acesso aos níveis restritos nem poderes de moderação. Decisão de
   2026-10-16.
 - Como moderador do Fórum, pode **ocultar, despublicar ou excluir** tópicos e comentários.
-- **Exceção**: conteúdo de autoria histórica (acervo do Growroom, seção 6) não pode ser moderado pela fila atual. A regra
-  é aplicada no ponto único de acesso (`ForumModerationHooks`).
+- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. O acervo histórico importado do Growroom é congelado: não pode ser editado, excluído, aprovado/desaprovado ou reaberto, inclusive por `content_editor` e `administrator` (F-D31).
 - Concedido somente pelo administrador.
 
 ## 3. Papel `administrator`
 
 - Concedido somente pelo administrador.
-- Tem **bypass total**: pode tudo, inclusive moderar conteúdo histórico e ver restritos.
+- Tem bypass administrativo de modo geral. A restrição F-D31 do acervo Growroom é exceção: conteúdo histórico importado permanece imutável para qualquer papel.
 - É o único que atribui papéis administrativos, edita contas e confirma e-mail manualmente. Essas ações não ficam com
   nenhum outro papel.
 
@@ -121,7 +120,7 @@ Não envia nenhum e-mail. Cada confirmação é registrada no log do canal `acul
 Autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na lista de usuários do
 administrador. A autoria fica na entidade própria `aculta_legado_autor`, acessível só pela permissão
 **administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para a autoria pelo campo
-`field_autor_legado`. Conteúdo com esse campo preenchido não é moderado pela fila atual.
+`field_autor_legado`. No novo modelo, somente os bundles `aculta_forum_topic` e `aculta_discussion_post` com essa referência pertencem ao acervo Growroom imutável: não podem ser editados, excluídos, aprovados/desaprovados ou reabertos por nenhum papel. `aculta_user` nega access a update/delete/approve, fecha a discussão em todo presave e protege contra a moderação em lote do Core. A mesma referência já presente nos bundles contrib `forum` e `comment_forum` não os converte em importação Growroom; esses bundles são uma base separada, a ser removida pelo plano seguro de retirada.
 
 ## 9. Mudanças em relação à versão anterior e pendências
 

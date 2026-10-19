@@ -1,0 +1,20 @@
+uuid: 6f2d4640-72a3-4d9f-ad11-5b8750fa643d
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_user
+    - comment
+id: comment.field_autor_legado
+field_name: field_autor_legado
+entity_type: comment
+type: entity_reference
+settings:
+  target_type: aculta_legado_autor
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

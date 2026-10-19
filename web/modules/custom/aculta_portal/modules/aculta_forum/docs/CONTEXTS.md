@@ -7,10 +7,12 @@ suas fases de integração; nenhuma entidade é tratada como contexto só por sl
 nome de bundle enviado pelo cliente ou presença de dados arbitrários.
 
 **Inicialização limpa:** os novos tópicos e comentários começam sem conteúdo
-importado do Drupal Forum legado. Tópicos e comentários antigos serão apagados
-na janela de retirada, após os novos fluxos contextuais estarem instalados e
-verificados. Conteúdo editorial hospedeiro permanece; os tópicos de sincronização
-da Revista não são convertidos em tópicos públicos nem em comentários.
+copiado do módulo Drupal Forum contribuído. Nodes e termos desse módulo serão
+removidos na janela segura de retirada, após os novos fluxos estarem instalados
+e verificados. Separadamente, o acervo histórico do Growroom será restaurado no
+novo modelo com autoria histórica e em modo somente leitura; ele não é conteúdo
+do módulo Drupal Forum. Conteúdo editorial hospedeiro permanece, e tópicos de
+sincronização da Revista não são convertidos em tópicos públicos nem em comentários.
 
 ## Interface do contexto
 
@@ -37,6 +39,7 @@ entidade é carregada pelo Entity API e o acesso é revalidado na operação.
 | `aculta_discussion_post` | bundle Comment compartilhado | Configuração de Comment em Node preparada na dev.4; suporte reutilizável em outros bundles Node ainda requer prova Kernel na dev.7/integrações. |
 | `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | Configuração de instalação adicionada na dev.4; a substituição do vocabulário `forums` fica para migração autorizada. |
 | `field_aculta_discussion` | campo Comment em Nodes hospedeiros suportados | Configuração instalada inicialmente apenas no tópico público. Teste Kernel em dev.5 provou que um storage Comment pode ser anexado a `article`, `blog` e `aculta_forum_topic`; os fields de publicação e o provider correspondente ainda aguardam configuração explícita e integração. |
+| `field_autor_legado` | referência a `aculta_legado_autor` em tópico/resposta Growroom restaurados | Storage de Node/Comment pertence ao `aculta_user`; instâncias de `aculta_forum_topic` e `aculta_discussion_post` acompanham `aculta_forum`. Conteúdo marcado é imutável; tópico permanece fechado. |
 
 Todos os machine names ficam abaixo do limite local de 32 caracteres, mas isso
 deve ser validado automaticamente antes de registrar configuração. Esta tabela
