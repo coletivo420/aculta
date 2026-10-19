@@ -4,7 +4,9 @@
 
 - Em 2026-10-18 o responsável aceitou o risco de licença de usar a base de CEPs do DNE dos Correios, contida na imagem Docker pública `brasilcep/api`, para consulta local.
 - Não há banco de dados para os CEPs: a base fica em arquivos privados, divididos por prefixo (três primeiros dígitos).
-- A base não entra no Git. Fica em `private://aculta_portal_cep/shards`, no diretório privado do ambiente.
+- Em 2026-10-19 o responsável decidiu versionar a base no repositório público `coletivo420/aculta`, assumindo o risco de licença e a propriedade do conteúdo. A cópia versionada fica em `data/cep/` (raiz do repositório, fora de `web/`, portanto não servida pelo site): `data/cep/manifest.json` e `data/cep/shards/*.tsv` (872 arquivos, 1.388.509 CEPs).
+- O conteúdo publicado não pode ser retirado do histórico do Git público. Qualquer remoção futura exige reescrita de histórico, decisão do responsável.
+- O Runtime continua lendo a base de `private://aculta_portal_cep/shards`. A cópia em `data/cep/` é a fonte versionada para reimportação.
 - A consulta local tem prioridade: só quando o CEP não está na base, o Portal consulta ViaCEP e depois BrasilAPI.
 
 ## Tamanho e formato

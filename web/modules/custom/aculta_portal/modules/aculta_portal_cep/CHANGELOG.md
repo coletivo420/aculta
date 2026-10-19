@@ -1,3 +1,10 @@
+## 0.3.0-dev.7 — base de CEP versionada no repositório — 2026-10-19
+
+- A base do DNE em shards (872 arquivos, 1.388.509 CEPs) e o `manifest.json` passam a ser versionados em `data/cep/` (raiz do repositório, fora de `web/`). Decisão do responsável de publicar no repositório público, assumindo o risco de licença e a propriedade do conteúdo (`docs/portal/CEP-LOCAL.md`).
+- Verificado: total de linhas dos shards igual ao `records` do manifesto; cópia idêntica à base do Runtime.
+- Nenhum código novo. O Runtime segue lendo `private://aculta_portal_cep/shards`.
+- RUNTIME STATUS: não aplicável (somente dados versionados).
+
 ## 0.3.0-dev.6 — configuração de Consulta de CEP: banco padrão e ordem das fontes — 2026-10-18
 
 - Nova tela em Configurações > ACULTA Portal > Consulta de CEP (`aculta_portal_cep.settings`, permissão de configuração do site). Ela escolhe o banco de dados padrão (primeira fonte consultada) e a ordem das demais pela tabela de arrastar do Drupal (tabledrag, peso). Cada fonte pode ser ativada ou desativada.
