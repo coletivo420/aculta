@@ -1,3 +1,10 @@
+## 0.6.0-dev.99 — formulário de resposta em discussões compartilhadas — 2026-10-19
+
+Classificação: PATCH de apresentação.
+
+- `discussion.css` apresenta o formulário nativo Comment com superfície semântica, campos em largura responsiva, foco visível e alvos de ação confortáveis em telas estreitas. O escopo se limita ao campo `field_aculta_discussion`; acesso, validação e submissão continuam no Drupal Core e Portal.
+- Foundation: 354 checks; SDC: 516; design: 2078; fixtures: 157; fronteira módulo/tema: 1331; mapa: 154 — PASS. Após cache rebuild no Runtime `toca`, raiz HTTP 200 e CSS agregado contém o seletor do formulário e o token de foco. Envio de comentário e inspeção visual no navegador ficam pendentes porque o Fórum está sem tópicos. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.98 — estado vazio do índice Growroom420 — 2026-10-19
 
 Classificação: PATCH de apresentação.
