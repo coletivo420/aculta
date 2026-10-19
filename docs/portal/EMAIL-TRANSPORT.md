@@ -27,8 +27,13 @@ Ver a decisão em aberto sobre Keys nesta seção.
 
 **Tradução do Mailer Plus (2026-10-19).** Os 85 textos do `symfony_mailer` 2.0.2 estão traduzidos para pt-br no
 Runtime de teste (conferidos um a um contra o `.po` oficial). A tradução é estado do banco, não do repositório:
-em cada ambiente, importar com `drush locale:update` (ou `drush locale:import pt-br <symfony_mailer-2.0.2.pt-br.po> --type=contrib --override=none`)
-e conferir a contagem. Nenhum arquivo de contrib é editado.
+**Tradução do Mailer Plus (2026-10-19).** Os textos do `symfony_mailer` 2.0.2 que estão no catálogo oficial e os que
+aparecem nas telas do módulo (formulários de transporte SMTP, DSN e Sendmail, substituição e política) estão em pt-br.
+Os textos extras estão em `web/modules/custom/aculta_portal/translations/symfony_mailer.pt-br.po`, importados como
+tradução customizada (`drush locale:import --type=customized --override=none pt-br <arquivo>`). Em cada ambiente, importar
+o catálogo oficial com `drush locale:update` e depois o arquivo do projeto. Nenhum arquivo de contrib é editado.
+Pendência: o prefixo "Warning:" da tela de substituição é texto fixo no código do módulo (`MailerOverrideController`, sem
+`t()`); só pode ser traduzido por correção no módulo ou por sobrescrita de tema, decisão a tomar.
 
 ## 1. Decisão
 

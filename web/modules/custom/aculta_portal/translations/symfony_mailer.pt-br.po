@@ -1,0 +1,410 @@
+# Traduções do módulo symfony_mailer (Mailer Plus) 2.0.2 que não estão no catálogo oficial,
+# incluindo os textos de formulário e de tela do módulo. Importar com:
+#   drush locale:import --type=customized --override=none pt-br <este arquivo>
+msgid ""
+msgstr ""
+"Language: pt-br\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid ""
+msgstr ""
+
+msgid "Override status"
+msgstr "Status da substituição"
+
+msgid "Enable & import"
+msgstr "Ativar e importar"
+
+msgid "Verify your Mailer configuration by sending a test email."
+msgstr "Verifique a configuração do Mailer enviando um e-mail de teste."
+
+msgid "Recipient email address. Leave blank to send to yourself."
+msgstr "Endereço de e-mail do destinatário. Deixe em branco para enviar para você mesmo."
+
+msgid "Mailer transport"
+msgstr "Transporte do Mailer"
+
+msgid "Transport type"
+msgstr "Tipo de transporte"
+
+msgid "Add transport"
+msgstr "Adicionar transporte"
+
+msgid "Use an SMTP server to send emails."
+msgstr "Use um servidor SMTP para enviar e-mails."
+
+msgid "Label for the Transport."
+msgstr "Rótulo do transporte."
+
+msgid "User name to log in."
+msgstr "Nome de usuário para entrar."
+
+msgid "Password to log in."
+msgstr "Senha para entrar."
+
+msgid "Your password is stored; select to change it."
+msgstr "Sua senha está armazenada; marque para alterá-la."
+
+msgid "Edit transport"
+msgstr "Editar transporte"
+
+msgid "Host name"
+msgstr "Nome do host"
+
+msgid "This is recommended for security reasons, however it can be useful to disable it while developing or when using a self-signed certificate."
+msgstr "Recomendado por segurança. Pode ser útil desativá-lo durante o desenvolvimento ou com certificado autoassinado."
+
+msgid "The domain name to use in HELO command."
+msgstr "Nome de domínio usado no comando HELO."
+
+msgid "The maximum number of messages to send before re-starting the transport."
+msgstr "Número máximo de mensagens enviadas antes de reiniciar o transporte."
+
+msgid "The number of seconds to sleep between stopping and re-starting the transport."
+msgstr "Número de segundos de espera entre parar e reiniciar o transporte."
+
+msgid "The minimum number of seconds between two messages required to ping the server."
+msgstr "Intervalo mínimo, em segundos, entre duas mensagens para verificar a conexão com o servidor."
+
+msgid "Update Status"
+msgstr "Atualizar status"
+
+msgid "Mailer policy"
+msgstr "Política do Mailer"
+
+msgid "Transport"
+msgstr "Transporte"
+
+msgid "- Choose transport type -"
+msgstr "- Escolha o tipo de transporte -"
+
+msgid "<b>*All*</b>"
+msgstr "<b>*Todos*</b>"
+
+msgid "An attempt has been made to send an email to @to."
+msgstr "Foi feita uma tentativa de enviar um e-mail para @to."
+
+msgid "Commerce order"
+msgstr "Pedido da loja"
+
+msgid "Configure Mailer Policy to customise outgoing emails in many different ways. There are many possible policies to apply including: subject; body; addresses (from, to, ...); theme; transport; convert to plain text. Each policy can be set globally or for emails of a specific type."
+msgstr "Configure a política do Mailer para personalizar os e-mails enviados de várias formas. Há muitas políticas disponíveis, incluindo: assunto; corpo; endereços (remetente, destinatário etc.); tema; transporte; conversão para texto simples. Cada política pode ser ajustada."
+
+msgid "Configure Mailer policy records to customise @label emails."
+msgstr "Configure os registros de política do Mailer para personalizar os e-mails de @label."
+
+msgid "DSN"
+msgstr "DSN"
+
+msgid "If you have made changes on this page, please save them before editing policy."
+msgstr "Se você fez alterações nesta página, salve-as antes de editar a política."
+
+msgid "Inline CSS"
+msgstr "CSS embutido"
+
+msgid "Order type settings"
+msgstr "Configurações do tipo de pedido"
+
+msgid "Perform TLS peer verification"
+msgstr "Verificar o certificado TLS do servidor"
+
+msgid "Personal"
+msgstr "Pessoal"
+
+msgid "Ping threshold"
+msgstr "Limite de ping"
+
+msgid "Resend receipt"
+msgstr "Reenviar recibo"
+
+msgid "Restart threshold sleep"
+msgstr "Pausa do limite de reinício"
+
+msgid "Restart threshold"
+msgstr "Limite de reinício"
+
+msgid "SMTP host name."
+msgstr "Nome do host SMTP."
+
+msgid "SMTP port."
+msgstr "Porta SMTP."
+
+msgid "Sendmail"
+msgstr "Sendmail"
+
+msgid "The default transport is now %label."
+msgstr "O transporte padrão agora é %label."
+
+msgid "The transport configuration has been saved."
+msgstr "A configuração do transporte foi salva."
+
+msgid "This overrides the default HTML messages with imported plain text versions"
+msgstr "Isto substitui as mensagens HTML padrão pelas versões de texto simples importadas"
+
+msgid "URL to absolute"
+msgstr "URL absoluta"
+
+msgid "Update notification addresses"
+msgstr "Endereços de notificação de atualização"
+
+msgid "User email settings"
+msgstr "Configurações de e-mail do usuário"
+
+msgid "Verification email"
+msgstr "E-mail de verificação"
+
+msgid "Wrap and convert"
+msgstr "Envolver e converter"
+
+msgid "You can set the @adjusters and more."
+msgstr "Você pode definir @adjusters e outros itens."
+
+msgid "Add element"
+msgstr "Adicionar elemento"
+
+msgid "- Select element to add -"
+msgstr "- Selecione um elemento para adicionar -"
+
+msgid "Add inline CSS."
+msgstr "Adicionar CSS embutido."
+
+msgid "Bcc"
+msgstr "Cco"
+
+msgid "Contact form name"
+msgstr "Nome do formulário de contato"
+
+msgid "Contact form recipients"
+msgstr "Destinatários do formulário de contato"
+
+msgid "Contact form URL"
+msgstr "URL do formulário de contato"
+
+msgid "Convert URLs to absolute."
+msgstr "Converter URLs para absolutas."
+
+msgid "Convert image links to inline images."
+msgstr "Converter links de imagem em imagens embutidas."
+
+msgid "Disable delivery of messages."
+msgstr "Desativar a entrega de mensagens."
+
+msgid "Email body."
+msgstr "Corpo do e-mail."
+
+msgid "Email subject."
+msgstr "Assunto do e-mail."
+
+msgid "Email priority."
+msgstr "Prioridade do e-mail."
+
+msgid "Enabled & imported"
+msgstr "Ativado e importado"
+
+msgid "Highest"
+msgstr "Mais alta"
+
+msgid "Lowest"
+msgstr "Mais baixa"
+
+msgid "Plain text alternative."
+msgstr "Alternativa em texto simples."
+
+msgid "Plain text alternative"
+msgstr "Alternativa em texto simples"
+
+msgid "Re-import"
+msgstr "Reimportar"
+
+msgid "Receipt"
+msgstr "Recibo"
+
+msgid "Send as plain text only."
+msgstr "Enviar somente como texto simples."
+
+msgid "Sender copy"
+msgstr "Cópia para o remetente"
+
+msgid "Skip sending"
+msgstr "Não enviar"
+
+msgid "Transport."
+msgstr "Transporte."
+
+msgid "Update messages"
+msgstr "Mensagens de atualização"
+
+msgid "Use the Sendmail transport."
+msgstr "Usar o transporte Sendmail."
+
+msgid "Use the local sendmail binary to send emails."
+msgstr "Usar o binário sendmail local para enviar e-mails."
+
+msgid "Use the sendmail binary and options configured in the sendmail_path setting of php.ini."
+msgstr "Usar o binário sendmail e as opções configuradas em sendmail_path do php.ini."
+
+msgid "Sendmail command to execute. Configure available commands by setting the variable %var in %file."
+msgstr "Comando sendmail a executar. Configure os comandos disponíveis definindo a variável %var em %file."
+
+msgid "Validate"
+msgstr "Validar"
+
+msgid "There are no overrides available."
+msgstr "Não há substituições disponíveis."
+
+msgid "No available actions"
+msgstr "Nenhuma ação disponível"
+
+msgid "Required packages missing."
+msgstr "Pacotes obrigatórios ausentes."
+
+msgid "Import unavailable for %name"
+msgstr "Importação indisponível para %name"
+
+msgid "Importing overwrites existing policy."
+msgstr "A importação substitui a política existente."
+
+msgid "Completed %action for all overrides"
+msgstr "Concluída a ação %action para todas as substituições"
+
+msgid "Completed %action for override %name"
+msgstr "Concluída a ação %action para a substituição %name"
+
+msgid "Run %action for override %name"
+msgstr "Executar %action para a substituição %name"
+
+msgid "Are you sure you want to do %action for all overrides?"
+msgstr "Tem certeza de que deseja executar %action em todas as substituições?"
+
+msgid "Are you sure you want to do %action for override %name?"
+msgstr "Tem certeza de que deseja executar %action na substituição %name?"
+
+msgid "Email sent to %to."
+msgstr "E-mail enviado para %to."
+
+msgid "Email sending skipped: %message."
+msgstr "Envio de e-mail ignorado: %message."
+
+msgid "Skipped %name: %warning"
+msgstr "Ignorado %name: %warning"
+
+msgid "Import skipped for %name: %import_warning"
+msgstr "Importação ignorada para %name: %import_warning"
+
+msgid "Policy already exists (<a href=\":url\">edit</a>)"
+msgstr "A política já existe (<a href=\":url\">editar</a>)"
+
+msgid "Please <a href=\":url\">check configuration</a>."
+msgstr "Verifique a <a href=\":url\">configuração</a>."
+
+msgid "Symfony Mailer dependencies"
+msgstr "Dependências do Symfony Mailer"
+
+msgid "Tag 1"
+msgstr "Etiqueta 1"
+
+msgid "Tag 2"
+msgstr "Etiqueta 2"
+
+msgid "Tag 3"
+msgstr "Etiqueta 3"
+
+msgid "Users with permission to manage mailer settings will see this message when skipping an email."
+msgstr "Usuários com permissão para gerenciar o Mailer verão esta mensagem ao ignorar um e-mail."
+
+msgid "Use an address ending in your site's domain to help prevent this email being flagged as spam."
+msgstr "Use um endereço do domínio do seu site para evitar que este e-mail seja marcado como spam."
+
+msgid "Welcome (no approval required, password is set)"
+msgstr "Boas-vindas (sem aprovação, senha definida)"
+
+msgid "Enter an email address, a user ID, or %site to use the site email address."
+msgstr "Digite um endereço de e-mail, um ID de usuário ou %site para usar o endereço de e-mail do site."
+
+msgid "Entity that the policy applies to, or leave empty for all entities."
+msgstr "Entidade à qual a política se aplica, ou deixe vazio para todas as entidades."
+
+msgid "Human-readable display name (ignored for user or site address)."
+msgstr "Nome de exibição legível (ignorado para endereço de usuário ou do site)."
+
+msgid "Recipient name"
+msgstr "Nome do destinatário"
+
+msgid "Recipient edit URL"
+msgstr "URL de edição do destinatário"
+
+msgid "Sender URL"
+msgstr "URL do remetente"
+
+msgid "Reason for hiding opt-out"
+msgstr "Motivo para ocultar a desativação"
+
+msgid "Whether to hide opt-out"
+msgstr "Se a desativação deve ser ocultada"
+
+msgid "Related Mailer Policy will be deleted."
+msgstr "A política do Mailer relacionada será excluída."
+
+msgid "Related Mailer Policy will be reset to default values."
+msgstr "A política do Mailer relacionada será redefinida para os valores padrão."
+
+msgid "Link to update manager page"
+msgstr "Link para a página do gerenciador de atualizações"
+
+msgid "Link to update settings page"
+msgstr "Link para a página de configurações de atualização"
+
+msgid "Link to update status page"
+msgstr "Link para a página de status de atualização"
+
+msgid "Sets the email bcc header."
+msgstr "Define o cabeçalho Cco do e-mail."
+
+msgid "Sets the email body."
+msgstr "Define o corpo do e-mail."
+
+msgid "Sets the email cc header."
+msgstr "Define o cabeçalho Cc do e-mail."
+
+msgid "Sets the email from header."
+msgstr "Define o cabeçalho De do e-mail."
+
+msgid "Sets the email plain text alternative."
+msgstr "Define a alternativa em texto simples do e-mail."
+
+msgid "Sets the email priority."
+msgstr "Define a prioridade do e-mail."
+
+msgid "Sets the email reply-to header."
+msgstr "Define o cabeçalho Responder para do e-mail."
+
+msgid "Sets the email sender header."
+msgstr "Define o cabeçalho Remetente do e-mail."
+
+msgid "Sets the email subject."
+msgstr "Define o assunto do e-mail."
+
+msgid "Sets the email theme."
+msgstr "Define o tema do e-mail."
+
+msgid "Sets the email to header."
+msgstr "Define o cabeçalho Para do e-mail."
+
+msgid "Sets the mailer transport alternative."
+msgstr "Define o transporte alternativo do Mailer."
+
+msgid "Wraps the email and converts to plain text."
+msgstr "Envolve o e-mail e converte para texto simples."
+
+msgid "Reply-To"
+msgstr "Responder para"
+
+msgid "name"
+msgstr "Nome"
+
+msgid "The DSN transport is a generic fallback and should only be used if there is no specific implementation available."
+msgstr "O transporte DSN é uma opção genérica de reserva e só deve ser usado se não houver uma implementação específica disponível."
+
+msgid "DSN for the Transport, see <a href=\":docs\">documentation</a>."
+msgstr "DSN do transporte; veja a <a href=\":docs\">documentação</a>."
