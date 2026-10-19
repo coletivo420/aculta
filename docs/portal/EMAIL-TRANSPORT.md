@@ -8,22 +8,23 @@ Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05
 
 ## 0. Estado atual do envio (2026-10-19)
 
-Envio pelo Mailer Plus, com um único transporte ativo: **SMTP2GO** (`mail.smtp2go.com:465`), definido em
-`config/sync/mailer_transport.mailer_transport.smtp2go.yml` e padrão em `config/sync/mailer_transport.settings.yml`.
-O transporte da Hostinger foi removido do Runtime de teste. Não havia versão dele no Git.
+Envio pelo Mailer Plus. O **transporte padrão é a Hostinger** (`smtp`, `smtp.hostinger.com:465`), versionado em
+`config/sync/mailer_transport.mailer_transport.smtp.yml` (sem credenciais) e apontado por `config/sync/mailer_transport.settings.yml`.
+O SMTP2GO (`mail.smtp2go.com:465`, `config/sync/mailer_transport.mailer_transport.smtp2go.yml`) fica disponível para troca,
+mas sua cota está esgotada.
 
-Remetente: `naoresponda@aculta.org`, o mesmo em teste e em produção. Definido em `config/sync`, com o mesmo valor no
-perfil `test` do `aculta_deployer`. Nenhum override de ambiente o altera.
+Remetente: `naoresponda@aculta.org`, o mesmo em teste e em produção, que é também a conta SMTP da Hostinger. A Hostinger
+aceita esse remetente: o teste de envio passa de `MAIL FROM` e falha apenas no destinatário de teste reservado (`example.invalid`).
 
-**Incidente de 2026-10-18 a 2026-10-19 (resolvido).** Os envios pela Hostinger falhavam com
-`553 5.7.1 : Sender address rejected: not owned by user naoresponda@aculta.org`. O remetente não pertencia à conta
-SMTP usada. Com o padrão no SMTP2GO e o remetente da própria conta, o teste de envio é aceito no `MAIL FROM` e
-no `AUTH`. A única recusa restante é o destinatário de teste `example.invalid` (domínio reservado).
+**Credenciais.** Usuário e senha da Hostinger ficam no próprio transporte do Mailer Plus, no banco do Runtime de teste, e não
+são versionados. O `config/sync` traz o transporte sem credenciais; o `config:status` aponta essa diferença, que é esperada.
 
-**Pendência.** As credenciais do SMTP2GO não são mais Keys. Ficam no arquivo de segredos do servidor (`SMTP2GO_USERNAME`,
-`SMTP2GO_PASSWORD`). No Runtime de teste, o transporte está sem credenciais: o envio não autentica até o responsável
-gravar a credencial no Mailer Plus ou o provisionamento passar a injetá-la.
-Ver a decisão em aberto sobre Keys nesta seção.
+**Incidente de 2026-10-18 a 2026-10-19 (resolvido).** Os envios falhavam com
+`553 5.7.1 : Sender address rejected: not owned by user naoresponda@aculta.org`, porque o remetente de teste era
+`naoresponda@toca.net.br`. Com o remetente igual à conta autenticada, a Hostinger aceita o envio.
+
+**Pendência.** O gate do Portal (`transactionalMailReady()`) e os validadores seguem o transporte padrão; a credencial
+continua sendo exigida no próprio Mailer Plus, pois a regra de segredos do `AGENTS.md` está em revisão.
 
 **Tradução do Mailer Plus (2026-10-19).** Os 85 textos do `symfony_mailer` 2.0.2 estão traduzidos para pt-br no
 Runtime de teste (conferidos um a um contra o `.po` oficial). A tradução é estado do banco, não do repositório:

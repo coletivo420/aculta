@@ -35,14 +35,13 @@ $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email
 $assert($modules->moduleExists('email_confirmer') && $modules->moduleExists('email_confirmer_user'), 'Email Confirmer and its user integration are enabled.');
 $assert($modules->moduleExists('change_mail_page'), 'Change Mail Page supplies the canonical new-address form.');
 $assert(\Drupal::config('email_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'Email Confirmer intercepts user email changes.');
-// O Mailer Plus controla o envio: o transporte SMTP2GO é o padrão somente quando tem usuário e senha configurados.
-$smtp_raw = \Drupal::config('mailer_transport.mailer_transport.smtp2go')->getRawData()['configuration'] ?? [];
-$smtp_ready = !empty($smtp_raw['user']) && !empty($smtp_raw['pass']);
-$mail_on = \Drupal::config('mailer_transport.settings')->get('default_transport') === 'smtp2go';
-$assert($mail_on === $smtp_ready, 'SMTP2GO é o transporte padrão exatamente quando tem credenciais configuradas no Mailer Plus.');
+// O Mailer Plus controla o envio: o transporte padrão precisa de usuário e senha configurados no próprio Mailer Plus.
+$default_transport = (string) \Drupal::config('mailer_transport.settings')->get('default_transport');
+$default_raw = \Drupal::config('mailer_transport.mailer_transport.' . $default_transport)->getRawData()['configuration'] ?? [];
+$assert($default_transport !== '' && !empty($default_raw['user']) && !empty($default_raw['pass']), 'O transporte padrão do Mailer Plus tem credenciais configuradas no próprio Mailer Plus.');
 // A configuração versionada não guarda credenciais.
-$smtp_versioned = \Symfony\Component\Yaml\Yaml::parseFile(DRUPAL_ROOT . '/../config/sync/mailer_transport.mailer_transport.smtp2go.yml')['configuration'] ?? [];
-$assert(($smtp_versioned['user'] ?? '') === '' && ($smtp_versioned['pass'] ?? '') === '', 'SMTP2GO credentials are absent from the versioned configuration.');
+$smtp_versioned = \Symfony\Component\Yaml\Yaml::parseFile(DRUPAL_ROOT . '/../config/sync/mailer_transport.mailer_transport.smtp.yml')['configuration'] ?? [];
+$assert(($smtp_versioned['user'] ?? '') === '' && ($smtp_versioned['pass'] ?? '') === '', 'Mail transport credentials are absent from the versioned configuration.');
 $login_composer = json_decode(file_get_contents(DRUPAL_ROOT . '/../composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $login_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/login_emailusername'))[0] ?? NULL;
 $assert(($login_package['version'] ?? NULL) === '3.0.1', 'Login Email or Username remains at the audited 3.0.1 release.');
@@ -53,10 +52,10 @@ $assert(($change_mail_package['version'] ?? NULL) === '1.0.2', 'Change Mail Page
 $mail_backend = \Drupal::config('system.mail')->get('interface.default');
 $mail_transport = \Drupal::config('mailer_transport.settings')->get('default_transport');
 $assert($mail_backend === 'symfony_mailer', 'The default mail backend is Mailer Plus (symfony_mailer).');
-$assert($mail_transport === 'smtp2go' && \Drupal::moduleHandler()->moduleExists('mailer_override'), 'Mailer Plus delivers through the SMTP2GO transport with mailer_override enabled.');
+$assert($mail_transport === 'smtp' && \Drupal::moduleHandler()->moduleExists('mailer_override'), 'Mailer Plus delivers through the Hostinger (smtp) transport with mailer_override enabled.');
 $assert(!\Drupal::moduleHandler()->moduleExists('smtp'), 'The legacy smtp module is not enabled (removed in M2).');
 $portal_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Controller/PortalController.php');
-$assert(str_contains($portal_controller_source, "moduleExists('mailer_override')") && str_contains($portal_controller_source, "MAIL_TRANSPORT") && str_contains($portal_controller_source, 'keyHasValue'), 'Security only enables email change when Mailer Plus, the SMTP2GO transport and its Keys are ready.');
+$assert(str_contains($portal_controller_source, "moduleExists('mailer_override')") && str_contains($portal_controller_source, "default_transport") && !str_contains($portal_controller_source, 'keyHasValue'), 'Security only enables email change when Mailer Plus, the SMTP2GO transport and its Keys are ready.');
 $assert(str_contains($portal_controller_source, "getForm(\$account, 'default')") && !str_contains($portal_controller_source, "getForm(\$account, 'edit')"), 'Portal account forms use the Drupal User entity type supported default form operation.');
 $assert(str_contains($portal_controller_source, "\$parameters->set('user', \$account)") && str_contains($portal_controller_source, "unset(\$form['social_auth'])") && str_contains($portal_controller_source, "\$parameters->remove('user')"), 'The Portal supplies Social Auth’s expected route parameter only while building Core User forms and removes its duplicate account section.');
 $assert(\Drupal::config('system.logging')->get('error_level') === 'hide' && str_contains(file_get_contents(DRUPAL_ROOT . '/../config/sync/system.logging.yml'), 'error_level: hide'), 'Detailed errors are hidden on screen in active and synchronized configuration (hardening: nao exibir erros detalhados).');

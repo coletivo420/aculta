@@ -40,7 +40,6 @@ final class PortalController extends ControllerBase {
   private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
 
   /** Transporte do Mailer Plus usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
-  private const MAIL_TRANSPORT = 'smtp2go';
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
@@ -400,14 +399,14 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * O Mailer Plus (mailer_override) é o único controlador de envio: pronto quando o transporte padrão é o SMTP2GO e
-   * esse transporte tem usuário e senha configurados. Nenhuma Key participa.
+   * O Mailer Plus (mailer_override) é o único controlador de envio: pronto quando existe um transporte padrão e esse
+   * transporte tem usuário e senha configurados no próprio Mailer Plus. Nenhuma Key participa.
    */
   private function transactionalMailReady(): bool {
     $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));
-    $transport = $this->configs->get('mailer_transport.mailer_transport.' . self::MAIL_TRANSPORT)->get('configuration') ?? [];
+    $default = trim((string) $this->configs->get('mailer_transport.settings')->get('default_transport'));
+    $transport = $default !== '' ? ($this->configs->get('mailer_transport.mailer_transport.' . $default)->get('configuration') ?? []) : [];
     return $this->modules->moduleExists('mailer_override')
-      && $this->configs->get('mailer_transport.settings')->get('default_transport') === self::MAIL_TRANSPORT
       && trim((string) ($transport['user'] ?? '')) !== ''
       && trim((string) ($transport['pass'] ?? '')) !== ''
       && $site_mail !== '';

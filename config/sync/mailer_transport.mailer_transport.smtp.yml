@@ -1,0 +1,15 @@
+uuid: ab868d18-0a1e-4806-bcb4-3573bd50c7fe
+langcode: pt-br
+status: true
+dependencies: {  }
+id: smtp
+label: Hostinger
+plugin: smtp
+configuration:
+  user: ''
+  pass: ''
+  host: smtp.hostinger.com
+  port: 465
+  query:
+    verify_peer: true
+

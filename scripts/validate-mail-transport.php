@@ -59,7 +59,10 @@ catch (\Symfony\Component\Mailer\Exception\UnsupportedSchemeException) {
 $check($fallback_scheme === 'aculta-disabled' && $fallback_fails_closed, 'O backend Symfony Mailer do Core deve falhar fechado, sem fallback sendmail.');
 
 $transports = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/mailer_transport.settings.yml') ?: [];
-$check(($transports['default_transport'] ?? NULL) === 'smtp2go', 'Mailer Plus deve usar SMTP2GO como transporte padrão.');
+$check(($transports['default_transport'] ?? NULL) === 'smtp', 'Mailer Plus deve usar a Hostinger (transporte smtp) como padrão; SMTP2GO fica disponível para troca.');
+$hostinger = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/mailer_transport.mailer_transport.smtp.yml') ?: [];
+$check(($hostinger['plugin'] ?? NULL) === 'smtp' && ($hostinger['configuration']['host'] ?? NULL) === 'smtp.hostinger.com' && ($hostinger['configuration']['port'] ?? NULL) === 465, 'Transporte Hostinger: plugin smtp, smtp.hostinger.com, porta 465.');
+$check(($hostinger['configuration']['user'] ?? '') === '' && ($hostinger['configuration']['pass'] ?? '') === '', 'Transporte Hostinger não pode versionar credenciais.');
 $smtp2go = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/mailer_transport.mailer_transport.smtp2go.yml') ?: [];
 $smtp_configuration = $smtp2go['configuration'] ?? [];
 $check(($smtp2go['plugin'] ?? NULL) === 'smtp', 'SMTP2GO deve usar o plugin SMTP instalado.');
@@ -92,7 +95,7 @@ $body = $match[1] ?? '';
 $check($body !== '', 'PortalController::transactionalMailReady() não encontrado.');
 $check(str_contains($body, 'mailer_override'), 'transactionalMailReady() deve checar mailer_override.');
 $check(str_contains($body, "'user'") && str_contains($body, "'pass'"), 'transactionalMailReady() deve checar usuário e senha do transporte do Mailer Plus.');
-$check(str_contains($controller, 'private const MAIL_TRANSPORT'), 'PortalController deve declarar a constante MAIL_TRANSPORT usada por transactionalMailReady().');
+$check(str_contains($controller, "default_transport") && !str_contains($controller, 'keyHasValue'), 'PortalController deve checar o transporte padrão do Mailer Plus, sem Keys.');
 $check(!str_contains($body, 'smtp.settings') && !str_contains($body, 'SMTPMailSystem'), 'transactionalMailReady() não pode depender do legado smtp.settings/SMTPMailSystem.');
 
 foreach (glob($root . '/config/sync/mailer_transport.mailer_transport.*.yml') ?: [] as $file) {
