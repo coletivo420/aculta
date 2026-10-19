@@ -110,3 +110,13 @@ versão local excedeu o limite do navegador disponível; portanto a revisão
 visual por screenshot em desktop/mobile e nos modos claro/escuro continua
 pendente. **RUNTIME STATUS: DEFERRED** para validação visual no servidor de
 testes; a validação HTTP e de render arrays no Runtime local passou.
+## Administração das discussões
+
+Comentários de discussão dos verbetes devem ter uma listagem administrativa
+Wiki própria em `/painel-administrativo/wiki/forum`, separada da administração
+geral de conteúdo e da fila do Fórum. A Revista concentra publicações e
+comentários em `/painel-administrativo/conteudo/revista`.
+O contrato futuro deverá limitar a consulta ao bundle/hospedeiro da Wiki e
+respeitar o acesso do verbete. Revisões e edição editorial não entram nessa
+fila. A rota só será ativada junto do provider Wiki e após validação de acesso;
+não existe atualmente um endpoint administrativo Wiki de comentários.

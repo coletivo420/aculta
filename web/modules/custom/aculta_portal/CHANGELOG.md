@@ -3040,3 +3040,15 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - Adicionado patch para negar upload H5P que use bibliotecas locais restritas quando a conta não tem `create restricted h5p content types`; segue revisão e teste funcional antes de ativar H5P.
 - RUNTIME STATUS: `aculta_patcher` habilitado no Runtime de teste após backup privado `/home/aculta/private/aculta/aculta-runtime-before-aculta-patcher-20261018.sql.gz.gz` (0600); tabela e entidade foram verificadas via Drush. H5P permanece desativado. A rota existe no Router, mas HTTP visual retornou 404 e fica DEFERRED. Nenhum arquivo de Core/contrib foi editado manualmente.
 
+## 0.4.0-dev.191 — conteúdos administrativos de Fórum e Revista — 2026-10-19
+
+- O Fórum público tem listagens separadas de tópicos e comentários; a fila de
+  comentários fixa tipo, campo, entidade e bundle hospedeiro.
+- A Revista reúne publicações e comentários em
+  `/painel-administrativo/conteudo/revista`; o bloco de comentários é restrito
+  ao purpose main e à permissão de moderação.
+- LMS e Wiki têm contratos de administração independentes e só ativarão suas
+  listagens com seus adapters e validação contextual de acesso.
+- RUNTIME STATUS: PARTIAL. Views do Fórum foram carregadas no Runtime de teste;
+  configuração da Revista aguarda smoke dedicado.
+

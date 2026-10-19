@@ -138,6 +138,57 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * The administrative Forum tab is isolated from legacy and unrelated nodes.
+   */
+  public function testAdministrativeForumListingIsScopedAndAccessAware(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $filename = 'views.view.aculta_forum_admin_topics.yml';
+    $view = Yaml::parseFile($module_path . '/config/install/' . $filename);
+    $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+    self::assertSame($view, $sync);
+
+    $options = $view['display']['default']['display_options'];
+    self::assertSame('access content overview', $options['access']['options']['perm']);
+    self::assertSame(['aculta_forum_topic' => 'aculta_forum_topic'], $options['filters']['type']['value']);
+    self::assertFalse($options['filters']['type']['exposed']);
+    self::assertFalse($options['query']['options']['disable_sql_rewrite']);
+    self::assertArrayNotHasKey('node_bulk_form', $options['fields']);
+    self::assertSame('entity_operations', $options['fields']['operations']['plugin_id']);
+    self::assertSame('admin/content/forum', $view['display']['page_forum']['display_options']['path']);
+    self::assertSame('tab', $view['display']['page_forum']['display_options']['menu']['type']);
+    self::assertSame('system.admin_content', $view['display']['page_forum']['display_options']['menu']['parent']);
+    self::assertContains('user.node_grants:view', $view['display']['default']['cache_metadata']['contexts']);
+  }
+
+  /**
+   * Administrative Forum comments exclude editorial and other contexts.
+   */
+  public function testAdministrativeForumCommentsAreScopedAndModerationAware(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $filename = 'views.view.aculta_forum_admin_comments.yml';
+    $view = Yaml::parseFile($module_path . '/config/install/' . $filename);
+    $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+    self::assertSame($view, $sync);
+
+    $options = $view['display']['default']['display_options'];
+    self::assertSame('administer comments', $options['access']['options']['perm']);
+    self::assertSame(['aculta_discussion_post' => 'aculta_discussion_post'], $options['filters']['comment_type']['value']);
+    self::assertSame('field_aculta_discussion', $options['filters']['field_name']['value']);
+    self::assertSame('node', $options['filters']['entity_type']['value']);
+    self::assertSame(['aculta_forum_topic' => 'aculta_forum_topic'], $options['filters']['type']['value']);
+    self::assertSame('node', $options['filters']['type']['relationship']);
+    self::assertFalse($options['query']['options']['disable_sql_rewrite']);
+    self::assertArrayNotHasKey('comment_bulk_form', $options['fields']);
+    self::assertSame('admin/content/forum/comentarios', $view['display']['page_forum_comments']['display_options']['path']);
+    self::assertSame(
+      'views_view:views.aculta_forum_admin_topics.page_forum',
+      $view['display']['page_forum_comments']['display_options']['menu']['parent'],
+    );
+  }
+
+  /**
    * Domain Source field configuration is shipped by the Forum module.
    */
   public function testDomainSourceFieldIsDeclaredForPublicTopics(): void {

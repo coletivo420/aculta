@@ -199,6 +199,28 @@ real no servidor de teste.
 - Gates Drupal 11+ 969, fronteira 1334, mapa 154, slugs 387 e PHPCS PASS.
   RUNTIME STATUS: PARTIAL.
 
+## Fórum dev.22 / Magazine dev.12 / Portal dev.191 — organização administrativa por contexto
+
+- PHPUnit Unit Forum + Magazine: 12 testes / 96 assertions — PASS. Verifica
+  escopo de bundle/campo, permissões, caminhos, bloco da Revista e equivalência
+  entre configuração de instalação e Config Sync.
+- PHP lint e PHPCS Drupal/DrupalPractice nos testes novos — PASS. Gate Portal
+  Drupal 11+: 969 checks; fronteira: 1.336; mapa: 154; slugs: 387; ACULTA420
+  Foundation via Drush: 355; SDC: 516; design: 2.078 — PASS. `git diff
+  --check` — PASS.
+- Runtime `toca`, Drupal 11.4.10, PHP CLI 8.4.26, banco `aculta_runtime`:
+  importação parcial incluiu View de comentários públicos, Views de conteúdo e
+  comentários da Revista e bloco editorial na região `content` do tema Claro,
+  condicionado ao purpose `main` e à URL administrativa. Cache reconstruído.
+- Drush confirmou os caminhos de Fórum e Revista; as Views carregam/executam
+  sem erro. Conta uid 5 tem acesso às Views por permissões efetivas; visitante
+  anônimo recebe HTTP 403 nos endpoints. Renderização HTTP com sessão editorial
+  e exibição do bloco no navegador ainda pendentes.
+- Nenhum Node, Comment, arquivo, revisão editorial ou dado de usuário foi
+  criado, alterado ou removido. Discussões LMS/Wiki permanecem sem rotas
+  executáveis até seus adapters provarem access contextual. RUNTIME STATUS:
+  PARTIAL.
+
 ## Correção Portal dev.184 — raiz e cache de rotas
 
 - A inspeção de `Drupal\Core\Routing\RouteProvider::getRouteCollectionForRequest()` confirmou que o cache conserva caminho, query e rotas, sem os atributos do Request marcados pelo path processor.

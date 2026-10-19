@@ -11,3 +11,12 @@ conteúdo, publicação e mídia.
 Para políticas editoriais transversais, consulte a
 [documentação de módulos](../../../../../../docs/modules/EDITORIAL-MEDIA.md)
 e o [mapa módulo–tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md).
+
+## Administração editorial
+
+As publicações `article` e `blog` e seus comentários são organizados juntos em
+`/painel-administrativo/conteudo/revista`. A View de comentários é renderizada
+como bloco na mesma página e filtra por tipo, campo, entidade e bundles editoriais.
+Não existe uma rota separada `/painel-administrativo/revista/comentarios`. A
+colocação do bloco é configuração de site em Config Sync; a instalação do
+módulo fornece as Views e o caminho editorial.

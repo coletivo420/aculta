@@ -103,3 +103,15 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
 - Chamada aparece na exibição da Notícia e do blog.
 - Documentação em `docs/README.md` (regras e passo a passo para tipos novos: vídeo, galeria).
 - RUNTIME STATUS: verificado no Homelab (navegador e HTTP). Inspeção visual humana pendente.
+## 0.1.0-dev.12 — área administrativa unificada da Revista — 2026-10-19
+
+- Criada listagem exclusiva de publicações `article` e `blog` em
+  `/painel-administrativo/conteudo/revista`.
+- Comentários editoriais ficam incorporados à mesma página como Views block,
+  filtrados por `field_aculta_discussion` e pelos bundles da Revista.
+- Acesso de conteúdo usa `access content overview`; moderação exige
+  `administer comments`; filtros de bundles são fixos e a área fica limitada ao
+  purpose `main`.
+- RUNTIME STATUS: PARTIAL; smoke HTTP e renderização da View no servidor de
+  teste pendentes.
+

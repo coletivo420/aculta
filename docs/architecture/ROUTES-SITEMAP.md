@@ -74,6 +74,9 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/apoiar/{valor}/agora` | Doação rápida de valor informado | Ativo conforme configuração do fluxo Commerce. |
 | `main.aculta` | `/termos/aceitar` | Ação de aceite dos termos | Endpoint autenticado; `POST` processa e redireciona ao destino seguro. |
 | `main.aculta` | `/painel-administrativo/**` | Árvore do painel administrativo ACULTA | Rotas administrativas; access do Core/contrib decide cada operação. |
+| `main.aculta` | `/painel-administrativo/conteudo/forum` | Listagem administrativa exclusiva de tópicos públicos do ACULTA Forum | Condicional à View `aculta_forum_admin_topics` e `access content overview`; filtro fixo pelo bundle público. Runtime de teste ativo após importação parcial, produção não confirmada. |
+| `main.aculta` | `/painel-administrativo/conteudo/forum/comentarios` | Listagem/moderação exclusiva dos comentários dos tópicos públicos do ACULTA Forum | Condicional à View `aculta_forum_admin_comments` e `administer comments`; filtros fixos por tipo, campo, entidade e bundle hospedeiro. Produção não confirmada. |
+| `main.aculta` | `/painel-administrativo/conteudo/revista` | Área administrativa unificada de publicações e comentários editoriais | Condicional às Views `aculta_magazine_admin_content` e `aculta_magazine_admin_comments`, permissão `access content overview` e ao bloco editorial condicionado ao purpose main. Homologação Runtime pendente. |
 | `main.aculta` | `/painel-administrativo/perfil/editar` | Edição do perfil do usuário autenticado | Requer access administrativo próprio. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/redes-sociais` | Configuração de perfis e links sociais | Rota administrativa protegida. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/cep` | Configuração da integração de CEP | Condicional ao submódulo CEP; rota administrativa. |

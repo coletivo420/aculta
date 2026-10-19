@@ -30,6 +30,27 @@ Um provider, resolvido por um serviço central (conceitualmente
 Providers não aceitam decisão de acesso apenas por slug/payload do navegador. A
 entidade é carregada pelo Entity API e o acesso é revalidado na operação.
 
+## Separação estrutural no painel de conteúdo
+
+O painel `/painel-administrativo/conteudo` não deve misturar objetos de discussão
+com os demais conteúdos. Cada contexto possui uma listagem/moderação própria,
+com filtros fixos no lado do servidor, permissões adequadas e acesso/cache da
+entidade hospedeira preservados. Listagens genéricas de Nodes ou Comments não
+são a interface administrativa dos contextos de discussão.
+
+| Contexto | Estrutura administrativa | Estado |
+| --- | --- | --- |
+| Fórum público Growroom420 | `/painel-administrativo/conteudo/forum` para tópicos e `/painel-administrativo/conteudo/forum/comentarios` para respostas; inclui pendentes de aprovação. | Listagens Views implementadas nesta subfase; acesso por `access content overview` e `administer comments`, filtros fixos por bundle/campo/contexto. |
+| Publicações | Conteúdo e comentários editoriais são reunidos em `/painel-administrativo/conteudo/revista`; nunca aparecem na listagem do Fórum. | Provider Magazine usa Comment compartilhado. View editorial lista `article`/`blog` e mostra seus comentários na mesma página administrativa. |
+| LMS | Espaço administrativo próprio em `/painel-administrativo/lms/forum`, com discussões de curso, turma e atividade separadas e autorização contextual de Educador. | Contrato para o adapter LMS; não criar listagem global até haver filtro por Group/Entity Access demonstrado. Comentários de avaliação (`lms_answer_comment`) são um recurso distinto e não viram comentários do Fórum. |
+| Wiki420 | Espaço administrativo próprio em `/painel-administrativo/wiki/forum`, limitado a comentários de discussão de verbetes; edição/revisão editorial permanece separada. | Contrato futuro, condicionado ao provider e ao bundle Wiki. Não criar agora rota/listagem sem contexto instalável e access validado. |
+
+Rotas futuras LMS/Wiki devem nascer no mesmo commit de seus adapters e serem
+registradas no mapa global de caminhos. A implementação não pode usar Views
+genérica ou confiar somente em `comment_type`: deve fixar host/contexto,
+revalidar Entity Access e, para LMS, membership/Group atuais. A fila pública não
+agrega comentários privados, editoriais ou de verbetes.
+
 ## Modelo inicial a validar
 
 | Nome proposto | Uso | Estado/validação |

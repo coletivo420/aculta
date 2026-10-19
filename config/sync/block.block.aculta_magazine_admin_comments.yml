@@ -1,0 +1,36 @@
+uuid: 2a680a57-82ba-453e-a2df-a60dc95c99a3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - views.view.aculta_magazine_admin_comments
+  module:
+    - aculta_portal
+    - system
+    - views
+  theme:
+    - claro
+id: aculta_magazine_admin_comments
+theme: claro
+region: content
+weight: 20
+provider: null
+plugin: 'views_block:aculta_magazine_admin_comments-block_comments'
+settings:
+  id: 'views_block:aculta_magazine_admin_comments-block_comments'
+  label: 'Comentários da Revista'
+  label_display: visible
+  provider: views
+  views_label: 'Comentários da Revista'
+  items_per_page: 10
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: |-
+      /painel-administrativo/conteudo/revista
+      /admin/content/revista
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: main
+    negate: false

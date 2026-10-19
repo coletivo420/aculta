@@ -306,3 +306,20 @@
 - Documentados pesquisa, arquitetura, reconstrução, roadmap e gates futuros.
 - Entrega exclusivamente documental, sem versão de módulo instalável ou Runtime.
 - [Evidência de revisão e validação estática](../../../../../../docs/portal/FORUM-GAME-PESQUISA-VALIDACAO.md).
+## `0.1.0-dev.22` — separação administrativa por contexto — 2026-10-19
+
+- Incluída a listagem administrativa de tópicos em
+  `/painel-administrativo/conteudo/forum`, isolada do inventário geral.
+- Criada a fila `/painel-administrativo/conteudo/forum/comentarios`, filtrada
+  por Comment type, field, entidade Node e bundle público; inclui comentários
+  aguardando aprovação e requer `administer comments`.
+- Documentada a política de separação para Magazine, LMS e Wiki. Os adapters
+  futuros deverão fornecer listagens próprias com acesso contextual; não foi
+  criada fila LMS/Wiki prematura.
+- Revista mantém conteúdo e comentários juntos em
+  `/painel-administrativo/conteudo/revista`; não há rota separada de comentários.
+- Nenhuma discussão LMS ou Wiki passa pela fila pública do Fórum. Nenhum
+  conteúdo foi criado, alterado ou removido nesta etapa.
+- Runtime status: a View de tópicos já foi importada no Runtime de teste;
+  aplicação da nova View de comentários e smoke de acesso ficam pendentes.
+

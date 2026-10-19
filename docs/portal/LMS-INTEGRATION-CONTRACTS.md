@@ -77,3 +77,17 @@ variando e invalidando cache por usuário/permissões e entidades relevantes. Pa
 acesso contextual não basta. `aculta_user` não aplica a regra global do primeiro comentário dentro do LMS, e a fila de
 moderação pública não inclui comentários pedagógicos. Até o adapter fornecer essas ações, moderação LMS permanece
 fechada por padrão; estudantes continuam podendo participar sem aprovação global.
+
+## Organização administrativa das discussões
+
+As discussões do LMS não aparecem em `/painel-administrativo/conteudo/forum` nem
+na fila pública de comentários. A Revista concentra publicações e comentários
+em `/painel-administrativo/conteudo/revista`. Quando o adapter de discussão for implementado,
+ele deverá fornecer listagens administrativas próprias em
+`/painel-administrativo/lms/forum`,
+separando curso, turma e atividade conforme o modelo de acesso, com filtros
+fixos e autorização revalidada por Entity Access e Group membership. A fila de
+aprovação é operada por Educadores do contexto correspondente. Não publicar uma
+View global de comentários LMS antes de provar isolamento entre turmas. O tipo
+existente `lms_answer_comment` continua reservado à conversa de avaliação da
+resposta e não é convertido em discussão de curso/turma.

@@ -20,6 +20,21 @@ linear, progresso e resposta contextual; (4) seguir/salvar/denunciar e
 notificações; (5) preferências e acabamento mobile/acessível. IA, chat em tempo
 real, aplicativo nativo e previews remotos não são requisitos deste roadmap.
 
+| Versão | Entrega | Estado |
+| --- | --- | --- |
+| `0.1.0-dev.22` | Separação administrativa do Fórum e contratos por contexto; Revista com conteúdo e comentários reunidos em `/painel-administrativo/conteudo/revista` | Implementado; Runtime PARTIAL, sem sessão editorial de navegador |
+
+## Política estrutural do painel administrativo
+
+O conteúdo de discussão não se mistura à listagem genérica em
+`/painel-administrativo/conteudo`. Fórum público tem áreas próprias para tópicos
+e comentários; Revista reúne publicações e comentários em
+`/painel-administrativo/conteudo/revista`; LMS terá área em
+`/painel-administrativo/lms/forum` restrita a curso/turma/atividade e autorização
+de Educador; Wiki terá área em `/painel-administrativo/wiki/forum` para
+comentários de verbetes. LMS e Wiki só ativam suas rotas junto dos respectivos
+adapters e depois de provar isolamento por contexto. Ver [contratos de contexto](CONTEXTS.md).
+
 ## `0.1.0-dev.1` — Auditoria e fundação documental (entregue)
 
 - Estado GitHub, branches e PRs; base `main` verificada.
