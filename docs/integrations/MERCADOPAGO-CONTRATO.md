@@ -66,3 +66,11 @@ Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
 1. Ler a referência oficial de pagamentos (cancelamento) e de preapproval (`PUT`), e fechar os itens "não confirmado".
 2. Testar no sandbox: estorno parcial e total, cancelamento de pagamento pendente, assinatura pendente com link de pagamento, e recebimento dos tópicos de assinatura.
 3. Só então tratar o Runtime (ver `CHANGELOG` do `aculta_portal`).
+
+## Verificações em 2026-10-19 (registro)
+
+- **Credencial configurada como teste** (`access_token_test`): pertence ao vendedor de teste `3735929876`, aplicativo `8616430635467445`. A API recusa criar pagamento e estorno com ela (401, `Unauthorized use of live credentials`), mesmo com comprador de teste e cartão de teste. Não é possível testar pagamento de sandbox com ela.
+- **Chave de produção salva** (`mercadopago_production_access_token`): pertence ao aplicativo `CheckoutProacultaorg` (`1573840918145296`), dono `3638510484`, conta real da ACULTA. Não enxerga os pagamentos do vendedor de teste (404).
+- **Pagamento real de R$ 1,00** pela preferência de produção `3638510484-a268b814-2f08-4151-8985-0e152c01b163`: pagamento `184952248830`, aprovado (`live_mode=true`), estornado totalmente pelo estorno `3395210317` (status `refunded`).
+- **Pagamentos de teste de R$ 30,00** (pedidos 6, 7 e 13; IDs `183617491071`, `183758594246`, `183741511220`): continuam aprovados no Mercado Pago, sem estorno. Não é possível excluí-los pela API. O registro local do pagamento do pedido 13 foi excluído do Commerce; os pedidos foram mantidos.
+- **Orientação documentada** (MCP, documentação MLB): produto que não exige credenciais de teste deve usar credenciais de produção de uma conta de teste. Essa credencial ainda não está disponível no Runtime.

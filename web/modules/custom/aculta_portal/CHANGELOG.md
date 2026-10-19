@@ -5,6 +5,13 @@
 - Portal Unit: 219 testes/551 assertions; `aculta_lms`: 25 testes/392 assertions; `aculta_lms_h5p`: 24 testes/272 assertions. Gates Drupal 11+, imagem e slugs aprovados.
 - Runtime `cursos`: PASS. Conta `agente-teste-20261019-lms-1` sem e-mail confirmado entrou na aula de revisão do curso após associação temporária ao Group; o conteúdo da atividade foi renderizado. Conta e membership removidas via Entity API ao fim; cache rebuild concluído. Nenhum dado do curso foi alterado.
 
+## 0.4.0-dev.154 — registro dos testes de Mercado Pago e limpeza de pagamento de teste — 2026-10-19
+
+- Pagamento real de R$ 1,00 com a preferência de produção da ACULTA foi aprovado e estornado totalmente (estorno `3395210317`).
+- Pagamento de teste local (pagamento 3, pedido 13) excluído do Commerce. Pedidos mantidos. Os três pagamentos de teste de R$ 30,00 continuam aprovados no Mercado Pago (conta de teste `3735929876`), sem estorno.
+- Credencial configurada como teste recusa criar pagamento e estorno (`Unauthorized use of live credentials`). Pendente: credencial de produção da conta de teste, para testes de ponta a ponta.
+- RUNTIME STATUS: APLICADO (exclusão local e estorno real conferidos pela API).
+
 ## 0.4.0-dev.153 — Mercado Pago: estorno negado para doação e curso; Runtime migrado — 2026-10-18
 
 - Regra: doação (pedido `donate_order_type`, item `donate_item_type`) e curso (pedido ou item `curso`) não têm estorno. Decidida em `MercadoPagoPaymentPolicy::bloqueiaEstorno()` (função pura) e aplicada por `RefundEligibilitySubscriber` ao evento `aculta_pagamentos_mercadopago.refund_eligibility`.
