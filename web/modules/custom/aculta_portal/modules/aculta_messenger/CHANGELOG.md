@@ -2,6 +2,14 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.48 — Bloquear e Desfazer amizade por pessoa, não por conversa — 2026-10-19
+
+- Amizade e bloqueio são por pessoa. A conversa tem uma caixa por outro membro (`OptionsDisclosure`, carregada ao abrir em `…/membro/{user}/opcoes`), e cada ação posta em `…/membro/{user}/relacao`. Antes, o menu da conversa só cobria uma pessoa e ficava vazio em conversas com mais de duas.
+- O menu "Opções" da conversa tem só "Limpar histórico". "Bloquear" e "Desfazer amizade" saem dele.
+- Modal do Drupal: o contêiner da pergunta não é destruído ao fechar (o `close` padrão do Drupal dispara `detachBehaviors('unload')`, e o jQuery UI então remove o elemento). O atributo `hidden` é tirado antes de abrir, porque a regra `[hidden]` do Bootstrap usa `!important`.
+- Validação no navegador (Firefox, sessão X11, conta de teste): caixas por membro, diálogos de "Bloquear" e "Desfazer amizade" com título e pergunta, Cancelar fecha e reabre, "Desbloquear" por clique e "Bloquear" por Enter gravam e voltam à conversa. Clique do mouse em "Sim" dentro do diálogo não chegou ao botão no X11 (causa não identificada).
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild). Estado de teste restaurado: sem bloqueios, amizade preservada.
+
 ## 0.1.1-dev.47 — confirmação de Bloquear e Desfazer amizade em modal do Drupal — 2026-10-19
 
 - `ConfirmDialog` deixa de usar `<dialog>` nativo. A pergunta é um contêiner oculto em `data-aculta-dialog`, e o tema abre o diálogo com `Drupal.dialog` (regra de `POPUP-PADRAO.md`).

@@ -84,6 +84,37 @@ aculta_messenger.drawer_relationship:
   options:
     no_cache: true
 
+aculta_messenger.member_options:
+  path: '/mensagens/conversa/{private_message_thread}/membro/{user}/opcoes'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::memberOptions'
+    _title: 'Opções'
+  requirements:
+    _entity_access: 'private_message_thread.view'
+    _permission: 'use private messaging system,access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    parameters:
+      user:
+        type: entity:user
+
+aculta_messenger.member_relationship:
+  path: '/mensagens/conversa/{private_message_thread}/membro/{user}/relacao'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\MessagesController::drawerMemberRelationship'
+    _title: 'Conversa'
+  requirements:
+    _entity_access: 'private_message_thread.view'
+    _permission: 'use private messaging system,access user profiles'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    parameters:
+      user:
+        type: entity:user
+
 aculta_messenger.drawer_conversation:
   path: '/mensagens/conversa/{private_message_thread}/painel'
   defaults:
