@@ -1,3 +1,10 @@
+## `0.1.0-dev.11` — listagem pública por domínio — 2026-10-19
+
+- View nova `aculta_forum_public_topics`, em Config Sync e config de instalação, consulta somente `aculta_forum_topic` publicado, filtra `field_domain_source` pelo domínio ativo, mantém SQL rewrite/`node_access` e cache contexts de grants. O bloco CTools Views deixa ajustáveis apenas paginação e quantidade.
+- `field_domain_source` passa a integrar o bundle. Hook OOP define o domínio canônico do purpose `forum` quando ausente; criação é negada fora desse purpose ou se sua configuração não existir. Fonte explicitamente definida é preservada.
+- A View antiga `aculta_forum_topics` e seu bloco existente seguem intactos para não interromper o acervo contrib antes da fase segura dev.5. A View nova ainda não foi colocada em página ou bloco.
+- Testes Unit de View/configuração e hook: 21 testes/102 assertions PASS; PHPCS e PHP lint PASS. Runtime: View executada sem resultados porque não há tópicos novos; hook OOP resolvido/registrado e atribuiu o domínio em Node em memória. Nenhuma rota, colocação, tópico ou comentário foi alterado.
+
 ## `0.1.0-dev.10` — formulário e apresentação base do tópico público — 2026-10-19
 
 - Configuração Core de formulário do Node `aculta_forum_topic`: título, corpo e categoria; status de comentário e referência de autoria histórica não ficam editáveis no formulário.

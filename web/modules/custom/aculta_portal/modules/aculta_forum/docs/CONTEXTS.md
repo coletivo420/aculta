@@ -34,7 +34,7 @@ entidade é carregada pelo Entity API e o acesso é revalidado na operação.
 
 | Nome proposto | Uso | Estado/validação |
 | --- | --- | --- |
-| `aculta_forum_topic` | Node para tópico independente público | Bundle/Comment/Taxonomy em `config/install` e Config Sync; formulário title/body/categoria e displays full/teaser aplicados no Runtime de teste. Nenhum tópico criado. Permissões de criação e gestão do próprio tópico declaradas na dev.6. `content_editor` modera tópicos de outros autores pelo access hook do `aculta_user`, que exige confirmação real de e-mail. |
+| `aculta_forum_topic` | Node para tópico independente público | Bundle/Comment/Taxonomy e campo `field_domain_source` em `config/install` e Config Sync; formulário title/body/categoria e displays full/teaser aplicados no Runtime de teste. Atribuição de origem usa o domínio canônico do purpose `forum`; criação falha fechada fora desse purpose ou se ele não existir. Nenhum tópico criado. Permissões de criação e gestão do próprio tópico declaradas na dev.6. `content_editor` modera tópicos de outros autores pelo access hook do `aculta_user`, que exige confirmação real de e-mail. |
 | `aculta_lms_topic` | Node para discussão pedagógica reservada | Planejado para adapter LMS; dependência opcional evita ciclo Forum↔LMS. |
 | `aculta_discussion_post` | bundle Comment compartilhado | Configuração de Comment em Node preparada na dev.4; suporte reutilizável em outros bundles Node ainda requer prova Kernel na dev.7/integrações. |
 | `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | Configuração de instalação adicionada na dev.4; a substituição do vocabulário `forums` fica para migração autorizada. |

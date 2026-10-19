@@ -86,6 +86,11 @@ tópico/resposta serem validados. A retirada contrib dev.5 também permanece
 aberta por depender de aplicação/verificação dos consumidores novos e restore
 point atual.
 
+Dev.11 adiciona a View nova `aculta_forum_public_topics` e o campo de domínio
+canônico. A View continua sem colocação, preservando `/forum` e o bloco legado
+enquanto o Forum contrib e seus Nodes continuam ativos; validar instalação/query
+no Runtime antes de escolher a colocação na etapa de corte.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,

@@ -12,6 +12,7 @@ DI explícita. Não criar service locator ou hook procedural migrável.
 | Consultar regras | `DiscussionAccessPolicy` ou delegação explícita a entity access/Group | Comparar APIs primeiro; `AccessResultInterface` e cacheability obrigatórios. |
 | Preparar thread/post | View builders e Views/Core Comment render | Não criar renderer paralelo antes de testar APIs existentes. |
 | Listagem e filtro | Views query/access handlers + Search API processors | Filters por domínio/contexto fixos. |
+| Origem do tópico público | `PublicForumTopicHooks` (`entity_create_access`, `node_presave`) | Implementado na dev.11: restringe criação ao purpose ativo `forum`, exige seu domínio canônico e preenche `field_domain_source` quando ausente. |
 | Leitura/não lidos | History API e serviço pequeno se histórico nativo não cobrir o contrato | Exige decidir armazenamento e invalidação antes de entidade/tabela. |
 | Estatísticas | agregação/cache service sobre APIs/views existentes | Sem query cara a cada render ou storage redundante. |
 | Evento de resposta | evento interno neutro após persistência, consumido por Messenger | Revalidar access no worker; não duplicar aviso. |

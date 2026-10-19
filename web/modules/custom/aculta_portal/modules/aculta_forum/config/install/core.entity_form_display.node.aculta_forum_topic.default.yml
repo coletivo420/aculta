@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.aculta_forum_topic.body
     - field.field.node.aculta_forum_topic.field_aculta_categories
+    - field.field.node.aculta_forum_topic.field_domain_source
     - node.type.aculta_forum_topic
   module:
     - text

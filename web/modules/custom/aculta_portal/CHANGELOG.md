@@ -1,3 +1,8 @@
+## 0.4.0-dev.175 — listagem isolada e domínio canônico do Fórum — 2026-10-19
+
+- A View `aculta_forum_public_topics` lista somente tópicos novos publicados no domínio ativo, preservando a reescrita `node_access`; CTools Views permite configurar pager e quantidade por bloco. A View antiga `aculta_forum_topics` não foi alterada.
+- `aculta_forum_topic` recebe `field_domain_source`; o hook OOP atribui o domínio canônico `forum` se estiver ausente e restringe criação ao purpose `forum`. Configuração da View não foi colocada em página/bloco nesta entrega.
+
 ## 0.4.0-dev.174 — formulários e displays nativos do tópico público — 2026-10-19
 
 - O `aculta_forum_topic` ganha formulário com título, corpo e categoria, além de displays `full` (inclui Comment compartilhado) e `teaser` para futuras listagens. Controles de status e autoria histórica ficam fora do formulário.

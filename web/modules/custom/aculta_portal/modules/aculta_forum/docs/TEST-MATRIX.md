@@ -120,6 +120,26 @@ Runtime e fluxos completos continuam pendentes.
 - RUNTIME STATUS: PARTIAL. Fluxo persistido de criação/resposta, acesso
   integrado, apresentação no navegador e UX ainda aguardam a fase funcional.
 
+## Evidência dev.11 — View pública isolada por domínio
+
+- PHPUnit Unit `aculta_forum`: 21 testes / 102 assertions — PASS.
+- PHPCS Drupal/DrupalPractice, PHP lint, YAML parse, Drupal 11+ (969), pacotes
+  (22), fronteira (1.323), mapa (154) e `git diff --check` — PASS.
+- No Runtime `aculta_runtime`, importação parcial incluiu a field instance de
+  Domain Source, a View nova e os três displays atualizados. A field instance
+  já existente no Runtime tinha outro UUID, então o Drush a substituiu durante
+  a sincronização; antes da operação havia zero
+  Nodes `aculta_forum_topic` e zero linhas dessa bundle em
+  `node__field_domain_source`. Os 30 Nodes legados e seus valores de domínio
+  permaneceram intactos. O restante da configuração não foi importado.
+- Após cache rebuild, os hooks OOP foram encontrados pelo ModuleHandler; smoke
+  sem salvar Node atribuiu `forum_aculta_org`. A View carregou/executou e retornou
+  zero itens, conforme o acervo novo vazio. As cinco configurações alvo ficaram
+  sem divergência no `config:status` por prefixo.
+- RUNTIME STATUS: PARTIAL. A View não foi colocada, não há tópico persistido e
+  browser/UX seguem pendentes.
+- A View nova não tem caminho de página nem bloco colocado. O bloco existente de `/forum` segue ligado à View do acervo contrib.
+
 Gates aplicáveis seguem `scripts/validate-aculta-portal-drupal11.php`, fronteira
 módulo/tema, mapa módulo-tema, slugs, rotas, endereços, imagem, hierarquia de
 papéis e gates relacionados ao código tocado. O gate final será recalibrado na

@@ -61,4 +61,43 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertArrayHasKey('field_autor_legado', $teaser['hidden']);
   }
 
+  /**
+   * The public listing keeps bundle, domain and access filters fixed.
+   */
+  public function testPublicListingUsesFixedAccessAwareFilters(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $install_path = $module_path . '/config/install/';
+    $filename = 'views.view.aculta_forum_public_topics.yml';
+    $view = Yaml::parseFile($install_path . $filename);
+    $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+    self::assertSame($view, $sync);
+
+    $options = $view['display']['default']['display_options'];
+    self::assertSame('access content', $options['access']['options']['perm']);
+    self::assertSame('1', $options['filters']['status']['value']);
+    self::assertSame(['aculta_forum_topic' => 'aculta_forum_topic'], $options['filters']['type']['value']);
+    self::assertSame('domain_source', $options['filters']['field_domain_source_target_id']['plugin_id']);
+    self::assertSame(['_active' => '_active'], $options['filters']['field_domain_source_target_id']['value']);
+    self::assertFalse($options['query']['options']['disable_sql_rewrite']);
+    self::assertContains('user.node_grants:view', $view['display']['default']['cache_metadata']['contexts']);
+    self::assertSame(
+      ['items_per_page' => TRUE, 'pager' => 'pager'],
+      $view['display']['block_recent']['display_options']['allow'],
+    );
+  }
+
+  /**
+   * Domain Source field configuration is shipped by the Forum module.
+   */
+  public function testDomainSourceFieldIsDeclaredForPublicTopics(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $filename = 'field.field.node.aculta_forum_topic.field_domain_source.yml';
+    self::assertSame(
+      Yaml::parseFile($module_path . '/config/install/' . $filename),
+      Yaml::parseFile($repository_path . '/config/sync/' . $filename),
+    );
+  }
+
 }

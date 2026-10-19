@@ -39,6 +39,13 @@ publicação não podem ser alterados por configuração do bloco. A listagem na
 do Forum continua sendo a fonte das categorias e dos tópicos dentro de cada
 categoria.
 
+A View `aculta_forum_public_topics` é a contraparte do motor novo: filtra apenas
+`aculta_forum_topic` publicado e `field_domain_source` do domínio ativo, mantém
+SQL rewrite do Core/`node_access` e usa o teaser do Node. O display de bloco
+permite somente ajustar quantidade e pager via CTools Views. A View e o seu
+bloco ainda não foram colocados; o bloco acima e a View antiga permanecem em
+serviço até o corte seguro do Drupal Forum contrib, sem misturar os dois acervos.
+
 A View `aculta_shop_catalog` apresenta produtos publicados do tipo `produto_loja`.
 Sua página `/produtos` e os detalhes de produto pertencem ao purpose SHOP. O
 bloco `block_catalog` deve ser colocado somente em páginas desse purpose. CTools
