@@ -108,6 +108,10 @@ Escopo: a decisão vale para a **importação**. O download não exclui esses f�
 
 ## Bloqueio atual
 
+**Importação adiada (decisão do responsável, 2026-10-19):** a importação do Growroom não começa até a remodelagem do
+fórum na PR #297 (`docs/aculta-forum-0.1.0-dev.1`). Ajustes desta etapa seguem como commits nessa branch, sem nova
+PR ou branch. Nenhum conteúdo, usuário ou imagem é importado antes disso.
+
 A F3 (migração piloto) depende da lista de autores aprovada. A F6 (reconstrução em lotes) depende da F3.
 Estado das condições:
 
