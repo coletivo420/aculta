@@ -56,8 +56,10 @@ Runtime.
 - Foram observados 30 nodes `forum`, dos quais 12 publicados vinculam
   discussões a publicações. `aculta_magazine` e `aculta_user` ainda têm
   consumidores ativos; ver `docs/MIGRATION-REMOVAL.md`.
-- Preservar `ForumTopicSync` e os vínculos editoriais até a implementação da
-  migração da Revista na dev.8, para não deixar publicações sem discussão.
+- Preservar temporariamente `ForumTopicSync` e os vínculos editoriais até a
+  Revista ter comentários diretos disponíveis e a sincronização antiga ser
+  desligada na dev.8. Os tópicos-casca antigos serão apagados depois; não
+  importar tópicos nem comentários antigos para os novos contextos.
 - Inventário imediatamente pré-operação e restore point validado ainda pendentes.
 - Exclusão escopada aprovada em ambiente de teste, uninstall oficial,
   remoção do Composer posterior e verificação de resíduos.

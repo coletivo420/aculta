@@ -6,15 +6,23 @@
   total do site (ambos de `site_alert`). O validador Drupal Core impede
   uninstall enquanto houver qualquer node `forum` ou termo `forums`.
 - Confirmados consumidores ativos em Magazine e User; a sincronização editorial
-  e os vínculos `field_discussao` permanecem. Desinstalar ou excluir agora
-  deixaria 12 publicações sem sua discussão; a migração da Revista da dev.8 e os
-  contratos funcionais correspondentes ainda não existem.
+  e os vínculos `field_discussao` permanecem. Desinstalar agora deixaria 12
+  publicações sem o novo campo de comentários; instalar esse fluxo vazio e
+  desligar a sincronização antiga precedem a exclusão dos tópicos-casca. O
+  conteúdo antigo de discussão não será migrado para o sistema novo.
 - Backups encontrados (17 e 18/10) são anteriores e de outras tarefas; nenhum
   foi validado como restore point desta retirada. Nenhuma exclusão, uninstall,
   remoção Composer, update ou alteração Runtime executada.
-- Dev5 permanece em andamento. Próximo gate: migrar os consumidores sem perder
-  discussão editorial e validar restore point atual antes de qualquer operação
-  destrutiva. RUNTIME STATUS: PARTIAL (auditoria somente leitura no teste).
+- Dev5 permanece em andamento. Próximo gate: completar os contratos dos
+  consumidores, disponibilizar novos fluxos vazios e validar restore point atual
+  antes de qualquer operação destrutiva. RUNTIME STATUS: PARTIAL (auditoria
+  somente leitura no teste).
+- Decisão do responsável: o novo Fórum e os contextos de discussão começam sem
+  importação de tópicos ou comentários antigos. Na limpeza autorizada serão
+  apagados os tópicos e comentários legados, preservando publicações, usuários
+  e demais entidades; os 12 tópicos de sincronização da Revista só saem depois
+  que os comentários diretos da publicação estiverem prontos e a sincronização
+  antiga desligada. A contagem registrada é zero comentários `comment_forum`.
 - A API agora registra `PublicationContextProvider`: bundles `article`/`blog`
   somente com `field_aculta_discussion`, access de leitura do host e campo,
   escrita via Comment aberto + `post comments`, moderação via `administer comments`,

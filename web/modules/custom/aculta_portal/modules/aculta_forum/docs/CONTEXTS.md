@@ -6,6 +6,12 @@ provider do Fórum público. Providers de Publicações, LMS e Wiki continuam po
 suas fases de integração; nenhuma entidade é tratada como contexto só por slug,
 nome de bundle enviado pelo cliente ou presença de dados arbitrários.
 
+**Inicialização limpa:** os novos tópicos e comentários começam sem conteúdo
+importado do Drupal Forum legado. Tópicos e comentários antigos serão apagados
+na janela de retirada, após os novos fluxos contextuais estarem instalados e
+verificados. Conteúdo editorial hospedeiro permanece; os tópicos de sincronização
+da Revista não são convertidos em tópicos públicos nem em comentários.
+
 ## Interface do contexto
 
 Um provider, resolvido por um serviço central (conceitualmente

@@ -44,12 +44,35 @@ com `accessCheck(FALSE)` foram somente de leitura e retornaram:
 | Dado legado | Quantidade | Observação |
 | --- | ---: | --- |
 | Nodes bundle `forum` | 30 | 12 publicados vinculados a publicações; 1 publicado independente; 17 não publicados sem referência editorial |
-| Nodes bundle `forum` referenciados por `field_discussao` | 12 | Um vínculo editorial por node; preservar entidades editoriais e as discussões até migração |
+| Nodes bundle `forum` referenciados por `field_discussao` | 12 | Um vínculo editorial por node; manter o vínculo temporariamente até o comentário direto estar operacional, depois excluir o tópico-casca sem importar seu conteúdo |
 | Comments bundle `comment_forum` | 0 | Campo configurado, sem entidades Comment nesse bundle |
 | Terms no vocabulário `forums` | 8 | Vocabulário também tem `field_categoria_revista`; uso editorial precisa ser migrado antes da remoção |
 | Arquivos de Config Sync com dependências dos bundles/campos antigos | 24 | Inclui permissões, flags, Magazine e displays |
 | Flagging entities | 2 no total; 0 do Forum | Ambos apontam a `site_alert` (flags `aculta_site_alert_dismissed` e `aculta_site_alert_read`) |
 | Drupal Core `validateUninstall(['forum'])` | Bloqueado | Exige excluir todos os nodes `forum` e todos os termos `forums` antes do uninstall |
+
+### Política de dados para o novo Fórum
+
+O responsável determinou que o novo Fórum deve começar limpo. Portanto, o
+conteúdo do Drupal Forum antigo **não será migrado** para `aculta_forum_topic`
+nem convertido em `aculta_discussion_post`. Na janela de retirada autorizada,
+serão eliminados os tópicos legados e todos os comentários ligados a eles; a
+consulta imediatamente anterior deverá confirmar a contagem e os bundles reais
+de Comment, incluindo respostas aninhadas. No inventário de 2026-10-19 havia 30
+tópicos `forum` e zero comentários `comment_forum`.
+
+Os 12 nós que funcionam como abertura/sincronização da Revista não serão
+preservados como tópicos. Antes de removê-los, a Revista deverá usar comentário
+direto na publicação e a sincronização `ForumTopicSync` deverá estar desligada;
+seus conteúdos editoriais e entidades de publicação permanecem intocados. O
+novo campo começa sem comentários, e os outros contextos também começam sem
+posts importados. Não remover contas, Nodes editoriais, cursos, turmas,
+atividades, verbetes, imagens ou arquivos por causa desta limpeza.
+
+O uninstall também exige retirar o vocabulário antigo `forums`; verificar e
+migrar antes qualquer uso editorial (incluindo `field_categoria_revista`). A
+remoção de termos/categorias antigos é limitada aos dados do módulo Forum e não
+autoriza exclusão de vocabulários ou dados de outras funcionalidades.
 
 O `aculta_forum` está habilitado no Runtime, mas seu provider novo atende o
 bundle `aculta_forum_topic`; os 30 nodes antigos e seus consumidores não foram
@@ -77,6 +100,10 @@ Não foi criado backup nesta subfase.
   backup atual de Runtime e arquivos relacionados; restore validado em ambiente
   de teste isolado; inventário repetido; plano de rollback específico; e
   confirmação do escopo exato dos dados.
+- Na execução aprovada, não migrar conteúdo de discussão: após provar os novos
+  fluxos vazios por contexto e desativar os consumidores antigos, excluir os
+  Nodes de tópico e Comments do Forum legado; repetir consulta e confirmar zero
+  antes do uninstall oficial. Manter conteúdo de publicação e demais entidades.
 - O responsável autorizou em princípio excluir apenas conteúdo antigo do Forum
   no teste, condicionado à confirmação de ambiente e escopo. Isso não cobre
   publicações, contas, LMS, Wiki nem outras entidades. A validação de restore e
