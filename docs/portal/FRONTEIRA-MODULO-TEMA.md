@@ -167,8 +167,9 @@ agrupados por camada. Esta seção registra a delimitação e o resultado; não 
 | Camada | Arquivos desta branch | Dono | Regra verificada |
 | --- | --- | --- | --- |
 | Tema `aculta420` | `templates/node--article--full`, `templates/node--blog--full`, `components/patterns/revista-publication`, `css/components/revista-post.css`, marcadores de versão | ACULTA420 | Só apresentação. Consome render arrays prontos do módulo; sem `Drupal::`, sem domínio, host ou purpose; cores por token. |
-| Submódulo `aculta_magazine` | `Forum/PublicationTypeConverter`, `Forum/ForumTopicSync` (`silently()`), `Hook/ForumTopicHooks` (`comment_links_alter`), `Presentation/PostPresentation` (contexto `theme`), `services.yml`, docs, CHANGELOG | Portal (função) | Serviços com injeção de dependência; sem classe de design nem referência ao tema; o contexto `theme` é dependência de cache, não estilo. |
-| Submódulo `aculta_user` | `Hook/DiscussionHooks` (texto da contagem, `t()`) | Portal (função) | Só texto e marcação com `data-portal-ui`. |
+| Submódulo `aculta_magazine` | Atual: `Forum/PublicationTypeConverter`, `Forum/ForumTopicSync` (`silently()`), `Hook/ForumTopicHooks`; alvo: Comment na publicação, sem Node Forum automático | Portal (função) | Estado e destino em `aculta_forum/docs/MIGRATION-REMOVAL.md`; access/cache ficam no Portal. |
+| Submódulo `aculta_forum` (planejado) | Context providers, Discussion API, Node/Comment/Taxonomy/Views e regras de access/cache | Portal (função) | Sem código runtime nesta fase; nunca possui cartão de autoria nem SDC do tema; LMS entra por adapter opcional. |
+| Submódulo `aculta_user` | Atual: `Hook/DiscussionHooks`, hooks de Forum, `PublicProfilePolicy`, `PublicProfileLink`, AvatarPool, LegacyAuthor; alvo: Author Card API única | Portal (identidade/acesso/dados) | `aculta_forum` consome cartões, sem builder nem consulta privada; ACULTA420 apresenta. Ver `aculta_user/docs/AUTHOR-CARDS.md`. |
 | Scripts de conteúdo | `scripts/content/editorial/*` (importação e JSON das notícias) | Projeto (ferramenta operacional) | Fora de `src/`. Usa `\Drupal::` no mesmo padrão dos scripts de conteúdo existentes (`link-project-art.php`). |
 | Documentação | `docs/portal/ACULTA-USER-PLAN.md` (E3.1), `aculta_magazine/docs/README.md`, esta seção | Projeto | Descreve o comportamento implementado e marca as regras propostas. |
 

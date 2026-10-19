@@ -146,6 +146,12 @@ Notas:
 
 Decisão registrada como F-D13 em `web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md`.
 
+Na reconstrução `aculta_forum`, a política atual de confirmação de e-mail para
+criação/edição/resposta/denúncia deve ser mantida nos providers correspondentes
+de tópicos e Comment. As referências abaixo a `create forum content` e
+`comment_forum` descrevem o código atual; não são nomes definitivos de permissão
+do novo motor. Revisar a tabela de permissões antes da fase dev.4.
+
 | Ação no Fórum | Papel mínimo | Situação |
 |---|---|---|
 | Ler tópicos e comentários | Público (anônimo) | Aplicado |

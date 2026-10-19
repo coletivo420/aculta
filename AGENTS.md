@@ -123,7 +123,7 @@ Preserve as fronteiras Core/contrib → `aculta_portal` → contrato neutro → 
 
 CTools é uma implementação suportada do projeto, não uma dependência a evitar
 por padrão. Antes de criar configuração ou código para uma necessidade que ele
-cobre, leia [`docs/portal/CTOOLS.md`](docs/portal/CTOOLS.md) e verifique o código
+cobre, leia [`web/modules/custom/aculta_portal/docs/CTOOLS.md`](web/modules/custom/aculta_portal/docs/CTOOLS.md) e verifique o código
 instalado e a documentação upstream. Use `ctools_views` para blocos de Views
 quando for necessário configurar por colocação, por exemplo quantidade de itens
 e pager; use a API de plugins/condições do CTools para integrações contextuais
@@ -574,6 +574,15 @@ O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem ex
 - Ícones de interface usam os **Bootstrap Icons** por padrão (`<i class="bi bi-…">`, já carregados pelo bootstrap5 do tema).
 - Outro pacote de ícones ou SVG de interface só com exceção registrada no próprio componente, com o motivo e a origem documentados.
 - Logos de marcas de terceiros (ex.: Mercado Pago) ficam em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
+
+## Reconstrução do ACULTA Forum
+
+- O roadmap em `web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md` é a sequência canônica de fases/versionamento; decisões anteriores incompatíveis ficam históricas em `web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md`.
+- Drupal Forum contrib continua fonte de verdade no código atual até a fase explícita de migração/retirada. Não remover Composer, módulo, dados ou configuração antes de cumprir `web/modules/custom/aculta_portal/modules/aculta_forum/docs/MIGRATION-REMOVAL.md` e gates de acesso/rollback.
+- Growroom420 recebe apenas tópicos públicos independentes. Publicações, LMS e Wiki associam comentários ao contexto original; publicações e verbetes não geram tópicos públicos automáticos.
+- `aculta_user` é o único dono de view-models/cartões de identidade e autoria. `aculta_forum` não cria builders/renderers de perfil nem consulta diretamente dados privados de User/Profile. ACULTA420 detém toda a apresentação.
+- LMS exige membership e acesso atual pelo Group/Entity Access; role global de estudante não basta. Wiki é contrato futuro e não autoriza reimplementar a Wiki como parte do Forum.
+- Imagens e avisos continuam sob `aculta_image` e `aculta_messenger`; não criar canais paralelos.
 
 ## Separação de Pessoas e Configurações > Pessoas (decisão do responsável, 2026-10-17)
 

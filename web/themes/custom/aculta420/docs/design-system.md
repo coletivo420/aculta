@@ -1,5 +1,15 @@
 # Design system
 
+## Discussões ACULTA — contrato planejado
+
+Hoje o tema apresenta Forum contrib pelos templates `forum-list`,
+`node--forum--full` e `comment--comment-forum`, com `forum-index.css` e
+`discussion.css`. Na reconstrução, `aculta_user` prepara dados e access para
+Author Cards; ACULTA420 controla somente SDC/Bootstrap, layout lateral ou
+empilhado, responsividade, acessibilidade e tokens light/dark. Os seis presets
+estão em `aculta_forum/docs/ADVANCED-FORUM-PORT.md`. Esta fase não implementa
+componentes.
+
 ## Identidade
 
 ACULTA420 usa Bootstrap como infraestrutura e mantém identidade própria por

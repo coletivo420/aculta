@@ -6,10 +6,10 @@ Revisado em 2026-10-19. Contratos de integração; a implementação depende das
 
 - Integrar `aculta_lms` e `aculta_lms_h5p` ao pipeline compartilhado `aculta_image` para capas, imagens de atividades, imagens em entregas e anexos de discussão. Toda ingestão deve passar pela finalidade e política de upload apropriadas; arquivos H5P internos permanecem gerenciados e privados, sem duplicar catálogo, remoção ou storage.
 - Integrar materiais PDF do curso com a capacidade existente `aculta_pdf_viewer` (incluindo `aculta_pdf_viewer_group`), que atende ao objetivo de leitor PDF solicitado como `aculta_pdf_reader`. Manter Media `course_document`, relação Group e entrega privada do Core como fontes de acesso; não criar reader/storage paralelo.
-- Integrar `aculta_lms` e `aculta_lms_h5p` ao `aculta_forum` para discussão contextual de curso e atividade. Forum/Node/Comment continuam donos de tópicos, respostas e moderação; o contexto LMS/H5P só pode ser anexado depois de revalidar acesso e membership atuais no Group. Não ativar `gnode` ou relações globais sem teste de isolamento entre turmas.
+- Integrar `aculta_lms` e `aculta_lms_h5p` ao `aculta_forum` para discussão contextual de curso, turma e atividade. O alvo usa Node/Comment com adapter opcional; cada leitura/escrita revalida Entity Access e membership atual no Group. Não ativar `gnode` ou relações globais sem teste de isolamento entre turmas.
 - Entregas LMS, documentos PDF e imagens de estudante devem respeitar a mesma política de acesso privado. Integrações precisam cobrir upload, renderização, download, revogação de matrícula, cacheabilidade e ciclo de exclusão nos testes antes de homologar no Runtime.
 
-`aculta_forum` ainda não fornece API executável para o contrato LMS, portanto essa parte é um objetivo de F15, não uma dependência ativa. Confirmar a API e os nomes de máquina no código instalado antes de implementar cada fluxo; não declarar uma integração completa apenas por registrar dependências.
+`aculta_forum` ainda não fornece API executável. A arquitetura aprovada em 2026-10-19 define um adapter opcional para os contextos LMS e substitui a referência anterior a Forum contrib como motor final; ver `aculta_forum/docs/CONTEXTS.md` e seu roadmap versionado. Confirmar API, Group e nomes de máquina no código instalado antes de implementar; não declarar integração completa apenas por registrar dependências.
 
 ## Matriz de ownership e dependências
 
@@ -22,7 +22,7 @@ Revisado em 2026-10-19. Contratos de integração; a implementação depende das
 | Avisos educacionais | `aculta_messenger` + Message/Message Notify | evento mínimo, usuário destinatário, entidade e referência de rota validável | LMS Messages, fila/storage redundante, envio baseado só em membership antiga |
 | Identidade, perfil e conexões | User/Profile + `aculta_user` | referência de User e API `FriendshipManagerInterface` quando aplicável | entidade de amizade ou perfil no LMS |
 | Conquistas | `aculta_user`/`aculta_game` | fato de conclusão/atributo LMS confirmado pela API autorizada | recalcular nota/progresso, nova entidade espelho de award |
-| Discussão de curso/atividade | `aculta_forum` + Forum/Node/Comment/Group access | Integração futura: tópico pode apontar ao curso e, se autorizado, à atividade H5P; tópico, respostas e moderação continuam em Forum/Node/Comment e acesso é revalidado pela relação Group | Dependência executável enquanto `aculta_forum` ainda é só documentação; entidade paralela de discussão; ativar Group integration/`gnode` sem decisão/teste de isolamento |
+| Discussão de curso/turma/atividade | `aculta_forum` + Node/Comment + Group access | Adapter opcional com tópico interno e provider contextual; acesso revalidado no Group e no host | Dependência executável enquanto Forum é apenas documentação; entidade paralela; role global `estudante`; ativar `gnode` sem decisão/teste de isolamento |
 | Mídia editorial | `aculta_gallery`/Media Gallery | Media Gallery e referências File/Media com seus handlers | fazer Gallery dona do PDF ou duplicar arquivo |
 | Apresentação | Portal neutral render contract → ACULTA420 SDC | render arrays, props escalares, cacheability | tema consultar LMS/Group/Domain ou chamar serviços |
 
