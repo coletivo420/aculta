@@ -1,6 +1,15 @@
 # Contratos de integração do LMS
 
-Revisado em 2026-10-16. Contratos de integração; a implementação depende das fases e critérios de aceite correspondentes.
+Revisado em 2026-10-19. Contratos de integração; a implementação depende das fases e critérios de aceite correspondentes.
+
+## Objetivos de integração de conteúdo (F15)
+
+- Integrar `aculta_lms` e `aculta_lms_h5p` ao pipeline compartilhado `aculta_image` para capas, imagens de atividades, imagens em entregas e anexos de discussão. Toda ingestão deve passar pela finalidade e política de upload apropriadas; arquivos H5P internos permanecem gerenciados e privados, sem duplicar catálogo, remoção ou storage.
+- Integrar materiais PDF do curso com a capacidade existente `aculta_pdf_viewer` (incluindo `aculta_pdf_viewer_group`), que atende ao objetivo de leitor PDF solicitado como `aculta_pdf_reader`. Manter Media `course_document`, relação Group e entrega privada do Core como fontes de acesso; não criar reader/storage paralelo.
+- Integrar `aculta_lms` e `aculta_lms_h5p` ao `aculta_forum` para discussão contextual de curso e atividade. Forum/Node/Comment continuam donos de tópicos, respostas e moderação; o contexto LMS/H5P só pode ser anexado depois de revalidar acesso e membership atuais no Group. Não ativar `gnode` ou relações globais sem teste de isolamento entre turmas.
+- Entregas LMS, documentos PDF e imagens de estudante devem respeitar a mesma política de acesso privado. Integrações precisam cobrir upload, renderização, download, revogação de matrícula, cacheabilidade e ciclo de exclusão nos testes antes de homologar no Runtime.
+
+`aculta_forum` ainda não fornece API executável para o contrato LMS, portanto essa parte é um objetivo de F15, não uma dependência ativa. Confirmar a API e os nomes de máquina no código instalado antes de implementar cada fluxo; não declarar uma integração completa apenas por registrar dependências.
 
 ## Matriz de ownership e dependências
 

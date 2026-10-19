@@ -90,3 +90,18 @@
 - Define explicitamente o serviço `H5PLibraryHooks` com suas dependências atuais após detectar no Runtime que o container compilado fornecia o antigo primeiro argumento (`cache.default`) à nova assinatura do construtor. Rebuild de cache em `conta` e `cursos`, construção do hook e carregamento visual da semântica HelloWorld passaram; `/entrar` responde 200. Erros antigos no watchdog são de antes do rebuild; não há erro novo de H5P após a correção.
 - Corrige a serialização do formulário Group: propriedades `private readonly` do `H5PEditorWidget` eram omitidas pelo `DependencySerializationTrait` herdado de Core, deixando serviços não inicializados ao recuperar formulário em cache. Propriedades protegidas mutáveis são serializadas por ID de serviço; Kernel confirma restauração de acesso ao curso, acesso à biblioteca e usuário atual. Kernel H5P completo: 11 testes/204 assertions; 40 depreciações Core/contrib. Unit H5P: 12 testes/52 assertions.
 - Runtime `cursos`: após rebuild, `H5PLibraryHooks` e `H5PEditorWidget` instanciam e `/group/13/edit` renderiza sem o fatal de serviço não inicializado. O salvamento H5P ainda falha na validação de parâmetros vazios; artefatos incompletos do curso de smoke foram removidos via Entity API. Runtime de salvamento/reprodução: DEFERRED.
+## Continuação F10 — DI do adaptador H5P e objetivos F15 — 2026-10-19
+
+- O adapter de plataforma H5P passa a receber por DI banco, usuário, config,
+  estado, entity manager, module handler, cache, cliente HTTP, messenger,
+  relógio, idioma, geradores de URL/assets, storage privado, file storage,
+  library discovery e otimizadores. A ponte estática exigida pelo framework
+  legado foi reduzida a um único acesso ao serviço `aculta_lms_h5p.framework`.
+- Unit H5P: 23 testes/67 assertions. Kernel H5P no MariaDB dedicado: 14
+  testes/263 assertions; 40 depreciações upstream de Core/contrib, nenhuma
+  falha. PHP 8.5 não validado neste ambiente.
+- F15 passa a incluir objetivos explícitos para integração LMS/H5P com
+  `aculta_image`, o leitor existente `aculta_pdf_viewer` (pedido como
+  `aculta_pdf_reader`) e `aculta_forum`; a parte Forum aguarda API executável e
+  testes de isolamento. Não foram criados storages ou módulos duplicados.
+

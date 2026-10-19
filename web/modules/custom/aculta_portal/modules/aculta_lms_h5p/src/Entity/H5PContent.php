@@ -139,7 +139,7 @@ class H5PContent extends ContentEntityBase implements ContentEntityInterface {
    * Load library used by content
    */
   protected function loadLibrary() {
-    $this->library = \Drupal::database()->query("
+    $this->library = H5PDrupal::getInstance()->getDatabaseConnection()->query("
       SELECT title,
             machine_name AS name,
             major_version AS major,
@@ -232,9 +232,8 @@ class H5PContent extends ContentEntityBase implements ContentEntityInterface {
     $filteredParameters = $core->filterParameters($content);
 
     // alters filtered params
-    $moduleHandler = \Drupal::moduleHandler();
     $filteredAsJson = json_decode($filteredParameters);
-    $moduleHandler->alter('h5p_filtered_params', $filteredAsJson);
+    H5PDrupal::getInstance()->alterFilteredParameters($filteredAsJson);
     return json_encode($filteredAsJson);
   }
 
@@ -284,14 +283,14 @@ class H5PContent extends ContentEntityBase implements ContentEntityInterface {
     }
 
     // Load user data for content
-    $results = \Drupal::database()->query("
+    $results = H5PDrupal::getInstance()->getDatabaseConnection()->query("
       SELECT sub_content_id, data_id, data
         FROM {h5p_content_user_data}
       WHERE user_id = :user_id
         AND content_main_id = :content_id
         AND preloaded = 1",
       [
-        ':user_id' => \Drupal::currentUser()->id(),
+        ':user_id' => H5PDrupal::getInstance()->getCurrentUserId(),
         ':content_id' => $this->id(),
       ]);
 

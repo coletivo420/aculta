@@ -7,6 +7,26 @@ services:
     arguments: ['@file_system', '@aculta_image.packaged_asset_publisher']
   aculta_lms_h5p.framework:
     class: Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal
+    arguments:
+      - '@database'
+      - '@current_user'
+      - '@config.factory'
+      - '@state'
+      - '@entity_type.manager'
+      - '@module_handler'
+      - '@cache.default'
+      - '@http_client'
+      - '@messenger'
+      - '@datetime.time'
+      - '@language_manager'
+      - '@file_url_generator'
+      - '@asset.query_string'
+      - '@extension.list.module'
+      - '@aculta_lms_h5p.storage_path'
+      - '@aculta_lms_h5p.file_storage_factory'
+      - '@library.discovery'
+      - '@asset.js.collection_optimizer'
+      - '@asset.css.collection_optimizer'
   aculta_lms_h5p.storage_path:
     class: Drupal\aculta_lms_h5p\H5PDrupal\H5PStoragePath
     arguments: ['@config.factory', '@file_system']

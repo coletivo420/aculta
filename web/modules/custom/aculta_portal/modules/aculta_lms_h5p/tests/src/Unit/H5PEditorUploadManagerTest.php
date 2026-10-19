@@ -91,7 +91,7 @@ final class H5PEditorUploadManagerTest extends UnitTestCase {
       $inspector,
       $fileSystem,
       $configFactory,
-      new H5PDrupal(),
+      $this->framework(),
     );
     try {
       $result = $manager->upload(
@@ -113,8 +113,14 @@ final class H5PEditorUploadManagerTest extends UnitTestCase {
       $inspector,
       $this->createMock(FileSystemInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
-      new H5PDrupal(),
+      $this->framework(),
     );
+  }
+
+  private function framework(): H5PDrupal {
+    $framework = $this->createMock(H5PDrupal::class);
+    $framework->method('getWhitelist')->willReturn(\H5PCore::$defaultContentWhitelist);
+    return $framework;
   }
 
 }

@@ -1,6 +1,6 @@
 # Roadmap do aculta_lms e visualizador PDF global
 
-Revisado em 2026-10-18. A implementação segue fases independentes, com autorização e critérios próprios. O status é registrado por fase; a homologação de PDF privado não ativa automaticamente o módulo `aculta_lms`.
+Revisado em 2026-10-19. A implementação segue fases independentes, com autorização e critérios próprios. O status é registrado por fase; a homologação de PDF privado não ativa automaticamente o módulo `aculta_lms`.
 
 ## Princípios e estado inicial
 
@@ -27,7 +27,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
 | F13 — Notificações educacionais | Eventos LMS → `aculta_messenger` / Message Notify | dedupe, access atual, preferências, e-mail mínimo e fila testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
-| F15 — Integrações de conteúdo | Gallery, Magazine, Wiki e `aculta_forum`; completar entrega de imagens do estudante pelo `aculta_image` e discussões de curso/atividade LMS-H5P | Referências seguem as entidades existentes; tópicos, respostas e arquivos respeitam Group, membership atual, cache, busca, feeds e acesso por purpose, sem duplicação de storage/entidade | `aculta_forum` ainda é só documentação; depender de implementação e testes de isolamento antes de criar vínculos ou mostrar discussões |
+| F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, ao leitor PDF existente `aculta_pdf_viewer` (solicitado como `aculta_pdf_reader`) e `aculta_forum`; Gallery, Magazine e Wiki | Imagens de curso, atividade, entrega e discussão passam pela política `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado; tópicos e respostas preservam Forum/Node/Comment como fonte e revalidam membership, access, cache e purpose | `aculta_forum` ainda não tem API executável para vínculo LMS; implementar e testar isolamento por turma antes de dependência/ativação. Não duplicar storage, reader PDF ou entidade de discussão |
 | F16 — Hardening | performance, segurança, privacidade, acessibilidade, cache e tamanho/timeout PDF | zero Critical/High; matriz completa e gates PASS | rollback por componente/flag/config, sem downgrade destrutivo de entidades |
 | RC — Homologação integrada | testes no Homelab, browser, config sync, documento e gate de release | checklist/testes completos, Runtime PASS, versão e rollback anotados | Nenhum deploy/merge automático; interromper RC se access/cache, segurança ou banco divergir |
 | F17 — Google Classroom (opcional e última) | Após RC aprovado e nova decisão; publicar somente link para atividade ACULTA | OAuth/scopes, consentimento e link para fonte LMS aprovados | Nenhum pacote/token/rota/storage nesta linha; desabilitar integração sem afetar LMS |

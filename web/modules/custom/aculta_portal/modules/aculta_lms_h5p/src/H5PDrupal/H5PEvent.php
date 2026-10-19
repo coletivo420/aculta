@@ -26,10 +26,10 @@ class H5PEvent extends H5PEventBase {
     $data = $this->getDataArray();
 
     // Add user
-    $data['user_id'] = \Drupal::currentUser()->id();
+    $data['user_id'] = H5PDrupal::getInstance()->getCurrentUserId();
 
     // Insert into DB
-    $this->id = \Drupal::database()->insert('h5p_events')
+    $this->id = H5PDrupal::getInstance()->getDatabaseConnection()->insert('h5p_events')
       ->fields($data)
       ->execute();
 
@@ -43,7 +43,7 @@ class H5PEvent extends H5PEventBase {
    */
   protected function saveStats() {
     $type = $this->type . ' ' . $this->sub_type;
-    $database = \Drupal::database();
+    $database = H5PDrupal::getInstance()->getDatabaseConnection();
 
     // Verify if counter exists
     $current_num = $database->query("

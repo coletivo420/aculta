@@ -3,14 +3,77 @@
 
 namespace Drupal\aculta_lms_h5p\H5PDrupal;
 
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Asset\AssetCollectionGroupOptimizerInterface;
+use Drupal\Core\Asset\AssetQueryStringInterface;
+use Drupal\Core\Asset\LibraryDiscoveryCollector;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\State\StateInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 use Drupal\aculta_lms_h5p\H5PEditor;
 use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalStorage;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use GuzzleHttp\ClientInterface;
 
 class H5PDrupal implements \H5PFrameworkInterface {
+
+  public function __construct(
+    private readonly Connection $database,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly StateInterface $state,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly CacheBackendInterface $cache,
+    private readonly ClientInterface $httpClient,
+    private readonly MessengerInterface $messenger,
+    private readonly TimeInterface $time,
+    private readonly LanguageManagerInterface $languageManager,
+    private readonly FileUrlGeneratorInterface $fileUrlGenerator,
+    private readonly AssetQueryStringInterface $assetQueryString,
+    private readonly ModuleExtensionList $moduleList,
+    private readonly H5PStoragePathInterface $storagePath,
+    private readonly H5PManagedFileStorageFactory $fileStorageFactory,
+    private readonly LibraryDiscoveryCollector $libraryDiscovery,
+    private readonly AssetCollectionGroupOptimizerInterface $jsCollectionOptimizer,
+    private readonly AssetCollectionGroupOptimizerInterface $cssCollectionOptimizer,
+  ) {}
+
+  /** Resolves the DI-built adapter for the legacy H5P static factory. */
+  private static function framework(): self {
+    return \Drupal::service('aculta_lms_h5p.framework');
+  }
+
+  /** Returns the platform database connection for legacy H5P entity callbacks. */
+  public function getDatabaseConnection(): Connection {
+    return $this->database;
+  }
+
+  /** Returns the current account ID for legacy H5P callbacks. */
+  public function getCurrentUserId(): ?string {
+    return $this->currentUser->id();
+  }
+
+  /** Applies the H5P filtered-parameters alter hook. */
+  public function alterFilteredParameters(&$parameters): void {
+    $this->moduleHandler->alter('h5p_filtered_params', $parameters);
+  }
+
+  /** Returns entity storage for legacy field-type lifecycle callbacks. */
+  public function getEntityStorage(string $entityTypeId) {
+    return $this->entityTypeManager->getStorage($entityTypeId);
+  }
 
   private $h5pPath;
 
@@ -46,14 +109,17 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
     if (!isset($instances) || !isset($instances[$instance])) {
       // Not present in runtime cache – create new instances
-      $interface = new self();
+      // The H5P framework uses a static interface factory. Keep this bridge
+      // narrow and retrieve the DI-built adapter rather than resolving each
+      // Drupal service throughout the framework implementation.
+      $interface = self::framework();
 
       // Determine language
-      $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+      $language = $interface->languageManager->getCurrentLanguage()->getId();
 
       // Prepare file storage.
-      $file_path = self::getStoragePath();
-      $fs = \Drupal::service('aculta_lms_h5p.file_storage_factory')->create($file_path);
+      $file_path = $interface->storagePath->getPath();
+      $fs = $interface->fileStorageFactory->create($file_path);
 
       // Determine if exports should be generated
       $is_export_enabled = !!$interface->getOption('export', TRUE);
@@ -96,19 +162,21 @@ class H5PDrupal implements \H5PFrameworkInterface {
 
   /** Returns the validated private directory used by H5P content and libraries. */
   public static function getStoragePath(): string {
-    // H5P's framework interface is a legacy static integration point. Keep
-    // path policy in an injectable service so application controllers do not
-    // depend on this service locator.
-    return \Drupal::service('aculta_lms_h5p.storage_path')->getPath();
+    return self::framework()->storagePath->getPath();
   }
 
   /**
    * Prepares the generic H5PIntegration settings
    */
   public static function getGenericH5PIntegrationSettings(?CourseInterface $course = NULL): array {
+    return self::framework()->buildGenericH5PIntegrationSettings($course);
+  }
+
+  /** Builds H5PIntegration data from the injected Drupal services. */
+  private function buildGenericH5PIntegrationSettings(?CourseInterface $course = NULL): array {
 
     // Load current user
-    $user = \Drupal::currentUser();
+    $user = $this->currentUser;
 
     // Load configuration settings
     $interface = self::getInstance();
@@ -155,11 +223,8 @@ class H5PDrupal implements \H5PFrameworkInterface {
       'hubIsEnabled' => $h5p_hub_is_enabled,
       'reportingIsEnabled' => FALSE,
       'libraryConfig' => $core->h5pF->getLibraryConfig(),
-      'pluginCacheBuster' => '?' . \Drupal::service('asset.query_string')->get(),
-      'libraryUrl' => \Drupal::service('file_url_generator')->generate('assets://h5p/h5p-core/js', [
-        'absolute' => TRUE,
-        'language' => FALSE,
-      ])->toString(TRUE)->getGeneratedUrl(),
+      'pluginCacheBuster' => '?' . $this->assetQueryString->get(),
+      'libraryUrl' => $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-core/js'),
     );
 
     if ($user->id()) {
@@ -183,6 +248,11 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return array
    */
   public static function getCoreAssets($keys = NULL) {
+    return self::framework()->buildCoreAssets($keys);
+  }
+
+  /** Builds library asset URLs from the H5P Core asset definition. */
+  private function buildCoreAssets($keys = NULL): array {
     if (empty($keys)) {
       $keys = ['scripts', 'styles'];
     }
@@ -194,23 +264,15 @@ class H5PDrupal implements \H5PFrameworkInterface {
     ];
 
     // Determine cache buster
-    $cache_buster = \Drupal::service('asset.query_string')->get();
-    $h5p_module_path = \Drupal::service('extension.list.module')->getPath('aculta_lms_h5p');
-
+    $cache_buster = $this->assetQueryString->get();
     // Add all core scripts
     foreach (\H5PCore::$scripts as $script) {
-      $assets[$keys[0]][] = \Drupal::service('file_url_generator')->generate('assets://h5p/h5p-core/' . $script, [
-        'absolute' => TRUE,
-        'language' => FALSE,
-      ])->toString(TRUE)->getGeneratedUrl() . '?' . $cache_buster;
+      $assets[$keys[0]][] = $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-core/' . $script) . '?' . $cache_buster;
     }
 
     // and styles
     foreach (\H5PCore::$styles as $style) {
-      $assets[$keys[1]][] = \Drupal::service('file_url_generator')->generate('assets://h5p/h5p-core/' . $style, [
-          'absolute' => TRUE,
-          'language' => FALSE,
-        ])->toString(TRUE)->getGeneratedUrl() . '?' . $cache_buster;
+      $assets[$keys[1]][] = $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-core/' . $style) . '?' . $cache_buster;
     }
 
     return $assets;
@@ -225,17 +287,21 @@ class H5PDrupal implements \H5PFrameworkInterface {
    *   Stylesheet assets.
    */
   public static function aggregatedAssets($scriptAssets, $styleAssets) {
+    return self::framework()->buildAggregatedAssets($scriptAssets, $styleAssets);
+  }
+
+  /** Normalizes aggregator output to absolute URLs for the legacy H5P player. */
+  private function buildAggregatedAssets($scriptAssets, $styleAssets): array {
     // @todo: deprecate this method and handle all assets via Drupal's library
     // system.
-    $file_url_generator = \Drupal::service('file_url_generator');
     foreach ($scriptAssets as $key => $assets) {
       foreach ($assets as $asset_key => $asset) {
-        $scriptAssets[$key][$asset_key] = $file_url_generator->generateAbsoluteString($asset);
+        $scriptAssets[$key][$asset_key] = $this->fileUrlGenerator->generateAbsoluteString($asset);
       }
     }
     foreach ($styleAssets as $key => $assets) {
       foreach ($assets as $asset_key => $asset) {
-        $styleAssets[$key][$asset_key] = $file_url_generator->generateAbsoluteString($asset);
+        $styleAssets[$key][$asset_key] = $this->fileUrlGenerator->generateAbsoluteString($asset);
       }
     }
     return [
@@ -250,7 +316,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
   public function removeOldLogEvents() {
     $older_than = (time() - \H5PEventBase::$log_time);
 
-    \Drupal::database()->delete('h5p_events')
+    $this->database->delete('h5p_events')
       ->condition('created_at', $older_than, '<')
       ->execute();
   }
@@ -279,7 +345,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function getPlatformInfo() {
 
-    $h5p_info = \Drupal::service('extension.list.module')->getExtensionInfo('aculta_lms_h5p');
+    $h5p_info = $this->moduleList->getExtensionInfo('aculta_lms_h5p');
 
     return [
       'name' => 'drupal',
@@ -307,7 +373,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
     }
 
     try {
-      $client = \Drupal::httpClient();
+      $client = $this->httpClient;
       $response = $client->request(empty($data) ? 'GET' : 'POST', $url, $options);
       $response_data = (string) $response->getBody();
       if (empty($response_data)) {
@@ -341,7 +407,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @param string $tutorialUrl
    */
   public function setLibraryTutorialUrl($machineName, $tutorialUrl) {
-    \Drupal::database()->update('h5p_libraries')
+    $this->database->update('h5p_libraries')
       ->fields([
         'tutorial_url' => $tutorialUrl,
       ])
@@ -357,7 +423,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
       'code' => $code,
       'message' => $message
     );
-    \Drupal::messenger()->addError($message);
+    $this->messenger->addError($message);
   }
 
   /**
@@ -365,7 +431,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function setInfoMessage($message) {
     $this->messages['info'][] = $message;
-    \Drupal::messenger()->addStatus($message);
+    $this->messenger->addStatus($message);
   }
 
   /**
@@ -378,7 +444,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
     }
     $messages = $this->messages[$type];
     $this->messages[$type] = [];
-    \Drupal::messenger()->messagesByType($type === 'info' ? 'status' : $type, TRUE); // Prevent messages from displaying twice
+    $this->messenger->messagesByType($type === 'info' ? 'status' : $type, TRUE); // Prevent messages from displaying twice
     return $messages;
   }
 
@@ -434,7 +500,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return array
    */
   public function loadLibraries() {
-    $result = \Drupal::database()->query("
+    $result = $this->database->query("
       SELECT
         library_id AS id,
         machine_name AS name,
@@ -472,7 +538,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return int|false
    */
   public function getLibraryId($machineName, $majorVersion = NULL, $minorVersion = NULL) {
-    $library_id = \Drupal::database()->query("
+    $library_id = $this->database->query("
       SELECT library_id
       FROM {h5p_libraries}
       WHERE machine_name = :machine_name
@@ -497,7 +563,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
       return TRUE;
     }
 
-    $result = \Drupal::database()->query("
+    $result = $this->database->query("
       SELECT 1
       FROM {h5p_libraries}
       WHERE machine_name = :machineName
@@ -530,7 +596,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
   public function mayUpdateLibraries() {
 
     // Get the current user
-    $user = \Drupal::currentUser();
+    $user = $this->currentUser;
     // Check for permission
     return $user->hasPermission('update h5p libraries');
   }
@@ -547,7 +613,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function getLibraryUsage($libraryId, $skipContent = FALSE) {
     $usage = [];
-    $database = \Drupal::database();
+    $database = $this->database;
 
     if ($skipContent) {
       $usage['content'] = -1;
@@ -590,7 +656,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
     $contentCount = [];
 
     // Count content with same machine name, major and minor version
-    $results = \Drupal::database()->query("
+    $results = $this->database->query("
       SELECT
         l.machine_name AS name,
         l.major_version AS major,
@@ -619,7 +685,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
   public function getLibraryStats($type) {
     $count = [];
 
-    $results = \Drupal::database()->query("
+    $results = $this->database->query("
       SELECT
         library_name AS name,
         library_version AS version,
@@ -644,7 +710,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function getNumAuthors() {
 
-    $id = \Drupal::database()->query("
+    $id = $this->database->query("
       SELECT id
       FROM {h5p_content}
       LIMIT 1")->fetchField();
@@ -686,7 +752,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
       $libraryData['hasIcon'] = 0;
     }
 
-    $database = \Drupal::database();
+    $database = $this->database;
 
     if ($new) {
       $libraryId = $database->insert('h5p_libraries')
@@ -745,7 +811,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
     );
 
     // invoke library installed
-    \Drupal::moduleHandler()->invokeAll('h5p_library_installed', array($libraryData, $new));
+    $this->moduleHandler->invokeAll('h5p_library_installed', array($libraryData, $new));
 
     $database->delete('h5p_libraries_languages')
       ->condition('library_id', $libraryData['libraryId'])
@@ -761,7 +827,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
           ->execute();
       }
     }
-    \Drupal::cache()->delete('aculta_lms_h5p_library_info_build');
+    $this->cache->delete('aculta_lms_h5p_library_info_build');
   }
 
   /**
@@ -786,7 +852,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
   }
 
   public function lockDependencyStorage() {
-    $database = \Drupal::database();
+    $database = $this->database;
 
     // Only works for mysql, other DBs will have to use transactions.
     if ($database->driver() === 'mysql') {
@@ -796,7 +862,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
   }
 
   public function unlockDependencyStorage() {
-    $database = \Drupal::database();
+    $database = $this->database;
     if ($database->driver() === 'mysql') {
       $database->query('UNLOCK TABLES');
     }
@@ -806,7 +872,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * Implements deleteLibraryDependencies
    */
   public function deleteLibraryDependencies($libraryId) {
-    \Drupal::database()->delete('h5p_libraries_libraries')
+    $this->database->delete('h5p_libraries_libraries')
       ->condition('library_id', $libraryId)
       ->execute();
   }
@@ -815,7 +881,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * Implements deleteLibrary. Will delete a library's data both in the database and file system
    */
   public function deleteLibrary($libraryId) {
-    $database = \Drupal::database();
+    $database = $this->database;
     $library = $database->query(
       "SELECT * FROM {h5p_libraries} WHERE library_id = :id",
       [':id' => $libraryId]
@@ -842,7 +908,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * Implements saveLibraryDependencies
    */
   public function saveLibraryDependencies($libraryId, $dependencies, $dependency_type) {
-    $database = \Drupal::database();
+    $database = $this->database;
 
     foreach ($dependencies as $dependency) {
       $query = $database->select('h5p_libraries', 'hl');
@@ -888,7 +954,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
     $h5p_content->save();
 
     // Log update event
-    self::logContentEvent('update', $content);
+    $this->logContentEvent('update', $content);
   }
 
   /**
@@ -911,7 +977,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
     $content['id'] = $h5p_content->id();
 
     // Log create event
-    self::logContentEvent('create', $content);
+    $this->logContentEvent('create', $content);
 
     // Return content id of the new entity
     return $content['id'];
@@ -923,7 +989,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @param string $eventType
    * @param array $content
    */
-  private static function logContentEvent($eventType, $content) {
+  private function logContentEvent($eventType, $content) {
     if (!empty($content['uploaded'])) {
       $eventType .= ' upload';
     }
@@ -939,9 +1005,9 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function resetContentUserData($contentId) {
     // Reset user datas for this content
-    \Drupal::database()->update('h5p_content_user_data')
+    $this->database->update('h5p_content_user_data')
       ->fields([
-        'timestamp' => \Drupal::time()->getCurrentTime(),
+        'timestamp' => $this->time->getCurrentTime(),
         'data' => 'RESET'
       ])
       ->condition('content_main_id', $contentId)
@@ -968,7 +1034,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * Implements copyLibraryUsage
    */
   public function copyLibraryUsage($contentId, $copyFromId, $contentMainId = NULL) {
-    \Drupal::database()->query("
+    $this->database->query("
       INSERT INTO
         {h5p_content_libraries}
         (content_id, library_id, dependency_type, drop_css, weight)
@@ -987,7 +1053,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
   public function deleteContentData($contentId) {
     // Delete library usage
     $this->deleteLibraryUsage($contentId);
-    $database = \Drupal::database();
+    $database = $this->database;
 
     // Remove content points
     $database->delete('h5p_points')
@@ -1004,7 +1070,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * Implements deleteLibraryUsage
    */
   public function deleteLibraryUsage($contentId) {
-    \Drupal::database()->delete('h5p_content_libraries')
+    $this->database->delete('h5p_content_libraries')
       ->condition('content_id', $contentId)
       ->execute();
   }
@@ -1019,7 +1085,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
         $dropLibraryCssList = array_merge($dropLibraryCssList, explode(', ', $dependency['library']['dropLibraryCss']));
       }
     }
-    $database = \Drupal::database();
+    $database = $this->database;
     foreach ($librariesInUse as $dependency) {
       $dropCss = in_array($dependency['library']['machineName'], $dropLibraryCssList) ? 1 : 0;
       $database->insert('h5p_content_libraries')
@@ -1039,7 +1105,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return array|false
    */
   public function loadLibrary($machineName, $majorVersion, $minorVersion) {
-    $database = \Drupal::database();
+    $database = $this->database;
     $library = $database->query(
       "SELECT library_id,
               machine_name,
@@ -1103,7 +1169,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return string
    */
   public function loadLibrarySemantics($machineName, $majorVersion, $minorVersion) {
-    $semantics = \Drupal::database()->query(
+    $semantics = $this->database->query(
       "SELECT semantics
           FROM {h5p_libraries}
         WHERE machine_name = :machine_name
@@ -1125,7 +1191,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
   public function alterLibrarySemantics(&$semantics, $name, $majorVersion, $minorVersion) {
     // alter only takes 4 arguments, so versions are combined to single parameter
     $version = $majorVersion . '.'. $minorVersion;
-    \Drupal::moduleHandler()->alter('h5p_semantics', $semantics, $name, $version);
+    $this->moduleHandler->alter('h5p_semantics', $semantics, $name, $version);
   }
 
   /**
@@ -1159,7 +1225,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
       $queryArgs[':dt'] = $type;
     }
     $query .= " ORDER BY hnl.weight";
-    $result = \Drupal::database()->query($query, $queryArgs);
+    $result = $this->database->query($query, $queryArgs);
 
     $dependencies = [];
     while ($dependency = $result->fetchObject()) {
@@ -1181,10 +1247,10 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function getOption($name, $default = NULL) {
     if ($this->stateOption($name)) {
-      $value = \Drupal::state()->get('h5p.' . $name, $default);
+      $value = $this->state->get('h5p.' . $name, $default);
     }
     else {
-      $value = \Drupal::config('aculta_lms_h5p.settings')->get('aculta_lms_h5p_' . $name);
+      $value = $this->configFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_' . $name);
     }
     return $value !== NULL ? $value : $default;
   }
@@ -1201,10 +1267,10 @@ class H5PDrupal implements \H5PFrameworkInterface {
     // Only update the setting if it has infact changed.
     if ($value !== $this->getOption($name)) {
       if ($this->stateOption($name)) {
-        \Drupal::state()->set('h5p.' . $name, $value);
+        $this->state->set('h5p.' . $name, $value);
       }
       else {
-        $config = \Drupal::configFactory()->getEditable('aculta_lms_h5p.settings');
+        $config = $this->configFactory->getEditable('aculta_lms_h5p.settings');
         $config->set("aculta_lms_h5p_{$name}", $value);
         $config->save();
       }
@@ -1220,7 +1286,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return void
    */
   public function resetHubOrganizationData() {
-    $config = \Drupal::configFactory()->getEditable('aculta_lms_h5p.settings');
+    $config = $this->configFactory->getEditable('aculta_lms_h5p.settings');
     $config->clear('aculta_lms_h5p_site_uuid');
     $config->clear('aculta_lms_h5p_hub_secret');
     $config->set('aculta_lms_h5p_hub_is_enabled', 0);
@@ -1269,7 +1335,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
   public function clearFilteredParameters($library_ids) {
 
     // Grab all H5PContent entities
-    $h5p_contents = \Drupal::entityTypeManager()
+    $h5p_contents = $this->entityTypeManager
         ->getStorage('h5p_content')
         ->loadByProperties(['library_id' => $library_ids]);
     /** @var \Drupal\aculta_lms_h5p\Entity\H5PContent[] $h5p_contents */
@@ -1281,14 +1347,14 @@ class H5PDrupal implements \H5PFrameworkInterface {
     }
 
     // Clear hook_library_info_build() to use updated libraries
-    \Drupal::service('library.discovery')->clear();
+    $this->libraryDiscovery->clear();
 
     // Delete ALL cached JS and CSS files
-    \Drupal::service('asset.js.collection_optimizer')->deleteAll();
-    \Drupal::service('asset.css.collection_optimizer')->deleteAll();
+    $this->jsCollectionOptimizer->deleteAll();
+    $this->cssCollectionOptimizer->deleteAll();
 
     // Reset cache buster
-    \Drupal::service('asset.query_string')->reset();
+    $this->assetQueryString->reset();
 
     // Clear field view cache for ALL H5P content
     Cache::invalidateTags(['h5p_content']);
@@ -1301,7 +1367,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return int
    */
   public function getNumNotFiltered() {
-    return intval(\Drupal::database()->query("SELECT COUNT(id) FROM {h5p_content} WHERE filtered_parameters IS NULL AND library_id > 0")->fetchField());
+    return intval($this->database->query("SELECT COUNT(id) FROM {h5p_content} WHERE filtered_parameters IS NULL AND library_id > 0")->fetchField());
   }
 
   /**
@@ -1310,7 +1376,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function getNumContent($library_id, $skip = NULL) {
     $skip_query = empty($skip) ? '' : " AND id NOT IN ($skip)";
-    return intval(\Drupal::database()->query('SELECT COUNT(id) FROM {h5p_content} WHERE library_id = :id' . $skip_query, [':id' => $library_id])->fetchField());
+    return intval($this->database->query('SELECT COUNT(id) FROM {h5p_content} WHERE library_id = :id' . $skip_query, [':id' => $library_id])->fetchField());
   }
 
   /**
@@ -1318,7 +1384,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return bool
    */
   public function isContentSlugAvailable($slug) {
-    return !\Drupal::database()->query('SELECT slug FROM {h5p_content} WHERE slug = :slug', [':slug' => $slug])->fetchField();
+    return !$this->database->query('SELECT slug FROM {h5p_content} WHERE slug = :slug', [':slug' => $slug])->fetchField();
   }
 
   /**
@@ -1349,7 +1415,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    */
   public function hasPermission($permission, $canUpdateEntity = NULL) {
 
-    $user = \Drupal::currentUser();
+    $user = $this->currentUser;
     switch ($permission) {
       case \H5PPermission::COPY_H5P:
         return $canUpdateEntity !== NULL && (
@@ -1388,7 +1454,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    *  containing the new content type cache that should replace the old one.
    */
   public function replaceContentTypeCache($contentTypeCache) {
-    $database = \Drupal::database();
+    $database = $this->database;
     // Replace existing cache
     $database->delete('h5p_libraries_hub_cache')->execute();
 
@@ -1428,7 +1494,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return array
    */
   public function loadAddons() {
-    $result = \Drupal::database()->query("
+    $result = $this->database->query("
       SELECT l1.library_id, l1.machine_name, l1.major_version, l1.minor_version, l1.patch_version, l1.add_to, l1.preloaded_js, l1.preloaded_css
       FROM {h5p_libraries} l1
       LEFT JOIN {h5p_libraries} l2 ON l1.machine_name = l2.machine_name AND
@@ -1460,7 +1526,7 @@ class H5PDrupal implements \H5PFrameworkInterface {
    * @return bool
    */
   public function libraryHasUpgrade($library) {
-    return !!\Drupal::database()->query(
+    return !!$this->database->query(
       "SELECT library_id
          FROM {h5p_libraries}
         WHERE machine_name = :name

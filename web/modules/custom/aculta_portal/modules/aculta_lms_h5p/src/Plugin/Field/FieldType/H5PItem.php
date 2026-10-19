@@ -132,14 +132,14 @@ class H5PItem extends FieldItemBase implements FieldItemInterface {
       // Only trigger cleanup once pr entity
       $revisionsCleanedUp[$entity->id()] = TRUE;
 
-      $storage = \Drupal::entityTypeManager()->getStorage($entity->getEntityTypeId());
+      $storage = H5PDrupal::getInstance()->getEntityStorage($entity->getEntityTypeId());
       $table_mapping = $storage->getTableMapping();
       $storage_definition = $this->getFieldDefinition()->getFieldStorageDefinition();
 
       // Check if we can get data values from the revision table, if not we use
       // the data table as no revisions has been created for this field.
       $revision_table = $table_mapping->getDedicatedRevisionTableName($storage_definition, $storage_definition->isDeleted());
-      $database = \Drupal::database();
+      $database = H5PDrupal::getInstance()->getDatabaseConnection();
       $from_table = ($database->schema()->tableExists($revision_table) ? $revision_table : $table_mapping->getDedicatedDataTableName($storage_definition, $storage_definition->isDeleted()));
 
       // Find column name for field instance
