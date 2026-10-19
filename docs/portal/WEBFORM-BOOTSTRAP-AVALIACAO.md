@@ -106,12 +106,16 @@ Conclusão: o projeto serve como lista de funcionalidades, não como dependênci
 | `#field_prefix`/`#field_suffix` → input-group | Coberto pelo `form-element.html.twig` do BS5 | Não portado |
 | Erro de fieldset em `alert-danger` | Coberto pelo `fieldset.html.twig` do BS5 | Não portado |
 | `form-inline` no `tel` | O BS5 contrib não gera a classe | Não aplicável |
-| `image_button` → ícone | Front-end ACULTA não usa `image_button`/`webform_multiple`; `input[type=image]` não comporta ícone | Não portado; abrir item se um form passar a usar |
+| `image_button` → ícone | Sem uso nos forms atuais; o BS5 não tem glifo para `input[type=image]` | Portado (0.6.0-dev.93): `src` troca para SVG do tema (`assets/icons/webform/`) e recebe classe de botão; continua imagem para preservar o clique do Form API (`PortalUiHooks::preprocess`) |
+| `input[type=image]` | Sem tratamento no tema | Portado (0.6.0-dev.93): cursor e foco visível; largura de campo do `form-control` anulada para ícones |
+| `webform_multiple` (tabela, operações, alça, lista vazia, adição) | Não coberto pelo tema; sem uso nos forms atuais | Portado (0.6.0-dev.93) em `webform.css`, com as classes `webform-multiple-table--*` |
 | Terms of service / likert: desativar smart description | Sem smart description | Não aplicável |
+
+Os ajustes de `image_button`, `input[type=image]` e `webform_multiple` foram portados a pedido, mesmo sem uso no front-end atual.
 
 Os formulários atuais (`aculta_contact`: textfield, email, textarea; `aculta_participation`: webform_markup, textfield, email, tel, checkboxes, checkbox, textarea) usam poucos elementos cobertos pelos itens portados. Os ajustes são preventivos, para formulários futuros.
 
-### 7.3 Entrega
+### 7.3 Entrega (0.6.0-dev.92 e 0.6.0-dev.93)
 
 - Tema `0.6.0-dev.92`: `css/components/webform.css` (library `global`), CHANGELOG, roadmap do tema e versão no `info.yml`.
 - Gate de Foundation: versão atualizada e o template `aculta-user-author-card.html.twig` incluído na allowlist de overrides Twig. A reprovação existia desde a 0.6.0-dev.91 e bloqueava a entrega. Gate com 368 checks PASS. Os demais gates (design foundations, SDC schemas, shell contract, fronteira módulo/tema, mapa módulo/tema) passam.
