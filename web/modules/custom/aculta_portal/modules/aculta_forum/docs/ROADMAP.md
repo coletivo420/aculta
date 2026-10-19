@@ -275,13 +275,14 @@ Planejar a ferramenta “Mover comentário” para comentários publicados ou
 moderados dentro do mesmo tópico/contexto público Growroom: mover uma resposta
 e sua subárvore para tópico existente, além de dividir uma discussão quando o
 destino for um tópico novo. Merge de tópicos só poderá ser avaliado como fluxo
-composto e reversível, com confirmação de todos os comentários afetados e
-tratamento explícito do tópico de origem. Não mover comentários entre Fórum,
-Revista, LMS e Wiki; não alterar estados de aprovação/rejeição nem contornar
-moderação. Comentários em contexto LMS continuam sob decisão dos Educadores com
-acesso real ao Group. O acervo Growroom histórico permanece imutável, inclusive
-para administradores. O desenho técnico, as decisões pendentes e os testes
-mínimos ficam em [`MOVE-TOOLS.md`](MOVE-TOOLS.md).
+composto, após demonstrar plano de recuperação/rollback, com confirmação de
+todos os comentários afetados e tratamento explícito do tópico de origem. Não
+mover comentários entre Fórum, Revista, LMS e Wiki; não alterar estados de
+aprovação/rejeição nem contornar moderação. Comentários em contexto LMS
+continuam sob decisão dos Educadores com acesso real ao Group. O acervo
+Growroom histórico permanece imutável, inclusive para administradores. O
+desenho técnico, as decisões pendentes e os testes mínimos ficam em
+[`MOVE-TOOLS.md`](MOVE-TOOLS.md).
 
 ## `0.1.0-dev.13` — Fóruns internos LMS
 
