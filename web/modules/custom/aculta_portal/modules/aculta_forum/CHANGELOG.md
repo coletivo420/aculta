@@ -1,3 +1,31 @@
+## `0.1.0-dev.20` — categorias e listagem pública com filtros — 2026-10-19
+
+- Corrigido o padrão Pathauto para selecionar apenas `aculta_forum_topic`; a
+  configuração de instalação e Config Sync agora coincidem. O campo base
+  `path` já existe em Node no Runtime e Pathauto o complementa, então não foi
+  necessário habilitar globalmente a geração Pathauto para todos os Nodes.
+- Pesquisa de organização moderna recomenda poucas categorias com propósito e
+  descrição explícitos, subcategorias apenas quando ajudam a navegação e tags
+  para dimensões transversais. A hierarquia inicial de homologação usa quatro
+  categorias e oito subcategorias; não altera o vocabulário legado `forums`.
+- Foram criados conteúdos marcados `[TESTE]` somente no Runtime Homelab para
+  validar as listagens e aliases. IDs, URLs e plano de remoção estão em
+  `docs/TEST-FIXTURES.md`. Nenhum comentário foi criado; entidades legadas
+  permaneceram intactas.
+- A montagem da View pública abortava porque o CAPTCHA global validava o
+  formulário GET de filtros durante a renderização. Hook OOP remove o desafio
+  somente dessa View/página de leitura; CAPTCHA permanece nas ações de escrita.
+- Os HTTP smoke tests verificaram raiz, filtro e oito aliases (200), com os
+  oito títulos aparecendo na listagem após o Runtime carregar o hook. RUNTIME
+  STATUS: PASS para listagem/URLs; navegador visual DEFERRED.
+- Pesquisa consultada: orientação do Discourse para categorias e subcategorias
+  (descrição e escopo claros, estrutura sem excesso) e API Drupal Taxonomy
+  (termos nativos com relação hierárquica). Ver `docs/CATEGORIES-AND-RESEARCH.md`.
+- Unit `ForumTopicDisplayConfigTest` + `PublicForumExposedFormHooksTest`:
+  11 testes/64 assertions PASS; PHPCS Drupal/DrupalPractice PASS. Gates Portal
+  Drupal 11+ (969), module/theme boundary (1334), map (154), public slugs (387)
+  e `git diff --check` PASS.
+
 ## `0.1.0-dev.18` — contrato de respostas abertas no tópico — 2026-10-19
 
 - O teste de configuração agora fixa que tópicos públicos usam `aculta_discussion_post`, começam com respostas abertas, exibem o formulário no campo Core e restringem envio anônimo; Config Sync deve permanecer equivalente à configuração de instalação.

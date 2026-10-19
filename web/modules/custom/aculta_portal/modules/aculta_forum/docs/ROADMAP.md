@@ -138,14 +138,15 @@ configuração ativa e a permissão da conta uid 5. Como não há tópico salvo,
 foi possível renderizar o formulário associado a uma entidade persistida nem
 enviar resposta. Nenhum dado foi criado; o fluxo funcional segue pendente.
 
-### Bloqueio de conteúdo para concluir a criação
+### Categorias e tópicos de homologação
 
-O campo `field_aculta_categories` é obrigatório e a View/form restringe termos
-ao vocabulário `aculta_forum_categories`. No Runtime de teste o vocabulário está
-instalado, mas tem zero termos; portanto o formulário abre, mas não permite
-concluir a criação de um tópico categorizado. Não criar categorias por
-inferência: nomes e hierarquia do Growroom420 precisam ser aprovados pelo
-responsável. O fórum continua sem tópicos nem comentários.
+O campo `field_aculta_categories` é obrigatório e usa o vocabulário novo
+`aculta_forum_categories`. A hierarquia inicial e seus tópicos `[TESTE]` foram
+criados no Runtime de Homelab por solicitação explícita do responsável, como
+fixtures para validar navegação e apresentação; isso substitui a pendência
+anterior de aguardar aprovação de nomes/hierarquia. Os registros não são
+Config Sync e não pertencem ao acervo legado. Inventário e remoção controlada:
+[`TEST-FIXTURES.md`](TEST-FIXTURES.md). Nenhum comentário foi criado.
 
 ## `0.1.0-dev.7` — Comentários universais
 
