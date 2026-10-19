@@ -1,8 +1,8 @@
 ## 0.4.0-dev.159 — Bloquear e Desfazer amizade por pessoa; validação do popup no navegador — 2026-10-19
 
 - O menu da conversa perde "Bloquear" e "Desfazer amizade": ficam em uma caixa por outro membro (`aculta_messenger` 0.1.1-dev.48). Conversas com mais de duas pessoas passam a ter essas ações.
-- Diálogos de confirmação validados no Firefox (sessão X11): abrem como modal do Drupal com título e pergunta, cancelam e reabrem. Tema 0.6.0-dev.88.
-- Pendências: clique do mouse em "Sim" não chegou ao botão no X11 (Enter funciona); galeria "Criar galeria" não validada (a sessão do navegador ficou como conta de teste, sem permissão de editor).
+- Diálogos de confirmação validados no Firefox (sessão X11): abrem como modal do Drupal com título e pergunta, cancelam e reabrem, e "Sim" envia a ação (bloqueio gravado e revertido). Causa do "Sim" sem resposta: o diálogo ficava recortado pelo conteúdo de rolagem da gaveta; corrigido no tema `0.6.0-dev.89` (`data-aculta-confirming`), e o envio do "Sim" passou a informar o botão ao servidor.
+- Galeria "Criar galeria" validada como modal do Drupal (título, formulário, fechar). Ressalva: o formulário de conteúdo usa o tema de administração, então a largura é a do tema administrativo; a regra de largura do `aculta420` não se aplica ali.
 - RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild) para messenger e tema.
 
 ## Não lançado — acesso do LMS sem confirmação de e-mail
