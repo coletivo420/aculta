@@ -1,3 +1,10 @@
+## 0.4.0-dev.159 — Bloquear e Desfazer amizade por pessoa; validação do popup no navegador — 2026-10-19
+
+- O menu da conversa perde "Bloquear" e "Desfazer amizade": ficam em uma caixa por outro membro (`aculta_messenger` 0.1.1-dev.48). Conversas com mais de duas pessoas passam a ter essas ações.
+- Diálogos de confirmação validados no Firefox (sessão X11): abrem como modal do Drupal com título e pergunta, cancelam e reabrem. Tema 0.6.0-dev.88.
+- Pendências: clique do mouse em "Sim" não chegou ao botão no X11 (Enter funciona); galeria "Criar galeria" não validada (a sessão do navegador ficou como conta de teste, sem permissão de editor).
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild) para messenger e tema.
+
 ## Não lançado — acesso do LMS sem confirmação de e-mail
 
 - Alinha as rotas de início de curso e respostas à decisão F7: e-mail não é pré-requisito para participar após matrícula.
