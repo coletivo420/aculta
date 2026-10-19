@@ -90,6 +90,7 @@ messenger-drawers:
     js/messenger-drawers.js: {}
   dependencies:
     - core/drupal
+    - core/drupal.dialog
     - core/once
     - bootstrap/bootstrap
 

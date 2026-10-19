@@ -2,6 +2,12 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.47 — confirmação de Bloquear e Desfazer amizade em modal do Drupal — 2026-10-19
+
+- `ConfirmDialog` deixa de usar `<dialog>` nativo. A pergunta é um contêiner oculto em `data-aculta-dialog`, e o tema abre o diálogo com `Drupal.dialog` (regra de `POPUP-PADRAO.md`).
+- Sem mudança de texto nem de ação: "Sim" continua submetendo o formulário (o diálogo fica dentro do form, por `appendTo`). Validação no navegador: pendente.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.1-dev.46 — docblocks de Opções corrigidos — 2026-10-19
 
 - Docblock "Opções" movido de `drawerOptions()` para `drawerRelationship()`, que é o método que o descreve. Sem mudança de comportamento.

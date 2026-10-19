@@ -29,23 +29,33 @@
         });
       });
 
-      // "Bloquear" and "Desfazer amizade" in the Opções menus open their confirmation dialog (inside the same form);
-      // "Cancelar" closes it. The button names its dialog in data-aculta-dialog-open.
+      // "Bloquear" and "Desfazer amizade" in the Opções menus open their confirmation as a Drupal modal. The question is
+      // a hidden container in the same form; appendTo keeps it inside the form, so "Sim" still submits. "Cancelar" closes
+      // it. The button names its dialog in data-aculta-dialog-open.
       once('aculta-dialog-open', '[data-aculta-dialog-open]', context).forEach((button) => {
         button.addEventListener('click', (event) => {
           // Form API renders these as submit inputs: the click only opens the dialog, it does not post the form.
           event.preventDefault();
-          const dialog = button.closest('form')?.querySelector(`dialog[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`);
-          if (dialog && typeof dialog.showModal === 'function') {
-            dialog.showModal();
+          const form = button.closest('form');
+          const content = form?.querySelector(`[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`);
+          if (!content || typeof Drupal.dialog !== 'function') {
+            return;
           }
+          if (!content.acultaDialog) {
+            content.acultaDialog = Drupal.dialog(content, {
+              appendTo: form,
+              title: button.textContent.trim(),
+              closeOnEscape: true,
+            });
+          }
+          content.acultaDialog.showModal();
         });
       });
 
       once('aculta-dialog-close', '[data-aculta-dialog-close]', context).forEach((button) => {
         button.addEventListener('click', (event) => {
           event.preventDefault();
-          button.closest('dialog')?.close();
+          button.closest('[data-aculta-dialog]')?.acultaDialog?.close();
         });
       });
 

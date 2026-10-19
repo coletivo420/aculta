@@ -1,4 +1,4 @@
-/* Modais (diálogos do Drupal e nativos <dialog>): o fundo escurece da mesma forma em todos. A cor é o token
+/* Modais (diálogos do Drupal): o fundo escurece da mesma forma em todos. A cor é o token
    --aculta-scrim; o módulo não emite nenhuma classe de design. */
 .ui-widget-overlay {
   background: var(--aculta-scrim);
@@ -23,10 +23,6 @@
   overflow-y: auto;
   background: var(--aculta-surface-raised);
   color: var(--aculta-text-primary);
-}
-
-dialog::backdrop {
-  background: var(--aculta-scrim);
 }
 
 /* Botão de fechar (X) de todos os diálogos. O botão do jQuery UI sai sem ícone (o widget de ícone não inicializa),
@@ -189,6 +185,11 @@ dialog::backdrop {
 /* Tamanho e posição dos modais que o módulo abre (o módulo só informa o comportamento). */
 .ui-dialog:has([data-portal-ui="login-popup"]) {
   inline-size: min(440px, calc(100vw - 2rem)) !important;
+}
+
+/* Criar galeria (CKEditor): o módulo não informa largura. O !important vence o width inline que o jQuery UI grava no diálogo. */
+.ui-dialog:has([data-portal-ui="gallery-dialog"]) {
+  inline-size: min(40rem, calc(100vw - 2rem)) !important;
 }
 
 .ui-dialog:has([data-portal-ui="search-popup"]) {

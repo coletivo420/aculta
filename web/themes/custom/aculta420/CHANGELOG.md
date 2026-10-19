@@ -1,3 +1,13 @@
+## 0.6.0-dev.87 — diálogos do messenger e da galeria como modal do Drupal — 2026-10-19
+
+Classificação: PATCH de apresentação e comportamento de diálogo. Autorizado na solicitação de validação dos itens do popup-rule.
+
+- `messenger-drawers.js`: "Bloquear" e "Desfazer amizade" abrem o diálogo com `Drupal.dialog` (`appendTo` do form, para "Sim" continuar submetendo). Sem `<dialog>` nativo nem `showModal()` direto.
+- `aculta420.libraries.yml`: `messenger-drawers` depende de `core/drupal.dialog`.
+- `dialog.css`: largura do diálogo da galeria por `data-portal-ui="gallery-dialog"`; removida a regra `dialog::backdrop`, que só valia para o `<dialog>` nativo.
+- Gate de fundação atualizado para `0.6.0-dev.87`. Gate do popup: PASS (605 arquivos, 0 exceções).
+- RUNTIME STATUS: DEFERRED. Cache rebuild feito no Runtime de teste; validação no navegador pendente.
+
 ## 0.6.0-dev.86 — tokens da fronteira Portal–tema e seletores de imagem por atributo — 2026-10-19
 
 Classificação: PATCH de fronteira. Autorizado na solicitação de correção dos gates de fronteira.

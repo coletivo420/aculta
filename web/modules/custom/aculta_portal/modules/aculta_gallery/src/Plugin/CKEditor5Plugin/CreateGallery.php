@@ -43,11 +43,6 @@ final class CreateGallery extends CKEditor5PluginDefault {
     $static_plugin_config['acultaGalleryCreate'] = [
       'dialogUrl' => $url,
       'label' => 'Criar galeria',
-      'dialogSettings' => [
-        'dialogClass' => 'aculta-gallery-dialog',
-        'height' => 'auto',
-        'width' => 'auto',
-      ],
     ];
     return $static_plugin_config;
   }

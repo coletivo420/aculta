@@ -1,5 +1,11 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-rc.4 — diálogo "Criar galeria" sem tamanho no módulo — 2026-10-19
+
+- `CreateGallery` não envia `dialogSettings` (largura, altura e classe). O formulário do diálogo traz `data-portal-ui="gallery-dialog"`, e a largura é do tema (`dialog.css`), conforme `POPUP-PADRAO.md`.
+- Mudança visual: a largura passa a ser 40rem (limitada à tela), no lugar do `width: auto` anterior. Validação no navegador: pendente.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-rc.3 — alinhamento de acesso/cache e VVJS de produto — 2026-10-18
 
 - A View `aculta_album_fotos` filtra as linhas por Media com acesso de visualização e File de imagem presente; miniaturas
