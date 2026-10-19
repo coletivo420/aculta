@@ -1,3 +1,12 @@
+## 0.6.0-dev.93 — botões de imagem e webform_multiple do Webform — 2026-10-19
+
+Classificação: PATCH de apresentação. Autorizado na solicitação de portar também os itens sem uso atual nos formulários.
+
+- `image_button` do Webform (ícones de adicionar e remover de `webform_multiple` e de condições): o `src` passa a usar SVG do tema (`assets/icons/webform/`) e o elemento recebe `btn btn-sm btn-outline-primary webform-icon-button`. Continua `input[type=image]`, porque o Form API identifica o clique pelas coordenadas da imagem; trocar o elemento por `<button>` alteraria esse contrato. A troca é feita em `PortalUiHooks::preprocess()`, o único `preprocess_input` do tema (o Core não aceita dois).
+- `input[type=image]`: cursor e foco visível do tema; ícones de tamanho próprio, sem largura de campo de formulário.
+- `webform_multiple`: largura de coluna de operações, sem quebra, espaçamento entre botões, alça de arrastar, mensagem de lista vazia, container responsivo e linha de adição.
+- Renderização verificada no Runtime de teste (`renderInIsolation`) com `image_button` de adicionar e remover; `submit` não é alterado. Validação visual de `webform_multiple` não executada (NÃO VALIDADO).
+
 ## 0.6.0-dev.92 — Webform: regras do webform_bootstrap 3.x portadas para o Bootstrap 5 — 2026-10-19
 
 Classificação: PATCH de apresentação. Autorizado na solicitação de portagem dos itens ainda não cobertos pelo tema.
