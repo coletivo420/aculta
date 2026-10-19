@@ -1,8 +1,9 @@
 # Variantes de cartão de autoria
 
-Contrato de planejamento. Todas as variantes compartilham resolução de sujeito,
-policy de visibilidade e cache em `aculta_user`. A diferença entre variantes é a
-quantidade de dados e ações apropriadas ao contexto, nunca um acesso mais amplo.
+Contrato de evolução. Todas as variantes compartilham identidade em
+`aculta_user`. A resolução base aceita variantes de User e sempre retorna o
+mesmo payload mínimo; dados, ações e renderizações específicas seguem pendentes.
+Uma variante nunca amplia acesso por si só.
 
 | Variante | Finalidade/dados candidatos | Estado |
 | --- | --- | --- |
@@ -14,9 +15,10 @@ quantidade de dados e ações apropriadas ao contexto, nunca um acesso mais ampl
 | `author_forum_stacked` | Mesmo view-model de `author_forum`, disposto acima da mensagem | Variação de apresentação no tema, nunca duplicação de serviço. |
 | `author_lms` | Identidade e papel contextual visível (educador/participante) | Preparar; não revelar turma, matrícula, nota ou estatística privada. |
 | `author_wiki` | Identidade de participante da conversa Wiki | Planejada; não introduzir autoria de revisão na página pública atual. |
-| `author_legacy` | Nome histórico individual, indicação de acervo, avatar memorial e link coletivo | Reusar entidade/memorial existente; sem User ou ações de conta. |
+| `author_legacy` | Nome histórico individual, indicação de acervo, avatar memorial e link coletivo | Reusar entidade/memorial existente; fora do resolver de User e sem ações de conta. |
 | `author_minimal` | Menção/aviso/prévia: nome público mínimo e link apenas se permitido | Preparar para consumidores Messenger/Views. |
 
 O ACULTA420 renderiza as variantes por SDCs existentes ou componentes a aprovar.
-Esta especificação não autoriza modificar comportamento visual antes da fase de
-cartões. Sem JS, o conteúdo e as ações essenciais continuam acessíveis.
+`AuthorIdentityResolver` aceita as variantes User documentadas, exceto
+`author_legacy`, e prepara somente nome e link. A composição visual continua no
+ACULTA420, em fase própria. Sem JS, o conteúdo e as ações essenciais continuam acessíveis.

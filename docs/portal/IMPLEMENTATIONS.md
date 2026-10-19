@@ -30,6 +30,11 @@ O gate deve falhar quando tags e metadados divergirem, quando a documentação r
 Desde Game G3, helpers de submódulos opcionais também são declarados nos próprios
 arquivos de serviços e descritos no registro central. O gate confere o conjunto
 root + submódulos; o painel continua mostrando somente serviços do container ativo.
+`aculta_user.author_identity_resolver` reutiliza a política e o link público do
+perfil para produzir a identidade base de autoria com cacheabilidade. O payload
+é limitado a variante, apelido e link canônico opcional; avatar e ações exigem
+extensão específica e passam pela policy do `aculta_user`. Contrato em
+[AUTHOR-CARD-API.md](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md).
 `aculta_game.achievement_presentation` aplica a mesma política de exibição à
 conta e ao perfil público. Contrato e evidências em
 [execução do Game](../../web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md).

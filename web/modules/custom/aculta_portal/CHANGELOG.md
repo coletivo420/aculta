@@ -1,3 +1,9 @@
+## 0.4.0-dev.163 — identidade base de autoria — 2026-10-19
+
+- O `aculta_user.author_identity_resolver` agora integra o inventário de Helpers ativos e prepara um view-model mínimo cacheável para a futura apresentação de autoria. A policy de perfil/link existente continua como fonte de acesso; não há dados de perfil privados no payload.
+- Entrega coordenada com `aculta_user` `0.4.0-dev.26` e `aculta_forum` `0.1.0-dev.2`. PR #296 (Portal `0.4.0-dev.162`) permanece separado; este marcador usa a versão seguinte da linha em andamento.
+- Teste Unit direcionado: 3 testes/12 assertions. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.161 — gates alinhados ao estado atual e item de menu duplicado
 
 - Removido o item de menu `aculta_portal.role_hierarchy_settings` (Papéis e perfis sob Administração). Ele já estava desativado em tempo de execução por `AdministrativeMenuHooks` (duplicava a aba de Pessoas); a entrada do YAML saiu junto, e o gate `validate-unique-paths-texts` passa. A rota `entity.user_role.collection` continua acessível por `aculta_portal.config_papeis_e_perfis`.

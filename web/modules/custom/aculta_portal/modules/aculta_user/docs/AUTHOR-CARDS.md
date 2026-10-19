@@ -1,9 +1,10 @@
 # Cartões de identidade e autoria
 
-Status: auditoria documental `aculta_forum 0.1.0-dev.1`. `aculta_user` já possui
-políticas, links, perfil, avatar e memória histórica, mas não foi encontrado um
-serviço genérico único de cartão de autoria na base `d4a0d66e`. A primeira
-implementação deve compor/reusar esses recursos, não duplicá-los no Forum.
+Status: fundação `aculta_forum 0.1.0-dev.2`. `aculta_user` possui políticas,
+links, perfil, avatar e memória histórica. `AuthorIdentityResolver` e
+`AuthorIdentity` agora oferecem a identidade base cacheável. A composição de
+avatar, ações e metadados de cada variante continua planejada e deve reutilizar
+os serviços listados aqui, sem duplicá-los no Forum.
 
 ## Inventário atual
 
@@ -11,6 +12,7 @@ implementação deve compor/reusar esses recursos, não duplicá-los no Forum.
 | --- | --- | --- | --- | --- |
 | `PublicProfileController` + `PublicProfilePolicy` | Perfil público, visibilidade campo a campo, foto e dados do perfil | `/u/{apelido}` | `profile_full` | Preservar e estender view-model/cache para os campos já autorizados; não tornar privado público por conveniência. |
 | `PublicProfileLink` + `UsernameLinkHooks` | URL atual por apelido; perfil sem visibilidade fica sem link | Tema Username e campos de referência User | Todas as variantes atuais | Preservar como resolução canônica. |
+| `AuthorIdentityResolver` + `AuthorIdentity` | Apelido público e URL opcional em payload mínimo, sem entidade | API reutilizável; ainda sem consumidor de cartão | Base compartilhada das variantes User | Preservar e estender somente com dados autorizados/cacheáveis; não aceitar autoria legada como User. |
 | `AccountBioCard` | Render da bio da própria conta | dashboard `/identidade` | não é cartão público | Preservar; separar claramente apresentação da área própria. |
 | `SocialLinksCard` + `SocialNetworks` | Redes sociais com dados de Profile | dashboard e perfil público | `profile_full`, apenas com opt-in | Preservar; aplicar política de visibilidade e sanitização existentes. |
 | `AvatarPool`, `UserPictureForm`, `aculta_image` | Avatar do acervo/foto da pessoa e edição | User/profile e componentes de identidade | Todas as variantes | Preservar. Qualquer nova URL/imagem passa por `aculta_image` e finalidade aprovada. |

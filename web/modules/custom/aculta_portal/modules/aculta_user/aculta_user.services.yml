@@ -12,6 +12,11 @@ services:
   aculta_user.public_profile_link:
     class: Drupal\aculta_user\PublicProfileLink
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+  aculta_user.author_identity_resolver:
+    class: Drupal\aculta_user\Identity\AuthorIdentityResolver
+    arguments: ['@entity_type.manager', '@aculta_user.public_profile_link']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_user.participation_rules:
     class: Drupal\aculta_user\ParticipationRules
     arguments: ['@config.factory', '@entity_type.manager']

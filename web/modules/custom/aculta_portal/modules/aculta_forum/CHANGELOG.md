@@ -1,3 +1,9 @@
+## 0.1.0-dev.2 — identidade base de autoria (`aculta_user`) — 2026-10-19
+
+- `aculta_user.author_identity_resolver` compõe o User e o perfil principal com o gerador canônico de perfil; retorna `AuthorIdentity`, payload mínimo cacheável de apelido e link.
+- Variantes são identificadores de consumidor, ainda sem payloads ampliados ou renderização específica. `author_legacy` permanece fora do resolver User.
+- Três testes unitários, 12 assertions; RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.1 — auditoria e fundação documental — 2026-10-19
 
 - PRs e base verificadas: PR #291 está mesclada e é de pagamentos; PRs antigas de Fórum #287–#289 estão fechadas; a branch desta fase parte de `origin/main` `d4a0d66e`. A PR #296 é a linha separada do Portal `0.4.0-dev.162`.

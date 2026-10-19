@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.26 — identidade compartilhada de autoria — 2026-10-19
+
+- `AuthorIdentityResolver` (`aculta_user.author_identity_resolver`) compõe a conta Drupal, o perfil principal, a política de link público e a metadata de cache já mantida por `PublicProfileLink`.
+- `AuthorIdentity` exporta somente variante, apelido e URL canônica opcional; não contém entidade, e-mail ou campos de perfil privados. Variantes identificam consumidores, mas continuam compartilhando esse payload mínimo.
+- `author_legacy` não é aceito pelo resolver de `User`; autoria histórica permanece entidade independente.
+- Testes unitários direcionados: 3 testes, 12 assertions. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.25 — links de perfil com o apelido atual, em todo o site
 
 - Nome de usuário e campos de referência a usuário (autor, remetente e participantes de conversa) apontavam para `/identidade/<uid>`, a página da própria conta, no lugar do perfil público. Agora apontam para `/u/<apelido>` no purpose `main`.

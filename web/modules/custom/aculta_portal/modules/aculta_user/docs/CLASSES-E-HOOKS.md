@@ -137,6 +137,13 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | --- | --- | --- |
 | `RestrictedForumGrants` | `src/Forum/RestrictedForumGrants.php` | Visibilidade dos fóruns restritos (ACULTA Fórum, F9, F-D14). |
 
+### `Identity`
+
+| Classe | Arquivo | Responsabilidade |
+| --- | --- | --- |
+| `AuthorIdentity` | `src/Identity/AuthorIdentity.php` | View-model escalar mínimo com cache tags/contexts da identidade pública. |
+| `AuthorIdentityResolver` | `src/Identity/AuthorIdentityResolver.php` | Resolve apelido e link canônico para variantes User sem expor a entidade. |
+
 ### `Hook`
 
 | Classe | Arquivo | Responsabilidade |
@@ -182,6 +189,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | --- | --- | --- |
 | `ParticipationRules` | `src/ParticipationRules.php` | Regras de participação no Fórum (plano aculta_user, seções E6 e E7). |
 | `PublicProfilePolicy` | `src/PublicProfilePolicy.php` | Decide, campo a campo, o que do perfil participante pode aparecer em público. |
+| `PublicProfileLink` | `src/PublicProfileLink.php` | Única regra de URL canônica do perfil público; atualiza a cache metadata fornecida pelo consumidor. |
+| `PublicProfileLinkInterface` | `src/PublicProfileLinkInterface.php` | Contrato para resolver e testar links de perfil sem substituir a implementação canônica. |
 
 ### Role/
 - `HerancaDePapeis.php` — mapa derivado de `aculta_portal.role_hierarchy`; herdados; papéis não gravados; remoção de papel excluído.

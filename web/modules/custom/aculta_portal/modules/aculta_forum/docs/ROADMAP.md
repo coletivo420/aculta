@@ -1,10 +1,11 @@
 # Roadmap — ACULTA Forum
 
-Linha do projeto `aculta_forum`: começa em **0.1.0-dev.1**. Roadmap de escopo
+Linha do projeto `aculta_forum`: começou em **0.1.0-dev.1**. Roadmap de escopo
 aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
-CHANGELOG e nos commits/PRs. A fase dev.1 não tem implementação de runtime.
+CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
+Runtime.
 
-## `0.1.0-dev.1` — Auditoria e fundação documental (fase atual)
+## `0.1.0-dev.1` — Auditoria e fundação documental (entregue)
 
 - Estado GitHub, branches e PRs; base `main` verificada.
 - Inventário real de Forum contrib, Composer/config, consumidores, cartões,
@@ -14,12 +15,12 @@ CHANGELOG e nos commits/PRs. A fase dev.1 não tem implementação de runtime.
 - Documentação de `aculta_forum`, `aculta_user`, Portal e ACULTA420 sincronizada.
 - Nenhuma alteração de banco, Runtime, conteúdo, dependência, entidade ou rota.
 
-## `0.1.0-dev.2` — Fundação de cartões (`aculta_user`)
+## `0.1.0-dev.2` — Fundação de cartões (`aculta_user`) (entregue)
 
-- Consolidar API de identidade/cartões reutilizando serviços existentes.
-- Definir contratos de variantes e view-models cacheáveis.
-- Preservar perfil e autoria atuais; testar access/privacy/cache.
-- Não desenvolver o motor Forum nesta fase.
+- Implementados `AuthorIdentityResolver` e `AuthorIdentity`, compondo perfil e link público já existentes.
+- Variantes User compartilham payload mínimo; autoria histórica fica separada e não é convertida em conta.
+- Testes Unit direcionados para payload neutro, cache e autoria legada.
+- Sem renderização, CSS, alterações de tema ou mudanças no Runtime.
 
 ## `0.1.0-dev.3` — Author Pane moderno (`aculta_user` + ACULTA420)
 

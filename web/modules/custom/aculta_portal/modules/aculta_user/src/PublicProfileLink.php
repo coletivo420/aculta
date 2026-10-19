@@ -19,7 +19,7 @@ use Drupal\user\UserInterface;
  * apelido muda, o link muda junto, porque o perfil entra nas tags de cache devolvidas em $cache. Sem perfil público
  * (apelido ausente, inválido ou perfil privado) o método devolve NULL, e quem renderiza mostra só o nome.
  */
-final class PublicProfileLink {
+final class PublicProfileLink implements PublicProfileLinkInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
