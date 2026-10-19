@@ -2977,3 +2977,8 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - Adicionado patch para negar upload H5P que use bibliotecas locais restritas quando a conta não tem `create restricted h5p content types`; segue revisão e teste funcional antes de ativar H5P.
 - RUNTIME STATUS: `aculta_patcher` habilitado no Runtime de teste após backup privado `/home/aculta/private/aculta/aculta-runtime-before-aculta-patcher-20261018.sql.gz.gz` (0600); tabela e entidade foram verificadas via Drush. H5P permanece desativado. A rota existe no Router, mas HTTP visual retornou 404 e fica DEFERRED. Nenhum arquivo de Core/contrib foi editado manualmente.
 
+## 0.4.0-dev.177 — encerra sincronização automática de tópicos editoriais — 2026-10-19
+
+- Removidos os hooks de insert/update/delete que criavam, atualizavam ou despublicavam Nodes do Forum contribuído ao salvar/excluir publicação. `field_aculta_discussion` está instalado nos dois bundles editoriais do Runtime de teste; as discussões permanecem diretamente na publicação.
+- Mantido somente o ajuste de links repetidos nos comentários dos tópicos históricos. Nenhum Node, Comment, termo ou vínculo legado foi alterado. RUNTIME STATUS: PARTIAL.
+

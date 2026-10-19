@@ -282,7 +282,7 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
 - **Resposta:** o formulário de resposta fica **só** na discussão completa, no host FORUM. A página de conteúdo não envia POST para outro host (`CROSS-DOMAIN-REQUEST-POLICY.md`).
 - **Sem tópico vinculado:** a página do conteúdo não mostra bloco nem link de discussão. Nada de comentário solto no conteúdo.
 - **Criação do tópico:** manual, pelo editor do conteúdo ou pelo `wiki_editor`, por ação no próprio conteúdo. Não criar tópico automaticamente para todo conteúdo (a confirmar, decisão 24).
-- **Exceção da Revista (pedido do responsável, 2026-10-13):** cada publicação da Revista cria o tópico automaticamente, com o mesmo autor, na pasta da sua categoria. Implementado em `aculta_magazine` 0.1.0-dev.2 (`docs/README.md`, seção Fórum da Revista). A decisão 24 continua aberta para os demais tipos.
+- **Decisão substituída (2026-10-19):** publicações da Revista não criam tópicos públicos. Cada publicação usa Comment diretamente na entidade; os hooks de sincronização automática foram removidos em `aculta_magazine` 0.1.0-dev.10. Os tópicos históricos permanecem preservados durante a transição.
 - **Atividade:** a aba Comentários (seção E2) lista os comentários da pessoa nas discussões. Com isso, a decisão 22 fica resolvida: não há comentário em artigo.
 
 **Por que esta forma:**
@@ -298,10 +298,10 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
 - Acesso anônimo de leitura do tópico no host FORUM (`access content` no papel anônimo já existe).
 - Pesquisa: a busca em drupal.org não confirmou detalhes de Views sobre comentários de outra entidade. Ver o registro de mudança de comentários como campos (`https://drupal.org/node/2100015`) e a documentação de Views de comentários no Homelab.
 
-#### E3.1 Como os comentários funcionam (implementado)
+#### E3.1 Como os comentários funcionavam no desenho anterior (histórico)
 
-Esta subseção descreve o que já está no código e no runtime, em 2026-10-14. As regras de moderação de tópico (E5) são
-propostas e não estão implementadas.
+Esta subseção preserva o registro do desenho anterior e sua homologação em 2026-10-14. A decisão foi substituída em
+2026-10-19: Revista usa Comment diretamente na publicação, e os hooks que sincronizavam tópicos foram removidos.
 
 - **Onde moram:** só no tópico do Fórum (`comment_forum`). A publicação da Revista não tem campo de comentário. Ela
   mostra a contagem e o link "Ver discussão completa (N comentários)" (`aculta_user` `DiscussionHooks`).
@@ -312,8 +312,8 @@ propostas e não estão implementadas.
 - **Moderação:** a do Core. Quem tem `skip comment approval` publica direto. Quem não tem entra na fila do
   `content_editor` (`administer comments`). Um comentário de quem não pode publicar sem aprovação não aparece na
   página até ser aprovado. Isso não é efeito da troca de tipo, nem de publicação.
-- **Exclusão da publicação:** o tópico é despublicado e a discussão é preservada (`ForumTopicSync::unpublish`).
-  Comentários não são apagados.
+- **Exclusão da publicação:** no desenho antigo, o tópico era despublicado e comentários permaneciam. No código atual,
+  não há despublicação automática de tópico legado; vínculos e conteúdo histórico aguardam o corte seguro autorizado.
 - **Troca de tipo (Notícia ↔ blog):** o tópico segue o nó da publicação nova. Comentários, autor e pasta permanecem
   (`docs/README.md`, seção "Trocar o tipo de uma publicação").
 - **Login para comentar:** o Core mostra "Efetue login ou registre-se para postar comentários". Nos tópicos do
@@ -321,8 +321,7 @@ propostas e não estão implementadas.
   é removida (`ForumTopicHooks::commentLinksAlter`, `aculta_magazine` 0.1.0-dev.5). Motivo: a repetição era
   visível quando havia comentário.
 
-Pendências desta subseção: a regra de criação de tópico com 10 comentários (E5) e a denúncia de comentário (`DT-P13`)
-continuam propostas.
+As regras de moderação descritas nas subseções atuais e em `aculta_forum/docs/CONTEXTS.md` são a referência vigente.
 
 ### E4. Verbetes chamados em todo o site, e papel de autor
 

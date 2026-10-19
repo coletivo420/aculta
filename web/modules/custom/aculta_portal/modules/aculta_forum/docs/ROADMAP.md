@@ -60,12 +60,10 @@ Runtime.
 - Foram observados 30 nodes `forum`, dos quais 12 publicados vinculam
   discussões a publicações. `aculta_magazine` e `aculta_user` ainda têm
   consumidores ativos; ver `docs/MIGRATION-REMOVAL.md`.
-- `ForumTopicSync` permanece apenas como fallback enquanto o campo novo não
-  estiver instalado. No Runtime de teste as instâncias foram aplicadas, então
-  insert/update de publicação não cria tópico; o handler de exclusão ainda pode
-  despublicar um tópico legado. `DiscussionHooks` omite o trecho antigo quando
-  o campo existe. A sincronização antiga ainda não foi removida em definitivo
-  porque há referências/tópicos legados e o Forum contrib não foi desinstalado.
+- Em 0.1.0-dev.10, hooks de insert/update/delete foram removidos. `ForumTopicSync`
+  permanece para leitura/conversão de vínculos históricos, não para sincronização
+  de ciclo de vida. `DiscussionHooks` omite o trecho antigo quando o campo existe.
+  O Forum contrib ainda não foi desinstalado e referências legadas permanecem.
   Os tópicos-casca antigos serão apagados depois; não
   importar tópicos nem comentários antigos para os novos contextos.
 - Inventário imediatamente pré-operação e restore point validado ainda pendentes.
@@ -99,8 +97,11 @@ encadeamento, formulários, permalink e moderação por contexto.
 
 ## `0.1.0-dev.8` — Revista/publicações
 
-Remover sincronização automática antiga e usar comentários na entidade editorial;
-preservar autoria editorial e nunca criar tópico público para publicação.
+Concluído parcialmente: Comment direto em `article`/`blog` foi instalado no
+Runtime de teste e os hooks que criavam, atualizavam ou despublicavam tópicos
+contribuídos foram removidos. Preservar autoria editorial e nunca criar tópico
+público para publicação. Serviços de leitura/conversão e o módulo legado ficam
+até a migração dos consumidores e o corte seguro documentado.
 
 ## `0.1.0-dev.9` — Advanced Forum: categorias e navegação
 

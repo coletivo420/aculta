@@ -15,7 +15,7 @@ configuração, Composer ou Runtime foi alterado nesta auditoria.
 | Modelo de conteúdo | Node bundle `forum`, vocabulary `forums`, Node field `taxonomy_forums`, Comment bundle `comment_forum`, campo `comment_forum` no Node. Configs opcionais do módulo contrib definem ainda displays, formulário e settings. |
 | Config Sync | `core.entity_*` de node.forum/comment_forum; `node.type.forum.yml`; taxonomy.vocabulary.forums.yml; `views.view.aculta_forum_topics.yml`; `flag.sinalizar_comentario` aponta a bundle `comment_forum`; `field_discussao` exportado em blog aponta à Node bundle `forum`; campos de autoria legada. |
 | `aculta_user` | `ParticipationRules` fixa bundles `forum`/`comment_forum`; `RestrictedForumGrants`, `RestrictedForumHooks`, `ForumModerationHooks`, `ForumTopicPresentationHooks`, `DiscussionHooks`, `ActivityController`; `config/install` declara `field_discussao` em activity/article/document/project/wiki_entry como entity reference à Node bundle `forum`. |
-| `aculta_magazine` | `ForumTopicSync`, `ForumSectionResolver`, `PublicationTypeConverter`, `ForumTopicHooks`, `ForumOpeningPost` e serviços; cria Node `forum` ao salvar publicação com categoria editorial; `field_discussao` de `blog` referencia Node bundle `forum`. |
+| `aculta_magazine` | `ForumTopicSync`, `ForumSectionResolver`, `PublicationTypeConverter`, `ForumTopicHooks`, `ForumOpeningPost` e serviços; hooks de ciclo de vida de publicação que criavam/atualizavam/despublicavam Node `forum` removidos em 0.1.0-dev.10; `field_discussao` de `blog` ainda referencia Node bundle `forum`. |
 | `aculta_messenger` | `MessageSubscribeEventHooks` atende criação/publicação de Node forum; `AvisoService`/`AvisoRetencao` têm política e tipos vinculados ao fórum. |
 | Tema | `forum-list.html.twig`, `node--forum--full.html.twig`, `comment--comment-forum.html.twig`, `forum-index.css`, `discussion.css`, traduções e estilos do padrão Forum. |
 | Documentação/gates | Portal/Forum/LMS/Magazine, mapa módulo-tema, fronteira, sitemap/purpose, slugs, buscas, avisos e políticas de participação referem Forum legado. Fazer `rg` global antes da remoção final. |
@@ -29,8 +29,8 @@ referências de auditoria/changelog sem motivo.
 contagem, enquanto valida publicação do tópico mas não chama explicitamente
 `topic->access('view')` nesse método. Isso é um ponto de migração a revisar para
 paridade de access/cache; não afirma, isoladamente, uma exposição confirmada no
-Runtime. `ForumTopicSync::sync()` cria Node `forum` por publicação com categoria
-editorial e `ForumOpeningPost` apresenta o conteúdo editorial como abertura.
+Runtime. `ForumTopicSync` ainda é usado para leitura/conversão de vínculos
+históricos; `ForumOpeningPost` apresenta o conteúdo editorial como abertura.
 
 ## Separação entre Drupal Forum e acervo histórico Growroom
 
@@ -117,21 +117,22 @@ comentário; nenhum comentário foi submetido. Havia 14 publicações publicadas
 Nodes Forum legados, nenhum `comment_forum` e nenhum Comment compartilhado.
 
 Os 12 Nodes `forum` ligados às publicações e seus vínculos `field_discussao`
-continuam intactos. A inserção/atualização de publicações no Runtime já não
-aciona a criação fallback enquanto o campo está instalado; o handler antigo de
-exclusão ainda pode despublicar tópico legado e será removido junto dos demais
-consumidores Magazine. O Forum contrib, o pacote Composer, os tópicos e o
-vocabulário não foram removidos.
+continuam intactos. Os hooks de insert/update/delete de `aculta_magazine` foram
+retirados: salvar, atualizar ou excluir uma publicação não cria, altera ou
+despublica tópico legado. Permanecem temporariamente serviços de leitura e
+conversão dos vínculos antigos e o ajuste visual de links de comentários. O
+Forum contrib, o pacote Composer, os tópicos e o vocabulário não foram removidos.
 
 ### Decisão operacional desta auditoria
 
 - Não excluir nodes, termos, comments ou flags; não desinstalar `forum`, não
   remover `drupal/forum` do Composer e não executar updates/import/export.
 - Preservar temporariamente os 12 tópicos vinculados à Revista e seus campos
-  `field_discussao`. Retirar a sincronização automática somente junto da
-  migração que mantém a discussão acessível na entidade editorial.
-- A retirada executável aguarda a migração dos consumidores de Magazine e User
-  e a cobertura contextual correspondente. Gates para exclusão/uninstall:
+  `field_discussao`. A discussão direta via Comment já está instalada para
+  `article` e `blog`; a sincronização automática foi removida sem apagar ou
+  migrar os tópicos antigos.
+- A remoção do contrib aguarda a migração dos consumidores restantes de
+  Magazine e User e a cobertura contextual correspondente. Gates para exclusão/uninstall:
   backup atual de Runtime e arquivos relacionados; restore validado em ambiente
   de teste isolado; inventário repetido; plano de rollback específico; e
   confirmação do escopo exato dos dados.

@@ -1,8 +1,8 @@
 # aculta_magazine (Revista)
 
 > **Transição em andamento:** publicações recebem o campo Comment compartilhado
-> `field_aculta_discussion` em Config Sync e no Runtime de teste. O sincronizador antigo permanece como
-> fallback apenas em ambientes onde esse campo ainda não está instalado. A remoção
+> `field_aculta_discussion` em Config Sync e no Runtime de teste. A sincronização automática de tópicos foi
+> removida; serviços de leitura/conversão ainda sustentam vínculos históricos. A remoção
 > final do Drupal Forum e de seus consumidores exige a sequência segura descrita em
 > [`MIGRATION-REMOVAL.md`](../../aculta_forum/docs/MIGRATION-REMOVAL.md).
 
@@ -139,15 +139,16 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
 
 - Pastas: pasta-mãe "Revista" com uma pasta por categoria (`ForumSectionResolver`). A pasta guarda a categoria em
   `field_categoria_revista`, então renomear a sessão não quebra o vínculo.
-- Vínculo: `field_discussao` na publicação (já existente). Criação, edição, mudança de categoria, despublicação e
-  exclusão são tratadas em `ForumTopicHooks` e `ForumTopicSync`.
+- Vínculo histórico: `field_discussao` permanece temporariamente para leitura de tópicos antigos e conversão de tipo.
+  Nenhum hook de ciclo de vida de publicação cria, atualiza ou despublica tópicos.
 - Abertura: `ForumOpeningPost` lê resumo e imagem da publicação. Nenhum texto ou arquivo é copiado: a imagem é o
   mesmo arquivo da mídia, no estilo `large`. Editar a publicação atualiza a abertura.
-- Estado de migração: `ForumTopicHooks` só mantém a criação antiga enquanto `field_aculta_discussion` não existir no
-  bundle da publicação. As instâncias estão presentes no Runtime de teste; `DiscussionHooks` omite o trecho antigo
-  quando o campo nativo está presente. A desativação definitiva do sincronizador e limpeza de tópicos continuam pendentes.
+- Estado de migração: `field_aculta_discussion` está instalado em `article` e `blog` no Runtime de teste. `ForumTopicHooks`
+  mantém apenas o ajuste de links de comentários dos tópicos históricos; `ForumTopicSync` continua temporariamente
+  como suporte de leitura/conversão de vínculos históricos. A limpeza de conteúdo legado e remoção do módulo contrib
+  continuam pendentes e protegidas pelo plano de recuperação.
 - URL do tópico: `/topico/<título>` (padrão `aculta_forum_topic`).
 - Moderação: segue o Core. Quem não tem `skip comment approval` vai para a fila do `content_editor`.
-- Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e ganha tópico automaticamente.
+- Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e recebe configuração de Comment direto.
 - Categoria nova: a pasta correspondente é criada na primeira publicação (ou por `aculta_magazine_update_10002`).
 - Não há criação manual de tópico para publicação. Tópicos de outros tipos (verbete, atividade) seguem o plano E3.

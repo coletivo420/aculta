@@ -93,3 +93,8 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
 - Chamada aparece na exibição da Notícia e do blog.
 - Documentação em `docs/README.md` (regras e passo a passo para tipos novos: vídeo, galeria).
 - RUNTIME STATUS: verificado no Homelab (navegador e HTTP). Inspeção visual humana pendente.
+## 0.1.0-dev.10 — encerra sincronização automática de tópicos editoriais — 2026-10-19
+
+- `ForumTopicHooks` não cria/atualiza mais tópicos Drupal Forum em insert/update nem despublica tópicos quando uma publicação é excluída. Comentários diretos na publicação estão instalados em `article` e `blog` no Runtime de teste.
+- Mantido `commentLinksAlter` somente para compatibilidade de apresentação dos tópicos históricos. Serviço de sincronização permanece temporariamente para leitura/conversão dos vínculos legados; nenhum dado foi alterado. RUNTIME STATUS: PARTIAL.
+
