@@ -48,7 +48,7 @@
   color: var(--aculta-text-primary);
   font-weight: 600;
 }
-.field--name-field-aculta-discussion .comment-comment-form :is(input:not([type="submit"]), textarea, select) {
+.field--name-field-aculta-discussion .comment-comment-form :is(input:not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="button"]):not([type="reset"]), textarea, select) {
   inline-size: 100%;
   max-inline-size: 100%;
   border-color: var(--aculta-border-default);

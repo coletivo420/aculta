@@ -2,6 +2,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.100 | Ajuste responsivo dos controles Comment | Foundation 354, SDC 516, design 2078 e fixtures 157 PASS; visual no navegador DEFERRED | Largura total exclui controles binários e de arquivo |
 | 0.6.0-dev.99 | Formulário de resposta Comment compartilhado | Foundation 354, SDC 516, design 2078, fixtures 157, fronteira 1331 e mapa 154 PASS; Runtime raiz 200 e CSS agregado verificado; visual no navegador/envio DEFERRED | Regras responsivas e foco em `discussion.css` |
 | 0.6.0-dev.98 | Estado vazio do índice Growroom420 | Gates PASS; raiz HTTP 200 mostra a mensagem | `.view-aculta-forum-public-topics .view-empty` em `forum-index.css`; inspeção visual pendente |
 | 0.6.0-dev.97 | Apresentação de tópicos ACULTA Forum | Gates PASS; render Runtime não salvo PASS; inspeção visual no navegador pendente | `node--aculta-forum-topic.html.twig`; identidade via `aculta_user`; tokens em `forum-index.css` |

@@ -1,3 +1,10 @@
+## 0.6.0-dev.100 — restringe largura dos controles de resposta — 2026-10-19
+
+Classificação: PATCH de responsividade.
+
+- O formulário Comment amplia somente campos textuais e selects; caixas de seleção, radio, upload, hidden e botões mantêm suas dimensões próprias.
+- Foundation 354, SDC 516, design 2078 e fixtures 157 — PASS. A restrição evita dimensionar inputs binários e arquivos. Inspeção visual permanece pendente; nenhum conteúdo criado. RUNTIME STATUS: PARTIAL, após smoke HTTP e CSS em cache agregada da dev.99.
+
 ## 0.6.0-dev.99 — formulário de resposta em discussões compartilhadas — 2026-10-19
 
 Classificação: PATCH de apresentação.
