@@ -386,12 +386,12 @@
         {
           "file": "config/sync/system.site.yml",
           "pattern": "^mail: .*$",
-          "with": "mail: naoresponda@toca.net.br"
+          "with": "mail: naoresponda@aculta.org"
         },
         {
           "file": "config/sync/webform.webform.aculta_contact.yml",
           "pattern": "^      from_mail: .*$",
-          "with": "      from_mail: naoresponda@toca.net.br"
+          "with": "      from_mail: naoresponda@aculta.org"
         },
         {
           "file": "config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml",

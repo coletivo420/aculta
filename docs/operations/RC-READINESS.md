@@ -86,8 +86,8 @@ web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/homologacao
   por parser YAML (estrutura, ignorando `langcode` e `_core`).
 - Classificação: 906 arquivos iguais; 63 só de `langcode`; 32 de tradução (copiados); `simple_sitemap.settings` (host de teste, fora do baseline).
 - Varredura antes do commit: nenhum host de teste novo em `config/sync`; nenhum valor de credencial.
-- SMTP no servidor de testes: ativado no runtime (`smtp.settings:smtp_on = true`, 2026-10-09). As
-  credenciais `SMTP2GO_USERNAME` e `SMTP2GO_PASSWORD` ainda **não** foram importadas; sem elas o envio
-  autenticado falha. Cadastrar pelo painel `/painel-administrativo/configuracoes/aculta/segredos`, nunca pelo Git. Em produção, a camada criptografada é provisionada pelo deployer após o deploy (fase 9).
+- Envio de e-mail (Mailer Plus, SMTP2GO): sem o módulo `smtp` legado. Desde 2026-10-19 o transporte do servidor de
+  testes está sem credenciais: o envio autenticado falha até o responsável gravar `SMTP2GO_USERNAME` e
+  `SMTP2GO_PASSWORD` (ver `docs/portal/EMAIL-TRANSPORT.md`, seção 0). Cadastrar pelo painel `/painel-administrativo/configuracoes/aculta/segredos`, nunca pelo Git. Em produção, a camada criptografada é provisionada pelo deployer após o deploy (fase 9).
 - Não exportado: `.htaccess` e as coleções `domain.*` (não vêm do export padrão).
 

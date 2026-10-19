@@ -54,8 +54,6 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | --- | --- | --- | --- | --- |
 | `google_oauth_client_id` | `GOOGLE_OAUTH_CLIENT_ID` | Produção e testes | Não, identificador público | plain |
 | `google_oauth_client_secret` | `GOOGLE_OAUTH_CLIENT_SECRET` | Produção e testes | Sim | plain |
-| `smtp2go_username` | `SMTP2GO_USERNAME` | Produção e testes | Sim, credencial | plain |
-| `smtp2go_password` | `SMTP2GO_PASSWORD` | Produção e testes | Sim | plain |
 | `mercadopago_production_public_key` | `MERCADOPAGO_PRODUCTION_PUBLIC_KEY` | Produção | Não, uso no frontend | plain |
 | `mercadopago_production_access_token` | `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` | Produção | Sim | plain |
 | `mercadopago_webhook_secret` | `MERCADOPAGO_WEBHOOK_SECRET` | Produção e testes (aplicação; obrigatória em produção) | Sim | plain |

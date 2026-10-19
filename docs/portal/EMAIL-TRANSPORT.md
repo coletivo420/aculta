@@ -12,15 +12,17 @@ Envio pelo Mailer Plus, com um único transporte ativo: **SMTP2GO** (`mail.smtp2
 `config/sync/mailer_transport.mailer_transport.smtp2go.yml` e padrão em `config/sync/mailer_transport.settings.yml`.
 O transporte da Hostinger foi removido do Runtime de teste. Não havia versão dele no Git.
 
-Remetente: `naoresponda@toca.net.br` no teste (endereço da própria conta SMTP2GO). Em produção, o remetente vem
-do mapeamento do `aculta_deployer`.
+Remetente: `naoresponda@aculta.org`, o mesmo em teste e em produção. Definido em `config/sync`, com o mesmo valor no
+perfil `test` do `aculta_deployer`. Nenhum override de ambiente o altera.
 
 **Incidente de 2026-10-18 a 2026-10-19 (resolvido).** Os envios pela Hostinger falhavam com
 `553 5.7.1 : Sender address rejected: not owned by user naoresponda@aculta.org`. O remetente não pertencia à conta
 SMTP usada. Com o padrão no SMTP2GO e o remetente da própria conta, o teste de envio é aceito no `MAIL FROM` e
 no `AUTH`. A única recusa restante é o destinatário de teste `example.invalid` (domínio reservado).
 
-**Pendência.** As credenciais do SMTP2GO chegam ao transporte por Keys (`key.config_override.mailer_smtp2go_*`).
+**Pendência.** As credenciais do SMTP2GO não são mais Keys. Ficam no arquivo de segredos do servidor (`SMTP2GO_USERNAME`,
+`SMTP2GO_PASSWORD`). No Runtime de teste, o transporte está sem credenciais: o envio não autentica até o responsável
+gravar a credencial no Mailer Plus ou o provisionamento passar a injetá-la.
 Ver a decisão em aberto sobre Keys nesta seção.
 
 ## 1. Decisão
@@ -77,12 +79,11 @@ integração com `drupal/key`. Ver seção 4.
 | `drupal/smtp` ^1.4 | `composer.json` (linha 250) | Envio SMTP atual |
 | `smtp` (módulo) | `config/sync/core.extension.yml` (linha 97), `web/modules/contrib/smtp` | Módulo ativo |
 | `smtp.settings` | `config/sync/smtp.settings.yml`; `smtp_on: true`, host `mail.smtp2go.com`, porta 465 (ver seção 0), `smtp_password` vazio no arquivo | Configuração do envio |
-| Override de senha | `config/sync/key.config_override.smtp_password.yml`, `key.config_override.smtp_username.yml` | Liga `smtp.settings` às Keys |
-| Keys | `config/sync/key.key.smtp2go_username.yml`, `key.key.smtp2go_password.yml` (provider `env`, `SMTP2GO_USERNAME`, `SMTP2GO_PASSWORD`) | Credenciais, fora do Git |
+| Credenciais | Arquivo de segredos do servidor (`SMTP2GO_USERNAME`, `SMTP2GO_PASSWORD`); sem Key | Credenciais, fora do Git |
 | `system.mail` | `config/sync/system.mail.yml` (`interface.default: php_mail`, `webform: webform_php_mail`) | Backend do Core e do Webform |
-| Secrets Contract | `config/secrets-contract.json` (linhas 31 e 44) | Declara as variáveis SMTP2GO |
+| Secrets Contract | `config/secrets-contract.json` | Declara as variáveis SMTP2GO do arquivo de segredos |
 | Deploy por ambiente | `aculta_deployer/config/deploy.json` (`environment_bound`, `smtp.settings`, `system.mail`, `system.site`, `webform.webform.aculta_contact`) | Remetente e backend por ambiente |
-| Gate de Portal | `PortalController::transactionalMailReady()` (checa `moduleExists('smtp')`, `SMTPMailSystem`, `smtp.settings`) | Libera troca de e-mail em "Segurança" |
+| Gate de Portal | `PortalController::transactionalMailReady()` (checa `mailer_override`, transporte padrão `smtp2go` e usuário e senha do transporte) | Libera troca de e-mail em "Segurança" |
 | Scripts e docs | `scripts/validate-*.php`, `docs/operations/*.md`, `docs/modules/*.md`, `docs/integrations/GOOGLE.md` | Referências a `smtp.settings` e a `SMTP2GO` |
 
 Fora do escopo desta migração: `key.key.*` e `SMTP2GO_*` (são reaproveitados); o provedor SMTP2GO; o
@@ -102,14 +103,10 @@ que já liga `smtp.settings` às Keys hoje. Não é preciso código próprio. Ve
 `config_prefix` + `config_name` + `config_item` (caminho com pontos, por exemplo `configuration.pass`) e
 `key_id`. Ele só altera a configuração carregada em memória; não grava nada.
 
-Configuração a exportar no Homelab (M1, depois da ativação):
+Superado em 2026-10-19: não há mais Keys nem overrides de SMTP2GO. Mantido como registro da M1:
 
 - `mailer_transport.mailer_transport.smtp2go`: plugin `smtp`, host `mail.smtp2go.com`, porta `465` (ver seção 0),
   `user` e `pass` vazios;
-- `key.config_override.mailer_smtp2go_username`: `config_prefix: mailer_transport.mailer_transport`,
-  `config_name: smtp2go`, `config_item: configuration.user`, `key_id: smtp2go_username`;
-- `key.config_override.mailer_smtp2go_password`: o mesmo, com `configuration.pass` e
-  `key_id: smtp2go_password`;
 - `mailer_transport.settings:default_transport: smtp2go`.
 
 Essas configurações **não entram em `config/sync` nesta fase**. Dependem do módulo `mailer_transport`

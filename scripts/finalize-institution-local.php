@@ -69,7 +69,6 @@ $official->set('field_org_description', 'Lutando por um futuro livre da proibiç
 FieldConfig::loadByName('block_content', 'aculta_institution', 'field_org_description')->setLabel('Slogan institucional')->setDescription('Slogan oficial exibido na identificação institucional do rodapé.')->save();
 // Preserve the superseded page as an unpublished revision; /contato is the existing Webform.
 if (!empty($state['nodes']['contact'])) { $oldContact = Node::load($state['nodes']['contact']); $oldContact->setUnpublished()->setNewRevision(TRUE); $oldContact->save(); }
-\Drupal::configFactory()->getEditable('system.site')->set('mail', '4e20coletivo@gmail.com')->save();
 $description = 'Associação sem fins lucrativos de Goiânia que desenvolve projetos de cultura, comunicação, cuidado, direitos e participação social.';
 \Drupal::configFactory()->getEditable('metatag.metatag_defaults.front')->set('tags.description', $description)->set('tags.og_description', $description)->save();
 // Node-level metatags override defaults, so keep both sources consistent.
