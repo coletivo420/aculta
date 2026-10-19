@@ -22,6 +22,9 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 
 - O Portal integra capacidades existentes. Não substitui storage, regra de negócio ou
   decisão de access de Core ou contrib.
+- Machine names de campos e IDs de bundles de entidades Drupal têm limite máximo de 32 caracteres.
+  Verificar esse limite antes de adicionar configuração ou instalar entidades: o Core rejeita nomes
+  maiores durante a criação das definições, causando falha de instalação.
 - Não criar storage paralelo quando o Core ou o contrib já tiver a capacidade.
 - Não usar service locator (`\Drupal::`) em código novo de `src/`.
 - Não hardcodar hostname ou domínio em controllers, rotas, templates ou config de tema.

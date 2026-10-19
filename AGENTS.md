@@ -139,6 +139,7 @@ complementa a listagem nativa; não a substitui.
 
 Regras resumidas:
 - Core/contrib continuam fonte de verdade; não criar storage paralelo quando a capacidade já existir;
+- nomes machine name de campos e IDs de bundles Drupal devem ter no máximo 32 caracteres; validar o comprimento antes de criar configuração ou instalar entidades, pois o Core rejeita valores maiores;
 - preferir dependency injection em classes; não introduzir novos service locators `\Drupal::...` em `src/`;
 - hooks runtime novos/refatorados usam OOP `#[Hook]` quando suportado pelo Core instalado; lifecycle permanece procedural quando exigido;
 - tratar como deprecada no projeto qualquer prática runtime legada contrária ao padrão moderno Drupal 11+ (por exemplo `#[FormAlter]`, hook procedural migrável, novo callback global ou novo service locator), mesmo quando ainda tolerada por compatibilidade; exceções precisam de evidência da API upstream;
