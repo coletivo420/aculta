@@ -5,8 +5,17 @@ use Symfony\Component\Yaml\Yaml;
 // Wiki, Commerce, LMS and Social Auth views; any other Views fail the check.
 $expected = [
   // Views do próprio projeto e do núcleo, e Views providas por módulos habilitados
-  // (Commerce, LMS/Group, Wiki, Social Auth, Webform, Revista, dblog). Cada uma depende de módulo
-  // habilitado (verificado em 2026-10-14). Qualquer outra View reprova o gate.
+  // (Commerce, LMS/Group, Wiki, Social Auth, Webform, Revista, dblog, Private Message). Cada uma depende de módulo
+  // habilitado (verificado em 2026-10-14; as exportadas em config/sync e a 'message' em 2026-10-19). Qualquer outra View
+  // reprova o gate. As Views de exemplo do VVJ habilitadas no Runtime não estão aqui: a decisão de desabilitá-las é do
+  // responsável.
+  'aculta_album_fotos',
+  'aculta_albuns',
+  'aculta_shop_catalog',
+  'classes_admin',
+  'lms_course_students',
+  'media_galleries',
+  'message',
   'aculta_activities',
   'aculta_documents',
   'aculta_news',

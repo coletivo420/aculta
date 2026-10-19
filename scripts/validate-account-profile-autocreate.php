@@ -40,16 +40,17 @@ else {
   }
   else {
     $body = $c[1];
-    $guard = strpos($body, "loadByUser(\$account, 'participante')");
+    // Um tipo de perfil por função (PerfilDoPapel): a guarda procura o perfil do papel antes de criar.
+    $guard = strpos($body, 'PerfilDoPapel::principal(');
     $create = strpos($body, '->create(');
     if ($guard === FALSE) {
-      $errors[] = "createProfile() sem a guarda loadByUser(\$account, 'participante')";
+      $errors[] = 'createProfile() sem a guarda PerfilDoPapel::principal()';
     }
     elseif ($create === FALSE || $create < $guard) {
       $errors[] = 'createProfile() cria o perfil antes de verificar se já existe';
     }
-    if (!str_contains($body, "'type' => 'participante'")) {
-      $errors[] = "createProfile() não cria perfil de tipo 'participante'";
+    if (!str_contains($body, 'PerfilDoPapel::tipoDaConta(')) {
+      $errors[] = 'createProfile() não escolhe o tipo pelo papel (PerfilDoPapel::tipoDaConta)';
     }
   }
 }
@@ -70,12 +71,13 @@ foreach ($iterator as $file) {
     continue;
   }
   $text = file_get_contents($path);
-  if (!preg_match("/create\\(\\s*\\[\\s*['\"]type['\"]\\s*=>\\s*['\"]participante['\"]/s", $text, $creation, PREG_OFFSET_CAPTURE)) {
+  if (!preg_match("/create\\(\\s*\\[\\s*['\"]type['\"]\\s*=>\\s*(?:['\"]participante['\"]|PerfilDoPapel::tipoDaConta\\()/s", $text, $creation, PREG_OFFSET_CAPTURE)) {
     continue;
   }
   // Busca de existência aceita: loadByUser() ou consulta por tipo participante, sempre antes do create.
   $before = substr($text, 0, $creation[0][1]);
   $hasLookup = str_contains($before, 'loadByUser(')
+    || str_contains($before, 'PerfilDoPapel::principal(')
     || preg_match("/->condition\\(\\s*['\"]type['\"]\\s*,\\s*['\"]participante['\"]/", $before)
     || str_contains($before, 'participantProfile(');
   if (!$hasLookup) {

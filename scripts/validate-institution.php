@@ -99,7 +99,7 @@ if (!empty($state['cms_enhancements'])) {
     throw new RuntimeException('Sitemap XML is not generated.');
   }
   echo 'Webform, metadata fields, Pathauto patterns and sitemap XML: OK.' . PHP_EOL;
-  $editor = \Drupal\editor\Entity\Editor::load('full_html');
+  $editor = \Drupal\editor\Entity\Editor::load('revista_editorial');
   $definitions = \Drupal::service('plugin.manager.ckeditor5.plugin')->getEnabledDefinitions($editor);
   if (!isset($definitions['media_library_mediaLibrary'])) {
     throw new RuntimeException('Media Library is not enabled in the content editor.');
