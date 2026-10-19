@@ -4,7 +4,8 @@ Revisão: 2026-10-19. Escopo: o que já foi preparado no sistema, onde estão os
 e o que falta. Nenhum conteúdo foi importado para o Drupal.
 
 Os números de download abaixo foram medidos em 2026-10-19, após a conclusão do reprocessamento. Para conferir de novo,
-usar somente leitura com `sudo`.
+usar somente leitura com `sudo`. A análise completa do acervo, com riscos para a importação, está em
+[AUDITORIA-GROWROOM-2026-10-19.md](AUDITORIA-GROWROOM-2026-10-19.md).
 
 ## Pré-requisito atendido: `aculta_image` pronto
 
