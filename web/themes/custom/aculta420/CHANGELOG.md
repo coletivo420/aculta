@@ -3,8 +3,8 @@
 ### Alteração não marcada — contador da lista pública do Fórum
 
 - Template e CSS apresentam a contagem preparada pela View ao lado do teaser,
-  com singular/plural em português. Runtime `toca`: HTTP 200 e oito linhas com
-  `0 respostas`; nenhum conteúdo alterado. Gates SDC/design PASS. Foundation
+  com contagem plural e data da última atividade. Runtime `toca`: HTTP 200,
+  oito linhas com `0 respostas` e data Core; nenhum conteúdo alterado. Gates SDC/design PASS. Foundation
   bloqueada pelo posicionamento divergente do bloco
   `block.block.aculta_magazine_admin_comments`; inspeção visual DEFERRED. Sem
   nova marcação: permanece `0.6.0-dev.101`, RUNTIME STATUS PARTIAL.

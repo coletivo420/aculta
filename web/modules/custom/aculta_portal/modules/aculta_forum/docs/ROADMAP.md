@@ -31,7 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
-| Não marcada | Contagem de respostas públicas na View de tópicos | Configuração Core Views executada no Runtime; oito tópicos renderizaram `0 respostas`. Validar caso positivo, invalidação após moderação e inspeção visual antes de marcar versão |
+| Não marcada | Contagem e atividade na View de tópicos | Runtime: oito tópicos com `0 respostas`; sort ACULTA executa fórmula Core `GREATEST(changed, last_comment_timestamp)` em ordem descendente e data renderizada. Caso positivo, invalidação após moderação e inspeção visual pendentes |
 | `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas e navegação HTTP; visual e hierarquia pendentes |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
 | `0.1.0-dev.26` | Fórum como aba em Conteúdo; “Comentários e moderação” como subaba; discussões contextuais fora das filas genéricas | Runtime de teste: abas carregadas e filtro exercitado; HTTP autenticado pendente |

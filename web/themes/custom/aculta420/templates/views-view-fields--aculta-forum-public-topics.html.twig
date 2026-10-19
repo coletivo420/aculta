@@ -3,8 +3,15 @@
   <div class="aculta-forum-topic-list-row__topic">
     {{ fields.rendered_entity.content }}
   </div>
-  <div class="aculta-forum-topic-list-row__replies">
-    {% set reply_count = fields.comment_count.raw|default(0) %}
-    {{ reply_count }} {{ reply_count == 1 ? 'resposta'|t : 'respostas'|t }}
-  </div>
+  <dl class="aculta-forum-topic-list-row__meta">
+    <div>
+      <dt>{{ 'Respostas'|t }}</dt>
+      {% set reply_count = fields.comment_count.raw|default(0) %}
+      <dd>{{ reply_count }} {{ reply_count == 1 ? 'resposta'|t : 'respostas'|t }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'Última atividade'|t }}</dt>
+      <dd>{{ fields.last_updated.content }}</dd>
+    </div>
+  </dl>
 </div>

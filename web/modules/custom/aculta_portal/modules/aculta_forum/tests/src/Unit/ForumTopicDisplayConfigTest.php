@@ -150,6 +150,13 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('comment_entity_statistics', $options['fields']['comment_count']['table']);
     self::assertFalse($options['fields']['comment_count']['empty_zero']);
     self::assertFalse($options['fields']['comment_count']['format_plural']);
+    self::assertSame('comment_entity_statistics', $options['fields']['last_updated']['table']);
+    self::assertSame('comment_ces_last_updated', $options['fields']['last_updated']['plugin_id']);
+    self::assertSame('comment_entity_statistics', $options['sorts']['last_updated']['table']);
+    self::assertSame('aculta_forum_last_activity', $options['sorts']['last_updated']['field']);
+    self::assertSame('aculta_forum_last_activity', $options['sorts']['last_updated']['plugin_id']);
+    self::assertSame('aculta_forum_last_activity', $options['sorts']['last_updated']['field']);
+    self::assertSame('DESC', $options['sorts']['last_updated']['order']);
     self::assertArrayNotHasKey('discussion_field_name', $options['filters']);
     self::assertContains('user.node_grants:view', $view['display']['default']['cache_metadata']['contexts']);
     self::assertSame(

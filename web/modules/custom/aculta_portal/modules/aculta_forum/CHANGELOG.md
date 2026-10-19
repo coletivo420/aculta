@@ -4,9 +4,22 @@
 
 - A View pública prepara o teaser Node existente e `comment_count` do Core,
   dentro do bundle fixo `aculta_forum_topic`, que possui um único campo de
-  discussão. A View usa o agregado Core e não executa COUNT por linha. A
-  versão segue sem marcação até confirmação de contagens positivas e revisão
-  visual. RUNTIME STATUS: PARTIAL.
+  discussão. A View usa o agregado Core e não executa COUNT por linha; ordena
+  por última atividade com `last_updated`. A versão segue sem marcação até
+  confirmação de contagens positivas e revisão visual. RUNTIME STATUS: PARTIAL.
+
+### Ordenação pela última atividade
+
+- Mantida a saída Core `comment_ces_last_updated`, com sort local
+  `aculta_forum_last_activity` usando a mesma fórmula de data. O sort do Core
+  falha em Drupal 11.4.10 ao atribuir o retorno `void` de `Sql::addOrderBy()` a
+  propriedade `string` (Drupal core issue
+  [#3519952](https://www.drupal.org/project/drupal/issues/3519952)). A primeira
+  configuração foi revertida imediatamente. O hook Views data adiciona um
+  sort virtual limitado ao Fórum; a View voltou a executar com o adaptador
+  ACULTA: SQL contém `GREATEST(node.changed, last_comment_timestamp) DESC`,
+  com 8 linhas e a coluna de data do Core renderizada. Sem resposta/comentário
+  positivo persistido; Runtime PARTIAL e versão não marcada.
 
 - Criada a página `/categorias` com View Core baseada em Taxonomy, limitada ao
   vocabulário público do ACULTA Forum e com cache por idioma/permissão. A raiz

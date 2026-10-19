@@ -1,18 +1,25 @@
 # Matriz de testes por fase
 
-## Evidência não marcada — contagem na listagem pública
+## Evidência não marcada — contagem e atividade na listagem pública
 
-- PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 131 assertions PASS.
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 137 assertions PASS.
 - No Runtime `toca` (Drupal 11.4.10, `aculta_runtime`, URI
   `https://growroom420.aculta.toca.net.br`), import parcial da View e cache
   rebuild; query retorna 8 tópicos com contagem 0, e HTTP 200 apresenta
   `0 respostas` nas oito linhas. Nenhum Node/Comment foi criado ou alterado.
-- Caso positivo, invalidação após moderação e inspeção visual continuam
-  DEFERRED. Render direto da View por Drush registrou `Missing text format: basic_html`
-  nos oito teasers, drift de formato a investigar separadamente.
+- O sort Core `comment_ces_last_updated` lançou `TypeError` em 11.4.10; a
+  configuração foi revertida e a rota voltou HTTP 200. O sort virtual
+  `PublicForumLastActivity` então executou: Views reconhece o plugin do ACULTA,
+  SQL contém `GREATEST(node.changed, last_comment_timestamp) DESC`, 8 resultados,
+  campo Core `last_updated` renderizado e HTML HTTP 200 com `0 respostas` e
+  “Última atividade” em todas as linhas. Nenhum conteúdo foi alterado.
+- Caso positivo e invalidação após moderação continuam DEFERRED. Render direto
+  por Drush registrou `Missing text format: basic_html` nos teasers; drift a
+  investigar separadamente. Inspeção visual também pendente. RUNTIME STATUS:
+  PARTIAL.
   RUNTIME STATUS: PARTIAL.
-- Rollback do objeto de configuração: cópia pré-alteração em
-  `/home/aculta/private/aculta/forum-topic-count-20261019/views.view.aculta_forum_public_topics.yml`.
+- Rollback seguro ao estado funcional anterior (contador sem data/sort) em
+  `/home/aculta/private/aculta/forum-activity-20261019/views.view.aculta_forum_public_topics.yml`.
 
 ## Evidência dev.28 — índice público de categorias
 

@@ -232,11 +232,12 @@ borda/superfície e categoria em etiqueta; o cartão de autoria continua vindo d
 `aculta_user`. Nenhum conteúdo foi alterado.
 
 O template `views-view-fields--aculta-forum-public-topics.html.twig` preserva
-o teaser renderizado pelo Drupal e apresenta ao lado a contagem de respostas.
-A View do Portal prepara o número; o Twig escolhe o rótulo singular/plural,
-incluindo `0 respostas`. Runtime exibiu oito contagens zero. Inspeção visual
-segue pendente; o gate Foundation está bloqueado por drift do bloco
-administrativo da Revista, então a alteração não recebeu nova versão.
+o teaser renderizado pelo Drupal e apresenta contagem e última atividade. A
+View do Portal prepara os valores com os handlers de estatística do Core; o
+Twig escolhe o rótulo singular/plural. A ordenação usa atividade descendente
+após tópicos fixados. Runtime confirmou oito contagens zero e render da data.
+Inspeção visual pendente; Foundation está
+bloqueada por drift do bloco administrativo da Revista, então sem nova versão.
 
 ## Patterns
 
