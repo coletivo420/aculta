@@ -11,6 +11,8 @@ já fornecem.
 Core + contrib → aculta_portal → contrato neutro de apresentação → ACULTA420
 ```
 
+> **Código no Aculta Portal, Design no ACULTA420.**
+
 O Portal cuida de integração funcional, rotas, dados, acesso, cache e presenters.
 O tema cuida de templates, componentes e estilo. O Portal não deve criar storage
 paralelo nem depender do tema para funcionar.

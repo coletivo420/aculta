@@ -5,6 +5,19 @@
 - Portal Unit: 219 testes/551 assertions; `aculta_lms`: 25 testes/392 assertions; `aculta_lms_h5p`: 24 testes/272 assertions. Gates Drupal 11+, imagem e slugs aprovados.
 - Runtime `cursos`: PASS. Conta `agente-teste-20261019-lms-1` sem e-mail confirmado entrou na aula de revisão do curso após associação temporária ao Group; o conteúdo da atividade foi renderizado. Conta e membership removidas via Entity API ao fim; cache rebuild concluído. Nenhum dado do curso foi alterado.
 
+## 0.4.0-dev.155 — revisão da PR #291: retorno do Mercado Pago, doações, H5P e `.htaccess` — 2026-10-19
+
+- Retorno em popup (`CheckoutPopupReturnController`): o destino aceita só caminho do mesmo site (`/x`, rejeitando `//` e `/\`) ou URL de mesma origem; `javascript:` e URLs externas viram `/`. O valor vai ao script como literal JSON com `JSON_HEX_*`, sem escape manual que deixava `</script>` passar. Teste Unit `CheckoutPopupReturnControllerTest`.
+- `onReturn` do Checkout Pro: sem `order` no pagamento, a checagem de vínculo usa o `external_reference` do pagamento e falha fechado; o valor registrado é o `transaction_amount` confirmado pela API (moeda igual à do pedido), não o saldo do pedido; `preference_id` é preservado ao gravar os dados do pedido.
+- Doações: `/donate/{amount}/now` passa a usar `checkAccess()` (respeita `donation_route`) e aceita só valor inteiro positivo. O pane de doação recebe `current_user` por DI, e o widget de nível resolve a moeda padrão da loja em tempo de uso (`currencyCode()`), sem serviço estático em `defaultSettings()`.
+- Service locator removido do `CheckoutPro::ajaxRefreshPaymentOptions()`: usa `getUserInput()` no lugar de `\Drupal::request()`.
+- H5P (`H5PManagedFileStorage::deleteContent`): um arquivo recusado não interrompe a exclusão do conteúdo; a pasta é mantida quando algum arquivo ficou retido.
+- `web/.htaccess`: `AddType ... .mjs` dentro de `<IfModule mod_mime.c>`. Removido o scaffold duplicado `assets/scaffold/htaccess-aculta-additions.txt`, sem referências.
+- Documentação: docblock de "Opções" de `MessagesController` associado ao método correto; regra "Código no Aculta Portal, Design no ACULTA420" no README do módulo.
+- Pendências desta revisão, não corrigidas aqui: `\Drupal::service('aculta_lms_h5p.framework')` na ponte estática de `H5PDrupal` (depende da refatoração do fork H5P); `DT-MP-09` segue aberto e bloqueia produção (decisão do responsável); gate de fronteira ainda marca `messages`/`feedback-section` em código do módulo e o token `requirements-cep-table` sem mapa no tema (exige autorização para `aculta420`).
+- Evidência: Unit de `aculta_donation`, `aculta_lms_h5p`, `aculta_messenger` e Portal (282 testes OK, PHP 8.4.26 do servidor de testes) e Unit de `aculta_pagamentos_mercadopago` (8 testes OK). Gates: Drupal 11+ PASS, endereços de ambiente PASS, slugs PASS. Kernel não executado.
+- RUNTIME STATUS: DEFERRED (código não aplicado nem testado no Runtime de teste).
+
 ## 0.4.0-dev.154 — registro dos testes de Mercado Pago e limpeza de pagamento de teste — 2026-10-19
 
 - Pagamento real de R$ 1,00 com a preferência de produção da ACULTA foi aprovado e estornado totalmente (estorno `3395210317`).

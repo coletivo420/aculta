@@ -2,6 +2,10 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.46 — docblocks de Opções corrigidos — 2026-10-19
+
+- Docblock "Opções" movido de `drawerOptions()` para `drawerRelationship()`, que é o método que o descreve. Sem mudança de comportamento.
+
 ## 0.1.1-dev.45 — avisos só para contas — 2026-10-17
 
 - O ícone de avisos e a contagem não aparecem para visitante anônimo (decisão do responsável).

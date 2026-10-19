@@ -136,10 +136,6 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The "Opções" form of a conversation posts here: the drawer gets the conversation again, with the new state.
-   * The form is processed while the conversation is built, so the answer already shows the change.
-   */
-  /**
    * The "Opções" menu of one conversation, for a row of the list: the same form as the conversation's, loaded when the
    * member opens the row's "Opções" (see lazyOptionsDisclosure).
    */
@@ -157,6 +153,10 @@ final class MessagesController extends ControllerBase {
     ]);
   }
 
+  /**
+   * The "Opções" form of a conversation posts here: the drawer gets the conversation again, with the new state.
+   * The form is processed while the conversation is built, so the answer already shows the change.
+   */
   public function drawerRelationship(PrivateMessageThreadInterface $private_message_thread): Response {
     $access = $private_message_thread->access('view', $this->account, TRUE);
     if (!$access->isAllowed() || !$private_message_thread->isMember($this->account->id())) {
