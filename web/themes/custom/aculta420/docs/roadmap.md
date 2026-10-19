@@ -2,12 +2,13 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.101 | Corrige classes dos cards do ACULTA Forum com base no render Firefox | Foundation, SDC, design e fixtures; Firefox desktop e viewport compacto de 500 px inspecionados. Viewport de 390 px e modo escuro pendentes. | Twig declara variante teaser/full, alinhada aos seletores; categoria vira etiqueta semântica |
 | 0.6.0-dev.100 | Ajuste responsivo dos controles Comment | Foundation 354, SDC 516, design 2078 e fixtures 157 PASS; visual no navegador DEFERRED | Largura total exclui controles binários e de arquivo |
 | 0.6.0-dev.99 | Formulário de resposta Comment compartilhado | Foundation 354, SDC 516, design 2078, fixtures 157, fronteira 1331 e mapa 154 PASS; Runtime raiz 200 e CSS agregado verificado; visual no navegador/envio DEFERRED | Regras responsivas e foco em `discussion.css` |
 | 0.6.0-dev.98 | Estado vazio do índice Growroom420 | Gates PASS; raiz HTTP 200 mostra a mensagem | `.view-aculta-forum-public-topics .view-empty` em `forum-index.css`; inspeção visual pendente |
 | 0.6.0-dev.97 | Apresentação de tópicos ACULTA Forum | Gates PASS; render Runtime não salvo PASS; inspeção visual no navegador pendente | `node--aculta-forum-topic.html.twig`; identidade via `aculta_user`; tokens em `forum-index.css` |
 
-Atualizado em 2026-10-19 (`0.6.0-dev.97`; validação visual no navegador pendente). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-19 (`0.6.0-dev.101`; correção visual do Fórum validada em Firefox, formulário de criação não submetido). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 

@@ -1,3 +1,18 @@
+## 0.6.0-dev.101 — corrige os cartões da lista Growroom420 — 2026-10-19
+
+Classificação: PATCH visual baseado em inspeção Firefox.
+
+- O template do tópico declara explicitamente os modificadores teaser/full que
+  seus estilos utilizam; antes, as classes padrão do wrapper Node não estavam
+  presentes e os cards apareciam como conteúdo sem superfície/borda.
+- A categoria aparece como etiqueta semântica mesmo com formatter sem link. O
+  cartão de identidade continua vindo exclusivamente do `aculta_user`.
+- Foundation verifica a correspondência Twig/CSS. Firefox no Runtime de teste
+  confirmou estilos computados em desktop e viewport compacto de 500 px. O
+  viewport de 390 px e o modo escuro seguem pendentes. Nenhum conteúdo foi
+  alterado. RUNTIME STATUS: PARTIAL para apresentação; fluxo autenticado segue
+  pendente.
+
 ## 0.6.0-dev.100 — restringe largura dos controles de resposta — 2026-10-19
 
 Classificação: PATCH de responsividade.

@@ -217,16 +217,19 @@ Portal por tokens data-portal-ui; Views/VVJB continuam fonte dos itens.
 
 Status: experimental, até validação em navegador no servidor de testes.
 
-### Tópico público ACULTA Forum (0.6.0-dev.97)
+### Tópico público ACULTA Forum (0.6.0-dev.101)
 
 `node--aculta-forum-topic.html.twig` deriva do template Node Core 11.4.10:
 mantém attributes, title prefix/suffix, título linkado no teaser e conteúdo
 renderizado. O byline padrão (`author_picture`/`author_name`) é omitido porque a
 autoria vem do cartão de `aculta_user`, que aplica a política de privacidade. A
 data segue visível. `forum-index.css` apresenta teasers, categorias e corpo com
-tokens semânticos. `renderInIsolation()` no Runtime de teste confirmou o
-presenter, cartão compartilhado e ausência do byline/imagem padrão. Inspeção
-visual em navegador ainda pendente.
+tokens semânticos. O presenter declara `aculta-forum-topic--{view_mode}` porque
+o template override não recebe automaticamente as classes bundle/mode do
+wrapper padrão do Node. O gate da Foundation alinha esses modificadores aos
+seletores teaser/full. Firefox no Runtime de teste confirmou os cartões com
+borda/superfície e categoria em etiqueta; o cartão de autoria continua vindo do
+`aculta_user`. Nenhum conteúdo foi alterado.
 
 ## Patterns
 

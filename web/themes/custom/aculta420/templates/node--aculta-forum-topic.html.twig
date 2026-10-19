@@ -8,7 +8,7 @@
  * policy, so this presenter keeps only the date.
  */
 #}
-<article{{ attributes.addClass('aculta-forum-topic') }}>
+<article{{ attributes.addClass('aculta-forum-topic', 'aculta-forum-topic--' ~ view_mode) }}>
   {{ title_prefix }}
   {% if label and view_mode != 'full' %}
     <h2{{ title_attributes }}>

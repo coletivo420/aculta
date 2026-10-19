@@ -36,7 +36,15 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.100', 'Theme metadata marks the current version 0.6.0-dev.100.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.101', 'Theme metadata marks the current version 0.6.0-dev.101.');
+$forumTopicPresenter = file_get_contents($themeRoot . '/templates/node--aculta-forum-topic.html.twig');
+$forumTopicStyles = file_get_contents($themeRoot . '/css/components/forum-index.css');
+$assert(
+  str_contains($forumTopicPresenter, "'aculta-forum-topic--' ~ view_mode")
+    && str_contains($forumTopicStyles, '.aculta-forum-topic--teaser')
+    && str_contains($forumTopicStyles, '.aculta-forum-topic--full'),
+  'Forum topic view-mode classes emitted by Twig have matching teaser and full styles.',
+);
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
