@@ -392,9 +392,6 @@
             },
             "file-mapping": {
                 "[project-root]/.gitattributes": false,
-                "[web-root]/.htaccess": {
-                    "append": "assets/scaffold/htaccess-aculta-additions.txt"
-                },
                 "[web-root]/robots.txt": false
             }
         },
