@@ -22,12 +22,12 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F7 — Turmas e memberships | LMS Classes conforme existência/metadata real, educadores/alunos, isolamento | Usuário A/B, educador A/B, acesso admin e autocadastro/política aprovados | Não habilitar autoenrollment até política; rollback de grants/config em janela controlada |
 | F8 — Avaliação objetiva | Answer plugins LMS, tentativas, scores e feedback | Cálculo repetível no servidor, regra documentada, audit trail e sem score externo confiado | Remover plugin somente após confirmar atividades referenciadas; preservar respostas existentes |
 | F9 — Webform Score e entregas | Webform Score, LMS File Upload, storage privado | Identidade/autoria e resultados integrados sem gradebook duplicado; revogação de membership corta arquivos | Dependente de APIs Composer e privacidade; desabilitar formulário/integração mantendo submissions e arquivos |
-| F10 — H5P | Integração própria `aculta_lms_h5p`, editor, bibliotecas privadas e reprodução integrada ao curso | Bibliotecas, permissões, uploads, CSP/isolamento, salvamento e acesso de estudante homologados; sem nota oficial até API confiável | Despublicar atividades sem apagar conteúdo válido; preservar bibliotecas enquanto houver referências |
+| F10 — H5P | Integração própria `aculta_lms_h5p`, editor, bibliotecas privadas, reprodução integrada ao curso e imagens via `aculta_image`; materiais PDF complementares usam `aculta_pdf_viewer` + Group | Bibliotecas, permissões, uploads, imagens, CSP/isolamento, salvamento e acesso de estudante homologados; sem nota oficial até API confiável | Despublicar atividades sem apagar conteúdo válido; preservar bibliotecas enquanto houver referências |
 | F11 — Certificados | Entity Print após conclusão LMS aprovada | emissão/autorização, verificação, reemissão, revogação, auditoria, privacidade e template testados | Definir registro imutável/derivado antes de codar. Reverter emissão sem apagar auditoria/artefatos válidos |
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
 | F13 — Notificações educacionais | Eventos LMS → `aculta_messenger` / Message Notify | dedupe, access atual, preferências, e-mail mínimo e fila testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
-| F15 — Integrações de conteúdo | Gallery, Magazine, Wiki, Forum e eventos quando estabilizados | referência de entidades e acesso preservados em todos os purposes | Só após roadmap/PRs dos submódulos estabilizados; remover links sem deletar conteúdo |
+| F15 — Integrações de conteúdo | Gallery, Magazine, Wiki e `aculta_forum`; completar entrega de imagens do estudante pelo `aculta_image` e discussões de curso/atividade LMS-H5P | Referências seguem as entidades existentes; tópicos, respostas e arquivos respeitam Group, membership atual, cache, busca, feeds e acesso por purpose, sem duplicação de storage/entidade | `aculta_forum` ainda é só documentação; depender de implementação e testes de isolamento antes de criar vínculos ou mostrar discussões |
 | F16 — Hardening | performance, segurança, privacidade, acessibilidade, cache e tamanho/timeout PDF | zero Critical/High; matriz completa e gates PASS | rollback por componente/flag/config, sem downgrade destrutivo de entidades |
 | RC — Homologação integrada | testes no Homelab, browser, config sync, documento e gate de release | checklist/testes completos, Runtime PASS, versão e rollback anotados | Nenhum deploy/merge automático; interromper RC se access/cache, segurança ou banco divergir |
 | F17 — Google Classroom (opcional e última) | Após RC aprovado e nova decisão; publicar somente link para atividade ACULTA | OAuth/scopes, consentimento e link para fonte LMS aprovados | Nenhum pacote/token/rota/storage nesta linha; desabilitar integração sem afetar LMS |
@@ -167,8 +167,10 @@ RUNTIME STATUS: HOMOLOGAÇÃO DE TESTE CONCLUÍDA; produção não foi alterada.
 
 As etapas depois da F10 continuam na ordem definida acima: F11 certificados (após decisões de produto), F12
 dashboards, F13 notificações educacionais, F14 conexões, F15 integrações de conteúdo, F16 hardening e RC
-integrado. F17 Google Classroom permanece opcional, por último e dependente de nova decisão. Antes de avançar
-para essas fases, fechar as homologações Runtime pendentes de F6–F9 e a aceitação ponta a ponta da F10.
+integrado. F17 Google Classroom permanece opcional, por último e dependente de nova decisão. F10 está
+homologada no Runtime de teste; os objetivos de integração de envio de imagem e discussão passam para F15,
+com discussão condicionada à implementação executável do `aculta_forum`. As homologações Runtime pendentes
+de F6–F9 continuam antes da RC.
 
 ## Ordem, PR e status
 

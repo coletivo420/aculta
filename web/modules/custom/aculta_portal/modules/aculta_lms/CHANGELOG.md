@@ -1,5 +1,20 @@
 # Changelog — aculta_lms
 
+## Integrações de conteúdo em andamento — 2026-10-19
+
+- `aculta_lms` declara as dependências `aculta_image` e
+  `aculta_pdf_viewer_group`: imagens de capa seguem a política ACULTA e Media
+  `course_document` preserva acesso de turma pelo Group e leitura pelo viewer
+  PDF compartilhado.
+- Contrato expandido para submissões com imagem e discussão ligada a curso ou
+  atividade. Upload de imagem de entrega e vínculo de discussão com
+  `aculta_forum` permanecem objetivos a implementar/homologar; o módulo de
+  fórum ainda não tem API executável. Nenhuma integração cria storage paralelo.
+- `aculta_lms_h5p` já encaminha imagens do editor/assets via `aculta_image`;
+  PDFs complementares continuam sob Media/viewer e Group, enquanto assets H5P
+  são servidos pelo controlador H5P protegido. Não houve importação de
+  configuração nem mutação do Runtime neste registro.
+
 ## Correção da sala de curso usada na homologação F10 — 2026-10-19
 
 - Corrige a resolução da classe `CourseEnrollmentPurchaseForm` chamada pela sala do curso; o namespace incorreto gerava 500 para visitantes sem acesso `take`.

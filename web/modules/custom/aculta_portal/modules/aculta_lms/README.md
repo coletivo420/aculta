@@ -4,6 +4,25 @@ Submódulo opcional de integração educacional do Portal. Drupal LMS e Group s�
 as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,
 progresso, certificado, mensagem ou amizade paralelos.
 
+## Integrações de conteúdo
+
+- Imagens de capa de turma usam `aculta_image` e sua `UploadPolicy`; imagens
+  enviadas ao editor H5P usam `aculta_image.upload_ingester` e o ciclo de vida
+  de File/uso compartilhado.
+- PDFs de material de turma usam Media `course_document`, relação de acesso
+  Group e o viewer `aculta_pdf_viewer`; o acesso ao arquivo é revalidado pela
+  rota privada do Core. O módulo declara a dependência do submódulo Group do
+  viewer para evitar configuração de curso sem o plugin correspondente.
+- As discussões de curso/atividade serão integradas quando `aculta_forum`
+  tiver implementação executável. Tópicos e comentários continuarão nas APIs
+  Forum/Node/Comment e o acesso seguirá o Group do curso, sem storage paralelo.
+  O contrato e as condições estão em
+  [LMS-INTEGRATION-CONTRACTS.md](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md).
+
+As integrações ainda exigem aceite ponta a ponta no Runtime após a configuração
+de cada fluxo; a dependência do PDF garante disponibilidade do plugin, mas não
+substitui a validação de permissão/cache nem importa conteúdo.
+
 ## F1 — Fundação
 
 O serviço `aculta_lms.course_completion_publisher` publica o evento
