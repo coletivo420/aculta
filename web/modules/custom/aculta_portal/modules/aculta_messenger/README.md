@@ -70,7 +70,7 @@ transportador.
 
 ## Domain Purpose
 
-Preferências ficam em `/configuracoes/mensagens`, na área ACCOUNT. O opt-out de
+Preferências de e-mail ficam em `/configuracoes/email` (Notificações por e-mail), na área ACCOUNT. O opt-out de
 e-mail reutiliza `private_message.receive_notification`; a entrega passa pela
 ferramenta de e-mail já instalada. Bloqueios e assinaturas usam os controles
 nativos por membro e por tópico.
@@ -124,7 +124,7 @@ A seção Mensagens da Minha Conta usa `/mensagens` e subrotas portuguesas no
 purpose `account`. Conversas abre a inbox do Private Message; a navegação
 condicional mostra a contagem de threads não lidas e cada thread da inbox exibe
 estado individual. Notificações lista avisos privados entregues ao próprio
-usuário; `/mensagens/avisos` lista comunicados publicados e visíveis, marcáveis
+usuário; a aba `avisos` de `/avisos-mensagens` lista comunicados publicados e visíveis, marcáveis
 como lidos/não lidos por conta.
 
 
@@ -132,7 +132,7 @@ como lidos/não lidos por conta.
 
 A entidade `aculta_friendship` e o serviço `aculta_user.friendship_manager` são
 a fonte de verdade para pedidos e amizades. O Messenger integra ações na
-página de perfil e pedidos recebidos em `/mensagens/notificacoes`. A preferência
+página de perfil. Pedidos recebidos não têm tela dedicada desde a remoção de `/mensagens/notificacoes` (ver `docs/operations/DEBT-REGISTER.md`, DT-O15). A preferência
 individual `message_privacy` usa User Data sob a chave `aculta_messenger`;
 `friends` restringe apenas novas conversas. Respostas em threads existentes e
 bloqueios nativos do Private Message conservam suas regras.

@@ -69,7 +69,7 @@ publicados e visíveis com links nativos lido/não lido do Flag.
 
 ## Checklist para implantação futura
 
-Preferências em `/configuracoes/mensagens` reutilizam `user.data` do Core e a
+Preferências de e-mail em `/configuracoes/email` reutilizam `user.data` do Core e a
 chave `private_message.receive_notification`, já consumida pelo Private Message
 e pelo worker Messenger. A aba aparece para contas com acesso a mensagens e com
 avisos habilitados na configuração nativa. Não há opção/storage para restringir

@@ -113,7 +113,7 @@ Hooks são classes com `#[Hook]`, descobertas automaticamente pelo Core; não s�
 | Papel ou regra | Classe | Hook ou ponto de entrada |
 |---|---|---|
 | Estudante por matrícula em curso/turma, só alunos | `Hook\EnrollmentRoleHooks` | `group_relationship_insert` (plugin `group_membership`, tipo `lms_course` ou `lms_class`) |
-| Wiki para quem confirmou o e-mail | `Hook\RoleSyncHooks` | `user_presave` |
+| Wiki para quem confirmou o e-mail | Papel `email_confirmed` (`wiki_contributor` mesclado; sem hook) | Configuração do papel |
 | Realms de visibilidade dos fóruns (papel, permissão, marcador) | `Forum\RestrictedForumGrants` | `grantsFor()` consumido pelos hooks de acesso de fórum |
 | Acesso e listagens dos fóruns restritos | `Hook\RestrictedForumHooks` | node access e entity access |
 | Associado: concessão e marcador de conta | `Associado\AssociadoMarker`, `Form\AssociadoMarkForm` | fallback do realm de associados |

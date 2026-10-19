@@ -117,7 +117,7 @@ Pendente: teste em navegador da abertura automática e do fechamento do popup; t
 | Confirmação de e-mail é etapa anti-bot, não permissão editorial | Documentado | `EMAIL-CONFIRMATION-POLICY.md` |
 | Papel `email_confirmed` é irreversível (sem remoção pela administração) | Implementado | `EmailConfirmedRoleGuard`, `EmailConfirmedRoleHooks` |
 | `skip CAPTCHA` só no papel `email_confirmed`; `authenticated` não muda | Mantido (confirmado pelo responsável) | `user.role.email_confirmed` |
-| `wiki_contributor` acompanha `email_confirmed` em todos os casos | Implementado | `RoleSyncHooks` |
+| `wiki_contributor` acompanha `email_confirmed` em todos os casos | Implementado: papel mesclado em `email_confirmed` | Configuração do papel; `scripts/validate-aculta-user-roles.php` impede o papel antigo |
 | Troca de e-mail só pelo formulário de Minha Conta | Implementado | `EmailChangeHooks`, `EmailChangePolicy` |
 | Troca dispara nova confirmação; papel permanece | Mantido pelo módulo `email_confirmer_user` (ligado no Runtime) | seção 9 de `EMAIL-CONFIRMATION-POLICY.md` |
 | Troca de e-mail feita pelo administrador é aceita sem confirmação (bypass por `is_admin`) | Decidido: aceito | seção 9 |
