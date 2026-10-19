@@ -1,3 +1,10 @@
+## Não lançado — acesso do LMS sem confirmação de e-mail
+
+- Alinha as rotas de início de curso e respostas à decisão F7: e-mail não é pré-requisito para participar após matrícula.
+- O acesso `take` do Group e a política vigente de termos continuam obrigatórios; teste Unit cobre aluno não confirmado permitido e não matriculado negado.
+- Portal Unit: 219 testes/551 assertions; `aculta_lms`: 25 testes/392 assertions; `aculta_lms_h5p`: 24 testes/272 assertions. Gates Drupal 11+, imagem e slugs aprovados.
+- Runtime `cursos`: PASS. Conta `agente-teste-20261019-lms-1` sem e-mail confirmado entrou na aula de revisão do curso após associação temporária ao Group; o conteúdo da atividade foi renderizado. Conta e membership removidas via Entity API ao fim; cache rebuild concluído. Nenhum dado do curso foi alterado.
+
 ## 0.4.0-dev.153 — Mercado Pago: estorno negado para doação e curso; Runtime migrado — 2026-10-18
 
 - Regra: doação (pedido `donate_order_type`, item `donate_item_type`) e curso (pedido ou item `curso`) não têm estorno. Decidida em `MercadoPagoPaymentPolicy::bloqueiaEstorno()` (função pura) e aplicada por `RefundEligibilitySubscriber` ao evento `aculta_pagamentos_mercadopago.refund_eligibility`.

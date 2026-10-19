@@ -13,11 +13,11 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Checkout e cursos: a regra original do dono do recurso continua valendo, e o e-mail confirmado é exigido junto.
+ * Checkout e cursos: preserva acesso original; cursos seguem matrícula Group sem exigir e-mail confirmado.
  *
  * A política de confirmação de e-mail não substitui a regra do Commerce (dono do pedido, loja publicada,
- * itens, permissão "access checkout") nem a do LMS (group.take). Cada rota tem um único _custom_access,
- * então a combinação acontece aqui, com andIf(), e o cache das duas regras é acumulado.
+ * itens, permissão "access checkout") nem a do LMS (group.take). Para loja e rotas sem recurso, combina a regra de
+ * e-mail; para cursos, combina somente o acesso Group com os termos vigentes.
  */
 final class ProtectedRouteAccessCheck {
 
@@ -39,11 +39,13 @@ final class ProtectedRouteAccessCheck {
       ->andIf($this->terms($account));
   }
 
-  /** Curso e lição do LMS: rotas com o parâmetro group. */
+  /** Curso e lição do LMS: Group decide a matrícula; termos seguem obrigatórios. */
   public function course(RouteMatchInterface $routeMatch, AccountInterface $account): AccessResult {
     $group = $routeMatch->getParameter('group');
     $take = $group ? $group->access('take', $account, TRUE) : AccessResult::neutral();
-    return $take->andIf($this->emailCheck->access($account))->andIf($this->terms($account));
+    // A inscrição em cursos não exige confirmação de e-mail. Não substituir
+    // nem ampliar o acesso nativo: só participa quem passa pelo Group take.
+    return $take->andIf($this->terms($account));
   }
 
   /** Rotas sem recurso próprio (ex.: /checkout): e-mail confirmado e aceite dos termos. */

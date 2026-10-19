@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## Continuação F7 — participação sem confirmação de e-mail
+
+- Corrige a divergência entre a matrícula em cursos, que não exige confirmação de e-mail, e as rotas de aula/resposta que ainda exigiam a marca global `email_confirmed`.
+- As rotas continuam exigindo acesso `take` atual do Group e aceite vigente dos termos. Não amplia acesso de pessoas sem matrícula.
+- Testes Unit do `ProtectedRouteAccessCheck`: estudante não confirmado com `take` permitido passa; pessoa sem `take` continua bloqueada. Runtime `cursos`: PASS com usuário temporário sem confirmação de e-mail e matrícula Group; a atividade de revisão renderizou. Usuário e membership removidos via Entity API; nenhum conteúdo do curso foi alterado.
+- RUNTIME STATUS: código aplicado por cache rebuild e smoke HTTP aprovado no Runtime de teste `aculta_runtime`.
+
 ## Não lançado — F10: auditoria H5P
 
 - A inspeção do endpoint de upload H5P `2.0.0-beta1` confirmou que a permissão de

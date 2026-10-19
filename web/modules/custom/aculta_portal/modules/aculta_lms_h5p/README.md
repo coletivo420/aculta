@@ -7,11 +7,13 @@ Composer independentes, sob GPL-3.0-only.
 
 ## Estado
 
-O módulo permanece desabilitado até a conclusão dos testes de isolamento,
-permissões, associação com turma/curso e persistência de tentativas. A rota
-pública de iframe do módulo de origem foi removida porque não fazia a validação
-de acesso ao conteúdo pai. O conteúdo deve ser apresentado no contexto de uma
-aula/turma com acesso validado pelo Drupal e pelo LMS.
+O módulo está habilitado no Runtime de teste `cursos` para validação funcional;
+isso não significa aceite do fluxo completo. A edição/salvamento e a reprodução
+H5P ainda precisam de smoke ponta a ponta com dados descartáveis. A rota pública
+de iframe do módulo de origem foi removida porque não validava o acesso ao
+conteúdo pai. O conteúdo deve ser apresentado no contexto de um curso com acesso
+validado pelo Drupal e pelo LMS. Nenhuma alteração de produção foi feita nesta
+execução.
 
 ## Painéis e vínculo com cursos
 

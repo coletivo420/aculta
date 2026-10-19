@@ -19,7 +19,7 @@ Os números seguem a ordem do Drupal no projeto: **quanto menor o número, maior
 | 1 | `content_editor` | Editor de conteúdo | Administrativa, só com `email_confirmed`; moderador do Fórum, revisor e moderador da Wiki |
 | 0 | `administrator` | Administrador | Administrativa; bypass total |
 
-Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula mesmo antes de confirmar o e-mail, mas só herda as permissões de `email_confirmed` depois que `EmailConfirmationPolicy` registra a confirmação real.
+Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula mesmo antes de confirmar o e-mail, mas só herda as permissões de `email_confirmed` depois que `EmailConfirmationPolicy` registra a confirmação real. Participar de um curso não exige confirmação de e-mail: o acesso continua condicionado à matrícula/permissão `take` do Group e ao aceite vigente dos termos.
 
 ## 2. Papel `content_editor`
 

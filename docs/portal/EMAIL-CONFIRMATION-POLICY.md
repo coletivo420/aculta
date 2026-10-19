@@ -7,7 +7,10 @@ Status: **parcialmente implementada** (ver seções 9 e 10). As decisões penden
 Usuário com e-mail não confirmado:
 
 - **Pode:** acessar o site, fazer login, navegar e usar a área "Minha conta".
-- **Não pode:** realizar cursos (matrícula e acesso às aulas) e editar a wiki (criar ou alterar verbetes).
+- **Não pode:** editar a wiki (criar ou alterar verbetes), comentar, comprar produtos não educacionais ou apoiar.
+- **Cursos:** confirmação de e-mail não é requisito de matrícula nem de participação. O acesso às aulas continua
+  condicionado à permissão `take` atual do Group e ao aceite dos termos vigente; o LMS/Group permanece a fonte de
+  verdade para matrícula e acesso.
 
 ## 2. Aviso em "Minha conta"
 
@@ -33,7 +36,8 @@ pelo Portal (flag por usuário, por exemplo em `user.data` do módulo `aculta_po
 
 ## 5. Pontos de aplicação
 
-- Cursos: matrícula e acesso às aulas (`aculta_portal` / LMS). Bloquear com `access` do Portal, sem alterar o LMS.
+- Cursos: matrícula e acesso às aulas são autorizados pelo Group/LMS; não exigir a marca global de e-mail confirmado.
+  A política geral de termos continua aplicada às rotas de participação.
 - Wiki: criação e edição de verbetes e categorias (permissões de conteúdo e `entity_access` do Portal).
 - Aviso: formulário/seção de "Minha conta" do shell do Portal, apenas para o usuário dono da conta.
 
@@ -118,7 +122,8 @@ própria e não devem ser tratados como garantia.
 
 | Área | Regra | Situação | Onde |
 |---|---|---|---|
-| Cursos (matrícula e aulas) | Exige e-mail confirmado | Aplicado | `EmailConfirmedAccessCheck`, via `ProtectedRouteAccessCheck` |
+| Cursos (matrícula e aulas) | Sem requisito de e-mail; exige Group `take` e termos vigentes | Aplicado | `ProtectedRouteAccessCheck::course()` |
+| Checkout de curso | Sem requisito de e-mail; exige propriedade/acesso do pedido e termos vigentes | Aplicado | `ProtectedRouteAccessCheck::checkout()` para pedido `curso` |
 | Checkout (loja) | Exige e-mail confirmado | Aplicado | `ProtectedRouteAccessCheck` (rota `/checkout`) |
 | Apoio (contribuições) | Exige e-mail confirmado | A confirmar | Sem verificação própria nesta revisão |
 | Wiki: editar e excluir verbete | Exige e-mail confirmado | Aplicado | `EntityHooks::entityAccess`, `update` e `delete` |
