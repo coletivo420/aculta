@@ -1,10 +1,13 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo planejado de `aculta_portal`. Linha do projeto: **0.1.0-dev.1**. O
+Submódulo em preparação de `aculta_portal`. Linha do projeto: **0.1.0-dev.3**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
 uma migração segura, por fase própria. Este diretório ainda é documental; não
-há `.info.yml`, serviços ou rotas runtime próprios nesta base.
+há `.info.yml`, rotas ou motor de discussão executável nesta base. `aculta_user`
+já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC
+experimental compartilhado. A integração dos cartões nas discussões atuais e no
+motor novo segue por contexto e fases.
 
 ## Arquitetura e regras
 
@@ -12,7 +15,7 @@ há `.info.yml`, serviços ou rotas runtime próprios nesta base.
 - Publicações, LMS e Wiki usam comentários no contexto da entidade original; não
   há tópico público automático para publicação ou verbete.
 - LMS tem adapter opcional e acesso revalidado por Group/membership e Entity Access.
-- `aculta_user` é o dono único de identidade e cartões de autor/participante/perfil.
+- `aculta_user` é o dono único de identidade e cartões de autor/participante/perfil. Variantes distinguem `author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki` e `author_growroom_historico`; autoria histórica não passa pelo resolver de User.
 - ACULTA420 é o dono visual; `aculta_forum` entrega contrato neutro, acesso e cache.
 - Core/contrib permanecem fonte de verdade para Node, Comment, Taxonomy, Views,
   Search API, History e Flag. Sem storage paralelo de resposta/categoria.
@@ -57,9 +60,9 @@ Consulte [inventário de remoção](docs/MIGRATION-REMOVAL.md) e
 
 ## Versão e execução
 
-A fase atual `0.1.0-dev.1` é auditoria e fundação documental. Releases Portal e
-tema conservam as linhas próprias; nenhuma versão de `aculta_user` ou ACULTA420
-avança por documentação. Fases funcionais precisam de commits e PR rastreáveis,
-validações reais e status Runtime explícito. O roadmap detalha os gates. Não
-executar desinstalação, exclusão, import/export de configuração, update de banco,
-deploy ou Runtime como parte desta fase.
+A fase atual `0.1.0-dev.3` entrega a base dos cartões; dev.1 foi documental e
+dev.2 fundou identidade cacheável. Releases Portal, User e tema conservam linhas
+próprias. Fases funcionais precisam de commits rastreáveis, validações reais e
+status Runtime explícito. O roadmap detalha os gates. A retirada do Forum contrib
+continua futura, sem desinstalação, exclusão, import/export de configuração,
+update de banco ou deploy nesta fase.

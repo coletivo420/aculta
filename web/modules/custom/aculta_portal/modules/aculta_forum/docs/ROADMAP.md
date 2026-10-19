@@ -22,12 +22,21 @@ Runtime.
 - Testes Unit direcionados para payload neutro, cache e autoria legada.
 - Sem renderização, CSS, alterações de tema ou mudanças no Runtime.
 
-## `0.1.0-dev.3` — Author Pane moderno (`aculta_user` + ACULTA420)
+## `0.1.0-dev.3` — Author Pane moderno (`aculta_user` + ACULTA420) (código implementado)
 
 - Implementar variantes `author_forum`, `author_comment`, `author_forum_stacked`,
-  `author_legacy`; preparar `author_lms` e `author_wiki`.
-- Portar capacidades pertinentes do Author Pane após validação funcional.
-- Testar mobile, acessibilidade, modos de cor, cache e privacidade.
+  `author_growroom_historico`; preparar `author_lms` e `author_wiki`.
+- `AuthorIdentityResolver` aplica a `PublicProfilePolicy`, resolve avatar pelo
+  `aculta_image` e mantém cache; perfil público exige opt-in da foto.
+- `AuthorCardBuilder` retorna tema hook neutro; ações continuam sendo render
+  arrays fornecidos por consumidores que já resolveram acesso.
+- ACULTA420 implementa o SDC experimental `content/author-card`, inline e
+  empilhado, com fallback por inicial, foco visível e tokens semânticos.
+- Não portados: data de entrada, presença online, estatísticas, badges, assinatura
+  e ações sociais; a política existente os exclui ou exige contexto/cache ainda
+  não implementados. Integração do author card no Fórum contrib é para dev4+.
+- Unit e gates estáticos direcionados em execução; browser/Runtime não validados,
+  RUNTIME STATUS: DEFERRED.
 
 ## `0.1.0-dev.4` — Motor executável
 
@@ -124,5 +133,6 @@ automaticamente.
 - Para operações de ambiente, seguir `docs/architecture/environments.md` e
   validar hostname, pwd, Git, Drush URI/banco, efeitos e recuperação.
 - O estado local não comprova Runtime; usar PASS/FAIL/PARTIAL/DEFERRED.
+- Variantes de autoria são contratos distintos por contexto. A autoria histórica do Growroom usa `author_growroom_historico`; ela nunca passa pelo resolver de contas User.
 - O plano antigo F1–F9 e seus resultados permanecem histórico; decisões
   incompatíveis estão marcadas como superadas em `DECISOES.md`.
