@@ -3,7 +3,8 @@
 - Confirmado em leitura somente no Runtime de teste: 30 nodes `forum` (12
   publicados e vinculados a publicações, 1 publicado independente e 17 não
   publicados), 0 comments `comment_forum`, 8 termos `forums` e 2 flaggings no
-  total do site.
+  total do site (ambos de `site_alert`). O validador Drupal Core impede
+  uninstall enquanto houver qualquer node `forum` ou termo `forums`.
 - Confirmados consumidores ativos em Magazine e User; a sincronização editorial
   e os vínculos `field_discussao` permanecem. Desinstalar ou excluir agora
   deixaria 12 publicações sem sua discussão; a migração da Revista da dev.8 e os

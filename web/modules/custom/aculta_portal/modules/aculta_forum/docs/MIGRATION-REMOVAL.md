@@ -48,7 +48,8 @@ com `accessCheck(FALSE)` foram somente de leitura e retornaram:
 | Comments bundle `comment_forum` | 0 | Campo configurado, sem entidades Comment nesse bundle |
 | Terms no vocabulário `forums` | 8 | Vocabulário também tem `field_categoria_revista`; uso editorial precisa ser migrado antes da remoção |
 | Arquivos de Config Sync com dependências dos bundles/campos antigos | 24 | Inclui permissões, flags, Magazine e displays |
-| Flagging entities | 2 no total | Contagem global; associação ao Forum ainda requer consulta específica |
+| Flagging entities | 2 no total; 0 do Forum | Ambos apontam a `site_alert` (flags `aculta_site_alert_dismissed` e `aculta_site_alert_read`) |
+| Drupal Core `validateUninstall(['forum'])` | Bloqueado | Exige excluir todos os nodes `forum` e todos os termos `forums` antes do uninstall |
 
 O `aculta_forum` está habilitado no Runtime, mas seu provider novo atende o
 bundle `aculta_forum_topic`; os 30 nodes antigos e seus consumidores não foram
