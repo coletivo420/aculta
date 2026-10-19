@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.91', 'Theme metadata marks the current version 0.6.0-dev.91.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.92', 'Theme metadata marks the current version 0.6.0-dev.92.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -259,6 +259,7 @@ $expectedTemplates = [
   'aculta-portal-photo-editor.html.twig',
   'aculta-portal-shell.html.twig',
   'aculta-section.html.twig',
+  'aculta-user-author-card.html.twig',
   'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',

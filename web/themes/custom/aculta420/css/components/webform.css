@@ -1,0 +1,42 @@
+/*
+ * Webform no Bootstrap 5.
+ *
+ * Portado do webform_bootstrap 3.x (deprecado no Webform 6.3): somente as regras
+ * que não estão cobertas pelo Bootstrap 5 e pelo próprio tema. Seletores de
+ * Bootstrap 3 (.panel, .well, .form-inline) não são portados.
+ */
+
+/* Título de composto (radios e checkboxes) sem a moldura do legend. */
+.form-composite legend {
+  font-size: 1em;
+  font-weight: 700;
+  border: 0;
+  margin: 0;
+}
+
+/* Título inline de elementos e de composto (configuração "título ao lado"). */
+.webform-element--title-inline > div { display: inline; }
+.webform-element--title-inline .form-control,
+.webform-element--title-inline .form-select {
+  display: inline;
+  width: inherit;
+}
+.form-composite.webform-fieldset--title-inline legend {
+  float: left;
+  width: auto;
+  font-size: 1em;
+  font-weight: 700;
+  border: 0;
+  margin: 10px 0.5em 10px 0;
+}
+
+/* Likert: texto de ajuda e descrição alternam em telas estreitas. */
+@media (max-width: 768px) {
+  .webform-likert-help.hidden { display: inline !important; }
+  .webform-likert-description.hidden { display: block !important; }
+}
+
+/* Confirmação em modal ocupa quase toda a largura em telas pequenas. */
+@media only screen and (max-width: 650px) {
+  .webform-confirmation-modal { width: 90% !important; }
+}

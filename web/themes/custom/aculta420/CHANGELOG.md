@@ -1,3 +1,13 @@
+## 0.6.0-dev.92 — Webform: regras do webform_bootstrap 3.x portadas para o Bootstrap 5 — 2026-10-19
+
+Classificação: PATCH de apresentação. Autorizado na solicitação de portagem dos itens ainda não cobertos pelo tema.
+
+- Novo `css/components/webform.css`, carregado pela library `global`: título de composto sem moldura, título inline de elemento e de composto, alternância de ajuda/descrição do Likert em telas estreitas e modal de confirmação responsivo.
+- Itens do webform_bootstrap 3.x que já são cobertos pelo Bootstrap 5 ou pelo tema não foram portados (ver `docs/portal/WEBFORM-BOOTSTRAP-AVALIACAO.md`).
+- Gate de Foundation alinhado à versão. Causa corrigida no mesmo commit: o template `aculta-user-author-card.html.twig` (0.6.0-dev.91) não estava na allowlist de overrides Twig, e o gate reprovava. Incluído na lista revisada; 368 checks PASS.
+- Validação visual no navegador não executada nesta etapa; estado: NÃO VALIDADO.
+- Sem alteração de Portal, configuração exportada ou Runtime além do cache rebuild.
+
 ## 0.6.0-dev.91 — cartão de autoria experimental — 2026-10-19
 
 - Novo SDC `content/author-card`, com variações visuais inline e empilhada, avatar/nome/link em slots e fallback por inicial; estilos usam tokens semânticos e suportam os modos de cor do tema.

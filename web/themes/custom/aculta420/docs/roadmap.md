@@ -1,6 +1,6 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-19 (cartão de autoria experimental `0.6.0-dev.91`; validação visual/Runtime pendente). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-19 (Webform no Bootstrap 5 `0.6.0-dev.92`; cartão de autoria experimental `0.6.0-dev.91`; validação visual/Runtime pendente). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.92 | Webform no Bootstrap 5: regras portadas do webform_bootstrap 3.x | Gates estáticos PASS; validação visual dos formulários `/contato` e participação pendente | `css/components/webform.css`; itens cobertos pelo Bootstrap 5 não portados |
 | 0.6.0-dev.91 | Cartão de autoria SDC experimental | Gates estáticos de SDC e design PASS; Foundation/Runtime visual DEFERRED porque Drush aponta `aculta_runtime` com URI `http://default` | `content/author-card`, variantes inline/empilhada e `author_growroom_historico` |
 | 0.6.0-dev.78 | Imagens das duas galerias VVJS carregadas progressivamente | Runtime de teste: validar primeira imagem, avanço e clique no último slide do produto; álbum mantém evidência da dev.77 | `ThemeHooks` aplica adiamento também às linhas Media da `galeria_produto`; biblioteca VVJS compartilhada restaura imagem atual e próxima |
 | 0.6.0-dev.77 | Imagens dos slides inativos são carregadas progressivamente | Firefox no Runtime: palco caiu de 63 requisições (8,8 MB) para 4 (572 KB); miniaturas visíveis/adjacentes: 20 (62 KB); clique na miniatura 60 carregou o slide 60 | Slide atual e próximo usam API/evento público VVJS; sequência e miniaturas preservadas |
