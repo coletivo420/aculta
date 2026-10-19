@@ -8,6 +8,7 @@
 - [GUARDRAILS.md](GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki, Conta e AJAX.
 - [COMPONENTES-PROPRIOS.md](COMPONENTES-PROPRIOS.md) — rótulo único "ACULTA Portal" para módulos próprios e gate de pacote.
 - [IMPLEMENTATIONS.md](IMPLEMENTATIONS.md) — inventário de implementações, helpers e integrações aplicadas pelo Portal.
+- [WEBFORM-BOOTSTRAP-AVALIACAO.md](WEBFORM-BOOTSTRAP-AVALIACAO.md) — avaliação de portabilidade do Webform Bootstrap (3.x, deprecado) para tema e Portal.
 - [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md) — envio de e-mail pelo Mailer Plus (M0 a M2 concluídas; validado no runtime de teste).
 - [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) — fonte de verdade de cada dado.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
