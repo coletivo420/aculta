@@ -5,20 +5,6 @@ aculta_lms_h5p.admin_dashboard:
   route_name: aculta_lms_h5p.admin_dashboard
   weight: 35
 
-aculta_lms_h5p.student_dashboard:
-  title: 'Atividades interativas'
-  parent: user.page
-  menu_name: account
-  route_name: aculta_lms_h5p.student_dashboard
-  weight: 35
-
-aculta_lms_h5p.educator_dashboard:
-  title: 'Atividades dos cursos'
-  parent: user.page
-  menu_name: account
-  route_name: aculta_lms_h5p.educator_dashboard
-  weight: 36
-
 aculta_lms_h5p.admin_config:
   title: 'Configurações H5P'
   description: 'Configure a integração de conteúdo interativo do LMS.'

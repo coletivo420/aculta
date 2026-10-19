@@ -1,3 +1,8 @@
+## Navegação multidomínio — 2026-10-19
+
+- Remove os atalhos "Atividades interativas" e "Atividades dos cursos" do menu de conta usado pela barra multidomínio. As rotas dos painéis H5P de estudante e educador permanecem disponíveis no contexto do LMS.
+- RUNTIME STATUS: DEFERRED.
+
 ## Marcação do H5P por token e contrato de classe do H5P core — 2026-10-19
 
 - Administração (`H5PLibraryAdmin`, `H5PDashboardController`) e formatação (`H5PDefaultFormatter`) usam render arrays com `data-portal-ui` (`h5p-admin-header`, `h5p-dashboard-course`, `h5p-content-unavailable`).
