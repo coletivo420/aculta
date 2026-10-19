@@ -1,0 +1,29 @@
+uuid: 1aa697b6-b35c-4c1b-80af-39aae1cae392
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.aculta_discussion_post
+    - field.field.comment.aculta_discussion_post.comment_body
+    - field.field.comment.aculta_discussion_post.field_autor_legado
+  module:
+    - text
+id: comment.aculta_discussion_post.default
+targetEntityType: comment
+bundle: aculta_discussion_post
+mode: default
+content:
+  comment_body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_autor_legado: true
+  langcode: true
+  search_api_excerpt: true

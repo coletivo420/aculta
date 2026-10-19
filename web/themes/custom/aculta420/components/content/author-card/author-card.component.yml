@@ -29,6 +29,9 @@ props:
     profile_url:
       type: [string, 'null']
       description: 'Canonical public profile URL, or null when no public link is available.'
+    source_label:
+      type: [string, 'null']
+      description: 'Historical archive source label; never a user profile or account action.'
 slots:
   avatar:
     title: Avatar

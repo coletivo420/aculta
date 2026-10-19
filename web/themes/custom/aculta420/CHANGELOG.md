@@ -1,3 +1,11 @@
+## 0.6.0-dev.96 — apresentação dos comentários compartilhados — 2026-10-19
+
+Classificação: PATCH visual para a experiência de discussão.
+
+- Novo template `comment--aculta-discussion-post.html.twig` apresenta cartões `author_comment` e `author_growroom_historico` preparados por `aculta_user`, corpo, permalink e ações do Comment. O cartão histórico identifica o acervo sem link de perfil.
+- `discussion.css` recebe layout responsivo com tokens semânticos; nenhuma consulta de entidade ou regra de acesso foi adicionada ao tema.
+- RUNTIME STATUS: DEFERRED; renderização visual em navegador pendente.
+
 ## 0.6.0-dev.95 — testes automatizados de InputHooks e PortalUiHooks — 2026-10-19
 
 Classificação: PATCH sem mudança de comportamento. Testes e documentação.

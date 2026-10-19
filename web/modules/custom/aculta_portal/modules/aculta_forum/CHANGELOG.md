@@ -1,3 +1,8 @@
+## `0.1.0-dev.9` — exibição do Comment compartilhado — 2026-10-19
+
+- Define o display Core `comment.aculta_discussion_post.default` para renderizar o corpo e as ações do Comment; `field_autor_legado` permanece oculto. O `aculta_user` injeta o cartão neutral de autoria.
+- RUNTIME STATUS: DEFERRED; configuração ainda não foi importada.
+
 ## `0.1.0-dev.8` — importação Growroom somente leitura — 2026-10-19
 
 - A autoria `field_autor_legado` pode ser ligada aos Nodes `aculta_forum_topic` e Comments `aculta_discussion_post`; o `aculta_forum` depende do `aculta_user`, dono do LegacyAuthor.

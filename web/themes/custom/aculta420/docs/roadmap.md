@@ -8,6 +8,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.96 | Template e estilos de Comment compartilhado ACULTA | Gates estáticos pendentes; Runtime e inspeção visual DEFERRED | `comment--aculta-discussion-post.html.twig`, `discussion.css` |
 | 0.6.0-dev.95 | Testes automatizados de InputHooks e PortalUiHooks; bibliotecas `web/libraries` versionadas | Unit 5/5 e Kernel 7/7 OK no banco de teste; validação visual pendente | `tests/src/Unit/PortalUiHooksTest.php`, `tests/src/Kernel/InputHooksKernelTest.php` |
 | 0.6.0-dev.94 | Correção de arquitetura do preprocess de input; ícones oficiais do Bootstrap Icons 1.11.0 | Gates estáticos PASS; render no Runtime de teste verificado; validação visual pendente | `InputHooks` (único `preprocess_input`); `assets/icons/bootstrap-icons/icons/`; `docs/verificacao-boas-praticas.md` |
 | 0.6.0-dev.93 | Botões de imagem e webform_multiple do Webform no Bootstrap 5 | Gates estáticos PASS; render do `image_button` verificado no Runtime de teste; validação visual pendente | `PortalUiHooks` troca o `src` dos ícones de adicionar e remover; `input[type=image]`; `css/components/webform.css` (`webform_multiple`) |

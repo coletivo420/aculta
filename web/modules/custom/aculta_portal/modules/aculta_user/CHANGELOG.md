@@ -1,3 +1,9 @@
+## 0.4.0-dev.32 — autoria dos comentários compartilhados — 2026-10-19
+
+- `DiscussionCommentAuthorHooks` usa `AuthorCardBuilder` nas variantes `author_comment` e `author_growroom_historico` para Comments compartilhados. A autoria histórica mostra apenas nome e origem do acervo, sem conta ativa ou ações; identidade de User continua sujeita à policy pública.
+- A política de moderação de comentários do LMS foi documentada como responsabilidade de Educadores autorizados no contexto, sob o contrato do adapter LMS.
+- Validação Runtime e inspeção visual humana pendentes. RUNTIME STATUS: DEFERRED.
+
 # Changelog — aculta_user
 
 ## 0.4.0-dev.31 — acervo Growroom importado em modo somente leitura — 2026-10-19

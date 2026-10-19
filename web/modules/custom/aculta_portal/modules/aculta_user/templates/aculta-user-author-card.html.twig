@@ -3,6 +3,7 @@
   {% if avatar %}<div>{{ avatar }}</div>{% endif %}
   <div>
     {% if profile_url %}<a href="{{ profile_url }}">{{ display_name }}</a>{% else %}{{ display_name }}{% endif %}
+    {% if source_label %}<div>{{ source_label }}</div>{% endif %}
   </div>
   {% if actions %}<div>{{ actions }}</div>{% endif %}
 </article>

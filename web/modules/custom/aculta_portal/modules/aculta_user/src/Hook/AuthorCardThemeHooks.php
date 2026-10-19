@@ -8,7 +8,9 @@ use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Declares the neutral theme hook consumed by ACULTA420. */
+/**
+ * Declares the neutral theme hook consumed by ACULTA420.
+ */
 final class AuthorCardThemeHooks {
 
   public function __construct(
@@ -16,6 +18,9 @@ final class AuthorCardThemeHooks {
     private readonly ModuleExtensionList $moduleList,
   ) {}
 
+  /**
+   * Declares the shared author card template variables.
+   */
   #[Hook('theme')]
   public function theme(): array {
     return [
@@ -26,6 +31,7 @@ final class AuthorCardThemeHooks {
           'profile_url' => NULL,
           'avatar' => NULL,
           'actions' => [],
+          'source_label' => NULL,
         ],
         'template' => 'aculta-user-author-card',
         'path' => $this->moduleList->getPath('aculta_user') . '/templates',

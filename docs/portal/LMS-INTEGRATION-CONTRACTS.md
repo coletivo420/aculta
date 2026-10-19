@@ -67,3 +67,13 @@ SDCs planejados após F5: apresentação de curso; sala/índice de lições; lis
 Cada endpoint, View, download, render array, evento e worker precisa verificar autenticação, Entity Access, access de Group e membership/papel atual; turmas diferentes não compartilham conteúdo privado. Render contexts/tags/max-age vêm das entidades, resultados de access e contexto necessário (`user`, permissions, group ou cache privado). Não reutilizar cache público entre alunos/educadores. URLs cross-purpose resolvidas pelo `DomainPurposeManager`; nenhuma configuração exportada guarda hostname.
 
 Matriz detalhada de arquivos e operações: [PDF-VIEWER-INTEGRATION.md](PDF-VIEWER-INTEGRATION.md) para viewer e [SECURITY-ACCESS-FILES-MATRIX.md](SECURITY-ACCESS-FILES-MATRIX.md) para LMS.
+
+
+## Moderação de discussões pedagógicas
+
+A moderação dos comentários do LMS pertence aos Educadores autorizados no curso, turma ou atividade em questão. A
+autorização deve ser revalidada pelo adapter usando o acesso pedagógico atual (Group/membership e Entity Access),
+variando e invalidando cache por usuário/permissões e entidades relevantes. Papel global de educador sem membership ou
+acesso contextual não basta. `aculta_user` não aplica a regra global do primeiro comentário dentro do LMS, e a fila de
+moderação pública não inclui comentários pedagógicos. Até o adapter fornecer essas ações, moderação LMS permanece
+fechada por padrão; estudantes continuam podendo participar sem aprovação global.

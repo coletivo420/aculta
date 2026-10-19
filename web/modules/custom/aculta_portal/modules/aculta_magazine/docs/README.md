@@ -1,10 +1,9 @@
 # aculta_magazine (Revista)
 
-> **Transição aprovada em 2026-10-19:** o código atual ainda sincroniza tópicos
-> Drupal Forum em `ForumTopicSync`. A arquitetura alvo de `aculta_forum` substitui
-> essa sincronização por Comment associado à própria publicação e proíbe novos
-> tópicos públicos automáticos. Esta nota documenta o estado atual e o alvo;
-> não altera nem remove os serviços existentes. Migração descrita em
+> **Transição em andamento:** publicações recebem o campo Comment compartilhado
+> `field_aculta_discussion` em Config Sync. O sincronizador antigo permanece como
+> fallback apenas em ambientes onde esse campo ainda não está instalado. A remoção
+> final do Drupal Forum e de seus consumidores exige a sequência segura descrita em
 > [`MIGRATION-REMOVAL.md`](../../aculta_forum/docs/MIGRATION-REMOVAL.md).
 
 Submódulo do Portal ACULTA (`aculta_portal`). Centraliza tudo que é da Revista: publicações, chamada, resumo,
@@ -23,6 +22,18 @@ SEO, caixa de autores e coautoria. Depende de `aculta_user` (perfil, privacidade
 | Listagens por sessão | view `revista_sessoes` (filtro de tipo com todos os tipos da Revista) | config da view |
 | Caixa de autores | `node_view`: autor (`node.uid`) e coautores (`co_authors`), foto, nome, bio, ícones das redes | `src/Hook/ArticleAuthorsHooks.php` |
 | Coautores | `co_authors` (Node Co-Authors): coautores recebem os direitos de conteúdo do autor | módulo contrib |
+
+## Discussão atual da publicação
+
+`article` e `blog` recebem `field_aculta_discussion`, do tipo Comment `aculta_discussion_post`, diretamente no Node.
+O full display usa o formatter Core `comment_default`, e o `aculta_user` constrói o cartão `author_comment`; autoria vinculada ao acervo usa `author_growroom_historico` sem conta ativa. A política
+configurável de primeiro comentário do `aculta_user` aplica-se aqui como nos demais contextos públicos; LMS fica
+expressamente fora dessa moderação global. A troca article ↔ blog copia o item do campo e re-hospeda as entidades
+Comment antes de remover a publicação antiga, preservando autoria, estado e encadeamento.
+
+A configuração foi preparada em `config/sync` e `config/install`; nenhuma importação foi executada neste commit. Em
+ambiente que já tem conteúdo, o status do campo precisa ser inicializado como aberto sem sobrescrever um status
+editorial explicitamente fechado. Essa inicialização deve ser validada antes de ativar o campo no Runtime.
 
 ## Blog é sinônimo de Editorial
 
@@ -115,11 +126,9 @@ Referência de leitura usada: largura de linha entre 60 e 75 caracteres (Piccali
 - Aparência (círculos, cores por rede, título e faixa) é do ACULTA420 (`revista-post.css`), com tokens semânticos.
 - Data: `field_published_at` é guardado em UTC; ao preencher manualmente, use o horário UTC (ex.: 19:32 de Brasília = 22:32 UTC).
 
-## Fórum da Revista (função)
+## Integração antiga com Drupal Forum (em remoção)
 
-Decisão do responsável (2026-10-13): cada publicação da Revista tem um tópico do Fórum criado automaticamente, com o
-mesmo autor, na pasta da sua categoria editorial. Motivo: a discussão fica em um lugar só (Fórum nativo), e a Revista
-não guarda comentário próprio (`docs/portal/ACULTA-USER-PLAN.md`, seção E3).
+Registro histórico: a versão anterior criava um tópico Drupal Forum por publicação. Essa decisão foi substituída: cada publicação mantém a discussão dentro da própria entidade via Comment compartilhado; novos tópicos públicos automáticos estão proibidos.
 
 - Pastas: pasta-mãe "Revista" com uma pasta por categoria (`ForumSectionResolver`). A pasta guarda a categoria em
   `field_categoria_revista`, então renomear a sessão não quebra o vínculo.
@@ -127,8 +136,8 @@ não guarda comentário próprio (`docs/portal/ACULTA-USER-PLAN.md`, seção E3)
   exclusão são tratadas em `ForumTopicHooks` e `ForumTopicSync`.
 - Abertura: `ForumOpeningPost` lê resumo e imagem da publicação. Nenhum texto ou arquivo é copiado: a imagem é o
   mesmo arquivo da mídia, no estilo `large`. Editar a publicação atualiza a abertura.
-- Comentários: o tópico usa `comment_forum`. A publicação mostra o trecho e o link "Ver discussão completa" para o
-  propósito FORUM. A resposta é feita só no Fórum.
+- Estado de migração: `ForumTopicHooks` só mantém a criação antiga enquanto `field_aculta_discussion` não existir no
+  bundle da publicação. `DiscussionHooks` omite o trecho antigo quando o campo nativo está presente.
 - URL do tópico: `/topico/<título>` (padrão `aculta_forum_topic`).
 - Moderação: segue o Core. Quem não tem `skip comment approval` vai para a fila do `content_editor`.
 - Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e ganha tópico automaticamente.

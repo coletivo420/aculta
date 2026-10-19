@@ -106,3 +106,12 @@ executar importação de configuração do site sem inspecionar seus efeitos e
 confirmar a recuperação.
 
 Referências: [configuração de comentários em entidade](https://www.drupal.org/docs/8/core/modules/comment/administering-a-content-types-comment-settings), [interface Comment](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentInterface.php/interface/CommentInterface/11.x) e [cacheability de render arrays](https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays).
+
+
+## Responsabilidade de moderação no LMS
+
+Comentários LMS não entram na regra global de aprovação do primeiro comentário. A moderação pertence aos Educadores
+que têm autorização efetiva no contexto pedagógico correspondente. O adapter deve derivar permissão de acesso do curso,
+turma ou atividade (Group/membership e Entity Access atuais), sem concedê-la a `content_editor` por papel global ou
+a qualquer conta `lms_teacher` sem acesso àquele contexto. Enquanto o adapter de moderação LMS não estiver implementado,
+a interface do motor deve falhar fechada para ações de moderação e não apresentar uma fila global de LMS.

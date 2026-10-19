@@ -14,7 +14,7 @@ Runtime e fluxos completos continuam pendentes.
 | Acesso público | anônimo/membro/editor; publicação, conteúdo fechado, flags e permissões | Kernel + Functional/browser. |
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
 | Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest`; Runtime editorial ainda DEFERRED. |
-| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership, educator/moderator, atividade em cursos múltiplos | Kernel/Functional; Route/View/Search/Cache e teste de navegador. |
+| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel/Functional; Route/View/Search/Cache e teste de navegador. |
 | Wiki | uma thread por verbete, comentário não altera revisão, acesso de edição distinto | Contract tests nesta fase; integração real só após Wiki. |
 | Busca/Views | filtro de contexto fixo, access query, títulos/trechos/contagens/facets e paginação sem vazamento | Kernel/Functional, index rebuild no ambiente de teste. |
 | Cache | tags/context/max-age em variações por usuário/permissão/Group/membership, revogação e conteúdo despublicado | Kernel + Functional; inspeção de cache. |

@@ -49,3 +49,5 @@
   .aculta-author-card:not(.aculta-author-card--stacked) { align-items: flex-start; gap: 0.5rem; }
   .aculta-author-card__avatar { flex-basis: 2.5rem; width: 2.5rem; height: 2.5rem; }
 }
+
+.aculta-author-card__source { display: block; color: var(--aculta-text-secondary); font-size: 0.8125rem; }

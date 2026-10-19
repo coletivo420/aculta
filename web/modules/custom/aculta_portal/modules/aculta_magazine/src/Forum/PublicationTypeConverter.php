@@ -20,12 +20,16 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  *
  * Regras que valem aqui (docs/portal/ACULTA-USER-PLAN.md, E3; aculta_magazine/docs/README.md):
  * - a pasta do Fórum segue a sessão editorial (ForumTopicSync), então a troca não move a discussão de pasta;
- * - o título, o autor, o estado e os comentários do tópico são preservados;
+ * - o título, o autor, o estado e os comentários nativos da publicação são preservados;
  * - campos que existem só no tipo de origem são listados no plano e não são copiados.
  */
 final class PublicationTypeConverter {
 
-  /** Campos de sistema e de revisão: nunca copiados para a publicação nova. */
+  /**
+   * Campos de sistema e de revisão: nunca copiados para a publicação nova.
+   *
+   * @var string[]
+   */
   private const SKIP = [
     'nid', 'vid', 'uuid', 'type', 'changed', 'path', 'revision_timestamp', 'revision_uid', 'revision_log',
     'revision_default', 'revision_translation_affected', 'default_langcode', 'content_translation_source',
@@ -44,6 +48,7 @@ final class PublicationTypeConverter {
    * Plano da troca, sem gravar: tópico vinculado, campos copiados e campos que não existem no destino.
    *
    * @return array{topic: int|null, copy: string[], dropped: string[]}
+   *   Linked topic, copied field names and non-empty fields omitted by the target.
    */
   public function plan(NodeInterface $post, string $target): array {
     $this->assertConvertible($post, $target);
@@ -92,8 +97,9 @@ final class PublicationTypeConverter {
         $alias->delete();
       }
       $new->save();
+      $this->moveDiscussionComments($oldId, (int) $new->id());
 
-      // A antiga perde o vínculo e o alias sem disparar a sincronização; depois sai. A exclusão não toca no tópico.
+      // A antiga perde o vínculo e o alias sem disparar a sincronização; depois sai.
       $this->sync->silently($post, function () use ($post): void {
         $post->set('field_discussao', NULL);
         $post->set('path', ['alias' => NULL, 'pathauto' => 0]);
@@ -109,6 +115,31 @@ final class PublicationTypeConverter {
     }
   }
 
+  /**
+   * Reassocia os comentários nativos à nova publicação antes da exclusão da antiga.
+   *
+   * Comentários são entidades de conteúdo e mantêm suas próprias autorias e revisões;
+   * alterar apenas CommentItem faria a thread permanecer hospedada no Node antigo.
+   */
+  private function moveDiscussionComments(int $oldId, int $newId): void {
+    $storage = $this->entityTypeManager->getStorage('comment');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', $oldId)
+      ->condition('field_name', 'field_aculta_discussion')
+      ->sort('thread')
+      ->execute();
+
+    foreach ($storage->loadMultiple($ids) as $comment) {
+      $comment->set('entity_id', $newId);
+      $comment->save();
+    }
+  }
+
+  /**
+   * Validates the source publication and requested target bundle.
+   */
   private function assertConvertible(NodeInterface $post, string $target): void {
     if (!RevistaPublications::isPublication($post->bundle()) || !RevistaPublications::isPublication($target)) {
       throw new \InvalidArgumentException('Só troca entre tipos da Revista (article e blog).');

@@ -4,3 +4,4 @@ component: aculta420:author-card
 props:
   variant: author_growroom_historico
   display_name: Autor preservado no acervo
+  source_label: Acervo histórico Growroom

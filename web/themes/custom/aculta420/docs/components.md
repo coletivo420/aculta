@@ -2,14 +2,12 @@
 
 ## Discussões ACULTA — contrato futuro
 
-O tema atual apresenta Forum contrib com `forum-list.html.twig`,
-`node--forum--full.html.twig`, `comment--comment-forum.html.twig`,
-`forum-index.css` e `discussion.css`. Esses arquivos não compõem um Author Card
-reutilizável. Na reconstrução, componentes de tópico/thread podem compor dados
-preparados por `aculta_user`; o ACULTA420 é responsável por SDC, presets,
-layout lateral/empilhado, acessibilidade e tokens light/dark. A lista de seis
-presets e capacidades está em `aculta_forum/docs/ADVANCED-FORUM-PORT.md`. Esta
-fase documental não altera markup nem estilos.
+O tema mantém os templates legados do Drupal Forum durante a migração e passa a
+apresentar comentários compartilhados via `comment--aculta-discussion-post.html.twig`.
+O `aculta_user` prepara o cartão `author_comment`; ACULTA420 controla markup,
+layout responsivo, acessibilidade e tokens light/dark em `discussion.css`. Não há
+consulta de usuário no tema. A lista de seis presets e capacidades está em
+`aculta_forum/docs/ADVANCED-FORUM-PORT.md`.
 
 O catálogo visual e suas regras estão em
 [`component-catalog.md`](component-catalog.md). Os stories ficam junto dos

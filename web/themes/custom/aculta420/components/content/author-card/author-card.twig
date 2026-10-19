@@ -9,6 +9,7 @@
     <div class="aculta-author-card__name">
       {% if profile_url %}<a href="{{ profile_url }}">{{ display_name }}</a>{% else %}{{ display_name }}{% endif %}
     </div>
+    {% if source_label %}<span class="aculta-author-card__source">{{ source_label }}</span>{% endif %}
     {% if actions %}<div class="aculta-author-card__actions">{{ actions }}</div>{% endif %}
   </div>
 </article>

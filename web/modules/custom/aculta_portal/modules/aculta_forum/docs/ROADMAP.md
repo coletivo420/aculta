@@ -51,16 +51,24 @@ Runtime.
 - **Em andamento: auditoria do Runtime de teste concluída; remoção não executada.**
 - Provider editorial iniciado em `aculta_forum`; Unit access/cache PASS e prova
   Kernel confirma storage Comment compartilhado entre `article`, `blog` e tópico.
-- A configuração de campo na Revista e a migração dos consumidores permanecem
-  pendentes; não apagar os tópicos antigos antes dessa substituição.
+- `article` e `blog` agora têm Config Sync/configuração de instalação para
+  `field_aculta_discussion`; o formatter Core está preparado e `author_comment`
+  usa o builder compartilhado do `aculta_user`. Kernels confirmam o campo
+  compartilhado e a política pública. Config Sync ainda não foi importada.
+- A abertura das discussões em publicações que já existem requer inicialização
+  explícita do status Comment depois da importação. Não ativar a apresentação
+  antes de validar esse passo.
 - Foram observados 30 nodes `forum`, dos quais 12 publicados vinculam
   discussões a publicações. `aculta_magazine` e `aculta_user` ainda têm
   consumidores ativos; ver `docs/MIGRATION-REMOVAL.md`.
-- Preservar temporariamente `ForumTopicSync` e os vínculos editoriais até a
-  Revista ter comentários diretos disponíveis e a sincronização antiga ser
-  desligada na dev.8. Os tópicos-casca antigos serão apagados depois; não
+- `ForumTopicSync` permanece apenas como fallback enquanto o campo novo não
+  estiver instalado. `DiscussionHooks` omite o trecho antigo quando o campo
+  existe. A sincronização antiga ainda não foi removida em definitivo porque
+  há nós/campos consumidores no Runtime e o Forum contrib não foi desinstalado.
+  Os tópicos-casca antigos serão apagados depois; não
   importar tópicos nem comentários antigos para os novos contextos.
 - Inventário imediatamente pré-operação e restore point validado ainda pendentes.
+- Troca de tipo da publicação re-hospeda Comments compartilhados antes de remover o Node antigo; transação e runtime ainda não foram exercitados nesta entrega.
 - Exclusão escopada aprovada em ambiente de teste, uninstall oficial,
   remoção do Composer posterior e verificação de resíduos.
 - Produção não é tocada por execução automática.

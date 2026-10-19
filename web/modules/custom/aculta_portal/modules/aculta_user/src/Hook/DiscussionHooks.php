@@ -10,26 +10,31 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
 
 /**
- * Discussão vinculada: trecho dos últimos comentários do tópico de Fórum e link para a discussão completa.
+ * Provides the legacy Magazine excerpt and link while the old forum is active.
  *
- * Plano aculta_user, seção E3: os comentários moram só no tópico. O conteúdo mostra um trecho e um link para o
- * purpose FORUM, obtido por DomainPurposeManager (nunca por hostname). Sem tópico vinculado, não há bloco.
- * Só comentários publicados aparecem.
+ * The shared Comment formatter replaces this block when the new field exists.
  */
 final class DiscussionHooks {
 
   use StringTranslationTrait;
 
-  /** Campo de referência do conteúdo para o tópico de Fórum. */
+  /**
+   * Legacy publication reference to a Drupal Forum topic.
+   *
+   * @var string
+   */
   private const FIELD = 'field_discussao';
 
-  /** Quantidade de comentários no trecho. */
+  /**
+   * Maximum number of legacy comments in the excerpt.
+   *
+   * @var int
+   */
   private const EXCERPT_LIMIT = 5;
 
   public function __construct(
@@ -44,7 +49,9 @@ final class DiscussionHooks {
    */
   #[Hook('node_view')]
   public function nodeView(array &$build, EntityInterface $entity, mixed $display, string $view_mode): void {
-    if (!$entity instanceof NodeInterface || $view_mode !== 'full' || !$entity->hasField(self::FIELD) || $entity->get(self::FIELD)->isEmpty()) {
+    if (!$entity instanceof NodeInterface || $view_mode !== 'full' ||
+      $entity->hasField('field_aculta_discussion') ||
+      !$entity->hasField(self::FIELD) || $entity->get(self::FIELD)->isEmpty()) {
       return;
     }
     $topic = $entity->get(self::FIELD)->entity;
@@ -77,12 +84,23 @@ final class DiscussionHooks {
       // Depois da caixa de autoria (peso 100 em ArticleAuthorsHooks).
       '#weight' => 110,
       '#attributes' => ['data-aculta-user' => 'discussao', 'data-portal-ui' => 'discussion'],
-      'titulo' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => (string) t('Discussão'), '#attributes' => ['data-portal-ui' => 'discussion-title']],
+      'titulo' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h2',
+        '#value' => (string) t('Discussão'),
+        '#attributes' => ['data-portal-ui' => 'discussion-title'],
+      ],
       'comentarios' => $items
-        ? ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'discussion-list'], 'itens' => array_map(
-          static fn(array $item): array => $item + ['#attributes' => ['data-portal-ui' => 'discussion-item']],
-          $items,
-        )]
+        ? [
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'discussion-list'],
+          'itens' => array_map(
+            static fn(array $item): array => $item + [
+              '#attributes' => ['data-portal-ui' => 'discussion-item'],
+            ],
+            $items,
+          ),
+        ]
         : ['#markup' => (string) t('Ainda não há comentários publicados.')],
       'link' => [
         '#type' => 'link',
@@ -97,17 +115,27 @@ final class DiscussionHooks {
     ];
   }
 
-  /** Número de comentários publicados do tópico. */
+  /**
+   * Returns the number of published legacy topic comments.
+   */
   private function publishedCount(int $topicId): int {
     return (int) $this->commentQuery($topicId)->count()->execute();
   }
 
-  /** @return \Drupal\comment\CommentInterface[] */
+  /**
+   * Returns the newest published comments for the legacy excerpt.
+   *
+   * @return \Drupal\comment\CommentInterface[]
+   *   Loaded comments, newest first.
+   */
   private function excerpt(int $topicId): array {
     $ids = $this->commentQuery($topicId)->sort('created', 'DESC')->range(0, self::EXCERPT_LIMIT)->execute();
     return array_values($this->entityTypeManager->getStorage('comment')->loadMultiple($ids));
   }
 
+  /**
+   * Builds an access-independent query restricted to public legacy comments.
+   */
   private function commentQuery(int $topicId) {
     return $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
@@ -117,7 +145,9 @@ final class DiscussionHooks {
       ->condition('status', 1);
   }
 
-  /** Trecho em texto puro, de até 200 caracteres. */
+  /**
+   * Returns a plain text comment excerpt with a 200-character limit.
+   */
   private function summary(CommentInterface $comment): string {
     $text = trim(preg_replace('/\s+/', ' ', strip_tags((string) $comment->get('comment_body')->value)) ?? '');
     return mb_strlen($text) > 200 ? mb_substr($text, 0, 197) . '...' : $text;

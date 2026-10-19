@@ -1,3 +1,10 @@
+## 0.1.0-dev.7 — comentários nativos diretamente nas publicações — 2026-10-19
+
+- `article` e `blog` recebem `field_aculta_discussion`, com tipo Comment `aculta_discussion_post`, status padrão aberto e formatter Core no display full.
+- A troca de tipo de publicação re-hospeda comentários compartilhados para a nova entidade dentro da transação, mantendo autor, estado e parent/encadeamento.
+- A criação automática antiga de tópico fica condicionada à ausência do campo novo; o trecho de comentário legado deixa de aparecer quando a discussão nativa está disponível.
+- A configuração foi preparada em `config/install` e `config/sync`. Não aplicada ao Runtime; publicações existentes precisam ter o campo inicializado com status aberto após a importação e antes da ativação. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.6 — abertura do tópico do Fórum sem título repetido (F4) — 2026-10-17
 
 Classificação: PATCH (ajuste de dados apresentados em um bloco; sem mudança de contrato).

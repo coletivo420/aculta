@@ -1,3 +1,10 @@
+## 0.4.0-dev.172 — comentários no contexto das publicações — 2026-10-19
+
+- `article` e `blog` recebem `field_aculta_discussion` com Comment compartilhado; o full display usa o formatter do Core. A conversão de tipo re-hospeda os Comments antes de remover o Node antigo.
+- `aculta_user` prepara `author_comment` nos Comments compartilhados; ACULTA420 apresenta o cartão e a resposta com tokens semânticos. A regra pública de primeiro comentário já cobre Revista e demais contexts fora do LMS.
+- O LMS permanece fora da moderação global: Educadores com autorização efetiva do contexto pedagógico serão responsáveis pela moderação; o contrato foi explicitado em `CONTEXTS.md` e `LMS-INTEGRATION-CONTRACTS.md`.
+- O fallback de criação de tópico Drupal Forum da Revista só atua quando o campo compartilhado não está instalado. Config Sync e Runtime não foram importados; status de abertura em publicações já existentes e inspeção visual seguem pendentes. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.171 — acervo Growroom congelado — 2026-10-19
 
 - Conteúdo de Fórum importado do Growroom e marcado por `field_autor_legado` é somente leitura, inclusive para administrador. `entity_access` nega alteração, exclusão e aprovação; a discussão do tópico fica fechada no `entity_presave`, inclusive durante a importação.

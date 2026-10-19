@@ -13,7 +13,7 @@ use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Mantém o tópico do Fórum de cada publicação da Revista (criação, edição e exclusão).
+ * Maintains legacy Magazine topics until the shared discussion field is installed.
  */
 final class ForumTopicHooks {
 
@@ -27,7 +27,9 @@ final class ForumTopicHooks {
    */
   #[Hook('node_insert')]
   public function nodeInsert(EntityInterface $entity): void {
-    if ($this->isPublication($entity)) {
+    if ($this->isPublication($entity) && !$entity->hasField('field_aculta_discussion')) {
+      // Transitional fallback while the shared Comment field is not yet
+      // installed in Config Sync on an environment.
       $this->sync->sync($entity);
     }
   }
@@ -37,7 +39,9 @@ final class ForumTopicHooks {
    */
   #[Hook('node_update')]
   public function nodeUpdate(EntityInterface $entity): void {
-    if ($this->isPublication($entity)) {
+    if ($this->isPublication($entity) && !$entity->hasField('field_aculta_discussion')) {
+      // Transitional fallback while the shared Comment field is not yet
+      // installed in Config Sync on an environment.
       $this->sync->sync($entity);
     }
   }
@@ -70,6 +74,9 @@ final class ForumTopicHooks {
     }
   }
 
+  /**
+   * Determines whether the entity is a Revista publication.
+   */
   private function isPublication(EntityInterface $entity): bool {
     return $entity instanceof NodeInterface && RevistaPublications::isPublication($entity->bundle());
   }
