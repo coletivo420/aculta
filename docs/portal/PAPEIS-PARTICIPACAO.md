@@ -70,6 +70,14 @@ de moderação). O nível de associado não dá nenhuma outra função além do 
 | Denunciar e ver a fila de denúncias | `content_editor` com `email_confirmed` | Aplicado |
 | Ocultar, despublicar ou excluir tópico e comentário (exceto histórico) | `content_editor` com `email_confirmed` | Aplicado |
 
+Para o bundle novo `aculta_forum_topic`, Config Sync declara as permissões Node
+por bundle: `email_confirmed` pode criar, editar e excluir o próprio tópico;
+`content_editor` herda as permissões próprias quando a confirmação de e-mail é
+real. Moderação de tópicos por editores ainda depende de access check explícito
+com essa confirmação; não conceder `edit any`/`delete any` diretamente ao papel.
+As regras configuráveis de participação continuam aplicadas pelo access check
+de criação. Administrador mantém o bypass nativo do Drupal.
+
 ### Moderação inicial de discussões
 
 - O primeiro comentário novo do participante fica não publicado até aprovação.

@@ -1,3 +1,8 @@
+## `0.1.0-dev.6` — permissões de tópico público em Config Sync — 2026-10-19
+
+- `core.extension` inclui `aculta_forum`; Config Sync declara as permissões nativas do Node `aculta_forum_topic` para criação e gestão do próprio tópico por `email_confirmed`. Permissões amplas de moderação por `content_editor` ficam pendentes de access check que respeite confirmação de e-mail.
+- O Runtime de teste foi consultado em modo somente leitura: `aculta_forum` está habilitado e `core.extension:module.aculta_forum` é `0`. A configuração local ainda difere de diversos itens do banco; nenhuma importação foi executada. Não foram criados termos/tópicos nem removidos dados legados. RUNTIME STATUS: DEFERRED para aplicar permissões.
+
 # `0.1.0-dev.5` — auditoria para retirada do Forum contrib — 2026-10-19
 
 - Confirmado em leitura somente no Runtime de teste: 30 nodes `forum` (12

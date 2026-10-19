@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - filter.format.usuario_aculta
+    - node.type.aculta_forum_topic
   module:
     - captcha
 id: email_confirmed
@@ -14,9 +15,12 @@ permissions:
   - 'access content'
   - 'create email_confirmed profile'
   - 'create forum content'
+  - 'create aculta_forum_topic content'
   - 'create wiki_entry content'
   - 'delete own forum content'
+  - 'delete own aculta_forum_topic content'
   - 'edit own forum content'
+  - 'edit own aculta_forum_topic content'
   - 'edit own wiki_entry content'
   - 'flag sinalizar_comentario'
   - 'flag sinalizar_topico'

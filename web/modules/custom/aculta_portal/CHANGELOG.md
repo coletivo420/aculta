@@ -1,3 +1,8 @@
+## 0.4.0-dev.169 — habilitação de permissões do tópico público — 2026-10-19
+
+- Config Sync registra `aculta_forum` como extensão habilitada e declara as permissões nativas do bundle `aculta_forum_topic`: participantes confirmados criam/editam/excluem os próprios tópicos. Moderação por editor fica pendente de access check que valide confirmação de e-mail; não há concessão direta de `edit any`/`delete any`. O bypass administrativo permanece do Core.
+- Preserva o `forum` contrib e seus dados; não houve importação de Config Sync, criação de categorias, conteúdo ou alteração persistente no Runtime. `aculta_forum` passa a `0.1.0-dev.6`. RUNTIME STATUS: DEFERRED para permissões administrativas efetivas.
+
 ## 0.4.0-dev.168 — invalidação de cache nas regras de participação — 2026-10-19
 
 - Resultados de acesso à criação de tópicos agora incluem a cache tag de `aculta_user.settings`, o contexto de papéis e a lista de comentários. Mudanças nas opções administrativas ou nos papéis invalidam decisões de acesso em cache.

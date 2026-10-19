@@ -32,7 +32,7 @@ entidade é carregada pelo Entity API e o acesso é revalidado na operação.
 
 | Nome proposto | Uso | Estado/validação |
 | --- | --- | --- |
-| `aculta_forum_topic` | Node para tópico independente público | Configuração de instalação adicionada na dev.4; <=32 caracteres. Não habilitada no Runtime. |
+| `aculta_forum_topic` | Node para tópico independente público | Bundle/Comment/Taxonomy em `config/install` e Config Sync; máquina <=32 caracteres. `aculta_forum` está habilitado no Runtime de teste; nenhum tópico foi criado. Permissões de criação e gestão do próprio tópico declaradas na dev.6. Moderação por editor aguarda access check com confirmação de e-mail. |
 | `aculta_lms_topic` | Node para discussão pedagógica reservada | Planejado para adapter LMS; dependência opcional evita ciclo Forum↔LMS. |
 | `aculta_discussion_post` | bundle Comment compartilhado | Configuração de Comment em Node preparada na dev.4; suporte reutilizável em outros bundles Node ainda requer prova Kernel na dev.7/integrações. |
 | `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | Configuração de instalação adicionada na dev.4; a substituição do vocabulário `forums` fica para migração autorizada. |
