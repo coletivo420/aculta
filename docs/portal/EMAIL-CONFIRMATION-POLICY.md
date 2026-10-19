@@ -127,7 +127,7 @@ própria e não devem ser tratados como garantia.
 | Checkout (loja) | Exige e-mail confirmado | Aplicado | `ProtectedRouteAccessCheck` (rota `/checkout`) |
 | Apoio (contribuições) | Exige e-mail confirmado | A confirmar | Sem verificação própria nesta revisão |
 | Wiki: editar e excluir verbete | Exige e-mail confirmado | Aplicado | `EntityHooks::entityAccess`, `update` e `delete` |
-| Wiki: criar verbete | Exige e-mail confirmado | Aplicado pelo papel | Só `email_confirmed` recebe `wiki_contributor`, por `RoleSyncHooks` |
+| Wiki: criar verbete | Exige e-mail confirmado | Aplicado pelo papel | Só `email_confirmed` concede escrita na wiki (`wiki_contributor` foi mesclado em `email_confirmed`; sem hook) |
 | Comentários: criar | Exige e-mail confirmado | Aplicado pelo papel | `post comments` só em `email_confirmed` (ver seção 10) |
 | Comentários: editar e excluir | Exige e-mail confirmado | Aplicado | `EntityHooks::entityAccess`, `update` e `delete` |
 | Leitura pública (wiki e páginas institucionais) | Livre | Aplicado | Não restringido |

@@ -29,7 +29,6 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `user_insert` | `AccountCreationHooks::userInsert` | `src/Hook/AccountCreationHooks.php` |
 | `user_presave` | `AccountCreationHooks::userPresave` | `src/Hook/AccountCreationHooks.php` |
 | `user_presave` | `PictureReplacementHooks::userPresave` | `src/Hook/PictureReplacementHooks.php` |
-| `user_presave` | `RoleSyncHooks::userPresave` | `src/Hook/RoleSyncHooks.php` |
 | `user_update` | `PictureReplacementHooks::userUpdate` | `src/Hook/PictureReplacementHooks.php` |
 
 ### Herança de papéis (0.4.0-dev.22–23)
@@ -144,7 +143,6 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `PhotoFlowPageHooks` | `src/Hook/PhotoFlowPageHooks.php` | Anexa o fluxo do popup de foto (aculta_user/photo-flow) na página do painel e informa a foto salva ao script. |
 | `PictureReplacementHooks` | `src/Hook/PictureReplacementHooks.php` | Apaga a foto anterior enviada pela pessoa quando ela troca ou remove a foto (economia de disco). |
 | `RestrictedForumHooks` | `src/Hook/RestrictedForumHooks.php` | Fóruns restritos (ACULTA Fórum, F9, F-D14). |
-| `RoleSyncHooks` | `src/Hook/RoleSyncHooks.php` | Concede wiki_contributor a quem tem o papel email_confirmed. |
 | `SettingsTabsHooks` | `src/Hook/SettingsTabsHooks.php` | Aba "Privacidade" em Minha conta > Configurações (o Portal monta as abas e chama o alter). |
 
 ### `Legacy`
