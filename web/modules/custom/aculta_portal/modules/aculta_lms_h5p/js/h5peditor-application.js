@@ -17,9 +17,15 @@
   function registerEditor(form, record) {
     var state = formStates.get(form);
     if (!state) {
-      state = {records: new Set(), handler: null};
+      state = {records: new Set(), handler: null, pending: false, allowSubmit: false};
       state.handler = function (event) {
-        var invalid = false;
+        if (state.allowSubmit) {
+          state.allowSubmit = false;
+          return;
+        }
+
+        var activeRecords = [];
+        var inspectionFailed = false;
         state.records.forEach(function (editorRecord) {
           if (editorRecord.frame && !editorRecord.frame.isConnected) {
             // AJAX replacement can detach a H5P iframe without unloading the
@@ -27,26 +33,21 @@
             unregisterEditor(editorRecord);
             return;
           }
-          var library = editorRecord.editor.getLibrary();
-          if (library) {
-            var frameDocument = editorRecord.editor.iframeWindow.document;
-            if (frameDocument.activeElement) {
-              frameDocument.activeElement.blur();
+          try {
+            var library = editorRecord.editor.getLibrary();
+            if (library) {
+              activeRecords.push(editorRecord);
             }
-            var params = editorRecord.editor.getParams();
-            editorRecord.$library.val(library);
-            editorRecord.$params.val(JSON.stringify(params));
-            if (params && params.params !== undefined && !editorRecord.editor.isMainTitleSet()) {
-              event.preventDefault();
-              showEditorError(editorRecord, 'missing-title');
-              invalid = true;
+            else {
+              // Clearing an existing activity is a valid edit. Keep the hidden
+              // Form API values in sync and do not ask the empty editor to save.
+              editorRecord.$library.val('');
+              editorRecord.$params.val('');
             }
           }
-          else {
-            // Clearing an existing activity is a valid edit. Keep the hidden
-            // Form API values in sync and do not ask the empty editor to save.
-            editorRecord.$library.val('');
-            editorRecord.$params.val('');
+          catch (error) {
+            inspectionFailed = true;
+            showEditorError(editorRecord, 'validation-failed');
           }
         });
         if (!state.records.size) {
@@ -54,9 +55,97 @@
           formStates.delete(form);
           return;
         }
-        if (invalid) {
+        if (!activeRecords.length) {
+          if (inspectionFailed) {
+            event.preventDefault();
+          }
           return;
         }
+
+        event.preventDefault();
+        if (inspectionFailed) {
+          return;
+        }
+        if (state.pending) {
+          return;
+        }
+
+        state.pending = true;
+        var nativeEvent = event.originalEvent || event;
+        var submitter = nativeEvent.submitter || null;
+        var remaining = activeRecords.length;
+        var failed = false;
+
+        function finishOne() {
+          remaining--;
+          if (remaining > 0) {
+            return;
+          }
+          state.pending = false;
+          if (failed) {
+            return;
+          }
+
+          state.allowSubmit = true;
+          if (typeof form.requestSubmit === 'function') {
+            if (submitter && submitter.form === form) {
+              form.requestSubmit(submitter);
+            }
+            else {
+              form.requestSubmit();
+            }
+          }
+          else if (submitter && typeof submitter.click === 'function') {
+            submitter.click();
+          }
+          else {
+            state.allowSubmit = false;
+            HTMLFormElement.prototype.submit.call(form);
+          }
+        }
+
+        activeRecords.forEach(function (editorRecord) {
+          var settled = false;
+          var frameDocument;
+          try {
+            frameDocument = editorRecord.editor.iframeWindow.document;
+            if (frameDocument.activeElement) {
+              frameDocument.activeElement.blur();
+            }
+            editorRecord.editor.getContent(function (content) {
+              try {
+                if (!content || !content.library || !content.params) {
+                  throw new Error('H5P Editor returned incomplete content.');
+                }
+                editorRecord.$library.val(content.library);
+                editorRecord.$params.val(content.params);
+                var $target = editorRecord.frame ? $(editorRecord.frame) : editorRecord.$root;
+                $target.next('[data-h5p-editor-error]').remove();
+              }
+              catch (error) {
+                failed = true;
+                showEditorError(editorRecord, 'validation-failed');
+              }
+              settle();
+            }, function (error) {
+              failed = true;
+              showEditorError(editorRecord, error);
+              settle();
+            });
+          }
+          catch (error) {
+            failed = true;
+            showEditorError(editorRecord, 'validation-failed');
+            settle();
+          }
+
+          function settle() {
+            if (!settled) {
+              settled = true;
+              finishOne();
+            }
+          }
+        });
       };
       formStates.set(form, state);
       $(form).on('submit.acultaH5PEditor', state.handler);
@@ -68,7 +157,11 @@
   /** Shows an accessible validation error next to the affected editor. */
   function showEditorError(record, error) {
     var messages = {
-      'missing-title': Drupal.t('Preencha o título principal da atividade.')
+      'content-not-selected': Drupal.t('Selecione um tipo de atividade H5P.'),
+      'missing-title': Drupal.t('Preencha o título principal da atividade.'),
+      'missing-library': Drupal.t('Selecione um tipo de atividade H5P.'),
+      'missing-params': Drupal.t('Complete os campos obrigatórios da atividade.'),
+      'missing-params-params': Drupal.t('Complete os campos obrigatórios da atividade.')
     };
     var message = messages[error] || Drupal.t('Não foi possível validar a atividade H5P. Revise os campos e tente novamente.');
     var $target = record.frame ? $(record.frame) : record.$root;

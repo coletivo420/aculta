@@ -1,3 +1,10 @@
+## Revisão do salvamento do editor — 2026-10-19
+
+- A revisão encontrou que o envio síncrono com `getParams()` ignorava a validação e a atualização de versão oferecidas pela API `getContent()` do H5P Editor. O formulário agora aguarda a serialização/validação assíncrona de todos os editores antes de submeter.
+- Falhas ao consultar editor ou validar conteúdo interrompem o envio e exibem alerta acessível; widgets vazios continuam permitindo limpar a atividade.
+- H5P Kernel: 24 testes, 272 assertions; gates Drupal 11+, imagem e slugs aprovados; sintaxe JavaScript validada. Persistência e reprodução ponta a ponta continuam DEFERRED.
+- RUNTIME STATUS: DEFERRED para salvamento/reprodução ponta a ponta.
+
 ## 0.4.0-dev.144 — instalação privada de bibliotecas H5P — 2026-10-18
 
 - Adiciona formulário administrativo para importar pacotes `.h5p` locais, com validação oficial H5P, limite/extensão fornecidos pelo Core, conteúdo ignorado e Hub remoto desligado.
