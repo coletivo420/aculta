@@ -13,6 +13,7 @@ continuam pendentes.
 | Context API | resolver cada contexto, provider ausente/desabilitado, host inválido e URLs canônicas | Unit + Kernel. |
 | Comment | tipo compartilhado (ou variantes justificadas), host bundles e field settings, thread, revisão, publicação, permalink/ancora, formulário | Kernel + Functional. |
 | Formulário/display de tópico público | title/body/categoria editáveis; status de comentário e autoria histórica não editáveis; full apresenta discussão compartilhada; teaser omite thread | Unit verifica contrato YAML e equivalência Config Sync/config install; Functional Runtime pendente. |
+| Ação de criação no índice | link aparece apenas se a rota Core autoriza; variação por usuário/permissões e contexto `forum`; ausência em outros displays/domínios | Unit `PublicForumTopicCreateActionHooksTest`: 5 testes/19 assertions PASS. Runtime anônimo: raiz 200, link omitido, rota 403. Conta autorizada, navegador e apresentação integral pendentes. |
 | Acesso público | anônimo/membro/editor; publicação, conteúdo fechado, flags e permissões | Kernel + Functional/browser. |
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
 | Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest` PASS; Runtime editorial PARTIAL (field/form renderizados sem envio). |

@@ -4,6 +4,12 @@ Revisão: 2026-10-19. Base local: `origin/main` `d4a0d66e`. Este documento
 distingue documentação upstream, código instalado e decisões alvo. APIs Drupal
 e dependências devem ser rechecadas no momento de cada implementação.
 
+Para a ação contextual da View, Drupal Core 11.x documenta `hook_views_pre_render`
+como ponto de inserir `attachment_before`/`attachment_after` antes da renderização;
+`AccessManagerInterface::checkNamedRoute(..., TRUE)` fornece o resultado de acesso
+cacheável. Código instalado verificado em `views.api.php`, `ViewExecutable.php`,
+`AccessManagerInterface.php` e `CacheableMetadata.php`. Referências: [Views pre-render](https://api.drupal.org/api/drupal/core%21modules%21views%21views.api.php/function/hook_views_pre_render/11.x), [AccessManagerInterface](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Access%21AccessManagerInterface.php/interface/AccessManagerInterface/11.x).
+
 ## Estado real do repositório
 
 | Evidência | Constatação | Efeito para o projeto |

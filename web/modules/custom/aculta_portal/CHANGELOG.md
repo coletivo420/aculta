@@ -1,3 +1,8 @@
+## 0.4.0-dev.181 — ação de criação condicionada por acesso — 2026-10-19
+
+- Na listagem raiz do Growroom, a ação de criar tópico aparece apenas quando a rota Core autoriza a conta atual. Metadados de acesso são propagados para o cache da View para evitar cache cruzado de permissões/participação.
+- PHPUnit Unit do Fórum: 11 testes/51 assertions PASS; PHPCS e gates Drupal 11+ (969), fronteira (1328), mapa (154), tokens (285), packages (22), slugs (387) PASS. Runtime `toca`: raiz 200, sem ação para anônimo, criação 403. Conta autorizada e navegador não validados. Nenhum formulário submetido ou conteúdo criado. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.180 — adiciona rota amigável de criação do tópico — 2026-10-19
 
 - `/criar-topico` usa o formulário Core `node.default` para `aculta_forum_topic`, com `_entity_create_access` por bundle e classificação do purpose `forum`. Sem permissão contextual, a rota nega acesso.

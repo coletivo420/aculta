@@ -13,6 +13,7 @@ DI explícita. Não criar service locator ou hook procedural migrável.
 | Preparar thread/post | View builders e Views/Core Comment render | Não criar renderer paralelo antes de testar APIs existentes. |
 | Listagem e filtro | Views query/access handlers + Search API processors | Filters por domínio/contexto fixos. |
 | Origem do tópico público | `PublicForumTopicHooks` (`entity_create_access`, `node_presave`) | Implementado na dev.11: restringe criação ao purpose ativo `forum`, exige seu domínio canônico e preenche `field_domain_source` quando ausente. |
+| Ação criar tópico na View | `PublicForumTopicCreateActionHooks` (`views_pre_render`) + `AccessManagerInterface` | Implementado na dev.14. Reavalia a rota `aculta_forum.topic_add` e propaga cacheabilidade antes de emitir o link com token visual existente; somente `page_discussions` no purpose `forum`. |
 | Leitura/não lidos | History API e serviço pequeno se histórico nativo não cobrir o contrato | Exige decidir armazenamento e invalidação antes de entidade/tabela. |
 | Estatísticas | agregação/cache service sobre APIs/views existentes | Sem query cara a cada render ou storage redundante. |
 | Evento de resposta | evento interno neutro após persistência, consumido por Messenger | Revalidar access no worker; não duplicar aviso. |

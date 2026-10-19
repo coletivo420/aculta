@@ -86,6 +86,13 @@ por participantes autorizados, submissão de tópico/resposta, moderação,
 integração visual e UX serem validados. A retirada contrib dev.5 também
 permanece aberta por depender de consumidores migrados e restore point válido.
 
+Dev.14 acrescentou a ação “Criar tópico” à listagem pública apenas quando a rota
+Core autoriza a conta atual, com cacheability de permissões e participação. A
+ação ainda aguarda apresentação completa no ACULTA420 e validação visual;
+nenhuma submissão persistida ocorreu. Testes Unit e gates estáticos direcionados
+passaram; Runtime confirmou raiz 200, ação ausente para anônimo e rota de criação
+403. Usuário autorizado e navegador permanecem sem homologação.
+
 Dev.11 adicionou a View `aculta_forum_public_topics` e o campo de domínio
 canônico; dev.12 conectou a Page display à raiz do purpose forum por meio do
 caminho interno `/discussoes`. Runtime confirmou raiz 200, rota classificada no

@@ -1,3 +1,8 @@
+## `0.1.0-dev.14` — ação contextual de criação de tópico — 2026-10-19
+
+- A View pública acrescenta `/criar-topico` somente quando Entity Create Access permite a ação. O hook OOP `views_pre_render` usa o resultado cacheável da rota tanto na ação quanto na View e aplica o token visual existente `button-primary`.
+- PHPUnit Unit do Fórum: 11 testes/51 assertions PASS, incluindo allow/deny, cache e filtros por View/display/purpose; PHPCS PASS; gates Drupal 11+ (969), fronteira (1328), mapa (154), tokens de UI (285), packages (22), slugs (387) PASS. Runtime `toca`: raiz HTTP 200, sem ação para anônimo, `/criar-topico` 403. A apresentação integral e usuário autorizado permanecem pendentes; nenhuma submissão ou conteúdo persistido foi feito. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.13` — formulário de criação em slug público — 2026-10-19
 
 - Nova rota `/criar-topico` para o formulário Core `node.default` do bundle `aculta_forum_topic`. Entity Create Access continua sendo a autorização, complementada pela regra de participação existente; a rota pertence ao purpose `forum`.
