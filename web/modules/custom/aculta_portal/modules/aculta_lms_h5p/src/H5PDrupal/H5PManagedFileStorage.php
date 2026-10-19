@@ -10,6 +10,7 @@ use Drupal\aculta_image\PackagedAssetPublisher;
 use Drupal\aculta_lms_h5p\H5PEditor\H5PFileUsageManager;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
@@ -23,6 +24,7 @@ final class H5PManagedFileStorage extends \H5PDefaultStorage {
     string $path,
     private readonly FileSystemInterface $fileSystem,
     private readonly FileRepositoryInterface $fileRepository,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FileUsageInterface $fileUsage,
     private readonly ImageFileUsageManager $imageUsage,
     private readonly FileRemover $imageRemover,
@@ -178,17 +180,17 @@ final class H5PManagedFileStorage extends \H5PDefaultStorage {
       if ($file === NULL) {
         throw new \RuntimeException('Refusing to delete an H5P library file that is not managed by Drupal.');
       }
+      $this->fileUsage->delete($file, 'aculta_lms_h5p', 'h5p_library', $directoryName);
       if (in_array(strtolower(pathinfo($relative, PATHINFO_EXTENSION)), ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'], TRUE)) {
-        $usageId = hash('sha256', dirname($relative));
+        $usageId = hash('sha256', dirname($directoryName . '/' . $relative));
         $this->fileUsage->delete($file, 'aculta_image', 'h5p_library_asset', $usageId);
         if (!$this->imageRemover->delete($file, 'H5P library removed by administrator')) {
           throw new \RuntimeException('An H5P library image is still referenced and cannot be removed.');
         }
       }
       else {
-        $this->fileUsage->delete($file, 'aculta_lms_h5p', 'h5p_library', $directoryName);
         if (empty($this->fileUsage->listUsage($file)) && !$this->imageRemover->hasReferences($file)) {
-          $file->getEntityType()->getStorage()->delete([$file]);
+          $this->entityTypeManager->getStorage('file')->delete([$file]);
         }
         else {
           throw new \RuntimeException('An H5P library asset is still referenced and cannot be removed.');
@@ -309,7 +311,7 @@ final class H5PManagedFileStorage extends \H5PDefaultStorage {
       }
     }
     elseif (empty($this->fileUsage->listUsage($managed)) && !$this->imageRemover->hasReferences($managed)) {
-      $managed->getEntityType()->getStorage()->delete([$managed]);
+      $this->entityTypeManager->getStorage('file')->delete([$managed]);
     }
     else {
       throw new \RuntimeException('An H5P content asset is still referenced and cannot be removed.');

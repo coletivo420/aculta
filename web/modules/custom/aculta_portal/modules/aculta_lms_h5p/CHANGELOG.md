@@ -1,7 +1,12 @@
-## Estado do Runtime e roadmap — 2026-10-19
+## F10 concluída — H5P ponta a ponta — 2026-10-19
 
-- README e roadmap alinhados: `aculta_lms_h5p` está habilitado no Runtime `cursos` apenas para teste; salvamento e reprodução ponta a ponta seguem pendentes, portanto a integração não está homologada para uso.
-- RUNTIME STATUS: ATIVO PARA TESTE; homologação ponta a ponta DEFERRED.
+- Corrige a serialização de serviços injetados no formulário de instalação de bibliotecas H5P, resolve URIs privados para caminhos locais antes da validação oficial e exclui o upload temporário pela API da entidade File.
+- Corrige o carregamento dos assets de bibliotecas H5P privadas: scripts e estilos servidos pela rota Drupal ficam fora da agregação, que procura os arquivos sob `DRUPAL_ROOT` e não consegue incorporar conteúdo privado.
+- Corrige a exclusão de bibliotecas: arquivos gerenciados são removidos pela Entity API e o identificador de uso de imagens inclui o caminho relativo completo, permitindo que `aculta_image` confirme a remoção segura.
+- Corrige o formatter para normalizar IDs de bibliotecas dinâmicas e a classificação de conteúdo `div`; corrige também a referência ao formulário de matrícula no construtor da sala de curso, que causava 500 ao visitante sem matrícula.
+- Homologação visual no Runtime `cursos`: pacote de biblioteca aceito pela tela administrativa, atividade salva pelo editor no Group 15 temporário e reproduzida por estudante matriculada. O navegador anônimo não recebeu o player e recebeu 403 na rota de arquivos privados; a estudante autorizada passou pela checagem de acesso. Dados, contas e biblioteca de smoke temporários foram removidos pela API Drupal; `H5P.HelloWorld` preexistente foi preservada.
+- Unit LMS/H5P: 36 testes, 148 assertions, 5 deprecações do PHPUnit. Kernel LMS/H5P em MariaDB dedicado: 23 testes, 549 assertions; 83 deprecações de Core/contrib (incluindo Webform Score). Gates Drupal 11+ (966 verificações), imagens, slugs (387 rotas; 20 ocorrências contrib baseline) e pacotes próprios (20 verificações) aprovados.
+- RUNTIME STATUS: HOMOLOGAÇÃO DE TESTE CONCLUÍDA; produção não foi alterada.
 
 ## Revisão do salvamento do editor — 2026-10-19
 

@@ -10,6 +10,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 
 /** Builds the learner facing overview on the native course page. */

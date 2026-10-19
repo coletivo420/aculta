@@ -21,7 +21,7 @@ services:
     arguments: ['@config.factory', '@file_system', '@file.repository', '@file.usage', '@aculta_image.file_usage_manager']
   aculta_lms_h5p.file_storage_factory:
     class: Drupal\aculta_lms_h5p\H5PDrupal\H5PManagedFileStorageFactory
-    arguments: ['@file_system', '@file.repository', '@file.usage', '@aculta_image.file_usage_manager', '@aculta_image.file_remover', '@aculta_image.packaged_asset_publisher', '@aculta_lms_h5p.file_usage_manager']
+    arguments: ['@file_system', '@file.repository', '@entity_type.manager', '@file.usage', '@aculta_image.file_usage_manager', '@aculta_image.file_remover', '@aculta_image.packaged_asset_publisher', '@aculta_lms_h5p.file_usage_manager']
   aculta_lms_h5p.editor_storage:
     class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalStorage
     arguments: ['@aculta_lms_h5p.file_usage_manager']

@@ -7,13 +7,13 @@ Composer independentes, sob GPL-3.0-only.
 
 ## Estado
 
-O módulo está habilitado no Runtime de teste `cursos` para validação funcional;
-isso não significa aceite do fluxo completo. A edição/salvamento e a reprodução
-H5P ainda precisam de smoke ponta a ponta com dados descartáveis. A rota pública
-de iframe do módulo de origem foi removida porque não validava o acesso ao
-conteúdo pai. O conteúdo deve ser apresentado no contexto de um curso com acesso
-validado pelo Drupal e pelo LMS. Nenhuma alteração de produção foi feita nesta
-execução.
+F10 foi homologada no Runtime de teste `cursos`: o pacote de biblioteca foi
+instalado pela tela administrativa, uma atividade foi salva pelo editor e
+reproduzida para estudante matriculada no Group. A rota de iframe do módulo de
+origem foi removida porque não validava o acesso ao conteúdo pai. O conteúdo é
+apresentado no contexto do curso, após validação de acesso pelo Drupal e pelo
+LMS. As fixtures temporárias foram removidas; `H5P.HelloWorld`, preexistente,
+foi preservada. Nenhuma alteração de produção foi feita.
 
 ## Painéis e vínculo com cursos
 
@@ -45,10 +45,9 @@ H5P. Administradores podem instalar pacotes `.h5p` locais pelo validador oficial
 do H5P; o conteúdo do pacote é ignorado e apenas bibliotecas aprovadas são
 instaladas. Imagens raster e SVG passam pelo `aculta_image`, e os demais assets
 ficam como arquivos privados gerenciados. Hub, telemetria e instalação remota
-continuam desabilitados. Embora habilitado no Runtime de teste, o módulo ainda
-não está homologado para uso: o salvamento e a reprodução ponta a ponta
-permanecem pendentes. Exportação pública e estatísticas externas ficam
-desabilitadas.
+continuam desabilitados. F10 foi homologada ponta a ponta no Runtime de teste;
+o changelog registra os testes Unit/Kernel, gates e limites da homologação.
+Exportação pública e estatísticas externas ficam desabilitadas.
 
 ## Proveniência
 

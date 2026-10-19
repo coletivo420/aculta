@@ -15,7 +15,7 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
   use UserCreationTrait;
 
   /** {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p'];
+  protected static $modules = ['system', 'user', 'file', 'image', 'views', 'entity_usage', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p'];
 
   /** {@inheritdoc} */
   protected function setUpFilesystem(): void {
@@ -29,11 +29,12 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
   /** {@inheritdoc} */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'user', 'file']);
+    $this->installConfig(['system', 'user', 'file', 'image']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('h5p_content');
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_image', ['aculta_image_fingerprint', 'aculta_image_quarantine', 'aculta_image_origin']);
     $this->installSchema('aculta_lms_h5p', [
       'h5p_content_libraries',
@@ -69,8 +70,10 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
         'machineName' => 'H5P.Test',
         'runnable' => 1,
         'preloadedJs' => [['path' => 'script.js']],
+        'preloadedCss' => [['path' => 'style.css']],
       ], JSON_THROW_ON_ERROR),
       'H5P.Test-1.0/script.js' => 'window.H5PTest = true;',
+      'H5P.Test-1.0/style.css' => '.h5p-test { display: block; }',
       'H5P.Test-1.0/assets/icon.svg' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1H0z"/></svg>',
     ]);
     try {
@@ -78,7 +81,10 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
       $libraryDiscovery = $this->container->get('library.discovery');
       self::assertFalse($libraryDiscovery->getLibraryByName('aculta_lms_h5p', 'h5p.test-1.0'));
       self::assertSame(1, $installer->install($package));
-      self::assertNotFalse($libraryDiscovery->getLibraryByName('aculta_lms_h5p', 'h5p.test-1.0'));
+      $runtimeLibrary = $libraryDiscovery->getLibraryByName('aculta_lms_h5p', 'h5p.test-1.0');
+      self::assertNotFalse($runtimeLibrary);
+      self::assertFalse($runtimeLibrary['js'][0]['preprocess']);
+      self::assertFalse(array_values($runtimeLibrary['css'])[0]['preprocess']);
       $library = $this->container->get('database')->select('h5p_libraries', 'l')
         ->fields('l', ['machine_name', 'major_version', 'minor_version'])
         ->condition('machine_name', 'H5P.Test')
@@ -93,6 +99,19 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
       self::assertNotNull($image);
       self::assertTrue(is_file($this->container->get('file_system')->realpath($image->getFileUri())));
       self::assertNotEmpty($this->container->get('file.usage')->listUsage($image)['aculta_image']['h5p_library_asset'] ?? NULL);
+
+      // H5P's native library deletion must clean managed Drupal files safely.
+      $libraryId = (int) $this->container->get('database')->select('h5p_libraries', 'l')
+        ->fields('l', ['library_id'])
+        ->condition('machine_name', 'H5P.Test')
+        ->execute()->fetchField();
+      \Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal::getInstance('core')->deleteLibrary($libraryId);
+      self::assertSame(0, (int) $this->container->get('database')->select('h5p_libraries', 'l')
+        ->condition('library_id', $libraryId)
+        ->countQuery()->execute()->fetchField());
+      self::assertNull($this->container->get('file.repository')->loadByUri('private://h5p-kernel-test/libraries/H5P.Test-1.0/script.js'));
+      self::assertNull($this->container->get('file.repository')->loadByUri('private://h5p-kernel-test/libraries/H5P.Test-1.0/assets/icon.svg'));
+      self::assertFalse(is_dir($this->container->get('file_system')->realpath('private://h5p-kernel-test/libraries/H5P.Test-1.0')));
     }
     finally {
       unlink($package);
@@ -176,6 +195,28 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     $built = $form->buildForm([], new \Drupal\Core\Form\FormState());
     self::assertSame('private://h5p-kernel-test/packages', $built['package']['#upload_location']);
     self::assertSame(['extensions' => 'h5p'], $built['package']['#upload_validators']['FileExtension']);
+  }
+
+  /** Ensures upload form dependencies are restored across Form API rebuilds. */
+  public function testLibraryUploadFormDependenciesSurviveSerialization(): void {
+    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\H5PLibraryUploadForm::class);
+    $form = unserialize(serialize($form));
+
+    $file = \Drupal\file\Entity\File::create([
+      'uri' => 'private://h5p-kernel-test/packages/smoke.h5p',
+      'filename' => 'smoke.h5p',
+      'status' => 0,
+    ]);
+    $file->save();
+    $form_state = new \Drupal\Core\Form\FormState();
+    $form_state->setValue('package', [$file->id()]);
+    $form = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Form\H5PLibraryUploadForm::class);
+    $form = unserialize(serialize($form));
+    $form_array = [];
+    $form->validateForm($form_array, $form_state);
+
+    self::assertSame([], $form_state->getErrors());
+    self::assertSame('private://h5p-kernel-test/packages', $form->buildForm([], new \Drupal\Core\Form\FormState())['package']['#upload_location']);
   }
 
   /** Verifies the H5P settings form builds its option fieldset and labels. */

@@ -14,6 +14,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryIdentifier;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -136,7 +137,7 @@ class H5PDefaultFormatter extends FormatterBase {
       // Get the H5P interactive's dependencies.
       $h5p_packages = [];
       foreach ($preloaded_dependencies as $dependency) {
-        $h5p_packages[] = 'h5p/' . _aculta_lms_h5p_library_machine_to_id($dependency);
+        $h5p_packages[] = 'aculta_lms_h5p/' . H5PLibraryIdentifier::toDrupalLibraryId($dependency);
       }
 
       // Render only in-context content. The former public iframe endpoint

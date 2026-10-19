@@ -153,13 +153,16 @@ Webform Score continua restrito às submissões Webform; não há integração q
 automaticamente para a nota LMS. A tentativa automática de baixar traduções
 pt-BR dos três módulos durante `drush en` falhou porque `translations://` não está configurado neste
 Runtime; o código e a ativação terminaram com sucesso. RUNTIME STATUS: MÓDULOS HABILITADOS; homologação
-de acesso Runtime/browser DEFERRED por ausência de conteúdo de teste. **F10 — em andamento.** A integração própria
-`aculta_lms_h5p` foi portada e revisada; o módulo está habilitado no Runtime `cursos` e a biblioteca de smoke
-`H5P.HelloWorld` está instalada. Testes automatizados cobrem segurança, permissões, arquivos privados, estado,
-progresso, acesso por curso e editor. O smoke visual confirmou carregamento do editor, seleção de biblioteca e
-serialização do conteúdo no formulário. Ainda falta salvar uma atividade descartável, confirmar sua reprodução
-para estudante matriculado e limpar os dados de teste. Portanto, não está homologado para uso. RUNTIME STATUS:
-ATIVO PARA TESTE; persistência/reprodução ponta a ponta DEFERRED. Detalhes em
+de acesso Runtime/browser DEFERRED por ausência de conteúdo de teste. **F10 — concluída em 2026-10-19.**
+No Runtime `cursos`, a tela administrativa instalou uma biblioteca de teste; o educador salvou atividades
+no Group descartável 15 e a estudante matriculada reproduziu o tipo `div` pelo player H5P. O navegador
+anônimo não recebeu o player e foi bloqueado (403) na rota de arquivos privados; a estudante passou pela
+verificação de acesso do curso. O smoke revelou e corrigiu o URI privado enviado ao instalador, a restauração
+de serviços do formulário entre requisições, a agregação indevida dos assets privados, o formatter de
+bibliotecas dinâmicas e o namespace do formulário de matrícula da sala. As fixtures, contas e biblioteca
+de teste foram removidas por APIs Drupal; a biblioteca `H5P.HelloWorld` que já existia foi preservada.
+Unit e Kernel LMS/H5P, gates Drupal 11+, imagens e slugs: resultados registrados no changelog da integração.
+RUNTIME STATUS: HOMOLOGAÇÃO DE TESTE CONCLUÍDA; produção não foi alterada. Detalhes em
 [LMS-H5P-AUDIT.md](LMS-H5P-AUDIT.md) e no [changelog do módulo H5P](../../web/modules/custom/aculta_portal/modules/aculta_lms_h5p/CHANGELOG.md).
 
 As etapas depois da F10 continuam na ordem definida acima: F11 certificados (após decisões de produto), F12

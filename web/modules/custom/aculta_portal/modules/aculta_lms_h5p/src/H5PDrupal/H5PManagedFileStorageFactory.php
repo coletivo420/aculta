@@ -9,6 +9,7 @@ use Drupal\aculta_image\ImageFileUsageManager;
 use Drupal\aculta_image\PackagedAssetPublisher;
 use Drupal\aculta_lms_h5p\H5PEditor\H5PFileUsageManager;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
@@ -18,6 +19,7 @@ final class H5PManagedFileStorageFactory {
   public function __construct(
     private readonly FileSystemInterface $fileSystem,
     private readonly FileRepositoryInterface $fileRepository,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FileUsageInterface $fileUsage,
     private readonly ImageFileUsageManager $imageUsage,
     private readonly FileRemover $imageRemover,
@@ -30,6 +32,7 @@ final class H5PManagedFileStorageFactory {
       $path,
       $this->fileSystem,
       $this->fileRepository,
+      $this->entityTypeManager,
       $this->fileUsage,
       $this->imageUsage,
       $this->imageRemover,

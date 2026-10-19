@@ -1,5 +1,11 @@
 # Changelog — aculta_lms
 
+## Correção da sala de curso usada na homologação F10 — 2026-10-19
+
+- Corrige a resolução da classe `CourseEnrollmentPurchaseForm` chamada pela sala do curso; o namespace incorreto gerava 500 para visitantes sem acesso `take`.
+- Unit cobre a montagem do formulário de inscrição pela sala. Runtime `cursos`: estudante matriculada abriu a sala e reproduziu H5P; visitante anônimo foi bloqueado na rota de arquivo privado.
+- RUNTIME STATUS: HOMOLOGADO EM TESTE; produção não foi alterada.
+
 ## Continuação F7 — participação sem confirmação de e-mail
 
 - Corrige a divergência entre a matrícula em cursos, que não exige confirmação de e-mail, e as rotas de aula/resposta que ainda exigiam a marca global `email_confirmed`.

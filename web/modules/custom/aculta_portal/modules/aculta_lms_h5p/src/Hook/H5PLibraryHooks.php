@@ -6,6 +6,7 @@ namespace Drupal\aculta_lms_h5p\Hook;
 
 use Drupal\aculta_lms_h5p\AssetFileStorage;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryIdentifier;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -242,7 +243,11 @@ final class H5PLibraryHooks {
       foreach ($scripts as &$script) {
         $script = trim($script);
         if ($script) {
-          $js["$libraries_prefix/{$h5p_library->name}-{$h5p_library->major}.{$h5p_library->minor}/$script"] = [];
+          // These files are private Drupal-managed assets served by the
+          // library route, not files beneath DRUPAL_ROOT for aggregation.
+          $js["$libraries_prefix/{$h5p_library->name}-{$h5p_library->major}.{$h5p_library->minor}/$script"] = [
+            'preprocess' => FALSE,
+          ];
         }
       }
 
@@ -251,7 +256,9 @@ final class H5PLibraryHooks {
       foreach ($styles as &$style) {
         $style = trim($style);
         if ($style) {
-          $css["$libraries_prefix/{$h5p_library->name}-{$h5p_library->major}.{$h5p_library->minor}/$style"] = [];
+          $css["$libraries_prefix/{$h5p_library->name}-{$h5p_library->major}.{$h5p_library->minor}/$style"] = [
+            'preprocess' => FALSE,
+          ];
         }
       }
 
@@ -268,10 +275,10 @@ final class H5PLibraryHooks {
 
       $dependencies = ['aculta_lms_h5p/h5p.content'];
       foreach ($h5p_dependencies as $h5p_dependency) {
-        $dependencies[] = 'aculta_lms_h5p/' . self::libraryMachineToId($h5p_dependency);
+        $dependencies[] = 'aculta_lms_h5p/' . H5PLibraryIdentifier::toDrupalLibraryId($h5p_dependency);
       }
 
-      $libraries[self::libraryMachineToId($h5p_library)] = [
+      $libraries[H5PLibraryIdentifier::toDrupalLibraryId($h5p_library)] = [
         'js' => $js,
         'css' => [
           'base' => $css,
@@ -281,22 +288,6 @@ final class H5PLibraryHooks {
     }
 
     return $libraries;
-  }
-
-  /** Converts H5P library metadata to its Drupal library identifier. */
-  private static function libraryMachineToId(array|\stdClass $h5pLibrary): string {
-    if (is_array($h5pLibrary)) {
-      $h5pLibrary = (object) [
-        'name' => $h5pLibrary['machineName'],
-        'major' => $h5pLibrary['majorVersion'],
-        'minor' => $h5pLibrary['minorVersion'],
-      ];
-    }
-    $name = strtolower($h5pLibrary->name);
-    if (substr($name, 0, 4) !== 'h5p.') {
-      $name = "h5p.{$name}";
-    }
-    return "{$name}-{$h5pLibrary->major}.{$h5pLibrary->minor}";
   }
 
 }
