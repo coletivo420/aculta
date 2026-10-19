@@ -119,6 +119,17 @@ Estas regras valem quando a importação começar. Nenhuma está em execução.
 - Outros termos (4.739 tópicos): seleção manual por caixa, em `scratchpad/selecao_outros.html` (sessão de trabalho, fora do
   Git). Até a seleção, ficam excluídos.
 
+**Conteúdo comercial fora da restauração** (decisão do responsável, 2026-10-19; `scripts/growroom/marcar_comercial.py`):
+- Tópicos de anúncio de loja e vendedor são marcados pelo título: marca "[Growshop]" e verbos de anúncio ("vendo",
+  "vende-se"). Resultado: **641 tópicos** em `comercial-marcados.jsonl`, de 37 títulos distintos, quase todos anúncios de
+  lojas de sementes. Saem da importação.
+- 17 tópicos com termos que também aparecem em notícias ("a venda", "propaganda", "loja") ficam para revisão humana.
+- Limite: a regra só vê o título. Anúncio sem marca nem verbo de venda no título não é detectado. Tentativa pelo texto da
+  página foi descartada: menus e blocos do template aparecem em todas as páginas e marcaram notícias e debates.
+- Nada é apagado do acervo arquivado. A exclusão vale só para a importação.
+- Links e imagens de anúncio de terceiros continuam descartados pelo `mapear_links.py` (anúncios `openx`). Anúncios de
+  lojas dentro das fotos não foram identificados.
+
 **Links para growroom.net** (decisão do responsável, 2026-10-19: link quebrado vai para o modal de conteúdo legado).
 Script versionado: `scripts/growroom/mapear_links.py`. Resultado da última execução, sobre 8.801.010 ocorrências
 em 738.125 alvos distintos:
