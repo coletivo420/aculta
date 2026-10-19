@@ -187,6 +187,18 @@ cache/access, browser/mobile, acessibilidade, desempenho, busca, notificações,
 instalação/update/uninstall e rollback. Runtime permanece DEFERRED até validação
 real no servidor de teste.
 
+## Fórum dev.21 / Portal dev.190 — paginação pública
+
+- Unit `ForumTopicDisplayConfigTest`: 9 testes / 62 assertions PASS; install e
+  Config Sync equivalentes; pager Core completo com 20 itens e seletor de
+  quantidade fechado.
+- Runtime `toca`: config ativa confirma `type: full`, `items_per_page: 20`; raiz
+  HTTP 200 mostra as 8 fixtures; filtro `?categoria=77` HTTP 200 mostra o tópico
+  esperado. Nenhum conteúdo foi gravado. Navegação entre páginas (mais de 20
+  tópicos) e apresentação visual dos controles ainda não exercitadas.
+- Gates Drupal 11+ 969, fronteira 1334, mapa 154, slugs 387 e PHPCS PASS.
+  RUNTIME STATUS: PARTIAL.
+
 ## Correção Portal dev.184 — raiz e cache de rotas
 
 - A inspeção de `Drupal\Core\Routing\RouteProvider::getRouteCollectionForRequest()` confirmou que o cache conserva caminho, query e rotas, sem os atributos do Request marcados pelo path processor.

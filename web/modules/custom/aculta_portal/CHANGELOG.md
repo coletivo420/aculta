@@ -1,3 +1,12 @@
+## 0.4.0-dev.190 — paginação do índice público Growroom420 — 2026-10-19
+
+- A View `aculta_forum_public_topics` passa a usar pager Core completo, com 20
+  itens por página e navegação traduzida; mantém filtros fixos de publicação,
+  bundle, domínio e controle de acesso.
+- Instalação e Config Sync permanecem equivalentes; teste Unit confirma a
+  configuração de pager. Runtime de teste recebeu somente a configuração da
+  View e cache rebuild; nenhum conteúdo foi alterado. Pager ativo e lista HTTP verificados; navegação >20 e inspeção visual pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.187 — contrato de respostas públicas do Fórum — 2026-10-19
 
 - O teste de configuração do `aculta_forum` verifica equivalência do field Comment entre install/Config Sync, status aberto, formulário inline, tipo compartilhado, bloqueio de anônimos e permissão `post comments` para participantes confirmados: 8 testes / 55 assertions PASS; PHPCS PASS. Runtime de teste confirma o campo e permissão efetivos, sem conteúdo persistido. RUNTIME STATUS: PARTIAL.

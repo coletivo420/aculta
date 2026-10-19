@@ -1,3 +1,12 @@
+## `0.1.0-dev.21` — paginação do índice público — 2026-10-19
+
+- A listagem pública usa pager Core completo com 20 tópicos por página, controles
+  de navegação em português e sem seletor livre de quantidade. Os filtros de
+  domínio, publicação, bundle, categoria e acesso permanecem fixos.
+- A configuração de instalação e Config Sync são iguais; validação Unit e HTTP
+  do Runtime de teste confirmam pager e visibilidade. Nenhum Node ou Comment foi
+  criado/editado/excluído nesta entrega. Navegação com mais de 20 itens e inspeção visual seguem pendentes. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.20` — categorias e listagem pública com filtros — 2026-10-19
 
 - Corrigido o padrão Pathauto para selecionar apenas `aculta_forum_topic`; a

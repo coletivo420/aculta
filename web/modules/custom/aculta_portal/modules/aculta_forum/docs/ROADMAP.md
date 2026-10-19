@@ -176,6 +176,14 @@ mapa/slugs passam. Inspeção visual no navegador ainda é necessária. Essa
 entrega cobre a base da experiência de listagem descrita em
 `DISCOURSE-EXPERIENCE.md`; não encerra a dev.6.
 
+Portal `0.4.0-dev.190` / Forum `0.1.0-dev.21` substituem o limite sem paginação
+de cinco itens por um pager Core de 20 tópicos, com navegação em português e
+quantidade fixa. A listagem pode apresentar as oito fixtures simultaneamente e
+continua paginável à medida que o conteúdo crescer. O filtro de categoria e os
+filtros de acesso/domínio permanecem inalterados. Unit e HTTP no Runtime de teste
+confirmam a View; inspeção visual e submissão de tópico/resposta seguem
+pendentes. Dev.6 continua aberta.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,

@@ -101,6 +101,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame($view, $sync);
 
     $options = $view['display']['default']['display_options'];
+    self::assertSame('full', $options['pager']['type']);
+    self::assertSame(20, $options['pager']['options']['items_per_page']);
+    self::assertFalse($options['pager']['options']['expose']['items_per_page']);
     self::assertSame('access content', $options['access']['options']['perm']);
     self::assertSame('1', $options['filters']['status']['value']);
     self::assertSame(['aculta_forum_topic' => 'aculta_forum_topic'], $options['filters']['type']['value']);
