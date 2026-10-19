@@ -110,7 +110,7 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
             $feedback['content']['matched'] = [
               '#type' => 'html_tag',
               '#tag' => 'div',
-              '#attributes' => ['class' => ['feedback-section', 'matched-phrases']],
+              '#attributes' => ['data-portal-ui' => 'feedback-matched'],
               'heading' => [
                 '#type' => 'html_tag',
                 '#tag' => 'h4',
@@ -123,7 +123,7 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
           $feedback['content']['matched']['items'][$delta] = [
             '#type' => 'html_tag',
             '#tag' => 'p',
-            '#attributes' => ['class' => ['phrase-match', self::CLASS_CORRECT]],
+            '#attributes' => ['data-portal-ui' => 'phrase-match', 'class' => [self::CLASS_CORRECT]],
             '#value' => $feedback_text,
           ];
         }
@@ -135,7 +135,7 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
             $feedback['content']['unmatched'] = [
               '#type' => 'html_tag',
               '#tag' => 'div',
-              '#attributes' => ['class' => ['feedback-section', 'unmatched-phrases']],
+              '#attributes' => ['data-portal-ui' => 'feedback-unmatched'],
               'heading' => [
                 '#type' => 'html_tag',
                 '#tag' => 'h4',
@@ -148,7 +148,7 @@ final class FreeTextReviewFeedback extends ActivityAnswerBase {
           $feedback['content']['unmatched']['items'][$delta] = [
             '#type' => 'html_tag',
             '#tag' => 'p',
-            '#attributes' => ['class' => ['phrase-mismatch', self::CLASS_WRONG]],
+            '#attributes' => ['data-portal-ui' => 'phrase-mismatch', 'class' => [self::CLASS_WRONG]],
             '#value' => $feedback_text,
           ];
         }

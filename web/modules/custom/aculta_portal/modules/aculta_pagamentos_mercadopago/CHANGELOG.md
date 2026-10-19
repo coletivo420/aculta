@@ -1,5 +1,11 @@
 # Changelog — aculta_pagamentos_mercadopago
 
+## 0.1.0-dev.6 — marcação do checkout e das credenciais por token — 2026-10-19
+
+- Aviso do checkout (`checkout-help`) e fieldsets de credenciais (`mercado-pago-credentials-*`) usam `data-portal-ui`. O mapa das classes fica no tema.
+- Pendência: o estilo das credenciais continua em `css/gateway-admin.css` deste submódulo, e deveria ir para o tema.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.5 — retorno do popup e onReturn endurecidos — 2026-10-19
 
 - Popup de retorno aceita só caminho do mesmo site ou URL de mesma origem, e grava o destino como literal JSON seguro (`JSON_HEX_*`). Teste Unit `CheckoutPopupReturnControllerTest`.

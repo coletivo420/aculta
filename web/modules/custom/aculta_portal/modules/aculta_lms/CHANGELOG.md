@@ -1,5 +1,10 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.6 — review de texto livre sem classe de design — 2026-10-19
+
+- `FreeTextReviewFeedback` marca as seções e frases do retorno com `data-portal-ui` (`feedback-matched`, `feedback-unmatched`, `phrase-match`, `phrase-mismatch`). As classes de estado do LMS (`correct-answer`, `wrong-answer`) continuam, vindas da constante do contrib.
+- RUNTIME STATUS: DEFERRED.
+
 ## Integrações de conteúdo em andamento — 2026-10-19
 
 - `aculta_lms` declara as dependências `aculta_image` e

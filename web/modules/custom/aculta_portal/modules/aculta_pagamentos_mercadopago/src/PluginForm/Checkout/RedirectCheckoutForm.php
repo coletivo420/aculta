@@ -356,7 +356,10 @@ class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerIn
         'initPoint' => $redirect_url,
       ];
       $form['commerce_message'] = [
-        '#markup' => '<div class="checkout-help">' . $this->t('Click the button below to proceed to Mercado Pago (opens in a popup window). After payment, the window will close automatically.') . '</div>',
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['data-portal-ui' => 'checkout-help'],
+        '#value' => $this->t('Click the button below to proceed to Mercado Pago (opens in a popup window). After payment, the window will close automatically.'),
         '#weight' => -10,
       ];
 

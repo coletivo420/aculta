@@ -118,7 +118,7 @@ class EnrollmentRoleHooksTest extends UnitTestCase {
   public static function semConcessaoCasos(): array {
     return [
       'outro plugin de relação' => ['group_node', 'lms_course', FALSE, FALSE],
-      'grupo que não é curso' => ['group_membership', 'lms_class', FALSE, FALSE],
+      'grupo que não é curso nem turma' => ['group_membership', 'lms_other', FALSE, FALSE],
       'visitante' => ['group_membership', 'lms_course', TRUE, FALSE],
       'já é estudante' => ['group_membership', 'lms_course', FALSE, TRUE],
     ];

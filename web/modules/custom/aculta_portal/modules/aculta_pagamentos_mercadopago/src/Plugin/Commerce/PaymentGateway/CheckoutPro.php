@@ -241,7 +241,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       '#type' => 'fieldset',
       '#title' => $this->t('Sandbox - Test account'),
       '#description' => $this->t('Use your Mercado Pago test account credentials (Public key and Access token from the test environment). Use them to simulate payments and test your integrations from a trial account. For more information visit: https://www.mercadopago.com/developers/en/docs/your-integrations/test/accounts'),
-      '#attributes' => ['class' => ['mercado-pago-credentials', 'mercado-pago-credentials-test']],
+      '#attributes' => ['data-portal-ui' => 'mercado-pago-credentials-test'],
       '#states' => [
         'visible' => [
           ':input[name="' . $mode_name . '"]' => ['value' => 'test'],
@@ -265,7 +265,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       '#type' => 'fieldset',
       '#title' => $this->t('Stage - Production account & Test credentials'),
       '#description' => $this->t('Use test credentials (Public key and Access token) against your production account to try the flow without real charges. For more information visit: https://www.mercadopago.com/developers/en/docs/your-integrations/credentials'),
-      '#attributes' => ['class' => ['mercado-pago-credentials', 'mercado-pago-credentials-stage']],
+      '#attributes' => ['data-portal-ui' => 'mercado-pago-credentials-stage'],
       '#states' => [
         'visible' => [
           ':input[name="' . $mode_name . '"]' => ['value' => 'stage'],
@@ -289,7 +289,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       '#type' => 'fieldset',
       '#title' => $this->t('Live - Production account & Production credentials'),
       '#description' => $this->t('Use your production credentials (Public key and Access token) for real payments. For more information visit: https://www.mercadopago.com/developers/en/docs/your-integrations/credentials'),
-      '#attributes' => ['class' => ['mercado-pago-credentials', 'mercado-pago-credentials-prod']],
+      '#attributes' => ['data-portal-ui' => 'mercado-pago-credentials-prod'],
       '#states' => [
         'visible' => [
           ':input[name="' . $mode_name . '"]' => ['value' => 'live'],

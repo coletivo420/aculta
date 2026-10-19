@@ -100,7 +100,7 @@ final class H5PDashboardController implements ContainerInjectionInterface {
 
       $courseBuild = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-lms-h5p-course']],
+        '#attributes' => ['data-portal-ui' => 'h5p-dashboard-course'],
         'title' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',

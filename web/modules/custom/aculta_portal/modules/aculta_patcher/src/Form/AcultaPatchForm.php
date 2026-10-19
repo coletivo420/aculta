@@ -19,7 +19,7 @@ final class AcultaPatchForm extends EntityForm {
     $patch = $this->entity;
     $form['notice'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['messages', 'messages--warning']],
+      '#attributes' => ['data-portal-ui' => 'notice-warning'],
       'text' => ['#markup' => $this->t('O estado ativo inclui este diff no manifesto do próximo build Composer. Salvar aqui não altera arquivos de código nem ativa o patch no site em execução; exporte a configuração, gere os artefatos e revise o commit antes do deploy.')],
     ];
     $form['label'] = [

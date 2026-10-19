@@ -1,3 +1,11 @@
+## Marcação do H5P por token e contrato de classe do H5P core — 2026-10-19
+
+- Administração (`H5PLibraryAdmin`, `H5PDashboardController`) e formatação (`H5PDefaultFormatter`) usam render arrays com `data-portal-ui` (`h5p-admin-header`, `h5p-dashboard-course`, `h5p-content-unavailable`).
+- Classes `h5p-content` (formatador) e `h5p-editor` (widget) continuam, porque o H5P core as usa para localizar as instâncias. Elas estão em render arrays, na exceção documentada do gate de fronteira.
+- Widget do editor: o rótulo "Tipo de atividade" ficou em um item próprio e o contêiner do editor recebe os atributos. Os seletores do JS não mudam.
+- Removidas classes sem consumidor (`h5p-settings-container`, `h5p-visibility-toggler`) e um comentário de código morto com marcação HTML.
+- RUNTIME STATUS: DEFERRED.
+
 ## Exclusão de conteúdo H5P tolerante a arquivo retido — 2026-10-19
 
 - `H5PManagedFileStorage::deleteContent()` processa todos os arquivos mesmo quando um é recusado (ainda referenciado ou fora do padrão gerenciado); a pasta do conteúdo só é removida quando nenhum arquivo ficou retido.

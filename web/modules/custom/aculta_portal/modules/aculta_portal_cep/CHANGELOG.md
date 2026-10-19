@@ -1,3 +1,8 @@
+## 0.3.0-dev.8 — ordem das fontes sem classe de design — 2026-10-19
+
+- Tabela de fontes com `data-portal-ui="cep-sources"` e coluna de ordem com `role-weight` (marcador de arrastar do Core), no lugar de `cep-source-weight`. Sem mudança de comportamento.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.3.0-dev.7 — base de CEP versionada no repositório — 2026-10-19
 
 - A base do DNE em shards (872 arquivos, 1.388.509 CEPs) e o `manifest.json` passam a ser versionados em `data/cep/` (raiz do repositório, fora de `web/`). Decisão do responsável de publicar no repositório público, assumindo o risco de licença e a propriedade do conteúdo (`docs/portal/CEP-LOCAL.md`).

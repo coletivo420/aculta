@@ -96,8 +96,9 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
       . ' alt="' . Html::escape($atributos['alt'] ?? '') . '" loading="lazy" decoding="async">';
     // Só legenda: o crédito foi removido de todos os modelos a pedido do responsável.
     $legenda = Html::escape($atributos['data-aculta-legenda'] ?? '');
-    $rodape = $legenda !== '' ? '<figcaption class="aculta-imagem__legenda">' . $legenda . '</figcaption>' : '';
-    return '<figure class="aculta-imagem aculta-imagem--' . $modelo . ' aculta-imagem--' . $alinhamento . '">' . $img . $rodape . '</figure>';
+    // Marcação em string (filtro de texto): atributos de dados estilizados no tema por seletor de atributo.
+    $rodape = $legenda !== '' ? '<figcaption data-aculta-imagem-legenda>' . $legenda . '</figcaption>' : '';
+    return '<figure data-aculta-imagem data-aculta-imagem-modelo="' . $modelo . '" data-aculta-imagem-alinhamento="' . $alinhamento . '">' . $img . $rodape . '</figure>';
   }
 
   /** URI public:// do src de um arquivo de imagem do site, ou NULL. */

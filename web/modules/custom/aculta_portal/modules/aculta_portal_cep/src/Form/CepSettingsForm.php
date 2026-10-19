@@ -87,7 +87,7 @@ final class CepSettingsForm extends ConfigFormBase {
           '#title_display' => 'invisible',
           '#delta' => count(CepSources::LABELS),
           '#default_value' => $position,
-          '#attributes' => ['class' => ['cep-source-weight']],
+          '#attributes' => ['class' => ['role-weight']],
         ],
       ];
     }
@@ -95,7 +95,7 @@ final class CepSettingsForm extends ConfigFormBase {
       '#type' => 'table',
       '#header' => [$this->t('Fonte'), $this->t('Ativa'), $this->t('Ordem')],
       '#tabledrag' => [
-        ['action' => 'order', 'relationship' => 'sibling', 'group' => 'cep-source-weight'],
+        ['action' => 'order', 'relationship' => 'sibling', 'group' => 'role-weight'],
       ],
       '#attributes' => ['data-portal-ui' => 'cep-sources'],
     ] + $rows;

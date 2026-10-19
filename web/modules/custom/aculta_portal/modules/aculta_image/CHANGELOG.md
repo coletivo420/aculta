@@ -1,5 +1,11 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.27 — imagem do texto marcada por atributos de dados — 2026-10-19
+
+- Filtro `ImagemModelo` emite `data-aculta-imagem`, `data-aculta-imagem-modelo`, `data-aculta-imagem-alinhamento` e `data-aculta-imagem-legenda` no lugar das classes `aculta-imagem*`. O tema (`revista-post.css`) seleciona por esses atributos.
+- Versão `0.1.0-dev.26` estava em `info.yml` sem seção neste CHANGELOG; esta entrega avança para `dev.27`.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.25 — gate de estilos em Views e modos de exibição — 2026-10-18
 
 - R9 lê os formatadores exportados de Views e dos modos de exibição e verifica que cada `image_style` e estilo PhotoSwipe
