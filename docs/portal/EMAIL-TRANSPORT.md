@@ -6,14 +6,52 @@ Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
 [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md), `config/secrets-contract.json`.
 
+## 0. Estado atual dos provedores (2026-10-19)
+
+Há dois transportes SMTP definidos no Mailer Plus. O documento anterior citava só o SMTP2GO; esta seção
+registra o que existe de fato.
+
+| Transporte | Provedor | Host e porta | Onde está definido | Papel |
+|---|---|---|---|---|
+| `smtp2go` | SMTP2GO | `mail.smtp2go.com:465` | `config/sync/mailer_transport.mailer_transport.smtp2go.yml`; senha e usuário por Key (`key.config_override.mailer_smtp2go_*`) | Padrão **no repositório** (`config/sync/mailer_transport.settings.yml`) |
+| `smtp` | Hostinger | `smtp.hostinger.com:465` | **Só no banco do Runtime de teste.** Não está em `config/sync`. Usuário e senha gravados na configuração do transporte, sem Key | Padrão **no Runtime de teste** (`default_transport: smtp`) |
+
+**Desvio de configuração.** O Runtime de teste aponta para a Hostinger e o repositório para o SMTP2GO. Os dois
+não estão alinhados, e o transporte da Hostinger não é reproduzível a partir do Git. Isso precisa ser resolvido
+antes de a configuração ser exportada ou importada.
+
+**Porta do SMTP2GO.** Este documento dizia `2525` nas seções 3 e 4.1. A configuração versionada usa `465`.
+Vale a porta de `config/sync`.
+
+**Incidente em 2026-10-19: envios falhando pela Hostinger.** Desde 2026-10-18 23:48 (horário de Brasília), todas
+as tentativas de envio pelo transporte da Hostinger falharam (30 registros em `symfony_mailer`, último às
+16:19 de 2026-10-19). A mensagem do servidor é:
+
+> `553 5.7.1 : Sender address rejected: not owned by user naoresponda@aculta.org`
+
+Leitura: a conexão TLS e a autenticação funcionam (a recusa acontece depois do `MAIL FROM`). A Hostinger recusa o
+endereço de remetente `naoresponda@aculta.org`, porque ele não pertence à conta SMTP autenticada. O remetente
+vem de `system.site:mail` e do `from_mail` do Webform `aculta_contact` (ambos `naoresponda@aculta.org` em
+`config/sync`). Para corrigir, é preciso uma das opções:
+
+1. criar `naoresponda@aculta.org` como caixa ou alias da conta SMTP da Hostinger (painel da Hostinger, fora do repositório);
+2. trocar o remetente para o endereço da conta autenticada, em `system.site` e no `from_mail` do Webform, por
+   mudança versionada e aprovada.
+
+Enquanto nenhuma das duas for feita, os envios pela Hostinger não são entregues.
+
+**Pendências de segurança.** A senha do transporte `smtp` (Hostinger) está na configuração do banco do Runtime. A
+regra do projeto exige Key com provider `env` para credenciais (`AGENTS.md`). Deve ser movida para Key antes de
+qualquer exportação.
+
 ## 1. Decisão
 
 Migrar o envio de e-mail do `drupal/smtp` (1.4, SMTP via `smtp.settings`) para **Mailer Plus**
 (`drupal/symfony_mailer` 2.x), em modo override (`mailer_override`), mantendo o provedor SMTP2GO
 e as mesmas credenciais.
 
-Não há troca de provedor. O SMTP2GO continua sendo o servidor de envio; muda apenas quem fala com ele
-dentro do Drupal.
+Provedores de envio atuais: **Hostinger** e **SMTP2GO** (ver seção 0). A migração não trocou provedor; muda
+quem fala com eles dentro do Drupal.
 
 Motivos:
 
@@ -59,7 +97,7 @@ integração com `drupal/key`. Ver seção 4.
 |---|---|---|
 | `drupal/smtp` ^1.4 | `composer.json` (linha 250) | Envio SMTP atual |
 | `smtp` (módulo) | `config/sync/core.extension.yml` (linha 97), `web/modules/contrib/smtp` | Módulo ativo |
-| `smtp.settings` | `config/sync/smtp.settings.yml`; `smtp_on: true`, host `mail.smtp2go.com`, porta 2525, `smtp_password` vazio no arquivo | Configuração do envio |
+| `smtp.settings` | `config/sync/smtp.settings.yml`; `smtp_on: true`, host `mail.smtp2go.com`, porta 465 (ver seção 0), `smtp_password` vazio no arquivo | Configuração do envio |
 | Override de senha | `config/sync/key.config_override.smtp_password.yml`, `key.config_override.smtp_username.yml` | Liga `smtp.settings` às Keys |
 | Keys | `config/sync/key.key.smtp2go_username.yml`, `key.key.smtp2go_password.yml` (provider `env`, `SMTP2GO_USERNAME`, `SMTP2GO_PASSWORD`) | Credenciais, fora do Git |
 | `system.mail` | `config/sync/system.mail.yml` (`interface.default: php_mail`, `webform: webform_php_mail`) | Backend do Core e do Webform |
@@ -87,7 +125,7 @@ que já liga `smtp.settings` às Keys hoje. Não é preciso código próprio. Ve
 
 Configuração a exportar no Homelab (M1, depois da ativação):
 
-- `mailer_transport.mailer_transport.smtp2go`: plugin `smtp`, host `mail.smtp2go.com`, porta `2525`,
+- `mailer_transport.mailer_transport.smtp2go`: plugin `smtp`, host `mail.smtp2go.com`, porta `465` (ver seção 0),
   `user` e `pass` vazios;
 - `key.config_override.mailer_smtp2go_username`: `config_prefix: mailer_transport.mailer_transport`,
   `config_name: smtp2go`, `config_item: configuration.user`, `key_id: smtp2go_username`;
