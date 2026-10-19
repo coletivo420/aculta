@@ -1,3 +1,11 @@
+## 0.6.0-dev.90 — revisão do /code-review: escopo do recorte e clique nativo
+
+- O contêiner de rolagem da gaveta é resolvido uma vez, antes de o diálogo existir (`button.acultaScroller`). Antes, a partir da segunda abertura `closest('.ui-dialog-content')` retornava o próprio diálogo (o jQuery UI adiciona essa classe ao elemento), e o recorte voltava.
+- O campo oculto do envio do "Sim" foi removido: o clique nativo já entrega o botão ao handler de envio da gaveta. Verificado no Firefox (X11): "Sim" por clique nativo gravou o bloqueio.
+- Removido o teste morto de `data-aculta-dialog-close` em inputs de envio.
+- Gate de fundação atualizado para `0.6.0-dev.90`.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild). Validado: segunda abertura do diálogo, "Sim" no centro do botão grava.
+
 ## 0.6.0-dev.89 — "Sim" do diálogo do messenger envia a ação (clique não era recortado) — 2026-10-19
 
 - Causa: o diálogo de confirmação de uma caixa de membro ficava dentro do conteúdo de rolagem da gaveta (`overflow-y: auto`), que recorta o que sai da caixa. Metade do diálogo ficava fora e recebia cliques no fundo. Correção: enquanto a confirmação está aberta, o contêiner de rolagem recebe `data-aculta-confirming` (`dialog.css`: `overflow: visible`), e volta ao normal ao fechar.

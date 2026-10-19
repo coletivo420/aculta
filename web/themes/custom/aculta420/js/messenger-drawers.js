@@ -38,27 +38,15 @@
           // Form API renders these as submit inputs: the click only opens the dialog, it does not post the form.
           event.preventDefault();
           // Each member's box has its own dialog with the same name: the open button keeps a reference to its own.
+          // The drawer's scroller is resolved once, before jQuery UI moves the question: afterwards closest() finds the
+          // dialog's own content, which carries the same class.
           if (!button.acultaDialogContent) {
             const form = button.closest('form');
             button.acultaDialogContent = form?.querySelector(`[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`) || null;
-            button.acultaDialogContent?.querySelectorAll('input[type="submit"]').forEach((submit) => {
-              // The confirm button posts its own form. A mouse click does not give the form its submitter here, so the
-              // button's name and value go in as a hidden field for this one submit, and the answer knows which action ran.
-              if (!submit.hasAttribute('data-aculta-dialog-close')) {
-                submit.addEventListener('click', (submitEvent) => {
-                  submitEvent.preventDefault();
-                  const marker = document.createElement('input');
-                  marker.type = 'hidden';
-                  marker.name = submit.name;
-                  marker.value = submit.value;
-                  submit.form.append(marker);
-                  submit.form.requestSubmit();
-                  marker.remove();
-                });
-              }
-            });
+            button.acultaScroller = button.acultaDialogContent?.closest('.ui-dialog-content') || null;
           }
           const content = button.acultaDialogContent;
+          const scroller = button.acultaScroller;
           if (!content || typeof Drupal.dialog !== 'function') {
             return;
           }
@@ -66,7 +54,6 @@
           content.removeAttribute('hidden');
           // The drawer's scrolling content clips what is drawn outside its box, and the centred modal is partly outside it.
           // While the question is open that content is not clipped; it goes back to normal when the question closes.
-          const scroller = content.closest('.ui-dialog-content');
           scroller?.setAttribute('data-aculta-confirming', '');
           if (!content.acultaDialog) {
             content.acultaDialog = Drupal.dialog(content, {
