@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
+use Drupal\commerce_price\Price;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -23,6 +25,7 @@ final class SalesReportController implements ContainerInjectionInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly CurrencyFormatterInterface $currencyFormatter,
     TranslationInterface $stringTranslation,
   ) {
     $this->stringTranslation = $stringTranslation;
@@ -31,6 +34,7 @@ final class SalesReportController implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
+      $container->get('commerce_price.currency_formatter'),
       $container->get('string_translation'),
     );
   }
@@ -52,19 +56,19 @@ final class SalesReportController implements ContainerInjectionInterface {
         if ($variacao === NULL || $preco === NULL) {
           continue;
         }
-        $chave = (string) $variacao->id();
+        // Agrupa por variação e moeda: Price::add() só soma valores da mesma moeda.
+        $moeda = $preco->getCurrencyCode();
+        $chave = $variacao->id() . '|' . $moeda;
         $produto = $variacao->getProduct();
         $linhas[$chave] ??= [
           'produto' => $produto ? (string) $produto->label() : '',
           'variacao' => (string) $variacao->label(),
           'quantidade' => 0,
-          'total' => 0.0,
-          'moeda' => $preco->getCurrencyCode(),
+          'total' => new Price('0', $moeda),
         ];
         $linhas[$chave]['quantidade'] += (int) $item->getQuantity();
-        $linhas[$chave]['total'] += (float) $preco->getNumber();
-        $moeda = $preco->getCurrencyCode();
-        $totais[$moeda] = ($totais[$moeda] ?? 0.0) + (float) $preco->getNumber();
+        $linhas[$chave]['total'] = $linhas[$chave]['total']->add($preco);
+        $totais[$moeda] = ($totais[$moeda] ?? new Price('0', $moeda))->add($preco);
       }
     }
 
@@ -73,12 +77,12 @@ final class SalesReportController implements ContainerInjectionInterface {
       $l['produto'],
       $l['variacao'],
       $l['quantidade'],
-      $this->formatar($l['total'], $l['moeda']),
+      $this->formatar($l['total']),
     ], $linhas);
 
     $rodape = [];
-    foreach ($totais as $moeda => $valor) {
-      $rodape[] = ['', '', $this->t('Total'), $this->formatar($valor, $moeda)];
+    foreach ($totais as $total) {
+      $rodape[] = ['', '', $this->t('Total'), $this->formatar($total)];
     }
 
     return [
@@ -96,10 +100,10 @@ final class SalesReportController implements ContainerInjectionInterface {
   }
 
   /**
-   * Formata valor com duas casas e a moeda do pedido.
+   * Formata o total com o formatador de moeda do Commerce (locale e casas da moeda).
    */
-  private function formatar(float $valor, string $moeda): string {
-    return number_format($valor, 2, ',', '.') . ' ' . $moeda;
+  private function formatar(Price $total): string {
+    return $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode());
   }
 
 }
