@@ -1,0 +1,20 @@
+uuid: cbfe8c39-a046-473e-bba8-d0bd7822f083
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_bio
+    - profile.type.gerente_loja
+id: profile.gerente_loja.field_bio
+field_name: field_bio
+entity_type: profile
+bundle: gerente_loja
+label: Bio
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
+

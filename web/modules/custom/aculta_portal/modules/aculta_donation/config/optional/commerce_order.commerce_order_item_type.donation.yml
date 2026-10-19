@@ -1,0 +1,13 @@
+uuid: ffe16601-3063-4611-9931-58e6728ddd92
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: X5vu8ZlswQ9Wi3vTOinA_mJattDwx2aM8sPwcHL7Q9A
+id: donation
+label: Doação
+traits: {  }
+locked: false
+purchasableEntityType: ''
+orderType: doacao
+

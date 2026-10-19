@@ -139,7 +139,7 @@ entre purposes.
 O contrato detalhado está em `PAYMENT-DOMAIN-POLICY.md`.
 
 - COURSES, SHOP e SUPPORT podem originar intenção comercial, mas carrinho/checkout/pagamento pertencem a MAIN;
-- `commerce_checkout.*`, `commerce_payment.checkout.*` e `commerce_donation_flow.*` são ownership MAIN;
+- `commerce_cart.*`, `commerce_checkout.*` e `commerce_payment.checkout.*` são ownership MAIN, inclusive as etapas de checkout da doação; a escolha do valor de apoio (`aculta_donation.donation.default` e `.quick`) é ownership SUPPORT; o gateway (retorno e notificação) é gerado no MAIN (decisão de 2026-10-17);
 - links conhecidos pelo Portal devem apontar diretamente para MAIN, evitando redirect corretivo desnecessário;
 - formulário mutável só deve ser exibido em MAIN; POST wrong-host falha fechado;
 - `commerce_payment.notify` pertence a MAIN e é POST-only;

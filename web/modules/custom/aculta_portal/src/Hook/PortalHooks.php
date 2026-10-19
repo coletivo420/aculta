@@ -16,6 +16,7 @@ use Drupal\aculta_portal\Form\LoginPopupForm;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\aculta_portal\Presentation\SocialLinksPagePresenter;
 use Drupal\block_content\BlockContentInterface;
+use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -33,6 +34,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Drupal hooks for the ACULTA account portal.
@@ -63,6 +65,7 @@ final class PortalHooks {
     'aculta_portal.support_form',
     'aculta_portal.wiki_home',
     'aculta_portal.courses_home',
+    'aculta_portal.shop_home',
   ];
 
   public function __construct(
@@ -518,7 +521,9 @@ final class PortalHooks {
     }
 
     $path = $this->currentPath->getPath();
-    if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'participante') {
+    // /dados/endereco é tratado pelo bloco de endereço logo abaixo (país padrão, número e S/N). Este bloco de papel
+    // retorna antes e não pode engolir essa página: o tipo authenticated também é tipo de papel.
+    if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity) && $path !== '/dados/endereco') {
       if ($path === '/dados') {
         // Keep this tab limited to personal basics, even if older active
         // Profile display configuration still contains address components.
@@ -549,37 +554,22 @@ final class PortalHooks {
       return;
     }
 
-    if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'customer'
+    if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'authenticated'
       && $path === '/dados/endereco'
       && (int) $entity->getOwnerId() === (int) $this->currentUser->id()) {
       // The Portal and Commerce edit the same customer Profile Address.
-      $allowed = ['address', 'actions', 'form_build_id', 'form_token', 'form_id'];
+      $allowed = ['field_address', 'actions', 'form_build_id', 'form_token', 'form_id'];
       foreach (array_keys($form) as $key) {
         if (!str_starts_with((string) $key, '#') && !in_array($key, $allowed, TRUE)) {
           unset($form[$key]);
         }
       }
-      if (isset($form['address']['widget'][0]['address'])) {
-        $address_element = &$form['address']['widget'][0]['address'];
-        $address_element['#default_value']['country_code'] ??= 'BR';
-        $participant = $this->entityTypeManager->getStorage('profile')->loadByUser($this->currentUser, 'participante');
+      if (isset($form['field_address']['widget'][0]['address'])) {
+        $address_element = &$form['field_address']['widget'][0]['address'];
+        $participant = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $this->currentUser);
         if ($participant) {
           $address_element['#default_value']['given_name'] ??= $participant->get('field_first_name')->value ?? '';
           $address_element['#default_value']['family_name'] ??= $participant->get('field_last_name')->value ?? '';
-        }
-        foreach ([
-          'country_code' => 'País',
-          'address_line1' => 'Endereço / Logradouro',
-          'address_line2' => 'Complemento',
-          'locality' => 'Cidade',
-          'dependent_locality' => 'Bairro',
-          'administrative_area' => 'Estado',
-          'postal_code' => 'CEP',
-          'sorting_code' => 'Código postal',
-        ] as $key => $label) {
-          if (isset($address_element[$key])) {
-            $address_element[$key]['#title'] = $this->translation->translate($label);
-          }
         }
         foreach (['given_name', 'additional_name', 'family_name'] as $private_or_duplicate) {
           if (isset($address_element[$private_or_duplicate])) {
@@ -592,12 +582,13 @@ final class PortalHooks {
       $parts = ['street' => '', 'number' => '', 'sn' => FALSE];
       if ($entity->id()) {
         $saved = $this->entityTypeManager->getStorage('profile')->load($entity->id());
-        if ($saved && $saved->hasField('address') && !$saved->get('address')->isEmpty()) {
-          $parts = \Drupal\aculta_portal\Account\StreetNumberField::split((string) $saved->get('address')->first()->getAddressLine1());
+        if ($saved && $saved->hasField('field_address') && !$saved->get('field_address')->isEmpty()) {
+          $parts = \Drupal\aculta_portal\Account\StreetNumberField::split((string) $saved->get('field_address')->first()->getAddressLine1());
         }
       }
-      if (isset($form['address']['widget'][0]['address'])) {
-        \Drupal\aculta_portal\Account\StreetNumberField::attach($form['address']['widget'][0]['address'], $parts['number'], $parts['sn']);
+      if (isset($form['field_address']['widget'][0]['address'])) {
+        AccountAddressForm::apply($form['field_address']['widget'][0]['address'], $parts['number'], $parts['sn']);
+        $form['#attached']['library'][] = AccountAddressForm::LIBRARY;
       }
       // Junta rua e número antes do save (PortalFormCallbacks::buildStreetNumber).
       $form['#entity_builders'][] = 'aculta_portal.form_callbacks:buildStreetNumber';
@@ -676,6 +667,17 @@ final class PortalHooks {
           'trigger_attributes' => NULL,
         ],
         'template' => 'portal-search-trigger',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
+      'aculta_portal_cart_panel' => [
+        'variables' => [
+          'sites' => [],
+          'total' => '',
+          'url' => '',
+          'checkout_url' => '',
+          'empty' => TRUE,
+        ],
+        'template' => 'portal-cart-panel',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
       'aculta_portal_cart_status' => [

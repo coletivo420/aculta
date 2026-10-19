@@ -29,23 +29,51 @@
         });
       });
 
-      // "Bloquear" and "Desfazer amizade" in the Opções menus open their confirmation dialog (inside the same form);
-      // "Cancelar" closes it. The button names its dialog in data-aculta-dialog-open.
+      // "Bloquear" and "Desfazer amizade" in a member's box open their confirmation as a Drupal modal. The question is a
+      // hidden container in the same form, so "Sim" still submits. The modal stays in the drawer and is centred on the
+      // drawer: the scrolling content clips whatever is drawn outside its box, and that part would not receive clicks.
+      // "Cancelar" closes it. The open button names its dialog.
       once('aculta-dialog-open', '[data-aculta-dialog-open]', context).forEach((button) => {
         button.addEventListener('click', (event) => {
           // Form API renders these as submit inputs: the click only opens the dialog, it does not post the form.
           event.preventDefault();
-          const dialog = button.closest('form')?.querySelector(`dialog[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`);
-          if (dialog && typeof dialog.showModal === 'function') {
-            dialog.showModal();
+          // Each member's box has its own dialog with the same name: the open button keeps a reference to its own.
+          // The drawer's scroller is resolved once, before jQuery UI moves the question: afterwards closest() finds the
+          // dialog's own content, which carries the same class.
+          if (!button.acultaDialogContent) {
+            const form = button.closest('form');
+            button.acultaDialogContent = form?.querySelector(`[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`) || null;
+            button.acultaScroller = button.acultaDialogContent?.closest('.ui-dialog-content') || null;
           }
+          const content = button.acultaDialogContent;
+          const scroller = button.acultaScroller;
+          if (!content || typeof Drupal.dialog !== 'function') {
+            return;
+          }
+          // Bootstrap's [hidden] rule uses !important, so jQuery UI cannot show the question while the attribute stays.
+          content.removeAttribute('hidden');
+          // The drawer's scrolling content clips what is drawn outside its box, and the centred modal is partly outside it.
+          // While the question is open that content is not clipped; it goes back to normal when the question closes.
+          scroller?.setAttribute('data-aculta-confirming', '');
+          if (!content.acultaDialog) {
+            content.acultaDialog = Drupal.dialog(content, {
+              appendTo: button.closest('form'),
+              // Form API renders the open button as an <input type="button">: its label is the value, not the text.
+              title: button.value || button.textContent.trim(),
+              closeOnEscape: true,
+              // The default close detaches the element's behaviors ('unload'), and jQuery UI then destroys the dialog
+              // with its content: the question is gone at the next opening. Closing only restores the scroller here.
+              close: () => scroller?.removeAttribute('data-aculta-confirming'),
+            });
+          }
+          content.acultaDialog.showModal();
         });
       });
 
       once('aculta-dialog-close', '[data-aculta-dialog-close]', context).forEach((button) => {
         button.addEventListener('click', (event) => {
           event.preventDefault();
-          button.closest('dialog')?.close();
+          button.closest('[data-aculta-dialog]')?.acultaDialog?.close();
         });
       });
 

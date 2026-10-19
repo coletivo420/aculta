@@ -1,0 +1,15 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Citação editorial
+status: stable
+group: Editorial
+description: 'Citação com autoria e fonte opcionais; o conteúdo é renderizado pelo Drupal.'
+props:
+  type: object
+  properties: {}
+slots:
+  quote:
+    title: Citação
+  author:
+    title: Autoria
+  source:
+    title: Fonte

@@ -203,3 +203,10 @@ AddType image/webp .webp
   # Disable Proxy header, since it's an attack vector.
   RequestHeader unset Proxy
 </IfModule>
+
+
+# ACULTA: PDF.js ships ES modules with the .mjs extension. Module scripts need
+# a JavaScript MIME type; some hosts otherwise serve these files as text/plain.
+<IfModule mod_mime.c>
+  AddType application/javascript .mjs
+</IfModule>

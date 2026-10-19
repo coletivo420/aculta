@@ -76,14 +76,14 @@
 }
 
 /* Modelos de imagem do texto (`aculta_image`): o módulo escolhe srcset; o tema define largura e apresentação. */
-.node--view-mode-full .field--name-body figure.aculta-imagem {
+.node--view-mode-full .field--name-body figure[data-aculta-imagem] {
   display: block;
   max-inline-size: 100%;
   margin-block: 2rem;
   margin-inline: auto;
   text-align: start;
 }
-.node--view-mode-full .field--name-body figure.aculta-imagem > img {
+.node--view-mode-full .field--name-body figure[data-aculta-imagem] > img {
   display: block;
   inline-size: 100%;
   max-inline-size: 100%;
@@ -92,10 +92,10 @@
   border-radius: 0.5rem;
   background: var(--aculta-surface-muted);
 }
-.node--view-mode-full .field--name-body .aculta-imagem--pequena { inline-size: min(50%, 20rem); }
-.node--view-mode-full .field--name-body .aculta-imagem--padrao { inline-size: min(100%, 36.25rem); }
-.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--larga,
-.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--destaque {
+.node--view-mode-full .field--name-body [data-aculta-imagem-modelo="pequena"] { inline-size: min(50%, 20rem); }
+.node--view-mode-full .field--name-body [data-aculta-imagem-modelo="padrao"] { inline-size: min(100%, 36.25rem); }
+.node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-modelo="larga"],
+.node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-modelo="destaque"] {
   position: relative;
   inset-inline-start: 50%;
   inline-size: min(56.25rem, calc(100vw - 2rem));
@@ -103,18 +103,18 @@
   margin-inline: 0;
   transform: translateX(-50%);
 }
-.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--destaque {
+.node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-modelo="destaque"] {
   inline-size: min(60rem, calc(100vw - 2rem));
 }
-.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--esquerda,
-.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--direita {
+.node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-alinhamento="esquerda"],
+.node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-alinhamento="direita"] {
   position: static;
   inset-inline-start: auto;
   transform: none;
 }
-.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--esquerda { margin-inline-start: 0; margin-inline-end: auto; }
-.node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--direita { margin-inline-start: auto; margin-inline-end: 0; }
-.node--view-mode-full .field--name-body .aculta-imagem__legenda {
+.node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-alinhamento="esquerda"] { margin-inline-start: 0; margin-inline-end: auto; }
+.node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-alinhamento="direita"] { margin-inline-start: auto; margin-inline-end: 0; }
+.node--view-mode-full .field--name-body [data-aculta-imagem-legenda] {
   margin-block-start: 0.65rem;
   color: var(--aculta-text-muted);
   font-size: 0.875rem;
@@ -145,10 +145,10 @@
 
 @media (max-width: 575.98px) {
   .node--view-mode-full .field--name-field-subtitle { font-size: 1.25rem; }
-  .node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--pequena,
-  .node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--padrao,
-  .node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--larga,
-  .node--view-mode-full .field--name-body figure.aculta-imagem.aculta-imagem--destaque {
+  .node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-modelo="pequena"],
+  .node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-modelo="padrao"],
+  .node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-modelo="larga"],
+  .node--view-mode-full .field--name-body figure[data-aculta-imagem][data-aculta-imagem-modelo="destaque"] {
     position: static;
     inline-size: 100%;
     max-inline-size: 100%;

@@ -11,15 +11,23 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Path\PathMatcherInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\node\NodeInterface;
+use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Presentation-only hooks for ACULTA420.
  */
-final class ThemeHooks {
+final class ThemeHooks implements TrustedCallbackInterface {
+
+  /** {@inheritdoc} */
+  public static function trustedCallbacks(): array {
+    return ['deferProductSlideImage'];
+  }
 
   public function __construct(
     private readonly PathMatcherInterface $pathMatcher,
@@ -45,6 +53,100 @@ final class ThemeHooks {
       $variables['options']['show_progress_bar'] = FALSE;
       $variables['options']['show_page_counter'] = FALSE;
     }
+  }
+
+  /**
+   * Defers inactive album slide images until VVJS approaches each slide.
+   *
+   * Firefox requests lazy images in hidden slides in this 60+ item View. The
+   * rendered PhotoSwipe formatter markup stays intact except for moving the
+   * inactive image source to a data attribute. The album behavior restores
+   * `src` for the active slide and its next slide.
+   */
+  #[Hook('preprocess_views_view_vvjs_fields')]
+  public function deferInactiveAlbumSlideImages(array &$variables): void {
+    $view = $variables['view'] ?? NULL;
+    $row = $variables['row'] ?? NULL;
+    if (!$view instanceof ViewExecutable
+      || $view->id() !== 'aculta_album_fotos'
+      || $view->current_display !== 'block_1'
+      || !is_object($row)
+      || (int) ($row->index ?? 0) === 0) {
+      return;
+    }
+
+    $field = $variables['fields']['field_media_image'] ?? NULL;
+    $content = $field->content ?? NULL;
+    if (!is_string($content) && !$content instanceof \Stringable) {
+      return;
+    }
+
+    $deferred = preg_replace_callback(
+      '/<img\\b[^>]*>/i',
+      static fn(array $matches): string => preg_replace(
+        "/\\s+src=(\"[^\"]*\"|'[^']*')/i",
+        ' data-aculta-lazy-src=$1',
+        $matches[0],
+        1,
+      ) ?? $matches[0],
+      (string) $content,
+      1,
+    );
+    if (is_string($deferred) && $deferred !== (string) $content) {
+      // The formatter has already produced sanitized image/link markup.
+      $field->content = Markup::create($deferred);
+    }
+  }
+
+  /**
+   * Defers product gallery images in entity rows until VVJS approaches them.
+   *
+   * The product View uses entity Media rows, so its markup is only available
+   * after rendering each row. A trusted post-render callback keeps the image
+   * formatter output intact while moving the image source for inactive slides.
+   */
+  #[Hook('preprocess_views_view_vvjs')]
+  public function deferInactiveProductSlideImages(array &$variables): void {
+    $view = $variables['view'] ?? NULL;
+    if (!$view instanceof ViewExecutable || $view->id() !== 'galeria_produto') {
+      return;
+    }
+    foreach ($variables['rows'] ?? [] as $index => &$row) {
+      if ((int) $index === 0 || !is_array($row)) {
+        continue;
+      }
+      $content = $row['content'] ?? NULL;
+      if (is_array($content)) {
+        // Wrap the render-cached entity row in an uncached render array. Its
+        // post-render callback still runs when the child is served from cache,
+        // while the child keeps its own cache keys and metadata.
+        $row['content'] = [
+          'slide' => $content,
+          '#post_render' => [[self::class, 'deferProductSlideImage']],
+        ];
+      }
+      elseif (is_string($content) || $content instanceof \Stringable) {
+        $row['content'] = Markup::create(self::deferProductSlideImage((string) $content, []));
+      }
+    }
+    unset($row);
+  }
+
+  /**
+   * Moves the first rendered image source into the VVJS lazy-load attribute.
+   */
+  public static function deferProductSlideImage(string $markup, array $element): string {
+    return preg_replace_callback(
+      '/<img\\b[^>]*>/i',
+      static fn(array $matches): string => preg_replace(
+        "/\\s+src=(\\\"[^\\\"]*\\\"|'[^']*')/i",
+        ' data-aculta-lazy-src=$1',
+        $matches[0],
+        1,
+      ) ?? $matches[0],
+      $markup,
+      1,
+    ) ?? $markup;
   }
 
   /**
@@ -404,18 +506,24 @@ final class ThemeHooks {
   /**
    * Aplica o modo de cor que o Portal resolveu (contrato aculta_color_mode: light, dark ou auto).
    *
-   * O html.html.twig do Bootstrap 5 grava data-bs-theme a partir de b5_theme_mode, e sobrescreve
-   * qualquer atributo colocado em html_attributes. Por isso o modo entra por essa variável. Em auto
-   * o valor fica vazio: o atributo não é "light", e o bloco prefers-color-scheme de tokens.css decide.
+   * O modo chega resolvido pelo Portal. A base Drupal Bootstrap preserva html_attributes,
+   * então ACULTA420 aplica o atributo diretamente. Em auto, removê-lo permite que tokens.css
+   * use prefers-color-scheme sem uma preferência explícita.
    */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
-    $mode = $variables['aculta_color_mode'] ?? 'light';
-    $variables['b5_theme_mode'] = match ($mode) {
+    $themeMode = match ($variables['aculta_color_mode'] ?? 'light') {
       'dark' => 'dark',
-      'auto' => '',
+      'auto' => NULL,
       default => 'light',
     };
+    $attributes = $variables['html_attributes'] ?? NULL;
+    if ($attributes instanceof \Drupal\Core\Template\Attribute) {
+      $attributes->removeAttribute('data-bs-theme');
+      if ($themeMode !== NULL) {
+        $attributes->setAttribute('data-bs-theme', $themeMode);
+      }
+    }
     // Título do documento informado pelo Portal (contrato aculta_head_title). Roda depois do Metatag.
     if (!empty($variables['aculta_head_title'])) {
       $variables['head_title'] = ['title' => (string) $variables['aculta_head_title']];

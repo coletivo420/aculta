@@ -1,131 +1,45 @@
-# ACULTA420
+# ACULTA420 (`aculta420`)
 
-**ACULTA420** é o tema público e o Bootstrap Component Design System da
-plataforma Drupal da Associação Cultural Antiproibicionista.
+Tema público e sistema de componentes da plataforma Drupal da ACULTA. Implementa
+a apresentação; não é fonte de verdade de identidade, autenticação, Commerce,
+LMS, Domains, conteúdo ou persistência.
 
-- machine name: `aculta420`;
-- versão no código: **0.6.0-dev.35** (`aculta420.info.yml`; linha 0.6.x em desenvolvimento); sem tag Git (tags só por pedido). Histórico em `CHANGELOG.md` e `docs/roadmap.md`;
-- Drupal: `^11`;
-- base theme: `bootstrap5`;
-- Bootstrap fixado pelo projeto: `4.0.8`;
-- SDC: Drupal Core;
-- build tooling: nenhum por padrão.
-
-## Arquitetura
+## Fronteira de arquitetura
 
 ```text
-Drupal Core + contrib
-        |
-        v
-   aculta_portal
-        |
-        v
-     ACULTA420
-  Bootstrap Component
-    Design System
-        |
-        v
-    Bootstrap 5
+Drupal Core + contrib → aculta_portal → contrato neutro → ACULTA420 → Bootstrap
 ```
 
-Drupal/contrib são donos de dados e regras. `aculta_portal` integra e prepara
-contexto. ACULTA420 apresenta. Bootstrap fornece infraestrutura de layout,
-utilities e behaviors.
-
-## O que já existe em 0.1.0
-
-- tokens ACULTA mapeados para custom properties Bootstrap;
-- tipografia Inter + Oswald;
-- shell responsivo;
-- navegação com Bootstrap Collapse e progressive enhancement;
-- breadcrumb público integrado ao presenter do Portal;
-- formulários/auth com herança Bootstrap5;
-- primeiro SDC stable: `aculta420:editorial-card`;
-- CSS do editorial card auto-carregado pelo SDC;
-- carrossel editorial VVJB com JS contextual;
-- cards/prosa/projetos/institucional/footer;
-- foco visível, teclado e reduced-motion;
-- schema obrigatório para SDCs via `enforce_prop_schemas: true`;
-- hooks do tema em OOP/DI (`src/Hook/ThemeHooks.php`), sem arquivo `.theme` procedural;
-- versionamento SemVer próprio.
-
-## Limite da Foundation 0.1.0
-
-A 0.1.0 estabelece provider, namespace, configuração, documentação e fronteiras
-arquiteturais. Ela **não** incorpora o redesign completo do shell multidomínio.
-
-A direção já está congelada para evitar contratos incompatíveis na próxima fase:
-
-```text
-instituição/plataforma ACULTA
-            ↓
-Domain purpose/produto
-            ↓
-conteúdo da página
-```
-
-O shell futuro terá uma Institution Bar global e discreta sobre um Domain Header
-visualmente dominante. Logo, título e navegação podem variar por purpose, mas são
-preparados pelo `aculta_portal`; o tema nunca escolhe identidade por hostname.
-
-O contrato detalhado e a direção visual estão em [docs/shell.md](docs/shell.md).
-A implementação visual pertence às fases posteriores de foundations/shell, junto
-dos semantic tokens.
-
-## Estrutura
-
-```text
-web/themes/custom/aculta420/
-├── aculta420.info.yml
-├── aculta420.libraries.yml
-├── src/
-│   └── Hook/
-│       └── ThemeHooks.php
-├── assets/
-├── components/
-│   └── content/
-│       └── editorial-card/
-├── config/
-├── css/
-├── docs/
-├── js/
-└── templates/
-```
-
-Os componentes podem ser agrupados em subdiretórios de `components/`; o Core
-SDC suporta essa organização.
+O Portal prepara URLs, dados, acesso e cache. O ACULTA420 escolhe a apresentação
+com Twig, Bootstrap e Single Directory Components (SDC) do Drupal Core. SDCs
+recebem props e slots de apresentação e não resolvem regras de domínio.
 
 ## Documentação
 
-Comece por [docs/README.md](docs/README.md).
-
-Documentos normativos:
-
-- [Arquitetura](docs/architecture.md)
-- [Design system](docs/design-system.md)
+- [Índice da documentação do tema](docs/README.md)
+- [Design system e tokens](docs/design-system.md)
+- [Catálogo de componentes](docs/component-catalog.md)
 - [Shell multidomínio](docs/shell.md)
-- [Componentes](docs/components.md)
-- [Desenvolvimento](docs/development.md)
+- [Arquitetura](docs/architecture.md)
 - [Acessibilidade](docs/accessibility.md)
+- [Desenvolvimento e gates](docs/development.md)
 - [Decisões](docs/decisions.md)
-- [Roadmap](docs/roadmap.md)
+- [Roadmap do tema](docs/roadmap.md)
 - [Versionamento](docs/versioning.md)
-- [Branding Wiki420](docs/branding-wiki420.md)
-- [Branding Podplant420](docs/branding-podplant420.md)
-- [Branding Baque Sativa](docs/branding-baque-sativa.md)
-- [Branding Bloco Sativa 420](docs/branding-bloco-sativa420.md)
-- [CHANGELOG](CHANGELOG.md)
+- [CHANGELOG](CHANGELOG.md) — mudanças, versões e evidências de validação.
 
-## Regra principal
+Os guias de identidade específicos ficam no [índice de documentação](docs/README.md).
+Cada componente SDC também pode manter seu README local em `components/`.
 
-> O tema não vira fonte de verdade de autenticação, Commerce, LMS, Domain,
-> Wiki, fórum, pagamentos ou persistência.
+## Estrutura
 
-SDCs recebem contratos de apresentação. Não consultam storage, entidades ou
-serviços de domínio.
+- `components/` — componentes SDC reutilizáveis.
+- `css/`, `js/` — apresentação e comportamento visual do tema.
+- `templates/` — templates Twig.
+- `src/Hook/` — hooks OOP de apresentação.
+- `assets/` — fontes e recursos visuais.
 
-## Histórico
-
-ACULTA420 0.1.0 nasce da base técnica do antigo tema `aculta`. O histórico de
-refatoração foi consolidado no CHANGELOG e nas decisões; a documentação corrente
-descreve apenas o estado suportado da versão atual.
+Consulte [components/README.md](components/README.md) antes de criar componentes.
+Para mudanças coordenadas com funcionalidade do Portal, consulte a
+[fronteira Portal–tema](../../../../docs/portal/FRONTEIRA-MODULO-TEMA.md) e o
+[mapa módulo–tema](../../../../docs/portal/MAPA-MODULO-TEMA.md).

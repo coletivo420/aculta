@@ -26,6 +26,7 @@ Pesquisa de melhores práticas: os resultados de busca na web não confirmaram t
 - https://www.drupal.org/project/entity_embed
 - https://www.drupal.org/project/media_library_bulk_upload
 - Core instalado: `web/core/modules/media_library/src/Form/FileUploadForm.php`, `web/core/modules/media_library/src/Plugin/Field/FieldWidget/MediaLibraryWidget.php`.
+- Para a integração Views/cache desta revisão: [API do Views 11.x — `hook_views_query_alter`](https://api.drupal.org/api/drupal/core%21modules%21views%21views.api.php/11.x), [CacheableMetadata 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/main), [Render API — cacheabilidade dos render arrays](https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays), [VVJS 2.x](https://www.drupal.org/project/vvjs) e [releases VVJS](https://www.drupal.org/project/vvjs/releases). O Composer instalado fornece VVJS 2.0.2; a View foi verificada renderizando no Core 11.4.10.
 
 ## 2. Estado atual verificado
 
@@ -49,6 +50,33 @@ Inventário em `config/sync/` e no Runtime (sem alterar nada):
 | Módulos de galeria | Nenhum instalado (`media_gallery`, `photoswipe`, `entity_embed`, `media_library_bulk_upload`) | Fase 1 instala apenas o aprovado. |
 
 ## 3. Avaliação dos módulos escolhidos
+
+### Integração VVJS do álbum: acesso e cache (2026-10-18)
+
+O palco usa a View `aculta_album_fotos` com estilo VVJS, uma linha por item de mídia. As miniaturas e os slides devem
+representar exatamente o mesmo conjunto de Media com acesso `view` e arquivo de imagem presente, na ordem do campo
+`images`. A checagem ocorre em `AlbumSlidesAccessHooks::filterAlbumSlides()` durante `views_query_alter`; consulta
+indisponível ou sem itens permitidos falha fechada. A consulta ordena pela coluna `delta` da referência do álbum. Isso evita que o índice enviado por
+`data-aculta-album-thumb` navegue para outra imagem ou revele um item que o painel de miniaturas omitiu.
+
+`GalleryViewHooks` também agrega no render array do palco a entidade álbum, cada Media referenciada, o `AccessResult`
+(inclusive quando negado) e o File da imagem. Esses metadados invalidam o HTML ao mudar publicação, arquivo ou
+permissão e variam o cache conforme a decisão de acesso. A View não é tratada como fronteira de autorização isolada:
+o filtro explícito é necessário porque o estilo de linha é Fields e a relação de campo, por si só, não garante a
+verificação de acesso à entidade Media relacionada.
+
+O gate `scripts/validate-aculta-image.php` agora lê IDs `image_style` e estilos do PhotoSwipe em Views e modos de
+exibição exportados, exigindo que cada ID pertença ao catálogo do `aculta_image`. Core/contrib recebem o ID de estilo
+que suas APIs exigem; o gate impede que a configuração exportada escape do catálogo controlado.
+
+### Integração VVJS da galeria de produto
+
+`galeria_produto` usa VVJS para apresentar as entidades Media uma por slide e mantém o modo de exibição
+`produto_galeria`, o paginador sem limite, o CSS class `aculta-galeria-produto` e a finalidade de imagem existente.
+Os slides têm autoplay desligado, navegação por setas, teclado e gesto de toque; VVJS é usado como formato de View,
+sem duplicar a apresentação de imagem no tema. Os carrosséis editoriais e de projetos permanecem em VVJB; a lista
+`aculta_albuns` continua grade paginada, pois é uma coleção, não uma sequência de slides. PhotoSwipe continua sendo o
+lightbox; VVJL não o substitui.
 
 ### 3.1 Media Gallery 3.3.0 — atende, com limitações comprovadas
 

@@ -47,15 +47,15 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
    o SMTP está ligado; `smtp_allowhtml` ainda difere do baseline). Classificação em
    [Baseline de configuração](#baseline-de-configuração-2026-10-09).
 
-2. **Ativação do catálogo da loja (DT-O10), obrigatória no RC**: a estrutura do catálogo (tipos e
-   variações de produto, atributo de tamanho, campos, displays, categoria `categoria_loja`, views
-   `commerce_products`, ações de publicação) **não está em `config/sync`** por decisão do responsável.
-   Antes do RC, a ativação precisa ser feita e revisada: finalidade e política comercial da loja,
-   LGPD, checkout, gateway, testes em MariaDB, isolamento de Domain e exportação da
-   configuração (ver `docs/portal/GUARDRAILS.md`, seção Loja). Permissões públicas do catálogo
-   (`view commerce_product` para o papel anônimo) só são ligadas no lançamento. Produtos e imagens
-   entram por migração de conteúdo, não por configuração. Os vínculos de domínio e de loja vão para o
-   `aculta_deployer` por ambiente.
+2. **Catálogo da loja (DT-O10), parcial**: a View `aculta_shop_catalog` e o modo
+   de exibição `catalog` agora estão em `config/sync`, com página `/produtos`, bloco
+   CTools restrito a pager/itens por página, filtros internos de tipo/publicação e
+   purpose SHOP. A permissão anônima `view commerce_product` já estava ativa no
+   Runtime de teste e não foi alterada. Isso entrega a listagem configurada, mas
+   não conclui ativação comercial/RC: revisar política comercial e LGPD, confirmar
+   categoria/variações, checkout e gateway, validar isolamento de Domain e executar
+   smoke visual/compra em MariaDB. Produtos e imagens são conteúdo, não configuração;
+   vínculos de domínio e loja continuam por ambiente no `aculta_deployer`.
 
 ## Estado por componente
 
@@ -72,6 +72,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 php scripts/validate-aculta-portal-drupal11.php
 php scripts/validate-public-slugs.php
 php scripts/validate-aculta-portal-conta-root.php
+php scripts/validate-own-module-packages.php
 php vendor/drush/drush/drush.php --uri=https://aculta.toca.net.br scr scripts/validate-aculta420-foundation.php
 php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests
 php web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/run.php

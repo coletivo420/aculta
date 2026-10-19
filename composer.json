@@ -262,13 +262,12 @@
         "composer/semver": "^3.4",
         "cweagans/composer-patches": "^2.0",
         "drupal/agreement": "^3.0",
-        "drupal/bootstrap5": "4.0.8",
+        "drupal/bootstrap": "^5.0",
         "drupal/captcha": "^2.0",
-        "drupal/cep_autocomplete": "^1.0",
         "drupal/change_mail_page": "^1.0.2",
         "drupal/commerce": "^3.3",
-        "drupal/commerce_donation_flow": "^1.2",
-        "drupal/commerce_mercado_pago": "^3.0@RC",
+        "drupal/commerce_cart": "3.3.10",
+        "drupal/commerce_checkout": "3.3.10",
         "drupal/commerce_shipping": "^3.0",
         "drupal/content_lock": "^3.0",
         "drupal/core-composer-scaffold": "^11.4",
@@ -276,11 +275,13 @@
         "drupal/core-recipe-unpack": "^11.4",
         "drupal/core-recommended": "^11.4",
         "drupal/crop": "^2.6",
+        "drupal/ctools": "^4.1",
         "drupal/diff": "^2.1",
         "drupal/domain": "^3.0",
         "drupal/email_confirmer": "^1.0",
         "drupal/entity_embed": "^1.7",
         "drupal/entity_usage": "^5.0.1",
+        "drupal/fences": "^3.0",
         "drupal/flag": "^5.1.1",
         "drupal/flood_control": "^3.0",
         "drupal/forum": "^1.1.3",
@@ -291,6 +292,7 @@
         "drupal/imagemagick": "^4.0",
         "drupal/key": "^1.22",
         "drupal/lms": "^1.2",
+        "drupal/lms_file_upload": "^1.0",
         "drupal/login_emailusername": "^3.0",
         "drupal/media_duplicates": "^2.0.4",
         "drupal/media_gallery": "^3.3",
@@ -308,9 +310,9 @@
         "drupal/redirect": "^1.13",
         "drupal/rename_admin_paths": "^3.1",
         "drupal/role_hierarchy": "^4.0",
-        "drupal/role_inheritance": "^2.1",
         "drupal/schema_metatag": "^3.0",
         "drupal/search_api": "^1.40",
+        "drupal/section_library": "^2.0",
         "drupal/security_review": "^3.1",
         "drupal/simple_sitemap": "^4.2",
         "drupal/site_alert": "^1.4",
@@ -319,16 +321,30 @@
         "drupal/symfony_mailer": "^2.0",
         "drupal/turnstile": "^1.2",
         "drupal/ui_patterns": "^2.0",
+        "drupal/ui_patterns_field_group": "^2.0@beta",
+        "drupal/ui_patterns_layouts": "^2.0",
+        "drupal/ui_styles": "^1.22",
         "drupal/username_enumeration_prevention": "^1.4",
+        "drupal/vvja": "^2.0",
         "drupal/vvjb": "^2.0",
+        "drupal/vvjf": "^2.0",
+        "drupal/vvjh": "^2.0",
+        "drupal/vvjl": "^2.0",
+        "drupal/vvjr": "^2.0",
+        "drupal/vvjs": "^2.0",
+        "drupal/vvjt": "^2.0",
         "drupal/webform": "^6.3",
+        "drupal/webform_score": "^2.4",
         "drush/drush": "^13.8",
+        "h5p/h5p-core": "^1.28",
+        "h5p/h5p-editor": "^1.25",
         "jquery/inputmask": "5.0.9",
         "jquery/intl-tel-input": "17.0.19",
         "jquery/rateit": "1.1.5",
         "jquery/select2": "4.0.13",
         "jquery/textcounter": "0.9.1",
         "jquery/timepicker": "1.14.0",
+        "mercadopago/dx-php": "^3",
         "mozilla/pdfjs-dist": "6.4.299",
         "photoswipe/photoswipe": "5.4.4",
         "photoswipe/photoswipe-dynamic-caption-plugin": "1.2.7",
@@ -358,7 +374,18 @@
         },
         "sort-packages": true
     },
+    "scripts": {
+        "post-install-cmd": [
+            "@php scripts/sync-bootstrap-assets.php"
+        ],
+        "post-update-cmd": [
+            "@php scripts/sync-bootstrap-assets.php"
+        ]
+    },
     "extra": {
+        "composer-patches": {
+            "patches-file": "patches-aculta.json"
+        },
         "drupal-scaffold": {
             "locations": {
                 "web-root": "web/"
@@ -446,6 +473,8 @@
         }
     },
     "require-dev": {
-        "drupal/core-dev": "11.4.10"
+        "drupal/core-dev": "11.4.10",
+        "drupal/sdc_devel": "^1.0",
+        "drupal/storybook": "^1.0"
     }
 }

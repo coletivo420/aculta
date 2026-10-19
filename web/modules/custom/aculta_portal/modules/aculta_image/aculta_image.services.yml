@@ -37,6 +37,21 @@ services:
     arguments: ['@file.repository', '@file_system', '@database', '@aculta_image.inspector', '@datetime.time', '@logger.factory']
     tags:
       - { name: aculta_portal.helper }
+  aculta_image.upload_ingester:
+    class: Drupal\aculta_image\ImageUploadIngestor
+    arguments: ['@aculta_image.upload_policy', '@aculta_image.inspector', '@file.upload_handler']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.packaged_asset_publisher:
+    class: Drupal\aculta_image\PackagedAssetPublisher
+    arguments: ['@file.repository', '@file_system', '@database', '@entity_type.manager', '@file.usage', '@aculta_image.inspector', '@datetime.time', '@logger.factory']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.file_usage_manager:
+    class: Drupal\aculta_image\ImageFileUsageManager
+    arguments: ['@aculta_image.inspector', '@file.usage']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_image.audit:
     class: Drupal\aculta_image\Audit\ImageAudit
     arguments: ['@database', '@?media_duplicates.checksum_statistics', '@file_system']

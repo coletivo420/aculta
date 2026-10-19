@@ -33,7 +33,7 @@ final class DomainPresentationBuilder {
       'short_title' => 'Apoio',
     ],
     'magazine' => [
-      'title' => 'Observatório da Maconha Coletivo 420',
+      'title' => 'Revista 420',
       'short_title' => 'Coletivo 420',
     ],
     'wiki' => [

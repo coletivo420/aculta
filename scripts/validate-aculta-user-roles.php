@@ -6,15 +6,15 @@
  *
  * Decisão do responsável (2026-10-14): todas as funções editoriais são uma só,
  * o papel content_editor (Editor de conteúdo). Autor, editor e revisor da Wiki,
- * e editor, autor e moderador do Fórum, são o mesmo papel. A única exceção é
- * wiki_contributor (Colaborador da Wiki420), concedido a quem tem e-mail
- * confirmado.
+ * e editor, autor e moderador do Fórum, são o mesmo papel. O antigo
+ * wiki_contributor (Colaborador da Wiki420) foi mesclado em email_confirmed
+ * (decisão do responsável, 2026-10-17); não há mais exceção editorial.
  *
  * Verifica no config/sync (sem Runtime):
  * - wiki_editor não existe mais (papel, ações de papel);
  * - content_editor concentra permissões editoriais: moderação de comentários
  *   e Fórum, revisões, Wiki e Revista;
- * - wiki_contributor continua existindo como única exceção;
+ * - wiki_contributor não existe mais (mesclado em email_confirmed);
  * - a política de perfil público obriga somente content_editor.
  *
  * Só lê config/sync e código. Não importa configuração nem consulta o Runtime.
@@ -39,7 +39,7 @@ $load = static function (string $role) use ($root): array {
 };
 
 $content_editor = $load('content_editor');
-$contributor = $load('wiki_contributor');
+$contributor = $load('email_confirmed');
 
 if (is_file($root . '/config/sync/user.role.wiki_editor.yml')) {
   $errors[] = 'user.role.wiki_editor.yml existe: o papel editorial é único (content_editor)';
@@ -48,7 +48,10 @@ if ($content_editor === []) {
   $errors[] = 'user.role.content_editor.yml ausente ou sem permissões';
 }
 if ($contributor === []) {
-  $errors[] = 'user.role.wiki_contributor.yml ausente: é a única exceção e deve existir';
+  $errors[] = 'user.role.email_confirmed.yml ausente ou sem permissões (recebe a wiki após a mesclagem)';
+}
+if (is_file($root . '/config/sync/user.role.wiki_contributor.yml')) {
+  $errors[] = 'user.role.wiki_contributor.yml existe: o papel foi mesclado em email_confirmed';
 }
 
 foreach ([
@@ -81,4 +84,4 @@ if ($errors !== []) {
   }
   exit(1);
 }
-echo 'ACULTA USER ROLES: PASS (papel editorial único content_editor com ' . count($content_editor) . " permissões; exceção wiki_contributor)\n";
+echo 'ACULTA USER ROLES: PASS (papel editorial único content_editor com ' . count($content_editor) . " permissões; sem exceção editorial)\n";

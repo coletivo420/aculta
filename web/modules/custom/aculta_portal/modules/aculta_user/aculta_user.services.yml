@@ -56,3 +56,16 @@ services:
   aculta_user.associado_marker:
     class: Drupal\aculta_user\Associado\AssociadoMarker
     arguments: ['@entity_type.manager']
+  aculta_user.public_profile_not_canonical:
+    class: Drupal\aculta_user\EventSubscriber\PublicProfileNotCanonicalSubscriber
+    arguments: ['@router.route_provider']
+    tags:
+      - { name: event_subscriber }
+  aculta_user.heranca_papeis:
+    class: Drupal\aculta_user\Role\HerancaDePapeis
+    arguments: ['@config.factory', '@entity_type.manager', '@database']
+  aculta_user.role_inheritance_current_user:
+    class: Drupal\aculta_user\EventSubscriber\RoleInheritanceCurrentUserSubscriber
+    arguments: ['@aculta_user.heranca_papeis', '@current_user', '@aculta_portal.email_confirmation_policy']
+    tags:
+      - { name: event_subscriber }

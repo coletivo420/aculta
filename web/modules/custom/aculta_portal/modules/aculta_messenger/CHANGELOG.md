@@ -2,6 +2,48 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.48 — Bloquear e Desfazer amizade por pessoa, não por conversa — 2026-10-19
+
+- Amizade e bloqueio são por pessoa. A conversa tem uma caixa por outro membro (`OptionsDisclosure`, carregada ao abrir em `…/membro/{user}/opcoes`), e cada ação posta em `…/membro/{user}/relacao`. Antes, o menu da conversa só cobria uma pessoa e ficava vazio em conversas com mais de duas.
+- O menu "Opções" da conversa tem só "Limpar histórico". "Bloquear" e "Desfazer amizade" saem dele.
+- Modal do Drupal: o contêiner da pergunta não é destruído ao fechar (o `close` padrão do Drupal dispara `detachBehaviors('unload')`, e o jQuery UI então remove o elemento). O atributo `hidden` é tirado antes de abrir, porque a regra `[hidden]` do Bootstrap usa `!important`.
+- Validação no navegador (Firefox, sessão X11, conta de teste): caixas por membro, diálogos de "Bloquear" e "Desfazer amizade" com título e pergunta, Cancelar fecha e reabre, "Desbloquear" e "Bloquear" (clique em "Sim") gravam e voltam à conversa com "Atualizado.". O clique em "Sim" só funcionou após a correção de `0.1.1-dev.49`/tema `0.6.0-dev.89`.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild). Estado de teste restaurado: sem bloqueios, amizade preservada.
+
+## 0.1.1-dev.51 — duplicação entre as ações do "Opções" e da caixa de membro
+
+- `submitRelationshipForm()`: o núcleo comum (POST, `form_build_id` fora do input, `setUserInput`, construção do formulário com os serviços) sai de `runRelationshipAction` e `runMemberAction`. `resultMessage()` lê a mensagem do resultado nas duas.
+- Cada ação mantém só o que é dela: modo "notice" e passo de "Limpar histórico" na conversa; o alvo do membro na caixa.
+- Validado no Firefox (X11): "Sim" de bloqueio gravou pelo caminho refatorado; resultado na caixa; "Desbloquear" restaurou (sem bloqueios, amizade preservada).
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild).
+
+## 0.1.1-dev.50 — revisão do /code-review: resultado na caixa de quem agiu e limpeza
+
+- O resultado de "Bloquear", "Desbloquear" e "Desfazer amizade" aparece na caixa do membro que agiu, aberta, e não no menu "Opções" da conversa (`memberPanel`, `memberBoxes`).
+- `menuFragment()`: resposta HTML do menu (antes duplicada entre `drawerOptions` e `memberOptions`).
+- `threadFormState()` só calcula os outros membros no modo "notice".
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild). Validado no Firefox: "Desbloquear" mostra "Atualizado." na caixa de `teste.b`; estado de teste restaurado.
+
+## 0.1.1-dev.49 — registro da validação do diálogo (sem mudança de PHP)
+
+- Versão para registrar a correção do diálogo de confirmação no tema `0.6.0-dev.89`: o "Sim" passa a enviar a ação. Sem mudança de código neste módulo.
+
+## 0.1.1-dev.47 — confirmação de Bloquear e Desfazer amizade em modal do Drupal — 2026-10-19
+
+- `ConfirmDialog` deixa de usar `<dialog>` nativo. A pergunta é um contêiner oculto em `data-aculta-dialog`, e o tema abre o diálogo com `Drupal.dialog` (regra de `POPUP-PADRAO.md`).
+- Sem mudança de texto nem de ação: "Sim" continua submetendo o formulário (o diálogo fica dentro do form, por `appendTo`). Validação no navegador: pendente.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.1.1-dev.46 — docblocks de Opções corrigidos — 2026-10-19
+
+- Docblock "Opções" movido de `drawerOptions()` para `drawerRelationship()`, que é o método que o descreve. Sem mudança de comportamento.
+
+## 0.1.1-dev.45 — avisos só para contas — 2026-10-17
+
+- O ícone de avisos e a contagem não aparecem para visitante anônimo (decisão do responsável).
+- A prévia de avisos (`/avisos/resumo`) exige conta: visitante recebe 403.
+- RUNTIME STATUS: APLICADO no Runtime de testes (página inicial anônima sem ícone de aviso; prévia 403 para anônimo).
+
 ## 0.1.1-dev.44 — "Ver todos os avisos" como botão no rodapé da gaveta (F5.2) — 2026-10-16
 
 Classificação: PATCH (ajuste de apresentação e de URL; sem regra nova).

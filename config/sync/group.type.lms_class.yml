@@ -1,0 +1,12 @@
+uuid: 03b0f04f-10e6-4e5c-b25c-d812951256d5
+langcode: en
+status: true
+dependencies: {  }
+id: lms_class
+label: Class
+description: ''
+new_revision: true
+creator_membership: true
+creator_wizard: false
+creator_roles: {  }
+

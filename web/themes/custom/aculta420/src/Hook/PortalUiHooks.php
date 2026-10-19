@@ -24,16 +24,39 @@ final class PortalUiHooks {
     'notice-warning' => ['messages', 'messages--warning'],
     'notice-error' => ['messages', 'messages--error'],
     'email-notice' => ['aculta-email-notice'],
+    // Doação (aculta_donation): resumo da etapa de revisão e links de edição.
+    'donation-summaries' => ['d-grid', 'gap-3'],
+    'donation-summary' => ['card', 'card-body'],
+    'donation-summary-edit' => ['btn', 'btn-sm', 'btn-outline-primary'],
+    'donation-document-link' => ['link-primary'],
+    'donation-thanks' => ['card', 'card-body', 'text-center'],
+    'donation-donor-name' => ['fw-semibold'],
+    'donation-clause' => ['text-muted'],
+    'donation-amount-block' => ['my-3'],
+    'donation-amount' => ['display-6', 'fw-bold'],
+    'donation-monthly' => ['badge', 'text-bg-secondary'],
+    'donation-in-honor' => ['fst-italic'],
+    'donation-account-invite' => ['alert', 'alert-info', 'mt-3'],
+    'donation-account-invite-link' => ['btn', 'btn-outline-primary'],
+    'register-popup' => ['d-grid', 'gap-3'],
+    // Loja: vitrine da página inicial (produtos publicados).
+    'shop-products' => ['d-grid', 'gap-3', 'mt-4'],
+    // Cartão do produto: caixa com borda neutra (sem cor de botão), texto alinhado à esquerda.
+    'shop-product-card' => ['d-block', 'border', 'border-2', 'rounded-3', 'text-start', 'p-3', 'text-decoration-none'],
     // Relatórios de requisitos e segredos (administração do Portal).
     'requirements' => ['aculta-portal-requirements'],
     'requirements-legend' => ['aculta-portal-requirements__legend'],
     'requirements-status' => ['aculta-portal-requirements__status'],
     'status-ok' => ['aculta-portal-requirements__status--ok'],
     'status-warning' => ['aculta-portal-requirements__status--warning'],
+    'status-attention' => ['aculta-portal-requirements__status--attention'],
     'status-error' => ['aculta-portal-requirements__status--error'],
     'status-pending' => ['aculta-portal-requirements__status--pending'],
     'requirements-indexing' => ['aculta-portal-requirements__indexing'],
     'requirements-indexing-table' => ['aculta-portal-requirements__indexing-table'],
+    'requirements-cep' => ['aculta-portal-requirements__cep'],
+    'requirements-cep-table' => ['aculta-portal-requirements__cep-table'],
+    'cep-sources' => ['aculta-cep-sources'],
     'secrets-section' => ['aculta-portal-secrets-section'],
     'secret-value' => ['aculta-secret-value'],
     'secret-value-text' => ['aculta-secret-value__text'],
@@ -64,6 +87,20 @@ final class PortalUiHooks {
     'search-preview-full' => ['aculta-search-preview__full', 'btn', 'btn-outline-primary', 'btn-sm'],
     'hint' => ['small', 'text-body-secondary'],
     'hint-muted' => ['text-body-secondary'],
+    // Review de texto livre (aculta_lms): seções de retorno e cada frase verificada.
+    'feedback-matched' => ['feedback-section', 'matched-phrases'],
+    'feedback-unmatched' => ['feedback-section', 'unmatched-phrases'],
+    'phrase-match' => ['phrase-match'],
+    'phrase-mismatch' => ['phrase-mismatch'],
+    // Administração do H5P (aculta_lms_h5p) e aviso do checkout Mercado Pago.
+    'h5p-admin-header' => ['h5p-admin-header'],
+    'h5p-content-unavailable' => ['h5p-content-unavailable'],
+    'h5p-dashboard-course' => ['aculta-lms-h5p-course'],
+    'checkout-help' => ['checkout-help'],
+    'gallery-dialog' => ['aculta-gallery-dialog'],
+    'mercado-pago-credentials-test' =>['mercado-pago-credentials', 'mercado-pago-credentials-test'],
+    'mercado-pago-credentials-stage' => ['mercado-pago-credentials', 'mercado-pago-credentials-stage'],
+    'mercado-pago-credentials-prod' => ['mercado-pago-credentials', 'mercado-pago-credentials-prod'],
     'icon-search' => ['bi', 'bi-search'],
     'visually-hidden' => ['visually-hidden'],
     // Wiki e cursos.
@@ -184,6 +221,10 @@ final class PortalUiHooks {
     'social-links-channel-instagram' => ['aculta-social-links__channel--instagram'],
     'social-links-channel-youtube' => ['aculta-social-links__channel--youtube'],
     'social-links-channel-facebook' => ['aculta-social-links__channel--facebook'],
+    // Ícone do canal na lista de redes sociais (Bootstrap Icons).
+    'social-links-icon-instagram' => ['bi', 'bi-instagram'],
+    'social-links-icon-youtube' => ['bi', 'bi-youtube'],
+    'social-links-icon-facebook' => ['bi', 'bi-facebook'],
     'social-links-list' => ['aculta-social-links__list', 'list-unstyled'],
     'social-links-footer-inner' => ['aculta-social-links-footer__inner'],
     'social-links-settings-button' => ['aculta-social-links-settings-button'],
@@ -283,6 +324,22 @@ final class PortalUiHooks {
     'aculta-button-outline' => ['aculta-button', 'aculta-button--outline'],
     'status-attention' => ['aculta-portal-requirements__status--attention'],
     'breadcrumb-list' => ['breadcrumb'],
+    // Formulário de apoio: valores sugeridos (módulo aculta_portal, SupportForm).
+    'support-amounts' => ['aculta-support-amounts'],
+    // Painéis de vendas e doações (módulo aculta_portal, SalesOrdersTableBuilder e controllers de relatório).
+    'sales-panel' => ['aculta-sales-panel'],
+    'sales-section' => ['aculta-sales-panel__section'],
+    'sales-heading' => ['aculta-sales-panel__heading'],
+    'sales-table' => ['table', 'table-hover', 'align-middle', 'aculta-sales-panel__table'],
+    'sales-pagination' => ['aculta-sales-panel__pagination'],
+    'sales-payment' => ['aculta-sales-panel__payment'],
+    'sales-action' => ['btn', 'btn-sm', 'btn-outline-primary', 'aculta-sales-panel__action'],
+    'sales-action-danger' => ['btn', 'btn-sm', 'btn-outline-danger', 'aculta-sales-panel__action'],
+    'sales-state-ok' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--ok'],
+    'sales-state-pending' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--pending'],
+    'sales-state-refunded' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--refunded'],
+    'sales-state-voided' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--voided'],
+    'sales-state-neutral' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--neutral'],
   ];
 
   /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */
@@ -317,6 +374,8 @@ final class PortalUiHooks {
   #[Hook('preprocess_container')]
   #[Hook('preprocess_html_tag')]
   #[Hook('preprocess_item_list')]
+  #[Hook('preprocess_fieldset')]
+  #[Hook('preprocess_table')]
   #[Hook('preprocess_input')]
   #[Hook('preprocess_form_element')]
   #[Hook('preprocess_image')]

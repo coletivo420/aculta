@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Presentation;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -104,13 +103,17 @@ final class SocialLinksPagePresenter {
       if (!$this->isAllowedUrl($uri, $channel['hosts'])) {
         continue;
       }
-      $title = $this->translation->translate('<i class="bi bi-@icon" aria-hidden="true"></i><span>@label</span>', [
-        '@icon' => $channel['icon'],
-        '@label' => $channel['label'],
-      ]);
       $items[] = [
         '#type' => 'link',
-        '#title' => Markup::create((string) $title),
+        '#title' => [
+          'icon' => [
+            '#type' => 'html_tag',
+            '#tag' => 'i',
+            '#attributes' => ['data-portal-ui' => 'social-links-icon-' . $id, 'aria-hidden' => 'true'],
+            '#value' => '',
+          ],
+          'label' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => $channel['label']],
+        ],
         '#url' => Url::fromUri($uri),
         '#attributes' => ['data-portal-ui' => 'social-links-channel social-links-channel-' . $id, 'rel' => 'noopener noreferrer', 'target' => '_blank'],
       ];

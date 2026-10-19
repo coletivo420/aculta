@@ -1,4 +1,4 @@
-{# Semantic layout; Bootstrap5 remains the sole provider of Bootstrap assets. #}
+{# Semantic layout; the Drupal Bootstrap base supplies framework assets. #}
 {% set aculta_wiki_search = domain_presentation.regions.wiki_search|default(null) %}
 {# Institution Bar: global, institutional, no Domain/purpose decisions here. #}
 {% if domain_presentation.layout.institution_bar_account|default(false) %}
@@ -21,7 +21,8 @@
             empty: aculta_cart.empty,
             url: aculta_cart.url,
             total: aculta_cart.total,
-            items: aculta_cart.items,
+            sites: aculta_cart.sites,
+            checkout_url: aculta_cart.checkout_url,
             banner: 'Compre na loja e apoie a luta antiproibicionista!',
           }, with_context = false) }}
         {% endif %}

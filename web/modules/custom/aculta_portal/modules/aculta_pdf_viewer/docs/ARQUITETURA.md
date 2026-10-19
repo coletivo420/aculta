@@ -16,6 +16,9 @@ Wiki420, Fórum, projetos e documentos institucionais que referenciem Media.
   File e às entidades/campos referenciadores a cada requisição.
 - O viewer não cria rotas, armazenamento, permissões, dados de LMS ou política
   de autorização independente.
+- Formatos que embutem Media usam o filtro `media_embed` do Core depois dos
+  filtros de HTML; a Wiki permite somente o bundle público `document`. O
+  render continua passando pelo display Media e pela checagem Core de acesso.
 - PDFPreview é uma melhoria opcional de miniatura da primeira página. Falha/ausência de preview não
   muda a leitura nem o fallback autorizado.
 
@@ -24,8 +27,9 @@ Wiki420, Fórum, projetos e documentos institucionais que referenciem Media.
 ### `PdfViewerBuilderInterface`
 
 Contrato de renderização: `build(MediaInterface $media, string $field_name)`
-recebe uma entidade Media e o campo esperado, e retorna um render array com
-cacheabilidade e access incorporados. O contrato evita que consumidores
+recebe uma entidade Media e o campo esperado; `buildFile()` recebe um File e a
+cacheabilidade acumulada pelo consumidor de campo direto. Ambos retornam um
+render array com acesso/cache incorporados. O contrato evita que consumidores
 construam URLs ou markup de viewer diretamente.
 
 ### `PdfViewerBuilder`
@@ -90,6 +94,32 @@ entidades e campos. Isso reaproveita a política Core, mas não substitui testes
 de isolamento por Group/turma. O bundle `document` exportado continua usando
 `public://`; conteúdo confidencial deve usar um campo/bundle configurado para
 `private://`.
+
+### `AcultaPdfFileFormatter`
+
+O plugin `aculta_pdf_file` atende campos File diretos, sem criar Media ou
+duplicar metadados. Ele exige acesso de visualização à entidade e ao campo, e
+acesso `download` ao File. PDF permanente `public://` usa `buildFile()` com a
+cacheabilidade acumulada pelo formatter; qualquer outro tipo, URI privado,
+arquivo temporário ou viewer negado mantém o link Core permitido. O formatter
+não oferece uma rota de leitura privada própria: campos privados continuam com
+a entrega protegida do formatter Core.
+
+Os displays `node.document.default` e `node.document.full` usam esse formatter
+para o campo institucional `field_document`. Isso amplia o contrato existente
+sem alterar a fonte de verdade: o node e o campo continuam donos da associação,
+enquanto o File continua dono do arquivo e seus metadados.
+
+### Wiki e formatos de texto
+
+Os formatos `wiki` e `usuario_aculta` processam tokens `drupal-media` pelo filtro
+`media_embed` após a sanitização HTML e permitem somente Media `document`. Ambos
+oferecem o botão Media no CKEditor 5 e foram aprovados pelo `CKEditor5::validatePair()`.
+Source Editing mantém os elementos históricos que não têm controles visuais; o
+filtro HTML continua limitando o que é persistido. Wiki, Fórum e formatos
+editoriais compartilham o display Media, sem URL ou política de acesso própria.
+A Media continua sujeita ao acesso Core e o bundle privado `course_document` não
+pode ser selecionado nesses formatos.
 
 ## JavaScript e carregamento
 

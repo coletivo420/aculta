@@ -1,0 +1,811 @@
+20210005	Praça Irmãos Bernardeli	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20210010	Praça Onze de Junho	Centro	Rio de Janeiro	RJ	3304557
+20210020	Rua Neri Pinheiro	Cidade Nova	Rio de Janeiro	RJ	3304557
+20210030	Avenida Presidente Vargas	Cidade Nova	Rio de Janeiro	RJ	3304557
+20210031	Avenida Presidente Vargas	Cidade Nova	Rio de Janeiro	RJ	3304557
+20210048	Travessa Sapucaí	Cidade Nova	Rio de Janeiro	RJ	3304557
+20210051	Rua Carmo Neto	Cidade Nova	Rio de Janeiro	RJ	3304557
+20210052	Rua Carmo Neto	Cidade Nova	Rio de Janeiro	RJ	3304557
+20210061	Rua Comandante Mauriti	Cidade Nova	Rio de Janeiro	RJ	3304557
+20210062	Rua Comandante Mauriti	Cidade Nova	Rio de Janeiro	RJ	3304557
+20210071	Rua Marquês de Sapucaí	Santo Cristo	Rio de Janeiro	RJ	3304557
+20210072	Rua Marquês de Sapucaí	Santo Cristo	Rio de Janeiro	RJ	3304557
+20211000	Rua Aníbal Benevolo	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211005	Rua Frei Caneca	Centro	Rio de Janeiro	RJ	3304557
+20211010	Rua Frei Caneca	Centro	Rio de Janeiro	RJ	3304557
+20211015	Rua Professor Lavaquiel Biosque	Estácio	Rio de Janeiro	RJ	3304557
+20211018	Rua Ademar Barcelos	Estácio	Rio de Janeiro	RJ	3304557
+20211020	Rua Frei Caneca	Estácio	Rio de Janeiro	RJ	3304557
+20211025	Rua Heitor Carrilho	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211030	Rua Frei Caneca	Centro	Rio de Janeiro	RJ	3304557
+20211035	Travessa Lopes	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211040	Rua Frei Caneca	Centro	Rio de Janeiro	RJ	3304557
+20211045	Travessa Onze de Maio	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211050	Rua Frei Caneca	Estácio	Rio de Janeiro	RJ	3304557
+20211051	Rua Alcebíades Barcelos	Estácio	Rio de Janeiro	RJ	3304557
+20211052	Rua Neco do Estácio	Estácio	Rio de Janeiro	RJ	3304557
+20211055	Travessa Pedregais	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211060	Rua Presidente Barroso	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211070	Rua Senhor de Matosinhos	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211080	Travessa Senhor de Matosinhos	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211090	Rua Tomás Rabelo	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211100	Rua Viscondessa Pirassununga	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211110	Rua Afonso Cavalcanti	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211120	Rua Amoroso Lima	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211130	Rua Benedito Hipólito	Centro	Rio de Janeiro	RJ	3304557
+20211140	Rua Correia Vasques	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211150	Travessa Guedes	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211160	Rua Júlio Carmo	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211170	Rua Laura de Araújo	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211174	Rua Madre Tereza de Calcutá	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211175	Rua Beatriz Larragoiti Lucas	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211176	Rua Sociólogo Herbert de Souza	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211177	Rua Senador Nelson Carneiro	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211178	Rua Dom Marcos Barbosa	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211180	Rua Machado Coelho	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211190	Rua Miguel de Frias	Estácio	Rio de Janeiro	RJ	3304557
+20211200	Rua Rodrigues dos Santos	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211210	Rua Santa Maria	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211220	Rua São Martinho	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211225	Rua Deputado Ulysses Guimarães	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211227	Rua Ministro Hélio Beltrão	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211230	Rua Visconde de Duprat	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211240	Praça Coronel Castelo Branco	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211250	Praça Reverendo Álvaro Reis	Estácio	Rio de Janeiro	RJ	3304557
+20211260	Avenida Salvador de Sá	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211270	Rua Estácio de Sá	Estácio	Rio de Janeiro	RJ	3304557
+20211280	Rua Carolina Reidner	Catumbi	Rio de Janeiro	RJ	3304557
+20211282	Travessa Ademar Barcelos	Catumbi	Rio de Janeiro	RJ	3304557
+20211284	Travessa Alexandre	Catumbi	Rio de Janeiro	RJ	3304557
+20211286	Travessa das Chácaras	Catumbi	Rio de Janeiro	RJ	3304557
+20211290	Rua do Chichorro	Catumbi	Rio de Janeiro	RJ	3304557
+20211295	Rua Emília Guimarães	Catumbi	Rio de Janeiro	RJ	3304557
+20211300	Rua João Ventura	Catumbi	Rio de Janeiro	RJ	3304557
+20211310	Rua Sousa Neves	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211320	Rua Van Erven	Catumbi	Rio de Janeiro	RJ	3304557
+20211321	Ladeira Caiçaras	Catumbi	Rio de Janeiro	RJ	3304557
+20211330	Largo do Caco	Centro	Rio de Janeiro	RJ	3304557
+20211340	Rua Moncorvo Filho	Centro	Rio de Janeiro	RJ	3304557
+20211350	Praça da República	Centro	Rio de Janeiro	RJ	3304557
+20211351	Praça da República	Centro	Rio de Janeiro	RJ	3304557
+20211360	Campo de Santana	Centro	Rio de Janeiro	RJ	3304557
+20211370	Beco dos Amigos	Catumbi	Rio de Janeiro	RJ	3304557
+20211380	Rua Balbino	Catumbi	Rio de Janeiro	RJ	3304557
+20211400	Beco Caiçaras	Catumbi	Rio de Janeiro	RJ	3304557
+20211410	Beco Labor de Ouro	Catumbi	Rio de Janeiro	RJ	3304557
+20211420	Rua Sabor de Ouro	Catumbi	Rio de Janeiro	RJ	3304557
+20211430	Rua São Bento	Rio Comprido	Rio de Janeiro	RJ	3304557
+20211440	Travessa Docilio	Catumbi	Rio de Janeiro	RJ	3304557
+20211445	Rua Pinto de Azevedo	Cidade Nova	Rio de Janeiro	RJ	3304557
+20211450	Rua João de Castro	Catumbi	Rio de Janeiro	RJ	3304557
+20211460	Praça Doutor Roberto	Catumbi	Rio de Janeiro	RJ	3304557
+20220000	Rua Atilia	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220006	Rua Marquês de Sapucaí	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220007	Rua Marquês de Sapucaí	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220010	Travessa Barros Sobrinho	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220020	Travessa Brito Teixeira	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220030	Rua Capiberibe	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220040	Rua Capitão Sena	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220050	Rua Carlos Gomes	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220060	Rua João Cardoso	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220070	Rua Orestes	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220080	Travessa Sara	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220090	Rua Sara	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220100	Rua Antônio José	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220110	Rua Araújo Viana	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220120	Rua Barão de Angra	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220130	Rua Carneiro Leão	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220140	Rua Conselheiro Leonardo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220141	Ladeira Pedra Lisa	Gamboa	Rio de Janeiro	RJ	3304557
+20220150	Rua Deolinda	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220160	Rua Doutor Piragibe	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220170	Rua Mariano Procópio	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220180	Rua Mont Alverne	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220190	Rua Moreira Pinto	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220195	Comunidade Urbana Moreira Pinto	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220200	Rua do Pinto	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220210	Rua Saldanha Marinho	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220220	Travessa Sousa	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220230	Praça Vasconcelos Quere	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220240	Parque Vila Formosa	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220250	Rua Comandante Garcia Pires	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220260	Rua General Luís Mendes de Morais	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220270	Praça Patrão-Mor Aguiar	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220280	Rua Pedro Alves	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220281	Rua Pedro Alves	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220283	Rua Pedro Alves	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220284	Rua Pedro Alves	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220290	Rua Rivadavia Correia	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220295	Rua Arlindo Rodrigues	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220297	Avenida Oscar Niemeyer	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220302	Rua Santo Cristo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220303	Rua Santo Cristo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220304	Rua Santo Cristo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220305	Rua Santo Cristo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220310	Avenida Francisco Bicalho	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220322	Rua da Gamboa	Gamboa	Rio de Janeiro	RJ	3304557
+20220323	Rua da Gamboa	Gamboa	Rio de Janeiro	RJ	3304557
+20220324	Rua da Gamboa	Gamboa	Rio de Janeiro	RJ	3304557
+20220325	Rua da Gamboa	Gamboa	Rio de Janeiro	RJ	3304557
+20220330	Rua João Álvares	Gamboa	Rio de Janeiro	RJ	3304557
+20220340	Caminho do Morro da Providência	Gamboa	Rio de Janeiro	RJ	3304557
+20220350	Rua Pedro Ernesto	Gamboa	Rio de Janeiro	RJ	3304557
+20220359	Rua do Aquário	Gamboa	Rio de Janeiro	RJ	3304557
+20220360	Avenida Rodrigues Alves	Saúde	Rio de Janeiro	RJ	3304557
+20220361	Avenida Rodrigues Alves	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220363	Avenida Rodrigues Alves	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220364	Avenida Rodrigues Alves	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220370	Rua Cardoso Marinho	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220380	Rua Comendador Evora	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220390	Rua Comendador Leonardo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220400	Rua Cordeiro da Graça	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220410	Rua Equador	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220420	Largo José Francisco Fraga	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220425	Rua Geógrafo Milton Santos	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220430	Praça Marechal Hermes	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220450	Rua Antônio Lage	Gamboa	Rio de Janeiro	RJ	3304557
+20220460	Avenida Barão de Tefé	Saúde	Rio de Janeiro	RJ	3304557
+20220470	Rua Conselheiro Zacarias	Gamboa	Rio de Janeiro	RJ	3304557
+20220480	Praça Coronel Assunção	Gamboa	Rio de Janeiro	RJ	3304557
+20220490	Rua Joaquim Esposel	Gamboa	Rio de Janeiro	RJ	3304557
+20220500	Rua Leôncio de Albuquerque	Gamboa	Rio de Janeiro	RJ	3304557
+20220505	Rua da União	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220510	Ladeira Morro da Saúde	Gamboa	Rio de Janeiro	RJ	3304557
+20220520	Rua da Mortona	Gamboa	Rio de Janeiro	RJ	3304557
+20220530	Rua do Propósito	Gamboa	Rio de Janeiro	RJ	3304557
+20220540	Rua Segunda	Gamboa	Rio de Janeiro	RJ	3304557
+20220550	Rua Silvino Montenegro	Gamboa	Rio de Janeiro	RJ	3304557
+20220560	Rua Sousa e Silva	Gamboa	Rio de Janeiro	RJ	3304557
+20220571	Avenida Venezuela	Gamboa	Rio de Janeiro	RJ	3304557
+20220572	Avenida Venezuela	Gamboa	Rio de Janeiro	RJ	3304557
+20220580	Praça Dinora de Queiroz	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220590	Rua da América	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220601	Rua Carmo Neto	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220602	Rua Carmo Neto	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220611	Rua Comandante Mauriti	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220612	Rua Comandante Mauriti	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220620	Rua Ebroino Uruguai	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220630	Beco das Escadinha do Oliveira	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220640	Rua Farnese	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220650	Rua Guapi	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220660	Rua Nabuco de Freitas	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220661	Comunidade Urbana São Diogo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220670	Travessa São Diogo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220680	Travessa Silva Baião	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220690	Rua Barão da Gamboa	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220700	Rua Bento Teixeira	Gamboa	Rio de Janeiro	RJ	3304557
+20220710	Avenida Cidade Lima	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220730	Ladeira do Mendonça	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220750	Rua Rego Barros	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220751	Comunidade Urbana Pedra Lisa	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220760	Praça Santo Cristo	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220770	Rua Vidal de Negreiros	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220780	Rua Waldemar Dutra	Santo Cristo	Rio de Janeiro	RJ	3304557
+20220790	Praça Jornal do Comércio	Saúde	Rio de Janeiro	RJ	3304557
+20220800	Avenida Professor Pereira Reis	Santo Cristo	Rio de Janeiro	RJ	3304557
+20221000	Rua Cruzeiro	Gamboa	Rio de Janeiro	RJ	3304557
+20221005	Rua Noêmia	Gamboa	Rio de Janeiro	RJ	3304557
+20221010	Largo Cruzeiro	Gamboa	Rio de Janeiro	RJ	3304557
+20221030	Praça Procópio Ferreira	Centro	Rio de Janeiro	RJ	3304557
+20221040	Rua Ana Mascarenhas	Gamboa	Rio de Janeiro	RJ	3304557
+20221050	Rua Costa Barros	Gamboa	Rio de Janeiro	RJ	3304557
+20221060	Travessa das Escadinhas do Livramento	Gamboa	Rio de Janeiro	RJ	3304557
+20221070	Beco das Escadinhas do Livramento	Gamboa	Rio de Janeiro	RJ	3304557
+20221080	Ladeira Livramento	Gamboa	Rio de Janeiro	RJ	3304557
+20221090	Ladeira Madre de Deus	Gamboa	Rio de Janeiro	RJ	3304557
+20221100	Beco Madre de Deus	Gamboa	Rio de Janeiro	RJ	3304557
+20221110	Rua Major Saião	Gamboa	Rio de Janeiro	RJ	3304557
+20221120	Rua Miguel Saião	Gamboa	Rio de Janeiro	RJ	3304557
+20221130	Rua do Monte	Gamboa	Rio de Janeiro	RJ	3304557
+20221160	Rua Sacadura Cabral	Saúde	Rio de Janeiro	RJ	3304557
+20221161	Rua Sacadura Cabral	Saúde	Rio de Janeiro	RJ	3304557
+20221170	Rua Cunha Barbosa	Gamboa	Rio de Janeiro	RJ	3304557
+20221180	Travessa Cunha Matos	Gamboa	Rio de Janeiro	RJ	3304557
+20221192	Rua do Livramento	Gamboa	Rio de Janeiro	RJ	3304557
+20221193	Rua do Livramento	Gamboa	Rio de Janeiro	RJ	3304557
+20221194	Rua do Livramento	Gamboa	Rio de Janeiro	RJ	3304557
+20221195	Rua do Livramento	Gamboa	Rio de Janeiro	RJ	3304557
+20221200	Rua São Gregório	Gamboa	Rio de Janeiro	RJ	3304557
+20221210	Rua Sousa Bandeira	Gamboa	Rio de Janeiro	RJ	3304557
+20221220	Rua Alfredo Dolabela Portela	Gamboa	Rio de Janeiro	RJ	3304557
+20221230	Rua Coronel Audomaro Costa	Gamboa	Rio de Janeiro	RJ	3304557
+20221240	Rua Costa Ferreira	Centro	Rio de Janeiro	RJ	3304557
+20221250	Praça Cristiano Otoni	Centro	Rio de Janeiro	RJ	3304557
+20221260	Praça Duque de Caxias	Centro	Rio de Janeiro	RJ	3304557
+20221270	Travessa da Felicidade	Gamboa	Rio de Janeiro	RJ	3304557
+20221280	Rua Marcílio Dias	Centro	Rio de Janeiro	RJ	3304557
+20221290	Rua Senador Pompeu	Centro	Rio de Janeiro	RJ	3304557
+20221291	Rua Senador Pompeu	Centro	Rio de Janeiro	RJ	3304557
+20221300	Praça Américo Brum	Gamboa	Rio de Janeiro	RJ	3304557
+20221310	Ladeira do Barroso	Gamboa	Rio de Janeiro	RJ	3304557
+20221320	Travessa do Barroso	Gamboa	Rio de Janeiro	RJ	3304557
+20221330	Rua da Bica	Gamboa	Rio de Janeiro	RJ	3304557
+20221340	Beco Capela	Gamboa	Rio de Janeiro	RJ	3304557
+20221350	Largo da Capela	Gamboa	Rio de Janeiro	RJ	3304557
+20221360	Rua Dona Lúcia	Gamboa	Rio de Janeiro	RJ	3304557
+20221370	Escada da Estirada	Gamboa	Rio de Janeiro	RJ	3304557
+20221380	Ladeira do Faria	Gamboa	Rio de Janeiro	RJ	3304557
+20221381	Comunidade Urbana Morro da Providência	Gamboa	Rio de Janeiro	RJ	3304557
+20221390	Rua Grota	Gamboa	Rio de Janeiro	RJ	3304557
+20221400	Rua Visconde da Gávea	Centro	Rio de Janeiro	RJ	3304557
+20221410	Rua Alexandre Mackenzie	Centro	Rio de Janeiro	RJ	3304557
+20221422	Rua Barão de São Félix	Centro	Rio de Janeiro	RJ	3304557
+20221423	Rua Barão de São Félix	Centro	Rio de Janeiro	RJ	3304557
+20221424	Rua Barão de São Félix	Centro	Rio de Janeiro	RJ	3304557
+20221425	Rua Barão de São Félix	Centro	Rio de Janeiro	RJ	3304557
+20221430	Rua Bento Ribeiro	Centro	Rio de Janeiro	RJ	3304557
+20221440	Rua Rosa Saião	Gamboa	Rio de Janeiro	RJ	3304557
+20230000	Ladeira Frei Orlando	Santa Teresa	Rio de Janeiro	RJ	3304557
+20230010	Rua Riachuelo	Centro	Rio de Janeiro	RJ	3304557
+20230011	Rua Riachuelo	Centro	Rio de Janeiro	RJ	3304557
+20230012	Rua Riachuelo	Centro	Rio de Janeiro	RJ	3304557
+20230013	Rua Riachuelo	Centro	Rio de Janeiro	RJ	3304557
+20230014	Rua Riachuelo	Centro	Rio de Janeiro	RJ	3304557
+20230015	Rua Riachuelo	Centro	Rio de Janeiro	RJ	3304557
+20230023	Rua Irineu Marinho	Centro	Rio de Janeiro	RJ	3304557
+20230024	Rua Washington Luís	Centro	Rio de Janeiro	RJ	3304557
+20230025	Rua Washington Luís	Centro	Rio de Janeiro	RJ	3304557
+20230026	Rua Washington Luís	Centro	Rio de Janeiro	RJ	3304557
+20230027	Rua Washington Luís	Centro	Rio de Janeiro	RJ	3304557
+20230030	Ladeira do Castro	Santa Teresa	Rio de Janeiro	RJ	3304557
+20230040	Travessa Plano Inclinado	Santa Teresa	Rio de Janeiro	RJ	3304557
+20230050	Rua Tadeu Kosciusko	Centro	Rio de Janeiro	RJ	3304557
+20230060	Rua dos Arcos	Centro	Rio de Janeiro	RJ	3304557
+20230070	Rua do Lavradio	Centro	Rio de Janeiro	RJ	3304557
+20230080	Rua Francisco Muratori	Santa Teresa	Rio de Janeiro	RJ	3304557
+20230090	Travessa Muratori	Santa Teresa	Rio de Janeiro	RJ	3304557
+20230100	Rua Sílvio Romero	Santa Teresa	Rio de Janeiro	RJ	3304557
+20230110	Praça Cardeal Câmara	Centro	Rio de Janeiro	RJ	3304557
+20230120	Rua Conselheiro Josino	Centro	Rio de Janeiro	RJ	3304557
+20230130	Praça Cruz Vermelha	Centro	Rio de Janeiro	RJ	3304557
+20230140	Praça João Pessoa	Centro	Rio de Janeiro	RJ	3304557
+20230150	Avenida Mem de Sá	Centro	Rio de Janeiro	RJ	3304557
+20230151	Avenida Mem de Sá	Centro	Rio de Janeiro	RJ	3304557
+20230152	Avenida Mem de Sá	Centro	Rio de Janeiro	RJ	3304557
+20230153	Avenida Mem de Sá	Centro	Rio de Janeiro	RJ	3304557
+20230160	Rua Tenente Possolo	Centro	Rio de Janeiro	RJ	3304557
+20230170	Rua Azeredo Coutinho	Centro	Rio de Janeiro	RJ	3304557
+20230180	Rua Carlos de Carvalho	Centro	Rio de Janeiro	RJ	3304557
+20230192	Rua General Caldwell	Centro	Rio de Janeiro	RJ	3304557
+20230193	Rua General Caldwell	Centro	Rio de Janeiro	RJ	3304557
+20230194	Rua General Caldwell	Centro	Rio de Janeiro	RJ	3304557
+20230195	Rua General Caldwell	Centro	Rio de Janeiro	RJ	3304557
+20230200	Praça Dom Sebastião Leme	Centro	Rio de Janeiro	RJ	3304557
+20230210	Rua Frederico Silva	Centro	Rio de Janeiro	RJ	3304557
+20230220	Rua Gustavo Barroso	Centro	Rio de Janeiro	RJ	3304557
+20230240	Rua Marquês de Pombal	Centro	Rio de Janeiro	RJ	3304557
+20230250	Rua Professor Clementino Fraga	Centro	Rio de Janeiro	RJ	3304557
+20230260	Rua de Santana	Centro	Rio de Janeiro	RJ	3304557
+20230261	Rua de Santana	Centro	Rio de Janeiro	RJ	3304557
+20231000	Rua do Senado	Centro	Rio de Janeiro	RJ	3304557
+20231003	Rua do Senado	Centro	Rio de Janeiro	RJ	3304557
+20231004	Rua do Senado	Centro	Rio de Janeiro	RJ	3304557
+20231005	Rua do Senado	Centro	Rio de Janeiro	RJ	3304557
+20231006	Rua do Senado	Centro	Rio de Janeiro	RJ	3304557
+20231012	Avenida Gomes Freire	Centro	Rio de Janeiro	RJ	3304557
+20231013	Avenida Gomes Freire	Centro	Rio de Janeiro	RJ	3304557
+20231014	Avenida Gomes Freire	Centro	Rio de Janeiro	RJ	3304557
+20231015	Avenida Gomes Freire	Centro	Rio de Janeiro	RJ	3304557
+20231016	Rua Ubaldino do Amaral	Centro	Rio de Janeiro	RJ	3304557
+20231020	Rua Vinte de Abril	Centro	Rio de Janeiro	RJ	3304557
+20231030	Avenida Henrique Valadares	Centro	Rio de Janeiro	RJ	3304557
+20231031	Avenida Henrique Valadares	Centro	Rio de Janeiro	RJ	3304557
+20231043	Rua dos Inválidos	Centro	Rio de Janeiro	RJ	3304557
+20231044	Rua dos Inválidos	Centro	Rio de Janeiro	RJ	3304557
+20231045	Rua dos Inválidos	Centro	Rio de Janeiro	RJ	3304557
+20231046	Rua dos Inválidos	Centro	Rio de Janeiro	RJ	3304557
+20231047	Rua dos Inválidos	Centro	Rio de Janeiro	RJ	3304557
+20231048	Rua dos Inválidos	Centro	Rio de Janeiro	RJ	3304557
+20231050	Rua André Cavalcanti	Centro	Rio de Janeiro	RJ	3304557
+20231060	Travessa Santos Lima	Santa Teresa	Rio de Janeiro	RJ	3304557
+20231065	Comunidade Urbana André Cavalcanti	Santa Teresa	Rio de Janeiro	RJ	3304557
+20231070	Rua Teresópolis	Santa Teresa	Rio de Janeiro	RJ	3304557
+20231082	Rua Carlos Sampaio	Centro	Rio de Janeiro	RJ	3304557
+20231083	Rua Carlos Sampaio	Centro	Rio de Janeiro	RJ	3304557
+20231084	Rua Carlos Sampaio	Centro	Rio de Janeiro	RJ	3304557
+20231085	Rua Carlos Sampaio	Centro	Rio de Janeiro	RJ	3304557
+20231091	Rua do Resende	Centro	Rio de Janeiro	RJ	3304557
+20231092	Rua do Resende	Centro	Rio de Janeiro	RJ	3304557
+20231093	Rua do Resende	Centro	Rio de Janeiro	RJ	3304557
+20231094	Rua do Resende	Centro	Rio de Janeiro	RJ	3304557
+20231110	Rua da Relação	Centro	Rio de Janeiro	RJ	3304557
+20240000	Praça Almirante Jaceguai	Centro	Rio de Janeiro	RJ	3304557
+20240012	Rua Cardeal Dom Sebastião Leme	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240013	Rua Cardeal Dom Sebastião Leme	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240014	Rua Cardeal Dom Sebastião Leme	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240015	Rua Cardeal Dom Sebastião Leme	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240020	Rua Costa Bastos	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240030	Rua das Graças	Centro	Rio de Janeiro	RJ	3304557
+20240040	Largo das Neves	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240050	Avenida Nossa Senhora de Fátima	Centro	Rio de Janeiro	RJ	3304557
+20240051	Avenida Nossa Senhora de Fátima	Centro	Rio de Janeiro	RJ	3304557
+20240060	Rua Progresso	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240070	Rua Santo Alfredo	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240080	Ladeira do Viana	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240090	Rua Aarão Reis	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240100	Rua Ocidental	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240101	Comunidade Urbana Vila Santa Bárbara	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240110	Beco Ocidental	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240120	Travessa Oriente	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240130	Rua do Oriente	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240140	Rua Padre Miguelinho	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240150	Travessa Poti	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240160	Beco do Salgueiro	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240170	Zigue-Zague do Teixeira	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240180	Rua Guilherme Marconi	Centro	Rio de Janeiro	RJ	3304557
+20240192	Rua Monte Alegre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240193	Rua Monte Alegre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240194	Rua Monte Alegre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240195	Rua Monte Alegre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240200	Praça Presidente Aguirre Cerda	Centro	Rio de Janeiro	RJ	3304557
+20240210	Rua Áurea	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240220	Rua Carlo Brant	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240230	Rua Constante Jardim	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240240	Rua Félicio dos Santos	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240250	Rua Filadélfia	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240260	Rua Fonseca Guimarães	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240270	Rua Laurinda Santos Lobo	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240280	Praça Odylo Costa Neto	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240290	Rua Paschoal Carlos Magno	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240300	Rua Tenente Maurício de Medeiros	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240310	Rua Terezina	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240320	Rua Triunfo	Santa Teresa	Rio de Janeiro	RJ	3304557
+20240330	Largo do Triunfo	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241000	Rua Bernardino dos Santos	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241010	Travessa Cassiano	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241020	Rua Dias de Barros	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241030	Praça Glauce Rocha	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241040	Rua Hermenegildo de Barros	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241050	Rua Murtinho Nobre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241060	Rua Taylor	Centro	Rio de Janeiro	RJ	3304557
+20241070	Rua Visconde de Paranaguá	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241080	Rua Conde Lages	Centro	Rio de Janeiro	RJ	3304557
+20241090	Travessa Escadinha de Santa Teresa	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241100	Rua Gonçalves Fontes	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241110	Rua Joaquim Silva	Centro	Rio de Janeiro	RJ	3304557
+20241120	Rua Manuel Carneiro	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241130	Rua Pinto Martins	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241140	Ladeira Santa Teresa	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241150	Rua Benjamim Constant	Glória	Rio de Janeiro	RJ	3304557
+20241160	Rua do Fialho	Glória	Rio de Janeiro	RJ	3304557
+20241170	Largo da Glória	Glória	Rio de Janeiro	RJ	3304557
+20241180	Rua da Glória	Glória	Rio de Janeiro	RJ	3304557
+20241190	Largo Paula Cândido	Glória	Rio de Janeiro	RJ	3304557
+20241200	Ladeira Santa Isabel	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241210	Rua Andres Belo	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241220	Rua Cândido Mendes	Glória	Rio de Janeiro	RJ	3304557
+20241230	Ladeira do Durão	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241240	Travessa Manuel Lebrão	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241250	Rua Santa Cristina	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241260	Rua Almirante Alexandrino	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241263	Rua Almirante Alexandrino	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241264	Rua Almirante Alexandrino	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241265	Rua Almirante Alexandrino	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241266	Rua Almirante Alexandrino	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241267	Comunidade Urbana Vila da Imaculada Conceição	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241268	Comunidade Urbana Coroado - AMAPOLO	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241269	Comunidade Urbana A. M. e Amigos do Vale	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241270	Rua Aprazível	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241280	Rua do Aqueduto	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241290	Rua Correia de Sá	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241300	Rua Francisco de Castro	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241310	Largo do Guimarães	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241320	Rua Joaquim Murtinho	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241330	Rua Leopoldo Frois	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241340	Ladeira do Meireles	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241350	Travessa Falet	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241352	Rua da Alegria	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241354	Rua da Pedreira	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241360	Rua Falet	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241365	Comunidade Urbana Ocidental Fallet	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241370	Largo do Franca	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241380	Rua Professor Júlio Koeler	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241390	Estrada Dom Joaquim Mamede	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241391	Comunidade Urbana Vila Santa Alexandrina	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241400	Rua Doutor Júlio Otoni	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241401	Comunidade Urbana Júlio Otoni	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241404	Rua Sebastião Francisco Silva	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241410	Rua Gomes Lópes	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241411	Comunidade Urbana Morro do Escondidinho	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241412	Comunidade Urbana Morro dos Prazeres	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241413	Comunidade Urbana Vila Anchieta	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241420	Beco da Lagoinha	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241430	Rua Moacir Santos Silva	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241440	Rua Silvestre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20241450	Travessa Xavier dos Passos	Santa Teresa	Rio de Janeiro	RJ	3304557
+20250000	Rua Maia Lacerda	Estácio	Rio de Janeiro	RJ	3304557
+20250001	Rua Maia Lacerda	Estácio	Rio de Janeiro	RJ	3304557
+20250010	Rua Mococa	Estácio	Rio de Janeiro	RJ	3304557
+20250020	Travessa Paulina	Estácio	Rio de Janeiro	RJ	3304557
+20250030	Rua Professor Quintino do Vale	Estácio	Rio de Janeiro	RJ	3304557
+20250040	Rua Sampaio Ferraz	Estácio	Rio de Janeiro	RJ	3304557
+20250052	Rua São Carlos	Estácio	Rio de Janeiro	RJ	3304557
+20250053	Rua São Carlos	Estácio	Rio de Janeiro	RJ	3304557
+20250054	Rua São Carlos	Estácio	Rio de Janeiro	RJ	3304557
+20250055	Rua São Carlos	Estácio	Rio de Janeiro	RJ	3304557
+20250060	Rua São Cláudio	Estácio	Rio de Janeiro	RJ	3304557
+20250070	Rua Zamenhof	Estácio	Rio de Janeiro	RJ	3304557
+20250090	Rua Atrás do Zinco	Estácio	Rio de Janeiro	RJ	3304557
+20250100	Rua da Capela	Estácio	Rio de Janeiro	RJ	3304557
+20250110	Travessa Capitão Guimarães	Estácio	Rio de Janeiro	RJ	3304557
+20250120	Travessa Castro Alves	Estácio	Rio de Janeiro	RJ	3304557
+20250130	Comunidade Urbana Azevedo Lima	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250140	Caminho do Galo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250150	Rua Laurindo Rabelo	Estácio	Rio de Janeiro	RJ	3304557
+20250152	Comunidade Urbana Rato	Estácio	Rio de Janeiro	RJ	3304557
+20250154	Rua Arlindo dos Santos	Estácio	Rio de Janeiro	RJ	3304557
+20250155	Rua Carmem Nogueira	Estácio	Rio de Janeiro	RJ	3304557
+20250156	Rua Norival Alves Borba	Estácio	Rio de Janeiro	RJ	3304557
+20250157	Rua Tupi	Estácio	Rio de Janeiro	RJ	3304557
+20250158	Rua Vicente Mariano	Estácio	Rio de Janeiro	RJ	3304557
+20250160	Praça Doutor Roberto	Estácio	Rio de Janeiro	RJ	3304557
+20250170	Rua Major Freitas	Estácio	Rio de Janeiro	RJ	3304557
+20250175	Travessa Major Freitas	Estácio	Rio de Janeiro	RJ	3304557
+20250177	Travessa Salvador	Estácio	Rio de Janeiro	RJ	3304557
+20250180	Travessa Marcelino Dias	Estácio	Rio de Janeiro	RJ	3304557
+20250190	Rua Ortivo Guedes	Estácio	Rio de Janeiro	RJ	3304557
+20250200	Rua Paulista	Estácio	Rio de Janeiro	RJ	3304557
+20250220	Travessa Rui Barbosa	Estácio	Rio de Janeiro	RJ	3304557
+20250230	Rua Santa Gertrudes	Estácio	Rio de Janeiro	RJ	3304557
+20250240	Travessa São Carlos	Estácio	Rio de Janeiro	RJ	3304557
+20250250	Rua São Dinis	Estácio	Rio de Janeiro	RJ	3304557
+20250260	Rua São Frederico	Estácio	Rio de Janeiro	RJ	3304557
+20250270	Rua Sargento Acácio	Estácio	Rio de Janeiro	RJ	3304557
+20250280	Travessa Sargento Souto	Estácio	Rio de Janeiro	RJ	3304557
+20250290	Rua Tenente Coelho	Estácio	Rio de Janeiro	RJ	3304557
+20250300	Travessa Tenente Godói	Estácio	Rio de Janeiro	RJ	3304557
+20250310	Rua Tenente Paulo Monteiro	Estácio	Rio de Janeiro	RJ	3304557
+20250320	Rua Tiradentes	Estácio	Rio de Janeiro	RJ	3304557
+20250330	Rua Travasso	Estácio	Rio de Janeiro	RJ	3304557
+20250340	Rua União	Estácio	Rio de Janeiro	RJ	3304557
+20250341	Comunidade Urbana São Carlos	Estácio	Rio de Janeiro	RJ	3304557
+20250350	Travessa Vinte e Um de Abril	Estácio	Rio de Janeiro	RJ	3304557
+20250360	Rua Vítor Hugo	Estácio	Rio de Janeiro	RJ	3304557
+20250370	Rua Voluntários de Trinta e Um	Estácio	Rio de Janeiro	RJ	3304557
+20250380	Travessa Carneiro	Estácio	Rio de Janeiro	RJ	3304557
+20250390	Beco Cruz	Estácio	Rio de Janeiro	RJ	3304557
+20250400	Rua Itapage	Estácio	Rio de Janeiro	RJ	3304557
+20250410	Rua Major Jacarandá	Estácio	Rio de Janeiro	RJ	3304557
+20250420	Rua Otávio Guimarães	Estácio	Rio de Janeiro	RJ	3304557
+20250430	Rua Santos Rodrigues	Estácio	Rio de Janeiro	RJ	3304557
+20250440	Rua São Roberto	Estácio	Rio de Janeiro	RJ	3304557
+20250450	Rua Aristides Lobo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250460	Rua Campos da Paz	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250461	Comunidade Urbana Morro Santos Rodrigues	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250470	Travessa da Paz	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250480	Rua Tenente Vieira Sampaio	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250490	Rua Ambire Cavalcanti	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250495	Rua Boa Esperança	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250496	Rua Esmeralda	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250497	Rua Rubi	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250498	Travessa Ambiré Cavalcanti	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250499	Travessa Clara Nunes	Rio Comprido	Rio de Janeiro	RJ	3304557
+20250500	Rua Azevedo Lima	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251000	Rua Costa Ferraz	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251010	Rua Dona Cecília	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251020	Rua da Estrela	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251021	Rua da Estrela	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251030	Rua Itapiru	Catumbi	Rio de Janeiro	RJ	3304557
+20251031	Rua Itapiru	Catumbi	Rio de Janeiro	RJ	3304557
+20251032	Rua Itapiru	Catumbi	Rio de Janeiro	RJ	3304557
+20251033	Rua Itapiru	Catumbi	Rio de Janeiro	RJ	3304557
+20251040	Rua Visconde de Jequitinhonha	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251050	Rua Caetano Martins	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251060	Rua Barão de Petrópolis	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251061	Rua Barão de Petrópolis	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251062	Rua Barão de Petrópolis	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251063	Rua Barão de Petrópolis	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251064	Rua Flor de Lótus	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251065	Rua Gibisis	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251070	Rua Caturama	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251071	Comunidade Urbana Unidos de Santa Tereza	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251080	Rua Doutor Agra	Catumbi	Rio de Janeiro	RJ	3304557
+20251090	Travessa Grapira	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251100	Rua Guaicurus	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251103	Rua Projetada Guaicurus	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251110	Rua Jaqueira	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251115	Beco Marrocos	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251116	Beco Moçambique	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251117	Beco Zaire	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251120	Rua Escragnole Doria	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251125	Comunidade Urbana Luiz Marcelino	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251130	Rua Marcel Proust	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251140	Rua Prefeito João Felipe	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251150	Rua Cruzeiro	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251160	Rua Cruzeiro do Sul	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251170	Rua Doutor Solidônio Leite	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251180	Rua Jorge da Silva	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251190	Rua Navarro	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251200	Rua Professora Jardelina da Silva	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251210	Vila Rialma	Catumbi	Rio de Janeiro	RJ	3304557
+20251220	Rua Tanimbu	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251230	Rua União	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251240	Travessa Brás e Barros	Catumbi	Rio de Janeiro	RJ	3304557
+20251250	Rua Eliseu Visconti	Catumbi	Rio de Janeiro	RJ	3304557
+20251255	Rua Navarro	Catumbi	Rio de Janeiro	RJ	3304557
+20251260	Rua General Galvão	Catumbi	Rio de Janeiro	RJ	3304557
+20251270	Travessa General Galvão	Catumbi	Rio de Janeiro	RJ	3304557
+20251280	Rua Greenalgh	Catumbi	Rio de Janeiro	RJ	3304557
+20251289	Comunidade Urbana Catumbi	Catumbi	Rio de Janeiro	RJ	3304557
+20251290	Rua Queiros Lima	Catumbi	Rio de Janeiro	RJ	3304557
+20251300	Rua Sobradinho	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251305	Rua Eliseu Visconti	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251310	Travessa Agra Filho	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251320	Rua Baronesa de Guararema	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251330	Rua dos Coqueiros	Catumbi	Rio de Janeiro	RJ	3304557
+20251340	Rua Engenheiro Miguel Austregesilo	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251350	Rua Gonçalves	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251360	Travessa Marieta	Catumbi	Rio de Janeiro	RJ	3304557
+20251370	Rua Miguel de Paiva	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251380	Rua Miguel Resende	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251381	Comunidade Urbana Morro da Coroa	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251390	Rua Paulo de Azevedo	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251400	Rua Santa Catarina	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251410	Rua Vista Alegre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251415	Comunidade Urbana Travessa Vista Alegre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251420	Travessa Vista Alegre	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251440	Rua de Catumbi	Catumbi	Rio de Janeiro	RJ	3304557
+20251450	Largo de Catumbi	Catumbi	Rio de Janeiro	RJ	3304557
+20251460	Rua Eduardo Santos	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251465	Travessa Fluminense	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251470	Rua Eleone de Almeida	Catumbi	Rio de Janeiro	RJ	3304557
+20251471	Comunidade Urbana A. M. e Amigos de Santa Tereza	Catumbi	Rio de Janeiro	RJ	3304557
+20251490	Rua Gilda de Abreu	Catumbi	Rio de Janeiro	RJ	3304557
+20251500	Praça Jardineira	Catumbi	Rio de Janeiro	RJ	3304557
+20251510	Praça Jornalista José Eugênio de Macedo Soares	Catumbi	Rio de Janeiro	RJ	3304557
+20251520	Rua José Bernardino	Catumbi	Rio de Janeiro	RJ	3304557
+20251525	Rua Doutor Lagden	Catumbi	Rio de Janeiro	RJ	3304557
+20251530	Rua José de Alencar	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251540	Rua do Paraíso	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251545	Comunidade Urbana Baronesa	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251550	Rua Paula Matos	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251555	Comunidade Urbana Vila Paraíso	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251560	Rua Pintora Djanira	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251570	Praça Radialista Manoel de Nóbrega	Catumbi	Rio de Janeiro	RJ	3304557
+20251580	Beco São Jorge	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251590	Rua Valença	Catumbi	Rio de Janeiro	RJ	3304557
+20251600	Rua do Z	Santa Teresa	Rio de Janeiro	RJ	3304557
+20251610	Rua Dom Pedro Mascarenhas	Catumbi	Rio de Janeiro	RJ	3304557
+20251620	Rua Lírio Branco	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251621	Rua Flor de Outubro	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251622	Rua Flor de Maio	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251623	Rua Brinco da Princesa	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251624	Rua Fortuna	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251625	Rua Chuva de Prata	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251626	Rua Gerbera	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251627	Rua Macieira	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251629	Rua Flor de Colônia	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251630	Rua Camomila	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251631	Rua Meladona	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251632	Rua Cheflera	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251633	Rua da Same	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251634	Rua São Sebastião	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251635	Rua São José	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251636	Rua Elias Bitar	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251637	Rua dos Mineiros	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251638	Rua Emília Maria Gualberto	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251639	Rua Rainha Maria da Penha	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251640	Rua Princesa Solange da Silva	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251641	Rua Saraiva de Menezes	Rio Comprido	Rio de Janeiro	RJ	3304557
+20251642	Travessa União	Rio Comprido	Rio de Janeiro	RJ	3304557
+20260000	Travessa Antônio Pedro Galiazzi	Rio Comprido	Rio de Janeiro	RJ	3304557
+20260001	Rua Haddock Lobo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20260002	Rua Haddock Lobo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20260010	Avenida Paulo de Frontin	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260011	Avenida Paulo de Frontin	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260020	Travessa Pastor Daniel Ribeiro	Rio Comprido	Rio de Janeiro	RJ	3304557
+20260030	Rua Santa Amélia	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260050	Rua Barão de Ubá	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260060	Largo Estácio de Sá	Estácio	Rio de Janeiro	RJ	3304557
+20260070	Rua João Paulo I	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260080	Rua Joaquim Palhares	Estácio	Rio de Janeiro	RJ	3304557
+20260085	Rua Joaquim Palhares	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260090	Rua Mirabeau Souto Uchoa	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260100	Rua Pereira de Almeida	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260110	Rua São Valentim	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260120	Travessa Angustura	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20260130	Rua Haddock Lobo	Estácio	Rio de Janeiro	RJ	3304557
+20260132	Rua Haddock Lobo	Estácio	Rio de Janeiro	RJ	3304557
+20260140	Rua São Vicente	Tijuca	Rio de Janeiro	RJ	3304557
+20260141	Rua Haddock Lobo	Tijuca	Rio de Janeiro	RJ	3304557
+20260142	Rua Haddock Lobo	Tijuca	Rio de Janeiro	RJ	3304557
+20260150	Rua Domício da Gama	Tijuca	Rio de Janeiro	RJ	3304557
+20260160	Rua Alberto de Sequeira	Tijuca	Rio de Janeiro	RJ	3304557
+20260170	Rua Manuel Leitão	Tijuca	Rio de Janeiro	RJ	3304557
+20260180	Travessa Nestor Vítor	Tijuca	Rio de Janeiro	RJ	3304557
+20260190	Rua Tenente Vilas Boas	Tijuca	Rio de Janeiro	RJ	3304557
+20260200	Rua Almirante Gavião	Tijuca	Rio de Janeiro	RJ	3304557
+20260210	Rua Engenheiro Adel	Tijuca	Rio de Janeiro	RJ	3304557
+20260211	Comunidade Urbana Morro da Liberdade	Tijuca	Rio de Janeiro	RJ	3304557
+20260220	Rua Maestro Vila Lobos	Tijuca	Rio de Janeiro	RJ	3304557
+20260230	Rua Araújo Pena	Tijuca	Rio de Janeiro	RJ	3304557
+20260240	Largo da Segunda-Feira	Tijuca	Rio de Janeiro	RJ	3304557
+20260250	Rua Antônio Rello Filho	Tijuca	Rio de Janeiro	RJ	3304557
+20260260	Rua Augusto Paulino Filho	Tijuca	Rio de Janeiro	RJ	3304557
+20260261	Comunidade Urbana Morro do Chacrinha	Tijuca	Rio de Janeiro	RJ	3304557
+20260270	Rua Coronel Correia Lima	Tijuca	Rio de Janeiro	RJ	3304557
+20260280	Rua Delgado de Carvalho	Tijuca	Rio de Janeiro	RJ	3304557
+20260290	Rua Doutor Oscar Pimentel	Tijuca	Rio de Janeiro	RJ	3304557
+20260291	Comunidade Urbana Bispo	Tijuca	Rio de Janeiro	RJ	3304557
+20260300	Rua Félix da Cunha	Tijuca	Rio de Janeiro	RJ	3304557
+20260309	Comunidade Urbana Matinha - RA - Rio Comprido	Tijuca	Rio de Janeiro	RJ	3304557
+20260310	Rua General Silva Pessoa	Tijuca	Rio de Janeiro	RJ	3304557
+20260311	Comunidade Urbana Pantanal - RA - Rio Comprido	Tijuca	Rio de Janeiro	RJ	3304557
+20260320	Rua Jacuma	Tijuca	Rio de Janeiro	RJ	3304557
+20260321	Rua Américo Nogueira	Tijuca	Rio de Janeiro	RJ	3304557
+20260322	Rua Anézio de Castro	Tijuca	Rio de Janeiro	RJ	3304557
+20260323	Rua Antonio Adão	Tijuca	Rio de Janeiro	RJ	3304557
+20260324	Rua Castorina	Tijuca	Rio de Janeiro	RJ	3304557
+20260325	Rua da Horta	Tijuca	Rio de Janeiro	RJ	3304557
+20260326	Rua José Nicolau	Tijuca	Rio de Janeiro	RJ	3304557
+20260327	Rua Laureano Espanhol	Tijuca	Rio de Janeiro	RJ	3304557
+20260328	Rua Manoel Lima	Tijuca	Rio de Janeiro	RJ	3304557
+20260329	Rua Manoel Nunes	Tijuca	Rio de Janeiro	RJ	3304557
+20260330	Rua Moisés Borges	Tijuca	Rio de Janeiro	RJ	3304557
+20261000	Rua Ana Maria	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261003	Rua Aureliano Joaquim Santana	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261004	Rua Aureliano Portugal	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261005	Rua Barão de Itapagipe	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261007	Travessa Celina	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261008	Rua Doutor Roberto Gonçalves Lima	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261009	Rua Eduardo Varela	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261020	Rua Batista das Neves	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261030	Rua Salvador de Mendonça	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261040	Rua Sampaio Viana	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261050	Rua Barão de Sertorio	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261062	9ª Avenida Rua do Bispo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261063	Rua do Bispo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261064	Rua do Bispo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261065	Rua do Bispo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261066	Rua do Bispo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261067	Rua do Bispo	Tijuca	Rio de Janeiro	RJ	3304557
+20261068	Rua do Bispo	Tijuca	Rio de Janeiro	RJ	3304557
+20261070	Rua Conselheiro Barros	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261080	Rua Japeri	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261090	Rua Antônio Pinto da Mota	Tijuca	Rio de Janeiro	RJ	3304557
+20261100	Rua Frei Cassiano	Tijuca	Rio de Janeiro	RJ	3304557
+20261105	Rua Barão de Itapagipe	Tijuca	Rio de Janeiro	RJ	3304557
+20261106	Rua Barão de Itapagipe	Tijuca	Rio de Janeiro	RJ	3304557
+20261110	Rua Joaquim Pizarro	Tijuca	Rio de Janeiro	RJ	3304557
+20261115	Rua Cândido de Oliveira	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261120	Rua Aguiar	Tijuca	Rio de Janeiro	RJ	3304557
+20261125	Rua Barão de Itapagipe	Tijuca	Rio de Janeiro	RJ	3304557
+20261126	Rua Barão de Itapagipe	Tijuca	Rio de Janeiro	RJ	3304557
+20261130	Rua Valparaíso	Tijuca	Rio de Janeiro	RJ	3304557
+20261140	Rua Citiso	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261150	Praça Doutor Del Vecchio	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261160	Rua Infante de Sagres	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261165	Comunidade Urbana Rodo	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261170	Rua Paula Frassinetti	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261180	Rua Santanésia	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261190	Praça Condessa Paulo de Frontin	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261200	Rua Augusta Sá	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261210	Rua Paula Ramos	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261211	Comunidade Urbana Santa Alexandrina - Parque Rebouças	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261215	Comunidade Urbana Paula Ramos	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261220	Escada Cândido de Oliveira	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261225	Praça Santa Alexandrina	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261230	Rua Gumercindo Bessa	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261231	Rua Santa Alexandrina	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261232	Rua Santa Alexandrina	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261233	Rua Santa Alexandrina	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261235	Rua Santa Alexandrina	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261240	Avenida Paulo de Frontin	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20261241	Avenida Paulo de Frontin	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261242	Avenida Paulo de Frontin	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20261243	Avenida Paulo de Frontin	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261260	Ladeira Sousa Doca	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261270	Estrada Roquete Pinto	Alto da Boa Vista	Rio de Janeiro	RJ	3304557
+20261280	Estrada do Sumaré	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261285	Comunidade Urbana Sumaré	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261290	Rua Engenheiro Veiga Brito	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261300	Rua Nicolina	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261301	Rua Barbosa	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261302	Rua José Sudário	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261303	Rua Manoel Cordeiro da Silva	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261304	Rua Moacir Machado	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261305	Rua União	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261306	Travessa Frei Cassiano	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261307	Travessa Galdino Reis	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261308	Travessa Goiás	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261309	Travessa Primeiro de Maio	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261310	Travessa São Lucas	Rio Comprido	Rio de Janeiro	RJ	3304557
+20261311	Travessa São Pedro	Rio Comprido	Rio de Janeiro	RJ	3304557
+20270001	Rua Mariz e Barros	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270002	Rua Mariz e Barros	Maracanã	Rio de Janeiro	RJ	3304557
+20270003	Rua Mariz e Barros	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270004	Rua Mariz e Barros	Maracanã	Rio de Janeiro	RJ	3304557
+20270005	Rua Mariz e Barros	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270006	Rua Mariz e Barros	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270010	Travessa São Silvestre	Maracanã	Rio de Janeiro	RJ	3304557
+20270020	Rua Senador Furtado	Maracanã	Rio de Janeiro	RJ	3304557
+20270021	Rua Senador Furtado	Maracanã	Rio de Janeiro	RJ	3304557
+20270030	Rua Benevenuto Berna	Maracanã	Rio de Janeiro	RJ	3304557
+20270040	Rua Lúcio de Mendonça	Maracanã	Rio de Janeiro	RJ	3304557
+20270050	Rua Visconde de Cairu	Maracanã	Rio de Janeiro	RJ	3304557
+20270060	Rua Barão de Iguatemi	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270070	Travessa Doutor Araújo	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270080	Rua Doze de Dezembro	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270090	Rua João Francisco	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270100	Travessa Maris e Barros	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270110	Rua Santa Filomena	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270120	Travessa Soledade	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270132	Rua do Matoso	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270133	Rua do Matoso	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270134	Rua do Matoso	Rio Comprido	Rio de Janeiro	RJ	3304557
+20270135	Rua do Matoso	Rio Comprido	Rio de Janeiro	RJ	3304557
+20270140	Beco do Mota	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270150	Praça da Bandeira	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270160	Rua Ceará	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270170	Rua Elpídio Boamorte	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270180	Rua Hilário Ribeiro	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270190	Rua Lópes de Sousa	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270200	Rua Sotero dos Reis	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270212	Rua Campos Sales	Tijuca	Rio de Janeiro	RJ	3304557
+20270213	Rua Campos Sales	Tijuca	Rio de Janeiro	RJ	3304557
+20270214	Rua Campos Sales	Tijuca	Rio de Janeiro	RJ	3304557
+20270215	Rua Campos Sales	Tijuca	Rio de Janeiro	RJ	3304557
+20270220	Rua Caruso	Tijuca	Rio de Janeiro	RJ	3304557
+20270230	Rua Doutor Satamini	Tijuca	Rio de Janeiro	RJ	3304557
+20270231	Rua Doutor Satamini	Tijuca	Rio de Janeiro	RJ	3304557
+20270232	Rua Doutor Satamini	Tijuca	Rio de Janeiro	RJ	3304557
+20270233	Rua Doutor Satamini	Tijuca	Rio de Janeiro	RJ	3304557
+20270242	Rua Afonso Pena	Tijuca	Rio de Janeiro	RJ	3304557
+20270243	Rua Afonso Pena	Tijuca	Rio de Janeiro	RJ	3304557
+20270244	Rua Afonso Pena	Tijuca	Rio de Janeiro	RJ	3304557
+20270245	Rua Afonso Pena	Tijuca	Rio de Janeiro	RJ	3304557
+20270250	Praça Castilhos França	Tijuca	Rio de Janeiro	RJ	3304557
+20270260	Rua Marechal Marques Porto	Tijuca	Rio de Janeiro	RJ	3304557
+20270270	Rua Martins Pena	Tijuca	Rio de Janeiro	RJ	3304557
+20270280	Rua Pardal Mallet	Tijuca	Rio de Janeiro	RJ	3304557
+20270290	Avenida Melo Matos	Tijuca	Rio de Janeiro	RJ	3304557
+20270300	Rua Felisberto de Menezes	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20270310	Largo Frei Cassiano Vilarosa	Tijuca	Rio de Janeiro	RJ	3304557
+20270320	Rua Gonçalves Crespo	Tijuca	Rio de Janeiro	RJ	3304557
+20270330	Rua Silva Ramos	Tijuca	Rio de Janeiro	RJ	3304557
+20270340	Rua Vicente Licínio	Tijuca	Rio de Janeiro	RJ	3304557
+20271000	Rua Comandante Cordeiro de Farias	Maracanã	Rio de Janeiro	RJ	3304557
+20271010	Praça General Portinho	Maracanã	Rio de Janeiro	RJ	3304557
+20271020	Rua Ibituruna	Maracanã	Rio de Janeiro	RJ	3304557
+20271021	Rua Ibituruna	Maracanã	Rio de Janeiro	RJ	3304557
+20271030	Rua Morais e Silva	Maracanã	Rio de Janeiro	RJ	3304557
+20271031	Rua Morais e Silva	Maracanã	Rio de Janeiro	RJ	3304557
+20271040	Rua Pedro Guedes	Maracanã	Rio de Janeiro	RJ	3304557
+20271050	Travessa Cruz	Tijuca	Rio de Janeiro	RJ	3304557
+20271060	Rua Professor Gabizo	Tijuca	Rio de Janeiro	RJ	3304557
+20271061	Rua Professor Gabizo	Tijuca	Rio de Janeiro	RJ	3304557
+20271062	Rua Professor Gabizo	Maracanã	Rio de Janeiro	RJ	3304557
+20271063	Rua Professor Gabizo	Tijuca	Rio de Janeiro	RJ	3304557
+20271064	Rua Professor Gabizo	Tijuca	Rio de Janeiro	RJ	3304557
+20271065	Rua Professor Gabizo	Maracanã	Rio de Janeiro	RJ	3304557
+20271070	Rua Santa Teresinha	Tijuca	Rio de Janeiro	RJ	3304557
+20271080	Rua Artur Menezes	Maracanã	Rio de Janeiro	RJ	3304557
+20271090	Rua Conselheiro Olegário	Maracanã	Rio de Janeiro	RJ	3304557
+20271100	Rua Isidro de Figueiredo	Maracanã	Rio de Janeiro	RJ	3304557
+20271110	Avenida Maracanã	Maracanã	Rio de Janeiro	RJ	3304557
+20271111	Avenida Maracanã	Maracanã	Rio de Janeiro	RJ	3304557
+20271120	Avenida Paula Sousa	Maracanã	Rio de Janeiro	RJ	3304557
+20271130	Avenida Presidente Castelo Branco	Maracanã	Rio de Janeiro	RJ	3304557
+20271131	Comunidade Urbana Comunidade Estação da Mangueira - Amcema	Maracanã	Rio de Janeiro	RJ	3304557
+20271140	Praça Presidente Emílio Garrastazu Médici	Maracanã	Rio de Janeiro	RJ	3304557
+20271150	Rua Professor Euríco Rabelo	Maracanã	Rio de Janeiro	RJ	3304557
+20271160	Rua Radialista Waldir Amaral	Maracanã	Rio de Janeiro	RJ	3304557
+20271170	Praça Violoncelista Alfredo Gomes	Maracanã	Rio de Janeiro	RJ	3304557
+20271180	Largo Aluno Horácio Lucas	Maracanã	Rio de Janeiro	RJ	3304557
+20271190	Praça André Rebouças	Maracanã	Rio de Janeiro	RJ	3304557
+20271202	Rua General Canabarro	Maracanã	Rio de Janeiro	RJ	3304557
+20271203	Rua General Canabarro	Maracanã	Rio de Janeiro	RJ	3304557
+20271204	Rua General Canabarro	Maracanã	Rio de Janeiro	RJ	3304557
+20271205	Rua General Canabarro	Maracanã	Rio de Janeiro	RJ	3304557
+20271210	Rua Luís Gama	Maracanã	Rio de Janeiro	RJ	3304557
+20271220	Rua Oto de Alencar	Maracanã	Rio de Janeiro	RJ	3304557
+20271230	Praça Alagoas	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20271240	Rua Amapá	Maracanã	Rio de Janeiro	RJ	3304557
+20271250	Rua Jiquiba	Maracanã	Rio de Janeiro	RJ	3304557
+20271260	Rua Mata Machado	Maracanã	Rio de Janeiro	RJ	3304557
+20271280	Rua Pará	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20271290	Rua Paraíba	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20271300	Rua Paulo Fernandes	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20271310	Rua Sergipe	Maracanã	Rio de Janeiro	RJ	3304557
+20271320	Rua Teixeira Soares	Praça da Bandeira	Rio de Janeiro	RJ	3304557
+20271330	Avenida Oswaldo Aranha	Praça da Bandeira	Rio de Janeiro	RJ	3304557

@@ -11,7 +11,7 @@ dependencies:
 _core:
   default_config_hash: uD0Op0Xq9NCN-603krU3XDzziCouHMMUWqw0EWxyWjw
 id: courses_admin
-label: Courses
+label: Cursos
 module: views
 description: ''
 tag: ''
@@ -20,11 +20,11 @@ base_field: id
 display:
   default:
     id: default
-    display_title: Default
+    display_title: Padrão
     display_plugin: default
     position: 0
     display_options:
-      title: Courses
+      title: Cursos
       fields:
         id:
           id: id
@@ -102,7 +102,7 @@ display:
           entity_type: null
           entity_field: label
           plugin_id: field
-          label: Title
+          label: Curso
           exclude: false
           alter:
             alter_text: false
@@ -167,7 +167,7 @@ display:
           entity_type: group
           entity_field: status
           plugin_id: field
-          label: Published
+          label: Publicado
           exclude: false
           alter:
             alter_text: false
@@ -234,7 +234,7 @@ display:
           entity_type: group
           entity_field: uid
           plugin_id: field
-          label: 'Created by'
+          label: 'Criado por'
           exclude: false
           alter:
             alter_text: false
@@ -298,7 +298,7 @@ display:
           admin_label: ''
           entity_type: group
           plugin_id: entity_operations
-          label: Operations
+          label: Operações
           exclude: false
           alter:
             alter_text: false
@@ -474,8 +474,8 @@ display:
       path: admin/lms/courses
       menu:
         type: normal
-        title: Courses
-        description: 'Administer Courses'
+        title: Cursos
+        description: 'Gerenciar cursos'
         weight: 0
         expanded: false
         menu_name: admin

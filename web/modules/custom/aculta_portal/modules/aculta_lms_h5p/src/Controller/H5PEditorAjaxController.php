@@ -1,0 +1,273 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_lms_h5p\Controller;
+
+use Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager;
+use Drupal\aculta_lms_h5p\Access\H5PLibraryAccessManager;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
+use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities;
+use Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUploadManager;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+/** Handles Group-authorized H5P editor requests for one course. */
+final class H5PEditorAjaxController implements ContainerInjectionInterface {
+
+  public function __construct(
+    private readonly H5PCourseAccessManager $courseAccess,
+    private readonly H5PLibraryAccessManager $libraryAccess,
+    private readonly H5PEditorUploadManager $uploadManager,
+    private readonly H5PEditorUtilities $editorUtilities,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly LanguageManagerInterface $languageManager,
+    private readonly RequestStack $requestStack,
+    private readonly TranslationInterface $translation,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('aculta_lms_h5p.course_access'),
+      $container->get('aculta_lms_h5p.library_access'),
+      $container->get('aculta_lms_h5p.editor_upload_manager'),
+      $container->get('aculta_lms_h5p.editor_utilities'),
+      $container->get('current_user'),
+      $container->get('language_manager'),
+      $container->get('request_stack'),
+      $container->get('string_translation'),
+    );
+  }
+
+  /** Dispatches the editor's non-mutating requests after course authorization. */
+  public function handle(
+    int $group_id,
+    string $token,
+    int $content_id,
+    string $action,
+    string $arguments = '',
+    string $argument_2 = '',
+    string $argument_3 = '',
+    string $argument_4 = '',
+    string $argument_5 = '',
+    string $argument_6 = '',
+    string $argument_7 = '',
+    string $argument_8 = '',
+    string $argument_9 = '',
+    string $argument_10 = '',
+  ): JsonResponse {
+    $arguments = implode('/', array_filter([
+      $arguments,
+      $argument_2,
+      $argument_3,
+      $argument_4,
+      $argument_5,
+      $argument_6,
+      $argument_7,
+      $argument_8,
+      $argument_9,
+      $argument_10,
+    ], static fn (string $part): bool => $part !== ''));
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request === NULL
+      || !$this->courseAccess->editorAccess($group_id, $content_id, $this->currentUser)->isAllowed()
+      || !\H5PCore::validToken('editorajax', $token)) {
+      throw new AccessDeniedHttpException();
+    }
+
+    $response = match ($action) {
+      // H5P's editor client uses the "libraries" endpoint for both the
+      // complete list and a single library's semantics. In the latter case
+      // getAjaxUrl() appends machine name and version as path segments.
+      'libraries' => $arguments !== ''
+        ? $this->singleLibrary(
+          $request->getMethod(),
+          $arguments,
+          $request->query->getString('language'),
+          $request->query->getString('default-language'),
+        )
+        : ($request->query->has('machineName')
+          ? $this->singleLibraryFromQuery($request)
+          : $this->libraries($request->getMethod())),
+      'single-library' => $this->singleLibrary(
+        $request->getMethod(),
+        $arguments,
+        $request->query->getString('language'),
+        $request->query->getString('default-language'),
+      ),
+      'translations' => $this->translations($request->getMethod(), $request->query->getString('language')),
+      'filter' => $this->filter($request->getMethod()),
+      'files' => $this->files($request->getMethod(), $content_id),
+      'library-upload', 'library-install', 'get-hub-content', 'content-type-cache' => $this->unavailable($request->getMethod()),
+      default => throw new NotFoundHttpException(),
+    };
+    $response->headers->set('Cache-Control', 'private, no-store, max-age=0');
+    $response->headers->set('X-Content-Type-Options', 'nosniff');
+    return $response;
+  }
+
+  /** Lists installed local libraries. The H5P API returns this list as a flat array. */
+  private function libraries(string $method): JsonResponse {
+    if ($method !== 'GET') {
+      throw new NotFoundHttpException();
+    }
+    $libraries = $this->editorUtilities->getEditor()->getLibraries();
+    $libraries = array_values(array_filter($libraries, fn (object $library): bool => $this->libraryAccess->canUse(
+      (string) $library->name,
+      (int) $library->majorVersion,
+      (int) $library->minorVersion,
+      $this->currentUser,
+    )));
+    return new JsonResponse($libraries);
+  }
+
+  /** Returns metadata and assets for one installed, permitted library. */
+  private function singleLibrary(
+    string $method,
+    string $arguments,
+    string $language = '',
+    string $defaultLanguage = '',
+  ): JsonResponse {
+    if ($method !== 'GET' || !preg_match('@^([A-Za-z][A-Za-z0-9_.-]*)/(\d{1,4})/(\d{1,4})$@D', $arguments, $matches)) {
+      throw new NotFoundHttpException();
+    }
+    [$machine, $major, $minor] = [$matches[1], (int) $matches[2], (int) $matches[3]];
+    if (!$this->libraryAccess->canUse($machine, $major, $minor, $this->currentUser)) {
+      throw new NotFoundHttpException();
+    }
+
+    $language = $language !== '' ? $language : $this->languageManager->getCurrentLanguage()->getId();
+    if (!preg_match('/^[a-zA-Z0-9_-]{2,12}$/D', $language)
+      || ($defaultLanguage !== '' && !preg_match('/^[a-zA-Z0-9_-]{2,12}$/D', $defaultLanguage))) {
+      throw new NotFoundHttpException();
+    }
+    $data = $this->editorUtilities->getEditor()->getLibraryData(
+      $machine,
+      $major,
+      $minor,
+      $language,
+      'libraries/',
+      $defaultLanguage,
+      '',
+    );
+    return new JsonResponse($data);
+  }
+
+  /** Resolves the parameter format emitted by H5P's editor JavaScript API. */
+  private function singleLibraryFromQuery(Request $request): JsonResponse {
+    $machine = $request->query->getString('machineName');
+    $major = $request->query->getString('majorVersion');
+    $minor = $request->query->getString('minorVersion');
+    if (!preg_match('/^[A-Za-z][A-Za-z0-9_.-]*$/D', $machine)
+      || !preg_match('/^\d{1,4}$/D', $major)
+      || !preg_match('/^\d{1,4}$/D', $minor)) {
+      throw new NotFoundHttpException();
+    }
+    return $this->singleLibrary(
+      $request->getMethod(),
+      "$machine/$major/$minor",
+      $request->query->getString('language'),
+      $request->query->getString('default-language'),
+    );
+  }
+
+  /** Returns only requested translations for installed local libraries. */
+  private function translations(string $method, string $language): JsonResponse {
+    if ($method !== 'POST' || !preg_match('/^[a-zA-Z0-9_-]{2,12}$/D', $language)) {
+      throw new NotFoundHttpException();
+    }
+    $request = $this->requestStack->getCurrentRequest();
+    $libraries = $request?->request->all('libraries') ?? [];
+    if (count($libraries) > 100) {
+      throw new NotFoundHttpException();
+    }
+
+    $valid = [];
+    foreach ($libraries as $name) {
+      if (!is_string($name) || !preg_match('/^[A-Za-z][A-Za-z0-9_.-]* \d{1,4}\.\d{1,4}$/D', $name)) {
+        throw new NotFoundHttpException();
+      }
+      $valid[] = $name;
+    }
+    $data = $this->editorUtilities->getEditor()->ajaxInterface->getTranslations($valid, $language);
+    return new JsonResponse(['success' => TRUE, 'data' => (object) $data]);
+  }
+
+  /** Applies the installed library's H5P semantics filter without saving content. */
+  private function filter(string $method): JsonResponse {
+    if ($method !== 'POST') {
+      throw new NotFoundHttpException();
+    }
+    $request = $this->requestStack->getCurrentRequest();
+    $raw = $request?->request->getString('libraryParameters') ?? '';
+    if ($raw === '' || strlen($raw) > 2_000_000) {
+      throw new NotFoundHttpException();
+    }
+    $parameters = json_decode($raw);
+    if (!$parameters instanceof \stdClass || !isset($parameters->library) || !is_string($parameters->library)) {
+      throw new NotFoundHttpException();
+    }
+    $parsed = \H5PCore::libraryFromString($parameters->library);
+    if (!is_array($parsed)) {
+      throw new NotFoundHttpException();
+    }
+    if (!$this->libraryAccess->canUse(
+      (string) $parsed['machineName'],
+      (int) $parsed['majorVersion'],
+      (int) $parsed['minorVersion'],
+      $this->currentUser,
+    )) {
+      throw new NotFoundHttpException();
+    }
+
+    $validator = H5PDrupal::getInstance('contentvalidator');
+    $validator->validateLibrary($parameters, (object) ['options' => [$parameters->library]]);
+    return new JsonResponse(['success' => TRUE, 'data' => $parameters]);
+  }
+
+  /** Accepts an H5P media file through Drupal's managed private upload API. */
+  private function files(string $method, int $routeContentId): JsonResponse {
+    if ($method !== 'POST') {
+      throw new NotFoundHttpException();
+    }
+    $request = $this->requestStack->getCurrentRequest();
+    $upload = $request?->files->get('file');
+    $contentId = $request?->request->getInt('contentId', -1) ?? -1;
+    if ($contentId !== $routeContentId || !$upload instanceof UploadedFile) {
+      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O envio não corresponde à atividade aberta.')], 400);
+    }
+    try {
+      $field = json_decode($request->request->getString('field'), TRUE, 16, JSON_THROW_ON_ERROR);
+    }
+    catch (\JsonException) {
+      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O campo de arquivo da atividade está inválido.')], 400);
+    }
+    if (!is_array($field)) {
+      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O campo de arquivo da atividade está inválido.')], 400);
+    }
+    $result = $this->uploadManager->upload($upload, $field);
+    return new JsonResponse($result, ($result['success'] ?? TRUE) === FALSE ? 400 : 200);
+  }
+
+  /** Explicit JSON failure for upload and remote library actions still closed. */
+  private function unavailable(string $method): JsonResponse {
+    if ($method !== 'POST') {
+      throw new NotFoundHttpException();
+    }
+    return new JsonResponse([
+      'success' => FALSE,
+      'errorCode' => 'H5P_UPLOAD_UNAVAILABLE',
+      'message' => $this->translation->translate('Envio de arquivos e instalação de bibliotecas ainda não estão disponíveis.'),
+    ], 403);
+  }
+
+}

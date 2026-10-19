@@ -1,3 +1,202 @@
+## 0.6.0-dev.90 — revisão do /code-review: escopo do recorte e clique nativo
+
+- O contêiner de rolagem da gaveta é resolvido uma vez, antes de o diálogo existir (`button.acultaScroller`). Antes, a partir da segunda abertura `closest('.ui-dialog-content')` retornava o próprio diálogo (o jQuery UI adiciona essa classe ao elemento), e o recorte voltava.
+- O campo oculto do envio do "Sim" foi removido: o clique nativo já entrega o botão ao handler de envio da gaveta. Verificado no Firefox (X11): "Sim" por clique nativo gravou o bloqueio.
+- Removido o teste morto de `data-aculta-dialog-close` em inputs de envio.
+- Gate de fundação atualizado para `0.6.0-dev.90`.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild). Validado: segunda abertura do diálogo, "Sim" no centro do botão grava.
+
+## 0.6.0-dev.89 — "Sim" do diálogo do messenger envia a ação (clique não era recortado) — 2026-10-19
+
+- Causa: o diálogo de confirmação de uma caixa de membro ficava dentro do conteúdo de rolagem da gaveta (`overflow-y: auto`), que recorta o que sai da caixa. Metade do diálogo ficava fora e recebia cliques no fundo. Correção: enquanto a confirmação está aberta, o contêiner de rolagem recebe `data-aculta-confirming` (`dialog.css`: `overflow: visible`), e volta ao normal ao fechar.
+- O envio do "Sim" informa o botão ao servidor (campo oculto com nome e valor, enviado com o formulário). Antes, o clique com o mouse não levava a ação, e a resposta era "Não foi possível concluir a ação".
+- A regra de `.ui-dialog` com `:has()` aninhado foi descartada pelo navegador; trocada por seletores simples. Removidas as regras `dialog[data-aculta-dialog]` do `messenger-drawer.css` (eram do `<dialog>` nativo, já sem efeito).
+- Gate de fundação atualizado para `0.6.0-dev.89`.
+- Validado no Firefox (X11) com o Runtime de teste: "Sim" de bloqueio grava e reverte; Cancelar fecha e reabre; "Desfazer amizade" abre com a pergunta.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild).
+
+## 0.6.0-dev.88 — diálogos do messenger: título, conteúdo visível e reabertura — 2026-10-19
+
+- `messenger-drawers.js`: o diálogo de confirmação remove o atributo `hidden` antes de abrir (a regra `[hidden]` do Bootstrap é `!important`), usa o valor do botão como título (o botão é um `<input>`), e tem um `close` próprio que só oculta. O `close` padrão destruía o elemento, e a segunda abertura não mostrava a pergunta.
+- Gate de fundação atualizado para `0.6.0-dev.88`.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild); validado no navegador (X11). Clique do mouse em "Sim" pendente de causa.
+
+## 0.6.0-dev.87 — diálogos do messenger e da galeria como modal do Drupal — 2026-10-19
+
+Classificação: PATCH de apresentação e comportamento de diálogo. Autorizado na solicitação de validação dos itens do popup-rule.
+
+- `messenger-drawers.js`: "Bloquear" e "Desfazer amizade" abrem o diálogo com `Drupal.dialog` (`appendTo` do form, para "Sim" continuar submetendo). Sem `<dialog>` nativo nem `showModal()` direto.
+- `aculta420.libraries.yml`: `messenger-drawers` depende de `core/drupal.dialog`.
+- `dialog.css`: largura do diálogo da galeria por `data-portal-ui="gallery-dialog"`; removida a regra `dialog::backdrop`, que só valia para o `<dialog>` nativo.
+- Gate de fundação atualizado para `0.6.0-dev.87`. Gate do popup: PASS (605 arquivos, 0 exceções).
+- RUNTIME STATUS: DEFERRED. Cache rebuild feito no Runtime de teste; validação no navegador pendente.
+
+## 0.6.0-dev.86 — tokens da fronteira Portal–tema e seletores de imagem por atributo — 2026-10-19
+
+Classificação: PATCH de fronteira. Autorizado na solicitação de correção dos gates de fronteira.
+
+- `PortalUiHooks`: tokens novos (feedback de texto livre, `status-attention`, CEP, H5P, ícones de redes sociais, credenciais do Mercado Pago, aviso de checkout) e hooks `preprocess_fieldset` e `preprocess_table`. Antes, tabelas (`sales-table`) e fieldsets não recebiam classes do mapa.
+- `revista-post.css`: imagens do texto são selecionadas por `data-aculta-imagem`, `data-aculta-imagem-modelo`, `data-aculta-imagem-alinhamento` e `data-aculta-imagem-legenda`, em vez de classes `aculta-imagem*`.
+- Gate de fundação (`validate-aculta420-foundation.php`) atualizado para a versão corrente, que estava em `dev.80` no código enquanto o tema já estava em `dev.85`.
+- Gates do tema: boundary, mapa módulo–tema, documentação de tokens, design foundations, SDC schemas e shell contract passam.
+- RUNTIME STATUS: DEFERRED (não aplicado no Runtime de teste).
+
+## 0.6.0-dev.85 — campos do endereço bloqueados pelo CEP — 2026-10-18
+
+Classificação: PATCH de apresentação. Estilo do bloqueio do endereço preenchido pelo CEP (classe `aculta-cep-locked`, marcada pelo módulo `aculta_portal_cep`), com tokens semânticos (`--aculta-surface-muted`) e cursor `not-allowed`. Modo claro e escuro usam o mesmo token.
+
+- Gates do tema: design foundations, foundation, shell contract e SDC schemas passam. Fronteira e mapa módulo-tema têm falhas antigas fora desta entrega.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild); estilo verificado pelo teste de navegador do endereço.
+
+## 0.6.0-dev.84 — cards no catálogo da loja — 2026-10-18
+
+Classificação: PATCH de apresentação do novo modo Commerce `catalog`; a página completa do produto permanece inalterada.
+
+- A View pública usa grid responsivo com o SDC `aculta420:card`; cada card apresenta galeria existente, título/link, resumo, preço e formulário de compra Commerce das variações.
+- O template detalhado do produto só usa a composição de galeria/abas no modo normal; o modo `catalog` é renderizado como cartão.
+- Atualiza fixture de regressão do token `--aculta-shadow-hover`, que ainda esperava valores literais removidos na migração semântica; o caso passa a exercitar `VAR()` com referência ausente.
+- Runtime de teste: `/produtos` retorna HTTP 200 com card, título, resumo, preço e formulário de compra; a rota canônica do produto retorna HTTP 200 e mantém o layout completo com abas. Revisão visual em navegador DEFERRED.
+- RUNTIME STATUS: aplicado ao Runtime de teste.
+
+## 0.6.0-dev.83 — centraliza popup da busca — 2026-10-18
+
+Classificação: PATCH de apresentação; sem alteração na busca, formulário ou acesso.
+
+- O diálogo da busca fica centralizado nos dois eixos da viewport, em telas grandes e pequenas, mantendo o limite de largura e altura existente.
+- Corrige o quoting de uma story YAML do catálogo visual que impedia o parser/validator do tema de concluir.
+- RUNTIME STATUS: aplicado ao Runtime de testes; verificação visual DEFERRED.
+
+## 0.6.0-dev.82 — catálogo visual e extensão semântica de UI Styles — 2026-10-18
+
+Classificação: PATCH de documentação e site building; sem alteração de dados ou contrato funcional do Portal.
+
+- Completa stories demonstrativos para os 34 SDCs no UI Patterns Library; previews usam conteúdo fictício, links de exemplo e placeholders, sem iniciar ações.
+- Documenta o catálogo visual em `/admin/appearance/ui/components`, protegido para administradores, sem aplicação Storybook independente.
+- Acrescenta UI Style de elevação apoiado pelo token semântico `--aculta-shadow-raised`, com valor próprio nos modos claro e escuro; as sombras de hover passam a reutilizar esse token.
+- Registra critérios para adotar UI Patterns em novos consumidores e limites para expandir o catálogo de estilos.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.81 — cards de projeto e curso no pattern compartilhado — 2026-10-18
+
+Classificação: PATCH de integração do design system; contratos e dados funcionais preservados.
+
+- `project-card` e `course_card` passam a compor `aculta420:card` na variante vertical, reaproveitando sua estrutura Bootstrap e os tokens ACULTA420.
+- O presenter de projetos conserva artigo, atributos e links; a mídia permanece renderizada pelo Drupal e contida sem recorte.
+- `course_card` mantém `replaces: lms:course_card`, props/slots e classes esperadas pelo Drupal LMS; URLs, conteúdo, acesso e cache continuam sob responsabilidade do LMS. Não usa o prop de URL como origem direta de imagem.
+- A folha do pattern passa a ser anexada pelo componente SDC; o overlay continua reservado aos álbuns editoriais.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.6.0-dev.80 — figuras, citações e cards sobrepostos — 2026-10-18
+
+Classificação: PATCH de composição editorial; sem mudança em conteúdo, acesso ou processamento de imagens.
+
+- Adiciona `aculta420:figure` com mídia Drupal renderizada e slots opcionais de legenda/crédito; substitui o wrapper `<figure>` simples da capa de artigo/blog da Revista.
+- Adiciona `aculta420:quote` com citação, autoria e fonte; citações `<blockquote>` já presentes no corpo da Revista recebem apresentação equivalente sem alterar o texto armazenado.
+- Acrescenta a variante `overlay` ao `aculta420:card` e usa a listagem `aculta_albuns` como consumidor, mantendo campos, ordem, acesso e configuração da View.
+- `project-card` e `course_card` ainda não compunham o pattern compartilhado nesta etapa.
+- RUNTIME STATUS: smoke test técnico e gates Drupal PASS; revisão visual da listagem de álbuns DEFERRED.
+
+## 0.6.0-dev.79 — porta padrões úteis do UI Suite Bootstrap — 2026-10-18
+
+Classificação: PATCH de integração visual/editorial; preserva `bootstrap` como tema base e ACULTA420 como tema público.
+
+- Remove UI Suite Bootstrap do Composer e da configuração ativa; nenhum código ou asset global do tema contribuído é carregado.
+- Adiciona o SDC `aculta420:card` com slots de mídia, cabeçalho, conteúdo e rodapé, em variantes vertical e horizontal.
+- Adiciona UI Styles ACULTA420 para superfície, texto e bordas, resolvendo tokens semânticos existentes.
+- Habilita integrações estáveis de UI Patterns/UI Styles para blocos, campos, formatters, layouts e Views; nenhuma View foi alterada.
+- RUNTIME STATUS: aplicado ao Runtime de testes; `drush cr` e gate Drupal do tema concluídos. Revisão visual no navegador DEFERRED.
+
+## 0.6.0-dev.77 — adia imagens de slides inativos do álbum — 2026-10-18
+
+Classificação: PATCH de performance, sem alteração dos controles ou da sequência do álbum.
+
+- `aculta_album_fotos` mantém no HTML o `src` do slide ativo e adia o `src` dos slides restantes até a navegação; ACULTA420 carrega o slide atual e o próximo pelo evento público `vvj:slideChanged`.
+- Diagnóstico no Firefox com o álbum de Goiânia: antes do ajuste, 63 imagens de palco (~8,8 MB) e 20 miniaturas eram baixadas no acesso inicial, apesar do `loading="lazy"`.
+- Firefox no Runtime de teste: requisições iniciais de imagens de palco caíram de 63 (8,8 MB) para 4 (572 KB); 20 miniaturas próximas à área visível somaram 62 KB. Clique na miniatura 60 ativou o slide 60 e carregou sua imagem. RUNTIME STATUS: PASS.
+
+## 0.6.0-dev.76 — auditoria de consumidores VVJ e smoke test — 2026-10-18
+
+Classificação: PATCH documental da implantação VVJ.
+
+- Smoke test no Runtime de teste: `galeria_produto` usa `views_vvjs` com 7 linhas; `aculta_album_fotos` usa `views_vvjs` com 63 linhas. Os render arrays produziram 8.039 e 54.778 bytes, respectivamente, nos purposes Main e Revista.
+- Inventário das Views não encontrou FAQ, conteúdo editorial com imagem dedicada para VVJH, ou agrupamento de resultados que justifique VVJA, VVJF, VVJR ou VVJT. Os formatos ficam disponíveis sem serem forçados em conteúdo essencial; Home e Projetos mantêm VVJB, PhotoSwipe mantém o lightbox e o SDC hero mantém o hero de página.
+- Documentação não fixa URI de teste; o purpose deve ser passado explicitamente ao Drush durante operações de Runtime.
+- Inspeção visual e validação por teclado/toque permanecem pendentes.
+
+## 0.6.0-dev.73 — módulos VVJ e slideshow de álbuns — 2026-10-18
+
+Classificação: MINOR (novos formatos de Views disponíveis; o palco de fotos migra para o VVJS apropriado a uma sequência editorial).
+
+- Incluídos VVJA, VVJB, VVJF, VVJH, VVJL, VVJR, VVJS e VVJT; VVJC (3D Carousel) e VVJP (Parallax) ficam excluídos por decisão do responsável.
+- A View `aculta_album_fotos` usa VVJS com API pública de miniaturas/eventos. Home e Projetos permanecem VVJB; PhotoSwipe continua responsável pelo lightbox.
+- O plano mapeia os usos adequados e registra limites para não converter SDCs, navegação, formulário ou conteúdo que não seja uma View.
+- Runtime de teste: módulos habilitados, cache reconstruído e View atualizada por configuração direcionada. Inspeção visual do slideshow pendente; não houve importação global de configuração.
+
+## 0.6.0-dev.72 — LMS em português e “Aulas” — 2026-10-18
+
+Classificação: PATCH de tradução e vocabulário, sem mudança de contrato visual.
+
+- O catálogo de interface do LMS passa a usar “aula/aulas” em todas as traduções antes exibidas como “lição/lições”.
+- Cobertura pt-BR do LMS 1.2.4 ampliada com as 168 entradas do pacote oficial; o arquivo `lms-terms.pt-br.po` substitui as duas traduções padrão de “Lesson” e “Lesson type” sem alterar outros termos padrão do Drupal.
+- Runtime de teste: catálogo principal importado (7 entradas novas, 334 atualizadas); vocabulário do LMS importado (2 atualizadas). Exportações pt-BR customizadas e padrão não contêm mais “lição/lições”.
+- RUNTIME STATUS: ACTIVE no servidor de testes (`aculta_runtime`, `https://aculta.toca.net.br`).
+
+## 0.6.0-dev.71 — carrinho com um botão de checkout e assinatura em espaço próprio — 2026-10-17
+
+Classificação: MINOR da linha aberta (estrutura do painel do carrinho).
+
+- Um botão "Finalizar carrinho" para as categorias (loja, cursos, apoio); caixas e separadores mantidos.
+- Assinatura em bloco próprio, com botão "Finalizar assinatura".
+
+## 0.6.0-dev.70 — carrinho com rolagem e rodapé neutro; cartões de produto com borda — 2026-10-17
+
+Classificação: PATCH da linha aberta (ajuste visual, sem contrato novo).
+
+- Cartões de produto com borda de 2 px (`border-2`).
+- Carrinho lateral: rodapé "Compre na loja…" com superfície neutra e borda de destaque (tokens claro e escuro), distinto dos
+  botões. O corpo rola dentro do painel, como as gavetas de mensagens e avisos; o rodapé fica fixo embaixo.
+- Cartões de produto da página inicial da loja com borda neutra (classe `border`), sem cor de botão.
+- SDC: descrições acrescentadas aos quatro componentes de doação (`donation-dedication`, `donation-notification`,
+  `donation-pane`, `donation-summary-container`); schema SDC PASS.
+- Verificação: `validate-module-theme-boundary` PASS; `validate-aculta420-sdc-schemas` PASS.
+
+## 0.6.0-dev.69 — F5: cartão ACULTA420 no catálogo LMS — 2026-10-17
+
+Classificação: MINOR da linha aberta (novo SDC experimental com contrato compatível).
+
+- `components/content/course_card/` substitui `lms:course_card` por SDC negotiation. O schema aceita
+  os props/slots existentes e inclui `description`, que o row plugin do LMS já fornece.
+- Drupal LMS e a View `courses_catalog` continuam donos dos dados, filtro de publicação, URL,
+  botão de entrada, access e cacheability; não houve alteração de configuração da View nem no contrib.
+- O tema assume o markup e o CSS do cartão, aplica tokens semânticos, limita a descrição visual a
+  seis linhas e mantém foco visível de 3 px. O rail continua nativo e não requer JavaScript.
+- Verificação: SDC schemas PASS (25 componentes/377 checks); design foundations PASS (1895);
+  `validate-lms-skin` PASS (17 checks); Core negociou o componente como `aculta420:course_card`;
+  `drush cr` PASS; View executada como anônimo e
+  como conta autenticada com papel estudante; HTTP 200 e Firefox headless com Tab, nome acessível
+  e contorno de foco. Há somente um curso publicado e nenhum não publicado no Runtime para testar
+  o caso negativo de listagem. Homelab PHP 8.4.26; produção não verificada.
+- RUNTIME STATUS: ACTIVE no servidor de testes (`aculta_runtime`, `https://aculta.toca.net.br`).
+
+## 0.6.0-dev.68 — zoom do viewer PDF preservado em viewport estreito — 2026-10-17
+
+Classificação: PATCH (apresentação responsiva; sem alterar o contrato de acesso ou markup semântico).
+
+- `css/components/pdf-viewer.css`: a área da página passa a rolar quando o zoom excede o viewport; o canvas deixa de ser redimensionado para caber em 100% da largura.
+- A marcação neutra do módulo envolve o canvas em `page-stage`, que recebe a rolagem visual.
+- O canvas só aparece depois de renderizado, evitando espaço vazio quando o carregamento falha.
+- Cache rebuild aplicado no Runtime de teste; verificação visual em Firefox e mobile continua pendente.
+
+## 0.6.0-dev.67 — painéis de vendas e doações (tokens sales-*) — 2026-10-16
+
+Classificação: MINOR da linha aberta (componente de apresentação compatível; nenhum contrato stable quebrado).
+
+- `src/Hook/PortalUiHooks.php`: 13 tokens `sales-*` (painel, seção, título, tabela, paginação, pagamento, ações normal e perigosa, e cinco estados de pagamento).
+- `css/components/sales-panel.css` (novo, na biblioteca `global`): só tokens semânticos (`--aculta-status-*`, `--aculta-surface-muted`, `--aculta-text-muted`, `--aculta-border-subtle`, `--aculta-space-section`); tabela rola dentro do painel, sem rolagem horizontal da página.
+- Gate de fundação: versão 0.6.0-dev.67.
+- Verificação: `validate-portal-ui-docs` PASS (250 tokens no mapa); `validate-module-theme-map` PASS; `validate-module-theme-boundary` PASS; `validate-aculta420-design-foundations` PASS; `validate-aculta420-sdc-schemas` PASS; `validate-aculta420-foundation` e `validate-aculta420-shell-contract` PASS (executados via `drush php:script`, como indica `docs/development.md`).
+- Pendente: captura visual com administrador logado e pedidos de teste (DEFERRED).
+
 ## 0.6.0-dev.66 — barra e cabeçalho por flags do Portal (shell-contract PASS) — 2026-10-16
 
 Classificação: PATCH (troca de decisão; o HTML e a aparência continuam os mesmos por purpose).
@@ -1150,3 +1349,34 @@ Classificação: PATCH (dados e estilos novos em um tópico; sem mudança de est
 - Título da seção "Respostas" com a contagem (`forum-reply-total`); chamada para visitante (`forum-topic-visitor`) na barra de ações.
 - Verificado no Runtime: visitante (claro e escuro, com o atributo `data-bs-theme` forçado em cópia local), conta logada (desktop e 390 px), respostas em árvore no escuro, índice no escuro.
 - Limitação de teste: o modo de cor é decidido pelo Portal (`aculta_color_mode`); a conta logada no escuro foi verificada só pelo HTML.
+# Unreleased — migração do tema base — 2026-10-18
+
+- Removidos Display Suite e `ui_patterns_ds`: nenhum módulo ACULTA ou display exportado consumia os plugins; os layouts do tema estavam sem consumidor e foram excluídos.
+- Removidos do `core.extension` e do catálogo do tema os layouts, templates e CSS específicos de Display Suite.
+- RUNTIME STATUS: `ds` desinstalado no Runtime de teste; pacotes Composer removidos, cache reconstruído e rota `ds.structure` ausente.
+- Verificação: Composer válido, `git diff --check` sem erros e Runtime confirma `ds_enabled=false`, `ds_route_exists=false`; o gate Foundation não concluiu porque `social-links-page.perfil.story.yml:9` contém um valor YAML HTML com `:` sem aspas.
+- Trocada a base `bootstrap5` pela base Drupal Bootstrap (`drupal/bootstrap` 5.0.2), compatível com Drupal 11.
+- Framework Bootstrap atualizado para 5.3.8 e carregado localmente via Composer.
+- Bootstrap Icons 1.11.0 copiado para os assets do ACULTA420 com licença MIT preservada, desacoplando os ícones da base anterior.
+- RUNTIME HOMELAB: DEFERRED; falta importar a configuração e fazer smoke test visual no ambiente de testes.
+
+## 0.6.0-dev.74 — galeria de produto em VVJS — 2026-10-18
+
+Classificação: PATCH visual. O slideshow de produto preserva o modo de exibição e contém imagens sem autoplay.
+
+- CSS de VVJS escopado à classe existente `aculta-galeria-produto`; usa somente tokens semânticos ACULTA420.
+- Documentação identifica VVJS para sequências fotográficas e VVJB para carrosséis editoriais/de projetos.
+- RUNTIME STATUS: código e configuração da View aplicados ao Runtime de teste; inspeção visual em navegador pendente.
+
+## 0.6.0-dev.75 — auditoria da base Bootstrap e reconciliação da Foundation — 2026-10-18
+
+Classificação: PATCH de manutenção do tema e do gate.
+
+- A Foundation agora verifica `drupal/bootstrap` 5.0.2, `twbs/bootstrap` 5.3.8, a ausência do pacote antigo `drupal/bootstrap5` e a allowlist atual de overrides Twig.
+- Avaliado em `/tmp` o pacote oficial `bootstrap_sass` 5.0.2. Ele é um subtema legado de Barrio para Drupal 8/9 e Bootstrap 4.4.1, com Gulp antigo, cópias locais de jQuery/Popper/Bootstrap e hooks procedurais; nenhum código foi portado.
+- Avaliado também o scaffold `Bootstrap Subtheme` distribuído com `drupal/bootstrap` 5.0.2. Seu `_page.html.twig` demonstra herança do template base, mas redefine a estrutura genérica de página; `global.js` é só um esqueleto de behavior. A integração de Color module e o CSS de cores literais não se encaixam no shell por purpose e nos tokens ACULTA420. Não há função portável que acrescente valor sem duplicar essas responsabilidades.
+- O ACULTA420 mantém o CSS e JavaScript do Bootstrap fornecidos pela dependência Composer e a camada semântica/tokenizada própria; não adiciona um pipeline Sass/Gulp paralelo.
+- `validate-aculta420-foundation.php`: PASS via Drush no Runtime Homelab, somente leitura. Nenhuma configuração ou banco foi alterado.
+- Runtime de teste: mapa `core.extension:theme` alinhado ao sync por remoção dirigida de `bootstrap5`; `aculta420` segue como tema padrão e `claro` como administrativo. Cópia recuperável do mapa anterior em `/tmp/aculta-runtime-core-extension-theme-before-bootstrap5-20261018.yml`.
+- DT-O14 permanece parcial: `bootstrap5.settings` e `block.block.bootstrap5_search_form` ainda existem no banco e apontam para a base antiga; não houve importação global nem exclusão desses objetos.
+

@@ -192,9 +192,12 @@ $check(
 // 0.3.0-dev.5 adds DonationFriendlyRouteSubscriber (donation route paths /apoiar, slug em português).
 // 0.4.0-dev.18 adds UploadedFilenameExtensionSubscriber after Core's configured filename sanitizer.
 // 0.4.0-dev.19 adjusts the account-owned Messenger conversation presentation.
+// 0.4.0-dev.90 adds AdministrativeRouteSubscriber (every /painel-administrativo route uses the administrative theme; runs last).
+// 0.4.0-dev.145 moves CepLookupRateLimitSubscriber to the aculta_portal_cep submodule (its own services.yml), so the Portal registers twelve.
+// 0.4.0-dev.153 adds RefundEligibilitySubscriber (nega estorno de doação e de curso no gateway Mercado Pago), so the Portal registers thirteen.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 12,
-  'Portal must register exactly twelve canonical event_subscriber tags.',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 13,
+  'Portal must register exactly thirteen canonical event_subscriber tags (CEP rate limiter in aculta_portal_cep; refund eligibility subscriber for Mercado Pago).',
 );
 
 $legacyProceduralFunctions = [];
@@ -214,7 +217,7 @@ $check(
 $editorialHooks = $srcRoot . '/Hook/EditorialHooks.php';
 $editorialHooksSource = $read($editorialHooks);
 $check(is_file($editorialHooks), 'P2.2 EditorialHooks class must exist.');
-foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter', 'library_info_alter'] as $hookName) {
+foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter'] as $hookName) {
   $check(
     substr_count($editorialHooksSource, "#[Hook('" . $hookName . "')]") === 1,
     'P2 EditorialHooks must implement ' . $hookName . ' as an OOP hook.',
@@ -231,7 +234,6 @@ $p2MigratedHooks = [
   'metatag_tags_alter',
   'node_presave',
   'metatags_alter',
-  'library_info_alter',
 ];
 $p2HookOwners = [
   'token_info' => $tokenHooksSource,
@@ -239,7 +241,6 @@ $p2HookOwners = [
   'metatag_tags_alter' => $editorialHooksSource,
   'node_presave' => $editorialHooksSource,
   'metatags_alter' => $editorialHooksSource,
-  'library_info_alter' => $editorialHooksSource,
 ];
 // Drupal 11.1+ runs every #[Hook] method of a module, so distinct concerns may
 // live in different classes (e.g. PortalHooks owns route-based metatags_alter
@@ -281,10 +282,6 @@ $check(
   preg_match('/function\\s+metatagsAlter\\s*\\(array\\s*&\\$tags,\\s*array\\s*&\\$context\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
   'P2-R metatags_alter must preserve both tags and context references.',
 );
-$check(
-  preg_match('/function\\s+libraryInfoAlter\\s*\\(array\\s*&\\$libraries,\\s*string\\s+\\$extension\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
-  'P2-R library_info_alter signature must match Drupal 11.',
-);
 foreach ([
   'config.factory',
   'entity_type.manager',
@@ -305,7 +302,7 @@ $check(
   'P2-R TokenHooks must keep config and node cacheability.',
 );
 $check(
-  str_contains($editorialHooksSource, "'aculta_portal/cep-address'")
+  str_contains($read($srcRoot . '/Account/AccountAddressForm.php'), "'aculta_portal_cep/cep-address'")
     && str_contains($editorialHooksSource, 'SchemaMetatagManager::serialize')
     && str_contains($editorialHooksSource, "'courses'")
     && str_contains($editorialHooksSource, "'wiki'"),
@@ -462,8 +459,9 @@ foreach ([
   );
 }
 
-// Module-wide totals: owning class + the pre-existing PortalHooks concern.
-foreach (['form_alter' => 2, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
+// Module-wide totals: owning class + the pre-existing PortalHooks concern. form_alter ganha AccountAddressHooks: o
+// formulário de endereço único (loja e perfis de equipe), ver docs/portal/ACCOUNT-ADDRESS.md.
+foreach (['form_alter' => 3, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
   $check(
     substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === $expected,
     'Hook implementation count drifted for ' . $hookName . ' (expected ' . $expected . ').',
@@ -667,10 +665,11 @@ foreach (["get('config.factory')", "get('entity_type.manager')", "get('plugin.ma
     'P5.1 SupportForm must inject ' . $dependency . '.',
   );
 }
+$quickBlockSource = $read($srcRoot . '/../modules/aculta_donation/src/Plugin/Block/QuickDonationBlock.php');
 $check(
   str_contains($supportFormSource, "getStorage('commerce_payment_gateway')->load('mercado_pago')")
-    && str_contains($supportFormSource, "\$this->blockManager->createInstance("),
-  'P5.1 SupportForm must use injected storage and BlockManager.',
+    && str_contains($quickBlockSource, "\$this->purposes->routeUrl('support', 'aculta_donation.donation.quick'"),
+  'P5.1 SupportForm must use injected storage; the suggested amounts (quick donation block) must route to the support domain (decisão de 2026-10-17).',
 );
 $check(
   !str_contains($supportFormSource, 'PaymentGateway::load(')
@@ -802,7 +801,7 @@ $check(
 // P7.3: every Portal request-phase listener ignores subrequests.
 foreach ([
   'src/EventSubscriber/AccountRouteSubscriber.php',
-  'src/EventSubscriber/CepLookupRateLimitSubscriber.php',
+  'modules/aculta_portal_cep/src/EventSubscriber/CepLookupRateLimitSubscriber.php',
   'src/EventSubscriber/DomainPurposeRequestSubscriber.php',
   'src/Commerce/MercadoPago/WebhookEventSubscriber.php',
 ] as $requestListener) {

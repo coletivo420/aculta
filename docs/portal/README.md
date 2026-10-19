@@ -6,18 +6,19 @@
 
 - [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) — padrão Drupal 11+ e regras de código.
 - [GUARDRAILS.md](GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki, Conta e AJAX.
+- [COMPONENTES-PROPRIOS.md](COMPONENTES-PROPRIOS.md) — rótulo único "ACULTA Portal" para módulos próprios e gate de pacote.
 - [IMPLEMENTATIONS.md](IMPLEMENTATIONS.md) — inventário de implementações, helpers e integrações aplicadas pelo Portal.
 - [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md) — envio de e-mail pelo Mailer Plus (M0 a M2 concluídas; validado no runtime de teste).
 - [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) — fonte de verdade de cada dado.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
 - [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.
-- [ADR-009 — sitemap multidomínio](../decisions/ADR-009-sitemap-multidominio.md) — submódulo `aculta_portal_sitemap` (linha 0.1.x, opt-in).
-- [ACULTA Associado ID](../modules/ACULTA-ASSOCIADO-ID.md) — escopo de dados dos associados, compatibilidade e migração controlada; Runtime DEFERRED.
-- [ACULTA Gallery — arquitetura](../../web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md) — álbuns e galerias incorporadas (Media Gallery, PhotoSwipe, Entity Embed): decisões, limitações comprovadas e contratos (linha 0.1.x, submódulo opcional).
+- [ADR-009 — sitemap multidomínio](../decisions/ADR-009-sitemap-multidominio.md) — decisão arquitetural do sitemap.
+- [ACULTA Associado ID](../modules/ACULTA-ASSOCIADO-ID.md) — escopo de dados dos associados, compatibilidade e migração controlada.
+- [ACULTA Gallery — arquitetura](../../web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md) — decisões e contratos de galerias incorporadas.
 - [ACULTA Messenger: documentação do projeto](MESSENGER.md) — módulo, submódulo, rotas, hooks, classes e contratos com o tema.
 - [Tipos de conversa do Messenger: grupos, fórum, LMS, retenção e integrações](MESSENGER-CONVERSATION-KINDS.md) — base preparada, decisões pendentes e fases.
 - [Auditoria do Messenger](MESSENGER-AUDIT.md) — separação entre módulo, submódulo e tema, com os achados.
-- [ACULTA Messenger](../../web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) — integração de mensagens, modais, avisos persistentes segmentados e estado de leitura individual.
+- [ACULTA Messenger](../../web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) — entrada local do submódulo.
 - [PDF global](PDF-VIEWER-INTEGRATION.md) — contrato compartilhado de Media, viewer, acesso a arquivos e previews.
 - [ACULTA PDF Viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md) — documentação do submódulo, formatter, serviço, biblioteca, hooks e testes.
 - [ACULTA PDF Viewer Group](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md) — relação opcional de Media `document` com turmas Group e acesso por membership.
@@ -30,6 +31,7 @@
 - [ADMIN-DOMAIN-POLICY.md](ADMIN-DOMAIN-POLICY.md) — painel administrativo e canonicalização para MAIN.
 - [CROSS-DOMAIN-REQUEST-POLICY.md](CROSS-DOMAIN-REQUEST-POLICY.md) — requisições entre purposes.
 - [PAYMENT-DOMAIN-POLICY.md](PAYMENT-DOMAIN-POLICY.md) — carrinho, checkout e pagamento no MAIN.
+- [MERCADO-PAGO-PLANO.md](MERCADO-PAGO-PLANO.md) — contrato e limites da integração Mercado Pago.
 - [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md) — URLs e slugs em português.
 - [TURNSTILE.md](TURNSTILE.md) — anti-bot: pontos de CAPTCHA, chaves de teste e produção, caixa de ativação.
 - [ACCOUNT-MENU.md](ACCOUNT-MENU.md) — menu da Minha conta: lista no desktop e sanfona no celular.
@@ -47,30 +49,21 @@
 - [AJAX.md](AJAX.md) — política de AJAX e interatividade.
 - [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md) — fronteira entre `aculta_portal` (função) e ACULTA420 (design); contrato `data-portal-ui`.
 
-## Estado e pendências
+## Planejamento e validação
 
-- [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md) — estado corrente após os merges #238 e #239, com verificações locais e limites de Runtime.
-- [historico/RELATORIO-ESTADO-2026-10-12.md](historico/RELATORIO-ESTADO-2026-10-12.md) — snapshot histórico anterior às PRs #238 e #239.
-- [ROADMAP.md](ROADMAP.md) — fases de saneamento e de produto.
+- [ROADMAP.md](ROADMAP.md) — planejamento do Portal.
+- [Registro de dívidas](../operations/DEBT-REGISTER.md) — pendências com evidência e impacto.
+- [TESTES-NAVEGADOR.md](TESTES-NAVEGADOR.md) — procedimento e registro de rodadas no navegador.
+- [Histórico documental](historico/README.md) — snapshots preservados para consulta; não são o estado atual.
 
-## Testes e pendências
+O estado implementado de cada componente é registrado no CHANGELOG e no código.
+Pull requests e resultados pontuais de execução pertencem ao GitHub/Git; não são
+duplicados neste índice.
 
-- [TESTES-NAVEGADOR.md](TESTES-NAVEGADOR.md) — rodadas de teste no navegador com o responsável: hosts, contas e resultados.
-- [historico/PENDENCIAS-PROXIMA-RODADA.md](historico/PENDENCIAS-PROXIMA-RODADA.md) — pendências abertas do checkout, pagamento e Minha conta.
-
-## Roadmap
-
-- [ROADMAP.md](ROADMAP.md) — saneamento e features de produto.
-
-## Projetos aprovados — 2026-10-15
+## Extensões próprias
 
 - [ACULTA Fórum / Growroom420](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
-  — reconstrução do acervo, autores individuais no memorial coletivo, prefixo
-  `growroom420`, conversas atuais vinculadas e integrações do Portal.
 - [ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md)
-  — conquistas e missões sem ranking ou benefícios financeiros; exibição pública
-  por padrão com privacidade e destaques; pesquisa de módulos e licenças.
 
-Fórum permanece documental. Game é instalável desde G1 e integra o backend de
-conquistas do User. Seus READMEs separam o estado do código, as decisões aprovadas
-e as fases de implementação.
+Os READMEs dos componentes são a entrada para escopo, contratos e documentação
+específica. O inventário de ativação por ambiente permanece na configuração Drupal.

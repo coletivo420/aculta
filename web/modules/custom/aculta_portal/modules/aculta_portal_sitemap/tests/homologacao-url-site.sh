@@ -8,7 +8,7 @@ set -u
 CYCLES="${1:-5}"
 IP="${2:-127.0.0.1}"
 BASE="toca.net.br"
-HOSTS=("aculta" "apoio.aculta" "wiki420.aculta" "coletivo420.aculta" "cursos.aculta" "conta.aculta")
+HOSTS=("aculta" "apoio.aculta" "wiki420.aculta" "revista420.aculta" "cursos.aculta" "conta.aculta")
 PATHS=("/" "/entrar")
 fail=0
 

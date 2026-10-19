@@ -1,35 +1,71 @@
 /**
  * @file
- * Presentation behavior for the album stage: thumbnails drive the VVJB slides.
+ * Presentation behavior for the album stage: thumbnails drive the VVJS slides.
  */
 (function (Drupal, once) {
   'use strict';
 
+  // Load the active photo and one slide ahead. This prevents browsers such as
+  // Firefox from downloading every hidden 1000 px stage image at page load.
+  const loadSlideImages = (slideshow, current) => {
+    const slides = slideshow.querySelectorAll('.vvjs-item');
+    const total = slides.length;
+    if (!total) {
+      return;
+    }
+
+    [current, (current % total) + 1].forEach((index) => {
+      const image = slides[index - 1]?.querySelector('img[data-aculta-lazy-src]');
+      if (!image) {
+        return;
+      }
+      image.setAttribute('src', image.dataset.acultaLazySrc);
+      image.removeAttribute('data-aculta-lazy-src');
+    });
+  };
+
   Drupal.behaviors.acultaAlbumStage = {
     attach(context) {
       once('aculta-album-stage', '[data-aculta-album-stage]', context).forEach((stage) => {
-        const carousel = stage.querySelector('vvjb-carousel');
+        const slideshow = stage.querySelector('vvjs-slideshow');
         const thumbs = [...stage.querySelectorAll('[data-aculta-album-thumb]')];
-        if (!carousel || thumbs.length === 0) {
+        if (!slideshow || thumbs.length === 0) {
           return;
         }
 
-        // Thumbnails are 1-based slide numbers in the VVJB public API (goToSlide).
+        loadSlideImages(slideshow, slideshow.getCurrentSlide?.() || 1);
+
+        // Thumbnails use the 1-based slide index in VVJS's public API.
         thumbs.forEach((button) => {
           button.addEventListener('click', () => {
-            carousel.goToSlide?.(Number(button.dataset.acultaAlbumThumb));
+            const target = Number(button.dataset.acultaAlbumThumb);
+            loadSlideImages(slideshow, target);
+            slideshow.goToSlide?.(target);
           });
         });
 
-        // Mirror the current slide on its thumbnail, from the VVJB markup (no VVJB event API needed).
-        const markCurrent = () => {
-          const current = carousel.getCurrentSlide?.();
+        const markCurrent = (current = slideshow.getCurrentSlide?.() || 1) => {
           thumbs.forEach((button) => {
             button.setAttribute('aria-current', Number(button.dataset.acultaAlbumThumb) === current ? 'true' : 'false');
           });
         };
-        new MutationObserver(markCurrent).observe(carousel, { subtree: true, attributes: true, attributeFilter: ['class'] });
         markCurrent();
+
+        // VVJS publishes slide changes through the VVJ Core event contract.
+        // Listen once globally and update only the stage that owns the source.
+        once('aculta-album-stage-events', document.documentElement).forEach(() => {
+          document.addEventListener('vvj:slideChanged', (event) => {
+            const source = event.detail?.source;
+            const eventStage = source?.closest?.('[data-aculta-album-stage]');
+            if (source?.matches?.('vvjs-slideshow') && eventStage) {
+              const current = event.detail.slide || source.getCurrentSlide?.() || 1;
+              loadSlideImages(source, current);
+              eventStage.querySelectorAll('[data-aculta-album-thumb]').forEach((button) => {
+                button.setAttribute('aria-current', Number(button.dataset.acultaAlbumThumb) === current ? 'true' : 'false');
+              });
+            }
+          });
+        });
 
         // Mobile: the thumbnail panel is collapsed behind a toggle button.
         const toggle = document.createElement('button');
@@ -45,6 +81,24 @@
           toggle.firstElementChild.className = open ? 'bi bi-chevron-right' : 'bi bi-chevron-left';
         });
         stage.prepend(toggle);
+      });
+    },
+  };
+
+  Drupal.behaviors.acultaProductGallery = {
+    attach(context) {
+      once('aculta-product-gallery', '.aculta-galeria-produto vvjs-slideshow', context).forEach((slideshow) => {
+        loadSlideImages(slideshow, slideshow.getCurrentSlide?.() || 1);
+      });
+
+      once('aculta-product-gallery-events', document.documentElement).forEach(() => {
+        document.addEventListener('vvj:slideChanged', (event) => {
+          const source = event.detail?.source;
+          if (!source?.matches?.('.aculta-galeria-produto vvjs-slideshow')) {
+            return;
+          }
+          loadSlideImages(source, event.detail.slide || source.getCurrentSlide?.() || 1);
+        });
       });
     },
   };

@@ -1,0 +1,32 @@
+uuid: 69c15170-6873-42d8-9ef7-d844d1083d02
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_donation
+    - aculta_portal
+    - system
+  theme:
+    - aculta420
+id: aculta_donation_donate_home
+theme: aculta420
+region: content
+weight: 91
+provider: null
+plugin: aculta_donation_donate
+settings:
+  id: aculta_donation_donate
+  label: 'Doar (página inicial)'
+  label_display: ''
+  provider: aculta_donation
+  return_path: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: main
+    negate: false
+

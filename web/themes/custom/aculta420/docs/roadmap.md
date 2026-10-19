@@ -1,6 +1,6 @@
 # Roadmap — ACULTA420
 
-Atualizado em 2026-10-15 (revisão documental, PR #281). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-18 (Foundation reconciliada com Drupal Bootstrap 5.0.2; avaliação do SASS Starter Kit concluída). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
@@ -8,7 +8,17 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.78 | Imagens das duas galerias VVJS carregadas progressivamente | Runtime de teste: validar primeira imagem, avanço e clique no último slide do produto; álbum mantém evidência da dev.77 | `ThemeHooks` aplica adiamento também às linhas Media da `galeria_produto`; biblioteca VVJS compartilhada restaura imagem atual e próxima |
+| 0.6.0-dev.77 | Imagens dos slides inativos são carregadas progressivamente | Firefox no Runtime: palco caiu de 63 requisições (8,8 MB) para 4 (572 KB); miniaturas visíveis/adjacentes: 20 (62 KB); clique na miniatura 60 carregou o slide 60 | Slide atual e próximo usam API/evento público VVJS; sequência e miniaturas preservadas |
+| 0.6.0-dev.76 | Auditoria de consumidores VVJ e smoke test de slideshow | Runtime de teste: 7 mídias no produto e 63 no álbum; inspeção visual/teclado/toque DEFERRED | Sem consumidor semântico para VVJA/VVJF/VVJH/VVJR/VVJT identificado no inventário |
+| 0.6.0-dev.75 | Gate Foundation alinhado à base Drupal Bootstrap 5.0.2, ao framework 5.3.8 e aos templates atuais | Gate PASS; mapa de tema do Runtime alinhado ao sync; DT-O14 parcial por configurações órfãs restantes | Revisão dos dois scaffolds 5.0.2; nenhum código novo necessário |
+| 0.6.0-dev.74 | Galeria de produto migrada para VVJS, sem autoplay | Runtime de teste: 7 linhas VVJS renderizadas; inspeção visual DEFERRED | Preserva modo `produto_galeria` e apresenta imagens contidas |
+| 0.6.0-dev.73 | VVJ patterns aprovados instalados; palco de álbum portado de VVJB para VVJS | RUNTIME STATUS: VVJ habilitados e View atualizada; validação visual DEFERRED | Mantém VVJB na Home/Projetos e PhotoSwipe na galeria |
+| 0.6.0-dev.72 | LMS em pt-BR; “Lições” passa a “Aulas” em toda a interface traduzida | Catálogos `lms.pt-br.po` e `lms-terms.pt-br.po` importados; exportações do Runtime sem “lição/lições” | Catálogo LMS |
+| 0.6.0-dev.69 | F5 Catálogo: SDC ACULTA420 substitui o cartão LMS na View existente | SDC schema, View access/cache, Firefox keyboard e host de testes verificados; RUNTIME STATUS: ACTIVE | `components/content/course_card/`, catálogo `courses_catalog` |
+| 0.6.0-dev.68 | Viewer PDF: página em área rolável preserva o zoom escolhido em telas menores | Firefox 153.4 ESR no Runtime: PDF de 14 páginas, zoom 125%, controles e foco visível; viewport 1440 px e viewport estreito 500 px sem overflow horizontal da página. Smoke visual/acessível PASS em PV6; matriz de navegadores e CSP segue na PV7. | `css/components/pdf-viewer.css`, marcação do `aculta_pdf_viewer` |
 | 0.6.0-dev.66 | Barra e cabeçalho do shell decididos pelo Portal (`domain_presentation.layout`); shell-contract PASS | Gates de shell, fundação, design e SDC PASS; capturas em main, wiki, cursos, apoio e conta; `links` não verificado (404 no teste) | `templates/page.html.twig` |
+| 0.6.0-dev.67 | Painéis de vendas e doações: tokens `sales-*` (tabela de pedidos, estados e ações de pagamento) e `css/components/sales-panel.css` | Gates de fundação, design, shell, SDC, fronteira módulo-tema, mapa e docs de tokens PASS |
 | 0.6.0-dev.65 | Tokens faltantes do módulo mapeados (avatar do perfil, avisos de conquista, relatório de imagens) | Gates de fundação, design e SDC PASS; shell-contract FAIL pré-existente (`page.html.twig`) registrado | `PortalUiHooks.php`, `messenger-drawer.css`, `portal-requirements-report.css` |
 | 0.6.0-dev.61 | Apresentação do leitor PDF compartilhado | Chromium headless no Runtime: 14 páginas; viewport 1440 px e 390 px sem overflow mobile; RUNTIME STATUS: ACTIVE no Homelab | `css/components/pdf-viewer.css` |
 | 0.6.0-dev.54 | Conquistas no perfil público | Firefox desktop/mobile e contrato módulo/tema verificados | `public-profile.css`, `PortalUiHooks.php` |
@@ -159,7 +169,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 - Decisões do responsável: o controle fica em **Minha Conta > Configurações** (`/configuracoes`, no Portal); a preferência é gravada por usuário no banco (`user.data`); há três estados (claro, escuro, automático); o padrão global do site fica em `/admin/config/aculta/aparencia`.
 - Portal (0.2.0-dev.18): `ColorModePreference` resolve o modo e publica o contrato `aculta_color_mode`. O tema não lê usuário nem configuração.
-- Tema (0.5.0): `ThemeHooks::preprocessHtml` define `b5_theme_mode` (o `html.html.twig` do Bootstrap 5 grava `data-bs-theme` a partir dele). Em `auto` o atributo fica vazio, e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`.
+- Tema: `ThemeHooks::preprocessHtml` aplica `data-bs-theme` diretamente em `html_attributes`, conforme o contrato resolvido pelo Portal. A base Drupal Bootstrap preserva esses atributos; em `auto`, o tema remove o atributo e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`.
 - Sem JavaScript de modo e sem `localStorage`. Tokens da barra institucional não foram alterados.
 - Evidência no Runtime oficial (`https://aculta.toca.net.br`, código da `main` em `ce87dcb`):
   - roteiro automatizado: 7 de 7 checagens (padrão global, escolha da pessoa usuária, HTML anônimo e logado, cache invalidado após salvar);
@@ -174,7 +184,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 **Estado: concluída em 0.5.1 (2026-10-09). Bootstrap Icons 1.11.0; sem dependência nova.**
 
 - Decisão do responsável: ícones pelo Bootstrap Icons.
-- Sem dependência nova: a fonte já vem do pacote `bootstrap5` (`dist/icons/1.11.0`) e é carregada em todas as páginas pela biblioteca `bootstrap5/global-styling`. Verificado no site público: a família `bootstrap-icons` carrega e `bi-house` renderiza o glifo.
+- Bootstrap Icons 1.11.0 foi copiado para `assets/icons/bootstrap-icons/` e é servido pela biblioteca do ACULTA420, sem dependência do tema base. A verificação histórica no site público confirmou a família `bootstrap-icons` e o glifo `bi-house`.
 - Regra: ícone é `<i class="bi bi-NOME" aria-hidden="true"></i>` ao lado de texto visível (ou rótulo acessível no pai). Nenhum SVG inline de ícone nos templates do tema; o gate `validate-aculta420-design-foundations.php` reprova.
 - Sem SDC de ícone até haver consumidor com contrato reutilizável (AGENTS: não criar SDC só para substituir uma classe simples).
 - Fora do tema: o editor de fotos do Portal (`aculta-portal-photo-editor.html.twig`) tem um SVG inline. Não é tratado aqui, porque o Portal não referencia componentes do tema.

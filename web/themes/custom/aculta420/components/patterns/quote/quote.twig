@@ -1,0 +1,10 @@
+{% do attach_library('aculta420/editorial-content') %}
+<figure{{ attributes.addClass('aculta-quote') }}>
+  <blockquote class="blockquote aculta-quote__text">{{ quote }}</blockquote>
+  {% if author or source %}
+    <figcaption class="aculta-quote__citation">
+      {% if author %}<span class="aculta-quote__author">{{ author }}</span>{% endif %}
+      {% if source %}<cite class="aculta-quote__source">{{ source }}</cite>{% endif %}
+    </figcaption>
+  {% endif %}
+</figure>

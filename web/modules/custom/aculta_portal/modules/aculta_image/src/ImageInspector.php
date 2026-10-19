@@ -13,13 +13,17 @@ final class ImageInspector {
 
   public function __construct(private readonly ImageFactory $imageFactory) {}
 
-  /** Largura e altura de uma imagem em memória, ou NULL se o conteúdo não é PNG, JPEG, GIF ou WebP. */
+  /** Dimensões e MIME de uma imagem em memória, ou NULL fora da política raster. */
   public function fromBytes(string $bytes): ?array {
     $info = @getimagesizefromstring($bytes);
     if ($info === FALSE || !in_array($info[2] ?? 0, [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_WEBP], TRUE)) {
       return NULL;
     }
-    return ['width' => (int) $info[0], 'height' => (int) $info[1]];
+    return [
+      'width' => (int) $info[0],
+      'height' => (int) $info[1],
+      'mime' => (string) ($info['mime'] ?? ''),
+    ];
   }
 
   /** Largura e altura da imagem em $uri, ou NULL se o arquivo não é uma imagem válida. */

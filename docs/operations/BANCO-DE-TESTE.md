@@ -89,6 +89,45 @@ MYSQL_PWD="$2" mysql -u "$1" -h localhost aculta_simpletest -e "SELECT CURRENT_U
 
 As deprecações vêm de contrib (Group e media) e não impedem o teste. Ficam registradas para revisão.
 
+Execução adicional em 2026-10-17: Unit e Kernel de `aculta_lms`, Unit e Kernel de
+`aculta_pdf_viewer` e Kernel de `aculta_pdf_viewer_group` passaram em conjunto
+(14 testes, 195 asserções). A cobertura Group inclui membro, não membro,
+remoção da relação Media↔Group e revogação de membership. Foram reportadas 23
+deprecações de Core/contrib; nenhuma falha. Runtime permanece DEFERRED.
+
+Execução adicional em 2026-10-18: Kernel de `aculta_lms_h5p` confirmou a
+descoberta dos hooks OOP e a construção dos serviços do módulo (1 teste, 5
+asserções). A suíte Unit H5P passou (4 testes, 10 asserções) sem deprecações do
+adapter; a suíte Unit `aculta_image` passou (19 testes, 69 asserções). A
+integração no Runtime e o teste visual do editor seguem DEFERRED.
+
+Execução adicional em 2026-10-18: Kernel `H5PCourseAccessIntegrationTest`
+passou com 2 testes e 62 asserções, incluindo ida e volta de serialização do
+widget H5P e restauração de seus serviços injetados. Na suíte H5P completa,
+passaram 11 testes e 204 asserções. As 40 depreciações vieram de
+Core/Group/LMS/Views instalados. O smoke no Runtime `cursos` confirmou que o
+fatal de serviço não inicializado foi corrigido; o ciclo completo de salvar e
+reproduzir conteúdo continua DEFERRED. Unit H5P: 12 testes/52 asserções.
+
+Execução adicional em 2026-10-19: Unit LMS/H5P passou com 36 testes e 148
+asserções (5 depreciações do PHPUnit). Kernel LMS/H5P passou com 24 testes e
+573 asserções no MariaDB dedicado; 83 depreciações foram reportadas por
+Drupal Core/contrib instalados. A cobertura H5P inclui instalação e exclusão
+de biblioteca privada, arquivos gerenciados, widget serializado e ciclo de
+imagens via `aculta_image`. Runtime de teste `cursos` validou salvamento e
+reprodução por estudante, bloqueio anônimo e limpeza via formulário
+administrativo. Após refatorar DI, Drush como conta `aculta` confirmou URLs
+absolutas do editor; os assets H5P CSS/JS e a tradução pt-br responderam HTTP
+200. Cache rebuild executado; nenhum update de banco ou import de configuração
+necessário. Produção não foi alterada.
+
+Execução adicional em 2026-10-19 após a revisão dos serviços do editor:
+H5P Unit passou com 23 testes e 67 asserções; Kernel H5P passou com 14 testes
+e 263 asserções no MariaDB dedicado. Foram reportadas 40 depreciações de
+Core/contrib e nenhuma falha. O Kernel validou o formulário de configuração
+após serialização, e o acesso próprio/global do plugin de Views está coberto
+em Unit.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

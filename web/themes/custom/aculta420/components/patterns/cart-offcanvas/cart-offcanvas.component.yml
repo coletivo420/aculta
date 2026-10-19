@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schema
 name: Carrinho (gaveta lateral)
 status: experimental
 group: Patterns
-description: 'Ícone do carrinho na barra multidomínio e gaveta lateral com os itens. Usa o offcanvas do Bootstrap, sem JavaScript próprio. Recebe só dados neutros do Portal (contagem, itens, total e URL do carrinho no MAIN).'
+description: 'Ícone do carrinho na barra multidomínio e gaveta lateral: um carrinho único, com separador por tipo de pedido e botão de checkout em cada separador. Usa o offcanvas e as abas do Bootstrap, sem JavaScript próprio. Recebe só dados neutros do Portal.'
 props:
   type: object
   properties:
@@ -23,10 +23,14 @@ props:
       type: string
       description: 'Total formatado (ex.: R$ 30,00).'
       default: ''
-    items:
+    sites:
       type: array
-      description: 'Itens do carrinho: title, quantity e total (texto).'
+      description: 'Separadores do carrinho único (loja, cursos, apoio): key, label, count, empty, total, items (title, quantity, total) e checkout_url (botão de checkout do separador, no MAIN).'
       default: []
+    checkout_url:
+      type: string
+      description: 'URL do checkout único do carrinho (todas as categorias, exceto assinatura).'
+      default: ''
     banner:
       type: string
       description: 'Frase fixa do rodapé da gaveta.'

@@ -1,0 +1,5 @@
+create_default_class: false
+class_name_pattern: ''
+class_permission_mappings: {  }
+course_permission_mappings: {  }
+

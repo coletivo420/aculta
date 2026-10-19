@@ -1,0 +1,25 @@
+uuid: 963c5e09-1387-4717-a8ad-18f2bced2815
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_city
+    - profile.type.lms_teacher
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.lms_teacher.field_city
+field_name: field_city
+entity_type: profile
+bundle: lms_teacher
+label: Cidade
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

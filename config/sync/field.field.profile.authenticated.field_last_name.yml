@@ -1,0 +1,25 @@
+uuid: 1b90c82e-41a8-47a6-9c81-768f7836c797
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_last_name
+    - profile.type.authenticated
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.authenticated.field_last_name
+field_name: field_last_name
+entity_type: profile
+bundle: authenticated
+label: Sobrenome
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

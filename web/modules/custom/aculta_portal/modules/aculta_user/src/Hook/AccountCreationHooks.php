@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Transliteration\PhpTransliteration;
 use Drupal\user\UserInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Criação de conta: perfil participante com apelido inicial, e avatar do acervo quando não há foto.
@@ -55,16 +56,16 @@ final class AccountCreationHooks {
     $this->avatarPool->assignPresave($account);
   }
 
-  /** Cria o perfil participante com o nome de usuário como apelido inicial, sem colidir. */
+  /** Cria o perfil do papel da conta com o nome de usuário como apelido inicial, sem colidir. */
   private function createProfile(UserInterface $account): void {
     $storage = $this->entityTypeManager->getStorage('profile');
-    if ($storage->loadByUser($account, 'participante') !== NULL) {
+    if (PerfilDoPapel::principal($storage, $account) !== NULL) {
       return;
     }
     $base = AccountNames::slug($this->transliteration->transliterate((string) $account->getAccountName(), 'pt-br'));
     $apelido = AccountNames::isValid($base) ? $base : 'pessoa-' . $account->id();
     $storage->create([
-      'type' => 'participante',
+      'type' => PerfilDoPapel::tipoDaConta($account),
       'uid' => $account->id(),
       'field_nickname' => $this->unique($apelido, (int) $account->id()),
     ])->save();
@@ -85,7 +86,7 @@ final class AccountCreationHooks {
 
   private function taken(string $apelido): bool {
     return $this->entityTypeManager->getStorage('profile')->getQuery()
-      ->accessCheck(FALSE)->condition('type', 'participante')->condition('field_nickname', $apelido)->range(0, 1)->count()->execute() > 0;
+      ->accessCheck(FALSE)->condition('type', PerfilDoPapel::TIPOS, 'IN')->condition('field_nickname', $apelido)->range(0, 1)->count()->execute() > 0;
   }
 
 }

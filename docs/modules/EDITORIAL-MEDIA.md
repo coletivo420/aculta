@@ -32,7 +32,7 @@ O tema não cria pipeline de imagem paralelo.
 
 ## Formulários
 
-`webform` e `webform_ui` atendem formulários estruturados do projeto. Conta pertence a User/Profile/Change Mail; checkout pertence ao Commerce.
+`webform` e `webform_ui` atendem formulários estruturados do projeto. Conta pertence a User/Profile/Change Mail; checkout pertence ao Commerce. Para o modelo de criação, permissões, submissões, uploads e publicação, consulte [Plataforma de formulários Webform](WEBFORM-PLATFORM.md).
 
 ### Bibliotecas externas do Webform
 
@@ -77,4 +77,6 @@ que as exija.
 
 ## Views interativas
 
-`vvjb` fornece carousel de Views e usa `vvj_core`. VVJT pode ser avaliado para Views tabuladas específicas, mas não é engine da Minha Conta. Ver [ACCOUNT-UI.md](ACCOUNT-UI.md).
+VVJ Core fornece a base compartilhada para oito formatos de Views instalados: VVJA Accordion, VVJB Carousel, VVJF FlipBox, VVJH Hero, VVJL Lightbox, VVJR Reveal, VVJS Slideshow e VVJT Tabs. O palco de álbum usa VVJS; carrosséis editoriais permanecem VVJB. VVJT não é engine da Minha Conta; VVJA/FlipBox/Reveal não devem esconder conteúdo essencial. VVJC (3D Carousel) e VVJP (Parallax) não foram instalados. Ver [ACCOUNT-UI.md](ACCOUNT-UI.md) e o plano do [ACULTA420 UI Suite](../../web/themes/custom/aculta420/docs/ui-suite-migration-plan.md).
+
+`galeria_produto` também usa VVJS para percorrer as mídias do produto sem autoplay; mantém o modo `produto_galeria`. No álbum, a View filtra slides pelo acesso `view` de Media e compartilha a ordem com as miniaturas; o palco borbulha cacheabilidade do álbum, Media, File e decisões de acesso.

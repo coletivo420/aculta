@@ -1,0 +1,34 @@
+uuid: 145eeeca-0e5a-4dd2-8c93-e0dccbeb42d8
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - views.view.aculta_forum_topics
+  module:
+    - aculta_portal
+    - system
+    - views
+  theme:
+    - aculta420
+id: aculta_forum_recent_topics
+theme: aculta420
+region: content
+weight: 30
+provider: null
+plugin: 'views_block:aculta_forum_topics-block_recent'
+settings:
+  id: 'views_block:aculta_forum_topics-block_recent'
+  label: 'Tópicos recentes'
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: null
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /forum
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: forum
+    negate: false

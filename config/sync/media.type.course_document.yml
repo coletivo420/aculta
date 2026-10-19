@@ -1,12 +1,12 @@
+uuid: 1782fab3-6bd8-4841-b205-5d2f12f67afe
 langcode: pt-br
 status: true
 dependencies:
   enforced:
     module:
       - aculta_pdf_viewer_group
-  module:
-    - file
-    - media
+_core:
+  default_config_hash: ccDcL6phwUinPw-XmekFQ2VkuIGDH4SfYppxfrv7bDA
 id: course_document
 label: 'Documento de turma'
 description: 'PDF privado associado a uma turma de aprendizagem.'

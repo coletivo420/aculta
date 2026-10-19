@@ -20,8 +20,9 @@ Tema: `aculta420`.
 
 Hooks:
 
-`src/Hook/ThemeHooks.php` com `#[Hook]` e DI/autowiring. A Foundation não usa
-arquivo `.theme` procedural.
+Hooks OOP com `#[Hook]` vivem em `src/Hook/`; consulte o
+[inventário de classes e hooks](classes-hooks.md). A Foundation não usa arquivo
+`.theme` procedural.
 
 Libraries:
 

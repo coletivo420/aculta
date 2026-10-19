@@ -1,0 +1,8 @@
+{# The album View owns access, ordering and the rendered field content. #}
+{{ include('aculta420:card', {
+  variant: 'overlay',
+  image: fields.field_gallery_cover.content,
+  header: fields.field_published_at.content,
+  content: fields.title.content,
+  footer: fields.field_credits.content
+}, with_context = false) }}

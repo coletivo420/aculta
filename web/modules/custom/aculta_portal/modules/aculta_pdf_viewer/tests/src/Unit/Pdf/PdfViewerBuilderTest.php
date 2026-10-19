@@ -8,6 +8,7 @@ use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilder;
 use Drupal\aculta_pdf_viewer\Pdf\PdfPreviewThumbnailBuilderInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\file\FileInterface;
@@ -31,6 +32,7 @@ final class PdfViewerBuilderTest extends UnitTestCase {
 
     $builder = new PdfViewerBuilder(
       $this->createMock(FileUrlGeneratorInterface::class),
+      $this->createMock(UrlGeneratorInterface::class),
       $this->createMock(AccountInterface::class),
       $this->createMock(PdfPreviewThumbnailBuilderInterface::class),
     );
@@ -84,7 +86,7 @@ final class PdfViewerBuilderTest extends UnitTestCase {
       ->with($file, 'Documento de teste — miniatura da primeira página')
       ->willReturn($thumbnail);
 
-    $build = (new PdfViewerBuilder($url_generator, $account, $thumbnail_builder))->build($media);
+    $build = (new PdfViewerBuilder($url_generator, $this->createMock(UrlGeneratorInterface::class), $account, $thumbnail_builder))->build($media);
 
     self::assertArrayNotHasKey('#access', $build);
     self::assertSame('true', $build['#attributes']['data-aculta-pdf-viewer']);
@@ -128,18 +130,19 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     $media->method('get')->with('field_media_course_document')->willReturn($field);
 
     $url_generator = $this->createMock(FileUrlGeneratorInterface::class);
-    $url_generator->expects(self::once())
-      ->method('generateString')
-      ->with('private://turma/trabalho.pdf')
-      ->willReturn('/system/files/turma/trabalho.pdf');
+    $route_url_generator = $this->createMock(UrlGeneratorInterface::class);
+    $route_url_generator->expects(self::once())
+      ->method('generateFromRoute')
+      ->with('system.files', ['scheme' => 'private'], ['query' => ['file' => 'turma/trabalho.pdf']], FALSE)
+      ->willReturn('/system/files?file=turma/trabalho.pdf');
     $thumbnail_builder = $this->createMock(PdfPreviewThumbnailBuilderInterface::class);
     $thumbnail_builder->expects(self::never())->method('build');
 
-    $build = (new PdfViewerBuilder($url_generator, $account, $thumbnail_builder))
+    $build = (new PdfViewerBuilder($url_generator, $route_url_generator, $account, $thumbnail_builder))
       ->build($media, 'field_media_course_document');
 
-    self::assertSame('/system/files/turma/trabalho.pdf', $build['#attributes']['data-aculta-pdf-url']);
-    self::assertSame('/system/files/turma/trabalho.pdf', $build['download']['#attributes']['href']);
+    self::assertSame('/system/files?file=turma/trabalho.pdf', $build['#attributes']['data-aculta-pdf-url']);
+    self::assertSame('/system/files?file=turma/trabalho.pdf', $build['download']['#attributes']['href']);
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertArrayNotHasKey('thumbnail', $build);
   }

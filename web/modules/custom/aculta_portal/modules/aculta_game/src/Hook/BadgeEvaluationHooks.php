@@ -14,6 +14,7 @@ use Drupal\node\NodeInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Avaliação única das conquistas automáticas do Portal.
@@ -109,7 +110,7 @@ final class BadgeEvaluationHooks {
   }
 
   private function profileBasic(ProfileInterface $profile): void {
-    if (!$this->isLive($profile) || $profile->bundle() !== 'participante') {
+    if (!$this->isLive($profile) || !PerfilDoPapel::ehTipoDePapel($profile)) {
       return;
     }
     foreach (['field_nickname', 'field_first_name', 'field_last_name', 'field_whatsapp'] as $field) {

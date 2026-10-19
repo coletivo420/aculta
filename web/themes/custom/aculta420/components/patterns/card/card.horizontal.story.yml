@@ -1,0 +1,12 @@
+name: Horizontal
+description: Cartão em duas colunas no desktop e empilhado em telas menores.
+component: aculta420:card
+props:
+  variant: horizontal
+slots:
+  image:
+    markup: '<div class="ratio ratio-4x3 bg-body-secondary" role="img" aria-label="Área reservada para mídia de exemplo"></div>'
+  content:
+    markup: '<h3>Projeto comunitário</h3><p>A apresentação mantém conteúdo e mídia em fluxo responsivo.</p>'
+  footer:
+    markup: '<a href="#">Conheça o projeto</a>'

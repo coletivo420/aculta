@@ -12,15 +12,23 @@ declare(strict_types=1);
  * Run: php scripts/validate-lms-skin.php
  */
 
-const LMS_REVIEWED_VERSION = '1.2.3';
+const LMS_REVIEWED_VERSION = '1.2.4';
 
 $root = dirname(__DIR__);
 $failures = [];
 $checks = 0;
 
-$skin = $root . '/web/themes/custom/aculta420/css/components/course-card.css';
+$themeCard = $root . '/web/themes/custom/aculta420/components/content/course_card';
+$skin = $themeCard . '/course_card.css';
 $lmsDir = $root . '/web/modules/contrib/lms';
 $source = (string) file_get_contents($skin);
+$themeMarkup = (string) file_get_contents($themeCard . '/course_card.twig');
+$metadata = (string) file_get_contents($themeCard . '/course_card.component.yml');
+
+$checks++;
+if (!str_contains($metadata, "replaces: 'lms:course_card'")) {
+  $failures[] = 'ACULTA420 course card must replace lms:course_card through SDC negotiation.';
+}
 
 $checks++;
 if (preg_match('/--color-[a-z0-9-]+/', $source) === 1) {
@@ -33,7 +41,7 @@ $lmsMarkup = (string) file_get_contents($lmsDir . '/components/course_card/cours
 preg_match_all('/\.(lms-[a-z0-9_-]+)/', $source, $matches);
 foreach (array_unique($matches[1]) as $class) {
   $checks++;
-  if (!str_contains($lmsMarkup, $class)) {
+  if (!str_contains($themeMarkup, $class) && !str_contains($lmsMarkup, $class)) {
     $failures[] = "course-card.css selects .$class, which the LMS course card no longer uses.";
   }
 }
@@ -42,7 +50,7 @@ $checks++;
 $info = (string) file_get_contents($lmsDir . '/lms.info.yml');
 if (preg_match("/^version:\s*'?([^'\s]+)'?/m", $info, $version) !== 1 || $version[1] !== LMS_REVIEWED_VERSION) {
   $found = $version[1] ?? 'unknown';
-  $failures[] = "LMS is $found, but the skin was reviewed against " . LMS_REVIEWED_VERSION . ". Review course-card.css and the catalog reference capture (docs/operations/DEBT-REGISTER.md, DT-T11), then update LMS_REVIEWED_VERSION.";
+  $failures[] = "LMS is $found, but the ACULTA420 card was reviewed against " . LMS_REVIEWED_VERSION . ". Review the SDC replacement and catalog reference (docs/operations/DEBT-REGISTER.md, DT-T11), then update LMS_REVIEWED_VERSION.";
 }
 
 if ($failures !== []) {

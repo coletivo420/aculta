@@ -2,11 +2,11 @@ uuid: 7574d725-31a1-445b-94fd-9c37faa91f73
 langcode: pt-br
 status: true
 dependencies:
-  module:
-    - aculta_pdf_viewer_group
   config:
     - group.type.lms_course
     - user.role.authenticated
+  module:
+    - aculta_pdf_viewer_group
 id: lms_course-member
 label: Estudante
 weight: 0

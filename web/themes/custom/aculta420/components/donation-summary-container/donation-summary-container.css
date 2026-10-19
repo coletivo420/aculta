@@ -1,0 +1,22 @@
+.donation-summaries {
+  gap: 2em;
+  display: flex;
+}
+
+.summary--donation {
+  gap: 2em;
+  display: flex;
+}
+
+.summary--dedication {
+  gap: 2em;
+  display: flex;
+}
+
+.summary--dedication .field {
+  margin-block-end: unset;
+}
+
+.summary--dedication .field.field--name-field-designation-type {
+  margin-block-end: 1em;
+}

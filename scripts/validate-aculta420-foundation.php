@@ -34,9 +34,9 @@ $assert($coreExtension->get('theme.aculta420') !== NULL, 'ACULTA420 is enabled i
 $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider remains enabled.');
 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
-$assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
+$assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.66', 'Theme metadata marks the current version 0.6.0-dev.66.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.90', 'Theme metadata marks the current version 0.6.0-dev.90.');
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
   file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
@@ -82,11 +82,24 @@ $assert($themeBoundaryCounts['turnstile'] === 0, 'THEME TURNSTILE REFERENCES: 0'
 $assert($themeBoundaryCounts['oauth_config'] === 0, 'THEME OAUTH CONFIG REFERENCES: 0');
 
 $lock = json_decode(file_get_contents($root . '/composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
-$bootstrapPackage = array_values(array_filter(
+$bootstrapPackages = array_values(array_filter(
   $lock['packages'] ?? [],
-  static fn(array $package): bool => ($package['name'] ?? '') === 'drupal/bootstrap5',
-))[0] ?? NULL;
-$assert(($bootstrapPackage['version'] ?? NULL) === '4.0.8', 'Bootstrap5 remains pinned to the audited 4.0.8 release.');
+  static fn(array $package): bool => ($package['name'] ?? '') === 'drupal/bootstrap',
+));
+$bootstrapPackage = $bootstrapPackages[0] ?? NULL;
+$assert(count($bootstrapPackages) === 1 && ($bootstrapPackage['version'] ?? NULL) === '5.0.2', 'Drupal Bootstrap remains pinned to release 5.0.2.');
+$bootstrapFrameworkPackages = array_values(array_filter(
+  $lock['packages'] ?? [],
+  static fn(array $package): bool => ($package['name'] ?? '') === 'twbs/bootstrap',
+));
+$assert(count($bootstrapFrameworkPackages) === 1 && ($bootstrapFrameworkPackages[0]['version'] ?? NULL) === 'v5.3.8', 'Bootstrap framework remains pinned to 5.3.8.');
+$legacyBootstrapPackages = array_filter(
+  $lock['packages'] ?? [],
+  static fn(array $package): bool => in_array(($package['name'] ?? ''), ['drupal/bootstrap5', 'drupal/bootstrap_sass'], TRUE),
+);
+$assert($legacyBootstrapPackages === [], 'Composer has no legacy Bootstrap5 or SASS starter theme package.');
+$bootstrapInfo = Yaml::parseFile($root . '/web/themes/contrib/bootstrap/bootstrap.info.yml');
+$assert(($bootstrapInfo['version'] ?? NULL) === '5.0.2', 'Installed Drupal Bootstrap base theme matches the locked release.');
 
 $hookSourcePath = $themeRoot . '/src/Hook/ThemeHooks.php';
 $assert(is_file($hookSourcePath), 'OOP theme hook class exists.');
@@ -231,8 +244,17 @@ foreach (glob($root . '/config/sync/block.block.aculta_*.yml') ?: [] as $path) {
 $expectedTemplates = [
   'block--block-content--type--aculta-institution.html.twig',
   'block--system-branding-block.html.twig',
+  // Formulários Commerce preservam a apresentação ACULTA dos dois panes de apoio.
+  'commerce-checkout-pane--commerce-donation-pane.html.twig',
+  'commerce-checkout-pane--commerce-memorial-pane.html.twig',
   // Página do produto da loja (0.6.0-dev.7): composição só com componentes SDC do tema.
   'commerce-product--produto-loja.html.twig',
+  // Formulários nativos de doação e resumo do pedido.
+  'aculta-donation-back.html.twig',
+  'aculta-donation-donate.html.twig',
+  'aculta-donation-quick.html.twig',
+  'aculta-donation-summary-container.html.twig',
+  'aculta-donation-summary.html.twig',
   'aculta-portal-account-terms-modal.html.twig',
   'aculta-portal-photo-editor.html.twig',
   'aculta-portal-shell.html.twig',
@@ -261,11 +283,14 @@ $expectedTemplates = [
   'node--forum--full.html.twig',
   'page.html.twig',
   'portal-cart-status.html.twig',
+  'portal-cart-panel.html.twig',
   'portal-payment-notice.html.twig',
   'portal-search-trigger.html.twig',
   'views-view-unformatted--aculta-projects.html.twig',
   'views-view-unformatted--courses-catalog.html.twig',
   'views-view-vvjb.html.twig',
+  // Álbumes: os campos e a View permanecem Drupal; o tema compõe o SDC card overlay.
+  'views-view-fields--aculta-albuns.html.twig',
   'views/views-view-table.html.twig',
 ];
 $actualTemplates = [];
@@ -279,6 +304,12 @@ sort($expectedTemplates);
 sort($actualTemplates);
 $assert($actualTemplates === $expectedTemplates, 'Twig override set matches the reviewed Foundation allowlist.');
 $sdc = \Drupal::service('plugin.manager.sdc');
+$assert($sdc->hasDefinition('aculta420:card'), 'Drupal discovers aculta420:card.');
+$assert($sdc->hasDefinition('aculta420:figure'), 'Drupal discovers aculta420:figure.');
+$assert($sdc->hasDefinition('aculta420:quote'), 'Drupal discovers aculta420:quote.');
+$cardMetadata = Yaml::parseFile($themeRoot . '/components/patterns/card/card.component.yml');
+$assert(isset($cardMetadata['variants']['overlay']), 'The composed card exposes the overlay presentation.');
+$assert(is_file($themeRoot . '/templates/views-view-fields--aculta-albuns.html.twig'), 'Album View fields use the theme card presenter.');
 $assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers aculta420:editorial-card.');
 $componentMetadata = Yaml::parseFile($themeRoot . '/components/content/editorial-card/editorial-card.component.yml');
 $assert(($componentMetadata['status'] ?? NULL) === 'stable', 'Editorial card keeps its documented stable status.');

@@ -1,11 +1,16 @@
-{#
-  Project card inner markup. The presenter node--project--teaser.html.twig owns
-  the article, its attributes and the title/CTA links; no business rule here.
-#}
-{% if media %}<div class="aculta-project-image">{{ media }}</div>{% endif %}
-<div class="aculta-project-text">
+{# The presenter owns the article, node attributes and project links. #}
+{% set project_header %}
   {% if category %}<div class="aculta-category">{{ category }}</div>{% endif %}
-  <h3>{{ title }}</h3>
-  {% if summary %}<div class="aculta-prose">{{ summary }}</div>{% endif %}
-  {% if cta %}{{ cta }}{% endif %}
-</div>
+{% endset %}
+{% set project_content %}
+  <div class="aculta-project-text">
+    <h3>{{ title }}</h3>
+    {% if summary %}<div class="aculta-prose">{{ summary }}</div>{% endif %}
+  </div>
+{% endset %}
+{{ include('aculta420:card', {
+  image: media,
+  header: category ? project_header : null,
+  content: project_content,
+  footer: cta
+}, with_context = false) }}

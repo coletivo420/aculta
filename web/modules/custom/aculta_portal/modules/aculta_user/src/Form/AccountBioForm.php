@@ -12,6 +12,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Modal de edição da bio (campo field_bio do perfil participante).
@@ -114,8 +115,7 @@ final class AccountBioForm extends FormBase {
   private function profile(): ProfileInterface {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
-    return $storage->loadByUser($account, 'participante')
-      ?? $storage->create(['type' => 'participante', 'uid' => (int) $account->id()]);
+    return PerfilDoPapel::obter($storage, $account);
   }
 
 }

@@ -14,6 +14,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Template\Attribute;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /** Representação de conquistas, sem publicar evidências ou dados de origem. */
 final class AchievementPresentation {
@@ -72,7 +73,7 @@ final class AchievementPresentation {
     $cache->addCacheableDependency($owner);
     $public = !$profile->hasField('field_perfil_publico') || $profile->get('field_perfil_publico')->isEmpty()
       || (bool) $profile->get('field_perfil_publico')->value;
-    $identified = $profile->bundle() === 'participante' && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty();
+    $identified = PerfilDoPapel::ehTipoDePapel($profile) && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty();
     if (!$identified || !$this->badges->isEligible($uid) || (!$public && !PublicProfilePolicy::isObrigatorioPublico($owner?->getRoles() ?? []))) {
       $build = [];
       $cache->applyTo($build);

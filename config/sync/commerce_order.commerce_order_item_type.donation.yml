@@ -9,4 +9,5 @@ label: Doação
 traits: {  }
 locked: false
 purchasableEntityType: ''
-orderType: default
+orderType: doacao
+

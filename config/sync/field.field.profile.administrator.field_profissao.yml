@@ -1,0 +1,20 @@
+uuid: c772c874-5b80-49f8-85c0-4b8bde838237
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_profissao
+    - profile.type.administrator
+id: profile.administrator.field_profissao
+field_name: field_profissao
+entity_type: profile
+bundle: administrator
+label: Profissão
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

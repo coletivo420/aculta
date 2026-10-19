@@ -12,6 +12,7 @@ use Drupal\Core\DrupalKernel;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
+use Drupal\filter\Entity\FilterFormat;
 use Drupal\filter\FilterPluginCollection;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
@@ -52,6 +53,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     'media',
     'filter',
     'text',
+    'node',
   ];
 
   /**
@@ -60,11 +62,13 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->installConfig(['system', 'user', 'media', 'filter', 'image']);
+    $this->installConfig(['system', 'user', 'media', 'filter', 'image', 'node']);
     $this->installSchema('file', ['file_usage']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('node');
+    $this->installSchema('node', ['node_access']);
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_pdf_viewer'], TRUE));
 
     $media_type = MediaType::create([
@@ -145,6 +149,71 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   }
 
   /**
+   * Tests the shared formatter on an institutional document's File field.
+   */
+  public function testInstitutionalDocumentFileFieldUsesSharedPdfViewer(): void {
+    $node_type = \Drupal\node\Entity\NodeType::create([
+      'type' => 'document',
+      'name' => 'Institutional document',
+    ]);
+    $node_type->save();
+    $storage = FieldStorageConfig::create([
+      'field_name' => 'field_document',
+      'entity_type' => 'node',
+      'type' => 'file',
+      'cardinality' => 1,
+    ]);
+    $storage->save();
+    FieldConfig::create([
+      'field_storage' => $storage,
+      'bundle' => 'document',
+      'label' => 'PDF',
+      'settings' => ['file_extensions' => 'pdf'],
+    ])->save();
+    EntityViewDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => 'document',
+      'mode' => 'default',
+      'status' => TRUE,
+    ])->setComponent('field_document', [
+      'type' => 'aculta_pdf_file',
+      'label' => 'hidden',
+      'settings' => [],
+      'third_party_settings' => [],
+      'weight' => 0,
+      'region' => 'content',
+    ])->save();
+
+    $file_uri = $this->container->get('file_system')->saveData(
+      "%PDF-1.4\n% ACULTA institutional PDF Kernel fixture\n",
+      'public://aculta-pdf-institutional-fixture.pdf',
+      FileExists::Replace,
+    );
+    $file = File::create([
+      'uri' => $file_uri,
+      'filename' => 'aculta-pdf-institutional-fixture.pdf',
+      'filemime' => 'application/pdf',
+      'uid' => $this->container->get('current_user')->id(),
+    ]);
+    $file->setPermanent();
+    $file->save();
+
+    $node = \Drupal\node\Entity\Node::create([
+      'type' => 'document',
+      'title' => 'Institutional PDF fixture',
+      'status' => TRUE,
+      'field_document' => [['target_id' => $file->id(), 'description' => 'Open the PDF']],
+    ]);
+    $node->save();
+    $render = $this->container->get('entity_type.manager')->getViewBuilder('node')->view($node);
+    $context = new RenderContext();
+    $markup = $this->container->get('renderer')->executeInRenderContext($context, fn () => $this->container->get('renderer')->renderRoot($render));
+
+    $this->assertStringContainsString('data-aculta-pdf-viewer="true"', (string) $markup);
+    $this->assertStringContainsString('aculta-pdf-institutional-fixture.pdf', (string) $markup);
+  }
+
+  /**
    * Tests that CKEditor Media Embed invokes the shared PDF formatter.
    */
   public function testCkeditorMediaEmbedUsesSharedPdfFormatter(): void {
@@ -182,7 +251,19 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
       '<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>',
       $media->uuid(),
     );
-    $filter_collection = new FilterPluginCollection($this->container->get('plugin.manager.filter'), []);
+    $filter_collection = new FilterPluginCollection($this->container->get('plugin.manager.filter'), [
+      'media_embed' => [
+        'id' => 'media_embed',
+        'provider' => 'media',
+        'status' => TRUE,
+        'weight' => 20,
+        'settings' => [
+          'default_view_mode' => 'default',
+          'allowed_view_modes' => [],
+          'allowed_media_types' => ['document' => 'document'],
+        ],
+      ],
+    ]);
     $filter = $filter_collection->get('media_embed');
     $render_context = new RenderContext();
     $result = $this->container->get('renderer')->executeInRenderContext($render_context, function () use ($filter, $markup) {
@@ -202,6 +283,81 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $this->assertStringContainsString('data-aculta-pdf-control="fullscreen"', $processed);
     $this->assertContains('aculta_pdf_viewer/viewer', $result->getAttachments()['library'] ?? []);
     $this->assertContains('media:' . $media->id(), $result->getCacheTags());
+  }
+
+  /**
+   * Tests that a Wiki text format renders a PDF through the shared formatter.
+   */
+  public function testWikiFormatUsesSharedPdfFormatter(): void {
+    $file_uri = $this->container->get('file_system')->saveData(
+      "%PDF-1.4\n% ACULTA Wiki PDF Kernel fixture\n",
+      'public://aculta-pdf-wiki-fixture.pdf',
+      FileExists::Replace,
+    );
+    $user = $this->container->get('current_user')->getAccount();
+    $file = File::create([
+      'uri' => $file_uri,
+      'filename' => 'aculta-pdf-wiki-fixture.pdf',
+      'filemime' => 'application/pdf',
+      'uid' => $user->id(),
+    ]);
+    $file->setPermanent();
+    $file->save();
+
+    $media = Media::create([
+      'bundle' => 'document',
+      'name' => 'Wiki PDF Kernel fixture',
+      'status' => TRUE,
+      'field_media_document' => [['target_id' => $file->id()]],
+    ]);
+    $media->setOwner($user);
+    $media->save();
+
+    $format = FilterFormat::create([
+      'format' => 'wiki_pdf_test',
+      'name' => 'Wiki PDF test',
+      'filters' => [
+        'filter_html' => [
+          'id' => 'filter_html',
+          'provider' => 'filter',
+          'status' => TRUE,
+          'weight' => -10,
+          'settings' => [
+            'allowed_html' => '<drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt>',
+            'filter_html_help' => FALSE,
+            'filter_html_nofollow' => FALSE,
+          ],
+        ],
+        'media_embed' => [
+          'id' => 'media_embed',
+          'provider' => 'media',
+          'status' => TRUE,
+          'weight' => 40,
+          'settings' => [
+            'default_view_mode' => 'default',
+            'allowed_view_modes' => [],
+            'allowed_media_types' => ['document' => 'document'],
+          ],
+        ],
+      ],
+    ]);
+    $format->save();
+
+    $text = sprintf(
+      '<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>',
+      $media->uuid(),
+    );
+    $build = [
+      '#type' => 'processed_text',
+      '#text' => $text,
+      '#format' => 'wiki_pdf_test',
+      '#langcode' => 'pt-br',
+    ];
+    $processed = $this->container->get('renderer')->renderRoot($build);
+
+    self::assertStringNotContainsString('<drupal-media', (string) $processed);
+    self::assertStringContainsString('data-aculta-pdf-viewer="true"', (string) $processed);
+    self::assertStringContainsString('aculta-pdf-wiki-fixture.pdf', (string) $processed);
   }
 
   /**
@@ -236,7 +392,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
 
     $build = $this->container->get('aculta_pdf_viewer.builder')->build($media, 'field_media_course_document');
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
-    $this->assertSame('/system/files/pdf-viewer/aculta-private-fixture.pdf', $private_url);
+    $this->assertSame('/system/files?file=pdf-viewer/aculta-private-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);
     $this->assertArrayNotHasKey('thumbnail', $build);
 

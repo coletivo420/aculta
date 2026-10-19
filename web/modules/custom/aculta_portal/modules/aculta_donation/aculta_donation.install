@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Donations.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Moves settings from the removed contrib provider to ACULTA Donations.
+ */
+function aculta_donation_update_11001(): string {
+  $config_factory = \Drupal::configFactory();
+  $legacy = $config_factory->get('commerce_donation_flow.settings')->getRawData();
+  $editable = $config_factory->getEditable('aculta_donation.settings');
+  $current = $editable->getRawData();
+
+  // Default configuration metadata belongs to the old provider and must not
+  // be carried over to the renamed config object.
+  unset($legacy['_core'], $current['_core']);
+
+  if ($legacy !== []) {
+    // Preserve values already saved in the old settings object while keeping
+    // any defaults added to the new object in future versions.
+    $editable->setData(array_replace_recursive($current, $legacy));
+    $editable->save();
+  }
+
+  $config_factory->getEditable('commerce_donation_flow.settings')->delete();
+
+  return 'Migrated donation settings to aculta_donation.settings.';
+}

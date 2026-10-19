@@ -11,6 +11,7 @@ use Drupal\aculta_portal\Deployer\DeployerStatusReader;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\aculta_portal\Status\PortalHelperRegistry;
 use Drupal\aculta_portal\Status\PortalImplementationRegistry;
+use Drupal\aculta_portal_cep\Status\CepStatusReport;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -45,6 +46,8 @@ final class PortalRequirementsController extends ControllerBase {
     private readonly PortalHelperRegistry $helperRegistry,
     #[Autowire(service: 'aculta_portal.implementation_registry')]
     private readonly PortalImplementationRegistry $implementationRegistry,
+    #[Autowire(service: 'aculta_portal_cep.status_report')]
+    private readonly CepStatusReport $cepStatus,
   ) {}
 
   /**
@@ -74,14 +77,6 @@ final class PortalRequirementsController extends ControllerBase {
       'package' => 'drupal/address',
       'minimum' => '^2.0',
       'purpose' => 'Estrutura de endereço compartilhada com o Commerce.',
-    ],
-    [
-      'name' => 'CEP Autocomplete',
-      'modules' => ['cep_autocomplete'],
-      'package' => 'drupal/cep_autocomplete',
-      'minimum' => '^1.0',
-      'purpose' => 'Consulta ViaCEP sobre o campo Address.',
-      'warning' => 'O projeto não está coberto pela Drupal Security Advisory Policy.',
     ],
     [
       'name' => 'Login por usuário ou e-mail',
@@ -136,19 +131,12 @@ final class PortalRequirementsController extends ControllerBase {
       'purpose' => 'Store, checkout, pedidos e pagamentos; fonte de verdade financeira.',
     ],
     [
-      'name' => 'Commerce Donation Flow',
-      'modules' => ['commerce_donation_flow'],
-      'package' => 'drupal/commerce_donation_flow',
-      'minimum' => '^1.2',
-      'purpose' => 'Fluxo de apoio único e Donation Order Item.',
-    ],
-    [
-      'name' => 'Commerce Mercado Pago',
-      'modules' => ['commerce_mercado_pago'],
-      'package' => 'drupal/commerce_mercado_pago',
-      'minimum' => '^3.0@RC',
-      'purpose' => 'Gateway de pagamento. Até a versão 1.0 é habilitado com chaves de teste; chaves de produção dependem de decisão do responsável.',
-      'warning' => 'Versão RC sem cobertura da Drupal Security Advisory Policy. Enquanto a versão não for estável, o gateway fica restrito às chaves de teste.',
+      'name' => 'Mercado Pago (SDK e gateway)',
+      'modules' => ['aculta_pagamentos_mercadopago'],
+      'package' => 'mercadopago/dx-php',
+      'minimum' => '^3',
+      'purpose' => 'SDK oficial e gateway Checkout Pro próprio do Portal (submódulo aculta_pagamentos_mercadopago). Chaves de produção dependem de decisão do responsável.',
+      'warning' => 'Porte próprio do gateway, sem cobertura da Drupal Security Advisory Policy do upstream.',
     ],
     [
       'name' => 'Key',
@@ -206,6 +194,7 @@ final class PortalRequirementsController extends ControllerBase {
     foreach ([
       ['aculta_portal.requirements', $this->t('Status'), $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.')],
       ['aculta_portal.turnstile_settings', $this->t('Turnstile (anti-bot)'), $this->t('Ativar ou desativar o desafio Turnstile em cadastro, login, recuperação de senha e contato. Só ativa com a chave configurada no ambiente.')],
+      ['aculta_portal_cep.settings', $this->t('Consulta de CEP'), $this->t('Banco de dados padrão e ordem das fontes de consulta de CEP (base local, ViaCEP e BrasilAPI), com a ativação de cada uma.')],
       ['aculta_portal.support_settings', $this->t('Configurações do Apoio'), $this->t('Edite o texto institucional exibido na página pública Apoie.')],
       ['aculta_portal.social_links_settings', $this->t('Redes sociais'), $this->t('Configure os links oficiais de Instagram, YouTube e Facebook exibidos na página LINKS.')],
       ['aculta_portal.deployer_status', $this->t('ACULTA Deployer: status'), $this->t('Relatório de fronteiras, correções de deploy abertas e credenciais por ambiente. Somente leitura.')],
@@ -276,6 +265,7 @@ final class PortalRequirementsController extends ControllerBase {
         'text' => ['#plain_text' => $this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
       ],
       'indexing' => $this->buildIndexingSection(),
+      'cep' => $this->buildCepSection(),
       '#cache' => [
         'contexts' => ['user.permissions'],
         'tags' => ['config:core.extension', 'config:system.theme'],
@@ -399,6 +389,46 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
+  /**
+   * Consultas de CEP (aculta_portal_cep): último resultado das APIs (cron) e versão da base local, pela data de hoje.
+   * Mesma legenda e mesmas classes de status das demais linhas do relatório.
+   */
+  private function buildCepSection(): array {
+    $rows = [];
+    foreach ($this->cepStatus->rows() as $row) {
+      $rows[] = [
+        'item' => ['data' => ['#plain_text' => $row['item']]],
+        'value' => ['data' => ['#plain_text' => $row['value']]],
+        'status' => [
+          'data' => ['#plain_text' => $this->statusSymbol($row['status']) . ' ' . $this->statusText($row['status'])],
+          'data-portal-ui' => 'requirements-status status-' . $row['status'],
+        ],
+        'detail' => ['data' => ['#plain_text' => $row['detail']]],
+      ];
+    }
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'requirements-cep'],
+      'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Consulta de CEP')],
+      'table' => [
+        '#type' => 'table',
+        '#header' => [$this->t('Item'), $this->t('Valor'), $this->t('Status'), $this->t('Detalhe')],
+        '#rows' => $rows,
+        '#empty' => $this->t('Consulta de CEP não está habilitada.'),
+        '#attributes' => ['data-portal-ui' => 'requirements-cep-table'],
+      ],
+    ];
+  }
+
+  /** Texto do status, junto do símbolo (OK, Atenção ou Erro). */
+  private function statusText(string $status): string {
+    return match ($status) {
+      'ok' => (string) $this->t('OK'),
+      'attention' => (string) $this->t('Atenção'),
+      default => (string) $this->t('Erro'),
+    };
+  }
+
   /** Builds one module requirement row. */
   private function buildModuleRow(array $requirement): array {
     $missing = [];
@@ -447,13 +477,14 @@ final class PortalRequirementsController extends ControllerBase {
 
   /** Builds the enabled public theme row. */
   private function buildBaseThemeRow(): array {
-    $exists = $this->themes->themeExists('bootstrap5');
-    $version = $this->packageVersion('drupal/bootstrap5');
-    $minimum = $this->minimumConstraint('drupal/bootstrap5', '4.0.8');
+    // Tema base do ACULTA420 (base theme: bootstrap). O pacote é drupal/bootstrap (Bootstrap 5), não drupal/bootstrap5.
+    $exists = $this->themes->themeExists('bootstrap');
+    $version = $this->packageVersion('drupal/bootstrap');
+    $minimum = $this->minimumConstraint('drupal/bootstrap', '^5.0');
     $compatible = $version !== NULL && $this->versionSatisfies($version, $minimum);
     $status = $exists && $compatible ? 'ok' : 'error';
     return [
-      'name' => ['data' => ['#plain_text' => 'Tema base Bootstrap 5 (bootstrap5)']],
+      'name' => ['data' => ['#plain_text' => 'Tema base Bootstrap 5 (bootstrap)']],
       'purpose' => ['data' => ['#plain_text' => $this->t('Tema base declarado pelo tema público ACULTA420.')]],
       'minimum' => ['data' => ['#plain_text' => $minimum]],
       'installed' => ['data' => ['#plain_text' => $version ?: $this->t('Não encontrado')]],

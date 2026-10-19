@@ -1,17 +1,28 @@
 # Contratos de integração do LMS
 
-Revisado em 2026-10-16. Contratos de integração; a implementação depende das fases e critérios de aceite correspondentes.
+Revisado em 2026-10-19. Contratos de integração; a implementação depende das fases e critérios de aceite correspondentes.
+
+## Objetivos de integração de conteúdo (F15)
+
+- Integrar `aculta_lms` e `aculta_lms_h5p` ao pipeline compartilhado `aculta_image` para capas, imagens de atividades, imagens em entregas e anexos de discussão. Toda ingestão deve passar pela finalidade e política de upload apropriadas; arquivos H5P internos permanecem gerenciados e privados, sem duplicar catálogo, remoção ou storage.
+- Integrar materiais PDF do curso com a capacidade existente `aculta_pdf_viewer` (incluindo `aculta_pdf_viewer_group`), que atende ao objetivo de leitor PDF solicitado como `aculta_pdf_reader`. Manter Media `course_document`, relação Group e entrega privada do Core como fontes de acesso; não criar reader/storage paralelo.
+- Integrar `aculta_lms` e `aculta_lms_h5p` ao `aculta_forum` para discussão contextual de curso e atividade. Forum/Node/Comment continuam donos de tópicos, respostas e moderação; o contexto LMS/H5P só pode ser anexado depois de revalidar acesso e membership atuais no Group. Não ativar `gnode` ou relações globais sem teste de isolamento entre turmas.
+- Entregas LMS, documentos PDF e imagens de estudante devem respeitar a mesma política de acesso privado. Integrações precisam cobrir upload, renderização, download, revogação de matrícula, cacheabilidade e ciclo de exclusão nos testes antes de homologar no Runtime.
+
+`aculta_forum` ainda não fornece API executável para o contrato LMS, portanto essa parte é um objetivo de F15, não uma dependência ativa. Confirmar a API e os nomes de máquina no código instalado antes de implementar cada fluxo; não declarar uma integração completa apenas por registrar dependências.
 
 ## Matriz de ownership e dependências
 
 | Necessidade | API/dono | Evento/dado que pode cruzar | Proibições |
 | --- | --- | --- | --- |
 | Course/Group/membership/progresso | Drupal LMS + Group | IDs de entidade e resultado permitido após access; URLs via `DomainPurposeManager` | tabela paralela, cache público de status privado, inferir membership de Flag |
-| Arquivos de aula/trabalho | Media/File + File Access + LMS | Media autorizada; submissão via LMS File Upload apenas após compatibilidade | URL pública de arquivo privado, cópia em entidade Portal |
+| Arquivos e imagens de curso | Media/File + `aculta_image` + LMS | Capa de curso sob `UploadPolicy`; imagens H5P passam por `upload_ingester`; documento PDF de turma é Media `course_document` privado com relação Group e viewer `aculta_pdf_viewer` | URL pública para arquivo privado, caminho de imagem fora de `aculta_image`, upload de imagem paralelo no H5P |
+| PDF de curso | `aculta_pdf_viewer` + `aculta_pdf_viewer_group` + Group | Educador vincula Media `course_document` à turma; viewer usa Media/File e acesso Group atual, com bytes entregues pela rota privada do Core | Usar o bundle editorial `document` público para material de turma; duplicar viewer, storage de documento ou entrega privada |
+| Arquivos de trabalho | Media/File + File Access + LMS File Upload | Submissão via LMS; acesso revalidado por matrícula e política do File Upload. Integrar imagens submetidas ao `aculta_image` antes de aceitar imagem como tipo de entrega | URL pública de arquivo privado, armazenamento paralelo ou imagem fora da política compartilhada |
 | Avisos educacionais | `aculta_messenger` + Message/Message Notify | evento mínimo, usuário destinatário, entidade e referência de rota validável | LMS Messages, fila/storage redundante, envio baseado só em membership antiga |
 | Identidade, perfil e conexões | User/Profile + `aculta_user` | referência de User e API `FriendshipManagerInterface` quando aplicável | entidade de amizade ou perfil no LMS |
 | Conquistas | `aculta_user`/`aculta_game` | fato de conclusão/atributo LMS confirmado pela API autorizada | recalcular nota/progresso, nova entidade espelho de award |
-| Discussão de curso | `aculta_forum` + Node/Comment/Group access | referência a curso após política de visibilidade definida | ativar Group integration/`gnode` ou forum de turma sem decisão/teste de isolamento |
+| Discussão de curso/atividade | `aculta_forum` + Forum/Node/Comment/Group access | Integração futura: tópico pode apontar ao curso e, se autorizado, à atividade H5P; tópico, respostas e moderação continuam em Forum/Node/Comment e acesso é revalidado pela relação Group | Dependência executável enquanto `aculta_forum` ainda é só documentação; entidade paralela de discussão; ativar Group integration/`gnode` sem decisão/teste de isolamento |
 | Mídia editorial | `aculta_gallery`/Media Gallery | Media Gallery e referências File/Media com seus handlers | fazer Gallery dona do PDF ou duplicar arquivo |
 | Apresentação | Portal neutral render contract → ACULTA420 SDC | render arrays, props escalares, cacheability | tema consultar LMS/Group/Domain ou chamar serviços |
 
@@ -47,9 +58,9 @@ Antes da implementação, decidir: certificado como artefato imutável arquivado
 
 ## Contrato de apresentação ACULTA420
 
-`aculta_lms` fornece ao Portal dados, access results e cacheability; Portal prepara navegação, purpose e URLs; ACULTA420 mapeia o contrato neutro para SDCs Bootstrap/Drupal. Itens apresentados podem incluir curso, estado, progresso permitido, ação e render arrays da entidade; nunca expor `GroupInterface`, serviços ou host a Twig. Deve haver navegação completa e fallback sem JavaScript. Catálogo usa Views existente (`courses_catalog`) como fonte; room/dashboard podem compor Views + serviços LMS com acesso nativo.
+`aculta_lms` fornece ao Portal dados, access results e cacheability; Portal prepara navegação, purpose e URLs; ACULTA420 mapeia o contrato neutro para SDCs Bootstrap/Drupal. Itens apresentados podem incluir curso, estado, progresso permitido, ação e render arrays da entidade; nunca expor `GroupInterface`, serviços ou host a Twig. Deve haver navegação completa e fallback sem JavaScript. O catálogo usa Views existente (`courses_catalog`) e o SDC `aculta420:course_card` substitui `lms:course_card` mantendo o schema compatível; Views/LMS seguem donos de acesso, dados e cacheability. Room/dashboard podem compor Views + serviços LMS com acesso nativo.
 
-SDCs planejados: catálogo/listagem de cursos; cartão de curso; apresentação de curso; sala/índice de lições; lista/estado de atividades; painel de progresso do estudante; painel de correção do educador; status de entrega/feedback; badge/aviso de acesso. São contratos/componentes novos, não substitutos de formulários/rotas contrib. Reusar tokens e SDCs existentes. Não copiar CSS/templates Opigno.
+SDCs planejados após F5: apresentação de curso; sala/índice de lições; lista/estado de atividades; painel de progresso do estudante; painel de correção do educador; status de entrega/feedback; badge/aviso de acesso. São contratos/componentes novos, não substitutos de formulários/rotas contrib. Reusar tokens e SDCs existentes. Não copiar CSS/templates Opigno.
 
 ## Segurança, cache e acesso
 

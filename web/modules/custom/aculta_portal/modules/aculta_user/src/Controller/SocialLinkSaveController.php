@@ -11,6 +11,7 @@ use Drupal\aculta_user\Social\SocialNetworks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Gravação do link de uma rede social pelo modal (JSON). O JS do formulário atualiza a página depois.
@@ -43,8 +44,7 @@ final class SocialLinkSaveController extends ControllerBase {
     }
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
-    $profile = $storage->loadByUser($account, 'participante')
-      ?? $storage->create(['type' => 'participante', 'uid' => (int) $account->id()]);
+    $profile = PerfilDoPapel::obter($storage, $account);
     $this->networks->setLink($profile, $rede, $uri);
     $profile->save();
     return new JsonResponse(['ok' => TRUE, 'rede' => $rede, 'uri' => $uri]);

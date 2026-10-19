@@ -33,7 +33,7 @@ equivalent root supported by the final hosting layout):
 | MAIN | `aculta.org` | Institutional site, central administration, shared technical integrations |
 | ACCOUNT | `conta.aculta.org` | Login, recovery, confirmation, account data and private account area |
 | SUPPORT | `apoio.aculta.org` | Public support portal and supportable projects |
-| Observatório da Maconha Coletivo 420 (Purpose: magazine) | `coletivo420.aculta.org` | Editorial publications, articles, reports, interviews and opinion |
+| Revista 420 (Purpose: magazine) | `revista420.aculta.org` | Editorial publications, articles, reports, interviews and opinion |
 | WIKI420 | `wiki420.aculta.org` | Wiki420 collaborative knowledge |
 | SHOP | `loja.aculta.org` | Future shop experience using the shared Commerce installation |
 | COURSES | `cursos.aculta.org` | Drupal LMS learning experience |
@@ -110,8 +110,9 @@ SUPPORT portal at `apoio.aculta.org/` then communicates that financial support
 is unavailable and does not link into payment checkout. No real or sandbox payment credentials
 belong in Git, configuration sync, logs, or reports.
 
-The installed `commerce_mercado_pago` release is 3.0.0-rc3, a release
-candidate outside the Drupal Security Advisory Policy. Its local code uses the
+The Mercado Pago gateway is the ACULTA port `aculta_pagamentos_mercadopago`
+(0.1.0-dev.2), from `commerce_mercado_pago` 3.0.0-rc3, a release candidate outside
+the Drupal Security Advisory Policy. Its local code uses the
 Checkout Pro Preferences API. Preferences is legacy/classic but still
 supported; Mercado Pago recommends Orders API for new integrations. This
 release keeps Preferences and records a future migration debt. Do not edit the

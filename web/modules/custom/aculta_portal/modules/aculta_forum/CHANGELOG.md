@@ -1,3 +1,14 @@
+## F4 — bloco CTools Views de tópicos recentes — 2026-10-18
+
+- Configuração versionada da View `aculta_forum_topics` e bloco na página
+  inicial do purpose `forum`; utiliza teaser do Node, filtros fixos de tipo,
+  publicação e domínio atual, e query access do Views (`node_access`).
+- CTools permite ajustar quantidade de itens e pager no bloco; sem exposição de
+  filtros, ordenação ou AJAX. Listagem nativa do Forum continua responsável por
+  categorias e listagens de cada categoria.
+- `RUNTIME STATUS: DEFERRED`: Drush aponta `aculta_runtime`, mas URI `http://default`
+  não confirma um site de teste permitido para esta configuração.
+
 ## F4 — tópico: ações sociais, respostas e limpeza de termos — 2026-10-17
 
 - Termo "General discussion" (instalador do módulo forum, sem tópicos, sem referências) removido no teste. `/forum/39` responde 404.

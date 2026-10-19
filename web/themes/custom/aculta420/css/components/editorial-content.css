@@ -1,0 +1,56 @@
+.aculta-quote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-inline-start: 0.25rem solid var(--aculta-border-accent);
+  border-radius: var(--bs-border-radius);
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-muted);
+}
+
+.aculta-quote__text,
+.aculta-revista-publication__body blockquote {
+  margin: 0;
+  color: inherit;
+  font-family: var(--aculta-font-display);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  line-height: 1.45;
+}
+
+.aculta-quote__text > :last-child,
+.aculta-revista-publication__body blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.aculta-quote__citation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.75rem;
+  color: var(--aculta-text-secondary);
+  font-size: 0.875rem;
+}
+
+.aculta-quote__source {
+  font-style: normal;
+}
+
+.aculta-revista-publication__body blockquote {
+  margin-block: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-inline-start: 0.25rem solid var(--aculta-border-accent);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-muted);
+}
+
+.aculta-revista-publication__body figure {
+  margin-block: 1.5rem;
+}
+
+.aculta-revista-publication__body figure figcaption {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  color: var(--aculta-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

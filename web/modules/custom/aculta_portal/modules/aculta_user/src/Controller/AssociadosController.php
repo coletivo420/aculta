@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\aculta_user\Associado\AssociadoMarker;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Relatório de associados (plano aculta_user, seção G2).
@@ -60,7 +61,7 @@ final class AssociadosController extends ControllerBase {
   private function rows(): array {
     $rows = [];
     foreach ($this->entityTypeManagerService->getStorage('user')->loadMultiple($this->marker->uids()) as $account) {
-      $profile = $this->entityTypeManagerService->getStorage('profile')->loadByUser($account, 'participante');
+      $profile = PerfilDoPapel::principal($this->entityTypeManagerService->getStorage('profile'), $account);
       $get = static fn (string $field): string => $profile && $profile->hasField($field) ? (string) $profile->get($field)->value : '';
       $rows[] = [
         'apelido' => $get('field_nickname'),

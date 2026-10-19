@@ -13,7 +13,7 @@ MAIN / aculta.org
 
 ACCOUNT / conta.aculta.org
 SUPPORT / apoio.aculta.org
-MAGAZINE / coletivo420.aculta.org
+MAGAZINE / revista420.aculta.org
 WIKI / wiki420.aculta.org
 SHOP / loja.aculta.org
 COURSES / cursos.aculta.org

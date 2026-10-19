@@ -60,4 +60,3 @@ content:
     third_party_settings: { }
 hidden:
   name: true
-  status: true

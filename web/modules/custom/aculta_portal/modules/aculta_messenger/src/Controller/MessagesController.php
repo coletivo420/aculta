@@ -136,10 +136,6 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The "Opções" form of a conversation posts here: the drawer gets the conversation again, with the new state.
-   * The form is processed while the conversation is built, so the answer already shows the change.
-   */
-  /**
    * The "Opções" menu of one conversation, for a row of the list: the same form as the conversation's, loaded when the
    * member opens the row's "Opções" (see lazyOptionsDisclosure).
    */
@@ -148,7 +144,11 @@ final class MessagesController extends ControllerBase {
     if (!$access->isAllowed() || !$private_message_thread->isMember($this->account->id())) {
       throw new NotFoundHttpException();
     }
-    $build = $this->relationshipForm($private_message_thread);
+    return $this->menuFragment($this->relationshipForm($private_message_thread));
+  }
+
+  /** A menu rendered alone, for the drawer to load: never cached, never sniffed as another type. */
+  private function menuFragment(array $build): Response {
     $content = $this->renderer->renderInIsolation($build);
     return new Response((string) $content, Response::HTTP_OK, [
       'Content-Type' => 'text/html; charset=UTF-8',
@@ -157,6 +157,10 @@ final class MessagesController extends ControllerBase {
     ]);
   }
 
+  /**
+   * The "Opções" form of a conversation posts here: the drawer gets the conversation again, with the new state.
+   * The form is processed while the conversation is built, so the answer already shows the change.
+   */
   public function drawerRelationship(PrivateMessageThreadInterface $private_message_thread): Response {
     $access = $private_message_thread->access('view', $this->account, TRUE);
     if (!$access->isAllowed() || !$private_message_thread->isMember($this->account->id())) {
@@ -227,14 +231,8 @@ final class MessagesController extends ControllerBase {
    * action, and the step of the two-step "Limpar histórico".
    */
   private function runRelationshipAction(PrivateMessageThreadInterface $thread): array {
-    $state = $this->threadFormState($thread);
-    // getForm() takes the method from the request; this state is built by hand, so it is set here.
-    $state->setRequestMethod('POST');
     $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
-    // No cached form: a form that comes back from the form cache is unserialized without its constructor services,
-    // so its submit would read uninitialized properties. The form is built here, with its services, from the input.
-    unset($input['form_build_id']);
-    $state->setUserInput($input);
+    $state = $this->threadFormState($thread, ($input['mode'] ?? '') === 'notice');
     // A notice posts its own buttons (for example "Clique aqui para desbloquear"): process them as the notice does.
     if (($input['mode'] ?? '') === 'notice') {
       $state->set('mode', 'notice');
@@ -242,15 +240,127 @@ final class MessagesController extends ControllerBase {
     if (($input['clear_step'] ?? '') === 'confirm') {
       $state->set('clear_step', 'confirm');
     }
-    $this->forms->buildForm(ConversationRelationshipForm::class, $state);
+    $this->submitRelationshipForm($state, $input);
     // The confirmation step is shown only right after "Limpar histórico" was pressed. Any other action ends it.
     $trigger = (string) ($state->getTriggeringElement()['#name'] ?? '');
     return array_filter([
-      'message' => $state->get('message') === NULL ? NULL : (string) $state->get('message'),
+      'message' => $this->resultMessage($state),
       'clear_step' => $trigger === 'clear' ? $state->get('clear_step') : NULL,
       // After a confirmed clear the answer is the list: the conversation is not rendered in the same response.
       'cleared' => $trigger === 'clear_confirm' ? TRUE : NULL,
     ], fn($value) => $value !== NULL);
+  }
+
+  /**
+   * The box of one member of a conversation: friendship and block with that member. Loaded the first time the box is
+   * opened (memberBoxes), so each action names the member it acts on.
+   */
+  public function memberOptions(PrivateMessageThreadInterface $private_message_thread, UserInterface $user): Response {
+    $access = $private_message_thread->access('view', $this->account, TRUE);
+    $this->assertOtherMember($private_message_thread, $user, $access);
+    $state = $this->memberFormState($private_message_thread, $user);
+    // The same rule as relationshipForm: a menu shown in a response is built, not submitted.
+    $state->setUserInput([]);
+    $state->setProcessInput(FALSE);
+    return $this->menuFragment($this->forms->buildForm(ConversationRelationshipForm::class, $state));
+  }
+
+  /** The action of one member's box, posted from the drawer: the drawer gets the conversation again, with the new state. */
+  public function drawerMemberRelationship(PrivateMessageThreadInterface $private_message_thread, UserInterface $user): Response {
+    $access = $private_message_thread->access('view', $this->account, TRUE);
+    $this->assertOtherMember($private_message_thread, $user, $access);
+    if (!$this->isMemberInitiatedRequest()) {
+      return new Response('', Response::HTTP_NO_CONTENT, ['Cache-Control' => 'private, no-store']);
+    }
+    $result = $this->runMemberAction($private_message_thread, $user);
+    if (!$private_message_thread->access('view', $this->account, TRUE)->isAllowed()) {
+      return $this->listWithMessage($result['message'] ?? NULL);
+    }
+    // The result belongs to the box that ran the action: that box is rebuilt open, with its message.
+    return $this->conversationResponse($private_message_thread, $access, [], (int) $user->id(), $this->memberPanel($private_message_thread, $user, $result));
+  }
+
+  /** The menu of one member's box, built with the result of the action just run. The box stays open to show it. */
+  private function memberPanel(PrivateMessageThreadInterface $thread, UserInterface $user, array $result): array {
+    $state = $this->memberFormState($thread, $user);
+    // Built, not submitted: the same rule as the conversation's menu in a response.
+    $state->setUserInput([]);
+    $state->setProcessInput(FALSE);
+    if (isset($result['message'])) {
+      $state->set('message', $result['message']);
+    }
+    return ['relationship' => $this->forms->buildForm(ConversationRelationshipForm::class, $state)];
+  }
+
+  /** The member must be another member of the thread: a box never acts on the current member or on a stranger. */
+  private function assertOtherMember(PrivateMessageThreadInterface $thread, UserInterface $user, $access): void {
+    if (!$access->isAllowed()
+      || !$thread->isMember($this->account->id())
+      || (int) $user->id() === (int) $this->account->id()
+      || !$thread->isMember($user->id())) {
+      throw new NotFoundHttpException();
+    }
+  }
+
+  /** The form state of one member's box: the target is the member, and the box posts to its own route. */
+  private function memberFormState(PrivateMessageThreadInterface $thread, UserInterface $user): FormState {
+    $state = new FormState();
+    $state->set('target', (int) $user->id());
+    $state->set('member_box', TRUE);
+    $state->set('post_url', Url::fromRoute('aculta_messenger.member_relationship', [
+      'private_message_thread' => $thread->id(),
+      'user' => $user->id(),
+    ])->toString());
+    return $state;
+  }
+
+  /** Runs the posted action of one member's box with the request's input. Returns the message the box shows. */
+  private function runMemberAction(PrivateMessageThreadInterface $thread, UserInterface $user): array {
+    $state = $this->memberFormState($thread, $user);
+    $this->submitRelationshipForm($state, $this->requestStack->getCurrentRequest()?->request->all() ?? []);
+    return array_filter(['message' => $this->resultMessage($state)], fn($value) => $value !== NULL);
+  }
+
+  /**
+   * Runs the posted "Opções" form with the request's input, as the drawer's POST does. The form is built here, with
+   * its services, from the input: a cached copy loses its constructor services, and its submit would read uninitialized
+   * properties. The state's target (a member's box) or thread (the conversation's menu) decides what the submit acts on.
+   */
+  private function submitRelationshipForm(FormState $state, array $input): void {
+    $state->setRequestMethod('POST');
+    unset($input['form_build_id']);
+    $state->setUserInput($input);
+    $this->forms->buildForm(ConversationRelationshipForm::class, $state);
+  }
+
+  /** The message the submit left for the member, or NULL when the action set none. */
+  private function resultMessage(FormState $state): ?string {
+    return $state->get('message') === NULL ? NULL : (string) $state->get('message');
+  }
+
+  /**
+   * One box per other member of the conversation, above the messages. A group has a box for each member, so the
+   * friendship and block actions always name the member they act on.
+   */
+  private function memberBoxes(PrivateMessageThreadInterface $thread, ?int $actedUid = NULL, array $actedPanel = []): array {
+    $boxes = ['#type' => 'container', '#weight' => -5];
+    foreach ($thread->getMembers() as $member) {
+      if ((int) $member->id() === (int) $this->account->id()) {
+        continue;
+      }
+      // The member whose action was just run comes back open, with the result in its own box.
+      if ((int) $member->id() === $actedUid) {
+        $boxes[(int) $member->id()] = OptionsDisclosure::build((string) $member->getDisplayName(), $actedPanel, TRUE);
+        continue;
+      }
+      $box = OptionsDisclosure::build((string) $member->getDisplayName(), []);
+      $box['#attributes']['data-aculta-options-url'] = Url::fromRoute('aculta_messenger.member_options', [
+        'private_message_thread' => $thread->id(),
+        'user' => $member->id(),
+      ])->toString();
+      $boxes[(int) $member->id()] = $box;
+    }
+    return $boxes;
   }
 
   /** The conversation list, with an optional message from the action just run. */
@@ -281,7 +391,7 @@ final class MessagesController extends ControllerBase {
   }
 
   /** The conversation container: toolbar (back on the left, "Opções" on the right), then the thread. */
-  private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = []): Response {
+  private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = [], ?int $actedUid = NULL, array $actedPanel = []): Response {
     $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
     $build = [
       '#type' => 'container',
@@ -297,6 +407,7 @@ final class MessagesController extends ControllerBase {
         'back' => $this->backToConversationsLink(),
         'options' => $this->optionsDisclosure($thread, $panel),
       ],
+      'members' => $this->memberBoxes($thread, $actedUid, $actedPanel),
       'thread' => $threadBuild,
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];
@@ -328,11 +439,15 @@ final class MessagesController extends ControllerBase {
     return $this->forms->buildForm(ConversationRelationshipForm::class, $state);
   }
 
-  /** The form state of a thread's menu: the other member for one-to-one, the thread for a group. */
-  private function threadFormState(PrivateMessageThreadInterface $thread): FormState {
-    $others = array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id()));
+  /**
+   * The form state of a thread's menu. Friendship and block are per member (memberFormState), so the menu of the
+   * conversation carries only "Limpar histórico" (group). The notice of a one-to-one conversation keeps its other member.
+   */
+  private function threadFormState(PrivateMessageThreadInterface $thread, bool $notice = FALSE): FormState {
     $state = new FormState();
-    if (count($others) === 1) {
+    // Only the notice needs the other member: the menu of a conversation is the group form.
+    $others = $notice ? array_values(array_filter($thread->getMembers(), fn($member) => (int) $member->id() !== (int) $this->account->id())) : [];
+    if ($notice && count($others) === 1) {
       $state->set('target', (int) $others[0]->id());
     }
     else {

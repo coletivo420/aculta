@@ -5,6 +5,7 @@ dependencies:
   config:
     - taxonomy.vocabulary.categoria_loja
   module:
+    - aculta_donation
     - commerce_order
     - commerce_product
     - system
@@ -18,7 +19,11 @@ permissions:
   - 'access commerce_product overview'
   - 'access commerce_product_attribute overview'
   - 'access site reports'
+  - 'administer aculta donation campaigns'
+  - 'administer aculta support settings'
+  - 'administrar doacoes'
   - 'create commerce_product_attribute'
+  - 'create gerente_loja profile'
   - 'create produto_loja commerce_product'
   - 'create terms in categoria_loja'
   - 'delete any produto_loja commerce_product'
@@ -26,14 +31,17 @@ permissions:
   - 'delete own produto_loja commerce_product'
   - 'delete terms in categoria_loja'
   - 'edit terms in categoria_loja'
+  - 'gerenciar pagamentos de vendas'
   - 'manage camiseta_tamanho commerce_product_variation'
   - 'manage default commerce_product_variation'
   - 'update any produto_loja commerce_product'
   - 'update commerce_product_attribute'
+  - 'update own gerente_loja profile'
   - 'update own produto_loja commerce_product'
   - 'view commerce_order'
   - 'view commerce_product'
   - 'view commerce_product_attribute'
+  - 'view own gerente_loja profile'
   - 'view own unpublished commerce_product'
   - 'view produto_loja commerce_product'
 

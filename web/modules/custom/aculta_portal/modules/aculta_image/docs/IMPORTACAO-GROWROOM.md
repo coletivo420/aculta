@@ -1,11 +1,10 @@
 # Importação do Growroom: alterações, caminhos e estado
 
-> **Atualização de passagem (2026-10-17):** os números de progresso abaixo são da última medição registrada, às 14:05.
-> Não foram remedidos na passagem: a pasta é `root` com acesso por `sudo`. Na passagem não havia processo de download ativo
-> (`ps`). Antes de qualquer decisão, confirmar o estado com `sudo` e somente leitura. Ver também [HANDOFF.md](HANDOFF.md), seção 5.
-
-Revisão: 2026-10-17. Escopo: o que já foi preparado no sistema, onde estão os dados recuperados, o estado observado
+Revisão: 2026-10-19. Escopo: o que já foi preparado no sistema, onde estão os dados recuperados, o estado verificado
 e o que falta. Nenhum conteúdo foi importado para o Drupal.
+
+Os números de download abaixo foram medidos em 2026-10-19, após a conclusão do reprocessamento. Para conferir de novo,
+usar somente leitura com `sudo`.
 
 ## Pré-requisito atendido: `aculta_image` pronto
 
@@ -30,90 +29,91 @@ e o que falta. Nenhum conteúdo foi importado para o Drupal.
 | Política de PDF e Ghostscript no ImageMagick | `/etc/ImageMagick-7/policy.xml` (backup em `policy.xml.aculta-bak`) | — (sistema) |
 | Limites de upload do PHP | `/etc/php/8.4/{cli,fpm}/conf.d/90-aculta.ini` | — (sistema) |
 
+## Scripts de download e mapeamento (versionados)
+
+Os scripts estão em `scripts/growroom/` e são a descrição de como os manifestos foram gerados:
+
+- `wayback_fetch.py {assets|html}`: baixa do Wayback a captura exata de cada URL do CDX. Nunca sobrescreve arquivo;
+  captura diferente da mesma URL ganha sufixo `__c<timestamp>`. Um registro é válido quando o arquivo existe e o
+  SHA-256 confere. Registros de falha são tentados de novo na rodada seguinte. Perfis entram na fila só se estiverem
+  em `perfis-permitidos.json`.
+- `build_mapping.py [--aplicar]`: mapeia tópico → fórum e autor → perfil. Sem `--aplicar`, só imprime os totais.
+  Com `--aplicar`, grava `perfis-permitidos.json` e `mapeamento/`.
+
+Uso (como root, pois o armazenamento é `root`): `sudo -n python3 -B scripts/growroom/wayback_fetch.py html`.
+Os caminhos de origem e de destino estão fixos no topo de cada script.
+
 ## Caminhos dos dados recuperados (armazenamento privado do Homelab)
 
 Estes caminhos ficam fora do Git (`estados/` e armazenamento privado). Pasta de origem: `/home/aculta/private/aculta/forum/`
 (dono `root`, grupo `aculta`, modo `0750`).
 
-| Caminho | Conteúdo | Estado observado (2026-10-17, 14:05) |
+| Caminho | Conteúdo | Estado (2026-10-19) |
 | --- | --- | --- |
-| `cdx/board-prefix-cdx-to-20250719.json` | Inventário CDX do prefixo `growroom.net/board/`, corte em 2025-07-19 (271.283 capturas, 177.673 URLs) | completo; 44,5 MB |
-| `restauro/assets/` | Recursos não HTML (imagens, arquivos) baixados do Wayback, por host e caminho | em andamento |
-| `restauro/html/` | Páginas HTML (tópicos, perfis, galerias) baixadas do Wayback | em andamento, parcial |
-| `restauro/manifest-assets.jsonl` | Um registro por URL de recurso: captura, HTTP, tipo, SHA-256 e caminho local | 9.238 registros |
-| `restauro/manifest-html.jsonl` | Um registro por URL de página HTML | 5.800 registros |
-| `restauro/progress-assets.log` | Progresso dos recursos | 4.851 de 5.023 na última linha |
-| `restauro/progress-html.log` | Progresso das páginas | 5.800 de 72.124 na última linha |
-| `f1-20261015/` | Evidências da F1 (domínio e inventário) | — |
+| `cdx/board-prefix-cdx-to-20250719.json` | Inventário CDX do prefixo `growroom.net/board/`, corte em 2025-07-19 | completo; 44,5 MB |
+| `restauro/assets/` | Recursos não HTML baixados do Wayback, por host e caminho | concluído |
+| `restauro/html/` | Páginas HTML (tópicos, galerias e perfis permitidos) baixadas do Wayback | concluído |
+| `restauro/manifest-html.jsonl` | Registros por URL de página (acréscimo; o último registro de cada URL vale) | 58.411 registros; 57.954 URLs exatas |
+| `restauro/manifest-assets.jsonl` | Registros por URL de recurso (acréscimo) | 9.485 registros; 9.385 URLs exatas |
+| `restauro/perfis-permitidos.json` | URLs de perfil permitidas pela regra de usuários | 2.173 URLs |
+| `restauro/mapeamento/` | `topico-forum.json` e `autor-topicos.json`, gerados por `build_mapping.py --aplicar` | gerado |
+| `restauro/progress-*.log` | Progresso das rodadas | — |
 
-Estado do armazenamento: `restauro/assets` e `restauro/html` estão com donos mistos (`piradopirata` e `root`), e os
-manifestos são de `root`. Há um job de download em execução (`wayback_fetch.py assets`, depois `html`), iniciado como
-root numa sessão anterior. Ele não foi interrompido nesta revisão.
+## Verificação do download (2026-10-19)
 
-Os scripts de download (`wayback_fetch.py`, `wayback_verify.py`) estão no diretório temporário da sessão de
-desenvolvimento, não no repositório. Antes da importação, eles precisam ser versionados ou documentados, porque
-são a única descrição de como os manifestos foram gerados.
+- **Integridade:** em todos os arquivos referenciados pelo último registro de cada URL, o SHA-256 confere e o arquivo
+  existe. Não há arquivo em disco fora do manifesto.
+- **Divergências antigas:** 4 registros de HTML e 14 de assets apontavam para um arquivo que foi depois ocupado por outra
+  captura da mesma URL (variações com e sem `:80`). Esses registros foram superados por recapturas posteriores; não
+  são o estado atual. O manifesto não foi editado.
+- **Lacunas de HTML:** 8 URLs sem arquivo, de 57.954 (denominador: URLs exatas). 6 com falha de rede (`None`) e 2 com 404.
+- **Lacunas de assets:** 17 URLs, de 9.385 (denominador: URLs exatas). Todas respondem HTTP 200 sem corpo; o Wayback
+  não entregou o conteúdo. Ficam registradas como lacuna, sem arquivo.
+- **Perfis permitidos:** 2.171 de 2.173 URLs baixadas. 2 sem arquivo (ver lacunas de HTML).
 
-## Regras de importação (contrato)
+## Mapeamento tópico → fórum → usuário (2026-10-19)
 
-- Imagens: somente por `aculta_image.ingester`. Origem recuperada (URL e data de captura) é o `$urlOrigem` e o
-  `$capturadoEm`.
-- Páginas e registros de conteúdo: pelo Migrate API, com mapas origem → destino, repetível e sem duplicar.
-- Usuários históricos: sem mesclar contas existentes por apelido, sem sobrescrever conteúdo atual, sem conceder
-  permissões do Game, sem notificações, sem perfil comum com avatar aleatório, sem reabertura de login
-  (`docs/RECONSTRUCAO.md` do `aculta_forum`).
-- Lacunas: itens não recuperados ficam com motivo registrado; nenhuma porcentagem é divulgada sem denominador.
-
-## Estado do download do Wayback (2026-10-16, 15:42)
-
-- **Assets:** concluído. 9.468 registros no manifesto; 9.314 arquivos em disco (`restauro/assets`).
-- **HTML:** em andamento, processo ativo (Python em segundo plano, como root). 6.512 registros no manifesto; 6.480 arquivos em disco. Nesta rodada: 182 de 49.517 pendentes, cerca de 15 por minuto (2 conexões).
-- **Fila:** tópicos e galerias; perfis fora da fila até o mapeamento (`perfis-permitidos.json`). Fila de HTML: 54.762 itens selecionados.
-- **Falhas:** cerca de 1% das últimas 300 requisições viram `None` (sem resposta após as tentativas).
-- **Caminho de conflito:** páginas que colidem com um arquivo do mesmo nome vão para `html/__conflitos/<hash da URL>`.
-
-Para acompanhar: `sudo sh -c 'tail -n 2 /home/aculta/private/aculta/forum/restauro/progress-html.log'`.
+- **Templates:** o acervo mistura o IPB (template antigo) e o IPS 4 (template atual). O mapeamento lê os dois.
+- **Fórum do tópico:** IPB: `<link rel='up' href='.../forum/<id>-...'>`. IPS 4: último `forum/<id>-` dentro das
+  `nav.ipsBreadcrumb`. Antes da correção, o IPS 4 ficava sem fórum (7.550 tópicos).
+- **Autores:** IPB: `<span class="author vcard">`, sem link de perfil (casamento pelo nome). IPS 4: bloco
+  `cAuthorPane_author`, com link de perfil que dá o ID exato.
+- **Totais:** 24.696 tópicos baixados; 24.675 com fórum; 21 sem fórum (páginas sem navegação, de índice). Em fóruns
+  importados: 18.377; excluídos: 6.298.
+- **Conferência:** para uma amostra de 3.000 tópicos, o nome do fórum no título da página é consistente com o ID
+  atribuído (ex.: 1 = Informações Básicas, 2 = Avisos, 24 = Notícias, 76 = Cannabis Medicinal).
+- **Autores:** 6.096 nos tópicos importados; 737 com ID exato (IPS 4); 1.850 casados com perfil; 6 ambíguos; 4.240 sem
+  perfil no índice CDX.
 
 ## Regra de usuários (decisão do responsável, 2026-10-16)
 
 - Serão importados **somente** os usuários que comentaram nos fóruns e tópicos que estão na importação.
 - Não serão importados usuários que aparecem apenas em fóruns excluídos (Avisos, Multimídia Cannábica, Cannabis Medicinal e Notícias) ou em tópicos desses fóruns.
 - Usuário que comentou em um tópico importado e em um excluído entra, pelo primeiro caso.
-- Perfis (`profile/` e `v_profile`) baixados de usuários fora desse conjunto não entram na importação. O download pode ser reduzido para só esses perfis, se o responsável quiser; ver a seção de estado.
-- Para aplicar a regra é preciso mapear cada tópico ao fórum de origem a partir das páginas de listagem (`showforum`) e listar os autores dos comentários dos tópicos importados. Esse mapeamento ainda não existe.
-
-## Mapeamento tópico → fórum → usuário (2026-10-16)
-
-- **Fórum do tópico:** `<link rel='up' href='.../forum/<id>-...'>` da própria página (o identificador é o número antes do hífen).
-- **Autores:** texto de `<span class="author vcard">` em cada post. O nome aparece sem link de perfil.
-- **Perfil:** casamento pelo nome (slug) com as URLs `/board/profile/<id>-<slug>/` do índice CDX. Perfis com IDs diferentes para o mesmo nome ficam em relatório. Variações `http`/`https`/`www` do mesmo ID entram juntas.
-- **Estado parcial:** 606 tópicos baixados (605 com fórum identificado). Dos 1.837 autores de tópicos importados até agora, 441 casam com perfil, 3 são ambíguos e 1.393 não têm perfil no índice CDX. O arquivo `perfis-permitidos.json` ainda não foi gravado; enquanto isso, nenhum perfil entra na fila.
-- **Fila de download:** tópicos primeiro, galerias depois, perfis só quando permitidos. Fila de HTML atual: 54.762 itens selecionados (sem perfis).
-- **Pesquisa no archive.org (nome de usuário "usuário unegro" / "usuarioNEGRO"):** o índice CDX de `growroom.net/board/*` não tem perfil nem URL com esses nomes; as 12 ocorrências de "negro" são outras (ex.: `diamante-negro`, `japonegro`). A busca geral na web também não encontrou nada.
+- Perfis fora desse conjunto não entram na importação e não foram baixados.
+- **Pendente de decisão:** 6 nomes ambíguos (IDs de perfil diferentes para o mesmo nome, por exemplo `Pot Head`, `Pcgrow`,
+  `Prof. Pardal`, `Delta-9-thc`). Nenhum deles entrou em `perfis-permitidos.json`. O responsável decide se entram
+  e como (qual ID).
 
 ## Fóruns fora da importação (decisão do responsável, 2026-10-16)
 
-Não serão importados os fóruns abaixo (identificadores do Growroom, lidos dos links de navegação das páginas baixadas):
-
-| Fórum (nome no Growroom) | Identificador (`showforum`) | Observação |
+| Fórum (nome no Growroom) | Identificador (`forum/<id>`) | Observação |
 | --- | --- | --- |
 | Avisos | 2 e 52 | dois fóruns com o mesmo nome |
 | Multimidia Cannabica | 48 | |
 | Cannabis Medicinal (interpretado como "Cultivo Medicinal") | 76 | o nome "Cultivo Medicinal" não existe no Growroom; confirmar com o responsável |
 | Notícias | 24 | incluído em 2026-10-16 (pedido do responsável) |
 
-Escopo: a decisão vale para a **importação**. O download do Wayback não exclui esses fóruns, porque os tópicos
-não trazem o identificador do fórum na URL; excluí-los do download exige mapear cada tópico à sua seção (a partir
-das páginas de listagem `showforum`). Fica como etapa separada, se o responsável quiser.
+Escopo: a decisão vale para a **importação**. O download não exclui esses fóruns; a exclusão é aplicada no mapeamento.
 
 ## Bloqueio atual
 
-A F3 (migração piloto) depende da lista de autores extraída do HTML. A F6 (reconstrução em lotes) depende da F3.
-Portanto a importação não começa até que:
+A F3 (migração piloto) depende da lista de autores aprovada. A F6 (reconstrução em lotes) depende da F3.
+Estado das condições:
 
-1. os downloads de `restauro/assets` e `restauro/html` estejam concluídos ou com lacunas documentadas;
-2. os scripts de download estejam versionados ou documentados;
-3. a lista de autores esteja extraída e aprovada.
+1. Downloads de `restauro/assets` e `restauro/html`: **concluídos**, com lacunas documentadas acima.
+2. Scripts de download e mapeamento: **versionados** em `scripts/growroom/`.
+3. Lista de autores: **extraída**; **aprovação pendente** (ambíguos e confirmação da regra pelo responsável).
 
-Quando essas condições forem atendidas, a importação segue a sequência do roteiro do Fórum (estrutura, usuários
+Quando a aprovação for dada, a importação segue a sequência do roteiro do Fórum (estrutura, usuários
 legados, tópicos, comentários, arquivos e reconciliação), usando somente os caminhos acima.

@@ -11,7 +11,10 @@ Group.
 `entity_access: TRUE` e `enforced: FALSE`. Assim o Group não instala a relação
 automaticamente em tipos de grupo novos. Ela existe só onde está configurada
 explicitamente: `config/sync/group.relationship_type.lms_course-af8ec2205541224f9d8c4.yml`
-para `lms_course`. `MediaDocumentDeriver` publica a relação somente para Media
+para `lms_course`. Esse arquivo fica no Config Sync, não em `config/optional`:
+o Group precisa descobrir o plugin depois que o submódulo está habilitado; a
+instalação automática da config opcional ocorre cedo demais e falha ao resolver
+o plugin. `MediaDocumentDeriver` publica a relação somente para Media
 `course_document`.
 Esse bundle é instalado com o submódulo e seu field storage usa `private://`;
 o bundle `document` público existente não é alterado. `CourseDocumentHooks`
@@ -23,9 +26,13 @@ relacionar documentos. A rota privada do Core continua como única entrega de
 bytes e reavalia o acesso em cada requisição.
 
 Os PDFs de turma usam o novo bundle `course_document` e não são publicados nem
-mesmo quando a caixa de status é submetida. Isso não migra arquivos nem altera
-o bundle institucional `document`. O Runtime precisa validar membership,
-revogação e entrega privada antes do aceite final da PV5.
+mesmo quando a caixa de status é submetida. Habilite o submódulo antes de
+importar a relação Group do Config Sync; importar o pacote completo de
+configuração continua sendo uma operação separada e revisada. Isso não migra arquivos nem altera
+o bundle institucional `document`. O Kernel verifica o endpoint privado do Core
+para membro, não membro, remoção da relação Group e revogação de membership. A
+homologação dessas condições no Runtime continua necessária antes do aceite
+final da PV5.
 
 ## Hooks e classes
 

@@ -1,16 +1,16 @@
 # Matriz de compatibilidade LMS, PDF e avaliação
 
-Revisão técnica: 2026-10-16. Versões externas devem ser rechecadas no changelog e Composer antes de atualizar/instalar.
+Revisão técnica: 2026-10-18. Versões externas devem ser rechecadas no changelog e Composer antes de atualizar/instalar.
 
 | Projeto/API | Metadata/versão encontrada | Drupal/PHP observado | Estado e decisão |
 | --- | --- | --- | --- |
-| `drupal/lms` | composer lock 1.2.3; `lms.info.yml` 1.2.3; upstream stable 1.2.4 | info: Core `^10.3 || ^11` | Instalado e em uso; 1.2.4 não deve ser adotado sem revisão do changelog, Composer dry-run, testes de atualização e validação de PHP 8.5 |
-| `lms_answer_plugins` | submódulo no diretório `lms/modules`, info 1.2.3 | acompanha LMS `^10.3 || ^11` | Não é pacote Composer independente; parte do repo LMS |
-| `lms_classes` | submódulo no diretório `lms/modules`, info 1.2.3 | acompanha LMS `^10.3 || ^11` | Não é pacote Composer independente; auditar necessidade/uso antes de ativação |
-| `drupal/lms_file_upload` | release 1.0.2 | projeto declara `^10 || ^11`; upload para private file system | Não instalado; revisar source/issue de persistência/usage e testes de access antes de F9 |
+| `drupal/lms` | composer lock 1.2.4; `lms.info.yml` 1.2.4; release estável com cobertura Drupal Security Team | Core `^10.3 || ^11`; o CLI Drush deste checkout reporta PHP 8.4.26, então PHP 8.5 não foi comprovado | Instalado; audit sem advisories, dry-run isolado alterou somente LMS 1.2.3 → 1.2.4. Update 12002 aplicado no Runtime de teste; `lms.settings` validado pelo schema, 10 Kernel tests upstream (990 assertions) e 3 testes `aculta_lms` (13 assertions) PASS. A release corrige FreeText, back navigation e course storage, adiciona `activity_page_title` e contém correções de depreciação Drupal 12. FunctionalJavascript exige `SIMPLETEST_BASE_URL` e ficou DEFERRED. PHP 8.5 continua DEFERRED (DT-P04) |
+| `lms_answer_plugins` | submódulo no diretório `lms/modules`, info 1.2.4 | acompanha LMS `^10.3 || ^11` | Não é pacote Composer independente; parte do repo LMS |
+| `lms_classes` | submódulo no diretório `lms/modules`, info 1.2.4 | acompanha LMS `^10.3 || ^11` | Não é pacote Composer independente; auditar necessidade/uso antes de ativação |
+| `drupal/lms_file_upload` | release 1.0.2 | projeto declara `^10 || ^11`; upload privado; issue de file usage #3578576 marcada fixed em 2026-03-26 | Composer instalado e módulo habilitado no Runtime de teste durante F9. Rota de download preserva `lms_answer.see_details` e soma verificação `take course` atual para o autor. Kernel transmite arquivo real, nega após revogação Group e preserva acesso de educador. Smoke HTTP/browser no Runtime `DEFERRED` por ausência de conteúdo de teste |
 | `drupal/webform` | lock 6.3.1 | lock instalado; Drupal 11 atual | Usado no site. Não converter submissions atuais em gradebook automaticamente |
-| `drupal/webform_score` | release 2.4.0 | release declara compatibilidade Drupal 11 | Não instalado. Pontuação separada não é nota LMS até adapter oficial, identidade e transação serem provadas |
-| `drupal/h5p` | release 2.0.0-beta1 | projeto anuncia `^10.2 || ^11`; PHP 8.5 não foi confirmado por release estável | **Beta**, sem versão estável suportada nas fontes consultadas; issue #3548290 documenta bypass de restrições na permissão de upload de bibliotecas e precisa de resolução comprovada. Não ativar antes de auditar editor, bibliotecas executáveis, permissões, upload, storage, CSP/isolamento, resultados e access. Sem nota oficial se integração LMS não for confiável |
+| `drupal/webform_score` | release 2.4.0 | release declara compatibilidade Drupal 11; depende de Webform e Fraction | Composer instalado e módulo habilitado no Runtime de teste durante F9. Scores permanecem dados Webform; não há adapter que os grave como nota oficial LMS. Validar submissão/autoria/permissões antes de uso em curso |
+| `aculta_lms_h5p` + `h5p/h5p-core` 1.28.0 + `h5p/h5p-editor` 1.25 | Fork ACULTA iniciado a partir de `drupal/h5p` 2.0.0-beta1; pacote Drupal original removido do Composer. Patch Composer bloqueia tipos restritos no upload AJAX upstream. Adapter por Group permite mídia privada com File API; imagens usam `aculta_image`. Admin instala `.h5p` local via validador Core; Hub permanece desligado. | **F10 em desenvolvimento; módulo próprio desabilitado e ainda não validado funcionalmente.** Upload/editor Unit e descoberta de serviços Kernel passam; faltam teste com pacote benigno/malformado, browser, autorização/cacheability por turma, CSP e persistência. Não aceitar notas externas como nota LMS sem API confiável |
 | `drupal/entity_print` | release 2.19.0 | linha estável com Core 11 no metadata upstream | Não instalado; comparar como gerador de PDF, não como autoridade de elegibilidade/certificado |
 | `drupal/lms_certificate` | release alpha3; sem release estável | Drupal `^10.3 || ^11` | Referência para F11, não instalada; auditar API, manutenção e compatibilidade antes de escolher emissão |
 | `drupal/lms_certificate_entity` | Página do projeto informa dependência de LMS Certificate e Entity Print; release/versionamento não confirmado | metadata de release não confirmada | Não adotar sem release/API compatível comprovada e decisão explícita; projeto não coberto pela política de security advisories do Drupal |
@@ -40,6 +40,8 @@ Revisão técnica: 2026-10-16. Versões externas devem ser rechecadas no changel
 - [Webform Score releases](https://www.drupal.org/project/webform_score/releases)
 - [H5P releases](https://www.drupal.org/project/h5p)
 - [H5P issue #3548290: restrição de upload de bibliotecas](https://www.drupal.org/project/h5p/issues/3548290)
+- [H5P issue #3221018: acesso ao conteúdo pelo embed URL](https://www.drupal.org/project/h5p/issues/3221018)
+- [Auditoria inicial H5P da F10](LMS-H5P-AUDIT.md)
 - [Entity Print releases](https://www.drupal.org/project/entity_print/releases)
 - [LMS Certificate](https://www.drupal.org/project/lms_certificate) e [LMS Certificate Entity](https://www.drupal.org/project/lms_certificate_entity)
 - [LMS Messages](https://www.drupal.org/project/lms_messages): alpha5, sem cobertura Drupal Security Advisory e com limitação documentada com Group Membership; referência apenas, sem instalação/dependência

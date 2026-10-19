@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.group.lms_course.capa_curso
     - field.field.group.lms_course.field_description
+    - field.field.group.lms_course.field_course_product
     - group.type.lms_course
     - image.style.thumbnail
   module:
@@ -24,6 +25,16 @@ content:
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_course_product:
+    type: entity_reference_autocomplete
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_description:
     type: text_textarea
@@ -84,3 +95,4 @@ content:
     third_party_settings: {  }
 hidden:
   uid: true
+

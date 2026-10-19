@@ -16,6 +16,7 @@ label: 'Usuário anônimo'
 weight: 0
 is_admin: false
 permissions:
+  - 'make donation'
   - 'access checkout'
   - 'access comments'
   - 'access content'

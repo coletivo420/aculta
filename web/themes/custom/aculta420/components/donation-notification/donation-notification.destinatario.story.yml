@@ -1,0 +1,10 @@
+name: Notificação a destinatário
+description: Exemplo estático de conteúdo do formulário, sem envio de mensagem.
+component: aculta420:donation-notification
+props:
+  notify: Enviar uma notificação
+  legend: Dados de quem recebe
+  message: Mensagem de homenagem
+  notify_first: Nome
+  notify_last: Sobrenome
+  notify_email: pessoa@example.org

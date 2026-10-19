@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Component implementation for recipient in the "memorial" checkout panes.
+ *
+ * @ingroup themeable
+ */
+#}
+{{ notify }}
+<fieldset class="commerce-memorial-pane--recipient hidden">
+  <legend>
+    <span>{{ legend }}</span>
+  </legend>
+  <div class="fieldset-wrapper">
+    {{ notify_first }}
+    {{ notify_last }}
+    {{ notify_email }}
+    {{ message }}
+  </div>
+</fieldset>

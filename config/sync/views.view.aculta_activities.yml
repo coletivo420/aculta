@@ -120,6 +120,9 @@ display:
     display_plugin: block
     position: 2
     display_options:
+      allow:
+        items_per_page: true
+        pager: pager
       title: 'Próximas atividades'
       empty:
         area:

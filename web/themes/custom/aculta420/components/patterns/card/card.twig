@@ -1,0 +1,42 @@
+{% set card_classes = ['aculta-card', 'card'] %}
+{% if variant == 'overlay' %}
+  {% set card_classes = card_classes|merge(['aculta-card--overlay']) %}
+{% elseif variant == 'horizontal' %}
+  {% set card_classes = card_classes|merge(['aculta-card--horizontal']) %}
+{% endif %}
+
+<div{{ attributes.addClass(card_classes) }}>
+  {% if variant == 'overlay' %}
+    {% if image %}<div class="aculta-card__overlay-media">{{ image }}</div>{% endif %}
+    <div class="card-img-overlay aculta-card__overlay-body">
+      <div class="aculta-card__overlay-panel">
+        {% if header %}<div class="aculta-card__overlay-header">{{ header }}</div>{% endif %}
+        {% if content %}<div class="card-body">{{ content }}</div>{% endif %}
+        {% if footer %}<div class="card-footer">{{ footer }}</div>{% endif %}
+      </div>
+    </div>
+  {% elseif variant == 'horizontal' %}
+    <div class="row g-0">
+      {% if image %}
+        <div class="col-md-4">
+          {{ image|add_class('img-fluid rounded-start') }}
+        </div>
+      {% endif %}
+      <div class="col-md-8">
+        {% if header %}<div class="card-header">{{ header }}</div>{% endif %}
+        {% if content %}<div class="card-body">{{ content }}</div>{% endif %}
+        {% if footer %}<div class="card-footer">{{ footer }}</div>{% endif %}
+      </div>
+    </div>
+  {% else %}
+    {% if image and image_position != 'bottom' %}
+      {{ image|add_class('card-img-top') }}
+    {% endif %}
+    {% if header %}<div class="card-header">{{ header }}</div>{% endif %}
+    {% if content %}<div class="card-body">{{ content }}</div>{% endif %}
+    {% if footer %}<div class="card-footer">{{ footer }}</div>{% endif %}
+    {% if image and image_position == 'bottom' %}
+      {{ image|add_class('card-img-bottom') }}
+    {% endif %}
+  {% endif %}
+</div>

@@ -13,6 +13,11 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) e
 [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md).
 
+## Componentes próprios
+
+- Todo módulo próprio em `web/modules/custom/` declara `package: 'ACULTA Portal'`, sem exceção, inclusive o `aculta_portal`.
+- Gate: `php scripts/validate-own-module-packages.php`. Motivo e como criar um componente novo: `docs/portal/COMPONENTES-PROPRIOS.md`.
+
 ## Fronteiras gerais
 
 - O Portal integra capacidades existentes. Não substitui storage, regra de negócio ou
@@ -24,6 +29,18 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 - O tema recebe contexto neutro de apresentação. Não recebe entidade `Domain`, storage nem
   decisão de access.
 - Não criar CMS, catálogo, carrinho, pedido, pagamento ou LMS paralelo a Core ou contrib.
+
+## Views e CTools
+
+- CTools é uma implementação suportada do projeto. Para blocos Views que
+  precisem de ajustes por colocação (como quantidade de itens ou pager), usar
+  `ctools_views` em vez de criar controles equivalentes no Portal.
+- Manter filtros de access, publicação e domínio na View. Não liberar controles
+  de alteração de filtros, campos ou ordenação no bloco sem revisão específica.
+- Usar as APIs de plugins/condições do CTools quando a integração pedir esse
+  mecanismo e ele se ajustar ao contrato; não usar CTools como construtor geral
+  de formulários nem para substituir APIs nativas de Forum, Webform ou Drupal.
+- Usos, limites e exemplos ativos: [`CTOOLS.md`](../../web/modules/custom/aculta_portal/docs/CTOOLS.md).
 
 ## Fórum (`forum`)
 
@@ -123,6 +140,11 @@ nunca escrever `/u/...` à mão nem guardar a URL sem tags de cache.
 - **Domínio:** o link é absoluto para o host do propósito `main` (ex.: a Revista aponta para o domínio principal),
   porque o perfil só existe nele. Relativo só funciona dentro do próprio host principal; por isso o link é
   gerado pelo serviço de domínio, sem host fixo no código.
+- **Maiúsculas no caminho:** o apelido guardado e exibido preserva a capitalização; só o segmento de URL é minúsculo.
+  Não há redirecionamento de slug (AGENTS.md): `/u/<apelido com maiúsculas>` responde 404. O roteador casa o padrão sem
+  diferenciar maiúsculas; `PublicProfileNotCanonicalSubscriber` (prioridade 31, entre roteador e normalizador) retira a
+  rota da requisição e responde 404 antes da renderização. Sem isso, o `metatag` e o normalizador do `redirect` geram a
+  URL com o apelido bruto e a página falha com 500. Não registra cache de perfil porque não renderiza perfil.
 - **Gate:** `php scripts/validate-profile-links.php` reprova caminho `/u/` literal, geração do perfil sem a regra
   de slug canônico, perda da capitalização na exibição e falta de registro na cache. Aplicar a mesma API do Portal
   em novos formulários e ações que gerem slugs públicos; valide sempre contra o contrato da rota proprietária.
@@ -217,3 +239,16 @@ Regra do responsável (2026-10-14). Vale para toda alteração de exibição dos
 - Gate: `php scripts/validate-content-visual-parity.php` (deve ser PASS em toda mudança de exibição de Notícia ou Editorial).
 
 Motivo: o leitor percebe a mesma página com dois layouts diferentes quando os tipos divergem, e a manutenção dobra.
+
+## Papéis e hierarquia
+
+Barreiras contra regressão (gate `php scripts/validate-role-hierarchy.php`):
+
+- A cadeia de herança em `config/sync/role_inheritance.settings.yml` deve ser a decidida em `docs/portal/PAPEIS-PARTICIPACAO.md`. Mudança exige decisão do responsável e atualização do gate no mesmo commit.
+- O mapa de herança não pode ter ciclo nem autorreferência (o formulário do painel também recusa).
+- `administrator` herda de todos os papéis de negócio.
+- Checagens por nome de papel em código customizado (`->hasRole(` e `in_array('papel', ...)`) não podem subir acima da linha de base registrada no gate (15 e 4). Acesso novo usa permissão.
+- Papéis efetivos: para o usuário logado, o `role_inheritance` estende os papéis a cada requisição (`CurrentUserRoleShim`); para entidades de usuário, a herança também aparece em `getRoles()`. Confirme no Runtime antes de depender de um caso de borda.
+
+Motivo: a hierarquia é decisão do responsável. Um comentário de código ou uma checagem por nome podem contradizê-la sem que nenhum teste pegue.
+

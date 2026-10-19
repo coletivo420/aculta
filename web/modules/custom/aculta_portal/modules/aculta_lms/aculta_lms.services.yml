@@ -1,6 +1,29 @@
 services:
+  aculta_lms.uploaded_answer_access:
+    class: Drupal\aculta_lms\Access\UploadedAnswerAccessCheck
+  aculta_lms.uploaded_answer_route_subscriber:
+    class: Drupal\aculta_lms\EventSubscriber\UploadedAnswerRouteSubscriber
+    tags:
+      - { name: event_subscriber }
   aculta_lms.course_completion_publisher:
     class: Drupal\aculta_lms\Event\CourseCompletionPublisher
     arguments: ['@event_dispatcher']
     tags:
       - { name: aculta_portal.helper }
+  aculta_lms.course_room_builder:
+    class: Drupal\aculta_lms\CourseRoomBuilder
+    arguments: ['@current_user', '@string_translation', '@form_builder']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_lms.course_order_enrollment:
+    class: Drupal\aculta_lms\CourseOrderEnrollmentManager
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
+      - { name: aculta_portal.implementation }
+  aculta_lms.attempt_archive:
+    class: Drupal\aculta_lms\AttemptArchiveManager
+    arguments: ['@entity_type.manager', '@current_user', '@datetime.time']
+    tags:
+      - { name: aculta_portal.helper }
+      - { name: aculta_portal.implementation }

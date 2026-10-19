@@ -9,6 +9,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\domain\DomainInterface;
@@ -23,6 +24,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class TokenHooks {
 
   public function __construct(
+    #[Autowire('%app.root%')]
+    private readonly string $appRoot,
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
     #[Autowire(service: 'entity_type.manager')]
@@ -173,7 +176,8 @@ final class TokenHooks {
 
       foreach ($tokens as $name => $original) {
         if ($name === 'url') {
-          $result[$original] = (string) ($block->get('field_site')->uri ?? '');
+          // Endereço principal do ambiente (aculta_deployer); o campo do bloco guarda o endereço de produção.
+          $result[$original] = DeployerEnvironment::siteUrl(dirname($this->appRoot)) ?? (string) ($block->get('field_site')->uri ?? '');
         }
         elseif (isset($fields[$name]) && $block->hasField($fields[$name])) {
           $result[$original] = (string) ($block->get($fields[$name])->value ?? '');

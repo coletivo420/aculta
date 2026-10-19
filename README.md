@@ -1,79 +1,87 @@
-# Associação Cultural Antiproibicionista — plataforma Drupal
+# ACULTA — plataforma institucional
 
-Plataforma Drupal 11 multidomínio da Associação Cultural Antiproibicionista.
+Site institucional da ACULTA — Associação Cultural Antiproibicionista, construído
+em Drupal 11. O projeto integra capacidades do Core e de módulos contrib; não é
+uma loja de cannabis. O Portal concentra integrações funcionais e o tema
+ACULTA420 apresenta a experiência.
 
-## Contextos
+## Comece por aqui
 
-| Purpose | Produção (`config/sync`) | Responsabilidade |
-| --- | --- | --- |
-| `main` | `aculta.org` | institucional, painel administrativo, carrinho e pagamento |
-| `account` | `conta.aculta.org` | identidade e conta (Minha conta, Segurança, Meus pedidos) |
-| `support` | `apoio.aculta.org` | apoio (contribuições) |
-| `magazine` | `revista420.aculta.org` *(o AGENTS.md cita `coletivo420`; a confirmar)* | editorial |
-| `wiki` | `wiki420.aculta.org` | Wiki420 |
-| `shop` | `loja.aculta.org` | comércio (produtos, camisetas) |
-| `courses` | `cursos.aculta.org` | aprendizagem (LMS) |
-| `forum` | `growroom420.aculta.org` | comunidade (fórum) |
-| `links` | `links.aculta.org` | redes sociais da ACULTA (página `/redes-sociais`) |
-
-Os hosts de teste são `*.aculta.toca.net.br` (Homelab, noindex). Os hosts de produção são os da coluna acima.
+- [Documentação do projeto](docs/README.md) — arquitetura, políticas e operação.
+- [Mapa de caminhos e redirecionamentos](docs/architecture/ROUTES-SITEMAP.md) — caminhos por domínio, rotas administrativas, estados e redirects.
+- [ACULTA Portal](web/modules/custom/aculta_portal/README.md) — módulo principal
+  e índice das extensões próprias.
+- [ACULTA420](web/themes/custom/aculta420/README.md) — tema, componentes e índice
+  do design system.
+- [Módulos por domínio](docs/modules/README.md) — integrações Core/contrib e
+  documentação transversal.
+- [Portal: normas e contratos](docs/portal/README.md) — políticas funcionais e
+  fronteiras entre Core, Portal e tema.
+- [Operação](docs/operations/README.md) — testes, releases, segurança e deploy.
 
 ## Componentes próprios
 
-- [aculta_portal](web/modules/custom/aculta_portal/README.md) — integração e
-  orquestração: conta, endereço único, checkout, pagamento pelo Mercado Pago,
-  envio (Commerce Shipping), Social Auth e domínios. Versão 0.3.0-dev.18 na árvore
-  de trabalho (ver o CHANGELOG do módulo).
-- [ACULTA420](web/themes/custom/aculta420/README.md) — tema público e Bootstrap
-  Component Design System. Versão 0.6.0-dev.11.
-- [aculta_portal_sitemap](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md)
-  — sitemap multidomínio por purpose, índice central em `/sitemap.xml` e `robots.txt`
-  com a diretiva `Sitemap:`. Versão 0.1.1 (fases A a J), habilitado no runtime de teste.
-- [aculta_deployer](web/modules/custom/aculta_portal/modules/aculta_deployer/README.md)
-  — submódulo do `aculta_portal` que troca hosts de teste por produção no build de
-  deploy, verifica `robots`, sitemaps e caminhos privados por ambiente, e mantém o
-  registro de correções de deploy. Versão 0.1.20, não habilitado no Drupal; CLI
-  standalone em `bin/aculta-deployer`.
-- [aculta_associado_id](web/modules/custom/aculta_portal/modules/aculta_associado_id/README.md)
-  — orquestração dos dados dos associados; escopo implementado atualmente: serviços protegidos de CPF/CNPJ.
-  Versão 0.3.0-dev.1, **RUNTIME STATUS: DEFERRED**. A migração do módulo legado ainda precisa ser validada em cópia isolada.
+### Módulo principal
 
-## Arquitetura
+- [aculta_portal](web/modules/custom/aculta_portal/README.md) — integração de
+  conta, Commerce, LMS, Domains, conteúdo e serviços institucionais.
+
+### Submódulos do Portal
+
+Cada README abaixo é a entrada local para escopo, contratos e documentação do
+componente. A lista de capacidades habilitadas em cada ambiente é definida pelo
+código e pela configuração Drupal, não por este índice.
+
+- [aculta_associado_id](web/modules/custom/aculta_portal/modules/aculta_associado_id/README.md)
+- [aculta_deployer](web/modules/custom/aculta_portal/modules/aculta_deployer/README.md)
+- [aculta_donation](web/modules/custom/aculta_portal/modules/aculta_donation/README.md)
+- [aculta_forum](web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
+- [aculta_game](web/modules/custom/aculta_portal/modules/aculta_game/README.md)
+- [aculta_gallery](web/modules/custom/aculta_portal/modules/aculta_gallery/README.md)
+- [aculta_id_cpf](web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md)
+- [aculta_image](web/modules/custom/aculta_portal/modules/aculta_image/README.md)
+- [aculta_lms](web/modules/custom/aculta_portal/modules/aculta_lms/README.md)
+- [aculta_lms_h5p](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md)
+- [aculta_magazine](web/modules/custom/aculta_portal/modules/aculta_magazine/README.md)
+- [aculta_messenger](web/modules/custom/aculta_portal/modules/aculta_messenger/README.md)
+- [aculta_patcher](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md)
+- [aculta_pdf_viewer](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md)
+- [aculta_pdf_viewer_group](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md)
+- [aculta_portal_sitemap](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md)
+- [aculta_user](web/modules/custom/aculta_portal/modules/aculta_user/README.md)
+
+### Tema e identidade visual
+
+- [Tema ACULTA420](web/themes/custom/aculta420/README.md)
+- [Documentação e catálogo do tema](web/themes/custom/aculta420/docs/README.md)
+- [Componentes reutilizáveis](web/themes/custom/aculta420/components/README.md)
+- [Documentação dos assets de marca](web/themes/custom/aculta420/assets/branding/)
+
+## Arquitetura e ambientes
 
 ```text
-Core + contrib -> aculta_portal -> ACULTA420 -> Bootstrap5
+Drupal Core + contrib → aculta_portal → contrato de apresentação → ACULTA420
 ```
 
-User/Profile/Commerce/LMS/Group/Node/Views/Domain continuam fontes de verdade.
-O Portal integra. ACULTA420 apresenta.
+Core e contrib são fontes de verdade para entidades e capacidades existentes.
+O Portal integra dados, acesso e cache; o tema implementa a apresentação.
 
-## Ambientes
+- Homelab/testes: Debian, Apache, PHP-FPM e MariaDB, em hosts `*.aculta.toca.net.br`.
+- Produção: Hostinger Cloud Startup, LiteSpeed, PHP e MariaDB, em `*.aculta.org`.
+- O checkout local não é, por si só, uma validação do Runtime de testes.
 
-- Homelab (servidor de testes `*.aculta.toca.net.br`): Debian + Apache + PHP-FPM + MariaDB. É noindex.
-- Produção (`*.aculta.org`): Hostinger Cloud Startup + LiteSpeed + PHP + MariaDB. Recebe deploy só no RC de todos os módulos, temas e subtemas.
+Detalhes e regras operacionais: [ambientes](docs/architecture/environments.md),
+[multidomínio](docs/architecture/multidomain.md) e
+[runbook de deploy](docs/operations/DEPLOYMENT.md).
 
-O Homelab usa Apache e a produção Hostinger Cloud Startup usa LiteSpeed.
-Configuração específica de servidor pertence à infraestrutura, não ao tema.
+## Como encontrar o estado vigente
 
-## Documentação
+- Regras permanentes: `AGENTS.md` e os documentos normativos indexados em
+  [docs/README.md](docs/README.md).
+- Estado de implementação e releases: CHANGELOG do componente e manifest Drupal.
+- Pendências transversais: [registro de dívidas](docs/operations/DEBT-REGISTER.md).
+- Planejamento: roadmap do Portal ou do tema, conforme o componente.
+- Histórico de revisão: Git e pull requests; snapshots antigos ficam identificados
+  como históricos e não substituem as fontes acima.
 
-Comece em [docs/README.md](docs/README.md).
-
-Referências transversais:
-
-- [Camadas anti-regressão](docs/ANTI-REGRESSION.md)
-- [Política de documentação](docs/DOCUMENTATION.md)
-- [Operação, testes e releases](docs/operations/README.md)
-- [Deployment](docs/operations/DEPLOYMENT.md)
-- [aculta_deployer — uso](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/USO.md),
-  [guardrails](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/GUARDRAILS.md),
-  [registro](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/REGISTRO.md),
-  [arquitetura](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/ARQUITETURA.md)
-  e [planejamento](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md)
-
-- Portal: [docs/portal](docs/portal/README.md)
-- Módulos: [docs/modules](docs/modules/README.md)
-- Tema/design system: [ACULTA420 docs](web/themes/custom/aculta420/docs/README.md)
-- Prontidão para RC e bateria de testes: [RC-READINESS](docs/operations/RC-READINESS.md)
-
-Segredos e settings locais nunca pertencem ao Git.
+Não mantenha cópias de versões, resultados de testes ou status de PR neste índice.

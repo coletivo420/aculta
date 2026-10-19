@@ -19,7 +19,7 @@ dependencies:
     - field.field.commerce_order_item.donation.field_recipient_last_name
     - field.field.commerce_order_item.donation.field_recurring_begins
   module:
-    - commerce_donation_flow
+    - aculta_donation
 _core:
   default_config_hash: fzbgu5Qe7urXPZ2FAPi5YzIRj8xqyaAdgcfdVMKKT2U
 id: commerce_order_item.donation.donation
@@ -76,3 +76,4 @@ hidden:
   title: true
   total_price: true
   unit_price: true
+

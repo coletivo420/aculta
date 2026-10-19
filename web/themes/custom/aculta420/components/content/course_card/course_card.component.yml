@@ -1,0 +1,44 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Course card
+status: experimental
+group: Cards
+description: 'ACULTA420 presentation for the Drupal LMS course card. LMS remains the source of course data, access and cacheability.'
+replaces: 'lms:course_card'
+props:
+  type: object
+  properties:
+    title:
+      type: string
+      description: 'The title of the course.'
+      default: 'Default Course Title'
+    url:
+      type: string
+      description: 'The URL to the course canonical page.'
+      default: '#'
+    background_image_url:
+      type: [string, 'null']
+      description: 'URL for the background image. If null, a default will be used.'
+      default: null
+    description:
+      type: [string, 'null']
+      description: 'Processed course description supplied by Drupal LMS.'
+      default: null
+    extra_fields:
+      type: array
+      description: 'An array of extra fields, where each item has a label and content.'
+      default: []
+      items:
+        type: object
+        properties:
+          label:
+            type: string
+          content:
+            type: object
+slots:
+  start_link:
+    title: Start Link
+    description: 'Rendered start link supplied by Drupal LMS.'
+assets:
+  css:
+    component:
+      course_card.css: {}

@@ -2,11 +2,11 @@ uuid: 2b2142b4-bf9d-4fbc-a9e0-50a43d122638
 langcode: pt-br
 status: true
 dependencies:
-  module:
-    - aculta_pdf_viewer_group
   config:
     - group.type.lms_course
     - user.role.lms_teacher
+  module:
+    - aculta_pdf_viewer_group
 id: lms_course-teacher
 label: Educador
 weight: 10
@@ -16,12 +16,19 @@ global_role: lms_teacher
 group_type: lms_course
 permissions:
   - 'administer members'
+  - 'add students'
+  - 'view students'
+  - 'create lms_classes relationship'
+  - 'delete own lms_classes relationship'
   - 'create aculta_pdf_viewer_group:course_document entity'
   - 'create aculta_pdf_viewer_group:course_document relationship'
   - 'edit group'
   - 'grade students'
   - 'revert group revisions'
   - 'update own group_membership relationship'
+  - 'update any lms_classes relationship'
+  - 'update own lms_classes relationship'
+  - 'view lms_classes relationship'
   - 'view all group revisions'
   - 'view any unpublished group'
   - 'view aculta_pdf_viewer_group:course_document entity'
@@ -32,3 +39,4 @@ permissions:
   - 'view group_membership relationship'
   - 'view latest group version'
   - 'view own unpublished group'
+

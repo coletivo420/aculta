@@ -54,7 +54,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
         'main' => $this->t('Institutional site'),
         'account' => $this->t('Account'),
         'support' => $this->t('Support'),
-        'magazine' => $this->t('Observatório da Maconha Coletivo 420'),
+        'magazine' => $this->t('Revista 420'),
         'wiki' => $this->t('Wiki420'),
         'shop' => $this->t('Shop'),
         'courses' => $this->t('Courses'),

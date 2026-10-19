@@ -19,7 +19,7 @@ Os números seguem a ordem do Drupal no projeto: **quanto menor o número, maior
 | 1 | `content_editor` | Editor de conteúdo | Administrativa, só com `email_confirmed`; moderador do Fórum, revisor e moderador da Wiki |
 | 0 | `administrator` | Administrador | Administrativa; bypass total |
 
-Um usuário pode ter mais de um papel. Se `estudante` e `associado` exigem ou não `email_confirmed`, é pendência (seção 9).
+Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula mesmo antes de confirmar o e-mail, mas só herda as permissões de `email_confirmed` depois que `EmailConfirmationPolicy` registra a confirmação real. Participar de um curso não exige confirmação de e-mail: o acesso continua condicionado à matrícula/permissão `take` do Group e ao aceite vigente dos termos.
 
 ## 2. Papel `content_editor`
 
@@ -103,8 +103,8 @@ Pendências:
 3. ~~Permissão de visibilidade do nível `estudante`~~: criada e aplicada no Runtime de testes (realm `aculta_estudante`).
 4. ~~Migração do marcador de associado para papel~~: papel `associado` criado (`config/sync/user.role.associado.yml`) e concedendo o realm de associados. O Runtime não tinha marcas (`aculta_associado` vazia), então não há contas a migrar. O marcador segue como fallback até decisão de remoção.
 5. ~~Permissões de Wiki do `content_editor`~~: a configuração atual já concede revisão e moderação da Wiki (transições de `wiki_editorial`); nada a alterar.
-6. ~~Se `estudante` e `associado` exigem `email_confirmed`~~: encerrado (2026-10-17). E-mail confirmado é papel, e a herança de papéis (item 7) faz `estudante` e `associado` herdarem `email_confirmed`.
-7. **Fase 2 (herança de papéis, 2026-10-17): encerrada.** Cadeia unilateral: cada papel herda só do que está imediatamente abaixo dele na hierarquia. Aplicado no Runtime e exportado em `config/sync/role_inheritance.settings.yml`: `email_confirmed` ← `authenticated`; `estudante` ← `email_confirmed`; `associado` ← `estudante`; `lms_teacher` ← `associado`. Exceções decididas pelo responsável: `gerente_loja` não herda de `lms_teacher` (só do `authenticated`, comum a todos); `content_editor` herda de `email_confirmed`, e não da cadeia até `gerente_loja`.
+6. ~~Se `estudante` e `associado` exigem `email_confirmed`~~: matrícula não exige confirmação, decisão F7. Como `estudante` recebe permissões de fórum e a cadeia inclui `email_confirmed`, a herança condicional consulta `EmailConfirmationPolicy`; matrícula não marca nem herda confirmação de e-mail.
+7. **Fase 2 (herança de papéis, 2026-10-17), atualizada:** cadeia unilateral e transitiva, de baixo para cima: `authenticated` < `email_confirmed` < `estudante` < `associado` < `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. `administrator` herda de todos os papéis de negócio. A herança do papel `email_confirmed` depende do marcador confirmado em `EmailConfirmationPolicy`; os demais papéis mantêm a cadeia. `wiki_contributor` e `lms_admin` herdam de `authenticated`. Edição pelo painel: ACULTA > Configurações > Papéis e perfis (`/painel-administrativo/configuracoes/aculta/papeis`), permissão `administer aculta role hierarchy`. Na mesma tela, cada tipo de perfil (`participante`, `customer`) declara os papéis que o usam (`aculta_portal.profile_roles`); o vínculo não move nem altera dados de perfil, e `customer` segue no checkout. Gate: `php scripts/validate-role-hierarchy.php`.
 
 ## 10. Implementação (hooks e classes)
 
@@ -112,7 +112,7 @@ Hooks são classes com `#[Hook]`, descobertas automaticamente pelo Core; não s�
 
 | Papel ou regra | Classe | Hook ou ponto de entrada |
 |---|---|---|
-| Estudante por matrícula em curso, só alunos | `Hook\EnrollmentRoleHooks` | `group_relationship_insert` (plugin `group_membership`, tipo `lms_course`) |
+| Estudante por matrícula em curso/turma, só alunos | `Hook\EnrollmentRoleHooks` | `group_relationship_insert` (plugin `group_membership`, tipo `lms_course` ou `lms_class`) |
 | Wiki para quem confirmou o e-mail | `Hook\RoleSyncHooks` | `user_presave` |
 | Realms de visibilidade dos fóruns (papel, permissão, marcador) | `Forum\RestrictedForumGrants` | `grantsFor()` consumido pelos hooks de acesso de fórum |
 | Acesso e listagens dos fóruns restritos | `Hook\RestrictedForumHooks` | node access e entity access |
@@ -122,3 +122,11 @@ Hooks são classes com `#[Hook]`, descobertas automaticamente pelo Core; não s�
 | Herança de papéis (Fase 2) | configuração `role_inheritance.settings` | mapa em `config/sync/role_inheritance.settings.yml` |
 
 Testes: `aculta_user/tests/src/Unit/EnrollmentRoleHooksTest.php`, `RestrictedForumGrantsTest.php`; `aculta_portal/tests/src/Unit/Controller/SalesReportControllerTest.php`.
+
+## 8. Painel de papéis (tela única)
+
+- **Página:** `/painel-administrativo/configuracoes/pessoas/papeis` é a página "Papéis e perfis" do ACULTA. Substituiu a lista de papéis do Core: cadeia de papéis (arrastar ou setas), coluna "Herda de (efetivo)", coluna "Operações" (editar, permissões e excluir, com o mesmo menu do Core), botão "Adicionar papel" e tabela dos papéis fora da cadeia.
+- **Permissão:** `administer permissions` (Core) ou `administer aculta role hierarchy`.
+- **Herança sem contrib:** o módulo `role_inheritance` foi desinstalado e removido do `composer.json`. A herança é do `aculta_user` (`HerancaDePapeis`, `RoleInheritanceHooks`, `RoleInheritanceCurrentUserSubscriber`), calculada a partir de `aculta_portal.role_hierarchy` (só `cadeia`). Documentação: `aculta_user/docs/HIERARQUIA-DE-FUNCOES.md`.
+- **Herança efetiva:** a coluna "Herda de (efetivo)" mostra a herança transitiva calculada por `RoleHierarchy::efetivos`.
+- **Tela de herança do contrib:** a rota `role_inheritance.config_role_inheritance` sai da coleção de rotas (sem aba nem link).

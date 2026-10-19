@@ -1,0 +1,24 @@
+uuid: 25fe6d68-a50b-4008-9ed8-9280bb42de8d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_redes
+    - profile.type.lms_teacher
+id: profile.lms_teacher.field_exibir_redes
+field_name: field_exibir_redes
+entity_type: profile
+bundle: lms_teacher
+label: 'Exibir redes sociais no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

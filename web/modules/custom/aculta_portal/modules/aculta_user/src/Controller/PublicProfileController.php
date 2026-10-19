@@ -23,6 +23,7 @@ use Drupal\Core\Template\Attribute;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Página pública do perfil em /u/<apelido>.
@@ -202,7 +203,7 @@ final class PublicProfileController extends ControllerBase {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
-      ->condition('type', 'participante')
+      ->condition('type', PerfilDoPapel::TIPOS, 'IN')
       ->condition('field_nickname', $apelido)
       ->range(0, 1)
       ->execute();

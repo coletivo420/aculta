@@ -1,0 +1,14 @@
+name: Vertical com cabeçalho e rodapé
+description: Cartão genérico de conteúdo com imagem opcional e regiões renderizadas.
+component: aculta420:card
+props:
+  variant: default
+slots:
+  image:
+    markup: '<div class="ratio ratio-16x9 bg-body-secondary" role="img" aria-label="Área reservada para mídia de exemplo"></div>'
+  header:
+    markup: Destaque cultural
+  content:
+    markup: '<h3>Encontro e participação</h3><p>Atividades culturais promovem convivência e debate público.</p>'
+  footer:
+    markup: '<a href="#">Saiba mais</a>'

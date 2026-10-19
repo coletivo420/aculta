@@ -1,0 +1,24 @@
+uuid: 8d83f091-e0c6-40dd-a445-b4807e66ca08
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_perfil_publico
+    - profile.type.administrator
+id: profile.administrator.field_perfil_publico
+field_name: field_perfil_publico
+entity_type: profile
+bundle: administrator
+label: 'Perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

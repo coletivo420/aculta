@@ -1,0 +1,61 @@
+uuid: c205e709-b83c-474c-9c22-ea57117a043c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.wiki
+  module:
+    - ckeditor5
+    - media
+format: wiki
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - bold
+      - italic
+      - code
+      - '|'
+      - link
+      - bulletedList
+      - numberedList
+      - blockQuote
+      - heading
+      - codeBlock
+      - drupalMedia
+      - sourceEditing
+  plugins:
+    ckeditor5_heading:
+      enabled_headings:
+        - heading2
+        - heading3
+        - heading4
+        - heading5
+        - heading6
+    ckeditor5_codeBlock:
+      languages:
+        - label: 'Texto puro'
+          language: plaintext
+    ckeditor5_list:
+      properties:
+        reversed: true
+        startIndex: true
+        styles: true
+      multiBlock: true
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<h2 id>'
+        - '<h3 id>'
+        - '<h4 id>'
+        - '<h5 id>'
+        - '<h6 id>'
+        - '<a hreflang title>'
+        - '<blockquote cite>'
+        - '<cite>'
+        - '<dl>'
+        - '<dt>'
+        - '<dd>'
+    media_media:
+      allow_view_mode_override: false
+image_upload:
+  status: false

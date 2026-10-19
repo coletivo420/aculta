@@ -1,0 +1,23 @@
+services:
+  aculta_portal_cep.rate_limit_subscriber:
+    class: Drupal\aculta_portal_cep\EventSubscriber\CepLookupRateLimitSubscriber
+    arguments: ['@flood']
+    tags:
+      - { name: event_subscriber }
+      - { name: aculta_portal.implementation }
+
+  aculta_portal_cep.local_store:
+    class: Drupal\aculta_portal_cep\Local\CepLocalStore
+    arguments: ['@file_system']
+
+  aculta_portal_cep.api_probe:
+    class: Drupal\aculta_portal_cep\Status\CepApiProbe
+    autowire: true
+
+  aculta_portal_cep.status_report:
+    class: Drupal\aculta_portal_cep\Status\CepStatusReport
+    autowire: true
+
+  aculta_portal_cep.sources:
+    class: Drupal\aculta_portal_cep\Settings\CepSources
+    autowire: true

@@ -99,11 +99,11 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status { margin: 0; p
 .aculta-messenger-notice__action:hover, .aculta-messenger-notice__action:focus-visible { text-decoration: none; }
 .aculta-messenger-notice__action:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 
-/* The confirmation dialogs (block, remove friendship): a native dialog inside the Opções form. Same surface and text as the menu, no palette primitives. */
-dialog[data-aculta-dialog] { width: min(22rem, 90vw); margin: auto; padding: 1rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); box-shadow: var(--bs-box-shadow); }
-dialog[data-aculta-dialog] p { margin: 0 0 0.75rem; font-weight: 600; }
-dialog[data-aculta-dialog] .form-actions { display: flex; flex-direction: row; gap: 0.5rem; justify-content: flex-end; }
-dialog[data-aculta-dialog] .form-actions :is(button, input[type="submit"]) { width: auto; margin: 0; padding: 0.5rem 0.9rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); text-align: center; }
+/* The confirmation dialogs (block, remove friendship): the question inside Drupal's modal. The modal frame gives the surface. */
+[data-aculta-dialog] { color: var(--aculta-text-primary); }
+[data-aculta-dialog] p { margin: 0 0 0.75rem; font-weight: 600; }
+[data-aculta-dialog] .form-actions { display: flex; flex-direction: row; gap: 0.5rem; justify-content: flex-end; }
+[data-aculta-dialog] .form-actions :is(button, input[type="submit"]) { width: auto; margin: 0; padding: 0.5rem 0.9rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); color: var(--aculta-text-primary); text-align: center; }
 
 /* Avisos na gaveta: resumo em caixa de botão (como uma conversa). O aviso completo abre na mesma gaveta. */
 .aculta-notice-summary { position: relative; }

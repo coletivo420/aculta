@@ -22,6 +22,7 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Caixa de autores da Revista: autor principal (node.uid) e coautores (co_authors, Node Co-Authors).
@@ -106,7 +107,7 @@ final class ArticleAuthorsHooks {
    * Um autor: foto, nome (com link se o perfil for público) e papel.
    */
   private function authorItem(UserInterface $user, string $role, CacheableMetadata $cache): array {
-    $profile = $this->entityTypeManager->getStorage('profile')->loadByUser($user, 'participante');
+    $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $user);
     if ($profile) {
       $cache->addCacheableDependency($profile);
     }

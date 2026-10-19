@@ -14,6 +14,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Caixa de bio na visão geral da Minha conta. Substitui o resumo de Cursos (aculta_portal).
@@ -45,7 +46,7 @@ final class AccountDashboardHooks {
    * Ações do topo da visão geral: "Ver Perfil" leva ao perfil público (purpose main). Sem apelido, nada aparece.
    */
   private function overviewActions(AccountInterface $account): array {
-    $profile = $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'participante');
+    $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
     $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
     // Preserve display casing, but generate the route from its lowercase slug.
     // Invalid legacy values omit this action rather than breaking the overview.

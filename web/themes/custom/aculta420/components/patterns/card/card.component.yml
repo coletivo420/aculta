@@ -1,0 +1,49 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de conteúdo
+status: stable
+group: Conteúdo
+description: 'Cartão composto com slots opcionais de mídia, cabeçalho, conteúdo e rodapé.'
+variants:
+  default:
+    title: Vertical
+  horizontal:
+    title: Horizontal
+  overlay:
+    title: Imagem sobreposta
+props:
+  type: object
+  properties:
+    variant:
+      type: string
+      title: Variante de apresentação
+      description: Variante visual limitada a uma das apresentações nomeadas do cartão.
+      enum:
+        - default
+        - horizontal
+        - overlay
+      default: default
+    image_position:
+      type: string
+      title: Posição da imagem
+      description: 'Usada somente na variante vertical.'
+      enum:
+        - top
+        - bottom
+      default: top
+      'meta:enum':
+        top: Acima do conteúdo
+        bottom: Abaixo do conteúdo
+slots:
+  image:
+    title: Mídia
+    description: Mídia renderizada pelo Drupal.
+  header:
+    title: Cabeçalho
+  content:
+    title: Conteúdo
+  footer:
+    title: Rodapé
+assets:
+  css:
+    component:
+      card.css: {}

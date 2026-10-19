@@ -1,10 +1,15 @@
-/* Modais (diálogos do Drupal e nativos <dialog>): o fundo escurece da mesma forma em todos. A cor é o token
+/* Modais (diálogos do Drupal): o fundo escurece da mesma forma em todos. A cor é o token
    --aculta-scrim; o módulo não emite nenhuma classe de design. */
 .ui-widget-overlay {
   background: var(--aculta-scrim);
   opacity: 1;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+}
+
+/* A confirmation of a member's box is open: the drawer's scrolling content does not clip the modal drawn over it. */
+.ui-dialog-content[data-aculta-confirming] {
+  overflow: visible !important;
 }
 
 /* The two communication panels use Drupal Core's off-canvas dialog renderer.
@@ -23,10 +28,6 @@
   overflow-y: auto;
   background: var(--aculta-surface-raised);
   color: var(--aculta-text-primary);
-}
-
-dialog::backdrop {
-  background: var(--aculta-scrim);
 }
 
 /* Botão de fechar (X) de todos os diálogos. O botão do jQuery UI sai sem ícone (o widget de ícone não inicializa),
@@ -191,12 +192,18 @@ dialog::backdrop {
   inline-size: min(440px, calc(100vw - 2rem)) !important;
 }
 
+/* Criar galeria (CKEditor): o módulo não informa largura. O !important vence o width inline que o jQuery UI grava no diálogo. */
+.ui-dialog:has([data-portal-ui="gallery-dialog"]) {
+  inline-size: min(40rem, calc(100vw - 2rem)) !important;
+}
+
 .ui-dialog:has([data-portal-ui="search-popup"]) {
+  position: fixed !important;
   inline-size: min(520px, calc(100vw - 2rem)) !important;
   max-block-size: min(560px, calc(100vh - 2rem)) !important;
-  top: 1.5rem !important;
+  top: 50% !important;
   left: 50% !important;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
 }
 
 /* Tamanho dos diálogos abertos pelo módulo (o módulo só informa título e comportamento). O alvo é o elemento

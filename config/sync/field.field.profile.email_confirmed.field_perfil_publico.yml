@@ -1,0 +1,24 @@
+uuid: fba0d9f3-f16e-4d3d-a8d8-9fead7690541
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_perfil_publico
+    - profile.type.email_confirmed
+id: profile.email_confirmed.field_perfil_publico
+field_name: field_perfil_publico
+entity_type: profile
+bundle: email_confirmed
+label: 'Perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

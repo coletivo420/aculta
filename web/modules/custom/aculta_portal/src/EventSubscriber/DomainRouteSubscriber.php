@@ -23,6 +23,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
 
   /** {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
+    // Doação rápida passa pelo resumo antes do pagamento (Portal\Donation\DonationSummaryController).
+    if ($quick = $collection->get('aculta_donation.donation.quick')) {
+      $quick->setDefault('_controller', '\\Drupal\\aculta_portal\\Donation\\DonationSummaryController::quick');
+    }
     // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado, somado à regra original do dono
     // do recurso (ProtectedRouteAccessCheck). Rota sem recurso (/checkout) só recebe a checagem de e-mail; mantém _permission.
     $protected = [
@@ -37,10 +41,6 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     }
     if ($route = $collection->get('commerce_checkout.checkout')) {
       $route->setRequirement('_custom_access', 'aculta_portal.access.protected_route:account');
-    }
-    // Consulta de CEP: controller do Portal (só AJAX e sem a resposta bruta do ViaCEP).
-    if ($route = $collection->get('cep_autocomplete.viacep_lookup')) {
-      $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\CepLookupController::lookup');
     }
     // Página do acordo de termos: substituída pelo popup de aceite (AccountTermsHooks). A rota continua existindo
     // porque o módulo agreement a consulta por nome; o caminho /aceite-termos responde 404.
@@ -186,7 +186,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       $route->setOption('parameters', []);
       $route->setOption('_aculta_domain_purpose', 'account');
     }
-    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.my_data_other', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.security_password', 'aculta_portal.support_my', 'aculta_portal.account_courses', 'aculta_portal.account_settings'] as $name) {
+    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.my_data_other', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.security_password', 'aculta_portal.support_my', 'aculta_portal.support_subscription_action', 'aculta_portal.account_courses', 'aculta_portal.account_settings'] as $name) {
       if ($route = $collection->get($name)) {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
@@ -212,6 +212,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('entity.commerce_product.canonical')) {
       $route->setOption('_aculta_domain_purpose', 'shop');
     }
+    // Catálogo público da loja; a listagem e o detalhe permanecem no purpose SHOP.
+    if ($route = $collection->get('view.aculta_shop_catalog.page_catalog')) {
+      $route->setOption('_aculta_domain_purpose', 'shop');
+    }
 
     // Listagens por sessão da Revista (view revista_sessoes) pertencem ao purpose MAGAZINE.
     foreach ($collection as $name => $route) {
@@ -230,6 +234,12 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     foreach ($collection as $name => $route) {
       if ($route->getOption('_admin_route')) {
         $route->setOption('_aculta_domain_purpose', 'main');
+      }
+      if (DomainRoutePolicy::isDonationFlowRouteName((string) $name)) {
+        // Escolha do valor (apoio) fica no SUPPORT; as etapas de checkout ficam no MAIN, com as rotas do Commerce.
+        $purpose = DomainRoutePolicy::purposeForDonationRoute((string) $name);
+        $route->setOption('_aculta_domain_purpose', $purpose);
+        $route->setOption('_aculta_cross_domain_canonical_purpose', $purpose);
       }
       if (DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
         $route->setOption('_aculta_domain_purpose', 'main');

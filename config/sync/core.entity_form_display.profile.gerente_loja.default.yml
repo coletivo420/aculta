@@ -1,0 +1,102 @@
+uuid: 5483b1c1-a827-4eca-8a19-ead70539e0df
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.profile.gerente_loja.field_address
+    - field.field.profile.gerente_loja.field_bio
+    - field.field.profile.gerente_loja.field_city
+    - field.field.profile.gerente_loja.field_data_nascimento
+    - field.field.profile.gerente_loja.field_documento
+    - field.field.profile.gerente_loja.field_documento_indice
+    - field.field.profile.gerente_loja.field_exibir_bio
+    - field.field.profile.gerente_loja.field_exibir_email
+    - field.field.profile.gerente_loja.field_exibir_foto
+    - field.field.profile.gerente_loja.field_exibir_redes
+    - field.field.profile.gerente_loja.field_first_name
+    - field.field.profile.gerente_loja.field_last_name
+    - field.field.profile.gerente_loja.field_nickname
+    - field.field.profile.gerente_loja.field_orgao_emissor
+    - field.field.profile.gerente_loja.field_perfil_publico
+    - field.field.profile.gerente_loja.field_profissao
+    - field.field.profile.gerente_loja.field_redes_sociais
+    - field.field.profile.gerente_loja.field_rg
+    - field.field.profile.gerente_loja.field_state
+    - field.field.profile.gerente_loja.field_whatsapp
+    - profile.type.gerente_loja
+  module:
+    - address
+id: profile.gerente_loja.default
+targetEntityType: profile
+bundle: gerente_loja
+mode: default
+content:
+  field_address:
+    type: address_default
+    weight: 20
+    region: content
+    settings:
+      wrapper_type: details
+    third_party_settings: {  }
+  field_city:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_first_name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_last_name:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_nickname:
+    type: string_textfield
+    weight: -1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_state:
+    type: options_select
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_whatsapp:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  field_bio: true
+  field_data_nascimento: true
+  field_documento: true
+  field_documento_indice: true
+  field_exibir_bio: true
+  field_exibir_email: true
+  field_exibir_foto: true
+  field_exibir_redes: true
+  field_orgao_emissor: true
+  field_perfil_publico: true
+  field_profissao: true
+  field_redes_sociais: true
+  field_rg: true
+  is_default: true
+

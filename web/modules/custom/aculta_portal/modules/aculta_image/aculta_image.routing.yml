@@ -5,6 +5,8 @@ aculta_image.audit:
     _title: 'Administração de imagens'
   requirements:
     _permission: 'administer aculta images'
+  options:
+    _admin_route: true
 
 aculta_image.audit_report:
   path: '/painel-administrativo/imagens/relatorio'
@@ -13,6 +15,8 @@ aculta_image.audit_report:
     _title: 'Relatório de imagens'
   requirements:
     _permission: 'administer aculta images'
+  options:
+    _admin_route: true
 
 aculta_image.quarantine:
   path: '/painel-administrativo/imagens/quarentena'
@@ -21,6 +25,8 @@ aculta_image.quarantine:
     _title: 'Quarentena de imagens'
   requirements:
     _permission: 'administer aculta images'
+  options:
+    _admin_route: true
 
 aculta_image.cleanup:
   path: '/painel-administrativo/imagens/limpeza'
@@ -29,3 +35,5 @@ aculta_image.cleanup:
     _title: 'Limpeza de imagens'
   requirements:
     _permission: 'administer aculta images'
+  options:
+    _admin_route: true

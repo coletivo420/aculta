@@ -39,3 +39,9 @@
   padding-block-end: 0 !important;
   align-self: flex-end;
 }
+
+/* Campos do endereço preenchidos pelo CEP: bloqueados para edição, mas visíveis (o módulo marca a classe). */
+.aculta-cep-locked {
+  background-color: var(--aculta-surface-muted);
+  cursor: not-allowed;
+}

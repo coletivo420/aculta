@@ -3,10 +3,12 @@ description: Cartão de projeto com categoria, título, resumo e chamada.
 component: aculta420:project-card
 props: {}
 slots:
+  media:
+    markup: '<div class="ratio ratio-1x1 bg-body-secondary" role="img" aria-label="Área reservada para imagem do projeto"></div>'
   category:
     markup: Música · Percussão
   title:
-    markup: Baque Sativa
+    markup: '<a href="#">Baque Sativa</a>'
   summary:
     markup: Grupo de percussão que transforma ritmo em encontro.
   cta:

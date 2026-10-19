@@ -37,20 +37,17 @@ são acessados por symlinks no topo do projeto, fora da árvore pública.
   trabalho precisa estar no grupo `aculta` para o Drush conectar ao runtime. Sem essa
   permissão, o `drush status` não mostra banco nem site URI. Não relaxe o modo dos arquivos
   de configuração nem copie segredos para fora da instalação para contornar isso.
-- Estado verificado em 2026-10-15: o código customizado de `/home/aculta/web` é idêntico ao do
-  checkout de origem; a configuração local de `/home/aculta` ainda não foi conectada ao runtime
-  `aculta_runtime` para o usuário de trabalho atual (bloqueio de permissão, não de código).
+- Estado verificado em 2026-10-18: `/home/aculta` aponta para o checkout de origem e o Drush alcança
+  o Runtime de teste `aculta_runtime`. Não fixe uma URI de teste nas configurações locais. Em operações
+  por Drush, informe a URI do host/purpose que se quer inspecionar; sem ela, Drush pode reportar
+  `http://default`, que não identifica o purpose do site.
 
 ## Servidor de testes
 
 `*.aculta.toca.net.br` é o **servidor de testes** do projeto. Neste documento ele
-aparece como Homelab; os dois termos designam o mesmo ambiente.
-
-- Hosts: `aculta.toca.net.br` (MAIN), `apoio.aculta.toca.net.br` (SUPPORT) e os
-  demais purposes conforme `docs/architecture/multidomain.md`.
-- `links.aculta.toca.net.br` é o host de teste da página pública de links para
-  redes sociais e projetos ACULTA. Seu CNAME Cloudflare aponta para
-  `aculta.toca.net.br`, com proxy desabilitado.
+aparece como Homelab; os dois termos designam o mesmo ambiente. Os hosts e seus
+purposes estão em `docs/architecture/multidomain.md`; não há uma URI única que
+represente todos os sites/purposes do Runtime.
 - Não é produção: nenhum dado de produção deve ser usado nele sem decisão do
   responsável.
 

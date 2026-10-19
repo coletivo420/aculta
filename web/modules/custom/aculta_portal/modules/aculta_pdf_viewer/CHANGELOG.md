@@ -1,5 +1,101 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.20 — upload editorial pela UI e acesso próprio — 2026-10-17
+
+Classificação: PATCH (completar criação e acesso do Media pelo papel editorial).
+
+- Firefox no Runtime de testes confirmou aceite dos termos pela rota real, upload pelo input nativo e criação da Media `document`.
+- O fluxo revelou que o redirect pós-criação caía em acesso negado. O papel `content_editor` recebeu `edit own document media`, conforme o controle de acesso do Core; não recebeu edição de Media de outras pessoas.
+- Repetição no Firefox confirmou mensagem de criação e abertura de `/media/239/edit`. Media, File, perfil e usuário temporários foram removidos após verificar ownership e `file_usage`.
+- Unit 11/11 (145 assertions), Kernel 5/5 (106 assertions, 4 deprecações de Core/contrib) e gate Drupal 11+ (904 checks) PASS.
+- `config:status` não pôde ser executado: `config/sync/user.role.administrator.yml` já contém duas chaves `permissions`. Não foi feito import global; a permissão foi alinhada no Runtime e no Config Sync do papel `content_editor`.
+- CSP estrita, revisão acessível ampliada e validação LiteSpeed/Cloudflare pós-deploy continuam pendentes.
+- RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
+
+## 0.1.0-dev.19 — cache versionado e matriz Chromium PV7 — 2026-10-17
+
+Classificação: PATCH (estabilidade de versão da API/worker em cache e evidências de compatibilidade).
+
+- As URLs da API e do worker PDF.js levam `?v=6.4.299`, igual à versão fixada em `composer.lock`; evita misturar módulos de releases diferentes em cache público de um ano.
+- Chromium 155.0.8059.39 no Runtime renderizou PDFs de 1 MiB e 22 MiB (14 páginas), sem erros JS severos. PDF inválido e 503 simulado exibiram fallback. Com cache desabilitado, rede limitada a 700 ms e 64 KiB/s renderizou o PDF pequeno em 20,9 s.
+- CSP simulada por proxy de loopback com `worker-src 'self'` renderizou o viewer. A política permitiu inline scripts/styles do Drupal e bloqueou fontes externas; não substitui auditoria de uma CSP estrita nos servidores.
+- Cache Runtime: HTML privado sem cache, PDF/JS público max-age de um ano; Range retornou 206. Produção retorna `text/plain` para os três módulos `.mjs`; corrigir header depende da regra `.htaccess` chegar via deploy e de validação pós-deploy.
+- A permissão `content_editor:create document media` está ativa; upload/criação por essa identidade na UI segue pendente por falta de sessão de teste autorizada.
+- A sessão temporária chegou à tela de termos obrigatórios. O aceite não foi marcado; nenhum arquivo/Media foi enviado. A identidade temporária e o perfil automático foram removidos após confirmar que não tinham conteúdo nem pedidos próprios.
+- RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
+
+## 0.1.0-dev.18 — MIME do PDF.js e evidências da PV7 — 2026-10-17
+
+Classificação: PATCH (compatibilidade de entrega dos módulos PDF.js).
+
+- `.mjs` agora recebe `application/javascript` via `.htaccess`; verificado no Apache do Runtime para `pdf.mjs` e `pdf.worker.mjs`.
+- Firefox 153.4 ESR no Runtime renderizou PDFs de 1 MiB e 22 MiB (14 páginas cada); arquivo inválido manteve o link autorizado com mensagem fail-soft.
+- Unit 11/11, Kernel 5/5 (106 assertions; quatro deprecações) e gate Drupal 11+ (892 checks) PASS.
+- Chromium, rede lenta e CSP estrita permanecem sem evidência. Produção Hostinger/Cloudflare ainda entrega o worker como `text/plain`; validar após deploy, sem deploy nesta fase.
+- RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
+
+## 0.1.0-dev.17 — PV6 homologada em Wiki, Fórum e apresentações — 2026-10-17
+
+Classificação: MINOR (autoria Media Embed compartilhada e conclusão da homologação PV6).
+
+- Wiki e Fórum usam `media_embed` restrito a `document`; CKEditor 5 validado nos dois formatos com `CKEditor5::validatePair()` e zero violações. Source Editing mantém markup legado sanitizado sem mudar conteúdos/revisões.
+- O Fórum renderiza o embed por `text_default`; o formatter Media/File não muda e o tema ACULTA420 já apresenta os atributos neutros usando tokens.
+- PHPUnit Unit 11/11 (145 asserções) e Kernel 5/5 (106 asserções) PASS no MariaDB `aculta_simpletest`; quatro deprecações Core/contrib.
+- Runtime de teste `https://aculta.toca.net.br`: filtros e editor aplicados individualmente, cache rebuild; Wiki/Fórum sem migration de conteúdo. Drush render do tópico restrito confirma viewer e fallback autorizado. Artigo, blog e projeto retornam HTTP 200 com viewer.
+- Firefox 153.4 ESR: PDF de 14 páginas, navegação, zoom a 125%, screenshot revisado em desktop 1440 px e viewport estreito (500 px de largura interna mínima do Firefox headless); sem overflow horizontal da página, controles nomeados com 44 px ou mais, foco 3 px, live regions e link fallback. Smoke visual/acessível PASS; PV7 continua com matriz ampla de navegadores/CSP.
+- Config Sync global não foi importado; `user.role.administrator.yml` continua com chave YAML duplicada preexistente.
+- RUNTIME STATUS: APLICADO.
+
+## 0.1.0-dev.16 — Media Embed da Wiki compartilha o display PDF — 2026-10-17
+
+Classificação: PATCH (habilita processamento de Media `document` no formato Wiki existente).
+
+- `filter.format.wiki` permite o elemento `drupal-media` e processa Media Embed após os filtros HTML, restrito ao bundle `document`; o display Media compartilhado mantém as verificações de acesso do Core.
+- Kernel confirma que embed em formato compatível renderiza o formatter PDF compartilhado. Na PV6, CKEditor também foi habilitado e validado sem incompatibilizar a lista HTML histórica.
+- Runtime de teste `https://aculta.toca.net.br`: formato `wiki` atualizado por entidade de configuração e cache reconstruído. Esta entrega foi homologada na versão .17, sem conteúdo PDF preexistente na Wiki para screenshot dedicado.
+
+## 0.1.0-dev.15 — viewer compartilhado em campos File institucionais — 2026-10-17
+
+Classificação: MINOR (novo formatter compatível com File API e sem storage próprio).
+
+- Adicionado `aculta_pdf_file`, formatter para campos File diretos. Ele usa o builder compartilhado somente para PDF público permanente, depois de validar acesso da entidade, do campo e de download do File. Tipos não PDF, arquivos privados e falhas do viewer mantêm o link Core autorizado.
+- Os displays `node.document.default` e `node.document.full` passam a usar o formatter para `field_document`; nenhum node, Media ou File é migrado ou regravado.
+- PHPUnit: Unit 11/11 (145 asserções) e Kernel 4/4 (87 asserções) PASS no MariaDB dedicado `aculta_simpletest`; quatro deprecações de Core/contrib registradas. Drupal 11+ Gate (888 checks), image, public-slugs e module/theme-boundary gates PASS.
+- Drush confirmou no Runtime de teste que `aculta_pdf_viewer` está ativo e que ambos os displays já usam `aculta_pdf_file`; não alterei configuração nesta sessão. RUNTIME STATUS: DEFERRED para smoke visual/HTTP do novo campo; Kernel confirma o render funcional.
+
+## 0.1.0-dev.14 — corrigir entrega do PDF privado no Runtime — 2026-10-17
+
+Classificação: PATCH (mantém a rota e as checagens de acesso do Drupal Core).
+
+- O viewer gera URLs privadas como `/system/files?file=...`, usando a rota Core `system.files`. No Runtime, `/system/files/{filepath}` retornava 404 mesmo para membros autorizados; a forma com `file` na query entrega o arquivo e mantém a autorização do Core em cada requisição.
+- Firefox 153.4 ESR no Runtime validou o PDF público e o PDF privado de turma (14 páginas), navegação, zoom, busca e renderização do canvas. A miniatura JPEG pública foi gerada pelo pipeline `aculta_image`. O membro recebeu 200; não membro e anônimo receberam 403. Remover membership ou relação Group negou imediatamente a mesma URL conhecida (403); restaurá-los retornou 200. A URL privada usa `?file=` porque a forma `/system/files/{filepath}` retornava 404 nesse Runtime.
+
+## Submódulo aculta_pdf_viewer_group 0.1.0-dev.4 — relação Group após habilitação — 2026-10-17
+
+Classificação: PATCH (corrige a ordem de instalação da configuração Group).
+
+- A relação `lms_course` deixa de ficar em `config/optional`; permanece no Config Sync, que a importa após habilitar o submódulo e descobrir o plugin `aculta_pdf_viewer_group:course_document`.
+- O Runtime confirmou que a instalação falhava ao resolver o plugin na importação opcional antecipada. A relação agora fica apenas no Config Sync e foi aplicada por importação parcial dirigida, depois da habilitação do submódulo.
+- O formulário de `course_document` mantém o checkbox de status visível como projetado; o hook continua impedindo que esses Media sejam publicados.
+- Os YAML do bundle e da relação usam UUIDs estáveis exportados do Runtime; `config:status` não aponta drift nos itens PV5. A configuração inválida do LMS que referia `filter.format.0` foi corrigida para `plain_text`, como em `config/sync`.
+- Runtime: configuração PV5 ativa; nenhuma Media `course_document` criada. A matriz real de membro, não membro, remoção da relação e revogação ainda aguarda homologação.
+
+## 0.1.0-dev.13 — zoom visível fora da tela cheia — 2026-10-17
+
+Classificação: PATCH (correção de apresentação; sem mudança no formato de arquivo ou contrato de acesso).
+
+- A página do PDF passa a ficar em uma área rolável; o canvas mantém o tamanho de renderização definido pelo zoom do PDF.js, sem ser reduzido pelo CSS para a largura do container.
+- O canvas permanece oculto até a primeira renderização bem-sucedida, evitando uma página em branco quando o PDF.js falha.
+- RUNTIME STATUS: cache rebuild feito no host de teste para carregar o código; revisão visual no Firefox e no mobile segue pendente.
+
+## Submódulo aculta_pdf_viewer_group 0.1.0-dev.3 — regressão de relação removida — 2026-10-17
+
+Classificação: PATCH (cobertura de segurança, sem alteração funcional).
+
+- O Kernel agora confirma que a URL privada conhecida retorna 403 quando a relação Media↔Group é removida; religa a Media para testar separadamente não membro e revogação de membership.
+- PHPUnit Kernel: 1 teste, 39 asserções, PASS; execução isolada no MariaDB `aculta_simpletest`.
+- RUNTIME STATUS: DEFERRED; o import de configuração e a homologação com memberships reais continuam pendentes.
+
 ## Submódulo aculta_pdf_viewer_group 0.1.0-dev.2 — relação de turma restrita a lms_course — 2026-10-16
 
 Classificação: PATCH (submódulo; o módulo pai não mudou de versão).

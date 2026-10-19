@@ -28,9 +28,9 @@ de rotas centrais de carrinho/checkout/pagamento que pertencem a MAIN:
 - `commerce_cart.*`;
 - `commerce_checkout.*`;
 - `commerce_payment.checkout.*`;
-- `commerce_payment.notify`;
-- `commerce_donation_flow.*`.
+- `commerce_payment.notify`.
 
+O fluxo de apoio e assinatura (`aculta_donation.*`) pertence a SUPPORT (ver "Donation Flow").
 A política é reutilizada por:
 
 - `DomainRouteSubscriber`, para classificar as rotas e anotar navegação browser-facing com `_aculta_cross_domain_canonical_purpose=main`;
@@ -141,14 +141,26 @@ nesta correção.
 
 ## Donation Flow
 
-A página institucional de apoio pode permanecer em SUPPORT. Informado pelo
-responsável: a página de apoio fica a cargo do subdomínio da plataforma de doações
-(`apoio.aculta.toca.net.br` no homelab, `apoio.aculta.org` em produção); o host
-principal não serve a rota de apoio (ver `docs/architecture/multidomain.md`).
+Decisão do responsável (2026-10-17, versão final):
 
-Quando Commerce Donation Flow inicia seu fluxo dedicado, suas rotas
-`commerce_donation_flow.*` pertencem a MAIN. Isso evita manter um checkout
-financeiro paralelo em SUPPORT.
+- **Carrinho único.** Loja, cursos e apoio compartilham um carrinho. O painel
+  da barra agrupa os itens por separador, conforme o tipo do pedido: `default`
+  (Loja), `curso` (Cursos) e `doacao` e `assinatura` (Apoio). Cada separador tem
+  seu botão de checkout.
+- **Carrinho, checkout e pagamento no MAIN.** As rotas do Commerce
+  (`commerce_cart.*`, `commerce_checkout.*`, `commerce_payment.checkout.*` e
+  `commerce_payment.notify`) pertencem ao MAIN. Cada botão de checkout leva ao
+  checkout do Commerce no domínio principal.
+- **Apoio escolhe o valor.** A página de apoio (`/apoiar` e `/apoiar/{valor}/agora`)
+  fica no purpose SUPPORT e só escolhe o valor. Ao escolher, o visitante vai para a
+  etapa de checkout no MAIN, com a sessão compartilhada pelo `cookie_domain` do ambiente.
+- **Gateway no MAIN.** A notificação do Mercado Pago, o retorno e o cancelamento
+  são gerados no domínio principal por `Routing\PaymentDomainPathProcessor`.
+- **Sem estorno** para doações, assinaturas e cursos. A regra é aplicada pelo evento de elegibilidade do gateway (`MercadoPagoPaymentPolicy::bloqueiaEstorno()`). A assinatura terá cancelamento. Cancelamento de pagamento pendente é operação separada, não estorno.
+- **Entrada de apoio sem cache.** As rotas que criam pedido de doação são
+  `no_cache`, para que cada visita tenha o próprio pedido e a própria sessão.
+
+A loja (produtos) segue a mesma regra de checkout no MAIN.
 
 ## Segurança
 

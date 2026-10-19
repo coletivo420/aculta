@@ -1,0 +1,102 @@
+uuid: 28604f7a-45c9-4fb5-8d97-b80586bca516
+langcode: pt-br
+id: h5p_restricted_upload
+label: "H5P: bloquear tipos de conteúdo restritos no upload"
+status: true
+dependencies: []
+_core:
+  default_config_hash: doQgu6rtI36y45YQEXbTPkvL1bt4jZWk26lhZfHCyBw
+package: h5p/h5p-editor
+version: "1.25"
+issue_url: "https://www.drupal.org/project/h5p/issues/3548290"
+patch: |
+  diff --git a/h5peditor-ajax.class.php b/h5peditor-ajax.class.php
+  index 812bab3807127552bf053ce6e89ea10a8a4c8931..04610e444f14bd9aa4516afd93a7216af1fa891f 100644
+  --- a/h5peditor-ajax.class.php
+  +++ b/h5peditor-ajax.class.php
+  @@ -227,6 +227,11 @@
+         return; // Validation errors
+       }
+   
+  +    if ($this->containsRestrictedContentType()) {
+  +      H5PCore::ajaxError($this->core->h5pF->t('You are not allowed to create content using a restricted content type.'), 'RESTRICTED_CONTENT_TYPE', 403);
+  +      return;
+  +    }
+  +
+       // Install any required dependencies (libraries) from the package
+       // (if permission allows it, of course)
+       $storage = new H5PStorage($this->core->h5pF, $this->core);
+  @@ -249,6 +254,73 @@
+         'content' => $this->core->contentJsonData,
+         'contentTypes' => $this->getContentTypeCache()
+       ));
+  +  }
+  +
+  +  /**
+  +   * Checks package libraries and dependencies against locally restricted types.
+  +   *
+  +   * The editor's library list filters restricted types from the UI, but an
+  +   * uploaded .h5p package bypasses that list. Reject it before saving content
+  +   * or installing libraries when it references a restricted local type.
+  +   *
+  +   * @return bool
+  +   *   TRUE when this package uses a restricted content type.
+  +   */
+  +  private function containsRestrictedContentType() {
+  +    if ($this->core->h5pF->hasPermission(H5PPermission::CREATE_RESTRICTED)) {
+  +      return FALSE;
+  +    }
+  +
+  +    $installedLibraries = $this->core->h5pF->loadLibraries();
+  +    $candidates = array();
+  +    if (is_array($this->core->librariesJsonData)) {
+  +      $candidates = $this->core->librariesJsonData;
+  +    }
+  +    if (is_array($this->core->mainJsonData)) {
+  +      $candidates[] = $this->core->mainJsonData;
+  +    }
+  +
+  +    $dependencies = array();
+  +    foreach ($candidates as $candidate) {
+  +      $this->collectLibraryDependencies($candidate, $dependencies);
+  +    }
+  +
+  +    foreach ($dependencies as $dependency) {
+  +      $machineName = $dependency['machineName'];
+  +      foreach ($installedLibraries[$machineName] ?? array() as $installed) {
+  +        if ((int) $installed->major_version === (int) $dependency['majorVersion'] &&
+  +          (int) $installed->minor_version === (int) $dependency['minorVersion'] &&
+  +          !empty($installed->restricted)) {
+  +          return TRUE;
+  +        }
+  +      }
+  +    }
+  +
+  +    return FALSE;
+  +  }
+  +
+  +  /**
+  +   * Collects H5P library metadata and its declared dependencies.
+  +   *
+  +   * @param array $libraryData
+  +   *   A library or content metadata array.
+  +   * @param array $dependencies
+  +   *   Collected library dependency records.
+  +   */
+  +  private function collectLibraryDependencies($libraryData, array &$dependencies) {
+  +    if (isset($libraryData['machineName'], $libraryData['majorVersion'], $libraryData['minorVersion'])) {
+  +      $dependencies[] = $libraryData;
+  +    }
+  +
+  +    foreach (array('preloadedDependencies', 'dynamicDependencies') as $key) {
+  +      if (!empty($libraryData[$key]) && is_array($libraryData[$key])) {
+  +        foreach ($libraryData[$key] as $dependency) {
+  +          if (is_array($dependency)) {
+  +            $this->collectLibraryDependencies($dependency, $dependencies);
+  +          }
+  +        }
+  +      }
+  +    }
+     }
+   
+     /**

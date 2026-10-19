@@ -3,6 +3,7 @@ global:
     theme:
       'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap': { type: external, minified: true }
       css/tokens.css: {}
+      css/components/ui-styles.css: {}
       components/content/project-card/project-card.css: {}
       css/base.css: {}
       css/layout.css: {}
@@ -15,12 +16,12 @@ global:
       css/components/pdf-viewer.css: {}
       css/drupal-bootstrap.css: {}
       css/components/institutional.css: {}
-      css/components/course-card.css: {}
       css/components/footer.css: {}
       css/components/forms.css: {}
       css/components/search.css: {}
       css/components/wiki.css: {}
       css/components/product.css: {}
+      css/components/product-gallery.css: {}
       css/components/account.css: {}
       css/components/portal-account.css: {}
       css/components/public-profile.css: {}
@@ -34,6 +35,7 @@ global:
       css/components/unread-count.css: {}
       css/components/portal-payment-notice.css: {}
       css/components/portal-requirements-report.css: {}
+      css/components/sales-panel.css: {}
       css/components/portal-support.css: {}
       css/components/auth.css: {}
   js:
@@ -42,10 +44,17 @@ global:
     js/alerts-dismiss.js: {}
     js/address-layout.js: {}
   dependencies:
-    - bootstrap5/global-styling
-    - bootstrap5/bootstrap5-js-latest
+    - bootstrap/bootstrap
+    - bootstrap/global-styling
+    - aculta420/bootstrap-icons
     - core/drupal
     - core/once
+
+bootstrap-icons:
+  version: 1.11.0
+  css:
+    component:
+      assets/icons/bootstrap-icons/font/bootstrap-icons.min.css: {}
 
 album-slideshow:
   css:
@@ -56,6 +65,11 @@ album-slideshow:
   dependencies:
     - core/drupal
     - core/once
+
+editorial-content:
+  css:
+    theme:
+      css/components/editorial-content.css: {}
 
 editorial-carousel:
   css:
@@ -76,6 +90,7 @@ messenger-drawers:
     js/messenger-drawers.js: {}
   dependencies:
     - core/drupal
+    - core/drupal.dialog
     - core/once
-    - bootstrap5/bootstrap5-js-latest
+    - bootstrap/bootstrap
 

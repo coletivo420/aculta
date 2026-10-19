@@ -1,0 +1,10 @@
+name: Figura com legenda e crédito
+description: Exemplo de composição editorial; a mídia é fornecida já renderizada.
+component: aculta420:figure
+slots:
+  image:
+    markup: '<div class="ratio ratio-16x9 bg-body-secondary" role="img" aria-label="Área reservada para imagem editorial"></div>'
+  caption:
+    markup: Legenda editorial da imagem (exemplo).
+  credit:
+    markup: Crédito informado pela edição (exemplo).

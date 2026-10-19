@@ -72,6 +72,21 @@ final class PortalHelperRegistry {
       'summary' => 'Porta única para imagens de origem externa: valida pela política, calcula SHA-256, reaproveita, nunca sobrescreve e registra a origem.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
+    'aculta_image.upload_ingester' => [
+      'label' => 'Ingestão de upload de imagem',
+      'summary' => 'Aplica UploadPolicy, valida conteúdo raster e cria arquivo gerenciado pela File API sem mover limites de upload para o consumidor.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.packaged_asset_publisher' => [
+      'label' => 'Publicação de imagens estáticas Composer',
+      'summary' => 'Publica assets H5P fixos dos pacotes Composer por caminho estável, valida imagens/SVG e registra uso e proveniência sem aceitar uploads.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.file_usage_manager' => [
+      'label' => 'Referências de imagem H5P',
+      'summary' => 'Registra e remove referências das imagens H5P no File API para a limpeza segura do acervo.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
     'aculta_image.audit' => [
       'label' => 'Inventário e auditoria de imagens',
       'summary' => 'Resumo do acervo, grupos de duplicatas exatas e candidatas à revisão com motivos. Somente leitura.',
@@ -151,6 +166,21 @@ final class PortalHelperRegistry {
       'label' => 'Eventos de conclusão do LMS',
       'summary' => 'Publica fatos de conclusão aprovada já persistidos pelo LMS, sem armazenar progresso ou nota.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/docs/CONTRACT.md',
+    ],
+    'aculta_lms.course_room_builder' => [
+      'label' => 'Sala do curso LMS',
+      'summary' => 'Apresenta o índice de lições com access e cache do Group/LMS nas páginas canônicas de curso.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/README.md',
+    ],
+    'aculta_lms.course_order_enrollment' => [
+      'label' => 'Matrícula de curso pelo Commerce',
+      'summary' => 'Sincroniza matrículas Group com pedidos pagos de curso e preserva memberships manuais e outras compras válidas.',
+      'docs' => 'docs/modules/LMS-GROUP.md',
+    ],
+    'aculta_lms.attempt_archive' => [
+      'label' => 'Histórico de tentativas do LMS',
+      'summary' => 'Preserva respostas, notas e comentários anteriores ao reinício de aula, revalidando acesso pelo curso e pelo usuário.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/README.md',
     ],
     'aculta_portal.mercado_pago_webhook_guard' => [
       'label' => 'Proteção de webhook de pagamento',

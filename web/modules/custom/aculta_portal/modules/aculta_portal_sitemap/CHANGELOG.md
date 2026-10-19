@@ -44,7 +44,7 @@
 - Dependência `domain_config` declarada em `aculta_portal_sitemap.info.yml`.
 - Variantes de piloto no runtime: `wiki`, `magazine` e `courses`.
 - Verificado no servidor de testes: MAIN 11 URLs; SUPPORT 1; WIKI 1 (`https://wiki420.aculta.org/`);
-  MAGAZINE 1 (`https://coletivo420.aculta.org/`); COURSES 1 (`https://cursos.aculta.org/`).
+  MAGAZINE 1 (`https://revista420.aculta.org/`); COURSES 1 (`https://cursos.aculta.org/`).
   Total final: 18 URLs (MAIN 10, SUPPORT 1, WIKI 5, MAGAZINE 1, COURSES 1), sem duplicatas.
 - Verbetes da WIKI incluídos (4): o acesso é avaliado no contexto do purpose de origem, via
   `DomainPurposeManager::runInPurpose()` (Portal 0.2.0-dev.8). Antes, o gerador rodava no contexto do MAIN

@@ -169,6 +169,16 @@ https://getbootstrap.com/docs/5.3/customize/color-modes/
 - Exceção: carrossel fora do VVJB só com decisão registrada no `DEBT-REGISTER.md` ou no roadmap do tema, com justificativa.
 - Motivo: uma só engine de carrossel, com navegação, teclado, reduced-motion e foco já tratados (`editorial-carousel.css` e `editorial-carousel.js`).
 
+## VVJS para sequências de fotos
+
+- O palco dos álbuns usa VVJS (`views_vvjs`) porque apresenta uma sequência fotográfica paginada com miniaturas próprias. Esse uso não muda os carrosséis editoriais Home/Projetos, que continuam VVJB.
+- A ampliação PhotoSwipe continua responsável pelo lightbox da imagem; VVJS controla somente o slide atual, navegação e movimento reduzido.
+- A View `galeria_produto` também usa VVJS para percorrer imagens de produto, sem autoplay. O modo de exibição `produto_galeria` e a finalidade de imagem permanecem; `product-gallery.css` mantém a imagem contida e a moldura usa tokens ACULTA420.
+- A integração do palco fica no tema por `data-aculta-album-*` e pela API/evento público VVJ; o submódulo Gallery mantém conteúdo, ordem, paginação, acesso e cache.
+- O tema retira do HTML o `src` das imagens de slides inativos e carrega o slide atual e o próximo ao navegar. `loading="lazy"` sozinho não impedia o Firefox de baixar todos os slides ocultos; a miniatura continua usando o carregamento lazy nativo dentro do trilho rolável.
+- VVJA, VVJF, VVJH, VVJL, VVJR e VVJT ficam disponíveis para Views, mas não substituem por conveniência componentes SDC, páginas de rota, formulários ou navegação da Conta. Aplicar um formato somente com View e necessidade editorial compatíveis.
+- VVJC (3D Carousel) e VVJP (Parallax) não fazem parte do catálogo instalado do ACULTA.
+
 ## Motion
 
 Motion deve ser foundation, não decisão local de cada componente.
@@ -211,6 +221,40 @@ Exemplos:
 - Category label: candidato a SDC;
 - Icon: futuramente via Core Icon API/UI Icons;
 - Media: só abstrair quando cards comprovarem contrato comum.
+
+O SDC `aculta420:card` é um pattern composto para site building, com slots de
+mídia, cabeçalho, conteúdo e rodapé, em variantes vertical e horizontal. Ele
+usa classes Bootstrap estruturais e tokens semânticos ACULTA420 para superfície,
+texto e borda. Botões e demais primitives simples continuam sendo Bootstrap
+direto; não importamos a folha global nem os helpers do UI Suite Bootstrap.
+
+O mesmo card inclui a variante `overlay`, usada na listagem de álbuns com a
+imagem ao fundo e metadados em painel sobreposto de contraste controlado por
+tokens de interação. `aculta420:figure` envolve mídia Drupal já renderizada e
+aceita legenda/crédito opcionais. `aculta420:quote` apresenta citação, autoria e
+fonte; citações antigas em HTML rico da Revista recebem a mesma tipografia e
+superfície sem reprocessar o corpo ou alterar o conteúdo salvo.
+
+O catálogo UI Styles também oferece elevação de superfície por
+`--aculta-shadow-raised`, com o mesmo contrato de markup e valores próprios dos
+tokens de cada modo. A opção é única e não substitui a sombra de foco/interação
+nem permite escolher valores livres.
+
+Os SDCs `project-card` e `course_card` compõem esse pattern em sua variante
+vertical, mantendo seus contratos especializados. Projetos preservam mídia já
+renderizada, categoria, resumo e CTA; o cartão do LMS mantém props/slots,
+marcação de integração e dados/access/cache fornecidos pelo Drupal LMS. A
+variante sobreposta segue reservada a mídias editoriais apropriadas, sem forçar
+recorte de logos de projeto ou depender de URL de imagem do curso.
+
+### Consumidores UI Patterns
+
+Adotar UI Patterns em um consumidor novo somente quando houver uma necessidade
+real e repetível de montagem editorial. Confirmar que o contrato do SDC é neutro
+e estável, que a integração preserva render arrays/access/cache e que Bootstrap,
+Core ou um consumidor existente não resolvem o caso. Registrar consumidor e
+story no mesmo commit. Não converter displays em lote nem substituir VVJB/VVJS,
+Form API, view modes ou lógica do Portal por conveniência.
 
 ## Variants
 
@@ -277,6 +321,22 @@ comportamento: não remova ao mudar o visual. Inventário: `docs/portal/FRONTEIR
   solto para ícone. Exceção: logo de marca de terceiros em `assets/brands/<marca>/`, com `alt` do nome da marca
   (hoje: `assets/brands/mercado-pago/mercado-pago.svg`, na caixa de pagamentos de Meus pedidos).
 - Gate: `php scripts/validate-module-theme-boundary.php`, seção 12.
+
+## Diálogo da busca
+
+O popup acionado pela barra multidomínio usa Drupal Dialog e é centralizado nos
+dois eixos da viewport pelo seletor `[data-portal-ui="search-popup"]` em
+`css/components/dialog.css`. Largura e altura máximas preservam margem de tela
+em dispositivos menores; o tema controla apenas a apresentação, e o Portal
+continua responsável pela rota e pelo formulário.
+
+## Catálogo Commerce
+
+A View `aculta_shop_catalog` solicita o view mode Commerce `catalog`. O template
+`commerce-product--produto-loja.html.twig` apresenta esse modo usando o SDC
+`aculta420:card`, com a galeria renderizada pelo Portal, título, resumo, preço,
+formulário Commerce e link para o detalhe. O modo completo do produto mantém a
+composição existente de galeria e abas.
 
 ## Cores só em tokens (regra permanente)
 

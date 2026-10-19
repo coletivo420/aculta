@@ -25,6 +25,8 @@ aculta_user.participacao_settings:
     _title: 'Regras de participação'
   requirements:
     _permission: 'administer aculta participacao'
+  options:
+    _admin_route: true
 
 aculta_user.atividade:
   path: '/atividade/{aba}'
@@ -43,6 +45,8 @@ aculta_user.associados:
     _title: 'Associados'
   requirements:
     _permission: 'administer aculta associados'
+  options:
+    _admin_route: true
 
 aculta_user.associados_csv:
   path: '/painel-administrativo/associados/exportar'
@@ -51,6 +55,8 @@ aculta_user.associados_csv:
     _title: 'Exportar associados'
   requirements:
     _permission: 'export aculta associados'
+  options:
+    _admin_route: true
 
 aculta_user.avatar_reroll:
   path: '/avatar/sortear'
@@ -138,6 +144,8 @@ aculta_user.denuncias_forum:
     _title: 'Denúncias do Fórum'
   requirements:
     _permission: 'moderar denuncias do forum'
+  options:
+    _admin_route: true
 
 aculta_user.associado_marcar:
   path: '/painel-administrativo/associados/{user}/marcar'
@@ -148,6 +156,7 @@ aculta_user.associado_marcar:
     _permission: 'administer aculta associados'
     user: '\d+'
   options:
+    _admin_route: true
     parameters:
       user:
         type: entity:user

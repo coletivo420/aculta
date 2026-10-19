@@ -2,30 +2,12 @@ aculta420.settings:
   type: theme_settings
   label: 'Configurações do tema ACULTA420'
   mapping:
-    b5_body_schema:
+    bootstrap_source:
       type: string
-      label: 'Esquema de texto do corpo'
-    b5_body_bg_schema:
+      label: 'Biblioteca Bootstrap carregada pela base'
+    bootstrap_bootstrap_icons:
+      type: integer
+      label: 'Ícones da base Drupal Bootstrap'
+    bootstrap_icons:
       type: string
-      label: 'Esquema de fundo do corpo'
-    b5_theme_mode:
-      type: string
-      label: 'Modo de cor'
-    b5_top_container:
-      type: string
-      label: 'Container do site'
-    b5_top_container_config:
-      type: string
-      label: 'Configuração do container'
-    b5_navbar_schema:
-      type: string
-      label: 'Esquema de texto da navegação'
-    b5_navbar_bg_schema:
-      type: string
-      label: 'Esquema de fundo da navegação'
-    b5_footer_schema:
-      type: string
-      label: 'Esquema de texto do rodapé'
-    b5_footer_bg_schema:
-      type: string
-      label: 'Esquema de fundo do rodapé'
+      label: 'Biblioteca de ícones da base Drupal Bootstrap'

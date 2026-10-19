@@ -1,0 +1,20 @@
+uuid: e3b4f696-900d-4587-b2b0-1d2e5acc93d6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_orgao_emissor
+    - profile.type.gerente_loja
+id: profile.gerente_loja.field_orgao_emissor
+field_name: field_orgao_emissor
+entity_type: profile
+bundle: gerente_loja
+label: 'Órgão emissor do RG'
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Support\Form;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\aculta_portal\Support\Form\SettingsForm;
+use Drupal\aculta_portal\Support\SupportAmountsProviderInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -20,6 +23,8 @@ final class SupportForm extends FormBase {
     private readonly ConfigFactoryInterface $configs,
     private readonly EntityTypeManagerInterface $entities,
     private readonly BlockManagerInterface $blockManager,
+    private readonly DomainPurposeManager $purposes,
+    private readonly ?SupportAmountsProviderInterface $campanhas = NULL,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -27,6 +32,8 @@ final class SupportForm extends FormBase {
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.block'),
+      $container->get('aculta_portal.domain_purpose'),
+      $container->has('aculta_donation.campaigns') ? $container->get('aculta_donation.campaigns') : NULL,
     );
   }
 
@@ -49,19 +56,8 @@ final class SupportForm extends FormBase {
     $gateway_ready = $gateway && $gateway->status()
       && !empty($gateway_configuration['public_key_test'])
       && !empty($gateway_configuration['access_token_test']);
-    if ($gateway_ready) {
-      // Donation Flow owns the route and order creation; the portal only
-      // presents its native link when the reviewed gateway is enabled.
-      $donation_link = $this->blockManager->createInstance(
-        'commerce_donation_flow_link',
-        ['return_path' => FALSE]
-      )->build();
-      if (isset($donation_link['#links']['default']['title'])) {
-        $donation_link['#links']['default']['title'] = $this->t('Continuar para pagamento');
-      }
-      $form['donation_flow'] = $donation_link;
-    }
-    else {
+    // Os valores sugeridos ficam no bloco de doação rápida (aculta_donation), a única fonte da lista de valores.
+    if (!$gateway_ready) {
       $form['status'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-warning'],

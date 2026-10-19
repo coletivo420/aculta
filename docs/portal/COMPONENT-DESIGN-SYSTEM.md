@@ -232,6 +232,14 @@ Commerce continua fonte de verdade.
 - Exceção: carrossel fora do VVJB só com decisão registrada no `DEBT-REGISTER.md` ou no roadmap do tema, com justificativa.
 - Motivo: uma só engine de carrossel, com navegação, teclado, reduced-motion e foco já tratados (`editorial-carousel.css` e `editorial-carousel.js`).
 
+### Exceção semântica: sequência de fotos do álbum com VVJS
+
+- A View `aculta_album_fotos` usa VVJS (`views_vvjs`) como slideshow de fotos paginado; não é carrossel editorial e não altera a regra Home/Projetos, que permanece VVJB.
+- PhotoSwipe continua sendo o visualizador ampliado das imagens. VVJS é dono do slide atual, controles, teclado, toque e redução de movimento; o tema sincroniza miniaturas pela API/evento público VVJ Core.
+- A View `galeria_produto` também usa VVJS sem autoplay e mantém o modo `produto_galeria`. No álbum, slides e miniaturas aplicam o mesmo acesso de Media; metadados de cache do álbum, Media, File e AccessResult sobem no palco.
+- Conteúdo, ordem, pager, acesso, cache e processamento das imagens continuam nos módulos Core/contrib e no submódulo `aculta_gallery`/`aculta_image`. ACULTA420 só compõe a aparência com tokens.
+- Não usar VVJS e VVJB para renderizar a mesma sequência ou criar outro engine de carrossel.
+
 ## AJAX
 
 Componentes devem sobreviver a reattachment por Drupal behaviors.

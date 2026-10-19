@@ -1,0 +1,24 @@
+uuid: fdb74ea9-bf30-4957-aa2c-f610068ee9c3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_redes_sociais
+    - profile.type.lms_teacher
+  module:
+    - link
+id: profile.lms_teacher.field_redes_sociais
+field_name: field_redes_sociais
+entity_type: profile
+bundle: lms_teacher
+label: 'Redes sociais'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link
+

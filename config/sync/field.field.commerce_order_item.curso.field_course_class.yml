@@ -1,0 +1,29 @@
+uuid: 69e1daa8-5764-4883-9290-4537eff762da
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_order.commerce_order_item_type.curso
+    - field.storage.commerce_order_item.field_course_class
+    - group.type.lms_class
+id: commerce_order_item.curso.field_course_class
+field_name: field_course_class
+entity_type: commerce_order_item
+bundle: curso
+label: Turma
+description: 'Turma escolhida para a matrícula deste item de curso.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:group'
+  handler_settings:
+    target_bundles:
+      - lms_class
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
+

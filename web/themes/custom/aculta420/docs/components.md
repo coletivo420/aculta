@@ -1,5 +1,9 @@
 # Componentes
 
+O catálogo visual e suas regras estão em
+[`component-catalog.md`](component-catalog.md). Os stories ficam junto dos
+SDCs e aparecem na biblioteca protegida do UI Patterns.
+
 ## Organização
 
 Drupal Core permite SDCs aninhados. A organização alvo é:
@@ -19,6 +23,7 @@ components/
 components/
 ├── content/
 │   ├── editorial-card/       (stable)
+│   ├── course_card/          (experimental, replaces LMS card)
 │   └── project-card/         (experimental, 0.3.0)
 └── patterns/
     └── social-links-page/    (experimental, 0.6.0)
@@ -90,16 +95,18 @@ Status: experimental (0.3.0). Local: `components/content/project-card/`.
 
 Slots: `media` (omitido quando vazio), `category`, `title` (link), `summary`, `cta` (link).
 O presenter `node--project--teaser.html.twig` mantém `<article>`, attributes e links;
-o SDC mantém a marcação interna, com as mesmas classes do teaser anterior (DOM idêntico
-medido). Sem props, JavaScript ou consulta de dados.
+o SDC compõe o pattern `aculta420:card` e mantém os slots e classes semânticas do
+projeto. A mídia continua renderizada pelo Drupal e contida sem recorte. Sem props,
+JavaScript ou consulta de dados.
 
-### Course card (LMS, skin do tema)
+### `aculta420:course_card`
 
-Não há SDC `aculta420:course-card`. O componente estável `lms:course_card` pertence ao
-módulo LMS (dados, marcação e assets). O tema apresenta esse componente pela
-`css/components/course-card.css`: mapeia as variáveis `--color-*` do LMS, o fundo, o overlay,
-as sombras de texto e as cores do botão "começar" para tokens semânticos. Um SDC paralelo
-duplicaria um componente estável de outro módulo e foi evitado.
+Status: experimental. Substitui `lms:course_card` via `replaces`, com props e slots
+compatíveis. O Drupal LMS segue dono dos dados, URL canônica, botão de entrada e cacheability;
+ACULTA420 compõe `aculta420:card` na variante vertical e apresenta o cartão e seus
+estados com tokens semânticos no CSS do próprio SDC. O template mantém os nomes de
+classe usados pelo row do LMS, sem alterar o plugin nem a View.
+O foco é visível por teclado, o cartão respeita movimento reduzido e não exige JavaScript.
 
 ### `aculta420:editorial-card`
 

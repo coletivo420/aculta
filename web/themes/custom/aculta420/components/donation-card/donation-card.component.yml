@@ -1,0 +1,24 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de doação
+status: experimental
+group: Doações
+description: 'Cartão-link de doação (valor sugerido, "Outro" ou "Doar"). Quebra de linha automática e tamanho compacto.'
+props:
+  type: object
+  required: [label, href]
+  properties:
+    label:
+      type: string
+      title: Texto do cartão (valor, "Outro" ou "Doar")
+    href:
+      type: string
+      title: URL de destino
+    other:
+      type: boolean
+      default: false
+      title: Opção de valor digitável (borda tracejada)
+    inline:
+      type: boolean
+      default: false
+      title: Ocupa só a largura do texto (botão avulso, como o Doar)
+slots: {}

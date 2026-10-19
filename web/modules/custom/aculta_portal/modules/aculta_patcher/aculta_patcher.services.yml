@@ -1,0 +1,4 @@
+services:
+  aculta_patcher.exporter:
+    class: Drupal\aculta_patcher\PatchManifestExporter
+    arguments: ['@entity_type.manager', '%app.root%', '@file_system']

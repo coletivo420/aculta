@@ -5,6 +5,7 @@ dependencies:
   module:
     - aculta_image
     - editor
+    - media
 name: 'Usuário ACULTA'
 format: usuario_aculta
 weight: 0
@@ -39,7 +40,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<br> <p> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <cite> <dl> <dt> <dd> <a hreflang href> <blockquote cite> <ul type> <ol start type> <strong> <em> <code> <li> <img src alt data-entity-uuid data-entity-type height width data-caption data-align data-aculta-modelo data-aculta-legenda data-aculta-alinhamento>'
+      allowed_html: '<drupal-media data-entity-type data-entity-uuid alt data-caption data-align> <br> <p> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <cite> <dl> <dt> <dd> <a hreflang href> <blockquote cite> <ul type> <ol type reversed start> <strong> <em> <code> <li> <img data-aculta-modelo data-aculta-legenda data-aculta-alinhamento src alt height width data-entity-uuid data-entity-type data-caption data-align> <* dir="ltr rtl" lang>'
       filter_html_help: false
       filter_html_nofollow: false
   filter_html_image_secure:
@@ -54,4 +55,14 @@ filters:
     status: true
     weight: 15
     settings: {  }
+  media_embed:
+    id: media_embed
+    provider: media
+    status: true
+    weight: 40
+    settings:
+      default_view_mode: default
+      allowed_view_modes: {  }
+      allowed_media_types:
+        document: document
 

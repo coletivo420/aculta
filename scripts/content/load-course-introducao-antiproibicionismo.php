@@ -17,29 +17,40 @@ use Drupal\lms\Entity\Lesson;
 $source = json_decode(file_get_contents(__DIR__ . '/courses/introducao-antiproibicionismo.json'), TRUE, 512, JSON_THROW_ON_ERROR);
 $courseSpec = $source['course'];
 
+$findOne = static function ($storage, array $conditions, string $label): ?object {
+  $query = $storage->getQuery()->accessCheck(FALSE);
+  foreach ($conditions as $field => $value) {
+    $query->condition($field, $value);
+  }
+  $ids = $query->range(0, 2)->execute();
+  if (count($ids) > 1) {
+    throw new RuntimeException(sprintf('More than one existing %s matched the pilot identity.', $label));
+  }
+  return $ids ? $storage->load(reset($ids)) : NULL;
+};
+
 $groupStorage = \Drupal::entityTypeManager()->getStorage('group');
 $lessonStorage = \Drupal::entityTypeManager()->getStorage('lms_lesson');
 $activityStorage = \Drupal::entityTypeManager()->getStorage('lms_activity');
 
-// Course: match by label among lms_course groups.
-$courseIds = $groupStorage->getQuery()->condition('type', 'lms_course')->condition('label', $courseSpec['label'])->accessCheck(FALSE)->execute();
-$course = $courseIds ? $groupStorage->load(reset($courseIds)) : Group::create(['type' => 'lms_course', 'label' => $courseSpec['label'], 'uid' => 1]);
+$course = $findOne($groupStorage, ['type' => 'lms_course', 'label' => $courseSpec['label']], 'pilot course');
+$course ??= Group::create(['type' => 'lms_course', 'label' => $courseSpec['label'], 'uid' => 1]);
 $course->set('field_description', ['value' => $courseSpec['description'], 'format' => 'basic_html']);
 $course->setPublished();
 
 $lessonRefs = [];
 $report = ['lessons' => [], 'activities' => 0];
 foreach ($source['lessons'] as $spec) {
-  $lessonIds = $lessonStorage->getQuery()->condition('name', $spec['name'])->accessCheck(FALSE)->execute();
   /** @var \Drupal\lms\Entity\LessonInterface $lesson */
-  $lesson = $lessonIds ? $lessonStorage->load(reset($lessonIds)) : Lesson::create(['lms_lesson_type' => 'lesson', 'name' => $spec['name'], 'randomization' => 0, 'backwards_navigation' => FALSE, 'random_activities' => 0]);
+  $lesson = $findOne($lessonStorage, ['lms_lesson_type' => 'lesson', 'name' => $spec['name']], 'pilot lesson');
+  $lesson ??= Lesson::create(['lms_lesson_type' => 'lesson', 'name' => $spec['name'], 'randomization' => 0, 'backwards_navigation' => FALSE, 'random_activities' => 0]);
   $lesson->set('name', $spec['name']);
   $lesson->set('description', ['value' => $spec['description'], 'format' => 'basic_html']);
 
   $activityRefs = [];
   foreach ($spec['activities'] as $act) {
-    $activityIds = $activityStorage->getQuery()->condition('name', $act['name'])->condition('type', $act['type'])->accessCheck(FALSE)->execute();
-    $activity = $activityIds ? $activityStorage->load(reset($activityIds)) : Activity::create(['type' => $act['type'], 'name' => $act['name']]);
+    $activity = $findOne($activityStorage, ['name' => $act['name'], 'type' => $act['type']], 'pilot activity');
+    $activity ??= Activity::create(['type' => $act['type'], 'name' => $act['name']]);
     $activity->set('name', $act['name']);
     if ($act['type'] === 'true_false') {
       $activity->set('question', ['value' => $act['question'], 'format' => 'basic_html']);

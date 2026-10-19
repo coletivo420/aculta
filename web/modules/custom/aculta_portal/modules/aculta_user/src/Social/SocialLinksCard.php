@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
  * Caixa "Redes sociais" da Minha conta, embaixo da bio: uma linha por rede, com ícone, valor atual e lápis.
@@ -26,7 +27,7 @@ final class SocialLinksCard {
    * Monta a caixa da conta informada.
    */
   public function build(AccountInterface $account): array {
-    $profile = $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'participante');
+    $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
     $links = $profile ? $this->networks->linksOf($profile) : [];
 
     $items = [];

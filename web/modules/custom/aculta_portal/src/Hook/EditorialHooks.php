@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
@@ -27,6 +28,8 @@ final class EditorialHooks {
     private readonly DomainPurposeManager $domainPurposeManager,
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'path.current')]
+    private readonly CurrentPathStack $currentPath,
   ) {}
 
   /**
@@ -99,6 +102,20 @@ final class EditorialHooks {
       }
     }
 
+    // Página que é a raiz do host (caminho interno de FRONT_PATHS, ex.: /loja-da-aculta): o canonical é a raiz do host.
+    $purpose = $this->domainPurposeManager->getCurrentPurpose();
+    $frontPath = \Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL;
+    $paginaRaiz = $frontPath !== NULL && ($node === NULL
+      ? $this->currentPath->getPath() === $frontPath
+      : $node->toUrl()->setAbsolute(FALSE)->toString() === $frontPath);
+    if ($paginaRaiz) {
+      $root = $this->domainPurposeManager->pathUrl($purpose, '/');
+      if ($root !== NULL) {
+        $tags['canonical_url'] = $root->toString();
+        $tags['og_url'] = $root->toString();
+      }
+    }
+
     if ($node !== NULL && $node->bundle() === 'wiki_entry') {
       $canonical = $this->domainPurposeManager->canonicalRouteUrl(
         'wiki',
@@ -155,17 +172,6 @@ final class EditorialHooks {
       $tags['schema_event_location'] = SchemaMetatagManager::serialize(
         count($locations) === 1 ? $locations[0] : $locations,
       );
-    }
-  }
-
-
-  /** Extends CEP Autocomplete with the accessible Portal behavior. */
-  #[Hook('library_info_alter')]
-  public function libraryInfoAlter(array &$libraries, string $extension): void {
-    if ($extension === 'cep_autocomplete' && isset($libraries['viacep'])) {
-      // Keep the contrib endpoint/client/cache, while using the local behavior
-      // for accessible status, stale-response protection, and post-fill focus.
-      $libraries['viacep']['dependencies'][] = 'aculta_portal/cep-address';
     }
   }
 

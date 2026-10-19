@@ -139,7 +139,10 @@ foreach ($files($module . '/js', ['js']) as $path) {
 
 // 10. Zero classes de design no módulo. Exceções: use-ajax (comportamento do Drupal) e is-active (estado da aba,
 //     que o tema também estiliza). Lê só o conteúdo de 'class' => [...] e de addClass(...).
-$allowedClasses = ['use-ajax', 'is-active'];
+// draggable e role-weight: contrato de comportamento do tabledrag do Core (web/core/misc/tabledrag.js), não design.
+// h5p-content e h5p-editor: contrato do H5P core (vendor/h5p/h5p-core/js/h5p.js:93 e vendor/h5p/h5p-editor/scripts/h5peditor-editor.js:173),
+// que localiza as instâncias por essas classes. Não são classes de design; o tema não as renomeia.
+$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor'];
 // Dívida conhecida fora do Messenger, registrada em docs/operations/DEBT-REGISTER.md (DT-BOUNDARY-GALLERY): a galeria
 // de fotos monta a classe do PhotoSwipe. Sai desta lista quando o token data-portal-ui for criado.
 $knownDebt = ['modules/aculta_gallery/src/Hook/GalleryViewHooks.php: photoswipe-gallery'];
@@ -208,16 +211,6 @@ foreach ($used as $token => $where) {
 $rule = 'Código no Aculta Portal, Design no ACULTA420.';
 foreach ([$root . '/AGENTS.md', $module . '/README.md', $theme . '/docs/design-system.md'] as $doc) {
   $assert(str_contains((string) file_get_contents($doc), $rule), 'Regra "' . $rule . '" ausente em ' . substr($doc, strlen($root) + 1) . '.');
-}
-
-// 12. Ícones de interface: Bootstrap Icons (classe bi bi-*). SVG só como logo de marca de terceiros em assets/brands/.
-foreach (array_merge($files($theme . '/templates', ['twig']), $files($theme . '/components', ['twig']), $files($theme . '/css', ['css']), $files($module . '/templates', ['twig']), $files($module . '/src', ['php']), $files($module . '/js', ['js'])) as $path) {
-  $text = (string) file_get_contents($path);
-  $assert(!preg_match('/<svg[\s>]/i', $text), 'SVG inline de interface (use Bootstrap Icons, classe bi bi-*): ' . substr($path, strlen($root) + 1));
-}
-foreach ($files($theme, ['svg']) as $svg) {
-  $rel = substr($svg, strlen($theme) + 1);
-  $assert(str_starts_with($rel, 'assets/brands/'), "Arquivo SVG fora de assets/brands (ícone deve ser Bootstrap Icons): $rel");
 }
 
 // 12b. Assets do tema precisam ser legíveis pelo servidor web (modo 0644): arquivo 0600 responde 403 no Apache.

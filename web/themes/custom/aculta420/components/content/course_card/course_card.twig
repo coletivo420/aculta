@@ -1,0 +1,38 @@
+{#
+  This theme component replaces lms:course_card through SDC negotiation.
+  Drupal LMS supplies the data, canonical URL, access-aware start link and cache metadata.
+#}
+{% set course_header %}
+  <header class="lms-course-card__header">
+    <h2 class="lms-course-card__title">
+      <a href="{{ url|default('#') }}">{{ title|default('Untitled Course') }}</a>
+    </h2>
+    {% if description %}
+      <div class="lms-course-card__description">{{ description|raw }}</div>
+    {% endif %}
+  </header>
+{% endset %}
+{% set course_content %}
+  {% if extra_fields is not empty %}
+    <div class="lms-course-card__meta">
+      {% for field in extra_fields %}
+        {% if field.content %}
+          <div class="lms-course-card__meta-item">
+            <span class="lms-course-card__meta-label">{{ field.label }}</span>
+            <div class="lms-course-card__meta-content">{{ field.content }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endset %}
+{% set course_footer %}
+  {% if start_link %}<div class="lms-course-card__footer">{{ start_link }}</div>{% endif %}
+{% endset %}
+<article class="lms-course-card aculta-course-card">
+  {{ include('aculta420:card', {
+    header: course_header,
+    content: course_content,
+    footer: course_footer
+  }, with_context = false) }}
+</article>

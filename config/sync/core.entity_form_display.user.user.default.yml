@@ -62,6 +62,4 @@ content:
     third_party_settings: {  }
 hidden:
   commerce_remote_id: true
-  customer_profiles: true
   langcode: true
-  participante_profiles: true
