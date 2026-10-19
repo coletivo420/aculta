@@ -206,10 +206,13 @@ $assert(\Drupal::config('core.extension')->get('module.aculta_editorial') === NU
 $assert(\Drupal::config('core.extension')->get('module.aculta_apoio') === NULL, 'Active extension config has no aculta_apoio entry.');
 $assert(!\Drupal::database()->schema()->tableExists('aculta_apoio_webhook'), 'No legacy webhook receipt storage table remains.');
 $assert(!\Drupal::database()->schema()->tableExists('aculta_contribution'), 'No legacy contribution storage table remains.');
-$support_classes = glob(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/*/*.php') ?: [];
-$assert(count($support_classes) === 3, 'Support contains only the public/settings forms and current account presenter.');
-$support_config_keys = array_diff(array_keys(\Drupal::config('aculta_portal.support')->getRawData()), ['_core', 'intro']);
-$assert($support_config_keys === [], 'Support settings contain only current editorial text.');
+$support_classes = array_map(static fn(string $file): string => substr($file, strlen(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/')), glob(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support/*/*.php') ?: []);
+sort($support_classes);
+$expected_support_classes = ['Controller/SupportController.php', 'Form/SettingsForm.php', 'Form/SubscriptionActionForm.php', 'Form/SupportForm.php'];
+$assert($support_classes === $expected_support_classes, 'Support contains exactly the approved public, settings and subscription-action forms and the account controller: ' . implode(', ', $support_classes));
+$support_config_keys = array_diff(array_keys(\Drupal::config('aculta_portal.support')->getRawData()), ['_core', 'langcode']);
+sort($support_config_keys);
+$assert($support_config_keys === ['amounts', 'custom_amount', 'intro'], 'Support settings contain exactly the approved keys: editorial intro and the editable donation amounts.');
 
 // These pages configure credentials, anti-bot behavior, OAuth, mail, and legal
 // acceptance. All are administrative routes, never generic access-content.
@@ -259,17 +262,26 @@ $assert((bool) $authenticated_role, 'Authenticated role exists.');
 $assert((bool) $administrator_role, 'Administrator role exists.');
 $assert(array_intersect($restricted_permissions, $authenticated_role->getPermissions()) === [], 'Authenticated role has no restricted platform administration permissions.');
 $assert($administrator_role->isAdmin(), 'Administrator role retains administrative status.');
+// Exceções aprovadas (CHANGELOG 0.4.0-dev.82): o gerente da loja acessa Formas de apoio, e só isso.
+$approved_role_exceptions = ['gerente_loja' => ['administer aculta support settings']];
 foreach (\Drupal\user\Entity\Role::loadMultiple() as $role) {
   if (!$role->isAdmin()) {
-    $assert(array_intersect($restricted_permissions, $role->getPermissions()) === [], 'Non-administrator role has no listed sensitive platform permissions: ' . $role->id());
+    $forbidden = array_diff(array_intersect($restricted_permissions, $role->getPermissions()), $approved_role_exceptions[$role->id()] ?? []);
+    $assert($forbidden === [], 'Non-administrator role has no listed sensitive platform permissions beyond approved exceptions: ' . $role->id());
   }
 }
 
 $profile = \Drupal::entityTypeManager()->getStorage('profile_type')->load('participante');
-$assert((bool) $profile, 'Participant profile type exists.');
-foreach (['field_nickname', 'field_first_name', 'field_last_name', 'field_whatsapp', 'field_city', 'field_state', 'field_address'] as $field_name) {
-  $field = \Drupal\field\Entity\FieldConfig::loadByName('profile', 'participante', $field_name);
-  $assert($field && $field->getThirdPartySetting('profile', 'profile_private') === TRUE, 'Personal data field is private: ' . $field_name);
+// Removido de propósito (commit d29e34bf): a hierarquia de papéis substitui o tipo de perfil participante.
+$assert(!$profile, 'Participant profile type stays removed (commit d29e34bf).');
+// Todo campo de dados pessoais que existir em qualquer tipo de perfil precisa ser privado.
+foreach (array_keys(\Drupal::entityTypeManager()->getStorage('profile_type')->loadMultiple()) as $profile_type) {
+  foreach (['field_nickname', 'field_first_name', 'field_last_name', 'field_whatsapp', 'field_city', 'field_state', 'field_address'] as $field_name) {
+    $field = \Drupal\field\Entity\FieldConfig::loadByName('profile', $profile_type, $field_name);
+    if ($field) {
+      $assert($field->getThirdPartySetting('profile', 'profile_private') === TRUE, "Personal data field is private: $profile_type.$field_name");
+    }
+  }
 }
 $assert(!\Drupal\field\Entity\FieldConfig::loadByName('profile', 'participante', 'field_phone'), 'Legacy participant phone field instance is absent.');
 $assert(!\Drupal\field\Entity\FieldStorageConfig::loadByName('profile', 'field_phone'), 'Legacy participant phone field storage is absent.');
