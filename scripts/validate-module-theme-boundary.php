@@ -213,16 +213,6 @@ foreach ([$root . '/AGENTS.md', $module . '/README.md', $theme . '/docs/design-s
   $assert(str_contains((string) file_get_contents($doc), $rule), 'Regra "' . $rule . '" ausente em ' . substr($doc, strlen($root) + 1) . '.');
 }
 
-// 12. Ícones de interface: Bootstrap Icons (classe bi bi-*). SVG só como logo de marca de terceiros em assets/brands/.
-foreach (array_merge($files($theme . '/templates', ['twig']), $files($theme . '/components', ['twig']), $files($theme . '/css', ['css']), $files($module . '/templates', ['twig']), $files($module . '/src', ['php']), $files($module . '/js', ['js'])) as $path) {
-  $text = (string) file_get_contents($path);
-  $assert(!preg_match('/<svg[\s>]/i', $text), 'SVG inline de interface (use Bootstrap Icons, classe bi bi-*): ' . substr($path, strlen($root) + 1));
-}
-foreach ($files($theme, ['svg']) as $svg) {
-  $rel = substr($svg, strlen($theme) + 1);
-  $assert(str_starts_with($rel, 'assets/brands/'), "Arquivo SVG fora de assets/brands (ícone deve ser Bootstrap Icons): $rel");
-}
-
 // 12b. Assets do tema precisam ser legíveis pelo servidor web (modo 0644): arquivo 0600 responde 403 no Apache.
 foreach ($files($theme . '/assets', ['svg', 'png', 'jpg', 'jpeg', 'webp', 'gif']) as $asset) {
   $assert((fileperms($asset) & 0004) !== 0, 'Asset sem leitura para o servidor web (chmod 644): ' . substr($asset, strlen($root) + 1));

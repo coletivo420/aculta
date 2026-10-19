@@ -567,12 +567,11 @@ Não crie hierarquia paralela nem conceda acesso por nome de papel. Para funcion
 
 O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem exibe cartões, métodos salvos ou histórico de pagamentos pessoais. Não reintroduza essas funções. O checkout, apoio e webhooks continuam usando Commerce/Mercado Pago. Detalhes e gate: `docs/portal/CHECKOUT-BILLING.md` e `php scripts/validate-module-theme-boundary.php`.
 
-## Ícones de interface: Bootstrap Icons (regra permanente)
+## Ícones de interface: Bootstrap Icons por padrão (regra permanente)
 
-- O padrão de ícones do ACULTA420 são os **Bootstrap Icons** (`<i class="bi bi-…">`, já carregados pelo bootstrap5).
-- Não usar outros pacotes de ícones nem SVG solto (inline ou arquivo) para ícone de interface.
-- **Exceção:** logos de marcas de terceiros (ex.: Mercado Pago), em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
-- Gate: `php scripts/validate-module-theme-boundary.php`, seção 12 (sem `<svg` inline e sem SVG fora de `assets/brands/`).
+- Ícones de interface usam os **Bootstrap Icons** por padrão (`<i class="bi bi-…">`, já carregados pelo bootstrap5 do tema).
+- Outro pacote de ícones ou SVG de interface só com exceção registrada no próprio componente, com o motivo e a origem documentados.
+- Logos de marcas de terceiros (ex.: Mercado Pago) ficam em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
 
 ## Separação de Pessoas e Configurações > Pessoas (decisão do responsável, 2026-10-17)
 

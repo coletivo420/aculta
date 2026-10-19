@@ -1,5 +1,10 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.20 — limite superior do valor da doação rápida — 2026-10-19
+
+- `/donate/{amount}/now` aceita no máximo 9 dígitos (`[1-9]\d{0,8}`). Antes, qualquer inteiro positivo era aceito.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.19 — acesso e moeda da doação rápida — 2026-10-19
 
 - `/donate/{amount}/now` passa a usar `checkAccess()`, que respeita `donation_route`, e aceita só valor inteiro positivo (`[1-9]\d*`).

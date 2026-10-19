@@ -64,7 +64,8 @@ final class HerancaDePapeisTest extends UnitTestCase {
   public function testPapelNovoSemCategoriaHerdaDoAutenticado(): void {
     // Papel criado depois da configuração: entra como lateral do autenticado (equivale ao insert do contrib).
     $mapa = $this->servico(self::CADEIA)->mapa();
-    $this->assertSame(['authenticated'], $mapa['wiki_contributor'] ?? ['authenticated']);
+    $this->assertArrayHasKey('wiki_contributor', $mapa);
+    $this->assertSame(['authenticated'], $mapa['wiki_contributor']);
   }
 
   public function testHerdadosNaoGravadosIgnoraOQueEstaNoBanco(): void {

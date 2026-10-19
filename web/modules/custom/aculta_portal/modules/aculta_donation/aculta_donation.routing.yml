@@ -28,7 +28,7 @@ aculta_donation.donation.quick:
     _title: 'Donate'
   requirements:
     _custom_access: '\Drupal\aculta_donation\Controller\DonationController::checkAccess'
-    amount: '[1-9]\d*'
+    amount: '[1-9]\d{0,8}'
   options:
     no_cache: true
 
