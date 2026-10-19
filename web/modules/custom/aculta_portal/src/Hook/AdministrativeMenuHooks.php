@@ -16,7 +16,6 @@ final class AdministrativeMenuHooks {
 
   /** Itens do menu desativados por duplicarem uma aba de Pessoas. */
   private const DUPLICADOS = [
-    'aculta_portal.role_hierarchy_settings',
     'entity.profile_type.collection',
   ];
 
