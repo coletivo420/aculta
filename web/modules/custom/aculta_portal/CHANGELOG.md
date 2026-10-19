@@ -5,6 +5,17 @@
 - Portal Unit: 219 testes/551 assertions; `aculta_lms`: 25 testes/392 assertions; `aculta_lms_h5p`: 24 testes/272 assertions. Gates Drupal 11+, imagem e slugs aprovados.
 - Runtime `cursos`: PASS. Conta `agente-teste-20261019-lms-1` sem e-mail confirmado entrou na aula de revisão do curso após associação temporária ao Group; o conteúdo da atividade foi renderizado. Conta e membership removidas via Entity API ao fim; cache rebuild concluído. Nenhum dado do curso foi alterado.
 
+## 0.4.0-dev.156 — gates de fronteira Portal–tema corrigidos — 2026-10-19
+
+- Gate de fronteira (`validate-module-theme-boundary.php`): nenhuma classe de design literal no módulo. Classes viraram `data-portal-ui` com tokens no tema; HTML em string virou render array ou atributo de dados (`data-aculta-imagem*` no filtro de imagem, com seletor de atributo no tema). Exceções: `h5p-content` e `h5p-editor`, contrato do H5P core (`vendor/h5p/h5p-core/js/h5p.js`, `vendor/h5p/h5p-editor/scripts/h5peditor-editor.js`), listadas no gate com o motivo. Tabledrag do CEP usa `role-weight`, marcador já previsto no gate.
+- Gate de mapa módulo–tema: submódulos `aculta_lms_h5p` e `aculta_pagamentos_mercadopago` com caminho; 12 contribs habilitados listados.
+- Gate de documentação de tokens: 16 tokens do mapa sem registro, 8 tokens novos e 4 atributos documentados (`data-aculta-imagem*`, `data-aculta-lazy-src`, `data-aculta-lock-mirror`).
+- Regra de fronteira no README do `aculta_portal` (exigida pelo gate).
+- Teste `EnrollmentRoleHooksTest` corrigido: o caso "grupo que não é curso" usava `lms_class`, que concede estudante conforme `docs/portal/PAPEIS-PARTICIPACAO.md`. Agora usa um tipo que não é curso nem turma.
+- Evidência: gates de fronteira, mapa, documentação de tokens, Portal Drupal 11+, design foundations, SDC schemas, endereços e slugs passam. Unit de todos os módulos do Portal e do tema: 471 testes OK. Gate de fundação e de segurança de comércio rodados via `drush scr` (Runtime de teste, `aculta_runtime`): fundação passa após a atualização de versão; segurança de comércio falha por configuração de SMTP2GO do ambiente, não por código desta entrega.
+- Pendências fora desta entrega: popup-rule (4 itens: `<dialog>` nativo em `aculta_messenger`, `dialogClass` em `aculta_gallery`, `showModal()` em `messenger-drawers.js`) pede modal do Drupal e validação no navegador; `validate-album-stage-contract` (contrato `slideChanged` do VVJ Core, contrib); `validate-role-hierarchy` (5 checagens por nome de papel, linha de base 4).
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.155 — revisão da PR #291: retorno do Mercado Pago, doações, H5P e `.htaccess` — 2026-10-19
 
 - Retorno em popup (`CheckoutPopupReturnController`): o destino aceita só caminho do mesmo site (`/x`, rejeitando `//` e `/\`) ou URL de mesma origem; `javascript:` e URLs externas viram `/`. O valor vai ao script como literal JSON com `JSON_HEX_*`, sem escape manual que deixava `</script>` passar. Teste Unit `CheckoutPopupReturnControllerTest`.

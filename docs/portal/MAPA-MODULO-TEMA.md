@@ -85,7 +85,9 @@ Estas regras valem para qualquer contraparte listada aqui. A fonte normativa é 
 | `web/modules/custom/aculta_portal/modules/aculta_portal_sitemap` | 0.1.1 | Sitemap | Sem contraparte visual própria | Sem contraparte |
 | `web/modules/custom/aculta_portal/modules/aculta_game` | 0.1.0-dev.9 | Conquistas e jogo | Sem contraparte identificada no tema | Sem contraparte; verificar |
 | `web/modules/custom/aculta_portal/modules/aculta_lms` | 0.1.0-dev.1 | Integração com o LMS (cursos, lições, matrícula) | Sem contraparte própria; o cartão de curso é do contrib `lms` (ver abaixo) | Sem contraparte própria |
-| `web/modules/custom/aculta_portal/modules/aculta_patcher` | 0.1.0-dev.1 | Registro administrativo de diffs Composer e exportação validada para build | Formulários e tabela administrativa nativos do Drupal/Claro | Sem contraparte de tema |
+| `web/modules/custom/aculta_portal/modules/aculta_patcher` | 0.1.0-dev.1 | Registro administrativo de diffs Composer e exportação validada para build | Aviso do formulário com `notice-warning` (tema); demais formulários e tabela administrativa nativos do Drupal | Sem contraparte de tema |
+| `web/modules/custom/aculta_portal/modules/aculta_lms_h5p` | sem versão no info.yml | Conteúdo interativo H5P em atividades e cursos: editor, renderização por curso e biblioteca administrativa | Sem template próprio no tema. Tokens `h5p-admin-header`, `h5p-dashboard-course` e `h5p-content-unavailable` (`PortalUiHooks`). Classes `h5p-content` e `h5p-editor` são contrato do H5P core (exceção do gate de fronteira) | Ativo |
+| `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago` | 0.1.0-dev.5 | Gateway Checkout Pro, retorno do popup e webhooks do Mercado Pago | Aviso `portal-payment-notice` (Portal); tokens `checkout-help` e `mercado-pago-credentials-*`. Pendência: o estilo das credenciais está em `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/css/gateway-admin.css` e deveria estar no tema | Ativo |
 | `web/modules/custom/aculta_portal/modules/aculta_id_cpf` | 0.2.0-dev.2 | Validação e campos de CPF | Sem contraparte própria; usa formulários do tema (`forms.css`) | Sem contraparte |
 | `web/modules/custom/aculta_portal/modules/aculta_associado_id` | 0.3.0-dev.1 | Identificador de associado | Sem contraparte própria; usa formulários do tema | Sem contraparte |
 
@@ -129,6 +131,8 @@ Módulos de API, infraestrutura, segurança, dados ou editor. Não têm marcaç�
 - **Busca, SEO e rotas:** `metatag`, `schema_metatag`, `pathauto`, `redirect`, `rename_admin_paths`, `simple_sitemap`, `search_api`.
 - **Correio e fila:** `symfony_mailer`, `sophron`, `state_machine`.
 - **Blocos e componentes:** `ui_patterns`, `vvj_core` (base do `vvjb`). Os componentes do tema são SDC do Core.
+- **Ferramentas de configuração e campos:** `ctools` (blocos de Views configuráveis pelo Portal, `ctools_views`), `ui_styles` (estilos definidos por módulos e temas), `fraction` (campo numérico), `lms_file_upload` (resposta com envio de arquivo do LMS) e `webform_score` (pontuação de elementos do webform). Sem marcação própria no tema.
+- **Formatos de Views do pacote `vvj`:** `vvja`, `vvjf`, `vvjh`, `vvjl`, `vvjr`, `vvjs` e `vvjt` não têm template no tema; só `vvjb` tem (`views-view-vvjb.html.twig`). Estado: verificar se algum deles é usado no site antes de desenhá-lo no tema.
 
 ## Conteúdo sem módulo customizado próprio
 

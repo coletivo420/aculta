@@ -140,7 +140,9 @@ foreach ($files($module . '/js', ['js']) as $path) {
 // 10. Zero classes de design no módulo. Exceções: use-ajax (comportamento do Drupal) e is-active (estado da aba,
 //     que o tema também estiliza). Lê só o conteúdo de 'class' => [...] e de addClass(...).
 // draggable e role-weight: contrato de comportamento do tabledrag do Core (web/core/misc/tabledrag.js), não design.
-$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight'];
+// h5p-content e h5p-editor: contrato do H5P core (vendor/h5p/h5p-core/js/h5p.js:93 e vendor/h5p/h5p-editor/scripts/h5peditor-editor.js:173),
+// que localiza as instâncias por essas classes. Não são classes de design; o tema não as renomeia.
+$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor'];
 // Dívida conhecida fora do Messenger, registrada em docs/operations/DEBT-REGISTER.md (DT-BOUNDARY-GALLERY): a galeria
 // de fotos monta a classe do PhotoSwipe. Sai desta lista quando o token data-portal-ui for criado.
 $knownDebt = ['modules/aculta_gallery/src/Hook/GalleryViewHooks.php: photoswipe-gallery'];

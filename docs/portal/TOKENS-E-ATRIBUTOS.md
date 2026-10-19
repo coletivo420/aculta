@@ -56,6 +56,12 @@
 | `data-aculta-legenda` | exato | sim | 2 |
 | `data-aculta-member-name` | exato | sim | 1 |
 | `data-aculta-messenger-count` | exato | sim | 2 |
+| `data-aculta-imagem` | exato | não | 1 |
+| `data-aculta-imagem-alinhamento` | exato | não | 1 |
+| `data-aculta-imagem-legenda` | exato | não | 1 |
+| `data-aculta-imagem-modelo` | exato | não | 1 |
+| `data-aculta-lazy-src` | exato | sim | 2 |
+| `data-aculta-lock-mirror` | exato | sim | 1 |
 | `data-aculta-modelo` | exato | sim | 3 |
 | `data-aculta-new-conversation` | exato | sim | 2 |
 | `data-aculta-new-conversation-form` | exato | sim | 2 |
@@ -114,6 +120,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 - `post-share-*`: Botões de compartilhamento da publicação (uma família por canal).
 - `public-profile-link-*`: Links sociais do perfil público (uma família por rede).
 - `social-links-channel-*`: Canais da página de redes sociais (uma família por canal).
+- `social-links-icon-*`: Ícone do canal na lista de redes sociais (uma família por canal; ícone Bootstrap).
 
 ## Tokens
 
@@ -365,6 +372,40 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `public-profile-avatar-image` | `portal-profile__avatar-image` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `achievement-notices` | `aculta-achievement-notices` | `web/modules/custom/aculta_portal/modules/aculta_game/src/Hook/MessengerNotificationHooks.php` |
 | `aculta-image-audit` | `aculta-image-audit` | `web/modules/custom/aculta_portal/modules/aculta_image/src/Controller/ImageAuditController.php` |
+| `donation-summaries` | `d-grid`, `gap-3` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
+| `donation-summary` | `card`, `card-body` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php`<br>`web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationItemPaneBase.php` |
+| `donation-summary-edit` | `btn`, `btn-sm`, `btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
+| `donation-document-link` | `link-primary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
+| `donation-thanks` | `card`, `card-body`, `text-center` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-donor-name` | `fw-semibold` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-clause` | `text-muted` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-amount-block` | `my-3` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-amount` | `display-6`, `fw-bold` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-monthly` | `badge`, `text-bg-secondary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-in-honor` | `fst-italic` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-account-invite` | `alert`, `alert-info`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-account-invite-link` | `btn`, `btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `register-popup` | `d-grid`, `gap-3` | `web/modules/custom/aculta_portal/src/Form/RegisterPopupForm.php` |
+| `shop-products` | `d-grid`, `gap-3`, `mt-4` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |
+| `shop-product-card` | `d-block`, `border`, `border-2`, `rounded-3`, `text-start`, `p-3`, `text-decoration-none` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |
+| `requirements-cep` | `aculta-portal-requirements__cep` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
+| `requirements-cep-table` | `aculta-portal-requirements__cep-table` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
+| `status-attention` | `aculta-portal-requirements__status--attention` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` (`status-` + `ok`, `attention` ou `error`) |
+| `cep-sources` | `aculta-cep-sources` | `web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Form/CepSettingsForm.php` |
+| `feedback-matched` | `feedback-section`, `matched-phrases` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
+| `feedback-unmatched` | `feedback-section`, `unmatched-phrases` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
+| `phrase-match` | `phrase-match` (com `correct-answer`, classe de estado do LMS) | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
+| `phrase-mismatch` | `phrase-mismatch` (com `wrong-answer`, classe de estado do LMS) | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
+| `social-links-icon-instagram` | `bi`, `bi-instagram` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
+| `social-links-icon-youtube` | `bi`, `bi-youtube` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
+| `social-links-icon-facebook` | `bi`, `bi-facebook` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
+| `h5p-admin-header` | `h5p-admin-header` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Controller/H5PLibraryAdmin.php` |
+| `h5p-content-unavailable` | `h5p-content-unavailable` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/Field/FieldFormatter/H5PDefaultFormatter.php` |
+| `h5p-dashboard-course` | `aculta-lms-h5p-course` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Controller/H5PDashboardController.php` |
+| `checkout-help` | `checkout-help` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/PluginForm/Checkout/RedirectCheckoutForm.php` |
+| `mercado-pago-credentials-test` | `mercado-pago-credentials`, `mercado-pago-credentials-test` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
+| `mercado-pago-credentials-stage` | `mercado-pago-credentials`, `mercado-pago-credentials-stage` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
+| `mercado-pago-credentials-prod` | `mercado-pago-credentials`, `mercado-pago-credentials-prod` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
 
 ## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)
 
