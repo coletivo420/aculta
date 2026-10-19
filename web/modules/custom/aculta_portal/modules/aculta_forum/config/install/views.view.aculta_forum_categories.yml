@@ -23,6 +23,38 @@ display:
     display_options:
       title: Categorias
       fields:
+        parent_name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: parent
+          group_type: group
+          admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: field
+          label: 'Categoria principal'
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          empty: 'Categoria raiz'
+          hide_empty: false
+          empty_zero: false
+          group_rows: true
         name:
           id: name
           table: taxonomy_term_field_data
@@ -122,6 +154,17 @@ display:
       query:
         type: views_query
         options: {  }
+      relationships:
+        parent:
+          id: parent_target_id
+          table: taxonomy_term__parent
+          field: parent_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'Categoria principal'
+          entity_type: taxonomy_term
+          plugin_id: standard
+          required: false
       display_extenders: {  }
     cache_metadata:
       max-age: -1

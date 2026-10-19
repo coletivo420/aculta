@@ -197,6 +197,16 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('fields', $install['display']['default']['display_options']['row']['type']);
     self::assertFalse($install['display']['default']['display_options']['fields']['name']['alter']['make_link']);
     self::assertSame(
+      'taxonomy_term__parent',
+      $install['display']['default']['display_options']['relationships']['parent']['table'],
+    );
+    self::assertSame(
+      'parent_target_id',
+      $install['display']['default']['display_options']['relationships']['parent']['field'],
+    );
+    self::assertSame('parent', $install['display']['default']['display_options']['fields']['parent_name']['relationship']);
+    self::assertSame('Categoria principal', $install['display']['default']['display_options']['fields']['parent_name']['label']);
+    self::assertSame(
       '<p><a href="/">Discussões recentes</a></p>',
       $install['display']['page_categories']['display_options']['header']['area_text_custom']['content'],
     );

@@ -32,8 +32,9 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | Versão | Entrega | Estado |
 | --- | --- | --- |
 | Não marcada | Contagem e atividade na View de tópicos | Runtime: oito tópicos com `0 respostas`; sort ACULTA executa fórmula Core `GREATEST(changed, last_comment_timestamp)` em ordem descendente e data renderizada. Caso positivo, invalidação após moderação e inspeção visual pendentes |
+| Não marcada | Hierarquia no índice público de categorias | Configuração e Runtime PASS: a View apresenta os 12 termos e associa corretamente as 8 subcategorias aos pais; inspeção visual continua pendente |
 | Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit e Kernel PASS; Functional/Runtime pendentes. Movimento de comentários continua bloqueado pela prova de integridade em `MOVE-TOOLS.md`. |
-| `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas e navegação HTTP; visual e hierarquia pendentes |
+| `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas, navegação HTTP e relação pai/filho; inspeção visual pendente |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
 | `0.1.0-dev.26` | Fórum como aba em Conteúdo; “Comentários e moderação” como subaba; discussões contextuais fora das filas genéricas | Runtime de teste: abas carregadas e filtro exercitado; HTTP autenticado pendente |
 | `0.1.0-dev.25` | Fórum em seção independente no menu Content e correção da View que causava HTTP 500 | Runtime PARTIAL: menu, access e renderização de ambas as Views confirmados; HTTP autenticado pendente |
@@ -233,9 +234,16 @@ até a migração dos consumidores e o corte seguro documentado.
 
 ## `0.1.0-dev.9` — Advanced Forum: categorias e navegação
 
-O formulário individual para mover tópico está implementado; aguarda testes
-Kernel/Functional, validação autenticada no Runtime e revisão de URL/histórico.
-Movimento em lote e reorganização Taxonomy seguem planejados.
+O índice `/categorias` agora expõe a relação Taxonomy Core `Parent` como
+coluna de categoria principal, preservando termos de topo e subcategorias numa
+única View. Isso explicita a hierarquia sem criar consulta ou storage paralelo.
+A confirmação visual e de conteúdo com termos filhos no Runtime continua
+pendente.
+
+O formulário individual para mover tópico está implementado; testes Unit e
+Kernel confirmam a preservação de referências. Ainda aguarda Functional,
+validação autenticada no Runtime e revisão de URL/histórico. Movimento em lote
+e reorganização Taxonomy seguem planejados.
 
 Categoria com descrição, subcategoria, índice geral, breadcrumbs, tópicos
 fixados, contagem cacheável de respostas/última atividade e listagem por
@@ -273,6 +281,18 @@ bot policy e cache.
 Incluir contadores de tópicos e respostas por pessoa somente em contexto próprio
 e conforme privacidade; agregados públicos por categoria/tópico respeitam
 publicação e Entity Access.
+
+**Compatibilidade da leitura:** no Core 11.4.10 instalado, History Core declara
+`lifecycle: deprecated` e será removido no Drupal 12. O projeto contrib
+`drupal/history` 1.0.0, compatível com Core `>11.3`, está instalado e habilitado
+no Runtime de teste somente por dependência transitiva de `drupal/forum`; sua
+remoção pode retirar a função junto com o Forum contribuído. Os plugins
+`history_user_timestamp` e `history_read` oferecem os pontos de integração
+esperados. Antes de implementar leitura/não lidos, avaliar explicitamente a
+política de manutenção e o aviso de que o projeto não está coberto pela política
+de security advisories; se for escolhido, adicionar requisito Composer direto
+na etapa coordenada com a remoção do Forum. Core History foi depreciado no 11.4
+e removido no 12 ([depreciação](https://www.drupal.org/node/3567647), [remoção](https://www.drupal.org/node/3570700)); a recomendação oficial indica instalar a versão contrib para manter a função ([guia](https://www.drupal.org/docs/core-modules-and-themes/deprecated-and-obsolete)).
 
 ## `0.1.0-dev.11` — Advanced Forum: apresentação
 

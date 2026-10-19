@@ -1,3 +1,20 @@
+# Implementação não marcada — hierarquia no índice de categorias — 2026-10-19
+
+- A View `/categorias` agora configura a relação Taxonomy Core `Parent` e uma
+  coluna `Categoria principal`; termos de topo continuam visíveis com texto
+  fallback, e subcategorias indicam seu pai.
+- Runtime `toca` confirmado em Drupal 11.4.10, `aculta_runtime` e URI de teste
+  explícita: apenas a View foi sincronizada, após cópia recuperável da config
+  ativa. A consulta retornou os 12 termos, com as 8 subcategorias ligadas aos
+  pais corretos; `/categorias` respondeu HTTP 200 e apresentou os nomes e
+  fallbacks. `config:status` não reporta diferença desta View. Nenhum termo,
+  Node ou Comment foi alterado. Inspeção visual autenticada permanece pendente.
+- Configuração de instalação e Config Sync equivalentes; PHPUnit direcionado:
+  13 testes / 141 assertions PASS; gates Portal 11+, fronteira e mapa PASS.
+- O roadmap registra que Core History está deprecated desde Drupal 11.4. A
+  versão contrib instalada é transitiva via `drupal/forum`; o roadmap registra
+  esse acoplamento e a avaliação necessária antes da remoção do pacote.
+
 # Implementação não marcada — mover tópico público entre categorias — 2026-10-19
 
 - Ação individual em `/painel-administrativo/conteudo/forum/{node}/mover-categoria`,
