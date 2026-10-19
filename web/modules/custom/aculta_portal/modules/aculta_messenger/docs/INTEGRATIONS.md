@@ -80,7 +80,7 @@ módulo; se a configuração de exibição não trouxer esse componente, inclui 
 mesmo Form API nativo como fallback. Acesso e envio continuam sob as regras do
 Private Message. O modal de avisos mostra Site Alerts ativos e o
 contador representa apenas a quantidade ativa: Site Alert não fornece recibo
-de leitura individual. Pedidos de amizade recebidos não têm tela dedicada desde a remoção de `/mensagens/notificacoes` (DT-O15); o contador da barra continua incluindo esses pedidos. A preferência é validada no formulário nativo do Private Message antes da criação de thread; threads existentes permanecem aptas a resposta.
+de leitura individual. Pedidos de amizade recebidos aparecem no topo da aba Mensagens de `/avisos-mensagens/mensagens` (`FriendRequestsForm`, ações POST) e no contador da barra. A preferência é validada no formulário nativo do Private Message antes da criação de thread; threads existentes permanecem aptas a resposta.
 
 | Pacote | `composer.lock` | Código em `web/modules/contrib` | Conclusão |
 | --- | --- | --- | --- |

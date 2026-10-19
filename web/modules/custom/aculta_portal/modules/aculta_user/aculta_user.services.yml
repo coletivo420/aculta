@@ -9,6 +9,9 @@ services:
     arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood']
   aculta_user.public_profile_policy:
     class: Drupal\aculta_user\PublicProfilePolicy
+  aculta_user.public_profile_link:
+    class: Drupal\aculta_user\PublicProfileLink
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
   aculta_user.participation_rules:
     class: Drupal\aculta_user\ParticipationRules
     arguments: ['@config.factory', '@entity_type.manager']

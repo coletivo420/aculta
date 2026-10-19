@@ -10,6 +10,13 @@ Mudanças relevantes do ACULTA Messenger.
 - Validação no navegador (Firefox, sessão X11, conta de teste): caixas por membro, diálogos de "Bloquear" e "Desfazer amizade" com título e pergunta, Cancelar fecha e reabre, "Desbloquear" e "Bloquear" (clique em "Sim") gravam e voltam à conversa com "Atualizado.". O clique em "Sim" só funcionou após a correção de `0.1.1-dev.49`/tema `0.6.0-dev.89`.
 - RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild). Estado de teste restaurado: sem bloqueios, amizade preservada.
 
+## 0.1.1-dev.52 — pedidos de amizade na aba Mensagens
+
+- Regressão corrigida: os pedidos de amizade recebidos voltam a aparecer, com Aceitar e Recusar, no topo da aba Mensagens de `/avisos-mensagens/mensagens`. A rota `/mensagens/notificacoes` tinha sido removida e `FriendRequestsForm` ficou sem uso, mas a barra continuava contando os pedidos.
+- `AvisosMensagensController::conteudoMensagens()` renderiza `FriendRequestsForm` só quando há pedidos pendentes (`FriendshipManagerInterface::getIncomingRequests()`).
+- Verificado no Runtime de teste (2026-10-19): pedido pendente de outra conta aparece na aba; Aceitar confirmou a amizade ("Amizade confirmada") e a relação ficou `accepted`.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild); validação visual autenticada pendente.
+
 ## 0.1.1-dev.51 — duplicação entre as ações do "Opções" e da caixa de membro
 
 - `submitRelationshipForm()`: o núcleo comum (POST, `form_build_id` fora do input, `setUserInput`, construção do formulário com os serviços) sai de `runRelationshipAction` e `runMemberAction`. `resultMessage()` lê a mensagem do resultado nas duas.

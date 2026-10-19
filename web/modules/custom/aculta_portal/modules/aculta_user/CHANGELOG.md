@@ -1,5 +1,13 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.25 — links de perfil com o apelido atual, em todo o site
+
+- Nome de usuário e campos de referência a usuário (autor, remetente e participantes de conversa) apontavam para `/identidade/<uid>`, a página da própria conta, no lugar do perfil público. Agora apontam para `/u/<apelido>` no purpose `main`.
+- `PublicProfileLink` (`aculta_user.public_profile_link`) é a única regra de URL do perfil: o apelido do perfil publicado no momento do render, a visibilidade do perfil e as tags de cache do perfil e da conta. Quando o apelido muda, o link muda junto, sem republicar nada.
+- `UsernameLinkHooks`: `preprocess_username` (tema `username` do Core) e `preprocess_field` (campos de referência a usuário). Sem perfil público, o nome sai sem link.
+- Verificado no Runtime de teste (2026-10-19): troca de apelido refletida no link e restaurada em seguida; perfil privado sai como texto.
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild).
+
 ## Não lançado — manter e-mail não confirmado na matrícula LMS
 
 - A herança automática de `email_confirmed` agora depende do marcador real de `EmailConfirmationPolicy`, inclusive no carregamento da conta, no usuário da sessão e ao remover papéis herdados antes de salvar.

@@ -10,7 +10,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Controller\MessagesController;
+use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
+use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,6 +34,7 @@ final class AvisosMensagensController extends ControllerBase {
     private readonly UnreadThreadCounter $conversas,
     private readonly AccountInterface $usuarioAtual,
     private readonly MessagesController $mensagens,
+    private readonly FriendshipManagerInterface $friendshipManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -40,6 +43,7 @@ final class AvisosMensagensController extends ControllerBase {
       $container->get('aculta_messenger.unread_thread_counter'),
       $container->get('current_user'),
       $container->get('class_resolver')->getInstanceFromDefinition(MessagesController::class),
+      $container->get('aculta_user.friendship_manager'),
     );
   }
 
@@ -115,11 +119,14 @@ final class AvisosMensagensController extends ControllerBase {
   }
 
   /**
-   * Aba Mensagens: a mesma lista de conversas da gaveta da barra (MessagesController::conversasBuild), com o mesmo
-   * comportamento. As conversas continuam no sistema de mensagens.
+   * Aba Mensagens: pedidos de amizade recebidos (aceitar e recusar, no topo) e a mesma lista de conversas da gaveta da
+   * barra (MessagesController::conversasBuild). As conversas continuam no sistema de mensagens.
    */
   private function conteudoMensagens(int $naoLidas): array {
-    return $this->mensagens->conversasBuild();
+    $pedidos = $this->friendshipManager->getIncomingRequests() === []
+      ? []
+      : ['pedidos_amizade' => $this->formBuilder()->getForm(FriendRequestsForm::class)];
+    return $pedidos + $this->mensagens->conversasBuild();
   }
 
 
