@@ -5,6 +5,21 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
+## Direção atual de produto: experiência Discourse Ubuntu
+
+O responsável definiu como referência uma experiência parecida com
+[discourse.ubuntu.com](https://discourse.ubuntu.com/). O ACULTA adotará os
+padrões de leitura e navegação adequados à comunidade, mantendo Drupal nativo,
+contextos privados e a identidade visual ACULTA420. A análise detalhada,
+referências observadas, limites de escopo e critérios de aceite ficam em
+[`DISCOURSE-EXPERIENCE.md`](DISCOURSE-EXPERIENCE.md).
+
+Prioridades para implementação: (1) categorias compreensíveis e atividade
+recente; (2) listagem densa e legível, com participantes e filtros; (3) leitura
+linear, progresso e resposta contextual; (4) seguir/salvar/denunciar e
+notificações; (5) preferências e acabamento mobile/acessível. IA, chat em tempo
+real, aplicativo nativo e previews remotos não são requisitos deste roadmap.
+
 ## `0.1.0-dev.1` — Auditoria e fundação documental (entregue)
 
 - Estado GitHub, branches e PRs; base `main` verificada.
@@ -76,15 +91,17 @@ Runtime.
 ## `0.1.0-dev.6` — Growroom420 funcional
 
 Categorias/subcategorias, tópicos, respostas, permissões, Views/navegação e
-Author Cards do `aculta_user` para discussões públicas independentes.
+Author Cards do `aculta_user` para discussões públicas independentes. O modelo
+visual detalhado está em `DISCOURSE-EXPERIENCE.md`.
 
 Preparação parcial: formulário e displays Core de `aculta_forum_topic` foram
 adicionados em dev.10 e aplicados ao Runtime de teste. A Page display serve a
 raiz em dev.12; `/criar-topico` usa o Entity Form Core com Entity Create Access
-em dev.13. Nenhum tópico foi salvo. A fase dev.6 permanece aberta até acesso
-por participantes autorizados, submissão de tópico/resposta, moderação,
-integração visual e UX serem validados. A retirada contrib dev.5 também
-permanece aberta por depender de consumidores migrados e restore point válido.
+em dev.13. O estado sem conteúdo descrito nos relatórios `.187` e anteriores é
+histórico; veja abaixo a atualização `.189`. A fase dev.6 continua aberta para
+UX visual, respostas reais e revisão das ferramentas de comunidade. A retirada
+contrib dev.5 também permanece aberta por depender de consumidores migrados e
+restore point válido.
 
 Dev.14 acrescentou a ação “Criar tópico” à listagem pública apenas quando a rota
 Core autoriza a conta atual, com cacheability de permissões e participação. A
@@ -93,14 +110,14 @@ nenhuma submissão persistida ocorreu. Testes Unit e gates estáticos direcionad
 passaram; Runtime confirmou raiz 200, ação ausente para anônimo e rota de criação
 403. Usuário autorizado e navegador permanecem sem homologação.
 
-Dev.11 adicionou a View `aculta_forum_public_topics` e o campo de domínio
+Histórico até `.187`: Dev.11 adicionou a View `aculta_forum_public_topics` e o campo de domínio
 canônico; dev.12 conectou a Page display à raiz do purpose forum por meio do
 caminho interno `/discussoes`. Runtime confirmou raiz 200, rota classificada no
 purpose `forum`, lista vazia e 404 direto para `/discussoes` e `/forum`. O bloco
 do acervo contrib permanece sem colocação. Criação/resposta persistida, tema e
 remoção do legado continuam pendentes.
 
-Dev.15 adiciona filtro exposto de categoria ao Page display, usando Taxonomy e
+Histórico até `.187`: Dev.15 adiciona filtro exposto de categoria ao Page display, usando Taxonomy e
 Views Core no vocabulário ACULTA. Runtime confirmou o plugin, renderização do
 seletor e resposta 200 com query; o vocabulário está vazio, sem termos cadastrados.
 
@@ -148,6 +165,17 @@ anterior de aguardar aprovação de nomes/hierarquia. Os registros não são
 Config Sync e não pertencem ao acervo legado. Inventário e remoção controlada:
 [`TEST-FIXTURES.md`](TEST-FIXTURES.md). Nenhum comentário foi criado.
 
+Portal `0.4.0-dev.189` / Forum `0.1.0-dev.20` criam 12 termos (4 categorias e
+8 subcategorias) e 8 tópicos `[TESTE]` de uid 5 no Runtime de teste. A correção
+Pathauto dá aliases portugueses ao bundle novo. A View GET pública agora não
+recebe CAPTCHA global, que a fazia abortar durante o render: a raiz mostra os
+cinco tópicos da página inicial e filtro `categoria=77` mostra o tópico
+esperado; os oito aliases retornam 200. O legado continua com 30 Nodes e 8
+termos; 0 comentários foram criados. Unit 11/64, PHPCS e gates Portal/fronteira/
+mapa/slugs passam. Inspeção visual no navegador ainda é necessária. Essa
+entrega cobre a base da experiência de listagem descrita em
+`DISCOURSE-EXPERIENCE.md`; não encerra a dev.6.
+
 ## `0.1.0-dev.7` — Comentários universais
 
 Comment compartilhado quando tecnicamente suportado; renderização contextual,
@@ -163,23 +191,33 @@ até a migração dos consumidores e o corte seguro documentado.
 
 ## `0.1.0-dev.9` — Advanced Forum: categorias e navegação
 
-Índices, contadores, fixados/movidos/sombra quando pertinente, paginação,
-navegação contextual e última atividade, todos access-aware.
+Categoria com descrição, subcategoria, índice geral, breadcrumbs, tópicos
+fixados, contagem cacheável de respostas/última atividade e listagem por
+atividade/data. Adotar o padrão observado no Ubuntu Discourse: descrições que
+explicam o destino e listas que expõem título, categoria, respostas e atividade.
+Tópicos-sombra/movidos apenas se um fluxo ACULTA aprovado precisar deles.
 
 ## `0.1.0-dev.10` — Advanced Forum: leitura e estatísticas
 
-Marcar lido/ler tudo, primeira resposta não lida, estatísticas e popularidade/
-visualizações com modelo de cache/performance e privacidade aprovado.
+Views Latest/Top/New/Unread/sem resposta, histórico de leitura por participante,
+marcar como lido e primeiro conteúdo não lido, estatísticas e atividade
+cacheáveis. Antes de juntar novos/não lidos numa navegação unificada, prototipar
+e validar rótulos e filtros com usuários; a própria comunidade Discourse relata
+trade-offs nesse modelo. Visualizações só após definir deduplicação, retenção,
+bot policy e cache.
 
 ## `0.1.0-dev.11` — Advanced Forum: apresentação
 
-Completar seis presets, layouts lateral/empilhado, interfaces compactas e
-light/dark no ACULTA420.
+Implementar lista de categorias, topic rows, cartões de participantes, leitor
+linear, timeline/progresso, composer e navegação responsiva no ACULTA420. Usar
+presets e layouts lateral/empilhado já previstos; validar light/dark, teclado,
+mobile, reduced-motion e fallback sem JavaScript.
 
 ## `0.1.0-dev.12` — Participação e moderação
 
-Flags, denúncias, salvar/seguir, citação, limites, aprovação, edição e bloqueio
-de tópico via APIs existentes e access real.
+Flags, denúncias, salvar/seguir, citação, aprovação, edição e bloqueio por APIs
+existentes e access real. Permissões de participação não serão derivadas de
+trust levels/ranking do Discourse.
 
 ## `0.1.0-dev.13` — Fóruns internos LMS
 
