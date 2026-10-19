@@ -1,3 +1,8 @@
+## 0.4.0-dev.162 — linha de desenvolvimento aberta
+
+- Incrementada a versão do módulo para iniciar esta linha de desenvolvimento. As entregas funcionais e suas evidências serão registradas em commits nesta mesma PR.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.161 — gates alinhados ao estado atual e item de menu duplicado
 
 - Removido o item de menu `aculta_portal.role_hierarchy_settings` (Papéis e perfis sob Administração). Ele já estava desativado em tempo de execução por `AdministrativeMenuHooks` (duplicava a aba de Pessoas); a entrada do YAML saiu junto, e o gate `validate-unique-paths-texts` passa. A rota `entity.user_role.collection` continua acessível por `aculta_portal.config_papeis_e_perfis`.
