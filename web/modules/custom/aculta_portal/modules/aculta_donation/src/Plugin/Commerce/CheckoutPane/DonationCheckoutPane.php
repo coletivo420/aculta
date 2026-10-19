@@ -43,6 +43,13 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
   protected $formMode;
 
   /**
+   * The current user, injected to check whether the visitor is anonymous.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(
@@ -60,6 +67,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
       $checkout_flow
     );
     $instance->formMode = 'donation';
+    $instance->currentUser = $container->get('current_user');
     $instance->hasRecurring = $instance->moduleHandler->moduleExists('commerce_recurring');
     return $instance;
   }
@@ -164,7 +172,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
    * @return array<string, mixed>
    */
   private function contaConvite(): array {
-    if (!$this->order || \Drupal::currentUser()->isAuthenticated()) {
+    if (!$this->order || $this->currentUser->isAuthenticated()) {
       return [];
     }
     $destino = Url::fromRoute('aculta_donation.donation_controller_formPage', [

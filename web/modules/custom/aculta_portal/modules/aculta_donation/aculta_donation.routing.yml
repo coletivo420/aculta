@@ -27,8 +27,8 @@ aculta_donation.donation.quick:
     _controller: '\Drupal\aculta_donation\Controller\DonationController::quickDonation'
     _title: 'Donate'
   requirements:
-    _permission: 'make donation'
-    amount: \d+
+    _custom_access: '\Drupal\aculta_donation\Controller\DonationController::checkAccess'
+    amount: '[1-9]\d*'
   options:
     no_cache: true
 

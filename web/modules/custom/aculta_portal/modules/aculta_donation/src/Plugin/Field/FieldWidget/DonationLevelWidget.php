@@ -101,12 +101,20 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    */
   public static function defaultSettings() {
+    // A moeda vazia significa "moeda padrão da loja atual", resolvida por
+    // currencyCode() com o serviço injetado (defaultSettings é estático).
     return [
-      'currency' => \Drupal::service('commerce_store.current_store')
-        ->getStore()
-        ->getDefaultCurrencyCode(),
+      'currency' => '',
       'levels' => [],
     ] + parent::defaultSettings();
+  }
+
+  /**
+   * Returns the currency code, falling back to the current store's default.
+   */
+  protected function currencyCode(): string {
+    $currency = (string) $this->getSetting('currency');
+    return $currency !== '' ? $currency : $this->store->getStore()->getDefaultCurrencyCode();
   }
 
   /**
@@ -256,14 +264,14 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
         // Add currency code.
         $value = [
           'number' => $item['donation_level']['amount'],
-          'currency_code' => $this->getSetting('currency'),
+          'currency_code' => $this->currencyCode(),
         ];
       }
       else {
         // Get amount from the selected option.
         $value = [
           'number' => preg_replace('/\D/', '', $options[$item['donation_level']['value']]),
-          'currency_code' => $this->getSetting('currency'),
+          'currency_code' => $this->currencyCode(),
         ];
       }
       $item = $value;
@@ -412,7 +420,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
     }
     $formatted = $this->currencyFormatter->format(
       $amount,
-      $this->getSetting('currency'),
+      $this->currencyCode(),
       $formatOptions
     );
     if ($addMonthly) {

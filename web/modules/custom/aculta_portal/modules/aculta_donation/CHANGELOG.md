@@ -1,5 +1,12 @@
 # Changelog — aculta_donation
 
+## 0.1.0-dev.19 — acesso e moeda da doação rápida — 2026-10-19
+
+- `/donate/{amount}/now` passa a usar `checkAccess()`, que respeita `donation_route`, e aceita só valor inteiro positivo (`[1-9]\d*`).
+- `DonationCheckoutPane` recebe `current_user` por DI, sem `\Drupal::currentUser()`.
+- `DonationLevelWidget`: moeda vazia significa moeda padrão da loja atual, resolvida por `currencyCode()` com o serviço injetado; `defaultSettings()` não usa mais serviço estático.
+- Evidência: Unit do módulo OK. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.18 — configuração sob o módulo proprietário — 2026-10-18
 
 - O setting passa de `commerce_donation_flow.settings` para `aculta_donation.settings`, conforme o provider instalado.
