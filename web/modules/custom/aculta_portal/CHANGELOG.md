@@ -1,3 +1,8 @@
+## 0.4.0-dev.160 — revisão do /code-review das caixas por pessoa e do diálogo do "Sim"
+
+- Resultado de cada ação de membro na própria caixa; "Sim" do diálogo corrigido na segunda abertura (`aculta_messenger` 0.1.1-dev.50, tema `0.6.0-dev.90`).
+- RUNTIME STATUS: APLICADO no Runtime de teste (cache rebuild).
+
 ## 0.4.0-dev.159 — Bloquear e Desfazer amizade por pessoa; validação do popup no navegador — 2026-10-19
 
 - O menu da conversa perde "Bloquear" e "Desfazer amizade": ficam em uma caixa por outro membro (`aculta_messenger` 0.1.1-dev.48). Conversas com mais de duas pessoas passam a ter essas ações.
