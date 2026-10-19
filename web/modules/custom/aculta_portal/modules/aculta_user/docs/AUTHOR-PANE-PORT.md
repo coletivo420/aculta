@@ -22,5 +22,8 @@ dados pertencem a `aculta_user`, o layout ao ACULTA420.
 
 O inventário upstream de categorias/listagens/thread e estilos está em
 [`ADVANCED-FORUM-PORT.md`](../../aculta_forum/docs/ADVANCED-FORUM-PORT.md).
-Implementação, teste mobile e privacidade pertencem às fases `0.1.0-dev.2` e
-`dev.3`; nenhum cartão visual novo foi criado nesta auditoria.
+Implementação inicial do cartão `author_forum`/`author_comment`, variante
+empilhada e SDC visual foi criada na `0.1.0-dev.3`. Data de entrada, estatísticas,
+badges, ações sociais e assinatura seguem adiadas pelas políticas acima. O
+consumidor do Fórum contrib ainda precisa ser substituído pelo motor novo; o
+Runtime e a inspeção visual em navegador permanecem DEFERRED.

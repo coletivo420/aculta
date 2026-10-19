@@ -6,6 +6,8 @@ namespace Drupal\aculta_user\Identity;
 
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\aculta_user\PublicProfileLinkInterface;
+use Drupal\aculta_image\ImageRenderer;
+use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
@@ -14,9 +16,9 @@ use Drupal\user\UserInterface;
 /**
  * Resolve a identidade compartilhada de autoria sem expor dados do perfil.
  *
- * Variantes são identificadores de apresentação; todas recebem a mesma
- * identidade mínima nesta etapa. Cada capacidade adicional precisa passar pela
- * policy do aculta_user e contribuir sua própria metadata de cache.
+ * Variantes identificam o contexto de apresentação, mas não concedem acesso.
+ * A identidade compartilhada aplica a policy pública ao apelido, link e avatar;
+ * cada dado contextual adicional exige policy e metadata de cache próprias.
  */
 final class AuthorIdentityResolver {
 
@@ -36,6 +38,8 @@ final class AuthorIdentityResolver {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly PublicProfileLinkInterface $publicProfileLink,
+    private readonly ImageRenderer $imageRenderer,
+    private readonly PublicProfilePolicy $profilePolicy,
   ) {}
 
   /**
@@ -65,10 +69,33 @@ final class AuthorIdentityResolver {
     }
 
     $profileUrl = $this->publicProfileLink->build($account, $cacheability);
+    $fieldBoolean = static function ($entity, string $field, bool $default): bool {
+      return !$entity->hasField($field) || $entity->get($field)->isEmpty()
+        ? $default
+        : (bool) $entity->get($field)->value;
+    };
+    $visibleItems = $this->profilePolicy->publicItems([
+      'publico' => $fieldBoolean($profile, 'field_perfil_publico', TRUE),
+      'obrigatorio' => PublicProfilePolicy::isObrigatorioPublico($account->getRoles()),
+      'apelido' => $nickname,
+      'exibir_foto' => $fieldBoolean($profile, 'field_exibir_foto', FALSE),
+      'exibir_bio' => $fieldBoolean($profile, 'field_exibir_bio', FALSE),
+      'exibir_email' => $fieldBoolean($profile, 'field_exibir_email', FALSE),
+      'exibir_redes' => $fieldBoolean($profile, 'field_exibir_redes', FALSE),
+    ]);
+    $avatar = NULL;
+    if (isset($visibleItems['foto']) && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
+      $file = $account->get('user_picture')->entity;
+      if ($file !== NULL) {
+        $avatar = $this->imageRenderer->build('avatar', $file->getFileUri(), $nickname, ['loading' => 'lazy']);
+        $cacheability->addCacheableDependency($file);
+      }
+    }
     return new AuthorIdentity(
       $variant,
       $nickname,
       $profileUrl instanceof Url ? $profileUrl->toString() : NULL,
+      $avatar,
       $cacheability,
     );
   }

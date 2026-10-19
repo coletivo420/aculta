@@ -22,6 +22,7 @@ class PublicProfilePolicyTest extends UnitTestCase {
     return $override + [
       'publico' => TRUE,
       'apelido' => 'maria-souza',
+      'exibir_foto' => TRUE,
       'exibir_bio' => TRUE,
       'exibir_email' => TRUE,
       'exibir_redes' => TRUE,
@@ -29,12 +30,12 @@ class PublicProfilePolicyTest extends UnitTestCase {
   }
 
   /**
-   * Perfil público mostra apelido e foto; bio, e-mail e redes dependem da escolha da pessoa.
+   * Perfil público mostra só o apelido por padrão; a foto e os demais dados dependem de opt-in.
    */
-  public function testPadraoMostraApelidoEFoto(): void {
+  public function testPadraoMostraSomenteApelido(): void {
     $policy = new PublicProfilePolicy();
-    $perfil = ['publico' => TRUE, 'apelido' => 'maria-souza', 'exibir_bio' => FALSE, 'exibir_email' => FALSE, 'exibir_redes' => FALSE];
-    $this->assertSame(['apelido' => TRUE, 'foto' => TRUE], $policy->publicItems($perfil));
+    $perfil = ['publico' => TRUE, 'apelido' => 'maria-souza', 'exibir_foto' => FALSE, 'exibir_bio' => FALSE, 'exibir_email' => FALSE, 'exibir_redes' => FALSE];
+    $this->assertSame(['apelido' => TRUE], $policy->publicItems($perfil));
   }
 
   /**
@@ -56,6 +57,9 @@ class PublicProfilePolicyTest extends UnitTestCase {
     $items = $policy->publicItems($this->perfilCompleto(['exibir_email' => FALSE]));
     $this->assertArrayNotHasKey('email', $items);
     $this->assertArrayHasKey('bio', $items);
+
+    $items = $policy->publicItems($this->perfilCompleto(['exibir_foto' => FALSE]));
+    $this->assertArrayNotHasKey('foto', $items);
   }
 
   /**

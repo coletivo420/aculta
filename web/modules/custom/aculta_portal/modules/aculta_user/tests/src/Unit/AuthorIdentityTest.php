@@ -13,6 +13,8 @@ use Drupal\aculta_user\Identity\AuthorIdentity;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\aculta_user\PublicProfileLinkInterface;
 use Drupal\Tests\UnitTestCase;
+use Drupal\aculta_image\ImageCatalog;
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -26,12 +28,13 @@ final class AuthorIdentityTest extends UnitTestCase {
     $cacheability = (new CacheableMetadata())
       ->setCacheTags(['user:42', 'profile:7'])
       ->setCacheContexts(['user.permissions']);
-    $identity = new AuthorIdentity('author_forum', 'Maria', '/u/maria', $cacheability);
+    $identity = new AuthorIdentity('author_forum', 'Maria', '/u/maria', NULL, $cacheability);
 
     $this->assertSame([
       'variant' => 'author_forum',
       'display_name' => 'Maria',
       'profile_url' => '/u/maria',
+      'avatar' => NULL,
     ], $identity->toArray());
     $this->assertSame(['user:42', 'profile:7'], $identity->getCacheTags());
     $this->assertSame(['user.permissions'], $identity->getCacheContexts());
@@ -49,8 +52,8 @@ final class AuthorIdentityTest extends UnitTestCase {
     $nickname = $this->createMock(FieldItemListInterface::class);
     $nickname->method('__get')->with('value')->willReturn('Maria');
     $profile = $this->createMock(ProfileInterface::class);
-    $profile->method('hasField')->with('field_nickname')->willReturn(TRUE);
-    $profile->method('get')->with('field_nickname')->willReturn($nickname);
+    $profile->method('hasField')->willReturnCallback(static fn (string $field): bool => $field === 'field_nickname');
+    $profile->method('get')->willReturnCallback(fn (string $field): FieldItemListInterface => $nickname);
     $profile->method('getCacheTags')->willReturn(['profile:7']);
     $profile->method('getCacheContexts')->willReturn([]);
     $profile->method('getCacheMaxAge')->willReturn(-1);
@@ -62,13 +65,21 @@ final class AuthorIdentityTest extends UnitTestCase {
     $profileLink = $this->createMock(PublicProfileLinkInterface::class);
     $profileLink->method('build')->willReturn(NULL);
 
-    $identity = (new AuthorIdentityResolver($entityTypeManager, $profileLink))->resolve($account, 'author_forum');
+    $imageRenderer = new ImageRenderer(new ImageCatalog(), $this->createMock(EntityTypeManagerInterface::class));
+    $resolver = new AuthorIdentityResolver(
+      $entityTypeManager,
+      $profileLink,
+      $imageRenderer,
+      new \Drupal\aculta_user\PublicProfilePolicy(),
+    );
+    $identity = $resolver->resolve($account, 'author_forum');
 
     $this->assertInstanceOf(AuthorIdentity::class, $identity);
     $this->assertSame([
       'variant' => 'author_forum',
       'display_name' => 'Maria',
       'profile_url' => NULL,
+      'avatar' => NULL,
     ], $identity->toArray());
     $this->assertSame(['user:42', 'profile:7'], $identity->getCacheTags());
   }
@@ -77,10 +88,12 @@ final class AuthorIdentityTest extends UnitTestCase {
     $resolver = new AuthorIdentityResolver(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(PublicProfileLinkInterface::class),
+      new ImageRenderer(new ImageCatalog(), $this->createMock(EntityTypeManagerInterface::class)),
+      new \Drupal\aculta_user\PublicProfilePolicy(),
     );
 
     $this->expectException(\InvalidArgumentException::class);
-    $resolver->resolve($this->createMock(UserInterface::class), 'author_legacy');
+    $resolver->resolve($this->createMock(UserInterface::class), 'author_growroom_historico');
   }
 
 }

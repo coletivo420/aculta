@@ -1,5 +1,12 @@
 # Changelog — aculta_user
 
+## 0.4.0-dev.27 — cartão compartilhado de autoria — 2026-10-19
+
+- `AuthorCardBuilder` e hook neutro `aculta_user_author_card` compõem o view-model cacheável; avatar usa `aculta_image`, e ações só entram como render arrays preparados por consumidores autorizados.
+- Corrigida a divergência de privacidade da foto: perfil público exige `field_exibir_foto`; perfil privado mantém a política existente de exibir foto e apelido. `PublicProfilePolicyTest` cobre opt-in e omissão.
+- ACULTA420 fornece o SDC experimental `content/author-card`, com cartões inline/empilhado e variante `author_growroom_historico` sem ações de conta. O nome conceitual anterior `author_legacy` foi substituído; autoria histórica ainda aguarda consumidor contextual autorizado.
+- Testes Unit `aculta_user`: 43 testes/87 assertions; gates Portal 968, fronteira 1272, mapa 153, imagem PASS. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.26 — identidade compartilhada de autoria — 2026-10-19
 
 - `AuthorIdentityResolver` (`aculta_user.author_identity_resolver`) compõe a conta Drupal, o perfil principal, a política de link público e a metadata de cache já mantida por `PublicProfileLink`.

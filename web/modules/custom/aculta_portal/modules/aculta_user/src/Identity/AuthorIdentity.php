@@ -18,19 +18,21 @@ final class AuthorIdentity implements CacheableDependencyInterface {
     private readonly string $variant,
     private readonly ?string $displayName,
     private readonly ?string $profileUrl,
+    private readonly ?array $avatar,
     private readonly CacheableMetadata $cacheability,
   ) {}
 
   /**
    * Exporta somente os dados neutros permitidos para apresentação.
    *
-   * @return array{variant: string, display_name: ?string, profile_url: ?string}
+   * @return array{variant: string, display_name: ?string, profile_url: ?string, avatar: ?array}
    */
   public function toArray(): array {
     return [
       'variant' => $this->variant,
       'display_name' => $this->displayName,
       'profile_url' => $this->profileUrl,
+      'avatar' => $this->avatar,
     ];
   }
 

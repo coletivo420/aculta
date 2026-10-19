@@ -1,3 +1,8 @@
+## 0.4.0-dev.164 — cartões de autoria compartilhados — 2026-10-19
+
+- Registra `aculta_user.author_card_builder` no inventário administrativo de Helpers; serviço com documentação própria e responsabilidade compartilhada entre o submódulo e o ACULTA420.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.163 — identidade base de autoria — 2026-10-19
 
 - O `aculta_user.author_identity_resolver` agora integra o inventário de Helpers ativos e prepara um view-model mínimo cacheável para a futura apresentação de autoria. A policy de perfil/link existente continua como fonte de acesso; não há dados de perfil privados no payload.
