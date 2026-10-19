@@ -12,6 +12,7 @@ Dois templates do Growroom são lidos (o arquivo mistura os dois):
   Nomes com IDs diferentes ficam em relatório. Variações http/https/www do mesmo ID entram juntas.
 Uso: sudo -n python3 -B build_mapping.py [--aplicar]
   --aplicar grava perfis-permitidos.json (usado pelo wayback_fetch.py) e o mapeamento em restauro/mapeamento/.
+  --so-mapeamento grava só restauro/mapeamento/ (não altera a fila de perfis).
 """
 import html as htmllib
 import json
@@ -36,6 +37,7 @@ RE_NOME_IPS = re.compile(r'itemprop="name">(.*?)</strong>', re.S)
 EXCLUIDOS_THW = {2, 24, 28}  # boardid do THWboard: Avisos (2), Notícias (24), Cannabis Medicinal (28)
 RE_THW_BC = re.compile(r"board\.php\?boardid=(\d+)[^>]*>([^<]{1,80})</a>\s*(?:&raquo;|»)?\s*(?:<[^>]+>\s*)*"
                        r"<a[^>]*showtopic\.php\?threadid=\d+")
+EMAIL_NOME = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+")  # nome com forma de e-mail: omitido do mapa
 RE_THW_AUTOR = re.compile(r'v_profile\.php\?userid=(\d+)"\s*>\s*<img[^>]*alt="Ver o Perfil de ([^"]+)"')
 
 
@@ -155,12 +157,14 @@ def perfis_cdx():
 
 def main():
     aplicar = "--aplicar" in sys.argv
+    so_mapeamento = "--so-mapeamento" in sys.argv
     topicos = topicos_baixados()
     forum_de = {}
     autores_de = defaultdict(set)
     ids_ips = defaultdict(set)  # nome -> IDs de perfil exatos (IPS 4)
     ids_thw = defaultdict(set)  # nome -> userids exatos (THWboard)
     sem_forum = 0
+    omitidos_email = set()
     for url, capturas in topicos.items():
         # Fórum: da captura mais recente que o identifica. Autores: de todas as capturas com fórum.
         analisadas = [analisar_topico(local) for local in capturas]
@@ -175,6 +179,10 @@ def main():
             if excluido(forum):
                 continue
             for nome, perfil, uid in autores:
+                if EMAIL_NOME.search(nome):
+                    # Contato pessoal digitado como nome: não é necessário para o casamento de perfil e não vai ao mapa.
+                    omitidos_email.add(nome)
+                    continue
                 autores_de[nome].add(url)
                 if perfil:
                     ids_ips[nome].add(perfil)
@@ -206,15 +214,18 @@ def main():
           f"casados: {len(casados)}; ambíguos (IDs diferentes): {len(ambiguos)}; sem perfil: {len(sem)}; "
           f"URLs de perfil permitidas: {len(permitidos)}")
     print("ambíguos (até 5):", ambiguos[:5])
-    if aplicar:
+    print(f"nomes com forma de e-mail omitidos do mapa: {len(omitidos_email)}")
+    if aplicar or so_mapeamento:
         os.makedirs(SAIDA, exist_ok=True)
-        with open(os.path.join(BASE, "perfis-permitidos.json"), "w", encoding="utf-8") as fh:
-            json.dump(permitidos, fh, ensure_ascii=False, indent=0)
+        if aplicar:
+            # perfis-permitidos.json muda a fila de download: só com --aplicar, decisão do responsável.
+            with open(os.path.join(BASE, "perfis-permitidos.json"), "w", encoding="utf-8") as fh:
+                json.dump(permitidos, fh, ensure_ascii=False, indent=0)
         with open(os.path.join(SAIDA, "topico-forum.json"), "w", encoding="utf-8") as fh:
             json.dump(forum_de, fh, ensure_ascii=False, indent=0)
         with open(os.path.join(SAIDA, "autor-topicos.json"), "w", encoding="utf-8") as fh:
             json.dump({k: sorted(v) for k, v in autores_de.items()}, fh, ensure_ascii=False, indent=0)
-        print("gravado: perfis-permitidos.json e mapeamento/")
+        print("gravado:", "perfis-permitidos.json e " if aplicar else "", "mapeamento/", sep="")
 
 
 if __name__ == "__main__":
