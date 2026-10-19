@@ -153,7 +153,9 @@ O mapeamento (`topicos_baixados()` em `build_mapping.py`) lê apenas URLs com `/
   Esses não são substituídos.
 - **Imagens truncadas:** 228 JPEG da galeria têm exatamente 1 MiB e não têm o marcador final (FFD9). O SHA-256
   confere com os bytes truncados, então a verificação de integridade não detecta. Estão marcados em `truncados.jsonl`.
-  Nenhuma captura completa no acervo. Busca por fonte alternativa em andamento.
+  Nenhuma captura completa no acervo. Busca no archive.org concluída: para os 223 arquivos diretos das galerias
+  (a consulta ao vivo, em dois hosts), não há captura da foto. A única captura encontrada é um ícone do site, não a
+  foto. Portanto, as 228 imagens permanecem sem fonte alternativa no archive.org.
 - **Links para growroom.net:** 8.801.010 ocorrências em 738.125 alvos. 72.555 resolvem no acervo; 591.305 vão para o
   modal de conteúdo legado; 74.265 são anúncios e recursos de tema antigo, descartados. Detalhes em
   `IMPORTACAO-GROWROOM.md`, seção "Plano de importação".
