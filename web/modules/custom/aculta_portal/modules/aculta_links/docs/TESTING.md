@@ -77,3 +77,11 @@ rebuild, a raiz `links` respondeu HTTP 200 e continha CTA,
 Instagram e projetos; o container resolveu as classes de hook/presenter. O
 template editorial Node, desktop, teclado e leitores de tela não foram
 verificados neste recorte; produção continua DEFERRED.
+
+Dashboard 0.3.0-dev.2: Kernel 2/71 e PHPCS PASS. No Runtime de teste, o serviço
+do dashboard gera as três listas (`pages`, `links`, `items`), a rota está
+declarada no purpose `main` e o acesso anônimo responde 403. O host de links e
+idioma entraram nos cache contexts da lista de micropáginas; o Domain Links é
+dependência cacheável. Não havia páginas em conteúdo de teste para validar
+visualmente o link público ou a prévia autenticada. `cr` completou com aviso
+recorrente de asset H5P sem diretório configurado.

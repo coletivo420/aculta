@@ -25,9 +25,13 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 5. Testar access, revisão, slug, cache, Domain, reversão e configuração; papéis
    não recebem permissões automaticamente.
 
-## 0.3.0 — dashboard e editor
+## 0.3.0 — dashboard e editor (em andamento)
 
-Dashboard, CRUD básico, composição ordenável por tabela Drupal, publicação individual e prévia privada estão implementados. Ainda faltam validação visual em tamanhos variados e navegação fluida entre páginas. Uma conta pode ter várias páginas; sem equipes complexas inicialmente.
+Listas paginadas, CRUD Core, operações por entidade, acesso a página pública/preview
+e composição ordenável por tabela Drupal estão implementados. Ainda faltam
+validação visual completa, navegação fluida entre páginas e editor de identidade
+em uma experiência coesa inspirada no LinkStack. Uma conta pode ter várias
+páginas; equipes complexas não são prioridade.
 
 ## 0.4.0 — interface pública e presets
 

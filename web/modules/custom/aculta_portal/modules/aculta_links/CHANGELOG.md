@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.8 — apresenta acesso à página no dashboard — 2026-10-20
+
+- A listagem de micropáginas oferece link público quando publicada ou prévia privada quando em rascunho, resolvidos pelo Domain Links existente.
+- A tabela varia por site/idioma e depende dos cache tags do Domain para evitar compartilhar host incorreto.
+- Validação: PHP lint/PHPCS, Kernel 2/71, mapa de módulos/tema 162, slugs 385, sitemap e diff check PASS. Runtime de teste: controller do dashboard constrói as três listas, rota está no MAIN e acesso anônimo responde 403. A listagem foi preparada para URL/preview com cache por site, idioma e Domain; sem páginas de teste para verificar esses links visualmente. `cr` repetiu aviso de asset H5P sem diretório de destino. O gate de status-index continua falhando apenas por dois commits anteriores de outra frente (`d0c3086c`, `88745650`), sem reescrita de histórico.
+
 ## 0.4.0-dev.7 — porta presenter e hooks de LINKS para o submódulo — 2026-10-20
 
 - Presenter de canais, botões e View; theme suggestion de Node e preprocess de projetos/footer agora pertencem ao `aculta_links`.

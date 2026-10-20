@@ -1,19 +1,15 @@
 # Funcionalidades
 
-## Disponível antes do submódulo
+## Página institucional de links
 
-- Página institucional de links sociais no purpose `links`.
-- Botão gerado para a home do purpose `main`.
-- Canais oficiais configuráveis (Instagram, YouTube e Facebook) com validação
-  HTTPS/host.
-- Botões adicionais com URL HTTPS ou caminho interno seguro.
-- Projetos renderizados pela View existente.
-- Página visual responsiva experimental pelo pattern ACULTA420.
-
-Os presenters/configuração continuam sob Portal. A raiz pública agora é roteada
-por `aculta_links`, que preserva Node/alias editorial correspondente ou reutiliza
-os botões e a View existente como fallback. A migração do formulário, configuração,
-canais sociais, rodapé e hooks permanece planejada e deve preservar conteúdo e URL.
+- A raiz `links.aculta.org/` usa Domain/rota existentes para preservar o Node
+  editorial associado ao alias `/redes-sociais`; sem conteúdo correspondente,
+  usa canais, botões e a View de projetos existentes.
+- Formulário, configuração, presenter e hooks específicos pertencem ao
+  `aculta_links`. Os valores da chave antiga continuam em dual-write durante a
+  janela de rollback.
+- O botão fixo aponta para a raiz do purpose `main`; canais usam validação
+  HTTPS/host, e botões adicionais aceitam HTTPS ou caminho interno seguro.
 
 ## Fundação 0.2.0 em desenvolvimento
 
@@ -21,9 +17,10 @@ canais sociais, rodapé e hooks permanece planejada e deve preservar conteúdo e
   a página é criada em rascunho e os itens ordenam referência tipada ao destino.
 - Handler de acesso e permissões explícitas, com propriedade Drupal User e
   teste Unit/Kernel de storage, referências, revisões e isolamento entre contas.
-- Dashboard e formulários Core para micropáginas/destinos, com listagem por
-  proprietário, revisão e cache de usuário. Rotas administrativas pertencem ao
-  MAIN e estão registradas no Runtime de teste; acesso segue as permissões e o Entity Access.
+- Dashboard e formulários Core para micropáginas, destinos e itens, com listas
+  paginadas por proprietário, revisões e cache por usuário. Rotas administrativas
+  pertencem ao MAIN; o acesso revalida permissões e Entity Access. A lista de
+  micropáginas inclui endereço publicado ou prévia privada.
 - Editor de itens com ordenação, publicação individual e link para prévia
   privada, além da rota pública `/pagina/{slug}` no purpose `links`; o módulo
   foi habilitado no Runtime de teste em 2026-10-20. A prévia pública no host
@@ -31,12 +28,13 @@ canais sociais, rodapé e hooks permanece planejada e deve preservar conteúdo e
   A rota root da landing foi restaurada em `0.4.0-dev.5`; a migração dos contratos
   de configuração/apresentação permanece pendente.
 
-## Ainda não disponível
+## Lacunas
 
-Micropáginas por conta, páginas múltiplas por pessoa, editor, ordenação, preview,
-temas selecionáveis, links curtos, QR, analytics, agendamento e componentes
-referenciados. LinkStack será analisado como referência funcional; essas funções
-não estão implementadas nesta versão.
+Dashboard visual equivalente ao LinkStack, identidade herdada explícita do
+`aculta_user`, editor completo de identidade/aparência, mais temas, componentes
+referenciados, links curtos, QR, analytics e agendamento ainda precisam ser
+concluídos. Uma conta Drupal pode possuir várias páginas; equipes complexas não
+fazem parte do escopo inicial.
 
 ## Em implementação — 0.2.0-dev.2
 

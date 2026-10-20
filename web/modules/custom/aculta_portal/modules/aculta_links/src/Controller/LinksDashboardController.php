@@ -9,6 +9,7 @@ use Drupal\Core\Link as CoreLink;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 
 /**
  * Builds the owner-scoped administration dashboard for pages and links.
@@ -18,6 +19,7 @@ final class LinksDashboardController {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
+    private readonly DomainPurposeManager $domainPurpose,
   ) {}
 
   /**
@@ -109,10 +111,16 @@ final class LinksDashboardController {
     }
     $entities = $storage->loadMultiple($query->execute());
     $rows = [];
+    $links_domain = $entity_type_id === 'aculta_link_page'
+      ? $this->domainPurpose->getDomain('links')
+      : NULL;
     $cache_tags = array_merge(
       $this->entityTypeManager->getDefinition($entity_type_id)->getListCacheTags(),
       [$list_cache_tag],
     );
+    if ($links_domain !== NULL) {
+      $cache_tags = array_merge($cache_tags, $links_domain->getCacheTags());
+    }
     foreach ($entities as $entity) {
       $access = $entity->access('update', $this->currentUser, TRUE);
       $cache_tags = array_merge($cache_tags, $entity->getCacheTags(), $access->getCacheTags());
@@ -142,6 +150,21 @@ final class LinksDashboardController {
           'title' => new TranslatableMarkup('Editar itens'),
           'url' => Url::fromRoute('aculta_links.page_editor', ['aculta_link_page' => $entity->id()]),
         ];
+        $slug = (string) $entity->get('slug')->value;
+        if (preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug) === 1) {
+          $page_path = $entity->isPublished()
+            ? '/pagina/' . $slug
+            : '/pagina/' . $slug . '/previa';
+          $page_url = $this->domainPurpose->pathUrl('links', $page_path);
+          if ($page_url !== NULL) {
+            $operations['public_page'] = [
+              'title' => $entity->isPublished()
+                ? new TranslatableMarkup('Abrir página pública')
+                : new TranslatableMarkup('Pré-visualizar'),
+              'url' => $page_url,
+            ];
+          }
+        }
       }
       $rows[] = [
         'title' => CoreLink::fromTextAndUrl($entity->label(), Url::fromRoute($edit_route, $route_arguments)),
@@ -175,7 +198,12 @@ final class LinksDashboardController {
         '#rows' => $rows,
         '#empty' => new TranslatableMarkup('Nenhum item cadastrado.'),
         '#cache' => [
-          'contexts' => ['user', 'user.permissions', 'url.query_args:page'],
+          'contexts' => [
+            'user',
+            'user.permissions',
+            'url.query_args:page',
+            ...($entity_type_id === 'aculta_link_page' ? ['url.site', 'languages:language_interface'] : []),
+          ],
           'tags' => array_values(array_unique($cache_tags)),
         ],
       ],
