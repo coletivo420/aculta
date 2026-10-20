@@ -1,3 +1,16 @@
+## 0.6.0-dev.115 — dar espaço ao slider e mostrar a posição no mobile — 2026-10-20
+
+- Em larguras até 575 px, as ações mantêm seus rótulos sem cortes, o slider
+  ganha uma linha de largura completa e o índice atual fica visível. Abaixo de
+  360 px, os botões se organizam em duas colunas; todos preservam alvos de toque
+  com 44 px de altura.
+- Firefox ESR 153.4/X11 e WebDriver BiDi no Runtime de teste, perfil anônimo
+  isolado: 320/360/390/500/1250 CSS px, claro/escuro, clique e slider testados
+  com seis mensagens sintéticas no DOM. Documento/corpo sem overflow; largura
+  de texto dos botões cabe em cada alvo. Foundation Runtime 366 e gates
+  direcionados PASS. Leitor de tela real pendente. RUNTIME STATUS: PASS no
+  escopo visual.
+
 ## 0.6.0-dev.114 — acomodar controles de progresso em telas estreitas — 2026-10-20
 
 - A barra móvel usa cinco colunas efetivas, reduz os espaçamentos sem diminuir

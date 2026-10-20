@@ -260,11 +260,11 @@ tela e os botões mantêm alvos confortáveis. O Firefox/X11 verificou claro e
 escuro em 1250/500 px e teclado do slider com DOM sintético não persistido;
 leitor de tela segue pendente. A barra sticky respeita `--drupal-displace-offset-top`
 e o scroll-padding do cabeçalho; em mobile ela fica no fluxo normal para não
-cobrir a mensagem ativa. Em 320 px, as ações ocupam duas linhas e o slider usa
-a largura completa; de 360 px em diante, as ações permanecem em uma linha.
-Firefox ESR/X11 e BiDi confirmaram 320/360/390/500/1250 px, modos claro/escuro,
-slider e botão sem overflow. Evidências nos changelogs `0.6.0-dev.110` a
-`0.6.0-dev.114`.
+cobrir a mensagem ativa. Em 320 px, as ações ocupam duas colunas; de 360 px em
+diante, ficam em uma linha. Em mobile, slider e contador têm linhas próprias
+para evitar alvos estreitos. Firefox ESR/X11 e BiDi confirmaram 320/360/390/500/
+1250 px, modos claro/escuro, slider e botão sem overflow. Evidências nos
+changelogs `0.6.0-dev.110` a `0.6.0-dev.115`.
 
 ## Patterns
 
