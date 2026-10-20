@@ -1,5 +1,14 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.37 — monitoramento IMAP corrigido; consulta de estado no Brevo — 2026-10-20
+
+- **Correção:** o monitoramento IMAP nunca lia mensagens. A resposta `* SEARCH` do servidor termina em CRLF, e a expressão do cliente não aceitava o retorno de carro. Com isso, bounces e relatórios DMARC não eram processados. Corrigido em `CurlImapClient::parseSearch()`, com testes da resposta em CRLF.
+- **Consulta de estado no Brevo** (`BrevoEventStatus`): `GET /v3/smtp/statistics/events` com `messageId` entre colchetes angulares e `days`. Testadas as variantes: sem colchetes a API devolve lista vazia; a resposta é um objeto com a chave `events`. Testadas também `smtp/emails` (registro da mensagem, sem estado) e `smtp/emails/{uuid}` (eventos `sent` e `delivered`).
+- Validação no Runtime de teste: o estado consultado na API (`delivered`, `requests`) coincide com o registro, que foi atualizado pelo webhook.
+- Validação de autenticação: a mensagem de teste enviada pelo Brevo para `dmarc@aculta.org` chegou à caixa monitorada com SPF, DKIM e DMARC `pass`, e com `DKIM-Signature` de `d=aculta.org`.
+- Testes: 125 unitários.
+- Pendente: tela de consulta no registro (o serviço já existe); reenvio de falha (F7), que depende de decisão sobre guardar o destinatário.
+
 ## 0.1.0-dev.36 — ID do provedor gravado no registro — 2026-10-20
 
 - O envio grava o ID que o provedor deu à mensagem aceita (`provider_message_id`). Brevo: o `messageId` da API, no formato do campo `message-id` dos eventos. SMTP: o ID devolvido pelo servidor.

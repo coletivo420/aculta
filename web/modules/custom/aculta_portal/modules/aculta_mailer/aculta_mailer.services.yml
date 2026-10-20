@@ -47,6 +47,14 @@ services:
   aculta_mailer.provider_messages:
     class: Drupal\aculta_mailer\Delivery\ProviderMessageRegistry
 
+  aculta_mailer.brevo_http_client:
+    class: Symfony\Contracts\HttpClient\HttpClientInterface
+    factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
+
+  Drupal\aculta_mailer\Provider\BrevoEventStatus:
+    class: Drupal\aculta_mailer\Provider\BrevoEventStatus
+    arguments: ['@?Drupal\aculta_mailer\Transport\SecretProviderInterface', '@aculta_mailer.brevo_http_client']
+
   aculta_mailer.smtp_classifier:
     class: Drupal\aculta_mailer\Delivery\SmtpReplyClassifier
 

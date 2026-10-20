@@ -24,7 +24,19 @@ final class CurlImapClient implements ImapClientInterface {
    */
   public function uidsAbove(int $uid): array {
     $response = $this->request($this->mailboxUrl(), 'UID SEARCH UID ' . ($uid + 1) . ':*');
-    preg_match_all('/^\* SEARCH([\d ]*)$/m', $response, $matches);
+    return self::parseSearch($response, $uid);
+  }
+
+  /**
+   * UIDs maiores que o informado, da resposta `* SEARCH`.
+   *
+   * O servidor termina as linhas com CRLF: a linha de resposta tem de aceitar o retorno de carro antes do fim.
+   *
+   * @return int[]
+   *   UIDs em ordem crescente, sem repetição.
+   */
+  public static function parseSearch(string $response, int $uid): array {
+    preg_match_all('/^\* SEARCH([\d ]*)\r?$/m', $response, $matches);
     $uids = [];
     foreach ($matches[1] as $line) {
       foreach (array_filter(explode(' ', trim($line)), 'strlen') as $candidate) {
