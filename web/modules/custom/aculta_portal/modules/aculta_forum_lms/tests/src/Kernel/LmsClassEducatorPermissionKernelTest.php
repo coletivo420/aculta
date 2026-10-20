@@ -210,6 +210,10 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     self::assertTrue($studentContext->getWriteAccess()->isAllowed());
     self::assertTrue($studentContext->getModerationAccess()->isForbidden());
     self::assertTrue($outsiderContext->getReadAccess()->isForbidden());
+    self::assertContains('user', $studentContext->getCacheContexts());
+    self::assertContains('user.permissions', $studentContext->getCacheContexts());
+    self::assertContains('user.group_permissions', $educatorContext->getCacheContexts());
+    self::assertContains('node:' . $topic->id(), $studentContext->getCacheTags());
 
     $comment = Comment::create([
       'entity_type' => 'node',

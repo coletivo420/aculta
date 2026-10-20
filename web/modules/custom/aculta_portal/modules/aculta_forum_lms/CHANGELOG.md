@@ -18,6 +18,15 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.9` — validar metadados de cache do contexto LMS — 2026-10-20
+
+- Kernel confirma contextos `user`, `user.permissions` e
+  `user.group_permissions`, além da dependência cacheável do tópico, ao compor
+  as decisões de leitura/escrita/moderação para Educador, estudante e outsider.
+- Nenhuma rota ou fila foi criada; o adapter e a Config Sync continuam fora do
+  Runtime. Kernel adapter: 2 testes / 67 assertions PASS, 38 depreciações
+  Core/contrib. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.8` — limitar tópicos LMS pelos Group roles — 2026-10-20
 
 - Roles de estudante/educador/criador recebem permission Group Node somente

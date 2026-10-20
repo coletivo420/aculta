@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.100` | Validar cacheabilidade do acesso LMS | Kernel confirma variação de acesso por usuário/permissões e dependência de cache do tópico para o provider de contexto; nenhum comportamento no Runtime. Adapter ainda aguarda revisão integrada de acesso e filas. |
 | `0.1.0-dev.99` | Configurar Group roles do LMS para tópicos | Config Sync limita visualização Group Node de tópico a membership de curso/turma e Educadores com role contextual; educator permission herda para turma. Kernel lê os quatro Group role configs reais e confirma estudante/Educador, outsider global não autorizado, Comment e moderação. Config Sync não importado. |
 | `0.1.0-dev.98` | Integrar Comment real à autorização contextual LMS | Kernel persiste resposta publicada na turma, prova escrita de estudante, moderação exclusiva de Educador e bloqueio quando o campo está fechado. Kernel adapter 2/57 (38 depreciações), Unit adapter 11/123 e Forum 87/556 PASS. Runtime DEFERRED; filas e habilitação continuam pendentes. |
 | `0.1.0-dev.97` | Herança de permission Educador nas turmas | Config Sync mapeia `grade students` do curso para visualização Group Node de tópicos. Kernel real com `ClassPermissionCalculator`: Educador permitido; outsider e conta apenas com papel global `lms_teacher` negados. 1 teste/24 assertions PASS, 37 depreciações Core/contrib. Adapter não habilitado e Config Sync não importado no Runtime. |

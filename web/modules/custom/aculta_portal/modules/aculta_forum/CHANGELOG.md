@@ -1722,6 +1722,16 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.100` — provar cacheabilidade do acesso LMS — 2026-10-20
+
+- Kernel verifica que os contextos de leitura/escrita/moderação carregam as
+  variações por usuário e permissões necessárias, preservam a dependência do
+  Node e mantêm a autorização contextual do Educador. Não adiciona nova
+  política de acesso nem habilita o adapter.
+- Kernel adapter: 2 testes / 67 assertions PASS, 38 depreciações Core/contrib;
+  Unit adapter 11/123 e Forum 87/556 PASS. Gates Drupal 11+ (980), fronteira
+  (1500), mapa (154), PHPCS e YAML PASS. Runtime DEFERRED.
+
 ## `0.1.0-dev.99` — conceder acesso Group Node por membership — 2026-10-20
 
 - Config Sync concede leitura de tópico aos Group roles course teacher, course
