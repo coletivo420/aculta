@@ -1,3 +1,19 @@
+## 0.4.0-dev.45 — retirar autoria histórica da fila de denúncias
+
+- A fila específica do Fórum inclui somente tópicos públicos atuais e seus
+  comentários. Exclui conteúdo com `field_autor_legado` e qualquer flagging de
+  comentário hospedado em Revista, LMS, Wiki ou outro contexto. Flag continua
+  sendo a fonte de verdade, sem contador paralelo.
+- O gate de papéis deixa de exigir `edit any forum content`, permissão do
+  Drupal Forum contrib retirado, e verifica a permissão atual `moderar denuncias
+  do forum`; a moderação editorial de Nodes continua contextual no
+  `ForumModerationHooks`.
+- Unit `ReportQueueTest`: 3 testes/14 assertions PASS; PHPCS Drupal e PHP lint
+  PASS; evidências em `aculta_forum/docs/TEST-MATRIX.md`. A
+  concessão contextual das ações Flag está em `aculta_forum` dev.51. Runtime
+  `toca`: papel atualizado por import parcial e cache rebuild; fila de dados
+  aguarda os campos históricos e conteúdo de teste. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.44 — excluir autoria histórica da moderação inicial — 2026-10-20
 
 - A regra do primeiro comentário agora ignora discussões marcadas com
