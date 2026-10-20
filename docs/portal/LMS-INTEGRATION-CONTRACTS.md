@@ -6,10 +6,10 @@ Revisado em 2026-10-20. Contratos de integração; a implementação depende das
 
 - Integrar `aculta_lms` e `aculta_lms_h5p` ao pipeline compartilhado `aculta_image` para capas, imagens de atividades, imagens em entregas e anexos de discussão. Toda ingestão deve passar pela finalidade e política de upload apropriadas; arquivos H5P internos permanecem gerenciados e privados, sem duplicar catálogo, remoção ou storage.
 - Integrar materiais PDF do curso com a capacidade existente `aculta_pdf_viewer` (incluindo `aculta_pdf_viewer_group`), que atende ao objetivo de leitor PDF solicitado como `aculta_pdf_reader`. Manter Media `course_document`, relação Group e entrega privada do Core como fontes de acesso; não criar reader/storage paralelo.
-- Integrar `aculta_lms` e `aculta_lms_h5p` ao `aculta_forum` para discussão contextual de curso, turma e atividade. O adapter opcional `aculta_forum_lms` usa Node/Comment e revalida Entity Access e membership atual no Group. O Group Node de tópicos tem permissão específica; a herança `grade students` do curso para a turma deve permanecer configurada e testada. Não ativar o adapter no Runtime até passar a matriz integrada de isolamento entre turmas.
+- Integrar `aculta_lms` e `aculta_lms_h5p` ao `aculta_forum` para discussão contextual de curso, turma e atividade. O adapter `aculta_forum_lms` usa Node/Comment e revalida Entity Access e membership atual no Group. O Group Node de tópicos tem permissão específica; a herança `grade students` do curso para a turma está configurada e coberta por Kernel. No Runtime de teste o adapter está habilitado, com Config Sync limitada às permissões; ainda não há conteúdo LMS para smoke de acesso HTTP. Não habilitar em produção nem expor listagens até passar a matriz integrada de isolamento entre turmas.
 - Entregas LMS, documentos PDF e imagens de estudante devem respeitar a mesma política de acesso privado. Integrações precisam cobrir upload, renderização, download, revogação de matrícula, cacheabilidade e ciclo de exclusão nos testes antes de homologar no Runtime.
 
-O motor `aculta_forum` e a fundação do adapter opcional LMS já existem. O adapter tem bundle Node, campo Comment compartilhado, relações Group de curso/turma, bloqueio direto de Node sem relação Group e permissões Group Node. Config Sync atribui a permission somente a course teacher/member/creator e class member, e herda `grade students` do curso para a turma. Kernel usa esses Group roles reais e prova membership, Comment, moderação, metadados de cache por usuário/permissão e instalação do conjunto padrão por `ConfigInstaller`; Unit garante coerência dos roles com os IDs instaláveis. Nenhuma configuração foi importada no Runtime e o módulo não foi habilitado. O adapter continua desabilitado até teste de ciclo completo e revisão de autorização/filas; ver `aculta_forum/docs/CONTEXTS.md` e roadmap.
+O motor `aculta_forum` e o adapter LMS já existem. O adapter tem bundle Node, campo Comment compartilhado, relações Group de curso/turma, bloqueio direto de Node sem relação Group e permissões Group Node. Config Sync atribui a permissão somente a course teacher/member/creator e class member, e herda `grade students` do curso para a turma. Kernel usa esses Group roles reais e prova membership, Comment, moderação, metadados de cache por usuário/permissão e instalação do conjunto padrão; Unit valida os IDs e a extensão ativa. No Runtime de teste, `aculta_forum_lms`/`gnode` estão habilitados e uma importação parcial aplicou somente os quatro Group roles e `lms_classes.settings`. A prévia global de Config Sync contém alterações não relacionadas e não deve ser importada integralmente. Não há Nodes/Comments de discussão no Runtime, então autorização por conteúdo HTTP e moderação visual ainda não foram exercitadas. Ver README do adapter, `aculta_forum/docs/CONTEXTS.md` e roadmap.
 
 ## Matriz de ownership e dependências
 
@@ -22,7 +22,7 @@ O motor `aculta_forum` e a fundação do adapter opcional LMS já existem. O ada
 | Avisos educacionais | `aculta_messenger` + Message/Message Notify | evento mínimo, usuário destinatário, entidade e referência de rota validável | LMS Messages, fila/storage redundante, envio baseado só em membership antiga |
 | Identidade, perfil e conexões | User/Profile + `aculta_user` | referência de User e API `FriendshipManagerInterface` quando aplicável | entidade de amizade ou perfil no LMS |
 | Conquistas | `aculta_user`/`aculta_game` | fato de conclusão/atributo LMS confirmado pela API autorizada | recalcular nota/progresso, nova entidade espelho de award |
-| Discussão de curso/turma/atividade | `aculta_forum` + `aculta_forum_lms` + Node/Comment + Group access | Adapter opcional com tópico interno e provider contextual; acesso revalidado no Group e no host; curso herda permissão Group Node `grade students` para turma | Entidade paralela; role global `estudante`/`lms_teacher` sem membership ou permissão contextual; habilitar adapter antes de Kernel de Comment/cache e isolamento |
+| Discussão de curso/turma/atividade | `aculta_forum` + `aculta_forum_lms` + Node/Comment + Group access | Adapter com tópico interno e provider contextual; acesso revalidado no Group e no host; curso herda permissão Group Node `grade students` para turma; habilitado somente no Runtime de teste | Entidade paralela; role global `estudante`/`lms_teacher` sem membership ou permissão contextual; expor listagem antes de aplicar filtros de Group/Entity Access |
 | Mídia editorial | `aculta_gallery`/Media Gallery | Media Gallery e referências File/Media com seus handlers | fazer Gallery dona do PDF ou duplicar arquivo |
 | Apresentação | Portal neutral render contract → ACULTA420 SDC | render arrays, props escalares, cacheability | tema consultar LMS/Group/Domain ou chamar serviços |
 
@@ -76,9 +76,10 @@ autorização deve ser revalidada pelo adapter usando o acesso pedagógico atual
 variando e invalidando cache por usuário/permissões e entidades relevantes. Papel global de educador sem membership ou
 acesso contextual não basta. `aculta_user` não aplica a regra global do primeiro comentário dentro do LMS, e a fila de
 moderação pública não inclui comentários pedagógicos. O adapter fornece a
-decisão contextual para o marcador compartilhado, mas permanece desabilitado até
-as provas integradas e as filas administrativas. Estudantes podem participar
-sem aprovação global quando o adapter estiver habilitado.
+decisão contextual para o marcador compartilhado e está habilitado no Runtime
+de teste. As provas Kernel cobrem permissão e Comment; filas administrativas e
+autorização de conteúdo real no Runtime continuam pendentes. Estudantes podem
+participar sem aprovação global nesse contexto.
 
 ## Organização administrativa das discussões
 

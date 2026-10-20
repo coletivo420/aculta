@@ -1,3 +1,12 @@
+## `0.1.0-dev.106` — aplicar permissão contextual do adapter LMS — 2026-10-20
+
+- `core.extension` rastreia o adapter LMS e `gnode`; importação parcial
+  revisada aplica Group permissions e herança `grade students` somente nos
+  cinco objetos necessários. HTTP público preservado e acervo de tópicos e
+  Comments continua vazio. Adapter Unit 14/147 e Kernel LMS 2/74 PASS; UI e
+  filas ainda pendentes.
+  RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.105` — corrigir ativação do adapter LMS — 2026-10-20
 
 - O adapter LMS passa a resolver explicitamente o serviço contextual do Fórum

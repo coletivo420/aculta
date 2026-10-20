@@ -1,43 +1,51 @@
 # ACULTA Forum LMS
 
-Adapter opcional entre `aculta_forum`, `aculta_lms` e Group. Esta primeira
-entrega registra um provider privado para Nodes `aculta_lms_topic` e delega a
+Adapter opcional entre `aculta_forum`, `aculta_lms` e Group. Registra provider
+privado para Nodes `aculta_lms_topic` e delega a
 autorização do marcador de moderação aos Educadores com `grade students` no
 curso contextual.
 
 ## Estado
 
-Na dev.13 o adapter foi habilitado no Runtime de teste (`aculta_runtime`, URI
-`https://growroom420.aculta.toca.net.br`) junto com `gnode`; suas oito
+Na dev.14 o adapter está listado na Config Sync junto a `gnode`. No Runtime de
+teste (`aculta_runtime`, URI `https://growroom420.aculta.toca.net.br`), as oito
 configurações padrão e as duas relações Group foram instaladas com sucesso. A
 correção adiciona `#[Autowire(service: 'aculta_forum.discussion_context_resolver')]`
-ao hook OOP, resolvendo falha de compilação do container. Unit: 13 testes / 143
+ao hook OOP, resolvendo falha de compilação do container. Unit: 14 testes / 147
 assertions; Kernel: 2 testes / 74 assertions, com 38 depreciações de
 Core/contrib/LMS. Smoke HTTP da raiz e de `/categorias`: 200. Não há Nodes de
 tópico público, LMS ou legado nem Comments `aculta_discussion_post` no Runtime.
 
-Esta ativação foi somente no Runtime de teste. A Config Sync do checkout não
-foi importada/exportada e diverge de `core.extension` e das configurações
-instaladas; a configuração de roles/herança ainda não foi importada. Portanto,
-o acesso contextual no Runtime, UI, Views, Search API e filas não estão
-homologados. Reconciliar a configuração após revisar o diff de importação e
-validar autorização; não copiar o estado Runtime para produção.
+As quatro permissões Group dos papéis de curso/turma e o mapeamento de herança
+`grade students` foram aplicados no Runtime de teste por importação parcial
+revisada, limitada a cinco itens (`group.role.lms_course-teacher`,
+`group.role.lms_course-member`, `group.role.lms_course-course_creator`,
+`group.role.lms_class-member` e `lms_classes.settings`). Todos os demais campos
+dos cinco objetos coincidiam com a Config Sync antes da operação. As
+permissões ativas agora coincidem com os arquivos versionados.
+
+A ativação foi somente no Runtime de teste. A prévia de sincronização integral
+continua exibindo diferenças alheias ao Fórum; não executar importação global.
+Como não há tópicos de teste, não foi feita autorização de conteúdo real no
+Runtime. Kernel prova acesso de membro/Educador, outsider negado e herança de
+Educador sem membership direto na turma. UI, Views, Search API e filas ainda
+não estão homologadas; não copiar o estado Runtime para produção.
 
 Em 2026-10-20, `drush config:import --diff` mostrou um diff completo com
 remoções e mudanças alheias ao Fórum (entre elas configurações de blocos,
 Commerce, perfis, hierarquia de papéis e recursos LMS). O comando terminou com
 exit 1 sem aplicar a importação; `drush pml` confirmou que adapter e `gnode`
 continuavam habilitados. A importação global não é um procedimento de
-reconciliação seguro para este Runtime. Antes de alinhar CMI, separar e revisar
-um conjunto parcial com dependências explícitas, sem apagar configuração ou
-conteúdo de outros sistemas.
+reconciliação seguro para este Runtime. A importação parcial subsequente aplicou
+somente os cinco itens listados acima, sem apagar configuração ou conteúdo de
+outros sistemas.
 
 Historicamente, a dev.94 adicionou install config do bundle `aculta_lms_topic`, Comment
 compartilhado e relações `group_node:aculta_lms_topic` para curso/turma. A
 dev.97 acrescenta em Config Sync a herança `grade students` do curso para a
 permission Group Node dos tópicos de turma, validada pelo `ClassPermissionCalculator`
-real. Essa configuração de herança/roles ainda não foi importada no Runtime.
-Não foram criadas Views, Search API, rotas ou conteúdo.
+real. Essas permissões e a herança foram aplicadas por importação parcial. Não
+foram criadas Views, Search API, rotas ou conteúdo.
 `gnode` está listado como dependência do adapter. Um hook
 `entity_access` nega acesso a Nodes do bundle quando falta relação Group única;
 para `lms_class`, também exige uma relação única com um curso. Com relações

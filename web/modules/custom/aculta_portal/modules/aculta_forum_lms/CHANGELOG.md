@@ -1,40 +1,23 @@
-## `0.1.0-dev.3` — configuração instalável de tópico — 2026-10-20
+## `0.1.0-dev.14` — sincronizar permissões contextuais LMS — 2026-10-20
 
-- Adiciona bundle Node, campo Comment compartilhado, displays e relações
-  Group Node específicas para curso e turma. Sem Config Sync de ativação,
-  permissão de roles, rotas ou Runtime.
-- Validação de config: 2 testes / 29 assertions; suíte completa: 8 testes /
-  48 assertions PASS.
+- `core.extension` passa a rastrear `aculta_forum_lms` e `gnode`. Importação
+  parcial revisada aplica os quatro Group roles e a herança `grade students` em
+  `lms_classes.settings`, sem deletar nem alterar outros itens do Runtime.
+- Unit: 14 testes / 147 assertions PASS; Kernel: 2 testes / 74 assertions
+  PASS, com 38 depreciações Core/contrib/LMS. Os cinco objetos ativos passaram
+  a coincidir com Config Sync; tópicos e Comments continuam zerados. Autorização
+  de conteúdo real no Runtime, UI/Views/busca/filas seguem pendentes.
+  RUNTIME STATUS: PARTIAL.
 
-## `0.1.0-dev.2` — acesso direto fail-closed — 2026-10-20
-
-- Protege a visualização direta do Node: exige relação Group única e, para
-  turma, um curso pai único. Com relação válida, delega autorização ao Group.
-- Testes Unit novos: 3 testes / 11 assertions PASS; suíte do adapter: 6 testes / 19 assertions. Não habilitado no Runtime.
-
-## `0.1.0-dev.1` — contrato inicial do adapter — 2026-10-20
-
-- Implementa resolução fail-closed de tópico LMS vinculado a Group e o acesso
-  contextual de Educador ao marcador de moderação compartilhado.
-- O adapter não possui configuração instalável nem deve ser habilitado antes
-  das provas Kernel e da configuração específica de Group Node.
 ## `0.1.0-dev.13` — corrigir ativação e registrar Runtime de teste — 2026-10-20
 
-- Hook OOP injeta explicitamente o serviço `aculta_forum.discussion_context_resolver`;
-  isso corrige o erro de compilação do container ao habilitar o adapter. Unit:
-  13 testes / 143 assertions PASS; Kernel: 2 testes / 74 assertions PASS,
-  com 38 depreciações de Core/contrib/LMS.
-- No Runtime de teste (`aculta_runtime`, URI `https://growroom420.aculta.toca.net.br`),
-  `aculta_forum_lms` e `gnode` foram habilitados e as oito configurações padrão,
-  incluindo bundle, campo, displays e duas relações Group, foram instaladas.
-  O Forum contrib permanece desabilitado. O smoke HTTP retornou 200 na raiz e
-  em `/categorias`; contagens de tópicos públicos/LMS/legados e comentários
-  compartilhados permaneceram em zero.
-- Não houve import/export da Config Sync. O estado Runtime diverge do checkout
-  (`core.extension` e configurações instaladas) até a reconciliação explícita;
-  nenhuma configuração de papel/role foi importada. UI, filas, autorização real
-  no Runtime e integração com educadores ainda não foram homologadas.
-  RUNTIME STATUS: PARTIAL.
+- Hook OOP injeta explicitamente `aculta_forum.discussion_context_resolver`,
+  corrigindo a compilação do container na ativação. Unit: 13/143 PASS; Kernel:
+  2/74 PASS, com 38 depreciações Core/contrib/LMS.
+- `aculta_forum_lms` e `gnode` habilitados no Runtime de teste; bundle,
+  Comment, displays e relações Group instalados. HTTP `/` e `/categorias`: 200;
+  tópicos públicos/LMS/legados e Comments compartilhados: zero. Naquele
+  incremento, roles ainda não haviam sido importadas. RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.12` — provar Educador sem membership direto na turma — 2026-10-20
 
@@ -116,3 +99,23 @@
   acesso ao membro e que outsider não lê o tópico. 1 teste / 17 assertions
   PASS; 17 depreciações do Core/Group/contrib. Sem instalação no Runtime.
 
+## `0.1.0-dev.3` — configuração instalável de tópico — 2026-10-20
+
+- Adiciona bundle Node, campo Comment compartilhado, displays e relações
+  Group Node específicas para curso e turma. Sem Config Sync de ativação,
+  permissão de roles, rotas ou Runtime.
+- Validação de config: 2 testes / 29 assertions; suíte completa: 8 testes /
+  48 assertions PASS.
+
+## `0.1.0-dev.2` — acesso direto fail-closed — 2026-10-20
+
+- Protege a visualização direta do Node: exige relação Group única e, para
+  turma, um curso pai único. Com relação válida, delega autorização ao Group.
+- Testes Unit novos: 3 testes / 11 assertions PASS; suíte do adapter: 6 testes / 19 assertions. Não habilitado no Runtime.
+
+## `0.1.0-dev.1` — contrato inicial do adapter — 2026-10-20
+
+- Implementa resolução fail-closed de tópico LMS vinculado a Group e o acesso
+  contextual de Educador ao marcador de moderação compartilhado.
+- O adapter não possui configuração instalável nem deve ser habilitado antes
+  das provas Kernel e da configuração específica de Group Node.

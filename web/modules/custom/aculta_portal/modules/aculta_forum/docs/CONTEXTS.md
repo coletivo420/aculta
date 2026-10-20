@@ -55,6 +55,15 @@ ativação valida descoberta/instalação de serviços e configuração, não o 
 real de Educadores no site. Views, Search API, rotas e filas LMS continuam
 pendentes. RUNTIME STATUS: PARTIAL.
 
+Na dev.106, `core.extension` passou a rastrear `aculta_forum_lms` e `gnode`.
+Uma importação parcial revisada atualizou somente quatro Group roles e
+`lms_classes.settings`: estudante/educador/criador têm leitura de tópicos na
+relação apropriada; `grade students` do curso é herdado na turma. Os outros
+campos dos cinco objetos já coincidiam com a Config Sync; nenhum outro item foi
+alterado. Kernel cobre membro, outsider e Educador sem membership direto na
+turma. O Runtime continua sem conteúdo para uma prova de acesso HTTP a tópico;
+moderação, Views e filas LMS permanecem sem interface.
+
 Moderação segue a árvore do sistema dono do conteúdo, sem fila global que
 misture contextos: Fórum → estado do comentário; Revista → publicações e
 comentários editoriais; Wiki → Comentários → Moderação; LMS → Cursos → Fórum →

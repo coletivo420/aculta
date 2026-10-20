@@ -77,6 +77,19 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
   }
 
   /**
+   * The enabled extension list tracks the adapter and Group Node integration.
+   */
+  public function testCoreExtensionTracksTheLmsAdapterWithoutLegacyForum(): void {
+    $path = dirname(__DIR__, 9) . '/config/sync/core.extension.yml';
+    self::assertFileExists($path);
+    $extensions = Yaml::parseFile($path)['module'];
+
+    self::assertArrayHasKey('aculta_forum_lms', $extensions);
+    self::assertArrayHasKey('gnode', $extensions);
+    self::assertArrayNotHasKey('forum', $extensions);
+  }
+
+  /**
    * Loads one install config file by its config object name.
    */
   private function config(string $name): array {

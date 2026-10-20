@@ -1,3 +1,14 @@
+## 0.4.0-dev.219 — sincronizar permissões do fórum LMS — 2026-10-20
+
+- Config Sync passa a registrar `aculta_forum_lms` e `gnode`; importação
+  parcial revisada alinhou quatro Group roles e a herança de permissão de
+  Educador no Runtime de teste. A importação global segue insegura devido a
+  divergências não relacionadas. Nenhum conteúdo de discussão foi criado.
+- Adapter Unit 14/147 e Kernel LMS 2/74 PASS; HTTP `/` e `/categorias` 200.
+  Autorização sobre tópico
+  real, UI, Views, busca e filas ainda não foram homologadas. RUNTIME STATUS:
+  PARTIAL.
+
 ## 0.4.0-dev.218 — habilitar adapter LMS no Runtime de teste — 2026-10-20
 
 - Corrigida a injeção do `DiscussionContextResolver` no hook do adapter LMS;
