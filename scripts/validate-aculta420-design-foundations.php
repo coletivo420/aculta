@@ -98,8 +98,14 @@ foreach ($runtime_files as $path) {
   elseif ($extension === 'twig') {
     $dark_twig_branches += Aculta420DesignFoundationsAnalyzer::countTwigModeBranches($source);
     $dark_twig_inline_js_branches += Aculta420DesignFoundationsAnalyzer::countTwigEmbeddedJsModeBranches($source);
-    $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countTwigInlineCssModeSelectors($source);
     $relative = substr($path, strlen($theme) + 1);
+    // Envelope de e-mail: clientes de e-mail não carregam tokens.css. As cores são tokens (MailEnvelopeHooks) e o único seletor de modo permitido é o bloco escuro do próprio envelope.
+    if ($relative === 'templates/aculta-mailer-wrap.html.twig') {
+      $check(Aculta420DesignFoundationsAnalyzer::countTwigInlineCssModeSelectors($source) === 1 && str_contains($source, '{{ d.page }}'), 'Email envelope mode selector is the single dark block fed by token values.');
+    }
+    else {
+      $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countTwigInlineCssModeSelectors($source);
+    }
     $check(!Aculta420DesignFoundationsAnalyzer::hasTwigInlineRawColorLiteral($source), 'CSS literals in Twig style blocks need semantic tokens: ' . $relative . '.');
     $twig_inline_premature_scripts += Aculta420DesignFoundationsAnalyzer::hasTwigEmbeddedPrematureColorModeScript($source) ? 1 : 0;
   }

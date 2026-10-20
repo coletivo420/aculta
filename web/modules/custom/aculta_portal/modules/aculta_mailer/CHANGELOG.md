@@ -1,5 +1,11 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.47 — estado dos relatórios alinhado ao código; tabela com atributo do módulo — 2026-10-20
+
+- Tabelas do painel de envios usam `data-aculta-mailer-table="rolagem"` (antes `data-portal-ui`). O painel usa o tema Claro, fora do mapa do ACULTA420; o token mapeado no tema tiraria o atributo e quebraria a rolagem.
+- `docs/REPORTS-AND-ALERTS.md`: cinco linhas estavam "pendentes" ou "não implementadas" sem serem (F11 ligada, webhook do Brevo, chave geral, DKIM, reenvio de falha e consulta ao Brevo na página de estado). Corrigidas com a versão em que cada uma entrou.
+- Evidência: Unit 136/136 e Kernel 34/34 no banco `aculta_simpletest`. Runtime de teste sem alteração de código nesta versão.
+
 ## 0.1.0-dev.46 — rastreamento opcional de aberturas e cliques (F11), ligado no teste e na produção
 
 - `MailTracker`: pixel e links do próprio site, assinados com o `hash_salt`; só para destinatário com consentimento e com `tracking_enabled` ligado. Links externos e o restante do HTML não mudam.

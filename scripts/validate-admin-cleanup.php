@@ -62,6 +62,25 @@ $expected = [
   'galeria_produto',
   'order_shipments',
   'revista_sessoes',
+  // Views exportadas e de donos de módulo, incluídas no retrato depois da limpeza: Fórum (aculta_forum), Revista (aculta_magazine),
+  // Group (group_nodes) e exemplos opcionais do pacote vvj (config/optional de cada vvj*).
+  'aculta_forum_admin_comments',
+  'aculta_forum_admin_topics',
+  'aculta_forum_categories',
+  'aculta_forum_lms_admin_comments',
+  'aculta_forum_public_topics',
+  'aculta_forum_search',
+  'aculta_forum_unread_topics',
+  'aculta_magazine_admin_comments',
+  'aculta_magazine_admin_content',
+  'group_nodes',
+  'vvja_example',
+  'vvjf_example',
+  'vvjh_example',
+  'vvjl_example',
+  'vvjr_example',
+  'vvjs_example',
+  'vvjt_example',
 ];
 $views = \Drupal\views\Entity\View::loadMultiple();
 sort($expected); $actual = array_keys($views); sort($actual);
@@ -82,7 +101,8 @@ if (\Drupal::moduleHandler()->moduleExists('contact')) throw new RuntimeExceptio
 if (!\Drupal\webform\Entity\Webform::load('aculta_contact') || \Drupal\webform\Entity\Webform::load('contact')) throw new RuntimeException('Unexpected Webforms.');
 foreach (['image','document','remote_video'] as $id) if (!\Drupal\media\Entity\MediaType::load($id)) throw new RuntimeException('Missing active editor media type.');
 $media = array_keys(\Drupal\media\Entity\MediaType::loadMultiple()); sort($media);
-if ($media !== ['document','image','remote_video']) throw new RuntimeException('Unexpected media types.');
+// course_document é do LMS (aculta_lms, exportado em config/sync); os três editoriais continuam obrigatórios.
+if ($media !== ['course_document','document','image','remote_video']) throw new RuntimeException('Unexpected media types.');
 $before = json_decode(file_get_contents(dirname(__DIR__) . '/tmp/admin-structure-audit.json'), TRUE, 512, JSON_THROW_ON_ERROR);
 foreach (['node','block_content','menu_link_content'] as $type) {
   $entities = \Drupal::entityTypeManager()->getStorage($type)->loadMultiple();

@@ -133,6 +133,8 @@ Módulos de API, infraestrutura, segurança, dados ou editor. Não têm marcaç�
 - **Conta, acesso e segurança:** `agreement`, `change_mail_page`, `email_confirmer`, `flexible_permissions`, `flood_control`, `login_emailusername`, `role_hierarchy`, `role_inheritance`, `username_enumeration_prevention`, `security_review` (busca de CEP é do Portal).
 - **Busca, SEO e rotas:** `metatag`, `schema_metatag`, `pathauto`, `redirect`, `rename_admin_paths`, `simple_sitemap`, `search_api`.
 - **Correio e fila:** `symfony_mailer`, `sophron`, `state_machine`.
+- **Segurança do navegador e relatórios:** `csp` (política Report-Only para o leitor PDF; sem marcação própria) e `reporting` (endpoint local de relatórios, gravado no DBLog). Sem contraparte visual.
+- **Desenvolvimento:** `sdc_devel` (apoio ao desenvolvimento de componentes SDC; não aparece no site público).
 - **Blocos e componentes:** `ui_patterns`, `vvj_core` (base do `vvjb`). Os componentes do tema são SDC do Core.
 - **Ferramentas de configuração e campos:** `ctools` (blocos de Views configuráveis pelo Portal, `ctools_views`), `ui_styles` (estilos definidos por módulos e temas), `fraction` (campo numérico), `lms_file_upload` (resposta com envio de arquivo do LMS) e `webform_score` (pontuação de elementos do webform). Sem marcação própria no tema.
 - **Formatos de Views do pacote `vvj`:** `vvja`, `vvjf`, `vvjh`, `vvjl`, `vvjr`, `vvjs` e `vvjt` não têm template no tema; só `vvjb` tem (`views-view-vvjb.html.twig`). Estado: verificar se algum deles é usado no site antes de desenhá-lo no tema.

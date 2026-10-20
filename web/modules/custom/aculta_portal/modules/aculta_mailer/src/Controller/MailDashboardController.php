@@ -310,7 +310,7 @@ final class MailDashboardController extends ControllerBase {
   private function scrollable(array $table): array {
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'mailer-tabela-rolagem'],
+      '#attributes' => ['data-aculta-mailer-table' => 'rolagem'],
       '#attached' => ['library' => ['aculta_mailer/admin']],
       'table' => $table,
     ];

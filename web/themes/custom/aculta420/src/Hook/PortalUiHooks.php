@@ -57,6 +57,9 @@ final class PortalUiHooks {
     'requirements-cep' => ['aculta-portal-requirements__cep'],
     'requirements-cep-table' => ['aculta-portal-requirements__cep-table'],
     'requirements-php-extensions' => ['aculta-portal-requirements__php-extensions'],
+    // Painel de moderação do LMS no Fórum (aculta_forum_lms): estrutura por grupo, sem CSS próprio.
+    'lms-forum-moderation-overview' => ['aculta-lms-forum-moderation__overview'],
+    'lms-forum-moderation-queue' => ['aculta-lms-forum-moderation__queue'],
     'cep-sources' => ['aculta-cep-sources'],
     'secrets-section' => ['aculta-portal-secrets-section'],
     'secret-value' => ['aculta-secret-value'],

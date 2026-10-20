@@ -1,3 +1,10 @@
+## 0.6.0-dev.124 — tokens do LMS no mapa; configuração de instalação alinhada ao Runtime — 2026-10-20
+
+- `PortalUiHooks::TOKENS`: `lms-forum-moderation-overview` e `lms-forum-moderation-queue` (painel de moderação do Fórum no LMS), sem CSS próprio.
+- `config/install/aculta420.settings.yml`: chaves `b5_*` do Runtime; removidas as `bootstrap_*` que o Runtime não tem (passam a valer os padrões da base). Corrige a divergência com `config/sync` no gate de fundação.
+- Gate de design: o envelope de e-mail (`aculta-mailer-wrap`) tem um único bloco de modo, alimentado pelos tokens (`MailEnvelopeHooks`); clientes de e-mail não carregam `tokens.css`. Exceção restrita, sem aceitar outros seletores de modo.
+- Evidência: `validate-aculta420-foundation` PASS (366); `validate-aculta420-design-foundations` PASS (2103); `validate-module-theme-boundary` PASS. Visual não revisado nesta versão (sem mudança de layout).
+
 ## 0.6.0-dev.123 — token de requisitos de extensões PHP — 2026-10-20
 
 - Novo token `requirements-php-extensions` no mapa `PortalUiHooks::TOKENS`

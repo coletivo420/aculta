@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.123', 'Theme metadata marks the current version 0.6.0-dev.123.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.124', 'Theme metadata marks the current version 0.6.0-dev.124.');
 $discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
 $assert(
   str_contains($discussionCss, '[data-aculta-discussion-announcement]')
@@ -339,6 +339,8 @@ $expectedTemplates = [
   // Álbumes: os campos e a View permanecem Drupal; o tema compõe o SDC card overlay.
   'views-view-fields--aculta-albuns.html.twig',
   'views/views-view-table.html.twig',
+  // Envelope HTML dos e-mails do aculta_mailer: cores dos tokens, claro e escuro inline (clientes de e-mail não carregam tokens.css).
+  'aculta-mailer-wrap.html.twig',
 ];
 $actualTemplates = [];
 $templateRoot = $themeRoot . '/templates';

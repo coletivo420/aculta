@@ -1,8 +1,8 @@
 /*
  * Tabelas do painel de envios: rolagem horizontal dentro da própria área, sem estourar a página em tela estreita.
- * Seleção por atributo data-portal-ui (contrato do módulo); o painel administrativo usa o tema Claro.
+ * Seleção por atributo data-aculta-mailer-table (contrato do módulo); o painel administrativo usa o tema Claro, fora do mapa do ACULTA420.
  */
-[data-portal-ui="mailer-tabela-rolagem"] {
+[data-aculta-mailer-table="rolagem"] {
   max-width: 100%;
   overflow-x: auto;
 }

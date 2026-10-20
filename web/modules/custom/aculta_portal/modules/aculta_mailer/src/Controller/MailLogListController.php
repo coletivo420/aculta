@@ -113,7 +113,7 @@ final class MailLogListController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum envio com estes filtros.'),
-        '#attributes' => ['data-portal-ui' => 'mailer-tabela-rolagem'],
+        '#attributes' => ['data-aculta-mailer-table' => 'rolagem'],
         '#attached' => ['library' => ['aculta_mailer/admin']],
       ],
       'paginacao' => $this->pager($total, $page, $type, $status, $transport, $days),

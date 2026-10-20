@@ -12,8 +12,8 @@ que existe no ACULTA Mailer. O roadmap do módulo (`ROADMAP.md`) traz as fases.
 | Período de retenção (6 meses no WP) | `aculta_mailer.log:retention_days` (30, 90, 180, 365; padrão 90) | Pronto |
 | Registrar conteúdo do e-mail | Não se aplica: política de privacidade (`LOGGING-PRIVACY.md`) | Indisponível por política |
 | Salvar anexos | Não se aplica: os e-mails do sistema não têm anexos | Indisponível |
-| Rastreamento de abertura e cliques | Fase F11, desligada por padrão | Pendente (decisão de consentimento) |
-| Status de webhooks (assinatura no provedor) | Endpoint F10; sem provedor ativo | Pendente |
+| Rastreamento de abertura e cliques | Fase F11 (0.1.0-dev.46): ligado no teste e na produção por config; vale só para quem deu consentimento em `/aceite-rastreamento` | Pronto |
+| Status de webhooks (assinatura no provedor) | Endpoint F10 com token de portador; webhook do Brevo cadastrado e validado no teste (0.1.0-dev.34) | Parcial (produção pendente: decisão do responsável) |
 | Alertas de falha (`failed_email`, `failed_primary_email`, `failed_backup_email`) | `MailAlerts::failure()`, janela de 5 min, fila | Pronto (desligado até informar destinatários) |
 | Alerta de bounce (`email_hard_bounced`) | `MailAlerts::hardBounce()`, chamado pelo monitor IMAP | Pronto (depende do IMAP) |
 | Resumo semanal por e-mail (Email Reports) | `MailSummary`, cron, 7 dias contra os 7 anteriores | Pronto (desligado até informar destinatários) |
@@ -22,13 +22,13 @@ que existe no ACULTA Mailer. O roadmap do módulo (`ROADMAP.md`) traz as fases.
 | Limite de envio (Rate Limiting, janelas hora, dia, semana e mês) | `TransportQuota`: `aculta_mailer.policy:rate_limit.<transporte>.<janela>`; sinal do provedor e contagem do registro | Pronto (limite do Brevo a confirmar) |
 | Detecção de erro de cota pelo texto (assinaturas de erro) | `QuotaSignatures` (padrões em inglês e português) e `QuotaSignal` | Pronto (padrões podem crescer com os casos observados) |
 | Failover e alerta de falha do principal (`failed_primary_email`) | Alerta de cota (`MailAlerts::quotaReached`), com janela de 5 minutos | Pronto |
-| Chave geral "não enviar" (Control) | Suspensão por tipo (`skip`); sem chave global | Parcial |
+| Chave geral "não enviar" (Control) | `sending_enabled` na página Entrega (desligada, nada é enviado e o registro mostra `envio_suspenso`) e suspensão por tipo (`skip`) | Pronto |
 | Teste de e-mail | Teste de modelo pelo caminho real | Pronto |
-| Verificação de domínio (Email Detective, SPF/DKIM/DMARC) | Diagnóstico mostra SPF e DMARC do domínio remetente (TXT, `SenderDomainCheck`); DKIM pendente (depende do seletor do provedor) | Parcial |
-| Reenvio de falha (Resend) | Não há conteúdo no registro; o reenvio precisa da fila ou de dado guardado | Pendente (decisão) |
+| Verificação de domínio (Email Detective, SPF/DKIM/DMARC) | Diagnóstico mostra SPF, DMARC e os seletores DKIM ativos (`brevo1`, `brevo2`, `hostingermail-a/b/c`) do domínio remetente (TXT, `SenderDomainCheck`; 0.1.0-dev.35) | Pronto (novo seletor exige acrescentá-lo em `SenderDomainCheck::DKIM_SELECTORS`) |
+| Reenvio de falha (Resend) | Reenvio de falha com o conteúdo cifrado (`MAILER_PAYLOAD_KEY`), guardado só nas mensagens com falha (0.1.0-dev.39); link de uso único não é reaproveitado: pede-se pedido novo | Pronto |
 | Exportar registro em CSV | `.../registro/exportar?dias=1|7|30`: data, tipo, estado, transporte, tentativas, código e correlação; sem destinatário nem texto de erro; separador `;`, BOM para o Excel | Pronto |
 | Painel de estatísticas (Dashboard) | Painel de contagens por período | Pronto (sem gráfico) |
-| Verificação de entrega pela API do provedor (Recheck) | Não implementado | Pendente (depende do webhook do Brevo) |
+| Verificação de entrega pela API do provedor (Recheck) | Página de estado do envio consulta `GET /v3/smtp/statistics/events` do Brevo a cada abertura, somente leitura (0.1.0-dev.42); não altera o registro | Pronto para envios pelo Brevo |
 
 ## Limites por transporte (copiado do WP Mail SMTP)
 
