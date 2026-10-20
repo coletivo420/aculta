@@ -64,10 +64,6 @@ final class ParticipationHooks {
     if (($context['entity_type_id'] ?? NULL) !== 'node') {
       return NULL;
     }
-    if ($entity_bundle === 'forum') {
-      return AccessResult::forbidden('O acervo restaurado do Growroom não aceita novos tópicos.')
-        ->addCacheContexts(['user.permissions']);
-    }
     if (!$isPublicDiscussionTopic) {
       return NULL;
     }

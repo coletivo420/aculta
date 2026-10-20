@@ -1,3 +1,13 @@
+## 0.4.0-dev.44 — excluir autoria histórica da moderação inicial — 2026-10-20
+
+- A regra do primeiro comentário agora ignora discussões marcadas com
+  `field_autor_legado`, tanto no tópico hospedeiro quanto no Comment. Removida
+  a regra temporária de negar criação no bundle `forum` do Drupal contrib.
+- Kernel `PublicDiscussionModerationKernelTest`: 7 testes/84 assertions PASS no
+  banco dedicado `aculta_simpletest` (PHP CLI 8.4.26). Aviso do PHPUnit sobre
+  diretório de saída do browser não gravável; teste não usa esse diretório.
+  Runtime status: código carregado no ambiente, smoke autenticado pendente.
+
 ## 0.4.0-dev.43 — aposentar níveis de visibilidade da taxonomia Forum — 2026-10-20
 
 - Removidos `RestrictedForumGrants`, `RestrictedForumHooks`, o subscriber 404,

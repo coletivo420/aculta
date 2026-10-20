@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_user;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\comment\CommentInterface;
@@ -69,7 +70,14 @@ final class ParticipationRules {
     }
 
     $host = $comment->getCommentedEntity();
-    return $host instanceof NodeInterface && $host->bundle() !== 'aculta_lms_topic';
+    if (!$host instanceof NodeInterface || $host->bundle() === 'aculta_lms_topic') {
+      return FALSE;
+    }
+
+    // Imported Growroom material uses the same Comment field as new public
+    // discussions, but its historical author marker exempts it from the
+    // contemporary first-comment moderation policy.
+    return !$this->hasHistoricAuthor($comment) && !$this->hasHistoricAuthor($host);
   }
 
   /**
@@ -123,6 +131,14 @@ final class ParticipationRules {
     }
 
     return $query;
+  }
+
+  /**
+   * Whether an entity is marked as authored by a historical Growroom author.
+   */
+  private function hasHistoricAuthor(FieldableEntityInterface $entity): bool {
+    return $entity->hasField('field_autor_legado')
+      && !$entity->get('field_autor_legado')->isEmpty();
   }
 
 }

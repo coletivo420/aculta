@@ -8,6 +8,8 @@ use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -57,12 +59,6 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
       'label' => 'Public discussion post',
       'target_entity_type_id' => 'node',
     ])->save();
-    CommentType::create([
-      'id' => 'comment_forum',
-      'label' => 'Restored Growroom reply',
-      'target_entity_type_id' => 'node',
-    ])->save();
-
     foreach (['aculta_forum_topic', 'article', 'blog', 'wiki_entry', 'document', 'aculta_lms_topic'] as $bundle) {
       NodeType::create(['type' => $bundle, 'name' => $bundle])->save();
       $this->addDefaultCommentField(
@@ -73,8 +69,28 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
         ParticipationRules::DISCUSSION_COMMENT_TYPE,
       );
     }
-    NodeType::create(['type' => 'forum', 'name' => 'Restored Growroom topic'])->save();
-    $this->addDefaultCommentField('node', 'forum', 'comment_forum', CommentingStatus::Open, 'comment_forum');
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_autor_legado',
+      'type' => 'string',
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+      'field_name' => 'field_autor_legado',
+      'label' => 'Historical author marker',
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'comment',
+      'field_name' => 'field_autor_legado',
+      'type' => 'string',
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'comment',
+      'bundle' => ParticipationRules::DISCUSSION_COMMENT_TYPE,
+      'field_name' => 'field_autor_legado',
+      'label' => 'Historical author marker',
+    ])->save();
 
     $this->container->get('config.factory')->getEditable('aculta_user.settings')
       ->set('primeiro_comentario_discussao_moderado', TRUE)
@@ -156,21 +172,22 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Restored Growroom comments bypass first-comment moderation and new topics.
+   * Imported Growroom comments bypass first-comment moderation.
    */
-  public function testRestoredForumCommentsAreNotModeratedAndCannotCreateTopics(): void {
+  public function testImportedHistoricalCommentsBypassFirstCommentModeration(): void {
     $account = $this->createAccount();
     $topic = Node::create([
-      'type' => 'forum',
+      'type' => 'aculta_forum_topic',
       'title' => 'Restored Growroom topic',
       'status' => 1,
+      'field_autor_legado' => ['value' => 'historical-author'],
     ]);
     $topic->save();
     $comment = Comment::create([
       'entity_type' => 'node',
       'entity_id' => $topic->id(),
-      'field_name' => 'comment_forum',
-      'comment_type' => 'comment_forum',
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => ParticipationRules::DISCUSSION_COMMENT_TYPE,
       'uid' => $account->id(),
       'subject' => 'Restored reply',
       'comment_body' => ['value' => 'Restored reply', 'format' => 'plain_text'],
@@ -180,10 +197,10 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
     (new ParticipationHooks($this->createRules()))->commentPresave($comment);
     self::assertTrue($comment->isPublished(), 'Restored comments do not enter the contemporary first-comment moderation policy.');
 
-    $createAccess = (new ParticipationHooks($this->createRules()))
-      ->entityCreateAccess($account, ['entity_type_id' => 'node'], 'forum');
-    self::assertNotNull($createAccess);
-    self::assertTrue($createAccess->isForbidden(), 'No new contributed Forum topics are allowed.');
+    $commentAuthorMarked = $this->newComment('aculta_forum_topic', (int) $account->id());
+    $commentAuthorMarked->set('field_autor_legado', ['value' => 'historical-author']);
+    (new ParticipationHooks($this->createRules()))->commentPresave($commentAuthorMarked);
+    self::assertTrue($commentAuthorMarked->isPublished(), 'A historical author marker on a Comment bypasses first-comment moderation.');
   }
 
   /**
