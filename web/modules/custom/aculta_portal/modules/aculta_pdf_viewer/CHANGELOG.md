@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.21 — fonte da miniatura verificada antes do ImageMagick — 2026-10-20
+
+- `PdfPreviewThumbnailBuilder` confirma que o arquivo PDF público ainda existe e está legível antes de invocar PDFPreview/ImageMagick. Arquivo ausente continua fail-soft e não produz warning por falha previsível do processador.
+- Adicionado teste Unit para garantir que uma fonte ausente não chama PDFPreview nem altera o timeout compartilhado.
+- A miniatura continua registrada como derivado temporário e renderizada por `aculta_image`; nenhuma imagem ou storage paralelo foi criado.
+- Evidência: PHPUnit Unit 1/1 (5 assertions) PASS; PHP lint PASS. PHPUnit reportou uma depreciação no teste; gate Drupal 11+ e gates do índice/imagem continuam bloqueados por achados alheios a este diff (Mailer/Wiki e política de campo Commerce, respectivamente).
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.20 — upload editorial pela UI e acesso próprio — 2026-10-17
 
 Classificação: PATCH (completar criação e acesso do Media pelo papel editorial).

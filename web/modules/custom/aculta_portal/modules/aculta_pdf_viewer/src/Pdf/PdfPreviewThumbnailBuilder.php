@@ -6,6 +6,7 @@ namespace Drupal\aculta_pdf_viewer\Pdf;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\aculta_image\GeneratedImageFileManager;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_image\ImageInspector;
@@ -33,6 +34,7 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
     private readonly GeneratedImageFileManager $generatedImageFileManager,
     private readonly ImageRenderer $imageRenderer,
     private readonly ImageInspector $imageInspector,
+    private readonly FileSystemInterface $fileSystem,
     private readonly LoggerInterface $logger,
     private readonly ?ImagemagickExecManagerInterface $imagemagickExecManager,
   ) {}
@@ -50,6 +52,7 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
       || strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)) !== 'pdf'
       || $file->getSize() <= 0
       || $file->getSize() > self::MAX_SOURCE_BYTES
+      || !$this->isReadableSource($file)
       || !$this->isSafeConfiguration()) {
       return NULL;
     }
@@ -99,6 +102,14 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
       ]);
       return NULL;
     }
+  }
+
+  /**
+   * Avoids invoking PDFPreview/ImageMagick for a missing source file.
+   */
+  private function isReadableSource(File $file): bool {
+    $realpath = $this->fileSystem->realpath($file->getFileUri());
+    return is_string($realpath) && is_file($realpath) && is_readable($realpath);
   }
 
   /**

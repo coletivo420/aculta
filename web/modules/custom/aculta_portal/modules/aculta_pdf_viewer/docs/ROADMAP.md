@@ -83,7 +83,10 @@ concessão mínima de `edit own document media` ao papel editorial. Media, File,
 perfil e usuário de teste foram removidos. Auditar CSP estrita e ampliar a
 revisão acessível. Depois do deploy normal, confirmar que
 LiteSpeed/Cloudflare serve `pdf-viewer.mjs`, `pdf.mjs` e `pdf.worker.mjs` como
-JavaScript e que o viewer renderiza sem erro. Nenhum deploy foi feito.
+JavaScript e que o viewer renderiza sem erro. Em 2026-10-20, o adapter passou
+a verificar que a fonte PDF ainda existe e está legível antes de invocar
+PDFPreview/ImageMagick, cobrindo a falha registrada no upstream. Nenhum deploy
+foi feito.
 
 ### Auditoria do contrib Drupal 3D Flipbook
 
