@@ -1,3 +1,16 @@
+## `0.1.0-dev.22` — confirmar aprovação e rejeição HTTP no LMS
+
+- Educador submeteu as duas confirmações Form API com sessão de teste
+  contextual: aprovação publicou o Comment e retirou o marcador de rejeição;
+  rejeição manteve-o não publicado e marcou o estado rejeitado. As filas
+  publicadas, rejeitadas e pendentes refletiram cada transição. Anônimo não
+  acessa fila/tópico privado. Nenhum aviso público foi criado.
+- Fixture Group/Node/Comment e sessão foram removidos; o estado final ficou com
+  1 Group de curso preexistente, 0 tópicos LMS e 0 Comments. `drush cr` e
+  resolução do controller pelo container PASS no Runtime de teste.
+  RUNTIME STATUS: PASS para estas transições; busca e notificação de eventos
+  permanecem fora desta validação.
+
 ## `0.1.0-dev.21` — validar a fila LMS com Comment e ações reais
 
 - Educador abriu a fila com uma fixture temporária em Group privado. O Comment

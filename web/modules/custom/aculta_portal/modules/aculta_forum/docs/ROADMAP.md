@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.114` | Transições Form API LMS, rebuild do container e nova organização administrativa do Fórum geral | Runtime de teste: aprovação/rejeição HTTP PASS, fixture limpa (0 tópicos LMS/0 Comments), `drush cr` PASS, controller resolve no container e overview anônimo 403. A próxima entrega administrativa é mover a aba de tópicos/comentários do Fórum para `/painel-administrativo/forum`, com entrada própria no menu lateral; escopo definido abaixo. |
 | `0.1.0-dev.113` | Validar fila e confirmações de moderação LMS com Comment real | Fixture isolada em Group próprio: fila pendente exibe o Comment e ações aprovar/rejeitar; ambas as confirmações GET retornam 200, sem POST. Filas publicadas/rejeitadas não exibem o Comment; anônimo recebe 403 para fila e tópico. Group, Node, relationship, Comment e sessão removidos; estado LMS restaurado (1 curso existente, 0 tópicos, 0 Comments). RUNTIME STATUS: PARTIAL; transições HTTP não submetidas. |
 | `0.1.0-dev.112` | Provar construção das filas LMS pelo controller e View Core | Kernel invoca `LmsForumModerationController::comments()` contra a View instalável e exige display/argumento Group corretos e cache tag contextual. Arquivo: 1/110; suíte Kernel adapter 2/127 PASS (40 depreciações Core/contrib/LMS). PHP CLI 8.4.26 abaixo da baseline 8.5. Smoke autenticado das filas vazias também PASS em dev.111; renderização de linhas com comentários e operações continua pendente. |
 | `0.1.0-dev.111` | Validar entity converters reais na rota LMS de moderação | Kernel executa conversores `entity:group`/`entity:comment` e `CustomAccessCheck`; Educador com Group dono passa; estudante e Group diferente negados. Unit 18/190, Kernel 2/122 PASS (40 depreciações). No Homelab, `drush cr` PASS; controller instanciado; três rotas ativas. Smoke autenticado GET-only como Educador: painel e filas publicadas/rejeitadas/pendentes HTTP 200; anônimo 403; `/` HTTP 200. Sessão temporária específica removida, sem fixtures nem alteração de configuração/conteúdo. Ações e linhas com comentários continuam pendentes; RUNTIME STATUS: PARTIAL. |
@@ -133,15 +134,33 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 ## Política estrutural do painel administrativo
 
 O conteúdo de discussão não se mistura à listagem genérica em
-`/painel-administrativo/conteudo`. Fórum é uma aba própria nesse painel; seus
-tópicos não entram na View genérica. As três filas do Fórum ficam como abas
-secundárias diretas da aba Fórum, porque o Core limita tarefas locais a dois
-níveis; a consulta agregada de comentários mantém seu caminho próprio. Revista reúne publicações e comentários em
+`/painel-administrativo/conteudo`. A decisão atual transfere a aba do Fórum
+geral para uma seção própria em `/painel-administrativo/forum`; seus tópicos
+continuam fora da View genérica. Revista reúne publicações e comentários em
 `/painel-administrativo/conteudo/revista`; LMS terá área em
 `/painel-administrativo/lms/forum` restrita a curso/turma/atividade e autorização
 de Educador; Wiki terá área em `/painel-administrativo/wiki/forum` para
 comentários de verbetes. LMS e Wiki só ativam suas rotas junto dos respectivos
 adapters e depois de provar isolamento por contexto. Ver [contratos de contexto](CONTEXTS.md).
+
+### Seção administrativa própria do Fórum geral
+
+Decisão do responsável em 2026-10-20: transferir integralmente a aba de Fórum
+que hoje fica em Conteúdo para `/painel-administrativo/forum`, com entrada
+própria no menu lateral. A seção reunirá opções administrativas do Growroom420,
+incluindo tópicos, categorias, comentários publicados/rejeitados/pendentes,
+ferramentas de mover tópicos e comentários, acompanhamento e configurações
+próprias do Fórum. A listagem genérica de Conteúdo continuará excluindo os
+bundles e comentários do Fórum; não haverá segunda interface de moderação.
+
+Na implementação, migrar links e operações sob
+`/painel-administrativo/conteudo/forum` para a nova seção e remover a antiga aba
+de Conteúdo após conferir seus consumidores. Não antecipar subrotas ou
+configurações até inventariar recursos existentes e permissões. Revista fica em
+`/painel-administrativo/conteudo/revista`; LMS em
+`/painel-administrativo/lms/forum`, moderado por Educadores; Wiki em
+`/painel-administrativo/wiki/forum` quando seu adapter existir. A seção do
+Fórum geral não incorpora opções desses contextos.
 
 ## `0.1.0-dev.1` — Auditoria e fundação documental (entregue)
 

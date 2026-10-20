@@ -1,3 +1,25 @@
+## `0.1.0-dev.114` — validar transições de moderação LMS e recuperar o container
+
+- Smoke autenticado no Runtime de teste submeteu confirmações Form API de
+  aprovação e rejeição com tokens reais: ambas retornaram HTTP 200 e o estado
+  persistido moveu cada Comment somente para sua fila correspondente. A fila
+  negou acesso anônimo; nenhuma notificação pública foi criada para as ações LMS.
+- Recibo privado registra 12/12 verificações e limpeza. Pós-condição confirmada
+  novamente: 1 curso preexistente, 0 tópicos `aculta_lms_topic`, 0 Comments
+  `aculta_discussion_post` e nenhum Group da fixture. Sem alteração de conteúdo
+  preexistente.
+- `drush cr --uri=https://aculta.toca.net.br` PASS. Depois da reconstrução,
+  `aculta_forum_lms.moderation_controller` resolve pelo container e as rotas de
+  overview/fila estão registradas; a fila retorna 403 para anônimo, como
+  esperado. O cache antigo foi reconstruído, sem alteração de código para o
+  controller nesta subfase. PHP CLI 8.4.26 permanece abaixo da baseline 8.5.
+  RUNTIME STATUS: PASS para reconstrução do container e transições LMS cobertas;
+  homologação geral continua pendente.
+- Nova organização administrativa aprovada para planejamento: transferir a aba
+  de Fórum de Conteúdo para `/painel-administrativo/forum`; ver Roadmap,
+  `CONTEXTS.md` e mapa de caminhos. Esta decisão documental não altera rotas
+  ativas.
+
 ## `0.1.0-dev.113` — validar linha e confirmações de moderação LMS
 
 - Smoke autenticado no Runtime de teste usou Group, Node e Comment efêmeros

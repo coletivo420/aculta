@@ -1,5 +1,22 @@
 # Matriz de testes por fase
 
+## dev.114 — transições de moderação LMS e cache do container
+
+- Runtime de teste, Educador autenticado: as confirmações Form API de
+  aprovação e rejeição foram submetidas. Ambas retornaram HTTP 200; a primeira
+  publicou o Comment e limpou o marcador de rejeição, a segunda deixou-o
+  unpublished e marcou rejeição. Cada Comment apareceu apenas na fila de seu
+  estado.
+- Nenhum aviso público do Fórum foi criado para ação LMS. Anônimo recebeu 403
+  na fila e no tópico privado. Recibo privado: 12/12 verificações PASS.
+- `drush cr --uri=https://aculta.toca.net.br` PASS; serviço
+  `aculta_forum_lms.moderation_controller` resolve no container e rotas de
+  overview/fila estão presentes. Verificação adicional após a limpeza:
+  1 Group de curso preexistente, 0 Nodes `aculta_lms_topic`, 0 Comments
+  `aculta_discussion_post`, 0 Groups da fixture; anônimo recebe 403 no overview.
+- RUNTIME STATUS: PASS para cache/container e transições cobertas. Nenhuma
+  alteração de Runtime fora do rebuild e dos fixtures temporários já removidos.
+
 ## dev.113 — fila LMS com Comment e ações
 
 - Runtime de teste, Educador autenticado: fixture em Group próprio; fila
