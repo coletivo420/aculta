@@ -1,7 +1,7 @@
 # Transportes e failover (F2)
 
-Status: envio por transporte escolhido, código SMTP real e failover implementados em 0.1.0-dev.6. Diagnóstico
-(painel de SMTP) pendente. Decisão do responsável (2026-10-20): padrão Hostinger, fallback SMTP2GO.
+Status: concluída em 0.1.0-dev.9. Envio por transporte escolhido, código SMTP real, failover e diagnóstico (página
+`.../envios-de-email/diagnostico`, sem usuário nem senha). Decisão do responsável (2026-10-20): padrão Hostinger, fallback SMTP2GO.
 
 ## Transportes
 
@@ -54,8 +54,12 @@ Os códigos diferentes confirmam que cada mensagem foi ao servidor pedido. Os do
 O failover temporário foi validado no Kernel, com um transporte de teste que devolve 421
 (`MailDeliveryKernelTest::testQueueFailsOverToFallbackAfterTemporaryFailure`). Não há teste real de 4xx no Runtime.
 
+## Entrega confirmada
+
+- 2026-10-20: envio de teste a um destinatário real (autorizado pelo responsável) foi aceito pelo Hostinger e
+  recebido na caixa de entrada, com o assunto do modelo `registration_existing_mail`.
+
 ## Pendências
 
-- Diagnóstico de SMTP (host, porta, TLS, último erro, teste) em fase própria.
 - Mensagem genérica do Mailer Plus aparece para o usuário (`Não foi possível enviar o email`), por padrão do contrib.
 - Verificar em produção quando houver autorização (merge em `main` não publica).

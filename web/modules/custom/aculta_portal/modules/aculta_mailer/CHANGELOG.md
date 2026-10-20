@@ -1,5 +1,11 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.9 — diagnóstico de envio e F2 concluída — 2026-10-20
+
+- `MailDiagnostics` e página `.../envios-de-email/diagnostico`: padrão e contingência, transportes (servidor, porta, verificação de certificado), se usuário e senha estão preenchidos (sem valor), último envio aceito e última falha por transporte, fila e cron.
+- Entrega real confirmada pelo destinatário autorizado (e-mail recebido com o assunto do modelo).
+- Testes: 76 no módulo (inclui diagnóstico).
+
 ## 0.1.0-dev.8 — envio de teste de modelo (F3) — 2026-10-20
 
 - Editor de modelo com link "Enviar e-mail de teste": formulário com destinatário, valores de exemplo do tipo e o caminho real de envio (`deliver`). Ao administrador aparece só o resultado; o motivo completo fica no relatório de falhas.

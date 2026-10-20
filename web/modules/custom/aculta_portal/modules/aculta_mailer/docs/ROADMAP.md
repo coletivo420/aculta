@@ -7,7 +7,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 |---|---|---|
 | F0 | Auditoria ([AUDIT](AUDIT.md)), pesquisa ([UPSTREAM](UPSTREAM.md)), arquitetura ([ARCHITECTURE](ARCHITECTURE.md)) | Concluída nesta PR |
 | F1 | Fundação: `MailMessage`, `MailStatus`, `MessageIdFactory`, `RetrySchedule`, contrato `AcultaMailerInterface`, testes unitários | Em andamento nesta PR |
-| F2 | Transporte: envio por transporte (`X-Transport`), código SMTP real, failover Hostinger → SMTP2GO e validação com mensagens reais no Runtime (`docs/TRANSPORTS.md`) | Parcial (envio e failover prontos; diagnóstico pendente) |
+| F2 | Transporte: envio por transporte (`X-Transport`), código SMTP real, failover Hostinger → SMTP2GO, diagnóstico sem credenciais e validação com entrega confirmada pelo destinatário (`docs/TRANSPORTS.md`) | Concluída (2026-10-20) |
 | F3 | Templates: tipos com variáveis declaradas; Config Entity `aculta_mailer_template` com editor, validação de placeholders, prévia e envio de teste pelo caminho real | Parcial (modelo e teste prontos; teste real aceito em 2026-10-20) |
 | F4 | Branding: `aculta_mailer_brand` e `aculta_mailer_layout` com editores; layout envolve o corpo com cabeçalho e rodapé da marca. Pendentes: HTML com estilos do tema e logo via `aculta_image` | Parcial (texto simples) |
 | F5 | Policy: adjusters por plugin, reutilização de `mailer_policy` até equivalência | Pendente |
