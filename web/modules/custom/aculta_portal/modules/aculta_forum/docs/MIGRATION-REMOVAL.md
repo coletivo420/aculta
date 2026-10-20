@@ -12,13 +12,13 @@ fixtures `[TESTE]` do bundle novo são tratados em
 | --- | --- |
 | Composer | `drupal/forum` foi removido de `composer.json`/lock; `drupal/history` permanece como dependência direta para marcadores pessoais de leitura. |
 | Extensão | `forum` foi removido de `config/sync/core.extension.yml` e desinstalado do Runtime de teste. |
-| Modelo de conteúdo | Node bundle `forum`, vocabulary `forums`, Node field `taxonomy_forums`, Comment bundle `comment_forum`, campo `comment_forum` no Node. Configs opcionais do módulo contrib definem ainda displays, formulário e settings. |
-| Config Sync | `core.entity_*` de node.forum/comment_forum; `node.type.forum.yml`; taxonomy.vocabulary.forums.yml; `views.view.aculta_forum_topics.yml`; `flag.sinalizar_comentario` aponta a bundle `comment_forum`; `field_discussao` exportado em blog aponta à Node bundle `forum`; campos de autoria legada. |
-| `aculta_user` | Em dev.42–.44, removidos consumidores contrib; regras atuais preservam a exceção de moderação para autoria histórica no bundle compartilhado. Kernel direcionado: 7 testes/84 assertions PASS. |
+| Modelo de conteúdo | O modelo `forum`/`forums`/`comment_forum` existia no Drupal Forum contrib e foi retirado do Runtime em dev.50. A arquitetura ACULTA usa `aculta_forum_topic`, `aculta_forum_categories` e Comment compartilhado. |
+| Config Sync | Configurações exclusivas do contrib foram removidas; as flags agora se aplicam aos bundles ACULTA. `field_discussao` não tem instâncias/storage e seus vínculos foram limpos. Referências restantes são inventário histórico/documentação. |
+| `aculta_user` | Dev.42–.45 removem consumidores contrib e preservam autoria histórica fora da moderação inicial e da fila de denúncias. Kernel de participação 7/84; fila de denúncias 2/10 PASS. |
 | `aculta_magazine` | Em dev.15 foram removidos `LegacyPublicationTopicLookup`, `ForumOpeningPost`, os campos `field_discussao` dos displays/configuração exportada e a dependência declarada `forum:forum`. `PublicationTypeConverter` continua movendo Comments compartilhados. Runtime cache rebuild e raiz Magazine HTTP 200; importação de configuração e conversão com Comments reais pendentes. |
 | `aculta_messenger` | Em dev.56 foi removido `ForumTopicCounterHooks` (`preprocess_forums`), que pressupunha a listagem contrib. `MessageSubscribeEventHooks` atende o Node ACULTA `aculta_forum_topic`; avisos e contagens agregadas seguem em serviços próprios. |
 | Tema | `forum-list.html.twig`, `node--forum--full.html.twig`, `comment--comment-forum.html.twig`, `forum-index.css`, `discussion.css`, traduções e estilos do padrão Forum. |
-| Documentação/gates | Portal/Forum/LMS/Magazine, mapa módulo-tema, fronteira, sitemap/purpose, slugs, buscas, avisos e políticas de participação referem Forum legado. Fazer `rg` global antes da remoção final. |
+| Documentação/gates | Documentação de migração mantém referências históricas; revisar consumidores ativos por busca global e tratar separadamente o histórico documental. |
 
 Lista pesquisável no checkout: `rg -n -i 'drupal/forum|node.forum|comment_forum|taxonomy_forums|field_discussao|ForumTopicSync|ForumSectionResolver|forum\\.forum' composer.json composer.lock config/sync web/modules/custom/aculta_portal web/themes/custom/aculta420 docs`.
 Este comando inclui strings históricas; revisar cada resultado e não apagar
@@ -262,8 +262,12 @@ Config Sync ou `updb` foi realizada; drift preexistente exige revisão antes de
 importação dirigida.
 
 Cache rebuild passou; raízes do Growroom420 e Revista responderam HTTP 200, e
-Conta anônima respondeu HTTP 302 esperado. Smoke autenticado e revisão de
-permissões/Flags continuam pendentes.
+Conta anônima respondeu HTTP 302 esperado. Em dev.51, importação parcial
+atualizou somente `user.role.email_confirmed` e removeu as permissões genéricas,
+concedendo `report aculta forum content`; cache rebuild descobriu a permissão e
+os hooks. A fila exclui legado e outros contextos. Smoke autenticado/Flag
+end-to-end continua pendente porque o Fórum está vazio e não foi usada conta de
+participante. Ver evidência em `TEST-MATRIX.md`.
 
 ## Rollback e limites
 

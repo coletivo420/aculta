@@ -9,7 +9,7 @@
 | Identidade, apelido e User | User/Profile + `aculta_user` | Author Card API a definir | consulta de dados privados e cartão próprio do Forum |
 | Avatar/foto | User picture + `aculta_user` + `aculta_image` | render autorizado por finalidade `avatar` | processar/excluir arquivo fora de `aculta_image` |
 | Autoria histórica | entidade `aculta_legado_autor` + `aculta_user` | `LegacyAuthorManager`, campo existente, memorial coletivo | conta User, perfil, login ou cartão independente |
-| Favorito/seguir/denúncia | Flag | flags existentes e access atual | armazenamento paralelo de ações |
+| Favorito/seguir/denúncia | Flag | flags existentes; denúncia do Fórum usa permissão contextual, `HistoricForumFlagAccessHooks` e fila `aculta_user` específica do Growroom | armazenamento paralelo de ações; pôr acervo histórico ou outro contexto na fila pública |
 | Notificação | `aculta_messenger` e seu contrato de avisos | evento/referência e chamada ao serviço dono | fila/tabela/email próprios no Forum |
 | Conquistas | `aculta_game` avalia somente participações atuais do Fórum ACULTA; concessões e catálogo têm fonte única no `aculta_user` | trigger existente `forum_comment` ao publicar Comment do tópico público novo | bundle Drupal Forum legado, storage, contagem, XP, ranking ou concessão próprios no Forum |
 | Cursos, atividades, matrícula | LMS + Group | adapter opcional `aculta_forum_lms` | autorização por role global ou cópia da matrícula |

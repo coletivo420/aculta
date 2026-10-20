@@ -4,3 +4,7 @@ move aculta forum topics:
 move aculta forum comments:
   title: 'Mover comentários entre tópicos públicos do fórum'
   description: 'Permite mover uma resposta e toda a sua subárvore entre tópicos públicos compatíveis.'
+report aculta forum content:
+  title: 'Denunciar conteúdo no Fórum público'
+  description: 'Sinalizar tópicos e comentários contemporâneos do Growroom420 para revisão.'
+  restrict access: true

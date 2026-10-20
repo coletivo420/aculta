@@ -1,10 +1,11 @@
 # Papéis e hierarquia
 
-As permissões e hooks listados abaixo descrevem o estado atual do Forum contrib
-e dos conteúdos instalados. A reconstrução `aculta_forum` deve aplicar as regras
-de participação ao provider/contexto correspondente e revalidá-las pela Access
-API; não converter matrícula em papel global nem depender somente de esconder
-links. Migração/retirada é documentada em
+As permissões e hooks listados abaixo descrevem o sistema ACULTA Forum atual e
+as integrações ativas. O Drupal Forum contrib foi removido do Runtime de teste
+e do Composer em dev.50. As regras de participação são aplicadas ao
+provider/contexto correspondente e revalidadas pela Access API; matrícula não
+se converte em papel global nem se protege conteúdo somente ocultando links.
+Migração/retirada é documentada em
 `aculta_forum/docs/MIGRATION-REMOVAL.md`.
 
 Status: **hierarquia atualizada pelo responsável (2026-10-17)**. Pendências na seção 7.
@@ -35,13 +36,13 @@ Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula me
   2026-10-16.
 - Como moderador do Fórum, pode **ocultar, despublicar ou excluir** tópicos e comentários.
 - Pode mover tópicos novos do Growroom entre categorias pela permissão `move aculta forum topics`; isso não concede edição do bundle. A permissão efetiva continua condicionada à confirmação de e-mail pela hierarquia vigente.
-- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. O conteúdo legado dos bundles `forum`/`comment_forum` foi removido do Runtime de teste em 2026-10-20 por decisão F-D33; o uninstall do contrib e a retirada dos consumidores permanecem pendentes.
+- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. Conteúdo Growroom histórico marcado com `field_autor_legado` não entra em denúncia/moderação e não pode ser reaberto ou alterado, inclusive por `content_editor`.
 - Concedido somente pelo administrador.
 
 ## 3. Papel `administrator`
 
 - Concedido somente pelo administrador.
-- Tem bypass administrativo de modo geral. O Runtime de teste está sem conteúdo nos bundles legados `forum`/`comment_forum` desde a limpeza F-D33; a implementação contrib permanece somente enquanto os consumidores/configurações forem retirados com segurança.
+- Tem bypass administrativo geral, exceto os guards explícitos do acervo Growroom histórico, que também vedam operações de conteúdo para administrador. O Runtime de teste está sem dados do Forum contrib após F-D33/dev.50; a estrutura de autoria histórica fica preparada para futura restauração controlada.
 - É o único que atribui papéis administrativos, edita contas e confirma e-mail manualmente. Essas ações não ficam com
   nenhum outro papel.
 
@@ -103,9 +104,10 @@ homologação funcional.
   contexto não LMS, mas deixa de bloquear depois de uma participação publicada
   no LMS. O limite mínimo de criação continua contando somente comentários do
   Fórum público.
-- Os bundles `forum`/`comment_forum` do contrib estão sem conteúdo no Runtime de
-  teste após F-D33 e aguardam uninstall oficial. As políticas de participação
-  atuais só se aplicam a Comments compartilhados em contextos ACULTA.
+- Os bundles do Forum contrib foram desinstalados em dev.50. As políticas de
+  participação atuais só se aplicam a Comments compartilhados em contextos
+  ACULTA; conteúdos Growroom importados com autoria histórica ficam isentos da
+  moderação inicial e fora da fila de denúncias.
   O Comment compartilhado está instalado em `article` e
   `blog` no Runtime de teste; formulário foi renderizado em memória para a
   conta de teste, mas HTTP/envio de comentário segue sem homologação.
@@ -116,8 +118,8 @@ As decisões F-D14/F-D15 sobre fóruns públicos com níveis de visibilidade da
 taxonomia `forums` foram aposentadas em 2026-10-20. O Growroom420 é público e
 suas categorias não carregam restrições por papel. Discussões de curso/turma
 usam Group e acesso contextual do LMS; esse acesso segue fechado por padrão e
-não depende de papel global. Código e permissões de realms estão sendo retirados;
-configuração ativa do Runtime ainda depende da fase de import/uninstall.
+não depende de papel global. Código e permissões de realms foram retirados em
+dev.49; configuração de Runtime foi limpa no uninstall de dev.50.
 
 ## 7. Confirmação manual de e-mail pelo administrador
 

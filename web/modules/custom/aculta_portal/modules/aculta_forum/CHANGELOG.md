@@ -1,3 +1,26 @@
+## 0.1.0-dev.51 — excluir o acervo Growroom histórico do fluxo de denúncias
+
+- A permissão `report aculta forum content` é concedida a `email_confirmed`;
+  `HistoricForumFlagAccessHooks` limita as ações a comentários hospedados em
+  tópicos públicos atuais e tópicos desse bundle. As permissões genéricas
+  `flag`/`unflag` foram retiradas, pois o Flag combina hook e permissões com OR.
+- A fila do `aculta_user` inclui somente conteúdo do Fórum público atual e
+  exclui autoria histórica. O hook `flagging_presave` bloqueia gravações diretas
+  no acervo, inclusive por administradores; comentários de Revista/LMS/Wiki não
+  entram na fila do Fórum.
+- `ForumHistoricModerationQueueHooks` também exclui comentários e tópicos com
+  autoria histórica das abas pendente/rejeitada da View administrativa,
+  falhando fechado se os campos/relacionamento não estiverem disponíveis. As
+  permissões existentes para mover tópicos e comentários foram preservadas.
+- Forum Unit direcionado: 14 testes/58 assertions PASS; suítes completas Forum
+  68/440 e User 55/189 PASS (uma depreciação PHPUnit preexistente no User).
+  PHPCS Drupal, Portal 11+ (971), fronteira (1402), mapa (152), pacotes (25) e
+  YAML/lint/diff-check/papéis/hierarquia PASS; evidências em `docs/TEST-MATRIX.md`.
+  No Runtime de
+  teste, Config Sync parcial atualizou somente `user.role.email_confirmed`, o
+  cache rebuild descobriu a permissão/hook e Fórum/principal responderam HTTP
+  200; smoke autenticado/Flag end-to-end segue pendente. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.50 — desinstalar Forum contrib no Runtime de teste — 2026-10-20
 
 - Config Sync remove as entidades/configurações exclusivas do módulo contrib,

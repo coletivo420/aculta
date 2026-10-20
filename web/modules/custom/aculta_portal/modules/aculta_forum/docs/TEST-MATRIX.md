@@ -1,5 +1,37 @@
 # Matriz de testes por fase
 
+## dev.51 — denúncia contextual e proteção do acervo Growroom
+
+- Forum Unit `HistoricForumFlagAccessHooksTest` e
+  `ForumHistoricModerationQueueHooksTest`: 14 testes/58 assertions PASS;
+  cobre permissão dedicada, tópico atual, autorias históricas no tópico/Comment,
+  host histórico, destinos fora do Fórum, save direto com permissão, alvo
+  inexistente/tipo inválido e as filas pendente/rejeitado.
+- User Unit `ReportQueueTest`: 3 testes/14 assertions PASS; fila inclui tópico
+  atual e exclui tópico histórico e Comment hospedado em outro contexto.
+- Suítes Unit completas: Fórum 68/440 PASS; User 55/189 PASS
+  com uma depreciação PHPUnit preexistente em `AuthorCardVariantResolverTest`.
+  As duas classes novas são 14/58; `ReportQueueTest` 3/14.
+- PHP lint, YAML de Config Sync/permissões, PHPCS Drupal nos seis arquivos PHP,
+  `git diff --check`, Portal Drupal 11+ (971), fronteira (1402), mapa (152),
+  pacotes próprios (25), política de papéis e hierarquia PASS. PHPUnit usa PHP
+  8.4.26 e emite aviso de diretório
+  `browser_output` não gravável, sem uso pelo conjunto Unit.
+- Runtime de teste (`toca`, Drupal 11.4.10, banco `aculta_runtime`, PHP CLI
+  8.4.26): cópia privada de recuperação de `user.role.email_confirmed` criada
+  em `/home/aculta/private/aculta/runtime-config-backups/forum-dev51-20261020/`;
+  importação `config:import --partial` processou somente esse YAML. Removidos os
+  quatro grants genéricos `flag/unflag sinalizar_{topico,comentario}`, concedida
+  `report aculta forum content` e declaradas as dependências `aculta_forum` e
+  `aculta_user`. Cache rebuild PASS; Drush confirmou módulo e permissão
+  descobertos. A configuração alvo não aparece como divergente no
+  `config:status`. Após cache rebuild, a montagem da View `page_pending` incluiu
+  predicado `1 = 0`: o campo de autoria histórica ainda não está disponível no
+  Runtime, portanto a fila falhou fechada. Raízes públicas do Fórum e do purpose
+  main responderam HTTP 200. Sem conteúdo do Fórum e sem sessão de participante,
+  ação Flag e fila com dados não foram exercitadas end-to-end. RUNTIME STATUS:
+  PARTIAL.
+
 ## Integração de comentários Revista/Fórum — Runtime de teste, 2026-10-19
 
 - Firefox autenticado confirmou o formatter Core de `field_aculta_discussion`
