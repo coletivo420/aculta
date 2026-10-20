@@ -190,6 +190,46 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
   }
 
   /**
+   * Published reply totals follow approval, unpublishing and deletion.
+   */
+  public function testPublishedReplyStatisticsFollowModerationLifecycle(): void {
+    $node = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Moderation statistics test topic',
+      'status' => 1,
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+      'field_aculta_discussion' => ['status' => CommentingStatus::Open->value],
+    ]);
+    $node->save();
+
+    $pending = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => $node->id(),
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'subject' => 'Pending reply',
+      'comment_body' => ['value' => 'Pending reply body', 'format' => 'plain_text'],
+      'status' => 0,
+    ]);
+    $pending->save();
+    $statistics = $this->container->get('comment.statistics')->read([(int) $node->id() => $node], 'node');
+    self::assertSame(0, (int) $statistics[0]->comment_count, 'Pending replies are excluded from public totals.');
+
+    $pending->setPublished()->save();
+    $statistics = $this->container->get('comment.statistics')->read([(int) $node->id() => $node], 'node');
+    self::assertSame(1, (int) $statistics[0]->comment_count, 'Approval adds a reply to public totals.');
+
+    $pending->setUnpublished()->save();
+    $statistics = $this->container->get('comment.statistics')->read([(int) $node->id() => $node], 'node');
+    self::assertSame(0, (int) $statistics[0]->comment_count, 'Unpublishing removes a reply from public totals.');
+
+    $pending->setPublished()->save();
+    $pending->delete();
+    $statistics = $this->container->get('comment.statistics')->read([(int) $node->id() => $node], 'node');
+    self::assertSame(0, (int) $statistics[0]->comment_count, 'Deleting a published reply removes it from public totals.');
+  }
+
+  /**
    * Historical topics cannot be moved even with the operation permission.
    */
   public function testHistoricalTopicCannotBeMoved(): void {

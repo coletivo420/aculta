@@ -1,3 +1,15 @@
+## Validação adicional — ciclo de moderação das contagens — 2026-10-20
+
+- `ForumTopicMoverKernelTest` agora exercita o agregado oficial do Comment Core
+  durante aprovação, despublicação e exclusão; comentários pendentes não entram
+  no total público. Kernel MariaDB: 3 testes/69 assertions PASS, com cinco
+  depreciações da dependência Domain. Unit Forum: 54/382 PASS; PHPCS, gates
+  Drupal 11+ (970 verificações), fronteira (1392 verificações) e `git diff
+  --check` PASS. A View continua ordenando pelo agregado Core configurado.
+- Nenhuma entidade ou configuração do Runtime foi alterada. A ordenação entre
+  vários tópicos com respostas positivas ainda requer teste de Views e
+  inspeção autenticada no navegador.
+
 ## 0.1.0-dev.44 — navegação direta por categoria — 2026-10-20
 
 - A View `aculta_forum_categories` passa o TID como token excluído e renderiza
