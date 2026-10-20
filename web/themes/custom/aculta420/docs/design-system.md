@@ -11,6 +11,12 @@ acessibilidade e tokens light/dark. `discussion.css` estiliza o formulário
 nativo de respostas sem alterar access ou comportamento. Os seis presets estão
 em `aculta_forum/docs/ADVANCED-FORUM-PORT.md`.
 
+As Views públicas de tópicos reutilizam os mesmos cartões em “Todas”, “Novas”,
+“Sem resposta” e “Mais comentadas”. O cabeçalho de navegação usa chips focáveis
+com tokens semânticos; título, respostas e atividade empilham em telas menores.
+Filtros, ordenação, visibilidade e contagens continuam responsabilidade do
+Portal/Core, nunca do tema.
+
 ## Identidade
 
 ACULTA420 usa Bootstrap como infraestrutura e mantém identidade própria por

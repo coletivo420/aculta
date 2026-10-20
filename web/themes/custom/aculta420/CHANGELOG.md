@@ -1,3 +1,17 @@
+## Alteração não marcada — listas públicas do Fórum — 2026-10-19
+
+- As listagens de tópicos públicos apresentam os links de navegação como chips
+  com alvo confortável, foco visível e tokens semânticos. Em telas estreitas,
+  contagem de respostas e última atividade descem abaixo do título para evitar
+  apertar a coluna de conteúdo.
+- Gates SDC (516), design foundations (2081), mapa (154) e fronteira (1360)
+  PASS. Foundation falha por posicionamento divergente preexistente de
+  `block.block.aculta_magazine_admin_comments`; não foi alterado neste escopo.
+- Runtime `toca`: cache rebuild PASS, `/discussoes/novas` HTTP 200 e CSS servido
+  contém o seletor responsivo e os chips. Tema `0.6.0-dev.101` mantido até
+  corrigir o gate prévio e inspecionar navegador 390 px/desktop/dark. RUNTIME
+  STATUS: PARTIAL.
+
 ## 0.6.0-dev.101 — corrige os cartões da lista Growroom420 — 2026-10-19
 
 ### Alteração não marcada — contador da lista pública do Fórum

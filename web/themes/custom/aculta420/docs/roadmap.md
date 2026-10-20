@@ -3,6 +3,7 @@
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
 | Não marcada | Contador e última atividade na lista Growroom420 | Runtime HTTP 200 com oito linhas `0 respostas` e data; sort SQL descendente executado; SDC/design PASS; Foundation bloqueada por drift do bloco administrativo da Revista; navegador DEFERRED | Template reapresenta teaser, contagem Core e data |
+| Não marcada | Navegação e linhas responsivas das listas ACULTA Forum | SDC/design/map/boundary PASS; Foundation bloqueada por placement Magazine prévio; HTTP 200 e CSS cacheado presentes; inspeção de navegador pendente | Links usam chips focáveis; contagem e atividade empilham no mobile |
 | 0.6.0-dev.101 | Corrige classes dos cards do ACULTA Forum com base no render Firefox | Foundation, SDC, design e fixtures; Firefox desktop e viewport compacto de 500 px inspecionados. Viewport de 390 px e modo escuro pendentes. | Twig declara variante teaser/full, alinhada aos seletores; categoria vira etiqueta semântica |
 | 0.6.0-dev.100 | Ajuste responsivo dos controles Comment | Foundation 354, SDC 516, design 2078 e fixtures 157 PASS; visual no navegador DEFERRED | Largura total exclui controles binários e de arquivo |
 | 0.6.0-dev.99 | Formulário de resposta Comment compartilhado | Foundation 354, SDC 516, design 2078, fixtures 157, fronteira 1331 e mapa 154 PASS; Runtime raiz 200 e CSS agregado verificado; visual no navegador/envio DEFERRED | Regras responsivas e foco em `discussion.css` |
