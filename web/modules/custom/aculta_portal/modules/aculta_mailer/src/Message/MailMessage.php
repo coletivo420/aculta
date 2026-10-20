@@ -7,8 +7,9 @@ namespace Drupal\aculta_mailer\Message;
 /**
  * Mensagem transacional imutável, criada pelo módulo que origina o evento.
  *
- * O contexto aceita somente escalares e NULL. Entidades e objetos são recusados: o template recebe apenas os valores
- * que o módulo de origem escolheu expor (ver docs/ARCHITECTURE.md, seção 4).
+ * O contexto aceita escalares, NULL e listas ou linhas de escalares com no máximo dois níveis (por exemplo, uma lista
+ * de linhas `tipo`/`titulo`/`quantidade`). Entidades e objetos são recusados: o template recebe apenas os valores que o
+ * módulo de origem escolheu expor (ver docs/ARCHITECTURE.md, seção 4).
  */
 final readonly class MailMessage {
 
@@ -27,8 +28,8 @@ final readonly class MailMessage {
    *   Destinatário. Deve ser um endereço de e-mail válido.
    * @param string $langcode
    *   Idioma BCP 47 simplificado, por exemplo `pt-br`.
-   * @param array<string, scalar|null> $context
-   *   Valores autorizados para o template. Chaves em snake_case.
+   * @param array<string, mixed> $context
+   *   Valores autorizados para o template. Chaves em snake_case; ver a classe para o formato permitido.
    * @param string $correlationId
    *   UUID v4 minúsculo gerado por `MessageIdFactory`.
    *
@@ -58,9 +59,22 @@ final readonly class MailMessage {
       if (!is_string($key) || preg_match(self::TYPE_PATTERN, $key) !== 1) {
         throw new \InvalidArgumentException('Chave de contexto inválida: use snake_case.');
       }
-      if ($value !== NULL && !is_scalar($value)) {
-        throw new \InvalidArgumentException(sprintf('O contexto "%s" aceita somente escalares ou NULL.', $key));
-      }
+      $this->assertPlainValue($key, $value, 0);
+    }
+  }
+
+  /**
+   * Aceita escalar, NULL, ou lista/linha de escalares até o segundo nível; recusa objetos e níveis maiores.
+   */
+  private function assertPlainValue(string $key, mixed $value, int $depth): void {
+    if ($value === NULL || is_scalar($value)) {
+      return;
+    }
+    if (!is_array($value) || $depth >= 2) {
+      throw new \InvalidArgumentException(sprintf('O contexto "%s" aceita somente escalares, NULL ou listas de escalares.', $key));
+    }
+    foreach ($value as $item) {
+      $this->assertPlainValue($key, $item, $depth + 1);
     }
   }
 

@@ -41,8 +41,9 @@ Drupal Core Mail (symfony_mailer) → Symfony Mailer → transporte (DSN)
 ## 4. Decisões de arquitetura
 
 1. **Símbolos públicos sob `Drupal\aculta_mailer`.** Interfaces em `Api`, valores em `Message`, política de entrega em `Delivery`.
-2. **Contexto restrito a escalares.** `MailMessage` rejeita objetos (entidades inclusive). Isso impede que templates recebam
-   entidades inteiras, conforme a regra de variáveis controladas.
+2. **Contexto restrito a dados.** `MailMessage` aceita escalares, NULL e listas ou linhas de escalares com até dois
+   níveis (o resumo de avisos envia linhas `tipo`/`titulo`/`quantidade`). Rejeita objetos e entidades, e aninhamento maior.
+   Isso impede que templates recebam entidades inteiras, conforme a regra de variáveis controladas.
 3. **Status separado de entrega.** `sent` (o transporte aceitou) não é `delivered` (o destinatário recebeu). Transições
    que pulam etapas são recusadas.
 4. **Retry só para erro temporário.** `RetrySchedule` recusa retry de erro permanente (destinatário inválido,

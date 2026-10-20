@@ -96,11 +96,20 @@ final class MailMessageTest extends UnitTestCase {
   }
 
   /**
-   * Rejeita array no contexto: o contexto aceita somente escalares.
+   * Aceita lista de linhas escalares (um nível de aninhamento), como o resumo de avisos.
    */
-  public function testRejectsArrayInContext(): void {
+  public function testAcceptsRowsOfScalars(): void {
+    $rows = [['tipo' => 'resposta', 'titulo' => 'Tópico', 'quantidade' => 2]];
+    $message = new MailMessage('avisos_resumo', 'pessoa@example.com', 'en', ['linhas' => $rows], self::CORRELATION);
+    $this->assertSame($rows, $message->context['linhas']);
+  }
+
+  /**
+   * Rejeita aninhamento além do segundo nível.
+   */
+  public function testRejectsDeepNestingInContext(): void {
     $this->expectException(\InvalidArgumentException::class);
-    new MailMessage('account_created', 'pessoa@example.com', 'pt-br', ['items' => ['a']], self::CORRELATION);
+    new MailMessage('account_created', 'pessoa@example.com', 'pt-br', ['items' => [['a' => ['b']]]], self::CORRELATION);
   }
 
   /**
