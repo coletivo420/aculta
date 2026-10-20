@@ -1743,3 +1743,17 @@ Classificação: PATCH de manutenção do tema e do gate.
 - Runtime de teste: mapa `core.extension:theme` alinhado ao sync por remoção dirigida de `bootstrap5`; `aculta420` segue como tema padrão e `claro` como administrativo. Cópia recuperável do mapa anterior em `/tmp/aculta-runtime-core-extension-theme-before-bootstrap5-20261018.yml`.
 - DT-O14 permanece parcial: `bootstrap5.settings` e `block.block.bootstrap5_search_form` ainda existem no banco e apontam para a base antiga; não houve importação global nem exclusão desses objetos.
 
+## 0.6.0-dev.118 — organizar o formulário da busca pública do Fórum — 2026-10-20
+
+- O formulário `/pesquisar` usa colunas responsivas e mantém textos de ajuda
+  dentro dos filtros; o botão alinha com os campos em desktop e ocupa uma linha
+  própria em larguras intermediárias. Mobile empilha os controles.
+- Firefox ESR/X11 anônimo no Runtime: 1024 px confirma que os textos cabem e o
+  botão não sobrepõe as descrições. Responsive Design Mode chegou a 320×480,
+  mas a inspeção completa do formulário ficou abaixo da área capturada.
+- SDC 535, Design Foundations 2100/fixtures 157 e Shell Contract 11 PASS. O
+  Foundation reconhece a versão .118, mas reprova na allowlist por
+  `email-wrap.html.twig`, adicionado pela linha Mailer .117 e ainda não listado
+  no gate; nenhuma alteração da allowlist foi feita neste escopo. SHA em
+  `main`: pendente de merge da PR #297.
+
