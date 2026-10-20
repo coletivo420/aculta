@@ -726,7 +726,7 @@ $check(
 
 // P5.4-A/B/C/E: account controllers receive every collaborator explicitly.
 $portalControllerSource = $read($srcRoot . '/Controller/PortalController.php');
-foreach (["'plugin.manager.block'", "'email_confirmer'", "'current_route_match'", "'current_user'", "'module_handler'", "'config.factory'"] as $serviceId) {
+foreach (["'plugin.manager.block'", "'aculta_mail_confirmer'", "'current_route_match'", "'current_user'", "'module_handler'", "'config.factory'"] as $serviceId) {
   $check(
     substr_count($portalControllerSource, '$container->get(' . $serviceId . ')') === 1,
     'P5.4 PortalController must inject ' . $serviceId . ' exactly once.',

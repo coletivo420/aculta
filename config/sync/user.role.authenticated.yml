@@ -6,13 +6,12 @@ dependencies:
     - filter.format.webform_default
   module:
     - aculta_donation
+    - aculta_mail_confirmer
     - aculta_portal
     - comment
     - commerce_checkout
     - commerce_order
     - commerce_product
-    - commerce_shipping
-    - aculta_mail_confirmer
     - file
     - filter
     - flag
@@ -28,11 +27,11 @@ label: 'Usuário autenticado'
 weight: 1
 is_admin: false
 permissions:
+  - 'access aculta mail confirmer'
   - 'access aculta portal'
   - 'access checkout'
   - 'access comments'
   - 'access content'
-  - 'access aculta mail confirmer'
   - 'access user profiles'
   - 'create authenticated profile'
   - 'delete own files'

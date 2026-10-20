@@ -21,7 +21,7 @@ $container->set('plugin.manager.mail', new class($sent_to) {
 });
 
 $user_storage = \Drupal::entityTypeManager()->getStorage('user');
-$confirmation_storage = \Drupal::entityTypeManager()->getStorage('email_confirmer_confirmation');
+$confirmation_storage = \Drupal::entityTypeManager()->getStorage('aculta_mail_confirmer');
 $switcher = \Drupal::service('account_switcher');
 $password = bin2hex(random_bytes(20));
 $suffix = bin2hex(random_bytes(8));
@@ -131,9 +131,9 @@ try {
 
   $user = $user_storage->load($user->id());
   $assert($user->getEmail() === $old_email, 'Drupal User keeps the current email until confirmation.');
-  $pending = \Drupal::service('user.data')->get('email_confirmer_user', $user->id(), 'email_change_new_address');
+  $pending = \Drupal::service('user.data')->get('aculta_mail_confirmer_user', $user->id(), 'email_change_new_address');
   $assert($pending === $new_email, 'Email Confirmer stores the requested address in its own pending user data.');
-  $confirmations = \Drupal::service('email_confirmer')->getConfirmations($new_email, 'pending', 0, 'email_confirmer_user');
+  $confirmations = \Drupal::service('aculta_mail_confirmer')->getConfirmations($new_email, 'pending', 0, 'aculta_mail_confirmer_user');
   $confirmation = reset($confirmations);
   $assert($confirmation && (int) $confirmation->get('uid')->target_id === (int) $user->id(), 'The native confirmation belongs to the requesting user.');
   if ($confirmation) {
@@ -166,7 +166,7 @@ try {
   $assert($user_storage->load($user->id())->getEmail() === $old_email, 'An invalid confirmation cannot change the account email.');
   // A real confirmation arrives in a separate HTTP request, whose PHP static
   // state is clean. Recreate the contrib's in-request recursion guard here.
-  $confirmation_guard =& drupal_static('email_confirmer_user_' . $user->id());
+  $confirmation_guard =& drupal_static('aculta_mail_confirmer_user_' . $user->id());
   $confirmation_guard = TRUE;
   $assert($confirmation->confirm($confirmation->getHash()), 'The native confirmation hash is accepted.');
   $confirmation->save();
@@ -175,7 +175,7 @@ try {
 
   $expired = $confirmation_storage->create([
     'email' => 'expired-' . $suffix . '@example.invalid',
-    'realm' => 'email_confirmer_user',
+    'realm' => 'aculta_mail_confirmer_user',
     'uid' => $user->id(),
   ]);
   $expired->setCreatedTime(1);
@@ -202,7 +202,7 @@ try {
 finally {
   if ($user) {
     $uid = $user->id();
-    \Drupal::service('user.data')->delete('email_confirmer_user', $uid, 'email_change_new_address');
+    \Drupal::service('user.data')->delete('aculta_mail_confirmer_user', $uid, 'email_change_new_address');
     \Drupal::service('user.data')->delete('aculta_portal', $uid, 'social_auth_password_unset');
   }
   foreach ($confirmation_ids as $confirmation_id) {

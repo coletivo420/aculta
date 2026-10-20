@@ -1,5 +1,5 @@
 _core:
-  default_config_hash: mZPvli4k5ulC_BcD35Yk2c8mlzSa6xwRkustThIT4jk
+  default_config_hash: UZ0787JbkK9d2JQTGavLSpNOQoU723GYLXnP8cwG11o
 langcode: pt-br
 hash_expiration: 86400
 restrict_same_ip: false
@@ -11,11 +11,12 @@ confirmation_request:
 confirmation_response:
   skip_confirmation_form: false
   questions:
-    pending: 'Proceed to confirm your email address.'
-    expired: 'This email confirmation process has expired.'
-    cancelled: 'This email confirmation process was cancelled.'
-    confirmed: 'Your email address was confirmed.'
+    pending: 'Prossiga para confirmar o seu endereço de e-mail.'
+    expired: 'Este processo de confirmação de e-mail expirou.'
+    cancelled: 'Este processo de confirmação de e-mail foi cancelado.'
+    confirmed: 'Seu endereço de e-mail foi confirmado.'
   url:
     confirm: '<front>'
     cancel: '<front>'
     error: '<front>'
+

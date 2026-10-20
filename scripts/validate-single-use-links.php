@@ -37,9 +37,9 @@ $userSettings = is_file($root . '/config/sync/user.settings.yml') ? Yaml::parseF
 $timeout = (int) ($userSettings['password_reset_timeout'] ?? 0);
 $check($timeout > 0 && $timeout <= MAX_SECONDS, "user.settings:password_reset_timeout deve ser de 1 a 86400 (é $timeout).");
 
-$emailSettings = is_file($root . '/config/sync/email_confirmer.settings.yml') ? Yaml::parseFile($root . '/config/sync/email_confirmer.settings.yml') : [];
+$emailSettings = is_file($root . '/config/sync/aculta_mail_confirmer.settings.yml') ? Yaml::parseFile($root . '/config/sync/aculta_mail_confirmer.settings.yml') : [];
 $hash = (int) ($emailSettings['hash_expiration'] ?? 0);
-$check($hash > 0 && $hash <= MAX_SECONDS, "email_confirmer.settings:hash_expiration deve ser de 1 a 86400 (é $hash).");
+$check($hash > 0 && $hash <= MAX_SECONDS, "aculta_mail_confirmer.settings:hash_expiration deve ser de 1 a 86400 (é $hash).");
 
 // Constantes da regra, nos dois módulos, com o mesmo valor.
 $portalPolicy = $read($root . '/web/modules/custom/aculta_portal/src/Email/SingleUseLinkPolicy.php');
