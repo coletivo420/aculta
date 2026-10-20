@@ -1,3 +1,14 @@
+## 0.1.0-dev.46 — retirar dependência editorial do Forum contrib — 2026-10-20
+
+- `aculta_magazine` não depende mais de `forum:forum`: removidos lookup e
+  renderização de publicação como abertura de tópico, além do campo antigo
+  `field_discussao` de displays/Config Sync. Conversão de tipo preserva os
+  Comments compartilhados da publicação.
+- Magazine Unit 7/31 e gates Portal, fronteira e mapa PASS. Runtime de teste:
+  cache rebuild, resolução do serviço e raiz Magazine HTTP 200; Forum contrib
+  ainda habilitado. Import de configuração e smoke autenticado DEFERRED.
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.45 — limpeza do conteúdo antigo no Runtime de teste — 2026-10-20
 
 - Por decisão F-D33, foram removidos pela Entity API os 30 Nodes `forum`, os

@@ -9,7 +9,6 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\PublicProfilePolicy;
-use Drupal\aculta_magazine\Presentation\ForumOpeningPost;
 use Drupal\aculta_magazine\Presentation\PostPresentation;
 use Drupal\aculta_magazine\Revista\RevistaPublications;
 use Drupal\aculta_user\Social\SocialNetworks;
@@ -27,10 +26,10 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 /**
  * Caixa de autores da Revista: autor principal (node.uid) e coautores (co_authors, Node Co-Authors).
  *
- * Só aparece em publicações da Revista (RevistaPublications::BUNDLES) publicadas, no propósito MAGAZINE. Nome, foto e link seguem PublicProfilePolicy.
+ * Só aparece em publicações da Revista publicadas, no purpose MAGAZINE. Nome,
+ * foto e link seguem PublicProfilePolicy.
  *
- * Este é o único `node_view` do módulo (um por hook e módulo). Tópicos do Fórum (tipo forum) também passam aqui: a
- * abertura da discussão vai para ForumOpeningPost.
+ * Este é o único `node_view` do módulo.
  */
 final class ArticleAuthorsHooks {
 
@@ -45,8 +44,6 @@ final class ArticleAuthorsHooks {
     private readonly SocialNetworks $networks,
     #[Autowire(service: 'aculta_magazine.post_presentation')]
     private readonly PostPresentation $presentation,
-    #[Autowire(service: 'aculta_magazine.forum_opening_post')]
-    private readonly ForumOpeningPost $forumOpening,
     #[Autowire(service: 'aculta_image.render')]
     private readonly ImageRenderer $imageRenderer,
   ) {}
@@ -56,10 +53,6 @@ final class ArticleAuthorsHooks {
    */
   #[Hook('node_view')]
   public function nodeView(array &$build, EntityInterface $entity, $display, $view_mode): void {
-    if ($entity instanceof NodeInterface && $entity->bundle() === 'forum' && $view_mode === 'full') {
-      $this->forumOpening->build($build, $entity);
-      return;
-    }
     if (!$entity instanceof NodeInterface || !RevistaPublications::isPublication($entity->bundle()) || $entity->isNew() || !$entity->isPublished()) {
       return;
     }

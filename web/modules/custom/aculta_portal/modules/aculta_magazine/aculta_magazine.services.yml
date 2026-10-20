@@ -2,12 +2,6 @@ services:
   aculta_magazine.post_presentation:
     class: Drupal\aculta_magazine\Presentation\PostPresentation
     arguments: ['@date.formatter', '@entity_type.manager', '@aculta_portal.domain_purpose']
-  aculta_magazine.legacy_publication_topic_lookup:
-    class: Drupal\aculta_magazine\Forum\LegacyPublicationTopicLookup
-    arguments: ['@entity_type.manager']
-  aculta_magazine.forum_opening_post:
-    class: Drupal\aculta_magazine\Presentation\ForumOpeningPost
-    arguments: ['@aculta_portal.domain_purpose', '@aculta_magazine.legacy_publication_topic_lookup', '@aculta_image.render']
   aculta_magazine.publication_type_converter:
     class: Drupal\aculta_magazine\Forum\PublicationTypeConverter
-    arguments: ['@entity_type.manager', '@aculta_magazine.legacy_publication_topic_lookup', '@database']
+    arguments: ['@entity_type.manager', '@database']

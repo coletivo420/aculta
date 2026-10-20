@@ -1,3 +1,21 @@
+## 0.1.0-dev.15 — retirar consumidores do Forum contribuído — 2026-10-20
+
+- A Revista não depende mais de `forum:forum`: removidos o leitor de tópicos
+  legados e a apresentação da abertura editorial em Nodes `forum`. A conversão
+  article/blog continua re-hospedando Comments `field_aculta_discussion` e não
+  preserva referências antigas.
+- Retirada dos campos `field_discussao` dos displays e do Config Sync da Revista;
+  a limpeza anterior confirmou zero valores no Runtime de teste. Nenhuma
+  atualização/importação de configuração foi executada nesta mudança.
+- Unit Magazine: 7 testes/31 assertions PASS. Gates Portal (970), fronteira
+  (1390), mapa (154), sintaxe PHP e `git diff --check` PASS. No Runtime
+  `toca`, cache rebuild PASS, serviço `publication_type_converter` resolve,
+  Forum contrib continua habilitado e raiz da Revista responde HTTP 200.
+  `config:status` já apresenta diferenças preexistentes em várias áreas; não
+  foi feita importação. Smoke autenticado e conversão article/blog com Comments
+  reais seguem pendentes. PHP 8.4.26 abaixo da baseline 8.5.
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.14 — aposentar criação de pastas Forum da Revista — 2026-10-19
 
 - Updates 10001 e 10002 mantêm seus números de schema, mas não criam mais campo

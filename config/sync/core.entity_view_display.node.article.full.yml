@@ -6,7 +6,6 @@ dependencies:
     - core.entity_view_mode.node.full
     - field.field.node.article.body
     - field.field.node.article.field_credits
-    - field.field.node.article.field_discussao
     - field.field.node.article.field_aculta_discussion
     - field.field.node.article.field_domain_source
     - field.field.node.article.field_editorial_author
@@ -109,7 +108,6 @@ content:
     region: content
 hidden:
   co_authors: true
-  field_discussao: true
   field_domain_source: true
   field_editorial_author: true
   field_meta_tags: true

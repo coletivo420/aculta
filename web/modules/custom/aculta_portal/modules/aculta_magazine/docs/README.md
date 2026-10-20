@@ -58,24 +58,24 @@ que a guarda. Não criar um segundo tipo para editorial, nem uma segunda seção
 O Drupal não converte o tipo de um nó no lugar. O serviço `aculta_magazine.publication_type_converter` faz a troca
 (é um serviço PHP: pode ser chamado de qualquer código; não há comando Drush nem tela registrados).
 
-- `plan($post, $target)`: não grava. Mostra o tópico vinculado, os campos que serão copiados e os que se perdem
+- `plan($post, $target)`: não grava. Mostra os campos que serão copiados e os que se perdem
   (campos que só existem no tipo de origem).
 - `convert($post, $target)`: grava. Ordem: (1) cria a publicação no tipo de destino com os campos copiados, o mesmo
-  autor, a mesma data de criação e o mesmo estado; (2) preserva o vínculo histórico `field_discussao` quando existe
-  e re-hospeda na publicação nova os Comments diretos de `field_aculta_discussion`; (3) remove o alias da antiga e a
+  autor, a mesma data de criação e o mesmo estado; (2) re-hospeda na publicação nova os Comments diretos de
+  `field_aculta_discussion`; (3) remove o alias da antiga e a
   nova recebe o mesmo endereço pelo Pathauto; (4) a antiga perde o vínculo e o alias e é excluída. Tudo em transação.
-- A antiga é sempre excluída. A referência histórica sai da antiga antes da exclusão; Comments diretos ficam na
-  publicação nova e não são criados nem movidos para Nodes do Forum contrib.
+- A antiga é sempre excluída; Comments diretos ficam na publicação nova e não
+  são criados nem movidos para Nodes do Forum contrib.
 
 ### O que permanece na troca
 
-- **Tópico do Forum antigo**: a entidade referenciada não é alterada; o vínculo `field_discussao` pode permanecer
-  temporariamente como referência histórica. Nenhum tópico novo é sincronizado.
+- **Discussão pública**: a conversão não cria tópicos públicos. A publicação
+  conserva sua discussão interna pelo campo Comment compartilhado.
 - **Comments diretos**: ficam associados à publicação convertida (mesmos CIDs, autoria, estado e hierarquia); o
   formatter Core de `field_aculta_discussion` os exibe na publicação.
 - **Endereço**: o mesmo, pelo padrão da sessão. O endereço antigo responde 404 (sem redirecionamento).
 - **Autoria**: o autor (`uid`), os coautores (`co_authors`) e o autor editorial (`field_editorial_author`) são copiados.
-  A caixa de autoria e o autor do tópico seguem o autor copiado. Verificado no runtime em 2026-10-14: publicações
+  A caixa de autoria segue o autor copiado. Verificado no runtime em 2026-10-14: publicações
   PodPlant420 #01 e Cuidar não é crime, de `coletivo420` (uid 15), continuam de `coletivo420`; o Bloco Sativa segue
   do uid 1. Os tópicos têm o mesmo dono de suas publicações.
 - **Autor dos comentários**: cada Comment mantém o próprio autor (`uid`). A conversão re-hospeda os Comments diretos
@@ -134,24 +134,23 @@ Referência de leitura usada: largura de linha entre 60 e 75 caracteres (Piccali
 - Aparência (círculos, cores por rede, título e faixa) é do ACULTA420 (`revista-post.css`), com tokens semânticos.
 - Data: `field_published_at` é guardado em UTC; ao preencher manualmente, use o horário UTC (ex.: 19:32 de Brasília = 22:32 UTC).
 
-## Integração antiga com Drupal Forum (em remoção)
+## Registro histórico: Drupal Forum contribuído
 
 Registro histórico: a versão anterior criava um tópico Drupal Forum por publicação. Essa decisão foi substituída: cada publicação mantém a discussão dentro da própria entidade via Comment compartilhado; novos tópicos públicos automáticos estão proibidos.
 
-- Pastas históricas: pasta-mãe "Revista" e pastas por categoria foram usadas somente pelos tópicos antigos.
-  `ForumSectionResolver` e os updates 10001/10002 que criavam campo/pastas foram aposentados; os números de update
-  continuam registrados, sem novas escritas.
-- Vínculo histórico: `field_discussao` permanece temporariamente para leitura de tópicos antigos e conversão de tipo.
-  Nenhum hook de ciclo de vida de publicação cria, atualiza ou despublica tópicos.
-- Abertura histórica: `ForumOpeningPost` lê resumo e imagem da publicação vinculada. Nenhum texto ou arquivo é
-  copiado; mudanças editoriais não alteram o Node tópico legado.
-- Estado de migração: `field_aculta_discussion` está instalado em `article` e `blog` no Runtime de teste. O hook
-  `ForumTopicHooks` foi removido; o Runtime tinha zero Comments `comment_forum`. `LegacyPublicationTopicLookup` só lê os
-  vínculos históricos para apresentação/conversão e não pode criar nem alterar tópicos. A limpeza de conteúdo legado e remoção do módulo contrib
-  continuam pendentes e protegidas pelo plano de recuperação.
-- URL do tópico: `/topico/<título>` (padrão `aculta_forum_topic`).
+- Pastas históricas e tópicos automáticos por publicação foram aposentados. Os
+  updates 10001/10002 mantêm seus números, sem criar o campo editorial antigo
+  ou termos no vocabulário contrib.
+- Em 2026-10-20, os 30 Nodes antigos, oito termos e 12 referências da Revista
+  foram removidos no Runtime de teste; o inventário tinha zero Comments
+  `comment_forum`. O campo `field_discussao`, o leitor legado e a apresentação
+  da publicação como abertura de Node `forum` foram retirados do código atual.
+- `field_aculta_discussion` é a discussão corrente em `article` e `blog`; o
+  serviço de conversão entre tipos mantém esses Comments no novo host.
+- A desinstalação oficial do módulo contrib e remoção do pacote Composer ainda
+  dependem da migração dos consumidores restantes e revisão da configuração.
 - Moderação atual: comentários diretos seguem a política configurável do primeiro comentário público, fora do LMS.
   A regra específica do LMS permanece sob Educadores com acesso contextual.
 - Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e recebe configuração de Comment direto.
 - Categoria nova: não cria pasta no vocabulário antigo do Forum.
-- Não há criação manual de tópico para publicação. Tópicos de outros tipos (verbete, atividade) seguem o plano E3.
+- Não há criação manual de tópico para publicação. Tópicos de outros tipos (verbete, atividade) seguem seus contratos contextuais.

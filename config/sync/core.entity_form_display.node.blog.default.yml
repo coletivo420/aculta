@@ -6,7 +6,6 @@ dependencies:
     - field.field.node.blog.body
     - field.field.node.blog.field_tags
     - field.field.node.blog.field_credits
-    - field.field.node.blog.field_discussao
     - field.field.node.blog.field_domain_source
     - field.field.node.blog.field_editorial_author
     - field.field.node.blog.field_editorial_category
@@ -222,7 +221,6 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
-  field_discussao: true
   promote: true
   sticky: true
 

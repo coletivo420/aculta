@@ -14,12 +14,11 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * Troca o tipo da publicação (Notícia ↔ blog) e mantém referências antigas.
  *
  * O Drupal não converte o tipo de um nó no lugar. A troca cria a publicação no
- * tipo de destino, copia os campos compatíveis, move eventual referência
- * histórica `field_discussao`, mantém o endereço e remove a antiga. Comments
+ * tipo de destino, copia os campos compatíveis, mantém o endereço e remove a
+ * antiga. Comments
  * diretos também são re-hospedados. Tudo dentro de uma transação.
  *
- * Regras: os tópicos antigos são referências históricas e não são alterados;
- * título, autor, estado e Comments nativos permanecem. Campos que existem só
+ * Título, autor, estado e Comments nativos permanecem. Campos que existem só
  * no tipo de origem aparecem no plano, mas não são copiados.
  */
 final class PublicationTypeConverter {
@@ -37,17 +36,15 @@ final class PublicationTypeConverter {
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_magazine.legacy_publication_topic_lookup')]
-    private readonly LegacyPublicationTopicLookup $topicLookup,
     #[Autowire(service: 'database')]
     private readonly Connection $database,
   ) {}
 
   /**
-   * Plano sem gravação: tópico vinculado e campos copiados ou descartados.
+   * Plano sem gravação: campos copiados ou descartados.
    *
-   * @return array{topic: int|null, copy: string[], dropped: string[]}
-   *   Topic and field names copied or omitted by the target.
+   * @return array{copy: string[], dropped: string[]}
+   *   Field names copied or omitted by the target.
    */
   public function plan(NodeInterface $post, string $target): array {
     $this->assertConvertible($post, $target);
@@ -56,8 +53,7 @@ final class PublicationTypeConverter {
     $dropped = [];
     foreach ($post->getFields(FALSE) as $name => $item) {
       if (in_array($name, self::SKIP, TRUE)
-        || str_starts_with($name, 'revision_')
-        || $name === 'field_discussao') {
+        || str_starts_with($name, 'revision_')) {
         continue;
       }
       if ($fresh->hasField($name)) {
@@ -67,8 +63,7 @@ final class PublicationTypeConverter {
         $dropped[] = $name;
       }
     }
-    $topic = $this->topicLookup->topicFor($post);
-    return ['topic' => $topic?->id(), 'copy' => $copy, 'dropped' => $dropped];
+    return ['copy' => $copy, 'dropped' => $dropped];
   }
 
   /**
@@ -77,8 +72,6 @@ final class PublicationTypeConverter {
   public function convert(NodeInterface $post, string $target): NodeInterface {
     $plan = $this->plan($post, $target);
     $oldId = (int) $post->id();
-    $topic = $this->topicLookup->topicFor($post);
-
     $transaction = $this->database->startTransaction();
     try {
       $nodes = $this->entityTypeManager->getStorage('node');
@@ -88,10 +81,6 @@ final class PublicationTypeConverter {
       }
       $new->set('status', $post->isPublished() ? 1 : 0);
       $new->setCreatedTime($post->getCreatedTime());
-      if ($topic !== NULL) {
-        $new->set('field_discussao', ['target_id' => $topic->id()]);
-      }
-
       // Remova o alias antigo para que Pathauto possa gerar o mesmo endereço.
       $aliases = $this->entityTypeManager->getStorage('path_alias')->loadByProperties(['path' => '/node/' . $oldId]);
       foreach ($aliases as $alias) {
@@ -100,8 +89,7 @@ final class PublicationTypeConverter {
       $new->save();
       $this->moveDiscussionComments($oldId, (int) $new->id());
 
-      // A antiga perde o vínculo e o alias. Os hooks não sincronizam tópicos.
-      $post->set('field_discussao', NULL);
+      // A antiga perde o alias antes de ser excluída.
       $post->set('path', ['alias' => NULL, 'pathauto' => 0]);
       $post->save();
       $post->delete();
