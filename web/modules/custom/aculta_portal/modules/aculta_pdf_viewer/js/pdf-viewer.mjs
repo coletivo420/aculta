@@ -2,6 +2,10 @@
 // composer.json. Query versioning prevents a year-long cache from pairing a
 // stale API module with a freshly fetched worker (or the reverse).
 const PDFJS_VERSION = '6.4.299';
+// Keep a single page canvas below common browser surface limits and avoid
+// allocating hundreds of megabytes for unusually large PDF page dimensions.
+const MAX_CANVAS_PIXELS = 16_000_000;
+const MAX_CANVAS_DIMENSION = 16_384;
 
 const initialized = new WeakSet();
 
@@ -67,7 +71,11 @@ async function initialize(viewer) {
       const baseViewport = page.getViewport({ scale: 1 });
       const availableWidth = Math.max(240, (viewer.clientWidth || 800) - 32);
       const fitScale = Math.min(1.5, availableWidth / baseViewport.width);
-      const viewport = page.getViewport({ scale: Math.max(0.5, Math.min(3, fitScale * zoom)) });
+      const requestedScale = Math.max(0.5, Math.min(3, fitScale * zoom));
+      const maxScaleByArea = Math.sqrt(MAX_CANVAS_PIXELS / (baseViewport.width * baseViewport.height));
+      const maxScaleByDimension = MAX_CANVAS_DIMENSION / Math.max(baseViewport.width, baseViewport.height);
+      const renderScale = Math.min(requestedScale, maxScaleByArea, maxScaleByDimension);
+      const viewport = page.getViewport({ scale: renderScale });
       const context = canvas.getContext('2d');
       canvas.width = Math.ceil(viewport.width);
       canvas.height = Math.ceil(viewport.height);
@@ -90,7 +98,7 @@ async function initialize(viewer) {
       status.textContent = `Página ${pageNumber} de ${pdf.numPages}`;
       previous.disabled = pageNumber <= 1;
       next.disabled = pageNumber >= pdf.numPages;
-      zoomStatus.textContent = `${Math.round(zoom * 100)}%`;
+      zoomStatus.textContent = `${Math.round((renderScale / fitScale) * 100)}%`;
       zoomOut.disabled = zoom <= 0.5;
       zoomIn.disabled = zoom >= 2.5;
     };

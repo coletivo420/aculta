@@ -1,5 +1,12 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.25 — limitar memória do canvas em páginas PDF extensas — 2026-10-20
+
+- O renderizador limita cada canvas a 16 milhões de pixels e 16.384 px por lado, evitando alocações excessivas em páginas de dimensões atípicas.
+- O indicador de zoom agora mostra a escala efetivamente renderizada quando o limite do canvas reduz a ampliação pedida.
+- `node --check` PASS; gates de status-index e Drupal 11+ PASS. Validação visual de PDFs extremos permanece pendente em Alpha.
+- Continua Dev; não altera CSP nem muda o estado RC da PV7.
+
 ## 0.1.0-dev.24 — rejeitar relatórios CSP sem estrutura completa — 2026-10-20
 
 - O guard exige `type`, `url` e objeto `body` nos relatórios Reporting API e `document-uri` no envelope CSP legacy do Firefox; payloads incompletos recebem 400 antes do contrib.
