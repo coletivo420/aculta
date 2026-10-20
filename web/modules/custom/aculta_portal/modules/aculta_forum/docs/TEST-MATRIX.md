@@ -429,12 +429,15 @@ real no servidor de teste.
 
 - Sessão gráfica X11 ativa, Firefox visível, Runtime de teste `toca`; comparação
   visual da entrada Ubuntu em 1024 px com a raiz ACULTA. Depois da implementação
-  dev.52, entrada ACULTA e categorias foram inspecionadas em 1024, 768 e 390 px.
+  dev.52, entrada ACULTA e categorias foram inspecionadas em 1024, 768 e 390 px
+  no modo claro; o escuro foi forçado somente no DOM local do navegador e
+  inspecionado em 1024 e 390 px, sem alterar a configuração do Runtime.
   Capturas privadas em `/home/aculta/private/aculta/visual-tests/forum-dev11-20261020/`,
   todas `0600`: `ubuntu-home-1024.png`, `aculta-home-before-categories-1024.png`,
   `aculta-home-categories-activity-1024.png`, `aculta-home-categories-activity-768.png`,
   `aculta-home-categories-activity-390-top.png` e
-  `aculta-home-categories-activity-390-lower.png`.
+  `aculta-home-categories-activity-390-lower.png`, `aculta-home-dark-1024.png`,
+  `aculta-home-dark-390-top.png` e `aculta-home-dark-390-lower.png`.
 - Em 1024 px, categorias principais e atividade aparecem lado a lado; em 768 e
   390 px, a lista ocupa primeiro a largura e as categorias aparecem depois.
   `/categorias` mantém todos os 12 termos e refluíu de três colunas a 1024, duas
@@ -451,7 +454,8 @@ real no servidor de teste.
 - `ForumTopicDisplayConfigTest`: 17 testes/215 assertions PASS; PHP/YAML e
   `git diff --check` PASS. Foundation 364 via Drush, SDC 535, Design
   Foundations 2097, Portal 975, fronteira 1411 e mapa 152 PASS.
-- Escopo visual **PARTIAL**: modo escuro, teclado/foco, leitores de tela, lista
-  com tópicos publicados, tópico, respostas e composer não foram avaliados. O
+- Escopo visual **PARTIAL**: modo claro/escuro está inspecionado nos tamanhos
+  descritos; teclado/foco, leitores de tela, lista com tópicos publicados,
+  tópico, respostas e composer não foram avaliados. O
   Runtime permaneceu sem fixtures. Nenhuma conclusão de aprovação visual
   integral ou acessibilidade foi feita. RUNTIME STATUS: PARTIAL.
