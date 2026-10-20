@@ -24,6 +24,41 @@ Lista pesquisável no checkout: `rg -n -i 'drupal/forum|node.forum|comment_forum
 Este comando inclui strings históricas; revisar cada resultado e não apagar
 referências de auditoria/changelog sem motivo.
 
+### Efeitos verificados no código contrib instalado
+
+Na versão instalada `drupal/forum` 1.1.3, foram inspecionados
+`src/ForumUninstallValidator.php`, `forum.services.yml`, `forum.install` e
+`tests/src/Functional/ForumUninstallTest.php`. O validator bloqueia o uninstall
+enquanto houver qualquer Node do bundle `forum` ou termo no vocabulário
+configurado do Forum. O teste funcional upstream confirma a ordem: remover os
+Nodes; remover os termos; então executar o uninstall oficial.
+
+`forum_uninstall()` não exclui Nodes, Comments nem termos por conta própria.
+Ele apaga os storages dos campos `node.taxonomy_forums`,
+`node.comment_forum` e `taxonomy_term.forum_container`, chama `FieldPurger` com
+lote de até 10 itens e libera o nome de bundle `forum`. Portanto, a exclusão de
+conteúdo autorizada precisa ser uma etapa explícita anterior; o uninstall não é
+um substituto para a limpeza dos Nodes/Comments. Remover `taxonomy_forums`
+também afeta todos os Nodes que tenham esse field storage, mesmo fora do bundle
+`forum`; o inventário não encontrou motivo para assumir que apagar apenas os
+Nodes satisfaz esse impacto.
+
+O vocabulário `forums` e seus termos são também referenciados por
+`field_categoria_revista`. Os oito termos observados no Runtime não podem ser
+apagados até migrar/verificar esse uso editorial. As referências antigas de
+`field_discussao` para Node Forum e os Nodes de abertura da Revista têm de ser
+resolvidos antes da limpeza; a remoção do field storage contrib não deve ser
+usada para descartar silenciosamente a associação editorial. A suíte upstream
+usa a exclusão de Node pela API Drupal para remover o tópico e seus Comments;
+o fluxo ACULTA deverá repetir inventário por bundle e validar a consequência no
+Runtime antes de cada etapa.
+
+Este estudo é somente código/documentação: nenhum validator foi contornado,
+nenhum campo/termo/Node foi alterado e o módulo continua habilitado. A referência
+API confirma que o validator existe para impedir perda de dados durante o
+uninstall; ver [registro de mudança do Core](https://www.drupal.org/node/2404451)
+e [API do validator](https://api.drupal.org/api/drupal/core%21modules%21forum%21src%21ForumUninstallValidator.php/function/ForumUninstallValidator%3A%3Avalidate/11.x).
+
 O antigo `DiscussionHooks` consultava `comment_forum` sem `topic->access('view')`
 para renderizar trechos editoriais. Foi removido após confirmar que todos os 12
 Nodes atualmente referenciados têm `field_aculta_discussion`; a Revista usa agora

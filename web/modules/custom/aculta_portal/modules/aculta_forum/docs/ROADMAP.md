@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.40` | Inspecionar uninstall do Forum contrib | Código 1.1.3, validator e teste funcional upstream documentados; confirmou bloqueios por Nodes/termos, field storages afetados e dependência editorial compartilhada. Apenas leitura/documentação; nenhuma alteração Runtime. |
 | `0.1.0-dev.39` | Remover apresentação presa ao Forum contrib | `ForumTopicPresentationHooks` removido; Unit `aculta_user` 60/175 e gates PASS. Runtime tem 0 `comment_forum`; Node antigo renderizou e respondeu HTTP 200 após redirect; conteúdo inalterado. |
 | `0.1.0-dev.38` | Aposentar geração de pastas Forum pela Revista | Updates Magazine 10001/10002 sem escritas, serviço/resolver e configs de instalação removidos. Unit 8/32, gates PASS; Runtime schema 10003, sem update persistente; render HTTP 200. Os vínculos antigos ficam preservados até a migração dos demais leitores. |
 | `0.1.0-dev.37` | Restore point da retirada | Dump de banco `aculta_runtime` criado fora do Git, modo 0600, `gzip -t` PASS; checksum e limites documentados. Sem restore de prova, backup de arquivos ou exclusão. |

@@ -1,3 +1,18 @@
+## 0.1.0-dev.40 — analisar efeitos de uninstall do Forum contrib — 2026-10-19
+
+- Inspecionados código, validator e teste funcional de `drupal/forum` 1.1.3.
+  O uninstall requer zero Nodes `forum` e zero termos do vocabulário; chama
+  `FieldPurger` em lote de até 10 para os field storages `taxonomy_forums`,
+  `comment_forum` e `forum_container`, mas não apaga Nodes/termos/Comments.
+  Registrados o impacto compartilhado de `taxonomy_forums` e a dependência
+  editorial dos termos `forums`.
+- Somente leitura/documentação: nenhuma entidade, config ou extensão foi
+  alterada. Runtime de teste permanece com 30 Nodes `forum`, 8 termos e zero
+  Comments `comment_forum`; uninstall e remoção Composer continuam DEFERRED.
+- Fontes: `web/modules/contrib/forum/src/ForumUninstallValidator.php`,
+  `forum.install`, `tests/src/Functional/ForumUninstallTest.php`; [registro do
+  Core](https://www.drupal.org/node/2404451) e [API do validator](https://api.drupal.org/api/drupal/core%21modules%21forum%21src%21ForumUninstallValidator.php/function/ForumUninstallValidator%3A%3Avalidate/11.x).
+
 ## 0.1.0-dev.39 — remover apresentação do Forum contrib — 2026-10-19
 
 - Removido de `aculta_user` `ForumTopicPresentationHooks`, que só servia Nodes
