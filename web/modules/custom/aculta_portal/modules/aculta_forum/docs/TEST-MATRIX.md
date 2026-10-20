@@ -1,5 +1,29 @@
 # Matriz de testes por fase
 
+## dev.60 — descoberta visual no X11
+
+- Firefox ESR isolado, visitante anônimo, X11 `DISPLAY=:0`, Runtime Drupal
+  11.4.10. As rotas `/discussoes/novas`, `/discussoes/sem-resposta` e
+  `/discussoes/mais-comentadas` responderam HTTP 200.
+- Três tópicos QA (`aculta_forum_topic`) e cinco Comments publicados tinham
+  contagens 0/2/3. Render/View e HTML confirmaram ordem decrescente por criação
+  em “novas” (3 → 2 → 0), filtro exclusivo de zero respostas em “sem resposta”
+  e ordem por quantidade em “mais comentadas” (3 → 2 → 0). Não houve abertura
+  dos detalhes, evitando novas linhas History.
+- Em 1024 × 739 px, cards mostraram título, autor, categoria, contagem e última
+  atividade. A janela visual estreita atingiu 500 px (mínimo disponível nessa
+  janela; não é aferição CSS exata de 390 px): tabs quebraram em duas linhas e
+  os controles/card permaneceram visíveis sem corte aparente. Capturas privadas
+  (modo 0600): `/home/aculta/private/aculta/visual-tests/forum-discovery-20261020/`
+  (`novas-1024.png`, `sem-resposta-1024.png`, `mais-comentadas-1024.png`,
+  `mais-comentadas-500.png`).
+- Cleanup confirmou os três NIDs/UUIDs e os cinco Comments, removeu comentários
+  e Nodes via Entity API e aliases/History relacionados. Cache rebuild PASS;
+  estado final 0 tópicos, 0 Comments, 24 History (baseline) e duas flaggings de
+  avisos preservadas. Todas as três rotas seguem 200 vazias. Modo escuro,
+  acessibilidade e comparação completa de referência não executados.
+  RUNTIME STATUS: PARTIAL.
+
 ## dev.59 — leitura em lote com limpeza exata
 
 - Runtime `toca`, Drupal 11.4.10, banco `aculta_runtime`: preflight confirmou

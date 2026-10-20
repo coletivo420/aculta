@@ -1,3 +1,24 @@
+## `0.1.0-dev.60` — inspeção visual das listas de descoberta — 2026-10-20
+
+- Firefox ESR visível em X11, visitante anônimo, Runtime `toca`:
+  `/discussoes/novas`, `/discussoes/sem-resposta` e
+  `/discussoes/mais-comentadas` retornaram 200. Três tópicos de QA com 0, 2 e
+  3 comentários publicados comprovaram: ordenação por data decrescente em
+  “novas” (3 → 2 → 0), somente o tópico sem respostas em sua lista e ordenação
+  por contagem em “mais comentadas” (3 → 2 → 0).
+- X11 a 1024 px mostrou título, categoria, autoria, contagem de respostas e
+  última atividade em cada card. Janela estreita limitada a 500 px pelo
+  gerenciador/Firefox: tabs quebraram em duas linhas e o conteúdo permaneceu
+  dentro da área visível. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-discovery-20261020/`.
+- As três fixtures e seus cinco Comments foram removidos após conferir NID,
+  UUID, título e vínculos; aliases e History específicos também foram limpos.
+  Cache rebuild PASS; estado final: 0 tópicos, 0 Comments, 24 History globais
+  (baseline) e 2 flaggings de avisos de site preservadas. As três rotas seguem
+  HTTP 200 com lista vazia. A comparação visual completa com Discourse, tema
+  escuro, teclado/leitor de tela e viewport CSS 390 px permanecem pendentes.
+  RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.59` — homologação isolada da leitura em lote — 2026-10-20
 
 - Runtime `toca`, Drupal 11.4.10, `aculta_runtime`: o serviço de leitura
