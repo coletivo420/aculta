@@ -11,6 +11,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Mail\Attribute\Mail;
 use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\Core\Mail\MailInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -35,6 +38,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly EntityTypeManagerInterface $entityTypes,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly LoggerInterface $logger,
+    private readonly RendererInterface $renderer,
   ) {}
 
   /**
@@ -47,6 +51,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('entity_type.manager'),
       $container->get('config.factory'),
       $container->get('logger.channel.aculta_mailer'),
+      $container->get('renderer'),
     );
   }
 
@@ -60,6 +65,22 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
   }
 
   /**
+   * Envelope HTML pelo hook de tema aculta_mailer_wrap: o texto é escapado e as quebras viram <br>.
+   */
+  private function renderHtml(array $message): string {
+    $body = Html::escape((string) ($message['body'] ?? ''));
+    $build = [
+      '#theme' => 'aculta_mailer_wrap',
+      '#body' => Markup::create(nl2br($body, FALSE)),
+      '#subject' => (string) ($message['subject'] ?? ''),
+      '#type' => 'core',
+      '#sub_type' => (string) ($message['key'] ?? ''),
+      '#is_html' => TRUE,
+    ];
+    return (string) $this->renderer->renderInIsolation($build);
+  }
+
+  /**
    * Envia pela entidade de transporte escolhida. Sem corpo nem destinatário no registro de erro.
    */
   public function mail(array $message) {
@@ -69,7 +90,8 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       return FALSE;
     }
     $from = (string) $this->configFactory->get('system.site')->get('mail');
-    $result = $this->sender->send($transport, $this->converter->toEmail($message, $from));
+    $html = $this->renderHtml($message);
+    $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $html));
     if (!$result['sent']) {
       $this->logger->error('Envio pela camada E-Mails ACULTA recusado pelo transporte @id: @message', [
         '@id' => $transport->id(),

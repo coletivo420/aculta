@@ -56,6 +56,21 @@ final class LegacyMessageConverterTest extends UnitTestCase {
   }
 
   /**
+   * Envelope HTML vai como parte HTML, e anexo em memória entra como anexo.
+   */
+  public function testHtmlAndAttachmentsAreAdded(): void {
+    $email = (new LegacyMessageConverter())->toEmail([
+      'from' => 'naoresponda@example.invalid',
+      'to' => 'destino@example.invalid',
+      'subject' => 'x',
+      'body' => 'y',
+      'params' => ['attachments' => [['filecontent' => 'conteudo', 'filename' => 'a.txt', 'filemime' => 'text/plain']]],
+    ], 'padrao@example.invalid', '<p>y</p>');
+    $this->assertSame('<p>y</p>', $email->getHtmlBody());
+    $this->assertCount(1, $email->getAttachments());
+  }
+
+  /**
    * Transporte pelo X-Transport das políticas; ausente ou desconhecido vai para o padrão.
    */
   public function testTransportIdMapsLegacyNames(): void {

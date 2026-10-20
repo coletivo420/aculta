@@ -21,11 +21,11 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F12 | Integrações ACULTA: cadastro com e-mail já usado (DT-P06), conquista (`aculta_game`) e resumo de avisos (`aculta_messenger`) migrados; Forum, LMS, Magazine e Commerce pendentes | Parcial |
 | F13 | Compatibilidade: interceptar e-mails remanescentes do Core. Inventário de emissores feito (`docs/SENDERS-INVENTORY.md`); migração pendente | Parcial (inventário pronto) |
 | F14 | Migração da configuração de transporte (`mailer_transport`) para `aculta_mailer_transport`, convivendo com o contrib, sem trocar o envio do site. Entregue: entidade, fábrica SMTP e Brevo, credencial pelo arquivo de segredos (`SMTP_PASSWORD`, contrato). Entidades criadas no runtime e envio SMTP de teste aceito. Pendente: trocar o envio do site para a camada nova (F15), após equivalência | Em andamento (runtime de teste validado no envio) |
-| F15 | Retirada do contrib, somente com equivalência comprovada. Entregue: plugin de envio do Core `aculta_mailer` (`AcultaMailerMail`) com conversão de mensagem (`LegacyMessageConverter`), testado e enviado pelo transporte novo, sem ser o padrão do site. Pendente: equivalência de envio do Core e do Webform, troca do `system.mail`, remoção de symfony_mailer, mailer_override, mailer_transport e mailer_policy | Em andamento (plugin pronto; site ainda no contrib) |
+| F15 | Retirada do contrib, somente com equivalência comprovada. Entregue: plugin de envio do Core `aculta_mailer` com HTML (hook de tema `aculta_mailer_wrap`, template do tema `aculta-mailer-wrap`), anexos e transporte `aculta_mailer_transport`; testes e envios de teste aceitos. `system.mail` continua `symfony_mailer`. Pendente (decisão do responsável): troca do `system.mail`, equivalência visual do envelope, e remoção de symfony_mailer, mailer_override, mailer_transport e mailer_policy (inclui credenciais no banco) | Em andamento (plugin pronto; decisão de troca e remoção pendente) |
 
 ## Runtime
 
-- F15: plugin `aculta_mailer` descoberto no runtime; `system.mail` continua `symfony_mailer`. Envio de teste pelo plugin aceito (`sent=1`) para o destinatário autorizado.
+- F15: plugin `aculta_mailer` com envelope HTML e anexo: envio de teste aceito (`sent=1`) para o destinatário autorizado. Conferência visual pendente. `system.mail` continua `symfony_mailer`.
 
 - F14: entidades `aculta_mailer_transport` `smtp_hostinger` e `brevo` criadas no runtime e exportadas em `config/sync`. Envio de teste pelo `smtp_hostinger` aceito (`sent=1`) para o destinatário autorizado. Conferência do destinatário pendente.
 

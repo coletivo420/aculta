@@ -1,5 +1,14 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.25 — F15: envelope HTML e anexos no plugin de envio do Core — 2026-10-20
+
+- Hook de tema `aculta_mailer_wrap` (`MailThemeHooks`) com template neutro no módulo. O tema passa a ter `aculta-mailer-wrap.html.twig` (antes `email-wrap.html.twig`, que dependia do hook do contrib).
+- Plugin `aculta_mailer`: envia parte HTML pelo hook, escapa o texto e troca quebras por `<br>`. Anexos do Core (conteúdo ou caminho local) entram como anexos.
+- Testes: 101 unitários (HTML e anexo no conversor).
+- Runtime: envio de teste com HTML e anexo aceito (`sent=1`). Conferência visual pelo destinatário pendente.
+- `system.mail` não foi alterado. Remoção do contrib depende de decisão do responsável.
+- Versão do módulo: `0.1.0-dev.25`.
+
 ## 0.1.0-dev.24 — F15: plugin de envio do Core pela camada E-Mails ACULTA (sem trocar o padrão) — 2026-10-20
 
 - Plugin `aculta_mailer` (`AcultaMailerMail`): `format()` igual ao padrão do Core; `mail()` converte a mensagem (`LegacyMessageConverter`) e envia pelo transporte `aculta_mailer_transport`.
