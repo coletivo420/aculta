@@ -203,6 +203,29 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $this->account,
     );
+
+    // VBO's ConfigureAction stores this data in FormState, then creates a new
+    // plugin instance for validation without restoring the action context.
+    $configuration_state = new FormState();
+    $configuration_state->set('views_bulk_operations', $selection + [
+      'view_id' => 'aculta_forum_admin_topics',
+      'display_id' => 'page_forum',
+      'total_results' => 2,
+    ]);
+    $configuration_state->setValue('destination_category', (int) $destination->id());
+    $validation_action = new MoveForumTopicsAction(
+      [],
+      'aculta_forum_move_topics',
+      [],
+      $this->mover,
+      $this->container->get('entity_type.manager'),
+      $this->account,
+    );
+    $validation_errors = [];
+    $validation_action->validateConfigurationForm($validation_errors, $configuration_state);
+    self::assertArrayNotHasKey('', $configuration_state->getErrors());
+    self::assertArrayNotHasKey('destination_category', $configuration_state->getErrors());
+
     $action->setContext($selection);
     $results = $action->executeMultiple([$node, $second_node]);
     self::assertCount(2, $results, 'VBO reports one result for each selected topic.');

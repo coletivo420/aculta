@@ -114,7 +114,10 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
-    $selected_count = $this->getSelectedCount();
+    // ConfigureAction restores the selection to FormState for validation but
+    // does not call setContext() on the newly created action instance.
+    $selection = $form_state->get('views_bulk_operations');
+    $selected_count = $this->getSelectedCount(is_array($selection) ? $selection : NULL);
     if ($selected_count < 1 || $selected_count > self::MAX_SELECTION) {
       $form_state->setErrorByName('destination_category', $this->t('Selecione entre 1 e @limit tópicos por operação.', [
         '@limit' => self::MAX_SELECTION,
@@ -206,14 +209,15 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
   /**
    * Counts the persisted VBO selection without trusting display labels.
    */
-  private function getSelectedCount(): int {
-    $list = $this->context['list'] ?? [];
+  private function getSelectedCount(?array $context = NULL): int {
+    $context ??= $this->context ?? [];
+    $list = $context['list'] ?? [];
     if (!is_array($list)) {
       return 0;
     }
 
-    if (!empty($this->context['exclude_mode'])) {
-      return max(0, (int) ($this->context['total_results'] ?? 0) - count($list));
+    if (!empty($context['exclude_mode'])) {
+      return max(0, (int) ($context['total_results'] ?? 0) - count($list));
     }
     return count($list);
   }

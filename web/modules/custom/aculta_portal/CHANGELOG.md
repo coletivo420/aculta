@@ -1,3 +1,10 @@
+## 0.4.0-dev.222 — corrigir validação da Action de movimento VBO
+
+- A validação do plugin de movimento lê a seleção preservada no `FormState`,
+  evitando contagem zero quando o VBO recria a Action sem restaurar contexto.
+- Kernel `ForumTopicMoverKernelTest`: 3 testes/84 assertions PASS; 5
+  depreciações de Domain contrib. Sem escrita de conteúdo no Runtime.
+
 ## 0.4.0-dev.221 — mover tópicos do Fórum em lote com VBO — 2026-10-20
 
 - O `aculta_forum` passa a usar Views Bulk Operations 4.4.9, release estável

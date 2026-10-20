@@ -1,3 +1,12 @@
+## `0.1.0-dev.119` — corrigir validação da seleção da Action VBO
+
+- `MoveForumTopicsAction` valida a seleção com os dados persistidos em
+  `FormState`; o novo plugin criado pelo `ConfigureAction` do VBO não recebe
+  `setContext()` durante a validação.
+- Kernel `ForumTopicMoverKernelTest`: 3 testes/84 assertions PASS, incluindo
+  instância sem contexto de plugin; 5 depreciações vieram do Domain contrib.
+  Nenhum conteúdo do Runtime foi movimentado.
+
 ## `0.1.0-dev.118` — mover tópicos em lote com VBO
 
 - Adicionada a dependência estável `drupal/views_bulk_operations:^4.4` e uma
