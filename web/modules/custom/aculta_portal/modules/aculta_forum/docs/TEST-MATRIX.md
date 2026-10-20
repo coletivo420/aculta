@@ -1,5 +1,20 @@
 # Matriz de testes por fase
 
+## Evidência dev.29 — marcar todas as discussões públicas como lidas
+
+- PHPUnit Unit do Fórum: 47 testes / 335 assertions PASS; o teste novo verifica
+  que a rota permite somente a conta autenticada no purpose `forum`.
+- PHPUnit Kernel em MariaDB `aculta_simpletest`: 4 testes / 75 assertions
+  PASS. O `ForumReadMarkerKernelTest` limita o conjunto a tópico publicado,
+  acessível e do Domain Fórum e confirma que somente o History da conta atual
+  recebe o registro. Cinco deprecações observadas vêm do Domain contrib 3.0.1.
+- Runtime `toca`: `drush cr`, resolução de rota e callbacks DI do Batch,
+  construção do formulário, service container e HTTP anônimo 403 — PASS. A
+  submissão autenticada não foi executada, evitando gravar History de uma conta
+  real. RUNTIME STATUS: PARTIAL.
+- PHPCS, lint, gate Drupal 11+ (970), fronteira (1368), mapa (154), slugs (387)
+  e `git diff --check` — PASS.
+
 ## Evidência não marcada — agregado de respostas públicas
 
 - `ForumTopicMoverKernelTest` valida Comment e `comment_entity_statistics` em
