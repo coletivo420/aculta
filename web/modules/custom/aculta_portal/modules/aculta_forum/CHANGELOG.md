@@ -1,3 +1,23 @@
+## 0.1.0-dev.30 — link para a primeira resposta não lida — 2026-10-19
+
+- A View autenticada `/discussoes/nao-lidas` adiciona o campo `node_new_comments`
+  do módulo History. Exibe apenas contagens positivas e liga à primeira
+  resposta nova, incluindo página/âncora calculadas pelo Comment Core. O campo
+  não foi adicionado às listas públicas; a View mantém cache `none` por conta.
+- Unit verifica plugin, link, ocultação de zeros e isolamento na View privada.
+  Forum Unit: 47 testes / 340 assertions PASS (3 deprecações antigas de
+  PHPUnit), incluindo configuração do campo (teste direcionado: 15/189);
+  Kernel MariaDB: 4 testes / 75 assertions PASS (5 deprecações do Domain
+  contrib; cobre access/History adjacente, não renderização do campo novo);
+  PHPCS e gates Drupal 11+ (970), fronteira (1368), mapa (154), slugs (387)
+  PASS.
+- Runtime `toca`: import parcial somente da View com backup recuperável,
+  `config:status` sem diferenças, plugin DI resolvido e 8 itens em renderização
+  autenticada via Drush; anônimo HTTP 403. Nenhuma resposta aprovada existe para
+  verificar contagem positiva/fragmento. O render em Drush também reportou o
+  erro preexistente `Missing text format: basic_html` nas fixtures. HTTP/browser
+  autenticado e inspeção visual pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.29 — marcar discussões públicas como lidas — 2026-10-19
 
 - Adicionada ação confirmada `/discussoes/marcar-tudo-como-lido`, disponível

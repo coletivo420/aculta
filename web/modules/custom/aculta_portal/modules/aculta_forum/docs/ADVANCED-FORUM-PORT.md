@@ -31,10 +31,10 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | --- | --- | --- |
 | Categorias e subcategorias / containers separados | Portar com Taxonomy `aculta_forum_categories` | Hierarquia explícita, breadcrumbs e acessibilidade. |
 | Busca em todos os fóruns | Portar via Search API com escopo/purpose | Nunca indexar LMS privado na busca pública. |
-| Marcar todos os fóruns como lidos | Portar por serviço de leitura aprovado | Idempotente, por conta e com access atual. |
+| Marcar todos os fóruns como lidos | Implementado em dev.29 pela confirmação e Core Batch sobre History | Por conta autenticada; tópicos publicados e access-aware no purpose público. Kernel MariaDB prova escopo e grava somente o History da pessoa. |
 | Ícone por fórum/categoria (Taxonomy Image) | Portar por referência Media/Imagem através de `aculta_image` | Definir finalidade do catálogo antes de campo. |
 | Ícones de pasta com novos posts / legenda | Portar como status textual e visual acessível | Ícone nunca é único indicador. |
-| Novos posts/tópicos com links | Portar por History/estado de leitura e links canônicos | Precisão sob paginação e edição. |
+| Novos posts/tópicos com links | View autenticada de não lidos usa History e `node_new_comments` para contagem e link à primeira resposta nova | Cache sem compartilhamento; o Runtime ainda não tem resposta aprovada para validar o caso positivo de paginação/âncora. |
 | Último tópico/atividade e último autor | Portar em View/query cacheável com access | Não vazar nomes ou existência de contexto privado. |
 | Estatísticas de usuários ativos, membro recente, membros/tópicos/posts | Portar apenas estatísticas úteis e aprovadas | “Online agora” fica sujeito à política de privacidade; não inferir de visualização de página. |
 | Hierarquia e contagens dependentes de node access | Portar com query access e agregação segura | Não confiar em contagem que ignora grants/Group. |

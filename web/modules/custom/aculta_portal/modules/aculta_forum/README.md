@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.28**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.30**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
 uma migração segura, por fase própria. A dev.4 introduziu o módulo executável e
@@ -77,6 +77,11 @@ e `/criar-topico` verifica Entity Create Access. Ainda faltam submissão
 persistida/homologação visual, migrar consumidores contrib restantes e validar
 restore point antes de excluir conteúdo/desinstalar o módulo. Releases Portal,
 User e tema conservam linhas próprias; o roadmap detalha as próximas entregas.
+
+A lista personalizada `/discussoes/nao-lidas` também mostra o número de novas
+respostas por tópico e liga diretamente à primeira resposta não lida. Essa
+capacidade usa o campo `node_new_comments` do módulo History, apenas nessa View
+autenticada com cache desativado; o campo esconde contagens vazias.
 ## Administração contextual de comentários
 
 A View `aculta_forum_admin_comments` tem página geral e três páginas de estado:

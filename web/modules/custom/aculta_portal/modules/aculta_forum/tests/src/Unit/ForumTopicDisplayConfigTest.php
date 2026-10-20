@@ -256,6 +256,11 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('history', $options['filters']['timestamp']['table']);
     self::assertSame('history_user_timestamp', $options['fields']['timestamp']['plugin_id']);
     self::assertTrue($options['fields']['timestamp']['comments']);
+    self::assertSame('node_new_comments', $options['fields']['new_comments']['plugin_id']);
+    self::assertSame('node', $options['fields']['new_comments']['table']);
+    self::assertTrue($options['fields']['new_comments']['link_to_comment']);
+    self::assertTrue($options['fields']['new_comments']['hide_empty']);
+    self::assertTrue($options['fields']['new_comments']['empty_zero']);
     self::assertSame('discussoes/nao-lidas', $view['display']['page_unread']['display_options']['path']);
 
     $tasks = Yaml::parseFile($module_path . '/aculta_forum.links.task.yml');

@@ -1,5 +1,21 @@
 # Matriz de testes por fase
 
+## Evidência dev.30 — primeira resposta não lida
+
+- `ForumTopicDisplayConfigTest` verifica que somente a View
+  `/discussoes/nao-lidas` habilita `node_new_comments`, liga à primeira resposta,
+  esconde zeros e mantém cache desativado por conta. Forum Unit: 47 testes / 340
+  assertions PASS; Kernel MariaDB: 4/75 PASS. PHPCS, Portal 11+ (970), fronteira
+  (1368), mapa (154) e slugs (387) PASS. Cinco deprecações Kernel vêm do Domain
+  contrib; esse Kernel cobre access/History adjacente, não renderização do campo
+  novo; três avisos PHPUnit são anteriores a esta alteração.
+- Runtime: import parcial da View com snapshot de recuperação e `config:status`
+  sem diferenças. O handler History instalado resolve e a View retorna 8 itens
+  após troca de conta por Drush; anônimo recebe 403. Nenhum tópico tem resposta
+  aprovada no Runtime, então contagem positiva/fragmento não foi exercitado.
+  Renderização CLI repetiu `Missing text format: basic_html` nas fixtures; HTTP
+  autenticado e inspeção visual permanecem pendentes.
+
 ## Evidência dev.29 — marcar todas as discussões públicas como lidas
 
 - PHPUnit Unit do Fórum: 47 testes / 335 assertions PASS; o teste novo verifica

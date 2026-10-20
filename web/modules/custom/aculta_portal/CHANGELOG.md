@@ -1,3 +1,14 @@
+## 0.4.0-dev.200 — atalho para respostas não lidas do Fórum — 2026-10-19
+
+- `aculta_forum 0.1.0-dev.30` acrescenta contagem personalizada e link à
+  primeira resposta não lida somente na lista History autenticada, com cache
+  desativado para isolamento por usuário. Forum Unit 47/340, Kernel MariaDB
+  4/75 (access/History adjacente), PHPCS e gates Drupal 11+ (970), fronteira
+  (1368), mapa (154), slugs (387) PASS. Runtime importou somente a View com
+  backup e `config:status` ficou limpo; 8 itens autenticados via Drush,
+  anônimo HTTP 403. Não há resposta aprovada para validar contagem positiva.
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.199 — ação de marcar discussões públicas como lidas — 2026-10-19
 
 - O `aculta_forum 0.1.0-dev.29` adiciona confirmação e processamento em lotes

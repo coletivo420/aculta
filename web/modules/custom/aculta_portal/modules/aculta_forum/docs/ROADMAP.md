@@ -33,7 +33,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | --- | --- | --- |
 | Não marcada | Contagem e atividade na View de tópicos | Kernel MariaDB confirma `comment_count = 1` com resposta publicada, exclui pendente e preserva o agregado após mover categoria; Runtime tem 0 respostas, então ordenação positiva, invalidação após moderação e inspeção visual seguem pendentes |
 | Não marcada | Hierarquia no índice público de categorias | Configuração e Runtime PASS: a View apresenta os 12 termos e associa corretamente as 8 subcategorias aos pais; inspeção visual continua pendente |
-| Não marcada | Lista personalizada de discussões não lidas | View `/discussoes/nao-lidas` usa History contrib com acesso `authenticated`, filtros públicos fixos e sem cache compartilhado; Runtime query como uid 5 retornou 7 resultados e anônimo recebeu 403; HTTP autenticado/browser pendente |
+| Não marcada | Lista personalizada de discussões não lidas | View `/discussoes/nao-lidas` usa History contrib com acesso `authenticated`, filtros públicos fixos e sem cache compartilhado; campo `node_new_comments` mostra contagem positiva e liga à primeira resposta nova. Runtime query como uid 5 retornou 7 resultados e anônimo recebeu 403; HTTP autenticado/browser pendente |
 | Não marcada | Marcar todas as discussões públicas acessíveis como lidas | Ação confirmada `/discussoes/marcar-tudo-como-lido`, em Core Batch de 200 itens e History por usuário; Unit/Kernel e isolamento de domínio aprovados. Runtime smoke confirmou rota/form/access sem gravar histórico; teste funcional com usuário de QA efêmero e Browser continuam pendentes. |
 | Não marcada | Descoberta: novas, sem resposta e mais comentadas | Displays de Views e abas implementados; Runtime das três rotas HTTP 200, 8 tópicos cada e 8 sem resposta; Kernel comprova contagem de resposta publicada e exclusão de pendente; ordenação positiva da View no Runtime pendente |
 | Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit e Kernel PASS; Functional/Runtime pendentes. Movimento de comentários continua bloqueado pela prova de integridade em `MOVE-TOOLS.md`. |
@@ -285,6 +285,12 @@ falta de cobertura da política de avisos de segurança em
 `MIGRATION-REMOVAL.md`. Runtime: como uid 5, a consulta encontrou 7 discussões
 novas/atualizadas; o acesso anônimo HTTP recebeu 403. Renderização HTTP com
 sessão e inspeção visual permanecem pendentes.
+
+A View inclui o campo nativo History `node_new_comments` para mostrar contagens
+positivas e ligar à primeira resposta nova, com página e âncora calculadas pelo
+Comment Core. O campo existe somente na listagem personalizada com cache
+desativado por conta; não foi adicionado às listas públicas. Referência:
+[History NodeNewComments](https://api.drupal.org/api/drupal/core%21modules%21history%21src%21Plugin%21views%21field%21NodeNewComments.php/class/NodeNewComments/11.x).
 
 Subfase de descoberta implementada: a View pública também expõe “Novas” por
 data de criação, “Sem resposta” pelo `comment_count = 0` do agregado Core e
