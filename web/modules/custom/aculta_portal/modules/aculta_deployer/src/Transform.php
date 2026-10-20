@@ -84,6 +84,10 @@ final class Transform {
         $covered[$rule['file']] = true;
       }
       foreach ($bound as $file) {
+        // Na produção, o arquivo removido pela lista drop não é gerado: não precisa de regra.
+        if ($env === 'production' && $this->isDropped($file)) {
+          continue;
+        }
         if (!isset($covered[$file])) {
           $errors[] = "deploy.json: perfil \"$env\" sem regra para arquivo dependente de ambiente: $file";
         }

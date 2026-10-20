@@ -4,6 +4,7 @@
 - `aculta-deployer webhooks`: leitura que confere a declaração contra o contrato de segredos. Exige o segredo obrigatório em produção antes do cadastro.
 - Ferramentas Drush em `drush/Commands/AculaDeployerCommands.php` (`aculta-deployer:check`, `:boundaries`, `:webhooks`, `:cookies`, `:domains`, `:robots`, `:sitemap`). Chamam a CLI standalone e repassam o código de saída; não exigem o módulo habilitado no Runtime.
 - Não altera o Runtime nem chama o provedor: o cadastro de produção segue no procedimento de deploy.
+- Correções dos testes do deployer, sem exceções: a validação de perfis não exige regra para alias que a produção remove (`drop`); regras explícitas de remetente, sitemap e `@id` de organização nos perfis de teste e de produção; host de teste nas regras de `links` do perfil de teste (antes escrevia o host de produção); arquivos declarados sem host removidos de `environment_bound`; expectativas dos domínios de produção (oito) e dos caminhos privados (oito) alinhadas à política declarada.
 
 ## 0.1.25 — substituição e remoção da raiz pública anterior — 2026-10-15
 

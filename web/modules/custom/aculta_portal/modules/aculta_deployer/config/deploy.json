@@ -247,30 +247,6 @@
       "reason": "alias de host do servidor de testes (migrar para provisionamento por ambiente)"
     },
     {
-      "file": "config/sync/domain.revista420_aculta_org/metatag.metatag_defaults.front.yml",
-      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
-    },
-    {
-      "file": "config/sync/domain/revista420_aculta_org/metatag.metatag_defaults.front.yml",
-      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
-    },
-    {
-      "file": "config/sync/domain/cursos_aculta_org/metatag.metatag_defaults.front.yml",
-      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
-    },
-    {
-      "file": "config/sync/domain.wiki420_aculta_org/metatag.metatag_defaults.front.yml",
-      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
-    },
-    {
-      "file": "config/sync/domain/wiki420_aculta_org/metatag.metatag_defaults.front.yml",
-      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
-    },
-    {
-      "file": "config/sync/metatag.metatag_defaults.front.yml",
-      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
-    },
-    {
       "file": "config/sync/metatag.metatag_defaults.global.yml",
       "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
     },
@@ -280,10 +256,6 @@
     },
     {
       "file": "config/sync/simple_sitemap.settings.yml",
-      "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
-    },
-    {
-      "file": "web/modules/custom/aculta_portal/tests/src/Unit/SecretsManagerTest.php",
       "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
     },
     {
@@ -389,6 +361,46 @@
           "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
           "pattern": "^  og_url: .*$",
           "with": "  og_url: 'https://links.aculta.org/'"
+        },
+        {
+          "file": "config/sync/simple_sitemap.settings.yml",
+          "pattern": "^base_url: .*$",
+          "with": "base_url: 'https://aculta.org'"
+        },
+        {
+          "file": "config/sync/metatag.metatag_defaults.global.yml",
+          "pattern": "^  schema_organization_id: .*$",
+          "with": "  schema_organization_id: 'https://aculta.org/#organization'"
+        },
+        {
+          "file": "config/sync/metatag.metatag_defaults.global.yml",
+          "pattern": "^  schema_web_site_id: .*$",
+          "with": "  schema_web_site_id: 'https://aculta.org/#website'"
+        },
+        {
+          "file": "config/sync/metatag.metatag_defaults.global.yml",
+          "pattern": "^  schema_web_site_publisher: .*$",
+          "with": "  schema_web_site_publisher: 'a:4:{s:5:\"@type\";s:12:\"Organization\";s:3:\"@id\";s:32:\"https://aculta.org/#organization\";s:4:\"name\";s:18:\"[institution:name]\";s:3:\"url\";s:17:\"[institution:url]\";}'"
+        },
+        {
+          "file": "config/sync/metatag.metatag_defaults.node__article.yml",
+          "pattern": "^  schema_article_publisher: .*$",
+          "with": "  schema_article_publisher: 'a:4:{s:5:\"@type\";s:12:\"Organization\";s:3:\"@id\";s:32:\"https://aculta.org/#organization\";s:4:\"name\";s:18:\"[institution:name]\";s:3:\"url\";s:17:\"[institution:url]\";}'"
+        },
+        {
+          "file": "config/sync/aculta_mailer.transport.smtp_hostinger.yml",
+          "pattern": "^user: .*$",
+          "with": "user: naoresponda@aculta.org"
+        },
+        {
+          "file": "config/sync/aculta_mailer.imap.yml",
+          "pattern": "^user: .*$",
+          "with": "user: naoresponda@aculta.org"
+        },
+        {
+          "file": "config/sync/aculta_mailer.delivery.yml",
+          "pattern": "^bounce_address: .*$",
+          "with": "bounce_address: dmarc@aculta.org"
         }
       ]
     },
@@ -463,12 +475,127 @@
         {
           "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
           "pattern": "^  canonical_url: .*$",
-          "with": "  canonical_url: 'https://links.aculta.org/'"
+          "with": "  canonical_url: 'https://links.aculta.toca.net.br/'"
         },
         {
           "file": "config/sync/domain/links_aculta_org/metatag.metatag_defaults.front.yml",
           "pattern": "^  og_url: .*$",
-          "with": "  og_url: 'https://links.aculta.org/'"
+          "with": "  og_url: 'https://links.aculta.toca.net.br/'"
+        },
+        {
+          "file": "config/sync/simple_sitemap.settings.yml",
+          "pattern": "^base_url: .*$",
+          "with": "base_url: 'https://aculta.toca.net.br'"
+        },
+        {
+          "file": "config/sync/metatag.metatag_defaults.global.yml",
+          "pattern": "^  schema_organization_id: .*$",
+          "with": "  schema_organization_id: 'https://aculta.toca.net.br/#organization'"
+        },
+        {
+          "file": "config/sync/metatag.metatag_defaults.global.yml",
+          "pattern": "^  schema_web_site_publisher: .*$",
+          "with": "  schema_web_site_publisher: 'a:4:{s:5:\"@type\";s:12:\"Organization\";s:3:\"@id\";s:40:\"https://aculta.toca.net.br/#organization\";s:4:\"name\";s:18:\"[institution:name]\";s:3:\"url\";s:17:\"[institution:url]\";}'"
+        },
+        {
+          "file": "config/sync/metatag.metatag_defaults.node__article.yml",
+          "pattern": "^  schema_article_publisher: .*$",
+          "with": "  schema_article_publisher: 'a:4:{s:5:\"@type\";s:12:\"Organization\";s:3:\"@id\";s:40:\"https://aculta.toca.net.br/#organization\";s:4:\"name\";s:18:\"[institution:name]\";s:3:\"url\";s:17:\"[institution:url]\";}'"
+        },
+        {
+          "file": "config/sync/aculta_mailer.transport.smtp_hostinger.yml",
+          "pattern": "^user: .*$",
+          "with": "user: naoresponda@aculta.org"
+        },
+        {
+          "file": "config/sync/aculta_mailer.imap.yml",
+          "pattern": "^user: .*$",
+          "with": "user: naoresponda@aculta.org"
+        },
+        {
+          "file": "config/sync/aculta_mailer.delivery.yml",
+          "pattern": "^bounce_address: .*$",
+          "with": "bounce_address: dmarc@aculta.org"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.aculta_test_8080.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: 'aculta.test:8080'"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.apoio_aculta_test_8080.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: 'apoio.aculta.test:8080'"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.apoio_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: apoio.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.revista420_aculta_test_8080.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: 'revista420.aculta.test:8080'"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.revista420_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: revista420.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.conta_aculta_test_8080.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: 'conta.aculta.test:8080'"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.conta_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: conta.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.cursos_aculta_test_8080.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: 'cursos.aculta.test:8080'"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.cursos_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: cursos.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.forum_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: growroom420.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.loja_aculta_test_8080.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: 'loja.aculta.test:8080'"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.loja_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: loja.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.wiki420_aculta_test_8080.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: 'wiki420.aculta.test:8080'"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.wiki420_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: wiki420.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain_alias.alias.links_aculta_toca_net_br.yml",
+          "pattern": "^pattern: .*$",
+          "with": "pattern: links.aculta.toca.net.br"
         }
       ]
     }
@@ -480,7 +607,15 @@
       "purpose": "eventos de entrega do aculta_mailer (entrega, devolução, endereço inválido, spam)",
       "path": "/aculta-mailer/webhook/brevo",
       "type": "transactional",
-      "events": ["delivered", "deferred", "softBounce", "hardBounce", "invalid", "blocked", "spam"],
+      "events": [
+        "delivered",
+        "deferred",
+        "softBounce",
+        "hardBounce",
+        "invalid",
+        "blocked",
+        "spam"
+      ],
       "auth": {
         "type": "bearer",
         "secret": "BREVO_WEBHOOK_TOKEN"
@@ -490,7 +625,9 @@
           "status": "pendente",
           "registration_id": null,
           "action": "no deploy do RC: gerar um BREVO_WEBHOOK_TOKEN próprio de produção no arquivo de segredos do servidor, cadastrar o webhook com a URL de produção e remover o cadastro de teste (registration_id da seção test) para não duplicar eventos",
-          "decision_pending": ["Confirmar com o responsável a data do cadastro de produção (depende da implantação)."]
+          "decision_pending": [
+            "Confirmar com o responsável a data do cadastro de produção (depende da implantação)."
+          ]
         },
         "test": {
           "status": "cadastrado",
