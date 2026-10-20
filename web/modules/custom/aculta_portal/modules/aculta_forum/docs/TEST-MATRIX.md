@@ -9,8 +9,9 @@
   responderam HTTP 200. Antes da importação, havia 0 tópicos e 0 Comments; não
   foram criados fixtures.
 - Firefox/X11: captura em 1024 px confirma título, abas e formulário. A página
-  anônima também apresenta o Turnstile global definido pela política de CAPTCHA
-  e uma mensagem visual de validação; a busca não foi submetida. A causa da
+  anônima também apresenta o Turnstile global definido pela
+  [política de CAPTCHA](../../../../../../../docs/integrations/CAPTCHA.md) e uma
+  mensagem visual de validação; a busca não foi submetida. A causa da
   mensagem não foi isolada, portanto o formulário e a validação visual ficam
   PARTIAL. Captura privada `private/visual-tests/aculta-forum-search-dev86/`
   (`0600`). Nenhuma conclusão mobile ou de acessibilidade integral.
