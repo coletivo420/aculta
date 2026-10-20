@@ -54,10 +54,9 @@ final class ForumReadMarker {
    */
   public function markBatch(int $accountId, int $total, array &$context): void {
     if ($this->currentUser->isAnonymous()
-      || (int) $this->currentUser->id() !== $accountId
-      || $this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+      || (int) $this->currentUser->id() !== $accountId) {
       $context['finished'] = 1;
-      $context['message'] = $this->stringTranslation->translate('O contexto ou a conta mudou; nenhuma discussão adicional foi marcada.');
+      $context['message'] = $this->stringTranslation->translate('A conta mudou; nenhuma discussão adicional foi marcada.');
       return;
     }
 
@@ -68,30 +67,44 @@ final class ForumReadMarker {
       return;
     }
 
-    $lastId = (int) ($context['sandbox']['last_id'] ?? 0);
-    $ids = $this->topicQuery((string) $domain->id())
-      ->condition('nid', $lastId, '>')
-      ->sort('nid', 'ASC')
-      ->range(0, self::BATCH_SIZE)
-      ->execute();
+    $processed = $this->domainPurposeManager->runInPurpose('forum', function () use ($domain, $account, $total, &$context): bool {
+      if ($this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+        $context['finished'] = 1;
+        $context['message'] = $this->stringTranslation->translate('O contexto do Fórum não está disponível; nenhuma discussão adicional foi marcada.');
+        return FALSE;
+      }
 
-    if ($ids === []) {
+      $lastId = (int) ($context['sandbox']['last_id'] ?? 0);
+      $ids = $this->topicQuery((string) $domain->id())
+        ->condition('nid', $lastId, '>')
+        ->sort('nid', 'ASC')
+        ->range(0, self::BATCH_SIZE)
+        ->execute();
+
+      if ($ids === []) {
+        $context['finished'] = 1;
+        $context['message'] = $this->stringTranslation->translate('Discussões marcadas como lidas.');
+        return TRUE;
+      }
+
+      foreach ($ids as $id) {
+        // history_write() is the installed History module's public API.
+        history_write((int) $id, $account);
+        $lastId = (int) $id;
+        $context['results']['marked'] = (int) ($context['results']['marked'] ?? 0) + 1;
+      }
+      $context['sandbox']['last_id'] = $lastId;
+      $context['finished'] = min(0.99, $lastId / max($total, $lastId + 1));
+      $context['message'] = $this->stringTranslation->translate('Marcando discussões como lidas (@count processadas).', [
+        '@count' => $context['results']['marked'],
+      ]);
+      return TRUE;
+    });
+
+    if ($processed === NULL) {
       $context['finished'] = 1;
-      $context['message'] = $this->stringTranslation->translate('Discussões marcadas como lidas.');
-      return;
+      $context['message'] = $this->stringTranslation->translate('O contexto do Fórum não está disponível; nenhuma discussão adicional foi marcada.');
     }
-
-    foreach ($ids as $id) {
-      // history_write() is the installed History module's public API.
-      history_write((int) $id, $account);
-      $lastId = (int) $id;
-      $context['results']['marked'] = (int) ($context['results']['marked'] ?? 0) + 1;
-    }
-    $context['sandbox']['last_id'] = $lastId;
-    $context['finished'] = min(0.99, $lastId / max($total, $lastId + 1));
-    $context['message'] = $this->stringTranslation->translate('Marcando discussões como lidas (@count processadas).', [
-      '@count' => $context['results']['marked'],
-    ]);
   }
 
   /**

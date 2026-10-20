@@ -1,5 +1,28 @@
 # Matriz de testes por fase
 
+## dev.61 — Batch Core no purpose Fórum
+
+- O endpoint progressivo Batch do Core permanece no purpose `main`, conforme a
+  política central de rotas administrativas. O callback `markBatch()` executa
+  a query de acesso e gravação do History com `runInPurpose('forum')`, após
+  validar a identidade autenticada capturada no formulário. O formulário
+  retorna à raiz pública absoluta do purpose Fórum.
+- PHPUnit Unit passou 78 testes/481 assertions; Kernel passou 1 teste/12
+  assertions. O Kernel inicia em `main`, confirma
+  elegibilidade zero fora do Fórum, conta 1 dentro do Fórum, executa o callback
+  enquanto o purpose inicial é `main`, e confirma restauração do contexto.
+- X11 Firefox autenticado como `teste.comum` confirmou a tela de confirmação, o
+  Batch processando e a mensagem “Foram marcadas 1 discussões como lidas.”; a
+  navegação retornou à raiz Growroom420. History só continha uid 5/NID 417 para
+  o fixture durante a prova. Depois, Node/alias e History da fixture foram
+  removidos; Runtime terminou com 0 tópicos, 0 Comments compartilhados, 24
+  History (baseline) e duas flaggings globais preservadas. Raiz e categorias
+  retornaram 200. Captura privada `result-final-dev61.png` em
+  `/home/aculta/private/aculta/visual-tests/forum-read-batch-20261020/`.
+- Cinco deprecações no Kernel vieram do Domain contrib instalado. Execução em
+  PHP CLI 8.4.26 (baseline do projeto 8.5). PHPCS, Portal 975, fronteira 1415 e
+  mapa 152 PASS. RUNTIME STATUS: PASS no escopo.
+
 ## dev.60 — descoberta visual no X11
 
 - Firefox ESR isolado, visitante anônimo, X11 `DISPLAY=:0`, Runtime Drupal

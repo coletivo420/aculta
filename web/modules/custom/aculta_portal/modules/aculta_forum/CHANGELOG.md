@@ -1015,6 +1015,29 @@
 
 # Changelog — ACULTA Fórum
 
+## `0.1.0-dev.61` — manter leitura em lote no purpose Fórum — 2026-10-20
+
+- O endpoint progressivo Batch do Core permanece no purpose `main`, como exige
+  a política administrativa central. `ForumReadMarker::markBatch()` agora
+  envolve a consulta e a escrita de History em `runInPurpose('forum')`, depois
+  de conferir que a conta autenticada corresponde à conta capturada na
+  confirmação. Node access e History por usuário continuam obrigatórios.
+- Cancelamento e retorno do formulário usam a raiz pública absoluta do purpose
+  Fórum; o redirect `/discussoes` gerado anteriormente respondeu 404 no Runtime.
+- Motivo: rotas Core `_admin_route`, incluindo `/batch`, são centralizadas em
+  `main`; tentar forçar o endpoint progressivo ao domínio do Fórum é revertido
+  pela política de domínio. O callback anterior falhava fechado no purpose
+  principal e reportava zero itens mesmo com uma discussão elegível.
+- PHPUnit Unit 78/481 e Kernel 1 teste/12 assertions confirmaram a execução
+  iniciada com purpose `main`, a consulta/escrita sob `forum` e a restauração
+  para `main`; cinco deprecações vieram do Domain contrib instalado. PHPCS e gates Drupal 11+,
+  fronteira e mapa passaram. X11 autenticado no Runtime confirmou a mensagem
+  “Foram marcadas 1 discussões como lidas” e retorno à raiz pública. Fixture
+  NID 417, alias e History específico foram limpos; Runtime encerrou com 0
+  tópicos, 0 Comments compartilhados, 24 History (baseline) e as 2 flaggings
+  preexistentes preservadas. `RUNTIME STATUS: PASS` neste fluxo. CLI PHP é
+  8.4.26, abaixo da baseline PHP 8.5 do projeto.
+
 ## F2 estrutura pronta para a importação — 2026-10-16
 
 - Campos `field_nome_historico` e `field_forum_origem_id` no perfil participante, aplicados no Runtime de teste.

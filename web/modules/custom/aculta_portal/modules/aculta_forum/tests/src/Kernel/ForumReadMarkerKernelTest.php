@@ -104,8 +104,14 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
     $this->createTopic('aculta_org');
     $this->createTopic((string) $forumDomain->id(), FALSE);
 
+    $activeDomain = Domain::load('aculta_org');
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
-    $negotiator->method('getActiveDomain')->willReturn($forumDomain);
+    $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): Domain {
+      return $activeDomain;
+    });
+    $negotiator->method('setActiveDomain')->willReturnCallback(static function (Domain $domain) use (&$activeDomain): void {
+      $activeDomain = $domain;
+    });
     $purposeManager = new DomainPurposeManager(
       $this->container->get('entity_type.manager'),
       $negotiator,
@@ -120,11 +126,14 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
       $this->container->get('messenger'),
     );
 
-    self::assertSame(1, $marker->countEligibleTopics());
+    self::assertSame(0, $marker->countEligibleTopics(), 'The central Batch purpose cannot discover Forum topics directly.');
+    self::assertSame(1, $purposeManager->runInPurpose('forum', static fn(): int => $marker->countEligibleTopics()));
+    self::assertSame('main', $purposeManager->getCurrentPurpose(), 'Purpose context is restored after eligibility checks.');
     $context = [];
     while (($context['finished'] ?? 0) < 1) {
       $marker->markBatch((int) $account->id(), 1, $context);
     }
+    self::assertSame('main', $purposeManager->getCurrentPurpose(), 'Purpose context is restored after the Batch callback.');
     $rows = $this->container->get('database')->select('history', 'h')
       ->fields('h', ['uid', 'nid'])
       ->execute()
