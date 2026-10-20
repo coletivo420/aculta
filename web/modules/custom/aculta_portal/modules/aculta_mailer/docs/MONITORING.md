@@ -67,7 +67,8 @@ nada. Decisão pendente do responsável: o endereço de retorno do domínio.
   caixa `naoresponda@` (UID 3). Cabeçalhos: `Authentication-Results` com `spf=pass`, `dkim=pass`, `dmarc=pass`;
   `X-Aculta-Mail-ID` igual à correlação; `From` e `Return-Path` = `naoresponda@aculta.org`. O assunto é o padrão do tipo
   ("Alerta de envio de e-mail do ACULTA"); o texto de teste está no corpo.
-- Divergência registrada: o `Return-Path` desta mensagem é `naoresponda@`, não `dmarc@` como na verificação anterior. A
-  configuração `aculta_mailer.delivery:bounce_address` aponta para `dmarc@`, mas o envelope do transporte SMTP usado
-  (Hostinger) saiu com `naoresponda@`. Bounces chegam à mesma caixa lida pelo IMAP, então a leitura não é afetada; o
-  envelope por transporte ainda precisa ser confirmado pelo responsável.
+- Divergência do `Return-Path` (naoresponda@ em vez de dmarc@): causa verificada. O `ReturnPathSubscriber` só troca o
+  envelope pelo evento do Symfony, e o SMTP criado pela fábrica não tem dispatcher; o envio direto saía com o remetente.
+  Correção: `MailTransportSender::envelopeFor()` passa o `bounce_address` como MAIL FROM para SMTP (teste Unit
+  `MailTransportSenderEnvelopeTest`). Reenvio de teste (correlação `7f17ccdd-8899-4914-b779-115a015eb8e3`, UID 4): `Return-Path:
+  <dmarc@aculta.org>`, `spf=pass` e `dkim=pass` para o domínio, `X-Aculta-Mail-ID` igual à correlação.

@@ -177,7 +177,7 @@ services:
 
   Drupal\aculta_mailer\Transport\MailTransportSender:
     class: Drupal\aculta_mailer\Transport\MailTransportSender
-    arguments: ['@Drupal\aculta_mailer\Transport\MailTransportFactory']
+    arguments: ['@Drupal\aculta_mailer\Transport\MailTransportFactory', '@config.factory']
 
   Drupal\aculta_mailer\Mail\LegacyMessageConverter:
     class: Drupal\aculta_mailer\Mail\LegacyMessageConverter

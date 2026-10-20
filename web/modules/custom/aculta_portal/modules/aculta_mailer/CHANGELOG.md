@@ -1,3 +1,10 @@
+## 0.1.0-dev.56 — MAIL FROM com endereço de retorno no SMTP — 2026-10-20
+
+- `MailTransportSender::envelopeFor()`: para transporte SMTP, o envelope (MAIL FROM) usa o `bounce_address` configurado.
+  O `ReturnPathSubscriber` não alcançava o SMTP criado pela fábrica (sem dispatcher), e o envio saía com `naoresponda@`.
+- Verificado no IMAP com envio de teste: `Return-Path: <dmarc@aculta.org>`, SPF e DKIM aprovados (correlação 7f17ccdd-…).
+- Testes: Unit do mailer 179/179 (`MailTransportSenderEnvelopeTest`, 3 testes).
+
 ## 0.1.0-dev.55 — chave de confirmação de e-mail renomeada — 2026-10-20
 
 - `SingleUseLinkMail` e seu teste: a chave do pedido de confirmação passa a ser `aculta_mail_confirmer:confirmation_request` (antes `email_confirmer:...`), por causa da incorporação do confirmador.
