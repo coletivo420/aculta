@@ -73,6 +73,20 @@ final class MailAlerts {
   }
 
   /**
+   * Alerta de cota: o transporte foi marcado como esgotado pelo texto do provedor (ver QuotaSignal).
+   */
+  public function quotaReached(string $transport, string $detail): void {
+    $this->dispatch([
+      'evento' => 'Cota ou limite do transporte atingido: o envio segue pela contingência',
+      'tipo' => '-',
+      'transporte' => $transport,
+      'codigo' => 'cota',
+      'correlacao' => '-',
+      'detalhe' => $detail,
+    ]);
+  }
+
+  /**
    * Enfileira o alerta para os destinatários, respeitando a janela. Desligado ou sem destinatário, não faz nada.
    */
   private function dispatch(array $context): void {

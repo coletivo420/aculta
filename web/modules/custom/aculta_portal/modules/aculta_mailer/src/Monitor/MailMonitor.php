@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Monitor;
 
 use Drupal\aculta_mailer\Alert\MailAlerts;
+use Drupal\aculta_mailer\Policy\QuotaSignal;
 use Drupal\aculta_mailer\Transport\SecretProviderInterface;
 use Drupal\aculta_mailer\Webhook\DeliveryEventApplier;
 use Drupal\aculta_mailer\Webhook\DeliveryEventType;
@@ -69,6 +70,7 @@ final class MailMonitor {
     private readonly DmarcReportParser $dmarc,
     private readonly ?SecretProviderInterface $secrets,
     private readonly MailAlerts $alerts,
+    private readonly QuotaSignal $quotaSignal,
   ) {}
 
   /**
@@ -175,7 +177,12 @@ final class MailMonitor {
     $uids = array_slice($client->uidsAbove($this->cursor('bounce')), 0, self::BATCH);
     $applied = 0;
     foreach ($uids as $uid) {
-      $event = $this->eventFromBounce($client->fetch($uid));
+      $raw = $client->fetch($uid);
+      $bounce = $this->bounces->parse($raw);
+      if ($bounce !== NULL) {
+        $this->quotaSignal->bounce((string) ($bounce['correlation'] ?? ''), $bounce['diagnostic']);
+      }
+      $event = $this->eventFromBounce($raw);
       if ($event !== NULL && $this->applier->apply($event)) {
         $applied++;
         if ($event->type === DeliveryEventType::Bounced) {

@@ -5,7 +5,7 @@ services:
 
   aculta_mailer.mailer:
     class: Drupal\aculta_mailer\Api\AcultaMailer
-    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts']
+    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal']
 
   logger.channel.aculta_mailer:
     parent: logger.channel_base
@@ -78,7 +78,11 @@ services:
 
   Drupal\aculta_mailer\Policy\TransportQuota:
     class: Drupal\aculta_mailer\Policy\TransportQuota
-    arguments: ['@config.factory', '@entity_type.manager', '@datetime.time']
+    arguments: ['@config.factory', '@entity_type.manager', '@datetime.time', '@state']
+
+  Drupal\aculta_mailer\Policy\QuotaSignal:
+    class: Drupal\aculta_mailer\Policy\QuotaSignal
+    arguments: ['@Drupal\aculta_mailer\Policy\TransportQuota', '@Drupal\aculta_mailer\Alert\MailAlerts', '@entity_type.manager']
 
   Drupal\aculta_mailer\Monitor\BounceParser:
     class: Drupal\aculta_mailer\Monitor\BounceParser
@@ -88,7 +92,7 @@ services:
 
   Drupal\aculta_mailer\Monitor\MailMonitor:
     class: Drupal\aculta_mailer\Monitor\MailMonitor
-    arguments: ['@config.factory', '@state', '@datetime.time', '@logger.channel.aculta_mailer', '@Drupal\aculta_mailer\Webhook\DeliveryEventApplier', '@Drupal\aculta_mailer\Monitor\BounceParser', '@Drupal\aculta_mailer\Monitor\DmarcReportParser', '@?Drupal\aculta_mailer\Transport\SecretProviderInterface', '@Drupal\aculta_mailer\Alert\MailAlerts']
+    arguments: ['@config.factory', '@state', '@datetime.time', '@logger.channel.aculta_mailer', '@Drupal\aculta_mailer\Webhook\DeliveryEventApplier', '@Drupal\aculta_mailer\Monitor\BounceParser', '@Drupal\aculta_mailer\Monitor\DmarcReportParser', '@?Drupal\aculta_mailer\Transport\SecretProviderInterface', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal']
 
   Drupal\aculta_mailer\Type\AdminAlertMailType:
     class: Drupal\aculta_mailer\Type\AdminAlertMailType

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.20 — limites por transporte e detecção de cota (modelo WP Mail SMTP) — 2026-10-20
+
+- Limites por transporte em janelas de hora, dia, semana e mês (`aculta_mailer.policy:rate_limit`). `quota.<transporte>` continua como limite diário.
+- Detecção de cota pelo texto do erro de envio e do bounce (`QuotaSignatures`, `QuotaSignal`). Cota da caixa do destinatário não conta.
+- Transporte esgotado por sinal sai de uso por 24 horas e gera alerta ao administrador.
+- Correção: mensagens sem transporte escolhido eram gravadas como `default`, e não como o transporte real. Agora gravam o efetivo, e a contagem de cota do SMTP passa a incluí-las.
+- Runtime: limite do Brevo de 200 por dia (a confirmar).
+- Versão do módulo: `0.1.0-dev.20`. 89 unitários.
+- DEFERRED: textos de cota reais dos provedores (Brevo, Hostinger, SMTP2GO) ainda não observados.
+
 ## 0.1.0-dev.19 — ligar e desligar monitoramento IMAP e Brevo; alertas e resumo para administradores — 2026-10-20
 
 - Página Entrega, alertas e resumo: interruptores "Transporte Brevo ligado" e "Monitoramento IMAP ligado". Desligado o Brevo, mensagens pedidas a ele seguem pelo transporte de contingência. O IMAP só liga com servidor, usuário e senha preenchidos.

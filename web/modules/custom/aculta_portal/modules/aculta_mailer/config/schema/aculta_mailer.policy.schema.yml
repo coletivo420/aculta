@@ -16,6 +16,28 @@ aculta_mailer.policy:
       sequence:
         type: integer
         label: 'Limite'
+    rate_limit:
+      type: sequence
+      label: 'Limite por transporte e janela (modelo Rate Limiting do WP Mail SMTP)'
+      sequence:
+        type: aculta_mailer.rate_limit
+
+aculta_mailer.rate_limit:
+  type: mapping
+  label: 'Limites por janela'
+  mapping:
+    hour:
+      type: integer
+      label: 'Por hora'
+    day:
+      type: integer
+      label: 'Por dia'
+    week:
+      type: integer
+      label: 'Por semana'
+    month:
+      type: integer
+      label: 'Por mês'
 
 aculta_mailer.policy_values:
   type: mapping

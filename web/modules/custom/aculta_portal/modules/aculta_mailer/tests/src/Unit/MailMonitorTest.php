@@ -10,6 +10,7 @@ use Drupal\aculta_mailer\Monitor\BounceParser;
 use Drupal\aculta_mailer\Monitor\DmarcReportParser;
 use Drupal\aculta_mailer\Monitor\ImapClientInterface;
 use Drupal\aculta_mailer\Monitor\MailMonitor;
+use Drupal\aculta_mailer\Policy\QuotaSignal;
 use Drupal\aculta_mailer\Queue\MailQueue;
 use Drupal\aculta_mailer\Webhook\DeliveryEventApplier;
 use Drupal\aculta_mailer\Webhook\DeliveryEventType;
@@ -106,6 +107,7 @@ MAIL;
         $this->createMock(UuidInterface::class),
         $this->createMock(AdministratorRecipients::class),
       ),
+      $this->createMock(QuotaSignal::class),
     );
   }
 

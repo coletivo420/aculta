@@ -15,6 +15,7 @@ use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_mailer\Delivery\TransportFailover;
 use Drupal\aculta_mailer\Policy\MailPolicyResolver;
+use Drupal\aculta_mailer\Policy\QuotaSignal;
 use Drupal\aculta_mailer\Policy\TransportQuota;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -49,6 +50,7 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly TransportFailover $failover,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly MailAlerts $alerts,
+    private readonly QuotaSignal $quotaSignal,
   ) {}
 
   /**
@@ -101,7 +103,7 @@ final class AcultaMailer implements AcultaMailerInterface {
       'return_path' => $this->returnPath($effective),
     ], $policy->replyTo, TRUE);
 
-    $transportUsed = $transport ?? self::DEFAULT_TRANSPORT;
+    $transportUsed = $effective;
     if (!empty($result['result'])) {
       $this->log->record($message, MailStatus::Sent, 1, $transportUsed);
       return SendResult::sent();
@@ -114,6 +116,8 @@ final class AcultaMailer implements AcultaMailerInterface {
     // O texto completo vai só para o registro (relatório do admin); o usuário vê a mensagem genérica.
     $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
     $this->alerts->failure($message->type, $message->correlationId, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
+    // Texto de cota no erro: o transporte sai de uso pela janela, e o envio seguinte já segue pela contingência.
+    $this->quotaSignal->failure($transportUsed, (string) ($failure['message'] ?? ''));
     // Sem conteúdo do e-mail nem destinatário no log: só tipo, correlação e código.
     $this->logger->error('O sistema de e-mail não aceitou a mensagem @type (correlação @id, código @code).', [
       '@type' => $message->type,
