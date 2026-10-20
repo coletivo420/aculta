@@ -35,6 +35,7 @@
 .aculta-author-card__name a:focus-visible,
 .aculta-author-card__actions :focus-visible { outline: 2px solid var(--aculta-border-strong); outline-offset: 2px; }
 .aculta-author-card__joined { display: block; color: var(--aculta-text-secondary); font-size: 0.8125rem; }
+.aculta-author-card__context { display: inline-flex; margin-block-start: 0.125rem; padding: 0.075rem 0.4rem; border: 1px solid var(--aculta-border-subtle); border-radius: 999px; background: var(--aculta-surface-muted); color: var(--aculta-text-secondary); font-size: 0.7rem; line-height: 1.4; }
 .aculta-author-card__actions { margin-block-start: 0.25rem; }
 
 .aculta-author-card--stacked {

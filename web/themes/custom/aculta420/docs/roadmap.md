@@ -2,6 +2,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| Não marcada | SDC de autoria diferencia Fórum, Revista, LMS e Wiki420 | SDC 516, design 2089, YAML/Twig e render Runtime dos rótulos PASS; Foundation bloqueada por placement anterior da Revista; browser pendente | Rótulos contextuais neutros derivados das variantes `aculta_user`; sem dados de papel ou matrícula |
 | Não marcada | Contador e última atividade na lista Growroom420 | Runtime HTTP 200 com oito linhas `0 respostas` e data; sort SQL descendente executado; SDC/design PASS; Foundation bloqueada por drift do bloco administrativo da Revista; navegador DEFERRED | Template reapresenta teaser, contagem Core e data |
 | Não marcada | Navegação e linhas responsivas das listas ACULTA Forum | SDC/design/map/boundary PASS; Foundation bloqueada por placement Magazine prévio; HTTP 200 e CSS cacheado presentes; inspeção de navegador pendente | Links usam chips focáveis; contagem e atividade empilham no mobile |
 | 0.6.0-dev.101 | Corrige classes dos cards do ACULTA Forum com base no render Firefox | Foundation, SDC, design e fixtures; Firefox desktop e viewport compacto de 500 px inspecionados. Viewport de 390 px e modo escuro pendentes. | Twig declara variante teaser/full, alinhada aos seletores; categoria vira etiqueta semântica |

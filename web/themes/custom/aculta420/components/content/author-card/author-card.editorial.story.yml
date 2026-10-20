@@ -1,0 +1,10 @@
+name: Autoria editorial
+description: Autoria pública de publicação da Revista.
+component: aculta420:author-card
+props:
+  variant: author_editorial
+  display_name: Joana Cultura
+  profile_url: /u/joana-cultura
+slots:
+  avatar:
+    markup: <span aria-hidden="true">J</span>

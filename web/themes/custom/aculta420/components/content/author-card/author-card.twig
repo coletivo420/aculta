@@ -1,4 +1,12 @@
 {% set layout = variant == 'author_forum_stacked' ? 'stacked' : 'inline' %}
+{% set context_labels = {
+  author_editorial: 'Revista'|t,
+  author_comment: 'Comentário da Revista'|t,
+  author_forum: 'Growroom420'|t,
+  author_forum_stacked: 'Growroom420'|t,
+  author_lms: 'Discussão de cursos'|t,
+  author_wiki: 'Wiki420'|t
+} %}
 <article class="aculta-author-card aculta-author-card--{{ layout }} aculta-author-card--{{ variant }}">
   {% if avatar %}
     <div class="aculta-author-card__avatar">{{ avatar }}</div>
@@ -9,6 +17,7 @@
     <div class="aculta-author-card__name">
       {% if profile_url %}<a href="{{ profile_url }}">{{ display_name }}</a>{% else %}{{ display_name }}{% endif %}
     </div>
+    {% if context_labels[variant] is defined %}<span class="aculta-author-card__context">{{ context_labels[variant] }}</span>{% endif %}
     {% if source_label %}<span class="aculta-author-card__source">{{ source_label }}</span>{% endif %}
     {% if actions %}<div class="aculta-author-card__actions">{{ actions }}</div>{% endif %}
   </div>

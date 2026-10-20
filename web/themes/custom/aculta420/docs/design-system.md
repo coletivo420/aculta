@@ -17,6 +17,12 @@ com tokens semânticos; título, respostas e atividade empilham em telas menores
 Filtros, ordenação, visibilidade e contagens continuam responsabilidade do
 Portal/Core, nunca do tema.
 
+O SDC `content/author-card` mantém o contrato de identidade entre contextos e
+mostra uma etiqueta neutra conforme a variante: Growroom420, Comentário da
+Revista, cursos e Wiki420. O módulo fornece a variante; o tema não consulta a
+entidade hospedeira nem revela papel, matrícula ou atividade. Stories cobrem
+separadamente `author_editorial`, `author_comment`, `author_lms` e `author_wiki`.
+
 ## Identidade
 
 ACULTA420 usa Bootstrap como infraestrutura e mantém identidade própria por

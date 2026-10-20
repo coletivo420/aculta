@@ -1,0 +1,10 @@
+name: Participação na Wiki420
+description: Identidade de autoria em discussão de verbete.
+component: aculta420:author-card
+props:
+  variant: author_wiki
+  display_name: Iara Pesquisadora
+  profile_url: /u/iara-pesquisadora
+slots:
+  avatar:
+    markup: <span aria-hidden="true">I</span>

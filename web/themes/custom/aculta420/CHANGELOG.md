@@ -1,3 +1,18 @@
+## Alteração não marcada — identificação visual dos contextos de autoria — 2026-10-19
+
+- O SDC `content/author-card` apresenta rótulos contextuais neutros para Revista,
+  Growroom420, cursos e Wiki420, derivados apenas da variante preparada por
+  `aculta_user`. Não exibe papel, matrícula, estatística ou dado de perfil novo.
+- Stories independentes cobrem autoria editorial, comentário da Revista, LMS e
+  Wiki; YAML e Twig parse PASS. Gates SDC (516) e design foundations (2089)
+  PASS. Runtime `toca`: renderização do SDC confirmou os quatro rótulos após
+  cache rebuild, sem persistência; `/discussoes/novas` HTTP 200 e CSS público
+  servido contém a nova regra do cartão.
+- A versão `0.6.0-dev.101` permanece até a inspeção visual completa; Foundation
+  ainda tem o bloqueio administrativo preexistente da Revista registrado
+  abaixo. Inspeção de navegador desktop/390 px/dark pendente. RUNTIME STATUS:
+  PARTIAL.
+
 ## Alteração não marcada — listas públicas do Fórum — 2026-10-19
 
 - As listagens de tópicos públicos apresentam os links de navegação como chips

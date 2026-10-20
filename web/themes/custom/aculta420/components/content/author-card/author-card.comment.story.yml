@@ -1,0 +1,10 @@
+name: Comentário da Revista
+description: Autoria de comentário associada a uma publicação.
+component: aculta420:author-card
+props:
+  variant: author_comment
+  display_name: Caio Antiproibicionista
+  profile_url: /u/caio-antiproibicionista
+slots:
+  avatar:
+    markup: <span aria-hidden="true">C</span>
