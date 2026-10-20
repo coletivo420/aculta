@@ -18,8 +18,9 @@
   de comentários e flags; Runtime terminou com 0 tópicos, 0 Comments e 0 flags
   de seguir/salvar. Firefox Responsive Design Mode sob uid 5, a 390 × 670 px,
   confirmou os dois botões lado a lado, sem transbordamento horizontal visível.
-  Nenhuma flag de outro contexto foi alterada. RUNTIME STATUS: PARTIAL; modo
-  escuro pendente.
+  Modo escuro forçado localmente no DOM mostrou os controles legíveis em 1024 px;
+  a preferência/configuração do Runtime não foi alterada. Nenhuma flag de outro
+  contexto foi alterada. RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.56` — remover bundle residual do Forum contrib nas Flags — 2026-10-20
 

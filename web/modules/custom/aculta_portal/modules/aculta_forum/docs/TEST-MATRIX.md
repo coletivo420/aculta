@@ -23,8 +23,9 @@
   0 tópicos, 0 Comments compartilhados e 0 flags de seguir/salvar; as duas
   flags de avisos de site (read/dismiss) foram preservadas. Firefox Responsive
   Design Mode autenticado a 390 × 670 px mostrou ambos os botões lado a lado,
-  sem transbordamento horizontal visível. Raiz e `/categorias` HTTP 200. Modo
-  escuro permanece pendente.
+  sem transbordamento horizontal visível. Modo escuro forçado localmente no DOM
+  foi inspecionado em 1024 px e os controles permaneceram legíveis; isso não
+  valida a preferência persistida do Runtime. Raiz e `/categorias` HTTP 200.
   RUNTIME STATUS: PARTIAL.
 
 ## dev.56 — remover referência residual ao bundle Forum contrib nas Flags
