@@ -16,6 +16,15 @@ Wiki420, Fórum, projetos e documentos institucionais que referenciem Media.
   File e às entidades/campos referenciadores a cada requisição.
 - O viewer não cria rotas, armazenamento, permissões, dados de LMS ou política
   de autorização independente.
+- O canvas renderiza a página como imagem: `aria-label` identifica a página, mas
+  não expõe o texto nem a estrutura semântica do PDF. O link Core para o arquivo
+  original permanece disponível como alternativa de leitura; a acessibilidade
+  nessa alternativa depende da marcação do próprio PDF e do leitor do navegador.
+  Portanto, controles acessíveis do viewer não significam conformidade WCAG do
+  conteúdo do documento. Uma camada textual/estrutural exige avaliação própria:
+  o upstream PDF.js registra limitações de teclado e estrutura acessível no
+  text layer ([#15635](https://github.com/mozilla/pdf.js/issues/15635),
+  [#20114](https://github.com/mozilla/pdf.js/issues/20114)).
 - Formatos que embutem Media usam o filtro `media_embed` do Core depois dos
   filtros de HTML; a Wiki permite somente o bundle público `document`. O
   render continua passando pelo display Media e pela checagem Core de acesso.

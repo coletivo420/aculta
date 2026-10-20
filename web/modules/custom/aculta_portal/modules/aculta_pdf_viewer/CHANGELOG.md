@@ -1,5 +1,11 @@
 # Changelog — aculta_pdf_viewer
 
+## Documentação PV7 — delimitar acessibilidade do conteúdo PDF — 2026-10-20
+
+- Registrado que o canvas rotulado não expõe texto/estrutura do documento e que controles acessíveis não certificam a acessibilidade do PDF.
+- O link Core ao arquivo original continua como alternativa; uma camada textual/estrutural não foi adicionada porque o upstream ainda registra limitações de teclado e semântica, exigindo avaliação própria antes dessa decisão.
+- PHP 8.4 do Runtime não é bloqueio. A revisão acessível ampliada da interface permanece no gate PV7.
+
 ## 0.1.0-dev.26 — limitar renderização de páginas PDF extremas — 2026-10-20
 
 - O renderizador limita cada canvas a 16 milhões de pixels e 16.384 px por lado, corrigindo também o excedente introduzido pelo arredondamento inteiro.
