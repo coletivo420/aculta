@@ -125,10 +125,9 @@ foreach ($manifests as $machine => $manifest) {
     $assert(is_file($root . '/' . $link), "$machine table has a missing local link: $link");
   }
   $assert(trim(strip_tags($row['phase'])) !== '', "$machine must state its next phase.");
-  $assert(in_array($row['status'], ['Dev', 'preRC', 'RC'], TRUE), "$machine state must be Dev, preRC, or RC.");
-  if ($row['status'] === 'preRC') {
-    $assert(stripos($row['version'], 'prerc') !== FALSE, "$machine is preRC but its declared version does not carry the preRC label.");
-  }
+  // preRC was retired from the release lifecycle. Keep the gate aligned with
+  // the permanent project policy so legacy table rows cannot pass silently.
+  $assert(in_array($row['status'], ['Dev', 'RC'], TRUE), "$machine state must be Dev or RC; preRC is retired.");
   if ($row['status'] === 'RC') {
     $assert(stripos($row['version'], '-rc') !== FALSE, "$machine is RC but its declared version is not an RC version.");
   }
