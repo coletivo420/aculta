@@ -61,6 +61,8 @@
         thread.insertBefore(navigation, thread.firstChild);
 
         let activeIndex = 0;
+        let announcementTimeout;
+        let announcementUntil = 0;
         const update = (index, announce = false) => {
           activeIndex = Math.max(0, Math.min(index, messages.length - 1));
           range.value = String(activeIndex);
@@ -70,8 +72,21 @@
           });
           range.setAttribute('aria-valuetext', message);
           status.textContent = message;
-          announcement.setAttribute('aria-live', announce ? 'polite' : 'off');
-          announcement.textContent = message;
+          if (announce) {
+            window.clearTimeout(announcementTimeout);
+            announcementUntil = Date.now() + 1200;
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.textContent = message;
+            announcementTimeout = window.setTimeout(() => {
+              announcementUntil = 0;
+              announcement.setAttribute('aria-live', 'off');
+              announcement.textContent = status.textContent;
+            }, 1200);
+          }
+          else if (Date.now() >= announcementUntil) {
+            announcement.setAttribute('aria-live', 'off');
+            announcement.textContent = message;
+          }
           previous.disabled = activeIndex === 0;
           first.disabled = activeIndex === 0;
           next.disabled = activeIndex === messages.length - 1;

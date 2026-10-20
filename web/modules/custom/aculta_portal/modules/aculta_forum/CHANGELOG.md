@@ -1,3 +1,17 @@
+## `0.1.0-dev.65` — preservar anúncio explícito durante rolagem suave — 2026-10-20
+
+- A ação de botão mantém o anúncio acessível do destino solicitado durante a
+  rolagem suave, mesmo quando o IntersectionObserver atualiza o progresso
+  visual em mensagens posteriores. Após 1,2 s, a live region volta a `off` e
+  sincroniza silenciosamente com a posição visível. Scroll manual e slider
+  continuam silenciosos; `aria-valuetext` acompanha a posição efetiva.
+- Firefox ESR 153.4/X11, viewport 390 × 844 CSS px: seis mensagens sintéticas
+  somente no DOM. Enter em Próxima deixou “Mensagem 4 de 6” estável em
+  `aria-live=polite` após 250 ms, enquanto a rolagem atualizou o estado visual
+  para 6/6; ao fim do timeout, anúncio e estado visual sincronizaram em 6/6 com
+  `aria-live=off`. Nenhum Comment foi salvo. `node --check` PASS; leitor de tela
+  real pendente. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.64` — reduzir anúncios da navegação de progresso — 2026-10-20
 
 - A posição visual acompanha a rolagem; a live region acompanha o mesmo texto

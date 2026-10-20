@@ -1,5 +1,19 @@
 # Matriz de testes por fase
 
+## dev.65 — anúncio explícito durante movimento de leitura
+
+- Firefox ESR 153.4/X11 e WebDriver BiDi no Runtime de teste, sessão anônima
+  isolada. Seis mensagens foram inseridas apenas no DOM da publicação e o
+  viewport CSS foi 390 × 844 px. A navegação chegou visualmente à mensagem 3/6
+  antes do teste de Enter, por efeito esperado do IntersectionObserver.
+- Enter em Próxima pediu a mensagem 4/6. Após 250 ms, o indicador visual já
+  acompanhava a rolagem em 6/6, mas o texto de anúncio permaneceu estável em
+  4/6 com `aria-live=polite`. Após 1,2 s, o anúncio voltou a `off` e sincronizou
+  silenciosamente em 6/6. Isso evita cancelar o anúncio explícito sem narrar
+  cada mensagem atravessada pela rolagem suave.
+- DOM sintético removido e sessão isolada encerrada; nenhum Comment persistido.
+  `node --check` PASS. Leitor de tela real/AT não testado. RUNTIME STATUS: PARTIAL.
+
 ## dev.64 — anúncio acessível sem ruído de rolagem
 
 - A região visual e a mensagem dentro de `role=status` seguem a posição. A live
@@ -21,8 +35,9 @@
   isolada: seis mensagens sintéticas foram inseridas apenas no DOM da publicação;
   nada foi gravado. BiDi aplicou viewport CSS exato em 320/360/390/500/1250 px.
   Após corrigir rótulos comprimidos em 320 px e avanço lateral em 390 px no tema
-  0.6.0-dev.114, barra e controles ficaram no container; documento e corpo
-  mantiveram a largura do viewport. Claro/escuro inspecionados; botão anunciou
+  0.6.0-dev.114, e dar ao slider largura própria e contador visível em 0.6.0-dev.115,
+  barra e controles ficaram no container; documento e corpo mantiveram a largura
+  do viewport. Claro/escuro inspecionados; botão anunciou
   “Mensagem 3 de 6”, slider mostrou “Mensagem 5 de 6” com `aria-live=off` e
   `aria-valuetext` sincronizado. Capturas privadas em
   `/home/aculta/private/aculta/visual-tests/forum-progress-20261020/`.
