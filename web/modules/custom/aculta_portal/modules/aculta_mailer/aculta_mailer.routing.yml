@@ -22,6 +22,14 @@ aculta_mailer.log_export:
   requirements:
     _permission: 'administer aculta_mailer'
 
+aculta_mailer.log_status:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/registro/{log_id}/estado'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailStatusController::show'
+    _title: 'Estado do envio'
+  requirements:
+    _permission: 'administer aculta_mailer'
+
 aculta_mailer.failure_resend:
   path: '/painel-administrativo/configuracoes/aculta/envios-de-email/falhas/reenviar/{log_id}'
   defaults:

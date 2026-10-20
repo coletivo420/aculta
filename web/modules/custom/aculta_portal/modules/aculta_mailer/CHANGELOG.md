@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.42 — estado do envio com eventos do Brevo
+
+- Página de estado de um envio (`.../registro/{log_id}/estado`), com o registro e, para envios pelo Brevo, os eventos informados pelo provedor (30 dias), pela API `GET /v3/smtp/statistics/events`. Sem destinatário nem conteúdo.
+- Link "Estado" em cada linha do relatório de falhas.
+- Validado no Runtime de teste: a página do envio pelo Brevo mostrou `requests`, `opened` e `delivered` da API; o endereço real não aparece na página.
+- Pendente: mostrar a consulta no registro sem passar pelas falhas (depende da tela de registro, ainda não existe).
+
 ## 0.1.0-dev.41 — pedido novo cancela o conteúdo anterior; reenvio manual não reaproveita link
 
 - Pedido novo de link de uso único para o mesmo destinatário e tipo cancela o conteúdo guardado do pedido anterior (`cancelPayloads`). A própria correlação fica de fora: é a exceção da retentativa automática (fila e failover), que mantém conteúdo e link.
