@@ -7,8 +7,10 @@
 - Unit: 18 testes / 190 assertions PASS. Kernel MariaDB: 2 testes / 122
   assertions PASS, 40 depreciações Core/contrib/LMS. Verificação posterior no
   Homelab: `drush cr` PASS, controller instanciado pelo container, três rotas
-  ativas, respostas anônimas 403 e `/` HTTP 200. Nenhum dado ou configuração
-  alterado. Smoke autenticado ainda pendente; RUNTIME STATUS: PARTIAL.
+  ativas, respostas anônimas 403 e `/` HTTP 200. Educador autenticado abriu o
+  painel e as três filas por GET (200); sessão temporária removida. Nenhum dado
+  ou configuração alterado; ações e linhas com comentários não exercitadas.
+  RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.18` — cobrir callback de rota de moderação — 2026-10-20
 
