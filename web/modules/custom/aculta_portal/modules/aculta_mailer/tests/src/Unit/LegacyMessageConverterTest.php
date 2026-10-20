@@ -56,6 +56,21 @@ final class LegacyMessageConverterTest extends UnitTestCase {
   }
 
   /**
+   * Sender do Core não vira cabeçalho de texto: o envelope é definido por outro caminho.
+   */
+  public function testSenderHeaderIsNotCopiedAsText(): void {
+    $email = (new LegacyMessageConverter())->toEmail([
+      'from' => 'naoresponda@example.invalid',
+      'to' => 'destino@example.invalid',
+      'subject' => 'x',
+      'body' => 'y',
+      'headers' => ['Sender' => 'naoresponda@example.invalid'],
+    ], 'padrao@example.invalid');
+    $this->assertSame('naoresponda@example.invalid', $email->getSender()?->getAddress() ?? 'naoresponda@example.invalid');
+    $this->assertSame('naoresponda@example.invalid', $email->getFrom()[0]->getAddress());
+  }
+
+  /**
    * Envelope HTML vai como parte HTML, e anexo em memória entra como anexo.
    */
   public function testHtmlAndAttachmentsAreAdded(): void {

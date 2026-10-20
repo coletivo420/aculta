@@ -1,0 +1,6 @@
+enabled: true
+host: imap.hostinger.com
+port: 993
+user: naoresponda@aculta.org
+mailbox: INBOX
+

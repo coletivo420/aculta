@@ -31,7 +31,7 @@ final class LegacyMessageConverter {
   ];
 
   /**
-   * Cabeçalhos que não são repassados: o Symfony monta ou o módulo consome.
+   * Cabeçalhos que não são repassados: o Symfony monta, o módulo consome, ou o envelope define (Sender).
    */
   private const SKIPPED = [
     'content-type',
@@ -41,6 +41,7 @@ final class LegacyMessageConverter {
     'message-id',
     'to',
     'from',
+    'sender',
     'subject',
     'return-path',
     'reply-to',

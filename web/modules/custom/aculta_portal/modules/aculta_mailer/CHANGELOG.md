@@ -1,5 +1,14 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.28 — F15 concluída: contrib de envio removido — 2026-10-20
+
+- Desinstalados no runtime: symfony_mailer, mailer_override, mailer_transport, mailer_policy. Snapshot da configuração do contrib guardado fora do repositório.
+- Pacote removido do composer.json e do composer.lock (4 pacotes: drupal/symfony_mailer, drupal/mailer_transport, html2text/html2text, tijsverkoyen/css-to-inline-styles). Nenhum pacote atualizado.
+- Configuração versionada: arquivos mailer_* removidos; `core.extension` sem o contrib; `system.mail` = aculta_mailer; configurações do projeto exportadas (delivery, imap sem senha, log, policy).
+- Código: o conversor ignora o cabeçalho Sender copiado como texto (causava erro no Symfony depois da remoção).
+- Gate `validate-mail-transport` passa. Gate de comércio já reprovava antes (check de rotas de webhook), não relacionado.
+- Versão do módulo: `0.1.0-dev.28`. 104 unitários.
+
 ## 0.1.0-dev.27 — F15: `system.mail` trocado para a camada de envio; gates e controlador atualizados — 2026-10-20
 
 - `system.mail` do runtime e da configuração versionada: `aculta_mailer`. Envio do Core e da aplicação aceito no runtime.

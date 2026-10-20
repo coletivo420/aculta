@@ -1,0 +1,7 @@
+bounce_address: dmarc@aculta.org
+alerts_enabled: true
+summary_enabled: true
+alerts_admins: true
+summary_admins: true
+brevo_enabled: true
+
