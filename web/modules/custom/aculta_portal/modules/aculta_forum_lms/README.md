@@ -36,7 +36,11 @@ inesperado de relação falha fechado.
 ## Próxima etapa
 
 O Kernel `LmsGroupNodeAccessKernelTest` usa o banco `aculta_simpletest` e prova
-member versus outsider em um curso. Próximo: testar membership de turma,
-herança de permission para Educador com `grade students`, escrita de Comment e
-moderação; versionar permissões Group e só então criar as filas administrativas
-LMS.
+member versus outsider em um curso. Unit agora cobre estudante matriculado que
+escreve, Educador contextual que modera, status fechado e ausência de acesso à
+moderação para estudante. A combinação de acesso trata membership e permission
+contextual de Educador como alternativas explícitas e só nega se ambas falharem;
+`orIf()` não pode ser usado porque `forbidden` prevalece sobre uma alternativa
+permitida. Próximo: Kernel para membership de turma e herança de
+`grade students`, depois roles Group em Config Sync e prova de Comment integrado;
+só então criar as filas administrativas LMS.

@@ -1722,6 +1722,19 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.96` — corrigir acesso de participação LMS — 2026-10-20
+
+- Corrige regressão que bloqueava estudantes matriculados e Educadores de turma
+  ao combinar duas alternativas que podiam retornar `forbidden` com `orIf()`.
+  Membership e `grade students` agora são avaliados como alternativas, com
+  negação explícita somente quando nenhuma delas concede acesso. Estudantes
+  podem ler/escrever quando matrícula e status permitem; só Educador contextual
+  modera.
+- Escrita fechada por status do Comment ou ausência de `post comments` termina
+  em negação explícita. Novos Unit: 2 testes / 50 assertions PASS.
+- Nenhum dado/configuração Runtime foi alterado; adapter segue desabilitado.
+  RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.95` — provar Group Node para tópico privado — 2026-10-20
 
 - Kernel no MariaDB dedicado ativa Group 3.3.5 e gnode com bundle/relação de

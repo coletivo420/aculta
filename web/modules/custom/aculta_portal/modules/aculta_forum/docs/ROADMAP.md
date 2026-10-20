@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.96` | Corrigir acesso LMS e cobrir escrita/moderação de Comment | Unit cobre estudante matriculado, Educador com `grade students`, permissão de comentar e status aberto/fechado. Corrige combinação AccessResult que negava estudantes e torna a moderação explicitamente contextual. Runtime DEFERRED; adapter ainda desabilitado. |
 | `0.1.0-dev.95` | Provar acesso Group Node no Kernel | MariaDB `aculta_simpletest` com Group 3.3.5/gnode: membro de curso com permission contextual acessa Node de tópico; outsider recebe forbidden. 1 teste/17 assertions PASS; 17 depreciações Core/Group/contrib. Não instala o adapter nem altera Runtime. |
 | `0.1.0-dev.94` | Configurar bundle e vínculos Group do LMS | `aculta_lms_topic`, campo `field_aculta_discussion`, displays e relationships Group para curso/turma entram como install config do adapter. Unit valida storage compartilhado, bundle, display e IDs ≤32. Roles Group, `lms_classes.settings`, instalação Kernel e habilitação Runtime seguem pendentes. |
 | `0.1.0-dev.93` | Bloquear acesso direto a tópico LMS não agrupado | `entity_access` nega tópico sem relação Group única e turma sem curso pai; Group continua dono das permissões quando a relação é válida. 3 testes Unit novos cobrem tópicos sem relação, curso válido e turma sem curso pai. Adapter continua desabilitado, sem configuração e sem Runtime. |

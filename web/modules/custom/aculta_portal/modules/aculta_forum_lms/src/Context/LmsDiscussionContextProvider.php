@@ -128,9 +128,17 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
       ? $entity->get('field_aculta_discussion')
       : NULL;
     $commentStatus = $commentField?->getValue()[0]['status'] ?? 0;
+    $commentStatusAccess = (int) $commentStatus === 2
+      ? AccessResult::allowed()
+      : AccessResult::forbidden();
+    $commentStatusAccess->addCacheableDependency($entity);
+    $commentPermissionAccess = $account->hasPermission('post comments')
+      ? AccessResult::allowed()
+      : AccessResult::forbidden();
+    $commentPermissionAccess->addCacheContexts(['user.permissions']);
     $writeAccess = $readAccess
-      ->andIf(AccessResult::allowedIf((int) $commentStatus === 2)->addCacheableDependency($entity))
-      ->andIf(AccessResult::allowedIf($account->hasPermission('post comments'))->addCacheContexts(['user.permissions']));
+      ->andIf($commentStatusAccess)
+      ->andIf($commentPermissionAccess);
 
     $moderationAccess = $validGroup
       ? $this->educatorAccess($group, $account)
@@ -156,8 +164,10 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
    */
   private function contextMembershipAccess(GroupInterface $group, AccountInterface $account): AccessResultInterface {
     if ($group instanceof CourseInterface) {
-      return $group->takeAccess($account)
-        ->orIf($this->educatorAccess($group, $account));
+      return $this->membershipOrEducatorAccess(
+        $group->takeAccess($account),
+        $this->educatorPermissionAccess($group, $account),
+      );
     }
 
     $membershipAccess = $this->membershipAccess($group, $account);
@@ -173,10 +183,24 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
-    return $membershipAccess
-      ->orIf($this->educatorAccess($course, $account))
+    return $this->membershipOrEducatorAccess(
+      $membershipAccess,
+      $this->educatorPermissionAccess($course, $account),
+    )
       ->addCacheableDependency($group)
       ->addCacheableDependency($course);
+  }
+
+  /**
+   * Allows membership or contextual Educator access, denying if neither fits.
+   */
+  private function membershipOrEducatorAccess(AccessResultInterface $membershipAccess, AccessResultInterface $educatorAccess): AccessResultInterface {
+    $access = $membershipAccess->isAllowed() || $educatorAccess->isAllowed()
+      ? AccessResult::allowed()
+      : AccessResult::forbidden();
+    return $access
+      ->addCacheableDependency($membershipAccess)
+      ->addCacheableDependency($educatorAccess);
   }
 
   /**
@@ -234,8 +258,19 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
+    $access = $course->hasPermission('grade students', $account)
+      ? AccessResult::allowed()
+      : AccessResult::forbidden();
+    return $access
+      ->addCacheContexts(['user.group_permissions'])
+      ->addCacheableDependency($course);
+  }
+
+  /**
+   * Checks the contextual educator permission without deciding fallback access.
+   */
+  private function educatorPermissionAccess(CourseInterface $course, AccountInterface $account): AccessResultInterface {
     return GroupAccessResult::allowedIfHasGroupPermission($course, $account, 'grade students')
-      ->orIf(AccessResult::forbidden())
       ->addCacheableDependency($course);
   }
 
