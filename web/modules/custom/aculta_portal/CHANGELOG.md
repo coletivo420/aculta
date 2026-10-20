@@ -1,3 +1,22 @@
+## 0.4.0-dev.205 — identidade do último comentarista na lista do Fórum — 2026-10-19
+
+- A View pública de tópicos passa o UID do último comentário publicado por um
+  campo Core oculto. `aculta_forum` resolve a conta ativa por DI e pede o cartão
+  `author_forum` ao `aculta_user`; o tema apresenta a autoria junto da atividade.
+  Nenhum nome de login ou dado privado é consultado pelo tema.
+- Teste direcionado Forum Unit: 17 testes / 203 assertions; conjunto Forum Unit:
+  49 testes / 354 assertions PASS (3 deprecações PHPUnit preexistentes). PHPCS
+  dos arquivos novos, Portal 970, boundary 1374, mapa 154, SDC 516, design
+  2089, fixtures 157 e `git diff --check` PASS. Foundation falha pelo placement
+  preexistente `block.block.aculta_magazine_admin_comments`.
+- Runtime `toca`: backup privado e atualização somente do campo `last_comment_uid`
+  na View ativa, preservando os filtros/campos locais divergentes. Cache rebuild,
+  hook DI resolvido, cartão de uid 5 construído com o tema `aculta_user_author_card`,
+  View com 8 linhas/renderização e HTTP `/discussoes/novas` 200. A renderização
+  registrou `Missing text format: basic_html` em conteúdo-fixture preexistente;
+  nenhum comentário foi criado. Browser e cartão vinculado a comentário real
+  pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.204 — testes de isolamento dos avisos do Fórum — 2026-10-19
 
 - Complementa a integração `0.4.0-dev.203` com testes da política de acesso:

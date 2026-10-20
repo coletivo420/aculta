@@ -12,6 +12,10 @@
     <div>
       <dt>{{ 'Última atividade'|t }}</dt>
       <dd>{{ fields.last_updated.content }}</dd>
+      {% if last_comment_author is defined %}
+        <dd class="aculta-forum-topic-list-row__last-author">{{ last_comment_author }}</dd>
+      {% endif %}
     </div>
+    {{ last_comment_author_cache|default('') }}
   </dl>
 </div>

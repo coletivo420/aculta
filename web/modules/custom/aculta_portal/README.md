@@ -19,8 +19,9 @@ paralelo nem depender do tema para funcionar.
 
 ## Capacidades e extensões ativas
 
-As extensões próprias incluem o ACULTA Forum com histórico de leitura por conta
-e contexto, o LMS com atividades H5P vinculadas a cursos,
+As extensões próprias incluem o ACULTA Forum com histórico de leitura por conta,
+contexto, descoberta e autoria pública das atividades por meio dos cartões do
+`aculta_user`; o LMS com atividades H5P vinculadas a cursos,
 slugs públicos canônicos por `PublicRouteSlug::normalize()` e a política
 `filename_sanitization` para nomes de upload. O `aculta_user` também fornece a
 API base cacheável de identidade de autoria para consumidores do Portal. Cada

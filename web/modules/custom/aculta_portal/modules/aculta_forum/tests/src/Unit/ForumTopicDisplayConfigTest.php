@@ -59,6 +59,22 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * The public topic View consumes only the Core latest commenter account ID.
+   */
+  public function testPublicTopicViewUsesHiddenCoreLatestCommenterField(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $install = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_public_topics.yml');
+    $sync = Yaml::parseFile($repository_path . '/config/sync/views.view.aculta_forum_public_topics.yml');
+    $field = $install['display']['default']['display_options']['fields']['last_comment_uid'];
+
+    self::assertSame($field, $sync['display']['default']['display_options']['fields']['last_comment_uid']);
+    self::assertSame('comment_entity_statistics', $field['table']);
+    self::assertSame('last_comment_uid', $field['field']);
+    self::assertTrue($field['exclude'], 'The account ID is a render-only input, never a visible View field.');
+  }
+
+  /**
    * The field display does not expose comment settings or legacy author data.
    */
   public function testFormDoesNotExposeCommentStatusOrHistoricalAuthor(): void {

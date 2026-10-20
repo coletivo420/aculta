@@ -40,6 +40,8 @@
 .aculta-forum-topic-list-row__meta > div { display: flex; justify-content: flex-end; gap: 0.35rem; }
 .aculta-forum-topic-list-row__meta dt { font-weight: 400; }
 .aculta-forum-topic-list-row__meta dd { margin: 0; color: var(--aculta-text-primary); }
+.aculta-forum-topic-list-row__last-author { display: flex; justify-content: flex-end; }
+.aculta-forum-topic-list-row__last-author .aculta-author-card { font-size: 0.8rem; }
 .view-aculta-forum-public-topics .view-header { margin-block: 0 1rem; }
 .view-aculta-forum-public-topics .view-header > p { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; }
 .view-aculta-forum-public-topics .view-header a {
@@ -112,6 +114,7 @@
   .aculta-forum-topic-list-row { grid-template-columns: minmax(0, 1fr); }
   .aculta-forum-topic-list-row__meta { grid-template-columns: repeat(2, minmax(0, 1fr)); text-align: start; }
   .aculta-forum-topic-list-row__meta > div { justify-content: flex-start; flex-wrap: wrap; }
+  .aculta-forum-topic-list-row__last-author { justify-content: flex-start; }
 }
 
 /* Tópico do Fórum (templates/node--forum--full.html.twig): metadados, barra de ações e seção de respostas. */

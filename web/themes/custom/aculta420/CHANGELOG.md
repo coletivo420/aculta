@@ -1,3 +1,14 @@
+## Alteração não marcada — autoria da última atividade do Fórum — 2026-10-19
+
+- As linhas de tópicos públicos apresentam o cartão contextual `author_forum`
+  preparado pelo Portal abaixo da data da última atividade. Estilos usam o SDC
+  existente e tokens semânticos; layout adapta o alinhamento para telas estreitas.
+- SDC 516, design foundations 2089 e fixtures 157 PASS. Runtime `toca`: CSS e
+  Twig ativos; View HTTP 200 e hook DI construiu cartão em chamada sintética.
+  Foundation bloqueada pelo placement preexistente da Revista; inspeção visual
+  desktop/mobile/claro/escuro pendente. A versão `0.6.0-dev.101` é mantida até
+  os gates e a revisão visual. RUNTIME STATUS: PARTIAL.
+
 ## Alteração não marcada — identificação visual dos contextos de autoria — 2026-10-19
 
 - O SDC `content/author-card` apresenta rótulos contextuais neutros para Revista,

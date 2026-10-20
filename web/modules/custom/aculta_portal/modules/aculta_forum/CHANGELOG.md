@@ -1,3 +1,14 @@
+## 0.1.0-dev.32 — autoria da última atividade pública — 2026-10-19
+
+- View pública usa `last_comment_uid` de `comment_entity_statistics` como campo
+  oculto; hook OOP prepara o cartão via `aculta_user.author_card_builder`, sem
+  expor o nome de login. Install e Config Sync devem permanecer equivalentes.
+- Forum Unit 49/354 PASS; PHPCS novo, Portal 970, boundary 1374, mapa 154,
+  SDC 516, design 2089 e fixtures 157 PASS. Runtime: campo ativo adicionado de
+  forma pontual após backup; View com 8 linhas e HTTP 200. `basic_html` ausente
+  nas fixtures causou avisos na renderização; browser e resposta real pendentes.
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.31 — seguir e salvar tópicos ACULTA — 2026-10-19
 
 - As Flags individuais `seguir_topico` e `salvar_topico` passam a aceitar o

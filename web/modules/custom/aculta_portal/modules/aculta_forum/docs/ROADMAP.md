@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.32` | Contagem, atividade e identidade pública do último comentarista na View de tópicos | Campo Core `last_comment_uid` oculto; hook injeta cartão `author_forum` pelo `aculta_user`, sem usar nome de login. Teste de equivalência entre install/sync adicionado; execução e Runtime/browser pendentes. Contagem publicada tem Kernel PASS; ordenação positiva e invalidação após moderação seguem pendentes |
 | Não marcada | Contagem e atividade na View de tópicos | Kernel MariaDB confirma `comment_count = 1` com resposta publicada, exclui pendente e preserva o agregado após mover categoria; Runtime tem 0 respostas, então ordenação positiva, invalidação após moderação e inspeção visual seguem pendentes |
 | Não marcada | Contagem de respostas em tópicos próprios | Implementada na aba privada Fórum de Minha Conta: cada tópico da pessoa usa `comment_count` de Comment Core; validação direcionada pendente nesta subfase |
 | `0.1.0-dev.31` | Seguir e salvar tópicos | Flags existentes `seguir_topico`/`salvar_topico` aceitam o bundle ACULTA; links e serviços de Flag confirmados no Runtime (HTTP/browser e alteração de estado pela interface pendentes) |
