@@ -1,5 +1,16 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.6 — transportes, código SMTP e failover (F2) — 2026-10-20
+
+- `AcultaMailer::deliver()` devolve `SendResult` (aceito, ou falha com classe e código SMTP). `send()` continua `bool`.
+- Código SMTP real: subscriber de `FailedMessageEvent` guarda o código por correlação; `SmtpReplyClassifier` decide permanente (5xx) ou temporário (4xx e sem código).
+- Transporte por mensagem pelo cabeçalho `X-Transport`; padrão `smtp` (Hostinger), fallback `smtp2go`.
+- O worker usa o resultado: erro permanente encerra; temporário reagenda e troca de transporte.
+- Registro do envio grava o código (`smtp_554`, `smtp_550`), sem texto livre do provedor.
+- Testes Kernel de ponta a ponta com um transporte de teste que dispara a falha (550, 421 e failover pela fila).
+- Runtime: mensagens reais para `example.invalid` pelos dois transportes (554 e 550, ambos permanentes). Registros de teste removidos.
+- `docs/TRANSPORTS.md`. Pendente: diagnóstico de SMTP.
+
 ## 0.1.0-dev.5 — painel de envios (F8) — 2026-10-20
 
 - Painel `/painel-administrativo/configuracoes/aculta/envios-de-email` (permissão `administer aculta_mailer`): contagens de 1, 7 e 30 dias por estado, tipo e transporte.

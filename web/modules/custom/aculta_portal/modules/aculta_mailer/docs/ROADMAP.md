@@ -7,7 +7,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 |---|---|---|
 | F0 | Auditoria ([AUDIT](AUDIT.md)), pesquisa ([UPSTREAM](UPSTREAM.md)), arquitetura ([ARCHITECTURE](ARCHITECTURE.md)) | Concluída nesta PR |
 | F1 | Fundação: `MailMessage`, `MailStatus`, `MessageIdFactory`, `RetrySchedule`, contrato `AcultaMailerInterface`, testes unitários | Em andamento nesta PR |
-| F2 | Transporte: failover Hostinger → SMTP2GO e classificação SMTP (`TransportFailover`, `SmtpReplyClassifier`) concluídos e testados; adaptador do Symfony Mailer por DSN, diagnóstico e fallback no envio real | Parcial (lógica pronta) |
+| F2 | Transporte: envio por transporte (`X-Transport`), código SMTP real, failover Hostinger → SMTP2GO e validação com mensagens reais no Runtime (`docs/TRANSPORTS.md`) | Parcial (envio e failover prontos; diagnóstico pendente) |
 | F3 | Templates: registro de tipos por tag (`MailTypeInterface`) concluído; Config Entity `aculta_mailer_template`, Twig, variáveis controladas, preview e envio de teste pendentes | Parcial (tipos prontos) |
 | F4 | Branding: `MailBrand` e `MailLayout`, herança, logo via `aculta_image` | Pendente |
 | F5 | Policy: adjusters por plugin, reutilização de `mailer_policy` até equivalência | Pendente |
