@@ -10,8 +10,10 @@ de e-mail, registrada antes em `EMAIL-CONFIRMATION-POLICY.md` §6.1.
 2. **Pedido novo substitui o anterior.** Quando o usuário pede outro link (confirmação, recuperação, acesso), o link
    antigo deixa de valer e o conteúdo guardado para reenvio do pedido antigo é cancelado. O novo link é gerado no
    pedido novo, com conteúdo novo.
-3. **Reenvio manual não reaproveita link de uso único.** O reenvio pela tela de falhas do `aculta_mailer` não aceita
-   mensagens de link de uso único: o pedido precisa ser refeito.
+3. **Reenvio manual gera pedido novo, nunca reaproveita link.** O reenvio pela tela de falhas do `aculta_mailer` não
+   remonta o conteúdo antigo: pede ao dono do link (`SingleUseLinkRegenerator`) um pedido novo, com token novo. O envio
+   desse pedido cancela o conteúdo anterior. O Portal gera a confirmação de e-mail; os demais links recusam o reenvio
+   até terem dono.
 4. **Exceção única: retentativa e failover automáticos da mesma mensagem.** A fila de envio e a troca de transporte
    (contingência) reenviam a mesma mensagem, com o mesmo conteúdo e o mesmo link, dentro das 24 horas. Não é um pedido
    novo: não cancela o conteúdo da própria mensagem e não gera link novo. Nenhum outro caminho automático pode reenviar
@@ -44,7 +46,7 @@ linha do Core ou do módulo.
 - **Nenhum `isExpired()` do projeto pode devolver `FALSE` fixo.** O gate reprova a validade infinita.
 - **Pedido novo cancela o anterior:** `AcultaMailer::deliver` chama `cancelPayloads` para o mesmo destinatário e tipo,
   excluindo a própria correlação (a exceção da retentativa).
-- **Reenvio manual recusado:** `MailResend::canResend` não aceita mensagem de `SingleUseLinkMail`.
+- **Reenvio gera pedido novo:** `MailResend` delega a `SingleUseLinkRegenerator` (serviço com tag `aculta_mailer.link_regenerator`); sem dono, o reenvio é recusado.
 - **Conteúdo guardado com prazo:** `purgeExpiredPayloads` (cron) apaga o conteúdo vencido.
 
 ## Para quem altera
@@ -52,6 +54,6 @@ linha do Core ou do módulo.
 - Um e-mail novo com link de uso único entra em `SingleUseLinkMail::KEYS` e no inventário deste documento, no mesmo commit.
 - Não aumente nenhum prazo acima de 24 horas. Se for preciso, a decisão muda aqui primeiro, com o responsável.
 - Não reintroduza `isExpired()` com retorno fixo. Não reenvie link de uso único a partir de conteúdo antigo fora da
-  exceção da seção 4.
+  exceção da seção 4. O reenvio manual passa sempre pelo dono do link.
 
 Gate: `php scripts/validate-single-use-links.php` (tolerância zero).

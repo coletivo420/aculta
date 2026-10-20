@@ -1,3 +1,10 @@
+## 0.4.0-dev.227 — reenvio de link de confirmação gera pedido novo
+
+- `EmailConfirmationLinkRegenerator`: dono do link de confirmação de e-mail para o reenvio manual do aculta_mailer. O reenvio passa pelo solicitante de confirmação: token novo, mensagem nova, e o conteúdo antigo é cancelado.
+- Serviço com tag `aculta_mailer.link_regenerator`.
+- Validado no Runtime de teste: falha real de confirmação guardada; reenvio gerou pedido novo enviado pela Hostinger; o conteúdo antigo ficou sem cifra e não pode mais ser reenviado.
+- Teste unitário do dono do link. Documento `LINKS-DE-USO-UNICO.md` atualizado.
+
 ## 0.4.0-dev.226 — links de acesso único com validade de 24 horas em todo o projeto
 
 - Decisão do responsável: links de acesso único valem 24 horas. Revoga a validade infinita da confirmação de e-mail (`EmailConfirmationEntity::isExpired()`, agora em `SingleUseLinkPolicy::isExpired()`).

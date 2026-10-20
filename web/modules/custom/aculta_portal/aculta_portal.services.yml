@@ -70,6 +70,11 @@ services:
     arguments: ['@email_confirmer', '@entity_type.manager', '@flood', '@lock.persistent', '@logger.channel.mail', '@aculta_mailer.mailer', '@config.factory', '@uuid', '@url_generator']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.email_confirmation_link_regenerator:
+    class: Drupal\aculta_portal\Email\EmailConfirmationLinkRegenerator
+    arguments: ['@aculta_portal.email_confirmation_requester', '@entity_type.manager']
+    tags:
+      - { name: aculta_mailer.link_regenerator }
   aculta_portal.email_confirmation_policy:
     class: Drupal\aculta_portal\Account\EmailConfirmationPolicy
     arguments: ['@user.data', '@entity_type.manager']

@@ -70,7 +70,7 @@ foreach (['web/modules/custom', 'web/themes/custom/aculta420/src'] as $dir) {
 $deliver = $read($root . '/web/modules/custom/aculta_portal/modules/aculta_mailer/src/Api/AcultaMailer.php');
 $check(str_contains($deliver, 'cancelPayloads('), 'AcultaMailer::deliver deve cancelar o conteúdo anterior de link de uso único (cancelPayloads).');
 $resend = $read($root . '/web/modules/custom/aculta_portal/modules/aculta_mailer/src/Delivery/MailResend.php');
-$check(str_contains($resend, 'SingleUseLinkMail::applies('), 'MailResend::canResend deve recusar reenvio de link de uso único.');
+$check(str_contains($resend, 'SingleUseLinkMail::applies(') && str_contains($resend, 'regenerate('), 'MailResend deve gerar o reenvio de link de uso único pelo dono (regenerate), sem reaproveitar conteúdo.');
 
 // Documentação e índice.
 $doc = $read($root . '/docs/portal/LINKS-DE-USO-UNICO.md');

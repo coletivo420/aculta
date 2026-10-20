@@ -620,7 +620,7 @@ O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem ex
 
 - Todo link de acesso único do projeto (confirmação, troca de e-mail, recuperação de senha, acesso de cadastro) vale **24 horas**, em todos os módulos. Nenhum prazo maior, nenhum `isExpired()` com retorno fixo.
 - Pedido novo de link substitui o anterior: o conteúdo guardado do pedido antigo é cancelado, e a cifra é gerada de novo.
-- Reenvio manual não reaproveita link de uso único. A única exceção é a retentativa e o failover automáticos da mesma mensagem.
+- Reenvio manual não reaproveita link de uso único: pede ao dono do link um pedido novo. A única exceção é a retentativa e o failover automáticos da mesma mensagem.
 - Regra, inventário e exceção: `docs/portal/LINKS-DE-USO-UNICO.md`. Gate: `php scripts/validate-single-use-links.php`.
 
 ## Política de commits para agentes de IA (regra permanente)
