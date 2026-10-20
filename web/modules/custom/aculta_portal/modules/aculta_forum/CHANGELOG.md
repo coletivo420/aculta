@@ -1,3 +1,13 @@
+## `0.1.0-dev.83` — exigir acesso ao tópico de origem para mover comentários — 2026-10-20
+
+- Kernel cobre conta com permissão operacional de movimento, mas sem `access
+  content`: a fonte e destinos são inacessíveis, e chamada direta não altera
+  o host. `ForumCommentMoverKernelTest`: 18 testes / 365 assertions PASS no
+  MariaDB dedicado; 19 depreciações Core/contrib. PHP CLI 8.4.26 abaixo da
+  baseline 8.5; lint, PHPCS, Drupal 11+ (975), fronteira (1450), mapa (152) e
+  `git diff --check` PASS.
+- Sem alteração no Runtime; RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.82` — exigir permissão dedicada para mover comentários — 2026-10-20
 
 - Kernel MariaDB cobre a negação quando a conta pode ler conteúdo/comentários,

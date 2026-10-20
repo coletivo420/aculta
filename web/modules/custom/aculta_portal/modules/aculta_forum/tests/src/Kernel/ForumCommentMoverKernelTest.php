@@ -547,6 +547,35 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   }
 
   /**
+   * The move permission cannot replace access to the source topic.
+   */
+  public function testMoveRequiresSourceTopicAccess(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $without_topic_access = $this->createMock(AccountInterface::class);
+    $without_topic_access->method('hasPermission')->willReturnCallback(
+      static fn (string $permission): bool => in_array($permission, [
+        'access comments',
+        'move aculta forum comments',
+      ], TRUE),
+    );
+    $without_topic_access->method('id')->willReturn(44);
+    $without_topic_access->method('isAnonymous')->willReturn(FALSE);
+    $without_topic_access->method('isAuthenticated')->willReturn(TRUE);
+
+    self::assertTrue($this->mover->access($comment, $without_topic_access)->isForbidden());
+    self::assertSame([], $this->mover->destinations($comment, $without_topic_access));
+    try {
+      $this->mover->move((int) $comment->id(), (int) $destination->id(), $without_topic_access);
+      self::fail('Move permission must not grant access to the source topic.');
+    }
+    catch (\InvalidArgumentException) {
+      self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+    }
+  }
+
+  /**
    * Form API submission moves only after the explicit confirmation.
    */
   public function testConfirmedFormApiSubmissionMovesTheComment(): void {

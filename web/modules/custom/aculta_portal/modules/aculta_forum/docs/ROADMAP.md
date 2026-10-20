@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.83` | Exigir acesso ao tópico fonte além da permissão de mover | Kernel MariaDB: permissão de mover sem `access content` não expõe destino nem altera o host; 18 testes/365 assertions PASS, 19 depreciações Core/contrib. PHP CLI 8.4.26 (baseline 8.5); lint, PHPCS e gates Portal PASS. Runtime DEFERRED. |
 | `0.1.0-dev.82` | Exigir permissão dedicada para mover comentários | Kernel MariaDB: sem `move aculta forum comments`, acesso e destinos negados e host preservado; 17 testes/348 assertions PASS, 19 depreciações de Core/contrib. PHP CLI 8.4.26 (baseline 8.5); lint, PHPCS e gates Portal PASS. Runtime DEFERRED. |
 | `0.1.0-dev.81` | Rejeitar movimento a destino fechado ou de outro purpose | Kernel MariaDB comprova bloqueio dos dois casos e preserva o host original; a fixture usa Domains Forum e main. Classe completa 16 testes/331 assertions PASS, com 19 depreciações; PHP CLI 8.4.26 abaixo da baseline 8.5. Revalidação X11 administrativa 19/19; Forum/filas 200, rota Revista antiga 404, sem 500; 768 px sem overflow e excesso conhecido de 3 px na tabela a 390 px. Nenhum conteúdo alterado. |
 | `0.1.0-dev.80` | Preservar traduções ao mover comentário | Kernel MariaDB confirma que um Comment publicado mantém o idioma original e a tradução `fr`, inclusive assunto, corpo e status, ao mudar de tópico. Suite do mover 15 testes/315 assertions PASS; 19 depreciações Core/contrib. PHP CLI 8.4.26 (baseline 8.5); Runtime DEFERRED. |

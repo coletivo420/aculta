@@ -1,5 +1,16 @@
 # Matriz de testes por fase
 
+## dev.83 — permissão de mover não substitui acesso ao tópico fonte
+
+- Kernel concede `move aculta forum comments` e `access comments`, mas nega
+  `access content`. A conta não pode ver a fonte ou listar destinos; chamada
+  direta de mover é recusada sem alterar o host.
+- `ForumCommentMoverKernelTest`: 18 testes / 365 assertions PASS no MariaDB
+  dedicado; 19 depreciações Core/contrib. PHP CLI 8.4.26 abaixo da baseline
+  8.5. Runtime não alterado; RUNTIME STATUS: DEFERRED.
+- Lint, PHPCS, Drupal 11+ (975 checks), fronteira módulo/tema (1450 checks),
+  mapa (152 checks) e `git diff --check`: PASS.
+
 ## dev.82 — negar movimentação sem permissão dedicada
 
 - Kernel cria comentário publicado e destino público elegível. A conta de
