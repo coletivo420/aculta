@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Kernel;
 
+use Drupal\aculta_forum\Form\ForumCommentMoveForm;
 use Drupal\aculta_forum\Service\ForumCommentMover;
 use Drupal\aculta_forum\Service\ForumDiscussionWriteGuard;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -13,6 +14,7 @@ use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Lock\DatabaseLockBackend;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -376,6 +378,45 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertTrue($this->mover->access($comment, $this->account)->isForbidden());
     $this->expectException(\InvalidArgumentException::class);
     $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+  }
+
+  /**
+   * Form API submission moves only after the explicit confirmation.
+   */
+  public function testConfirmedFormApiSubmissionMovesTheComment(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $form_state = new FormState();
+    $form_state->setValues([
+      'destination' => (string) $destination->id(),
+      'confirm_move' => 1,
+    ]);
+    $form = new ForumCommentMoveForm($this->mover, $this->account);
+
+    $this->container->get('form_builder')->submitForm($form, $form_state, $comment);
+
+    self::assertSame([], $form_state->getErrors());
+    self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+  }
+
+  /**
+   * Form API rejects an unconfirmed move without changing the comment host.
+   */
+  public function testFormApiRejectsMoveWithoutConfirmation(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $form_state = new FormState();
+    $form_state->setValues([
+      'destination' => (string) $destination->id(),
+    ]);
+    $form = new ForumCommentMoveForm($this->mover, $this->account);
+
+    $this->container->get('form_builder')->submitForm($form, $form_state, $comment);
+
+    self::assertNotSame([], $form_state->getErrors());
+    self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
   }
 
   /**
