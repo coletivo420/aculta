@@ -33,6 +33,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | --- | --- | --- |
 | Não marcada | Contagem e atividade na View de tópicos | Runtime: oito tópicos com `0 respostas`; sort ACULTA executa fórmula Core `GREATEST(changed, last_comment_timestamp)` em ordem descendente e data renderizada. Caso positivo, invalidação após moderação e inspeção visual pendentes |
 | Não marcada | Hierarquia no índice público de categorias | Configuração e Runtime PASS: a View apresenta os 12 termos e associa corretamente as 8 subcategorias aos pais; inspeção visual continua pendente |
+| Não marcada | Lista personalizada de discussões não lidas | View `/discussoes/nao-lidas` usa History contrib com acesso `authenticated`, filtros públicos fixos e sem cache compartilhado; Runtime query como uid 5 retornou 7 resultados e anônimo recebeu 403; HTTP autenticado/browser pendente |
 | Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit e Kernel PASS; Functional/Runtime pendentes. Movimento de comentários continua bloqueado pela prova de integridade em `MOVE-TOOLS.md`. |
 | `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas, navegação HTTP e relação pai/filho; inspeção visual pendente |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
@@ -272,6 +273,17 @@ validar cache/invalidação no campo compartilhado durante a implementação.
 
 ## `0.1.0-dev.10` — Advanced Forum: leitura e estatísticas
 
+Subfase implementada: View `/discussoes/nao-lidas` com plugin de filtro e
+indicador `history_user_timestamp` do projeto History, incluindo novas
+respostas. O display exige papel autenticado, preserva filtros de status,
+bundle, Domain ativo, vocabulário de categoria e SQL rewrite, e desativa cache
+compartilhado por usuário. O projeto `drupal/history` foi promovido a requisito
+direto do Composer para não desaparecer com `drupal/forum`; segue o alerta de
+falta de cobertura da política de avisos de segurança em
+`MIGRATION-REMOVAL.md`. Runtime: como uid 5, a consulta encontrou 7 discussões
+novas/atualizadas; o acesso anônimo HTTP recebeu 403. Renderização HTTP com
+sessão e inspeção visual permanecem pendentes.
+
 Views Latest/Top/New/Unread/sem resposta, histórico de leitura por participante,
 marcar como lido e primeiro conteúdo não lido, estatísticas e atividade
 cacheáveis. Antes de juntar novos/não lidos numa navegação unificada, prototipar
@@ -284,15 +296,14 @@ publicação e Entity Access.
 
 **Compatibilidade da leitura:** no Core 11.4.10 instalado, History Core declara
 `lifecycle: deprecated` e será removido no Drupal 12. O projeto contrib
-`drupal/history` 1.0.0, compatível com Core `>11.3`, está instalado e habilitado
-no Runtime de teste somente por dependência transitiva de `drupal/forum`; sua
-remoção pode retirar a função junto com o Forum contribuído. Os plugins
-`history_user_timestamp` e `history_read` oferecem os pontos de integração
-esperados. Antes de implementar leitura/não lidos, avaliar explicitamente a
-política de manutenção e o aviso de que o projeto não está coberto pela política
-de security advisories; se for escolhido, adicionar requisito Composer direto
-na etapa coordenada com a remoção do Forum. Core History foi depreciado no 11.4
-e removido no 12 ([depreciação](https://www.drupal.org/node/3567647), [remoção](https://www.drupal.org/node/3570700)); a recomendação oficial indica instalar a versão contrib para manter a função ([guia](https://www.drupal.org/docs/core-modules-and-themes/deprecated-and-obsolete)).
+`drupal/history` 1.0.0, compatível com Core `>11.3`, estava instalado no Runtime
+somente por dependência transitiva de `drupal/forum`; a dependência direta foi
+adicionada ao Composer para manter a função após remover Forum contrib. Os
+plugins `history_user_timestamp` e `history_read` oferecem os pontos de
+integração usados pela lista personalizada. A versão 1.0.0 não está coberta
+pela política de avisos de segurança do Drupal.org, portanto manutenção e
+releases precisam ser acompanhadas. Core History foi depreciado no 11.4 e
+removido no 12 ([depreciação](https://www.drupal.org/node/3567647), [remoção](https://www.drupal.org/node/3570700)); a recomendação oficial indica instalar a versão contrib para manter a função ([guia](https://www.drupal.org/docs/core-modules-and-themes/deprecated-and-obsolete)).
 
 ## `0.1.0-dev.11` — Advanced Forum: apresentação
 

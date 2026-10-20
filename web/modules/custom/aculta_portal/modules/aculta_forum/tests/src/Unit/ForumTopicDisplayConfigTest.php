@@ -224,6 +224,46 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * The unread listing is private and retains public-list scoping.
+   */
+  public function testUnreadListingUsesHistoryAndKeepsForumScope(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $filename = 'views.view.aculta_forum_unread_topics.yml';
+    $view = Yaml::parseFile($module_path . '/config/install/' . $filename);
+    $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+    $public = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_public_topics.yml');
+    $module_info = Yaml::parseFile($module_path . '/aculta_forum.info.yml');
+    $composer = json_decode((string) file_get_contents($repository_path . '/composer.json'), TRUE, flags: JSON_THROW_ON_ERROR);
+    self::assertSame($view, $sync);
+    self::assertContains('history', $view['dependencies']['module']);
+    self::assertContains('drupal:history', $module_info['dependencies']);
+    self::assertSame('^1.0', $composer['require']['drupal/history']);
+
+    $options = $view['display']['default']['display_options'];
+    self::assertSame('role', $options['access']['type']);
+    self::assertSame(['authenticated' => 'authenticated'], $options['access']['options']['role']);
+    self::assertSame('none', $options['cache']['type'], 'Per-user read state must not share a cached result.');
+    foreach (['status', 'type', 'field_domain_source_target_id', 'field_aculta_categories_target_id'] as $filter) {
+      self::assertSame(
+        $public['display']['default']['display_options']['filters'][$filter],
+        $options['filters'][$filter],
+        sprintf('The unread View preserves the fixed public-list filter %s.', $filter),
+      );
+    }
+    self::assertFalse($options['query']['options']['disable_sql_rewrite']);
+    self::assertSame('history_user_timestamp', $options['filters']['timestamp']['plugin_id']);
+    self::assertSame('history', $options['filters']['timestamp']['table']);
+    self::assertSame('history_user_timestamp', $options['fields']['timestamp']['plugin_id']);
+    self::assertTrue($options['fields']['timestamp']['comments']);
+    self::assertSame('discussoes/nao-lidas', $view['display']['page_unread']['display_options']['path']);
+
+    $tasks = Yaml::parseFile($module_path . '/aculta_forum.links.task.yml');
+    self::assertSame('view.aculta_forum_unread_topics.page_unread', $tasks['aculta_forum.unread_topics']['route_name']);
+    self::assertSame('view.aculta_forum_public_topics.page_discussions', $tasks['aculta_forum.unread_topics']['base_route']);
+  }
+
+  /**
    * The Forum admin listing excludes unrelated and legacy node content.
    */
   public function testAdministrativeForumListingIsScopedAndAccessAware(): void {

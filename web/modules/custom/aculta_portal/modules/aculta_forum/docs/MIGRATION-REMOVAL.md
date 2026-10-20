@@ -1,16 +1,14 @@
 # Plano de retirada do Drupal Forum contrib
 
 Status: dev5 em auditoria; pré-requisitos operacionais para remoção ainda não
-foram satisfeitos. O inventário de código/configuração foi atualizado em
-2026-10-19 e o Runtime de teste foi consultado em modo somente leitura.
-`drupal/forum` 1.1.3 continua instalado e habilitado. Nenhuma entidade,
-configuração, Composer ou Runtime foi alterado nesta auditoria.
+foram satisfeitos. `drupal/forum` 1.1.3 continua instalado e habilitado; não
+houve alteração de conteúdo ou uninstall.
 
 ## Inventário conferido
 
 | Tipo | Referências atuais observadas |
 | --- | --- |
-| Composer | `composer.json` requer `drupal/forum:^1.1.3`; lock 1.1.3 requer Core `~11.3 || ~12` e `drupal/history:^1`. |
+| Composer | `drupal/forum:^1.1.3` permanece no projeto e requer `drupal/history:^1`; `drupal/history:^1.0` agora também é requisito direto do projeto para manter os marcadores pessoais de leitura quando Forum contrib for removido. |
 | Extensão | `config/sync/core.extension.yml` habilita `forum`; módulo instalado em `web/modules/contrib/forum`. |
 | Modelo de conteúdo | Node bundle `forum`, vocabulary `forums`, Node field `taxonomy_forums`, Comment bundle `comment_forum`, campo `comment_forum` no Node. Configs opcionais do módulo contrib definem ainda displays, formulário e settings. |
 | Config Sync | `core.entity_*` de node.forum/comment_forum; `node.type.forum.yml`; taxonomy.vocabulary.forums.yml; `views.view.aculta_forum_topics.yml`; `flag.sinalizar_comentario` aponta a bundle `comment_forum`; `field_discussao` exportado em blog aponta à Node bundle `forum`; campos de autoria legada. |
@@ -140,6 +138,11 @@ Forum contrib, o pacote Composer, os tópicos e o vocabulário não foram removi
   fluxos vazios por contexto e desativar os consumidores antigos, excluir os
   Nodes de tópico e Comments do Forum legado; repetir consulta e confirmar zero
   antes do uninstall oficial. Manter conteúdo de publicação e demais entidades.
+- Preservar `drupal/history` como dependência independente antes de remover
+  `drupal/forum`; hoje a versão contrib substitui History Core e implementa
+  leitura do usuário. A versão 1.0.0 não é coberta pela política de avisos de
+  segurança do Drupal.org; esse risco e a necessidade de acompanhar releases
+  devem permanecer no plano de operação.
 - O responsável autorizou em princípio excluir apenas conteúdo antigo do Forum
   no teste, condicionado à confirmação de ambiente e escopo. Isso não cobre
   publicações, contas, LMS, Wiki nem outras entidades. A validação de restore e

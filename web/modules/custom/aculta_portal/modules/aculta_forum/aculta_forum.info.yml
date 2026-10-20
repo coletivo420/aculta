@@ -10,6 +10,7 @@ dependencies:
   - ctools_views:ctools_views
   - domain_source:domain_source
   - drupal:comment
+  - drupal:history
   - drupal:views
   - drupal:node
   - drupal:taxonomy

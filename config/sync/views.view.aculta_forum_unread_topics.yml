@@ -1,0 +1,502 @@
+uuid: d744fa9e-6c95-4f88-9ee2-c7b8eaeb394d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.node.aculta_forum_topic.field_domain_source
+    - field.field.node.aculta_forum_topic.field_aculta_categories
+    - node.type.aculta_forum_topic
+    - taxonomy.vocabulary.aculta_forum_categories
+  module:
+    - ctools_views
+    - domain_source
+    - history
+    - comment
+    - node
+    - taxonomy
+    - user
+id: aculta_forum_unread_topics
+label: 'Tópicos não lidos do ACULTA Forum'
+module: views
+description: 'Tópicos públicos novos ou atualizados para a conta autenticada, respeitando domínio e acesso.'
+tag: forum
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Tópicos não lidos'
+      fields:
+        rendered_entity:
+          id: rendered_entity
+          table: node
+          field: rendered_entity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: rendered_entity
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          hide_alter_empty: true
+          view_mode: teaser
+        timestamp:
+          id: timestamp
+          table: history
+          field: timestamp
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: history_user_timestamp
+          label: Novidade
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          link_to_node: false
+          comments: true
+        comment_count:
+          id: comment_count
+          table: comment_entity_statistics
+          field: comment_count
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: numeric
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          set_precision: false
+          precision: 0
+          decimal: .
+          separator: ''
+          format_plural: false
+          format_plural_string: !!binary QGNvdW50IHJlc3Bvc3RhA0Bjb3VudCByZXNwb3N0YXM=
+          prefix: ''
+          suffix: ''
+        last_updated:
+          id: last_updated
+          table: comment_entity_statistics
+          field: last_updated
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: comment_ces_last_updated
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          hide_alter_empty: true
+          date_format: short
+          custom_date_format: ''
+          timezone: ''
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 20
+          total_pages: null
+          id: 0
+          tags:
+            next: 'Avançar ›'
+            previous: '‹ Voltar'
+            first: '« Primeiro'
+            last: 'Último »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Itens por página'
+            items_per_page_options: '10, 20, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: Todos
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      access:
+        type: role
+        options:
+          role:
+            authenticated: authenticated
+      cache:
+        type: none
+        options: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: true
+          content: 'Não há discussões novas ou atualizadas para sua conta.'
+          tokenize: false
+      sorts:
+        sticky:
+          id: sticky
+          table: node_field_data
+          field: sticky
+          entity_type: node
+          entity_field: sticky
+          plugin_id: standard
+          order: DESC
+        last_updated:
+          id: aculta_forum_last_activity
+          table: comment_entity_statistics
+          field: aculta_forum_last_activity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: aculta_forum_last_activity
+          order: DESC
+          expose:
+            label: ''
+          exposed: false
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            aculta_forum_topic: aculta_forum_topic
+        field_domain_source_target_id:
+          id: field_domain_source_target_id
+          table: node__field_domain_source
+          field: field_domain_source_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: domain_source
+          operator: or
+          value:
+            _active: _active
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+        field_aculta_categories_target_id:
+          id: field_aculta_categories_target_id
+          table: node__field_aculta_categories
+          field: field_aculta_categories_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_aculta_categories_target_id_op
+            label: Categoria
+            description: ''
+            use_operator: false
+            operator: field_aculta_categories_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: categoria
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: categoria
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: aculta_forum_categories
+          type: select
+          hierarchy: true
+          limit: true
+          error_message: false
+        timestamp:
+          id: timestamp
+          table: history
+          field: timestamp
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: history_user_timestamp
+          operator: '='
+          value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: '0'
+            label: ''
+            description: ''
+            use_operator: false
+            operator: '0'
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      style:
+        type: default
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          uses_fields: true
+      row:
+        type: fields
+        options: {  }
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_unread:
+    id: page_unread
+    display_title: 'Tópicos não lidos'
+    display_plugin: page
+    position: 2
+    display_options:
+      title: 'Discussões não lidas'
+      defaults:
+        title: false
+        header: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<p><a href="/discussoes">Todas as discussões</a> · <a href="/categorias">Ver categorias</a></p>'
+          tokenize: false
+      display_extenders: {  }
+      path: discussoes/nao-lidas
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+

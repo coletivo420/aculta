@@ -1,3 +1,20 @@
+# Implementação não marcada — lista personalizada de não lidos — 2026-10-19
+
+- Criada View `/discussoes/nao-lidas` com filtros de History por usuário e
+  indicador de conteúdo novo/atualizado que inclui comentários. Exige o papel
+  autenticado, mantém filtros de publicação, bundle, Domain, categoria e
+  acesso à entidade; usa cache `none` para não compartilhar resultado pessoal.
+- `drupal/history:^1.0` promovido de dependência transitiva de `drupal/forum`
+  a requisito direto para preservar a função após a futura remoção do Forum.
+  Essa versão não está coberta pela política de avisos de segurança do
+  Drupal.org; o risco e acompanhamento de releases estão documentados.
+- Runtime de teste: configuração criada sem alterar conteúdo; uid 5 autorizado
+  pelo plugin e query retorna 7 itens; usuário anônimo recebe 403. HTTP com
+  sessão autenticada e inspeção visual pendentes. Nenhum registro de leitura
+  foi gravado; o índice público continua com seus caminhos/filtros atuais.
+- PHPUnit Forum: 14 testes / 157 assertions; gates Portal 11+, fronteira, mapa,
+  slugs, Composer validate e PHPCS PASS. RUNTIME STATUS: PARTIAL.
+
 # Implementação não marcada — hierarquia no índice de categorias — 2026-10-19
 
 - A View `/categorias` agora configura a relação Taxonomy Core `Parent` e uma

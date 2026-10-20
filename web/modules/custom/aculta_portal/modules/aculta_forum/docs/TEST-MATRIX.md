@@ -37,6 +37,27 @@
 - RUNTIME STATUS: PASS para rotas, View e navegação HTTP. Inspeção visual e
   apresentação hierárquica permanecem pendentes para a fase ACULTA420.
 
+## Evidência inicial dev.10 — tópicos não lidos
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 14 testes / 157 assertions PASS;
+  a View de não lidos mantém os filtros da listagem pública, exige role
+  `authenticated`, usa o filter/field plugin de History e desativa cache
+  compartilhado.
+- Composer: `drupal/history:^1.0` foi declarado diretamente para sobreviver à
+  retirada futura de `drupal/forum`, sua dependência anterior. Composer validate
+  e audit reportam nenhum advisory conhecido; o projeto History declara que não
+  está coberto pela política de avisos do Drupal.org. Acompanhamento de releases
+  permanece obrigatório.
+- Runtime `toca`: Views data confirmou o plugin instalado e a query SQL juntou
+  History pelo uid atual. A conta uid 5 passou no plugin de acesso e encontrou
+  7 discussões novas/atualizadas; o anônimo recebeu HTTP 403 em
+  `/discussoes/nao-lidas`. `/discussoes` é caminho interno bloqueado (404).
+  Nenhum Node, Comment ou registro de leitura foi alterado.
+- Renderização direta da View pelo Drush emitiu `Missing text format:
+  basic_html` nos teasers das fixtures; mesmo formato já é usado pela listagem
+  pública e requer investigação própria. HTTP com sessão autenticada e
+  inspeção visual pendentes. RUNTIME STATUS: PARTIAL.
+
 Esta matriz separa plano das evidências já executadas. Na `0.1.0-dev.4`, a
 Context API pública e configuração nativa foram exercitadas no Runtime de teste.
 Na dev.5, um teste Kernel prova storage Comment compartilhado em três bundles
