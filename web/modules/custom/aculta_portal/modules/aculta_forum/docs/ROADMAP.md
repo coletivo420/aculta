@@ -124,7 +124,10 @@ adapters e depois de provar isolamento por contexto. Ver [contratos de contexto]
 
 ## `0.1.0-dev.5` — Retirada do Forum contrib
 
-- **Em andamento: conteúdo antigo removido; módulo contrib ainda instalado.**
+- **Concluída no Runtime de teste em 2026-10-20:** os Nodes `forum`, termos
+  `forums`, vínculos `field_discussao`, storage/configuração legada e módulo
+  contrib foram removidos na ordem oficial; `drupal/forum` não está instalado
+  no Composer. Produção não foi alterada.
 - Provider editorial iniciado em `aculta_forum`; Unit access/cache PASS e prova
   Kernel confirma storage Comment compartilhado entre `article`, `blog` e tópico.
 - `article` e `blog` agora têm Config Sync/configuração de instalação para
@@ -133,10 +136,11 @@ adapters e depois de provar isolamento por contexto. Ver [contratos de contexto]
   compartilhado e a política pública. A configuração das duas instâncias e dos
   displays full foi aplicada parcialmente no Runtime; status default aberto
   verificado em memória, sem persistir Nodes ou Comments.
-- O Runtime de teste tinha 30 nodes `forum`, 8 termos `forums` e 12 vínculos
-  editoriais; F-D33 removeu todos esses dados sem migrá-los. As 12 categorias
-  ACULTA permanecem. `aculta_magazine`, `aculta_user`, Messenger, Views e tema
-  ainda têm referências de código/config a auditar; ver `docs/MIGRATION-REMOVAL.md`.
+- O Runtime de teste tinha 30 Nodes `forum`, 8 termos `forums` e 12 vínculos
+  editoriais; F-D33 removeu esses dados sem migrá-los. As 12 categorias ACULTA
+  permanecem. Os consumidores ativos de Magazine, `aculta_user`, Messenger,
+  Views e tema foram retirados nas entregas posteriores; a auditoria de resíduos
+  e as evidências estão em `docs/MIGRATION-REMOVAL.md`.
 - Em Magazine 0.1.0-dev.10/.11, hooks de insert/update/delete e a API
   `ForumTopicSync` foram removidos. `LegacyPublicationTopicLookup` somente lê
   vínculos históricos para apresentação/conversão. Em `aculta_user 0.4.0-dev.38`,
@@ -144,11 +148,14 @@ adapters e depois de provar isolamento por contexto. Ver [contratos de contexto]
   confirmar o campo Comment direto nas 12 publicações referenciadas.
   Os tópicos-casca antigos foram apagados em dev.45; não importar conteúdo
   antigo para os novos contextos.
-- Inventário pré-operação, backup íntegro e contagens zero concluídos. Restore
-  isolado e análise de efeitos de uninstall continuam pendentes.
+- Inventário pré-operação, backup íntegro e contagens zero concluídos. O
+  uninstall oficial e a remoção do pacote Composer também foram concluídos; o
+  restore em base isolada e a reconciliação integral do Config Sync permanecem
+  pendentes por drift preexistente.
 - Troca de tipo da publicação re-hospeda Comments compartilhados antes de remover o Node antigo; transação e runtime ainda não foram exercitados nesta entrega.
-- Exclusão escopada aprovada em ambiente de teste, uninstall oficial,
-  remoção do Composer posterior e verificação de resíduos.
+- Exclusão escopada, uninstall oficial, remoção posterior do pacote Composer e
+  verificação de resíduos concluídos no ambiente de teste; não executar o fluxo
+  em produção sem decisão e plano próprios.
 - Produção não é tocada por execução automática.
 
 ## `0.1.0-dev.6` — Growroom420 funcional
@@ -171,14 +178,16 @@ Core autoriza a conta atual, com cacheability de permissões e participação. A
 ação ainda aguarda apresentação completa no ACULTA420 e validação visual;
 nenhuma submissão persistida ocorreu. Testes Unit e gates estáticos direcionados
 passaram; Runtime confirmou raiz 200, ação ausente para anônimo e rota de criação
-403. Usuário autorizado e navegador permanecem sem homologação.
+403. Usuário autorizado e envio persistido permanecem sem homologação. A entrada
+visual ganhou categorias e atividade lado a lado/empilhadas em dev.52; o
+Runtime continua sem tópicos para validar cartão/linha com conteúdo real.
 
-Histórico até `.187`: Dev.11 adicionou a View `aculta_forum_public_topics` e o campo de domínio
-canônico; dev.12 conectou a Page display à raiz do purpose forum por meio do
-caminho interno `/discussoes`. Runtime confirmou raiz 200, rota classificada no
-purpose `forum`, lista vazia e 404 direto para `/discussoes` e `/forum`. O bloco
-do acervo contrib permanece sem colocação. Criação/resposta persistida, tema e
-remoção do legado continuam pendentes.
+Histórico até `.187`: Dev.11 adicionou a View `aculta_forum_public_topics` e o
+campo de domínio canônico; dev.12 conectou a Page display à raiz do purpose
+forum por meio do caminho interno `/discussoes`. As verificações iniciais de
+raiz 200 e rotas internas são históricas; dev.52 combina a Page com o bloco de
+categorias CTools. Criação/resposta persistida, cartão/listagem com conteúdo e
+UX completa continuam pendentes.
 
 Histórico até `.187`: Dev.15 adiciona filtro exposto de categoria ao Page display, usando Taxonomy e
 Views Core no vocabulário ACULTA. Runtime confirmou o plugin, renderização do
@@ -378,15 +387,13 @@ modo claro/escuro, foco/teclado e ausência de overflow. Guardar capturas de
 homologação fora do repositório quando contiverem dados do Runtime e registrar
 no relatório as telas, dimensões, divergências e correções.
 
-Revisão inicial X11 em 2026-10-20 foi parcial: entrada e categorias em 1024,
-768 e 390 px; comparação da entrada ACULTA/Ubuntu em 1024 px. Grade de
-categorias refluindo sem overflow horizontal observado. A entrada ACULTA ainda
-separa a lista vazia e a página de categorias, enquanto a referência mostra
-categorias e atividade recente lado a lado. Dev.52 implementou a composição:
-colunas em 1024 px e lista seguida pela barra de categorias em 768/390 px. As
-capturas privadas e limites estão registrados em `TEST-MATRIX.md`. Dev.11 não
-está visualmente homologada: faltam modo escuro, foco/teclado, listagem com
-conteúdo, tópico e composer.
+Revisão visual X11 em 2026-10-20: entrada e categorias em 1024, 768 e 390 px,
+comparadas à entrada Ubuntu em 1024 px. Dev.52 implementou categorias junto à
+atividade: colunas em 1024 px e lista seguida pelas categorias em 768/390 px.
+Claro foi observado nos três tamanhos; escuro em 1024/390 px. Tab confirmou
+foco visível no atalho, marca e busca. As capturas privadas e limites estão em
+`TEST-MATRIX.md`. A homologação segue parcial: falta fluxo completo de teclado,
+leitor de tela, listagem com conteúdo, tópico, respostas e composer.
 
 ## `0.1.0-dev.12` — Participação e moderação
 

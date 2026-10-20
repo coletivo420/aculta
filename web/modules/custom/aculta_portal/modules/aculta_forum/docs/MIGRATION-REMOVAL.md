@@ -62,11 +62,13 @@ vínculos vazios, preservando as publicações. `field_aculta_discussion` segue
 como Comment direto da Revista. A submissão de Comment real continua pendente;
 isso não reverte a decisão de manter vazio o Fórum antigo.
 
-Este estudo é somente código/documentação: nenhum validator foi contornado,
-nenhum campo/termo/Node foi alterado e o módulo continua habilitado. A referência
-API confirma que o validator existe para impedir perda de dados durante o
-uninstall; ver [registro de mudança do Core](https://www.drupal.org/node/2404451)
-e [API do validator](https://api.drupal.org/api/drupal/core%21modules%21forum%21src%21ForumUninstallValidator.php/function/ForumUninstallValidator%3A%3Avalidate/11.x).
+Na auditoria somente leitura de 2026-10-19, nenhum validator foi contornado e
+nenhum campo/termo/Node foi alterado; naquele snapshot o módulo ainda estava
+habilitado. A retirada posterior seguiu o validator oficial, conforme o registro
+de execução abaixo. A referência API confirma que o validator existe para
+impedir perda de dados durante o uninstall; ver [registro de mudança do
+Core](https://www.drupal.org/node/2404451) e [API do
+validator](https://api.drupal.org/api/drupal/core%21modules%21forum%21src%21ForumUninstallValidator.php/function/ForumUninstallValidator%3A%3Avalidate/11.x).
 
 ### Registro histórico de consumidores removidos
 
