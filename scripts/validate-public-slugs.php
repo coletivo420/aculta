@@ -27,7 +27,7 @@ $contribBaseline = [
   'entity.group.revision_delete_form', 'social_auth.network.redirect', 'social_auth.network.callback',
   'social_auth.user.profiles', 'change_mail_page.change_mail', 'change_mail_page.change_mail_form',
   'entity.webform_submission.user', 'profile.user_page.single', 'profile.user_page.multiple',
-  'profile.user_page.add_form', 'diff.revisions_diff', 'entity.user.cancel_email_change',
+  'profile.user_page.add_form', 'diff.revisions_diff',
 ];
 
 $forbidden = ['course', 'courses_', 'group', 'node', 'user', 'lesson', 'activity', 'answer', 'taxonomy', 'comment', 'forum_', 'block', 'views'];
