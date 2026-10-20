@@ -24,8 +24,19 @@
   Comments reais e leitor de tela/AT seguem pendentes. Rolagem X11 detectou
   barra sob o cabeçalho; correção de offset do tema dev.111 revalidada a 500 px
   com a barra visível (topo 56 px) e status 4/6. Teste exato em 390 CSS px
-  encontrou controles sticky cobrindo a mensagem; tema dev.112 remove o sticky
-  no mobile e aguarda revalidação. RUNTIME STATUS: PARTIAL.
+  encontrou controles sticky cobrindo a mensagem; o tema dev.112 remove o
+  sticky no mobile e foi revalidado em 390 × 844 CSS px: controles em fluxo,
+  status 5/6 pela rolagem, sem sobreposição e sem overflow. Runtime segue
+  PARTIAL porque Comments reais e leitor de tela/AT não foram homologados.
+  Revalidação posterior dos movers: Forum Unit 82/497; Kernels de comentário e
+  tópico 16/341 no MariaDB `aculta_simpletest`; Portal 975, fronteira 1419,
+  mapa 152 e Design Foundations 2097 PASS. Runtime `toca`, URI
+  `https://growroom420.aculta.toca.net.br`: rota registrada com permissão
+  `move aculta forum comments`, opção ausente (fail-closed), rota anônima com
+  ID inexistente 404, raiz 200 e 0 tópicos/Comments. Não houve login, alteração
+  de configuração ou escrita no Runtime; homologação autenticada continua
+  pendente. Os Kernels emitiram 19 depreciações de Core/contrib. PHP CLI
+  8.4.26 permanece abaixo da baseline 8.5.
 
 ## `0.1.0-dev.62` — corrigir filas de moderação do Fórum — 2026-10-20
 

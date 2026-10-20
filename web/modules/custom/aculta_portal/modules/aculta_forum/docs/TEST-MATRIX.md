@@ -35,6 +35,25 @@
   Captura privada `progress-390.png`.
   Runtime global PARTIAL.
 
+### Revalidação dos movers no Runtime de teste — 2026-10-20
+
+- `ForumCommentMoverKernelTest` e `ForumTopicMoverKernelTest`: execução conjunta
+  PASS, 16 testes/341 assertions em `aculta_simpletest`; 19 depreciações de
+  Core/contrib. Forum Unit: 82 testes/497 assertions PASS.
+- Portal Drupal 11+ 975, fronteira 1419, mapa módulo/tema 152 e ACULTA420
+  Design Foundations 2097 PASS. PHP CLI 8.4.26 está abaixo da baseline 8.5.
+- Preflight confirmou `hostname=toca`, branch da PR #297 e Drush no Drupal
+  11.4.10, banco `aculta_runtime`, URI
+  `https://growroom420.aculta.toca.net.br`. A rota de movimento está
+  registrada e exige `move aculta forum comments`; a configuração está ausente
+  (`NULL`) e permanece fail-closed. GET anônimo com Comment inexistente: 404;
+  raiz do Fórum: 200; consultas Entity API read-only: 0 tópicos e 0 Comments.
+- Nenhuma conta foi autenticada, opção alterada, entidade criada ou conteúdo
+  salvo no Runtime. A validação de navegação autenticada/CSRF e a execução do
+  formulário com Comment real continuam pendentes; não habilitar a função até
+  essa homologação e a revisão dos efeitos de History, permalink e avisos.
+  RUNTIME STATUS: PARTIAL.
+
 ## dev.62 — filas pendente/rejeitada do Fórum
 
 - A consulta da View usava `getTableInfo('node_field_data')`, mas o Core 11.4
