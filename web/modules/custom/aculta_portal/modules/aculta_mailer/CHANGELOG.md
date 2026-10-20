@@ -1,5 +1,14 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.2 — API de envio e registro de tipos — 2026-10-20
+
+- `AcultaMailerInterface::send()` retorna `bool` (aceite do sistema de e-mail) e usa o `plugin.manager.mail` do Core.
+- Tipos de e-mail são serviços com a tag `aculta_mailer.type` (`MailTypeInterface`), reunidos por `MailTypeRegistry`.
+  Tipo não registrado não envia e registra erro sem destinatário nem conteúdo.
+- `hook_mail` (`Hook\MailHooks`) renderiza assunto e corpo do tipo e grava o cabeçalho `X-Aculta-Mail-ID`.
+- Testes Kernel (`AcultaMailerKernelTest`, módulo `aculta_mailer_test`): envio de tipo registrado com cabeçalho de
+  correlação e recusa de tipo desconhecido. Runtime de teste: módulo habilitado, sem atualização de banco.
+
 ## 0.1.0-dev.1 — 2026-10-20
 
 - F0: auditoria do e-mail atual (`docs/AUDIT.md`), pesquisa upstream e decisões de porte (`docs/UPSTREAM.md`),

@@ -1,0 +1,12 @@
+services:
+  Drupal\aculta_mailer\Type\MailTypeRegistry:
+    class: Drupal\aculta_mailer\Type\MailTypeRegistry
+    arguments: [!tagged_iterator aculta_mailer.type]
+
+  aculta_mailer.mailer:
+    class: Drupal\aculta_mailer\Api\AcultaMailer
+    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer']
+
+  logger.channel.aculta_mailer:
+    parent: logger.channel_base
+    arguments: ['aculta_mailer']

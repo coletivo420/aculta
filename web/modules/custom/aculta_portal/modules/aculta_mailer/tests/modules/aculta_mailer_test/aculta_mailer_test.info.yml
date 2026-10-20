@@ -1,0 +1,7 @@
+name: 'ACULTA Mailer test types'
+type: module
+description: 'Tipo de e-mail de teste para os testes Kernel do aculta_mailer.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - aculta_portal:aculta_mailer

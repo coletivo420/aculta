@@ -9,17 +9,19 @@ use Drupal\aculta_mailer\Message\MailMessage;
 /**
  * Ponto público de envio de e-mail transacional do ACULTA.
  *
- * Consumidores dependem somente deste contrato. A implementação (F2 em diante) usa o Symfony Mailer por meio do Core
- * e não é exposta a quem chama. Ver docs/ARCHITECTURE.md.
+ * Consumidores dependem somente deste contrato. A implementação usa o Core (plugin.manager.mail) e não é exposta
+ * a quem chama. Ver docs/ARCHITECTURE.md.
  */
 interface AcultaMailerInterface {
 
   /**
-   * Enfileira ou envia a mensagem conforme a política do tipo.
+   * Envia a mensagem pelo transporte da política do tipo.
    *
-   * @return string
-   *   Correlation ID da mensagem, para rastreio em logs e suporte.
+   * O correlation ID da mensagem é o mesmo informado em MailMessage, para rastreio em logs e cabeçalhos.
+   *
+   * @return bool
+   *   TRUE quando o sistema de e-mail aceitou a mensagem (status `sent`).
    */
-  public function send(MailMessage $message): string;
+  public function send(MailMessage $message): bool;
 
 }

@@ -1,0 +1,5 @@
+services:
+  aculta_mailer_test.type:
+    class: Drupal\aculta_mailer_test\AcultaMailerTestType
+    tags:
+      - { name: aculta_mailer.type }
