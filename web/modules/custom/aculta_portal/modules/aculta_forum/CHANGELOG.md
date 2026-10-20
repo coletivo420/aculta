@@ -7,17 +7,27 @@
 - Preserva Comment IDs, UUIDs, autor, texto, datas e estado de moderação; atualiza
   parent/thread, recalcula estatísticas dos dois Nodes e invalida caches. Lock
   segue o padrão de chave Comment Core e relê o máximo da thread sob lock.
-- Kernel MariaDB dedicado: 4 testes/92 assertions PASS (árvore em três níveis,
-  estado pendente, legado bloqueado, estatísticas, flag disabled e rollback). 5
-  depreciações do Domain contrib. Runtime `toca`: cache rebuild PASS; rota e
-  serviço resolvidos via Drush; `comment_move_enabled` efetivamente false. Nenhuma
-  config ativa ou entidade foi alterada. Teste funcional de movimento permanece
-  DEFERRED; RUNTIME STATUS: PARTIAL.
-- Forum Unit: 50 testes/357 assertions PASS; PHPCS nos arquivos novos e gates
-  Drupal 11+ (970), fronteira (1381), mapa (154), slugs (387) e hierarquia de
+- Kernel MariaDB dedicado: 7 testes/133 assertions PASS (árvore em três níveis,
+  estado pendente, legado bloqueado, estatísticas, flag disabled, rollback,
+  formulário de resposta/remoção desatualizado e retenção do lock até o callback
+  da transação raiz). 5
+  depreciações do Domain contrib. No Runtime `toca`, `drush cr` com URI explícita
+  do purpose `forum` e resolução do serviço guard e da classe OOP de hooks
+  PASS; `aculta_forum.settings` segue ausente, portanto o mover permanece
+  desabilitado por padrão. Nenhuma configuração ou entidade foi alterada. A
+  submissão funcional e a concorrência real permanecem DEFERRED; RUNTIME STATUS:
+  PARTIAL.
+- Forum Unit: 51 testes/360 assertions PASS; PHPCS nos arquivos novos e gates
+  Drupal 11+ (970), fronteira (1387), mapa (154), slugs (387) e hierarquia de
   papéis PASS. PHP CLI 8.4.26 (abaixo da baseline 8.5).
 - Pesquisa contrib: referência `comment_mover` alpha não foi portada; VBO é
   candidato para ações em lote, não dependência desta versão.
+- `ForumDiscussionWriteGuard` serializa comentário e movimento por tópico, com
+  locks adquiridos em ordem estável, validação de pai/host após lock e liberação
+  ao final da transação raiz. O teste de lifecycle usa LockBackend mockado; não
+  simula duas conexões HTTP concorrentes. Efeitos externos e concorrência real
+  permanecem na matriz pendente. O mover reserva primeiro o lock de thread Core,
+  respeitando a ordem de aquisição de `Comment::preSave()` para evitar inversão.
 
 ## Pesquisa adicional de módulos contrib — 2026-10-19 (documentação)
 
@@ -33,6 +43,10 @@
   foi substituído pelo protótipo independente em dev.33; validações de integrações
   ainda mantêm a ação fora do Runtime. Sem código contrib copiado ou dependência
   nova.
+- A auditoria ampliada dos módulos contrib instalados e candidatos está em
+  `MOVE-TOOLS.md`. CTools, Flag, History, Search API e Group permanecem donos de
+  suas funções; padrões de Advanced Forum, Comment Mover e Achievements foram
+  avaliados sem copiar código nem criar storage concorrente.
 
 ## 0.1.0-dev.32 — autoria da última atividade pública — 2026-10-19
 

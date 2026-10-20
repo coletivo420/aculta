@@ -217,6 +217,18 @@ teste Functional/browser. No Runtime de teste, apenas `drush cr` e resolução
 read-only de rota/serviço foram executados; nenhuma configuração ativa ou
 entidade foi alterada.
 
+O `ForumDiscussionWriteGuard` agora compartilha locks por tópico com gravação e
+exclusão de comentários normais; valida host/thread persistidos e o host do pai
+após adquirir locks, e os mantém até o callback da transação raiz. O lock de
+thread raiz do Comment Core precisa ser reservado **antes** dos locks ACULTA:
+`Comment::preSave()` adquire primeiro o lock Core e só depois executa
+`comment_presave`. A ordem inversa deixaria uma gravação normal segurando o lock
+Core enquanto espera o tópico, e o mover segurando o tópico enquanto espera o
+lock Core. O mover mantém sua reserva do Core até persistir a nova raiz.
+O teste Kernel comprova rejeição de formulário obsoleto e callback de retenção;
+simulação real de dois requests/conexões, timeout, worker e indisponibilidade de
+lock continuam pendentes.
+
 O gate operacional também é explícito: `aculta_forum.settings` define
 `comment_move_enabled: false` no install e Config Sync. `ForumCommentMover`
 nega acesso e submissão quando a opção está desligada. A opção não tem formulário
@@ -237,6 +249,36 @@ depende de fechar os casos de concorrência e integração da matriz de testes.
   API e Group) continuam donos de suas funções. O ACULTA reutiliza APIs e
   configuração e adapta os contratos de domínio/contexto/access/cache, sem
   copiar storage nem código destes módulos.
+
+### Auditoria ampliada de módulos contrib e código portável
+
+Consulta upstream e inspeção do `composer.lock`/código instalado em
+2026-10-19. As versões encontradas localmente foram Forum 1.1.3, CTools 4.1.1,
+Flag 5.1.1, Group 3.3.5, History 1.0.0 e Search API 1.41.0. Não foram
+adicionadas dependências Composer.
+
+| Projeto / código consultado | Capacidade ou padrão reaproveitável | Decisão ACULTA |
+| --- | --- | --- |
+| Forum contrib (`web/modules/contrib/forum`) | Taxonomy, Node e Comment nativos; containers, fóruns filhos, posts, respostas e ordenação/índices | Usar apenas para inventariar a configuração e os consumidores a remover. Não portar seu código, controllers ou storage; a decisão do responsável é retirar o módulo, não preservá-lo como implementação paralela. |
+| Advanced Forum / Author Pane | Variáveis de autoria contextuais, template dedicado de fórum, variantes empilhadas e separação de preprocess/apresentação | Portar requisitos e casos de uso para `aculta_user`; a documentação histórica descreve integração com CTools, user context, contexto de Node/Comment e template específico. Não copiar hooks PHPTemplate, CSS ou APIs Drupal 7/8 em execução. Origem/licença de qualquer fragmento literal deve ser registrada por arquivo antes da adaptação. |
+| Comment Mover 2.0.0-alpha1 | Seleção explícita, mover subárvore e preservar IDs ao atualizar in-place | Referência já inspecionada acima; algoritmo e recursão não são portáveis sem correções, não há contrato ACULTA de access/transação/estatísticas. Sem cópia e sem dependência. |
+| Forum Notifications Subscription 2.1.1 | Seguir fórum/tópico, frequência, digest e fila de e-mail | O conceito de preferência por frequência e agrupamento é útil. O módulo é específico do Forum contrib e uma issue Drupal 11 reporta falha de envio/configuração de digest; ACULTA Messenger continua dono, com validação contextual atual. Nenhum código de entrega foi copiado. |
+| Achievements 3.0.3 / Gamification 2.0.2 / User Points | Marcos, elegibilidade, idempotência/transação de concessão e limite de repetição | A auditoria e proveniência/licença estão em `aculta_game/docs/PESQUISA.md` e `LICENCAS.md`. A estrutura de marcos e concessão transacional pode orientar correções; não importar armazenamento, pontos cumulativos ou segundo ledger. `aculta_user` mantém o catálogo e os awards atuais; `aculta_game` avalia eventos autorizados. |
+| Flag 5.1.1 | Ações por usuário para seguir/salvar entidades | Manter tipos e API Flag já instalados. Não criar tabela paralela de subscriptions/favorites. Notificação continua separada via Messenger. |
+| CTools 4.1.1 / `ctools_views` | Contexto/condições e configuração de colocação de Views | Usar plugins/API existentes quando o bloco exigir opções de colocação. Filtros de domínio, bundle e access permanecem fixos; nenhum código equivalente é necessário para o mover individual. |
+| History 1.0.0, Search API 1.41.0 e Group 3.3.5 | Leitura por usuário, índices de busca e membresia/contexto | Reusar APIs existentes; movimentação precisa de adaptadores e invalidadores explícitos antes de ativar, sem replicar histórico, índices ou membership. |
+| Views Bulk Operations | Ações em lote com Batch/Actions API | Não instalado. Candidato futuro apenas após prévia, limites, access por linha, relatório parcial e rollback operacional; nunca usar como substituto da transação individual. |
+
+Fontes oficiais consultadas: [Advanced Forum e status da compatibilidade Drupal
+11](https://www.drupal.org/project/issues/advanced_forum), [Author Pane e
+contexto de uso](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-archive/contrib-modules-for-building-the-site-functionality/social-networking-and-collaboration/community-building-and-social-networking-19),
+[Forum Notifications Subscription](https://www.drupal.org/project/forum_notifications_subscription),
+[issue de envio no Drupal 11](https://www.drupal.org/project/forum_notifications_subscription/issues/3573281),
+[Achievements](https://www.drupal.org/project/achievements), [Gamification](https://www.drupal.org/project/gamification)
+e [User Points](https://www.drupal.org/project/userpoints). Essas páginas servem
+para estado e capacidade; versões instaladas e contratos locais foram
+conferidos no repositório. Nenhum fragmento de terceiros foi copiado nesta
+auditoria.
 
 Não foi copiado código-fonte contrib nesta subfase. Onde uma adaptação literal
 for justificada, o commit deve preservar licença, copyright e proveniência.
