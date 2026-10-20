@@ -72,6 +72,7 @@ final class MailDashboard {
     $rows = [];
     foreach ($this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE)->loadMultiple($ids) as $log) {
       $rows[] = [
+        'id' => (string) $log->id(),
         'created' => (int) $log->get('created')->value,
         'type' => (string) $log->get('type')->value,
         'correlation_id' => (string) $log->get('correlation_id')->value,
@@ -79,6 +80,8 @@ final class MailDashboard {
         'attempts' => (int) $log->get('attempts')->value,
         'error_code' => (string) $log->get('error_code')->value,
         'error_message' => (string) $log->get('error_message')->value,
+        // O conteúdo cifrado não sai daqui: só se existe, para mostrar o link de reenvio.
+        'resendable' => (string) $log->get('payload_cipher')->value !== '',
       ];
     }
     return $rows;

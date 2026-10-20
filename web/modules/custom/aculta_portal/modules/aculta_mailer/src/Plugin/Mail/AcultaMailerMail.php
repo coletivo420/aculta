@@ -6,6 +6,7 @@ namespace Drupal\aculta_mailer\Plugin\Mail;
 
 use Drupal\aculta_mailer\Entity\MailTransport;
 use Drupal\aculta_mailer\Api\PublicUrlInterface;
+use Drupal\aculta_mailer\Delivery\MailPayloadRegistry;
 use Drupal\aculta_mailer\Delivery\ProviderMessageRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
@@ -44,6 +45,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly RendererInterface $renderer,
     private readonly SmtpFailureRegistry $failures,
     private readonly ProviderMessageRegistry $providerMessages,
+    private readonly MailPayloadRegistry $payloads,
     private readonly ?PublicUrlInterface $publicUrls = NULL,
   ) {}
 
@@ -60,6 +62,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('renderer'),
       $container->get('aculta_mailer.smtp_failures'),
       $container->get('aculta_mailer.provider_messages'),
+      $container->get('aculta_mailer.payloads'),
       $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
     );
   }
@@ -102,6 +105,17 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     $from = (string) $this->configFactory->get('system.site')->get('mail');
     // Imagens do envelope são carregadas do servidor (URL absoluta); nada é anexado nem embutido.
     $html = $this->renderHtml($message);
+    // Conteúdo para o reenvio, só em memória até o fim da requisição: a falha o leva ao registro, cifrado.
+    // Anexos não entram: os e-mails do sistema não têm anexos.
+    $this->payloads->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), [
+      'to' => (string) $message['to'],
+      'from' => $from,
+      'subject' => (string) ($message['subject'] ?? ''),
+      'body' => (string) ($message['body'] ?? ''),
+      'html' => $html,
+      'reply-to' => (string) ($message['reply-to'] ?? ''),
+      'headers' => array_filter($message['headers'] ?? [], 'is_scalar'),
+    ]);
     $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $html));
     if ($result['sent'] && $result['provider_id'] !== NULL) {
       $this->providerMessages->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['provider_id']);

@@ -8,7 +8,9 @@ use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\Delivery\MailSuppression;
+use Drupal\aculta_mailer\Delivery\MailPayloadRegistry;
 use Drupal\aculta_mailer\Delivery\ProviderMessageRegistry;
+use Drupal\aculta_mailer\Log\MailPayloadCipher;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpReplyClassifier;
@@ -57,6 +59,8 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly QuotaSignal $quotaSignal,
     private readonly MailSuppression $suppression,
     private readonly ProviderMessageRegistry $providerMessages,
+    private readonly MailPayloadRegistry $payloads,
+    private readonly MailPayloadCipher $cipher,
   ) {}
 
   /**
@@ -114,6 +118,7 @@ final class AcultaMailer implements AcultaMailerInterface {
 
     $transportUsed = $effective;
     if (!empty($result['result'])) {
+      $this->payloads->take($message->correlationId);
       $this->log->record($message, MailStatus::Sent, 1, $transportUsed, NULL, NULL, $this->providerMessages->take($message->correlationId));
       return SendResult::sent();
     }
@@ -126,7 +131,10 @@ final class AcultaMailer implements AcultaMailerInterface {
       ? DeliveryError::Temporary
       : $this->classifier->classify($code);
     // O texto completo vai só para o registro (relatório do admin); o usuário vê a mensagem genérica.
-    $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
+    // Falha: o conteúdo vai ao registro cifrado, para o reenvio. Sem chave válida, nada é guardado.
+    $payload = $this->payloads->take($message->correlationId);
+    $cipher = $payload !== NULL ? $this->cipher->encrypt($payload) : NULL;
+    $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL, NULL, $cipher);
     $this->alerts->failure($message->type, $message->correlationId, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
     // Texto de cota no erro: o transporte sai de uso pela janela, e o envio seguinte já segue pela contingência.
     $this->quotaSignal->failure($transportUsed, (string) ($failure['message'] ?? ''));

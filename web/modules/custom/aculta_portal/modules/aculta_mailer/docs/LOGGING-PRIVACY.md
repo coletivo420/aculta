@@ -1,6 +1,6 @@
 # Registro de envios e privacidade (F7)
 
-Status: implementado em 0.1.0-dev.4. Runtime de teste: tabela criada por `aculta_mailer_update_10001` (2026-10-20).
+Status: implementado em 0.1.0-dev.4; reenvio com conteúdo cifrado em 0.1.0-dev.38 (`aculta_mailer_update_10004`).
 
 ## O que é registrado
 
@@ -16,10 +16,11 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 | `error_code` | Código curto: `smtp_<código>` (ex.: `smtp_554`) ou `sem_codigo_<classe>`. |
 | `error_message` | Texto completo da falha do transporte, como o servidor devolveu. Visível só no relatório do admin (ver abaixo). |
 | `sent`, `created`, `changed` | Datas. |
+| `payload_cipher` | Só nas mensagens com falha: conteúdo para reenvio, cifrado (destinatário, assunto, corpo renderizado e cabeçalhos). Apagado quando a mensagem é aceita, e junto com o registro pela retenção. Ver *Reenvio*. |
 
 ## O que nunca é registrado
 
-- Corpo renderizado, assunto e contexto (links de login, recuperação, confirmação).
+- Corpo renderizado, assunto e contexto em claro (links de login, recuperação, confirmação). Para mensagens com falha, o conteúdo vai ao campo `payload_cipher`, cifrado (ver *Reenvio*).
 - Tokens, URLs secretas e credenciais.
 - O endereço de e-mail em claro.
 - Mensagem genérica ao usuário: quem envia (cadastro, conquista) vê só a mensagem genérica da camada de envio E-Mails ACULTA.
@@ -51,3 +52,12 @@ permanece. Pendência: a fila não tem prazo próprio de expiração; itens pres
 
 - `sent` não prova entrega. Entrega depende de webhooks de provedor (F10).
 - Aberturas e cliques não são registrados (F11, opt-in).
+
+## Reenvio (0.1.0-dev.38)
+
+- Mensagem com falha guarda o conteúdo para reenvio em `payload_cipher`: destinatário, assunto, corpo renderizado, HTML e cabeçalhos. Anexos não entram (os e-mails do sistema não têm anexos).
+- Cifra: `sodium_crypto_secretbox` (XSalsa20 e Poly1305), nonce aleatório por mensagem, chave `MAILER_PAYLOAD_KEY` (32 bytes, arquivo de segredos). Sem chave válida, nada é guardado e o reenvio fica indisponível: falha fechada.
+- Mensagem aceita não guarda conteúdo: o campo é apagado no envio que dá certo, inclusive no reenvio.
+- Retenção: o conteúdo cifrado sai com o registro, pelo prazo de retenção (padrão 90 dias).
+- Reenvio: página da falha, link "Reenviar" (permissão `administer aculta_mailer`, confirmação com token CSRF). Respeita a chave geral de envio e a lista de supressão. A nova tentativa atualiza o próprio registro.
+- Risco aceito pelo responsável: e-mails com links de uso único (recuperação de senha, confirmação) ficam no conteúdo cifrado enquanto durarem a retenção. Se o link expirar antes do reenvio, o reenvio entrega um link inválido. Decisão pendente: excluir esses tipos do conteúdo guardado.

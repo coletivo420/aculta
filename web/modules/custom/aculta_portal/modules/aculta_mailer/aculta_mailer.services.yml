@@ -5,7 +5,7 @@ services:
 
   aculta_mailer.mailer:
     class: Drupal\aculta_mailer\Api\AcultaMailer
-    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal', '@Drupal\aculta_mailer\Delivery\MailSuppression', '@aculta_mailer.provider_messages']
+    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal', '@Drupal\aculta_mailer\Delivery\MailSuppression', '@aculta_mailer.provider_messages', '@aculta_mailer.payloads', '@Drupal\aculta_mailer\Log\MailPayloadCipher']
 
   logger.channel.aculta_mailer:
     parent: logger.channel_base
@@ -46,6 +46,17 @@ services:
 
   aculta_mailer.provider_messages:
     class: Drupal\aculta_mailer\Delivery\ProviderMessageRegistry
+
+  aculta_mailer.payloads:
+    class: Drupal\aculta_mailer\Delivery\MailPayloadRegistry
+
+  Drupal\aculta_mailer\Log\MailPayloadCipher:
+    class: Drupal\aculta_mailer\Log\MailPayloadCipher
+    arguments: ['@?Drupal\aculta_mailer\Transport\SecretProviderInterface']
+
+  Drupal\aculta_mailer\Delivery\MailResend:
+    class: Drupal\aculta_mailer\Delivery\MailResend
+    arguments: ['@entity_type.manager', '@Drupal\aculta_mailer\Transport\MailTransportSender', '@Drupal\aculta_mailer\Mail\LegacyMessageConverter', '@Drupal\aculta_mailer\Log\MailPayloadCipher', '@aculta_mailer.log_recorder', '@Drupal\aculta_mailer\Delivery\MailSuppression', '@config.factory', '@logger.channel.aculta_mailer']
 
   aculta_mailer.brevo_http_client:
     class: Symfony\Contracts\HttpClient\HttpClientInterface

@@ -43,8 +43,10 @@ final class MailLogRecorder {
    *   Texto completo da falha do transporte, para o relatório do admin (ver LOGGING-PRIVACY.md).
    * @param string|null $providerMessageId
    *   ID que o provedor deu à mensagem aceita; sem valor, o registro não é alterado.
+   * @param string|null $payloadCipher
+   *   Conteúdo cifrado para reenvio (ver MailPayloadCipher); sem valor, o campo não muda.
    */
-  public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL, ?string $errorMessage = NULL, ?string $providerMessageId = NULL): void {
+  public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL, ?string $errorMessage = NULL, ?string $providerMessageId = NULL, ?string $payloadCipher = NULL): void {
     if (!$this->logSettings->enabled()) {
       return;
     }
@@ -64,6 +66,13 @@ final class MailLogRecorder {
     $log->set('error_message', $errorMessage);
     if ($providerMessageId !== NULL && $providerMessageId !== '') {
       $log->set('provider_message_id', $providerMessageId);
+    }
+    // Conteúdo para reenvio só existe enquanto a mensagem não foi aceita: ao ser aceita, o campo é apagado.
+    if ($payloadCipher !== NULL) {
+      $log->set('payload_cipher', $payloadCipher);
+    }
+    elseif ($status === MailStatus::Sent) {
+      $log->set('payload_cipher', NULL);
     }
     if ($status === MailStatus::Sent) {
       $log->set('sent', $this->time->getRequestTime());

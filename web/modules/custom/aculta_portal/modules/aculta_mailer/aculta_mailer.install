@@ -28,3 +28,11 @@ function aculta_mailer_update_10003(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
   \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('provider_message_id', 'aculta_mail_log', 'aculta_mailer', $fields['provider_message_id']);
 }
+
+/**
+ * Campo do conteúdo cifrado para reenvio das mensagens com falha.
+ */
+function aculta_mailer_update_10004(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('payload_cipher', 'aculta_mail_log', 'aculta_mailer', $fields['payload_cipher']);
+}

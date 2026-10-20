@@ -22,6 +22,14 @@ aculta_mailer.log_export:
   requirements:
     _permission: 'administer aculta_mailer'
 
+aculta_mailer.failure_resend:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/falhas/reenviar/{log_id}'
+  defaults:
+    _form: '\Drupal\aculta_mailer\Form\MailResendForm'
+    _title: 'Reenviar mensagem com falha'
+  requirements:
+    _permission: 'administer aculta_mailer'
+
 aculta_mailer.template_test:
   path: '/painel-administrativo/configuracoes/aculta/envios-de-email/modelos/{aculta_mailer_template}/teste'
   defaults:

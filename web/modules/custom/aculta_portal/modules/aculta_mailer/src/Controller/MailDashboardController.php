@@ -103,6 +103,11 @@ final class MailDashboardController extends ControllerBase {
         $failure['attempts'],
         $failure['error_code'],
         $failure['error_message'],
+        $failure['resendable'] ? [
+          '#type' => 'link',
+          '#title' => $this->t('Reenviar'),
+          '#url' => Url::fromRoute('aculta_mailer.failure_resend', ['log_id' => $failure['id']]),
+        ] : '-',
       ];
     }
     return [
@@ -117,6 +122,7 @@ final class MailDashboardController extends ControllerBase {
           $this->t('Tentativas'),
           $this->t('Código'),
           $this->t('Texto completo'),
+          $this->t('Reenvio'),
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhuma falha nos últimos 30 dias.'),

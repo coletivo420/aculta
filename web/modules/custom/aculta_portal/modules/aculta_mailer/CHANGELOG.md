@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.38 — reenvio de falha com conteúdo cifrado — 2026-10-20
+
+- Mensagem com falha guarda o conteúdo para reenvio, cifrado (`payload_cipher`, `MailPayloadCipher`, chave `MAILER_PAYLOAD_KEY` no arquivo de segredos). Sem chave válida, nada é guardado.
+- Mensagem aceita não guarda conteúdo; o campo é apagado no envio que dá certo.
+- Reenvio na página de falhas (`/falhas/reenviar/{log_id}`): escolhe o transporte, respeita chave geral de envio e supressão, e atualiza o próprio registro (tentativas, estado, ID do provedor).
+- Atualização `aculta_mailer_update_10004` (campo `payload_cipher`), aplicada no Runtime de teste.
+- Validado no Runtime de teste: falha real do SMTP2GO (552, cota mensal) gravou o conteúdo cifrado; o reenvio pela Hostinger decifrou, enviou e atualizou o registro para `sent`, sem conteúdo guardado.
+- Política de privacidade atualizada (`docs/LOGGING-PRIVACY.md`), com o risco de links de uso único registrado como decisão pendente.
+- Testes: 129 unitários.
+
 ## 0.1.0-dev.37 — monitoramento IMAP corrigido; consulta de estado no Brevo — 2026-10-20
 
 - **Correção:** o monitoramento IMAP nunca lia mensagens. A resposta `* SEARCH` do servidor termina em CRLF, e a expressão do cliente não aceitava o retorno de carro. Com isso, bounces e relatórios DMARC não eram processados. Corrigido em `CurlImapClient::parseSearch()`, com testes da resposta em CRLF.
