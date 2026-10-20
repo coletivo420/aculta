@@ -33,3 +33,11 @@ aculta_mailer.diagnostics:
     _title: 'Diagnóstico de envio de e-mail'
   requirements:
     _permission: 'administer aculta_mailer'
+
+aculta_mailer.webhook:
+  path: '/aculta-mailer/webhook/{provider}'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailWebhookController::receive'
+  requirements:
+    _access: 'TRUE'
+  methods: [POST]

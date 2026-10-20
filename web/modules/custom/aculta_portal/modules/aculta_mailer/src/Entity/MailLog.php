@@ -69,6 +69,9 @@ final class MailLog extends ContentEntityBase {
     $fields['error_code'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Código do erro'))
       ->setSetting('max_length', 64);
+    $fields['provider_message_id'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('ID no provedor'))
+      ->setSetting('max_length', 255);
     $fields['error_message'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Texto completo da falha'));
     $fields['sent'] = BaseFieldDefinition::create('timestamp')

@@ -3,3 +3,7 @@ services:
     class: Drupal\aculta_mailer_test\AcultaMailerTestType
     tags:
       - { name: aculta_mailer.type }
+  aculta_mailer_test.webhook_provider:
+    class: Drupal\aculta_mailer_test\Webhook\TestWebhookProvider
+    tags:
+      - { name: aculta_mailer.webhook_provider }

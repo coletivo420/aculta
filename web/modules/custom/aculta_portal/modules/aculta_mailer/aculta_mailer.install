@@ -20,3 +20,11 @@ function aculta_mailer_update_10002(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
   \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('error_message', 'aculta_mail_log', 'aculta_mailer', $fields['error_message']);
 }
+
+/**
+ * Acrescenta o ID da mensagem no provedor ao registro (eventos de webhook sem correlação).
+ */
+function aculta_mailer_update_10003(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('provider_message_id', 'aculta_mail_log', 'aculta_mailer', $fields['provider_message_id']);
+}

@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_mailer\Webhook;
+
+use Drupal\aculta_mailer\Log\MailLogRecorder;
+use Drupal\aculta_mailer\Message\MailStatus;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+
+/**
+ * Aplica um evento validado ao registro do envio, somente quando a transição é permitida (ver MailStatus).
+ */
+final class DeliveryEventApplier {
+
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {}
+
+  /**
+   * Aplica o evento. Retorna TRUE quando o registro mudou.
+   *
+   * Evento sem registro correspondente, ou com transição não permitida, é ignorado (retorna FALSE). Eventos de provedor
+   * podem chegar fora de ordem ou repetidos; a regra de transição protege o estado.
+   */
+  public function apply(ProviderEvent $event): bool {
+    $log = $this->find($event);
+    if ($log === NULL) {
+      return FALSE;
+    }
+    $current = MailStatus::from((string) $log->get('status')->value);
+    $next = $event->type->status();
+    if (!$current->canTransitionTo($next)) {
+      return FALSE;
+    }
+    $log->set('status', $next->value);
+    if ($event->providerMessageId !== NULL && $event->providerMessageId !== '') {
+      $log->set('provider_message_id', $event->providerMessageId);
+    }
+    if ($event->code !== NULL && $event->code !== '') {
+      $log->set('error_code', 'provedor_' . $event->code);
+    }
+    $log->save();
+    return TRUE;
+  }
+
+  /**
+   * Registro pelo correlation ID, ou pelo ID do provedor quando o correlation não veio.
+   */
+  private function find(ProviderEvent $event): ?object {
+    $storage = $this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE);
+    if ($event->correlationId !== NULL && $event->correlationId !== '') {
+      $found = $storage->loadByProperties(['correlation_id' => $event->correlationId]);
+    }
+    elseif ($event->providerMessageId !== NULL && $event->providerMessageId !== '') {
+      $found = $storage->loadByProperties(['provider_message_id' => $event->providerMessageId]);
+    }
+    else {
+      return NULL;
+    }
+    return $found === [] ? NULL : reset($found);
+  }
+
+}

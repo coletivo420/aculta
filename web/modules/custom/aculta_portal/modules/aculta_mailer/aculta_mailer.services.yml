@@ -61,3 +61,11 @@ services:
   plugin.manager.aculta_mail_adjuster:
     class: Drupal\aculta_mailer\Plugin\AcultaMailAdjuster\AcultaMailAdjusterManager
     arguments: ['@container.namespaces', '@module_handler', '@cache.discovery']
+
+  Drupal\aculta_mailer\Webhook\ProviderWebhookRegistry:
+    class: Drupal\aculta_mailer\Webhook\ProviderWebhookRegistry
+    arguments: [!tagged_iterator aculta_mailer.webhook_provider]
+
+  Drupal\aculta_mailer\Webhook\DeliveryEventApplier:
+    class: Drupal\aculta_mailer\Webhook\DeliveryEventApplier
+    arguments: ['@entity_type.manager']
