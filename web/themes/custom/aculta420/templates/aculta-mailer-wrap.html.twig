@@ -8,7 +8,6 @@
  *
  * Variables:
  * - body: corpo já escapado (HTML), quando is_html.
- * - logo_url: URL absoluta do logo da marca; vazio usa o logo do tema.
  * - theme_logo: logo do tema, da configuração do tema (preprocess em src/Hook/MailEnvelopeHooks.php).
  * - mail_colors: cores claras e escuras lidas dos tokens do tema (css/tokens.css) pelo mesmo preprocess.
  * - is_html: True if generating HTML output, false for plain text.
@@ -58,7 +57,7 @@
         <table width="100%" cellpadding="0" cellspacing="0" role="presentation" class="aculta-mail-card" style="max-width:600px;background:{{ c.card }};border-radius:8px;">
           <tr>
             <td class="aculta-mail-header" style="background:{{ c.header }};padding:16px 24px;border-radius:8px 8px 0 0;">
-              <img src="{{ logo_url ?: theme_logo }}" width="180" alt="ACULTA" style="display:block;border:0;width:180px;height:auto;">
+              <img src="{{ theme_logo }}" width="180" alt="ACULTA" style="display:block;border:0;width:180px;height:auto;">
             </td>
           </tr>
           <tr>

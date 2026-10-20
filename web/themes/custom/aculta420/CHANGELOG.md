@@ -1,3 +1,7 @@
+## 0.6.0-dev.121 — envelope de e-mail usa só o logo do tema — 2026-10-20
+
+- `templates/aculta-mailer-wrap.html.twig`: o logo vem sempre de `theme_logo` (configuração do tema). Não há mais logo por marca do `aculta_mailer`, que duplicava o arquivo.
+
 ## 0.6.0-dev.120 — envelope de e-mail montado pelo tema, com cores dos tokens e modo escuro automático — 2026-10-20
 
 - `templates/aculta-mailer-wrap.html.twig`: envelope HTML do hook `aculta_mailer_wrap`, com cores lidas dos tokens do tema em claro e escuro (`prefers-color-scheme`).
