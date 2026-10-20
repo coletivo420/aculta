@@ -20,7 +20,7 @@ Documentos relacionados: [`MESSENGER.md`](MESSENGER.md) (projeto), [`MESSENGER-A
 | --- | --- |
 | Conversa direta (duas pessoas) | Pronta: "Iniciar conversa", resposta, menu de amizade e bloqueio. |
 | Conversa em grupo | Existe no Private Message e aparece na lista. A criação pela gaveta (várias pessoas na busca) está em construção: a busca já mostra caixas de seleção e a rota de grupo existe; o fluxo ainda precisa de teste de navegador. |
-| Controles administrativos | `aculta_messenger.settings` e o formulário em `/painel-administrativo/configuracoes/aculta/portal/mensagens` (permissão `administer aculta messenger`). Ver seção 5. |
+| Controles administrativos | `aculta_messenger.settings` e o formulário em `/painel-administrativo/aculta/mensagens` (permissão `administer aculta messenger`). Ver seção 5. |
 | Política dos tipos | `Service\ConversationPolicy`: tipo, limite, retenção e limites de envio, lidos da configuração. |
 | Tipo gravado na conversa | **Não existe.** O tipo é deduzido do número de membros (2 = direto, mais = grupo). Fórum e curso não são detectáveis até as integrações gravarem o tipo. |
 | Fórum, LMS, wiki | Não integrados. |
@@ -50,7 +50,7 @@ Não há um canal separado para o curso. Os avisos do curso são avisos globais 
 
 ## 5. Controles administrativos (aculta_messenger.settings)
 
-Formulário: `/painel-administrativo/configuracoes/aculta/portal/mensagens`, permissão `administer aculta messenger` (perfil administrador).
+Formulário: `/painel-administrativo/aculta/mensagens`, permissão `administer aculta messenger` (perfil administrador).
 
 | Controle | Padrão | Faixa | Efeito |
 | --- | --- | --- | --- |

@@ -415,7 +415,7 @@ As regras de moderação descritas nas subseções atuais e em `aculta_forum/doc
 
 **Painel administrativo (`aculta_user`, linkado pelo hub do `aculta_portal`):**
 
-- Caminho: `/painel-administrativo/configuracoes/aculta/portal/participacao` (técnico, sem slug público). Permissão própria `administer aculta participacao`, com `restrict access`.
+- Caminho: `/painel-administrativo/aculta/participacao` (técnico, sem slug público). Permissão própria `administer aculta participacao`, com `restrict access`.
 - Configuração em `aculta_user.settings` (exportável; sem segredo):
   - `topico_limite_ativo` (liga/desliga o limite de criação de tópico);
   - `topico_comentarios_minimos` (padrão 10; número inteiro não negativo);

@@ -170,7 +170,7 @@ Domain, bundle, estado e acesso. Nenhum painel de Revista, LMS ou Wiki é
 incorporado ao Fórum. Ver [Administração do Fórum](ADMIN-TOOLS.md).
 
 A opção de moderação inicial do primeiro comentário está em
-`/painel-administrativo/configuracoes/aculta/portal/participacao`, sob ownership
+`/painel-administrativo/aculta/participacao`, sob ownership
 do `aculta_user`, pois afeta Fórum, Revista, Wiki e outros hosts, exceto LMS.
 A seção do Growroom pode oferecer um link claro para essa configuração
 compartilhada, mas não duplicar nem restringir seu efeito ao Fórum.

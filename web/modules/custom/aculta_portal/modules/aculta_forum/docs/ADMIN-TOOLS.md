@@ -80,5 +80,5 @@ colocação de blocos é necessária.
   redireciona ao painel. Mover tópico permanece indisponível por caminho direto.
 - `/painel-administrativo/conteudo/forum` e filhos: redirects antigos para a
   entrada canônica do Fórum.
-- `/painel-administrativo/configuracoes/aculta/portal/participacao`: políticas
+- `/painel-administrativo/aculta/participacao`: políticas
   compartilhadas do `aculta_user`.

@@ -88,6 +88,6 @@ web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/homologacao
 - Varredura antes do commit: nenhum host de teste novo em `config/sync`; nenhum valor de credencial.
 - Envio de e-mail (camada de envio E-Mails ACULTA, SMTP2GO): sem o módulo `smtp` legado. Desde 2026-10-19 o transporte do servidor de
   testes está sem credenciais: o envio autenticado falha até o responsável gravar `SMTP2GO_USERNAME` e
-  `SMTP2GO_PASSWORD` (ver `docs/portal/EMAIL-TRANSPORT.md`, seção 0). Cadastrar pelo painel `/painel-administrativo/configuracoes/aculta/segredos`, nunca pelo Git. Em produção, a camada criptografada é provisionada pelo deployer após o deploy (fase 9).
+  `SMTP2GO_PASSWORD` (ver `docs/portal/EMAIL-TRANSPORT.md`, seção 0). Cadastrar pelo painel `/painel-administrativo/aculta/segredos`, nunca pelo Git. Em produção, a camada criptografada é provisionada pelo deployer após o deploy (fase 9).
 - Não exportado: `.htaccess` e as coleções `domain.*` (não vêm do export padrão).
 

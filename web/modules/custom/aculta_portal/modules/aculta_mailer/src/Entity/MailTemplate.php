@@ -34,9 +34,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     ],
   ],
   links: [
-    'collection' => '/painel-administrativo/configuracoes/aculta/envios-de-email/modelos',
-    'add-form' => '/painel-administrativo/configuracoes/aculta/envios-de-email/modelos/add',
-    'edit-form' => '/painel-administrativo/configuracoes/aculta/envios-de-email/modelos/{aculta_mailer_template}',
+    'collection' => '/painel-administrativo/aculta/mail/modelos',
+    'add-form' => '/painel-administrativo/aculta/mail/modelos/add',
+    'edit-form' => '/painel-administrativo/aculta/mail/modelos/{aculta_mailer_template}',
   ],
   admin_permission: 'administer aculta_mailer',
   config_export: [

@@ -1,0 +1,7 @@
+# Configuração de participação, dentro da aba ACULTA (decisão de 2026-10-20).
+aculta_user.participacao_settings:
+  title: Participação
+  description: Regras de participação e cadastro de associados.
+  route_name: aculta_user.participacao_settings
+  parent: aculta_portal.admin
+  weight: 4

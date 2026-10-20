@@ -1,3 +1,8 @@
+## 0.1.1-dev.58 — configuração do chat no painel ACULTA — 2026-10-20
+
+- Limites e limpeza do chat em `/painel-administrativo/aculta/mensagens`, com item na aba ACULTA. Avisos continuam no menu de conteúdo.
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
 # Changelog
 
 ## 0.1.1-dev.57 — resumo de avisos pelo aculta_mailer — 2026-10-20

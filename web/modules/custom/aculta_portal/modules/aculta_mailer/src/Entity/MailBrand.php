@@ -33,9 +33,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     ],
   ],
   links: [
-    'collection' => '/painel-administrativo/configuracoes/aculta/envios-de-email/marcas',
-    'add-form' => '/painel-administrativo/configuracoes/aculta/envios-de-email/marcas/add',
-    'edit-form' => '/painel-administrativo/configuracoes/aculta/envios-de-email/marcas/{aculta_mailer_brand}',
+    'collection' => '/painel-administrativo/aculta/mail/marcas',
+    'add-form' => '/painel-administrativo/aculta/mail/marcas/add',
+    'edit-form' => '/painel-administrativo/aculta/mail/marcas/{aculta_mailer_brand}',
   ],
   admin_permission: 'administer aculta_mailer',
   config_export: [

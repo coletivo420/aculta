@@ -45,7 +45,7 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 - A página é um Node `page` com `field_domain_source = links_aculta_org`; texto e
   descrição permanecem editoriais no Drupal. Os perfis são salvos em
   `aculta_portal.social_links` e editados em Administração > Configuração >
-  ACULTA Portal > Redes sociais (`/painel-administrativo/configuracoes/aculta/portal/redes-sociais`).
+  ACULTA Portal > Redes sociais (`/painel-administrativo/aculta/redes-sociais`).
 - A tela aceita somente URLs HTTPS de `instagram.com`, `youtube.com`/`youtu.be`
   e `facebook.com`/`fb.com`. Valores vazios ocultam o canal. Instagram vem do
   perfil de organizador citado abaixo; YouTube e Facebook ficam vazios até a

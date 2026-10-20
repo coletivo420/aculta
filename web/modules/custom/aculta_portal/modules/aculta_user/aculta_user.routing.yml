@@ -19,7 +19,7 @@ aculta_user.configuracoes_privacidade:
     _permission: 'access aculta portal'
 
 aculta_user.participacao_settings:
-  path: '/painel-administrativo/configuracoes/aculta/portal/participacao'
+  path: '/painel-administrativo/aculta/participacao'
   defaults:
     _form: '\Drupal\aculta_user\Form\ParticipationSettingsForm'
     _title: 'Regras de participação'

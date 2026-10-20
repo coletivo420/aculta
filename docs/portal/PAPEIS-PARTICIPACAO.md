@@ -99,7 +99,7 @@ homologação funcional.
   criação de tópico enquanto houver comentário não LMS pendente.
 - A opção administrativa **Moderar comentários iniciais nos contextos de
   discussão, exceto LMS** fica em
-  `/painel-administrativo/configuracoes/aculta/portal/participacao` e vem
+  `/painel-administrativo/aculta/participacao` e vem
   ativada por padrão. O bloqueio de tópico considera pendências em qualquer
   contexto não LMS, mas deixa de bloquear depois de uma participação publicada
   no LMS. O limite mínimo de criação continua contando somente comentários do
@@ -156,7 +156,7 @@ Pendências:
 4. ~~Migração do marcador de associado para papel~~: papel `associado` criado (`config/sync/user.role.associado.yml`) e concedendo o realm de associados. O Runtime não tinha marcas (`aculta_associado` vazia), então não há contas a migrar. O marcador segue como fallback até decisão de remoção.
 5. ~~Permissões de Wiki do `content_editor`~~: a configuração atual já concede revisão e moderação da Wiki (transições de `wiki_editorial`); nada a alterar.
 6. ~~Se `estudante` e `associado` exigem `email_confirmed`~~: matrícula não exige confirmação, decisão F7. Como `estudante` recebe permissões de fórum e a cadeia inclui `email_confirmed`, a herança condicional consulta `EmailConfirmationPolicy`; matrícula não marca nem herda confirmação de e-mail.
-7. **Fase 2 (herança de papéis, 2026-10-17), atualizada:** cadeia unilateral e transitiva, de baixo para cima: `authenticated` < `email_confirmed` < `estudante` < `associado` < `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. `administrator` herda de todos os papéis de negócio. A herança do papel `email_confirmed` depende do marcador confirmado em `EmailConfirmationPolicy`; os demais papéis mantêm a cadeia. `wiki_contributor` e `lms_admin` herdam de `authenticated`. Edição pelo painel: ACULTA > Configurações > Papéis e perfis (`/painel-administrativo/configuracoes/aculta/papeis`), permissão `administer aculta role hierarchy`. Na mesma tela, cada tipo de perfil (`participante`, `customer`) declara os papéis que o usam (`aculta_portal.profile_roles`); o vínculo não move nem altera dados de perfil, e `customer` segue no checkout. Gate: `php scripts/validate-role-hierarchy.php`.
+7. **Fase 2 (herança de papéis, 2026-10-17), atualizada:** cadeia unilateral e transitiva, de baixo para cima: `authenticated` < `email_confirmed` < `estudante` < `associado` < `lms_teacher` < `content_editor` < `gerente_loja` < `administrator`. `administrator` herda de todos os papéis de negócio. A herança do papel `email_confirmed` depende do marcador confirmado em `EmailConfirmationPolicy`; os demais papéis mantêm a cadeia. `wiki_contributor` e `lms_admin` herdam de `authenticated`. Edição pelo painel: ACULTA > Configurações > Papéis e perfis (`/painel-administrativo/aculta/papeis`), permissão `administer aculta role hierarchy`. Na mesma tela, cada tipo de perfil (`participante`, `customer`) declara os papéis que o usam (`aculta_portal.profile_roles`); o vínculo não move nem altera dados de perfil, e `customer` segue no checkout. Gate: `php scripts/validate-role-hierarchy.php`.
 
 ## 10. Implementação (hooks e classes)
 

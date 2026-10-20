@@ -21,7 +21,7 @@ transições inválidas, então uma repetição não corrompe o estado).
 
 ## Configuração
 
-Painel: `/painel-administrativo/configuracoes/aculta/envios-de-email/monitoramento` (permissão `administer aculta_mailer`).
+Painel: `/painel-administrativo/aculta/mail/monitoramento` (permissão `administer aculta_mailer`).
 
 - Servidor, porta, e-mail (usuário IMAP) e pasta: gravados na configuração `aculta_mailer.imap`, sem senha.
 - Senha: campo do próprio formulário, gravado em `IMAP_PASSWORD` no arquivo de segredos do servidor

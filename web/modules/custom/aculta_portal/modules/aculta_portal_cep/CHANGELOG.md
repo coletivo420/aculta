@@ -1,3 +1,8 @@
+## 0.3.0-dev.9 — consulta de CEP no painel ACULTA — 2026-10-20
+
+- Configuração em `/painel-administrativo/aculta/cep`, com item na aba ACULTA.
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
 ## 0.3.0-dev.8 — ordem das fontes sem classe de design — 2026-10-19
 
 - Tabela de fontes com `data-portal-ui="cep-sources"` e coluna de ordem com `role-weight` (marcador de arrastar do Core), no lugar de `cep-source-weight`. Sem mudança de comportamento.

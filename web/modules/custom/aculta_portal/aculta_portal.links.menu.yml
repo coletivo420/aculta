@@ -16,18 +16,44 @@ aculta_portal.social_links_settings:
   route_name: aculta_portal.social_links_settings
   parent: aculta_portal.admin
   weight: 2
+# Aba ACULTA no painel: todas as configurações do ACULTA ficam aqui (decisão de 2026-10-20). Cada módulo declara os
+# próprios itens com parent: aculta_portal.admin (ou, para o e-mail, parent: aculta_mailer.dashboard).
 aculta_portal.admin:
-  title: ACULTA Portal
-  description: Configurações e relatórios administrativos do módulo ACULTA Portal.
+  title: ACULTA
+  description: Configurações e relatórios do ACULTA Portal, do e-mail e dos módulos integrados.
   route_name: aculta_portal.admin
-  parent: system.admin_config
-  weight: 5
+  parent: system.admin
+  weight: 45
+aculta_portal.appearance_settings:
+  title: Aparência do site
+  description: Cores, logo e opções visuais do site público.
+  route_name: aculta_portal.appearance_settings
+  parent: aculta_portal.admin
+  weight: 0
 aculta_portal.requirements:
   title: Status
   description: Status, versão mínima e versão instalada das integrações do Portal.
   route_name: aculta_portal.requirements
   parent: aculta_portal.admin
   weight: 2
+aculta_portal.turnstile_settings:
+  title: Turnstile
+  description: Chaves e pontos de proteção anti-bot dos formulários.
+  route_name: aculta_portal.turnstile_settings
+  parent: aculta_portal.admin
+  weight: 3
+aculta_portal.secrets_import:
+  title: Credenciais
+  description: Credenciais de integração do ambiente (valores nunca são exibidos).
+  route_name: aculta_portal.secrets_import
+  parent: aculta_portal.admin
+  weight: 6
+aculta_portal.deployer_status:
+  title: Implantação
+  description: Estado do aculta_deployer e do ambiente de implantação.
+  route_name: aculta_portal.deployer_status
+  parent: aculta_portal.admin
+  weight: 7
 aculta_portal.footer_support:
   title: Apoie
   description: Conheça as formas de apoio institucional disponíveis.

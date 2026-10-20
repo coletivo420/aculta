@@ -39,7 +39,7 @@ final class SecretsRequirementsHook {
     }
     return ['aculta_secrets' => [
       'title' => $title,
-      'value' => $this->t('Faltam: @names. Preencha em /painel-administrativo/configuracoes/aculta/segredos.', ['@names' => implode(', ', $missing)]),
+      'value' => $this->t('Faltam: @names. Preencha em /painel-administrativo/aculta/segredos.', ['@names' => implode(', ', $missing)]),
       'severity' => REQUIREMENT_WARNING,
     ]];
   }

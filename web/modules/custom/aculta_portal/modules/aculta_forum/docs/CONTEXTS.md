@@ -57,7 +57,7 @@ Fórum. Nenhum novo CRUD é criado.
 O formulário próprio de configuração do Fórum tinha opção `comment_move_enabled`;
 seu antigo caminho agora redireciona ao painel e não edita a configuração. A
 moderação do primeiro comentário é uma configuração compartilhada do `aculta_user`, em
-`/painel-administrativo/configuracoes/aculta/portal/participacao`, com efeito
+`/painel-administrativo/aculta/participacao`, com efeito
 em Fórum, Revista, Wiki e outros hosts, exceto LMS. O painel Growroom poderá
 apresentar um link para essa opção com seu escopo compartilhado explícito, sem
 duplicar o armazenamento nem alterar a política dos outros contextos.
@@ -129,7 +129,7 @@ Views permanece responsável pela consulta, filtros fixos, acesso e cache. Para 
 - Um único fluxo de comentários na própria página; nunca criar tópico em outro Node.
 - O provider atende apenas bundles `article` e `blog` que tenham o campo compartilhado; as duas field instances e os displays full estão aplicados no Runtime de teste, sem comentários criados.
 - Leitura combina Node Entity Access com field access. Escrita requer leitura permitida, campo aberto e permissão `post comments`; moderação combina leitura e `administer comments`. As decisões variam por `user.permissions` e carregam cacheability do host/campo.
-- `aculta_user` aplica moderação do primeiro comentário compartilhado a qualquer Node com `field_aculta_discussion`, incluindo Fórum, Revista, Wiki e novos contextos. O host `aculta_lms_topic` não é moderado, mas um comentário LMS publicado conta como participação aprovada nos demais contextos e retira o bloqueio temporário de criação de tópico. A opção fica em `/painel-administrativo/configuracoes/aculta/portal/participacao`. Os bundles contrib `forum`/`comment_forum` estão vazios no Runtime de teste após F-D33; criação legado permanece bloqueada até o uninstall. O toggle antigo de moderação do Forum contrib é obsoleto e ignorado.
+- `aculta_user` aplica moderação do primeiro comentário compartilhado a qualquer Node com `field_aculta_discussion`, incluindo Fórum, Revista, Wiki e novos contextos. O host `aculta_lms_topic` não é moderado, mas um comentário LMS publicado conta como participação aprovada nos demais contextos e retira o bloqueio temporário de criação de tópico. A opção fica em `/painel-administrativo/aculta/participacao`. Os bundles contrib `forum`/`comment_forum` estão vazios no Runtime de teste após F-D33; criação legado permanece bloqueada até o uninstall. O toggle antigo de moderação do Forum contrib é obsoleto e ignorado.
 - O provider editorial e a política de moderação estão cobertos por testes Unit/Kernel isolados. `aculta_magazine` aplica em memória o status default configurado a Nodes anteriores sem status persistido; status explícitos e estatísticas são preservados. Runtime editorial PARTIAL: campo/display presente e status padrão verificado; renderização HTTP e envio permanecem pendentes.
 - Publicação/despublicação e permissões editoriais condicionam leitura/escrita.
 - Canonical do comentário preserva o caminho editorial e permalink/âncora.

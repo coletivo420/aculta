@@ -27,7 +27,7 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 
 ## Relatório de falhas
 
-- Página `/painel-administrativo/configuracoes/aculta/envios-de-email/falhas`: falhas dos últimos 30 dias com o texto completo.
+- Página `/painel-administrativo/aculta/mail/falhas`: falhas dos últimos 30 dias com o texto completo.
 - O texto do servidor pode conter o endereço do destinatário (ex.: `<pessoa@dominio>`). Por isso o relatório é restrito e o aviso aparece na página.
 - O usuário final nunca vê este texto.
 

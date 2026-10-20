@@ -11,7 +11,7 @@ use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 /**
  * The rules of the chat: how many people a conversation may have, how long it is kept and how much is sent.
  *
- * The numbers are the administrator's (aculta_messenger.settings, the form at /painel-administrativo/configuracoes/aculta/portal/mensagens).
+ * The numbers are the administrator's (aculta_messenger.settings, the form at /painel-administrativo/aculta/mensagens).
  * This class is the one place that reads them: the new conversation form, the retention cron and the send validator
  * all ask here. See docs/portal/MESSENGER-CONVERSATION-KINDS.md.
  *

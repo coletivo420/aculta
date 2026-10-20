@@ -1,3 +1,8 @@
+## 0.1.0-dev.21 — fluxo e campanhas de doação no painel ACULTA — 2026-10-20
+
+- Fluxo em `/painel-administrativo/aculta/doacoes/fluxo` e campanhas em `/painel-administrativo/aculta/doacoes/campanhas`, com itens na aba ACULTA.
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
 # Changelog — aculta_donation
 
 ## 0.1.0-dev.20 — limite superior do valor da doação rápida — 2026-10-19

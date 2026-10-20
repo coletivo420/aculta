@@ -1,3 +1,10 @@
+## 0.4.0-dev.232 — painel ACULTA em /painel-administrativo/aculta, com aba e subaba no menu — 2026-10-20
+
+- Página do Portal movida para `/painel-administrativo/aculta` (antes `.../configuracoes/aculta/portal`).
+- Configurações do Portal centralizadas sob `/painel-administrativo/aculta/...`: aparência, apoio, redes sociais, Turnstile, status, credenciais e implantação.
+- Menu: aba **ACULTA** em Administração, com os itens do Portal e a subaba **E-mail** (os itens do e-mail ficam em `links.menu.yml` do mailer).
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
 ## 0.4.0-dev.231 — textos de conta aprovados na camada do aculta_mailer — 2026-10-20
 
 - Textos aprovados pelo responsável (2026-10-20) para reset de senha, cadastro concluído, conta criada pelo administrador e confirmação de novo e-mail. Os três primeiros são tipos novos (`account_password_reset`, `account_register`, `account_register_admin`); o de confirmação (`email_confirmation_request`) passa a ter o texto aprovado.

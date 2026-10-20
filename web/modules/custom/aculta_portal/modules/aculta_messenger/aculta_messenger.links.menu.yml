@@ -4,3 +4,9 @@ aculta_messenger.admin_notices:
   route_name: aculta_messenger.admin_notices
   parent: system.admin
   weight: 8
+aculta_messenger.settings_form:
+  title: 'Mensagens'
+  description: 'Limites e limpeza do chat.'
+  route_name: aculta_messenger.settings_form
+  parent: aculta_portal.admin
+  weight: 5

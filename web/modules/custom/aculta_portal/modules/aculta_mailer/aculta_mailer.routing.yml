@@ -1,5 +1,5 @@
 aculta_mailer.dashboard:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email'
+  path: '/painel-administrativo/aculta/mail'
   defaults:
     _controller: '\Drupal\aculta_mailer\Controller\MailDashboardController::overview'
     _title: 'Envios de e-mail'
@@ -7,7 +7,7 @@ aculta_mailer.dashboard:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.failures:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/falhas'
+  path: '/painel-administrativo/aculta/mail/falhas'
   defaults:
     _controller: '\Drupal\aculta_mailer\Controller\MailDashboardController::failures'
     _title: 'Relatório de falhas de envio'
@@ -15,7 +15,7 @@ aculta_mailer.failures:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.log_export:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/registro/exportar'
+  path: '/painel-administrativo/aculta/mail/registro/exportar'
   defaults:
     _controller: '\Drupal\aculta_mailer\Controller\MailDashboardController::export'
     _title: 'Exportar registro de envios'
@@ -23,7 +23,7 @@ aculta_mailer.log_export:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.log_list:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/envios'
+  path: '/painel-administrativo/aculta/mail/envios'
   defaults:
     _controller: '\Drupal\aculta_mailer\Controller\MailLogListController::list'
     _title: 'Envios de e-mail'
@@ -49,7 +49,7 @@ aculta_mailer.track_click:
   methods: [GET]
 
 aculta_mailer.log_status:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/registro/{log_id}/estado'
+  path: '/painel-administrativo/aculta/mail/registro/{log_id}/estado'
   defaults:
     _controller: '\Drupal\aculta_mailer\Controller\MailStatusController::show'
     _title: 'Estado do envio'
@@ -57,7 +57,7 @@ aculta_mailer.log_status:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.failure_resend:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/falhas/reenviar/{log_id}'
+  path: '/painel-administrativo/aculta/mail/falhas/reenviar/{log_id}'
   defaults:
     _form: '\Drupal\aculta_mailer\Form\MailResendForm'
     _title: 'Reenviar mensagem com falha'
@@ -65,7 +65,7 @@ aculta_mailer.failure_resend:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.template_test:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/modelos/{aculta_mailer_template}/teste'
+  path: '/painel-administrativo/aculta/mail/modelos/{aculta_mailer_template}/teste'
   defaults:
     _form: '\Drupal\aculta_mailer\Form\MailTemplateTestForm'
     _title: 'Enviar teste de modelo'
@@ -77,7 +77,7 @@ aculta_mailer.template_test:
         type: entity:aculta_mailer_template
 
 aculta_mailer.diagnostics:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/diagnostico'
+  path: '/painel-administrativo/aculta/mail/diagnostico'
   defaults:
     _controller: '\Drupal\aculta_mailer\Controller\MailDashboardController::diagnostics'
     _title: 'Diagnóstico de envio de e-mail'
@@ -93,7 +93,7 @@ aculta_mailer.webhook:
   methods: [POST]
 
 aculta_mailer.settings:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/configuracoes'
+  path: '/painel-administrativo/aculta/mail/configuracoes'
   defaults:
     _controller: '\Drupal\aculta_mailer\Controller\MailSettingsController::settings'
     _title: 'Configurações de envio de e-mail'
@@ -101,7 +101,7 @@ aculta_mailer.settings:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.imap_settings:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/monitoramento'
+  path: '/painel-administrativo/aculta/mail/monitoramento'
   defaults:
     _form: '\Drupal\aculta_mailer\Form\MailImapSettingsForm'
     _title: 'Monitoramento IMAP de envios'
@@ -109,7 +109,7 @@ aculta_mailer.imap_settings:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.delivery_settings:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/entrega'
+  path: '/painel-administrativo/aculta/mail/entrega'
   defaults:
     _form: '\Drupal\aculta_mailer\Form\MailAlertSettingsForm'
     _title: 'Entrega, alertas e resumo'
@@ -117,7 +117,7 @@ aculta_mailer.delivery_settings:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.log_settings:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/registro'
+  path: '/painel-administrativo/aculta/mail/registro'
   defaults:
     _form: '\Drupal\aculta_mailer\Form\MailLogSettingsForm'
     _title: 'Registro de e-mail'
@@ -125,7 +125,7 @@ aculta_mailer.log_settings:
     _permission: 'administer aculta_mailer'
 
 aculta_mailer.policy_settings:
-  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/politicas'
+  path: '/painel-administrativo/aculta/mail/politicas'
   defaults:
     _form: '\Drupal\aculta_mailer\Form\MailPolicyForm'
     _title: 'Políticas de envio'

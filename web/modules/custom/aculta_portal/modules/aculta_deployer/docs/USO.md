@@ -177,7 +177,7 @@ Configuração que muda entre teste e produção não é editada à mão: está 
 
 ## Painel do Portal (0.1.6)
 
-- `$CLI report` grava `var/deployer/status.json` (ignorado pelo Git). A página `/painel-administrativo/configuracoes/aculta/deployer`
+- `$CLI report` grava `var/deployer/status.json` (ignorado pelo Git). A página `/painel-administrativo/aculta/deployer`
   (permissão `administer aculta deployer`) lê esse arquivo e mostra fronteiras, correções abertas e credenciais
   por nome e estado, com o mesmo sistema de status do diagnóstico (✔, ⚠, ✖).
 - Gere o relatório antes de consultar o painel. Sem o arquivo, a página informa que o relatório está indisponível.

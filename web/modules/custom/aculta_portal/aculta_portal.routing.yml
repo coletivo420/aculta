@@ -104,7 +104,7 @@ aculta_portal.account_settings:
   options:
     no_cache: true
 aculta_portal.appearance_settings:
-  path: /painel-administrativo/configuracoes/aculta/aparencia
+  path: /painel-administrativo/aculta/aparencia
   defaults:
     _form: '\Drupal\aculta_portal\Appearance\SettingsForm'
     _title: Aparência do site
@@ -113,7 +113,7 @@ aculta_portal.appearance_settings:
   options:
     _admin_route: true
 aculta_portal.support_settings:
-  path: /painel-administrativo/configuracoes/aculta/apoio
+  path: /painel-administrativo/aculta/apoio
   defaults:
     _form: '\Drupal\aculta_portal\Support\Form\SettingsForm'
     _title: Formas de apoio
@@ -122,7 +122,7 @@ aculta_portal.support_settings:
   options:
     _admin_route: true
 aculta_portal.social_links_settings:
-  path: /painel-administrativo/configuracoes/aculta/portal/redes-sociais
+  path: /painel-administrativo/aculta/redes-sociais
   defaults:
     _form: '\Drupal\aculta_portal\Presentation\SocialLinksSettingsForm'
     _title: Redes sociais e botões
@@ -131,7 +131,7 @@ aculta_portal.social_links_settings:
   options:
     _admin_route: true
 aculta_portal.admin:
-  path: /painel-administrativo/configuracoes/aculta/portal
+  path: /painel-administrativo/aculta
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalRequirementsController::overview'
     _title: ACULTA Portal
@@ -140,7 +140,7 @@ aculta_portal.admin:
   options:
     _admin_route: true
 aculta_portal.turnstile_settings:
-  path: /painel-administrativo/configuracoes/aculta/portal/turnstile
+  path: /painel-administrativo/aculta/turnstile
   defaults:
     _form: '\Drupal\aculta_portal\Captcha\Form\TurnstileSettingsForm'
     _title: Turnstile
@@ -149,7 +149,7 @@ aculta_portal.turnstile_settings:
   options:
     _admin_route: true
 aculta_portal.requirements:
-  path: /painel-administrativo/configuracoes/aculta/portal/requisitos
+  path: /painel-administrativo/aculta/requisitos
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalRequirementsController::report'
     _title: Status do Portal Aculta
@@ -256,7 +256,7 @@ aculta_portal.shop_home:
   options:
     _aculta_domain_purpose: shop
 aculta_portal.secrets_import:
-  path: /painel-administrativo/configuracoes/aculta/segredos
+  path: /painel-administrativo/aculta/segredos
   defaults:
     _controller: 'aculta_portal.secrets_controller:page'
     _title: Credenciais do ambiente
@@ -265,7 +265,7 @@ aculta_portal.secrets_import:
   options:
     _admin_route: true
 aculta_portal.secrets_clear:
-  path: /painel-administrativo/configuracoes/aculta/segredos/apagar/{name}
+  path: /painel-administrativo/aculta/segredos/apagar/{name}
   defaults:
     _controller: 'aculta_portal.secrets_controller:clear'
     _title: Apagar valor
@@ -275,7 +275,7 @@ aculta_portal.secrets_clear:
   options:
     _admin_route: true
 aculta_portal.secrets_edit:
-  path: /painel-administrativo/configuracoes/aculta/segredos/editar/{name}
+  path: /painel-administrativo/aculta/segredos/editar/{name}
   defaults:
     _controller: 'aculta_portal.secrets_controller:edit'
     _title: Alterar credencial
@@ -285,7 +285,7 @@ aculta_portal.secrets_edit:
   options:
     _admin_route: true
 aculta_portal.secrets_show:
-  path: /painel-administrativo/configuracoes/aculta/segredos/mostrar/{name}
+  path: /painel-administrativo/aculta/segredos/mostrar/{name}
   defaults:
     _controller: 'aculta_portal.secrets_controller:show'
     _title: Valor da credencial
@@ -295,7 +295,7 @@ aculta_portal.secrets_show:
   options:
     _admin_route: true
 aculta_portal.deployer_status:
-  path: /painel-administrativo/configuracoes/aculta/deployer
+  path: /painel-administrativo/aculta/deployer
   defaults:
     _controller: '\Drupal\aculta_portal\Deployer\DeployerStatusController::page'
     _title: ACULTA Deployer

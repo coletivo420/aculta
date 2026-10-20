@@ -1,3 +1,8 @@
+## 0.4.0-dev.48 — regras de participação no painel ACULTA — 2026-10-20
+
+- Página de participação em `/painel-administrativo/aculta/participacao` e item na aba ACULTA.
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
 ## 0.4.0-dev.47 — encaminhar a antiga fila de denúncias ao painel central do Fórum
 
 - `/painel-administrativo/forum/denuncias` mantém a permissão específica, mas

@@ -33,7 +33,7 @@ aculta_donation.donation.quick:
     no_cache: true
 
 aculta_donation.donation_settings:
-  path: '/painel-administrativo/configuracoes/aculta/doacoes/fluxo'
+  path: '/painel-administrativo/aculta/doacoes/fluxo'
   defaults:
     _title: 'Fluxo de doação'
     _form: 'Drupal\aculta_donation\Form\DonationSettingsForm'

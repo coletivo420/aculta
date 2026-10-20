@@ -1,0 +1,7 @@
+# Consulta de CEP, dentro da aba ACULTA (decisão de 2026-10-20).
+aculta_portal_cep.settings:
+  title: CEP
+  description: Consulta de CEP do formulário de endereço.
+  route_name: aculta_portal_cep.settings
+  parent: aculta_portal.admin
+  weight: 8

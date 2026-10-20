@@ -1,3 +1,9 @@
+## 0.1.0-dev.52 — painel do e-mail em /painel-administrativo/aculta/mail, com subaba E-mail — 2026-10-20
+
+- Painel movido para `/painel-administrativo/aculta/mail`; todas as páginas do e-mail (envios, falhas, registro, entrega, modelos, layouts, marcas, políticas, diagnóstico, monitoramento, configurações) ficam sob esse caminho.
+- Subaba **E-mail** na aba ACULTA, com os itens do painel. Os links de entidade (modelos, layouts, marcas) acompanham.
+- Caminhos antigos `/painel-administrativo/configuracoes/aculta/...` respondem 404, sem redirecionamento.
+
 # Changelog — ACULTA Mailer
 
 ## 0.1.0-dev.51 — gráficos do painel (F8); exceção histórica do gate — 2026-10-20
