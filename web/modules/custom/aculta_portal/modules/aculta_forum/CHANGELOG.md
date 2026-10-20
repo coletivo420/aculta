@@ -30,6 +30,11 @@
   persistente entre conexões, mas não simula dois processos/requisições HTTP.
   Efeitos externos seguem pendentes. O mover reserva primeiro o lock de thread
   Core, respeitando `Comment::preSave()` para evitar inversão.
+- Revisão dos hooks laterais: `aculta_game` Unit `ForumParticipationPolicyTest`
+  (8/35) confirma que update de comentário já publicado não repete o gatilho de
+  conquista; `aculta_messenger` `ForumNoticeAccessPolicyTest` (3/29) passou para
+  os contratos de acesso. A entrega de aviso e atualização de índice Search API
+  após movimento ainda precisam de teste integrado.
 
 ## Pesquisa adicional de módulos contrib — 2026-10-19 (documentação)
 
