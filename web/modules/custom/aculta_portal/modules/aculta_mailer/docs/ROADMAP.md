@@ -7,7 +7,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 |---|---|---|
 | F0 | Auditoria ([AUDIT](AUDIT.md)), pesquisa ([UPSTREAM](UPSTREAM.md)), arquitetura ([ARCHITECTURE](ARCHITECTURE.md)) | Concluída nesta PR |
 | F1 | Fundação: `MailMessage`, `MailStatus`, `MessageIdFactory`, `RetrySchedule`, contrato `AcultaMailerInterface`, testes unitários | Em andamento nesta PR |
-| F2 | Transporte: envio por transporte (`X-Transport`), código SMTP real, failover Hostinger → SMTP2GO, diagnóstico sem credenciais e validação com entrega confirmada pelo destinatário (`docs/TRANSPORTS.md`) | Concluída (2026-10-20) |
+| F2 | Transporte (Brevo acrescentado em 2026-10-20: fábrica, transporte `brevo`, cota diária e envio real aceito; `docs/CONTROL-SCREENS.md` para as telas de controle). Anterior: envio por transporte (`X-Transport`), código SMTP real, failover Hostinger → SMTP2GO, diagnóstico sem credenciais e validação com entrega confirmada pelo destinatário (`docs/TRANSPORTS.md`) | Concluída (2026-10-20) |
 | F3 | Templates: tipos com variáveis declaradas; Config Entity `aculta_mailer_template` com editor, validação de placeholders, prévia e envio de teste pelo caminho real | Parcial (modelo e teste prontos; teste real aceito em 2026-10-20) |
 | F4 | Branding: `aculta_mailer_brand` e `aculta_mailer_layout` com editores (texto); envelope HTML com identidade ACULTA no tema (`email-wrap`, logo do tema). Pendente: logo de marca via `aculta_image` e conferência visual pelo destinatário | Parcial (HTML no ar em teste) |
 | F5 | Policy: hierarquia global → tipo, ajustes em plugins (`transport`, `reply_to`, `priority`, `skip`), suspensão sem retry (`docs/POLICIES.md`) | Parcial (hierarquia de global e tipo prontas; ajuste por instância e interface de edição pendentes) |
@@ -34,3 +34,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 - Remetente: confirmar na F2 (ver `docs/portal/EMAIL-TRANSPORT.md` §4.2).
 - Caminho administrativo: `/painel-administrativo/...`, conforme decisão do responsável.
 - Local dos templates de layout: módulo, com estilos vindos do tema via dados e classes (decisão do responsável).
+
+## Telas de controle (planejado)
+
+- Lista de e-mails do sistema, suspensão por tipo, coluna de destinatário, diagnóstico de domínio (SPF, DKIM, DMARC) e editor visual. Ver `docs/CONTROL-SCREENS.md`.

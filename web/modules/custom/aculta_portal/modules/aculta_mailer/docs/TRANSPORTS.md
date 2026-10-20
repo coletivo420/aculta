@@ -68,8 +68,9 @@ O failover temporário foi validado no Kernel, com um transporte de teste que de
 ## Transporte Brevo e cota diária (2026-10-20)
 
 - **Fábrica:** `BrevoSecretTransportFactory`, esquema `aculta-brevo://default`. A chave vem de `BREVO_API_KEY` pela interface `SecretProviderInterface` (implementada pelo aculta_portal). A DSN não tem segredo, então a configuração pode ser exportada.
-- **Pendente:** `symfony/http-client` (exigido pela API do Brevo). Enquanto não estiver instalado, a fábrica falha de forma controlada e o teste de criação fica pulado.
-- **Transporte na configuração:** não criado nesta versão (depende da biblioteca acima).
+- **Biblioteca:** `symfony/http-client` 7.4 instalado (autorizado em 2026-10-20).
+- **Transporte `brevo`:** criado na configuração do Mailer Plus (plugin `dsn`, DSN `aculta-brevo://default`, sem segredo). Não é o padrão: só é usado quando escolhido.
+- **Evidência:** envio real pela API do Brevo para o destinatário autorizado, aceito (`sent`), com transporte `brevo` no registro. Entrega na caixa de entrada depende de conferência do destinatário.
 - **Cota diária:** `aculta_mailer.policy:quota` (ex.: `brevo: 200`). A cota é contada no nosso próprio registro, mensagens aceitas nas últimas 24 horas. Ao atingi-la, o envio segue pelo transporte de contingência, antes da falha.
 
 ## Comparação com o WP Mail SMTP Pro (código-fonte lido)

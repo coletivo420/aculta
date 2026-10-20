@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.15 — transporte Brevo ativo na configuração e planejamento das telas de controle — 2026-10-20
+
+- Biblioteca `symfony/http-client` 7.4 instalada (autorizada). Testes da fábrica do Brevo passam sem pular.
+- Transporte `brevo` criado na configuração (plugin `dsn`, sem segredo). Usado apenas quando escolhido.
+- Envio real pela API do Brevo para o destinatário autorizado: aceito, transporte `brevo` no registro.
+- Planejamento das telas de controle dos e-mails (inspirado no Ultimate Member): `docs/CONTROL-SCREENS.md`.
+
 ## 0.1.0-dev.14 — transporte Brevo (fábrica) e cota diária por transporte — 2026-10-20
 
 - `BrevoSecretTransportFactory` (esquema `aculta-brevo://default`): chave de `BREVO_API_KEY` pela interface neutra `SecretProviderInterface`. Opcional: sem o aculta_portal, não cria o transporte.
