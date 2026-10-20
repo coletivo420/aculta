@@ -80,3 +80,10 @@ O failover temporário foi validado no Kernel, com um transporte de teste que de
 - **Contagem diária:** não encontrei contador de envios por dia no código do Pro. O throttle existente limita as chamadas de diagnóstico, não o envio.
 - **Logs:** tabela própria de e-mails enviados, com retenção configurável.
 - **Nosso diferencial:** cota diária contada no registro e troca antecipada para a contingência. A detecção por código do provedor continua como complemento (a ser implementada com o código real do Brevo).
+
+## Autenticação do domínio (2026-10-20)
+
+- **Brevo:** `aculta.org` verificado e autenticado. DKIM `brevo1._domainkey` e `brevo2._domainkey` publicados (CNAME).
+- **SPF:** sem alteração. SPF não é exigido pelo Brevo com IP compartilhado; `include` do Brevo só com IP dedicado.
+- **DMARC:** `p=none`, relatórios agora para `dmarc@aculta.org`. A caixa precisa existir na Hostinger para receber os relatórios.
+- **DNS:** zona `aculta.org` gerenciada na Cloudflare. Alterações feitas pela API da Cloudflare com token de DNS.
