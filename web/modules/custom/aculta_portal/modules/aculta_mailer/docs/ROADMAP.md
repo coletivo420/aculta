@@ -8,7 +8,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F0 | Auditoria ([AUDIT](AUDIT.md)), pesquisa ([UPSTREAM](UPSTREAM.md)), arquitetura ([ARCHITECTURE](ARCHITECTURE.md)) | Concluída nesta PR |
 | F1 | Fundação: `MailMessage`, `MailStatus`, `MessageIdFactory`, `RetrySchedule`, contrato `AcultaMailerInterface`, testes unitários | Em andamento nesta PR |
 | F2 | Transporte: failover Hostinger → SMTP2GO e classificação SMTP (`TransportFailover`, `SmtpReplyClassifier`) concluídos e testados; adaptador do Symfony Mailer por DSN, diagnóstico e fallback no envio real | Parcial (lógica pronta) |
-| F3 | Templates: Config Entity `aculta_mailer_template`, Twig, variáveis controladas, preview, envio de teste | Pendente |
+| F3 | Templates: registro de tipos por tag (`MailTypeInterface`) concluído; Config Entity `aculta_mailer_template`, Twig, variáveis controladas, preview e envio de teste pendentes | Parcial (tipos prontos) |
 | F4 | Branding: `MailBrand` e `MailLayout`, herança, logo via `aculta_image` | Pendente |
 | F5 | Policy: adjusters por plugin, reutilização de `mailer_policy` até equivalência | Pendente |
 | F6 | Queue: decisão de retry/failover (`DeliveryPlanner`, `DeliveryDecision`) concluída e testada; worker de envio, eventos e persistência de tentativas | Parcial (decisão pronta) |
@@ -17,14 +17,15 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F9 | Usuário: criação, confirmação, troca de e-mail, reset, integração com `aculta_user` | Pendente |
 | F10 | Eventos de entrega: webhooks de provedor, bounce, complaint, supressão | Pendente |
 | F11 | Tracking opcional (abertura e clique), desligado por padrão | Pendente |
-| F12 | Integrações ACULTA: Forum, Game, LMS, Magazine, Commerce | Pendente |
+| F12 | Integrações ACULTA: cadastro com e-mail já usado migrado (DT-P06); Game (conquista), Messenger (resumo), Forum, LMS, Magazine e Commerce pendentes | Parcial |
 | F13 | Compatibilidade: interceptar e-mails remanescentes do Core | Pendente |
 | F14 | Migração de configuração de Mailer Plus/Policy | Pendente |
 | F15 | Retirada do contrib, somente com equivalência comprovada | Pendente |
 
 ## Runtime
 
-- F1 não tem efeito em runtime: o módulo não é habilitado e não altera envio. **Runtime: não aplicável nesta fase.**
+- Runtime de teste (`aculta_runtime`): `aculta_mailer` habilitado (2026-10-20, sem updb). O cadastro com e-mail já usado envia pela API; demais consumidores ainda usam o Core direto.
+- Envio real pelo transporte não foi executado: os testes usam o coletor de e-mail do Core, sem SMTP.
 - Validação de envio real (F2 em diante): **DEFERRED** até autorização explícita de ambiente de teste.
 
 ## Pendências de decisão
