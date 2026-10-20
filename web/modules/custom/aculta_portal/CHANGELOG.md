@@ -8,7 +8,7 @@
   (5 depreciações de Domain contrib), PHPCS PASS; gates Drupal 11 (988), mapa
   (154) e slugs (381) PASS. Runtime `aculta_runtime`: duas Views importadas
   parcialmente, cache reconstruído, rotas GET/POST resolvidas; anônimo recebe
-  403. Redirect HTTP autenticado pendente. RUNTIME STATUS: PARTIAL.
+  403. Uid 1 autenticado: página central 200 e sete redirects GET 302; logout encerrou a sessão. Smoke visual pendente. RUNTIME STATUS: PARTIAL.
 
 ## 0.4.0-dev.222 — corrigir validação da Action de movimento VBO
 

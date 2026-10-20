@@ -1493,8 +1493,10 @@ real no servidor de teste.
   `views.view.aculta_forum_admin_comments`; `drush cr` PASS. Ambas preservam o
   display `default`; RouteProvider resolve as rotas de conteúdo, comentários,
   filas, configurações e denúncias para redirects. HTTP anônimo recebeu 403 nos
-  oito caminhos centrais. Redirect com sessão administrativa e inspeção visual
-  não foram executados nesta rodada.
+  oito caminhos centrais. ULI pelo purpose conta autenticou uid 1; a página
+  central respondeu 200 e os sete redirects GET retornaram 302 para ela. Logout
+  via `/sair` encerrou a sessão; após logout a página voltou a 403. Inspeção
+  visual segue pendente.
 - EntityQuery antes/depois: zero `aculta_forum_topic` e zero
   `aculta_discussion_post`. Nenhuma entidade de conteúdo foi criada, alterada ou
   removida. RUNTIME STATUS: PARTIAL.

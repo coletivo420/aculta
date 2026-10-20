@@ -12,8 +12,7 @@
   (5 depreciações de Domain contrib); PHPCS direcionado e gates Drupal 11 (988),
   mapa (154) e slugs (381) PASS.
 - Runtime de teste: importação parcial apenas dessas duas Views, `drush cr` PASS,
-  displays `default` e RouteProvider resolve GET/POST nos caminhos centrais. Oito
-  caminhos principais recebem HTTP 403 anônimo; redirect HTTP autenticado pendente.
+  displays `default` e RouteProvider resolve GET/POST nos caminhos centrais. Anônimo recebe 403 nos oito caminhos. ULI pelo purpose `conta` autenticou uid 1: a página central respondeu 200 e os sete redirects GET responderam 302 para ela. Logout encerrou a sessão e a página voltou a 403 anônimo.
   Backup anterior privado; nenhum Node ou Comment criado/alterado. RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.119` — corrigir validação da seleção da Action VBO
