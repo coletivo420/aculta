@@ -16,6 +16,11 @@
   restrito à tabela administrativa. Roteiro só fez GET, sem conteúdo/config
   alterados; capturas privadas em
   `/home/piradopirata/private/aculta/visual-tests/forum-admin-recheck-dev81-20261020/`.
+- Auditoria dos hooks do Messenger registrou um ponto que requer decisão antes
+  da homologação de Comment publicado: movimentos não criam novo aviso, mas os
+  avisos agregados já existentes continuam no tópico de origem. O storage não
+  guarda eventos individuais suficientes para reverter/migrar contadores com
+  segurança; ver `MOVE-TOOLS.md`. Nenhuma alteração de Messenger foi feita.
 
 ## `0.1.0-dev.80` — preservar traduções ao mover comentário — 2026-10-20
 

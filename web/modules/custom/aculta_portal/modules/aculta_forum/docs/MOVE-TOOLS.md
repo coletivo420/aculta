@@ -258,6 +258,25 @@ funcional, notificações existentes com seguidores, anexos reais pela política
 aprovação. O smoke Runtime confirmou especificamente a Flag de denúncia e sua
 fila; não clicou em seguir/salvar tópico.
 
+#### Avisos de comentários movimentados — decisão pendente
+
+O código atual do Messenger cria aviso em `comment_insert` e quando um
+comentário pendente passa a publicado. Atualizar um comentário publicado para
+movê-lo não dispara nenhum desses dois eventos, portanto não envia aviso novo.
+Avisos existentes continuam com `assunto_nid` da discussão de origem. Cada
+`aculta_aviso` agrega contadores por destinatário/tipo/tópico e guarda apenas o
+último Comment contado; não existe ledger de cada evento/recipient que permita
+reverter com segurança uma parte do contador ou recompor o último ID quando
+houve várias respostas. Por isso não se deve transferir, decrementá-los ou
+notificar seguidores do destino automaticamente sem uma política aprovada.
+
+Antes de homologar movimentação de comentários publicados, o responsável deve
+definir se avisos antigos ficam como registro da notificação original, se são
+reconciliados com o destino (incluindo merge de contadores) ou se a mudança gera
+um aviso contextual de movimentação. Qualquer entrega no destino ainda precisa
+revalidar acesso atual e respeitar opt-in de e-mail; não usar `comment_update`
+como se fosse uma nova resposta.
+
 O `ForumDiscussionWriteGuard` agora compartilha locks por tópico com gravação e
 exclusão de comentários normais; valida host/thread persistidos e o host do pai
 após adquirir locks, e os mantém até o callback da transação raiz. O lock de
