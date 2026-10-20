@@ -1,3 +1,4 @@
+uuid: 0cc064bf-e6a8-45f0-b69b-03bd2dc10e82
 langcode: pt-br
 status: true
 dependencies:
@@ -5,7 +6,7 @@ dependencies:
     - site_alert
 id: aculta_site_alert_dismissed
 label: 'Aviso temporário dispensado'
-bundles: {  }
+bundles: {}
 entity_type: site_alert
 global: false
 flag_short: 'Dispensar aviso'
@@ -19,9 +20,9 @@ weight: 0
 flag_type: 'entity:site_alert'
 link_type: ajax_link
 flagTypeConfig:
-  show_in_links: {  }
+  show_in_links: {}
   show_as_field: true
   show_on_form: false
   show_contextual_link: false
-  extra_permissions: {  }
-linkTypeConfig: {  }
+  extra_permissions: {}
+linkTypeConfig: {}

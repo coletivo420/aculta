@@ -1,5 +1,5 @@
-langcode: pt-br
 uuid: 84d6b071-980f-4f33-ad2f-f5a72ff96aab
+langcode: pt-br
 status: true
 dependencies:
   module:

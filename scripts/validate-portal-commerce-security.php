@@ -618,8 +618,10 @@ foreach ($manifest['configs'] as $name) {
 }
 $assert(!\Drupal::keyValue('system.schema')->get('aculta_apoio'), 'No stale schema version remains for standalone aculta_apoio.');
 $assert(!\Drupal::keyValue('system.schema')->get('aculta_editorial'), 'No stale schema version remains for consolidated aculta_editorial.');
-$commerce_address = \Drupal\field\Entity\FieldConfig::loadByName('profile', 'customer', 'address');
-$assert((bool) $commerce_address && $commerce_address->getFieldStorageDefinition()->id() === 'profile.address', 'Address storage profile.address remains attached to the Commerce customer profile.');
+// Endereço único (docs/portal/CHECKOUT-BILLING.md): o endereço de cobrança e envio é o field_address do perfil de pessoa.
+// O tipo de perfil customer do Commerce não existe no site; a checagem antiga foi aposentada em 2026-10-20.
+$unified_address = \Drupal\field\Entity\FieldConfig::loadByName('profile', 'associado', 'field_address');
+$assert((bool) $unified_address && $unified_address->getFieldStorageDefinition()->id() === 'profile.field_address', 'Unified address field_address is attached to the person profile (associado).');
 $assert((bool) \Drupal::entityTypeManager()->getStorage('field_storage_config')->load('profile.field_address'), 'Participant portal address uses its separate field_address storage.');
 
 $support_code = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Support', FilesystemIterator::SKIP_DOTS));

@@ -1,4 +1,3 @@
-uuid: 6e2dcc28-64d1-4198-9dae-d91629ab69be
 langcode: pt-br
 status: true
 dependencies:
@@ -29,13 +28,13 @@ content:
   body:
     type: text_default
     label: hidden
-    settings: {  }
-    third_party_settings: {  }
+    settings: {}
+    third_party_settings: {}
     weight: 5
     region: content
   links:
-    settings: {  }
-    third_party_settings: {  }
+    settings: {}
+    third_party_settings: {}
     weight: 100
     region: content
 hidden:

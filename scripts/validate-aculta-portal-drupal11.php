@@ -718,9 +718,10 @@ $check(
   'P5.3 Wiki queries must keep explicit access checks, WIKI Domain/status filters and per-entity access.',
 );
 $wikiNodeType = $read($root . '/config/sync/node.type.wiki_entry.yml');
+// Autoria de verbete publicado é pública (AGENTS, seção Wiki; base legal de consentimento na política de privacidade).
 $check(
-  str_contains($wikiNodeType, 'display_submitted: false'),
-  'Public Wiki entry presentation must not expose authorship while node ownership and revisions remain in Drupal.',
+  str_contains($wikiNodeType, 'display_submitted: true'),
+  'Wiki entry type displays its published authorship (AGENTS, Wiki: autoria pública).',
 );
 
 // P5.4-A/B/C/E: account controllers receive every collaborator explicitly.
