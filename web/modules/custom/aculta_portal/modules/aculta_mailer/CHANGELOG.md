@@ -1,5 +1,11 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.13 — configurações de envio e credencial do Brevo — 2026-10-20
+
+- Biblioteca `symfony/brevo-mailer` 7.4 instalada (ponte do Symfony Mailer para a API do Brevo). Transporte Brevo ainda não ativado.
+- Página `/painel-administrativo/configuracoes/aculta/envios-de-email/configuracoes`: estado da credencial `BREVO_API_KEY` (sem valor) e link para alterá-la no painel de credenciais do ambiente, para quem tem a permissão de segredos.
+- Testes: página (Kernel) e leitura da credencial.
+
 ## 0.1.0-dev.12 — eventos de entrega do provedor (F10, camada neutra) — 2026-10-20
 
 - Contrato `ProviderWebhookInterface` (tag `aculta_mailer.webhook_provider`), com verificação de assinatura antes de qualquer leitura.

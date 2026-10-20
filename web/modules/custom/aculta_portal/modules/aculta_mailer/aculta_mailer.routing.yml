@@ -41,3 +41,11 @@ aculta_mailer.webhook:
   requirements:
     _access: 'TRUE'
   methods: [POST]
+
+aculta_mailer.settings:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/configuracoes'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailSettingsController::settings'
+    _title: 'Configurações de envio de e-mail'
+  requirements:
+    _permission: 'administer aculta_mailer'
