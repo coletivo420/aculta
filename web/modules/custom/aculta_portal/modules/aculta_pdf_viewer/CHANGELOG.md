@@ -6,6 +6,7 @@
 - Removida a escala mínima fixa de 50% que impedia o ajuste à largura e exibia 500% em uma página de 20.000 × 30.000 pt.
 - Se o limite seguro exigir renderização abaixo de 50% da escala solicitada, o canvas fica oculto com mensagem acessível; navegação entre páginas e link Core de abertura/download permanecem disponíveis.
 - Firefox ESR no Runtime renderizou um PDF público de 23 MB/14 páginas. Fixtures temporários confirmaram a página 20.000 × 30.000 pt em 100% (653 × 980 px) e a página 20.000 × 2.000.000 pt com fallback (25% efetivo). `node --check`, status-index e Drupal 11+ PASS.
+- Um fixture temporário 20.000 × 200.000 pt foi ampliado até 250%: o canvas ficou em 15.971.904 pixels e 12.636 px de altura, e o indicador refletiu 194% efetivos sem ocultar o PDF. Arquivo removido após a validação; a URL passou a responder 404.
 - Unit PDF 25/25 (163 assertions); Unit `aculta_image` 20/20 (71 assertions, 8 depreciações PHPUnit); Kernel PDF + Group 6/6 (145 assertions, 28 depreciações Core/contrib).
 - Ainda Dev: o fallback de páginas extremas está validado no Homelab; os outros gates PV7 abaixo continuam pendentes.
 
