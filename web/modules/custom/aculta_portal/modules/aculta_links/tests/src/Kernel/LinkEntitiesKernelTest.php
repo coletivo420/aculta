@@ -49,9 +49,21 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
    * Tests page composition, owner access, publication, and link revision.
    */
   public function testEntityStorageAndOwnerBoundAccess(): void {
+    $route_provider = $this->container->get('router.route_provider');
+    $dashboard_route = $route_provider->getRouteByName('aculta_links.dashboard');
+    self::assertSame('/painel-administrativo/links', $dashboard_route->getPath());
+    self::assertTrue($dashboard_route->getOption('_admin_route'));
+    $page_add_route = $route_provider->getRouteByName('entity.aculta_link_page.add_form');
+    self::assertSame('/painel-administrativo/links/pagina/adicionar', $page_add_route->getPath());
+    self::assertTrue($page_add_route->getOption('_admin_route'));
+    $link_revision_route = $route_provider->getRouteByName('entity.aculta_link.revision');
+    self::assertSame(
+      '/painel-administrativo/links/destino/{aculta_link}/revisao/{aculta_link_revision}/visualizar',
+      $link_revision_route->getPath(),
+    );
+
     $owner_role = Role::create(['id' => 'links_owner', 'label' => 'Links owner']);
     $owner_role->grantPermission('manage own aculta links');
-    $owner_role->grantPermission('create aculta links');
     $owner_role->save();
     $other_role = Role::create(['id' => 'links_other', 'label' => 'Links other']);
     $other_role->grantPermission('manage own aculta links');

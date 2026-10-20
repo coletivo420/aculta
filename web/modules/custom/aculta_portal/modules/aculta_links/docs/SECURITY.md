@@ -11,6 +11,10 @@
   referenciado, adicionando ambos como dependências cacheáveis.
 - O handler inclui contextos de cache de usuário/permissões e dependência da
   entidade no resultado.
+- O dashboard limita a EntityQuery pela conta quando não é administração,
+  declara `accessCheck(TRUE)` e revalida `update` por entidade antes de montar
+  cada linha. As listagens variam por usuário/permissões e invalidam pelo tag de
+  lista da entidade.
 
 ## Controles obrigatórios antes de publicar páginas
 
@@ -35,3 +39,8 @@
   processamento ou limites paralelos.
 
 Esta lista estabelece requisitos futuros, não certifica segurança já testada.
+
+
+## Painel 0.2.0-dev.2
+
+A consulta administrativa declara `accessCheck(TRUE)`, aplica condição de proprietário para contas comuns e revalida permissão de edição por entidade antes de criar operações. Cache da tabela varia por usuário/permissões e query de paginação, inclui tags de lista e dependências das entidades e resultados de acesso. Nenhuma rota pública ou redirecionamento curto foi criado.

@@ -1,0 +1,9 @@
+aculta_links.dashboard:
+  path: '/painel-administrativo/links'
+  defaults:
+    _controller: 'aculta_links.dashboard_controller:overview'
+    _title: 'ACULTA Links'
+  requirements:
+    _custom_access: 'aculta_links.dashboard_access:access'
+  options:
+    _admin_route: TRUE

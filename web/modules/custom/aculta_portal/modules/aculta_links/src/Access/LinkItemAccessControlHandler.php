@@ -50,7 +50,7 @@ final class LinkItemAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
-    return AccessResult::allowedIfHasPermission($account, 'create aculta links')
+    return AccessResult::allowedIfHasPermission($account, 'manage own aculta links')
       ->orIf(AccessResult::allowedIfHasPermission($account, 'administer aculta links'));
   }
 

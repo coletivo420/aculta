@@ -25,7 +25,15 @@ class LinkAccessControlHandler extends EntityAccessControlHandler {
         ->addCacheableDependency($entity);
     }
 
-    if (!in_array($operation, ['view', 'update', 'delete', 'view revision'], TRUE)) {
+    if (!in_array($operation, [
+      'view',
+      'update',
+      'delete',
+      'view revision',
+      'view all revisions',
+      'revert',
+      'delete revision',
+    ], TRUE)) {
       return AccessResult::forbidden()
         ->cachePerPermissions()
         ->addCacheableDependency($entity);
@@ -45,7 +53,7 @@ class LinkAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
-    return AccessResult::allowedIfHasPermission($account, 'create aculta links')
+    return AccessResult::allowedIfHasPermission($account, 'manage own aculta links')
       ->orIf(AccessResult::allowedIfHasPermission($account, 'administer aculta links'));
   }
 

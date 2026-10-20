@@ -62,7 +62,8 @@ com dados/editoria antes de qualquer migração.
 - `aculta_link_item`: referência à página/destino, rótulo, descrição, ordem e
   ativação; o access handler confere ownership dos dois alvos.
 - Access de páginas e destinos permanece privado, sem canonical pública,
-  formulários ou listagem até integração de rota e domínio.
+  rota pública. O dashboard e os formulários/listagens ficam no MAIN, em rotas
+  administrativas sob `/painel-administrativo/links/**`.
 - Testes Unit e Kernel passam no banco dedicado. Módulo não instalado,
   configuração de produção não alterada e landing atual preservada.
 
@@ -73,7 +74,12 @@ com dados/editoria antes de qualquer migração.
 2. Migrar formulário, configuração e presenters para `aculta_links` sem mudar
    rota, URL, domínio, conteúdo ou apresentação.
 3. Atualizar consumidores do Portal de forma atômica e demonstrar paridade.
-4. As entidades base existem em código; finalizar formulários/listagem seguros,
-   atualizar documentação e validá-las antes de habilitar o módulo.
+4. Entidades e gestão administrativa básica existem em código; a edição de
+   itens, migração da landing e publicação Domain permanecem pendentes.
 5. Resolver a ambiguidade de licença da tag LinkStack antes de copiar qualquer
    asset ou código.
+
+
+## Painel administrativo 0.2.0-dev.2
+
+`aculta_links` declara painel próprio e formulários Core de criação, edição, exclusão e histórico de revisões para páginas e destinos. O painel filtra por proprietário, pagina resultados e revalida acesso de edição de cada entidade. As rotas ficam em `main` e não ficam ativas até habilitação do módulo; a landing pública e sua configuração continuam no Portal.

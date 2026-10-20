@@ -34,3 +34,12 @@
 - A validação do mapa módulo-tema identificou também módulos concorrentes ainda
   não documentados. O registro de Links foi incluído; o gate de status permanece
   bloqueado pelo commit histórico misto e por alterações concorrentes.
+
+
+## 0.2.0-dev.2 — painel administrativo e rotas de entidade — 2026-10-20
+
+- Adicionadas rotas administrativas no purpose `main` para painel, micropáginas e destinos, incluindo formulários Core e histórico de revisão.
+- Painel lista separadamente páginas e links, filtra a consulta pelo proprietário, pagina a 50 itens e confere o acesso de edição por entidade.
+- Permissões de criação consolidadas em `manage own aculta links` ou `administer aculta links`; removida permissão de criação redundante.
+- Sitemap e documentação indicam que as rotas estão declaradas, mas inativas enquanto o módulo estiver desabilitado. A landing pública e configuração de Domain não foram alteradas.
+- Kernel: 1 teste/25 asserções PASS; Unit: 1 teste/7 asserções PASS com 2 depreciações PHPUnit; PHPCS e parse YAML PASS em PHP 8.4.26. Runtime e PHP 8.5 DEFERRED.

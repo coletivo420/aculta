@@ -1,0 +1,7 @@
+services:
+  aculta_links.dashboard_access:
+    class: Drupal\aculta_links\Access\LinksDashboardAccess
+
+  aculta_links.dashboard_controller:
+    class: Drupal\aculta_links\Controller\LinksDashboardController
+    arguments: ['@entity_type.manager', '@current_user']

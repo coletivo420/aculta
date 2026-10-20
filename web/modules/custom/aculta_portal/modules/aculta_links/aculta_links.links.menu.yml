@@ -1,0 +1,6 @@
+aculta_links.dashboard:
+  title: 'Links'
+  description: 'Gerencie micropáginas, destinos e apresentação pública.'
+  route_name: aculta_links.dashboard
+  parent: aculta_portal.admin
+  weight: 12

@@ -22,4 +22,4 @@ Contrato futuro:
   mutações no purpose errado falham fechadas.
 - Sessões e cookies seguem a política multidomínio central.
 
-Esta fase não declara rotas nem altera a configuração do Domain.
+O módulo declara rotas administrativas em `main` sob `/painel-administrativo/links/**`; elas permanecem inativas enquanto `aculta_links` estiver desabilitado. Não foram declaradas rotas públicas novas nem alterada a configuração do Domain nesta fase.

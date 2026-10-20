@@ -41,7 +41,7 @@ final class LinkAccessControlHandlerTest extends UnitTestCase {
     self::assertFalse($handler->checkEntityAccess($entity, 'delete', $this->account(18, ['manage own aculta links']))->isAllowed());
     self::assertFalse($handler->checkEntityAccess($entity, 'view', $this->account(17, []))->isAllowed());
     self::assertTrue($handler->checkEntityAccess($entity, 'delete', $this->account(18, ['administer aculta links']))->isAllowed());
-    self::assertTrue($handler->checkEntityCreateAccess($this->account(18, ['create aculta links']))->isAllowed());
+    self::assertTrue($handler->checkEntityCreateAccess($this->account(17, ['manage own aculta links']))->isAllowed());
     self::assertFalse($handler->checkEntityCreateAccess($this->account(18, []))->isAllowed());
   }
 

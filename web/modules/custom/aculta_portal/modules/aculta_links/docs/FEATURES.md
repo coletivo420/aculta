@@ -20,7 +20,10 @@ conteúdo e URL.
   a página é criada em rascunho e os itens ordenam referência tipada ao destino.
 - Handler de acesso e permissões explícitas, com propriedade Drupal User e
   teste Unit/Kernel de storage, referências, revisões e isolamento entre contas.
-- Ainda não há formulários, listagem, editor nem rota pública. O submódulo
+- Dashboard e formulários Core para micropáginas/destinos, com listagem por
+  proprietário, revisão e cache de usuário. Rotas administrativas pertencem ao
+  MAIN e são condicionais enquanto o módulo estiver desabilitado.
+- Ainda não há editor de itens, preview, temas nem rota pública. O submódulo
   continua desabilitado.
 
 ## Ainda não disponível
@@ -29,3 +32,9 @@ Micropáginas por conta, páginas múltiplas por pessoa, editor, ordenação, pr
 temas selecionáveis, links curtos, QR, analytics, agendamento e componentes
 referenciados. LinkStack será analisado como referência funcional; essas funções
 não estão implementadas nesta versão.
+
+## Em implementação — 0.2.0-dev.2
+
+- Painel administrativo em `main`, com listas separadas e paginadas para micropáginas e destinos reutilizáveis.
+- Formulários de entidade Drupal para CRUD e revisões, protegidos pelos handlers de acesso e permissões do módulo.
+- Ainda não existe dashboard público do proprietário nem apresentação pública das novas entidades.

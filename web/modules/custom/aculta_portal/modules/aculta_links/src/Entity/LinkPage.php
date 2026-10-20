@@ -6,7 +6,13 @@ namespace Drupal\aculta_links\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\EditorialContentEntityBase;
+use Drupal\Core\Entity\EntityDeleteForm;
+use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Form\RevisionDeleteForm;
+use Drupal\Core\Entity\Form\RevisionRevertForm;
+use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
+use Drupal\Core\Entity\Routing\RevisionHtmlRouteProvider;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\user\EntityOwnerInterface;
@@ -24,6 +30,18 @@ use Drupal\views\EntityViewsData;
   handlers: [
     'access' => LinkAccessControlHandler::class,
     'views_data' => EntityViewsData::class,
+    'form' => [
+      'default' => EntityForm::class,
+      'add' => EntityForm::class,
+      'edit' => EntityForm::class,
+      'delete' => EntityDeleteForm::class,
+      'revision-revert' => RevisionRevertForm::class,
+      'revision-delete' => RevisionDeleteForm::class,
+    ],
+    'route_provider' => [
+      'html' => AdminHtmlRouteProvider::class,
+      'revision' => RevisionHtmlRouteProvider::class,
+    ],
   ],
   base_table: 'aculta_link_page',
   revision_table: 'aculta_link_page_revision',
@@ -44,6 +62,18 @@ use Drupal\views\EntityViewsData;
   collection_permission: 'access aculta links overview',
   show_revision_ui: TRUE,
   common_reference_target: TRUE,
+  list_cache_contexts: ['user', 'user.permissions'],
+  list_cache_tags: ['aculta_link_page_list'],
+  links: [
+    'canonical' => '/painel-administrativo/links/pagina/{aculta_link_page}',
+    'add-form' => '/painel-administrativo/links/pagina/adicionar',
+    'edit-form' => '/painel-administrativo/links/pagina/{aculta_link_page}/editar',
+    'delete-form' => '/painel-administrativo/links/pagina/{aculta_link_page}/excluir',
+    'version-history' => '/painel-administrativo/links/pagina/{aculta_link_page}/revisoes',
+    'revision' => '/painel-administrativo/links/pagina/{aculta_link_page}/revisao/{aculta_link_page_revision}/visualizar',
+    'revision-revert-form' => '/painel-administrativo/links/pagina/{aculta_link_page}/revisao/{aculta_link_page_revision}/reverter',
+    'revision-delete-form' => '/painel-administrativo/links/pagina/{aculta_link_page}/revisao/{aculta_link_page_revision}/excluir',
+  ],
 )]
 final class LinkPage extends EditorialContentEntityBase implements EntityOwnerInterface {
 
