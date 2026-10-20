@@ -1,3 +1,29 @@
+## 0.4.0-dev.226 — links de acesso único com validade de 24 horas em todo o projeto
+
+- Decisão do responsável: links de acesso único valem 24 horas. Revoga a validade infinita da confirmação de e-mail (`EmailConfirmationEntity::isExpired()`, agora em `SingleUseLinkPolicy::isExpired()`).
+- Regra, inventário, exceção (retentativa e failover automáticos da mesma mensagem) e gate em `docs/portal/LINKS-DE-USO-UNICO.md`; `EMAIL-CONFIRMATION-POLICY.md` §6.1 e `AGENTS.md` atualizados.
+- Gate `scripts/validate-single-use-links.php`: confere `password_reset_timeout` e `hash_expiration` (até 86400 s), as constantes da regra nos dois módulos, a ausência de `isExpired()` com retorno fixo e o cancelamento e a recusa de reenvio no aculta_mailer.
+- Validado: gate passa; testes de Kernel do aculta_mailer passam. Uma falha pré-existente em `ContentPurposeResolverTest` (propósito do fórum, de outro commit) continua aberta e não faz parte desta mudança.
+
+## 0.4.0-dev.225 — navegação administrativa de primeiro nível do Fórum
+
+- O painel central liga às páginas próprias de Tópicos, Comentários e
+  Configurações. As três filas de estado continuam aninhadas como subabas em
+  Comentários; os caminhos antigos fora da seção mantêm redirects locais.
+- As Views administrativas são limitadas ao Domain ativo do Growroom e mantêm
+  permissões e filtros fixos. O formulário específico do Fórum voltou a abrir
+  em seu caminho canônico. Validação Runtime/X11 registrada na matriz do
+  `aculta_forum` dev.122.
+
+## 0.4.0-dev.224 — tornar útil o painel central do Fórum
+
+- O painel administrativo independente do Growroom420 agora apresenta contagens
+  protegidas por Entity Access, resume os limites entre os quatro contextos e
+  aponta ao fórum público e às categorias pelo purpose dinâmico.
+- Fórum Unit direcionado: 2 testes/29 assertions PASS. Gates Drupal 11,
+  segurança de cache e smoke Runtime/X11 pendentes antes de declarar a versão
+  validada. Sem alteração de tema. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.223 — centralizar os caminhos administrativos específicos do Fórum
 
 - Os caminhos atuais de ferramentas do Growroom420 redirecionam para a entrada
@@ -8,7 +34,7 @@
   (5 depreciações de Domain contrib), PHPCS PASS; gates Drupal 11 (988), mapa
   (154) e slugs (381) PASS. Runtime `aculta_runtime`: duas Views importadas
   parcialmente, cache reconstruído, rotas GET/POST resolvidas; anônimo recebe
-  403. Uid 1 autenticado: página central 200 e sete redirects GET 302; logout encerrou a sessão. Smoke visual pendente. RUNTIME STATUS: PARTIAL.
+  403. Uid 1 autenticado: página central 200 e sete redirects GET 302; logout encerrou a sessão. Firefox/X11 GET-only 20/20; painel e 12 caminhos estáticos conferidos em 390/768/1024 CSS px sem overflow. Rotas dinâmicas não testadas sem fixtures. RUNTIME STATUS: PARTIAL.
 
 ## 0.4.0-dev.222 — corrigir validação da Action de movimento VBO
 

@@ -7,15 +7,15 @@ namespace Drupal\aculta_portal\Email;
 use Drupal\email_confirmer\Entity\EmailConfirmation;
 
 /**
- * Pedido de confirmação de e-mail com validade infinita (decisão do responsável).
+ * Pedido de confirmação de e-mail. O link de uso único vale 24 horas (SingleUseLinkPolicy, decisão do responsável).
  *
- * O link não expira; a segurança passa a depender do hash de 43 caracteres de uso único e de o pedido ser
- * substituído (com novo hash) quando um novo e-mail de confirmação é solicitado.
+ * Um pedido novo substitui o anterior, com novo hash, e o conteúdo guardado do pedido antigo é cancelado (ver
+ * docs/portal/LINKS-DE-USO-UNICO.md).
  */
 class EmailConfirmationEntity extends EmailConfirmation {
 
   public function isExpired() {
-    return FALSE;
+    return SingleUseLinkPolicy::isExpired((int) $this->getCreatedTime(), time());
   }
 
 }

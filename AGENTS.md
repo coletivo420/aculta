@@ -616,6 +616,13 @@ O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem ex
 - Só a árvore de configuração e as ferramentas listadas são traduzidas (`AdministrativeRouteSubscriber`). Caminhos antigos
   respondem 404, sem redirecionamento.
 
+## Links de acesso único: 24 horas (regra permanente)
+
+- Todo link de acesso único do projeto (confirmação, troca de e-mail, recuperação de senha, acesso de cadastro) vale **24 horas**, em todos os módulos. Nenhum prazo maior, nenhum `isExpired()` com retorno fixo.
+- Pedido novo de link substitui o anterior: o conteúdo guardado do pedido antigo é cancelado, e a cifra é gerada de novo.
+- Reenvio manual não reaproveita link de uso único. A única exceção é a retentativa e o failover automáticos da mesma mensagem.
+- Regra, inventário e exceção: `docs/portal/LINKS-DE-USO-UNICO.md`. Gate: `php scripts/validate-single-use-links.php`.
+
 ## Política de commits para agentes de IA (regra permanente)
 
 Motivo: trabalho que ficou só no working tree, em stash ou em branch sem PR gerou
