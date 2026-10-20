@@ -1,7 +1,7 @@
 name: 'ACULTA Forum Comment Move test fixture'
 type: module
 description: 'Provides controlled failure injection for Forum comment move Kernel tests.'
-package: Testing
+package: ACULTA Portal
 core_version_requirement: ^11.3
 dependencies:
   - drupal:comment
