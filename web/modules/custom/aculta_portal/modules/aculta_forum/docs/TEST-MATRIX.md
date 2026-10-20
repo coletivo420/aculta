@@ -48,8 +48,11 @@
   purpose. Estado final: 0 tópicos, 0 Comments compartilhados, 24 History e
   duas flaggings preexistentes. Capturas privadas mode 0600 em
   `/home/aculta/private/aculta/visual-tests/forum-mobile-20261020/`.
-- Teclado, leitor de tela e comparação integral das páginas internas do
-  Discourse continuam pendentes. RUNTIME STATUS: PARTIAL.
+- Navegação real por teclado em Firefox/X11 percorreu 16 tabs, partindo do link
+  “Pular para o conteúdo principal” até um link de categoria visível. O
+  elemento final manteve `:focus-visible` e contorno sólido de 2 px verde; a
+  navegação avançou sem ficar presa. Leitor de tela e comparação integral das
+  páginas internas do Discourse continuam pendentes. RUNTIME STATUS: PARTIAL.
 
 - Firefox ESR isolado, visitante anônimo, X11 `DISPLAY=:0`, Runtime Drupal
   11.4.10. As rotas `/discussoes/novas`, `/discussoes/sem-resposta` e

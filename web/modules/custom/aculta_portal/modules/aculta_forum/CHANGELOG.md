@@ -28,8 +28,10 @@
   cookies externo foi fechado somente no DOM local, sem aceitar consentimento.
   Fixture NID 418 e alias removidos; estado final 0 tópicos/Comments, 24 History
   e duas flaggings existentes preservadas. Capturas privadas em
-  `/home/aculta/private/aculta/visual-tests/forum-mobile-20261020/`. Comparação
-  completa e testes de teclado/leitor de tela seguem pendentes.
+  `/home/aculta/private/aculta/visual-tests/forum-mobile-20261020/`. Teclado em
+  X11 também avançou desde o link de salto até links de categoria em 16 tabs;
+  o foco permaneceu visível com contorno sólido de 2 px. Leitor de tela e
+  comparação completa das páginas do Discourse seguem pendentes.
   RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.59` — homologação isolada da leitura em lote — 2026-10-20
