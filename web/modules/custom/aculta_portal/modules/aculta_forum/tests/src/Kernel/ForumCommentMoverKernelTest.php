@@ -137,6 +137,14 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'status' => TRUE,
       'is_default' => FALSE,
     ])->save();
+    Domain::create([
+      'id' => 'aculta_org',
+      'hostname' => 'main.example.test',
+      'name' => 'Main test domain',
+      'scheme' => 'https',
+      'status' => TRUE,
+      'is_default' => TRUE,
+    ])->save();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic'])->save();
     $this->addField('entity_reference', 'field_domain_source', ['target_type' => 'domain']);
     $this->addField('string', 'field_autor_legado', []);
@@ -305,6 +313,26 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertTrue($this->mover->access($historical_comment, $this->account)->isForbidden());
     $this->expectException(\InvalidArgumentException::class);
     $this->mover->move((int) $historical_comment->id(), (int) $destination->id(), $this->account);
+  }
+
+  /**
+   * Closed or cross-purpose destinations cannot alter the Comment host.
+   */
+  public function testMoveRejectsClosedAndCrossPurposeDestinations(): void {
+    $source = $this->topic('Source');
+    $closed = $this->topic('Closed destination', '', CommentingStatus::Closed);
+    $cross_purpose = $this->topic('Main destination', '', CommentingStatus::Open, 'aculta_org');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+
+    foreach ([$closed, $cross_purpose] as $destination) {
+      try {
+        $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+        self::fail('A closed or cross-purpose destination must be rejected.');
+      }
+      catch (\InvalidArgumentException) {
+        self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+      }
+    }
   }
 
   /**
@@ -634,14 +662,14 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   /**
    * Creates a public Forum topic for a test scenario.
    */
-  private function topic(string $title, string $legacyAuthor = ''): Node {
+  private function topic(string $title, string $legacyAuthor = '', CommentingStatus $commentStatus = CommentingStatus::Open, string $domainId = 'forum_aculta_org'): Node {
     $topic = Node::create([
       'type' => 'aculta_forum_topic',
       'title' => $title,
       'status' => 1,
-      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+      'field_domain_source' => ['target_id' => $domainId],
       'field_autor_legado' => $legacyAuthor === '' ? [] : ['value' => $legacyAuthor],
-      ForumCommentMover::FIELD_NAME => ['status' => CommentingStatus::Open->value],
+      ForumCommentMover::FIELD_NAME => ['status' => $commentStatus->value],
     ]);
     $topic->save();
     return $topic;

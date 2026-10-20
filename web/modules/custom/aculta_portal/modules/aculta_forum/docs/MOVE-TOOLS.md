@@ -392,6 +392,8 @@ resultado devem indicar sucesso/falha sem revelar destino inacessível.
   CSRF, acesso direto e revalidação no momento da ação.
 - Bloqueio de mudança entre purpose/domínios, Fórum/Revista/LMS/Wiki e acesso
   privado; bloqueio do acervo histórico para qualquer conta.
+- Testar destinos fechados, de outro purpose e inacessíveis; confirmar que o
+  Comment e sua árvore permanecem no host original após cada recusa.
 - Tópico aberto/fechado, comentários publicados/pendentes/rejeitados, autor
   legado, pai com múltiplas respostas, árvore com ao menos três níveis (regressão
   observada no Comment Mover alpha), threads e destinos incompatíveis.

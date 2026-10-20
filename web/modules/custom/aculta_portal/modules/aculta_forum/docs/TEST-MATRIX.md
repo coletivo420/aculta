@@ -1,5 +1,14 @@
 # Matriz de testes por fase
 
+## dev.81 — rejeitar destino fechado ou de outro purpose
+
+- Kernel cria tópico destino fechado e tópico Node associado ao Domain `main`;
+  ambos são recusados antes de alterar a relação do Comment publicado. A
+  origem continua hospedeira após cada tentativa.
+- Classe completa `ForumCommentMoverKernelTest`: 16 testes / 331 assertions
+  PASS no MariaDB dedicado; 19 depreciações Core/contrib. PHP 8.4.26 abaixo da
+  baseline 8.5. Runtime não foi alterado; RUNTIME STATUS: DEFERRED.
+
 ## dev.80 — preservar traduções em comentário movido
 
 - Kernel MariaDB configura `comment_body` como traduzível, cria tradução `fr`

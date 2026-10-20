@@ -1,3 +1,15 @@
+## `0.1.0-dev.81` — negar destino fechado ou de outro purpose — 2026-10-20
+
+- O Kernel comprova que a tentativa de mover Comment publicado para tópico
+  fechado ou Node do purpose `main` é negada, mantendo o Comment no host
+  original. Incluído o Domain `aculta_org` na fixture para testar a fronteira
+  real entre purposes.
+- `ForumCommentMoverKernelTest`: 16 testes / 331 assertions PASS no MariaDB
+  dedicado; 19 depreciações Core/contrib. PHP CLI 8.4.26 abaixo da baseline
+  8.5; PHP lint, PHPCS, gates Portal 975, fronteira 1448, mapa 152 e
+  `git diff --check` PASS. Sem mudança de Runtime; ferramenta continua
+  fail-closed. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.80` — preservar traduções ao mover comentário — 2026-10-20
 
 - O Kernel cria uma tradução francesa em Comment ACULTA e move a entidade pelo
