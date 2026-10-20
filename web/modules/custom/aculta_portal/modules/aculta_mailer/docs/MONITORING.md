@@ -35,7 +35,7 @@ O monitoramento começa desligado. Só roda com a opção ativa e servidor, usu�
 
 Runtime (2026-10-20): `dmarc@aculta.org` é alias de `naoresponda@aculta.org` no Hostinger. O envelope `dmarc@` foi aceito
 pelo SMTP (login `naoresponda@`). Por ser alias, as mensagens chegam na caixa de `naoresponda@`: o IMAP deve ler essa caixa,
-com o usuário e a senha dela, e não `dmarc@`. Conferir no cabeçalho original da mensagem: `Return-Path: <dmarc@aculta.org>`.
+com o usuário e a senha dela, e não `dmarc@`. Verificado em 2026-10-20 no cabeçalho original de uma mensagem recebida (correlação 9e501662-…): `Return-Path: <dmarc@aculta.org>`, `spf=pass` com `smtp.mailfrom=dmarc@aculta.org`, `dmarc=pass`. O `From` e o `Sender` seguem `naoresponda@aculta.org`.
 
 
 Notificações de falha voltam ao endereço de **retorno (Return-Path / envelope from)** da mensagem, que é definido pelo
