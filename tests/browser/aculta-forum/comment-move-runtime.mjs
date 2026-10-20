@@ -79,7 +79,7 @@ if (baseline.forum_topics !== 0 || baseline.legacy_forum_topics !== 0 || baselin
   throw new Error(`Precondições de isolamento/recuperação não satisfeitas: ${JSON.stringify(baseline)}`);
 }
 
-const marker = `QAM75-${Math.random().toString(16).slice(2, 8)}`;
+const marker = `QAM77-${Math.random().toString(16).slice(2, 8)}`;
 const fixtureCode = `
 $config_storage = \\Drupal::service('config.storage');
 if ($config_storage->exists('aculta_forum.settings')) { throw new \\RuntimeException('O config do mover apareceu durante o preflight; nenhuma alteração foi feita.'); }
@@ -131,10 +131,18 @@ try {
   $comment->save();
   $comments[] = (int) $comment->id();
   $reply_specs = [
-    ['parent_index' => 0, 'label' => 'resposta ramo A'],
-    ['parent_index' => 1, 'label' => 'resposta aninhada ramo A'],
-    ['parent_index' => 0, 'label' => 'resposta ramo B'],
+    ['parent_index' => 0, 'label' => 'resposta ramo A', 'rejected' => TRUE],
+    ['parent_index' => 1, 'label' => 'resposta aninhada ramo A', 'rejected' => FALSE],
+    ['parent_index' => 0, 'label' => 'resposta ramo B', 'rejected' => FALSE],
   ];
+  $followings = \\Drupal::entityTypeManager()->getStorage('flagging')->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('flag_id', 'seguir_topico')
+    ->condition('entity_type', 'node')
+    ->condition('entity_id', $nodes, 'IN')
+    ->count()
+    ->execute();
+  if ((int) $followings !== 0) { throw new \\RuntimeException('Tópicos de fixture não podem ter seguidores.'); }
   foreach ($reply_specs as $spec) {
     $reply = \\Drupal::entityTypeManager()->getStorage('comment')->create([
       'entity_type' => 'node',
@@ -147,6 +155,8 @@ try {
       'subject' => '${marker} ' . $spec['label'],
       'comment_body' => ['value' => '${marker} conteúdo QA ' . $spec['label'], 'format' => 'plain_text'],
     ]);
+    if (!$reply->hasField('field_aculta_rejected')) { throw new \\RuntimeException('Campo de moderação rejeitada ausente na fixture.'); }
+    $reply->set('field_aculta_rejected', $spec['rejected']);
     $reply->save();
     $comments[] = (int) $reply->id();
   }
@@ -267,23 +277,24 @@ $source = \\Drupal::entityTypeManager()->getStorage('node')->load(${fixture.sour
 $destination = \\Drupal::entityTypeManager()->getStorage('node')->load(${fixture.destination_nid});
 $count_on = static function (int $nid): int { return (int) \\Drupal::entityTypeManager()->getStorage('comment')->getQuery()->accessCheck(FALSE)->condition('entity_type', 'node')->condition('entity_id', $nid)->condition('field_name', 'field_aculta_discussion')->count()->execute(); };
 $rows = [];
-foreach ([${fixture.cids.join(',')}] as $cid) { $item = $loaded[$cid] ?? NULL; $rows[] = ['cid' => (int) ($item?->id() ?? 0), 'entity_id' => (int) ($item?->getCommentedEntityId() ?? 0), 'uid' => (int) ($item?->getOwnerId() ?? 0), 'status' => $item?->isPublished(), 'subject' => $item?->getSubject(), 'body' => $item?->get('comment_body')->value, 'pid' => (int) ($item?->get('pid')->target_id ?? 0), 'thread' => (string) ($item?->getThread() ?? '')]; }
+foreach ([${fixture.cids.join(',')}] as $cid) { $item = $loaded[$cid] ?? NULL; $rows[] = ['cid' => (int) ($item?->id() ?? 0), 'entity_id' => (int) ($item?->getCommentedEntityId() ?? 0), 'uid' => (int) ($item?->getOwnerId() ?? 0), 'status' => $item?->isPublished(), 'rejected' => (bool) ($item?->get('field_aculta_rejected')->value ?? FALSE), 'subject' => $item?->getSubject(), 'body' => $item?->get('comment_body')->value, 'pid' => (int) ($item?->get('pid')->target_id ?? 0), 'thread' => (string) ($item?->getThread() ?? '')]; }
 $state = ['comments' => $rows, 'source_exists' => $source instanceof \\Drupal\\node\\NodeInterface, 'destination_exists' => $destination instanceof \\Drupal\\node\\NodeInterface, 'source_count' => $count_on(${fixture.source_nid}), 'destination_count' => $count_on(${fixture.destination_nid})];
 print 'ACULTA_MOVE_RESULT:' . json_encode($state, JSON_THROW_ON_ERROR) . PHP_EOL;
 `;
   const moved = parseMarker(evalDrupal(verifyCode), 'ACULTA_MOVE_RESULT');
   const expected = [
-    { uid: 1, subject: `${fixture.marker} comentário pendente`, body: `${fixture.marker} conteúdo QA`, pid: 0 },
-    { uid: 5, subject: `${fixture.marker} resposta ramo A`, body: `${fixture.marker} conteúdo QA resposta ramo A`, pid: fixture.cids[0] },
-    { uid: 5, subject: `${fixture.marker} resposta aninhada ramo A`, body: `${fixture.marker} conteúdo QA resposta aninhada ramo A`, pid: fixture.cids[1] },
-    { uid: 5, subject: `${fixture.marker} resposta ramo B`, body: `${fixture.marker} conteúdo QA resposta ramo B`, pid: fixture.cids[0] },
+    { uid: 1, subject: `${fixture.marker} comentário pendente`, body: `${fixture.marker} conteúdo QA`, pid: 0, status: false, rejected: false },
+    { uid: 5, subject: `${fixture.marker} resposta ramo A`, body: `${fixture.marker} conteúdo QA resposta ramo A`, pid: fixture.cids[0], status: false, rejected: true },
+    { uid: 5, subject: `${fixture.marker} resposta aninhada ramo A`, body: `${fixture.marker} conteúdo QA resposta aninhada ramo A`, pid: fixture.cids[1], status: false, rejected: false },
+    { uid: 5, subject: `${fixture.marker} resposta ramo B`, body: `${fixture.marker} conteúdo QA resposta ramo B`, pid: fixture.cids[0], status: false, rejected: false },
   ];
   const movedCorrectly = moved.source_exists && moved.destination_exists
     && moved.comments.length === expected.length
     && moved.comments.every((item, index) => Number(item.cid) === fixture.cids[index]
       && Number(item.entity_id) === fixture.destination_nid
       && Number(item.uid) === expected[index].uid
-      && item.status === false
+      && item.status === expected[index].status
+      && item.rejected === expected[index].rejected
       && item.subject === expected[index].subject
       && item.body === expected[index].body
       && Number(item.pid) === expected[index].pid
@@ -291,7 +302,7 @@ print 'ACULTA_MOVE_RESULT:' . json_encode($state, JSON_THROW_ON_ERROR) . PHP_EOL
     && moved.comments.slice(1).every((item) => item.thread.startsWith(moved.comments[0].thread.replace(/\/$/, '') + '.'))
     && moved.source_count === 0
     && moved.destination_count === expected.length;
-  check('Raiz ramificada preservou CIDs, autoria, conteúdo, estado, relações pid/thread e destino', movedCorrectly, JSON.stringify(moved));
+  check('Raiz ramificada preservou CIDs, autoria, conteúdo, pendência/rejeição, relações pid/thread e destino', movedCorrectly, JSON.stringify(moved));
 }
 finally {
   if (browserSession) await request('DELETE', `/session/${browserSession}`).catch(() => {});

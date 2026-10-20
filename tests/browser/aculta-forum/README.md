@@ -61,7 +61,9 @@ responsiva do tema administrativo; não aplica CSS nem altera o tema/contrib.
 token CSRF e POST, e limpa seus dois tópicos e uma árvore ramificada de quatro
 Comments pendentes pela Entity API em `finally`. A prova confirma dois ramos,
 um com resposta aninhada, preservando CID, autoria, texto, estado, `pid`/`thread`
-e destino. Os tópicos fixture usam o marcador Core `SynchronizableInterface`
+e destino. No modo de estados mistos, uma resposta pendente recebe a marca
+administrativa `field_aculta_rejected`; o roteiro confirma essa distinção após
+o movimento. Os tópicos fixture usam o marcador Core `SynchronizableInterface`
 durante o insert para não criar avisos de publicação nem efeitos de Game; o
 roteiro exige fila Messenger vazia no preflight e confirma que ela continua
 vazia. A operação exige explicitamente

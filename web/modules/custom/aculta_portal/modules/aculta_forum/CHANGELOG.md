@@ -1,3 +1,17 @@
+## `0.1.0-dev.77` — preservar pendência e rejeição em árvore movida — 2026-10-20
+
+- Smoke X11 autenticado moveu uma árvore ramificada de quatro Comments,
+  preservando a raiz pendente, uma resposta marcada como rejeitada, duas
+  respostas pendentes, autores, textos, CIDs, `pid`, caminhos `thread` e
+  destino. Todos continuaram não publicados; nenhum badge ou aviso foi gerado.
+- 10/10 verificações PASS via Form API/CSRF, incluindo 390×844, 768×1024 e
+  1024×768 CSS px sem overflow. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-mixed-dev77-20261020/`.
+- Cleanup restaurou o baseline: Fórum/Comments vazios, fila Messenger 0, 12
+  categorias, 3 avisos e opção de mover ausente. A prova usa `field_aculta_rejected`
+  apenas em dados temporários e confirma sua preservação; estado publicado e
+  aprovação via workflow ainda não foram exercitados. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.76` — isolar efeitos de teste do Messenger — 2026-10-20
 
 - A revisão pós-dev.75 encontrou 24 eventos da fila Core

@@ -2,7 +2,8 @@
 
 Estado: **movimento individual de tópico implementado no código, ainda sem
 homologação autenticada no Runtime; o formulário de mover comentário teve smoke
-X11 autenticado de uma raiz pendente com subárvore ramificada, permanece
+X11 autenticado de uma raiz pendente com subárvore ramificada e rejeição
+preservada, permanece
 desativado por padrão e ainda depende da homologação de integrações descritas
 abaixo. O Kernel MariaDB cobre subárvores e rollback**. Este contrato detalha os itens de organização e moderação do
 [`ROADMAP.md`](ROADMAP.md), incorporando padrões observados no Discourse sem
@@ -119,8 +120,10 @@ e CSRF. A dev.75 repetiu o fluxo com quatro Comments: dois ramos, um deles com
 uma resposta aninhada. Os CIDs, autores, textos, estados, `pid`, caminhos
 `thread` e destino foram conferidos; a tela informou “4 comentários foram
 movidos.”. A limpeza reversa removeu respostas, raiz e tópicos, mantendo o
-Runtime no baseline. Estados mistos e efeitos de serviços externos continuam
-pendentes.
+Runtime no baseline. Em dev.77, um dos quatro Comments foi marcado rejeitado e
+os demais permaneceram pendentes; o campo foi preservado na entidade movida.
+Comentários publicados/aprovação via workflow e efeitos de serviços externos
+continuam pendentes.
 
 ### D. Dividir ou mesclar tópicos
 
@@ -232,9 +235,9 @@ do Comment Core; uma segunda consulta `getMaxThread()` sob lock evita colisão
 quando uma criação concorrente termina entre a consulta inicial e a aquisição.
 A transação reverte a árvore inteira se um save falhar. Kernel MariaDB valida
 árvore com três níveis, estado pendente, estatísticas dos dois hosts e rollback.
-Em dev.73–dev.75, smokes X11 autenticados abriram o Form API com CSRF e moveram
-uma raiz, uma árvore linear e uma árvore ramificada, conferindo
-identidade/estado/pid/thread/destino; os fixtures foram removidos. O Runtime
+Em dev.73–dev.77, smokes X11 autenticados abriram o Form API com CSRF e moveram
+uma raiz, uma árvore linear e árvores ramificadas em estados pendente/rejeitado,
+conferindo identidade/estado/pid/thread/destino; os fixtures foram removidos. O Runtime
 continua fail-closed por padrão: a opção foi habilitada
 somente durante a prova e removida em seguida. O botão/rota não devem ser
 habilitados por padrão até completar testes de concorrência, History,
