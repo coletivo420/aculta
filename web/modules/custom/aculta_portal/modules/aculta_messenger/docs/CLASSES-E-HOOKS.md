@@ -2,6 +2,10 @@
 
 Mensagens privadas (conversas), avisos (Fórum, alertas do site, persistentes), central Avisos/Mensagens da conta, resumo diário e retenção. Avisos e mensagens são sistemas separados: ver `docs/AVISOS-E-MENSAGENS.md`.
 
+`ForumTopicCounterHooks` e o hook `preprocess_forums` foram removidos em
+0.1.1-dev.56: eram ligados à listagem do Forum contribuído. A listagem ACULTA
+usa Views Core e consome os próprios dados neutros.
+
 Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a primeira frase do próprio docblock; a regra e o motivo completos ficam no código. Quando uma classe mudar, atualize esta tabela na mesma entrega.
 
 ## Hooks (`#[Hook]`)
@@ -32,7 +36,6 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `module_preuninstall` | `LifecycleHooks::protectNotificationData` | `src/Hook/LifecycleHooks.php` |
 | `node_access` | `MessengerBarHooks::nodeAccess` | `src/Hook/MessengerBarHooks.php` |
 | `page_attachments` | `MessengerBarHooks::pageAttachments` | `src/Hook/MessengerBarHooks.php` |
-| `preprocess_forums` | `ForumTopicCounterHooks::preprocessForums` | `src/Hook/ForumTopicCounterHooks.php` |
 | `preprocess_page` | `MessengerBarHooks::preprocessPage` | `src/Hook/MessengerBarHooks.php` |
 | `preprocess_private_message` | `PrivateMessagePresentationHooks::preprocessPrivateMessage` | `src/Hook/PrivateMessagePresentationHooks.php` |
 | `preprocess_private_message_thread` | `MessengerBarHooks::preprocessPrivateMessageThread` | `src/Hook/MessengerBarHooks.php` |
@@ -105,7 +108,6 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `AvisosPrivacyHooks` | `src/Hook/AvisosPrivacyHooks.php` | Acrescenta o bloco "Avisos" à página de privacidade da conta (ACULTA Messenger, F5.2). |
 | `AvisosResumoHooks` | `src/Hook/AvisosResumoHooks.php` | Cron e mensagem do resumo diário de avisos (ACULTA Messenger, F5.2). |
 | `ForumAvisoHooks` | `src/Hook/ForumAvisoHooks.php` | Respostas em tópico seguido geram aviso no site (ACULTA Fórum, F5.2). |
-| `ForumTopicCounterHooks` | `src/Hook/ForumTopicCounterHooks.php` | Contador individual nas linhas de tópico do fórum (ACULTA Fórum, F5.2). |
 | `LifecycleHooks` | `src/Hook/LifecycleHooks.php` | Protects Messenger-owned notification records during module removal. */ |
 | `MessageSubscribeEventHooks` | `src/Hook/MessageSubscribeEventHooks.php` | Queues publication events for the forum's existing follow flag. */ |
 | `MessageSubscribeHooks` | `src/Hook/MessageSubscribeHooks.php` | Adapts Message Subscribe to the existing Portuguese forum follow flag. */ |

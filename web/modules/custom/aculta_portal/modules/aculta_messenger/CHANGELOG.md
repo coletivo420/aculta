@@ -2,6 +2,15 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.56 — remover preprocess do Forum contribuído — 2026-10-20
+
+- Removido `ForumTopicCounterHooks`, que alterava `preprocess_forums` e
+  pressupunha as linhas da listagem do módulo Drupal Forum. A descoberta do
+  ACULTA é baseada em Views Core e não consome esse preprocess. Os serviços de
+  aviso e contagem agregada continuam disponíveis para integração própria.
+- Verificação de sintaxe, PHPCS e referências do hook: PASS. Runtime sem
+  mudança. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.1-dev.55 — evitar avisos duplicados ao mover comentários — 2026-10-19
 
 - `ForumAvisoHooks::commentUpdate()` usa `CommentInterface::getOriginal()` no

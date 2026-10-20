@@ -1,3 +1,11 @@
+## 0.1.0-dev.47 — remover preprocess da listagem Forum contrib — 2026-10-20
+
+- O hook Messenger `preprocess_forums` foi removido: a listagem atual usa Views
+  Core e não compartilha o render array do módulo contrib. Os avisos do Fórum
+  ACULTA continuam nos serviços e eventos próprios.
+- Verificação de referências, lint e PHPCS PASS; Runtime sem alteração.
+  RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.46 — retirar dependência editorial do Forum contrib — 2026-10-20
 
 - `aculta_magazine` não depende mais de `forum:forum`: removidos lookup e
