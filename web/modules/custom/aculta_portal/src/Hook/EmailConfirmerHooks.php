@@ -9,7 +9,7 @@ use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\email_confirmer\EmailConfirmationInterface;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -30,8 +30,8 @@ final class EmailConfirmerHooks {
   /** Validade infinita: troca a classe da entidade de confirmação pela do Portal (ver EmailConfirmationEntity). */
   #[Hook('entity_type_alter')]
   public function alterConfirmationEntityClass(array &$entity_types): void {
-    if (isset($entity_types['email_confirmer_confirmation'])) {
-      $entity_types['email_confirmer_confirmation']->setClass(\Drupal\aculta_portal\Email\EmailConfirmationEntity::class);
+    if (isset($entity_types['aculta_mail_confirmer'])) {
+      $entity_types['aculta_mail_confirmer']->setClass(\Drupal\aculta_portal\Email\EmailConfirmationEntity::class);
     }
   }
 
@@ -40,8 +40,8 @@ final class EmailConfirmerHooks {
    */
   #[Hook('entity_type_alter')]
   public function alterConfirmationAccess(array &$entity_types): void {
-    if (isset($entity_types['email_confirmer_confirmation'])) {
-      $entity_types['email_confirmer_confirmation']->setHandlerClass('access', EmailConfirmationResponseAccessHandler::class);
+    if (isset($entity_types['aculta_mail_confirmer'])) {
+      $entity_types['aculta_mail_confirmer']->setHandlerClass('access', EmailConfirmationResponseAccessHandler::class);
     }
   }
 
@@ -51,14 +51,14 @@ final class EmailConfirmerHooks {
    * Só vale para confirmações de troca de e-mail de conta, para conta ativa, e só quando o visitante ainda não
    * está logado (não troca a sessão de outro usuário). O hash do link já foi verificado por confirm().
    */
-  #[Hook('email_confirmer')]
-  public function loginAfterConfirmation(string $op, EmailConfirmationInterface $confirmation): void {
+  #[Hook('aculta_mail_confirmer')]
+  public function loginAfterConfirmation(string $op, AcultaMailConfirmationInterface $confirmation): void {
     if ($op === 'confirm' && $confirmation->getRealm() === 'aculta_registration') {
       // Confirmação do cadastro: o e-mail da conta está comprovado.
       $this->policy->markConfirmed((int) $confirmation->getProperty('user'));
       return;
     }
-    if ($op !== 'confirm' || $confirmation->getRealm() !== 'email_confirmer_user') {
+    if ($op !== 'confirm' || $confirmation->getRealm() !== 'aculta_mail_confirmer_user') {
       return;
     }
     $uid = (int) $confirmation->getProperty('user');

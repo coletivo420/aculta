@@ -1,0 +1,10 @@
+name: 'ACULTA Mail Confirmer'
+type: module
+description: 'Confirmação de endereço de e-mail do ACULTA. Incorporado do módulo contrib email_confirmer (GPL-2.0-or-later, ver LICENSE.txt); API, entidade e rotas próprias.'
+package: 'ACULTA Portal'
+configure: aculta_mail_confirmer.settings
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:user
+  - token:token
+version: '0.1.0-dev.1'

@@ -1,0 +1,6 @@
+services:
+  access_check.aculta_mail_confirmer_user_email_change:
+    class: Drupal\aculta_mail_confirmer_user\Access\UserEmailPendingChangeAccess
+    tags:
+      - { name: access_check, applies_to: _aculta_mail_confirmer_user_email_pending_change }
+    arguments: ['@config.factory', '@user.data']

@@ -1,3 +1,9 @@
+## 0.4.0-dev.235 — email_confirmer incorporado como aculta_mail_confirmer — 2026-10-20
+
+- O contrib `drupal/email_confirmer` foi substituído pelo módulo `aculta_mail_confirmer` (e `aculta_mail_confirmer_user`). O Portal usa os nomes novos (serviço, entidade, rotas, token e realm).
+- Caminho do painel de requisitos: entrada do contrib removida (o módulo agora é do projeto).
+- Testes: Unit do Portal 240 OK; Kernel do Portal 26 OK (banco de teste) antes da remoção; revalidar após o commit.
+
 ## 0.4.0-dev.234 — teste Kernel dos textos de conta — 2026-10-20
 
 - `AccountMailRouterKernelTest`: reset e cadastro saem com o texto aprovado, com conta real, link de uso único e entrada no domínio de Conta; chaves do Core que não são de conta ficam intactas. 3/3.

@@ -115,12 +115,12 @@ final class TokenHooks {
    */
   #[Hook('tokens_alter')]
   public function alterEmailConfirmationUrl(array &$replacements, array $context, BubbleableMetadata $metadata): void {
-    if (($context['type'] ?? NULL) !== 'email-confirmer' || !isset($context['data']['email_confirmer_confirmation'])) {
+    if (($context['type'] ?? NULL) !== 'aculta-mail-confirmer' || !isset($context['data']['aculta_mail_confirmer'])) {
       return;
     }
-    $confirmation = $context['data']['email_confirmer_confirmation'];
-    $url = $this->domainPurposeManager->routeUrl('account', 'entity.email_confirmer_confirmation.response_form', [
-      'email_confirmer_confirmation' => $confirmation->uuid(),
+    $confirmation = $context['data']['aculta_mail_confirmer'];
+    $url = $this->domainPurposeManager->routeUrl('account', 'entity.aculta_mail_confirmer.response_form', [
+      'aculta_mail_confirmer' => $confirmation->uuid(),
       'hash' => $confirmation->getHash(),
     ]);
     foreach ($context['tokens'] ?? [] as $name => $original) {

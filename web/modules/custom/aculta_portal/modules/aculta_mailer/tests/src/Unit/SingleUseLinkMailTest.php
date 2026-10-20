@@ -21,7 +21,7 @@ final class SingleUseLinkMailTest extends UnitTestCase {
     $this->assertTrue(SingleUseLinkMail::applies('user', 'password_reset'));
     $this->assertTrue(SingleUseLinkMail::applies('aculta_mailer', 'email_confirmation_request'));
     $this->assertTrue(SingleUseLinkMail::applies('aculta_mailer', 'registration_existing_mail'));
-    $this->assertTrue(SingleUseLinkMail::applies('email_confirmer', 'confirmation_request'));
+    $this->assertTrue(SingleUseLinkMail::applies('aculta_mail_confirmer', 'confirmation_request'));
   }
 
   /**

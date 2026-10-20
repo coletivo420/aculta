@@ -12,7 +12,7 @@ dependencies:
     - commerce_order
     - commerce_product
     - commerce_shipping
-    - email_confirmer
+    - aculta_mail_confirmer
     - file
     - filter
     - flag
@@ -32,7 +32,7 @@ permissions:
   - 'access checkout'
   - 'access comments'
   - 'access content'
-  - 'access email confirmation'
+  - 'access aculta mail confirmer'
   - 'access user profiles'
   - 'create authenticated profile'
   - 'delete own files'

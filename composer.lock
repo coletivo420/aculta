@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2fc588cb681d7ea0e116ed7a3042dd20",
+    "content-hash": "18730c241b0a72add833ff46f4843781",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3057,54 +3057,6 @@
             "homepage": "https://www.drupal.org/project/domain",
             "support": {
                 "source": "https://git.drupalcode.org/project/domain"
-            }
-        },
-        {
-            "name": "drupal/email_confirmer",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/email_confirmer.git",
-                "reference": "8.x-1.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/email_confirmer-8.x-1.0.zip",
-                "reference": "8.x-1.0",
-                "shasum": "b6e94e55200bec4245d93ac73575747aa97b3458"
-            },
-            "require": {
-                "drupal/core": "^9 || ^10 || ^11"
-            },
-            "suggest": {
-                "drupal/queue_unique": "Provides queues that only accepts unique items."
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.0",
-                    "datestamp": "1743632695",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "manuel.adan",
-                    "homepage": "https://www.drupal.org/user/516420"
-                }
-            ],
-            "description": "Email confirmation service. Provides a common API for email address confirmation.",
-            "homepage": "https://www.drupal.org/project/email_confirmer",
-            "support": {
-                "source": "https://git.drupalcode.org/project/email_confirmer",
-                "issues": "https://www.drupal.org/project/issues/email_confirmer"
             }
         },
         {

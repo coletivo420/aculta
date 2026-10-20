@@ -1,0 +1,4 @@
+aculta_mail_confirmer.settings:
+  route_name: aculta_mail_confirmer.settings
+  title: 'Email confirmation settings'
+  base_route: aculta_mail_confirmer.settings

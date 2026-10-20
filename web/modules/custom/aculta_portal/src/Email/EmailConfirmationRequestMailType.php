@@ -38,7 +38,7 @@ final class EmailConfirmationRequestMailType implements MailTypeInterface {
       ],
       'confirm_url' => [
         'label' => (string) $this->translation->translate('Link de resposta (segredo)'),
-        'sample' => 'https://example.invalid/email-confirmer/reply/exemplo/hash',
+        'sample' => 'https://example.invalid/aculta-mail-confirmer/responder/exemplo/hash',
       ],
     ];
   }

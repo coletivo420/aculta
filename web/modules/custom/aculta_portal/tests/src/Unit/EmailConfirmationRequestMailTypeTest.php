@@ -29,10 +29,10 @@ final class EmailConfirmationRequestMailTypeTest extends UnitTestCase {
     $this->assertSame([], MailTemplateRenderer::unknownPlaceholders($type->defaultBody(), $allowed));
     $body = MailTemplateRenderer::fill($type->defaultBody(), [
       'email' => 'pessoa@example.invalid',
-      'confirm_url' => 'https://example.invalid/email-confirmer/reply/x/hash',
+      'confirm_url' => 'https://example.invalid/aculta-mail-confirmer/responder/x/hash',
     ]);
     $this->assertStringContainsString('pessoa@example.invalid', $body);
-    $this->assertStringContainsString('https://example.invalid/email-confirmer/reply/x/hash', $body);
+    $this->assertStringContainsString('https://example.invalid/aculta-mail-confirmer/responder/x/hash', $body);
   }
 
 }

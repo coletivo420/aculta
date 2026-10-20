@@ -1,0 +1,8 @@
+name: 'ACULTA Mail Confirmer User'
+type: module
+description: 'Troca de e-mail e bloqueio de login de conta não confirmada, incorporado do email_confirmer_user (GPL-2.0-or-later).'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+version: '0.1.0-dev.1'
+dependencies:
+  - aculta_portal:aculta_mail_confirmer

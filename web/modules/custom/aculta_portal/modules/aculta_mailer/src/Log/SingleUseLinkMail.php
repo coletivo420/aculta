@@ -28,7 +28,7 @@ final class SingleUseLinkMail {
     'user:password_reset',
     'user:register_admin_created',
     'user:register_no_approval_required',
-    'email_confirmer:confirmation_request',
+    'aculta_mail_confirmer:confirmation_request',
   ];
 
   /**

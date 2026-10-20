@@ -2,7 +2,7 @@ name: Portal ACULTA
 type: module
 description: 'Integra conta, conteúdo, aprendizagem e discussões; histórico e descoberta do Fórum, operações administrativas em lote com acesso revalidado, autoria contextual via aculta_user, Views/CTools, PDF, contratos de propósito, slugs públicos canônicos, sanitização nativa de nomes de upload e status de extensões PHP.'
 package: 'ACULTA Portal'
-version: '0.4.0-dev.234'
+version: '0.4.0-dev.235'
 core_version_requirement: ^11.3
 dependencies:
   - ctools:ctools
@@ -21,8 +21,8 @@ dependencies:
   - drupal:user
   - login_emailusername:login_emailusername
   - change_mail_page:change_mail_page
-  - email_confirmer:email_confirmer
-  - email_confirmer:email_confirmer_user
+  - aculta_portal:aculta_mail_confirmer
+  - aculta_portal:aculta_mail_confirmer_user
   - social_auth:social_auth
   - group:group
   - lms:lms

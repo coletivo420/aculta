@@ -61,8 +61,8 @@ module:
   domain_config: 0
   dynamic_page_cache: 0
   editor: 0
-  email_confirmer: 0
-  email_confirmer_user: 0
+  aculta_mail_confirmer: 0
+  aculta_mail_confirmer_user: 0
   embed: 0
   entity: 0
   entity_embed: 0

@@ -28,7 +28,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\email_confirmer\EmailConfirmerManagerInterface;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -50,7 +50,7 @@ final class PortalController extends ControllerBase {
     private readonly UserDataInterface $userData,
     private readonly AuthIntegrationManager $authIntegrationManager,
     private readonly BlockManagerInterface $blockManager,
-    private readonly EmailConfirmerManagerInterface $emailConfirmer,
+    private readonly AcultaMailConfirmerManagerInterface $emailConfirmer,
     private readonly RouteMatchInterface $routeMatch,
     private readonly AccountInterface $account,
     private readonly ModuleHandlerInterface $modules,
@@ -71,7 +71,7 @@ final class PortalController extends ControllerBase {
       $container->get('user.data'),
       $container->get('aculta_portal.auth_integration'),
       $container->get('plugin.manager.block'),
-      $container->get('email_confirmer'),
+      $container->get('aculta_mail_confirmer'),
       $container->get('current_route_match'),
       $container->get('current_user'),
       $container->get('module_handler'),
@@ -373,7 +373,7 @@ final class PortalController extends ControllerBase {
       'current_label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
       'current_email' => ['#plain_text' => $account->getEmail()],
     ];
-    if ($email_ready && $this->modules->moduleExists('email_confirmer_user') && $this->modules->moduleExists('change_mail_page')) {
+    if ($email_ready && $this->modules->moduleExists('aculta_mail_confirmer_user') && $this->modules->moduleExists('change_mail_page')) {
       $section_content['change_form'] = $this->accountFormBuilder->getForm(ChangeMailForm::class, $account);
       $pending_email = $this->pendingEmail($account->id());
       if ($pending_email !== NULL) {
@@ -421,14 +421,14 @@ final class PortalController extends ControllerBase {
   }
 
   private function pendingEmail(int|string $uid): ?string {
-    if (!$this->modules->moduleExists('email_confirmer_user')) {
+    if (!$this->modules->moduleExists('aculta_mail_confirmer_user')) {
       return NULL;
     }
-    $pending = $this->userData->get('email_confirmer_user', $uid, 'email_change_new_address');
+    $pending = $this->userData->get('aculta_mail_confirmer_user', $uid, 'email_change_new_address');
     if (!is_string($pending) || $pending === '') {
       return NULL;
     }
-    $confirmations = $this->emailConfirmer->getConfirmations($pending, 'pending', 0, 'email_confirmer_user');
+    $confirmations = $this->emailConfirmer->getConfirmations($pending, 'pending', 0, 'aculta_mail_confirmer_user');
     foreach ($confirmations as $confirmation) {
       if ((int) $confirmation->get('uid')->target_id === (int) $uid) {
         return $pending;

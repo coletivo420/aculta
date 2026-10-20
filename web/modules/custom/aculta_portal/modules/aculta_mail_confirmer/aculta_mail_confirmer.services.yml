@@ -1,0 +1,10 @@
+services:
+  aculta_mail_confirmer:
+    class: Drupal\aculta_mail_confirmer\AcultaMailConfirmerManager
+    arguments: ['@entity_type.manager', '@config.factory', '@datetime.time']
+
+  aculta_mail_confirmer.confirmation_uuid_param_converter:
+    class: Drupal\aculta_mail_confirmer\ParamConverter\UuidConverter
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: paramconverter }

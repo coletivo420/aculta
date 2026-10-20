@@ -19,8 +19,8 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
-use Drupal\email_confirmer\EmailConfirmationInterface;
-use Drupal\email_confirmer\EmailConfirmerManagerInterface;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -70,7 +70,7 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->once())->method('isAllowed')->with('aculta_portal.email_confirmation_request', 1, 900, '7')->willReturn(FALSE);
     $flood->expects($this->never())->method('register');
-    $manager = $this->createMock(EmailConfirmerManagerInterface::class);
+    $manager = $this->createMock(AcultaMailConfirmerManagerInterface::class);
     $manager->expects($this->never())->method('createConfirmation');
     $lock = $this->lock(TRUE);
     $requester = new EmailConfirmationRequester(
@@ -92,7 +92,7 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->never())->method('isAllowed');
     $lock = $this->lock(FALSE);
-    $manager = $this->createMock(EmailConfirmerManagerInterface::class);
+    $manager = $this->createMock(AcultaMailConfirmerManagerInterface::class);
     $manager->expects($this->never())->method('createConfirmation');
     $requester = new EmailConfirmationRequester(
       $manager,
@@ -116,7 +116,7 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->expects($this->never())->method('acquire');
     $requester = new EmailConfirmationRequester(
-      $this->createMock(EmailConfirmerManagerInterface::class),
+      $this->createMock(AcultaMailConfirmerManagerInterface::class),
       $this->createMock(EntityTypeManagerInterface::class),
       $flood,
       $lock,
@@ -141,7 +141,7 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $this->assertSame(['new-save', 'send', 'new-save'], $events);
   }
 
-  private function requester(array $existing, EmailConfirmationInterface $new, array &$events, bool $accepted): EmailConfirmationRequester {
+  private function requester(array $existing, AcultaMailConfirmationInterface $new, array &$events, bool $accepted): EmailConfirmationRequester {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -153,9 +153,9 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $storage->method('loadMultiple')->willReturn($existing);
 
     $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $entity_manager->method('getStorage')->with('email_confirmer_confirmation')->willReturn($storage);
+    $entity_manager->method('getStorage')->with('aculta_mail_confirmer')->willReturn($storage);
 
-    $manager = $this->createMock(EmailConfirmerManagerInterface::class);
+    $manager = $this->createMock(AcultaMailConfirmerManagerInterface::class);
     $manager->method('createConfirmation')->with('person@example.invalid')->willReturn($new);
 
     $flood = $this->createMock(FloodInterface::class);
@@ -166,11 +166,11 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $mailer->method('send')->willReturnCallback(static function (MailMessage $message) use (&$events, $accepted): bool {
       $events[] = 'send';
       self::assertSame('email_confirmation_request', $message->type);
-      self::assertSame('https://example.invalid/email-confirmer/reply/uuid-11/hash', $message->context['confirm_url']);
+      self::assertSame('https://example.invalid/aculta-mail-confirmer/responder/uuid-11/hash', $message->context['confirm_url']);
       return $accepted;
     });
     $urls = $this->createMock(UrlGeneratorInterface::class);
-    $urls->method('generateFromRoute')->willReturn('https://example.invalid/email-confirmer/reply/uuid-11/hash');
+    $urls->method('generateFromRoute')->willReturn('https://example.invalid/aculta-mail-confirmer/responder/uuid-11/hash');
 
     return new EmailConfirmationRequester($manager, $entity_manager, $flood, $this->lock(TRUE), $this->createMock(LoggerChannelInterface::class), $mailer, $this->configFactory(), new UuidGenerator(), $urls);
   }
@@ -179,12 +179,12 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $settings = $this->createMock(ImmutableConfig::class);
     $settings->method('get')->with('resendrequest_delay')->willReturn(900);
     $factory = $this->createMock(ConfigFactoryInterface::class);
-    $factory->method('get')->with('email_confirmer.settings')->willReturn($settings);
+    $factory->method('get')->with('aculta_mail_confirmer.settings')->willReturn($settings);
     return $factory;
   }
 
-  private function confirmation(int $id, int $uid, array &$events, string $prefix): EmailConfirmationInterface {
-    $confirmation = $this->createMock(EmailConfirmationInterface::class);
+  private function confirmation(int $id, int $uid, array &$events, string $prefix): AcultaMailConfirmationInterface {
+    $confirmation = $this->createMock(AcultaMailConfirmationInterface::class);
     $confirmation->method('isRequestSent')->willReturn(FALSE);
     $confirmation->method('getEmail')->willReturn('person@example.invalid');
     $confirmation->method('uuid')->willReturn('uuid-' . $id);
@@ -198,7 +198,7 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $confirmation->method('setRealm')->willReturnSelf();
     $confirmation->method('setProperty')->willReturnSelf();
     $confirmation->method('setPrivate')->willReturnSelf();
-    $confirmation->method('setResponseUrl')->willReturnCallback(function ($url, $operation) use ($confirmation): EmailConfirmationInterface {
+    $confirmation->method('setResponseUrl')->willReturnCallback(function ($url, $operation) use ($confirmation): AcultaMailConfirmationInterface {
       $this->assertSame('aculta_portal.dashboard', $url->getRouteName());
       $this->assertSame('confirm', $operation);
       return $confirmation;

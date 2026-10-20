@@ -1,3 +1,8 @@
+## 0.1.0-dev.55 — chave de confirmação de e-mail renomeada — 2026-10-20
+
+- `SingleUseLinkMail` e seu teste: a chave do pedido de confirmação passa a ser `aculta_mail_confirmer:confirmation_request` (antes `email_confirmer:...`), por causa da incorporação do confirmador.
+- Unit do mailer 141/141.
+
 ## 0.1.0-dev.54 — RC1; teto de tamanho no webhook — 2026-10-20
 
 - Estado do módulo: **RC1**, com autorização do responsável. Pronto para deploy em Alpha (`docs/operations/RELEASE-LIFECYCLE.md`); o deploy depende de autorização separada.

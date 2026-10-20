@@ -1,0 +1,34 @@
+aculta_mail_confirmer.settings:
+  path: '/painel-administrativo/aculta/confirmacao-de-email'
+  defaults:
+    _form: '\Drupal\aculta_mail_confirmer\Form\AcultaMailConfirmerSettingsForm'
+    _title:  'Email confirmation service'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.aculta_mail_confirmer.response_form:
+  path: '/aculta-mail-confirmer/responder/{aculta_mail_confirmer}/{hash}'
+  defaults:
+    _entity_form: 'aculta_mail_confirmer.response'
+    _title: 'Email confirmation'
+  requirements:
+    _entity_access: aculta_mail_confirmer.response
+    hash: ^[a-zA-Z0-9\-_]{43}$
+  options:
+    parameters:
+      aculta_mail_confirmer:
+        type: 'aculta-mail-confirmer-uuid'
+
+entity.aculta_mail_confirmer.resend:
+  path: '/aculta-mail-confirmer/reenviar/{confirmation}'
+  defaults:
+    _controller: '\Drupal\aculta_mail_confirmer\Controller\AcultaMailConfirmerController::resendConfirmation'
+    _title: 'Resend confirmation email'
+  requirements:
+    _permission: 'access aculta mail confirmer'
+    _csrf_token: 'TRUE'
+    confirmation: \d+
+  options:
+    parameters:
+      confirmation:
+        type: entity:aculta_mail_confirmer

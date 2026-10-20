@@ -94,13 +94,6 @@ final class PortalRequirementsController extends ControllerBase {
       'purpose' => 'Formulário de solicitação de alteração do e-mail.',
     ],
     [
-      'name' => 'Email Confirmer',
-      'modules' => ['email_confirmer', 'email_confirmer_user'],
-      'package' => 'drupal/email_confirmer',
-      'minimum' => '^1.0',
-      'purpose' => 'Confirmação do novo e-mail antes de atualizar Drupal User.',
-    ],
-    [
       'name' => 'Social API / Social Auth',
       'modules' => ['social_api', 'social_auth'],
       'package' => 'drupal/social_auth',
