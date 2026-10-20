@@ -67,6 +67,33 @@ final class MailDashboardKernelTest extends KernelTestBase {
   }
 
   /**
+   * O relatório lista as falhas com o texto completo e a rota do relatório responde.
+   */
+  public function testFailureReportShowsFullError(): void {
+    $storage = $this->container->get('entity_type.manager')->getStorage('aculta_mail_log');
+    $storage->create([
+      'correlation_id' => 'a0000000-0000-4000-8000-000000000009',
+      'type' => 'account_created',
+      'recipient_hash' => str_repeat('b', 64),
+      'status' => 'failed',
+      'transport' => 'smtp',
+      'error_code' => 'smtp_550',
+      'error_message' => 'Expected response code "250" but got code "550".',
+      'created' => time(),
+    ])->save();
+    $dashboard = $this->container->get('aculta_mailer.dashboard');
+    $rows = $dashboard->recentFailures(time() - 86400);
+    $this->assertCount(1, $rows);
+    $this->assertSame('Expected response code "250" but got code "550".', $rows[0]['error_message']);
+    $this->assertSame(['smtp_550' => 1], $dashboard->summary(time() - 86400)['by_error']);
+
+    $route = $this->container->get('router.route_provider')->getRouteByName('aculta_mailer.failures');
+    $this->assertSame('administer aculta_mailer', $route->getRequirement('_permission'));
+    $page = MailDashboardController::create($this->container)->failures();
+    $this->assertArrayHasKey('table', $page);
+  }
+
+  /**
    * Cria um registro de envio para o teste.
    */
   private function log($storage, string $correlation, string $type, string $status, string $transport, int $created): void {

@@ -54,6 +54,8 @@ final class MailDeliveryKernelTest extends KernelTestBase {
     $this->assertSame(DeliveryError::Permanent, $result->error);
     $this->assertSame(550, $result->smtpCode);
     $this->assertSame('smtp_550', $this->logFor(self::CORRELATION)->get('error_code')->value);
+    // O relatório guarda o texto completo do transporte; a mensagem ao usuário continua genérica.
+    $this->assertSame('Expected response code "250" but got code "550".', $this->logFor(self::CORRELATION)->get('error_message')->value);
     $this->assertSame('failed', $this->logFor(self::CORRELATION)->get('status')->value);
   }
 

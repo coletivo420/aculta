@@ -76,7 +76,8 @@ final class AcultaMailer implements AcultaMailerInterface {
     $failure = $this->failures->take($message->correlationId);
     $code = $failure['code'] ?? NULL;
     $error = $this->classifier->classify($code);
-    $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error));
+    // O texto completo vai só para o registro (relatório do admin); o usuário vê a mensagem genérica.
+    $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
     // Sem conteúdo do e-mail nem destinatário no log: só tipo, correlação e código.
     $this->logger->error('O sistema de e-mail não aceitou a mensagem @type (correlação @id, código @code).', [
       '@type' => $message->type,

@@ -7,8 +7,9 @@ namespace Drupal\aculta_mailer\Type;
 /**
  * Tipo de e-mail registrado por um módulo consumidor (serviço com tag `aculta_mailer.type`).
  *
- * O tipo recebe somente o contexto que o consumidor montou, com escalares. Não consulta entidades nem rotas: URLs
- * chegam prontas no contexto, o que mantém subject e body testáveis sem bootstrap.
+ * Declara as variáveis que modelos (Config Entity `aculta_mailer_template`) podem usar, e o texto padrão com
+ * placeholders `{{ variavel }}`. Só variáveis declaradas são substituídas. URLs e textos chegam prontos no contexto:
+ * o tipo não consulta entidades nem rotas.
  */
 interface MailTypeInterface {
 
@@ -18,19 +19,21 @@ interface MailTypeInterface {
   public function id(): string;
 
   /**
-   * Assunto já traduzido.
+   * Variáveis disponíveis para o modelo, por nome.
    *
-   * @param array<string, scalar|null> $context
-   *   Contexto da mensagem.
+   * @return array<string, array{label: string, sample: string}>
+   *   Rótulo para o editor e valor de exemplo para a prévia.
    */
-  public function subject(array $context): string;
+  public function variables(): array;
 
   /**
-   * Corpo em texto simples, já traduzido e com o contexto aplicado.
-   *
-   * @param array<string, scalar|null> $context
-   *   Contexto da mensagem.
+   * Assunto padrão, com placeholders.
    */
-  public function body(array $context): string;
+  public function defaultSubject(): string;
+
+  /**
+   * Corpo padrão em texto simples, com placeholders.
+   */
+  public function defaultBody(): string;
 
 }

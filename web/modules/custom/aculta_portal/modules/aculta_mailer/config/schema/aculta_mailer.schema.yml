@@ -1,0 +1,59 @@
+aculta_mailer.template.*:
+  type: config_entity
+  label: 'Modelo de e-mail'
+  mapping:
+    id:
+      type: string
+      label: 'ID (tipo de e-mail)'
+    label:
+      type: label
+      label: 'Nome'
+    status:
+      type: boolean
+      label: 'Ativo'
+    layout:
+      type: string
+      label: 'Layout'
+    subject:
+      type: text
+      label: 'Assunto'
+    body:
+      type: text
+      label: 'Corpo (texto simples)'
+
+aculta_mailer.brand.*:
+  type: config_entity
+  label: 'Marca de e-mail'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Nome interno'
+    name:
+      type: label
+      label: 'Nome exibido'
+    footer:
+      type: text
+      label: 'Rodapé'
+
+aculta_mailer.layout.*:
+  type: config_entity
+  label: 'Layout de e-mail'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Nome'
+    brand:
+      type: string
+      label: 'Marca'
+    header:
+      type: text
+      label: 'Cabeçalho'
+    footer:
+      type: text
+      label: 'Rodapé'

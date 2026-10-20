@@ -32,8 +32,9 @@ final class MailFailureSubscriber implements EventSubscriberInterface {
     if (!is_string($correlation) || $correlation === '') {
       return;
     }
-    $code = (int) $event->getError()->getCode();
-    $this->failures->remember($correlation, $code > 0 ? $code : NULL);
+    $error = $event->getError();
+    $code = (int) $error->getCode();
+    $this->failures->remember($correlation, $code > 0 ? $code : NULL, $error->getMessage());
   }
 
 }

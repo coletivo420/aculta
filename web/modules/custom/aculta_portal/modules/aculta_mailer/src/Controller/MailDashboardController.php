@@ -53,9 +53,46 @@ final class MailDashboardController extends ControllerBase {
         'status' => $this->table($this->t('Estado'), $summary['by_status']),
         'type' => $this->table($this->t('Tipo'), $summary['by_type']),
         'transport' => $this->table($this->t('Transporte'), $summary['by_transport']),
+        'error' => $this->table($this->t('Motivo da falha'), $summary['by_error']),
       ];
     }
     return $build;
+  }
+
+  /**
+   * Relatório de falhas: texto completo do erro por envio, para o administrador.
+   */
+  public function failures(): array {
+    $since = $this->time->getRequestTime() - 30 * 86400;
+    $rows = [];
+    foreach ($this->dashboard->recentFailures($since) as $failure) {
+      $rows[] = [
+        date('Y-m-d H:i', $failure['created']),
+        $failure['type'],
+        $failure['correlation_id'],
+        $failure['transport'],
+        $failure['attempts'],
+        $failure['error_code'],
+        $failure['error_message'],
+      ];
+    }
+    return [
+      'intro' => ['#markup' => '<p>' . $this->t('Últimos 30 dias. O texto completo pode conter o endereço do destinatário: não compartilhe este relatório.') . '</p>'],
+      'table' => [
+        '#type' => 'table',
+        '#header' => [
+          $this->t('Data'),
+          $this->t('Tipo'),
+          $this->t('Correlação'),
+          $this->t('Transporte'),
+          $this->t('Tentativas'),
+          $this->t('Código'),
+          $this->t('Texto completo'),
+        ],
+        '#rows' => $rows,
+        '#empty' => $this->t('Nenhuma falha nos últimos 30 dias.'),
+      ],
+    ];
   }
 
   /**

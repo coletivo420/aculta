@@ -34,6 +34,10 @@ services:
     class: Drupal\aculta_mailer\Dashboard\MailDashboard
     arguments: ['@entity_type.manager']
 
+  Drupal\aculta_mailer\Template\MailTemplateRenderer:
+    class: Drupal\aculta_mailer\Template\MailTemplateRenderer
+    arguments: ['@entity_type.manager']
+
   aculta_mailer.smtp_failures:
     class: Drupal\aculta_mailer\Delivery\SmtpFailureRegistry
 

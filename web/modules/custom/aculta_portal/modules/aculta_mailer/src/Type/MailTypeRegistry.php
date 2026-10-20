@@ -39,6 +39,18 @@ final class MailTypeRegistry {
   }
 
   /**
+   * IDs dos tipos registrados, em ordem.
+   *
+   * @return string[]
+   *   IDs ordenados.
+   */
+  public function ids(): array {
+    $ids = array_keys($this->types);
+    sort($ids);
+    return $ids;
+  }
+
+  /**
    * Tipo registrado; lança exceção se o ID não existir.
    */
   public function get(string $id): MailTypeInterface {

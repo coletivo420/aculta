@@ -7,7 +7,7 @@ namespace Drupal\aculta_mailer_test;
 use Drupal\aculta_mailer\Type\MailTypeInterface;
 
 /**
- * Tipo de teste com contexto escalar conhecido.
+ * Tipo de teste com variáveis escalares conhecidas.
  */
 final class AcultaMailerTestType implements MailTypeInterface {
 
@@ -21,15 +21,25 @@ final class AcultaMailerTestType implements MailTypeInterface {
   /**
    * {@inheritdoc}
    */
-  public function subject(array $context): string {
-    return 'Assunto de teste para ' . ($context['name'] ?? 'ninguém');
+  public function variables(): array {
+    return [
+      'name' => ['label' => 'Nome', 'sample' => 'Maria'],
+      'link' => ['label' => 'Link', 'sample' => 'https://example.invalid/x'],
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function body(array $context): string {
-    return 'Corpo de teste. Link: ' . ($context['link'] ?? '');
+  public function defaultSubject(): string {
+    return 'Assunto de teste para {{ name }}';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultBody(): string {
+    return 'Corpo de teste. Link: {{ link }}';
   }
 
 }

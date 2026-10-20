@@ -12,3 +12,11 @@ function aculta_mailer_update_10001(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_mail_log'));
 }
+
+/**
+ * Acrescenta o texto completo da falha ao registro de envios (relatório do admin).
+ */
+function aculta_mailer_update_10002(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('error_message', 'aculta_mail_log', 'aculta_mailer', $fields['error_message']);
+}

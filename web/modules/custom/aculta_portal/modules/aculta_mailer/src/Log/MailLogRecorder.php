@@ -37,9 +37,11 @@ final class MailLogRecorder {
    * @param string $transport
    *   Nome do transporte usado nesta tentativa.
    * @param string|null $errorCode
-   *   Código curto e controlado pelo módulo; nunca texto livre do provedor.
+   *   Código curto e controlado pelo módulo.
+   * @param string|null $errorMessage
+   *   Texto completo da falha do transporte, para o relatório do admin (ver LOGGING-PRIVACY.md).
    */
-  public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL): void {
+  public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL, ?string $errorMessage = NULL): void {
     $storage = $this->entityTypeManager->getStorage(self::ENTITY_TYPE);
     $found = $storage->loadByProperties(['correlation_id' => $message->correlationId]);
     $log = $found === [] ? $storage->create([
@@ -53,6 +55,7 @@ final class MailLogRecorder {
     $log->set('attempts', $attempt);
     $log->set('transport', $transport);
     $log->set('error_code', $errorCode);
+    $log->set('error_message', $errorMessage);
     if ($status === MailStatus::Sent) {
       $log->set('sent', $this->time->getRequestTime());
     }
