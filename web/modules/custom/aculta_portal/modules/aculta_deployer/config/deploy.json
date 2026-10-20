@@ -297,6 +297,18 @@
     {
       "file": "config/sync/domain_alias.alias.links_aculta_toca_net_br.yml",
       "reason": "alias do host do servidor de testes; excluído no build de produção"
+    },
+    {
+      "file": "config/sync/aculta_mailer.transport.smtp_hostinger.yml",
+      "reason": "servidor e usuário de envio SMTP (endereço de envio do domínio) por ambiente"
+    },
+    {
+      "file": "config/sync/aculta_mailer.imap.yml",
+      "reason": "caixa IMAP do monitoramento de retorno (endereço do domínio) por ambiente"
+    },
+    {
+      "file": "config/sync/aculta_mailer.delivery.yml",
+      "reason": "endereço de retorno e destinatários dos alertas e resumos por ambiente"
     }
   ],
   "profiles": {

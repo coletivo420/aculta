@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.30 — RC do submódulo: cron único, painel validado visualmente, F14 e F15 — 2026-10-20
+
+- **RC do submódulo** (decisão do responsável): o ACULTA Mailer entra como RC. Todos os submódulos entram como RC no lançamento do módulo central `aculta_portal` (regra em `AGENTS.md`).
+- Correção de runtime: havia três implementações de `hook_cron` no módulo. O Core recusa mais de uma (LogicException no Kernel). Agora há uma só (`MailCronHooks`), que chama retenção (`MailLogRetention`), monitoramento IMAP e resumo semanal.
+- Painel validado no X11 (Firefox, perfil de teste): visão geral, falhas, diagnóstico, configurações, entrega, registro e monitoramento. Ajustes feitos: estados com rótulos em português; tabelas com rolagem horizontal dentro da área (`css/admin.css`); Brevo mostrado como API (sem servidor, porta e certificado); nome de produto de terceiros removido dos títulos.
+- Config de ambiente: `config/sync` dos transportes, do IMAP e da entrega declarados em `environment_bound` (endereços de domínio).
+- Validações: 108 unitários; 33 Kernel; gates de envio, segredos, rotas, papéis, fronteira e endereços passam.
+- Pendente (não bloqueia o RC do submódulo): tipo de falha com nome técnico na tabela; alta densidade das linhas da tabela de falhas; reenvio de falha (F7); verificação de domínio SPF/DKIM/DMARC (F3); tracking (F11, desligado); integrações com Forum, LMS, Magazine e Commerce (F12).
+- Versão do módulo: `0.1.0-dev.30`.
+
 ## 0.1.0-dev.29 — transporte esgotado é ignorado, inclusive a contingência; gate de comércio corrigido — 2026-10-20
 
 - `TransportChoice`: um transporte sem cota (ou Brevo desligado) é ignorado; a contingência também só entra se estiver disponível. Sem transporte disponível, a falha segue com o erro real.

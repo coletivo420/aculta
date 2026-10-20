@@ -454,6 +454,17 @@ Homelab/Hostinger no Portal.
 - O Portal prepara dados, URLs, acesso e cache; ACULTA420 seleciona e renderiza a apresentação. O Portal não referencia componentes SDC do tema.
 - Gates de tema e da fronteira Portal–tema permanecem obrigatórios conforme os documentos e scripts de validação correspondentes.
 
+## Release candidate de submódulos e módulo central (regra permanente)
+
+- **RC é por submódulo.** Um submódulo (ex.: `aculta_mailer`) recebe a marca de RC quando as suas próprias fases
+  estão concluídas, os testes Unit e Kernel dele passam e a validação visual do painel administrativo, quando houver,
+  foi feita. Isso não exige que o módulo central esteja pronto.
+- **Todos os submódulos entram como RC no lançamento do módulo central `aculta_portal`.** O lançamento do módulo
+  central considera cada submódulo já em RC; não reabrir o RC de um submódulo sem motivo registrado no CHANGELOG dele.
+- **Pendências de fase que não bloqueiam o RC do submódulo** ficam registradas no roadmap do submódulo, com o estado
+  "Pendente" ou "Parcial" e o motivo. O agente não declara RC de um item que ainda não foi validado.
+- Release e tag continuam seguindo `docs/operations/RELEASES.md`; sem tag sem pedido explícito do responsável.
+
 ## Regra de encerramento de fase
 
 Toda fase ou subfase concluída deve terminar em **PR próprio**.

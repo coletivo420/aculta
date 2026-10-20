@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
-use Drupal\aculta_mailer\Hook\MailLogRetentionHooks;
+use Drupal\aculta_mailer\Log\MailLogSettings;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -73,7 +73,7 @@ final class MailLogKernelTest extends KernelTestBase {
    */
   public function testRetentionDeletesOnlyOldLogs(): void {
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_mail_log');
-    $antigo = time() - (MailLogRetentionHooks::RETENTION_DAYS + 5) * 86400;
+    $antigo = time() - (MailLogSettings::DEFAULT_RETENTION_DAYS + 5) * 86400;
     $old = $storage->create([
       'correlation_id' => 'a0000000-0000-4000-8000-000000000001',
       'type' => 'aculta_mailer_test_message',

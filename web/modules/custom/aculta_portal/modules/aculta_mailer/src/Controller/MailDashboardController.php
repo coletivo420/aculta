@@ -16,6 +16,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class MailDashboardController extends ControllerBase {
 
+  /**
+   * Rótulos em português dos estados do registro (MailStatus).
+   */
+  private const STATUS_LABELS = [
+    'queued' => 'Na fila',
+    'processing' => 'Em processamento',
+    'sent' => 'Aceito',
+    'delivered' => 'Entregue',
+    'deferred' => 'Adiado',
+    'bounced' => 'Devolvido',
+    'complained' => 'Reclamação',
+    'failed' => 'Falhou',
+    'cancelled' => 'Suspenso',
+  ];
+
   public function __construct(
     private readonly MailDashboard $dashboard,
     private readonly TimeInterface $time,
@@ -53,7 +68,7 @@ final class MailDashboardController extends ControllerBase {
           '@total' => $summary['total'],
         ]),
         '#open' => $days === 1,
-        'status' => $this->table($this->t('Estado'), $summary['by_status']),
+        'status' => $this->table($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
         'type' => $this->table($this->t('Tipo'), $summary['by_type']),
         'transport' => $this->table($this->t('Transporte'), $summary['by_transport']),
         'error' => $this->table($this->t('Motivo da falha'), $summary['by_error']),
@@ -81,7 +96,7 @@ final class MailDashboardController extends ControllerBase {
     }
     return [
       'intro' => ['#markup' => '<p>' . $this->t('Últimos 30 dias. O texto completo pode conter o endereço do destinatário: não compartilhe este relatório.') . '</p>'],
-      'table' => [
+      'table' => $this->scrollable([
         '#type' => 'table',
         '#header' => [
           $this->t('Data'),
@@ -94,7 +109,7 @@ final class MailDashboardController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhuma falha nos últimos 30 dias.'),
-      ],
+      ]),
     ];
   }
 
@@ -105,13 +120,15 @@ final class MailDashboardController extends ControllerBase {
     $report = $this->diagnostics->report();
     $transports = [];
     foreach ($report['transports'] as $id => $row) {
+      // Brevo é API: não tem servidor, porta nem certificado. Mostrar isso em vez de ":0".
+      $api = $row['plugin'] === 'brevo';
       $transports[] = [
         $id,
         $row['label'],
-        $row['host'] . ':' . $row['port'],
-        $row['verify_peer'] ? $this->t('sim') : $this->t('não'),
-        $row['user_set'] ? $this->t('preenchido') : $this->t('vazio'),
-        $row['pass_set'] ? $this->t('preenchida') : $this->t('vazia'),
+        $api ? $this->t('API (sem servidor)') : $row['host'] . ':' . $row['port'],
+        $api ? $this->t('não se aplica') : ($row['verify_peer'] ? $this->t('sim') : $this->t('não')),
+        $api ? $this->t('não se aplica') : ($row['user_set'] ? $this->t('preenchido') : $this->t('vazio')),
+        $api ? $this->t('chave no arquivo de segredos') : ($row['pass_set'] ? $this->t('preenchida') : $this->t('vazia')),
         $row['last_sent'] ? date('Y-m-d H:i', $row['last_sent']) : $this->t('nunca'),
         $row['last_failure'] ? date('Y-m-d H:i', $row['last_failure']) : $this->t('nunca'),
       ];
@@ -123,7 +140,7 @@ final class MailDashboardController extends ControllerBase {
           '@fallback' => $report['failover']['fallback'] ?? '-',
         ]) . '</p>',
       ],
-      'transports' => [
+      'transports' => $this->scrollable([
         '#type' => 'table',
         '#header' => [
           $this->t('ID'),
@@ -137,7 +154,7 @@ final class MailDashboardController extends ControllerBase {
         ],
         '#rows' => $transports,
         '#empty' => $this->t('Transportes indisponíveis: o módulo de transporte não está habilitado.'),
-      ],
+      ]),
       'queue' => ['#markup' => '<p>' . $this->t('Mensagens na fila: @n.', ['@n' => $report['queue_items']]) . '</p>'],
       'cron' => [
         '#markup' => '<p>' . $this->t('Última execução do cron: @when.', [
@@ -163,11 +180,34 @@ final class MailDashboardController extends ControllerBase {
     foreach ($counts as $name => $count) {
       $rows[] = [$name, $count];
     }
-    return [
+    return $this->scrollable([
       '#type' => 'table',
       '#header' => [$label, $this->t('Quantidade')],
       '#rows' => $rows,
       '#empty' => $this->t('Nenhum registro.'),
+    ]);
+  }
+
+  /**
+   * Rótulos legíveis nas chaves de uma contagem; chave sem rótulo fica como está.
+   */
+  private function labelled(array $counts, array $labels): array {
+    $out = [];
+    foreach ($counts as $key => $count) {
+      $out[(string) ($labels[$key] ?? $key)] = $count;
+    }
+    return $out;
+  }
+
+  /**
+   * Tabela dentro de um contêiner com rolagem horizontal (estilo em css/admin.css).
+   */
+  private function scrollable(array $table): array {
+    return [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['aculta-mailer-scroll']],
+      '#attached' => ['library' => ['aculta_mailer/admin']],
+      'table' => $table,
     ];
   }
 

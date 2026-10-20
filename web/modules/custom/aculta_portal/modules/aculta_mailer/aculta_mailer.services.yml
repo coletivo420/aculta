@@ -114,9 +114,9 @@ services:
     class: Drupal\aculta_mailer\Report\MailSummary
     arguments: ['@config.factory', '@state', '@datetime.time', '@entity_type.manager', '@aculta_mailer.queue', '@uuid', '@Drupal\aculta_mailer\Delivery\AdministratorRecipients']
 
-  Drupal\aculta_mailer\Hook\MailReportHooks:
-    class: Drupal\aculta_mailer\Hook\MailReportHooks
-    arguments: ['@Drupal\aculta_mailer\Report\MailSummary']
+  Drupal\aculta_mailer\Log\MailLogRetention:
+    class: Drupal\aculta_mailer\Log\MailLogRetention
+    arguments: ['@entity_type.manager', '@datetime.time', '@Drupal\aculta_mailer\Log\MailLogSettings']
 
   Drupal\aculta_mailer\Log\MailLogSettings:
     class: Drupal\aculta_mailer\Log\MailLogSettings

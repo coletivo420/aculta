@@ -1,0 +1,8 @@
+/*
+ * Tabelas do painel de envios: rolagem horizontal dentro da própria área, sem estourar a página em tela estreita.
+ * Apresentação mínima do módulo (o painel administrativo usa o tema Claro, sem as classes do Bootstrap).
+ */
+.aculta-mailer-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}

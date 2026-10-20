@@ -23,6 +23,11 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F14 | Migração da configuração de transporte (`mailer_transport`) para `aculta_mailer_transport`, convivendo com o contrib, sem trocar o envio do site. Entregue: entidade, fábrica SMTP e Brevo, credencial pelo arquivo de segredos (`SMTP_PASSWORD`, contrato). Entidades criadas no runtime e envio SMTP de teste aceito. Pendente: trocar o envio do site para a camada nova (F15), após equivalência | Em andamento (runtime de teste validado no envio) |
 | F15 | Retirada do contrib de envio: concluída. `system.mail` = `aculta_mailer`; symfony_mailer, mailer_override, mailer_transport e mailer_policy desinstalados no runtime, sem pacote no composer.json/composer.lock (somente 4 remoções no lock), sem configuração residual e com a configuração exportada. Envio pelo caminho da aplicação aceito depois da remoção. Pendências fora da F15: conferência visual do destinatário; SMTP2GO sem cota no plano atual; o gate de comércio reprova no check de rotas de webhook (já reprovava antes) | Concluída (runtime de teste; produção só com decisão do responsável) |
 
+## Status de RC
+
+- **Submódulo `aculta_mailer` em RC** (0.1.0-dev.30, decisão do responsável). Critérios atendidos: testes Unit (108) e Kernel (33) passam; painel administrativo validado no X11; gates de envio, segredos, rotas, papéis, fronteira e endereços passam. Pendências listadas no CHANGELOG 0.1.0-dev.30 não bloqueiam o RC do submódulo.
+- Lançamento do módulo central `aculta_portal`: considera este submódulo já em RC (regra em `AGENTS.md`).
+
 ## Runtime
 
 - F15 concluída no runtime de teste (2026-10-20): contrib de envio desinstalado; envio pelo caminho da aplicação aceito (`sent=1`).

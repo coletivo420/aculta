@@ -70,7 +70,7 @@ final class MailLogSettingsForm extends ConfigFormBase {
     ];
     $form['not_applicable'] = [
       '#type' => 'details',
-      '#title' => $this->t('Opções do WP Mail SMTP que não se aplicam aqui'),
+      '#title' => $this->t('Opções de registro que não se aplicam aqui'),
       '#open' => TRUE,
       'content' => [
         '#type' => 'item',

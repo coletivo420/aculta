@@ -60,7 +60,7 @@ final class MailSettingsController extends ControllerBase {
     ];
     $build['log'] = [
       '#type' => 'link',
-      '#title' => $this->t('Registro de e-mail: ligar, retenção e opções do WP Mail SMTP'),
+      '#title' => $this->t('Registro de e-mail: ligar, retenção e opções de registro'),
       '#url' => Url::fromRoute('aculta_mailer.log_settings'),
     ];
     $build['delivery'] = [

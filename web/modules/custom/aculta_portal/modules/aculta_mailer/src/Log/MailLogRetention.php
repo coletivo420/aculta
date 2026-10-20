@@ -2,23 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mailer\Hook;
+namespace Drupal\aculta_mailer\Log;
 
-use Drupal\aculta_mailer\Log\MailLogRecorder;
-use Drupal\aculta_mailer\Log\MailLogSettings;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Retenção dos registros de envio: apaga registros mais antigos que o prazo, em lotes.
+ * Retenção dos registros de envio: apaga registros mais antigos que o prazo configurado, em lotes.
  */
-final class MailLogRetentionHooks {
-
-  /**
-   * Prazo de retenção, em dias. Configurável em fase própria (ver docs/LOGGING-PRIVACY.md).
-   */
-  public const RETENTION_DAYS = 90;
+final class MailLogRetention {
 
   /**
    * Lote por execução de cron, para não sobrecarregar a requisição.
@@ -32,9 +24,8 @@ final class MailLogRetentionHooks {
   ) {}
 
   /**
-   * Implements hook_cron().
+   * Apaga um lote de registros mais antigos que o prazo de retenção.
    */
-  #[Hook('cron')]
   public function cron(): void {
     $limite = $this->time->getRequestTime() - $this->settings->retentionDays() * 86400;
     $storage = $this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE);

@@ -38,7 +38,7 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 
 ## Retenção
 
-- `MailLogRetentionHooks` apaga, no cron, registros com mais de 90 dias, em lotes de 500.
+- `MailCronHooks` (via `MailLogRetention`) apaga, no cron, registros mais antigos que o prazo configurado (padrão 90 dias), em lotes de 500.
 - O prazo é constante de código nesta versão. Configuração por ambiente fica para fase própria.
 
 ## Fila: dados em trânsito
