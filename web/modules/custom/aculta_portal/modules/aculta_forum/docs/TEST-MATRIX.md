@@ -1,5 +1,15 @@
 # Matriz de testes por fase
 
+## dev.55 — cacheabilidade do texto de citação
+
+- `ForumQuoteHooksTest`: 6/18 PASS; suíte direcionada Builder + Hooks + display
+  config: 26/240 PASS. PHPCS Drupal/DrupalPractice PASS. Caso específico
+  confirma que contexts, tags e max-age de `TextProcessed` do Core são
+  propagados ao formulário.
+- Runtime `toca`: cache rebuild e resolução de `ForumQuoteHooks`, `quote_builder`
+  e `discussion_context_resolver` PASS; 0 tópicos e 0 Comments mantidos. O texto
+  real não foi processado no Runtime. RUNTIME STATUS: PARTIAL.
+
 ## dev.54 — agrupamento visual de categorias por hierarquia
 
 - A captura X11 1024 px mostrou filhos antes das categorias raiz. Config da

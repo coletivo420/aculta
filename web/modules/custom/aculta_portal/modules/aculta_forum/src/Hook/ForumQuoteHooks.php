@@ -127,7 +127,12 @@ final class ForumQuoteHooks {
       return;
     }
     $commentBody = $parent->get('comment_body');
-    $quote = $this->quoteBuilder->build((string) $commentBody->processed, $parent->getAuthorName());
+    $bodyItem = $commentBody->get(0);
+    if ($bodyItem === NULL) {
+      return;
+    }
+    $processedBody = $bodyItem->get('processed');
+    $quote = $this->quoteBuilder->build((string) $processedBody, $parent->getAuthorName());
     if ($quote === NULL || !isset($form['comment_body']['widget'][0]['value'])) {
       return;
     }
@@ -143,6 +148,7 @@ final class ForumQuoteHooks {
       ->addCacheableDependency($discussion)
       ->addCacheableDependency($discussion->getReadAccess())
       ->addCacheableDependency($sourceAccess)
+      ->addCacheableDependency($processedBody)
       ->addCacheContexts(['url.query_args:quote'])
       ->applyTo($form);
   }

@@ -11,8 +11,10 @@ use Drupal\aculta_forum\Hook\ForumQuoteHooks;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -116,31 +118,47 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     $this->makeCacheable($host);
     $parent = $this->comment(AccessResult::allowed());
     $parent->method('hasField')->with('comment_body')->willReturn(TRUE);
-    $body = new class('<p>Original <strong>mensagem</strong>.</p>') extends FieldItemList {
-      /**
-       * Filtered comment markup used by this test.
-       */
-      private string $rendered;
+    $processed = new class('<p>Original <strong>mensagem</strong>.</p>') implements CacheableDependencyInterface, \Stringable {
 
-      public function __construct(string $rendered) {
-        $this->rendered = $rendered;
+      /**
+       * Creates a processed-text fixture with filter cache metadata.
+       */
+      public function __construct(private readonly string $markup) {}
+
+      /**
+       * {@inheritdoc}
+       */
+      public function __toString(): string {
+        return $this->markup;
       }
 
       /**
-       * Test field item list always has a comment body value.
+       * {@inheritdoc}
        */
-      public function isEmpty(): bool {
-        return FALSE;
+      public function getCacheContexts(): array {
+        return ['filter_formats'];
       }
 
       /**
-       * Exposes the filtered text used by the quote builder.
+       * {@inheritdoc}
        */
-      public function __get($name) {
-        return $name === 'processed' ? $this->rendered : parent::__get($name);
+      public function getCacheTags(): array {
+        return ['config:filter.format.usuario_aculta'];
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function getCacheMaxAge(): int {
+        return 900;
       }
 
     };
+    $bodyItem = $this->createMock(FieldItemInterface::class);
+    $bodyItem->method('get')->with('processed')->willReturn($processed);
+    $body = $this->createMock(FieldItemList::class);
+    $body->method('isEmpty')->willReturn(FALSE);
+    $body->method('get')->with(0)->willReturn($bodyItem);
     $parent->method('get')->with('comment_body')->willReturn($body);
     $parent->method('getAuthorName')->willReturn('Pessoa autora');
     $parent->method('getCommentedEntity')->willReturn($host);
@@ -173,6 +191,9 @@ final class ForumQuoteHooksTest extends UnitTestCase {
       $form['comment_body']['widget'][0]['value']['#default_value'],
     );
     self::assertContains('url.query_args:quote', $form['#cache']['contexts']);
+    self::assertContains('filter_formats', $form['#cache']['contexts']);
+    self::assertContains('config:filter.format.usuario_aculta', $form['#cache']['tags']);
+    self::assertSame(900, $form['#cache']['max-age']);
   }
 
   /**

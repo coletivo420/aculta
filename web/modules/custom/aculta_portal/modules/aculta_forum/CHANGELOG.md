@@ -1,3 +1,14 @@
+## `0.1.0-dev.55` — propagar cache do texto citado — 2026-10-20
+
+- A ação de citação lê a propriedade computada `processed` do item de texto e
+  inclui seu `CacheableDependencyInterface` no formulário. Tags, contextos e
+  max-age dos filtros aplicados acompanham o texto pré-preenchido.
+- PHPUnit dos hooks: 6/18; suíte direcionada com Builder e config: 26/240 PASS;
+  PHPCS, Portal 11+ (975) e fronteira módulo/tema (1415) PASS. Runtime `toca`:
+  cache rebuild PASS e hook/Builder/Context Resolver resolvidos pelo container.
+  Contagens seguem em 0 tópicos e 0 Comments; texto citado real não foi
+  processado no Runtime para manter o Fórum limpo. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.54` — agrupar subcategorias na navegação — 2026-10-20
 
 - A View de `/categorias` agora ordena primeiro pelo nome do pai, depois pelo
