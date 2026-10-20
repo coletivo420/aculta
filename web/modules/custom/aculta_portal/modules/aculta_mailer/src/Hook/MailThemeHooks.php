@@ -27,7 +27,6 @@ final class MailThemeHooks {
           'type' => '',
           'sub_type' => '',
           'is_html' => TRUE,
-          'logo_url' => '',
           'public_base' => '',
         ],
       ],

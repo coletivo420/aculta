@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.32 — logo do envelope vem só do tema, sem cópia por marca — 2026-10-20
+
+- Removido o logo por marca: campo `logo_fid` da entidade e do schema, `managed_file` do formulário de marca, `logoUrl()`/`logoUri()` do renderizador e os parâmetros `brand_logo_*` do hook de e-mail. O envelope usa o logo do tema (`aculta420.settings`, `logo.path`), que já é servido pelo site.
+- Motivo: a cópia enviada em `public://aculta-mailer/marcas` duplicava o logo do tema, e a limpeza de teste que a removeu deixou o logo quebrado no e-mail recebido.
+- Teste `MailBrandLogoKernelTest` removido com o recurso.
+- Não altera o campo `logo_fid` de marcas já gravadas no Runtime: a chave fica ignorada no config até uma limpeza de dados, pendente de decisão.
+
 ## 0.1.0-dev.31 — fases F3 a F8 e F13 fechadas (exceto decisões e escopo de outros módulos) — 2026-10-20
 
 - F3: modelos, marcas e layouts ganham criação pelo painel (formulário "Adicionar" e lista com botão); antes só existiam por linha de comando.

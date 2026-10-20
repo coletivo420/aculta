@@ -82,7 +82,6 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       '#type' => 'core',
       '#sub_type' => (string) ($message['key'] ?? ''),
       '#is_html' => TRUE,
-      '#logo_url' => (string) ($message['params']['brand_logo_url'] ?? ''),
       '#public_base' => $this->publicUrls !== NULL ? $this->publicUrls->absolute('/') : '',
     ];
     return (string) $this->renderer->renderInIsolation($build);

@@ -71,5 +71,5 @@ Drupal Core Mail (symfony_mailer) → Symfony Mailer → transporte (DSN)
 
 - Caminhos e rotas: `docs/architecture/ROUTES-SITEMAP.md` (ainda sem rotas nesta fase).
 - Endereços por ambiente: `web/modules/custom/aculta_portal/modules/aculta_deployer/docs/ENDERECOS-AMBIENTE.md`.
-- Imagens (logo de brand): `aculta_image` (`docs/` do submódulo).
+- Logo do envelope: o logo do tema (`aculta420.settings`, `logo.path`), lido pelo tema; o mailer não guarda cópia do logo por marca.
 - Fronteira Portal/tema: `docs/portal/MAPA-MODULO-TEMA.md`.

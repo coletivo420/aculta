@@ -36,7 +36,7 @@ services:
 
   Drupal\aculta_mailer\Template\MailTemplateRenderer:
     class: Drupal\aculta_mailer\Template\MailTemplateRenderer
-    arguments: ['@entity_type.manager', '@file_url_generator', '@?Drupal\aculta_mailer\Api\PublicUrlInterface']
+    arguments: ['@entity_type.manager']
 
   aculta_mailer.smtp_failures:
     class: Drupal\aculta_mailer\Delivery\SmtpFailureRegistry

@@ -7,31 +7,25 @@ namespace Drupal\aculta_mailer\Form;
 use Drupal\aculta_mailer\Entity\MailBrand;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\file\FileUsage\FileUsageInterface;
-use Drupal\aculta_image\UploadPolicy;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Editor de marca: nome e rodapé institucional usados pelos layouts.
+ *
+ * O logo não é cadastrado aqui: o envelope usa o logo do tema (aculta420.settings), sem uma cópia por marca.
  */
 final class MailBrandForm extends EntityForm {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypes,
-    private readonly UploadPolicy $uploadPolicy,
-    private readonly FileUsageInterface $fileUsage,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static(
-      $container->get('entity_type.manager'),
-      $container->get('aculta_image.upload_policy'),
-      $container->get('file.usage'),
-    );
+    return new static($container->get('entity_type.manager'));
   }
 
   /**
@@ -66,14 +60,6 @@ final class MailBrandForm extends EntityForm {
       '#required' => TRUE,
       '#maxlength' => 255,
     ];
-    $form['logo'] = [
-      '#type' => 'managed_file',
-      '#title' => $this->t('Logo (PNG, GIF, JPG ou WebP, até 10 MB)'),
-      '#description' => $this->t('Imagem do cabeçalho do envelope. Enviada pela política de imagens do ACULTA.'),
-      '#upload_location' => 'public://aculta-mailer/marcas',
-      '#upload_validators' => $this->uploadPolicy->validators(),
-      '#default_value' => $brand->getLogoFid() > 0 ? [$brand->getLogoFid()] : [],
-    ];
     $form['footer'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Rodapé institucional (texto simples)'),
@@ -99,18 +85,6 @@ final class MailBrandForm extends EntityForm {
     $brand->set('label', (string) $form_state->getValue('label'));
     $brand->setName((string) $form_state->getValue('name'));
     $brand->setFooter((string) $form_state->getValue('footer'));
-    $previous = $brand->getLogoFid();
-    $fid = (int) (($form_state->getValue('logo')[0] ?? 0));
-    $fileStorage = $this->entityTypes->getStorage('file');
-    if ($fid > 0 && $fid !== $previous && ($file = $fileStorage->load($fid)) !== NULL) {
-      $file->setPermanent();
-      $file->save();
-      $this->fileUsage->add($file, 'aculta_mailer', 'aculta_mailer_brand', $brand->id(), 1);
-    }
-    if ($previous > 0 && $fid !== $previous && ($old = $fileStorage->load($previous)) !== NULL) {
-      $this->fileUsage->delete($old, 'aculta_mailer', 'aculta_mailer_brand', $brand->id(), 1);
-    }
-    $brand->setLogoFid($fid);
     $status = $brand->save();
     $this->messenger()->addStatus($this->t('Marca salva.'));
     $form_state->setRedirect('entity.' . MailBrand::ENTITY_TYPE . '.collection');

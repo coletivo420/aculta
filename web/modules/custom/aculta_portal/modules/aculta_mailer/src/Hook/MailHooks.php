@@ -29,11 +29,6 @@ final class MailHooks {
     $type = $this->types->get($key);
     $context = $params['context'] ?? [];
     $rendered = $this->renderer->render($type, $context);
-    $logo = $this->renderer->logoUrl($type);
-    if ($logo !== '') {
-      $message['params']['brand_logo_url'] = $logo;
-      $message['params']['brand_logo_uri'] = $this->renderer->logoUri($type);
-    }
     $message['subject'] = $rendered['subject'];
     $message['body'][] = $rendered['body'];
     if (isset($params['correlation_id'])) {
