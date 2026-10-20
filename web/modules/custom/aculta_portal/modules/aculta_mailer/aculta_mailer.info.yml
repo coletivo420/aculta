@@ -3,7 +3,7 @@ type: module
 description: 'Plataforma própria de e-mail transacional do ACULTA: API, mensagens, políticas, templates, entrega e registro. Submódulo opt-in do aculta_portal; ver docs/ROADMAP.md.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.0-dev.40'
+version: '0.1.0-dev.41'
 dependencies:
   - drupal:user
   - drupal:views

@@ -7,6 +7,7 @@ namespace Drupal\aculta_mailer\Delivery;
 use Drupal\aculta_mailer\Entity\MailTransport;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Log\MailPayloadCipher;
+use Drupal\aculta_mailer\Log\SingleUseLinkMail;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
@@ -36,11 +37,15 @@ final class MailResend {
   ) {}
 
   /**
-   * Pode reenviar: a mensagem está com falha e tem conteúdo cifrado guardado.
+   * Pode reenviar: a mensagem está com falha, tem conteúdo cifrado guardado e não é link de uso único.
    */
   public function canResend(string $logId): bool {
     $log = $this->load($logId);
-    return $log !== NULL && (string) $log->get('status')->value === MailStatus::Failed->value && (string) $log->get('payload_cipher')->value !== '';
+    if ($log === NULL || (string) $log->get('status')->value !== MailStatus::Failed->value || (string) $log->get('payload_cipher')->value === '') {
+      return FALSE;
+    }
+    // Link de uso único não é reenviado com o conteúdo antigo: o pedido precisa ser refeito, e o link novo é gerado então.
+    return !SingleUseLinkMail::applies('aculta_mailer', (string) $log->get('type')->value);
   }
 
   /**

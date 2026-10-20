@@ -85,6 +85,36 @@ final class MailLogRecorder {
   }
 
   /**
+   * Cancela o conteúdo guardado para reenvio das mensagens anteriores do mesmo destinatário e tipo.
+   *
+   * Usado quando o usuário pede um novo link de uso único: o link antigo não é reaproveitado. Exceção: a retentativa
+   * automática da mesma mensagem (fila e failover) mantém o conteúdo e o link, por isso a própria correlação fica de fora. O registro anterior
+   * continua, sem conteúdo, e o novo pedido gera outra cifra com conteúdo novo.
+   *
+   * @return int
+   *   Quantidade de conteúdos cancelados.
+   */
+  public function cancelPayloads(string $recipientHash, string $type, string $exceptCorrelationId): int {
+    $storage = $this->entityTypeManager->getStorage(self::ENTITY_TYPE);
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('recipient_hash', $recipientHash)
+      ->condition('type', $type)
+      // A própria mensagem (retentativa automática da fila) não se cancela: é a mesma solicitação.
+      ->condition('correlation_id', $exceptCorrelationId, '<>')
+      ->condition('payload_cipher', NULL, 'IS NOT NULL')
+      ->execute();
+    $count = 0;
+    foreach ($storage->loadMultiple($ids) as $log) {
+      $log->set('payload_cipher', NULL);
+      $log->set('payload_expires', NULL);
+      $log->save();
+      $count++;
+    }
+    return $count;
+  }
+
+  /**
    * HMAC do endereço normalizado, com o hash_salt do ambiente. Permite correlacionar sem expor o endereço.
    */
   public function hashRecipient(string $to): string {

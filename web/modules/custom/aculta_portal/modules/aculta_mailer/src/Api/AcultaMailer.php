@@ -11,6 +11,7 @@ use Drupal\aculta_mailer\Delivery\MailSuppression;
 use Drupal\aculta_mailer\Delivery\MailPayloadRegistry;
 use Drupal\aculta_mailer\Delivery\ProviderMessageRegistry;
 use Drupal\aculta_mailer\Log\MailPayloadCipher;
+use Drupal\aculta_mailer\Log\SingleUseLinkMail;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpReplyClassifier;
@@ -80,6 +81,13 @@ final class AcultaMailer implements AcultaMailerInterface {
         '@id' => $message->correlationId,
       ]);
       return SendResult::failed(DeliveryError::Permanent, NULL);
+    }
+
+    // Link de uso único: um pedido novo substitui o anterior. O conteúdo guardado do pedido antigo é cancelado,
+    // e o novo pedido gera outra cifra, com conteúdo novo. Exceção: a retentativa automática da mesma mensagem
+    // (fila e failover) mantém o conteúdo e o link.
+    if (SingleUseLinkMail::applies('aculta_mailer', $message->type)) {
+      $this->log->cancelPayloads($this->log->hashRecipient($message->to), $message->type, $message->correlationId);
     }
 
     // Chave geral desligada: nada é enviado, e o registro mostra a mensagem como suspensa.

@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.41 — pedido novo cancela o conteúdo anterior; reenvio manual não reaproveita link
+
+- Pedido novo de link de uso único para o mesmo destinatário e tipo cancela o conteúdo guardado do pedido anterior (`cancelPayloads`). A própria correlação fica de fora: é a exceção da retentativa automática (fila e failover), que mantém conteúdo e link.
+- Reenvio manual recusa mensagem de link de uso único (`MailResend::canResend`). O pedido precisa ser refeito, e a cifra é gerada de novo.
+- Regra e inventário em `docs/portal/LINKS-DE-USO-UNICO.md` do Portal.
+- Testes: 133 unitários; Kernel passa.
+
 ## 0.1.0-dev.40 — conteúdo de uso único sem links e saída na confirmação — 2026-10-20
 
 - O conteúdo guardado para reenvio de e-mail com link de uso único não tem link: cada URL vira `[link removido]`.
