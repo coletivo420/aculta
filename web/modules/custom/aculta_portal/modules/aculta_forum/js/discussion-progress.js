@@ -45,6 +45,13 @@
         announcement.setAttribute('aria-atomic', 'true');
         announcement.setAttribute('data-aculta-discussion-announcement', '');
 
+        const firstUnread = document.createElement('button');
+        firstUnread.type = 'button';
+        firstUnread.textContent = Drupal.t('Não lidas');
+        firstUnread.setAttribute('aria-label', Drupal.t('Ir à primeira mensagem não lida'));
+        firstUnread.setAttribute('data-aculta-discussion-unread', '');
+        firstUnread.hidden = true;
+
         const next = document.createElement('button');
         next.type = 'button';
         next.textContent = Drupal.t('Próxima');
@@ -57,7 +64,7 @@
         last.setAttribute('aria-label', Drupal.t('Ir à última mensagem'));
         last.setAttribute('data-aculta-discussion-last', '');
 
-        navigation.append(first, previous, range, status, announcement, next, last);
+        navigation.append(first, previous, range, status, announcement, firstUnread, next, last);
         thread.insertBefore(navigation, thread.firstChild);
 
         let activeIndex = 0;
@@ -99,6 +106,25 @@
             behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
           });
         };
+
+        const syncFirstUnreadAction = () => {
+          firstUnread.hidden = !messages.some((message) => message.classList.contains('new'));
+        };
+
+        firstUnread.addEventListener('click', () => {
+          const index = messages.findIndex((message) => message.classList.contains('new'));
+          if (index !== -1) {
+            goTo(index);
+          }
+        });
+
+        if ('MutationObserver' in window) {
+          const unreadObserver = new MutationObserver(syncFirstUnreadAction);
+          messages.forEach((message) => {
+            unreadObserver.observe(message, { attributes: true, attributeFilter: ['class'] });
+          });
+        }
+        syncFirstUnreadAction();
 
         first.addEventListener('click', () => goTo(0));
         previous.addEventListener('click', () => goTo(activeIndex - 1));

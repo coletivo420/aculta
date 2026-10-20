@@ -1,3 +1,15 @@
+## 0.6.0-dev.116 — apresentar salto à primeira resposta não lida — 2026-10-20
+
+- `[data-aculta-discussion-unread]` recebe a mesma hierarquia visual das ações
+  da barra. Em mobile, usa uma linha própria; no desktop, mantém o rótulo numa
+  linha e os controles compactos. O tema só apresenta o botão neutro criado pelo
+  Portal e não consulta os marcadores History.
+- Firefox ESR 153.4/X11/BiDi no Runtime, com mensagens e classe `.new`
+  sintéticas somente no DOM: controle dentro da barra em 320/360/390/500/1250
+  CSS px; área de ação 44 px no mobile, sem overflow e claro/escuro coerentes.
+  Foundation Runtime e gates direcionados PASS. Integração real autenticada e
+  leitor de tela pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.115 — dar espaço ao slider e mostrar a posição no mobile — 2026-10-20
 
 - Em larguras até 575 px, as ações mantêm seus rótulos sem cortes, o slider

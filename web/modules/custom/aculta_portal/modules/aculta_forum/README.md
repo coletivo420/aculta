@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.65**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.66**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
 de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
@@ -85,6 +85,11 @@ A lista personalizada `/discussoes/nao-lidas` também mostra o número de novas
 respostas por tópico e liga diretamente à primeira resposta não lida. Essa
 capacidade usa o campo `node_new_comments` do módulo History, apenas nessa View
 autenticada com cache desativado; o campo esconde contagens vazias.
+
+Na página de discussão, o controle “Não lidas” da barra de progresso depende
+somente da classe `.new` que o History aplica aos Comments renderizados para a
+conta autenticada. Ele permanece oculto sem uma mensagem marcada; usa o mesmo
+salto de progresso e não mantém contagem, timestamp ou histórico paralelo.
 ## Administração contextual de comentários
 
 A View `aculta_forum_admin_comments` tem página geral e três páginas de estado:

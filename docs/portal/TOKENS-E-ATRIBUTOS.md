@@ -60,6 +60,7 @@
 | `data-aculta-discussion-range` | exato | sim | 1 |
 | `data-aculta-discussion-status` | exato | sim | 1 |
 | `data-aculta-discussion-thread` | exato | sim | 1 |
+| `data-aculta-discussion-unread` | exato | sim | 1 |
 | `data-aculta-group-max` | exato | sim | 1 |
 | `data-aculta-json-form` | exato | sim | 2 |
 | `data-aculta-legenda` | exato | sim | 2 |

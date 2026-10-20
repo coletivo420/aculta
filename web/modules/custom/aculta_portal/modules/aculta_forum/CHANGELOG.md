@@ -1,3 +1,17 @@
+## `0.1.0-dev.66` — saltar à primeira resposta não lida — 2026-10-20
+
+- A barra de progresso oferece “Não lidas” somente quando o History instalado
+  marca um Comment renderizado com `.new`. MutationObserver acompanha a classe
+  nativa; a ação navega à primeira mensagem marcada e usa o anúncio explícito
+  acessível já estabilizado em dev.65. Sem marcador (incluindo anônimo), o
+  botão fica oculto. Não calcula timestamp, contagem, acesso nem storage próprios.
+- Firefox ESR 153.4/X11 e BiDi no Runtime de teste, página pública da Revista,
+  seis mensagens e marcador `.new` sintéticos somente no DOM. A ação anunciou
+  “Mensagem 4 de 6”; remover a classe ocultou o controle. Viewports
+  320/360/390/500/1250 CSS px, sem overflow, claro/escuro inspecionados. Nenhum
+  Comment foi persistido. `node --check` e gates Portal/tema/mapa PASS; integração
+  autenticada real e leitor de tela pendentes. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.65` — preservar anúncio explícito durante rolagem suave — 2026-10-20
 
 - A ação de botão mantém o anúncio acessível do destino solicitado durante a

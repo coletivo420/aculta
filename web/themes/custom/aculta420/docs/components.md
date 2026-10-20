@@ -264,7 +264,11 @@ cobrir a mensagem ativa. Em 320 px, as ações ocupam duas colunas; de 360 px em
 diante, ficam em uma linha. Em mobile, slider e contador têm linhas próprias
 para evitar alvos estreitos. Firefox ESR/X11 e BiDi confirmaram 320/360/390/500/
 1250 px, modos claro/escuro, slider e botão sem overflow. Evidências nos
-changelogs `0.6.0-dev.110` a `0.6.0-dev.115`.
+changelogs `0.6.0-dev.110` a `0.6.0-dev.115`. Quando History marca um Comment
+renderizado com `.new`, o Portal acrescenta `[data-aculta-discussion-unread]`;
+o tema o apresenta como ação secundária em uma linha separada no mobile e numa
+linha compacta no desktop. O botão continua oculto sem marcador e o tema não
+consulta History. Evidência visual em `0.6.0-dev.116`.
 
 ## Patterns
 

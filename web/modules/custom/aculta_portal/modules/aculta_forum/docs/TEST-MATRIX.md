@@ -1,5 +1,25 @@
 # Matriz de testes por fase
 
+## dev.66 — primeira resposta não lida pelo History instalado
+
+- O Runtime carrega `drupal/history` 1.0.0 de `web/modules/contrib/history`.
+  O `comment-new-indicator.js` instalado acrescenta classe `.new` ao `.js-comment`
+  depois de comparar o timestamp com o History do usuário. A documentação Core
+  registra que o marcador é personalizado no cliente e que o History JS API
+  coordena esses indicadores; fontes: [HistoryHooks::commentView](https://api.drupal.org/api/drupal/core%21modules%21history%21src%21Hook%21HistoryHooks.php/function/HistoryHooks%3A%3AcommentView/11.x)
+  e [New History JS API](https://www.drupal.org/node/2086767).
+- Firefox ESR 153.4/X11/BiDi no Runtime de teste, sessão anônima isolada e página
+  da Revista. Seis mensagens sintéticas somente no DOM: sem `.new`, o botão
+  ficou oculto; adicionar `.new` ao quarto comentário mostrou “Não lidas”; clicar
+  navegou e anunciou “Mensagem 4 de 6” em `aria-live=polite`; remover a classe
+  ocultou novamente o botão. Capturas em
+  `/home/aculta/private/aculta/visual-tests/forum-progress-20261020/`.
+- 320/360/390/500/1250 CSS px: a barra manteve largura do viewport, slider amplo,
+  status visível no mobile e alvo de ação de 44 px; o botão não quebrou no
+  desktop. Claro/escuro inspecionados. Nenhum Node/Comment foi gravado. Não houve
+  usuário autenticado nem marcador History de comentário real; essa homologação,
+  integração de leitor de tela e AT continuam pendentes. RUNTIME STATUS: PARTIAL.
+
 ## dev.65 — anúncio explícito durante movimento de leitura
 
 - Firefox ESR 153.4/X11 e WebDriver BiDi no Runtime de teste, sessão anônima
