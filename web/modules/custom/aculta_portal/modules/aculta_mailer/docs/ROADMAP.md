@@ -9,7 +9,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F1 | Fundação: `MailMessage`, `MailStatus`, `MessageIdFactory`, `RetrySchedule`, contrato `AcultaMailerInterface`, testes unitários | Em andamento nesta PR |
 | F2 | Transporte: envio por transporte (`X-Transport`), código SMTP real, failover Hostinger → SMTP2GO, diagnóstico sem credenciais e validação com entrega confirmada pelo destinatário (`docs/TRANSPORTS.md`) | Concluída (2026-10-20) |
 | F3 | Templates: tipos com variáveis declaradas; Config Entity `aculta_mailer_template` com editor, validação de placeholders, prévia e envio de teste pelo caminho real | Parcial (modelo e teste prontos; teste real aceito em 2026-10-20) |
-| F4 | Branding: `aculta_mailer_brand` e `aculta_mailer_layout` com editores; layout envolve o corpo com cabeçalho e rodapé da marca. Pendentes: HTML com estilos do tema e logo via `aculta_image` | Parcial (texto simples) |
+| F4 | Branding: `aculta_mailer_brand` e `aculta_mailer_layout` com editores (texto); envelope HTML com identidade ACULTA no tema (`email-wrap`, logo do tema). Pendente: logo de marca via `aculta_image` e conferência visual pelo destinatário | Parcial (HTML no ar em teste) |
 | F5 | Policy: adjusters por plugin, reutilização de `mailer_policy` até equivalência | Pendente |
 | F6 | Queue: fila `aculta_mailer_send`, worker com retry e failover (`MailSendWorker`), decisão testada; eventos de fila e classificação SMTP real (código de resposta) pendentes | Parcial (fila pronta) |
 | F7 | Logging: entidade `aculta_mail_log` com texto completo da falha (relatório do admin), retenção de 90 dias e `views_data`; reenvio administrativo pendente | Parcial (registro e relatório prontos) |

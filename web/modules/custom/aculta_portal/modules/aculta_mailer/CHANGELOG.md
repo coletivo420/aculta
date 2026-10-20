@@ -1,5 +1,10 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.10 — envelope HTML com identidade ACULTA (F4) — 2026-10-20
+
+- Os e-mails saem com o envelope HTML do tema (`aculta420` 0.6.0-dev.117): logo, cores da marca e rodapé. O texto dos layouts continua como dados.
+- Runtime de teste: dois envios reais aceitos para o destinatário autorizado. Conferência visual pelo destinatário pendente.
+
 ## 0.1.0-dev.9 — diagnóstico de envio e F2 concluída — 2026-10-20
 
 - `MailDiagnostics` e página `.../envios-de-email/diagnostico`: padrão e contingência, transportes (servidor, porta, verificação de certificado), se usuário e senha estão preenchidos (sem valor), último envio aceito e última falha por transporte, fila e cron.
