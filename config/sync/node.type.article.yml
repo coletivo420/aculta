@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 name: Notícia
 type: article
-description: 'Conteúdos editoriais publicados no Revista 420.'
+description: 'Conteúdos editoriais publicados no Observatório da Maconha Coletivo 420.'
 help: null
 new_revision: true
 preview_mode: 1

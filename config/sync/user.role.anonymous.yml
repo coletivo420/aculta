@@ -5,21 +5,28 @@ dependencies:
   config:
     - filter.format.restricted_html
   module:
+    - aculta_donation
+    - comment
     - commerce_checkout
+    - commerce_product
+    - commerce_shipping
     - filter
     - media
+    - media_gallery
     - system
 _core:
   default_config_hash: Tus1ZTNXKIOnrennR1hnTbc7wUPBXHTUm5UdCpEhJSk
 id: anonymous
 label: 'Usuário anônimo'
-weight: 0
+weight: -10
 is_admin: false
 permissions:
-  - 'make donation'
   - 'access checkout'
   - 'access comments'
   - 'access content'
+  - 'make donation'
   - 'use text format restricted_html'
+  - 'view commerce_product'
+  - 'view commerce_shipping_method'
   - 'view media'
   - 'view published media gallery entities'

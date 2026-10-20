@@ -10,6 +10,9 @@ dependencies:
   enforced:
     module:
       - media
+third_party_settings:
+  aculta_image:
+    policy: default
 _core:
   default_config_hash: P7CkVOgjDXiN26Fm2hniNei-XPK3iuZTlcBGqreTbJ0
 id: media.image.field_media_image
@@ -41,6 +44,3 @@ settings:
     width: null
     height: null
 field_type: image
-third_party_settings:
-  aculta_image:
-    policy: default

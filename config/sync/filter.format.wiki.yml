@@ -3,17 +3,29 @@ langcode: pt-br
 status: true
 dependencies:
   module:
-    - media
     - freelinking
+    - media
 name: Wiki420
 format: wiki
 weight: 5
 filters:
+  filter_align:
+    id: filter_align
+    provider: filter
+    status: true
+    weight: 7
+    settings: {  }
   filter_autop:
     id: filter_autop
     provider: filter
     status: true
     weight: 10
+    settings: {  }
+  filter_caption:
+    id: filter_caption
+    provider: filter
+    status: true
+    weight: 8
     settings: {  }
   filter_html:
     id: filter_html
@@ -29,18 +41,6 @@ filters:
     provider: filter
     status: true
     weight: 20
-    settings: {  }
-  filter_align:
-    id: filter_align
-    provider: filter
-    status: true
-    weight: 7
-    settings: {  }
-  filter_caption:
-    id: filter_caption
-    provider: filter
-    status: true
-    weight: 8
     settings: {  }
   freelinking:
     id: freelinking

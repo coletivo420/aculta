@@ -1,0 +1,279 @@
+uuid: 0fd88394-25bc-4510-8e20-c828534c10f6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+  module:
+    - node
+    - text
+    - user
+    - vvjt
+_core:
+  default_config_hash: j9c6GRHPSN2VqQ_ExfjckdGehzM7PmyBx8DHqdnyJTQ
+id: vvjt_example
+label: 'VVJT Example'
+module: views
+description: 'Render items in Vanilla JavaScript Tabs.'
+tag: ''
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Principal
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'VVJT View'
+      fields:
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        body:
+          id: body
+          table: node__body
+          field: body
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: text_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+      pager:
+        type: mini
+        options:
+          offset: 0
+          pagination_heading_level: h4
+          items_per_page: 12
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Itens por página'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- Todos -'
+            offset: false
+            offset_label: Deslocamento
+      exposed_form:
+        type: basic
+        options: {  }
+      cache:
+        type: tag
+        options: {  }
+      empty: {  }
+      arguments: {  }
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          value: '1'
+      style:
+        type: views_vvjt
+        options:
+          grouping: {  }
+          animation: a-bottom
+          tabs_position: top
+          max_width: 300
+          available_breakpoints: '992'
+          enable_css: true
+          disable_background: false
+          background_buttons: '#ececec'
+          background_panes: '#f7f7f7'
+          wrap_tabs: true
+      row:
+        type: fields
+        options:
+          default_field_elements: false
+      defaults:
+        empty: true
+        query: true
+        title: true
+        pager: true
+        exposed_form: true
+        style: true
+        fields: true
+        sorts: true
+        filters: true
+        header: true
+        footer: true
+      relationships: {  }
+      header: {  }
+      footer: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+      tags:
+        - 'config:field.storage.node.body'
+  block_1:
+    id: block_1
+    display_title: 'Tabs Block'
+    display_plugin: block
+    position: 2
+    display_options:
+      title: 'Artigos em destaque'
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 3
+      defaults:
+        title: false
+        pager: false
+      display_extenders: {  }
+      block_description: 'VVJT Articles Tabs Block'
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+      tags:
+        - 'config:field.storage.node.body'
+  page_1:
+    id: page_1
+    display_title: 'Demo Page'
+    display_plugin: page
+    position: 1
+    display_options:
+      title: 'VVJT Tabs Demo'
+      access:
+        type: perm
+        options:
+          perm: 'access administration pages'
+      defaults:
+        access: false
+      display_extenders: {  }
+      path: vvjt-example
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.body'

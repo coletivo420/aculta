@@ -1,0 +1,21 @@
+uuid: c2d2f109-d224-4479-abfa-9f62fe93ea86
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_orgao_emissor
+field_name: field_orgao_emissor
+entity_type: profile
+type: string
+settings:
+  max_length: 30
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

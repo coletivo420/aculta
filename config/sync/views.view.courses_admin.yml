@@ -466,7 +466,7 @@ display:
       tags: {  }
   page:
     id: page
-    display_title: Page
+    display_title: Página
     display_plugin: page
     position: 1
     display_options:

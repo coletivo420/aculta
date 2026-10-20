@@ -1,0 +1,22 @@
+uuid: 59d8397b-e08b-4207-81f9-8c91dca4483d
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - datetime
+    - node
+_core:
+  default_config_hash: 6eLRuhYW4rzny3k6bfbcQvQfbXeRlqU1cPFpW0TzR9s
+id: node.field_aculta_notice_end
+field_name: field_aculta_notice_end
+entity_type: node
+type: datetime
+settings:
+  datetime_type: datetime
+module: datetime
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

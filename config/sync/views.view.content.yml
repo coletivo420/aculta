@@ -46,7 +46,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
-          label: Título
+          label: Item
           exclude: false
           alter:
             alter_text: false
@@ -351,22 +351,6 @@ display:
       sorts: {  }
       arguments: {  }
       filters:
-        forum_bundle_exclusion:
-          id: forum_bundle_exclusion
-          table: node_field_data
-          field: type
-          relationship: none
-          group_type: group
-          admin_label: 'Excluir tópicos do Fórum'
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
-          operator: 'not in'
-          value:
-            aculta_forum_topic: aculta_forum_topic
-          group: 1
-          exposed: false
-          is_grouped: false
         title:
           id: title
           table: node_field_data
@@ -383,7 +367,7 @@ display:
           exposed: true
           expose:
             operator_id: title_op
-            label: Título
+            label: Item
             description: ''
             use_operator: false
             operator: title_op
@@ -549,6 +533,22 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
+        forum_bundle_exclusion:
+          id: forum_bundle_exclusion
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: 'Excluir tópicos do Fórum'
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: 'not in'
+          value:
+            aculta_forum_topic: aculta_forum_topic
+          group: 1
+          exposed: false
+          is_grouped: false
       filter_groups:
         operator: AND
         groups:
@@ -704,4 +704,3 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-

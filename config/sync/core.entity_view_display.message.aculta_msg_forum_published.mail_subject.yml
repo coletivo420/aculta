@@ -1,0 +1,33 @@
+uuid: 149fc973-f0c0-431f-941b-8adb84653e35
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_subject
+    - field.field.message.aculta_msg_forum_published.field_aculta_messenger_attempts
+    - field.field.message.aculta_msg_forum_published.field_aculta_msg_delivery
+    - field.field.message.aculta_msg_forum_published.field_aculta_msg_node
+    - field.field.message.aculta_msg_forum_published.field_aculta_msg_revision
+    - message.template.aculta_msg_forum_published
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: oq4sxiLpEAF7MF4ufkm-rRnZiQiyH70YGTCnHXumR9I
+id: message.aculta_msg_forum_published.mail_subject
+targetEntityType: message
+bundle: aculta_msg_forum_published
+mode: mail_subject
+content:
+  partial_0:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_aculta_messenger_attempts: true
+  field_aculta_msg_delivery: true
+  field_aculta_msg_node: true
+  field_aculta_msg_revision: true
+  partial_1: true
+  search_api_excerpt: true

@@ -1,0 +1,15 @@
+uuid: 56134f31-4879-4b62-a6ff-f8ad7792a67a
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - flag.flag.seguir_topico
+  module:
+    - flag
+id: flag_action.seguir_topico_unflag
+label: 'Remover: Seguir tópico'
+type: node
+plugin: 'flag_action:seguir_topico_unflag'
+configuration:
+  flag_id: seguir_topico
+  flag_action: unflag

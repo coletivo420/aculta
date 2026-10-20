@@ -4,6 +4,13 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_project_history
+    - filter.format.email_html
+    - filter.format.plain_text
+    - filter.format.restricted_html
+    - filter.format.revista_editorial
+    - filter.format.usuario_aculta
+    - filter.format.webform_default
+    - filter.format.wiki
     - node.type.project
   module:
     - text
@@ -27,4 +34,3 @@ settings:
     wiki: wiki
     plain_text: plain_text
 field_type: text_long
-

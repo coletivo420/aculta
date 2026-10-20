@@ -1,0 +1,36 @@
+uuid: 54d226b9-aab3-4a02-8037-c23374890f0a
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.aculta_lms_topic.body
+    - field.field.node.aculta_lms_topic.field_aculta_discussion
+    - field.field.node.aculta_lms_topic.field_domain_source
+    - node.type.aculta_lms_topic
+  module:
+    - text
+    - user
+_core:
+  default_config_hash: v4pBOBS7JKh3K_Uwr46J7dIQMsMpmPmwkr_iSAUvBwE
+id: node.aculta_lms_topic.teaser
+targetEntityType: node
+bundle: aculta_lms_topic
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 400
+    third_party_settings: {  }
+    weight: 10
+    region: content
+hidden:
+  co_authors: true
+  field_aculta_discussion: true
+  field_domain_source: true
+  langcode: true
+  links: true
+  private_message_link: true
+  search_api_excerpt: true

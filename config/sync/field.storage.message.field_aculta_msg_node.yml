@@ -1,0 +1,25 @@
+uuid: f103ec07-7fa3-45ac-8067-88f4e92df959
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+    - node
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: BVxPwNorswRX-ScLRYiXWEtZP7pWFmM-elkH31gZcEA
+id: message.field_aculta_msg_node
+field_name: field_aculta_msg_node
+entity_type: message
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

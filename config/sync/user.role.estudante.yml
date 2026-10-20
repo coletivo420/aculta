@@ -9,4 +9,4 @@ label: Estudante
 weight: 8
 is_admin: false
 permissions:
-
+  - 'view aculta restricted forum estudante'

@@ -138,36 +138,6 @@ display:
           format_plural_string: !!binary QGNvdW50IHJlc3Bvc3RhA0Bjb3VudCByZXNwb3N0YXM=
           prefix: ''
           suffix: ''
-        last_comment_uid:
-          id: last_comment_uid
-          table: comment_entity_statistics
-          field: last_comment_uid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: numeric
-          label: ''
-          exclude: true
-          alter:
-            alter_text: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          hide_alter_empty: true
-          set_precision: false
-          precision: 0
-          decimal: .
-          separator: ''
-          format_plural: false
-          prefix: ''
-          suffix: ''
         last_updated:
           id: last_updated
           table: comment_entity_statistics
@@ -219,6 +189,36 @@ display:
           date_format: short
           custom_date_format: ''
           timezone: ''
+        last_comment_uid:
+          id: last_comment_uid
+          table: comment_entity_statistics
+          field: last_comment_uid
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: numeric
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          hide_alter_empty: true
+          set_precision: false
+          precision: 0
+          decimal: .
+          separator: ''
+          format_plural: false
+          prefix: ''
+          suffix: ''
       pager:
         type: full
         options:
@@ -734,4 +734,3 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-

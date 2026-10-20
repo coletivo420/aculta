@@ -5,7 +5,7 @@ dependencies: {  }
 _core:
   default_config_hash: jn2Hj-04qG6O3dTtK8EaBB13jVPplONDb9L0Fat-0pI
 id: default
-label: Default
+label: Padrão
 traits: {  }
 locked: false
 workflow: order_default

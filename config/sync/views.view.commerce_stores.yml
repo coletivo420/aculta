@@ -87,7 +87,7 @@ display:
           entity_type: commerce_store
           entity_field: is_default
           plugin_id: field
-          label: Default
+          label: Padrão
           exclude: true
           alter:
             alter_text: false
@@ -351,7 +351,7 @@ display:
           admin_label: ''
           entity_type: commerce_store
           plugin_id: entity_operations
-          label: Operations
+          label: Operações
           exclude: false
           alter:
             alter_text: false
@@ -571,7 +571,7 @@ display:
       cacheable: false
   page_1:
     id: page_1
-    display_title: Page
+    display_title: Página
     display_plugin: page
     position: 1
     display_options:

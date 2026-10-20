@@ -1,0 +1,14 @@
+uuid: fdc4becc-5afd-4617-b907-a191a69137a4
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.associado
+  module:
+    - user
+id: user_add_role_action.associado
+label: 'Adiciona o papel Associado para o(s) usuário(s) selecionado(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: associado

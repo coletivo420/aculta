@@ -1,0 +1,35 @@
+uuid: e60bec5c-0ff3-4f5d-b5fb-ce8ac514b691
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+    - options
+_core:
+  default_config_hash: Y1EZigeiCEbJxOeHAt9x1SU7irThbEvm6OXSWtyHMVo
+id: node.field_aculta_notice_roles
+field_name: field_aculta_notice_roles
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: authenticated
+      label: 'Usuário autenticado'
+    -
+      value: email_confirmed
+      label: 'E-mail confirmado'
+    -
+      value: content_editor
+      label: 'Editor de conteúdo'
+    -
+      value: lms_teacher
+      label: Educador
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: -1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

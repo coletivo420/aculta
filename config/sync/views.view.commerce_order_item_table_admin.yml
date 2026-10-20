@@ -32,7 +32,7 @@ display:
           entity_type: null
           entity_field: title
           plugin_id: field
-          label: Title
+          label: Curso
           exclude: false
           alter:
             alter_text: false

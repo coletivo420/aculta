@@ -6,8 +6,10 @@ dependencies:
     - taxonomy.vocabulary.categoria_loja
   module:
     - aculta_donation
+    - aculta_portal
     - commerce_order
     - commerce_product
+    - profile
     - system
     - taxonomy
 id: gerente_loja
@@ -44,4 +46,3 @@ permissions:
   - 'view own gerente_loja profile'
   - 'view own unpublished commerce_product'
   - 'view produto_loja commerce_product'
-

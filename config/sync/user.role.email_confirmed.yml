@@ -25,14 +25,14 @@ weight: -8
 is_admin: false
 permissions:
   - 'access content'
-  - 'create email_confirmed profile'
   - 'create aculta_forum_topic content'
-  - 'report aculta forum content'
+  - 'create email_confirmed profile'
   - 'create wiki_entry content'
   - 'delete own aculta_forum_topic content'
   - 'edit own aculta_forum_topic content'
   - 'edit own wiki_entry content'
   - 'post comments'
+  - 'report aculta forum content'
   - 'skip CAPTCHA'
   - 'update own email_confirmed profile'
   - 'use text format usuario_aculta'

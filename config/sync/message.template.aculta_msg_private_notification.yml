@@ -1,0 +1,27 @@
+uuid: eb742c5d-d2a5-49a4-9d11-6cb4c567c0a5
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: LBdoIpnfiMgX26gbtjdRA4Z-7V4znyw_5uQNWgvVEuA
+template: aculta_msg_private_notification
+label: 'Aviso de mensagem privada ACULTA'
+description: 'Aviso por e-mail sem o conteúdo da conversa privada.'
+text:
+  -
+    value: 'Nova mensagem privada na ACULTA'
+    format: plain_text
+  -
+    value: 'Você recebeu uma nova mensagem privada. Acesse sua conta para ler e responder: @account_url'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

@@ -1,0 +1,13 @@
+uuid: 481763a6-435f-4544-99ea-a8c6452a6f85
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_shipping
+_core:
+  default_config_hash: DoNSiUz1rufPdYbjKXEmhAw-nPFlYPGUUieIMr0tDVw
+id: commerce_shipment.admin
+label: Administrar
+description: null
+targetEntityType: commerce_shipment
+cache: true

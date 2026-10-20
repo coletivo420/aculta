@@ -1,0 +1,30 @@
+uuid: ad3e4864-a4c6-46a9-a131-e226566619e1
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_attempts
+    - message.template.aculta_msg_private_notification
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: 2q1PuEzkp7dkZumA3jlC0pwmOcRHstz0W9P1IF2Jolg
+id: message.aculta_msg_private_notification.field_aculta_messenger_attempts
+field_name: field_aculta_messenger_attempts
+entity_type: message
+bundle: aculta_msg_private_notification
+label: 'Tentativas de entrega'
+description: 'Contagem limitada de tentativas para o envio do aviso.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

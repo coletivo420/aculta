@@ -1,9 +1,7 @@
-uuid: 09f26574-aff4-4448-975e-72fea490b696
+uuid: 2f0bc1d9-b3c6-4be3-b918-9669b16a4747
 langcode: pt-br
 status: false
-dependencies:
-  module:
-    - captcha
+dependencies: {  }
 formId: commerce_order_item_add_to_cart_form
 captchaType: default
 label: 'Adicionar ao carrinho (loja)'

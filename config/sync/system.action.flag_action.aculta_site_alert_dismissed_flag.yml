@@ -1,0 +1,15 @@
+uuid: 9e61b3a1-877c-4b8a-ac8a-e2fed6c053d9
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - flag.flag.aculta_site_alert_dismissed
+  module:
+    - flag
+id: flag_action.aculta_site_alert_dismissed_flag
+label: 'Dispensar aviso'
+type: site_alert
+plugin: 'flag_action:aculta_site_alert_dismissed_flag'
+configuration:
+  flag_id: aculta_site_alert_dismissed
+  flag_action: flag

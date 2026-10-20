@@ -22,8 +22,8 @@ content:
   body:
     type: text_default
     label: hidden
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     weight: 0
     region: content
   field_aculta_categories:
@@ -31,27 +31,27 @@ content:
     label: inline
     settings:
       link: false
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 10
     region: content
-  flag_seguir_topico:
-    weight: 20
-    region: content
-    settings: { }
-    third_party_settings: { }
-  flag_salvar_topico:
-    weight: 21
-    region: content
-    settings: { }
-    third_party_settings: { }
   field_aculta_discussion:
     type: comment_default
     label: hidden
     settings:
       view_mode: default
       pager_id: 0
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 100
+    region: content
+  flag_salvar_topico:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 21
+    region: content
+  flag_seguir_topico:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 20
     region: content
 hidden:
   co_authors: true

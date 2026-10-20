@@ -1,0 +1,13 @@
+uuid: 0ffbb009-d1e0-4ed5-a94c-ebc6d1e615f0
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_shipping
+_core:
+  default_config_hash: SOM4LMI0fFeahHJLPEPoVldiWGePCGwhTERi0cTjb0U
+id: commerce_shipment.checkout
+label: 'Fechar pedido'
+description: null
+targetEntityType: commerce_shipment
+cache: true

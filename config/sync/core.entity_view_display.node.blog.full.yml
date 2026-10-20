@@ -3,10 +3,11 @@ langcode: pt-br
 status: true
 dependencies:
   config:
+    - core.entity_view_display.comment.aculta_discussion_post.default
     - core.entity_view_mode.node.full
     - field.field.node.blog.body
-    - field.field.node.blog.field_credits
     - field.field.node.blog.field_aculta_discussion
+    - field.field.node.blog.field_credits
     - field.field.node.blog.field_domain_source
     - field.field.node.blog.field_editorial_author
     - field.field.node.blog.field_editorial_category
@@ -118,4 +119,3 @@ hidden:
   links: true
   private_message_link: true
   search_api_excerpt: true
-

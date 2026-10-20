@@ -1,0 +1,24 @@
+uuid: d0245e61-dcf5-4fc2-9030-fb516543278c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.produto_loja
+    - field.storage.commerce_product.field_categoria
+    - taxonomy.vocabulary.categoria_loja
+id: commerce_product.produto_loja.field_categoria
+field_name: field_categoria
+entity_type: commerce_product
+bundle: produto_loja
+label: Categoria
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      categoria_loja: categoria_loja
+field_type: entity_reference

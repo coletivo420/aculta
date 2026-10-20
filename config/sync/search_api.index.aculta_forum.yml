@@ -84,8 +84,17 @@ field_settings:
     dependencies:
       module:
         - node
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        - aculta_forum_topic
+    languages:
+      default: true
+      selected: {  }
 processor_settings:
-  add_url: { }
+  add_url: {  }
   content_access:
     weights:
       preprocess_index: -30
@@ -93,7 +102,7 @@ processor_settings:
   entity_status:
     weights:
       preprocess_index: -20
-  entity_type: { }
+  entity_type: {  }
   html_filter:
     weights:
       preprocess_index: -10
@@ -103,11 +112,11 @@ processor_settings:
     title: true
     alt: true
     tags:
+      em: 1.5
       h1: 5.0
       h2: 3.0
       h3: 2.0
       strong: 2.0
-      em: 1.5
   ignorecase:
     weights:
       preprocess_index: -20
@@ -116,7 +125,7 @@ processor_settings:
     fields:
       - body
       - title
-  language_with_fallback: { }
+  language_with_fallback: {  }
   tokenizer:
     weights:
       preprocess_index: -5
@@ -141,19 +150,10 @@ tracker_settings:
   default:
     indexing_order: fifo
     plugin_id: default
-    settings: { }
+    settings: {  }
 options:
   cron_limit: 50
   delete_on_fail: true
   index_directly: true
   track_changes_in_references: true
-datasource_settings:
-  'entity:node':
-    bundles:
-      default: false
-      selected:
-        - aculta_forum_topic
-    languages:
-      default: true
-      selected: { }
 server: aculta_database

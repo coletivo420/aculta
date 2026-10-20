@@ -1,0 +1,30 @@
+uuid: 4ccbbcae-3b07-4fb2-ba2f-fce1165731d2
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_source_pm
+    - message.template.aculta_msg_private_notification
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: jAkLeqvvM9P_k1aoG3Id_1ZmwnS7M66cMCDyRNqP77Y
+id: message.aculta_msg_private_notification.field_aculta_messenger_source_pm
+field_name: field_aculta_messenger_source_pm
+entity_type: message
+bundle: aculta_msg_private_notification
+label: 'Mensagem privada de origem'
+description: 'Referência de idempotência para a notificação.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:private_message'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

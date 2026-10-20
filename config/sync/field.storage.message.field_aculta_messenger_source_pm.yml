@@ -1,0 +1,25 @@
+uuid: d4048dbf-6a3f-4d11-b859-a97c2b1b9519
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+    - private_message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: _9f6zkZhWiH43RzjVLjhU-HXv1J_Qwb2T1WQDBmunXE
+id: message.field_aculta_messenger_source_pm
+field_name: field_aculta_messenger_source_pm
+entity_type: message
+type: entity_reference
+settings:
+  target_type: private_message
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

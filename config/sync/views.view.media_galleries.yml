@@ -20,7 +20,7 @@ base_field: id
 display:
   default:
     id: default
-    display_title: Padrão
+    display_title: Principal
     display_plugin: default
     position: 0
     display_options:
@@ -244,4 +244,3 @@ display:
         - url.query_args
         - user.permissions
       tags: {  }
-

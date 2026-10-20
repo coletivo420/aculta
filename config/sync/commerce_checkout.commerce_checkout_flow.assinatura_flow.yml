@@ -1,11 +1,11 @@
-uuid: 1bc63154-2cb2-45f6-8623-f4a465f51be2
+uuid: 2988a6b2-4da0-488a-913b-8422b89f2dba
 langcode: pt-br
 status: true
 dependencies:
   module:
-  - aculta_donation
-  - commerce_payment
-label: Assinatura de doação
+    - aculta_donation
+    - commerce_payment
+label: 'Assinatura de doação'
 id: assinatura_flow
 plugin: fluxo_doacao
 configuration:
@@ -29,13 +29,6 @@ configuration:
     review:
       step: review
       weight: 4
-    donation_recurring_authorization:
-      step: payment
-      weight: 3
-    payment_process:
-      step: payment
-      weight: 4
-      capture: true
     donation_thank_you:
       step: complete
       weight: 5
@@ -58,5 +51,12 @@ configuration:
       step: _disabled
       weight: 2
       double_entry: false
+    donation_recurring_authorization:
+      step: payment
+      weight: 3
+    payment_process:
+      step: payment
+      weight: 4
+      capture: true
   offline_link_title: ''
   offline_link_url: ''

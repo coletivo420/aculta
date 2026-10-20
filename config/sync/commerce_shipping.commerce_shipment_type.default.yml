@@ -1,0 +1,12 @@
+uuid: ff87966d-352b-48fb-bbfe-d79e4b323790
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: hqMH9C7kamyh9ei_oI1WgbF9blY8Fy9J9zXuu0XHFpU
+id: default
+label: Padrão
+traits: {  }
+profileType: customer
+sendConfirmation: false
+confirmationBcc: null

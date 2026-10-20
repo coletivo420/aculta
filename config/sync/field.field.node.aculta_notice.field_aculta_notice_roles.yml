@@ -1,0 +1,21 @@
+uuid: 4aab55ce-e3d7-49f7-abe1-0069d77ed2a3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_aculta_notice_roles
+    - node.type.aculta_notice
+_core:
+  default_config_hash: mGkV6285RtiQ9X3h0htNsJtVOYhM-zQwUwk1BATiRCU
+id: node.aculta_notice.field_aculta_notice_roles
+field_name: field_aculta_notice_roles
+entity_type: node
+bundle: aculta_notice
+label: 'Público por papel'
+description: 'Um ou mais papéis autorizados; a seleção é combinada por OU.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

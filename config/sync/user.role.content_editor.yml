@@ -6,18 +6,17 @@ dependencies:
     - filter.format.revista_editorial
     - filter.format.wiki
     - media.type.document
-    - node.type.aculta_notice
     - node.type.wiki_entry
     - workflows.workflow.wiki_editorial
   module:
-    - aculta_forum
+    - aculta_user
     - comment
-    - contextual
     - content_lock
     - content_moderation
-    - media
+    - contextual
     - file
     - filter
+    - media
     - navigation
     - node
     - path
@@ -26,39 +25,32 @@ _core:
   default_config_hash: og55Zu0F-q-X8zG0Ohrls49zws6IrmmosZS-30Es8vw
 id: content_editor
 label: 'Editor de conteúdo'
-weight: 2
+weight: -4
 is_admin: false
 permissions:
-  - 'moderar denuncias do forum'
-  - 'move aculta forum topics'
-  - 'move aculta forum comments'
   - 'access administration pages'
-  - 'access content overview'
   - 'access content'
+  - 'access content overview'
   - 'access contextual links'
   - 'access files overview'
   - 'access navigation'
   - 'administer comments'
   - 'administer url aliases'
   - 'break content lock'
+  - 'create document media'
   - 'create url aliases'
   - 'create wiki_entry content'
-  - 'create document media'
-  - 'edit own document media'
-  - 'create aculta_notice content'
   - 'delete own files'
   - 'edit any wiki_entry content'
-  - 'edit any aculta_notice content'
+  - 'edit own document media'
+  - 'moderar denuncias do forum'
   - 'revert all revisions'
-  - 'revert wiki_entry revisions'
   - 'use text format revista_editorial'
   - 'use text format wiki'
   - 'use wiki_editorial transition create_new_draft'
   - 'use wiki_editorial transition draft_to_review'
   - 'use wiki_editorial transition review_to_draft'
   - 'use wiki_editorial transition review_to_published'
-  - 'use editorial transition create_new_draft'
-  - 'use editorial transition draft_to_review'
   - 'view all revisions'
   - 'view any unpublished content'
   - 'view latest version'

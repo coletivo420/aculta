@@ -1,0 +1,31 @@
+uuid: a2606d80-4079-4708-80b7-78eb4d2eb282
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_body
+    - field.field.message.aculta_msg_private_notification.field_aculta_messenger_attempts
+    - field.field.message.aculta_msg_private_notification.field_aculta_messenger_source_pm
+    - field.field.message.aculta_msg_private_notification.field_aculta_msg_delivery
+    - message.template.aculta_msg_private_notification
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: ErvX87CDoq2i4MJaDC-_Xy9xBlXQHY2aACxqnwpzf4I
+id: message.aculta_msg_private_notification.mail_body
+targetEntityType: message
+bundle: aculta_msg_private_notification
+mode: mail_body
+content:
+  partial_1:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_aculta_messenger_attempts: true
+  field_aculta_messenger_source_pm: true
+  field_aculta_msg_delivery: true
+  partial_0: true
+  search_api_excerpt: true

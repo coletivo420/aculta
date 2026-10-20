@@ -59,6 +59,12 @@ type_settings:
         - published
       to: draft
       weight: 0
+    draft_to_review:
+      label: 'Enviar para revisão'
+      from:
+        - draft
+      to: review
+      weight: 2
     publish:
       label: Publish
       from:
@@ -66,12 +72,6 @@ type_settings:
         - draft
       to: published
       weight: 1
-    draft_to_review:
-      label: 'Enviar para revisão'
-      from:
-        - draft
-      to: review
-      weight: 2
     review_to_draft:
       label: 'Devolver para rascunho'
       from:

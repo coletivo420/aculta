@@ -4,12 +4,12 @@ status: true
 dependencies:
   config:
     - field.field.group.lms_course.capa_curso
-    - field.field.group.lms_course.field_description
     - field.field.group.lms_course.field_course_product
+    - field.field.group.lms_course.field_description
+    - field.field.group.lms_course.field_h5p_activities
     - group.type.lms_course
     - image.style.aculta_destaque_16x9
   module:
-    - aculta_lms
     - image
     - lms
     - text
@@ -59,8 +59,8 @@ hidden:
   changed: true
   created: true
   field_course_product: true
+  field_h5p_activities: true
   langcode: true
   lessons: true
   search_api_excerpt: true
   uid: true
-

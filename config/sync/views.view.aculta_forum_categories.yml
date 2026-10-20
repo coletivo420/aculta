@@ -202,37 +202,6 @@ display:
         - 'languages:language_interface'
         - user.permissions
       tags: {  }
-  page_categories:
-    id: page_categories
-    display_title: Categorias
-    display_plugin: page
-    position: 1
-    display_options:
-      title: 'Categorias do Growroom420'
-      defaults:
-        header: false
-      header:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: text_custom
-          empty: false
-          content: '<p><a href="/">Discussões recentes</a></p>'
-          tokenize: false
-      display_extenders: {  }
-      path: categorias
-      menu:
-        type: none
-    cache_metadata:
-      max-age: -1
-      contexts:
-        - 'languages:language_interface'
-        - user.permissions
-      tags: {  }
   block_landing:
     id: block_landing
     display_title: 'Categorias da entrada'
@@ -240,10 +209,6 @@ display:
     position: 2
     display_options:
       title: 'Categorias e subcategorias'
-      block_description: 'Categorias da entrada do Growroom420'
-      defaults:
-        filters: false
-        header: false
       filters:
         vid:
           id: vid
@@ -295,9 +260,9 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-      allow:
-        items_per_page: true
-        pager: pager
+      defaults:
+        filters: false
+        header: false
       header:
         area_text_custom:
           id: area_text_custom
@@ -311,10 +276,44 @@ display:
           content: '<p><a href="/categorias">Ver todas as categorias</a></p>'
           tokenize: false
       display_extenders: {  }
+      block_description: 'Categorias da entrada do Growroom420'
+      allow:
+        items_per_page: true
+        pager: pager
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_interface'
         - user.permissions
       tags: {  }
-
+  page_categories:
+    id: page_categories
+    display_title: Categorias
+    display_plugin: page
+    position: 1
+    display_options:
+      title: 'Categorias do Growroom420'
+      defaults:
+        header: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<p><a href="/">Discussões recentes</a></p>'
+          tokenize: false
+      display_extenders: {  }
+      path: categorias
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - user.permissions
+      tags: {  }

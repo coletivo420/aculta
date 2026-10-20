@@ -1,0 +1,7 @@
+uuid: 9788fb8d-4a52-43f3-b3e1-9da50b3b4596
+langcode: pt-br
+status: true
+dependencies: {  }
+id: tamanho
+label: Tamanho
+elementType: select

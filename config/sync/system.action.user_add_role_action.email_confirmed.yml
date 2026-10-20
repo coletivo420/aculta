@@ -1,0 +1,14 @@
+uuid: 7f64de2f-1baa-4376-9160-cfe3b3916cc6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.email_confirmed
+  module:
+    - user
+id: user_add_role_action.email_confirmed
+label: 'Add the E-mail confirmado role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: email_confirmed

@@ -1,9 +1,7 @@
 uuid: 1dc5da9b-d145-453c-9a20-e7b146a1ddee
 langcode: pt-br
 status: false
-dependencies:
-  module:
-    - captcha
+dependencies: {  }
 formId: aculta_messenger_conversation_relationship
 captchaType: default
 label: 'Opções de amizade e bloqueio na conversa (exceção do Turnstile)'

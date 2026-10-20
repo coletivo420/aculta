@@ -6,7 +6,7 @@ dependencies:
     - aculta_portal
 _core:
   default_config_hash: 50QUbDL5hfMj6JF3n2JcOsPZtzq8PyU9UR0iXIpVThA
-label: Default
+label: Padrão
 id: default
 plugin: multistep_default
 configuration:

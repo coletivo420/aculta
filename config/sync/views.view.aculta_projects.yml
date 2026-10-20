@@ -6,9 +6,9 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - node.type.project
   module:
-    - vvjb
     - node
     - user
+    - vvjb
 id: aculta_projects
 label: 'Projetos da associação'
 module: views
@@ -102,12 +102,6 @@ display:
     position: 2
     display_options:
       title: 'Projetos da ACULTA'
-      defaults:
-        title: false
-        pager: false
-        style: false
-        row: false
-        css_class: false
       pager:
         type: none
         options: {  }
@@ -136,10 +130,16 @@ display:
         type: 'entity:node'
         options:
           view_mode: teaser
+      defaults:
+        title: false
+        css_class: false
+        pager: false
+        style: false
+        row: false
       css_class: view-aculta-social-projects
+      display_extenders: {  }
       block_description: 'Projetos ACULTA — carrossel LINKS'
       block_hide_empty: true
-      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:

@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.article.body
+    - field.field.node.article.field_aculta_discussion
     - field.field.node.article.field_credits
     - field.field.node.article.field_domain_source
     - field.field.node.article.field_editorial_author
@@ -17,6 +18,7 @@ dependencies:
     - field.field.node.article.field_related_activity
     - field.field.node.article.field_subtitle
     - field.field.node.article.field_summary
+    - field.field.node.article.field_tags
     - node.type.article
   module:
     - text
@@ -39,6 +41,8 @@ content:
     weight: 100
     region: content
 hidden:
+  co_authors: true
+  field_aculta_discussion: true
   field_credits: true
   field_domain_source: true
   field_editorial_author: true
@@ -51,4 +55,7 @@ hidden:
   field_related_activity: true
   field_subtitle: true
   field_summary: true
+  field_tags: true
   langcode: true
+  private_message_link: true
+  search_api_excerpt: true

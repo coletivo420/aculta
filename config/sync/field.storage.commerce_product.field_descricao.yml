@@ -1,0 +1,19 @@
+uuid: 480135ee-f010-40d9-84cf-df1a68d152b8
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_product
+    - text
+id: commerce_product.field_descricao
+field_name: field_descricao
+entity_type: commerce_product
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

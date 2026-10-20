@@ -49,6 +49,10 @@ content:
     weight: 100
     region: content
 hidden:
+  co_authors: true
+  field_discussao: true
   field_domain_source: true
   field_meta_tags: true
   langcode: true
+  private_message_link: true
+  search_api_excerpt: true

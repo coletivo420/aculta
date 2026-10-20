@@ -1,24 +1,27 @@
 _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
+  aculta_donation: 0
   aculta_forum: 0
   aculta_forum_lms: 0
-  aculta_donation: 0
   aculta_gallery: 0
+  aculta_game: 0
+  aculta_id_cpf: 0
   aculta_image: 0
-  aculta_mailer: 0
-  aculta_pagamentos_mercadopago: 0
   aculta_lms: 0
+  aculta_lms_h5p: 0
   aculta_magazine: 0
+  aculta_mailer: 0
   aculta_messenger: 0
+  aculta_pagamentos_mercadopago: 0
   aculta_patcher: 0
   aculta_pdf_viewer: 0
   aculta_pdf_viewer_group: 0
   aculta_portal: 0
   aculta_portal_cep: 0
   aculta_portal_sitemap: 0
+  aculta_user: 0
   address: 0
-  agreement: 9999
   announcements_feed: 0
   automated_cron: 0
   big_pipe: 0
@@ -36,6 +39,7 @@ module:
   commerce_order: 0
   commerce_payment: 0
   commerce_price: 0
+  commerce_product: 0
   commerce_shipping: 0
   commerce_store: 0
   config: 0
@@ -54,7 +58,6 @@ module:
   domain: 0
   domain_alias: 0
   domain_config: 0
-  domain_source: 30
   dynamic_page_cache: 0
   editor: 0
   email_confirmer: 0
@@ -74,8 +77,8 @@ module:
   flood_control: 0
   fraction: 0
   freelinking: 0
-  group: 0
   gnode: 0
+  group: 0
   help: 0
   history: 0
   image: 0
@@ -115,12 +118,12 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
-  pathauto: 1
   pdfpreview: 0
   photoswipe: 0
   photoswipe_dynamic_caption: 0
   physical: 0
   private_message: 0
+  private_message_notify: 0
   profile: 0
   redirect: 0
   rename_admin_paths: 0
@@ -133,6 +136,7 @@ module:
   schema_product: 0
   schema_web_page: 0
   schema_web_site: 0
+  sdc_devel: 0
   search: 0
   search_api: 0
   search_api_db: 0
@@ -143,7 +147,6 @@ module:
   social_auth: 0
   social_auth_google: 0
   sophron: 0
-  standard: 1000
   state_machine: 0
   system: 0
   taxonomy: 0
@@ -165,11 +168,10 @@ module:
   update: 0
   user: 0
   username_enumeration_prevention: 0
-  views: 10
   views_bulk_operations: 0
   views_ui: 0
-  vvja: 0
   vvj_core: 0
+  vvja: 0
   vvjb: 0
   vvjf: 0
   vvjh: 0
@@ -181,9 +183,14 @@ module:
   webform_score: 0
   webform_ui: 0
   workflows: 0
+  pathauto: 1
+  views: 10
+  domain_source: 30
+  standard: 1000
+  agreement: 9999
 theme:
-  bootstrap: 0
   claro: 0
   stable9: 0
   aculta420: 0
+  bootstrap: 0
 profile: standard

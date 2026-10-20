@@ -4,8 +4,9 @@ status: true
 dependencies:
   config:
     - field.field.group.lms_course.capa_curso
-    - field.field.group.lms_course.field_description
     - field.field.group.lms_course.field_course_product
+    - field.field.group.lms_course.field_description
+    - field.field.group.lms_course.field_h5p_activities
     - group.type.lms_course
     - image.style.thumbnail
   module:
@@ -94,5 +95,5 @@ content:
       display_label: true
     third_party_settings: {  }
 hidden:
+  field_h5p_activities: true
   uid: true
-

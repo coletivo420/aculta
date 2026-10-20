@@ -1,0 +1,15 @@
+uuid: 7747568a-bcd5-4c16-888e-b6ce727d5f86
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - flag.flag.aculta_site_alert_dismissed
+  module:
+    - flag
+id: flag_action.aculta_site_alert_dismissed_unflag
+label: 'Mostrar aviso novamente'
+type: site_alert
+plugin: 'flag_action:aculta_site_alert_dismissed_unflag'
+configuration:
+  flag_id: aculta_site_alert_dismissed
+  flag_action: unflag

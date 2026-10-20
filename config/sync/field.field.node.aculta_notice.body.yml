@@ -1,0 +1,26 @@
+uuid: 9814abff-49dd-475c-97fb-2596b0c5b50f
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.aculta_notice
+  module:
+    - text
+_core:
+  default_config_hash: 3PgsBSPDwvK4houC8eHcViSa6FdR6wtR_TF1QeP7uy8
+id: node.aculta_notice.body
+field_name: body
+entity_type: node
+bundle: aculta_notice
+label: 'Texto do aviso'
+description: 'Conteúdo institucional apresentado a cada destinatário autorizado.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+  allowed_formats: {  }
+field_type: text_with_summary

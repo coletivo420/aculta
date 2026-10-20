@@ -88,7 +88,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
-          label: Title
+          label: Curso
           exclude: false
           alter:
             alter_text: false
@@ -322,7 +322,7 @@ display:
           admin_label: ''
           entity_type: node
           plugin_id: entity_operations
-          label: Operations
+          label: Operações
           exclude: false
           alter:
             alter_text: false
@@ -512,7 +512,7 @@ display:
             default_group_multiple: {  }
             group_items:
               1:
-                title: Published
+                title: Publicado
                 operator: '='
                 value: '1'
               2:
@@ -576,7 +576,7 @@ display:
           exposed: true
           expose:
             operator_id: title_op
-            label: Title
+            label: Curso
             description: ''
             use_operator: false
             operator: title_op
@@ -702,7 +702,7 @@ display:
         - 'config:content_lock.settings'
   page_1:
     id: page_1
-    display_title: Page
+    display_title: Página
     display_plugin: page
     position: 1
     display_options:

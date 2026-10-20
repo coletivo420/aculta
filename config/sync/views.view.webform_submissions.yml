@@ -20,7 +20,7 @@ base_field: sid
 display:
   default:
     id: default
-    display_title: Padrão
+    display_title: Principal
     display_plugin: default
     position: 0
     display_options:
@@ -797,7 +797,7 @@ display:
           entity_type: webform_submission
           entity_field: sticky
           plugin_id: field
-          label: Sticky
+          label: Destacado
           exclude: false
           alter:
             alter_text: false
@@ -998,7 +998,7 @@ display:
           entity_type: webform_submission
           entity_field: completed
           plugin_id: field
-          label: Completed
+          label: Concluído
           exclude: false
           alter:
             alter_text: false
@@ -1233,7 +1233,7 @@ display:
           exposed: true
           expose:
             operator_id: ''
-            label: Sticky
+            label: Destacado
             description: ''
             use_operator: false
             operator: sticky_op
@@ -1714,7 +1714,7 @@ display:
           entity_type: webform_submission
           entity_field: sticky
           plugin_id: field
-          label: Sticky
+          label: Destacado
           exclude: false
           alter:
             alter_text: false
@@ -1915,7 +1915,7 @@ display:
           entity_type: webform_submission
           entity_field: completed
           plugin_id: field
-          label: Completed
+          label: Concluído
           exclude: false
           alter:
             alter_text: false
@@ -2204,7 +2204,7 @@ display:
           exposed: true
           expose:
             operator_id: ''
-            label: Sticky
+            label: Destacado
             description: ''
             use_operator: false
             operator: sticky_op
@@ -2542,7 +2542,7 @@ display:
           entity_type: webform_submission
           entity_field: sticky
           plugin_id: field
-          label: Sticky
+          label: Destacado
           exclude: false
           alter:
             alter_text: false
@@ -2743,7 +2743,7 @@ display:
           entity_type: webform_submission
           entity_field: completed
           plugin_id: field
-          label: Completed
+          label: Concluído
           exclude: false
           alter:
             alter_text: false
@@ -2979,7 +2979,7 @@ display:
           exposed: true
           expose:
             operator_id: ''
-            label: Sticky
+            label: Destacado
             description: ''
             use_operator: false
             operator: sticky_op

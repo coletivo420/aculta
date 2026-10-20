@@ -6,7 +6,6 @@ _core:
   default_config_hash: vbPSqe3wbFSkaEY0zGy3NVpofBxcTZYrT6N2YPQX7nI
 name: wide
 label: 'Largo (1090)'
-pipeline: aculta_derivados
 effects:
   09959c15-59ce-4f6d-90df-e2d7cf32bce5:
     uuid: 09959c15-59ce-4f6d-90df-e2d7cf32bce5
@@ -22,3 +21,4 @@ effects:
     weight: 2
     data:
       extension: webp
+pipeline: aculta_derivados

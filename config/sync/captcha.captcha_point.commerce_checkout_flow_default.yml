@@ -1,9 +1,7 @@
-uuid: 989fe71e-c421-49b7-a5a4-314c8e03385a
+uuid: d524d39d-3015-47cb-9234-e3fe46a2c417
 langcode: pt-br
 status: false
-dependencies:
-  module:
-    - captcha
+dependencies: {  }
 formId: commerce_checkout_flow_default
 captchaType: default
 label: 'Checkout da loja'
