@@ -75,7 +75,6 @@ final class PortalController extends ControllerBase {
       $container->get('module_handler'),
       $container->get('config.factory'),
       $container->get('date.formatter'),
-      $container->get('key.repository'),
       $container->get('commerce_price.currency_formatter'),
       self::accountDocumentService($container),
       $container->get('aculta_image.render'),

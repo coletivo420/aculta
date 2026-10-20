@@ -1,3 +1,12 @@
+## 0.4.0-dev.209 — corrigida falha de construção do controlador da conta — 2026-10-20
+
+- Corrigida a ordem de dependências de `PortalController`: a factory injetava
+  `key.repository` no lugar de `commerce_price.currency_formatter`, causando
+  `TypeError` e HTTP 500 em páginas autenticadas da Conta.
+- Runtime de teste: a factory do controlador instancia via Drush, o cache foi
+  reconstruído, e as raízes públicas verificadas respondem 200. O endpoint
+  autenticado não foi repetido por HTTP; RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.208 — apresentação navegável das categorias do Fórum — 2026-10-20
 
 - A View Core `/categorias` agora apresenta cartões do SDC `forum-category` e
