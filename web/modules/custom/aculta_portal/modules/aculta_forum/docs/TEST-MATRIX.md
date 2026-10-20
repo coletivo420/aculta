@@ -1,5 +1,28 @@
 # Matriz de testes por fase
 
+## dev.67 — suíte visual X11 reproduzível
+
+- `node tests/browser/aculta-forum/progress-visual.mjs` usa Firefox não headless
+  em uma sessão X11, URL pública `SUITE_PAGE` e saída privada `SUITE_OUT` fora
+  do checkout. Host é comparado aos hosts de teste do Deployer. O WebDriver
+  BiDi ajusta o viewport CSS, independente do tamanho mínimo da janela X11; essa
+  capacidade está na [especificação W3C WebDriver BiDi](https://www.w3.org/TR/webdriver-bidi/)
+  e no [MDN browsingContext.setViewport](https://developer.mozilla.org/en-US/docs/Web/WebDriver/Reference/BiDi/Modules/browsingContext/setViewport).
+- O cenário cria seis mensagens exclusivamente no DOM dentro do campo de
+  discussão já renderizado; verifica controles, ausência/presença de `.new`,
+  anúncio “Mensagem 4 de 6”, remoção do marcador, viewport, overflow, alvos de
+  toque e capturas claro/escuro. Não autentica nem envia formulários.
+- Firefox ESR 153.4/geckodriver 0.37.1 no Runtime `toca`, página pública de
+  publicação: 20/20 verificações PASS em 320/360/390/500/900 CSS px; `.new`,
+  anúncio, alvo móvel de 44 px e claro/escuro confirmados. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-progress-dev67-20261020/`.
+- O DOM/body da página base já mede 509 px entre viewport 320–500 px; inspeção
+  identificou o `#aculta-cart-offcanvas` fixo e fechado além do limite. Os
+  controles do Fórum não ampliam essa largura. É um achado preexistente do
+  carrinho, fora do escopo deste commit; portanto o teste não afirma ausência de
+  overflow global. Nenhum dado foi salvo. History autenticado real e leitor de
+  tela permanecem pendentes. RUNTIME STATUS: PARTIAL.
+
 ## dev.66 — primeira resposta não lida pelo History instalado
 
 - O Runtime carrega `drupal/history` 1.0.0 de `web/modules/contrib/history`.

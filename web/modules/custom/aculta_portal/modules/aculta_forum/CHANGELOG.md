@@ -1,3 +1,26 @@
+## `0.1.0-dev.67` — suíte visual X11 reproduzível — 2026-10-20
+
+- Adicionada suíte Firefox/geckodriver sem modo headless para repetir a revisão
+  visual da barra de progresso em publicação de teste. Host é validado contra o
+  ACULTA Deployer; largura, controles, marcador `.new`, anúncio, overflow e
+  estados claro/escuro são verificados automaticamente.
+- Seis mensagens sintéticas são inseridas somente no DOM. A suíte não autentica,
+  não envia formulários e não grava conteúdo. Capturas e resultados exigem
+  diretório absoluto privado fora do checkout.
+- Firefox ESR 153.4, geckodriver 0.37.1, Node 22.23.3, sessão X11 `:0`,
+  Runtime `toca` Drupal 11.4.10: 20/20 verificações PASS em viewports CSS exatos
+  de 320/360/390/500/900 px; alvo móvel 44 px; ação History `.new`, anúncio,
+  overflow adicionado pelos controles e capturas claro/escuro inspecionadas.
+  Evidências privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-progress-dev67-20261020/`.
+- A publicação usada já apresenta `document/body.scrollWidth=509` em viewports
+  de 320–500 px por causa do `#aculta-cart-offcanvas` fixo fora da tela; a suíte
+  registra o baseline e confirma que os controles não aumentam esse overflow.
+  A causa pertence ao componente de carrinho e não foi alterada nesta entrega.
+  Nenhum Node/Comment foi salvo. `node --check` e gates direcionados PASS.
+  History real autenticado, leitor de tela e correção da rolagem preexistente
+  continuam pendentes. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.66` — saltar à primeira resposta não lida — 2026-10-20
 
 - A barra de progresso oferece “Não lidas” somente quando o History instalado
