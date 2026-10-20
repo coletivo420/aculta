@@ -31,7 +31,9 @@ estudante, contexto divergente e estados repetidos. Não há comentários LMS de
 teste nem smoke autenticado das operações.
 O Kernel também executa `CustomAccessCheck` do Core com a assinatura configurada
 na rota, comprovando a conversão Group/Comment, o parâmetro `decision` e a conta
-na chamada do manager.
+na chamada do manager. Na dev.111, `ParamConverterManager` do Core converte os
+IDs Group/Comment pela definição `entity:group`/`entity:comment` antes do check;
+o teste nega aluno e Group diferente do proprietário do tópico.
 
 ## Matriz de ownership e dependências
 

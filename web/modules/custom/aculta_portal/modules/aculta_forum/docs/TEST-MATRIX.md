@@ -1,5 +1,15 @@
 # Matriz de testes por fase
 
+## dev.111 — conversores Core de entidade na rota LMS
+
+- Kernel `LmsClassEducatorPermissionKernelTest`: a definição de rota com
+  `entity:group`/`entity:comment` passa IDs pelo `ParamConverterManager`; a
+  `RouteMatch` recebe entidades carregadas, e o `CustomAccessCheck` chama o
+  callback de serviço com Educador permitido, estudante negado e Group diferente
+  sem acesso. Suíte Kernel LMS: 2 testes/122 assertions PASS, 40 depreciações.
+- Unit LMS: 18/190 PASS. PHPCS Drupal/DrupalPractice, lint PHP e `git diff
+  --check` PASS. Runtime não alterado. RUNTIME STATUS: DEFERRED.
+
 ## dev.110 — argumentos da rota contextual de moderação
 
 - Kernel `LmsClassEducatorPermissionKernelTest`: suíte LMS 2 testes/118

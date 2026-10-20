@@ -1,3 +1,13 @@
+## `0.1.0-dev.19` — validar conversão de entidades na rota de moderação — 2026-10-20
+
+- Kernel registra a definição de rota com os conversores instalados `entity:group`
+  e `entity:comment`, converte IDs reais em entidades e aciona o `CustomAccessCheck`
+  usando o callback de serviço configurado. Group/Comment, decisão e conta são
+  resolvidos; aluno e Group divergente não passam.
+- Unit: 18 testes / 190 assertions PASS. Kernel MariaDB: 2 testes / 122
+  assertions PASS, 40 depreciações Core/contrib/LMS. Runtime não alterado.
+  RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.18` — cobrir callback de rota de moderação — 2026-10-20
 
 - Kernel executa o mecanismo Core `CustomAccessCheck` com a assinatura da rota

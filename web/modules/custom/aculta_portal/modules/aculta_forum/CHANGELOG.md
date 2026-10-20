@@ -1,3 +1,12 @@
+## `0.1.0-dev.111` — testar conversores reais da rota de moderação — 2026-10-20
+
+- Kernel configura `entity:group` e `entity:comment` na rota, executa os
+  conversores do Core a partir dos IDs e então invoca `CustomAccessCheck` com o
+  Group/Comment carregado, decisão e conta. Verifica Educador permitido, aluno
+  negado e Group autorizado divergente sem autorização.
+- Adapter Unit: 18/190; Kernel: 2/122 PASS, 40 depreciações Core/contrib/LMS.
+  Runtime não alterado. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.110` — validar resolução de access na rota de moderação LMS — 2026-10-20
 
 - Kernel agora invoca o `CustomAccessCheck` do Core com parâmetros upcastados
