@@ -22,19 +22,26 @@ final class MailTransportSender {
   /**
    * Resultado do envio. A mensagem vai para o administrador; não contém credenciais.
    *
-   * @return array{sent: bool, message: string, code: int|null}
-   *   Se foi aceito, a mensagem de erro e o código SMTP da resposta, quando houver.
+   * @return array{sent: bool, message: string, code: int|null, provider_id: string|null}
+   *   Se foi aceito, a mensagem de erro, o código SMTP da resposta (quando houver) e o ID que o provedor deu à mensagem.
    */
   public function send(MailTransport $transport, Email $email): array {
     try {
-      $this->factory->create($transport)->send($email);
-      return ['sent' => TRUE, 'message' => '', 'code' => NULL];
+      $sent = $this->factory->create($transport)->send($email);
+      // O Brevo devolve o messageId na resposta da API; o Symfony o guarda no SentMessage. Sem ID, NULL.
+      $providerId = $sent?->getMessageId();
+      return [
+        'sent' => TRUE,
+        'message' => '',
+        'code' => NULL,
+        'provider_id' => $providerId !== NULL && $providerId !== '' ? trim($providerId, '<> ') : NULL,
+      ];
     }
     catch (TransportExceptionInterface | \RuntimeException $error) {
       $message = $error->getMessage();
       // Respostas do servidor citam o código: "...got code \"552\"..." ou "552 texto".
       $code = preg_match('/got code "?(\d{3})"?|^(\d{3})\b/', $message, $match) === 1 ? (int) ($match[1] ?: $match[2]) : NULL;
-      return ['sent' => FALSE, 'message' => $message, 'code' => $code];
+      return ['sent' => FALSE, 'message' => $message, 'code' => $code, 'provider_id' => NULL];
     }
   }
 

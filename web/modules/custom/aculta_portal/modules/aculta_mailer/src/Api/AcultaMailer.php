@@ -8,6 +8,7 @@ use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\Delivery\MailSuppression;
+use Drupal\aculta_mailer\Delivery\ProviderMessageRegistry;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpReplyClassifier;
@@ -55,6 +56,7 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly MailAlerts $alerts,
     private readonly QuotaSignal $quotaSignal,
     private readonly MailSuppression $suppression,
+    private readonly ProviderMessageRegistry $providerMessages,
   ) {}
 
   /**
@@ -112,7 +114,7 @@ final class AcultaMailer implements AcultaMailerInterface {
 
     $transportUsed = $effective;
     if (!empty($result['result'])) {
-      $this->log->record($message, MailStatus::Sent, 1, $transportUsed);
+      $this->log->record($message, MailStatus::Sent, 1, $transportUsed, NULL, NULL, $this->providerMessages->take($message->correlationId));
       return SendResult::sent();
     }
 

@@ -41,8 +41,10 @@ final class MailLogRecorder {
    *   Código curto e controlado pelo módulo.
    * @param string|null $errorMessage
    *   Texto completo da falha do transporte, para o relatório do admin (ver LOGGING-PRIVACY.md).
+   * @param string|null $providerMessageId
+   *   ID que o provedor deu à mensagem aceita; sem valor, o registro não é alterado.
    */
-  public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL, ?string $errorMessage = NULL): void {
+  public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL, ?string $errorMessage = NULL, ?string $providerMessageId = NULL): void {
     if (!$this->logSettings->enabled()) {
       return;
     }
@@ -60,6 +62,9 @@ final class MailLogRecorder {
     $log->set('transport', $transport);
     $log->set('error_code', $errorCode);
     $log->set('error_message', $errorMessage);
+    if ($providerMessageId !== NULL && $providerMessageId !== '') {
+      $log->set('provider_message_id', $providerMessageId);
+    }
     if ($status === MailStatus::Sent) {
       $log->set('sent', $this->time->getRequestTime());
     }

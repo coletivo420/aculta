@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.36 — ID do provedor gravado no registro — 2026-10-20
+
+- O envio grava o ID que o provedor deu à mensagem aceita (`provider_message_id`). Brevo: o `messageId` da API, no formato do campo `message-id` dos eventos. SMTP: o ID devolvido pelo servidor.
+- `ProviderMessageRegistry` guarda o ID na mesma requisição, por correlação, como o registro de falhas. O registro de envio recebe o ID quando a mensagem é aceita.
+- Validado no Runtime de teste: envio pelo Brevo (autorizado) gravou o ID; o evento de entrega real chegou ao webhook e o registro passou para `delivered`, casado pela tag de correlação.
+- Pendente: consulta de estado pela API (recheck). O endpoint `GET /v3/smtp/statistics/events` com filtro por `messageId` não foi confirmado na referência oficial; não implementado.
+- Testes: 118 unitários.
+
 ## 0.1.0-dev.35 — verificação de DKIM no diagnóstico — 2026-10-20
 
 - Diagnóstico: além de SPF e DMARC, mostra os seletores DKIM ativos do domínio remetente (`brevo1`, `brevo2`, `hostingermail-a`, `hostingermail-b`, `hostingermail-c`). Um seletor só conta como ativo com `p=` não vazio.

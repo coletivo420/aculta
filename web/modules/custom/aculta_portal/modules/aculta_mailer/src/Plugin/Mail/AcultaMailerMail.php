@@ -6,6 +6,7 @@ namespace Drupal\aculta_mailer\Plugin\Mail;
 
 use Drupal\aculta_mailer\Entity\MailTransport;
 use Drupal\aculta_mailer\Api\PublicUrlInterface;
+use Drupal\aculta_mailer\Delivery\ProviderMessageRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
 use Drupal\aculta_mailer\Transport\MailTransportSender;
@@ -42,6 +43,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly LoggerInterface $logger,
     private readonly RendererInterface $renderer,
     private readonly SmtpFailureRegistry $failures,
+    private readonly ProviderMessageRegistry $providerMessages,
     private readonly ?PublicUrlInterface $publicUrls = NULL,
   ) {}
 
@@ -57,6 +59,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('logger.channel.aculta_mailer'),
       $container->get('renderer'),
       $container->get('aculta_mailer.smtp_failures'),
+      $container->get('aculta_mailer.provider_messages'),
       $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
     );
   }
@@ -100,6 +103,9 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     // Imagens do envelope são carregadas do servidor (URL absoluta); nada é anexado nem embutido.
     $html = $this->renderHtml($message);
     $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $html));
+    if ($result['sent'] && $result['provider_id'] !== NULL) {
+      $this->providerMessages->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['provider_id']);
+    }
     if (!$result['sent']) {
       // Mesmo registro de falha que o envio do módulo usa para classificar (código SMTP e texto completo).
       $this->failures->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['code'], $result['message']);
