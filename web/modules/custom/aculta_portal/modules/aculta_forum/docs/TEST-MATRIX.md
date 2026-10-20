@@ -1,5 +1,26 @@
 # Matriz de testes por fase
 
+## dev.78 — preservar Flag de denúncia e fila ACULTA User
+
+- Smoke X11 autenticado moveu uma árvore de quatro Comments e verificou que a
+  Flagging `sinalizar_comentario` permaneceu no mesmo CID, com owner uid 5; a
+  fila `aculta_user.report_queue` continuou listando o comentário denunciado.
+  Os estados pendente/rejeitado, `pid`, `thread` e destino também permaneceram
+  corretos. 10/10 verificações em 390×844, 768×1024 e 1024×768 CSS px.
+- A configuração ativa da Flag foi previamente comparada ao Config Sync e
+  alinhada por importação parcial de um único objeto, depois de backup privado.
+  Antes da criação e após cleanup, a contagem de Flagging era zero. Cleanup
+  excluiu a Flagging de fixture antes dos Comments e tópicos; Fórum vazio, fila
+  Messenger 0, 12 categorias, 3 avisos e config temporária ausente.
+- Capturas e `results.json` privados em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-flags-dev78-20261020/`.
+  O smoke não alterou o PHP do Runtime.
+- `drush cr` não foi executado no final: sua falha reproduzível aponta para o
+  mapper `aculta_mailer_template`, que solicita a rota ainda não registrada
+  `entity.aculta_mailer_template.edit_form` durante edição paralela do Mailer.
+  O roteiro evita esse rebuild global; validação completa de cache permanece
+  DEFERRED. RUNTIME STATUS: PARTIAL.
+
 ## dev.77 — moderação pendente/rejeitada em subárvore
 
 - A fixture mantém quatro Comments não publicados em árvore ramificada: raiz

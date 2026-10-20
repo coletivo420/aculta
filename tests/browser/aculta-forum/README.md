@@ -59,7 +59,7 @@ responsiva do tema administrativo; não aplica CSS nem altera o tema/contrib.
 
 `comment-move-runtime.mjs` faz um smoke autenticado do formulário real, inclusive
 token CSRF e POST, e limpa seus dois tópicos e uma árvore ramificada de quatro
-Comments pendentes pela Entity API em `finally`. A prova confirma dois ramos,
+Comments pendentes/rejeitados pela Entity API em `finally`. A prova confirma dois ramos,
 um com resposta aninhada, preservando CID, autoria, texto, estado, `pid`/`thread`
 e destino. No modo de estados mistos, uma resposta pendente recebe a marca
 administrativa `field_aculta_rejected`; o roteiro confirma essa distinção após
@@ -72,8 +72,19 @@ vazia. A operação exige explicitamente
 branch dedicada, host MAIN de teste resolvido pelo Deployer, URI Drush e banco
 `aculta_runtime`; recusa executar se houver conteúdo do Fórum ou se a opção já
 estiver configurada. Ela ativa `comment_move_enabled` somente durante o smoke e
-remove a configuração ausente no final. O comentário é criado pendente para não
-gerar badge nem aviso de resposta publicada. Não rode em produção.
+remove a configuração ausente no final. O roteiro também cria uma Flag de
+denúncia com a conta QA, verifica a permanência da mesma Flagging e sua presença
+na fila ACULTA User depois do movimento, e exclui a Flagging antes de remover os
+Comments. Antes de usar, confirme que a configuração ativa da Flag
+`sinalizar_comentario` corresponde ao bundle versionado
+`aculta_discussion_post`. O comentário é criado pendente para não gerar badge
+nem aviso de resposta publicada.
+
+O roteiro não executa `drush cr`: um rebuild global depende de todos os
+config translation mappers e rotas ativas. Em 2026-10-20, o mapper
+`aculta_mailer_template` referenciava `entity.aculta_mailer_template.edit_form`,
+ainda ausente do route collection. Valide essa condição separadamente antes da
+homologação integral de cache. Não rode em produção.
 
 O formulário é aberto em 390×844, 768×1024 e 1024×768 CSS px; o roteiro verifica
 overflow horizontal, destino, confirmação e token CSRF. As capturas ficam no

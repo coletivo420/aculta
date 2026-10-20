@@ -65,6 +65,7 @@ $state = [
   'forum_categories' => (int) $terms,
   'notices' => (int) $notice,
   'subscribe_queue' => (int) \\Drupal::queue('aculta_messenger_message_subscribe_event')->numberOfItems(),
+  'comment_report_flaggings' => (int) \\Drupal::entityTypeManager()->getStorage('flagging')->getQuery()->accessCheck(FALSE)->condition('flag_id', 'sinalizar_comentario')->condition('entity_type', 'comment')->count()->execute(),
   'forum_settings_exist' => $config_storage->exists('aculta_forum.settings'),
   'forum_node_legacy_field' => $config_storage->exists('field.field.node.aculta_forum_topic.field_autor_legado'),
   'forum_comment_legacy_field' => $config_storage->exists('field.field.comment.aculta_discussion_post.field_autor_legado'),
@@ -79,7 +80,7 @@ if (baseline.forum_topics !== 0 || baseline.legacy_forum_topics !== 0 || baselin
   throw new Error(`Precondições de isolamento/recuperação não satisfeitas: ${JSON.stringify(baseline)}`);
 }
 
-const marker = `QAM77-${Math.random().toString(16).slice(2, 8)}`;
+const marker = `QAM78-${Math.random().toString(16).slice(2, 8)}`;
 const fixtureCode = `
 $config_storage = \\Drupal::service('config.storage');
 if ($config_storage->exists('aculta_forum.settings')) { throw new \\RuntimeException('O config do mover apareceu durante o preflight; nenhuma alteração foi feita.'); }
@@ -87,7 +88,10 @@ $configuration = \\Drupal::configFactory()->getEditable('aculta_forum.settings')
 $configuration->set('comment_move_enabled', TRUE)->save();
 $nodes = [];
 $comments = [];
-$cleanup = static function () use (&$comments, &$nodes, $config_storage): void {
+$flaggings = [];
+$cleanup = static function () use (&$flaggings, &$comments, &$nodes, $config_storage): void {
+  $flagging_storage = \\Drupal::entityTypeManager()->getStorage('flagging');
+  foreach (array_reverse($flaggings) as $flagging_id) { try { $flagging = $flagging_storage->load($flagging_id); if ($flagging) { $flagging_storage->delete([$flagging]); } } catch (\\Throwable $exception) { print 'ACULTA_CLEANUP_ERROR:flagging:' . $exception->getMessage() . PHP_EOL; } }
   $comment_storage = \\Drupal::entityTypeManager()->getStorage('comment');
   foreach (array_reverse($comments) as $cid) { try { $entity = $comment_storage->load($cid); if ($entity) { $comment_storage->delete([$entity]); } } catch (\\Throwable $exception) { print 'ACULTA_CLEANUP_ERROR:comment:' . $exception->getMessage() . PHP_EOL; } }
   $node_storage = \\Drupal::entityTypeManager()->getStorage('node');
@@ -160,7 +164,14 @@ try {
     $reply->save();
     $comments[] = (int) $reply->id();
   }
-  print 'ACULTA_FIXTURE:' . json_encode(['marker' => '${marker}', 'source_nid' => $nodes[0], 'destination_nid' => $nodes[1], 'cids' => $comments], JSON_THROW_ON_ERROR) . PHP_EOL;
+  $reporter = \\Drupal\\user\\Entity\\User::load(5);
+  if (!$reporter instanceof \\Drupal\\user\\UserInterface || !$reporter->isActive() || !$reporter->hasPermission('report aculta forum content')) { throw new \\RuntimeException('A conta QA não pode testar a denúncia contextual.'); }
+  $flag = \\Drupal::service('flag')->getFlagById('sinalizar_comentario');
+  if ($flag === NULL) { throw new \\RuntimeException('A Flag de denúncia de comentário não está instalada.'); }
+  \\Drupal::currentUser()->setAccount($reporter);
+  $flagging = \\Drupal::service('flag')->flag($flag, \\Drupal::entityTypeManager()->getStorage('comment')->load($comments[0]), $reporter);
+  $flaggings[] = (int) $flagging->id();
+  print 'ACULTA_FIXTURE:' . json_encode(['marker' => '${marker}', 'source_nid' => $nodes[0], 'destination_nid' => $nodes[1], 'cids' => $comments, 'report_flagging_id' => (int) $flagging->id()], JSON_THROW_ON_ERROR) . PHP_EOL;
 }
 catch (\\Throwable $exception) {
   try { $cleanup(); } catch (\\Throwable $cleanup_exception) { print 'ACULTA_CLEANUP_ERROR:' . $cleanup_exception->getMessage() . PHP_EOL; }
@@ -200,7 +211,6 @@ const execute = (script) => request('POST', path('/execute/sync'), { script, arg
 
 try {
   fixture = parseMarker(execFileSync('php', [drush, 'php:eval', fixtureCode, `--uri=${uri}`], { cwd: root, encoding: 'utf8', timeout: 60000 }), 'ACULTA_FIXTURE');
-  execFileSync('php', [drush, 'cr', `--uri=${uri}`], { cwd: root, stdio: 'ignore', timeout: 60000 });
 
   // The one-time link is kept in memory and generated for ACCOUNT before MAIN.
   const login = execFileSync('php', [drush, 'uli', '--uid=1', '--no-browser', `--uri=${accountBase}`], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'], timeout: 30000 }).toString().trim().split('\n').pop();
@@ -278,7 +288,11 @@ $destination = \\Drupal::entityTypeManager()->getStorage('node')->load(${fixture
 $count_on = static function (int $nid): int { return (int) \\Drupal::entityTypeManager()->getStorage('comment')->getQuery()->accessCheck(FALSE)->condition('entity_type', 'node')->condition('entity_id', $nid)->condition('field_name', 'field_aculta_discussion')->count()->execute(); };
 $rows = [];
 foreach ([${fixture.cids.join(',')}] as $cid) { $item = $loaded[$cid] ?? NULL; $rows[] = ['cid' => (int) ($item?->id() ?? 0), 'entity_id' => (int) ($item?->getCommentedEntityId() ?? 0), 'uid' => (int) ($item?->getOwnerId() ?? 0), 'status' => $item?->isPublished(), 'rejected' => (bool) ($item?->get('field_aculta_rejected')->value ?? FALSE), 'subject' => $item?->getSubject(), 'body' => $item?->get('comment_body')->value, 'pid' => (int) ($item?->get('pid')->target_id ?? 0), 'thread' => (string) ($item?->getThread() ?? '')]; }
-$state = ['comments' => $rows, 'source_exists' => $source instanceof \\Drupal\\node\\NodeInterface, 'destination_exists' => $destination instanceof \\Drupal\\node\\NodeInterface, 'source_count' => $count_on(${fixture.source_nid}), 'destination_count' => $count_on(${fixture.destination_nid})];
+$flagging = \\Drupal::entityTypeManager()->getStorage('flagging')->load(${fixture.report_flagging_id});
+$reports = \\Drupal::service('aculta_user.report_queue')->items();
+$report_present = FALSE;
+foreach ($reports['items'] as $report) { if ($report['entity_type'] === 'comment' && $report['entity_id'] === ${fixture.cids[0]} && $report['total'] === 1) { $report_present = TRUE; } }
+$state = ['comments' => $rows, 'source_exists' => $source instanceof \\Drupal\\node\\NodeInterface, 'destination_exists' => $destination instanceof \\Drupal\\node\\NodeInterface, 'source_count' => $count_on(${fixture.source_nid}), 'destination_count' => $count_on(${fixture.destination_nid}), 'report_flagging_id' => (int) ($flagging?->id() ?? 0), 'report_flag_id' => $flagging?->getFlagId(), 'report_owner_id' => (int) ($flagging?->getOwnerId() ?? 0), 'report_queue_contains_comment' => $report_present];
 print 'ACULTA_MOVE_RESULT:' . json_encode($state, JSON_THROW_ON_ERROR) . PHP_EOL;
 `;
   const moved = parseMarker(evalDrupal(verifyCode), 'ACULTA_MOVE_RESULT');
@@ -301,8 +315,12 @@ print 'ACULTA_MOVE_RESULT:' . json_encode($state, JSON_THROW_ON_ERROR) . PHP_EOL
       && item.thread !== '')
     && moved.comments.slice(1).every((item) => item.thread.startsWith(moved.comments[0].thread.replace(/\/$/, '') + '.'))
     && moved.source_count === 0
-    && moved.destination_count === expected.length;
-  check('Raiz ramificada preservou CIDs, autoria, conteúdo, pendência/rejeição, relações pid/thread e destino', movedCorrectly, JSON.stringify(moved));
+    && moved.destination_count === expected.length
+    && moved.report_flagging_id === fixture.report_flagging_id
+    && moved.report_flag_id === 'sinalizar_comentario'
+    && moved.report_owner_id === 5
+    && moved.report_queue_contains_comment;
+  check('Movimento preservou a árvore, o estado de moderação, a denúncia Flag e a fila ACULTA User', movedCorrectly, JSON.stringify(moved));
 }
 finally {
   if (browserSession) await request('DELETE', `/session/${browserSession}`).catch(() => {});
@@ -312,6 +330,7 @@ finally {
     const safeCleanup = `
 $config_storage = \\Drupal::service('config.storage');
 $errors = [];
+try { $flagging_storage = \\Drupal::entityTypeManager()->getStorage('flagging'); $flagging = $flagging_storage->load(${fixture.report_flagging_id}); if ($flagging) { $flagging_storage->delete([$flagging]); } $remaining = $flagging_storage->getQuery()->accessCheck(FALSE)->condition('flag_id', 'sinalizar_comentario')->condition('entity_type', 'comment')->condition('entity_id', [${fixture.cids.join(',')}], 'IN')->count()->execute(); if ((int) $remaining !== 0) { $errors[] = 'report_flaggings_remaining:' . (int) $remaining; } } catch (\\Throwable $e) { $errors[] = 'flaggings:' . $e->getMessage(); }
 try { $comment_storage = \\Drupal::entityTypeManager()->getStorage('comment'); foreach (array_reverse([${fixture.cids.join(',')}]) as $cid) { $comment = $comment_storage->load($cid); if ($comment) { $comment_storage->delete([$comment]); } } } catch (\\Throwable $e) { $errors[] = 'comments:' . $e->getMessage(); }
 try { $node_storage = \\Drupal::entityTypeManager()->getStorage('node'); foreach ([${fixture.source_nid}, ${fixture.destination_nid}] as $nid) { $node = $node_storage->load($nid); if ($node) { $node_storage->delete([$node]); } } } catch (\\Throwable $e) { $errors[] = 'nodes:' . $e->getMessage(); }
 $active = \\Drupal::config('aculta_forum.settings')->get();
@@ -323,10 +342,9 @@ print 'ACULTA_CLEANUP:' . json_encode(['errors' => $errors, 'config_exists' => $
       const outputText = evalDrupal(safeCleanup);
       const cleanup = parseMarker(outputText, 'ACULTA_CLEANUP');
       if (cleanup.errors.length > 0 || cleanup.config_exists) throw new Error(JSON.stringify(cleanup));
-      execFileSync('php', [drush, 'cr', `--uri=${uri}`], { cwd: root, stdio: 'ignore', timeout: 60000 });
     }
     catch (error) {
-      console.error(`CLEANUP REQUIRED; fixture CIDs/NIDs ${fixture.cids.join(',')}/${fixture.source_nid}/${fixture.destination_nid}: ${error.message}`);
+      console.error(`CLEANUP REQUIRED; fixture flag/CIDs/NIDs ${fixture.report_flagging_id}/${fixture.cids.join(',')}/${fixture.source_nid}/${fixture.destination_nid}: ${error.message}`);
       checks.push({ name: 'limpeza e restauração do estado', pass: false, detail: error.message });
     }
   }
@@ -341,6 +359,7 @@ print 'ACULTA_CLEANUP:' . json_encode(['errors' => $errors, 'config_exists' => $
       && finalState.forum_categories === baseline.forum_categories
       && finalState.notices === baseline.notices
       && finalState.subscribe_queue === baseline.subscribe_queue
+      && finalState.comment_report_flaggings === baseline.comment_report_flaggings
       && finalState.forum_node_legacy_field === baseline.forum_node_legacy_field
       && finalState.forum_comment_legacy_field === baseline.forum_comment_legacy_field
       && !finalState.forum_settings_exist;

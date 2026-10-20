@@ -122,8 +122,13 @@ uma resposta aninhada. Os CIDs, autores, textos, estados, `pid`, caminhos
 movidos.”. A limpeza reversa removeu respostas, raiz e tópicos, mantendo o
 Runtime no baseline. Em dev.77, um dos quatro Comments foi marcado rejeitado e
 os demais permaneceram pendentes; o campo foi preservado na entidade movida.
-Comentários publicados/aprovação via workflow e efeitos de serviços externos
-continuam pendentes.
+Em dev.78, uma Flag `sinalizar_comentario` sobre a raiz permaneceu associada ao
+mesmo CID e a fila `aculta_user.report_queue` continuou apresentando o item após
+o movimento. A Flagging de teste foi removida antes dos Comments no cleanup.
+Essa prova cobre somente a integração da denúncia existente no Fórum público;
+não prova outras flags, Search API, History, anexos ou notificações. Comentários
+publicados/aprovação via workflow e efeitos de serviços externos continuam
+pendentes.
 
 ### D. Dividir ou mesclar tópicos
 

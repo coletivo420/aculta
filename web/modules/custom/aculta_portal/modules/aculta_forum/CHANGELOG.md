@@ -1,3 +1,26 @@
+## `0.1.0-dev.78` — preservar denúncias ao mover subárvore — 2026-10-20
+
+- O roteiro autenticado X11 cria uma denúncia real de Comment com a Flag
+  `sinalizar_comentario`, verifica a identidade/owner da Flagging e confirma que
+  `aculta_user.report_queue` continua exibindo a mesma denúncia após mover a
+  árvore ramificada. O smoke passou 10/10 em 390×844, 768×1024 e 1024×768 CSS
+  px; CIDs, autores, estados pendente/rejeitado, `pid`, `thread` e tópico destino
+  também foram preservados.
+- O teste detectou que a configuração ativa da Flag ainda apontava para o
+  bundle antigo `comment_forum`; após backup e comparação, somente
+  `flag.flag.sinalizar_comentario` foi alinhada à configuração versionada
+  `aculta_discussion_post`. A importação parcial não alterou outras configurações.
+- Cleanup removeu a Flagging QA, Comments e tópicos temporários; confirmou zero
+  conteúdo/denúncias do Fórum, fila Messenger 0, 12 categorias, 3 avisos e
+  `aculta_forum.settings` ausente. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-flags-dev78-20261020/`.
+- Sem mudança PHP de Runtime. `drush cr` foi omitido do roteiro após reproduzir
+  falha em `ConfigNamesMapper::getPath()` por mapper do `aculta_mailer` cuja rota
+  `entity.aculta_mailer_template.edit_form` não estava registrada durante a
+  edição paralela. Esse bloqueio externo ficou documentado; não houve alteração
+  nos arquivos do Mailer. Gates Portal 975, fronteira 1447, mapa 152,
+  `node --check` e `git diff --check` PASS. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.77` — preservar pendência e rejeição em árvore movida — 2026-10-20
 
 - Smoke X11 autenticado moveu uma árvore ramificada de quatro Comments,
