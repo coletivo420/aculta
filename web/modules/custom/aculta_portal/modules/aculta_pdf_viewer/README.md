@@ -24,6 +24,9 @@ de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
   turma, use `private://`; o bundle `document` existente continua público e não
   pode receber arquivos confidenciais.
 - PDF sem viewer conserva o link Core apenas quando `download` access permite.
+- O canvas tem limite de 16 milhões de pixels e 16.384 px por lado. Se uma página
+  muito extensa exigir redução para menos da metade da escala pedida, o leitor
+  informa a limitação e mantém navegação e link autorizado para abrir/baixar.
 - O bundle Media `document` atual usa `public://`. Não o use para trabalhos de
   estudante ou outro documento que exija isolamento por turma.
 - O `CspReportRequestGuardSubscriber` limita e valida os corpos CSP antes do

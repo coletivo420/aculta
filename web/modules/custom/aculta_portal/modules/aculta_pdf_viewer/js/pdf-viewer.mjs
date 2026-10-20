@@ -6,6 +6,7 @@ const PDFJS_VERSION = '6.4.299';
 // allocating hundreds of megabytes for unusually large PDF page dimensions.
 const MAX_CANVAS_PIXELS = 16_000_000;
 const MAX_CANVAS_DIMENSION = 16_384;
+const MIN_SAFE_SCALE_RATIO = 0.5;
 
 const initialized = new WeakSet();
 
@@ -71,14 +72,35 @@ async function initialize(viewer) {
       const baseViewport = page.getViewport({ scale: 1 });
       const availableWidth = Math.max(240, (viewer.clientWidth || 800) - 32);
       const fitScale = Math.min(1.5, availableWidth / baseViewport.width);
-      const requestedScale = Math.max(0.5, Math.min(3, fitScale * zoom));
+      const requestedScale = Math.min(3, fitScale * zoom);
       const maxScaleByArea = Math.sqrt(MAX_CANVAS_PIXELS / (baseViewport.width * baseViewport.height));
-      const maxScaleByDimension = MAX_CANVAS_DIMENSION / Math.max(baseViewport.width, baseViewport.height);
-      const renderScale = Math.min(requestedScale, maxScaleByArea, maxScaleByDimension);
-      const viewport = page.getViewport({ scale: renderScale });
+      const maxScaleByDimension = (MAX_CANVAS_DIMENSION - 1) / Math.max(baseViewport.width, baseViewport.height);
+      let renderScale = Math.min(requestedScale, maxScaleByArea, maxScaleByDimension);
+      let viewport = page.getViewport({ scale: renderScale });
+      let canvasWidth = Math.ceil(viewport.width);
+      let canvasHeight = Math.ceil(viewport.height);
+      // Rounding both sides up can exceed the pixel budget by a few thousand
+      // pixels even when the floating-point viewport is exactly at the limit.
+      while (canvasWidth * canvasHeight > MAX_CANVAS_PIXELS) {
+        renderScale *= Math.sqrt(MAX_CANVAS_PIXELS / (canvasWidth * canvasHeight)) * 0.999;
+        viewport = page.getViewport({ scale: renderScale });
+        canvasWidth = Math.ceil(viewport.width);
+        canvasHeight = Math.ceil(viewport.height);
+      }
+      const effectiveZoom = renderScale / fitScale;
+      if (effectiveZoom < zoom * MIN_SAFE_SCALE_RATIO) {
+        canvas.hidden = true;
+        status.textContent = 'Esta página excede o limite seguro de visualização. Use o link para abrir ou baixar o PDF.';
+        previous.disabled = pageNumber <= 1;
+        next.disabled = pageNumber >= pdf.numPages;
+        zoomStatus.textContent = `${Math.round(effectiveZoom * 100)}%`;
+        zoomOut.disabled = zoom <= 0.5;
+        zoomIn.disabled = zoom >= 2.5;
+        return;
+      }
       const context = canvas.getContext('2d');
-      canvas.width = Math.ceil(viewport.width);
-      canvas.height = Math.ceil(viewport.height);
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
       const task = page.render({ canvasContext: context, viewport });
       renderTask = task;
       try {
@@ -98,7 +120,7 @@ async function initialize(viewer) {
       status.textContent = `Página ${pageNumber} de ${pdf.numPages}`;
       previous.disabled = pageNumber <= 1;
       next.disabled = pageNumber >= pdf.numPages;
-      zoomStatus.textContent = `${Math.round((renderScale / fitScale) * 100)}%`;
+      zoomStatus.textContent = `${Math.round(effectiveZoom * 100)}%`;
       zoomOut.disabled = zoom <= 0.5;
       zoomIn.disabled = zoom >= 2.5;
     };

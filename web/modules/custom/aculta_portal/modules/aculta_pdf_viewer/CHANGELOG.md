@@ -1,11 +1,18 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.26 — limitar renderização de páginas PDF extremas — 2026-10-20
+
+- O renderizador limita cada canvas a 16 milhões de pixels e 16.384 px por lado, corrigindo também o excedente introduzido pelo arredondamento inteiro.
+- Removida a escala mínima fixa de 50% que impedia o ajuste à largura e exibia 500% em uma página de 20.000 × 30.000 pt.
+- Se o limite seguro exigir renderização abaixo de 50% da escala solicitada, o canvas fica oculto com mensagem acessível; navegação entre páginas e link Core de abertura/download permanecem disponíveis.
+- Firefox ESR no Runtime renderizou um PDF público de 23 MB/14 páginas. Fixtures temporários confirmaram a página 20.000 × 30.000 pt em 100% (653 × 980 px) e a página 20.000 × 2.000.000 pt com fallback (25% efetivo). `node --check`, status-index e Drupal 11+ PASS.
+- Unit PDF 25/25 (163 assertions); Unit `aculta_image` 20/20 (71 assertions, 8 depreciações PHPUnit); Kernel PDF + Group 6/6 (145 assertions, 28 depreciações Core/contrib).
+- Ainda Dev: o fallback de páginas extremas está validado no Homelab; os outros gates PV7 abaixo continuam pendentes.
+
 ## 0.1.0-dev.25 — limitar memória do canvas em páginas PDF extensas — 2026-10-20
 
-- O renderizador limita cada canvas a 16 milhões de pixels e 16.384 px por lado, evitando alocações excessivas em páginas de dimensões atípicas.
-- O indicador de zoom agora mostra a escala efetivamente renderizada quando o limite do canvas reduz a ampliação pedida.
-- `node --check` PASS; gates de status-index e Drupal 11+ PASS. Validação visual de PDFs extremos permanece pendente em Alpha.
-- Continua Dev; não altera CSP nem muda o estado RC da PV7.
+- Primeira proteção do canvas: 16 milhões de pixels e 16.384 px por lado; aperfeiçoada em 0.1.0-dev.26 após reprodução com página extrema.
+- `node --check`, gates de status-index e Drupal 11+ PASS.
 
 ## 0.1.0-dev.24 — rejeitar relatórios CSP sem estrutura completa — 2026-10-20
 
