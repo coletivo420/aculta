@@ -4,8 +4,9 @@
   pelos tokens ACULTA420, com estados hover e foco visível. O tema não consulta
   Flag nem decide autorização; o Portal/Flag prepara os links autorizados.
 - Gates Foundation (364), SDC (535), Design Foundations (2097), fronteira
-  (1415) e mapa (152) PASS. Render Runtime sob uid 5 contém as duas âncoras; a
-  inspeção X11 com sessão autenticada e clique continuam pendentes. RUNTIME
+  (1415) e mapa (152) PASS. Firefox/X11 autenticado em 1024 px mostrou os dois
+  controles; seguir e salvar gravaram e reverteram seus estados corretamente.
+  Viewports mobile autenticados e modo escuro continuam pendentes. RUNTIME
   STATUS: PARTIAL.
 
 ## 0.6.0-dev.107 — alinhar metadados da lista de tópicos — 2026-10-20

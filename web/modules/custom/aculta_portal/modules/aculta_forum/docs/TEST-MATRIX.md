@@ -14,15 +14,16 @@
   importação parcial processou só `core.entity_view_display.node.aculta_forum_topic.full`,
   cache rebuild PASS e alvo sem diferenças do Config Sync. O render da página
   completa sob uid 5 incluiu ambos os links; `flag.link_builder` gerou âncoras
-  para as permissões de seguir/salvar. Não houve clique nem Flagging de
-  seguir/salvar gravada. Comparação de render com uid 5 e `AnonymousUserSession`
-  mostrou ambos os controles somente para uid 5, sem exposição anônima.
-  Fixtures temporárias foram removidas; Runtime segue
-  com 0 tópicos, 0 Comments, 0 flaggings de `seguir_topico`/`salvar_topico` e
-  fila de inscrição Messenger vazia. A consulta global encontrou 2 flaggings
-  não relacionados do `aculta_site_alert` (read/dismiss), preservados sem
-  alteração. Raiz e `/categorias` HTTP 200.
-  Fluxo com navegador autenticado segue pendente. RUNTIME STATUS: PARTIAL.
+  para as permissões de seguir/salvar. Comparação de render com uid 5 e
+  `AnonymousUserSession` mostrou ambos os controles somente para uid 5, sem
+  exposição anônima. Firefox/X11 autenticado em 1024 px confirmou os dois
+  controles. Cada ação foi ativada e revertida pela interface; contagens
+  persistidas foram `seguir_topico 0 → 1 → 0` e `salvar_topico 0 → 1 → 0`.
+  A fixture exata foi removida sem Comments ou flags restantes. Estado final:
+  0 tópicos, 0 Comments compartilhados e 0 flags de seguir/salvar; itens de
+  outros contextos foram preservados. Raiz e `/categorias` HTTP 200. A validação
+  visual autenticada em viewport mobile e modo escuro permanece pendente.
+  RUNTIME STATUS: PARTIAL.
 
 ## dev.56 — remover referência residual ao bundle Forum contrib nas Flags
 
