@@ -29,6 +29,9 @@ entidade; Form API confirma e revalida no submit, publica e limpa marcador ao
 aprovar ou despublica e marca ao rejeitar. Kernel cobre as transições e nega
 estudante, contexto divergente e estados repetidos. Não há comentários LMS de
 teste nem smoke autenticado das operações.
+O Kernel também executa `CustomAccessCheck` do Core com a assinatura configurada
+na rota, comprovando a conversão Group/Comment, o parâmetro `decision` e a conta
+na chamada do manager.
 
 ## Matriz de ownership e dependências
 

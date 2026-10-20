@@ -11,11 +11,16 @@ use Drupal\aculta_forum_lms\Form\LmsCommentModerationForm;
 use Drupal\aculta_forum_lms\Hook\LmsCommentModerationOperationsHooks;
 use Drupal\aculta_forum_lms\Hook\LmsCommentModerationAccessHooks;
 use Drupal\aculta_forum_lms\Hook\LmsDiscussionModerationHooks;
+use Drupal\Core\Access\AccessArgumentsResolverFactory;
+use Drupal\Core\Access\CustomAccessCheck;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Routing\RouteMatch;
+use Drupal\Core\Utility\CallableResolver;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
@@ -30,6 +35,7 @@ use Drupal\user\Entity\Role;
 use Drupal\views\ViewExecutableFactory;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\Routing\Route;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -378,6 +384,57 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $studentOperations = new LmsCommentModerationOperationsHooks($moderationManager, $student);
     self::assertSame([], $studentOperations->entityOperation($pendingComment, new CacheableMetadata()));
     self::assertFalse($moderationManager->applyModerationDecision($unassignedCourse, $pendingComment, 'approve', $educator));
+
+    // Exercise Core's `_custom_access` argument resolution using the same
+    // upcast entity parameters and scalar decision defined by the route.
+    $accessRoute = new Route(
+      '/painel-administrativo/lms/forum/{group}/comentario/{comment}/moderacao/{decision}',
+      [],
+      ['_custom_access' => 'aculta_forum_lms.moderation_manager:commentModerationAccess'],
+    );
+    $educatorRouteMatch = new RouteMatch('aculta_forum_lms.comment_moderate', $accessRoute, [
+      'group' => $class,
+      'comment' => $pendingComment,
+      'decision' => 'reject',
+    ], [
+      'group' => (string) $class->id(),
+      'comment' => (string) $pendingComment->id(),
+      'decision' => 'reject',
+    ]);
+    $customAccessCheck = new CustomAccessCheck(
+      new CallableResolver(new class($moderationManager) implements ClassResolverInterface {
+
+        public function __construct(private readonly LmsForumModerationManager $moderationManager) {}
+
+        /**
+         * {@inheritdoc}
+         */
+        public function getInstanceFromDefinition($definition) {
+          if ($definition !== 'aculta_forum_lms.moderation_manager') {
+            throw new \InvalidArgumentException(sprintf('Unexpected service: %s', $definition));
+          }
+          return $this->moderationManager;
+        }
+
+      }),
+      new AccessArgumentsResolverFactory(),
+    );
+    self::assertTrue($customAccessCheck->access($accessRoute, $educatorRouteMatch, $educator)->isAllowed());
+    self::assertTrue($customAccessCheck->access($accessRoute, $educatorRouteMatch, $student)->isForbidden());
+    $wrongGroupRouteMatch = new RouteMatch('aculta_forum_lms.comment_moderate', $accessRoute, [
+      'group' => $course,
+      'comment' => $pendingComment,
+      'decision' => 'reject',
+    ], [
+      'group' => (string) $course->id(),
+      'comment' => (string) $pendingComment->id(),
+      'decision' => 'reject',
+    ]);
+    self::assertNotSame($class->id(), $course->id());
+    self::assertSame($class->id(), $moderationManager->getCommentGroup($pendingComment)?->id());
+    self::assertFalse($moderationManager->commentModerationAccess($course, $pendingComment, 'reject', $educator)->isAllowed());
+    self::assertFalse($customAccessCheck->access($accessRoute, $wrongGroupRouteMatch, $educator)->isAllowed());
+
     $moderationForm = new LmsCommentModerationForm(
       $moderationManager,
       $educator,

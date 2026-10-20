@@ -1,5 +1,14 @@
 # Matriz de testes por fase
 
+## dev.110 — argumentos da rota contextual de moderação
+
+- Kernel `LmsClassEducatorPermissionKernelTest`: suíte LMS 2 testes/118
+  assertions PASS. O Core `CustomAccessCheck` chama o manager configurado com
+  Group e Comment convertidos, decisão escalar e conta Educador; estudante é
+  negado e Group permitido, mas diferente do dono do tópico, não recebe acesso.
+- Runtime não foi alterado. Unit permanece 18/190 PASS. RUNTIME STATUS:
+  DEFERRED para esta subfase.
+
 ## dev.109 — moderação de comentários LMS
 
 - Adapter Unit: 18 testes/190 assertions PASS. Kernel MariaDB: 2 testes/112

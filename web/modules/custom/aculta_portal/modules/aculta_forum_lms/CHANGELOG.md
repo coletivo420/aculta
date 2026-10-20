@@ -1,3 +1,13 @@
+## `0.1.0-dev.18` — cobrir callback de rota de moderação — 2026-10-20
+
+- Kernel executa o mecanismo Core `CustomAccessCheck` com a assinatura da rota
+  de moderação. Confirma que Groups e Comments upcastados e a decisão escalar
+  chegam ao manager, Educador permitido, estudante negado e contexto Group
+  divergente sem autorização.
+- Unit: 18 testes / 190 assertions PASS. Kernel MariaDB: 2 testes / 118
+  assertions PASS, com 40 depreciações Core/contrib/LMS. Runtime não alterado.
+  RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.17` — executar moderação LMS em contexto — 2026-10-20
 
 - Filas agora usam a coluna Core `entity_operations`, com ações `Aprovar` e

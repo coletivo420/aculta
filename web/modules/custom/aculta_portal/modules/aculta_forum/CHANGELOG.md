@@ -1,3 +1,12 @@
+## `0.1.0-dev.110` — validar resolução de access na rota de moderação LMS — 2026-10-20
+
+- Kernel agora invoca o `CustomAccessCheck` do Core com parâmetros upcastados
+  de Group/Comment, decisão escalar e conta. Educador autorizado passa; estudante
+  e Group válido divergente não passam. Isso cobre a integração de rota além do
+  hook, manager e submit do Form API.
+- Adapter Unit: 18/190; Kernel: 2/118 PASS, 40 depreciações Core/contrib/LMS.
+  Sem mudanças de Runtime ou conteúdo. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.109` — ações de moderação contextual LMS — 2026-10-20
 
 - O adapter `aculta_forum_lms` adiciona operações de aprovar/rejeitar nas filas
