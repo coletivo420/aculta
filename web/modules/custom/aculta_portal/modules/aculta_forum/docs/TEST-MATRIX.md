@@ -1,5 +1,21 @@
 # Matriz de testes por fase
 
+## dev.68 — teclado e estados de limite
+
+- A suíte usa WebDriver Actions para enviar Enter à ação Próxima e ArrowRight ao
+  slider, além de conferir o estado inicial, `aria-valuetext`, live announcement
+  e retorno Início/Fim. A interação de teclado usa eventos do navegador, não
+  `dispatchEvent` sintético para as teclas.
+- Firefox ESR 153.4/geckodriver 0.37.1, Runtime `toca`: Enter enviou o foco a
+  Próxima e anunciou “Mensagem 2 de 6”; ArrowRight no slider alterou o índice e
+  `aria-valuetext` para “Mensagem 3 de 6”, com live region `off`; Fim/Início
+  atualizaram o índice e disabled dos botões de borda. A suíte completa passou
+  25/25 em 320/360/390/500/900 CSS px. Sem gravação. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-progress-dev68-20261020/`.
+- O resultado de overflow global permanece limitado pelo baseline do offcanvas
+  de carrinho descrito em dev.67; esta entrega não o altera. Leitor de tela e
+  History real autenticado continuam pendentes. RUNTIME STATUS: PARTIAL.
+
 ## dev.67 — suíte visual X11 reproduzível
 
 - `node tests/browser/aculta-forum/progress-visual.mjs` usa Firefox não headless

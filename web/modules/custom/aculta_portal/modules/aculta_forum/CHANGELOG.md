@@ -1,3 +1,16 @@
+## `0.1.0-dev.68` — teclado e limites dos controles em X11 — 2026-10-20
+
+- A suíte visual também envia Enter/ArrowRight pelo endpoint W3C WebDriver Actions
+  para verificar anúncio em botão, atualização de `aria-valuetext` no slider,
+  silêncio acessível na navegação contínua e estados de limite Início/Fim.
+- Firefox ESR 153.4/geckodriver 0.37.1 no Runtime `toca`: Enter em Próxima
+  anunciou “Mensagem 2 de 6”; ArrowRight avançou `aria-valuetext` sem anúncio
+  contínuo; Fim/Início atualizaram o slider e os controles desabilitados. Suíte
+  completa PASS: 25/25, com viewports CSS 320/360/390/500/900 px e capturas
+  claro/escuro. Nenhum Node/Comment foi gravado. O overflow preexistente do
+  offcanvas de carrinho continua igual ao baseline; ver dev.67. RUNTIME STATUS:
+  PARTIAL.
+
 ## `0.1.0-dev.67` — suíte visual X11 reproduzível — 2026-10-20
 
 - Adicionada suíte Firefox/geckodriver sem modo headless para repetir a revisão

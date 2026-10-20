@@ -54,6 +54,12 @@ const request = async (method, path, body) => {
 const path = (suffix) => `/session/${session}${suffix}`;
 const execute = (script, args = []) => request('POST', path('/execute/sync'), { script, args });
 const sleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
+const pressKey = (value) => request('POST', path('/actions'), {
+  actions: [{ type: 'key', id: 'aculta-forum-visual-keys', actions: [
+    { type: 'keyDown', value },
+    { type: 'keyUp', value },
+  ] }],
+});
 const bidiCommand = (method, params = {}) => new Promise((resolveCommand, rejectCommand) => {
   const id = ++bidiId;
   bidiPending.set(id, { resolveCommand, rejectCommand });
@@ -113,6 +119,20 @@ try {
     return thread.querySelectorAll('article.js-comment[id]').length;
   `);
   check('Renderiza controles de progresso com seis mensagens DOM sintéticas', await execute(`const t=window.__acultaTestThread; return t.querySelector('[data-aculta-discussion-progress]')?.querySelectorAll('button').length === 5 && t.querySelector('[data-aculta-discussion-range]')?.max === '5'`));
+  check('Estado inicial desabilita início/anterior e permite próxima/fim', await execute(`const t=window.__acultaTestThread; return t.querySelector('[data-aculta-discussion-range]').value==='0' && t.querySelector('[data-aculta-discussion-first]').disabled && t.querySelector('[data-aculta-discussion-previous]').disabled && !t.querySelector('[data-aculta-discussion-next]').disabled && !t.querySelector('[data-aculta-discussion-last]').disabled`));
+  await execute(`window.__acultaTestThread.querySelector('[data-aculta-discussion-next]').focus(); return true;`);
+  await pressKey('\uE007');
+  check('Enter em Próxima anuncia a segunda mensagem', await execute(`const a=window.__acultaTestThread.querySelector('[data-aculta-discussion-announcement]'); return a.textContent.includes('Mensagem 2 de 6') && a.getAttribute('aria-live')==='polite'`));
+  await sleep(1300);
+  await execute(`const r=window.__acultaTestThread.querySelector('[data-aculta-discussion-range]'); r.value='1'; r.dispatchEvent(new Event('input',{bubbles:true})); return true;`);
+  await sleep(100);
+  await execute(`window.__acultaTestThread.querySelector('[data-aculta-discussion-range]').focus(); return true;`);
+  await pressKey('\uE014');
+  check('Seta direita no slider avança uma mensagem sem anúncio contínuo', await execute(`const t=window.__acultaTestThread; const r=t.querySelector('[data-aculta-discussion-range]'); const a=t.querySelector('[data-aculta-discussion-announcement]'); return r.value==='2' && r.getAttribute('aria-valuetext').includes('Mensagem 3 de 6') && a.getAttribute('aria-live')==='off'`));
+  await execute(`window.__acultaTestThread.querySelector('[data-aculta-discussion-last]').click(); return true;`);
+  check('Fim vai à última mensagem e bloqueia o avanço', await execute(`const t=window.__acultaTestThread; return t.querySelector('[data-aculta-discussion-range]').value==='5' && t.querySelector('[data-aculta-discussion-next]').disabled && t.querySelector('[data-aculta-discussion-last]').disabled`));
+  await execute(`window.__acultaTestThread.querySelector('[data-aculta-discussion-first]').click(); return true;`);
+  check('Início retorna à primeira mensagem e bloqueia o recuo', await execute(`const t=window.__acultaTestThread; return t.querySelector('[data-aculta-discussion-range]').value==='0' && t.querySelector('[data-aculta-discussion-first]').disabled && t.querySelector('[data-aculta-discussion-previous]').disabled`));
   check('A ação Não lidas começa oculta', await execute(`return window.__acultaTestThread.querySelector('[data-aculta-discussion-unread]').hidden`));
   await execute(`document.querySelector('#aculta-visual-comment-4').classList.add('new'); return true;`);
   await sleep(100);
