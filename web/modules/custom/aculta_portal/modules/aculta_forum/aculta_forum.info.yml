@@ -2,7 +2,7 @@ name: ACULTA Forum
 type: module
 description: 'Discussões ACULTA sobre entidades nativas do Drupal, com administração contextual, leitura personalizada e links para novas respostas.'
 package: 'ACULTA Portal'
-version: '0.1.0-dev.30'
+version: '0.1.0-dev.31'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal
@@ -11,6 +11,7 @@ dependencies:
   - domain_source:domain_source
   - drupal:comment
   - drupal:history
+  - flag:flag
   - drupal:views
   - drupal:node
   - drupal:taxonomy

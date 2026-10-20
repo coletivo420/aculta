@@ -8,6 +8,7 @@ id: salvar_topico
 label: 'Salvar tópico'
 bundles:
   - forum
+  - aculta_forum_topic
 entity_type: node
 global: false
 flag_short: 'Salvar tópico'

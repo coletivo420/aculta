@@ -8,6 +8,7 @@ id: seguir_topico
 label: 'Seguir tópico'
 bundles:
   - forum
+  - aculta_forum_topic
 entity_type: node
 global: false
 flag_short: 'Seguir tópico'

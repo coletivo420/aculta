@@ -1,0 +1,31 @@
+uuid: 041d016e-b43b-4658-8898-078ac36d672b
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+id: seguir_topico
+label: 'Seguir tópico'
+bundles:
+  - forum
+  - aculta_forum_topic
+entity_type: node
+global: false
+flag_short: 'Seguir tópico'
+flag_long: ''
+flag_message: ''
+unflag_short: 'Seguindo'
+unflag_long: ''
+unflag_message: ''
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:node'
+link_type: reload
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions: {  }
+linkTypeConfig: {  }
+

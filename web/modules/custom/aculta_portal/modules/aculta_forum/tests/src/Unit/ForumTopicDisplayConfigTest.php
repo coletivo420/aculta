@@ -116,6 +116,24 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Follow and save flags target both the transitional and current bundles.
+   */
+  public function testTopicFlagsTargetCurrentPublicBundle(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    foreach (['seguir_topico', 'salvar_topico'] as $id) {
+      $filename = 'flag.flag.' . $id . '.yml';
+      $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
+      $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+      self::assertSame($install, $sync, $filename);
+      self::assertContains('forum', $install['bundles'], 'Legacy bundle remains supported during migration.');
+      self::assertContains('aculta_forum_topic', $install['bundles']);
+      self::assertFalse($install['global']);
+      self::assertSame('node', $install['entity_type']);
+    }
+  }
+
+  /**
    * The public listing keeps bundle, domain and access filters fixed.
    */
   public function testPublicListingUsesFixedAccessAwareFilters(): void {

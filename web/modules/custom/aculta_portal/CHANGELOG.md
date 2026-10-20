@@ -3167,3 +3167,13 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   8 contagens encontradas, somente leitura; HTTP/browser autenticado pendente.
   RUNTIME STATUS: PARTIAL.
 
+## 0.4.0-dev.202 — seguir e salvar tópicos do Fórum — 2026-10-19
+
+- As Flags `seguir_topico` e `salvar_topico` cobrem o bundle próprio do ACULTA
+  Forum, preservando registros e suporte transitório ao bundle antigo.
+- Forum Unit `ForumTopicDisplayConfigTest`: 16 testes / 199 assertions PASS;
+  gates Portal 11+ (970), fronteira (1370), mapa (154) PASS. Runtime de teste:
+  backup privado e alteração somente das duas configurações Flag; cache
+  rebuild e construção dos dois links como uid 5 PASS, sem gravar flagging.
+  Navegador autenticado pendente. RUNTIME STATUS: PARTIAL.
+

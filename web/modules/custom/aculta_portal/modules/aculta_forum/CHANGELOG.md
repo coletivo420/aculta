@@ -1,3 +1,21 @@
+## 0.1.0-dev.31 — seguir e salvar tópicos ACULTA — 2026-10-19
+
+- As Flags individuais `seguir_topico` e `salvar_topico` passam a aceitar o
+  bundle `aculta_forum_topic`, preservando provisoriamente o bundle legado
+  `forum` durante a migração. As mesmas definições ficam nos defaults do módulo
+  e em Config Sync; `flag` é dependência executável explícita do Forum.
+- O tipo atual da Flag é por usuário, portanto os dados não são globais e os
+  registros existentes não são removidos. A implementação continua no Flag; o
+  Fórum não cria storage próprio nem automatiza avisos de Messenger ao seguir.
+- Testes Forum Unit: 48 testes / 350 assertions PASS (3 deprecações PHPUnit
+  preexistentes); PHPCS da configuração testada e gates Portal 11+
+  (970), fronteira (1370) e mapa (154) PASS. PHP CLI 8.4.26.
+- Runtime `toca`, Core 11.4.10: backup privado dos dois configs antes da escrita;
+  somente `bundles` foi estendido e `config:status` não indicou drift nos dois
+  IDs após a alteração. Cache rebuild PASS. uid 5 montou os dois links contra
+  tópico público atual sem persistir flagging. HTTP/browser e mudança real de
+  estado por navegador pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.30 — link para a primeira resposta não lida — 2026-10-19
 
 - A View autenticada `/discussoes/nao-lidas` adiciona o campo `node_new_comments`
@@ -546,4 +564,3 @@
 - O link “Categorias” integra a navegação local do índice público de discussões.
 - A View usa renderização padrão da entidade Taxonomy. Hierarquia visual,
   contagens de tópicos e ordenação por atividade ficam para as subfases próprias.
-
