@@ -1,5 +1,21 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.36 — padrões de rolagem e página dupla no PDF.js completo — 2026-10-20
+
+- Acrescenta um wrapper local e same-origin para inicializar o viewer PDF.js com rolagem vertical/horizontal e spread configurados por painel ou formatter. O PDF.js continua sem alterações nos arquivos Composer.
+- Desktop pode abrir em página dupla; em telas móveis o spread é desligado por padrão e respeita a opção explícita para mantê-lo. Canvas ACULTA segue paginado.
+- Links de impressão e viewer completo passam pelo wrapper. O caminho PDF continua vindo do builder após checagem de acesso; arquivos privados continuam na rota Core. O wrapper valida origem e extensão antes de carregar.
+- Unit 26/26 (183 assertions), `php -l` e `node --check` PASS. Firefox no Homelab carregou o PDF público PV7 de 14 páginas: PDF.js reportou scroll mode horizontal e spread no desktop; ao estreitar a janela para viewport efetivo de 500 px, spread mudou para desligado e a página não transbordou horizontalmente.
+- RUNTIME STATUS: PARTIAL; Firefox verificou wrapper/modos no Homelab. O builder real no Runtime gerou links de impressão e viewer com o wrapper e os padrões correntes (`vertical`, spread desligado), sem título editorial na query; HTML respondeu HTTP 200 em `main.aculta`. Kernel do Portal precisa ser repetido após estabilizar as alterações concorrentes atuais; gates finais e revisão acessível seguem abertos. Permanece Dev.
+
+## Evidência PV7 — validações retomadas — 2026-10-20
+
+- Unit passou: 26 testes, 183 assertions (contagem confirmada em nova execução em 2026-10-20).
+- Kernel no MariaDB dedicado não alcançou assertions: a compilação do container do Portal falhou por referências a `agreement.handler` e `commerce_cart.cart_provider` ausentes no fixture. O bloqueio está registrado no roadmap para resolução antes de RC.
+- Status-index e Drupal 11+ gate passaram após atualizar a linha do componente no índice raiz: 24 componentes e 1026 checks. `aculta_image`, fronteira módulo/tema, endereços de ambiente, slugs públicos e `.htaccess` passaram.
+- No Homelab, a rota administrativa foi carregada após `drush cr`; a configuração ausente foi inicializada somente com o objeto de Config Sync `aculta_pdf_viewer.settings`. Firefox autenticado confirmou a subaba Site → Leitor de PDF e os controles padrão ligados (10 opções); página dupla móvel e desktop permanecem desligadas. O rebuild registrou aviso preexistente de diretório de asset H5P, mas concluiu.
+- Sem mudança de código nesta nota; na ocasião, a versão era `0.1.0-dev.35`. PV7 não estava em RC. O modo de rolagem/página dupla foi concluído para o viewer oficial no dev.36; Kernel/gates finais permanecem abertos.
+
 ## 0.1.0-dev.35 — subaba Leitor de PDF em Site — 2026-10-20
 
 - Integra o formulário global como subaba “Leitor de PDF” dentro da aba “Site” do painel ACULTA, mantendo o caminho e a permissão administrativa existentes.

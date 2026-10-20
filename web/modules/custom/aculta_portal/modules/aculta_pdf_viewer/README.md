@@ -8,8 +8,10 @@ Padrões globais ficam em ACULTA → Site → Leitor de PDF
 (`/painel-administrativo/aculta/leitor-pdf`). O painel pertence ao módulo Portal;
 formatters usam esses valores por padrão e podem optar por configuração
 específica do campo. A configuração fica em `aculta_pdf_viewer.settings` e faz
-parte do Config Sync. Rolagem horizontal e página dupla já têm opções de padrão,
-mas ainda não alteram o canvas ACULTA; o formulário identifica essa limitação.
+parte do Config Sync. Rolagem horizontal e página dupla são aplicadas pelo
+wrapper ao viewer PDF.js completo antes de sua inicialização. O canvas ACULTA
+continua em navegação paginada. Em telas móveis, página dupla fica desligada por
+padrão e respeita a opção explícita do painel/formatter.
 
 ## Responsabilidade e limites
 
@@ -87,6 +89,12 @@ mas ainda não alteram o canvas ACULTA; o formulário identifica essa limitaçã
    já existente via CKEditor no Runtime; a criação/upload pela UI como
    `content_editor` ainda não foi verificada. O registro, inclusive dos itens limpos, está em
    [TESTES-NAVEGADOR](../../../../../../docs/portal/TESTES-NAVEGADOR.md).
+6. `viewer-wrapper.html` e `js/pdf-viewer-wrapper.mjs` aplicam os padrões do
+   formatter ao viewer completo pelo evento `webviewerloaded` do PDF.js 6.4.299,
+   antes de `PDFViewerApplication.run()`. Nenhum arquivo da distribuição
+   Composer é alterado. O builder fornece somente URL local após validar o
+   acesso; o wrapper exige PDF same-origin, e o acesso privado continua na rota
+   protegida do Core.
 
 ## Hooks e integração Drupal
 

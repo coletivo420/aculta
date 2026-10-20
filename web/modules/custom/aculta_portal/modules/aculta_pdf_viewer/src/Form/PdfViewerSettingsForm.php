@@ -79,19 +79,19 @@ final class PdfViewerSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Rolagem padrão'),
       '#options' => ['vertical' => $this->t('Vertical'), 'horizontal' => $this->t('Horizontal')],
       '#config_target' => 'aculta_pdf_viewer.settings:default_scroll',
-      '#description' => $this->t('O leitor canvas ainda usa navegação paginada; rolagem contínua será conectada na próxima etapa.'),
+      '#description' => $this->t('Aplicada pelo viewer completo aberto nos links de impressão e PDF.js. O canvas incorporado mantém navegação paginada.'),
     ];
     $form['defaults']['double_page'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Solicitar modo de duas páginas'),
       '#config_target' => 'aculta_pdf_viewer.settings:double_page',
-      '#description' => $this->t('A opção fica registrada como padrão, mas ainda não altera o canvas ACULTA.'),
+      '#description' => $this->t('Aplicada pelo viewer completo em telas largas. Em telas móveis, página dupla é desligada por padrão.'),
     ];
     $form['defaults']['double_page_mobile'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Manter duas páginas em telas móveis'),
       '#config_target' => 'aculta_pdf_viewer.settings:double_page_mobile',
-      '#description' => $this->t('A opção fica registrada como padrão, mas ainda não altera o canvas ACULTA.'),
+      '#description' => $this->t('Quando marcada, mantém página dupla no viewer completo em telas móveis. O canvas incorporado mantém página única.'),
     ];
     $form['defaults']['language'] = [
       '#type' => 'select',

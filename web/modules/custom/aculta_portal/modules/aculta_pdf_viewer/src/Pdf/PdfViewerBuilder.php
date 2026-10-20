@@ -21,6 +21,11 @@ use Drupal\media\MediaInterface;
  */
 final class PdfViewerBuilder implements PdfViewerBuilderInterface {
 
+  /**
+   * Local wrapper that applies per-document defaults to the pinned PDF.js UI.
+   */
+  private const VIEWER_WRAPPER_PATH = '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/viewer-wrapper.html';
+
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
     private readonly UrlGeneratorInterface $urlGenerator,
@@ -122,6 +127,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       'link_text' => '', 'link_target' => '_blank', 'css_class' => '',
     ];
     $settings = array_replace($defaults, $settings);
+    $full_viewer_url = $this->fullViewerUrl($url, $settings);
     $class = preg_replace('/[^a-zA-Z0-9_ -]/', '', (string) $settings['css_class']);
     $build = [
       '#type' => 'container',
@@ -344,7 +350,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#tag' => 'a',
         '#value' => new TranslatableMarkup('Abrir leitor completo para imprimir'),
         '#attributes' => [
-          'href' => '/libraries/pdf.js/web/viewer.html?' . UrlHelper::buildQuery(['file' => $url, 'locale' => $settings['language']]),
+          'href' => $full_viewer_url,
           'target' => '_blank',
           'rel' => 'noopener noreferrer',
           'data-aculta-pdf-control' => 'print',
@@ -355,10 +361,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#tag' => 'a',
         '#value' => new TranslatableMarkup('Abrir leitor completo do PDF (nova aba)'),
         '#attributes' => [
-          'href' => '/libraries/pdf.js/web/viewer.html?' . UrlHelper::buildQuery([
-            'file' => $url,
-            'locale' => $settings['language'],
-          ]),
+          'href' => $full_viewer_url,
           'target' => in_array($settings['link_target'], ['_blank', '_self'], TRUE) ? $settings['link_target'] : '_blank',
           'rel' => $settings['link_target'] === '_blank' ? 'noopener noreferrer' : NULL,
           'data-aculta-pdf-control' => 'full-viewer',
@@ -435,6 +438,19 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     ]);
     $url->setUrlGenerator($this->urlGenerator);
     return $url->toString();
+  }
+
+  /**
+   * Builds the same-origin wrapper URL with the defaults for this formatter.
+   */
+  private function fullViewerUrl(string $file_url, array $settings): string {
+    return self::VIEWER_WRAPPER_PATH . '?' . UrlHelper::buildQuery([
+      'file' => $file_url,
+      'locale' => (string) $settings['language'],
+      'scroll' => $settings['default_scroll'] === 'horizontal' ? 'horizontal' : 'vertical',
+      'spread' => !empty($settings['double_page']) ? '1' : '0',
+      'spread_mobile' => !empty($settings['double_page_mobile']) ? '1' : '0',
+    ]);
   }
 
 }

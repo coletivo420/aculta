@@ -86,7 +86,12 @@ final class PdfViewerBuilderTest extends UnitTestCase {
       ->with($file, 'Documento de teste — miniatura da primeira página')
       ->willReturn($thumbnail);
 
-    $build = (new PdfViewerBuilder($url_generator, $this->createMock(UrlGeneratorInterface::class), $account, $thumbnail_builder))->build($media);
+    $build = (new PdfViewerBuilder($url_generator, $this->createMock(UrlGeneratorInterface::class), $account, $thumbnail_builder))
+      ->build($media, settings: [
+        'default_scroll' => 'horizontal',
+        'double_page' => TRUE,
+        'double_page_mobile' => TRUE,
+      ]);
 
     self::assertArrayNotHasKey('#access', $build);
     self::assertSame('true', $build['#attributes']['data-aculta-pdf-viewer']);
@@ -96,6 +101,14 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     self::assertContains('media:7', $build['#cache']['tags']);
     self::assertContains('file:11', $build['#cache']['tags']);
     self::assertSame('/sites/default/files/documento.pdf', $build['download']['#attributes']['href']);
+    self::assertSame($build['print']['#attributes']['href'], $build['full_viewer']['#attributes']['href']);
+    $viewer_query = [];
+    parse_str((string) parse_url($build['full_viewer']['#attributes']['href'], PHP_URL_QUERY), $viewer_query);
+    self::assertSame('/sites/default/files/documento.pdf', $viewer_query['file']);
+    self::assertSame('pt-BR', $viewer_query['locale']);
+    self::assertSame('horizontal', $viewer_query['scroll']);
+    self::assertSame('1', $viewer_query['spread']);
+    self::assertSame('1', $viewer_query['spread_mobile']);
     self::assertSame($thumbnail, $build['thumbnail']['image']);
   }
 
@@ -143,6 +156,9 @@ final class PdfViewerBuilderTest extends UnitTestCase {
 
     self::assertSame('/system/files?file=turma/trabalho.pdf', $build['#attributes']['data-aculta-pdf-url']);
     self::assertSame('/system/files?file=turma/trabalho.pdf', $build['download']['#attributes']['href']);
+    $viewer_query = [];
+    parse_str((string) parse_url($build['full_viewer']['#attributes']['href'], PHP_URL_QUERY), $viewer_query);
+    self::assertSame('/system/files?file=turma/trabalho.pdf', $viewer_query['file']);
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertArrayNotHasKey('thumbnail', $build);
   }
