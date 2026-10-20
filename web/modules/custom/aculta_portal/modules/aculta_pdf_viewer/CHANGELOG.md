@@ -1,5 +1,10 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.35 — subaba Leitor de PDF em Site — 2026-10-20
+
+- Integra o formulário global como subaba “Leitor de PDF” dentro da aba “Site” do painel ACULTA, mantendo o caminho e a permissão administrativa existentes.
+- RUNTIME STATUS: DEFERRED; confirmar descoberta da aba no Runtime Alpha junto ao fluxo autorizado de implantação.
+
 ## 0.1.0-dev.34 — controles globais no painel ACULTA — 2026-10-20
 
 - Adiciona `/painel-administrativo/aculta/leitor-pdf` como subpágina do painel ACULTA, protegida por `administer site configuration`.

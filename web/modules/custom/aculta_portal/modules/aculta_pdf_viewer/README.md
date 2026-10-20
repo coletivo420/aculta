@@ -4,7 +4,7 @@
 pelas experiências do site. Não pertence ao LMS: conteúdo pode usar o formatter
 de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
 
-Padrões globais ficam em ACULTA → Leitor de PDF
+Padrões globais ficam em ACULTA → Site → Leitor de PDF
 (`/painel-administrativo/aculta/leitor-pdf`). O painel pertence ao módulo Portal;
 formatters usam esses valores por padrão e podem optar por configuração
 específica do campo. A configuração fica em `aculta_pdf_viewer.settings` e faz
