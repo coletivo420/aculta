@@ -38,6 +38,8 @@ hidden:
   field_aculta_discussion: true
   field_autor_legado: true
   field_domain_source: true
+  flag_salvar_topico: true
+  flag_seguir_topico: true
   langcode: true
   links: true
   private_message_link: true

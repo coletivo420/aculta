@@ -169,8 +169,12 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       ], $install['content'][$key]);
     }
     $teaser = Yaml::parseFile($module_path . '/config/install/core.entity_view_display.node.aculta_forum_topic.teaser.yml');
+    $teaser_sync = Yaml::parseFile($repository_path . '/config/sync/core.entity_view_display.node.aculta_forum_topic.teaser.yml');
+    self::assertSame($teaser, $teaser_sync);
     self::assertArrayNotHasKey('flag_seguir_topico', $teaser['content']);
     self::assertArrayNotHasKey('flag_salvar_topico', $teaser['content']);
+    self::assertTrue($teaser['hidden']['flag_seguir_topico']);
+    self::assertTrue($teaser['hidden']['flag_salvar_topico']);
   }
 
   /**

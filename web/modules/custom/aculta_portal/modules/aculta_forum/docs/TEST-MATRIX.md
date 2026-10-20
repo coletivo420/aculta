@@ -1,5 +1,24 @@
 # Matriz de testes por fase
 
+## dev.58 — ocultar ações Flag nos cartões teaser
+
+- `ForumTopicDisplayConfigTest`: 18 testes/224 assertions PASS. PHPCS
+  Drupal/DrupalPractice, Portal 11+ (975), fronteira módulo/tema (1415) e mapa
+  (152) PASS. PHPUnit executou em PHP CLI 8.4.26, abaixo da baseline 8.5; o
+  aviso preexistente de `sites/simpletest/browser_output` não gravável persiste.
+- Runtime `toca`, Drupal 11.4.10, banco `aculta_runtime`: backup privado da
+  configuração anterior, importação parcial somente de
+  `core.entity_view_display.node.aculta_forum_topic.teaser`, cache rebuild e
+  `config:status` do alvo sem drift PASS. Render API sob uid 5 confirmou
+  `teaser_follow=no_save=no` e `full_follow=yes_save=yes`.
+- Firefox/X11 autenticado: a lista `/discussoes/nao-lidas` deixou de exibir
+  seguir/salvar no teaser e preservou “Respostas novas: 2”; o detalhe do mesmo
+  tópico manteve os dois controles. A fixture NID 409 tinha exatamente dois
+  Comments; a exclusão pela Entity API removeu também alias e History. Estado
+  final: 0 tópicos, 0 Comments, 0 flags do Fórum, 0 History da fixture e alias
+  retorna 404. A raiz e `/categorias` retornam 200; não autenticado em não
+  lidos retorna 403. RUNTIME STATUS: PASS para esta correção.
+
 ## dev.57 — ações nativas de seguir/salvar no tópico
 
 - `ForumTopicDisplayConfigTest`: 18/221 PASS; PHPCS Drupal/DrupalPractice,

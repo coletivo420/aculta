@@ -1,3 +1,25 @@
+## `0.1.0-dev.58` — ocultar ações Flag dos cartões teaser — 2026-10-20
+
+- Flag registra os pseudocampos em todos os modos por padrão, então os links de
+  seguir/salvar apareciam em cartões teaser das Views, apesar de estarem
+  planejados somente no detalhe completo. O teaser agora oculta ambos os campos
+  explicitamente; a página completa mantém as ações.
+- Instalação e Config Sync foram alinhadas; o teste Unit compara os YAML e
+  exige os dois pseudocampos ocultos no teaser. PHPUnit: 18 testes/224
+  assertions PASS; PHPCS, Portal 11+ (975), fronteira (1415) e mapa (152)
+  PASS. PHPUnit executou em PHP CLI 8.4.26, abaixo da baseline 8.5; permanece
+  o aviso preexistente sobre `sites/simpletest/browser_output` não gravável.
+- Runtime `toca`, Drupal 11.4.10, `aculta_runtime`: backup privado da
+  configuração anterior, importação parcial somente do display teaser, cache
+  rebuild e ausência de drift do alvo PASS. Render API confirmou teaser sem
+  links e detalhe `full` com ambos. Firefox/X11 autenticado confirmou que os
+  controles desapareceram da lista de não lidos e continuam no detalhe; o
+  indicador de duas respostas novas permaneceu. A fixture NID 409, com dois
+  Comments, foi excluída via Entity API; History e alias também foram limpos.
+  Estado final: 0 tópicos, 0 Comments, 0 flags do Fórum e 0 registros History
+  da fixture. Raiz e `/categorias` HTTP 200; rota de não lidos anônima 403;
+  alias removido 404. RUNTIME STATUS: PASS para o escopo desta correção.
+
 ## `0.1.0-dev.57` — expor ações de seguir e salvar no tópico — 2026-10-20
 
 - A View Display `full` inclui os pseudocampos de Flag `seguir_topico` e
