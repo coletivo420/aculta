@@ -15,7 +15,7 @@ fixtures `[TESTE]` do bundle novo são tratados separadamente em
 | Modelo de conteúdo | Node bundle `forum`, vocabulary `forums`, Node field `taxonomy_forums`, Comment bundle `comment_forum`, campo `comment_forum` no Node. Configs opcionais do módulo contrib definem ainda displays, formulário e settings. |
 | Config Sync | `core.entity_*` de node.forum/comment_forum; `node.type.forum.yml`; taxonomy.vocabulary.forums.yml; `views.view.aculta_forum_topics.yml`; `flag.sinalizar_comentario` aponta a bundle `comment_forum`; `field_discussao` exportado em blog aponta à Node bundle `forum`; campos de autoria legada. |
 | `aculta_user` | `ParticipationRules` fixa bundles `forum`/`comment_forum`; `RestrictedForumGrants`, `RestrictedForumHooks`, `ForumModerationHooks`, `ForumTopicPresentationHooks` e `ActivityController` ainda têm consumidores a migrar. O fallback de resumo `DiscussionHooks` foi removido; `config/install` ainda declara `field_discussao` legado em activity/article/document/project/wiki_entry. |
-| `aculta_magazine` | `LegacyPublicationTopicLookup`, `ForumSectionResolver`, `PublicationTypeConverter`, `ForumTopicHooks`, `ForumOpeningPost` e serviços; hooks e API de sincronização/backfill removidos em 0.1.0-dev.10/.11; `field_discussao` de `blog` ainda referencia Node bundle `forum`. |
+| `aculta_magazine` | `LegacyPublicationTopicLookup`, `ForumSectionResolver`, `PublicationTypeConverter` e `ForumOpeningPost` ainda preservam/leem vínculos históricos; `ForumTopicHooks` removido em dev.12 após confirmar zero Comments `comment_forum`. Hooks e API de sincronização/backfill removidos em dev.10/.11; `field_discussao` de publicações ainda referencia Node bundle `forum`. |
 | `aculta_messenger` | `MessageSubscribeEventHooks` atende criação/publicação de Node forum; `AvisoService`/`AvisoRetencao` têm política e tipos vinculados ao fórum. |
 | Tema | `forum-list.html.twig`, `node--forum--full.html.twig`, `comment--comment-forum.html.twig`, `forum-index.css`, `discussion.css`, traduções e estilos do padrão Forum. |
 | Documentação/gates | Portal/Forum/LMS/Magazine, mapa módulo-tema, fronteira, sitemap/purpose, slugs, buscas, avisos e políticas de participação referem Forum legado. Fazer `rg` global antes da remoção final. |
@@ -28,8 +28,9 @@ O antigo `DiscussionHooks` consultava `comment_forum` sem `topic->access('view')
 para renderizar trechos editoriais. Foi removido após confirmar que todos os 12
 Nodes atualmente referenciados têm `field_aculta_discussion`; a Revista usa agora
 o formatter Core direto e não carrega resumo de Comments do tópico antigo.
-`LegacyPublicationTopicLookup` ainda lê vínculos para conversão de tipo e
-`ForumOpeningPost` apresenta a publicação vinculada nos Nodes Forum antigos;
+`ForumTopicHooks` de links legados foi removido (o Runtime não possui Comments
+`comment_forum`). `LegacyPublicationTopicLookup` ainda lê vínculos para conversão
+de tipo e `ForumOpeningPost` apresenta a publicação vinculada nos Nodes Forum antigos;
 esses leitores serão retirados somente após preparar a limpeza dos dados.
 
 ## Separação entre Drupal Forum e acervo histórico Growroom

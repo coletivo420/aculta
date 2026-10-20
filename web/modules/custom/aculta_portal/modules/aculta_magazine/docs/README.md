@@ -61,31 +61,32 @@ O Drupal não converte o tipo de um nó no lugar. O serviço `aculta_magazine.pu
 - `plan($post, $target)`: não grava. Mostra o tópico vinculado, os campos que serão copiados e os que se perdem
   (campos que só existem no tipo de origem).
 - `convert($post, $target)`: grava. Ordem: (1) cria a publicação no tipo de destino com os campos copiados, o mesmo
-  autor, a mesma data de criação e o mesmo estado; (2) move o vínculo `field_discussao` para a nova; (3) remove o
-  alias da antiga e a nova recebe o mesmo endereço pelo Pathauto; (4) a antiga perde o vínculo e o alias e é
-  excluída. Tudo em transação: se algo falhar, nada muda.
-- A antiga é sempre excluída. O vínculo sai antes, senão a exclusão despublicaria o tópico.
+  autor, a mesma data de criação e o mesmo estado; (2) preserva o vínculo histórico `field_discussao` quando existe
+  e re-hospeda na publicação nova os Comments diretos de `field_aculta_discussion`; (3) remove o alias da antiga e a
+  nova recebe o mesmo endereço pelo Pathauto; (4) a antiga perde o vínculo e o alias e é excluída. Tudo em transação.
+- A antiga é sempre excluída. A referência histórica sai da antiga antes da exclusão; Comments diretos ficam na
+  publicação nova e não são criados nem movidos para Nodes do Forum contrib.
 
 ### O que permanece na troca
 
-- **Tópico do Fórum**: é o mesmo nó. Título, pasta (segue a sessão), estado e autor são sincronizados como sempre.
-- **Comentários**: ficam no tópico, então permanecem. A publicação mostra a contagem em "Ver discussão completa".
+- **Tópico do Forum antigo**: a entidade referenciada não é alterada; o vínculo `field_discussao` pode permanecer
+  temporariamente como referência histórica. Nenhum tópico novo é sincronizado.
+- **Comments diretos**: ficam associados à publicação convertida (mesmos CIDs, autoria, estado e hierarquia); o
+  formatter Core de `field_aculta_discussion` os exibe na publicação.
 - **Endereço**: o mesmo, pelo padrão da sessão. O endereço antigo responde 404 (sem redirecionamento).
 - **Autoria**: o autor (`uid`), os coautores (`co_authors`) e o autor editorial (`field_editorial_author`) são copiados.
   A caixa de autoria e o autor do tópico seguem o autor copiado. Verificado no runtime em 2026-10-14: publicações
   PodPlant420 #01 e Cuidar não é crime, de `coletivo420` (uid 15), continuam de `coletivo420`; o Bloco Sativa segue
   do uid 1. Os tópicos têm o mesmo dono de suas publicações.
-- **Autor dos comentários**: o comentário guarda o próprio autor (`uid`) e o tópico ao qual pertence. A troca não
-  toca neles, então o autor, o nome exibido e a publicação do comentário permanecem. Verificado em 2026-10-14 com
-  comentário de outro autor (`teste.comum`), publicado explicitamente, em ida e volta (Notícia → blog): autor e nome
-  iguais, comentário no tópico. Comentários de autores sem permissão de publicação sem aprovação ficam na fila de
-  moderação, como em qualquer tópico; isso não é efeito da troca.
+- **Autor dos comentários**: cada Comment mantém o próprio autor (`uid`). A conversão re-hospeda os Comments diretos
+  preservando CID, autor, estado, parent/thread e conteúdo. O teste legado em tópico no Runtime de 2026-10-14 não
+  homologa a discussão direta atual.
 - **Campos**: copiados quando existem no destino. Blog e Notícia têm os mesmos campos da Revista, então nada se perde.
 
 ### Verificação
 
-- Teste no navegador com comentário de teste no tópico, em ida e volta (Notícia → blog): contagem "1 comentário"
-  na publicação, comentário no tópico, endereço 200, comentário de teste removido depois.
+- Homologação pendente: criar Comment diretamente na publicação, converter article ↔ blog, comprovar CID, estado,
+  hierarquia, exibição no novo host e moderação; depois remover apenas o fixture de teste.
 
 ## Privacidade
 
@@ -143,8 +144,8 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
   Nenhum hook de ciclo de vida de publicação cria, atualiza ou despublica tópicos.
 - Abertura histórica: `ForumOpeningPost` lê resumo e imagem da publicação vinculada. Nenhum texto ou arquivo é
   copiado; mudanças editoriais não alteram o Node tópico legado.
-- Estado de migração: `field_aculta_discussion` está instalado em `article` e `blog` no Runtime de teste. `ForumTopicHooks`
-  mantém apenas o ajuste de links de comentários dos tópicos históricos; `LegacyPublicationTopicLookup` só lê os
+- Estado de migração: `field_aculta_discussion` está instalado em `article` e `blog` no Runtime de teste. O hook
+  `ForumTopicHooks` foi removido; o Runtime tinha zero Comments `comment_forum`. `LegacyPublicationTopicLookup` só lê os
   vínculos históricos para apresentação/conversão e não pode criar nem alterar tópicos. A limpeza de conteúdo legado e remoção do módulo contrib
   continuam pendentes e protegidas pelo plano de recuperação.
 - URL do tópico: `/topico/<título>` (padrão `aculta_forum_topic`).

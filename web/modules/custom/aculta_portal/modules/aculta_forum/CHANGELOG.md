@@ -1,3 +1,14 @@
+## 0.1.0-dev.36 — retirar hook residual do Magazine — 2026-10-19
+
+- O `aculta_magazine` removeu o único hook restante ligado a Comments
+  `comment_forum`; a suíte Unit confirmou 7 testes/30 assertions e o Runtime
+  confirmou zero Comments antigos, render full de publicação e HTTP 200 após
+  redirect. Os 12 vínculos e Nodes antigos permanecem intocados.
+- Gatilhos de criação/sincronização já haviam sido removidos; agora não há
+  hook de visualização/editorial executável nesse módulo que dependa do Forum
+  contrib. Permanecem os serviços de leitura/conversão de vínculo até a migração
+  dos dados. RUNTIME STATUS: PARTIAL; Comments diretos reais/browser pendentes.
+
 ## 0.1.0-dev.35 — remover consumidor editorial do Forum legado — 2026-10-19
 
 - Retirado de `aculta_user` o fallback de resumo que consultava Comments do

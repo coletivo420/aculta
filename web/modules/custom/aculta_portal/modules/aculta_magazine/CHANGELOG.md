@@ -1,3 +1,17 @@
+## 0.1.0-dev.12 — retirar ajuste residual de links do Forum — 2026-10-19
+
+- `ForumTopicHooks::commentLinksAlter` removido: era o único hook restante e
+  só tratava links de Comments `comment_forum` legados. O Runtime de teste tem
+  zero entidades desse bundle. `PublicationTypeConverter` continua preservando
+  os vínculos `field_discussao` sem alterar tópicos antigos e re-hospedando
+  Comments diretos.
+- Removido o teste unitário do hook extinto. Unit do Magazine e renderização no
+  Runtime foram revalidados: 7 testes/30 assertions PASS; cache rebuild, render
+  full da publicação e HTTP canônico (200 após redirect) PASS. Gates Portal
+  (970), fronteira (1385) e mapa (154) PASS. Nenhum dado foi alterado; não há
+  Comments `comment_forum` reais para testar links. PHP 8.4.26 abaixo da baseline
+  8.5. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.11 — remove API residual de criação de tópico — 2026-10-19
 
 - Serviço `ForumTopicSync` removido e substituído por `LegacyPublicationTopicLookup`, somente leitura. `PublicationTypeConverter` ainda preserva referências históricas e Comments diretos ao trocar o bundle, sem criar nem alterar tópicos antigos.
