@@ -351,6 +351,7 @@
         "popperjs/popperjs": "2.11.6",
         "progress-tracker/progress-tracker": "2.0.7",
         "signature_pad/signature_pad": "2.3.0",
+        "symfony/brevo-mailer": "^7.4",
         "tabby/tabby": "12.0.3",
         "tippyjs/tippyjs": "6.3.7"
     },
