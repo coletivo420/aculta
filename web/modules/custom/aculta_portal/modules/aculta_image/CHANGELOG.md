@@ -1,5 +1,10 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.28 — campo histórico de produto alinhado à política de imagem — 2026-10-20
+
+- O campo legado `commerce_product.produto_loja.field_imagens` declara `aculta_image:policy: default`, mantendo a configuração histórica dentro da política única de imagens.
+- Evidência: `php scripts/validate-aculta-image.php` PASS; RUNTIME STATUS: DEFERRED (Config Sync não importado).
+
 ## 0.1.0-dev.27 — imagem do texto marcada por atributos de dados — 2026-10-19
 
 - Filtro `ImagemModelo` emite `data-aculta-imagem`, `data-aculta-imagem-modelo`, `data-aculta-imagem-alinhamento` e `data-aculta-imagem-legenda` no lugar das classes `aculta-imagem*`. O tema (`revista-post.css`) seleciona por esses atributos.

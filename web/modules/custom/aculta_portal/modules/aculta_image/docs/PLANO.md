@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-20: versão **0.1.0-dev.27**. A classificação do submódulo permanece **Dev**: o gate precisa ser executado novamente no estado atual e há bloqueios operacionais/integração além da revisão visual. `preRC` só se aplica quando a validação visual for a única pendência que restar; RC segue a política de `AGENTS.md`.
+Status em 2026-10-20: versão **0.1.0-dev.28**. O campo histórico `commerce_product.produto_loja.field_imagens` foi alinhado à política `aculta_image` e o gate passou. A classificação do submódulo permanece **Dev**: há bloqueios operacionais/integração além da revisão visual. `preRC` só se aplica quando a validação visual for a única pendência que restar; RC segue a política de `AGENTS.md`.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
