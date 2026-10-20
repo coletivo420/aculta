@@ -23,6 +23,8 @@ informações institucionais; se algum dado não estiver aqui, peça ao respons�
 
 - Textos públicos (política de privacidade, termos, rodapé, contato) usam esses dados exatamente como aqui.
 - O e-mail `4e20coletivo@gmail.com` que aparece em alguns arquivos antigos não é o canal oficial: o canal é `faleconosco@aculta.org`.
-- Encarregado pelo tratamento de dados (LGPD): não consta nas informações publicadas. Não preencher sem indicação do responsável.
+- Encarregado pelo tratamento de dados (LGPD): pessoa jurídica, a designar pelo responsável (razão social pendente). Atendimento pelo canal faleconosco@aculta.org.
+- Servidores de hospedagem e banco de dados do site: no Brasil.
+- Checkout de pagamentos: ativo na produção, processado pelo Mercado Pago.
 - Ver também `docs/compliance/LGPD-INVENTARIO.md` (tratamento de dados pessoais por módulo) e
   `scripts/institution/politica-de-privacidade.html` (texto publicado).
