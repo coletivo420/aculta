@@ -12,6 +12,7 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Mail\AvisosResumoMailType;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 
 /**
@@ -102,7 +103,7 @@ final class AvisosResumo {
       return FALSE;
     }
     $mensagem = new MailMessage(self::CHAVE_MAIL, (string) $conta->getEmail(), LanguageInterface::LANGCODE_DEFAULT, [
-      'linhas' => $linhas,
+      'resumo' => AvisosResumoMailType::formatLinhas($linhas),
     ], $this->uuid->generate());
     if (!$this->mailer->send($mensagem)) {
       return FALSE;

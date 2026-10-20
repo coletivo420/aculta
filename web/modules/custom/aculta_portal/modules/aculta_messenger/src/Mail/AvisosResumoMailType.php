@@ -12,7 +12,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 /**
  * Resumo diário de avisos do Fórum por e-mail (ACULTA Messenger, F5.2).
  *
- * Recebe `linhas`: uma linha por tópico, com `tipo`, `titulo` e `quantidade` de novidades.
+ * O consumidor monta a variável `resumo` com formatLinhas(); o tipo só declara o texto.
  */
 final class AvisosResumoMailType implements MailTypeInterface {
 
@@ -30,25 +30,48 @@ final class AvisosResumoMailType implements MailTypeInterface {
   /**
    * {@inheritdoc}
    */
-  public function subject(array $context): string {
+  public function variables(): array {
+    return [
+      'resumo' => ['label' => (string) $this->translation->translate('Linhas do resumo (um tópico por linha)'), 'sample' => 'Respostas novas em "Tópico de exemplo": 2'],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultSubject(): string {
     return (string) $this->translation->translate('Resumo de avisos do Fórum');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function body(array $context): string {
+  public function defaultBody(): string {
+    $partes = [
+      (string) $this->translation->translate('Você tem novidades nos tópicos que segue:'),
+      '{{ resumo }}',
+      (string) $this->translation->translate('Para deixar de receber este resumo, altere a opção em Minha conta > Privacidade.'),
+    ];
+    return implode("\n\n", $partes);
+  }
+
+  /**
+   * Linhas do resumo a partir de `tipo`, `titulo` e `quantidade` (uma por tópico).
+   *
+   * @param array $linhas
+   *   Linhas do resumo.
+   */
+  public static function formatLinhas(array $linhas): string {
     $rotulos = [
       Aviso::TIPO_RESPOSTA => 'Respostas novas',
       Aviso::TIPO_ATUALIZACAO => 'Atualizações',
     ];
-    $partes = [(string) $this->translation->translate('Você tem novidades nos tópicos que segue:')];
-    foreach ($context['linhas'] ?? [] as $linha) {
+    $texto = [];
+    foreach ($linhas as $linha) {
       $tipo = (string) ($linha['tipo'] ?? '');
-      $partes[] = ($rotulos[$tipo] ?? $tipo) . ' em "' . (string) ($linha['titulo'] ?? '') . '": ' . (int) ($linha['quantidade'] ?? 0);
+      $texto[] = ($rotulos[$tipo] ?? $tipo) . ' em "' . (string) ($linha['titulo'] ?? '') . '": ' . (int) ($linha['quantidade'] ?? 0);
     }
-    $partes[] = (string) $this->translation->translate('Para deixar de receber este resumo, altere a opção em Minha conta > Privacidade.');
-    return implode("\n\n", $partes);
+    return implode("\n", $texto);
   }
 
 }

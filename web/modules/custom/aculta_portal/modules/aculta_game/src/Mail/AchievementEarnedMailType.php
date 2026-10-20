@@ -8,7 +8,7 @@ use Drupal\aculta_mailer\Type\MailTypeInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
- * Aviso de conquista por e-mail. Recebe `label` e `url` prontos no contexto.
+ * Aviso de conquista por e-mail.
  */
 final class AchievementEarnedMailType implements MailTypeInterface {
 
@@ -26,23 +26,27 @@ final class AchievementEarnedMailType implements MailTypeInterface {
   /**
    * {@inheritdoc}
    */
-  public function subject(array $context): string {
-    return (string) $this->translation->translate('Você conquistou: @achievement', [
-      '@achievement' => (string) ($context['label'] ?? ''),
-    ]);
+  public function variables(): array {
+    return [
+      'label' => ['label' => (string) $this->translation->translate('Nome da conquista'), 'sample' => 'Primeira leitura'],
+      'url' => ['label' => (string) $this->translation->translate('Endereço das conquistas'), 'sample' => 'https://example.invalid/conta/atividade'],
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function body(array $context): string {
+  public function defaultSubject(): string {
+    return (string) $this->translation->translate('Você conquistou: {{ label }}');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultBody(): string {
     $lines = [
-      (string) $this->translation->translate('Parabéns! Você recebeu a conquista “@achievement”.', [
-        '@achievement' => (string) ($context['label'] ?? ''),
-      ]),
-      (string) $this->translation->translate('Veja suas conquistas e as opções de visibilidade na sua conta: @url', [
-        '@url' => (string) ($context['url'] ?? ''),
-      ]),
+      (string) $this->translation->translate('Parabéns! Você recebeu a conquista “{{ label }}”.'),
+      (string) $this->translation->translate('Veja suas conquistas e as opções de visibilidade na sua conta: {{ url }}'),
     ];
     return implode("\n\n", $lines);
   }
