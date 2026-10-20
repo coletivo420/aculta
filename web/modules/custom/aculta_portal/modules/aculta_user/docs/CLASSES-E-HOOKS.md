@@ -147,7 +147,13 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `AuthorIdentity` | `src/Identity/AuthorIdentity.php` | View-model escalar mínimo com cache tags/contexts da identidade pública. |
 | `AuthorIdentityResolver` | `src/Identity/AuthorIdentityResolver.php` | Resolve apelido e link canônico para variantes User sem expor a entidade. |
 | `AuthorCardBuilder` | `src/Identity/AuthorCardBuilder.php` | Gera render array neutro de cartão, com cache e ações fornecidas por consumidor autorizado. |
+| `AuthorCardVariantResolver` | `src/Identity/AuthorCardVariantResolver.php` | Resolve variant de Comment pelo bundle do host; contextos desconhecidos não herdam cartão. |
 | `AuthorCardThemeHooks` | `src/Hook/AuthorCardThemeHooks.php` | Declara hook neutro do cartão e mantém fallback sem estilo. |
+
+`DiscussionCommentAuthorHooks::entityView` usa `CommentInterface::getCommentedEntity()`
+e o resolver de variantes. Fórum e respostas usam `author_forum`; Revista usa
+`author_comment`; os bundles previstos de LMS e Wiki usam `author_lms` e
+`author_wiki`. Ver `AUTHOR-CARD-VARIANTS.md`.
 
 ### `Hook`
 

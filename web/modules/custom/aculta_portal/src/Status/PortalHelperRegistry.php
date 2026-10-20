@@ -32,6 +32,12 @@ final class PortalHelperRegistry {
       'summary' => 'Prepara identidade, avatar mediado pelo aculta_image e cache para cartões; ações e decisões de acesso permanecem com os consumidores funcionais.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md',
     ],
+    'aculta_user.author_card_variant_resolver' => [
+      'label' => 'Variantes contextuais de autoria',
+      'summary' => 'Seleciona a variante do cartão pelo host sem conceder acesso ou misturar '
+        . 'Fórum, Revista, LMS e Wiki.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md',
+    ],
     'aculta_game.mission_progress' => [
       'label' => 'Missões e progresso',
       'summary' => 'Apresenta missões iniciais e progresso privado a partir das concessões reais, sem pontuação ou storage paralelo.',

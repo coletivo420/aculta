@@ -22,6 +22,10 @@ services:
     arguments: ['@aculta_user.author_identity_resolver']
     tags:
       - { name: aculta_portal.helper }
+  aculta_user.author_card_variant_resolver:
+    class: Drupal\aculta_user\Identity\AuthorCardVariantResolver
+    tags:
+      - { name: aculta_portal.helper }
   aculta_user.participation_rules:
     class: Drupal\aculta_user\ParticipationRules
     arguments: ['@config.factory', '@entity_type.manager']

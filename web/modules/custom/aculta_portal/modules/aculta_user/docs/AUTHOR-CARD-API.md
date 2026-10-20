@@ -37,6 +37,9 @@ resultado de access antes de serem usados.
 - `AuthorIdentity`: contrato escalar cacheável de saída, sem regra de negócio.
 - `AuthorCardBuilder` (`aculta_user.author_card_builder`): cria o render array
   neutro `aculta_user_author_card` para o contrato de apresentação do tema.
+- `AuthorCardVariantResolver` (`aculta_user.author_card_variant_resolver`):
+  escolhe a variante contextual para Comment a partir do bundle da entidade
+  hospedeira; recusa contextos desconhecidos e não decide access.
 - `PublicProfileLinkInterface`: permite compor e testar o link canônico sem
   substituir `PublicProfileLink` como fonte de verdade.
 - `PublicProfilePolicy`: continua responsável pela política pública existente.

@@ -1,3 +1,22 @@
+## 0.4.0-dev.35 — variantes de autoria separadas pelo host da discussão — 2026-10-19
+
+- `DiscussionCommentAuthorHooks` consulta a entidade hospedeira pelo contrato
+  Core `CommentInterface::getCommentedEntity()` e seleciona `author_forum` para
+  respostas de tópicos públicos; `article`/`blog` usam `author_comment`, e os
+  bundles planejados LMS/Wiki têm variantes próprias. Hosts desconhecidos não
+  recebem o cartão errado. Access permanece no host/Comment; o resolver só
+  identifica contexto.
+- PHPUnit Unit para o mapeamento Forum/Revista/LMS/Wiki e hosts não suportados;
+  suíte Unit `aculta_user`: 60 testes / 175 assertions PASS (1 depreciação
+  preexistente); lint e PHPCS dos arquivos alterados PASS; Drupal 11+ (970),
+  fronteira (1362), mapa (154) e hierarquia PASS.
+- Runtime `toca`, Drupal 11.4.10: cache rebuild PASS; smoke sem persistência
+  resolveu Forum→`author_forum`, Revista→`author_comment`, LMS→`author_lms` e
+  Wiki→`author_wiki`. Não foi criado ou alterado Comment. Renderização de
+  comentários persistidos e inspeção visual seguem pendentes. PHP CLI e Runtime
+  estão em 8.4.26, abaixo da baseline de desenvolvimento 8.5. RUNTIME STATUS:
+  PARTIAL.
+
 ## 0.4.0-dev.32 — autoria dos comentários compartilhados — 2026-10-19
 
 - `DiscussionCommentAuthorHooks` usa `AuthorCardBuilder` nas variantes `author_comment` e `author_growroom_historico` para Comments compartilhados. A autoria histórica mostra apenas nome e origem do acervo, sem conta ativa ou ações; identidade de User continua sujeita à policy pública.

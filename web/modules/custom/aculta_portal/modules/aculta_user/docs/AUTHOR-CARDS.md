@@ -1,7 +1,7 @@
 # Cartões de identidade e autoria
 
-Status: cartões de `author_forum` integrados aos tópicos do bundle novo na linha
-`aculta_user 0.4.0-dev.33`. `aculta_user` possui políticas,
+Status: cartões de `author_forum` integrados aos tópicos e respostas do bundle novo na linha
+`aculta_user 0.4.0-dev.35`. `aculta_user` possui políticas,
 links, perfil, avatar e memória histórica. `AuthorIdentityResolver`,
 `AuthorIdentity` e `AuthorCardBuilder` compõem identidade, avatar cacheável e
 render array neutro; ACULTA420 apresenta o cartão SDC. Ações e dados adicionais
@@ -22,11 +22,11 @@ seguem responsabilidade de consumidores autorizados, sem duplicação no Forum.
 | `LegacyMemorialController` | Memorial coletivo `/u/lendashistoricas` | Growroom histórico | `author_growroom_historico` | Preservar link coletivo; sem página individual. |
 | `FriendshipManager` / `FriendshipManagerInterface` | Estado e ações de amizade | perfil e Messenger | `author_forum`, `author_comment`, `profile_full` quando autorizado | Reusar API existente; ocultar ação quando inelegível. |
 | `BadgeService` / `AchievementDefinitions` | Conquistas e fatos | perfil/Game | variantes autorizadas | Reusar sem conceder prémios no render e respeitar privacidade de conquistas. |
-| `DiscussionHooks` em `aculta_user` | Trecho/link de comentário de tópico vinculado | Magazine (hoje links para Node Forum) | `author_comment` | Refatorar para o host comentário; remover acoplamento `comment_forum` após substituição. |
+| `DiscussionCommentAuthorHooks` em `aculta_user` | Cartão compartilhado de autoria de Comment | Fórum, Revista e contextos futuros | Variante resolvida pelo host: `author_forum`, `author_comment`, `author_lms` ou `author_wiki` | Contextos desconhecidos não herdam variante. Autoria histórica usa builder separado. |
 | `PublicForumTopicAuthorHooks` | Cartão da autoria User ou histórica nos tópicos novos | Node `aculta_forum_topic`, `full`/`teaser` | `author_forum` / `author_growroom_historico` | Integrado pelo `AuthorCardBuilder`; não consulta campos Profile diretamente e não converte autores históricos em User. |
 | `ForumTopicPresentationHooks`, `ForumModerationHooks`, `RestrictedForumHooks`, `RestrictedForumGrants`, `ParticipationRules` | Apresentação/acesso/moderação ligados aos bundles antigos | Forum contrib | `author_forum` + política contextual | Refatorar/migrar conforme paridade e ownership da nova API. |
 | `ActivityController` | Aba de atividade Wiki/Fórum/Revista/Comentários/conquistas | perfil/conta | `profile_compact` ou list views | Estender a nova fonte de tópico/comentário; não duplicar consulta de perfil. |
-| `comment--comment-forum.html.twig` | Avatar/nome/data/resposta em cartão de mensagem | Comment contrib | `author_forum` ou `author_comment` via tema | Ainda usa saída legada; integrar ao novo builder junto do novo motor, sem duplicar dados no tema. |
+| `comment--comment-forum.html.twig` | Avatar/nome/data/resposta em cartão de mensagem | Comment contrib | `author_forum` via tema | Ainda usa saída legada; integrar ao novo builder junto do corte do Forum contrib, sem duplicar dados no tema. |
 | `node--forum--full.html.twig`, `forum-list.html.twig` | Thread e listagem | Forum contrib | `author_forum` e cards de discussão | Substituir apenas com implementação do novo motor, fora desta fase. |
 | `revista-publication` slot **Author box**, `node--article--full`/`node--blog--full` | Autoria editorial | Magazine/ACULTA420 | `author_editorial` | Preservar o cartão editorial existente; adaptar slot para API central quando implementada. |
 | SDCs `social-links-page`, `editorial-card`, `course_card` | Perfil social, autor editorial/curso | ACULTA420 | várias | Reutilizar onde a função coincide; não declarar que já são Author Cards genéricos. |

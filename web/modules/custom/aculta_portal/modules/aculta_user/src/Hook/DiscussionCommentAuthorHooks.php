@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Hook;
 
 use Drupal\aculta_user\Entity\LegacyAuthor;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
+use Drupal\aculta_user\Identity\AuthorCardVariantResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,6 +22,8 @@ final class DiscussionCommentAuthorHooks {
   public function __construct(
     #[Autowire(service: 'aculta_user.author_card_builder')]
     private readonly AuthorCardBuilder $authorCardBuilder,
+    #[Autowire(service: 'aculta_user.author_card_variant_resolver')]
+    private readonly AuthorCardVariantResolver $variantResolver,
   ) {}
 
   /**
@@ -42,12 +45,17 @@ final class DiscussionCommentAuthorHooks {
       return;
     }
 
+    $host = $entity->getCommentedEntity();
+    if ($host === NULL || ($variant = $this->variantResolver->forHost($host)) === NULL) {
+      return;
+    }
+
     $author = $entity->getOwner();
     if (!$author instanceof UserInterface) {
       return;
     }
 
-    $card = $this->authorCardBuilder->build($author, 'author_comment');
+    $card = $this->authorCardBuilder->build($author, $variant);
     if ($card === NULL) {
       return;
     }

@@ -35,6 +35,10 @@ perfil para produzir a identidade base de autoria com cacheabilidade. O payload
 é limitado a variante, apelido e link canônico opcional; avatar e ações exigem
 extensão específica e passam pela policy do `aculta_user`. Contrato em
 [AUTHOR-CARD-API.md](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md).
+`aculta_user.author_card_variant_resolver` seleciona a variante de autoria pelo
+bundle hospedeiro dos Comments compartilhados; não substitui Entity Access nem
+autoriza o contexto. As variantes e os contratos de cada host estão em
+[AUTHOR-CARD-VARIANTS.md](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md).
 `aculta_game.achievement_presentation` aplica a mesma política de exibição à
 conta e ao perfil público. Contrato e evidências em
 [execução do Game](../../web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md).
