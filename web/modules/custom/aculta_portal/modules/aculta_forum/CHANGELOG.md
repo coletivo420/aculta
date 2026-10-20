@@ -1,3 +1,16 @@
+## `0.1.0-dev.113` — validar linha e confirmações de moderação LMS
+
+- Smoke autenticado no Runtime de teste usou Group, Node e Comment efêmeros
+  próprios. A View mostra o Comment somente na fila pendente e emite as ações
+  contextuais `approve`/`reject`; ambas as confirmações Form API abriram por GET.
+  Nenhuma decisão foi submetida. Acesso anônimo à fila e ao tópico privado foi
+  negado.
+- Fixture, membership automática do Group e sessão foram removidas; consultas
+  finais confirmaram 1 curso preexistente, 0 tópicos LMS e 0 Comments. Recibo
+  privado: `/home/aculta/private/aculta/forum-lms-dev113/smoke-result.json`.
+  RUNTIME STATUS: PARTIAL; transições HTTP e regressão de notificações/Game
+  seguem pendentes.
+
 ## `0.1.0-dev.112` — provar montagem da fila pelo controller
 
 - O Kernel instancia o `LmsForumModerationController` com as dependências reais

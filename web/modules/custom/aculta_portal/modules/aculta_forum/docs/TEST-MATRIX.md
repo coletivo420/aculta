@@ -1,5 +1,19 @@
 # Matriz de testes por fase
 
+## dev.113 — fila LMS com Comment e ações
+
+- Runtime de teste, Educador autenticado: fixture em Group próprio; fila
+  pendente exibiu o Comment e ambos os links de moderação. Confirmações de
+  aprovação/rejeição responderam HTTP 200 por GET, sem submissão. Fila
+  publicada/rejeitada excluiu o Comment pendente. Anônimo recebeu 403 para fila
+  e tópico privado.
+- Cleanup via Entity API removeu Comment, Node, relationship, membership e
+  Group; sessão ULI destruída. Pós-condição: 1 curso preexistente, 0 tópicos LMS,
+  0 Comments e nenhum usuário de teste novo. Recibo privado em
+  `/home/aculta/private/aculta/forum-lms-dev113/smoke-result.json`.
+- Transições HTTP não foram submetidas; Kernel cobre o efeito de aprovar/rejeitar.
+  RUNTIME STATUS: PARTIAL.
+
 ## dev.112 — montagem da fila pelo controller LMS
 
 - `LmsClassEducatorPermissionKernelTest` instancia o controller com o

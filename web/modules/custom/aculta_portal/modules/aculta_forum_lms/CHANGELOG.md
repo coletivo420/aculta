@@ -1,3 +1,12 @@
+## `0.1.0-dev.21` — validar a fila LMS com Comment e ações reais
+
+- Educador abriu a fila com uma fixture temporária em Group privado. O Comment
+  aparece somente na fila pendente; as ações `approve` e `reject` são emitidas,
+  e as duas confirmações Form API respondem 200 por GET. Nenhum POST foi feito.
+- A fila e o tópico negam acesso anônimo. Group, membership, Node, relationship,
+  Comment e sessão de teste foram removidos; estado LMS original confirmado.
+  RUNTIME STATUS: PARTIAL; execução HTTP das transições ainda pendente.
+
 ## `0.1.0-dev.20` — validar montagem contextual da fila no controller
 
 - O teste Kernel chama `LmsForumModerationController::comments()` com a View
