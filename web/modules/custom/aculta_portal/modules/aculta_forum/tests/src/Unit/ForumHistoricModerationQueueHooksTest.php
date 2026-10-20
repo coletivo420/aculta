@@ -25,7 +25,9 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
     foreach (['page_pending', 'page_rejected'] as $display) {
       $view = $this->view('aculta_forum_admin_comments', $display);
       $query = $this->createMock(Sql::class);
-      $query->method('getTableInfo')->with('node_field_data')->willReturn(['alias' => 'node_host']);
+      $query->method('getTableInfo')
+        ->with('node_field_data_comment_field_data')
+        ->willReturn(['alias' => 'node_host', 'table' => 'node_field_data']);
       $conditions = [];
       $query->expects(self::exactly(2))
         ->method('addWhereExpression')
@@ -69,10 +71,25 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
    */
   public function testMissingHostRelationshipFailsClosed(): void {
     $view = $this->view('aculta_forum_admin_comments', 'page_pending');
+    $view->relationship = [];
     $query = $this->createMock(Sql::class);
-    $query->method('getTableInfo')->with('node_field_data')->willReturn(NULL);
+    $query->expects(self::never())->method('getTableInfo');
     $query->expects(self::once())->method('addWhereExpression')->with(0, '1 = 0');
     $query->expects(self::never())->method('addTable');
+
+    $this->hook(FALSE)->viewsQueryAlter($view, $query);
+  }
+
+  /**
+   * An aliased relationship to a different table fails closed.
+   */
+  public function testUnexpectedHostTableFailsClosed(): void {
+    $view = $this->view('aculta_forum_admin_comments', 'page_pending');
+    $query = $this->createMock(Sql::class);
+    $query->method('getTableInfo')
+      ->with('node_field_data_comment_field_data')
+      ->willReturn(['alias' => 'unexpected_host', 'table' => 'comment_field_data']);
+    $query->expects(self::once())->method('addWhereExpression')->with(0, '1 = 0');
 
     $this->hook(FALSE)->viewsQueryAlter($view, $query);
   }
@@ -83,7 +100,9 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
   public function testMissingAuthorFieldTablesFailClosed(): void {
     $view = $this->view('aculta_forum_admin_comments', 'page_rejected');
     $query = $this->createMock(Sql::class);
-    $query->method('getTableInfo')->with('node_field_data')->willReturn(['alias' => 'node_host']);
+    $query->method('getTableInfo')
+      ->with('node_field_data_comment_field_data')
+      ->willReturn(['alias' => 'node_host', 'table' => 'node_field_data']);
     $query->expects(self::once())->method('addWhereExpression')->with(0, '1 = 0');
 
     $this->hook(FALSE)->viewsQueryAlter($view, $query);
@@ -107,6 +126,7 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
     $view = $this->createMock(ViewExecutable::class);
     $view->method('id')->willReturn($id);
     $view->current_display = $display;
+    $view->relationship = ['node' => (object) ['alias' => 'node_field_data_comment_field_data']];
     return $view;
   }
 

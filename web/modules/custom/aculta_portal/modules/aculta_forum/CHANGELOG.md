@@ -1,3 +1,24 @@
+## `0.1.0-dev.62` — corrigir filas de moderação do Fórum — 2026-10-20
+
+- A consulta da fila pendente/rejeitada falhava fechada em todas as execuções:
+  no Core 11.4, a relação Node da View usa o alias
+  `node_field_data_comment_field_data`, então procurar pelo nome-base
+  `node_field_data` retornava vazio e o hook adicionava `1 = 0`.
+- `ForumHistoricModerationQueueHooks` resolve o alias da relação configurada e
+  confirma que a tabela é `node_field_data` antes de excluir autores históricos.
+  A política fail-closed é preservada: relacionamento/tabelas ausentes
+  continuam fechando a fila para proteger o acervo.
+- Unit do hook: 5 testes/18 assertions; suíte Unit do Fórum: 79 testes/484
+  assertions; Kernel de moderação `aculta_user`: 7 testes/84 assertions PASS.
+  Runtime `toca`: a fila pendente trouxe somente o comentário
+  do tópico Fórum e excluiu o da publicação. Fixtures 425/426 e 56/57 removidas
+  via Entity API; estado final vazio para tópicos e Comments compartilhados.
+- A conta QA disponível é isenta por `content_editor`; não foi usada para
+  simular um primeiro comentário real. Essa política tem cobertura Kernel, mas
+  o fluxo autenticado da rota e a inspeção visual permanecem pendentes.
+  PHP CLI 8.4.26 (abaixo da baseline 8.5). RUNTIME STATUS: PARTIAL para a
+  homologação integral; PASS para consulta e separação das filas.
+
 ## `0.1.0-dev.60` — inspeção visual das listas de descoberta — 2026-10-20
 
 - Firefox ESR visível em X11, visitante anônimo, Runtime `toca`:

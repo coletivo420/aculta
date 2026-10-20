@@ -1,5 +1,28 @@
 # Matriz de testes por fase
 
+## dev.62 — filas pendente/rejeitada do Fórum
+
+- A consulta da View usava `getTableInfo('node_field_data')`, mas o Core 11.4
+  indexa a tabela do relacionamento como `node_field_data_comment_field_data`.
+  O hook fail-closed acrescentava `1 = 0`, ocultando também comentários válidos.
+  O código agora resolve o alias no relacionamento `node` já construído pela
+  View e confirma que aponta para `node_field_data`; ausência ou divergência
+  ainda fecha a fila.
+- PHPUnit Unit direcionado: `ForumHistoricModerationQueueHooksTest`, 5 testes /
+  18 assertions PASS; suíte Unit do Fórum, 79 testes/484 assertions PASS.
+  PHPUnit Kernel `PublicDiscussionModerationKernelTest`,
+  7 testes / 84 assertions PASS. PHP CLI 8.4.26, abaixo da baseline 8.5.
+- Runtime `toca`: View `page_pending` retornou apenas o Comment 56, associado
+  ao tópico temporário do Fórum; o Comment 57 da publicação não apareceu. Os
+  dois Comments estavam pendentes. Nodes 425/426 e Comments 56/57 foram
+  removidos via Entity API no `finally` da execução. Estado final: 0 tópicos
+  públicos e 0 Comments compartilhados, preservando os dados baseline.
+- A conta `teste.comum` não prova a política de primeiro comentário: seu papel
+  `content_editor` a isenta. A política foi validada pelo Kernel; nenhuma conta
+  real foi usada como fixture. A execução da rota HTTP autenticada e a inspeção
+  visual das três abas permanecem pendentes. RUNTIME STATUS: PASS para a query
+  e isolamento; PARTIAL para a homologação completa.
+
 ## dev.61 — Batch Core no purpose Fórum
 
 - O endpoint progressivo Batch do Core permanece no purpose `main`, conforme a

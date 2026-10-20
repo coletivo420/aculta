@@ -36,9 +36,18 @@ final class ForumHistoricModerationQueueHooks {
       return;
     }
 
-    $hostTable = $query->getTableInfo('node_field_data');
+    // Views keys aliased relationship tables by their actual alias (for
+    // example, node_field_data_comment_field_data), not by the base table
+    // name. Resolve the configured Node relationship first, then validate
+    // that it points to the expected table before using its SQL alias.
+    $nodeRelationship = $view->relationship['node'] ?? NULL;
+    $relationshipAlias = $nodeRelationship->alias ?? NULL;
+    $hostTable = is_string($relationshipAlias)
+      ? $query->getTableInfo($relationshipAlias)
+      : NULL;
     $hostAlias = $hostTable['alias'] ?? NULL;
-    if (!is_string($hostAlias)
+    if (($hostTable['table'] ?? NULL) !== 'node_field_data'
+      || !is_string($hostAlias)
       || !preg_match('/^[A-Za-z0-9_]+$/', $hostAlias)
       || !$this->database->schema()->tableExists('node__field_autor_legado')
       || !$this->database->schema()->tableExists('comment__field_autor_legado')) {
