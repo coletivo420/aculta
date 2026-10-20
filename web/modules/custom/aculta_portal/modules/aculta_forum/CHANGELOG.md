@@ -1,3 +1,25 @@
+## `0.1.0-dev.54` — agrupar subcategorias na navegação — 2026-10-20
+
+- A View de `/categorias` agora ordena primeiro pelo nome do pai, depois pelo
+  peso e pelo nome da categoria. Raízes ficam no início; subcategorias aparecem
+  agrupadas pela categoria principal, reduzindo a dispersão observada na
+  inspeção visual X11. O filtro e o vocabulário continuam fixos.
+- Configuração de instalação e Config Sync estão alinhadas. PHPUnit
+  `ForumTopicDisplayConfigTest`: 17/217 PASS; PHPCS, Portal 11+ (975), fronteira
+  (1415), mapa (152), pacotes próprios (26), slugs (378), aculta_image (25) e
+  `git diff --check` PASS.
+- Runtime `toca`, Drupal 11.4.10, `aculta_runtime`: snapshot privado da View
+  anterior em `/home/aculta/private/aculta/runtime-config-backups/forum-dev54-20261020/`
+  (SHA-256 `44b2578fdd372b4815ad46af65252e3a36fa79b8b167ce33d16cb69e13816521`);
+  importação parcial processou somente essa View, cache rebuild PASS, listagem
+  da API ordenou 4 raízes e 8 filhos por pai, `/categorias` HTTP 200 e 0 Nodes
+  `aculta_forum_topic`/0 Comments `aculta_discussion_post`.
+- Firefox/X11: categorias conferidas em 1024 e 768 px, mais viewport 320 px no
+  Responsive Design Mode; raízes antes dos filhos, grupo/ordem coerentes e sem
+  overflow horizontal observado. Capturas privadas indexadas em
+  `docs/TEST-MATRIX.md`. RUNTIME STATUS: PARTIAL; fluxo visual autenticado e
+  páginas com tópicos permanecem sem fixture.
+
 ## `0.1.0-dev.53` — citar comentário no contexto — 2026-10-20
 
 - A ação **Citar** usa a rota Core de resposta com o ID do comentário como pai;

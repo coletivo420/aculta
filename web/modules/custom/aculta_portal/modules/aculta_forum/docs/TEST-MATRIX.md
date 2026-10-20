@@ -1,5 +1,22 @@
 # Matriz de testes por fase
 
+## dev.54 — agrupamento visual de categorias por hierarquia
+
+- A captura X11 1024 px mostrou filhos antes das categorias raiz. Config da
+  View agora ordena pelo nome da relação `parent`, depois peso e nome; Unit
+  `ForumTopicDisplayConfigTest`: 17/217 PASS. PHPCS, Portal 11+ (975), fronteira
+  (1415), mapa (152), pacotes (26), slugs (378), imagem e diff-check PASS.
+- Runtime `toca`: cópia privada da configuração anterior em
+  `/home/aculta/private/aculta/runtime-config-backups/forum-dev54-20261020/`,
+  importação parcial somente da View e cache rebuild PASS. Execução real lista
+  4 categorias raiz antes de 8 filhas agrupadas; `/categorias` HTTP 200 e 0
+  tópicos/Comments. Nenhum conteúdo criado/alterado.
+- Firefox/X11: capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-dev53-20261020/` para 1024,
+  768 e Responsive Design Mode 320 px; raízes primeiro, filhos agrupados e sem
+  overflow horizontal visível. Tópicos e sessão autenticada seguem sem fixture.
+  RUNTIME STATUS: PARTIAL.
+
 ## dev.53 — citação contextual de comentário
 
 - PHPUnit Unit `ForumQuoteBuilderTest` e `ForumQuoteHooksTest`: 9 testes / 18

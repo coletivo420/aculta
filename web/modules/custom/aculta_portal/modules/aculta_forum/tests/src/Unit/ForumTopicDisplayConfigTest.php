@@ -244,6 +244,8 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     );
     self::assertSame('parent', $install['display']['default']['display_options']['fields']['parent_name']['relationship']);
     self::assertSame('Categoria principal', $install['display']['default']['display_options']['fields']['parent_name']['label']);
+    self::assertSame('parent', $install['display']['default']['display_options']['sorts']['parent_name']['relationship']);
+    self::assertSame('ASC', $install['display']['default']['display_options']['sorts']['parent_name']['order']);
     self::assertSame('block', $install['display']['block_landing']['display_plugin']);
     self::assertSame(
       ['items_per_page' => TRUE, 'pager' => 'pager'],

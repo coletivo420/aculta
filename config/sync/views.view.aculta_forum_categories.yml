@@ -138,6 +138,16 @@ display:
         type: tag
         options: {  }
       sorts:
+        parent_name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: parent
+          group_type: group
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: standard
+          order: ASC
         weight:
           id: weight
           table: taxonomy_term_field_data
