@@ -1,5 +1,27 @@
 # Matriz de testes por fase
 
+## dev.115 — painel administrativo próprio do Fórum geral
+
+- Config Sync e instalação: tópico em `admin/forum`; comentários agregados e
+  filas em `admin/forum/comentarios/...`; local tasks deixam de usar
+  `system.admin_content`. Rotas mover tópico/comentário também passam à seção.
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 18 testes/236 assertions PASS;
+  PHPCS PASS. Drupal 11+ 988, slugs 377 (20 violações contrib baselined), mapa
+  módulo/tema 153 e packages 27 PASS.
+- Runtime `toca`, URI `https://aculta.toca.net.br`: somente cinco paths de Views
+  atualizados por `drush config:set`, seguido por `drush cr` PASS. RouteProvider
+  retorna os paths novos; MenuLinkManager constrói as cinco URLs da árvore; as
+  três tarefas de estado aparecem no nível secundário. `access_manager` permite
+  os destinos como UID 1. Requisições anônimas para tópicos, filas, ferramentas
+  Core, denúncias e regra compartilhada retornam 403; os dois caminhos antigos
+  `/painel-administrativo/conteudo/forum` e todas as seis rotas descendentes
+  (mover tópico, mover comentário, consulta agregada e as três filas) retornam
+  404. Nenhuma rota do Fórum aparece mais como tarefa local de Conteúdo.
+- Consultas finais: 0 tópicos `aculta_forum_topic`, 0 Comments
+  `aculta_discussion_post`. Nenhuma entidade/conteúdo foi criada ou alterada.
+  Renderização HTML autenticada, browser/X11 e configuração de categorias por
+  interface ainda pendentes. RUNTIME STATUS: PARTIAL.
+
 ## dev.114 — transições de moderação LMS e cache do container
 
 - Runtime de teste, Educador autenticado: as confirmações Form API de

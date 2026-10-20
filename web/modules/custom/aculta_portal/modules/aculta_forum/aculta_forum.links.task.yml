@@ -1,7 +1,7 @@
 aculta_forum.admin_topics:
   title: 'Fórum'
   route_name: view.aculta_forum_admin_topics.page_forum
-  base_route: system.admin_content
+  base_route: view.aculta_forum_admin_topics.page_forum
   weight: 15
 
 aculta_forum.admin_comments_published:

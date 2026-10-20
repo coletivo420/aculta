@@ -314,7 +314,7 @@ display:
     position: 1
     display_options:
       title: Fórum
-      path: admin/content/forum
+      path: admin/forum
       menu:
         type: none
       display_extenders: { }

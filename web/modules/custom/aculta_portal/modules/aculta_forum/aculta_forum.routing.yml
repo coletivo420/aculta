@@ -23,7 +23,7 @@ aculta_forum.mark_all_read:
     _custom_access: 'aculta_forum.read_access:access'
 
 aculta_forum.topic_move:
-  path: '/painel-administrativo/conteudo/forum/{node}/mover-categoria'
+  path: '/painel-administrativo/forum/{node}/mover-categoria'
   defaults:
     _form: '\Drupal\aculta_forum\Form\ForumTopicMoveForm'
     _title: 'Mover tópico de categoria'
@@ -35,7 +35,7 @@ aculta_forum.topic_move:
         type: 'entity:node'
 
 aculta_forum.comment_move:
-  path: '/painel-administrativo/conteudo/forum/comentario/{comment}/mover'
+  path: '/painel-administrativo/forum/comentario/{comment}/mover'
   defaults:
     _form: '\Drupal\aculta_forum\Form\ForumCommentMoveForm'
     _title: 'Mover comentário do fórum'

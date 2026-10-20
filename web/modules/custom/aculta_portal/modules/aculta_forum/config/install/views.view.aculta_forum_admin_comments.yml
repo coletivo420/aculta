@@ -710,7 +710,7 @@ display:
       display_comment: ''
       exposed_block: false
       display_extenders: {}
-      path: admin/content/forum/comentarios
+      path: admin/forum/comentarios
       menu:
         type: none
     cache_metadata:
@@ -911,7 +911,7 @@ display:
         filters: false
       display_description: 'Comentários não publicados e ainda não rejeitados, exclusivamente em tópicos do Fórum público.'
       display_extenders: {  }
-      path: admin/content/forum/comentarios/aguardando-moderacao
+      path: admin/forum/comentarios/aguardando-moderacao
       menu:
         type: none
     cache_metadata:
@@ -1105,7 +1105,7 @@ display:
         filters: false
       display_description: 'Comentários publicados exclusivamente em tópicos do Fórum público.'
       display_extenders: {  }
-      path: admin/content/forum/comentarios/publicados
+      path: admin/forum/comentarios/publicados
       menu:
         type: none
     cache_metadata:
@@ -1306,7 +1306,7 @@ display:
         filters: false
       display_description: 'Comentários rejeitados exclusivamente em tópicos do Fórum público.'
       display_extenders: {  }
-      path: admin/content/forum/comentarios/rejeitados
+      path: admin/forum/comentarios/rejeitados
       menu:
         type: none
     cache_metadata:

@@ -1,3 +1,28 @@
+## `0.1.0-dev.115` — seção administrativa própria do Growroom420
+
+- A aba de tópicos que antes ficava em Conteúdo passa a ser a página principal
+  da seção própria `/painel-administrativo/forum`; os tópicos deixam de aparecer
+  em `/painel-administrativo/conteudo`. As filas de
+  comentários publicados, rejeitados e aguardando moderação e as ferramentas de
+  mover tópico/comentário passam para a mesma árvore.
+- Entrada própria no menu lateral, com links para categorias Taxonomy,
+  configuração do bundle do tópico, denúncias e regras de participação
+  compartilhadas. Access continua sob as permissões e handlers dos respectivos
+  sistemas; não foi criado CRUD/configuração paralela.
+- Configuração ativa atualizada somente nos cinco paths das duas Views; `drush
+  cr` PASS. Rotas novas são registradas, URLs dos cinco links do menu geram
+  destinos sob a seção, e comentários aparecem como tarefas locais nos níveis
+  esperados. `access_manager` permite os nove destinos administrativos ao UID 1;
+  requests anônimos retornam 403 e os paths antigos sob Conteúdo retornam 404.
+  Runtime PARTIAL: a renderização HTML autenticada e browser/X11 seguem pendentes.
+- Runtime permaneceu com 0 tópicos públicos e 0 Comments compartilhados; nenhuma
+  entidade de conteúdo/categoria foi alterada. Configuração anterior era
+  recuperável pelos cinco paths: `admin/content/forum`, `admin/content/forum/comentarios`,
+  `admin/content/forum/comentarios/publicados`,
+  `admin/content/forum/comentarios/rejeitados` e
+  `admin/content/forum/comentarios/aguardando-moderacao`. Reverter código/menu,
+  restaurar esses valores e reconstruir cache; sem import/export global.
+
 ## `0.1.0-dev.114` — validar transições LMS e reconstruir o cache
 
 - Smoke autenticado no Runtime de teste submeteu confirmações Form API de

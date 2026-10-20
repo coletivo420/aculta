@@ -32,30 +32,41 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
-   * Administrative entries expose Forum topics and their separate comments.
+   * The Forum has its own admin section, separate from Content.
    */
-  public function testForumViewsAreDedicatedContentTabs(): void {
+  public function testForumViewsAreDedicatedAdministrationSection(): void {
     $module_path = dirname(__DIR__, 3);
     $repository_path = dirname($module_path, 6);
     $topics = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_admin_topics.yml');
     $comments = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_admin_comments.yml');
     $tasks = Yaml::parseFile($module_path . '/aculta_forum.links.task.yml');
+    $menu = Yaml::parseFile($module_path . '/aculta_forum.links.menu.yml');
+    $routes = Yaml::parseFile($module_path . '/aculta_forum.routing.yml');
 
     self::assertSame('none', $topics['display']['page_forum']['display_options']['menu']['type']);
     self::assertSame('none', $comments['display']['page_forum_comments']['display_options']['menu']['type']);
     self::assertSame('view.aculta_forum_admin_topics.page_forum', $tasks['aculta_forum.admin_topics']['route_name']);
-    self::assertSame('system.admin_content', $tasks['aculta_forum.admin_topics']['base_route']);
+    self::assertSame('view.aculta_forum_admin_topics.page_forum', $tasks['aculta_forum.admin_topics']['base_route']);
     self::assertSame('view.aculta_forum_admin_comments.page_published', $tasks['aculta_forum.admin_comments_published']['route_name']);
     self::assertSame('aculta_forum.admin_topics', $tasks['aculta_forum.admin_comments_published']['parent_id']);
     self::assertSame('Comentários rejeitados', $tasks['aculta_forum.admin_comments_rejected']['title']);
     self::assertSame('Aguardando moderação', $tasks['aculta_forum.admin_comments_pending']['title']);
+    self::assertSame('view.aculta_forum_admin_topics.page_forum', $menu['aculta_forum.admin']['route_name']);
+    self::assertSame('system.admin', $menu['aculta_forum.admin']['parent']);
+    self::assertSame('entity.taxonomy_vocabulary.overview_form', $menu['aculta_forum.admin_categories']['route_name']);
+    self::assertSame(['taxonomy_vocabulary' => 'aculta_forum_categories'], $menu['aculta_forum.admin_categories']['route_parameters']);
+    self::assertSame('entity.node_type.edit_form', $menu['aculta_forum.admin_topic_type']['route_name']);
+    self::assertSame(['node_type' => 'aculta_forum_topic'], $menu['aculta_forum.admin_topic_type']['route_parameters']);
+    self::assertSame('aculta_user.denuncias_forum', $menu['aculta_forum.admin_reports']['route_name']);
+    self::assertSame('aculta_user.participacao_settings', $menu['aculta_forum.admin_participation']['route_name']);
+    self::assertSame('/painel-administrativo/forum/{node}/mover-categoria', $routes['aculta_forum.topic_move']['path']);
+    self::assertSame('/painel-administrativo/forum/comentario/{comment}/mover', $routes['aculta_forum.comment_move']['path']);
 
     $content = Yaml::parseFile($repository_path . '/config/sync/views.view.content.yml');
     $filters = $content['display']['default']['display_options']['filters'];
     self::assertSame('not in', $filters['forum_bundle_exclusion']['operator']);
     self::assertSame(['aculta_forum_topic' => 'aculta_forum_topic'], $filters['forum_bundle_exclusion']['value']);
     self::assertFalse($filters['forum_bundle_exclusion']['exposed']);
-    self::assertFileDoesNotExist($module_path . '/aculta_forum.links.menu.yml');
   }
 
   /**
@@ -421,7 +432,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('field_aculta_categories', $options['fields']['field_aculta_categories']['field']);
     self::assertSame('field_aculta_categories', $options['style']['options']['columns']['field_aculta_categories']);
     self::assertSame('entity_operations', $options['fields']['operations']['plugin_id']);
-    self::assertSame('admin/content/forum', $view['display']['page_forum']['display_options']['path']);
+    self::assertSame('admin/forum', $view['display']['page_forum']['display_options']['path']);
     self::assertSame('none', $view['display']['page_forum']['display_options']['menu']['type']);
     self::assertContains('user.node_grants:view', $view['display']['default']['cache_metadata']['contexts']);
   }
@@ -449,12 +460,12 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('node', $options['filters']['type']['relationship']);
     self::assertFalse($options['query']['options']['disable_sql_rewrite']);
     self::assertArrayNotHasKey('comment_bulk_form', $options['fields']);
-    self::assertSame('admin/content/forum/comentarios', $view['display']['page_forum_comments']['display_options']['path']);
+    self::assertSame('admin/forum/comentarios', $view['display']['page_forum_comments']['display_options']['path']);
     self::assertSame('none', $view['display']['page_forum_comments']['display_options']['menu']['type']);
     foreach ([
-      'page_published' => ['admin/content/forum/comentarios/publicados', '1', NULL],
-      'page_rejected' => ['admin/content/forum/comentarios/rejeitados', '0', '1'],
-      'page_pending' => ['admin/content/forum/comentarios/aguardando-moderacao', '0', '0'],
+      'page_published' => ['admin/forum/comentarios/publicados', '1', NULL],
+      'page_rejected' => ['admin/forum/comentarios/rejeitados', '0', '1'],
+      'page_pending' => ['admin/forum/comentarios/aguardando-moderacao', '0', '0'],
     ] as $display_id => [$path, $published, $rejected]) {
       $display = $view['display'][$display_id]['display_options'];
       self::assertSame($path, $display['path']);

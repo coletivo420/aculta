@@ -31,7 +31,8 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
-| `0.1.0-dev.114` | Transições Form API LMS, rebuild do cache e nova organização administrativa do Fórum geral | Runtime de teste: aprovação/rejeição HTTP PASS, fixture limpa (0 tópicos LMS/0 Comments), `drush cr` PASS; controller resolve no container antes e depois, overview anônimo 403. A quebra atribuída ao controller não se reproduziu nesta checagem. Próxima entrega administrativa: mover a aba de tópicos/comentários do Fórum para `/painel-administrativo/forum`, com entrada própria no menu lateral; escopo definido abaixo. |
+| `0.1.0-dev.115` | Seção administrativa própria do Growroom420 | Código e config ativa migrados para `/painel-administrativo/forum`; menu lateral liga ao View de tópicos, categorias, bundle, denúncias e configuração compartilhada User. `drush cr` PASS; rotas/URLs/tarefas locais e access manager UID 1 PASS, anônimo 403, caminhos antigos 404; conteúdo permanece vazio. RUNTIME STATUS: PARTIAL, renderização autenticada no browser pendente. |
+| `0.1.0-dev.114` | Transições Form API LMS e rebuild do cache | Aprovação/rejeição HTTP PASS, fixture limpa (0 tópicos LMS/0 Comments), `drush cr` PASS; controller resolve antes/depois, overview anônimo 403. A falha atribuída ao controller não se reproduziu. |
 | `0.1.0-dev.113` | Validar fila e confirmações de moderação LMS com Comment real | Fixture isolada em Group próprio: fila pendente exibe o Comment e ações aprovar/rejeitar; ambas as confirmações GET retornam 200, sem POST. Filas publicadas/rejeitadas não exibem o Comment; anônimo recebe 403 para fila e tópico. Group, Node, relationship, Comment e sessão removidos; estado LMS restaurado (1 curso existente, 0 tópicos, 0 Comments). RUNTIME STATUS: PARTIAL; transições HTTP não submetidas. |
 | `0.1.0-dev.112` | Provar construção das filas LMS pelo controller e View Core | Kernel invoca `LmsForumModerationController::comments()` contra a View instalável e exige display/argumento Group corretos e cache tag contextual. Arquivo: 1/110; suíte Kernel adapter 2/127 PASS (40 depreciações Core/contrib/LMS). PHP CLI 8.4.26 abaixo da baseline 8.5. Smoke autenticado das filas vazias também PASS em dev.111; renderização de linhas com comentários e operações continua pendente. |
 | `0.1.0-dev.111` | Validar entity converters reais na rota LMS de moderação | Kernel executa conversores `entity:group`/`entity:comment` e `CustomAccessCheck`; Educador com Group dono passa; estudante e Group diferente negados. Unit 18/190, Kernel 2/122 PASS (40 depreciações). No Homelab, `drush cr` PASS; controller instanciado; três rotas ativas. Smoke autenticado GET-only como Educador: painel e filas publicadas/rejeitadas/pendentes HTTP 200; anônimo 403; `/` HTTP 200. Sessão temporária específica removida, sem fixtures nem alteração de configuração/conteúdo. Ações e linhas com comentários continuam pendentes; RUNTIME STATUS: PARTIAL. |
@@ -153,16 +154,14 @@ ferramentas de mover tópicos e comentários, acompanhamento e configurações
 próprias do Fórum. A listagem genérica de Conteúdo continuará excluindo os
 bundles e comentários do Fórum; não haverá segunda interface de moderação.
 
-Na implementação, migrar links e operações sob
-`/painel-administrativo/conteudo/forum` para a nova seção e remover a antiga aba
-de Conteúdo após conferir seus consumidores. Não antecipar subrotas ou
-configurações até inventariar recursos existentes e permissões. O inventário
-atual encontrou: View de tópicos públicos; Views de comentários publicados,
+O inventário atual encontrou: View de tópicos públicos; Views de comentários publicados,
 rejeitados e pendentes; ações para mover tópico e comentário; e gerenciamento
 nativo das categorias Taxonomy e do bundle Node fora da seção de Conteúdo.
-O painel novo deve centralizar links para essas ferramentas existentes e suas
-permissões, sem recriar formulários CRUD do Core. Ainda não existe formulário
-próprio de configuração do Fórum.
+O painel novo centraliza links para essas ferramentas existentes e suas
+permissões (`access content overview`, `administer comments`, `move aculta forum
+topics`, `move aculta forum comments`, `administer taxonomy` e `administer
+content types`), sem recriar formulários CRUD do Core. Ainda não existe
+formulário próprio de configuração do Fórum.
 
 A opção de moderação inicial do primeiro comentário está em
 `/painel-administrativo/configuracoes/aculta/portal/participacao`, sob ownership
