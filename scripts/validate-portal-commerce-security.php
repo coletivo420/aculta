@@ -35,10 +35,10 @@ $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email
 $assert($modules->moduleExists('email_confirmer') && $modules->moduleExists('email_confirmer_user'), 'Email Confirmer and its user integration are enabled.');
 $assert($modules->moduleExists('change_mail_page'), 'Change Mail Page supplies the canonical new-address form.');
 $assert(\Drupal::config('email_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'Email Confirmer intercepts user email changes.');
-// A camada de envio do Drupal controla o envio: o transporte padrão precisa de usuário e senha configurados na própria camada de envio do Drupal.
+// A camada de envio E-Mails ACULTA controla o envio: o transporte padrão precisa de usuário e senha configurados na própria camada de envio E-Mails ACULTA.
 $default_transport = (string) \Drupal::config('mailer_transport.settings')->get('default_transport');
 $default_raw = \Drupal::config('mailer_transport.mailer_transport.' . $default_transport)->getRawData()['configuration'] ?? [];
-$assert($default_transport !== '' && !empty($default_raw['user']) && !empty($default_raw['pass']), 'O transporte padrão da camada de envio do Drupal tem credenciais configuradas na própria camada de envio do Drupal.');
+$assert($default_transport !== '' && !empty($default_raw['user']) && !empty($default_raw['pass']), 'O transporte padrão da camada de envio E-Mails ACULTA tem credenciais configuradas na própria camada de envio E-Mails ACULTA.');
 // A configuração versionada não guarda credenciais.
 $smtp_versioned = \Symfony\Component\Yaml\Yaml::parseFile(DRUPAL_ROOT . '/../config/sync/mailer_transport.mailer_transport.smtp.yml')['configuration'] ?? [];
 $assert(($smtp_versioned['user'] ?? '') === '' && ($smtp_versioned['pass'] ?? '') === '', 'Mail transport credentials are absent from the versioned configuration.');
@@ -51,11 +51,11 @@ $assert(($confirmer_package['version'] ?? NULL) === '1.0.0', 'Email Confirmer re
 $assert(($change_mail_package['version'] ?? NULL) === '1.0.2', 'Change Mail Page remains on its stable 1.0.2 release.');
 $mail_backend = \Drupal::config('system.mail')->get('interface.default');
 $mail_transport = \Drupal::config('mailer_transport.settings')->get('default_transport');
-$assert($mail_backend === 'symfony_mailer', 'The default mail backend is camada de envio do Drupal (symfony_mailer).');
-$assert($mail_transport === 'smtp' && \Drupal::moduleHandler()->moduleExists('mailer_override'), 'camada de envio do Drupal delivers through the Hostinger (smtp) transport with mailer_override enabled.');
+$assert($mail_backend === 'symfony_mailer', 'The default mail backend is camada de envio E-Mails ACULTA (symfony_mailer).');
+$assert($mail_transport === 'smtp' && \Drupal::moduleHandler()->moduleExists('mailer_override'), 'camada de envio E-Mails ACULTA delivers through the Hostinger (smtp) transport with mailer_override enabled.');
 $assert(!\Drupal::moduleHandler()->moduleExists('smtp'), 'The legacy smtp module is not enabled (removed in M2).');
 $portal_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Controller/PortalController.php');
-$assert(str_contains($portal_controller_source, "moduleExists('mailer_override')") && str_contains($portal_controller_source, "default_transport") && !str_contains($portal_controller_source, 'keyHasValue'), 'Security only enables email change when camada de envio do Drupal, the SMTP2GO transport and its Keys are ready.');
+$assert(str_contains($portal_controller_source, "moduleExists('mailer_override')") && str_contains($portal_controller_source, "default_transport") && !str_contains($portal_controller_source, 'keyHasValue'), 'Security only enables email change when camada de envio E-Mails ACULTA, the SMTP2GO transport and its Keys are ready.');
 $assert(str_contains($portal_controller_source, "getForm(\$account, 'default')") && !str_contains($portal_controller_source, "getForm(\$account, 'edit')"), 'Portal account forms use the Drupal User entity type supported default form operation.');
 $assert(str_contains($portal_controller_source, "\$parameters->set('user', \$account)") && str_contains($portal_controller_source, "unset(\$form['social_auth'])") && str_contains($portal_controller_source, "\$parameters->remove('user')"), 'The Portal supplies Social Auth’s expected route parameter only while building Core User forms and removes its duplicate account section.');
 $assert(\Drupal::config('system.logging')->get('error_level') === 'hide' && str_contains(file_get_contents(DRUPAL_ROOT . '/../config/sync/system.logging.yml'), 'error_level: hide'), 'Detailed errors are hidden on screen in active and synchronized configuration (hardening: nao exibir erros detalhados).');

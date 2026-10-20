@@ -13,7 +13,7 @@ Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
   credencial SMTP ou segredo. Segredos, se uma integração futura realmente
   exigir, seguem Drupal Key provider `env` e o contrato de secrets do ACULTA.
 - A entrega usa a ferramenta de e-mail já instalada: Message Notify chama o
-  serviço de mail do Drupal, que usa o Symfony Mailer/camada de envio do Drupal existente.
+  serviço de mail do Drupal, que usa o Symfony Mailer/camada de envio E-Mails ACULTA existente.
   Não configurar SMTP ou outro transporte novo nem adicionar dependência para
   isso.
 - Administração de Site Alert e comunicados permanece em `main`.

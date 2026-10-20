@@ -65,7 +65,7 @@ O PHP CLI disponível nesta execução é 8.4.26. O projeto pede PHP 8.5; esta
 máquina não comprova validação em PHP 8.5. Compatibilidade de cada dependência
 com PHP 8.5 também não é declarada até examinar código e metadados instalados.
 O transporte de e-mail já instalado é o caminho de entrega previsto: Drupal Mail
-com Symfony Mailer/camada de envio do Drupal. O Messenger não adiciona SMTP ou outro
+com Symfony Mailer/camada de envio E-Mails ACULTA. O Messenger não adiciona SMTP ou outro
 transportador.
 
 ## Domain Purpose

@@ -39,7 +39,7 @@ final class PortalController extends ControllerBase {
   /** Social Auth stores the network plugin ID, not its URL short name. */
   private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
 
-  /** Transporte da camada de envio do Drupal usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
+  /** Transporte da camada de envio E-Mails ACULTA usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
@@ -398,8 +398,8 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * A camada de envio do Drupal (mailer_override) é o único controlador de envio: pronto quando existe um transporte padrão e esse
-   * transporte tem usuário e senha configurados na própria camada de envio do Drupal. Nenhuma Key participa.
+   * A camada de envio E-Mails ACULTA (mailer_override) é o único controlador de envio: pronto quando existe um transporte padrão e esse
+   * transporte tem usuário e senha configurados na própria camada de envio E-Mails ACULTA. Nenhuma Key participa.
    */
   private function transactionalMailReady(): bool {
     $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));

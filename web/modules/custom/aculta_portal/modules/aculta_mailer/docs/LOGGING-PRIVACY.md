@@ -22,7 +22,7 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 - Corpo renderizado, assunto e contexto (links de login, recuperação, confirmação).
 - Tokens, URLs secretas e credenciais.
 - O endereço de e-mail em claro.
-- Mensagem genérica ao usuário: quem envia (cadastro, conquista) vê só a mensagem genérica da camada de envio do Drupal.
+- Mensagem genérica ao usuário: quem envia (cadastro, conquista) vê só a mensagem genérica da camada de envio E-Mails ACULTA.
 
 ## Relatório de falhas
 

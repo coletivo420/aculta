@@ -32,9 +32,9 @@ envio ou configuração foi alterado. Para migrar cada item, seguir a ordem da �
 1. **Textos personalizados.** Migrar `user.mail` sem copiar os textos em português mudaria o que os usuários recebem.
 2. **Links de uso único.** `password_reset` e `cancel_confirm` usam tokens. Pela regra do projeto, o token nunca vai para log
    nem para subject, e reenvio gera token novo, nunca reaproveita o antigo.
-3. **Layout comum.** Todo e-mail da camada de envio do Drupal já sai no envelope HTML do tema (`email-wrap`), inclusive os de Commerce e
+3. **Layout comum.** Todo e-mail da camada de envio E-Mails ACULTA já sai no envelope HTML do tema (`email-wrap`), inclusive os de Commerce e
    Webform. Migrar um emissor não muda o layout, mas muda o caminho de auditoria e o registro.
-4. **Override do Core.** A camada de envio do Drupal substitui o gerenciador de e-mail do Core. Mensagens do `user` passam por ele hoje,
+4. **Override do Core.** A camada de envio E-Mails ACULTA substitui o gerenciador de e-mail do Core. Mensagens do `user` passam por ele hoje,
    e a migração não pode quebrar esse fluxo para os demais módulos.
 
 ## Próximos passos sugeridos

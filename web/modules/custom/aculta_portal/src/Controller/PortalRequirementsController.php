@@ -156,11 +156,11 @@ final class PortalRequirementsController extends ControllerBase {
       'warning' => 'Chaves reais e homologação externa permanecem adiadas.',
     ],
     [
-      'name' => 'camada de envio do Drupal',
+      'name' => 'camada de envio E-Mails ACULTA',
       'modules' => ['symfony_mailer', 'mailer_override'],
       'package' => 'drupal/symfony_mailer',
       'minimum' => '^2.0',
-      'purpose' => 'Transporte de e-mail transacional pelo SMTP2GO, com o envio do Core e do Webform pela camada de envio do Drupal.',
+      'purpose' => 'Transporte de e-mail transacional pelo SMTP2GO, com o envio do Core e do Webform pela camada de envio E-Mails ACULTA.',
       'warning' => 'Entrega em produção depende do RC e do provisionamento das credenciais SMTP2GO.',
     ],
     [

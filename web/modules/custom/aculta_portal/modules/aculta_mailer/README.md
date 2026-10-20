@@ -9,4 +9,4 @@ Plataforma própria de e-mail transacional do ACULTA. Submódulo opt-in do `acul
 - Histórico de entregas: [CHANGELOG.md](CHANGELOG.md)
 
 Estado: fundação de API (sem efeito em runtime). O módulo não está habilitado por padrão e não altera o envio atual
-(camada de envio do Drupal).
+(camada de envio E-Mails ACULTA).

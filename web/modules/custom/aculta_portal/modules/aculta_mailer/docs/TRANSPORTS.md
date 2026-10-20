@@ -10,7 +10,7 @@ Status: concluída em 0.1.0-dev.9. Envio por transporte escolhido, código SMTP 
 | `smtp` | `smtp.hostinger.com:465` | Padrão (`mailer_transport.settings:default_transport`) | Senha no banco do Runtime (exceção de 2026-10-19), nunca em `config/sync` |
 | `smtp2go` | `mail.smtp2go.com:465` | Fallback | Arquivo de segredos do servidor (`SMTP2GO_*`, `config/secrets-contract.json`) |
 
-O ID é o nome da entidade `mailer_transport` da camada de envio do Drupal. O `aculta_mailer` não define DSN nem senha.
+O ID é o nome da entidade `mailer_transport` da camada de envio E-Mails ACULTA. O `aculta_mailer` não define DSN nem senha.
 
 ## Como a mensagem escolhe o transporte
 
@@ -21,7 +21,7 @@ O ID é o nome da entidade `mailer_transport` da camada de envio do Drupal. O `a
 
 ## Código de resposta SMTP
 
-- A camada de envio do Drupal captura a exceção do transporte e devolve `FALSE`, sem o código.
+- A camada de envio E-Mails ACULTA captura a exceção do transporte e devolve `FALSE`, sem o código.
 - O Symfony Mailer dispara `FailedMessageEvent` no dispatcher do Drupal, com a exceção original (`UnexpectedResponseException`,
   cujo `getCode()` é o código SMTP).
 - `Subscriber\MailFailureSubscriber` lê o código e o guarda por correlação (`SmtpFailureRegistry`, só na requisição).
@@ -61,7 +61,7 @@ O failover temporário foi validado no Kernel, com um transporte de teste que de
 
 ## Pendências
 
-- Mensagem genérica da camada de envio do Drupal aparece para o usuário (`Não foi possível enviar o email`), por padrão do contrib.
+- Mensagem genérica da camada de envio E-Mails ACULTA aparece para o usuário (`Não foi possível enviar o email`), por padrão do contrib.
 - Verificar em produção quando houver autorização (merge em `main` não publica).
 
 
@@ -69,7 +69,7 @@ O failover temporário foi validado no Kernel, com um transporte de teste que de
 
 - **Fábrica:** `BrevoSecretTransportFactory`, esquema `aculta-brevo://default`. A chave vem de `BREVO_API_KEY` pela interface `SecretProviderInterface` (implementada pelo aculta_portal). A DSN não tem segredo, então a configuração pode ser exportada.
 - **Biblioteca:** `symfony/http-client` 7.4 instalado (autorizado em 2026-10-20).
-- **Transporte `brevo`:** criado na configuração da camada de envio do Drupal (plugin `dsn`, DSN `aculta-brevo://default`, sem segredo). Não é o padrão: só é usado quando escolhido.
+- **Transporte `brevo`:** criado na configuração da camada de envio E-Mails ACULTA (plugin `dsn`, DSN `aculta-brevo://default`, sem segredo). Não é o padrão: só é usado quando escolhido.
 - **Evidência:** envio real pela API do Brevo para o destinatário autorizado, aceito (`sent`), com transporte `brevo` no registro. Entrega na caixa de entrada depende de conferência do destinatário.
 - **Cota diária:** `aculta_mailer.policy:quota` (ex.: `brevo: 200`). A cota é contada no nosso próprio registro, mensagens aceitas nas últimas 24 horas. Ao atingi-la, o envio segue pelo transporte de contingência, antes da falha.
 

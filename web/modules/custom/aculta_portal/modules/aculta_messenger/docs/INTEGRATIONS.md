@@ -153,7 +153,7 @@ privada. O lifecycle guard do Messenger bloqueia a ativação simultânea para
 evitar exposição e dupla entrega.
 
 O envio externo permanece no transporte de e-mail já instalado pelo projeto:
-Drupal Mail com Symfony Mailer/camada de envio do Drupal. Message Notify é responsável pela
+Drupal Mail com Symfony Mailer/camada de envio E-Mails ACULTA. Message Notify é responsável pela
 preparação/entrega lógica; não há configuração SMTP ou transportador próprio do
 Messenger. O `private_message_notify` opcional é um possível chamador do mesmo
 serviço, portanto deve haver um único caminho ativo para notificar cada evento.
@@ -213,7 +213,7 @@ O evento usa a Queue API do Core. O worker confirma publicação atual, exige
 alias público, resolve URL no purpose `forum` por `DomainPurposeManager` e chama
 `message_subscribe.subscribers` com access habilitado e dispatch síncrono. O
 notifier configurado usa o mailer instalado via Drupal Mail (Symfony
-Mailer/camada de envio do Drupal); o Messenger não configura SMTP/transporte. O Message de
+Mailer/camada de envio E-Mails ACULTA); o Messenger não configura SMTP/transporte. O Message de
 evento registra Node/revisão, estado e tentativas; lock e chave Node/revisão
 deduplicam chamadas repetidas. `sendMessage()` não retorna resultado individual
 da entrega, então falhas parciais e retry precisam de homologação controlada.

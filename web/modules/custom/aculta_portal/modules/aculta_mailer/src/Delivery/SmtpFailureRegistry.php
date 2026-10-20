@@ -7,7 +7,7 @@ namespace Drupal\aculta_mailer\Delivery;
 /**
  * Guarda, na mesma requisição, o código e o texto completo de cada falha de transporte, por correlação.
  *
- * A camada de envio do Drupal captura a exceção do transporte e devolve só FALSE; o subscriber de FailedMessageEvent registra a falha
+ * A camada de envio E-Mails ACULTA captura a exceção do transporte e devolve só FALSE; o subscriber de FailedMessageEvent registra a falha
  * aqui antes, e o AcultaMailer a consome logo após a chamada. Não persiste nada.
  */
 final class SmtpFailureRegistry {
