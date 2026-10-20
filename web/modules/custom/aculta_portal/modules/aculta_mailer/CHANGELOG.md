@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.23 — F14: entidade e fábrica de transporte (`aculta_mailer_transport`), coexistindo com o contrib — 2026-10-20
+
+- Entidade de configuração `aculta_mailer_transport` (`MailTransport`): tipo (`smtp` ou `brevo`), servidor, porta, usuário e nome da credencial da senha. Não guarda senha.
+- `MailTransportFactory`: SMTP autenticado (porta 465 com TLS implícito, verificação de certificado) e Brevo pela fábrica existente. Sem credencial, falha fechado.
+- `MailTransportSender`: envia pelo transporte da entidade e devolve aceito ou mensagem de erro, sem credenciais.
+- Credencial `SMTP_PASSWORD` no contrato, no gate e na lista do carregador de segredos.
+- Nada foi removido: o envio do site segue pelo contrib até a F15.
+- Pendente no runtime: as entidades não foram criadas (cache bloqueado pelo `LmsForumModerationController`, do fórum) e a linha `SMTP_PASSWORD` no arquivo de segredos depende de autorização.
+- Versão do módulo: `0.1.0-dev.23`. 97 unitários (inclui a fábrica).
+
 ## 0.1.0-dev.22 — nomes dos plugins de ajuste e das classes passam a AcultaMailer — 2026-10-20
 
 - Plugins de ajuste: `AcultaMailAdjuster` → `AcultaMailerAdjuster` (atributo, interface, gerenciador, namespace `Plugin\AcultaMailerAdjuster`). Serviço `plugin.manager.aculta_mailer_adjuster`. Ids dos plugins (`skip`, `transport`, `reply_to`, `priority`) não mudam.

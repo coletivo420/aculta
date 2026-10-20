@@ -20,10 +20,12 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F11 | Tracking opcional (abertura e clique), desligado por padrão | Pendente |
 | F12 | Integrações ACULTA: cadastro com e-mail já usado (DT-P06), conquista (`aculta_game`) e resumo de avisos (`aculta_messenger`) migrados; Forum, LMS, Magazine e Commerce pendentes | Parcial |
 | F13 | Compatibilidade: interceptar e-mails remanescentes do Core. Inventário de emissores feito (`docs/SENDERS-INVENTORY.md`); migração pendente | Parcial (inventário pronto) |
-| F14 | Migração de configuração da camada de envio E-Mails ACULTA/Policy | Pendente |
+| F14 | Migração da configuração de transporte (`mailer_transport`) para `aculta_mailer_transport`, convivendo com o contrib, sem trocar o envio do site. Entregue: entidade, fábrica SMTP e Brevo, credencial pelo arquivo de segredos (`SMTP_PASSWORD`, contrato). Pendente: criar as entidades no runtime (cache bloqueado pelo controlador do fórum), a linha `SMTP_PASSWORD` no arquivo de segredos (autorização) e o envio de teste | Em andamento (código pronto e testado; runtime pendente) |
 | F15 | Retirada do contrib, somente com equivalência comprovada | Pendente |
 
 ## Runtime
+
+- F14: entidades `aculta_mailer_transport` (smtp_hostinger, brevo) e `SMTP_PASSWORD` ainda não criadas no runtime. O cache não reconstrói por causa de `LmsForumModerationController` (não rastreado, agente do fórum). **DEFERRED**.
 
 - Runtime de teste: endereço de retorno `dmarc@aculta.org` gravado (`aculta_mailer.delivery`). Um envio SMTP de teste foi aceito (`sent=1`) para o destinatário autorizado. Verificar no cabeçalho original da mensagem recebida: `Return-Path: <dmarc@aculta.org>`. **DEFERRED** até essa verificação.
 - Alertas e resumo semanal: desligados (sem destinatários informados).
