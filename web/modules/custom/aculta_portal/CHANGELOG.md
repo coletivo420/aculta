@@ -1,3 +1,15 @@
+## 0.4.0-dev.198 — variantes de autoria por contexto no ACULTA User — 2026-10-19
+
+- O inventário administrativo do Portal registra o helper
+  `aculta_user.author_card_variant_resolver`, e o mapa módulo/tema descreve a
+  separação Fórum, Revista, LMS e Wiki.
+- `aculta_user 0.4.0-dev.35` e ACULTA420 recebem contratos e apresentação
+  contextualizados; o tema ainda tem inspeção visual pendente e seu versionamento
+  independente não avançou devido ao gate Foundation bloqueado.
+- Gate Drupal 11+ (970), fronteira (1362), mapa (154), Unit User (60/175),
+  PHPCS e smoke de Runtime descritos nos changelogs dos componentes — PASS.
+  RUNTIME STATUS: PARTIAL; PHP 8.4.26 e browser autenticado/visual pendentes.
+
 ## 0.4.0-dev.197 — índice público de categorias do Fórum — 2026-10-19
 
 - `aculta_forum 0.1.0-dev.28` acrescenta `/categorias`, View Core limitada ao
