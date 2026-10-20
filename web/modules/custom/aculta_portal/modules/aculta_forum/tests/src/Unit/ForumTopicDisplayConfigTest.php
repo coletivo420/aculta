@@ -244,6 +244,25 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     );
     self::assertSame('parent', $install['display']['default']['display_options']['fields']['parent_name']['relationship']);
     self::assertSame('Categoria principal', $install['display']['default']['display_options']['fields']['parent_name']['label']);
+    self::assertSame('block', $install['display']['block_landing']['display_plugin']);
+    self::assertSame(
+      ['items_per_page' => TRUE, 'pager' => 'pager'],
+      $install['display']['block_landing']['display_options']['allow'],
+    );
+    self::assertSame(
+      ['min' => '', 'max' => '', 'value' => '0'],
+      $install['display']['block_landing']['display_options']['filters']['parent_target_id']['value'],
+    );
+    self::assertFalse($install['display']['block_landing']['display_options']['filters']['parent_target_id']['exposed']);
+    self::assertSame(
+      '<p><a href="/categorias">Ver todas as categorias</a></p>',
+      $install['display']['block_landing']['display_options']['header']['area_text_custom']['content'],
+    );
+    $category_block = Yaml::parseFile($repository_path . '/config/sync/block.block.aculta_forum_categories_home.yml');
+    self::assertSame('views_block:aculta_forum_categories-block_landing', $category_block['plugin']);
+    self::assertSame('sidebar', $category_block['region']);
+    self::assertSame("/\n/discussoes", $category_block['visibility']['request_path']['pages']);
+    self::assertSame('forum', $category_block['visibility']['aculta_domain_purpose']['purpose']);
     self::assertSame(
       '<p><a href="/">Discussões recentes</a></p>',
       $install['display']['page_categories']['display_options']['header']['area_text_custom']['content'],

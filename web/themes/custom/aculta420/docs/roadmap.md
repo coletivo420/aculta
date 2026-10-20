@@ -2,6 +2,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.106 | Implementado; visual parcial | Foundation 366 via Drush, SDC 535, Design Foundations 2097; Firefox/X11 1024/768/390 sem overflow observado; light PASS, dark e tópico com conteúdo pendentes | Entrada Growroom420 combina categorias principais (View/CTools na sidebar) e lista recente; layout responsivo usa o SDC existente |
 | 0.6.0-dev.105 | Remover templates da integração com Forum contrib | Foundation 362 via Drush, SDC 531, Design Foundations 2094, Portal 970, fronteira 1386, mapa 151 PASS; cache rebuild e raízes Fórum/Revista HTTP 200; sem tópico persistido para página individual. RUNTIME PARTIAL | Removidos presenters específicos de `node.forum`, `comment_forum` e `forum-list`; publicação deixa de excluir campo legado |
 | 0.6.0-dev.104 | Cartões responsivos para categorias públicas do Fórum | SDC 531, design 2103, Foundation 362, Portal 970, boundary 1388, mapa 154 PASS; `/categorias` 200 e 12 cartões com links TID. Browser visual DEFERRED | SDC recebe os campos já renderizados pela View Core e apresenta hierarquia/descrição sem consultar entidades |
 | 0.6.0-dev.103 | Data pública da conta em cartões de autoria do Fórum | Foundation 360, SDC 518, design 2089, Portal 970, boundary 1384, mapa 154 PASS; visual com tópico persistido pendente | SDC recebe apenas o ano; perfil privado e autoria Growroom histórica ficam sem data |

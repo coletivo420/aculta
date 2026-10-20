@@ -21,6 +21,12 @@ hierarquia, descrição e o link filtrado que a View Core prepara a partir do TI
 O componente não carrega Taxonomy nem constrói URLs; a navegação permanece sob
 responsabilidade do Portal.
 
+Na entrada do Growroom420, o mesmo SDC apresenta até seis categorias no bloco
+`block_landing` da View, posicionado na barra lateral por purpose e rota. Em
+telas largas a barra lateral antecede visualmente a lista recente; em telas
+estreitas aparece depois dela. Views/CTools controlam os dados, a quantidade e
+o pager, enquanto o tema compõe as colunas com tokens responsivos.
+
 O SDC `content/author-card` mantém o contrato de identidade entre contextos e
 mostra uma etiqueta neutra conforme a variante: Growroom420, Comentário da
 Revista, cursos e Wiki420. O módulo fornece a variante; o tema não consulta a

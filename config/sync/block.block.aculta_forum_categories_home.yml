@@ -1,33 +1,37 @@
-uuid: 145eeeca-0e5a-4dd2-8c93-e0dccbeb42d8
+uuid: cd8a28eb-86da-4024-80dd-4baef9d660e1
 langcode: pt-br
 status: true
 dependencies:
   config:
-    - views.view.aculta_forum_public_topics
+    - views.view.aculta_forum_categories
   module:
     - aculta_portal
+    - ctools_views
     - system
     - views
   theme:
     - aculta420
-id: aculta_forum_recent_topics
+id: aculta_forum_categories_home
 theme: aculta420
-region: content
-weight: 30
+region: sidebar
+weight: 0
 provider: null
-plugin: 'views_block:aculta_forum_public_topics-block_recent'
+plugin: 'views_block:aculta_forum_categories-block_landing'
 settings:
-  id: 'views_block:aculta_forum_public_topics-block_recent'
-  label: 'Tópicos recentes'
+  id: 'views_block:aculta_forum_categories-block_landing'
+  label: 'Categorias do Growroom420'
   label_display: visible
   provider: views
   views_label: ''
-  items_per_page: null
+  items_per_page: 6
+  pager: some
 visibility:
   request_path:
     id: request_path
     negate: false
-    pages: '<front>'
+    pages: |-
+      /
+      /discussoes
   aculta_domain_purpose:
     id: aculta_domain_purpose
     purpose: forum

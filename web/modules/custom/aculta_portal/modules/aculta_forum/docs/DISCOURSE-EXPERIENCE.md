@@ -39,11 +39,12 @@ esteja habilitada no Ubuntu Discourse.
 
 Na comparação visual X11 de 2026-10-20, a entrada pública Ubuntu em 1024 px
 apresentou categorias descritas e atividade recente em colunas adjacentes. A
-entrada ACULTA manteve filtro e navegação no topo e o estado vazio da lista; as
-categorias permanecem em página/aba separada. A estrutura ACULTA foi verificada
-em 1024, 768 e 390 px; as capturas e limitações estão em `TEST-MATRIX.md` e no
+primeira captura ACULTA ainda separava as categorias; dev.52 passou a exibir as
+categorias principais à esquerda e a lista recente à direita em telas largas,
+empilhando a barra abaixo da lista a 768/390 px. A página `/categorias` preserva
+a hierarquia completa. As capturas e limitações estão em `TEST-MATRIX.md` e no
 arquivo privado de homologação indicado ali. Esta rodada não inspecionou tópico,
-composer ou modo escuro.
+composer, modo escuro nem estado com tópicos publicados.
 
 ## Ferramentas de comunidade e moderação pesquisadas
 

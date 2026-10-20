@@ -1,12 +1,28 @@
+## `0.1.0-dev.52` — categorias junto à lista recente — 2026-10-20
+
+- Adicionado o display Views `block_landing` à View Taxonomy existente e bloco
+  CTools na barra lateral, visível apenas pela raiz `/` e rota interna
+  `/discussoes` do purpose `forum`. A View mantém fixos o vocabulário e o filtro
+  de categorias principais; CTools controla somente quantidade e pager. A
+  lista completa e sua hierarquia continuam em `/categorias`.
+- Configurações parciais da View e do bloco importadas no Runtime de teste com
+  backup privado; cache rebuild PASS. Firefox/X11 mostrou categorias à esquerda
+  e atividade à direita em 1024 px, e a barra após a lista em 768/390 px. A raiz
+  principal não recebe o bloco. Tópicos e Comments permaneceram em zero.
+  PHPUnit Unit direcionado 17/215, Foundation 364, SDC 535, Design Foundations
+  2097, Portal 975, fronteira 1411 e mapa 152 PASS. Modo escuro, teclado, tópico
+  e composer seguem pendentes; RUNTIME STATUS: PARTIAL.
+
 ## Revisão visual X11 parcial — sem nova versão — 2026-10-20
 
 - Comparadas a entrada ACULTA Forum e o Ubuntu Discourse em Firefox/X11; raiz e
   categorias ACULTA verificadas em 1024, 768 e 390 px. A grade reflowa e não
   apresentou overflow horizontal. As capturas foram arquivadas fora do Git em
   `/home/aculta/private/aculta/visual-tests/forum-dev11-20261020/`.
-- A entrada ainda não combina categorias descritas e atividade recente como a
-  referência. Modo escuro, foco/teclado, tópicos com conteúdo, tópico e composer
-  permanecem pendentes; não houve criação de fixtures no Runtime. Ver
+- A rodada inicial encontrou categorias separadas da atividade; dev.52 corrigiu
+  a composição responsiva. Modo escuro, foco/teclado, tópicos com conteúdo,
+  tópico e composer permanecem pendentes; não houve criação de fixtures no
+  Runtime. Ver
   `docs/TEST-MATRIX.md`. RUNTIME STATUS: PARTIAL.
 
 ## 0.1.0-dev.51 — excluir o acervo Growroom histórico do fluxo de denúncias

@@ -3,8 +3,10 @@
 CTools 4.1 é uma implementação suportada do projeto e deve ser usada quando a
 necessidade corresponder às capacidades disponíveis, após conferir o código
 instalado e as referências upstream. Hoje, `ctools_views` configura paginação e
-quantidade de itens nos blocos de próximas atividades e tópicos recentes do
-Fórum; a integração H5P do LMS usa a API de condições/plugins do CTools. O
+quantidade de itens nos blocos de próximas atividades e categorias da entrada
+do Fórum. O display de tópicos recentes continua disponível, mas sem colocação
+para evitar duplicação com o Page display da raiz; a integração H5P do LMS usa
+a API de condições/plugins do CTools. O
 `aculta_portal` declara a
 dependência de `ctools` e `ctools_views`; o submódulo H5P declara `ctools`.
 Além disso, o Composer já recebe CTools transitivamente por dependências de
@@ -29,14 +31,20 @@ Os filtros e ordenação da View continuam sendo a fonte de verdade: somente
 atividades publicadas, do tipo `activity`, com início futuro, em ordem
 cronológica. CTools não altera acesso, cache, domínio, entidade ou conteúdo.
 
+A View `aculta_forum_categories`, base `taxonomy_term_field_data`, também tem
+o display `block_landing`, colocado na barra lateral da entrada do Growroom420.
+CTools Views ajusta por posição a quantidade de categorias e o pager. O filtro
+do vocabulário é mantido fixo na View; o bloco não expõe controle de filtros,
+campos ou ordenação.
+
 A View `aculta_forum_public_topics`, base `node_field_data`, apresenta tópicos
 `aculta_forum_topic` publicados e associados ao domínio corrente. O display
-`block_recent` alimenta o bloco de tópicos recentes na página inicial do purpose
-`forum`; CTools Views permite ajustar quantidade de itens e tipo de pager. A
-consulta mantém o query tag `node_access` do Views e o contexto de cache
-`user.node_grants:view`; filtros de tipo, domínio e publicação não podem ser
-alterados pela configuração do bloco. Categorias e listagens continuam no motor
-ACULTA baseado em Taxonomy e Views.
+`block_recent` tem suporte CTools para quantidade e pager, mas não tem colocação
+ativa: a raiz do purpose `forum` usa o Page display, e colocar também o bloco
+duplicaria os mesmos tópicos. A consulta mantém o query tag `node_access` do
+Views e o contexto de cache `user.node_grants:view`; filtros de tipo, domínio e
+publicação não podem ser alterados pela configuração do bloco. Categorias e
+listagens continuam no motor ACULTA baseado em Taxonomy e Views.
 
 A View `aculta_forum_public_topics` é a contraparte do motor novo: filtra apenas
 `aculta_forum_topic` publicado e `field_domain_source` do domínio ativo, mantém
@@ -44,9 +52,8 @@ SQL rewrite do Core/`node_access` e usa o teaser do Node. O Page display serve a
 raiz do purpose `forum` e oferece o filtro exposto de categoria do vocabulário
 `aculta_forum_categories`, com hierarquia e variação de cache por query string.
 O display de bloco permite somente ajustar quantidade e pager via CTools Views;
-filtros de tipo, domínio, publicação e vocabulário continuam fixos. Esse bloco
-novo ainda não foi colocado; a rota antiga e o bloco da View contrib permanecem
-em serviço até o corte seguro, sem misturar os dois acervos.
+filtros de tipo, domínio e publicação continuam fixos. O módulo Forum contrib e
+sua colocação foram removidos no corte de `aculta_forum` dev.50.
 
 A View `aculta_shop_catalog` apresenta produtos publicados do tipo `produto_loja`.
 Sua página `/produtos` e os detalhes de produto pertencem ao purpose SHOP. O

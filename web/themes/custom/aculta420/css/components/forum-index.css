@@ -38,6 +38,30 @@
 .view-aculta-forum-public-topics .view-header a:hover { background: var(--aculta-interactive-bg); color: var(--aculta-interactive-text); }
 .view-aculta-forum-public-topics .view-header a:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 .aculta-forum-topic .aculta-forum-topic__meta { margin: 0; color: var(--aculta-text-secondary); font-size: 0.875rem; }
+
+/* Category overview alongside recent discussions on the Growroom landing page. */
+.aculta-main:has(#block-aculta-forum-categories-home) .view-aculta-forum-categories.view-display-id-block_landing .view-content {
+  display: grid;
+  gap: 0.75rem;
+}
+.aculta-main:has(#block-aculta-forum-categories-home) .view-aculta-forum-categories.view-display-id-block_landing .views-row { min-width: 0; }
+.aculta-main:has(#block-aculta-forum-categories-home) .view-aculta-forum-categories.view-display-id-block_landing .aculta-forum-category__parent { display: none; }
+.aculta-main:has(#block-aculta-forum-categories-home) .view-aculta-forum-categories.view-display-id-block_landing .aculta-forum-category {
+  height: auto;
+  padding: 0.75rem;
+}
+.aculta-main:has(#block-aculta-forum-categories-home) .view-aculta-forum-categories.view-display-id-block_landing .aculta-forum-category__title h2 {
+  font-size: 1.125rem;
+}
+.aculta-main:has(#block-aculta-forum-categories-home) .view-aculta-forum-categories.view-display-id-block_landing .aculta-forum-category__description {
+  color: var(--aculta-text-secondary);
+  font-size: 0.9rem;
+}
+.aculta-main:has(#block-aculta-forum-categories-home) .view-aculta-forum-categories.view-display-id-block_landing .view-header > p { margin: 0 0 0.75rem; }
+@media (min-width: 992px) {
+  .aculta-main:has(#block-aculta-forum-categories-home) .row > .aculta-sidebar { order: 1; }
+  .aculta-main:has(#block-aculta-forum-categories-home) .row > .aculta-content { order: 2; }
+}
 .aculta-forum-topic .field--name-field-aculta-categories {
   display: inline-flex;
   min-height: 1.75rem;

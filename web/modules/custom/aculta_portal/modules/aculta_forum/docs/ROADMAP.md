@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.52` | Categorias visíveis junto à atividade recente | View `block_landing` e bloco CTools apenas na raiz do purpose Fórum; categorias principais filtradas, página `/categorias` permanece completa. Config parcial Runtime, cache rebuild, 17/215 Unit, Foundation 364, SDC 535, Design 2097, Portal 975, fronteira 1411, mapa 152 e Firefox/X11 1024/768/390 PASS. Sem conteúdo criado; dark, teclado e páginas com tópicos pendentes. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.51` | Isolar moderação/denúncias do Fórum e excluir o acervo histórico | Flag 5 combina hook e permissões com OR; permissão dedicada, hook contextual e guard de `flagging_presave` limitam denúncias a tópicos/comentários públicos contemporâneos. Fila de denúncias exclui legado/outros contextos; Views pendente/rejeitado excluem marcador legado no tópico e comentário, e falham fechado sem campo/relação. Import parcial do papel e cache rebuild PASS no Runtime; smoke autenticado com dados pendente. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.50` | Desinstalar e remover Drupal Forum contrib | Runtime `toca`: uninstall oficial PASS; zerados bundles/configs e tabelas antigas; seis instâncias e storage `field_discussao` vazios removidos via Field API; Composer removeu apenas `drupal/forum`, mantendo `history`. Cache rebuild PASS; Fórum/Revista 200, Conta anônima 302 esperado. Config Sync integral não aplicado; configuração dirigida, revisão de flags e smoke autenticado pendentes. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.49` | Remover realms de acesso da taxonomia Forum contrib | Classes, subscriber, permissões, field `field_visibilidade` e grants de papéis removidos; F-D14 substituída por Growroom público/LMS Group. User Unit 52/175; gates Portal 970, fronteira 1376 e mapa 151 PASS. Cache rebuild e raízes HTTP 200. Config/permissions antigas ainda ativas no Runtime até limpeza dirigida/uninstall. RUNTIME STATUS: PARTIAL. |
@@ -381,9 +382,11 @@ Revisão inicial X11 em 2026-10-20 foi parcial: entrada e categorias em 1024,
 768 e 390 px; comparação da entrada ACULTA/Ubuntu em 1024 px. Grade de
 categorias refluindo sem overflow horizontal observado. A entrada ACULTA ainda
 separa a lista vazia e a página de categorias, enquanto a referência mostra
-categorias e atividade recente lado a lado. Capturas privadas e limites estão
-registrados em `TEST-MATRIX.md`. Dev.11 não está visualmente homologada: faltam
-modo escuro, foco/teclado, listagem com conteúdo, tópico e composer.
+categorias e atividade recente lado a lado. Dev.52 implementou a composição:
+colunas em 1024 px e lista seguida pela barra de categorias em 768/390 px. As
+capturas privadas e limites estão registrados em `TEST-MATRIX.md`. Dev.11 não
+está visualmente homologada: faltam modo escuro, foco/teclado, listagem com
+conteúdo, tópico e composer.
 
 ## `0.1.0-dev.12` — Participação e moderação
 

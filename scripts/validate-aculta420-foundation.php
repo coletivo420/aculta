@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.105', 'Theme metadata marks the current version 0.6.0-dev.105.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.106', 'Theme metadata marks the current version 0.6.0-dev.106.');
 $forumTopicPresenter = file_get_contents($themeRoot . '/templates/node--aculta-forum-topic.html.twig');
 $forumTopicStyles = file_get_contents($themeRoot . '/css/components/forum-index.css');
 $assert(
@@ -312,6 +312,8 @@ $expectedTemplates = [
   'views-view-fields--aculta-forum-public-topics.html.twig',
   // Categories View fields are reassembled through the Forum category SDC.
   'views-view-fields--aculta-forum-categories--page-categories.html.twig',
+  // The landing-page category block reuses the same neutral fields and SDC.
+  'views-view-fields--aculta-forum-categories--block-landing.html.twig',
   // The categories page uses a grid wrapper while preserving each row's attributes.
   'views-view-unformatted--aculta-forum-categories--page-categories.html.twig',
   'page.html.twig',
@@ -346,8 +348,9 @@ $assert(isset($cardMetadata['variants']['overlay']), 'The composed card exposes 
 $assert(is_file($themeRoot . '/templates/views-view-fields--aculta-albuns.html.twig'), 'Album View fields use the theme card presenter.');
 $assert(
   is_file($themeRoot . '/templates/views-view-fields--aculta-forum-categories--page-categories.html.twig')
+    && is_file($themeRoot . '/templates/views-view-fields--aculta-forum-categories--block-landing.html.twig')
     && is_file($themeRoot . '/templates/views-view-unformatted--aculta-forum-categories--page-categories.html.twig'),
-  'Forum category View keeps the reviewed SDC presenter and responsive list wrapper.',
+  'Forum category View keeps the reviewed page and landing SDC presenters and responsive page wrapper.',
 );
 $assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers aculta420:editorial-card.');
 $componentMetadata = Yaml::parseFile($themeRoot . '/components/content/editorial-card/editorial-card.component.yml');
