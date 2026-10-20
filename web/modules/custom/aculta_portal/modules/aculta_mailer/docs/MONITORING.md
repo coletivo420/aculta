@@ -62,5 +62,12 @@ nada. Decisão pendente do responsável: o endereço de retorno do domínio.
 ## Estado de validação
 
 - Parsers e cliente: unitários (`MonitorParsersTest`, `MailMonitorTest`), sem caixa real.
-- Leitura real da caixa: **DEFERRED** até a senha e os dados serem informados no formulário e o "Testar conexão"
-  retornar a contagem. Não há evidência de leitura real nesta versão.
+- Leitura real da caixa (2026-10-20, leitura somente de cabeçalhos, sem alterar cursor): e-mail de teste enviado pelo
+  caminho real (`aculta_admin_alert`, correlação `2103116e-83c1-4ba4-8f82-2a45e6afd957`) para `dmarc@aculta.org` chegou à
+  caixa `naoresponda@` (UID 3). Cabeçalhos: `Authentication-Results` com `spf=pass`, `dkim=pass`, `dmarc=pass`;
+  `X-Aculta-Mail-ID` igual à correlação; `From` e `Return-Path` = `naoresponda@aculta.org`. O assunto é o padrão do tipo
+  ("Alerta de envio de e-mail do ACULTA"); o texto de teste está no corpo.
+- Divergência registrada: o `Return-Path` desta mensagem é `naoresponda@`, não `dmarc@` como na verificação anterior. A
+  configuração `aculta_mailer.delivery:bounce_address` aponta para `dmarc@`, mas o envelope do transporte SMTP usado
+  (Hostinger) saiu com `naoresponda@`. Bounces chegam à mesma caixa lida pelo IMAP, então a leitura não é afetada; o
+  envelope por transporte ainda precisa ser confirmado pelo responsável.
