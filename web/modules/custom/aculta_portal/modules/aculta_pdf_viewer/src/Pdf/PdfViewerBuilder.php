@@ -105,6 +105,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     $defaults = [
       'show_download' => TRUE, 'show_print' => TRUE, 'show_zoom' => TRUE,
       'show_fullscreen' => TRUE, 'show_search' => TRUE, 'show_page_navigation' => TRUE,
+      'show_rotation' => TRUE,
       'show_full_viewer' => TRUE, 'default_zoom' => 'fit-width', 'default_scroll' => 'vertical',
       'double_page' => FALSE, 'double_page_mobile' => FALSE, 'language' => 'pt-BR',
       'link_text' => '', 'link_target' => '_blank', 'css_class' => '',
@@ -204,6 +205,16 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           ],
         ],
           ],
+        'rotate' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#value' => new TranslatableMarkup('Girar página 90 graus'),
+          '#attributes' => [
+            'type' => 'button',
+            'data-aculta-pdf-control' => 'rotate',
+            'aria-label' => new TranslatableMarkup('Girar página 90 graus'),
+          ],
+        ],
         'fullscreen' => [
           '#type' => 'html_tag',
           '#tag' => 'button',
@@ -326,6 +337,9 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     }
     if (empty($settings['show_fullscreen'])) {
       $build['reader_controls']['fullscreen']['#access'] = FALSE;
+    }
+    if (empty($settings['show_rotation'])) {
+      $build['reader_controls']['rotate']['#access'] = FALSE;
     }
     if (empty($settings['show_search'])) {
       $build['search_controls']['#access'] = FALSE;

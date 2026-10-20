@@ -41,6 +41,7 @@ async function initialize(viewer) {
     const pdf = await pdfjsLib.getDocument({ url }).promise;
     let pageNumber = 1;
     let zoom = viewer.dataset.acultaPdfDefaultZoom === '125' ? 1.25 : viewer.dataset.acultaPdfDefaultZoom === '100' ? 1 : 1;
+    let rotation = 0;
     let renderSequence = 0;
     let renderTask;
     let searchSequence = 0;
@@ -69,21 +70,21 @@ async function initialize(viewer) {
       if (sequence !== renderSequence) {
         return;
       }
-      const baseViewport = page.getViewport({ scale: 1 });
+      const baseViewport = page.getViewport({ scale: 1, rotation });
       const availableWidth = Math.max(240, (viewer.clientWidth || 800) - 32);
       const fitScale = Math.min(1.5, availableWidth / baseViewport.width);
       const requestedScale = Math.min(3, fitScale * zoom);
       const maxScaleByArea = Math.sqrt(MAX_CANVAS_PIXELS / (baseViewport.width * baseViewport.height));
       const maxScaleByDimension = (MAX_CANVAS_DIMENSION - 1) / Math.max(baseViewport.width, baseViewport.height);
       let renderScale = Math.min(requestedScale, maxScaleByArea, maxScaleByDimension);
-      let viewport = page.getViewport({ scale: renderScale });
+      let viewport = page.getViewport({ scale: renderScale, rotation });
       let canvasWidth = Math.ceil(viewport.width);
       let canvasHeight = Math.ceil(viewport.height);
       // Rounding both sides up can exceed the pixel budget by a few thousand
       // pixels even when the floating-point viewport is exactly at the limit.
       while (canvasWidth * canvasHeight > MAX_CANVAS_PIXELS) {
         renderScale *= Math.sqrt(MAX_CANVAS_PIXELS / (canvasWidth * canvasHeight)) * 0.999;
-        viewport = page.getViewport({ scale: renderScale });
+        viewport = page.getViewport({ scale: renderScale, rotation });
         canvasWidth = Math.ceil(viewport.width);
         canvasHeight = Math.ceil(viewport.height);
       }
@@ -150,6 +151,12 @@ async function initialize(viewer) {
       zoom = 1;
       render().catch(() => {
         status.textContent = 'Não foi possível restaurar o zoom do PDF.';
+      });
+    });
+    viewer.querySelector('[data-aculta-pdf-control="rotate"]')?.addEventListener('click', () => {
+      rotation = (rotation + 90) % 360;
+      render().catch(() => {
+        status.textContent = 'Não foi possível girar a página do PDF.';
       });
     });
 

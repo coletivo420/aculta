@@ -1,5 +1,10 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.30 — rotação do canvas — 2026-10-20
+
+- Acrescenta controle opcional de rotação no formatter; o canvas gira em passos de 90° e recalcula a escala respeitando o limite de pixels e dimensões.
+- Não altera o arquivo PDF nem persiste rotação no documento. RUNTIME STATUS: DEFERRED; testes e validação visual pré-RC pendentes.
+
 ## 0.1.0-dev.29 — opções do leitor no formatter — 2026-10-20
 
 - Os formatters Media e File passam a oferecer configuração Drupal por campo para controles, zoom inicial, rolagem, página dupla, idioma e apresentação do link, sem string posicional compactada.
