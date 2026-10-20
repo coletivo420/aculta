@@ -1,3 +1,16 @@
+## `0.1.0-dev.59` — homologação isolada da leitura em lote — 2026-10-20
+
+- Runtime `toca`, Drupal 11.4.10, `aculta_runtime`: o serviço de leitura
+  retornou exatamente um tópico elegível para a fixture QA e `markBatch()`
+  gravou somente o par History uid 5/NID 410. Esse registro foi confirmado e
+  removido pelo par exato; o Node e seu alias foram excluídos via Entity API.
+  Cache rebuild PASS; estado final confirmado: 0 tópicos, 0 Comments
+  compartilhados, 24 registros History (mesmo total anterior ao teste) e 2
+  flaggings de avisos do site preservadas. Raiz e `/categorias` HTTP 200.
+- A rota, confirmação e Core Batch completo não foram submetidos pelo
+  navegador; a homologação desta ação permanece parcial. RUNTIME STATUS:
+  PARTIAL.
+
 ## `0.1.0-dev.58` — ocultar ações Flag dos cartões teaser — 2026-10-20
 
 - Flag registra os pseudocampos em todos os modos por padrão, então os links de

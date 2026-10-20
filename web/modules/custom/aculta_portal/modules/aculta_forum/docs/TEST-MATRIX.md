@@ -1,5 +1,19 @@
 # Matriz de testes por fase
 
+## dev.59 — leitura em lote com limpeza exata
+
+- Runtime `toca`, Drupal 11.4.10, banco `aculta_runtime`: preflight confirmou
+  0 tópicos e 0 Comments compartilhados. Fixture NID 410, autor uid 5 e domínio
+  `forum_aculta_org`, foi a única discussão elegível; `countEligibleTopics()`
+  retornou 1. `ForumReadMarker::markBatch()` gravou History para o par exato
+  uid 5/NID 410. O registro, tópico e alias foram removidos após confirmar a
+  identidade da fixture.
+- Cache rebuild PASS; HTTP da raiz e `/categorias` 200. Estado final:
+  0 tópicos, 0 Comments compartilhados, 24 History globais (baseline antes do
+  teste) e as 2 flaggings existentes de avisos de site preservadas. A rota de
+  confirmação e a execução do Core Batch pelo navegador permanecem pendentes.
+  RUNTIME STATUS: PARTIAL.
+
 ## dev.58 — ocultar ações Flag nos cartões teaser
 
 - `ForumTopicDisplayConfigTest`: 18 testes/224 assertions PASS. PHPCS
