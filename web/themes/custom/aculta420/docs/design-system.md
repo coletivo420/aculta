@@ -2,9 +2,8 @@
 
 ## Discussões ACULTA — contrato planejado
 
-O tema apresenta Forum contrib pelos templates `forum-list`,
-`node--forum--full` e `comment--comment-forum`, com `forum-index.css` e
-`discussion.css`, enquanto o novo motor usa `node--aculta-forum-topic` e
+O Forum contrib não tem templates no tema desde 0.6.0-dev.105. O novo motor usa
+`node--aculta-forum-topic` e
 `comment--aculta-discussion-post`. `aculta_user` prepara identidade e access
 para Author Cards; ACULTA420 cuida de SDC/Bootstrap, layout, responsividade,
 acessibilidade e tokens light/dark. `discussion.css` estiliza o formulário

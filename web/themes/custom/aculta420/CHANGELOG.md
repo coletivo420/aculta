@@ -1,3 +1,16 @@
+## 0.6.0-dev.105 — remover templates do Forum contribuído — 2026-10-20
+
+- Removidos os templates para a lista, tópicos e comentários do módulo Drupal
+  Forum, agora sem conteúdo e em retirada. Os presenters ACULTA para
+  `aculta_forum_topic` e `aculta_discussion_post` permanecem.
+- Os templates de artigo/blog deixaram de excluir nomes de campo da estrutura
+  antiga; regras CSS específicas de listagem e respostas legadas também foram
+  removidas. Foundation 362 via Drush, SDC 531, Design Foundations 2094,
+  fronteira 1386, mapa 151 e `git diff --check` PASS. Runtime de teste: cache rebuild e
+  raízes Fórum/Revista HTTP 200; nenhum conteúdo novo foi criado. Não há tópicos
+  persistidos para teste da página individual. PHP 8.4.26 abaixo da baseline
+  8.5. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.104 — cartões para o índice público de categorias do Fórum — 2026-10-20
 
 - A página `/categorias` apresenta a hierarquia e as descrições da View Core em

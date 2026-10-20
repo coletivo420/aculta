@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.104', 'Theme metadata marks the current version 0.6.0-dev.104.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.105', 'Theme metadata marks the current version 0.6.0-dev.105.');
 $forumTopicPresenter = file_get_contents($themeRoot . '/templates/node--aculta-forum-topic.html.twig');
 $forumTopicStyles = file_get_contents($themeRoot . '/css/components/forum-index.css');
 $assert(
@@ -308,10 +308,6 @@ $expectedTemplates = [
   'node--wiki-entry--teaser.html.twig',
   // Página pública LINKS (0.6.0-dev.11): presenter neutro e configuração do Portal.
   'node--social-links.html.twig',
-  // Fórum em cartões (0.6.0-dev.62) e tópico do Fórum (0.6.0-dev.63): índice, resposta e tópico.
-  'forum-list.html.twig',
-  'comment--comment-forum.html.twig',
-  'node--forum--full.html.twig',
   // A View Growroom fornece os campos renderizados ao tema.
   'views-view-fields--aculta-forum-public-topics.html.twig',
   // Categories View fields are reassembled through the Forum category SDC.
