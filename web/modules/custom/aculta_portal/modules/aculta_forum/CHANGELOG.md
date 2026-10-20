@@ -3,7 +3,9 @@
 - `ForumTopicMoverKernelTest` agora exercita o agregado oficial do Comment Core
   durante aprovação, despublicação e exclusão; comentários pendentes não entram
   no total público. Kernel MariaDB: 3 testes/69 assertions PASS, com cinco
-  depreciações da dependência Domain. Unit Forum: 54/382 PASS; PHPCS, gates
+  depreciações da dependência Domain. `PublicTopicCommentCountViewKernelTest`
+  executa um Views Core real com três tópicos, garantindo ordenação por total
+  publicado e exclusão de resposta pendente (1/11 PASS). Unit Forum: 54/382 PASS; PHPCS, gates
   Drupal 11+ (970 verificações), fronteira (1392 verificações) e `git diff
   --check` PASS. A View continua ordenando pelo agregado Core configurado.
 - Nenhuma entidade ou configuração do Runtime foi alterada. A ordenação entre
