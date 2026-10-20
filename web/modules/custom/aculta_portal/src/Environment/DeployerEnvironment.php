@@ -15,7 +15,7 @@ final class DeployerEnvironment {
 
   /** @param string $projectRoot raiz do projeto (acima de web/) */
   /**
-   * Endereço principal do ambiente declarado pelo aculta_deployer (URL https), ou NULL.
+   * Endereço principal do ambiente declarado no mapeamento de endereços por ambiente (URL https), ou NULL.
    */
   public static function siteUrl(string $projectRoot): ?string {
     $file = rtrim($projectRoot, '/') . '/var/deployer/environment.json';

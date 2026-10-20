@@ -207,7 +207,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_aculta_domain_purpose', 'wiki');
       }
     }
-    // Página do produto da loja pertence ao purpose SHOP (host de loja por ambiente, ver aculta_deployer).
+    // Página do produto da loja pertence ao purpose SHOP (host de loja por ambiente, ver o mapeamento de endereços por ambiente).
     // Carrinho e checkout continuam no MAIN (DomainRoutePolicy).
     if ($route = $collection->get('entity.commerce_product.canonical')) {
       $route->setOption('_aculta_domain_purpose', 'shop');

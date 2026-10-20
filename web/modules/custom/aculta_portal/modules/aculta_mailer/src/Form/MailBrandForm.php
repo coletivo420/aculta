@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Editor de marca: nome e rodapé institucional usados pelos layouts.
  *
- * O logo não é cadastrado aqui: o envelope usa o logo do tema (aculta420.settings), sem uma cópia por marca.
+ * O logo não é cadastrado aqui: o envelope usa o logo configurado pelo tema, sem uma cópia por marca.
  */
 final class MailBrandForm extends EntityForm {
 

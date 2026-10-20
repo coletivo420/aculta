@@ -9,7 +9,7 @@ use Drupal\Component\Uuid\UuidInterface;
 /**
  * Gera Message-ID (RFC 5322) e correlation ID a partir de um UUID.
  *
- * O host do Message-ID é recebido por construtor. Ele vem do `aculta_deployer` (environment_bound) e nunca é fixo no
+ * O host do Message-ID é recebido por construtor. Ele vem do mapeamento de endereços por ambiente (environment_bound) e nunca é fixo no
  * código, para não criar endereço de produção em Runtime de teste.
  */
 final class MessageIdFactory {

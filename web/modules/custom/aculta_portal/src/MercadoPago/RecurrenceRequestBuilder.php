@@ -11,7 +11,7 @@ namespace Drupal\aculta_portal\MercadoPago;
  * - valores em decimal com até duas casas, maiores que zero;
  * - moeda BRL (o site opera só em real);
  * - frequência mensal de 1 a 12 meses;
- * - back_url sempre https: o endereço vem do mapeamento de ambiente do aculta_deployer, nunca do código;
+ * - back_url sempre https: o endereço vem do mapeamento de endereços por ambiente, nunca do código;
  * - e-mail do pagador só é usado no payload; nunca é registrado em log.
  */
 final class RecurrenceRequestBuilder {

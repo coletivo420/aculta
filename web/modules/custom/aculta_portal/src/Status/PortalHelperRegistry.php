@@ -156,7 +156,7 @@ final class PortalHelperRegistry {
     'aculta_portal.deployer_status_reader' => [
       'label' => 'Leitura do estado do Deployer',
       'summary' => 'Lê o relatório neutro publicado pelo ACULTA Deployer sem executar sua CLI.',
-      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_deployer/README.md',
+      'docs' => 'docs/architecture/environments.md',
     ],
     'aculta_portal.domain_purpose' => [
       'label' => 'Domain Purpose Manager',

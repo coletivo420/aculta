@@ -176,7 +176,7 @@ final class TokenHooks {
 
       foreach ($tokens as $name => $original) {
         if ($name === 'url') {
-          // Endereço principal do ambiente (aculta_deployer); o campo do bloco guarda o endereço de produção.
+          // Endereço principal do ambiente (mapeamento de endereços por ambiente); o campo do bloco guarda o endereço de produção.
           $result[$original] = DeployerEnvironment::siteUrl(dirname($this->appRoot)) ?? (string) ($block->get('field_site')->uri ?? '');
         }
         elseif (isset($fields[$name]) && $block->hasField($fields[$name])) {
