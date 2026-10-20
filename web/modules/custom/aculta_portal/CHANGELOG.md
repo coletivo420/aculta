@@ -1,3 +1,16 @@
+## 0.4.0-dev.211 — cadastro com e-mail já usado pelo aculta_mailer — 2026-10-20
+
+- `RegistrationMailPolicy` envia o aviso (DT-P06) pela API `AcultaMailerInterface`, em vez de `plugin.manager.mail`.
+  O texto e a chave `registration_existing_mail` permanecem; o tipo vive em `RegistrationExistingAccountMailType`,
+  registrado pela tag `aculta_mailer.type`. Os links de login e de recuperação chegam prontos no contexto.
+- `MailHooks` do Portal mantém só o redirecionamento de testes (`mail_alter`); o `hook_mail` do cadastro saiu.
+- `aculta_portal.info.yml` depende de `aculta_portal:aculta_mailer`; `config/sync/core.extension.yml` registra o submódulo.
+- Testes: `RegistrationMailPolicyKernelTest` (2 testes, 18 asserções) e `LoginBlockedAccountTest` (6 testes) PASS.
+- Runtime de teste: `aculta_mailer` habilitado com `drush en` (sem updb). Durante a migração, o Runtime ficou
+  inoperante por alguns minutos porque o código do Portal foi carregado antes do módulo; o código foi revertido para
+  HEAD, o módulo habilitado e as alterações reaplicadas. Nenhuma configuração foi exportada nem importada.
+  Drift de `core.extension` entre Runtime e `config/sync` é anterior e não relacionado (aculta_game, aculta_user, outros).
+
 ## 0.4.0-dev.210 — retirar integrações de rota com bundles contrib — 2026-10-20
 
 - `ContentPurposeResolver` só reconhece `aculta_forum_topic`; `AccountTermsHooks`

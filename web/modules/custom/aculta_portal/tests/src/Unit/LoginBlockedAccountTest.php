@@ -52,7 +52,9 @@ final class LoginBlockedAccountTest extends UnitTestCase {
       ),
       new \Drupal\aculta_portal\Account\RegistrationMailPolicy(
         $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class),
-        $this->createMock(\Drupal\Core\Mail\MailManagerInterface::class),
+        $this->createMock(\Drupal\aculta_mailer\Api\AcultaMailerInterface::class),
+        $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class),
+        $this->createMock(\Drupal\Component\Uuid\UuidInterface::class),
       ),
     );
   }

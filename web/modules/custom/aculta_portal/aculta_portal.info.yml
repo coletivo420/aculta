@@ -2,12 +2,13 @@ name: Portal ACULTA
 type: module
 description: 'Integra conta, conteúdo, aprendizagem e discussões; histórico e descoberta do Fórum, autoria contextual via aculta_user, Views/CTools, PDF, contratos de propósito, slugs públicos canônicos e sanitização nativa de nomes de upload.'
 package: 'ACULTA Portal'
-version: '0.4.0-dev.210'
+version: '0.4.0-dev.211'
 core_version_requirement: ^11.3
 dependencies:
   - ctools:ctools
   - ctools:ctools_views
   - aculta_portal:aculta_image
+  - aculta_portal:aculta_mailer
   - profile:profile
   - drupal:views
   - vvjs:vvjs

@@ -5,6 +5,7 @@ module:
   aculta_donation: 0
   aculta_gallery: 0
   aculta_image: 0
+  aculta_mailer: 0
   aculta_pagamentos_mercadopago: 0
   aculta_lms: 0
   aculta_magazine: 0

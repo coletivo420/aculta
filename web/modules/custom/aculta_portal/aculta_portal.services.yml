@@ -24,9 +24,14 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.registration_mail_policy:
     class: Drupal\aculta_portal\Account\RegistrationMailPolicy
-    arguments: ['@entity_type.manager', '@plugin.manager.mail']
+    arguments: ['@entity_type.manager', '@aculta_mailer.mailer', '@url_generator', '@uuid']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.registration_existing_account_mail_type:
+    class: Drupal\aculta_portal\Account\RegistrationExistingAccountMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
   aculta_portal.color_mode_preference:
     class: Drupal\aculta_portal\Appearance\ColorModePreference
     arguments: ['@config.factory', '@user.data']

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Kernel;
 
+use Drupal\aculta_mailer\Type\MailTypeRegistry;
+use Drupal\aculta_portal\Account\RegistrationExistingAccountMailType;
 use Drupal\aculta_portal\Account\RegistrationMailPolicy;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
@@ -17,12 +19,16 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class RegistrationMailPolicyKernelTest extends KernelTestBase {
 
-  protected static $modules = ['system', 'user'];
+  protected static $modules = ['system', 'user', 'aculta_mailer'];
 
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
+    // O tipo vive no aculta_portal, que não é habilitado aqui; registra-se o mesmo objeto manualmente.
+    $this->container->set(MailTypeRegistry::class, new MailTypeRegistry([
+      new RegistrationExistingAccountMailType($this->container->get('string_translation')),
+    ]));
   }
 
   public function testExistingAccountIsFoundOnlyForRegisteredMail(): void {
@@ -34,7 +40,7 @@ final class RegistrationMailPolicyKernelTest extends KernelTestBase {
     $this->assertNull($policy->existingAccount('   '));
   }
 
-  public function testOwnerIsNotifiedAndNoAccountIsCreated(): void {
+  public function testOwnerIsNotifiedThroughMailerAndNoAccountIsCreated(): void {
     $owner = User::create(['name' => 'titular2', 'mail' => 'titular2@example.invalid', 'status' => 1]);
     $owner->save();
     $before = count(User::loadMultiple());
@@ -47,13 +53,19 @@ final class RegistrationMailPolicyKernelTest extends KernelTestBase {
     $last = end($mails);
     $this->assertSame('titular2@example.invalid', $last['to']);
     $this->assertSame(RegistrationMailPolicy::MAIL_KEY, $last['key']);
+    $this->assertSame('aculta_mailer', $last['module']);
+    $this->assertMatchesRegularExpression('/^[0-9a-f-]{36}$/', (string) ($last['headers']['X-Aculta-Mail-ID'] ?? ''));
+    $this->assertStringContainsString('Tentativa de cadastro', (string) $last['subject']);
+    $this->assertStringContainsString('/user/login', (string) $last['body']);
     $this->assertSame($before, count(User::loadMultiple()), 'Nenhuma conta nova foi criada.');
   }
 
   private function policy(): RegistrationMailPolicy {
     return new RegistrationMailPolicy(
       $this->container->get('entity_type.manager'),
-      $this->container->get('plugin.manager.mail'),
+      $this->container->get('aculta_mailer.mailer'),
+      $this->container->get('url_generator'),
+      $this->container->get('uuid'),
     );
   }
 
