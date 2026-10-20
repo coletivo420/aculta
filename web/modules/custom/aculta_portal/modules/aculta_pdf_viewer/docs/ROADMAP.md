@@ -118,9 +118,11 @@ em viewport desktop de 1366 px e móvel de 560 px. O modo de duas páginas caiu
 para página única no viewport móvel e ambos mantiveram `scrollWidth` igual à
 largura da viewport. WebDriver confirmou navegação pelo atalho `n` da página 1
 para 2. `PageDown` em `fit-width` não alterou o número da página nessa
-verificação; não foi considerado evidência de navegação por teclado. Essa
-inspeção de DOM e teclado não substitui teste com leitor de tela real, que segue
-obrigatório antes de RC. O
+verificação; não foi considerado evidência de navegação por teclado. Em teste
+real com Orca e Firefox ESR, o leitor anunciou documento/páginas, mas a leitura
+contínua não anunciou o corpo textual do PDF. Isso não valida leitura acessível
+do conteúdo; falta investigar foco/caret, navegação estrutural e PDF marcado no
+viewer completo. A sessão temporária foi encerrada. O
 Kernel segue sem chegar às assertions por dependências/serviços do Portal e da
 configuração LMS no fixture. Gates centrais ainda incluem trabalho não
 integrado de outros componentes; o viewer permanece Dev.

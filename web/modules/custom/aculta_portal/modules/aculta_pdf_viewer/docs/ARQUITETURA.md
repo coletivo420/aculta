@@ -165,6 +165,16 @@ um PDF sem marcação estrutural. Ainda é necessário exercitar PDFs marcados e
 marcados, teclado, leitores de tela e CSP Report-Only. Nenhuma camada de
 texto/estrutura própria foi implementada.
 
+Em 2026-10-20, a verificação manual com Orca e Firefox ESR na sessão gráfica
+ativa confirmou que o leitor de tela reconhece o documento web e landmarks de
+página (`Page 1`, `Page 2` etc.). A tentativa de leitura contínua não anunciou
+o corpo textual do PDF; portanto, a evidência não confirma que o texto seja
+consumível pelo leitor de tela. Não classificar o viewer como acessível com
+base apenas no nome/landmark da página ou na existência de `.textLayer` no DOM.
+Repetir a avaliação com foco/caret e navegação estrutural no viewer oficial e
+com ao menos um PDF marcado, antes do RC. Orca e Firefox foram encerrados após
+o teste; a sessão desktop existente permaneceu ativa.
+
 ### Traduções pt-BR disponíveis
 
 Os arquivos `.po` locais presentes em
