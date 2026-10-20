@@ -12,6 +12,10 @@ Contrato futuro:
 
 - Resolver host/URL pelo `DomainPurposeManager`; nenhum hostname de ambiente
   fixo em código ou configuração exportada.
+- Canonical das micropáginas deve ser gerado no purpose `links` via API canônica
+  do `DomainPurposeManager`, nunca derivado do host de entrada por concatenação.
+  A geração do metadado deve manter tags de cache do registro Domain e da
+  configuração de hostname.
 - Provisionar aliases `links.aculta.*` pela política Domain/`aculta_deployer`,
   sem resolver hostnames em paralelo.
 - Micropáginas e slugs usam APIs/rotas Drupal; `/pagina/{slug}` e

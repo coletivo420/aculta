@@ -31,10 +31,10 @@
 ## Lacunas
 
 Dashboard visual equivalente ao LinkStack, identidade herdada explícita do
-`aculta_user`, editor completo de identidade/aparência, mais temas, componentes
-referenciados, links curtos, QR, analytics e agendamento ainda precisam ser
-concluídos. Uma conta Drupal pode possuir várias páginas; equipes complexas não
-fazem parte do escopo inicial.
+`aculta_user`, editor completo de identidade/aparência, SEO via Metatag, mais
+temas, componentes referenciados, links curtos, QR, analytics e agendamento
+ainda precisam ser concluídos. Uma conta Drupal pode possuir várias páginas;
+equipes complexas não fazem parte do escopo inicial.
 
 ## Em implementação — 0.2.0-dev.2
 
