@@ -1,3 +1,25 @@
+# Implementação não marcada — descoberta de tópicos públicos — 2026-10-19
+
+- A View pública ganhou displays de tópicos novos, sem resposta e mais
+  comentados, com navegação local. Reaproveitam o escopo da lista pública;
+  respostas vêm do agregado Core `comment_entity_statistics`, sem contadores
+  paralelos.
+- Runtime `toca`: três rotas HTTP 200; cada uma consulta 8 tópicos, e a lista
+  sem resposta retorna os 8 porque não existem comentários públicos no Fórum.
+  Caso positivo de respostas/ordenação e inspeção visual seguem pendentes.
+- O CAPTCHA global abortava o exposed GET form nos novos displays. A exceção
+  OOP foi limitada aos filtros read-only do índice público; PHPUnit passa e os
+  resultados HTTP agora apresentam os tópicos sem o desafio inválido.
+- `drush cr` também revelou a injeção do hook mover tópico por tipo sem alias
+  para o service ID. O parâmetro recebeu `#[Autowire(service: ...)]`; cache
+  rebuild agora PASS. O teste Unit verifica esse wiring explicitamente.
+- Runtime importou somente `views.view.aculta_forum_public_topics`, após cópia
+  recuperável da config ativa; nenhum conteúdo foi modificado. RUNTIME STATUS:
+  PARTIAL (sem sessão autenticada/browser e sem contagem positiva).
+- PHPUnit do módulo: 46 testes / 332 assertions PASS; PHPCS e gates Drupal
+  11+, fronteira, mapa, slugs, hierarquia e `.htaccess` PASS. Uma depreciação
+  preexistente de metadata PHPUnit permanece em `DiscussionModerationHooksTest`.
+
 # Implementação não marcada — lista personalizada de não lidos — 2026-10-19
 
 - Criada View `/discussoes/nao-lidas` com filtros de History por usuário e

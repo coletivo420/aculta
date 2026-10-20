@@ -26,7 +26,12 @@ final class PublicForumExposedFormHooks {
     $view = $form_state->get('view');
     if (!$view instanceof ViewExecutable
       || $view->id() !== 'aculta_forum_public_topics'
-      || $view->current_display !== 'page_discussions') {
+      || !in_array($view->current_display, [
+        'page_discussions',
+        'page_new_topics',
+        'page_unanswered',
+        'page_most_commented',
+      ], TRUE)) {
       return;
     }
 

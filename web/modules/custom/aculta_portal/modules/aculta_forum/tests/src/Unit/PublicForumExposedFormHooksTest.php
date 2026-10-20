@@ -34,6 +34,24 @@ final class PublicForumExposedFormHooksTest extends UnitTestCase {
   }
 
   /**
+   * CAPTCHA is removed from each public discovery listing filter.
+   */
+  public function testCaptchaIsRemovedFromAdditionalReadOnlyListings(): void {
+    foreach (['page_new_topics', 'page_unanswered', 'page_most_commented'] as $display) {
+      $view = $this->createMock(ViewExecutable::class);
+      $view->method('id')->willReturn('aculta_forum_public_topics');
+      $view->current_display = $display;
+      $form_state = $this->createMock(FormStateInterface::class);
+      $form_state->method('get')->with('view')->willReturn($view);
+      $form = ['captcha' => ['#type' => 'captcha']];
+
+      (new PublicForumExposedFormHooks())->formViewsExposedFormAlter($form, $form_state, 'views_exposed_form');
+
+      self::assertArrayNotHasKey('captcha', $form, $display);
+    }
+  }
+
+  /**
    * CAPTCHA remains on other Views forms.
    */
   public function testCaptchaIsKeptForOtherViews(): void {

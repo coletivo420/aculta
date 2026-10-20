@@ -264,6 +264,51 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Discovery displays reuse the public View's fixed access scope.
+   */
+  public function testDiscoveryPagesPreservePublicFiltersAndUseCoreStatistics(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $filename = 'views.view.aculta_forum_public_topics.yml';
+    $view = Yaml::parseFile($module_path . '/config/install/' . $filename);
+    $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+    self::assertSame($view, $sync);
+
+    $default = $view['display']['default']['display_options'];
+    $new = $view['display']['page_new_topics']['display_options'];
+    self::assertSame('discussoes/novas', $new['path']);
+    self::assertFalse($new['defaults']['sorts']);
+    self::assertSame('created', $new['sorts']['created']['field']);
+    self::assertSame('DESC', $new['sorts']['created']['order']);
+
+    $unanswered = $view['display']['page_unanswered']['display_options'];
+    self::assertSame('discussoes/sem-resposta', $unanswered['path']);
+    foreach (['status', 'type', 'field_domain_source_target_id', 'field_aculta_categories_target_id'] as $filter) {
+      self::assertSame($default['filters'][$filter], $unanswered['filters'][$filter], $filter);
+    }
+    self::assertSame('numeric', $unanswered['filters']['comment_count']['plugin_id']);
+    self::assertSame('comment_entity_statistics', $unanswered['filters']['comment_count']['table']);
+    self::assertSame('0', $unanswered['filters']['comment_count']['value']['value']);
+    self::assertFalse($view['display']['default']['display_options']['query']['options']['disable_sql_rewrite']);
+
+    $popular = $view['display']['page_most_commented']['display_options'];
+    self::assertSame('discussoes/mais-comentadas', $popular['path']);
+    self::assertSame('comment_entity_statistics', $popular['sorts']['comment_count']['table']);
+    self::assertSame('comment_count', $popular['sorts']['comment_count']['field']);
+    self::assertSame('DESC', $popular['sorts']['comment_count']['order']);
+
+    $tasks = Yaml::parseFile($module_path . '/aculta_forum.links.task.yml');
+    foreach ([
+      'new_topics' => 'page_new_topics',
+      'unanswered_topics' => 'page_unanswered',
+      'most_commented_topics' => 'page_most_commented',
+    ] as $task => $display) {
+      self::assertSame("view.aculta_forum_public_topics.$display", $tasks["aculta_forum.$task"]['route_name']);
+      self::assertSame('view.aculta_forum_public_topics.page_discussions', $tasks["aculta_forum.$task"]['base_route']);
+    }
+  }
+
+  /**
    * The Forum admin listing excludes unrelated and legacy node content.
    */
   public function testAdministrativeForumListingIsScopedAndAccessAware(): void {

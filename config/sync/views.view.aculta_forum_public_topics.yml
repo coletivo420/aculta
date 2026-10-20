@@ -29,46 +29,6 @@ display:
     position: 0
     display_options:
       title: 'Tópicos recentes'
-      pager:
-        type: full
-        options:
-          offset: 0
-          items_per_page: 20
-          total_pages: null
-          id: 0
-          tags:
-            next: 'Avançar ›'
-            previous: '‹ Voltar'
-            first: '« Primeiro'
-            last: 'Último »'
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Itens por página'
-            items_per_page_options: '10, 20, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: Todos
-            offset: false
-            offset_label: Offset
-          quantity: 9
-      access:
-        type: perm
-        options:
-          perm: 'access content'
-      cache:
-        type: tag
-        options: {  }
-      empty:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: text_custom
-          empty: true
-          content: 'Ainda não há tópicos publicados nesta lista.'
-          tokenize: false
       fields:
         rendered_entity:
           id: rendered_entity
@@ -127,6 +87,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          plugin_id: numeric
           label: ''
           exclude: false
           alter:
@@ -176,8 +138,6 @@ display:
           format_plural_string: !!binary QGNvdW50IHJlc3Bvc3RhA0Bjb3VudCByZXNwb3N0YXM=
           prefix: ''
           suffix: ''
-          plugin_id: numeric
-          entity_type: node
         last_updated:
           id: last_updated
           table: comment_entity_statistics
@@ -185,6 +145,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: comment_ces_last_updated
           label: ''
           exclude: false
           alter:
@@ -228,7 +189,46 @@ display:
           date_format: short
           custom_date_format: ''
           timezone: ''
-          plugin_id: comment_ces_last_updated
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 20
+          total_pages: null
+          id: 0
+          tags:
+            next: 'Avançar ›'
+            previous: '‹ Voltar'
+            first: '« Primeiro'
+            last: 'Último »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Itens por página'
+            items_per_page_options: '10, 20, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: Todos
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: true
+          content: 'Ainda não há tópicos publicados nesta lista.'
+          tokenize: false
       sorts:
         sticky:
           id: sticky
@@ -245,11 +245,11 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: aculta_forum_last_activity
           order: DESC
-          exposed: false
           expose:
             label: ''
-          plugin_id: aculta_forum_last_activity
+          exposed: false
         created:
           id: created
           table: node_field_data
@@ -418,6 +418,282 @@ display:
           tokenize: false
       display_extenders: {  }
       path: discussoes
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_most_commented:
+    id: page_most_commented
+    display_title: 'Mais comentadas'
+    display_plugin: page
+    position: 5
+    display_options:
+      title: 'Discussões mais comentadas'
+      sorts:
+        comment_count:
+          id: comment_count
+          table: comment_entity_statistics
+          field: comment_count
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          expose:
+            label: 'Respostas publicadas'
+          exposed: false
+        last_updated:
+          id: aculta_forum_last_activity
+          table: comment_entity_statistics
+          field: aculta_forum_last_activity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: aculta_forum_last_activity
+          order: DESC
+          expose:
+            label: ''
+          exposed: false
+      defaults:
+        title: false
+        sorts: false
+        header: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<p><a href="/discussoes">Todas as discussões</a> · <a href="/categorias">Ver categorias</a></p>'
+          tokenize: false
+      display_extenders: {  }
+      path: discussoes/mais-comentadas
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_new_topics:
+    id: page_new_topics
+    display_title: 'Tópicos novos'
+    display_plugin: page
+    position: 3
+    display_options:
+      title: 'Discussões novas'
+      sorts:
+        sticky:
+          id: sticky
+          table: node_field_data
+          field: sticky
+          entity_type: node
+          entity_field: sticky
+          plugin_id: standard
+          order: DESC
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      defaults:
+        title: false
+        sorts: false
+        header: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<p><a href="/discussoes">Todas as discussões</a> · <a href="/categorias">Ver categorias</a></p>'
+          tokenize: false
+      display_extenders: {  }
+      path: discussoes/novas
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_unanswered:
+    id: page_unanswered
+    display_title: 'Sem resposta'
+    display_plugin: page
+    position: 4
+    display_options:
+      title: 'Discussões sem resposta'
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            aculta_forum_topic: aculta_forum_topic
+        field_domain_source_target_id:
+          id: field_domain_source_target_id
+          table: node__field_domain_source
+          field: field_domain_source_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: domain_source
+          operator: or
+          value:
+            _active: _active
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+        field_aculta_categories_target_id:
+          id: field_aculta_categories_target_id
+          table: node__field_aculta_categories
+          field: field_aculta_categories_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_aculta_categories_target_id_op
+            label: Categoria
+            description: ''
+            use_operator: false
+            operator: field_aculta_categories_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: categoria
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: categoria
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: aculta_forum_categories
+          type: select
+          hierarchy: true
+          limit: true
+          error_message: false
+        comment_count:
+          id: comment_count
+          table: comment_entity_statistics
+          field: comment_count
+          relationship: none
+          group_type: group
+          admin_label: 'Somente discussões sem respostas publicadas'
+          plugin_id: numeric
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: '0'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: '0'
+            label: ''
+            description: ''
+            use_operator: false
+            operator: '0'
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      defaults:
+        title: false
+        filters: false
+        header: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<p><a href="/discussoes">Todas as discussões</a> · <a href="/categorias">Ver categorias</a></p>'
+          tokenize: false
+      display_extenders: {  }
+      path: discussoes/sem-resposta
       menu:
         type: none
     cache_metadata:

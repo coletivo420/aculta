@@ -33,3 +33,21 @@ aculta_forum.unread_topics:
   route_name: view.aculta_forum_unread_topics.page_unread
   base_route: view.aculta_forum_public_topics.page_discussions
   weight: 2
+
+aculta_forum.new_topics:
+  title: Novas
+  route_name: view.aculta_forum_public_topics.page_new_topics
+  base_route: view.aculta_forum_public_topics.page_discussions
+  weight: 3
+
+aculta_forum.unanswered_topics:
+  title: Sem resposta
+  route_name: view.aculta_forum_public_topics.page_unanswered
+  base_route: view.aculta_forum_public_topics.page_discussions
+  weight: 4
+
+aculta_forum.most_commented_topics:
+  title: Mais comentadas
+  route_name: view.aculta_forum_public_topics.page_most_commented
+  base_route: view.aculta_forum_public_topics.page_discussions
+  weight: 5

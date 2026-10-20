@@ -20,6 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class ForumTopicMoveHooks {
 
   public function __construct(
+    #[Autowire(service: 'aculta_forum.topic_mover')]
     private readonly ForumTopicMover $mover,
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $account,

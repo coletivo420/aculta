@@ -58,6 +58,30 @@
   pública e requer investigação própria. HTTP com sessão autenticada e
   inspeção visual pendentes. RUNTIME STATUS: PARTIAL.
 
+## Evidência inicial dev.10 — telas de descoberta
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 15 testes / 184 assertions PASS;
+  PHPCS PASS. A View compartilha os filtros da lista pública e a tela sem
+  resposta usa `comment_entity_statistics.comment_count = 0`; a tela popular
+  ordena pelo agregado Core e por atividade.
+- `PublicForumExposedFormHooksTest`: 3 testes / 11 assertions PASS. A exceção
+  ao CAPTCHA cobre somente os quatro filtros GET da View pública; formulários
+  de escrita não são alterados.
+- Suite Unit completa do Fórum: 46 testes / 332 assertions PASS; inclui
+  `ForumTopicMoveHooksTest` (wiring do mover para o service ID). Uma
+  depreciação preexistente de metadata PHPUnit fica em
+  `DiscussionModerationHooksTest`.
+- Runtime `toca`: após importar somente a View pública e reconstruir caches,
+  `/discussoes/novas`, `/discussoes/sem-resposta` e
+  `/discussoes/mais-comentadas` retornaram HTTP 200 e exibiram tópicos `[TESTE]`.
+  Cada query encontrou 8 itens; todos 8 aparecem sem resposta porque há 0
+  comentários públicos. Config Sync ficou sem diferença para a View.
+- O cache rebuild inicial revelou wiring inválido de `ForumTopicMoveHooks`;
+  a injeção explícita do service ID foi adicionada e o rebuild subsequente
+  passou. Nenhum Node, Comment ou registro de leitura foi alterado.
+- Ainda não foi validada uma ordenação com comentários positivos nem a
+  visualização autenticada em browser. RUNTIME STATUS: PARTIAL.
+
 Esta matriz separa plano das evidências já executadas. Na `0.1.0-dev.4`, a
 Context API pública e configuração nativa foram exercitadas no Runtime de teste.
 Na dev.5, um teste Kernel prova storage Comment compartilhado em três bundles

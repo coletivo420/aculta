@@ -34,6 +34,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | Não marcada | Contagem e atividade na View de tópicos | Runtime: oito tópicos com `0 respostas`; sort ACULTA executa fórmula Core `GREATEST(changed, last_comment_timestamp)` em ordem descendente e data renderizada. Caso positivo, invalidação após moderação e inspeção visual pendentes |
 | Não marcada | Hierarquia no índice público de categorias | Configuração e Runtime PASS: a View apresenta os 12 termos e associa corretamente as 8 subcategorias aos pais; inspeção visual continua pendente |
 | Não marcada | Lista personalizada de discussões não lidas | View `/discussoes/nao-lidas` usa History contrib com acesso `authenticated`, filtros públicos fixos e sem cache compartilhado; Runtime query como uid 5 retornou 7 resultados e anônimo recebeu 403; HTTP autenticado/browser pendente |
+| Não marcada | Descoberta: novas, sem resposta e mais comentadas | Displays de Views e abas implementados; Runtime das três rotas HTTP 200, 8 tópicos cada e 8 sem resposta (0 comentários aprovados); teste positivo de contagem ainda pendente |
 | Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit e Kernel PASS; Functional/Runtime pendentes. Movimento de comentários continua bloqueado pela prova de integridade em `MOVE-TOOLS.md`. |
 | `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas, navegação HTTP e relação pai/filho; inspeção visual pendente |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
@@ -283,6 +284,18 @@ falta de cobertura da política de avisos de segurança em
 `MIGRATION-REMOVAL.md`. Runtime: como uid 5, a consulta encontrou 7 discussões
 novas/atualizadas; o acesso anônimo HTTP recebeu 403. Renderização HTTP com
 sessão e inspeção visual permanecem pendentes.
+
+Subfase de descoberta implementada: a View pública também expõe “Novas” por
+data de criação, “Sem resposta” pelo `comment_count = 0` do agregado Core e
+“Mais comentadas” por contagem de respostas publicadas com desempate por
+atividade. As três listagens preservam o bundle, publication status, Domain
+ativo, filtro de categoria e SQL rewrite da View base. Abas locais ligam os
+displays à página principal. Runtime: as três rotas responderam HTTP 200 e cada
+consulta retornou os 8 tópicos de teste; “Sem resposta” retornou os 8 porque o
+Fórum ainda não tem comentários publicados. Portanto, a ordenação com contagem
+positiva continua sem caso Runtime. Um hook GET-only existente foi ampliado
+para remover CAPTCHA somente das formas de filtro dessas quatro páginas de
+leitura; envio de conteúdo permanece fora da exceção.
 
 Views Latest/Top/New/Unread/sem resposta, histórico de leitura por participante,
 marcar como lido e primeiro conteúdo não lido, estatísticas e atividade
