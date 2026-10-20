@@ -5,7 +5,7 @@ services:
 
   aculta_mailer.mailer:
     class: Drupal\aculta_mailer\Api\AcultaMailer
-    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver']
+    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover']
 
   logger.channel.aculta_mailer:
     parent: logger.channel_base
@@ -69,3 +69,13 @@ services:
   Drupal\aculta_mailer\Webhook\DeliveryEventApplier:
     class: Drupal\aculta_mailer\Webhook\DeliveryEventApplier
     arguments: ['@entity_type.manager']
+
+  Drupal\aculta_mailer\Transport\BrevoSecretTransportFactory:
+    class: Drupal\aculta_mailer\Transport\BrevoSecretTransportFactory
+    arguments: ['@?Drupal\aculta_mailer\Transport\SecretProviderInterface', '@?Psr\EventDispatcher\EventDispatcherInterface', '@?Symfony\Contracts\HttpClient\HttpClientInterface', '@logger.channel.aculta_mailer']
+    tags:
+      - { name: mailer.transport_factory }
+
+  Drupal\aculta_mailer\Policy\TransportQuota:
+    class: Drupal\aculta_mailer\Policy\TransportQuota
+    arguments: ['@config.factory', '@entity_type.manager', '@datetime.time']

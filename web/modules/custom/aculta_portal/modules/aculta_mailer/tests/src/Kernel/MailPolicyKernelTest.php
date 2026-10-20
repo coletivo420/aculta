@@ -93,6 +93,25 @@ final class MailPolicyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Cota diária esgotada: a mensagem segue pelo transporte de contingência, e a cota vem do próprio registro.
+   */
+  public function testExhaustedQuotaUsesFallbackTransport(): void {
+    $this->config('aculta_mailer.policy')->set('quota', ['brevo' => 1])->save();
+    $this->container->get('entity_type.manager')->getStorage('aculta_mail_log')->create([
+      'correlation_id' => 'a0000000-0000-4000-8000-000000000020',
+      'type' => 'aculta_mailer_test_message',
+      'recipient_hash' => str_repeat('e', 64),
+      'status' => 'sent',
+      'transport' => 'brevo',
+      'created' => time(),
+    ])->save();
+
+    $this->assertTrue($this->container->get('aculta_mailer.mailer')->deliver($this->message(), 'brevo')->sent);
+    $mails = $this->container->get('state')->get('system.test_mail_collector', []);
+    $this->assertSame('smtp2go', end($mails)['headers']['X-Transport'] ?? NULL);
+  }
+
+  /**
    * Grava a configuração da política de teste.
    *
    * @param array $values

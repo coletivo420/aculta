@@ -11,7 +11,9 @@ use Drupal\aculta_mailer\Delivery\SmtpReplyClassifier;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
+use Drupal\aculta_mailer\Delivery\TransportFailover;
 use Drupal\aculta_mailer\Policy\MailPolicyResolver;
+use Drupal\aculta_mailer\Policy\TransportQuota;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -40,6 +42,8 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly SmtpFailureRegistry $failures,
     private readonly SmtpReplyClassifier $classifier,
     private readonly MailPolicyResolver $policies,
+    private readonly TransportQuota $quota,
+    private readonly TransportFailover $failover,
   ) {}
 
   /**
@@ -69,6 +73,15 @@ final class AcultaMailer implements AcultaMailerInterface {
 
     $langcode = $message->langcode !== '' ? $message->langcode : LanguageInterface::LANGCODE_DEFAULT;
     $transport ??= $policy->transport;
+    // Cota diária atingida: a mensagem segue pelo transporte de contingência, antes de a falha acontecer.
+    $fallback = $this->failover->names()['fallback'];
+    if ($transport !== NULL && $transport !== $fallback && $this->quota->exhausted($transport)) {
+      $this->logger->warning('Cota diária do transporte @t atingida; usando @f.', [
+        '@t' => $transport,
+        '@f' => $fallback,
+      ]);
+      $transport = $fallback;
+    }
     $result = $this->mailManager->mail(self::MODULE, $message->type, $message->to, $langcode, [
       'context' => $message->context,
       'correlation_id' => $message->correlationId,

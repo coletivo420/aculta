@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.14 — transporte Brevo (fábrica) e cota diária por transporte — 2026-10-20
+
+- `BrevoSecretTransportFactory` (esquema `aculta-brevo://default`): chave de `BREVO_API_KEY` pela interface neutra `SecretProviderInterface`. Opcional: sem o aculta_portal, não cria o transporte.
+- `TransportQuota`: cota diária por transporte (`aculta_mailer.policy:quota`), contada no registro de envios. Ao atingir o limite, o envio segue pelo transporte de contingência.
+- Testes: cota (Kernel); fábrica (unitário, com teste de criação pulado até autorizar `symfony/http-client`).
+- Pendente: `symfony/http-client` e a criação do transporte Brevo na configuração.
+
 ## 0.1.0-dev.13 — configurações de envio e credencial do Brevo — 2026-10-20
 
 - Biblioteca `symfony/brevo-mailer` 7.4 instalada (ponte do Symfony Mailer para a API do Brevo). Transporte Brevo ainda não ativado.

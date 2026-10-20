@@ -10,6 +10,12 @@ aculta_mailer.policy:
       label: 'Ajustes por tipo de e-mail'
       sequence:
         type: aculta_mailer.policy_values
+    quota:
+      type: sequence
+      label: 'Cota diária por transporte (mensagens aceitas nas últimas 24 horas)'
+      sequence:
+        type: integer
+        label: 'Limite'
 
 aculta_mailer.policy_values:
   type: mapping
