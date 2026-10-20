@@ -9,7 +9,7 @@
   caracteres e escapa texto e autoria dentro de `blockquote` permitido pelo
   formato `usuario_aculta`. A resposta original não é alterada. Nenhuma
   dependência contrib foi instalada.
-- Unit: 7 testes/16 assertions PASS, incluindo escape/limite, bloqueio de
+- Unit: 9 testes/18 assertions PASS, incluindo escape/limite, bloqueio de
   contexto ilegível, rota Core e preenchimento da resposta. PHPCS e `git
 -  diff --check` PASS. Runtime em `toca`, Drupal 11.4.10, banco
   `aculta_runtime`: cache rebuild e resolução dos dois serviços PASS; Fórum e

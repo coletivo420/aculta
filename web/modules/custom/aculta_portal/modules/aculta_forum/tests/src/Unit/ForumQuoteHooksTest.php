@@ -46,6 +46,34 @@ final class ForumQuoteHooksTest extends UnitTestCase {
   }
 
   /**
+   * Unpublished comments never expose their text through the quote action.
+   */
+  public function testUnpublishedCommentDoesNotGetQuoteLink(): void {
+    $hooks = $this->hooks(AccessResult::allowed());
+    $comment = $this->comment(AccessResult::allowed(), AccessResult::allowed(), FALSE);
+    $links = [];
+    $context = [];
+
+    $hooks->commentLinksAlter($links, $comment, $context);
+
+    self::assertSame([], $links);
+  }
+
+  /**
+   * A reader who cannot reply is not offered an unusable quote action.
+   */
+  public function testAccountWithoutReplyAccessDoesNotGetQuoteLink(): void {
+    $hooks = $this->hooks(AccessResult::allowed());
+    $comment = $this->comment(AccessResult::allowed(), AccessResult::forbidden());
+    $links = [];
+    $context = [];
+
+    $hooks->commentLinksAlter($links, $comment, $context);
+
+    self::assertSame([], $links);
+  }
+
+  /**
    * A context that denies reading never exposes a reply/quote action.
    */
   public function testUnreadableContextDoesNotExposeQuoteLink(): void {
@@ -185,16 +213,22 @@ final class ForumQuoteHooksTest extends UnitTestCase {
   /**
    * Creates a published Comment from the shared discussion field.
    */
-  private function comment(AccessResult $access): CommentInterface {
+  private function comment(
+    AccessResult $viewAccess,
+    ?AccessResult $replyAccess = NULL,
+    bool $published = TRUE,
+  ): CommentInterface {
     $host = $this->createMock(EntityInterface::class);
     $this->makeCacheable($host);
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('bundle')->willReturn('aculta_discussion_post');
     $comment->method('getFieldName')->willReturn('field_aculta_discussion');
-    $comment->method('isPublished')->willReturn(TRUE);
+    $comment->method('isPublished')->willReturn($published);
     $comment->method('getCommentedEntity')->willReturn($host);
     $comment->method('access')->willReturnCallback(
-      static fn (string $operation, AccountProxyInterface $account, bool $return_as_object) => $access,
+      static fn (string $operation, AccountProxyInterface $account, bool $return_as_object) => $operation === 'create'
+        ? ($replyAccess ?? $viewAccess)
+        : $viewAccess,
     );
     $comment->method('getCommentedEntityTypeId')->willReturn('node');
     $comment->method('getCommentedEntityId')->willReturn(17);
