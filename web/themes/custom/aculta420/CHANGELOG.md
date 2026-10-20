@@ -1757,3 +1757,15 @@ Classificação: PATCH de manutenção do tema e do gate.
   no gate; nenhuma alteração da allowlist foi feita neste escopo. SHA em
   `main`: pendente de merge da PR #297.
 
+## 0.6.0-dev.119 — apresentar estado vazio da busca do Fórum — 2026-10-20
+
+- O estado sem resultados de `/pesquisar` recebe o mesmo painel contido usado
+  pelo índice público do Fórum, com tokens semânticos e leitura responsiva.
+- Firefox ESR/X11 anônimo no Runtime de teste a 1024 px confirma painel, texto,
+  link e formulário sem sobreposição. Mobile, claro/escuro e acessibilidade
+  completa pendentes. SHA em `main`: pendente de merge da PR #297.
+- SDC (535), Design Foundations (2100), fixtures (157) e Shell Contract (11)
+  PASS. O Foundation reconhece a versão .119, mas a allowlist de Twig ainda não
+  inclui `email-wrap.html.twig` da linha paralela Mailer; a allowlist não foi
+  alterada aqui. SHA em `main`: pendente de merge da PR #297.
+
