@@ -64,13 +64,14 @@ catálogo, a missão e a API de concessões existentes são reutilizados; Fórum
 passa a depender do Game. Aprovação posterior conta uma vez, enquanto edição de
 comentário já publicado não dispara nova avaliação.
 
-O par contrib antigo (`comment_forum` em `forum`) fica transitoriamente
-reconhecido até a remoção segura prevista no `aculta_forum`; remover esse caminho
-quando os bundles antigos não forem mais suportados. Em ambos os caminhos,
-`field_autor_legado` e `SynchronizableInterface::isSyncing()` bloqueiam
-concessões por conteúdo histórico/restaurado. Não se reavalia o passado e não
-se cria cópia dos comentários ou contadores no Game. O evento atual é o hook de
-entidade Drupal; não há fila assíncrona nem módulo adapter adicional.
+O par contrib antigo (`comment_forum` em `forum`) não é elegível, mesmo enquanto
+o módulo aguarda a retirada segura documentada em `aculta_forum`. Somente a
+publicação atual no bundle ACULTA conta. `field_autor_legado` e
+`SynchronizableInterface::isSyncing()` também bloqueiam concessões por conteúdo
+histórico/restaurado. Não se reavalia o passado e não se cria cópia dos
+comentários ou contadores no Game. O evento atual é o hook de entidade Drupal;
+não há fila assíncrona nem módulo adapter adicional. A versão dev.11 substitui
+explicitamente o caminho transitório documentado na dev.10.
 
 ## Lacunas observadas no código atual
 

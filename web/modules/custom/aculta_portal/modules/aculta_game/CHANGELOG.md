@@ -1,5 +1,20 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.11 — excluir Forum contrib das conquistas — 2026-10-19
+
+- O trigger `forum_comment` só aceita `aculta_discussion_post` hospedado em
+  Node `aculta_forum_topic` publicado. Comentários do bundle legado
+  `comment_forum` em `forum` e comentários sem conta deixam de gerar conquistas
+  contemporâneas.
+- O caminho transitório registrado em dev.10 fica substituído; `field_autor_legado`
+  e entidades em sincronização permanecem excluídos. Sem backfill ou novo storage.
+- `ForumParticipationPolicyTest` cobre a rejeição explícita do bundle legado.
+  Unit 8 testes / 35 assertions PASS; PHPCS novo e Portal 970, boundary 1374,
+  mapa 154 e `git diff --check` PASS. Runtime `toca`: Game habilitado, hook
+  resolvido após cache rebuild; leitura encontrou 8 concessões já existentes.
+  Nenhum evento foi disparado e nenhuma concessão foi escrita. RUNTIME STATUS:
+  PARTIAL.
+
 ## 0.1.0-dev.10 — integração com o Fórum ACULTA — 2026-10-19
 
 - O trigger existente `forum_comment` reconhece respostas publicadas em

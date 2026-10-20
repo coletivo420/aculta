@@ -20,6 +20,20 @@
 - Sem instalação/update/importação, conteúdo de teste, backfill ou alteração no
   Runtime. **RUNTIME STATUS: DEFERRED.**
 
+## Dev.11 — impedir conquistas no Forum contribuído legado
+
+- O caminho temporário `forum`/`comment_forum` da dev.10 é removido. O trigger
+  existente continua premiando somente a resposta atual `aculta_discussion_post`
+  em tópico público `aculta_forum_topic`, quando ela passa a publicada e tem
+  uma conta proprietária válida. Comentário anônimo não recebe badge individual.
+- A remoção do caminho de premiação não apaga conteúdo nem desinstala o módulo;
+  isso permanece sujeito à auditoria e à fase segura do `aculta_forum`.
+- Unit cobre a negativa do bundle contribuído. Nenhuma concessão histórica,
+  importação ou comentário de teste foi executado. Runtime `toca`: cache rebuild,
+  Game habilitado e `BadgeEvaluationHooks` resolvido; consulta read-only observou
+  8 concessões existentes. Sem disparo de evento ou escrita de concessão.
+  RUNTIME STATUS: PARTIAL; evento real aprovado permanece sem homologação.
+
 Autorização de 2026-10-15: implementar por fases e commits na mesma PR #286.
 Esta autorização substitui a restrição anterior de abertura somente documental.
 

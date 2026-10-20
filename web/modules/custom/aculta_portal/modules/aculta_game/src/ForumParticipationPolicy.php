@@ -11,13 +11,15 @@ use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\node\NodeInterface;
 
 /**
- * Defines which published comments count as current public Forum activity. */
+ * Defines which published comments count as current public Forum activity.
+ */
 final class ForumParticipationPolicy {
 
   /**
    * Whether a newly published comment is eligible for the Forum trigger. */
   public function isEligible(CommentInterface $comment, NodeInterface $topic): bool {
     if (!$comment->isPublished() || !$topic->isPublished()
+      || (int) $comment->getOwnerId() < 1
       || !$this->isLive($comment) || !$this->isLive($topic)
       || $this->hasLegacyAuthor($comment) || $this->hasLegacyAuthor($topic)) {
       return FALSE;
@@ -28,16 +30,11 @@ final class ForumParticipationPolicy {
       return FALSE;
     }
 
-    // Keep the old live Forum path until its planned safe removal. Imported
-    // archive entries are excluded by the marker and synchronizable checks.
-    $isCurrentForum = $topic->bundle() === 'aculta_forum_topic'
+    // Only new ACULTA Forum topics count. Drupal Forum content is legacy and
+    // must not earn contemporary achievements while it awaits safe removal.
+    return $topic->bundle() === 'aculta_forum_topic'
       && $comment->bundle() === 'aculta_discussion_post'
       && $comment->getFieldName() === 'field_aculta_discussion';
-    $isContribTransition = $topic->bundle() === 'forum'
-      && $comment->bundle() === 'comment_forum'
-      && $comment->getFieldName() === 'comment_forum';
-
-    return $isCurrentForum || $isContribTransition;
   }
 
   /**

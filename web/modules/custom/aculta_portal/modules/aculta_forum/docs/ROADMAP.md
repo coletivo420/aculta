@@ -381,9 +381,10 @@ Não reimplementar Wiki nesta fase.
 
 Messenger, Image, Gallery, PDF, Game, eventos, cache e suas políticas de acesso.
 Integração inicial do gatilho de primeira resposta publicada com `aculta_game`
-foi implementada separadamente em `aculta_game 0.1.0-dev.10`: Game reconhece o
-Comment do tópico público novo e ignora importação/autoria histórica. A
-homologação no Runtime fica pendente; estatísticas completas e novos critérios
+foi implementada separadamente em `aculta_game 0.1.0-dev.11`: Game reconhece
+Comment publicado de conta no tópico público novo e rejeita bundles do Drupal
+Forum contribuído e autoria histórica. A
+homologação do evento real no Runtime fica pendente; estatísticas completas e novos critérios
 de gamificação continuam nesta fase e na linha própria do Game.
 
 Pesquisa atualizada em 2026-10-19: o Discourse combina badges por marcos com

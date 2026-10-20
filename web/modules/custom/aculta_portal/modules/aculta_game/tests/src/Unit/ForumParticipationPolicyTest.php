@@ -35,6 +35,15 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
   }
 
   /**
+   * Anonymous comments cannot qualify for an account achievement.
+   */
+  public function testAnonymousReplyIsNotEligible(): void {
+    self::assertFalse(
+      (new ForumParticipationPolicy())->isEligible($this->comment(uid: 0), $this->topic()),
+    );
+  }
+
+  /**
    * Editing an already published reply does not repeat the trigger. */
   public function testAlreadyPublishedReplyEditIsNotEligibleAgain(): void {
     $original = $this->createMock(CommentInterface::class);
@@ -62,10 +71,11 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
   }
 
   /**
-   * The contributed bundle pair is retained only during transition. */
-  public function testContributedBundleIsOnlyTransitionallyEligible(): void {
+   * Drupal Forum contributed content is legacy and cannot earn new badges.
+   */
+  public function testDrupalForumContributedBundleIsNotEligible(): void {
     $comment = $this->comment(bundle: 'comment_forum', field: 'comment_forum');
-    self::assertTrue((new ForumParticipationPolicy())->isEligible($comment, $this->topic('forum')));
+    self::assertFalse((new ForumParticipationPolicy())->isEligible($comment, $this->topic('forum')));
   }
 
   /**
@@ -93,11 +103,13 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
     ?CommentInterface $original = NULL,
     string $bundle = 'aculta_discussion_post',
     string $field = 'field_aculta_discussion',
+    int $uid = 1,
   ): CommentInterface {
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('bundle')->willReturn($bundle);
     $comment->method('getFieldName')->willReturn($field);
     $comment->method('isPublished')->willReturn($published);
+    $comment->method('getOwnerId')->willReturn($uid);
     $comment->method('getOriginal')->willReturn($original);
     $this->legacyAuthorField($comment, $legacyAuthor);
     return $comment;

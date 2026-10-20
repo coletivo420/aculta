@@ -23,8 +23,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * Cada regra concede no fato que a cumpre; a concessão é idempotente.
  * Conquistas automáticas nunca são revogadas.
  *
- * Forum is optional: the hook matches the current public bundles and keeps the
- * contributed bundle pair only while its planned safe removal is outstanding.
+ * Forum is optional: only the current ACULTA public discussion bundles match.
  */
 final class BadgeEvaluationHooks {
 
