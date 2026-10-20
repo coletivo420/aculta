@@ -1,3 +1,13 @@
+## 0.1.0-dev.39 — remover apresentação do Forum contrib — 2026-10-19
+
+- Removido de `aculta_user` `ForumTopicPresentationHooks`, que só servia Nodes
+  `forum` e Comments `comment_forum`; a autoria e apresentação do novo bundle
+  seguem no contexto ACULTA. Nenhum Node ou Comment foi alterado.
+- Unit `aculta_user` 60/175 PASS; gates Portal (970), fronteira (1382) e mapa
+  (154) PASS. Runtime `toca`: zero `comment_forum`, cache rebuild, classe ausente,
+  Node antigo renderizado e HTTP 200 após redirect. Sem dados para testar
+  contagem de Comments legados; PHP 8.4.26 abaixo de 8.5. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.38 — aposentar pastas editoriais do Forum antigo — 2026-10-19
 
 - `aculta_magazine` 0.1.0-dev.14 agora mantém os updates 10001/10002 como no-op,

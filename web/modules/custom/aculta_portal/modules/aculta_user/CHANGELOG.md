@@ -1,3 +1,14 @@
+## 0.4.0-dev.39 — remover apresentação do Forum contrib — 2026-10-19
+
+- Removido `ForumTopicPresentationHooks`, cujo contador e chamada de login
+  atendiam apenas Nodes `forum` e Comments `comment_forum`. A apresentação do
+  novo bundle `aculta_forum_topic` permanece nos contratos ACULTA atuais.
+- Runtime de teste confirma zero `comment_forum`; nenhum conteúdo foi alterado.
+  Unit: 60 testes/175 assertions PASS (1 depreciação PHPUnit); gates Drupal 11+
+  970, fronteira 1382 e mapa 154 PASS. Cache rebuild, ausência da classe, render
+  do Node legado e HTTP 200 após redirect passaram. Não há Comments antigos para
+  validar contagem; PHP 8.4.26 abaixo da baseline 8.5. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.38 — remover resumo editorial do Forum legado — 2026-10-19
 
 - Removido o `DiscussionHooks` de `aculta_user`, que consultava comments do
