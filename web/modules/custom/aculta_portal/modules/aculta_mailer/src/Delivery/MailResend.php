@@ -6,6 +6,7 @@ namespace Drupal\aculta_mailer\Delivery;
 
 use Drupal\aculta_mailer\Entity\MailTransport;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
+use Drupal\aculta_mailer\Api\SingleUseLinkRegenerator;
 use Drupal\aculta_mailer\Log\MailPayloadCipher;
 use Drupal\aculta_mailer\Log\SingleUseLinkMail;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
@@ -34,6 +35,7 @@ final class MailResend {
     private readonly MailSuppression $suppression,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly LoggerInterface $logger,
+    private readonly iterable $regenerators = [],
   ) {}
 
   /**
@@ -44,8 +46,9 @@ final class MailResend {
     if ($log === NULL || (string) $log->get('status')->value !== MailStatus::Failed->value || (string) $log->get('payload_cipher')->value === '') {
       return FALSE;
     }
-    // Link de uso único não é reenviado com o conteúdo antigo: o pedido precisa ser refeito, e o link novo é gerado então.
-    return !SingleUseLinkMail::applies('aculta_mailer', (string) $log->get('type')->value);
+    $type = (string) $log->get('type')->value;
+    // Link de uso único: o dono do link precisa existir para gerar o pedido novo; o conteúdo antigo não é reenviado.
+    return !SingleUseLinkMail::applies('aculta_mailer', $type) || $this->regeneratorFor($type) !== NULL;
   }
 
   /**
@@ -67,6 +70,15 @@ final class MailResend {
     if ($this->suppression->has($this->log->hashRecipient((string) $payload['to']))) {
       return SendResult::cancelled();
     }
+    $type = (string) $log->get('type')->value;
+    if (SingleUseLinkMail::applies('aculta_mailer', $type)) {
+      // Link de uso único: o dono gera o pedido novo, com token novo. O envio desse pedido cancela o conteúdo antigo.
+      $regenerator = $this->regeneratorFor($type);
+      if ($regenerator === NULL) {
+        return SendResult::failed(DeliveryError::Permanent, NULL);
+      }
+      return $regenerator->regenerate((string) $payload['to']) ? SendResult::sent() : SendResult::failed(DeliveryError::Temporary, NULL);
+    }
     $transport = $this->entityTypes->getStorage(MailTransport::ENTITY_TYPE)->load($this->converter->transportId(['headers' => ['X-Transport' => $transportName]]));
     if (!$transport instanceof MailTransport) {
       return SendResult::failed(DeliveryError::Permanent, NULL);
@@ -84,6 +96,18 @@ final class MailResend {
     $errorCode = $code !== NULL ? 'smtp_' . $code : 'sem_codigo_temporaria';
     $this->log->record($message, MailStatus::Failed, $attempt, $transportName, $errorCode, $result['message']);
     return SendResult::failed(DeliveryError::Temporary, $code);
+  }
+
+  /**
+   * Dono do link para o tipo, ou NULL quando nenhum módulo gera o pedido novo.
+   */
+  private function regeneratorFor(string $type): ?SingleUseLinkRegenerator {
+    foreach ($this->regenerators as $regenerator) {
+      if ($regenerator->supports($type)) {
+        return $regenerator;
+      }
+    }
+    return NULL;
   }
 
   /**

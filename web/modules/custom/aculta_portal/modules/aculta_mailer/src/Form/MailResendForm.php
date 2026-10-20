@@ -6,6 +6,7 @@ namespace Drupal\aculta_mailer\Form;
 
 use Drupal\aculta_mailer\Delivery\MailResend;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
+use Drupal\aculta_mailer\Log\SingleUseLinkMail;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -91,6 +92,11 @@ final class MailResendForm extends ConfirmFormBase {
         '@n' => (int) $log->get('attempts')->value,
       ]) . '</p>',
     ];
+    if (SingleUseLinkMail::applies('aculta_mailer', (string) $log->get('type')->value)) {
+      // Link de uso único: o dono do link gera um pedido novo, com token novo, e o transporte é o padrão do envio.
+      $form['summary']['#markup'] .= '<p>' . $this->t('Este é um link de uso único. O reenvio gera um pedido novo, com link novo, e o conteúdo antigo é cancelado.') . '</p>';
+      return parent::buildForm($form, $form_state);
+    }
     $current = (string) $log->get('transport')->value;
     $form['transport'] = [
       '#type' => 'select',
@@ -106,7 +112,7 @@ final class MailResendForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $result = $this->resend->resend((string) $form_state->getValue('log_id'), (string) $form_state->getValue('transport'));
+    $result = $this->resend->resend((string) $form_state->getValue('log_id'), (string) ($form_state->getValue('transport') ?? ''));
     $this->messenger()->addMessage(match (TRUE) {
       $result->sent => $this->t('Mensagem aceita pelo transporte. O registro foi atualizado.'),
       $result->cancelled => $this->t('Reenvio suspenso: chave geral de envio desligada, ou destinatário na lista de supressão.'),

@@ -56,7 +56,7 @@ services:
 
   Drupal\aculta_mailer\Delivery\MailResend:
     class: Drupal\aculta_mailer\Delivery\MailResend
-    arguments: ['@entity_type.manager', '@Drupal\aculta_mailer\Transport\MailTransportSender', '@Drupal\aculta_mailer\Mail\LegacyMessageConverter', '@Drupal\aculta_mailer\Log\MailPayloadCipher', '@aculta_mailer.log_recorder', '@Drupal\aculta_mailer\Delivery\MailSuppression', '@config.factory', '@logger.channel.aculta_mailer']
+    arguments: ['@entity_type.manager', '@Drupal\aculta_mailer\Transport\MailTransportSender', '@Drupal\aculta_mailer\Mail\LegacyMessageConverter', '@Drupal\aculta_mailer\Log\MailPayloadCipher', '@aculta_mailer.log_recorder', '@Drupal\aculta_mailer\Delivery\MailSuppression', '@config.factory', '@logger.channel.aculta_mailer', !tagged_iterator aculta_mailer.link_regenerator]
 
   aculta_mailer.brevo_http_client:
     class: Symfony\Contracts\HttpClient\HttpClientInterface

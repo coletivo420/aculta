@@ -1,5 +1,10 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.44 — reenvio de link de uso único gera pedido novo pelo dono do link
+
+- Reenvio manual de link de uso único não remonta o conteúdo antigo: `MailResend` delega ao dono do link (`SingleUseLinkRegenerator`, tag `aculta_mailer.link_regenerator`). Sem dono, o reenvio é recusado. Para link de uso único, a tela de reenvio não mostra escolha de transporte.
+- Validado no Runtime de teste com o Portal como dono da confirmação de e-mail (ver changelog do Portal 0.4.0-dev.227).
+
 ## 0.1.0-dev.43 — lista completa de envios; correção de links em tabela
 
 - Lista de todos os envios do registro (`.../envios`), com filtros por tipo, estado, transporte e período, paginada em 50. Sem destinatário nem conteúdo; cada linha leva à página de estado. Link a partir do painel de envios.
