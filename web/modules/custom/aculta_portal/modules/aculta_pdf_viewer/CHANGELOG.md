@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.29 — opções do leitor no formatter — 2026-10-20
+
+- Os formatters Media e File passam a oferecer configuração Drupal por campo para controles, zoom inicial, rolagem, página dupla, idioma e apresentação do link, sem string posicional compactada.
+- Builder recebe as opções e oculta controles conforme a configuração. Download e impressão continuam disponíveis apenas quando o formatter já confirmou `File::access('download')`; impressão abre o viewer completo local do PDF.js, cujo botão de impressão processa o documento.
+- Zoom inicial é aplicado ao canvas próprio; idioma pt-BR é propagado para o viewer completo. A leitura custom ainda não implementa modo horizontal nem página dupla: as opções correspondentes se aplicam ao leitor completo até concluir o adapter.
+- Nenhum arquivo de TNC FlipBook estava disponível neste checkout; a análise de capacidades foi feita pela matriz enviada e pelas referências upstream já registradas no roadmap. A comparação detalhada, validação funcional do botão de impressão e inspeção do protótipo seguem pendentes. RUNTIME STATUS: DEFERRED.
+- Decisão do responsável: leitura em voz alta pelo navegador fica para pós-deploy; antes de implementação, avaliar suporte no ambiente de produção e testar com leitor de tela.
+
 ## 0.1.0-dev.28 — link alternativo ao viewer completo PDF.js — 2026-10-20
 
 - O formatter oferece link secundário para o viewer oficial `web/viewer.html`, com locale `pt-BR`; o canvas custom permanece a experiência padrão.

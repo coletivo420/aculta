@@ -40,7 +40,7 @@ async function initialize(viewer) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = `/libraries/pdf.js/build/pdf.worker.mjs?v=${PDFJS_VERSION}`;
     const pdf = await pdfjsLib.getDocument({ url }).promise;
     let pageNumber = 1;
-    let zoom = 1;
+    let zoom = viewer.dataset.acultaPdfDefaultZoom === '125' ? 1.25 : viewer.dataset.acultaPdfDefaultZoom === '100' ? 1 : 1;
     let renderSequence = 0;
     let renderTask;
     let searchSequence = 0;

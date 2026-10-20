@@ -27,7 +27,7 @@ interface PdfViewerBuilderInterface {
    * @return array
    *   A render array with cacheability and access metadata.
    */
-  public function build(MediaInterface $media, string $field_name = 'field_media_document'): array;
+  public function build(MediaInterface $media, string $field_name = 'field_media_document', array $settings = []): array;
 
   /**
    * Builds the shared viewer for a file field outside Media.
@@ -35,6 +35,6 @@ interface PdfViewerBuilderInterface {
    * The caller must add the containing entity and field access decisions to
    * the supplied cacheability metadata before calling this method.
    */
-  public function buildFile(FileInterface $file, string $title, string $expected_scheme, CacheableMetadata $cacheability, bool $require_file_view_access = FALSE): array;
+  public function buildFile(FileInterface $file, string $title, string $expected_scheme, CacheableMetadata $cacheability, bool $require_file_view_access = FALSE, array $settings = []): array;
 
 }

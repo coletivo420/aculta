@@ -30,7 +30,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function build(MediaInterface $media, string $field_name = 'field_media_document'): array {
+  public function build(MediaInterface $media, string $field_name = 'field_media_document', array $settings = []): array {
     $cacheability = CacheableMetadata::createFromObject($media);
     $media_access = $media->access('view', $this->currentUser, TRUE);
     $cacheability->addCacheableDependency($media_access);
@@ -54,13 +54,13 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     }
 
     $expected_scheme = $bundle === 'course_document' ? 'private' : 'public';
-    return $this->buildFile($file, $media->label() ?: $file->getFilename(), $expected_scheme, $cacheability, TRUE);
+    return $this->buildFile($file, $media->label() ?: $file->getFilename(), $expected_scheme, $cacheability, TRUE, $settings);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildFile(FileInterface $file, string $title, string $expected_scheme, CacheableMetadata $cacheability, bool $require_file_view_access = FALSE): array {
+  public function buildFile(FileInterface $file, string $title, string $expected_scheme, CacheableMetadata $cacheability, bool $require_file_view_access = FALSE, array $settings = []): array {
     $cacheability->addCacheableDependency($file);
     $file_access = $require_file_view_access
       ? $file->access('view', $this->currentUser, TRUE)
@@ -101,7 +101,16 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       return $this->denied($cacheability);
     }
 
-    $title = trim($title) ?: $file->getFilename();
+    $title = trim((string) ($settings['embed_title'] ?? '')) ?: (trim($title) ?: $file->getFilename());
+    $defaults = [
+      'show_download' => TRUE, 'show_print' => TRUE, 'show_zoom' => TRUE,
+      'show_fullscreen' => TRUE, 'show_search' => TRUE, 'show_page_navigation' => TRUE,
+      'show_full_viewer' => TRUE, 'default_zoom' => 'fit-width', 'default_scroll' => 'vertical',
+      'double_page' => FALSE, 'double_page_mobile' => FALSE, 'language' => 'pt-BR',
+      'link_text' => '', 'link_target' => '_blank', 'css_class' => '',
+    ];
+    $settings = array_replace($defaults, $settings);
+    $class = preg_replace('/[^a-zA-Z0-9_ -]/', '', (string) $settings['css_class']);
     $build = [
       '#type' => 'container',
       '#attributes' => [
@@ -110,6 +119,15 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         'aria-label' => $title,
         'data-aculta-pdf-url' => $url,
         'data-aculta-pdf-title' => $title,
+        'data-aculta-pdf-default-zoom' => $settings['default_zoom'],
+        'data-aculta-pdf-default-scroll' => $settings['default_scroll'],
+        'data-aculta-pdf-double-page' => $settings['double_page'] ? 'true' : 'false',
+        'data-aculta-pdf-double-page-mobile' => $settings['double_page_mobile'] ? 'true' : 'false',
+        'data-aculta-pdf-show-zoom' => $settings['show_zoom'] ? 'true' : 'false',
+        'data-aculta-pdf-show-fullscreen' => $settings['show_fullscreen'] ? 'true' : 'false',
+        'data-aculta-pdf-show-search' => $settings['show_search'] ? 'true' : 'false',
+        'data-aculta-pdf-show-page-navigation' => $settings['show_page_navigation'] ? 'true' : 'false',
+        'class' => array_filter(['aculta-pdf-viewer', $class]),
       ],
       'toolbar' => [
         '#type' => 'container',
@@ -147,7 +165,10 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       'reader_controls' => [
         '#type' => 'container',
         '#attributes' => ['data-aculta-pdf-control' => 'reader-controls'],
-        'zoom_out' => [
+        'zoom' => [
+          '#type' => 'container',
+          '#attributes' => ['data-aculta-pdf-control' => 'zoom-controls'],
+          'zoom_out' => [
           '#type' => 'html_tag',
           '#tag' => 'button',
           '#value' => new TranslatableMarkup('Reduzir zoom'),
@@ -157,13 +178,13 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
             'aria-label' => new TranslatableMarkup('Reduzir zoom'),
           ],
         ],
-        'zoom_status' => [
+          'zoom_status' => [
           '#type' => 'html_tag',
           '#tag' => 'span',
           '#value' => '100%',
           '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
         ],
-        'zoom_in' => [
+          'zoom_in' => [
           '#type' => 'html_tag',
           '#tag' => 'button',
           '#value' => new TranslatableMarkup('Aumentar zoom'),
@@ -173,7 +194,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
             'aria-label' => new TranslatableMarkup('Aumentar zoom'),
           ],
         ],
-        'zoom_reset' => [
+          'zoom_reset' => [
           '#type' => 'html_tag',
           '#tag' => 'button',
           '#value' => new TranslatableMarkup('Restaurar zoom'),
@@ -182,6 +203,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
             'data-aculta-pdf-control' => 'zoom-reset',
           ],
         ],
+          ],
         'fullscreen' => [
           '#type' => 'html_tag',
           '#tag' => 'button',
@@ -260,8 +282,19 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       'download' => [
         '#type' => 'html_tag',
         '#tag' => 'a',
-        '#value' => new TranslatableMarkup('Abrir ou baixar PDF'),
+        '#value' => trim((string) $settings['link_text']) ?: new TranslatableMarkup('Abrir ou baixar PDF'),
         '#attributes' => ['href' => $url, 'data-aculta-pdf-control' => 'download'],
+      ],
+      'print' => [
+        '#type' => 'html_tag',
+        '#tag' => 'a',
+        '#value' => new TranslatableMarkup('Abrir leitor completo para imprimir'),
+        '#attributes' => [
+          'href' => '/libraries/pdf.js/web/viewer.html?' . UrlHelper::buildQuery(['file' => $url, 'locale' => $settings['language']]),
+          'target' => '_blank',
+          'rel' => 'noopener noreferrer',
+          'data-aculta-pdf-control' => 'print',
+        ],
       ],
       'full_viewer' => [
         '#type' => 'html_tag',
@@ -270,15 +303,37 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#attributes' => [
           'href' => '/libraries/pdf.js/web/viewer.html?' . UrlHelper::buildQuery([
             'file' => $url,
-            'locale' => 'pt-BR',
+            'locale' => $settings['language'],
           ]),
-          'target' => '_blank',
-          'rel' => 'noopener noreferrer',
+          'target' => in_array($settings['link_target'], ['_blank', '_self'], TRUE) ? $settings['link_target'] : '_blank',
+          'rel' => $settings['link_target'] === '_blank' ? 'noopener noreferrer' : NULL,
           'data-aculta-pdf-control' => 'full-viewer',
         ],
       ],
       '#attached' => ['library' => ['aculta_pdf_viewer/viewer']],
     ];
+    if (empty($settings['show_download'])) {
+      $build['download']['#access'] = FALSE;
+    }
+    if (empty($settings['show_print'])) {
+      $build['print']['#access'] = FALSE;
+    }
+    if (empty($settings['show_full_viewer'])) {
+      $build['full_viewer']['#access'] = FALSE;
+    }
+    if (empty($settings['show_zoom'])) {
+      $build['reader_controls']['zoom']['#access'] = FALSE;
+    }
+    if (empty($settings['show_fullscreen'])) {
+      $build['reader_controls']['fullscreen']['#access'] = FALSE;
+    }
+    if (empty($settings['show_search'])) {
+      $build['search_controls']['#access'] = FALSE;
+    }
+    if (empty($settings['show_page_navigation'])) {
+      $build['toolbar']['previous']['#access'] = FALSE;
+      $build['toolbar']['next']['#access'] = FALSE;
+    }
     $thumbnail = $scheme === 'public'
       ? $this->thumbnailBuilder->build($file, $title . ' — miniatura da primeira página')
       : NULL;

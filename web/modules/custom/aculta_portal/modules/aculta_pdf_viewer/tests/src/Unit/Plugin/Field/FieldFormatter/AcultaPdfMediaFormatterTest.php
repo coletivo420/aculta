@@ -42,7 +42,7 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
 
     $viewer = ['#type' => 'container', '#attributes' => ['data-aculta-pdf-viewer' => 'true']];
     $builder = $this->createMock(PdfViewerBuilderInterface::class);
-    $builder->expects(self::once())->method('build')->with($media, 'field_media_document')->willReturn($viewer);
+    $builder->expects(self::once())->method('build')->with($media, 'field_media_document', self::anything())->willReturn($viewer);
 
     $elements = $this->formatter($builder)->viewElements($items, 'pt-br');
 
@@ -105,7 +105,7 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     $builder = $this->createMock(PdfViewerBuilderInterface::class);
     $builder->expects(self::once())
       ->method('build')
-      ->with($media, 'field_media_course_document')
+      ->with($media, 'field_media_course_document', self::anything())
       ->willReturn($viewer);
 
     self::assertSame($viewer, $this->formatter($builder)->viewElements($items, 'pt-br')[0]);
@@ -132,7 +132,7 @@ final class AcultaPdfMediaFormatterTest extends UnitTestCase {
     $items = $this->fieldItems($media, $file);
 
     $builder = $this->createMock(PdfViewerBuilderInterface::class);
-    $builder->expects(self::once())->method('build')->with($media, 'field_media_document')->willReturn([
+    $builder->expects(self::once())->method('build')->with($media, 'field_media_document', self::anything())->willReturn([
       '#access' => FALSE,
       '#cache' => ['contexts' => ['user.permissions']],
     ]);

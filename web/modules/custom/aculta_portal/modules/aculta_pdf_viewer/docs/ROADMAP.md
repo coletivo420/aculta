@@ -10,6 +10,25 @@ no Runtime.
 
 ## Princípios e referência funcional
 
+### Comparação de recursos TNC solicitados em 2026-10-20
+
+O arquivo que o responsável enviou ao outro agente não está disponível neste
+checkout; esta análise usa a tabela compartilhada na conversa e as páginas TNC
+já referenciadas acima. Não reproduzir sua string posicional de 16 caracteres.
+As opções devem ser configurações Drupal nomeadas no formatter.
+
+| Grupo | Decisão ACULTA | Situação |
+|---|---|---|
+| Download, impressão, zoom, tela cheia, busca, navegação, viewer oficial | Controles administráveis no formatter; permissão efetiva do File continua obrigatória. Impressão abre o PDF.js completo, cujo fluxo imprime o documento inteiro. | Opções iniciais implementadas em dev.29; conferir UX/acesso e formulário no gate pré-RC. |
+| Zoom e rolagem padrão | Configuração nomeada. Zoom alimenta o canvas custom; rolagem depende de integração específica com o viewer oficial ou implementação custom. | Zoom custom implementado; rolagem configurável ainda sem efeito e precisa ser removida da UI até ser ligada. |
+| Página dupla e móvel | Desligado por padrão, opção configurável; não forçar página dupla móvel por padrão. | As opções estão armazenadas, mas ainda sem efeito visível. Corrigir antes de considerar esta parte entregue. |
+| Idioma | Expor idiomas realmente instalados, iniciando com pt-BR. | A configuração oferece somente pt-BR e o propaga ao PDF.js. |
+| Rotação, contorno e miniaturas | Adaptar usando APIs PDF.js; outline só quando o documento fornecer marcadores; miniaturas sob demanda. | Pendentes no canvas custom; viewer completo oficial já expõe recursos relacionados. |
+| Compartilhamento | Somente link copiável, same-origin e sem serviços de terceiros. | Pendente; exigir revisão de URL/acesso para documento privado antes de implementar. |
+| Mão/arrastar | Baixa prioridade; só se o modo de leitura justificar e passar avaliação de teclado. | Fora do recorte atual. |
+| Leitura em voz alta | Pós-deploy. Avaliar suporte/voz do navegador no ambiente de produção e testar com leitor de tela antes de qualquer implementação. | Fora do escopo pré-deploy; registrar como evolução pós-deploy. |
+| Tema, ícones e embed | Tokens ACULTA420/Bootstrap; formatter configura título, link, destino e classe validada. | Campos do formatter presentes; confirmar apresentação com validação visual pré-RC. |
+
 O Media/File do Drupal continua sendo a fonte de verdade para documento,
 metadados, URL e acesso. O viewer usa o PDF.js local e só recebe arquivo
 resolvido por Media autorizada ou campo File com acesso confirmado; conteúdo embutido não aceita URL
