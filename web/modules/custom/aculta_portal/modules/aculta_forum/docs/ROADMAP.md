@@ -31,7 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
-| `0.1.0-dev.33` | Mover comentário e subárvore entre tópicos do Fórum | Serviço/Form/ação administrativa, permissão específica, locks por tópico compartilhados com gravação/exclusão normal, revalidação de pai/host, atualização de thread/estatísticas e transação/rollback. Kernel MariaDB atualizado: 12/246 PASS; inclui Flag, Search API, referência/file_usage de anexo e submissão Form API confirmada/rejeitada. Forum Unit 51/360 PASS; Messenger e Game têm testes direcionados contra eventos duplicados. Runtime `toca`: Drupal 11.4.10, rota/permissão/serviço resolvidos, configuração ausente (fechada); GET com Comment inexistente respondeu 404. Nenhum conteúdo ou config foi alterado; não há Comment publicado de `aculta_forum_topic` no Runtime para testar entidade real. RUNTIME STATUS: PARTIAL. Restam rota com entidade existente/CSRF, teste concorrente entre requisições, History, política de anexos `aculta_image`, evento/fila Messenger, permalink e browser. Evidências em `CHANGELOG.md` e `TEST-MATRIX.md`. |
+| `0.1.0-dev.33` | Mover comentário e subárvore entre tópicos do Fórum | Serviço/Form/ação administrativa, permissão específica, locks por tópico compartilhados com gravação/exclusão normal, revalidação de pai/host, atualização de thread/estatísticas e transação/rollback. Kernel MariaDB atualizado: 12/246 PASS; inclui Flag, Search API, referência/file_usage de anexo e submissão Form API confirmada/rejeitada. Forum Unit 51/360 PASS; Messenger e Game têm testes direcionados contra eventos duplicados. Runtime `toca`: Drupal 11.4.10, rota/permissão/serviço resolvidos, configuração ausente (fechada); GET com Comment inexistente respondeu 404. Em limpeza separada dos fixtures, 8 tópicos `[TESTE]` foram removidos; 0 tópicos/Comments novos permanecem e 12 termos da árvore inicial foram preservados. O Forum antigo mantém 30 Nodes/12 vínculos editoriais. Não há Comment publicado de `aculta_forum_topic` para testar a rota com entidade real. RUNTIME STATUS: PARTIAL. Restam rota com entidade existente/CSRF, teste concorrente entre requisições, History, política de anexos `aculta_image`, evento/fila Messenger, permalink e browser. Evidências em `CHANGELOG.md` e `TEST-MATRIX.md`. |
 | `0.1.0-dev.32` | Contagem, atividade e identidade pública do último comentarista na View de tópicos | Campo Core `last_comment_uid` oculto; hook injeta cartão `author_forum` pelo `aculta_user`, sem usar nome de login. Teste de equivalência entre install/sync adicionado; execução e Runtime/browser pendentes. Contagem publicada tem Kernel PASS; ordenação positiva e invalidação após moderação seguem pendentes |
 | Não marcada | Contagem e atividade na View de tópicos | Kernel MariaDB confirma `comment_count = 1` com resposta publicada, exclui pendente e preserva o agregado após mover categoria; Runtime tem 0 respostas, então ordenação positiva, invalidação após moderação e inspeção visual seguem pendentes |
 | Não marcada | Contagem de respostas em tópicos próprios | Implementada na aba privada Fórum de Minha Conta: cada tópico da pessoa usa `comment_count` de Comment Core; validação direcionada pendente nesta subfase |
@@ -40,7 +40,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | Não marcada | Hierarquia no índice público de categorias | Configuração e Runtime PASS: a View apresenta os 12 termos e associa corretamente as 8 subcategorias aos pais; inspeção visual continua pendente |
 | Não marcada | Lista personalizada de discussões não lidas | View `/discussoes/nao-lidas` usa History contrib com acesso `authenticated`, filtros públicos fixos e sem cache compartilhado; campo `node_new_comments` mostra contagem positiva e liga à primeira resposta nova. Runtime query como uid 5 retornou 7 resultados e anônimo recebeu 403; HTTP autenticado/browser pendente |
 | Não marcada | Marcar todas as discussões públicas acessíveis como lidas | Ação confirmada `/discussoes/marcar-tudo-como-lido`, em Core Batch de 200 itens e History por usuário; Unit/Kernel e isolamento de domínio aprovados. Runtime smoke confirmou rota/form/access sem gravar histórico; teste funcional com usuário de QA efêmero e Browser continuam pendentes. |
-| Não marcada | Descoberta: novas, sem resposta e mais comentadas | Displays de Views e abas implementados; Runtime das três rotas HTTP 200, 8 tópicos cada e 8 sem resposta; Kernel comprova contagem de resposta publicada e exclusão de pendente; ordenação positiva da View no Runtime pendente |
+| Não marcada | Descoberta: novas, sem resposta e mais comentadas | Displays de Views e abas implementados; Runtime validou HTTP 200 e fixtures antes da limpeza; depois da remoção dos oito tópicos `[TESTE]`, as três rotas retornam lista vazia (HTTP 200). Kernel comprova contagem de resposta publicada e exclusão de pendente; ordenação positiva da View com dados permanece pendente |
 | Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit e Kernel PASS; Functional/Runtime pendentes. Movimento de comentários implementado no código em dev.33, com portas de validação descritas em `MOVE-TOOLS.md`. |
 | `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas, navegação HTTP e relação pai/filho; inspeção visual pendente |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
@@ -202,15 +202,16 @@ enviar resposta. Nenhum dado foi criado; o fluxo funcional segue pendente.
 
 O campo `field_aculta_categories` é obrigatório e usa o vocabulário novo
 `aculta_forum_categories`. A hierarquia inicial e seus tópicos `[TESTE]` foram
-criados no Runtime de Homelab por solicitação explícita do responsável, como
-fixtures para validar navegação e apresentação; isso substitui a pendência
-anterior de aguardar aprovação de nomes/hierarquia. Os registros não são
-Config Sync e não pertencem ao acervo legado. Inventário e remoção controlada:
-[`TEST-FIXTURES.md`](TEST-FIXTURES.md). Nenhum comentário foi criado.
+criados no Runtime de Homelab por solicitação explícita do responsável para
+validar navegação e apresentação; os oito Nodes de teste foram removidos em
+2026-10-19 depois da homologação, sem comentários. Os 12 termos seguem como
+estrutura inicial do novo fórum. Os registros não são Config Sync nem parte do
+acervo legado. Inventário e limpeza: [`TEST-FIXTURES.md`](TEST-FIXTURES.md).
 
-Portal `0.4.0-dev.189` / Forum `0.1.0-dev.20` criam 12 termos (4 categorias e
-8 subcategorias) e 8 tópicos `[TESTE]` de uid 5 no Runtime de teste. A correção
-Pathauto dá aliases portugueses ao bundle novo. A View GET pública agora não
+Portal `0.4.0-dev.189` / Forum `0.1.0-dev.20` criaram 12 termos (4 categorias e
+8 subcategorias) e 8 tópicos `[TESTE]` de uid 5 no Runtime de teste. Depois da
+validação, os oito tópicos foram removidos; as categorias foram preservadas. A
+correção Pathauto dá aliases portugueses ao bundle novo. A View GET pública agora não
 recebe CAPTCHA global, que a fazia abortar durante o render: a raiz mostra os
 cinco tópicos da página inicial e filtro `categoria=77` mostra o tópico
 esperado; os oito aliases retornam 200. O legado continua com 30 Nodes e 8
@@ -309,10 +310,12 @@ data de criação, “Sem resposta” pelo `comment_count = 0` do agregado Core 
 “Mais comentadas” por contagem de respostas publicadas com desempate por
 atividade. As três listagens preservam o bundle, publication status, Domain
 ativo, filtro de categoria e SQL rewrite da View base. Abas locais ligam os
-displays à página principal. Runtime: as três rotas responderam HTTP 200 e cada
-consulta retornou os 8 tópicos de teste; “Sem resposta” retornou os 8 porque o
-Fórum ainda não tem comentários publicados. Portanto, a ordenação com contagem
-positiva continua sem caso Runtime. Um hook GET-only existente foi ampliado
+displays à página principal. Na primeira homologação, as três rotas responderam
+HTTP 200 e cada consulta retornou os 8 tópicos de teste; “Sem resposta” retornou
+os 8 porque não havia comentários publicados. Os fixtures foram removidos em
+2026-10-19. Smoke HTTP posterior confirmou as três rotas com HTTP 200 e lista
+vazia; a ordenação com contagem positiva continua sem caso Runtime. Um hook
+GET-only existente foi ampliado
 para remover CAPTCHA somente das formas de filtro dessas quatro páginas de
 leitura; envio de conteúdo permanece fora da exceção.
 

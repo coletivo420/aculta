@@ -19,9 +19,17 @@
   confirmou rota, permissão e serviço do mover, com `comment_move_enabled: null`
   (ausente e portanto fechado). GET ao formulário com Comment inexistente retornou
   404. Não há Comments publicados desse bundle no Runtime para testar rota com
-  entidade real; nenhum conteúdo/configuração foi alterado. Rota com entidade
+  entidade real; nenhuma configuração do mover foi alterada. Rota com entidade
   existente, CSRF, concorrência entre processos e efeitos integrados permanecem
   DEFERRED; PHP 8.4.26 abaixo da baseline 8.5; RUNTIME STATUS: PARTIAL.
+- Limpeza de homologação autorizada no Runtime: removidos pela Entity API os
+  oito Nodes `[TESTE]` (IDs 383–390) do bundle novo, após confirmar títulos,
+  bundle e owner uid 5, sem Comments, Flags ou referências editoriais. Os 12
+  termos da árvore inicial foram preservados; resultado: 0 tópicos e 0 Comments
+  novos. Os oito aliases Pathauto foram removidos e cada URL anterior retorna
+  HTTP 404. O módulo Forum antigo, seus 30 Nodes, 8 termos `forums`, 12 vínculos
+  da Revista e 0 Comments legados permaneceram intactos. Configuração não foi
+  alterada. Inventário e evidência em `docs/TEST-FIXTURES.md`.
 - Forum Unit: 51 testes/360 assertions PASS; PHPCS nos arquivos novos e gates
   Drupal 11+ (970), fronteira (1388), mapa (154), slugs (387) e hierarquia de
   papéis PASS. PHP CLI 8.4.26 (abaixo da baseline 8.5).

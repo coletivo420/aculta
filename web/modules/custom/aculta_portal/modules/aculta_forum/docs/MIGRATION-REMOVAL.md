@@ -1,8 +1,10 @@
 # Plano de retirada do Drupal Forum contrib
 
 Status: dev5 em auditoria; pré-requisitos operacionais para remoção ainda não
-foram satisfeitos. `drupal/forum` 1.1.3 continua instalado e habilitado; não
-houve alteração de conteúdo ou uninstall.
+foram satisfeitos. `drupal/forum` 1.1.3 continua instalado e habilitado; nenhum
+conteúdo/configuração do sistema legado foi alterado e não houve uninstall. Os
+fixtures `[TESTE]` do bundle novo são tratados separadamente em
+[`TEST-FIXTURES.md`](TEST-FIXTURES.md).
 
 ## Inventário conferido
 
@@ -121,10 +123,31 @@ despublica tópico legado. Permanecem temporariamente serviços de leitura e
 conversão dos vínculos antigos e o ajuste visual de links de comentários. O
 Forum contrib, o pacote Composer, os tópicos e o vocabulário não foram removidos.
 
+### Limpeza posterior dos fixtures do fórum novo — 2026-10-19
+
+Em nova conferência do Runtime `toca` (Drupal 11.4.10, URI do purpose `forum`,
+banco `aculta_runtime`), foram encontrados os oito Nodes `[TESTE]` 383–390 do
+bundle `aculta_forum_topic`, todos publicados por uid 5. O responsável já havia
+determinado que os tópicos e comentários de teste fossem removidos para deixar
+o novo Fórum sem conteúdo. Antes da operação, cada ID foi revalidado por bundle,
+título e owner; os Nodes não tinham Comments, Flags, nem referências editoriais
+ou externas. A Entity API removeu somente esses oito Nodes. Não havia Comments
+de teste.
+
+Consulta posterior confirmou 0 Nodes `aculta_forum_topic` e 0 Comments
+`aculta_discussion_post`. Os 12 termos da hierarquia inicial foram preservados
+como estrutura de categoria solicitada. O Fórum legado continua ativo: 30 Nodes
+`forum` (13 publicados/17 não publicados), 8 termos `forums`, 0 Comments
+`comment_forum` e 12 vínculos `field_discussao` das publicações. Nenhuma
+configuração foi alterada, e nenhum conteúdo editorial ou legado foi removido.
+Os oito aliases antigos não têm mais registro de Pathauto e respondem HTTP 404.
+Detalhes e IDs: [`TEST-FIXTURES.md`](TEST-FIXTURES.md).
+
 ### Decisão operacional desta auditoria
 
-- Não excluir nodes, termos, comments ou flags; não desinstalar `forum`, não
-  remover `drupal/forum` do Composer e não executar updates/import/export.
+- Não excluir Nodes, termos, Comments ou Flags do Forum legado; não desinstalar
+  `forum`, não remover `drupal/forum` do Composer e não executar
+  updates/import/export nesta subfase.
 - Preservar temporariamente os 12 tópicos vinculados à Revista e seus campos
   `field_discussao`. A discussão direta via Comment já está instalada para
   `article` e `blog`; a sincronização automática foi removida sem apagar ou

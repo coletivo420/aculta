@@ -46,14 +46,18 @@
 - PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 137 assertions PASS.
 - No Runtime `toca` (Drupal 11.4.10, `aculta_runtime`, URI
   `https://growroom420.aculta.toca.net.br`), import parcial da View e cache
-  rebuild; query retorna 8 tópicos com contagem 0, e HTTP 200 apresenta
-  `0 respostas` nas oito linhas. Nenhum Node/Comment foi criado ou alterado.
+  rebuild; na primeira homologação a query retornou 8 tópicos com contagem 0,
+  e HTTP 200 apresentou `0 respostas` nas oito linhas. Os oito fixtures foram
+  removidos posteriormente por solicitação do responsável; o smoke após limpeza
+  confirmou HTTP 200 e ausência de `[TESTE]` nas listagens. Nenhum Comment foi
+  criado.
 - O sort Core `comment_ces_last_updated` lançou `TypeError` em 11.4.10; a
   configuração foi revertida e a rota voltou HTTP 200. O sort virtual
   `PublicForumLastActivity` então executou: Views reconhece o plugin do ACULTA,
   SQL contém `GREATEST(node.changed, last_comment_timestamp) DESC`, 8 resultados,
   campo Core `last_updated` renderizado e HTML HTTP 200 com `0 respostas` e
-  “Última atividade” em todas as linhas. Nenhum conteúdo foi alterado.
+  “Última atividade” em todas as linhas. Estado atual depois da limpeza: 0
+  tópicos; a contagem/ordenação com dados segue aguardando fixture deliberada.
 - Caso positivo e invalidação após moderação continuam DEFERRED. Render direto
   por Drush registrou `Missing text format: basic_html` nos teasers; drift a
   investigar separadamente. Inspeção visual também pendente. RUNTIME STATUS:
@@ -135,11 +139,11 @@ continuam pendentes.
 | Instalação/configuração | install profile limpo, dependências, IDs e nomes <=32, field Comment nos bundles Node permitidos | Kernel/install tests; validação de config. |
 | Context API | resolver cada contexto, provider ausente/desabilitado, host inválido e URLs canônicas | Unit + Kernel. |
 | Comment | tipo compartilhado (ou variantes justificadas), host bundles e field settings, thread, revisão, publicação, permalink/ancora, formulário | Kernel + Functional. |
-| Formulário/display de tópico público | title/body/categoria editáveis; status de comentário e autoria histórica não editáveis; full apresenta discussão compartilhada; teaser omite thread | Unit verifica contrato YAML e equivalência Config Sync/config install. Runtime de teste contém 12 termos iniciais e 8 tópicos `[TESTE]`; registros em `TEST-FIXTURES.md`. Todos os oito aliases HTTP 200; a raiz renderiza os cinco itens do pager inicial. |
+| Formulário/display de tópico público | title/body/categoria editáveis; status de comentário e autoria histórica não editáveis; full apresenta discussão compartilhada; teaser omite thread | Unit verifica contrato YAML e equivalência Config Sync/config install. Na homologação, 12 termos e 8 tópicos `[TESTE]` foram usados para validar navegação; os tópicos foram removidos depois. Estado atual do Runtime: 12 termos, 0 tópicos e 0 Comments; histórico e IDs em `TEST-FIXTURES.md`. Os oito aliases responderam HTTP 200 antes da limpeza e HTTP 404 depois, sem redirect. |
 | Ação de criação no índice | link aparece apenas se a rota Core autoriza; variação por usuário/permissões e contexto `forum`; ausência em outros displays/domínios | Unit `PublicForumTopicCreateActionHooksTest`: 5 testes/19 assertions PASS. Runtime anônimo: raiz 200, link omitido, rota 403. Conta autorizada, navegador e apresentação integral pendentes. |
 | Acesso ao formulário de tópico | `email_confirmed` cria e gerencia somente tópico próprio; sem permissões `edit any`/`delete any`; access real da entidade | Unit `ForumTopicDisplayConfigTest`: 7 testes/47 assertions PASS. Runtime `toca`: uid 5 autorizado na rota; formulário Core renderizado em memória, sem submissão; contagens seguem 0 tópicos/Comments. Browser e envio funcional DEFERRED. |
 | Respostas no tópico público | Field Comment compartilhado aberto, formulário inline Core, anônimo bloqueado e permissão `post comments` | Unit `ForumTopicDisplayConfigTest` verifica equivalência install/Sync e contrato de field/role. Runtime `toca`: status Open, uid 5 tem permissão, 0 tópicos/Comments. Render e envio vinculados a tópico salvo DEFERRED para preservar acervo limpo. |
-| Navegação por categoria | filtro Views nativo na referência Taxonomy, hierárquico, escopo fixo no vocabulário novo e query args em cache | Unit `ForumTopicDisplayConfigTest` cobre filtro e hierarquia. Runtime `toca`: 12 termos/8 tópicos; filtro `categoria=77` mostra o tópico esperado. O CAPTCHA global foi removido apenas da View GET de leitura, que antes abortava a listagem; formulário de criação anônimo permanece 403. Navegador visual ainda pendente. |
+| Navegação por categoria | filtro Views nativo na referência Taxonomy, hierárquico, escopo fixo no vocabulário novo e query args em cache | Unit `ForumTopicDisplayConfigTest` cobre filtro e hierarquia. Runtime `toca`: 12 termos e 0 tópicos após limpeza dos fixtures; antes da limpeza o filtro `categoria=77` mostrou o tópico esperado. O CAPTCHA global foi removido apenas da View GET de leitura, que antes abortava a listagem; formulário de criação anônimo permanece 403. Inspeção visual com a lista vazia pendente. |
 | Acesso público | anônimo/membro/editor; publicação, conteúdo fechado, flags e permissões | Kernel + Functional/browser. |
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
 | Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest` PASS; Runtime editorial PARTIAL (field/form renderizados sem envio). |

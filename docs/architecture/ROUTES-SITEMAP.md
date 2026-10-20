@@ -52,7 +52,7 @@ desabilitadas. Nunca use um caminho de teste como evidência de produção.
 | `wiki.aculta` | `/` | Início da Wiki420 | Ativo; edição/criação depende de autenticação e permissões. |
 | `loja.aculta` | `/` | Vitrine da loja da associação | Domain ativo; produtos dependem de conteúdo publicado. Carrinho e checkout vão para `main.aculta`. |
 | `cursos.aculta` | `/` | Catálogo inicial de cursos | Ativo; cursos e ações dependem de conteúdo, matrícula e access. |
-| `forum.aculta` | `/` | Índice público do ACULTA Forum / Growroom420 | Declarado; HTTP 200 validado no Runtime de teste com a View nova; itens dependem de Nodes publicados e access. Produção não confirmada. |
+| `forum.aculta` | `/` | Índice público do ACULTA Forum / Growroom420 | Declarado; Runtime de teste HTTP 200 e sem tópicos após limpeza dos fixtures; itens futuros dependem de Nodes publicados e access. Produção não confirmada. |
 | `links.aculta` | `/` | Página pública de perfis e links sociais | Código/configuração existentes; confirmar provisionamento DNS de produção em multidomínio. |
 
 ## Caminhos humanos ativos ou condicionais
@@ -173,12 +173,12 @@ correspondentes estão habilitados no ambiente.
 | `cursos.aculta` | `/curso/{alias}` | Página de um curso | Dinâmico; depende de curso publicado e acesso. O caminho interno `/cursos` responde `404` diretamente. |
 | `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de arquivo anexado a uma resposta LMS | Condicional; valida resposta e matrícula vigente. |
 | `forum.aculta` | `/topico/{titulo}` | Tópico do fórum | Dinâmico; depende de tópico publicado e access. Caminhos internos `/discussoes` e legado `/forum` respondem `404` diretamente. |
-| `forum.aculta` | `/categorias` | Índice público das categorias e subcategorias do Growroom420 | Declarado pela View `aculta_forum_categories`; filtra exclusivamente o vocabulário `aculta_forum_categories`; Runtime de teste retorna 12 termos com relações pai/filho corretas. |
+| `forum.aculta` | `/categorias` | Índice público das categorias e subcategorias do Growroom420 | View `aculta_forum_categories`; Runtime de teste HTTP 200, apresenta os 12 termos iniciais com relações pai/filho e nenhum tópico de teste. |
 | `forum.aculta` | `/discussoes/nao-lidas` | Lista personalizada de tópicos novos ou atualizados para a conta autenticada | View criada no Runtime de teste; exige papel `authenticated`, tópico público publicado, Domain ativo e acesso atual. UID 5 autorizado no plugin; anônimo HTTP 403; sessão autenticada/browser pendentes. |
 | `forum.aculta` | `/discussoes/marcar-tudo-como-lido` | Confirmação para marcar tópicos públicos acessíveis como lidos pela conta atual | Declarada em `aculta_forum 0.1.0-dev.29`; somente autenticado no purpose `forum`; Core Batch atualiza History por lotes após confirmação; Runtime não submeteu a ação para não gravar histórico de conta real. |
-| `forum.aculta` | `/discussoes/novas` | Tópicos públicos mais novos, ordenados por fixação e criação | Runtime de teste HTTP 200; a View retornou os 8 tópicos públicos de teste. Inspeção visual pendente. |
-| `forum.aculta` | `/discussoes/sem-resposta` | Tópicos públicos sem respostas publicadas | Runtime de teste HTTP 200; filtra agregado Core zero e mantém publicação, Domain, categoria, bundle e node access fixos; 8 resultados, pois não há respostas públicas. |
-| `forum.aculta` | `/discussoes/mais-comentadas` | Tópicos públicos ordenados pelo agregado de respostas publicadas | Runtime de teste HTTP 200; ordena pelo agregado Comment Core e atividade. Há 0 comentários aprovados, portanto o caso de contagem positiva aguarda homologação. |
+| `forum.aculta` | `/discussoes/novas` | Tópicos públicos mais novos, ordenados por fixação e criação | Runtime de teste HTTP 200 e lista vazia após limpeza dos 8 tópicos `[TESTE]`; inspeção visual vazia pendente. |
+| `forum.aculta` | `/discussoes/sem-resposta` | Tópicos públicos sem respostas publicadas | Runtime de teste HTTP 200 e lista vazia após limpeza; filtros fixos de bundle, publicação, Domain, categoria e node access permanecem configurados. |
+| `forum.aculta` | `/discussoes/mais-comentadas` | Tópicos públicos ordenados pelo agregado de respostas publicadas | Runtime de teste HTTP 200 e lista vazia após limpeza; ordenação positiva com respostas publicadas aguarda homologação. |
 | `forum.aculta` | `/criar-topico` | Formulário Core para novo tópico público | Declarado; Runtime de teste resolve no purpose forum; requer Entity Create Access para `aculta_forum_topic`. Anônimo 403; submissão autorizada ainda não homologada. |
 | `links.aculta` | `/` | Página pública de perfis e links sociais | Condicional ao provisionamento do host e conteúdo de configuração. `/redes-sociais` é interno. |
 | `revista.aculta` | `/u/{apelido}` | Perfil público de autor | Condicional a perfil público habilitado; apelido não canônico responde `404`. |
