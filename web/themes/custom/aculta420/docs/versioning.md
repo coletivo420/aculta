@@ -1,5 +1,16 @@
 # Versionamento
 
+## Ciclo de entrega (vigente em 2026-10-20)
+
+Toda alteração de fase no ciclo Dev → RC → deploy/validação Alpha → produção
+deve ser refletida neste versionamento, no roadmap do tema e nas instruções de
+IA (`AGENTS.md`). RC só é declarado quando código, gates/testes, revisão de
+código e validação visual pré-deploy aplicável estiverem concluídos. Alpha é a
+implantação/validação no servidor de desenvolvimento; depois de Alpha aprovado,
+o mesmo candidato segue para preparação de produção e validação pós-deploy.
+Registros anteriores permanecem históricos. Mudança apenas documental segue a
+regra específica abaixo e não avança marcador de versão do código.
+
 O versionamento do ACULTA420 controla as mudanças e os avanços **no código**. A versão é
 assinalada dentro do repositório. Tags no GitHub não são criadas por padrão.
 

@@ -1,5 +1,7 @@
 # Roadmap — ACULTA Game
 
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Concluir implementação, gates, testes e revisão visual aplicável antes de RC; validar o deploy Alpha no servidor de desenvolvimento antes da migração a produção.
+
 Escopo de produto aprovado em 2026-10-15. G0 documenta o projeto; G1 inicia a
 implementação. Estado e evidências em [EXECUCAO.md](EXECUCAO.md). Não instalar
 módulos candidatos antes da fase e da decisão correspondente. Por autorização

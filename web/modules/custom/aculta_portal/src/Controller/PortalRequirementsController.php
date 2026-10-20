@@ -204,7 +204,12 @@ final class PortalRequirementsController extends ControllerBase {
     [
       'name' => 'ACULTA PDF Viewer',
       'modules' => ['aculta_pdf_viewer'],
-      'packages' => ['drupal/pdfpreview', 'drupal/imagemagick'],
+      'packages' => [
+        'drupal/pdfpreview',
+        'drupal/imagemagick',
+        'drupal/csp',
+        'drupal/reporting',
+      ],
     ],
   ];
 

@@ -1,6 +1,8 @@
 # Roadmap do ACULTA Mailer
 
-Status atualizado em 2026-10-20. Cada fase vira commit(s) atômico(s) na PR aberta; não há PR nova por fase.
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Todo escopo, testes, gates e revisão visual aplicável devem estar concluídos para RC; Alpha valida o deploy no servidor de desenvolvimento antes da migração a produção.
+
+Status atualizado em 2026-10-20. Cada fase vira commit(s) atômico(s) na branch autorizada; PR só quando solicitada.
 Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser declaradas validadas sem evidência.
 
 | Fase | Entrega | Estado |
@@ -23,9 +25,9 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F14 | Migração da configuração de transporte (`mailer_transport`) para `aculta_mailer_transport`, convivendo com o contrib, sem trocar o envio do site. Entregue: entidade, fábrica SMTP e Brevo, credencial pelo arquivo de segredos (`SMTP_PASSWORD`, contrato). Entidades criadas no runtime e envio SMTP de teste aceito. Pendente: trocar o envio do site para a camada nova (F15), após equivalência | Em andamento (runtime de teste validado no envio) |
 | F15 | Retirada do contrib de envio: concluída. `system.mail` = `aculta_mailer`; symfony_mailer, mailer_override, mailer_transport e mailer_policy desinstalados no runtime, sem pacote no composer.json/composer.lock (somente 4 remoções no lock), sem configuração residual e com a configuração exportada. Envio pelo caminho da aplicação aceito depois da remoção. Pendências fora da F15: conferência visual do destinatário; SMTP2GO sem cota no plano atual; o gate de comércio reprova no check de rotas de webhook (já reprovava antes) | Concluída (runtime de teste; produção só com decisão do responsável) |
 
-## Status de RC
+## Situação para RC
 
-- **Não está pronto para RC.** O RC do submódulo exige todas as fases concluídas, revisadas e mescladas, com validação de código, visual e revisão final (ver `AGENTS.md`).
+- **Não está pronto para RC.** O escopo funcional aberto, gates/testes e revisão visual aplicável precisam ser concluídos antes de classificar o candidato como RC. Não é necessário aguardar merge em `main`; Alpha é etapa pós-deploy no servidor de desenvolvimento.
 - Fases fechadas nesta rodada: F3, F4, F5, F6, F8 (sem gráficos, a confirmar), F13. Abertas por decisão ou escopo de outro módulo: F7 (reenvio), F9 (textos do contrib), F10 (provedor e supressão), F11 (tracking), F12 (integrações de outros módulos).
 - Validação feita até aqui (não substitui as fases em aberto): testes Unit e Kernel passam; painel administrativo revisado no X11; gates de envio, segredos, rotas, papéis, fronteira e endereços passam.
 

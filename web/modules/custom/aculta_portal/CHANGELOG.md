@@ -3473,3 +3473,11 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   formulário não submetido, causa não isolada; ver a matriz do Forum. RUNTIME
   STATUS: PARTIAL.
 
+## 0.4.0-dev.230 — preparar CSP Report-Only e ciclo Alpha — 2026-10-20
+
+- Adicionadas dependências Composer oficiais `drupal/csp` e `drupal/reporting` para integrar a política CSP Report-Only do leitor PDF e coletar violações em Alpha; enforcement permanece desligado.
+- `config/sync` habilita os módulos e o endpoint local. A coleta registra metadados técnicos no watchdog/DBLog; retenção e URLs reportadas precisam ser revistas antes da migração a produção.
+- O painel Status atribui os pacotes `drupal/csp` e `drupal/reporting` ao `aculta_pdf_viewer`, mantendo visíveis seus requisitos PHP no inventário de extensões.
+- Atualizada a governança Dev → RC (tudo pronto para deploy) → Alpha (servidor de desenvolvimento) → produção.
+- Composer audit não encontrou advisories. Runtime DEFERRED; gates e validação visual pré-deploy ainda pendentes.
+

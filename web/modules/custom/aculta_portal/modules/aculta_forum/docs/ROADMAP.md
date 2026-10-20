@@ -1,5 +1,7 @@
 # Roadmap — ACULTA Forum
 
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Fechar escopo, testes, gates e revisão visual aplicável antes de RC; Alpha valida o deploy no servidor de desenvolvimento; após aprovação, preparar produção. Seções `rc.*` abaixo são planejamento/histórico legado, não autorizam deixar critérios para depois do deploy.
+
 Linha do projeto `aculta_forum`: começou em **0.1.0-dev.1**. Roadmap de escopo
 aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram

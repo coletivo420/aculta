@@ -1,5 +1,7 @@
 # Mercado Pago: inventário de APIs, recorrência e plano de integração
 
+**Ciclo vigente:** este plano segue [Dev → RC → deploy/validação Alpha → produção](../operations/RELEASE-LIFECYCLE.md). Concluir integração, testes/gates e revisão visual aplicável antes de RC; validar o candidato em Alpha antes da migração a produção.
+
 Status: **plano de trabalho** para a linha 0.4.0-dev.65 (`aculta_portal`). Painéis visuais (vendas, loja e produto) ficam para a fase seguinte, por decisão do responsável.
 
 Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `aculta_pagamentos_mercadopago` 0.1.0-dev.2, porte do `commerce_mercado_pago` 3.0.0-rc3 (Checkout Pro).

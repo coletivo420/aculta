@@ -2,10 +2,7 @@
 
 Status: **normativo para a linha 0.1.x**. Dono: responsável pelo Portal. Revisão: a cada fase da linha 0.1.x e antes do RC.
 
-**Estado atual de release:** `preRC` (`0.1.0-preRC.4`). A validação visual do
-diálogo de criação e a revisão em aparelho real são as únicas verificações
-pendentes registradas; o histórico da classificação `rc.1` abaixo permanece
-preservado como decisão anterior.
+**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). O estado registrado no índice raiz é a fonte vigente. `preRC` foi aposentado; RC exige todas as pendências, testes, gates e revisão visual pré-deploy concluídos. A classificação `rc.1` e a versão `preRC.4` abaixo são registros históricos feitos sob o fluxo anterior e não qualificam o estado atual.
 
 Este documento registra **por que** o submódulo é feito de certo modo. Ele não contém status de PR nem resultado de teste; esses dados ficam no `CHANGELOG.md` do módulo e na descrição da PR.
 

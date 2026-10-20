@@ -14,8 +14,8 @@ manual da lista de extensões.
   no painel.
 - Linhas com atribuição explícita ligam requisitos às integrações que os usam.
   `ACULTA Image` mapeia `entity_usage`, `media_duplicates`, `imageapi_optimize`
-  e `imageapi_optimize_binaries`; `ACULTA PDF Viewer` mapeia `pdfpreview` e
-  `imagemagick`. A varredura global também registra qualquer requisito
+  e `imageapi_optimize_binaries`; `ACULTA PDF Viewer` mapeia `pdfpreview`,
+  `imagemagick`, `csp` e `reporting`. A varredura global também registra qualquer requisito
   encontrado fora desses mapas.
 - Só entram dependências de runtime em `packages`. `packages-dev` e sugestões
   opcionais (`suggest`) ficam de fora.

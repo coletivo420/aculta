@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-Status em 2026-10-20: versão **0.1.0-dev.28**. O campo histórico `commerce_product.produto_loja.field_imagens` foi alinhado à política `aculta_image` e o gate passou. A mesma política foi aplicada somente a esse campo no Runtime de teste; nenhuma importação global foi feita. A classificação do submódulo permanece **Dev**: há bloqueios operacionais/integração além da revisão visual. `preRC` só se aplica quando a validação visual for a única pendência que restar; RC segue a política de `AGENTS.md`.
+**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Status em 2026-10-20: versão **0.1.0-dev.28**. O campo histórico `commerce_product.produto_loja.field_imagens` foi alinhado à política `aculta_image` e o gate passou. A mesma política foi aplicada somente a esse campo no Runtime de teste; nenhuma importação global foi feita. A classificação permanece **Dev**: há bloqueios operacionais/integração. `preRC` foi aposentado; concluir pendências, gates/testes e revisão visual aplicável antes de RC. Alpha é deploy/validação no servidor de desenvolvimento; produção ocorre depois da aprovação Alpha.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -93,7 +93,7 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 | **R7 — Fórum e LMS** | Fórum usa `usuario_aculta`; LMS recebe campo `capa_curso` com política `aculta_image` e finalidade `destaque` nos cartões | Campo de capa, limite de 10 MB e Views configurados no Runtime; Firefox confirmou o derivado 1280×720 num teste temporário, removido depois. Catálogos respondem 200 | F3/F6 do Fórum e LMS |
 | **R8 — Migração e dívida** | auditoria de consumidores e estilos legados | nenhuma ocorrência `legado_*`; referências de estilos em configurações nativas correspondem a `ImageCatalog::STYLES`; gate PASS; resultado registrado em `DEBT-REGISTER` | feito em 2026-10-16 |
 | **R9 — Configuração de imagens** | Views e modos de exibição usam estilos presentes no catálogo | gate verifica IDs `image_style` e estilos PhotoSwipe em `views.view.*` e `core.entity_view_display.*`; PASS em 2026-10-18 | feito |
-| **Pré-RC — validações de ambiente e integração** | Confirmar compatibilidade de `shell_exec`, ImageMagick e Ghostscript na Hostinger; fechar as pendências de importação/integração Growroom | Evidência de ambiente e checklist de integração aprovados; em seguida revisar se resta apenas validação visual | responsável e conclusão das fases do Fórum |
+| **Preparação de RC — validações de ambiente e integração** | Confirmar binários necessários para produção e fechar as pendências de importação/integração Growroom | Evidência, checklist, gates/testes e revisão visual pré-deploy concluídos antes de RC; Alpha valida o deploy no servidor de desenvolvimento e produção vem após aprovação | responsável e conclusão das fases do Fórum |
 
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 

@@ -1,16 +1,18 @@
 # Planejamento de construção do ACULTA Deployer
 
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Em RC, toda preparação, código, gates e revisão visual aplicável estão concluídos. Alpha é deploy no servidor de desenvolvimento; depois de validar Alpha, preparar a migração do mesmo candidato a produção e realizar a validação pós-deploy. Esta nota substitui marcos antigos que adiavam preparação essencial para o RC.
+
 Este documento define as fases de construção do submódulo `aculta_deployer`
 (versão atual: 0.1.22, conforme `VERSION`; estado de testes e de `check` em
 `docs/portal/historico/RELATORIO-ESTADO-2026-10-12.md` e DT-O12). Regra geral: cada fase é curta, termina com testes
-determinísticos e entra em PR própria. Fases longas terminam com uma **verificação
+determinísticos e commits atômicos na branch autorizada; PR só quando solicitada. Fases longas terminam com uma **verificação
 de segurança** obrigatória (seção "Gates de segurança"). Nenhuma fase começa com a
 anterior com pendência de segurança aberta.
 
 ## Premissas
 
 - A ferramenta é standalone: sem Drupal, Drush ou vendor (ver `ARQUITETURA.md`).
-- **Produção (decisão do responsável):** a entrega em produção não é requisito de fase, PR, release, RC nem pendência do agente. O responsável decide quando o projeto vai para produção, no fim de todo o projeto. Merge em `main` atualiza o código do repositório e não publica nada no Hostinger. As verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
+- **Produção:** preparar todos os requisitos para que o RC esteja pronto para deploy. Depois do deploy e validação Alpha no servidor de desenvolvimento, preparar a migração do mesmo candidato para produção; aplicar guardrails de ambiente, autorização e validação pós-deploy. Merge em `main` não publica nada no Hostinger.
 - O build de produção nunca grava dentro do repositório.
 - Correções que o código não resolve são registradas em `registry/deploy-registry.json`.
 - Segredos não entram no build nem no registro (ver `GUARDRAILS.md`).
@@ -104,7 +106,7 @@ Gate de segurança ao fim da fase 5: ver seção "Gate S5".
   runtime (`drush config:set`, não versionado). A produção usa `https://aculta.org` em `config/sync`.
 
 Pendências desta fase (não fechadas):
-1. Deploy no RC (todos os módulos, temas e subtemas). Só então: `robots --env=production` e `sitemap --env=production` como verificação pós-deploy. Até lá, o deploy não é executado.
+1. Deixar código, configuração, gates e verificações prontos em RC; após o deploy/validação Alpha, executar `robots --env=production` e `sitemap --env=production` como validação pós-deploy produtivo.
 2. Cross-host: `apoio.aculta.org`, `wiki420`, `coletivo420` e `cursos` precisam responder em produção
    (DEP-0001, DEP-0002 e DEP-0003 no registro). Verificação de propriedade no Search Console é
    manual e fica fora do deployer (ADR-009).
@@ -139,16 +141,16 @@ Pendências desta fase:
 
 ## Fase 11 — Migração de domínios teste → produção (0.1.15)
 
-**Status: preparação concluída; execução no RC.** Tabela `domain_transition` em `config/deploy.json`, comando `domains` (somente leitura) e guia em `docs/MIGRACAO-DOMINIOS.md`.
+**Status: preparação concluída; execução após RC, no fluxo Alpha → produção.** Tabela `domain_transition` em `config/deploy.json`, comando `domains` (somente leitura) e guia em `docs/MIGRACAO-DOMINIOS.md`.
 
 Pendências:
 1. Decidir o host de produção da revista (`revista420.aculta.org` ou manter `revista420.aculta.org`).
-2. No RC: `domains` sem pendências, `transition --target=production`, importação parcial com backup, DNS e certificados de `*.aculta.org` (fora do repositório), e verificação pós-deploy.
+2. Antes de RC, deixar comando, configuração, gate e rollback prontos. Após Alpha validado, `domains` sem pendências, `transition --target=production`, importação parcial com backup, DNS/certificados (fora do repositório) e verificação pós-deploy.
 
 ## Fase 6 — Release 0.2.0 (curta)
 
 - Atualizar CHANGELOG, VERSION e `info.yml`; a tag só é criada sob pedido do responsável.
-- Esta fase é o gate de RC do deployer. A entrega em produção é decisão do responsável no fim do projeto.
+- Esta fase fecha os requisitos do Deployer antes de RC; deploy Alpha e migração produtiva ocorrem depois, conforme o ciclo vigente.
 - Revisão final da documentação e das fronteiras.
 
 ## Gates de segurança

@@ -8,6 +8,10 @@ de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
 
 - Integra Media/File ao PDF.js oficial local, sem armazenar conteúdo, permissões,
   documentos ou progresso próprios.
+- CSP é observada com `drupal/csp` em Report-Only e endpoint local `drupal/reporting`;
+  Config Sync deixa `enforce` desligado. O candidato só vai a RC após
+  testes/gates e revisão visual pré-deploy; Alpha confere relatórios e enforcement
+  exige decisão posterior. Veja [PV7](docs/ROADMAP.md) e o [ciclo de release](../../../../../../docs/operations/RELEASE-LIFECYCLE.md).
 - O builder incorpora PDFs permanentes em `public://` ou `private://`, somente
   após autorização de Media, campo e File. `private://` usa a rota Core e cache
   de render max-age zero.

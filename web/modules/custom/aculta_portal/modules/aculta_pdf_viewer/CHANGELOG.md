@@ -1,5 +1,12 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.22 — CSP em Report-Only para coleta em Alpha — 2026-10-20
+
+- Dependências Composer aprovadas: `drupal/csp:^2.2` (2.2.4) e `drupal/reporting:^2.2` (2.2.0) para emitir política Report-Only e receber relatórios no endpoint local.
+- Config Sync inclui módulos e endpoint; `report-only` está ligado, `enforce` desligado. A política de observação não habilita `report-sample`, para não registrar trechos de scripts/estilos inline.
+- O PDF.js continua com `worker-src 'self'`. Fontes e violações serão aferidas pelos relatórios em Alpha. Nenhuma política bloqueante é aplicada; enforcement fica para decisão após Alpha.
+- Runtime DEFERRED. Antes do deploy, executar gates/config validation e revisão visual pré-deploy; após deploy Alpha, conferir cabeçalhos, endpoint, registros, volume e privacidade. Não declarar RC ainda.
+
 ## 0.1.0-dev.21 — fonte da miniatura verificada antes do ImageMagick — 2026-10-20
 
 - `PdfPreviewThumbnailBuilder` confirma que o arquivo PDF público ainda existe e está legível antes de invocar PDFPreview/ImageMagick. Arquivo ausente continua fail-soft e não produz warning por falha previsível do processador.

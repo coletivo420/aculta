@@ -9,6 +9,7 @@ Documentação operacional durável do ACULTA.
 - [RELEASES.md](RELEASES.md) — gates, SemVer, tags e release.
 - [DEPLOYMENT.md](DEPLOYMENT.md) — deployment, conteúdo, homologação e rollback.
 - [RC-READINESS.md](RC-READINESS.md) — bateria de testes locais, pendências e prontidão para RC (sitemap, descoberta, deployer).
+- [RELEASE-LIFECYCLE.md](RELEASE-LIFECYCLE.md) — fluxo vigente Dev → RC → deploy/validação Alpha e decisão CSP.
 - [Homelab](../../scripts/homelab/README.md) — ambiente de desenvolvimento.
 - Estados — snapshots/estados de desenvolvimento, mantidos fora do Git (pasta `estados/`, ignorada).
 

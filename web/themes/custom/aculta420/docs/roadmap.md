@@ -1,5 +1,7 @@
 # Roadmap — ACULTA420
 
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../docs/operations/RELEASE-LIFECYCLE.md). Todo requisito de código, testes, gates e revisão visual aplicável deve estar pronto antes de RC; Alpha é validação pós-deploy no servidor de desenvolvimento. Após Alpha aprovado, preparar a migração para produção e realizar checks específicos pós-deploy.
+
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
 | 0.6.0-dev.123 | Token de extensões PHP do painel de requisitos | Gate de fronteira Portal–tema PASS. Sem mudança visual | Token mapeado para a tabela de extensões PHP; documentado em TOKENS-E-ATRIBUTOS |
@@ -248,7 +250,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 ### F5 — Mega menu
 
-- **Decisão do responsável (2026-10-09): só depois do primeiro RC.** Antes disso não há produção estável para validar a navegação.
+- **Registro histórico (2026-10-09):** a validação de produção era adiada até o primeiro RC. Pelo fluxo vigente, concluir todos os requisitos em RC, validar o deploy Alpha no servidor de desenvolvimento e, após aprovação, migrar o candidato a produção.
 
 ## Critério para encerrar o saneamento do tema
 

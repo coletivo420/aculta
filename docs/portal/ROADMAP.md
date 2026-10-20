@@ -1,5 +1,7 @@
 # Roadmap do aculta_portal
 
+**Ciclo vigente:** este roadmap segue [Dev → RC → deploy/validação Alpha → produção](../operations/RELEASE-LIFECYCLE.md). Todo escopo funcional, gates, testes e revisão visual aplicável devem estar prontos em RC antes do deploy. Alpha é o deploy/validação no servidor de desenvolvimento; após aprovação, preparar a migração do mesmo candidato para produção. Itens de releases anteriores são históricos e não alteram este fluxo.
+
 Atualizado após os merges das PRs #238 e #239 (2026-10-13 UTC; estado atual: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md)). Substitui o roadmap de modernização
 P0–P10 e a lista antiga de prioridades de produto.
 
@@ -141,7 +143,7 @@ As fontes de verdade e o estado exportado de Group/LMS estão em [LMS-GROUP.md](
 Todos os itens do registro do Portal estão em Resolvida, Decisão registrada ou Aberta com
 justificativa aceita pelo responsável. Os gates passam. Não há dívida nova sem registro.
 
-## Primeiro release candidate — preparação do pacote de produção
+## Preparação do pacote para RC (ciclo vigente)
 
 Ao final da preparação do primeiro RC do ACULTA Portal, iniciar no
 `aculta_deployer` uma etapa de **montagem de pacote enxuto de produção**. O

@@ -1,5 +1,7 @@
 # Roadmap do aculta_lms e visualizador PDF global
 
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../operations/RELEASE-LIFECYCLE.md). Em RC, código, configuração, testes isolados, gates e revisão visual/acessível aplicável estão prontos para deploy. Alpha valida o Runtime no servidor de desenvolvimento; depois de aprovado, preparar a migração do mesmo candidato para produção. RC não exige validação Runtime que só pode ocorrer após deploy.
+
 Revisado em 2026-10-19. A implementação segue fases independentes, com autorização e critérios próprios. O status é registrado por fase; a homologação de PDF privado não ativa automaticamente o módulo `aculta_lms`.
 
 ## Princípios e estado inicial
@@ -29,7 +31,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
 | F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, ao leitor PDF existente `aculta_pdf_viewer` (solicitado como `aculta_pdf_reader`) e `aculta_forum`; Gallery, Magazine e Wiki | Imagens de curso, atividade, entrega e discussão passam pela política `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado; tópicos e respostas preservam Forum/Node/Comment como fonte e revalidam membership, access, cache e purpose | `aculta_forum` ainda não tem API executável para vínculo LMS; implementar e testar isolamento por turma antes de dependência/ativação. Não duplicar storage, reader PDF ou entidade de discussão |
 | F16 — Hardening | performance, segurança, privacidade, acessibilidade, cache e tamanho/timeout PDF | zero Critical/High; matriz completa e gates PASS | rollback por componente/flag/config, sem downgrade destrutivo de entidades |
-| RC — Homologação integrada | testes no Homelab, browser, config sync, documento e gate de release | checklist/testes completos, Runtime PASS, versão e rollback anotados | Nenhum deploy/merge automático; interromper RC se access/cache, segurança ou banco divergir |
+| RC — Candidato integrado pronto para deploy | Testes automatizados, config sync estática, navegador pré-deploy, acessibilidade, segurança, documentação, versão e rollback | Todo requisito funcional e visual aplicável passa antes de RC; evidências e limites registrados. Alpha valida o Runtime após deploy | Não implantar automaticamente; se Alpha encontrar divergência, voltar a Dev, corrigir e gerar novo RC |
 | F17 — Google Classroom (opcional e última) | Após RC aprovado e nova decisão; publicar somente link para atividade ACULTA | OAuth/scopes, consentimento e link para fonte LMS aprovados | Nenhum pacote/token/rota/storage nesta linha; desabilitar integração sem afetar LMS |
 
 ## Estado de fase
@@ -170,11 +172,14 @@ dashboards, F13 notificações educacionais, F14 conexões, F15 integrações de
 integrado. F17 Google Classroom permanece opcional, por último e dependente de nova decisão. F10 está
 homologada no Runtime de teste; os objetivos de integração de envio de imagem e discussão passam para F15,
 com discussão condicionada à implementação executável do `aculta_forum`. As homologações Runtime pendentes
-de F6–F9 continuam antes da RC.
+de F6–F9 (funcional, testes, gates e visual aplicável) continuam antes da RC; a
+validação do ambiente Runtime ocorre no Alpha após deploy.
 
-## Ordem, PR e status
+## Ordem, commits e status
 
-Cada fase é uma unidade pequena, commitada e descrita em PR própria conforme a regra do repositório. A autorização explícita do responsável para F9 permite a implementação nesta branch/PR; não autoriza importação de cursos, merge ou deploy.
+Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando
+solicitada. A autorização explícita do responsável para F9 permite a
+implementação nesta branch; não autoriza importação de cursos, merge ou deploy.
 
 Antes de operação Homelab: registrar `hostname`, `pwd`, branch/estado Git e Drush; confirmar site URI, banco, estado de configuração e possibilidade de recuperação.
 

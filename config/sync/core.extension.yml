@@ -47,6 +47,7 @@ module:
   content_lock: 0
   content_moderation: 0
   contextual: 0
+  csp: 0
   crop: 0
   ctools: 0
   ctools_entity_mask: 0
@@ -126,6 +127,7 @@ module:
   private_message_notify: 0
   profile: 0
   redirect: 0
+  reporting: 0
   rename_admin_paths: 0
   role_hierarchy: 0
   schema_article: 0

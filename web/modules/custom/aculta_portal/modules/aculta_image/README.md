@@ -6,7 +6,7 @@ origem externa, auditoria, quarentena e comparação visual.
 
 | Estado do submódulo | Versão atual | Próximas fases | Classificação |
 | --- | --- | --- | --- |
-| Em desenvolvimento | `0.1.0-dev.28` ([CHANGELOG](CHANGELOG.md)) | Confirmar binários e compatibilidade na Hostinger; concluir a integração/importação Growroom conforme bloqueios listados em [PLANO](docs/PLANO.md) e [IMPORTAÇÃO](docs/IMPORTACAO-GROWROOM.md); depois avaliar o RC | **Dev**, não `preRC`: há pendências funcionais e operacionais além da validação visual. |
+| Em desenvolvimento | `0.1.0-dev.28` ([CHANGELOG](CHANGELOG.md)) | Confirmar binários necessários para produção; concluir integração/importação Growroom conforme [PLANO](docs/PLANO.md) e [IMPORTAÇÃO](docs/IMPORTACAO-GROWROOM.md); concluir gates/testes e revisão visual pré-deploy antes de RC; depois Alpha e produção | **Dev**. Ciclo vigente: Dev → RC → deploy/validação Alpha no servidor de desenvolvimento → produção. |
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).

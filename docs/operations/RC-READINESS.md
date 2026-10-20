@@ -1,9 +1,9 @@
 # Prontidão para RC — sitemap, descoberta e deployer
 
+> **Snapshot histórico (2026-10-09):** os resultados abaixo registram aquela rodada e não definem o status atual. O fluxo vigente é [Dev → RC (tudo pronto) → deploy/validação Alpha → produção](RELEASE-LIFECYCLE.md). Revalidar componentes e roadmaps antes de usar qualquer status deste relatório.
+
 Estado do projeto em 2026-10-09, medido no servidor de testes (`aculta.toca.net.br`, Drupal
-11.4.8, MariaDB). Este documento registra a bateria executada, o resultado de cada item e o que
-impede declarar RC para **todo o projeto**. A entrega em produção é decisão do responsável no fim do
-projeto e não faz parte deste RC (ver [DEPLOYMENT.md](DEPLOYMENT.md) e [RELEASES.md](RELEASES.md)).
+11.4.8, MariaDB). Este documento registra a bateria executada, o resultado de cada item naquela rodada e os bloqueios então identificados.
 
 ## Escopo coberto por este documento
 
@@ -56,7 +56,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
    smoke visual/compra em MariaDB. Produtos e imagens são conteúdo, não configuração;
    vínculos de domínio e loja continuam por ambiente no `aculta_deployer`.
 
-## Estado por componente
+## Estado por componente (registro histórico de 2026-10-09)
 
 | Componente | Versão | Status |
 | --- | --- | --- |

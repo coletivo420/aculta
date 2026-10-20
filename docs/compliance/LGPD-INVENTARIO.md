@@ -52,6 +52,7 @@ Legenda de base legal (LGPD, art. 7º e 11): **C** consentimento (art. 7º, I); 
 | `aculta_lms` e `aculta_lms_h5p` | Nomes em cursos e em conteúdos interativos; progresso, avaliações e certificados | Cursos e acompanhamento | E; O (registro acadêmico, quando exigido) | Pelo período do curso e obrigações acadêmicas | — |
 | `aculta_mailer` | E-mail do destinatário (só HMAC no registro); conteúdo cifrado só em falha | Envio e registro de mensagens transacionais | E | Registro: 90 dias (configurável, 30 a 365). Conteúdo de falha: até aceitação ou entrega; links de uso único em 24 horas | Brevo; Hostinger; SMTP2GO |
 | `aculta_image`, `aculta_pdf_viewer`, `aculta_gallery` | Arquivos enviados (podem conter imagens de pessoas) | Acervo e visualização | C, L | Enquanto o arquivo estiver publicado ou em uso | — |
+| `csp` + `reporting` (observação CSP do PDF.js) | URL da página, URL/recurso bloqueado, diretiva, metadados do navegador/User-Agent; sem trecho inline (`report-sample` não habilitado) | Diagnóstico de compatibilidade e segurança da política CSP em Alpha; DBLog local recebe os relatórios | L (a validar) | DBLog/Watchdog; prazo de retenção precisa ser definido e limitado antes da migração a produção | — |
 | `aculta_deployer`, `aculta_patcher`, `aculta_portal_sitemap` | Nenhum dado pessoal (ferramentas de operação e índices) | — | — | — | — |
 | `aculta420` (tema) | Nenhum dado pessoal; só apresentação | — | — | — | Google Fonts |
 

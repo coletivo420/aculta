@@ -1,5 +1,7 @@
 # Roadmap — ACULTA Messenger
 
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Tudo que for requisito funcional, de teste, gate ou revisão visual aplicável deve estar pronto em RC; Alpha valida o deploy no servidor de desenvolvimento antes da migração a produção. Critérios antigos de RC devem ser lidos sob esta regra.
+
 Documento de planejamento único do submódulo. O estado de execução pertence ao
 Git, à PR e ao changelog; esta lista registra sequência e critérios de entrega.
 

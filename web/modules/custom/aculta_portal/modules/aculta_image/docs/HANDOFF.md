@@ -1,6 +1,6 @@
 # Handoff — ACULTA Image (aculta_image)
 
-Data da passagem: 2026-10-20. Versão: 0.1.0-dev.27. Classificação: **Dev**; não `preRC`, pois validação operacional e integração continuam pendentes além da visual. Leia este documento antes de qualquer alteração no submódulo.
+Data da passagem: 2026-10-20. Versão registrada nesta passagem: 0.1.0-dev.27. Classificação: **Dev**; pendências operacionais e de integração continuam abertas. `preRC` foi aposentado. O ciclo vigente é Dev → RC (tudo pronto, inclusive revisão visual pré-deploy) → deploy/validação Alpha no servidor de desenvolvimento → produção. Leia este documento antes de qualquer alteração no submódulo.
 
 Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas configurações exportadas de Views e modos de exibição. O `aculta_gallery` também usa VVJS no álbum e na galeria de produto; a sequência do álbum filtra mídia pela permissão `view` e agrega cacheabilidade do álbum, Media, File e `AccessResult`. Ver [arquitetura da Gallery](../../aculta_gallery/docs/ARQUITETURA.md) e o changelog do submódulo.
 
@@ -134,7 +134,7 @@ O schema do submódulo permanece em `aculta_image_update_10003`. O `updb` aplica
 1. Adicionar uma capa a um curso quando a edição de cursos estiver disponível pela frente de contas/permissões; conferir a imagem no cartão via Firefox.
 2. Revisar a dependência inválida `filter.format.0` antes de futuras importações parciais do Config Sync.
 3. R8 concluída: auditoria estática não encontrou consumidores `legado_*`; os IDs de estilos usados nas configurações nativas do Config Sync estão no catálogo. O gate passou e o registro de dívida foi atualizado.
-4. A confirmação dos binários na Hostinger e as pendências da integração/importação Growroom ainda são trabalho funcional e operacional, não apenas validação visual. Só reclassificar para `preRC` quando essas pendências estiverem encerradas e restar somente a validação visual. A mesclagem da galeria foi concluída; arquivos redundantes continuam na quarentena até 2026-11-15.
+4. A confirmação dos binários necessários para produção e as pendências da integração/importação Growroom são trabalho funcional/operacional. Fechar essas pendências, gates/testes e a revisão visual pré-deploy antes de classificar como RC. Depois, Alpha valida o deploy no servidor de desenvolvimento e só então ocorre a migração a produção. A mesclagem da galeria foi concluída; arquivos redundantes continuam na quarentena até 2026-11-15.
 
 ## 7. Regras que valem nesta frente (resumo; a regra completa está no AGENTS)
 

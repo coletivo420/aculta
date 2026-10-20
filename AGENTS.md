@@ -27,9 +27,19 @@ PROJECT-STATUS-INDEX-GUARD: 2026-10-20
   módulo/submódulo/tema, atualize no mesmo commit a linha correspondente com a
   versão declarada, a próxima fase e o estado atual. Use o roadmap/changelog
   dono como fonte; não invente fases.
-- `preRC` só pode ser usado quando código, fases e validação não visual estiverem
-  completos e restar somente validação visual. `RC` exige todos os critérios da
-  seção “Release candidate de submódulos e módulo central” abaixo.
+- Estados vigentes são Dev, RC e Alpha conforme
+  [`docs/operations/RELEASE-LIFECYCLE.md`](docs/operations/RELEASE-LIFECYCLE.md).
+  Não criar `preRC`. RC exige código concluído, gates/testes, revisão de código
+  e visual pré-deploy aplicável. Alpha é status e ambiente: candidato implantado
+  no servidor de desenvolvimento, aguardando/registrando validação desse Runtime.
+- Mudança no ciclo de entrega exige atualizar as instruções de IA, o roadmap
+  central e todos os roadmaps de componentes afetados, além das políticas de
+  versionamento do Portal e do tema. Roadmaps devem ordenar trabalho para que
+  todos os requisitos de código, testes, gates e revisão visual aplicável
+  terminem antes do RC; deploy/validação Alpha e migração a produção ficam depois.
+  Não reescrever versões históricas nem inventar nova versão: atualizar os
+  marcadores de versão do componente somente quando a mudança de código/config
+  e as regras locais de versionamento exigirem.
 - Gate obrigatório após qualquer mudança nessas árvores:
   `php scripts/validate-project-status-index.php`. O gate confirma a presença,
   cobertura completa, links e versões e exige que a linha exata do componente
@@ -479,34 +489,31 @@ Homelab/Hostinger no Portal.
 - O Portal prepara dados, URLs, acesso e cache; ACULTA420 seleciona e renderiza a apresentação. O Portal não referencia componentes SDC do tema.
 - Gates de tema e da fronteira Portal–tema permanecem obrigatórios conforme os documentos e scripts de validação correspondentes.
 
-## Release candidate de submódulos e módulo central (regra permanente)
+## Ciclo Dev, RC e Alpha
 
-- **RC é por submódulo e só existe depois de tudo abaixo:**
-  1. todas as fases do planejamento do submódulo concluídas (roadmap sem item "Pendente" ou "Parcial" que o próprio
-     roadmap marque como requisito de RC);
-  2. validação de código: testes Unit e Kernel passando, gates e padrão de código;
-  3. validação visual: telas administrativas e de usuário revisadas no navegador, quando o submódulo tiver interface;
-  4. revisão final de código, com as fases mescladas no branch principal.
-- **Sem os quatro itens, o submódulo não está em RC.** O agente não declara RC, não escreve "RC" no CHANGELOG nem no
-  roadmap, e não cria tag. Quando a tarefa terminar, informa o responsável do estado real: o que falta e o que foi validado.
-- **Todos os submódulos em RC entram no lançamento do módulo central `aculta_portal`.** Um submódulo que não está em RC
-  bloqueia o lançamento do central, salvo decisão registrada do responsável.
-- Release e tag continuam seguindo `docs/operations/RELEASES.md`; sem tag sem pedido explícito do responsável.
+- Seguir `docs/operations/RELEASE-LIFECYCLE.md` para classificar entregas. RC é
+  por unidade e requer validação visual pré-deploy quando houver interface; a
+  validação do servidor ocorre em Alpha, após deploy autorizado.
+- Um submódulo fora de RC não bloqueia automaticamente o trabalho ou a entrega
+  de outro componente. Escopo de release central é decidido pelo responsável.
+- Não abrir PR nesta frente nem como encerramento automático de fase. Permanecer
+  no branch aberto pelo responsável, registrar commits atômicos e aguardar pedido
+  explícito antes de PR, merge ou tag.
 
 ## Regra de encerramento de fase
 
-Toda fase ou subfase concluída deve terminar em **PR próprio**.
-
-O PR deve:
+Toda fase ou subfase concluída deve terminar em commit(s) atômicos na branch
+autorizada. PR só é criado quando o responsável solicitar. Quando solicitado, o PR deve:
 
 - representar uma unidade lógica clara;
 - listar entregas e limites;
-- registrar `RUNTIME STATUS: DEFERRED` quando houver código não testado no Homelab;
+- classificar o estado de Runtime conforme o ciclo Alpha e registrar `DEFERRED`
+  quando ainda não implantado/validado no servidor de desenvolvimento;
 - não misturar trabalho de outra fase;
 - apontar a próxima fase;
 - permanecer rastreável mesmo quando for integrado imediatamente.
 
-Não considerar uma fase encerrada apenas porque existe commit local/branch.
+Não declarar Alpha validado sem evidência do servidor de desenvolvimento.
 
 ## Coordenação Portal, tema e documentação
 
