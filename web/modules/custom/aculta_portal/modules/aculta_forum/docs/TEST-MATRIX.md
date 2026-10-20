@@ -1,5 +1,14 @@
 # Matriz de testes por fase
 
+## dev.112 — montagem da fila pelo controller LMS
+
+- `LmsClassEducatorPermissionKernelTest` instancia o controller com o
+  `ViewExecutableFactory` real e chama `comments()` contra a View instalada.
+  Verifica display `lms_pending`, argumento Group e cache tag do contexto.
+- Kernel LMS: 1 teste/110 assertions PASS; 39 depreciações Core/contrib/LMS.
+  Nenhuma alteração no Runtime. Smoke HTTP vazio e autenticado permanece na
+  evidência dev.111; ainda não há prova Runtime das linhas/operações com Comment.
+
 ## dev.111 — conversores Core de entidade na rota LMS
 
 - Kernel `LmsClassEducatorPermissionKernelTest`: a definição de rota com

@@ -1,3 +1,13 @@
+## `0.1.0-dev.112` — provar montagem da fila pelo controller
+
+- O Kernel instancia o `LmsForumModerationController` com as dependências reais
+  da fixture e chama `comments()` contra a View de moderação instalada. As
+  asserções verificam o display pendente, o argumento Group da rota e a cache
+  tag contextual, prevenindo regressão de montagem/container.
+- Kernel LMS: 1 teste/110 assertions PASS, 39 depreciações Core/contrib/LMS.
+  Runtime sem alteração nesta subfase; smoke autenticado vazio está registrado
+  na dev.111. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.111` — testar conversores reais da rota de moderação — 2026-10-20
 
 - Kernel configura `entity:group` e `entity:comment` na rota, executa os

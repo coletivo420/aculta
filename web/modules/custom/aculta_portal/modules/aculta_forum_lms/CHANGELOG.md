@@ -1,3 +1,13 @@
+## `0.1.0-dev.20` — validar montagem contextual da fila no controller
+
+- O teste Kernel chama `LmsForumModerationController::comments()` com a View
+  persistida e confirma tipo de renderização, ID do display pendente, argumento
+  do Group da rota e cache tag da entidade. Isso verifica a composição das
+  dependências de View/controller sem usar o Runtime.
+- Kernel LMS: 1 teste/110 assertions PASS, 39 depreciações Core/contrib/LMS.
+  RUNTIME STATUS: PARTIAL; smoke das filas vazias PASS, linhas e operações ainda
+  não renderizadas com Comments LMS.
+
 ## `0.1.0-dev.19` — validar conversão de entidades na rota de moderação — 2026-10-20
 
 - Kernel registra a definição de rota com os conversores instalados `entity:group`

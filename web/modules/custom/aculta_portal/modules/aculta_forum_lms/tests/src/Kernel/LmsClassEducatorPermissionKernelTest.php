@@ -11,6 +11,7 @@ use Drupal\aculta_forum_lms\Form\LmsCommentModerationForm;
 use Drupal\aculta_forum_lms\Hook\LmsCommentModerationOperationsHooks;
 use Drupal\aculta_forum_lms\Hook\LmsCommentModerationAccessHooks;
 use Drupal\aculta_forum_lms\Hook\LmsDiscussionModerationHooks;
+use Drupal\aculta_forum_lms\Controller\LmsForumModerationController;
 use Drupal\Core\Access\AccessArgumentsResolverFactory;
 use Drupal\Core\Access\CustomAccessCheck;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
@@ -353,6 +354,19 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     self::assertSame(['group_node:aculta_lms_topic' => 'group_node:aculta_lms_topic'], $viewDisplays['default']['display_options']['relationships']['group_relationship']['group_relation_plugins']);
     $viewFactory = $this->container->get('views.executable');
     self::assertInstanceOf(ViewExecutableFactory::class, $viewFactory);
+    $moderationController = new LmsForumModerationController(
+      $moderationManager,
+      $this->container->get('entity_type.manager'),
+      $viewFactory,
+      $this->container->get('current_user'),
+      $this->container->get('string_translation'),
+    );
+    $pendingQueue = $moderationController->comments($class, 'pending');
+    self::assertSame('view', $pendingQueue['view']['#type']);
+    self::assertSame('aculta_forum_lms_admin_comments', $pendingQueue['view']['#name']);
+    self::assertSame('lms_pending', $pendingQueue['view']['#display_id']);
+    self::assertSame([(string) $class->id()], $pendingQueue['view']['#arguments']);
+    self::assertContains('group:' . $class->id(), $pendingQueue['#cache']['tags']);
     foreach ([
       'lms_published' => 1,
       'lms_pending' => 1,
