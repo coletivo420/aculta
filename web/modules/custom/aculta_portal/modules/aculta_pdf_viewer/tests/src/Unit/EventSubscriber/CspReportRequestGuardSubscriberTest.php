@@ -61,6 +61,20 @@ final class CspReportRequestGuardSubscriberTest extends TestCase {
   }
 
   /**
+   * Tests flattened legacy reports from browsers pass through to contrib.
+   */
+  public function testAcceptsFlattenedLegacyReport(): void {
+    $event = $this->requestEvent(
+      '{"type":"csp-violation","url":"https://example.test/","body":{}}',
+      'application/csp-report',
+    );
+
+    (new CspReportRequestGuardSubscriber())->onKernelRequest($event);
+
+    self::assertNull($event->getResponse());
+  }
+
+  /**
    * Tests invalid JSON and malformed legacy reports are rejected.
    */
   #[DataProvider('invalidPayloadProvider')]
@@ -80,7 +94,13 @@ final class CspReportRequestGuardSubscriberTest extends TestCase {
       'invalid JSON' => ['{', 'application/reports+json'],
       'scalar JSON' => ['"report"', 'application/reports+json'],
       'scalar list item' => ['["report"]', 'application/reports+json'],
+      'incomplete report item' => [
+        '[{"type":"csp-violation","url":"https://example.test/"}]',
+        'application/reports+json',
+      ],
+      'empty reporting object' => ['{}', 'application/csp-report'],
       'invalid legacy report' => ['{"csp-report":"invalid"}', 'application/csp-report'],
+      'legacy report without document URL' => ['{"csp-report":{}}', 'application/csp-report'],
     ];
   }
 

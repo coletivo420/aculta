@@ -68,7 +68,7 @@ final class CspReportRequestGuardSubscriber implements EventSubscriberInterface 
         return;
       }
       foreach ($report as $item) {
-        if (!is_array($item)) {
+        if (!is_array($item) || !$this->isReportingApiReport($item)) {
           $event->setResponse(new Response('', Response::HTTP_BAD_REQUEST, ['Cache-Control' => 'no-store']));
           return;
         }
@@ -76,9 +76,34 @@ final class CspReportRequestGuardSubscriber implements EventSubscriberInterface 
       return;
     }
 
-    if (array_is_list($report) || (array_key_exists('csp-report', $report) && !is_array($report['csp-report']))) {
+    if (array_is_list($report)) {
+      $event->setResponse(new Response('', Response::HTTP_BAD_REQUEST, ['Cache-Control' => 'no-store']));
+      return;
+    }
+
+    if (array_key_exists('csp-report', $report)) {
+      $legacy_report = $report['csp-report'];
+      if (!is_array($legacy_report) || !isset($legacy_report['document-uri']) || !is_string($legacy_report['document-uri']) || trim($legacy_report['document-uri']) === '') {
+        $event->setResponse(new Response('', Response::HTTP_BAD_REQUEST, ['Cache-Control' => 'no-store']));
+      }
+      return;
+    }
+
+    if (!$this->isReportingApiReport($report)) {
       $event->setResponse(new Response('', Response::HTTP_BAD_REQUEST, ['Cache-Control' => 'no-store']));
     }
+  }
+
+  /**
+   * Checks the fields expected by the contrib Reporting API logger.
+   */
+  private function isReportingApiReport(array $report): bool {
+    return isset($report['type'], $report['url'], $report['body'])
+      && is_string($report['type'])
+      && trim($report['type']) !== ''
+      && is_string($report['url'])
+      && trim($report['url']) !== ''
+      && is_array($report['body']);
   }
 
 }
