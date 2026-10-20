@@ -1,0 +1,7 @@
+{# Preserva atributos por linha enquanto organiza as categorias em uma grade responsiva. #}
+{% if title %}<h3>{{ title }}</h3>{% endif %}
+<div class="aculta-forum-category-list">
+  {% for row in rows %}
+    <div{{ row.attributes.addClass(default_row_class ? 'views-row') }}>{{ row.content }}</div>
+  {% endfor %}
+</div>

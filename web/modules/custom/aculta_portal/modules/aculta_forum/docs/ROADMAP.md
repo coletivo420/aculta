@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.44` | Navegação da lista de categorias para discussões filtradas | View Core inclui TID oculto e emite links com TID real à raiz filtrada; ACULTA420 mostra hierarquia/descrição em cartões SDC. Unit Forum 54/382 e gates PASS. Runtime de teste: importação parcial pontual, `/categorias` 200 com 12 links e `/?categoria=76` 200 com filtro selecionado; `config:status` da View sem diferença. Browser visual DEFERRED. Pesquisa contrib em [`CONTRIB-PORT-RESEARCH.md`](CONTRIB-PORT-RESEARCH.md). |
 | `0.1.0-dev.43` | Atualizar metadados de teste para atributos PHPUnit | Unit Forum 54/379 PASS; removeu 3 depreciações em metadata de docblocks. PHPCS PASS; Runtime DEFERRED. |
 | `0.1.0-dev.42` | Navegação de descoberta na raiz pública | Firefox confirmou a composição das tabs; Runtime HTTP: raiz e abas existentes 200, `/discussoes` 404. HTML confirma Discussões ativa e `aria-current="page"`; Access de Não lidos permanece condicional. Unit 3/19 e gates direcionados PASS. Sem fixtures. |
 | `0.1.0-dev.41` | Conferir se categorias de publicações dependem do vocabulário Forum | Consultas Entity API read-only confirmaram que 12/12 publicações ligadas a tópicos antigos já têm categoria editorial direta igual ao mapeamento do Forum. Nenhuma migração editorial é necessária; formulário de Comment e limpeza seguem pendentes. |

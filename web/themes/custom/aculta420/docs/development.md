@@ -83,9 +83,16 @@ Core/Bootstrap5/contrib:
 | `node--editorial-highlight.html.twig` | presenter do SDC `editorial-card` |
 | `node--project--teaser.html.twig` | teaser de projeto existente até o Card System v1 |
 | `views-view-vvjb.html.twig` | delta de integração/acessibilidade e library contextual do VVJB |
+| `views-view-fields--aculta-forum-categories--page-categories.html.twig` | compõe campos Taxonomy já renderizados no SDC `forum-category`; evita duplicar wrappers/markup de campos por fora da estrutura do componente |
+| `views-view-unformatted--aculta-forum-categories--page-categories.html.twig` | adiciona a grade responsiva preservando `row.attributes`, o título de agrupamento e o conteúdo da linha Core |
 
 Novo override exige comparação com o template upstream da versão instalada e
 uma justificativa documental. Override sem delta real deve ser removido.
+Os dois overrides do índice de categorias foram comparados a
+`web/core/modules/views/templates/views-view-fields.html.twig` e
+`views-view-unformatted.html.twig`: o primeiro só remonta os três campos
+renderizados em um SDC; o segundo mantém o loop, atributos por linha e título
+Core, acrescentando apenas o wrapper de grade necessário ao layout do índice.
 
 ## Twig
 

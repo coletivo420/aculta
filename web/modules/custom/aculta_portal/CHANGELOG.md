@@ -1,3 +1,19 @@
+## 0.4.0-dev.208 — apresentação navegável das categorias do Fórum — 2026-10-20
+
+- A View Core `/categorias` agora apresenta cartões do SDC `forum-category` e
+  liga o nome de cada termo à raiz do Growroom filtrada por `categoria={tid}`.
+  O TID fica oculto; a hierarquia, descrição e link continuam fornecidos pela
+  View/Portal, sem consulta ou construção de URL pelo tema.
+- Gates Drupal 11+ (970), fronteira (1388), mapa (154), SDC (531), design
+  (2103), Foundation (362), Unit Forum (54/382) e `git diff --check` PASS.
+- Runtime de teste: importação parcial isolada atualizou somente essa View;
+  `config:status` do objeto ficou sem diferenças e `/categorias` respondeu 200
+  com 12 termos. A inspeção HTTP encontrou token literal `[tid]`; o uso foi
+  corrigido para o placeholder Core `{{ tid }}` após conferir
+  `FieldPluginBase::getFieldTokenPlaceholder()`. A revalidação do link com TID
+  renderizado está pendente. Inspeção visual browser DEFERRED. RUNTIME STATUS:
+  PARTIAL.
+
 ## 0.4.0-dev.207 — dados públicos de autoria do fórum — 2026-10-20
 
 - `aculta_user` resolve o ano de criação da conta via DateFormatter somente para

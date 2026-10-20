@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Categoria do Fórum
+status: experimental
+group: Discussion
+description: 'Card informativo da hierarquia de categorias públicas preparada pela View do ACULTA Forum.'
+props:
+  type: object
+  properties: {}
+slots:
+  parent:
+    title: Categoria principal
+    description: 'Nome da categoria principal ou rótulo de categoria raiz preparado pela View.'
+  title:
+    title: Nome da categoria
+    description: 'Título renderizado pelo campo Taxonomy da View.'
+  description:
+    title: Descrição
+    description: 'Descrição renderizada pelo campo Taxonomy da View, respeitando o formato configurado.'
+assets:
+  css:
+    component:
+      forum-category.css: {}

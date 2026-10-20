@@ -2,7 +2,8 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
-| 0.6.0-dev.103 | Data pública da conta em cartões de autoria do Fórum | Gates e browser serão registrados após execução | SDC recebe apenas o ano; perfil privado e autoria Growroom histórica ficam sem data |
+| 0.6.0-dev.104 | Cartões responsivos para categorias públicas do Fórum | SDC 531, design 2103, Foundation 362, Portal 970, boundary 1388, mapa 154 PASS; `/categorias` 200 e 12 cartões com links TID. Browser visual DEFERRED | SDC recebe os campos já renderizados pela View Core e apresenta hierarquia/descrição sem consultar entidades |
+| 0.6.0-dev.103 | Data pública da conta em cartões de autoria do Fórum | Foundation 360, SDC 518, design 2089, Portal 970, boundary 1384, mapa 154 PASS; visual com tópico persistido pendente | SDC recebe apenas o ano; perfil privado e autoria Growroom histórica ficam sem data |
 | 0.6.0-dev.102 | Comentários diretos da Revista aparecem no slot de discussão | Foundation 360, SDC 516, design 2089, fixtures 157, fronteira 1382, mapa 154, Drupal 11+ 970 PASS; Firefox confirmou slot/formulário; Views e browser admin confirmaram filas separadas e anônimos não veem pendentes. RUNTIME PARTIAL: submissão bloqueada pela falta da marca canônica de confirmação nos usuários QA; fixtures removidas e conteúdo novo limpo | `field_aculta_discussion` é passado como render array Core aos templates `article`/`blog`; tema admin é validado pelo gate Foundation conforme a rota |
 | Não marcada | Cartão do último participante na lista Growroom420 | SDC 516 e design 2089 PASS; Runtime aplica o campo Core, a View responde 200 e a chamada sintética constrói o cartão. Foundation bloqueada por placement anterior da Revista; inspeção visual desktop/mobile/claro/escuro pendente | Reutiliza `author_forum`; não expõe login nem cria consulta no tema |
 | Não marcada | SDC de autoria diferencia Fórum, Revista, LMS e Wiki420 | SDC 516, design 2089, YAML/Twig e render Runtime dos rótulos PASS; Foundation bloqueada por placement anterior da Revista; browser pendente | Rótulos contextuais neutros derivados das variantes `aculta_user`; sem dados de papel ou matrícula |
@@ -14,7 +15,7 @@
 | 0.6.0-dev.98 | Estado vazio do índice Growroom420 | Gates PASS; raiz HTTP 200 mostra a mensagem | `.view-aculta-forum-public-topics .view-empty` em `forum-index.css`; inspeção visual pendente |
 | 0.6.0-dev.97 | Apresentação de tópicos ACULTA Forum | Gates PASS; render Runtime não salvo PASS; inspeção visual no navegador pendente | `node--aculta-forum-topic.html.twig`; identidade via `aculta_user`; tokens em `forum-index.css` |
 
-Atualizado em 2026-10-19 (`0.6.0-dev.101`; correção visual do Fórum validada em Firefox, formulário de criação não submetido). Dívidas e pendências, com evidência,
+Atualizado em 2026-10-20 (`0.6.0-dev.104`; gates e HTTP de cartões de categoria PASS; inspeção visual DEFERRED). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 

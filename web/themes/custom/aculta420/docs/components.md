@@ -98,6 +98,16 @@ Pendências da 0.4:
 
 ## Componentes atuais
 
+### `aculta420:forum-category`
+
+Status: experimental. Local: `components/content/forum-category/`.
+
+Slots `parent`, `title` e `description` recebem os campos renderizados pela View
+Core de categorias; `title` já inclui o link filtrado preparado pela View. Os
+presenters especializados preservam as linhas e seus attributes e o SDC organiza
+hierarquia/descrição numa grade responsiva. Não carrega entidades, constrói URLs
+ou decide filtros/acesso; isso continua com Drupal Views e o Portal.
+
 ### `aculta420:project-card`
 
 Status: experimental (0.3.0). Local: `components/content/project-card/`.

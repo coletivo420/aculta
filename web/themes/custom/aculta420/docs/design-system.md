@@ -17,6 +17,11 @@ com tokens semânticos; título, respostas e atividade empilham em telas menores
 Filtros, ordenação, visibilidade e contagens continuam responsabilidade do
 Portal/Core, nunca do tema.
 
+O índice `/categorias` utiliza o SDC `content/forum-category` para apresentar
+hierarquia, descrição e o link filtrado que a View Core prepara a partir do TID.
+O componente não carrega Taxonomy nem constrói URLs; a navegação permanece sob
+responsabilidade do Portal.
+
 O SDC `content/author-card` mantém o contrato de identidade entre contextos e
 mostra uma etiqueta neutra conforme a variante: Growroom420, Comentário da
 Revista, cursos e Wiki420. O módulo fornece a variante; o tema não consulta a

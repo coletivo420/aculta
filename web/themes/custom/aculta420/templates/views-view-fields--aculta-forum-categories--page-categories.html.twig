@@ -1,0 +1,5 @@
+{{ include('aculta420:forum-category', {
+  parent: fields.parent_name.content,
+  title: fields.name.content,
+  description: fields.description__value.content,
+}, with_context = false) }}

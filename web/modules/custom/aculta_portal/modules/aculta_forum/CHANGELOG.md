@@ -1,3 +1,24 @@
+## 0.1.0-dev.44 — navegação direta por categoria — 2026-10-20
+
+- A View `aculta_forum_categories` passa o TID como token excluído e renderiza
+  cada nome como link à raiz pública com filtro `categoria`. Config/install,
+  Config Sync e teste de equivalência permanecem alinhados.
+- Pesquisa de módulos contrib registrada em `docs/CONTRIB-PORT-RESEARCH.md`:
+  CTools e Flag são APIs existentes a reutilizar; Comment Mover, Quote,
+  Achievements e referências históricas foram avaliados como inspiração/port
+  condicionado. Sem novas dependências ou código externo copiado.
+- O ACULTA420 implementa o SDC `content/forum-category` e os presenters de
+  Views para exibir hierarquia e descrição em grade responsiva; sem consulta de
+  entidade ou construção de URL no tema.
+- Testes Unit do Fórum 54/382 PASS; PHPCS do teste, Drupal 11+ (970), fronteira
+  (1388), mapa (154), SDC (531), design (2103), Foundation (362) e `git diff
+  --check` PASS. HTTP `/categorias` respondeu 200 e exibiu 12 categorias.
+- Import parcial com diff/backup aplicou somente `views.view.aculta_forum_categories`
+  no Runtime de teste; nenhum conteúdo foi gravado. A primeira resposta revelou
+  token literal `[tid]`; substituído pelo placeholder Views Core `{{ tid }}`.
+  Confirmar render final dos links e filtro ainda pendente; inspeção visual
+  DEFERRED. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.43 — modernizar metadados PHPUnit — 2026-10-20
 
 - Os testes `DiscussionModerationHooksTest` e `ForumReadAccessTest` agora usam

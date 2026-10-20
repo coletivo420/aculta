@@ -1,3 +1,13 @@
+## 0.6.0-dev.104 — cartões para o índice público de categorias do Fórum — 2026-10-20
+
+- A página `/categorias` apresenta a hierarquia e as descrições da View Core em
+  cartões responsivos pelo SDC `content/forum-category`. A View continua dona
+  dos dados; o ACULTA420 só organiza e apresenta os campos renderizados.
+- SDC (531), design (2103), Foundation (362) e HTTP `/categorias` (200, 12
+  cartões) PASS. A inspeção HTTP revelou token literal; a View Core foi
+  corrigida para `{{ tid }}`. Browser visual não validado; RUNTIME STATUS:
+  PARTIAL.
+
 ## 0.6.0-dev.103 — apresentar o ano da conta em autoria de fórum — 2026-10-20
 
 - O SDC `content/author-card` mostra o ano da conta apenas nos cartões

@@ -213,7 +213,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
-   * Category discovery is a native View restricted to the Forum vocabulary.
+   * Category discovery stays in Forum taxonomy and links into its filter.
    */
   public function testPublicCategoryIndexUsesOnlyForumVocabulary(): void {
     $module_path = dirname(__DIR__, 3);
@@ -229,7 +229,11 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       $install['display']['default']['display_options']['filters']['vid']['value'],
     );
     self::assertSame('fields', $install['display']['default']['display_options']['row']['type']);
-    self::assertFalse($install['display']['default']['display_options']['fields']['name']['alter']['make_link']);
+    $category_fields = $install['display']['default']['display_options']['fields'];
+    self::assertTrue($category_fields['tid']['exclude']);
+    self::assertSame('tid', $category_fields['tid']['field']);
+    self::assertTrue($category_fields['name']['alter']['make_link']);
+    self::assertSame('/?categoria={{ tid }}', $category_fields['name']['alter']['path']);
     self::assertSame(
       'taxonomy_term__parent',
       $install['display']['default']['display_options']['relationships']['parent']['table'],
