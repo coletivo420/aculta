@@ -12,7 +12,8 @@ use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Database\Database;
+use Drupal\Core\Lock\DatabaseLockBackend;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
@@ -88,6 +89,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installConfig(['system', 'filter', 'node', 'comment', 'domain', 'path', 'path_alias']);
+    $this->container->set('lock', new DatabaseLockBackend($this->container->get('database')));
     $this->config('aculta_forum.settings')->set('comment_move_enabled', TRUE)->save();
     $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
 
@@ -267,8 +269,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   }
 
   /**
-   * Write locks remain held until the enclosing transaction commits. */
-  public function testCommentWriteLockReleasesAfterRootTransaction(): void {
+   * An independent backend is blocked until the root transaction completes.
+   */
+  public function testCommentWriteLockBlocksIndependentBackendUntilRootTransactionEnds(): void {
     $topic = $this->topic('Topic');
     $comment = Comment::create([
       'entity_type' => 'node',
@@ -281,31 +284,30 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'status' => CommentInterface::PUBLISHED,
     ]);
     $lock_name = 'aculta_forum:topic-write:' . $topic->id();
-    $released = FALSE;
-    $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects(self::once())
-      ->method('acquire')
-      ->with($lock_name, 300.0)
-      ->willReturn(TRUE);
-    $lock->expects(self::once())
-      ->method('release')
-      ->with($lock_name)
-      ->willReturnCallback(static function () use (&$released): void {
-        $released = TRUE;
-      });
-    $guard = new ForumDiscussionWriteGuard(
-      $this->container->get('entity_type.manager'),
-      $lock,
-      $this->container->get('database'),
-    );
-    $transaction = $this->container->get('database')->startTransaction();
-    $guard->beforeCommentSave($comment);
-    $guard->afterCommentSave($comment);
+    self::assertInstanceOf(DatabaseLockBackend::class, $this->container->get('lock'));
+    self::assertSame(ForumCommentMover::COMMENT_TYPE, $comment->bundle());
+    self::assertSame('node', $comment->getCommentedEntityTypeId());
+    self::assertSame((int) $topic->id(), (int) $comment->getCommentedEntityId());
+    self::assertSame(ForumCommentMover::FIELD_NAME, $comment->getFieldName());
+    $this->writeGuard->beforeCommentSave($comment);
 
-    self::assertFalse($released);
-    $transaction->commitOrRelease();
-    unset($transaction);
-    self::assertTrue($released);
+    $connection_info = Database::getConnectionInfo('default');
+    Database::addConnectionInfo('forum_lock_observer', 'default', $connection_info['default']);
+    $observer_connection = Database::getConnection('default', 'forum_lock_observer');
+    $observer = new DatabaseLockBackend($observer_connection);
+    try {
+      $transaction = $this->container->get('database')->startTransaction();
+      $this->writeGuard->afterCommentSave($comment);
+      self::assertFalse($observer->acquire($lock_name));
+
+      $transaction->commitOrRelease();
+      unset($transaction);
+      self::assertTrue($observer->acquire($lock_name));
+    }
+    finally {
+      $observer->releaseAll();
+      Database::removeConnection('forum_lock_observer');
+    }
   }
 
   /**
