@@ -1,5 +1,10 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.27 — confirmar tamanho real antes de gerar miniatura — 2026-10-20
+
+- O limite de 20 MiB da miniatura agora confere o tamanho do arquivo resolvido no disco, além do metadado da entidade File; arquivos maiores ou inacessíveis não chegam ao PDFPreview/ImageMagick.
+- Unit cobre metadado desatualizado que subestima um arquivo acima do limite; esperado: geração e alteração do timeout do ImageMagick não são chamadas.
+
 ## Documentação PV7 — delimitar acessibilidade do conteúdo PDF — 2026-10-20
 
 - Registrado que o canvas rotulado não expõe texto/estrutura do documento e que controles acessíveis não certificam a acessibilidade do PDF.

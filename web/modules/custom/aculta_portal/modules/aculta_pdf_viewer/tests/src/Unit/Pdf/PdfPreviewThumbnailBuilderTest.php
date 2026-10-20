@@ -74,4 +74,63 @@ final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
     self::assertNull($builder->build($file, 'Documento'));
   }
 
+  /**
+   * A stale File entity size cannot bypass the source processing limit.
+   */
+  public function testOversizedSourceSkipsPreviewGeneration(): void {
+    $path = tempnam(sys_get_temp_dir(), 'aculta_pdf_preview_');
+    self::assertIsString($path);
+    try {
+      $handle = fopen($path, 'wb');
+      self::assertIsResource($handle);
+      self::assertTrue(ftruncate($handle, 20_971_521));
+      fclose($handle);
+
+      $file = $this->createMock(File::class);
+      $file->method('isPermanent')->willReturn(TRUE);
+      $file->method('getFileUri')->willReturn('public://documento.pdf');
+      $file->method('getMimeType')->willReturn('application/pdf');
+      $file->method('getFilename')->willReturn('documento.pdf');
+      // Entity metadata is stale and understates the actual file size.
+      $file->method('getSize')->willReturn(1024);
+
+      $file_system = $this->createMock(FileSystemInterface::class);
+      $file_system->expects(self::once())
+        ->method('realpath')
+        ->with('public://documento.pdf')
+        ->willReturn($path);
+
+      $preview_generator = $this->getMockBuilder(PDFPreviewGenerator::class)
+        ->disableOriginalConstructor()
+        ->onlyMethods(['getPDFPreview'])
+        ->getMock();
+      $preview_generator->expects(self::never())->method('getPDFPreview');
+
+      $exec_manager = $this->createMock(ImagemagickExecManagerInterface::class);
+      $exec_manager->expects(self::never())->method('setTimeout');
+
+      $builder = new PdfPreviewThumbnailBuilder(
+        $preview_generator,
+        $this->createMock(ConfigFactoryInterface::class),
+        new GeneratedImageFileManager(
+          $this->createMock(EntityTypeManagerInterface::class),
+          $file_system,
+          $this->createMock(MimeTypeGuesser::class),
+          new ImageInspector($this->createMock(ImageFactory::class)),
+          $this->getMockBuilder(TimeInterface::class)->getMock(),
+        ),
+        new ImageRenderer(new ImageCatalog(), $this->createMock(EntityTypeManagerInterface::class)),
+        new ImageInspector($this->createMock(ImageFactory::class)),
+        $file_system,
+        $this->createMock(LoggerInterface::class),
+        $exec_manager,
+      );
+
+      self::assertNull($builder->build($file, 'Documento'));
+    }
+    finally {
+      unlink($path);
+    }
+  }
+
 }
