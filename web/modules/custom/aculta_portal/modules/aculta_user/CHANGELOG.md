@@ -1,3 +1,13 @@
+## Validação adicional — respostas nos tópicos próprios do Fórum — 2026-10-20
+
+- `ActivityControllerKernelTest` usa Comment/Core e MariaDB `aculta_simpletest`
+  para confirmar que a aba privada de tópicos exibe 2 respostas publicadas e
+  ignora 1 resposta pendente, via agregado `comment_entity_statistics`.
+- Kernel: 1 teste / 12 assertions PASS; 5 deprecações originadas pelo Domain
+  contrib 3.0.1. Unit de `aculta_user`: 62 testes / 194 assertions PASS.
+- Nenhum conteúdo foi criado no Runtime. A rota autenticada e o browser ainda
+  precisam de homologação integrada.
+
 ## 0.4.0-dev.40 — ano da conta no cartão público de fórum — 2026-10-20
 
 - `AuthorIdentity` inclui o ano de criação da conta somente quando o perfil
