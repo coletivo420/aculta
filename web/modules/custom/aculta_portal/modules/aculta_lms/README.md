@@ -8,7 +8,10 @@ progresso, certificado, mensagem ou amizade paralelos.
 
 - Imagens de capa de turma usam `aculta_image` e sua `UploadPolicy`; imagens
   enviadas ao editor H5P usam `aculta_image.upload_ingester` e o ciclo de vida
-  de File/uso compartilhado.
+  de File/uso compartilhado. Imagens anexadas a respostas do LMS passam pela
+  `UploadPolicy` e por `ImageInspector` antes de serem aceitas; continuam em
+  storage privado e são entregues pela rota de download protegida pela resposta
+  e pela matrícula vigente.
 - PDFs de material de turma usam Media `course_document`, relação de acesso
   Group e o viewer `aculta_pdf_viewer`; o acesso ao arquivo é revalidado pela
   rota privada do Core. O módulo declara a dependência do submódulo Group do
@@ -24,6 +27,13 @@ progresso, certificado, mensagem ou amizade paralelos.
 As integrações ainda exigem aceite ponta a ponta no Runtime após a configuração
 de cada fluxo; a dependência do PDF garante disponibilidade do plugin, mas não
 substitui a validação de permissão/cache nem importa conteúdo.
+
+O validador da resposta só aplica a política quando a extensão autorizada pela
+atividade é raster (`png`, `gif`, `jpg`, `jpeg` ou `webp`). Demais extensões
+mantêm a validação nativa do LMS File Upload. Imagens inválidas, com MIME
+incompatível ou acima de 10 MB são recusadas. A validação automatizada e o
+smoke de upload/revogação ainda precisam ser executados antes de homologar a
+integração F15.
 
 ## F1 — Fundação
 

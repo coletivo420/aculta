@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.9 — validação ACULTA de imagens em entregas — 2026-10-20
+
+- O formulário `file_upload` do LMS acrescenta constraint do Core que detecta
+  anexos raster e aplica os 10 MB e a inspeção de conteúdo/MIME de
+  `aculta_image`. Extensões não-imagem continuam sob a configuração da atividade;
+  os arquivos permanecem privados e o download continua sujeito à resposta e à
+  matrícula atual.
+- Sintaxe e container/gates ainda não foram validados; Kernel, upload real,
+  revogação e inspeção visual permanecem pendentes. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.8 — roles Group de discussão — 2026-10-20
 
 - Config Sync acrescenta permission Group Node de tópicos aos roles de curso

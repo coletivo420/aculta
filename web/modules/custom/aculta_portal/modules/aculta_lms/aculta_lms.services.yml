@@ -1,4 +1,7 @@
 services:
+  aculta_lms.submission_image_validator:
+    class: Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
+    arguments: ['@aculta_image.inspector', '@file_system']
   aculta_lms.uploaded_answer_access:
     class: Drupal\aculta_lms\Access\UploadedAnswerAccessCheck
   aculta_lms.uploaded_answer_route_subscriber:
