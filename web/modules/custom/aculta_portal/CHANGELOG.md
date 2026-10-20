@@ -1,5 +1,12 @@
 ## 0.4.0-dev.211 — cadastro com e-mail já usado pelo aculta_mailer — 2026-10-20
 
+## 0.4.0-dev.212 — pedido de confirmação de e-mail pelo aculta_mailer (F9) — 2026-10-20
+
+- `EmailConfirmationRequester::sendRequest()` envia o pedido pelo `aculta_mailer` (tipo `email_confirmation_request`), com o link de resposta do contrib e o mesmo limite de reenvio (`resendrequest_delay`). Dentro da janela, delega ao contrib, que enfileira.
+- O texto é o mesmo que estava em produção (`email_confirmer.settings`). O link é segredo: não entra em logs nem no registro do envio.
+- Testes: requester (7) e tipo (1) passam. Runtime: um pedido real aceito para o destinatário autorizado, com a confirmação temporária removida.
+- Não migrado nesta versão: a entidade e o token (continuam no `email_confirmer`), o e-mail de troca de endereço (`notify_current`) e a fila de reenvio do contrib.
+
 - `RegistrationMailPolicy` envia o aviso (DT-P06) pela API `AcultaMailerInterface`, em vez de `plugin.manager.mail`.
   O texto e a chave `registration_existing_mail` permanecem; o tipo vive em `RegistrationExistingAccountMailType`,
   registrado pela tag `aculta_mailer.type`. Os links de login e de recuperação chegam prontos no contexto.

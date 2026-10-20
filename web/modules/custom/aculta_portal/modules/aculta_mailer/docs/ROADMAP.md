@@ -14,7 +14,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F6 | Queue: fila `aculta_mailer_send`, worker com retry e failover (`MailSendWorker`), decisão testada; eventos de fila e classificação SMTP real (código de resposta) pendentes | Parcial (fila pronta) |
 | F7 | Logging: entidade `aculta_mail_log` com texto completo da falha (relatório do admin), retenção de 90 dias e `views_data`; reenvio administrativo pendente | Parcial (registro e relatório prontos) |
 | F8 | Dashboard: painel de contagens por período, estado, tipo e transporte concluído; gráficos e agregação no banco pendentes | Parcial (painel pronto) |
-| F9 | Usuário: criação, confirmação, troca de e-mail, reset, integração com `aculta_user` | Pendente |
+| F9 | Usuário: pedido de confirmação de e-mail enviado pelo aculta_mailer (token e entidade continuam no `email_confirmer`); troca de e-mail, reset e fila de reenvio ainda pelo contrib | Parcial (confirmação enviada pelo aculta_mailer) |
 | F10 | Eventos de entrega: webhooks de provedor, bounce, complaint, supressão | Pendente |
 | F11 | Tracking opcional (abertura e clique), desligado por padrão | Pendente |
 | F12 | Integrações ACULTA: cadastro com e-mail já usado (DT-P06), conquista (`aculta_game`) e resumo de avisos (`aculta_messenger`) migrados; Forum, LMS, Magazine e Commerce pendentes | Parcial |
