@@ -3,7 +3,7 @@
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Tudo que for requisito funcional, de teste, gate ou revisão visual aplicável deve estar pronto em RC; Alpha valida o deploy no servidor de desenvolvimento antes da migração a produção. Critérios antigos de RC devem ser lidos sob esta regra.
 
 Documento de planejamento único do submódulo. O estado de execução pertence ao
-Git, à PR e ao changelog; esta lista registra sequência e critérios de entrega.
+Git, aos commits e ao changelog; esta lista registra sequência e critérios de entrega.
 
 ## 0.1.1 — pedidos de amizade e política de novas conversas
 
@@ -19,11 +19,12 @@ Git, à PR e ao changelog; esta lista registra sequência e critérios de entreg
    sem expor dados privados.
 4. **dev.4 — hardening e homologação:** testes automatizados de acesso/IDOR,
    transições, isolamento entre contas, rate limit, cache e regressão; validação
-   no Homelab e revisão do Config Sync antes do RC.
+   em Alpha, após o deploy do candidato; revisão do Config Sync e testes estáticos
+   permanecem concluídos antes de RC.
 
 Cada incremento registra os testes realmente executados e `RUNTIME STATUS`.
-O RC não é considerado pronto sem homologação de runtime e transporte de
-notificação controlado.
+RC exige testes/gates e revisão visual aplicável pré-deploy; homologação do
+Runtime e transporte controlado são validados em Alpha.
 
 ## 0.1.0
 
@@ -57,8 +58,9 @@ notificação controlado.
    visual desktop/mobile, teclado e modos claro/escuro no Homelab.
 10. **dev.11 — hardening:** autorização, cache, abuso, entrega, retenção,
     logs, desinstalação e testes automatizados.
-11. **rc.1 — homologação:** gates, testes no Homelab, Config Sync, isolamento
-    de contas/domínios e revisão final; runtime e e-mails controlados.
+11. **RC — candidato pronto:** gates, testes, Config Sync, isolamento de
+    contas/domínios, revisão final e testes visuais pré-deploy. Depois, Alpha
+    valida Runtime e e-mails controlados.
 
 ### Subfase dev.10 — barra, comunicados e estado de leitura
 
@@ -69,8 +71,8 @@ são contados enquanto ativos e não simulam estado individual.
 
 ## Critérios de avanço
 
-- Cada fase tem commit claro na branch de trabalho e atualiza o changelog e a
-  descrição da única PR.
+- Cada fase tem commit claro na branch autorizada e atualiza o changelog.
+  PR só quando solicitada pelo responsável.
 - Não declarar comportamento verificado sem executar a verificação no ambiente
   correspondente.
 - Dependências só entram depois de código instalado, compatibilidade e

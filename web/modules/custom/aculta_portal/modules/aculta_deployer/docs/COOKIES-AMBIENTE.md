@@ -60,7 +60,8 @@ Sem isso, o gate falha.
 
 - `web/sites/default/services.local.yml` está versionado com `cookie_domain: '.aculta.test'`. Esse valor não corresponde a
   nenhum ambiente declarado e o `settings.local.php` do Homelab não carrega esse arquivo. O comando `cookies` aponta a
-  dívida. Ação: alinhar ou remover em PR próprio.
+  dívida. Ação: alinhar ou remover em commit próprio na branch autorizada; PR
+  somente quando solicitado.
 
 ## Relação com outras regras
 

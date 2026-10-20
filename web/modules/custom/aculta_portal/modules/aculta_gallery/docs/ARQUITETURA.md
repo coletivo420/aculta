@@ -4,7 +4,7 @@ Status: **normativo para a linha 0.1.x**. Dono: responsável pelo Portal. Revis�
 
 **Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). O estado registrado no índice raiz é a fonte vigente. `preRC` foi aposentado; RC exige todas as pendências, testes, gates e revisão visual pré-deploy concluídos. A classificação `rc.1` e a versão `preRC.4` abaixo são registros históricos feitos sob o fluxo anterior e não qualificam o estado atual.
 
-Este documento registra **por que** o submódulo é feito de certo modo. Ele não contém status de PR nem resultado de teste; esses dados ficam no `CHANGELOG.md` do módulo e na descrição da PR.
+Este documento registra **por que** o submódulo é feito de certo modo. Ele não contém status de PR nem resultado de teste; esses dados ficam no `CHANGELOG.md` do módulo e, quando solicitado, na descrição da PR.
 
 Escopo: álbuns fotográficos independentes, galerias menores incorporadas em artigos e blogs, visualização ampliada, catálogo e desempenho com galerias grandes, e integração multidomínio.
 
@@ -132,7 +132,7 @@ A página do Media Gallery cita "inserir galerias no CKEditor". O código do tar
 
 ### 4.1 Decisões do responsável (2026-10-14)
 
-- **R5 (forma de entrega):** uma única PR (#268), com cada fase como commit. Segue a missão.
+- **R5 (forma de entrega, registro histórico):** a execução original foi organizada na PR #268, com cada fase como commit. No ciclo vigente, continuar na branch autorizada; PR só quando solicitada.
 - **Acesso às galerias (2026-10-14, supera R3):** segue o padrão do conteúdo da Revista. Só o administrador cria, edita e publica galerias. O editor de conteúdo não recebe as permissões de galeria, pois também não cria artigos nem blogs; continua usando o formato de texto da Revista e o fluxo de moderação, que não mudaram.
 - **R3 (publicação, histórico):** aceito publicar sem revisão e sem Content Moderation (D5). **Só os papéis administrador e editor de conteúdo publicam galerias.** Mesmas permissões da Revista, aplicadas em `content_editor`: `access media gallery overview`, `add media gallery entities`, `edit any media gallery entities`, `delete any media gallery entities`, `view published media gallery entities`, `view unpublished media gallery entities`. O administrador já tem todas por `is_admin`. Não há papel de "autor" no site; autores que escrevem a Revista são o editor de conteúdo.
 - **R4 (rota técnica):** não respondido. Adotada a recomendação (a): 404 na rota técnica quando a galeria tem alias. Confirmar na Fase 2.
@@ -280,7 +280,7 @@ Versão alvo por fase, conforme `web/themes/custom/aculta420/docs/versioning.md`
 | 9 | 0.1.0-dev.10 | Hardening e testes direcionados | PATCH |
 | 10 | 0.1.0-rc.1 | Validação de release no Homelab | RC (declarada em 2026-10-15; duas rodadas de navegador no servidor de testes) |
 
-A versão de cada fase é marcada no `aculta_gallery.info.yml` (a partir da Fase 1), no `CHANGELOG.md` do módulo e na descrição da PR. Tag Git só com pedido explícito do responsável.
+A versão de cada fase é marcada no `aculta_gallery.info.yml` (a partir da Fase 1) e no `CHANGELOG.md` do módulo. PR só quando solicitada; tag Git exige pedido explícito do responsável.
 
 ## 10. Verificações previstas
 

@@ -151,7 +151,7 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 
 | Decisão | Status |
 | --- | --- |
-| Caixa de autor da publicação da Revista é programada no `aculta_user` (opção 1: presenter + contrato `data-portal-ui="author-card"` + componente no ACULTA420), sem módulo contrib de layout ou de exibição | Decidido (2026-10-13); documentado, não implementado; fase U2, PR próprio |
+| Caixa de autor da publicação da Revista é programada no `aculta_user` (opção 1: presenter + contrato `data-portal-ui="author-card"` + componente no ACULTA420), sem módulo contrib de layout ou de exibição | Decidido (2026-10-13); documentado, não implementado; fase U2, commits na branch autorizada; validar visualmente antes de RC |
 | A caixa mostra só nome de exibição (apelido), foto, bio e link para `/u/<apelido>`, cada um sob as regras de `PublicProfilePolicy` | Decidido; documentado |
 | O autor é `node.uid`; `field_editorial_author` não entra na caixa | Decidido; documentado |
 | Link para o perfil é construído no purpose `main` (perfil público só existe lá) | Decidido; documentado |

@@ -143,7 +143,10 @@ em outros lugares do site.
 | E | LMS: turma, chat do curso persistente, entrada automática, relatório de participação do chat | Matrícula entra no chat; remoção tira; cron não remove o chat do curso; relatório por aluno. |
 | F | Wiki e outras ferramentas | Mesmo contrato da fase D, com a origem declarada. |
 
-Cada fase é um PR próprio (AGENTS.md). As fases D, E e F dependem de módulos que ainda não existem neste repositório.
+Cada fase termina em commits na branch autorizada; PR só quando o responsável
+solicitar. Requisitos, gates e revisão visual aplicável ficam prontos antes de
+RC; a validação do Runtime ocorre em Alpha. As fases D, E e F dependem de módulos
+que ainda não existem neste repositório.
 
 ## 11. Testes
 

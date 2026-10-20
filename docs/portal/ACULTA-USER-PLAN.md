@@ -1,5 +1,7 @@
 # Plano do submódulo `aculta_user`
 
+**Ciclo vigente:** Dev → RC (código, testes, gates e revisão visual aplicável prontos) → deploy/validação Alpha no servidor de desenvolvimento → produção, conforme [ciclo de entrega](../operations/RELEASE-LIFECYCLE.md). Este plano histórico mantém registros antigos, mas não adia requisitos para depois do RC.
+
 Status: **plano de 2026-10-13, com implementação já iniciada**. O submódulo existe em `aculta_portal/modules/aculta_user` (versão 0.4.0-dev.2, `CHANGELOG.md` do submódulo). Esta seção 1 descreve a base de 2026-10-13 (`main` em `ce0941a`, Portal 0.3.0-dev.28) e não é mais o estado atual. O estado de cada decisão e de cada entrega está em [ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md](ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md); a verificação da fase U0 está em [ACULTA-USER-U0-VERIFICACAO.md](ACULTA-USER-U0-VERIFICACAO.md).
 
 Escopo: avatar, perfil público e autoria, integração com Wiki, Fórum e revista, funções sociais e gamificação, dentro de `web/modules/custom/aculta_portal/modules/aculta_user/`.
@@ -244,8 +246,10 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
   `validate-environment-addresses.php`.
 - Navegador no servidor de testes (`TESTES-NAVEGADOR.md`): caixa visível em artigo da Revista, link só com perfil público.
 
-**Entrega:** fase U2, PR próprio, com `RUNTIME STATUS: DEFERRED` até o teste no Homelab. Marcadores de versão do
-`aculta_user` (`aculta_user.info.yml` e `CHANGELOG.md`) no mesmo PR.
+**Entrega:** fase U2 em commits na branch autorizada. Código, testes, gates e
+revisão visual aplicável ficam prontos antes de RC; o Runtime é validado em
+Alpha. Marcadores de versão do `aculta_user` (`aculta_user.info.yml` e
+`CHANGELOG.md`) acompanham mudança de código conforme a política de versão.
 
 **Pendências dependentes do responsável** (registradas em `ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md`, seção 2):
 - tipo de publicação "blog" (hoje a Revista usa `article`, "Notícia");
@@ -511,7 +515,10 @@ Regras:
 
 ## 6. Fases propostas
 
-Cada fase tem PR próprio (`AGENTS.md`, regra de encerramento). Código sem Runtime fica com `RUNTIME STATUS: DEFERRED`.
+Cada fase termina em commits na branch autorizada; PR só quando solicitada. Os
+critérios de código, testes, gates e revisão visual aplicável ficam prontos
+antes de RC. Código ainda não implantado registra Runtime como `DEFERRED`; a
+validação do servidor de desenvolvimento ocorre em Alpha.
 
 | Fase | Entrega | Critério de conclusão |
 | --- | --- | --- |
@@ -590,7 +597,8 @@ Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/
 
 **Status do bloqueio (atualizado após U0):** o bloqueio de 2026-10-13 não existe mais. O Homelab tem `composer install` concluído, Core 11.4.8 e Drush respondendo, com acesso ao banco `aculta_runtime`. Nenhum item deste plano foi validado no Runtime.
 
-**Status da ordem de implementação (cada item é um PR próprio, `RUNTIME STATUS: DEFERRED` até validação no Homelab):**
+**Status da ordem de implementação** (itens em commits na branch autorizada;
+Runtime `DEFERRED` até deploy/validação em Alpha):
 
 1. **U0 (no Homelab): concluído** no branch `aculta-user-u0` (commit `6d11bb2`, publicado, sem PR). Relatório: `docs/portal/ACULTA-USER-U0-VERIFICACAO.md`. Parada registrada: `lms_activity` não tem discussão nem comentário.
 2. **Configuração de papéis:** **parcial**, no branch `aculta-user-papeis` (commit `0fc367a`, `RUNTIME STATUS: DEFERRED`). Feito: `content_editor` recebe as permissões de `wiki_editor`, `administer comments` e `edit any forum content` (sem `administer forums`); `wiki_editor` recebe `revert wiki_entry revisions`; gate `scripts/validate-aculta-user-roles.php`. **Pendente:** `wiki_contributor` para `email_confirmed`. Drupal não mapeia papel para papel; a forma de conceder (hook de atribuição ou outra) é decisão do responsável.
