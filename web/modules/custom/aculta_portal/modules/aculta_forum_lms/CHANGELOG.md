@@ -18,6 +18,16 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.12` — provar Educador sem membership direto na turma — 2026-10-20
+
+- Kernel mantém curso e turma sob propriedade de uma terceira conta. O Educador
+  é apenas membro Educador do curso; ainda assim pode ver a turma e o tópico
+  Group associado por `grade students`, sem membership direto na turma.
+- A prova continua negando o outsider com papel global `lms_teacher` e confirma
+  leitura/moderação contextual. Kernel do adapter: 2 testes / 74 assertions
+  PASS; 38 depreciações observadas de Core/contrib/LMS.
+- Nenhum módulo ou Config Sync foi ativado no Runtime. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.11` — aplicar config padrão em fixture Kernel — 2026-10-20
 
 - Kernel executa o `ConfigInstaller` do Drupal para as configurações padrão do

@@ -179,19 +179,28 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $outsider->save();
     $outsider->addRole('lms_teacher');
     $outsider->save();
+    $classOwner = User::create([
+      'name' => 'lms_class_owner',
+      'mail' => 'lms-class-owner@example.invalid',
+      'status' => 1,
+    ]);
+    $classOwner->save();
 
     $course = Group::create([
       'type' => 'lms_course',
       'label' => 'Educator permission course',
-      'uid' => $educator->id(),
+      'uid' => $classOwner->id(),
     ]);
     $course->save();
+    // The course role is assigned through the existing global-role mapping.
     $course->addMember($educator);
 
     $class = Group::create([
       'type' => 'lms_class',
       'label' => 'Course class',
-      'uid' => $educator->id(),
+      // The Educator is not the class owner or a direct class member. Access
+      // must come from their course membership and contextual permissions.
+      'uid' => $classOwner->id(),
     ]);
     $class->save();
     $course->addRelationship($class, 'lms_classes')->save();
@@ -220,6 +229,8 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     self::assertTrue($class->hasPermission('view group_node:aculta_lms_topic entity', $educator));
     self::assertTrue($class->hasPermission('view group_node:aculta_lms_topic entity', $student));
     self::assertTrue($class->access('view', $student));
+    self::assertTrue($class->access('view', $educator));
+    self::assertTrue($topic->access('view', $educator));
     self::assertTrue($topic->access('view', $student));
     self::assertFalse($class->hasPermission('view group_node:aculta_lms_topic entity', $outsider));
     self::assertFalse($outsider->hasPermission('view group_node:aculta_lms_topic entity'));

@@ -56,3 +56,15 @@ types instaláveis. A dev.102 instala a configuração padrão via `ConfigInstal
 na fixture LMS/Group e confirma bundle, campo, relações e formatter, sem
 habilitar o módulo. Próximo: testar ciclo de ativação/desinstalação com o
 grafo completo de dependências, depois revisar rotas, Views, busca e filas.
+
+Na dev.12, a fixture separa propriedade de membership: curso e turma pertencem
+a uma terceira conta; o Educador é membro com role contextual no curso, não é
+membro direto da turma e não é proprietário. O Kernel confirma que ainda pode
+ver a turma/tópico e moderar. A inspeção somente leitura do Runtime de teste
+com `--uri=https://growroom420.aculta.toca.net.br` encontrou apenas
+`gnode` e `aculta_forum_lms` ausentes no fecho estático de dependências; não
+ativou módulos nem importou configuração. A API local do Drupal 11.4.10 não
+expõe `ModuleInstaller::getModulesToInstall()` descrito pela documentação
+upstream consultada; o fecho foi conferido pelos metadados instalados das
+extensões e por `core.extension`. Ativação/desinstalação completa continua
+pendente e não está pré-aprovada para o Runtime.
