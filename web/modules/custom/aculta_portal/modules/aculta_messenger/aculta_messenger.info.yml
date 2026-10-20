@@ -3,7 +3,7 @@ type: module
 description: 'Integra mensagens, notificações e avisos no ACULTA Portal.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.1-dev.53'
+version: '0.1.1-dev.54'
 dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_user

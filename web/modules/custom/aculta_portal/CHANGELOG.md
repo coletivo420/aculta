@@ -1,3 +1,11 @@
+## 0.4.0-dev.204 — testes de isolamento dos avisos do Fórum — 2026-10-19
+
+- Complementa a integração `0.4.0-dev.203` com testes da política de acesso:
+  Domain Fórum + Node access permitido, domínio diferente e Node access negado.
+- Messenger Unit: 41 testes / 145 assertions PASS; PHPCS nos testes novos,
+  lint e `git diff --check` PASS. RUNTIME STATUS: PARTIAL conforme a entrega
+  base; nenhum dado de Runtime foi criado.
+
 ## 0.4.0-dev.203 — avisos de tópicos seguidos com acesso revalidado — 2026-10-19
 
 - O Messenger entrega avisos de respostas publicadas/aprovadas e revisões somente

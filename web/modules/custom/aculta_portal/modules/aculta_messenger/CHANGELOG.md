@@ -2,6 +2,13 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.54 — testes de política de acesso dos avisos — 2026-10-19
+
+- `ForumNoticeAccessPolicyTest` exercita a checagem com acesso permitido no
+  Domain Fórum, bloqueio para outra atribuição de domínio e negação de Node
+  access. Messenger Unit: 41 testes / 145 assertions PASS. Sem Runtime writes.
+- RUNTIME STATUS: PARTIAL (smoke read-only registrado em dev.53).
+
 ## 0.1.1-dev.53 — avisos do Fórum com revalidação de acesso — 2026-10-19
 
 - Seguir tópico usa o bundle público ACULTA `aculta_forum_topic` e comentários
