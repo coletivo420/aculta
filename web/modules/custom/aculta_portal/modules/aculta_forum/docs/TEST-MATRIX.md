@@ -1479,3 +1479,22 @@ real no servidor de teste.
   tópico, respostas e composer não foram avaliados. O
   Runtime permaneceu sem fixtures. Nenhuma conclusão de aprovação visual
   integral ou acessibilidade foi feita. RUNTIME STATUS: PARTIAL.
+
+## Fórum dev.120 / Portal dev.223 / User dev.47 — painel administrativo canônico
+
+- Forum + User Unit: 154 testes / 829 assertions PASS. `ForumTopicMoverKernelTest`
+  passou com 3 testes / 84 assertions; 5 depreciações vieram do módulo Domain
+  contrib. PHPCS Drupal/DrupalPractice direcionado PASS. Gate Drupal 11+: 988;
+  mapa módulo/tema: 154; slugs: 381; `git diff --check` PASS.
+- Runtime de teste confirmado (`toca`, Drupal 11.4.10, PHP CLI 8.4.26,
+  `aculta_runtime`, URI `https://aculta.toca.net.br`). Backup privado dos dois
+  YAMLs das Views criado antes da importação parcial. Foram importados somente
+  `views.view.aculta_forum_admin_topics` e
+  `views.view.aculta_forum_admin_comments`; `drush cr` PASS. Ambas preservam o
+  display `default`; RouteProvider resolve as rotas de conteúdo, comentários,
+  filas, configurações e denúncias para redirects. HTTP anônimo recebeu 403 nos
+  oito caminhos centrais. Redirect com sessão administrativa e inspeção visual
+  não foram executados nesta rodada.
+- EntityQuery antes/depois: zero `aculta_forum_topic` e zero
+  `aculta_discussion_post`. Nenhuma entidade de conteúdo foi criada, alterada ou
+  removida. RUNTIME STATUS: PARTIAL.

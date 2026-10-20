@@ -1,27 +1,3 @@
-aculta_forum.admin_topics:
-  title: 'Conteúdo'
-  route_name: view.aculta_forum_admin_topics.page_forum
-  base_route: view.aculta_forum_admin_topics.page_forum
-  weight: 15
-
-aculta_forum.admin_comments_published:
-  title: 'Comentários publicados'
-  route_name: view.aculta_forum_admin_comments.page_published
-  parent_id: aculta_forum.admin_topics
-  weight: 0
-
-aculta_forum.admin_comments_rejected:
-  title: 'Comentários rejeitados'
-  route_name: view.aculta_forum_admin_comments.page_rejected
-  parent_id: aculta_forum.admin_topics
-  weight: 1
-
-aculta_forum.admin_comments_pending:
-  title: 'Aguardando moderação'
-  route_name: view.aculta_forum_admin_comments.page_pending
-  parent_id: aculta_forum.admin_topics
-  weight: 2
-
 aculta_forum.public_categories:
   title: Categorias
   route_name: view.aculta_forum_categories.page_categories

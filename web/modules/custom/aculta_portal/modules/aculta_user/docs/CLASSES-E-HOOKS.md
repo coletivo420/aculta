@@ -88,7 +88,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `AvatarRerollController` | `src/Controller/AvatarRerollController.php` | Sorteia outro avatar do acervo para a própria conta (botão do popup de foto). |
 | `LegacyMemorialController` | `src/Controller/LegacyMemorialController.php` | Memorial coletivo das autorias históricas do Fórum em /u/lendashistoricas (ACULTA Fórum, F2, F-D07). |
 | `PublicProfileController` | `src/Controller/PublicProfileController.php` | Página pública do perfil em /u/<apelido>. |
-| `ReportQueueController` | `src/Controller/ReportQueueController.php` | Fila de denúncias do Fórum em /painel-administrativo/forum/denuncias (ACULTA Fórum, F5.1). |
+| `ReportQueueController` | `src/Controller/ReportQueueController.php` | Redirect local do caminho legado de denúncias para `/painel-administrativo/forum`; mantém access route-level e não carrega a fila. |
 | `SocialLinkSaveController` | `src/Controller/SocialLinkSaveController.php` | Gravação do link de uma rede social pelo modal (JSON). O JS do formulário atualiza a página depois. |
 
 ### `Entity`

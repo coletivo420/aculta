@@ -1,3 +1,21 @@
+## `0.1.0-dev.120` — centralizar os caminhos administrativos do Fórum
+
+- `/painel-administrativo/forum` permanece uma página própria e mínima. Os
+  caminhos específicos de conteúdo, filas de comentários, denúncias,
+  configuração e movimentação redirecionam localmente para ela em GET/HEAD/POST;
+  nenhuma ferramenta é copiada para o painel. `/painel-administrativo/conteudo`
+  continua sem tópicos do Fórum.
+- Removidos os page displays administrativos das Views e seus atalhos de menu.
+  Rotas genéricas Core de Taxonomy/tipos de conteúdo e configuração compartilhada
+  de participação permanecem em seus sistemas.
+- Forum + User Unit: 155 testes/831 assertions PASS; Kernel mover 3/84 PASS
+  (5 depreciações de Domain contrib); PHPCS direcionado e gates Drupal 11 (988),
+  mapa (154) e slugs (381) PASS.
+- Runtime de teste: importação parcial apenas dessas duas Views, `drush cr` PASS,
+  displays `default` e RouteProvider resolve GET/POST nos caminhos centrais. Oito
+  caminhos principais recebem HTTP 403 anônimo; redirect HTTP autenticado pendente.
+  Backup anterior privado; nenhum Node ou Comment criado/alterado. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.119` — corrigir validação da seleção da Action VBO
 
 - `MoveForumTopicsAction` valida a seleção com os dados persistidos em

@@ -1,3 +1,15 @@
+## 0.4.0-dev.223 — centralizar os caminhos administrativos específicos do Fórum
+
+- Os caminhos atuais de ferramentas do Growroom420 redirecionam para a entrada
+  canônica `/painel-administrativo/forum`; a página central permanece própria.
+  Displays de página administrativos foram removidos das Views, sem retirar os
+  displays base nem mexer nos painéis de LMS, Revista ou Wiki.
+- Forum + User Unit: 155 testes/831 assertions PASS; Kernel mover 3/84 PASS
+  (5 depreciações de Domain contrib), PHPCS PASS; gates Drupal 11 (988), mapa
+  (154) e slugs (381) PASS. Runtime `aculta_runtime`: duas Views importadas
+  parcialmente, cache reconstruído, rotas GET/POST resolvidas; anônimo recebe
+  403. Redirect HTTP autenticado pendente. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.222 — corrigir validação da Action de movimento VBO
 
 - A validação do plugin de movimento lê a seleção preservada no `FormState`,

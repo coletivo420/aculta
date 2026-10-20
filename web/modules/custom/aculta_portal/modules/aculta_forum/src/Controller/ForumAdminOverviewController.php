@@ -25,7 +25,7 @@ final class ForumAdminOverviewController {
   }
 
   /**
-   * Sends legacy administrative Forum URLs to the central Forum panel.
+   * Sends Forum administrative tool paths to the central Forum panel.
    */
   public function redirectToOverview(): LocalRedirectResponse {
     return new LocalRedirectResponse('/painel-administrativo/forum', 302);

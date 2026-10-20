@@ -31,6 +31,8 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.120` | Caminhos específicos do Fórum redirecionam ao painel próprio | Decisão F-D38: `/painel-administrativo/forum` permanece autônomo; caminhos de conteúdo, comentários, moderação, denúncias, configuração e movimento redirecionam para ele em GET/HEAD/POST. Rotas genéricas Core e configuração compartilhada continuam fora. Unit Forum + User 155 testes/831 assertions PASS; Kernel mover 3/84 PASS (5 depreciações de Domain contrib); PHPCS e gates Portal/mapa/slugs PASS. Runtime de teste recebeu importação parcial de apenas duas Views e `drush cr`; Router resolve GET/POST nos caminhos centrais e as Views mantêm apenas `default`; Fórum 0 tópicos/0 Comments. HTTP anônimo 403. HTTP autenticado e visual ainda pendentes. Backup privado dos YAMLs anteriores. RUNTIME STATUS: PARTIAL. |
+| `0.1.0-dev.119` | Corrigir validação da seleção da Action VBO | `MoveForumTopicsAction` lê a seleção persistida pelo `ConfigureAction` em `FormState`, pois a instância de validação não recebe `setContext()`. `ForumTopicMoverKernelTest`: 3 testes/84 assertions PASS; 5 depreciações do Domain contrib. Sem escrita no Runtime. |
 | `0.1.0-dev.118` | Mover tópicos em lote com Views Bulk Operations | Action contextual na View administrativa; seleção de até 50 tópicos, confirmação com destino, Batch API de 10 itens e resposta por tópico. Kernel cobre dois Nodes e bloqueio histórico. VBO e View ativos no Runtime de teste; Firefox/X11 autenticado selecionou dois tópicos e abriu configuração (5/7), mas não submeteu confirmação/Batch API porque o smoke não reconheceu os seletores do resumo. Fixtures removidas; Entity API confirmou Fórum vazio. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.117` | Painel central do Fórum geral | `/painel-administrativo/forum` é entrada canônica mínima, sem agregar outras telas; conteúdo fica em `/painel-administrativo/forum/conteudo`; sete paths antigos redirecionam ao painel em GET/HEAD. Suíte Unit 90/601, PHPCS e X11 34/34 PASS; gate de fronteira tem uma violação isolada em `aculta_mailer`, fora do escopo. Smoke de mover tópico 7/7; Fórum de teste permanece vazio; produção não acessada. |
 | `0.1.0-dev.116` | Configuração própria na seção do Fórum | `ForumSettingsForm` Core em `/painel-administrativo/forum/configuracoes`, permissão restrita própria e entrada no menu Growroom. PHPUnit 19/246 e PHPCS PASS; smoke Firefox/X11 31/31, tela 200, checkbox `false`, POST confirmou persistência e anônimo 403. Config Runtime ausente foi restaurada ausente; install/sync false; 0 tópicos/Comments. RUNTIME STATUS: PASS para rota, access e gravação do estado seguro; habilitar movimento segue sem teste. |
@@ -138,10 +140,10 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 ## Política estrutural do painel administrativo
 
 O conteúdo de discussão não se mistura à listagem genérica em
-`/painel-administrativo/conteudo`. A decisão atual cria um painel central em
-`/painel-administrativo/forum` e mantém a listagem de tópicos em
-`/painel-administrativo/forum/conteudo`; ambas pertencem à seção própria e seus
-tópicos continuam fora da View genérica. Revista reúne publicações e comentários em
+`/painel-administrativo/conteudo`. A decisão atual mantém um painel central
+próprio em `/painel-administrativo/forum`. Os caminhos administrativos
+específicos do Fórum levam a ele por redirect local; ferramentas não são
+agregadas nem replicadas no conteúdo do painel. Revista reúne publicações e comentários em
 `/painel-administrativo/conteudo/revista`; LMS terá área em
 `/painel-administrativo/lms/forum` restrita a curso/turma/atividade e autorização
 de Educador; Wiki terá área em `/painel-administrativo/wiki/forum` para
@@ -150,31 +152,28 @@ adapters e depois de provar isolamento por contexto. Ver [contratos de contexto]
 
 ### Painel central do Fórum geral
 
-Decisão do responsável em 2026-10-20: `/painel-administrativo/forum` é o caminho
-central canônico do Growroom420, não a listagem de tópicos nem uma reunião de
-outras telas administrativas. A página central não agrega links/conteúdo nem
-redireciona para as ferramentas. Cada ferramenta segue em sua rota própria na
-navegação administrativa da seção. A listagem fica em
-`/painel-administrativo/forum/conteudo`; comentários, filas e ações continuam em
-paths próprios da seção. A listagem genérica de Conteúdo exclui os bundles e
-comentários do Fórum.
+Decisão vigente F-D38, confirmada pelo responsável em 2026-10-20:
+`/painel-administrativo/forum` é a página canônica própria do Growroom420. Não é
+uma tela agregadora nem um alias de outra rota. Os caminhos específicos de
+ferramentas — conteúdo, filas de comentários, denúncias, configuração e ações
+de movimento — redirecionam localmente para essa página e não executam operações.
+A listagem genérica de Conteúdo exclui os bundles e comentários do Fórum.
 
-Os sete paths administrativos antigos sob `/painel-administrativo/conteudo/forum`
-redirecionam ao painel central por GET/HEAD. As telas nativas de categoria e
-bundle permanecem acessíveis como ferramentas e retornam ao painel quando suas
-operações respeitam o parâmetro `destination`. Nenhum painel de outro contexto
-é incorporado ao Fórum.
+Os caminhos antigos sob `/painel-administrativo/conteudo/forum` e os caminhos
+específicos de ferramentas sob `/painel-administrativo/forum` redirecionam ao
+painel central por GET/HEAD/POST (as rotas de ações também respondem a POST sem
+executar movimento). As telas genéricas Core de Taxonomy e tipos de conteúdo
+permanecem fora da seção do Fórum e sem atalhos específicos no menu do Growroom.
+Nenhum painel de outro contexto é incorporado ao Fórum.
 
 O inventário atual encontrou: View de tópicos públicos; Views de comentários publicados,
 rejeitados e pendentes; ações para mover tópico e comentário; e gerenciamento
 nativo das categorias Taxonomy e do bundle Node fora da seção de Conteúdo.
-O menu lateral da seção oferece acesso às ferramentas existentes, sujeitas às
-permissões (`access content overview`, `administer comments`, `move aculta forum
-topics`, `move aculta forum comments`, `administer taxonomy` e `administer
-content types`), sem recriar formulários CRUD do Core. A opção própria existente
-`comment_move_enabled` é controlada em `/painel-administrativo/forum/configuracoes`
-por `administer aculta forum settings`; permanece desabilitada por padrão e não
-concede por si só a permissão de movimento. Ver [Administração do Fórum](ADMIN-TOOLS.md).
+Não há atalhos para essas ferramentas no menu lateral do Fórum; os caminhos de
+tools específicos reconhecidos redirecionam ao painel, mantendo os requisitos de
+permissão próprios. A configuração armazenada `comment_move_enabled` permanece
+fail-closed, mas seu antigo caminho de formulário não está ativo nesta seção.
+Ver [Administração do Fórum](ADMIN-TOOLS.md).
 
 A opção de moderação inicial do primeiro comentário está em
 `/painel-administrativo/configuracoes/aculta/portal/participacao`, sob ownership

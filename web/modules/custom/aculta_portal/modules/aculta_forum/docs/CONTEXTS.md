@@ -40,24 +40,23 @@ são a interface administrativa dos contextos de discussão.
 
 | Contexto | Estrutura administrativa | Estado |
 | --- | --- | --- |
-| Fórum público Growroom420 | `/painel-administrativo/forum` é o caminho central canônico, sem agregar outras telas; `/painel-administrativo/forum/conteudo` contém os tópicos e tarefas de comentários. Cada ferramenta mantém sua rota própria na navegação da seção. | Views mantêm filtros por bundle/campo e estado. Os sete paths legados sob Conteúdo redirecionam ao painel por GET/HEAD; métodos de escrita não redirecionam. Runtime de teste: painel e conteúdo HTTP 200, paths antigos chegam ao painel, filas permanecem isoladas e Conteúdo genérico exclui Fórum. Revista, LMS e Wiki não aparecem na seção. |
+| Fórum público Growroom420 | `/painel-administrativo/forum` é o caminho central canônico e autônomo. Todos os caminhos administrativos específicos das ferramentas do Fórum redirecionam para ele; não há listagem nem filas dentro do painel. | Displays de página administrativa removidos das Views. Rotas genéricas Core e participação compartilhada permanecem fora da seção. Runtime de teste: views default-only e route match após `drush cr`; anônimo recebe 403. HTTP autenticado ainda não verificado. Revista, LMS e Wiki não aparecem na seção. |
 | Publicações | Conteúdo e comentários editoriais são reunidos em `/painel-administrativo/conteudo/revista`; nunca aparecem na listagem do Fórum. | Provider Magazine usa Comment compartilhado. View editorial lista `article`/`blog` e mostra seus comentários na mesma página administrativa. |
 | LMS | Espaço administrativo próprio em `/painel-administrativo/lms/forum`, com discussões de curso, turma e atividade separadas e autorização contextual de Educador. | Contrato para o adapter LMS; não criar listagem global até haver filtro por Group/Entity Access demonstrado. Comentários de avaliação (`lms_answer_comment`) são um recurso distinto e não viram comentários do Fórum. |
 | Wiki420 | Espaço administrativo próprio em `/painel-administrativo/wiki/forum`, limitado a comentários de discussão de verbetes; edição/revisão editorial permanece separada. | Contrato futuro, condicionado ao provider e ao bundle Wiki. Não criar agora rota/listagem sem contexto instalável e access validado. |
 
 ### Inventário administrativo do Growroom420
 
-No estado atual, as ferramentas existentes são a View de tópicos públicos, as
-três filas de Comments (`publicados`, `rejeitados` e `aguardando moderação`), e
-as ações de mover tópico entre categorias e comentário/subárvore entre tópicos.
-Categorias Taxonomy e configuração do bundle Node usam interfaces nativas de
-administração Core e ainda não têm links centralizados na seção do Fórum.
-Planejar o novo painel como índice que reúne essas ferramentas e respeita as
-permissões atuais (`access content overview`, `administer comments`, `move
-aculta forum topics` e `move aculta forum comments`); não criar outro CRUD.
+Antes da decisão F-D38, as ferramentas incluíam View de tópicos públicos, três
+filas de Comments (`publicados`, `rejeitados` e `aguardando moderação`) e ações
+para mover tópico/comentário. Os respectivos caminhos administrativos agora
+redirecionam ao painel central e não executam essas ferramentas. Administração
+genérica Core de Taxonomy e bundle Node permanece fora da seção, sem atalhos do
+Fórum. Nenhum novo CRUD é criado.
 
-Não há formulário próprio de configuração do Fórum hoje. A moderação do
-primeiro comentário é uma configuração compartilhada do `aculta_user`, em
+O formulário próprio de configuração do Fórum tinha opção `comment_move_enabled`;
+seu antigo caminho agora redireciona ao painel e não edita a configuração. A
+moderação do primeiro comentário é uma configuração compartilhada do `aculta_user`, em
 `/painel-administrativo/configuracoes/aculta/portal/participacao`, com efeito
 em Fórum, Revista, Wiki e outros hosts, exceto LMS. O painel Growroom poderá
 apresentar um link para essa opção com seu escopo compartilhado explícito, sem

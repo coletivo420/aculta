@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.118**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.120**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
 de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
@@ -24,12 +24,12 @@ motor novo segue por contexto e fases.
 
 ## Arquitetura e regras
 
-- A administração do Growroom fica em `/painel-administrativo/forum`; listagem,
-  filas e configuração conservam rotas próprias. A View de tópicos oferece
-  movimento em lote com VBO: até 50 Nodes, categoria única, confirmação e Batch
-  API em grupos de 10. O mesmo `ForumTopicMover` revalida cada Node, mantendo
-  acervo histórico inelegível. O Runtime de teste ainda não recebeu essa
-  dependência/configuração.
+- A administração do Growroom fica em `/painel-administrativo/forum`. Os
+  caminhos específicos de ferramentas — listagem, filas, denúncias,
+  configurações e movimentos — redirecionam localmente ao painel e não executam
+  operações. Rotas genéricas Core e configuração compartilhada ficam fora da
+  seção. A ação VBO segue disponível na configuração da View, mas não existe
+  página administrativa do Fórum que a exponha enquanto vigor a decisão F-D38.
 
 - Growroom420 hospeda somente tópicos públicos independentes.
 - Publicações, LMS e Wiki usam comentários no contexto da entidade original; não
@@ -106,14 +106,15 @@ conta autenticada. Ele permanece oculto sem uma mensagem marcada; usa o mesmo
 salto de progresso e não mantém contagem, timestamp ou histórico paralelo.
 ## Administração contextual de comentários
 
-A View `aculta_forum_admin_comments` tem página geral e três páginas de estado
-sob a seção própria do Fórum:
+A View `aculta_forum_admin_comments` preserva o display base para reutilização,
+mas seus displays de página administrativos foram retirados. Os caminhos antigos
+da consulta e das três filas agora redirecionam à página central:
 `/painel-administrativo/forum/comentarios/publicados`,
 `/painel-administrativo/forum/comentarios/rejeitados` e
 `/painel-administrativo/forum/comentarios/aguardando-moderacao`.
-Todos os displays exigem `administer comments` e herdam os filtros fixos do
-Fórum público (`aculta_discussion_post`, `field_aculta_discussion`, Node
-`aculta_forum_topic`).
+Os redirects exigem `administer comments` e não listam, moderam ou alteram
+comentários. `/painel-administrativo/forum` não incorpora essas filas. A
+administração genérica de comentários do Core permanece fora desta seção.
 
 Core Comment distingue publicado de não publicado. Para distinguir uma rejeição
 definitiva de uma pendência, o bundle compartilhado usa `field_aculta_rejected`;

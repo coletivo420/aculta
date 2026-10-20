@@ -1,3 +1,12 @@
+## 0.4.0-dev.47 — encaminhar a antiga fila de denúncias ao painel central do Fórum
+
+- `/painel-administrativo/forum/denuncias` mantém a permissão específica, mas
+  redireciona localmente para `/painel-administrativo/forum`, sem carregar ou
+  modificar denúncias nessa rota.
+- Adicionado teste unitário para a resposta local do redirect; a suíte Unit
+  combinada Forum + User passou com 155 testes/831 assertions. Runtime de teste
+  resolve a rota e responde 403 para anônimo; redirect autenticado pendente.
+
 ## 0.4.0-dev.46 — cartão editorial compartilhado e fallback de avatar — 2026-10-20
 
 - `author_editorial` passa a preparar identidade, avatar, designation, biografia e

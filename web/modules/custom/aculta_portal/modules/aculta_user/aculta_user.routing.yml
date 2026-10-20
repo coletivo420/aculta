@@ -144,6 +144,7 @@ aculta_user.denuncias_forum:
     _title: 'Denúncias do Fórum'
   requirements:
     _permission: 'moderar denuncias do forum'
+  methods: [GET, HEAD, POST]
   options:
     _admin_route: true
 
