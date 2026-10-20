@@ -25,8 +25,9 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 
 ## Status de RC
 
-- **Submódulo `aculta_mailer` em RC** (0.1.0-dev.30, decisão do responsável). Critérios atendidos: testes Unit (108) e Kernel (33) passam; painel administrativo validado no X11; gates de envio, segredos, rotas, papéis, fronteira e endereços passam. Pendências listadas no CHANGELOG 0.1.0-dev.30 não bloqueiam o RC do submódulo.
-- Lançamento do módulo central `aculta_portal`: considera este submódulo já em RC (regra em `AGENTS.md`).
+- **Não está pronto para RC.** O RC do submódulo exige todas as fases concluídas, revisadas e mescladas, com validação de código, visual e revisão final (ver `AGENTS.md`).
+- Fases ainda em aberto na tabela acima: F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13 (parciais ou pendentes). F14 e F15 estão em andamento.
+- Validação feita até aqui (não substitui as fases em aberto): testes Unit e Kernel passam; painel administrativo revisado no X11; gates de envio, segredos, rotas, papéis, fronteira e endereços passam.
 
 ## Runtime
 

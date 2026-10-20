@@ -456,13 +456,16 @@ Homelab/Hostinger no Portal.
 
 ## Release candidate de submódulos e módulo central (regra permanente)
 
-- **RC é por submódulo.** Um submódulo (ex.: `aculta_mailer`) recebe a marca de RC quando as suas próprias fases
-  estão concluídas, os testes Unit e Kernel dele passam e a validação visual do painel administrativo, quando houver,
-  foi feita. Isso não exige que o módulo central esteja pronto.
-- **Todos os submódulos entram como RC no lançamento do módulo central `aculta_portal`.** O lançamento do módulo
-  central considera cada submódulo já em RC; não reabrir o RC de um submódulo sem motivo registrado no CHANGELOG dele.
-- **Pendências de fase que não bloqueiam o RC do submódulo** ficam registradas no roadmap do submódulo, com o estado
-  "Pendente" ou "Parcial" e o motivo. O agente não declara RC de um item que ainda não foi validado.
+- **RC é por submódulo e só existe depois de tudo abaixo:**
+  1. todas as fases do planejamento do submódulo concluídas (roadmap sem item "Pendente" ou "Parcial" que o próprio
+     roadmap marque como requisito de RC);
+  2. validação de código: testes Unit e Kernel passando, gates e padrão de código;
+  3. validação visual: telas administrativas e de usuário revisadas no navegador, quando o submódulo tiver interface;
+  4. revisão final de código, com as fases mescladas no branch principal.
+- **Sem os quatro itens, o submódulo não está em RC.** O agente não declara RC, não escreve "RC" no CHANGELOG nem no
+  roadmap, e não cria tag. Quando a tarefa terminar, informa o responsável do estado real: o que falta e o que foi validado.
+- **Todos os submódulos em RC entram no lançamento do módulo central `aculta_portal`.** Um submódulo que não está em RC
+  bloqueia o lançamento do central, salvo decisão registrada do responsável.
 - Release e tag continuam seguindo `docs/operations/RELEASES.md`; sem tag sem pedido explícito do responsável.
 
 ## Regra de encerramento de fase
