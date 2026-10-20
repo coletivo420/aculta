@@ -13,8 +13,10 @@
   Caminhos históricos sob Conteúdo seguem redirecionando para a entrada central.
 - Cache reconstruído no Runtime confirmado de teste; Firefox/X11 autenticado
   confirmou páginas canônicas HTTP 200, abas administrativas de primeiro e
-  segundo nível e redirects legados. Smoke completo 25/25 antes da retirada do
-  texto contextual; repetição após esta alteração pendente. Fórum sem fixtures.
+  segundo nível e redirects legados. Smoke GET-only 25/25 depois da retirada do
+  texto contextual; viewports 390/768/1024 sem overflow. Entity API confirmou
+  zero tópicos e comentários. RUNTIME STATUS: PASS no escopo administrativo;
+  produção não acessada.
 
 ## `0.1.0-dev.121` — preencher o painel central do Growroom420
 

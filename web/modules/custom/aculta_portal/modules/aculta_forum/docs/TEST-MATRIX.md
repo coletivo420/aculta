@@ -13,8 +13,9 @@
   redirects legados retornam como esperado; viewports 390/768/1024 sem overflow.
 - Evidências privadas `0600` em
   `/home/aculta/private/aculta-forum-admin-final-20261020/`. Nenhum formulário
-  enviado nem conteúdo criado. Fórum permaneceu sem fixtures. RUNTIME STATUS:
-  PASS para navegação administrativa validada; produção não acessada.
+  enviado nem conteúdo criado. Entity API confirmou 0 tópicos e 0 comentários
+  do Fórum. RUNTIME STATUS: PASS para navegação administrativa validada;
+  produção não acessada.
 
 ## dev.118 — movimentação de tópicos em lote
 
