@@ -1,0 +1,6 @@
+aculta_forum.mark_all_read:
+  title: 'Marcar tudo como lido'
+  route_name: aculta_forum.mark_all_read
+  appears_on:
+    - view.aculta_forum_public_topics.page_discussions
+    - view.aculta_forum_unread_topics.page_unread

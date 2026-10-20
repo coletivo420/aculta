@@ -19,3 +19,11 @@ services:
     class: Drupal\aculta_forum\Context\Provider\PublicationContextProvider
     tags:
       - { name: aculta_forum.discussion_context_provider }
+
+  aculta_forum.read_access:
+    class: Drupal\aculta_forum\Access\ForumReadAccess
+    arguments: ['@aculta_portal.domain_purpose']
+
+  aculta_forum.read_marker:
+    class: Drupal\aculta_forum\Service\ForumReadMarker
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@messenger']

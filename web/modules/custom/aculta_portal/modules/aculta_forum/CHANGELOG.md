@@ -1,3 +1,23 @@
+## 0.1.0-dev.29 — marcar discussões públicas como lidas — 2026-10-19
+
+- Adicionada ação confirmada `/discussoes/marcar-tudo-como-lido`, disponível
+  apenas para contas autenticadas no purpose público do Fórum. A seleção fixa
+  `aculta_forum_topic`, publicação, domínio canônico e Node access; o Core Batch
+  processa até 200 IDs por requisição e usa a API pública `history_write()` do
+  pacote `drupal/history` instalado. Não há storage próprio e cada conta só
+  grava o próprio histórico.
+- O processamento revalida conta e purpose em cada lote e repete a consulta com
+  `accessCheck(TRUE)`. A ação não altera Nodes/Comments nem inclui LMS, Wiki,
+  Revista ou conteúdo histórico.
+- Adicionado teste Unit para acesso autenticado e isolamento por purpose.
+  PHPUnit Unit do Fórum: 47 testes / 335 assertions PASS (3 deprecações antigas
+  do PHPUnit). Kernel MariaDB `aculta_simpletest`: 4 testes / 75 assertions
+  PASS; 5 deprecações pertencem ao Domain contrib 3.0.1. PHPCS, lint, gates
+  Portal 11+ (970), fronteira (1368), mapa (154) e slugs (387 rotas) PASS.
+  Runtime `toca`: cache rebuild, container, construção do formulário e rota
+  confirmados; acesso anônimo 403. A ação não foi submetida para evitar gravar
+  histórico de uma conta real. RUNTIME STATUS: PARTIAL.
+
 # Implementação não marcada — valida agregado de respostas Core — 2026-10-19
 
 - O Kernel do movimento de categoria agora valida o agregado real de

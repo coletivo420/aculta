@@ -14,6 +14,14 @@ aculta_forum.topic_add:
         type: 'entity:node_type'
         with_config_overrides: true
 
+aculta_forum.mark_all_read:
+  path: '/discussoes/marcar-tudo-como-lido'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumMarkAllReadForm'
+    _title: 'Marcar discussões como lidas'
+  requirements:
+    _custom_access: 'aculta_forum.read_access:access'
+
 aculta_forum.topic_move:
   path: '/painel-administrativo/conteudo/forum/{node}/mover-categoria'
   defaults:

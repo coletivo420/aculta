@@ -1,3 +1,16 @@
+## 0.4.0-dev.199 — ação de marcar discussões públicas como lidas — 2026-10-19
+
+- O `aculta_forum 0.1.0-dev.29` adiciona confirmação e processamento em lotes
+  para atualizar o History da conta autenticada nos tópicos públicos publicados
+  e acessíveis do domínio Fórum. Não altera Nodes, Comments ou discussões
+  privadas; a rota é negada fora do purpose `forum`.
+- Unit direcionado, lint, gates Drupal 11+, fronteira, mapa e slugs executados;
+  Forum Unit 47/335 e Kernel MariaDB 4/75; 5 deprecações do Domain contrib e 3
+  avisos antigos de PHPUnit. Runtime confirmou rota, service container,
+  construção de formulário e HTTP anônimo 403, sem executar a ação que grava
+  histórico. Gates Drupal 11+ (970), fronteira (1368), mapa (154) e slugs (387)
+  PASS. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.198 — variantes de autoria por contexto no ACULTA User — 2026-10-19
 
 - O inventário administrativo do Portal registra o helper
