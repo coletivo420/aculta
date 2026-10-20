@@ -1,3 +1,16 @@
+## 0.1.0-dev.35 — remover consumidor editorial do Forum legado — 2026-10-19
+
+- Retirado de `aculta_user` o fallback de resumo que consultava Comments do
+  Drupal Forum. Os 12 Nodes de Revista ainda têm vínculos antigos, mas agora o
+  conteúdo editorial usa Comment direto; a leitura histórica permanece apenas
+  nos serviços de compatibilidade do `aculta_magazine` até a limpeza aprovada.
+- Nenhum dado foi alterado no Runtime. `drush cr`, renderização full de uma
+  publicação e GET à URL canônica passaram; o request `/node/90` redirecionou
+  para a URL editorial e terminou em HTTP 200. Unit `aculta_user` 60/175,
+  gate Drupal 11+ (970), mapa módulo/tema (154), diff-check e PHPCS PASS.
+  Sem Comments reais para validar formulário/exibição de conteúdo; PHP 8.4.26
+  abaixo da baseline 8.5. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.34 — revisão de fonte contrib e thread ramificada — 2026-10-19
 
 - Inspecionado diretamente o tarball `comment_mover` 2.0.0-alpha1: a operação

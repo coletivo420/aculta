@@ -1,3 +1,19 @@
+## 0.4.0-dev.38 — remover resumo editorial do Forum legado — 2026-10-19
+
+- Removido o `DiscussionHooks` de `aculta_user`, que consultava comments do
+  bundle contrib `comment_forum` por `field_discussao` com query sem access.
+  `article`/`blog` agora usam exclusivamente o campo Comment direto já
+  instalado; a leitura dos vínculos antigos permanece isolada para conversão
+  editorial até a retirada planejada dos dados.
+- Runtime `toca`: consulta somente leitura confirmou 8 vínculos em `article`, 4
+  em `blog`, e o campo `field_aculta_discussion` nos 12 Nodes; outros bundles
+  consultados não possuem vínculos legados. Cache rebuild, renderização full
+  da publicação e HTTP canônico (200 após redirect) passaram. Nenhum Node ou
+  Comment foi alterado. Unit `aculta_user`: 60 testes/175 assertions PASS;
+  gate Portal 970 e mapa módulo/tema 154 checks PASS. PHP CLI 8.4.26 está abaixo
+  da baseline 8.5; não há Comments reais para confirmar a exibição/submissão no
+  browser. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.37 — atividade com comentários do novo Fórum — 2026-10-19
 
 - A aba privada “Comentários” consulta exclusivamente Comments publicados do
