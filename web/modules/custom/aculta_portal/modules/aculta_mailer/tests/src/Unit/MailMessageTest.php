@@ -120,4 +120,22 @@ final class MailMessageTest extends UnitTestCase {
     new MailMessage('account_created', 'pessoa@example.com', 'pt-br', ['Display-Name' => 'Maria'], self::CORRELATION);
   }
 
+  /**
+   * Ida e volta pelo array da fila preserva a mensagem.
+   */
+  public function testRoundTripThroughArray(): void {
+    $message = new MailMessage('account_created', 'pessoa@example.com', 'pt-br', ['name' => 'Maria', 'count' => NULL], self::CORRELATION);
+    $copy = MailMessage::fromArray($message->toArray());
+
+    $this->assertEquals($message, $copy);
+  }
+
+  /**
+   * Dados corrompidos da fila são recusados pela mesma validação.
+   */
+  public function testFromArrayRejectsCorruptData(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    MailMessage::fromArray(['type' => 'account_created', 'to' => 'nao-e-email', 'langcode' => 'pt-br', 'correlation_id' => self::CORRELATION]);
+  }
+
 }

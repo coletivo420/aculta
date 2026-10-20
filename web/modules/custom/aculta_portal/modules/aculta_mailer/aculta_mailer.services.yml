@@ -10,3 +10,18 @@ services:
   logger.channel.aculta_mailer:
     parent: logger.channel_base
     arguments: ['aculta_mailer']
+
+  aculta_mailer.retry_schedule:
+    class: Drupal\aculta_mailer\Delivery\RetrySchedule
+
+  aculta_mailer.transport_failover:
+    class: Drupal\aculta_mailer\Delivery\TransportFailover
+    arguments: ['hostinger', 'smtp2go']
+
+  aculta_mailer.delivery_planner:
+    class: Drupal\aculta_mailer\Delivery\DeliveryPlanner
+    arguments: ['@aculta_mailer.retry_schedule', '@aculta_mailer.transport_failover']
+
+  aculta_mailer.queue:
+    class: Drupal\aculta_mailer\Queue\MailQueue
+    arguments: ['@queue']

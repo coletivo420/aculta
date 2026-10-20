@@ -64,6 +64,38 @@ final readonly class MailMessage {
   }
 
   /**
+   * Mensagem a partir do array guardado na fila; valida tudo de novo.
+   *
+   * @param array<string, mixed> $data
+   *   Campos de toArray().
+   */
+  public static function fromArray(array $data): self {
+    return new self(
+      (string) ($data['type'] ?? ''),
+      (string) ($data['to'] ?? ''),
+      (string) ($data['langcode'] ?? ''),
+      is_array($data['context'] ?? NULL) ? $data['context'] : [],
+      (string) ($data['correlation_id'] ?? ''),
+    );
+  }
+
+  /**
+   * Array serializável para a fila. Contém o destinatário e o contexto; nunca o corpo renderizado.
+   *
+   * @return array
+   *   Campos da mensagem, em chaves de fila.
+   */
+  public function toArray(): array {
+    return [
+      'type' => $this->type,
+      'to' => $this->to,
+      'langcode' => $this->langcode,
+      'context' => $this->context,
+      'correlation_id' => $this->correlationId,
+    ];
+  }
+
+  /**
    * Aceita escalar, NULL, ou lista/linha de escalares até o segundo nível; recusa objetos e níveis maiores.
    */
   private function assertPlainValue(string $key, mixed $value, int $depth): void {
