@@ -1,5 +1,11 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.43 — lista completa de envios; correção de links em tabela
+
+- Lista de todos os envios do registro (`.../envios`), com filtros por tipo, estado, transporte e período, paginada em 50. Sem destinatário nem conteúdo; cada linha leva à página de estado. Link a partir do painel de envios.
+- Correção: os links "Reenviar" e "Estado" do relatório de falhas, e os da lista, não renderizavam dentro da tabela (objeto `Url` solto na célula). Agora a célula leva `data`. A verificação anterior só contou linhas e não pegou o defeito; esta rodada renderizou as tabelas.
+- Testes: unitários e Kernel passam (ver execução).
+
 ## 0.1.0-dev.42 — estado do envio com eventos do Brevo
 
 - Página de estado de um envio (`.../registro/{log_id}/estado`), com o registro e, para envios pelo Brevo, os eventos informados pelo provedor (30 dias), pela API `GET /v3/smtp/statistics/events`. Sem destinatário nem conteúdo.

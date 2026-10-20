@@ -22,6 +22,14 @@ aculta_mailer.log_export:
   requirements:
     _permission: 'administer aculta_mailer'
 
+aculta_mailer.log_list:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/envios'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailLogListController::list'
+    _title: 'Envios de e-mail'
+  requirements:
+    _permission: 'administer aculta_mailer'
+
 aculta_mailer.log_status:
   path: '/painel-administrativo/configuracoes/aculta/envios-de-email/registro/{log_id}/estado'
   defaults:

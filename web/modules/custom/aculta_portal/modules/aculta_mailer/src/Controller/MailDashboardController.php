@@ -64,6 +64,11 @@ final class MailDashboardController extends ControllerBase {
       'intro' => [
         '#markup' => '<p>' . $this->t('Aceito pelo sistema de e-mail não é o mesmo que entregue: a entrega depende dos provedores.') . '</p>',
       ],
+      'lista' => [
+        '#type' => 'link',
+        '#title' => $this->t('Ver todos os envios, com filtros'),
+        '#url' => Url::fromRoute('aculta_mailer.log_list'),
+      ],
       'export' => [
         '#type' => 'link',
         '#title' => $this->t('Exportar registro dos últimos 30 dias (CSV)'),
@@ -104,14 +109,18 @@ final class MailDashboardController extends ControllerBase {
         $failure['error_code'],
         $failure['error_message'],
         $failure['resendable'] ? [
-          '#type' => 'link',
-          '#title' => $this->t('Reenviar'),
-          '#url' => Url::fromRoute('aculta_mailer.failure_resend', ['log_id' => $failure['id']]),
+          'data' => [
+            '#type' => 'link',
+            '#title' => $this->t('Reenviar'),
+            '#url' => Url::fromRoute('aculta_mailer.failure_resend', ['log_id' => $failure['id']]),
+          ],
         ] : '-',
         [
-          '#type' => 'link',
-          '#title' => $this->t('Estado'),
-          '#url' => Url::fromRoute('aculta_mailer.log_status', ['log_id' => $failure['id']]),
+          'data' => [
+            '#type' => 'link',
+            '#title' => $this->t('Estado'),
+            '#url' => Url::fromRoute('aculta_mailer.log_status', ['log_id' => $failure['id']]),
+          ],
         ],
       ];
     }
