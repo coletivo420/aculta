@@ -193,9 +193,15 @@ $tableRows = static function (string $markdown) use ($begin, $end): array {
 $componentRowsChanged = static function (array $machines, string $before, string $after) use ($tableRows): array {
   $beforeRows = $tableRows($before);
   $afterRows = $tableRows($after);
-  return array_values(array_filter($machines, static fn(string $machine): bool =>
-    !isset($beforeRows[$machine], $afterRows[$machine]) || $beforeRows[$machine] === $afterRows[$machine]
-  ));
+  return array_values(array_filter($machines, static function (string $machine) use ($beforeRows, $afterRows): bool {
+    // A new component counts as changed when its status row is added in the
+    // same commit. Missing from both versions is unchanged. Row removal is
+    // rejected separately by the manifest coverage checks.
+    if (!isset($beforeRows[$machine])) {
+      return !isset($afterRows[$machine]);
+    }
+    return isset($afterRows[$machine]) && $beforeRows[$machine] === $afterRows[$machine];
+  }));
 };
 $show = static function (string $revision) use ($git): string {
   [, $contents] = $git(['show', $revision]);

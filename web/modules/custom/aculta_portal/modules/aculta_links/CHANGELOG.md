@@ -14,3 +14,7 @@
 - Validação desta fundação: manifesto YAML parseado pelo Symfony YAML e links
   locais Markdown verificados em 2026-10-20; diff-check PASS. Runtime:
   DEFERRED; módulo não instalado nem habilitado.
+- O gate do índice revelou que sua comparação histórica tratava a primeira linha
+  de um componente novo como inalterada. A condição foi corrigida no validador
+  para reconhecer a inclusão da linha no mesmo commit; o gate será repetido após
+  esta correção.
