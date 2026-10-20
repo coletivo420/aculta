@@ -29,3 +29,7 @@ services:
   aculta_mailer.log_recorder:
     class: Drupal\aculta_mailer\Log\MailLogRecorder
     arguments: ['@entity_type.manager', '@settings', '@datetime.time']
+
+  aculta_mailer.dashboard:
+    class: Drupal\aculta_mailer\Dashboard\MailDashboard
+    arguments: ['@entity_type.manager']

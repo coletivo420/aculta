@@ -1,0 +1,7 @@
+aculta_mailer.dashboard:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailDashboardController::overview'
+    _title: 'Envios de e-mail'
+  requirements:
+    _permission: 'administer aculta_mailer'
