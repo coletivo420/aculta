@@ -1,3 +1,8 @@
+## 0.4.0-dev.234 — teste Kernel dos textos de conta — 2026-10-20
+
+- `AccountMailRouterKernelTest`: reset e cadastro saem com o texto aprovado, com conta real, link de uso único e entrada no domínio de Conta; chaves do Core que não são de conta ficam intactas. 3/3.
+- Suíte do Portal com banco de teste: 266 testes, sem falhas (deprecações de contrib e do Core, já existentes).
+
 ## 0.4.0-dev.233 — abas do painel ACULTA: Visão geral, Site, Pessoas, Segurança e sistema — 2026-10-20
 
 - Abas no topo de `/painel-administrativo/aculta`, com subabas: **Site** (Aparência, Formas de apoio, Redes sociais e botões) e **Segurança e sistema** (Turnstile, Credenciais, Status, Implantação). As abas de Pessoas e de Doações e a barra do e-mail ficam nos módulos donos.
