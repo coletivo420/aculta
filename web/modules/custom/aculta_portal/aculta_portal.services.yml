@@ -60,9 +60,14 @@ services:
   aculta_portal.email_confirmation_notice:
     class: Drupal\aculta_portal\Account\EmailConfirmationNotice
     arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@string_translation']
+  aculta_portal.email_confirmation_request_mail_type:
+    class: Drupal\aculta_portal\Email\EmailConfirmationRequestMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
   aculta_portal.email_confirmation_requester:
     class: Drupal\aculta_portal\Email\EmailConfirmationRequester
-    arguments: ['@email_confirmer', '@entity_type.manager', '@flood', '@lock.persistent', '@logger.channel.mail']
+    arguments: ['@email_confirmer', '@entity_type.manager', '@flood', '@lock.persistent', '@logger.channel.mail', '@aculta_mailer.mailer', '@config.factory', '@uuid', '@url_generator']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.email_confirmation_policy:

@@ -6,7 +6,14 @@ namespace Drupal\Tests\aculta_portal\Unit;
 
 use Drupal\aculta_portal\Email\EmailConfirmationRequestResult;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\Component\Uuid\Php as UuidGenerator;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Flood\FloodInterface;
@@ -26,11 +33,7 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $events = [];
     $old = $this->confirmation(10, 7, $events, 'old');
     $new = $this->confirmation(11, 7, $events, 'new');
-    $new->expects($this->once())->method('sendRequest')->willReturnCallback(static function () use (&$events): bool {
-      $events[] = 'send';
-      return TRUE;
-    });
-    $requester = $this->requester([$old], $new, $events);
+    $requester = $this->requester([$old], $new, $events, TRUE);
 
     $this->assertSame(EmailConfirmationRequestResult::ACCEPTED, $requester->request($this->account(7)));
     $this->assertSame(['new-save', 'send', 'new-save', 'old-cancel', 'old-save'], $events);
@@ -41,14 +44,10 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $old = $this->confirmation(10, 7, $events, 'old');
     $old->expects($this->never())->method('cancel');
     $new = $this->confirmation(11, 7, $events, 'new');
-    $new->expects($this->once())->method('sendRequest')->willReturnCallback(static function () use (&$events): bool {
-      $events[] = 'send';
-      return FALSE;
-    });
     $new->expects($this->once())->method('delete')->willReturnCallback(static function () use (&$events): void {
       $events[] = 'new-delete';
     });
-    $requester = $this->requester([$old], $new, $events);
+    $requester = $this->requester([$old], $new, $events, FALSE);
 
     $this->assertSame(EmailConfirmationRequestResult::FAILED, $requester->request($this->account(7)));
     $this->assertSame(['new-save', 'send', 'new-delete'], $events);
@@ -61,7 +60,7 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $new = $this->confirmation(11, 7, $events, 'new');
     $new->expects($this->once())->method('save')->willThrowException(new \RuntimeException('simulated storage failure'));
     $new->expects($this->never())->method('sendRequest');
-    $requester = $this->requester([$old], $new, $events);
+    $requester = $this->requester([$old], $new, $events, TRUE);
 
     $this->assertSame(EmailConfirmationRequestResult::FAILED, $requester->request($this->account(7)));
     $this->assertSame(['new-save'], $events);
@@ -80,6 +79,10 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
       $flood,
       $lock,
       $this->createMock(LoggerChannelInterface::class),
+      $this->createMock(AcultaMailerInterface::class),
+      $this->configFactory(),
+      new UuidGenerator(),
+      $this->createMock(UrlGeneratorInterface::class),
     );
 
     $this->assertSame(EmailConfirmationRequestResult::RATE_LIMITED, $requester->request($this->account(7)));
@@ -97,6 +100,10 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
       $flood,
       $lock,
       $this->createMock(LoggerChannelInterface::class),
+      $this->createMock(AcultaMailerInterface::class),
+      $this->configFactory(),
+      new UuidGenerator(),
+      $this->createMock(UrlGeneratorInterface::class),
     );
 
     $this->assertSame(EmailConfirmationRequestResult::BUSY, $requester->request($this->account(7)));
@@ -114,6 +121,10 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
       $flood,
       $lock,
       $this->createMock(LoggerChannelInterface::class),
+      $this->createMock(AcultaMailerInterface::class),
+      $this->configFactory(),
+      new UuidGenerator(),
+      $this->createMock(UrlGeneratorInterface::class),
     );
 
     $this->assertSame(EmailConfirmationRequestResult::INVALID_ACCOUNT, $requester->request($account));
@@ -124,14 +135,13 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $other = $this->confirmation(10, 8, $events, 'other');
     $other->expects($this->never())->method('cancel');
     $new = $this->confirmation(11, 7, $events, 'new');
-    $new->expects($this->once())->method('sendRequest')->willReturn(TRUE);
-    $requester = $this->requester([$other], $new, $events);
+    $requester = $this->requester([$other], $new, $events, TRUE);
 
     $this->assertSame(EmailConfirmationRequestResult::ACCEPTED, $requester->request($this->account(7)));
-    $this->assertSame(['new-save', 'new-save'], $events);
+    $this->assertSame(['new-save', 'send', 'new-save'], $events);
   }
 
-  private function requester(array $existing, EmailConfirmationInterface $new, array &$events): EmailConfirmationRequester {
+  private function requester(array $existing, EmailConfirmationInterface $new, array &$events, bool $accepted): EmailConfirmationRequester {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -152,11 +162,36 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $flood->expects($this->once())->method('isAllowed')->with('aculta_portal.email_confirmation_request', 1, 900, '7')->willReturn(TRUE);
     $flood->expects($this->once())->method('register')->with('aculta_portal.email_confirmation_request', 900, '7');
 
-    return new EmailConfirmationRequester($manager, $entity_manager, $flood, $this->lock(TRUE), $this->createMock(LoggerChannelInterface::class));
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->method('send')->willReturnCallback(static function (MailMessage $message) use (&$events, $accepted): bool {
+      $events[] = 'send';
+      self::assertSame('email_confirmation_request', $message->type);
+      self::assertSame('https://example.invalid/email-confirmer/reply/uuid-11/hash', $message->context['confirm_url']);
+      return $accepted;
+    });
+    $urls = $this->createMock(UrlGeneratorInterface::class);
+    $urls->method('generateFromRoute')->willReturn('https://example.invalid/email-confirmer/reply/uuid-11/hash');
+
+    return new EmailConfirmationRequester($manager, $entity_manager, $flood, $this->lock(TRUE), $this->createMock(LoggerChannelInterface::class), $mailer, $this->configFactory(), new UuidGenerator(), $urls);
+  }
+
+  private function configFactory(): ConfigFactoryInterface {
+    $settings = $this->createMock(ImmutableConfig::class);
+    $settings->method('get')->with('resendrequest_delay')->willReturn(900);
+    $factory = $this->createMock(ConfigFactoryInterface::class);
+    $factory->method('get')->with('email_confirmer.settings')->willReturn($settings);
+    return $factory;
   }
 
   private function confirmation(int $id, int $uid, array &$events, string $prefix): EmailConfirmationInterface {
     $confirmation = $this->createMock(EmailConfirmationInterface::class);
+    $confirmation->method('isRequestSent')->willReturn(FALSE);
+    $confirmation->method('getEmail')->willReturn('person@example.invalid');
+    $confirmation->method('uuid')->willReturn('uuid-' . $id);
+    $confirmation->method('getHash')->willReturn('hash');
+    $language = $this->createMock(LanguageInterface::class);
+    $language->method('getId')->willReturn('pt-br');
+    $confirmation->method('language')->willReturn($language);
     $confirmation->method('id')->willReturn((string) $id);
     $confirmation->method('isPending')->willReturn(TRUE);
     $confirmation->method('getProperty')->with('user')->willReturn($uid);

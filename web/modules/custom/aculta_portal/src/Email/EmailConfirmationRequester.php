@@ -9,6 +9,11 @@ use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\email_confirmer\EmailConfirmationInterface;
 use Drupal\email_confirmer\EmailConfirmerManagerInterface;
 use Drupal\user\UserInterface;
@@ -29,6 +34,10 @@ final class EmailConfirmationRequester {
     private readonly FloodInterface $flood,
     private readonly LockBackendInterface $lock,
     private readonly LoggerChannelInterface $logger,
+    private readonly AcultaMailerInterface $mailer,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly UuidInterface $uuid,
+    private readonly UrlGeneratorInterface $urlGenerator,
   ) {}
 
   /**
@@ -70,7 +79,7 @@ final class EmailConfirmationRequester {
       $confirmation->save();
 
       try {
-        $accepted = $confirmation->sendRequest();
+        $accepted = $this->sendRequest($confirmation);
       }
       catch (Throwable $exception) {
         $this->logFailure('The email confirmation backend threw while sending.', $exception);
@@ -134,6 +143,35 @@ final class EmailConfirmationRequester {
     finally {
       $this->lock->release($lockName);
     }
+  }
+
+  /**
+   * Envia o pedido pelo aculta_mailer, com o mesmo limite de reenvio do contrib.
+   *
+   * Dentro da janela de reenvio, delega ao contrib, que enfileira. Fora dela, envia direto e grava a data do envio.
+   */
+  public function sendRequest(EmailConfirmationInterface $confirmation): bool {
+    $delay = (int) $this->configFactory->get('email_confirmer.settings')->get('resendrequest_delay');
+    if ($confirmation->isRequestSent() && $confirmation->getLastRequestDate() + $delay > time()) {
+      return $confirmation->sendRequest();
+    }
+
+    $url = $this->urlGenerator->generateFromRoute('entity.email_confirmer_confirmation.response_form', [
+      'email_confirmer_confirmation' => $confirmation->uuid(),
+      'hash' => $confirmation->getHash(),
+    ], ['absolute' => TRUE]);
+    $message = new MailMessage(
+      EmailConfirmationRequestMailType::ID,
+      (string) $confirmation->getEmail(),
+      $confirmation->language()->getId(),
+      ['email' => (string) $confirmation->getEmail(), 'confirm_url' => $url],
+      $this->uuid->generate(),
+    );
+    $accepted = $this->mailer->send($message);
+    if ($accepted) {
+      $confirmation->setLastRequestDate(time());
+    }
+    return $accepted;
   }
 
   /** @return \Drupal\email_confirmer\EmailConfirmationInterface[] */

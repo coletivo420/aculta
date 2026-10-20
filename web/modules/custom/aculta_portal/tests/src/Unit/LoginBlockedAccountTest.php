@@ -45,6 +45,10 @@ final class LoginBlockedAccountTest extends UnitTestCase {
         $this->createMock(\Drupal\Core\Flood\FloodInterface::class),
         $this->createMock(\Drupal\Core\Lock\LockBackendInterface::class),
         $this->createMock(\Drupal\Core\Logger\LoggerChannelInterface::class),
+        $this->createMock(\Drupal\aculta_mailer\Api\AcultaMailerInterface::class),
+        $this->createMock(\Drupal\Core\Config\ConfigFactoryInterface::class),
+        new \Drupal\Component\Uuid\Php(),
+        $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class),
       ),
       new \Drupal\aculta_portal\Account\RegistrationTerms(
         $this->createMock(\Drupal\agreement\AgreementHandlerInterface::class),
