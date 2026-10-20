@@ -5,7 +5,7 @@
 - `PdfPreviewThumbnailBuilder` confirma que o arquivo PDF público ainda existe e está legível antes de invocar PDFPreview/ImageMagick. Arquivo ausente continua fail-soft e não produz warning por falha previsível do processador.
 - Adicionado teste Unit para garantir que uma fonte ausente não chama PDFPreview nem altera o timeout compartilhado.
 - A miniatura continua registrada como derivado temporário e renderizada por `aculta_image`; nenhuma imagem ou storage paralelo foi criado.
-- Evidência: PHPUnit Unit 1/1 (5 assertions) PASS; PHP lint PASS. PHPUnit reportou uma depreciação no teste; gate Drupal 11+ e gates do índice/imagem continuam bloqueados por achados alheios a este diff (Mailer/Wiki e política de campo Commerce, respectivamente).
+- Evidência: PHPUnit Unit 1/1 (5 assertions) PASS; a suíte atual do submódulo passou 12/12 (150 assertions), com uma depreciação PHPUnit. Em 2026-10-20, os assets `pdf-viewer.mjs`, `pdf.mjs` e `pdf.worker.mjs` responderam no Homelab com HTTP 200, `application/javascript` e `max-age=31536000`. PV7 segue aberta para CSP estrita e acessibilidade ampliada; LiteSpeed/Cloudflare fica para validação pós-deploy.
 - RUNTIME STATUS: DEFERRED.
 
 ## 0.1.0-dev.20 — upload editorial pela UI e acesso próprio — 2026-10-17
