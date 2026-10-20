@@ -1,0 +1,62 @@
+# Inventário de tratamento de dados pessoais (LGPD)
+
+Versão 1.0, 20/10/2026. Base: código e configuração do repositório (`web/modules/custom/aculta_portal`, `web/themes/custom/aculta420`),
+e dados publicados em `docs/institution/IDENTIDADE-LEGAL.md`.
+
+Controlador: Associação Cultural Antiproibicionista (CNPJ 68.238.467/0001-08). Canal de privacidade: faleconosco@aculta.org.
+Encarregado (DPO): **não designado nas informações publicadas — a definir pelo responsável**.
+
+## Princípios que valem para todo módulo
+
+- **O Portal não processa pagamentos.** Todo pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem exibe
+  cartões, métodos salvos ou histórico de pagamentos pessoais (regra permanente em `AGENTS.md`).
+- **CPF e CNPJ**: coletados quando necessários a cursos e à condição de associado. Em claro, o documento só existe no
+  momento da coleta e, quando exigido pelo pagamento, no envio ao Mercado Pago. No banco, ficam cifrados
+  (`aculta_associado_id`, `DocumentCipher`) e com impressão digital pseudonimizada, para unicidade (`aculta_id_cpf`,
+  `DocumentFingerprint`, chave `ACULTA_ID_CPF_FINGERPRINT_KEY`). Impressão digital é dado pessoal pseudonimizado, não anonimizado.
+- **Endereços de e-mail** no registro de envios: só como identificador criptográfico (`aculta_mailer`).
+- **Segredos** (chaves de cifra, tokens, senhas) ficam no arquivo de segredos do servidor, fora do repositório.
+
+## Operadores e terceiros
+
+| Prestador | Função | Dados enviados | Observação |
+|---|---|---|---|
+| Mercado Pago | Processamento de pagamentos | Dados de pagamento, identificação do pagador (CPF quando exigido), valor, referência | Trata dados em seu próprio ambiente. Cartão nunca passa pelo site. |
+| Brevo | Envio transacional por API e eventos de entrega | Endereço do destinatário, assunto e corpo da mensagem, dados de entrega | Recebe eventos de volta pelo webhook (token de portador). |
+| Hostinger | Hospedagem e envio SMTP | Mesmo conteúdo do envio SMTP | Caixa de monitoramento de devoluções e DMARC. |
+| SMTP2GO | Contingência de envio | Mesmo conteúdo do envio por esse transporte | Usado só quando os demais falham. |
+| Cloudflare Turnstile | Antirrobô em formulários | Token de desafio e dados técnicos (pode incluir IP) | Ativo quando há chaves; contingência local sem chaves. |
+| Google | Fontes (Inter, Oswald); conexão opcional de conta (OAuth) | Endereço IP ao carregar fontes; dados básicos da conta Google se o usuário optar | Sem acesso a Gmail, Drive, Agenda ou Contatos. |
+| ViaCEP | Consulta de endereço por CEP (`aculta_portal_cep`) | CEP digitado | Consulta pública; não envia nome nem CPF. |
+
+## Inventário por módulo
+
+Legenda de base legal (LGPD, art. 7º e 11): **C** consentimento; **E** execução de contrato ou procedimentos preliminares;
+**O** obrigação legal; **L** legítimo interesse; **T** tutela da saúde ou outro previsto em lei. Enquadramento final a validar pelo responsável.
+
+| Módulo | Dados pessoais tratados | Finalidade | Base (a validar) | Retenção | Prestadores |
+|---|---|---|---|---|---|
+| `aculta_portal` (conta, formulários) | Nome de usuário, e-mail, hash de senha, dados de Contato e Faça Parte | Acesso à conta; resposta a manifestações | E, L | Conta enquanto existir; submissões pelo prazo necessário | Hosting; Turnstile |
+| `aculta_user` | Apelido, nome, sobrenome, WhatsApp, cidade, UF, data de nascimento, biografia, foto, visibilidade pública | Perfil privado; perfil público só se a pessoa optar | C | Enquanto a conta existir | — |
+| `aculta_id_cpf` | Impressão digital pseudonimizada de CPF/CNPJ | Unicidade de documento (sem exibir o número) | E, O | Enquanto o vínculo existir | — |
+| `aculta_associado_id` | CPF/CNPJ cifrado; documentos cifrados (`ACULTA_DOCUMENT_ENCRYPTION_KEY`) | Condição de associado | E, O | Pelo período de vínculo e obrigações legais | — |
+| `aculta_pagamentos_mercadopago` | Referências de pedido, valores, estados; identificação do pagador enviada ao Mercado Pago | Apoios e compras | E, O | Pelo período exigido para registro fiscal e contábil | Mercado Pago |
+| `aculta_donation` | Valor de apoio, dedicatórias (nome da pessoa homenageada), recorrência | Apoios | C, E | Conforme pagamento | Mercado Pago |
+| `aculta_portal_cep` | CEP consultado | Preenchimento de endereço | E | A validar (confirmar se o CEP é gravado no endereço da pessoa) | ViaCEP |
+| `aculta_messenger` | Mensagens internas, remetente, avatar, avisos e destinatários | Comunicação e avisos da conta | E | A validar (prazo de retenção das mensagens internas) | — |
+| `aculta_forum` e `aculta_forum_lms` | Autoria, apelido, conteúdo publicado | Discussões | C, L | Enquanto o conteúdo existir | — |
+| `aculta_magazine` | Nome, apelido, WhatsApp, data de publicação, perfil público | Revista e autoria | C | Enquanto o conteúdo existir | — |
+| `aculta_game` (conquistas) | Nome, sobrenome, apelido, WhatsApp, imagem, perfil público | Conquistas e reconhecimento | C | Enquanto a conta existir | — |
+| `aculta_lms` e `aculta_lms_h5p` | Nomes em cursos e em conteúdos interativos; dados de atividades a validar | Cursos e acompanhamento | E | A validar (prazo do curso e obrigações acadêmicas) | — |
+| `aculta_mailer` | E-mail do destinatário (só HMAC no registro); conteúdo cifrado só em falha | Envio e registro de mensagens transacionais | E | Registro: 90 dias (configurável, 30 a 365). Conteúdo de falha: até aceitação ou entrega; links de uso único em 24 horas | Brevo; Hostinger; SMTP2GO |
+| `aculta_image`, `aculta_pdf_viewer`, `aculta_gallery` | Arquivos enviados (podem conter imagens de pessoas) | Acervo e visualização | C, L | Enquanto o arquivo estiver publicado ou em uso | — |
+| `aculta_deployer`, `aculta_patcher`, `aculta_portal_sitemap` | Nenhum dado pessoal (ferramentas de operação e índices) | — | — | — | — |
+| `aculta420` (tema) | Nenhum dado pessoal; só apresentação | — | — | — | Google Fonts |
+
+## Pendências para fechar o inventário
+
+1. Encarregado (DPO): designar e publicar nome e contato.
+2. Base legal de cada módulo: validar com o responsável; o enquadramento acima é uma proposta a partir do código.
+3. Transferência internacional: confirmar a localização dos servidores de Brevo, Cloudflare, Google e Mercado Pago, e as cláusulas aplicáveis.
+4. Retenção de dados de associado e de pagamento: confirmar os prazos fiscais e de vínculo.
+5. Processo de atendimento aos direitos do titular (art. 18) e de comunicação de incidentes (art. 48): a definir pelo responsável.

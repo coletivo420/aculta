@@ -20,6 +20,11 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [decisions/](decisions/) — ADRs vigentes.
 - [ADR-010](decisions/ADR-010-hostinger-litespeed.md) — LiteSpeed na produção Hostinger Cloud Startup; Apache no Homelab.
 
+## Institucional e compliance
+
+- [Identidade legal da Associação](institution/IDENTIDADE-LEGAL.md): razão social, CNPJ, endereço e canal de privacidade.
+- [Inventário LGPD](compliance/LGPD-INVENTARIO.md): dados pessoais por módulo, operadores e pendências.
+
 ## Módulos e integrações
 
 - [modules/README.md](modules/README.md) — referência canônica dos módulos e das regras anti-regressão.

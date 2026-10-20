@@ -286,6 +286,10 @@ Os testes de Kernel usam o MariaDB dedicado `aculta_simpletest`, com a configura
 
 ## Identidade institucional
 
+- Dados legais da Associação (razão social, CNPJ, endereço, telefone e canal de privacidade `faleconosco@aculta.org`): `docs/institution/IDENTIDADE-LEGAL.md`. Use esses dados, não o e-mail antigo `4e20coletivo@gmail.com`.
+- Tratamento de dados pessoais (LGPD), por módulo e por prestador: `docs/compliance/LGPD-INVENTARIO.md`. Antes de criar campo com dado pessoal, registre-o nesse inventário.
+- O Portal não processa pagamentos: todos são processados pelo Mercado Pago. CPF e CNPJ ficam cifrados no site, e só vão ao Mercado Pago quando o pagamento exige.
+
 Nome:
 
 ACULTA - Associação Cultural Antiproibicionista
