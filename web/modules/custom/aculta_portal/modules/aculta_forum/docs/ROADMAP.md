@@ -402,8 +402,13 @@ comparadas à entrada Ubuntu em 1024 px. Dev.52 implementou categorias junto à
 atividade: colunas em 1024 px e lista seguida pelas categorias em 768/390 px.
 Claro foi observado nos três tamanhos; escuro em 1024/390 px. Tab confirmou
 foco visível no atalho, marca e busca. As capturas privadas e limites estão em
-`TEST-MATRIX.md`. A homologação segue parcial: falta fluxo completo de teclado,
-leitor de tela, listagem com conteúdo, tópico, respostas e composer.
+`TEST-MATRIX.md`. Complemento X11: a thread com uma resposta foi observada em
+1270 e 500 px e comparada a um tópico Ubuntu Discourse. A autoria lateral e o
+painel de mensagem ACULTA permanecem legíveis em 500 px sem overflow. Discourse
+acrescenta timeline/progresso de leitura e navegação persistente, já previstos
+nesta fase como itens para implementar. A homologação segue parcial: falta
+thread extensa em 390 px, fluxo completo de teclado, leitor de tela, listagem
+com conteúdo e composer.
 
 ## `0.1.0-dev.12` — Participação e moderação
 

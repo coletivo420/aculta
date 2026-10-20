@@ -19,6 +19,23 @@
   PHP CLI 8.4.26 (abaixo da baseline 8.5). RUNTIME STATUS: PARTIAL para a
   homologação integral; PASS para consulta e separação das filas.
 
+### Complemento visual X11 da thread
+
+- A comparação com um tópico Ubuntu Discourse foi feita em Firefox ESR/X11.
+  ACULTA respondeu HTTP 200 e exibiu o comentário publicado; 1270 px e 500 px
+  sem overflow (largura documental/corpo de 500 px). A thread ACULTA apresenta
+  título, autoria/categoria do tópico e painéis de comentário com permalink.
+  Discourse também mantém timeline/progresso do leitor e navegação persistente;
+  esses detalhes ficam como foco de apresentação da dev.11.
+- A thread usou resposta temporária publicada sob marcador de sincronização para
+  excluir concessão de conquista; isso não validou moderação. O teste anônimo
+  ficou pendente conforme regra e foi removido. Todos os fixtures foram
+  removidos; Runtime final 0 tópicos/Comments, 24 History e 2 flaggings
+  preservadas. Capturas mode 0600 em
+  `/home/aculta/private/aculta/visual-tests/forum-thread-20261020/`.
+- Thread extensa, ações autenticadas, leitor de tela e 390 px exatos seguem
+  pendentes. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.60` — inspeção visual das listas de descoberta — 2026-10-20
 
 - Firefox ESR visível em X11, visitante anônimo, Runtime `toca`:

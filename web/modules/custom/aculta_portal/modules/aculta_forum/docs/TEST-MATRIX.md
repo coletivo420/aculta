@@ -23,6 +23,30 @@
   visual das três abas permanecem pendentes. RUNTIME STATUS: PASS para a query
   e isolamento; PARTIAL para a homologação completa.
 
+### Complemento visual X11 da thread — referência Ubuntu Discourse
+
+- Firefox ESR X11 comparou uma discussão ACULTA com a categoria e um tópico
+  público do Ubuntu Discourse. O alias `/topico/qa-visual-inspecao-discussao`
+  respondeu 200; a captura da thread mediu 1270 px de viewport, e outra janela
+  estreita mediu 500 px, com `documentWidth` e `bodyWidth` iguais a 500 e a
+  resposta ainda visível. Nenhum overflow horizontal foi observado.
+- A página ACULTA mostra título e autoria/categoria do tópico, seguidos por
+  cada comentário em painel com autor, corpo e permalink. No exemplo Discourse,
+  o autor também ocupa uma coluna lateral, com timeline vertical, posição do
+  leitor na discussão e navegação contextual persistente. A inspeção ACULTA
+  sugere priorizar timeline/progresso e navegação de thread; ações de resposta
+  autenticada não foram avaliadas neste fluxo anônimo.
+- Fixture NID 431/CID 61 e a repetição NID 432/CID 62 foram removidas via
+  Entity API. As respostas publicadas usaram temporariamente `setSyncing(TRUE)`
+  para que o ACULTA Game não concedesse uma conquista de teste irreversível;
+  esse mecanismo não foi usado para validar a política de moderação. O teste
+  anônimo pendente também foi removido. Estado final do Runtime: 0 tópicos e 0
+  Comments compartilhados, 24 History (baseline) e 2 flaggings globais
+  preservadas. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-thread-20261020/`.
+- A comparação ainda não cobre thread extensa, ação autenticada, leitor de tela
+  nem largura CSS exata de 390 px nessa página. RUNTIME STATUS: PARTIAL.
+
 ## dev.61 — Batch Core no purpose Fórum
 
 - O endpoint progressivo Batch do Core permanece no purpose `main`, conforme a
