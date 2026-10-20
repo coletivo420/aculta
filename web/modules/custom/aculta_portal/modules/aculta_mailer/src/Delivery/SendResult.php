@@ -13,7 +13,15 @@ final readonly class SendResult {
     public bool $sent,
     public ?DeliveryError $error,
     public ?int $smtpCode,
+    public bool $cancelled = FALSE,
   ) {}
+
+  /**
+   * Não enviado por decisão da política (suspensão). Não é falha: não há retry.
+   */
+  public static function cancelled(): self {
+    return new self(FALSE, NULL, NULL, TRUE);
+  }
 
   /**
    * Aceito pelo sistema de e-mail (status `sent`).

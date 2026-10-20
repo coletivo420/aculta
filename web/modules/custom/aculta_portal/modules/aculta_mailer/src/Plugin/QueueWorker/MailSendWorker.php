@@ -10,6 +10,7 @@ use Drupal\aculta_mailer\Delivery\DeliveryPlanner;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
+use Drupal\aculta_mailer\Policy\MailPolicyResolver;
 use Drupal\aculta_mailer\Queue\MailQueue;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
 use Drupal\Component\Datetime\TimeInterface;
@@ -42,6 +43,7 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
     private readonly TimeInterface $time,
     private readonly LoggerChannelInterface $logger,
     private readonly MailLogRecorder $log,
+    private readonly MailPolicyResolver $policies,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -58,6 +60,7 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
       $container->get('datetime.time'),
       $container->get('logger.channel.aculta_mailer'),
       $container->get('aculta_mailer.log_recorder'),
+      $container->get(MailPolicyResolver::class),
     );
   }
 
@@ -68,7 +71,8 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
     $message = MailMessage::fromArray(is_array($data['message'] ?? NULL) ? $data['message'] : []);
     $attempt = (int) ($data['attempt'] ?? 1);
     $notBefore = (int) ($data['not_before'] ?? 0);
-    $transport = (string) ($data['transport'] ?? MailQueue::DEFAULT_TRANSPORT);
+    $policy = $this->policies->resolve($message->type);
+    $transport = (string) ($data['transport'] ?? $policy->transport ?? MailQueue::DEFAULT_TRANSPORT);
 
     // Ainda não é hora da próxima tentativa: a mensagem volta para a fila sem ser perdida.
     if ($notBefore > $this->time->getRequestTime()) {
@@ -86,7 +90,8 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
     }
 
     $result = $this->mailer->deliver($message, $transport);
-    if ($result->sent) {
+    // Enviado, ou suspenso pela política (já registrado como cancelado, sem retry).
+    if ($result->sent || $result->cancelled) {
       return;
     }
 

@@ -1,0 +1,29 @@
+aculta_mailer.policy:
+  type: config_object
+  label: 'Política de envio do ACULTA Mailer'
+  mapping:
+    global:
+      type: aculta_mailer.policy_values
+      label: 'Ajustes globais'
+    types:
+      type: sequence
+      label: 'Ajustes por tipo de e-mail'
+      sequence:
+        type: aculta_mailer.policy_values
+
+aculta_mailer.policy_values:
+  type: mapping
+  label: 'Valores de política'
+  mapping:
+    transport:
+      type: string
+      label: 'Transporte'
+    reply_to:
+      type: email
+      label: 'Responder para'
+    priority:
+      type: integer
+      label: 'Prioridade (1 a 5)'
+    skip:
+      type: boolean
+      label: 'Suspender envio'

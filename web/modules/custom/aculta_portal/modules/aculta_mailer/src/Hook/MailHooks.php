@@ -35,6 +35,10 @@ final class MailHooks {
       // Cabeçalho próprio para rastrear a mensagem do Drupal até o provedor (ver docs/ARCHITECTURE.md).
       $message['headers']['X-Aculta-Mail-ID'] = (string) $params['correlation_id'];
     }
+    if (!empty($params['priority'])) {
+      // Prioridade definida pela política (1 alta a 5 baixa); RFC 2156.
+      $message['headers']['X-Priority'] = (string) (int) $params['priority'];
+    }
     if (!empty($params['transport'])) {
       // Escolhe o transporte desta mensagem; lido e removido pelo MultiTransport do mailer_transport.
       $message['headers']['X-Transport'] = (string) $params['transport'];

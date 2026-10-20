@@ -34,7 +34,8 @@ final class MailQueue {
       'message' => $message->toArray(),
       'attempt' => 1,
       'not_before' => 0,
-      'transport' => self::DEFAULT_TRANSPORT,
+      // NULL: a política escolhe o transporte na primeira tentativa; cai no padrão se não houver ajuste.
+      'transport' => NULL,
     ]);
   }
 

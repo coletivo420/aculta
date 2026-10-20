@@ -11,6 +11,7 @@ use Drupal\aculta_mailer\Delivery\SmtpReplyClassifier;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
+use Drupal\aculta_mailer\Policy\MailPolicyResolver;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -38,6 +39,7 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly MailLogRecorder $log,
     private readonly SmtpFailureRegistry $failures,
     private readonly SmtpReplyClassifier $classifier,
+    private readonly MailPolicyResolver $policies,
   ) {}
 
   /**
@@ -59,12 +61,20 @@ final class AcultaMailer implements AcultaMailerInterface {
       return SendResult::failed(DeliveryError::Permanent, NULL);
     }
 
+    $policy = $this->policies->resolve($message->type);
+    if ($policy->skip) {
+      $this->log->record($message, MailStatus::Cancelled, 1, $transport ?? self::DEFAULT_TRANSPORT, 'policy_skip');
+      return SendResult::cancelled();
+    }
+
     $langcode = $message->langcode !== '' ? $message->langcode : LanguageInterface::LANGCODE_DEFAULT;
+    $transport ??= $policy->transport;
     $result = $this->mailManager->mail(self::MODULE, $message->type, $message->to, $langcode, [
       'context' => $message->context,
       'correlation_id' => $message->correlationId,
       'transport' => $transport,
-    ], NULL, TRUE);
+      'priority' => $policy->priority,
+    ], $policy->replyTo, TRUE);
 
     $transportUsed = $transport ?? self::DEFAULT_TRANSPORT;
     if (!empty($result['result'])) {
