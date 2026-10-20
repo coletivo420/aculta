@@ -187,8 +187,8 @@ A verificação completa relê os 8 GB e confere o SHA-256 de cada arquivo.
    que só aparecem em tópicos comerciais ou em tópicos excluídos não entram. Resultado: 3.924 URLs de perfil.
    Consequência: os autores dos 555 tópicos de caso individual têm conteúdo mantido, então entram pela mesma regra.
    Se isso não for o desejado, é preciso dizer.
-6. **Download dos perfis**: os 1.332 perfis da lista ainda não baixados estão sendo baixados agora. Quando terminar, o
-   mapeamento é regenerado e a verificação roda de novo.
+6. **Download dos perfis: concluído** (2026-10-19). 3.941 perfis permitidos; 3.940 com captura. Uma lacuna: perfil
+   `v_profile.php?userid=5289` (sem resposta após as retentativas), a ser registrada como não recuperada.
 7. **Três nomes ambíguos** (`Delta-9-thc`, `Pcgrow`, `Prof. Pardal`): sem decisão de qual perfil vale.
 8. **228 fotos truncadas: não recuperadas** (decisão do responsável, 2026-10-19). Entram com a imagem padrão, no lugar do
    arquivo cortado. Também se aplica aos 298 links de download dessas fotos.
