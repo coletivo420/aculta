@@ -1,5 +1,16 @@
 # Matriz de testes por fase
 
+## dev.85 — formulário de mover tópico nega autoria histórica
+
+- O Kernel usa uma conta com `administer nodes` e `move aculta forum topics`
+  contra um Node histórico com `field_autor_legado`. Serviço e formulário
+  negam a operação, e a categoria original fica inalterada.
+- `ForumTopicMoverKernelTest`: 3 testes / 71 assertions PASS no MariaDB
+  dedicado; 5 depreciações Core/Domain contrib. Lint, PHPCS, Drupal 11+ (975),
+  fronteira (1451), mapa (152) e `git diff --check` PASS. Runtime não alterado;
+  RUNTIME STATUS: DEFERRED. A suíte Kernel completa passou na dev.84 antes
+  deste caso.
+
 ## dev.84 — negar Form API quando falta acesso ao tópico
 
 - Conta tem `move aculta forum comments`, mas não `access content`. O Kernel

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Kernel;
 
+use Drupal\aculta_forum\Form\ForumTopicMoveForm;
 use Drupal\aculta_forum\Service\ForumTopicMover;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
@@ -24,6 +26,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Verifies category movement through real Node, Taxonomy and Comment storage.
@@ -246,9 +249,29 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $node->save();
     $destination = Term::create(['vid' => 'aculta_forum_categories', 'name' => 'Another']);
     $destination->save();
+    $original_category = (int) $node->get('field_aculta_categories')->target_id;
 
-    $this->expectException(\InvalidArgumentException::class);
-    $this->mover->move((int) $node->id(), (int) $destination->id(), $this->account);
+    self::assertTrue($this->mover->access($node, $this->account)->isForbidden());
+    try {
+      $this->mover->move((int) $node->id(), (int) $destination->id(), $this->account);
+      self::fail('Historical topics must not be moved, including by administrators.');
+    }
+    catch (\InvalidArgumentException) {
+      self::assertSame($original_category, (int) Node::load($node->id())->get('field_aculta_categories')->target_id);
+    }
+
+    $form = new ForumTopicMoveForm(
+      $this->mover,
+      $this->container->get('entity_type.manager'),
+      $this->account,
+    );
+    try {
+      $form->buildForm([], new FormState(), $node);
+      self::fail('The topic move form must deny historical topics to administrators.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertSame($original_category, (int) Node::load($node->id())->get('field_aculta_categories')->target_id);
+    }
   }
 
   /**

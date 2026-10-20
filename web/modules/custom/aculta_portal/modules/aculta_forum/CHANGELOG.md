@@ -1,3 +1,14 @@
+## `0.1.0-dev.85` — negar formulário de movimento para Growroom histórico — 2026-10-20
+
+- Kernel prova que a imutabilidade do tópico histórico é aplicada também no
+  formulário: mesmo com permissão administrativa, o serviço nega movimento, o
+  Form API lança acesso negado e a categoria original permanece.
+- `ForumTopicMoverKernelTest`: 3 testes / 71 assertions PASS no MariaDB
+  dedicado; 5 depreciações de Core/Domain contrib. Lint, PHPCS, Drupal 11+
+  (975), fronteira (1451), mapa (152) e `git diff --check` PASS. A suíte Kernel
+  completa já havia passado na dev.84 antes deste novo caso; Runtime não
+  alterado; RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.84` — negar formulário sem acesso ao tópico — 2026-10-20
 
 - Kernel invoca o Form API de mover com uma conta que tem a permissão de mover,
