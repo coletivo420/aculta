@@ -24,6 +24,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\flag\Entity\Flag;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\search_api\Entity\Index;
@@ -61,6 +62,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     'file',
     'flag',
     'history',
+    'language',
     'path',
     'path_alias',
     'search_api',
@@ -117,6 +119,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'file',
       'flag',
       'history',
+      'language',
       'path',
       'path_alias',
       'search_api',
@@ -374,6 +377,36 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame(1, $history->getCountNewComments(Node::load($destination->id()), ForumCommentMover::FIELD_NAME));
     self::assertSame($receipts_before, history_read_multiple([(int) $source->id(), (int) $destination->id()]));
     self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+  }
+
+  /**
+   * Moving a translated reply preserves every Comment translation.
+   */
+  public function testMovePreservesCommentTranslations(): void {
+    ConfigurableLanguage::createFromLangcode('fr')->save();
+    $storage = FieldStorageConfig::loadByName('comment', 'comment_body');
+    $storage->setTranslatable(TRUE)->save();
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $translation = $comment->addTranslation('fr', [
+      'subject' => 'Réponse française',
+      'comment_body' => ['value' => 'Contenu traduit', 'format' => 'plain_text'],
+    ]);
+    $translation->setPublished();
+    $comment->save();
+
+    self::assertTrue($comment->hasTranslation('fr'));
+    self::assertSame(1, $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account));
+
+    $moved = Comment::load($comment->id());
+    self::assertSame((int) $destination->id(), (int) $moved->getCommentedEntityId());
+    self::assertTrue($moved->hasTranslation('fr'));
+    self::assertSame('Reply subject', $moved->getUntranslated()->getSubject());
+    self::assertSame('Reply body', $moved->getUntranslated()->get('comment_body')->value);
+    self::assertSame('Réponse française', $moved->getTranslation('fr')->getSubject());
+    self::assertSame('Contenu traduit', $moved->getTranslation('fr')->get('comment_body')->value);
+    self::assertSame(CommentInterface::PUBLISHED, (int) $moved->getTranslation('fr')->get('status')->value);
   }
 
   /**

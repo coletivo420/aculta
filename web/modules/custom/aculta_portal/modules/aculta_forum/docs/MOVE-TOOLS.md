@@ -346,6 +346,12 @@ confirma que uma resposta nova sai da contagem de origem e entra na do destino,
 sem reescrever linhas de histórico. Fontes: [API `history_write()` 11.x](https://api.drupal.org/api/drupal/core%21modules%21history%21history.module/function/history_write/11.x)
 e [HistoryManager 11.x](https://api.drupal.org/api/drupal/core%21modules%21history%21src%21HistoryManager.php/11.x).
 
+Comment é uma Content Entity translatável no Core. O teste Kernel cria a
+tradução por `ContentEntityBase::addTranslation()` e comprova que a gravação da
+re-hospedagem preserva os valores nos dois idiomas sem duplicar a entidade ou
+seus IDs. Fonte: [ContentEntityBase::addTranslation 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21ContentEntityBase.php/function/ContentEntityBase%3A%3AaddTranslation/11.x)
+e [Comment 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21Entity%21Comment.php/class/Comment/11.x).
+
 A fixture também cria um campo File privado no Comment: depois de mover, o mesmo
 CID continua referenciando o arquivo e o serviço Core `file.usage` mantém o uso.
 Isso prova a preservação genérica de uma referência File; anexos e imagens ACULTA

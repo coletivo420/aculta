@@ -1,5 +1,15 @@
 # Matriz de testes por fase
 
+## dev.80 — preservar traduções em comentário movido
+
+- Kernel MariaDB configura `comment_body` como traduzível, cria tradução `fr`
+  para um Comment `aculta_discussion_post` publicado e move a mesma entidade.
+  Depois do movimento, idioma original e tradução preservam assunto, corpo e
+  estado publicado, e o host é o destino.
+- Classe completa `ForumCommentMoverKernelTest`: 15 testes / 315 assertions
+  PASS; 19 depreciações Core/contrib. PHP 8.4.26 está abaixo da baseline 8.5.
+  Runtime não foi alterado; RUNTIME STATUS: DEFERRED.
+
 ## dev.79 — leitura por tópico após mover comentário
 
 - Kernel MariaDB usa History oficial e usuário autenticado de fixture. Uma

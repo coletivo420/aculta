@@ -1,3 +1,14 @@
+## `0.1.0-dev.80` — preservar traduções ao mover comentário — 2026-10-20
+
+- O Kernel cria uma tradução francesa em Comment ACULTA e move a entidade pelo
+  serviço real. A mesma entidade mantém idioma original/francês, assunto, corpo
+  e publicação da tradução no destino. A cobertura usa a Entity API instalada;
+  nenhuma lógica especial de idioma foi adicionada ao mover.
+- `ForumCommentMoverKernelTest`: 15 testes / 315 assertions PASS no MariaDB
+  dedicado; 19 depreciações Core/contrib. PHP CLI 8.4.26 abaixo da baseline
+  8.5. PHP lint, PHPCS, gates Portal 975, fronteira 1447, mapa 152 e
+  `git diff --check` PASS. Sem alteração do Runtime; RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.79` — validar transferência de estado não lido — 2026-10-20
 
 - O Kernel MariaDB agora instala History no cenário do mover e comprova a
