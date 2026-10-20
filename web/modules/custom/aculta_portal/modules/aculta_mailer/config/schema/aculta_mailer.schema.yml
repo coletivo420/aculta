@@ -37,6 +37,10 @@ aculta_mailer.brand.*:
     footer:
       type: text
       label: 'Rodapé'
+    logo_fid:
+      type: integer
+      label: 'ID do arquivo do logo'
+
 
 aculta_mailer.layout.*:
   type: config_entity

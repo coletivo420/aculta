@@ -9,6 +9,7 @@ use Drupal\aculta_mailer\Entity\MailLayout;
 use Drupal\aculta_mailer\Entity\MailTemplate;
 use Drupal\aculta_mailer\Type\MailTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileUrlGeneratorInterface;
 
 /**
  * Monta assunto e corpo: o modelo salvo quando existe e está ativo; senão, o texto padrão do tipo.
@@ -24,6 +25,7 @@ final class MailTemplateRenderer {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly FileUrlGeneratorInterface $fileUrls,
   ) {}
 
   /**
@@ -113,6 +115,20 @@ final class MailTemplateRenderer {
     ];
     $text = $layout->getHeader() . "\n\n{{ content }}\n\n" . $layout->getFooter();
     return self::fill($text, $values + ['content' => $content]);
+  }
+
+  /**
+   * URL absoluta do logo da marca do layout ativo do tipo, ou vazio quando não há logo.
+   */
+  public function logoUrl(MailTypeInterface $type): string {
+    $template = $this->activeTemplate($type->id());
+    $layout = $template !== NULL ? $this->layoutFor($template) : NULL;
+    $brand = $layout !== NULL ? $this->entityTypeManager->getStorage(MailBrand::ENTITY_TYPE)->load($layout->getBrand()) : NULL;
+    if (!$brand instanceof MailBrand || $brand->getLogoFid() === 0) {
+      return '';
+    }
+    $file = $this->entityTypeManager->getStorage('file')->load($brand->getLogoFid());
+    return $file === NULL ? '' : $this->fileUrls->generateAbsoluteString($file->getFileUri());
   }
 
   /**

@@ -41,6 +41,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'label',
     'name',
     'footer',
+    'logo_fid',
   ],
 )]
 final class MailBrand extends ConfigEntityBase {
@@ -61,6 +62,11 @@ final class MailBrand extends ConfigEntityBase {
   protected string $footer = '';
 
   /**
+   * ID do arquivo do logo (0 sem logo). Upload pela política do aculta_image.
+   */
+  protected int $logo_fid = 0;
+
+  /**
    * Nome exibido no cabeçalho.
    */
   public function getName(): string {
@@ -72,6 +78,21 @@ final class MailBrand extends ConfigEntityBase {
    */
   public function setName(string $name): static {
     $this->name = $name;
+    return $this;
+  }
+
+  /**
+   * ID do arquivo do logo, ou 0.
+   */
+  public function getLogoFid(): int {
+    return $this->logo_fid;
+  }
+
+  /**
+   * Define o arquivo do logo.
+   */
+  public function setLogoFid(int $fid): static {
+    $this->logo_fid = $fid;
     return $this;
   }
 

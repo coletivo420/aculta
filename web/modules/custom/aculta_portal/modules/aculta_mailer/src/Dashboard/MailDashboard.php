@@ -7,12 +7,14 @@ namespace Drupal\aculta_mailer\Dashboard;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 
 /**
- * Contagens de envios por período, estado, tipo e transporte, a partir de aculta_mail_log.
+ * Contagens de envios por período, estado, tipo e transporte, agregadas no banco (aculta_mail_log).
  *
- * Só leitura e contagem: não lista destinatários nem conteúdo.
+ * Só leitura e contagem: não carrega registros para contar, e não lista destinatários nem conteúdo.
  */
 final class MailDashboard {
 
@@ -21,8 +23,14 @@ final class MailDashboard {
    */
   public const PERIODS = [1, 7, 30];
 
+  /**
+   * Tabela de registros (mesmo nome da entidade aculta_mail_log).
+   */
+  private const TABLE = MailLogRecorder::ENTITY_TYPE;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly Connection $database,
   ) {}
 
   /**
@@ -83,57 +91,68 @@ final class MailDashboard {
    *   Contagem por código de erro.
    */
   private function errorsByCode(int $since): array {
-    $ids = $this->query($since)->condition('status', MailStatus::Failed->value)->execute();
-    $counts = [];
-    foreach ($this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE)->loadMultiple($ids) as $log) {
-      $code = (string) $log->get('error_code')->value;
-      $counts[$code] = ($counts[$code] ?? 0) + 1;
-    }
-    ksort($counts);
-    return $counts;
+    return $this->groupBy($since, 'error_code', [], MailStatus::Failed->value, '(sem código)');
   }
 
   /**
    * Total de registros criados a partir do instante informado.
    */
   private function count(int $since): int {
-    return (int) $this->query($since)->count()->execute();
+    return (int) $this->table()->condition('log.created', $since, '>=')->countQuery()->execute()->fetchField();
   }
 
   /**
-   * Contagem por campo. Valores conhecidos aparecem com zero quando não há registros.
+   * Contagem por campo, no banco. Valores conhecidos aparecem com zero quando não há registros.
    *
    * @param int $since
    *   Instante inicial, em timestamp Unix.
    * @param string $field
-   *   Campo a agrupar.
+   *   Coluna a agrupar (ex.: status, type, transport, error_code).
    * @param string[] $known
    *   Valores que devem aparecer mesmo sem registros.
+   * @param string|null $onlyStatus
+   *   Se informado, conta só os registros nesse estado.
+   * @param string|null $emptyLabel
+   *   Rótulo para valor vazio.
    *
    * @return array
-   *   Contagem por valor do campo.
+   *   Contagem por valor do campo, em ordem de chave.
    */
-  private function groupBy(int $since, string $field, array $known = []): array {
+  private function groupBy(int $since, string $field, array $known = [], ?string $onlyStatus = NULL, ?string $emptyLabel = NULL): array {
     $counts = array_fill_keys($known, 0);
-    $ids = $this->query($since)->execute();
-    if ($ids === []) {
-      return $counts;
+    $query = $this->table()
+      ->condition('log.created', $since, '>=')
+      ->groupBy('log.' . $field);
+    $query->addField('log', $field, 'value');
+    $query->addExpression('COUNT(*)', 'total');
+    if ($onlyStatus !== NULL) {
+      $query->condition('log.status', $onlyStatus);
     }
-    foreach ($this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE)->loadMultiple($ids) as $log) {
-      $value = (string) $log->get($field)->value;
-      $counts[$value] = ($counts[$value] ?? 0) + 1;
+    foreach ($query->execute() as $row) {
+      $value = (string) $row->value;
+      if ($value === '' && $emptyLabel !== NULL) {
+        $value = $emptyLabel;
+      }
+      $counts[$value] = ($counts[$value] ?? 0) + (int) $row->total;
     }
     ksort($counts);
     return $counts;
   }
 
   /**
-   * Consulta dos registros criados a partir do instante, sem checagem de acesso (leitura interna).
+   * Consulta de entidades dos registros criados a partir do instante (relatório de falhas, limitado).
    */
   private function query(int $since): QueryInterface {
     return $this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE)->getQuery()
       ->accessCheck(FALSE)
       ->condition('created', $since, '>=');
+  }
+
+  /**
+   * Tabela de registros de envio, para consulta agregada.
+   */
+  private function table(): SelectInterface {
+    return $this->database->select(self::TABLE, 'log');
   }
 
 }

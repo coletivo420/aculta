@@ -22,7 +22,7 @@ final class TransportAdjuster extends PluginBase implements AcultaMailerAdjuster
   /**
    * Transportes aceitos.
    */
-  private const ALLOWED = ['smtp', 'smtp2go'];
+  public const ALLOWED = ['smtp', 'smtp2go', 'brevo'];
 
   /**
    * {@inheritdoc}

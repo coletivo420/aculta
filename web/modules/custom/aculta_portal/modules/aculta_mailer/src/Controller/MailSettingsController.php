@@ -58,6 +58,11 @@ final class MailSettingsController extends ControllerBase {
         '#rows' => $rows,
       ],
     ];
+    $build['policy'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Políticas de envio: padrão, por tipo e limites por transporte'),
+      '#url' => Url::fromRoute('aculta_mailer.policy_settings'),
+    ];
     $build['log'] = [
       '#type' => 'link',
       '#title' => $this->t('Registro de e-mail: ligar, retenção e opções de registro'),

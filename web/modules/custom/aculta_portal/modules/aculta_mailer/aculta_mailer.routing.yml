@@ -73,3 +73,11 @@ aculta_mailer.log_settings:
     _title: 'Registro de e-mail'
   requirements:
     _permission: 'administer aculta_mailer'
+
+aculta_mailer.policy_settings:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/politicas'
+  defaults:
+    _form: '\Drupal\aculta_mailer\Form\MailPolicyForm'
+    _title: 'Políticas de envio'
+  requirements:
+    _permission: 'administer aculta_mailer'

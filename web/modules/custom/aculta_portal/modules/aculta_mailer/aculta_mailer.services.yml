@@ -32,11 +32,11 @@ services:
 
   aculta_mailer.dashboard:
     class: Drupal\aculta_mailer\Dashboard\MailDashboard
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@database']
 
   Drupal\aculta_mailer\Template\MailTemplateRenderer:
     class: Drupal\aculta_mailer\Template\MailTemplateRenderer
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@file_url_generator']
 
   aculta_mailer.smtp_failures:
     class: Drupal\aculta_mailer\Delivery\SmtpFailureRegistry
