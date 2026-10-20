@@ -11,8 +11,9 @@
   principal não recebe o bloco. Tópicos e Comments permaneceram em zero.
   PHPUnit Unit direcionado 17/215, Foundation 364, SDC 535, Design Foundations
   2097, Portal 975, fronteira 1411 e mapa 152 PASS. Modo escuro foi inspecionado
-  em X11 a 1024/390 px por override DOM local; teclado, tópico e composer seguem
-  pendentes. RUNTIME STATUS: PARTIAL.
+  em X11 a 1024/390 px por override DOM local. Tab verificou foco visível no
+  atalho, marca e busca em 1024 px; leitores de tela, fluxo completo, tópico e
+  composer seguem pendentes. RUNTIME STATUS: PARTIAL.
 
 ## Revisão visual X11 parcial — sem nova versão — 2026-10-20
 

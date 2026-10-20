@@ -455,7 +455,9 @@ real no servidor de teste.
   `git diff --check` PASS. Foundation 364 via Drush, SDC 535, Design
   Foundations 2097, Portal 975, fronteira 1411 e mapa 152 PASS.
 - Escopo visual **PARTIAL**: modo claro/escuro está inspecionado nos tamanhos
-  descritos; teclado/foco, leitores de tela, lista com tópicos publicados,
+  descritos. Em X11, Tab percorreu o atalho "Pular para o conteúdo principal",
+  marca e busca, com indicador de foco amarelo visível no modo escuro em 1024 px.
+  Leitores de tela, navegação completa por teclado, lista com tópicos publicados,
   tópico, respostas e composer não foram avaliados. O
   Runtime permaneceu sem fixtures. Nenhuma conclusão de aprovação visual
   integral ou acessibilidade foi feita. RUNTIME STATUS: PARTIAL.

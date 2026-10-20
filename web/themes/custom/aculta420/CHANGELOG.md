@@ -7,7 +7,8 @@
 - Gates: Foundation 364 via Drush no Runtime, SDC 535 e Design Foundations
   2097 PASS. Firefox/X11 comparou 1024/768/390 px no claro e 1024/390 px no
   escuro, aplicado apenas no DOM local; não foi observado overflow horizontal.
-  Telas com tópicos publicados permanecem pendentes. RUNTIME STATUS: PARTIAL.
+  Tab mostrou o indicador de foco nos controles iniciais; fluxo completo e telas
+  com tópicos publicados permanecem pendentes. RUNTIME STATUS: PARTIAL.
 
 ## 0.6.0-dev.105 — remover templates do Forum contribuído — 2026-10-20
 
