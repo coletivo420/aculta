@@ -45,8 +45,10 @@ final class MailLogRecorder {
    *   ID que o provedor deu à mensagem aceita; sem valor, o registro não é alterado.
    * @param string|null $payloadCipher
    *   Conteúdo cifrado para reenvio (ver MailPayloadCipher); sem valor, o campo não muda.
+   * @param int|null $payloadExpires
+   *   Instante em que o conteúdo cifrado deve ser apagado (link de uso único); NULL: segue a retenção do registro.
    */
-  public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL, ?string $errorMessage = NULL, ?string $providerMessageId = NULL, ?string $payloadCipher = NULL): void {
+  public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL, ?string $errorMessage = NULL, ?string $providerMessageId = NULL, ?string $payloadCipher = NULL, ?int $payloadExpires = NULL): void {
     if (!$this->logSettings->enabled()) {
       return;
     }
@@ -70,9 +72,11 @@ final class MailLogRecorder {
     // Conteúdo para reenvio só existe enquanto a mensagem não foi aceita: ao ser aceita, o campo é apagado.
     if ($payloadCipher !== NULL) {
       $log->set('payload_cipher', $payloadCipher);
+      $log->set('payload_expires', $payloadExpires);
     }
     elseif ($status === MailStatus::Sent) {
       $log->set('payload_cipher', NULL);
+      $log->set('payload_expires', NULL);
     }
     if ($status === MailStatus::Sent) {
       $log->set('sent', $this->time->getRequestTime());

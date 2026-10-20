@@ -134,7 +134,8 @@ final class AcultaMailer implements AcultaMailerInterface {
     // Falha: o conteúdo vai ao registro cifrado, para o reenvio. Sem chave válida, nada é guardado.
     $payload = $this->payloads->take($message->correlationId);
     $cipher = $payload !== NULL ? $this->cipher->encrypt($payload) : NULL;
-    $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL, NULL, $cipher);
+    $expires = $cipher !== NULL ? ($payload['expires'] ?? NULL) : NULL;
+    $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL, NULL, $cipher, $expires);
     $this->alerts->failure($message->type, $message->correlationId, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
     // Texto de cota no erro: o transporte sai de uso pela janela, e o envio seguinte já segue pela contingência.
     $this->quotaSignal->failure($transportUsed, (string) ($failure['message'] ?? ''));

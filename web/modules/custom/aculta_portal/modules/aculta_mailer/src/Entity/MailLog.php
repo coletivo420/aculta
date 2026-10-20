@@ -77,6 +77,8 @@ final class MailLog extends ContentEntityBase {
     // Conteúdo da mensagem com falha, cifrado (MailPayloadCipher), para o reenvio. Vazio nas mensagens que deram certo.
     $fields['payload_cipher'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Conteúdo cifrado para reenvio'));
+    $fields['payload_expires'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(new TranslatableMarkup('Conteúdo para reenvio expira em'));
     $fields['sent'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(new TranslatableMarkup('Aceito pelo sistema de e-mail em'));
     $fields['created'] = BaseFieldDefinition::create('created')

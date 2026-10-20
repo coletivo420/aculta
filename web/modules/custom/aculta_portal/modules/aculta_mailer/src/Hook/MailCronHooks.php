@@ -28,6 +28,7 @@ final class MailCronHooks {
   #[Hook('cron')]
   public function cron(): void {
     $this->retention->cron();
+    $this->retention->purgeExpiredPayloads();
     $this->monitor->cron();
     $this->summary->cron();
   }

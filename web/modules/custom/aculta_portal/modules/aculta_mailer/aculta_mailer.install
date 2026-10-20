@@ -36,3 +36,11 @@ function aculta_mailer_update_10004(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
   \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('payload_cipher', 'aculta_mail_log', 'aculta_mailer', $fields['payload_cipher']);
 }
+
+/**
+ * Prazo do conteúdo cifrado para reenvio (link de uso único: 24 horas).
+ */
+function aculta_mailer_update_10005(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('payload_expires', 'aculta_mail_log', 'aculta_mailer', $fields['payload_expires']);
+}

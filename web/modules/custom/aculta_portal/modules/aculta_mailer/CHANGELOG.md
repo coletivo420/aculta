@@ -1,5 +1,21 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.40 — conteúdo de uso único sem links e saída na confirmação — 2026-10-20
+
+- O conteúdo guardado para reenvio de e-mail com link de uso único não tem link: cada URL vira `[link removido]`.
+- O conteúdo sai do registro quando o provedor confirma a entrega, a devolução ou a reclamação (além da aceitação e do prazo de 24 horas).
+- Validado no Runtime de teste: falha de uso único guardada decifrada sem link; envio de uso único aceito pelo Brevo não guardou nenhum conteúdo.
+- Testes: 133 unitários.
+
+## 0.1.0-dev.39 — prazo de 24 horas para o conteúdo de links de uso único — 2026-10-20
+
+- E-mails com link de uso único (`SingleUseLinkMail`: confirmação, conta já existente, recuperação de senha, acesso de cadastro, confirmação do `email_confirmer`): o conteúdo cifrado para reenvio expira em 24 horas (`payload_expires`). O cron apaga o conteúdo vencido (`purgeExpiredPayloads`), e o registro continua.
+- Os demais e-mails seguem a retenção do registro.
+- Atualização `aculta_mailer_update_10005` (campo `payload_expires`), aplicada no Runtime de teste.
+- Validado no Runtime de teste: falha real de link de uso único gravou o conteúdo com prazo de 24 horas; com o prazo vencido, a purga apagou só o conteúdo cifrado e manteve o registro e o de outra mensagem.
+- Chave `MAILER_PAYLOAD_KEY`: conferida no Runtime (32 bytes decodificados). Criada na 0.1.0-dev.38; não foi recriada.
+- Testes: 132 unitários.
+
 ## 0.1.0-dev.38 — reenvio de falha com conteúdo cifrado — 2026-10-20
 
 - Mensagem com falha guarda o conteúdo para reenvio, cifrado (`payload_cipher`, `MailPayloadCipher`, chave `MAILER_PAYLOAD_KEY` no arquivo de segredos). Sem chave válida, nada é guardado.

@@ -9,6 +9,8 @@ use Drupal\aculta_mailer\Api\PublicUrlInterface;
 use Drupal\aculta_mailer\Delivery\MailPayloadRegistry;
 use Drupal\aculta_mailer\Delivery\ProviderMessageRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
+use Drupal\aculta_mailer\Log\SingleUseLinkMail;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
 use Drupal\aculta_mailer\Transport\MailTransportSender;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -46,6 +48,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly SmtpFailureRegistry $failures,
     private readonly ProviderMessageRegistry $providerMessages,
     private readonly MailPayloadRegistry $payloads,
+    private readonly TimeInterface $time,
     private readonly ?PublicUrlInterface $publicUrls = NULL,
   ) {}
 
@@ -63,6 +66,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('aculta_mailer.smtp_failures'),
       $container->get('aculta_mailer.provider_messages'),
       $container->get('aculta_mailer.payloads'),
+      $container->get('datetime.time'),
       $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
     );
   }
@@ -107,14 +111,17 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     $html = $this->renderHtml($message);
     // Conteúdo para o reenvio, só em memória até o fim da requisição: a falha o leva ao registro, cifrado.
     // Anexos não entram: os e-mails do sistema não têm anexos.
+    // Link de uso único: o conteúdo guardado não tem link e expira em 24 horas (SingleUseLinkMail).
+    $singleUse = SingleUseLinkMail::applies((string) ($message['module'] ?? ''), (string) ($message['key'] ?? ''));
     $this->payloads->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), [
       'to' => (string) $message['to'],
       'from' => $from,
       'subject' => (string) ($message['subject'] ?? ''),
-      'body' => (string) ($message['body'] ?? ''),
-      'html' => $html,
+      'body' => $singleUse ? SingleUseLinkMail::withoutLinks((string) ($message['body'] ?? '')) : (string) ($message['body'] ?? ''),
+      'html' => $singleUse ? SingleUseLinkMail::withoutLinks($html) : $html,
       'reply-to' => (string) ($message['reply-to'] ?? ''),
       'headers' => array_filter($message['headers'] ?? [], 'is_scalar'),
+      'expires' => $singleUse ? $this->time->getRequestTime() + SingleUseLinkMail::TTL : NULL,
     ]);
     $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $html));
     if ($result['sent'] && $result['provider_id'] !== NULL) {

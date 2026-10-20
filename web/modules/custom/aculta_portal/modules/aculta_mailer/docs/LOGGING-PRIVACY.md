@@ -1,6 +1,6 @@
 # Registro de envios e privacidade (F7)
 
-Status: implementado em 0.1.0-dev.4; reenvio com conteúdo cifrado em 0.1.0-dev.38 (`aculta_mailer_update_10004`).
+Status: implementado em 0.1.0-dev.4; reenvio com conteúdo cifrado em 0.1.0-dev.38 (`aculta_mailer_update_10004`); prazo de 24 horas para links de uso único em 0.1.0-dev.39 (`aculta_mailer_update_10005`).
 
 ## O que é registrado
 
@@ -60,4 +60,6 @@ permanece. Pendência: a fila não tem prazo próprio de expiração; itens pres
 - Mensagem aceita não guarda conteúdo: o campo é apagado no envio que dá certo, inclusive no reenvio.
 - Retenção: o conteúdo cifrado sai com o registro, pelo prazo de retenção (padrão 90 dias).
 - Reenvio: página da falha, link "Reenviar" (permissão `administer aculta_mailer`, confirmação com token CSRF). Respeita a chave geral de envio e a lista de supressão. A nova tentativa atualiza o próprio registro.
-- Risco aceito pelo responsável: e-mails com links de uso único (recuperação de senha, confirmação) ficam no conteúdo cifrado enquanto durarem a retenção. Se o link expirar antes do reenvio, o reenvio entrega um link inválido. Decisão pendente: excluir esses tipos do conteúdo guardado.
+- Conteúdo de e-mail com link de uso único, guardado para reenvio, não contém link: cada URL vira `[link removido]`. O conteúdo sai do registro quando o envio é aceito, quando o provedor confirma a entrega, a devolução ou a reclamação, e quando expira.
+- E-mails com link de uso único (`SingleUseLinkMail`: confirmação de e-mail, conta já existente, recuperação de senha, acesso de cadastro e confirmação do `email_confirmer`) têm prazo de 24 horas para o conteúdo guardado. Se não forem enviados nesse prazo, o cron (`MailLogRetention::purgeExpiredPayloads`) apaga o conteúdo cifrado; o registro continua, sem conteúdo. Os demais e-mails seguem a retenção do registro (90 dias).
+- Chave `MAILER_PAYLOAD_KEY` criada e verificada no Runtime de teste (32 bytes). Sem ela, nada é guardado.

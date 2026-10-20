@@ -43,6 +43,11 @@ final class DeliveryEventApplier {
       return FALSE;
     }
     $log->set('status', $next->value);
+    // Estado confirmado pelo provedor: o conteúdo para reenvio já não é necessário e sai do registro.
+    if (in_array($next, [MailStatus::Delivered, MailStatus::Bounced, MailStatus::Complained], TRUE)) {
+      $log->set('payload_cipher', NULL);
+      $log->set('payload_expires', NULL);
+    }
     if ($event->providerMessageId !== NULL && $event->providerMessageId !== '') {
       $log->set('provider_message_id', $event->providerMessageId);
     }

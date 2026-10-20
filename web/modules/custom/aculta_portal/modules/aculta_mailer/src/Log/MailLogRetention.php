@@ -24,6 +24,29 @@ final class MailLogRetention {
   ) {}
 
   /**
+   * Apaga o conteúdo cifrado para reenvio cujo prazo passou (link de uso único, 24 horas). O registro continua.
+   *
+   * @return int
+   *   Quantidade de conteúdos apagados nesta execução.
+   */
+  public function purgeExpiredPayloads(): int {
+    $storage = $this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE);
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('payload_expires', $this->time->getRequestTime(), '<=')
+      ->range(0, self::BATCH_SIZE)
+      ->execute();
+    $count = 0;
+    foreach ($storage->loadMultiple($ids) as $log) {
+      $log->set('payload_cipher', NULL);
+      $log->set('payload_expires', NULL);
+      $log->save();
+      $count++;
+    }
+    return $count;
+  }
+
+  /**
    * Apaga um lote de registros mais antigos que o prazo de retenção.
    */
   public function cron(): void {
