@@ -31,6 +31,7 @@ final class SecretsManagerTest extends UnitTestCase {
         ['name' => 'GOOGLE_OAUTH_CLIENT_ID', 'key_id' => 'g_id', 'required_in' => ['production', 'test']],
         ['name' => 'EXEMPLO_SENHA', 'key_id' => 'smtp_pw', 'required_in' => ['test']],
         ['name' => 'TURNSTILE_KEYS_JSON', 'key_id' => 'turnstile', 'required_in' => []],
+        ['name' => 'BREVO_API_KEY', 'key_id' => 'brevo_api_key', 'required_in' => []],
       ],
     ]));
   }
@@ -103,6 +104,33 @@ final class SecretsManagerTest extends UnitTestCase {
 
   private function store(): string {
     return $this->base . '/secrets/aculta.secrets.env';
+  }
+
+  public function testValueReadsServerFileWhenNoKeyExists(): void {
+    file_put_contents($this->store(), "BREVO_API_KEY=valor-de-teste\n");
+    $this->assertSame('valor-de-teste', $this->manager()->value('BREVO_API_KEY'));
+  }
+
+  public function testValuePrefersKeyWhenKeyExists(): void {
+    file_put_contents($this->store(), "BREVO_API_KEY=do-arquivo\n");
+    $key = $this->createMock(\Drupal\key\KeyInterface::class);
+    $key->method('getKeyValue')->willReturn('da-key');
+    $keys = $this->createMock(KeyRepositoryInterface::class);
+    $keys->method('getKey')->with('brevo_api_key')->willReturn($key);
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $factory->method('get')->willReturn($logger);
+    $settings = new Settings([
+      'aculta_secrets_file' => $this->store(),
+      'aculta_secrets_environment' => 'test',
+      'aculta_secrets_storage' => 'file',
+    ]);
+    $manager = new SecretsManager($keys, $settings, $factory, $this->base . '/web');
+    $this->assertSame('da-key', $manager->value('BREVO_API_KEY'));
+  }
+
+  public function testValueIsNullWhenNeitherKeyNorFileHasIt(): void {
+    $this->assertNull($this->manager()->value('BREVO_API_KEY'));
   }
 
 }

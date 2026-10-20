@@ -1,5 +1,11 @@
 ## 0.4.0-dev.211 — cadastro com e-mail já usado pelo aculta_mailer — 2026-10-20
 
+## 0.4.0-dev.215 — credencial sem Key lida do arquivo do servidor — 2026-10-20
+
+- `SecretsManager::value()`: se existir configuração de Key para a variável, ela continua valendo; se não existir, o valor é lido do arquivo de credenciais do servidor. Nenhuma Key nova é criada.
+- Testes: `SecretsManagerTest` (8 testes, inclui os casos de arquivo e de precedência da Key).
+- Runtime: `BREVO_API_KEY` lida do arquivo do servidor.
+
 ## 0.4.0-dev.214 — pedido de confirmação em português — 2026-10-20
 
 - O texto do pedido de confirmação de e-mail (`email_confirmation_request`) passa a ser em português; o link e a regra de reenvio não mudam.
