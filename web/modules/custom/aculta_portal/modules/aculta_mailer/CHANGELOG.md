@@ -1,5 +1,11 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.45 — validação do monitoramento IMAP no Runtime de teste
+
+- Varredura de devoluções executada no Runtime com a caixa real: 2 mensagens lidas (UIDs 1 e 2), nenhuma devolução aplicada indevidamente, cursor gravado em `bounce: 2`. Confirma a correção do CRLF da 0.1.0-dev.37 fora dos testes unitários.
+- Ainda sem devolução real pelo IMAP: uma devolução verdadeira depende de destinatário externo que aceite e recuse a mensagem depois, e não foi provocada. Fica como pendência de validação.
+- Sem alteração de código nesta versão.
+
 ## 0.1.0-dev.44 — reenvio de link de uso único gera pedido novo pelo dono do link
 
 - Reenvio manual de link de uso único não remonta o conteúdo antigo: `MailResend` delega ao dono do link (`SingleUseLinkRegenerator`, tag `aculta_mailer.link_regenerator`). Sem dono, o reenvio é recusado. Para link de uso único, a tela de reenvio não mostra escolha de transporte.
