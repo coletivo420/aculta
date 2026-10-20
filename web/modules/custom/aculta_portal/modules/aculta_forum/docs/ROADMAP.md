@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.38` | Aposentar geração de pastas Forum pela Revista | Updates Magazine 10001/10002 sem escritas, serviço/resolver e configs de instalação removidos. Unit 8/32, gates PASS; Runtime schema 10003, sem update persistente; render HTTP 200. Os vínculos antigos ficam preservados até a migração dos demais leitores. |
 | `0.1.0-dev.37` | Restore point da retirada | Dump de banco `aculta_runtime` criado fora do Git, modo 0600, `gzip -t` PASS; checksum e limites documentados. Sem restore de prova, backup de arquivos ou exclusão. |
 | `0.1.0-dev.36` | Retirar hook residual da Revista | `ForumTopicHooks`/`comment_links_alter` removido após Runtime confirmar zero `comment_forum`; Unit Magazine 7/30 PASS e render full/HTTP 200. Mantidos os leitores/conversores de `field_discussao` até limpeza dos 12 vínculos antigos. |
 | `0.1.0-dev.35` | Remover fallback editorial do Forum contrib | `aculta_user::DiscussionHooks` removido; publicações usam o Comment direto. Runtime confirmou 8 referências antigas em `article` e 4 em `blog` e campo novo nos 12 Nodes; nenhum dado foi alterado. `drush cr`, render full e HTTP editorial (200) PASS; falta testar Comments reais e remover vínculos/Nodes na fase operacional segura. |

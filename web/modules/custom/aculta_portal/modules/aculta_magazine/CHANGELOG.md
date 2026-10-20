@@ -1,3 +1,18 @@
+## 0.1.0-dev.14 — aposentar criação de pastas Forum da Revista — 2026-10-19
+
+- Updates 10001 e 10002 mantêm seus números de schema, mas não criam mais campo
+  editorial nem termos no vocabulário `forums`; o `ForumSectionResolver`, seu
+  service e os arquivos de instalação exclusivos foram removidos. O update
+  10003 de alias legado permanece até a fase de retirada de Nodes.
+- Unit `LegacyForumUpdatesTest` protege o contrato sem escrita. Schema do
+  Runtime Magazine já está em 10003, então nenhuma atualização de banco é
+  necessária nesta entrega. Unit Magazine: 8 testes/32 assertions PASS;
+  PHPCS e gates Portal (970), fronteira (1383) e mapa (154) PASS. Runtime:
+  cache rebuild PASS, resolver ausente, lookup histórico disponível, publicação
+  renderizada e HTTP 200 após redirect. Os 12 vínculos e sua configuração ativa
+  foram preservados; nenhum update/config import executado. PHP 8.4.26 abaixo
+  da baseline 8.5. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.12 — retirar ajuste residual de links do Forum — 2026-10-19
 
 - `ForumTopicHooks::commentLinksAlter` removido: era o único hook restante e

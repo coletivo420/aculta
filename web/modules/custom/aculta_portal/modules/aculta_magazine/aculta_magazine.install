@@ -7,45 +7,18 @@
 
 declare(strict_types=1);
 
-use Drupal\Core\Config\FileStorage;
-use Drupal\Core\Field\FieldConfigInterface;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
-
 /**
- * Prepara apenas o campo de categoria editorial em configurações antigas do Fórum.
- *
- * Campo `field_categoria_revista` em taxonomy_term (vocabulário forums): liga cada pasta à sessão da Revista.
- * A criação de tópicos por publicação foi substituída por Comment direto e não é repetida aqui.
+ * Aposenta a criação do campo de categoria em fóruns contribuídos.
  */
 function aculta_magazine_update_10001(): string {
-  $storage = new FileStorage(__DIR__ . '/config/install');
-  $names = [
-    'field.storage.taxonomy_term.field_categoria_revista',
-    'field.field.taxonomy_term.forums.field_categoria_revista',
-  ];
-  foreach ($names as $name) {
-    $data = $storage->read($name);
-    unset($data['uuid'], $data['_core']);
-    if ($name === 'field.storage.taxonomy_term.field_categoria_revista') {
-      if (FieldStorageConfig::loadByName('taxonomy_term', 'field_categoria_revista') === NULL) {
-        FieldStorageConfig::create($data)->save();
-      }
-    }
-    elseif (FieldConfig::loadByName('taxonomy_term', 'forums', 'field_categoria_revista') === NULL) {
-      FieldConfig::create($data)->save();
-    }
-  }
-
-  return 'Campo de categoria do Fórum criado; nenhum tópico de publicação foi criado.';
+  return 'Update legado aposentado: nenhum campo de categoria do Forum contrib foi criado.';
 }
 
 /**
- * Cria uma pasta de Fórum para cada categoria editorial da Revista (mesma separação das sessões).
+ * Aposenta a criação de pastas da Revista no vocabulário Forum contrib.
  */
 function aculta_magazine_update_10002(): string {
-  $sections = \Drupal::service('aculta_magazine.forum_section_resolver')->ensureAll();
-  return count($sections) . ' pasta(s) de categoria da Revista garantida(s).';
+  return 'Update legado aposentado: nenhuma pasta editorial do Forum contrib foi criada.';
 }
 
 /**

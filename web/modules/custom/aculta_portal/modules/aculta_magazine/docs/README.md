@@ -139,7 +139,8 @@ Referência de leitura usada: largura de linha entre 60 e 75 caracteres (Piccali
 Registro histórico: a versão anterior criava um tópico Drupal Forum por publicação. Essa decisão foi substituída: cada publicação mantém a discussão dentro da própria entidade via Comment compartilhado; novos tópicos públicos automáticos estão proibidos.
 
 - Pastas históricas: pasta-mãe "Revista" e pastas por categoria foram usadas somente pelos tópicos antigos.
-  `ForumSectionResolver` não participa da criação ou atualização de publicações.
+  `ForumSectionResolver` e os updates 10001/10002 que criavam campo/pastas foram aposentados; os números de update
+  continuam registrados, sem novas escritas.
 - Vínculo histórico: `field_discussao` permanece temporariamente para leitura de tópicos antigos e conversão de tipo.
   Nenhum hook de ciclo de vida de publicação cria, atualiza ou despublica tópicos.
 - Abertura histórica: `ForumOpeningPost` lê resumo e imagem da publicação vinculada. Nenhum texto ou arquivo é

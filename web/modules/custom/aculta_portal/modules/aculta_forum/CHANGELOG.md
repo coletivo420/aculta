@@ -1,3 +1,15 @@
+## 0.1.0-dev.38 — aposentar pastas editoriais do Forum antigo — 2026-10-19
+
+- `aculta_magazine` 0.1.0-dev.14 agora mantém os updates 10001/10002 como no-op,
+  remove `ForumSectionResolver` e deixa de instalar seu campo exclusivo na
+  taxonomy `forums`. O update de aliases 10003 permanece para a próxima etapa;
+  referências e Nodes antigos não foram alterados.
+- Unit Magazine 8/32, PHPCS e gates Drupal 11+ (970), fronteira (1383), mapa
+  (154) PASS. Runtime schema já era 10003; sem `updb`/config import. Cache
+  rebuild, resolver ausente, lookup histórico presente, render de publicação e
+  HTTP 200 após redirect PASS. PHP CLI 8.4.26 abaixo da baseline 8.5; comentários
+  diretos reais/browser continuam pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.37 — preparar restore point da retirada — 2026-10-19
 
 - Criado dump pré-limpeza do Runtime de teste `aculta_runtime`, privado fora do
