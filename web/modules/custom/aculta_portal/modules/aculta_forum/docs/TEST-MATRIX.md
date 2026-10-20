@@ -1,5 +1,16 @@
 # Matriz de testes por fase
 
+## dev.79 — leitura por tópico após mover comentário
+
+- Kernel MariaDB usa History oficial e usuário autenticado de fixture. Uma
+  resposta publicada conta como nova na origem antes do movimento; depois conta
+  como nova no destino. As duas linhas de leitura `uid/nid/timestamp` continuam
+  iguais, provando que o movimento não edita recibos pessoais.
+- `ForumCommentMoverKernelTest`: 14 testes / 292 assertions PASS; 19
+  depreciações preexistentes Core/contrib observadas. Execução em PHP CLI
+  8.4.26, inferior à baseline 8.5. Runtime não foi alterado. RUNTIME STATUS:
+  DEFERRED.
+
 ## dev.78 — preservar Flag de denúncia e fila ACULTA User
 
 - Smoke X11 autenticado moveu uma árvore de quatro Comments e verificou que a

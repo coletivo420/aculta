@@ -60,6 +60,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     'domain',
     'file',
     'flag',
+    'history',
     'path',
     'path_alias',
     'search_api',
@@ -105,6 +106,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('flag', ['flag_counts']);
+    $this->installSchema('history', ['history']);
     $this->installSchema('search_api', ['search_api_item']);
     $this->installConfig([
       'system',
@@ -114,6 +116,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'domain',
       'file',
       'flag',
+      'history',
       'path',
       'path_alias',
       'search_api',
@@ -333,6 +336,44 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame((int) $comment->id(), (int) $stored_flagging->getFlaggableId());
     self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
     self::assertSame($flagging_id, (int) $this->container->get('flag')->getFlagging($flag, Comment::load($comment->id()), $flagger)->id());
+  }
+
+  /**
+   * Moving a reply transfers its unread status without rewriting read receipts.
+   */
+  public function testMoveTransfersUnreadCommentToDestinationWithoutChangingHistory(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $role = $this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated');
+    $role->grantPermission('access content');
+    $role->grantPermission('access comments');
+    $role->save();
+    $reader = User::create([
+      'name' => 'forum-history-reader',
+      'mail' => 'forum-history-reader@example.test',
+      'status' => 1,
+      'roles' => ['authenticated'],
+    ]);
+    $reader->save();
+    $this->container->get('current_user')->setAccount($reader);
+
+    $timestamp = $this->container->get('datetime.time')->getRequestTime();
+    history_write($source->id(), $reader);
+    history_write($destination->id(), $reader);
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $comment->set('created', $timestamp + 1)->save();
+    $history = $this->container->get('Drupal\\history\\HistoryManager');
+
+    self::assertSame(1, $history->getCountNewComments($source, ForumCommentMover::FIELD_NAME));
+    self::assertSame(0, $history->getCountNewComments($destination, ForumCommentMover::FIELD_NAME));
+    $receipts_before = history_read_multiple([(int) $source->id(), (int) $destination->id()]);
+
+    $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+
+    self::assertSame(0, $history->getCountNewComments(Node::load($source->id()), ForumCommentMover::FIELD_NAME));
+    self::assertSame(1, $history->getCountNewComments(Node::load($destination->id()), ForumCommentMover::FIELD_NAME));
+    self::assertSame($receipts_before, history_read_multiple([(int) $source->id(), (int) $destination->id()]));
+    self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
   }
 
   /**

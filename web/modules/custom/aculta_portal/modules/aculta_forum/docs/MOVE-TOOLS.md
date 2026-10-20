@@ -336,6 +336,16 @@ alterado por este teste. Fontes de API: [ciclo CRUD do Drupal](https://api.drupa
 [implementação Search API](https://git.drupalcode.org/project/search_api/-/blob/8.x-1.x/src/Hook/ContentEntityDatasourceHooks.php)
 e [Flag](https://www.drupal.org/project/flag).
 
+O [History 1.0.0](https://www.drupal.org/project/history) mantém recibos por
+usuário e Node: `history_write()` atualiza o par `uid/nid`, enquanto
+`HistoryManager::getCountNewComments()` conta Comments publicados daquele host
+posteriores ao timestamp de leitura. Ao mover uma resposta, portanto, os
+recibos ficam nos dois Nodes; o estado não lido da resposta segue o host novo
+porque as consultas nativas contam pelo `entity_id` atual. O Kernel MariaDB
+confirma que uma resposta nova sai da contagem de origem e entra na do destino,
+sem reescrever linhas de histórico. Fontes: [API `history_write()` 11.x](https://api.drupal.org/api/drupal/core%21modules%21history%21history.module/function/history_write/11.x)
+e [HistoryManager 11.x](https://api.drupal.org/api/drupal/core%21modules%21history%21src%21HistoryManager.php/11.x).
+
 A fixture também cria um campo File privado no Comment: depois de mover, o mesmo
 CID continua referenciando o arquivo e o serviço Core `file.usage` mantém o uso.
 Isso prova a preservação genérica de uma referência File; anexos e imagens ACULTA

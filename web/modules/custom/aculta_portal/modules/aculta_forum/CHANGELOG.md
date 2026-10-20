@@ -1,3 +1,16 @@
+## `0.1.0-dev.79` — validar transferência de estado não lido — 2026-10-20
+
+- O Kernel MariaDB agora instala History no cenário do mover e comprova a
+  semântica de leitura contextual: após mover um Comment publicado, a resposta
+  nova deixa de contar no tópico de origem e passa a contar no destino. Os dois
+  recibos pessoais de leitura por Node permanecem idênticos; nenhum histórico de
+  participante é regravado ou transferido.
+- `ForumCommentMoverKernelTest`: 14 testes / 292 assertions PASS. Foram
+  observadas 19 depreciações de Core/contrib; PHP CLI 8.4.26 está abaixo da
+  baseline 8.5. PHPCS, gates Portal 975, fronteira 1447, mapa 152 e
+  `git diff --check` PASS. Sem mudança de comportamento no Runtime; mover segue
+  desabilitado por padrão. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.78` — preservar denúncias ao mover subárvore — 2026-10-20
 
 - O roteiro autenticado X11 cria uma denúncia real de Comment com a Flag
