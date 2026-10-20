@@ -437,7 +437,10 @@ real no servidor de teste.
   `aculta-home-categories-activity-1024.png`, `aculta-home-categories-activity-768.png`,
   `aculta-home-categories-activity-390-top.png` e
   `aculta-home-categories-activity-390-lower.png`, `aculta-home-dark-1024.png`,
-  `aculta-home-dark-390-top.png` e `aculta-home-dark-390-lower.png`.
+  `aculta-home-dark-390-top.png`, `aculta-home-dark-390-lower.png` e as capturas
+  de foco `aculta-home-dark-keyboard-skip-1024.png`,
+  `aculta-home-dark-keyboard-logo-1024.png` e
+  `aculta-home-dark-keyboard-search-1024.png`.
 - Em 1024 px, categorias principais e atividade aparecem lado a lado; em 768 e
   390 px, a lista ocupa primeiro a largura e as categorias aparecem depois.
   `/categorias` mantém todos os 12 termos e refluíu de três colunas a 1024, duas
