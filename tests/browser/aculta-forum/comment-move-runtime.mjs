@@ -250,7 +250,7 @@ try {
   if (!signedIn) throw new Error('A sessão administrativa não foi confirmada no MAIN de teste.');
 
   const rootCid = fixture.cids[0];
-  const route = `/painel-administrativo/conteudo/forum/comentario/${rootCid}/mover`;
+  const route = `/painel-administrativo/forum/comentarios/${rootCid}/mover`;
   for (const width of [390, 768]) {
     await bidiCommand('browsingContext.setViewport', {
       context,

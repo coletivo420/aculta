@@ -1,6 +1,34 @@
+## dev.125 — mover comentário pela aba Comentários
+
+- Forum Unit `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS.
+- Runtime de teste `toca`, Drupal 11.4.10, URI
+  `https://aculta.toca.net.br`, DB `aculta_runtime`; fórum inicialmente vazio,
+  12 categorias, 3 avisos, configuração `aculta_forum.settings` ausente e UID 1
+  autorizado. `drush cr` PASS.
+- Firefox ESR/X11 autenticado, 10/10: formulário canônico carregou e não teve
+  overflow em 390/768 CSS px; contagem de 4 descendentes, destino e token CSRF
+  corretos; POST pela Form API completou o movimento. Entity API confirmou os
+  quatro CIDs no destino, pais/threads, autoria, textos, estados pendentes e
+  rejeitado preservados; Flagging e fila de denúncias continuaram associados ao
+  comentário. Evidência visual revisada manualmente.
+- `finally` removeu os dois Nodes, quatro Comments e Flagging de fixture e
+  removeu apenas a configuração temporária criada para o teste. Estado final:
+  0 tópicos novos e legados, 0 Comments novos e legados, 12 categorias, 3 avisos,
+  fila Messenger 0, fila de denúncias sem fixture; configuração voltou a ausente.
+  Capturas privadas `0600` em
+  `/home/aculta/private/aculta-forum-comment-move-dev125-20261020/`.
+  RUNTIME STATUS: PASS no fluxo e viewports exercitados; publicação/aprovação,
+  concorrência HTTP, anexos, permalink e aviso aos seguidores seguem na matriz
+  geral de movimento.
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS;
+  Kernel `ForumCommentMoverKernelTest`: 18 testes/366 assertions PASS, com 19
+  depreciações de Core/contrib. PHPCS, `node --check`, Portal 996, mapa 154,
+  fronteira 1598, slugs 381 (20 violações contrib baselined) e diff check PASS.
+  CLI PHP 8.4.26, abaixo do alvo 8.5.
+
 ## dev.124 — rota canônica de mover comentário na área Comentários
 
-- `ForumTopicDisplayConfigTest`: 19 testes/282 assertions PASS. Confirma rota
+- `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS. Confirma rota
   plural ligada ao `ForumCommentMoveForm`, conversão `entity:comment`, permissão
   dedicada e redirect do caminho singular antigo; PHPCS Drupal/DrupalPractice e
   `git diff --check` PASS.

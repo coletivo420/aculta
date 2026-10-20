@@ -1,3 +1,24 @@
+## `0.1.0-dev.125` — homologar mover comentário no painel canônico — 2026-10-20
+
+- A rota `/painel-administrativo/forum/comentarios/{comment}/mover` mostra o
+  formulário com o título “Mover comentário do fórum”. O navegador X11 autenticado
+  confirmou layout em 390 e 768 px, confirmação CSRF e submissão real pela Form API.
+- Runtime de teste: árvore ramificada de quatro Comments movida entre dois
+  tópicos temporários. CIDs, autoria, conteúdo, estados pendente/rejeitado,
+  relações `pid`/`thread` e denúncia Flag/fila ACULTA User foram preservados.
+  A limpeza removeu fixtures e configuração temporária: zero tópicos/Comments,
+  zero flaggings de denúncia, 12 categorias, três avisos e fila Messenger
+  preservados; `comment_move_enabled` voltou a ausente/desabilitado.
+- Evidências X11 privadas `0600` em
+  `/home/aculta/private/aculta-forum-comment-move-dev125-20261020/`.
+- Forum Unit `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS;
+  Kernel `ForumCommentMoverKernelTest`: 18 testes/366 assertions PASS (19
+  depreciações de Core/contrib); PHPCS, `node --check`, Drupal 11+ (996), mapa
+  (154), fronteira (1598), slugs (381 rotas; 20 violações contrib baselined) e
+  `git diff --check` PASS. CLI disponível: PHP 8.4.26, abaixo do alvo 8.5.
+- RUNTIME STATUS: PASS no fluxo e viewports exercitados; aprovação, concorrência
+  HTTP, anexos e aviso aos seguidores permanecem pendentes na matriz geral.
+
 ## `0.1.0-dev.124` — reabrir a rota canônica de mover comentários — 2026-10-20
 
 - O formulário `ForumCommentMoveForm` fica acessível em
@@ -7,7 +28,7 @@
   singular e o caminho antigo sob Conteúdo continuam redirecionando ao painel.
 - `comment_move_enabled` permanece desabilitado por padrão. Nenhuma operação de
   movimentação foi executada no Runtime nesta mudança.
-- `ForumTopicDisplayConfigTest`: 19 testes/282 assertions PASS; PHPCS e
+- `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS; PHPCS e
   `git diff --check` PASS. Runtime de teste: cache reconstruído e RouteProvider
   confirma a rota/handler/conversor; config ausente e nenhum conteúdo alterado.
   Sem Comment de Fórum ativo, renderização autenticada do formulário permanece
