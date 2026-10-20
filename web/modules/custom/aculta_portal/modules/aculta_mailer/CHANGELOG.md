@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.29 — transporte esgotado é ignorado, inclusive a contingência; gate de comércio corrigido — 2026-10-20
+
+- `TransportChoice`: um transporte sem cota (ou Brevo desligado) é ignorado; a contingência também só entra se estiver disponível. Sem transporte disponível, a falha segue com o erro real.
+- SMTP2GO sem cota mensal deixa de ser escolhido enquanto o sinal de cota valer.
+- Gate de comércio: a rota de eventos de entrega (`aculta_mailer.webhook`, F10) não é tratada como rota legada de contribuição; a rota sensível de transporte passa a ser `aculta_mailer.settings`.
+- Gate de comércio ainda reprova por dados: 46 pedidos existem no runtime (2 concluídos do usuário de teste, 42 rascunhos anônimos, 2 da conta uid 1). Remoção depende de autorização.
+- Versão do módulo: `0.1.0-dev.29`. 108 unitários.
+
 ## 0.1.0-dev.28 — F15 concluída: contrib de envio removido — 2026-10-20
 
 - Desinstalados no runtime: symfony_mailer, mailer_override, mailer_transport, mailer_policy. Snapshot da configuração do contrib guardado fora do repositório.

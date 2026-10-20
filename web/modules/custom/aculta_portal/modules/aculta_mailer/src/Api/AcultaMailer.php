@@ -13,6 +13,7 @@ use Drupal\aculta_mailer\Delivery\SmtpReplyClassifier;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
+use Drupal\aculta_mailer\Delivery\TransportChoice;
 use Drupal\aculta_mailer\Delivery\TransportFailover;
 use Drupal\aculta_mailer\Policy\MailPolicyResolver;
 use Drupal\aculta_mailer\Policy\QuotaSignal;
@@ -81,20 +82,12 @@ final class AcultaMailer implements AcultaMailerInterface {
 
     $langcode = $message->langcode !== '' ? $message->langcode : LanguageInterface::LANGCODE_DEFAULT;
     $transport ??= $policy->transport;
-    // Cota diária atingida: a mensagem segue pelo transporte de contingência, antes de a falha acontecer.
-    $fallback = $this->failover->names()['fallback'];
-    if ($transport !== NULL && $transport !== $fallback && $this->quota->exhausted($transport)) {
-      $this->logger->warning('Cota diária do transporte @t atingida; usando @f.', [
-        '@t' => $transport,
-        '@f' => $fallback,
-      ]);
-      $transport = $fallback;
-    }
-    // Brevo desligado na página Entrega: a mensagem segue pelo transporte de contingência, como na cota.
-    if ($transport === 'brevo' && $this->configFactory->get(DeliverySettings::CONFIG)->get('brevo_enabled') === FALSE) {
-      $this->logger->warning('Transporte brevo desligado; usando @f.', ['@f' => $fallback]);
-      $transport = $fallback;
-    }
+    // Transporte esgotado (cota) ou desligado é ignorado, inclusive a contingência (ver TransportChoice).
+    $names = $this->failover->names();
+    $transport = TransportChoice::choose($transport, $names['primary'], $names['fallback'], function (string $name): bool {
+      return !$this->quota->exhausted($name)
+        && !($name === 'brevo' && $this->configFactory->get(DeliverySettings::CONFIG)->get('brevo_enabled') === FALSE);
+    });
     $effective = $transport ?? $this->failover->names()['primary'];
     $result = $this->mailManager->mail(self::MODULE, $message->type, $message->to, $langcode, [
       'context' => $message->context,

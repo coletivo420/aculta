@@ -185,7 +185,9 @@ $retired_portal_route_present = FALSE;
 $retired_finance_route_present = FALSE;
 foreach ($all_routes as $route_name => $route_definition) {
   $retired_portal_route_present = $retired_portal_route_present || $route_definition->getPath() === '/minha-conta/perfil';
-  $retired_finance_route_present = $retired_finance_route_present || str_contains((string) $route_name, 'contribution') || str_contains((string) $route_name, 'webhook');
+  // Rotas do módulo de envio (aculta_mailer, F10) são o endpoint de eventos de entrega, não o legado de contribuições.
+  $owned_by_mailer = str_starts_with((string) $route_name, 'aculta_mailer.');
+  $retired_finance_route_present = $retired_finance_route_present || (!$owned_by_mailer && (str_contains((string) $route_name, 'contribution') || str_contains((string) $route_name, 'webhook')));
 }
 $assert(!$retired_portal_route_present, 'The legacy /minha-conta/perfil route is absent rather than redirected.');
 $assert(!$retired_finance_route_present, 'No custom contribution or webhook route remains.');
@@ -219,7 +221,7 @@ $assert($support_config_keys === ['amounts', 'custom_amount', 'intro'], 'Support
 foreach ([
   'entity.key.collection',
   'entity.key_config_override.collection',
-  'entity.mailer_transport.collection',
+  'aculta_mailer.settings',
   'social_auth.integrations',
   'social_auth_google.settings_form',
   'captcha_settings',
