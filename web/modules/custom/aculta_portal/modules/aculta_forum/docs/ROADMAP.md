@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.42` | Navegação de descoberta na raiz pública | Firefox confirmou a composição das tabs; Runtime HTTP: raiz e abas existentes 200, `/discussoes` 404. HTML confirma Discussões ativa e `aria-current="page"`; Access de Não lidos permanece condicional. Unit 3/19 e gates direcionados PASS. Sem fixtures. |
 | `0.1.0-dev.41` | Conferir se categorias de publicações dependem do vocabulário Forum | Consultas Entity API read-only confirmaram que 12/12 publicações ligadas a tópicos antigos já têm categoria editorial direta igual ao mapeamento do Forum. Nenhuma migração editorial é necessária; formulário de Comment e limpeza seguem pendentes. |
 | `0.1.0-dev.40` | Inspecionar uninstall do Forum contrib | Código 1.1.3, validator e teste funcional upstream documentados; confirmou bloqueios por Nodes/termos, field storages afetados e dependência editorial compartilhada. Apenas leitura/documentação; nenhuma alteração Runtime. |
 | `0.1.0-dev.39` | Remover apresentação presa ao Forum contrib | `ForumTopicPresentationHooks` removido; Unit `aculta_user` 60/175 e gates PASS. Runtime tem 0 `comment_forum`; Node antigo renderizou e respondeu HTTP 200 após redirect; conteúdo inalterado. |

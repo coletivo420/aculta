@@ -1,3 +1,20 @@
+## 0.1.0-dev.42 — navegação de descoberta na raiz do Growroom — 2026-10-20
+
+- A raiz pública `/` agora mostra a navegação existente de Categorias, Novas,
+  Sem resposta e Mais comentadas, além do link ativo para a própria raiz. A aba
+  Não lidos continua sujeita ao access de cada tarefa local. Nenhum link aponta
+  para `/discussoes`, que permanece fechado como caminho interno.
+- A implementação reutiliza o `LocalTaskManager` Core e os títulos/rotas já
+  declarados, preserva access/cache dos tabs e delega a apresentação ao tema.
+- Unit 3/19 PASS; PHPCS, gate Drupal 11, fronteira módulo/tema, mapa e diff
+  limpo PASS. Runtime: cache rebuild e HTTP 200 na raiz e nas quatro abas;
+  `/discussoes` 404. HTML confirma aba raiz ativa com `aria-current="page"`.
+  Firefox havia confirmado a composição visual das tabs antes do ajuste
+  semântico. Nenhum conteúdo foi criado ou alterado.
+- Pesquisa contrib complementada: `forum_access` 2.0.2/ACL e código GPL
+  inspecionados; sem dependência instalada ou código copiado. Decisão e
+  proveniência em `docs/PESQUISA.md`.
+
 ## 0.1.0-dev.41 — auditar categoria editorial legada — 2026-10-19
 
 - Consultas Entity API somente leitura no Runtime `aculta_runtime` compararam
