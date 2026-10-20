@@ -1,3 +1,21 @@
+## `0.1.0-dev.57` — expor ações de seguir e salvar no tópico — 2026-10-20
+
+- A View Display `full` inclui os pseudocampos de Flag `seguir_topico` e
+  `salvar_topico` após a categoria e antes das respostas. Os links continuam
+  sendo construídos pelo módulo Flag, com access, cache e estado por conta; não
+  foram criados campos de storage nem endpoints próprios. O teaser público não
+  recebe essas ações.
+- `ForumTopicDisplayConfigTest` e instalação/Config Sync validam os dois
+  pseudocampos e o placement. Unit: 18 testes/221 assertions PASS; PHPCS,
+  Portal 11+ (975), fronteira (1415), mapa (152), SDC (535) e Design
+  Foundations (2097) PASS. No Runtime, importação parcial somente do display
+  após backup privado e cache rebuild PASS. Render da página completa para uid
+  5 incluiu os dois links “Seguir tópico”/“Salvar tópico”; o Link Builder de
+  Flag produziu âncoras autorizadas sob uid 5; render anônimo não expôs esses
+  links. A conta não acionou as ações; nenhuma Flagging de seguir/salvar foi
+  gravada. Nenhuma sessão autenticada foi aberta no navegador.
+  RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.56` — remover bundle residual do Forum contrib nas Flags — 2026-10-20
 
 - `seguir_topico` e `salvar_topico` agora se aplicam somente ao bundle atual

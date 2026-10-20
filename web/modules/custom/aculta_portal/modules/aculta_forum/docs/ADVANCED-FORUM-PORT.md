@@ -54,7 +54,7 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | Tópico popular/hot e contagem de visualizações | Portar contagem com cache/decisão de métrica | Visualização ≠ sessão/pessoa ativa; proteção contra bots e duplicidade. |
 | Contagem de tópico/respostas e estatística breve | Portar por serviço/View cacheável | Sem COUNT caro em cada render e sem contar itens inacessíveis. |
 | Respostas/comentários por tópico criado | Reutilizar `comment_count`/`comment_entity_statistics` do Core e exibir somente comentários publicados e acessíveis | Planejado em dev.9; invalidar em aprovação, despublicação, remoção e movimento; pendências/rejeitados não aparecem ao público. |
-| Acompanhar e salvar tópicos | Flags individuais `seguir_topico` e `salvar_topico` aplicadas somente a `aculta_forum_topic`; a associação ao bundle removido do Forum contrib foi retirada após o uninstall | Flag conserva o storage e permissões por usuário; notificações por acompanhamento ficam dependentes da integração Messenger futura. |
+| Acompanhar e salvar tópicos | Flags individuais `seguir_topico` e `salvar_topico` aplicadas somente a `aculta_forum_topic`; ações são pseudocampos do modo full, após a categoria | Flag conserva o storage e permissões por usuário; notificações por acompanhamento ficam dependentes da integração Messenger futura. |
 | Ordenação por atividade/data | Portar com sort Views permitido | Não expor configuração editorial perigosa em bloco. |
 | Datas relativas/absolutas e teaser em hover | Portar com formato acessível | Hover tem alternativa de foco; preferir informação disponível sem hover. |
 | Ícones/legenda de estado | Portar como estado textual mais ícone | Novo, fechado, fixado e moderação devem ter rótulo. |

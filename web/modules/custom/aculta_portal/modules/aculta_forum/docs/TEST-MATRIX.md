@@ -1,5 +1,29 @@
 # Matriz de testes por fase
 
+## dev.57 — ações nativas de seguir/salvar no tópico
+
+- `ForumTopicDisplayConfigTest`: 18/221 PASS; PHPCS Drupal/DrupalPractice,
+  igualdade entre Config Sync e `config/install`, Portal 11+ (975), fronteira
+  (1415), mapa (152), SDC (535) e Design Foundations (2097) PASS.
+- PHPUnit executou em PHP CLI 8.4.26, abaixo da baseline 8.5; aparece o aviso
+  preexistente de `sites/simpletest/browser_output` não gravável. A suíte Unit
+  não usa esse diretório.
+- Runtime `toca`: snapshot recuperável da configuração anterior em
+  `/home/aculta/private/aculta/runtime-config-backups/forum-dev57-20261020/`
+  (SHA-256 `e51d5b2128c0904c3b4052afc6745a9c2b3f9dd13109398132a33d2f4f132f58`);
+  importação parcial processou só `core.entity_view_display.node.aculta_forum_topic.full`,
+  cache rebuild PASS e alvo sem diferenças do Config Sync. O render da página
+  completa sob uid 5 incluiu ambos os links; `flag.link_builder` gerou âncoras
+  para as permissões de seguir/salvar. Não houve clique nem Flagging de
+  seguir/salvar gravada. Comparação de render com uid 5 e `AnonymousUserSession`
+  mostrou ambos os controles somente para uid 5, sem exposição anônima.
+  Fixtures temporárias foram removidas; Runtime segue
+  com 0 tópicos, 0 Comments, 0 flaggings de `seguir_topico`/`salvar_topico` e
+  fila de inscrição Messenger vazia. A consulta global encontrou 2 flaggings
+  não relacionados do `aculta_site_alert` (read/dismiss), preservados sem
+  alteração. Raiz e `/categorias` HTTP 200.
+  Fluxo com navegador autenticado segue pendente. RUNTIME STATUS: PARTIAL.
+
 ## dev.56 — remover referência residual ao bundle Forum contrib nas Flags
 
 - `ForumTopicDisplayConfigTest`: 17 testes/215 assertions PASS; PHPCS

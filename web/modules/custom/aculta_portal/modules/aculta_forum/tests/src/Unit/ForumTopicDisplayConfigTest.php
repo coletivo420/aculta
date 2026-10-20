@@ -149,6 +149,31 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Follow and save controls are placed only on the full topic page.
+   */
+  public function testTopicFullDisplayIncludesFollowAndSaveControls(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $filename = 'core.entity_view_display.node.aculta_forum_topic.full.yml';
+    $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
+    $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
+    self::assertSame($install, $sync);
+    self::assertContains('flag', $install['dependencies']['module']);
+
+    foreach (['flag_seguir_topico' => 20, 'flag_salvar_topico' => 21] as $key => $weight) {
+      self::assertSame([
+        'weight' => $weight,
+        'region' => 'content',
+        'settings' => [],
+        'third_party_settings' => [],
+      ], $install['content'][$key]);
+    }
+    $teaser = Yaml::parseFile($module_path . '/config/install/core.entity_view_display.node.aculta_forum_topic.teaser.yml');
+    self::assertArrayNotHasKey('flag_seguir_topico', $teaser['content']);
+    self::assertArrayNotHasKey('flag_salvar_topico', $teaser['content']);
+  }
+
+  /**
    * The public listing keeps bundle, domain and access filters fixed.
    */
   public function testPublicListingUsesFixedAccessAwareFilters(): void {

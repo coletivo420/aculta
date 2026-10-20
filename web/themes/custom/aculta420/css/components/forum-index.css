@@ -108,6 +108,21 @@
 .aculta-forum-topic .field--name-field-aculta-categories .field__item a:hover,
 .aculta-forum-topic .field--name-field-aculta-categories .field__item a:focus-visible { color: var(--aculta-text-link); text-decoration: underline; }
 .aculta-forum-topic .field--name-field-aculta-categories .field__item a:focus-visible { outline: 2px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.aculta-forum-topic--full .flag { display: inline-flex; margin: 0.75rem 0.5rem 0 0; }
+.aculta-forum-topic--full .flag a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--aculta-interactive-border);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-interactive-bg);
+  color: var(--aculta-interactive-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+.aculta-forum-topic--full .flag a:hover { border-color: var(--aculta-interactive-hover-bg); background: var(--aculta-interactive-hover-bg); color: var(--aculta-interactive-hover-text); }
+.aculta-forum-topic--full .flag a:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 .aculta-forum-topic--full { display: grid; gap: 1rem; }
 .aculta-forum-topic--full > div > .field--name-body { line-height: 1.7; overflow-wrap: anywhere; }
 .view-aculta-forum-public-topics .view-empty {

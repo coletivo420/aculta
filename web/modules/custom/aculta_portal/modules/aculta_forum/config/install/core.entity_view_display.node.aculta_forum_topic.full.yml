@@ -11,6 +11,7 @@ dependencies:
     - node.type.aculta_forum_topic
   module:
     - comment
+    - flag
     - text
     - user
 id: node.aculta_forum_topic.full
@@ -33,6 +34,16 @@ content:
     third_party_settings: { }
     weight: 10
     region: content
+  flag_seguir_topico:
+    weight: 20
+    region: content
+    settings: { }
+    third_party_settings: { }
+  flag_salvar_topico:
+    weight: 21
+    region: content
+    settings: { }
+    third_party_settings: { }
   field_aculta_discussion:
     type: comment_default
     label: hidden
