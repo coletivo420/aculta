@@ -18,7 +18,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F10 | Eventos de entrega: contrato de provedor, verificação de assinatura, endpoint e aplicação de eventos com transições (`docs/DELIVERABILITY.md`). Pendentes: escolha e implementação do provedor, supressão | Parcial (camada neutra pronta; sem provedor ativo) |
 | F11 | Tracking opcional (abertura e clique), desligado por padrão | Pendente |
 | F12 | Integrações ACULTA: cadastro com e-mail já usado (DT-P06), conquista (`aculta_game`) e resumo de avisos (`aculta_messenger`) migrados; Forum, LMS, Magazine e Commerce pendentes | Parcial |
-| F13 | Compatibilidade: interceptar e-mails remanescentes do Core | Pendente |
+| F13 | Compatibilidade: interceptar e-mails remanescentes do Core. Inventário de emissores feito (`docs/SENDERS-INVENTORY.md`); migração pendente | Parcial (inventário pronto) |
 | F14 | Migração de configuração de Mailer Plus/Policy | Pendente |
 | F15 | Retirada do contrib, somente com equivalência comprovada | Pendente |
 
