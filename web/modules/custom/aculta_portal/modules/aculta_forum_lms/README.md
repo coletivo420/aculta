@@ -7,10 +7,12 @@ curso contextual.
 
 ## Estado
 
-O módulo não deve ser habilitado até a instalação versionada do bundle,
-`field_aculta_discussion`, relações `group_node:aculta_lms_topic` e a matriz de
-acesso serem cobertas por testes Kernel. Não foi incluído Config Sync de
-permissões, Views, Search API, rotas ou conteúdo. `gnode` está listado como
+O módulo não deve ser habilitado até as permissões Group de course/class roles,
+membership e a matriz de acesso serem cobertas por testes Kernel. A dev.94
+adiciona install config do bundle `aculta_lms_topic`, Comment compartilhado e
+relações `group_node:aculta_lms_topic` para curso/turma. Não foi incluído
+Config Sync raiz de ativação/permissões, Views, Search API, rotas ou conteúdo.
+`gnode` está listado como
 dependência do adapter, não como alteração de `core.extension`. Um hook
 `entity_access` nega acesso a Nodes do bundle quando falta relação Group única;
 para `lms_class`, também exige uma relação única com um curso. Com relações

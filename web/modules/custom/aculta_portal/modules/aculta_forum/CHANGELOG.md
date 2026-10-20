@@ -1,3 +1,15 @@
+## `0.1.0-dev.94` — configurar o bundle privado LMS — 2026-10-20
+
+- O adapter recebe install config para `aculta_lms_topic`, `body`, Comment
+  compartilhado `field_aculta_discussion`, displays e relações Group Node
+  restritas a `lms_course`/`lms_class`. Não há armazenamento novo de respostas.
+- Os IDs de relationship type gerados conforme Group 3.3.5 têm até 32
+  caracteres. Config Unit: 2 testes / 29 assertions PASS; suíte adapter
+  completa: 8 testes / 48 assertions.
+- Permissões dos Group roles, `lms_classes.settings`, configuração raiz de
+  ativação, Kernel e Runtime foram adiados até validar a matriz de acesso.
+  Nenhum dado/configuração do Runtime foi alterado. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.93` — negar acesso direto a tópico LMS sem Group — 2026-10-20
 
 - O hook OOP `entity_access` impede que um Node `aculta_lms_topic` sem Group

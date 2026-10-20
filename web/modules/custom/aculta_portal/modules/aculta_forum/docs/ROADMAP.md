@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.94` | Configurar bundle e vínculos Group do LMS | `aculta_lms_topic`, campo `field_aculta_discussion`, displays e relationships Group para curso/turma entram como install config do adapter. Unit valida storage compartilhado, bundle, display e IDs ≤32. Roles Group, `lms_classes.settings`, instalação Kernel e habilitação Runtime seguem pendentes. |
 | `0.1.0-dev.93` | Bloquear acesso direto a tópico LMS não agrupado | `entity_access` nega tópico sem relação Group única e turma sem curso pai; Group continua dono das permissões quando a relação é válida. 3 testes Unit novos cobrem tópicos sem relação, curso válido e turma sem curso pai. Adapter continua desabilitado, sem configuração e sem Runtime. |
 | `0.1.0-dev.92` | Fundação do adapter privado LMS | Adicionado `aculta_forum_lms` opcional com provider para `aculta_lms_topic`, resolução única de Group curso/turma, access fail-closed e moderação por `grade students`. Sem configuração instalável, matriz Kernel ou uso no Runtime; módulo permanece desabilitado. RUNTIME STATUS: DEFERRED. |
 | `0.1.0-dev.91` | Homologação X11 visual da busca pública | Suíte Firefox X11/BiDi somente leitura: 20/20 em 390/768/1024 CSS px, claro/escuro; formulário enquadrado, estado vazio, CAPTCHA ausente e contraste 12,40:1/12,23:1. 0 tópicos/Comments preservados. Comparação visual completa do fórum segue planejada. |
