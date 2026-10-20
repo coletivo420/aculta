@@ -35,6 +35,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Tests the integrity and access boundaries of public Forum comment moves.
@@ -566,6 +567,14 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
 
     self::assertTrue($this->mover->access($comment, $without_topic_access)->isForbidden());
     self::assertSame([], $this->mover->destinations($comment, $without_topic_access));
+    $form = new ForumCommentMoveForm($this->mover, $without_topic_access);
+    try {
+      $form->buildForm([], new FormState(), $comment);
+      self::fail('The form must not expose destinations without source access.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+    }
     try {
       $this->mover->move((int) $comment->id(), (int) $destination->id(), $without_topic_access);
       self::fail('Move permission must not grant access to the source topic.');

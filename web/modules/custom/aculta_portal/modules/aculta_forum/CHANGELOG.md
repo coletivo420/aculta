@@ -1,3 +1,13 @@
+## `0.1.0-dev.84` — negar formulário sem acesso ao tópico — 2026-10-20
+
+- Kernel invoca o Form API de mover com uma conta que tem a permissão de mover,
+  mas não pode acessar o tópico fonte. O formulário lança acesso negado antes
+  de expor destinos; chamada direta também preserva o host. A suíte Kernel
+  completa passou: 24 testes / 476 assertions no MariaDB dedicado, 19
+  depreciações Core/contrib. Forum Unit: 82 testes / 500 assertions PASS.
+- PHP lint, PHPCS, Drupal 11+ (975), fronteira (1451), mapa (152) e diff-check
+  PASS. PHP CLI 8.4.26 abaixo da baseline 8.5. Runtime DEFERRED.
+
 ## `0.1.0-dev.83` — exigir acesso ao tópico de origem para mover comentários — 2026-10-20
 
 - Kernel cobre conta com permissão operacional de movimento, mas sem `access

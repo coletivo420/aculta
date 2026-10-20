@@ -1,5 +1,16 @@
 # Matriz de testes por fase
 
+## dev.84 — negar Form API quando falta acesso ao tópico
+
+- Conta tem `move aculta forum comments`, mas não `access content`. O Kernel
+  chama `ForumCommentMoveForm::buildForm()` e exige `AccessDeniedHttpException`
+  antes de destinos; confirma que o Comment fica no tópico original.
+- Kernel completo: 24 testes / 476 assertions PASS no MariaDB dedicado, 19
+  depreciações Core/contrib; Unit Forum: 82 testes / 500 assertions PASS.
+- PHP lint, PHPCS, Drupal 11+ (975 checks), fronteira módulo/tema (1451), mapa
+  (152) e `git diff --check`: PASS. Runtime não alterado; RUNTIME STATUS:
+  DEFERRED.
+
 ## dev.83 — permissão de mover não substitui acesso ao tópico fonte
 
 - Kernel concede `move aculta forum comments` e `access comments`, mas nega
