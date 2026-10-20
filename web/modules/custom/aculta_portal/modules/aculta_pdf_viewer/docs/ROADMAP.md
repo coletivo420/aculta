@@ -17,6 +17,18 @@ checkout; esta análise usa a tabela compartilhada na conversa e as páginas TNC
 já referenciadas acima. Não reproduzir sua string posicional de 16 caracteres.
 As opções devem ser configurações Drupal nomeadas no formatter.
 
+As páginas do TNC descrevem três camadas: recursos gerais do viewer, padrões
+globais e substituições por FlipBook; também agrupam controles de navegação,
+conteúdo, ações e interface. Isso informa o catálogo de opções, mas o ACULTA
+não precisa criar entidade própria de FlipBook nem shortcode: o formatter e o
+display Drupal são as unidades de configuração e continuam usando Media/File
+como fonte de verdade. A página de toolbar recomenda miniaturas, bookmarks,
+zoom, busca, impressão, download e rotação, e identifica ações como compartilhar
+e leitura em voz alta que exigem decisões de acesso/terceiros e de
+acessibilidade. Fontes: [recursos básicos](https://docs.tncflipbook.com/article/348-basic-features),
+[customização](https://docs.tncflipbook.com/article/349-customization-options) e
+[padrões de toolbar](https://docs.tncflipbook.com/article/391-toolbar-defaults).
+
 | Grupo | Decisão ACULTA | Situação |
 |---|---|---|
 | Download, impressão, zoom, tela cheia, busca, navegação, viewer oficial | Controles administráveis no formatter; permissão efetiva do File continua obrigatória. Impressão abre o PDF.js completo, cujo fluxo imprime o documento inteiro. | Opções iniciais implementadas em dev.29; conferir UX/acesso e formulário no gate pré-RC. |
