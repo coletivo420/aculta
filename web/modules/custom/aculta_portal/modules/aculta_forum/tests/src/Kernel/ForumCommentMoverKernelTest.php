@@ -19,9 +19,14 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\flag\Entity\Flag;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Entity\Server;
+use Drupal\search_api\Utility\Utility;
+use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\LoggerInterface;
@@ -50,8 +55,11 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     'node',
     'comment',
     'domain',
+    'flag',
     'path',
     'path_alias',
+    'search_api',
+    'search_api_test',
     'options',
     'aculta_forum_comment_move_test',
   ];
@@ -85,10 +93,25 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('flagging');
+    $this->installEntitySchema('search_api_task');
     $this->installEntitySchema('path_alias');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['system', 'filter', 'node', 'comment', 'domain', 'path', 'path_alias']);
+    $this->installSchema('flag', ['flag_counts']);
+    $this->installSchema('search_api', ['search_api_item']);
+    $this->installConfig([
+      'system',
+      'filter',
+      'node',
+      'comment',
+      'domain',
+      'flag',
+      'path',
+      'path_alias',
+      'search_api',
+      'user',
+    ]);
     $this->container->set('lock', new DatabaseLockBackend($this->container->get('database')));
     $this->config('aculta_forum.settings')->set('comment_move_enabled', TRUE)->save();
     $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
@@ -221,6 +244,78 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertTrue($this->mover->access($historical_comment, $this->account)->isForbidden());
     $this->expectException(\InvalidArgumentException::class);
     $this->mover->move((int) $historical_comment->id(), (int) $destination->id(), $this->account);
+  }
+
+  /**
+   * Existing Flag records remain attached to the same Comment after a move.
+   */
+  public function testMovePreservesFlaggingOnCommentIdentity(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $flagger = User::create(['uid' => 42, 'name' => 'forum-flagger', 'status' => 1]);
+    $flagger->save();
+    $flag = Flag::create([
+      'id' => 'forum_comment_test',
+      'label' => 'Forum comment test',
+      'entity_type' => 'comment',
+      'bundles' => [ForumCommentMover::COMMENT_TYPE],
+      'flag_type' => 'entity:comment',
+      'link_type' => 'reload',
+      'flagTypeConfig' => [],
+      'linkTypeConfig' => [],
+      'global' => FALSE,
+    ]);
+    $flag->save();
+    $flagging = $this->container->get('flag')->flag($flag, $comment, $flagger);
+    $flagging_id = (int) $flagging->id();
+
+    self::assertSame(1, $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account));
+
+    $stored_flagging = $this->container->get('entity_type.manager')->getStorage('flagging')->load($flagging_id);
+    self::assertNotFalse($stored_flagging);
+    self::assertSame('comment', $stored_flagging->getFlaggableType());
+    self::assertSame((int) $comment->id(), (int) $stored_flagging->getFlaggableId());
+    self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+    self::assertSame($flagging_id, (int) $this->container->get('flag')->getFlagging($flag, Comment::load($comment->id()), $flagger)->id());
+  }
+
+  /**
+   * A moved Comment is queued for Search API reindexing under its same ID.
+   */
+  public function testMoveQueuesCommentForSearchApiReindexing(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    Server::create([
+      'name' => 'Forum test server',
+      'id' => 'forum_test_server',
+      'backend' => 'search_api_test',
+    ])->save();
+    $index = Index::create([
+      'name' => 'Forum comment test index',
+      'id' => 'forum_comment_test_index',
+      'status' => TRUE,
+      'server' => 'forum_test_server',
+      'datasource_settings' => ['entity:comment' => []],
+      'tracker_settings' => ['default' => []],
+      'options' => ['index_directly' => FALSE],
+    ]);
+    $index->save();
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $item_id = $comment->id() . ':' . $comment->language()->getId();
+    $combined_item_id = Utility::createCombinedId('entity:comment', $item_id);
+    $tracker = $index->getTrackerInstance();
+    self::assertSame(1, $tracker->getTotalItemsCount('entity:comment'));
+    self::assertSame([$combined_item_id], $tracker->getRemainingItems(-1, 'entity:comment'));
+    $tracker->trackItemsIndexed([$combined_item_id]);
+    self::assertSame(1, $tracker->getIndexedItemsCount('entity:comment'));
+    self::assertSame(0, $tracker->getRemainingItemsCount('entity:comment'));
+
+    $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+
+    self::assertSame(0, $tracker->getIndexedItemsCount('entity:comment'));
+    self::assertSame(1, $tracker->getRemainingItemsCount('entity:comment'));
+    self::assertSame([$combined_item_id], $tracker->getRemainingItems(-1, 'entity:comment'));
   }
 
   /**
