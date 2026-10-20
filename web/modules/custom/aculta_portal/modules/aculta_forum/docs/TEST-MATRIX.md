@@ -1,5 +1,22 @@
 # Matriz de testes por fase
 
+## dev.76 — isolamento dos efeitos de publicação das fixtures
+
+- Leitura via Drupal API encontrou 24 itens na fila
+  `aculta_messenger_message_subscribe_event`. Os 24 tinham como alvo Nodes que
+  já não existiam; nenhuma entidade Fórum estava presente. O worker Core
+  processou exatamente 24 itens, sem alterar avisos.
+- O roteiro X11 exige fila vazia antes de criar fixtures, marca os Nodes de QA
+  como sincronizando apenas durante o insert e compara a fila ao baseline após
+  remover comentários/tópicos. Esse marcador evita o evento de anúncio de tópico
+  e avaliação de conquistas em dados sintéticos; o teste do mover segue sendo
+  uma submissão real autenticada do Form API.
+- Repetição de árvore ramificada: 10/10 PASS. Estado final verificado via
+  Drush/Entity API: fila 0, tópicos/Comments ACULTA e legados 0, 12 categorias,
+  3 avisos e `aculta_forum.settings` ausente. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-branch-dev76-20261020/`.
+  RUNTIME STATUS: PARTIAL.
+
 ## dev.75 — mover subárvore ramificada em Runtime/X11
 
 - O roteiro cria dois tópicos e quatro Comments pendentes: raiz, duas respostas

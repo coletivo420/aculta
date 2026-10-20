@@ -1,3 +1,19 @@
+## `0.1.0-dev.76` — isolar efeitos de teste do Messenger — 2026-10-20
+
+- A revisão pós-dev.75 encontrou 24 eventos da fila Core
+  `aculta_messenger_message_subscribe_event`; uma leitura via Drupal API
+  confirmou que todos apontavam para Nodes já removidos. O worker oficial
+  `drush queue:run` processou somente essa fila, dentro do limite de 24 itens.
+  Recontagem: fila 0, Fórum/Comments 0, 12 categorias e 3 avisos preservados.
+- O smoke Runtime agora exige fila Messenger vazia, marca somente os Nodes QA
+  publicados como sincronizando durante o insert (evita evento de publicação e
+  efeitos de conquistas) e verifica que a fila segue vazia após a limpeza. Isso
+  não altera o comportamento do mover nem do Runtime fora do teste.
+- O protocolo X11 foi repetido com árvore ramificada: 10/10 PASS e cleanup
+  completo; capturas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-branch-dev76-20261020/`.
+  RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.75` — homologar movimentação de árvore ramificada — 2026-10-20
 
 - O roteiro X11 de Runtime cria dois tópicos e quatro Comments pendentes: raiz,

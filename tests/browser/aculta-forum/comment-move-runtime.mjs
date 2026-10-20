@@ -64,6 +64,7 @@ $state = [
   'all_shared_field_comments' => $count($comment, 'field_name', 'field_aculta_discussion'),
   'forum_categories' => (int) $terms,
   'notices' => (int) $notice,
+  'subscribe_queue' => (int) \\Drupal::queue('aculta_messenger_message_subscribe_event')->numberOfItems(),
   'forum_settings_exist' => $config_storage->exists('aculta_forum.settings'),
   'forum_node_legacy_field' => $config_storage->exists('field.field.node.aculta_forum_topic.field_autor_legado'),
   'forum_comment_legacy_field' => $config_storage->exists('field.field.comment.aculta_discussion_post.field_autor_legado'),
@@ -74,7 +75,7 @@ print 'ACULTA_STATE:' . json_encode($state, JSON_THROW_ON_ERROR) . PHP_EOL;
 `;
 const baseline = parseMarker(evalDrupal(countsCode), 'ACULTA_STATE');
 writeFileSync(resolve(output, 'preflight.json'), JSON.stringify({ host: mainHost, branch, uri, db: 'aculta_runtime', baseline }, null, 2), { mode: 0o600 });
-if (baseline.forum_topics !== 0 || baseline.legacy_forum_topics !== 0 || baseline.discussion_posts !== 0 || baseline.legacy_forum_comments !== 0 || baseline.all_shared_field_comments !== 0 || baseline.forum_settings_exist || !baseline.forum_node_legacy_field || !baseline.forum_comment_legacy_field || !baseline.move_permission_uid1 || !baseline.forum_domain || baseline.forum_categories < 1) {
+if (baseline.forum_topics !== 0 || baseline.legacy_forum_topics !== 0 || baseline.discussion_posts !== 0 || baseline.legacy_forum_comments !== 0 || baseline.all_shared_field_comments !== 0 || baseline.forum_settings_exist || !baseline.forum_node_legacy_field || !baseline.forum_comment_legacy_field || !baseline.move_permission_uid1 || !baseline.forum_domain || baseline.forum_categories < 1 || baseline.subscribe_queue !== 0) {
   throw new Error(`Precondições de isolamento/recuperação não satisfeitas: ${JSON.stringify(baseline)}`);
 }
 
@@ -108,7 +109,10 @@ try {
       'field_aculta_categories' => ['target_id' => $term_id],
       'field_aculta_discussion' => ['status' => 2],
     ]);
+    // A test topic must not enqueue public publication notices or award badges.
+    $node->setSyncing(TRUE);
     $node->save();
+    $node->setSyncing(FALSE);
     $nodes[] = (int) $node->id();
     if ((string) $node->get('field_domain_source')->target_id !== (string) $domain->id() || !$node->hasField('field_autor_legado') || !$node->get('field_autor_legado')->isEmpty()) {
       throw new \\RuntimeException('Tópico temporário não respeitou o Domain público ou o campo histórico vazio.');
@@ -325,6 +329,7 @@ print 'ACULTA_CLEANUP:' . json_encode(['errors' => $errors, 'config_exists' => $
       && finalState.all_shared_field_comments === baseline.all_shared_field_comments
       && finalState.forum_categories === baseline.forum_categories
       && finalState.notices === baseline.notices
+      && finalState.subscribe_queue === baseline.subscribe_queue
       && finalState.forum_node_legacy_field === baseline.forum_node_legacy_field
       && finalState.forum_comment_legacy_field === baseline.forum_comment_legacy_field
       && !finalState.forum_settings_exist;

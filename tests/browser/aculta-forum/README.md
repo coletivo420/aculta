@@ -61,7 +61,10 @@ responsiva do tema administrativo; não aplica CSS nem altera o tema/contrib.
 token CSRF e POST, e limpa seus dois tópicos e uma árvore ramificada de quatro
 Comments pendentes pela Entity API em `finally`. A prova confirma dois ramos,
 um com resposta aninhada, preservando CID, autoria, texto, estado, `pid`/`thread`
-e destino. A operação exige explicitamente
+e destino. Os tópicos fixture usam o marcador Core `SynchronizableInterface`
+durante o insert para não criar avisos de publicação nem efeitos de Game; o
+roteiro exige fila Messenger vazia no preflight e confirma que ela continua
+vazia. A operação exige explicitamente
 `ALLOW_RUNTIME_MUTATION=MOVE-COMMENT-FIXTURE-ON-TEST-RUNTIME`, `DISPLAY=:0` e um
 `SUITE_OUT` absoluto privado fora do checkout. O script confirma `hostname=toca`,
 branch dedicada, host MAIN de teste resolvido pelo Deployer, URI Drush e banco
