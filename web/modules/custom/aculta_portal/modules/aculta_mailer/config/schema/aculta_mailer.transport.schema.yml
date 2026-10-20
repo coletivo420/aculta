@@ -14,6 +14,9 @@ aculta_mailer.transport.*:
     user:
       type: string
       label: 'Usuário (não secreto)'
+    user_secret:
+      type: string
+      label: 'Nome da credencial do usuário no arquivo de segredos'
     password_secret:
       type: string
       label: 'Nome da credencial da senha no arquivo de segredos'

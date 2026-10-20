@@ -36,6 +36,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'host',
     'port',
     'user',
+    'user_secret',
     'password_secret',
     'verify_peer',
   ],
@@ -63,6 +64,11 @@ final class MailTransport extends ConfigEntityBase {
    * Usuário SMTP (não secreto).
    */
   protected string $user = '';
+
+  /**
+   * Nome da variável do arquivo de segredos com o usuário (ex.: SMTP2GO_USERNAME). Usado quando o usuário é credencial.
+   */
+  protected string $user_secret = '';
 
   /**
    * Nome da variável do arquivo de segredos com a senha (ex.: SMTP_PASSWORD). Vazio sem autenticação.
@@ -96,10 +102,17 @@ final class MailTransport extends ConfigEntityBase {
   }
 
   /**
-   * Usuário.
+   * Usuário literal (não secreto).
    */
   public function user(): string {
     return $this->user;
+  }
+
+  /**
+   * Nome da credencial do usuário.
+   */
+  public function userSecret(): string {
+    return $this->user_secret;
   }
 
   /**

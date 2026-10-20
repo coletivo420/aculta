@@ -16,6 +16,7 @@ use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_mailer\Delivery\TransportFailover;
 use Drupal\aculta_mailer\Policy\MailPolicyResolver;
 use Drupal\aculta_mailer\Policy\QuotaSignal;
+use Drupal\aculta_mailer\Policy\QuotaSignatures;
 use Drupal\aculta_mailer\Policy\TransportQuota;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -111,7 +112,10 @@ final class AcultaMailer implements AcultaMailerInterface {
     // Falha: o código SMTP, se o transporte informou, chega pelo subscriber de FailedMessageEvent.
     $failure = $this->failures->take($message->correlationId);
     $code = $failure['code'] ?? NULL;
-    $error = $this->classifier->classify($code);
+    // Cota ou limite do provedor é temporário para o failover, mesmo com código 5xx (ex.: 552 de cota mensal).
+    $error = QuotaSignatures::matches((string) ($failure['message'] ?? ''))
+      ? DeliveryError::Temporary
+      : $this->classifier->classify($code);
     // O texto completo vai só para o registro (relatório do admin); o usuário vê a mensagem genérica.
     $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
     $this->alerts->failure($message->type, $message->correlationId, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);

@@ -33,6 +33,7 @@ final class QuotaSignaturesTest extends UnitTestCase {
       'cota diária em inglês' => ['550 5.4.5 Daily sending quota exceeded'],
       'limite de taxa' => ['421 4.7.0 rate limit reached, try later'],
       'HTTP 429' => ['429 Too Many Requests'],
+      'SMTP2GO: cota mensal' => ['552 Your monthly email allowance is exhausted'],
       'muitos envios' => ['554 too many messages sent in the last hour'],
       'cota em português' => ['Cota diária de envio excedida no provedor'],
       'limite diário em português' => ['Limite diário de envio atingido'],

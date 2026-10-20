@@ -55,6 +55,20 @@ final class MailTransportFactoryTest extends UnitTestCase {
   }
 
   /**
+   * Usuário vindo do arquivo de segredos (user_secret) e senha pelo nome: transporte autenticado.
+   */
+  public function testUserFromSecretBuildsAuthenticatedTransport(): void {
+    $transport = $this->factory(['SMTP2GO_USERNAME' => 'usuario', 'SMTP2GO_PASSWORD' => 'segredo'])->create($this->transport([
+      'plugin' => 'smtp',
+      'host' => 'mail.example.invalid',
+      'port' => 465,
+      'user_secret' => 'SMTP2GO_USERNAME',
+      'password_secret' => 'SMTP2GO_PASSWORD',
+    ]));
+    $this->assertInstanceOf(EsmtpTransport::class, $transport);
+  }
+
+  /**
    * Usuário informado sem credencial no arquivo de segredos: recusa, sem tentar enviar sem autenticação.
    */
   public function testMissingCredentialFailsClosed(): void {

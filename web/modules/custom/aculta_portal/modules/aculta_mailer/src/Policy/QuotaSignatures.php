@@ -19,6 +19,8 @@ final class QuotaSignatures {
     '/\bdaily (sending )?limit\b/i',
     '/\bsending limit\b/i',
     '/\btoo many (messages|emails|recipients|requests)\b/i',
+    '/\bmonthly (email )?(allowance|quota|limit)\b/i',
+    '/\ballowance (is )?(exhausted|exceeded)\b/i',
     '/\b429\b/',
     '/\blimite (diário|diario|de envio|mensal|semanal)\b/iu',
     '/\bcota (diária|diaria|de envio|excedida|atingida)\b/iu',

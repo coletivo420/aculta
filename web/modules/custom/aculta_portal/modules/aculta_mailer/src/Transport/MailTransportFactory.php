@@ -44,13 +44,17 @@ final class MailTransportFactory {
    */
   private function smtp(MailTransport $transport): EsmtpTransport {
     $smtp = new EsmtpTransport($transport->host(), $transport->port(), $transport->port() === 465);
-    if ($transport->user() !== '') {
+    $user = $transport->user();
+    if ($transport->userSecret() !== '') {
+      $user = (string) $this->secrets?->value($transport->userSecret());
+    }
+    if ($user !== '') {
       $secret = $transport->passwordSecret();
       $password = $secret !== '' ? $this->secrets?->value($secret) : NULL;
       if ($password === NULL) {
         throw new \RuntimeException('Credencial da senha SMTP ausente no arquivo de segredos.');
       }
-      $smtp->setUsername($transport->user());
+      $smtp->setUsername($user);
       $smtp->setPassword($password);
     }
     $stream = $smtp->getStream();
