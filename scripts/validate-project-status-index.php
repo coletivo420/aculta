@@ -216,6 +216,7 @@ if ($markerCode === 0 && $markerCommit !== '') {
   // Exceções históricas aprovadas pelo responsável (2026-10-20): commits anteriores ao registro da regra, cujo
   // histórico compartilhado não é reescrito. Não criar novas exceções sem decisão do responsável.
   $historicalExceptions = [
+    'fb1e678bdf32e222ad945520b4035e4e04cda44c' => 'atualizou o changelog de aculta_links ao reabrir aculta_mailer para Dev; exceção aprovada pelo responsável em 2026-10-20',
     'a8f05a047d68b6621388564e3a05afdbc52079bf' => 'alterou aculta_mailer antes da regra de linha de README',
     '1ecf099f9baa678067a440ec03095fd57b52effb' => 'alterou aculta_mailer antes da regra de linha de README',
     '17af34c706e6950d14f09d358130fa8b0cbd172c' => 'alterou aculta_portal e aculta_mailer antes da regra de linha de README',
