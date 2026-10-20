@@ -5,7 +5,7 @@ services:
 
   aculta_mailer.mailer:
     class: Drupal\aculta_mailer\Api\AcultaMailer
-    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder']
+    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier']
 
   logger.channel.aculta_mailer:
     parent: logger.channel_base
@@ -16,7 +16,7 @@ services:
 
   aculta_mailer.transport_failover:
     class: Drupal\aculta_mailer\Delivery\TransportFailover
-    arguments: ['hostinger', 'smtp2go']
+    arguments: ['smtp', 'smtp2go']
 
   aculta_mailer.delivery_planner:
     class: Drupal\aculta_mailer\Delivery\DeliveryPlanner
@@ -33,3 +33,15 @@ services:
   aculta_mailer.dashboard:
     class: Drupal\aculta_mailer\Dashboard\MailDashboard
     arguments: ['@entity_type.manager']
+
+  aculta_mailer.smtp_failures:
+    class: Drupal\aculta_mailer\Delivery\SmtpFailureRegistry
+
+  aculta_mailer.smtp_classifier:
+    class: Drupal\aculta_mailer\Delivery\SmtpReplyClassifier
+
+  aculta_mailer.failure_subscriber:
+    class: Drupal\aculta_mailer\EventSubscriber\MailFailureSubscriber
+    arguments: ['@aculta_mailer.smtp_failures']
+    tags:
+      - { name: event_subscriber }

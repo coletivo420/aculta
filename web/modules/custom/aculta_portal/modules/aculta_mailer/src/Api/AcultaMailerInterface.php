@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Api;
 
+use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 
 /**
@@ -23,5 +24,18 @@ interface AcultaMailerInterface {
    *   TRUE quando o sistema de e-mail aceitou a mensagem (status `sent`).
    */
   public function send(MailMessage $message): bool;
+
+  /**
+   * Tenta o envio pelo transporte escolhido e devolve a classe da falha, quando houver.
+   *
+   * @param \Drupal\aculta_mailer\Message\MailMessage $message
+   *   Mensagem a enviar.
+   * @param string|null $transport
+   *   ID do transporte (`smtp`, `smtp2go`); NULL usa o padrão configurado.
+   *
+   * @return \Drupal\aculta_mailer\Delivery\SendResult
+   *   Resultado com a classe da falha e o código SMTP, quando conhecidos.
+   */
+  public function deliver(MailMessage $message, ?string $transport = NULL): SendResult;
 
 }

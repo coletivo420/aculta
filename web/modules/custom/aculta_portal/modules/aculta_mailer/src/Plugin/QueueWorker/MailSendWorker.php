@@ -68,7 +68,7 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
     $message = MailMessage::fromArray(is_array($data['message'] ?? NULL) ? $data['message'] : []);
     $attempt = (int) ($data['attempt'] ?? 1);
     $notBefore = (int) ($data['not_before'] ?? 0);
-    $transport = (string) ($data['transport'] ?? 'hostinger');
+    $transport = (string) ($data['transport'] ?? MailQueue::DEFAULT_TRANSPORT);
 
     // Ainda não é hora da próxima tentativa: a mensagem volta para a fila sem ser perdida.
     if ($notBefore > $this->time->getRequestTime()) {
@@ -85,12 +85,13 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
       return;
     }
 
-    if ($this->mailer->send($message)) {
+    $result = $this->mailer->deliver($message, $transport);
+    if ($result->sent) {
       return;
     }
 
-    // O envio não informa o código SMTP ainda (F2): falha tratada como temporária, com retry limitado.
-    $decision = $this->planner->afterFailure($attempt, $transport, DeliveryError::Temporary);
+    // Erro permanente (5xx) encerra; temporário (4xx ou sem código) reagenda, trocando de transporte no failover.
+    $decision = $this->planner->afterFailure($attempt, $transport, $result->error ?? DeliveryError::Temporary);
     if ($decision->status === MailStatus::Deferred) {
       $this->log->record($message, MailStatus::Deferred, (int) $decision->nextAttempt, (string) $decision->transport);
       $this->queues->get(MailQueue::QUEUE_NAME)->createItem([

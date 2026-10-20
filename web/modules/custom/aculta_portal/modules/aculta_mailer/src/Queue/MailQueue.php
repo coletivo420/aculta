@@ -17,6 +17,11 @@ final class MailQueue {
 
   public const QUEUE_NAME = 'aculta_mailer_send';
 
+  /**
+   * Transporte da primeira tentativa: o padrão de envio (Hostinger, ID `smtp`).
+   */
+  public const DEFAULT_TRANSPORT = 'smtp';
+
   public function __construct(
     private readonly QueueFactory $queues,
   ) {}
@@ -29,7 +34,7 @@ final class MailQueue {
       'message' => $message->toArray(),
       'attempt' => 1,
       'not_before' => 0,
-      'transport' => 'hostinger',
+      'transport' => self::DEFAULT_TRANSPORT,
     ]);
   }
 
