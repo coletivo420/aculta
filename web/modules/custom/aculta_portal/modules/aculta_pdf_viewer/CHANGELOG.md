@@ -4,7 +4,8 @@
 
 - O formatter oferece link secundário para o viewer oficial `web/viewer.html`, com locale `pt-BR`; o canvas custom permanece a experiência padrão.
 - A URL do documento vem do builder após validar acesso de Media/campo/File. PDFs privados continuam apontando à rota protegida do Drupal Core; nenhum controller ou cópia de arquivo foi criado.
-- Homelab: HTTP GET dos assets `viewer.html`, `viewer.mjs` e locale `pt-BR/viewer.ftl` respondeu 200. Isso confirma apenas a entrega estática; ainda validar abertura do PDF pelo parâmetro `file`, foco/teclado, leitor de tela, PDFs marcados/não marcados e CSP Report-Only. RUNTIME STATUS: DEFERRED para o fluxo funcional.
+- O mapa transversal de caminhos registra o viewer na mesma origem para MAIN, Revista, Wiki, Fórum e Cursos.
+- Homelab: HTTP GET de `viewer.html` respondeu 200 em MAIN, Revista, Wiki, Fórum e Cursos; `viewer.mjs` e locale `pt-BR/viewer.ftl` também responderam 200. Isso confirma apenas a entrega estática; ainda validar abertura do PDF pelo parâmetro `file`, foco/teclado, leitor de tela, PDFs marcados/não marcados e CSP Report-Only. RUNTIME STATUS: DEFERRED para o fluxo funcional.
 
 ## Documentação PV7 — validar traduções locais, text layer e decisão CSP — 2026-10-20
 
