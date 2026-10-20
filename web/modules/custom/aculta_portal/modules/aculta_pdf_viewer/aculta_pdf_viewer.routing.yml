@@ -1,0 +1,9 @@
+aculta_pdf_viewer.settings:
+  path: '/painel-administrativo/aculta/leitor-pdf'
+  defaults:
+    _form: '\Drupal\aculta_pdf_viewer\Form\PdfViewerSettingsForm'
+    _title: 'Leitor de PDF'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true

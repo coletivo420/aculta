@@ -41,6 +41,12 @@ acessibilidade. Fontes: [recursos básicos](https://docs.tncflipbook.com/article
 | Leitura em voz alta | Pós-deploy. Avaliar suporte/voz do navegador no ambiente de produção e testar com leitor de tela antes de qualquer implementação. | Fora do escopo pré-deploy; registrar como evolução pós-deploy. |
 | Tema, ícones e embed | Tokens ACULTA420/Bootstrap; formatter configura título, link, destino e classe validada. | Campos do formatter presentes; confirmar apresentação com validação visual pré-RC. |
 
+Os padrões globais do leitor ficam em ACULTA → Leitor de PDF. A configuração
+`aculta_pdf_viewer.settings` é fonte exportável do site; formatter de campo
+herda os valores por padrão e pode desligar a herança para manter seu próprio
+perfil. Rolagem horizontal e página dupla aparecem no painel, mas estão
+explicitamente marcadas como sem efeito no canvas atual até sua implementação.
+
 O Media/File do Drupal continua sendo a fonte de verdade para documento,
 metadados, URL e acesso. O viewer usa o PDF.js local e só recebe arquivo
 resolvido por Media autorizada ou campo File com acesso confirmado; conteúdo embutido não aceita URL

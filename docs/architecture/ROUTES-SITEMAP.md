@@ -124,6 +124,7 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/painel-administrativo/aculta/mail/layouts` | Lista de layouts de e-mail (`aculta_mailer_layout`) | Protegida por `administer aculta_mailer`; editor em `.../layouts/{aculta_mailer_layout}`. |
 | `main.aculta` | `/painel-administrativo/aculta/mail/modelos/{aculta_mailer_template}/teste` | Envio de teste de um modelo para um endereço informado | Protegida por `administer aculta_mailer`; usa valores de exemplo e o caminho real de envio. Resultado genérico na tela; motivo completo no relatório de falhas. |
 | `main.aculta` | `/painel-administrativo/aculta` | Configurações gerais do Portal | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/aculta/leitor-pdf` | Padrões globais dos controles e da apresentação do leitor PDF.js | Formulário `PdfViewerSettingsForm`, protegido por `administer site configuration`; menu dentro da área ACULTA. Padrões são herdados pelos formatters que não optam por configuração local. Declarado no submódulo `aculta_pdf_viewer`; Runtime não confirmado. |
 | `main.aculta` | `/painel-administrativo/aculta/turnstile` | Configuração do CAPTCHA Turnstile | Rota administrativa protegida; credenciais não são documentadas aqui. |
 | `main.aculta` | `/painel-administrativo/aculta/requisitos` | Relatório de requisitos do Portal | Rota administrativa protegida. |
 | `main.aculta` | `/painel-administrativo/aculta/segredos` | Lista de integrações/segredos configurados | Rota administrativa restrita; nenhum valor secreto é registrado neste mapa. |

@@ -8,6 +8,7 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -25,6 +26,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     private readonly UrlGeneratorInterface $urlGenerator,
     private readonly AccountInterface $currentUser,
     private readonly PdfPreviewThumbnailBuilderInterface $thumbnailBuilder,
+    private readonly ?ConfigFactoryInterface $configFactory = NULL,
   ) {}
 
   /**
@@ -95,6 +97,12 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       $cacheability->setCacheMaxAge(0);
     }
 
+    if (($settings['use_site_settings'] ?? TRUE) && $this->configFactory !== NULL) {
+      $site_settings = $this->configFactory->get('aculta_pdf_viewer.settings');
+      $cacheability->addCacheableDependency($site_settings);
+      $settings = array_replace($settings, $site_settings->getRawData());
+    }
+
     $mime = strtolower((string) $file->getMimeType());
     $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
     if ($mime !== 'application/pdf' || $extension !== 'pdf') {
@@ -109,6 +117,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       'show_outline' => TRUE,
       'show_page_thumbnails' => TRUE,
       'show_full_viewer' => TRUE, 'default_zoom' => 'fit-width', 'default_scroll' => 'vertical',
+      'use_site_settings' => TRUE,
       'double_page' => FALSE, 'double_page_mobile' => FALSE, 'language' => 'pt-BR',
       'link_text' => '', 'link_target' => '_blank', 'css_class' => '',
     ];

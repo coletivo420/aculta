@@ -1,5 +1,11 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.34 — controles globais no painel ACULTA — 2026-10-20
+
+- Adiciona `/painel-administrativo/aculta/leitor-pdf` como subpágina do painel ACULTA, protegida por `administer site configuration`.
+- O painel salva padrões globais tipados/exportáveis; cada formatter herda esses valores por padrão ou pode desativar a herança e configurar aquele campo. A cache do viewer varia pela configuração global.
+- Rolagem horizontal e página dupla ficam visíveis com descrição explícita de que ainda não afetam o canvas; leitura em voz alta continua pós-deploy. Runtime e formulário visual DEFERRED.
+
 ## 0.1.0-dev.33 — miniaturas de páginas sob demanda — 2026-10-20
 
 - Inclui miniaturas navegáveis no canvas próprio. Só renderiza ao expandir a seção, limita cada miniatura a 65.536 pixels e a lista a 100 páginas; PDFs maiores informam o limite aplicado.

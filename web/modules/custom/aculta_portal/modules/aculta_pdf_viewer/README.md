@@ -4,6 +4,13 @@
 pelas experiências do site. Não pertence ao LMS: conteúdo pode usar o formatter
 de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
 
+Padrões globais ficam em ACULTA → Leitor de PDF
+(`/painel-administrativo/aculta/leitor-pdf`). O painel pertence ao módulo Portal;
+formatters usam esses valores por padrão e podem optar por configuração
+específica do campo. A configuração fica em `aculta_pdf_viewer.settings` e faz
+parte do Config Sync. Rolagem horizontal e página dupla já têm opções de padrão,
+mas ainda não alteram o canvas ACULTA; o formulário identifica essa limitação.
+
 ## Responsabilidade e limites
 
 - Integra Media/File ao PDF.js oficial local, sem armazenar conteúdo, permissões,
@@ -92,9 +99,9 @@ anexada pelo render array somente quando o builder autoriza e reconhece PDF.
 O display padrão `media.document` seleciona `aculta_pdf_media`; os displays
 `node.document.default` e `node.document.full` selecionam `aculta_pdf_file` em
 Config Sync.
-O módulo exige apenas Core File e Media; PDFPreview e ImageMagick são opcionais
-no runtime. Não depende do módulo geral `aculta_portal`, LMS, PDF contrib, nem de
-configuração ativa importada. O PDF.js é gerenciado pelo Composer do site. O
+O módulo depende do Portal (painel de administração), aculta_image, Core File e
+Media; PDFPreview e ImageMagick são opcionais no runtime. Não depende do LMS nem
+de PDF contrib. A configuração global é exportável e versionada. O PDF.js é gerenciado pelo Composer do site. O
 contrib `drupal/pdf` não é chamado porque
 seu loader 1.3 usa `pdf.js`/API global, enquanto o pacote escolhido publica ES
 modules `.mjs`.

@@ -26,6 +26,7 @@ trait PdfViewerFormatterSettingsTrait {
       'show_search' => TRUE,
       'show_page_navigation' => TRUE,
       'show_full_viewer' => TRUE,
+      'use_site_settings' => TRUE,
       'default_zoom' => 'fit-width',
       'default_scroll' => 'vertical',
       'double_page' => FALSE,
@@ -42,6 +43,12 @@ trait PdfViewerFormatterSettingsTrait {
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
+    $form['use_site_settings'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Usar padrões do painel ACULTA'),
+      '#description' => $this->t('Quando ativado, os padrões em ACULTA → Leitor de PDF controlam este campo. Desative para configurar opções locais abaixo.'),
+      '#default_value' => (bool) $this->getSetting('use_site_settings'),
+    ];
     foreach ([
       'show_download' => $this->t('Exibir link para abrir ou baixar (sujeito à permissão do arquivo)'),
       'show_print' => $this->t('Exibir opção de impressão no leitor completo'),
