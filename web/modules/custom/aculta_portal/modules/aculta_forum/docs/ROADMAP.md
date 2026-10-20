@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.91` | Homologação X11 visual da busca pública | Suíte Firefox X11/BiDi somente leitura: 20/20 em 390/768/1024 CSS px, claro/escuro; formulário enquadrado, estado vazio, CAPTCHA ausente e contraste 12,40:1/12,23:1. 0 tópicos/Comments preservados. Comparação visual completa do fórum segue planejada. |
 | `0.1.0-dev.90` | Validar busca textual combinada e relevância | Search API DB Kernel prova filtro textual + categoria, pontuação de título acima de corpo e ordenação padrão por relevância; suíte Kernel 26/513 PASS, com 19 depreciações de Core/contrib. Sem conteúdo Runtime. Busca com resultados publicados segue DEFERRED para manter o Fórum limpo. |
 | `0.1.0-dev.85` | Formulário de mover tópico nega Growroom histórico | Kernel com conta administrativa prova que serviço e Form API negam movimento e preservam categoria histórica; 3 testes/71 assertions PASS, 5 depreciações de Core/Domain. PHPCS, lint e gates Portal PASS. Runtime DEFERRED. |
 | `0.1.0-dev.86` | Busca pública contextual do Growroom420 | Índice Search API/View `/pesquisar` somente para tópico público; acesso/status e Domain canônico em query fail-closed. Runtime de teste: ativo, zero itens; GET e consulta vazia HTTP 200. 5 testes/17 assertions, suíte Forum Unit 87/527 e gates PASS. X11 1024 parcial: render visível, mas banner de validação CAPTCHA sem submissão; detalhes em `TEST-MATRIX.md`. |

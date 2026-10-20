@@ -509,7 +509,24 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 - **Leitor de tela:** o Orca anunciou o nome e valor do campo de legenda. Em fixture DOM não persistida na página pública, ao focar a imagem o Orca anunciou a legenda “Legenda acessível de teste” e o `alt` “Imagem de teste com texto alternativo”; AT-SPI expôs a legenda e a imagem como elementos filhos do painel/figura. A fixture foi removida e a sessão Firefox fechada.
 - **Limite:** a figura foi fixture DOM temporária com as classes reais do modelo; não foi salva em conteúdo. A configuração de runtime permaneceu inalterada.
 
-## ACULTA Forum — comparação visual X11 com Ubuntu Discourse (planejado)
+## ACULTA Forum — busca visual X11 e comparação com Ubuntu Discourse
+
+### Busca pública — 2026-10-20
+
+- Runtime de teste `toca`, sessão Firefox ESR visível no X11 `:0`, anônima e
+  isolada. Drush confirmou Drupal 11.4.10, URI `growroom420`, banco
+  `aculta_runtime` e 0 tópicos/0 comentários antes e depois.
+- `tests/browser/aculta-forum/search-visual.mjs` abriu a busca GET sem gravar
+  conteúdo: 20/20 verificações PASS em viewports CSS exatos de 390, 768 e 1024
+  px, nos modos claro e escuro. Formulário, categoria, estado vazio, CAPTCHA
+  ausente e limites laterais foram verificados. Contraste do botão: 12,40:1 no
+  claro e 12,23:1 no escuro.
+- O offcanvas fechado do carrinho foi encontrado fora do viewport, sem alterar
+  `scrollWidth`; não foi tratado como overflow da busca. Capturas privadas
+  `0600` em `/home/aculta-system-data/private/aculta-forum-search-dev91/visual/captures/`.
+- Esta rodada cobre apenas o estado de busca vazia. Inspeção comparativa das
+  categorias, listas com conteúdo e tópico contra Ubuntu Discourse permanece
+  planejada, pois o Runtime do Fórum está intencionalmente sem conteúdo.
 
 Aplicar na revisão visual da dev.11 e repetir na homologação rc.1, usando
 Firefox visível na sessão X11 do servidor de teste ou workstation autorizada.

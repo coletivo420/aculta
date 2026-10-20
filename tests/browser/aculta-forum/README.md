@@ -13,6 +13,29 @@ Não autentica, não envia formulários e não grava Nodes ou Comments.
   `field_aculta_discussion` renderizado;
 - geckodriver acessível em `http://127.0.0.1:4444` ou `GECKODRIVER`.
 
+## Busca pública
+
+`search-visual.mjs` verifica a página somente leitura `/pesquisar` em Firefox
+visível. Ela exige uma query sem resultados, percorre 390/768/1024 CSS px nos
+modos claro/escuro e confere formulário, estado vazio, CAPTCHA, enquadramento e
+contraste. Não submete formulários nem cria conteúdo.
+
+```sh
+DISPLAY=:0 geckodriver --host 127.0.0.1 --port 4448
+```
+
+Em outro terminal:
+
+```sh
+DISPLAY=:0 GECKODRIVER=http://127.0.0.1:4448 \
+SUITE_PAGE='https://<host-de-teste>/pesquisar?keys=<termo-sem-resultados>' \
+SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-search' \
+node tests/browser/aculta-forum/search-visual.mjs
+```
+
+Use host declarado no Deployer e diretório privado fora do checkout. O script
+encerra sua própria sessão WebDriver e salva capturas/resultados com modo `0600`.
+
 ## Execução
 
 ```sh

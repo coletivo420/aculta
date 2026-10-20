@@ -1,3 +1,18 @@
+## `0.1.0-dev.91` — teste visual X11 da busca pública — 2026-10-20
+
+- Adicionada suíte Firefox X11/WebDriver BiDi somente leitura para `/pesquisar`.
+  Ela valida formulário, estado vazio, ausência de CAPTCHA, enquadramento e
+  contraste em 390/768/1024 CSS px; não envia formulários nem cria conteúdo.
+- Runtime de teste: 20/20 verificações PASS; botão da busca atingiu contraste
+  12,40:1 no claro e 12,23:1 no escuro. A página não ampliou o viewport; o
+  offcanvas fechado do carrinho está fora da tela e não gera overflow do
+  documento. Capturas privadas em
+  `/home/aculta-system-data/private/aculta-forum-search-dev91/visual/captures/`.
+- A busca usa o Runtime vazio: 0 tópicos e 0 comentários antes/depois.
+  Comparação completa com categorias/tópicos e referência Ubuntu Discourse
+  permanece planejada para quando houver uma página com conteúdo permitido.
+  RUNTIME STATUS: PASS para busca vazia e apresentação visual.
+
 ## `0.1.0-dev.90` — validar texto, categoria e relevância da busca — 2026-10-20
 
 - `ForumCategorySearchKernelTest` agora indexa título e corpo com Search API DB;

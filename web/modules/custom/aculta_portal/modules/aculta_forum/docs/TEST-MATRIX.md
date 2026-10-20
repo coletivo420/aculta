@@ -1,5 +1,24 @@
 # Matriz de testes por fase
 
+## dev.91 — busca pública em Firefox/X11
+
+- `search-visual.mjs` usa Firefox ESR/geckodriver em `DISPLAY=:0`, WebDriver
+  BiDi para viewports CSS exatos e apenas GET. Confere título, formulário,
+  filtro, ausência de CAPTCHA, estado vazio, bounds e contraste; salva capturas
+  `0600` fora do checkout. Não envia busca por POST nem altera conteúdo.
+- No Runtime `toca`, `/pesquisar?keys=forumvisualtest` respondeu como página
+  vazia: 20/20 verificações PASS em 390/768/1024 CSS px. Modos claro e escuro:
+  contraste do botão 12,40:1 e 12,23:1. Formulário cabe no viewport; largura
+  do documento coincide com o viewport. O offcanvas fechado aparece como
+  elemento fixo fora da tela, mas não alarga o documento.
+- Capturas e `results.json` privados:
+  `/home/aculta-system-data/private/aculta-forum-search-dev91/visual/captures/`.
+  Contagem Runtime antes/depois: 0 tópicos e 0 Comments. A comparação X11 de
+  categorias, listas com resultados e tópicos com Ubuntu Discourse permanece
+  pendente; esta rota só tem estado vazio.
+- RUNTIME STATUS: PASS para busca vazia; PARTIAL para experiência completa do
+  fórum.
+
 ## dev.90 — busca textual, categoria e relevância
 
 - `ForumCategorySearchKernelTest` combina `keys` com o ID da categoria e prova
