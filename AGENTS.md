@@ -629,8 +629,17 @@ O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem ex
 - Drupal Forum contrib continua fonte de verdade no código atual até a fase explícita de migração/retirada. Não remover Composer, módulo, dados ou configuração antes de cumprir `web/modules/custom/aculta_portal/modules/aculta_forum/docs/MIGRATION-REMOVAL.md` e gates de acesso/rollback.
 - Growroom420 recebe apenas tópicos públicos independentes. Publicações, LMS e Wiki associam comentários ao contexto original; publicações e verbetes não geram tópicos públicos automáticos.
 - `aculta_user` é o único dono de view-models/cartões de identidade e autoria. `aculta_forum` não cria builders/renderers de perfil nem consulta diretamente dados privados de User/Profile. ACULTA420 detém toda a apresentação.
-- LMS exige membership e acesso atual pelo Group/Entity Access; role global de estudante não basta. Wiki é contrato futuro e não autoriza reimplementar a Wiki como parte do Forum.
+- LMS exige membership e acesso atual pelo Group/Entity Access; role global de estudante não basta. A Wiki não é parte do Fórum e não deve ser reimplementada dentro dele (ver seção Wiki).
 - Imagens e avisos continuam sob `aculta_image` e `aculta_messenger`; não criar canais paralelos.
+
+## Wiki (regra permanente)
+
+- **Estado atual (2026-10-20, Runtime de teste):** a Wiki funciona como conteúdo no domínio `wiki420` (`wiki420.aculta.org` em produção), com o tipo de conteúdo `wiki_entry` e o fluxo editorial `wiki_editorial`. Havia 7 verbetes, 6 publicados. Não existe um módulo de Wiki habilitado: a implementação é de conteúdo e configuração.
+- **Não reimplementar a Wiki no Fórum.** O Fórum (`aculta_forum`, Growroom420) não cria verbetes nem fluxo editorial da Wiki.
+- **Comentários e contexto:** comentários em verbete ficam associados ao verbete de origem. Verbetes não geram tópicos públicos automáticos no Fórum.
+- **Dados pessoais:** a autoria e o conteúdo de verbete são públicos quando publicados. Quem contribui consente na publicação (art. 7º, I da LGPD). A base legal e o uso estão na política de privacidade (seção "Bases legais por uso do site") e no inventário `docs/compliance/LGPD-INVENTARIO.md`.
+- **Mudança de escopo:** se a Wiki ganhar módulo próprio, retenção específica ou integração (busca, notificações, perfis), atualize o inventário LGPD, a política de privacidade e este `AGENTS.md` no mesmo commit.
+- **Domínio:** `wiki420` é um purpose de Domain. Mudanças de host seguem `docs/architecture/multidomain.md` e o `aculta_deployer`; nada fixo no código.
 
 ## Separação de Pessoas e Configurações > Pessoas (decisão do responsável, 2026-10-17)
 
