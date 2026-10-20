@@ -22,9 +22,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * Acesso do Fórum e isolamento administrativo das discussões contextuais.
  *
  * O moderador pode ocultar, despublicar ou excluir conteúdo ativo novo.
- * Bundles restaurados do Growroom ficam fora da moderação e seus comentários
- * permanecem fechados. Bundles atuais marcados com autor histórico também
- * ficam congelados; conteúdo ativo novo exige e-mail confirmado para moderação.
+ * Tópicos importados do Growroom são Nodes ACULTA marcados com autor histórico;
+ * ficam fora da moderação e suas discussões permanecem fechadas.
  *
  * No bundle novo, o editor confirmado também recebe acesso contextual sem
  * permissões genéricas de edição/exclusão. A própria autoria segue as
@@ -46,7 +45,7 @@ final class ForumModerationHooks {
    */
   #[Hook('entity_access')]
   public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
-    if ($this->isGrowroomHistoric($entity)
+    if ($this->isImportedHistoric($entity)
       && (in_array($operation, self::MODERATION_OPS, TRUE) || $operation === 'create')) {
       return AccessResult::forbidden('O acervo histórico do Growroom é somente leitura.')
         ->addCacheableDependency($entity);
@@ -54,10 +53,8 @@ final class ForumModerationHooks {
     if (!in_array($operation, ['update', 'delete'], TRUE) || $account->hasPermission('bypass node access')) {
       return NULL;
     }
-    $topicoLegado = $entity instanceof NodeInterface && $entity->bundle() === 'forum';
     $topicoNovo = $entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic';
-    $comentario = $entity instanceof CommentInterface && $entity->bundle() === 'comment_forum';
-    if (!$topicoLegado && !$topicoNovo && !$comentario) {
+    if (!$topicoNovo) {
       return NULL;
     }
     $autor = $entity->getOwner();
@@ -81,7 +78,7 @@ final class ForumModerationHooks {
   }
 
   /**
-   * Closes replies on legacy topic bundles while the contrib is being removed.
+   * Closes discussion on imported Growroom topics before each save.
    */
   #[Hook('entity_presave')]
   public function closeGrowroomHistoricDiscussion(EntityInterface $entity): void {
@@ -89,13 +86,11 @@ final class ForumModerationHooks {
       return;
     }
 
-    $fieldName = match (TRUE) {
-      $entity->bundle() === 'forum' && $entity->hasField('comment_forum') => 'comment_forum',
-      $entity->bundle() === 'aculta_forum_topic'
-        && $this->hasHistoricAuthor($entity)
-        && $entity->hasField('field_aculta_discussion') => 'field_aculta_discussion',
-      default => NULL,
-    };
+    $fieldName = $entity->bundle() === 'aculta_forum_topic'
+      && $this->hasHistoricAuthor($entity)
+      && $entity->hasField('field_aculta_discussion')
+      ? 'field_aculta_discussion'
+      : NULL;
     if ($fieldName !== NULL) {
       $field = $entity->get($fieldName);
       $values = $field->getValue() ?: [[]];
@@ -118,7 +113,7 @@ final class ForumModerationHooks {
     foreach (array_keys($form['comments']['#options']) as $cid) {
       $comment = $this->entityTypeManager->getStorage('comment')->load($cid);
       if ($comment instanceof CommentInterface
-        && ($this->isContextManagedComment($comment) || $this->isGrowroomHistoric($comment))) {
+        && ($this->isContextManagedComment($comment) || $this->isImportedHistoric($comment))) {
         unset($form['comments']['#options'][$cid]);
       }
     }
@@ -137,7 +132,7 @@ final class ForumModerationHooks {
     }
     $comments = $this->entityTypeManager->getStorage('comment')->loadMultiple($ids);
     foreach ($comments as $comment) {
-      if ($comment instanceof CommentInterface && $this->isGrowroomHistoric($comment)) {
+      if ($comment instanceof CommentInterface && $this->isImportedHistoric($comment)) {
         $form_state->setErrorByName('comments', 'O acervo histórico do Growroom não pode ser moderado.');
         return;
       }
@@ -151,16 +146,12 @@ final class ForumModerationHooks {
   /**
    * Determines whether an entity is part of the read-only Growroom archive.
    */
-  private function isGrowroomHistoric(EntityInterface $entity): bool {
+  private function isImportedHistoric(EntityInterface $entity): bool {
     if ($entity instanceof NodeInterface) {
-      return $entity->bundle() === 'forum'
-        || ($entity->bundle() === 'aculta_forum_topic' && $this->hasHistoricAuthor($entity));
+      return $entity->bundle() === 'aculta_forum_topic' && $this->hasHistoricAuthor($entity);
     }
     if (!$entity instanceof CommentInterface) {
       return FALSE;
-    }
-    if ($entity->bundle() === 'comment_forum') {
-      return TRUE;
     }
     if ($entity->bundle() !== 'aculta_discussion_post') {
       return FALSE;
@@ -170,8 +161,8 @@ final class ForumModerationHooks {
     }
     $host = $entity->getCommentedEntity();
     return $host instanceof NodeInterface
-      && ($host->bundle() === 'forum'
-        || ($host->bundle() === 'aculta_forum_topic' && $this->hasHistoricAuthor($host)));
+      && $host->bundle() === 'aculta_forum_topic'
+      && $this->hasHistoricAuthor($host);
   }
 
   /**

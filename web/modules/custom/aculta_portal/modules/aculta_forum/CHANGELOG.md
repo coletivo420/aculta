@@ -1,3 +1,24 @@
+## 0.1.0-dev.49 — remover fóruns restritos por Taxonomy — 2026-10-20
+
+- A política de visibilidade por realm do Forum contrib foi removida do User,
+  junto de permissões, subscriber 404 e campo de nível na taxonomia antiga.
+  Growroom420 permanece público; discussões internas LMS usam Group.
+- Atualizada a documentação central de papéis e avisos, preservando a decisão
+  histórica como substituída. Config Sync ainda não importado no Runtime.
+  User Unit 52/175, Portal 970, fronteira 1376 e mapa 151 PASS. Runtime `toca`:
+  cache rebuild e raízes Fórum/Conta/Revista HTTP 200; bundles contribuído ainda
+  instalados, as duas configs de `field_visibilidade` e permissões antigas
+  continuam ativas até limpeza dirigida/uninstall. RUNTIME STATUS: PARTIAL.
+
+## 0.1.0-dev.48 — migrar guards de conteúdo histórico para bundles ACULTA — 2026-10-20
+
+- `aculta_user` não reconhece bundles Drupal Forum; congela apenas tópicos
+  `aculta_forum_topic` com `field_autor_legado` e suas discussões Comment.
+  Removidos defaults antigos `field_discussao`; `ContentPurposeResolver` e
+  `AccountTermsHooks` deixaram de consumir estruturas contrib.
+- User Unit 61/192; gates Portal 970, fronteira 1380 e mapa 151 PASS. Sem
+  atualização persistente do Runtime. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.47 — remover preprocess da listagem Forum contrib — 2026-10-20
 
 - O hook Messenger `preprocess_forums` foi removido: a listagem atual usa Views

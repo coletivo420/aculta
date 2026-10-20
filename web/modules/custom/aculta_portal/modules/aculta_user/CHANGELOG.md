@@ -1,3 +1,26 @@
+## 0.4.0-dev.43 — aposentar níveis de visibilidade da taxonomia Forum — 2026-10-20
+
+- Removidos `RestrictedForumGrants`, `RestrictedForumHooks`, o subscriber 404,
+  três permissões de realms e o campo `field_visibilidade` da taxonomia `forums`.
+  Fórum Growroom novo permanece público; o LMS segue com Group access.
+- Retirados os grants dos papéis em Config Sync. A configuração ativa do Runtime
+  ainda requer import controlado. Unit/gates serão registrados após execução.
+  RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.42 — remover estrutura de discussão contrib do User — 2026-10-20
+
+- `ForumModerationHooks` agora protege apenas Nodes ACULTA importados com
+  `field_autor_legado`; removidos os branches Drupal Forum `forum`/
+  `comment_forum`. O campo antigo `field_discussao` e suas instâncias em
+  activity/article/document/project/wiki_entry saíram dos defaults de
+  instalação do User.
+- Unit User: 52 testes/175 assertions PASS, uma depreciação em dependência;
+  PHPCS e lint dos arquivos modificados PASS. Portal 11+ (970), fronteira
+  (1376), mapa (151) e `git diff --check` PASS. Remoção ainda está em código,
+  Config Sync/Install; Runtime tem permissões/configs antigas ativas até o
+  próximo import dirigido. Cache rebuild e roots Fórum/Conta/Revista HTTP 200;
+  nenhum updb/import. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.41 — regras de participação sem Forum contrib — 2026-10-20
 
 - A moderação do primeiro comentário usa somente o Comment compartilhado dos

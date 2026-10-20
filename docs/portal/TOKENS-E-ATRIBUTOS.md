@@ -315,7 +315,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `public-profile-actions` | `portal-profile__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `friendship-action-form` | `portal-profile__friendship-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
 | `friendship-action-button` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
-| `forum-topic-unread` | `aculta-unread-count` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/ForumTopicCounterHooks.php` |
+| `forum-topic-unread` | `aculta-unread-count` | Reserva de apresentação para futura integração da View ACULTA; sem produtor ativo desde a remoção de `preprocess_forums` em dev.56. |
 | `profile-achievements` | `portal-profile__achievements` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
 | `profile-achievements-title` | `portal-profile__achievements-title` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
 | `profile-achievements-list` | `portal-profile__achievements-list` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |

@@ -23,17 +23,11 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `entity_access` | `ForumModerationHooks::entityAccess` | `src/Hook/ForumModerationHooks.php` |
 | `entity_presave` | `ForumModerationHooks::closeGrowroomHistoricDiscussion` | `src/Hook/ForumModerationHooks.php` |
 | `form_comment_admin_overview_alter` | `ForumModerationHooks::commentAdminOverviewAlter` | `src/Hook/ForumModerationHooks.php` |
-| `entity_access` | `RestrictedForumHooks::entityAccess` | `src/Hook/RestrictedForumHooks.php` |
 | `entity_create_access` | `ParticipationHooks::entityCreateAccess` | `src/Hook/ParticipationHooks.php` |
 | `form_user_form_alter` | `PhotoEditorHooks::formUserFormAlter` | `src/Hook/PhotoEditorHooks.php` |
 | `module_preuninstall` | `FriendshipLifecycleHooks::protectFriendshipData` | `src/Hook/FriendshipLifecycleHooks.php` |
-| `node_access_records` | `RestrictedForumHooks::nodeAccessRecords` | `src/Hook/RestrictedForumHooks.php` |
-| `node_grants` | `RestrictedForumHooks::nodeGrants` | `src/Hook/RestrictedForumHooks.php` |
 | `entity_view` | `PublicForumTopicAuthorHooks::entityView` | `src/Hook/PublicForumTopicAuthorHooks.php` |
 | `page_attachments` | `PhotoFlowPageHooks::pageAttachments` | `src/Hook/PhotoFlowPageHooks.php` |
-| `query_node_access_alter` | `RestrictedForumHooks::queryNodeAccessAlter` | `src/Hook/RestrictedForumHooks.php` |
-| `simple_sitemap_links_alter` | `RestrictedForumHooks::simpleSitemapLinksAlter` | `src/Hook/RestrictedForumHooks.php` |
-| `taxonomy_term_update` | `RestrictedForumHooks::termUpdate` | `src/Hook/RestrictedForumHooks.php` |
 | `user_delete` | `FriendshipLifecycleHooks::removeRelationshipsForDeletedMember` | `src/Hook/FriendshipLifecycleHooks.php` |
 | `user_insert` | `AccountCreationHooks::userInsert` | `src/Hook/AccountCreationHooks.php` |
 | `user_presave` | `AccountCreationHooks::userPresave` | `src/Hook/AccountCreationHooks.php` |
@@ -114,7 +108,6 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
-| `RestrictedForumNotFoundSubscriber` | `src/EventSubscriber/RestrictedForumNotFoundSubscriber.php` | Responde 404 para páginas de fórum restrito sem acesso (ACULTA Fórum, F9, F-D14). |
 | `SocialAuthFieldsSubscriber` | `src/EventSubscriber/SocialAuthFieldsSubscriber.php` | Conta criada por OAuth recebe o nome de usuário a partir da parte local do e-mail recebido, sem o domínio. |
 
 ### `Form`
@@ -135,7 +128,6 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
-| `RestrictedForumGrants` | `src/Forum/RestrictedForumGrants.php` | Visibilidade dos fóruns restritos (ACULTA Fórum, F9, F-D14). |
 
 ### `Identity`
 
@@ -159,13 +151,12 @@ e o resolver de variantes. Fórum e respostas usam `author_forum`; Revista usa
 | `AccountCreationHooks` | `src/Hook/AccountCreationHooks.php` | Criação de conta: perfil participante com apelido inicial, e avatar do acervo quando não há foto. |
 | `AccountDashboardHooks` | `src/Hook/AccountDashboardHooks.php` | Caixa de bio na visão geral da Minha conta. Substitui o resumo de Cursos (aculta_portal). |
 | `AvatarCronHooks` | `src/Hook/AvatarCronHooks.php` | Cron do aculta_user: limpeza de assets temporários de avatar (ver AvatarAssetCleanup). |
-| `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação confirmada de conteúdo ativo; preserva guards de bundles legados enquanto a extensão contrib é retirada e mantém Comments `aculta_discussion_post` na fila administrativa do contexto, rejeitando seleção em lote adulterada. |
+| `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação confirmada de conteúdo ativo; congela Nodes ACULTA importados com autoria Growroom histórica e mantém Comments contextuais fora da fila geral, validando seleções em lote. |
 | `FriendshipLifecycleHooks` | `src/Hook/FriendshipLifecycleHooks.php` | Maintains friendship data through account deletion and module lifecycle. */ |
 | `ParticipationHooks` | `src/Hook/ParticipationHooks.php` | Modera comentários iniciais nos contextos públicos compartilhados, exclui LMS, bloqueia novos Nodes do bundle legado e aplica limite configurável de criação de tópico. |
 | `PhotoEditorHooks` | `src/Hook/PhotoEditorHooks.php` | Editor de foto do painel (ponto de extensão aculta_portal_photo_editor e formulário do painel). |
 | `PhotoFlowPageHooks` | `src/Hook/PhotoFlowPageHooks.php` | Anexa o fluxo do popup de foto (aculta_user/photo-flow) na página do painel e informa a foto salva ao script. |
 | `PictureReplacementHooks` | `src/Hook/PictureReplacementHooks.php` | Apaga a foto anterior enviada pela pessoa quando ela troca ou remove a foto (economia de disco). |
-| `RestrictedForumHooks` | `src/Hook/RestrictedForumHooks.php` | Fóruns restritos (ACULTA Fórum, F9, F-D14). |
 | `SettingsTabsHooks` | `src/Hook/SettingsTabsHooks.php` | Aba "Privacidade" em Minha conta > Configurações (o Portal monta as abas e chama o alter). |
 
 ### `Legacy`

@@ -1,3 +1,13 @@
+## 0.4.0-dev.210 — retirar integrações de rota com bundles contrib — 2026-10-20
+
+- `ContentPurposeResolver` só reconhece `aculta_forum_topic`; `AccountTermsHooks`
+  não infere autenticação pela existência do campo do Forum antigo. Os
+  comentários ACULTA seguem a permissão do Comment e do contexto.
+- Portal Drupal 11+ 970, fronteira 1376, mapa 151, PHP lint e `git diff --check`
+  PASS. PHPCS completo dos arquivos Portal ainda aponta dívida preexistente em
+  outras linhas. Runtime de teste: cache rebuild e raízes de Conta/Fórum/Revista
+  HTTP 200; nenhuma importação/update. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.209 — corrigida falha de construção do controlador da conta — 2026-10-20
 
 - Corrigida a ordem de dependências de `PortalController`: a factory injetava

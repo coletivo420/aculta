@@ -316,6 +316,6 @@ publicação; capa, resumo e corpo ficam na mesma coluna de leitura.
 ## Contador de não lidos (`aculta-unread-count`)
 
 Classe única para todos os contadores (carrinho, avisos, mensagens, badge de conta e contadores de conteúdo, como o
-do fórum). Arquivo: `css/components/unread-count.css`. O módulo entrega o token `data-portal-ui` (ex.: `forum-topic-unread`),
+do fórum). Arquivo: `css/components/unread-count.css`. O Portal poderá entregar o token `data-portal-ui` (ex.: `forum-topic-unread`) na futura contagem da View ACULTA; não há produtor ativo hoje,
 que `PortalUiHooks` traduz nessa classe. Zero não lidos oculta o contador. A posição fica no gatilho. Contrato completo
 em `docs/portal/CONTADORES.md` (raiz do repositório).

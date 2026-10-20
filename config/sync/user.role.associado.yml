@@ -11,6 +11,5 @@ is_admin: false
 permissions:
   - 'create associado profile'
   - 'update own associado profile'
-  - 'view aculta restricted forum associado'
   - 'view own associado profile'
 

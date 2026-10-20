@@ -46,7 +46,7 @@ atual. Discussões LMS/Wiki não entram em avisos públicos. Ver
 
 ## 5. Limites
 
-- Não há notificação para conteúdo restrito que a conta não pode ver (fóruns restritos, `PAPEIS-PARTICIPACAO.md`).
+- Não há notificação para conteúdo que a conta não pode acessar; discussões do LMS revalidam matrícula e Group access.
 - Não há notificação para conteúdo histórico importado (autorias legadas não são contas).
 - Não há notificação de conquista por este caminho (`aculta_game` tem regras próprias).
 

@@ -161,7 +161,7 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 | --- | --- | --- |
 | Hierarquia: authenticated < email_confirmed < estudante < associado < lms_teacher < gerente_loja < content_editor < administrator | Implementado (papéis e herança) | `docs/portal/PAPEIS-PARTICIPACAO.md` seção 1 |
 | Estudante: inscrito em algum curso, concedido na matrícula; só alunos (professor, criador e administração do LMS não concedem) | Implementado | `Hook\EnrollmentRoleHooks` |
-| Associado: atribuído manualmente pelo administrador; realm pelo papel | Implementado | `user.role.associado`, `RestrictedForumGrants` |
+| Associado: atribuído manualmente pelo administrador; realm pelo papel | Decisão histórica substituída em 2026-10-20: o Forum público não usa realms de visibilidade; marcador de associado permanece apenas para consumidores específicos | `user.role.associado`; a integração antiga com `RestrictedForumGrants` foi removida |
 | Gerente de Loja: produtos `produto_loja`, variações, atributos, categorias, pedidos (visualização) e relatório de vendas; financeiro só administrador | Implementado | `user.role.gerente_loja`, `SalesReportController` |
 | Herança unilateral por role_inheritance: estudante ← email_confirmed; associado ← estudante; lms_teacher ← associado. Exceções: content_editor ← email_confirmed; gerente_loja sem herança de lms_teacher | Implementado no Runtime e exportado | `config/sync/role_inheritance.settings.yml` |
 | role_hierarchy e role_inheritance habilitados, sem alterar acesso de não-administradores | Implementado | `core.extension` |

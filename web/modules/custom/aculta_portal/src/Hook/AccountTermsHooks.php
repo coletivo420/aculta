@@ -80,8 +80,9 @@ final class AccountTermsHooks {
   }
 
   /**
-   * Página restrita a usuário logado: o anônimo não teria acesso, ou a rota é de ação para logados, ou é nó com comentários
-   * (fórum). A página de acesso negado (system.403) também recebe o popup quando o usuário está sem aceite.
+   * Identifies routes that require an authenticated account.
+   *
+   * The 403 page also receives the terms popup when consent is missing.
    */
   private function isRestrictedToLoggedUsers(string $routeName): bool {
     if ($routeName === 'system.403') {
@@ -92,12 +93,6 @@ final class AccountTermsHooks {
     }
     if (in_array($routeName, self::LOGGED_ONLY_ROUTES, TRUE)) {
       return TRUE;
-    }
-    if ($routeName === 'entity.node.canonical') {
-      $node = $this->routeMatch->getParameter('node');
-      if ($node instanceof \Drupal\node\NodeInterface && $node->hasField('comment_forum')) {
-        return TRUE;
-      }
     }
     $request = $this->requestStack->getCurrentRequest();
     if ($request === NULL) {

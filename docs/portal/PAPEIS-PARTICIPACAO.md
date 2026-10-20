@@ -103,18 +103,21 @@ homologação funcional.
   contexto não LMS, mas deixa de bloquear depois de uma participação publicada
   no LMS. O limite mínimo de criação continua contando somente comentários do
   Fórum público.
-- Bundles `forum`/`comment_forum` são estruturas legadas do contrib; o conteúdo
-  do Runtime de teste foi apagado conforme F-D33, não recebe moderação inicial
-  nem novos tópicos, e aguarda a retirada oficial da extensão e consumidores.
+- Os bundles `forum`/`comment_forum` do contrib estão sem conteúdo no Runtime de
+  teste após F-D33 e aguardam uninstall oficial. As políticas de participação
+  atuais só se aplicam a Comments compartilhados em contextos ACULTA.
   O Comment compartilhado está instalado em `article` e
   `blog` no Runtime de teste; formulário foi renderizado em memória para a
   conta de teste, mas HTTP/envio de comentário segue sem homologação.
 
-## 6. Visitante e bots
+## 6. Política histórica de fóruns restritos — decisão substituída
 
-- Quem não tem o nível exigido recebe **404**, inclusive bots. O conteúdo restrito não aparece em listagens, contagens,
-  sitemap nem busca (decisão F-D15).
-- Visitante **não vê o nome** do fórum restrito: o contêiner não aparece no índice do fórum nem tem página.
+As decisões F-D14/F-D15 sobre fóruns públicos com níveis de visibilidade da
+taxonomia `forums` foram aposentadas em 2026-10-20. O Growroom420 é público e
+suas categorias não carregam restrições por papel. Discussões de curso/turma
+usam Group e acesso contextual do LMS; esse acesso segue fechado por padrão e
+não depende de papel global. Código e permissões de realms estão sendo retirados;
+configuração ativa do Runtime ainda depende da fase de import/uninstall.
 
 ## 7. Confirmação manual de e-mail pelo administrador
 
@@ -161,14 +164,12 @@ Hooks são classes com `#[Hook]`, descobertas automaticamente pelo Core; não s�
 |---|---|---|
 | Estudante por matrícula em curso/turma, só alunos | `Hook\EnrollmentRoleHooks` | `group_relationship_insert` (plugin `group_membership`, tipo `lms_course` ou `lms_class`) |
 | Wiki para quem confirmou o e-mail | Papel `email_confirmed` (`wiki_contributor` mesclado; sem hook) | Configuração do papel |
-| Realms de visibilidade dos fóruns (papel, permissão, marcador) | `Forum\RestrictedForumGrants` | `grantsFor()` consumido pelos hooks de acesso de fórum |
-| Acesso e listagens dos fóruns restritos | `Hook\RestrictedForumHooks` | node access e entity access |
-| Associado: concessão e marcador de conta | `Associado\AssociadoMarker`, `Form\AssociadoMarkForm` | fallback do realm de associados |
+| Associado: concessão e marcador de conta | `Associado\AssociadoMarker`, `Form\AssociadoMarkForm` | marcador para recursos que o consumirem; não cria acesso ao Fórum público |
 | Relatório de associados (só administrador) | `Controller\AssociadosController` | `/painel-administrativo/associados/relatorio` |
 | Relatório de vendas (gerente de loja) | `aculta_portal` `Controller\SalesReportController` | `/painel-administrativo/loja/vendas`, permissão `view commerce_order` |
 | Herança de papéis (Fase 2) | configuração `role_inheritance.settings` | mapa em `config/sync/role_inheritance.settings.yml` |
 
-Testes: `aculta_user/tests/src/Unit/EnrollmentRoleHooksTest.php`, `RestrictedForumGrantsTest.php`; `aculta_portal/tests/src/Unit/Controller/SalesReportControllerTest.php`.
+Testes: `aculta_user/tests/src/Unit/EnrollmentRoleHooksTest.php`; `aculta_portal/tests/src/Unit/Controller/SalesReportControllerTest.php`.
 
 ## 8. Painel de papéis (tela única)
 

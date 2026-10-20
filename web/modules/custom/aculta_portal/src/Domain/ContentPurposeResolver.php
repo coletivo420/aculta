@@ -94,8 +94,8 @@ final class ContentPurposeResolver {
         ? $this->entities->getStorage('node')->load((int) $parameter)
         : (is_object($parameter) ? $parameter : NULL);
 
-      // Tópicos legados e o bundle próprio pertencem ao purpose FORUM.
-      if ($node && in_array($node->bundle(), ['forum', 'aculta_forum_topic'], TRUE)) {
+      // Tópicos ACULTA pertencem ao purpose FORUM.
+      if ($node && $node->bundle() === 'aculta_forum_topic') {
         return 'forum';
       }
 

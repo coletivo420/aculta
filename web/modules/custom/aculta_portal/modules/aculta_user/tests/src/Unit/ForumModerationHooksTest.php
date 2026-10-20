@@ -122,34 +122,6 @@ final class ForumModerationHooksTest extends TestCase {
   }
 
   /**
-   * Restored Forum bundles are archive content even without author markers.
-   */
-  public function testRestoredGrowroomBundlesAreFrozenWithoutAuthorMarker(): void {
-    $hook = $this->hook(FALSE);
-    $administrator = $this->account(1, ['administrator'], TRUE);
-
-    $forumTopic = $this->createMock(NodeInterface::class);
-    $forumTopic->method('bundle')->willReturn('forum');
-    $forumTopic->method('getCacheTags')->willReturn(['node:21']);
-    $forumTopic->method('getCacheContexts')->willReturn([]);
-    $forumTopic->method('getCacheMaxAge')->willReturn(-1);
-    $topicAccess = $hook->entityAccess($forumTopic, 'update', $administrator);
-    self::assertInstanceOf(AccessResult::class, $topicAccess);
-    self::assertTrue($topicAccess->isForbidden());
-
-    $forumComment = $this->createMock(CommentInterface::class);
-    $forumComment->method('bundle')->willReturn('comment_forum');
-    $forumComment->method('getCacheTags')->willReturn(['comment:31']);
-    $forumComment->method('getCacheContexts')->willReturn([]);
-    $forumComment->method('getCacheMaxAge')->willReturn(-1);
-    foreach (['update', 'delete', 'approve', 'create'] as $operation) {
-      $commentAccess = $hook->entityAccess($forumComment, $operation, $administrator);
-      self::assertInstanceOf(AccessResult::class, $commentAccess);
-      self::assertTrue($commentAccess->isForbidden());
-    }
-  }
-
-  /**
    * Imported historic topics have their discussion closed on every save.
    */
   public function testHistoricTopicPresaveClosesItsDiscussion(): void {
@@ -166,27 +138,7 @@ final class ForumModerationHooksTest extends TestCase {
   }
 
   /**
-   * Restored Forum nodes cannot be reopened through a save operation.
-   */
-  public function testRestoredForumPresaveClosesTheContributedCommentField(): void {
-    $hook = $this->hook(FALSE);
-    $field = $this->createMock(FieldItemListInterface::class);
-    $field->method('getValue')->willReturn([
-      ['status' => 2, 'cid' => 0, 'comment_count' => 3],
-    ]);
-    $field->expects(self::once())->method('setValue')->with([
-      ['status' => 1, 'cid' => 0, 'comment_count' => 3],
-    ]);
-
-    $topic = $this->createMock(NodeInterface::class);
-    $topic->method('bundle')->willReturn('forum');
-    $topic->method('hasField')->with('comment_forum')->willReturn(TRUE);
-    $topic->method('get')->with('comment_forum')->willReturn($field);
-    $hook->closeGrowroomHistoricDiscussion($topic);
-  }
-
-  /**
-   * Core bulk moderation hides Forum rows and rejects tampered submissions.
+   * Core bulk moderation hides imported Growroom rows and rejects tampering.
    */
   public function testCommentAdminOverviewCannotModerateHistoricComments(): void {
     $comment = $this->historicComment();

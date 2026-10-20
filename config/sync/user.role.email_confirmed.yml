@@ -46,7 +46,6 @@ permissions:
   - 'use wiki_editorial transition create_new_draft'
   - 'use wiki_editorial transition draft_to_review'
   - 'use wiki_editorial transition review_to_draft'
-  - 'view aculta restricted forum email confirmed'
   - 'view latest version'
   - 'view own email_confirmed profile'
   - 'view own unpublished content'
