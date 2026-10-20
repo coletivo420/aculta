@@ -23,6 +23,15 @@ o acesso contextual no Runtime, UI, Views, Search API e filas não estão
 homologados. Reconciliar a configuração após revisar o diff de importação e
 validar autorização; não copiar o estado Runtime para produção.
 
+Em 2026-10-20, `drush config:import --diff` mostrou um diff completo com
+remoções e mudanças alheias ao Fórum (entre elas configurações de blocos,
+Commerce, perfis, hierarquia de papéis e recursos LMS). O comando terminou com
+exit 1 sem aplicar a importação; `drush pml` confirmou que adapter e `gnode`
+continuavam habilitados. A importação global não é um procedimento de
+reconciliação seguro para este Runtime. Antes de alinhar CMI, separar e revisar
+um conjunto parcial com dependências explícitas, sem apagar configuração ou
+conteúdo de outros sistemas.
+
 Historicamente, a dev.94 adicionou install config do bundle `aculta_lms_topic`, Comment
 compartilhado e relações `group_node:aculta_lms_topic` para curso/turma. A
 dev.97 acrescenta em Config Sync a herança `grade students` do curso para a
