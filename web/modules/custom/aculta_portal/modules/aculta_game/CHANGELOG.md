@@ -1,5 +1,11 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.13 — avisos de conquista pelo aculta_mailer — 2026-10-20
+
+- `AchievementEmailWorker` envia pela API `AcultaMailerInterface` (tipo `achievement_earned`), sem `plugin.manager.mail`.
+- Texto do aviso em `AchievementEarnedMailType` (tag `aculta_mailer.type`); `AchievementMailHooks` saiu para não duplicar o corpo.
+- Dependência `aculta_portal:aculta_mailer`. Testes unitários do texto.
+
 ## 0.1.0-dev.12 — fixar concessão após aprovação de comentário — 2026-10-19
 
 - `ForumParticipationPolicyTest` comprova que um comentário pendente não é

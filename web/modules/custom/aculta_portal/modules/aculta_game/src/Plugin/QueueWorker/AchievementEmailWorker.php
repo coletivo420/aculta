@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_game\Plugin\QueueWorker;
 
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Lock\LockBackendInterface;
-use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
@@ -30,7 +32,8 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
     mixed $plugin_definition,
     private readonly EntityTypeManagerInterface $entities,
     private readonly UserDataInterface $userData,
-    private readonly MailManagerInterface $mailManager,
+    private readonly AcultaMailerInterface $mailer,
+    private readonly UuidInterface $uuid,
     private readonly DomainPurposeManager $domainPurpose,
     private readonly LockBackendInterface $lock,
     private readonly BadgeService $badges,
@@ -42,7 +45,8 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('user.data'),
-      $container->get('plugin.manager.mail'),
+      $container->get('aculta_mailer.mailer'),
+      $container->get('uuid'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('lock.persistent'),
       $container->get('aculta_user.badge_service'),
@@ -80,8 +84,14 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
       if ($url === NULL) {
         throw new \RuntimeException('O endereço do ambiente para a conta não está disponível.');
       }
-      $result = $this->mailManager->mail('aculta_game', 'achievement_earned', (string) $account->getEmail(), $account->getPreferredLangcode(), ['label' => $definition['label'], 'url' => $url->toString()]);
-      if (empty($result['result'])) {
+      $message = new MailMessage(
+        'achievement_earned',
+        (string) $account->getEmail(),
+        $account->getPreferredLangcode() ?: 'und',
+        ['label' => $definition['label'], 'url' => $url->toString()],
+        $this->uuid->generate(),
+      );
+      if (!$this->mailer->send($message)) {
         throw new \RuntimeException('O sistema de e-mail não confirmou o envio do aviso de conquista.');
       }
       $sent[] = $awardId;

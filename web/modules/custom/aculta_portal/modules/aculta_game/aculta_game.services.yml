@@ -12,3 +12,9 @@ services:
     arguments: ['@entity_type.manager', '@aculta_user.badge_service', '@user.data', '@cache_tags.invalidator', '@extension.list.module']
     tags:
       - { name: aculta_portal.helper }
+
+  aculta_game.achievement_earned_mail_type:
+    class: Drupal\aculta_game\Mail\AchievementEarnedMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
