@@ -1,0 +1,7 @@
+aculta_forum.settings:
+  type: config_object
+  label: 'ACULTA Forum settings'
+  mapping:
+    comment_move_enabled:
+      type: boolean
+      label: 'Enable moving public Forum comments between topics'

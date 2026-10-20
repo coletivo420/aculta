@@ -1,0 +1,319 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_forum\Kernel;
+
+use Drupal\aculta_forum\Service\ForumCommentMover;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\comment\CommentInterface;
+use Drupal\comment\CommentingStatus;
+use Drupal\comment\Entity\Comment;
+use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\Entity\Domain;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/**
+ * Tests the integrity and access boundaries of public Forum comment moves.
+ */
+#[Group('aculta_forum')]
+#[RunTestsInSeparateProcesses]
+final class ForumCommentMoverKernelTest extends KernelTestBase {
+
+  use CommentTestTrait;
+
+  /**
+   * Modules required by the Kernel test fixture.
+   *
+   * @var string[]
+   */
+  protected static $modules = [
+    'system',
+    'user',
+    'field',
+    'filter',
+    'text',
+    'node',
+    'comment',
+    'domain',
+    'path',
+    'path_alias',
+    'options',
+    'aculta_forum_comment_move_test',
+  ];
+
+  /**
+   * The service under test.
+   *
+   * @var \Drupal\aculta_forum\Service\ForumCommentMover
+   */
+  private ForumCommentMover $mover;
+
+  /**
+   * The account used for authorized move scenarios.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  private AccountInterface $account;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('comment');
+    $this->installEntitySchema('path_alias');
+    $this->installSchema('node', ['node_access']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installConfig(['system', 'filter', 'node', 'comment', 'domain', 'path', 'path_alias']);
+    $this->config('aculta_forum.settings')->set('comment_move_enabled', TRUE)->save();
+    $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
+
+    Domain::create([
+      'id' => 'forum_aculta_org',
+      'hostname' => 'forum.example.test',
+      'name' => 'Forum test domain',
+      'scheme' => 'https',
+      'status' => TRUE,
+      'is_default' => FALSE,
+    ])->save();
+    NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic'])->save();
+    $this->addField('entity_reference', 'field_domain_source', ['target_type' => 'domain']);
+    $this->addField('string', 'field_autor_legado', []);
+    $this->addDefaultCommentField(
+      'node',
+      'aculta_forum_topic',
+      ForumCommentMover::FIELD_NAME,
+      CommentingStatus::Open,
+      ForumCommentMover::COMMENT_TYPE,
+    );
+
+    $this->account = $this->createMock(AccountInterface::class);
+    $this->account->method('hasPermission')->willReturnCallback(
+      static fn (string $permission): bool => in_array($permission, [
+        'access content',
+        'access comments',
+        'administer comments',
+        'move aculta forum comments',
+      ], TRUE),
+    );
+    $this->account->method('id')->willReturn(42);
+    $this->account->method('isAnonymous')->willReturn(FALSE);
+    $this->account->method('isAuthenticated')->willReturn(TRUE);
+
+    $manager = $this->container->get('entity_type.manager');
+    $purpose = new DomainPurposeManager(
+      $manager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    $this->mover = new ForumCommentMover(
+      $manager,
+      $this->container->get('config.factory'),
+      $purpose,
+      $this->container->get('lock'),
+      $this->container->get('database'),
+      $this->container->get('comment.statistics'),
+      $this->container->get('cache_tags.invalidator'),
+      $this->createMock(LoggerInterface::class),
+    );
+  }
+
+  /**
+   * Moving a deep subtree keeps identity, state and statistics consistent. */
+  public function testMovePreservesDeepTreeAndRecalculatesBothHosts(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $root = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $child = $this->comment($source, $root, CommentInterface::PUBLISHED);
+    $grandchild = $this->comment($source, $child, CommentInterface::PUBLISHED);
+    $source_keeper = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $destination_existing = $this->comment($destination, NULL, CommentInterface::PUBLISHED);
+    $identities = [];
+    foreach ([$root, $child, $grandchild] as $comment) {
+      $identities[(int) $comment->id()] = [
+        'uuid' => $comment->uuid(),
+        'created' => $comment->getCreatedTime(),
+        'changed' => $comment->getChangedTime(),
+        'subject' => $comment->getSubject(),
+        'body' => $comment->get('comment_body')->value,
+      ];
+    }
+
+    self::assertSame(3, $this->mover->subtreeCount($root));
+    self::assertSame(4, $this->commentCount($source));
+    self::assertSame(1, $this->commentCount($destination));
+    self::assertSame(3, $this->mover->move((int) $root->id(), (int) $destination->id(), $this->account));
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('comment');
+    $moved_root = $storage->load($root->id());
+    $moved_child = $storage->load($child->id());
+    $moved_grandchild = $storage->load($grandchild->id());
+    self::assertSame((int) $destination->id(), (int) $moved_root->getCommentedEntityId());
+    self::assertNull($moved_root->getParentComment());
+    self::assertSame('02/', $moved_root->getThread());
+    self::assertSame('02.00/', $moved_child->getThread());
+    self::assertSame('02.00.00/', $moved_grandchild->getThread());
+    self::assertSame((int) $moved_root->id(), (int) $moved_child->getParentComment()->id());
+    self::assertSame((int) $moved_child->id(), (int) $moved_grandchild->getParentComment()->id());
+
+    foreach ([$moved_root, $moved_child, $moved_grandchild] as $moved) {
+      self::assertSame($identities[(int) $moved->id()]['uuid'], $moved->uuid());
+      self::assertSame((string) $identities[(int) $moved->id()]['created'], (string) $moved->getCreatedTime());
+      self::assertSame((string) $identities[(int) $moved->id()]['changed'], (string) $moved->getChangedTime());
+      self::assertSame($identities[(int) $moved->id()]['subject'], $moved->getSubject());
+      self::assertSame($identities[(int) $moved->id()]['body'], $moved->get('comment_body')->value);
+      self::assertSame(CommentInterface::PUBLISHED, (int) $moved->get('status')->value);
+    }
+    self::assertSame((int) $source_keeper->id(), (int) Comment::load($source_keeper->id())->id());
+    self::assertSame((int) $destination_existing->id(), (int) Comment::load($destination_existing->id())->id());
+    self::assertSame(1, $this->commentCount($source));
+    self::assertSame(4, $this->commentCount($destination));
+  }
+
+  /**
+   * Pending comments stay pending and cannot escape the public Forum. */
+  public function testMovePreservesPendingStateAndRejectsHistoricalTopics(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $pending = $this->comment($source, NULL, CommentInterface::NOT_PUBLISHED);
+    $child = $this->comment($source, $pending, CommentInterface::NOT_PUBLISHED);
+
+    $this->mover->move((int) $pending->id(), (int) $destination->id(), $this->account);
+    self::assertSame(CommentInterface::NOT_PUBLISHED, (int) Comment::load($pending->id())->get('status')->value);
+    self::assertSame(CommentInterface::NOT_PUBLISHED, (int) Comment::load($child->id())->get('status')->value);
+    self::assertSame(0, $this->commentCount($source));
+    self::assertSame(0, $this->commentCount($destination));
+
+    $historical = $this->topic('Historical', 'legacy-author-ref');
+    $historical_comment = $this->comment($historical, NULL, CommentInterface::PUBLISHED);
+    self::assertTrue($this->mover->access($historical_comment, $this->account)->isForbidden());
+    $this->expectException(\InvalidArgumentException::class);
+    $this->mover->move((int) $historical_comment->id(), (int) $destination->id(), $this->account);
+  }
+
+  /**
+   * The operation stays unavailable while its runtime setting is disabled.
+   */
+  public function testMoveIsUnavailableWhenFeatureFlagIsDisabled(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $this->config('aculta_forum.settings')->set('comment_move_enabled', FALSE)->save();
+
+    self::assertTrue($this->mover->access($comment, $this->account)->isForbidden());
+    $this->expectException(\InvalidArgumentException::class);
+    $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+  }
+
+  /**
+   * A save failure after the root write rolls the entire operation back. */
+  public function testPartialSaveFailureRollsBackTheWholeSubtree(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $root = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $child = $this->comment($source, $root, CommentInterface::PUBLISHED);
+    $this->container->get('state')->set('aculta_forum_comment_move_test.fail_cid', (int) $child->id());
+    $this->container->get('state')->set('aculta_forum_comment_move_test.destination', (int) $destination->id());
+
+    try {
+      $this->mover->move((int) $root->id(), (int) $destination->id(), $this->account);
+      self::fail('The fixture hook should throw after the root Comment was saved.');
+    }
+    catch (\Throwable $exception) {
+      self::assertStringContainsString('Injected Forum comment move failure.', $exception->getMessage());
+    }
+    finally {
+      $this->container->get('state')->delete('aculta_forum_comment_move_test.fail_cid');
+      $this->container->get('state')->delete('aculta_forum_comment_move_test.destination');
+    }
+
+    self::assertSame((int) $source->id(), (int) Comment::load($root->id())->getCommentedEntityId());
+    self::assertSame((int) $source->id(), (int) Comment::load($child->id())->getCommentedEntityId());
+    self::assertSame('01/', Comment::load($root->id())->getThread());
+    self::assertSame('01.00/', Comment::load($child->id())->getThread());
+    self::assertSame(2, $this->commentCount($source));
+    self::assertSame(0, $this->commentCount($destination));
+  }
+
+  /**
+   * Creates a public Forum topic for a test scenario.
+   */
+  private function topic(string $title, string $legacyAuthor = ''): Node {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => $title,
+      'status' => 1,
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+      'field_autor_legado' => $legacyAuthor === '' ? [] : ['value' => $legacyAuthor],
+      ForumCommentMover::FIELD_NAME => ['status' => CommentingStatus::Open->value],
+    ]);
+    $topic->save();
+    return $topic;
+  }
+
+  /**
+   * Creates a Comment attached to the host and optional parent.
+   */
+  private function comment(Node $host, ?CommentInterface $parent, int $status): Comment {
+    $comment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => (int) $host->id(),
+      'field_name' => ForumCommentMover::FIELD_NAME,
+      'comment_type' => ForumCommentMover::COMMENT_TYPE,
+      'pid' => $parent?->id(),
+      'uid' => 42,
+      'subject' => 'Reply subject',
+      'comment_body' => ['value' => 'Reply body', 'format' => 'plain_text'],
+      'status' => $status,
+    ]);
+    $comment->save();
+    return $comment;
+  }
+
+  /**
+   * Reads Core's published-comment aggregate for a host.
+   */
+  private function commentCount(Node $host): int {
+    $records = $this->container->get('comment.statistics')->read([(int) $host->id() => $host], 'node');
+    foreach ($records as $record) {
+      if ($record->field_name === ForumCommentMover::FIELD_NAME) {
+        return (int) $record->comment_count;
+      }
+    }
+    return 0;
+  }
+
+  /**
+   * Adds a field storage and its bundle field configuration.
+   */
+  private function addField(string $type, string $name, array $settings): void {
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => $name,
+      'type' => $type,
+      'settings' => $settings,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+      'field_name' => $name,
+      'label' => $name,
+    ])->save();
+  }
+
+}

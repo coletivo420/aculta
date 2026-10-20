@@ -1,3 +1,6 @@
 move aculta forum topics:
   title: 'Mover tópicos públicos do fórum entre categorias'
   description: 'Permite reorganizar tópicos do Growroom420 sem editar seu conteúdo.'
+move aculta forum comments:
+  title: 'Mover comentários entre tópicos públicos do fórum'
+  description: 'Permite mover uma resposta e toda a sua subárvore entre tópicos públicos compatíveis.'

@@ -11,6 +11,7 @@ dependencies:
     - node.type.wiki_entry
     - workflows.workflow.wiki_editorial
   module:
+    - aculta_forum
     - comment
     - contextual
     - content_lock
@@ -31,6 +32,7 @@ is_admin: false
 permissions:
   - 'moderar denuncias do forum'
   - 'move aculta forum topics'
+  - 'move aculta forum comments'
   - 'access administration pages'
   - 'access content overview'
   - 'access content'

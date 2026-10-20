@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+use Drupal\comment\CommentInterface;
+
+/**
+ * Implements hook_comment_presave().
+ *
+ * This procedural hook exists only in a test fixture to force transaction
+ * rollback after a previous Comment in the subtree has already been saved.
+ */
+function aculta_forum_comment_move_test_comment_presave(CommentInterface $comment): void {
+  $fail_cid = \Drupal::state()->get('aculta_forum_comment_move_test.fail_cid');
+  $destination = \Drupal::state()->get('aculta_forum_comment_move_test.destination');
+  if ($fail_cid && (int) $comment->id() === (int) $fail_cid
+    && (int) $comment->getCommentedEntityId() === (int) $destination) {
+    throw new RuntimeException('Injected Forum comment move failure.');
+  }
+}

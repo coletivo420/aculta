@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.33` | Mover comentário e subárvore entre tópicos do Fórum | Serviço/Form/ação administrativa, permission específica, lock interoperável com Comment Core, atualização de thread e estatísticas, transação/rollback. Kernel MariaDB 4/92 PASS. Configuração `comment_move_enabled` permanece false; Runtime fica desabilitado até completar concorrência, Search API, History, anexos/flags, permalink e teste Functional/browser. |
 | `0.1.0-dev.32` | Contagem, atividade e identidade pública do último comentarista na View de tópicos | Campo Core `last_comment_uid` oculto; hook injeta cartão `author_forum` pelo `aculta_user`, sem usar nome de login. Teste de equivalência entre install/sync adicionado; execução e Runtime/browser pendentes. Contagem publicada tem Kernel PASS; ordenação positiva e invalidação após moderação seguem pendentes |
 | Não marcada | Contagem e atividade na View de tópicos | Kernel MariaDB confirma `comment_count = 1` com resposta publicada, exclui pendente e preserva o agregado após mover categoria; Runtime tem 0 respostas, então ordenação positiva, invalidação após moderação e inspeção visual seguem pendentes |
 | Não marcada | Contagem de respostas em tópicos próprios | Implementada na aba privada Fórum de Minha Conta: cada tópico da pessoa usa `comment_count` de Comment Core; validação direcionada pendente nesta subfase |
@@ -40,7 +41,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | Não marcada | Lista personalizada de discussões não lidas | View `/discussoes/nao-lidas` usa History contrib com acesso `authenticated`, filtros públicos fixos e sem cache compartilhado; campo `node_new_comments` mostra contagem positiva e liga à primeira resposta nova. Runtime query como uid 5 retornou 7 resultados e anônimo recebeu 403; HTTP autenticado/browser pendente |
 | Não marcada | Marcar todas as discussões públicas acessíveis como lidas | Ação confirmada `/discussoes/marcar-tudo-como-lido`, em Core Batch de 200 itens e History por usuário; Unit/Kernel e isolamento de domínio aprovados. Runtime smoke confirmou rota/form/access sem gravar histórico; teste funcional com usuário de QA efêmero e Browser continuam pendentes. |
 | Não marcada | Descoberta: novas, sem resposta e mais comentadas | Displays de Views e abas implementados; Runtime das três rotas HTTP 200, 8 tópicos cada e 8 sem resposta; Kernel comprova contagem de resposta publicada e exclusão de pendente; ordenação positiva da View no Runtime pendente |
-| Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit e Kernel PASS; Functional/Runtime pendentes. Movimento de comentários continua bloqueado pela prova de integridade em `MOVE-TOOLS.md`. |
+| Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit e Kernel PASS; Functional/Runtime pendentes. Movimento de comentários implementado no código em dev.33, com portas de validação descritas em `MOVE-TOOLS.md`. |
 | `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas, navegação HTTP e relação pai/filho; inspeção visual pendente |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
 | `0.1.0-dev.26` | Fórum como aba em Conteúdo; “Comentários e moderação” como subaba; discussões contextuais fora das filas genéricas | Runtime de teste: abas carregadas e filtro exercitado; HTTP autenticado pendente |
@@ -354,10 +355,11 @@ Revista, Wiki e LMS. Tipos de denúncia e opções administrativas devem ser
 configuráveis, mas limites, prevenção a abuso e revisão humana precisam de
 decisão ACULTA antes de automação por contagem de flags.
 
-Planejar a ferramenta “Mover comentário” para comentários publicados ou
-moderados dentro do mesmo tópico/contexto público Growroom: mover uma resposta
-e sua subárvore para tópico existente, além de dividir uma discussão quando o
-destino for um tópico novo. Merge de tópicos só poderá ser avaliado como fluxo
+“Mover comentário” tem uma primeira implementação em dev.33 para mover uma
+resposta e sua subárvore dentro do Growroom, preservando estado de moderação;
+ela não vai ao Runtime até completar as provas de Search API, History, anexos,
+permalink, concorrência e browser. Dividir uma discussão quando o destino for
+um tópico novo continua planejado. Merge de tópicos só poderá ser avaliado como fluxo
 composto, após demonstrar plano de recuperação/rollback, com confirmação de
 todos os comentários afetados e tratamento explícito do tópico de origem. Não
 mover comentários entre Fórum, Revista, LMS e Wiki; não alterar estados de

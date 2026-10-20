@@ -33,3 +33,15 @@ aculta_forum.topic_move:
     parameters:
       node:
         type: 'entity:node'
+
+aculta_forum.comment_move:
+  path: '/painel-administrativo/conteudo/forum/comentario/{comment}/mover'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumCommentMoveForm'
+    _title: 'Mover comentário do fórum'
+  requirements:
+    _permission: 'move aculta forum comments'
+  options:
+    parameters:
+      comment:
+        type: 'entity:comment'

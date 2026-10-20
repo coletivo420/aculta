@@ -1,8 +1,9 @@
 # Planejamento das ferramentas de movimento
 
 Estado: **movimento individual de tópico implementado no código, ainda sem
-homologação de Runtime; movimento de comentários permanece planejado e bloqueado
-até prova técnica**. Este contrato detalha os itens de organização e moderação do
+homologação autenticada no Runtime; movimento de comentário/subárvore tem
+protótipo funcional e Kernel MariaDB aprovado, mas permanece fora do Runtime até
+completar as provas de integração listadas abaixo**. Este contrato detalha os itens de organização e moderação do
 [`ROADMAP.md`](ROADMAP.md), incorporando padrões observados no Discourse sem
 importar seus papéis, storage ou regras de acesso.
 
@@ -68,15 +69,19 @@ não concede edição geral do bundle.
 
 ### C. Mover comentário/resposta
 
-Primeira versão planejada: mover um Comment e sua subárvore de respostas para
-outro tópico `aculta_forum_topic`, somente dentro do Fórum público e do mesmo
-purpose. Não transferir para entidades Revista, LMS ou Wiki, nem entre tópicos
+Versão inicial implementada no código: mover um Comment e sua subárvore de
+respostas para outro tópico `aculta_forum_topic`, somente dentro do Fórum público
+e do mesmo purpose. Não transferir para entidades Revista, LMS ou Wiki, nem entre tópicos
 com políticas distintas de acesso/moderação. O destino precisa ter o campo de
 discussão habilitado e aberto, e acesso de leitura/escrita/moderação compatível.
 
-Preservar CID/UUID, autor, conteúdo, timestamps, estado publicado/rejeitado/
-pendente, idioma, referência de autoria histórica quando aplicável, anexos e
-file usage, flags e permalink quando tecnicamente possível. A operação nunca
+O Kernel comprova CID/UUID, autor, conteúdo, timestamps e estado publicado ou
+pendente; o teste histórico confirma que `field_autor_legado` impede a operação.
+O ID permanece igual, portanto referências de entidade e file usage não são
+recriadas. Anexos reais, flags, idiomas adicionais e histórico de leitura ainda
+precisam de teste integrado. O permalink calculado muda com o Node hospedeiro;
+links antigos para âncora do tópico de origem não são redirecionados nesta versão.
+A operação nunca
 aprova, rejeita, reabre ou publica um comentário como efeito colateral. Se
 estados de origem e destino não forem compatíveis, negar e explicar sem alterar
 dados.
@@ -86,9 +91,12 @@ atômica; se a API/armazenamento não puder garantir isso, bloquear movimento do
 pai com respostas. Não permitir órfãos. A interface deve resumir comentário,
 destino e quantidade de respostas afetadas e oferecer confirmação explícita.
 
-O fluxo deve atualizar corretamente thread/parent/permalink, estatísticas dos
-dois Nodes, cache tags, History/estado de leitura, Search API, flags,
-notificações e filas. Falha em qualquer etapa deve preservar a árvore original;
+O fluxo atualizado reatribui thread/parent, recalcula estatísticas dos dois
+Nodes, invalida cache tags dos hosts e usa transação para a árvore. Kernel cobre
+árvore de três níveis, estados de moderação, contadores e rollback. Ainda falta
+provar explicitamente atualização de History/estado de leitura, Search API,
+flags, file usage, idiomas, notificações e efeitos de hook na transação. Falha
+em qualquer etapa deve preservar a árvore original;
 notificações só saem após sucesso e revalidação de acesso. Aviso neutro de
 movimentação pode ser avaliado para origem e destino, mas não deve ser um
 Comment de usuário fabricado nem alterar o histórico autoral.
@@ -137,10 +145,10 @@ API upstream 11.x expõem getters do entity host, `setFieldName()` e
 `setThread()`, mas não um setter público para reatribuir o host nem uma operação
 de rethread em entidade salva. O `Comment::preSave()` do Core calcula thread e
 obtém lock somente quando o Comment é novo; um update não refaz essa árvore.
-Portanto, mudar campos Entity API não demonstra correção de `pid`/`thread`,
-estatísticas dos dois tópicos, URL/permalink, file usage ou indexação. Mover
-comentários continua bloqueado até uma estratégia transacional auditada provar
-esses efeitos e a preservação CID/UUID. Fontes: [CommentInterface 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentInterface.php/11.x),
+Portanto, mudar campos Entity API isoladamente não demonstra correção de
+`pid`/`thread`, estatísticas dos dois tópicos, URL/permalink, file usage ou
+indexação. Essa constatação bloqueou a ação até a estratégia transacional e o
+teste Kernel registrados na seção de decisão seguinte. Fontes: [CommentInterface 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentInterface.php/11.x),
 [Comment 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21Entity%21Comment.php/class/Comment/11.x),
 [CommentStorage 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStorage.php/class/CommentStorage/11.x).
 
@@ -198,12 +206,38 @@ de uma estratégia, não uma operação segura de movimento. Fontes: [Comment::p
 [CommentStatisticsInterface::update 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStatisticsInterface.php/function/CommentStatisticsInterface%3A%3Aupdate/11.x),
 [CommentStatisticsInterface 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStatisticsInterface.php/interface/CommentStatisticsInterface/11.x).
 
-**Decisão desta auditoria:** manter “Mover comentário” fora do Runtime. Não
-adotar setter genérico de campo como substituto de rehost, nem criar/atualizar
-estatísticas por SQL. Reabrir o bloqueio somente com protótipo isolado e testes
-Kernel MariaDB para árvore/subárvore, concorrência de criação, estatísticas
-multicampo, cache dos dois hosts, permalink/âncora antiga, indexação e
-notificações. Não há alteração funcional nem de dados nesta auditoria.
+**Decisão desta auditoria:** o protótipo usa Entity API e o mesmo lock de thread
+do Comment Core; uma segunda consulta `getMaxThread()` sob lock evita colisão
+quando uma criação concorrente termina entre a consulta inicial e a aquisição.
+A transação reverte a árvore inteira se um save falhar. Kernel MariaDB valida
+árvore com três níveis, estado pendente, estatísticas dos dois hosts e rollback.
+O botão segue fora do Runtime até completar testes de concorrência, campos
+multicampo, History, permalink/âncora, busca, notificações, file usage, flags e
+teste Functional/browser. Não houve alteração de Runtime ou conteúdo.
+
+O gate operacional também é explícito: `aculta_forum.settings` define
+`comment_move_enabled: false` no install e Config Sync. `ForumCommentMover`
+nega acesso e submissão quando a opção está desligada. A opção não tem formulário
+administrativo nesta fase; não alterá-la manualmente no Runtime. A habilitação
+depende de fechar os casos de concorrência e integração da matriz de testes.
+
+### Outras referências contrib pesquisadas
+
+- [`views_bulk_operations`](https://www.drupal.org/project/views_bulk_operations)
+  oferece lote com Batch API, confirmação, seleção entre páginas e Actions API;
+  upstream lista release estável 4.4.9 para Drupal 10.3/11 (consulta em
+  2026-10-19). Não está instalado no ACULTA. É opção futura para lotes em Views,
+  mas não substitui a operação transacional por Comment nem deve expor Actions,
+  filtros ou campos sem permissões e escopo fixos.
+- `comment_mover` segue sem release estável Drupal 11; sua alpha de Drupal 9/10
+  serviu como contraste de comportamento, não como código incorporado.
+- Contrib instalados consultados (`flag`, CTools/`ctools_views`, History, Search
+  API e Group) continuam donos de suas funções. O ACULTA reutiliza APIs e
+  configuração e adapta os contratos de domínio/contexto/access/cache, sem
+  copiar storage nem código destes módulos.
+
+Não foi copiado código-fonte contrib nesta subfase. Onde uma adaptação literal
+for justificada, o commit deve preservar licença, copyright e proveniência.
 
 Auditar autor, origem, destino, IDs afetados, horário e resultado usando
 infraestrutura de log/auditoria existente; nunca registrar corpo de comentário,
@@ -228,7 +262,7 @@ resultado devem indicar sucesso/falha sem revelar destino inacessível.
 - Functional/browser: teclado, confirmação legível, retorno contextual,
   mensagens acessíveis e ausência de vazamento de título/conteúdo do destino.
 
-As ferramentas entram em dev.9 (categorias e mover tópicos) e dev.12 (mover
-comentários; split/merge somente após decisão de produto e prova técnica). Até
-testes e documentação de operação/rollback estarem completos, os controles não
-devem aparecer no Runtime.
+A ferramenta individual de mover comentários chegou ao código em dev.33;
+operações em lote, split e merge continuam em dev.12/etapas posteriores. Até
+testes funcionais, integração e documentação de operação/rollback estarem
+completos, os controles não devem aparecer no Runtime.

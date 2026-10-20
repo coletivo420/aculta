@@ -2,6 +2,9 @@ services:
   aculta_forum.topic_mover:
     class: Drupal\aculta_forum\Service\ForumTopicMover
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@logger.channel.aculta_forum']
+  aculta_forum.comment_mover:
+    class: Drupal\aculta_forum\Service\ForumCommentMover
+    arguments: ['@entity_type.manager', '@config.factory', '@aculta_portal.domain_purpose', '@lock', '@database', '@comment.statistics', '@cache_tags.invalidator', '@logger.channel.aculta_forum']
   logger.channel.aculta_forum:
     parent: logger.channel_base
     arguments: ['aculta_forum']

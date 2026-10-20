@@ -1,3 +1,24 @@
+## 0.1.0-dev.33 — mover comentário com subárvore — 2026-10-19
+
+- Implementados serviço transacional, formulário de confirmação, rota e
+  operação contextual para mover um comentário público e suas respostas
+  descendentes entre tópicos abertos do Growroom. Revalida permissão, acesso,
+  Domain e imutabilidade do acervo histórico na submissão.
+- Preserva Comment IDs, UUIDs, autor, texto, datas e estado de moderação; atualiza
+  parent/thread, recalcula estatísticas dos dois Nodes e invalida caches. Lock
+  segue o padrão de chave Comment Core e relê o máximo da thread sob lock.
+- Kernel MariaDB dedicado: 4 testes/92 assertions PASS (árvore em três níveis,
+  estado pendente, legado bloqueado, estatísticas e rollback). 5 depreciações do
+  Domain contrib. Runtime: nenhuma alteração; o controle não deve ser habilitado
+  antes das integrações e testes restantes. A configuração
+  `aculta_forum.settings:comment_move_enabled` fica `false` por padrão, inclusive
+  no Config Sync. RUNTIME STATUS: DEFERRED.
+- Forum Unit: 50 testes/357 assertions PASS; PHPCS nos arquivos novos e gates
+  Drupal 11+ (970), fronteira (1381), mapa (154), slugs (387) e hierarquia de
+  papéis PASS. PHP CLI 8.4.26 (abaixo da baseline 8.5).
+- Pesquisa contrib: referência `comment_mover` alpha não foi portada; VBO é
+  candidato para ações em lote, não dependência desta versão.
+
 ## Pesquisa adicional de módulos contrib — 2026-10-19 (documentação)
 
 - `PESQUISA.md` registra APIs e decisões para os contrib instalados Flag,
@@ -8,9 +29,10 @@
   thread recém-calculada ao mover descendentes profundos e não valida o contrato
   de acesso/estatísticas da ACULTA. Reutilizar só requisitos de
   seleção/subárvore/split; código e dependência não foram incorporados.
-- `MOVE-TOOLS.md` registra origem, compatibilidade, limitações e a manutenção do
-  bloqueio até prova de integridade no Comment Core instalado. Sem alteração
-  funcional, dependência, Runtime ou versão.
+- `MOVE-TOOLS.md` registra origem, compatibilidade e limites. O bloqueio inicial
+  foi substituído pelo protótipo independente em dev.33; validações de integrações
+  ainda mantêm a ação fora do Runtime. Sem código contrib copiado ou dependência
+  nova.
 
 ## 0.1.0-dev.32 — autoria da última atividade pública — 2026-10-19
 
@@ -22,11 +44,10 @@
   forma pontual após backup; View com 8 linhas e HTTP 200. `basic_html` ausente
   nas fixtures causou avisos na renderização; browser e resposta real pendentes.
   RUNTIME STATUS: PARTIAL.
-- Auditoria documental do Core 11.4.10 confirmou que a gravação de Comment
-  recalcula somente estatísticas do host atual, invalida só seu cache e calcula
-  thread/lock automaticamente apenas em Comment novo. Movimento continua
-  bloqueado até prova Kernel de rethread, recomposição multicampo, concorrência,
-  cache e permalinks; nenhum SQL direto ou alteração de Runtime.
+- Auditoria do Core 11.4.10 confirmou que a gravação de Comment recalcula
+  somente estatísticas do host atual, invalida só seu cache e calcula thread/lock
+  automaticamente apenas em Comment novo. Essa análise guiou o protótipo
+  transacional de dev.33. Nenhum SQL direto foi adotado.
 
 ## 0.1.0-dev.31 — seguir e salvar tópicos ACULTA — 2026-10-19
 
