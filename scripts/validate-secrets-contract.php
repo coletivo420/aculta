@@ -40,6 +40,7 @@ $file_secrets = [
   'smtp2go_password' => 'SMTP2GO_PASSWORD',
   'brevo_api_key' => 'BREVO_API_KEY',
   'brevo_webhook_token' => 'BREVO_WEBHOOK_TOKEN',
+  'mailer_payload_key' => 'MAILER_PAYLOAD_KEY',
   'imap_password' => 'IMAP_PASSWORD',
   'smtp_password' => 'SMTP_PASSWORD',
 ];

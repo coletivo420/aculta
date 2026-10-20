@@ -68,6 +68,7 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `smtp2go_password` | `SMTP2GO_PASSWORD` | Produção e testes (obrigatória nos dois) | Sim | plain |
 | `brevo_api_key` | `BREVO_API_KEY` | Produção e testes | Sim, chave da API do Brevo (envio e webhook) | plain |
 | `brevo_webhook_token` | `BREVO_WEBHOOK_TOKEN` | Produção e testes (obrigatória nos dois; produção pendente no deploy do RC) | Sim, token de portador do webhook do Brevo; um valor por ambiente | plain |
+| `mailer_payload_key` | `MAILER_PAYLOAD_KEY` | Testes (produção pendente no deploy do RC) | Sim, chave de 32 bytes (base64) que cifra o conteúdo das mensagens com falha guardadas para reenvio | plain |
 | `imap_password` | `IMAP_PASSWORD` | Produção e testes | Sim, senha da caixa de monitoramento de retorno | plain |
 | `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
 
