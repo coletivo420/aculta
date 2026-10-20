@@ -20,9 +20,11 @@
   controles. Cada ação foi ativada e revertida pela interface; contagens
   persistidas foram `seguir_topico 0 → 1 → 0` e `salvar_topico 0 → 1 → 0`.
   A fixture exata foi removida sem Comments ou flags restantes. Estado final:
-  0 tópicos, 0 Comments compartilhados e 0 flags de seguir/salvar; itens de
-  outros contextos foram preservados. Raiz e `/categorias` HTTP 200. A validação
-  visual autenticada em viewport mobile e modo escuro permanece pendente.
+  0 tópicos, 0 Comments compartilhados e 0 flags de seguir/salvar; as duas
+  flags de avisos de site (read/dismiss) foram preservadas. Firefox Responsive
+  Design Mode autenticado a 390 × 670 px mostrou ambos os botões lado a lado,
+  sem transbordamento horizontal visível. Raiz e `/categorias` HTTP 200. Modo
+  escuro permanece pendente.
   RUNTIME STATUS: PARTIAL.
 
 ## dev.56 — remover referência residual ao bundle Forum contrib nas Flags

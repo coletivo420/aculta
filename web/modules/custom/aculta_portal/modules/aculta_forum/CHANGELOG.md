@@ -16,8 +16,10 @@
   cliques na conta de teste gravaram uma flag de cada tipo; os cliques seguintes
   removeram ambas (`1 → 0`). A fixture exata foi excluída após confirmar ausência
   de comentários e flags; Runtime terminou com 0 tópicos, 0 Comments e 0 flags
-  de seguir/salvar. Nenhuma flag de outro contexto foi alterada. RUNTIME STATUS:
-  PARTIAL: validação visual/auth em viewport mobile e modo escuro pendente.
+  de seguir/salvar. Firefox Responsive Design Mode sob uid 5, a 390 × 670 px,
+  confirmou os dois botões lado a lado, sem transbordamento horizontal visível.
+  Nenhuma flag de outro contexto foi alterada. RUNTIME STATUS: PARTIAL; modo
+  escuro pendente.
 
 ## `0.1.0-dev.56` — remover bundle residual do Forum contrib nas Flags — 2026-10-20
 

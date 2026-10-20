@@ -6,8 +6,9 @@
 - Gates Foundation (364), SDC (535), Design Foundations (2097), fronteira
   (1415) e mapa (152) PASS. Firefox/X11 autenticado em 1024 px mostrou os dois
   controles; seguir e salvar gravaram e reverteram seus estados corretamente.
-  Viewports mobile autenticados e modo escuro continuam pendentes. RUNTIME
-  STATUS: PARTIAL.
+  Firefox Responsive Design Mode autenticado em 390 × 670 px confirmou os dois
+  botões lado a lado, sem overflow horizontal visível. Modo escuro continua
+  pendente. RUNTIME STATUS: PARTIAL.
 
 ## 0.6.0-dev.107 — alinhar metadados da lista de tópicos — 2026-10-20
 
