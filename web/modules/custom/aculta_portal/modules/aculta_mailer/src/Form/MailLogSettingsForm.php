@@ -85,12 +85,12 @@ final class MailLogSettingsForm extends ConfigFormBase {
       'tracking' => [
         '#type' => 'item',
         '#title' => $this->t('Rastreamento de abertura e de cliques'),
-        '#markup' => '<p>' . $this->t('Indisponível: fase F11, desligada por padrão. Exige decisão de consentimento e de privacidade antes de ligar (ver o roadmap do ACULTA Mailer).') . '</p>',
+        '#markup' => '<p>' . $this->t('Não é opção do registro: o rastreamento (F11) fica na página Entrega e só atua para quem aceitou o consentimento na conta.') . '</p>',
       ],
       'webhooks' => [
         '#type' => 'item',
         '#title' => $this->t('Status de webhooks'),
-        '#markup' => '<p>' . $this->t('Nenhum provedor de webhook está ativo. O endpoint existe (F10), mas a assinatura e o cadastro no provedor são pendentes. Enquanto isso, falhas de entrega chegam pelo monitoramento IMAP.') . '</p>',
+        '#markup' => '<p>' . $this->t('O webhook do Brevo está cadastrado no ambiente de teste (F10). Em produção, o cadastro depende de decisão do responsável; até lá, falhas de entrega também chegam pelo monitoramento IMAP.') . '</p>',
       ],
     ];
     return parent::buildForm($form, $form_state);

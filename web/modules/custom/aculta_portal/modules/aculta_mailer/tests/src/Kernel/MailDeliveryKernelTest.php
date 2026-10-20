@@ -85,6 +85,18 @@ final class MailDeliveryKernelTest extends KernelTestBase {
   }
 
   /**
+   * Sem hash_salt nada é enviado (decisão do responsável): o HMAC do destinatário não seria seguro.
+   */
+  public function testMissingHashSaltRefusesSendAndLogsNothing(): void {
+    $this->setSetting('hash_salt', '');
+    $result = $this->mailer()->deliver($this->message());
+
+    $this->assertFalse($result->sent);
+    $this->assertSame(DeliveryError::Permanent, $result->error);
+    $this->assertNull($this->container->get('state')->get('aculta_mailer_test.last_headers'));
+  }
+
+  /**
    * Na fila, falha temporária no transporte padrão reagenda pelo smtp2go com a segunda tentativa.
    */
   public function testQueueFailsOverToFallbackAfterTemporaryFailure(): void {

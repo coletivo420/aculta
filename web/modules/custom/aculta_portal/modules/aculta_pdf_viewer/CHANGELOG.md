@@ -124,7 +124,7 @@ Classificação: PATCH (corrige a ordem de instalação da configuração Group)
 - O Runtime confirmou que a instalação falhava ao resolver o plugin na importação opcional antecipada. A relação agora fica apenas no Config Sync e foi aplicada por importação parcial dirigida, depois da habilitação do submódulo.
 - O formulário de `course_document` mantém o checkbox de status visível como projetado; o hook continua impedindo que esses Media sejam publicados.
 - Os YAML do bundle e da relação usam UUIDs estáveis exportados do Runtime; `config:status` não aponta drift nos itens PV5. A configuração inválida do LMS que referia `filter.format.0` foi corrigida para `plain_text`, como em `config/sync`.
-- Runtime: configuração PV5 ativa; nenhuma Media `course_document` criada. A matriz real de membro, não membro, remoção da relação e revogação ainda aguarda homologação.
+- Runtime: configuração PV5 ativa. Em Firefox, membro recebeu 200 e renderizou o PDF privado; não membro e anônimo receberam 403. Remover membership ou relação Group negou a URL conhecida (403), e restaurá-los devolveu 200. Media e arquivo de teste foram removidos após a rodada. A integração Group segue dependente dos gates PV7 compartilhados para o release.
 
 ## 0.1.0-dev.13 — zoom visível fora da tela cheia — 2026-10-17
 

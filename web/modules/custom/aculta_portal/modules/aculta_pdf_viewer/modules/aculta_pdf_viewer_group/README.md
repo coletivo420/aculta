@@ -30,9 +30,12 @@ mesmo quando a caixa de status é submetida. Habilite o submódulo antes de
 importar a relação Group do Config Sync; importar o pacote completo de
 configuração continua sendo uma operação separada e revisada. Isso não migra arquivos nem altera
 o bundle institucional `document`. O Kernel verifica o endpoint privado do Core
-para membro, não membro, remoção da relação Group e revogação de membership. A
-homologação dessas condições no Runtime continua necessária antes do aceite
-final da PV5.
+para membro, não membro, remoção da relação Group e revogação de membership. Essa
+matriz também foi homologada no Runtime de teste em 2026-10-17: Firefox
+renderizou o documento para membro (HTTP 200); não membro e anônimo receberam
+HTTP 403. Remover a relação ou a membership negou a URL conhecida (HTTP 403);
+restaurar cada vínculo devolveu HTTP 200. A Media e o arquivo de teste foram
+removidos. Não importar toda a configuração como parte desta validação.
 
 ## Hooks e classes
 

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.49 — revisão visual do painel de envios; sem hash_salt, nada é enviado — 2026-10-20
+
+- Decisão do responsável: sem `hash_salt` no settings.php, `deliver()` recusa o envio (log de erro, sem registro). Antes, o HMAC do destinatário ficava com chave vazia. Teste Kernel `testMissingHashSaltRefusesSendAndLogsNothing` (falha quando o salt volta a ser usado).
+- Revisão visual no Runtime de teste (Chromium headless, sessão de admin por link de uso único gerado só para esta revisão, sem alterar senha ou e-mail): 10 telas do painel, em 1270 e 500 px, 20 capturas. Sem erro, sem acesso negado; a página de estado do envio não mostra destinatário.
+- Corrigido: a tabela de envios em tela estreita estourava a página inteira (398 px). A rolagem agora fica no contêiner (`data-aculta-mailer-table` em `<div>`); a página fica sem overflow.
+- Corrigido: a visão geral colava os dois links; agora cada um fica em parágrafo.
+- Corrigido: textos desatualizados. O interruptor de rastreamento dizia "desligado por padrão" com a opção ligada; o registro dizia "fase F11 indisponível" e "nenhum webhook ativo". Agora descrevem o estado real.
+- Observação (não alterada): em desktop a tabela de envios é estreita, e os cabeçalhos quebram em sílabas ("Es-tado", "De-ta-lhe") por causa da coluna de correlação.
+- Evidência: Unit 137/137; Kernel 35/35 (banco `aculta_simpletest`).
+
 ## 0.1.0-dev.48 — rastreamento falha fechado sem hash_salt — 2026-10-20
 
 - `MailTracker`: sem `hash_salt` o rastreamento fica indisponível (`enabled()` FALSE, HTML inalterado) e `verify()` recusa toda assinatura. Antes, uma chave vazia tornava o HMAC previsível e permitia forjar aberturas e cliques.

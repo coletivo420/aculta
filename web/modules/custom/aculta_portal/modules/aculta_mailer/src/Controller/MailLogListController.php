@@ -113,7 +113,9 @@ final class MailLogListController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum envio com estes filtros.'),
-        '#attributes' => ['data-aculta-mailer-table' => 'rolagem'],
+        // A rolagem vai no contêiner: overflow-x não rola em <table>; sem isso a página inteira rolava em tela estreita.
+        '#prefix' => '<div data-aculta-mailer-table="rolagem">',
+        '#suffix' => '</div>',
         '#attached' => ['library' => ['aculta_mailer/admin']],
       ],
       'paginacao' => $this->pager($total, $page, $type, $status, $transport, $days),

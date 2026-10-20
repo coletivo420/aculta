@@ -72,7 +72,7 @@ final class MailAlertSettingsForm extends ConfigFormBase {
         '#type' => 'checkbox',
         '#title' => $this->t('Rastreamento de aberturas e cliques ligado'),
         '#default_value' => $config->get('tracking_enabled') === TRUE,
-        '#description' => $this->t('Desligado por padrão. Só rastreia quem aceitou o consentimento de rastreamento na conta (página /aceite-rastreamento). Não guarda IP nem dados do navegador.'),
+        '#description' => $this->t('Desligado, nada é rastreado. Ligado, só rastreia quem aceitou o consentimento de rastreamento na conta (página /aceite-rastreamento). Não guarda IP nem dados do navegador.'),
       ],
       'brevo_enabled' => [
         '#type' => 'checkbox',

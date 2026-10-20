@@ -121,4 +121,11 @@ final class MailLogRecorder {
     return hash_hmac('sha256', mb_strtolower(trim($to)), (string) $this->settings->get('hash_salt', ''));
   }
 
+  /**
+   * Indica se o hash_salt existe. Sem ele o HMAC do destinatário seria calculado com chave vazia (previsível).
+   */
+  public function recipientKeyAvailable(): bool {
+    return (string) $this->settings->get('hash_salt', '') !== '';
+  }
+
 }

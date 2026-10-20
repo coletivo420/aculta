@@ -75,6 +75,11 @@ final class AcultaMailer implements AcultaMailerInterface {
    * {@inheritdoc}
    */
   public function deliver(MailMessage $message, ?string $transport = NULL): SendResult {
+    // Decisão do responsável (2026-10-20): sem hash_salt nada é enviado, porque o HMAC do destinatário não seria seguro.
+    if (!$this->log->recipientKeyAvailable()) {
+      $this->logger->error('Envio recusado: hash_salt ausente no settings.php (correlação @id).', ['@id' => $message->correlationId]);
+      return SendResult::failed(DeliveryError::Permanent, NULL);
+    }
     if (!$this->types->has($message->type)) {
       $this->logger->error('Tipo de e-mail não registrado: @type (correlação @id).', [
         '@type' => $message->type,

@@ -68,11 +68,15 @@ final class MailDashboardController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Ver todos os envios, com filtros'),
         '#url' => Url::fromRoute('aculta_mailer.log_list'),
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
       ],
       'export' => [
         '#type' => 'link',
         '#title' => $this->t('Exportar registro dos últimos 30 dias (CSV)'),
         '#url' => Url::fromRoute('aculta_mailer.log_export', [], ['query' => ['dias' => 30]]),
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
       ],
     ];
     foreach (MailDashboard::PERIODS as $days) {
