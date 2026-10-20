@@ -346,3 +346,10 @@ services:
 
   Drupal\aculta_mailer\Transport\SecretProviderInterface:
     alias: aculta_portal.secret_provider_adapter
+
+  aculta_portal.secret_writer_adapter:
+    class: Drupal\aculta_portal\Secrets\SecretWriterAdapter
+    arguments: ['@aculta_portal.secrets_manager']
+
+  Drupal\aculta_mailer\Transport\SecretWriterInterface:
+    alias: aculta_portal.secret_writer_adapter

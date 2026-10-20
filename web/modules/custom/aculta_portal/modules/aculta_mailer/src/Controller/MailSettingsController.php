@@ -58,6 +58,11 @@ final class MailSettingsController extends ControllerBase {
         '#rows' => $rows,
       ],
     ];
+    $build['monitor'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Monitoramento IMAP (bounces e DMARC)'),
+      '#url' => Url::fromRoute('aculta_mailer.imap_settings'),
+    ];
     if ($this->currentUser()->hasPermission('administer aculta secrets')) {
       $build['change'] = [
         '#type' => 'link',

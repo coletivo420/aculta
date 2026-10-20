@@ -79,3 +79,13 @@ services:
   Drupal\aculta_mailer\Policy\TransportQuota:
     class: Drupal\aculta_mailer\Policy\TransportQuota
     arguments: ['@config.factory', '@entity_type.manager', '@datetime.time']
+
+  Drupal\aculta_mailer\Monitor\BounceParser:
+    class: Drupal\aculta_mailer\Monitor\BounceParser
+
+  Drupal\aculta_mailer\Monitor\DmarcReportParser:
+    class: Drupal\aculta_mailer\Monitor\DmarcReportParser
+
+  Drupal\aculta_mailer\Monitor\MailMonitor:
+    class: Drupal\aculta_mailer\Monitor\MailMonitor
+    arguments: ['@config.factory', '@state', '@datetime.time', '@logger.channel.aculta_mailer', '@Drupal\aculta_mailer\Webhook\DeliveryEventApplier', '@Drupal\aculta_mailer\Monitor\BounceParser', '@Drupal\aculta_mailer\Monitor\DmarcReportParser', '@?Drupal\aculta_mailer\Transport\SecretProviderInterface']

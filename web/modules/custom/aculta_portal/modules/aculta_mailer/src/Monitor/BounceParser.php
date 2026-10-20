@@ -16,6 +16,7 @@ final class BounceParser {
    * Dados da falha, ou NULL quando a mensagem não é uma notificação de falha.
    *
    * @return array{status: string, action: string, diagnostic: string, recipient: string, correlation: string|null}|null
+   *   Resultado do processamento.
    */
   public function parse(string $raw): ?array {
     $status = NULL;
@@ -38,6 +39,7 @@ final class BounceParser {
    * Campos do primeiro destinatário com status, lidos do bloco de campos por destinatário.
    *
    * @return array{status: string, action: string, diagnostic: string, recipient: string}|null
+   *   Resultado do processamento.
    */
   private function firstRecipientBlock(string $body): ?array {
     foreach (preg_split('/\r?\n\s*\r?\n/', trim($body)) ?: [] as $block) {

@@ -46,7 +46,7 @@ final class MonitorParsersTest extends UnitTestCase {
       '--B1',
       'Content-Type: message/rfc822',
       '',
-      'From: naoresponda@aculta.org',
+      'From: naoresponda@example.invalid',
       'X-Aculta-Mail-ID: 0190a3f2-7c1d-4e8a-9b2f-3d4e5f6a7b8c',
       'Subject: teste',
       '',
@@ -76,7 +76,7 @@ final class MonitorParsersTest extends UnitTestCase {
   public function testDmarcGzipReportIsSummarized(): void {
     $xml = '<?xml version="1.0"?><feedback><report_metadata><org_name>google.com</org_name>'
       . '<report_id>123</report_id><date_range><begin>1700000000</begin><end>1700086400</end></date_range>'
-      . '</report_metadata><policy_published><domain>aculta.org</domain></policy_published>'
+      . '</report_metadata><policy_published><domain>example.invalid</domain></policy_published>'
       . '<record><row><source_ip>203.0.113.5</source_ip><count>7</count><policy_evaluated>'
       . '<disposition>none</disposition><dkim>pass</dkim><spf>fail</spf></policy_evaluated></row></record>'
       . '<record><row><source_ip>198.51.100.9</source_ip><count>2</count><policy_evaluated>'
@@ -91,9 +91,9 @@ final class MonitorParsersTest extends UnitTestCase {
       '',
       'Relatório DMARC anexo.',
       '--M1',
-      'Content-Type: application/gzip; name="google.com!aculta.org!1700000000!1700086400.xml.gz"',
+      'Content-Type: application/gzip; name="google.com!example.invalid!1700000000!1700086400.xml.gz"',
       'Content-Transfer-Encoding: base64',
-      'Content-Disposition: attachment; filename="google.com!aculta.org!1700000000!1700086400.xml.gz"',
+      'Content-Disposition: attachment; filename="google.com!example.invalid!1700000000!1700086400.xml.gz"',
       '',
       chunk_split($gz),
       '--M1--',
@@ -104,7 +104,7 @@ final class MonitorParsersTest extends UnitTestCase {
 
     $this->assertNotNull($summary);
     $this->assertSame('google.com', $summary['org']);
-    $this->assertSame('aculta.org', $summary['domain']);
+    $this->assertSame('example.invalid', $summary['domain']);
     $this->assertSame(9, $summary['total']);
     $this->assertSame(7, $summary['pass']);
     $this->assertSame(2, $summary['fail']);

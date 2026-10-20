@@ -15,6 +15,7 @@ final class MimeMessage {
    * Cabeçalhos em minúsculas (dobrados quando continuam na linha seguinte).
    *
    * @return array<string, string>
+   *   Resultado do processamento.
    */
   public static function headers(string $block): array {
     $headers = [];
@@ -38,6 +39,7 @@ final class MimeMessage {
    * Partes folha da mensagem, em profundidade: cada uma com tipo, parâmetros, nome de arquivo e corpo decodificado.
    *
    * @return array<int, array{type: string, params: array<string, string>, filename: string, body: string}>
+   *   Resultado do processamento.
    */
   public static function leaves(string $raw): array {
     [$headerBlock, $body] = self::split($raw);
@@ -50,18 +52,21 @@ final class MimeMessage {
       }
       return $leaves;
     }
-    return [[
-      'type' => $type,
-      'params' => $params,
-      'filename' => self::filename($headers, $params),
-      'body' => self::decode($body, $headers['content-transfer-encoding'] ?? ''),
-    ]];
+    return [
+      [
+        'type' => $type,
+        'params' => $params,
+        'filename' => self::filename($headers, $params),
+        'body' => self::decode($body, $headers['content-transfer-encoding'] ?? ''),
+      ],
+    ];
   }
 
   /**
    * Cabeçalhos da mensagem de nível superior, como texto.
    *
    * @return array<string, string>
+   *   Resultado do processamento.
    */
   public static function topHeaders(string $raw): array {
     [$headerBlock] = self::split($raw);
@@ -72,6 +77,7 @@ final class MimeMessage {
    * Separa cabeçalhos e corpo na primeira linha em branco.
    *
    * @return array{0: string, 1: string}
+   *   Resultado do processamento.
    */
   private static function split(string $raw): array {
     $parts = preg_split('/\r?\n\r?\n/', $raw, 2) ?: [$raw, ''];
@@ -79,7 +85,10 @@ final class MimeMessage {
   }
 
   /**
+   * Tipo e parâmetros do Content-Type (padrão: text/plain).
+   *
    * @return array{0: string, 1: array<string, string>}
+   *   Tipo e parâmetros.
    */
   private static function contentType(array $headers): array {
     $value = $headers['content-type'] ?? 'text/plain';
@@ -110,6 +119,7 @@ final class MimeMessage {
    * Partes de um multipart, sem os delimitadores.
    *
    * @return string[]
+   *   Resultado do processamento.
    */
   private static function multipartParts(string $body, string $boundary): array {
     $parts = [];

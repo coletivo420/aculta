@@ -11,15 +11,26 @@ namespace Drupal\aculta_mailer\Monitor;
  */
 final class DmarcReportParser {
 
-  /** Tipos e nomes de anexo aceitos. */
+  /**
+   * Tipos MIME aceitos para o XML do relatório.
+   */
   private const XML_TYPES = ['application/xml', 'text/xml'];
 
-  private const ARCHIVE_TYPES = ['application/gzip', 'application/x-gzip', 'application/zip', 'application/x-zip-compressed'];
+  /**
+   * Tipos MIME de anexo compactado (gzip ou zip).
+   */
+  private const ARCHIVE_TYPES = [
+    'application/gzip',
+    'application/x-gzip',
+    'application/zip',
+    'application/x-zip-compressed',
+  ];
 
   /**
    * Resumo do primeiro relatório DMARC encontrado na mensagem, ou NULL.
    *
    * @return array{org: string, report_id: string, domain: string, begin: int, end: int, total: int, pass: int, fail: int, top_sources: array<string, int>}|null
+   *   Resultado do processamento.
    */
   public function parse(string $raw): ?array {
     foreach (MimeMessage::leaves($raw) as $leaf) {
@@ -49,11 +60,17 @@ final class DmarcReportParser {
     return NULL;
   }
 
+  /**
+   * XML de um anexo gzip, ou NULL quando não descompacta.
+   */
   private function fromGzip(string $body): ?string {
     $xml = @gzdecode($body);
     return $xml === FALSE ? NULL : $xml;
   }
 
+  /**
+   * XML do primeiro arquivo de um anexo zip, ou NULL quando não abre.
+   */
   private function fromZip(string $body): ?string {
     $temp = tempnam(sys_get_temp_dir(), 'dmarc');
     if ($temp === FALSE) {
@@ -78,6 +95,7 @@ final class DmarcReportParser {
    * Resume o XML do relatório, ou NULL se não for um relatório DMARC.
    *
    * @return array{org: string, report_id: string, domain: string, begin: int, end: int, total: int, pass: int, fail: int, top_sources: array<string, int>}|null
+   *   Resultado do processamento.
    */
   private function summarize(string $xml): ?array {
     $previous = libxml_use_internal_errors(TRUE);

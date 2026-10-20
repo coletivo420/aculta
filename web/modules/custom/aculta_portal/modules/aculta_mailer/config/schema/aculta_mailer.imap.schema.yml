@@ -1,0 +1,25 @@
+aculta_mailer.imap:
+  type: config_object
+  label: 'Monitoramento IMAP de envios (sem senha: a senha fica em IMAP_PASSWORD)'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Ativo'
+    host:
+      type: string
+      label: 'Servidor IMAP'
+    port:
+      type: integer
+      label: 'Porta (TLS implícito)'
+    user:
+      type: string
+      label: 'Usuário'
+    mailbox:
+      type: string
+      label: 'Pasta'
+    bounce_interval:
+      type: integer
+      label: 'Intervalo de leitura de bounces (segundos)'
+    dmarc_interval:
+      type: integer
+      label: 'Intervalo de leitura DMARC (segundos)'

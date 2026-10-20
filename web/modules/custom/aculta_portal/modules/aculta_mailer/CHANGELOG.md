@@ -1,5 +1,17 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.16 — monitoramento por IMAP (bounces e DMARC) com formulário e senha no servidor — 2026-10-20
+
+- Monitor (`Monitor/MailMonitor`): bounces aplicados aos envios pelo `DeliveryEventApplier` (5.x → bounced, 4.x → deferred, só com o correlation ID do envio); relatórios DMARC guardados como resumo, sem IPs de origem.
+- Cadência: bounces a cada 30 minutos, DMARC a cada 12 horas (intervalos configuráveis, piso de 15 minutos). Cursor por UID em estado, com avanço por mensagem.
+- Cliente `CurlImapClient` (protocolo `imaps`, curl do PHP, sem biblioteca nova). A extensão `imap` do PHP não está disponível no servidor.
+- Formulário `/painel-administrativo/configuracoes/aculta/envios-de-email/monitoramento`: servidor, porta, e-mail (usuário), pasta, intervalos, senha e "Testar conexão" (dados digitados, sem gravar nada).
+- Senha gravada em `IMAP_PASSWORD` no arquivo de segredos, pelo gerenciador do aculta_portal (`SecretWriterAdapter`, interface `SecretWriterInterface`). Não vai ao banco nem à configuração. Exige `administer aculta secrets`.
+- Hook de cron (`MailMonitorHooks`). Monitoramento desligado por padrão.
+- Correção de versão: o `info.yml` estava em `0.1.0-dev.13` enquanto o CHANGELOG já listava até `dev.15`. Agora em `dev.16`.
+- Testes: `MailMonitorTest` (5 unitários: mapeamento de código, bounce sem correlation, mensagem comum, cursor do bounce, DMARC que não é relatório). Módulo com 67 unitários.
+- Limites e DEFERRED: leitura real da caixa não validada (aguarda o teste de conexão com a senha no servidor). Caixa de retorno (Return-Path) dos transportes ainda não definida: ver `docs/MONITORING.md`.
+
 ## 0.1.0-dev.15 — transporte Brevo ativo na configuração e planejamento das telas de controle — 2026-10-20
 
 - Biblioteca `symfony/http-client` 7.4 instalada (autorizada). Testes da fábrica do Brevo passam sem pular.
