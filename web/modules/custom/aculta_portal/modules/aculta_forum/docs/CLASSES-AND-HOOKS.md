@@ -9,6 +9,8 @@ DI explícita. Não criar service locator ou hook procedural migrável.
 | --- | --- | --- |
 | Navegação progressiva na conversa renderizada | `DiscussionProgressHooks` (`entity_view_alter`) | dev.63 anexa biblioteca neutra somente à renderização full do campo compartilhado; controles limitam-se aos Comments renderizados na página. |
 | Selecionar contexto/provedor | `DiscussionContextResolver` + `DiscussionContextProviderInterface` | Implementado na dev.4; provider via tag `aculta_forum.discussion_context_provider`, duplicidade falha explicitamente. |
+| Contexto privado LMS | `Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider` | Fundação na dev.92: exige tópico persistido, relação Group única e bundle `lms_course`/`lms_class`; valida acesso contextual e `grade students`; configuração instalável e Kernel de isolamento pendentes. |
+| Moderação LMS | `Drupal\aculta_forum_lms\Hook\LmsDiscussionModerationHooks` (`#[Hook('entity_field_access')]`) | Dev.92 delega acesso cacheável do marcador compartilhado ao Educador do curso; prova Kernel de publicação/rejeição e matriz educator/student/outsider pendentes. |
 | Identificar topic/thread | `DiscussionContextInterface` + `DiscussionContext` | Implementado para entidade hospedeira, ID estável, URL canônica, access e cacheability; sem storage duplicado. |
 | Consultar regras | `DiscussionAccessPolicy` ou delegação explícita a entity access/Group | Comparar APIs primeiro; `AccessResultInterface` e cacheability obrigatórios. |
 | Preparar thread/post | View builders e Views/Core Comment render | Não criar renderer paralelo antes de testar APIs existentes. |
@@ -31,7 +33,7 @@ DI explícita. Não criar service locator ou hook procedural migrável.
 | Estatísticas | agregação/cache service sobre APIs/views existentes | Sem query cara a cada render ou storage redundante. |
 | Evento de resposta | evento interno neutro após persistência, consumido por Messenger | Revalidar access no worker; não duplicar aviso. |
 | Author cards | APIs em `aculta_user` | Forum nunca possui builder. |
-| Provider LMS | submódulo opcional `aculta_forum_lms` | Planejado após contrato e teste de isolamento. |
+| Provider LMS | submódulo opcional `aculta_forum_lms` | Fundação na dev.92; ativação depende de configuração e teste de isolamento. |
 | Provider Wiki | adapter futuro | Não implementar antes da reimplementação Wiki. |
 
 Hooks existentes relacionados ao legado aparecem em

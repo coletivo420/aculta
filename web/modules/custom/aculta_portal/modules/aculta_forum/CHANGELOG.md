@@ -1,3 +1,19 @@
+## `0.1.0-dev.92` — fundação do adapter privado LMS — 2026-10-20
+
+- Criado `aculta_forum_lms` como adapter opcional, dependente de Forum, LMS e
+  Group Node, sem dependência reversa ou habilitação no Runtime.
+- O provider tagueado reconhece apenas Nodes persistidos `aculta_lms_topic`,
+  exige vínculo Group único a curso/turma suportados e combina access do Node,
+  Group e membership real. Vínculo ausente/ambíguo ou cadeia de turma/curso
+  inválida nega acesso.
+- Moderação exige `grade students` no curso contextual, inclusive para turma.
+  Hook OOP permite ao Educador autorizado operar o marcador compartilhado sem
+  conceder permissão global de administração de comentários.
+- Faltam configuração instalável de bundle/campo/relationship types, prova
+  Kernel da matriz de acesso e integração de filas, busca, avisos e UI. O módulo
+  permanece desabilitado e a homologação Runtime fica DEFERRED. Nenhum dado do
+  Runtime foi alterado.
+
 ## `0.1.0-dev.91` — teste visual X11 da busca pública — 2026-10-20
 
 - Adicionada suíte Firefox X11/WebDriver BiDi somente leitura para `/pesquisar`.
@@ -1685,4 +1701,3 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
-

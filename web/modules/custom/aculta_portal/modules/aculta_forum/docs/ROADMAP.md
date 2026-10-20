@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.92` | Fundação do adapter privado LMS | Adicionado `aculta_forum_lms` opcional com provider para `aculta_lms_topic`, resolução única de Group curso/turma, access fail-closed e moderação por `grade students`. Sem configuração instalável, matriz Kernel ou uso no Runtime; módulo permanece desabilitado. RUNTIME STATUS: DEFERRED. |
 | `0.1.0-dev.91` | Homologação X11 visual da busca pública | Suíte Firefox X11/BiDi somente leitura: 20/20 em 390/768/1024 CSS px, claro/escuro; formulário enquadrado, estado vazio, CAPTCHA ausente e contraste 12,40:1/12,23:1. 0 tópicos/Comments preservados. Comparação visual completa do fórum segue planejada. |
 | `0.1.0-dev.90` | Validar busca textual combinada e relevância | Search API DB Kernel prova filtro textual + categoria, pontuação de título acima de corpo e ordenação padrão por relevância; suíte Kernel 26/513 PASS, com 19 depreciações de Core/contrib. Sem conteúdo Runtime. Busca com resultados publicados segue DEFERRED para manter o Fórum limpo. |
 | `0.1.0-dev.85` | Formulário de mover tópico nega Growroom histórico | Kernel com conta administrativa prova que serviço e Form API negam movimento e preservam categoria histórica; 3 testes/71 assertions PASS, 5 depreciações de Core/Domain. PHPCS, lint e gates Portal PASS. Runtime DEFERRED. |
@@ -468,7 +469,11 @@ desenho técnico, as decisões pendentes e os testes mínimos ficam em
 ## `0.1.0-dev.13` — Fóruns internos LMS
 
 Adapter opcional `aculta_forum_lms`; curso/turma/atividade; Group/membership,
-cartões educacionais, busca e notificações privadas. Provar isolamento em testes.
+cartões educacionais, busca e notificações privadas. A fundação do provider e a
+delegação de moderação contextual começaram na dev.92. Completar bundle, fields
+e relationship types após validar a instalação do Group Node; provar leitura,
+escrita, moderação, Views, Search API e avisos em testes antes de habilitar no
+Runtime.
 
 ## `0.1.0-dev.14` — Contrato Wiki420
 
