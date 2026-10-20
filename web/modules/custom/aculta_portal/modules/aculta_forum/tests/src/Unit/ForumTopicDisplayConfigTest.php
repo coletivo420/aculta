@@ -438,6 +438,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame($view, $sync);
 
     $options = $view['display']['default']['display_options'];
+    self::assertSame('Atualizado', $options['fields']['changed']['label']);
+    self::assertSame('Operações', $options['fields']['operations']['label']);
+    self::assertSame('Não há comentários disponíveis.', $options['empty']['area_text_custom']['content']);
     self::assertSame('administer comments', $options['access']['options']['perm']);
     self::assertSame(['aculta_discussion_post' => 'aculta_discussion_post'], $options['filters']['comment_type']['value']);
     self::assertSame('field_aculta_discussion', $options['filters']['field_name']['value']);

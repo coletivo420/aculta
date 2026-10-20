@@ -1,3 +1,19 @@
+## `0.1.0-dev.70` — traduzir vazios da moderação do Fórum — 2026-10-20
+
+- As filas administrativas de comentários passam a identificar as colunas de
+  atualização e ações como “Atualizado” e “Operações”, e o resultado vazio como
+  “Não há comentários disponíveis.”, em Config Sync e configuração de instalação.
+- Unit verifica paridade install/sync e os três rótulos. No Runtime de teste,
+  a configuração completa da View foi copiada antes da alteração em backup
+  privado (`/home/aculta/private/aculta/forum-admin-labels-20261020`); os três
+  valores foram alinhados ao Config Sync e `config:status` não reportou drift
+  para a View. Firefox/X11 autenticado confirmou as quatro filas e rótulos em
+  português em 15/15 verificações. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev70-20261020/`.
+  Nenhum conteúdo foi criado; o fórum continuou limpo (0 tópicos e 0 comentários).
+  Como as filas não têm dados, o isolamento entre contextos com linhas reais não
+  foi revalidado. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.69` — smoke X11 de organização administrativa — 2026-10-20
 
 - Criado roteiro automatizado de leitura autenticada no painel: separação entre

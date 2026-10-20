@@ -1,5 +1,18 @@
 # Matriz de testes por fase
 
+## dev.70 — rótulos pt-BR das filas de moderação
+
+- A configuração de instalação e Config Sync deve ter colunas `changed` e
+  `operations` como “Atualizado” e “Operações”, e texto vazio “Não há comentários
+  disponíveis.”; Unit verifica os valores e a paridade.
+- `admin-content-structure.mjs`: Firefox ESR 153.4/geckodriver 0.37.1 em X11,
+  autenticado no MAIN de teste; 15/15 verificações PASS nas quatro filas. Confirma
+  “Atualizado”, “Operações” e “Não há comentários disponíveis.”. Capturas
+  privadas em `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev70-20261020/`.
+- View ativa atualizada após backup privado e alinhada ao Config Sync. Fórum
+  permanece com 0 tópicos e 0 Comments; filas sem linhas não comprovam
+  isolamento cruzado com dados reais. RUNTIME STATUS: PARTIAL.
+
 ## dev.69 — smoke X11 de organização administrativa
 
 - `node tests/browser/aculta-forum/admin-content-structure.mjs` gera link ULI

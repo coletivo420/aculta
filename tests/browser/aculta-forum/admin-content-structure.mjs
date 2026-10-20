@@ -126,6 +126,10 @@ try {
     info = await go(pathname);
     const labelPresent = await execute(`return document.body.innerText.includes(${JSON.stringify(label)})`);
     check(`${pathname} carrega ${label}`, info.path === pathname && (!info.status || info.status === 200) && info.main && !info.serverError && labelPresent, JSON.stringify(info));
+    if (pathname.startsWith('/painel-administrativo/conteudo/forum/comentarios')) {
+      const localized = await execute(`const text=document.body.innerText; const headers=[...document.querySelectorAll('thead th')].map(e=>e.innerText.trim()); return text.includes('Atualizado') && text.includes('Não há comentários disponíveis.') && headers.includes('Operações') && !headers.includes('Operations') && !text.includes('No comments available.')`);
+      check(`${pathname} apresenta data e lista vazia em português`, localized);
+    }
     if (pathname.endsWith('/aguardando-moderacao')) {
       writeFileSync(resolve(output, 'forum-moderacao-pendente.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
     }

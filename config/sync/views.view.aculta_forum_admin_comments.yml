@@ -232,7 +232,7 @@ display:
           entity_type: comment
           entity_field: changed
           plugin_id: field
-          label: Updated
+          label: Atualizado
           exclude: false
           alter:
             alter_text: false
@@ -307,7 +307,7 @@ display:
           admin_label: ''
           entity_type: comment
           plugin_id: entity_operations
-          label: Operations
+          label: Operações
           exclude: false
           alter:
             alter_text: false
@@ -398,7 +398,7 @@ display:
           admin_label: ''
           plugin_id: text_custom
           empty: true
-          content: No comments available.
+          content: Não há comentários disponíveis.
           tokenize: false
       sorts:
         changed:
