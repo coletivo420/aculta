@@ -17,6 +17,7 @@ use Drupal\Core\Lock\DatabaseLockBackend;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
+use Drupal\file\Entity\File;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\flag\Entity\Flag;
@@ -55,6 +56,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     'node',
     'comment',
     'domain',
+    'file',
     'flag',
     'path',
     'path_alias',
@@ -93,11 +95,13 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('file');
     $this->installEntitySchema('flagging');
     $this->installEntitySchema('search_api_task');
     $this->installEntitySchema('path_alias');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('file', ['file_usage']);
     $this->installSchema('flag', ['flag_counts']);
     $this->installSchema('search_api', ['search_api_item']);
     $this->installConfig([
@@ -106,6 +110,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'node',
       'comment',
       'domain',
+      'file',
       'flag',
       'path',
       'path_alias',
@@ -134,6 +139,19 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       CommentingStatus::Open,
       ForumCommentMover::COMMENT_TYPE,
     );
+    FieldStorageConfig::create([
+      'entity_type' => 'comment',
+      'field_name' => 'field_test_attachment',
+      'type' => 'file',
+      'settings' => ['uri_scheme' => 'private'],
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'comment',
+      'bundle' => ForumCommentMover::COMMENT_TYPE,
+      'field_name' => 'field_test_attachment',
+      'label' => 'Test attachment',
+    ])->save();
 
     $this->account = $this->createMock(AccountInterface::class);
     $this->account->method('hasPermission')->willReturnCallback(
@@ -278,6 +296,34 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame((int) $comment->id(), (int) $stored_flagging->getFlaggableId());
     self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
     self::assertSame($flagging_id, (int) $this->container->get('flag')->getFlagging($flag, Comment::load($comment->id()), $flagger)->id());
+  }
+
+  /**
+   * File field usage remains keyed to the same Comment after a move.
+   */
+  public function testMovePreservesAttachmentFileUsage(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $file = File::create([
+      'uid' => 42,
+      'filename' => 'forum-attachment.txt',
+      'uri' => 'private://forum-attachment.txt',
+      'filemime' => 'text/plain',
+      'status' => 1,
+    ]);
+    $file->save();
+    $comment->set('field_test_attachment', ['target_id' => $file->id()])->save();
+    $file_usage = $this->container->get('file.usage');
+    self::assertSame('1', $file_usage->listUsage($file)['file']['comment'][$comment->id()]);
+
+    $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+
+    $stored_file = File::load($file->id());
+    $stored_comment = Comment::load($comment->id());
+    self::assertSame((int) $file->id(), (int) $stored_comment->get('field_test_attachment')->target_id);
+    self::assertSame('1', $file_usage->listUsage($stored_file)['file']['comment'][$comment->id()]);
+    self::assertSame((int) $destination->id(), (int) $stored_comment->getCommentedEntityId());
   }
 
   /**
