@@ -9,9 +9,10 @@
   estado.
 - Nenhum aviso público do Fórum foi criado para ação LMS. Anônimo recebeu 403
   na fila e no tópico privado. Recibo privado: 12/12 verificações PASS.
-- `drush cr --uri=https://aculta.toca.net.br` PASS; serviço
-  `aculta_forum_lms.moderation_controller` resolve no container e rotas de
-  overview/fila estão presentes. Verificação adicional após a limpeza:
+- `drush cr --uri=https://aculta.toca.net.br` PASS; o serviço
+  `aculta_forum_lms.moderation_controller` resolvia antes e continuou resolvendo
+  após o rebuild; rotas de overview/fila estão presentes. A quebra atribuída
+  ao controller não se reproduziu nesta checagem. Verificação adicional após a limpeza:
   1 Group de curso preexistente, 0 Nodes `aculta_lms_topic`, 0 Comments
   `aculta_discussion_post`, 0 Groups da fixture; anônimo recebe 403 no overview.
 - RUNTIME STATUS: PASS para cache/container e transições cobertas. Nenhuma

@@ -1,4 +1,4 @@
-## `0.1.0-dev.114` — validar transições de moderação LMS e recuperar o container
+## `0.1.0-dev.114` — validar transições LMS e reconstruir o cache
 
 - Smoke autenticado no Runtime de teste submeteu confirmações Form API de
   aprovação e rejeição com tokens reais: ambas retornaram HTTP 200 e o estado
@@ -8,10 +8,12 @@
   novamente: 1 curso preexistente, 0 tópicos `aculta_lms_topic`, 0 Comments
   `aculta_discussion_post` e nenhum Group da fixture. Sem alteração de conteúdo
   preexistente.
-- `drush cr --uri=https://aculta.toca.net.br` PASS. Depois da reconstrução,
-  `aculta_forum_lms.moderation_controller` resolve pelo container e as rotas de
-  overview/fila estão registradas; a fila retorna 403 para anônimo, como
-  esperado. O cache antigo foi reconstruído, sem alteração de código para o
+- `drush cr --uri=https://aculta.toca.net.br` PASS. O serviço
+  `aculta_forum_lms.moderation_controller` já resolvia antes do rebuild e
+  continua resolvendo depois; as rotas de overview/fila estão registradas e a
+  fila retorna 403 para anônimo, como esperado. A quebra do container atribuída
+  ao controller não foi reproduzida nesta checagem; os erros recentes do log
+  consultado eram de outras operações. Nenhuma alteração de código do
   controller nesta subfase. PHP CLI 8.4.26 permanece abaixo da baseline 8.5.
   RUNTIME STATUS: PASS para reconstrução do container e transições LMS cobertas;
   homologação geral continua pendente.
