@@ -28,6 +28,12 @@ aculta_forum.public_categories:
   base_route: view.aculta_forum_public_topics.page_discussions
   weight: 1
 
+aculta_forum.public_search:
+  title: Pesquisar
+  route_name: view.aculta_forum_search.page_search
+  base_route: view.aculta_forum_public_topics.page_discussions
+  weight: 6
+
 aculta_forum.unread_topics:
   title: Não lidos
   route_name: view.aculta_forum_unread_topics.page_unread

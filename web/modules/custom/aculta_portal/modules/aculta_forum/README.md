@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.85**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.86**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
 de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
@@ -42,6 +42,7 @@ motor novo segue por contexto e fases.
 - [Experiência e ferramentas Discourse](docs/DISCOURSE-EXPERIENCE.md)
 - [Planejamento de movimentação de tópicos e comentários](docs/MOVE-TOOLS.md)
 - [Pesquisa](docs/PESQUISA.md)
+- [Busca pública](docs/SEARCH.md)
 - [Plano de retirada/migração](docs/MIGRATION-REMOVAL.md)
 - [Classes e hooks planejados](docs/CLASSES-AND-HOOKS.md)
 - [Matriz de testes](docs/TEST-MATRIX.md)

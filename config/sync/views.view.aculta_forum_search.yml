@@ -1,0 +1,174 @@
+uuid: acd6f841-ef2d-43e8-a8e1-4a17d6feeb71
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - search_api.index.aculta_forum
+  module:
+    - node
+    - search_api
+    - user
+id: aculta_forum_search
+label: 'Pesquisar discussões do Growroom420'
+module: views
+description: 'Busca pública limitada aos tópicos do purpose Fórum, com filtros fixos de bundle e domínio.'
+tag: forum
+base_table: search_api_index_aculta_forum
+base_field: search_api_id
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Pesquisar discussões'
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: search_api_none
+        options: { }
+      query:
+        type: search_api_query
+        options: { }
+      exposed_form:
+        type: input_required
+        options:
+          submit_button: Pesquisar
+          reset_button: false
+          reset_button_label: Limpar
+          exposed_sorts_label: Ordenar
+          expose_sort_order: false
+          sort_asc_label: Crescente
+          sort_desc_label: Decrescente
+          text_input_required: 'Digite ao menos três caracteres para pesquisar.'
+          text_input_required_format: plain_text
+      pager:
+        type: full
+        options:
+          items_per_page: 20
+          offset: 0
+          id: 0
+          total_pages: null
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Itens por página'
+            items_per_page_options: '10, 20, 40'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- Todos -'
+            offset: false
+            offset_label: Deslocamento
+          tags:
+            previous: Anterior
+            next: Próxima
+            first: Primeira
+            last: Última
+          quantity: 9
+      style:
+        type: default
+      row:
+        type: search_api
+        options:
+          view_modes:
+            'entity:node':
+              ':default': teaser
+      filters:
+        search_api_fulltext:
+          id: search_api_fulltext
+          table: search_api_index_aculta_forum
+          field: search_api_fulltext
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: and
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: search_op
+            label: Pesquisar
+            description: 'Pesquise por assunto ou texto do tópico.'
+            use_operator: false
+            operator: search_op
+            identifier: keys
+            required: true
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items: { }
+          parse_mode: terms
+          min_length: 3
+          fields: { }
+          plugin_id: search_api_fulltext
+        type:
+          plugin_id: search_api_string
+          id: type
+          table: search_api_index_aculta_forum
+          field: type
+          relationship: none
+          admin_label: 'Isolar tópico público'
+          operator: '='
+          value: aculta_forum_topic
+          group: 1
+          exposed: false
+          is_grouped: false
+      sorts: { }
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          content: 'Exibindo resultados @start–@end de @total'
+          plugin_id: result
+      footer: { }
+      empty: { }
+      relationships: { }
+      arguments: { }
+      display_extenders: { }
+    cache_metadata:
+      contexts:
+        - languages:language_content
+        - languages:language_interface
+        - url
+        - url.query_args
+      cacheable: false
+      max-age: 0
+      tags: { }
+  page_search:
+    id: page_search
+    display_title: Página
+    display_plugin: page
+    position: 1
+    display_options:
+      path: pesquisar
+      display_extenders: { }
+    cache_metadata:
+      contexts:
+        - languages:language_content
+        - languages:language_interface
+        - url
+        - url.query_args
+      cacheable: false
+      max-age: 0
+      tags: { }

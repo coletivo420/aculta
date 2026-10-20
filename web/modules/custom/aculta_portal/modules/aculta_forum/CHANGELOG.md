@@ -1586,3 +1586,21 @@
 - O link “Categorias” integra a navegação local do índice público de discussões.
 - A View usa renderização padrão da entidade Taxonomy. Hierarquia visual,
   contagens de tópicos e ordenação por atividade ficam para as subfases próprias.
+## `0.1.0-dev.86` — busca pública contextual — 2026-10-20
+
+- Índice Search API e View separados pesquisam somente tópicos `aculta_forum_topic`.
+  O processador `content_access`, status da entidade, acesso da View e indexação
+  imediata reduzem exposição por estado/permissão; o subscriber aplica filtro
+  pelo Domain canônico e falha fechado fora do purpose Fórum.
+- A página `/pesquisar` é classificada como purpose `forum`; mapa de rotas e
+  fronteira módulo-tema atualizados. Configuração de instalação e Config Sync
+  devem permanecer idênticas.
+- Unit Search API/contexto e rota: 5 testes / 17 asserções PASS. Suíte Unit
+  completa do Forum: 87 testes / 527 asserções PASS. PHPCS e PHP lint dos novos
+  arquivos PASS; equivalência instalação/Config Sync, Drupal 11+ (975),
+  fronteira (1467), mapa (152), slugs (378) e caminhos PASS.
+- Runtime `toca`: Search API 1.41 e backend `aculta_database` ativos; importação
+  parcial criou apenas índice e View, cache rebuild PASS, `/pesquisar` HTTP 200
+  e busca vazia HTTP 200. Zero tópicos e Comments antes da alteração; nenhum
+  conteúdo foi criado. Browser visual DEFERRED. RUNTIME STATUS: PARTIAL.
+

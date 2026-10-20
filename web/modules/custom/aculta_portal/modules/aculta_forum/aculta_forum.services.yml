@@ -1,4 +1,9 @@
 services:
+  aculta_forum.search_query_subscriber:
+    class: Drupal\aculta_forum\EventSubscriber\ForumSearchQuerySubscriber
+    arguments: ['@aculta_portal.domain_purpose']
+    tags:
+      - { name: event_subscriber }
   aculta_forum.quote_builder:
     class: Drupal\aculta_forum\Service\ForumQuoteBuilder
 

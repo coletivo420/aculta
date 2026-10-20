@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_forum\Unit;
+
+use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\Yaml\Yaml;
+
+/**
+ * Verifies the public search configuration and its Config Sync copy.
+ */
+#[Group('aculta_forum')]
+final class ForumSearchConfigTest extends UnitTestCase {
+
+  /**
+   * Search stays scoped to public Forum topics with access checks enabled.
+   */
+  public function testIndexAndViewRemainPublicForumOnly(): void {
+    $root = dirname(__DIR__, 3);
+    $installDirectory = $root . '/config/install';
+    $repositoryRoot = dirname($root, 6);
+    $indexFile = 'search_api.index.aculta_forum.yml';
+    $viewFile = 'views.view.aculta_forum_search.yml';
+    $index = Yaml::parseFile($installDirectory . '/' . $indexFile);
+    $view = Yaml::parseFile($installDirectory . '/' . $viewFile);
+
+    self::assertSame($index, Yaml::parseFile($repositoryRoot . '/config/sync/' . $indexFile));
+    self::assertSame($view, Yaml::parseFile($repositoryRoot . '/config/sync/' . $viewFile));
+    self::assertSame(['aculta_forum_topic'], $index['datasource_settings']['entity:node']['bundles']['selected']);
+    self::assertSame('aculta_forum_topic', $view['display']['default']['display_options']['filters']['type']['value']);
+    self::assertArrayHasKey('content_access', $index['processor_settings']);
+    self::assertArrayHasKey('entity_status', $index['processor_settings']);
+    self::assertTrue($index['options']['index_directly']);
+    self::assertSame('access content', $view['display']['default']['display_options']['access']['options']['perm']);
+    self::assertSame('search_api_none', $view['display']['default']['display_options']['cache']['type']);
+    self::assertArrayNotHasKey('skip_access', $view['display']['default']['display_options']['query']['options']);
+    self::assertSame('pesquisar', $view['display']['page_search']['display_options']['path']);
+  }
+
+}

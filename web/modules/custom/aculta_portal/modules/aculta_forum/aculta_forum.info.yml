@@ -2,7 +2,7 @@ name: ACULTA Forum
 type: module
 description: 'Discussões ACULTA via Node, Comment, Taxonomy e Views, com leitura contextual, descoberta e autoria preparada pelo aculta_user.'
 package: 'ACULTA Portal'
-version: '0.1.0-dev.85'
+version: '0.1.0-dev.86'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal
@@ -14,5 +14,7 @@ dependencies:
   - flag:flag
   - drupal:views
   - drupal:node
+  - search_api:search_api
+  - search_api:search_api_db
   - drupal:taxonomy
   - drupal:text
