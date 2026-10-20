@@ -112,6 +112,16 @@ páginas: scroll mode horizontal e spread ativo no desktop, e spread desligado
 após reduzir a viewport para 500 px. O canvas ACULTA segue paginado. Kernel,
 gates finais e revisão acessível ampliada continuam abertos; permanece Dev.
 
+Na verificação de 2026-10-20, Firefox confirmou também a camada textual do
+viewer completo (texto do documento no `.textLayer` e rótulo de página no DOM)
+em viewport desktop de 1366 px e móvel de 560 px. O modo de duas páginas caiu
+para página única no viewport móvel e ambos mantiveram `scrollWidth` igual à
+largura da viewport. Essa inspeção de DOM não é um teste com leitor de tela;
+validar teclado e leitor de tela real antes de RC continua obrigatório. O
+Kernel segue sem chegar às assertions por dependências/serviços do Portal e da
+configuração LMS no fixture. Gates centrais ainda incluem trabalho não
+integrado de outros componentes; o viewer permanece Dev.
+
 ### Limite de acessibilidade da renderização
 
 O canvas do viewer é raster: seu nome identifica a página, mas ele não torna
