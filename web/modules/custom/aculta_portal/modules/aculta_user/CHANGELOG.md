@@ -1,8 +1,9 @@
 ## Validação adicional — respostas nos tópicos próprios do Fórum — 2026-10-20
 
-- `ActivityControllerKernelTest` usa Comment/Core e MariaDB `aculta_simpletest`
-  para confirmar que a aba privada de tópicos exibe 2 respostas publicadas e
-  ignora 1 resposta pendente, via agregado `comment_entity_statistics`.
+- `ActivityControllerKernelTest` chama `view('forum')` com domínio/account e
+  Comment/Core no MariaDB `aculta_simpletest`: lista apenas o tópico publicado
+  da conta atual, mostra 2 respostas publicadas e ignora 1 pendente pelo
+  agregado `comment_entity_statistics`.
 - Kernel: 1 teste / 12 assertions PASS; 5 deprecações originadas pelo Domain
   contrib 3.0.1. Unit de `aculta_user`: 62 testes / 194 assertions PASS.
 - Nenhum conteúdo foi criado no Runtime. A rota autenticada e o browser ainda

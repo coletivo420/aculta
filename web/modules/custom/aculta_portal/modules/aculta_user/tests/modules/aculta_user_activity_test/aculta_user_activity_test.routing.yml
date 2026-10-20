@@ -1,0 +1,7 @@
+aculta_user.atividade:
+  path: '/minha-conta/atividade/{aba}'
+  defaults:
+    _controller: '\Drupal\aculta_user_activity_test\Controller\ActivityRouteController::placeholder'
+    _title: 'Activity test route'
+  requirements:
+    _access: 'TRUE'

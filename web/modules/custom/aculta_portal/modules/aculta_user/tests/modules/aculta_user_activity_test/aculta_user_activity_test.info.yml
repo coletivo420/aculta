@@ -1,0 +1,5 @@
+name: 'ACULTA User activity route test'
+type: module
+description: 'Provides the account activity route name for ActivityController kernel tests.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3

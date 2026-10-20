@@ -45,6 +45,7 @@ final class ActivityControllerKernelTest extends KernelTestBase {
     'node',
     'comment',
     'domain',
+    'aculta_user_activity_test',
   ];
 
   /**
@@ -117,6 +118,13 @@ final class ActivityControllerKernelTest extends KernelTestBase {
       'roles' => ['authenticated'],
     ]);
     $account->save();
+    $otherAccount = User::create([
+      'name' => 'activity-other-reader',
+      'mail' => 'activity-other-reader@example.test',
+      'status' => 1,
+      'roles' => ['authenticated'],
+    ]);
+    $otherAccount->save();
     $currentUser = $this->container->get('current_user');
     $currentUser->setAccount($account);
 
@@ -132,6 +140,14 @@ final class ActivityControllerKernelTest extends KernelTestBase {
     $this->createComment($topic, 1, 'First published reply');
     $this->createComment($topic, 1, 'Second published reply');
     $this->createComment($topic, 0, 'Pending reply');
+    Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Another person topic',
+      'uid' => $otherAccount->id(),
+      'status' => 1,
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+      'field_aculta_discussion' => ['status' => CommentingStatus::Open->value],
+    ])->save();
 
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->setActiveDomain($accountDomain);
@@ -149,13 +165,13 @@ final class ActivityControllerKernelTest extends KernelTestBase {
       $this->container->get('module_handler'),
       $this->container->get('string_translation'),
     );
-    $nodeList = new \ReflectionMethod($controller, 'nodeList');
-    $build = $nodeList->invoke($controller, [(int) $topic->id()], 'aculta_forum_topic', '', FALSE, TRUE);
+    $build = $controller->view('forum');
+    $items = $build['content']['list']['#items'];
 
-    self::assertCount(1, $build['#items']);
+    self::assertCount(1, $items, 'Only published topics owned by the current account are listed.');
     self::assertSame(
       '2 comentários — Topic with published replies',
-      (string) $build['#items'][0]['#title'],
+      (string) $items[0]['#title'],
     );
     self::assertSame(
       (int) $accountDomain->id(),
