@@ -1,3 +1,19 @@
+## 0.6.0-dev.107 — alinhar metadados da lista de tópicos — 2026-10-20
+
+- O cartão da lista agora envolve título, autoria, contagem de respostas e
+  atividade recente numa única superfície. A coluna de metadados tem largura
+  limitada; em mobile, ela passa para uma faixa abaixo do conteúdo. Isso corrige
+  a separação visual observada na captura de 768 px. Em larguras intermediárias,
+  as abas reduzem o espaçamento para permanecer em uma única linha; as datas da
+  atividade ficam sem quebra.
+- Firefox/X11 no Runtime `toca`: lista em 1024, 768 e 390 px e tópico em 390 px
+  revisados no modo claro, sem overflow horizontal observado. Gates Foundation
+  (364), SDC (535), Design Foundations (2097), fronteira (1415) e mapa (152)
+  PASS. Depois das capturas, as três fixtures QA foram removidas e o Runtime
+  confirmou 0 tópicos, 0 Comments, fila Messenger vazia e aliases removidos.
+  Capturas privadas em `/home/aculta/private/aculta/visual-tests/forum-dev56-20261020/`.
+  Modo escuro e fluxo autenticado não foram exercitados. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.106 — categorias junto às discussões do Growroom420 — 2026-10-20
 
 - O SDC `forum-category` apresenta o bloco `block_landing` na barra lateral da
