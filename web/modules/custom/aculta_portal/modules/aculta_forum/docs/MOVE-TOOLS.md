@@ -151,21 +151,36 @@ está instalado no ACULTA. Em 2026-10-19, Drupal.org lista apenas a versão
 `2.0.0-alpha1` compatível com Drupal 9/10, sem release estável; a issue de
 compatibilidade Drupal 11 continua `Needs review`. A documentação descreve
 recorte/colagem de comentário com descendentes, movimentação para outra entidade
-ou pai e conversão comentário↔Node. A mesma documentação declara que os itens
-movidos são apagados da origem; a interface usa clipboard e aceita conversões
-entre tipos/contextos. Isso é incompatível com a preservação de CID/UUID,
-histórico, URLs, mesmo-contexto e recuperação definidos para ACULTA. Fontes:
+ou pai e conversão comentário↔Node. A documentação diz que os itens saem da
+origem; o código alpha inspecionado reatribui o mesmo Comment via Entity API
+(não faz delete/recreate), mantendo CID/UUID nessa operação. O pacote traz
+licença GPL v2. Fonte examinada: `src/CommentMover.php`, em especial
+`moveComment()` e `recursivelyUpdateCommentThread()`, e o Kernel
+`tests/src/Kernel/CommentMoverServiceTest.php` do tarball
+`comment_mover-2.0.0-alpha1.tar.gz` (SHA-256
+`2fa3a4af65b43eb7855b7ae4c78da8368e425bcd4d10477e7f670fdd46510a91`). O
+O código mantém CIDs por atualização, mas não prova URLs, histórico,
+mesmo-contexto e recuperação exigidos para ACULTA. Fontes públicas:
 [projeto e releases](https://www.drupal.org/project/comment_mover),
+[tarball 2.0.0-alpha1 inspecionado](https://ftp.drupal.org/files/projects/comment_mover-2.0.0-alpha1.tar.gz),
 [guia de uso](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/comment-mover),
 [issue queue e estado de compatibilidade Drupal 11](https://www.drupal.org/project/issues/comment_mover).
 
+O serviço alpha calcula `thread` usando `Number` e percorre descendentes,
+mas a recursão passa o `$threadBase` original em vez da thread recém-calculada
+do pai; os Kernels publicados verificam movimento de folha e um único nível de
+descendente, sem exercitar uma árvore profunda. Também não há na operação
+inspecionada autorização contextual, validação de campo compartilhado,
+transação/rollback ou recomposição explícita das estatísticas do host de origem.
+Esses limites excluem port direto do algoritmo e viram casos de regressão para
+qualquer implementação ACULTA independente.
+
 **Decisão:** aproveitar apenas requisitos de produto encontrados nessa pesquisa:
 seleção explícita, pai com subárvore indivisível, movimento para tópico existente
-e split como operação posterior. Não instalar o alpha, copiar diretamente sua
-implementação ou tratar o mecanismo de delete+recreate como prova de movimento
-seguro. Uma portabilidade de algoritmo só poderá ser avaliada após leitura do
-código exato do branch e revisão de licença/proveniência; não remove o bloqueio
-de integridade identificado na API Core 11.4.10.
+e split como operação posterior. Não instalar o alpha nem copiar diretamente
+sua implementação. O algoritmo de thread poderá orientar cenários de teste, mas
+não substitui lock, transação, access/cache, estatísticas das duas pontas ou
+prova de estrutura profunda no Core instalado; o bloqueio permanece.
 
 Auditoria complementar do caminho de gravação no Core 11.4.10: `Comment::postSave()`
 invalida cache somente para a entidade que o comentário referencia **depois**
@@ -202,7 +217,8 @@ resultado devem indicar sucesso/falha sem revelar destino inacessível.
 - Bloqueio de mudança entre purpose/domínios, Fórum/Revista/LMS/Wiki e acesso
   privado; bloqueio do acervo histórico para qualquer conta.
 - Tópico aberto/fechado, comentários publicados/pendentes/rejeitados, autor
-  legado, pai com múltiplas respostas, threads e destinos incompatíveis.
+  legado, pai com múltiplas respostas, árvore com ao menos três níveis (regressão
+  observada no Comment Mover alpha), threads e destinos incompatíveis.
 - Preservação de CID/UUID, autoria, timestamps, revisões, arquivos/usage,
   flags, links/âncoras, estatísticas, cache e indexação.
 - Atomicidade e recuperação após falha entre persistência e atualização de

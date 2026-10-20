@@ -3,8 +3,10 @@
 - `PESQUISA.md` registra APIs e decisões para os contrib instalados Flag,
   CTools, History, Search API, Group e Message stack, com versões do lockfile.
 - `comment_mover` foi avaliado como referência para ferramentas de movimento:
-  não está instalado, o release disponível é alpha para Drupal 9/10 e seu fluxo
-  documentado remove o conteúdo da origem. Reutilizar somente os requisitos de
+  não está instalado; a release disponível é alpha para Drupal 9/10. O tarball
+  foi inspecionado: ele reatribui Comments in-place, mas a recursão não passa a
+  thread recém-calculada ao mover descendentes profundos e não valida o contrato
+  de acesso/estatísticas da ACULTA. Reutilizar só requisitos de
   seleção/subárvore/split; código e dependência não foram incorporados.
 - `MOVE-TOOLS.md` registra origem, compatibilidade, limitações e a manutenção do
   bloqueio até prova de integridade no Comment Core instalado. Sem alteração
