@@ -53,6 +53,30 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
   }
 
   /**
+   * Root Config Sync grants the topic relation only through contextual roles.
+   */
+  public function testConfigSyncRolesMatchTheAdapterRelationships(): void {
+    $roleRelationships = [
+      'group.role.lms_course-teacher' => 'group.relationship_type.lms_course-3abb8caf7f7d526ecedee',
+      'group.role.lms_course-member' => 'group.relationship_type.lms_course-3abb8caf7f7d526ecedee',
+      'group.role.lms_course-course_creator' => 'group.relationship_type.lms_course-3abb8caf7f7d526ecedee',
+      'group.role.lms_class-member' => 'group.relationship_type.lms_class-3abb8caf7f7d526ecedeec',
+    ];
+    foreach ($roleRelationships as $roleName => $relationshipName) {
+      $role = $this->syncConfig($roleName);
+      self::assertContains('aculta_forum_lms', $role['dependencies']['module']);
+      self::assertContains($relationshipName, $role['dependencies']['config']);
+      self::assertContains('view group_node:aculta_lms_topic entity', $role['permissions']);
+    }
+
+    $classSettings = $this->syncConfig('lms_classes.settings');
+    self::assertSame(
+      'grade students',
+      $classSettings['class_permission_mappings']['view group_node:aculta_lms_topic entity'],
+    );
+  }
+
+  /**
    * Loads one install config file by its config object name.
    */
   private function config(string $name): array {
@@ -66,6 +90,15 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
    */
   private function storageConfig(string $name): array {
     $path = dirname(__DIR__, 4) . '/aculta_forum/config/install/' . $name . '.yml';
+    self::assertFileExists($path);
+    return Yaml::parseFile($path);
+  }
+
+  /**
+   * Loads one root Config Sync YAML file.
+   */
+  private function syncConfig(string $name): array {
+    $path = dirname(__DIR__, 9) . '/config/sync/' . $name . '.yml';
     self::assertFileExists($path);
     return Yaml::parseFile($path);
   }

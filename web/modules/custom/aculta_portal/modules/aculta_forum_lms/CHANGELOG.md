@@ -18,6 +18,14 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.10` — validar dependências dos Group roles — 2026-10-20
+
+- Unit confronta os Group roles do Config Sync com as duas relationship types
+  entregues pelo adapter e verifica o mapeamento LMS de Educador para turma.
+- Unit do adapter: 12 testes / 141 assertions PASS. Config Sync não importado;
+  instalação real do módulo continua pendente do teste do grafo completo.
+  RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.9` — validar metadados de cache do contexto LMS — 2026-10-20
 
 - Kernel confirma contextos `user`, `user.permissions` e

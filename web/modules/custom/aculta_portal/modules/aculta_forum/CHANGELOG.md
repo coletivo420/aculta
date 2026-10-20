@@ -1722,6 +1722,15 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.101` — validar coerência da configuração LMS — 2026-10-20
+
+- Unit verifica que os quatro Group roles do Config Sync dependem das
+  relationship types do adapter e recebem somente a permission contextual de
+  tópico; também protege o mapeamento `grade students` para Educadores de
+  curso nas turmas.
+- A instalação real do grafo de módulos não foi simulada: o adapter continua
+  desabilitado e nenhuma configuração foi importada. Runtime DEFERRED.
+
 ## `0.1.0-dev.100` — provar cacheabilidade do acesso LMS — 2026-10-20
 
 - Kernel verifica que os contextos de leitura/escrita/moderação carregam as
