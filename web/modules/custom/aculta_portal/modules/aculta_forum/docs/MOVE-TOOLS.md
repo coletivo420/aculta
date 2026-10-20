@@ -248,7 +248,13 @@ depende de fechar os casos de concorrência e integração da matriz de testes.
   mas não substitui a operação transacional por Comment nem deve expor Actions,
   filtros ou campos sem permissões e escopo fixos.
 - `comment_mover` segue sem release estável Drupal 11; sua alpha de Drupal 9/10
-  serviu como contraste de comportamento, não como código incorporado.
+  foi inspecionada no tarball 2.0.0-alpha1 (SHA-256
+  `2fa3a4af65b43eb7855b7ae4c78da8368e425bcd4d10477e7f670fdd46510a91`). O
+  `CommentMover::moveComment()` confirma o padrão de reatribuir entidades
+  existentes; porém, `recursivelyUpdateCommentThread()` recursa com a base
+  original, e o teste upstream cobre somente um nível filho. Não copiamos o
+  algoritmo. A suíte ACULTA ganhou um caso com dois ramos e netos para fixar a
+  integridade da estrutura profunda e testar sua própria estratégia transacional.
 - Contrib instalados consultados (`flag`, CTools/`ctools_views`, History, Search
   API e Group) continuam donos de suas funções. O ACULTA reutiliza APIs e
   configuração e adapta os contratos de domínio/contexto/access/cache, sem

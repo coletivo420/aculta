@@ -246,6 +246,41 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   }
 
   /**
+   * Moving a subtree with sibling branches preserves each branch's thread path.
+   */
+  public function testMovePreservesSiblingBranchesAtMultipleDepths(): void {
+    $source = $this->topic('Branch source');
+    $destination = $this->topic('Branch destination');
+    $root = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $left = $this->comment($source, $root, CommentInterface::PUBLISHED);
+    $left_leaf = $this->comment($source, $left, CommentInterface::PUBLISHED);
+    $right = $this->comment($source, $root, CommentInterface::PUBLISHED);
+    $right_leaf = $this->comment($source, $right, CommentInterface::PUBLISHED);
+    $this->comment($destination, NULL, CommentInterface::PUBLISHED);
+
+    self::assertSame(5, $this->mover->move((int) $root->id(), (int) $destination->id(), $this->account));
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('comment');
+    $moved_root = $storage->load($root->id());
+    $moved_left = $storage->load($left->id());
+    $moved_left_leaf = $storage->load($left_leaf->id());
+    $moved_right = $storage->load($right->id());
+    $moved_right_leaf = $storage->load($right_leaf->id());
+
+    self::assertSame('02/', $moved_root->getThread());
+    self::assertSame('02.00/', $moved_left->getThread());
+    self::assertSame('02.00.00/', $moved_left_leaf->getThread());
+    self::assertSame('02.01/', $moved_right->getThread());
+    self::assertSame('02.01.00/', $moved_right_leaf->getThread());
+    self::assertSame((int) $moved_root->id(), (int) $moved_left->getParentComment()->id());
+    self::assertSame((int) $moved_root->id(), (int) $moved_right->getParentComment()->id());
+    self::assertSame((int) $moved_left->id(), (int) $moved_left_leaf->getParentComment()->id());
+    self::assertSame((int) $moved_right->id(), (int) $moved_right_leaf->getParentComment()->id());
+    self::assertSame(0, $this->commentCount($source));
+    self::assertSame(6, $this->commentCount($destination));
+  }
+
+  /**
    * Pending comments stay pending and cannot escape the public Forum. */
   public function testMovePreservesPendingStateAndRejectsHistoricalTopics(): void {
     $source = $this->topic('Source');

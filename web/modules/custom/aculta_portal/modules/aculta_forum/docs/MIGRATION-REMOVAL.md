@@ -69,6 +69,14 @@ com `accessCheck(FALSE)` foram somente de leitura e retornaram:
 | Flagging entities | 2 no total; 0 do Forum | Ambos apontam a `site_alert` (flags `aculta_site_alert_dismissed` e `aculta_site_alert_read`) |
 | Drupal Core `validateUninstall(['forum'])` | Bloqueado | Exige excluir todos os nodes `forum` e todos os termos `forums` antes do uninstall |
 
+Consulta adicional de 2026-10-19, somente leitura, agrupou os vínculos por
+bundle hospedeiro: 8 publicações `article` e 4 `blog` têm `field_discussao` não
+vazio. Os mesmos 12 Nodes têm também o campo `field_aculta_discussion`; essa
+presença de campo não prova que os Comments diretos estejam homologados por
+submissão/browser. Manter os vínculos e Nodes de abertura enquanto forem
+necessários para leitura histórica ou conversão de tipo; não remover o fallback
+nem limpar esses registros até a validação funcional e a sequência de retirada.
+
 ### Política de dados para o novo Fórum
 
 O responsável determinou que o novo Fórum deve começar limpo. Portanto, o

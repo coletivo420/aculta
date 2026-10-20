@@ -1,3 +1,18 @@
+## 0.1.0-dev.34 — revisão de fonte contrib e thread ramificada — 2026-10-19
+
+- Inspecionado diretamente o tarball `comment_mover` 2.0.0-alpha1: a operação
+  reatribui as entidades Comment existentes, mas a recursão de thread mantém a
+  base original e a suíte publicada não cobre descendentes em múltiplos ramos.
+  Nenhum código contrib foi copiado e o módulo não foi instalado.
+- Kernel `ForumCommentMoverKernelTest` ganhou cenário com dois ramos e netos,
+  verificando caminhos `thread`, parents e contagens após mover a árvore.
+  MariaDB dedicado: 13 testes/272 assertions PASS; 19 depreciações de
+  Core/Domain/Flag/Search API contrib.
+- Consulta somente leitura ao Runtime `toca` confirmou 8 vínculos antigos em
+  `article` e 4 em `blog`, todos com campo de discussão novo presente. Os Nodes,
+  Comments, Composer, configuração ativa e conteúdo do Runtime não foram
+  alterados. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.33 — mover comentário com subárvore — 2026-10-19
 
 - Implementados serviço transacional, formulário de confirmação, rota e
