@@ -8,6 +8,7 @@ use Drupal\aculta_mailer\Dashboard\MailDashboard;
 use Drupal\aculta_mailer\Diagnostics\MailDiagnostics;
 use Drupal\aculta_mailer\Diagnostics\SenderDomainCheck;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -88,6 +89,8 @@ final class MailDashboardController extends ControllerBase {
           '@total' => $summary['total'],
         ]),
         '#open' => $days === 1,
+        'status_chart' => $this->chart($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
+        'transport_chart' => $this->chart($this->t('Transporte'), $summary['by_transport']),
         'status' => $this->table($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
         'type' => $this->table($this->t('Tipo'), $summary['by_type']),
         'transport' => $this->table($this->t('Transporte'), $summary['by_transport']),
@@ -306,6 +309,22 @@ final class MailDashboardController extends ControllerBase {
       $out[(string) ($labels[$key] ?? $key)] = $count;
     }
     return $out;
+  }
+
+  /**
+   * Barras de contagem com o elemento nativo progress: o valor aparece como texto, então não depende de cor.
+   */
+  private function chart(TranslatableMarkup $label, array $counts): array {
+    if ($counts === []) {
+      return ['#markup' => '<p>' . $this->t('Nenhum registro.') . '</p>'];
+    }
+    $max = max(1, max($counts));
+    $items = [];
+    foreach ($counts as $name => $count) {
+      // O nome e o valor vão em texto, escapados; a barra é só apoio visual.
+      $items[] = ['#markup' => Html::escape($name . ': ' . $count) . ' <progress value="' . (int) $count . '" max="' . $max . '"></progress>'];
+    }
+    return ['#theme' => 'item_list', '#title' => $label, '#items' => $items];
   }
 
   /**

@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.51 — gráficos do painel (F8); exceção histórica do gate — 2026-10-20
+
+- F8: cada período do painel ganha barras de contagem por estado e por transporte. Barras com o elemento nativo `progress`, nome e valor em texto escapado (não depende de cor). Sem classe de design no módulo e sem biblioteca JS.
+- Revisão visual no Runtime de teste, 1270 e 500 px, com sessão de admin por link de uso único gerado só para a captura; sessão encerrada depois. Primeira versão mostrava só barras, sem rótulo; corrigida antes do commit.
+- Teste Kernel: uma barra por estado no painel renderizado.
+- Gate de índice: `a57f777d` registrado como exceção histórica, por decisão do responsável (commit de documentação sem a linha do README; corrigido no commit seguinte).
+- Evidência: Unit 137/137; Kernel do painel 3/3; gate de índice PASS.
+
 ## 0.1.0-dev.50 — cabeçalhos da tabela sem hifenização; roadmap atualizado — 2026-10-20
 
 - `css/admin.css`: cabeçalhos da tabela de envios sem hifenização e sem quebra de palavra ("Es-tado", "De-ta-lhe" na revisão de 0.1.0-dev.49). A tabela continua rolando dentro do contêiner.

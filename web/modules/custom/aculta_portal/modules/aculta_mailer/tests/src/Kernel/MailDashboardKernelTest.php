@@ -64,6 +64,11 @@ final class MailDashboardKernelTest extends KernelTestBase {
     $this->assertArrayHasKey('period_1', $page);
     $this->assertArrayHasKey('period_7', $page);
     $this->assertArrayHasKey('period_30', $page);
+
+    // Gráfico por estado: barras nativas com o valor em texto (acessível sem cor).
+    $html = (string) $this->container->get('renderer')->renderInIsolation($page['period_1']['status_chart']);
+    $this->assertStringContainsString('<progress', $html);
+    $this->assertSame(count(\Drupal\aculta_mailer\Message\MailStatus::cases()), substr_count($html, '<progress'), 'Uma barra por estado.');
   }
 
   /**
