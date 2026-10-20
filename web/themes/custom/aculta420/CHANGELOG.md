@@ -1,3 +1,8 @@
+## 0.6.0-dev.129 — separa a marca institucional da identidade de micropágina — 2026-10-20
+
+- O SDC `social-links-page` aceita `show_brand`; a landing institucional e o Node legado mantêm a marca ACULTA, enquanto micropáginas mostram seu título como H1 visível sem logo institucional indevida.
+- Validação: SDC schema PASS (36 componentes, 26 includes, 568 checks), Design Foundations PASS (2109), Foundation PASS (366 via Runtime de teste), fronteira módulo–tema PASS (1698). O Runtime ainda não contém micropáginas; landing institucional HTTP 200 preserva marca e projetos. Revisão responsiva da micropágina, claro/escuro, teclado e leitor de tela pendentes.
+
 ## 0.6.0-dev.128 — apresenta a landing Links restaurada — 2026-10-20
 
 - Template da landing institucional usa o SDC `social-links-page`, com preset clássico e logo do tema, mantendo dados e render arrays preparados pelo Portal/Links.

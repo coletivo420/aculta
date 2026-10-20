@@ -1,5 +1,10 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.9 — apresenta título próprio nas micropáginas — 2026-10-20
+
+- O template de micropágina solicita ao SDC que não apresente a marca institucional ACULTA e mantenha o título da página como H1 visível; a landing pública continua com a identidade institucional.
+- Validação: Kernel 2 testes/71 asserções, SDC schema 568, Design Foundations 2109, Foundation 366, fronteira módulo–tema 1698, mapa módulo/tema 162 e `git diff --check` PASS. Runtime de teste: rebuild concluído, landing HTTP 200 com marca ACULTA e projetos; ainda não havia micropáginas para smoke visual. Rebuild repetiu aviso de destino H5P sem diretório. Gate de status do projeto permanece bloqueado pelos commits externos `d0c3086c` e `88745650`; interfaces responsivas/dark/teclado/leitor de tela e identidade opt-in ainda pendentes.
+
 ## 0.4.0-dev.8 — apresenta acesso à página no dashboard — 2026-10-20
 
 - A listagem de micropáginas oferece link público quando publicada ou prévia privada quando em rascunho, resolvidos pelo Domain Links existente.

@@ -25,6 +25,10 @@ props:
     logo_src:
       type: string
       title: Logo URL
+    show_brand:
+      type: boolean
+      title: Show institutional brand
+      default: true
 slots:
   description:
     title: Description

@@ -36,6 +36,7 @@ páginas; equipes complexas não são prioridade.
 ## 0.4.0 — interface pública e presets
 
 Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; em 0.4.0-dev.5 a landing raiz foi restaurada com preservação do Node editorial e fallback dos dados atuais. Faltam SEO, controles adicionais de aparência e revisão visual/acessível antes de RC.
+Em 0.4.0-dev.9, o template de micropágina deixa de herdar a marca ACULTA da landing e usa o título escolhido como H1 visível. A identidade pública opt-in do proprietário permanece planejada para 0.6.0.
 
 ## 0.5.0 — métricas e ferramentas
 

@@ -1,14 +1,16 @@
 {% set preset = theme_preset|default('classic') %}
 <section class="aculta-social-links aculta-social-links--{{ preset|clean_class }}" aria-labelledby="aculta-social-links-title">
   <div class="aculta-social-links__profile">
-    <div class="aculta-social-links__logo-frame">
-      {% if logo_src %}
-        <img class="aculta-social-links__logo" src="{{ logo_src }}" width="180" height="60" alt="{{ 'ACULTA - Associação Cultural Antiproibicionista'|t }}">
-      {% else %}
-        <span class="aculta-social-links__logo-text">{{ 'ACULTA'|t }}</span>
-      {% endif %}
-    </div>
-    <h1 id="aculta-social-links-title" class="visually-hidden">{{ title }}</h1>
+    {% if show_brand is not defined or show_brand %}
+      <div class="aculta-social-links__logo-frame">
+        {% if logo_src %}
+          <img class="aculta-social-links__logo" src="{{ logo_src }}" width="180" height="60" alt="{{ 'ACULTA - Associação Cultural Antiproibicionista'|t }}">
+        {% else %}
+          <span class="aculta-social-links__logo-text">{{ 'ACULTA'|t }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+    <h1 id="aculta-social-links-title" class="aculta-social-links__title{% if show_brand is not defined or show_brand %} visually-hidden{% endif %}">{{ title }}</h1>
     {% if description %}
       <div class="aculta-social-links__description aculta-prose">{{ description }}</div>
     {% endif %}
