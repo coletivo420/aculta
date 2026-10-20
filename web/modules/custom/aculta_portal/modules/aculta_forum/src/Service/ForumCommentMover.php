@@ -36,6 +36,7 @@ final class ForumCommentMover {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ConfigFactoryInterface $configFactory,
+    private readonly ForumDiscussionWriteGuard $discussionWriteGuard,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly LockBackendInterface $lock,
@@ -148,6 +149,116 @@ final class ForumCommentMover {
     if (!$comment instanceof CommentInterface || !$destination instanceof NodeInterface) {
       throw new \InvalidArgumentException('The Forum comment move endpoints are unavailable.');
     }
+    $source_candidate = $comment->getCommentedEntity();
+    if (!$source_candidate instanceof NodeInterface) {
+      throw new \InvalidArgumentException('The source is not a public Forum topic.');
+    }
+    $source_id = (int) $source_candidate->id();
+    $destination_id = (int) $destination->id();
+    $this->assertMoveEndpoints($comment, $destination, $account);
+    $comment_storage = $this->entityTypeManager->getStorage('comment');
+    if (!$comment_storage instanceof CommentStorageInterface) {
+      throw new \LogicException('Drupal Comment storage does not support thread allocation.');
+    }
+
+    // Comment::preSave() acquires its thread lock before comment_presave. Keep
+    // the same order: reserve the destination root before discussion locks so
+    // a normal reply save cannot deadlock with this move operation.
+    [$new_root_thread, $thread_lock] = $this->allocateRootThread(
+      $comment_storage,
+      $this->newHostProbe($destination),
+      $destination_id,
+    );
+    try {
+      $topic_locks = $this->discussionWriteGuard->acquireTopics([$source_id, $destination_id]);
+      try {
+        $node_storage = $this->entityTypeManager->getStorage('node');
+        $comment_storage->resetCache([$commentId]);
+        $node_storage->resetCache([$source_id, $destination_id]);
+        $comment = $comment_storage->load($commentId);
+        $destination = $node_storage->load($destination_id);
+        if (!$comment instanceof CommentInterface || !$destination instanceof NodeInterface) {
+          throw new \InvalidArgumentException('The Forum comment move endpoints changed while the operation was starting.');
+        }
+        $source = $this->assertMoveEndpoints($comment, $destination, $account);
+        $subtree = $this->loadSubtree($comment);
+        foreach ($subtree as $member) {
+          if (!$this->domainPurposeManager->runInPurpose(
+            'forum',
+            fn () => $member->access('view', $account, TRUE)->isAllowed(),
+          )) {
+            throw new \InvalidArgumentException('A reply in this subtree is not accessible.');
+          }
+        }
+
+        $old_root_thread = rtrim((string) $comment->getThread(), '/');
+        if ($old_root_thread === '') {
+          throw new \InvalidArgumentException('The source reply has no valid thread position.');
+        }
+
+        $transaction = NULL;
+        try {
+          $transaction = $this->database->startTransaction();
+          $this->discussionWriteGuard->beginMove(array_keys($subtree));
+          foreach ($subtree as $cid => $member) {
+            $this->discussionWriteGuard->refresh($topic_locks);
+            $old_thread = (string) $member->getThread();
+            if ((int) $cid === $commentId) {
+              $member->set('pid', NULL);
+              $member->setThread($new_root_thread);
+            }
+            else {
+              if (!str_starts_with($old_thread, $old_root_thread . '.')) {
+                throw new \InvalidArgumentException('The reply subtree has inconsistent thread positions.');
+              }
+              $suffix = substr(rtrim($old_thread, '/'), strlen($old_root_thread));
+              $member->setThread(rtrim($new_root_thread, '/') . $suffix . '/');
+            }
+            $member->set('entity_id', $destination_id);
+            $member->save();
+          }
+
+          $this->commentStatistics->update($this->newHostProbe($source));
+          $this->cacheTagsInvalidator->invalidateTags($source->getCacheTagsToInvalidate());
+          $this->cacheTagsInvalidator->invalidateTags($destination->getCacheTagsToInvalidate());
+          $transaction->commitOrRelease();
+        }
+        catch (\Throwable $exception) {
+          $transaction?->rollBack();
+          $this->logger->error('Forum comment subtree move failed for comment @root from topic @source to @destination by uid @uid.', [
+            '@root' => $commentId,
+            '@source' => $source->id(),
+            '@destination' => $destination_id,
+            '@uid' => $account->id(),
+          ]);
+          throw $exception;
+        }
+        finally {
+          $this->discussionWriteGuard->endMove();
+        }
+      }
+      finally {
+        $this->discussionWriteGuard->release($topic_locks);
+      }
+
+      $this->logger->notice('Forum comment subtree @root moved from topic @source to @destination by uid @uid; @count comments.', [
+        '@root' => $commentId,
+        '@source' => $source->id(),
+        '@destination' => $destination_id,
+        '@uid' => $account->id(),
+        '@count' => count($subtree),
+      ]);
+
+      return count($subtree);
+    }
+    finally {
+      $this->lock->release($thread_lock);
+    }
+  }
+
+  /**
+   * Revalidates both endpoints while their discussion-write locks are held. */
+  private function assertMoveEndpoints(CommentInterface $comment, NodeInterface $destination, AccountInterface $account): NodeInterface {
     $this->assertMovableComment($comment);
     if (!$this->access($comment, $account)->isAllowed()
       || !$this->isOpenTopic($destination)
@@ -172,76 +283,7 @@ final class ForumCommentMover {
     if (!$source instanceof NodeInterface) {
       throw new \InvalidArgumentException('The source is not a public Forum topic.');
     }
-    $subtree = $this->loadSubtree($comment);
-    foreach ($subtree as $member) {
-      if (!$this->domainPurposeManager->runInPurpose(
-        'forum',
-        fn () => $member->access('view', $account, TRUE)->isAllowed(),
-      )) {
-        throw new \InvalidArgumentException('A reply in this subtree is not accessible.');
-      }
-    }
-
-    $comment_storage = $this->entityTypeManager->getStorage('comment');
-    if (!$comment_storage instanceof CommentStorageInterface) {
-      throw new \LogicException('Drupal Comment storage does not support thread allocation.');
-    }
-    $probe = $this->newHostProbe($destination);
-    [$new_root_thread, $lock_name] = $this->allocateRootThread($comment_storage, $probe, (int) $destination->id());
-    $old_root_thread = rtrim((string) $comment->getThread(), '/');
-    if ($old_root_thread === '') {
-      $this->lock->release($lock_name);
-      throw new \InvalidArgumentException('The source reply has no valid thread position.');
-    }
-
-    $transaction = NULL;
-    try {
-      $transaction = $this->database->startTransaction();
-      foreach ($subtree as $cid => $member) {
-        $old_thread = (string) $member->getThread();
-        if ((int) $cid === $commentId) {
-          $member->set('pid', NULL);
-          $member->setThread($new_root_thread);
-        }
-        else {
-          if (!str_starts_with($old_thread, $old_root_thread . '.')) {
-            throw new \InvalidArgumentException('The reply subtree has inconsistent thread positions.');
-          }
-          $suffix = substr(rtrim($old_thread, '/'), strlen($old_root_thread));
-          $member->setThread(rtrim($new_root_thread, '/') . $suffix . '/');
-        }
-        $member->set('entity_id', (int) $destination->id());
-        $member->save();
-      }
-
-      $this->commentStatistics->update($this->newHostProbe($source));
-      $this->cacheTagsInvalidator->invalidateTags($source->getCacheTagsToInvalidate());
-      $this->cacheTagsInvalidator->invalidateTags($destination->getCacheTagsToInvalidate());
-      $transaction->commitOrRelease();
-    }
-    catch (\Throwable $exception) {
-      $transaction?->rollBack();
-      $this->logger->error('Forum comment subtree move failed for comment @root from topic @source to @destination by uid @uid.', [
-        '@root' => $commentId,
-        '@source' => $source->id(),
-        '@destination' => $destination->id(),
-        '@uid' => $account->id(),
-      ]);
-      throw $exception;
-    }
-    finally {
-      $this->lock->release($lock_name);
-    }
-
-    $this->logger->notice('Forum comment subtree @root moved from topic @source to @destination by uid @uid; @count comments.', [
-      '@root' => $commentId,
-      '@source' => $source->id(),
-      '@destination' => $destination->id(),
-      '@uid' => $account->id(),
-      '@count' => count($subtree),
-    ]);
-
-    return count($subtree);
+    return $source;
   }
 
   /**

@@ -4,7 +4,10 @@ services:
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@logger.channel.aculta_forum']
   aculta_forum.comment_mover:
     class: Drupal\aculta_forum\Service\ForumCommentMover
-    arguments: ['@entity_type.manager', '@config.factory', '@aculta_portal.domain_purpose', '@lock', '@database', '@comment.statistics', '@cache_tags.invalidator', '@logger.channel.aculta_forum']
+    arguments: ['@entity_type.manager', '@config.factory', '@aculta_forum.discussion_write_guard', '@aculta_portal.domain_purpose', '@lock', '@database', '@comment.statistics', '@cache_tags.invalidator', '@logger.channel.aculta_forum']
+  aculta_forum.discussion_write_guard:
+    class: Drupal\aculta_forum\Service\ForumDiscussionWriteGuard
+    arguments: ['@entity_type.manager', '@lock', '@database']
   logger.channel.aculta_forum:
     parent: logger.channel_base
     arguments: ['aculta_forum']

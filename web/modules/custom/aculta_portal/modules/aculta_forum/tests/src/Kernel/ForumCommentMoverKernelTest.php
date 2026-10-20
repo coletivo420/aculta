@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Service\ForumCommentMover;
+use Drupal\aculta_forum\Service\ForumDiscussionWriteGuard;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
@@ -68,6 +70,13 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   private AccountInterface $account;
 
   /**
+   * Serializes Forum comment writes with tree moves.
+   *
+   * @var \Drupal\aculta_forum\Service\ForumDiscussionWriteGuard
+   */
+  private ForumDiscussionWriteGuard $writeGuard;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -121,9 +130,15 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
+    $this->writeGuard = new ForumDiscussionWriteGuard(
+      $manager,
+      $this->container->get('lock'),
+      $this->container->get('database'),
+    );
     $this->mover = new ForumCommentMover(
       $manager,
       $this->container->get('config.factory'),
+      $this->writeGuard,
       $purpose,
       $this->container->get('lock'),
       $this->container->get('database'),
@@ -218,6 +233,79 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertTrue($this->mover->access($comment, $this->account)->isForbidden());
     $this->expectException(\InvalidArgumentException::class);
     $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+  }
+
+  /**
+   * A stale reply form cannot recreate a parent link across topics. */
+  public function testStaleReplyWriteIsRejectedAfterItsParentMoves(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $root = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $reply = $this->comment($source, $root, CommentInterface::PUBLISHED);
+    // Keep an isolated copy: entity storage may return the same instance to
+    // the mover later in this request.
+    $stale_reply = clone $reply;
+
+    $this->mover->move((int) $root->id(), (int) $destination->id(), $this->account);
+
+    $this->expectException(\InvalidArgumentException::class);
+    $this->writeGuard->beforeCommentSave($stale_reply);
+  }
+
+  /**
+   * A stale delete form cannot remove a comment after it was moved. */
+  public function testStaleCommentDeleteIsRejectedAfterMove(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $stale_comment = Comment::load($comment->id());
+
+    $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+
+    $this->expectException(\InvalidArgumentException::class);
+    $this->writeGuard->beforeCommentDelete($stale_comment);
+  }
+
+  /**
+   * Write locks remain held until the enclosing transaction commits. */
+  public function testCommentWriteLockReleasesAfterRootTransaction(): void {
+    $topic = $this->topic('Topic');
+    $comment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => (int) $topic->id(),
+      'field_name' => ForumCommentMover::FIELD_NAME,
+      'comment_type' => ForumCommentMover::COMMENT_TYPE,
+      'uid' => 42,
+      'subject' => 'Reply subject',
+      'comment_body' => ['value' => 'Reply body', 'format' => 'plain_text'],
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $lock_name = 'aculta_forum:topic-write:' . $topic->id();
+    $released = FALSE;
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())
+      ->method('acquire')
+      ->with($lock_name, 300.0)
+      ->willReturn(TRUE);
+    $lock->expects(self::once())
+      ->method('release')
+      ->with($lock_name)
+      ->willReturnCallback(static function () use (&$released): void {
+        $released = TRUE;
+      });
+    $guard = new ForumDiscussionWriteGuard(
+      $this->container->get('entity_type.manager'),
+      $lock,
+      $this->container->get('database'),
+    );
+    $transaction = $this->container->get('database')->startTransaction();
+    $guard->beforeCommentSave($comment);
+    $guard->afterCommentSave($comment);
+
+    self::assertFalse($released);
+    $transaction->commitOrRelease();
+    unset($transaction);
+    self::assertTrue($released);
   }
 
   /**
