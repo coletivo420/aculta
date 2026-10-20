@@ -1,6 +1,6 @@
 ## 0.4.0-dev.211 — cadastro com e-mail já usado pelo aculta_mailer — 2026-10-20
 
-## 0.4.0-dev.213 — pedido de confirmação em português — 2026-10-20
+## 0.4.0-dev.214 — pedido de confirmação em português — 2026-10-20
 
 - O texto do pedido de confirmação de e-mail (`email_confirmation_request`) passa a ser em português; o link e a regra de reenvio não mudam.
 - Verificação no Runtime: um pedido aceito para o destinatário autorizado.
