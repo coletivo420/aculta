@@ -26,8 +26,10 @@ de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
 - PDF sem viewer conserva o link Core apenas quando `download` access permite.
 - O bundle Media `document` atual usa `public://`. Não o use para trabalhos de
   estudante ou outro documento que exija isolamento por turma.
-- Não cria rota, controller, hook PHP ou configuração própria. Não chama
-  `hook_file_download`; a entrega privada continua sob Core.
+- O `CspReportRequestGuardSubscriber` limita e valida os corpos CSP antes do
+  controller do Reporting; não altera relatórios válidos. Não cria rota nem
+  controller próprios para o viewer. A entrega de PDFs privados continua sob
+  Core e não chama `hook_file_download`.
 - PDFPreview/ImageMagick gera miniatura fail-soft somente para PDFs públicos;
   serviço e dependências contrib não são requisito para habilitar o viewer.
 - Campos File diretos usam o viewer somente para PDFs permanentes públicos. O

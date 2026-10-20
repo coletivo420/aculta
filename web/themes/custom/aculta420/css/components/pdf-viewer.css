@@ -99,6 +99,14 @@
   background-color: var(--aculta-media-stage-bg);
 }
 
+[data-aculta-pdf-viewer="true"] img[data-aculta-pdf-control="thumbnail"] {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
 [data-aculta-pdf-viewer="true"] canvas[data-aculta-pdf-control="page"] {
   display: block;
   width: auto;

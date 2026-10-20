@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.23 — proteger o endpoint público de relatórios CSP — 2026-10-20
+
+- O subscriber do viewer limita o corpo dos relatórios CSP a 64 KiB e valida o formato antes do controller contrib, retornando 400/413 para entrada malformada/grande em vez de erro 500.
+- Unit do guard cobre Reporting API/legacy válidos, objeto inválido, JSON malformado, scalar, item inválido e limite de tamanho; suíte Unit 21/21 (159 assertions), sem depreciações PHPUnit. Metadados PHPUnit legados do próprio módulo foram migrados para atributos.
+- Runtime Alpha: CSP/Reporting ativos, Report-Only true, enforcement false; header inclui `Reporting-Endpoints`, `report-to` e `report-uri`. Relatórios de ambos os formatos receberam 202; entrada inválida 400, corpo >64 KiB 413, Content-Type incompatível 415 e HEAD 405. Consulta agregada confirmou registros no DBLog sem expor payloads.
+- Firefox ESR no Alpha: PDF de 14 páginas renderizou; próxima página, zoom 125% e busca (“Resultado 1 de 5”) funcionaram; controles medem 44 px. A captura mobile encontrou miniatura do `aculta_image` com largura intrínseca de 480 px e motivou a correção responsiva no ACULTA420 dev.125.
+- Runtime PHP-FPM/CLI é 8.4.26, abaixo da baseline 8.5; traduções pt-BR falharam por `translations://` não configurado. Ainda Dev, não RC.
+
 ## 0.1.0-dev.22 — CSP em Report-Only para coleta em Alpha — 2026-10-20
 
 - Dependências Composer aprovadas: `drupal/csp:^2.2` (2.2.4) e `drupal/reporting:^2.2` (2.2.0) para emitir política Report-Only e receber relatórios no endpoint local.

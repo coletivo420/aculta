@@ -14,17 +14,18 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Image\ImageFactory;
 use Drupal\Core\File\MimeType\MimeTypeGuesser;
 use Drupal\aculta_pdf_viewer\Pdf\PdfPreviewThumbnailBuilder;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\file\Entity\File;
 use Drupal\imagemagick\ImagemagickExecManagerInterface;
 use Drupal\pdfpreview\PDFPreviewGenerator;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\LoggerInterface;
 
 /**
  * Tests safe source handling for PDF thumbnail generation.
- *
- * @group aculta_pdf_viewer
  */
+#[Group('aculta_pdf_viewer')]
 final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
 
   /**
@@ -61,7 +62,7 @@ final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
         $file_system,
         $this->createMock(MimeTypeGuesser::class),
         new ImageInspector($this->createMock(ImageFactory::class)),
-        $this->getMockBuilder(\Drupal\Component\Datetime\TimeInterface::class)->getMock(),
+        $this->getMockBuilder(TimeInterface::class)->getMock(),
       ),
       new ImageRenderer(new ImageCatalog(), $this->createMock(EntityTypeManagerInterface::class)),
       new ImageInspector($this->createMock(ImageFactory::class)),

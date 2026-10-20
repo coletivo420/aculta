@@ -1,3 +1,9 @@
+## 0.6.0-dev.125 — miniatura PDF responsiva — 2026-10-20
+
+- A miniatura gerada pelo pipeline `aculta_image` respeita a largura do viewer em telas estreitas; tamanho intrínseco de 480 px não causa overflow horizontal.
+- Firefox ESR headless no Alpha mostrou o overflow em 390 × 844 antes da correção. Depois do ajuste, a miniatura coube no cartão; no Firefox WebDriver a página e o canvas renderizaram, os controles mantiveram 44 px, o documento não teve overflow e página seguinte/zoom/busca funcionaram. Gates Foundation (366), Design Foundations (2103) e fronteira módulo–tema (1608) PASS.
+- PV7 permanece Dev; não foi validada em produção.
+
 ## 0.6.0-dev.124 — tokens do LMS no mapa; configuração de instalação alinhada ao Runtime — 2026-10-20
 
 - `PortalUiHooks::TOKENS`: `lms-forum-moderation-overview` e `lms-forum-moderation-queue` (painel de moderação do Fórum no LMS), sem CSS próprio.

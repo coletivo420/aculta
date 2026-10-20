@@ -34,7 +34,8 @@ redirecionamentos. Ele complementa o sitemap XML de indexação; não o substitu
 
 Este mapa não é inventário exaustivo de todas as rotas do Drupal. Em 2026-10-20,
 o conjunto administrativo do Fórum listado abaixo foi reconciliado no Runtime
-de teste por Drush e HTTP; isso não comprova as outras áreas nem produção.
+de teste por Drush e HTTP; CSP/Reporting também foi conferido no Alpha por
+nomes de rota e HTTP. Isso não comprova produção.
 Antes de declarar o mapa completo para qualquer ambiente, gere as rotas com
 Drush, inspecione paths derivados de conteúdo/aliases e marque módulos
 desabilitados. Nunca use um caminho de teste como evidência de produção.
@@ -130,13 +131,19 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/segredos/editar/{name}` | Edição de metadados de credencial | Rota administrativa restrita; segredo não é exposto no mapa. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/segredos/mostrar/{name}` | Visualização controlada de estado da credencial | Rota administrativa restrita; não copiar segredo para documentação. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/deployer` | Configuração/operações do deployer | Rota administrativa restrita. |
-| `main.aculta` | `/admin/config/system/csp` | Administração das políticas CSP Report-Only/enforced | Rota administrativa do contrib `csp`; condicional à configuração habilitar `csp`; exige permissão `administer csp configuration`; enforce permanece desabilitado no Config Sync. |
-| `main.aculta` | `/admin/config/system/reporting` | Lista de endpoints de relatório do navegador | Rota administrativa do contrib `reporting`; condicional à ativação do módulo; exige `administer site configuration`. |
-| `main.aculta` | `/admin/config/system/reporting/add` | Cadastro de endpoint de relatório do navegador | Rota administrativa do contrib `reporting`; condicional à ativação do módulo; exige `administer site configuration`. |
-| `main.aculta` | `/admin/config/system/reporting/{reporting_endpoint}` | Edição de endpoint de relatório do navegador | Rota administrativa do contrib `reporting`; condicional à ativação do módulo; exige `administer site configuration`. |
-| `main.aculta` | `/admin/config/system/reporting/{reporting_endpoint}/delete` | Remoção de endpoint de relatório do navegador | Rota administrativa do contrib `reporting`; condicional à ativação do módulo; exige `administer site configuration`. |
-| `main.aculta` | `/admin/reports/reporting` | Consulta de violações CSP recebidas no DBLog | Rota administrativa do contrib `reporting`; depende também de `dblog`; exige `access site reports`. |
-| `main.aculta` | `/system/reporting/{reporting_endpoint}` | Endpoint técnico POST para relatórios CSP do navegador | Condicional à ativação/configuração `reporting`; endpoint público e não navegável, valida formato/content-type e registra relatório técnico no DBLog; revisar retenção e dados de URL/UA antes de produção. |
+| `main.aculta` | `/admin/config/system/csp` | Path declarado pelo contrib para a configuração CSP | Não ativo diretamente no Alpha observado: `rename_admin_paths` reescreve para `/painel-administrativo/configuracoes/system/csp`; o path declarado respondeu 404. Produção ainda não confirmada. |
+| `main.aculta` | `/painel-administrativo/configuracoes/system/csp` | Administração das políticas CSP Report-Only/enforced | Rota ativa no Runtime Alpha de teste; HTTP anônimo 403; exige `administer csp configuration`. `enforce` permanece desligado. |
+| `main.aculta` | `/admin/config/system/reporting` | Path declarado pelo contrib para a lista de endpoints Reporting | Não ativo diretamente no Alpha observado: reescrito para `/painel-administrativo/configuracoes/system/reporting`; o path declarado respondeu 404. |
+| `main.aculta` | `/painel-administrativo/configuracoes/system/reporting` | Lista de endpoints de relatório do navegador | Rota ativa no Runtime Alpha de teste; HTTP anônimo 403; exige `administer site configuration`. |
+| `main.aculta` | `/admin/config/system/reporting/add` | Path declarado pelo contrib para cadastrar endpoint Reporting | Não ativo diretamente no Alpha observado; reescrito pelo `rename_admin_paths`. |
+| `main.aculta` | `/painel-administrativo/configuracoes/system/reporting/add` | Cadastro de endpoint de relatório do navegador | Rota ativa no Runtime Alpha; HTTP anônimo 403; exige `administer site configuration`. |
+| `main.aculta` | `/admin/config/system/reporting/{reporting_endpoint}` | Path declarado pelo contrib para editar endpoint Reporting | Não ativo diretamente no Alpha observado; reescrito pelo `rename_admin_paths`. |
+| `main.aculta` | `/painel-administrativo/configuracoes/system/reporting/{reporting_endpoint}` | Edição de endpoint de relatório do navegador | Rota ativa no Runtime Alpha; HTTP anônimo 403; exige `administer site configuration`. |
+| `main.aculta` | `/admin/config/system/reporting/{reporting_endpoint}/delete` | Path declarado pelo contrib para remover endpoint Reporting | Não ativo diretamente no Alpha observado; reescrito pelo `rename_admin_paths`. |
+| `main.aculta` | `/painel-administrativo/configuracoes/system/reporting/{reporting_endpoint}/delete` | Remoção de endpoint de relatório do navegador | Rota ativa no Runtime Alpha; HTTP anônimo 403; exige `administer site configuration`. |
+| `main.aculta` | `/admin/reports/reporting` | Path declarado pelo contrib para o relatório de violações CSP | Não ativo diretamente no Alpha observado: reescrito para `/painel-administrativo/relatorios/reporting`. |
+| `main.aculta` | `/painel-administrativo/relatorios/reporting` | Consulta de violações CSP recebidas no DBLog | Rota ativa no Runtime Alpha de teste; depende de `reporting` e `dblog`; exige `access site reports`. |
+| `main.aculta` | `/system/reporting/{reporting_endpoint}` | Endpoint técnico POST para relatórios CSP do navegador | Ativo no Runtime Alpha: HEAD recebe 405; relatório válido `application/reports+json` e CSP legacy recebeu 202; objeto inválido recebeu 400; corpo acima de 64 KiB recebeu 413. Público e não navegável; revisar retenção e dados de URL/UA antes de produção. |
 | `main.aculta` | `/painel-administrativo/loja/vendas` | Lista administrativa de vendas | Condicional aos módulos Commerce e permissões. |
 | `main.aculta` | `/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/atualizar` | Atualização administrativa de pagamento | Condicional ao Commerce; operação protegida. |
 | `main.aculta` | `/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/cancelar` | Cancelamento administrativo de pagamento | Condicional ao Commerce; operação protegida. |
