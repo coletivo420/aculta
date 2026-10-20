@@ -116,8 +116,11 @@ Na verificação de 2026-10-20, Firefox confirmou também a camada textual do
 viewer completo (texto do documento no `.textLayer` e rótulo de página no DOM)
 em viewport desktop de 1366 px e móvel de 560 px. O modo de duas páginas caiu
 para página única no viewport móvel e ambos mantiveram `scrollWidth` igual à
-largura da viewport. Essa inspeção de DOM não é um teste com leitor de tela;
-validar teclado e leitor de tela real antes de RC continua obrigatório. O
+largura da viewport. WebDriver confirmou navegação pelo atalho `n` da página 1
+para 2. `PageDown` em `fit-width` não alterou o número da página nessa
+verificação; não foi considerado evidência de navegação por teclado. Essa
+inspeção de DOM e teclado não substitui teste com leitor de tela real, que segue
+obrigatório antes de RC. O
 Kernel segue sem chegar às assertions por dependências/serviços do Portal e da
 configuração LMS no fixture. Gates centrais ainda incluem trabalho não
 integrado de outros componentes; o viewer permanece Dev.
