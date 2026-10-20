@@ -1,3 +1,20 @@
+## dev.123 — homologar movimento de tópicos em lote no Runtime
+
+- Firefox ESR/X11 autenticado no Runtime de teste (Drupal 11.4.10,
+  `https://aculta.toca.net.br`, banco `aculta_runtime`): 13/13 verificações.
+  Seleção AJAX correspondeu exatamente aos NIDs de duas fixtures; configuração
+  e confirmação exibiram ambos os títulos; Batch API concluiu sem erro e a View
+  informou duas movimentações. As entidades mantiveram NID, UUID, título,
+  autor, status não publicado, Domain e estado do campo Comment; a categoria
+  mudou e a revisão avançou.
+- `finally` removeu apenas as duas fixtures pelos NIDs/UUIDs registrados.
+  Entity API confirmou baseline restaurado: 0 tópicos públicos/legados,
+  0 comentários compartilhados/legados, 12 categorias intactas e fila
+  Messenger 0. Nenhuma alteração estrutural/configuracional no Runtime.
+- Evidências privadas `0600` em
+  `/home/aculta/private/aculta-forum-bulk-dev123-retry-20261020/`.
+  RUNTIME STATUS: PASS para o movimento em lote no escopo exercitado.
+
 ## dev.122 — painel Growroom420 e abas administrativas
 
 - PHPUnit Unit direcionado: 21 testes/309 assertions PASS; PHPCS direcionado,

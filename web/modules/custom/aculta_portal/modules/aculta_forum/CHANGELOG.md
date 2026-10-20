@@ -1,3 +1,15 @@
+## `0.1.0-dev.123` — homologar movimento de tópicos em lote
+
+- Firefox/X11 autenticado no Runtime de teste confirmou seleção VBO de dois
+  tópicos, configuração e confirmação explícitas, execução completa do Batch
+  API e movimentação das entidades para a categoria escolhida. Identidade,
+  autoria, publicação, Domain e discussão foram preservados; as revisões
+  avançaram. Fixtures exatas foram removidas ao final e o fórum voltou ao
+  baseline vazio, sem alteração de categorias ou da fila Messenger.
+- O texto sobre os quatro contextos de discussão fica em
+  `docs/ADMIN-TOOLS.md`; o painel Growroom420 não o renderiza. O smoke visual
+  dev.122 verifica explicitamente essa ausência.
+
 ## `0.1.0-dev.122` — abas administrativas do Fórum
 
 - `/painel-administrativo/forum` é a aba Início, intitulada Painel Growroom420,

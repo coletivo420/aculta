@@ -2,12 +2,12 @@
 
 Estado: **movimento individual e em lote de tópico implementados no código; o
 lote usa Views Bulk Operations 4.4.9 com limite 50, confirmação e Batch API,
-mas ainda não está habilitado no Runtime. O formulário de mover comentário teve smoke
+e está habilitado no Runtime de teste. O formulário de mover comentário teve smoke
 X11 autenticado de uma raiz pendente com subárvore ramificada e rejeição
 preservada, permanece
 desativado por padrão e ainda depende da homologação de integrações descritas
 abaixo. O Kernel MariaDB cobre subárvores e rollback**. A interface administrativa
-fica na aba Conteúdo de `/painel-administrativo/forum`; este contrato detalha os itens de organização e moderação do
+fica na aba Tópicos de `/painel-administrativo/forum`; este contrato detalha os itens de organização e moderação do
 [`ROADMAP.md`](ROADMAP.md), incorporando padrões observados no Discourse sem
 importar seus papéis, storage ou regras de acesso.
 
@@ -87,9 +87,16 @@ específica, categoria de origem, Domain Fórum, Entity Access e bloqueio de
 `field_autor_legado`; o destino também precisa ser uma categoria pública visível
 e diferente da origem. Cada item é gravado como nova revisão do mesmo Node, e
 resultados de sucesso/recusa são agregados individualmente pelo VBO. O Kernel
-cobre dois tópicos e o bloqueio histórico. A ativação do VBO e da configuração
-da View no Runtime, e um smoke autenticado da seleção, confirmação e Batch API,
-permanecem pendentes.
+cobre dois tópicos e o bloqueio histórico. Em 2026-10-20, Firefox/X11
+autenticado no Runtime de teste selecionou exatamente dois Nodes, exibiu ambos
+na configuração e confirmação, submeteu a operação e concluiu o Batch API. A
+verificação de entidades confirmou nova revisão e categoria destino,
+preservando NID, UUID, autoria, status, Domain e estado da discussão. O smoke
+removeu somente as duas fixtures marcadas e confirmou retorno ao baseline:
+zero tópicos/comentários públicos ou legados e fila Messenger vazia. O primeiro
+ensaio foi interrompido por uma expectativa incorreta sobre o markup do VBO;
+o ensaio final verificou a seleção pelos IDs decodificados das checkboxes e os
+títulos nas telas de configuração e confirmação.
 
 ### C. Mover comentário/resposta
 
