@@ -124,13 +124,28 @@ final class LinkPage extends EditorialContentEntityBase implements EntityOwnerIn
       ])
       ->setDisplayConfigurable('form', TRUE);
 
+    $fields['theme_preset'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Aparência'))
+      ->setSetting('allowed_values', [
+        'classic' => 'Clássica',
+        'soft' => 'Suave',
+        'outline' => 'Contorno',
+      ])
+      ->setDefaultValue('classic')
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => 3,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
     $fields['status']->setDefaultValue(FALSE)
       ->setDisplayOptions('form', [
         'type' => 'boolean_checkbox',
         'settings' => [
           'display_label' => TRUE,
         ],
-        'weight' => 3,
+        'weight' => 4,
       ])->setDisplayConfigurable('form', TRUE);
     $fields['uid']->setRevisionable(TRUE);
     $fields['created'] = BaseFieldDefinition::create('created')

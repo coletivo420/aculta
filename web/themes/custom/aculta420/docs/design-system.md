@@ -246,7 +246,7 @@ do asset ACULTA já existente no próprio tema e recebe o token de filtro do she
 Nesse purpose, a página preserva a barra institucional multidomínio e um rodapé
 específico, omitindo o Domain Header e o rodapé padrão do site.
 O botão primário leva à raiz MAIN; botões adicionais configurados no Portal
-aparecem em seguida, e os canais sociais configurados permanecem no rodapé. O shell usa espaçamento vertical compacto para aproximar o conteúdo
+aparecem em seguida, e os canais sociais configurados permanecem no rodapé. Micropáginas podem escolher os presets `classic`, `soft` ou `outline`; o template legado omite a propriedade e mantém `classic`. Os presets alteram somente superfícies e bordas por tokens semânticos, sem CSS fornecido por usuários. O shell usa espaçamento vertical compacto para aproximar o conteúdo
 da barra institucional e do rodapé, sem remover a folga mínima de leitura.
 
 ## Primitives

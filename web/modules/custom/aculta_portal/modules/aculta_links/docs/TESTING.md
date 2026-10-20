@@ -24,8 +24,8 @@ perdem conteúdo. Criar mecanismo de reversão antes de qualquer migração de d
 Para entidades: Unit/Kernel/Functional em MariaDB dedicado conforme
 `docs/operations/BANCO-DE-TESTE.md`, cobrindo ownership, revisões, unicidade,
 URLs inválidas, isolamento Domain, access, cache e publicação. Runtime é DEFERRED
-até validação autorizada no servidor de testes. Nenhum resultado de Runtime é
-reivindicado nesta fase.
+para produção; evidências parciais do Runtime de teste e seus limites são
+registrados abaixo.
 
 ## Interface pública e segurança
 
@@ -33,8 +33,15 @@ reivindicado nesta fase.
 - Functional/browser valida `/pagina/{slug}` em links e 404 em outros purposes; inspeciona SDC em tamanhos móveis/desktop, claro/escuro, teclado, contraste e sem overflow.
 - Cache precisa invalidar ao editar/despublicar página, item ou link e ao mudar alias de Domain.
 
+Update de entidade `aculta_links_update_10001` aplicado ao Runtime de teste em
+2026-10-20 com zero micropáginas existentes; o schema recebeu o campo
+revisionável `theme_preset`. Nenhum update de outro módulo foi executado.
+
 Em 2026-10-20, Kernel passou com 1 teste/49 asserções incluindo prévia privada
-do proprietário e `max-age: 0`; o route provider do Runtime confirmou
-`/pagina/{slug}/previa` no purpose `links`; HTTP anônimo para slug inexistente
-e HTTP no purpose `main` retornaram 404. Cache rebuild foi executado no Runtime
-de teste. Uma prévia autenticada visual continua pendente.
+do proprietário, preset persistido e `max-age: 0` (1 teste/52 asserções); o
+route provider do Runtime confirmou `/pagina/{slug}/previa` no purpose `links`;
+HTTP anônimo sem entidade e HTTP no purpose `main` retornaram 404. Firefox
+headless a 390 × 844 CSS px apresentou o preset `soft` com HTTP 200; o cabeçalho
+vazio de projetos foi removido. Os fixtures de três presets foram apagados após
+verificação de identidade. Claro/escuro completo, desktop, teclado, leitor de
+tela e prévia autenticada continuam pendentes.

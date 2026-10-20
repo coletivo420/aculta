@@ -15,6 +15,19 @@
   color: var(--aculta-text-primary);
   text-align: center;
 }
+.aculta-social-links--soft {
+  border-color: var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius-xl);
+  background: var(--aculta-surface-muted);
+}
+.aculta-social-links--outline {
+  border-width: 2px;
+  background: transparent;
+}
+.aculta-social-links--outline .aculta-social-links__channel,
+.aculta-social-links--outline .aculta-social-links__item a {
+  background: transparent;
+}
 .aculta-social-links__profile { margin-bottom: 0.75rem; }
 .aculta-social-links__logo-frame {
   width: min(100%, 12rem);

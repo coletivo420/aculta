@@ -3,8 +3,8 @@
 Implementadas como entidades de conteúdo revisionáveis, as três responsabilidades
 ficam separadas. `aculta_link` usa o campo Link do Core para o destino, a
 propriedade padrão de User, publicação e metadados de revisão. `aculta_link_page`
-guarda título, slug, descrição, proprietário e estado de publicação (rascunhos
-começam despublicados). `aculta_link_item` guarda página/destino referenciados,
+guarda título, slug, descrição, proprietário, aparência governada por preset e
+estado de publicação (rascunhos começam despublicados). `aculta_link_item` guarda página/destino referenciados,
 rótulo, descrição, ordem e estado.
 
 Há formulários Core e rotas administrativas declaradas para as três entidades, além de um dashboard com listas paginadas. O handler de itens exige que o próprio item, a página e o destino referenciado pertençam à conta que os gerencia. O slug tem gramática ASCII minúscula e unicidade validada pelo Core. A renderização pública já está declarada em `/pagina/{slug}`, condicionada ao purpose `links` e ao estado publicado; a camada visual reaproveita o SDC existente. O handler de página/destino
@@ -13,7 +13,7 @@ mantém acesso privado até a integração de publicação/domínio.
 | Conceito | Responsabilidade proposta | Relações |
 | --- | --- | --- |
 | Link reutilizável | Destino do campo Link do Core, título e publicação; `aculta_link` já cobre o armazenamento revisionável e propriedade. | Autor Drupal; destino pode ser URI interna ou HTTPS externa; Entity Access privado. |
-| Micropágina | `aculta_link_page`: título, slug, descrição e publicação Drupal. | `uid` proprietário; Domain/purpose será resolvido em runtime. |
+| Micropágina | `aculta_link_page`: título, slug, descrição, preset visual e publicação Drupal. | `uid` proprietário; Domain/purpose será resolvido em runtime. |
 | Item de página | `aculta_link_item`: composição ordenada que aponta a um destino reutilizável. | Referências tipadas à página e ao link; peso e ativo. |
 | Evento estatístico | Visita/clique mínimo, retenção curta e agregação. | IDs opacos de página/item e data; sem IP ou user-agent persistente por padrão. |
 

@@ -148,6 +148,9 @@ final class LinkPagePublicController {
       '#theme' => 'aculta_links_page',
       '#title' => $page->label(),
       '#description' => (string) $page->get('description')->value,
+      '#theme_preset' => in_array((string) $page->get('theme_preset')->value, ['classic', 'soft', 'outline'], TRUE)
+        ? (string) $page->get('theme_preset')->value
+        : 'classic',
       '#links' => $links,
       '#has_links' => $link_items !== [],
       '#cache' => [

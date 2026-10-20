@@ -2,7 +2,7 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.3`. O módulo possui entidades revisionáveis de destinos, micropáginas
+`0.4.0-dev.4`. O módulo possui entidades revisionáveis de destinos, micropáginas
 e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A migração da landing raiz continua pendente.
 
@@ -48,6 +48,7 @@ destinos e rascunhos privados por proprietário. O editor oferece prévia privad
 de rascunhos e itens inativos, sem cache compartilhado. A rota pública usa status publicado, validação de slug/destino e o SDC
 `social-links-page` via template ACULTA420. O módulo foi habilitado no Runtime
 de teste em 2026-10-20; router confirmado sob purpose `links`; slug inexistente
-retorna 404 e dashboard anônimo retorna 403. A configuração exportável foi
+retorna 404 e dashboard anônimo retorna 403. Micropáginas oferecem três presets
+de aparência controlados pelo ACULTA420. A configuração exportável foi
 atualizada, sem importação global. A migração da landing atual e a revisão visual
 com conteúdo continuam pendentes.

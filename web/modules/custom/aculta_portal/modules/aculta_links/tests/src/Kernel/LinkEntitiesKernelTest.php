@@ -28,6 +28,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     'user',
     'field',
     'link',
+    'options',
     'views',
     'aculta_links',
   ];
@@ -104,6 +105,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
       'title' => 'Página cultural',
       'slug' => 'pagina-cultural',
       'description' => 'Apresentação pública.',
+      'theme_preset' => 'soft',
       'uid' => $owner->id(),
     ]);
     $page->save();
@@ -119,6 +121,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $item->save();
 
     self::assertFalse($page->isPublished(), 'Micropáginas começam despublicadas.');
+    self::assertSame('soft', $page->get('theme_preset')->value, 'A escolha de preset é persistida na micropágina.');
     self::assertTrue($link->access('update', $owner));
     self::assertTrue($link->access('view', $other), 'Destinos publicados são públicos.');
     self::assertTrue($page->access('update', $owner));
@@ -133,6 +136,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount($owner);
     $preview = $this->container->get('aculta_links.public_page_controller')->preview($page);
     self::assertTrue($preview['#has_links'], 'Proprietário pode pré-visualizar itens de um rascunho.');
+    self::assertSame('soft', $preview['#theme_preset']);
     self::assertSame(0, $preview['#cache']['max-age'], 'Prévia privada nunca pode ser compartilhada em cache.');
     self::assertTrue(
       $this->container->get('aculta_links.public_page_controller')->previewBySlug('pagina-cultural')['#has_links'],
@@ -167,6 +171,13 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
       'uid' => $owner->id(),
     ]);
     self::assertNotEmpty($duplicate_slug->validate()->getByField('slug'), 'Slug deve ser globalmente único.');
+    $invalid_preset = LinkPage::create([
+      'title' => 'Preset inválido',
+      'slug' => 'pagina-com-preset-invalido',
+      'theme_preset' => 'custom-css',
+      'uid' => $owner->id(),
+    ]);
+    self::assertNotEmpty($invalid_preset->validate()->getByField('theme_preset'), 'Presets só aceitam os valores governados.');
     $unsafe_link = Link::create([
       'title' => 'Destino inseguro',
       'uri' => ['uri' => 'http://example.org/'],

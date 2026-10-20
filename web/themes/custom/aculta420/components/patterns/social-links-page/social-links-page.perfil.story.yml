@@ -4,6 +4,7 @@ component: aculta420:social-links-page
 props:
   title: ACULTA
   has_links: true
+  theme_preset: classic
 slots:
   description:
     markup: '<p>Associação cultural antiproibicionista: cultura, direitos e participação.</p>'

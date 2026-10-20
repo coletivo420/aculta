@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.127 | Presets governados `classic`, `soft` e `outline` no SDC de links | Revisão visual responsiva/acessível ainda pendente | A micropágina escolhe uma opção permitida; o SDC usa tokens semânticos; a landing antiga conserva `classic` |
 | 0.6.0-dev.126 | Template público do ACULTA Links conectado ao SDC existente; visual ainda pendente | Revisar micropágina em larguras móveis/desktop, claro/escuro, foco/teclado e leitor de tela |
 | 0.6.0-dev.125 | Miniatura PDF responsiva | Alpha Firefox 390 × 844 identificou e corrigiu o overflow; render, controles e canvas verificados no Firefox WebDriver. Foundation 366, Design Foundations 2103 e fronteira módulo–tema 1608 PASS | Restringir a largura da miniatura ao viewer sem alterar o canvas do leitor |
 | 0.6.0-dev.124 | Tokens do LMS no mapa; instalação alinhada ao Runtime | Foundation e design foundations PASS. Sem mudança visual | Tokens de moderação do Fórum no LMS mapeados; exceção restrita do e-mail no gate de modo |

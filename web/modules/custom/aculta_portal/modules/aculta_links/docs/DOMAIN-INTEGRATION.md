@@ -1,7 +1,10 @@
 # Integração com Domain
 
 `links.aculta.org` é o registro `links_aculta_org`, purpose `links`. A raiz `/`
-é servida por `PurposeFrontPathProcessor` usando `/redes-sociais` internamente.
+é reescrita por `PurposeFrontPathProcessor` para `/redes-sociais` internamente.
+No Runtime de teste em 2026-10-20 esse path retornou 404: não havia Node com
+Domain Source `links_aculta_org` nem alias `/redes-sociais`. A recuperação deve
+fornecer a landing pelo `aculta_links`, sem publicar o caminho interno direto.
 O mapa de caminhos marca a entrada `links.aculta` e informa que DNS de produção
 precisa confirmação.
 

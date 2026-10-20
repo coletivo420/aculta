@@ -12,6 +12,16 @@ props:
     has_links:
       type: boolean
       title: Has social links
+      default: false
+    has_projects:
+      type: boolean
+      title: Has ACULTA projects
+      default: false
+    theme_preset:
+      type: string
+      title: Theme preset
+      default: classic
+      enum: [classic, soft, outline]
     logo_src:
       type: string
       title: Logo URL

@@ -19,6 +19,7 @@ final class AcultaLinksThemeHooks {
         'variables' => [
           'title' => NULL,
           'description' => NULL,
+          'theme_preset' => 'classic',
           'links' => [],
           'has_links' => FALSE,
         ],

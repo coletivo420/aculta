@@ -1,3 +1,8 @@
+## 0.6.0-dev.127 — presets governados nas micropáginas — 2026-10-20
+
+- O SDC `social-links-page` aceita as variantes `classic`, `soft` e `outline`, usando tokens semânticos ACULTA420; a variante clássica permanece o fallback da landing institucional existente.
+- Gate Design Foundations PASS (2106), SDC schema PASS (36 componentes/555 verificações). Firefox headless em 390 × 844 CSS px mostrou o preset soft e a ausência de seção de projetos vazia; dark mode, outros presets, desktop e a11y permanecem pendentes antes de RC.
+
 ## 0.6.0-dev.126 — Micropágina pública integrada ao SDC — 2026-10-20
 
 - Template `aculta-links-page.html.twig` reaproveita o SDC `social-links-page` para renderizar páginas públicas preparadas pelo módulo; o tema mantém toda a apresentação.

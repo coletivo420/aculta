@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.4 — presets visuais governados — 2026-10-20
+
+- Micropáginas armazenam `theme_preset` revisionável com opções fixas `classic`, `soft` e `outline`, renderizadas pelo SDC ACULTA420 com tokens semânticos.
+- Campo incluído em instalação nova e update hook `aculta_links_update_10001()` para entidades existentes; dependência adicionada somente ao módulo Core `options`.
+- Kernel: 1 teste/52 asserções PASS em MariaDB dedicada, incluindo persistência, rejeição de preset inválido e render da prévia. O update foi aplicado no Runtime de teste após confirmar zero micropáginas existentes; nenhuma entidade ou conteúdo foi alterado.
+- Firefox headless em 390 × 844 CSS px confirmou o preset `soft`; a tela não apresenta projetos sem conteúdo. Os sete registros temporários de QA foram apagados após conferência. A auditoria também encontrou a landing antiga em HTTP 404: nenhum Node com Domain Source `links_aculta_org` nem alias `/redes-sociais`; restauração entra no próximo incremento.
+
 ## 0.4.0-dev.3 — prévia privada de micropágina — 2026-10-20
 
 - Editor de composição inclui rota de prévia privada no purpose `links` (`/pagina/{slug}/previa`) para renderizar com o tema público, aceitando rascunhos e itens inativos; o controlador exige atualização da página e `max-age: 0` impede cache compartilhado.

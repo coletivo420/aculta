@@ -29,7 +29,7 @@ Dashboard, CRUD básico, composição ordenável por tabela Drupal, publicação
 
 ## 0.4.0 — interface pública e presets
 
-Rota pública inicial, integração ao SDC existente e prévia privada sem cache compartilhado em `/pagina/{slug}/previa` implementadas em 0.4.0-dev.3; faltam presets governados, SEO, controles de aparência, revisão visual/acessível e migração preservadora da landing antiga antes de RC.
+Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; faltam SEO, controles adicionais de aparência, revisão visual/acessível e migração preservadora da landing antiga antes de RC.
 
 ## 0.5.0 — métricas e ferramentas
 

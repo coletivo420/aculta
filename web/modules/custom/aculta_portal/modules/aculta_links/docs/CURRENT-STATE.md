@@ -12,11 +12,13 @@
 
 ## Implementação encontrada
 
-O Domain `links_aculta_org` atende `links.aculta.org`, com purpose `links`. O
+O Domain `links_aculta_org` e o purpose `links` existem. O
 `PurposeFrontPathProcessor` traduz internamente a raiz pública `/` para
-`/redes-sociais`, preservando a URL de navegador. O conteúdo da página é uma
-entidade Node `page` associada a Domain Source; o hook do Portal identifica esse
-purpose e seleciona `node--social-links.html.twig` no ACULTA420.
+`/redes-sociais`, preservando a URL de navegador. Em 2026-10-20, a consulta ao
+Runtime encontrou zero Nodes com `field_domain_source = links_aculta_org`, sem
+alias para `/redes-sociais`; HTTP na raiz e no caminho interno retornou 404.
+Assim, o template Node e a página editorial esperada não estão ativos neste
+Runtime, embora seus hooks/configuração existam no código.
 
 O Portal constrói o botão para MAIN, os botões editoriais configurados, os
 canais oficiais e o rodapé. Uma View já existente fornece teasers de projetos.
@@ -29,7 +31,7 @@ com dados/editoria antes de qualquer migração.
 | Recurso | Estado | Decisão |
 | --- | --- | --- |
 | Domain `links_aculta_org` e mapeamento do purpose | EXISTENTE E FUNCIONAL (config/código; DNS de produção não confirmado) | Preservar; resolução pertence ao Domain e ao `DomainPurposeManager`. |
-| Página raiz e mapeamento para `/redes-sociais` | EXISTENTE E FUNCIONAL por código/configuração | Preservar até substituição com conteúdo equivalente e smoke test. |
+| Rota raiz e mapeamento para `/redes-sociais` | EXISTENTE MAS INCOMPLETO no Runtime (Domain/front configurados, conteúdo/alias ausentes; HTTP 404) | Corrigir por rota preservadora no submódulo, usando configuração/Views existentes e mantendo `/redes-sociais` fechado diretamente. |
 | Canais sociais institucionais e botões configuráveis | EXISTENTE E FUNCIONAL por código; estado visual não revalidado | Portar a propriedade para o submódulo em etapa própria, preservando valores. |
 | View `aculta_projects`, display `social_links` | EXISTENTE E FUNCIONAL como integração editorial compartilhada | Reutilizar via Views; não copiar Nodes nem criar dados espelhados. |
 | Pattern `aculta420:social-links-page` e template Node dedicado | EXISTENTE, apresentação experimental | Preservar nesta fase; adaptar quando o contrato de micropágina estiver definido. |
@@ -87,4 +89,4 @@ com dados/editoria antes de qualquer migração.
 
 ## Micropáginas públicas 0.4.0-dev.1
 
-`/pagina/{slug}` está ativa no Runtime de teste no purpose `links`, com status publicado e acesso revalidado em página, item e destino. A prévia em `/pagina/{slug}/previa` é hospedada no mesmo purpose para usar o tema público, exige edição e não é cacheada. Atributos e lista de links são preparados pelo módulo; ACULTA420 apresenta o SDC existente. Ainda não há integração com perfil público/avatares, presets de tema, SEO nem migração da landing `/`. Produção não foi verificada.
+`/pagina/{slug}` está ativa no Runtime de teste no purpose `links`, com status publicado e acesso revalidado em página, item e destino. A prévia em `/pagina/{slug}/previa` é hospedada no mesmo purpose para usar o tema público, exige edição e não é cacheada. Micropáginas guardam preset de apresentação revisionável; o update `10001` foi aplicado no Runtime após confirmar que não havia páginas existentes. ACULTA420 apresenta o SDC existente. Ainda não há integração com perfil público/avatares, SEO nem migração da landing `/`. Produção não foi verificada.

@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Links.
+ */
+
+/**
+ * Installs the revisionable visual preset field on existing micropages.
+ */
+function aculta_links_update_10001(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($update_manager->getFieldStorageDefinition('theme_preset', 'aculta_link_page') === NULL) {
+    $definitions = \Drupal::service('entity_field.manager')
+      ->getBaseFieldDefinitions('aculta_link_page');
+    $update_manager->installFieldStorageDefinition(
+      'theme_preset',
+      'aculta_link_page',
+      'aculta_links',
+      $definitions['theme_preset'],
+    );
+  }
+
+  return 'Adicionado o campo revisionável de preset visual às micropáginas existentes.';
+}
