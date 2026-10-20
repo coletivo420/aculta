@@ -25,3 +25,11 @@ aculta_mailer.template_test:
     parameters:
       aculta_mailer_template:
         type: entity:aculta_mailer_template
+
+aculta_mailer.diagnostics:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/diagnostico'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailDashboardController::diagnostics'
+    _title: 'Diagnóstico de envio de e-mail'
+  requirements:
+    _permission: 'administer aculta_mailer'

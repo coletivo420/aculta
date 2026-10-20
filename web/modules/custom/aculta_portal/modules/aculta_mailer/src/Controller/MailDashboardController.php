@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Controller;
 
 use Drupal\aculta_mailer\Dashboard\MailDashboard;
+use Drupal\aculta_mailer\Diagnostics\MailDiagnostics;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -18,6 +19,7 @@ final class MailDashboardController extends ControllerBase {
   public function __construct(
     private readonly MailDashboard $dashboard,
     private readonly TimeInterface $time,
+    private readonly MailDiagnostics $diagnostics,
   ) {}
 
   /**
@@ -27,6 +29,7 @@ final class MailDashboardController extends ControllerBase {
     return new static(
       $container->get('aculta_mailer.dashboard'),
       $container->get('datetime.time'),
+      $container->get(MailDiagnostics::class),
     );
   }
 
@@ -91,6 +94,55 @@ final class MailDashboardController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhuma falha nos últimos 30 dias.'),
+      ],
+    ];
+  }
+
+  /**
+   * Diagnóstico: transportes configurados (sem credenciais), último envio e falha, fila e cron.
+   */
+  public function diagnostics(): array {
+    $report = $this->diagnostics->report();
+    $transports = [];
+    foreach ($report['transports'] as $id => $row) {
+      $transports[] = [
+        $id,
+        $row['label'],
+        $row['host'] . ':' . $row['port'],
+        $row['verify_peer'] ? $this->t('sim') : $this->t('não'),
+        $row['user_set'] ? $this->t('preenchido') : $this->t('vazio'),
+        $row['pass_set'] ? $this->t('preenchida') : $this->t('vazia'),
+        $row['last_sent'] ? date('Y-m-d H:i', $row['last_sent']) : $this->t('nunca'),
+        $row['last_failure'] ? date('Y-m-d H:i', $row['last_failure']) : $this->t('nunca'),
+      ];
+    }
+    return [
+      'default' => [
+        '#markup' => '<p>' . $this->t('Padrão: @default. Contingência: @fallback.', [
+          '@default' => $report['default'],
+          '@fallback' => $report['failover']['fallback'] ?? '-',
+        ]) . '</p>',
+      ],
+      'transports' => [
+        '#type' => 'table',
+        '#header' => [
+          $this->t('ID'),
+          $this->t('Nome'),
+          $this->t('Servidor'),
+          $this->t('Verifica certificado'),
+          $this->t('Usuário'),
+          $this->t('Senha'),
+          $this->t('Último envio aceito'),
+          $this->t('Última falha'),
+        ],
+        '#rows' => $transports,
+        '#empty' => $this->t('Transportes indisponíveis: o módulo de transporte não está habilitado.'),
+      ],
+      'queue' => ['#markup' => '<p>' . $this->t('Mensagens na fila: @n.', ['@n' => $report['queue_items']]) . '</p>'],
+      'cron' => [
+        '#markup' => '<p>' . $this->t('Última execução do cron: @when.', [
+          '@when' => $report['cron_last'] ? date('Y-m-d H:i', $report['cron_last']) : $this->t('nunca'),
+        ]) . '</p>',
       ],
     ];
   }

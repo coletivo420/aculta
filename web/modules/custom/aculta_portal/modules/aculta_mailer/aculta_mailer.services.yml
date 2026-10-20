@@ -49,3 +49,7 @@ services:
     arguments: ['@aculta_mailer.smtp_failures']
     tags:
       - { name: event_subscriber }
+
+  Drupal\aculta_mailer\Diagnostics\MailDiagnostics:
+    class: Drupal\aculta_mailer\Diagnostics\MailDiagnostics
+    arguments: ['@entity_type.manager', '@config.factory', '@state', '@queue', '@aculta_mailer.transport_failover']
