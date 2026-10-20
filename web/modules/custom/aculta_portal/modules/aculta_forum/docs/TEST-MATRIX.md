@@ -10,6 +10,9 @@
   8.5. Runtime não alterado; RUNTIME STATUS: DEFERRED.
 - Lint, PHPCS, Drupal 11+ (975 checks), fronteira módulo/tema (1450 checks),
   mapa (152 checks) e `git diff --check`: PASS.
+- Regressão completa após a alteração: Forum Unit 82 testes / 500 assertions
+  PASS; Forum Kernel 24 testes / 475 assertions PASS no MariaDB dedicado. As
+  19 depreciações reportadas são de Core/contrib instalados.
 
 ## dev.82 — negar movimentação sem permissão dedicada
 

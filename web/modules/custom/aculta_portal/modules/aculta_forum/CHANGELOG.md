@@ -6,6 +6,9 @@
   MariaDB dedicado; 19 depreciações Core/contrib. PHP CLI 8.4.26 abaixo da
   baseline 8.5; lint, PHPCS, Drupal 11+ (975), fronteira (1450), mapa (152) e
   `git diff --check` PASS.
+- Regressão completa de `aculta_forum`: Unit 82 testes / 500 assertions PASS;
+  Kernel 24 testes / 475 assertions PASS no MariaDB dedicado. As 19
+  depreciações reportadas são de Core/contrib instalados.
 - Sem alteração no Runtime; RUNTIME STATUS: DEFERRED.
 
 ## `0.1.0-dev.82` — exigir permissão dedicada para mover comentários — 2026-10-20
