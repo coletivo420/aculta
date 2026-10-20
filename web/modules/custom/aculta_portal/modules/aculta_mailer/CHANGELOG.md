@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.12 — eventos de entrega do provedor (F10, camada neutra) — 2026-10-20
+
+- Contrato `ProviderWebhookInterface` (tag `aculta_mailer.webhook_provider`), com verificação de assinatura antes de qualquer leitura.
+- Endpoint `POST /aculta-mailer/webhook/{provider}`: 404 sem provedor, 403 sem assinatura válida, 400 com corpo malformado.
+- Aplicação de eventos (`delivered`, `deferred`, `bounced`, `complained`) pelas transições permitidas; campo `provider_message_id` (update 10003, aplicado no Runtime).
+- Nenhum provedor ativo: a escolha e a chave de assinatura são pendentes do responsável.
+- Testes: 86 no módulo (Kernel do webhook com provedor de teste, unitários do mapeamento de eventos).
+
 ## 0.1.0-dev.11 — política de envio em plugins (F5) — 2026-10-20
 
 - Hierarquia global → tipo (`aculta_mailer.policy`), com validação por ajuste. Valor inválido não apaga o da camada anterior.

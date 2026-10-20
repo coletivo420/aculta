@@ -47,14 +47,14 @@ final class EmailConfirmationRequestMailType implements MailTypeInterface {
    * {@inheritdoc}
    */
   public function defaultSubject(): string {
-    return (string) $this->translation->translate('Request for confirmation of email address from Associação Cultural Antiproibicionista');
+    return (string) $this->translation->translate('Pedido de confirmação do seu endereço de e-mail');
   }
 
   /**
    * {@inheritdoc}
    */
   public function defaultBody(): string {
-    return (string) $this->translation->translate("We have received a request to confirm {{ email }} on the Associação Cultural Antiproibicionista website. Please, reply to this request using the link below.\n\n{{ confirm_url }}");
+    return (string) $this->translation->translate("Recebemos um pedido para confirmar {{ email }} no site da Associação Cultural Antiproibicionista. Responda a este pedido pelo link abaixo.\n\n{{ confirm_url }}");
   }
 
 }

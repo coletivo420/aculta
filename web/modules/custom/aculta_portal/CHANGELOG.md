@@ -1,5 +1,10 @@
 ## 0.4.0-dev.211 — cadastro com e-mail já usado pelo aculta_mailer — 2026-10-20
 
+## 0.4.0-dev.213 — pedido de confirmação em português — 2026-10-20
+
+- O texto do pedido de confirmação de e-mail (`email_confirmation_request`) passa a ser em português; o link e a regra de reenvio não mudam.
+- Verificação no Runtime: um pedido aceito para o destinatário autorizado.
+
 ## 0.4.0-dev.212 — pedido de confirmação de e-mail pelo aculta_mailer (F9) — 2026-10-20
 
 - `EmailConfirmationRequester::sendRequest()` envia o pedido pelo `aculta_mailer` (tipo `email_confirmation_request`), com o link de resposta do contrib e o mesmo limite de reenvio (`resendrequest_delay`). Dentro da janela, delega ao contrib, que enfileira.
