@@ -468,7 +468,13 @@
 - Forum Unit 49/354 PASS; PHPCS novo, Portal 970, boundary 1374, mapa 154,
   SDC 516, design 2089 e fixtures 157 PASS. Runtime: campo ativo adicionado de
   forma pontual após backup; View com 8 linhas e HTTP 200. `basic_html` ausente
-  nas fixtures causou avisos na renderização; browser e resposta real pendentes.
+  nas fixtures causou avisos na renderização. Validação posterior no Runtime
+  `toca`: a View pública listou uma fixture com 2 respostas publicadas; uma
+  resposta pendente não alterou `comment_count` nem a contagem da View. Firefox/
+  X11 mostrou o cartão e “2 respostas” na raiz do Fórum em 1024 px, sem avisos
+  de formato de texto. As três respostas e o tópico temporários foram removidos;
+  estado final 0 tópicos e 0 Comments, flags de avisos preservadas. Ordenação
+  Runtime entre múltiplos tópicos e invalidação visual seguem pendentes.
   RUNTIME STATUS: PARTIAL.
 - Auditoria do Core 11.4.10 confirmou que a gravação de Comment recalcula
   somente estatísticas do host atual, invalida só seu cache e calcula thread/lock
