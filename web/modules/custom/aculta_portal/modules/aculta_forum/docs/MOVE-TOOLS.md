@@ -144,6 +144,29 @@ esses efeitos e a preservação CID/UUID. Fontes: [CommentInterface 11.x](https:
 [Comment 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21Entity%21Comment.php/class/Comment/11.x),
 [CommentStorage 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStorage.php/class/CommentStorage/11.x).
 
+Auditoria complementar do caminho de gravação no Core 11.4.10: `Comment::postSave()`
+invalida cache somente para a entidade que o comentário referencia **depois**
+da mudança e chama `CommentStatisticsInterface::update($comment)`. Esse método
+recalcula as estatísticas do host/campo atuais; não recebe nem atualiza o host
+anterior. `delete($host)` e `create($host, $fields)` existem como APIs públicas,
+mas operam todos os campos de comentário daquele host; uma recomposição seletiva
+precisa restaurar cada campo e ser coberta por teste Kernel. `preSave()` só obtém
+o lock e calcula a thread para comentário novo. Em comentário já salvo,
+`setThread()` é apenas setter de valor: não reserva a posição contra uma criação
+concorrente. A chamada a `setFieldName()` também não oferece uma operação de
+transferência coordenada do `entity_id` e do pai. Essas APIs são peças possíveis
+de uma estratégia, não uma operação segura de movimento. Fontes: [Comment::postSave
+11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21Entity%21Comment.php/class/Comment/11.x),
+[CommentStatisticsInterface::update 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStatisticsInterface.php/function/CommentStatisticsInterface%3A%3Aupdate/11.x),
+[CommentStatisticsInterface 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStatisticsInterface.php/interface/CommentStatisticsInterface/11.x).
+
+**Decisão desta auditoria:** manter “Mover comentário” fora do Runtime. Não
+adotar setter genérico de campo como substituto de rehost, nem criar/atualizar
+estatísticas por SQL. Reabrir o bloqueio somente com protótipo isolado e testes
+Kernel MariaDB para árvore/subárvore, concorrência de criação, estatísticas
+multicampo, cache dos dois hosts, permalink/âncora antiga, indexação e
+notificações. Não há alteração funcional nem de dados nesta auditoria.
+
 Auditar autor, origem, destino, IDs afetados, horário e resultado usando
 infraestrutura de log/auditoria existente; nunca registrar corpo de comentário,
 dados pessoais extras ou conteúdo privado em logs. A tela de confirmação e o

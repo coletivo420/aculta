@@ -8,6 +8,11 @@
   forma pontual após backup; View com 8 linhas e HTTP 200. `basic_html` ausente
   nas fixtures causou avisos na renderização; browser e resposta real pendentes.
   RUNTIME STATUS: PARTIAL.
+- Auditoria documental do Core 11.4.10 confirmou que a gravação de Comment
+  recalcula somente estatísticas do host atual, invalida só seu cache e calcula
+  thread/lock automaticamente apenas em Comment novo. Movimento continua
+  bloqueado até prova Kernel de rethread, recomposição multicampo, concorrência,
+  cache e permalinks; nenhum SQL direto ou alteração de Runtime.
 
 ## 0.1.0-dev.31 — seguir e salvar tópicos ACULTA — 2026-10-19
 
