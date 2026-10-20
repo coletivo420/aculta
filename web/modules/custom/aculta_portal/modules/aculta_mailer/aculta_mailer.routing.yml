@@ -14,6 +14,14 @@ aculta_mailer.failures:
   requirements:
     _permission: 'administer aculta_mailer'
 
+aculta_mailer.log_export:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/registro/exportar'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailDashboardController::export'
+    _title: 'Exportar registro de envios'
+  requirements:
+    _permission: 'administer aculta_mailer'
+
 aculta_mailer.template_test:
   path: '/painel-administrativo/configuracoes/aculta/envios-de-email/modelos/{aculta_mailer_template}/teste'
   defaults:

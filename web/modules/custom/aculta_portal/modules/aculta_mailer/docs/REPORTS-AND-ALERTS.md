@@ -24,9 +24,9 @@ que existe no ACULTA Mailer. O roadmap do módulo (`ROADMAP.md`) traz as fases.
 | Failover e alerta de falha do principal (`failed_primary_email`) | Alerta de cota (`MailAlerts::quotaReached`), com janela de 5 minutos | Pronto |
 | Chave geral "não enviar" (Control) | Suspensão por tipo (`skip`); sem chave global | Parcial |
 | Teste de e-mail | Teste de modelo pelo caminho real | Pronto |
-| Verificação de domínio (Email Detective, SPF/DKIM/DMARC) | Diagnóstico sem checagem de DNS | Pendente |
+| Verificação de domínio (Email Detective, SPF/DKIM/DMARC) | Diagnóstico mostra SPF e DMARC do domínio remetente (TXT, `SenderDomainCheck`); DKIM pendente (depende do seletor do provedor) | Parcial |
 | Reenvio de falha (Resend) | Não há conteúdo no registro; o reenvio precisa da fila ou de dado guardado | Pendente (decisão) |
-| Exportar registro em CSV | Não implementado | Pendente |
+| Exportar registro em CSV | `.../registro/exportar?dias=1|7|30`: data, tipo, estado, transporte, tentativas, código e correlação; sem destinatário nem texto de erro; separador `;`, BOM para o Excel | Pronto |
 | Painel de estatísticas (Dashboard) | Painel de contagens por período | Pronto (sem gráfico) |
 | Verificação de entrega pela API do provedor (Recheck) | Não implementado | Pendente (depende do webhook do Brevo) |
 

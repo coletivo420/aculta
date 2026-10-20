@@ -95,6 +95,27 @@ final class MailDashboard {
   }
 
   /**
+   * Linhas do registro para exportação (CSV), mais recentes primeiro. Sem destinatário nem texto de erro.
+   *
+   * @param int $since
+   *   Instante inicial, em timestamp Unix.
+   * @param int $limit
+   *   Máximo de linhas.
+   *
+   * @return array
+   *   Linhas com created, type, status, transport, attempts, error_code e correlation_id.
+   */
+  public function exportRows(int $since, int $limit = 10000): array {
+    $rows = $this->table()
+      ->fields('log', ['created', 'type', 'status', 'transport', 'attempts', 'error_code', 'correlation_id'])
+      ->condition('log.created', $since, '>=')
+      ->orderBy('log.created', 'DESC')
+      ->range(0, $limit)
+      ->execute();
+    return array_map(static fn(object $row): array => (array) $row, $rows->fetchAll());
+  }
+
+  /**
    * Total de registros criados a partir do instante informado.
    */
   private function count(int $since): int {

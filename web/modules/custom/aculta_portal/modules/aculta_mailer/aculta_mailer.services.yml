@@ -34,6 +34,9 @@ services:
     class: Drupal\aculta_mailer\Dashboard\MailDashboard
     arguments: ['@entity_type.manager', '@database']
 
+  Drupal\aculta_mailer\Diagnostics\SenderDomainCheck:
+    class: Drupal\aculta_mailer\Diagnostics\SenderDomainCheck
+
   Drupal\aculta_mailer\Template\MailTemplateRenderer:
     class: Drupal\aculta_mailer\Template\MailTemplateRenderer
     arguments: ['@entity_type.manager']

@@ -6,10 +6,14 @@ namespace Drupal\aculta_mailer\Controller;
 
 use Drupal\aculta_mailer\Dashboard\MailDashboard;
 use Drupal\aculta_mailer\Diagnostics\MailDiagnostics;
+use Drupal\aculta_mailer\Diagnostics\SenderDomainCheck;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Painel de envios: um quadro por período, com contagens. Sem destinatário e sem conteúdo.
@@ -35,6 +39,7 @@ final class MailDashboardController extends ControllerBase {
     private readonly MailDashboard $dashboard,
     private readonly TimeInterface $time,
     private readonly MailDiagnostics $diagnostics,
+    private readonly SenderDomainCheck $domainCheck,
   ) {}
 
   /**
@@ -45,6 +50,7 @@ final class MailDashboardController extends ControllerBase {
       $container->get('aculta_mailer.dashboard'),
       $container->get('datetime.time'),
       $container->get(MailDiagnostics::class),
+      $container->get(SenderDomainCheck::class),
     );
   }
 
@@ -57,6 +63,11 @@ final class MailDashboardController extends ControllerBase {
       '#type' => 'container',
       'intro' => [
         '#markup' => '<p>' . $this->t('Aceito pelo sistema de e-mail não é o mesmo que entregue: a entrega depende dos provedores.') . '</p>',
+      ],
+      'export' => [
+        '#type' => 'link',
+        '#title' => $this->t('Exportar registro dos últimos 30 dias (CSV)'),
+        '#url' => Url::fromRoute('aculta_mailer.log_export', [], ['query' => ['dias' => 30]]),
       ],
     ];
     foreach (MailDashboard::PERIODS as $days) {
@@ -114,6 +125,47 @@ final class MailDashboardController extends ControllerBase {
   }
 
   /**
+   * Exportação do registro em CSV (`;`, com BOM para o Excel), sem destinatário nem texto de erro.
+   *
+   * O período vem de `dias`, limitado aos períodos do painel; sem valor válido, 30 dias.
+   */
+  public function export(Request $request): Response {
+    $days = $request->query->getInt('dias', 30);
+    if (!in_array($days, MailDashboard::PERIODS, TRUE)) {
+      $days = 30;
+    }
+    $handle = fopen('php://temp', 'w+');
+    fputcsv($handle, [
+      (string) $this->t('Data'),
+      (string) $this->t('Tipo'),
+      (string) $this->t('Estado'),
+      (string) $this->t('Transporte'),
+      (string) $this->t('Tentativas'),
+      (string) $this->t('Código'),
+      (string) $this->t('Correlação'),
+    ], ';');
+    foreach ($this->dashboard->exportRows($this->time->getRequestTime() - $days * 86400) as $row) {
+      fputcsv($handle, [
+        date('Y-m-d H:i', (int) $row['created']),
+        $row['type'],
+        self::STATUS_LABELS[$row['status']] ?? $row['status'],
+        $row['transport'],
+        $row['attempts'],
+        $row['error_code'],
+        $row['correlation_id'],
+      ], ';');
+    }
+    rewind($handle);
+    $csv = "\xEF\xBB\xBF" . (string) stream_get_contents($handle);
+    fclose($handle);
+    return new Response($csv, 200, [
+      'Content-Type' => 'text/csv; charset=UTF-8',
+      'Content-Disposition' => 'attachment; filename="envios-' . $days . '-dias-' . date('Ymd-His', $this->time->getRequestTime()) . '.csv"',
+      'X-Robots-Tag' => 'noindex, nofollow, noarchive',
+    ]);
+  }
+
+  /**
    * Diagnóstico: transportes configurados (sem credenciais), último envio e falha, fila e cron.
    */
   public function diagnostics(): array {
@@ -155,12 +207,40 @@ final class MailDashboardController extends ControllerBase {
         '#rows' => $transports,
         '#empty' => $this->t('Transportes indisponíveis: o módulo de transporte não está habilitado.'),
       ]),
+      'domain' => $this->senderDomain(),
       'queue' => ['#markup' => '<p>' . $this->t('Mensagens na fila: @n.', ['@n' => $report['queue_items']]) . '</p>'],
       'cron' => [
         '#markup' => '<p>' . $this->t('Última execução do cron: @when.', [
           '@when' => $report['cron_last'] ? date('Y-m-d H:i', $report['cron_last']) : $this->t('nunca'),
         ]) . '</p>',
       ],
+    ];
+  }
+
+  /**
+   * SPF e DMARC do domínio do remetente (`system.site:mail`). DKIM não é verificado aqui.
+   */
+  private function senderDomain(): array {
+    $sender = (string) $this->config('system.site')->get('mail');
+    if (!str_contains($sender, '@')) {
+      return ['#markup' => '<p>' . $this->t('Domínio do remetente não configurado.') . '</p>'];
+    }
+    $check = $this->domainCheck->check(substr(strrchr($sender, '@'), 1));
+    $spf = match ($check['spf']) {
+      SenderDomainCheck::SPF_OK => $this->t('encontrado'),
+      SenderDomainCheck::SPF_MULTIPLE => $this->t('mais de um registro (inválido)'),
+      default => $this->t('não encontrado'),
+    };
+    $dmarc = $check['dmarc'] === SenderDomainCheck::DMARC_MISSING
+      ? $this->t('não encontrado ou sem política')
+      : $this->t('política @policy', ['@policy' => $check['dmarc']]);
+    return [
+      'intro' => ['#markup' => '<p>' . $this->t('Autenticação do domínio remetente. DKIM não é verificado aqui: depende do seletor do provedor.') . '</p>'],
+      'table' => $this->scrollable([
+        '#type' => 'table',
+        '#header' => [$this->t('Domínio'), $this->t('SPF'), $this->t('DMARC')],
+        '#rows' => [[$check['domain'], $spf, $dmarc]],
+      ]),
     ];
   }
 

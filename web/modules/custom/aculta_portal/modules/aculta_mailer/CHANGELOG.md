@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.33 — exportação CSV do registro e SPF/DMARC no diagnóstico — 2026-10-20
+
+- Exportação CSV do registro: `.../registro/exportar?dias=1|7|30` (padrão 30). Colunas: data, tipo, estado, transporte, tentativas, código e correlação. Sem destinatário nem texto de erro. Separador `;` e BOM para o Excel. Resposta com `noindex`.
+- Diagnóstico: SPF e DMARC do domínio remetente (`system.site:mail`) por consulta DNS TXT (`SenderDomainCheck`). DKIM continua fora: depende do seletor do provedor.
+- Testes: unitários de classificação SPF (ausente, único, repetido) e DMARC (política none, quarantine, reject; sem política). 110 unitários.
+- Validação no Runtime de teste: exportação e diagnóstico chamados pelo controlador (Drush), com CSV de 26 linhas e domínio `aculta.org` encontrado com SPF e DMARC `none`. Rota responde 403 para visitante, como esperado.
+- Pendências desta frente: DKIM (seletor), reenvio de falha, chave geral de envio, rastreamento (F11).
+
 ## 0.1.0-dev.32 — logo do envelope vem só do tema, sem cópia por marca — 2026-10-20
 
 - Removido o logo por marca: campo `logo_fid` da entidade e do schema, `managed_file` do formulário de marca, `logoUrl()`/`logoUri()` do renderizador e os parâmetros `brand_logo_*` do hook de e-mail. O envelope usa o logo do tema (`aculta420.settings`, `logo.path`), que já é servido pelo site.
