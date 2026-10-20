@@ -1,3 +1,13 @@
+## 0.1.0-dev.41 — auditar categoria editorial legada — 2026-10-19
+
+- Consultas Entity API somente leitura no Runtime `aculta_runtime` compararam
+  `field_categoria_revista` nos termos antigos com `field_editorial_category`
+  direto nas 12 publicações vinculadas (8 `article`, 4 `blog`): 12/12 coincidem.
+  O mapeamento auxiliar não precisa ser migrado; categorias diretas e conteúdo
+  editorial ficam preservados. A submissão/exibição real dos Comments ainda
+  precisa de browser antes de remover nós/vínculos antigos.
+- Nenhum dado, configuração ou extensão foi alterado. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.40 — analisar efeitos de uninstall do Forum contrib — 2026-10-19
 
 - Inspecionados código, validator e teste funcional de `drupal/forum` 1.1.3.

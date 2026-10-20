@@ -43,15 +43,26 @@ também afeta todos os Nodes que tenham esse field storage, mesmo fora do bundle
 `forum`; o inventário não encontrou motivo para assumir que apagar apenas os
 Nodes satisfaz esse impacto.
 
-O vocabulário `forums` e seus termos são também referenciados por
-`field_categoria_revista`. Os oito termos observados no Runtime não podem ser
-apagados até migrar/verificar esse uso editorial. As referências antigas de
-`field_discussao` para Node Forum e os Nodes de abertura da Revista têm de ser
-resolvidos antes da limpeza; a remoção do field storage contrib não deve ser
-usada para descartar silenciosamente a associação editorial. A suíte upstream
-usa a exclusão de Node pela API Drupal para remover o tópico e seus Comments;
-o fluxo ACULTA deverá repetir inventário por bundle e validar a consequência no
-Runtime antes de cada etapa.
+O vocabulário `forums` tem o campo legado `field_categoria_revista`. A auditoria
+somente leitura de 2026-10-19 encontrou 5 dos 8 termos com referência a
+`editorial_category` e 3 sem valor. Os 12 Nodes de publicações que apontam para
+tópicos antigos (8 `article`, 4 `blog`) já têm `field_editorial_category`; nos
+12 casos a categoria direta é igual ao destino indicado pelo mapeamento antigo
+do termo do Fórum. Assim, a categoria editorial não precisa ser migrada do
+vocabulário antigo; o campo auxiliar e seus valores podem ser retirados com o
+legado, enquanto os campos diretos e os termos `editorial_category` permanecem.
+O field config em Config Sync pertence à estrutura Magazine e depende
+explicitamente de `taxonomy.vocabulary.forums`; remover essa definição de campo
+e revisar sua field storage antes de retirar a configuração do vocabulário.
+
+Os tópicos antigos são usados como destino de `field_discussao` e como abertura
+histórica em 12 publicações. A Revista já tem Comment direto, mas a submissão e
+exibição ainda não foram validadas por navegador com um Comment real. Até essa
+validação e a sequência de retirada, manter os vínculos e Nodes de abertura.
+A exclusão das entidades antigas deve ser feita pela API Drupal, com nova
+consulta imediatamente antes da operação e revisão dos efeitos sobre Comments,
+referências, revisions e arquivos. O uninstall não deve descartar associação
+editorial implicitamente.
 
 Este estudo é somente código/documentação: nenhum validator foi contornado,
 nenhum campo/termo/Node foi alterado e o módulo continua habilitado. A referência
@@ -100,7 +111,7 @@ com `accessCheck(FALSE)` foram somente de leitura e retornaram:
 | Nodes bundle `forum` | 30 | 12 publicados vinculados a publicações; 1 publicado independente; 17 não publicados sem referência editorial |
 | Nodes bundle `forum` referenciados por `field_discussao` | 12 | Um vínculo editorial por node; manter o vínculo temporariamente até o comentário direto estar operacional, depois excluir o tópico-casca sem importar seu conteúdo |
 | Comments bundle `comment_forum` | 0 | Campo configurado, sem entidades Comment nesse bundle |
-| Terms no vocabulário `forums` | 8 | Vocabulário também tem `field_categoria_revista`; uso editorial precisa ser migrado antes da remoção |
+| Terms no vocabulário `forums` | 8 | Campo legado `field_categoria_revista`: 5 termos mapeiam para `editorial_category`, 3 vazios; categorias diretas das 12 publicações vinculadas conferem. Ver auditoria detalhada abaixo. |
 | Arquivos de Config Sync com dependências dos bundles/campos antigos | 24 | Inclui permissões, flags, Magazine e displays |
 | Flagging entities | 2 no total; 0 do Forum | Ambos apontam a `site_alert` (flags `aculta_site_alert_dismissed` e `aculta_site_alert_read`) |
 | Drupal Core `validateUninstall(['forum'])` | Bloqueado | Exige excluir todos os nodes `forum` e todos os termos `forums` antes do uninstall |
@@ -113,13 +124,15 @@ Arquivo fora do Git, modo `0600`, 5,841,604 bytes; `gzip -t` passou. SHA-256:
 Este ponto recupera o banco, não os arquivos públicos/privados. O dump ainda não
 foi restaurado em uma base isolada; nenhuma exclusão foi executada.
 
-Consulta adicional de 2026-10-19, somente leitura, agrupou os vínculos por
-bundle hospedeiro: 8 publicações `article` e 4 `blog` têm `field_discussao` não
-vazio. Os mesmos 12 Nodes têm também o campo `field_aculta_discussion`; essa
-presença de campo não prova que os Comments diretos estejam homologados por
-submissão/browser. Manter os vínculos e Nodes de abertura enquanto forem
-necessários para leitura histórica ou conversão de tipo; não remover o fallback
-nem limpar esses registros até a validação funcional e a sequência de retirada.
+Consultas adicionais de 2026-10-19, somente leitura, confirmaram: 8 publicações
+`article` e 4 `blog` têm `field_discussao` não vazio; todas as 12 têm
+`field_aculta_discussion` e `field_editorial_category` preenchidos. Comparação
+por entidade confirmou que as 12 categorias diretas correspondem exatamente
+ao destino do `field_categoria_revista` no termo do tópico vinculado. No lado
+dos Nodes `forum`, 4 usam o termo `Editorial` e 25 `Notícias`; entre os 12
+tópicos vinculados à Revista, são 4 `Editorial` e 8 `Notícias`. Esses resultados
+eliminam a necessidade de migração de categoria, mas não validam o formulário
+de Comment direto: sua submissão/exibição no navegador continua pendente.
 
 ### Política de dados para o novo Fórum
 
@@ -139,10 +152,11 @@ novo campo começa sem comentários, e os outros contextos também começam sem
 posts importados. Não remover contas, Nodes editoriais, cursos, turmas,
 atividades, verbetes, imagens ou arquivos por causa desta limpeza.
 
-O uninstall também exige retirar o vocabulário antigo `forums`; verificar e
-migrar antes qualquer uso editorial (incluindo `field_categoria_revista`). A
-remoção de termos/categorias antigos é limitada aos dados do módulo Forum e não
-autoriza exclusão de vocabulários ou dados de outras funcionalidades.
+O uninstall também exige retirar o vocabulário antigo `forums`. A verificação
+confirmou que as categorias editoriais permanecem nos campos diretos das
+publicações e que o mapeamento auxiliar não diverge. A remoção de termos e do
+campo legado só pode ocorrer na janela autorizada de limpeza e não autoriza
+excluir o vocabulário `editorial_category` ou dados de outras funcionalidades.
 
 O `aculta_forum` está habilitado no Runtime, mas seu provider novo atende o
 bundle `aculta_forum_topic`; os 30 nodes antigos e seus consumidores não foram
