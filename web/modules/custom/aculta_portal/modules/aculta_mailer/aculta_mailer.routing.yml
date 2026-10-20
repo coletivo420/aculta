@@ -30,6 +30,24 @@ aculta_mailer.log_list:
   requirements:
     _permission: 'administer aculta_mailer'
 
+aculta_mailer.track_open:
+  path: '/aculta-mailer/t/o/{correlation}'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailTrackingController::open'
+  requirements:
+    _access: 'TRUE'
+    correlation: '[0-9a-f-]{36}'
+  methods: [GET]
+
+aculta_mailer.track_click:
+  path: '/aculta-mailer/t/c/{correlation}'
+  defaults:
+    _controller: '\Drupal\aculta_mailer\Controller\MailTrackingController::click'
+  requirements:
+    _access: 'TRUE'
+    correlation: '[0-9a-f-]{36}'
+  methods: [GET]
+
 aculta_mailer.log_status:
   path: '/painel-administrativo/configuracoes/aculta/envios-de-email/registro/{log_id}/estado'
   defaults:

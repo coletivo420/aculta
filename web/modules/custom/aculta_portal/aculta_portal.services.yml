@@ -75,6 +75,11 @@ services:
     arguments: ['@aculta_portal.email_confirmation_requester', '@entity_type.manager']
     tags:
       - { name: aculta_mailer.link_regenerator }
+  aculta_portal.mail_tracking_consent:
+    class: Drupal\aculta_portal\Account\MailTrackingConsent
+    arguments: ['@agreement.handler', '@entity_type.manager']
+    tags:
+      - { name: aculta_mailer.tracking_consent }
   aculta_portal.email_confirmation_policy:
     class: Drupal\aculta_portal\Account\EmailConfirmationPolicy
     arguments: ['@user.data', '@entity_type.manager']

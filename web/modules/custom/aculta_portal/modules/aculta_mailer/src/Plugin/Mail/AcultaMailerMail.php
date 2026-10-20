@@ -10,6 +10,7 @@ use Drupal\aculta_mailer\Delivery\MailPayloadRegistry;
 use Drupal\aculta_mailer\Delivery\ProviderMessageRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Log\SingleUseLinkMail;
+use Drupal\aculta_mailer\Tracking\MailTracker;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
 use Drupal\aculta_mailer\Transport\MailTransportSender;
@@ -49,6 +50,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly ProviderMessageRegistry $providerMessages,
     private readonly MailPayloadRegistry $payloads,
     private readonly TimeInterface $time,
+    private readonly MailTracker $tracker,
     private readonly ?PublicUrlInterface $publicUrls = NULL,
   ) {}
 
@@ -67,6 +69,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('aculta_mailer.provider_messages'),
       $container->get('aculta_mailer.payloads'),
       $container->get('datetime.time'),
+      $container->get(MailTracker::class),
       $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
     );
   }
@@ -123,7 +126,9 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       'headers' => array_filter($message['headers'] ?? [], 'is_scalar'),
       'expires' => $singleUse ? $this->time->getRequestTime() + SingleUseLinkMail::TTL : NULL,
     ]);
-    $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $html));
+    // Rastreamento só para quem consentiu e com o recurso ligado. O conteúdo guardado acima segue sem rastreamento.
+    $sent = $this->tracker->decorate($html, (string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), (string) $message['to']);
+    $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $sent));
     if ($result['sent'] && $result['provider_id'] !== NULL) {
       $this->providerMessages->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['provider_id']);
     }

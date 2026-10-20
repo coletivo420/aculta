@@ -79,6 +79,17 @@ final class MailLog extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Conteúdo cifrado para reenvio'));
     $fields['payload_expires'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(new TranslatableMarkup('Conteúdo para reenvio expira em'));
+    // Rastreamento (só com consentimento): contadores e primeira data. Sem IP nem navegador.
+    $fields['opens'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Aberturas'))
+      ->setDefaultValue(0);
+    $fields['clicks'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Cliques'))
+      ->setDefaultValue(0);
+    $fields['first_opened'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(new TranslatableMarkup('Primeira abertura'));
+    $fields['first_clicked'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(new TranslatableMarkup('Primeiro clique'));
     $fields['sent'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(new TranslatableMarkup('Aceito pelo sistema de e-mail em'));
     $fields['created'] = BaseFieldDefinition::create('created')

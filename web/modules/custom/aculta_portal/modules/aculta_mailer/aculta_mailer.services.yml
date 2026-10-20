@@ -50,6 +50,10 @@ services:
   aculta_mailer.payloads:
     class: Drupal\aculta_mailer\Delivery\MailPayloadRegistry
 
+  Drupal\aculta_mailer\Tracking\MailTracker:
+    class: Drupal\aculta_mailer\Tracking\MailTracker
+    arguments: ['@config.factory', '@settings', '@Drupal\aculta_mailer\Api\PublicUrlInterface', !tagged_iterator aculta_mailer.tracking_consent]
+
   Drupal\aculta_mailer\Log\MailPayloadCipher:
     class: Drupal\aculta_mailer\Log\MailPayloadCipher
     arguments: ['@?Drupal\aculta_mailer\Transport\SecretProviderInterface']

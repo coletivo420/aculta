@@ -44,3 +44,14 @@ function aculta_mailer_update_10005(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
   \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('payload_expires', 'aculta_mail_log', 'aculta_mailer', $fields['payload_expires']);
 }
+
+/**
+ * Contadores de rastreamento (aberturas e cliques), só com consentimento.
+ */
+function aculta_mailer_update_10006(): void {
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  foreach (['opens', 'clicks', 'first_opened', 'first_clicked'] as $name) {
+    $manager->installFieldStorageDefinition($name, 'aculta_mail_log', 'aculta_mailer', $fields[$name]);
+  }
+}

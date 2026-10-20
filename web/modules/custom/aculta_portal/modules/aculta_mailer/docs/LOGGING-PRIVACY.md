@@ -63,3 +63,9 @@ permanece. Pendência: a fila não tem prazo próprio de expiração; itens pres
 - Conteúdo de e-mail com link de uso único, guardado para reenvio, não contém link: cada URL vira `[link removido]`. O conteúdo sai do registro quando o envio é aceito, quando o provedor confirma a entrega, a devolução ou a reclamação, e quando expira.
 - E-mails com link de uso único (`SingleUseLinkMail`: confirmação de e-mail, conta já existente, recuperação de senha, acesso de cadastro e confirmação do `email_confirmer`) têm prazo de 24 horas para o conteúdo guardado. Se não forem enviados nesse prazo, o cron (`MailLogRetention::purgeExpiredPayloads`) apaga o conteúdo cifrado; o registro continua, sem conteúdo. Os demais e-mails seguem a retenção do registro (90 dias).
 - Chave `MAILER_PAYLOAD_KEY` criada e verificada no Runtime de teste (32 bytes). Sem ela, nada é guardado.
+
+## Rastreamento (opcional, 0.1.0-dev.46)
+
+- Desligado por padrão. Só rastreia destinatário com consentimento no acordo `aculta_rastreamento`.
+- Campos: `opens`, `clicks`, `first_opened`, `first_clicked`. Nenhum IP, user agent ou dado de navegador.
+- Limite: clientes que pré-carregam imagens (como o proxy de imagens do Gmail) geram aberturas sem leitura; a contagem de aberturas é superestimada nesses casos.

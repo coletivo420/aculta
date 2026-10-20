@@ -29,3 +29,6 @@ aculta_mailer.delivery:
     sending_enabled:
       type: boolean
       label: 'Envio geral ligado (chave geral)'
+    tracking_enabled:
+      type: boolean
+      label: 'Rastreamento de aberturas e cliques ligado (só com consentimento)'

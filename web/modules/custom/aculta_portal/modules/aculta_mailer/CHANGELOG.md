@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.46 — rastreamento opcional de aberturas e cliques (F11), desligado
+
+- `MailTracker`: pixel e links do próprio site, assinados com o `hash_salt`; só para destinatário com consentimento e com `tracking_enabled` ligado. Links externos e o restante do HTML não mudam.
+- Consentimento: acordo `aculta_rastreamento` (`/aceite-rastreamento`), separado dos termos, revogável; lido pelo Portal (`MailTrackingConsent`, tag `aculta_mailer.tracking_consent`).
+- Rotas `/aculta-mailer/t/o/{correlação}` e `/aculta-mailer/t/c/{correlação}`: só respondem com assinatura válida; redirecionamento só para o mesmo host.
+- Registro: contadores `opens`, `clicks` e datas de primeira abertura e clique (`aculta_mailer_update_10006`). Sem IP nem navegador.
+- Interruptor na página de entrega, desligado por padrão. Desligado no Runtime de teste.
+- Validado no Runtime de teste: com consentimento e recurso ligado, a abertura registrou contagem, o clique redirecionou e contou, e assinatura adulterada foi recusada. Limite observado: o proxy de imagens do Gmail registra abertura sem o usuário ter aberto; contagens de abertura são superestimadas nesses clientes.
+- Testes unitários: 136.
+
 ## 0.1.0-dev.45 — validação do monitoramento IMAP no Runtime de teste
 
 - Varredura de devoluções executada no Runtime com a caixa real: 2 mensagens lidas (UIDs 1 e 2), nenhuma devolução aplicada indevidamente, cursor gravado em `bounce: 2`. Confirma a correção do CRLF da 0.1.0-dev.37 fora dos testes unitários.

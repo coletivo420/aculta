@@ -68,6 +68,12 @@ final class MailAlertSettingsForm extends ConfigFormBase {
         '#default_value' => $config->get('sending_enabled') !== FALSE,
         '#description' => $this->t('Desligado, nenhum e-mail do sistema é enviado. As mensagens ficam no registro como suspensas.'),
       ],
+      'tracking_enabled' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Rastreamento de aberturas e cliques ligado'),
+        '#default_value' => $config->get('tracking_enabled') === TRUE,
+        '#description' => $this->t('Desligado por padrão. Só rastreia quem aceitou o consentimento de rastreamento na conta (página /aceite-rastreamento). Não guarda IP nem dados do navegador.'),
+      ],
       'brevo_enabled' => [
         '#type' => 'checkbox',
         '#title' => $this->t('Transporte Brevo ligado'),
@@ -178,6 +184,7 @@ final class MailAlertSettingsForm extends ConfigFormBase {
     }
     $this->config(DeliverySettings::CONFIG)
       ->set('sending_enabled', (bool) $form_state->getValue('sending_enabled'))
+      ->set('tracking_enabled', (bool) $form_state->getValue('tracking_enabled'))
       ->set('brevo_enabled', (bool) $form_state->getValue('brevo_enabled'))
       ->set('bounce_address', strtolower(trim((string) $form_state->getValue('bounce_address'))))
       ->set('alerts_enabled', (bool) $form_state->getValue('alerts_enabled'))
