@@ -15,13 +15,19 @@ use Drupal\Core\Url;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\node\NodeInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Tests the public Forum discussion context provider.
+ */
 #[Group('aculta_forum')]
 final class PublicForumContextProviderTest extends TestCase {
 
+  /**
+   * The provider supports only public Forum topic nodes.
+   */
   public function testSupportsOnlyPublicForumTopicNodes(): void {
     $provider = new PublicForumContextProvider($this->domainPurposeManager('forum_aculta_org'));
     $topic = $this->createMock(NodeInterface::class);
@@ -35,6 +41,9 @@ final class PublicForumContextProviderTest extends TestCase {
     $this->assertFalse($provider->supports($this->createMock(EntityInterface::class)));
   }
 
+  /**
+   * The provider returns stable identifiers and neutral write policies.
+   */
   public function testBuildsStableContextAndKeepsWriteAccessNeutral(): void {
     $provider = new PublicForumContextProvider($this->domainPurposeManager('forum_aculta_org'));
     $topic = $this->createMock(NodeInterface::class);
@@ -60,6 +69,9 @@ final class PublicForumContextProviderTest extends TestCase {
     $this->assertSame($url, $context->getCanonicalUrl());
   }
 
+  /**
+   * New hosts are rejected because they do not have stable identifiers.
+   */
   public function testRejectsUnpersistedHostEntities(): void {
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
@@ -70,6 +82,9 @@ final class PublicForumContextProviderTest extends TestCase {
       ->getContext($topic, $this->createMock(AccountInterface::class));
   }
 
+  /**
+   * Read access is denied when the active Domain purpose is not Forum.
+   */
   public function testReadAccessIsDeniedOutsideForumPurpose(): void {
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
@@ -88,6 +103,15 @@ final class PublicForumContextProviderTest extends TestCase {
     $this->assertContains('domain', $context->getReadAccess()->getCacheContexts());
   }
 
+  /**
+   * Creates a Domain purpose manager for the requested domain ID.
+   *
+   * @param string $domainId
+   *   The active domain ID.
+   *
+   * @return \Drupal\aculta_portal\Domain\DomainPurposeManager
+   *   The mocked-purpose manager.
+   */
   private function domainPurposeManager(string $domainId): DomainPurposeManager {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn($domainId);

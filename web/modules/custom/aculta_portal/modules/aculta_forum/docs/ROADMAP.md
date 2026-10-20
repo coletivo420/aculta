@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.72` | Corrigir conformidade PHPCS do contrato de contexto | Removidas violações de documentação/namespace em 7 arquivos `aculta_forum`; sem mudança comportamental. Unit completo 82/500 e PHPCS Drupal/DrupalPractice PASS. Runtime DEFERRED. |
 | `0.1.0-dev.71` | Validar a fila administrativa em telas estreitas | Firefox/X11 autenticado, 19/19 PASS: filas e rotas administrativas continuam corretas; 768 CSS px sem overflow, 390 px com excesso de 3 px restrito à tabela responsiva. Nenhuma entidade alterada; evidências privadas. Linhas reais ainda precisam de revisão responsiva. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.70` | Localizar cabeçalhos e estado vazio das filas administrativas | Unit 18/227 PASS. View ativa no Runtime de teste alinhada ao Config Sync após backup privado; sem drift do alvo. Firefox/X11 autenticado: 15/15 PASS, quatro filas respondem e exibem “Atualizado”, “Operações” e “Não há comentários disponíveis.”. Fórum permaneceu limpo. Linhas vazias não permitem confirmar exclusão cruzada com conteúdo real. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.69` | Smoke X11 das áreas administrativas separadas | Firefox/X11 autenticado, 11/11: Conteúdo e Fórum 200; agregada, publicadas, rejeitadas e aguardando moderação 200; Revista consolidada 200; rota antiga Revista/comentários 404. Fórum permaneceu com 0 tópicos/Comments. Listas vazias limitam a prova de exclusão cruzada com conteúdo real. RUNTIME STATUS: PARTIAL. |

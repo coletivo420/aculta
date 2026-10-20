@@ -9,13 +9,18 @@ use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use LogicException;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Tests resolution of discussion context providers.
+ */
 #[Group('aculta_forum')]
 final class DiscussionContextResolverTest extends TestCase {
 
+  /**
+   * An unsupported entity has no discussion context.
+   */
   public function testReturnsNullWhenNoProviderSupportsEntity(): void {
     $provider = $this->createMock(DiscussionContextProviderInterface::class);
     $provider->method('supports')->willReturn(FALSE);
@@ -27,6 +32,9 @@ final class DiscussionContextResolverTest extends TestCase {
     ));
   }
 
+  /**
+   * One matching provider builds the returned context.
+   */
   public function testResolvesExactlyOneMatchingProvider(): void {
     $entity = $this->createMock(EntityInterface::class);
     $account = $this->createMock(AccountInterface::class);
@@ -38,15 +46,19 @@ final class DiscussionContextResolverTest extends TestCase {
     $this->assertSame($context, (new DiscussionContextResolver([$provider]))->resolve($entity, $account));
   }
 
+  /**
+   * Multiple matching providers fail explicitly.
+   */
   public function testAmbiguousProvidersFailExplicitly(): void {
     $entity = $this->createMock(EntityInterface::class);
-    $providers = [];
-    foreach (range(1, 2) as $_) {
-      $provider = $this->createMock(DiscussionContextProviderInterface::class);
+    $providers = [
+      $this->createMock(DiscussionContextProviderInterface::class),
+      $this->createMock(DiscussionContextProviderInterface::class),
+    ];
+    foreach ($providers as $provider) {
       $provider->method('supports')->willReturn(TRUE);
-      $providers[] = $provider;
     }
-    $this->expectException(LogicException::class);
+    $this->expectException(\LogicException::class);
     (new DiscussionContextResolver($providers))->resolve($entity, $this->createMock(AccountInterface::class));
   }
 

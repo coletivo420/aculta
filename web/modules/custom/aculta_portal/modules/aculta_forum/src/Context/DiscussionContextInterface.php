@@ -14,34 +14,44 @@ use Drupal\Core\Url;
  */
 interface DiscussionContextInterface extends CacheableDependencyInterface {
 
-  /** Returns the entity that owns the discussion. */
+  /**
+   * Returns the entity that owns the discussion. */
   public function getHostEntity(): EntityInterface;
 
-  /** Returns a stable, namespaced context type. */
+  /**
+   * Returns a stable, namespaced context type. */
   public function getType(): string;
 
-  /** Returns a stable key that does not depend on a request slug. */
+  /**
+   * Returns a stable key that does not depend on a request slug. */
   public function getStableId(): string;
 
-  /** Returns current host-entity read access. */
+  /**
+   * Returns current host-entity read access. */
   public function getReadAccess(): AccessResultInterface;
 
-  /** Returns a fail-closed write access result for this phase. */
+  /**
+   * Returns a fail-closed write access result for this phase. */
   public function getWriteAccess(): AccessResultInterface;
 
-  /** Returns a fail-closed moderation access result for this phase. */
+  /**
+   * Returns a fail-closed moderation access result for this phase. */
   public function getModerationAccess(): AccessResultInterface;
 
-  /** Returns the canonical URL of the host entity. */
+  /**
+   * Returns the canonical URL of the host entity. */
   public function getCanonicalUrl(): Url;
 
-  /** Returns the public visibility policy identifier. */
+  /**
+   * Returns the public visibility policy identifier. */
   public function getVisibilityPolicy(): string;
 
-  /** Returns the discovery policy identifier. */
+  /**
+   * Returns the discovery policy identifier. */
   public function getDiscoveryPolicy(): string;
 
-  /** Returns the notification policy identifier. */
+  /**
+   * Returns the notification policy identifier. */
   public function getNotificationPolicy(): string;
 
 }

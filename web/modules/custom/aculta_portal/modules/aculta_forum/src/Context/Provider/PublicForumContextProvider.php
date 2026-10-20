@@ -12,27 +12,34 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-use LogicException;
 
-/** Provides contexts only for independent public Forum topic nodes. */
+/**
+ * Provides contexts only for independent public Forum topic nodes.
+ */
 final class PublicForumContextProvider implements DiscussionContextProviderInterface {
 
   public function __construct(private readonly DomainPurposeManager $domainPurposeManager) {}
 
+  /**
+   * Checks whether an entity is an independent public Forum topic.
+   */
   public function supports(EntityInterface $entity): bool {
     return $entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic';
   }
 
+  /**
+   * Builds the public Forum context and applies purpose-aware read access.
+   */
   public function getContext(EntityInterface $entity, AccountInterface $account): DiscussionContextInterface {
     if (!$this->supports($entity)) {
-      throw new LogicException('Public forum context requires an aculta_forum_topic node.');
+      throw new \LogicException('Public forum context requires an aculta_forum_topic node.');
     }
     if ($entity->isNew()) {
-      throw new LogicException('A discussion context requires a persisted host entity.');
+      throw new \LogicException('A discussion context requires a persisted host entity.');
     }
     $uuid = $entity->uuid();
     if ($uuid === NULL || $uuid === '') {
-      throw new LogicException('A discussion host must have a stable UUID.');
+      throw new \LogicException('A discussion host must have a stable UUID.');
     }
 
     $forumPurposeAccess = AccessResult::allowedIf($this->domainPurposeManager->getCurrentPurpose() === 'forum')

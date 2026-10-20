@@ -1,5 +1,14 @@
 # Matriz de testes por fase
 
+## dev.72 — PHPCS do contrato de contexto
+
+- PHPUnit Unit completo do Fórum: 82 testes / 500 assertions PASS.
+- PHPCS Drupal/DrupalPractice PASS em `src/Context`, o provider público e os
+  testes unitários do resolver/provider. `php -l` nos arquivos de contexto
+  alterados e `git diff --check` PASS.
+- Ajustes limitados a docblocks, posição de `use` e remoção da variável
+  ignorada no fixture de mocks; Runtime DEFERRED.
+
 ## dev.71 — fila administrativa responsiva
 
 - A suíte X11 abre a fila aguardando moderação em viewports CSS de 390×844 e

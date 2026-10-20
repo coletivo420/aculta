@@ -1,3 +1,13 @@
+## `0.1.0-dev.72` — corrigir documentação PHP do contrato de contexto — 2026-10-20
+
+- Uma varredura PHPCS do módulo encontrou violações preexistentes em sete
+  arquivos do contrato de contexto público. Foram ajustados namespace/use,
+  docblocks de classes, métodos e propriedades; o teste de ambiguidade não usa
+  mais variável ignorada. Comportamento de runtime e contratos não mudaram.
+- PHPUnit Unit completo do Fórum: 82 testes/500 assertions PASS. PHPCS
+  Drupal/DrupalPractice PASS nos sete arquivos; `php -l` e `git diff --check`
+  PASS. O Runtime não foi alterado nesta fase. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.71` — validar a fila administrativa em telas estreitas — 2026-10-20
 
 - A suíte administrativa X11 agora valida viewports CSS de 390 e 768 px,
