@@ -473,6 +473,33 @@
       ]
     }
   },
+  "external_webhooks": {
+    "note": "Webhooks cadastrados em provedores externos, por ambiente. A URL é environments.<ambiente>.site + path, sem endereço fixo no código. O cadastro no provedor usa o segredo do ambiente, que nunca entra neste arquivo. Conferência local: aculta-deployer webhooks (somente leitura). Procedimento no deploy: docs/USO.md.",
+    "brevo_transactional": {
+      "provider": "Brevo",
+      "purpose": "eventos de entrega do aculta_mailer (entrega, devolução, endereço inválido, spam)",
+      "path": "/aculta-mailer/webhook/brevo",
+      "type": "transactional",
+      "events": ["delivered", "deferred", "softBounce", "hardBounce", "invalid", "blocked", "spam"],
+      "auth": {
+        "type": "bearer",
+        "secret": "BREVO_WEBHOOK_TOKEN"
+      },
+      "environments": {
+        "production": {
+          "status": "pendente",
+          "registration_id": null,
+          "action": "no deploy do RC: gerar um BREVO_WEBHOOK_TOKEN próprio de produção no arquivo de segredos do servidor, cadastrar o webhook com a URL de produção e remover o cadastro de teste (registration_id da seção test) para não duplicar eventos",
+          "decision_pending": ["Confirmar com o responsável a data do cadastro de produção (depende da implantação)."]
+        },
+        "test": {
+          "status": "cadastrado",
+          "registration_id": 2631443,
+          "action": "cadastrado no Brevo para o host de teste; mantido até o cadastro de produção"
+        }
+      }
+    }
+  },
   "session_cookie": {
     "note": "Cookie de sessão compartilhado entre os hosts de um mesmo ambiente (purposes de Domain). Cada ambiente define session.storage.options.cookie_domain no arquivo de serviços que o settings.php carrega. Não é configuração exportável e não vai ao Git como valor de produção. Ver docs/COOKIES-AMBIENTE.md.",
     "environments": {

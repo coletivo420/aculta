@@ -1,3 +1,10 @@
+## 0.1.26 — webhooks por ambiente e ferramentas Drush — 2026-10-20
+
+- `external_webhooks` em `config/deploy.json`: webhook do Brevo declarado por ambiente. A URL sai de `environments` + `path`; o segredo é `BREVO_WEBHOOK_TOKEN`. Produção fica `pendente` até o cadastro no deploy do RC (passos em `docs/USO.md`).
+- `aculta-deployer webhooks`: leitura que confere a declaração contra o contrato de segredos. Exige o segredo obrigatório em produção antes do cadastro.
+- Ferramentas Drush em `drush/Commands/AculaDeployerCommands.php` (`aculta-deployer:check`, `:boundaries`, `:webhooks`, `:cookies`, `:domains`, `:robots`, `:sitemap`). Chamam a CLI standalone e repassam o código de saída; não exigem o módulo habilitado no Runtime.
+- Não altera o Runtime nem chama o provedor: o cadastro de produção segue no procedimento de deploy.
+
 ## 0.1.25 — substituição e remoção da raiz pública anterior — 2026-10-15
 
 - `hostinger-layout --apply` substitui diretórios ou symlinks `public_html` por `public_html -> web` relativo e exclui o conteúdo anterior após a ativação.

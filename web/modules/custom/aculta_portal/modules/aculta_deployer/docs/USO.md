@@ -25,15 +25,38 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
   sem credenciais na URL, sem seguir redirecionamentos. Não altera nenhum arquivo nem o registro.
 - `$CLI version`.
 
+## Ferramentas Drush
+
+Os comandos abaixo ficam em `drush/Commands/AculaDeployerCommands.php`, na raiz do projeto. Chamam a CLI standalone
+(`bin/aculta-deployer`) e repassam saída e código de saída. Não dependem do módulo habilitado no Runtime, e a CLI
+continua sendo a fonte das verificações.
+
+- `drush aculta-deployer:check [--strict]`, `:boundaries`, `:webhooks`, `:cookies`, `:domains`.
+- `drush aculta-deployer:robots --env=production|test` e `drush aculta-deployer:sitemap --env=production|test`
+  (GET somente leitura).
+
+Todos são leitura. Nenhum altera o registro nem o Runtime.
+
+## Webhooks por ambiente
+
+`external_webhooks` em `config/deploy.json` declara os webhooks cadastrados em provedores externos. A URL vem de
+`environments.<ambiente>.site` + `path`, e o segredo, de `BREVO_WEBHOOK_TOKEN` (contrato de segredos). Valores de
+segredo nunca entram no arquivo. `$CLI webhooks` confere a declaração. A `production` está `pendente` até o deploy.
+
 ## Procedimento de deploy
 
 1. `$CLI check --strict`. Precisa passar; se não, resolva ou registre as entradas.
-2. `$CLI build --out=/caminho/de/producao`.
-3. Confira `deploy-report.json`: nenhum `toca.net.br` deve restar nos arquivos gerados.
-4. Aplique a árvore gerada no ambiente de produção, pelo processo do responsável.
-5. Após o deploy, rode `$CLI verify`. Entradas que passam podem ser marcadas `status: resolved`
+2. `$CLI webhooks`. Precisa passar. Mostra o cadastro de produção pendente e a ação do deploy.
+3. `$CLI build --out=/caminho/de/producao`.
+4. Confira `deploy-report.json`: nenhum `toca.net.br` deve restar nos arquivos gerados.
+5. Aplique a árvore gerada no ambiente de produção, pelo processo do responsável.
+6. Cadastro do webhook de produção, no deploy do RC (passos da seção de webhooks, feitos pelo responsável):
+   gerar `BREVO_WEBHOOK_TOKEN` de produção no arquivo de segredos do servidor, cadastrar o webhook no Brevo com a URL
+   de produção e o token, e remover o cadastro de teste (`registration_id` da seção `test`) para não duplicar eventos.
+   Atualizar o `status` no `config/deploy.json` com o novo `registration_id`.
+7. Após o deploy, rode `$CLI verify`. Entradas que passam podem ser marcadas `status: resolved`
    no registro, com a decisão registrada.
-6. Rollback: cada build fica em seu próprio diretório. Para voltar, aponte o ambiente de
+8. Rollback: cada build fica em seu próprio diretório. Para voltar, aponte o ambiente de
    produção para o diretório do build anterior, pelo processo do responsável. Builds nunca
    são sobrescritos.
 
