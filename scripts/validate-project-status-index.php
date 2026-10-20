@@ -197,8 +197,15 @@ $show = static function (string $revision) use ($git): string {
 if ($markerCode === 0 && $markerCommit !== '') {
   [$historyCode, $history] = $git(['rev-list', '--reverse', $markerCommit . '..HEAD']);
   $assert($historyCode === 0, 'Unable to audit commits since the status-index guardrail was introduced.');
+  // Exceções históricas aprovadas pelo responsável (2026-10-20): commits anteriores ao registro da regra, cujo
+  // histórico compartilhado não é reescrito. Não criar novas exceções sem decisão do responsável.
+  $historicalExceptions = [
+    'a8f05a047d68b6621388564e3a05afdbc52079bf' => 'alterou aculta_mailer antes da regra de linha de README',
+    '1ecf099f9baa678067a440ec03095fd57b52effb' => 'alterou aculta_mailer antes da regra de linha de README',
+    '17af34c706e6950d14f09d358130fa8b0cbd172c' => 'alterou aculta_portal e aculta_mailer antes da regra de linha de README',
+  ];
   foreach (preg_split('/\R/', $history) ?: [] as $commit) {
-    if ($commit === '') {
+    if ($commit === '' || isset($historicalExceptions[$commit])) {
       continue;
     }
     [, $files] = $git(['diff-tree', '--no-commit-id', '--name-only', '-r', $commit]);

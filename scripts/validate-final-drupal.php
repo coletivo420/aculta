@@ -1,6 +1,7 @@
 <?php
 /** Assertions and public-content inventory, excluding private users and form submissions. */
-if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) throw new RuntimeException('Local only.');
+$host = \Drupal::request()->getHost();
+if (!in_array($host, ['localhost', '127.0.0.1'], TRUE) && !str_ends_with($host, 'aculta.toca.net.br')) throw new RuntimeException('Local or test host only.');
 $assert = static function(bool $condition, string $message): void { if (!$condition) throw new RuntimeException($message); echo "$message: OK\n"; };
 $assert(\Drupal::config('system.site')->get('name') === 'Associação Cultural Antiproibicionista', 'Public identity');
 $assert(!isset(\Drupal::config('core.extension')->get('theme')['olivero']), 'Olivero uninstalled');

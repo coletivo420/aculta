@@ -1,7 +1,8 @@
 <?php
 
 /** Read-only local checks for account ownership, permissions, and migration. */
-if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1', 'default'], TRUE)) {
+$host = \Drupal::request()->getHost();
+if (!in_array($host, ['localhost', '127.0.0.1', 'default'], TRUE) && !str_ends_with($host, 'aculta.toca.net.br')) {
   throw new RuntimeException('This audit is local-only.');
 }
 

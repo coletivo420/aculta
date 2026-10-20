@@ -104,11 +104,22 @@ $media = array_keys(\Drupal\media\Entity\MediaType::loadMultiple()); sort($media
 // course_document é do LMS (aculta_lms, exportado em config/sync); os três editoriais continuam obrigatórios.
 if ($media !== ['course_document','document','image','remote_video']) throw new RuntimeException('Unexpected media types.');
 $before = json_decode(file_get_contents(dirname(__DIR__) . '/tmp/admin-structure-audit.json'), TRUE, 512, JSON_THROW_ON_ERROR);
+// Itens aposentados por decisão do responsável (2026-10-20): bloco de participação da home e os três links de
+// participação do rodapé. Qualquer outro item do snapshot ausente reprova.
+$retired = [
+  '2a3a1cc7-802b-45ce-a137-7775527b15c6', // Home — Participação (block_content)
+  'a2079029-53bf-4c12-96c2-79881a43a656', // Contato (menu aculta-footer-participation)
+  'd9f4dac8-647f-4cdc-aa5d-841d5cb91178', // Acompanhe nossas atividades (menu aculta-footer-participation)
+  '18825a7c-e0f4-4277-9f70-56ec5842fe98', // Política de Privacidade (menu aculta-footer-participation)
+];
 foreach (['node','block_content','menu_link_content'] as $type) {
-  $entities = \Drupal::entityTypeManager()->getStorage($type)->loadMultiple();
   // A limpeza não pode apagar conteúdo existente. O conteúdo novo (importações, publicações) é esperado: a checagem é
-  // de não diminuir em relação ao snapshot, e não de igualdade.
-  if (count($entities) < count($before['content'][$type])) throw new RuntimeException('Existing content removed: ' . $type);
+  // por UUID do snapshot, sem exigir igualdade de contagem.
+  $present = [];
+  foreach (\Drupal::entityTypeManager()->getStorage($type)->loadMultiple() as $entity) $present[$entity->uuid()] = TRUE;
+  foreach ($before['content'][$type] as $item) {
+    if (!isset($present[$item['uuid']]) && !in_array($item['uuid'], $retired, TRUE)) throw new RuntimeException('Existing content removed: ' . $type . ' ' . ($item['label'] ?? $item['uuid']));
+  }
 }
 $config = \Drupal::service('config.storage');
 $names = $config->listAll();
