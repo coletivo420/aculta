@@ -2,6 +2,11 @@
 
 Status: **normativo para a linha 0.1.x**. Dono: responsável pelo Portal. Revisão: a cada fase da linha 0.1.x e antes do RC.
 
+**Estado atual de release:** `preRC` (`0.1.0-preRC.4`). A validação visual do
+diálogo de criação e a revisão em aparelho real são as únicas verificações
+pendentes registradas; o histórico da classificação `rc.1` abaixo permanece
+preservado como decisão anterior.
+
 Este documento registra **por que** o submódulo é feito de certo modo. Ele não contém status de PR nem resultado de teste; esses dados ficam no `CHANGELOG.md` do módulo e na descrição da PR.
 
 Escopo: álbuns fotográficos independentes, galerias menores incorporadas em artigos e blogs, visualização ampliada, catálogo e desempenho com galerias grandes, e integração multidomínio.

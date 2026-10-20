@@ -892,6 +892,16 @@ foreach (glob($templateDir . '/*.twig') ?: [] as $template) {
   );
 }
 
+// The project README status index is a required guardrail for all owned
+// extensions and the theme, so the main Portal architecture gate invokes it.
+$statusIndexOutput = [];
+$statusIndexExit = 1;
+exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($root . '/scripts/validate-project-status-index.php'), $statusIndexOutput, $statusIndexExit);
+foreach ($statusIndexOutput as $line) {
+  echo $line . "\n";
+}
+$check($statusIndexExit === 0, 'The permanent project module/theme status-index gate failed.');
+
 if ($failures !== []) {
   fwrite(STDERR, "ACULTA PORTAL DRUPAL 11+ GATE: FAIL\n");
   foreach ($failures as $failure) {

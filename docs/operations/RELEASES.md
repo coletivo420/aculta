@@ -33,6 +33,16 @@ O tema marca a versão dentro do código (`aculta420.info.yml`, `CHANGELOG.md` e
 Mudanças do `aculta_portal` entram no `CHANGELOG.md` do módulo, citando a versão do tema
 em que foram entregues. A versão do Portal é marcada em `aculta_portal.info.yml`.
 
+## Classificação pré-RC dos componentes
+
+`preRC` é um estado de homologação, não uma release nem uma tag: pode ser usado
+somente quando o trabalho funcional, as fases, os testes e as revisões de código
+estiverem concluídos e faltar exclusivamente validação visual. Se houver
+pendência funcional, operacional ou de decisão, o estado permanece `Dev`. A
+tabela permanente do README raiz registra esse estado para o módulo central,
+submódulos (inclusive aninhados) e tema; o gate é
+`php scripts/validate-project-status-index.php`.
+
 ## Caminhos e textos únicos até a 1.0
 
 Até a versão 1.0, o ambiente de teste não mantém caminho, rótulo ou texto duplicado nem texto

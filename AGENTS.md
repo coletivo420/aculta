@@ -16,6 +16,25 @@ Este arquivo reúne guardrails para agentes; os documentos vinculados são a fon
 canônica dos contratos detalhados. Evite copiar versões, resultados de validação
 ou status de PR para índices e READMEs.
 
+### Índice permanente de estado dos componentes
+
+PROJECT-STATUS-INDEX-GUARD: 2026-10-20
+
+- A tabela `PROJECT-STATUS-INDEX` do README raiz é um índice obrigatório e
+  permanente do `aculta_portal`, de todos os submódulos customizados (incluindo
+  aninhados) e do tema `aculta420`. Agentes não podem removê-la nem omitir linhas.
+- Ao alterar código, configuração, documentação de fase ou versão de qualquer
+  módulo/submódulo/tema, atualize no mesmo commit a linha correspondente com a
+  versão declarada, a próxima fase e o estado atual. Use o roadmap/changelog
+  dono como fonte; não invente fases.
+- `preRC` só pode ser usado quando código, fases e validação não visual estiverem
+  completos e restar somente validação visual. `RC` exige todos os critérios da
+  seção “Release candidate de submódulos e módulo central” abaixo.
+- Gate obrigatório após qualquer mudança nessas árvores:
+  `php scripts/validate-project-status-index.php`. O gate confirma a presença,
+  cobertura completa, links e versões e reprova commits de módulo/tema sem a
+  atualização simultânea do README raiz.
+
 ## Mapa obrigatório de caminhos
 
 - Antes de criar, revisar ou remover rota, alias, redirect, home de domínio,

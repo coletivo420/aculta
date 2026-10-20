@@ -1,5 +1,12 @@
 # Changelog — ACULTA Gallery
 
+## Estado atual: preRC — 2026-10-20
+
+A versão declarada passa a `0.1.0-preRC.4`: a validação visual no navegador e
+em aparelho real ainda falta. O código e as fases registradas estão concluídos;
+esta reclassificação preserva abaixo o histórico da decisão RC anterior e não
+cria tag nem declara release final.
+
 ## 0.1.0-rc.4 — diálogo "Criar galeria" sem tamanho no módulo — 2026-10-19
 
 - `CreateGallery` não envia `dialogSettings` (largura, altura e classe). O formulário do diálogo traz `data-portal-ui="gallery-dialog"`, e a largura é do tema (`dialog.css`), conforme `POPUP-PADRAO.md`.
