@@ -1,6 +1,7 @@
 # ACULTA Game — conquistas e missões
 
-Versão atual: `0.1.0-dev.11` — gatilho limitado ao Fórum ACULTA novo; Forum
+Versão atual: `0.1.0-dev.12` — aprovação de comentário pendente é elegível uma
+única vez após publicação; gatilho limitado ao Fórum ACULTA novo; Forum
 contribuído e conteúdo legado não geram conquistas contemporâneas.
 
 Submódulo opcional `aculta_game`, integrante do `aculta_portal`.

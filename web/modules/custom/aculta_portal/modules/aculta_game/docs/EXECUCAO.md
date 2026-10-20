@@ -34,6 +34,16 @@
   8 concessões existentes. Sem disparo de evento ou escrita de concessão.
   RUNTIME STATUS: PARTIAL; evento real aprovado permanece sem homologação.
 
+## Dev.12 — regressão de aprovação tardia
+
+- Adicionado caso que mantém uma resposta pendente inelegível antes da
+  aprovação, torna a primeira publicação elegível e protege contra novo prêmio
+  em edição de resposta já publicada.
+- PHPUnit Unit `ForumParticipationPolicyTest`: 9 testes / 40 assertions PASS;
+  PHPCS do teste PASS. Gates Drupal 11+ (970), fronteira (1382), mapa (154) e
+  `git diff --check` PASS. Runtime não foi alterado; concessões/eventos reais
+  continuam sem homologação. RUNTIME STATUS: DEFERRED.
+
 Autorização de 2026-10-15: implementar por fases e commits na mesma PR #286.
 Esta autorização substitui a restrição anterior de abertura somente documental.
 

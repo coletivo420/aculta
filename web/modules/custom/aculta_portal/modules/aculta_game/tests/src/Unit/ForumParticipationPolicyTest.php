@@ -35,6 +35,21 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
   }
 
   /**
+   * Approving a pending reply makes its first publication eligible once.
+   */
+  public function testApprovedPendingReplyIsEligibleOnUpdate(): void {
+    $original = $this->createMock(CommentInterface::class);
+    $original->method('isPublished')->willReturn(FALSE);
+
+    self::assertTrue(
+      (new ForumParticipationPolicy())->isEligible(
+        $this->comment(original: $original),
+        $this->topic(),
+      ),
+    );
+  }
+
+  /**
    * Anonymous comments cannot qualify for an account achievement.
    */
   public function testAnonymousReplyIsNotEligible(): void {

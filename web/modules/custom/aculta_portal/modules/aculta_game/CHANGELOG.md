@@ -1,5 +1,12 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.12 — fixar concessão após aprovação de comentário — 2026-10-19
+
+- `ForumParticipationPolicyTest` comprova que um comentário pendente não é
+  elegível antes da aprovação, passa a ser elegível quando sua primeira
+  publicação é aprovada e não se qualifica novamente em edições posteriores.
+- Nenhum hook, regra de concessão, conta, conquista ou Runtime foi alterado.
+
 ## 0.1.0-dev.11 — excluir Forum contrib das conquistas — 2026-10-19
 
 - O trigger `forum_comment` só aceita `aculta_discussion_post` hospedado em
