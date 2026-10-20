@@ -2,6 +2,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.113 | Implementado; validação parcial | Firefox ESR Runtime confirmou rolagem sem anúncio, botão anuncia, slider expõe valor; Foundation 366 PASS. Leitor de tela real e inspeção X11 deste ajuste pendentes | Separar posição visual da live region e manter `aria-valuetext` sincronizado |
 | 0.6.0-dev.112 | Corrigido; mobile validado | Foundation 365 PASS; Firefox ESR/X11 BiDi a 390 × 844 CSS px confirmou barra `static`, sem cruzar a mensagem ativa; status 5/6, documento/corpo em 390 px. Leitor de tela/AT pendente. RUNTIME PARTIAL | Em larguras até 575 px a navegação está no fluxo, evitando sobrepor texto durante a leitura |
 | 0.6.0-dev.111 | Corrigido; inspeção visual parcial | Foundation 365 PASS; Firefox/X11 escuro a 500 px confirmou a barra toda abaixo do cabeçalho (topo 56 px), progresso 4/6 durante rolagem e documento/corpo sem overflow. 390/AT pendentes. RUNTIME PARTIAL | `discussion.css` usa `--drupal-displace-offset-top` e os 3 rem de scroll-padding do cabeçalho |
 | 0.6.0-dev.110 | Implementado; inspeção visual parcial | Foundation 365, SDC 535, Design 2097, fronteira 1419, mapa 152 e Shell 11 PASS; Firefox ESR/X11 verificou campo real com DOM sintético a 1250/500, navegação por botão/teclado, claro/escuro e sem overflow. Fórum vazio e sem conteúdo salvo. 390/AT pendentes. RUNTIME PARTIAL | Portal anexa controles; `discussion.css` apresenta progresso, foco, alvos e scroll offset; fallback linear sem JavaScript |

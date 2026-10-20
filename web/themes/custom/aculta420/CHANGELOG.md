@@ -1,3 +1,19 @@
+## 0.6.0-dev.113 — manter anúncios de progresso acessíveis sem poluir a leitura — 2026-10-20
+
+- O contador visual não é uma live region. O texto acessível permanece
+  sincronizado em `aria-live=off` durante rolagem e slider; ações de botão
+  alternam para `polite`. O tema oculta visualmente o atributo neutro do Portal.
+- ACULTA Forum dev.64 expõe `aria-valuetext` atualizado no slider e mantém a
+  posição visual sincronizada durante rolagem. Firefox ESR 153.4 no Runtime de
+  teste mediu a região oculta em 1×1 px; rolagem e slider mantiveram a mensagem
+  sincronizada em `aria-live=off`, e botão alternou para `polite` e anunciou.
+  WebDriver BiDi confirmou viewport 390 × 844 CSS px, barra `static` e sem
+  overflow horizontal. O browser foi headless; leitor de tela real e X11 visual
+  deste ajuste seguem pendentes.
+- Foundation Runtime 366 PASS; design foundations 2097, SDC 535, módulo/tema
+  boundary 1419 e map 152 PASS. RUNTIME STATUS: PARTIAL. Evidências em
+  `web/modules/custom/aculta_portal/modules/aculta_forum/docs/TEST-MATRIX.md`.
+
 ## 0.6.0-dev.112 — evitar sobreposição dos controles no mobile — 2026-10-20
 
 - Em viewports estreitos, os controles de progresso voltam ao fluxo normal do

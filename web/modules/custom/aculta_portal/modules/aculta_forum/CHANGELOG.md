@@ -1,3 +1,28 @@
+## `0.1.0-dev.64` — reduzir anúncios da navegação de progresso — 2026-10-20
+
+- A posição visual acompanha a rolagem; a live region acompanha o mesmo texto
+  em `aria-live=off`, sem anunciar cada mensagem. O slider mantém
+  `aria-valuetext`; os botões publicam a posição para tecnologia assistiva
+  somente após ação explícita. `role="status"` mantém o anúncio não intrusivo.
+  ACULTA420 mantém o texto de anúncio fora do fluxo visual por atributo neutro,
+  sem classes de design no Portal.
+- WAI-ARIA/W3C documenta `role=status` como anúncio `polite`; MDN recomenda que
+  live regions recebam atualizações breves e não frequentes. Fontes: [W3C
+  ARIA22](https://www.w3.org/WAI/WCAG22/Techniques/aria/ARIA22.html), [MDN
+  aria-live](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live).
+- Firefox ESR 153.4/Geckodriver no Runtime de teste: com seis Comments
+  sintéticos somente no DOM, a rolagem manual atualiza status visual e texto
+  acessível para 5/6 com `aria-live=off`; o slider atualiza ambos para 3/6,
+  também em `off`; Próxima alterna para `polite` e anuncia 4/6. A região oculta
+  mede 1×1 px e usa `clip-path`; nenhum Comment foi salvo. Não houve leitor de
+  tela real. WebDriver BiDi aplicou viewport de 390 × 844 CSS px: barra
+  `static`, largura de janela 390 px, documento/corpo 378 px, mensagem 5/6 e
+  `aria-live=off` sem overflow horizontal.
+- Forum Unit 82/497, JavaScript syntax, Drupal 11+ 975, fronteira 1419, mapa
+  152, UI docs 280 tokens/97 atributos, SDC 535, Design Foundations 2097 e
+  Foundation Runtime 366 PASS. `drush cr` PASS. PHP CLI 8.4.26 permanece abaixo
+  da baseline 8.5. RUNTIME STATUS: PARTIAL (sem validação com leitor de tela).
+
 ## `0.1.0-dev.63` — navegação de progresso em discussões — 2026-10-20
 
 - `DiscussionProgressHooks` anexa a biblioteca somente à renderização `full` de

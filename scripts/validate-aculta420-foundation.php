@@ -36,7 +36,13 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.112', 'Theme metadata marks the current version 0.6.0-dev.112.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.113', 'Theme metadata marks the current version 0.6.0-dev.113.');
+$discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
+$assert(
+  str_contains($discussionCss, '[data-aculta-discussion-announcement]')
+  && str_contains($discussionCss, 'clip-path: inset(50%)'),
+  'Discussion announcements are visually hidden by the theme while remaining available to assistive technology.',
+);
 $forumTopicPresenter = file_get_contents($themeRoot . '/templates/node--aculta-forum-topic.html.twig');
 $forumTopicStyles = file_get_contents($themeRoot . '/css/components/forum-index.css');
 $assert(

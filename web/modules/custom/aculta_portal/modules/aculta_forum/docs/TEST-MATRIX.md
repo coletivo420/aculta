@@ -1,5 +1,31 @@
 # Matriz de testes por fase
 
+## dev.64 — anúncio acessível sem ruído de rolagem
+
+- A região visual e a mensagem dentro de `role=status` seguem a posição. A live
+  region alterna para `aria-live=off` em atualizações do IntersectionObserver e
+  do slider, e para `polite` em ações de botão. `aria-valuetext` acompanha o
+  slider. CSS do tema oculta visualmente a região (1×1 px, `clip-path`) sem
+  classes de design no módulo.
+- Firefox ESR 153.4/Geckodriver no Runtime `toca`, URL pública de publicação
+  com `field_aculta_discussion`: seis Comments foram acrescentados apenas no
+  DOM. Próxima definiu `polite` e anunciou “Mensagem 2 de 6”; rolar até a quinta
+  atualizou texto visível/acessível e `aria-valuetext` para 5/6, em `off`;
+  operar o slider atualizou para 3/6, ainda em `off`; Próxima definiu `polite`
+  e anunciou 4/6. O anúncio mediu 1×1 px e `clip-path: inset(50%)`. Fixtures
+  DOM removidas e sessão isolada fechada; nenhum dado foi salvo.
+- BiDi `browsingContext.setViewport` confirmou 390 × 844 CSS px: a janela mediu
+  390 px, documento/corpo 378 px, navegação `static`, status 5/6 e região em
+  `aria-live=off`; sem overflow horizontal.
+- Forum Unit 82/497, `node --check`, Portal Drupal 11+ 975, fronteira 1419,
+  mapa 152, UI docs 280 tokens/97 atributos, SDC 535, Design Foundations 2097
+  e Foundation Runtime 366 PASS. `drush cr` PASS. PHP CLI 8.4.26 abaixo da
+  baseline 8.5. Browser Firefox foi headless/BiDi; não houve sessão X11 visual
+  deste ajuste nem leitor de tela real nesta validação. RUNTIME STATUS: PARTIAL.
+- Base normativa consultada: [W3C ARIA22](https://www.w3.org/WAI/WCAG22/Techniques/aria/ARIA22.html)
+  reconhece `role=status` como live region `polite`; [MDN aria-live](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live)
+  descreve anúncio de mudanças e priorização não intrusiva.
+
 ## dev.63 — navegação de progresso compartilhada
 
 - `DiscussionProgressHooksTest`: verifica anexação do atributo e biblioteca
