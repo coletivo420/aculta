@@ -57,7 +57,7 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 ## 6.1 Validade do link (decisão do responsável, revista em 2026-10-20)
 
 - O link de confirmação (cadastro e troca de endereço) **vale 24 horas**, por `SingleUseLinkPolicy`
-  (`EmailConfirmationEntity::isExpired()`). A validade infinita anterior foi revogada.
+  (`AcultaMailConfirmerManager::isExpired()`, com `hash_expiration` = 86400 e a mesma fronteira da política). A validade infinita anterior foi revogada.
 - Um pedido novo substitui o anterior, com novo hash, e cancela o conteúdo guardado do pedido antigo.
 - Regra completa, inventário e gate: [LINKS-DE-USO-UNICO.md](LINKS-DE-USO-UNICO.md).
 

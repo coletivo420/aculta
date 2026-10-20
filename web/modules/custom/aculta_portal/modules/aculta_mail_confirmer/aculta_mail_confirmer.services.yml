@@ -1,7 +1,10 @@
 services:
+  Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface:
+    alias: aculta_mail_confirmer
+
   aculta_mail_confirmer:
     class: Drupal\aculta_mail_confirmer\AcultaMailConfirmerManager
-    arguments: ['@entity_type.manager', '@config.factory', '@datetime.time']
+    arguments: ['@entity_type.manager', '@config.factory', '@datetime.time', '@plugin.manager.mail', '@module_handler', '@queue', '@current_user', '@request_stack', '@private_key']
 
   aculta_mail_confirmer.confirmation_uuid_param_converter:
     class: Drupal\aculta_mail_confirmer\ParamConverter\UuidConverter

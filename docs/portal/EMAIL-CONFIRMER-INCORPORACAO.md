@@ -57,6 +57,5 @@ Recuperação: `drush cr` (atualiza os metadados), reinstalação dos módulos n
 ## Pendências
 
 - Validar no navegador: confirmação pelo link (conta de teste), troca de e-mail e login bloqueado.
-- Refatorar o restante de `\Drupal::` dentro de `src/` do módulo (12 usos, quase todos na entidade), conforme AGENTS.
-- Investigar a variação de contagem da fila no teste de reenvio (o teste aceita 1 ou mais itens).
+- Concluído em 0.1.0-dev.2: `\Drupal::` removido de `src/` dos dois módulos (serviços por injeção); hooks procedurais do submódulo migrados para `#[Hook]`; teste da fila exato (1 item). Variação anterior da contagem não se reproduziu; causa não identificada.
 - Drift preexistente, fora desta integração: `commerce_shipping` na dependência do papel `authenticated`.

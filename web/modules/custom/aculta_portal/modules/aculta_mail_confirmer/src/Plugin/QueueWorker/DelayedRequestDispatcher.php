@@ -2,6 +2,9 @@
 
 namespace Drupal\aculta_mail_confirmer\Plugin\QueueWorker;
 
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Attribute\QueueWorker;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -35,6 +38,27 @@ class DelayedRequestDispatcher extends QueueWorkerBase implements ContainerFacto
   protected $entityTypeManager;
 
   /**
+   * The email confirmation service.
+   *
+   * @var \Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface
+   */
+  protected $manager;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * Creates a new DelayedRequestDispatcher object.
    *
    * @param array $configuration
@@ -45,11 +69,20 @@ class DelayedRequestDispatcher extends QueueWorkerBase implements ContainerFacto
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface $manager
+   *   The email confirmation service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, AcultaMailConfirmerManagerInterface $manager, ConfigFactoryInterface $config_factory, TimeInterface $time) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->already = [];
     $this->entityTypeManager = $entity_type_manager;
+    $this->manager = $manager;
+    $this->configFactory = $config_factory;
+    $this->time = $time;
   }
 
   /**
@@ -60,7 +93,10 @@ class DelayedRequestDispatcher extends QueueWorkerBase implements ContainerFacto
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('aculta_mail_confirmer'),
+      $container->get('config.factory'),
+      $container->get('datetime.time')
     );
   }
 
@@ -80,7 +116,8 @@ class DelayedRequestDispatcher extends QueueWorkerBase implements ContainerFacto
       return;
     }
 
-    if ($confirmation->getLastRequestDate() + intval(\Drupal::config('aculta_mail_confirmer.settings')->get('resendrequest_delay')) > \Drupal::time()->getRequestTime()) {
+    $resend_delay = (int) $this->configFactory->get('aculta_mail_confirmer.settings')->get('resendrequest_delay');
+    if ($confirmation->getLastRequestDate() + $resend_delay > $this->time->getRequestTime()) {
       throw new RequeueException('Early confirmation request re-send');
     }
 
@@ -88,9 +125,11 @@ class DelayedRequestDispatcher extends QueueWorkerBase implements ContainerFacto
     $this->already[$data] = $data;
 
     // Deliver the confirmation request.
-    if ($confirmation->isPending()
-      && $confirmation->setLastRequestDate(NULL)->sendRequest()) {
-      $confirmation->save();
+    if ($this->manager->isPending($confirmation)) {
+      $confirmation->setLastRequestDate(NULL);
+      if ($this->manager->sendRequest($confirmation)) {
+        $confirmation->save();
+      }
     }
   }
 

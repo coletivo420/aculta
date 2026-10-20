@@ -82,6 +82,14 @@
 | `data-aculta-open-conversation` | exato | sim | 2 |
 | `data-aculta-options-url` | exato | sim | 2 |
 | `data-aculta-pdf-control` | exato | sim | 4 |
+| `data-aculta-pdf-default-scroll` | exato | não | 1 |
+| `data-aculta-pdf-default-zoom` | exato | não | 1 |
+| `data-aculta-pdf-double-page` | exato | não | 1 |
+| `data-aculta-pdf-double-page-mobile` | exato | não | 1 |
+| `data-aculta-pdf-show-fullscreen` | exato | não | 1 |
+| `data-aculta-pdf-show-page-navigation` | exato | não | 1 |
+| `data-aculta-pdf-show-search` | exato | não | 1 |
+| `data-aculta-pdf-show-zoom` | exato | não | 1 |
 | `data-aculta-pdf-title` | exato | sim | 1 |
 | `data-aculta-pdf-url` | exato | sim | 1 |
 | `data-aculta-pdf-viewer` | exato | sim | 3 |

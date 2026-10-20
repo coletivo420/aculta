@@ -10,8 +10,6 @@ use Drupal\aculta_mail_confirmer\Form\AcultaMailConfirmerResponseForm;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\aculta_mail_confirmer\InvalidConfirmationStateException;
-use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Url;
 
 #[ContentEntityType(
@@ -81,7 +79,6 @@ class AcultaMailConfirmation extends ContentEntityBase implements AcultaMailConf
       ->setLabel(t('IP address'))
       ->setDescription(t('Confirmation related IP address.'))
       ->setSetting('max_length', 45)
-      ->setDefaultValueCallback('Drupal\aculta_mail_confirmer\Entity\AcultaMailConfirmation::getRequestIp')
       ->setDisplayOptions('view', [
         'type' => 'string',
         'weight' => 0,
@@ -111,7 +108,6 @@ class AcultaMailConfirmation extends ContentEntityBase implements AcultaMailConf
       ->setDescription(t('The user ID who created the email confirmation.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\aculta_mail_confirmer\Entity\AcultaMailConfirmation::getCurrentUserId')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
@@ -156,7 +152,6 @@ class AcultaMailConfirmation extends ContentEntityBase implements AcultaMailConf
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Added on'))
-      ->setDefaultValueCallback('Drupal\aculta_mail_confirmer\Entity\AcultaMailConfirmation::getRequestTime')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'timestamp',
@@ -164,15 +159,6 @@ class AcultaMailConfirmation extends ContentEntityBase implements AcultaMailConf
       ]);
 
     return $fields;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isPending() {
-    return !$this->isExpired()
-      && !$this->isCancelled()
-      && !$this->isConfirmed();
   }
 
   /**
@@ -187,13 +173,6 @@ class AcultaMailConfirmation extends ContentEntityBase implements AcultaMailConf
    */
   public function isConfirmed() {
     return $this->get('confirmed')->value == AcultaMailConfirmationInterface::CONFIRMED;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isExpired() {
-    return \Drupal::time()->getRequestTime() > $this->getCreatedTime() + \Drupal::config('aculta_mail_confirmer.settings')->get('hash_expiration');
   }
 
   /**
@@ -216,100 +195,6 @@ class AcultaMailConfirmation extends ContentEntityBase implements AcultaMailConf
   public function setPrivate($private = TRUE) {
     $this->get('private')->setValue($private ? AcultaMailConfirmationInterface::IS_PRIVATE : AcultaMailConfirmationInterface::IS_PUBLIC);
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getStatus() {
-    if ($this->isExpired()) {
-      $status = 'expired';
-    }
-    elseif ($this->isCancelled()) {
-      $status = 'cancelled';
-    }
-    elseif ($this->isConfirmed()) {
-      $status = 'confirmed';
-    }
-    else {
-      $status = 'pending';
-    }
-
-    return $status;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function sendRequest() {
-    $status = $this->getStatus();
-    if ($status != 'pending') {
-      throw new InvalidConfirmationStateException('Unable to send request email for ' . $status . ' confirmations.');
-    }
-
-    // Recently sent?
-    if ($this->isRequestSent()
-        && $this->getLastRequestDate() + intval(\Drupal::config('aculta_mail_confirmer.settings')->get('resendrequest_delay')) > \Drupal::time()->getRequestTime()) {
-      // Add to queue for further processing.
-      \Drupal::queue('aculta_mail_confirmer_requests')->createItem($this->id());
-      return TRUE;
-    }
-
-    // Send the confirmation request.
-    $message = \Drupal::service('plugin.manager.mail')->mail('aculta_mail_confirmer',
-      'confirmation_request',
-      $this->getEmail(),
-      $this->language()->getId(),
-      ['context' => ['aculta_mail_confirmer' => $this]]);
-
-    if ($ok = !empty($message['result'])) {
-      $this->setLastRequestDate(\Drupal::time()->getRequestTime());
-    }
-
-    return $ok;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function confirm($hash) {
-    $status = $this->getStatus();
-    if ($status != 'pending') {
-      throw new InvalidConfirmationStateException('Unable to confirm ' . $status . ' confirmations.');
-    }
-
-    if ($hash == $this->getHash()) {
-      $this->get('confirmed')->setValue(AcultaMailConfirmationInterface::CONFIRMED);
-      // Invoke aculta_mail_confirmer hook.
-      \Drupal::moduleHandler()->invokeAll('aculta_mail_confirmer', ['confirm', $this]);
-      return TRUE;
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function cancel() {
-    $status = $this->getStatus();
-    if ($status != 'pending') {
-      throw new InvalidConfirmationStateException('Unable to cancel ' . $status . ' confirmations.');
-    }
-
-    $this->get('status')->setValue(AcultaMailConfirmationInterface::CANCELLED);
-    // Invoke aculta_mail_confirmer hook.
-    \Drupal::moduleHandler()->invokeAll('aculta_mail_confirmer', ['cancel', $this]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getHash() {
-    $data = $this->getEmail()
-      . $this->getCreatedTime()
-      . $this->getIp() ?: '';
-    return Crypt::hmacBase64($data, \Drupal::service('private_key')->get());
   }
 
   /**
@@ -427,42 +312,6 @@ class AcultaMailConfirmation extends ContentEntityBase implements AcultaMailConf
   public function setCreatedTime($timestamp) {
     $this->get('created')->setValue($timestamp);
     return $this;
-  }
-
-  /**
-   * Default value callback for 'uid' base field definition.
-   *
-   * @see ::baseFieldDefinitions()
-   *
-   * @return array
-   *   An array of default values.
-   */
-  public static function getCurrentUserId() {
-    return [\Drupal::currentUser()->id()];
-  }
-
-  /**
-   * Default value callback for 'ip' base field definition.
-   *
-   * @see ::baseFieldDefinitions()
-   *
-   * @return array
-   *   An array of default values.
-   */
-  public static function getRequestIp() {
-    return [\Drupal::request()->getClientIp()];
-  }
-
-  /**
-   * Default value callback for 'created' base field definition.
-   *
-   * @see ::baseFieldDefinitions()
-   *
-   * @return array
-   *   An array of default values.
-   */
-  public static function getRequestTime() {
-    return [\Drupal::time()->getRequestTime()];
   }
 
   /**

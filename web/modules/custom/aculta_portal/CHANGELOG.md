@@ -1,3 +1,13 @@
+## 0.4.0-dev.236 — confirmação de e-mail com serviço por injeção — 2026-10-20
+
+- A classe de entidade `EmailConfirmationEntity` foi retirada: a expiração (24 h, `hash_expiration`) e as
+  transições vêm do `AcultaMailConfirmerManager` do `aculta_mail_confirmer` 0.1.0-dev.2. A classe sobrescrevia
+  `isExpired()` com `SingleUseLinkPolicy` e não tinha como usar serviços.
+- `EmailConfirmationRequester`, `TokenHooks` (link no host da conta) e `EmailConfirmationResponseAccessHandler`
+  chamam o manager; o handler passou a receber o serviço por `createInstance`.
+- Gate `validate-single-use-links` verifica a expiração no manager, não mais na classe do Portal.
+- Testes: `EmailConfirmationRequesterTest` atualizado para as chamadas do manager.
+
 ## 0.4.0-dev.235 — email_confirmer incorporado como aculta_mail_confirmer — 2026-10-20
 
 - O contrib `drupal/email_confirmer` foi substituído pelo módulo `aculta_mail_confirmer` (e `aculta_mail_confirmer_user`). O Portal usa os nomes novos (serviço, entidade, rotas, token e realm).

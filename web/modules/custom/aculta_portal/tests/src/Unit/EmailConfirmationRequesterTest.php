@@ -33,7 +33,7 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $events = [];
     $old = $this->confirmation(10, 7, $events, 'old');
     $new = $this->confirmation(11, 7, $events, 'new');
-    $requester = $this->requester([$old], $new, $events, TRUE);
+    $requester = $this->requester([$old], $new, $events, TRUE, $this->managerFor($new, $events));
 
     $this->assertSame(EmailConfirmationRequestResult::ACCEPTED, $requester->request($this->account(7)));
     $this->assertSame(['new-save', 'send', 'new-save', 'old-cancel', 'old-save'], $events);
@@ -42,12 +42,13 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
   public function testRejectedTransportPreservesPreviousConfirmation(): void {
     $events = [];
     $old = $this->confirmation(10, 7, $events, 'old');
-    $old->expects($this->never())->method('cancel');
     $new = $this->confirmation(11, 7, $events, 'new');
     $new->expects($this->once())->method('delete')->willReturnCallback(static function () use (&$events): void {
       $events[] = 'new-delete';
     });
-    $requester = $this->requester([$old], $new, $events, FALSE);
+    $manager = $this->managerFor($new, $events);
+    $manager->expects($this->never())->method('cancelConfirmation');
+    $requester = $this->requester([$old], $new, $events, FALSE, $manager);
 
     $this->assertSame(EmailConfirmationRequestResult::FAILED, $requester->request($this->account(7)));
     $this->assertSame(['new-save', 'send', 'new-delete'], $events);
@@ -56,11 +57,12 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
   public function testInitialPersistenceFailureDoesNotSendOrCancelOldConfirmation(): void {
     $events = [];
     $old = $this->confirmation(10, 7, $events, 'old');
-    $old->expects($this->never())->method('cancel');
     $new = $this->confirmation(11, 7, $events, 'new');
     $new->expects($this->once())->method('save')->willThrowException(new \RuntimeException('simulated storage failure'));
-    $new->expects($this->never())->method('sendRequest');
-    $requester = $this->requester([$old], $new, $events, TRUE);
+    $manager = $this->managerFor($new, $events);
+    $manager->expects($this->never())->method('sendRequest');
+    $manager->expects($this->never())->method('cancelConfirmation');
+    $requester = $this->requester([$old], $new, $events, TRUE, $manager);
 
     $this->assertSame(EmailConfirmationRequestResult::FAILED, $requester->request($this->account(7)));
     $this->assertSame(['new-save'], $events);
@@ -133,15 +135,27 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
   public function testPreviousConfirmationForDifferentAccountIsNotCancelled(): void {
     $events = [];
     $other = $this->confirmation(10, 8, $events, 'other');
-    $other->expects($this->never())->method('cancel');
     $new = $this->confirmation(11, 7, $events, 'new');
-    $requester = $this->requester([$other], $new, $events, TRUE);
+    $manager = $this->managerFor($new, $events);
+    $manager->expects($this->never())->method('cancelConfirmation');
+    $requester = $this->requester([$other], $new, $events, TRUE, $manager);
 
     $this->assertSame(EmailConfirmationRequestResult::ACCEPTED, $requester->request($this->account(7)));
     $this->assertSame(['new-save', 'send', 'new-save'], $events);
   }
 
-  private function requester(array $existing, AcultaMailConfirmationInterface $new, array &$events, bool $accepted): EmailConfirmationRequester {
+  private function managerFor(AcultaMailConfirmationInterface $new, array &$events): AcultaMailConfirmerManagerInterface {
+    $manager = $this->createMock(AcultaMailConfirmerManagerInterface::class);
+    $manager->method('createConfirmation')->with('person@example.invalid')->willReturn($new);
+    $manager->method('getHash')->willReturn('hash');
+    $manager->method('isPending')->willReturn(TRUE);
+    $manager->method('cancelConfirmation')->willReturnCallback(static function (AcultaMailConfirmationInterface $confirmation) use (&$events): void {
+      $events[] = ($confirmation->id() === '10' ? 'old' : 'new') . '-cancel';
+    });
+    return $manager;
+  }
+
+  private function requester(array $existing, AcultaMailConfirmationInterface $new, array &$events, bool $accepted, AcultaMailConfirmerManagerInterface $manager): EmailConfirmationRequester {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -154,9 +168,6 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
 
     $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_manager->method('getStorage')->with('aculta_mail_confirmer')->willReturn($storage);
-
-    $manager = $this->createMock(AcultaMailConfirmerManagerInterface::class);
-    $manager->method('createConfirmation')->with('person@example.invalid')->willReturn($new);
 
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->once())->method('isAllowed')->with('aculta_portal.email_confirmation_request', 1, 900, '7')->willReturn(TRUE);
@@ -188,12 +199,10 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $confirmation->method('isRequestSent')->willReturn(FALSE);
     $confirmation->method('getEmail')->willReturn('person@example.invalid');
     $confirmation->method('uuid')->willReturn('uuid-' . $id);
-    $confirmation->method('getHash')->willReturn('hash');
     $language = $this->createMock(LanguageInterface::class);
     $language->method('getId')->willReturn('pt-br');
     $confirmation->method('language')->willReturn($language);
     $confirmation->method('id')->willReturn((string) $id);
-    $confirmation->method('isPending')->willReturn(TRUE);
     $confirmation->method('getProperty')->with('user')->willReturn($uid);
     $confirmation->method('setRealm')->willReturnSelf();
     $confirmation->method('setProperty')->willReturnSelf();
@@ -206,9 +215,6 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $confirmation->method('save')->willReturnCallback(static function () use (&$events, $prefix): int {
       $events[] = $prefix . '-save';
       return 2;
-    });
-    $confirmation->method('cancel')->willReturnCallback(static function () use (&$events, $prefix): void {
-      $events[] = $prefix . '-cancel';
     });
     return $confirmation;
   }

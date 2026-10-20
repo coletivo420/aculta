@@ -26,8 +26,8 @@ de e-mail, registrada antes em `EMAIL-CONFIRMATION-POLICY.md` §6.1.
 
 | Link | Módulo | Mecanismo | Validade | Onde está aplicada |
 |---|---|---|---|---|
-| Confirmação de e-mail do cadastro | `aculta_portal` (realm `email_confirmer`) | `EmailConfirmationEntity::isExpired()` | 24 h | `src/Email/SingleUseLinkPolicy.php` |
-| Troca de endereço de e-mail | `aculta_portal` (realm `email_confirmer_user`, mesma classe) | `EmailConfirmationEntity::isExpired()` | 24 h | `src/Email/SingleUseLinkPolicy.php` |
+| Confirmação de e-mail do cadastro | `aculta_portal` (realm `aculta_registration`) | `AcultaMailConfirmerManager::isExpired()` (`hash_expiration`) | 24 h | `aculta_mail_confirmer` e `src/Email/SingleUseLinkPolicy.php` |
+| Troca de endereço de e-mail | `aculta_mail_confirmer_user` (realm `aculta_mail_confirmer_user`) | `AcultaMailConfirmerManager::isExpired()` (`hash_expiration`) | 24 h | `aculta_mail_confirmer` e `src/Email/SingleUseLinkPolicy.php` |
 | Confirmação do `email_confirmer` | contrib `email_confirmer` | `hash_expiration` em `config/sync/email_confirmer.settings.yml` | 86400 s | gate |
 | Recuperação de senha | Core `user` | `password_reset_timeout` em `config/sync/user.settings.yml` | 86400 s | gate |
 | Login de uso único (cadastro pelo administrador, sem aprovação) | Core `user` | `password_reset_timeout` (mesmo prazo) | 86400 s | gate |

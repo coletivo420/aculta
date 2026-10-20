@@ -116,7 +116,7 @@ class UserEmailChangeCancelForm extends ContentEntityConfirmFormBase {
     // Cancel any pending address confirmation for the requested new email.
     /** @var \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface $confirmation */
     foreach ($this->emailConfirmer->getConfirmations($new_email, 'pending', 0, 'aculta_mail_confirmer_user') as $confirmation) {
-      $confirmation->cancel();
+      $this->emailConfirmer->cancelConfirmation($confirmation);
       $confirmation->save();
       $cancel_url = $confirmation->getResponseUrl('cancel');
     }

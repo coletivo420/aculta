@@ -7,7 +7,14 @@ resendrequest_delay: 900
 confirmation_lifetime: 604800
 confirmation_request:
   subject: 'Confirme seu novo endereço de e-mail na Associação Cultural Antiproibicionista'
-  body: "Recebemos um pedido para usar [aculta-mail-confirmer:confirmation-mail] como e-mail da sua conta na Associação Cultural Antiproibicionista.\n\nSe foi você, confirme clicando no link abaixo ou copiando e colando no navegador. O link pode ser usado uma vez e vale por 24 horas.\n\n[aculta-mail-confirmer:confirmation-url]\n\nSe não foi você, ignore esta mensagem: nada será alterado."
+  body: |-
+    Recebemos um pedido para usar [aculta-mail-confirmer:confirmation-mail] como e-mail da sua conta na Associação Cultural Antiproibicionista.
+
+    Se foi você, confirme clicando no link abaixo ou copiando e colando no navegador. O link pode ser usado uma vez e vale por 24 horas.
+
+    [aculta-mail-confirmer:confirmation-url]
+
+    Se não foi você, ignore esta mensagem: nada será alterado.
 confirmation_response:
   skip_confirmation_form: false
   questions:
@@ -19,4 +26,3 @@ confirmation_response:
     confirm: '<front>'
     cancel: '<front>'
     error: '<front>'
-

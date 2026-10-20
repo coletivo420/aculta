@@ -2,10 +2,12 @@
 
 namespace Drupal\aculta_mail_confirmer\Form;
 
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\aculta_mail_confirmer\InvalidConfirmationStateException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -14,11 +16,27 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class AcultaMailConfirmerResponseForm extends EntityConfirmFormBase {
 
   /**
+   * Creates the response form.
+   *
+   * @param \Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface $manager
+   *   The email confirmation service.
+   */
+  public function __construct(protected AcultaMailConfirmerManagerInterface $manager) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('aculta_mail_confirmer'));
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getDescription() {
     return $this->config('aculta_mail_confirmer.settings')
-      ->get('confirmation_response.questions.' . $this->entity->getStatus());
+      ->get('confirmation_response.questions.' . $this->manager->getStatus($this->getEntity()));
   }
 
   /**
@@ -27,7 +45,7 @@ class AcultaMailConfirmerResponseForm extends EntityConfirmFormBase {
   public function getConfirmText() {
     /** @var \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface $confirmation */
     $confirmation = $this->getEntity();
-    return $confirmation->isPending() ? $this->t('Send') : $this->t('OK');
+    return $this->manager->isPending($confirmation) ? $this->t('Send') : $this->t('OK');
   }
 
   /**
@@ -69,7 +87,7 @@ class AcultaMailConfirmerResponseForm extends EntityConfirmFormBase {
     // No cancel option needed.
     unset($form['actions']['cancel']);
 
-    if ($this->getEntity()->isPending()) {
+    if ($this->manager->isPending($this->getEntity())) {
       $form['cancel'] = [
         '#type' => 'radios',
         '#default_value' => 0,
@@ -91,7 +109,7 @@ class AcultaMailConfirmerResponseForm extends EntityConfirmFormBase {
     $confirmation = $this->getEntity();
     $question = '';
 
-    switch ($confirmation->getStatus()) {
+    switch ($this->manager->getStatus($confirmation)) {
       case 'pending':
         // @todo obfuscate email address if no administer permission, user is anonymous or not owner
         $question = $this->t('Confirm %email', ['%email' => $this->entity->label()]);
@@ -123,7 +141,7 @@ class AcultaMailConfirmerResponseForm extends EntityConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Do nothing if it is not a real response.
-    if (!$this->getEntity()->isPending()) {
+    if (!$this->manager->isPending($this->getEntity())) {
       $form_state->setRedirectUrl($this->getRedirectUrl('error'));
       return;
     }
@@ -156,7 +174,7 @@ class AcultaMailConfirmerResponseForm extends EntityConfirmFormBase {
   protected function cancelConfirmation(FormStateInterface $form_state) {
     /** @var \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface $confirmation */
     $confirmation = $this->getEntity();
-    $confirmation->cancel();
+    $this->manager->cancelConfirmation($confirmation);
     $this->messenger()->addStatus($this->t('Email confirmation cancelled.'));
     $confirmation->save();
     $form_state->setRedirectUrl($this->getRedirectUrl('cancel'));
@@ -174,7 +192,7 @@ class AcultaMailConfirmerResponseForm extends EntityConfirmFormBase {
   protected function confirmConfirmation(FormStateInterface $form_state) {
     /** @var \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface $confirmation */
     $confirmation = $this->getEntity();
-    if (!$confirmation->confirm($this->getRouteMatch()->getParameter('hash'))) {
+    if (!$this->manager->confirmWithHash($confirmation, $this->getRouteMatch()->getParameter('hash'))) {
       $this->confirmationError($form_state);
       return;
     }

@@ -51,4 +51,3 @@ permissions:
   - 'view media'
   - 'view own authenticated profile'
   - 'view own commerce_order'
-

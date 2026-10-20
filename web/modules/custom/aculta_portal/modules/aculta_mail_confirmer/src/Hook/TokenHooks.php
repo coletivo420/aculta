@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mail_confirmer\Hook;
 
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -13,6 +14,15 @@ use Drupal\Core\Url;
  * Tokens do pedido de confirmação de e-mail.
  */
 final class TokenHooks {
+
+  /**
+   * Creates the token hooks.
+   *
+   * @param \Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface $manager
+   *   The email confirmation service.
+   */
+  public function __construct(protected AcultaMailConfirmerManagerInterface $manager) {
+  }
 
   /**
    * Declara o tipo de token e seus tokens.
@@ -57,7 +67,7 @@ final class TokenHooks {
         case 'confirmation-url':
           $replacements[$original] = Url::fromRoute(
             'entity.aculta_mail_confirmer.response_form',
-            ['aculta_mail_confirmer' => $confirmation->uuid(), 'hash' => $confirmation->getHash()],
+            ['aculta_mail_confirmer' => $confirmation->uuid(), 'hash' => $this->manager->getHash($confirmation)],
           )->setAbsolute()->toString();
           $bubbleable_metadata->setCacheMaxAge(0);
           break;

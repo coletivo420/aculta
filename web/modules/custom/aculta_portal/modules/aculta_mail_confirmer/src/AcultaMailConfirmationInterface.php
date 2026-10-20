@@ -41,14 +41,6 @@ interface AcultaMailConfirmationInterface extends ContentEntityInterface {
   const IS_PUBLIC = 0;
 
   /**
-   * Returns if the confirmation is in a proper status to get response.
-   *
-   * @return bool
-   *   TRUE if the confirmation can be responded, FALSE otherwise.
-   */
-  public function isPending();
-
-  /**
    * Returns if the confirmation is cancelled.
    *
    * @return bool
@@ -63,14 +55,6 @@ interface AcultaMailConfirmationInterface extends ContentEntityInterface {
    *   TRUE if the confirmation is done, FALSE if it is not confirmed.
    */
   public function isConfirmed();
-
-  /**
-   * Returns if the confirmation is expired.
-   *
-   * @return bool
-   *   TRUE if the confirmation is expired, FALSE if it is active.
-   */
-  public function isExpired();
 
   /**
    * Returns if the confirmation request was sent.
@@ -102,77 +86,6 @@ interface AcultaMailConfirmationInterface extends ContentEntityInterface {
    *   The called email confirmation entity.
    */
   public function setPrivate($private = TRUE);
-
-  /**
-   * Returns the most representative current status of the email confirmation.
-   *
-   * Possible status values:
-   *
-   * - pending: confirmation is pending response
-   *
-   * - confirmed: the email confirmation was sent and positively responded
-   *
-   * - cancelled: the confirmation process was cancelled; request could be
-   *   sent or not
-   *
-   * - expired: the confirmation age is over the allowed maximum, regardless
-   *   of any other status
-   *
-   * Note that an expired confirmation could be confirmed as well. Check
-   * the confirmed status with the isConfirmed method.
-   *
-   * @see \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface::isConfirmed
-   *
-   * @return string
-   *   The current status.
-   */
-  public function getStatus();
-
-  /**
-   * Sends the email confirmation request.
-   *
-   * Confirmation must be not expired, cancelled or confirmed. More than
-   * one request can be sent, but some delivery limitations are applied.
-   * See docs for details.
-   *
-   * @return bool
-   *   TRUE if request was successfully sent, FALSE on sending error.
-   *
-   * @throws \Drupal\aculta_mail_confirmer\InvalidConfirmationStateException
-   *   If confirmation is cancelled, expired or already confirmed.
-   */
-  public function sendRequest();
-
-  /**
-   * Process the email confirmation.
-   *
-   * @param string $hash
-   *   The received hash.
-   *
-   * @return bool
-   *   TRUE if confirmation was successfully processed, FALSE on mistmach
-   *   hash.
-   *
-   * @throws \Drupal\aculta_mail_confirmer\InvalidConfirmationStateException
-   *   If confirmation is cancelled, expired or already confirmed.
-   */
-  public function confirm($hash);
-
-  /**
-   * Cancel the email confirmation.
-   *
-   * @throws \Drupal\aculta_mail_confirmer\InvalidConfirmationStateException
-   *   If confirmation is expired, confirmed or already cancelled.
-   */
-  public function cancel();
-
-  /**
-   * Calculate hash for this email confirmation.
-   *
-   * @return string
-   *   The hash.
-   */
-  public function getHash();
 
   /**
    * Returns the subscribers email address.

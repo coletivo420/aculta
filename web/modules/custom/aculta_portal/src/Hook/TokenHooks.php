@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
+use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\domain\DomainInterface;
@@ -40,6 +41,8 @@ final class TokenHooks {
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'aculta_mail_confirmer')]
+    private readonly AcultaMailConfirmerManagerInterface $confirmationManager,
   ) {}
 
   /** Declares institutional and editorial tokens. */
@@ -121,7 +124,7 @@ final class TokenHooks {
     $confirmation = $context['data']['aculta_mail_confirmer'];
     $url = $this->domainPurposeManager->routeUrl('account', 'entity.aculta_mail_confirmer.response_form', [
       'aculta_mail_confirmer' => $confirmation->uuid(),
-      'hash' => $confirmation->getHash(),
+      'hash' => $this->confirmationManager->getHash($confirmation),
     ]);
     foreach ($context['tokens'] ?? [] as $name => $original) {
       if ($name === 'confirmation-url' && $url !== NULL && isset($replacements[$original])) {

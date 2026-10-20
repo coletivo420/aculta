@@ -27,14 +27,6 @@ final class EmailConfirmerHooks {
     private readonly EmailConfirmationPolicy $policy,
   ) {}
 
-  /** Validade infinita: troca a classe da entidade de confirmação pela do Portal (ver EmailConfirmationEntity). */
-  #[Hook('entity_type_alter')]
-  public function alterConfirmationEntityClass(array &$entity_types): void {
-    if (isset($entity_types['aculta_mail_confirmer'])) {
-      $entity_types['aculta_mail_confirmer']->setClass(\Drupal\aculta_portal\Email\EmailConfirmationEntity::class);
-    }
-  }
-
   /**
    * Troca o handler de acesso das confirmações de e-mail por um que libera a resposta ao visitante.
    */

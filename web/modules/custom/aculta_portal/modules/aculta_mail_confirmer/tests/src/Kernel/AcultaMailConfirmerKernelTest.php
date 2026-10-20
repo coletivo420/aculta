@@ -28,7 +28,6 @@ final class AcultaMailConfirmerKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_mail_confirmer');
     $this->installConfig(['aculta_mail_confirmer']);
-    $this->installSchema('system', ['sequences']);
     $this->config('system.mail')->set('interface.default', 'test_mail_collector')->save();
   }
 
@@ -39,7 +38,7 @@ final class AcultaMailConfirmerKernelTest extends KernelTestBase {
   public function testConfirmCreatesPendingRequestAndSendsTheApprovedText(): void {
     $confirmation = $this->manager()->confirm(self::EMAIL);
     $this->assertNotNull($confirmation->id());
-    $this->assertSame('pending', $confirmation->getStatus());
+    $this->assertSame('pending', $this->manager()->getStatus($confirmation));
 
     $mails = $this->container->get('state')->get('system.test_mail_collector', []);
     $this->assertCount(1, $mails);
@@ -51,25 +50,25 @@ final class AcultaMailConfirmerKernelTest extends KernelTestBase {
 
   public function testCorrectHashConfirmsAndWrongHashDoesNot(): void {
     $confirmation = $this->manager()->confirm(self::EMAIL);
-    $this->assertFalse($confirmation->confirm('hash-errado'));
-    $this->assertSame('pending', $confirmation->getStatus());
-    $this->assertTrue($confirmation->confirm($confirmation->getHash()));
-    $this->assertSame('confirmed', $confirmation->getStatus());
+    $this->assertFalse($this->manager()->confirmWithHash($confirmation, 'hash-errado'));
+    $this->assertSame('pending', $this->manager()->getStatus($confirmation));
+    $this->assertTrue($this->manager()->confirmWithHash($confirmation, $this->manager()->getHash($confirmation)));
+    $this->assertSame('confirmed', $this->manager()->getStatus($confirmation));
   }
 
   public function testCancelMovesToCancelled(): void {
     $confirmation = $this->manager()->confirm(self::EMAIL);
-    $confirmation->cancel();
-    $this->assertSame('cancelled', $confirmation->getStatus());
+    $this->manager()->cancelConfirmation($confirmation);
+    $this->assertSame('cancelled', $this->manager()->getStatus($confirmation));
   }
 
   public function testExpiredRequestCannotBeSentOrConfirmed(): void {
     $confirmation = $this->manager()->confirm(self::EMAIL);
     // Pedido com mais que o prazo de hash_expiration (24 h).
     $confirmation->setCreatedTime(time() - 86400 - 60);
-    $this->assertSame('expired', $confirmation->getStatus());
+    $this->assertSame('expired', $this->manager()->getStatus($confirmation));
     $this->expectException(InvalidConfirmationStateException::class);
-    $confirmation->sendRequest();
+    $this->manager()->sendRequest($confirmation);
   }
 
   public function testResendWithinTheDelayIsQueuedInsteadOfSentAgain(): void {
@@ -77,10 +76,10 @@ final class AcultaMailConfirmerKernelTest extends KernelTestBase {
     // confirm() já enviou o primeiro pedido.
     $mails = $this->container->get('state')->get('system.test_mail_collector', []);
     $this->assertCount(1, $mails);
-    $this->assertTrue($confirmation->sendRequest());
+    $this->assertTrue($this->manager()->sendRequest($confirmation));
     $this->assertCount(1, $this->container->get('state')->get('system.test_mail_collector', []), 'Dentro do atraso, nada novo sai.');
-    // Reenvio dentro do prazo vai para a fila e não sai como e-mail. A contagem exata da fila variou entre execuções; investigar.
-    $this->assertGreaterThanOrEqual(1, $this->container->get('queue')->get('aculta_mail_confirmer_requests')->numberOfItems());
+    // Reenvio dentro do prazo vai para a fila e não sai como e-mail.
+    $this->assertSame(1, $this->container->get('queue')->get('aculta_mail_confirmer_requests')->numberOfItems());
   }
 
 }

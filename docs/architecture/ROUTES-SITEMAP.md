@@ -206,7 +206,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/seguranca/email/cancelar/{user}` | Cancelamento de alteração de e-mail | Condicional a token válido; `{user}` é validado no fluxo. |
 | `conta.aculta` | `/identidade/editar` | Edição técnica/legada do perfil próprio | Navegação redirecionada para `/seguranca`; acesso alheio é negado. |
 | `conta.aculta` | `/identidade/{user}` | Perfil técnico/legado de usuário | Para o próprio usuário redireciona à raiz da Conta; perfil alheio não é exibido. |
-| `conta.aculta` | `/confirmar-email/{email_confirmer_confirmation}/{hash}` | Confirmação de endereço de e-mail | Token temporário; usuário e hash precisam ser válidos. |
+| `conta.aculta` | `/confirmar-email/{aculta_mail_confirmer}/{hash}` | Confirmação de endereço de e-mail | Token temporário; usuário e hash precisam ser válidos. |
 | `conta.aculta` | `/confirmar-email/reenviar/{confirmation}` | Reenvio de confirmação de uma solicitação | Registro/token de confirmação validado pelo módulo. |
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |

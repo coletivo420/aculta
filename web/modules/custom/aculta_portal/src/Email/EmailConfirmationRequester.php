@@ -123,7 +123,7 @@ final class EmailConfirmationRequester {
           continue;
         }
         try {
-          $old->cancel();
+          $this->manager->cancelConfirmation($old);
           $old->save();
         }
         catch (Throwable $exception) {
@@ -153,12 +153,12 @@ final class EmailConfirmationRequester {
   public function sendRequest(AcultaMailConfirmationInterface $confirmation): bool {
     $delay = (int) $this->configFactory->get('aculta_mail_confirmer.settings')->get('resendrequest_delay');
     if ($confirmation->isRequestSent() && $confirmation->getLastRequestDate() + $delay > time()) {
-      return $confirmation->sendRequest();
+      return $this->manager->sendRequest($confirmation);
     }
 
     $url = $this->urlGenerator->generateFromRoute('entity.aculta_mail_confirmer.response_form', [
       'aculta_mail_confirmer' => $confirmation->uuid(),
-      'hash' => $confirmation->getHash(),
+      'hash' => $this->manager->getHash($confirmation),
     ], ['absolute' => TRUE]);
     $message = new MailMessage(
       EmailConfirmationRequestMailType::ID,
@@ -188,7 +188,7 @@ final class EmailConfirmationRequester {
 
     return array_values(array_filter(
       $storage->loadMultiple($ids),
-      static fn(AcultaMailConfirmationInterface $confirmation): bool => $confirmation->isPending()
+      fn(AcultaMailConfirmationInterface $confirmation): bool => $this->manager->isPending($confirmation)
         && (int) $confirmation->getProperty('user') === $uid,
     ));
   }

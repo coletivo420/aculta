@@ -1,4 +1,20 @@
 services:
+  Drupal\aculta_mail_confirmer_user\Hook\UserEmailChangeHooks:
+    class: Drupal\aculta_mail_confirmer_user\Hook\UserEmailChangeHooks
+    arguments: ['@config.factory', '@current_user', '@user.data', '@aculta_mail_confirmer', '@entity_type.manager', '@messenger', '@logger.factory', '@plugin.manager.mail', '@language_manager']
+
+  Drupal\aculta_mail_confirmer_user\Hook\UserEmailChangeFormHooks:
+    class: Drupal\aculta_mail_confirmer_user\Hook\UserEmailChangeFormHooks
+    arguments: ['@config.factory', '@user.data', '@aculta_mail_confirmer', '@redirect.destination']
+
+  Drupal\aculta_mail_confirmer_user\Hook\UserLoginConfirmationHooks:
+    class: Drupal\aculta_mail_confirmer_user\Hook\UserLoginConfirmationHooks
+    arguments: ['@config.factory', '@aculta_mail_confirmer', '@datetime.time', '@current_route_match']
+
+  Drupal\aculta_mail_confirmer_user\Hook\UserEmailChangeMailHooks:
+    class: Drupal\aculta_mail_confirmer_user\Hook\UserEmailChangeMailHooks
+    arguments: ['@token']
+
   access_check.aculta_mail_confirmer_user_email_change:
     class: Drupal\aculta_mail_confirmer_user\Access\UserEmailPendingChangeAccess
     tags:
