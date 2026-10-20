@@ -1,3 +1,14 @@
+# Implementação não marcada — valida agregado de respostas Core — 2026-10-19
+
+- O Kernel do movimento de categoria agora valida o agregado real de
+  `comment_entity_statistics`: uma resposta publicada conta, uma pendente não,
+  e a contagem sobrevive à mudança de categoria do mesmo Node.
+- O teste habilita explicitamente `comment.maintain_entity_statistics`, como a
+  instalação oficial do Core faz. Kernel MariaDB dedicado: 2 testes / 48
+  assertions PASS; 5 deprecações preexistentes do contrib Domain. Nenhum dado
+  do Runtime foi alterado. RUNTIME STATUS: PARTIAL; ordenação visual da View
+  com comentários aprovados continua pendente.
+
 # Implementação não marcada — descoberta de tópicos públicos — 2026-10-19
 
 - A View pública ganhou displays de tópicos novos, sem resposta e mais

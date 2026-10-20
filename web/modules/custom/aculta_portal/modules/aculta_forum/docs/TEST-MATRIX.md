@@ -1,5 +1,15 @@
 # Matriz de testes por fase
 
+## Evidência não marcada — agregado de respostas públicas
+
+- `ForumTopicMoverKernelTest` valida Comment e `comment_entity_statistics` em
+  MariaDB dedicado: resposta publicada conta como 1, resposta pendente mantém
+  o contador em 1 e mover a categoria preserva o mesmo agregado no Node. 2
+  testes / 48 assertions PASS.
+- Runtime de teste continua sem respostas aprovadas; portanto, a ordenação
+  `/discussoes/mais-comentadas` com contagens distintas ainda aguarda fixture
+  deliberada em homologação. Nenhum conteúdo de Runtime foi criado.
+
 ## Evidência não marcada — contagem e atividade na listagem pública
 
 - PHPUnit Unit `ForumTopicDisplayConfigTest`: 13 testes / 137 assertions PASS.

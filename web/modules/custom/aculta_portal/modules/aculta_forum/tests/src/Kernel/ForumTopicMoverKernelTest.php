@@ -74,6 +74,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installConfig(['system', 'filter', 'node', 'taxonomy', 'comment', 'domain', 'path', 'path_alias']);
+    $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
 
     Domain::create([
       'id' => 'forum_aculta_org',
@@ -153,6 +154,22 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $uuid = $node->uuid();
     $original_vid = (int) $node->getRevisionId();
     $cid = (int) $comment->id();
+    $statistics = $this->container->get('comment.statistics')->read([$nid => $node], 'node');
+    self::assertCount(1, $statistics);
+    self::assertSame(1, (int) $statistics[0]->comment_count, 'Core statistics count the published reply.');
+
+    $pending_comment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => $nid,
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'subject' => 'Pending reply',
+      'comment_body' => ['value' => 'Pending reply body', 'format' => 'plain_text'],
+      'status' => 0,
+    ]);
+    $pending_comment->save();
+    $statistics = $this->container->get('comment.statistics')->read([$nid => $node], 'node');
+    self::assertSame(1, (int) $statistics[0]->comment_count, 'Unpublished replies do not enter public statistics.');
 
     $access = $this->mover->access($node, $this->account);
     self::assertTrue($access->isAllowed());
@@ -168,6 +185,8 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     self::assertNotNull($reloaded_comment);
     self::assertSame($nid, (int) $reloaded_comment->getCommentedEntityId());
     self::assertSame('Reply body', $reloaded_comment->get('comment_body')->value);
+    $statistics = $this->container->get('comment.statistics')->read([$nid => $moved], 'node');
+    self::assertSame(1, (int) $statistics[0]->comment_count, 'Category movement preserves Core reply statistics.');
   }
 
   /**

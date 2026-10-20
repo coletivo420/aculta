@@ -31,10 +31,10 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
-| Não marcada | Contagem e atividade na View de tópicos | Runtime: oito tópicos com `0 respostas`; sort ACULTA executa fórmula Core `GREATEST(changed, last_comment_timestamp)` em ordem descendente e data renderizada. Caso positivo, invalidação após moderação e inspeção visual pendentes |
+| Não marcada | Contagem e atividade na View de tópicos | Kernel MariaDB confirma `comment_count = 1` com resposta publicada, exclui pendente e preserva o agregado após mover categoria; Runtime tem 0 respostas, então ordenação positiva, invalidação após moderação e inspeção visual seguem pendentes |
 | Não marcada | Hierarquia no índice público de categorias | Configuração e Runtime PASS: a View apresenta os 12 termos e associa corretamente as 8 subcategorias aos pais; inspeção visual continua pendente |
 | Não marcada | Lista personalizada de discussões não lidas | View `/discussoes/nao-lidas` usa History contrib com acesso `authenticated`, filtros públicos fixos e sem cache compartilhado; Runtime query como uid 5 retornou 7 resultados e anônimo recebeu 403; HTTP autenticado/browser pendente |
-| Não marcada | Descoberta: novas, sem resposta e mais comentadas | Displays de Views e abas implementados; Runtime das três rotas HTTP 200, 8 tópicos cada e 8 sem resposta (0 comentários aprovados); teste positivo de contagem ainda pendente |
+| Não marcada | Descoberta: novas, sem resposta e mais comentadas | Displays de Views e abas implementados; Runtime das três rotas HTTP 200, 8 tópicos cada e 8 sem resposta; Kernel comprova contagem de resposta publicada e exclusão de pendente; ordenação positiva da View no Runtime pendente |
 | Não marcada | Mover tópico individual entre categorias públicas | Formulário, confirmação, nova revisão no mesmo Node, permissão específica e bloqueio de autoria histórica implementados. Unit e Kernel PASS; Functional/Runtime pendentes. Movimento de comentários continua bloqueado pela prova de integridade em `MOVE-TOOLS.md`. |
 | `0.1.0-dev.28` | Índice público inicial de categorias em `/categorias` | Runtime PASS para View, rotas, navegação HTTP e relação pai/filho; inspeção visual pendente |
 | `0.1.0-dev.27` | Abas de comentários do Fórum por estado, marcador seguro de rejeição e validação Fórum/Revista | Runtime PARTIAL: separação de View/render confirmada, registros temporários removidos; browser autenticado pendente |
