@@ -73,7 +73,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | `/busca` enviada pelo formulário | `/busca?q=<termo>` | 302 | `SearchPageForm::submitForm` | Busca em GET com o termo na URL |
 | Destinos após formulários de conta (cadastro, segurança, dados, painel) | `aculta_portal.security`, `aculta_portal.dashboard`, `aculta_portal.my_data_address`, `<front>` | 302 | `PortalFormCallbacks` (`setRedirect`) | Retorno ao painel depois de salvar |
 | `/product/{id}` | `/loja/produto/...` (alias) | 301 | Módulo Redirect e alias do Pathauto | Caminho canônico do produto |
-| Paths GET/HEAD/POST sob `/painel-administrativo/conteudo/forum` | `/painel-administrativo/forum` | 302 | `aculta_forum.legacy_admin_redirect*` com `LocalRedirectResponse` | Caminhos antigos e ferramentas específicas do Fórum entram no painel central; POST não executa a operação anterior |
+| Caminhos antigos GET/HEAD/POST sob `/painel-administrativo/conteudo/forum` | `/painel-administrativo/forum` | 302 | `aculta_forum.legacy_admin_redirect*` com `LocalRedirectResponse` | A árvore antiga fora da seção canônica redireciona para a entrada; POST não executa a operação anterior. Os caminhos atuais de tópicos, comentários e configurações dentro de `/painel-administrativo/forum` são páginas próprias, não redirects |
 
 ### Caminhos removidos (404, sem redirecionamento)
 

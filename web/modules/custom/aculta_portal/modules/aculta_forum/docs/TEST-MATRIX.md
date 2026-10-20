@@ -1,3 +1,21 @@
+## dev.122 — painel Growroom420 e abas administrativas
+
+- PHPUnit Unit direcionado: 21 testes/309 assertions PASS; PHPCS direcionado,
+  `node --check`, `git diff --check`, Drupal 11+ (992), mapa módulo/tema (154),
+  fronteira módulo/tema (1593) e slugs públicos (381 rotas; 20 violações
+  contrib já baselined) PASS.
+- Runtime de teste `toca`: Drush confirmou Drupal 11.4.10, URI
+  `https://aculta.toca.net.br` e banco `aculta_runtime`; `drush cr` PASS.
+  Firefox ESR/X11 autenticado, smoke GET-only: 25/25. Painel Growroom420 é a
+  aba Início; as ferramentas aparecem nas abas nativas e menu lateral; filas
+  publicadas/pendentes/rejeitadas aparecem no segundo nível de Comentários.
+  Contextos documentados não são renderizados no painel. Rotas canônicas e
+  redirects legados retornam como esperado; viewports 390/768/1024 sem overflow.
+- Evidências privadas `0600` em
+  `/home/aculta/private/aculta-forum-admin-final-20261020/`. Nenhum formulário
+  enviado nem conteúdo criado. Fórum permaneceu sem fixtures. RUNTIME STATUS:
+  PASS para navegação administrativa validada; produção não acessada.
+
 ## dev.118 — movimentação de tópicos em lote
 
 - PHPUnit Unit `ForumTopicDisplayConfigTest`: configurações install/Sync da View
@@ -1482,7 +1500,7 @@ real no servidor de teste.
 
 ## Fórum dev.120 / Portal dev.223 / User dev.47 — painel administrativo canônico
 
-- Forum + User Unit: 154 testes / 829 assertions PASS. `ForumTopicMoverKernelTest`
+- Forum + User Unit: 155 testes / 831 assertions PASS. `ForumTopicMoverKernelTest`
   passou com 3 testes / 84 assertions; 5 depreciações vieram do módulo Domain
   contrib. PHPCS Drupal/DrupalPractice direcionado PASS. Gate Drupal 11+: 988;
   mapa módulo/tema: 154; slugs: 381; `git diff --check` PASS.
@@ -1495,8 +1513,18 @@ real no servidor de teste.
   filas, configurações e denúncias para redirects. HTTP anônimo recebeu 403 nos
   oito caminhos centrais. ULI pelo purpose conta autenticou uid 1; a página
   central respondeu 200 e os sete redirects GET retornaram 302 para ela. Logout
-  via `/sair` encerrou a sessão; após logout a página voltou a 403. Inspeção
-  visual segue pendente.
+  via `/sair` encerrou a sessão; após logout a página voltou a 403.
+- Firefox ESR 153.4/geckodriver 0.37.1, X11 `:0`, UID 1, GET-only: 20/20
+  verificações PASS. Os 12 caminhos estáticos específicos de ferramentas
+  testados terminaram no painel canônico; `/painel-administrativo/forum` não
+  agrega links de ferramentas. Viewports CSS 390/768/1024 renderizaram sem
+  overflow horizontal. Capturas privadas 0600 em
+  `/home/aculta/private/aculta/visual-tests/forum-admin-central-dev120-20261020/`.
+  Rotas de movimentação com conversores Node/Comment não foram chamadas por
+  HTTP nesta rodada, pois não existem entidades de teste e nenhuma fixture foi
+  criada. Permanecem cobertas por RouteProvider e testes Kernel.
 - EntityQuery antes/depois: zero `aculta_forum_topic` e zero
   `aculta_discussion_post`. Nenhuma entidade de conteúdo foi criada, alterada ou
-  removida. RUNTIME STATUS: PARTIAL.
+  removida nem configuração foi submetida. RUNTIME STATUS: PARTIAL; a inspeção
+  visual do painel e redirects está PASS, mas a validação HTTP positiva das
+  rotas dinâmicas e a homologação visual integral do Fórum seguem pendentes.

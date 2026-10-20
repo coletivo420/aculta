@@ -7,6 +7,7 @@ DI explícita. Não criar service locator ou hook procedural migrável.
 
 | Responsabilidade prevista | Candidato/API | Estado |
 | --- | --- | --- |
+| Painel administrativo central do Growroom420 | `ForumAdminOverviewController` | dev.122: contagens EntityQuery por bundle e Domain com `accessCheck(TRUE)`, tags/cache contexts e TTL; explica fronteiras Revista/LMS/Wiki, gera links públicos via `DomainPurposeManager` e links administrativos autorizados somente para a primeira camada de páginas filhas. |
 | Configuração administrativa específica | `Drupal\aculta_forum\Form\ForumSettingsForm` (`ConfigFormBase`) | dev.116: formulário mapeia `comment_move_enabled` por `#config_target`; rota exige `administer aculta forum settings`; mantém padrão falso. |
 | Navegação progressiva na conversa renderizada | `DiscussionProgressHooks` (`entity_view_alter`) | dev.63 anexa biblioteca neutra somente à renderização full do campo compartilhado; controles limitam-se aos Comments renderizados na página. |
 | Selecionar contexto/provedor | `DiscussionContextResolver` + `DiscussionContextProviderInterface` | Implementado na dev.4; provider via tag `aculta_forum.discussion_context_provider`, duplicidade falha explicitamente. |

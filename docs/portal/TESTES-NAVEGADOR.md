@@ -546,6 +546,36 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
   categorias, listas com conteúdo e tópico contra Ubuntu Discourse permanece
   planejada, pois o Runtime do Fórum está intencionalmente sem conteúdo.
 
+### Painel administrativo central — 2026-10-20
+
+- Runtime `toca`, URI `https://aculta.toca.net.br`, Drupal 11.4.10 / banco
+  `aculta_runtime`; Firefox ESR 153.4/geckodriver 0.37.1 em X11 `:0`, UID 1.
+- `tests/browser/aculta-forum/admin-content-structure.mjs` executou 23/23
+  verificações GET-only: página central HTTP 200, indicadores de categorias e
+  tópicos, separação dos quatro contextos, links no host Growroom e ausência de
+  ferramentas agregadas. Os 12 caminhos estáticos de conteúdo, comentários,
+  filas, configurações e denúncias terminaram em `/painel-administrativo/forum`.
+- Viewports CSS 390, 768 e 1024 px renderizaram sem overflow. Capturas 0600 em
+  `/home/aculta/private/aculta/visual-tests/forum-admin-central-dev120-20261020/`.
+- Nenhum formulário, configuração ou conteúdo foi gravado. As rotas de mover
+  Node/Comment exigem entidades reais; não foram chamadas por HTTP e nenhuma
+  fixture foi criada. A inspeção comparativa completa do Growroom com Ubuntu
+  Discourse continua pendente e separada deste smoke administrativo.
+
+### Abas administrativas do Growroom420 — 2026-10-20
+
+- Runtime de teste `toca`, Drush URI `https://aculta.toca.net.br`, banco
+  `aculta_runtime`, Firefox ESR/geckodriver em X11 `:0`, UID 1.
+- `tests/browser/aculta-forum/admin-content-structure.mjs`: 25/25 verificações
+  GET-only. `/painel-administrativo/forum` apresenta o título Painel
+  Growroom420 e aba Início; não repete atalhos de ferramentas nem conteúdo de
+  arquitetura destinado aos documentos. Abas de primeiro nível, filhos do menu
+  lateral e subabas de estado de Comentários foram verificadas; caminhos
+  canônicos responderam 200 e caminhos antigos redirecionaram ao painel.
+- Viewports CSS 390, 768 e 1024 px sem overflow. Capturas privadas `0600` em
+  `/home/aculta/private/aculta-forum-admin-final-20261020/`. Smoke não enviou
+  formulários nem criou conteúdo. RUNTIME STATUS: PASS para esta navegação.
+
 Aplicar na revisão visual da dev.11 e repetir na homologação rc.1, usando
 Firefox visível na sessão X11 do servidor de teste ou workstation autorizada.
 Confirmar `DISPLAY`, URI de teste e viewport efetivo do navegador; registrar

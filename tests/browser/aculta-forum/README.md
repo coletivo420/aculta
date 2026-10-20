@@ -66,18 +66,13 @@ somente leitura; a suíte encerra sua própria sessão WebDriver ao terminar.
 
 `admin-content-structure.mjs` autentica temporariamente o uid 1 com um link
 único gerado por `drush uli --no-browser` no host ACCOUNT, depois confirma a
-sessão compartilhada e navega no MAIN de teste. Não grava conteúdo ou
-comentários. Também submete a configuração de movimento com a caixa desmarcada
-para validar Form API. Antes, exige a opção ausente ou `false`; se a configuração
-estava ausente, remove somente o item `aculta_forum.settings` criado pelo próprio
-smoke e confirma que o estado ausente foi restaurado. Se já existia como `false`,
-não a remove. Recusa executar quando o movimento estiver habilitado.
-Verifica `/painel-administrativo/conteudo`
-sem a aba nem tópicos do Fórum, a entrada central mínima `/painel-administrativo/forum`,
-Conteúdo em seu caminho próprio, as filas de comentários publicados, rejeitados
-e aguardando moderação, a área consolidada da Revista e os sete caminhos antigos
-do Fórum redirecionando para o painel central. Confirma também a
-remoção da rota antiga `/painel-administrativo/revista/comentarios`.
+sessão compartilhada e navega no MAIN de teste. É GET-only: não grava conteúdo,
+comentários ou configurações. Confirma que `/painel-administrativo/forum`
+apresenta links somente para Tópicos, Comentários e Configurações; abre as páginas
+canônicas dessas funções e as três subabas de estado dos comentários; e confirma
+que os caminhos antigos sob `/painel-administrativo/conteudo/forum` redirecionam
+para a entrada central. Também verifica os links públicos no purpose Growroom e
+viewports CSS responsivos.
 
 Use o mesmo procedimento para iniciar geckodriver e defina `DISPLAY` e `SUITE_OUT`
 fora do checkout. Capturas e resultados são privados; não copie o link único de

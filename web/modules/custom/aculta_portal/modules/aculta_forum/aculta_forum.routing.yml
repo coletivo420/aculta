@@ -2,49 +2,9 @@ aculta_forum.admin:
   path: '/painel-administrativo/forum'
   defaults:
     _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::overview'
-    _title: 'Painel do Fórum'
+    _title: 'Painel Growroom420'
   requirements:
     _permission: 'access content overview'
-
-aculta_forum.admin_content_redirect:
-  path: '/painel-administrativo/forum/conteudo'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.admin_comments_redirect:
-  path: '/painel-administrativo/forum/comentarios'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'administer comments'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.admin_comments_published_redirect:
-  path: '/painel-administrativo/forum/comentarios/publicados'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'administer comments'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.admin_comments_rejected_redirect:
-  path: '/painel-administrativo/forum/comentarios/rejeitados'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'administer comments'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.admin_comments_pending_redirect:
-  path: '/painel-administrativo/forum/comentarios/aguardando-moderacao'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'administer comments'
-  methods: [GET, HEAD, POST]
 
 aculta_forum.legacy_admin_redirect:
   path: '/painel-administrativo/conteudo/forum'
@@ -155,7 +115,8 @@ aculta_forum.comment_move:
 aculta_forum.settings:
   path: '/painel-administrativo/forum/configuracoes'
   defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
+    _form: '\Drupal\aculta_forum\Form\ForumSettingsForm'
+    _title: 'Configurações do Fórum'
   requirements:
     _permission: 'administer aculta forum settings'
   methods: [GET, HEAD, POST]

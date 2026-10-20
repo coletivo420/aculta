@@ -5,3 +5,21 @@ aculta_forum.admin:
   parent: system.admin
   weight: 11
 
+aculta_forum.admin_topics:
+  title: Tópicos
+  route_name: view.aculta_forum_admin_topics.page_forum
+  parent: aculta_forum.admin
+  weight: 0
+
+aculta_forum.admin_comments:
+  title: Comentários
+  route_name: view.aculta_forum_admin_comments.page_forum_comments
+  parent: aculta_forum.admin
+  weight: 1
+
+aculta_forum.admin_settings:
+  title: Configurações
+  route_name: aculta_forum.settings
+  parent: aculta_forum.admin
+  weight: 2
+

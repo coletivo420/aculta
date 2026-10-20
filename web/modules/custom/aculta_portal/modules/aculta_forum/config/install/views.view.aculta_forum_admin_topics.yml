@@ -4,12 +4,14 @@ status: true
 dependencies:
   config:
     - field.field.node.aculta_forum_topic.field_aculta_categories
+    - field.field.node.aculta_forum_topic.field_domain_source
     - node.type.aculta_forum_topic
   module:
     - node
     - user
     - views
     - views_bulk_operations
+    - domain_source
 id: aculta_forum_admin_topics
 label: 'Fóruns — tópicos públicos'
 module: views
@@ -276,6 +278,45 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: { }
+        field_domain_source_target_id:
+          id: field_domain_source_target_id
+          table: node__field_domain_source
+          field: field_domain_source_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: domain_source
+          operator: or
+          value:
+            _active: _active
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: { }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items: { }
       filter_groups:
         operator: AND
         groups:
@@ -359,6 +400,28 @@ display:
           admin_label: autor
           plugin_id: standard
           required: false
+      display_extenders: { }
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: { }
+  page_forum:
+    id: page_forum
+    display_title: Fórum
+    display_plugin: page
+    position: 1
+    display_options:
+      title: Fórum
+      path: painel-administrativo/forum/conteudo
+      menu:
+        type: none
       display_extenders: { }
     cache_metadata:
       max-age: 0

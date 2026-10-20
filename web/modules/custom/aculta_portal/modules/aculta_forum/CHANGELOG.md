@@ -1,3 +1,36 @@
+## `0.1.0-dev.122` — abas administrativas do Fórum
+
+- `/painel-administrativo/forum` é a aba Início, intitulada Painel Growroom420,
+  com o resumo público. A explicação dos limites dos quatro contextos fica só
+  na documentação, não no painel. Os links repetidos de Ferramentas do Fórum
+  foram removidos do conteúdo; Tópicos, Comentários e Configurações ficam nas
+  abas administrativas nativas do Drupal e no menu lateral.
+- Reativados os Page displays das Views de tópicos e comentários dentro da
+  seção própria. Comentários publicados, aguardando moderação e rejeitados são
+  subabas. Listagens mantêm filtros fixos por bundle, campo de comentário,
+  tópico e Domain ativo do Growroom.
+- `/painel-administrativo/forum/configuracoes` volta a abrir `ForumSettingsForm`.
+  Caminhos históricos sob Conteúdo seguem redirecionando para a entrada central.
+- Cache reconstruído no Runtime confirmado de teste; Firefox/X11 autenticado
+  confirmou páginas canônicas HTTP 200, abas administrativas de primeiro e
+  segundo nível e redirects legados. Smoke completo 25/25 antes da retirada do
+  texto contextual; repetição após esta alteração pendente. Fórum sem fixtures.
+
+## `0.1.0-dev.121` — preencher o painel central do Growroom420
+
+- `/painel-administrativo/forum` agora mostra contagens de categorias públicas e
+  tópicos publicados, limitadas ao bundle `aculta_forum_topic` e ao Domain
+  canônico `forum`. As EntityQuery usam `accessCheck(TRUE)` e o resumo varia por
+  grants, permissões, idioma e Domain, invalida pelas tags das listas e expira
+  após 60 segundos.
+- A página explica a separação das discussões de Growroom420, Revista, LMS e
+  Wiki e oferece links gerados pelo `DomainPurposeManager` para o Growroom e
+  suas categorias. Ferramentas administrativas continuam redirecionando ao
+  painel e não são agregadas nele.
+- Unit direcionado `ForumAdminOverviewControllerTest`: 2 testes/29 assertions
+  PASS. Validação Runtime e smoke X11 desta versão serão registrados após
+  executar o cache rebuild e inspecionar o conteúdo renderizado.
+
 ## `0.1.0-dev.120` — centralizar os caminhos administrativos do Fórum
 
 - `/painel-administrativo/forum` permanece uma página própria e mínima. Os
@@ -13,7 +46,13 @@
   mapa (154) e slugs (381) PASS.
 - Runtime de teste: importação parcial apenas dessas duas Views, `drush cr` PASS,
   displays `default` e RouteProvider resolve GET/POST nos caminhos centrais. Anônimo recebe 403 nos oito caminhos. ULI pelo purpose `conta` autenticou uid 1: a página central respondeu 200 e os sete redirects GET responderam 302 para ela. Logout encerrou a sessão e a página voltou a 403 anônimo.
-  Backup anterior privado; nenhum Node ou Comment criado/alterado. RUNTIME STATUS: PARTIAL.
+  Backup anterior privado; nenhum Node ou Comment criado/alterado.
+- Firefox ESR/X11 autenticado: 20/20 verificações GET-only; 12 caminhos estáticos
+  terminaram no painel central e os viewports CSS 390/768/1024 não tiveram
+  overflow. Evidências privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-admin-central-dev120-20261020/`.
+  Rotas dinâmicas de movimentação não foram chamadas sem entidades de teste.
+  RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.119` — corrigir validação da seleção da Action VBO
 

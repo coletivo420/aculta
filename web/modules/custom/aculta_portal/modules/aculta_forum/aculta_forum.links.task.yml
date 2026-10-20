@@ -33,3 +33,45 @@ aculta_forum.most_commented_topics:
   route_name: view.aculta_forum_public_topics.page_most_commented
   base_route: view.aculta_forum_public_topics.page_discussions
   weight: 5
+
+aculta_forum.admin_overview_tab:
+  title: Início
+  route_name: aculta_forum.admin
+  base_route: aculta_forum.admin
+  weight: -1
+
+aculta_forum.admin_topics_tab:
+  title: Tópicos
+  route_name: view.aculta_forum_admin_topics.page_forum
+  base_route: aculta_forum.admin
+  weight: 0
+
+aculta_forum.admin_comments_tab:
+  title: Comentários
+  route_name: view.aculta_forum_admin_comments.page_forum_comments
+  base_route: aculta_forum.admin
+  weight: 1
+
+aculta_forum.admin_settings_tab:
+  title: Configurações
+  route_name: aculta_forum.settings
+  base_route: aculta_forum.admin
+  weight: 2
+
+aculta_forum.admin_comments_published:
+  title: Publicados
+  route_name: view.aculta_forum_admin_comments.page_published
+  parent_id: aculta_forum.admin_comments_tab
+  weight: 1
+
+aculta_forum.admin_comments_pending:
+  title: Aguardando moderação
+  route_name: view.aculta_forum_admin_comments.page_pending
+  parent_id: aculta_forum.admin_comments_tab
+  weight: 2
+
+aculta_forum.admin_comments_rejected:
+  title: Rejeitados
+  route_name: view.aculta_forum_admin_comments.page_rejected
+  parent_id: aculta_forum.admin_comments_tab
+  weight: 3

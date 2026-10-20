@@ -5,11 +5,14 @@
 - Gate `scripts/validate-single-use-links.php`: confere `password_reset_timeout` e `hash_expiration` (até 86400 s), as constantes da regra nos dois módulos, a ausência de `isExpired()` com retorno fixo e o cancelamento e a recusa de reenvio no aculta_mailer.
 - Validado: gate passa; testes de Kernel do aculta_mailer passam. Uma falha pré-existente em `ContentPurposeResolverTest` (propósito do fórum, de outro commit) continua aberta e não faz parte desta mudança.
 
-## 0.4.0-dev.225 — navegação administrativa de primeiro nível do Fórum
+## 0.4.0-dev.227 — abas administrativas do Fórum
 
-- O painel central liga às páginas próprias de Tópicos, Comentários e
-  Configurações. As três filas de estado continuam aninhadas como subabas em
-  Comentários; os caminhos antigos fora da seção mantêm redirects locais.
+- `/painel-administrativo/forum` é a aba Início (Painel Growroom420), mostra
+  apenas o resumo público e não repete links às ferramentas. A explicação dos
+  contextos fica na documentação. Tópicos, Comentários e Configurações aparecem nas abas
+  administrativas Drupal e como filhos no menu lateral; as filas de estado
+  continuam como subabas de Comentários. Caminhos antigos fora da seção mantêm
+  redirects locais.
 - As Views administrativas são limitadas ao Domain ativo do Growroom e mantêm
   permissões e filtros fixos. O formulário específico do Fórum voltou a abrir
   em seu caminho canônico. Validação Runtime/X11 registrada na matriz do

@@ -106,15 +106,15 @@ conta autenticada. Ele permanece oculto sem uma mensagem marcada; usa o mesmo
 salto de progresso e não mantém contagem, timestamp ou histórico paralelo.
 ## Administração contextual de comentários
 
-A View `aculta_forum_admin_comments` preserva o display base para reutilização,
-mas seus displays de página administrativos foram retirados. Os caminhos antigos
-da consulta e das três filas agora redirecionam à página central:
+A View `aculta_forum_admin_comments` mantém páginas próprias em
+`/painel-administrativo/forum/comentarios` e nas três subabas de estado:
 `/painel-administrativo/forum/comentarios/publicados`,
 `/painel-administrativo/forum/comentarios/rejeitados` e
-`/painel-administrativo/forum/comentarios/aguardando-moderacao`.
-Os redirects exigem `administer comments` e não listam, moderam ou alteram
-comentários. `/painel-administrativo/forum` não incorpora essas filas. A
-administração genérica de comentários do Core permanece fora desta seção.
+`/painel-administrativo/forum/comentarios/aguardando-moderacao`. Os displays
+exigem `administer comments`, filtram o Comment compartilhado, o campo de
+discussão, o tópico público e o Domain ativo do Growroom. A página central aponta
+apenas para a entrada Comentários; a administração genérica de comentários do
+Core permanece fora desta seção.
 
 Core Comment distingue publicado de não publicado. Para distinguir uma rejeição
 definitiva de uma pendência, o bundle compartilhado usa `field_aculta_rejected`;

@@ -5,6 +5,9 @@
   modificar denúncias nessa rota.
 - Adicionado teste unitário para a resposta local do redirect; a suíte Unit
   combinada Forum + User passou com 155 testes/831 assertions. Runtime de teste resolve a rota, responde 403 para anônimo e, em sessão uid 1, retorna 302 para o painel; logout confirmado.
+- O smoke visual X11 autenticado GET-only incluiu a rota de denúncias entre os
+  12 caminhos estáticos que terminaram no painel central (20/20 verificações
+  totais); nenhuma denúncia ou outra entidade foi criada ou alterada.
 
 ## 0.4.0-dev.46 — cartão editorial compartilhado e fallback de avatar — 2026-10-20
 
