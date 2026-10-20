@@ -56,6 +56,12 @@ Recuperação: `drush cr` (atualiza os metadados), reinstalação dos módulos n
 
 ## Pendências
 
-- Validar no navegador: confirmação pelo link (conta de teste), troca de e-mail e login bloqueado.
+- Validação no servidor de teste (2026-10-20):
+  - Troca de e-mail, de ponta a ponta com e-mail real: usuário de teste novo, pedido para `dmarc@aculta.org`, mensagem
+    recebida por IMAP com o link do próprio e-mail, confirmação pelo serviço, e-mail da conta alterado. Usuário e pedido
+    de teste removidos; aviso ao endereço antigo desligado só durante o teste e restaurado.
+  - Confirmação pelo formulário: página em pt-BR no navegador (X11), desafio anti-bot passou no navegador real. O envio do
+    formulário ainda depende de um clique humano (pedido de teste pendente, para remoção depois).
+  - Login bloqueado: pendente. Não há senha conhecida numa conta de teste sem confirmação; coberto só por teste Unit.
 - Concluído em 0.1.0-dev.2: `\Drupal::` removido de `src/` dos dois módulos (serviços por injeção); hooks procedurais do submódulo migrados para `#[Hook]`; teste da fila exato (1 item). Variação anterior da contagem não se reproduziu; causa não identificada.
 - Drift preexistente, fora desta integração: `commerce_shipping` na dependência do papel `authenticated`.

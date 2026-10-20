@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_links\Controller;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_portal\Presentation\SocialLinksPagePresenter;
+use Drupal\aculta_links\Service\SocialLinksPagePresenter;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -15,13 +14,12 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\NodeInterface;
 use Drupal\path_alias\AliasManagerInterface;
 use Drupal\views\ViewExecutable;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Serves the links-purpose front page when its editorial alias is absent.
  */
-final class LinksLandingController implements ContainerInjectionInterface {
+final class LinksLandingController {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -31,20 +29,6 @@ final class LinksLandingController implements ContainerInjectionInterface {
     private readonly DomainPurposeManager $domainPurpose,
     private readonly SocialLinksPagePresenter $pagePresenter,
   ) {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container): static {
-    return new static(
-      $container->get('entity_type.manager'),
-      $container->get('current_user'),
-      $container->get('path_alias.manager'),
-      $container->get('language_manager'),
-      $container->get('aculta_portal.domain_purpose'),
-      $container->get('aculta_portal.presentation.social_links_page'),
-    );
-  }
 
   /**
    * Builds the editorial page when available, or a safe configured fallback.
@@ -93,7 +77,7 @@ final class LinksLandingController implements ContainerInjectionInterface {
     ];
     (new CacheableMetadata())
       ->addCacheContexts(['url.site', 'languages:language_interface'])
-      ->addCacheTags(['path_alias_list', 'config:aculta_portal.social_links'])
+      ->addCacheTags(['path_alias_list', 'config:aculta_links.social_links'])
       ->addCacheableDependency($domain)
       ->applyTo($build);
     return $build;

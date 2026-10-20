@@ -66,3 +66,14 @@ legados; a configuração antiga continua presente; Drush confirmou zero updates
 pendentes e a rota registrada com a permissão original. Sitemap PASS. Os
 comandos `updb` e `cr` repetiram aviso de asset H5P sem diretório destino
 configurado; smoke HTTP autenticado do formulário ainda não foi feito.
+
+Ainda em 2026-10-20, presenter, theme suggestion e preprocess foram movidos
+para o submódulo com DI explícita. Kernel PASS (2/71), PHPCS e lint PASS;
+Foundation ACULTA420 (366 checks), módulo/tema (162) e sitemap PASS. O gate
+global de índice/Portal está bloqueado por dois commits paralelos anteriores
+(`d0c3086c`, `88745650`) que alteraram arquivos do Portal sem atualizar a linha
+do componente no README no mesmo commit; o histórico não foi reescrito. Após
+rebuild, a raiz `links` respondeu HTTP 200 e continha CTA,
+Instagram e projetos; o container resolveu as classes de hook/presenter. O
+template editorial Node, desktop, teclado e leitores de tela não foram
+verificados neste recorte; produção continua DEFERRED.

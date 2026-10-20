@@ -44,7 +44,7 @@ aculta_links.page_preview:
 aculta_links.landing:
   path: '/redes-sociais'
   defaults:
-    _controller: '\Drupal\aculta_links\Controller\LinksLandingController::view'
+    _controller: 'aculta_links.landing_controller:view'
     _title: 'ACULTA'
   requirements:
     _access: 'TRUE'

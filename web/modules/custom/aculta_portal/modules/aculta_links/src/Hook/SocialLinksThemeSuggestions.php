@@ -2,24 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Hook;
+namespace Drupal\aculta_links\Hook;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\aculta_portal\Presentation\SocialLinksPagePresenter;
+use Drupal\aculta_links\Service\SocialLinksPagePresenter;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\path_alias\AliasManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Provides the neutral node template suggestion for the social links page. */
+/**
+ * Provides the neutral node template suggestion for the social links page. */
 final class SocialLinksThemeSuggestions {
 
   public function __construct(
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $domainPurpose,
-    #[Autowire(service: 'aculta_portal.presentation.social_links_page')]
+    #[Autowire(service: 'aculta_links.social_links_page')]
     private readonly SocialLinksPagePresenter $pagePresenter,
     #[Autowire(service: 'path_alias.manager')]
     private readonly AliasManagerInterface $aliasManager,
@@ -27,7 +28,17 @@ final class SocialLinksThemeSuggestions {
     private readonly LanguageManagerInterface $languageManager,
   ) {}
 
-  /** Selects the social-links presentation for its own public node and purpose. */
+  /**
+ * Adds the LINKS-specific identity/footer to the public page render array. */
+  #[Hook('preprocess_page')]
+  public function preprocessPage(array &$variables): void {
+    if ($this->domainPurpose->getCurrentPurpose() === 'links') {
+      $variables['social_links_page_footer'] = $this->pagePresenter->buildFooter();
+    }
+  }
+
+  /**
+ * Selects the social-links presentation for its own public node and purpose. */
   #[Hook('theme_suggestions_node_alter')]
   public function themeSuggestionsNodeAlter(array &$suggestions, array $variables): void {
     $node = $variables['elements']['#node'] ?? NULL;
@@ -45,7 +56,8 @@ final class SocialLinksThemeSuggestions {
     }
   }
 
-  /** Supplies public project links to the neutral content template contract. */
+  /**
+ * Supplies public project links to the neutral content template contract. */
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
     $node = $variables['node'] ?? NULL;

@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.7 — porta presenter e hooks de LINKS para o submódulo — 2026-10-20
+
+- Presenter de canais, botões e View; theme suggestion de Node e preprocess de projetos/footer agora pertencem ao `aculta_links`.
+- Landing recebe presenter por serviço Drupal com DI explícita. O conteúdo público consome `aculta_links.social_links`; a chave antiga permanece dual-write na janela de rollback.
+- Validação: Kernel 2/71, PHPCS/lint/YAML, ACULTA420 Foundation 366, mapa de módulos/tema 162 e sitemap via Drush PASS. Runtime após rebuild: landing HTTP 200 contém CTA, Instagram e projetos; hook/presenter foram resolvidos pelo container. Rebuild repetiu aviso de diretório de assets H5P. O gate global de índice/Portal está bloqueado por commits paralelos anteriores (`d0c3086c`, `88745650`) sem linha de estado do Portal; não reescrevi o histórico. Conteúdo editorial Node e produção não verificados nesta mudança.
+
 ## 0.4.0-dev.6 — transfere configuração social e formulário para o submódulo — 2026-10-20
 
 - A rota e a aba administrativa em `/painel-administrativo/aculta/redes-sociais` agora pertencem ao `aculta_links`; o acesso continua exigindo `administer site configuration`.

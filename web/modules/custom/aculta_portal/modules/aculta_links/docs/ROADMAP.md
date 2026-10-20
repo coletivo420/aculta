@@ -11,10 +11,10 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 
 ## 0.2.0 — migração preservadora e entidades base (em andamento)
 
-1. Landing de raiz, formulário e configuração social pertencem ao submódulo;
-   update `10002` migra sem remover o original e o formulário dual-write mantém
-   rollback. Ainda falta portar presenter/hooks com paridade antes de retirar a
-   chave legada do Portal.
+1. Landing, formulário, configuração, presenter e hooks específicos pertencem
+   ao submódulo; o update `10002` migra sem remover o original e o formulário
+   dual-write mantém rollback. A integração usa os contratos atuais de Domain e
+   tema.
 2. Atualizar integração neutra Portal–tema e rota administrativa, com paridade e
    rollback demonstrados antes de corte.
 3. As três entidades base estão iniciadas (`aculta_link`, `aculta_link_page`,

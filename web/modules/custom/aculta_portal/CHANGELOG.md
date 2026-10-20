@@ -1,3 +1,10 @@
+## 0.4.0-dev.238 — remove a apresentação LINKS do Portal — 2026-10-20
+
+- Presenter e sugestões/preprocess específicos de links foram movidos ao submódulo. Portal mantém os serviços compartilhados de Domain; footer e dados da página agora pertencem ao `aculta_links`.
+- A configuração antiga continua versionada e dual-write para rollback, mas a apresentação passou a consumir `aculta_links.social_links`.
+- Landing usa serviço Drupal com injeção explícita.
+- Validação: Kernel 2/71, PHPCS/lint/YAML, ACULTA420 Foundation 366, mapa de módulos/tema 162 e mapa final via Drush PASS. Runtime após `cr`: landing HTTP 200 contém CTA, Instagram e projetos; presenter/hook estão resolvidos no container. Rebuild repetiu aviso de diretório de assets H5P. Portal/index estão bloqueados por commits paralelos anteriores (`d0c3086c`, `88745650`) que alteraram arquivos do Portal sem a linha correspondente no README; o histórico compartilhado não foi reescrito. Node editorial e produção não verificados nesta mudança.
+
 ## 0.4.0-dev.237 — transfere configuração social ao ACULTA Links — 2026-10-20
 
 - A rota/admin links do purpose LINKS, formulário e callbacks Form API deixaram de pertencer ao Portal e foram movidos ao submódulo `aculta_links`; URL e permissão são preservadas.

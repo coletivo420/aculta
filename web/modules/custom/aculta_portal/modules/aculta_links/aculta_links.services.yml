@@ -1,4 +1,10 @@
 services:
+  aculta_links.social_links_page:
+    class: Drupal\aculta_links\Service\SocialLinksPagePresenter
+    arguments: ['@config.factory', '@entity_type.manager', '@views.executable', '@string_translation', '@aculta_portal.domain_purpose']
+  aculta_links.landing_controller:
+    class: Drupal\aculta_links\Controller\LinksLandingController
+    arguments: ['@entity_type.manager', '@current_user', '@path_alias.manager', '@language_manager', '@aculta_portal.domain_purpose', '@aculta_links.social_links_page']
   aculta_links.dashboard_access:
     class: Drupal\aculta_links\Access\LinksDashboardAccess
 

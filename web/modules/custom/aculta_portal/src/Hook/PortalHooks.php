@@ -14,7 +14,6 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\aculta_portal\Form\LoginPopupForm;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
-use Drupal\aculta_portal\Presentation\SocialLinksPagePresenter;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\StreetNumberField;
@@ -107,8 +106,6 @@ final class PortalHooks {
     private readonly DomainPresentationBuilder $domainPresentationBuilder,
     #[Autowire(service: 'renderer')]
     private readonly RendererInterface $renderer,
-    #[Autowire(service: 'aculta_portal.presentation.social_links_page')]
-    private readonly SocialLinksPagePresenter $socialLinksPagePresenter,
   ) {}
 
 
@@ -119,9 +116,6 @@ final class PortalHooks {
   public function preprocessPage(array &$variables): void {
     $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
     $variables['domain_presentation'] = $domainPresentation?->toThemeArray();
-    if (($variables['domain_presentation']['identity']['purpose'] ?? NULL) === 'links') {
-      $variables['social_links_page_footer'] = $this->socialLinksPagePresenter->buildFooter();
-    }
     $variables['aculta_search_utility'] = $this->searchUtility->build();
     // Ícone da ACULTA na barra multidomínio: página inicial do domínio principal (purpose main), nunca fixa no código.
     $mainHome = $this->domainPurposeManager->pathUrl('main', '/');

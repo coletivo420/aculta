@@ -7,6 +7,8 @@ namespace Drupal\Tests\aculta_links\Kernel;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkItem;
 use Drupal\aculta_links\Entity\LinkPage;
@@ -37,8 +39,22 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    // Portal integration is an external contract in this isolated Kernel test.
+    $container->register('aculta_portal.domain_purpose')
+      ->setSynthetic(TRUE)
+      ->setPublic(TRUE);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
+    $domain_purpose = (new \ReflectionClass(DomainPurposeManager::class))
+      ->newInstanceWithoutConstructor();
+    $this->container->set('aculta_portal.domain_purpose', $domain_purpose);
     $this->installEntitySchema('user');
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('aculta_link');
@@ -210,7 +226,8 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     self::assertSame('Site institucional', $previous_revision->label());
   }
 
-  /** Tests legacy social-links configuration migration without deleting its source. */
+  /**
+   * Tests legacy social-links configuration migration without deleting its source. */
   public function testSocialLinksConfigurationMigrationPreservesLegacySource(): void {
     $this->installConfig(['aculta_links']);
     $config_storage = $this->container->get('config.storage');

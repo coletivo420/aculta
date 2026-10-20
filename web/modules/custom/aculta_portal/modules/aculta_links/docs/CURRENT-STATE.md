@@ -50,11 +50,10 @@ com dados/editoria antes de qualquer migração.
 
 - `DomainPurposeManager`, registro do Domain e processador de raiz pertencem à
   infraestrutura comum do Portal.
-- `SocialLinksPagePresenter` e hooks de preprocess/theme suggestion seguem no
-  Portal. Formulário/callbacks, rota/aba de administração e configuração nova
-  `aculta_links.social_links` foram transferidos; update/cópia preserva o objeto
-  `aculta_portal.social_links` para rollback com dual-write temporário.
-- O hook `preprocess_page` do Portal injeta o rodapé de links no shell do tema.
+- Presenter, preprocess do footer/node, View de projetos e theme suggestion
+  agora pertencem ao submódulo. Portal fornece Domain e suas APIs compartilhadas.
+  O update/cópia preserva `aculta_portal.social_links` para rollback com
+  dual-write temporário.
 - O template Node dedicado chama o SDC `social-links-page`; esse SDC também
   depende do contrato neutro de apresentação do tema.
 - A View e o conteúdo de projetos são editoriais compartilhados, não propriedade

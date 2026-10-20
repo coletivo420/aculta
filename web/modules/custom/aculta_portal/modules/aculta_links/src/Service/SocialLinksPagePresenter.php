@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Presentation;
+namespace Drupal\aculta_links\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -12,13 +12,27 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\views\ViewExecutableFactory;
 
-/** Builds the social channels and project carousel for the LINKS purpose. */
+/**
+ * Builds the social channels and project carousel for the LINKS purpose.
+ */
 final class SocialLinksPagePresenter {
 
   private const CHANNELS = [
-    'instagram' => ['label' => 'Instagram', 'icon' => 'instagram', 'hosts' => ['instagram.com', 'www.instagram.com']],
-    'youtube' => ['label' => 'YouTube', 'icon' => 'youtube', 'hosts' => ['youtube.com', 'www.youtube.com', 'youtu.be']],
-    'facebook' => ['label' => 'Facebook', 'icon' => 'facebook', 'hosts' => ['facebook.com', 'www.facebook.com', 'm.facebook.com', 'fb.com', 'www.fb.com']],
+    'instagram' => [
+      'label' => 'Instagram',
+      'icon' => 'instagram',
+      'hosts' => ['instagram.com', 'www.instagram.com'],
+    ],
+    'youtube' => [
+      'label' => 'YouTube',
+      'icon' => 'youtube',
+      'hosts' => ['youtube.com', 'www.youtube.com', 'youtu.be'],
+    ],
+    'facebook' => [
+      'label' => 'Facebook',
+      'icon' => 'facebook',
+      'hosts' => ['facebook.com', 'www.facebook.com', 'm.facebook.com', 'fb.com', 'www.fb.com'],
+    ],
   ];
 
   public function __construct(
@@ -29,12 +43,14 @@ final class SocialLinksPagePresenter {
     private readonly DomainPurposeManager $domainPurpose,
   ) {}
 
-  /** Builds the fixed MAIN CTA and administrator-configured additional buttons. */
+  /**
+   * Builds the fixed MAIN CTA and administrator-configured additional buttons.
+   */
   public function buildSiteButtons(): array {
     $container = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'social-links-button-list'],
-      '#cache' => ['tags' => ['config:aculta_portal.social_links']],
+      '#cache' => ['tags' => ['config:aculta_links.social_links']],
     ];
     $has_buttons = FALSE;
     $url = $this->domainPurpose->pathUrl('main', '/');
@@ -55,7 +71,7 @@ final class SocialLinksPagePresenter {
       $container['main'] = $main_link;
     }
 
-    foreach (($this->configFactory->get('aculta_portal.social_links')->get('buttons') ?? []) as $index => $button) {
+    foreach (($this->configFactory->get('aculta_links.social_links')->get('buttons') ?? []) as $index => $button) {
       $text = trim((string) ($button['text'] ?? ''));
       $uri = trim((string) ($button['url'] ?? ''));
       $buttonUrl = $this->buttonUrl($uri);
@@ -73,7 +89,9 @@ final class SocialLinksPagePresenter {
     return isset($container['main']) || $has_buttons ? $container : [];
   }
 
-  /** Resolves only HTTPS URLs or safe root-relative paths from configuration. */
+  /**
+   * Resolves only HTTPS URLs or safe root-relative paths from configuration.
+   */
   private function buttonUrl(string $uri): ?Url {
     if ($uri === '' || preg_match('/[\x00-\x20\\\\]/', $uri)) {
       return NULL;
@@ -94,9 +112,11 @@ final class SocialLinksPagePresenter {
     return Url::fromUri($uri);
   }
 
-  /** Builds configured, official social channel links as a render array. */
+  /**
+   * Builds configured, official social channel links as a render array.
+   */
   public function buildChannels(): array {
-    $config = $this->configFactory->get('aculta_portal.social_links');
+    $config = $this->configFactory->get('aculta_links.social_links');
     $items = [];
     foreach (self::CHANNELS as $id => $channel) {
       $uri = trim((string) $config->get($id));
@@ -109,13 +129,20 @@ final class SocialLinksPagePresenter {
           'icon' => [
             '#type' => 'html_tag',
             '#tag' => 'i',
-            '#attributes' => ['data-portal-ui' => 'social-links-icon-' . $id, 'aria-hidden' => 'true'],
+            '#attributes' => [
+              'data-portal-ui' => 'social-links-icon-' . $id,
+              'aria-hidden' => 'true',
+            ],
             '#value' => '',
           ],
           'label' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => $channel['label']],
         ],
         '#url' => Url::fromUri($uri),
-        '#attributes' => ['data-portal-ui' => 'social-links-channel social-links-channel-' . $id, 'rel' => 'noopener noreferrer', 'target' => '_blank'],
+        '#attributes' => [
+          'data-portal-ui' => 'social-links-channel social-links-channel-' . $id,
+          'rel' => 'noopener noreferrer',
+          'target' => '_blank',
+        ],
       ];
     }
 
@@ -124,12 +151,14 @@ final class SocialLinksPagePresenter {
       '#list_type' => 'ul',
       '#items' => $items,
       '#attributes' => ['data-portal-ui' => 'social-links-list'],
-      '#cache' => ['tags' => ['config:aculta_portal.social_links']],
+      '#cache' => ['tags' => ['config:aculta_links.social_links']],
     ];
     return $list;
   }
 
-  /** Renders the existing ACULTA project teaser View through the VVJB display. */
+  /**
+   * Renders the existing ACULTA project teaser View through the VVJB display.
+   */
   public function buildProjects(): array {
     $view = $this->entityTypeManager->getStorage('view')->load('aculta_projects');
     if ($view === NULL) {
@@ -140,7 +169,9 @@ final class SocialLinksPagePresenter {
     return $executable->render('social_links') ?? [];
   }
 
-  /** Builds the dedicated page footer, including the configured social links. */
+  /**
+   * Builds the dedicated page footer, including the configured social links.
+   */
   public function buildFooter(): array {
     return [
       '#type' => 'container',
@@ -149,11 +180,13 @@ final class SocialLinksPagePresenter {
         '#plain_text' => $this->translation->translate('ACULTA - Associação Cultural Antiproibicionista'),
       ],
       'channels' => $this->buildChannels(),
-      '#cache' => ['tags' => ['config:aculta_portal.social_links']],
+      '#cache' => ['tags' => ['config:aculta_links.social_links']],
     ];
   }
 
-  /** Ensures imported config cannot render arbitrary protocols or hosts. */
+  /**
+   * Ensures imported config cannot render arbitrary protocols or hosts.
+   */
   private function isAllowedUrl(string $uri, array $hosts): bool {
     $parts = parse_url($uri);
     return filter_var($uri, FILTER_VALIDATE_URL) !== FALSE
