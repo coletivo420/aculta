@@ -30,6 +30,9 @@
   renderizar HTML arbitrário de tema.
 - Links curtos resolvem códigos publicados e destinos aprovados, evitando open
   redirect; aplicar Flood/rate limit em criação e cliques.
+- A auditoria de 2026-10-20 registrou `GHSA-mg7g-g2wv-6mhr` para
+  `UserController::saveLink` do LinkStack até v4.8.6. Não portar esse fluxo ou
+  sua autorização; revalidar Entity Access e ownership no Drupal.
 - Analytics minimiza dados e define retenção/expurgo. Não persistir IP, user
   agent completo, fingerprint ou identificador transversal por padrão; definir
   LGPD e consentimento antes de rastrear.

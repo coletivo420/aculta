@@ -3,11 +3,17 @@
 ## Referência reproduzível
 
 - Repositório: [LinkStackOrg/LinkStack](https://github.com/LinkStackOrg/LinkStack).
-- Tag `v4.8.0`, commit `ae6837e8c0cc2cd0e77f26952ceca97d0eebec35`.
+- Referência inicial auditada: tag `v4.8.0`, commit `ae6837e8c0cc2cd0e77f26952ceca97d0eebec35`.
+- Release mais recente consultada em 2026-10-20: tag `v4.8.6`, commit
+  `dca586e8b8946a779cb212d21791cff6308fa7c0`. A auditoria arquivo a arquivo
+  dessa release ainda está pendente.
 - Árvore consultada: controllers Laravel, `resources/views`, CSS/JS,
   `themes` e `blocks` na tag.
 - `composer.json` declara `GPL-3.0-or-later`; o `LICENSE` dessa mesma tag contém
   AGPL-3.0. Isso é um conflito de licença a resolver por arquivo/upstream.
+- O GitHub Advisory Database lista `GHSA-mg7g-g2wv-6mhr` para LinkStack até
+  `v4.8.6`: possível bypass de autorização em `UserController::saveLink`. Não
+  portar o fluxo nem sua autorização; usar Entity Access e ownership Drupal.
 - A árvore da tag contém `app/Models/{Page,Button,Link}.php`,
   `app/Http/Controllers/{Home,User}Controller.php`, rotas Laravel,
   `resources/views/studio/*`, `resources/views/panel/*`,
@@ -40,4 +46,5 @@ inventariar licenças de código, CSS, JS, fontes, ícones, imagens, temas, bloc
 dependências. A AGPL tem obrigação de fonte correspondente para interação de
 usuários por rede em versão modificada, além de avisos e condições de interface
 interativa. Compatibilidade e fronteira de obra combinada com Drupal não são
-inferidas nesta auditoria. Nenhum código foi copiado.
+inferidas nesta auditoria. Nenhum código foi copiado. O aviso de segurança
+também reforça que autorização upstream não deve ser reutilizada.

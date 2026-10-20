@@ -16,7 +16,7 @@
 | `aculta_user/src/Social/*` e perfil | Redes pessoais, edição e acesso/visibilidade. | Identidade e dados pessoais compartilhados. | PRESERVAR; integrar somente de forma explícita. |
 | Drupal Core Link fields | Links editoriais em projetos/destaques/páginas. | Recurso compartilhado. | PRESERVAR; não substituir campos globalmente por Linky. |
 | Linky `2.0.0-beta1` | Link entity/referências/revisões/DER. | Beta sem stable suportada. | PORTAR conceitos/arquivos após verificação; não instalar como dependência. |
-| LinkStack `v4.8.0` | UX de dashboard/editor/temas/analytics. | Laravel; licença da tag inconsistente. | PORTAR comportamento depois de seleção/licença por arquivo; auth DESCARTAR. |
+| LinkStack `v4.8.6` (`dca586e8b8946a779cb212d21791cff6308fa7c0`) | UX de dashboard/editor/temas/analytics. | Laravel; licença da tag inconsistente; advisory de autorização `GHSA-mg7g-g2wv-6mhr`. | PORTAR comportamento após seleção/licença por arquivo; autorização Laravel DESCARTAR. |
 
 Antes de migração, pesquisar consumidores; quando necessário, inventariar dados
 do Runtime em modo read-only conforme `docs/architecture/environments.md`.
