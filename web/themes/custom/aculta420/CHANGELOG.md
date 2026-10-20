@@ -1,5 +1,11 @@
 ## 0.6.0-dev.116 — apresentar salto à primeira resposta não lida — 2026-10-20
 
+## 0.6.0-dev.117 — envelope HTML dos e-mails do ACULTA — 2026-10-20
+
+- `templates/email-wrap.html.twig`: envelope HTML dos e-mails do Mailer Plus (hook `email_wrap`), com tabela, estilos em linha, logo horizontal do tema e rodapé institucional. O texto de cabeçalho e rodapé continua vindo dos layouts do `aculta_mailer` (dados).
+- A logo usa o caminho do tema; a conversão para endereço absoluto é feita pelo Mailer Plus no envio (política `mailer_url_to_absolute`).
+- Runtime de teste: dois envios reais para o destinatário autorizado, aceitos pelo sistema de e-mail. Conferência visual pelo destinatário pendente. RUNTIME STATUS: PARTIAL.
+
 - `[data-aculta-discussion-unread]` recebe a mesma hierarquia visual das ações
   da barra. Em mobile, usa uma linha própria; no desktop, mantém o rótulo numa
   linha e os controles compactos. O tema só apresenta o botão neutro criado pelo
