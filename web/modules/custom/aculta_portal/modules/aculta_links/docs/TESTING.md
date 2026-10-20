@@ -45,3 +45,14 @@ headless a 390 × 844 CSS px apresentou o preset `soft` com HTTP 200; o cabeçal
 vazio de projetos foi removido. Os fixtures de três presets foram apagados após
 verificação de identidade. Claro/escuro completo, desktop, teclado, leitor de
 tela e prévia autenticada continuam pendentes.
+
+Em 2026-10-20, landing em implementação: Unit PASS (1/7, com duas depreciações
+do PHPUnit); Kernel PASS (1/56) com o banco `aculta_simpletest`. Runtime
+confirmou preliminarmente raiz links HTTP 200 com ACULTA/botão/projetos e path
+direto `/redes-sociais` HTTP 404 após o rebuild final; route provider confirma o
+caminho interno. Firefox WebDriver (390 × 844) mostrou logo, CTA, título de
+projetos e o primeiro card publicado da View. Claro/escuro completo, desktop,
+teclado, leitor de tela e interação do carrossel permanecem pendentes. PHP lint
+e PHPCS Drupal PASS; gates Portal,
+status, SDC, design foundations e boundary PASS. Foundation exige bootstrap
+Drush e não passou quando chamado como PHP standalone.

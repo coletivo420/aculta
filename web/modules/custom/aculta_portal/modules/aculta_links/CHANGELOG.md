@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.5 — restaura a landing do purpose links — 2026-10-20
+
+- A rota interna `/redes-sociais` fornece a página de raiz reescrita pelo Portal, preserva o Node editorial quando o alias aponta para página do Domain links e apresenta fallback com os botões e a View de projetos já existentes quando conteúdo/alias não existe.
+- A rota direta continua submetida à política de caminho interno; não foi alterada a regra compartilhada do Portal. A resposta varia/invalida por Domain, idioma, aliases e configuração dos links.
+- Validação: PHP lint/PHPCS PASS; Unit 1 teste/7 asserções PASS com 2 depreciações; Kernel 1 teste/56 asserções PASS em `aculta_simpletest`; Portal 1023, status index 26, Foundation 366, SDC 36/566, Design Foundations 2109, boundary 1698, mapa de módulos/tema 162 e mapa de rotas via Drush PASS. Slugs 386 (19 violações contrib no baseline) e endereços ambientais 3014 PASS.
+- Runtime após rebuild: route provider confirmou `/redes-sociais`; HTTP da raiz 200, caminho interno 404; resposta contém marca ACULTA, botão principal e projetos. Firefox WebDriver em 390 × 844 mostrou o primeiro card da View e logo; claro/escuro completo, teclado, leitor de tela e desktop permanecem pendentes. Cache rebuild completou com aviso do diretório de assets H5P não configurado. Produção não verificada.
+
 ## 0.4.0-dev.4 — presets visuais governados — 2026-10-20
 
 - Micropáginas armazenam `theme_preset` revisionável com opções fixas `classic`, `soft` e `outline`, renderizadas pelo SDC ACULTA420 com tokens semânticos.

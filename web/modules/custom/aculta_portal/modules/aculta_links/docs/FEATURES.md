@@ -10,9 +10,10 @@
 - Projetos renderizados pela View existente.
 - Página visual responsiva experimental pelo pattern ACULTA420.
 
-Esses recursos são implementados pelo Portal e pelo tema hoje, não por este
-módulo recém-criado. Sua migração para `aculta_links` deverá manter configuração,
-conteúdo e URL.
+Os presenters/configuração continuam sob Portal. A raiz pública agora é roteada
+por `aculta_links`, que preserva Node/alias editorial correspondente ou reutiliza
+os botões e a View existente como fallback. A migração do formulário, configuração,
+canais sociais, rodapé e hooks permanece planejada e deve preservar conteúdo e URL.
 
 ## Fundação 0.2.0 em desenvolvimento
 
@@ -27,7 +28,8 @@ conteúdo e URL.
   privada, além da rota pública `/pagina/{slug}` no purpose `links`; o módulo
   foi habilitado no Runtime de teste em 2026-10-20. A prévia pública no host
   `links` usa `/pagina/{slug}/previa`, revalida propriedade e não é cacheada.
-  Migração da landing institucional segue pendente.
+  A rota root da landing foi restaurada em `0.4.0-dev.5`; a migração dos contratos
+  de configuração/apresentação permanece pendente.
 
 ## Ainda não disponível
 

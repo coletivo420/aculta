@@ -29,6 +29,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     'field',
     'link',
     'options',
+    'path_alias',
     'views',
     'aculta_links',
   ];
@@ -39,6 +40,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
+    $this->installEntitySchema('path_alias');
     $this->installEntitySchema('aculta_link');
     $this->installEntitySchema('aculta_link_page');
     $this->installEntitySchema('aculta_link_item');
@@ -72,6 +74,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $preview_route = $route_provider->getRouteByName('aculta_links.page_preview');
     self::assertSame('/pagina/{slug}/previa', $preview_route->getPath());
     self::assertSame('links', $preview_route->getOption('_aculta_domain_purpose'));
+    $landing_route = $route_provider->getRouteByName('aculta_links.landing');
+    self::assertSame('/redes-sociais', $landing_route->getPath());
+    self::assertSame('links', $landing_route->getOption('_aculta_domain_purpose'));
     self::assertSame('aculta_link_page.update', $editor_route->getRequirement('_entity_access'));
     $item_revision_route = $route_provider->getRouteByName('entity.aculta_link_item.revision');
     self::assertSame(

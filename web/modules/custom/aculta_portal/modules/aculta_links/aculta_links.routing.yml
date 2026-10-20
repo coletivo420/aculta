@@ -40,3 +40,13 @@ aculta_links.page_preview:
     slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
   options:
     _aculta_domain_purpose: links
+
+aculta_links.landing:
+  path: '/redes-sociais'
+  defaults:
+    _controller: '\Drupal\aculta_links\Controller\LinksLandingController::view'
+    _title: 'ACULTA'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: links

@@ -36,16 +36,17 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo futuro |
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |
 | forum | growroom420.aculta.org | growroom420.aculta.toca.net.br | ativo (0.2.0-dev.57) |
-| links | links.aculta.org | links.aculta.toca.net.br | Domain/purpose ativo; Runtime de teste retornou 404 na raiz em 2026-10-20 por ausência de Node/alias; restauração via `aculta_links` em andamento; DNS de produção não provisionado |
+| links | links.aculta.org | links.aculta.toca.net.br | Domain/purpose ativo; landing preservadora em `aculta_links`; Runtime de teste HTTP 200/404 confirmado; DNS de produção não provisionado |
 
 ## Redes sociais (LINKS)
 
 - A URL pública planejada é a raiz `/` em `links.aculta.toca.net.br`. O front interno
   `/redes-sociais` é resolvido para essa raiz pelo `PurposeFrontPathProcessor`.
 - Em 2026-10-20, o Runtime não tinha Node `page` com
-  `field_domain_source = links_aculta_org` nem alias `/redes-sociais`; raiz e path
-  direto retornaram 404. A landing será recuperada no `aculta_links`, preservando
-  os dados de configuração editorial existentes. Perfis são salvos em
+  `field_domain_source = links_aculta_org` nem alias `/redes-sociais`; a raiz e o
+  path direto retornavam 404 antes da restauração. A rota `/redes-sociais` agora
+  tem fallback no `aculta_links`; após rebuild, HTTP da raiz confirmou 200 e o
+  acesso direto 404. Produção não confirmada. Perfis são salvos em
   `aculta_portal.social_links` e editados em Administração > Configuração >
   ACULTA Portal > Redes sociais (`/painel-administrativo/aculta/redes-sociais`).
 - A tela aceita somente URLs HTTPS de `instagram.com`, `youtube.com`/`youtu.be`

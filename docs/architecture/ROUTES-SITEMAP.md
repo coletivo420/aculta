@@ -53,7 +53,7 @@ desabilitados. Nunca use um caminho de teste como evidência de produção.
 | `cursos.aculta` | `/` | Catálogo inicial de cursos | Ativo; cursos e ações dependem de conteúdo, matrícula e access. |
 | `forum.aculta` | `/` | Índice público do ACULTA Forum / Growroom420 | Declarado; Runtime de teste HTTP 200 e sem tópicos após limpeza dos fixtures; itens futuros dependem de Nodes publicados e access. Produção não confirmada. |
 | `links.aculta` | `/pagina/{slug}` | Micropágina pública do ACULTA Links | Declarada e ativa no Runtime de teste após habilitação em 2026-10-20; exige página e itens publicados, slug válido e purpose `links`. Produção não confirmada. |
-| `links.aculta` | `/` | Landing pública de perfis e links sociais | Domain e rewrite de raiz declarados; Runtime de teste HTTP 404 em 2026-10-20 porque não há Node/alias de origem. Recuperação via `aculta_links` pendente; produção não confirmada. |
+| `links.aculta` | `/` | Landing pública de perfis e links sociais | Runtime de teste após rebuild: HTTP 200 com ACULTA, botão principal e projetos via fallback; `/redes-sociais` direto retorna 404. Produção e revisão visual não confirmadas. |
 
 ## Caminhos humanos ativos ou condicionais
 
@@ -260,7 +260,7 @@ correspondentes estão habilitados no ambiente.
 | `forum.aculta` | `/discussoes/mais-comentadas` | Tópicos públicos ordenados pelo agregado de respostas publicadas | Runtime de teste HTTP 200 e lista vazia após limpeza; ordenação positiva com respostas publicadas aguarda homologação. |
 | `forum.aculta` | `/criar-topico` | Formulário Core para novo tópico público | Declarado; Runtime de teste resolve no purpose forum; requer Entity Create Access para `aculta_forum_topic`. Anônimo 403; submissão autorizada ainda não homologada. |
 | `links.aculta` | `/pagina/{slug}` | Micropágina pública do ACULTA Links | Declarada e ativa no Runtime de teste após habilitação em 2026-10-20; exige página e itens publicados, slug válido e purpose `links`. Produção não confirmada. |
-| `links.aculta` | `/` | Landing pública de perfis e links sociais | Runtime de teste HTTP 404 em 2026-10-20; falta conteúdo/alias para `/redes-sociais`. `/redes-sociais` permanece interno e retorna 404 diretamente. |
+| `links.aculta` | `/` | Landing pública de perfis e links sociais | Runtime após rebuild: HTTP 200 via fallback e 404 no caminho interno direto; produção não confirmada. |
 | `revista.aculta` | `/u/{apelido}` | Perfil público de autor | Condicional a perfil público habilitado; apelido não canônico responde `404`. |
 | `revista.aculta` | `/albuns/{titulo}` | Álbum de galeria | Condicional ao módulo e conteúdo; confirmar estado efetivo do Runtime. |
 

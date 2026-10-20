@@ -25,6 +25,18 @@ final class AcultaLinksThemeHooks {
         ],
         'template' => 'aculta-links-page',
       ],
+      'aculta_links_landing' => [
+        'variables' => [
+          'title' => NULL,
+          'description' => NULL,
+          'links' => [],
+          'has_links' => FALSE,
+          'projects' => [],
+          'has_projects' => FALSE,
+          'theme_preset' => 'classic',
+        ],
+        'template' => 'aculta-links-landing',
+      ],
     ];
   }
 

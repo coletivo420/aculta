@@ -16,12 +16,18 @@ O Domain `links_aculta_org` e o purpose `links` existem. O
 `PurposeFrontPathProcessor` traduz internamente a raiz pública `/` para
 `/redes-sociais`, preservando a URL de navegador. Em 2026-10-20, a consulta ao
 Runtime encontrou zero Nodes com `field_domain_source = links_aculta_org`, sem
-alias para `/redes-sociais`; HTTP na raiz e no caminho interno retornou 404.
-Assim, o template Node e a página editorial esperada não estão ativos neste
-Runtime, embora seus hooks/configuração existam no código.
+alias para `/redes-sociais`; antes da restauração, raiz e caminho interno
+retornavam 404. A rota agora declarada em `aculta_links` mantém o caminho interno
+bloqueado para acesso direto, renderiza o Node editorial correspondente se o
+alias existir e for da origem Domain `links`, ou usa o fallback existente de
+botões e View. Após rebuild final: route provider confirma `/redes-sociais`, HTTP
+da raiz 200, path direto 404, resposta inclui ACULTA/botão/projetos. Produção e
+revisão visual da landing permanecem pendentes.
 
 O Portal constrói o botão para MAIN, os botões editoriais configurados, os
-canais oficiais e o rodapé. Uma View já existente fornece teasers de projetos.
+canais oficiais e o rodapé. A landing do submódulo reutiliza botão/configuração
+e uma View existente para teasers de projetos. O formulário/settings, channels,
+footer, presenter e hooks continuam no Portal até migração atômica futura.
 Há também um campo `field_social_links` em Node `page`, mas o template dedicado
 não consome o render array desse campo; seu uso efetivo precisa ser confirmado
 com dados/editoria antes de qualquer migração.
@@ -31,7 +37,7 @@ com dados/editoria antes de qualquer migração.
 | Recurso | Estado | Decisão |
 | --- | --- | --- |
 | Domain `links_aculta_org` e mapeamento do purpose | EXISTENTE E FUNCIONAL (config/código; DNS de produção não confirmado) | Preservar; resolução pertence ao Domain e ao `DomainPurposeManager`. |
-| Rota raiz e mapeamento para `/redes-sociais` | EXISTENTE MAS INCOMPLETO no Runtime (Domain/front configurados, conteúdo/alias ausentes; HTTP 404) | Corrigir por rota preservadora no submódulo, usando configuração/Views existentes e mantendo `/redes-sociais` fechado diretamente. |
+| Rota raiz e mapeamento para `/redes-sociais` | RESTAURADA; Runtime HTTP 200 na raiz e 404 no caminho direto após rebuild | Rota preserva Node editorial de origem correta; fallback reutiliza configuração/Views sem editar política compartilhada do Portal. |
 | Canais sociais institucionais e botões configuráveis | EXISTENTE E FUNCIONAL por código; estado visual não revalidado | Portar a propriedade para o submódulo em etapa própria, preservando valores. |
 | View `aculta_projects`, display `social_links` | EXISTENTE E FUNCIONAL como integração editorial compartilhada | Reutilizar via Views; não copiar Nodes nem criar dados espelhados. |
 | Pattern `aculta420:social-links-page` e template Node dedicado | EXISTENTE, apresentação experimental | Preservar nesta fase; adaptar quando o contrato de micropágina estiver definido. |
@@ -63,30 +69,33 @@ com dados/editoria antes de qualquer migração.
   despublicadas.
 - `aculta_link_item`: referência à página/destino, rótulo, descrição, ordem e
   ativação; o access handler confere ownership dos dois alvos.
-- Access de páginas e destinos permanece privado, sem canonical pública,
-  rota pública. O dashboard e os formulários/listagens ficam no MAIN, em rotas
-  administrativas sob `/painel-administrativo/links/**`.
-- Testes Unit e Kernel passam no banco dedicado. Módulo não instalado,
-  configuração de produção não alterada e landing atual preservada.
+- Access de páginas e destinos permanece privado por proprietário até publicar;
+  páginas publicadas têm a rota `/pagina/{slug}` em `links`, e a prévia exige
+  edição e não é cacheada. O dashboard e os formulários/listagens ficam no MAIN,
+  em rotas administrativas sob `/painel-administrativo/links/**`.
+- Testes Unit e Kernel passam no banco dedicado (Kernel 1/56). Módulo habilitado
+  no Runtime de teste em 2026-10-20; `config/sync/core.extension.yml` registra a
+  extensão e não houve importação global. Produção não verificada.
 
 ## Pendências para a migração
 
-1. Inventariar conteúdo/valores da página no Runtime documentado antes de uma
-   migração funcional; esta fase não acessou nem alterou Runtime.
+1. Inventário do Runtime: zero Node de origem links e zero alias `/redes-sociais`;
+   fallback restaura a landing sem mudar conteúdo/configuração. Nenhum dado foi
+   migrado.
 2. Migrar formulário, configuração e presenters para `aculta_links` sem mudar
    rota, URL, domínio, conteúdo ou apresentação.
 3. Atualizar consumidores do Portal de forma atômica e demonstrar paridade.
-4. Entidades e gestão administrativa básica existem em código; a edição de
-   itens, migração da landing e publicação Domain permanecem pendentes.
+4. Entidades e gestão administrativa básica existem em código; integração direta
+   com aculta_user, perfil visual, SEO e outras entidades permanece pendente.
 5. Resolver a ambiguidade de licença da tag LinkStack antes de copiar qualquer
    asset ou código.
 
 
 ## Painel administrativo 0.2.0-dev.2
 
-`aculta_links` declara painel próprio e formulários Core de criação, edição, exclusão e histórico de revisões para páginas, destinos e itens. O painel filtra por proprietário, pagina resultados e revalida acesso de edição de cada entidade. As rotas ficam em `main` e não ficam ativas até habilitação do módulo; a landing pública e sua configuração continuam no Portal.
+`aculta_links` declara painel próprio e formulários Core de criação, edição, exclusão e histórico de revisões para páginas, destinos e itens. O painel filtra por proprietário, pagina resultados e revalida acesso de edição de cada entidade. As rotas ficam em `main`; módulo habilitado no Runtime de teste e rotas registradas. A apresentação da landing é preservada, enquanto configuração e presenters continuam parcialmente no Portal.
 
 
 ## Micropáginas públicas 0.4.0-dev.1
 
-`/pagina/{slug}` está ativa no Runtime de teste no purpose `links`, com status publicado e acesso revalidado em página, item e destino. A prévia em `/pagina/{slug}/previa` é hospedada no mesmo purpose para usar o tema público, exige edição e não é cacheada. Micropáginas guardam preset de apresentação revisionável; o update `10001` foi aplicado no Runtime após confirmar que não havia páginas existentes. ACULTA420 apresenta o SDC existente. Ainda não há integração com perfil público/avatares, SEO nem migração da landing `/`. Produção não foi verificada.
+`/pagina/{slug}` está ativa no Runtime de teste no purpose `links`, com status publicado e acesso revalidado em página, item e destino. A prévia em `/pagina/{slug}/previa` é hospedada no mesmo purpose para usar o tema público, exige edição e não é cacheada. Micropáginas guardam preset de apresentação revisionável; o update `10001` foi aplicado no Runtime após confirmar que não havia páginas existentes. ACULTA420 apresenta o SDC existente. Landing raiz restaurada, mas integração com perfil público/avatares e SEO pendente. Produção não foi verificada.

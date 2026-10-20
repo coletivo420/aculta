@@ -1,3 +1,8 @@
+## 0.6.0-dev.128 — apresenta a landing Links restaurada — 2026-10-20
+
+- Template da landing institucional usa o SDC `social-links-page`, com preset clássico e logo do tema, mantendo dados e render arrays preparados pelo Portal/Links.
+- Runtime após rebuild confirma root links HTTP 200; direct `/redes-sociais` HTTP 404. Firefox WebDriver 390 × 844 mostrou logo ACULTA, CTA e card publicado; SDC schema, Design Foundations e fronteira Portal–tema PASS. Desktop, dark, teclado, leitor de tela e interação do carrossel pendentes antes de RC.
+
 ## 0.6.0-dev.127 — presets governados nas micropáginas — 2026-10-20
 
 - O SDC `social-links-page` aceita as variantes `classic`, `soft` e `outline`, usando tokens semânticos ACULTA420; a variante clássica permanece o fallback da landing institucional existente.

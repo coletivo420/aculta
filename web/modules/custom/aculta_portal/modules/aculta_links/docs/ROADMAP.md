@@ -11,8 +11,9 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 
 ## 0.2.0 — migração preservadora e entidades base (em andamento)
 
-1. Transferir formulário, configuração, presenters e hooks da landing para
-   `aculta_links`, mantendo URL, conteúdo, canais e botões.
+1. Landing de raiz restaurada pela rota do submódulo; ainda falta transferir
+   formulário, configuração, presenters e hooks para `aculta_links`, mantendo
+   URL, conteúdo, canais e botões, antes de retirar os contratos no Portal.
 2. Atualizar integração neutra Portal–tema e rota administrativa, com paridade e
    rollback demonstrados antes de corte.
 3. As três entidades base estão iniciadas (`aculta_link`, `aculta_link_page`,
@@ -29,7 +30,7 @@ Dashboard, CRUD básico, composição ordenável por tabela Drupal, publicação
 
 ## 0.4.0 — interface pública e presets
 
-Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; faltam SEO, controles adicionais de aparência, revisão visual/acessível e migração preservadora da landing antiga antes de RC.
+Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; em 0.4.0-dev.5 a landing raiz foi restaurada com preservação do Node editorial e fallback dos dados atuais. Faltam SEO, controles adicionais de aparência e revisão visual/acessível antes de RC.
 
 ## 0.5.0 — métricas e ferramentas
 

@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.128 | Template da landing institucional restaurada conectado ao SDC de links | Runtime 200/404 e Firefox 390 × 844 claro conferidos; desktop, dark, teclado e leitor de tela pendentes | Apresenta conteúdo legado/fallback sem adicionar lógica de domínio ao tema |
 | 0.6.0-dev.127 | Presets governados `classic`, `soft` e `outline` no SDC de links | Revisão visual responsiva/acessível ainda pendente | A micropágina escolhe uma opção permitida; o SDC usa tokens semânticos; a landing antiga conserva `classic` |
 | 0.6.0-dev.126 | Template público do ACULTA Links conectado ao SDC existente; visual ainda pendente | Revisar micropágina em larguras móveis/desktop, claro/escuro, foco/teclado e leitor de tela |
 | 0.6.0-dev.125 | Miniatura PDF responsiva | Alpha Firefox 390 × 844 identificou e corrigiu o overflow; render, controles e canvas verificados no Firefox WebDriver. Foundation 366, Design Foundations 2103 e fronteira módulo–tema 1608 PASS | Restringir a largura da miniatura ao viewer sem alterar o canvas do leitor |
