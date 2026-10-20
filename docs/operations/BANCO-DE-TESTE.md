@@ -137,7 +137,7 @@ configurações de permissões e smoke HTTP foram confirmados; o Runtime usa
 `aculta_runtime`, nunca o banco dedicado desta suíte. RUNTIME STATUS: PARTIAL;
 ver o changelog do adapter para limites de configuração e acesso.
 
-Execução adicional em 2026-10-20: adapter LMS Unit passou com 17 testes e 183
+Execução adicional em 2026-10-20: adapter LMS Unit passou com 18 testes e 184
 assertions; Kernel passou com 2 testes e 102 assertions, incluindo autorização
 contextual de Comments e as três filas Views com Group/status isolados. Foram
 emitidas 40 depreciações de Core/contrib/LMS. PHP CLI 8.4.26, abaixo do alvo

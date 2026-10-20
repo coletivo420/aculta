@@ -4,12 +4,15 @@
   publicados, rejeitados e pendentes. O acesso exige `grade students` no curso
   contextual; uma View Embed fixa Group, bundle e estado e não possui página ou
   bloco global. Kernel verifica curso/turma, status e Group fora da atribuição.
-- Adapter Unit: 17 testes / 182 assertions PASS. Kernel: 2 testes / 102
-  assertions PASS, 40 depreciações de Core/contrib/LMS. Routes/View ainda não
-  atualizadas no Runtime nem testadas por HTTP. RUNTIME STATUS: DEFERRED.
-- Revisão pré-instalação encontrou e corrigiu o machine name da relação Group
-  de turma na dependência da View. Unit agora compara os dois IDs reais do
-  Config Sync; 17 testes / 183 assertions PASS.
+- Adapter Unit: 18 testes / 184 assertions PASS. Kernel: 2 testes / 102
+  assertions PASS, 40 depreciações de Core/contrib/LMS. Revisão corrigiu o ID da
+  relação Group de turma na View. O primeiro rebuild revelou conflito de
+  propriedades herdadas de `ControllerBase`; o controller agora usa DI sem a
+  classe base. `drush cr` passou após a correção.
+- A View foi importada isoladamente no Runtime com `config:import --partial`.
+  `/` respondeu 200, overview anônimo 403 e rotas com Group inexistente 404.
+  Não há sessão autenticada de Educador nem Comments LMS para validar a
+  renderização de linhas e operações. RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.15` — permitir moderação contextual de Comments no LMS — 2026-10-20
 

@@ -92,14 +92,17 @@ usuário/permissões e a dependência cacheável do tópico para as três decis�
 de acesso. A dev.101 verifica a coerência entre Config Sync e as relationship
 types instaláveis. A dev.102 instala a configuração padrão via `ConfigInstaller`
 na fixture LMS/Group. A dev.16 cobre a View Embed em Kernel: o Educador só vê
-Comments de seu Group e cada aba retorna o status fixo esperado. Views, routes,
-permissões por HTTP, links do painel e cache no Runtime ainda precisam de
-rebuild e smoke autenticado com conteúdo efêmero autorizado.
+Comments de seu Group e cada aba retorna o status fixo esperado. A dev.16
+aplicou a View por importação parcial e refez o cache no Runtime de teste. A
+raiz respondeu 200, o overview anônimo 403 e as rotas com Group inexistente
+404. Autenticação como Educador, renderização com linhas e ações de
+aprovação/rejeição ainda não foram validadas.
 
-Na dev.16, Unit passou com 17 testes / 183 assertions e Kernel com 2 testes /
-102 assertions; o Kernel reportou 40 depreciações de Core/contrib/LMS. O adapter e
-as permissões de Group permanecem ativos no Runtime de teste, mas as rotas e a
-configuração nova da View ainda não foram aplicadas. RUNTIME STATUS: DEFERRED.
+Na dev.16, Unit passou com 18 testes / 184 assertions e Kernel com 2 testes /
+102 assertions; o Kernel reportou 40 depreciações de Core/contrib/LMS. O adapter,
+as permissões Group, as rotas e a View estão ativos no Runtime de teste. Sem uma
+conta Educador e conteúdo LMS apropriado para smoke autenticado, RUNTIME STATUS:
+PARTIAL.
 
 Na dev.12, a fixture separa propriedade de membership: curso e turma pertencem
 a uma terceira conta; o Educador é membro com role contextual no curso, não é

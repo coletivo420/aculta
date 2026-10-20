@@ -19,8 +19,11 @@ continuam fora desse grant. As três rotas de status incorporam uma View sem
 display público/Page/Block, com argumento Group obrigatório, bundle LMS, campo
 Comment e estado fixos. A rota revalida acesso por Group e a View junta os
 relacionamentos Node e Group para preservar os filtros de acesso. Kernel prova
-separação de curso/turma e dos três status; cache/rebuild e renderização HTTP no
-Runtime seguem pendentes. A busca pública não inclui o índice LMS.
+separação de curso/turma e dos três status. No Runtime de teste, a View foi
+importada isoladamente com `--partial`, cache rebuild passou, o índice retornou
+403 sem autenticação e Groups inexistentes retornaram 404. O índice LMS não
+entra na busca pública. Aprovação/rejeição por ação ainda não está exposta na
+tabela da fila.
 
 ## Matriz de ownership e dependências
 

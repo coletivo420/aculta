@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum_lms\Unit;
 
+use Drupal\aculta_forum_lms\Controller\LmsForumModerationController;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Yaml\Yaml;
@@ -13,6 +14,13 @@ use Symfony\Component\Yaml\Yaml;
  */
 #[Group('aculta_forum_lms')]
 final class LmsDiscussionInstallConfigTest extends UnitTestCase {
+
+  /**
+   * The moderation controller loads independently of ControllerBase internals.
+   */
+  public function testModerationControllerClassCanBeLoaded(): void {
+    self::assertTrue(class_exists(LmsForumModerationController::class));
+  }
 
   /**
    * The LMS bundle reuses Comment storage and has a visible full display.

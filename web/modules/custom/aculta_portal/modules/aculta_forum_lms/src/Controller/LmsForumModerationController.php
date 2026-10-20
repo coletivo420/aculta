@@ -6,10 +6,11 @@ namespace Drupal\aculta_forum_lms\Controller;
 
 use Drupal\aculta_forum_lms\Access\LmsForumModerationManager;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\views\ViewExecutableFactory;
@@ -19,7 +20,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Presents Group-scoped LMS discussion moderation queues.
  */
-final class LmsForumModerationController extends ControllerBase {
+final class LmsForumModerationController {
+
+  use StringTranslationTrait;
 
   private const VIEW_ID = 'aculta_forum_lms_admin_comments';
 
@@ -39,7 +42,10 @@ final class LmsForumModerationController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ViewExecutableFactory $viewExecutableFactory,
     private readonly AccountProxyInterface $currentUser,
-  ) {}
+    TranslationInterface $stringTranslation,
+  ) {
+    $this->stringTranslation = $stringTranslation;
+  }
 
   /**
    * Builds the Educator's authorized course/class list.
