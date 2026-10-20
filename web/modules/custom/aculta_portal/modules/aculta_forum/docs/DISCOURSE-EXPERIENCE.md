@@ -37,6 +37,24 @@ contagens de tópicos e atividade do site mudam continuamente. Os guias gerais
 do Discourse explicam padrões de uso, mas não significam que toda capacidade
 esteja habilitada no Ubuntu Discourse.
 
+### Comparação atualizada em 2026-10-20
+
+A categoria ativa [Support and Help](https://discourse.ubuntu.com/c/support-and-help/306)
+mostra descrição e subcategorias no cabeçalho e organiza tópicos em colunas de
+assunto, respostas, visualizações e atividade. Na captura ACULTA anterior ao
+ajuste visual, o card de tópico ocupava boa parte da altura da janela com
+resumo, data, avatar de 48 px e metadados da conta. A `0.6.0-dev.109` do tema
+reduz esse peso somente na listagem: conserva título, categoria, autoria
+autorizada, contagem e atividade; o texto integral permanece no tópico. A
+métrica de visualizações segue fora até existir uma fonte confiável, conforme
+decisão já registrada acima. Não reproduzir marcas, cores ou CSS do Discourse.
+
+Capturas X11 do Runtime ACULTA e limites das larguras testadas estão em
+`aculta_forum/docs/TEST-MATRIX.md` (arquivo privado de evidência indicado ali).
+Esta inspeção confirma as listas públicas em estado anônimo; não substitui a
+comparação completa de composer, detalhe, dark mode, teclado/leitor de tela e
+viewport CSS de 390 px.
+
 Na comparação visual X11 de 2026-10-20, a entrada pública Ubuntu em 1024 px
 apresentou categorias descritas e atividade recente em colunas adjacentes. A
 primeira captura ACULTA ainda separava as categorias; dev.52 passou a exibir as

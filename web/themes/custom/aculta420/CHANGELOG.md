@@ -1,3 +1,26 @@
+## 0.6.0-dev.109 — reduzir densidade vertical das listas do Fórum — 2026-10-20
+
+- Depois de comparar a lista X11 do Growroom com a categoria ativa do Ubuntu
+  Discourse, os cards públicos ficaram mais compactos em desktop: resumo e data
+  redundante saem somente da lista, avatar e autoria usam uma linha enxuta, e
+  contagem/atividade mantêm sua coluna. O detalhe do tópico, as variantes
+  compartilhadas do `aculta_user` e os dados/contagens preparados pelo Portal
+  não mudam. Em telas estreitas a coluna lateral continua empilhada.
+- Ubuntu Discourse atual, categoria [Support and Help](https://discourse.ubuntu.com/c/support-and-help/306),
+  foi observado com colunas Topic/Replies/Views/Activity; o ACULTA não adiciona
+  Views até validar uma fonte confiável. Firefox/X11 anônimo no Runtime `toca`
+  mostrou duas linhas em 1024 px; em 500 px o card empilha metadados e as tabs
+  quebram em duas linhas sem corte aparente. O detalhe do tópico em 500 px
+  manteve corpo, autoria, categoria e comentário.
+- Foundation (365), SDC (535), Design Foundations (2097), fronteira (1415),
+  mapa (152) e Portal 11+ (975) PASS. Cache rebuild e HTTP raiz/listas PASS.
+  Três tópicos e cinco Comments de QA, aliases e History relacionados foram
+  removidos; estado final 0 tópicos/Comments, 24 History (baseline) e duas
+  flags de avisos preservadas. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-density-20261020/`.
+  Tema escuro, viewport CSS 390 px, teclado/leitor de tela e comparação integral
+  seguem pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.108 — apresentar ações seguir/salvar do Fórum — 2026-10-20
 
 - Os links nativos de Flag na página completa do tópico recebem estilo de botão

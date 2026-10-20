@@ -245,9 +245,12 @@ O template `views-view-fields--aculta-forum-public-topics.html.twig` preserva
 o teaser renderizado pelo Drupal e apresenta contagem e última atividade. A
 View do Portal prepara os valores com os handlers de estatística do Core; o
 Twig escolhe o rótulo singular/plural. A ordenação usa atividade descendente
-após tópicos fixados. Runtime confirmou oito contagens zero e render da data.
-Inspeção visual pendente; Foundation está
-bloqueada por drift do bloco administrativo da Revista, então sem nova versão.
+após tópicos fixados. Na lista, `forum-index.css` omite apenas o resumo do corpo
+e a data de publicação redundante com última atividade; reduz avatar e
+metadados autorais dentro do cartão compartilhado. O detalhe completo mantém
+corpo, data e identidade sem alterações. Firefox/X11 verificou a listagem em
+1024 e 500 px e o detalhe em 500 px; capturas privadas e limites restantes
+estão no changelog `0.6.0-dev.109`.
 
 ## Patterns
 

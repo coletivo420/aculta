@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.108', 'Theme metadata marks the current version 0.6.0-dev.108.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.109', 'Theme metadata marks the current version 0.6.0-dev.109.');
 $forumTopicPresenter = file_get_contents($themeRoot . '/templates/node--aculta-forum-topic.html.twig');
 $forumTopicStyles = file_get_contents($themeRoot . '/css/components/forum-index.css');
 $assert(
@@ -44,6 +44,12 @@ $assert(
     && str_contains($forumTopicStyles, '.aculta-forum-topic--teaser')
     && str_contains($forumTopicStyles, '.aculta-forum-topic--full'),
   'Forum topic view-mode classes emitted by Twig have matching teaser and full styles.',
+);
+$assert(
+  str_contains($forumTopicStyles, '.aculta-forum-topic-list-row__topic .field--name-body')
+    && str_contains($forumTopicStyles, '.aculta-forum-topic-list-row__topic .aculta-author-card__joined')
+    && str_contains($forumTopicStyles, 'grid-template-columns: minmax(0, 1fr) minmax(11rem, 13rem)'),
+  'Forum topic list keeps its compact presentation inside Views rows only.',
 );
 $wikiPresenters = [
   file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
