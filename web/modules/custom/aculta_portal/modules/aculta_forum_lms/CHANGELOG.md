@@ -1,3 +1,16 @@
+## `0.1.0-dev.17` — executar moderação LMS em contexto — 2026-10-20
+
+- Filas agora usam a coluna Core `entity_operations`, com ações `Aprovar` e
+  `Rejeitar` emitidas apenas para Comments do tópico e Group LMS autorizados.
+  Form API confirma cada transição e revalida acesso no submit; aprovar publica
+  e limpa o marcador, rejeitar despublica e marca. Nenhuma permissão global de
+  `update`, `delete` ou `administer comments` é concedida.
+- Unit: 18 testes / 190 assertions PASS. Kernel MariaDB: 2 testes / 112
+  assertions PASS, incluindo operações por estado, aluno negado, Group incorreto
+  e transições de status. 40 depreciações Core/contrib/LMS. View atualizada por
+  importação parcial de um único item e cache reconstruído no Runtime de teste;
+  sem comentário LMS de teste ou smoke autenticado. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.16` — criar filas de moderação LMS por contexto — 2026-10-20
 
 - Adiciona painel de cursos/turmas autorizados e três rotas de Comments

@@ -1,5 +1,23 @@
 # Matriz de testes por fase
 
+## dev.109 — moderação de comentários LMS
+
+- Adapter Unit: 18 testes/190 assertions PASS. Kernel MariaDB: 2 testes/112
+  assertions PASS; cobre ações por estado, Educador versus estudante, Group
+  divergente e aprovação/rejeição com persistência recarregada. O Kernel reporta
+  40 depreciações Core/contrib/LMS.
+- PHPCS Drupal/DrupalPractice, `php -l` dos arquivos PHP alterados e
+  `git diff --check` PASS. Gates Portal Drupal 11+ (988), fronteira (1556), mapa
+  módulo/tema (153), slugs (377 rotas; 20 violações baseline DT-P20) e packages
+  (27) PASS.
+- Runtime `toca`: atualização parcial de um único View adicionou a coluna Core
+  `entity_operations`; descrições corrigidas para LMS; `drush cr` PASS. `/`
+  retornou 200, painel de moderação anônimo 403 e rota de ação com IDs
+  inexistentes 404. Nenhuma conta Educador/Comment de teste foi usada.
+- RUNTIME STATUS: PARTIAL; fila e operações ainda precisam de smoke autenticado
+  com conteúdo LMS autorizado. O cache foi reconstruído depois da correção do
+  conflito de propriedade que impedia compilar o container do adapter.
+
 ## dev.103 — categorias vazias em Firefox/X11
 
 - `forum-index-visual.mjs` visita somente `/` e `/categorias` no host de teste

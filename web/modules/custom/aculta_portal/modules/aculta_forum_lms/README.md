@@ -5,10 +5,14 @@ privado para Nodes `aculta_lms_topic` e delega a
 autorização do marcador de moderação aos Educadores com `grade students` no
 curso contextual.
 
-Desde a dev.16, Educadores com `grade students` no curso contextual têm um
+Desde a dev.17, Educadores com `grade students` no curso contextual têm um
 painel com filas separadas de Comments publicados, rejeitados e pendentes por
 curso/turma. O Core `approve` fica permitido apenas no contexto LMS autorizado;
 `update`, `delete` e `administer comments` não são concedidos.
+
+As filas agora mostram operações contextuais `Aprovar` e `Rejeitar` apenas para
+transições válidas. Cada operação abre confirmação Form API, revalida o Group,
+o tópico e o papel Educador e atualiza status e marcador de rejeição juntos.
 
 ## Estado
 
@@ -33,10 +37,12 @@ A ativação foi somente no Runtime de teste. A prévia de sincronização integ
 continua exibindo diferenças alheias ao Fórum; não executar importação global.
 Como não há tópicos de teste, não foi feita autorização de conteúdo real no
 Runtime. Kernel prova acesso de membro/Educador, outsider negado e herança de
-Educador sem membership direto na turma. Rotas e View das filas estão no código,
-mas ainda não foram importadas/rebuildadas nem exercitadas por HTTP no Runtime;
-Search API e notificações LMS também aguardam isolamento/homologação. Não copiar
-configuração para produção.
+Educador sem membership direto na turma. Rotas e View das filas foram aplicadas
+no Runtime; a dev.17 acrescentou a coluna Core `entity_operations` por
+importação parcial de um único View e cache rebuild. `/painel-administrativo/lms/forum`
+continua 403 para anônimo e IDs inválidos da ação retornam 404. Falta smoke com
+Educador autenticado e Comment de teste. Search API e notificações LMS aguardam
+isolamento/homologação. Não copiar configuração para produção.
 
 Em 2026-10-20, `drush config:import --diff` mostrou um diff completo com
 remoções e mudanças alheias ao Fórum (entre elas configurações de blocos,
@@ -52,7 +58,7 @@ compartilhado e relações `group_node:aculta_lms_topic` para curso/turma. A
 dev.97 acrescenta em Config Sync a herança `grade students` do curso para a
 permission Group Node dos tópicos de turma, validada pelo `ClassPermissionCalculator`
 real. Essas permissões e a herança foram aplicadas por importação parcial.
-Na dev.16 foi instalada como config padrão do adapter uma View Embed com três
+Na dev.17 foi instalada como config padrão do adapter uma View Embed com três
 displays fixos, sem página nem bloco; os caminhos de rota recebem Group explícito.
 `gnode` está listado como dependência do adapter. Um hook
 `entity_access` nega acesso a Nodes do bundle quando falta relação Group única;

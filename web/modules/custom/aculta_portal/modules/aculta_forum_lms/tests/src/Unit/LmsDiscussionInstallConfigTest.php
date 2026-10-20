@@ -117,6 +117,21 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
       self::assertSame('entity:group', $routes[$routeName]['options']['parameters']['group']['type']);
     }
 
+    self::assertSame(
+      '/painel-administrativo/lms/forum/{group}/comentario/{comment}/moderacao/{decision}',
+      $routes['aculta_forum_lms.comment_moderate']['path'],
+    );
+    self::assertSame(
+      'aculta_forum_lms.moderation_manager:commentModerationAccess',
+      $routes['aculta_forum_lms.comment_moderate']['requirements']['_custom_access'],
+    );
+    self::assertSame(
+      '\\Drupal\\aculta_forum_lms\\Form\\LmsCommentModerationForm',
+      $routes['aculta_forum_lms.comment_moderate']['defaults']['_form'],
+    );
+    self::assertSame('entity:group', $routes['aculta_forum_lms.comment_moderate']['options']['parameters']['group']['type']);
+    self::assertSame('entity:comment', $routes['aculta_forum_lms.comment_moderate']['options']['parameters']['comment']['type']);
+
     $view = $this->config('views.view.aculta_forum_lms_admin_comments');
     self::assertEqualsCanonicalizing([
       'group.relationship_type.lms_class-3abb8caf7f7d526ecedeec',
@@ -132,6 +147,7 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     self::assertNotContains('block', $displayPlugins);
     self::assertSame('empty', $view['display']['default']['display_options']['arguments']['gid']['default_action']);
     self::assertSame('aculta_lms_topic', $view['display']['default']['display_options']['filters']['type']['value']['aculta_lms_topic']);
+    self::assertSame('entity_operations', $view['display']['default']['display_options']['fields']['operations']['plugin_id']);
   }
 
   /**

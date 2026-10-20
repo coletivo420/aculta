@@ -32,6 +32,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | Versão | Entrega | Estado |
 | --- | --- | --- |
 | `0.1.0-dev.108` | Painel e filas de moderação por Group no LMS | Rotas `/painel-administrativo/lms/forum` e três estados; View Embed sem endpoint global, argumento Group obrigatório e filtros fixos. Unit 18/184 e Kernel 2/102 PASS (40 depreciações de Core/contrib/LMS). Runtime: import parcial da View, cache rebuild, root 200, overview anônimo 403 e Groups inexistentes 404. Sem smoke autenticado ou ações na fila. |
+| `0.1.0-dev.109` | Ações de aprovação e rejeição em filas LMS | Operações nas Views levam a confirmação Form API; manager valida tópico/Group/estado em leitura e submit. Kernel prova transições, estados e Educador versus estudante/Group incorreto. Unit 18/190 e Kernel 2/112 PASS (40 depreciações). View atualizada por importação parcial de um item; cache rebuild passou. Smoke autenticado não executado; conteúdo LMS permanece vazio. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.107` | Liberar leitura e aprovação de Comment para Educadores LMS | Adapter dev.15 autoriza somente `view`/`approve` quando o Comment está em `field_aculta_discussion` e o contexto resolvido concede `grade students`. Estudantes mantêm o acesso Core; `update`, `delete` e `administer comments` não são concedidos. Unit 16/165 e Kernel 1/62 PASS; Kernel reporta 37 depreciações Core/contrib/LMS. Rotas/Views das filas ainda não existem; integração Runtime DEFERRED. |
 | `0.1.0-dev.106` | Rastrear adapter LMS e aplicar permissões Group contextuais | `core.extension` inclui adapter e `gnode`. Importação parcial revisada atualiza quatro Group roles e `lms_classes.settings`; os demais campos dos cinco itens coincidiam com a Config Sync e nenhum outro item foi alterado. Kernel 2/74 PASS, HTTP `/` e `/categorias` 200, tópicos/Comments zero. Sem conteúdo real, acesso Runtime ainda não exercitado; UI, Views e filas pendentes. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.105` | Corrigir injeção do serviço e habilitar adapter LMS no Runtime de teste | `#[Autowire]` aponta ao service ID real do `DiscussionContextResolver`; adapter e `gnode` habilitados com sucesso e oito configs default presentes. Unit 13/143 e Kernel 2/74 PASS (38 depreciações Core/contrib/LMS); smoke HTTP `/` e `/categorias` 200; zero tópicos/Comments. Config Sync/roles não reconciliadas; UI, filas e autorização Runtime ainda pendentes. RUNTIME STATUS: PARTIAL. |
@@ -488,10 +489,12 @@ Adapter opcional `aculta_forum_lms`; curso/turma/atividade; Group/membership,
 cartões educacionais, busca e notificações privadas. A fundação do provider,
 permissões Group e moderação contextual foram implementadas nas dev.92–108.
 A dev.108 acrescenta rotas administrativas com filas isoladas de Comments por
-curso/turma, provadas em Kernel para acesso contextual e estados. A View e as
-rotas novas ainda não foram aplicadas nem testadas por HTTP no Runtime. Busca,
-notificações, controles de ação na fila e associação de atividades continuam
-pendentes; não liberar busca pública para contexto LMS.
+curso/turma, provadas em Kernel para acesso contextual e estados; suas rotas e
+View foram aplicadas no Runtime de teste. A dev.109 acrescenta ações Form API
+para transições moderadas por Educador; a coluna foi importada parcialmente e
+o cache reconstruído no Runtime de teste. Busca,
+notificações e associação de atividades continuam pendentes; não liberar busca
+pública para contexto LMS.
 
 ## `0.1.0-dev.14` — Contrato Wiki420
 

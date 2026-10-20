@@ -1,3 +1,13 @@
+## `0.1.0-dev.109` — ações de moderação contextual LMS — 2026-10-20
+
+- O adapter `aculta_forum_lms` adiciona operações de aprovar/rejeitar nas filas
+  de comentários por Group, com confirmação Form API e revalidação no submit.
+  Nenhuma alteração em Comment fora dos tópicos LMS é permitida por essas ações.
+- Adapter Unit: 18/190; Kernel: 2/112 PASS, 40 depreciações Core/contrib/LMS.
+- A View recebeu a coluna por importação parcial de um único item e o cache foi
+  reconstruído no Runtime de teste. Sem comentário LMS ou smoke autenticado;
+  RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.108` — criar filas de comentários por Group no LMS — 2026-10-20
 
 - O painel `/painel-administrativo/lms/forum` lista apenas cursos e turmas

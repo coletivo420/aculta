@@ -20,10 +20,15 @@ display público/Page/Block, com argumento Group obrigatório, bundle LMS, campo
 Comment e estado fixos. A rota revalida acesso por Group e a View junta os
 relacionamentos Node e Group para preservar os filtros de acesso. Kernel prova
 separação de curso/turma e dos três status. No Runtime de teste, a View foi
-importada isoladamente com `--partial`, cache rebuild passou, o índice retornou
-403 sem autenticação e Groups inexistentes retornaram 404. O índice LMS não
-entra na busca pública. Aprovação/rejeição por ação ainda não está exposta na
-tabela da fila.
+atualizada isoladamente com importação `--partial` de um único item, cache
+rebuild passou, o índice retornou 403 sem autenticação e Groups inexistentes
+retornaram 404. A coluna de operações também foi aplicada; não houve smoke
+autenticado nem comentários LMS de teste. O índice LMS não
+entra na busca pública. As filas exibem `Aprovar`/`Rejeitar` por operação de
+entidade; Form API confirma e revalida no submit, publica e limpa marcador ao
+aprovar ou despublica e marca ao rejeitar. Kernel cobre as transições e nega
+estudante, contexto divergente e estados repetidos. Não há comentários LMS de
+teste nem smoke autenticado das operações.
 
 ## Matriz de ownership e dependências
 

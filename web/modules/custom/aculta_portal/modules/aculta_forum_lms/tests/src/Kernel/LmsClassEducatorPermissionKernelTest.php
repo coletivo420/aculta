@@ -7,11 +7,15 @@ namespace Drupal\Tests\aculta_forum_lms\Kernel;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider;
 use Drupal\aculta_forum_lms\Access\LmsForumModerationManager;
+use Drupal\aculta_forum_lms\Form\LmsCommentModerationForm;
+use Drupal\aculta_forum_lms\Hook\LmsCommentModerationOperationsHooks;
 use Drupal\aculta_forum_lms\Hook\LmsCommentModerationAccessHooks;
 use Drupal\aculta_forum_lms\Hook\LmsDiscussionModerationHooks;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Form\FormState;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
@@ -355,6 +359,47 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $courseView = $viewFactory->get($viewEntity);
     $courseView->preview('lms_published', [(string) $course->id()]);
     self::assertCount(1, $courseView->result, 'The course queue shows the course topic, not the class topic.');
+
+    $operations = new LmsCommentModerationOperationsHooks($moderationManager, $educator);
+    self::assertEqualsCanonicalizing(
+      ['aculta_lms_approve', 'aculta_lms_reject'],
+      array_keys($operations->entityOperation($pendingComment, new CacheableMetadata())),
+    );
+    self::assertSame(
+      ['aculta_lms_reject'],
+      array_keys($operations->entityOperation($comment, new CacheableMetadata())),
+      'Published comments can be rejected but do not have an approve action.',
+    );
+    self::assertSame(
+      ['aculta_lms_approve'],
+      array_keys($operations->entityOperation($rejectedComment, new CacheableMetadata())),
+      'Rejected comments can be approved but cannot be rejected twice.',
+    );
+    $studentOperations = new LmsCommentModerationOperationsHooks($moderationManager, $student);
+    self::assertSame([], $studentOperations->entityOperation($pendingComment, new CacheableMetadata()));
+    self::assertFalse($moderationManager->applyModerationDecision($unassignedCourse, $pendingComment, 'approve', $educator));
+    $moderationForm = new LmsCommentModerationForm(
+      $moderationManager,
+      $educator,
+      $this->container->get('entity_type.manager'),
+    );
+    $moderationForm->setMessenger($this->container->get('messenger'));
+    $moderationForm->setStringTranslation($this->container->get('string_translation'));
+    $rejectState = new FormState();
+    $rejectForm = $moderationForm->buildForm([], $rejectState, $class, $pendingComment, 'reject');
+    self::assertArrayHasKey('confirm', $rejectForm);
+    $rejectState->setValue('confirm', TRUE);
+    $moderationForm->submitForm($rejectForm, $rejectState);
+    $pendingComment = $this->container->get('entity_type.manager')->getStorage('comment')->load($pendingComment->id());
+    self::assertFalse($pendingComment->isPublished());
+    self::assertSame(1, (int) $pendingComment->get('field_aculta_rejected')->value);
+    $approveState = new FormState();
+    $approveForm = $moderationForm->buildForm([], $approveState, $class, $pendingComment, 'approve');
+    $approveState->setValue('confirm', TRUE);
+    $moderationForm->submitForm($approveForm, $approveState);
+    $pendingComment = $this->container->get('entity_type.manager')->getStorage('comment')->load($pendingComment->id());
+    self::assertTrue($pendingComment->isPublished());
+    self::assertSame(0, (int) $pendingComment->get('field_aculta_rejected')->value);
 
     $resolver = new DiscussionContextResolver([$provider]);
     $commentAccessHook = new LmsCommentModerationAccessHooks($resolver);

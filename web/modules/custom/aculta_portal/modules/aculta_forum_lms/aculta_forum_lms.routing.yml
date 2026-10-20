@@ -49,3 +49,19 @@ aculta_forum_lms.comments_pending:
     parameters:
       group:
         type: entity:group
+
+aculta_forum_lms.comment_moderate:
+  path: '/painel-administrativo/lms/forum/{group}/comentario/{comment}/moderacao/{decision}'
+  defaults:
+    _form: '\Drupal\aculta_forum_lms\Form\LmsCommentModerationForm'
+    _title: 'Moderar comentário'
+  requirements:
+    _custom_access: 'aculta_forum_lms.moderation_manager:commentModerationAccess'
+    decision: 'approve|reject'
+  options:
+    _admin_route: true
+    parameters:
+      group:
+        type: entity:group
+      comment:
+        type: entity:comment

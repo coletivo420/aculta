@@ -172,6 +172,15 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        operations:
+          id: operations
+          table: comment
+          field: operations
+          relationship: none
+          group_type: group
+          plugin_id: entity_operations
+          label: Operações
+          destination: true
       pager:
         type: full
         options:
@@ -452,6 +461,7 @@ display:
           columns:
             subject: subject
             changed: changed
+            operations: operations
           default: changed
           info:
             subject:
@@ -468,6 +478,13 @@ display:
               separator: ''
               empty_column: false
               responsive: priority-low
+            operations:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
           override: true
           sticky: true
           summary: ''
@@ -719,7 +736,7 @@ display:
           value: '1'
       defaults:
         filters: false
-      display_description: 'Comentários publicados exclusivamente em tópicos do Fórum público.'
+      display_description: 'Comentários publicados exclusivamente nos tópicos deste curso ou turma do LMS.'
       display_extenders: {  }
     cache_metadata:
       max-age: 0
@@ -917,7 +934,7 @@ display:
           value: '1'
       defaults:
         filters: false
-      display_description: 'Comentários rejeitados exclusivamente em tópicos do Fórum público.'
+      display_description: 'Comentários rejeitados exclusivamente nos tópicos deste curso ou turma do LMS.'
       display_extenders: {  }
     cache_metadata:
       max-age: 0
@@ -1115,7 +1132,7 @@ display:
           value: '0'
       defaults:
         filters: false
-      display_description: 'Comentários não publicados e ainda não rejeitados, exclusivamente em tópicos do Fórum público.'
+      display_description: 'Comentários não publicados e ainda não rejeitados nos tópicos deste curso ou turma do LMS.'
       display_extenders: {  }
     cache_metadata:
       max-age: 0
