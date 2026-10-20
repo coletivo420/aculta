@@ -1,5 +1,21 @@
 # Matriz de testes por fase
 
+## dev.88 — integração do filtro de categoria com Search API DB
+
+- `ForumCategorySearchKernelTest` cria índice Search API DB e conteúdo Node/
+  Taxonomy somente no MariaDB dedicado. Indexa três tópicos em raiz, filha e
+  categoria paralela; condição `forum_category = TID filha` retorna somente o
+  tópico associado. Resultado: 1 teste / 17 assertions PASS.
+- Foram reportadas duas depreciações no Search API instalado (`TaskStorageSchema`
+  e `EntityDatasourceInterface`); nenhuma origem é código ACULTA. O teste usa
+  `secrets/simpletest-db.env` sem imprimir a URL e nunca conecta ao Runtime.
+- Suíte Kernel completa: 25 testes / 495 assertions PASS, com 19 depreciações
+  de Core/contrib. Unit completa: 87 / 553 PASS. A View não declara `sorts`;
+  `QueryInterface` instalado define relevância decrescente como padrão.
+- Runtime permanece com 0 tópicos e 0 Comments. Busca real com resultados e
+  ordenação continuam pendentes para fechar a subfase de descoberta.
+- RUNTIME STATUS: DEFERRED.
+
 ## dev.87 — filtro de categorias e formulário de busca somente leitura
 
 - Search API instalado no Drupal 11.4.10 rejeitou `entity:taxonomy_term`

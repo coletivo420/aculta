@@ -14,6 +14,10 @@ controle de acesso padrão de Search API/Views, sem `skip_access`.
   poderiam aguardar o próximo cron. Alterações de access ainda dependem do
   comportamento de tracking/reindex do Search API; não se deve interpretar o
   índice como substituto de Entity Access.
+- Sem ordenação declarada pela View, Search API 1.41 ordena por relevância
+  decrescente. Esse padrão está definido na `QueryInterface` upstream e no
+  código instalado; não se adiciona uma ordenação SQL paralela. Esta entrega não
+  oferece escolha entre relevância e atividade.
 - `ForumSearchQuerySubscriber` usa `search_api.query_pre_execute`. Só modifica o
   índice `aculta_forum`, adicionando o identificador do Domain resolvido para o
   purpose `forum`. Em outro purpose ou sem Domain configurado, adiciona uma
@@ -33,10 +37,9 @@ categoria. O índice armazena o ID inteiro do termo; um hook de formulário
 substitui o controle numérico da View por um select com rótulos hierárquicos
 atuais, traduzidos e filtrados por Entity Access, incluindo os metadados de
 cache correspondentes. Isso evita depender de um tipo de campo de entidade que
-não existe na versão instalada do Search API. Ordenação por relevância,
-sugestões e busca contextual de LMS/Wiki/publicações continuam fora desta
-entrega. A configuração declarada não prova que o índice está atualizado com
-conteúdo publicado.
+não existe na versão instalada do Search API. Sugestões e busca contextual de
+LMS/Wiki/publicações continuam fora desta entrega. A configuração declarada não
+prova que o índice está atualizado com conteúdo publicado.
 
 A busca `/pesquisar` é somente leitura e usa GET. Como as listagens públicas do
 Growroom420, não renderiza CAPTCHA; essa exceção não se estende a formulários

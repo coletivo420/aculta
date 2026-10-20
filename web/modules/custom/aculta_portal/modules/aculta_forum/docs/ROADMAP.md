@@ -34,6 +34,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | `0.1.0-dev.85` | Formulário de mover tópico nega Growroom histórico | Kernel com conta administrativa prova que serviço e Form API negam movimento e preservam categoria histórica; 3 testes/71 assertions PASS, 5 depreciações de Core/Domain. PHPCS, lint e gates Portal PASS. Runtime DEFERRED. |
 | `0.1.0-dev.86` | Busca pública contextual do Growroom420 | Índice Search API/View `/pesquisar` somente para tópico público; acesso/status e Domain canônico em query fail-closed. Runtime de teste: ativo, zero itens; GET e consulta vazia HTTP 200. 5 testes/17 assertions, suíte Forum Unit 87/527 e gates PASS. X11 1024 parcial: render visível, mas banner de validação CAPTCHA sem submissão; detalhes em `TEST-MATRIX.md`. |
 | `0.1.0-dev.87` | Filtro hierárquico de categorias na busca pública | Search API indexa ID inteiro do termo; Form API converte o filtro em select com rótulos Taxonomy atuais, Entity Access e cacheabilidade. Exceção CAPTCHA limitada a Views públicas somente leitura. Unit 87/553 e gates Portal PASS; Runtime da busca HTTP 200, categorias 12, Fórum vazio; X11 desktop 1024 corrigido e RDM 320×480 parcial. Gate Foundation reconhece .118, mas encontra `email-wrap.html.twig` da linha Mailer fora da allowlist. Detalhes em `TEST-MATRIX.md`. |
+| `0.1.0-dev.88` | Kernel prova filtro Search API por ID de Taxonomy | MariaDB dedicado cria tópicos com categorias raiz/filha e comprova que a condição por ID inteiro recupera somente a entidade atribuída ao termo selecionado. 1 teste/17 assertions PASS; suíte Kernel 25/495 e Unit 87/553 PASS, com 19 depreciações Core/contrib. Search API 1.41 usa relevância decrescente quando a View não define sort. Sem alterações no Runtime. |
 | `0.1.0-dev.84` | Negar formulário de movimento sem acesso ao tópico | Form API lança `AccessDeniedHttpException` antes de expor destinos quando a conta tem permissão de mover, mas não acesso à fonte. Kernel total 24/476 e Unit Forum 82/500 PASS; 19 depreciações Core/contrib. PHP CLI 8.4.26 (baseline 8.5); PHPCS e gates Portal PASS. Runtime DEFERRED. |
 | `0.1.0-dev.83` | Exigir acesso ao tópico fonte além da permissão de mover | Kernel MariaDB: permissão de mover sem `access content` não expõe destino nem altera o host; 18 testes/365 assertions PASS, 19 depreciações Core/contrib. Regressão total Forum: Unit 82/500, Kernel 24/475 PASS. PHP CLI 8.4.26 (baseline 8.5); lint, PHPCS e gates Portal PASS. Runtime DEFERRED. |
 | `0.1.0-dev.82` | Exigir permissão dedicada para mover comentários | Kernel MariaDB: sem `move aculta forum comments`, acesso e destinos negados e host preservado; 17 testes/348 assertions PASS, 19 depreciações de Core/contrib. PHP CLI 8.4.26 (baseline 8.5); lint, PHPCS e gates Portal PASS. Runtime DEFERRED. |
@@ -497,12 +498,11 @@ e [trust levels](https://blog.discourse.org/2018/06/understanding-discourse-trus
 Fundação pública entregue na dev.86: índice Search API e View `/pesquisar`
 isolados ao bundle de tópico, com acesso/status e filtro dinâmico pelo Domain
 canônico do Growroom420. A dev.87 acrescenta filtro hierárquico por categoria,
-com rótulos dinâmicos. Permanecem para esta fase ordenação por relevância e
-homologação de consulta com conteúdo temporário limpo por ciclo. A inspeção X11
-de 1024 px registrou
-mensagem de validação CAPTCHA na sessão anônima conforme política global; sem
-submissão, viewport mobile ou causa isolada. LMS, Wiki, Revista e Comments não
-entram neste índice público.
+com rótulos dinâmicos; a dev.88 comprova no MariaDB de Kernel que o ID
+`target_id` filtra somente o tópico da categoria. Search API 1.41 ordena por
+relevância decrescente quando a View não define sort. Homologação pública com
+conteúdo real continua pendente sem criar fixtures no Runtime; LMS, Wiki,
+Revista e Comments não entram neste índice público.
 
 ## `0.1.0-dev.17` — Consolidação
 

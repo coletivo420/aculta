@@ -1629,3 +1629,15 @@
   RUNTIME STATUS: PARTIAL, pois o índice está vazio e não há resultados reais
   para comprovar o filtro.
 
+## `0.1.0-dev.88` — provar o filtro de categoria no Search API DB — 2026-10-20
+
+- Kernel cria vocabulário, termos raiz/filho, tópicos e índice Search API DB
+  isolado. O campo indexado `field_aculta_categories:target_id` é inteiro; a
+  consulta da categoria filha retorna apenas o tópico associado, sem misturar
+  pai ou categoria paralela.
+- `ForumCategorySearchKernelTest`: 1 teste / 17 assertions PASS no MariaDB
+  dedicado `aculta_simpletest`; duas depreciações são do Search API instalado.
+  Runtime não alterado e permanece vazio. RUNTIME STATUS: DEFERRED para esta
+  prova de integração; homologação pública segue PARTIAL porque o índice do
+  Runtime não tem itens.
+
