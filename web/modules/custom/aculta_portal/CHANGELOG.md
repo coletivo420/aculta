@@ -3316,6 +3316,8 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   PASS. Gates Portal Drupal 11+, fronteira, mapa, slugs e caminhos PASS.
 - Runtime `toca`: importação parcial apenas do índice e da View; cache rebuild;
   `/pesquisar` HTTP 200 e consulta sem resultados HTTP 200. Antes da importação,
-  havia 0 tópicos e 0 Comments ACULTA; nenhum conteúdo foi criado. Browser visual
-  não executado nesta entrega. RUNTIME STATUS: PARTIAL.
+  havia 0 tópicos e 0 Comments ACULTA; nenhum conteúdo foi criado. Firefox/X11
+  em 1024 px confirmou a página, mas exibiu a mensagem de validação CAPTCHA;
+  formulário não submetido, causa não isolada; ver a matriz do Forum. RUNTIME
+  STATUS: PARTIAL.
 

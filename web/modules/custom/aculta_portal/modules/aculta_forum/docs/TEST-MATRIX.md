@@ -1,5 +1,25 @@
 # Matriz de testes por fase
 
+## dev.86 — busca pública contextual
+
+- Unit da query e do purpose, equivalência de instalação/Config Sync e rota:
+  5 testes / 17 assertions PASS. Suíte Unit completa do Forum: 87 / 527 PASS.
+- Runtime de teste `toca`: Search API 1.41 com backend `aculta_database`, índice
+  `aculta_forum` ativo e 0 itens indexados; `/pesquisar` e consulta vazia
+  responderam HTTP 200. Antes da importação, havia 0 tópicos e 0 Comments; não
+  foram criados fixtures.
+- Firefox/X11: captura em 1024 px confirma título, abas e formulário. A página
+  anônima também apresenta o Turnstile global definido pela política de CAPTCHA
+  e uma mensagem visual de validação; a busca não foi submetida. A causa da
+  mensagem não foi isolada, portanto o formulário e a validação visual ficam
+  PARTIAL. Captura privada `private/visual-tests/aculta-forum-search-dev86/`
+  (`0600`). Nenhuma conclusão mobile ou de acessibilidade integral.
+- Gates Drupal 11+ (975), fronteira (1467), mapa (152), slugs (378), caminhos,
+  PHP lint, PHPCS dos novos arquivos e `git diff --check`: PASS. O PHPCS do
+  arquivo Portal preexistente `DomainRouteSubscriber.php` aponta dívida
+  anterior em comentários/linhas não alteradas; o gate Drupal 11+ passa.
+- RUNTIME STATUS: PARTIAL.
+
 ## dev.85 — formulário de mover tópico nega autoria histórica
 
 - O Kernel usa uma conta com `administer nodes` e `move aculta forum topics`

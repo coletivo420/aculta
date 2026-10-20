@@ -1602,5 +1602,8 @@
 - Runtime `toca`: Search API 1.41 e backend `aculta_database` ativos; importação
   parcial criou apenas índice e View, cache rebuild PASS, `/pesquisar` HTTP 200
   e busca vazia HTTP 200. Zero tópicos e Comments antes da alteração; nenhum
-  conteúdo foi criado. Browser visual DEFERRED. RUNTIME STATUS: PARTIAL.
+  conteúdo foi criado. Firefox/X11 confirmou renderização da navegação/form em
+  1024 px, mas mostrou mensagem de validação Turnstile; não houve submissão, e a
+  causa não foi isolada. Mobile DEFERRED; RUNTIME STATUS: PARTIAL. Evidência
+  privada e limites em `TEST-MATRIX.md`.
 
