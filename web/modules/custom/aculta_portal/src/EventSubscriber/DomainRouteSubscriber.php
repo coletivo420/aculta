@@ -229,7 +229,8 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       if (str_starts_with((string) $name, 'forum.')
         || str_starts_with((string) $name, 'aculta_forum.')
         || str_starts_with((string) $name, 'entity.taxonomy_term.forum_')
-        || str_starts_with((string) $name, 'view.aculta_forum_public_topics.')) {
+        || str_starts_with((string) $name, 'view.aculta_forum_public_topics.')
+        || str_starts_with((string) $name, 'view.aculta_forum_search.')) {
         $route->setOption('_aculta_domain_purpose', 'forum');
       }
     }

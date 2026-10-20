@@ -3306,3 +3306,16 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   rebuild e construção dos dois links como uid 5 PASS, sem gravar flagging.
   Navegador autenticado pendente. RUNTIME STATUS: PARTIAL.
 
+## 0.4.0-dev.212 — pesquisa pública do Growroom420 — 2026-10-20
+
+- A rota da View `aculta_forum_search` pertence ao purpose `forum`, com o mesmo
+  contrato de canonicalização das páginas públicas do Fórum. A busca usa índice
+  separado limitado a `aculta_forum_topic`; detalhes e limites em
+  `aculta_forum/docs/PESQUISA.md`.
+- Testes Unit de consulta e classificação de rota: 5 testes / 17 asserções
+  PASS. Gates Portal Drupal 11+, fronteira, mapa, slugs e caminhos PASS.
+- Runtime `toca`: importação parcial apenas do índice e da View; cache rebuild;
+  `/pesquisar` HTTP 200 e consulta sem resultados HTTP 200. Antes da importação,
+  havia 0 tópicos e 0 Comments ACULTA; nenhum conteúdo foi criado. Browser visual
+  não executado nesta entrega. RUNTIME STATUS: PARTIAL.
+
