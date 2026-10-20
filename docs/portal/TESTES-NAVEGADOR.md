@@ -508,3 +508,37 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 - **Persistência:** formulário de legenda no CKEditor salvou “Legenda salva no Firefox visível” em artigo temporário válido. O corpo armazenou `data-aculta-legenda`; ao reabrir a edição, o campo trouxe o mesmo valor. Artigo(s) temporário(s) removido(s) e confirmado(s) no cleanup.
 - **Leitor de tela:** o Orca anunciou o nome e valor do campo de legenda. Em fixture DOM não persistida na página pública, ao focar a imagem o Orca anunciou a legenda “Legenda acessível de teste” e o `alt` “Imagem de teste com texto alternativo”; AT-SPI expôs a legenda e a imagem como elementos filhos do painel/figura. A fixture foi removida e a sessão Firefox fechada.
 - **Limite:** a figura foi fixture DOM temporária com as classes reais do modelo; não foi salva em conteúdo. A configuração de runtime permaneceu inalterada.
+
+## ACULTA Forum — comparação visual X11 com Ubuntu Discourse (planejado)
+
+Aplicar na revisão visual da dev.11 e repetir na homologação rc.1, usando
+Firefox visível na sessão X11 do servidor de teste ou workstation autorizada.
+Confirmar `DISPLAY`, URI de teste e viewport efetivo do navegador; registrar
+resolução CSS aferida, tema claro/escuro, conta/perfil de acesso e data da
+consulta de referência. Não salvar screenshots com dados pessoais ou privados
+no repositório; mantê-las em evidência privada e registrar os caminhos sem
+copiar conteúdo para documentos versionados.
+
+### Roteiro de comparação
+
+1. Abrir `https://discourse.ubuntu.com/` e observar a organização atual da home,
+   categorias, lista e uma discussão. Anotar a data porque o conteúdo e a
+   configuração da referência mudam.
+2. Abrir o Growroom420 de teste nas larguras CSS 1366, 768 e 390 px. Comparar
+   entrada, categorias, subcategorias, lista, tópico, resposta e composição.
+3. Avaliar hierarquia, densidade/ritmo, largura de leitura, alinhamento de
+   atividade/contadores, estados de tópico, navegação e persistência visual do
+   contexto durante leitura. Confirmar autoria `author_forum`/`author_comment`
+   e que nenhum contexto LMS/Wiki ou campo privado aparece publicamente.
+4. Repetir em claro e escuro. Testar tabulação, foco visível, abrir/fechar
+   controles, voltar para a primeira resposta não lida e enviar/validar os
+   formulários com conteúdo efêmero aprovado. Não mover conteúdo real durante a
+   comparação.
+5. Registrar divergências por tela, viewport, severidade e correção. Revisar
+   overflow, contraste, alvos de toque, headings, estados vazios/erro e
+   comportamento sem JavaScript.
+
+O objetivo é aproximar a experiência e composição do fórum de referência com a
+identidade visual ACULTA420; marcas, logos, ilustrações e folhas de estilo do
+Ubuntu/Discourse não são copiadas. Resultado permanece **planejado** até rodar
+esse roteiro com o Firefox X11 e evidência real.

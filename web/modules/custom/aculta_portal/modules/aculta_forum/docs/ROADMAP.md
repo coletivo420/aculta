@@ -365,6 +365,16 @@ linear, timeline/progresso, composer e navegação responsiva no ACULTA420. Usar
 presets e layouts lateral/empilhado já previstos; validar light/dark, teclado,
 mobile, reduced-motion e fallback sem JavaScript.
 
+Antes de encerrar esta fase, fazer revisão visual em sessão gráfica X11 com
+Firefox visível. Comparar as telas de entrada, categorias, lista, tópico e
+composição com o Ubuntu Discourse atual, usando capturas da mesma largura e
+densidade de conteúdo. Reproduzir a hierarquia, o ritmo, a densidade e os
+padrões de navegação observados dentro da identidade ACULTA420; não reutilizar
+marca, logos, ilustrações ou CSS do Discourse. Conferir desktop, 768 px e 390 px,
+modo claro/escuro, foco/teclado e ausência de overflow. Guardar capturas de
+homologação fora do repositório quando contiverem dados do Runtime e registrar
+no relatório as telas, dimensões, divergências e correções.
+
 ## `0.1.0-dev.12` — Participação e moderação
 
 Flags, denúncias, salvar/seguir, citação, aprovação, edição e bloqueio por APIs
@@ -435,6 +445,22 @@ variantes; preparar homologação.
 Unit, Kernel, Functional, gates Drupal/tema/fronteira, Domain, acesso, cache,
 segurança, browser/mobile, light/dark, acessibilidade, LMS, Wiki contratual,
 Magazine, notificações, desempenho e install/update/uninstall/rollback.
+Incluir rodada visual X11/Firefox visível contra a referência Ubuntu Discourse
+e revisão por tamanhos fixos desktop/768/390 px; conferir também interação real,
+foco, teclado, mensagens de validação e modo escuro, com screenshots antes/depois
+para os desvios corrigidos.
+
+## Estimativa de conclusão (revisão de 2026-10-20)
+
+Estimativa de esforço restante, sujeita aos resultados de homologação e a
+dependências de ambiente: dev.5 (uninstall/configuração residual), 1–2 dias
+úteis; dev.6–12 (fórum público, navegação, moderação e ferramentas), 5–8 dias;
+dev.13–16 (LMS, contrato Wiki, integrações, busca), 3–5 dias; dev.17 e rc.1
+(consolidação, testes integrados e inspeção visual X11), 4–6 dias; rc.2 e
+preparação estável, 2–4 dias. Total aproximado: 15–25 dias úteis, ou 3–5 semanas
+de trabalho contínuo, mais 1–2 semanas de margem se surgirem regressões em
+acesso, cache, dados ou UX. A sequência é de esforço e não representa prazo de
+deploy; produção depende de decisão própria do responsável.
 
 ## `0.1.0-rc.2` — Correções
 
