@@ -7,11 +7,11 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 |---|---|---|
 | F0 | Auditoria ([AUDIT](AUDIT.md)), pesquisa ([UPSTREAM](UPSTREAM.md)), arquitetura ([ARCHITECTURE](ARCHITECTURE.md)) | Concluída nesta PR |
 | F1 | Fundação: `MailMessage`, `MailStatus`, `MessageIdFactory`, `RetrySchedule`, contrato `AcultaMailerInterface`, testes unitários | Em andamento nesta PR |
-| F2 | Transporte: adaptador do Symfony Mailer por DSN, segredo fora do Config Sync, diagnóstico | Pendente |
+| F2 | Transporte: failover Hostinger → SMTP2GO e classificação SMTP (`TransportFailover`, `SmtpReplyClassifier`) concluídos e testados; adaptador do Symfony Mailer por DSN, diagnóstico e fallback no envio real | Parcial (lógica pronta) |
 | F3 | Templates: Config Entity `aculta_mailer_template`, Twig, variáveis controladas, preview, envio de teste | Pendente |
 | F4 | Branding: `MailBrand` e `MailLayout`, herança, logo via `aculta_image` | Pendente |
 | F5 | Policy: adjusters por plugin, reutilização de `mailer_policy` até equivalência | Pendente |
-| F6 | Queue: worker de envio, retry, tratamento de falha, eventos | Pendente |
+| F6 | Queue: decisão de retry/failover (`DeliveryPlanner`, `DeliveryDecision`) concluída e testada; worker de envio, eventos e persistência de tentativas | Parcial (decisão pronta) |
 | F7 | Logging: entidade de log, retenção, Views, reenvio | Pendente |
 | F8 | Dashboard: métricas e gráficos (sem framework JS novo) | Pendente |
 | F9 | Usuário: criação, confirmação, troca de e-mail, reset, integração com `aculta_user` | Pendente |
