@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1-dev.57 — resumo de avisos pelo aculta_mailer — 2026-10-20
+
+- `AvisosResumo` envia pela API `AcultaMailerInterface` (tipo `avisos_resumo`), sem `plugin.manager.mail`.
+- Texto do resumo em `AvisosResumoMailType` (tag `aculta_mailer.type`); o `hook_mail` saiu de `AvisosResumoHooks`, que mantém o cron.
+- `MailMessage` passou a aceitar listas de linhas escalares (até dois níveis) para o resumo; objetos e entidades continuam recusados.
+- Dependência `aculta_portal:aculta_mailer`. Teste unitário do texto.
+
 Mudanças relevantes do ACULTA Messenger.
 
 ## 0.1.1-dev.56 — remover preprocess do Forum contribuído — 2026-10-20

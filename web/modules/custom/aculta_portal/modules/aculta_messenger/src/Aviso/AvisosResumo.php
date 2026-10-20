@@ -6,7 +6,9 @@ namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\aculta_messenger\Entity\Aviso;
@@ -28,11 +30,12 @@ final class AvisosResumo {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AvisoPreferencias $preferencias,
-    private readonly MailManagerInterface $mailManager,
+    private readonly AcultaMailerInterface $mailer,
     private readonly EmailConfirmationPolicy $emailPolicy,
     private readonly UserDataInterface $userData,
     private readonly TimeInterface $time,
     private readonly AvisoService $avisos,
+    private readonly UuidInterface $uuid,
   ) {}
 
   /** Regra do intervalo: uma conta só recebe um resumo a cada ~20 horas. */
@@ -98,10 +101,10 @@ final class AvisosResumo {
     if ($linhas === []) {
       return FALSE;
     }
-    $resultado = $this->mailManager->mail('aculta_messenger', self::CHAVE_MAIL, $conta->getEmail(), LanguageInterface::LANGCODE_DEFAULT, [
+    $mensagem = new MailMessage(self::CHAVE_MAIL, (string) $conta->getEmail(), LanguageInterface::LANGCODE_DEFAULT, [
       'linhas' => $linhas,
-    ]);
-    if (empty($resultado['result'])) {
+    ], $this->uuid->generate());
+    if (!$this->mailer->send($mensagem)) {
       return FALSE;
     }
     foreach ($daFila as $aviso) {

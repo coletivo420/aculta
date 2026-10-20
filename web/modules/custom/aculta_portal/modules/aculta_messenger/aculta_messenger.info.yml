@@ -3,10 +3,11 @@ type: module
 description: 'Integra mensagens, notificações e avisos no ACULTA Portal.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.1-dev.56'
+version: '0.1.1-dev.57'
 dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_user
+  - aculta_portal:aculta_mailer
   - private_message:private_message
   - message:message
   - message_notify:message_notify
