@@ -10,7 +10,6 @@ use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
 use Drupal\aculta_mailer\Transport\MailTransportSender;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Mail\Attribute\Mail;
 use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\Core\Mail\MailInterface;
@@ -44,7 +43,6 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly RendererInterface $renderer,
     private readonly SmtpFailureRegistry $failures,
     private readonly ?PublicUrlInterface $publicUrls = NULL,
-    private readonly ?FileSystemInterface $fileSystem = NULL,
   ) {}
 
   /**
@@ -60,7 +58,6 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('renderer'),
       $container->get('aculta_mailer.smtp_failures'),
       $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
-      $container->get('file_system'),
     );
   }
 
@@ -74,18 +71,9 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
   }
 
   /**
-   * Caminho local do logo da marca, se o arquivo estiver legível neste servidor; senão NULL.
+   * Envelope HTML pelo hook de tema; o logo é a URL absoluta do servidor.
    */
-  private function localLogoPath(array $message): ?string {
-    $uri = (string) ($message['params']['brand_logo_uri'] ?? '');
-    $path = $uri !== '' && $this->fileSystem !== NULL ? $this->fileSystem->realpath($uri) : FALSE;
-    return is_string($path) && is_readable($path) ? $path : NULL;
-  }
-
-  /**
-   * Envelope HTML pelo hook de tema, com o logo embutido (cid:) quando o arquivo estiver disponível.
-   */
-  private function renderHtml(array $message, bool $embedded): string {
+  private function renderHtml(array $message): string {
     $body = Html::escape((string) ($message['body'] ?? ''));
     $build = [
       '#theme' => 'aculta_mailer_wrap',
@@ -94,7 +82,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       '#type' => 'core',
       '#sub_type' => (string) ($message['key'] ?? ''),
       '#is_html' => TRUE,
-      '#logo_url' => $embedded ? 'cid:aculta-marca' : (string) ($message['params']['brand_logo_url'] ?? ''),
+      '#logo_url' => (string) ($message['params']['brand_logo_url'] ?? ''),
       '#public_base' => $this->publicUrls !== NULL ? $this->publicUrls->absolute('/') : '',
     ];
     return (string) $this->renderer->renderInIsolation($build);
@@ -110,14 +98,9 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       return FALSE;
     }
     $from = (string) $this->configFactory->get('system.site')->get('mail');
-    // Logo da marca embutido na mensagem (cid:), para aparecer sem o cliente buscar imagem remota.
-    $logoPath = $this->localLogoPath($message);
-    $html = $this->renderHtml($message, $logoPath !== NULL);
-    $email = $this->converter->toEmail($message, $from, $html);
-    if ($logoPath !== NULL) {
-      $email->embedFromPath($logoPath, 'aculta-marca', (string) (mime_content_type($logoPath) ?: 'image/png'));
-    }
-    $result = $this->sender->send($transport, $email);
+    // Imagens do envelope são carregadas do servidor (URL absoluta); nada é anexado nem embutido.
+    $html = $this->renderHtml($message);
+    $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $html));
     if (!$result['sent']) {
       // Mesmo registro de falha que o envio do módulo usa para classificar (código SMTP e texto completo).
       $this->failures->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['code'], $result['message']);
