@@ -88,7 +88,8 @@
         "https://wiki420.aculta.org/",
         "https://loja.aculta.org/",
         "https://cursos.aculta.org/",
-        "https://links.aculta.org/"
+        "https://links.aculta.org/",
+        "https://growroom420.aculta.org/"
       ],
       "note": "Indexação ativa em todos os domínios e subdomínios de produção. Noindex de páginas privadas da conta permanece no Portal (meta robots por rota).",
       "private_probes": [

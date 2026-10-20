@@ -22,11 +22,11 @@ final class ContentPurposeResolverTest extends TestCase {
 
   public static function forumBundles(): array {
     return [
-      'legacy Forum node' => ['forum'],
       'ACULTA Forum topic' => ['aculta_forum_topic'],
     ];
   }
 
+  // Só o bundle próprio pertence ao purpose FORUM; o bundle legado 'forum' saiu da regra (commit 4fa73cc0).
   #[DataProvider('forumBundles')]
   public function testPublicTopicCanonicalRouteBelongsToForumPurpose(string $bundle): void {
     $node = $this->createMock(NodeInterface::class);
