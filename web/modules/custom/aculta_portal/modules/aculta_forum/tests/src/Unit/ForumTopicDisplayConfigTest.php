@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit;
 
+use Drupal\aculta_forum\Plugin\Action\MoveForumTopicsAction;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Yaml\Yaml;
@@ -474,6 +475,11 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertFalse($options['filters']['type']['exposed']);
     self::assertFalse($options['query']['options']['disable_sql_rewrite']);
     self::assertArrayNotHasKey('node_bulk_form', $options['fields']);
+    self::assertSame('views_bulk_operations_bulk_form', $options['fields']['views_bulk_operations_bulk_form']['plugin_id']);
+    self::assertTrue($options['fields']['views_bulk_operations_bulk_form']['batch']);
+    self::assertSame(10, $options['fields']['views_bulk_operations_bulk_form']['batch_size']);
+    self::assertSame(50, MoveForumTopicsAction::MAX_SELECTION);
+    self::assertSame('aculta_forum_move_topics', $options['fields']['views_bulk_operations_bulk_form']['selected_actions'][0]['action_id']);
     self::assertSame('field', $options['fields']['field_aculta_categories']['plugin_id']);
     self::assertSame('field_aculta_categories', $options['fields']['field_aculta_categories']['field']);
     self::assertSame('field_aculta_categories', $options['style']['options']['columns']['field_aculta_categories']);

@@ -1,3 +1,25 @@
+## dev.118 — movimentação de tópicos em lote
+
+- PHPUnit Unit `ForumTopicDisplayConfigTest`: configurações install/Sync da View
+  iguais, plugin VBO, processamento por lote de 10, Action própria e seleção
+  limitada a 50.
+- Kernel `ForumTopicMoverKernelTest`: dois tópicos movidos para a mesma categoria
+  pela Action; identidade, alias, Comment/CID e estatísticas permanecem; a Action
+  nega tópico com `field_autor_legado`, mesmo para a conta administrativa.
+- PHPCS direcionado e `git diff --check` PASS. VBO 4.4.9 foi instalado no
+  Runtime `aculta_runtime` (URI explícita `https://aculta.toca.net.br`); somente
+  a View de tópicos foi importada parcialmente e `drush cr` passou. RouteProvider
+  resolveu `view.aculta_forum_admin_topics.page_forum`; o display executou,
+  encontrou o handler VBO e a Action, com zero resultados. GET anônimo recebeu
+  403 na lista e no painel central, conforme access. A instalação tentou baixar
+  a tradução pt-br, mas o download falhou e o stream `translations://` não estava
+  gravável; isso não impediu instalação/configuração e strings podem aparecer no
+  idioma fallback. Backup da View e fonte parcial ficam fora do Git, com
+  permissões restritas, em
+  `/home/aculta/private/aculta/operations/forum-vbo-dev118-20261020/`. Não houve
+  sessão autenticada de navegador nem execução de lote no Runtime; o Fórum
+  continuou com 0 tópicos e 0 comentários. RUNTIME STATUS: PARTIAL.
+
 ## dev.117 — painel central e Conteúdo do Fórum geral
 
 - Unit da suíte `aculta_forum`: 90 testes/601 assertions PASS, incluindo `ForumTopicDisplayConfigTest` e `ForumAdminOverviewControllerTest`. PHPCS Drupal/DrupalPractice, `node --check`, Drupal 11+ gate (988), mapa módulo/tema (153), public slugs (377/20 violações contrib baselined), packages e `git diff --check` PASS. O gate módulo/tema falha por uma dependência de tema em `aculta_mailer/src/Form/MailBrandForm.php`, introduzida no commit compartilhado `ac2e580e`; não pertence ao escopo do Fórum e foi preservada. PHP CLI 8.4.26 está abaixo da baseline 8.5.
@@ -1207,7 +1229,7 @@ continuam pendentes.
 | Integração Game | primeira resposta publicada em `aculta_discussion_post`/`aculta_forum_topic`; aprovação tardia uma vez; outras entidades, sincronização e `field_autor_legado` excluídos | `aculta_game` Unit `BadgeEvaluationHooksTest` cobre contrato de bundle/field e casos negativos. Concessão real/cache/commit externo e Runtime seguem pendentes. |
 | Mover tópico individual entre categorias | permissão específica e Entity Access no purpose público; categoria do vocabulário correto; confirmação; submissão adulterada; preservação de NID/UUID/alias/Comments/flags; nova revisão; autoria histórica negada mesmo para admin | Unit `ForumTopicMoverTest`: 4 testes/31 assertions PASS. Kernel `ForumTopicMoverKernelTest`: 2 testes/44 assertions PASS em MariaDB `aculta_simpletest`; comprova mesmo NID/UUID, nova revisão, alias e Comment/CID preservados e bloqueio histórico mesmo com permissões de administrador. Functional e Runtime autenticado pendentes; nenhuma fixture do Runtime foi movida. |
 | Mover comentário e subárvore para outro tópico público | autorização, dois endpoints no purpose Fórum, tópico aberto, legado imutável, estados publicados/pendentes/rejeitados, thread profunda e ramificada, identidade/datas, estatísticas de origem/destino, cache, gate desabilitado por default e rollback | `ForumCommentMoverKernelTest`: 15/315 PASS em MariaDB `aculta_simpletest`, cobrindo árvore, estados, rollback, locks, flagging, Search API, file usage, History e tradução; 19 depreciações Core/contrib. Runtime `toca` dev.73–78: raiz, árvore linear e ramificada pendente/rejeitada via Form API/CSRF; preserva CID/autor/texto/estado/pid/thread, denúncia Flag e fila ACULTA User; X11 10/10 em 390/768/1024 CSS px. Fixtures removidas; Fórum e denúncias zerados, fila Messenger 0, 12 termos e 3 avisos baseline. `comment_move_enabled` continua ausente. PHPCS e gates Drupal11+ PASS; PHP CLI 8.4.26 abaixo da baseline 8.5. Pendentes: aprovação/workflow no Runtime, aviso com seguidores, anexos reais pela política `aculta_image`, permalink/âncora, busca funcional, concorrência HTTP e smoke de cache completo. RUNTIME STATUS: PARTIAL. |
-| Outras ferramentas de movimento | reorganizar Taxonomy; lote via Views/VBO; split/merge; verificar revisões/URLs/arquivos/flags/estatísticas/cache/busca/notificações e recuperação | Planejadas. `MOVE-TOOLS.md` registra pesquisa de Comment Mover e VBO; não instalar VBO nem expor ferramenta em lote até aprovar o escopo e segurança das Actions. |
+| Outras ferramentas de movimento | reorganizar Taxonomy; mover tópicos em lote via VBO; split/merge; verificar revisões/URLs/arquivos/flags/estatísticas/cache/busca/notificações e recuperação | Lote de tópicos implementado em dev.118 com confirmação, limite e Access por item; Runtime ativado e View/Action descobertas, mas execução autenticada pendente. VBO não substitui o serviço individual. Reorganização de Taxonomy, lote de Comments, split e merge continuam planejados. |
 | Acervo Growroom restaurado | autoria por `field_autor_legado`; edição/exclusão/aprovação negadas a qualquer papel; tópico fechado; bulk admin e IDs adulterados rejeitados | Unit `ForumModerationHooksTest`; Kernel/Functional de importação e access pendentes. Não confundir com Nodes `forum` do módulo contrib, cuja retirada é separada. |
 | UX/acessibilidade | mobile, teclado, foco, leitor de tela, light/dark, reduced motion e fallback sem JS | Firefox/browser, auditoria manual e automatizada existente. |
 | Revisão visual de referência | Entrada, categorias, listagem, tópico e composição; comparação com Ubuntu Discourse em desktop/768/390 px; claro/escuro; ritmo, densidade, navegação, foco e overflow | Rodada X11 parcial registrada nesta matriz; não reutilizar marca/ativos/CSS da referência. |

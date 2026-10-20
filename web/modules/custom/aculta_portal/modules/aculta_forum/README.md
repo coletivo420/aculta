@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.117**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.118**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
 de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
@@ -23,6 +23,13 @@ experimental compartilhado. A integração dos cartões nas discussões atuais e
 motor novo segue por contexto e fases.
 
 ## Arquitetura e regras
+
+- A administração do Growroom fica em `/painel-administrativo/forum`; listagem,
+  filas e configuração conservam rotas próprias. A View de tópicos oferece
+  movimento em lote com VBO: até 50 Nodes, categoria única, confirmação e Batch
+  API em grupos de 10. O mesmo `ForumTopicMover` revalida cada Node, mantendo
+  acervo histórico inelegível. O Runtime de teste ainda não recebeu essa
+  dependência/configuração.
 
 - Growroom420 hospeda somente tópicos públicos independentes.
 - Publicações, LMS e Wiki usam comentários no contexto da entidade original; não

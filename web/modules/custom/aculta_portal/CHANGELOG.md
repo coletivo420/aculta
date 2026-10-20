@@ -1,3 +1,17 @@
+## 0.4.0-dev.221 — mover tópicos do Fórum em lote com VBO — 2026-10-20
+
+- O `aculta_forum` passa a usar Views Bulk Operations 4.4.9, release estável
+  compatível com Drupal 11, para selecionar tópicos na View administrativa,
+  escolher categoria, confirmar e processar lotes de 10 com limite total de 50.
+  O Action revalida a permissão e cada tópico na execução; acervo histórico e
+  itens incompatíveis geram resultado por item sem alteração.
+- `ForumTopicMoverKernelTest` cobre dois tópicos movimentados pela Action e a
+  recusa do acervo histórico. Runtime de teste: VBO habilitado, somente a View de
+  tópicos importada parcialmente e cache reconstruído; RouteProvider, handler e
+  Action descobertos com 0 resultados, sem criação de dados. A tradução pt-br
+  falhou no download; execução autenticada em navegador permanece pendente.
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.220 — autoria editorial compartilhada entre Portal e ACULTA420 — 2026-10-20
 
 - Magazine usa `author_editorial` do `aculta_user`; identidade, avatar, bio e

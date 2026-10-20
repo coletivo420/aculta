@@ -166,6 +166,7 @@ module:
   user: 0
   username_enumeration_prevention: 0
   views: 10
+  views_bulk_operations: 0
   views_ui: 0
   vvja: 0
   vvj_core: 0

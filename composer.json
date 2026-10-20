@@ -324,6 +324,7 @@
         "drupal/ui_patterns_layouts": "^2.0",
         "drupal/ui_styles": "^1.22",
         "drupal/username_enumeration_prevention": "^1.4",
+        "drupal/views_bulk_operations": "^4.4",
         "drupal/vvja": "^2.0",
         "drupal/vvjb": "^2.0",
         "drupal/vvjf": "^2.0",

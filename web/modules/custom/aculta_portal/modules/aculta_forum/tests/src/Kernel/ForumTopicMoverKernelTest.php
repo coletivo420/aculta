@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Form\ForumTopicMoveForm;
+use Drupal\aculta_forum\Plugin\Action\MoveForumTopicsAction;
 use Drupal\aculta_forum\Service\ForumTopicMover;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentingStatus;
@@ -177,7 +178,60 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $access = $this->mover->access($node, $this->account);
     self::assertTrue($access->isAllowed());
 
-    $moved = $this->mover->move($nid, (int) $destination->id(), $this->account);
+    $second_node = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Second movable test topic',
+      'status' => 1,
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+      'field_aculta_categories' => ['target_id' => $source->id()],
+      'field_aculta_discussion' => ['status' => CommentingStatus::Open->value],
+      'field_autor_legado' => [],
+    ]);
+    $second_node->save();
+    $selection = [
+      'list' => [
+        [$nid, 'en', 'node', $nid],
+        [(int) $second_node->id(), 'en', 'node', (int) $second_node->id()],
+      ],
+      'exclude_mode' => FALSE,
+    ];
+    $action = new MoveForumTopicsAction(
+      ['destination_category' => (int) $destination->id()],
+      'aculta_forum_move_topics',
+      [],
+      $this->mover,
+      $this->container->get('entity_type.manager'),
+      $this->account,
+    );
+    $action->setContext($selection);
+    $results = $action->executeMultiple([$node, $second_node]);
+    self::assertCount(2, $results, 'VBO reports one result for each selected topic.');
+    self::assertArrayHasKey('message', $results[0]);
+    self::assertSame('status', $results[0]['type'] ?? 'status');
+    $moved = Node::load($nid);
+    self::assertNotNull($moved);
+    $moved_second = Node::load((int) $second_node->id());
+    self::assertNotNull($moved_second);
+    self::assertSame((int) $destination->id(), (int) $moved_second->get('field_aculta_categories')->target_id);
+
+    $oversized_node = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Oversized selection test topic',
+      'status' => 1,
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+      'field_aculta_categories' => ['target_id' => $source->id()],
+      'field_aculta_discussion' => ['status' => CommentingStatus::Open->value],
+      'field_autor_legado' => [],
+    ]);
+    $oversized_node->save();
+    $oversized_selection = [
+      'list' => array_map(static fn (int $id): array => [$id, 'en', 'node', $id], range(1, MoveForumTopicsAction::MAX_SELECTION + 1)),
+      'exclude_mode' => FALSE,
+    ];
+    $action->setContext($oversized_selection);
+    $oversized_results = $action->executeMultiple([$oversized_node]);
+    self::assertSame('error', $oversized_results[0]['type']);
+    self::assertSame((int) $source->id(), (int) Node::load($oversized_node->id())->get('field_aculta_categories')->target_id);
 
     self::assertSame($nid, (int) $moved->id());
     self::assertSame($uuid, $moved->uuid());
@@ -252,6 +306,20 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $original_category = (int) $node->get('field_aculta_categories')->target_id;
 
     self::assertTrue($this->mover->access($node, $this->account)->isForbidden());
+    $selection = ['list' => [[(int) $node->id(), 'en', 'node', (int) $node->id()]], 'exclude_mode' => FALSE];
+    $action = new MoveForumTopicsAction(
+      ['destination_category' => (int) $destination->id()],
+      'aculta_forum_move_topics',
+      [],
+      $this->mover,
+      $this->container->get('entity_type.manager'),
+      $this->account,
+    );
+    $action->setContext($selection);
+    self::assertTrue($action->access($node, $this->account, TRUE)->isForbidden());
+    $action_result = $action->execute($node);
+    self::assertSame('warning', $action_result['type']);
+    self::assertSame($original_category, (int) Node::load($node->id())->get('field_aculta_categories')->target_id);
     try {
       $this->mover->move((int) $node->id(), (int) $destination->id(), $this->account);
       self::fail('Historical topics must not be moved, including by administrators.');

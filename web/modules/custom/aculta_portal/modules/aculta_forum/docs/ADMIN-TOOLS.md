@@ -2,7 +2,7 @@
 
 `/painel-administrativo/forum` é o caminho administrativo padrão e canônico do Growroom420; a própria rota renderiza sua página, sem copiar conteúdo, incorporar telas ou redirecionar para caminhos de outras ferramentas. Os caminhos administrativos antigos e dispersos que davam acesso ao Fórum, atualmente sob `/painel-administrativo/conteudo/forum`, redirecionam para este painel central. A direção do redirecionamento é sempre do caminho antigo para `/painel-administrativo/forum`.
 
-A listagem dos tópicos e as filas de comentários têm rotas próprias na seção Fórum, ligadas pela navegação administrativa. Elas não são copiadas nem incorporadas à rota central e não aparecem na listagem genérica `/painel-administrativo/conteudo`.
+A listagem dos tópicos e as filas de comentários têm rotas próprias na seção Fórum, ligadas pela navegação administrativa. A lista de tópicos oferece mover em lote por VBO, limitado a 50 itens com confirmação; a Action revalida acesso e imutabilidade histórica para cada Node. Essas telas não são copiadas nem incorporadas à rota central e não aparecem na listagem genérica `/painel-administrativo/conteudo`.
 
 ## Ownership e acesso
 

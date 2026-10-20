@@ -1,7 +1,8 @@
 # Planejamento das ferramentas de movimento
 
-Estado: **movimento individual de tópico implementado no código, ainda sem
-homologação autenticada no Runtime; o formulário de mover comentário teve smoke
+Estado: **movimento individual e em lote de tópico implementados no código; o
+lote usa Views Bulk Operations 4.4.9 com limite 50, confirmação e Batch API,
+mas ainda não está habilitado no Runtime. O formulário de mover comentário teve smoke
 X11 autenticado de uma raiz pendente com subárvore ramificada e rejeição
 preservada, permanece
 desativado por padrão e ainda depende da homologação de integrações descritas
@@ -70,6 +71,25 @@ Runtime. O Kernel `ForumTopicMoverKernelTest` comprova em armazenamento real a
 preservação de NID, UUID, nova revisão, alias e Comment/CID, além do bloqueio do
 acervo histórico com permissões de administração. A permissão de `content_editor` só se efetiva com e-mail confirmado e
 não concede edição geral do bundle.
+
+#### Movimento em lote de tópicos (dev.118)
+
+A View administrativa usa a Action `aculta_forum_move_topics`, fornecida pelo
+VBO, apenas no display fixo de tópicos `aculta_forum_admin_topics`. A Action
+recebe até 50 seleções, apresenta a contagem, permite escolher uma categoria
+pública e conduz à confirmação padrão do VBO; o processamento usa Batch API em
+blocos de 10. A seleção pode atravessar páginas, mas a validação rejeita
+conjuntos acima de 50 antes da confirmação e a Action volta a aplicar o limite
+ao executar.
+
+Cada Node é validado pelo mesmo `ForumTopicMover` do fluxo individual: permissão
+específica, categoria de origem, Domain Fórum, Entity Access e bloqueio de
+`field_autor_legado`; o destino também precisa ser uma categoria pública visível
+e diferente da origem. Cada item é gravado como nova revisão do mesmo Node, e
+resultados de sucesso/recusa são agregados individualmente pelo VBO. O Kernel
+cobre dois tópicos e o bloqueio histórico. A ativação do VBO e da configuração
+da View no Runtime, e um smoke autenticado da seleção, confirmação e Batch API,
+permanecem pendentes.
 
 ### C. Mover comentário/resposta
 
@@ -305,10 +325,14 @@ depende de fechar os casos de concorrência e integração da matriz de testes.
 
 - [`views_bulk_operations`](https://www.drupal.org/project/views_bulk_operations)
   oferece lote com Batch API, confirmação, seleção entre páginas e Actions API;
-  upstream lista release estável 4.4.9 para Drupal 10.3/11 (consulta em
-  2026-10-19). Não está instalado no ACULTA. É opção futura para lotes em Views,
-  mas não substitui a operação transacional por Comment nem deve expor Actions,
-  filtros ou campos sem permissões e escopo fixos.
+  a release estável 4.4.9 declara suporte a Drupal `^10.3 || ^11`. Entrou como
+  dependência Composer do `aculta_forum` em dev.118. Seu papel é transportar a
+  seleção e o lote; não substitui autorização e revalidação por entidade nem a
+  lógica de movimento do Portal.
+- CTools/`ctools_views` permanece instalado, mas não participa desta interface:
+  ela é um display Page, sem bloco configurável por colocação nem condição
+  contextual. CTools não fornece seleção de linhas, Action API ou Batch API; VBO
+  é o mecanismo específico para esta capacidade.
 - `comment_mover` segue sem release estável Drupal 11; sua alpha de Drupal 9/10
   foi inspecionada no tarball 2.0.0-alpha1 (SHA-256
   `2fa3a4af65b43eb7855b7ae4c78da8368e425bcd4d10477e7f670fdd46510a91`). O
@@ -339,7 +363,7 @@ adicionadas dependências Composer.
 | Flag 5.1.1 | Ações por usuário para seguir/salvar entidades | Manter tipos e API Flag já instalados. Não criar tabela paralela de subscriptions/favorites. Notificação continua separada via Messenger. |
 | CTools 4.1.1 / `ctools_views` | Contexto/condições e configuração de colocação de Views | Usar plugins/API existentes quando o bloco exigir opções de colocação. Filtros de domínio, bundle e access permanecem fixos; nenhum código equivalente é necessário para o mover individual. |
 | History 1.0.0, Search API 1.41.0 e Group 3.3.5 | Leitura por usuário, índices de busca e membresia/contexto | Reusar APIs existentes; movimentação precisa de adaptadores e invalidadores explícitos antes de ativar, sem replicar histórico, índices ou membership. |
-| Views Bulk Operations | Ações em lote com Batch/Actions API | Não instalado. Candidato futuro apenas após prévia, limites, access por linha, relatório parcial e rollback operacional; nunca usar como substituto da transação individual. |
+| Views Bulk Operations 4.4.9 | Ações em lote com Batch/Actions API, confirmação e seleção entre páginas | Dependência do `aculta_forum` para mover até 50 tópicos; destino, permissão e histórico são revalidados por Node. Runtime ainda não habilitado. Nunca substitui a lógica individual. |
 
 #### Verificação de integração Flag e Search API
 
@@ -428,6 +452,6 @@ resultado devem indicar sucesso/falha sem revelar destino inacessível.
   mensagens acessíveis e ausência de vazamento de título/conteúdo do destino.
 
 A ferramenta individual de mover comentários chegou ao código em dev.33;
-operações em lote, split e merge continuam em dev.12/etapas posteriores. Até
+lote de tópicos está em dev.118; lote de comentários, split e merge continuam em dev.12/etapas posteriores. Até
 testes funcionais, integração e documentação de operação/rollback estarem
 completos, os controles não devem aparecer no Runtime.

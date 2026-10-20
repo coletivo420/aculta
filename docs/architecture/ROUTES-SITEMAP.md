@@ -217,6 +217,10 @@ correspondente e sua proteção deve ser mantida no dono da feature.
 | --- | --- | --- | --- |
 | `main.aculta` | `/webhook/{endpoint}` | Recepção de evento de integração/gateway | Padrão genérico; caminhos concretos definidos pelo módulo ativo e configuração. Nunca presumir acesso público irrestrito. |
 | `main.aculta` | `/admin/**` | Administração técnica Drupal Core/contrib | Rotas individuais variam por módulo e continuam sob access upstream; navegação humana ACULTA usa `/painel-administrativo/**`. |
+| `main.aculta` | `/views-bulk-operations/execute/{view_id}/{display_id}` | Inicialização de operações em lote de uma View | Rota técnica condicional ao VBO; a própria View exige access e a Action revalida seleção, permissão e cada tópico. |
+| `main.aculta` | `/views-bulk-operations/ajax/{view_id}/{display_id}` | Atualização da seleção entre páginas de uma View | Rota técnica condicional ao VBO; acesso passa pelo display da View e usa seleção temporária privada do usuário. |
+| `main.aculta` | `/views-bulk-operations/configure/{view_id}/{display_id}` | Configuração de uma Action VBO | Rota técnica condicional ao VBO; access do display da View. |
+| `main.aculta` | `/views-bulk-operations/confirm/{view_id}/{display_id}` | Confirmação de execução de uma Action VBO | Rota técnica condicional ao VBO; access do display da View. |
 | `main.aculta` | `/aculta_portal_cep/{cep}` | Consulta AJAX de CEP | Condicional ao submódulo CEP; endpoint técnico com resposta controlada. |
 | `main.aculta` | `/integracoes/pagamentos/{commerce_payment_gateway}/notificacao` | Notificação enviada pelo gateway de pagamento | Callback técnico, sem navegação humana; endereço declarado por ambiente e validado pelo gateway. |
 | `conta.aculta` | `/oauth/{provedor}/retorno` | Callback de autenticação OAuth | Endpoint técnico, restrito a provedores e URIs configurados. |

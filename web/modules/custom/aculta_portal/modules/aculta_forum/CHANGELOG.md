@@ -1,3 +1,21 @@
+## `0.1.0-dev.118` — mover tópicos em lote com VBO
+
+- Adicionada a dependência estável `drupal/views_bulk_operations:^4.4` e uma
+  Action própria no display administrativo de tópicos. A pessoa seleciona até
+  50 itens, escolhe uma categoria, revisa a lista e confirma; o processamento
+  usa Batch API com lotes de 10 e resultado por tópico.
+- Cada item volta a validar categoria, permissão `move aculta forum topics`,
+  Domain e imutabilidade de `field_autor_legado` por `ForumTopicMover`. Itens
+  que mudaram ou não podem ser movidos geram aviso individual; não há edição em
+  lote de outros campos nem remoção/recriação de Node.
+- Kernel `ForumTopicMoverKernelTest` cobre dois Nodes pela Action e recusa de
+  tópico histórico; testes da View validam a configuração fixa. No Runtime de
+  teste, VBO foi habilitado, somente a View de tópicos foi importada parcialmente
+  e o cache reconstruído; RouteProvider, handler e Action foram descobertos com
+  seleção vazia, sem dados criados. GET administrativo anônimo retorna 403. A
+  tradução pt-br não pôde ser baixada e a confirmação/execução autenticada em
+  navegador segue pendente. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.117` — painel central do Fórum geral
 
 - `/painel-administrativo/forum` passa a ser o painel de entrada do Growroom420,
