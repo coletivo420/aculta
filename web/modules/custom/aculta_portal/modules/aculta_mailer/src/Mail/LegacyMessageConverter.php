@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Mail;
 
+use Drupal\aculta_mailer\Webhook\BrevoWebhook;
+use Symfony\Component\Mailer\Header\TagHeader;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Part\DataPart;
@@ -71,6 +73,10 @@ final class LegacyMessageConverter {
     }
     if (isset($headers['X-Priority'])) {
       $email->getHeaders()->addTextHeader('X-Priority', (string) $headers['X-Priority']);
+    }
+    // Tag do provedor (Brevo): leva o correlation ID de volta nos eventos de entrega (ver BrevoWebhook).
+    if (isset($headers['X-Aculta-Mail-ID']) && is_scalar($headers['X-Aculta-Mail-ID']) && $headers['X-Aculta-Mail-ID'] !== '') {
+      $email->getHeaders()->add(new TagHeader(BrevoWebhook::TAG_PREFIX . $headers['X-Aculta-Mail-ID']));
     }
     foreach ($headers as $name => $value) {
       if (in_array(strtolower((string) $name), self::SKIPPED, TRUE) || !is_scalar($value)) {

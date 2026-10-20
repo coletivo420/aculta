@@ -4,4 +4,5 @@ summary_enabled: true
 alerts_admins: true
 summary_admins: true
 brevo_enabled: true
+sending_enabled: true
 

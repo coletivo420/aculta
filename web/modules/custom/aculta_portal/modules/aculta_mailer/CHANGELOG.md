@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.34 — webhook do Brevo, lista de supressão e chave geral de envio — 2026-10-20
+
+- Webhook do Brevo (`BrevoWebhook`): autenticação por token de portador (`BREVO_WEBHOOK_TOKEN`, guardado no arquivo de segredos). O Brevo não assina eventos; sem token configurado, todo pedido é recusado. Mapeia `delivered`, `deferred`, `soft_bounce`, `hard_bounce`, `invalid_email`, `blocked` e `spam`; os demais eventos são ignorados.
+- Correlação: o envio leva `aculta-mail:<correlation_id>` como tag (`X-Tag`), e o Brevo devolve a tag no evento. Sem a tag, o evento não é aplicado.
+- Lista de supressão (`MailSuppression`): hard bounce, endereço inválido e spam suprimem o destinatário pelo HMAC que o registro já guarda. Envio para endereço suprimido fica cancelado com `suprimido`. Limpar a lista é ação na página Entrega.
+- Chave geral de envio: `sending_enabled` na página Entrega. Desligada, nada é enviado e o registro mostra `envio_suspenso`.
+- Rastreamento (F11): não implementado. Não há parâmetro de rastreamento por mensagem na API do Brevo; a conta precisa ser conferida no painel.
+- Validação no Runtime de teste: endpoint recusa sem token (403) e aceita com token (200); webhook cadastrado no Brevo para o host de teste (tipo transacional, token bearer); envio de teste aceito, evento de devolução aplicado (registro `bounced`, código `provedor_hard`), novo envio bloqueado por supressão, lista limpa; chave geral desligada cancela o envio e foi religada.
+- Pendente: webhook de produção (endereço de produção no painel do Brevo, quando o responsável decidir); DKIM; reenvio de falha.
+
 ## 0.1.0-dev.33 — exportação CSV do registro e SPF/DMARC no diagnóstico — 2026-10-20
 
 - Exportação CSV do registro: `.../registro/exportar?dias=1|7|30` (padrão 30). Colunas: data, tipo, estado, transporte, tentativas, código e correlação. Sem destinatário nem texto de erro. Separador `;` e BOM para o Excel. Resposta com `noindex`.

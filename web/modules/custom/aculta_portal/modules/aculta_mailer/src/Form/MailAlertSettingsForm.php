@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Form;
 
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
+use Drupal\aculta_mailer\Delivery\MailSuppression;
 use Drupal\aculta_mailer\Monitor\MailMonitor;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
@@ -21,6 +22,7 @@ final class MailAlertSettingsForm extends ConfigFormBase {
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typedConfigManager,
     private readonly MailMonitor $monitor,
+    private readonly MailSuppression $suppression,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }
@@ -29,7 +31,12 @@ final class MailAlertSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('config.factory'), $container->get('config.typed'), $container->get(MailMonitor::class));
+    return new static(
+      $container->get('config.factory'),
+      $container->get('config.typed'),
+      $container->get(MailMonitor::class),
+      $container->get(MailSuppression::class),
+    );
   }
 
   /**
@@ -55,6 +62,12 @@ final class MailAlertSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Ligar e desligar'),
       '#open' => TRUE,
+      'sending_enabled' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Envio geral ligado (chave geral)'),
+        '#default_value' => $config->get('sending_enabled') !== FALSE,
+        '#description' => $this->t('Desligado, nenhum e-mail do sistema é enviado. As mensagens ficam no registro como suspensas.'),
+      ],
       'brevo_enabled' => [
         '#type' => 'checkbox',
         '#title' => $this->t('Transporte Brevo ligado'),
@@ -66,6 +79,19 @@ final class MailAlertSettingsForm extends ConfigFormBase {
         '#title' => $this->t('Monitoramento IMAP ligado (bounces e DMARC)'),
         '#default_value' => $this->monitor->enabled(),
         '#description' => $this->t('Só liga com servidor, usuário e senha preenchidos na página de monitoramento IMAP.'),
+      ],
+    ];
+    $form['suppression'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Lista de supressão'),
+      '#open' => TRUE,
+      'info' => [
+        '#markup' => '<p>' . $this->t('Endereços suprimidos: @n. Entram por devolução permanente, endereço inválido ou reclamação de spam. Guardam só o identificador do endereço, não o endereço.', ['@n' => $this->suppression->count()]) . '</p>',
+      ],
+      'clear_suppression' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Limpar a lista de supressão ao salvar'),
+        '#description' => $this->t('Use quando um endereço foi suprimido por engano ou o problema da caixa foi resolvido. Não há desfazer por endereço.'),
       ],
     ];
     $form['bounce_address'] = [
@@ -147,7 +173,11 @@ final class MailAlertSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    if ($form_state->getValue('clear_suppression')) {
+      $this->suppression->clear();
+    }
     $this->config(DeliverySettings::CONFIG)
+      ->set('sending_enabled', (bool) $form_state->getValue('sending_enabled'))
       ->set('brevo_enabled', (bool) $form_state->getValue('brevo_enabled'))
       ->set('bounce_address', strtolower(trim((string) $form_state->getValue('bounce_address'))))
       ->set('alerts_enabled', (bool) $form_state->getValue('alerts_enabled'))

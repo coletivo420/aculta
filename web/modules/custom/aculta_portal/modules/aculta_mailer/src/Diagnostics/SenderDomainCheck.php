@@ -24,7 +24,7 @@ final class SenderDomainCheck {
    * Verifica SPF e DMARC do domínio.
    *
    * @param string $domain
-   *   Domínio do remetente (ex.: aculta.org).
+   *   Domínio do remetente (ex.: exemplo.invalid).
    *
    * @return array{domain: string, spf: string, dmarc: string}
    *   Domínio e classificação de SPF e de DMARC.

@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_mailer\Unit;
 
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\AdministratorRecipients;
+use Drupal\aculta_mailer\Delivery\MailSuppression;
 use Drupal\aculta_mailer\Monitor\BounceParser;
 use Drupal\aculta_mailer\Monitor\DmarcReportParser;
 use Drupal\aculta_mailer\Monitor\ImapClientInterface;
@@ -89,7 +90,8 @@ MAIL;
     $configFactory->method('get')->willReturn($config);
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(self::NOW);
-    $applier = new DeliveryEventApplier($this->createMock(EntityTypeManagerInterface::class));
+    $suppression = new MailSuppression($this->createMock(StateInterface::class), $this->createMock(TimeInterface::class));
+    $applier = new DeliveryEventApplier($this->createMock(EntityTypeManagerInterface::class), $suppression);
     return new MailMonitor(
       $configFactory,
       $state,

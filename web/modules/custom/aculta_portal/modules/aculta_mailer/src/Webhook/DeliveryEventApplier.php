@@ -4,17 +4,26 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Webhook;
 
+use Drupal\aculta_mailer\Delivery\MailSuppression;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Aplica um evento validado ao registro do envio, somente quando a transição é permitida (ver MailStatus).
+ *
+ * Devolução permanente, endereço inválido e spam também suprimem o destinatário para envios futuros.
  */
 final class DeliveryEventApplier {
 
+  /**
+   * Códigos que suprimem o destinatário: devolução permanente, endereço inválido e reclamação de spam.
+   */
+  private const SUPPRESSING_CODES = ['hard', 'invalid', 'spam'];
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly MailSuppression $suppression,
   ) {}
 
   /**
@@ -41,6 +50,9 @@ final class DeliveryEventApplier {
       $log->set('error_code', 'provedor_' . $event->code);
     }
     $log->save();
+    if (in_array($event->code, self::SUPPRESSING_CODES, TRUE) && $log->get('recipient_hash')->value) {
+      $this->suppression->add((string) $log->get('recipient_hash')->value);
+    }
     return TRUE;
   }
 

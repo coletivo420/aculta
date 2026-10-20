@@ -7,6 +7,7 @@ namespace Drupal\aculta_mailer\Api;
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
+use Drupal\aculta_mailer\Delivery\MailSuppression;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpReplyClassifier;
@@ -53,6 +54,7 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly MailAlerts $alerts,
     private readonly QuotaSignal $quotaSignal,
+    private readonly MailSuppression $suppression,
   ) {}
 
   /**
@@ -72,6 +74,18 @@ final class AcultaMailer implements AcultaMailerInterface {
         '@id' => $message->correlationId,
       ]);
       return SendResult::failed(DeliveryError::Permanent, NULL);
+    }
+
+    // Chave geral desligada: nada é enviado, e o registro mostra a mensagem como suspensa.
+    if ($this->configFactory->get(DeliverySettings::CONFIG)->get('sending_enabled') === FALSE) {
+      $this->log->record($message, MailStatus::Cancelled, 1, $transport ?? self::DEFAULT_TRANSPORT, 'envio_suspenso');
+      return SendResult::cancelled();
+    }
+
+    // Destinatário na lista de supressão (devolução permanente, endereço inválido ou spam).
+    if ($this->suppression->has($this->log->hashRecipient($message->to))) {
+      $this->log->record($message, MailStatus::Cancelled, 1, $transport ?? self::DEFAULT_TRANSPORT, 'suprimido');
+      return SendResult::cancelled();
     }
 
     $policy = $this->policies->resolve($message->type);

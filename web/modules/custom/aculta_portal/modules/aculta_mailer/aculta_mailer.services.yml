@@ -5,7 +5,7 @@ services:
 
   aculta_mailer.mailer:
     class: Drupal\aculta_mailer\Api\AcultaMailer
-    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal']
+    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal', '@Drupal\aculta_mailer\Delivery\MailSuppression']
 
   logger.channel.aculta_mailer:
     parent: logger.channel_base
@@ -71,7 +71,17 @@ services:
 
   Drupal\aculta_mailer\Webhook\DeliveryEventApplier:
     class: Drupal\aculta_mailer\Webhook\DeliveryEventApplier
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@Drupal\aculta_mailer\Delivery\MailSuppression']
+
+  Drupal\aculta_mailer\Webhook\BrevoWebhook:
+    class: Drupal\aculta_mailer\Webhook\BrevoWebhook
+    arguments: ['@?Drupal\aculta_mailer\Transport\SecretProviderInterface']
+    tags:
+      - { name: aculta_mailer.webhook_provider }
+
+  Drupal\aculta_mailer\Delivery\MailSuppression:
+    class: Drupal\aculta_mailer\Delivery\MailSuppression
+    arguments: ['@state', '@datetime.time']
 
   Drupal\aculta_mailer\Transport\BrevoSecretTransportFactory:
     class: Drupal\aculta_mailer\Transport\BrevoSecretTransportFactory

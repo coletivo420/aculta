@@ -26,3 +26,6 @@ aculta_mailer.delivery:
     brevo_enabled:
       type: boolean
       label: 'Transporte Brevo ligado'
+    sending_enabled:
+      type: boolean
+      label: 'Envio geral ligado (chave geral)'
