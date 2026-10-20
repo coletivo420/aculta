@@ -4,7 +4,9 @@ Sistema único de imagens do site ACULTA. Todo uso de imagem passa por ele: cat�
 renderização responsiva, modelos de imagem no texto, compressão, leitura de dimensões, exclusão controlada, ingestão de
 origem externa, auditoria, quarentena e comparação visual.
 
-**Versão:** 0.1.0-dev.25 (ver [CHANGELOG](CHANGELOG.md)).
+| Estado do submódulo | Versão atual | Próximas fases | Classificação |
+| --- | --- | --- | --- |
+| Em desenvolvimento | `0.1.0-dev.27` ([CHANGELOG](CHANGELOG.md)) | Confirmar binários e compatibilidade na Hostinger; concluir a integração/importação Growroom conforme bloqueios listados em [PLANO](docs/PLANO.md) e [IMPORTAÇÃO](docs/IMPORTACAO-GROWROOM.md); depois avaliar o RC | **Dev**, não `preRC`: há pendências funcionais e operacionais além da validação visual. |
 **Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
 **Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
 **Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
