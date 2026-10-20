@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.11 — política de envio em plugins (F5) — 2026-10-20
+
+- Hierarquia global → tipo (`aculta_mailer.policy`), com validação por ajuste. Valor inválido não apaga o da camada anterior.
+- Ajustes em plugins: `transport`, `reply_to`, `priority` e `skip`. A suspensão registra `cancelled` e não reagenda.
+- Testes Kernel: hierarquia e validação, contratos dos ajustes, suspensão e remetente/prioridade no envio. 80 testes no módulo.
+- Correção encontrada pelo teste: a fusão de camadas apagava o valor global antes da validação. Corrigida: aplicação em sequência.
+- Runtime: sem política configurada, a resolução é vazia e o envio segue como antes.
+
 ## 0.1.0-dev.10 — envelope HTML com identidade ACULTA (F4) — 2026-10-20
 
 - Os e-mails saem com o envelope HTML do tema (`aculta420` 0.6.0-dev.117): logo, cores da marca e rodapé. O texto dos layouts continua como dados.
