@@ -82,3 +82,47 @@ para diretório temporário, sem alterar `config/sync`. Comparação semântica,
    (retenção, não validade do link). Direção a decidir: texto do banco ou do versionado.
 
 Nenhuma importação foi feita. O backup e a exportação ficam no scratchpad da sessão.
+
+## Sincronização de config/sync: executada (2026-10-20)
+
+Decisões do responsável aplicadas:
+
+- **Módulos e permissões do banco:** `config/sync` atualizado a partir da exportação do Runtime (131 arquivos com
+  mudança semântica real; 160 objetos só no banco incluídos; 293 arquivos com conteúdo semântico igual foram
+  mantidos como estavam no Git, sem ruído de formatação).
+- **Hierarquia de papéis:** a decisão do `config/sync` foi aplicada ao Runtime com importação parcial
+  (`config:import --partial`), que cria e atualiza sem apagar. Gate `validate-role-hierarchy` passa.
+- **Três objetos só no versionado:** `aculta_forum.settings` e `agreement.agreement.default` importados ao Runtime.
+  `ds.settings` **não** foi importado: depende do módulo `ds`, que não está habilitado no Runtime. Fica como resíduo
+  no versionado até a decisão sobre o módulo `ds`.
+
+Mantidos do repositório, de propósito (não sobrescritos pela exportação):
+
+- Dependentes de ambiente (`environment_bound`): domínios de produção (`domain.record.*`), gateway Mercado Pago,
+  `system.site` e aliases. Cada ambiente tem valores próprios; o deployer transforma no build.
+- `email_confirmer.settings`: diferença de texto dos e-mails de confirmação, sem decisão. Mantida como está no
+  repositório.
+- `aculta_portal.role_hierarchy`: igual ao repositório após a importação.
+
+Resultado do `config:status` no Runtime depois da sincronização: 37 diferenças, de 326 antes.
+Entre elas, há 11 de ambiente (esperadas: o Runtime é de teste) e `email_confirmer.settings` (decisão pendente).
+Duas inconsistências da própria listagem, não resolvidas:
+
+- `agreement.agreement.default` está no banco, mas o status ainda o marca como "só no diretório de sincronização".
+- `filter.format.basic_html` não existe no banco nem em `config/sync`, e o status o marca como "só no diretório de
+  sincronização". A listagem do status não é confiável para esses dois objetos. Investigar antes de qualquer conclusão
+  sobre eles.
+
+Verificações depois da sincronização: `drush cr` e `updatedb:status` (sem pendências); `aculta-deployer check`,
+`domains`, `cookies` e os testes do deployer passam; gates de papéis, endereços de ambiente, segredos, links de uso
+único e transporte de e-mail passam; site responde 200 e as telas administrativas do mailer respondem.
+
+## Pendências (produção incluída)
+
+Produção **não implementada**. Passos em "Produção: o que falta" acima, mais:
+
+- Decidir `email_confirmer.settings` (texto do banco ou do repositório).
+- Decidir o módulo `ds` (habilitar ou remover `ds.settings` do repositório).
+- Investigar a listagem do `config:status` para `agreement.agreement.default` e `filter.format.basic_html`.
+- Rastreamento com consentimento (F11): texto dos termos de uso e da política de privacidade.
+- Renovação do SMTP2GO (contingência), esgotado no mês.
