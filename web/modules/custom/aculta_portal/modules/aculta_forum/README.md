@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.115**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.116**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
 de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
@@ -46,6 +46,7 @@ motor novo segue por contexto e fases.
 - [Pesquisa de módulos contrib e critérios para portar código](docs/CONTRIB-PORT-RESEARCH.md)
 - [Experiência e ferramentas Discourse](docs/DISCOURSE-EXPERIENCE.md)
 - [Planejamento de movimentação de tópicos e comentários](docs/MOVE-TOOLS.md)
+- [Administração do Fórum geral](docs/ADMIN-TOOLS.md)
 - [Pesquisa](docs/PESQUISA.md)
 - [Busca pública](docs/SEARCH.md)
 - [Plano de retirada/migração](docs/MIGRATION-REMOVAL.md)
@@ -98,10 +99,11 @@ conta autenticada. Ele permanece oculto sem uma mensagem marcada; usa o mesmo
 salto de progresso e não mantém contagem, timestamp ou histórico paralelo.
 ## Administração contextual de comentários
 
-A View `aculta_forum_admin_comments` tem página geral e três páginas de estado:
-`/painel-administrativo/conteudo/forum/comentarios/publicados`,
-`/painel-administrativo/conteudo/forum/comentarios/rejeitados` e
-`/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao`.
+A View `aculta_forum_admin_comments` tem página geral e três páginas de estado
+sob a seção própria do Fórum:
+`/painel-administrativo/forum/comentarios/publicados`,
+`/painel-administrativo/forum/comentarios/rejeitados` e
+`/painel-administrativo/forum/comentarios/aguardando-moderacao`.
 Todos os displays exigem `administer comments` e herdam os filtros fixos do
 Fórum público (`aculta_discussion_post`, `field_aculta_discussion`, Node
 `aculta_forum_topic`).

@@ -45,3 +45,11 @@ aculta_forum.comment_move:
     parameters:
       comment:
         type: 'entity:comment'
+
+aculta_forum.settings:
+  path: '/painel-administrativo/forum/configuracoes'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumSettingsForm'
+    _title: 'Configurações do Fórum'
+  requirements:
+    _permission: 'administer aculta forum settings'

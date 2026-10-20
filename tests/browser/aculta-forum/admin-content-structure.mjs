@@ -1,5 +1,5 @@
-// Read-only X11 smoke test for the dedicated Forum admin section.
-// It uses the existing administrator and performs GET navigations only.
+// Bounded X11 smoke test for the dedicated Forum admin section.
+// It uses GET navigation and submits only the unchecked safe settings default.
 import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { isAbsolute, resolve } from 'node:path';
@@ -24,6 +24,12 @@ if (!mainEntry?.test_host || !accountEntry?.test_host || resolve(output).startsW
 }
 const base = `https://${mainEntry.test_host}`;
 const accountBase = `https://${accountEntry.test_host}`;
+const readForumSettings = () => JSON.parse(execFileSync('php', [
+  'vendor/drush/drush/drush.php',
+  'php:eval',
+  '$config = Drupal::configFactory()->getEditable("aculta_forum.settings"); echo json_encode(["new" => $config->isNew(), "data" => $config->getRawData()]);',
+  `--uri=${base}`,
+], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'], timeout: 30000 }).toString().trim());
 process.umask(0o077);
 mkdirSync(output, { recursive: true, mode: 0o700 });
 chmodSync(output, 0o700);
@@ -51,6 +57,8 @@ let bidiId = 0;
 let browserSession;
 let context;
 let bidi;
+let initialForumSettings;
+let forumSettingsSaveAttempted = false;
 const bidiCommand = (method, params = {}) => new Promise((resolveCommand, rejectCommand) => {
   const id = ++bidiId;
   pendingBidi.set(id, { resolveCommand, rejectCommand });
@@ -65,6 +73,10 @@ const go = async (pathname) => {
 };
 
 try {
+  initialForumSettings = readForumSettings();
+  if (!initialForumSettings.new && initialForumSettings.data.comment_move_enabled !== false) {
+    throw new Error('O smoke exige configuração ausente ou comment_move_enabled=false; nenhuma configuração foi alterada.');
+  }
   // Drush one-time login token stays in process memory and is never printed or saved.
   const login = execFileSync('php', [
     'vendor/drush/drush/drush.php', 'uli', '--uid=1', '--no-browser', `--uri=${accountBase}`,
@@ -116,9 +128,21 @@ try {
   check('Seção própria do Fórum responde sem erro', info.path === '/painel-administrativo/forum' && (!info.status || info.status === 200) && info.main && !info.serverError, JSON.stringify(info));
   const sectionMenu = await execute(`return [...document.querySelectorAll('a')].some(a=>a.pathname==='/painel-administrativo/forum' && a.innerText.replace(/\\s+/g,' ').trim()==='Fórum')`);
   check('Menu administrativo oferece a seção própria Fórum', sectionMenu);
+  const settingsMenu = await execute(`return [...document.querySelectorAll('a')].some(a=>a.pathname==='/painel-administrativo/forum/configuracoes' && a.innerText.replace(/\\s+/g,' ').trim()==='Configurações do Fórum')`);
+  check('Menu do Fórum oferece as configurações próprias', settingsMenu);
   const forumTabs = await execute(`const expected=['Comentários publicados','Comentários rejeitados','Aguardando moderação']; const links=[...document.querySelectorAll('a')].map(a=>({text:a.innerText.replace(/\\s+/g,' ').trim(),path:a.pathname})); return JSON.stringify(expected.map(label=>({label,found:links.some(link=>link.text===label)})));`);
   check('A aba Fórum expõe as três filas de comentários', JSON.parse(forumTabs).every((tab) => tab.found), forumTabs);
   writeFileSync(resolve(output, 'forum-topicos.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
+
+  info = await go('/painel-administrativo/forum/configuracoes');
+  const settings = await execute(`const input=document.querySelector('input[name="comment_move_enabled"]'); return {input:!!input,checked:input?.checked??null,description:document.body.innerText.includes('acervo histórico nunca são movidos'),title:document.body.innerText.includes('Permitir mover comentários entre tópicos públicos')};`);
+  check('Configurações próprias do Fórum abrem e mantêm movimento de comentários desligado', info.status === 200 && info.path === '/painel-administrativo/forum/configuracoes' && !info.serverError && settings.input && settings.checked === false && settings.description && settings.title, JSON.stringify({info, settings}));
+  writeFileSync(resolve(output, 'forum-configuracoes.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
+  forumSettingsSaveAttempted = true;
+  await execute(`document.querySelector('form')?.requestSubmit(); return true;`);
+  await wait(1200);
+  const savedSettings = await execute(`const nav=performance.getEntriesByType('navigation')[0]; const input=document.querySelector('input[name="comment_move_enabled"]'); return {path:location.pathname,status:nav?.responseStatus||null,checked:input?.checked??null,serverError:/Internal Server Error|The website encountered an unexpected error/i.test(document.body?.innerText||'')};`);
+  check('Salvar mantém desabilitado o movimento de comentários', savedSettings.path === '/painel-administrativo/forum/configuracoes' && (!savedSettings.status || savedSettings.status === 200) && savedSettings.checked === false && !savedSettings.serverError, JSON.stringify(savedSettings));
 
   for (const [pathname, label] of [
     ['/painel-administrativo/forum/comentarios', 'Comentários'],
@@ -175,6 +199,24 @@ try {
 finally {
   if (browserSession) await request('DELETE', `/session/${browserSession}`).catch(() => {});
   if (bidi?.readyState === WebSocket.OPEN) bidi.close();
+  if (initialForumSettings?.new && forumSettingsSaveAttempted) {
+    try {
+      const current = readForumSettings();
+      if (!current.new && current.data.comment_move_enabled === false && Object.keys(current.data).length === 1) {
+        execFileSync('php', [
+          'vendor/drush/drush/drush.php',
+          'config:delete',
+          'aculta_forum.settings',
+          '--yes',
+          `--uri=${base}`,
+        ], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'], timeout: 30000 });
+      }
+      check('Configuração ausente antes do smoke foi restaurada', readForumSettings().new);
+    }
+    catch (error) {
+      check('Configuração ausente antes do smoke foi restaurada', false, error.message);
+    }
+  }
   const passed = checks.filter((item) => item.pass).length;
   writeFileSync(resolve(output, 'results.json'), JSON.stringify({ host: mainEntry.test_host, display, checks, passed, total: checks.length }, null, 2), { mode: 0o600 });
   console.log(`${passed}/${checks.length} verificações administrativas passaram; evidências em ${output}.`);

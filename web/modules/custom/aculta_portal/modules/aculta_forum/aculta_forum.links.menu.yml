@@ -21,6 +21,12 @@ aculta_forum.admin_topic_type:
   parent: aculta_forum.admin
   weight: 20
 
+aculta_forum.admin_settings:
+  title: 'Configurações do Fórum'
+  route_name: aculta_forum.settings
+  parent: aculta_forum.admin
+  weight: 25
+
 aculta_forum.admin_reports:
   title: 'Denúncias'
   route_name: aculta_user.denuncias_forum

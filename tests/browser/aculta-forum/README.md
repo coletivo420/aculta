@@ -66,8 +66,13 @@ somente leitura; a suíte encerra sua própria sessão WebDriver ao terminar.
 
 `admin-content-structure.mjs` autentica temporariamente o uid 1 com um link
 único gerado por `drush uli --no-browser` no host ACCOUNT, depois confirma a
-sessão compartilhada e navega somente por GET no MAIN de teste. Não salva
-configuração, conteúdo ou comentários. Verifica `/painel-administrativo/conteudo`
+sessão compartilhada e navega no MAIN de teste. Não grava conteúdo ou
+comentários. Também submete a configuração de movimento com a caixa desmarcada
+para validar Form API. Antes, exige a opção ausente ou `false`; se a configuração
+estava ausente, remove somente o item `aculta_forum.settings` criado pelo próprio
+smoke e confirma que o estado ausente foi restaurado. Se já existia como `false`,
+não a remove. Recusa executar quando o movimento estiver habilitado.
+Verifica `/painel-administrativo/conteudo`
 sem a aba nem tópicos do Fórum, a seção `/painel-administrativo/forum`, as filas
 de comentários publicados, rejeitados e aguardando moderação, a área consolidada
 da Revista e os sete caminhos antigos do Fórum retornando 404. Confirma também a

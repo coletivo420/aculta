@@ -70,6 +70,32 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Forum-only settings use a dedicated permission and remain fail-closed.
+   */
+  public function testForumSettingsAdministrationIsDedicatedAndFailClosed(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $routes = Yaml::parseFile($module_path . '/aculta_forum.routing.yml');
+    $menu = Yaml::parseFile($module_path . '/aculta_forum.links.menu.yml');
+    $permissions = Yaml::parseFile($module_path . '/aculta_forum.permissions.yml');
+    $install = Yaml::parseFile($module_path . '/config/install/aculta_forum.settings.yml');
+    $sync = Yaml::parseFile($repository_path . '/config/sync/aculta_forum.settings.yml');
+    $editor = Yaml::parseFile($repository_path . '/config/sync/user.role.content_editor.yml');
+    $form = file_get_contents($module_path . '/src/Form/ForumSettingsForm.php');
+
+    self::assertSame('/painel-administrativo/forum/configuracoes', $routes['aculta_forum.settings']['path']);
+    self::assertSame('administer aculta forum settings', $routes['aculta_forum.settings']['requirements']['_permission']);
+    self::assertTrue($permissions['administer aculta forum settings']['restrict access']);
+    self::assertSame('aculta_forum.settings', $menu['aculta_forum.admin_settings']['route_name']);
+    self::assertSame(FALSE, $install['comment_move_enabled']);
+    self::assertSame($install, $sync);
+    self::assertNotContains('administer aculta forum settings', $editor['permissions']);
+    self::assertStringContainsString("'#config_target' => 'aculta_forum.settings:comment_move_enabled'", $form);
+    self::assertStringContainsString('acervo histórico nunca são movidos', $form);
+    self::assertStringNotContainsString('\\Drupal::', $form);
+  }
+
+  /**
    * The public topic View consumes only the Core latest commenter account ID.
    */
   public function testPublicTopicViewUsesHiddenCoreLatestCommenterField(): void {

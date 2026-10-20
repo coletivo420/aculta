@@ -1,3 +1,25 @@
+## dev.116 — configuração específica do Growroom420
+
+- Unit `ForumTopicDisplayConfigTest`: 19 testes/246 assertions PASS; PHPCS
+  Drupal/DrupalPractice, PHP lint e `node --check` PASS. PHP CLI 8.4.26 está
+  abaixo da baseline 8.5. Gates Drupal 11+,
+  mapa módulo/tema, slugs, packages e `git diff --check` PASS.
+- `ForumSettingsForm` usa `ConfigFormBase` e `#config_target` Core; rota exige
+  `administer aculta forum settings` (`restrict access`) e o papel
+  `content_editor` não recebe a permissão. Install e Config Sync permanecem
+  equivalentes com `comment_move_enabled: false`.
+- Runtime `toca`: hostname, checkout, branch, URI e banco conferidos; `drush cr`
+  PASS. Firefox ESR/X11 autenticado: 31/31; rota e formulário 200, menu inclui
+  Configurações do Fórum, checkbox desmarcado e POST Form API mantém `false`;
+  acesso anônimo retorna 403. `aculta_forum.settings` estava ausente; o smoke
+  criou somente `comment_move_enabled: false`, verificou o resultado e removeu o
+  item para restaurar exatamente a ausência inicial. EntityQuery final: 0 Nodes
+  `aculta_forum_topic`, 0 Comments `aculta_discussion_post`.
+- Capturas privadas 0600 em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev116-20261020/`.
+  RUNTIME STATUS: PASS para rota, access e gravação do estado seguro; habilitar
+  o movimento de comentários deliberadamente não foi testado.
+
 # Matriz de testes por fase
 
 ## dev.115 — painel administrativo próprio do Fórum geral

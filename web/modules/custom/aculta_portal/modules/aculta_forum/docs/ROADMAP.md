@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.116` | Configuração própria na seção do Fórum | `ForumSettingsForm` Core em `/painel-administrativo/forum/configuracoes`, permissão restrita própria e entrada no menu Growroom. PHPUnit 19/246 e PHPCS PASS; smoke Firefox/X11 31/31, tela 200, checkbox `false`, POST confirmou persistência e anônimo 403. Config Runtime ausente foi restaurada ausente; install/sync false; 0 tópicos/Comments. RUNTIME STATUS: PASS para rota, access e gravação do estado seguro; habilitar movimento segue sem teste. |
 | `0.1.0-dev.115` | Seção administrativa própria do Growroom420 | Código e config ativa migrados para `/painel-administrativo/forum`; menu lateral liga ao View de tópicos, categorias, bundle, denúncias e configuração compartilhada User. `drush cr` PASS; rotas/URLs/tarefas locais e access manager UID 1 PASS. Firefox ESR/X11 autenticado GET-only: 27/27, raiz e filas 200, sete caminhos antigos 404, Conteúdo sem a aba do Fórum; Revista segue em sua área. Em 390 px, 3 px de overflow restrito à tabela responsiva vazia; 768 px sem overflow. Fórum permaneceu vazio. RUNTIME STATUS: PARTIAL: filas vazias não exercitam operações sobre comentários reais; administração de categorias não percorrida visualmente. |
 | `0.1.0-dev.114` | Transições Form API LMS e rebuild do cache | Aprovação/rejeição HTTP PASS, fixture limpa (0 tópicos LMS/0 Comments), `drush cr` PASS; controller resolve antes/depois, overview anônimo 403. A falha atribuída ao controller não se reproduziu. |
 | `0.1.0-dev.113` | Validar fila e confirmações de moderação LMS com Comment real | Fixture isolada em Group próprio: fila pendente exibe o Comment e ações aprovar/rejeitar; ambas as confirmações GET retornam 200, sem POST. Filas publicadas/rejeitadas não exibem o Comment; anônimo recebe 403 para fila e tópico. Group, Node, relationship, Comment e sessão removidos; estado LMS restaurado (1 curso existente, 0 tópicos, 0 Comments). RUNTIME STATUS: PARTIAL; transições HTTP não submetidas. |
@@ -160,8 +161,10 @@ nativo das categorias Taxonomy e do bundle Node fora da seção de Conteúdo.
 O painel novo centraliza links para essas ferramentas existentes e suas
 permissões (`access content overview`, `administer comments`, `move aculta forum
 topics`, `move aculta forum comments`, `administer taxonomy` e `administer
-content types`), sem recriar formulários CRUD do Core. Ainda não existe
-formulário próprio de configuração do Fórum.
+content types`), sem recriar formulários CRUD do Core. A opção própria existente
+`comment_move_enabled` é controlada em `/painel-administrativo/forum/configuracoes`
+por `administer aculta forum settings`; permanece desabilitada por padrão e não
+concede por si só a permissão de movimento. Ver [Administração do Fórum](ADMIN-TOOLS.md).
 
 A opção de moderação inicial do primeiro comentário está em
 `/painel-administrativo/configuracoes/aculta/portal/participacao`, sob ownership

@@ -1,3 +1,25 @@
+## `0.1.0-dev.116` — configurar opções próprias do Fórum
+
+- Adicionado `ForumSettingsForm` com `ConfigFormBase` do Core e `#config_target`
+  para `aculta_forum.settings:comment_move_enabled`; a opção controla apenas a
+  disponibilidade da ferramenta de mover comentários do Growroom420.
+- Nova rota `/painel-administrativo/forum/configuracoes` e link na seção própria.
+  Exige `administer aculta forum settings` (`restrict access`); não concedida a
+  `content_editor`. Habilitar a opção não concede `move aculta forum comments`.
+- O valor de configuração de instalação e sync continua `false`. O formulário
+  só habilita a operação mediante permissão separada; tópicos/Comments históricos
+  continuam inelegíveis e o escopo permanece no contexto público.
+- PHPUnit `ForumTopicDisplayConfigTest`: 19 testes/246 assertions PASS; PHPCS
+  Drupal/DrupalPractice PASS. PHP CLI 8.4.26 está abaixo da baseline 8.5.
+  Firefox ESR/X11 autenticado: 31/31; rota 200,
+  checkbox desmarcado, submissão Form API de `false` bem-sucedida e anônimo 403.
+- `drush cr --uri=https://aculta.toca.net.br` PASS para registrar a rota. Antes
+  do smoke, `aculta_forum.settings` não existia; o script gravou somente
+  `comment_move_enabled: false`, verificou a renderização após o POST e removeu
+  esse único item para restaurar a ausência. EntityQuery após cleanup: 0 tópicos
+  públicos e 0 Comments compartilhados. Runtime PASS para rota, access e gravação
+  do estado seguro; não foi testado habilitar o movimento.
+
 ## `0.1.0-dev.115` — seção administrativa própria do Growroom420
 
 - A aba de tópicos que antes ficava em Conteúdo passa a ser a página principal
@@ -14,7 +36,12 @@
   destinos sob a seção, e comentários aparecem como tarefas locais nos níveis
   esperados. `access_manager` permite os nove destinos administrativos ao UID 1;
   requests anônimos retornam 403 e os paths antigos sob Conteúdo retornam 404.
-  Runtime PARTIAL: a renderização HTML autenticada e browser/X11 seguem pendentes.
+  Firefox ESR/X11 autenticado GET-only: 27/27 verificações PASS; a página de
+  tópicos e quatro páginas de Comments renderizam sem erro, sete caminhos antigos
+  retornam 404, e Conteúdo não oferece a aba antiga. Em 390 px persistem 3 px de
+  overflow só na tabela responsiva vazia; em 768 px não há overflow. Capturas
+  privadas em `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev115-20261020/`.
+  Runtime PARTIAL: filas vazias não exercitam operações com comentários reais.
 - Runtime permaneceu com 0 tópicos públicos e 0 Comments compartilhados; nenhuma
   entidade de conteúdo/categoria foi alterada. Configuração anterior era
   recuperável pelos cinco paths: `admin/content/forum`, `admin/content/forum/comentarios`,
