@@ -1,5 +1,38 @@
 # Matriz de testes por fase
 
+## dev.73 — formulário real para mover comentário
+
+- Pré-condições Runtime confirmadas: `hostname=toca`, branch da PR #297, Drupal
+  11.4.10, URI MAIN derivado do Deployer e banco `aculta_runtime`. Antes do
+  teste havia 0 tópicos ACULTA/legados, 0 Comments ACULTA/legados, 0 Comments
+  no campo compartilhado, 12 categorias e 3 avisos. O gate de mutação exige
+  variável explícita, X11 e diretório de saída privado fora do checkout.
+- O Runtime não tinha as instâncias `field_autor_legado` nos bundles de Node e
+  Comment ACULTA, embora os storage configs e o tipo `aculta_legado_autor`
+  existissem. Os dois field configs ausentes foram comparados ao Config Sync e
+  instalados por importação parcial limitada a esses arquivos, após registro do
+  estado anterior; config status dos alvos ficou sem drift.
+- O roteiro ativou temporariamente `comment_move_enabled`, criou 2 tópicos e 1
+  Comment pendente de teste, autenticou uid 1 via ULI, abriu o formulário em
+  MAIN, conferiu o token CSRF e submeteu a confirmação Form API. 10/10 PASS em
+  390, 768 e 1024 CSS px, sem overflow horizontal:
+  formulário/destino, singular “1 comentário”, POST sem erro, CID/autor/texto/
+  estado pendente/thread preservados e host alterado ao destino (origem 0,
+  destino 1 antes da limpeza).
+- PHPUnit Unit completo: 82/500 PASS. Kernel `ForumCommentMoverKernelTest`:
+  13/272 PASS no MariaDB `aculta_simpletest`; 19 depreciações de Core/contrib.
+  PHPCS Drupal/DrupalPractice e gates Portal 975, fronteira 1419 e mapa 152 PASS.
+  PHP CLI 8.4.26 está abaixo da baseline 8.5.
+- Capturas privadas do formulário/resultado em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-move-dev73-20261020/`.
+  O `finally` removeu o Comment e os dois Nodes via Entity API, apagou o config
+  temporário, invalidou caches e reconferiu o estado: 0 tópicos/Comments
+  ACULTA/legados, 12 categorias, 3 avisos, instâncias legadas alinhadas e
+  `aculta_forum.settings` ausente (fail-closed). RUNTIME STATUS: PARTIAL.
+- Cobertura desta rodada é só a raiz de um Comment pendente; não cobre subárvore
+  real, aprovação, flags/History, Search API, arquivos processados pelo
+  `aculta_image`, entrega de notificação ou concorrência entre requests.
+
 ## dev.72 — PHPCS do contrato de contexto
 
 - PHPUnit Unit completo do Fórum: 82 testes / 500 assertions PASS.
@@ -694,7 +727,7 @@ continuam pendentes.
 | Moderação | criar, editar, sinalizar, aprovar, ocultar, despublicar, bloquear, auditoria | Unit/Kernel/Functional por papel. |
 | Integração Game | primeira resposta publicada em `aculta_discussion_post`/`aculta_forum_topic`; aprovação tardia uma vez; outras entidades, sincronização e `field_autor_legado` excluídos | `aculta_game` Unit `BadgeEvaluationHooksTest` cobre contrato de bundle/field e casos negativos. Concessão real/cache/commit externo e Runtime seguem pendentes. |
 | Mover tópico individual entre categorias | permissão específica e Entity Access no purpose público; categoria do vocabulário correto; confirmação; submissão adulterada; preservação de NID/UUID/alias/Comments/flags; nova revisão; autoria histórica negada mesmo para admin | Unit `ForumTopicMoverTest`: 4 testes/31 assertions PASS. Kernel `ForumTopicMoverKernelTest`: 2 testes/44 assertions PASS em MariaDB `aculta_simpletest`; comprova mesmo NID/UUID, nova revisão, alias e Comment/CID preservados e bloqueio histórico mesmo com permissões de administrador. Functional e Runtime autenticado pendentes; nenhuma fixture do Runtime foi movida. |
-| Mover comentário e subárvore para outro tópico público | autorização, dois endpoints no purpose Fórum, tópico aberto, legado imutável, estados publicados/pendentes, thread profunda e ramificada, identidade/datas, estatísticas de origem/destino, cache, gate desabilitado por default e rollback | Revalidação 2026-10-20: Forum Unit 82/497 PASS; Game `ForumParticipationPolicyTest` 9/40 PASS; Messenger `ForumNoticeAccessPolicyTest` + `ForumAvisoHooksTest` 5/35 PASS. Kernels `ForumCommentMoverKernelTest` + `ForumTopicMoverKernelTest`: 16/341 em MariaDB `aculta_simpletest`, 19 depreciações Core/contrib. Cobertura inclui árvore profunda/ramificada, estados, rollback, locks entre conexões, flagging por CID, reindexação Search API e file usage; Form API confirma somente após confirmação. Índice Search API `aculta_conteudo` não inclui Comments nem bundles do Fórum; o Kernel de indexação usa fixture isolada. O anexo de teste é texto e não valida ingestão/acesso por `aculta_image`. Runtime `toca`: rota registrada, permissão dedicada, config ausente (fail-closed), ID inexistente 404, raiz 200 e 0 tópicos/Comments; nenhuma entidade ou configuração alterada. Login, CSRF/submit de entidade real, History, idiomas, política de arquivo/imagem ACULTA, entrega de aviso, permalink antigo, concorrência HTTP e browser seguem pendentes. RUNTIME STATUS: PARTIAL. |
+| Mover comentário e subárvore para outro tópico público | autorização, dois endpoints no purpose Fórum, tópico aberto, legado imutável, estados publicados/pendentes, thread profunda e ramificada, identidade/datas, estatísticas de origem/destino, cache, gate desabilitado por default e rollback | Kernels `ForumCommentMoverKernelTest` + `ForumTopicMoverKernelTest` cobrem árvore profunda/ramificada, estados, rollback, locks, flagging, Search API e file usage; dev.73 executou `ForumCommentMoverKernelTest` 13/272 PASS no MariaDB `aculta_simpletest`, com 19 depreciações Core/contrib. Runtime `toca` dev.73: instâncias `field_autor_legado` alinhadas a duas configs versionadas após backup; smoke autenticado do formulário via Form API/CSRF moveu uma raiz pendente, preservando CID/autor/texto/estado/thread. X11 10/10 em 390/768/1024 CSS px, sem overflow. Fixtures removidas; fórum terminou com 0 tópicos/Comments, 12 termos e 3 avisos baseline. `comment_move_enabled` temporário foi removido e permanece ausente por padrão. Unit Forum 82/500; PHPCS e gates Drupal11+ PASS; PHP CLI 8.4.26 abaixo da baseline 8.5. Pendentes: subárvore real no Runtime, History, idiomas, avisos com seguidores, arquivos pela política `aculta_image`, permalink e concorrência HTTP. RUNTIME STATUS: PARTIAL. |
 | Outras ferramentas de movimento | reorganizar Taxonomy; lote via Views/VBO; split/merge; verificar revisões/URLs/arquivos/flags/estatísticas/cache/busca/notificações e recuperação | Planejadas. `MOVE-TOOLS.md` registra pesquisa de Comment Mover e VBO; não instalar VBO nem expor ferramenta em lote até aprovar o escopo e segurança das Actions. |
 | Acervo Growroom restaurado | autoria por `field_autor_legado`; edição/exclusão/aprovação negadas a qualquer papel; tópico fechado; bulk admin e IDs adulterados rejeitados | Unit `ForumModerationHooksTest`; Kernel/Functional de importação e access pendentes. Não confundir com Nodes `forum` do módulo contrib, cuja retirada é separada. |
 | UX/acessibilidade | mobile, teclado, foco, leitor de tela, light/dark, reduced motion e fallback sem JS | Firefox/browser, auditoria manual e automatizada existente. |

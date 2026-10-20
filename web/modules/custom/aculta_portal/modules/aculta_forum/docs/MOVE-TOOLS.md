@@ -1,9 +1,10 @@
 # Planejamento das ferramentas de movimento
 
 Estado: **movimento individual de tópico implementado no código, ainda sem
-homologação autenticada no Runtime; movimento de comentário/subárvore tem
-protótipo funcional e Kernel MariaDB aprovado, mas permanece fora do Runtime até
-completar as provas de integração listadas abaixo**. Este contrato detalha os itens de organização e moderação do
+homologação autenticada no Runtime; o formulário de mover comentário teve smoke
+X11 autenticado de uma raiz pendente, permanece desativado por padrão e ainda
+depende da homologação de subárvore e integrações descritas abaixo. O Kernel
+MariaDB cobre subárvores e rollback**. Este contrato detalha os itens de organização e moderação do
 [`ROADMAP.md`](ROADMAP.md), incorporando padrões observados no Discourse sem
 importar seus papéis, storage ou regras de acesso.
 
@@ -100,6 +101,18 @@ em qualquer etapa deve preservar a árvore original;
 notificações só saem após sucesso e revalidação de acesso. Aviso neutro de
 movimentação pode ser avaliado para origem e destino, mas não deve ser um
 Comment de usuário fabricado nem alterar o histórico autoral.
+
+Smoke Runtime de 2026-10-20: após alinhar duas instâncias ausentes de
+`field_autor_legado` (Node tópico e Comment compartilhado) a partir do Config
+Sync, o roteiro X11 habilitou temporariamente `comment_move_enabled`, moveu um
+Comment raiz pendente pelo formulário com token CSRF e verificou CID, autor,
+texto, estado, thread raiz e destino. O singular da contagem foi corrigido com
+`formatPlural()`. Os dois Nodes e o Comment foram removidos; a opção temporária
+foi apagada e o Runtime voltou a zero tópicos/Comments. Os 12 termos e três
+avisos iniciais permaneceram. Isso comprova a rota e o fluxo de uma raiz simples,
+não a integração completa da subárvore nem os efeitos derivados acima. Ver
+`docs/TEST-MATRIX.md` dev.73 e o roteiro
+`tests/browser/aculta-forum/comment-move-runtime.mjs`.
 
 ### D. Dividir ou mesclar tópicos
 
@@ -211,11 +224,13 @@ do Comment Core; uma segunda consulta `getMaxThread()` sob lock evita colisão
 quando uma criação concorrente termina entre a consulta inicial e a aquisição.
 A transação reverte a árvore inteira se um save falhar. Kernel MariaDB valida
 árvore com três níveis, estado pendente, estatísticas dos dois hosts e rollback.
-O botão segue fora do Runtime até completar testes de concorrência, campos
-multicampo, History, permalink/âncora, busca, notificações, file usage, flags e
-teste Functional/browser. No Runtime de teste, apenas `drush cr` e resolução
-read-only de rota/serviço foram executados; nenhuma configuração ativa ou
-entidade foi alterada.
+Em dev.73, um smoke X11 autenticado abriu o Form API com CSRF, moveu uma raiz
+pendente e conferiu identidade/estado/thread/destino; os fixtures foram
+removidos. O Runtime continua fail-closed por padrão: a opção foi habilitada
+somente durante a prova e removida em seguida. O botão/rota não devem ser
+habilitados por padrão até completar testes de concorrência, History,
+permalink/âncora, busca, notificações com seguidores, anexos reais pela política
+`aculta_image`, flags no Runtime e teste Functional/browser da subárvore.
 
 O `ForumDiscussionWriteGuard` agora compartilha locks por tópico com gravação e
 exclusão de comentários normais; valida host/thread persistidos e o host do pai

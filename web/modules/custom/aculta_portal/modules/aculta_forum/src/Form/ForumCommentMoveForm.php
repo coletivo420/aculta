@@ -57,13 +57,14 @@ final class ForumCommentMoveForm extends FormBase {
 
     $host = $comment->getCommentedEntity();
     $form_state->set('comment_id', (int) $comment->id());
+    $count_text = $this->formatPlural($subtree_count, '1 comentário', '@count comentários');
     $form['summary'] = [
       '#type' => 'item',
       '#title' => $this->t('Comentário selecionado'),
-      '#plain_text' => $this->t('“@subject” em “@topic”; serão movidos @count comentários, incluindo todas as respostas descendentes.', [
+      '#plain_text' => $this->t('“@subject” em “@topic”; serão movidos @count, incluindo todas as respostas descendentes.', [
         '@subject' => $comment->getSubject(),
         '@topic' => $host->label(),
-        '@count' => $subtree_count,
+        '@count' => $count_text,
       ]),
     ];
     $form['preservation'] = [

@@ -1,3 +1,28 @@
+## `0.1.0-dev.73` — homologar a movimentação de comentário — 2026-10-20
+
+- O Runtime de teste tinha as duas instâncias `field_autor_legado` do Fórum
+  ausentes, embora os armazenamentos já existissem e os bundles não tivessem
+  conteúdo. Após registro privado do estado anterior e conferência de zero
+  tópicos/comentários, foram importadas somente as duas configurações
+  versionadas de instância. Nenhum armazenamento compartilhado foi removido.
+- O roteiro X11 autenticado habilita temporariamente `comment_move_enabled`
+  (ausente antes e removido no `finally`), cria dois tópicos públicos efêmeros e
+  um comentário pendente, envia o formulário com CSRF e verifica movimento do
+  mesmo CID ao destino, preservando autor, texto, estado e raiz da thread. As
+  entidades temporárias são removidas pela Entity API; a contagem final voltou
+  a zero. Os 12 termos e 3 avisos existentes foram preservados.
+- A tela mostrou erro de plural (“1 comentários”); o formulário agora usa
+  `formatPlural()`. Firefox ESR 153.4/geckodriver 0.37.1 no X11: 10/10
+  verificações PASS em formulário de 390/768/1024 CSS px, incluindo ausência
+  de overflow horizontal. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-move-dev73-20261020/`.
+- PHPUnit Unit completo 82/500; Kernel `ForumCommentMoverKernelTest` 13/272
+  (19 depreciações de Core/contrib); PHPCS Drupal/DrupalPractice e gates Portal
+  975, fronteira 1419 e mapa 152 PASS. PHP CLI 8.4.26, abaixo da baseline 8.5.
+  Limites: a rodada valida somente uma raiz pendente, sem descendentes; flags, History, anexos ACULTA Image,
+  notificações com seguidores e concorrência HTTP seguem pendentes. A operação
+  continua desativada por padrão. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.72` — corrigir documentação PHP do contrato de contexto — 2026-10-20
 
 - Uma varredura PHPCS do módulo encontrou violações preexistentes em sete

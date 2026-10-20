@@ -54,3 +54,24 @@ fora do checkout. Capturas e resultados são privados; não copie o link único 
 login nem dados de usuário para o relatório. A suíte também valida a fila em
 390×844 e 768×1024 CSS px. Ela reporta o overflow horizontal observado na tabela
 responsiva do tema administrativo; não aplica CSS nem altera o tema/contrib.
+
+## Movimentação de comentário no Runtime de teste
+
+`comment-move-runtime.mjs` faz um smoke autenticado do formulário real, inclusive
+token CSRF e POST, e limpa seus dois tópicos e um Comment pendente pela Entity
+API em `finally`. A operação exige explicitamente
+`ALLOW_RUNTIME_MUTATION=MOVE-COMMENT-FIXTURE-ON-TEST-RUNTIME`, `DISPLAY=:0` e um
+`SUITE_OUT` absoluto privado fora do checkout. O script confirma `hostname=toca`,
+branch dedicada, host MAIN de teste resolvido pelo Deployer, URI Drush e banco
+`aculta_runtime`; recusa executar se houver conteúdo do Fórum ou se a opção já
+estiver configurada. Ela ativa `comment_move_enabled` somente durante o smoke e
+remove a configuração ausente no final. O comentário é criado pendente para não
+gerar badge nem aviso de resposta publicada. Não rode em produção.
+
+O formulário é aberto em 390×844, 768×1024 e 1024×768 CSS px; o roteiro verifica
+overflow horizontal, destino, confirmação e token CSRF. As capturas ficam no
+diretório privado de `SUITE_OUT`.
+
+O roteiro pressupõe as instâncias versionadas `field_autor_legado` nos bundles
+do Fórum e Comment ACULTA; se faltarem no Runtime, primeiro faça uma importação
+parcial limitada a esses dois arquivos, com backup e revisão dos alvos.
