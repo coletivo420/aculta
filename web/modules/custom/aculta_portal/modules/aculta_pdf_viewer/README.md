@@ -27,6 +27,11 @@ de Media `document` ou o formatter `aculta_pdf_file` em um campo File direto.
 - O canvas tem limite de 16 milhões de pixels e 16.384 px por lado. Se uma página
   muito extensa exigir redução para menos da metade da escala pedida, o leitor
   informa a limitação e mantém navegação e link autorizado para abrir/baixar.
+- O viewer oferece também um link ao viewer oficial completo do PDF.js, em nova
+  aba e com locale `pt-BR`, como alternativa de exploração de text layer e
+  estrutura marcada. O canvas continua sendo a experiência padrão; o viewer
+  oficial ainda precisa de validação de teclado/leitor de tela e não torna PDFs
+  sem estrutura marcada acessíveis por si só.
 - O bundle Media `document` atual usa `public://`. Não o use para trabalhos de
   estudante ou outro documento que exija isolamento por turma.
 - O `CspReportRequestGuardSubscriber` limita e valida os corpos CSP antes do

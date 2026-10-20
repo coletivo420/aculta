@@ -157,13 +157,13 @@ do pacote `pdf.mjs`; adicionar apenas spans sobre o canvas não reproduziria o
 contrato completo. O viewer distribuído já inclui esses componentes, folha de
 estilo própria e locale pt-BR.
 
-Recomendação de implementação: antes de criar uma camada própria, fazer um
-protótipo do viewer oficial completo como alternativa de leitura integrada ou
-linkada. Isso reduz código customizado e acompanha a implementação upstream,
-mas não certifica WCAG nem torna acessível um PDF sem marcação estrutural. O
-protótipo ainda precisa ser exercitado com PDFs marcados e não marcados, teclado,
-leitores de tela e CSP Report-Only. Nenhuma camada de texto/estrutura foi
-implementada nesta fase.
+O formatter agora oferece um link secundário para o viewer oficial completo na
+mesma origem, com a URL do PDF já aprovada pelo builder e locale `pt-BR`. O
+canvas custom permanece padrão. Essa integração reduz código customizado e
+acompanha a implementação upstream, mas não certifica WCAG nem torna acessível
+um PDF sem marcação estrutural. Ainda é necessário exercitar PDFs marcados e não
+marcados, teclado, leitores de tela e CSP Report-Only. Nenhuma camada de
+texto/estrutura própria foi implementada.
 
 ### Traduções pt-BR disponíveis
 

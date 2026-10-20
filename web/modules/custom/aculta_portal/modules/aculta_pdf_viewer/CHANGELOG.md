@@ -1,5 +1,11 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.28 — link alternativo ao viewer completo PDF.js — 2026-10-20
+
+- O formatter oferece link secundário para o viewer oficial `web/viewer.html`, com locale `pt-BR`; o canvas custom permanece a experiência padrão.
+- A URL do documento vem do builder após validar acesso de Media/campo/File. PDFs privados continuam apontando à rota protegida do Drupal Core; nenhum controller ou cópia de arquivo foi criado.
+- RUNTIME STATUS: DEFERRED. Ainda validar fluxo do viewer completo em navegador, foco/teclado, leitor de tela, PDFs marcados e não marcados e CSP Report-Only antes de considerar o protótipo aprovado.
+
 ## Documentação PV7 — validar traduções locais, text layer e decisão CSP — 2026-10-20
 
 - Arquivos gettext pt-BR disponíveis foram conferidos pelo parser do Drupal Core: Core e 12 PO contrib não têm entradas traduzíveis com `msgstr` vazio; o pacote PDF.js também contém `web/locale/pt-BR/viewer.ftl`. A contagem não representa cobertura integral dos módulos instalados.

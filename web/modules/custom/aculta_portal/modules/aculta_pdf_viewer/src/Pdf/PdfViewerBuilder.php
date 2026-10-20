@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_pdf_viewer\Pdf;
 
-use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -261,6 +262,20 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#tag' => 'a',
         '#value' => new TranslatableMarkup('Abrir ou baixar PDF'),
         '#attributes' => ['href' => $url, 'data-aculta-pdf-control' => 'download'],
+      ],
+      'full_viewer' => [
+        '#type' => 'html_tag',
+        '#tag' => 'a',
+        '#value' => new TranslatableMarkup('Abrir leitor completo do PDF (nova aba)'),
+        '#attributes' => [
+          'href' => '/libraries/pdf.js/web/viewer.html?' . UrlHelper::buildQuery([
+            'file' => $url,
+            'locale' => 'pt-BR',
+          ]),
+          'target' => '_blank',
+          'rel' => 'noopener noreferrer',
+          'data-aculta-pdf-control' => 'full-viewer',
+        ],
       ],
       '#attached' => ['library' => ['aculta_pdf_viewer/viewer']],
     ];
