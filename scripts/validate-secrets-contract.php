@@ -39,6 +39,7 @@ $file_secrets = [
   'smtp2go_username' => 'SMTP2GO_USERNAME',
   'smtp2go_password' => 'SMTP2GO_PASSWORD',
   'brevo_api_key' => 'BREVO_API_KEY',
+  'brevo_webhook_token' => 'BREVO_WEBHOOK_TOKEN',
   'imap_password' => 'IMAP_PASSWORD',
   'smtp_password' => 'SMTP_PASSWORD',
 ];
