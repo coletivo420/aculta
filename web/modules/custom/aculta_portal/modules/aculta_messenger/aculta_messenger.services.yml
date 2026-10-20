@@ -68,7 +68,10 @@ services:
       - '@user.data'
   aculta_messenger.aviso_service:
     class: Drupal\aculta_messenger\Aviso\AvisoService
-    arguments: ['@entity_type.manager', '@flag']
+    arguments: ['@entity_type.manager', '@flag', '@aculta_messenger.forum_notice_access_policy']
+  aculta_messenger.forum_notice_access_policy:
+    class: Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
   aculta_messenger.forum_aviso_read_subscriber:
     class: Drupal\aculta_messenger\EventSubscriber\ForumAvisoReadSubscriber
     arguments: ['@current_user', '@aculta_messenger.aviso_service']
@@ -82,4 +85,4 @@ services:
     arguments: ['@current_user', '@aculta_messenger.aviso_preferencias']
   aculta_messenger.avisos_resumo:
     class: Drupal\aculta_messenger\Aviso\AvisosResumo
-    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@plugin.manager.mail', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time']
+    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@plugin.manager.mail', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time', '@aculta_messenger.aviso_service']

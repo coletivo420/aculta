@@ -1,6 +1,6 @@
 # Avisos e mensagens no ACULTA Messenger
 
-Status: documento de referência, atualizado em 2026-10-16. Descreve o que o módulo faz hoje e o que está pendente.
+Status: documento de referência, atualizado em 2026-10-19. Descreve o que o módulo faz hoje e o que está pendente.
 Decisões de origem: F-D21 (política em `docs/portal/AVISOS-E-NOTIFICACOES.md`, no repositório).
 
 ## 1. Dois sistemas, dois destinos
@@ -14,7 +14,7 @@ nenhuma conversa usa o aviso.
 | Onde aparece | Caixa de conversas (Private Message) | Barra do site, lista de avisos e contadores |
 | Quem envia | Pessoas | O sistema (comunicados, respostas em tópico seguido) |
 | Entidade | `private_message` (nativa) | Comunicados `aculta_notice` (nó); avisos por pessoa `aculta_aviso` (entidade própria) |
-| E-mail | Pelo Message Notify, quando a pessoa ativa | Resumo diário opt-in, pela fila de envio do módulo (pendente) |
+| E-mail | Pelo Message Notify, quando a pessoa ativa | Resumo diário opt-in, somente com e-mail confirmado e contexto ainda acessível |
 | Contadores | Não lidas por conversa (nativo) | `contador_site` por tópico; `MessengerCounts` |
 
 Regra: uma resposta em tópico seguido é um **aviso**, não uma mensagem. A publicação de tópico também não gera mais
@@ -47,6 +47,18 @@ Regras (implementadas em `Aviso\AvisoService`):
 - O aviso é visível só para a própria pessoa (`AvisoAccessControlHandler`). Administrar avisos exige
   `administer aculta avisos`.
 
+### 2.1 Elegibilidade e privacidade do contexto
+
+- A integração de seguir/notificar usa exclusivamente tópicos publicados do bundle `aculta_forum_topic` e comentários
+  publicados `aculta_discussion_post`. O bundle Drupal Forum contribuído `forum` não participa desse fluxo.
+- Tópico com autoria histórica em `field_autor_legado` e eventos de sincronização são excluídos.
+- Antes de criar um aviso e antes de mostrá-lo, contá-lo ou incluí-lo no resumo por e-mail, o Messenger carrega a conta
+  ativa e revalida acesso de visualização no purpose `forum`, incluindo a atribuição explícita ao Domain público do Fórum.
+- Comentários exigem acesso ao tópico e ao próprio comentário. Se o acesso deixar de existir, o aviso sai das listas e
+  contadores; seu contador pendente de e-mail é zerado antes de montar o resumo.
+- O serviço de acesso está em `Aviso\ForumNoticeAccessPolicy`; não depende do módulo Forum nem cria uma segunda fila ou
+  entidade. Domain Access determina o acesso ao nó no domínio ativo, então a revalidação executa no purpose correto.
+
 ## 3. Funções do módulo por camada
 
 Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem transporte próprio.
@@ -74,7 +86,7 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 
 **Assinaturas e eventos**
 
-- `Hook/MessageSubscribeHooks`: destinatários de assinatura. **Hoje retorna vazio para tópicos de fórum** (seção 5).
+- `Hook/MessageSubscribeHooks`: retorna vazio para mensagens de assinatura do Fórum (F-D21); assinaturas do Fórum são avisos no site.
 - `Hook/MessageSubscribeEventHooks`, `Plugin/QueueWorker/MessageSubscribeEventWorker`: fila do evento de publicação
   de tópico. Ainda existe; sua entrega por mensagem foi desligada.
 

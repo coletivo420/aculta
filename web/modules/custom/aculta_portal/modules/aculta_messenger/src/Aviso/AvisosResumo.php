@@ -32,6 +32,7 @@ final class AvisosResumo {
     private readonly EmailConfirmationPolicy $emailPolicy,
     private readonly UserDataInterface $userData,
     private readonly TimeInterface $time,
+    private readonly AvisoService $avisos,
   ) {}
 
   /** Regra do intervalo: uma conta só recebe um resumo a cada ~20 horas. */
@@ -77,6 +78,13 @@ final class AvisosResumo {
     $linhas = [];
     $daFila = [];
     foreach ($avisos as $aviso) {
+      $nid = (int) $aviso->get('assunto_nid')->value;
+      if (!$this->avisos->canRecipientViewTopic($uid, $nid)) {
+        // Acesso revogado: não reter este item para um resumo futuro.
+        $aviso->set('contador_email', 0);
+        $aviso->save();
+        continue;
+      }
       if (!$this->preferencias->tipoNoResumo($uid, (string) $aviso->get('tipo')->value)) {
         continue;
       }

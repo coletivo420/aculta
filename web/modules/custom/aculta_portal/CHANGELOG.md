@@ -1,3 +1,25 @@
+## 0.4.0-dev.203 — avisos de tópicos seguidos com acesso revalidado — 2026-10-19
+
+- O Messenger entrega avisos de respostas publicadas/aprovadas e revisões somente
+  para tópicos públicos `aculta_forum_topic`, fora do fluxo Drupal Forum legado.
+  Uma política central confirma conta ativa, publicação, atribuição ao Domain
+  Fórum e acesso atual de cada destinatário ao tópico/comentário. A checagem
+  também protege gaveta, contadores e resumo por e-mail; tópicos com autoria
+  Growroom histórica e eventos de sincronização são excluídos.
+- `Message Subscribe` continua sem entregar mensagens de Fórum (F-D21); eventos
+  de publicação/atualização usam a fila e o serviço de avisos já existentes.
+- A fila carrega a revisão específica e inclui a primeira publicação, aprovação
+  e novas revisões publicadas, com deduplicação por revisão.
+- Messenger Unit 38/116, lint, PHPCS nos arquivos novos, Drupal 11+ (970),
+  fronteira (1372), mapa (154) e `git diff --check` PASS. PHPCS dos arquivos
+  novos PASS; os 46 erros restantes no conjunto dos arquivos tocados já existem
+  na base, enquanto os avisos caíram de 32 para 18 após a remoção do consumidor
+  morto de mensagem.
+- Runtime `toca`, Drupal 11.4.10, `aculta_runtime`, URI `growroom420` de teste:
+  cache rebuild e resolução do container/worker PASS; uid 5: 8 tópicos publicados
+  acessíveis, 0 avisos existentes/visíveis. Sem criação de aviso, flag ou e-mail.
+  Browser autenticado e entrega real continuam pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.200 — atalho para respostas não lidas do Fórum — 2026-10-19
 
 - `aculta_forum 0.1.0-dev.30` acrescenta contagem personalizada e link à

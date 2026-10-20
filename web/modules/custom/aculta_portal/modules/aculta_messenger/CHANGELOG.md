@@ -2,6 +2,29 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.53 — avisos do Fórum com revalidação de acesso — 2026-10-19
+
+- Seguir tópico usa o bundle público ACULTA `aculta_forum_topic` e comentários
+  `aculta_discussion_post`; removido o consumidor morto que ainda referenciava
+  o bundle do Drupal Forum contribuído.
+- `ForumNoticeAccessPolicy` revalida conta ativa, domínio, publicação e acesso
+  atual antes de criar/mostrar/contar avisos e antes do resumo diário. Comentário
+  histórico e tópico com `field_autor_legado` não geram aviso. Eventos de
+  sincronização são excluídos da fila.
+- A fila registra o ID da revisão; criação, aprovação e cada nova revisão
+  publicada entram uma vez no fluxo. O worker carrega essa revisão específica,
+  confirma que ela e o tópico atual seguem publicados, e a deduplicação existente
+  impede repetir a mesma revisão.
+- Messenger Unit: 38 testes / 116 assertions PASS. PHPCS no novo policy/teste e
+  lint PASS; as classes preexistentes tocadas já tinham violações PHPCS na base.
+  Portal Drupal 11+ (970), fronteira (1371), mapa (154) e `git diff --check`
+  PASS. PHP CLI 8.4.26.
+- Runtime de teste: cache rebuild PASS; container resolve policy, serviço,
+  resumo e worker. A política permitiu 8/8 tópicos publicados para uid 5; a
+  listagem/contagem read-only retornou 0 avisos e 0 tópicos não lidos. Nenhum
+  aviso foi criado nem e-mail enviado; validação autenticada/browser pendente.
+- RUNTIME STATUS: PARTIAL.
+
 ## 0.1.1-dev.48 — Bloquear e Desfazer amizade por pessoa, não por conversa — 2026-10-19
 
 - Amizade e bloqueio são por pessoa. A conversa tem uma caixa por outro membro (`OptionsDisclosure`, carregada ao abrir em `…/membro/{user}/opcoes`), e cada ação posta em `…/membro/{user}/relacao`. Antes, o menu da conversa só cobria uma pessoa e ficava vazio em conversas com mais de duas.

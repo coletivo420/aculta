@@ -57,12 +57,18 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
   }
 
   public function processItem($data): void {
-    if (!is_array($data) || !isset($data['node_id']) || !is_numeric($data['node_id'])) {
+    if (!is_array($data) || !isset($data['node_id'], $data['revision_id'])
+      || !is_numeric($data['node_id']) || !is_numeric($data['revision_id'])) {
       return;
     }
 
-    $node = $this->entityTypeManager->getStorage('node')->load((int) $data['node_id']);
-    if (!$node instanceof NodeInterface || $node->bundle() !== 'forum' || !$node->isPublished()) {
+    $storage = $this->entityTypeManager->getStorage('node');
+    $current = $storage->load((int) $data['node_id']);
+    $node = $storage->loadRevision((int) $data['revision_id']);
+    if (!$current instanceof NodeInterface || !$current->isPublished()
+      || !$node instanceof NodeInterface || $node->bundle() !== 'aculta_forum_topic' || !$node->isPublished()
+      || (int) $node->id() !== (int) $current->id()
+      || ($node->hasField('field_autor_legado') && !$node->get('field_autor_legado')->isEmpty())) {
       return;
     }
 
@@ -77,7 +83,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
       throw new RequeueException();
     }
 
-    $revisionId = (int) $node->getRevisionId();
+    $revisionId = (int) $data['revision_id'];
     $lockId = 'aculta_messenger:forum_topic_updated:' . $node->id() . ':' . $revisionId;
     if (!$this->lock->acquire($lockId, 60.0)) {
       throw new \RuntimeException('Forum topic update notice is already being processed.');
