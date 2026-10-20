@@ -12,6 +12,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Grants LMS educators contextual access to the discussion moderation marker.
@@ -19,6 +20,7 @@ use Drupal\Core\Session\AccountInterface;
 final class LmsDiscussionModerationHooks {
 
   public function __construct(
+    #[Autowire(service: 'aculta_forum.discussion_context_resolver')]
     private readonly DiscussionContextResolver $contextResolver,
   ) {}
 

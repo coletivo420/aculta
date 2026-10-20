@@ -7,16 +7,29 @@ curso contextual.
 
 ## Estado
 
-O módulo não deve ser habilitado até as permissões Group de course/class roles,
-membership, Comment e a matriz de acesso serem cobertas por testes Kernel. A
-dev.94 adiciona install config do bundle `aculta_lms_topic`, Comment
+Na dev.13 o adapter foi habilitado no Runtime de teste (`aculta_runtime`, URI
+`https://growroom420.aculta.toca.net.br`) junto com `gnode`; suas oito
+configurações padrão e as duas relações Group foram instaladas com sucesso. A
+correção adiciona `#[Autowire(service: 'aculta_forum.discussion_context_resolver')]`
+ao hook OOP, resolvendo falha de compilação do container. Unit: 13 testes / 143
+assertions; Kernel: 2 testes / 74 assertions, com 38 depreciações de
+Core/contrib/LMS. Smoke HTTP da raiz e de `/categorias`: 200. Não há Nodes de
+tópico público, LMS ou legado nem Comments `aculta_discussion_post` no Runtime.
+
+Esta ativação foi somente no Runtime de teste. A Config Sync do checkout não
+foi importada/exportada e diverge de `core.extension` e das configurações
+instaladas; a configuração de roles/herança ainda não foi importada. Portanto,
+o acesso contextual no Runtime, UI, Views, Search API e filas não estão
+homologados. Reconciliar a configuração após revisar o diff de importação e
+validar autorização; não copiar o estado Runtime para produção.
+
+Historicamente, a dev.94 adicionou install config do bundle `aculta_lms_topic`, Comment
 compartilhado e relações `group_node:aculta_lms_topic` para curso/turma. A
 dev.97 acrescenta em Config Sync a herança `grade students` do curso para a
 permission Group Node dos tópicos de turma, validada pelo `ClassPermissionCalculator`
-real. Essa configuração ainda não foi importada no Runtime. Não foram criadas
-Views, Search API, rotas ou conteúdo.
-`gnode` está listado como
-dependência do adapter, não como alteração de `core.extension`. Um hook
+real. Essa configuração de herança/roles ainda não foi importada no Runtime.
+Não foram criadas Views, Search API, rotas ou conteúdo.
+`gnode` está listado como dependência do adapter. Um hook
 `entity_access` nega acesso a Nodes do bundle quando falta relação Group única;
 para `lms_class`, também exige uma relação única com um curso. Com relações
 válidas, o hook retorna neutro e deixa o access handler do Group aplicar os
@@ -66,5 +79,6 @@ com `--uri=https://growroom420.aculta.toca.net.br` encontrou apenas
 ativou módulos nem importou configuração. A API local do Drupal 11.4.10 não
 expõe `ModuleInstaller::getModulesToInstall()` descrito pela documentação
 upstream consultada; o fecho foi conferido pelos metadados instalados das
-extensões e por `core.extension`. Ativação/desinstalação completa continua
-pendente e não está pré-aprovada para o Runtime.
+extensões e por `core.extension`. Na dev.13 o ciclo de ativação foi executado
+no Runtime após revisão do estado limpo; a desinstalação não foi necessária.
+A autorização no Runtime e a reconciliação de Config Sync continuam pendentes.

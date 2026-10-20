@@ -16,12 +16,26 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Tests that only LMS contexts can delegate moderation to this adapter.
  */
 #[Group('aculta_forum_lms')]
 final class LmsDiscussionModerationHooksTest extends UnitTestCase {
+
+  /**
+   * The OOP hook injects the Forum's actual resolver service ID.
+   */
+  public function testResolverUsesTheForumServiceId(): void {
+    $parameter = (new \ReflectionMethod(LmsDiscussionModerationHooks::class, '__construct'))
+      ->getParameters()[0];
+    $attributes = $parameter->getAttributes(Autowire::class);
+
+    self::assertCount(1, $attributes);
+    $autowire = $attributes[0]->newInstance();
+    self::assertSame('aculta_forum.discussion_context_resolver', (string) $autowire->value);
+  }
 
   /**
    * Checks that an Educator's LMS context can authorize moderation.

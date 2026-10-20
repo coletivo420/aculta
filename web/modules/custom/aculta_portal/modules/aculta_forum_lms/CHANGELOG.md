@@ -18,6 +18,24 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.13` — corrigir ativação e registrar Runtime de teste — 2026-10-20
+
+- Hook OOP injeta explicitamente o serviço `aculta_forum.discussion_context_resolver`;
+  isso corrige o erro de compilação do container ao habilitar o adapter. Unit:
+  13 testes / 143 assertions PASS; Kernel: 2 testes / 74 assertions PASS,
+  com 38 depreciações de Core/contrib/LMS.
+- No Runtime de teste (`aculta_runtime`, URI `https://growroom420.aculta.toca.net.br`),
+  `aculta_forum_lms` e `gnode` foram habilitados e as oito configurações padrão,
+  incluindo bundle, campo, displays e duas relações Group, foram instaladas.
+  O Forum contrib permanece desabilitado. O smoke HTTP retornou 200 na raiz e
+  em `/categorias`; contagens de tópicos públicos/LMS/legados e comentários
+  compartilhados permaneceram em zero.
+- Não houve import/export da Config Sync. O estado Runtime diverge do checkout
+  (`core.extension` e configurações instaladas) até a reconciliação explícita;
+  nenhuma configuração de papel/role foi importada. UI, filas, autorização real
+  no Runtime e integração com educadores ainda não foram homologadas.
+  RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.12` — provar Educador sem membership direto na turma — 2026-10-20
 
 - Kernel mantém curso e turma sob propriedade de uma terceira conta. O Educador
