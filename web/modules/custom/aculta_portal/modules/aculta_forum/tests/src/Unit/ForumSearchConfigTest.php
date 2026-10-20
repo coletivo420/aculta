@@ -34,6 +34,9 @@ final class ForumSearchConfigTest extends UnitTestCase {
     self::assertSame('aculta_forum_topic', $view['display']['default']['display_options']['filters']['type']['value']);
     self::assertSame('search_api_numeric', $view['display']['default']['display_options']['filters']['forum_category']['plugin_id']);
     self::assertSame('categoria', $view['display']['default']['display_options']['filters']['forum_category']['expose']['identifier']);
+    self::assertSame('text_custom', $view['display']['default']['display_options']['empty']['area_text_custom']['plugin_id']);
+    self::assertStringContainsString('Nenhuma discussão corresponde', $view['display']['default']['display_options']['empty']['area_text_custom']['content']);
+    self::assertStringContainsString('href="/categorias"', $view['display']['default']['display_options']['empty']['area_text_custom']['content']);
     self::assertArrayHasKey('content_access', $index['processor_settings']);
     self::assertArrayHasKey('entity_status', $index['processor_settings']);
     self::assertTrue($index['options']['index_directly']);

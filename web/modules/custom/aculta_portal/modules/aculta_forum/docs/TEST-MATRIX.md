@@ -1,5 +1,27 @@
 # Matriz de testes por fase
 
+## dev.89 — busca sem correspondências
+
+- A View expõe mensagem neutra de estado vazio com link para `/categorias`;
+  Unit verifica plugin de área, texto e caminho, além da paridade entre
+  `config/install` e Config Sync: 1 teste / 18 assertions PASS.
+- Runtime `toca`: backup privado da View ativa, importação parcial só desse
+  objeto e cache rebuild PASS. Busca GET com `keys` e categoria respondeu 200;
+  mensagem e link apareceram, CAPTCHA ausente, 0 tópicos/Comments. Nenhum
+  conteúdo foi criado ou removido.
+- Firefox ESR/X11 anônimo em 1024 px: painel vazio, texto e link cabem no
+  conteúdo; formulário mantém alinhamento. Captura privada em
+  `/home/aculta-system-data/private/aculta-forum-search-dev89/visual/captures/`
+  (modo 0600). Mobile, claro/escuro e acessibilidade completa pendentes.
+- RUNTIME STATUS: PASS para estado vazio; busca com resultados reais continua
+  PARTIAL porque não há itens no índice.
+- Regressão Unit completa do Forum: 87 testes / 556 assertions PASS. Portal
+  Drupal 11+ (979), fronteira (1478), mapa (152), slugs (378), caminhos/textos,
+  SDC (535), Design Foundations (2100 e 157 fixtures) e Shell Contract (11)
+  PASS. Foundation aceita a versão .119, mas falha pela diferença na allowlist
+  Twig: `email-wrap.html.twig` da linha Mailer ainda não está listado; o gate e
+  os arquivos Mailer ficaram fora do escopo.
+
 ## dev.88 — integração do filtro de categoria com Search API DB
 
 - `ForumCategorySearchKernelTest` cria índice Search API DB e conteúdo Node/

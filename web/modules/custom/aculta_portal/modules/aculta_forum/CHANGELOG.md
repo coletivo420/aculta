@@ -1641,3 +1641,21 @@
   prova de integração; homologação pública segue PARTIAL porque o índice do
   Runtime não tem itens.
 
+## `0.1.0-dev.89` — orientar buscas sem resultados — 2026-10-20
+
+- A View `/pesquisar` mostra um estado vazio em português com orientação para
+  ajustar os termos ou abrir `/categorias`. A apresentação visual usa o tema;
+  não há consulta nem regra de negócio no ACULTA420.
+- `ForumSearchConfigTest`: 1 teste / 18 assertions PASS; instalação e Sync
+  idênticas. Runtime `toca`: backup privado, importação parcial de somente uma
+  View, rebuild e busca GET com categoria HTTP 200; mensagem e link presentes,
+  sem CAPTCHA, 0 tópicos/Comments. Firefox/X11 1024 px confirma o painel visual.
+  Nenhum conteúdo alterado. RUNTIME STATUS: PASS para o estado vazio; PARTIAL
+  para busca pública, pois o índice continua sem itens publicados.
+- Unit completa do Forum: 87 testes / 556 assertions PASS. Gates Drupal 11+
+  (979), fronteira (1478), mapa (152), slugs (378), caminhos/textos, SDC (535),
+  Design Foundations (2100/fixtures 157) e Shell Contract (11) PASS. Foundation
+  reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
+  a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
+  de allowlist foi alterado.
+

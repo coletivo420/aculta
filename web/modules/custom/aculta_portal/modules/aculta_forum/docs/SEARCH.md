@@ -41,6 +41,10 @@ não existe na versão instalada do Search API. Sugestões e busca contextual de
 LMS/Wiki/publicações continuam fora desta entrega. A configuração declarada não
 prova que o índice está atualizado com conteúdo publicado.
 
+Quando a consulta não encontra tópicos, a View oferece uma mensagem concisa
+com link para `/categorias`. O texto usa configuração neutra de Views; o
+ACULTA420 apresenta o estado vazio junto aos demais resultados do Fórum.
+
 A busca `/pesquisar` é somente leitura e usa GET. Como as listagens públicas do
 Growroom420, não renderiza CAPTCHA; essa exceção não se estende a formulários
 que criam ou alteram conteúdo. A política está detalhada em

@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.88**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.89**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
 de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
@@ -14,6 +14,8 @@ visual hierárquica e os contadores de tópicos continuam planejados.
 `/pesquisar` pesquisa título/corpo de tópicos públicos e oferece categoria em
 select hierárquico. Os nomes vêm da Taxonomy atual e respeitam Entity Access;
 o filtro usa IDs inteiros indexados, sem tipo de campo ou lista paralela.
+Quando não há correspondências, a View orienta a ajustar a busca ou explorar
+as categorias.
 Fixtures de tópicos do Runtime de teste são inventariadas em
 [TEST-FIXTURES](docs/TEST-FIXTURES.md). `aculta_user`
 já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC
