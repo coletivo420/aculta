@@ -126,3 +126,18 @@ Produção **não implementada**. Passos em "Produção: o que falta" acima, mai
 - Investigar a listagem do `config:status` para `agreement.agreement.default` e `filter.format.basic_html`.
 - Rastreamento com consentimento (F11): texto dos termos de uso e da política de privacidade.
 - Renovação do SMTP2GO (contingência), esgotado no mês.
+
+## Política de Privacidade: versão 0.2 (minuta)
+
+- Fonte única: `scripts/institution/politica-de-privacidade.html`. `scripts/install-institution.php` passou a ler esse arquivo.
+- Aplicada à página `/politica-de-privacidade` (nó 11) no Runtime de teste, como nova revisão do conteúdo.
+- Conteúdo novo: destinatário guardado só como identificador criptográfico; conteúdo de mensagem guardado só em falha, cifrado, com 24 horas para links de uso único; eventos de entrega do Brevo; relatórios DMARC; SMTP2GO como contingência; rastreamento como opt-in futuro, desligado por padrão, com consentimento no aceite dos termos; prazos de retenção.
+- Correção de uma afirmação da versão 0.1: o gateway Mercado Pago está ativo no Runtime de teste e a rota de checkout existe. O texto da seção de pagamentos foi corrigido, e a situação em produção fica marcada para confirmação.
+
+Pendências para publicar em produção (não resolvidas):
+
+- CNPJ, endereço e canal de privacidade (encarregado) da Associação: marcadores `[a informar]` no texto.
+- Data da versão: marcador `[data a informar]`.
+- Revisão jurídica e aprovação da Associação (a versão está marcada como minuta).
+- Confirmar se o checkout Mercado Pago estará ativo em produção.
+- Implementação do rastreamento opt-in (F11) e do texto de consentimento no aceite dos termos: o texto só descreve o recurso como futuro.
