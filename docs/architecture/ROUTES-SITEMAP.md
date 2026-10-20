@@ -88,6 +88,7 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/painel-administrativo/game` | Visão geral administrativa do jogo | Condicional ao módulo; exige permissão específica. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/aparencia` | Configuração da aparência institucional | Rota administrativa protegida. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/apoio` | Configuração dos meios/valores de apoio | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/configuracoes/aculta/envios-de-email` | Painel de envios de e-mail transacional (contagens por período, estado, tipo e transporte) | Rota administrativa protegida por `administer aculta_mailer`; condicional ao submódulo `aculta_mailer` habilitado (Runtime de teste: habilitado). Sem destinatário nem conteúdo. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal` | Configurações gerais do Portal | Rota administrativa protegida. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/turnstile` | Configuração do CAPTCHA Turnstile | Rota administrativa protegida; credenciais não são documentadas aqui. |
 | `main.aculta` | `/painel-administrativo/configuracoes/aculta/portal/requisitos` | Relatório de requisitos do Portal | Rota administrativa protegida. |
