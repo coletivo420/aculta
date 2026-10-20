@@ -378,10 +378,12 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "@php scripts/sync-bootstrap-assets.php"
+            "@php scripts/sync-bootstrap-assets.php",
+            "@php scripts/restore-aculta-htaccess.php"
         ],
         "post-update-cmd": [
-            "@php scripts/sync-bootstrap-assets.php"
+            "@php scripts/sync-bootstrap-assets.php",
+            "@php scripts/restore-aculta-htaccess.php"
         ]
     },
     "extra": {
