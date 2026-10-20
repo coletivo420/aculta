@@ -20,8 +20,10 @@
   persistido em 1250/500 px, quatro controles, avanço e ArrowRight no slider
   para mensagem 2/6 e ausência de overflow (document/body 500 px). Modo escuro
   forçado somente no DOM da sessão exibiu tokens legíveis. Fórum manteve-se sem
-  fixtures. Claro/escuro e teclado do slider PASS; 390 px, Comments reais e
-  leitor de tela/AT seguem pendentes. RUNTIME STATUS: PARTIAL.
+  fixtures. Claro/escuro, teclado do slider e IntersectionObserver PASS; 390 px,
+  Comments reais e leitor de tela/AT seguem pendentes. Rolagem X11 detectou
+  barra sob o cabeçalho; correção de offset do tema dev.111 revalidada a 500 px
+  com a barra visível (topo 56 px) e status 4/6. RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.62` — corrigir filas de moderação do Fórum — 2026-10-20
 

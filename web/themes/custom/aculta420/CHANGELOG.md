@@ -1,3 +1,14 @@
+## 0.6.0-dev.111 — compensar cabeçalho na barra de progresso — 2026-10-20
+
+- A navegação sticky da discussão respeita o deslocamento do toolbar Drupal e
+  os 3 rem de scroll-padding do cabeçalho; ao rolar a thread, os controles não
+  ficam escondidos sob a navegação fixa.
+- Firefox ESR/X11 confirmou ao rolar para a quarta mensagem: barra completa
+  abaixo do cabeçalho, topo em 56 px, indicador “Mensagem 4 de 6 nesta página”
+  e viewport/documento/corpo em 500 px. Captura escura permanece privada na
+  pasta de evidências da dev.110. Foundation 365 PASS. 390/AT pendentes;
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.110 — navegação visual de progresso em discussões — 2026-10-20
 
 - O Portal anexa controles funcionais ao campo de discussão compartilhado; o

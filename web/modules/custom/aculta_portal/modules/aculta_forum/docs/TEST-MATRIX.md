@@ -24,6 +24,10 @@
 - Não foram criados ou salvos Nodes/Comments. Claro/escuro e teclado do slider
   PASS nas larguras X11 1250/500; 390 px, Comments reais, navegação completa por
   teclado e leitor de tela/AT ficam pendentes.
+- Rolagem manual inicialmente mostrou a barra sticky parcialmente sob o
+  cabeçalho. Após tema dev.111, Firefox/X11 escuro a 500 px confirmou a barra
+  completa com topo 56 px (12 px após o cabeçalho de 44 px), status 4/6 pela
+  rolagem e sem overflow; captura `progress-500-dark.png`.
   Runtime global PARTIAL.
 
 ## dev.62 — filas pendente/rejeitada do Fórum
