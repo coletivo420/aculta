@@ -137,6 +137,12 @@ final class LinksDashboardController {
           'url' => Url::fromRoute('entity.' . $entity_type_id . '.version_history', $route_arguments),
         ],
       ];
+      if ($entity_type_id === 'aculta_link_page') {
+        $operations['items'] = [
+          'title' => new TranslatableMarkup('Editar itens'),
+          'url' => Url::fromRoute('aculta_links.page_editor', ['aculta_link_page' => $entity->id()]),
+        ];
+      }
       $rows[] = [
         'title' => CoreLink::fromTextAndUrl($entity->label(), Url::fromRoute($edit_route, $route_arguments)),
         'status' => $entity->isPublished()

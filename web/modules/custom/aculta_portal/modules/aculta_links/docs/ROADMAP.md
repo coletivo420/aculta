@@ -25,9 +25,7 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 
 ## 0.3.0 — dashboard e editor
 
-Portar navegação e fluxo de dashboard, edição, ordenação, preview e fallback
-acessível via Drupal Form API. Uma conta pode ter várias páginas; sem equipes
-complexas inicialmente.
+O dashboard e CRUD básico existem. Em andamento: editor Form API de composição, ordenação e ativação individual. Próximos itens: preview responsivo com dados da página, drag-and-drop revisável em diferentes navegadores e navegação entre páginas. Uma conta pode ter várias páginas; sem equipes complexas inicialmente.
 
 ## 0.4.0 — interface pública e presets
 

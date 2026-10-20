@@ -38,3 +38,7 @@ não estão implementadas nesta versão.
 - Painel administrativo em `main`, com listas separadas e paginadas para micropáginas, destinos reutilizáveis e itens de página.
 - Formulários de entidade Drupal para CRUD e revisões, protegidos pelos handlers de acesso e permissões do módulo.
 - Ainda não existe dashboard público do proprietário nem apresentação pública das novas entidades.
+
+## Editor de composição — 0.3.0-dev.1
+
+A rota administrativa `/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens` lista itens da página, permite alterar ordem por tabela arrastável com campo numérico como fallback e ativar/desativar individualmente. Cada item salvo cria revisão. A edição do texto e destino permanece no formulário individual da entidade.

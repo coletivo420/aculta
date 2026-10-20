@@ -44,3 +44,6 @@ Esta lista estabelece requisitos futuros, não certifica segurança já testada.
 ## Painel 0.2.0-dev.2
 
 A consulta administrativa declara `accessCheck(TRUE)`, aplica condição de proprietário para contas comuns e revalida permissão de edição por entidade antes de criar operações. Cache da tabela varia por usuário/permissões e query de paginação, inclui tags de lista e dependências das entidades e resultados de acesso. Itens têm proprietário explícito além de page/link references; o acesso exige coincidência de propriedade nos três registros. Nenhuma rota pública ou redirecionamento curto foi criado.
+
+
+Editor de composição: a rota e a submissão revalidam access da página; a submissão também confirma que cada item pertence à página editada antes de salvar nova revisão. Query declara `accessCheck(TRUE)`.

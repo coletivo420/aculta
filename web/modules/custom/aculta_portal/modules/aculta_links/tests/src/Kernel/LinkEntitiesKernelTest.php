@@ -63,6 +63,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     );
     $item_add_route = $route_provider->getRouteByName('entity.aculta_link_item.add_form');
     self::assertSame('/painel-administrativo/links/item/adicionar', $item_add_route->getPath());
+    $editor_route = $route_provider->getRouteByName('aculta_links.page_editor');
+    self::assertSame('/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens', $editor_route->getPath());
+    self::assertSame('aculta_link_page.update', $editor_route->getRequirement('_entity_access'));
     $item_revision_route = $route_provider->getRouteByName('entity.aculta_link_item.revision');
     self::assertSame(
       '/painel-administrativo/links/item/{aculta_link_item}/revisao/{aculta_link_item_revision}/visualizar',

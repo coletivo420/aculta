@@ -52,3 +52,11 @@
 - Dashboard passou a listar itens com filtro de proprietário e permitir criação pela rota Core.
 - Sitemap atualizado com todas as rotas da entidade; ainda condicionais ao módulo desabilitado.
 - Kernel: 1 teste/27 asserções PASS; Unit: 1 teste/7 asserções PASS com 2 depreciações PHPUnit; PHPCS e diff-check PASS em PHP 8.4.26. PHP 8.5 e Runtime DEFERRED.
+
+
+## 0.3.0-dev.1 — editor de composição — 2026-10-20
+
+- Criado formulário administrativo de composição por micropágina, com listagem de itens autorizados, ordenação por peso e controle de publicação individual.
+- O salvamento revalida a micropágina e cada item, exige correspondência da referência `page` e cria revisão por item alterado. Campo de peso continua disponível como fallback sem JavaScript.
+- Rota adicionada ao sitemap como declarada e inativa enquanto o módulo estiver desabilitado.
+- Kernel: 1 teste/29 asserções PASS; Unit: 1 teste/7 asserções PASS com 2 depreciações PHPUnit; PHPCS PASS em PHP 8.4.26. `validate-module-theme-map.php` PASS (162 checks); `validate-public-slugs.php` FAIL por baseline obsoleta em `aculta_user`. PHP 8.5 e Runtime DEFERRED.

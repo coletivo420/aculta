@@ -7,3 +7,16 @@ aculta_links.dashboard:
     _custom_access: 'aculta_links.dashboard_access:access'
   options:
     _admin_route: TRUE
+
+aculta_links.page_editor:
+  path: '/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens'
+  defaults:
+    _form: '\Drupal\aculta_links\Form\LinkPageEditorForm'
+    _title: 'Editar itens da micropágina'
+  requirements:
+    _entity_access: 'aculta_link_page.update'
+  options:
+    _admin_route: TRUE
+    parameters:
+      aculta_link_page:
+        type: entity:aculta_link_page
