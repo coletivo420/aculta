@@ -1,5 +1,26 @@
 # Matriz de testes por fase
 
+## dev.103 — categorias vazias em Firefox/X11
+
+- `forum-index-visual.mjs` visita somente `/` e `/categorias` no host de teste
+  Growroom420. Firefox ESR 153.4/geckodriver 0.37.1 em `DISPLAY=:0`; 13/13
+  verificações PASS em cada página para 390, 768 e 1024 CSS px nos temas claro
+  e escuro. Verifica região principal, heading, categorias, ausência de tópicos
+  e de bundle contrib, enquadramento dos cards e ausência de overflow horizontal.
+- Drush confirmou URI de teste e `aculta_runtime`; EntityQuery após a rodada:
+  0 Nodes `aculta_forum_topic`, 0 Comments desses tópicos e 0 Nodes de bundle
+  legado `forum`. O script é GET-only, sem formulário enviado ou dados gravados.
+- O Ubuntu Discourse foi observado em sessão separada e sem aceitar cookies.
+  A página de referência apresenta categorias com descrição, atividade/volume
+  semanal e tópico recente; o Growroom vazio mostra quatro categorias raiz na
+  home, 12 cards no índice e estado vazio na lista. O ACULTA mantém sua paleta,
+  marca e navegação próprias; comparação de atividade, linhas de tópicos e
+  detalhes fica pendente enquanto o Runtime deve permanecer sem conteúdo.
+- Capturas privadas e `results.json` (diretórios 0700, arquivos 0600):
+  `/home/aculta-system-data/private/aculta-forum-index-dev102/visual/captures/`.
+  Sem alteração de configuração ou conteúdo. RUNTIME STATUS: PASS para as duas
+  listagens sem conteúdo; experiência de fórum completo PARTIAL/DEFERRED.
+
 ## dev.91 — busca pública em Firefox/X11
 
 - `search-visual.mjs` usa Firefox ESR/geckodriver em `DISPLAY=:0`, WebDriver

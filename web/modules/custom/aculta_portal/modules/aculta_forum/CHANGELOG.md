@@ -1722,6 +1722,19 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.103` — inspeção visual X11 de categorias — 2026-10-20
+
+- Nova suíte GET-only `tests/browser/aculta-forum/forum-index-visual.mjs`
+  verifica `/` e `/categorias` no Firefox/X11, 390/768/1024 CSS px, claro e
+  escuro, título/região principal, cards e ausência de tópicos/legado. Resultado
+  no Runtime de teste: 26/26 PASS; EntityQuery confirma 0 tópicos públicos,
+  0 comentários e 0 Nodes antigos do bundle `forum`.
+- Capturas privadas 0600 e `results.json` em
+  `/home/aculta-system-data/private/aculta-forum-index-dev102/visual/captures/`.
+  Nenhum conteúdo ou configuração foi alterado. RUNTIME STATUS: PASS para as
+  listagens vazias; comparação de listas/tópicos com atividade permanece
+  DEFERRED para manter o Growroom limpo.
+
 ## `0.1.0-dev.102` — instalar config padrão LMS em Kernel — 2026-10-20
 
 - Kernel usa o `ConfigInstaller` do Drupal para aplicar o conjunto de config

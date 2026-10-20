@@ -511,6 +511,24 @@ Suíte em `tests/browser/aculta-messenger/suite.mjs`, 70 verificações: nova co
 
 ## ACULTA Forum — busca visual X11 e comparação com Ubuntu Discourse
 
+### Home e categorias vazias — 2026-10-20
+
+- Runtime `toca`, Drupal 11.4.10, URI de propósito Growroom420 e banco
+  `aculta_runtime`; Firefox ESR 153.4/geckodriver 0.37.1 visível em X11 `:0`.
+- `tests/browser/aculta-forum/forum-index-visual.mjs` fez somente GET em `/` e
+  `/categorias`: 13/13 PASS por tela em 390/768/1024 CSS px e claro/escuro.
+  A home apresentou quatro categorias raiz; `/categorias`, 12. Ambas sem cards
+  de tópicos ou bundle `forum` contrib, sem overflow horizontal.
+- EntityQuery confirmou 0 tópicos públicos, 0 comentários hospedados por esses
+  tópicos e 0 Nodes antigos `forum`; nada foi criado ou removido. Capturas
+  privadas 0600 em
+  `/home/aculta-system-data/private/aculta-forum-index-dev102/visual/captures/`.
+- Comparação com `https://discourse.ubuntu.com/` observou organização por
+  categoria com descrições, volume semanal e tópico/atividade recente. A sessão
+  não aceitou o modal de cookies. A referência visual completa de lista/tópico
+  permanece pendente porque o Growroom de teste precisa ficar sem conteúdo.
+  RUNTIME STATUS: PASS para as páginas vazias; fórum completo PARTIAL.
+
 ### Busca pública — 2026-10-20
 
 - Runtime de teste `toca`, sessão Firefox ESR visível no X11 `:0`, anônima e
