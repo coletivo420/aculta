@@ -1722,3 +1722,12 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.95` — provar Group Node para tópico privado — 2026-10-20
+
+- Kernel no MariaDB dedicado ativa Group 3.3.5 e gnode com bundle/relação de
+  tópico. Membro de curso com `view group_node:aculta_lms_topic entity` acessa;
+  outsider recebe `forbidden`.
+- `LmsGroupNodeAccessKernelTest`: 1 teste / 17 assertions PASS; 17
+  depreciações Core/Group/contrib, sem falhas. Nenhum Runtime/configuração real
+  foi alterado. RUNTIME STATUS: DEFERRED.
+

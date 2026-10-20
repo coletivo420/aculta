@@ -35,7 +35,8 @@ inesperado de relação falha fechado.
 
 ## Próxima etapa
 
-Adicionar configuração instalável e testes Kernel no banco `aculta_simpletest`
-para estudante da turma, educador do curso, membro de outra turma e usuário
-externo. Validar também acesso direto ao Node e ao Comment; só então criar as
-filas administrativas LMS.
+O Kernel `LmsGroupNodeAccessKernelTest` usa o banco `aculta_simpletest` e prova
+member versus outsider em um curso. Próximo: testar membership de turma,
+herança de permission para Educador com `grade students`, escrita de Comment e
+moderação; versionar permissões Group e só então criar as filas administrativas
+LMS.

@@ -18,3 +18,9 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.4` — provar permissões Group Node — 2026-10-20
+
+- Kernel com Group 3.3.5/gnode prova que permission contextual do Group concede
+  acesso ao membro e que outsider não lê o tópico. 1 teste / 17 assertions
+  PASS; 17 depreciações do Core/Group/contrib. Sem instalação no Runtime.
+
