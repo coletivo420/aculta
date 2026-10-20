@@ -1,3 +1,11 @@
+## 0.4.0-dev.228 — status de extensões PHP das integrações
+
+- A página administrativa ACULTA Portal > Status deriva requisitos `ext-*` do `composer.lock` para os pacotes Composer mapeados às integrações e suas dependências transitivas.
+- Exibe extensão, integração, módulos Drupal relacionados, pacote declarante e se a extensão está carregada na SAPI PHP da requisição. Exclui `packages-dev` e `suggest` opcionais.
+- Contrato registrado em `docs/portal/PHP-EXTENSION-STATUS.md`; função incluída na descrição do módulo.
+- Evidência: PHPUnit Unit 1/1 (6 assertions) PASS; exemplo derivado do `composer.lock` listou 17 requisitos do Core e todos constaram carregados no PHP CLI desta workstation. `validate-own-module-packages` (27 checks) e `validate-public-slugs` PASS. O gate de endereços agora aponta três literais `aculta.org` em testes Mailer não incluídos nesta entrega. `validate-project-status-index` e o gate Drupal 11+ seguem bloqueados por alterações em `aculta_mailer` e pela regra de autoria pública da Wiki. Nenhum arquivo Mailer ou Wiki foi incluído nesta entrega.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.227 — reenvio de link de confirmação gera pedido novo
 
 - `EmailConfirmationLinkRegenerator`: dono do link de confirmação de e-mail para o reenvio manual do aculta_mailer. O reenvio passa pelo solicitante de confirmação: token novo, mensagem nova, e o conteúdo antigo é cancelado.

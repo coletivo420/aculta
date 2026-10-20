@@ -27,6 +27,12 @@ slugs públicos canônicos por `PublicRouteSlug::normalize()` e a política
 API base cacheável de identidade de autoria para consumidores do Portal. Cada
 capacidade documenta seus limites no README do respectivo submódulo.
 
+O relatório administrativo **ACULTA Portal > Status** deriva os requisitos de
+extensões PHP (`ext-*`) declarados pelos pacotes Composer associados às
+integrações registradas, incluindo dependências transitivas, e indica quais
+estão carregadas na SAPI PHP que atende a página. Consulte o
+[contrato do inventário de extensões PHP](../../../../docs/portal/PHP-EXTENSION-STATUS.md).
+
 ## Navegação documental
 
 - [Índice normativo do Portal](../../../../docs/portal/README.md) — contratos,

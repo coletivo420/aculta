@@ -11,6 +11,7 @@ use Drupal\aculta_portal\Deployer\DeployerStatusReader;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\aculta_portal\Status\PortalHelperRegistry;
 use Drupal\aculta_portal\Status\PortalImplementationRegistry;
+use Drupal\aculta_portal\Status\PhpExtensionRequirements;
 use Drupal\aculta_portal_cep\Status\CepStatusReport;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -259,6 +260,7 @@ final class PortalRequirementsController extends ControllerBase {
         '#empty' => $this->t('Nenhum requisito foi encontrado.'),
         '#attributes' => ['data-portal-ui' => 'requirements'],
       ],
+      'php_extensions' => $this->buildPhpExtensionSection(),
       'note' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-warning'],
@@ -276,6 +278,58 @@ final class PortalRequirementsController extends ControllerBase {
     $build['#attached']['library'][] = 'system/admin';
     $build['#attached']['library'][] = 'aculta_portal/requirements-report';
     return $build;
+  }
+
+  /** Reports the runtime PHP extensions required by the integrated modules. */
+  private function buildPhpExtensionSection(): array {
+    $lockFile = dirname($this->appRoot) . '/composer.lock';
+    $decoded = is_readable($lockFile) ? json_decode((string) file_get_contents($lockFile), TRUE) : NULL;
+    $lockAvailable = is_array($decoded['packages'] ?? NULL);
+    $packages = $lockAvailable ? $decoded['packages'] : [];
+    $extensionRows = PhpExtensionRequirements::build(
+      self::MODULE_REQUIREMENTS,
+      $packages,
+      get_loaded_extensions(),
+    );
+    $rows = [];
+    foreach ($extensionRows as $extension) {
+      $status = $extension['loaded'] ? 'ok' : 'error';
+      $rows[] = [
+        'extension' => ['data' => ['#plain_text' => $extension['extension']]],
+        'integrations' => ['data' => ['#plain_text' => implode(', ', $extension['integrations'])]],
+        'modules' => ['data' => ['#plain_text' => implode(', ', $extension['modules'])]],
+        'packages' => ['data' => ['#plain_text' => implode(', ', $extension['packages'])]],
+        'status' => [
+          'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($extension['loaded']
+            ? $this->t('OK — carregada neste PHP.')
+            : $this->t('Erro — ausente ou desativada neste PHP.'))],
+          'data-portal-ui' => 'requirements-status status-' . $status,
+        ],
+      ];
+    }
+
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('Extensões PHP necessárias'),
+      '#open' => TRUE,
+      'description' => ['#plain_text' => $this->t('Requisitos ext-* declarados no composer.lock pelos pacotes dos módulos integrados e suas dependências transitivas. O status verifica se a extensão está carregada no PHP que atende esta página; requisitos opcionais (suggest) e dependências de desenvolvimento não entram na lista.')],
+      'table' => [
+        '#type' => 'table',
+        '#header' => [
+          $this->t('Extensão PHP'),
+          $this->t('Integração'),
+          $this->t('Módulos Drupal'),
+          $this->t('Pacote que declara o requisito'),
+          $this->t('Status'),
+        ],
+        '#rows' => $rows,
+        '#empty' => $lockAvailable
+          ? $this->t('Não foi encontrado requisito ext-* nos pacotes registrados para as integrações.')
+          : $this->t('Não foi possível ler o composer.lock; os requisitos de extensões PHP são desconhecidos.'),
+        '#attributes' => ['data-portal-ui' => 'requirements-php-extensions'],
+      ],
+      '#cache' => ['contexts' => ['user.permissions'], 'max-age' => 0],
+    ];
   }
 
   /**

@@ -34,7 +34,7 @@ submódulos e tema.
 <!-- PROJECT-STATUS-INDEX:BEGIN -->
 | Componente | Última versão declarada | Próxima fase registrada | Estado |
 | --- | --- | --- | --- |
-| [`aculta_portal`](web/modules/custom/aculta_portal/README.md) | `0.4.0-dev.227` | Seguir as dívidas abertas no registro e o roadmap vigente ([dívidas](docs/operations/DEBT-REGISTER.md)) | Dev |
+| [`aculta_portal`](web/modules/custom/aculta_portal/README.md) | `0.4.0-dev.228` | Seguir as dívidas abertas no registro e o roadmap vigente ([dívidas](docs/operations/DEBT-REGISTER.md)) | Dev |
 | [`aculta_associado_id`](web/modules/custom/aculta_portal/modules/aculta_associado_id/README.md) | `0.3.0-dev.1` | Validar migração em cópia isolada e fechar escopo/minimização ([decisão](docs/modules/ACULTA-ASSOCIADO-ID.md)) | Dev |
 | [`aculta_deployer`](web/modules/custom/aculta_portal/modules/aculta_deployer/README.md) | módulo `0.1.25`; CLI `0.1.27` | Corrigir pendências do plano e preparar provisionamento de produção para RC ([plano](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md)) | Dev |
 | [`aculta_donation`](web/modules/custom/aculta_portal/modules/aculta_donation/README.md) | `0.1.0-dev.20` | Completar fluxo de sandbox e fechar decisão sobre recorrência ([README](web/modules/custom/aculta_portal/modules/aculta_donation/README.md)) | Dev |
