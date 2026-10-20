@@ -167,6 +167,36 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
   }
 
   /**
+   * The account activity query only selects published public Forum replies.
+   */
+  public function testForumActivityQueryExcludesOtherContextsAndPendingComments(): void {
+    $account = $this->createAccount();
+    $forum_comment = $this->newComment('aculta_forum_topic', (int) $account->id());
+    $forum_comment->save();
+
+    $publication_comment = $this->newComment('article', (int) $account->id());
+    $publication_comment->save();
+
+    $pending_comment = $this->newComment('aculta_forum_topic', (int) $account->id());
+    $pending_comment->setUnpublished();
+    $pending_comment->save();
+
+    $ids = $this->container->get('entity_type.manager')
+      ->getStorage('comment')
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('comment_type', ParticipationRules::DISCUSSION_COMMENT_TYPE)
+      ->condition('entity_type', 'node')
+      ->condition('field_name', 'field_aculta_discussion')
+      ->condition('entity_id.entity:node.type', 'aculta_forum_topic')
+      ->condition('uid', $account->id())
+      ->condition('status', 1)
+      ->execute();
+
+    self::assertSame([(int) $forum_comment->id()], array_map('intval', array_values($ids)));
+  }
+
+  /**
    * Pending public comments can block new Forum topics when configured.
    */
   public function testPendingPublicCommentBlocksTopicCreationWhenConfigured(): void {

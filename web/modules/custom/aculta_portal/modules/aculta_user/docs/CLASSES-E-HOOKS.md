@@ -92,7 +92,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
 | `AccountBioSaveController` | `src/Controller/AccountBioSaveController.php` | Gravação da bio pelo modal (JSON). O JS do formulário chama esta rota, atualiza a caixa e fecha o modal. |
-| `ActivityController` | `src/Controller/ActivityController.php` | Atividade da própria pessoa em Minha Conta (plano aculta_user, seção E2). |
+| `ActivityController` | `src/Controller/ActivityController.php` | Atividade da própria pessoa em Minha Conta (plano aculta_user, seção E2); comentários usam o bundle compartilhado e validação de acesso/domínio do Fórum, sem consultar `comment_forum`. |
 | `AssociadosController` | `src/Controller/AssociadosController.php` | Relatório de associados (plano aculta_user, seção G2). |
 | `AvatarRerollController` | `src/Controller/AvatarRerollController.php` | Sorteia outro avatar do acervo para a própria conta (botão do popup de foto). |
 | `LegacyMemorialController` | `src/Controller/LegacyMemorialController.php` | Memorial coletivo das autorias históricas do Fórum em /u/lendashistoricas (ACULTA Fórum, F2, F-D07). |

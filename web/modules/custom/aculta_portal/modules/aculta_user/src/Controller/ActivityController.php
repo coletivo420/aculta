@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Controller;
 
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -12,6 +13,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -141,11 +143,14 @@ final class ActivityController implements ContainerInjectionInterface {
     return $this->nodeList(array_values($nids), 'article', 'Você ainda não tem artigos publicados na revista.', FALSE);
   }
 
-  /** Comentários publicados pela pessoa no Fórum, com link para o tópico. */
+  /** Comentários publicados pela pessoa em tópicos públicos do novo Fórum. */
   private function comentarios(int $uid): array {
     $ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
-      ->condition('comment_type', 'comment_forum')
+      ->condition('comment_type', 'aculta_discussion_post')
+      ->condition('entity_type', 'node')
+      ->condition('field_name', 'field_aculta_discussion')
+      ->condition('entity_id.entity:node.type', 'aculta_forum_topic')
       ->condition('uid', $uid)
       ->condition('status', 1)
       ->sort('created', 'DESC')
@@ -157,13 +162,44 @@ final class ActivityController implements ContainerInjectionInterface {
     }
     $items = [];
     foreach ($comments as $comment) {
-      $topic = $comment->getCommentedEntity();
-      if ($topic === NULL || !$topic->isPublished()) {
+      if (!($comment instanceof CommentInterface)) {
         continue;
       }
-      $items[] = ['#type' => 'link', '#title' => $topic->label(), '#url' => $topic->toUrl()];
+      $topic = $comment->getCommentedEntity();
+      if (!($topic instanceof NodeInterface)
+        || $topic->bundle() !== 'aculta_forum_topic'
+        || !$topic->isPublished()) {
+        continue;
+      }
+      $access = $this->purposeManager->runInPurpose('forum', function () use (
+        $comment,
+        $topic,
+      ): bool {
+        $topic_access = $topic->access('view', $this->currentUser, TRUE);
+        $comment_access = $comment->access('view', $this->currentUser, TRUE);
+        return $topic_access->isAllowed() && $comment_access->isAllowed();
+      });
+      if ($access !== TRUE) {
+        continue;
+      }
+      $url = $this->purposeManager->routeUrl(
+        'forum',
+        'entity.node.canonical',
+        ['node' => $topic->id()],
+      );
+      if ($url === NULL) {
+        continue;
+      }
+      $url->setOption('fragment', 'comment-' . $comment->id());
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $topic->label(),
+        '#url' => $url,
+      ];
     }
-    return $items === [] ? ['#markup' => (string) t('Você ainda não comentou nas discussões do Fórum.')] : ['#theme' => 'item_list', '#items' => $items];
+    return $items === []
+      ? ['#markup' => (string) t('Você ainda não comentou nas discussões do Fórum.')]
+      : ['#theme' => 'item_list', '#items' => $items];
   }
 
   /** Mantém os nós publicados do tipo indicado. */
@@ -194,6 +230,9 @@ final class ActivityController implements ContainerInjectionInterface {
     }
     $items = [];
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($nids) as $node) {
+      if (!$node instanceof NodeInterface || !$node->isPublished()) {
+        continue;
+      }
       $title = $node->label();
       if ($showReplies && $node->hasField('field_aculta_discussion')) {
         // Core's Comment field reads its published-only aggregate from
@@ -206,10 +245,27 @@ final class ActivityController implements ContainerInjectionInterface {
           ['@title' => $title],
         );
       }
+      $url = $history ? Url::fromRoute('entity.node.version_history', ['node' => $node->id()]) : $node->toUrl();
+      if ($bundle === 'aculta_forum_topic') {
+        $access = $this->purposeManager->runInPurpose(
+          'forum',
+          fn () => $node->access('view', $this->currentUser, TRUE)->isAllowed(),
+        );
+        $url = $access
+          ? $this->purposeManager->routeUrl(
+            'forum',
+            'entity.node.canonical',
+            ['node' => $node->id()],
+          )
+          : NULL;
+      }
+      if ($url === NULL) {
+        continue;
+      }
       $items[] = [
         '#type' => 'link',
         '#title' => $title,
-        '#url' => $history ? Url::fromRoute('entity.node.version_history', ['node' => $node->id()]) : $node->toUrl(),
+        '#url' => $url,
       ];
     }
     return ['#theme' => 'item_list', '#items' => $items];

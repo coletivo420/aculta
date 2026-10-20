@@ -1,7 +1,7 @@
 # Cartões de identidade e autoria
 
 Status: cartões de `author_forum` integrados aos tópicos e respostas do bundle novo na linha
-`aculta_user 0.4.0-dev.35`. `aculta_user` possui políticas,
+`aculta_user 0.4.0-dev.37`. `aculta_user` possui políticas,
 links, perfil, avatar e memória histórica. `AuthorIdentityResolver`,
 `AuthorIdentity` e `AuthorCardBuilder` compõem identidade, avatar cacheável e
 render array neutro; ACULTA420 apresenta o cartão SDC. Ações e dados adicionais

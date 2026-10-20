@@ -1,3 +1,25 @@
+## 0.4.0-dev.37 — atividade com comentários do novo Fórum — 2026-10-19
+
+- A aba privada “Comentários” consulta exclusivamente Comments publicados do
+  bundle `aculta_discussion_post`, field compartilhado e Nodes
+  `aculta_forum_topic`; não depende mais de `comment_forum` do Drupal Forum
+  contrib. Cada link aponta ao domínio canônico do Fórum e à âncora do Comment.
+- Antes de renderizar, a tela revalida acesso ao tópico e ao Comment no purpose
+  `forum`, além de exigir host público publicado do bundle correto. Links de
+  tópicos próprios também usam Domain canônico e access contextual.
+- Auditoria adicional de contrib instalado e critérios para adaptar código
+  registrados em `aculta_forum/docs/PESQUISA.md`; nenhuma implementação ou
+  dependência nova foi copiada/adicionada.
+- Teste Kernel MariaDB: 6 testes/73 assertions PASS, incluindo query exata da
+  atividade (Forum publicado incluído; Revista e pendente excluídos). Unit
+  `aculta_user`: 60 testes/175 assertions PASS. PHP lint e gates Portal (970),
+  fronteira (1374), mapa (154), diff-check PASS. PHPCS do controller ainda
+  acusa dívida pré-existente: 22 erros/14 avisos, contra 23/14 na base; não foi
+  ampliada. Runtime `toca`: service/rota renderizada em leitura como uid 5, mas
+  sem comentários do novo bundle; consulta pública também retornou zero, logo
+  card/link com conteúdo e browser não foram exercitados. PHP CLI 8.4.26 está
+  abaixo da baseline 8.5. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.35 — variantes de autoria separadas pelo host da discussão — 2026-10-19
 
 - `DiscussionCommentAuthorHooks` consulta a entidade hospedeira pelo contrato

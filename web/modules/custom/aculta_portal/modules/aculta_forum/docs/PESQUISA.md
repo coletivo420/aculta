@@ -36,6 +36,44 @@ O código instalado é fonte de verdade para o estado descrito. Os status de Run
 e de conteúdo não foram consultados nesta fase, portanto nada aqui afirma que a
 configuração exportada é idêntica ao servidor.
 
+## Auditoria de contrib instalado e portabilidade
+
+Inventário conferido em `composer.lock`, `composer show --locked` e no código
+presente em `web/modules/contrib` em 2026-10-19. Os módulos abaixo são avaliados
+como dependências instaladas; qualquer uso futuro continua sujeito ao código e
+testes da versão travada. “Portar” significa adaptar somente comportamento útil
+ao contrato ACULTA, com revisão de licença/proveniência, não copiar sistema
+inteiro nem criar storage paralelo.
+
+| Módulo/versão | Capacidade e evidência local | Decisão para o Fórum |
+| --- | --- | --- |
+| `drupal/forum` 1.1.3 | `web/modules/contrib/forum`: `ForumManager`, storage de índice, rotas, formulários, blocos, hooks, validação e configuração optional; Composer depende de `drupal/history` | Legado a retirar na fase autorizada. Inspecionar efeitos de uninstall; nenhum código executável D7 será base do motor novo. O purpose público Growroom420 permanece. |
+| [`drupal/flag`](https://www.drupal.org/project/flag) 5.1.1 | Serviço `flag`, entidades de flag, integração Views e configuração `seguir_topico`/`salvar_topico` já consumida por `aculta_forum` | Reutilizar para seguir/salvar/denunciar conforme configuração; não armazenar flags em entidade/tabela própria. Revalidar access/contexto antes de mostrar ou notificar. |
+| [`drupal/ctools`](https://www.drupal.org/project/ctools) 4.1.1 | Plugin API e submódulo `ctools_views` em `web/modules/contrib/ctools` | Reutilizar plugins/contextos e blocos Views com opções editoriais controladas. Não expor filtros, ordenação ou campos de access ao configurador. |
+| `drupal/history` 1.0.0 | Histórico de leitura do Node e integração de campos/serviços usados pela View de não lidos | Reutilizar para progresso de leitura de tópicos públicos onde a semântica instalada cubra a necessidade. Não presumir suporte a Comments nem cruzar Domain/contextos sem teste. |
+| [`drupal/search_api`](https://www.drupal.org/project/search_api) 1.41.0 | Framework de índices/processors; backend e Views integration disponíveis no projeto. Upstream já publicou 1.42 após a versão travada; nenhuma atualização foi solicitada. | Reutilizar índices/Views por contexto. Search API não garante restrições genéricas de acesso; conteúdos LMS/Wiki privados exigem filtros fixos e teste de isolamento. Índice público nunca recebe conteúdo privado. |
+| [`drupal/group`](https://www.drupal.org/project/group) 3.3.5 | Membership, roles e acesso de conteúdo por grupo; adapter LMS planejado. A documentação upstream descreve negação fechada para conteúdo agrupado sem permissão/membership. | Integrar pelo adapter opcional e access efetivo; papel global estudante não substitui membership. Nunca publicar Group content no índice público. |
+| [`drupal/message`](https://www.drupal.org/project/message) 1.9.0, [`message_notify`](https://www.drupal.org/project/message_notify) 1.5.0, [`message_subscribe`](https://www.drupal.org/project/message_subscribe) 2.1.0 | Message stack de tipos, entrega e assinatura; Message Subscribe usa Flag para subscrição. Integração ativa do Portal é `aculta_messenger`. | Não enviar notificações fora de `aculta_messenger` nem criar fila concorrente. Confirmar consumidores antes de retirada/atualização. |
+| `drupal/private_message` 3.0.7 | Mensagem privada independente | Não usar como armazenamento de discussão; não é dependência do motor de Comments nem solução para LMS. |
+| [`drupal/advanced_forum`](https://www.drupal.org/project/advanced_forum) | Não consta no lockfile nem em `web/modules/contrib` | Não instalado. Advanced Forum D7 é catálogo de capacidades; ramo 8.x em desenvolvimento não confirma Drupal 11. Não copiar PHPTemplate, hooks D7 ou APIs obsoletas. |
+
+### Critérios antes de portar código contrib
+
+1. Confirmar versão no lockfile e inspecionar API instalada, testes, dependências,
+   manutenção e licença.
+2. Preferir configurar/reutilizar Core e contrib; adaptar código só diante de
+   lacuna concreta do contrato.
+3. Isolar dependência em adapter e cobrir access, cache, instalação e remoção.
+4. Registrar origem, API/arquivo, licença e transformação na documentação da
+   feature; apresentação permanece no ACULTA420.
+5. Rejeitar padrões incompatíveis com Drupal 11+ ACULTA: service locator, hooks
+   migráveis procedurais, acesso sem `accessCheck()`, SQL de domínio e consultas
+   sem isolamento de Domain/contexto.
+
+Nenhum código contrib foi copiado nesta auditoria. O código executável do Forum
+contrib e os templates do ACULTA420 foram inspecionados para mapear efeitos e
+consumidores; alterações de remoção aguardam o procedimento seguro documentado.
+
 ## Advanced Forum histórico
 
 Advanced Forum 7.x-2.8 é uma referência Drupal 7 histórica que extendia Core
