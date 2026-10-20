@@ -11,7 +11,7 @@ dados pertencem a `aculta_user`, o layout ao ACULTA420.
 | Online e último acesso | Excluir por padrão | O dado histórico derivava de atividade recente da conta; não é necessário e pode revelar hábitos/presença. Só decisão explícita pode reintroduzir com policy adequada. |
 | Título/role do participante | Mostrar só função de contexto aprovada (por exemplo, educador na discussão daquele curso) | Nunca despejar roles globais/permissões. |
 | Data de entrada/registro | Não mostrar por padrão; avaliar se há motivo institucional | Evitar exposição e informação sem valor para thread. |
-| Estatísticas: tópicos/respostas | Contagem Core de respostas publicada por tópico e atividade estão na View do Fórum; contagens por participante aguardam definição de métrica e serviço cacheável | Ignorar conteúdo sem acesso e excluir histórico importado das métricas contemporâneas. |
+| Estatísticas: tópicos/respostas | A aba privada de atividade mostra, em cada tópico público criado pela própria pessoa, a contagem publicada mantida pelo Comment Core. Estatísticas agregadas por participante em cartões seguem fora de escopo até definição própria de métrica/cache | Ignorar conteúdo sem acesso e excluir histórico importado das métricas contemporâneas. |
 | Badges e pontos | Reusar apenas conquistas com visibilidade pública autorizada | Pontos Userpoints do template histórico não são portados; sem leaderboard/ranking. |
 | Perfil público | Link canônico atual `/u/{apelido}` | Sem UID e sem URL hardcoded fora de DomainPurposeManager. |
 | Links sociais/contato | Reusar opt-in `SocialNetworks` e Friendship/Messenger APIs | Não expor email; Messenger só para conta atual elegível. |

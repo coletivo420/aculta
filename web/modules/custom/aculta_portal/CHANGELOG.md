@@ -3156,3 +3156,14 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   hierárquica refinada e os contadores de tópicos permanecem nas etapas visuais
   e de estatísticas do Fórum.
 
+## 0.4.0-dev.201 — respostas nos tópicos próprios do Fórum — 2026-10-19
+
+- Minha Conta consulta os tópicos públicos `aculta_forum_topic` e apresenta o
+  contador agregado de comentários publicados mantido pelo Comment Core.
+- PHPUnit Unit `aculta_user`: 60/60 testes, 175 assertions PASS; lint e gates
+  Drupal 11+ (970), fronteira (1368), mapa (154) e portal-ui docs PASS.
+- PHPCS mantém a linha de base anterior na classe alterada (23 erros/14 avisos);
+  PHP CLI 8.4.26. Runtime de teste via Drush, uid 5: 8 tópicos renderizáveis e
+  8 contagens encontradas, somente leitura; HTTP/browser autenticado pendente.
+  RUNTIME STATUS: PARTIAL.
+

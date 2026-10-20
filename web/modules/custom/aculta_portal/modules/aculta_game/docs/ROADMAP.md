@@ -56,6 +56,15 @@ Estudos de referência e limites: [experimento de mecânicas em fóruns de curso
 online](https://www.sciencedirect.com/science/article/pii/S0360131515300592),
 [estudo sobre badges em discussões online com desenho pré/pós](https://scholar.ui.ac.id/en/publications/influence-of-gamification-on-student-engagement-in-online-discuss/) e
 [guia Discourse de badges](https://meta.discourse.org/t/understanding-and-using-badges/32540).
+Revisão do modelo Discourse em 2026-10-19 também conferiu seu recurso oficial
+de pontos configuráveis e leaderboards e a função de moderação dos trust levels:
+[Discourse Gamification](https://meta.discourse.org/t/discourse-gamification/225916)
+e [Trust Levels](https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/).
+Esses recursos não foram adotados como mecânica ACULTA: pontos, ranking,
+sequências diárias e permissões derivadas de participação conflitam com os
+limites de produto e acesso já aprovados. A integração ativa permanece a badge
+idempotente da primeira resposta pública aprovada; a contagem por tópico serve à
+atividade privada da própria pessoa, sem gerar prêmio por volume.
 Esses estudos não autorizam prometer resultados para a comunidade ACULTA.
 
 ## Área administrativa aprovada

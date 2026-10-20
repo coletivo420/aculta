@@ -32,6 +32,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | Versão | Entrega | Estado |
 | --- | --- | --- |
 | Não marcada | Contagem e atividade na View de tópicos | Kernel MariaDB confirma `comment_count = 1` com resposta publicada, exclui pendente e preserva o agregado após mover categoria; Runtime tem 0 respostas, então ordenação positiva, invalidação após moderação e inspeção visual seguem pendentes |
+| Não marcada | Contagem de respostas em tópicos próprios | Implementada na aba privada Fórum de Minha Conta: cada tópico da pessoa usa `comment_count` de Comment Core; validação direcionada pendente nesta subfase |
 | Não marcada | Hierarquia no índice público de categorias | Configuração e Runtime PASS: a View apresenta os 12 termos e associa corretamente as 8 subcategorias aos pais; inspeção visual continua pendente |
 | Não marcada | Lista personalizada de discussões não lidas | View `/discussoes/nao-lidas` usa History contrib com acesso `authenticated`, filtros públicos fixos e sem cache compartilhado; campo `node_new_comments` mostra contagem positiva e liga à primeira resposta nova. Runtime query como uid 5 retornou 7 resultados e anônimo recebeu 403; HTTP autenticado/browser pendente |
 | Não marcada | Marcar todas as discussões públicas acessíveis como lidas | Ação confirmada `/discussoes/marcar-tudo-como-lido`, em Core Batch de 200 itens e History por usuário; Unit/Kernel e isolamento de domínio aprovados. Runtime smoke confirmou rota/form/access sem gravar histórico; teste funcional com usuário de QA efêmero e Browser continuam pendentes. |
@@ -273,6 +274,13 @@ campos para Views ([`CommentStatistics`](https://api.drupal.org/api/drupal/core%
 [`CommentViewsData`](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentViewsData.php/11.x));
 validar cache/invalidação no campo compartilhado durante a implementação.
 
+Na aba privada “Fórum” de Minha Conta, a pessoa também vê a quantidade de
+respostas publicadas em cada tópico que criou. A fonte é o mesmo agregado Core;
+não publicar contagens de outros autores, contar comentários pendentes/rejeitados
+ou materializar estatísticas próprias por participante. Cartões públicos de
+autoria não recebem totais até existir decisão de métrica/cache e política de
+privacidade.
+
 ## `0.1.0-dev.10` — Advanced Forum: leitura e estatísticas
 
 Subfase implementada: View `/discussoes/nao-lidas` com plugin de filtro e
@@ -374,6 +382,17 @@ foi implementada separadamente em `aculta_game 0.1.0-dev.10`: Game reconhece o
 Comment do tópico público novo e ignora importação/autoria histórica. A
 homologação no Runtime fica pendente; estatísticas completas e novos critérios
 de gamificação continuam nesta fase e na linha própria do Game.
+
+Pesquisa atualizada em 2026-10-19: o Discourse combina badges por marcos com
+gamificação configurável por pontos e leaderboards; seus níveis de confiança
+também podem conceder poderes de moderação. O ACULTA mantém o uso adequado já
+aprovado: reconhecimento por badges e marcos publicados, sem XP, ranking,
+streaks ou poderes de moderação derivados de volume. Critérios quantitativos
+novos exigiriam defesa contra spam e medição de qualidade; a integração atual
+reutiliza apenas a conquista existente da primeira resposta publicada. Fontes:
+[badges Discourse](https://meta.discourse.org/t/understanding-and-using-badges/32540),
+[gamification oficial do Discourse](https://meta.discourse.org/t/discourse-gamification/225916)
+e [trust levels](https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/).
 
 ## `0.1.0-dev.16` — Busca e descoberta
 

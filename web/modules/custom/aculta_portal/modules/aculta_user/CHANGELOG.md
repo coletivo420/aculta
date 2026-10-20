@@ -457,3 +457,20 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
   formulários e integração de notificações seguem em desenvolvimento.
 
 
+## 0.4.0-dev.36 — respostas nos tópicos próprios da atividade — 2026-10-19
+
+- A aba Fórum em Minha Conta lista o bundle `aculta_forum_topic` e mostra a
+  contagem publicada de respostas em cada tópico, usando o agregado de Comment
+  Core. O contador é privado à própria pessoa nessa tela; não há armazenamento
+  paralelo, contagem de pendências/rejeições nem consulta por linha.
+- Esta atualização também substitui a consulta obsoleta ao bundle contribuído
+  `forum` na lista de tópicos próprios. O histórico antigo não é migrado nem
+  alterado por esta tela.
+- Validação: Unit `aculta_user` 60/60 testes e 175 assertions PASS; PHP lint e
+  gates Portal 11+ (970), fronteira (1368) e mapa (154) PASS. PHPCS da classe
+  ainda registra 23 erros e 14 avisos já presentes na versão-base, sem aumento
+  da contagem após esta alteração. Runtime `toca`, Core 11.4.10, uid 5: render
+  direto da aba produziu 8 tópicos e 8 itens com contador agregado; somente
+  leitura, sem alteração de conteúdo. HTTP/browser autenticado pendente. PHP CLI
+  8.4.26, abaixo da baseline requerida 8.5. RUNTIME STATUS: PARTIAL.
+

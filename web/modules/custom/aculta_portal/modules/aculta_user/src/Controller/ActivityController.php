@@ -10,6 +10,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
@@ -38,6 +39,7 @@ final class ActivityController implements ContainerInjectionInterface {
     private readonly AccountInterface $currentUser,
     private readonly DomainPurposeManager $purposeManager,
     private readonly ModuleHandlerInterface $modules,
+    private readonly TranslationInterface $stringTranslation,
   ) {}
 
   /**
@@ -49,6 +51,7 @@ final class ActivityController implements ContainerInjectionInterface {
       $container->get('current_user'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('module_handler'),
+      $container->get('string_translation'),
     );
   }
 
@@ -114,9 +117,21 @@ final class ActivityController implements ContainerInjectionInterface {
 
   /** Tópicos de Fórum criados pela pessoa que continuam publicados. */
   private function forum(int $uid): array {
-    $nids = $this->entityTypeManager->getStorage('node')->getQuery()
-      ->accessCheck(FALSE)->condition('type', 'forum')->condition('uid', $uid)->condition('status', 1)->execute();
-    return $this->nodeList(array_values($nids), 'forum', 'Você ainda não criou tópicos no Fórum.', FALSE);
+    $query = $this->entityTypeManager->getStorage('node')->getQuery();
+    $nids = $query
+      ->accessCheck(FALSE)
+      ->condition('type', 'aculta_forum_topic')
+      ->condition('uid', $uid)
+      ->condition('status', 1)
+      ->execute();
+
+    return $this->nodeList(
+      array_values($nids),
+      'aculta_forum_topic',
+      'Você ainda não criou tópicos no Fórum.',
+      FALSE,
+      TRUE,
+    );
   }
 
   /** Artigos da revista (tipo article) de autoria da pessoa, publicados. */
@@ -167,15 +182,33 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /** Lista de nós com link, ou mensagem de vazio com link para a área. */
-  private function nodeList(array $nids, string $bundle, string $vazio, bool $history): array {
+  private function nodeList(
+    array $nids,
+    string $bundle,
+    string $vazio,
+    bool $history,
+    bool $showReplies = FALSE,
+  ): array {
     if ($nids === []) {
       return ['#markup' => (string) t($vazio)];
     }
     $items = [];
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($nids) as $node) {
+      $title = $node->label();
+      if ($showReplies && $node->hasField('field_aculta_discussion')) {
+        // Core's Comment field reads its published-only aggregate from
+        // comment_entity_statistics; do not count replies with a query per row.
+        $replyCount = (int) $node->get('field_aculta_discussion')->comment_count;
+        $title = $this->stringTranslation->formatPlural(
+          $replyCount,
+          '1 comentário — @title',
+          '@count comentários — @title',
+          ['@title' => $title],
+        );
+      }
       $items[] = [
         '#type' => 'link',
-        '#title' => $node->label(),
+        '#title' => $title,
         '#url' => $history ? Url::fromRoute('entity.node.version_history', ['node' => $node->id()]) : $node->toUrl(),
       ];
     }
