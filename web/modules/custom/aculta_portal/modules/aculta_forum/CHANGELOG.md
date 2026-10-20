@@ -7,22 +7,29 @@
 - Preserva Comment IDs, UUIDs, autor, texto, datas e estado de moderação; atualiza
   parent/thread, recalcula estatísticas dos dois Nodes e invalida caches. Lock
   segue o padrão de chave Comment Core e relê o máximo da thread sob lock.
-- Kernel MariaDB dedicado: 10 testes/214 assertions PASS (árvore em três níveis,
+- Kernel MariaDB dedicado: 12 testes/246 assertions PASS (árvore em três níveis,
   estado pendente, legado bloqueado, estatísticas, flag disabled, rollback,
   formulário de resposta/remoção desatualizado e retenção do lock até o callback
   da transação raiz, verificada por uma segunda conexão MariaDB independente).
-  19 depreciações de Core/Domain/Flag/Search API contrib. No Runtime `toca`,
+  Form API pelo `FormBuilder::submitForm()` confirma que a movimentação exige
+  destino e confirmação explícita; com a caixa ausente, o envio é rejeitado e o
+  tópico hospedeiro permanece. Persistem 19 depreciações de Core/Domain/Flag/
+  Search API contrib. No Runtime `toca`,
   `drush cr` com URI explícita
   do purpose `forum` e resolução do serviço guard e da classe OOP de hooks
   PASS; `aculta_forum.settings` segue ausente, portanto o mover permanece
   desabilitado por padrão. Nenhuma configuração ou entidade foi alterada. A
-  submissão funcional e concorrência entre processos permanecem DEFERRED; RUNTIME STATUS:
-  PARTIAL.
+  rota HTTP/CSRF, concorrência entre processos e efeitos integrados permanecem
+  DEFERRED; RUNTIME STATUS: PARTIAL.
 - Forum Unit: 51 testes/360 assertions PASS; PHPCS nos arquivos novos e gates
   Drupal 11+ (970), fronteira (1387), mapa (154), slugs (387) e hierarquia de
   papéis PASS. PHP CLI 8.4.26 (abaixo da baseline 8.5).
-- Pesquisa contrib: referência `comment_mover` alpha não foi portada; VBO é
-  candidato para ações em lote, não dependência desta versão.
+- Pesquisa contrib expandida: Forum Access (matriz de permissões), Comment Notify
+  (preferências de acompanhamento), Achievements/Gamification (marcos e limites)
+  e VBO (ações em lote) são referências; nenhum código/dependência foi copiado.
+  Comment Moderation AI foi rejeitado como dependência por processamento externo
+  e ausência de cobertura pela política de security advisories. Ver
+  `docs/PESQUISA.md`.
 - `ForumDiscussionWriteGuard` serializa comentário e movimento por tópico, com
   locks adquiridos em ordem estável, validação de pai/host após lock e liberação
   ao final da transação raiz. A fixture Kernel substitui `NullLockBackend` pelo
