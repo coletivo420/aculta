@@ -1,5 +1,9 @@
 ## 0.4.0-dev.211 — cadastro com e-mail já usado pelo aculta_mailer — 2026-10-20
 
+## 0.4.0-dev.216 — provedor de credenciais para o transporte Brevo — 2026-10-20
+
+- `SecretProviderAdapter` implementa `SecretProviderInterface` (aculta_mailer) com o gerenciador de segredos, para o transporte Brevo ler `BREVO_API_KEY` sem depender do módulo de Key.
+
 ## 0.4.0-dev.215 — credencial sem Key lida do arquivo do servidor — 2026-10-20
 
 - `SecretsManager::value()`: se existir configuração de Key para a variável, ela continua valendo; se não existir, o valor é lido do arquivo de credenciais do servidor. Nenhuma Key nova é criada.

@@ -339,3 +339,10 @@ services:
   aculta_portal.mercado_pago.recurrence_service:
     class: Drupal\aculta_portal\MercadoPago\MercadoPagoRecurrenceService
     arguments: ['@aculta_portal.mercado_pago.client_factory', '@aculta_portal.mercado_pago.recurrence_request_builder', '@aculta_portal.mercado_pago.logger']
+
+  aculta_portal.secret_provider_adapter:
+    class: Drupal\aculta_portal\Secrets\SecretProviderAdapter
+    arguments: ['@aculta_portal.secrets_manager']
+
+  Drupal\aculta_mailer\Transport\SecretProviderInterface:
+    alias: aculta_portal.secret_provider_adapter
