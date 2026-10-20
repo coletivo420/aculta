@@ -4,20 +4,19 @@ status: true
 dependencies:
   config:
     - filter.format.webform_default
-    - node.type.aculta_notice
   module:
+    - aculta_donation
     - aculta_portal
     - comment
     - commerce_checkout
     - commerce_order
-    - commerce_payment
     - commerce_product
+    - commerce_shipping
     - email_confirmer
     - file
     - filter
     - flag
     - media
-    - node
     - private_message
     - profile
     - social_auth

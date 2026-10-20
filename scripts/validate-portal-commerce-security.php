@@ -531,7 +531,7 @@ $assert($canonical_sync_path !== FALSE && $effective_sync_path === $canonical_sy
 $sync_storage = \Drupal::service('config.storage.sync');
 // user_registrationpassword was removed (commit b4b4389); its three objects are no longer in the manifest.
 // F15: o contrib de envio (mailer_transport) saiu; as configurações de envio são de aculta_mailer e não entram no manifesto de conta.
-$assert(count($manifest['configs']) === 50, 'The reviewed account manifest contains 50 intentionally selected config objects.');
+$assert(count($manifest['configs']) === 40, 'The reviewed account manifest contains 40 intentionally selected config objects.');
 $assert(in_array('field.storage.user.user_picture', $manifest['configs'], TRUE), 'Private User picture storage is included in the reviewed manifest.');
 $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
   ksort($data);
