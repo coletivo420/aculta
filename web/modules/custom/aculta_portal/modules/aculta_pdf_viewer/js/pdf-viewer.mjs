@@ -31,6 +31,9 @@ async function initialize(viewer) {
   const searchPrevious = viewer.querySelector('[data-aculta-pdf-control="search-previous"]');
   const searchNext = viewer.querySelector('[data-aculta-pdf-control="search-next"]');
   const searchStatus = viewer.querySelector('[data-aculta-pdf-control="search-status"]');
+  const outline = viewer.querySelector('[data-aculta-pdf-control="outline"]');
+  const outlineItems = viewer.querySelector('[data-aculta-pdf-control="outline-items"]');
+  const outlineStatus = viewer.querySelector('[data-aculta-pdf-control="outline-status"]');
   if (!url || !url.startsWith('/') || url.startsWith('//') || !canvas || !status) {
     return;
   }
@@ -47,6 +50,49 @@ async function initialize(viewer) {
     let searchSequence = 0;
     let matchingPages = [];
     let matchingPageIndex = -1;
+
+    if (outline && outlineItems && outlineStatus) {
+      const entries = await pdf.getOutline();
+      if (entries?.length) {
+        outlineStatus.textContent = '';
+        let entryCount = 0;
+        const appendEntries = (parent, items, depth = 0) => {
+          if (depth > 20 || entryCount >= 500) return;
+          for (const entry of items) {
+            if (entryCount >= 500) break;
+            entryCount += 1;
+            const item = document.createElement('li');
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = entry.title || `Seção ${entryCount}`;
+            button.addEventListener('click', async () => {
+              try {
+                let destination = entry.dest;
+                if (typeof destination === 'string') destination = await pdf.getDestination(destination);
+                if (!Array.isArray(destination) || !destination[0]) return;
+                const pageIndex = await pdf.getPageIndex(destination[0]);
+                goToPage(pageIndex + 1);
+              }
+              catch {
+                outlineStatus.textContent = 'Não foi possível abrir esta seção do contorno.';
+              }
+            });
+            item.append(button);
+            if (Array.isArray(entry.items) && entry.items.length) {
+              const nested = document.createElement('ul');
+              item.append(nested);
+              appendEntries(nested, entry.items, depth + 1);
+            }
+            parent.append(item);
+          }
+        };
+        appendEntries(outlineItems, entries);
+        if (entryCount >= 500) outlineStatus.textContent = 'Contorno truncado após 500 itens.';
+      }
+      else {
+        outline.hidden = true;
+      }
+    }
 
     const render = async () => {
       const sequence = ++renderSequence;

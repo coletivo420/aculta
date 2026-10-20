@@ -1,5 +1,10 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.31 — navegação pelo contorno do PDF — 2026-10-20
+
+- Exibe o outline fornecido pelo PDF.js em lista hierárquica de controles acessíveis, navegando para a página de cada destino. Documento sem outline não exibe a área vazia.
+- Limita a construção a 500 itens e 20 níveis; títulos são inseridos como texto, sem interpretar HTML. Miniaturas por página continuam pendentes. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.30 — rotação do canvas — 2026-10-20
 
 - Acrescenta controle opcional de rotação no formatter; o canvas gira em passos de 90° e recalcula a escala respeitando o limite de pixels e dimensões.

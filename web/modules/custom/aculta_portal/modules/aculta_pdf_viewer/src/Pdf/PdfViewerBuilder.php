@@ -106,6 +106,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       'show_download' => TRUE, 'show_print' => TRUE, 'show_zoom' => TRUE,
       'show_fullscreen' => TRUE, 'show_search' => TRUE, 'show_page_navigation' => TRUE,
       'show_rotation' => TRUE,
+      'show_outline' => TRUE,
       'show_full_viewer' => TRUE, 'default_zoom' => 'fit-width', 'default_scroll' => 'vertical',
       'double_page' => FALSE, 'double_page_mobile' => FALSE, 'language' => 'pt-BR',
       'link_text' => '', 'link_target' => '_blank', 'css_class' => '',
@@ -277,6 +278,22 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           ],
         ],
       ],
+      'outline' => [
+        '#type' => 'details',
+        '#title' => new TranslatableMarkup('Contorno do documento'),
+        '#attributes' => ['data-aculta-pdf-control' => 'outline'],
+        'items' => [
+          '#type' => 'html_tag',
+          '#tag' => 'ul',
+          '#attributes' => ['data-aculta-pdf-control' => 'outline-items'],
+        ],
+        'status' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => new TranslatableMarkup('Este PDF não contém contorno.'),
+          '#attributes' => ['data-aculta-pdf-control' => 'outline-status', 'aria-live' => 'polite'],
+        ],
+      ],
       'page_stage' => [
         '#type' => 'container',
         '#attributes' => ['data-aculta-pdf-control' => 'page-stage'],
@@ -340,6 +357,9 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
     }
     if (empty($settings['show_rotation'])) {
       $build['reader_controls']['rotate']['#access'] = FALSE;
+    }
+    if (empty($settings['show_outline'])) {
+      $build['outline']['#access'] = FALSE;
     }
     if (empty($settings['show_search'])) {
       $build['search_controls']['#access'] = FALSE;
