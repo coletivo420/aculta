@@ -7,15 +7,15 @@
 - Preserva Comment IDs, UUIDs, autor, texto, datas e estado de moderação; atualiza
   parent/thread, recalcula estatísticas dos dois Nodes e invalida caches. Lock
   segue o padrão de chave Comment Core e relê o máximo da thread sob lock.
-- Kernel MariaDB dedicado: 7 testes/133 assertions PASS (árvore em três níveis,
+- Kernel MariaDB dedicado: 7 testes/134 assertions PASS (árvore em três níveis,
   estado pendente, legado bloqueado, estatísticas, flag disabled, rollback,
   formulário de resposta/remoção desatualizado e retenção do lock até o callback
-  da transação raiz). 5
+  da transação raiz, verificada por uma segunda conexão MariaDB independente). 5
   depreciações do Domain contrib. No Runtime `toca`, `drush cr` com URI explícita
   do purpose `forum` e resolução do serviço guard e da classe OOP de hooks
   PASS; `aculta_forum.settings` segue ausente, portanto o mover permanece
   desabilitado por padrão. Nenhuma configuração ou entidade foi alterada. A
-  submissão funcional e a concorrência real permanecem DEFERRED; RUNTIME STATUS:
+  submissão funcional e concorrência entre processos permanecem DEFERRED; RUNTIME STATUS:
   PARTIAL.
 - Forum Unit: 51 testes/360 assertions PASS; PHPCS nos arquivos novos e gates
   Drupal 11+ (970), fronteira (1387), mapa (154), slugs (387) e hierarquia de
@@ -24,10 +24,12 @@
   candidato para ações em lote, não dependência desta versão.
 - `ForumDiscussionWriteGuard` serializa comentário e movimento por tópico, com
   locks adquiridos em ordem estável, validação de pai/host após lock e liberação
-  ao final da transação raiz. O teste de lifecycle usa LockBackend mockado; não
-  simula duas conexões HTTP concorrentes. Efeitos externos e concorrência real
-  permanecem na matriz pendente. O mover reserva primeiro o lock de thread Core,
-  respeitando a ordem de aquisição de `Comment::preSave()` para evitar inversão.
+  ao final da transação raiz. A fixture Kernel substitui `NullLockBackend` pelo
+  `DatabaseLockBackend`; uma conexão MariaDB adicional não adquire a chave até a
+  transação raiz encerrar e consegue adquiri-la após o commit. Isso prova o lock
+  persistente entre conexões, mas não simula dois processos/requisições HTTP.
+  Efeitos externos seguem pendentes. O mover reserva primeiro o lock de thread
+  Core, respeitando `Comment::preSave()` para evitar inversão.
 
 ## Pesquisa adicional de módulos contrib — 2026-10-19 (documentação)
 

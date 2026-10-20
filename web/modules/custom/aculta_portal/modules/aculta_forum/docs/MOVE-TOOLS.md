@@ -225,9 +225,13 @@ thread raiz do Comment Core precisa ser reservado **antes** dos locks ACULTA:
 `comment_presave`. A ordem inversa deixaria uma gravação normal segurando o lock
 Core enquanto espera o tópico, e o mover segurando o tópico enquanto espera o
 lock Core. O mover mantém sua reserva do Core até persistir a nova raiz.
-O teste Kernel comprova rejeição de formulário obsoleto e callback de retenção;
-simulação real de dois requests/conexões, timeout, worker e indisponibilidade de
-lock continuam pendentes.
+O teste Kernel comprova rejeição de formulário obsoleto e callback de retenção.
+Para não mascarar concorrência com o `NullLockBackend` padrão da fixture, o
+Kernel injeta `DatabaseLockBackend` e abre uma conexão independente ao mesmo
+banco de teste: ela não adquire a chave até a transação raiz terminar e consegue
+adquiri-la após o commit. Isso valida o backend persistente entre conexões; dois
+processos/requisições HTTP, timeout, worker e indisponibilidade de lock seguem
+pendentes.
 
 O gate operacional também é explícito: `aculta_forum.settings` define
 `comment_move_enabled: false` no install e Config Sync. `ForumCommentMover`
