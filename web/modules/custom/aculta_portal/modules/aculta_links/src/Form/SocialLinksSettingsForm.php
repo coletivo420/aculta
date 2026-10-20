@@ -2,30 +2,47 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Presentation;
+namespace Drupal\aculta_links\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-/** Configures the public social profile links shown in LINKS. */
+/**
+ * Configures the public social profile links shown in LINKS.
+ */
 final class SocialLinksSettingsForm extends ConfigFormBase {
 
   private const CHANNELS = [
-    'instagram' => ['label' => 'Instagram', 'hosts' => ['instagram.com', 'www.instagram.com']],
-    'youtube' => ['label' => 'YouTube', 'hosts' => ['youtube.com', 'www.youtube.com', 'youtu.be']],
-    'facebook' => ['label' => 'Facebook', 'hosts' => ['facebook.com', 'www.facebook.com', 'm.facebook.com', 'fb.com', 'www.fb.com']],
+    'instagram' => [
+      'hosts' => ['instagram.com', 'www.instagram.com'],
+    ],
+    'youtube' => [
+      'hosts' => ['youtube.com', 'www.youtube.com', 'youtu.be'],
+    ],
+    'facebook' => [
+      'hosts' => ['facebook.com', 'www.facebook.com', 'm.facebook.com', 'fb.com', 'www.fb.com'],
+    ],
   ];
 
+  /**
+   * Returns the stable Form API identifier.
+   */
   public function getFormId(): string {
-    return 'aculta_portal_social_links_settings';
+    return 'aculta_links_social_links_settings';
   }
 
+  /**
+   * Returns the configuration edited by this form.
+   */
   protected function getEditableConfigNames(): array {
-    return ['aculta_portal.social_links'];
+    return ['aculta_links.social_links'];
   }
 
+  /**
+   * Builds the configuration form.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $config = $this->config('aculta_portal.social_links');
+    $config = $this->config('aculta_links.social_links');
     $form['intro'] = [
       '#type' => 'item',
       '#title' => $this->t('Redes sociais da página LINKS'),
@@ -34,7 +51,7 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
     foreach (self::CHANNELS as $id => $channel) {
       $form[$id] = [
         '#type' => 'url',
-        '#title' => $this->t($channel['label']),
+        '#title' => $this->channelLabel($id),
         '#default_value' => $config->get($id) ?? '',
         '#maxlength' => 2048,
         '#description' => $this->t('Hosts aceitos: @hosts.', ['@hosts' => implode(', ', $channel['hosts'])]),
@@ -44,7 +61,7 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
     $form['buttons_heading'] = [
       '#type' => 'item',
       '#title' => $this->t('Botões da página LINKS'),
-      '#description' => $this->t('“Visite nosso Site” é fixo e sempre aparece primeiro. Adicione botões abaixo com texto e link. Aceita endereços HTTPS ou caminhos internos iniciados por /.')
+      '#description' => $this->t('“Visite nosso Site” é fixo e sempre aparece primeiro. Adicione botões abaixo com texto e link. Aceita endereços HTTPS ou caminhos internos iniciados por /.'),
     ];
     $form['fixed_button'] = [
       '#type' => 'item',
@@ -91,10 +108,10 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
           '#type' => 'submit',
           '#value' => $this->t('Remover'),
           '#name' => 'remove_social_button_' . $id,
-          '#submit' => ['aculta_portal.social_links_form_callbacks:removeButton'],
+          '#submit' => ['aculta_links.social_links_form_callbacks:removeButton'],
           '#limit_validation_errors' => [],
           '#ajax' => [
-            'callback' => 'aculta_portal.social_links_form_callbacks:buttonsAjax',
+            'callback' => 'aculta_links.social_links_form_callbacks:buttonsAjax',
             'wrapper' => 'aculta-social-links-buttons-wrapper',
           ],
         ],
@@ -103,16 +120,19 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
     $form['buttons_wrapper']['add'] = [
       '#type' => 'submit',
       '#value' => $this->t('+ Adicionar botão'),
-      '#submit' => ['aculta_portal.social_links_form_callbacks:addButton'],
+      '#submit' => ['aculta_links.social_links_form_callbacks:addButton'],
       '#limit_validation_errors' => [],
       '#ajax' => [
-        'callback' => 'aculta_portal.social_links_form_callbacks:buttonsAjax',
+        'callback' => 'aculta_links.social_links_form_callbacks:buttonsAjax',
         'wrapper' => 'aculta-social-links-buttons-wrapper',
       ],
     ];
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * Validates configured URLs before saving.
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     foreach (self::CHANNELS as $id => $channel) {
       $value = trim((string) $form_state->getValue($id));
@@ -128,7 +148,7 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
         && !isset($parts['pass'])
         && !isset($parts['port']);
       if (!$valid) {
-        $form_state->setErrorByName($id, $this->t('Informe uma URL HTTPS válida de @channel.', ['@channel' => $channel['label']]));
+        $form_state->setErrorByName($id, $this->t('Informe uma URL HTTPS válida de @channel.', ['@channel' => $this->channelLabel($id)]));
       }
     }
     $buttons = $form_state->getValue(['buttons_wrapper', 'items']) ?? [];
@@ -147,8 +167,11 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
     }
   }
 
+  /**
+   * Saves the new configuration and its temporary rollback copy.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $config = $this->configFactory()->getEditable('aculta_portal.social_links');
+    $config = $this->configFactory()->getEditable('aculta_links.social_links');
     foreach (array_keys(self::CHANNELS) as $id) {
       $config->set($id, trim((string) $form_state->getValue($id)));
     }
@@ -163,10 +186,16 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
     }
     $config->set('buttons', $saved_buttons);
     $config->save();
+    // Keep the previous config object synchronized during the rollback window.
+    $this->configFactory()
+      ->getEditable('aculta_portal.social_links')
+      ->setData($config->getRawData())
+      ->save();
     parent::submitForm($form, $form_state);
   }
 
-  /** Ensures configured button links stay within supported safe URL forms. */
+  /**
+   * Ensures configured button links stay within supported safe URL forms. */
   private function isAllowedButtonUrl(string $uri): bool {
     if ($uri === '' || preg_match('/[\x00-\x20\\\\]/', $uri)) {
       return FALSE;
@@ -182,6 +211,18 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
       && !isset($parts['user'])
       && !isset($parts['pass'])
       && !isset($parts['port']);
+  }
+
+  /**
+   * Returns a translatable social-channel label.
+   */
+  private function channelLabel(string $id): string {
+    return match ($id) {
+      'instagram' => (string) $this->t('Instagram'),
+      'youtube' => (string) $this->t('YouTube'),
+      'facebook' => (string) $this->t('Facebook'),
+      default => (string) $this->t('Rede social'),
+    };
   }
 
 }

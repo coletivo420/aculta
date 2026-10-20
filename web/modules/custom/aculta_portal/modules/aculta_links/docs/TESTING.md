@@ -56,3 +56,13 @@ teclado, leitor de tela e interação do carrossel permanecem pendentes. PHP lin
 e PHPCS Drupal PASS; gates Portal,
 status, SDC, design foundations e boundary PASS. Foundation exige bootstrap
 Drush e não passou quando chamado como PHP standalone.
+
+Em 2026-10-20, configuração e formulário administrativos transferidos em
+incremento isolado: Unit PASS (1 teste/7 asserções; duas depreciações PHPUnit),
+Kernel PASS (2 testes/71 asserções), PHPCS/lint/YAML e `git diff --check` PASS.
+Update `aculta_links_update_10002` foi a única atualização pendente e foi
+aplicada no Runtime de teste. A nova configuração corresponde aos valores
+legados; a configuração antiga continua presente; Drush confirmou zero updates
+pendentes e a rota registrada com a permissão original. Sitemap PASS. Os
+comandos `updb` e `cr` repetiram aviso de asset H5P sem diretório destino
+configurado; smoke HTTP autenticado do formulário ainda não foi feito.

@@ -38,6 +38,7 @@ aculta_portal.appearance:
     default_mode:
       type: string
       label: 'Modo de cor padrão (light, dark ou auto)'
+# Legacy config retained as a rollback source while aculta_links dual-writes.
 aculta_portal.social_links:
   type: config_object
   label: 'Redes sociais públicas da ACULTA'

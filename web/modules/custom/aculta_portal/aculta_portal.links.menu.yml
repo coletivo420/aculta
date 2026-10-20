@@ -10,12 +10,6 @@ aculta_portal.support_settings:
   route_name: aculta_portal.support_settings
   parent: aculta_portal.admin
   weight: 1
-aculta_portal.social_links_settings:
-  title: Redes sociais e botões
-  description: Configurar os canais sociais e botões públicos da página LINKS.
-  route_name: aculta_portal.social_links_settings
-  parent: aculta_portal.admin
-  weight: 2
 # Aba ACULTA no painel: todas as configurações do ACULTA ficam aqui (decisão de 2026-10-20). Cada módulo declara os
 # próprios itens com parent: aculta_portal.admin (ou, para o e-mail, parent: aculta_mailer.dashboard).
 aculta_portal.admin:

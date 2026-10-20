@@ -1,6 +1,6 @@
-aculta_links.dashboard:
-  title: 'Links'
-  description: 'Gerencie micropáginas, destinos e apresentação pública.'
-  route_name: aculta_links.dashboard
+aculta_links.social_links_settings:
+  title: Redes sociais e botões
+  description: Configurar os canais sociais e botões públicos da página LINKS.
+  route_name: aculta_links.social_links_settings
   parent: aculta_portal.admin
-  weight: 12
+  weight: 2

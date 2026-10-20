@@ -2,12 +2,18 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.5`. O módulo possui entidades revisionáveis de destinos, micropáginas
+`0.4.0-dev.6`. O módulo possui entidades revisionáveis de destinos, micropáginas
 e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A raiz do purpose preserva a página
 editorial encontrada pelo alias `/redes-sociais`; se o Node/alias não existir,
 apresenta os mesmos botões configurados e projetos pela View existente. O caminho
 interno `/redes-sociais` continua inacessível diretamente.
+
+A configuração e o formulário administrativo dos canais sociais também estão
+no submódulo. Os valores são migrados sem apagar `aculta_portal.social_links`, e
+o formulário mantém as duas configurações sincronizadas durante a janela de
+rollback. O presenter e os hooks de render ainda estão no Portal enquanto a
+paridade de migração é concluída.
 
 ## Estado atual e preservação
 

@@ -9,3 +9,6 @@ services:
   aculta_links.public_page_controller:
     class: Drupal\aculta_links\Controller\LinkPagePublicController
     arguments: ['@entity_type.manager', '@current_user']
+
+  aculta_links.social_links_form_callbacks:
+    class: Drupal\aculta_links\Service\SocialLinksFormCallbacks

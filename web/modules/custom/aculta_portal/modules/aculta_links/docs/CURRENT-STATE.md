@@ -50,9 +50,10 @@ com dados/editoria antes de qualquer migração.
 
 - `DomainPurposeManager`, registro do Domain e processador de raiz pertencem à
   infraestrutura comum do Portal.
-- `SocialLinksPagePresenter`, `SocialLinksSettingsForm`, callbacks AJAX,
-  configuração `aculta_portal.social_links`, rota/menu de configuração e hooks
-  de preprocess/theme suggestion implementam especificamente a landing LINKS.
+- `SocialLinksPagePresenter` e hooks de preprocess/theme suggestion seguem no
+  Portal. Formulário/callbacks, rota/aba de administração e configuração nova
+  `aculta_links.social_links` foram transferidos; update/cópia preserva o objeto
+  `aculta_portal.social_links` para rollback com dual-write temporário.
 - O hook `preprocess_page` do Portal injeta o rodapé de links no shell do tema.
 - O template Node dedicado chama o SDC `social-links-page`; esse SDC também
   depende do contrato neutro de apresentação do tema.

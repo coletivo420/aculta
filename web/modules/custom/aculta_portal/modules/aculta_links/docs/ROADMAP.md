@@ -11,9 +11,10 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 
 ## 0.2.0 — migração preservadora e entidades base (em andamento)
 
-1. Landing de raiz restaurada pela rota do submódulo; ainda falta transferir
-   formulário, configuração, presenters e hooks para `aculta_links`, mantendo
-   URL, conteúdo, canais e botões, antes de retirar os contratos no Portal.
+1. Landing de raiz, formulário e configuração social pertencem ao submódulo;
+   update `10002` migra sem remover o original e o formulário dual-write mantém
+   rollback. Ainda falta portar presenter/hooks com paridade antes de retirar a
+   chave legada do Portal.
 2. Atualizar integração neutra Portal–tema e rota administrativa, com paridade e
    rollback demonstrados antes de corte.
 3. As três entidades base estão iniciadas (`aculta_link`, `aculta_link_page`,

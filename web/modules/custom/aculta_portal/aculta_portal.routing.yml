@@ -121,15 +121,6 @@ aculta_portal.support_settings:
     _permission: administer aculta support settings
   options:
     _admin_route: true
-aculta_portal.social_links_settings:
-  path: /painel-administrativo/aculta/redes-sociais
-  defaults:
-    _form: '\Drupal\aculta_portal\Presentation\SocialLinksSettingsForm'
-    _title: Redes sociais e botões
-  requirements:
-    _permission: administer site configuration
-  options:
-    _admin_route: true
 aculta_portal.admin:
   path: /painel-administrativo/aculta
   defaults:

@@ -1,3 +1,10 @@
+## 0.4.0-dev.237 — transfere configuração social ao ACULTA Links — 2026-10-20
+
+- A rota/admin links do purpose LINKS, formulário e callbacks Form API deixaram de pertencer ao Portal e foram movidos ao submódulo `aculta_links`; URL e permissão são preservadas.
+- Portal deixou de registrar a rota/menu/tab e o painel de requisitos não cria link para funcionalidade opcional. Presenter/hooks ainda são consumidores compartilhados e seguem temporariamente no Portal.
+- `aculta_portal.social_links` schema/export é mantido como fonte de rollback; o update do submódulo copia sem apagar e seu formulário dual-write evita perda ao reverter.
+- Validação: Portal 1015 checks, índice 26 componentes, mapa de módulos/tema 162, sitemap via Drush e Kernel 2/71 PASS; atualização 10002 aplicada isoladamente ao Runtime de teste e configuração antiga preservada. PHPCS/lint/YAML PASS. Smoke HTTP do formulário ainda pendente; Runtime não validado para produção.
+
 ## 0.4.0-dev.236 — confirmação de e-mail com serviço por injeção — 2026-10-20
 
 - A classe de entidade `EmailConfirmationEntity` foi retirada: a expiração (24 h, `hash_expiration`) e as

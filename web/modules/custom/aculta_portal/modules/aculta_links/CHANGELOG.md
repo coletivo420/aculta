@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.6 — transfere configuração social e formulário para o submódulo — 2026-10-20
+
+- A rota e a aba administrativa em `/painel-administrativo/aculta/redes-sociais` agora pertencem ao `aculta_links`; o acesso continua exigindo `administer site configuration`.
+- Form API e callbacks AJAX foram movidos. `aculta_links.social_links` passa a ser a chave principal; update `10002` copia os valores da chave legada sem removê-la e o formulário dual-write mantém rollback compatível.
+- O presenter e os hooks de exibição continuam no Portal neste incremento; o formulário usa a chave nova e a página permanece compatível pela escrita dupla. Migração da renderização fica como etapa seguinte.
+- Validação: Kernel 2 testes/71 asserções, PHPCS/lint/YAML, Portal 1015 checks, índice 26 componentes, mapa módulo/tema 162 e sitemap via Drush PASS. Update 10002 aplicado isoladamente ao Runtime de teste; ambas as configurações foram conferidas, sem updates pendentes. Smoke HTTP do formulário e validação em produção permanecem pendentes. Nenhuma importação global de configuração foi executada.
+
 ## 0.4.0-dev.5 — restaura a landing do purpose links — 2026-10-20
 
 - A rota interna `/redes-sociais` fornece a página de raiz reescrita pelo Portal, preserva o Node editorial quando o alias aponta para página do Domain links e apresenta fallback com os botões e a View de projetos já existentes quando conteúdo/alias não existe.

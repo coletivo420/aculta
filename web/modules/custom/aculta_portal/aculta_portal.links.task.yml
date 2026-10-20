@@ -113,12 +113,6 @@ aculta_portal.admin_subtab_apoio:
   parent_id: aculta_portal.admin_tab_site
   weight: 1
 
-aculta_portal.admin_subtab_redes:
-  title: 'Redes sociais e botões'
-  route_name: aculta_portal.social_links_settings
-  base_route: aculta_portal.admin
-  parent_id: aculta_portal.admin_tab_site
-  weight: 2
 
 aculta_portal.admin_tab_seguranca:
   title: 'Segurança e sistema'

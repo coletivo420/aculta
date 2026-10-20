@@ -77,6 +77,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $landing_route = $route_provider->getRouteByName('aculta_links.landing');
     self::assertSame('/redes-sociais', $landing_route->getPath());
     self::assertSame('links', $landing_route->getOption('_aculta_domain_purpose'));
+    $social_settings_route = $route_provider->getRouteByName('aculta_links.social_links_settings');
+    self::assertSame('/painel-administrativo/aculta/redes-sociais', $social_settings_route->getPath());
+    self::assertTrue($social_settings_route->getOption('_admin_route'));
     self::assertSame('aculta_link_page.update', $editor_route->getRequirement('_entity_access'));
     $item_revision_route = $route_provider->getRouteByName('entity.aculta_link_item.revision');
     self::assertSame(
@@ -205,6 +208,26 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $revision_storage = $this->container->get('entity_type.manager')->getStorage('aculta_link');
     $previous_revision = $revision_storage->loadRevision($first_revision_id);
     self::assertSame('Site institucional', $previous_revision->label());
+  }
+
+  /** Tests legacy social-links configuration migration without deleting its source. */
+  public function testSocialLinksConfigurationMigrationPreservesLegacySource(): void {
+    $this->installConfig(['aculta_links']);
+    $config_storage = $this->container->get('config.storage');
+    $legacy_values = [
+      'instagram' => 'https://instagram.com/coletivo_420',
+      'youtube' => '',
+      'facebook' => '',
+      'buttons' => [['text' => 'Campanha', 'url' => '/campanha']],
+    ];
+    $config_storage->write('aculta_portal.social_links', $legacy_values);
+    $config_storage->delete('aculta_links.social_links');
+    $this->container->get('module_handler')->loadInclude('aculta_links', 'install');
+
+    aculta_links_update_10002();
+
+    self::assertSame($legacy_values, $config_storage->read('aculta_links.social_links'));
+    self::assertSame($legacy_values, $config_storage->read('aculta_portal.social_links'));
   }
 
 }

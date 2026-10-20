@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Presentation;
+namespace Drupal\aculta_links\Service;
 
 use Drupal\Core\Form\FormStateInterface;
 
-/** Form API callbacks for dynamically editing LINKS page buttons. */
+/**
+ * Form API callbacks for dynamically editing LINKS page buttons. */
 final class SocialLinksFormCallbacks {
 
-  /** Adds an empty button row and rebuilds the form. */
+  /**
+   * Adds an empty button row and rebuilds the form. */
   public function addButton(array &$form, FormStateInterface $form_state): void {
     $ids = $form_state->get('aculta_social_links_button_ids') ?? [];
     $next_id = (int) ($form_state->get('aculta_social_links_button_next_id') ?? 0);
@@ -19,7 +21,8 @@ final class SocialLinksFormCallbacks {
     $form_state->setRebuild();
   }
 
-  /** Removes the selected button row while retaining remaining form values. */
+  /**
+   * Removes the selected button row while retaining remaining form values. */
   public function removeButton(array &$form, FormStateInterface $form_state): void {
     $trigger = $form_state->getTriggeringElement() ?? [];
     $trigger_name = (string) ($trigger['#name'] ?? '');
@@ -37,7 +40,8 @@ final class SocialLinksFormCallbacks {
     $form_state->setRebuild();
   }
 
-  /** Returns the dynamic button controls wrapper to Drupal AJAX. */
+  /**
+   * Returns the dynamic button controls wrapper to Drupal AJAX. */
   public function buttonsAjax(array &$form, FormStateInterface $form_state): array {
     return $form['buttons_wrapper'];
   }

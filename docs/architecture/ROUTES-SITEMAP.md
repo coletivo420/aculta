@@ -129,7 +129,7 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/painel-administrativo/conteudo/revista` | Área administrativa unificada de publicações e comentários editoriais | Condicional às Views `aculta_magazine_admin_content` e `aculta_magazine_admin_comments`, permissão `access content overview` e ao bloco editorial condicionado ao purpose main. Homologação Runtime pendente. |
 | `main.aculta` | `/painel-administrativo/aculta/participacao` | Configuração compartilhada das regras de participação | Rota `aculta_user` fora da seção do Fórum; afeta Fórum, Revista, Wiki e outros contextos, exceto LMS. Exige `administer aculta participacao`; Runtime access manager permite UID 1 e anônimo 403. |
 | `main.aculta` | `/painel-administrativo/perfil/editar` | Edição do perfil do usuário autenticado | Requer access administrativo próprio. |
-| `main.aculta` | `/painel-administrativo/aculta/redes-sociais` | Configuração de perfis e links sociais | Rota administrativa protegida. |
+| `main.aculta` | `/painel-administrativo/aculta/redes-sociais` | Configuração de perfis e links sociais | Rota declarada em `aculta_links`, protegida por `administer site configuration`; Runtime de teste pós-rebuild: anônimo recebe 403 no host `main`; acesso pelo host `links` canonicaliza para `main`. |
 | `main.aculta` | `/painel-administrativo/aculta/cep` | Configuração da integração de CEP | Condicional ao submódulo CEP; rota administrativa. |
 | `main.aculta` | `/painel-administrativo/game` | Visão geral administrativa do jogo | Condicional ao módulo; exige permissão específica. |
 | `main.aculta` | `/painel-administrativo/aculta/aparencia` | Configuração da aparência institucional | Rota administrativa protegida. |

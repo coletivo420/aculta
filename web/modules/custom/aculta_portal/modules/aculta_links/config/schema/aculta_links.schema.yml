@@ -1,0 +1,25 @@
+aculta_links.social_links:
+  type: config_object
+  label: 'Redes sociais públicas da ACULTA'
+  mapping:
+    instagram:
+      type: string
+      label: 'URL do Instagram'
+    youtube:
+      type: string
+      label: 'URL do YouTube'
+    facebook:
+      type: string
+      label: 'URL do Facebook'
+    buttons:
+      type: sequence
+      label: 'Botões adicionais da página LINKS'
+      sequence:
+        type: mapping
+        mapping:
+          text:
+            type: string
+            label: 'Texto do botão'
+          url:
+            type: string
+            label: 'Link do botão'

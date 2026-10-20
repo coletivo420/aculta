@@ -3,11 +3,6 @@
 declare(strict_types=1);
 
 /**
- * @file
- * Install and update hooks for ACULTA Links.
- */
-
-/**
  * Installs the revisionable visual preset field on existing micropages.
  */
 function aculta_links_update_10001(): string {
@@ -24,4 +19,28 @@ function aculta_links_update_10001(): string {
   }
 
   return 'Adicionado o campo revisionável de preset visual às micropáginas existentes.';
+}
+
+/**
+ * Moves the public social-links configuration into ACULTA Links.
+ */
+function aculta_links_update_10002(): string {
+  $config_storage = \Drupal::service('config.storage');
+  if ($config_storage->read('aculta_links.social_links') !== FALSE) {
+    return 'The ACULTA Links social configuration already exists; no values were changed.';
+  }
+
+  $source = $config_storage->read('aculta_portal.social_links') ?: [];
+  $data = array_replace([
+    'instagram' => '',
+    'youtube' => '',
+    'facebook' => '',
+    'buttons' => [],
+  ], array_intersect_key($source, array_flip(['instagram', 'youtube', 'facebook', 'buttons'])));
+  \Drupal::configFactory()
+    ->getEditable('aculta_links.social_links')
+    ->setData($data)
+    ->save();
+
+  return 'Copied the existing ACULTA social-links values; the legacy configuration was preserved for rollback.';
 }
