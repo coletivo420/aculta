@@ -8,11 +8,11 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F0 | Auditoria ([AUDIT](AUDIT.md)), pesquisa ([UPSTREAM](UPSTREAM.md)), arquitetura ([ARCHITECTURE](ARCHITECTURE.md)) | Concluída nesta PR |
 | F1 | Fundação: `MailMessage`, `MailStatus`, `MessageIdFactory`, `RetrySchedule`, contrato `AcultaMailerInterface`, testes unitários | Em andamento nesta PR |
 | F2 | Transporte: envio por transporte (`X-Transport`), código SMTP real, failover Hostinger → SMTP2GO e validação com mensagens reais no Runtime (`docs/TRANSPORTS.md`) | Parcial (envio e failover prontos; diagnóstico pendente) |
-| F3 | Templates: registro de tipos por tag (`MailTypeInterface`) concluído; Config Entity `aculta_mailer_template`, Twig, variáveis controladas, preview e envio de teste pendentes | Parcial (tipos prontos) |
-| F4 | Branding: `MailBrand` e `MailLayout`, herança, logo via `aculta_image` | Pendente |
+| F3 | Templates: tipos com variáveis declaradas; Config Entity `aculta_mailer_template` com editor, validação de placeholders e prévia; renderização com fallback ao texto padrão | Parcial (modelo pronto; envio de teste pendente) |
+| F4 | Branding: `aculta_mailer_brand` e `aculta_mailer_layout` com editores; layout envolve o corpo com cabeçalho e rodapé da marca. Pendentes: HTML com estilos do tema e logo via `aculta_image` | Parcial (texto simples) |
 | F5 | Policy: adjusters por plugin, reutilização de `mailer_policy` até equivalência | Pendente |
 | F6 | Queue: fila `aculta_mailer_send`, worker com retry e failover (`MailSendWorker`), decisão testada; eventos de fila e classificação SMTP real (código de resposta) pendentes | Parcial (fila pronta) |
-| F7 | Logging: entidade `aculta_mail_log`, registro do estado, retenção de 90 dias e `views_data`; reenvio administrativo pendente | Parcial (registro pronto) |
+| F7 | Logging: entidade `aculta_mail_log` com texto completo da falha (relatório do admin), retenção de 90 dias e `views_data`; reenvio administrativo pendente | Parcial (registro e relatório prontos) |
 | F8 | Dashboard: painel de contagens por período, estado, tipo e transporte concluído; gráficos e agregação no banco pendentes | Parcial (painel pronto) |
 | F9 | Usuário: criação, confirmação, troca de e-mail, reset, integração com `aculta_user` | Pendente |
 | F10 | Eventos de entrega: webhooks de provedor, bounce, complaint, supressão | Pendente |

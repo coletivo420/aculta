@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.7 — modelos, marca, layout e relatório completo de falhas (F3/F4, F7) — 2026-10-20
+
+- F3: tipos declaram variáveis (`variables()`) e texto padrão com `{{ variavel }}`. Config Entity `aculta_mailer_template` com editor, validação (variável desconhecida recusada) e prévia com valores de exemplo. Renderização usa o modelo ativo; sem modelo, o texto padrão.
+- F4: Config Entities `aculta_mailer_brand` (nome e rodapé) e `aculta_mailer_layout` (cabeçalho e rodapé com `{{ content }}`). O modelo escolhe um layout; o corpo entra como valor, sem reprocessamento. Texto simples; HTML com estilos do tema fica para a etapa seguinte.
+- Relatório: `aculta_mail_log` guarda o texto completo da falha (`error_message`, update 10002, aplicado no Runtime). Página `/painel-administrativo/configuracoes/aculta/envios-de-email/falhas`, restrita a `administer aculta_mailer`. O usuário continua vendo a mensagem genérica.
+- Painel: nova tabela "Motivo da falha" por código (`smtp_554` etc.).
+- Runtime: teste real para example.invalid pelo `smtp`: 554 registrado com o texto completo do servidor; registro de teste removido.
+- Correção: entidades de configuração sem `route_provider` impediam o cache (config_translation); declarado nas três.
+- Testes: 73 do módulo, mais cadastro, Game e Messenger.
+
 ## 0.1.0-dev.6 — transportes, código SMTP e failover (F2) — 2026-10-20
 
 - `AcultaMailer::deliver()` devolve `SendResult` (aceito, ou falha com classe e código SMTP). `send()` continua `bool`.

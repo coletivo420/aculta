@@ -13,7 +13,8 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 | `recipient_hash` | HMAC-SHA256 do endereço normalizado (minúsculas, sem espaços), com `hash_salt` do ambiente. |
 | `langcode`, `transport`, `attempts` | Idioma, transporte usado e número da tentativa. |
 | `status` | Estado (`sent`, `deferred`, `failed`). `sent` é "aceito pelo sistema de e-mail", não "entregue". |
-| `error_code` | Código curto controlado pelo módulo: `send_refused`, `unregistered_type`, `retries_exhausted`. |
+| `error_code` | Código curto: `smtp_<código>` (ex.: `smtp_554`) ou `sem_codigo_<classe>`. |
+| `error_message` | Texto completo da falha do transporte, como o servidor devolveu. Visível só no relatório do admin (ver abaixo). |
 | `sent`, `created`, `changed` | Datas. |
 
 ## O que nunca é registrado
@@ -21,7 +22,13 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 - Corpo renderizado, assunto e contexto (links de login, recuperação, confirmação).
 - Tokens, URLs secretas e credenciais.
 - O endereço de e-mail em claro.
-- Texto livre de erro do provedor (o código é controlado pelo módulo).
+- Mensagem genérica ao usuário: quem envia (cadastro, conquista) vê só a mensagem genérica do Mailer Plus.
+
+## Relatório de falhas
+
+- Página `/painel-administrativo/configuracoes/aculta/envios-de-email/falhas`: falhas dos últimos 30 dias com o texto completo.
+- O texto do servidor pode conter o endereço do destinatário (ex.: `<pessoa@dominio>`). Por isso o relatório é restrito e o aviso aparece na página.
+- O usuário final nunca vê este texto.
 
 ## Acesso
 
