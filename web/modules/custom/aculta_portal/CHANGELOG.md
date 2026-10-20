@@ -1,3 +1,12 @@
+## 0.4.0-dev.218 — habilitar adapter LMS no Runtime de teste — 2026-10-20
+
+- Corrigida a injeção do `DiscussionContextResolver` no hook do adapter LMS;
+  ativação de `aculta_forum_lms` e `gnode` no Runtime de teste concluída com
+  configuração instalável e sem criação de tópicos/comentários.
+- Unit 13/143 e Kernel 2/74 PASS (38 depreciações Core/contrib/LMS); HTTP 200 na
+  raiz pública e categorias. Config Sync e roles não importadas; homologação de
+  acesso/UI/filas pendente. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.217 — provar acesso contextual de Educador ao fórum de turma — 2026-10-20
 
 - O Kernel do adapter LMS separa propriedade e membership: um Educador membro

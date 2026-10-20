@@ -45,6 +45,16 @@ são a interface administrativa dos contextos de discussão.
 | LMS | Espaço administrativo próprio em `/painel-administrativo/lms/forum`, com discussões de curso, turma e atividade separadas e autorização contextual de Educador. | Contrato para o adapter LMS; não criar listagem global até haver filtro por Group/Entity Access demonstrado. Comentários de avaliação (`lms_answer_comment`) são um recurso distinto e não viram comentários do Fórum. |
 | Wiki420 | Espaço administrativo próprio em `/painel-administrativo/wiki/forum`, limitado a comentários de discussão de verbetes; edição/revisão editorial permanece separada. | Contrato futuro, condicionado ao provider e ao bundle Wiki. Não criar agora rota/listagem sem contexto instalável e access validado. |
 
+Na dev.105, o adapter `aculta_forum_lms` foi habilitado no Runtime de teste com
+`gnode`, bundle `aculta_lms_topic`, campo compartilhado e relações Group para
+curso/turma. O smoke da raiz pública e de `/categorias` retornou HTTP 200 e as
+contagens de tópicos públicos, LMS, legados e Comments compartilhados ficaram
+em zero. A Config Sync do checkout não foi importada/exportada e ainda diverge
+do Runtime; a configuração de permissões/roles não foi aplicada. Logo, essa
+ativação valida descoberta/instalação de serviços e configuração, não o acesso
+real de Educadores no site. Views, Search API, rotas e filas LMS continuam
+pendentes. RUNTIME STATUS: PARTIAL.
+
 Moderação segue a árvore do sistema dono do conteúdo, sem fila global que
 misture contextos: Fórum → estado do comentário; Revista → publicações e
 comentários editoriais; Wiki → Comentários → Moderação; LMS → Cursos → Fórum →

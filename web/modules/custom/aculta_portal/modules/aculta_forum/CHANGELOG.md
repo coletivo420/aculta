@@ -1,3 +1,12 @@
+## `0.1.0-dev.105` — corrigir ativação do adapter LMS — 2026-10-20
+
+- O adapter LMS passa a resolver explicitamente o serviço contextual do Fórum
+  pelo seu ID registrado, corrigindo a compilação do container na ativação.
+- Unit adapter: 13 testes / 143 assertions PASS. Kernel adapter: 2 testes / 74
+  assertions PASS, com 38 depreciações Core/contrib/LMS. Runtime de teste:
+  adapter habilitado; smoke HTTP 200; nenhuma discussão criada. Config Sync não
+  reconciliada e autorização contextual Runtime pendente. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.104` — endurecer prova de Educador em turma LMS — 2026-10-20
 
 - O Kernel LMS agora testa curso e turma de propriedade independente. Um

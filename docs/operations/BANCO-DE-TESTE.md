@@ -128,6 +128,14 @@ Core/contrib e nenhuma falha. O Kernel validou o formulário de configuração
 após serialização, e o acesso próprio/global do plugin de Views está coberto
 em Unit.
 
+Execução adicional em 2026-10-20: `aculta_forum_lms` Unit passou com 13 testes e
+143 assertions; Kernel passou com 2 testes e 74 assertions. Foram emitidas 38
+depreciações de Core/contrib/LMS, sem falha. PHP CLI disponível no Homelab é
+8.4.26, abaixo do alvo PHP 8.5; resultado não substitui validação nessa versão.
+No Runtime de teste, ativação do adapter e smoke HTTP foram confirmados; o
+Runtime usa `aculta_runtime`, nunca o banco dedicado desta suíte. RUNTIME STATUS:
+PARTIAL; ver o changelog do adapter para limites de configuração e acesso.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.
