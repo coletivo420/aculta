@@ -1,3 +1,15 @@
+## Pesquisa adicional de módulos contrib — 2026-10-19 (documentação)
+
+- `PESQUISA.md` registra APIs e decisões para os contrib instalados Flag,
+  CTools, History, Search API, Group e Message stack, com versões do lockfile.
+- `comment_mover` foi avaliado como referência para ferramentas de movimento:
+  não está instalado, o release disponível é alpha para Drupal 9/10 e seu fluxo
+  documentado remove o conteúdo da origem. Reutilizar somente os requisitos de
+  seleção/subárvore/split; código e dependência não foram incorporados.
+- `MOVE-TOOLS.md` registra origem, compatibilidade, limitações e a manutenção do
+  bloqueio até prova de integridade no Comment Core instalado. Sem alteração
+  funcional, dependência, Runtime ou versão.
+
 ## 0.1.0-dev.32 — autoria da última atividade pública — 2026-10-19
 
 - View pública usa `last_comment_uid` de `comment_entity_statistics` como campo

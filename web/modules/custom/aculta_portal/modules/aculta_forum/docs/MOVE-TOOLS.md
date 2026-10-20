@@ -144,6 +144,29 @@ esses efeitos e a preservação CID/UUID. Fontes: [CommentInterface 11.x](https:
 [Comment 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21Entity%21Comment.php/class/Comment/11.x),
 [CommentStorage 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentStorage.php/class/CommentStorage/11.x).
 
+### Inspeção do contrib Comment Mover
+
+O módulo [`comment_mover`](https://www.drupal.org/project/comment_mover) não
+está instalado no ACULTA. Em 2026-10-19, Drupal.org lista apenas a versão
+`2.0.0-alpha1` compatível com Drupal 9/10, sem release estável; a issue de
+compatibilidade Drupal 11 continua `Needs review`. A documentação descreve
+recorte/colagem de comentário com descendentes, movimentação para outra entidade
+ou pai e conversão comentário↔Node. A mesma documentação declara que os itens
+movidos são apagados da origem; a interface usa clipboard e aceita conversões
+entre tipos/contextos. Isso é incompatível com a preservação de CID/UUID,
+histórico, URLs, mesmo-contexto e recuperação definidos para ACULTA. Fontes:
+[projeto e releases](https://www.drupal.org/project/comment_mover),
+[guia de uso](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/comment-mover),
+[issue queue e estado de compatibilidade Drupal 11](https://www.drupal.org/project/issues/comment_mover).
+
+**Decisão:** aproveitar apenas requisitos de produto encontrados nessa pesquisa:
+seleção explícita, pai com subárvore indivisível, movimento para tópico existente
+e split como operação posterior. Não instalar o alpha, copiar diretamente sua
+implementação ou tratar o mecanismo de delete+recreate como prova de movimento
+seguro. Uma portabilidade de algoritmo só poderá ser avaliada após leitura do
+código exato do branch e revisão de licença/proveniência; não remove o bloqueio
+de integridade identificado na API Core 11.4.10.
+
 Auditoria complementar do caminho de gravação no Core 11.4.10: `Comment::postSave()`
 invalida cache somente para a entidade que o comentário referencia **depois**
 da mudança e chama `CommentStatisticsInterface::update($comment)`. Esse método
