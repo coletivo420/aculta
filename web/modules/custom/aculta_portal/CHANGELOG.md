@@ -8,9 +8,10 @@
 - `ForumTopicMoverKernelTest` cobre dois tópicos movimentados pela Action e a
   recusa do acervo histórico. Runtime de teste: VBO habilitado, somente a View de
   tópicos importada parcialmente e cache reconstruído; RouteProvider, handler e
-  Action descobertos com 0 resultados, sem criação de dados. A tradução pt-br
-  falhou no download; execução autenticada em navegador permanece pendente.
-  RUNTIME STATUS: PARTIAL.
+  Action descobertos. Firefox/X11 autenticado listou duas fixtures e checkboxes;
+  clique real interceptado pelo viewport impediu configuração e execução do
+  Batch API. Fixtures removidas e verificação final confirmou zero tópicos e
+  Comments. A tradução pt-br falhou no download. RUNTIME STATUS: PARTIAL.
 
 ## 0.4.0-dev.220 — autoria editorial compartilhada entre Portal e ACULTA420 — 2026-10-20
 

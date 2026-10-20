@@ -11,10 +11,13 @@
 - Kernel `ForumTopicMoverKernelTest` cobre dois Nodes pela Action e recusa de
   tópico histórico; testes da View validam a configuração fixa. No Runtime de
   teste, VBO foi habilitado, somente a View de tópicos foi importada parcialmente
-  e o cache reconstruído; RouteProvider, handler e Action foram descobertos com
-  seleção vazia, sem dados criados. GET administrativo anônimo retorna 403. A
-  tradução pt-br não pôde ser baixada e a confirmação/execução autenticada em
-  navegador segue pendente. RUNTIME STATUS: PARTIAL.
+  e o cache reconstruído; RouteProvider, handler e Action foram descobertos. Em
+  Firefox/X11 autenticado, a View listou duas fixtures e os checkboxes; um clique
+  real foi interceptado pelo viewport antes da configuração da Action, portanto
+  a confirmação/Batch API não foi executada. As fixtures foram removidas e a
+  verificação final confirmou zero tópicos e Comments. GET administrativo
+  anônimo retorna 403. A tradução pt-br não pôde ser baixada. RUNTIME STATUS:
+  PARTIAL.
 
 ## `0.1.0-dev.117` — painel central do Fórum geral
 

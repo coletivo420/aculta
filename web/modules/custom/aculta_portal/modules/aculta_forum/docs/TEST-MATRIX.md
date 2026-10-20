@@ -16,9 +16,13 @@
   gravável; isso não impediu instalação/configuração e strings podem aparecer no
   idioma fallback. Backup da View e fonte parcial ficam fora do Git, com
   permissões restritas, em
-  `/home/aculta/private/aculta/operations/forum-vbo-dev118-20261020/`. Não houve
-  sessão autenticada de navegador nem execução de lote no Runtime; o Fórum
-  continuou com 0 tópicos e 0 comentários. RUNTIME STATUS: PARTIAL.
+  `/home/aculta/private/aculta/operations/forum-vbo-dev118-20261020/`. Firefox/X11
+  autenticado como UID 1: 4/5 verificações — ULI e View exibiram as duas fixtures,
+  a Action e os checkboxes; o clique real foi interceptado pelo viewport e não
+  chegou à configuração/Batch API. A rodada foi encerrada sem executar a Action;
+  as duas fixtures exatas foram removidas. Verificação final via Entity API:
+  0 tópicos públicos, 0 tópicos legados, 0 Comments compartilhados/legados e
+  fila Messenger inalterada em 0. RUNTIME STATUS: PARTIAL.
 
 ## dev.117 — painel central e Conteúdo do Fórum geral
 
