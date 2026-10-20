@@ -74,14 +74,14 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     $media->method('get')->with('field_media_document')->willReturn($field);
 
     $url_generator = $this->createMock(FileUrlGeneratorInterface::class);
-    $url_generator->expects(self::once())
+    $url_generator->expects(self::exactly(2))
       ->method('generateString')
       ->with('public://documento.pdf')
       ->willReturn('/sites/default/files/documento.pdf');
 
     $thumbnail = ['#type' => 'html_tag', '#tag' => 'img'];
     $thumbnail_builder = $this->createMock(PdfPreviewThumbnailBuilderInterface::class);
-    $thumbnail_builder->expects(self::once())
+    $thumbnail_builder->expects(self::exactly(2))
       ->method('build')
       ->with($file, 'Documento de teste — miniatura da primeira página')
       ->willReturn($thumbnail);
@@ -109,7 +109,20 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     self::assertSame('horizontal', $viewer_query['scroll']);
     self::assertSame('1', $viewer_query['spread']);
     self::assertSame('1', $viewer_query['spread_mobile']);
+    self::assertSame('1', $viewer_query['print']);
+    self::assertSame('1', $viewer_query['download']);
     self::assertSame($thumbnail, $build['thumbnail']['image']);
+
+    $restricted_build = (new PdfViewerBuilder($url_generator, $this->createMock(UrlGeneratorInterface::class), $account, $thumbnail_builder))
+      ->build($media, settings: [
+        'show_print' => FALSE,
+        'show_download' => FALSE,
+      ]);
+    parse_str((string) parse_url($restricted_build['full_viewer']['#attributes']['href'], PHP_URL_QUERY), $restricted_query);
+    self::assertSame('0', $restricted_query['print']);
+    self::assertSame('0', $restricted_query['download']);
+    self::assertFalse($restricted_build['print']['#access']);
+    self::assertFalse($restricted_build['download']['#access']);
   }
 
   /**

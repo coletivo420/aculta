@@ -5,6 +5,8 @@ const error = document.getElementById('viewer-error');
 const scrollMode = parameters.get('scroll') === 'horizontal' ? 1 : 0;
 const doublePage = parameters.get('spread') === '1';
 const doublePageMobile = parameters.get('spread_mobile') === '1';
+const hidePrint = parameters.get('print') === '0';
+const hideDownload = parameters.get('download') === '0';
 const mobileLayout = window.matchMedia('(max-width: 40rem)');
 
 function showError(message) {
@@ -61,12 +63,30 @@ else {
     options.set('scrollModeOnLoad', scrollMode);
     options.set('spreadModeOnLoad', doublePage && (!mobileLayout.matches || doublePageMobile) ? 1 : 0);
 
+    const applyHiddenControls = () => {
+      const hiddenIds = [
+        ...(hidePrint ? ['printButton', 'secondaryPrint'] : []),
+        ...(hideDownload ? ['downloadButton', 'secondaryDownload'] : []),
+      ];
+      for (const id of hiddenIds) {
+        const control = viewerWindow.document.getElementById(id);
+        if (!control) {
+          continue;
+        }
+        control.hidden = true;
+        control.setAttribute('aria-hidden', 'true');
+        control.tabIndex = -1;
+      }
+    };
+    applyHiddenControls();
+
     application.initializedPromise.then(() => {
       const applySpreadMode = () => {
         if (!application.pdfViewer) {
           return;
         }
         application.pdfViewer.spreadMode = doublePage && (!mobileLayout.matches || doublePageMobile) ? 1 : 0;
+        applyHiddenControls();
       };
       application.eventBus.on('pagesloaded', applySpreadMode, { once: true });
       mobileLayout.addEventListener('change', applySpreadMode);

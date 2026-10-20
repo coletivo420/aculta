@@ -31,7 +31,7 @@ acessibilidade. Fontes: [recursos básicos](https://docs.tncflipbook.com/article
 
 | Grupo | Decisão ACULTA | Situação |
 |---|---|---|
-| Download, impressão, zoom, tela cheia, busca, navegação, viewer oficial | Controles administráveis no formatter; permissão efetiva do File continua obrigatória. Impressão abre o PDF.js completo, cujo fluxo imprime o documento inteiro. | Opções iniciais implementadas em dev.29; conferir UX/acesso e formulário no gate pré-RC. |
+| Download, impressão, zoom, tela cheia, busca, navegação, viewer oficial | Controles administráveis no formatter; permissão efetiva do File continua obrigatória. Impressão abre o PDF.js completo, cujo fluxo imprime o documento inteiro. | Controles do formatter concluídos em dev.37; flags de download/impressão também ocultam os botões principal e secundário do PDF.js completo. Firefox headless confirmou os estados ligados/desligados em fixture local de 14 páginas; repetir visualmente no Homelab antes do RC. |
 | Zoom e rolagem padrão | Configuração nomeada. Zoom alimenta o canvas custom; rolagem é aplicada ao viewer oficial completo. | Zoom do canvas e padrões vertical/horizontal do PDF.js completo implementados. O canvas ACULTA permanece paginado. |
 | Página dupla e móvel | Desligado por padrão, opção configurável; não forçar página dupla móvel por padrão. | Wrapper do PDF.js aplica spread no viewer completo. Página dupla é desligada em telas móveis por padrão e só permanece ligada se a opção móvel for marcada. O canvas ACULTA permanece em página única. |
 | Idioma | Expor idiomas realmente instalados, iniciando com pt-BR. | A configuração oferece somente pt-BR e o propaga ao PDF.js. |
@@ -47,7 +47,9 @@ painel ACULTA. A configuração
 herda os valores por padrão e pode desligar a herança para manter seu próprio
 perfil. O link de impressão e o link ao viewer completo abrem um wrapper same-
 origin que configura rolagem e spread no PDF.js oficial antes de sua inicialização.
-O canvas ACULTA continua em navegação paginada e não usa esses modos.
+Os flags nomeados de impressão e download ocultam os dois botões equivalentes no
+viewer oficial; o canvas ACULTA continua em navegação paginada e não usa esses
+modos. Essa ocultação é de apresentação: não substitui autorização do Drupal.
 
 O Media/File do Drupal continua sendo a fonte de verdade para documento,
 metadados, URL e acesso. O viewer usa o PDF.js local e só recebe arquivo
@@ -128,6 +130,13 @@ viewer completo. A sessão temporária foi encerrada. O
 Kernel segue sem chegar às assertions por dependências/serviços do Portal e da
 configuração LMS no fixture. Gates centrais ainda incluem trabalho não
 integrado de outros componentes; o viewer permanece Dev.
+
+Em 0.1.0-dev.37, Firefox headless servindo `web/` em `127.0.0.1` carregou o
+PDF de amostra de 14 páginas do próprio PDF.js. Com `print=0&download=0`, os
+botões primário e secundário de impressão/download ficaram `hidden`, com
+`aria-hidden=true` e `tabIndex=-1`; com ambos `1`, voltaram visíveis e focáveis.
+Essa verificação local valida o comportamento do wrapper, não a apresentação no
+Homelab. Nenhum arquivo do Runtime foi alterado.
 
 ### Limite de acessibilidade da renderização
 

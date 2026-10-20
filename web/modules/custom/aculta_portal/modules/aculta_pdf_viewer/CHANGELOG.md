@@ -1,5 +1,13 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.37 — respeitar controles de download e impressão no PDF.js completo — 2026-10-20
+
+- Corrige a configuração por formatter: os links dedicados já eram ocultados, mas o PDF.js completo mantinha seus próprios botões de imprimir/baixar.
+- Os valores de controle agora seguem no link same-origin; o wrapper esconde os botões principais e secundários do PDF.js quando desativados. A permissão Drupal do arquivo continua obrigatória e não é substituída por esses controles visuais.
+- Unit do módulo: 26 testes, 195 assertions PASS; o builder cobre flags ligados/desligados e visibilidade dos links. `node --check`, PHP lint e `git diff --check` PASS.
+- O PDF.js instalado não expõe AppOption pública para remover esses botões; a adaptação usa IDs presentes no viewer 6.4.299 instalado. Não altera arquivos Composer.
+- Firefox headless validou em fixture local do pacote PDF.js (14 páginas): flags `0` ocultam os quatro botões e os removem do foco/árvore acessível; flags `1` os tornam visíveis e focáveis. Teste executado em `127.0.0.1`, sem Runtime nem deploy.
+
 ## 0.1.0-dev.36 — padrões de rolagem e página dupla no PDF.js completo — 2026-10-20
 
 - Acrescenta um wrapper local e same-origin para inicializar o viewer PDF.js com rolagem vertical/horizontal e spread configurados por painel ou formatter. O PDF.js continua sem alterações nos arquivos Composer.

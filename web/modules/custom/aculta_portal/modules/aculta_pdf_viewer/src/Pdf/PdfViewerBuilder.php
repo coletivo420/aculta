@@ -450,6 +450,8 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       'scroll' => $settings['default_scroll'] === 'horizontal' ? 'horizontal' : 'vertical',
       'spread' => !empty($settings['double_page']) ? '1' : '0',
       'spread_mobile' => !empty($settings['double_page_mobile']) ? '1' : '0',
+      'print' => !empty($settings['show_print']) ? '1' : '0',
+      'download' => !empty($settings['show_download']) ? '1' : '0',
     ]);
   }
 

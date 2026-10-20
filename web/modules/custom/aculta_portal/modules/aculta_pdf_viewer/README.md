@@ -94,7 +94,9 @@ padrão e respeita a opção explícita do painel/formatter.
    antes de `PDFViewerApplication.run()`. Nenhum arquivo da distribuição
    Composer é alterado. O builder fornece somente URL local após validar o
    acesso; o wrapper exige PDF same-origin, e o acesso privado continua na rota
-   protegida do Core.
+   protegida do Core. Os padrões de download e impressão também são propagados
+   ao viewer completo; quando desativados no formatter, os respectivos botões
+   principal e secundário do PDF.js ficam ocultos e fora da árvore acessível.
 
 ## Hooks e integração Drupal
 
