@@ -48,6 +48,11 @@
   edição paralela. Esse bloqueio externo ficou documentado; não houve alteração
   nos arquivos do Mailer. Gates Portal 975, fronteira 1447, mapa 152,
   `node --check` e `git diff --check` PASS. RUNTIME STATUS: PARTIAL.
+- Revalidação posterior (2026-10-20), após commits independentes do Mailer:
+  `drush cr` PASS; route provider confirmou a rota de edição do modelo e as
+  páginas administrativas do Fórum. A raiz retorna HTTP 200; filas
+  administrativas retornam 403 a anônimo. Runtime continua com 0 tópicos e 0
+  comentários ACULTA e Flag configurada para `aculta_discussion_post`.
 
 ## `0.1.0-dev.77` — preservar pendência e rejeição em árvore movida — 2026-10-20
 

@@ -80,11 +80,13 @@ Comments. Antes de usar, confirme que a configuração ativa da Flag
 `aculta_discussion_post`. O comentário é criado pendente para não gerar badge
 nem aviso de resposta publicada.
 
-O roteiro não executa `drush cr`: um rebuild global depende de todos os
-config translation mappers e rotas ativas. Em 2026-10-20, o mapper
-`aculta_mailer_template` referenciava `entity.aculta_mailer_template.edit_form`,
-ainda ausente do route collection. Valide essa condição separadamente antes da
-homologação integral de cache. Não rode em produção.
+O roteiro não executa `drush cr`: o smoke muda somente entidades e uma
+configuração temporária, sem trocar definições de rota/serviço, e evita um
+rebuild global desnecessário no meio do caso. O bloqueio histórico do mapper do
+`aculta_mailer_template` foi resolvido quando sua rota passou a ser declarada;
+em 2026-10-20 `drush cr` passou e o route provider confirmou essa rota e as
+quatro rotas administrativas de tópicos/comentários do Fórum. Não rode em
+produção.
 
 O formulário é aberto em 390×844, 768×1024 e 1024×768 CSS px; o roteiro verifica
 overflow horizontal, destino, confirmação e token CSRF. As capturas ficam no

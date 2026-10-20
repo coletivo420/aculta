@@ -36,11 +36,11 @@
 - Capturas e `results.json` privados em
   `/home/piradopirata/private/aculta/visual-tests/forum-comment-flags-dev78-20261020/`.
   O smoke não alterou o PHP do Runtime.
-- `drush cr` não foi executado no final: sua falha reproduzível aponta para o
-  mapper `aculta_mailer_template`, que solicita a rota ainda não registrada
-  `entity.aculta_mailer_template.edit_form` durante edição paralela do Mailer.
-  O roteiro evita esse rebuild global; validação completa de cache permanece
-  DEFERRED. RUNTIME STATUS: PARTIAL.
+- O roteiro evita executar `drush cr` durante o caso por não alterar definições
+  de rota ou serviços. Revalidação posterior, após commits independentes do
+  Mailer, executou `drush cr` com PASS e confirmou a rota de edição do modelo e
+  as quatro páginas administrativas do Fórum. A raiz responde 200; filas dão
+  403 a anônimo. RUNTIME STATUS: PARTIAL pelo escopo funcional restante.
 
 ## dev.77 — moderação pendente/rejeitada em subárvore
 
