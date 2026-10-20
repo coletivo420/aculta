@@ -167,6 +167,16 @@ $componentForPath = static function (string $path) use ($componentRoots): ?strin
   }
   return NULL;
 };
+$isStatusRelevantPath = static function (string $path): bool {
+  // The index tracks implementation and release state, not every explanatory
+  // note. Component docs that define phases, declared versions, or the entry
+  // status remain gated; drafts and architecture prose do not imply a phase
+  // transition by themselves.
+  if (!str_contains($path, '/docs/')) {
+    return TRUE;
+  }
+  return preg_match('#/docs/(?:ROADMAP(?:[-.][^/]*)?|CHANGELOG(?:\.[^/]*)?|README)\.md$#i', $path) === 1;
+};
 $tableRows = static function (string $markdown) use ($begin, $end): array {
   if (substr_count($markdown, $begin) !== 1 || substr_count($markdown, $end) !== 1) {
     return [];
@@ -212,6 +222,9 @@ if ($markerCode === 0 && $markerCommit !== '') {
     $paths = preg_split('/\R/', $files) ?: [];
     $componentTouched = [];
     foreach ($paths as $path) {
+      if (!$isStatusRelevantPath($path)) {
+        continue;
+      }
       $machine = $componentForPath($path);
       if ($machine !== NULL) {
         $componentTouched[$machine] = TRUE;
@@ -232,6 +245,9 @@ $assert($worktreeCode === 0, 'Unable to inspect staged/unstaged component change
 $worktreePaths = preg_split('/\R/', $worktree) ?: [];
 $uncommittedComponents = [];
 foreach ($worktreePaths as $path) {
+  if (!$isStatusRelevantPath($path)) {
+    continue;
+  }
   $machine = $componentForPath($path);
   if ($machine !== NULL) {
     $uncommittedComponents[$machine] = TRUE;

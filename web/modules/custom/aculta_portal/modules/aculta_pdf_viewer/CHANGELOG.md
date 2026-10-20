@@ -19,7 +19,7 @@
 
 - O guard exige `type`, `url` e objeto `body` nos relatórios Reporting API e `document-uri` no envelope CSP legacy do Firefox; payloads incompletos recebem 400 antes do contrib.
 - Unit 25/25 (163 assertions), sem depreciações PHPUnit; PHPCS Drupal PASS. Após rebuild no Runtime Alpha: formatos Reporting API e Firefox legacy válidos 202, objetos e itens incompletos 400, >64 KiB 413.
-- Continua Dev até triagem de CSP/privacidade em Alpha, PHP 8.5 e os outros critérios do roadmap.
+- Continua Dev até concluir os gates e a revisão acessível ampliada definidos no roadmap; PHP 8.4 do Runtime já foi relatado e não bloqueia esta entrega.
 
 ## 0.1.0-dev.23 — proteger o endpoint público de relatórios CSP — 2026-10-20
 
@@ -29,7 +29,7 @@
 - Amostra Alpha de uma hora: 14 relatórios (7 `style-src-attr`, 3 `script-src`, 1 `script-src-elem`, 1 `style-src-elem`, 2 `worker-src`); as 3 URLs com query tinham o marcador sintético `pv7`. O DBLog retém URL e User-Agent: analisar dados e retenção antes de produção, e não ativar enforcement enquanto houver violações sem triagem.
 - Uma visita pública limpa à home em Alpha gerou dois novos `style-src-attr` Report-Only, coincidentes com os elementos `.vvjb-items` e `.ui-front` observados no DOM; amostras de script não vazias: zero. Não habilitar enforcement antes de tratar os estilos inline usados por Drupal Core e VVJB.
 - Firefox ESR no Alpha: PDF de 14 páginas renderizou; próxima página, zoom 125% e busca (“Resultado 1 de 5”) funcionaram; controles medem 44 px. A captura mobile encontrou miniatura do `aculta_image` com largura intrínseca de 480 px e motivou a correção responsiva no ACULTA420 dev.125.
-- Runtime PHP-FPM/CLI é 8.4.26, abaixo da baseline 8.5. A etapa de busca de traduções pt-BR falhou durante a ativação inicial; o wrapper `translations://` agora está registrado, mas a disponibilidade de traduções não foi revalidada. Ainda Dev, não RC.
+- A etapa de busca de traduções pt-BR falhou durante a ativação inicial; o wrapper `translations://` agora está registrado, mas a disponibilidade de traduções não foi revalidada. Ainda Dev, não RC.
 
 ## 0.1.0-dev.22 — CSP em Report-Only para coleta em Alpha — 2026-10-20
 
