@@ -1,3 +1,22 @@
+## `0.1.0-dev.126` — verificar permalink canônico após mover comentário — 2026-10-20
+
+- O Kernel verifica que, depois de mover uma árvore, o permalink gerado pelo
+  Comment continua usando a rota canônica Core `entity.comment.canonical` e o
+  fragmento `#comment-{cid}`. O comentário mantém seu CID, e a rota Core usa o
+  hospedeiro atual para calcular a página e encaminhar ao tópico de destino.
+- Links antigos diretamente para o tópico de origem com fragmento não podem
+  ser redirecionados no servidor: fragmentos não são enviados na requisição.
+  Essa limitação permanece conhecida; o permalink canônico do comentário é
+  estável após a movimentação.
+- `ForumCommentMoverKernelTest`: 18 testes/368 assertions PASS em MariaDB
+  `aculta_simpletest`; 19 depreciações Core/contrib. `ForumTopicDisplayConfigTest`:
+  19/283 PASS. Suas comparações de configuração agora ignoram apenas a ordem
+  de chaves em mapas YAML e preservam a ordem significativa de listas.
+  PHPCS e `git diff --check` PASS. RUNTIME STATUS: DEFERRED (não houve
+  alteração nem navegação no Runtime). O gate Drupal 11+ executa o status-index
+  com PASS, mas falha na regra da Wiki que impede expor autoria pública; essa
+  configuração fora do escopo não foi alterada.
+
 ## `0.1.0-dev.125` — homologar mover comentário no painel canônico — 2026-10-20
 
 - A rota `/painel-administrativo/forum/comentarios/{comment}/mover` mostra o

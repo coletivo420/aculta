@@ -113,8 +113,14 @@ recriadas. A suíte Kernel também comprova preservação de flagging, reindexa�
 Search API, file usage genérico, recibos History e tradução. A prova X11 dev.78
 confirmou a denúncia no `aculta_user.report_queue`. Arquivos/imagens reais via
 `aculta_image` e avisos agrupados a seguidores ainda precisam de homologação
-integrada. O permalink calculado muda com o Node hospedeiro;
-links antigos para âncora do tópico de origem não são redirecionados nesta versão.
+integrada. O permalink canônico Core do Comment (`/comment/{cid}#comment-{cid}`)
+preserva o CID e a rota `entity.comment.canonical`; após o movimento, o
+controller Core consulta o hospedeiro atual e calcula a página no novo tópico.
+O Kernel verifica rota e fragmento após mover. Links antigos diretamente para
+a URL do tópico de origem com `#comment-{cid}` não podem ser redirecionados pelo
+servidor, pois o fragmento não é enviado na requisição; essa limitação permanece.
+Contrato consultado no Core: [Comment::permalink 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21Entity%21Comment.php/class/Comment/11.x)
+e [CommentController::commentPermalink 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21Controller%21CommentController.php/class/CommentController/11.x).
 A operação nunca
 aprova, rejeita, reabre ou publica um comentário como efeito colateral. Se
 estados de origem e destino não forem compatíveis, negar e explicar sem alterar

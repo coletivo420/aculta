@@ -28,7 +28,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     ] as $filename) {
       $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
       $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
-      self::assertSame($install, $sync, $filename);
+      self::assertConfigSame($install, $sync, $filename);
     }
   }
 
@@ -132,7 +132,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertTrue($permissions['administer aculta forum settings']['restrict access']);
     self::assertSame('aculta_forum.admin', $menu['aculta_forum.admin_settings']['parent']);
     self::assertSame(FALSE, $install['comment_move_enabled']);
-    self::assertSame($install, $sync);
+    self::assertConfigSame($install, $sync);
     self::assertNotContains('administer aculta forum settings', $editor['permissions']);
     self::assertStringContainsString("'#config_target' => 'aculta_forum.settings:comment_move_enabled'", $form);
     self::assertStringContainsString('acervo histórico nunca são movidos', $form);
@@ -222,7 +222,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       $filename = 'flag.flag.' . $id . '.yml';
       $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
       $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
-      self::assertSame($install, $sync, $filename);
+      self::assertConfigSame($install, $sync, $filename);
       self::assertSame(['aculta_forum_topic'], $install['bundles']);
       self::assertFalse($install['global']);
       self::assertSame('node', $install['entity_type']);
@@ -238,7 +238,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $filename = 'core.entity_view_display.node.aculta_forum_topic.full.yml';
     $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
     $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
-    self::assertSame($install, $sync);
+    self::assertConfigSame($install, $sync);
     self::assertContains('flag', $install['dependencies']['module']);
 
     foreach (['flag_seguir_topico' => 20, 'flag_salvar_topico' => 21] as $key => $weight) {
@@ -268,7 +268,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $filename = 'views.view.aculta_forum_public_topics.yml';
     $view = Yaml::parseFile($install_path . $filename);
     $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
-    self::assertSame($view, $sync);
+    self::assertConfigSame($view, $sync);
 
     $options = $view['display']['default']['display_options'];
     self::assertSame('full', $options['pager']['type']);
@@ -330,7 +330,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $filename = 'views.view.aculta_forum_categories.yml';
     $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
     $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
-    self::assertSame($install, $sync);
+    self::assertConfigSame($install, $sync);
     self::assertSame('taxonomy_term_field_data', $install['base_table']);
     self::assertSame('categorias', $install['display']['page_categories']['display_options']['path']);
     self::assertSame(
@@ -380,7 +380,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     );
     $topics = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_public_topics.yml');
     $topics_sync = Yaml::parseFile($repository_path . '/config/sync/views.view.aculta_forum_public_topics.yml');
-    self::assertSame($topics, $topics_sync);
+    self::assertConfigSame($topics, $topics_sync);
     self::assertSame(
       '<p><a href="/categorias">Ver categorias</a></p>',
       $topics['display']['page_discussions']['display_options']['header']['area_text_custom']['content'],
@@ -403,7 +403,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $public = Yaml::parseFile($module_path . '/config/install/views.view.aculta_forum_public_topics.yml');
     $module_info = Yaml::parseFile($module_path . '/aculta_forum.info.yml');
     $composer = json_decode((string) file_get_contents($repository_path . '/composer.json'), TRUE, flags: JSON_THROW_ON_ERROR);
-    self::assertSame($view, $sync);
+    self::assertConfigSame($view, $sync);
     self::assertContains('history', $view['dependencies']['module']);
     self::assertContains('drupal:history', $module_info['dependencies']);
     self::assertSame('^1.0', $composer['require']['drupal/history']);
@@ -445,7 +445,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $filename = 'views.view.aculta_forum_public_topics.yml';
     $view = Yaml::parseFile($module_path . '/config/install/' . $filename);
     $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
-    self::assertSame($view, $sync);
+    self::assertConfigSame($view, $sync);
 
     $default = $view['display']['default']['display_options'];
     $new = $view['display']['page_new_topics']['display_options'];
@@ -490,7 +490,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $filename = 'views.view.aculta_forum_admin_topics.yml';
     $view = Yaml::parseFile($module_path . '/config/install/' . $filename);
     $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
-    self::assertSame($view, $sync);
+    self::assertConfigSame($view, $sync);
 
     $options = $view['display']['default']['display_options'];
     self::assertSame('access content overview', $options['access']['options']['perm']);
@@ -523,7 +523,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $filename = 'views.view.aculta_forum_admin_comments.yml';
     $view = Yaml::parseFile($module_path . '/config/install/' . $filename);
     $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
-    self::assertSame($view, $sync);
+    self::assertConfigSame($view, $sync);
 
     $options = $view['display']['default']['display_options'];
     self::assertSame('Atualizado', $options['fields']['changed']['label']);
@@ -587,7 +587,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
     $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
     unset($sync['_core']);
-    self::assertSame($install, $sync);
+    self::assertConfigSame($install, $sync);
     self::assertSame('/topico/[node:title]', $install['pattern']);
     self::assertSame(
       ['aculta_forum_topic' => 'aculta_forum_topic'],
@@ -628,6 +628,31 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     }
     self::assertNotContains('edit any aculta_forum_topic content', $role['permissions']);
     self::assertNotContains('delete any aculta_forum_topic content', $role['permissions']);
+  }
+
+  /**
+   * Compares YAML config maps without treating key order as significant.
+   *
+   * Drupal configuration is a mapping; only YAML lists have meaningful order.
+   */
+  private static function assertConfigSame(array $expected, array $actual, string $message = ''): void {
+    self::assertSame(self::normalizeConfigMap($expected), self::normalizeConfigMap($actual), $message);
+  }
+
+  /**
+   * Recursively sorts associative maps while preserving sequence order.
+   */
+  private static function normalizeConfigMap(array $value): array {
+    foreach ($value as &$item) {
+      if (is_array($item)) {
+        $item = self::normalizeConfigMap($item);
+      }
+    }
+    unset($item);
+    if (!array_is_list($value)) {
+      ksort($value);
+    }
+    return $value;
   }
 
 }

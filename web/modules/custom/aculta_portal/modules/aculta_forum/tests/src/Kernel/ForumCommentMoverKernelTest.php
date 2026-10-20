@@ -241,6 +241,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame((int) $destination->id(), (int) $moved_root->getCommentedEntityId());
     self::assertNull($moved_root->getParentComment());
     self::assertSame('02/', $moved_root->getThread());
+    $permalink = $moved_root->permalink();
+    self::assertSame('entity.comment.canonical', $permalink->getRouteName());
+    self::assertSame('comment-' . $moved_root->id(), $permalink->getOption('fragment'));
     self::assertSame('02.00/', $moved_child->getThread());
     self::assertSame('02.00.00/', $moved_grandchild->getThread());
     self::assertSame((int) $moved_root->id(), (int) $moved_child->getParentComment()->id());
