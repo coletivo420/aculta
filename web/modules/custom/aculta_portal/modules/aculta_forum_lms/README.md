@@ -45,6 +45,9 @@ global `lms_teacher`) e herança real de `grade students` para o Group Node da
 turma. Unit cobre escrita, status fechado e moderação do comentário. A
 combinação de acesso trata membership e permissão contextual como alternativas
 explícitas e nega somente se ambas falharem; `orIf()` não pode ser usado porque
-`forbidden` prevalece sobre uma alternativa permitida. Próximo: integrar e provar
-Comment real com callbacks de criação, estado aprovado e moderação antes de
-criar as filas administrativas LMS ou habilitar o adapter.
+`forbidden` prevalece sobre uma alternativa permitida. O Kernel também persiste
+Comment publicado, exerce o hook do marcador `field_aculta_rejected`, prova
+Educador versus estudante e recusa escrita quando o campo fecha. Próximo:
+adicionar e testar a permission contextual nos Group roles de curso/turma e
+revisar cache/access de todas as rotas antes das filas administrativas ou da
+habilitação do adapter.

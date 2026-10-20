@@ -18,6 +18,15 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.7` — validar Comment e moderação contextual em Kernel — 2026-10-20
+
+- Kernel cria tópico LMS em Group de turma, persiste Comment compartilhado,
+  permite escrita de membro, restringe o marcador de moderação a Educador do
+  curso e bloqueia escrita com campo fechado. Outsider não lê. Kernel adapter:
+  2 testes / 57 assertions PASS, 38 depreciações Core/contrib; Unit 11/123.
+- Adapter e Config Sync continuam desabilitados/não importados no Runtime.
+  Nenhuma fila foi criada. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.6` — herdar permissão do Educador nas turmas — 2026-10-20
 
 - Config Sync de `lms_classes.settings` concede permissão Group Node de tópico

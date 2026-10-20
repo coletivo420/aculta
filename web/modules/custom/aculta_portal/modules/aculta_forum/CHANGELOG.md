@@ -1722,6 +1722,18 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.98` — provar Comment e moderação em turma LMS — 2026-10-20
+
+- Kernel integrado usa Node/Comment e permissões Group reais, persiste uma
+  resposta publicada e exerce `LmsDiscussionModerationHooks`: estudante da
+  turma pode escrever; somente Educador com `grade students` no curso edita o
+  marcador; outsider é negado e campo fechado bloqueia escrita.
+- A configuração Group Node vem do Config Sync do checkout e passa pelo
+  `ClassPermissionCalculator`. O adapter não é habilitado e o Runtime não é
+  alterado; nenhuma fila administrativa foi criada. Kernel adapter: 2 testes /
+  57 assertions PASS, 38 depreciações Core/contrib; Unit adapter 11/123 e Forum
+  Unit 87/556 PASS. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.97` — herdar acesso de Educador nas turmas LMS — 2026-10-20
 
 - O Config Sync de `lms_classes.settings` mapeia `grade students` do curso para

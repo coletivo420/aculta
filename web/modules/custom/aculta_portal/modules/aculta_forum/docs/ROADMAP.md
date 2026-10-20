@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.98` | Integrar Comment real à autorização contextual LMS | Kernel persiste resposta publicada na turma, prova escrita de estudante, moderação exclusiva de Educador e bloqueio quando o campo está fechado. Kernel adapter 2/57 (38 depreciações), Unit adapter 11/123 e Forum 87/556 PASS. Runtime DEFERRED; filas e habilitação continuam pendentes. |
 | `0.1.0-dev.97` | Herança de permission Educador nas turmas | Config Sync mapeia `grade students` do curso para visualização Group Node de tópicos. Kernel real com `ClassPermissionCalculator`: Educador permitido; outsider e conta apenas com papel global `lms_teacher` negados. 1 teste/24 assertions PASS, 37 depreciações Core/contrib. Adapter não habilitado e Config Sync não importado no Runtime. |
 | `0.1.0-dev.96` | Corrigir acesso LMS e cobrir escrita/moderação de Comment | Unit cobre estudante matriculado, Educador com `grade students`, permissão de comentar e status aberto/fechado. Corrige combinação AccessResult que negava estudantes e torna a moderação explicitamente contextual. Runtime DEFERRED; adapter ainda desabilitado. |
 | `0.1.0-dev.95` | Provar acesso Group Node no Kernel | MariaDB `aculta_simpletest` com Group 3.3.5/gnode: membro de curso com permission contextual acessa Node de tópico; outsider recebe forbidden. 1 teste/17 assertions PASS; 17 depreciações Core/Group/contrib. Não instala o adapter nem altera Runtime. |
