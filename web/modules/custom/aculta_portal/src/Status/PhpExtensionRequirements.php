@@ -40,6 +40,10 @@ final class PhpExtensionRequirements {
         $requirement['package'] ?? NULL,
         $requirement['related_package'] ?? NULL,
       ], 'is_string');
+      $roots = array_merge($roots, array_filter($requirement['packages'] ?? [], 'is_string'));
+      if (($requirement['scan_all'] ?? FALSE) === TRUE) {
+        $roots = array_merge($roots, array_keys($packageMap));
+      }
       $visited = [];
       $declared = [];
       foreach ($roots as $root) {
@@ -64,7 +68,7 @@ final class PhpExtensionRequirements {
       $rows[] = [
         'extension' => $extension,
         'integrations' => array_keys($data['integrations']),
-        'modules' => array_keys($data['modules']),
+        'modules' => array_keys($data['modules'] ?? []),
         'packages' => array_keys($data['packages']),
         'loaded' => isset($loaded[$phpExtension]),
       ];

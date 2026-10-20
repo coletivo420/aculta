@@ -1,3 +1,11 @@
+## 0.4.0-dev.229 — cobertura global de extensões PHP
+
+- O Status agora varre todos os pacotes de runtime de `composer.lock`; novos requisitos `ext-*` passam a aparecer sem inclusão manual da extensão no painel.
+- Atribuição explícita aos pacotes dos submódulos `aculta_image` e `aculta_pdf_viewer`, além do inventário global.
+- Gate `scripts/validate-php-extension-status.php` compara a detecção com os requisitos declarados no lockfile e exige a presença do scanner e dos mapas no relatório.
+- Evidência: gate `validate-php-extension-status` PASS (20 requisitos ext-*); PHPUnit Unit 3/3 (13 assertions) PASS; PHP lint PASS; `git diff --check` PASS. `validate-project-status-index` permanece bloqueado por commits prévios de `aculta_mailer`/`aculta_portal` sem atualização correspondente da linha raiz, incluindo o commit `17af34c706e6`; nenhuma alteração Mailer foi incluída.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.228 — status de extensões PHP das integrações
 
 - A página administrativa ACULTA Portal > Status deriva requisitos `ext-*` do `composer.lock` para os pacotes Composer mapeados às integrações e suas dependências transitivas.

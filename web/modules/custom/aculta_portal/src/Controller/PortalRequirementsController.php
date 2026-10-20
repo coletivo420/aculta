@@ -189,6 +189,25 @@ final class PortalRequirementsController extends ControllerBase {
     ],
   ];
 
+  /** Composer packages used by custom modules that need explicit attribution. */
+  private const PHP_EXTENSION_MODULE_REQUIREMENTS = [
+    [
+      'name' => 'ACULTA Image',
+      'modules' => ['aculta_image'],
+      'packages' => [
+        'drupal/entity_usage',
+        'drupal/media_duplicates',
+        'drupal/imageapi_optimize',
+        'drupal/imageapi_optimize_binaries',
+      ],
+    ],
+    [
+      'name' => 'ACULTA PDF Viewer',
+      'modules' => ['aculta_pdf_viewer'],
+      'packages' => ['drupal/pdfpreview', 'drupal/imagemagick'],
+    ],
+  ];
+
   /** Administrative landing page for the ACULTA Portal section. */
   public function overview(): array {
     $rows = [];
@@ -287,7 +306,15 @@ final class PortalRequirementsController extends ControllerBase {
     $lockAvailable = is_array($decoded['packages'] ?? NULL);
     $packages = $lockAvailable ? $decoded['packages'] : [];
     $extensionRows = PhpExtensionRequirements::build(
-      self::MODULE_REQUIREMENTS,
+      array_merge(
+        self::MODULE_REQUIREMENTS,
+        self::PHP_EXTENSION_MODULE_REQUIREMENTS,
+        [[
+          'name' => 'Dependências de runtime do site (varredura global)',
+          'modules' => [],
+          'scan_all' => TRUE,
+        ]],
+      ),
       $packages,
       get_loaded_extensions(),
     );
@@ -297,7 +324,7 @@ final class PortalRequirementsController extends ControllerBase {
       $rows[] = [
         'extension' => ['data' => ['#plain_text' => $extension['extension']]],
         'integrations' => ['data' => ['#plain_text' => implode(', ', $extension['integrations'])]],
-        'modules' => ['data' => ['#plain_text' => implode(', ', $extension['modules'])]],
+        'modules' => ['data' => ['#plain_text' => $extension['modules'] === [] ? '—' : implode(', ', $extension['modules'])]],
         'packages' => ['data' => ['#plain_text' => implode(', ', $extension['packages'])]],
         'status' => [
           'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($extension['loaded']

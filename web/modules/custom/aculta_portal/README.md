@@ -27,10 +27,11 @@ slugs públicos canônicos por `PublicRouteSlug::normalize()` e a política
 API base cacheável de identidade de autoria para consumidores do Portal. Cada
 capacidade documenta seus limites no README do respectivo submódulo.
 
-O relatório administrativo **ACULTA Portal > Status** deriva os requisitos de
-extensões PHP (`ext-*`) declarados pelos pacotes Composer associados às
-integrações registradas, incluindo dependências transitivas, e indica quais
-estão carregadas na SAPI PHP que atende a página. Consulte o
+O relatório administrativo **ACULTA Portal > Status** varre os requisitos de
+extensões PHP (`ext-*`) de todos os pacotes Composer de runtime, incluindo
+dependências transitivas, e indica quais estão carregadas na SAPI PHP que
+atende a página. Mapas explícitos atribuem os pacotes de `aculta_image` e
+`aculta_pdf_viewer`; o gate bloqueia regressões de cobertura. Consulte o
 [contrato do inventário de extensões PHP](../../../../docs/portal/PHP-EXTENSION-STATUS.md).
 
 ## Navegação documental
