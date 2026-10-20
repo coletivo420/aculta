@@ -1,3 +1,20 @@
+## `0.1.0-dev.75` — homologar movimentação de árvore ramificada — 2026-10-20
+
+- O roteiro X11 de Runtime cria dois tópicos e quatro Comments pendentes: raiz,
+  dois ramos diretos e uma resposta aninhada no primeiro ramo. O formulário
+  autenticado moveu a árvore com CSRF; CIDs, autores, textos, status, relações
+  `pid` e posições `thread` foram preservados. Origem ficou com zero Comments e
+  destino com quatro antes da limpeza.
+- Firefox ESR 153.4/geckodriver 0.37.1: 10/10 verificações PASS, inclusive
+  formulário/fila em 390×844, 768×1024 e 1024×768 CSS px sem overflow
+  horizontal. Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-branch-dev75-20261020/`.
+- Cleanup reverso removeu Comments e tópicos, apagou configuração temporária e
+  reconfirmou zero tópicos/Comments, 12 categorias, 3 avisos e settings do
+  mover ausentes. A função segue desativada por padrão. Limites: somente árvore
+  pendente; estados mistos, History, flags, anexos `aculta_image`, notificações
+  e concorrência HTTP pendentes. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.74` — homologar movimento de subárvore em dois níveis — 2026-10-20
 
 - O roteiro X11 de Runtime agora cria uma raiz e duas respostas descendentes

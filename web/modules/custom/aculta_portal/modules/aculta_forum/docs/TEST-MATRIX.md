@@ -1,5 +1,23 @@
 # Matriz de testes por fase
 
+## dev.75 — mover subárvore ramificada em Runtime/X11
+
+- O roteiro cria dois tópicos e quatro Comments pendentes: raiz, duas respostas
+  diretas e uma resposta aninhada no primeiro ramo. Autenticado como uid 1,
+  envia o Form API com CSRF e verifica CIDs, autores, textos, status, relações
+  `pid` e posições `thread`; origem termina com zero e destino com quatro.
+- Firefox ESR 153.4/geckodriver 0.37.1: 10/10 PASS; formulário/fila em
+  390×844, 768×1024 e 1024×768 CSS px, sem overflow horizontal. Capturas
+  privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-branch-dev75-20261020/`.
+- Cleanup em ordem reversa removeu os quatro Comments e os dois Nodes e apagou a
+  configuração temporária. Estado final: 0 tópicos/Comments ACULTA/legados,
+  12 categorias, 3 avisos e settings do mover ausentes. RUNTIME STATUS: PARTIAL.
+- Limites: todas as respostas estavam pendentes. Não cobre status mistos,
+  History, flags, Search API, anexos `aculta_image`, aviso com seguidores ou
+  concorrência HTTP. Unit/Kernel permanecem conforme os resultados anteriores;
+  esta subfase mudou apenas roteiro e documentação, não o PHP do Runtime.
+
 ## dev.74 — mover subárvore em Runtime/X11
 
 - O roteiro cria duas discussões de teste e três Comments pendentes (raiz,
@@ -748,7 +766,7 @@ continuam pendentes.
 | Moderação | criar, editar, sinalizar, aprovar, ocultar, despublicar, bloquear, auditoria | Unit/Kernel/Functional por papel. |
 | Integração Game | primeira resposta publicada em `aculta_discussion_post`/`aculta_forum_topic`; aprovação tardia uma vez; outras entidades, sincronização e `field_autor_legado` excluídos | `aculta_game` Unit `BadgeEvaluationHooksTest` cobre contrato de bundle/field e casos negativos. Concessão real/cache/commit externo e Runtime seguem pendentes. |
 | Mover tópico individual entre categorias | permissão específica e Entity Access no purpose público; categoria do vocabulário correto; confirmação; submissão adulterada; preservação de NID/UUID/alias/Comments/flags; nova revisão; autoria histórica negada mesmo para admin | Unit `ForumTopicMoverTest`: 4 testes/31 assertions PASS. Kernel `ForumTopicMoverKernelTest`: 2 testes/44 assertions PASS em MariaDB `aculta_simpletest`; comprova mesmo NID/UUID, nova revisão, alias e Comment/CID preservados e bloqueio histórico mesmo com permissões de administrador. Functional e Runtime autenticado pendentes; nenhuma fixture do Runtime foi movida. |
-| Mover comentário e subárvore para outro tópico público | autorização, dois endpoints no purpose Fórum, tópico aberto, legado imutável, estados publicados/pendentes, thread profunda e ramificada, identidade/datas, estatísticas de origem/destino, cache, gate desabilitado por default e rollback | Kernels `ForumCommentMoverKernelTest` + `ForumTopicMoverKernelTest` cobrem árvore profunda/ramificada, estados, rollback, locks, flagging, Search API e file usage; dev.73 executou `ForumCommentMoverKernelTest` 13/272 PASS no MariaDB `aculta_simpletest`, com 19 depreciações Core/contrib. Runtime `toca` dev.73/74: três Comments (raiz e dois níveis descendentes) movidos via Form API/CSRF, preservando CIDs/autores/textos/estados/pid/thread; X11 10/10 em 390/768/1024 CSS px, sem overflow. Fixtures removidas; Fórum terminou com 0 tópicos/Comments, 12 termos e 3 avisos baseline. `comment_move_enabled` continua ausente por padrão. Unit Forum 82/500; PHPCS e gates Drupal11+ PASS; PHP CLI 8.4.26 abaixo da baseline 8.5. Pendentes: ramificações/estados mistos no Runtime, History, idiomas, avisos com seguidores, arquivos pela política `aculta_image`, permalink e concorrência HTTP. RUNTIME STATUS: PARTIAL. |
+| Mover comentário e subárvore para outro tópico público | autorização, dois endpoints no purpose Fórum, tópico aberto, legado imutável, estados publicados/pendentes, thread profunda e ramificada, identidade/datas, estatísticas de origem/destino, cache, gate desabilitado por default e rollback | Kernels `ForumCommentMoverKernelTest` + `ForumTopicMoverKernelTest` cobrem árvore profunda/ramificada, estados, rollback, locks, flagging, Search API e file usage; dev.73 executou `ForumCommentMoverKernelTest` 13/272 PASS no MariaDB `aculta_simpletest`, com 19 depreciações Core/contrib. Runtime `toca` dev.73–75: raiz, árvore linear e árvore ramificada com quatro Comments foram movidas via Form API/CSRF, preservando CIDs/autores/textos/estados/pid/thread; X11 10/10 em 390/768/1024 CSS px, sem overflow. Fixtures removidas; Fórum terminou com 0 tópicos/Comments, 12 termos e 3 avisos baseline. `comment_move_enabled` continua ausente por padrão. Unit Forum 82/500; PHPCS e gates Drupal11+ PASS; PHP CLI 8.4.26 abaixo da baseline 8.5. Pendentes: estados mistos no Runtime, History, idiomas, avisos com seguidores, arquivos pela política `aculta_image`, permalink e concorrência HTTP. RUNTIME STATUS: PARTIAL. |
 | Outras ferramentas de movimento | reorganizar Taxonomy; lote via Views/VBO; split/merge; verificar revisões/URLs/arquivos/flags/estatísticas/cache/busca/notificações e recuperação | Planejadas. `MOVE-TOOLS.md` registra pesquisa de Comment Mover e VBO; não instalar VBO nem expor ferramenta em lote até aprovar o escopo e segurança das Actions. |
 | Acervo Growroom restaurado | autoria por `field_autor_legado`; edição/exclusão/aprovação negadas a qualquer papel; tópico fechado; bulk admin e IDs adulterados rejeitados | Unit `ForumModerationHooksTest`; Kernel/Functional de importação e access pendentes. Não confundir com Nodes `forum` do módulo contrib, cuja retirada é separada. |
 | UX/acessibilidade | mobile, teclado, foco, leitor de tela, light/dark, reduced motion e fallback sem JS | Firefox/browser, auditoria manual e automatizada existente. |

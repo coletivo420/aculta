@@ -78,7 +78,7 @@ if (baseline.forum_topics !== 0 || baseline.legacy_forum_topics !== 0 || baselin
   throw new Error(`Precondições de isolamento/recuperação não satisfeitas: ${JSON.stringify(baseline)}`);
 }
 
-const marker = `QAM74-${Math.random().toString(16).slice(2, 8)}`;
+const marker = `QAM75-${Math.random().toString(16).slice(2, 8)}`;
 const fixtureCode = `
 $config_storage = \\Drupal::service('config.storage');
 if ($config_storage->exists('aculta_forum.settings')) { throw new \\RuntimeException('O config do mover apareceu durante o preflight; nenhuma alteração foi feita.'); }
@@ -126,22 +126,25 @@ try {
   ]);
   $comment->save();
   $comments[] = (int) $comment->id();
-  $parent_id = (int) $comment->id();
-  foreach (['resposta', 'resposta aninhada'] as $label) {
+  $reply_specs = [
+    ['parent_index' => 0, 'label' => 'resposta ramo A'],
+    ['parent_index' => 1, 'label' => 'resposta aninhada ramo A'],
+    ['parent_index' => 0, 'label' => 'resposta ramo B'],
+  ];
+  foreach ($reply_specs as $spec) {
     $reply = \\Drupal::entityTypeManager()->getStorage('comment')->create([
       'entity_type' => 'node',
       'entity_id' => $nodes[0],
       'field_name' => 'field_aculta_discussion',
       'comment_type' => 'aculta_discussion_post',
       'uid' => 5,
-      'pid' => $parent_id,
+      'pid' => $comments[$spec['parent_index']],
       'status' => 0,
-      'subject' => '${marker} ' . $label,
-      'comment_body' => ['value' => '${marker} conteúdo QA ' . $label, 'format' => 'plain_text'],
+      'subject' => '${marker} ' . $spec['label'],
+      'comment_body' => ['value' => '${marker} conteúdo QA ' . $spec['label'], 'format' => 'plain_text'],
     ]);
     $reply->save();
-    $parent_id = (int) $reply->id();
-    $comments[] = $parent_id;
+    $comments[] = (int) $reply->id();
   }
   print 'ACULTA_FIXTURE:' . json_encode(['marker' => '${marker}', 'source_nid' => $nodes[0], 'destination_nid' => $nodes[1], 'cids' => $comments], JSON_THROW_ON_ERROR) . PHP_EOL;
 }
@@ -240,8 +243,8 @@ try {
   await bidiCommand('browsingContext.setViewport', { context, viewport: { width: 1024, height: 768 }, devicePixelRatio: 1 });
   await request('POST', path('/url'), { url: `${uri}${route}` });
   await wait(900);
-  const before = await execute(`const text=document.body.innerText; const select=document.querySelector('select[name="destination"]'); const check=document.querySelector('input[name="confirm_move"]'); return {path:location.pathname,title:document.title,heading:document.querySelector('h1')?.innerText||'',hasMarker:text.includes(${JSON.stringify(fixture.marker)}),subtreeCount:text.includes('serão movidos 3 comentários, incluindo'),wrongCount:/serão movidos [12] comentários/.test(text),destination:!!select&&[...select.options].some(o=>o.value===${JSON.stringify(String(fixture.destination_nid))}),confirm:!!check,csrf:!!document.querySelector('input[name="form_token"]'),bodyError:/Internal Server Error|The website encountered an unexpected error/i.test(text)};`);
-  check('Formulário informa a subárvore de três comentários, destino e token CSRF', before.path === route && before.hasMarker && before.subtreeCount && !before.wrongCount && before.destination && before.confirm && before.csrf && !before.bodyError, JSON.stringify(before));
+  const before = await execute(`const text=document.body.innerText; const select=document.querySelector('select[name="destination"]'); const check=document.querySelector('input[name="confirm_move"]'); return {path:location.pathname,title:document.title,heading:document.querySelector('h1')?.innerText||'',hasMarker:text.includes(${JSON.stringify(fixture.marker)}),subtreeCount:text.includes('serão movidos 4 comentários, incluindo'),wrongCount:/serão movidos [123] comentários/.test(text),destination:!!select&&[...select.options].some(o=>o.value===${JSON.stringify(String(fixture.destination_nid))}),confirm:!!check,csrf:!!document.querySelector('input[name="form_token"]'),bodyError:/Internal Server Error|The website encountered an unexpected error/i.test(text)};`);
+  check('Formulário informa os quatro Comments da árvore ramificada, destino e CSRF', before.path === route && before.hasMarker && before.subtreeCount && !before.wrongCount && before.destination && before.confirm && before.csrf && !before.bodyError, JSON.stringify(before));
   writeFileSync(resolve(output, 'forum-comment-move-form.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
   if (!(before.path === route && before.destination && before.confirm && before.csrf && !before.bodyError)) throw new Error('Formulário não ficou pronto para envio.');
 
@@ -249,7 +252,7 @@ try {
   check('Form API recebeu destino e confirmação explícita', submitted);
   if (!submitted) throw new Error('Não foi possível enviar a confirmação pela Form API.');
   await wait(1600);
-  const afterSubmit = await execute(`const text=document.body.innerText; const nav=performance.getEntriesByType('navigation')[0]; return {path:location.pathname,title:document.title,status:nav?.responseStatus||null,success:text.includes('3 comentários foram movidos.'),serverError:/Internal Server Error|The website encountered an unexpected error/i.test(text)};`);
+  const afterSubmit = await execute(`const text=document.body.innerText; const nav=performance.getEntriesByType('navigation')[0]; return {path:location.pathname,title:document.title,status:nav?.responseStatus||null,success:text.includes('4 comentários foram movidos.'),serverError:/Internal Server Error|The website encountered an unexpected error/i.test(text)};`);
   check('Submissão CSRF movimentou a árvore pela interface', afterSubmit.success && !afterSubmit.serverError, JSON.stringify(afterSubmit));
   writeFileSync(resolve(output, 'forum-comment-move-result.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
 
@@ -267,8 +270,9 @@ print 'ACULTA_MOVE_RESULT:' . json_encode($state, JSON_THROW_ON_ERROR) . PHP_EOL
   const moved = parseMarker(evalDrupal(verifyCode), 'ACULTA_MOVE_RESULT');
   const expected = [
     { uid: 1, subject: `${fixture.marker} comentário pendente`, body: `${fixture.marker} conteúdo QA`, pid: 0 },
-    { uid: 5, subject: `${fixture.marker} resposta`, body: `${fixture.marker} conteúdo QA resposta`, pid: fixture.cids[0] },
-    { uid: 5, subject: `${fixture.marker} resposta aninhada`, body: `${fixture.marker} conteúdo QA resposta aninhada`, pid: fixture.cids[1] },
+    { uid: 5, subject: `${fixture.marker} resposta ramo A`, body: `${fixture.marker} conteúdo QA resposta ramo A`, pid: fixture.cids[0] },
+    { uid: 5, subject: `${fixture.marker} resposta aninhada ramo A`, body: `${fixture.marker} conteúdo QA resposta aninhada ramo A`, pid: fixture.cids[1] },
+    { uid: 5, subject: `${fixture.marker} resposta ramo B`, body: `${fixture.marker} conteúdo QA resposta ramo B`, pid: fixture.cids[0] },
   ];
   const movedCorrectly = moved.source_exists && moved.destination_exists
     && moved.comments.length === expected.length
@@ -283,7 +287,7 @@ print 'ACULTA_MOVE_RESULT:' . json_encode($state, JSON_THROW_ON_ERROR) . PHP_EOL
     && moved.comments.slice(1).every((item) => item.thread.startsWith(moved.comments[0].thread.replace(/\/$/, '') + '.'))
     && moved.source_count === 0
     && moved.destination_count === expected.length;
-  check('Raiz e dois níveis descendentes preservaram CIDs, autoria, conteúdo, estado, pid/thread e destino', movedCorrectly, JSON.stringify(moved));
+  check('Raiz ramificada preservou CIDs, autoria, conteúdo, estado, relações pid/thread e destino', movedCorrectly, JSON.stringify(moved));
 }
 finally {
   if (browserSession) await request('DELETE', `/session/${browserSession}`).catch(() => {});
