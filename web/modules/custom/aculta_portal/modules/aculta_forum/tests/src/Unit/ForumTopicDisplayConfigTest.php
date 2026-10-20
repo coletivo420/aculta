@@ -43,24 +43,44 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $menu = Yaml::parseFile($module_path . '/aculta_forum.links.menu.yml');
     $routes = Yaml::parseFile($module_path . '/aculta_forum.routing.yml');
 
+    self::assertSame('admin/forum/conteudo', $topics['display']['page_forum']['display_options']['path']);
     self::assertSame('none', $topics['display']['page_forum']['display_options']['menu']['type']);
     self::assertSame('none', $comments['display']['page_forum_comments']['display_options']['menu']['type']);
     self::assertSame('view.aculta_forum_admin_topics.page_forum', $tasks['aculta_forum.admin_topics']['route_name']);
     self::assertSame('view.aculta_forum_admin_topics.page_forum', $tasks['aculta_forum.admin_topics']['base_route']);
+    self::assertSame('Conteúdo', $tasks['aculta_forum.admin_topics']['title']);
     self::assertSame('view.aculta_forum_admin_comments.page_published', $tasks['aculta_forum.admin_comments_published']['route_name']);
     self::assertSame('aculta_forum.admin_topics', $tasks['aculta_forum.admin_comments_published']['parent_id']);
     self::assertSame('Comentários rejeitados', $tasks['aculta_forum.admin_comments_rejected']['title']);
     self::assertSame('Aguardando moderação', $tasks['aculta_forum.admin_comments_pending']['title']);
-    self::assertSame('view.aculta_forum_admin_topics.page_forum', $menu['aculta_forum.admin']['route_name']);
+    self::assertSame('aculta_forum.admin', $menu['aculta_forum.admin']['route_name']);
     self::assertSame('system.admin', $menu['aculta_forum.admin']['parent']);
+    self::assertSame('view.aculta_forum_admin_topics.page_forum', $menu['aculta_forum.admin_content']['route_name']);
+    self::assertSame('aculta_forum.admin', $menu['aculta_forum.admin_content']['parent']);
     self::assertSame('entity.taxonomy_vocabulary.overview_form', $menu['aculta_forum.admin_categories']['route_name']);
     self::assertSame(['taxonomy_vocabulary' => 'aculta_forum_categories'], $menu['aculta_forum.admin_categories']['route_parameters']);
+    self::assertSame('/painel-administrativo/forum', $menu['aculta_forum.admin_categories']['options']['query']['destination']);
     self::assertSame('entity.node_type.edit_form', $menu['aculta_forum.admin_topic_type']['route_name']);
     self::assertSame(['node_type' => 'aculta_forum_topic'], $menu['aculta_forum.admin_topic_type']['route_parameters']);
+    self::assertSame('/painel-administrativo/forum', $menu['aculta_forum.admin_topic_type']['options']['query']['destination']);
     self::assertSame('aculta_user.denuncias_forum', $menu['aculta_forum.admin_reports']['route_name']);
     self::assertSame('aculta_user.participacao_settings', $menu['aculta_forum.admin_participation']['route_name']);
     self::assertSame('/painel-administrativo/forum/{node}/mover-categoria', $routes['aculta_forum.topic_move']['path']);
     self::assertSame('/painel-administrativo/forum/comentario/{comment}/mover', $routes['aculta_forum.comment_move']['path']);
+    self::assertSame('/painel-administrativo/forum', $routes['aculta_forum.admin']['path']);
+    self::assertSame('access content overview', $routes['aculta_forum.admin']['requirements']['_permission']);
+    self::assertSame('/painel-administrativo/conteudo/forum', $routes['aculta_forum.legacy_admin_redirect']['path']);
+    self::assertSame('/painel-administrativo/conteudo/forum/{node}/mover-categoria', $routes['aculta_forum.legacy_admin_topic_move_redirect']['path']);
+    self::assertSame('\\d+', $routes['aculta_forum.legacy_admin_topic_move_redirect']['requirements']['node']);
+    self::assertSame('/painel-administrativo/conteudo/forum/comentario/{comment}/mover', $routes['aculta_forum.legacy_admin_comment_move_redirect']['path']);
+    self::assertSame('\\d+', $routes['aculta_forum.legacy_admin_comment_move_redirect']['requirements']['comment']);
+    self::assertSame('/painel-administrativo/conteudo/forum/comentarios', $routes['aculta_forum.legacy_admin_comments_redirect']['path']);
+    self::assertSame('/painel-administrativo/conteudo/forum/comentarios/publicados', $routes['aculta_forum.legacy_admin_comments_published_redirect']['path']);
+    self::assertSame('/painel-administrativo/conteudo/forum/comentarios/rejeitados', $routes['aculta_forum.legacy_admin_comments_rejected_redirect']['path']);
+    self::assertSame('/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao', $routes['aculta_forum.legacy_admin_comments_pending_redirect']['path']);
+    self::assertSame(['GET', 'HEAD'], $routes['aculta_forum.legacy_admin_redirect']['methods']);
+    self::assertSame(['GET', 'HEAD'], $routes['aculta_forum.legacy_admin_topic_move_redirect']['methods']);
+    self::assertSame(['GET', 'HEAD'], $routes['aculta_forum.legacy_admin_comment_move_redirect']['methods']);
 
     $content = Yaml::parseFile($repository_path . '/config/sync/views.view.content.yml');
     $filters = $content['display']['default']['display_options']['filters'];
@@ -458,7 +478,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('field_aculta_categories', $options['fields']['field_aculta_categories']['field']);
     self::assertSame('field_aculta_categories', $options['style']['options']['columns']['field_aculta_categories']);
     self::assertSame('entity_operations', $options['fields']['operations']['plugin_id']);
-    self::assertSame('admin/forum', $view['display']['page_forum']['display_options']['path']);
+    self::assertSame('admin/forum/conteudo', $view['display']['page_forum']['display_options']['path']);
     self::assertSame('none', $view['display']['page_forum']['display_options']['menu']['type']);
     self::assertContains('user.node_grants:view', $view['display']['default']['cache_metadata']['contexts']);
   }

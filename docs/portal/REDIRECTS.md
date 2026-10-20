@@ -5,7 +5,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 
 ## Regras vigentes
 
-1. **Caminho antigo responde 404; não há redirecionamento de slug.** É o padrão do projeto, antes e depois da versão estável (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404.
+1. **Caminho antigo responde 404; não há redirecionamento de slug**, salvo exceções administrativas registradas neste documento. É o padrão do projeto, antes e depois da versão estável (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404.
 2. **Redirecionamento entre purposes** usa `DomainPurposeManager` + `TrustedRedirectResponse`, nunca `RedirectResponse` cru para outro host (`DomainPurposeRequestSubscriber::retargetRedirect`).
 3. **Conta:** a raiz `/` do host de conta é o ponto de entrada da área logada. Visitante não logado é redirecionado (302) para `/entrar` do próprio host de conta; a visão geral (`/minha-conta` internamente) não é acessível diretamente. Após logout, o destino também é o login (`DomainPurposeRequestSubscriber`, `onRequestBeforeRouter` e bloco de `user.logout`).
 4. **Login com destino salvo** volta ao purpose de origem, validado por `isSafeLoginDestinationPath` (`LOGIN_DESTINATION_SESSION_KEY`).
@@ -73,6 +73,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | `/busca` enviada pelo formulário | `/busca?q=<termo>` | 302 | `SearchPageForm::submitForm` | Busca em GET com o termo na URL |
 | Destinos após formulários de conta (cadastro, segurança, dados, painel) | `aculta_portal.security`, `aculta_portal.dashboard`, `aculta_portal.my_data_address`, `<front>` | 302 | `PortalFormCallbacks` (`setRedirect`) | Retorno ao painel depois de salvar |
 | `/product/{id}` | `/loja/produto/...` (alias) | 301 | Módulo Redirect e alias do Pathauto | Caminho canônico do produto |
+| Paths GET/HEAD sob `/painel-administrativo/conteudo/forum` | `/painel-administrativo/forum` | 302 | `aculta_forum.legacy_admin_redirect*` com `LocalRedirectResponse` | Paths administrativos antigos entram no painel central do Fórum; não há redirect para outros contextos nem em métodos de escrita |
 
 ### Caminhos removidos (404, sem redirecionamento)
 

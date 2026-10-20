@@ -1,3 +1,33 @@
+## `0.1.0-dev.117` — painel central do Fórum geral
+
+- `/painel-administrativo/forum` passa a ser o painel de entrada do Growroom420,
+  como página canônica mínima. Não agrega nem replica ferramentas, nem vira alias
+  da lista de tópicos; a navegação administrativa mantém cada ferramenta em sua
+  rota própria. Os caminhos administrativos legados redirecionam para essa
+  entrada central.
+- A listagem fica em `/painel-administrativo/forum/conteudo`; comentários e
+  moderação continuam isolados na seção própria. `/painel-administrativo/conteudo`
+  permanece sem conteúdo do Fórum.
+- GET/HEAD dos antigos paths sob `/painel-administrativo/conteudo/forum`
+  redirecionam localmente ao painel. Telas Core de categorias e bundle recebem
+  destino de retorno; formulários de mover tópico/comentário redirecionam ao painel.
+- O controller não consulta nem renderiza Menu Link Tree; portanto a página
+  central não reúne telas ou links que pertencem às rotas administrativas próprias.
+- Unit da suíte `aculta_forum`: 90 testes/601 assertions PASS; PHPCS PASS.
+  Runtime `toca`, PHP CLI 8.4.26: `drush cr` PASS; Firefox/X11 autenticado
+  34/34 para painel, conteúdo, filas,
+  revista, viewport 390/768 px e sete paths antigos. A listagem de tópicos abre
+  somente em `/forum/conteudo`.
+- Smoke Form API de mover tópico: 7/7 PASS em duas execuções; fixtures unpublished
+  NIDs 464 e 465 criaram revisões preservando UUID/autor/estado e foram removidas. Pré/pós: 0 tópicos,
+  0 comentários compartilhados, 0 legado, 12 categorias e fila Messenger 0.
+  Evidências privadas em `/home/aculta/private/aculta/visual-tests/`.
+- A primeira tentativa de redirect genérico capturou somente caminhos de um
+  segmento; os seis padrões legados descendentes foram explicitados e o smoke
+  final passou. O gate de fronteira módulo/tema reporta uma violação em
+  `aculta_mailer/src/Form/MailBrandForm.php`, fora do escopo e do commit do
+  Fórum. RUNTIME STATUS: PASS no escopo. Produção não foi acessada.
+
 ## `0.1.0-dev.116` — configurar opções próprias do Fórum
 
 - Adicionado `ForumSettingsForm` com `ConfigFormBase` do Core e `#config_target`

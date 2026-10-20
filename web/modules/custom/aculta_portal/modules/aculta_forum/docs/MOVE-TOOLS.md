@@ -5,7 +5,8 @@ homologação autenticada no Runtime; o formulário de mover comentário teve sm
 X11 autenticado de uma raiz pendente com subárvore ramificada e rejeição
 preservada, permanece
 desativado por padrão e ainda depende da homologação de integrações descritas
-abaixo. O Kernel MariaDB cobre subárvores e rollback**. Este contrato detalha os itens de organização e moderação do
+abaixo. O Kernel MariaDB cobre subárvores e rollback**. A interface administrativa
+fica na aba Conteúdo de `/painel-administrativo/forum`; este contrato detalha os itens de organização e moderação do
 [`ROADMAP.md`](ROADMAP.md), incorporando padrões observados no Discourse sem
 importar seus papéis, storage ou regras de acesso.
 
@@ -58,7 +59,8 @@ privado. Se links históricos exigirem redirecionamento, decidir canonical,
 permalinks e política de URL antes da implementação.
 
 Implementação individual atual: rota administrativa em
-`/painel-administrativo/conteudo/forum/{node}/mover-categoria`, permissão
+`/painel-administrativo/forum/{node}/mover-categoria`, vinculada ao conteúdo do
+Fórum e com retorno ao painel central, permissão
 `move aculta forum topics`, opção nas operações do Node, destino em Taxonomy,
 confirmação explícita, revalidação no submit, nova revisão no mesmo Node e log
 com IDs/uid sem conteúdo. `field_autor_legado` nega a operação inclusive para

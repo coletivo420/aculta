@@ -1,9 +1,8 @@
 # Administração do Fórum geral
 
-O Growroom420 tem seção própria em `/painel-administrativo/forum`. A listagem
-de tópicos é a página inicial da seção; comentários e ações administrativas do
-Fórum ficam sob a mesma raiz. A listagem genérica de Conteúdo não inclui Nodes
-`aculta_forum_topic` nem filas de Comments do Fórum.
+O Growroom420 tem um caminho central em `/painel-administrativo/forum`. Essa página é somente a entrada canônica da seção: não agrega links, incorpora telas, replica formulários nem redireciona para outros caminhos. As ferramentas mantêm rotas próprias, acessadas pela navegação administrativa da seção. Caminhos antigos e dispersos do Fórum sob `/painel-administrativo/conteudo/forum` redirecionam para essa entrada central.
+
+A listagem dos tópicos fica em `/painel-administrativo/forum/conteudo`; as filas de comentários ficam em `/painel-administrativo/forum/comentarios/...` e são abas subordinadas de Conteúdo. Essas telas pertencem à seção própria e não aparecem na listagem genérica `/painel-administrativo/conteudo`.
 
 ## Ownership e acesso
 
@@ -43,7 +42,8 @@ configuração; nenhum bloco Views desta tela precisa de controle por colocaçã
 
 ## Rotas relacionadas
 
-- `/painel-administrativo/forum`: tópicos públicos e entrada da seção.
+- `/painel-administrativo/forum`: entrada central canônica do Growroom420, sem agregação de outras telas.
+- `/painel-administrativo/forum/conteudo`: tópicos públicos; comentários e estados de moderação como abas subordinadas.
 - `/painel-administrativo/forum/comentarios`: consulta agregada.
 - `/painel-administrativo/forum/comentarios/publicados`.
 - `/painel-administrativo/forum/comentarios/rejeitados`.
@@ -52,5 +52,6 @@ configuração; nenhum bloco Views desta tela precisa de controle por colocaçã
 - `/painel-administrativo/configuracoes/aculta/portal/participacao`: regras
   compartilhadas do `aculta_user`.
 
-Os antigos paths em `/painel-administrativo/conteudo/forum` foram removidos e
-respondem 404, sem redirecionamento, conforme a política de slugs do projeto.
+Os antigos paths sob `/painel-administrativo/conteudo/forum` redirecionam por
+GET/HEAD para `/painel-administrativo/forum`. O painel não é alias das páginas
+de conteúdo, configuração ou moderação.

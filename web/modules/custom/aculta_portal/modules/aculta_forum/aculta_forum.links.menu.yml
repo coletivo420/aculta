@@ -1,15 +1,25 @@
 aculta_forum.admin:
   title: 'Fórum'
-  description: 'Gerencie tópicos, categorias e participação no Growroom420.'
-  route_name: view.aculta_forum_admin_topics.page_forum
+  description: 'Painel central de administração do Growroom420.'
+  route_name: aculta_forum.admin
   parent: system.admin
   weight: 11
+
+aculta_forum.admin_content:
+  title: 'Conteúdo'
+  description: 'Tópicos públicos e comentários do Growroom420.'
+  route_name: view.aculta_forum_admin_topics.page_forum
+  parent: aculta_forum.admin
+  weight: 0
 
 aculta_forum.admin_categories:
   title: 'Categorias do Fórum'
   route_name: entity.taxonomy_vocabulary.overview_form
   route_parameters:
     taxonomy_vocabulary: aculta_forum_categories
+  options:
+    query:
+      destination: /painel-administrativo/forum
   parent: aculta_forum.admin
   weight: 10
 
@@ -18,6 +28,9 @@ aculta_forum.admin_topic_type:
   route_name: entity.node_type.edit_form
   route_parameters:
     node_type: aculta_forum_topic
+  options:
+    query:
+      destination: /painel-administrativo/forum
   parent: aculta_forum.admin
   weight: 20
 
@@ -37,5 +50,8 @@ aculta_forum.admin_participation:
   title: 'Moderação inicial (compartilhada)'
   description: 'Configuração de participação do Fórum, Revista e Wiki; não se aplica ao LMS.'
   route_name: aculta_user.participacao_settings
+  options:
+    query:
+      destination: /painel-administrativo/forum
   parent: aculta_forum.admin
   weight: 40

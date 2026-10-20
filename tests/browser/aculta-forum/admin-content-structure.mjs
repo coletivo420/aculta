@@ -125,13 +125,21 @@ try {
   writeFileSync(resolve(output, 'conteudo-geral.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
 
   info = await go('/painel-administrativo/forum');
-  check('Seção própria do Fórum responde sem erro', info.path === '/painel-administrativo/forum' && (!info.status || info.status === 200) && info.main && !info.serverError, JSON.stringify(info));
+  check('Painel central do Fórum responde sem erro', info.path === '/painel-administrativo/forum' && (!info.status || info.status === 200) && info.main && !info.serverError && info.h1.includes('Painel do Fórum'), JSON.stringify(info));
   const sectionMenu = await execute(`return [...document.querySelectorAll('a')].some(a=>a.pathname==='/painel-administrativo/forum' && a.innerText.replace(/\\s+/g,' ').trim()==='Fórum')`);
   check('Menu administrativo oferece a seção própria Fórum', sectionMenu);
+  const panelLinks = await execute(`return [...document.querySelectorAll('main a')].filter(a=>a.pathname.startsWith('/painel-administrativo/forum/')).map(a=>a.pathname)`);
+  check('Painel central não agrega links nem copia outras telas administrativas', panelLinks.length === 0, JSON.stringify(panelLinks));
+  const contentLink = await execute(`return [...document.querySelectorAll('a')].some(a=>a.pathname==='/painel-administrativo/forum/conteudo' && a.innerText.replace(/\\s+/g,' ').trim()==='Conteúdo')`);
+  check('Navegação administrativa abre Conteúdo no caminho próprio', contentLink);
   const settingsMenu = await execute(`return [...document.querySelectorAll('a')].some(a=>a.pathname==='/painel-administrativo/forum/configuracoes' && a.innerText.replace(/\\s+/g,' ').trim()==='Configurações do Fórum')`);
-  check('Menu do Fórum oferece as configurações próprias', settingsMenu);
+  check('Navegação administrativa mantém as configurações no caminho próprio', settingsMenu);
+  writeFileSync(resolve(output, 'forum-painel.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
+
+  info = await go('/painel-administrativo/forum/conteudo');
+  check('Conteúdo do Fórum abre em caminho próprio', info.path === '/painel-administrativo/forum/conteudo' && (!info.status || info.status === 200) && info.main && !info.serverError && info.h1.includes('Tópicos'), JSON.stringify(info));
   const forumTabs = await execute(`const expected=['Comentários publicados','Comentários rejeitados','Aguardando moderação']; const links=[...document.querySelectorAll('a')].map(a=>({text:a.innerText.replace(/\\s+/g,' ').trim(),path:a.pathname})); return JSON.stringify(expected.map(label=>({label,found:links.some(link=>link.text===label)})));`);
-  check('A aba Fórum expõe as três filas de comentários', JSON.parse(forumTabs).every((tab) => tab.found), forumTabs);
+  check('A página Conteúdo do Fórum expõe as três filas de comentários', JSON.parse(forumTabs).every((tab) => tab.found), forumTabs);
   writeFileSync(resolve(output, 'forum-topicos.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
 
   info = await go('/painel-administrativo/forum/configuracoes');
@@ -177,7 +185,7 @@ try {
     '/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao',
   ]) {
     info = await go(pathname);
-    check(`Caminho antigo retorna 404: ${pathname}`, info.notFound || info.status === 404, JSON.stringify(info));
+    check(`Caminho antigo do Fórum retorna ao painel central: ${pathname}`, info.path === '/painel-administrativo/forum' && (!info.status || info.status === 200) && !info.serverError, JSON.stringify(info));
   }
 
   // Check the Forum moderation queue at narrow CSS viewports without writing

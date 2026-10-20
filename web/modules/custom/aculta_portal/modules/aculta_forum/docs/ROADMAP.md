@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.117` | Painel central do Fórum geral | `/painel-administrativo/forum` é entrada canônica mínima, sem agregar outras telas; conteúdo fica em `/painel-administrativo/forum/conteudo`; sete paths antigos redirecionam ao painel em GET/HEAD. Suíte Unit 90/601, PHPCS e X11 34/34 PASS; gate de fronteira tem uma violação isolada em `aculta_mailer`, fora do escopo. Smoke de mover tópico 7/7; Fórum de teste permanece vazio; produção não acessada. |
 | `0.1.0-dev.116` | Configuração própria na seção do Fórum | `ForumSettingsForm` Core em `/painel-administrativo/forum/configuracoes`, permissão restrita própria e entrada no menu Growroom. PHPUnit 19/246 e PHPCS PASS; smoke Firefox/X11 31/31, tela 200, checkbox `false`, POST confirmou persistência e anônimo 403. Config Runtime ausente foi restaurada ausente; install/sync false; 0 tópicos/Comments. RUNTIME STATUS: PASS para rota, access e gravação do estado seguro; habilitar movimento segue sem teste. |
 | `0.1.0-dev.115` | Seção administrativa própria do Growroom420 | Código e config ativa migrados para `/painel-administrativo/forum`; menu lateral liga ao View de tópicos, categorias, bundle, denúncias e configuração compartilhada User. `drush cr` PASS; rotas/URLs/tarefas locais e access manager UID 1 PASS. Firefox ESR/X11 autenticado GET-only: 27/27, raiz e filas 200, sete caminhos antigos 404, Conteúdo sem a aba do Fórum; Revista segue em sua área. Em 390 px, 3 px de overflow restrito à tabela responsiva vazia; 768 px sem overflow. Fórum permaneceu vazio. RUNTIME STATUS: PARTIAL: filas vazias não exercitam operações sobre comentários reais; administração de categorias não percorrida visualmente. |
 | `0.1.0-dev.114` | Transições Form API LMS e rebuild do cache | Aprovação/rejeição HTTP PASS, fixture limpa (0 tópicos LMS/0 Comments), `drush cr` PASS; controller resolve antes/depois, overview anônimo 403. A falha atribuída ao controller não se reproduziu. |
@@ -136,29 +137,37 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 ## Política estrutural do painel administrativo
 
 O conteúdo de discussão não se mistura à listagem genérica em
-`/painel-administrativo/conteudo`. A decisão atual transfere a aba do Fórum
-geral para uma seção própria em `/painel-administrativo/forum`; seus tópicos
-continuam fora da View genérica. Revista reúne publicações e comentários em
+`/painel-administrativo/conteudo`. A decisão atual cria um painel central em
+`/painel-administrativo/forum` e mantém a listagem de tópicos em
+`/painel-administrativo/forum/conteudo`; ambas pertencem à seção própria e seus
+tópicos continuam fora da View genérica. Revista reúne publicações e comentários em
 `/painel-administrativo/conteudo/revista`; LMS terá área em
 `/painel-administrativo/lms/forum` restrita a curso/turma/atividade e autorização
 de Educador; Wiki terá área em `/painel-administrativo/wiki/forum` para
 comentários de verbetes. LMS e Wiki só ativam suas rotas junto dos respectivos
 adapters e depois de provar isolamento por contexto. Ver [contratos de contexto](CONTEXTS.md).
 
-### Seção administrativa própria do Fórum geral
+### Painel central do Fórum geral
 
-Decisão do responsável em 2026-10-20: transferir integralmente a aba de Fórum
-que hoje fica em Conteúdo para `/painel-administrativo/forum`, com entrada
-própria no menu lateral. A seção reunirá opções administrativas do Growroom420,
-incluindo tópicos, categorias, comentários publicados/rejeitados/pendentes,
-ferramentas de mover tópicos e comentários, acompanhamento e configurações
-próprias do Fórum. A listagem genérica de Conteúdo continuará excluindo os
-bundles e comentários do Fórum; não haverá segunda interface de moderação.
+Decisão do responsável em 2026-10-20: `/painel-administrativo/forum` é o caminho
+central canônico do Growroom420, não a listagem de tópicos nem uma reunião de
+outras telas administrativas. A página central não agrega links/conteúdo nem
+redireciona para as ferramentas. Cada ferramenta segue em sua rota própria na
+navegação administrativa da seção. A listagem fica em
+`/painel-administrativo/forum/conteudo`; comentários, filas e ações continuam em
+paths próprios da seção. A listagem genérica de Conteúdo exclui os bundles e
+comentários do Fórum.
+
+Os sete paths administrativos antigos sob `/painel-administrativo/conteudo/forum`
+redirecionam ao painel central por GET/HEAD. As telas nativas de categoria e
+bundle permanecem acessíveis como ferramentas e retornam ao painel quando suas
+operações respeitam o parâmetro `destination`. Nenhum painel de outro contexto
+é incorporado ao Fórum.
 
 O inventário atual encontrou: View de tópicos públicos; Views de comentários publicados,
 rejeitados e pendentes; ações para mover tópico e comentário; e gerenciamento
 nativo das categorias Taxonomy e do bundle Node fora da seção de Conteúdo.
-O painel novo centraliza links para essas ferramentas existentes e suas
+O menu lateral da seção oferece acesso às ferramentas existentes, sujeitas às
 permissões (`access content overview`, `administer comments`, `move aculta forum
 topics`, `move aculta forum comments`, `administer taxonomy` e `administer
 content types`), sem recriar formulários CRUD do Core. A opção própria existente

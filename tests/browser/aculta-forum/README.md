@@ -73,9 +73,10 @@ estava ausente, remove somente o item `aculta_forum.settings` criado pelo própr
 smoke e confirma que o estado ausente foi restaurado. Se já existia como `false`,
 não a remove. Recusa executar quando o movimento estiver habilitado.
 Verifica `/painel-administrativo/conteudo`
-sem a aba nem tópicos do Fórum, a seção `/painel-administrativo/forum`, as filas
-de comentários publicados, rejeitados e aguardando moderação, a área consolidada
-da Revista e os sete caminhos antigos do Fórum retornando 404. Confirma também a
+sem a aba nem tópicos do Fórum, a entrada central mínima `/painel-administrativo/forum`,
+Conteúdo em seu caminho próprio, as filas de comentários publicados, rejeitados
+e aguardando moderação, a área consolidada da Revista e os sete caminhos antigos
+do Fórum redirecionando para o painel central. Confirma também a
 remoção da rota antiga `/painel-administrativo/revista/comentarios`.
 
 Use o mesmo procedimento para iniciar geckodriver e defina `DISPLAY` e `SUITE_OUT`

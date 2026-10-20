@@ -87,7 +87,7 @@ final class ForumTopicMoveForm extends FormBase {
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('view.aculta_forum_admin_topics.page_forum'),
+      '#url' => Url::fromRoute('aculta_forum.admin'),
     ];
     return $form;
   }
@@ -108,11 +108,11 @@ final class ForumTopicMoveForm extends FormBase {
       $node = $this->mover->move((int) $form_state->get('topic_id'), (int) $form_state->getValue('destination'), $this->account);
       $category = $this->entityTypeManager->getStorage('taxonomy_term')->load((int) $node->get('field_aculta_categories')->getValue()[0]['target_id']);
       $this->messenger()->addStatus($this->t('O tópico foi movido para “@category”.', ['@category' => $category?->label() ?? '']));
-      $form_state->setRedirect('view.aculta_forum_admin_topics.page_forum');
+      $form_state->setRedirect('aculta_forum.admin');
     }
     catch (\InvalidArgumentException) {
       $this->messenger()->addError($this->t('Não foi possível mover este tópico. A categoria, o acesso ou o contexto mudaram; nenhuma alteração foi aplicada.'));
-      $form_state->setRedirect('view.aculta_forum_admin_topics.page_forum');
+      $form_state->setRedirect('aculta_forum.admin');
     }
   }
 

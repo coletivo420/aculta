@@ -1,5 +1,5 @@
 aculta_forum.admin_topics:
-  title: 'Fórum'
+  title: 'Conteúdo'
   route_name: view.aculta_forum_admin_topics.page_forum
   base_route: view.aculta_forum_admin_topics.page_forum
   weight: 15

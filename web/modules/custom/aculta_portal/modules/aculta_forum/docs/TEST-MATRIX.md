@@ -1,3 +1,11 @@
+## dev.117 — painel central e Conteúdo do Fórum geral
+
+- Unit da suíte `aculta_forum`: 90 testes/601 assertions PASS, incluindo `ForumTopicDisplayConfigTest` e `ForumAdminOverviewControllerTest`. PHPCS Drupal/DrupalPractice, `node --check`, Drupal 11+ gate (988), mapa módulo/tema (153), public slugs (377/20 violações contrib baselined), packages e `git diff --check` PASS. O gate módulo/tema falha por uma dependência de tema em `aculta_mailer/src/Form/MailBrandForm.php`, introduzida no commit compartilhado `ac2e580e`; não pertence ao escopo do Fórum e foi preservada. PHP CLI 8.4.26 está abaixo da baseline 8.5.
+- Configuração install e sync da View agora usa `admin/forum/conteudo`. No Runtime `toca`, Drush confirmou `aculta_runtime` com URI explícita `https://aculta.toca.net.br`; `http://default` sem URI permanece o erro esperado/documentado. Backup da View anterior em `/home/aculta/private/aculta/visual-tests/forum-admin-dev117-20261020/views.view.aculta_forum_admin_topics-before.yml`; somente o path foi alterado e `drush cr` PASS.
+- Firefox ESR/X11 autenticado: 34/34. `/painel-administrativo/forum` é uma página de entrada mínima e não agrega links/telas; navegação lateral abre Conteúdo e Configurações em seus caminhos próprios. Filas, Revista e layouts de 390/768 px confirmados; sete paths antigos de Fórum sob Conteúdo redirecionam ao painel. `/painel-administrativo/conteudo` permanece sem tópico do Fórum. Capturas privadas `0600` em `/home/aculta/private/aculta/visual-tests/forum-admin-dev117-20261020/`.
+- Mover tópico por Form API: 7/7 PASS em duas execuções. Fixtures não publicadas NIDs 464 e 465 receberam nova revisão preservando NID/UUID/autor/estado e foram apagadas. Pós-teste: 0 tópicos, 0 Comments compartilhados/legados, 12 categorias e fila Messenger 0. Capturas e recibos privados em `/home/aculta/private/aculta/visual-tests/forum-topic-move-dev117-20261020/`.
+- A primeira rodada encontrou que o redirect genérico não atendia paths com vários segmentos; os seis paths descendentes foram definidos explicitamente e a rodada final passou. RUNTIME STATUS: PASS no escopo. Produção não acessada.
+
 ## dev.116 — configuração específica do Growroom420
 
 - Unit `ForumTopicDisplayConfigTest`: 19 testes/246 assertions PASS; PHPCS

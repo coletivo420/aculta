@@ -91,7 +91,7 @@ final class ForumCommentMoveForm extends FormBase {
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('view.aculta_forum_admin_comments.page_forum_comments'),
+      '#url' => Url::fromRoute('aculta_forum.admin'),
     ];
     return $form;
   }
@@ -127,7 +127,7 @@ final class ForumCommentMoveForm extends FormBase {
     }
 
     $this->messenger()->addStatus($this->formatPlural($count, '1 comentário foi movido.', '@count comentários foram movidos.'));
-    $form_state->setRedirect('view.aculta_forum_admin_comments.page_forum_comments');
+    $form_state->setRedirect('aculta_forum.admin');
   }
 
 }
