@@ -125,7 +125,6 @@ module:
   redirect: 0
   rename_admin_paths: 0
   role_hierarchy: 0
-  role_inheritance: 0
   schema_article: 0
   schema_event: 0
   schema_image_object: 0

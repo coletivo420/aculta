@@ -169,7 +169,7 @@ Hooks são classes com `#[Hook]`, descobertas automaticamente pelo Core; não s�
 | Associado: concessão e marcador de conta | `Associado\AssociadoMarker`, `Form\AssociadoMarkForm` | marcador para recursos que o consumirem; não cria acesso ao Fórum público |
 | Relatório de associados (só administrador) | `Controller\AssociadosController` | `/painel-administrativo/associados/relatorio` |
 | Relatório de vendas (gerente de loja) | `aculta_portal` `Controller\SalesReportController` | `/painel-administrativo/loja/vendas`, permissão `view commerce_order` |
-| Herança de papéis (Fase 2) | configuração `role_inheritance.settings` | mapa em `config/sync/role_inheritance.settings.yml` |
+| Herança de papéis (Fase 2) | configuração `aculta_portal.role_hierarchy` (cadeia) | cadeia em `config/sync/aculta_portal.role_hierarchy.yml`; herança calculada pelo `aculta_user` |
 
 Testes: `aculta_user/tests/src/Unit/EnrollmentRoleHooksTest.php`; `aculta_portal/tests/src/Unit/Controller/SalesReportControllerTest.php`.
 

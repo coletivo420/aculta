@@ -46,7 +46,16 @@ $decidida = [
 const LINHA_DE_BASE_HASROLE = 15;
 const LINHA_DE_BASE_IN_ARRAY_PAPEL = 4;
 
-$mapa = Yaml::parseFile($root . '/config/sync/role_inheritance.settings.yml')['role_map'] ?? [];
+// Mapa derivado da cadeia decidida (aculta_portal.role_hierarchy): cada papel herda o próximo da cadeia, e o
+// administrador herda toda a cadeia. O módulo contrib role_inheritance saiu; a herança é do aculta_user.
+$cadeia = Yaml::parseFile($root . '/config/sync/aculta_portal.role_hierarchy.yml')['cadeia'] ?? [];
+$mapa = [];
+foreach ($cadeia as $i => $papel) {
+  if (isset($cadeia[$i + 1])) {
+    $mapa[$papel] = [$cadeia[$i + 1]];
+  }
+}
+$mapa['administrator'] = $cadeia;
 
 foreach ($decidida as $papel => $esperado) {
   $atual = $mapa[$papel] ?? [];

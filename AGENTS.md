@@ -549,7 +549,7 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
 
 ## Papéis e hierarquia (regra permanente)
 
-Não crie hierarquia paralela nem conceda acesso por nome de papel. Para funcionalidade nova, conceda a permissão adequada e valide por `hasPermission()`/Entity Access. A configuração e as decisões vigentes estão em `config/sync/role_inheritance.settings.yml` e `docs/portal/PAPEIS-PARTICIPACAO.md`; não duplique aqui a lista de papéis. Mudanças na hierarquia exigem avaliação de herança, atualização da decisão e execução de `php scripts/validate-role-hierarchy.php`.
+Não crie hierarquia paralela nem conceda acesso por nome de papel. Para funcionalidade nova, conceda a permissão adequada e valide por `hasPermission()`/Entity Access. A configuração e as decisões vigentes estão em `config/sync/aculta_portal.role_hierarchy.yml` e `docs/portal/PAPEIS-PARTICIPACAO.md`; não duplique aqui a lista de papéis. Mudanças na hierarquia exigem avaliação de herança, atualização da decisão e execução de `php scripts/validate-role-hierarchy.php`.
 
 ## Indexação e sitemap (política do projeto)
 
