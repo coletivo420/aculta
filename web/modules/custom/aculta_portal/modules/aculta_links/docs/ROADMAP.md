@@ -41,7 +41,9 @@ Identidade pública opt-in do proprietário permanece planejada para 0.6.0.
 
 ## 0.5.0 — métricas e ferramentas
 
-Desenhar eventos minimizados, filas/agregação, retenção, QR, redirects curtos e
+QR Code SVG da URL canônica para páginas publicadas foi implementado em
+0.4.0-dev.10, com dependência MIT Endroid e licenças transitivas registradas.
+Permanecem eventos minimizados, filas/agregação, retenção, redirects curtos e
 agendamento; revisar LGPD, Flood e open redirect.
 
 ## 0.6.0 — integração do ecossistema

@@ -32,6 +32,7 @@ registrados abaixo.
 - Kernel valida unicidade/gramática do slug, constraint do destino, access publicado e path/purpose declarado.
 - Functional/browser valida `/pagina/{slug}` em links e 404 em outros purposes; inspeciona SDC em tamanhos móveis/desktop, claro/escuro, teclado, contraste e sem overflow.
 - Cache precisa invalidar ao editar/despublicar página, item ou link e ao mudar alias de Domain.
+- QR: rota de página publicada entrega SVG com URL canônica HTTPS; rascunho/inexistente retorna 404; validar headers, cache e ausência de arquivo/telemetria.
 
 Update de entidade `aculta_links_update_10001` aplicado ao Runtime de teste em
 2026-10-20 com zero micropáginas existentes; o schema recebeu o campo

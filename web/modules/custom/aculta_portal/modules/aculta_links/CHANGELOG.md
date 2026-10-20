@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.10 — disponibiliza QR Code das páginas publicadas — 2026-10-20
+
+- O dashboard oferece download de QR Code SVG em `/pagina/{slug}/codigo-qr.svg` somente para micropáginas publicadas. A carga usa a URL canônica de `DomainPurposeManager`, sem arquivos persistidos, telemetria ou redirect.
+- Composer adiciona `endroid/qr-code` 6.1.3 (MIT), `bacon/bacon-qr-code` 3.1.1 (BSD-2-Clause) e `dasprid/enum` 1.0.7 (BSD-2-Clause). A geração usa SVG, sem GD.
+- Validação: QR Unit 1 teste/4 asserções; Kernel 2/71; PHPCS; Composer validate; slugs 385 e mapa módulo/tema 162 PASS. Runtime de teste após `cr` resolve a rota no purpose `links`; slug inexistente responde 404. Não havia micropáginas para testar download publicado. `cr` repetiu aviso do destino H5P não configurado. Gate de índice ainda falha por commit histórico de outra frente (`d0c3086c`); gate de endereços acusa 4 literais de `aculta_mailer` fora do escopo. Não houve criação de conteúdo nem importação de configuração.
+
 ## 0.4.0-dev.9 — apresenta título próprio nas micropáginas — 2026-10-20
 
 - O template de micropágina solicita ao SDC que não apresente a marca institucional ACULTA e mantenha o título da página como H1 visível; a landing pública continua com a identidade institucional.

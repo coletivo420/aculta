@@ -164,6 +164,15 @@ final class LinksDashboardController {
               'url' => $page_url,
             ];
           }
+          if ($entity->isPublished()) {
+            $qr_url = $this->domainPurpose->pathUrl('links', '/pagina/' . $slug . '/codigo-qr.svg');
+            if ($qr_url !== NULL) {
+              $operations['qr_code'] = [
+                'title' => new TranslatableMarkup('Baixar código QR'),
+                'url' => $qr_url,
+              ];
+            }
+          }
         }
       }
       $rows[] = [

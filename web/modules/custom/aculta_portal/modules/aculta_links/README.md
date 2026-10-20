@@ -2,12 +2,15 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.8`. O módulo possui entidades revisionáveis de destinos, micropáginas
+`0.4.0-dev.10`. O módulo possui entidades revisionáveis de destinos, micropáginas
 e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A raiz do purpose preserva a página
 editorial encontrada pelo alias `/redes-sociais`; se o Node/alias não existir,
 apresenta os mesmos botões configurados e projetos pela View existente. O caminho
 interno `/redes-sociais` continua inacessível diretamente.
+Páginas publicadas têm download de QR Code SVG em
+`/pagina/{slug}/codigo-qr.svg`; a carga codifica a URL canônica do purpose
+`links` sem armazenar imagem ou medir visitas.
 
 A configuração e o formulário administrativo dos canais sociais também estão
 no submódulo. Os valores são migrados sem apagar `aculta_portal.social_links`, e
@@ -49,8 +52,8 @@ essas APIs; não passa a ser dono desses dados.
 
 ## Estado da implementação
 
-Nenhum código upstream foi copiado e nenhuma dependência Composer foi
-adicionada. `aculta_link` usa o campo Link do Core; `aculta_link_page` guarda
+Nenhum código upstream foi copiado. `endroid/qr-code` gera SVG localmente
+(MIT; BaconQrCode e dasprid/enum BSD-2-Clause). `aculta_link` usa o campo Link do Core; `aculta_link_page` guarda
 slug, título, apresentação e publicação; `aculta_link_item` ordena referências
 entre página e destino. As três entidades têm revisões Drupal. Access mantém
 destinos e rascunhos privados por proprietário. O editor oferece prévia privada

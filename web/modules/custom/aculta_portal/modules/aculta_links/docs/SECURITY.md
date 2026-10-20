@@ -36,6 +36,9 @@
 - Analytics minimiza dados e define retenção/expurgo. Não persistir IP, user
   agent completo, fingerprint ou identificador transversal por padrão; definir
   LGPD e consentimento antes de rastrear.
+- QR Code é calculado localmente como SVG a partir somente da URL canônica
+  HTTPS de página publicada. O endpoint não aceita URL da requisição, não busca
+  rede, não persiste arquivo e não registra visualizações ou scans.
 - Cache público varia/invalida por Domain, idioma, path e entidades; conteúdo
   privado não é cacheado publicamente.
 - Imagens passam pelo `aculta_image`, `ImageCatalog` e `UploadPolicy`, sem

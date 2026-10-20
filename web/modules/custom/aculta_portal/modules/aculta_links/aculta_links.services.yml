@@ -16,5 +16,12 @@ services:
     class: Drupal\aculta_links\Controller\LinkPagePublicController
     arguments: ['@entity_type.manager', '@current_user']
 
+  aculta_links.qr_code_svg_generator:
+    class: Drupal\aculta_links\Service\QrCodeSvgGenerator
+
+  aculta_links.page_qr_code_controller:
+    class: Drupal\aculta_links\Controller\LinkPageQrCodeController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_links.qr_code_svg_generator']
+
   aculta_links.social_links_form_callbacks:
     class: Drupal\aculta_links\Service\SocialLinksFormCallbacks

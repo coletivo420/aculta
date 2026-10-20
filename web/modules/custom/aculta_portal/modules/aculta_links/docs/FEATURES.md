@@ -53,3 +53,4 @@ A rota administrativa `/painel-administrativo/links/pagina/{aculta_link_page}/ed
 - Destinos permitem URIs Drupal internas (`internal:`/`entity:`) ou HTTPS sem credenciais e sem portas não padrão.
 - Contrato de render é neutro no módulo; ACULTA420 reutiliza o SDC `social-links-page`.
 - Micropáginas exibem o próprio título e não herdam a marca institucional da ACULTA; a landing preserva o logo ACULTA. Identidade Drupal do proprietário ainda não é herdada.
+- Micropágina publicada oferece SVG QR em `/pagina/{slug}/codigo-qr.svg`; codifica a URL canônica gerada por Domain. Sem QR para rascunhos, arquivo persistido ou medição de scans.

@@ -31,7 +31,7 @@
 | Temas/presets | PORTAR/REIMPLEMENTAR | Presets governados por tokens; não executar tema arbitrário. |
 | Blocks/extensões de terceiros | ADIAR | Sem contrato de extensão executável nesta fase. |
 | Estatísticas/cliques | REIMPLEMENTAR | Queue/Cron e armazenamento minimizado, após análise LGPD. |
-| QR Code | ADIAR | Avaliar dependência Drupal/PHP quando a fase justificar. |
+| QR Code | REIMPLEMENTAR | Endroid QR Code 6.1.3 gera SVG da URL canônica da página publicada; código LinkStack e serviço remoto descartados. |
 | Slugs/redirect curto | REIMPLEMENTAR | APIs Drupal, política de slugs e DomainPurposeManager; proteger open redirect. |
 | Autenticação, instalação, usuários Laravel | DESCARTAR | Drupal User e `aculta_user`. |
 | Backup, editor de ambiente, updater, jobs/config Laravel | DESCARTAR | Operação/deploy e Configuration API Drupal. |
