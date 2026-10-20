@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.24 — F15: plugin de envio do Core pela camada E-Mails ACULTA (sem trocar o padrão) — 2026-10-20
+
+- Plugin `aculta_mailer` (`AcultaMailerMail`): `format()` igual ao padrão do Core; `mail()` converte a mensagem (`LegacyMessageConverter`) e envia pelo transporte `aculta_mailer_transport`.
+- Transporte escolhido pelo `X-Transport` (`smtp` → `smtp_hostinger`, `brevo` → `brevo`); padrão `smtp_hostinger`. Falha registra o erro sem corpo nem destinatário.
+- `system.mail` não foi alterado: o site continua no contrib.
+- Runtime: plugin descoberto; envio de teste aceito (`sent=1`) para o destinatário autorizado.
+- Versão do módulo: `0.1.0-dev.24`. 100 unitários.
+
 ## 0.1.0-dev.23 — F14: entidade e fábrica de transporte (`aculta_mailer_transport`), coexistindo com o contrib — 2026-10-20
 
 - Entidade de configuração `aculta_mailer_transport` (`MailTransport`): tipo (`smtp` ou `brevo`), servidor, porta, usuário e nome da credencial da senha. Não guarda senha.
