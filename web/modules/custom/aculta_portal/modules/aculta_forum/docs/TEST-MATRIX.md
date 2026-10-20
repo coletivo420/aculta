@@ -8,7 +8,12 @@
   callback de serviço com Educador permitido, estudante negado e Group diferente
   sem acesso. Suíte Kernel LMS: 2 testes/122 assertions PASS, 40 depreciações.
 - Unit LMS: 18/190 PASS. PHPCS Drupal/DrupalPractice, lint PHP e `git diff
-  --check` PASS. Runtime não alterado. RUNTIME STATUS: DEFERRED.
+  --check` PASS. Homelab: `drush cr` PASS; o serviço controller resolve pelo
+  container e as três rotas ficam ativas. Smoke autenticado GET-only com uid 1,
+  Educador do Group: overview e filas publicadas/rejeitadas/pendentes HTTP 200;
+  sessão específica criada pelo ULI foi removida. Anônimo recebe 403; `/`
+  responde 200. Sem fixtures ou alteração de configuração/conteúdo. Renderização
+  de linhas e ações pendente; RUNTIME STATUS: PARTIAL.
 
 ## dev.110 — argumentos da rota contextual de moderação
 
@@ -57,6 +62,11 @@
   `/home/aculta-system-data/private/aculta-forum-index-dev102/visual/captures/`.
   Sem alteração de configuração ou conteúdo. RUNTIME STATUS: PASS para as duas
   listagens sem conteúdo; experiência de fórum completo PARTIAL/DEFERRED.
+- Revalidação em 2026-10-20 com Firefox ESR 153.4/geckodriver 0.37.1 e sessão
+  X11 própria, GET-only em `/categorias`: 13/13 verificações PASS, 12 termos,
+  zero tópicos, sem overflow em 390/768/1024 CSS px nos modos claro/escuro.
+  Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-index-smoke-dev111-20261020/`.
 
 ## dev.91 — busca pública em Firefox/X11
 
