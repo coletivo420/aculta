@@ -7,11 +7,12 @@
 - Preserva Comment IDs, UUIDs, autor, texto, datas e estado de moderação; atualiza
   parent/thread, recalcula estatísticas dos dois Nodes e invalida caches. Lock
   segue o padrão de chave Comment Core e relê o máximo da thread sob lock.
-- Kernel MariaDB dedicado: 7 testes/134 assertions PASS (árvore em três níveis,
+- Kernel MariaDB dedicado: 9 testes/187 assertions PASS (árvore em três níveis,
   estado pendente, legado bloqueado, estatísticas, flag disabled, rollback,
   formulário de resposta/remoção desatualizado e retenção do lock até o callback
-  da transação raiz, verificada por uma segunda conexão MariaDB independente). 5
-  depreciações do Domain contrib. No Runtime `toca`, `drush cr` com URI explícita
+  da transação raiz, verificada por uma segunda conexão MariaDB independente).
+  19 depreciações de Core/Domain/Flag/Search API contrib. No Runtime `toca`,
+  `drush cr` com URI explícita
   do purpose `forum` e resolução do serviço guard e da classe OOP de hooks
   PASS; `aculta_forum.settings` segue ausente, portanto o mover permanece
   desabilitado por padrão. Nenhuma configuração ou entidade foi alterada. A
@@ -33,8 +34,14 @@
 - Revisão dos hooks laterais: `aculta_game` Unit `ForumParticipationPolicyTest`
   (8/35) confirma que update de comentário já publicado não repete o gatilho de
   conquista; `aculta_messenger` `ForumNoticeAccessPolicyTest` (3/29) passou para
-  os contratos de acesso. A entrega de aviso e atualização de índice Search API
-  após movimento ainda precisam de teste integrado.
+  os contratos de acesso. A fila/entrega de aviso durante um movimento segue
+  sem teste integrado.
+- Kernel também instala Flag 5.1.1 e Search API 1.41.0: flagging de usuário em
+  Comment permanece ligada ao mesmo CID após a movimentação; um Comment indexado
+  é marcado para reindexação após o update, mantendo o mesmo item ID. O índice
+  atual `aculta_conteudo` só indexa Nodes dos bundles institucionais definidos e
+  não inclui Forum nem Comments; o novo teste cria um índice Kernel isolado e
+  não altera essa política de busca.
 
 ## Pesquisa adicional de módulos contrib — 2026-10-19 (documentação)
 

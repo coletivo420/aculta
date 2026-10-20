@@ -273,6 +273,31 @@ adicionadas dependências Composer.
 | History 1.0.0, Search API 1.41.0 e Group 3.3.5 | Leitura por usuário, índices de busca e membresia/contexto | Reusar APIs existentes; movimentação precisa de adaptadores e invalidadores explícitos antes de ativar, sem replicar histórico, índices ou membership. |
 | Views Bulk Operations | Ações em lote com Batch/Actions API | Não instalado. Candidato futuro apenas após prévia, limites, access por linha, relatório parcial e rollback operacional; nunca usar como substituto da transação individual. |
 
+#### Verificação de integração Flag e Search API
+
+O contrato upstream do [Flag](https://www.drupal.org/project/flag) inclui
+Comments e flags por usuário. No Kernel do ACULTA, o serviço Flag grava uma
+flagging para o Comment e, depois da movimentação, a mesma entidade de flagging
+continua apontando para o mesmo CID, agora carregando o host de destino. Isso
+confirma que a operação in-place preserva follow/save por comentário sem
+copiar, excluir ou recriar registros de Flag.
+
+O [Search API](https://www.drupal.org/project/search_api) acompanha mudanças de
+entidades pelo ciclo CRUD do Drupal: seu `ContentEntityDatasourceHooks` encaminha
+`entity_update` ao tracking manager, que marca o item do datasource para
+reindexação. O Kernel cria um index de Comments isolado, marca o item inicial
+como indexado, move o Comment e verifica que o mesmo item ID volta à fila. Não
+se chama `search_api_skip_tracking`, pois o conteúdo hospedeiro indexado pode ter
+mudado.
+
+Isso valida a integração genérica do Search API instalada (`1.41.0`), mas o
+índice exportado `aculta_conteudo` atualmente usa somente `entity:node` e bundles
+institucionais; não indexa Comments nem tópicos do Fórum. A indexação pública do
+Fórum continua no roadmap de busca e nenhum índice ou configuração Runtime foi
+alterado por este teste. Fontes de API: [ciclo CRUD do Drupal](https://api.drupal.org/api/drupal/11.x/group/entity_crud/main),
+[implementação Search API](https://git.drupalcode.org/project/search_api/-/blob/8.x-1.x/src/Hook/ContentEntityDatasourceHooks.php)
+e [Flag](https://www.drupal.org/project/flag).
+
 Fontes oficiais consultadas: [Advanced Forum e status da compatibilidade Drupal
 11](https://www.drupal.org/project/issues/advanced_forum), [Author Pane e
 contexto de uso](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-archive/contrib-modules-for-building-the-site-functionality/social-networking-and-collaboration/community-building-and-social-networking-19),
