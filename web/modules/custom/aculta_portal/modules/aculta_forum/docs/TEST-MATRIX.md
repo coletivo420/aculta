@@ -1,3 +1,17 @@
+## dev.124 — rota canônica de mover comentário na área Comentários
+
+- `ForumTopicDisplayConfigTest`: 19 testes/282 assertions PASS. Confirma rota
+  plural ligada ao `ForumCommentMoveForm`, conversão `entity:comment`, permissão
+  dedicada e redirect do caminho singular antigo; PHPCS Drupal/DrupalPractice e
+  `git diff --check` PASS.
+- Runtime Homelab: hostname `toca`, URI `https://aculta.toca.net.br`, Drupal
+  11.4.10 e banco `aculta_runtime`. Antes do rebuild, `aculta_forum.settings`
+  estava ausente, mantendo o mover fechado. `drush cr` PASS e RouteProvider
+  confirma o caminho plural, handler Form API, permissão, conversor de Comment
+  e redirect singular. Nenhuma configuração ou entidade foi alterada. Não há
+  Comment de Fórum para renderizar o formulário com entidade real; submissão e
+  movimento continuam DEFERRED. RUNTIME STATUS: PARTIAL.
+
 ## dev.123 — homologar movimento de tópicos em lote no Runtime
 
 - Firefox ESR/X11 autenticado no Runtime de teste (Drupal 11.4.10,

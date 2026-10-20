@@ -82,11 +82,14 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertArrayNotHasKey('aculta_forum.admin_content_redirect', $routes);
     self::assertArrayNotHasKey('aculta_forum.admin_comments_redirect', $routes);
     self::assertSame('/painel-administrativo/forum/{node}/mover-categoria', $routes['aculta_forum.topic_move']['path']);
-    self::assertSame('/painel-administrativo/forum/comentario/{comment}/mover', $routes['aculta_forum.comment_move']['path']);
+    self::assertSame('/painel-administrativo/forum/comentarios/{comment}/mover', $routes['aculta_forum.comment_move']['path']);
     self::assertSame('\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview', $routes['aculta_forum.topic_move']['defaults']['_controller']);
-    self::assertSame('\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview', $routes['aculta_forum.comment_move']['defaults']['_controller']);
+    self::assertSame('\Drupal\aculta_forum\Form\ForumCommentMoveForm', $routes['aculta_forum.comment_move']['defaults']['_form']);
+    self::assertSame('entity:comment', $routes['aculta_forum.comment_move']['options']['parameters']['comment']['type']);
+    self::assertSame('/painel-administrativo/forum/comentario/{comment}/mover', $routes['aculta_forum.comment_move_legacy_redirect']['path']);
+    self::assertSame('\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview', $routes['aculta_forum.comment_move_legacy_redirect']['defaults']['_controller']);
     self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.topic_move']['methods']);
-    self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.comment_move']['methods']);
+    self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.comment_move_legacy_redirect']['methods']);
     self::assertSame('/painel-administrativo/conteudo/forum', $routes['aculta_forum.legacy_admin_redirect']['path']);
     self::assertSame('/painel-administrativo/conteudo/forum/{node}/mover-categoria', $routes['aculta_forum.legacy_admin_topic_move_redirect']['path']);
     self::assertSame('\\d+', $routes['aculta_forum.legacy_admin_topic_move_redirect']['requirements']['node']);

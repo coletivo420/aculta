@@ -73,10 +73,11 @@ colocação de blocos é necessária.
 - `/painel-administrativo/forum/comentarios/aguardando-moderacao`: fila pendente.
 - `/painel-administrativo/forum/comentarios/rejeitados`: fila rejeitada.
 - `/painel-administrativo/forum/configuracoes`: configurações específicas.
-- `/painel-administrativo/forum/{node}/mover-categoria` e
-  `/painel-administrativo/forum/comentario/{comment}/mover`: rotas de ação
-  direta continuam redirecionadas ao painel até a política de localização de
-  ações ser revista.
+- `/painel-administrativo/forum/comentarios/{comment}/mover`: formulário
+  canônico para mover comentário e respostas descendentes, acessível somente
+  com a permissão `move aculta forum comments`; a opção continua desabilitada
+  por padrão. O caminho antigo singular `/painel-administrativo/forum/comentario/{comment}/mover`
+  redireciona ao painel. Mover tópico permanece indisponível por caminho direto.
 - `/painel-administrativo/conteudo/forum` e filhos: redirects antigos para a
   entrada canônica do Fórum.
 - `/painel-administrativo/configuracoes/aculta/portal/participacao`: políticas

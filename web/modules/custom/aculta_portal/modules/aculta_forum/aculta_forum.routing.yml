@@ -101,15 +101,25 @@ aculta_forum.topic_move:
   methods: [GET, HEAD, POST]
 
 aculta_forum.comment_move:
-  path: '/painel-administrativo/forum/comentario/{comment}/mover'
+  path: '/painel-administrativo/forum/comentarios/{comment}/mover'
   defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
+    _form: '\Drupal\aculta_forum\Form\ForumCommentMoveForm'
+    _title: 'Mover comentário'
   requirements:
     _permission: 'move aculta forum comments'
   options:
     parameters:
       comment:
         type: 'entity:comment'
+  methods: [GET, HEAD, POST]
+
+aculta_forum.comment_move_legacy_redirect:
+  path: '/painel-administrativo/forum/comentario/{comment}/mover'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
+  requirements:
+    _permission: 'access content overview'
+    comment: '\d+'
   methods: [GET, HEAD, POST]
 
 aculta_forum.settings:

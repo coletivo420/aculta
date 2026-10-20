@@ -1,3 +1,20 @@
+## `0.1.0-dev.124` — reabrir a rota canônica de mover comentários — 2026-10-20
+
+- O formulário `ForumCommentMoveForm` fica acessível em
+  `/painel-administrativo/forum/comentarios/{comment}/mover`, na área
+  administrativa Comentários, por decisão do responsável. A rota mantém a
+  conversão de Comment e exige `move aculta forum comments`; o caminho antigo
+  singular e o caminho antigo sob Conteúdo continuam redirecionando ao painel.
+- `comment_move_enabled` permanece desabilitado por padrão. Nenhuma operação de
+  movimentação foi executada no Runtime nesta mudança.
+- `ForumTopicDisplayConfigTest`: 19 testes/282 assertions PASS; PHPCS e
+  `git diff --check` PASS. Runtime de teste: cache reconstruído e RouteProvider
+  confirma a rota/handler/conversor; config ausente e nenhum conteúdo alterado.
+  Sem Comment de Fórum ativo, renderização autenticada do formulário permanece
+  DEFERRED (RUNTIME STATUS: PARTIAL).
+- Drupal.org documenta `_form` como handler Form API e conversão/upcasting de
+  parâmetros de entidade em rotas; ver fontes oficiais citadas no relatório.
+
 ## `0.1.0-dev.123` — homologar movimento de tópicos em lote
 
 - Firefox/X11 autenticado no Runtime de teste confirmou seleção VBO de dois
