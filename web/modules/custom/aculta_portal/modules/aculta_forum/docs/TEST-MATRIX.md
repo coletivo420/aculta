@@ -1,5 +1,19 @@
 # Matriz de testes por fase
 
+## dev.71 — fila administrativa responsiva
+
+- A suíte X11 abre a fila aguardando moderação em viewports CSS de 390×844 e
+  768×1024, valida o carregamento e mede overflow do documento e da área `<main>`;
+  também salva screenshots com permissões privadas.
+- Firefox ESR 153.4/geckodriver 0.37.1 no X11 autenticado: 19/19 verificações
+  PASS, inclusive carregamento das abas e rótulos. Em 768 px não houve overflow;
+  em 390 px a tabela responsiva estende-se 3 px e os elementos excedentes ficam
+  restritos a `table/thead/tr/th/tbody/td`. A captura foi inspecionada; nenhum
+  conteúdo/configuração foi alterado. Filas vazias limitam revisão de linhas
+  reais em telas estreitas. Evidências privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev71-20261020/`.
+  RUNTIME STATUS: PARTIAL.
+
 ## dev.70 — rótulos pt-BR das filas de moderação
 
 - A configuração de instalação e Config Sync deve ter colunas `changed` e

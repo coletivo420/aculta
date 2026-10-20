@@ -1,3 +1,18 @@
+## `0.1.0-dev.71` — validar a fila administrativa em telas estreitas — 2026-10-20
+
+- A suíte administrativa X11 agora valida viewports CSS de 390 e 768 px,
+  verifica a largura da fila de moderação e registra capturas adicionais.
+- Firefox ESR 153.4/geckodriver 0.37.1, autenticado no MAIN de teste: 19/19
+  verificações PASS. Em 768 px não há overflow; em 390 px a tabela responsiva
+  estende-se 3 px e o excesso fica restrito aos elementos da tabela. O roteiro
+  registra a condição observada. A página carregou corretamente e foi inspecionada
+  em X11; não foi alterado CSS do tema administrativo nem código contrib.
+- Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev71-20261020/`.
+  Somente navegação GET e login ULI temporário; nenhuma entidade foi criada ou
+  alterada. Filas vazias não permitem avaliar as linhas de conteúdo em viewport
+  estreito. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.70` — traduzir vazios da moderação do Fórum — 2026-10-20
 
 - As filas administrativas de comentários passam a identificar as colunas de

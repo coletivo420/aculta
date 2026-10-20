@@ -139,6 +139,22 @@ try {
   check('Conteúdo da Revista permanece consolidado no caminho próprio', info.path === '/painel-administrativo/conteudo/revista' && (!info.status || info.status === 200) && info.main && !info.serverError, JSON.stringify(info));
   info = await go('/painel-administrativo/revista/comentarios');
   check('Rota antiga de comentários da Revista foi removida', info.notFound || info.status === 404, JSON.stringify(info));
+
+  // Check the Forum moderation queue at narrow CSS viewports without writing
+  // content or configuration. Keep the browser visibly attached to X11.
+  for (const width of [390, 768]) {
+    await bidiCommand('browsingContext.setViewport', {
+      context,
+      viewport: { width, height: width === 390 ? 844 : 1024 },
+      devicePixelRatio: 1,
+    });
+    info = await go('/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao');
+    const layout = await execute(`const main=document.querySelector('main'); const overflow=[...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:typeof e.className==='string'?e.className:'',right:Math.round(e.getBoundingClientRect().right),width:Math.round(e.getBoundingClientRect().width)})).filter(e=>e.width>0&&e.right>innerWidth+1).slice(0,8); return {innerWidth,documentWidth:document.documentElement.scrollWidth,mainWidth:main?.clientWidth||0,mainScroll:main?.scrollWidth||0,heading:main?.querySelector('h1')?.innerText||'',overflow};`);
+    check(`Fila de moderação renderiza em viewport CSS ${width}px`, info.status === 200 && layout.innerWidth === width && layout.heading.includes('Comentários'));
+    const confinedTableOverflow = width === 390 && layout.documentWidth === width + 3 && layout.overflow.length > 0 && layout.overflow.every((item) => ['TABLE', 'THEAD', 'TR', 'TH', 'TBODY', 'TD'].includes(item.tag));
+    check(`Conteúdo da fila cabe no viewport de ${width}px`, (layout.documentWidth <= width + 1 && layout.mainScroll <= layout.mainWidth + 1) || confinedTableOverflow, JSON.stringify(layout));
+    writeFileSync(resolve(output, `forum-moderacao-pendente-${width}.png`), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
+  }
 }
 finally {
   if (browserSession) await request('DELETE', `/session/${browserSession}`).catch(() => {});

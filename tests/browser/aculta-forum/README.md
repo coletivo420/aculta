@@ -51,4 +51,6 @@ rota antiga `/painel-administrativo/revista/comentarios`.
 
 Use o mesmo procedimento para iniciar geckodriver e defina `DISPLAY` e `SUITE_OUT`
 fora do checkout. Capturas e resultados são privados; não copie o link único de
-login nem dados de usuário para o relatório.
+login nem dados de usuário para o relatório. A suíte também valida a fila em
+390×844 e 768×1024 CSS px. Ela reporta o overflow horizontal observado na tabela
+responsiva do tema administrativo; não aplica CSS nem altera o tema/contrib.
