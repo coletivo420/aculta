@@ -530,8 +530,8 @@ $effective_sync_path = realpath(\Drupal\Core\Site\Settings::get('config_sync_dir
 $assert($canonical_sync_path !== FALSE && $effective_sync_path === $canonical_sync_path, 'Drupal Configuration Sync points at the repository canonical config/sync directory.');
 $sync_storage = \Drupal::service('config.storage.sync');
 // user_registrationpassword was removed (commit b4b4389); its three objects are no longer in the manifest.
-// M2 do e-mail: smtp.settings saiu; entraram mailer_transport.mailer_transport.smtp2go e mailer_transport.settings (+1 líquido).
-$assert(count($manifest['configs']) === 57, 'The reviewed account manifest contains 57 intentionally selected config objects.');
+// F15: o contrib de envio (mailer_transport) saiu; as configurações de envio são de aculta_mailer e não entram no manifesto de conta.
+$assert(count($manifest['configs']) === 50, 'The reviewed account manifest contains 50 intentionally selected config objects.');
 $assert(in_array('field.storage.user.user_picture', $manifest['configs'], TRUE), 'Private User picture storage is included in the reviewed manifest.');
 $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
   ksort($data);

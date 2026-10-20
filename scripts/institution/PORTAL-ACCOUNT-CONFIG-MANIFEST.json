@@ -44,8 +44,6 @@
     "key.key.google_oauth_client_secret",
     "key.key.turnstile",
     "profile.type.participante",
-    "mailer_transport.mailer_transport.smtp2go",
-    "mailer_transport.settings",
     "social_auth.settings",
     "turnstile.settings",
     "user.mail",
