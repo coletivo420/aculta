@@ -5,9 +5,11 @@
 - `LmsClassEducatorPermissionKernelTest` instancia o controller com o
   `ViewExecutableFactory` real e chama `comments()` contra a View instalada.
   Verifica display `lms_pending`, argumento Group e cache tag do contexto.
-- Kernel LMS: 1 teste/110 assertions PASS; 39 depreciações Core/contrib/LMS.
-  Nenhuma alteração no Runtime. Smoke HTTP vazio e autenticado permanece na
-  evidência dev.111; ainda não há prova Runtime das linhas/operações com Comment.
+- O arquivo direcionado: 1 teste/110 assertions PASS; suíte Kernel completa do
+  adapter: 2 testes/127 assertions PASS, 40 depreciações Core/contrib/LMS. PHP
+  CLI 8.4.26 está abaixo da baseline 8.5. Nenhuma alteração no Runtime. Smoke
+  HTTP vazio e autenticado permanece na evidência dev.111; ainda não há prova
+  Runtime das linhas/operações com Comment.
 
 ## dev.111 — conversores Core de entidade na rota LMS
 

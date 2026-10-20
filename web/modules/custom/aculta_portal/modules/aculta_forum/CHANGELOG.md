@@ -4,9 +4,10 @@
   da fixture e chama `comments()` contra a View de moderação instalada. As
   asserções verificam o display pendente, o argumento Group da rota e a cache
   tag contextual, prevenindo regressão de montagem/container.
-- Kernel LMS: 1 teste/110 assertions PASS, 39 depreciações Core/contrib/LMS.
-  Runtime sem alteração nesta subfase; smoke autenticado vazio está registrado
-  na dev.111. RUNTIME STATUS: PARTIAL.
+- Kernel do arquivo: 1 teste/110 assertions PASS; suíte Kernel completa do
+  adapter: 2 testes/127 assertions PASS, 40 depreciações Core/contrib/LMS. PHP
+  CLI 8.4.26 está abaixo da baseline 8.5. Runtime sem alteração nesta subfase;
+  smoke autenticado vazio está registrado na dev.111. RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.111` — testar conversores reais da rota de moderação — 2026-10-20
 
