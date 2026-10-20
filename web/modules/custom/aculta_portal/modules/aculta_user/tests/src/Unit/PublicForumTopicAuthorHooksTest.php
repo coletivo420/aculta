@@ -11,6 +11,7 @@ use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\aculta_user\PublicProfileLinkInterface;
 use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -99,6 +100,7 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
       $this->createMock(PublicProfileLinkInterface::class),
       new ImageRenderer(new ImageCatalog(), $entityTypeManager),
       new PublicProfilePolicy(),
+      new SocialNetworks(),
       $dateFormatter = $this->createMock(DateFormatterInterface::class),
     );
     $dateFormatter->method('format')->willReturn('2020');

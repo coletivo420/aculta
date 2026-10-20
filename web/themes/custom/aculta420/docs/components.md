@@ -217,9 +217,11 @@ decidir acesso. O `aculta_user` prepara apelido, link canônico, avatar autoriza
 e cache no theme hook neutro; a imagem passa por `aculta_image`. `author_forum`
 e `author_comment` compartilham o layout inline, enquanto
 `author_forum_stacked` altera apenas a disposição. `author_growroom_historico` é somente
-identificação de acervo, sem link individual ou ação de conta. `author_editorial`,
-`author_lms` e `author_wiki` têm chaves reservadas, mas aguardam seus consumidores
-contextuais. Inspeção visual e Runtime: DEFERRED.
+identificação de acervo, sem link individual ou ação de conta. `author_editorial`
+é consumido pela caixa de autoria da Revista, com designação Autor/Coautor,
+biografia e redes entregues pelo Portal somente quando autorizadas pelo perfil.
+`author_lms` e `author_wiki` aguardam seus consumidores contextuais. Inspeção
+visual integrada e Runtime: DEFERRED.
 
 A home/lista da Wiki usa css/components/wiki.css, arquivo temático de
 responsabilidade própria na biblioteca global. O markup continua preparado pelo

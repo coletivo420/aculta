@@ -1,3 +1,20 @@
+## 0.4.0-dev.46 — cartão editorial compartilhado e fallback de avatar — 2026-10-20
+
+- `author_editorial` passa a preparar identidade, avatar, designation, biografia e
+  redes no `AuthorCardBuilder`. Bio e redes exigem perfil público e opt-in; o
+  Magazine só envia Autor/Coautor. Sem apelido, usa o nome de exibição para
+  atribuição editorial, sem inventar URL de perfil.
+- O view-model informa explicitamente quando há avatar, para que o slot SDC vazio
+  apresente a inicial. Redes salvas também são filtradas por esquema HTTP(S) e
+  host suportado.
+- User Unit: 63 testes/222 assertions PASS; Magazine Unit: 7/31 PASS; PHPCS
+  direcionado PASS; Drupal 11+ 988, mapa módulo/tema 153 e schema SDC 543 PASS.
+  Runtime de teste: cache rebuild PASS, conteúdo editorial publicado renderizado
+  sem escrita; Firefox/X11 1270 e 500 px, claro/escuro, designation e inicial
+  verificados. A página testada tem 9 px de overflow lateral no visualizador PDF,
+  fora do cartão. PHP 8.4.26; baseline PHP 8.5 não disponível. RUNTIME STATUS:
+  PARTIAL.
+
 ## 0.4.0-dev.45 — retirar autoria histórica da fila de denúncias
 
 - A fila específica do Fórum inclui somente tópicos públicos atuais e seus

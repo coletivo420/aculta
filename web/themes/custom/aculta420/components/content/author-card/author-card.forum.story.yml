@@ -6,6 +6,7 @@ props:
   display_name: Maria Antônia
   profile_url: /u/maria
   member_since: '2021'
+  has_avatar: true
 slots:
   avatar:
     markup: <span aria-hidden="true">M</span>

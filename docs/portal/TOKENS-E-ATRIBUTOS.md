@@ -127,7 +127,6 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 
 Montadas por concatenação no módulo (o gate não enxerga cada valor; a família é o contrato):
 
-- `article-author-social-link-*`: Links sociais do autor de artigo (uma família por rede).
 - `post-share-*`: Botões de compartilhamento da publicação (uma família por canal).
 - `public-profile-link-*`: Links sociais do perfil público (uma família por rede).
 - `social-links-channel-*`: Canais da página de redes sociais (uma família por canal).
@@ -221,21 +220,11 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `article-authors-title` | `portal-article-authors__title` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
 | `article-authors-list` | `portal-article-authors__list` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
 | `article-author` | `portal-article-author` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-photo` | `portal-article-author__photo` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-initial` | `portal-article-author__initial` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-text` | `portal-article-author__text` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-name` | `portal-article-author__name` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
 | `forum-opening-post` | `portal-forum-opening` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-title` | `portal-forum-opening__title` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-image` | `portal-forum-opening__image` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-body` | `portal-forum-opening__body` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-link` | `portal-forum-opening__link` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
-| `article-author-role` | `portal-article-author__role` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-bio` | `portal-article-author__bio` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-social` | `portal-article-author__social` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `article-author-social-link-instagram` | `portal-article-author__social-link`, `bi`, `bi-instagram` | (montado dinamicamente ou só no tema) |
-| `article-author-social-link-facebook` | `portal-article-author__social-link`, `bi`, `bi-facebook` | (montado dinamicamente ou só no tema) |
-| `article-author-social-link-reddit` | `portal-article-author__social-link`, `bi`, `bi-reddit` | (montado dinamicamente ou só no tema) |
 | `public-profile` | `portal-profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-header` | `portal-profile__header` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-avatar` | `portal-profile__avatar` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |

@@ -5,6 +5,7 @@ props:
   variant: author_wiki
   display_name: Iara Pesquisadora
   profile_url: /u/iara-pesquisadora
+  has_avatar: true
 slots:
   avatar:
     markup: <span aria-hidden="true">I</span>

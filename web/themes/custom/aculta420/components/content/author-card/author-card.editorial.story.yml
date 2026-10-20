@@ -5,6 +5,13 @@ props:
   variant: author_editorial
   display_name: Joana Cultura
   profile_url: /u/joana-cultura
+  has_avatar: true
+  designation: Autora
+  bio: Articuladora cultural e pesquisadora de políticas públicas.
+  social_links:
+    - network: instagram
+      label: Instagram
+      url: https://instagram.com/
 slots:
   avatar:
     markup: <span aria-hidden="true">J</span>

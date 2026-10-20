@@ -10,7 +10,8 @@ policy e consumidor próprios.
 
 - sujeito tipado: `UserInterface` ou `LegacyAuthorInterface`/referência legada;
 - chave de variante User aceita por `AuthorIdentityResolver::USER_VARIANTS`;
-- usuário Drupal com perfil principal e apelido; sem apelido não há identidade;
+- usuário Drupal com perfil principal; variantes comuns usam o apelido, enquanto
+  `author_editorial` pode usar o nome de exibição da conta para manter atribuição;
 - a variante identifica o consumidor, mas não amplia os dados retornados.
 
 Não aceitar arrays arbitrários de dados privados fornecidos pelo chamador. Um
@@ -19,8 +20,10 @@ contexto identifica apresentação e policy; não é concessão de acesso.
 ## Saída
 
 - `AuthorIdentity`, um view-model neutro que implementa `CacheableDependencyInterface`;
-- apelido de exibição e URL canônica em string, gerada por `PublicProfileLink`;
+- nome público de exibição e URL canônica opcional em string, gerada por `PublicProfileLink`;
 - `member_since`, apenas como ano da conta quando o perfil inteiro é público;
+- somente em `author_editorial`, bio e redes sociais filtradas pelo opt-in do
+  perfil público; endereço social só é entregue para host e esquema HTTP(S) reconhecidos;
 - tags e contextos herdados da conta e do perfil principal.
 
 O resultado não contém e-mail privado, endereço, documentos, relações LMS,
@@ -44,9 +47,14 @@ resultado de access antes de serem usados.
 - `PublicProfileLinkInterface`: permite compor e testar o link canônico sem
   substituir `PublicProfileLink` como fonte de verdade.
 - `PublicProfilePolicy`: continua responsável pela política pública existente.
+- `SocialNetworksInterface`: entrega links por rede; `SocialNetworks` preserva
+  a constante pública `NETWORKS` e valida host e esquema HTTP(S) também ao ler
+  valores já armazenados.
 
 `member_since` não inclui a data ou hora exatas e fica ausente quando o perfil é
-privado; o tema só o apresenta em `author_forum`/`author_forum_stacked`. A
+privado; o tema só o apresenta em `author_forum`/`author_forum_stacked`. Bio e
+redes da variante editorial não são concedidas por `designation`; o tema recebe
+somente valores autorizados pelo perfil e a designação fornecida pelo Magazine. A
 entidade Account é cache dependency e a formatação anual usa UTC, sem variação
 por fuso horário.
 

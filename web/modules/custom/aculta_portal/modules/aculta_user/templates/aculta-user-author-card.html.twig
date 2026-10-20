@@ -1,9 +1,18 @@
 {# Neutral fallback. ACULTA420 supplies the visual implementation. #}
 <article>
-  {% if avatar %}<div>{{ avatar }}</div>{% endif %}
+  {% if has_avatar %}<div>{{ avatar }}</div>{% endif %}
   <div>
     {% if profile_url %}<a href="{{ profile_url }}">{{ display_name }}</a>{% else %}{{ display_name }}{% endif %}
     {% if member_since %}<div>{{ 'Conta ACULTA desde @year'|t({'@year': member_since}) }}</div>{% endif %}
+    {% if designation %}<div>{{ designation }}</div>{% endif %}
+    {% if bio %}<p>{{ bio }}</p>{% endif %}
+    {% if social_links %}
+      <ul aria-label="{{ 'Redes sociais públicas'|t }}">
+        {% for social in social_links %}
+          <li><a href="{{ social.url }}" rel="nofollow noopener noreferrer">{{ social.label }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
     {% if source_label %}<div>{{ source_label }}</div>{% endif %}
   </div>
   {% if actions %}<div>{{ actions }}</div>{% endif %}

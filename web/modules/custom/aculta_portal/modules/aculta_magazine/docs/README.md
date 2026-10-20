@@ -20,10 +20,16 @@ SEO, caixa de autores e coautoria. Depende de `aculta_user` (perfil, privacidade
 | SEO | metatag do tipo (`node__article`, `node__blog`) e campo `field_meta_tags` | config do metatag |
 | URL por sessão | padrão Pathauto `/[node:session]/[node:title]` (`aculta_article`, inclui o blog) | config do pathauto e token do aculta_portal |
 | Listagens por sessão | view `revista_sessoes` (filtro de tipo com todos os tipos da Revista) | config da view |
-| Caixa de autores | `node_view`: autor (`node.uid`) e coautores (`co_authors`), foto, nome, bio, ícones das redes | `src/Hook/ArticleAuthorsHooks.php` |
+| Caixa de autores | `node_view`: autor (`node.uid`) e coautores (`co_authors`); identity/avatar/bio/redes vêm do cartão `author_editorial` de `aculta_user`; Magazine fornece só Autor/Coautor | `src/Hook/ArticleAuthorsHooks.php` |
 | Coautores | `co_authors` (Node Co-Authors): coautores recebem os direitos de conteúdo do autor | módulo contrib |
 
 ## Discussão atual da publicação
+
+A caixa de autoria editorial usa o `AuthorCardBuilder` de `aculta_user` com a
+variante `author_editorial`. O Magazine mantém somente a designação Autor ou
+Coautor; apelido/nome, avatar, biografia e redes públicas são preparados pelo
+User e apresentados pelo SDC compartilhado do ACULTA420. Bio e redes respeitam
+o opt-in do perfil público, e o Magazine não lê campos de perfil diretamente.
 
 `article` e `blog` recebem `field_aculta_discussion`, do tipo Comment `aculta_discussion_post`, diretamente no Node.
 O full display usa o formatter Core `comment_default`, e o `aculta_user` constrói o cartão `author_comment`; autoria vinculada ao acervo usa `author_growroom_historico` sem conta ativa. A política

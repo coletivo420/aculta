@@ -1,3 +1,15 @@
+## 0.1.0-dev.16 — autoria editorial usa cartão compartilhado — 2026-10-20
+
+- `ArticleAuthorsHooks` consome `aculta_user.author_card_builder` com a variante
+  `author_editorial`. O Magazine fornece apenas a designação Autor/Coautor; não
+  lê campos privados do perfil nem monta avatar, nome, biografia ou redes.
+- O ACULTA420 renderiza o mesmo SDC de autoria usado pelos contextos do Portal.
+  Firefox/X11 no Runtime confirmou a caixa editorial em 1270 e 500 px, claro e
+  escuro, com a inicial de fallback quando não há avatar. Nenhum conteúdo foi
+  criado ou alterado. Unit Magazine 7/31 PASS; User Unit 63/222 PASS. RUNTIME
+  STATUS: PARTIAL (viewport X11 mínimo 500 px; overflow lateral de 9 px no PDF
+  da publicação testada não pertence ao cartão).
+
 ## 0.1.0-dev.15 — retirar consumidores do Forum contribuído — 2026-10-20
 
 - A Revista não depende mais de `forum:forum`: removidos o leitor de tópicos

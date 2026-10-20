@@ -7,8 +7,9 @@
   author_lms: 'Discussão de cursos'|t,
   author_wiki: 'Wiki420'|t
 } %}
+{% set social_icons = { instagram: 'instagram', facebook: 'facebook', reddit: 'reddit' } %}
 <article class="aculta-author-card aculta-author-card--{{ layout }} aculta-author-card--{{ variant }}">
-  {% if avatar %}
+  {% if has_avatar %}
     <div class="aculta-author-card__avatar">{{ avatar }}</div>
   {% else %}
     <div class="aculta-author-card__avatar aculta-author-card__avatar--initial" aria-hidden="true">{{ display_name|slice(0, 1)|upper }}</div>
@@ -19,7 +20,18 @@
     </div>
     {% if context_labels[variant] is defined %}<span class="aculta-author-card__context">{{ context_labels[variant] }}</span>{% endif %}
     {% if member_since and variant in ['author_forum', 'author_forum_stacked'] %}<span class="aculta-author-card__joined">{{ 'Conta ACULTA desde @year'|t({'@year': member_since}) }}</span>{% endif %}
+    {% if designation %}<span class="aculta-author-card__designation">{{ designation }}</span>{% endif %}
     {% if source_label %}<span class="aculta-author-card__source">{{ source_label }}</span>{% endif %}
+    {% if bio %}<p class="aculta-author-card__bio">{{ bio }}</p>{% endif %}
+    {% if social_links %}
+      <ul class="aculta-author-card__social-links" aria-label="{{ 'Redes sociais públicas'|t }}">
+        {% for social in social_links %}
+          {% if social_icons[social.network] is defined %}
+            <li><a href="{{ social.url }}" rel="nofollow noopener noreferrer" target="_blank" aria-label="{{ social.label }}" title="{{ social.label }}"><i class="bi bi-{{ social_icons[social.network] }}" aria-hidden="true"></i></a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
     {% if actions %}<div class="aculta-author-card__actions">{{ actions }}</div>{% endif %}
   </div>
 </article>

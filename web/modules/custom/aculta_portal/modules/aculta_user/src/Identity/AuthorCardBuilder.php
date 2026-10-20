@@ -27,7 +27,11 @@ final class AuthorCardBuilder {
       '#display_name' => (string) $author->label(),
       '#profile_url' => NULL,
       '#avatar' => NULL,
+      '#has_avatar' => FALSE,
       '#member_since' => NULL,
+      '#bio' => NULL,
+      '#social_links' => [],
+      '#designation' => NULL,
       '#actions' => [],
       '#source_label' => 'Acervo histórico Growroom',
     ];
@@ -43,12 +47,13 @@ final class AuthorCardBuilder {
    * by PublicProfilePolicy enter the card.
    *
    * @return array|null
-   *   Cacheable theme-hook array, or NULL if no public nickname exists.
+   *   Cacheable theme-hook array, or NULL if no public identity is available.
    */
   public function build(
     UserInterface $account,
     string $variant = 'author_minimal',
     array $actions = [],
+    ?string $designation = NULL,
   ): ?array {
     $identity = $this->identityResolver->resolve($account, $variant);
     if ($identity === NULL) {
@@ -62,7 +67,11 @@ final class AuthorCardBuilder {
       '#display_name' => $data['display_name'],
       '#profile_url' => $data['profile_url'],
       '#avatar' => $data['avatar'],
+      '#has_avatar' => $data['avatar'] !== NULL,
       '#member_since' => $data['member_since'],
+      '#bio' => $data['bio'],
+      '#social_links' => $data['social_links'],
+      '#designation' => $designation,
       '#actions' => $actions,
     ];
     CacheableMetadata::createFromObject($identity)->applyTo($build);

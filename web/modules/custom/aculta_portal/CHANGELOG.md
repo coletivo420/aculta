@@ -1,3 +1,16 @@
+## 0.4.0-dev.220 — autoria editorial compartilhada entre Portal e ACULTA420 — 2026-10-20
+
+- Magazine usa `author_editorial` do `aculta_user`; identidade, avatar, bio e
+  redes respeitam a política de perfil, enquanto o consumidor fornece apenas
+  Autor/Coautor. O cartão SDC apresenta a inicial quando o slot de avatar está
+  ausente.
+- User Unit 63/222, Magazine Unit 7/31, PHPCS direcionado, Portal Drupal 11+
+  (988), mapa módulo/tema (153) e SDC schema (543) PASS. Runtime de teste:
+  cache rebuild e render de publicação PASS sem escrita; Firefox/X11 claro/escuro
+  em 1270/500 px. Gate de fronteira bloqueado por `aculta_mailer` citando o tema;
+  gate de Foundation/design também registra dívida da implementação de e-mail
+  paralela. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.219 — sincronizar permissões do fórum LMS — 2026-10-20
 
 - Config Sync passa a registrar `aculta_forum_lms` e `gnode`; importação

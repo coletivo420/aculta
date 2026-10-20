@@ -8,6 +8,7 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\aculta_user\PublicProfileLinkInterface;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_user\Social\SocialNetworksInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -43,14 +44,16 @@ final class AuthorIdentityResolver {
     private readonly PublicProfileLinkInterface $publicProfileLink,
     private readonly ImageRenderer $imageRenderer,
     private readonly PublicProfilePolicy $profilePolicy,
+    private readonly SocialNetworksInterface $socialNetworks,
     private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
    * Resolve apelido e link público canônico para uma conta Drupal.
    *
-   * Perfis sem apelido não produzem identidade. O link pode ser NULL quando o
-   * perfil é privado ou não possui um slug público válido. A conta e o perfil
+   * Variantes comuns sem apelido não produzem identidade; a editorial usa o
+   * nome de exibição como fallback. O link pode ser NULL quando o perfil é
+   * privado ou não possui um slug público válido. A conta e o perfil
    * são incorporados à metadata inclusive quando não há apelido, para permitir
    * que consumidores cacheiem também a ausência.
    */
@@ -68,13 +71,15 @@ final class AuthorIdentityResolver {
     $nickname = $profile !== NULL && $profile->hasField('field_nickname')
       ? trim((string) $profile->get('field_nickname')->value)
       : '';
-    if ($nickname === '') {
+    $editorialFallback = $variant === 'author_editorial' ? trim($account->getDisplayName()) : '';
+    $displayName = $nickname !== '' ? $nickname : $editorialFallback;
+    if ($displayName === '') {
       return NULL;
     }
 
-    $profileUrl = $this->publicProfileLink->build($account, $cacheability);
+    $profileUrl = $nickname !== '' ? $this->publicProfileLink->build($account, $cacheability) : NULL;
     $fieldBoolean = static function ($entity, string $field, bool $default): bool {
-      return !$entity->hasField($field) || $entity->get($field)->isEmpty()
+      return $entity === NULL || !$entity->hasField($field) || $entity->get($field)->isEmpty()
         ? $default
         : (bool) $entity->get($field)->value;
     };
@@ -92,7 +97,7 @@ final class AuthorIdentityResolver {
     if (isset($visibleItems['foto']) && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
       $file = $account->get('user_picture')->entity;
       if ($file !== NULL) {
-        $avatar = $this->imageRenderer->build('avatar', $file->getFileUri(), $nickname, ['loading' => 'lazy']);
+        $avatar = $this->imageRenderer->build('avatar', $file->getFileUri(), $displayName, ['loading' => 'lazy']);
         $cacheability->addCacheableDependency($file);
       }
     }
@@ -102,13 +107,31 @@ final class AuthorIdentityResolver {
       && ($created = $account->getCreatedTime()) > 0) {
       $memberSince = $this->dateFormatter->format($created, 'custom', 'Y', 'UTC');
     }
+    $bio = NULL;
+    $socialLinks = [];
+    if ($variant === 'author_editorial' && $profile !== NULL) {
+      if (isset($visibleItems['bio']) && $profile->hasField('field_bio') && !$profile->get('field_bio')->isEmpty()) {
+        $bio = trim((string) $profile->get('field_bio')->value);
+      }
+      if (isset($visibleItems['redes'])) {
+        foreach ($this->socialNetworks->linksOf($profile) as $network => $url) {
+          $socialLinks[] = [
+            'network' => $network,
+            'label' => (string) (SocialNetworksInterface::NETWORKS[$network]['label'] ?? ''),
+            'url' => $url,
+          ];
+        }
+      }
+    }
     return new AuthorIdentity(
       $variant,
-      $nickname,
+      $displayName,
       $profileUrl instanceof Url ? $profileUrl->toString() : NULL,
       $avatar,
       $memberSince,
       $cacheability,
+      $bio !== '' ? $bio : NULL,
+      $socialLinks,
     );
   }
 

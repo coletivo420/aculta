@@ -9,7 +9,7 @@ provider autorizado os fornecer. Uma variante nunca amplia acesso por si só.
 | --- | --- | --- |
 | `profile_full` | Perfil público completo; itens visíveis via `PublicProfilePolicy` | Perfil e rota existentes preservados; SDC ainda não substitui a página toda. |
 | `profile_compact` | Nome público, avatar se policy permite, link canônico | Variante aceita pelo resolver; layout compacto no SDC. |
-| `author_editorial` | Autoria de publicação; papel editorial vem do consumidor Revista | Variante aceita; caixa editorial existente continua ativa. |
+| `author_editorial` | Autoria de publicação; designação Autor/Coautor vem do Magazine; bio e redes seguem opt-in público | Integrada: `ArticleAuthorsHooks` usa `AuthorCardBuilder`; cartão compartilhado do SDC apresenta identidade, avatar, designação, bio e links autorizados. |
 | `author_comment` | Autoria de comentário interno da Revista, avatar conforme policy, ações fornecidas pelo host | `DiscussionCommentAuthorHooks` seleciona para Comments compartilhados em `article` e `blog`; comentários de Fórum não usam esta variante. |
 | `author_forum` | Autor de tópico/resposta pública, avatar conforme policy, ano da conta em perfil público, ações fornecidas pelo host | `PublicForumTopicAuthorHooks` integra tópicos `aculta_forum_topic`; `AuthorCardVariantResolver` usa a mesma variante nas respostas hospedadas nesse bundle. Forum contrib permanece em migração separada. |
 | `author_forum_stacked` | Mesma identidade de `author_forum`, empilhada acima da mensagem | Mesmo view-model; variante visual implementada no SDC. |

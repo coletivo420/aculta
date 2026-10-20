@@ -1,3 +1,15 @@
+## 0.6.0-dev.122 — cartão editorial usa view-model compartilhado — 2026-10-20
+
+- O SDC `content/author-card` exibe designation, bio e redes sociais autorizadas
+  pelo `aculta_user`; Magazine não replica a estrutura de identidade.
+- A presença do avatar usa prop explícita, então slot vazio mostra a inicial.
+  Firefox ESR/X11 no Runtime de teste: cartão conferido em 1270 e 500 CSS px,
+  nos modos claro e escuro; cartão contido e foco/link legíveis. A página de
+  fixture tem 9 px de overflow no preview PDF, fora da caixa de autoria; o Firefox
+  X11 desta sessão não permite viewport menor que 500 px. SDC schema PASS.
+  Foundation/design gates mantêm bloqueios já presentes na camada paralela de
+  e-mail. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.121 — envelope de e-mail usa só o logo do tema — 2026-10-20
 
 - `templates/aculta-mailer-wrap.html.twig`: o logo vem sempre de `theme_logo` (configuração do tema). Não há mais logo por marca do `aculta_mailer`, que duplicava o arquivo.

@@ -30,10 +30,13 @@ o pager, enquanto o tema compõe as colunas com tokens responsivos.
 O SDC `content/author-card` mantém o contrato de identidade entre contextos e
 mostra uma etiqueta neutra conforme a variante: Growroom420, Comentário da
 Revista, cursos e Wiki420. O módulo fornece a variante; o tema não consulta a
-entidade hospedeira nem revela papel, matrícula ou atividade. Nos cartões do
-Fórum, apresenta opcionalmente o ano da conta fornecido pelo `aculta_user`, que
-omite o dado para perfis privados e autoria histórica. Stories cobrem
-separadamente `author_editorial`, `author_comment`, `author_lms` e `author_wiki`.
+entidade hospedeira nem revela papel, matrícula ou atividade. Na Revista, o
+Magazine fornece somente a designação Autor/Coautor; identidade, avatar, bio e
+redes públicas são preparados pelo `aculta_user` segundo opt-in e política de
+privacidade. Nos cartões do Fórum, apresenta opcionalmente o ano da conta
+fornecido pelo `aculta_user`, que omite o dado para perfis privados e autoria
+histórica. Stories cobrem separadamente `author_editorial`, `author_comment`,
+`author_lms` e `author_wiki`.
 
 ## Identidade
 

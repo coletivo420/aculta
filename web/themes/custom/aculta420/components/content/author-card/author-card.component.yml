@@ -32,9 +32,32 @@ props:
     source_label:
       type: [string, 'null']
       description: 'Historical archive source label; never a user profile or account action.'
+    has_avatar:
+      type: boolean
+      description: 'Whether the authorized avatar render array is present; SDC slots can be empty but truthy.'
     member_since:
       type: [string, 'null']
       description: 'Creation year for an account with a public profile; presented only on forum author variants.'
+    designation:
+      type: [string, 'null']
+      description: 'Contextual role prepared by the content owner, such as Autor or Coautor.'
+    bio:
+      type: [string, 'null']
+      description: 'Biography text approved for this public author-card context.'
+    social_links:
+      type: array
+      items:
+        type: object
+        required: [network, label, url]
+        properties:
+          network:
+            type: string
+            enum: [instagram, facebook, reddit]
+          label:
+            type: string
+          url:
+            type: string
+      description: 'Public social links already filtered by aculta_user policy.'
 slots:
   avatar:
     title: Avatar
