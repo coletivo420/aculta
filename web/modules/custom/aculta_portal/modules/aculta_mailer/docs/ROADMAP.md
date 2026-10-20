@@ -29,6 +29,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 
 ## Pendências de decisão
 
-- Remetente e transporte padrão: a documentação ainda diverge (Hostinger x SMTP2GO). Resolver antes de F2.
+- Transporte padrão: **Hostinger** (`smtp`), com **fallback para SMTP2GO**, decisão do responsável (2026-10-20). A configuração versionada já aponta o padrão para `smtp`; o fallback é implementado na F2.
+- Remetente: confirmar na F2 (ver `docs/portal/EMAIL-TRANSPORT.md` §4.2).
 - Caminho administrativo: `/painel-administrativo/...`, conforme decisão do responsável.
 - Local dos templates de layout: módulo, com estilos vindos do tema via dados e classes (decisão do responsável).

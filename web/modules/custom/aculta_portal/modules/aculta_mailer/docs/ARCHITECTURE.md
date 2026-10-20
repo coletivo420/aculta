@@ -52,6 +52,13 @@ Drupal Core Mail (symfony_mailer) → Symfony Mailer → transporte (DSN)
    A integração só ocorre em fase própria, com testes e migração.
 7. **Sem novo segredo.** Nenhuma credencial é adicionada nesta fase.
 
+## 4.1 Transportes
+
+- Padrão: Hostinger (`smtp.hostinger.com`, porta 465), decisão do responsável em 2026-10-20.
+- Fallback: SMTP2GO (`mail.smtp2go.com`, porta 465), usado quando o padrão falha em erro temporário.
+- Credenciais: somente conforme a regra de segredos do `AGENTS.md`; nenhuma senha vai para Config Sync.
+- Implementação do fallback: F2 (`ROADMAP.md`).
+
 ## 5. Regras que não podem ser violadas
 
 - Token de confirmação, token de reset e URL secreta nunca entram em log nem em subject.
