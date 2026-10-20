@@ -1,5 +1,21 @@
 # Matriz de testes por fase
 
+## dev.56 — remover referência residual ao bundle Forum contrib nas Flags
+
+- `ForumTopicDisplayConfigTest`: 17 testes/215 assertions PASS; PHPCS
+  Drupal/DrupalPractice e parse dos quatro YAML (Config Sync + `config/install`)
+  PASS. O teste garante que `seguir_topico` e `salvar_topico` se aplicam somente
+  ao bundle `aculta_forum_topic`.
+- Runtime `toca`: Drupal 11.4.10, `aculta_runtime`. Antes da mudança, as duas
+  Flags tinham 0 flaggings. Backups privados das duas configs anteriores em
+  `/home/aculta/private/aculta/runtime-config-backups/forum-dev56-20261020/`;
+  SHA-256 `seguir_topico` `bc23cdd7732261694f8245a891a30c2acc2355cc63b11c5feb85884db412d982`,
+  `salvar_topico` `9859233e45071e7e1e94ee70b3584eaf54b68dc0c8d26eb66e2ed8fe9df62e9d`.
+  Importação parcial processou apenas os dois objetos; cache rebuild e ausência
+  de diferenças dos alvos PASS. Depois, ambas continuam com 0 flaggings; Fórum
+  está em 0 tópicos e 0 Comments; raiz e `/categorias` HTTP 200. Nenhum dado foi
+  removido. RUNTIME STATUS: PASS para esta limpeza.
+
 ## dev.55 — cacheabilidade do texto de citação
 
 - `ForumQuoteHooksTest`: 6/18 PASS; suíte direcionada Builder + Hooks + display

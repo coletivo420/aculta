@@ -1,3 +1,16 @@
+## `0.1.0-dev.56` — remover bundle residual do Forum contrib nas Flags — 2026-10-20
+
+- `seguir_topico` e `salvar_topico` agora se aplicam somente ao bundle atual
+  `aculta_forum_topic`. Removida a referência residual `forum` dos defaults e
+  Config Sync depois da desinstalação oficial do módulo contrib. Nenhum dado de
+  Flag foi removido.
+- `ForumTopicDisplayConfigTest` exige a lista exata de bundles para impedir que
+  a associação antiga volte. Estado inicial do Runtime: ambas as Flags tinham
+  0 flaggings. Importação parcial atualizou somente as duas Flags após backup
+  privado; cache rebuild e `config:status` dos alvos PASS. Contagem de flaggings
+  permaneceu 0 para ambas, fórum com 0 tópicos/Comments, raiz e `/categorias`
+  HTTP 200. Nenhum storage ou flagging foi apagado. RUNTIME STATUS: PASS.
+
 ## `0.1.0-dev.55` — propagar cache do texto citado — 2026-10-20
 
 - A ação de citação lê a propriedade computada `processed` do item de texto e

@@ -132,7 +132,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
-   * Follow and save flags target both the transitional and current bundles.
+   * Follow and save flags target only the current public topic bundle.
    */
   public function testTopicFlagsTargetCurrentPublicBundle(): void {
     $module_path = dirname(__DIR__, 3);
@@ -142,8 +142,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       $install = Yaml::parseFile($module_path . '/config/install/' . $filename);
       $sync = Yaml::parseFile($repository_path . '/config/sync/' . $filename);
       self::assertSame($install, $sync, $filename);
-      self::assertContains('forum', $install['bundles'], 'Legacy bundle remains supported during migration.');
-      self::assertContains('aculta_forum_topic', $install['bundles']);
+      self::assertSame(['aculta_forum_topic'], $install['bundles']);
       self::assertFalse($install['global']);
       self::assertSame('node', $install['entity_type']);
     }
