@@ -1,5 +1,10 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.32 — corrigir escala inicial configurada — 2026-10-20
+
+- Distingue “ajustar à largura” de escala real 100%/125%; restaurar zoom volta ao padrão selecionado no formatter.
+- Zoom em tela estreita respeita o limite seguro de canvas já existente. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.31 — navegação pelo contorno do PDF — 2026-10-20
 
 - Exibe o outline fornecido pelo PDF.js em lista hierárquica de controles acessíveis, navegando para a página de cada destino. Documento sem outline não exibe a área vazia.

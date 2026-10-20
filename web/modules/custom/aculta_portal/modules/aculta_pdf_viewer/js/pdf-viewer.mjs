@@ -43,7 +43,9 @@ async function initialize(viewer) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = `/libraries/pdf.js/build/pdf.worker.mjs?v=${PDFJS_VERSION}`;
     const pdf = await pdfjsLib.getDocument({ url }).promise;
     let pageNumber = 1;
-    let zoom = viewer.dataset.acultaPdfDefaultZoom === '125' ? 1.25 : viewer.dataset.acultaPdfDefaultZoom === '100' ? 1 : 1;
+    const fitToWidth = viewer.dataset.acultaPdfDefaultZoom === 'fit-width';
+    const initialZoom = fitToWidth ? 1 : viewer.dataset.acultaPdfDefaultZoom === '125' ? 1.25 : 1;
+    let zoom = initialZoom;
     let rotation = 0;
     let renderSequence = 0;
     let renderTask;
@@ -119,7 +121,7 @@ async function initialize(viewer) {
       const baseViewport = page.getViewport({ scale: 1, rotation });
       const availableWidth = Math.max(240, (viewer.clientWidth || 800) - 32);
       const fitScale = Math.min(1.5, availableWidth / baseViewport.width);
-      const requestedScale = Math.min(3, fitScale * zoom);
+      const requestedScale = Math.min(3, fitToWidth ? fitScale * zoom : zoom);
       const maxScaleByArea = Math.sqrt(MAX_CANVAS_PIXELS / (baseViewport.width * baseViewport.height));
       const maxScaleByDimension = (MAX_CANVAS_DIMENSION - 1) / Math.max(baseViewport.width, baseViewport.height);
       let renderScale = Math.min(requestedScale, maxScaleByArea, maxScaleByDimension);
@@ -134,7 +136,7 @@ async function initialize(viewer) {
         canvasWidth = Math.ceil(viewport.width);
         canvasHeight = Math.ceil(viewport.height);
       }
-      const effectiveZoom = renderScale / fitScale;
+      const effectiveZoom = fitToWidth ? renderScale / fitScale : renderScale;
       if (effectiveZoom < zoom * MIN_SAFE_SCALE_RATIO) {
         canvas.hidden = true;
         status.textContent = 'Esta página excede o limite seguro de visualização. Use o link para abrir ou baixar o PDF.';
@@ -194,7 +196,7 @@ async function initialize(viewer) {
       });
     });
     zoomReset.addEventListener('click', () => {
-      zoom = 1;
+        zoom = initialZoom;
       render().catch(() => {
         status.textContent = 'Não foi possível restaurar o zoom do PDF.';
       });
