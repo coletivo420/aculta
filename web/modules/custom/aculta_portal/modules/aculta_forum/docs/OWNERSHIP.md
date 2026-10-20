@@ -6,6 +6,7 @@
 | Respostas | Comment/Core | Campos Comment e API de contexto | entidade/tabela paralela de resposta |
 | Categorias públicas | Taxonomy/Core e `aculta_forum` | vocabulário e Views | categoria paralela |
 | Ação de criar tópico | `aculta_forum` consulta o access da rota Core | link render array em `views_pre_render`, token visual `button-primary` já existente, cacheability do resultado | link estático que ignore Entity Create Access ou regra contextual |
+| Ação de citar comentário | `aculta_forum` valida Comment e provider/contexto | link Core `comment.reply` com token neutro `button-secondary`; o tema traduz `data-portal-ui` | classes CSS, templates, markup de cartão ou acesso decidido pelo tema |
 | Identidade, apelido e User | User/Profile + `aculta_user` | Author Card API a definir | consulta de dados privados e cartão próprio do Forum |
 | Avatar/foto | User picture + `aculta_user` + `aculta_image` | render autorizado por finalidade `avatar` | processar/excluir arquivo fora de `aculta_image` |
 | Autoria histórica | entidade `aculta_legado_autor` + `aculta_user` | `LegacyAuthorManager`, campo existente, memorial coletivo | conta User, perfil, login ou cartão independente |

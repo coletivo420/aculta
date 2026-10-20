@@ -1,3 +1,22 @@
+## `0.1.0-dev.53` — citar comentário no contexto — 2026-10-20
+
+- A ação **Citar** usa a rota Core de resposta com o ID do comentário como pai;
+  o formulário só recebe a citação quando a origem é o pai exato, publicado,
+  legível no contexto atual e o usuário pode responder. Atende os providers
+  públicos existentes (Growroom e Revista); LMS e Wiki permanecem fora até
+  terem providers com autorização contextual.
+- O builder usa o conteúdo já filtrado, remove marcação, limita a 1.200
+  caracteres e escapa texto e autoria dentro de `blockquote` permitido pelo
+  formato `usuario_aculta`. A resposta original não é alterada. Nenhuma
+  dependência contrib foi instalada.
+- Unit: 7 testes/16 assertions PASS, incluindo escape/limite, bloqueio de
+  contexto ilegível, rota Core e preenchimento da resposta. PHPCS e `git
+-  diff --check` PASS. Runtime em `toca`, Drupal 11.4.10, banco
+  `aculta_runtime`: cache rebuild e resolução dos dois serviços PASS; Fórum e
+  `/categorias` HTTP 200; contagens finais 0 tópicos e 0 Comments. O link e o
+  formulário não foram testados com comentário real porque o Runtime precisa
+  permanecer vazio. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.52` — categorias junto à lista recente — 2026-10-20
 
 - Adicionado o display Views `block_landing` à View Taxonomy existente e bloco

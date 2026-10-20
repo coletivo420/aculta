@@ -1,4 +1,7 @@
 services:
+  aculta_forum.quote_builder:
+    class: Drupal\aculta_forum\Service\ForumQuoteBuilder
+
   aculta_forum.topic_mover:
     class: Drupal\aculta_forum\Service\ForumTopicMover
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@logger.channel.aculta_forum']

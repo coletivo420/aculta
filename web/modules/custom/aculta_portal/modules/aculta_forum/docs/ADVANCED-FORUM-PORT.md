@@ -80,7 +80,7 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | Comentário-título oculto quando vazio | Portar configuração/display do Comment | Não renderizar título duplicado. |
 | Preview de resposta | Usar Form API/preview do Drupal | Sem template legado. |
 | Anexos | Portar por Media/File, `aculta_image` e handlers existentes | Arquivo sempre revalida acesso do contexto. |
-| Resposta citada | Portar com sanitização e referência ao original | Não copiar conteúdo inacessível no quote. |
+| Resposta citada | Portar com sanitização e referência ao original | Dev.53: ação **Citar** usa pai e rota Core, valida acesso de leitura/escrita no contexto e preenche texto filtrado, escapado e limitado. Seleção de trecho e contextos sem provider ainda não estão implementados. |
 | Conteúdo não publicado | Estado/aviso só para quem tem permissão de moderação | Não revelar existência a leitores sem access. |
 | Assinatura de autor | Capacidade confirmada pelo post template/Author Pane | Não port automático; exige campo, formato permitido, moderação e visibilidade aprovados. |
 | IP e Fasttoggle no Author Pane | Presentes na seção administrativa do template histórico | Excluir do cartão público. A moderação fica em interface separada e autorizada. |

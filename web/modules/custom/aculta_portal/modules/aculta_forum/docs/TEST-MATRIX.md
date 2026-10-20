@@ -1,5 +1,19 @@
 # Matriz de testes por fase
 
+## dev.53 — citação contextual de comentário
+
+- PHPUnit Unit `ForumQuoteBuilderTest` e `ForumQuoteHooksTest`: 7 testes / 16
+  assertions PASS. `ForumTopicDisplayConfigTest` executado junto: suíte
+  direcionada total 24/231 PASS. PHPCS Drupal/DrupalPractice nos quatro arquivos
+  PHP PASS. Cobertura do fluxo: escape e limite de texto, origem inacessível,
+  ação ligada à rota Core e pré-preenchimento apenas do comentário pai esperado.
+- Runtime `toca`, Drupal 11.4.10, banco `aculta_runtime`: cache rebuild e
+  resolução de `aculta_forum.quote_builder`/`discussion_context_resolver` PASS;
+  raiz e `/categorias` HTTP 200. Consultas finais confirmaram 0 Nodes
+  `aculta_forum_topic` e 0 Comments `aculta_discussion_post`. Link e formulário
+  com entidade real não foram exercitados para conservar o Runtime vazio.
+  RUNTIME STATUS: PARTIAL.
+
 ## dev.51 — denúncia contextual e proteção do acervo Growroom
 
 - Forum Unit `HistoricForumFlagAccessHooksTest` e
