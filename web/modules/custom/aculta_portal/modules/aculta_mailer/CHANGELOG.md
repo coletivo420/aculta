@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.18 — registro de e-mail e mapa do modelo WP Mail SMTP — 2026-10-20
+
+- Página Registro (`.../envios-de-email/registro`): ligar o registro (desligado, nada novo é gravado e a cota diária deixa de valer) e prazo de retenção (30 dias, 3 meses, 6 meses, 1 ano; padrão 90 dias, o comportamento anterior).
+- Opções do WP Mail SMTP que não se aplicam por política aparecem com a razão: conteúdo, anexos, rastreamento (F11) e webhooks (F10).
+- Mapa completo do modelo em `docs/REPORTS-AND-ALERTS.md`; fase F16 no roadmap.
+- Versão do módulo: `0.1.0-dev.18`. Testes: `MailLogSettingsTest` (79 unitários no módulo).
+- Runtime: endereço de retorno `dmarc@aculta.org` gravado; envio SMTP de teste aceito. Cabeçalho `Return-Path` ainda não conferido na caixa recebida (DEFERRED).
+
 ## 0.1.0-dev.17 — endereço de retorno, alertas de falha e resumo semanal (modelo WP Mail SMTP) — 2026-10-20
 
 - Endereço de retorno (`bounce_address`, página Entrega): vai no envelope (cabeçalho `Sender`) dos transportes SMTP. Transportes por API (Brevo) ficam de fora (`DeliverySettings::API_TRANSPORTS`), porque lá o envelope vira o remetente visível.

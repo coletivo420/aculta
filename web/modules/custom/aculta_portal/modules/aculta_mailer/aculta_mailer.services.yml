@@ -28,7 +28,7 @@ services:
 
   aculta_mailer.log_recorder:
     class: Drupal\aculta_mailer\Log\MailLogRecorder
-    arguments: ['@entity_type.manager', '@settings', '@datetime.time']
+    arguments: ['@entity_type.manager', '@settings', '@datetime.time', '@Drupal\aculta_mailer\Log\MailLogSettings']
 
   aculta_mailer.dashboard:
     class: Drupal\aculta_mailer\Dashboard\MailDashboard
@@ -113,3 +113,7 @@ services:
   Drupal\aculta_mailer\Hook\MailReportHooks:
     class: Drupal\aculta_mailer\Hook\MailReportHooks
     arguments: ['@Drupal\aculta_mailer\Report\MailSummary']
+
+  Drupal\aculta_mailer\Log\MailLogSettings:
+    class: Drupal\aculta_mailer\Log\MailLogSettings
+    arguments: ['@config.factory']

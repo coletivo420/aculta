@@ -16,6 +16,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F8 | Dashboard: painel de contagens por período, estado, tipo e transporte concluído; gráficos e agregação no banco pendentes | Parcial (painel pronto) |
 | F9 | Usuário: pedido de confirmação de e-mail enviado pelo aculta_mailer (token e entidade continuam no `email_confirmer`); troca de e-mail, reset e fila de reenvio ainda pelo contrib | Parcial (confirmação enviada pelo aculta_mailer) |
 | F10 | Eventos de entrega: contrato de provedor, verificação de assinatura, endpoint e aplicação de eventos com transições (`docs/DELIVERABILITY.md`). Monitoramento por IMAP (bounces a cada 30 min, DMARC a cada 12 h, `docs/MONITORING.md`) como complemento e fallback. Pendentes: escolha e implementação do provedor, supressão, leitura real da caixa (DEFERRED) e caixa de retorno dos transportes | Parcial (camada neutra e monitoramento prontos; leitura real pendente) |
+| F16 | Relatórios, registros e alertas no modelo do WP Mail SMTP: endereço de retorno, alertas de falha e de bounce, resumo semanal, opções do registro (ligar e retenção). Mapa completo em `docs/REPORTS-AND-ALERTS.md`. Pendentes: exportação CSV, reenvio de falha, verificação de domínio (SPF, DKIM, DMARC), limite por hora, chave geral de envio, rastreamento (F11) | Parcial (alertas, resumo, registro e endereço de retorno prontos; desligados até informar destinatários) |
 | F11 | Tracking opcional (abertura e clique), desligado por padrão | Pendente |
 | F12 | Integrações ACULTA: cadastro com e-mail já usado (DT-P06), conquista (`aculta_game`) e resumo de avisos (`aculta_messenger`) migrados; Forum, LMS, Magazine e Commerce pendentes | Parcial |
 | F13 | Compatibilidade: interceptar e-mails remanescentes do Core. Inventário de emissores feito (`docs/SENDERS-INVENTORY.md`); migração pendente | Parcial (inventário pronto) |
@@ -23,6 +24,9 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F15 | Retirada do contrib, somente com equivalência comprovada | Pendente |
 
 ## Runtime
+
+- Runtime de teste: endereço de retorno `dmarc@aculta.org` gravado (`aculta_mailer.delivery`). Um envio SMTP de teste foi aceito (`sent=1`) para o destinatário autorizado. Verificar no cabeçalho original da mensagem recebida: `Return-Path: <dmarc@aculta.org>`. **DEFERRED** até essa verificação.
+- Alertas e resumo semanal: desligados (sem destinatários informados).
 
 - Runtime de teste (`aculta_runtime`): `aculta_mailer` habilitado (2026-10-20, sem updb). Consumidores migrados: cadastro com e-mail já usado, conquista e resumo de avisos. Confirmação de e-mail continua no `email_confirmer` (F9).
 - Envio real pelo transporte não foi executado: os testes usam o coletor de e-mail do Core, sem SMTP.

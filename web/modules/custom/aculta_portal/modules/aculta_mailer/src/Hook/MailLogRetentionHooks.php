@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Hook;
 
 use Drupal\aculta_mailer\Log\MailLogRecorder;
+use Drupal\aculta_mailer\Log\MailLogSettings;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -27,6 +28,7 @@ final class MailLogRetentionHooks {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TimeInterface $time,
+    private readonly MailLogSettings $settings,
   ) {}
 
   /**
@@ -34,7 +36,7 @@ final class MailLogRetentionHooks {
    */
   #[Hook('cron')]
   public function cron(): void {
-    $limite = $this->time->getRequestTime() - self::RETENTION_DAYS * 86400;
+    $limite = $this->time->getRequestTime() - $this->settings->retentionDays() * 86400;
     $storage = $this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE);
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)

@@ -1,0 +1,50 @@
+# Relatórios, registros e alertas (modelo WP Mail SMTP)
+
+Referência: WP Mail SMTP Pro 4.10.2 (pacote analisado em 2026-10-20). Este documento mapeia cada função do modelo para o
+que existe no ACULTA Mailer. O roadmap do módulo (`ROADMAP.md`) traz as fases.
+
+## Mapa de funções
+
+| Função no WP Mail SMTP | ACULTA Mailer | Estado |
+|---|---|---|
+| Log de e-mails (data, assunto, estado, transporte, código) | `aculta_mail_log` (sem corpo, destinatário em HMAC) | Pronto |
+| Ativar registro | `aculta_mailer.log:enabled`, página Registro | Pronto (desligado para de contar a cota) |
+| Período de retenção (6 meses no WP) | `aculta_mailer.log:retention_days` (30, 90, 180, 365; padrão 90) | Pronto |
+| Registrar conteúdo do e-mail | Não se aplica: política de privacidade (`LOGGING-PRIVACY.md`) | Indisponível por política |
+| Salvar anexos | Não se aplica: os e-mails do sistema não têm anexos | Indisponível |
+| Rastreamento de abertura e cliques | Fase F11, desligada por padrão | Pendente (decisão de consentimento) |
+| Status de webhooks (assinatura no provedor) | Endpoint F10; sem provedor ativo | Pendente |
+| Alertas de falha (`failed_email`, `failed_primary_email`, `failed_backup_email`) | `MailAlerts::failure()`, janela de 5 min, fila | Pronto (desligado até informar destinatários) |
+| Alerta de bounce (`email_hard_bounced`) | `MailAlerts::hardBounce()`, chamado pelo monitor IMAP | Pronto (depende do IMAP) |
+| Resumo semanal por e-mail (Email Reports) | `MailSummary`, cron, 7 dias contra os 7 anteriores | Pronto (desligado até informar destinatários) |
+| Endereço de retorno / bounce | `aculta_mailer.delivery:bounce_address`, cabeçalho `Sender` em SMTP | Pronto; envelope em envio real: verificar |
+| Failover para transporte de contingência | `TransportFailover` (smtp → smtp2go) e cota diária | Pronto (cota depende do registro) |
+| Limite de envio (Rate Limiting) | Cota diária por transporte; sem limite por hora | Parcial |
+| Chave geral "não enviar" (Control) | Suspensão por tipo (`skip`); sem chave global | Parcial |
+| Teste de e-mail | Teste de modelo pelo caminho real | Pronto |
+| Verificação de domínio (Email Detective, SPF/DKIM/DMARC) | Diagnóstico sem checagem de DNS | Pendente |
+| Reenvio de falha (Resend) | Não há conteúdo no registro; o reenvio precisa da fila ou de dado guardado | Pendente (decisão) |
+| Exportar registro em CSV | Não implementado | Pendente |
+| Painel de estatísticas (Dashboard) | Painel de contagens por período | Pronto (sem gráfico) |
+| Verificação de entrega pela API do provedor (Recheck) | Não implementado | Pendente (depende do webhook do Brevo) |
+
+## Decisões
+
+- **Alertas com janela de 5 minutos**, como o padrão do WP Mail SMTP: evita uma caixa cheia de alertas durante uma
+  queda. O número de alertas suprimidos segue no próximo alerta.
+- **Alertas e resumos passam pela fila**, para não atrasar a requisição do usuário. Alertas não geram alertas: não há
+  laço.
+- **Endereço de retorno só em SMTP.** No Brevo (API), o envelope vira o remetente visível (`sender` do payload), então
+  o endereço de retorno não se aplica. As devoluções do Brevo chegam pelo webhook transacional (eventos *Hard Bounced* e
+  *Soft Bounced*, cadastrados pela API), que é o próximo passo da F10.
+- **Registro desligado** deixa de gravar, e a cota diária por transporte deixa de valer, porque a cota conta o registro.
+  A tela avisa.
+- **Retenção padrão de 90 dias**, o comportamento anterior. O WP usa 6 meses; mudar o padrão apagaria menos registros, e
+  por isso fica como decisão do responsável.
+
+## Fontes
+
+- WP Mail SMTP Pro 4.10.2: `src/Pro/Alerts`, `src/Reports/Emails/Summary.php`, `src/Pro/Emails/Logs`,
+  `src/Pro/Emails/RateLimiting`, `src/Pro/Emails/Control`, `src/Admin/EmailSendingErrors`.
+- Brevo, webhooks transacionais: <https://developers.brevo.com/docs/transactional-webhooks>.
+- Symfony Mailer: o envelope usa o cabeçalho `Sender` quando existe (`vendor/symfony/mailer/DelayedEnvelope.php`).

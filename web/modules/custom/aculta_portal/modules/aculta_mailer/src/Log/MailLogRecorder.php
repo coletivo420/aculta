@@ -23,6 +23,7 @@ final class MailLogRecorder {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly Settings $settings,
     private readonly TimeInterface $time,
+    private readonly MailLogSettings $logSettings,
   ) {}
 
   /**
@@ -42,6 +43,9 @@ final class MailLogRecorder {
    *   Texto completo da falha do transporte, para o relatório do admin (ver LOGGING-PRIVACY.md).
    */
   public function record(MailMessage $message, MailStatus $status, int $attempt, string $transport, ?string $errorCode = NULL, ?string $errorMessage = NULL): void {
+    if (!$this->logSettings->enabled()) {
+      return;
+    }
     $storage = $this->entityTypeManager->getStorage(self::ENTITY_TYPE);
     $found = $storage->loadByProperties(['correlation_id' => $message->correlationId]);
     $log = $found === [] ? $storage->create([

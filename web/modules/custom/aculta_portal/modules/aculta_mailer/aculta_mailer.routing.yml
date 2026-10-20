@@ -65,3 +65,11 @@ aculta_mailer.delivery_settings:
     _title: 'Entrega, alertas e resumo'
   requirements:
     _permission: 'administer aculta_mailer'
+
+aculta_mailer.log_settings:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/registro'
+  defaults:
+    _form: '\Drupal\aculta_mailer\Form\MailLogSettingsForm'
+    _title: 'Registro de e-mail'
+  requirements:
+    _permission: 'administer aculta_mailer'

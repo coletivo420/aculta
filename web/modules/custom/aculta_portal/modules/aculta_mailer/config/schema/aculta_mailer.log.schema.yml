@@ -1,0 +1,10 @@
+aculta_mailer.log:
+  type: config_object
+  label: 'Registro de envios do ACULTA Mailer'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Ativar registro'
+    retention_days:
+      type: integer
+      label: 'Período de retenção do registro (dias)'
