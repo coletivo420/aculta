@@ -1,0 +1,19 @@
+aculta_mailer.delivery:
+  type: config_object
+  label: 'Entrega, alertas e resumo do ACULTA Mailer'
+  mapping:
+    bounce_address:
+      type: string
+      label: 'Endereço de retorno (envelope) dos transportes SMTP'
+    alerts_enabled:
+      type: boolean
+      label: 'Alertas de falha ativos'
+    alerts_recipients:
+      type: string
+      label: 'Destinatários dos alertas'
+    summary_enabled:
+      type: boolean
+      label: 'Resumo semanal ativo'
+    summary_recipients:
+      type: string
+      label: 'Destinatários do resumo semanal'

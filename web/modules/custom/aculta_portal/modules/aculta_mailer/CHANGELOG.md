@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.17 — endereço de retorno, alertas de falha e resumo semanal (modelo WP Mail SMTP) — 2026-10-20
+
+- Endereço de retorno (`bounce_address`, página Entrega): vai no envelope (cabeçalho `Sender`) dos transportes SMTP. Transportes por API (Brevo) ficam de fora (`DeliverySettings::API_TRANSPORTS`), porque lá o envelope vira o remetente visível.
+- Alertas de falha de envio e de endereço que devolveu a mensagem (`MailAlerts`): um alerta a cada 5 minutos, o restante contado; enfileirados; não geram alerta sobre alerta.
+- Resumo semanal (`MailSummary`, cron): 7 dias comparados com os 7 anteriores e motivos de falha. Tipos `aculta_admin_alert` e `aculta_weekly_summary`.
+- Página `/painel-administrativo/configuracoes/aculta/envios-de-email/entrega`.
+- Versão do módulo: `0.1.0-dev.17`.
+- Testes unitários: `MailAlertsTest` (janela, destinatários, laço) e demais; módulo com 72 unitários.
+- DEFERRED: cabeçalho `Sender` e envelope não verificados em envio real; alertas e resumo desligados até informar destinatários.
+
 ## 0.1.0-dev.16 — monitoramento por IMAP (bounces e DMARC) com formulário e senha no servidor — 2026-10-20
 
 - Monitor (`Monitor/MailMonitor`): bounces aplicados aos envios pelo `DeliveryEventApplier` (5.x → bounced, 4.x → deferred, só com o correlation ID do envio); relatórios DMARC guardados como resumo, sem IPs de origem.

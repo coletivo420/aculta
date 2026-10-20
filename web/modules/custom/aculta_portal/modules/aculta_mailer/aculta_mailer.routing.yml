@@ -57,3 +57,11 @@ aculta_mailer.imap_settings:
     _title: 'Monitoramento IMAP de envios'
   requirements:
     _permission: 'administer aculta_mailer'
+
+aculta_mailer.delivery_settings:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/entrega'
+  defaults:
+    _form: '\Drupal\aculta_mailer\Form\MailAlertSettingsForm'
+    _title: 'Entrega, alertas e resumo'
+  requirements:
+    _permission: 'administer aculta_mailer'

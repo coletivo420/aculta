@@ -66,7 +66,7 @@ final class MonitorParsersTest extends UnitTestCase {
   /**
    * Mensagem comum (sem DSN) não é tratada como falha.
    */
-  public function testOrdinaryMessageIsNotABounce(): void {
+  public function testOrdinaryMessageIsNotBounce(): void {
     $this->assertNull((new BounceParser())->parse("Subject: oi\r\n\r\ncorpo"));
   }
 

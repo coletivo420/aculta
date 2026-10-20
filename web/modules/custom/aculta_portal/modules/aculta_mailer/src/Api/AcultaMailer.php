@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Api;
 
+use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Delivery\SmtpReplyClassifier;
@@ -15,6 +17,7 @@ use Drupal\aculta_mailer\Delivery\TransportFailover;
 use Drupal\aculta_mailer\Policy\MailPolicyResolver;
 use Drupal\aculta_mailer\Policy\TransportQuota;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Mail\MailManagerInterface;
@@ -44,6 +47,8 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly MailPolicyResolver $policies,
     private readonly TransportQuota $quota,
     private readonly TransportFailover $failover,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly MailAlerts $alerts,
   ) {}
 
   /**
@@ -82,11 +87,13 @@ final class AcultaMailer implements AcultaMailerInterface {
       ]);
       $transport = $fallback;
     }
+    $effective = $transport ?? $this->failover->names()['primary'];
     $result = $this->mailManager->mail(self::MODULE, $message->type, $message->to, $langcode, [
       'context' => $message->context,
       'correlation_id' => $message->correlationId,
       'transport' => $transport,
       'priority' => $policy->priority,
+      'return_path' => $this->returnPath($effective),
     ], $policy->replyTo, TRUE);
 
     $transportUsed = $transport ?? self::DEFAULT_TRANSPORT;
@@ -101,6 +108,7 @@ final class AcultaMailer implements AcultaMailerInterface {
     $error = $this->classifier->classify($code);
     // O texto completo vai só para o registro (relatório do admin); o usuário vê a mensagem genérica.
     $this->log->record($message, MailStatus::Failed, 1, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
+    $this->alerts->failure($message->type, $message->correlationId, $transportUsed, $this->errorCode($code, $error), $failure['message'] ?? NULL);
     // Sem conteúdo do e-mail nem destinatário no log: só tipo, correlação e código.
     $this->logger->error('O sistema de e-mail não aceitou a mensagem @type (correlação @id, código @code).', [
       '@type' => $message->type,
@@ -108,6 +116,17 @@ final class AcultaMailer implements AcultaMailerInterface {
       '@code' => $code ?? 'sem código',
     ]);
     return SendResult::failed($error, $code);
+  }
+
+  /**
+   * Endereço de retorno para o transporte, ou NULL: transportes por API não usam o envelope (ver DeliverySettings).
+   */
+  private function returnPath(string $transport): ?string {
+    if (in_array($transport, DeliverySettings::API_TRANSPORTS, TRUE)) {
+      return NULL;
+    }
+    $address = trim((string) $this->configFactory->get(DeliverySettings::CONFIG)->get('bounce_address'));
+    return $address !== '' ? $address : NULL;
   }
 
   /**

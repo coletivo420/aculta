@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Monitor;
 
+use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Transport\SecretProviderInterface;
 use Drupal\aculta_mailer\Webhook\DeliveryEventApplier;
 use Drupal\aculta_mailer\Webhook\DeliveryEventType;
@@ -67,6 +68,7 @@ final class MailMonitor {
     private readonly BounceParser $bounces,
     private readonly DmarcReportParser $dmarc,
     private readonly ?SecretProviderInterface $secrets,
+    private readonly MailAlerts $alerts,
   ) {}
 
   /**
@@ -176,6 +178,9 @@ final class MailMonitor {
       $event = $this->eventFromBounce($client->fetch($uid));
       if ($event !== NULL && $this->applier->apply($event)) {
         $applied++;
+        if ($event->type === DeliveryEventType::Bounced) {
+          $this->alerts->hardBounce((string) $event->correlationId, (string) $event->code);
+        }
       }
       $this->saveCursor('bounce', $uid);
     }

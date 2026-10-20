@@ -5,7 +5,7 @@ services:
 
   aculta_mailer.mailer:
     class: Drupal\aculta_mailer\Api\AcultaMailer
-    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover']
+    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts']
 
   logger.channel.aculta_mailer:
     parent: logger.channel_base
@@ -88,4 +88,28 @@ services:
 
   Drupal\aculta_mailer\Monitor\MailMonitor:
     class: Drupal\aculta_mailer\Monitor\MailMonitor
-    arguments: ['@config.factory', '@state', '@datetime.time', '@logger.channel.aculta_mailer', '@Drupal\aculta_mailer\Webhook\DeliveryEventApplier', '@Drupal\aculta_mailer\Monitor\BounceParser', '@Drupal\aculta_mailer\Monitor\DmarcReportParser', '@?Drupal\aculta_mailer\Transport\SecretProviderInterface']
+    arguments: ['@config.factory', '@state', '@datetime.time', '@logger.channel.aculta_mailer', '@Drupal\aculta_mailer\Webhook\DeliveryEventApplier', '@Drupal\aculta_mailer\Monitor\BounceParser', '@Drupal\aculta_mailer\Monitor\DmarcReportParser', '@?Drupal\aculta_mailer\Transport\SecretProviderInterface', '@Drupal\aculta_mailer\Alert\MailAlerts']
+
+  Drupal\aculta_mailer\Type\AdminAlertMailType:
+    class: Drupal\aculta_mailer\Type\AdminAlertMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+
+  Drupal\aculta_mailer\Type\WeeklySummaryMailType:
+    class: Drupal\aculta_mailer\Type\WeeklySummaryMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+
+  Drupal\aculta_mailer\Alert\MailAlerts:
+    class: Drupal\aculta_mailer\Alert\MailAlerts
+    arguments: ['@config.factory', '@state', '@datetime.time', '@aculta_mailer.queue', '@uuid']
+
+  Drupal\aculta_mailer\Report\MailSummary:
+    class: Drupal\aculta_mailer\Report\MailSummary
+    arguments: ['@config.factory', '@state', '@datetime.time', '@entity_type.manager', '@aculta_mailer.queue', '@uuid']
+
+  Drupal\aculta_mailer\Hook\MailReportHooks:
+    class: Drupal\aculta_mailer\Hook\MailReportHooks
+    arguments: ['@Drupal\aculta_mailer\Report\MailSummary']

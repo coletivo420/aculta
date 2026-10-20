@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_mailer\Unit;
 
+use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Monitor\BounceParser;
 use Drupal\aculta_mailer\Monitor\DmarcReportParser;
 use Drupal\aculta_mailer\Monitor\ImapClientInterface;
 use Drupal\aculta_mailer\Monitor\MailMonitor;
+use Drupal\aculta_mailer\Queue\MailQueue;
 use Drupal\aculta_mailer\Webhook\DeliveryEventApplier;
 use Drupal\aculta_mailer\Webhook\DeliveryEventType;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\State\StateInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -93,6 +97,13 @@ MAIL;
       new BounceParser(),
       new DmarcReportParser(),
       NULL,
+      new MailAlerts(
+        $configFactory,
+        $state,
+        $time,
+        new MailQueue($this->createMock(QueueFactory::class)),
+        $this->createMock(UuidInterface::class),
+      ),
     );
   }
 

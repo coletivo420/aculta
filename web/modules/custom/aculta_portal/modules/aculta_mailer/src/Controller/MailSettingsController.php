@@ -58,6 +58,11 @@ final class MailSettingsController extends ControllerBase {
         '#rows' => $rows,
       ],
     ];
+    $build['delivery'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Entrega, endereço de retorno, alertas e resumo semanal'),
+      '#url' => Url::fromRoute('aculta_mailer.delivery_settings'),
+    ];
     $build['monitor'] = [
       '#type' => 'link',
       '#title' => $this->t('Monitoramento IMAP (bounces e DMARC)'),
