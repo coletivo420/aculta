@@ -120,6 +120,20 @@ final class MailTemplateRenderer {
   }
 
   /**
+   * URI do arquivo do logo da marca do layout ativo do tipo (ex.: public://...), ou vazio.
+   */
+  public function logoUri(MailTypeInterface $type): string {
+    $template = $this->activeTemplate($type->id());
+    $layout = $template !== NULL ? $this->layoutFor($template) : NULL;
+    $brand = $layout !== NULL ? $this->entityTypeManager->getStorage(MailBrand::ENTITY_TYPE)->load($layout->getBrand()) : NULL;
+    if (!$brand instanceof MailBrand || $brand->getLogoFid() === 0) {
+      return '';
+    }
+    $file = $this->entityTypeManager->getStorage('file')->load($brand->getLogoFid());
+    return $file === NULL ? '' : $file->getFileUri();
+  }
+
+  /**
    * URL absoluta do logo da marca do layout ativo do tipo, ou vazio quando não há logo.
    */
   public function logoUrl(MailTypeInterface $type): string {
