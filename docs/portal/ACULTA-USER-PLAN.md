@@ -32,7 +32,7 @@ Não apagar hooks ou configurações legadas sem a fase de migração descrita e
 | Fórum | `forum` 1.1.3, `flag` 5.1.1, flags `seguir_topico` e `salvar_topico` (`0.2.0-dev.57`) | Adotado. Sem página "Atividade". |
 | Wiki | Nó `wiki_entry`, papéis `wiki_contributor` e `wiki_editor`, workflow `wiki_editorial`, módulo `diff` | Existe. Sem "Minhas contribuições". |
 | Revista | Nós `article` (Notícia), `document`, `activity`, `project`; autor = `node.uid` | Autor vem do Core, sem página de autor. Perfil público em `/u/<apelido>`, exceção registrada em `FRIENDLY-PORTUGUESE-SLUGS.md`; sem rota no código ainda. |
-| Notificações | Symfony Mailer (`symfony_mailer`, Mailer Plus) | Transporte pronto. Sem assinaturas. |
+| Notificações | Symfony Mailer (`symfony_mailer`, camada de envio do Drupal) | Transporte pronto. Sem assinaturas. |
 | Gamificação, seguir pessoas, menções, denúncia | Não existem | `DT-P13`: denúncia de comentários pendente. |
 | Anti-abuso | `flood_control`, Turnstile, `username_enumeration_prevention` | Existe. |
 
@@ -58,7 +58,7 @@ Verificação a fazer no Homelab, antes de qualquer adoção: `composer show -a 
 | Pontos e badges | `gamification` 1.1.0-beta6 | Declara `^9 || ^10`, sem D11. Manutenção mínima. | Não adotar. Ver seção 5.G. |
 | Seguir pessoas | `friendship` | Documenta seguir e seguidores com campos de Views. Versão D11 não confirmada. | Avaliar após verificação no Homelab. Alternativa: Flag sobre entidade `user`. |
 | Seguir pessoas | `follow`, `follow_unfollow` | `follow` é para links de redes sociais; `follow_unfollow` é de era D7. | Não adotar. |
-| Notificações de comentários | `comment_notify`, `scn` | `scn` cita suporte a D11 e manutenção mínima; `comment_notify` sem D11 confirmado. | Não adotar sem verificação. Preferir Mailer Plus + fila do Core. |
+| Notificações de comentários | `comment_notify`, `scn` | `scn` cita suporte a D11 e manutenção mínima; `comment_notify` sem D11 confirmado. | Não adotar sem verificação. Preferir camada de envio do Drupal + fila do Core. |
 | Notificações genéricas | `message`, `message_notify` | Branch de desenvolvimento de 2024, "use por sua conta e risco". | Não adotar. |
 | Avatar externo | `gravatar` | Não portado para D8+. | Não adotar (ver 5.A). |
 | Avatar | `avatar_kit` | Citado como alternativa ao Gravatar. D11 não confirmado. | Não adotar sem verificação; a necessidade é pequena. |
@@ -455,7 +455,7 @@ As regras de moderação descritas nas subseções atuais e em `aculta_forum/doc
 - **Seguir pessoa:** Flag sobre entidade `user`, nome `seguir_pessoa`. A confirmar que Flag 5.1.1 aceita `entity:user` (verificação no Homelab). Se não aceitar, a alternativa é um campo de referência em uma entidade de vínculo, o que cria storage e exige decisão.
 - **Seguidores e seguindo:** contagens e listas por Views (`/seguindo`, `/seguidores`). Lista de seguidores de outras pessoas é privada por padrão.
 - **Feed:** View de atividades (tópicos, respostas, verbetes publicados) das pessoas seguidas. Sem contrib de atividade.
-- **Notificações:** somente opt-in. Envio por Mailer Plus, com fila do Core (`queue`), uma mensagem por evento de lote. Nenhum envio sem consentimento, e nada de PII no corpo além do necessário.
+- **Notificações:** somente opt-in. Envio por camada de envio do Drupal, com fila do Core (`queue`), uma mensagem por evento de lote. Nenhum envio sem consentimento, e nada de PII no corpo além do necessário.
 
 ### G. Gamificação: badges, sem ranking
 

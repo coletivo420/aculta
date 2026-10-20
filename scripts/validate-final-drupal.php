@@ -23,7 +23,7 @@ foreach ($deploy['profiles']['test']['rules'] ?? [] as $rule) {
   if (($rule['file'] ?? '') === 'config/sync/system.site.yml' && preg_match('/^mail: (.+)$/', (string) ($rule['with'] ?? ''), $m)) $test_site_mail = trim($m[1]);
 }
 $assert($test_site_mail !== NULL && \Drupal::config('system.site')->get('mail') === $test_site_mail, 'Institutional site mail matches the test profile of config/deploy.json');
-$assert(($sync->read('system.mail')['interface']['default'] ?? NULL) === 'symfony_mailer', 'Versioned default mailer is Mailer Plus (symfony_mailer).');
+$assert(($sync->read('system.mail')['interface']['default'] ?? NULL) === 'symfony_mailer', 'Versioned default mailer is camada de envio do Drupal (symfony_mailer).');
 $assert(!$sync->exists('smtp.settings'), 'Legacy smtp.settings is not versioned (drupal/smtp removed).');
 $manifest = ['note' => 'Content is NOT included in config export. Preserve IDs/UUIDs during the separately planned secure migration; this is an inventory, not a database dump.', 'entities' => []];
 foreach (['node', 'block_content', 'menu_link_content', 'path_alias', 'redirect', 'media', 'file'] as $type) {

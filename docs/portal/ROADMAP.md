@@ -21,7 +21,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 - Tema: `aculta420` 0.6.0-dev.35 (`aculta420.info.yml`, `CHANGELOG.md` e `docs/roadmap.md` coerentes). Gate Foundation PASS (341 checks) desde 2026-10-15: DT-T19 resolvida em 0.6.0-dev.22.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
-- Migração do envio de e-mail para Mailer Plus (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
+- Migração do envio de e-mail para camada de envio do Drupal (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
 - Verificações desta mudança (2026-10-13): Drupal 11+ PASS (659 checks), domínio do Associado ID PASS (248 checks), Unit do Associado ID PASS (47 testes/107 asserções), Unit do Portal PASS (63 testes/118 asserções) e lint PHP PASS. Evidência anterior de fronteira módulo/tema e endereços permanece registrada na revisão anterior. Foundation PASS em 2026-10-15 (341 checks, via Drush; DT-T19 resolvida).
 - Pendências abertas: ver DEBT-REGISTER (estado vivo; este roadmap não repete a contagem).
 
@@ -75,7 +75,7 @@ Resultados abaixo têm datas próprias no registro de dívidas. Itens resolvidos
 - **DT-P08 (login com CAPTCHA por HTTP): parcial.** O formulário de login em `/entrar` renderiza o widget Turnstile. A resolução do desafio depende de um humano ou de uma exceção de teste aprovada pelo responsável (ver DT-P11). Adiado.
 - **DT-P11 (`validate-final-contact`): adiado com decisão.** O script é local por desenho (recusa qualquer host que não seja localhost) e sai com código 2 (pendente) porque o Turnstile recusa envio por script. Permanece pendente até a decisão de exceção de teste.
 - **DT-P04 (PHP 8.5): adiado por ambiente.** O host tem PHP 8.4 e não tem PHP 8.5. A instalação exige privilégio de root neste host.
-- **DT-O07 (drift de `smtp.settings` e `system.mail`): resolvida na M2.** O módulo SMTP e sua configuração foram removidos; `system.mail` usa Mailer Plus. **DT-P05 (entrega em produção):** decisão do responsável para o fim do projeto; não é bloqueio de fase. O envio no Runtime de teste está validado.
+- **DT-O07 (drift de `smtp.settings` e `system.mail`): resolvida na M2.** O módulo SMTP e sua configuração foram removidos; `system.mail` usa camada de envio do Drupal. **DT-P05 (entrega em produção):** decisão do responsável para o fim do projeto; não é bloqueio de fase. O envio no Runtime de teste está validado.
 - **DT-P07 (Mercado Pago com credencial de sandbox): adiado.** Decisão do responsável, a pedido.
 
 ### S4 — Decisões do responsável (DT-P10; decisões tomadas em DT-P06, DT-P09 e DT-G01)

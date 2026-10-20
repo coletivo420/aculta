@@ -13,7 +13,7 @@ Referências: [EMAIL-TRANSPORT](../../../../../../docs/portal/EMAIL-TRANSPORT.md
 | `drupal/symfony_mailer` | `^2.0`, versão instalada `2.0.2` | `composer.json`; `web/modules/contrib/symfony_mailer/symfony_mailer.info.yml` |
 | Submódulos do pacote | `mailer_policy`, `mailer_transport`, `mailer_override` em `web/modules/contrib/symfony_mailer/modules/` | diretório instalado |
 | `drupal/smtp` | Ausente de `composer.json` e de `core.extension` (removido na M2) | `docs/portal/EMAIL-TRANSPORT.md` §5 |
-| `symfony_mailer_log` (Mailer Plus Log) | **Não instalado** (sem diretório em `web/modules/contrib/symfony_mailer/modules/`) | diretório instalado |
+| `symfony_mailer_log` (camada de envio do Drupal Log) | **Não instalado** (sem diretório em `web/modules/contrib/symfony_mailer/modules/`) | diretório instalado |
 | Easy Email | **Não instalado** | `composer.json` |
 | Core: `SymfonyMailer` | Plugin `symfony_mailer` existe em `web/core/lib/Drupal/Core/Mail/Plugin/Mail/SymfonyMailer.php` | código do Core 11.4 |
 | `email_confirmer` / `email_confirmer_user` | Ativos em `core.extension.yml` | `config/sync/core.extension.yml` |
@@ -57,7 +57,7 @@ complementar, com `drush php:eval` no Runtime de teste, antes de migrar qualquer
   referenciam e-mail; revisar antes de migrar.
 - `scripts/institution/phase6-account-email-test.php`: teste de conta por e-mail.
 - `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php`: checagem de requisitos.
-- `web/modules/custom/aculta_portal/translations/symfony_mailer.pt-br.po`: traduções customizadas do Mailer Plus.
+- `web/modules/custom/aculta_portal/translations/symfony_mailer.pt-br.po`: traduções customizadas da camada de envio do Drupal.
 
 ## 5. Configuração exportada
 

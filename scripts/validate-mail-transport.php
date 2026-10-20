@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /**
- * Gate do transporte de e-mail (M1 da migração para Mailer Plus, docs/portal/EMAIL-TRANSPORT.md).
+ * Gate do transporte de e-mail (M1 da migração para camada de envio do Drupal, docs/portal/EMAIL-TRANSPORT.md).
  *
- * Confere: dependência Mailer Plus declarada; prontidão de e-mail sem o legado smtp.settings;
+ * Confere: dependência camada de envio do Drupal declarada; prontidão de e-mail sem o legado smtp.settings;
  * senha e usuário do transporte fora da configuração exportada.
  */
 
@@ -59,7 +59,7 @@ catch (\Symfony\Component\Mailer\Exception\UnsupportedSchemeException) {
 $check($fallback_scheme === 'aculta-disabled' && $fallback_fails_closed, 'O backend Symfony Mailer do Core deve falhar fechado, sem fallback sendmail.');
 
 $transports = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/mailer_transport.settings.yml') ?: [];
-$check(($transports['default_transport'] ?? NULL) === 'smtp', 'Mailer Plus deve usar a Hostinger (transporte smtp) como padrão; SMTP2GO fica disponível para troca.');
+$check(($transports['default_transport'] ?? NULL) === 'smtp', 'camada de envio do Drupal deve usar a Hostinger (transporte smtp) como padrão; SMTP2GO fica disponível para troca.');
 $hostinger = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/mailer_transport.mailer_transport.smtp.yml') ?: [];
 $check(($hostinger['plugin'] ?? NULL) === 'smtp' && ($hostinger['configuration']['host'] ?? NULL) === 'smtp.hostinger.com' && ($hostinger['configuration']['port'] ?? NULL) === 465, 'Transporte Hostinger: plugin smtp, smtp.hostinger.com, porta 465.');
 $check(($hostinger['configuration']['user'] ?? '') === '' && ($hostinger['configuration']['pass'] ?? '') === '', 'Transporte Hostinger não pode versionar credenciais.');
@@ -80,11 +80,11 @@ $check(($tls_options['ssl']['verify_peer_name'] ?? TRUE) !== FALSE, 'Symfony SMT
 
 $override_settings = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/mailer_override.settings.yml') ?: [];
 $extensions = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/core.extension.yml') ?: [];
-$check(isset($extensions['module']['symfony_mailer']) && isset($extensions['module']['mailer_transport']), 'Mailer Plus e mailer_transport devem estar habilitados.');
+$check(isset($extensions['module']['symfony_mailer']) && isset($extensions['module']['mailer_transport']), 'camada de envio do Drupal e mailer_transport devem estar habilitados.');
 $check(isset($extensions['module']['mailer_override']), 'mailer_override deve estar habilitado para substituir o MailManager do Core.');
 $check(is_array($override_settings['override'] ?? NULL), 'A lista de overrides deve estar declarada.');
 
-// Sem Keys: o Mailer Plus é o único controlador de envio. Nenhum override de Key nem Key de SMTP2GO pode existir.
+// Sem Keys: a camada de envio do Drupal é o único controlador de envio. Nenhum override de Key nem Key de SMTP2GO pode existir.
 foreach (['key.config_override.mailer_smtp2go_username', 'key.config_override.mailer_smtp2go_password', 'key.key.smtp2go_username', 'key.key.smtp2go_password'] as $removed) {
   $check(!is_file($root . '/config/sync/' . $removed . '.yml'), "$removed não pode existir: o envio não usa Keys.");
 }
@@ -94,8 +94,8 @@ preg_match('/private function transactionalMailReady\(\): bool \{(.*?)\n  \}/s',
 $body = $match[1] ?? '';
 $check($body !== '', 'PortalController::transactionalMailReady() não encontrado.');
 $check(str_contains($body, 'mailer_override'), 'transactionalMailReady() deve checar mailer_override.');
-$check(str_contains($body, "'user'") && str_contains($body, "'pass'"), 'transactionalMailReady() deve checar usuário e senha do transporte do Mailer Plus.');
-$check(str_contains($controller, "default_transport") && !str_contains($controller, 'keyHasValue'), 'PortalController deve checar o transporte padrão do Mailer Plus, sem Keys.');
+$check(str_contains($body, "'user'") && str_contains($body, "'pass'"), 'transactionalMailReady() deve checar usuário e senha do transporte da camada de envio do Drupal.');
+$check(str_contains($controller, "default_transport") && !str_contains($controller, 'keyHasValue'), 'PortalController deve checar o transporte padrão da camada de envio do Drupal, sem Keys.');
 $check(!str_contains($body, 'smtp.settings') && !str_contains($body, 'SMTPMailSystem'), 'transactionalMailReady() não pode depender do legado smtp.settings/SMTPMailSystem.');
 
 foreach (glob($root . '/config/sync/mailer_transport.mailer_transport.*.yml') ?: [] as $file) {

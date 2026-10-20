@@ -64,7 +64,7 @@ final class MailDiagnostics {
   }
 
   /**
-   * Transportes do Mailer Plus, sem credenciais. Vazio quando o módulo não está disponível.
+   * Transportes da camada de envio do Drupal, sem credenciais. Vazio quando o módulo não está disponível.
    *
    * @return array
    *   Linhas por ID do transporte.

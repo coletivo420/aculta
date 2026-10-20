@@ -18,7 +18,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 final class MailDiagnosticsKernelTest extends KernelTestBase {
 
   /**
-   * Módulos do teste (o módulo de transporte do Mailer Plus não é habilitado aqui).
+   * Módulos do teste (o módulo de transporte da camada de envio do Drupal não é habilitado aqui).
    *
    * @var string[]
    */
