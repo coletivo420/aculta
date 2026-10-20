@@ -518,6 +518,35 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   }
 
   /**
+   * Denied moves require permission and leave the host intact.
+   */
+  public function testMoveRequiresDedicatedPermission(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $unauthorized = $this->createMock(AccountInterface::class);
+    $unauthorized->method('hasPermission')->willReturnCallback(
+      static fn (string $permission): bool => in_array($permission, [
+        'access content',
+        'access comments',
+      ], TRUE),
+    );
+    $unauthorized->method('id')->willReturn(43);
+    $unauthorized->method('isAnonymous')->willReturn(FALSE);
+    $unauthorized->method('isAuthenticated')->willReturn(TRUE);
+
+    self::assertTrue($this->mover->access($comment, $unauthorized)->isForbidden());
+    self::assertSame([], $this->mover->destinations($comment, $unauthorized));
+    try {
+      $this->mover->move((int) $comment->id(), (int) $destination->id(), $unauthorized);
+      self::fail('A user without the move permission must be denied.');
+    }
+    catch (\InvalidArgumentException) {
+      self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+    }
+  }
+
+  /**
    * Form API submission moves only after the explicit confirmation.
    */
   public function testConfirmedFormApiSubmissionMovesTheComment(): void {

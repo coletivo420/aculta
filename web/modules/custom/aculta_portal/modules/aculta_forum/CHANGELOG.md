@@ -1,3 +1,14 @@
+## `0.1.0-dev.82` — exigir permissão dedicada para mover comentários — 2026-10-20
+
+- Kernel MariaDB cobre a negação quando a conta pode ler conteúdo/comentários,
+  mas não tem `move aculta forum comments`: a operação e a lista de destinos
+  ficam indisponíveis e o host do comentário permanece inalterado.
+- `ForumCommentMoverKernelTest`: 17 testes / 348 assertions PASS no MariaDB
+  dedicado; 19 depreciações preexistentes de Core/contrib. PHP CLI 8.4.26
+  abaixo da baseline 8.5; lint, PHPCS, Drupal 11+ (975), fronteira (1450),
+  mapa (152) e `git diff --check` PASS. Runtime não alterado;
+  RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.81` — negar destino fechado ou de outro purpose — 2026-10-20
 
 - O Kernel comprova que a tentativa de mover Comment publicado para tópico

@@ -1,5 +1,17 @@
 # Matriz de testes por fase
 
+## dev.82 — negar movimentação sem permissão dedicada
+
+- Kernel cria comentário publicado e destino público elegível. A conta de
+  fixture recebe acesso de leitura, mas não `move aculta forum comments`.
+  Confirma access negado, nenhuma opção de destino e negação da chamada direta,
+  mantendo o comentário no Node de origem.
+- Classe completa `ForumCommentMoverKernelTest`: 17 testes / 348 assertions
+  PASS no MariaDB dedicado; 19 depreciações de Core/contrib. PHP CLI 8.4.26,
+  abaixo da baseline 8.5. Runtime não alterado; RUNTIME STATUS: DEFERRED.
+- Lint, PHPCS, Drupal 11+ (975 checks), fronteira módulo/tema (1450 checks),
+  mapa (152 checks) e `git diff --check`: PASS.
+
 ## dev.81 — rejeitar destino fechado ou de outro purpose
 
 - Kernel cria tópico destino fechado e tópico Node associado ao Domain `main`;
