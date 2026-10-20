@@ -298,7 +298,7 @@ Classes (documentadas aqui porque são de apresentação, não do módulo):
 | `aculta-revista-publication__body` | corpo | Texto da publicação. Intertítulos alinhados à esquerda; imagens do corpo centralizadas (`media--type-image`). |
 | `aculta-revista-publication__footer` | rodapé | Sessão, tags, referências e créditos. |
 | `aculta-revista-publication__authors` | caixa de autoria | Recebe `data-portal-ui="article-authors"` do módulo. |
-| `aculta-revista-publication__discussion` | discussão | Recebe `data-portal-ui="discussion"` do módulo. |
+| `aculta-revista-publication__discussion` | discussão | Recebe o render array Core de `field_aculta_discussion` no slot `discussion`; access e estado são preparados pelo Drupal/Portal. |
 
 Regras de apresentação que valem para todas as publicações (`css/components/revista-post.css`): não há ajuste por
 publicação; capa, resumo e corpo ficam na mesma coluna de leitura.

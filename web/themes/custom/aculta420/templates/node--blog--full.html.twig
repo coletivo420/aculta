@@ -8,7 +8,7 @@
     {{ content.field_tags }}
     {{ content.field_references }}
     {{ content.field_credits }}
-    {{ content|without('post_meta', 'field_media_image', 'field_subtitle', 'field_summary', 'body', 'field_editorial_category', 'field_tags', 'field_references', 'field_credits', 'article_authors', 'discussao', 'field_discussao', 'field_published_at') }}
+    {{ content|without('post_meta', 'field_media_image', 'field_subtitle', 'field_summary', 'body', 'field_editorial_category', 'field_tags', 'field_references', 'field_credits', 'article_authors', 'field_aculta_discussion', 'discussao', 'field_discussao', 'field_published_at') }}
   {% endset %}
   {{ include('aculta420:revista-publication', {
     has_subtitle: not node.field_subtitle.isEmpty,
@@ -22,6 +22,6 @@
     body: content.body,
     footer: footer,
     authors: content.article_authors,
-    discussion: content.discussao
+    discussion: content.field_aculta_discussion
   }, with_context = false) }}
 </article>

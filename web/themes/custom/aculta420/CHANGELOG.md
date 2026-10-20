@@ -1,3 +1,29 @@
+## 0.6.0-dev.102 — renderizar comentários diretos da Revista — 2026-10-19
+
+- Os templates `article` e `blog` passam `content.field_aculta_discussion` ao
+  slot `discussion` do SDC da publicação e excluem esse render array do rodapé
+  genérico. O formatter Core ativa o formulário e a lista Comment compartilhada;
+  o tema aplica sua superfície à discussão e preserva o cartão `author_comment`
+  preparado por `aculta_user`.
+- Removidos do tema os tokens/camadas `portal-discussion*` sem produtor após a
+  remoção de `DiscussionHooks`; o SDC usa sua própria classe semântica.
+- O gate Foundation aceita placements administrativos limitados a rotas de
+  administração no tema admin ativo e verifica as regiões desse tema; placements
+  públicos continuam exigindo ACULTA420.
+- Runtime de teste `toca`: Firefox confirmou o formulário Core dentro do slot da
+  Revista. A submissão foi bloqueada pela política correta: os usuários de QA
+  têm papel histórico `email_confirmed`, mas não a marca canônica de confirmação;
+  nenhuma conta ou permissão foi alterada. Com Comments temporários pendentes,
+  as Views administrativas mostraram o CID do Fórum somente na fila do Fórum e
+  o CID da Revista somente no bloco da Revista. Ambos ficaram invisíveis para
+  visitantes anônimos. Os Comments e o tópico de teste foram removidos pela
+  Entity API; conferência final: 0 tópicos novos, 0 Comments novos, 0 Comments
+  na publicação e filas Messenger vazias.
+- Foundation (360), SDC (516), design foundations (2089), fixtures (157),
+  fronteira (1382), mapa (154) e Drupal 11+ (970) — PASS. RUNTIME STATUS:
+  PARTIAL: renderização e separação de moderação passaram; envio pelo formulário
+  autenticado continua pendente por falta de uma conta de QA já confirmada.
+
 ## Alteração não marcada — autoria da última atividade do Fórum — 2026-10-19
 
 - As linhas de tópicos públicos apresentam o cartão contextual `author_forum`

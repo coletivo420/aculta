@@ -215,11 +215,6 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `article-author-initial` | `portal-article-author__initial` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
 | `article-author-text` | `portal-article-author__text` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
 | `article-author-name` | `portal-article-author__name` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/ArticleAuthorsHooks.php` |
-| `discussion` | `portal-discussion` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
-| `discussion-title` | `portal-discussion__title` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
-| `discussion-list` | `portal-discussion__list` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
-| `discussion-item` | `portal-discussion__item` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
-| `discussion-link` | `portal-discussion__link` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionHooks.php` |
 | `forum-opening-post` | `portal-forum-opening` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-title` | `portal-forum-opening__title` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |
 | `forum-opening-post-image` | `portal-forum-opening__image` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/ForumOpeningPost.php` |

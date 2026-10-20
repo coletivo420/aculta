@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.101', 'Theme metadata marks the current version 0.6.0-dev.101.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.102', 'Theme metadata marks the current version 0.6.0-dev.102.');
 $forumTopicPresenter = file_get_contents($themeRoot . '/templates/node--aculta-forum-topic.html.twig');
 $forumTopicStyles = file_get_contents($themeRoot . '/css/components/forum-index.css');
 $assert(
@@ -190,23 +190,41 @@ $assert($emptyUuidGuard !== FALSE && $uuidLookup !== FALSE && $emptyUuidGuard < 
 
 $syncCoreExtension = Yaml::parseFile($root . '/config/sync/core.extension.yml');
 $syncSystemTheme = Yaml::parseFile($root . '/config/sync/system.theme.yml');
+$adminTheme = (string) \Drupal::config('system.theme')->get('admin');
 $assert(isset($syncCoreExtension['theme']['aculta420']), 'Config sync enables ACULTA420.');
 $assert(!isset($syncCoreExtension['theme']['aculta']), 'Config sync contains no legacy theme provider.');
 $assert(($syncSystemTheme['default'] ?? NULL) === 'aculta420', 'Config sync selects ACULTA420 as default.');
+$assert(($syncSystemTheme['admin'] ?? NULL) === $adminTheme, 'Config sync and Runtime agree on the administrative theme.');
 
 $configStorage = \Drupal::service('config.storage');
 $blockContentStorage = \Drupal::entityTypeManager()->getStorage('block_content');
 $validateBlockPlacement = static function (array $data, string $configName) use (
   $assert,
-  $info,
+  $themeHandler,
+  $adminTheme,
   $blockContentStorage,
 ): void {
+  $paths = preg_split('/\R/', trim((string) ($data['visibility']['request_path']['pages'] ?? ''))) ?: [];
+  $paths = array_values(array_filter(array_map('trim', $paths), static fn (string $path): bool => $path !== ''));
+  $adminOnly = $paths !== [];
+  foreach ($paths as $path) {
+    if (str_starts_with($path, '!')
+      || (!str_starts_with($path, '/admin/') && !str_starts_with($path, '/painel-administrativo/'))) {
+      $adminOnly = FALSE;
+      break;
+    }
+  }
+  $expectedTheme = $adminOnly ? $adminTheme : 'aculta420';
+  $placementTheme = (string) ($data['theme'] ?? '');
   $assert(
-    ($data['theme'] ?? NULL) === 'aculta420',
-    'ACULTA block placement uses the current provider: ' . $configName,
+    $placementTheme === $expectedTheme,
+    'ACULTA block placement uses its public or admin theme according to path visibility: ' . $configName,
   );
 
-  $regions = $info['regions'] ?? [];
+  $placementInfo = $themeHandler->themeExists($placementTheme)
+    ? $themeHandler->getTheme($placementTheme)->info
+    : [];
+  $regions = $placementInfo['regions'] ?? [];
   $assert(
     isset($regions[$data['region'] ?? '']),
     'ACULTA block placement uses a declared theme region: ' . $configName,
@@ -294,6 +312,8 @@ $expectedTemplates = [
   'forum-list.html.twig',
   'comment--comment-forum.html.twig',
   'node--forum--full.html.twig',
+  // A View Growroom fornece os campos renderizados ao tema.
+  'views-view-fields--aculta-forum-public-topics.html.twig',
   'page.html.twig',
   'portal-cart-status.html.twig',
   'portal-cart-panel.html.twig',

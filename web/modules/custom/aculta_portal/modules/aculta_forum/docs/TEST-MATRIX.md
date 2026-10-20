@@ -1,5 +1,30 @@
 # Matriz de testes por fase
 
+## Integração de comentários Revista/Fórum — Runtime de teste, 2026-10-19
+
+- Firefox autenticado confirmou o formatter Core de `field_aculta_discussion`
+  dentro do slot de discussão do SDC `revista-publication`. O formulário foi
+  renderizado, mas a conta QA recebeu o bloqueio esperado porque o marcador
+  canônico de confirmação de e-mail está ausente. Não alteramos usuário,
+  confirmação, permissões nem configuração para contornar a política.
+- Criados via Entity API, apenas para leitura das Views, um tópico temporário e
+  dois Comments pendentes: um em `aculta_forum_topic`, outro em artigo. Como
+  resultado, `aculta_forum_admin_comments.page_pending` retornou somente o CID
+  do Fórum; `page_published` e `page_rejected` não retornaram esse CID; o bloco
+  `aculta_magazine_admin_comments.block_comments` retornou somente o CID da
+  Revista. Firefox autenticado confirmou os itens em suas respectivas áreas
+  administrativas e não na outra. Requests anônimos às duas páginas públicas
+  não mostraram nenhum dos textos pendentes.
+- Removidos os dois Comments e o tópico de teste via Entity API. Conferência
+  final no Runtime: 0 Nodes `aculta_forum_topic`, 0 Comments
+  `aculta_discussion_post`, 0 Comments na publicação testada e filas Messenger
+  sem itens. Nenhum conteúdo legado, publicação, usuário ou curso foi alterado.
+- Resultado: separação de Views e exibição anônima **PASS**; montagem visual do
+  campo **PASS**; envio autenticado pelo formulário **DEFERRED** pela política
+  de confirmação e ausência de uma conta QA confirmada. RUNTIME STATUS: PARTIAL.
+- A correção de slot e as evidências dos gates estão em
+  `web/themes/custom/aculta420/CHANGELOG.md` (`0.6.0-dev.102`).
+
 ## Evidência dev.30 — primeira resposta não lida
 
 - `ForumTopicDisplayConfigTest` verifica que somente a View

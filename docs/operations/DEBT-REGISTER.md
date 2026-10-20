@@ -1,6 +1,6 @@
 # Registro de dívidas e pendências
 
-Atualizado em 2026-10-18: reconciliação parcial dirigida de 29 objetos F7 no Runtime; drift global restante 284. Anterior: 2026-10-15 (revisão documental, PR #281): gates reexecutados e estados de DT-T19, DT-P20 e DT-O12 corrigidos. Merges #238 e #239 (2026-10-13 UTC). Revisão anterior: 2026-10-12; os resultados detalhados daquela data estão no snapshot
+Atualizado em 2026-10-19: correção de gate Foundation para placements administrativos do tema Claro. Reconciliação parcial dirigida de 29 objetos F7 no Runtime; drift global restante 284. Anterior: 2026-10-15 (revisão documental, PR #281): gates reexecutados e estados de DT-T19, DT-P20 e DT-O12 corrigidos. Merges #238 e #239 (2026-10-13 UTC). Revisão anterior: 2026-10-12; os resultados detalhados daquela data estão no snapshot
 [`docs/portal/historico/RELATORIO-ESTADO-2026-10-12.md`](../portal/historico/RELATORIO-ESTADO-2026-10-12.md). Estado corrente de código e gates: [RELATORIO-ESTADO-APOS-PR-238-239.md](../portal/RELATORIO-ESTADO-APOS-PR-238-239.md).
 
 Este é o registro único de dívidas históricas e pendências de desenvolvimento. Os roadmaps
@@ -87,6 +87,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-T14 | Foundation de 0.1.0 descrita como "preserva o shell existente" em documentos atuais | `architecture.md` e `development.md` reescritos (0.4.0-dev.2) | Baixa | Não | T0 | Resolvida |
 | DT-T20 | Página pública `links` responde 404 na raiz do host de teste `links.aculta.toca.net.br`; o shell de LINKS (`layout.links_page`) não foi verificado visualmente | Verificação visual de 2026-10-16 (`web/themes/custom/aculta420/CHANGELOG.md`, 0.6.0-dev.66) | Média | Não decidido | S2 | Aberta: causa não investigada (provisionamento do host ou rota) |
 | DT-T21 | Gate Foundation do ACULTA420 tinha expectativas obsoletas para o provider `bootstrap5`, o pacote 4.0.8, a versão do tema e a allowlist Twig | `scripts/validate-aculta420-foundation.php`; verificações reconciliadas com `aculta420.info.yml`, `web/themes/contrib/bootstrap/bootstrap.info.yml`, `composer.lock` e os templates atuais. Gate somente leitura PASS via Drush em 2026-10-18 | Média | Não | S2 | Resolvida em 0.6.0-dev.75 |
+| DT-T22 | Gate Foundation exigia tema público ACULTA420 em placements administrativos limitados por rota e corretamente atribuídos ao tema admin Claro | `block.block.aculta_magazine_admin_comments` usa só `/painel-administrativo/conteudo/revista` e `/admin/content/revista`; o gate agora distingue paths exclusivamente administrativos e valida tema/região pela informação do tema ativo | Média | Não | Fórum/Revista | Resolvida em 0.6.0-dev.102 após gate Runtime PASS |
 
 ## Operação e Runtime
 

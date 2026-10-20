@@ -148,13 +148,6 @@ final class PortalUiHooks {
     'article-author-initial' => ['portal-article-author__initial'],
     'article-author-text' => ['portal-article-author__text'],
     'article-author-name' => ['portal-article-author__name'],
-    // Bloco de discussão (comentários do Fórum), em caixa própria abaixo da autoria.
-    'discussion' => ['portal-discussion'],
-    'discussion-title' => ['portal-discussion__title'],
-    'discussion-list' => ['portal-discussion__list'],
-    'discussion-item' => ['portal-discussion__item'],
-    'discussion-link' => ['portal-discussion__link'],
-
     // Abertura do tópico do Fórum (resumo, imagem e link para a publicação da Revista).
     'forum-opening-post' => ['portal-forum-opening'],
     'forum-opening-post-title' => ['portal-forum-opening__title'],
