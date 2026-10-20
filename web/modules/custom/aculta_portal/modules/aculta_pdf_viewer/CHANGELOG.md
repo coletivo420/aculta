@@ -1,5 +1,12 @@
 # Changelog — aculta_pdf_viewer
 
+## Documentação PV7 — validar traduções locais, text layer e decisão CSP — 2026-10-20
+
+- Arquivos gettext pt-BR disponíveis foram conferidos pelo parser do Drupal Core: Core e 12 PO contrib não têm entradas traduzíveis com `msgstr` vazio; o pacote PDF.js também contém `web/locale/pt-BR/viewer.ftl`. A contagem não representa cobertura integral dos módulos instalados.
+- A investigação do PDF.js 6.4.299 recomenda prototipar o viewer completo oficial antes de criar uma camada custom: o `TextLayer` isolado não contém toda a integração de foco/acessibilidade/estrutura do viewer. Nenhuma camada foi implementada nem considerada prova de conformidade WCAG.
+- Decisão do responsável: manter CSP em Report-Only, enforcement desligado, e `dblog.settings:row_limit` atual de 1000 registros. DBLog usa limite por quantidade, não retenção por prazo, e armazena URL/User-Agent; rever acesso e retenção antes da produção.
+- Acessibilidade ampliada, testes do protótipo com PDFs marcados/não marcados e leitores de tela, e demais gates PV7 continuam pendentes; o módulo permanece Dev.
+
 ## 0.1.0-dev.27 — confirmar tamanho real antes de gerar miniatura — 2026-10-20
 
 - O limite de 20 MiB da miniatura agora confere o tamanho do arquivo resolvido no disco, além do metadado da entidade File; arquivos maiores ou inacessíveis não chegam ao PDFPreview/ImageMagick.

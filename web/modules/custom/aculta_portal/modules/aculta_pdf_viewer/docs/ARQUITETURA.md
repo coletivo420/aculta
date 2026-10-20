@@ -146,6 +146,40 @@ JavaScript behavior do Drupal, não um hook PHP. Não há `hook_*`, subscriber,
 controller nem classe de formulário neste módulo; não existe arquivo
 `aculta_pdf_viewer.module`.
 
+### Investigação de text layer acessível
+
+O PDF.js instalado é 6.4.299. Seu `TextLayer` público cria spans posicionados
+para seleção e busca, mas a integração do viewer oficial também usa
+`TextLayerBuilder`, `TextAccessibilityManager` e `StructTreeLayerBuilder` para
+gerenciar foco, mapeamento de seleção e estrutura marcada. Esses builders fazem
+parte da implementação interna do viewer, não de um contrato público isolado
+do pacote `pdf.mjs`; adicionar apenas spans sobre o canvas não reproduziria o
+contrato completo. O viewer distribuído já inclui esses componentes, folha de
+estilo própria e locale pt-BR.
+
+Recomendação de implementação: antes de criar uma camada própria, fazer um
+protótipo do viewer oficial completo como alternativa de leitura integrada ou
+linkada. Isso reduz código customizado e acompanha a implementação upstream,
+mas não certifica WCAG nem torna acessível um PDF sem marcação estrutural. O
+protótipo ainda precisa ser exercitado com PDFs marcados e não marcados, teclado,
+leitores de tela e CSP Report-Only. Nenhuma camada de texto/estrutura foi
+implementada nesta fase.
+
+### Traduções pt-BR disponíveis
+
+Os arquivos `.po` locais presentes em
+`web/sites/default/files/translations/` foram lidos pelo parser gettext do
+Drupal Core: Core 11.4.10 e os 12 arquivos contrib disponíveis têm pelo menos
+uma tradução e todas as entradas `msgid` não vazias têm `msgstr` não vazio. O
+locale inclui `pt_BR` e regras plurais. Isso verifica apenas os arquivos locais
+encontrados; não prova cobertura de todas as strings dos módulos instalados,
+nem substitui atualização/verificação pelo serviço de traduções.
+
+O pacote PDF.js inclui `web/libraries/pdf.js/web/locale/pt-BR/viewer.ftl`.
+Como o viewer custom atual não carrega a interface do viewer oficial, esse locale
+não é aplicado automaticamente aos controles do ACULTA, que permanecem com
+strings próprias em português.
+
 ## Configuração e dependências
 
 - `.info.yml` declara Core 11.3+, File e Media. Não depende do módulo geral
