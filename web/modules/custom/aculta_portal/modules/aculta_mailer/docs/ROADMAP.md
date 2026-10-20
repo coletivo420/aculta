@@ -17,14 +17,14 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F9 | Usuário: criação, confirmação, troca de e-mail, reset, integração com `aculta_user` | Pendente |
 | F10 | Eventos de entrega: webhooks de provedor, bounce, complaint, supressão | Pendente |
 | F11 | Tracking opcional (abertura e clique), desligado por padrão | Pendente |
-| F12 | Integrações ACULTA: cadastro com e-mail já usado migrado (DT-P06); Game (conquista), Messenger (resumo), Forum, LMS, Magazine e Commerce pendentes | Parcial |
+| F12 | Integrações ACULTA: cadastro com e-mail já usado (DT-P06), conquista (`aculta_game`) e resumo de avisos (`aculta_messenger`) migrados; Forum, LMS, Magazine e Commerce pendentes | Parcial |
 | F13 | Compatibilidade: interceptar e-mails remanescentes do Core | Pendente |
 | F14 | Migração de configuração de Mailer Plus/Policy | Pendente |
 | F15 | Retirada do contrib, somente com equivalência comprovada | Pendente |
 
 ## Runtime
 
-- Runtime de teste (`aculta_runtime`): `aculta_mailer` habilitado (2026-10-20, sem updb). O cadastro com e-mail já usado envia pela API; demais consumidores ainda usam o Core direto.
+- Runtime de teste (`aculta_runtime`): `aculta_mailer` habilitado (2026-10-20, sem updb). Consumidores migrados: cadastro com e-mail já usado, conquista e resumo de avisos. Confirmação de e-mail continua no `email_confirmer` (F9).
 - Envio real pelo transporte não foi executado: os testes usam o coletor de e-mail do Core, sem SMTP.
 - Validação de envio real (F2 em diante): **DEFERRED** até autorização explícita de ambiente de teste.
 
