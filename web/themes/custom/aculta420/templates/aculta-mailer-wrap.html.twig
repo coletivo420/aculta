@@ -1,21 +1,20 @@
 {#
 /**
  * @file
- * Envelope HTML dos e-mails do ACULTA (hook aculta_mailer_wrap).
+ * Envelope HTML dos e-mails do ACULTA (hook aculta_mailer_wrap), montado pelo tema.
  *
- * O texto de cabeçalho e rodapé vem do layout do aculta_mailer, como conteúdo do corpo. Aqui fica só a apresentação:
- * tabela para compatibilidade com clientes de e-mail e estilos em linha (o e-mail não carrega o CSS do site).
+ * Cores dos tokens do ACULTA420 (tokens.css), em claro e em escuro automático (prefers-color-scheme). Cada cor vem
+ * inline no modo claro (clientes sem CSS) e em classe, com override escuro com !important (clientes que leem o <style>).
  *
  * Variables:
- * - body: Email body content (HTML, quando is_html).
+ * - body: corpo já escapado (HTML), quando is_html.
  * - logo_url: URL absoluta do logo da marca; vazio usa o logo do tema.
- * - public_base: URL absoluta do site público (termina em /), base do logo do tema.
  * - theme_logo: logo do tema, da configuração do tema (preprocess em src/Hook/MailEnvelopeHooks.php).
+ * - mail_colors: cores claras e escuras lidas dos tokens do tema (css/tokens.css) pelo mesmo preprocess.
  * - is_html: True if generating HTML output, false for plain text.
  * - subject: Email subject.
- * - type: Email type.
- * - sub_type: Email sub-type.
- * - attributes: HTML attributes for the top-level email element.
+ * - type, sub_type: tipo e subtipo do e-mail.
+ * - attributes: atributos do elemento raiz.
  */
 #}
 {%
@@ -26,31 +25,49 @@
 %}
 
 {% if is_html %}
+{% set c = mail_colors.light %}
+{% set d = mail_colors.dark %}
 <!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
   <title>{{ subject }}</title>
+  <style>
+    .aculta-mail-page { background: {{ c.page }}; }
+    .aculta-mail-card { background: {{ c.card }}; }
+    .aculta-mail-text { color: {{ c.text }}; }
+    .aculta-mail-footer { background: {{ c.footer }}; color: {{ c.footer_text }}; }
+    .aculta-mail-header { background: {{ c.header }}; }
+    @media (prefers-color-scheme: dark) {
+      .aculta-mail-page { background: {{ d.page }} !important; }
+      .aculta-mail-card { background: {{ d.card }} !important; }
+      .aculta-mail-text { color: {{ d.text }} !important; }
+      .aculta-mail-footer { background: {{ d.footer }} !important; color: {{ d.footer_text }} !important; }
+      .aculta-mail-header { background: {{ d.header }} !important; }
+    }
+  </style>
 </head>
-<body style="margin:0;padding:0;background:#fbf4e8;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
+<body class="aculta-mail-page" style="margin:0;padding:0;background:{{ c.page }};font-family:Arial,Helvetica,sans-serif;">
 <div{{ attributes.addClass(classes) }}>
-  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#fbf4e8;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" class="aculta-mail-page" style="background:{{ c.page }};">
     <tr>
       <td align="center" style="padding:24px 16px;">
-        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;background:#ffffff;border-radius:8px;">
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" class="aculta-mail-card" style="max-width:600px;background:{{ c.card }};border-radius:8px;">
           <tr>
-            <td style="background:#3d5c17;padding:16px 24px;border-radius:8px 8px 0 0;">
+            <td class="aculta-mail-header" style="background:{{ c.header }};padding:16px 24px;border-radius:8px 8px 0 0;">
               <img src="{{ logo_url ?: theme_logo }}" width="180" alt="ACULTA" style="display:block;border:0;width:180px;height:auto;">
             </td>
           </tr>
           <tr>
-            <td style="padding:24px;font-size:16px;line-height:1.5;color:#1a1a1a;">
+            <td class="aculta-mail-text" style="padding:24px;font-size:16px;line-height:1.5;color:{{ c.text }};">
               {{ body }}
             </td>
           </tr>
           <tr>
-            <td style="padding:16px 24px;background:#fdf8ea;color:#163d2a;font-size:13px;line-height:1.4;border-radius:0 0 8px 8px;">
+            <td class="aculta-mail-footer" style="padding:16px 24px;background:{{ c.footer }};color:{{ c.footer_text }};font-size:13px;line-height:1.4;border-radius:0 0 8px 8px;">
               Associação Cultural Antiproibicionista
             </td>
           </tr>

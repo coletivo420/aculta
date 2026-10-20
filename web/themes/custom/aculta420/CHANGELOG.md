@@ -1,3 +1,9 @@
+## 0.6.0-dev.120 — envelope de e-mail montado pelo tema, com cores dos tokens e modo escuro automático — 2026-10-20
+
+- `templates/aculta-mailer-wrap.html.twig`: envelope HTML do hook `aculta_mailer_wrap`, com cores lidas dos tokens do tema em claro e escuro (`prefers-color-scheme`).
+- `src/Hook/MailEnvelopeHooks.php`: lê `css/tokens.css` a cada montagem (bloco `:root` para o claro, bloco de modo escuro sobre ele) e entrega `mail_colors`; o logo vem de `aculta420.settings` (`logo.path`).
+- Quando um token muda, o e-mail muda junto, sem editar o template.
+
 ## 0.6.0-dev.116 — apresentar salto à primeira resposta não lida — 2026-10-20
 
 ## 0.6.0-dev.117 — envelope HTML dos e-mails do ACULTA — 2026-10-20
