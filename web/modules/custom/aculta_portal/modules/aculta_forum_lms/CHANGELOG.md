@@ -5,8 +5,10 @@
   usando o callback de serviço configurado. Group/Comment, decisão e conta são
   resolvidos; aluno e Group divergente não passam.
 - Unit: 18 testes / 190 assertions PASS. Kernel MariaDB: 2 testes / 122
-  assertions PASS, 40 depreciações Core/contrib/LMS. Runtime não alterado.
-  RUNTIME STATUS: DEFERRED.
+  assertions PASS, 40 depreciações Core/contrib/LMS. Verificação posterior no
+  Homelab: `drush cr` PASS, controller instanciado pelo container, três rotas
+  ativas, respostas anônimas 403 e `/` HTTP 200. Nenhum dado ou configuração
+  alterado. Smoke autenticado ainda pendente; RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.18` — cobrir callback de rota de moderação — 2026-10-20
 
