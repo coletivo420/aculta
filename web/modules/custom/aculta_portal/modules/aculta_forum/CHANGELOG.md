@@ -6,8 +6,13 @@
 - PHPUnit dos hooks: 6/18; suíte direcionada com Builder e config: 26/240 PASS;
   PHPCS, Portal 11+ (975) e fronteira módulo/tema (1415) PASS. Runtime `toca`:
   cache rebuild PASS e hook/Builder/Context Resolver resolvidos pelo container.
-  Contagens seguem em 0 tópicos e 0 Comments; texto citado real não foi
-  processado no Runtime para manter o Fórum limpo. RUNTIME STATUS: PARTIAL.
+  Firefox/X11: listagem de tópicos em 1024, 768 e 390 px e detalhe em 390 px
+  exibiram cartões legíveis, autoria, texto e categoria sem overflow horizontal.
+  Para a inspeção, três tópicos QA temporários foram criados via Entity API e
+  removidos após a captura; não tinham comentários. Verificação final no
+  Runtime confirmou 0 tópicos, 0 Comments, fila de inscrição Messenger vazia e
+  aliases removidos. O formulário e a ação Citar com sessão autenticada seguem
+  pendentes. RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.54` — agrupar subcategorias na navegação — 2026-10-20
 

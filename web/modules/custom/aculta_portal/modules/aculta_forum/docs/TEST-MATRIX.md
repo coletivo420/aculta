@@ -7,8 +7,17 @@
   confirma que contexts, tags e max-age de `TextProcessed` do Core são
   propagados ao formulário.
 - Runtime `toca`: cache rebuild e resolução de `ForumQuoteHooks`, `quote_builder`
-  e `discussion_context_resolver` PASS; 0 tópicos e 0 Comments mantidos. O texto
-  real não foi processado no Runtime. RUNTIME STATUS: PARTIAL.
+  e `discussion_context_resolver` PASS. Firefox/X11 conferiu listas em 1024,
+  768 e 390 px e detalhe de tópico em 390 px; título, cartão de autor, corpo e
+  categoria renderizaram sem overflow horizontal observado. Três tópicos QA
+  temporários foram criados via Entity API para as capturas e removidos após
+  verificar identidade por NID/UUID/título e ausência de Comments associados.
+  Estado final: 0 tópicos, 0 Comments, fila de inscrição Messenger vazia e
+  aliases das fixtures removidos. As capturas privadas ficam em
+  `/home/aculta/private/aculta/visual-tests/forum-dev53-20261020/`.
+- O fluxo autenticado de citação e o formulário de resposta não foram enviados
+  no Runtime; seguem cobertos parcialmente por Unit e aguardam sessão QA
+  confirmada. RUNTIME STATUS: PARTIAL.
 
 ## dev.54 — agrupamento visual de categorias por hierarquia
 
