@@ -7,6 +7,9 @@
   depreciações Core/contrib. Forum Unit: 82 testes / 500 assertions PASS.
 - PHP lint, PHPCS, Drupal 11+ (975), fronteira (1451), mapa (152) e diff-check
   PASS. PHP CLI 8.4.26 abaixo da baseline 8.5. Runtime DEFERRED.
+- Regressão dos consumidores próximos: `aculta_game` Unit 10 testes / 46
+  assertions PASS; `aculta_user` Unit 55 / 189 PASS, com uma depreciação do
+  PHPUnit. Nenhum arquivo desses módulos foi alterado.
 
 ## `0.1.0-dev.83` — exigir acesso ao tópico de origem para mover comentários — 2026-10-20
 

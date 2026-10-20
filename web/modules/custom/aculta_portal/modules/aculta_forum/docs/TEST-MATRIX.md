@@ -10,6 +10,9 @@
 - PHP lint, PHPCS, Drupal 11+ (975 checks), fronteira módulo/tema (1451), mapa
   (152) e `git diff --check`: PASS. Runtime não alterado; RUNTIME STATUS:
   DEFERRED.
+- Regressão dos consumidores: `aculta_game` Unit 10/46 PASS;
+  `aculta_user` Unit 55/189 PASS, com uma depreciação do PHPUnit. Esses
+  módulos não tiveram arquivos alterados.
 
 ## dev.83 — permissão de mover não substitui acesso ao tópico fonte
 
