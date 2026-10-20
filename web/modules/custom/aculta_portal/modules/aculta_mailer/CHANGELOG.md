@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.26 — F15: credenciais no arquivo de segredos e transporte SMTP2GO na camada E-Mails ACULTA — 2026-10-20
+
+- Entidade `aculta_mailer_transport` aceita usuário pelo arquivo de segredos (`user_secret`), além da senha (`password_secret`).
+- Transporte `smtp2go` criado com `SMTP2GO_USERNAME` e `SMTP2GO_PASSWORD` (já no arquivo de segredos). Configuração exportada em `config/sync`.
+- Senha do Hostinger no banco do contrib confere com `SMTP_PASSWORD` (comparação por hash, sem exibir valores).
+- Cota mensal do SMTP2GO (`552 Your monthly email allowance is exhausted`) reconhecida pelo detector de cota e tratada como temporária, para o failover trocar de transporte.
+- Teste pelo SMTP2GO: credencial aceita; envio recusado por cota do plano. Diagnóstico recebido, não é falha de configuração.
+- Versão do módulo: `0.1.0-dev.26`. 103 unitários.
+- Não removido: credenciais no banco do contrib (saem junto com a remoção do contrib).
+
 ## 0.1.0-dev.25 — F15: envelope HTML e anexos no plugin de envio do Core — 2026-10-20
 
 - Hook de tema `aculta_mailer_wrap` (`MailThemeHooks`) com template neutro no módulo. O tema passa a ter `aculta-mailer-wrap.html.twig` (antes `email-wrap.html.twig`, que dependia do hook do contrib).

@@ -1,0 +1,14 @@
+uuid: 55bf15c6-8691-434b-9d03-90e5e529396b
+langcode: pt-br
+status: true
+dependencies: {  }
+plugin: smtp
+host: mail.smtp2go.com
+port: 465
+user: ''
+user_secret: SMTP2GO_USERNAME
+password_secret: SMTP2GO_PASSWORD
+verify_peer: true
+id: smtp2go
+label: SMTP2GO
+
