@@ -3,7 +3,7 @@
 ## 0.1.0-dev.28 — campo histórico de produto alinhado à política de imagem — 2026-10-20
 
 - O campo legado `commerce_product.produto_loja.field_imagens` declara `aculta_image:policy: default`, mantendo a configuração histórica dentro da política única de imagens.
-- Evidência: `php scripts/validate-aculta-image.php` PASS; RUNTIME STATUS: DEFERRED (Config Sync não importado).
+- Evidência: `php scripts/validate-aculta-image.php` PASS; no Runtime de teste, `aculta_image` estava habilitado e o campo não tinha `third_party_settings`. A política `default` foi aplicada apenas ao campo `commerce_product.produto_loja.field_imagens` com Drush; `config:status` deixou de listar esse campo como divergente. Nenhuma importação global foi executada. RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
 
 ## 0.1.0-dev.27 — imagem do texto marcada por atributos de dados — 2026-10-19
 
