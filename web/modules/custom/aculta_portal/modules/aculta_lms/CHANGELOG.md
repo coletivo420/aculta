@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.7 — permissão de tópico LMS herdada na turma — 2026-10-20
+
+- `lms_classes.settings` mapeia `grade students` do curso para acesso Group
+  Node aos tópicos de discussão da turma. O `ClassPermissionCalculator` real
+  foi validado em Kernel: Educador do curso permitido; pessoa externa, inclusive
+  com papel global `lms_teacher`, sem acesso. 1 teste / 24 assertions PASS;
+  37 depreciações Core/contrib.
+- A configuração não ativa o adapter nem cria tópicos/Comments. Runtime
+  DEFERRED; mudança de Config Sync ainda não foi importada.
+
 ## 0.1.0-dev.6 — review de texto livre sem classe de design — 2026-10-19
 
 - `FreeTextReviewFeedback` marca as seções e frases do retorno com `data-portal-ui` (`feedback-matched`, `feedback-unmatched`, `phrase-match`, `phrase-mismatch`). As classes de estado do LMS (`correct-answer`, `wrong-answer`) continuam, vindas da constante do contrib.

@@ -8,10 +8,13 @@ curso contextual.
 ## Estado
 
 O módulo não deve ser habilitado até as permissões Group de course/class roles,
-membership e a matriz de acesso serem cobertas por testes Kernel. A dev.94
-adiciona install config do bundle `aculta_lms_topic`, Comment compartilhado e
-relações `group_node:aculta_lms_topic` para curso/turma. Não foi incluído
-Config Sync raiz de ativação/permissões, Views, Search API, rotas ou conteúdo.
+membership, Comment e a matriz de acesso serem cobertas por testes Kernel. A
+dev.94 adiciona install config do bundle `aculta_lms_topic`, Comment
+compartilhado e relações `group_node:aculta_lms_topic` para curso/turma. A
+dev.97 acrescenta em Config Sync a herança `grade students` do curso para a
+permission Group Node dos tópicos de turma, validada pelo `ClassPermissionCalculator`
+real. Essa configuração ainda não foi importada no Runtime. Não foram criadas
+Views, Search API, rotas ou conteúdo.
 `gnode` está listado como
 dependência do adapter, não como alteração de `core.extension`. Um hook
 `entity_access` nega acesso a Nodes do bundle quando falta relação Group única;
@@ -35,12 +38,13 @@ inesperado de relação falha fechado.
 
 ## Próxima etapa
 
-O Kernel `LmsGroupNodeAccessKernelTest` usa o banco `aculta_simpletest` e prova
-member versus outsider em um curso. Unit agora cobre estudante matriculado que
-escreve, Educador contextual que modera, status fechado e ausência de acesso à
-moderação para estudante. A combinação de acesso trata membership e permission
-contextual de Educador como alternativas explícitas e só nega se ambas falharem;
-`orIf()` não pode ser usado porque `forbidden` prevalece sobre uma alternativa
-permitida. Próximo: Kernel para membership de turma e herança de
-`grade students`, depois roles Group em Config Sync e prova de Comment integrado;
-só então criar as filas administrativas LMS.
+Os Kernels `LmsGroupNodeAccessKernelTest` e
+`LmsClassEducatorPermissionKernelTest` usam `aculta_simpletest`: provam acesso
+de membro e Educador contextual, bloqueio de outsider (inclusive com papel
+global `lms_teacher`) e herança real de `grade students` para o Group Node da
+turma. Unit cobre escrita, status fechado e moderação do comentário. A
+combinação de acesso trata membership e permissão contextual como alternativas
+explícitas e nega somente se ambas falharem; `orIf()` não pode ser usado porque
+`forbidden` prevalece sobre uma alternativa permitida. Próximo: integrar e provar
+Comment real com callbacks de criação, estado aprovado e moderação antes de
+criar as filas administrativas LMS ou habilitar o adapter.

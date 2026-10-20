@@ -1,5 +1,6 @@
 create_default_class: false
 class_name_pattern: ''
-class_permission_mappings: {  }
+class_permission_mappings:
+  'view group_node:aculta_lms_topic entity': 'grade students'
 course_permission_mappings: {  }
 

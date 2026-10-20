@@ -13,12 +13,12 @@ progresso, certificado, mensagem ou amizade paralelos.
   Group e o viewer `aculta_pdf_viewer`; o acesso ao arquivo é revalidado pela
   rota privada do Core. O módulo declara a dependência do submódulo Group do
   viewer para evitar configuração de curso sem o plugin correspondente.
-- As discussões de curso/turma/atividade serão integradas por adapter opcional
-  quando `aculta_forum` tiver implementação executável. O alvo usa Node/Comment
-  contextual e revalida Entity Access e membership no Group; papel global
-  `estudante` sozinho não autoriza. Forum contrib 1.1.3 continua no runtime
-  atual até a fase aprovada de substituição, sem alterar conteúdo nesta fase.
-  O contrato e as condições estão em
+- Discussões LMS usam o adapter opcional `aculta_forum_lms`, com Node e Comment
+  compartilhado em Group de curso/turma, access contextual, membership
+  revalidada e moderação por `grade students` do curso. `lms_classes.settings`
+  herda essa permissão Group Node para turmas. O adapter continua desabilitado
+  até a matriz integrada de Comments, roles e cache passar; nenhuma conversa é
+  publicada no Growroom420. O contrato e as condições estão em
   [LMS-INTEGRATION-CONTRACTS.md](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md).
 
 As integrações ainda exigem aceite ponta a ponta no Runtime após a configuração

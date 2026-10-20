@@ -1,15 +1,15 @@
 # Contratos de integração do LMS
 
-Revisado em 2026-10-19. Contratos de integração; a implementação depende das fases e critérios de aceite correspondentes.
+Revisado em 2026-10-20. Contratos de integração; a implementação depende das fases e critérios de aceite correspondentes.
 
 ## Objetivos de integração de conteúdo (F15)
 
 - Integrar `aculta_lms` e `aculta_lms_h5p` ao pipeline compartilhado `aculta_image` para capas, imagens de atividades, imagens em entregas e anexos de discussão. Toda ingestão deve passar pela finalidade e política de upload apropriadas; arquivos H5P internos permanecem gerenciados e privados, sem duplicar catálogo, remoção ou storage.
 - Integrar materiais PDF do curso com a capacidade existente `aculta_pdf_viewer` (incluindo `aculta_pdf_viewer_group`), que atende ao objetivo de leitor PDF solicitado como `aculta_pdf_reader`. Manter Media `course_document`, relação Group e entrega privada do Core como fontes de acesso; não criar reader/storage paralelo.
-- Integrar `aculta_lms` e `aculta_lms_h5p` ao `aculta_forum` para discussão contextual de curso, turma e atividade. O alvo usa Node/Comment com adapter opcional; cada leitura/escrita revalida Entity Access e membership atual no Group. Não ativar `gnode` ou relações globais sem teste de isolamento entre turmas.
+- Integrar `aculta_lms` e `aculta_lms_h5p` ao `aculta_forum` para discussão contextual de curso, turma e atividade. O adapter opcional `aculta_forum_lms` usa Node/Comment e revalida Entity Access e membership atual no Group. O Group Node de tópicos tem permissão específica; a herança `grade students` do curso para a turma deve permanecer configurada e testada. Não ativar o adapter no Runtime até passar a matriz integrada de isolamento entre turmas.
 - Entregas LMS, documentos PDF e imagens de estudante devem respeitar a mesma política de acesso privado. Integrações precisam cobrir upload, renderização, download, revogação de matrícula, cacheabilidade e ciclo de exclusão nos testes antes de homologar no Runtime.
 
-`aculta_forum` ainda não fornece API executável. A arquitetura aprovada em 2026-10-19 define um adapter opcional para os contextos LMS e substitui a referência anterior a Forum contrib como motor final; ver `aculta_forum/docs/CONTEXTS.md` e seu roadmap versionado. Confirmar API, Group e nomes de máquina no código instalado antes de implementar; não declarar integração completa apenas por registrar dependências.
+O motor `aculta_forum` e a fundação do adapter opcional LMS já existem. O adapter tem bundle Node, campo Comment compartilhado, relações Group de curso/turma, bloqueio direto de Node sem relação Group e permissões Group Node. Kernel prova membro versus outsider e a herança da permissão `grade students` do curso para tópicos na turma. A configuração foi adicionada ao Config Sync, ainda sem import no Runtime. O adapter continua desabilitado até a validação Kernel de Comment, papéis reais, cache e autorização integrada; ver `aculta_forum/docs/CONTEXTS.md` e roadmap.
 
 ## Matriz de ownership e dependências
 
@@ -22,7 +22,7 @@ Revisado em 2026-10-19. Contratos de integração; a implementação depende das
 | Avisos educacionais | `aculta_messenger` + Message/Message Notify | evento mínimo, usuário destinatário, entidade e referência de rota validável | LMS Messages, fila/storage redundante, envio baseado só em membership antiga |
 | Identidade, perfil e conexões | User/Profile + `aculta_user` | referência de User e API `FriendshipManagerInterface` quando aplicável | entidade de amizade ou perfil no LMS |
 | Conquistas | `aculta_user`/`aculta_game` | fato de conclusão/atributo LMS confirmado pela API autorizada | recalcular nota/progresso, nova entidade espelho de award |
-| Discussão de curso/turma/atividade | `aculta_forum` + Node/Comment + Group access | Adapter opcional com tópico interno e provider contextual; acesso revalidado no Group e no host | Dependência executável enquanto Forum é apenas documentação; entidade paralela; role global `estudante`; ativar `gnode` sem decisão/teste de isolamento |
+| Discussão de curso/turma/atividade | `aculta_forum` + `aculta_forum_lms` + Node/Comment + Group access | Adapter opcional com tópico interno e provider contextual; acesso revalidado no Group e no host; curso herda permissão Group Node `grade students` para turma | Entidade paralela; role global `estudante`/`lms_teacher` sem membership ou permissão contextual; habilitar adapter antes de Kernel de Comment/cache e isolamento |
 | Mídia editorial | `aculta_gallery`/Media Gallery | Media Gallery e referências File/Media com seus handlers | fazer Gallery dona do PDF ou duplicar arquivo |
 | Apresentação | Portal neutral render contract → ACULTA420 SDC | render arrays, props escalares, cacheability | tema consultar LMS/Group/Domain ou chamar serviços |
 
@@ -75,15 +75,17 @@ A moderação dos comentários do LMS pertence aos Educadores autorizados no cur
 autorização deve ser revalidada pelo adapter usando o acesso pedagógico atual (Group/membership e Entity Access),
 variando e invalidando cache por usuário/permissões e entidades relevantes. Papel global de educador sem membership ou
 acesso contextual não basta. `aculta_user` não aplica a regra global do primeiro comentário dentro do LMS, e a fila de
-moderação pública não inclui comentários pedagógicos. Até o adapter fornecer essas ações, moderação LMS permanece
-fechada por padrão; estudantes continuam podendo participar sem aprovação global.
+moderação pública não inclui comentários pedagógicos. O adapter fornece a
+decisão contextual para o marcador compartilhado, mas permanece desabilitado até
+as provas integradas e as filas administrativas. Estudantes podem participar
+sem aprovação global quando o adapter estiver habilitado.
 
 ## Organização administrativa das discussões
 
 As discussões do LMS não aparecem em `/painel-administrativo/conteudo/forum` nem
 na fila pública de comentários. A Revista concentra publicações e comentários
-em `/painel-administrativo/conteudo/revista`. Quando o adapter de discussão for implementado,
-ele deverá fornecer listagens administrativas próprias em
+em `/painel-administrativo/conteudo/revista`. O adapter ainda não fornece filas
+ou listagens próprias; quando forem implementadas, elas deverão ficar em
 `/painel-administrativo/lms/forum`,
 separando curso, turma e atividade conforme o modelo de acesso, com filtros
 fixos e autorização revalidada por Entity Access e Group membership. A fila de

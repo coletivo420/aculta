@@ -18,6 +18,15 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.6` — herdar permissão do Educador nas turmas — 2026-10-20
+
+- Config Sync de `lms_classes.settings` concede permissão Group Node de tópico
+  na turma quando o membro tem `grade students` no curso pai.
+- Kernel Group/LMS comprova a herança real: Educador do curso passa; outsider e
+  pessoa com apenas papel global `lms_teacher` não passam. 1 teste / 24
+  assertions PASS; 37 depreciações Core/contrib. Config não importada no
+  Runtime; adapter segue desabilitado.
+
 ## `0.1.0-dev.5` — corrigir composição de acesso contextual — 2026-10-20
 
 - Corrige a combinação de acesso: membership e permissão `grade students` são

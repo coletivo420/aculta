@@ -1722,6 +1722,16 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.97` — herdar acesso de Educador nas turmas LMS — 2026-10-20
+
+- O Config Sync de `lms_classes.settings` mapeia `grade students` do curso para
+  `view group_node:aculta_lms_topic entity` nas turmas.
+- Kernel com o `ClassPermissionCalculator` instalado prova Educador de curso
+  permitido e nega outsider, inclusive usuário que possui apenas o papel global
+  `lms_teacher`: 1 teste / 24 assertions PASS; 37 depreciações Core/contrib.
+- O adapter e a configuração não foram ativados/importados no Runtime; nenhum
+  tópico ou Comment criado. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.96` — corrigir acesso de participação LMS — 2026-10-20
 
 - Corrige regressão que bloqueava estudantes matriculados e Educadores de turma
