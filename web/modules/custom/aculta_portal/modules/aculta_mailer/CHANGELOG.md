@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.3 — fila de envio com retry — 2026-10-20
+
+- `MailQueue::enqueue()` coloca a mensagem na fila `aculta_mailer_send` (guarda destinatário e contexto, nunca o corpo).
+- `MailSendWorker` envia pela API; falha reagenda pelo `DeliveryPlanner` com o atraso de `RetrySchedule`; tipo não registrado é descartado; tentativa com horário futuro volta para a fila sem envio.
+- `MailMessage::fromArray()` e `toArray()`, validados de novo ao sair da fila.
+- Limite conhecido: o envio ainda não informa o código SMTP, então toda falha é tratada como temporária; o fallback por transporte chega na F2.
+- Testes: 56 unitários e Kernel; Kernel da fila com 3 testes (envio, descarte, horário futuro).
+
 ## 0.1.0-dev.2 — API de envio e registro de tipos — 2026-10-20
 
 - `AcultaMailerInterface::send()` retorna `bool` (aceite do sistema de e-mail) e usa o `plugin.manager.mail` do Core.

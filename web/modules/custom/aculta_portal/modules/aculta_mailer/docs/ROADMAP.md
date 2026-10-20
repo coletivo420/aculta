@@ -11,7 +11,7 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 | F3 | Templates: registro de tipos por tag (`MailTypeInterface`) concluído; Config Entity `aculta_mailer_template`, Twig, variáveis controladas, preview e envio de teste pendentes | Parcial (tipos prontos) |
 | F4 | Branding: `MailBrand` e `MailLayout`, herança, logo via `aculta_image` | Pendente |
 | F5 | Policy: adjusters por plugin, reutilização de `mailer_policy` até equivalência | Pendente |
-| F6 | Queue: decisão de retry/failover (`DeliveryPlanner`, `DeliveryDecision`) concluída e testada; worker de envio, eventos e persistência de tentativas | Parcial (decisão pronta) |
+| F6 | Queue: fila `aculta_mailer_send`, worker com retry e failover (`MailSendWorker`), decisão testada; eventos de fila e classificação SMTP real (código de resposta) pendentes | Parcial (fila pronta) |
 | F7 | Logging: entidade de log, retenção, Views, reenvio | Pendente |
 | F8 | Dashboard: métricas e gráficos (sem framework JS novo) | Pendente |
 | F9 | Usuário: criação, confirmação, troca de e-mail, reset, integração com `aculta_user` | Pendente |
