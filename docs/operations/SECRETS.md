@@ -64,6 +64,12 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Testes | Sim, contém secret | Base64 |
 | `aculta_id_cpf_fingerprint` | `ACULTA_ID_CPF_FINGERPRINT_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave HMAC do índice CPF/CNPJ (mínimo de 32 bytes; ID legado mantido pelo `aculta_associado_id`) | plain |
 | `aculta_document_encryption_key` | `ACULTA_DOCUMENT_ENCRYPTION_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave de cifra de documentos de associados/CPF/CNPJ (64 caracteres hexadecimais) | plain |
+| `smtp2go_username` | `SMTP2GO_USERNAME` | Produção e testes (obrigatória nos dois) | Sim | plain |
+| `smtp2go_password` | `SMTP2GO_PASSWORD` | Produção e testes (obrigatória nos dois) | Sim | plain |
+| `brevo_api_key` | `BREVO_API_KEY` | Produção e testes | Sim, chave da API do Brevo (envio e webhook) | plain |
+| `brevo_webhook_token` | `BREVO_WEBHOOK_TOKEN` | Produção e testes (obrigatória nos dois; produção pendente no deploy do RC) | Sim, token de portador do webhook do Brevo; um valor por ambiente | plain |
+| `imap_password` | `IMAP_PASSWORD` | Produção e testes | Sim, senha da caixa de monitoramento de retorno | plain |
+| `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
 
 Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
 compartilhadas aparecem nas duas seções do painel. Mercado Pago: ver [MERCADOPAGO.md](../integrations/MERCADOPAGO.md).
