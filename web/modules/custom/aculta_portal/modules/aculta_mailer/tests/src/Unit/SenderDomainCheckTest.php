@@ -39,4 +39,15 @@ final class SenderDomainCheckTest extends UnitTestCase {
     $this->assertSame(SenderDomainCheck::DMARC_MISSING, SenderDomainCheck::classifyDmarc(['v=spf1 -all']));
   }
 
+  /**
+   * DKIM: chave pública não vazia é ativa; `p=` vazio (seletor não usado) não é.
+   */
+  public function testDkimClassification(): void {
+    $this->assertFalse(SenderDomainCheck::classifyDkim([]));
+    $this->assertFalse(SenderDomainCheck::classifyDkim(['v=DKIM1;p=']));
+    $this->assertFalse(SenderDomainCheck::classifyDkim(['v=DKIM1;k=rsa']));
+    $this->assertTrue(SenderDomainCheck::classifyDkim(['v=DKIM1;k=rsa;p=MIIBIjANBgkqh']));
+    $this->assertTrue(SenderDomainCheck::classifyDkim(['k=rsa;p=MIIBIjANBgkqh']));
+  }
+
 }

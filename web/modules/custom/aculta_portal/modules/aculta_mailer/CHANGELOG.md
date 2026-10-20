@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.35 — verificação de DKIM no diagnóstico — 2026-10-20
+
+- Diagnóstico: além de SPF e DMARC, mostra os seletores DKIM ativos do domínio remetente (`brevo1`, `brevo2`, `hostingermail-a`, `hostingermail-b`, `hostingermail-c`). Um seletor só conta como ativo com `p=` não vazio.
+- Verificado em `aculta.org`: `brevo1`, `brevo2` e `hostingermail-a` ativos; `hostingermail-b` e `hostingermail-c` com `p=` vazio. O Brevo reconhece o domínio como autenticado e verificado (API `/v3/senders/domains`).
+- Pendente: confirmar `dkim=pass` em uma mensagem recebida (cabeçalho original), pois o DNS não prova a assinatura de envio.
+- Testes: 116 unitários.
+
 ## 0.1.0-dev.34 — webhook do Brevo, lista de supressão e chave geral de envio — 2026-10-20
 
 - Webhook do Brevo (`BrevoWebhook`): autenticação por token de portador (`BREVO_WEBHOOK_TOKEN`, guardado no arquivo de segredos). O Brevo não assina eventos; sem token configurado, todo pedido é recusado. Mapeia `delivered`, `deferred`, `soft_bounce`, `hard_bounce`, `invalid_email`, `blocked` e `spam`; os demais eventos são ignorados.

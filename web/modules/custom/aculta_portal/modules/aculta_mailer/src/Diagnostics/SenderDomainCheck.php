@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Diagnostics;
 
 /**
- * Registros DNS de autenticação do domínio remetente: SPF e DMARC (TXT).
+ * Registros DNS de autenticação do domínio remetente: SPF, DKIM e DMARC (TXT).
  *
- * DKIM não entra aqui: o nome do seletor depende do provedor de envio e ainda não é configurado pelo módulo.
+ * Seletores DKIM conhecidos: os do Brevo (CNAME para o DKIM do Brevo) e os da Hostinger. Um seletor só conta como ativo
+ * com chave pública não vazia (`p=`); a Hostinger publica `p=` vazio nos seletores que não usa.
  */
 final class SenderDomainCheck {
 
@@ -21,20 +22,45 @@ final class SenderDomainCheck {
   public const DMARC_MISSING = 'missing';
 
   /**
-   * Verifica SPF e DMARC do domínio.
+   * Seletores DKIM verificados, na ordem de exibição.
+   */
+  public const DKIM_SELECTORS = ['brevo1', 'brevo2', 'hostingermail-a', 'hostingermail-b', 'hostingermail-c'];
+
+  /**
+   * Verifica SPF, DKIM e DMARC do domínio.
    *
    * @param string $domain
    *   Domínio do remetente (ex.: exemplo.invalid).
    *
-   * @return array{domain: string, spf: string, dmarc: string}
-   *   Domínio e classificação de SPF e de DMARC.
+   * @return array{domain: string, spf: string, dmarc: string, dkim: array<string, bool>}
+   *   Domínio, classificação de SPF e de DMARC, e se cada seletor DKIM tem chave ativa.
    */
   public function check(string $domain): array {
+    $dkim = [];
+    foreach (self::DKIM_SELECTORS as $selector) {
+      $dkim[$selector] = self::classifyDkim($this->txt($selector . '._domainkey.' . $domain));
+    }
     return [
       'domain' => $domain,
       'spf' => self::classifySpf($this->txt($domain)),
       'dmarc' => self::classifyDmarc($this->txt('_dmarc.' . $domain)),
+      'dkim' => $dkim,
     ];
+  }
+
+  /**
+   * Indica se algum registro do seletor DKIM tem chave pública não vazia.
+   *
+   * @param string[] $records
+   *   Textos TXT do seletor (`<seletor>._domainkey.<domínio>`).
+   */
+  public static function classifyDkim(array $records): bool {
+    foreach ($records as $record) {
+      if (preg_match('/(?:^|;)\s*p\s*=\s*([^;\s]+)/i', $record, $match) === 1) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**

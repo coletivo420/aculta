@@ -218,7 +218,7 @@ final class MailDashboardController extends ControllerBase {
   }
 
   /**
-   * SPF e DMARC do domínio do remetente (`system.site:mail`). DKIM não é verificado aqui.
+   * SPF, DKIM e DMARC do domínio do remetente (`system.site:mail`).
    */
   private function senderDomain(): array {
     $sender = (string) $this->config('system.site')->get('mail');
@@ -234,12 +234,16 @@ final class MailDashboardController extends ControllerBase {
     $dmarc = $check['dmarc'] === SenderDomainCheck::DMARC_MISSING
       ? $this->t('não encontrado ou sem política')
       : $this->t('política @policy', ['@policy' => $check['dmarc']]);
+    $active = array_keys(array_filter($check['dkim']));
+    $dkim = $active === []
+      ? $this->t('nenhum seletor com chave ativa')
+      : $this->t('ativo: @selectors', ['@selectors' => implode(', ', $active)]);
     return [
-      'intro' => ['#markup' => '<p>' . $this->t('Autenticação do domínio remetente. DKIM não é verificado aqui: depende do seletor do provedor.') . '</p>'],
+      'intro' => ['#markup' => '<p>' . $this->t('Autenticação do domínio remetente, pelo DNS. A validação do domínio no Brevo é conferida no painel do Brevo.') . '</p>'],
       'table' => $this->scrollable([
         '#type' => 'table',
-        '#header' => [$this->t('Domínio'), $this->t('SPF'), $this->t('DMARC')],
-        '#rows' => [[$check['domain'], $spf, $dmarc]],
+        '#header' => [$this->t('Domínio'), $this->t('SPF'), $this->t('DKIM'), $this->t('DMARC')],
+        '#rows' => [[$check['domain'], $spf, $dkim, $dmarc]],
       ]),
     ];
   }
