@@ -1,7 +1,7 @@
 # Cartões de identidade e autoria
 
 Status: cartões de `author_forum` integrados aos tópicos e respostas do bundle novo na linha
-`aculta_user 0.4.0-dev.37`. `aculta_user` possui políticas,
+`aculta_user 0.4.0-dev.40`. `aculta_user` possui políticas,
 links, perfil, avatar e memória histórica. `AuthorIdentityResolver`,
 `AuthorIdentity` e `AuthorCardBuilder` compõem identidade, avatar cacheável e
 render array neutro; ACULTA420 apresenta o cartão SDC. Ações e dados adicionais
@@ -13,7 +13,7 @@ seguem responsabilidade de consumidores autorizados, sem duplicação no Forum.
 | --- | --- | --- | --- | --- |
 | `PublicProfileController` + `PublicProfilePolicy` | Perfil público, visibilidade campo a campo, foto e dados do perfil | `/u/{apelido}` | `profile_full` | Preservar e estender view-model/cache para os campos já autorizados; não tornar privado público por conveniência. |
 | `PublicProfileLink` + `UsernameLinkHooks` | URL atual por apelido; perfil sem visibilidade fica sem link | Tema Username e campos de referência User | Todas as variantes atuais | Preservar como resolução canônica. |
-| `AuthorIdentityResolver` + `AuthorIdentity` + `AuthorCardBuilder` | Apelido/link, avatar governado por policy e render array com cache | Cartão neutro compartilhável | Base compartilhada das variantes User | Preservar; somente acrescentar dados aprovados e cacheáveis; não aceitar autoria legada como User. |
+| `AuthorIdentityResolver` + `AuthorIdentity` + `AuthorCardBuilder` | Apelido/link, avatar governado por policy, ano de conta pública nos cartões de fórum e render array com cache | Cartão neutro compartilhável | Base compartilhada das variantes User | Preservar; somente acrescentar dados aprovados e cacheáveis; não aceitar autoria legada como User. |
 | `AccountBioCard` | Render da bio da própria conta | dashboard `/identidade` | não é cartão público | Preservar; separar claramente apresentação da área própria. |
 | `SocialLinksCard` + `SocialNetworks` | Redes sociais com dados de Profile | dashboard e perfil público | `profile_full`, apenas com opt-in | Preservar; aplicar política de visibilidade e sanitização existentes. |
 | `AvatarPool`, `UserPictureForm`, `aculta_image` | Avatar do acervo/foto da pessoa e edição | User/profile e componentes de identidade | Todas as variantes | Preservar. Qualquer nova URL/imagem passa por `aculta_image` e finalidade aprovada. |

@@ -3,6 +3,7 @@
   {% if avatar %}<div>{{ avatar }}</div>{% endif %}
   <div>
     {% if profile_url %}<a href="{{ profile_url }}">{{ display_name }}</a>{% else %}{{ display_name }}{% endif %}
+    {% if member_since %}<div>{{ 'Conta ACULTA desde @year'|t({'@year': member_since}) }}</div>{% endif %}
     {% if source_label %}<div>{{ source_label }}</div>{% endif %}
   </div>
   {% if actions %}<div>{{ actions }}</div>{% endif %}

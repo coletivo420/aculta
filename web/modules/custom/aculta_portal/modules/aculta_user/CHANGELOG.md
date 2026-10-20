@@ -1,3 +1,14 @@
+## 0.4.0-dev.40 — ano da conta no cartão público de fórum — 2026-10-20
+
+- `AuthorIdentity` inclui o ano de criação da conta somente quando o perfil
+  inteiro é público e a variante é `author_forum` ou `author_forum_stacked`;
+  `author_comment`, editorial, LMS, Wiki e histórico não recebem o dado.
+  ACULTA420 apresenta “Conta ACULTA desde” com o ano UTC, sem data exata.
+- Unit de identidade + hook do Fórum: 8 testes / 42 assertions PASS; suíte
+  completa: 62 / 194 PASS, com 1 depreciação PHPUnit preexistente. PHPCS da
+  implementação PHP e gate Foundation PASS. Inspeção visual de cartão
+  persistido pendente. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.39 — remover apresentação do Forum contrib — 2026-10-19
 
 - Removido `ForumTopicPresentationHooks`, cujo contador e chamada de login

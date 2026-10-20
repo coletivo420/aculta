@@ -32,6 +32,9 @@ props:
     source_label:
       type: [string, 'null']
       description: 'Historical archive source label; never a user profile or account action.'
+    member_since:
+      type: [string, 'null']
+      description: 'Creation year for an account with a public profile; presented only on forum author variants.'
 slots:
   avatar:
     title: Avatar

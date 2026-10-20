@@ -13,6 +13,7 @@ use Drupal\aculta_user\PublicProfileLinkInterface;
 use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\profile\Entity\ProfileInterface;
@@ -43,6 +44,7 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
     self::assertSame('aculta_user_author_card', $build['author_card']['#theme']);
     self::assertSame('author_forum', $build['author_card']['#variant']);
     self::assertSame('Maria', $build['author_card']['#display_name']);
+    self::assertSame('2020', $build['author_card']['#member_since']);
     self::assertSame(-20, $build['author_card']['#weight']);
   }
 
@@ -97,7 +99,9 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
       $this->createMock(PublicProfileLinkInterface::class),
       new ImageRenderer(new ImageCatalog(), $entityTypeManager),
       new PublicProfilePolicy(),
+      $dateFormatter = $this->createMock(DateFormatterInterface::class),
     );
+    $dateFormatter->method('format')->willReturn('2020');
     return new PublicForumTopicAuthorHooks(new AuthorCardBuilder($resolver));
   }
 
@@ -110,6 +114,7 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
     $account->method('getCacheTags')->willReturn(['user:42']);
     $account->method('getCacheContexts')->willReturn([]);
     $account->method('getCacheMaxAge')->willReturn(-1);
+    $account->method('getCreatedTime')->willReturn(1577836800);
     return $account;
   }
 

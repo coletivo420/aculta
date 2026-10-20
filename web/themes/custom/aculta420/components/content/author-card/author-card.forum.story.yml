@@ -5,6 +5,7 @@ props:
   variant: author_forum
   display_name: Maria Antônia
   profile_url: /u/maria
+  member_since: '2021'
 slots:
   avatar:
     markup: <span aria-hidden="true">M</span>

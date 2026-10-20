@@ -9,6 +9,7 @@ use Drupal\aculta_user\PublicProfileLinkInterface;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
@@ -22,7 +23,9 @@ use Drupal\user\UserInterface;
  */
 final class AuthorIdentityResolver {
 
-  /** Variantes de contas User atendidas por esta resolução de identidade. */
+  /**
+   * Variantes de contas User atendidas por esta resolução de identidade.
+   */
   public const USER_VARIANTS = [
     'profile_full',
     'profile_compact',
@@ -40,6 +43,7 @@ final class AuthorIdentityResolver {
     private readonly PublicProfileLinkInterface $publicProfileLink,
     private readonly ImageRenderer $imageRenderer,
     private readonly PublicProfilePolicy $profilePolicy,
+    private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
@@ -74,8 +78,9 @@ final class AuthorIdentityResolver {
         ? $default
         : (bool) $entity->get($field)->value;
     };
+    $publicProfile = $fieldBoolean($profile, 'field_perfil_publico', TRUE);
     $visibleItems = $this->profilePolicy->publicItems([
-      'publico' => $fieldBoolean($profile, 'field_perfil_publico', TRUE),
+      'publico' => $publicProfile,
       'obrigatorio' => PublicProfilePolicy::isObrigatorioPublico($account->getRoles()),
       'apelido' => $nickname,
       'exibir_foto' => $fieldBoolean($profile, 'field_exibir_foto', FALSE),
@@ -91,11 +96,18 @@ final class AuthorIdentityResolver {
         $cacheability->addCacheableDependency($file);
       }
     }
+    $memberSince = NULL;
+    if (in_array($variant, ['author_forum', 'author_forum_stacked'], TRUE)
+      && $publicProfile
+      && ($created = $account->getCreatedTime()) > 0) {
+      $memberSince = $this->dateFormatter->format($created, 'custom', 'Y', 'UTC');
+    }
     return new AuthorIdentity(
       $variant,
       $nickname,
       $profileUrl instanceof Url ? $profileUrl->toString() : NULL,
       $avatar,
+      $memberSince,
       $cacheability,
     );
   }

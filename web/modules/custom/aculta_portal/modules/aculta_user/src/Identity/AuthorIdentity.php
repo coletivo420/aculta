@@ -19,13 +19,15 @@ final class AuthorIdentity implements CacheableDependencyInterface {
     private readonly ?string $displayName,
     private readonly ?string $profileUrl,
     private readonly ?array $avatar,
+    private readonly ?string $memberSince,
     private readonly CacheableMetadata $cacheability,
   ) {}
 
   /**
    * Exporta somente os dados neutros permitidos para apresentação.
    *
-   * @return array{variant: string, display_name: ?string, profile_url: ?string, avatar: ?array}
+   * @return array{variant: string, display_name: ?string, profile_url: ?string, avatar: ?array, member_since: ?string}
+   *   Identidade pública preparada para apresentação.
    */
   public function toArray(): array {
     return [
@@ -33,20 +35,27 @@ final class AuthorIdentity implements CacheableDependencyInterface {
       'display_name' => $this->displayName,
       'profile_url' => $this->profileUrl,
       'avatar' => $this->avatar,
+      'member_since' => $this->memberSince,
     ];
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheContexts(): array {
     return $this->cacheability->getCacheContexts();
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheTags(): array {
     return $this->cacheability->getCacheTags();
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheMaxAge(): int {
     return $this->cacheability->getCacheMaxAge();
   }

@@ -27,6 +27,7 @@ final class AuthorCardBuilder {
       '#display_name' => (string) $author->label(),
       '#profile_url' => NULL,
       '#avatar' => NULL,
+      '#member_since' => NULL,
       '#actions' => [],
       '#source_label' => 'Acervo histórico Growroom',
     ];
@@ -61,6 +62,7 @@ final class AuthorCardBuilder {
       '#display_name' => $data['display_name'],
       '#profile_url' => $data['profile_url'],
       '#avatar' => $data['avatar'],
+      '#member_since' => $data['member_since'],
       '#actions' => $actions,
     ];
     CacheableMetadata::createFromObject($identity)->applyTo($build);

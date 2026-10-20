@@ -7,6 +7,7 @@ cada campo/ação e seus resultados contribuem cacheability.
 | Dado/ação | Regra documental |
 | --- | --- |
 | Apelido/nome público | Usar Account/Profile atual e rota pública canônica; conta privada segue `PublicProfilePolicy`. |
+| Ano da conta | Mostrar apenas em cartões `author_forum` quando `field_perfil_publico` permite o perfil público; ocultar para perfil privado e autoria histórica. |
 | Foto/avatar | `user_picture` via `aculta_image`; anexo privado permanece inacessível e URLs não são inferidas pelo tema. |
 | Bio e redes | Só conforme visibilidade escolhida/public policy; links externos são validados por serviço. |
 | Email, endereço, documentos | Nunca integrar a Author Card pública. |

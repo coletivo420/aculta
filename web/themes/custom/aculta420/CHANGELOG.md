@@ -1,3 +1,13 @@
+## 0.6.0-dev.103 — apresentar o ano da conta em autoria de fórum — 2026-10-20
+
+- O SDC `content/author-card` mostra o ano da conta apenas nos cartões
+  `author_forum`/`author_forum_stacked`, recebido como dado neutro de
+  `aculta_user`. Contas com perfil privado e autores históricos não exibem data.
+- Foundation 360, SDC 518, design foundations 2089, Portal 970, boundary 1384
+  e mapa 154 checks PASS. O gate Foundation foi executado via Drush no Runtime
+  de teste; nenhuma alteração persistente. Inspeção visual de cartão com tópico
+  salvo DEFERRED. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.102 — renderizar comentários diretos da Revista — 2026-10-19
 
 - Os templates `article` e `blog` passam `content.field_aculta_discussion` ao

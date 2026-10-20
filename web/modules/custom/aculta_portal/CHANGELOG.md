@@ -1,3 +1,20 @@
+## 0.4.0-dev.207 — dados públicos de autoria do fórum — 2026-10-20
+
+- `aculta_user` resolve o ano de criação da conta via DateFormatter somente para
+  cartões `author_forum` e `author_forum_stacked` quando o perfil é público;
+  ACULTA420 o apresenta sem data exata. Variantes editoriais, LMS, Wiki,
+  comentários e autores históricos não recebem esse dado.
+- Pesquisa contrib adicional documentada: Author Pane (requisitos históricos
+  de autoria) e User Stats (estatísticas, com alertas de segurança/privacidade).
+  Não foi instalada dependência nem copiado código legado.
+- Unit direcionado de identidade + hook do Fórum: 8 testes / 42 assertions PASS;
+  suíte completa de `aculta_user`: 62 testes / 194 assertions PASS, 1 depreciação
+  PHPUnit preexistente; lint/PHPCS da implementação PHP, Portal 970, boundary
+  1384, mapa 154, Foundation 360, SDC 518, design 2089 e `git diff --check`
+  PASS. O PHPCS da suíte histórica contém violações preexistentes fora das
+  linhas novas. Runtime de teste: gate Foundation via Drush PASS; sem alterações
+  persistentes. Browser visual DEFERRED. RUNTIME STATUS: PARTIAL.
+
 ## 0.4.0-dev.206 — navegação do Growroom e higiene dos testes do Fórum — 2026-10-20
 
 - A raiz pública do Growroom420 apresenta tabs de descoberta com Discussões

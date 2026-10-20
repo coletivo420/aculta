@@ -20,6 +20,7 @@ contexto identifica apresentação e policy; não é concessão de acesso.
 
 - `AuthorIdentity`, um view-model neutro que implementa `CacheableDependencyInterface`;
 - apelido de exibição e URL canônica em string, gerada por `PublicProfileLink`;
+- `member_since`, apenas como ano da conta quando o perfil inteiro é público;
 - tags e contextos herdados da conta e do perfil principal.
 
 O resultado não contém e-mail privado, endereço, documentos, relações LMS,
@@ -44,7 +45,13 @@ resultado de access antes de serem usados.
   substituir `PublicProfileLink` como fonte de verdade.
 - `PublicProfilePolicy`: continua responsável pela política pública existente.
 
-`author_growroom_historico` não passa por este resolver: `LegacyAuthor` não é User e não
-ganha login, perfil ou ações de conta. A integração do cartão histórico depende
-de um consumidor autorizado de conteúdo legado e não foi criada nesta fase.
+`member_since` não inclui a data ou hora exatas e fica ausente quando o perfil é
+privado; o tema só o apresenta em `author_forum`/`author_forum_stacked`. A
+entidade Account é cache dependency e a formatação anual usa UTC, sem variação
+por fuso horário.
+
+`author_growroom_historico` não passa por este resolver: `LegacyAuthor` não é
+User e não ganha login, perfil, data de conta ou ações. `AuthorCardBuilder::buildLegacy()`
+é o consumidor dedicado, apresenta o nome e a origem do acervo e mantém cache da
+entidade histórica.
 Nenhum service locator novo foi introduzido. Referências Drupal 11+: [DI](https://www.drupal.org/docs/drupal-apis/services-and-dependency-injection/services-and-dependency-injection-in-drupal), [cacheability de render arrays](https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays) e [CacheableDependencyInterface](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableDependencyInterface.php/interface/CacheableDependencyInterface/11.x).

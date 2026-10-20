@@ -2,6 +2,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.103 | Data pública da conta em cartões de autoria do Fórum | Gates e browser serão registrados após execução | SDC recebe apenas o ano; perfil privado e autoria Growroom histórica ficam sem data |
 | 0.6.0-dev.102 | Comentários diretos da Revista aparecem no slot de discussão | Foundation 360, SDC 516, design 2089, fixtures 157, fronteira 1382, mapa 154, Drupal 11+ 970 PASS; Firefox confirmou slot/formulário; Views e browser admin confirmaram filas separadas e anônimos não veem pendentes. RUNTIME PARTIAL: submissão bloqueada pela falta da marca canônica de confirmação nos usuários QA; fixtures removidas e conteúdo novo limpo | `field_aculta_discussion` é passado como render array Core aos templates `article`/`blog`; tema admin é validado pelo gate Foundation conforme a rota |
 | Não marcada | Cartão do último participante na lista Growroom420 | SDC 516 e design 2089 PASS; Runtime aplica o campo Core, a View responde 200 e a chamada sintética constrói o cartão. Foundation bloqueada por placement anterior da Revista; inspeção visual desktop/mobile/claro/escuro pendente | Reutiliza `author_forum`; não expõe login nem cria consulta no tema |
 | Não marcada | SDC de autoria diferencia Fórum, Revista, LMS e Wiki420 | SDC 516, design 2089, YAML/Twig e render Runtime dos rótulos PASS; Foundation bloqueada por placement anterior da Revista; browser pendente | Rótulos contextuais neutros derivados das variantes `aculta_user`; sem dados de papel ou matrícula |

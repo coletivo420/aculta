@@ -18,6 +18,7 @@
       {% if profile_url %}<a href="{{ profile_url }}">{{ display_name }}</a>{% else %}{{ display_name }}{% endif %}
     </div>
     {% if context_labels[variant] is defined %}<span class="aculta-author-card__context">{{ context_labels[variant] }}</span>{% endif %}
+    {% if member_since and variant in ['author_forum', 'author_forum_stacked'] %}<span class="aculta-author-card__joined">{{ 'Conta ACULTA desde @year'|t({'@year': member_since}) }}</span>{% endif %}
     {% if source_label %}<span class="aculta-author-card__source">{{ source_label }}</span>{% endif %}
     {% if actions %}<div class="aculta-author-card__actions">{{ actions }}</div>{% endif %}
   </div>

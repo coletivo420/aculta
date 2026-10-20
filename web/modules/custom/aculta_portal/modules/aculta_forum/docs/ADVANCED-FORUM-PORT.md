@@ -66,7 +66,8 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | --- | --- | --- |
 | Resposta linear ou encadeada | Portar como modos configurados do campo Comment | Nativo Comment; sem entidade de resposta própria. |
 | Painel de autor lateral e layout empilhado | Portar em variante `aculta_user` + preset do tema | Ver `aculta_user/docs/AUTHOR-PANE-PORT.md`. |
-| Nome/avatar/estatísticas/links de perfil | Reutilizar Author Card API de `aculta_user` | Privacy/access antes de construir dados. |
+| Ano de entrada do participante | Mostrar ano de criação da conta ativa em cartões públicos do Fórum | Perfil privado oculta a data; autores Growroom históricos não recebem data de conta inferida. |
+| Nome/avatar/links de perfil | Reutilizar Author Card API de `aculta_user` | Privacy/access antes de construir dados. O ano da conta aparece apenas em perfil público; estatísticas por autor aguardam fonte/access/cache próprios. |
 | Mensagem privada/amizade | Reutilizar API de `aculta_user` e `aculta_messenger` | Só participantes atuais e conforme permissão; nada para legados. |
 | Email e campos opcionais | Não mostrar por padrão; somente dado público autorizado | Email privado não integra view-model público. |
 | Assinaturas de fórum | Candidato a port; requer política/sanitização de conteúdo própria | Não inserir HTML livre ou elevar formato. |

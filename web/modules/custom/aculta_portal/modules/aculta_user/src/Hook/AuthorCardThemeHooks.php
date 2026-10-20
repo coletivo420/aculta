@@ -30,6 +30,7 @@ final class AuthorCardThemeHooks {
           'display_name' => NULL,
           'profile_url' => NULL,
           'avatar' => NULL,
+          'member_since' => NULL,
           'actions' => [],
           'source_label' => NULL,
         ],

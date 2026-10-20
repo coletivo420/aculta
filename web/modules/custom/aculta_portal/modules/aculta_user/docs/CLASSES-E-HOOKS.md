@@ -144,7 +144,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
 | `AuthorIdentity` | `src/Identity/AuthorIdentity.php` | View-model escalar mínimo com cache tags/contexts da identidade pública. |
-| `AuthorIdentityResolver` | `src/Identity/AuthorIdentityResolver.php` | Resolve apelido e link canônico para variantes User sem expor a entidade. |
+| `AuthorIdentityResolver` | `src/Identity/AuthorIdentityResolver.php` | Resolve apelido, link e ano da conta em perfil público para variantes User sem expor a entidade. |
 | `AuthorCardBuilder` | `src/Identity/AuthorCardBuilder.php` | Gera render array neutro de cartão, com cache e ações fornecidas por consumidor autorizado. |
 | `AuthorCardVariantResolver` | `src/Identity/AuthorCardVariantResolver.php` | Resolve variant de Comment pelo bundle do host; contextos desconhecidos não herdam cartão. |
 | `AuthorCardThemeHooks` | `src/Hook/AuthorCardThemeHooks.php` | Declara hook neutro do cartão e mantém fallback sem estilo. |
