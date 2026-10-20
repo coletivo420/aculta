@@ -28,8 +28,7 @@ destinatário e botão "Gerenciar"; edição com habilitar/desabilitar, assunto 
 
 - Estado "suspenso" usa o mesmo mecanismo da política (`skip`): registro `cancelled`, sem envio e sem retry. Não é
   apagamento.
-- Tipo de e-mail que o usuário precisa para segurança (confirmação de e-mail, redefinição de senha) não pode ser
-  suspenso pela tela. Regra aplicada no formulário, conforme o planejamento de preferências (F9/F13).
+- Qualquer tipo de e-mail pode ser suspenso pela tela, inclusive os de segurança (decisão do responsável, 2026-10-20).
 - O destinatário ("Membro", "Administrador") é dado do tipo, não do modelo editável.
 - Textos e variáveis vêm dos tipos; o modelo só substitui o texto padrão.
 
@@ -40,7 +39,7 @@ destinatário e botão "Gerenciar"; edição com habilitar/desabilitar, assunto 
 3. Diagnóstico de domínio (SPF, DKIM, DMARC) na página de diagnóstico.
 4. Editor visual com HTML restrito (depende de decisão sobre CKEditor 5 e formatos de texto).
 
-## Decisões pendentes
+## Decisões tomadas (2026-10-20)
 
-- Quais tipos são obrigatórios (não suspensos pela tela): confirmação de e-mail, redefinição de senha, alteração de senha.
-- Se o editor visual usa o CKEditor 5 do Drupal com um formato de texto dedicado, ou fica só em texto com prévia.
+- Todos os tipos podem ser suspensos pela tela.
+- Editor visual: CKEditor 5 do Drupal, com um formato de texto dedicado (HTML restrito).
