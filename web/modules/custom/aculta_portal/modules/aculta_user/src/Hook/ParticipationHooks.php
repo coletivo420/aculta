@@ -35,23 +35,16 @@ final class ParticipationHooks {
     }
     $settings = $this->rules->settings();
 
-    // Keep the contributed Forum behavior intact until its removal. The new
-    // shared Comment bundle applies to every discussion context except LMS;
-    // LMS discussion is deliberately governed by the LMS adapter.
-    $isLegacyForumComment = $comment->bundle() === ParticipationRules::COMMENT_TYPE;
     $isDiscussionComment = $this->rules->isNonLmsDiscussionComment($comment);
-    if (!$isLegacyForumComment && !$isDiscussionComment) {
+    if (!$isDiscussionComment) {
       return;
     }
-    if (($isLegacyForumComment && !$settings['primeiro_comentario_moderado']) ||
-      ($isDiscussionComment && !$settings['primeiro_comentario_discussao_moderado']) ||
+    if (!$settings['primeiro_comentario_discussao_moderado'] ||
       $comment->getOwner() === NULL) {
       return;
     }
     $owner = $comment->getOwner();
-    $hasPublishedComment = $isLegacyForumComment
-      ? $this->rules->publishedCount((int) $owner->id()) > 0
-      : $this->rules->hasPublishedDiscussionComment((int) $owner->id());
+    $hasPublishedComment = $this->rules->hasPublishedDiscussionComment((int) $owner->id());
     if ($this->rules->isExempt($owner) || $hasPublishedComment) {
       return;
     }
@@ -67,9 +60,15 @@ final class ParticipationHooks {
    */
   #[Hook('entity_create_access')]
   public function entityCreateAccess(AccountInterface $account, array $context, ?string $entity_bundle): ?AccessResult {
-    $isLegacyForumTopic = $entity_bundle === ParticipationRules::TOPIC_TYPE;
     $isPublicDiscussionTopic = $entity_bundle === 'aculta_forum_topic';
-    if (($context['entity_type_id'] ?? NULL) !== 'node' || (!$isLegacyForumTopic && !$isPublicDiscussionTopic)) {
+    if (($context['entity_type_id'] ?? NULL) !== 'node') {
+      return NULL;
+    }
+    if ($entity_bundle === 'forum') {
+      return AccessResult::forbidden('O acervo restaurado do Growroom não aceita novos tópicos.')
+        ->addCacheContexts(['user.permissions']);
+    }
+    if (!$isPublicDiscussionTopic) {
       return NULL;
     }
     if ($this->rules->isExempt($account)) {
@@ -81,18 +80,14 @@ final class ParticipationHooks {
       ->addCacheContexts(['user', 'user.roles'])
       ->addCacheTags(['comment_list', ...$this->rules->settingsCacheTags()]);
 
-    $firstCommentPending = $isLegacyForumTopic
-      ? $this->rules->firstCommentPending($uid)
-      : $this->rules->firstDiscussionCommentPending($uid);
+    $firstCommentPending = $this->rules->firstDiscussionCommentPending($uid);
     if ($settings['bloqueio_ate_aprovacao'] && $firstCommentPending) {
       return $this->forbidden(
         'Seu primeiro comentário aguarda moderação.',
       );
     }
     if ($settings['topico_limite_ativo']) {
-      $published = $isLegacyForumTopic
-        ? $this->rules->publishedCount($uid)
-        : $this->rules->publishedPublicForumCommentCount($uid);
+      $published = $this->rules->publishedPublicForumCommentCount($uid);
       $minimum = (int) $settings['topico_comentarios_minimos'];
       if ($published < $minimum) {
         return $this->forbidden(

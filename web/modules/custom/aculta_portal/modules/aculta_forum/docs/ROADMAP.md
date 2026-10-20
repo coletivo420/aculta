@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.45` | Limpeza do conteúdo antigo do Fórum no Runtime de teste | F-D33 cumprida: Entity API removeu 30 Nodes `forum` e 8 termos `forums`; Comments `comment_forum` eram zero; 12 vínculos `field_discussao` foram retirados sem alterar o conteúdo das publicações. Views/tabelas do Forum, aliases, revisões, flaggings e referências ficaram zerados; as 12 categorias `aculta_forum_categories` permanecem. Backup integral atual, `0600`, `gzip -t` PASS; restore isolado DEFERRED. Validator de uninstall sem blockers; dry-run ainda tem alterações de config/roles e consumidores a retirar antes do uninstall/Composer. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.44` | Navegação da lista de categorias para discussões filtradas | View Core inclui TID oculto e emite links com TID real à raiz filtrada; ACULTA420 mostra hierarquia/descrição em cartões SDC. Unit Forum 54/382 e gates PASS. Runtime de teste: importação parcial pontual, `/categorias` 200 com 12 links e `/?categoria=76` 200 com filtro selecionado; `config:status` da View sem diferença. Browser visual DEFERRED. Pesquisa contrib em [`CONTRIB-PORT-RESEARCH.md`](CONTRIB-PORT-RESEARCH.md). |
 | `0.1.0-dev.43` | Atualizar metadados de teste para atributos PHPUnit | Unit Forum 54/379 PASS; removeu 3 depreciações em metadata de docblocks. PHPCS PASS; Runtime DEFERRED. |
 | `0.1.0-dev.42` | Navegação de descoberta na raiz pública | Firefox confirmou a composição das tabs; Runtime HTTP: raiz e abas existentes 200, `/discussoes` 404. HTML confirma Discussões ativa e `aria-current="page"`; Access de Não lidos permanece condicional. Unit 3/19 e gates direcionados PASS. Sem fixtures. |
@@ -42,7 +43,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 | `0.1.0-dev.36` | Retirar hook residual da Revista | `ForumTopicHooks`/`comment_links_alter` removido após Runtime confirmar zero `comment_forum`; Unit Magazine 7/30 PASS e render full/HTTP 200. Mantidos os leitores/conversores de `field_discussao` até limpeza dos 12 vínculos antigos. |
 | `0.1.0-dev.35` | Remover fallback editorial do Forum contrib | `aculta_user::DiscussionHooks` removido; publicações usam o Comment direto. Runtime confirmou 8 referências antigas em `article` e 4 em `blog` e campo novo nos 12 Nodes; nenhum dado foi alterado. `drush cr`, render full e HTTP editorial (200) PASS; falta testar Comments reais e remover vínculos/Nodes na fase operacional segura. |
 | `0.1.0-dev.34` | Pesquisa contrib e integridade de movimento | Código de `comment_mover` alpha inspecionado; regressão ACULTA para dois ramos com netos. Kernel MariaDB 13/272 PASS, sem instalar dependência ou copiar algoritmo. Runtime somente leitura: 8 vínculos antigos em `article`, 4 em `blog`; nenhum dado alterado. |
-| `0.1.0-dev.33` | Mover comentário e subárvore entre tópicos do Fórum | Serviço/Form/ação administrativa, permissão específica, locks por tópico compartilhados com gravação/exclusão normal, revalidação de pai/host, atualização de thread/estatísticas e transação/rollback. Kernel MariaDB original: 12/246 PASS; dev.34 acrescenta ramos irmãos e netos. Forum Unit 51/360 PASS; Messenger e Game têm testes direcionados contra eventos duplicados. Runtime `toca`: Drupal 11.4.10, rota/permissão/serviço resolvidos, configuração ausente (fechada); GET com Comment inexistente respondeu 404. Em limpeza separada dos fixtures, 8 tópicos `[TESTE]` foram removidos; 0 tópicos/Comments novos permanecem e 12 termos da árvore inicial foram preservados. O Forum antigo mantém 30 Nodes/12 vínculos editoriais. Não há Comment publicado de `aculta_forum_topic` para testar a rota com entidade real. RUNTIME STATUS: PARTIAL. Restam rota com entidade existente/CSRF, teste concorrente entre requisições, History, política de anexos `aculta_image`, evento/fila Messenger, permalink e browser. Evidências em `CHANGELOG.md` e `TEST-MATRIX.md`. |
+| `0.1.0-dev.33` | Mover comentário e subárvore entre tópicos do Fórum | Serviço/Form/ação administrativa, permissão específica, locks por tópico compartilhados com gravação/exclusão normal, revalidação de pai/host, atualização de thread/estatísticas e transação/rollback. Kernel MariaDB original: 12/246 PASS; dev.34 acrescenta ramos irmãos e netos. Forum Unit 51/360 PASS; Messenger e Game têm testes direcionados contra eventos duplicados. Runtime `toca`: Drupal 11.4.10, rota/permissão/serviço resolvidos, configuração ausente (fechada); GET com Comment inexistente respondeu 404. Em limpeza separada dos fixtures, 8 tópicos `[TESTE]` foram removidos; 0 tópicos/Comments novos permanecem e 12 termos da árvore inicial foram preservados. No snapshot desta entrega, o Forum antigo tinha 30 Nodes/12 vínculos editoriais; removidos depois em dev.45 por F-D33. Não há Comment publicado de `aculta_forum_topic` para testar a rota com entidade real. RUNTIME STATUS: PARTIAL. Restam rota com entidade existente/CSRF, teste concorrente entre requisições, History, política de anexos `aculta_image`, evento/fila Messenger, permalink e browser. Evidências em `CHANGELOG.md` e `TEST-MATRIX.md`. |
 | `0.1.0-dev.32` | Contagem, atividade e identidade pública do último comentarista na View de tópicos | Campo Core `last_comment_uid` oculto; hook injeta cartão `author_forum` pelo `aculta_user`, sem usar nome de login. Teste de equivalência entre install/sync adicionado; execução e Runtime/browser pendentes. Contagem publicada tem Kernel PASS; ordenação positiva e invalidação após moderação seguem pendentes |
 | Não marcada | Contagem e atividade na View de tópicos | Kernel MariaDB confirma `comment_count` em aprovação, despublicação e exclusão; também executa Views Core com 3 tópicos e confirma ordem DESC pelos publicados, ignorando pendente. Runtime tem 0 respostas, então query visual autenticada e inspeção seguem pendentes |
 | Não marcada | Contagem de respostas em tópicos próprios | `ActivityControllerKernelTest` executa `view('forum')` no MariaDB `aculta_simpletest`: lista somente o tópico publicado da conta atual; mostra 2 respostas publicadas e exclui 1 pendente (1/12 PASS). Unit `aculta_user` 62/194 PASS; 5 deprecações do Domain contrib. Rota autenticada e browser Runtime permanecem pendentes. |
@@ -117,7 +118,7 @@ adapters e depois de provar isolamento por contexto. Ver [contratos de contexto]
 
 ## `0.1.0-dev.5` — Retirada do Forum contrib
 
-- **Em andamento: auditoria do Runtime de teste concluída; remoção não executada.**
+- **Em andamento: conteúdo antigo removido; módulo contrib ainda instalado.**
 - Provider editorial iniciado em `aculta_forum`; Unit access/cache PASS e prova
   Kernel confirma storage Comment compartilhado entre `article`, `blog` e tópico.
 - `article` e `blog` agora têm Config Sync/configuração de instalação para
@@ -126,18 +127,19 @@ adapters e depois de provar isolamento por contexto. Ver [contratos de contexto]
   compartilhado e a política pública. A configuração das duas instâncias e dos
   displays full foi aplicada parcialmente no Runtime; status default aberto
   verificado em memória, sem persistir Nodes ou Comments.
-- Foram observados 30 nodes `forum`, dos quais 12 publicados vinculam
-  discussões a publicações. `aculta_magazine` e `aculta_user` ainda têm
-  consumidores ativos; ver `docs/MIGRATION-REMOVAL.md`.
+- O Runtime de teste tinha 30 nodes `forum`, 8 termos `forums` e 12 vínculos
+  editoriais; F-D33 removeu todos esses dados sem migrá-los. As 12 categorias
+  ACULTA permanecem. `aculta_magazine`, `aculta_user`, Messenger, Views e tema
+  ainda têm referências de código/config a auditar; ver `docs/MIGRATION-REMOVAL.md`.
 - Em Magazine 0.1.0-dev.10/.11, hooks de insert/update/delete e a API
   `ForumTopicSync` foram removidos. `LegacyPublicationTopicLookup` somente lê
   vínculos históricos para apresentação/conversão. Em `aculta_user 0.4.0-dev.38`,
   o fallback antigo que exibia trechos de `comment_forum` foi removido após
   confirmar o campo Comment direto nas 12 publicações referenciadas.
-  O Forum contrib ainda não foi desinstalado e referências legadas permanecem.
-  Os tópicos-casca antigos serão apagados depois; não
-  importar tópicos nem comentários antigos para os novos contextos.
-- Inventário imediatamente pré-operação e restore point validado ainda pendentes.
+  Os tópicos-casca antigos foram apagados em dev.45; não importar conteúdo
+  antigo para os novos contextos.
+- Inventário pré-operação, backup íntegro e contagens zero concluídos. Restore
+  isolado e análise de efeitos de uninstall continuam pendentes.
 - Troca de tipo da publicação re-hospeda Comments compartilhados antes de remover o Node antigo; transação e runtime ainda não foram exercitados nesta entrega.
 - Exclusão escopada aprovada em ambiente de teste, uninstall oficial,
   remoção do Composer posterior e verificação de resíduos.
@@ -226,8 +228,9 @@ validação, os oito tópicos foram removidos; as categorias foram preservadas. 
 correção Pathauto dá aliases portugueses ao bundle novo. A View GET pública agora não
 recebe CAPTCHA global, que a fazia abortar durante o render: a raiz mostra os
 cinco tópicos da página inicial e filtro `categoria=77` mostra o tópico
-esperado; os oito aliases retornam 200. O legado continua com 30 Nodes e 8
-termos; 0 comentários foram criados. Unit 11/64, PHPCS e gates Portal/fronteira/
+esperado; os oito aliases retornam 200. Naquele snapshot de 2026-10-19 o legado
+tinha 30 Nodes e 8 termos; F-D33 removeu-os em dev.45. Nenhum comentário antigo
+existia. Unit 11/64, PHPCS e gates Portal/fronteira/
 mapa/slugs passam. Inspeção visual no navegador ainda é necessária. Essa
 entrega cobre a base da experiência de listagem descrita em
 `DISCOURSE-EXPERIENCE.md`; não encerra a dev.6.

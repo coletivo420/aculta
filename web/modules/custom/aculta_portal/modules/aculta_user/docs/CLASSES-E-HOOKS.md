@@ -2,12 +2,10 @@
 
 Identidade, perfil, avatar, amizade, associados (marcador), autoria histórica (memorial), restrição de fóruns (F9) e moderação de denúncias. Ver também `docs/` e o `CHANGELOG.md` do módulo.
 
-> As entradas Forum nesta referência descrevem a implementação atual e seus
-> consumidores dos bundles `forum`/`comment_forum`. A reconstrução aprovada em
-> 2026-10-19 os substituirá por contratos contextuais e cartões de autoria
-> preparados por `aculta_user`; ver [AUTHOR-CARDS.md](AUTHOR-CARDS.md) e
-> [MIGRATION-REMOVAL.md](../../aculta_forum/docs/MIGRATION-REMOVAL.md). Não remova nem renomeie hooks nesta
-> fase documental.
+> O Runtime de teste não contém Nodes `forum`, Comments `comment_forum`, termos
+> `forums` ou vínculos editoriais antigos desde a limpeza F-D33 (2026-10-20).
+> Alguns guards permanecem somente até uninstall do contrib e retirada de
+> consumidores; ver [MIGRATION-REMOVAL.md](../../aculta_forum/docs/MIGRATION-REMOVAL.md).
 
 Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a primeira frase do próprio docblock; a regra e o motivo completos ficam no código. Quando uma classe mudar, atualize esta tabela na mesma entrega.
 
@@ -161,9 +159,9 @@ e o resolver de variantes. Fórum e respostas usam `author_forum`; Revista usa
 | `AccountCreationHooks` | `src/Hook/AccountCreationHooks.php` | Criação de conta: perfil participante com apelido inicial, e avatar do acervo quando não há foto. |
 | `AccountDashboardHooks` | `src/Hook/AccountDashboardHooks.php` | Caixa de bio na visão geral da Minha conta. Substitui o resumo de Cursos (aculta_portal). |
 | `AvatarCronHooks` | `src/Hook/AvatarCronHooks.php` | Cron do aculta_user: limpeza de assets temporários de avatar (ver AvatarAssetCleanup). |
-| `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação confirmada de conteúdo ativo; congela o acervo Growroom por `field_autor_legado`, fecha sua discussão no presave e mantém Comments `aculta_discussion_post` na fila administrativa do seu contexto, rejeitando seleção em lote adulterada. |
+| `ForumModerationHooks` | `src/Hook/ForumModerationHooks.php` | Moderação confirmada de conteúdo ativo; preserva guards de bundles legados enquanto a extensão contrib é retirada e mantém Comments `aculta_discussion_post` na fila administrativa do contexto, rejeitando seleção em lote adulterada. |
 | `FriendshipLifecycleHooks` | `src/Hook/FriendshipLifecycleHooks.php` | Maintains friendship data through account deletion and module lifecycle. */ |
-| `ParticipationHooks` | `src/Hook/ParticipationHooks.php` | Modera comentários iniciais no Forum legado e nos contextos públicos compartilhados; exclui LMS e aplica bloqueio/limite configurável de criação de tópico. |
+| `ParticipationHooks` | `src/Hook/ParticipationHooks.php` | Modera comentários iniciais nos contextos públicos compartilhados, exclui LMS, bloqueia novos Nodes do bundle legado e aplica limite configurável de criação de tópico. |
 | `PhotoEditorHooks` | `src/Hook/PhotoEditorHooks.php` | Editor de foto do painel (ponto de extensão aculta_portal_photo_editor e formulário do painel). |
 | `PhotoFlowPageHooks` | `src/Hook/PhotoFlowPageHooks.php` | Anexa o fluxo do popup de foto (aculta_user/photo-flow) na página do painel e informa a foto salva ao script. |
 | `PictureReplacementHooks` | `src/Hook/PictureReplacementHooks.php` | Apaga a foto anterior enviada pela pessoa quando ela troca ou remove a foto (economia de disco). |
@@ -196,7 +194,7 @@ e o resolver de variantes. Fórum e respostas usam `author_forum`; Revista usa
 
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
-| `ParticipationRules` | `src/ParticipationRules.php` | Contagens via EntityQuery e regras de participação para Forum legado e comentários públicos compartilhados; LMS é excluído. |
+| `ParticipationRules` | `src/ParticipationRules.php` | Contagens via EntityQuery e regras de participação para comentários públicos compartilhados; LMS é excluído. |
 | `PublicProfilePolicy` | `src/PublicProfilePolicy.php` | Decide, campo a campo, o que do perfil participante pode aparecer em público. |
 | `PublicProfileLink` | `src/PublicProfileLink.php` | Única regra de URL canônica do perfil público; atualiza a cache metadata fornecida pelo consumidor. |
 | `PublicProfileLinkInterface` | `src/PublicProfileLinkInterface.php` | Contrato para resolver e testar links de perfil sem substituir a implementação canônica. |

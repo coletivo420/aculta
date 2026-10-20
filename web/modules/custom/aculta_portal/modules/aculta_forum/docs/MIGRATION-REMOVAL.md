@@ -1,9 +1,9 @@
 # Plano de retirada do Drupal Forum contrib
 
-Status: dev5 em auditoria; pré-requisitos operacionais para remoção ainda não
-foram satisfeitos. `drupal/forum` 1.1.3 continua instalado e habilitado; nenhum
-conteúdo/configuração do sistema legado foi alterado e não houve uninstall. Os
-fixtures `[TESTE]` do bundle novo são tratados separadamente em
+Status: conteúdo legado removido do Runtime de teste em 2026-10-20; o módulo
+`drupal/forum` 1.1.3 continua instalado e habilitado enquanto os consumidores e
+configurações restantes são auditados. O uninstall e a remoção Composer ainda
+não foram executados. Os fixtures `[TESTE]` do bundle novo são tratados em
 [`TEST-FIXTURES.md`](TEST-FIXTURES.md).
 
 ## Inventário conferido
@@ -79,23 +79,19 @@ o formatter Core direto e não carrega resumo de Comments do tópico antigo.
 de tipo e `ForumOpeningPost` apresenta a publicação vinculada nos Nodes Forum antigos;
 esses leitores serão retirados somente após preparar a limpeza dos dados.
 
-## Separação entre Drupal Forum e acervo histórico Growroom
+## Bundles Drupal Forum e decisão de limpeza Growroom
 
-O conteúdo do Drupal Forum contribuído descrito nesta auditoria é uma base
-legada local para retirada; sua exclusão permanece no plano operacional e não é
-uma importação. O acervo Growroom a restaurar é uma origem histórica distinta,
-que será importada para Nodes `aculta_forum_topic` e Comments
-`aculta_discussion_post`, com referências `field_autor_legado` a `aculta_legado_autor`.
+F-D32 registrou que os Nodes `forum` e Comments `comment_forum` representavam o
+Growroom restaurado. Em 2026-10-20, F-D33 substituiu a decisão de preservar esse
+conteúdo: o responsável determinou que o banco de teste ficasse sem tópicos,
+respostas, termos do vocabulário `forums` ou referências ativas àqueles tópicos.
+Nenhum conteúdo antigo será importado para os bundles ACULTA.
 
-O acervo importado será preservado como somente leitura: Nodes
-`aculta_forum_topic` e Comments `aculta_discussion_post` marcados com
-`field_autor_legado` e respostas relacionadas
-não podem ser editados, excluídos, aprovados/desaprovados ou reabertos por
-nenhum papel. A discussão deve chegar fechada; `aculta_user` aplica o estado
-fechado no presave e nega operações de alteração. Nenhum item do Drupal Forum
-contrib é convertido nesse acervo. A referência histórica existente nos bundles
-`forum` e `comment_forum` não os classifica como parte da restauração. Ver F-D31
-em `DECISOES.md`.
+O Drupal Forum contrib continua instalado apenas até que os consumidores,
+campos, Views, flags e configurações dependentes sejam retirados pelo processo
+oficial. O novo vocabulário `aculta_forum_categories` e seus 12 termos são
+estrutura atual e permanecem. A limpeza do Runtime não alterou Nodes da Revista,
+Wiki, LMS, usuários ou comentários diretos de publicação.
 
 ## Auditoria do Runtime de teste — 2026-10-19
 
@@ -209,33 +205,12 @@ configuração foi alterada, e nenhum conteúdo editorial ou legado foi removido
 Os oito aliases antigos não têm mais registro de Pathauto e respondem HTTP 404.
 Detalhes e IDs: [`TEST-FIXTURES.md`](TEST-FIXTURES.md).
 
-### Decisão operacional desta auditoria
+### Decisão operacional da auditoria de 2026-10-19 (superada por F-D33)
 
-- Não excluir Nodes, termos, Comments ou Flags do Forum legado; não desinstalar
-  `forum`, não remover `drupal/forum` do Composer e não executar
-  updates/import/export nesta subfase.
-- Preservar temporariamente os 12 tópicos vinculados à Revista e seus campos
-  `field_discussao`. A discussão direta via Comment já está instalada para
-  `article` e `blog`; a sincronização automática foi removida sem apagar ou
-  migrar os tópicos antigos.
-- A remoção do contrib aguarda a migração dos consumidores restantes de
-  Magazine e User e a cobertura contextual correspondente. Gates para exclusão/uninstall:
-  backup atual de Runtime e arquivos relacionados; restore validado em ambiente
-  de teste isolado; inventário repetido; plano de rollback específico; e
-  confirmação do escopo exato dos dados.
-- Na execução aprovada, não migrar conteúdo de discussão: após provar os novos
-  fluxos vazios por contexto e desativar os consumidores antigos, excluir os
-  Nodes de tópico e Comments do Forum legado; repetir consulta e confirmar zero
-  antes do uninstall oficial. Manter conteúdo de publicação e demais entidades.
-- Preservar `drupal/history` como dependência independente antes de remover
-  `drupal/forum`; hoje a versão contrib substitui History Core e implementa
-  leitura do usuário. A versão 1.0.0 não é coberta pela política de avisos de
-  segurança do Drupal.org; esse risco e a necessidade de acompanhar releases
-  devem permanecer no plano de operação.
-- O responsável autorizou em princípio excluir apenas conteúdo antigo do Forum
-  no teste, condicionado à confirmação de ambiente e escopo. Isso não cobre
-  publicações, contas, LMS, Wiki nem outras entidades. A validação de restore e
-  do escopo ainda não satisfaz os pré-requisitos para apagar.
+Naquele momento, foi registrado que não se deveria excluir o legado antes de
+validar o restore e os consumidores editoriais. A determinação de 2026-10-20
+substituiu essa decisão para o conteúdo do Runtime de teste. O registro histórico
+permanece para explicar a sequência; ele não é a instrução operacional atual.
 
 ## Portas obrigatórias antes de remover
 
@@ -251,9 +226,48 @@ Detalhes e IDs: [`TEST-FIXTURES.md`](TEST-FIXTURES.md).
 
 Não executar `drush pm:uninstall`, `composer remove`, exclusão em massa, `updb`, importação integral ou alteração de Runtime nesta fase documental.
 
+## Limpeza do Fórum antigo no Runtime de teste — 2026-10-20
+
+Ambiente verificado imediatamente antes da operação: `hostname=toca`, checkout
+`/home/piradopirata/projetos/aculta-site`, branch
+`docs/aculta-forum-0.1.0-dev.1`, Drupal 11.4.10, URI
+`https://growroom420.aculta.toca.net.br`, banco `aculta_runtime`. Produção não
+foi consultada nem alterada.
+
+Restore point integral, privado e externo ao Git:
+`/home/piradopirata/.local/share/aculta-private-backups/aculta_runtime-forum-content-before-delete-20261020.sql.gz`;
+modo `0600`, 6,397,232 bytes, `gzip -t` PASS, SHA-256
+`2ad6723d6dc56599681cdeafd7758291698ee5b0d92d4e40734fd5835de65f43`. O dump
+contém dados do Runtime; não copiar para repositório, produção ou artefatos
+públicos. Restore isolado não foi executado.
+
+Inventário repetido imediatamente antes da operação confirmou exatamente 30
+Nodes `forum`, zero Comments `comment_forum`, oito termos no vocabulário
+`forums` e 12 Nodes editoriais com `field_discussao` apontando a esses tópicos.
+Os 12 Nodes tinham `field_aculta_discussion` preenchido e eram `article`/`blog`;
+nenhum outro bundle usava os termos `forums`. O vocabulário novo
+`aculta_forum_categories`, com 12 categorias, ficou fora do escopo.
+
+Em uma transação via Entity API foram removidos os 30 tópicos e oito termos,
+apagados comentários `comment_forum` (zero encontrados) e limpos os 12 valores
+legados de `field_discussao` nas publicações. Nodes editoriais, seus conteúdos,
+revisões de conteúdo e comentários diretos permaneceram. As verificações após a
+operação encontraram zero em: Nodes `forum`, Comments `comment_forum`, termos
+`forums`, referências ativas e históricas `field_discussao` aos tópicos,
+revisões dos Nodes excluídos, aliases, flaggings, `forum_index` e tabela
+relacional `forum`.
+
+O uninstall continua pendente. `module_installer->validateUninstall(['forum'])`
+retornou lista vazia depois da limpeza. O dry-run de dependências ainda informa
+que a remoção atualizará `field.field.node.blog.field_discussao` e permissões de
+papéis, e excluirá configurações do bundle/campos/termos antigos. Restam revisar
+consumidores PHP/Views/tema, executar uninstall oficial com backup vigente e só
+depois remover `drupal/forum` do Composer. A limpeza de conteúdo não foi tratada
+como autorização para fazer essas etapas sem inspecionar seus efeitos.
+
 ## Rollback e limites
 
 Código/config pode ser revertido enquanto nenhum dado legado foi excluído. Após
-exclusão, rollback exige restore point anterior validado ou procedimento de
+exclusão, rollback exige o restore point descrito acima ou procedimento de
 reimportação idempotente, nunca apenas `git revert`. Nenhuma ação atinge produção
 sem decisão própria do responsável; merge em `main` não é deploy.

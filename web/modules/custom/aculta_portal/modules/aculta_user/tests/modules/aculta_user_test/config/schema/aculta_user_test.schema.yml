@@ -8,9 +8,6 @@ aculta_user.settings:
     topico_comentarios_minimos:
       type: integer
       label: 'Minimum published comments'
-    primeiro_comentario_moderado:
-      type: boolean
-      label: 'Moderate legacy Forum comments'
     primeiro_comentario_discussao_moderado:
       type: boolean
       label: 'Moderate initial discussion comments'

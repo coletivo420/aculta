@@ -57,6 +57,11 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
       'label' => 'Public discussion post',
       'target_entity_type_id' => 'node',
     ])->save();
+    CommentType::create([
+      'id' => 'comment_forum',
+      'label' => 'Restored Growroom reply',
+      'target_entity_type_id' => 'node',
+    ])->save();
 
     foreach (['aculta_forum_topic', 'article', 'blog', 'wiki_entry', 'document', 'aculta_lms_topic'] as $bundle) {
       NodeType::create(['type' => $bundle, 'name' => $bundle])->save();
@@ -68,6 +73,8 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
         ParticipationRules::DISCUSSION_COMMENT_TYPE,
       );
     }
+    NodeType::create(['type' => 'forum', 'name' => 'Restored Growroom topic'])->save();
+    $this->addDefaultCommentField('node', 'forum', 'comment_forum', CommentingStatus::Open, 'comment_forum');
 
     $this->container->get('config.factory')->getEditable('aculta_user.settings')
       ->set('primeiro_comentario_discussao_moderado', TRUE)
@@ -146,6 +153,37 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
     (new ParticipationHooks($this->createRules()))->commentPresave($comment);
 
     self::assertTrue($comment->isPublished());
+  }
+
+  /**
+   * Restored Growroom comments bypass first-comment moderation and new topics.
+   */
+  public function testRestoredForumCommentsAreNotModeratedAndCannotCreateTopics(): void {
+    $account = $this->createAccount();
+    $topic = Node::create([
+      'type' => 'forum',
+      'title' => 'Restored Growroom topic',
+      'status' => 1,
+    ]);
+    $topic->save();
+    $comment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'comment_forum',
+      'comment_type' => 'comment_forum',
+      'uid' => $account->id(),
+      'subject' => 'Restored reply',
+      'comment_body' => ['value' => 'Restored reply', 'format' => 'plain_text'],
+      'status' => 1,
+    ]);
+
+    (new ParticipationHooks($this->createRules()))->commentPresave($comment);
+    self::assertTrue($comment->isPublished(), 'Restored comments do not enter the contemporary first-comment moderation policy.');
+
+    $createAccess = (new ParticipationHooks($this->createRules()))
+      ->entityCreateAccess($account, ['entity_type_id' => 'node'], 'forum');
+    self::assertNotNull($createAccess);
+    self::assertTrue($createAccess->isForbidden(), 'No new contributed Forum topics are allowed.');
   }
 
   /**

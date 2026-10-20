@@ -74,11 +74,14 @@ Consulte [inventário de remoção](docs/MIGRATION-REMOVAL.md) e
 
 A dev.5 mantém a retirada em andamento: os Comments diretos de `article`/`blog`
 estão instalados; os hooks e a API capazes de sincronizar tópicos legados foram
-removidos. O índice público do novo bundle está ativo na raiz do Runtime de teste
-e `/criar-topico` verifica Entity Create Access. Ainda faltam submissão
-persistida/homologação visual, migrar consumidores contrib restantes e validar
-restore point antes de excluir conteúdo/desinstalar o módulo. Releases Portal,
-User e tema conservam linhas próprias; o roadmap detalha as próximas entregas.
+removidos. Por F-D33, o Runtime de teste está sem Nodes/Comments/termos antigos
+e sem vínculos editoriais para eles; as 12 categorias novas permanecem. Um
+backup integral atual foi criado e validado por `gzip -t`. O uninstall e a
+remoção Composer aguardam a retirada de consumidores PHP/Views/tema e revisão
+dos efeitos de configuração listados em `docs/MIGRATION-REMOVAL.md`. O índice
+público do novo bundle está ativo na raiz do Runtime e `/criar-topico` verifica
+Entity Create Access. Releases Portal, User e tema conservam linhas próprias;
+o roadmap detalha as próximas entregas.
 
 A lista personalizada `/discussoes/nao-lidas` também mostra o número de novas
 respostas por tópico e liga diretamente à primeira resposta não lida. Essa

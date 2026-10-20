@@ -21,9 +21,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 /**
  * Acesso do Fórum e isolamento administrativo das discussões contextuais.
  *
- * O moderador pode ocultar, despublicar ou excluir tópicos e comentários.
- * Conteúdo Growroom com autoria histórica fica congelado, mesmo para
- * administradores; conteúdo ativo novo exige e-mail confirmado para moderação.
+ * O moderador pode ocultar, despublicar ou excluir conteúdo ativo novo.
+ * Bundles restaurados do Growroom ficam fora da moderação e seus comentários
+ * permanecem fechados. Bundles atuais marcados com autor histórico também
+ * ficam congelados; conteúdo ativo novo exige e-mail confirmado para moderação.
  *
  * No bundle novo, o editor confirmado também recebe acesso contextual sem
  * permissões genéricas de edição/exclusão. A própria autoria segue as
@@ -32,7 +33,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class ForumModerationHooks {
 
-  private const MODERATION_OPS = ['update', 'delete'];
+  private const MODERATION_OPS = ['update', 'delete', 'approve', 'revert revision', 'delete revision'];
 
   public function __construct(
     #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
@@ -45,11 +46,12 @@ final class ForumModerationHooks {
    */
   #[Hook('entity_access')]
   public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
-    if (in_array($operation, ['update', 'delete', 'approve'], TRUE) && $this->isGrowroomHistoric($entity)) {
+    if ($this->isGrowroomHistoric($entity)
+      && (in_array($operation, self::MODERATION_OPS, TRUE) || $operation === 'create')) {
       return AccessResult::forbidden('O acervo histórico do Growroom é somente leitura.')
         ->addCacheableDependency($entity);
     }
-    if (!in_array($operation, self::MODERATION_OPS, TRUE) || $account->hasPermission('bypass node access')) {
+    if (!in_array($operation, ['update', 'delete'], TRUE) || $account->hasPermission('bypass node access')) {
       return NULL;
     }
     $topicoLegado = $entity instanceof NodeInterface && $entity->bundle() === 'forum';
@@ -79,15 +81,23 @@ final class ForumModerationHooks {
   }
 
   /**
-   * Closes replies on historic Growroom topics, including on import.
+   * Closes replies on legacy topic bundles while the contrib is being removed.
    */
   #[Hook('entity_presave')]
   public function closeGrowroomHistoricDiscussion(EntityInterface $entity): void {
-    if ($entity instanceof NodeInterface
-      && $entity->bundle() === 'aculta_forum_topic'
-      && $this->hasHistoricAuthor($entity)
-      && $entity->hasField('field_aculta_discussion')) {
-      $field = $entity->get('field_aculta_discussion');
+    if (!$entity instanceof NodeInterface) {
+      return;
+    }
+
+    $fieldName = match (TRUE) {
+      $entity->bundle() === 'forum' && $entity->hasField('comment_forum') => 'comment_forum',
+      $entity->bundle() === 'aculta_forum_topic'
+        && $this->hasHistoricAuthor($entity)
+        && $entity->hasField('field_aculta_discussion') => 'field_aculta_discussion',
+      default => NULL,
+    };
+    if ($fieldName !== NULL) {
+      $field = $entity->get($fieldName);
       $values = $field->getValue() ?: [[]];
       foreach ($values as &$value) {
         $value['status'] = CommentingStatus::Closed->value;
@@ -143,10 +153,16 @@ final class ForumModerationHooks {
    */
   private function isGrowroomHistoric(EntityInterface $entity): bool {
     if ($entity instanceof NodeInterface) {
-      return $entity->bundle() === 'aculta_forum_topic'
-        && $this->hasHistoricAuthor($entity);
+      return $entity->bundle() === 'forum'
+        || ($entity->bundle() === 'aculta_forum_topic' && $this->hasHistoricAuthor($entity));
     }
-    if (!$entity instanceof CommentInterface || $entity->bundle() !== 'aculta_discussion_post') {
+    if (!$entity instanceof CommentInterface) {
+      return FALSE;
+    }
+    if ($entity->bundle() === 'comment_forum') {
+      return TRUE;
+    }
+    if ($entity->bundle() !== 'aculta_discussion_post') {
       return FALSE;
     }
     if ($this->hasHistoricAuthor($entity)) {
@@ -154,8 +170,8 @@ final class ForumModerationHooks {
     }
     $host = $entity->getCommentedEntity();
     return $host instanceof NodeInterface
-      && $host->bundle() === 'aculta_forum_topic'
-      && $this->hasHistoricAuthor($host);
+      && ($host->bundle() === 'forum'
+        || ($host->bundle() === 'aculta_forum_topic' && $this->hasHistoricAuthor($host)));
   }
 
   /**

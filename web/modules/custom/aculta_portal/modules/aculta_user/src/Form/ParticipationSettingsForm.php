@@ -43,14 +43,6 @@ final class ParticipationSettingsForm extends ConfigFormBase {
       '#default_value' => (int) $config->get('topico_comentarios_minimos'),
       '#min' => 0,
     ];
-    $form['primeiro_comentario_moderado'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Moderar o primeiro comentário no Fórum legado'),
-      '#default_value' => (bool) $config->get('primeiro_comentario_moderado'),
-      '#description' => $this->t(
-        'Controla o bundle antigo comment_forum durante a retirada do módulo Forum.',
-      ),
-    ];
     $form['primeiro_comentario_discussao_moderado'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Moderar comentários iniciais nos contextos de discussão, exceto LMS'),
@@ -80,7 +72,6 @@ final class ParticipationSettingsForm extends ConfigFormBase {
     $this->config('aculta_user.settings')
       ->set('topico_limite_ativo', (bool) $form_state->getValue('topico_limite_ativo'))
       ->set('topico_comentarios_minimos', max(0, (int) $form_state->getValue('topico_comentarios_minimos')))
-      ->set('primeiro_comentario_moderado', (bool) $form_state->getValue('primeiro_comentario_moderado'))
       ->set('primeiro_comentario_discussao_moderado', (bool) $form_state->getValue('primeiro_comentario_discussao_moderado'))
       ->set('bloqueio_ate_aprovacao', (bool) $form_state->getValue('bloqueio_ate_aprovacao'))
       ->set('papeis_isentos', array_values(array_filter((array) $form_state->getValue('papeis_isentos'))))

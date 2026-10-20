@@ -39,3 +39,15 @@ function aculta_user_update_10003(): void {
     $manager->installFieldStorageDefinition($name, 'aculta_badge_award', 'aculta_user', $field);
   }
 }
+
+/**
+ * Removes the obsolete moderation toggle for the contributed Forum bundle.
+ */
+function aculta_user_update_10004(): string {
+  \Drupal::configFactory()->getEditable('aculta_user.settings')
+    ->clear('primeiro_comentario_moderado')
+    ->save();
+
+  return (string) t('Removed the obsolete first-comment setting for Drupal Forum.');
+}
+

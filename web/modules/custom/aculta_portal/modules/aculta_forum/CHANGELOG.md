@@ -1,3 +1,19 @@
+## 0.1.0-dev.45 — limpeza do conteúdo antigo no Runtime de teste — 2026-10-20
+
+- Por decisão F-D33, foram removidos pela Entity API os 30 Nodes `forum`, os
+  oito termos do vocabulário `forums` e os 12 vínculos `field_discussao` nas
+  publicações; não havia Comments `comment_forum`. Os 12 termos da árvore nova
+  `aculta_forum_categories` e o conteúdo editorial foram preservados.
+- Backup integral `aculta_runtime` em diretório privado, modo 0600,
+  `gzip -t` PASS; SHA-256 e contagens pré/pós documentadas em
+  `docs/MIGRATION-REMOVAL.md`. Verificações encontraram zero tópicos,
+  comentários, termos, referências, revisões, aliases, flaggings e linhas nas
+  tabelas do Forum contrib. Restore isolado não executado.
+- O validador de uninstall não reporta blockers; o dry-run de dependências
+  ainda aponta alterações em campo da Revista e papéis. Consumers/config/tema,
+  uninstall oficial e remoção Composer seguem pendentes. RUNTIME STATUS:
+  PARTIAL.
+
 ## Validação adicional — ciclo de moderação das contagens — 2026-10-20
 
 - `ForumTopicMoverKernelTest` agora exercita o agregado oficial do Comment Core

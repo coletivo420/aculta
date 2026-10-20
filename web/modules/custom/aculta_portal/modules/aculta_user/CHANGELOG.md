@@ -1,3 +1,17 @@
+## 0.4.0-dev.41 — regras de participação sem Forum contrib — 2026-10-20
+
+- A moderação do primeiro comentário usa somente o Comment compartilhado dos
+  contextos não LMS; `comment_forum` deixa de ser uma política de participação.
+  A criação de novos Nodes `forum` fica negada até a retirada oficial do
+  módulo contrib.
+- Update 10004 removeu do Runtime de teste a configuração persistida obsoleta;
+  `updatedb:status` ficou limpo e a chave não está mais salva.
+- Testes Unit do isolamento histórico: 13/80 PASS; Kernel da política pública:
+  7/85 PASS no banco dedicado `aculta_simpletest`. PHP 8.4.26 no ambiente de
+  teste; execução em PHP 8.5 continua pendente. PHPCS nos arquivos alterados,
+  Portal Drupal 11+ (970), fronteira (1393), mapa módulo/tema (154) e
+  `git diff --check` PASS.
+
 ## Validação adicional — respostas nos tópicos próprios do Fórum — 2026-10-20
 
 - `ActivityControllerKernelTest` chama `view('forum')` com domínio/account e

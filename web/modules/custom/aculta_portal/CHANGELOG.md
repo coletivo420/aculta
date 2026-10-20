@@ -5,7 +5,10 @@
   `TypeError` e HTTP 500 em páginas autenticadas da Conta.
 - Runtime de teste: a factory do controlador instancia via Drush, o cache foi
   reconstruído, e as raízes públicas verificadas respondem 200. O endpoint
-  autenticado não foi repetido por HTTP; RUNTIME STATUS: PARTIAL.
+  autenticado não foi repetido por HTTP; RUNTIME STATUS: PARTIAL. PHP lint,
+  Portal Drupal 11+ (970), fronteira (1393) e mapa (154) PASS. PHPCS completo
+  de `PortalController.php` ainda aponta violações preexistentes fora da linha
+  alterada.
 
 ## 0.4.0-dev.208 — apresentação navegável das categorias do Fórum — 2026-10-20
 

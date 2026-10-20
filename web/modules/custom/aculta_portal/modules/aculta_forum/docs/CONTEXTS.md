@@ -6,13 +6,13 @@ provider do Fórum público. Providers de Publicações, LMS e Wiki continuam po
 suas fases de integração; nenhuma entidade é tratada como contexto só por slug,
 nome de bundle enviado pelo cliente ou presença de dados arbitrários.
 
-**Inicialização limpa:** os novos tópicos e comentários começam sem conteúdo
-copiado do módulo Drupal Forum contribuído. Nodes e termos desse módulo serão
-removidos na janela segura de retirada, após os novos fluxos estarem instalados
-e verificados. Separadamente, o acervo histórico do Growroom será restaurado no
-novo modelo com autoria histórica e em modo somente leitura; ele não é conteúdo
-do módulo Drupal Forum. Conteúdo editorial hospedeiro permanece, e tópicos de
-sincronização da Revista não são convertidos em tópicos públicos nem em comentários.
+**Inicialização limpa:** por F-D33, Nodes `forum`, Comments `comment_forum`,
+termos do vocabulário `forums` e vínculos antigos `field_discussao` foram
+removidos do Runtime de teste em 2026-10-20; nenhum tópico ou comentário antigo
+será importado. A extensão contrib ainda aguarda retirada oficial depois da
+auditoria de consumidores/configuração. As 12 categorias do vocabulário novo
+`aculta_forum_categories` permanecem. Conteúdo editorial hospedeiro e seus
+comentários diretos foram preservados.
 
 ## Interface do contexto
 
@@ -63,9 +63,9 @@ usar apenas `comment_type` para autorizar ou listar conteúdo contextual.
 | `aculta_forum_topic` | Node para tópico independente público | Bundle/Comment/Taxonomy e campo `field_domain_source` em `config/install` e Config Sync; formulário title/body/categoria e displays full/teaser aplicados no Runtime de teste. Atribuição de origem usa o domínio canônico do purpose `forum`; criação falha fechada fora desse purpose ou se ele não existir. Nenhum tópico criado. Permissões de criação e gestão do próprio tópico declaradas na dev.6. `content_editor` modera tópicos de outros autores pelo access hook do `aculta_user`, que exige confirmação real de e-mail. |
 | `aculta_lms_topic` | Node para discussão pedagógica reservada | Planejado para adapter LMS; dependência opcional evita ciclo Forum↔LMS. |
 | `aculta_discussion_post` | bundle Comment compartilhado | Configuração de Comment em Node preparada na dev.4; suporte reutilizável em outros bundles Node ainda requer prova Kernel na dev.7/integrações. |
-| `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | Configuração de instalação adicionada na dev.4; a substituição do vocabulário `forums` fica para migração autorizada. |
+| `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | 12 categorias novas no Runtime de teste; as 8 categorias antigas `forums` foram apagadas conforme F-D33. |
 | `field_aculta_discussion` | campo Comment em Nodes hospedeiros suportados | Configuração do tópico público e fields de `article`/`blog` estão em Config Sync; as duas instâncias editoriais e os displays full foram aplicados no Runtime de teste. Teste Kernel em dev.5 provou o storage compartilhado nos três bundles. |
-| `field_autor_legado` | referência a `aculta_legado_autor` em tópico/resposta Growroom restaurados | Storage de Node/Comment pertence ao `aculta_user`; instâncias de `aculta_forum_topic` e `aculta_discussion_post` acompanham `aculta_forum`. Conteúdo marcado é imutável; tópico permanece fechado. |
+| `field_autor_legado` | referência a `aculta_legado_autor` em autoria histórica validada | Storage pertence ao `aculta_user`; instâncias previstas em bundles ACULTA só entram com futura importação explicitamente aprovada. O Runtime atual não contém conteúdo legado. |
 
 Todos os machine names ficam abaixo do limite local de 32 caracteres, mas isso
 deve ser validado automaticamente antes de registrar configuração. Esta tabela
@@ -93,7 +93,7 @@ Views permanece responsável pela consulta, filtros fixos, acesso e cache. Para 
 - Um único fluxo de comentários na própria página; nunca criar tópico em outro Node.
 - O provider atende apenas bundles `article` e `blog` que tenham o campo compartilhado; as duas field instances e os displays full estão aplicados no Runtime de teste, sem comentários criados.
 - Leitura combina Node Entity Access com field access. Escrita requer leitura permitida, campo aberto e permissão `post comments`; moderação combina leitura e `administer comments`. As decisões variam por `user.permissions` e carregam cacheability do host/campo.
-- `aculta_user` aplica moderação do primeiro comentário compartilhado a qualquer Node com `field_aculta_discussion`, incluindo Fórum, Revista, Wiki e novos contextos. O host `aculta_lms_topic` não é moderado, mas um comentário LMS publicado conta como participação aprovada nos demais contextos e retira o bloqueio temporário de criação de tópico. A opção fica em `/painel-administrativo/configuracoes/aculta/portal/participacao`; o bundle legado `comment_forum` conserva seu controle separado durante a migração.
+- `aculta_user` aplica moderação do primeiro comentário compartilhado a qualquer Node com `field_aculta_discussion`, incluindo Fórum, Revista, Wiki e novos contextos. O host `aculta_lms_topic` não é moderado, mas um comentário LMS publicado conta como participação aprovada nos demais contextos e retira o bloqueio temporário de criação de tópico. A opção fica em `/painel-administrativo/configuracoes/aculta/portal/participacao`. Os bundles contrib `forum`/`comment_forum` estão vazios no Runtime de teste após F-D33; criação legado permanece bloqueada até o uninstall. O toggle antigo de moderação do Forum contrib é obsoleto e ignorado.
 - O provider editorial e a política de moderação estão cobertos por testes Unit/Kernel isolados. `aculta_magazine` aplica em memória o status default configurado a Nodes anteriores sem status persistido; status explícitos e estatísticas são preservados. Runtime editorial PARTIAL: campo/display presente e status padrão verificado; renderização HTTP e envio permanecem pendentes.
 - Publicação/despublicação e permissões editoriais condicionam leitura/escrita.
 - Canonical do comentário preserva o caminho editorial e permalink/âncora.

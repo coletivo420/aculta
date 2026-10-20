@@ -34,14 +34,14 @@ Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula me
 - **Precisa ter `email_confirmed`.** Sem ele, não recebe acesso aos níveis restritos nem poderes de moderação. Decisão de
   2026-10-16.
 - Como moderador do Fórum, pode **ocultar, despublicar ou excluir** tópicos e comentários.
-- Pode mover tópicos novos do Growroom entre categorias pela permissão `move aculta forum topics`; isso não concede edição do bundle e é negado para o acervo histórico. A permissão efetiva continua condicionada à confirmação de e-mail pela hierarquia vigente.
-- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. O acervo histórico importado do Growroom é congelado: não pode ser editado, excluído, aprovado/desaprovado ou reaberto, inclusive por `content_editor` e `administrator` (F-D31).
+- Pode mover tópicos novos do Growroom entre categorias pela permissão `move aculta forum topics`; isso não concede edição do bundle. A permissão efetiva continua condicionada à confirmação de e-mail pela hierarquia vigente.
+- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. O conteúdo legado dos bundles `forum`/`comment_forum` foi removido do Runtime de teste em 2026-10-20 por decisão F-D33; o uninstall do contrib e a retirada dos consumidores permanecem pendentes.
 - Concedido somente pelo administrador.
 
 ## 3. Papel `administrator`
 
 - Concedido somente pelo administrador.
-- Tem bypass administrativo de modo geral. A restrição F-D31 do acervo Growroom é exceção: conteúdo histórico importado permanece imutável para qualquer papel.
+- Tem bypass administrativo de modo geral. O Runtime de teste está sem conteúdo nos bundles legados `forum`/`comment_forum` desde a limpeza F-D33; a implementação contrib permanece somente enquanto os consumidores/configurações forem retirados com segurança.
 - É o único que atribui papéis administrativos, edita contas e confirma e-mail manualmente. Essas ações não ficam com
   nenhum outro papel.
 
@@ -103,8 +103,10 @@ homologação funcional.
   contexto não LMS, mas deixa de bloquear depois de uma participação publicada
   no LMS. O limite mínimo de criação continua contando somente comentários do
   Fórum público.
-- O controle legado do bundle `comment_forum` permanece separado durante a
-  retirada de `drupal/forum`. Comment direto está instalado em `article` e
+- Bundles `forum`/`comment_forum` são estruturas legadas do contrib; o conteúdo
+  do Runtime de teste foi apagado conforme F-D33, não recebe moderação inicial
+  nem novos tópicos, e aguarda a retirada oficial da extensão e consumidores.
+  O Comment compartilhado está instalado em `article` e
   `blog` no Runtime de teste; formulário foi renderizado em memória para a
   conta de teste, mas HTTP/envio de comentário segue sem homologação.
 
@@ -129,7 +131,7 @@ Não envia nenhum e-mail. Cada confirmação é registrada no log do canal `acul
 Autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na lista de usuários do
 administrador. A autoria fica na entidade própria `aculta_legado_autor`, acessível só pela permissão
 **administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para a autoria pelo campo
-`field_autor_legado`. No novo modelo, somente os bundles `aculta_forum_topic` e `aculta_discussion_post` com essa referência pertencem ao acervo Growroom imutável: não podem ser editados, excluídos, aprovados/desaprovados ou reabertos por nenhum papel. `aculta_user` nega access a update/delete/approve, fecha a discussão em todo presave e protege contra a moderação em lote do Core. A mesma referência já presente nos bundles contrib `forum` e `comment_forum` não os converte em importação Growroom; esses bundles são uma base separada, a ser removida pelo plano seguro de retirada.
+`field_autor_legado`. O responsável determinou F-D33 e o Runtime de teste não contém mais Nodes `forum`, Comments `comment_forum`, termos `forums` nem referências editoriais antigas. A extensão contrib ainda fornece estruturas vazias até o uninstall seguro. Nenhum conteúdo legado será importado para o novo fórum; autores históricos continuam distintos de contas Drupal e não são convertidos em usuários ativos.
 
 ## 9. Mudanças em relação à versão anterior e pendências
 

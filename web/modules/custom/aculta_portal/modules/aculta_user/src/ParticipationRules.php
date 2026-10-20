@@ -20,11 +20,7 @@ use Drupal\node\NodeInterface;
  */
 final class ParticipationRules {
 
-  public const COMMENT_TYPE = 'comment_forum';
-
   public const DISCUSSION_COMMENT_TYPE = 'aculta_discussion_post';
-
-  public const TOPIC_TYPE = 'forum';
 
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
@@ -38,7 +34,6 @@ final class ParticipationRules {
     return $this->configFactory->get('aculta_user.settings')->getRawData() + [
       'topico_limite_ativo' => TRUE,
       'topico_comentarios_minimos' => 10,
-      'primeiro_comentario_moderado' => TRUE,
       'primeiro_comentario_discussao_moderado' => TRUE,
       'bloqueio_ate_aprovacao' => TRUE,
       'papeis_isentos' => ['content_editor', 'administrator'],
@@ -61,27 +56,6 @@ final class ParticipationRules {
   public function isExempt(AccountInterface $account): bool {
     $exempt = $this->settings()['papeis_isentos'];
     return array_intersect($exempt, $account->getRoles()) !== [];
-  }
-
-  /**
-   * Number of published legacy Forum comments by the account.
-   */
-  public function publishedCount(int $uid): int {
-    return (int) $this->commentQuery($uid, TRUE)->count()->execute();
-  }
-
-  /**
-   * Number of unpublished legacy Forum comments by the account.
-   */
-  public function pendingCount(int $uid): int {
-    return (int) $this->commentQuery($uid, FALSE)->count()->execute();
-  }
-
-  /**
-   * Whether the account has pending legacy comments and no published ones.
-   */
-  public function firstCommentPending(int $uid): bool {
-    return $this->publishedCount($uid) === 0 && $this->pendingCount($uid) > 0;
   }
 
   /**
@@ -149,18 +123,6 @@ final class ParticipationRules {
     }
 
     return $query;
-  }
-
-  /**
-   * Builds the legacy Forum comment query used during migration.
-   */
-  private function commentQuery(int $uid, bool $published) {
-    return $this->entityTypeManager->getStorage('comment')->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('comment_type', self::COMMENT_TYPE)
-      ->condition('entity_type', 'node')
-      ->condition('uid', $uid)
-      ->condition('status', $published ? 1 : 0);
   }
 
 }
