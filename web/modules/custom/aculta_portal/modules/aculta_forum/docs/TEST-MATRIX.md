@@ -20,11 +20,17 @@
   `/home/aculta/private/aculta/runtime-config-backups/forum-dev54-20261020/`,
   importação parcial somente da View e cache rebuild PASS. Execução real lista
   4 categorias raiz antes de 8 filhas agrupadas; `/categorias` HTTP 200 e 0
-  tópicos/Comments. Nenhum conteúdo criado/alterado.
+  tópicos/Comments. Nenhum conteúdo criado/alterado. `config:status` ainda
+  marca a View como `Different` apenas por ordem de chaves em `display` e em
+  `block_landing.display_options`; comparação normalizada entre active e Sync
+  confirma os mesmos valores, incluindo o sort novo.
 - Firefox/X11: capturas privadas em
   `/home/aculta/private/aculta/visual-tests/forum-dev53-20261020/` para 1024,
-  768 e Responsive Design Mode 320 px; raízes primeiro, filhos agrupados e sem
-  overflow horizontal visível. Tópicos e sessão autenticada seguem sem fixture.
+  768 e Responsive Design Mode 320 px (`categories-grouped-1024.png`,
+  `categories-grouped-768.png`, `categories-responsive-mode.png`); raízes
+  primeiro, filhos agrupados e sem overflow horizontal visível. A sessão de
+  390 px fora do modo Responsive já está registrada na rodada dev.52. Tópicos e
+  sessão autenticada seguem sem fixture.
   RUNTIME STATUS: PARTIAL.
 
 ## dev.53 — citação contextual de comentário

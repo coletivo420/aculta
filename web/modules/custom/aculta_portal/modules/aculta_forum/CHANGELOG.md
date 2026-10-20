@@ -24,7 +24,10 @@
   (SHA-256 `44b2578fdd372b4815ad46af65252e3a36fa79b8b167ce33d16cb69e13816521`);
   importação parcial processou somente essa View, cache rebuild PASS, listagem
   da API ordenou 4 raízes e 8 filhos por pai, `/categorias` HTTP 200 e 0 Nodes
-  `aculta_forum_topic`/0 Comments `aculta_discussion_post`.
+  `aculta_forum_topic`/0 Comments `aculta_discussion_post`. `config:status` ainda
+  marca a View como `Different` porque a ordem de chaves de `display` e de
+  `block_landing.display_options` difere; arrays normalizados do Runtime e Sync
+  têm os mesmos valores, sem drift semântico nessa View.
 - Firefox/X11: categorias conferidas em 1024 e 768 px, mais viewport 320 px no
   Responsive Design Mode; raízes antes dos filhos, grupo/ordem coerentes e sem
   overflow horizontal observado. Capturas privadas indexadas em
