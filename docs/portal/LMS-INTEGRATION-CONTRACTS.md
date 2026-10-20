@@ -11,6 +11,14 @@ Revisado em 2026-10-20. Contratos de integração; a implementação depende das
 
 O motor `aculta_forum` e o adapter LMS já existem. O adapter tem bundle Node, campo Comment compartilhado, relações Group de curso/turma, bloqueio direto de Node sem relação Group e permissões Group Node. Config Sync atribui a permissão somente a course teacher/member/creator e class member, e herda `grade students` do curso para a turma. Kernel usa esses Group roles reais e prova membership, Comment, moderação, metadados de cache por usuário/permissão e instalação do conjunto padrão; Unit valida os IDs e a extensão ativa. No Runtime de teste, `aculta_forum_lms`/`gnode` estão habilitados e uma importação parcial aplicou somente os quatro Group roles e `lms_classes.settings`. A prévia global de Config Sync contém alterações não relacionadas e não deve ser importada integralmente. Não há Nodes/Comments de discussão no Runtime, então autorização por conteúdo HTTP e moderação visual ainda não foram exercitadas. Ver README do adapter, `aculta_forum/docs/CONTEXTS.md` e roadmap.
 
+O Core exige `administer comments` para ver Comments não publicados e executar
+`approve`. O adapter passou a conceder apenas `view`/`approve` a Comments
+`field_aculta_discussion` cujo host resolve para o contexto LMS e cujo Educador
+tem `grade students` no curso atual. `update`, `delete` e a permissão global
+continuam fora desse grant. As filas por status em
+`/painel-administrativo/lms/forum` ainda devem aplicar argumento Group fixo na
+View e acesso contextual na rota; não liberar listagem geral de Comments.
+
 ## Matriz de ownership e dependências
 
 | Necessidade | API/dono | Evento/dado que pode cruzar | Proibições |

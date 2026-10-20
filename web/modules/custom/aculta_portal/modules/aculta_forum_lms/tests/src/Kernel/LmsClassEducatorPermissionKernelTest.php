@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum_lms\Kernel;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider;
+use Drupal\aculta_forum_lms\Hook\LmsCommentModerationAccessHooks;
 use Drupal\aculta_forum_lms\Hook\LmsDiscussionModerationHooks;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
@@ -265,7 +266,13 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     self::assertSame('Student reply', $comment->get('comment_body')->value);
 
     $resolver = new DiscussionContextResolver([$provider]);
+    $commentAccessHook = new LmsCommentModerationAccessHooks($resolver);
     $moderationHooks = new LmsDiscussionModerationHooks($resolver);
+    self::assertTrue($commentAccessHook->entityAccess($comment, 'view', $educator)->isAllowed());
+    self::assertTrue($commentAccessHook->entityAccess($comment, 'approve', $educator)->isAllowed());
+    self::assertTrue($commentAccessHook->entityAccess($comment, 'update', $educator)->isNeutral());
+    self::assertTrue($commentAccessHook->entityAccess($comment, 'view', $student)->isNeutral());
+    self::assertTrue($commentAccessHook->entityAccess($comment, 'approve', $student)->isNeutral());
     $rejectedItems = $comment->get('field_aculta_rejected');
     $rejectedDefinition = $rejectedItems->getFieldDefinition();
     self::assertTrue($moderationHooks->entityFieldAccess('edit', $rejectedDefinition, $educator, $rejectedItems)->isAllowed());

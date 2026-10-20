@@ -5,6 +5,11 @@ privado para Nodes `aculta_lms_topic` e delega a
 autorização do marcador de moderação aos Educadores com `grade students` no
 curso contextual.
 
+Desde a dev.15, Educadores com `grade students` no curso contextual podem ver
+Comments pendentes/rejeitados e executar a operação Core de aprovação no campo
+compartilhado. Essa concessão não abrange edição, exclusão ou a permissão global
+`administer comments`. A fila ainda não está exposta em rota/View.
+
 ## Estado
 
 Na dev.14 o adapter está listado na Config Sync junto a `gnode`. No Runtime de
@@ -86,6 +91,12 @@ types instaláveis. A dev.102 instala a configuração padrão via `ConfigInstal
 na fixture LMS/Group e confirma bundle, campo, relações e formatter, sem
 habilitar o módulo. Próximo: testar ciclo de ativação/desinstalação com o
 grafo completo de dependências, depois revisar rotas, Views, busca e filas.
+
+Na dev.15, Unit (16 testes / 165 assertions) e Kernel (1 teste / 62
+assertions) exercitam acesso `view`/`approve` para Educador e preservam o acesso
+Core para estudante; o Kernel reportou 37 depreciações de Core/contrib/LMS.
+Integração do hook carregado pelo Runtime, filas Views e autorização por
+conteúdo real continuam pendentes. RUNTIME STATUS: DEFERRED.
 
 Na dev.12, a fixture separa propriedade de membership: curso e turma pertencem
 a uma terceira conta; o Educador é membro com role contextual no curso, não é

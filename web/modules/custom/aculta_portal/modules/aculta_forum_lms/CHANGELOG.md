@@ -1,3 +1,14 @@
+## `0.1.0-dev.15` — permitir moderação contextual de Comments no LMS — 2026-10-20
+
+- Educadores com `grade students` no curso contextual podem ver Comments
+  pendentes/rejeitados e usar a operação Core `approve` em Comments ligados a
+  `field_aculta_discussion` de tópicos LMS. A permissão é avaliada pelo
+  `DiscussionContextResolver`, inclui cacheabilidade do contexto e não concede
+  `update`, `delete` nem `administer comments`.
+- Teste Unit verifica Educador versus estudante e restringe as operações; a
+  integração do hook com autorização real de entidades e filas Views segue para
+  Kernel/Functional. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.14` — sincronizar permissões contextuais LMS — 2026-10-20
 
 - `core.extension` passa a rastrear `aculta_forum_lms` e `gnode`. Importação

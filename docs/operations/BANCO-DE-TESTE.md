@@ -137,6 +137,14 @@ configurações de permissões e smoke HTTP foram confirmados; o Runtime usa
 `aculta_runtime`, nunca o banco dedicado desta suíte. RUNTIME STATUS: PARTIAL;
 ver o changelog do adapter para limites de configuração e acesso.
 
+Execução adicional em 2026-10-20: o adapter LMS Unit passou com 16 testes e
+165 assertions. `LmsClassEducatorPermissionKernelTest` passou com 1 teste e 62
+assertions após adicionar a concessão de `view`/`approve` de Comment ao
+Educador contextual, sem `update`/`delete`; foram emitidas 37 depreciações de
+Core/contrib/LMS. PHP CLI 8.4.26, abaixo do alvo 8.5. O novo hook foi invocado
+diretamente na fixture Kernel; registro automático em Runtime, filas e acesso
+com conteúdo real ainda não foram validados. RUNTIME STATUS: DEFERRED.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

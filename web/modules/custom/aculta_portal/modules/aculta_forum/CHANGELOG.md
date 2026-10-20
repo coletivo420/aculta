@@ -1,3 +1,12 @@
+## `0.1.0-dev.107` — permitir aprovação de comentários por Educadores LMS — 2026-10-20
+
+- O adapter `aculta_forum_lms` agora autoriza `view`/`approve` contextual de
+  Comments no LMS por `grade students`, sem conceder `update`, `delete` ou
+  `administer comments`. Testes Unit 16/165 e Kernel 1/62 PASS; 37
+  depreciações Core/contrib/LMS no Kernel.
+- Filas e rotas Views do LMS ainda não existem; integração do hook em Runtime
+  e acesso com conteúdo real seguem pendentes. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.106` — aplicar permissão contextual do adapter LMS — 2026-10-20
 
 - `core.extension` rastreia o adapter LMS e `gnode`; importação parcial

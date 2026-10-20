@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_forum_lms\Unit;
 use Drupal\aculta_forum\Context\DiscussionContextInterface;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum_lms\Hook\LmsCommentModerationAccessHooks;
 use Drupal\aculta_forum_lms\Hook\LmsDiscussionModerationHooks;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
@@ -57,6 +58,9 @@ final class LmsDiscussionModerationHooksTest extends UnitTestCase {
     $context = $this->createMock(DiscussionContextInterface::class);
     $context->method('getType')->willReturn('lms');
     $context->method('getModerationAccess')->willReturn(AccessResult::allowed());
+    $context->method('getCacheContexts')->willReturn([]);
+    $context->method('getCacheTags')->willReturn([]);
+    $context->method('getCacheMaxAge')->willReturn(-1);
     $provider = $this->createMock(DiscussionContextProviderInterface::class);
     $provider->method('supports')->with($host)->willReturn(TRUE);
     $provider->method('getContext')->with($host, $account)->willReturn($context);
@@ -76,6 +80,64 @@ final class LmsDiscussionModerationHooksTest extends UnitTestCase {
     $hook = new LmsDiscussionModerationHooks(new DiscussionContextResolver([]));
 
     self::assertTrue($hook->entityFieldAccess('edit', $field, $this->createMock(AccountInterface::class))->isNeutral());
+  }
+
+  /**
+   * Contextual Educators can view and approve LMS Comments, without editing.
+   */
+  public function testEducatorCommentAccessIsLimitedToViewAndApprove(): void {
+    $host = $this->createMock(NodeInterface::class);
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('getFieldName')->willReturn('field_aculta_discussion');
+    $comment->method('getCommentedEntity')->willReturn($host);
+    $comment->method('getCacheContexts')->willReturn([]);
+    $comment->method('getCacheTags')->willReturn([]);
+    $comment->method('getCacheMaxAge')->willReturn(-1);
+    $educator = $this->createMock(AccountInterface::class);
+
+    $context = $this->createMock(DiscussionContextInterface::class);
+    $context->method('getType')->willReturn('lms');
+    $context->method('getModerationAccess')->willReturn(AccessResult::allowed());
+    $context->method('getCacheContexts')->willReturn([]);
+    $context->method('getCacheTags')->willReturn([]);
+    $context->method('getCacheMaxAge')->willReturn(-1);
+    $provider = $this->createMock(DiscussionContextProviderInterface::class);
+    $provider->method('supports')->with($host)->willReturn(TRUE);
+    $provider->method('getContext')->with($host, $educator)->willReturn($context);
+    $hook = new LmsCommentModerationAccessHooks(new DiscussionContextResolver([$provider]));
+
+    self::assertTrue($hook->entityAccess($comment, 'view', $educator)->isAllowed());
+    self::assertTrue($hook->entityAccess($comment, 'approve', $educator)->isAllowed());
+    self::assertTrue($hook->entityAccess($comment, 'update', $educator)->isNeutral());
+    self::assertTrue($hook->entityAccess($comment, 'delete', $educator)->isNeutral());
+  }
+
+  /**
+   * Students retain Core access and cannot see unpublished LMS Comments.
+   */
+  public function testNonEducatorCommentAccessDoesNotOverrideCore(): void {
+    $host = $this->createMock(NodeInterface::class);
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('getFieldName')->willReturn('field_aculta_discussion');
+    $comment->method('getCommentedEntity')->willReturn($host);
+    $comment->method('getCacheContexts')->willReturn([]);
+    $comment->method('getCacheTags')->willReturn([]);
+    $comment->method('getCacheMaxAge')->willReturn(-1);
+    $student = $this->createMock(AccountInterface::class);
+
+    $context = $this->createMock(DiscussionContextInterface::class);
+    $context->method('getType')->willReturn('lms');
+    $context->method('getModerationAccess')->willReturn(AccessResult::forbidden());
+    $context->method('getCacheContexts')->willReturn([]);
+    $context->method('getCacheTags')->willReturn([]);
+    $context->method('getCacheMaxAge')->willReturn(-1);
+    $provider = $this->createMock(DiscussionContextProviderInterface::class);
+    $provider->method('supports')->with($host)->willReturn(TRUE);
+    $provider->method('getContext')->with($host, $student)->willReturn($context);
+    $hook = new LmsCommentModerationAccessHooks(new DiscussionContextResolver([$provider]));
+
+    self::assertTrue($hook->entityAccess($comment, 'view', $student)->isNeutral());
+    self::assertTrue($hook->entityAccess($comment, 'approve', $student)->isNeutral());
   }
 
 }
