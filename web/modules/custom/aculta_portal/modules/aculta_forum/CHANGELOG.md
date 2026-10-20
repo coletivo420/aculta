@@ -8,11 +8,11 @@
   parent/thread, recalcula estatísticas dos dois Nodes e invalida caches. Lock
   segue o padrão de chave Comment Core e relê o máximo da thread sob lock.
 - Kernel MariaDB dedicado: 4 testes/92 assertions PASS (árvore em três níveis,
-  estado pendente, legado bloqueado, estatísticas e rollback). 5 depreciações do
-  Domain contrib. Runtime: nenhuma alteração; o controle não deve ser habilitado
-  antes das integrações e testes restantes. A configuração
-  `aculta_forum.settings:comment_move_enabled` fica `false` por padrão, inclusive
-  no Config Sync. RUNTIME STATUS: DEFERRED.
+  estado pendente, legado bloqueado, estatísticas, flag disabled e rollback). 5
+  depreciações do Domain contrib. Runtime `toca`: cache rebuild PASS; rota e
+  serviço resolvidos via Drush; `comment_move_enabled` efetivamente false. Nenhuma
+  config ativa ou entidade foi alterada. Teste funcional de movimento permanece
+  DEFERRED; RUNTIME STATUS: PARTIAL.
 - Forum Unit: 50 testes/357 assertions PASS; PHPCS nos arquivos novos e gates
   Drupal 11+ (970), fronteira (1381), mapa (154), slugs (387) e hierarquia de
   papéis PASS. PHP CLI 8.4.26 (abaixo da baseline 8.5).

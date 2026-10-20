@@ -213,7 +213,9 @@ A transação reverte a árvore inteira se um save falhar. Kernel MariaDB valida
 árvore com três níveis, estado pendente, estatísticas dos dois hosts e rollback.
 O botão segue fora do Runtime até completar testes de concorrência, campos
 multicampo, History, permalink/âncora, busca, notificações, file usage, flags e
-teste Functional/browser. Não houve alteração de Runtime ou conteúdo.
+teste Functional/browser. No Runtime de teste, apenas `drush cr` e resolução
+read-only de rota/serviço foram executados; nenhuma configuração ativa ou
+entidade foi alterada.
 
 O gate operacional também é explícito: `aculta_forum.settings` define
 `comment_move_enabled: false` no install e Config Sync. `ForumCommentMover`
