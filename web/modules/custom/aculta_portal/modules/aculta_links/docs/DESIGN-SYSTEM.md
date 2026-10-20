@@ -1,0 +1,16 @@
+# Integração visual com ACULTA420
+
+ACULTA420 é dono da apresentação; o módulo fornece conteúdo, URLs, acesso e
+cacheabilidade. O SDC existente `social-links-page` já apresenta a landing em
+coluna mobile-first com tokens semânticos e modo de cor. Seu contrato deve
+suportar micropáginas sem mover política de acesso ou dados para Twig/JS.
+
+Para o editor inspirado no LinkStack, portar fluxos e hierarquia avaliados
+arquivo a arquivo, não copiar componentes Laravel em bloco. Usar o Bootstrap
+Component Design System, tokens, SDCs e bibliotecas Drupal existentes. Ordenação
+precisa ser acessível por teclado e ter fallback sem JavaScript. Preview não
+pode expor campos privados do `aculta_user`.
+
+Antes de mudança visual, ler `docs/portal/COMPONENT-DESIGN-SYSTEM.md`,
+`web/themes/custom/aculta420/docs/design-system.md` e regras de versão do tema;
+validar a fronteira Portal–tema. Assets externos exigem licença individual.
