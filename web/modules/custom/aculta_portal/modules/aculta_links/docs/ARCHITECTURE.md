@@ -2,7 +2,8 @@
 
 ## Fronteiras
 
-`aculta_links` será um módulo Drupal nativo dentro do Portal. Drupal User e
+`aculta_links` é um módulo Drupal nativo no diretório de submódulos do Portal.
+Drupal User e
 `aculta_user` continuam responsáveis por identidade, sessão, autenticação e
 perfil. Drupal Core e módulos existentes são donos de entidades e APIs que já
 oferecem conteúdo, Domains, Views, arquivos, cache, Forms e permissões. O
@@ -14,25 +15,25 @@ resolução de domínio paralelos.
 
 ## Responsabilidades separadas
 
-1. **Destino/link reutilizável:** destino externo validado ou referência para
-   entidade/rota interna, rótulo alternativo e estado; revisar se o Core Link
-   field já satisfaz cada caso.
-2. **Micropágina:** proprietário Drupal, slug, identidade, aparência e
-   publicação.
-3. **Item de página:** posição, tipo de apresentação, destino/referência,
-   ativação e agendamento.
+1. **Destino/link reutilizável (`aculta_link`):** campo Link do Core (URI interna
+   ou externa), título e publicação; revisões e proprietário Drupal.
+2. **Micropágina (`aculta_link_page`):** proprietário Drupal, slug, título,
+   apresentação textual e publicação em rascunho por padrão.
+3. **Item de página (`aculta_link_item`):** referências tipadas à página e ao
+   destino, posição, rótulo, ativação e agendamento futuro.
 4. **Evento estatístico:** evento minimizado, retenção e processamento
    assíncrono quando volume e confiabilidade justificarem.
 
-Não fundir essas tabelas por conveniência. Não criar entidade Link redundante
-antes de comparar Linky, Drupal Link Field e a necessidade concreta.
+Não fundir essas responsabilidades por conveniência. O Linky serviu como
+referência para entidade/revisões; sua dependência Dynamic Entity Reference não
+foi adicionada. O campo Link Core atende o destino URI sem uma dependência.
 
 ## Caminho de implantação
 
 - 0.1.0: auditoria e decisão, sem código upstream copiado ou mudança de Runtime.
-- 0.2.0: transferir primeiro a landing e sua configuração ao submódulo,
-  mantendo endpoint e dados atuais; depois implementar somente entidades
-  justificadas pela análise de API/licença.
+- 0.2.0: entidades base iniciadas sem ativar o módulo. Antes de habilitar ou
+  publicar páginas, transferir a landing e sua configuração ao submódulo,
+  mantendo endpoint e dados atuais, paridade e rollback documentados.
 - Fases seguintes: editor, apresentação, métricas e ferramentas.
 
 Cada substituição será por fluxo, com paridade e reversão documentadas. Conteúdo

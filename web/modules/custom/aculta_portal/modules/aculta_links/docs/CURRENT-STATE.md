@@ -7,7 +7,8 @@
   assunto é o Fórum; não foi criada PR para Links.
 - HEAD inicial da auditoria: `1d54c26faf4ca81f00deea6344449bdc97ee53b8`.
 - O working tree e o index estavam limpos no início. A branch contém trabalho de
-  outras frentes; esta entrega altera somente a documentação/fundação de Links.
+  outras frentes; o commit inicial de Links foi documental. A fase 0.2 começa
+  agora com entidades próprias, sem habilitação no Runtime.
 
 ## Implementação encontrada
 
@@ -52,6 +53,19 @@ com dados/editoria antes de qualquer migração.
 - `aculta_user` disponibiliza links pessoais em perfil público conforme sua
   política de visibilidade; não é o mesmo produto que `links.aculta.org`.
 
+## Fundação de dados 0.2.0 em desenvolvimento
+
+- `aculta_link`: destino pelo campo Link Core, dono Drupal User, publicação,
+  Views data e revisão.
+- `aculta_link_page`: título, slug, apresentação e dono; páginas começam
+  despublicadas.
+- `aculta_link_item`: referência à página/destino, rótulo, descrição, ordem e
+  ativação; o access handler confere ownership dos dois alvos.
+- Access de páginas e destinos permanece privado, sem canonical pública,
+  formulários ou listagem até integração de rota e domínio.
+- Testes Unit e Kernel passam no banco dedicado. Módulo não instalado,
+  configuração de produção não alterada e landing atual preservada.
+
 ## Pendências para a migração
 
 1. Inventariar conteúdo/valores da página no Runtime documentado antes de uma
@@ -59,6 +73,7 @@ com dados/editoria antes de qualquer migração.
 2. Migrar formulário, configuração e presenters para `aculta_links` sem mudar
    rota, URL, domínio, conteúdo ou apresentação.
 3. Atualizar consumidores do Portal de forma atômica e demonstrar paridade.
-4. Só depois introduzir entidades de micropágina/itens e editor LinkStack-like.
+4. As entidades base existem em código; finalizar formulários/listagem seguros,
+   atualizar documentação e validá-las antes de habilitar o módulo.
 5. Resolver a ambiguidade de licença da tag LinkStack antes de copiar qualquer
    asset ou código.

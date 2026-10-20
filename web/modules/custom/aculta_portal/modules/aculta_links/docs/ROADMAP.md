@@ -9,16 +9,18 @@ Inventário local, pesquisa de referências e licenças, matriz, integração,
 segurança e modelo proposto. Sem remover conteúdo ou alterar Runtime. Esta
 entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 
-## 0.2.0 — migração preservadora e entidades base
+## 0.2.0 — migração preservadora e entidades base (em andamento)
 
 1. Transferir formulário, configuração, presenters e hooks da landing para
    `aculta_links`, mantendo URL, conteúdo, canais e botões.
 2. Atualizar integração neutra Portal–tema e rota administrativa, com paridade e
    rollback demonstrados antes de corte.
-3. Fechar análise de arquivos Linky e licença LinkStack. Implementar modelo
-   mínimo de link/micropágina/item somente após provar necessidade perante as
-   APIs existentes.
-4. Testar access, revisão, slug, cache, Domain, reversão e configuração; papéis
+3. As três entidades base estão iniciadas (`aculta_link`, `aculta_link_page`,
+   `aculta_link_item`) com revisões e acesso privado; completar formulários e
+   listagem com filtros de proprietário, publicação e histórico.
+4. Fechar a revisão arquivo a arquivo do Linky e a licença por arquivo do
+   LinkStack antes de copiar qualquer código/asset.
+5. Testar access, revisão, slug, cache, Domain, reversão e configuração; papéis
    não recebem permissões automaticamente.
 
 ## 0.3.0 — dashboard e editor

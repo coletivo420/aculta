@@ -1,9 +1,10 @@
 # ACULTA Links (`aculta_links`)
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
-purpose `links` em micropáginas gerenciáveis. Versão declarada: `0.1.0-dev.1`.
-Esta fundação é documental e permanece desabilitada; não registra rotas,
-entidades, permissões, serviços nem altera a página atual.
+purpose `links` em micropáginas gerenciáveis. Versão declarada:
+`0.2.0-dev.1`. Esta fase inicializa entidades Drupal revisionáveis para
+destinos, micropáginas e itens ordenados, com propriedade por usuário e acesso
+privado; ainda não registra rotas públicas nem altera a página atual.
 
 ## Estado atual e preservação
 
@@ -37,10 +38,13 @@ essas APIs; não passa a ser dono desses dados.
 - [Roadmap](docs/ROADMAP.md)
 - [Changelog](CHANGELOG.md)
 
-## Limites desta fundação
+## Estado da implementação
 
-Não há código upstream copiado, dependências Composer novas, esquema de dados,
-instalação no Runtime ou alteração de rota. A classificação de cada recurso e
-os bloqueios de licenciamento estão registrados na matriz. A implementação
-funcional começa somente nas fases seguintes, com a migração preservadora da
-página atual como primeiro passo.
+Nenhum código upstream foi copiado e nenhuma dependência Composer foi
+adicionada. `aculta_link` usa o campo Link do Core; `aculta_link_page` guarda
+slug, título, apresentação e publicação; `aculta_link_item` ordena referências
+entre página e destino. As três entidades têm revisões Drupal. Access mantém
+destinos e rascunhos privados por proprietário. O módulo continua desabilitado,
+sem instalação de esquema, formulários, listagem, rota pública ou migração da
+página atual. A interface de gestão e a transição preservadora da landing são
+pendências desta fase.

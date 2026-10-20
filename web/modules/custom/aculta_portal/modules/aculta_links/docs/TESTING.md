@@ -1,13 +1,20 @@
 # Testes e critérios de migração
 
-## Fundação 0.1.0
+## Fundação 0.1.0 (histórico)
 
 - Validar sintaxe do manifesto YAML.
 - Executar `php scripts/validate-project-status-index.php`.
 - Executar `git diff --check`.
 - Manter módulo desabilitado; sem DB, Config Sync import ou operação no Runtime.
 
-## Próxima fase funcional
+## Entidades 0.2.0 em desenvolvimento
+
+- Unit: permissão do proprietário, isolamento de outra conta e administração.
+- Kernel em `aculta_simpletest`: armazenamento de destino/página/item,
+  referências, rascunho padrão, acesso por proprietário e revisão do destino.
+- Validar lint/PHPCS, dependências Core e gates de mapa/documentação do projeto.
+
+## Migração da landing e UI
 
 Antes de mover a landing, testar configuração e URL, render/cache, formulário,
 fallback sem JavaScript e autorização administrativa. Comparar HTTP e apresentação

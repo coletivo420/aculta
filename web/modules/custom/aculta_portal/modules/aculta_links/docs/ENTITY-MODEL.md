@@ -1,17 +1,30 @@
-# Modelo de entidades proposto
+# Modelo de entidades
 
-Ainda não implementado. Confirmar requisitos, referência Linky e APIs Drupal
-antes de escolher storage. Entidades usarão Entity Access, cacheability,
-propriedade Drupal e schemas/updates reversíveis.
+Implementadas como entidades de conteúdo revisionáveis, as três responsabilidades
+ficam separadas. `aculta_link` usa o campo Link do Core para o destino, a
+propriedade padrão de User, publicação e metadados de revisão. `aculta_link_page`
+guarda título, slug, descrição, proprietário e estado de publicação (rascunhos
+começam despublicados). `aculta_link_item` guarda página/destino referenciados,
+rótulo, descrição, ordem e estado.
+
+Ainda não há rotas, formulários, listagens, restrição de slug único ou
+renderização pública. O handler de itens exige que a página e o destino
+referenciado pertençam à conta que os gerencia. O handler de página/destino
+mantém acesso privado até a integração de publicação/domínio.
 
 | Conceito | Responsabilidade proposta | Relações |
 | --- | --- | --- |
-| Link reutilizável | Destino externo validado ou referência interna; rótulo e estado. | Autor Drupal; alvo interno quando disponível; revisão se necessária. |
-| Micropágina | Página de conta com slug, identidade pública opcional, aparência e publicação. | `uid` proprietário; Domain/purpose resolvido em runtime. |
-| Item de página | Composição ordenada que aponta a link ou tipo permitido de conteúdo. | Página + link/referência; peso, ativo e janela opcional. |
+| Link reutilizável | Destino do campo Link do Core, título e publicação; `aculta_link` já cobre o armazenamento revisionável e propriedade. | Autor Drupal; destino pode ser URI interna ou HTTPS externa; Entity Access privado. |
+| Micropágina | `aculta_link_page`: título, slug, descrição e publicação Drupal. | `uid` proprietário; Domain/purpose será resolvido em runtime. |
+| Item de página | `aculta_link_item`: composição ordenada que aponta a um destino reutilizável. | Referências tipadas à página e ao link; peso e ativo. |
 | Evento estatístico | Visita/clique mínimo, retenção curta e agregação. | IDs opacos de página/item e data; sem IP ou user-agent persistente por padrão. |
 
 Uma conta poderá ter várias páginas. Colaboração não entra na primeira entrega.
 Unicidade/reservas de slug devem seguir as normas de URL pública. O Core `link`
 continua adequado para campos editoriais comuns e não será substituído
 globalmente.
+
+O submódulo não depende de Dynamic Entity Reference: relações entre entidades
+Drupal serão definidas por tipo conhecido ou por adapters/plugins explícitos.
+Assim a referência a destinos não instala dependência adicional nem imita uma
+entidade universal de URL.

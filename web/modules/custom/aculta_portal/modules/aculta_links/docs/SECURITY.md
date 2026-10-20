@@ -1,6 +1,18 @@
 # Segurança e privacidade
 
-Controles a implementar antes de publicar a edição de páginas:
+## Implementado na 0.2.0-dev.1
+
+- `aculta_link` não oferece visualização pública da própria entidade.
+- `aculta_link_page` e `aculta_link_item` também permanecem privados; a página
+  nasce despublicada.
+- Acesso à entidade exige `administer aculta links` ou, para a pessoa
+  proprietária, `manage own aculta links`; a criação exige permissão explícita.
+- Acesso de item revalida a propriedade tanto da micropágina quanto do destino
+  referenciado, adicionando ambos como dependências cacheáveis.
+- O handler inclui contextos de cache de usuário/permissões e dependência da
+  entidade no resultado.
+
+## Controles obrigatórios antes de publicar páginas
 
 - Entity Access por proprietário em rotas, formulários, Views e ações; CSRF e
   Form API para mutações.
