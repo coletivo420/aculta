@@ -1,0 +1,97 @@
+# Painel do e-mail (/painel-administrativo/aculta/mail): três abas, com subabas em cada uma.
+aculta_mailer.tab_painel:
+  title: 'Painel'
+  route_name: aculta_mailer.dashboard
+  base_route: aculta_mailer.dashboard
+  weight: 0
+
+aculta_mailer.tab_operacao:
+  title: 'Operação'
+  route_name: aculta_mailer.log_list
+  base_route: aculta_mailer.dashboard
+  weight: 1
+
+aculta_mailer.subtab_envios:
+  title: 'Envios'
+  route_name: aculta_mailer.log_list
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_operacao
+  weight: 0
+
+aculta_mailer.subtab_falhas:
+  title: 'Falhas'
+  route_name: aculta_mailer.failures
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_operacao
+  weight: 1
+
+aculta_mailer.subtab_diagnostico:
+  title: 'Diagnóstico'
+  route_name: aculta_mailer.diagnostics
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_operacao
+  weight: 2
+
+aculta_mailer.subtab_monitoramento:
+  title: 'Monitoramento'
+  route_name: aculta_mailer.imap_settings
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_operacao
+  weight: 3
+
+aculta_mailer.tab_configuracao:
+  title: 'Configuração'
+  route_name: aculta_mailer.delivery_settings
+  base_route: aculta_mailer.dashboard
+  weight: 2
+
+aculta_mailer.subtab_entrega:
+  title: 'Entrega'
+  route_name: aculta_mailer.delivery_settings
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_configuracao
+  weight: 0
+
+aculta_mailer.subtab_registro:
+  title: 'Registro'
+  route_name: aculta_mailer.log_settings
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_configuracao
+  weight: 1
+
+aculta_mailer.subtab_politicas:
+  title: 'Políticas'
+  route_name: aculta_mailer.policy_settings
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_configuracao
+  weight: 2
+
+aculta_mailer.subtab_modelos:
+  title: 'Modelos'
+  route_name: entity.aculta_mailer_template.collection
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_configuracao
+  weight: 3
+
+aculta_mailer.subtab_layouts:
+  title: 'Layouts'
+  route_name: entity.aculta_mailer_layout.collection
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_configuracao
+  weight: 4
+
+aculta_mailer.subtab_marcas:
+  title: 'Marcas'
+  route_name: entity.aculta_mailer_brand.collection
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_configuracao
+  weight: 5
+
+aculta_mailer.subtab_configuracoes:
+  title: 'Configurações'
+  route_name: aculta_mailer.settings
+  base_route: aculta_mailer.dashboard
+  parent_id: aculta_mailer.tab_configuracao
+  weight: 6
+
+# A aba E-mail do grupo ACULTA foi retirada: duplicava a barra nas telas do e-mail. O e-mail é a subaba do menu lateral.

@@ -1,3 +1,9 @@
+## 0.4.0-dev.233 — abas do painel ACULTA: Visão geral, Site, Pessoas, Segurança e sistema — 2026-10-20
+
+- Abas no topo de `/painel-administrativo/aculta`, com subabas: **Site** (Aparência, Formas de apoio, Redes sociais e botões) e **Segurança e sistema** (Turnstile, Credenciais, Status, Implantação). As abas de Pessoas e de Doações e a barra do e-mail ficam nos módulos donos.
+- Sem aba do e-mail nem de Doações no grupo ACULTA: duplicavam a barra das telas do e-mail e de doações. Essas telas já têm barra própria e entradas no menu lateral.
+- Verificação visual no Runtime de teste (1270 e 500 px): cada área mostra uma barra; sem estouro horizontal.
+
 ## 0.4.0-dev.232 — painel ACULTA em /painel-administrativo/aculta, com aba e subaba no menu — 2026-10-20
 
 - Página do Portal movida para `/painel-administrativo/aculta` (antes `.../configuracoes/aculta/portal`).

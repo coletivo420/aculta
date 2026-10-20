@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\Entity\Role;
 
 /**
  * Painel de regras de participação (plano aculta_user, seção E7).
@@ -55,7 +56,13 @@ final class ParticipationSettingsForm extends ConfigFormBase {
       '#default_value' => (bool) $config->get('bloqueio_ate_aprovacao'),
       '#description' => $this->t('Considera pendências não LMS. Um comentário LMS publicado remove esse bloqueio temporário.'),
     ];
-    $roles = array_diff_key(user_role_names(TRUE), ['anonymous' => TRUE]);
+    // Papéis por id => rótulo (user_role_names() era do Drupal 7 e não existe no Drupal 11). O anônimo fica de fora.
+    $roles = [];
+    foreach (Role::loadMultiple() as $id => $role) {
+      if ($id !== 'anonymous') {
+        $roles[$id] = $role->label();
+      }
+    }
     $form['papeis_isentos'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Papéis isentos das regras'),

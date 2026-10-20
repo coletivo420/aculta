@@ -1,3 +1,8 @@
+## 0.1.0-dev.53 — barra do e-mail em três abas: Painel, Operação e Configuração — 2026-10-20
+
+- Painel do e-mail com três abas: **Painel**; **Operação** (Envios, Falhas, Diagnóstico, Monitoramento); **Configuração** (Entrega, Registro, Políticas, Modelos, Layouts, Marcas, Configurações).
+- A aba E-mail não aparece no grupo ACULTA, para não duplicar a barra.
+
 ## 0.1.0-dev.52 — painel do e-mail em /painel-administrativo/aculta/mail, com subaba E-mail — 2026-10-20
 
 - Painel movido para `/painel-administrativo/aculta/mail`; todas as páginas do e-mail (envios, falhas, registro, entrega, modelos, layouts, marcas, políticas, diagnóstico, monitoramento, configurações) ficam sob esse caminho.

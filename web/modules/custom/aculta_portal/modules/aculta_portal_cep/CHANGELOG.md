@@ -1,3 +1,7 @@
+## 0.3.0-dev.10 — subaba CEP na aba Pessoas do painel ACULTA — 2026-10-20
+
+- Subaba **CEP** em `/painel-administrativo/aculta/cep`, dentro da aba Pessoas.
+
 ## 0.3.0-dev.9 — consulta de CEP no painel ACULTA — 2026-10-20
 
 - Configuração em `/painel-administrativo/aculta/cep`, com item na aba ACULTA.

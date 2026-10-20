@@ -1,3 +1,7 @@
+## 0.1.1-dev.59 — subaba Mensagens na aba Pessoas do painel ACULTA — 2026-10-20
+
+- Subaba **Mensagens** em `/painel-administrativo/aculta/mensagens`, dentro da aba Pessoas. Avisos continuam no menu de conteúdo.
+
 ## 0.1.1-dev.58 — configuração do chat no painel ACULTA — 2026-10-20
 
 - Limites e limpeza do chat em `/painel-administrativo/aculta/mensagens`, com item na aba ACULTA. Avisos continuam no menu de conteúdo.

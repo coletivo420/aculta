@@ -1,3 +1,8 @@
+## 0.4.0-dev.49 — aba Pessoas do painel; formulário de participação corrigido — 2026-10-20
+
+- Aba **Pessoas** no painel ACULTA, com Regras de participação, Mensagens e CEP como subabas.
+- Correção: o formulário de participação chamava `user_role_names()`, função do Drupal 7 que não existe no Drupal 11. A página dava erro 500. Agora os papéis vêm de `Role::loadMultiple()`.
+
 ## 0.4.0-dev.48 — regras de participação no painel ACULTA — 2026-10-20
 
 - Página de participação em `/painel-administrativo/aculta/participacao` e item na aba ACULTA.

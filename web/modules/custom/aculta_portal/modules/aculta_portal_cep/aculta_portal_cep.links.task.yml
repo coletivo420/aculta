@@ -1,0 +1,7 @@
+# Subaba CEP dentro da aba Participação do painel ACULTA.
+aculta_portal_cep.admin_subtab_cep:
+  title: 'CEP'
+  route_name: aculta_portal_cep.settings
+  base_route: aculta_portal.admin
+  parent_id: aculta_user.admin_tab_pessoas
+  weight: 2
