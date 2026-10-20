@@ -5,6 +5,8 @@
   ACULTA continuam nos serviços e eventos próprios.
 - Verificação de referências, lint e PHPCS PASS; Runtime sem alteração.
   RUNTIME STATUS: DEFERRED.
+- `MIGRATION-REMOVAL.md` corrigido para distinguir o inventário histórico de
+  2026-10-19 da limpeza executada e das remoções de consumidor em dev.15/56.
 
 ## 0.1.0-dev.46 — retirar dependência editorial do Forum contrib — 2026-10-20
 

@@ -14,7 +14,7 @@ não foram executados. Os fixtures `[TESTE]` do bundle novo são tratados em
 | Extensão | `config/sync/core.extension.yml` habilita `forum`; módulo instalado em `web/modules/contrib/forum`. |
 | Modelo de conteúdo | Node bundle `forum`, vocabulary `forums`, Node field `taxonomy_forums`, Comment bundle `comment_forum`, campo `comment_forum` no Node. Configs opcionais do módulo contrib definem ainda displays, formulário e settings. |
 | Config Sync | `core.entity_*` de node.forum/comment_forum; `node.type.forum.yml`; taxonomy.vocabulary.forums.yml; `views.view.aculta_forum_topics.yml`; `flag.sinalizar_comentario` aponta a bundle `comment_forum`; `field_discussao` exportado em blog aponta à Node bundle `forum`; campos de autoria legada. |
-| `aculta_user` | `ParticipationRules` fixa bundles `forum`/`comment_forum`; `RestrictedForumGrants`, `RestrictedForumHooks`, `ForumModerationHooks` e `ActivityController` ainda têm consumidores a migrar. `DiscussionHooks` e `ForumTopicPresentationHooks` foram removidos; `config/install` ainda declara `field_discussao` legado em activity/article/document/project/wiki_entry. |
+| `aculta_user` | `ForumModerationHooks` mantém guards de escrita transitórios para os bundles contrib até o uninstall. `RestrictedForumGrants`/`RestrictedForumHooks` ainda implementam níveis da taxonomia contrib; devem sair porque o fórum público novo é público e LMS usa Group. `config/install` ainda declara `field_discussao` em activity/article/document/project/wiki_entry; retirar após confirmar os campos Comment atuais por contexto. |
 | `aculta_magazine` | Em dev.15 foram removidos `LegacyPublicationTopicLookup`, `ForumOpeningPost`, os campos `field_discussao` dos displays/configuração exportada e a dependência declarada `forum:forum`. `PublicationTypeConverter` continua movendo Comments compartilhados. Runtime cache rebuild e raiz Magazine HTTP 200; importação de configuração e conversão com Comments reais pendentes. |
 | `aculta_messenger` | Em dev.56 foi removido `ForumTopicCounterHooks` (`preprocess_forums`), que pressupunha a listagem contrib. `MessageSubscribeEventHooks` atende o Node ACULTA `aculta_forum_topic`; avisos e contagens agregadas seguem em serviços próprios. |
 | Tema | `forum-list.html.twig`, `node--forum--full.html.twig`, `comment--comment-forum.html.twig`, `forum-index.css`, `discussion.css`, traduções e estilos do padrão Forum. |
@@ -55,14 +55,12 @@ O field config em Config Sync pertence à estrutura Magazine e depende
 explicitamente de `taxonomy.vocabulary.forums`; remover essa definição de campo
 e revisar sua field storage antes de retirar a configuração do vocabulário.
 
-Os tópicos antigos são usados como destino de `field_discussao` e como abertura
-histórica em 12 publicações. A Revista já tem Comment direto, mas a submissão e
-exibição ainda não foram validadas por navegador com um Comment real. Até essa
-validação e a sequência de retirada, manter os vínculos e Nodes de abertura.
-A exclusão das entidades antigas deve ser feita pela API Drupal, com nova
-consulta imediatamente antes da operação e revisão dos efeitos sobre Comments,
-referências, revisions e arquivos. O uninstall não deve descartar associação
-editorial implicitamente.
+Na auditoria de 2026-10-19, os tópicos antigos eram destino de
+`field_discussao` e abertura histórica de 12 publicações. Essa situação foi
+encerrada em 2026-10-20: a Entity API excluiu Nodes/termos antigos e removeu os
+vínculos vazios, preservando as publicações. `field_aculta_discussion` segue
+como Comment direto da Revista. A submissão de Comment real continua pendente;
+isso não reverte a decisão de manter vazio o Fórum antigo.
 
 Este estudo é somente código/documentação: nenhum validator foi contornado,
 nenhum campo/termo/Node foi alterado e o módulo continua habilitado. A referência
@@ -70,14 +68,15 @@ API confirma que o validator existe para impedir perda de dados durante o
 uninstall; ver [registro de mudança do Core](https://www.drupal.org/node/2404451)
 e [API do validator](https://api.drupal.org/api/drupal/core%21modules%21forum%21src%21ForumUninstallValidator.php/function/ForumUninstallValidator%3A%3Avalidate/11.x).
 
+### Registro histórico de consumidores removidos
+
 O antigo `DiscussionHooks` consultava `comment_forum` sem `topic->access('view')`
 para renderizar trechos editoriais. Foi removido após confirmar que todos os 12
 Nodes atualmente referenciados têm `field_aculta_discussion`; a Revista usa agora
 o formatter Core direto e não carrega resumo de Comments do tópico antigo.
 `ForumTopicHooks` de links legados foi removido (o Runtime não possui Comments
-`comment_forum`). `LegacyPublicationTopicLookup` ainda lê vínculos para conversão
-de tipo e `ForumOpeningPost` apresenta a publicação vinculada nos Nodes Forum antigos;
-esses leitores serão retirados somente após preparar a limpeza dos dados.
+`comment_forum`). `LegacyPublicationTopicLookup` e `ForumOpeningPost` foram
+removidos em dev.15 após a limpeza documentada abaixo.
 
 ## Bundles Drupal Forum e decisão de limpeza Growroom
 
@@ -140,13 +139,11 @@ consulta imediatamente anterior deverá confirmar a contagem e os bundles reais
 de Comment, incluindo respostas aninhadas. No inventário de 2026-10-19 havia 30
 tópicos `forum` e zero comentários `comment_forum`.
 
-Os 12 nós que funcionam como abertura histórica da Revista não serão
-preservados como tópicos. A Revista já usa comentário direto na publicação e a
-API de sincronização foi removida; `LegacyPublicationTopicLookup` somente lê
-vínculos antigos. Seus conteúdos editoriais e entidades de publicação permanecem intocados. O
-novo campo começa sem comentários, e os outros contextos também começam sem
-posts importados. Não remover contas, Nodes editoriais, cursos, turmas,
-atividades, verbetes, imagens ou arquivos por causa desta limpeza.
+Os Nodes editoriais e seu conteúdo permaneceram intocados; comentários diretos
+da Revista não foram apagados. O `field_discussao`, o lookup legado e a
+apresentação editorial como abertura de tópico foram retirados do código. Não
+remover contas, Nodes editoriais, cursos, turmas, atividades, verbetes, imagens
+ou arquivos durante a limpeza do Fórum.
 
 O uninstall também exige retirar o vocabulário antigo `forums`. A verificação
 confirmou que as categorias editoriais permanecem nos campos diretos das
@@ -154,14 +151,10 @@ publicações e que o mapeamento auxiliar não diverge. A remoção de termos e 
 campo legado só pode ocorrer na janela autorizada de limpeza e não autoriza
 excluir o vocabulário `editorial_category` ou dados de outras funcionalidades.
 
-O `aculta_forum` está habilitado no Runtime, mas seu provider novo atende o
-bundle `aculta_forum_topic`; os 30 nodes antigos e seus consumidores não foram
-migrados. `aculta_magazine` ainda declara `forum:forum`, sincroniza tópicos,
-usa `field_discussao` e apresenta a abertura editorial. `aculta_user` ainda
-implementa acesso, moderação, atividade e apresentação para `forum` e
-`comment_forum`. Logo, a remoção agora quebraria consumidores ativos e perderia
-as discussões de 12 publicações antes de existir o substituto contextual
-previsto na dev.8.
+No estado da auditoria de 2026-10-19, os consumidores ainda impediam o uninstall.
+Magazine removeu sua dependência e seus leitores em dev.15. `aculta_user`, as
+configurações contrib, os templates do tema e o pacote Composer ainda precisam
+de revisão antes da desinstalação oficial.
 
 Os backups observados em `/home/aculta/private/aculta` datam de 2026-10-17 e
 2026-10-18 e foram criados para outras alterações. Nenhum foi validado como
