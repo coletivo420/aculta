@@ -13,6 +13,9 @@
   destino de retorno; formulários de mover tópico/comentário redirecionam ao painel.
 - O controller não consulta nem renderiza Menu Link Tree; portanto a página
   central não reúne telas ou links que pertencem às rotas administrativas próprias.
+- `ADMIN-TOOLS.md` esclarece a direção canônica: `/painel-administrativo/forum`
+  renderiza sua própria página; caminhos antigos/dispersos sob Conteúdo apontam
+  para ela, e a rota central não incorpora nem redireciona para as ferramentas.
 - Unit da suíte `aculta_forum`: 90 testes/601 assertions PASS; PHPCS PASS.
   Runtime `toca`, PHP CLI 8.4.26: `drush cr` PASS; Firefox/X11 autenticado
   34/34 para painel, conteúdo, filas,

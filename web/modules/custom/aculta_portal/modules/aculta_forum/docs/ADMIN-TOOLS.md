@@ -1,8 +1,8 @@
 # Administração do Fórum geral
 
-O Growroom420 tem um caminho central em `/painel-administrativo/forum`. Essa página é somente a entrada canônica da seção: não agrega links, incorpora telas, replica formulários nem redireciona para outros caminhos. As ferramentas mantêm rotas próprias, acessadas pela navegação administrativa da seção. Caminhos antigos e dispersos do Fórum sob `/painel-administrativo/conteudo/forum` redirecionam para essa entrada central.
+`/painel-administrativo/forum` é o caminho administrativo padrão e canônico do Growroom420; a própria rota renderiza sua página, sem copiar conteúdo, incorporar telas ou redirecionar para caminhos de outras ferramentas. Os caminhos administrativos antigos e dispersos que davam acesso ao Fórum, atualmente sob `/painel-administrativo/conteudo/forum`, redirecionam para este painel central. A direção do redirecionamento é sempre do caminho antigo para `/painel-administrativo/forum`.
 
-A listagem dos tópicos fica em `/painel-administrativo/forum/conteudo`; as filas de comentários ficam em `/painel-administrativo/forum/comentarios/...` e são abas subordinadas de Conteúdo. Essas telas pertencem à seção própria e não aparecem na listagem genérica `/painel-administrativo/conteudo`.
+A listagem dos tópicos e as filas de comentários têm rotas próprias na seção Fórum, ligadas pela navegação administrativa. Elas não são copiadas nem incorporadas à rota central e não aparecem na listagem genérica `/painel-administrativo/conteudo`.
 
 ## Ownership e acesso
 
@@ -42,8 +42,8 @@ configuração; nenhum bloco Views desta tela precisa de controle por colocaçã
 
 ## Rotas relacionadas
 
-- `/painel-administrativo/forum`: entrada central canônica do Growroom420, sem agregação de outras telas.
-- `/painel-administrativo/forum/conteudo`: tópicos públicos; comentários e estados de moderação como abas subordinadas.
+- `/painel-administrativo/forum`: página padrão e canônica do Growroom420.
+- `/painel-administrativo/forum/conteudo`: listagem dos tópicos públicos; comentários e estados de moderação têm caminhos próprios na seção.
 - `/painel-administrativo/forum/comentarios`: consulta agregada.
 - `/painel-administrativo/forum/comentarios/publicados`.
 - `/painel-administrativo/forum/comentarios/rejeitados`.
