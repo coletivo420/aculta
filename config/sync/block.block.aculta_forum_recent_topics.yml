@@ -3,7 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - views.view.aculta_forum_topics
+    - views.view.aculta_forum_public_topics
   module:
     - aculta_portal
     - system
@@ -15,9 +15,9 @@ theme: aculta420
 region: content
 weight: 30
 provider: null
-plugin: 'views_block:aculta_forum_topics-block_recent'
+plugin: 'views_block:aculta_forum_public_topics-block_recent'
 settings:
-  id: 'views_block:aculta_forum_topics-block_recent'
+  id: 'views_block:aculta_forum_public_topics-block_recent'
   label: 'Tópicos recentes'
   label_display: visible
   provider: views
@@ -27,7 +27,7 @@ visibility:
   request_path:
     id: request_path
     negate: false
-    pages: /forum
+    pages: '<front>'
   aculta_domain_purpose:
     id: aculta_domain_purpose
     purpose: forum

@@ -7,7 +7,7 @@ dependencies:
 id: sinalizar_topico
 label: 'Sinalizar tópico'
 bundles:
-  - forum
+  - aculta_forum_topic
 entity_type: node
 global: false
 flag_short: 'Denunciar tópico'

@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - filter.format.webform_default
-    - node.type.forum
     - node.type.aculta_notice
   module:
     - aculta_portal

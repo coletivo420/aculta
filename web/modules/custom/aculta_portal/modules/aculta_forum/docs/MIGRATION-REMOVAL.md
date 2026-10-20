@@ -1,20 +1,20 @@
 # Plano de retirada do Drupal Forum contrib
 
-Status: conteúdo legado removido do Runtime de teste em 2026-10-20; o módulo
-`drupal/forum` 1.1.3 continua instalado e habilitado enquanto os consumidores e
-configurações restantes são auditados. O uninstall e a remoção Composer ainda
-não foram executados. Os fixtures `[TESTE]` do bundle novo são tratados em
+Status: `drupal/forum` foi desinstalado do Runtime de teste e removido do
+Composer em 2026-10-20. Config Sync ainda está em revisão; a configuração não
+foi importada integralmente no Runtime por causa de drift preexistente. Os
+fixtures `[TESTE]` do bundle novo são tratados em
 [`TEST-FIXTURES.md`](TEST-FIXTURES.md).
 
 ## Inventário conferido
 
 | Tipo | Referências atuais observadas |
 | --- | --- |
-| Composer | `drupal/forum:^1.1.3` permanece no projeto e requer `drupal/history:^1`; `drupal/history:^1.0` agora também é requisito direto do projeto para manter os marcadores pessoais de leitura quando Forum contrib for removido. |
-| Extensão | `config/sync/core.extension.yml` habilita `forum`; módulo instalado em `web/modules/contrib/forum`. |
+| Composer | `drupal/forum` foi removido de `composer.json`/lock; `drupal/history` permanece como dependência direta para marcadores pessoais de leitura. |
+| Extensão | `forum` foi removido de `config/sync/core.extension.yml` e desinstalado do Runtime de teste. |
 | Modelo de conteúdo | Node bundle `forum`, vocabulary `forums`, Node field `taxonomy_forums`, Comment bundle `comment_forum`, campo `comment_forum` no Node. Configs opcionais do módulo contrib definem ainda displays, formulário e settings. |
 | Config Sync | `core.entity_*` de node.forum/comment_forum; `node.type.forum.yml`; taxonomy.vocabulary.forums.yml; `views.view.aculta_forum_topics.yml`; `flag.sinalizar_comentario` aponta a bundle `comment_forum`; `field_discussao` exportado em blog aponta à Node bundle `forum`; campos de autoria legada. |
-| `aculta_user` | Em dev.42/.43, `ForumModerationHooks` protege o bundle ACULTA histórico; removidos `field_discussao`, `RestrictedForumGrants`/`RestrictedForumHooks`, subscriber 404 e permissões/field da taxonomia contrib. Config Sync ainda precisa ser aplicado no Runtime. |
+| `aculta_user` | Em dev.42–.44, removidos consumidores contrib; regras atuais preservam a exceção de moderação para autoria histórica no bundle compartilhado. Kernel direcionado: 7 testes/84 assertions PASS. |
 | `aculta_magazine` | Em dev.15 foram removidos `LegacyPublicationTopicLookup`, `ForumOpeningPost`, os campos `field_discussao` dos displays/configuração exportada e a dependência declarada `forum:forum`. `PublicationTypeConverter` continua movendo Comments compartilhados. Runtime cache rebuild e raiz Magazine HTTP 200; importação de configuração e conversão com Comments reais pendentes. |
 | `aculta_messenger` | Em dev.56 foi removido `ForumTopicCounterHooks` (`preprocess_forums`), que pressupunha a listagem contrib. `MessageSubscribeEventHooks` atende o Node ACULTA `aculta_forum_topic`; avisos e contagens agregadas seguem em serviços próprios. |
 | Tema | `forum-list.html.twig`, `node--forum--full.html.twig`, `comment--comment-forum.html.twig`, `forum-index.css`, `discussion.css`, traduções e estilos do padrão Forum. |
@@ -205,21 +205,16 @@ validar o restore e os consumidores editoriais. A determinação de 2026-10-20
 substituiu essa decisão para o conteúdo do Runtime de teste. O registro histórico
 permanece para explicar a sequência; ele não é a instrução operacional atual.
 
-## Portas obrigatórias antes de remover
+## Portas e pendências após a retirada
 
-1. Fechar contratos e machine names; implementar bundles/campos/provedores e testes de instalação/update em uma fase não destrutiva.
-2. Migrar consumidores funcionais de `aculta_user`, `aculta_magazine`, `aculta_messenger` e `aculta_game`, com paridade de acesso, apresentação, notificações, URLs e busca. A discussão editorial direta está ativa; remover lookup/readers de vínculos antigos somente quando o corte preservar os caminhos acordados.
-3. Repetir no Runtime de teste o inventário de nodes, comments, termos, flags, arquivos, vínculos e dependências imediatamente antes da operação; separar conteúdo histórico, contemporâneo e editorial.
-4. Preparar backup/restauração e plano de rollback verificados conforme `docs/operations/environments.md` e `docs/operations/DEPLOYMENT.md`; ambiente/URI/banco precisam ser confirmados com hostname, pwd, Git e `drush status` antes de qualquer operação persistente.
-5. Conferir a autorização já registrada contra o inventário atual e delimitar os IDs/bundles de conteúdo Forum. Ela não autoriza apagar conteúdo da Revista, Wiki, LMS, usuários ou outros módulos.
-6. Executar somente em Runtime de teste identificado, em etapa dedicada e com relatório de impacto/recuperação. Excluir apenas entidades legadas no escopo autorizado por Entity API; preservar configurações/cópias de recuperação conforme plano.
-7. Desinstalar `forum` pelo mecanismo oficial Drupal após remover dependentes e inspecionar validators/impacto. Confirmar `updatedb`/uninstall plan antes de executar.
-8. Só depois da desinstalação concluída e estado recuperável, retirar pacote Composer e regenerar lock. Fazer auditoria residual de extensões, plugins, config e comandos.
-9. Repetir instalações, updates, uninstall, gates, testes de acesso e revisão de dados; documentar o resultado antes de declarar fase concluída.
+1. Resolver a configuração de Flags e confirmar a política para sinalização de tópicos/comentários históricos sem conceder edição ou moderação desses itens.
+2. Preparar importação dirigida de Config Sync somente após revisar o diff ativo completo e os efeitos por configuração.
+3. Executar smoke autenticado de criação, primeira resposta, estados de moderação e permissões; confirmar que conteúdo Growroom histórico não pode ser alterado ou reaberto por `content_editor`.
+4. Auditar código, Config Sync, Views, tema, Search API, sitemap, Messenger e dependências, distinguindo referências históricas daquelas executáveis.
+5. Testar instalação/atualização/desinstalação em banco dedicado e validar restauração do dump em base isolada, sem usar o Runtime para testes Kernel.
+6. Completar homologação visual planejada em Firefox/X11 conforme `docs/portal/TESTES-NAVEGADOR.md`.
 
-Não executar `drush pm:uninstall`, `composer remove`, exclusão em massa, `updb`, importação integral ou alteração de Runtime nesta fase documental.
-
-## Limpeza do Fórum antigo no Runtime de teste — 2026-10-20
+## Limpeza e retirada do Forum contrib no Runtime de teste — 2026-10-20
 
 Ambiente verificado imediatamente antes da operação: `hostname=toca`, checkout
 `/home/piradopirata/projetos/aculta-site`, branch
@@ -250,17 +245,30 @@ operação encontraram zero em: Nodes `forum`, Comments `comment_forum`, termos
 revisões dos Nodes excluídos, aliases, flaggings, `forum_index` e tabela
 relacional `forum`.
 
-O uninstall continua pendente. `module_installer->validateUninstall(['forum'])`
-retornou lista vazia depois da limpeza. O dry-run de dependências ainda informa
-que a remoção atualizará `field.field.node.blog.field_discussao` e permissões de
-papéis, e excluirá configurações do bundle/campos/termos antigos. Restam revisar
-consumidores PHP/Views/tema, executar uninstall oficial com backup vigente e só
-depois remover `drupal/forum` do Composer. A limpeza de conteúdo não foi tratada
-como autorização para fazer essas etapas sem inspecionar seus efeitos.
+`module_installer->validateUninstall(['forum'])` retornou lista vazia. O
+uninstall oficial foi executado; após o aviso do Drupal sobre seis instâncias
+vazias de `field_discussao` sem bundles válidos, as instâncias e o storage foram
+removidos via Field API, com zero valores/revisões confirmados. Verificação
+posterior: módulo, bundle, configs, tabelas e índices contrib ausentes. Só então
+`composer remove drupal/forum` retirou o pacote; `drupal/history` continua como
+dependência direta.
+
+Restore point imediatamente anterior ao uninstall, já sem conteúdo antigo:
+`/home/piradopirata/.local/share/aculta-private-backups/aculta_runtime-forum-clean-before-uninstall-20261020.sql.gz`;
+modo `0600`, 4.279.109 bytes, `gzip -t` PASS, SHA-256
+`bae45c1dc7d0fc751bcb1777dc0779dd8ca873debefa4857d6da83afe9dde402`.
+Restauração em base isolada não foi validada. Nenhuma importação integral de
+Config Sync ou `updb` foi realizada; drift preexistente exige revisão antes de
+importação dirigida.
+
+Cache rebuild passou; raízes do Growroom420 e Revista responderam HTTP 200, e
+Conta anônima respondeu HTTP 302 esperado. Smoke autenticado e revisão de
+permissões/Flags continuam pendentes.
 
 ## Rollback e limites
 
-Código/config pode ser revertido enquanto nenhum dado legado foi excluído. Após
-exclusão, rollback exige o restore point descrito acima ou procedimento de
-reimportação idempotente, nunca apenas `git revert`. Nenhuma ação atinge produção
-sem decisão própria do responsável; merge em `main` não é deploy.
+Código/config pode ser revertido; a remoção dos dados exige restauração do
+backup compatível ou reimportação idempotente, nunca apenas `git revert`. O
+restore point pré-uninstall descrito acima não contém os tópicos antigos; para
+recuperar esses dados seria necessário o dump pré-exclusão indicado no registro
+histórico. Nenhuma ação atingiu produção; merge em `main` não é deploy.

@@ -1,9 +1,9 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.43**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.50**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
-as discussões ACULTA com APIs nativas e retirar Drupal Forum contrib depois de
-uma migração segura, por fase própria. A dev.4 introduziu o módulo executável e
+as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
+de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
 a Context API; a View pública já serve a raiz do Runtime de teste e `/criar-topico`
 usa Entity Form/Entity Create Access do Core. A ação na listagem aparece somente
 quando a rota permite a criação, e a decisão integra o cache da View. O índice
@@ -29,7 +29,8 @@ motor novo segue por contexto e fases.
 - Core/contrib permanecem fonte de verdade para Node, Comment, Taxonomy, Views,
   Search API, History e Flag. Sem storage paralelo de resposta/categoria.
 - Imagens passam por `aculta_image`; avisos pelo `aculta_messenger`.
-- Remoção do Forum contrib e exclusão de dados aguardam os pré-requisitos da dev.5.
+- O conteúdo antigo permanece ausente no Runtime de teste; somente as categorias
+  ACULTA novas foram preservadas. A retirada executável do contrib ocorreu em dev.50.
 
 ## Documentação
 
@@ -63,22 +64,19 @@ comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
 
 ## Estado confirmado na auditoria
 
-Base local/GitHub: `origin/main` `d4a0d66e` (2026-10-19). Composer contém e
-`core.extension.yml` habilita `drupal/forum` 1.1.3. Há Node `forum`, Taxonomy
-`forums`, Comment `comment_forum`, Views, flags, serviços e apresentações
-existentes em `aculta_user`, `aculta_magazine`, `aculta_messenger` e ACULTA420.
-Consulte [inventário de remoção](docs/MIGRATION-REMOVAL.md) e
+Estado de remoção conferido em 2026-10-20: `drupal/forum` não está no Composer,
+em `core.extension.yml` nem em `web/modules/contrib`; Node `forum`, vocabulário
+`forums`, Comment `comment_forum`, tabelas `forum`/`forum_index` e o campo
+`field_discussao` estão ausentes no Runtime de teste. Consulte o [inventário de remoção](docs/MIGRATION-REMOVAL.md) e
 [auditoria de cartões](../aculta_user/docs/AUTHOR-CARDS.md).
 
 ## Versão e execução
 
-A dev.5 mantém a retirada em andamento: os Comments diretos de `article`/`blog`
-estão instalados; os hooks e a API capazes de sincronizar tópicos legados foram
-removidos. Por F-D33, o Runtime de teste está sem Nodes/Comments/termos antigos
-e sem vínculos editoriais para eles; as 12 categorias novas permanecem. Um
-backup integral atual foi criado e validado por `gzip -t`. O uninstall e a
-remoção Composer aguardam a retirada de consumidores PHP/Views/tema e revisão
-dos efeitos de configuração listados em `docs/MIGRATION-REMOVAL.md`. O índice
+A dev.5 completou a limpeza e a retirada contrib no Runtime de teste. Os
+Comments diretos de `article`/`blog` e as categorias ACULTA são independentes do
+Forum antigo. Um restore point pós-limpeza e pré-uninstall foi criado e validado
+por `gzip -t`; contém zero conteúdo antigo. A configuração versionada foi
+limpa sem importar Config Sync integral, bloqueado pelo drift preexistente. O índice
 público do novo bundle está ativo na raiz do Runtime e `/criar-topico` verifica
 Entity Create Access. Releases Portal, User e tema conservam linhas próprias;
 o roadmap detalha as próximas entregas.

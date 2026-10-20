@@ -6,7 +6,6 @@ dependencies:
     - filter.format.revista_editorial
     - filter.format.wiki
     - media.type.document
-    - node.type.forum
     - node.type.aculta_notice
     - node.type.wiki_entry
     - workflows.workflow.wiki_editorial
@@ -48,8 +47,6 @@ permissions:
   - 'edit own document media'
   - 'create aculta_notice content'
   - 'delete own files'
-  - 'delete any forum content'
-  - 'edit any forum content'
   - 'edit any wiki_entry content'
   - 'edit any aculta_notice content'
   - 'revert all revisions'

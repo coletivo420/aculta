@@ -1,3 +1,17 @@
+## 0.1.0-dev.50 — desinstalar Forum contrib no Runtime de teste — 2026-10-20
+
+- Config Sync remove as entidades/configurações exclusivas do módulo contrib,
+  ajusta o bloco para a View ACULTA e mantém `history` direto no Composer.
+  Removido também o Pathauto duplicado de Magazine que dependia de `node.type.forum`.
+- No Runtime `aculta_runtime`, o uninstall oficial removeu `forum`, seus bundles,
+  tabelas e configurações. As seis instâncias vazias de `field_discussao` foram
+  removidas pelo Field API após confirmar zero linhas e revisões. `composer remove`
+  retirou somente `drupal/forum`; `drupal/history` foi mantido.
+- Cache rebuild PASS; Fórum e Revista HTTP 200; Conta anônima HTTP 302 esperado.
+  Conteúdo antigo continua zerado. Config Sync integral não foi importado devido
+  a drift preexistente; importação dirigida e smoke autenticado seguem pendentes.
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.49 — remover fóruns restritos por Taxonomy — 2026-10-20
 
 - A política de visibilidade por realm do Forum contrib foi removida do User,

@@ -94,16 +94,14 @@ Reutilizar `LegacyAuthor`, `LegacyAuthorManager` e `LegacyMemorialController` de
 Tópicos e comentários importados do acervo Growroom são somente leitura para
 todos os papéis. A discussão chega fechada e não pode ser reaberta; update,
 delete, approve e ações de moderação em lote são negadas. O marcador usado é
-`field_autor_legado`, anexado ao novo Node e ao tipo Comment compartilhado. A
-implementação atual não reinstala nem preserva o módulo contrib `drupal/forum`;
-sua retirada e a limpeza de seus dados seguem `MIGRATION-REMOVAL.md`.
+`field_autor_legado`, anexado ao novo Node e ao tipo Comment compartilhado.
+`drupal/forum` foi retirado do Runtime de teste e do Composer em dev.50. A
+restauração futura do acervo usa os bundles ACULTA sem reintroduzir o contrib.
 
 ## Código instalado versus alvo
 
-O código atual ainda usa `drupal/forum` 1.1.3, Node bundle `forum`, vocabulary
-`forums`, `comment_forum`, `taxonomy_forums`, uma View de recentes, flags e
-integrações em `aculta_user`/`aculta_magazine`. Este documento descreve o alvo
-aprovado pelo pedido de 2026-10-19. Nenhum módulo foi desinstalado e nenhum dado
-foi removido na fase documental. Ver inventário em
+O Runtime de teste não contém o Drupal Forum contrib, seus bundles nem o campo
+`field_discussao`; Config Sync remove as respectivas definições. Os efeitos estão
+registrados no inventário em
 [`MIGRATION-REMOVAL.md`](MIGRATION-REMOVAL.md) e decisão de supersessão em
 [`DECISOES.md`](DECISOES.md).

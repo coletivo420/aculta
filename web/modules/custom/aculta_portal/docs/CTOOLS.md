@@ -29,15 +29,14 @@ Os filtros e ordenação da View continuam sendo a fonte de verdade: somente
 atividades publicadas, do tipo `activity`, com início futuro, em ordem
 cronológica. CTools não altera acesso, cache, domínio, entidade ou conteúdo.
 
-A View `aculta_forum_topics`, base `node_field_data`, apresenta tópicos do tipo
-`forum` publicados e associados ao domínio corrente. Ela usa o teaser do Node,
-ordena fixos primeiro e depois por criação, e fica posicionada apenas na página
-inicial do purpose `forum`. O bloco permite ao administrador ajustar quantidade
-de itens e tipo de pager. A consulta mantém o query tag `node_access` do Views e
-o contexto de cache `user.node_grants:view`; filtros de tipo, domínio e
-publicação não podem ser alterados por configuração do bloco. A listagem nativa
-do Forum continua sendo a fonte das categorias e dos tópicos dentro de cada
-categoria.
+A View `aculta_forum_public_topics`, base `node_field_data`, apresenta tópicos
+`aculta_forum_topic` publicados e associados ao domínio corrente. O display
+`block_recent` alimenta o bloco de tópicos recentes na página inicial do purpose
+`forum`; CTools Views permite ajustar quantidade de itens e tipo de pager. A
+consulta mantém o query tag `node_access` do Views e o contexto de cache
+`user.node_grants:view`; filtros de tipo, domínio e publicação não podem ser
+alterados pela configuração do bloco. Categorias e listagens continuam no motor
+ACULTA baseado em Taxonomy e Views.
 
 A View `aculta_forum_public_topics` é a contraparte do motor novo: filtra apenas
 `aculta_forum_topic` publicado e `field_domain_source` do domínio ativo, mantém

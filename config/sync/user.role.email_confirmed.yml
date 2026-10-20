@@ -6,7 +6,6 @@ dependencies:
     - filter.format.usuario_aculta
     - filter.format.wiki
     - node.type.aculta_forum_topic
-    - node.type.forum
     - node.type.wiki_entry
     - workflows.workflow.wiki_editorial
   module:
@@ -26,12 +25,9 @@ is_admin: false
 permissions:
   - 'access content'
   - 'create email_confirmed profile'
-  - 'create forum content'
   - 'create aculta_forum_topic content'
   - 'create wiki_entry content'
-  - 'delete own forum content'
   - 'delete own aculta_forum_topic content'
-  - 'edit own forum content'
   - 'edit own aculta_forum_topic content'
   - 'edit own wiki_entry content'
   - 'flag sinalizar_comentario'
