@@ -46,7 +46,7 @@ final class MailTracker {
    * Indica se o rastreamento está ligado na configuração de entrega (desligado por padrão).
    */
   public function enabled(): bool {
-    return $this->configFactory->get(DeliverySettings::CONFIG)->get('tracking_enabled') === TRUE;
+    return $this->configFactory->get(DeliverySettings::CONFIG)->get('tracking_enabled') === TRUE && $this->salt() !== '';
   }
 
   /**
@@ -79,14 +79,21 @@ final class MailTracker {
    * Assinatura de um dado do rastreamento, com o hash_salt do ambiente.
    */
   public function sign(string $data): string {
-    return hash_hmac('sha256', $data, (string) $this->settings->get('hash_salt', ''));
+    return hash_hmac('sha256', $data, $this->salt());
   }
 
   /**
-   * Confere a assinatura em tempo constante.
+   * Confere a assinatura em tempo constante. Sem hash_salt a chave seria vazia e qualquer um a calcularia: falha fechado.
    */
   public function verify(string $data, string $signature): bool {
-    return hash_equals($this->sign($data), $signature);
+    return $this->salt() !== '' && hash_equals($this->sign($data), $signature);
+  }
+
+  /**
+   * Chave do ambiente (hash_salt do settings.php). Vazia significa rastreamento indisponível.
+   */
+  private function salt(): string {
+    return (string) $this->settings->get('hash_salt', '');
   }
 
   /**

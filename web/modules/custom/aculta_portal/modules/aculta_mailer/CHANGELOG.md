@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.48 — rastreamento falha fechado sem hash_salt — 2026-10-20
+
+- `MailTracker`: sem `hash_salt` o rastreamento fica indisponível (`enabled()` FALSE, HTML inalterado) e `verify()` recusa toda assinatura. Antes, uma chave vazia tornava o HMAC previsível e permitia forjar aberturas e cliques.
+- Revisão de código das rotas públicas de rastreamento: comparação em tempo constante, redirecionamento só para o mesmo host, URL assinada junto com a correlação. Sem alteração nesses pontos.
+- Teste unitário novo: `testWithoutSaltTrackingIsUnavailableAndNothingVerifies`. Unit 137/137. Kernel 34/34 no banco `aculta_simpletest`. Sem alteração de config nem de Runtime.
+- Pendente (registrado, não alterado): o HMAC do destinatário em `MailLogRecorder::hashRecipient` usa o mesmo `hash_salt`; com chave vazia o endereço ficaria recuperável por dicionário. Falhar fechado ali quebraria o registro, então exige decisão.
+
 ## 0.1.0-dev.47 — estado dos relatórios alinhado ao código; tabela com atributo do módulo — 2026-10-20
 
 - Tabelas do painel de envios usam `data-aculta-mailer-table="rolagem"` (antes `data-portal-ui`). O painel usa o tema Claro, fora do mapa do ACULTA420; o token mapeado no tema tiraria o atributo e quebraria a rolagem.

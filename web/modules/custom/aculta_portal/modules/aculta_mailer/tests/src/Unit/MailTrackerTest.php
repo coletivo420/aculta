@@ -22,9 +22,9 @@ final class MailTrackerTest extends UnitTestCase {
   private const CORR = '0410e60e-f014-4eb9-bd0f-e3d9b638d42d';
 
   /**
-   * Rastreador com o recurso ligado ou não, e o consentimento informado.
+   * Rastreador com o recurso ligado ou não, e o consentimento informado. O hash_salt pode ser trocado (vazio testa a falha fechada).
    */
-  private function tracker(bool $enabled, bool $consent): MailTracker {
+  private function tracker(bool $enabled, bool $consent, string $salt = 'segredo-de-teste'): MailTracker {
     $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('tracking_enabled')->willReturn($enabled);
     $configs = $this->createMock(ConfigFactoryInterface::class);
@@ -43,7 +43,7 @@ final class MailTrackerTest extends UnitTestCase {
       }
 
     };
-    return new MailTracker($configs, new Settings(['hash_salt' => 'segredo-de-teste']), $urls, [$checker]);
+    return new MailTracker($configs, new Settings(['hash_salt' => $salt]), $urls, [$checker]);
   }
 
   /**
@@ -65,6 +65,18 @@ final class MailTrackerTest extends UnitTestCase {
     $this->assertStringContainsString('/aculta-mailer/t/c/' . self::CORR . '?s=', $out);
     $this->assertStringContainsString('href="https://externo.example.invalid/x"', $out, 'link externo não muda');
     $this->assertLessThan(strpos($out, '</body>'), strpos($out, 'aculta-mailer/t/o/'));
+  }
+
+  /**
+   * Sem hash_salt: o rastreamento fica indisponível e nenhuma assinatura é aceita (a chave vazia seria previsível).
+   */
+  public function testWithoutSaltTrackingIsUnavailableAndNothingVerifies(): void {
+    $html = '<p><a href="https://example.invalid/conta">Conta</a></p></body>';
+    $tracker = $this->tracker(TRUE, TRUE, '');
+    $this->assertFalse($tracker->enabled());
+    $this->assertSame($html, $tracker->decorate($html, self::CORR, 'a@example.invalid'));
+    $forged = hash_hmac('sha256', 'o|' . self::CORR, '');
+    $this->assertFalse($tracker->verify('o|' . self::CORR, $forged));
   }
 
   /**
