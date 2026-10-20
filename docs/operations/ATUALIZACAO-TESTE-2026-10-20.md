@@ -54,3 +54,31 @@ previstas. Produção não foi implementada nesta data: não há deploy de produ
 
 - Rastreamento com consentimento (F11): falta o texto dos termos de uso e da política de privacidade.
 - Renovação do plano SMTP2GO (contingência), esgotado no mês.
+
+## Sincronização de config/sync: inventário (não aplicado)
+
+Backup antes de qualquer alteração: banco `aculta_runtime` em `sql:dump` (fora do repositório). Exportação do Runtime
+para diretório temporário, sem alterar `config/sync`. Comparação semântica, ignorando `_core` e `uuid`:
+
+- Iguais: 1.034 objetos. Diferentes: 112. Só no banco: 160. Só no `config/sync`: 3.
+- Mailer e Portal: sem diferença de configuração relevante (`aculta_mailer.*` iguais).
+
+### Grupos que exigem decisão
+
+1. **`core.extension` (módulos habilitados).** Habilitados só no banco: `aculta_game`, `aculta_id_cpf`,
+   `aculta_lms_h5p`, `aculta_user`, `commerce_product`, `private_message_notify`, `sdc_devel`. Importar o
+   `config/sync` os desabilitaria. Hipótese: o versionado está atrasado. Direção a decidir: atualizar `config/sync`
+   a partir do Runtime para esses módulos, ou desabilitá-los.
+2. **Papéis e permissões.** Permissões só no banco: `view aculta restricted forum` (associado, estudante),
+   `view commerce_product` e `view commerce_shipping_method` (anônimo). A hierarquia de papéis no banco ordena
+   `lms_teacher` antes de `content_editor`; a decisão registrada no `config/sync` ordena o inverso. Importar o
+   versionado removeria as permissões e corrigiria a ordem. Direção a decidir, por papel.
+3. **160 objetos só no banco** (campos, views, configurações de sistema e de módulos, incluindo definições de
+   conquistas e de missões). Importação completa os apagaria. Direção a decidir: exportar para `config/sync` ou
+   deixar fora da sincronização.
+4. **3 objetos só no `config/sync`** (`aculta_forum.settings`, `agreement.agreement.default`, `ds.settings`):
+   importar cria esses objetos no Runtime. Necessita confirmação.
+5. **`email_confirmer.settings`:** diferenças de texto dos e-mails de confirmação, e `confirmation_lifetime`
+   (retenção, não validade do link). Direção a decidir: texto do banco ou do versionado.
+
+Nenhuma importação foi feita. O backup e a exportação ficam no scratchpad da sessão.
