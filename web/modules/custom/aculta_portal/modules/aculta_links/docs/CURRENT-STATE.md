@@ -87,4 +87,4 @@ com dados/editoria antes de qualquer migração.
 
 ## Micropáginas públicas 0.4.0-dev.1
 
-`/pagina/{slug}` está declarada para o purpose `links`, com status publicado e acesso revalidado em página, item e destino. Atributos e lista de links são preparados pelo módulo; ACULTA420 apresenta o SDC existente. Ainda não há integração com perfil público/avatares, preview de editor, presets de tema, SEO nem migração da landing `/`. A rota depende do módulo habilitado.
+`/pagina/{slug}` está ativa no Runtime de teste no purpose `links`, com status publicado e acesso revalidado em página, item e destino. A prévia em `/pagina/{slug}/previa` é hospedada no mesmo purpose para usar o tema público, exige edição e não é cacheada. Atributos e lista de links são preparados pelo módulo; ACULTA420 apresenta o SDC existente. Ainda não há integração com perfil público/avatares, presets de tema, SEO nem migração da landing `/`. Produção não foi verificada.

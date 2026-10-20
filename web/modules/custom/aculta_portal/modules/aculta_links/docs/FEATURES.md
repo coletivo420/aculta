@@ -23,10 +23,11 @@ conteúdo e URL.
 - Dashboard e formulários Core para micropáginas/destinos, com listagem por
   proprietário, revisão e cache de usuário. Rotas administrativas pertencem ao
   MAIN e estão registradas no Runtime de teste; acesso segue as permissões e o Entity Access.
-- Editor de itens com ordenação e publicação individual, além da rota pública
-  `/pagina/{slug}` no purpose `links`; o módulo foi habilitado no Runtime de
-  teste em 2026-10-20. Preview no editor e migração da landing institucional
-  seguem pendentes.
+- Editor de itens com ordenação, publicação individual e link para prévia
+  privada, além da rota pública `/pagina/{slug}` no purpose `links`; o módulo
+  foi habilitado no Runtime de teste em 2026-10-20. A prévia pública no host
+  `links` usa `/pagina/{slug}/previa`, revalida propriedade e não é cacheada.
+  Migração da landing institucional segue pendente.
 
 ## Ainda não disponível
 

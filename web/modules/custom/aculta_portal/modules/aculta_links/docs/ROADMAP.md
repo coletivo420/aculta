@@ -25,11 +25,11 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 
 ## 0.3.0 — dashboard e editor
 
-O dashboard e CRUD básico existem. Em andamento: editor Form API de composição, ordenação e ativação individual. Próximos itens: preview responsivo com dados da página, drag-and-drop revisável em diferentes navegadores e navegação entre páginas. Uma conta pode ter várias páginas; sem equipes complexas inicialmente.
+Dashboard, CRUD básico, composição ordenável por tabela Drupal, publicação individual e prévia privada estão implementados. Ainda faltam validação visual em tamanhos variados e navegação fluida entre páginas. Uma conta pode ter várias páginas; sem equipes complexas inicialmente.
 
 ## 0.4.0 — interface pública e presets
 
-Rota pública inicial e integração ao SDC existente implementadas em 0.4.0-dev.1; faltam preview responsivo no editor, presets governados, SEO, controles de aparência, revisão visual/acessível e migração preservadora da landing antiga antes de RC.
+Rota pública inicial, integração ao SDC existente e prévia privada sem cache compartilhado em `/pagina/{slug}/previa` implementadas em 0.4.0-dev.3; faltam presets governados, SEO, controles de aparência, revisão visual/acessível e migração preservadora da landing antiga antes de RC.
 
 ## 0.5.0 — métricas e ferramentas
 

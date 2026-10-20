@@ -37,14 +37,63 @@ final class LinkPagePublicController {
       throw new NotFoundHttpException();
     }
 
+    return $this->buildPage($page, TRUE);
+  }
+
+  /**
+   * Builds an owner-only preview, including unpublished items and drafts.
+   */
+  public function preview(LinkPage $aculta_link_page): array {
+    if (!$aculta_link_page->access('update', $this->currentUser)) {
+      throw new NotFoundHttpException();
+    }
+
+    $build = $this->buildPage($aculta_link_page, FALSE);
+    $build['#cache']['max-age'] = 0;
+    return $build;
+  }
+
+  /**
+   * Builds a private preview addressed by its public slug.
+   */
+  public function previewBySlug(string $slug): array {
+    $page_storage = $this->entityTypeManager->getStorage('aculta_link_page');
+    $ids = $page_storage->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('slug', $slug)
+      ->range(0, 2)
+      ->execute();
+    if (count($ids) !== 1) {
+      throw new NotFoundHttpException();
+    }
+    $page = $page_storage->load(reset($ids));
+    if (!$page instanceof LinkPage || !$page->access('update', $this->currentUser)) {
+      throw new NotFoundHttpException();
+    }
+
+    $build = $this->buildPage($page, FALSE);
+    $build['#cache']['max-age'] = 0;
+    return $build;
+  }
+
+  /**
+   * Builds page output, filtering unpublished items for public requests.
+   */
+  private function buildPage(LinkPage $page, bool $published_only): array {
+    if ($published_only && !$page->isPublished()) {
+      throw new NotFoundHttpException();
+    }
+    $page_storage = $this->entityTypeManager->getStorage('aculta_link_page');
     $item_storage = $this->entityTypeManager->getStorage('aculta_link_item');
-    $item_ids = $item_storage->getQuery()
+    $item_query = $item_storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('page', $page->id())
-      ->condition('status', TRUE)
       ->sort('weight')
-      ->sort('id')
-      ->execute();
+      ->sort('id');
+    if ($published_only) {
+      $item_query->condition('status', TRUE);
+    }
+    $item_ids = $item_query->execute();
     $items = $item_storage->loadMultiple($item_ids);
     $link_items = [];
     $cache_tags = array_merge(
@@ -61,7 +110,7 @@ final class LinkPagePublicController {
         continue;
       }
       $link = $item->get('link')->entity;
-      if (!$link || !$link->isPublished()) {
+      if (!$link || ($published_only && !$link->isPublished())) {
         continue;
       }
       $link_access = $link->access('view', $this->currentUser, TRUE);

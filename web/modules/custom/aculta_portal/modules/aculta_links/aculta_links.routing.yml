@@ -30,3 +30,13 @@ aculta_links.page_public:
     slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
   options:
     _aculta_domain_purpose: links
+
+aculta_links.page_preview:
+  path: '/pagina/{slug}/previa'
+  defaults:
+    _controller: 'aculta_links.public_page_controller:previewBySlug'
+    _title: 'Pré-visualizar micropágina'
+  requirements:
+    slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
+  options:
+    _aculta_domain_purpose: links

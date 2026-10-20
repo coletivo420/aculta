@@ -2,7 +2,7 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.2`. O módulo possui entidades revisionáveis de destinos, micropáginas
+`0.4.0-dev.3`. O módulo possui entidades revisionáveis de destinos, micropáginas
 e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A migração da landing raiz continua pendente.
 
@@ -44,7 +44,8 @@ Nenhum código upstream foi copiado e nenhuma dependência Composer foi
 adicionada. `aculta_link` usa o campo Link do Core; `aculta_link_page` guarda
 slug, título, apresentação e publicação; `aculta_link_item` ordena referências
 entre página e destino. As três entidades têm revisões Drupal. Access mantém
-destinos e rascunhos privados por proprietário. A rota pública usa status publicado, validação de slug/destino e o SDC
+destinos e rascunhos privados por proprietário. O editor oferece prévia privada
+de rascunhos e itens inativos, sem cache compartilhado. A rota pública usa status publicado, validação de slug/destino e o SDC
 `social-links-page` via template ACULTA420. O módulo foi habilitado no Runtime
 de teste em 2026-10-20; router confirmado sob purpose `links`; slug inexistente
 retorna 404 e dashboard anônimo retorna 403. A configuração exportável foi

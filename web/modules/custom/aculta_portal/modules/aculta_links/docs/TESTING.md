@@ -32,3 +32,9 @@ reivindicado nesta fase.
 - Kernel valida unicidade/gramática do slug, constraint do destino, access publicado e path/purpose declarado.
 - Functional/browser valida `/pagina/{slug}` em links e 404 em outros purposes; inspeciona SDC em tamanhos móveis/desktop, claro/escuro, teclado, contraste e sem overflow.
 - Cache precisa invalidar ao editar/despublicar página, item ou link e ao mudar alias de Domain.
+
+Em 2026-10-20, Kernel passou com 1 teste/49 asserções incluindo prévia privada
+do proprietário e `max-age: 0`; o route provider do Runtime confirmou
+`/pagina/{slug}/previa` no purpose `links`; HTTP anônimo para slug inexistente
+e HTTP no purpose `main` retornaram 404. Cache rebuild foi executado no Runtime
+de teste. Uma prévia autenticada visual continua pendente.

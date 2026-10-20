@@ -68,6 +68,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     self::assertSame('/painel-administrativo/links/item/adicionar', $item_add_route->getPath());
     $editor_route = $route_provider->getRouteByName('aculta_links.page_editor');
     self::assertSame('/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens', $editor_route->getPath());
+    $preview_route = $route_provider->getRouteByName('aculta_links.page_preview');
+    self::assertSame('/pagina/{slug}/previa', $preview_route->getPath());
+    self::assertSame('links', $preview_route->getOption('_aculta_domain_purpose'));
     self::assertSame('aculta_link_page.update', $editor_route->getRequirement('_entity_access'));
     $item_revision_route = $route_provider->getRouteByName('entity.aculta_link_item.revision');
     self::assertSame(
@@ -127,6 +130,15 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
 
     $anonymous = User::getAnonymousUser();
     self::assertFalse($page->access('view', $anonymous), 'Rascunhos não são públicos.');
+    $this->container->get('current_user')->setAccount($owner);
+    $preview = $this->container->get('aculta_links.public_page_controller')->preview($page);
+    self::assertTrue($preview['#has_links'], 'Proprietário pode pré-visualizar itens de um rascunho.');
+    self::assertSame(0, $preview['#cache']['max-age'], 'Prévia privada nunca pode ser compartilhada em cache.');
+    self::assertTrue(
+      $this->container->get('aculta_links.public_page_controller')->previewBySlug('pagina-cultural')['#has_links'],
+      'Prévia por slug resolve o rascunho do proprietário.',
+    );
+    $this->container->get('current_user')->setAccount($anonymous);
     $page->setPublished();
     $page->save();
     $this->container->get('entity_type.manager')

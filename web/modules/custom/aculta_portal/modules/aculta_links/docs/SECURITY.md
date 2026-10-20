@@ -40,6 +40,15 @@
 
 Esta lista estabelece requisitos futuros, não certifica segurança já testada.
 
+## Prévia privada 0.4.0-dev.3
+
+`/pagina/{slug}/previa` usa o purpose `links`, resolve o slug com
+`accessCheck(TRUE)` e exige acesso de atualização da própria página antes de
+renderizar rascunhos, links e itens inativos. A resposta declara `max-age: 0`
+para não compartilhar renderização privada. O endpoint retorna 404 sem acesso;
+o teste Kernel cobre a consulta do proprietário e o limite de cache. Inspeção
+visual autenticada no navegador permanece pendente.
+
 
 ## Painel 0.2.0-dev.2
 

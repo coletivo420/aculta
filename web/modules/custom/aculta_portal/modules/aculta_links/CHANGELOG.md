@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.3 — prévia privada de micropágina — 2026-10-20
+
+- Editor de composição inclui rota de prévia privada no purpose `links` (`/pagina/{slug}/previa`) para renderizar com o tema público, aceitando rascunhos e itens inativos; o controlador exige atualização da página e `max-age: 0` impede cache compartilhado.
+- Kernel valida rota, acesso do proprietário, inclusão do item inativo e ausência de cache compartilhado (1 teste, 48 asserções PASS); PHPCS PASS em PHP 8.4.26.
+- Rebuild controlado de cache no Runtime de teste registrou a rota no purpose `links`; HTTP anônimo para prévia de slug inexistente e no purpose `main` retornou 404. Prévia visual autenticada e produção não validadas.
+
 ## 0.4.0-dev.2 — habilitação controlada no Runtime de teste — 2026-10-20
 
 - Habilitado `aculta_links` no Runtime Homelab após confirmar hostname `toca`, checkout/branch e banco `aculta_runtime`; criadas somente as seis tabelas de entidade/revisão do módulo, sem conteúdo existente a migrar ou remover.

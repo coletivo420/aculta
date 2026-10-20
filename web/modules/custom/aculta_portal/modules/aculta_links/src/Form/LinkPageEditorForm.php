@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_links\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_links\Entity\LinkPage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -23,6 +25,7 @@ final class LinkPageEditorForm extends FormBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
+    private readonly DomainPurposeManager $domainPurpose,
   ) {}
 
   /**
@@ -31,6 +34,7 @@ final class LinkPageEditorForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
+      $container->get('aculta_portal.domain_purpose'),
     );
   }
 
@@ -64,6 +68,23 @@ final class LinkPageEditorForm extends FormBase {
       '#title' => new TranslatableMarkup('Organize os itens desta micropágina'),
       '#description' => new TranslatableMarkup('Ajuste a posição e a publicação de cada item. A ordem também pode ser alterada pelo campo numérico sem JavaScript.'),
     ];
+    $slug = (string) $aculta_link_page->get('slug')->value;
+    $preview_url = preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug)
+      ? $this->domainPurpose->pathUrl('links', '/pagina/' . $slug . '/previa')
+      : NULL;
+    $links_domain = $this->domainPurpose->getDomain('links');
+    if ($preview_url !== NULL && $links_domain !== NULL) {
+      $form['preview'] = [
+        '#type' => 'link',
+        '#title' => new TranslatableMarkup('Pré-visualizar página'),
+        '#url' => $preview_url,
+        '#attributes' => ['target' => '_blank', 'rel' => 'noopener'],
+      ];
+      (new CacheableMetadata())
+        ->addCacheContexts(['url.site'])
+        ->addCacheableDependency($links_domain)
+        ->applyTo($form['preview']);
+    }
     $form['items'] = [
       '#type' => 'table',
       '#header' => [
