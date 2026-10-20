@@ -1,3 +1,14 @@
+## Revisão visual X11 parcial — sem nova versão — 2026-10-20
+
+- Comparadas a entrada ACULTA Forum e o Ubuntu Discourse em Firefox/X11; raiz e
+  categorias ACULTA verificadas em 1024, 768 e 390 px. A grade reflowa e não
+  apresentou overflow horizontal. As capturas foram arquivadas fora do Git em
+  `/home/aculta/private/aculta/visual-tests/forum-dev11-20261020/`.
+- A entrada ainda não combina categorias descritas e atividade recente como a
+  referência. Modo escuro, foco/teclado, tópicos com conteúdo, tópico e composer
+  permanecem pendentes; não houve criação de fixtures no Runtime. Ver
+  `docs/TEST-MATRIX.md`. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.51 — excluir o acervo Growroom histórico do fluxo de denúncias
 
 - A permissão `report aculta forum content` é concedida a `email_confirmed`;

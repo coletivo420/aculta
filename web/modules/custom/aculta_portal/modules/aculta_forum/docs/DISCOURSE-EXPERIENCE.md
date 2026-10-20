@@ -37,6 +37,14 @@ contagens de tópicos e atividade do site mudam continuamente. Os guias gerais
 do Discourse explicam padrões de uso, mas não significam que toda capacidade
 esteja habilitada no Ubuntu Discourse.
 
+Na comparação visual X11 de 2026-10-20, a entrada pública Ubuntu em 1024 px
+apresentou categorias descritas e atividade recente em colunas adjacentes. A
+entrada ACULTA manteve filtro e navegação no topo e o estado vazio da lista; as
+categorias permanecem em página/aba separada. A estrutura ACULTA foi verificada
+em 1024, 768 e 390 px; as capturas e limitações estão em `TEST-MATRIX.md` e no
+arquivo privado de homologação indicado ali. Esta rodada não inspecionou tópico,
+composer ou modo escuro.
+
 ## Ferramentas de comunidade e moderação pesquisadas
 
 Pesquisa complementar em 2026-10-19 cobriu documentação de administração e o

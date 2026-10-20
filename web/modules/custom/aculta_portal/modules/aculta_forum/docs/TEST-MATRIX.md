@@ -223,7 +223,7 @@ continuam pendentes.
 | Outras ferramentas de movimento | reorganizar Taxonomy; lote via Views/VBO; split/merge; verificar revisões/URLs/arquivos/flags/estatísticas/cache/busca/notificações e recuperação | Planejadas. `MOVE-TOOLS.md` registra pesquisa de Comment Mover e VBO; não instalar VBO nem expor ferramenta em lote até aprovar o escopo e segurança das Actions. |
 | Acervo Growroom restaurado | autoria por `field_autor_legado`; edição/exclusão/aprovação negadas a qualquer papel; tópico fechado; bulk admin e IDs adulterados rejeitados | Unit `ForumModerationHooksTest`; Kernel/Functional de importação e access pendentes. Não confundir com Nodes `forum` do módulo contrib, cuja retirada é separada. |
 | UX/acessibilidade | mobile, teclado, foco, leitor de tela, light/dark, reduced motion e fallback sem JS | Firefox/browser, auditoria manual e automatizada existente. |
-| Revisão visual de referência | Entrada, categorias, listagem, tópico e composição; comparação com Ubuntu Discourse em desktop/768/390 px; claro/escuro; ritmo, densidade, navegação, foco e overflow | Firefox visível em X11; capturas comparáveis e checklist documentado em `docs/portal/TESTES-NAVEGADOR.md`; não reutilizar marca/ativos/CSS da referência. |
+| Revisão visual de referência | Entrada, categorias, listagem, tópico e composição; comparação com Ubuntu Discourse em desktop/768/390 px; claro/escuro; ritmo, densidade, navegação, foco e overflow | Rodada X11 parcial registrada nesta matriz; não reutilizar marca/ativos/CSS da referência. |
 | Performance | listagens, thread grande, Views, Query counts e contagens/cache | profiling comparável; limites definidos na fase de benchmark. |
 | Remoção/migração | dry run, inventário, exclusão escopada, uninstall, composer remove, rollback/restauro e ausência de residuais | prova somente no Runtime de teste e ponto de recuperação revisado. |
 
@@ -424,3 +424,27 @@ real no servidor de teste.
 - Unit `ForumTopicDisplayConfigTest`: 6/42 PASS. Sync e configuração de instalação equivalentes; mensagem usa Views Core `text_custom` e não tokeniza conteúdo.
 - Runtime `toca`: importação parcial apenas de `views.view.aculta_forum_public_topics`. Após cache rebuild, raiz HTTP 200 mostrou título, seletor de categoria e texto vazio; rota interna `/discussoes` retornou 404. Tópicos e comentários compartilhados continuam em zero.
 - RUNTIME STATUS: PARTIAL; listagem vazia conferida por HTTP, navegador e tópico persistido seguem pendentes.
+
+## Revisão visual X11 — Ubuntu Discourse e ACULTA Forum — 2026-10-20
+
+- Sessão gráfica X11 ativa, Firefox visível, Runtime de teste `toca`; comparação
+  da entrada do Ubuntu Discourse com a raiz ACULTA em 1024 px. Capturas privadas
+  em `/home/aculta/private/aculta/visual-tests/forum-dev11-20261020/`, arquivos
+  `ubuntu-home-1024.png` e `aculta-home-1024.png`, permissões `0600`.
+- ACULTA `/categorias` inspecionada em 1024, 768 e 390 px; raiz inspecionada em
+  1024, 768 e 390 px. Grade refluindo de três para duas e uma coluna,
+  respectivamente; cabeçalho sem quebra/overflow horizontal observado; abas
+  da raiz quebram em duas linhas a 390 px. Capturas correspondentes foram
+  guardadas no mesmo diretório privado.
+- A referência Ubuntu apresenta categorias descritas e atividade recente lado
+  a lado. Na ACULTA, a raiz oferece filtro e abas e mostra estado vazio; as
+  categorias ficam na aba/página própria. Portanto, o padrão de navegação já é
+  responsivo, mas a composição da entrada ainda não alcança a densidade de
+  informação da referência. Registrar como melhoria pendente: combinar resumo
+  de categorias e atividade recente na entrada, mantendo a lista Views e os
+  filtros/access fixos.
+- Escopo visual **PARTIAL**: não foram avaliados modo escuro, foco/teclado,
+  leitores de tela, listagem com tópicos publicados, tópico, respostas ou
+  composer. O Runtime não recebeu fixtures; o Fórum permaneceu sem tópicos e
+  comentários. Nenhuma conclusão de aprovação visual integral ou acessibilidade
+  foi feita. RUNTIME STATUS: PARTIAL.

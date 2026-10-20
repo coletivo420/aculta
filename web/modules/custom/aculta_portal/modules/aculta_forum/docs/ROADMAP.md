@@ -377,6 +377,14 @@ modo claro/escuro, foco/teclado e ausência de overflow. Guardar capturas de
 homologação fora do repositório quando contiverem dados do Runtime e registrar
 no relatório as telas, dimensões, divergências e correções.
 
+Revisão inicial X11 em 2026-10-20 foi parcial: entrada e categorias em 1024,
+768 e 390 px; comparação da entrada ACULTA/Ubuntu em 1024 px. Grade de
+categorias refluindo sem overflow horizontal observado. A entrada ACULTA ainda
+separa a lista vazia e a página de categorias, enquanto a referência mostra
+categorias e atividade recente lado a lado. Capturas privadas e limites estão
+registrados em `TEST-MATRIX.md`. Dev.11 não está visualmente homologada: faltam
+modo escuro, foco/teclado, listagem com conteúdo, tópico e composer.
+
 ## `0.1.0-dev.12` — Participação e moderação
 
 Flags, denúncias, salvar/seguir, citação, aprovação, edição e bloqueio por APIs
