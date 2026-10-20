@@ -7,6 +7,9 @@
 - Adapter Unit: 17 testes / 182 assertions PASS. Kernel: 2 testes / 102
   assertions PASS, 40 depreciações de Core/contrib/LMS. Routes/View ainda não
   atualizadas no Runtime nem testadas por HTTP. RUNTIME STATUS: DEFERRED.
+- Revisão pré-instalação encontrou e corrigiu o machine name da relação Group
+  de turma na dependência da View. Unit agora compara os dois IDs reais do
+  Config Sync; 17 testes / 183 assertions PASS.
 
 ## `0.1.0-dev.15` — permitir moderação contextual de Comments no LMS — 2026-10-20
 

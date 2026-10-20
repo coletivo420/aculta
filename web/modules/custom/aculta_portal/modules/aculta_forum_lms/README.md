@@ -96,7 +96,7 @@ Comments de seu Group e cada aba retorna o status fixo esperado. Views, routes,
 permissões por HTTP, links do painel e cache no Runtime ainda precisam de
 rebuild e smoke autenticado com conteúdo efêmero autorizado.
 
-Na dev.16, Unit passou com 17 testes / 182 assertions e Kernel com 2 testes /
+Na dev.16, Unit passou com 17 testes / 183 assertions e Kernel com 2 testes /
 102 assertions; o Kernel reportou 40 depreciações de Core/contrib/LMS. O adapter e
 as permissões de Group permanecem ativos no Runtime de teste, mas as rotas e a
 configuração nova da View ainda não foram aplicadas. RUNTIME STATUS: DEFERRED.

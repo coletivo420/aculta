@@ -110,6 +110,14 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     }
 
     $view = $this->config('views.view.aculta_forum_lms_admin_comments');
+    self::assertEqualsCanonicalizing([
+      'group.relationship_type.lms_class-3abb8caf7f7d526ecedeec',
+      'group.relationship_type.lms_course-3abb8caf7f7d526ecedee',
+    ], array_values(array_intersect($view['dependencies']['config'], [
+      'group.relationship_type.lms_class-3abb8caf7f7d526ecedeec',
+      'group.relationship_type.lms_course-3abb8caf7f7d526ecedee',
+      'group.relationship_type.lms_class-3abb8caf7f7d526ecedeeec',
+    ])));
     $displayPlugins = array_column($view['display'], 'display_plugin');
     self::assertSame(['embed'], array_values(array_unique(array_slice($displayPlugins, 1))));
     self::assertNotContains('page', $displayPlugins);

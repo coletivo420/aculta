@@ -5,7 +5,7 @@ dependencies:
   config:
     - field.field.comment.aculta_discussion_post.field_aculta_rejected
     - field.field.node.aculta_lms_topic.field_aculta_discussion
-    - group.relationship_type.lms_class-3abb8caf7f7d526ecedeeec
+    - group.relationship_type.lms_class-3abb8caf7f7d526ecedeec
     - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
     - node.type.aculta_lms_topic
   module:
